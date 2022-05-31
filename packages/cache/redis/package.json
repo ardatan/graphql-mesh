@@ -32,7 +32,7 @@
     "@graphql-mesh/utils": "0.35.1",
     "@graphql-mesh/cache-localforage": "0.6.7",
     "@graphql-mesh/string-interpolation": "0.2.0",
-    "ioredis": "5.0.5",
+    "ioredis": "5.0.6",
     "tslib": "^2.3.1"
   },
   "publishConfig": {

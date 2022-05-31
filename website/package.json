@@ -21,7 +21,7 @@
     "@guild-docs/server": "4.0.0",
     "@theguild/components": "1.11.8",
     "classnames": "2.3.1",
-    "framer-motion": "6.3.5",
+    "framer-motion": "6.3.6",
     "next": "12.1.6",
     "next-i18next": "11.0.0",
     "react": "17.0.2",
@@ -46,7 +46,7 @@
   "devDependencies": {
     "@guild-docs/algolia": "0.0.6",
     "@next/bundle-analyzer": "12.1.6",
-    "@types/node": "16.11.36",
+    "@types/node": "16.11.38",
     "@types/react": "17.0.45",
     "@types/react-dom": "17.0.17",
     "concurrently": "7.2.1",
