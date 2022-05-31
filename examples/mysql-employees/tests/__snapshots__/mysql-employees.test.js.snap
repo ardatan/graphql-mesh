@@ -499,13 +499,13 @@ Object {
           Object {
             "departments": Array [
               Object {
-                "dept_name": "Development",
-                "dept_no": "d005",
+                "dept_name": "Sales",
+                "dept_no": "d007",
               },
             ],
-            "dept_no": "d005",
-            "emp_no": 10001,
-            "from_date": "1986-06-26",
+            "dept_no": "d007",
+            "emp_no": 10002,
+            "from_date": "1996-08-03",
             "to_date": "9999-01-01",
           },
         ],
@@ -522,13 +522,13 @@ Object {
           Object {
             "departments": Array [
               Object {
-                "dept_name": "Development",
-                "dept_no": "d005",
+                "dept_name": "Production",
+                "dept_no": "d004",
               },
             ],
-            "dept_no": "d005",
-            "emp_no": 10001,
-            "from_date": "1986-06-26",
+            "dept_no": "d004",
+            "emp_no": 10003,
+            "from_date": "1995-12-03",
             "to_date": "9999-01-01",
           },
         ],
@@ -545,13 +545,13 @@ Object {
           Object {
             "departments": Array [
               Object {
-                "dept_name": "Development",
-                "dept_no": "d005",
+                "dept_name": "Production",
+                "dept_no": "d004",
               },
             ],
-            "dept_no": "d005",
-            "emp_no": 10001,
-            "from_date": "1986-06-26",
+            "dept_no": "d004",
+            "emp_no": 10004,
+            "from_date": "1986-12-01",
             "to_date": "9999-01-01",
           },
         ],
@@ -568,13 +568,13 @@ Object {
           Object {
             "departments": Array [
               Object {
-                "dept_name": "Development",
-                "dept_no": "d005",
+                "dept_name": "Human Resources",
+                "dept_no": "d003",
               },
             ],
-            "dept_no": "d005",
-            "emp_no": 10001,
-            "from_date": "1986-06-26",
+            "dept_no": "d003",
+            "emp_no": 10005,
+            "from_date": "1989-09-12",
             "to_date": "9999-01-01",
           },
         ],
