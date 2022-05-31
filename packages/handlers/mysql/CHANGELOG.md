@@ -1,5 +1,14 @@
 # @graphql-mesh/mysql
 
+## 0.16.0
+
+### Minor Changes
+
+- ccde8eb19: feat(mysql): handle many-to-many relations automatically
+
+  - Add relation fields other way around.
+  - In case of insert, update and so on, respect multiple primary keys.
+
 ## 0.15.23
 
 ### Patch Changes
