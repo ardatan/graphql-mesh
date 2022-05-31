@@ -1,0 +1,21 @@
+extend type Case {
+  population: ApiPopulation
+    @resolveTo(
+      requiredSelectionSet: "{ countryRegion }"
+      sourceName: "WorldPop"
+      sourceTypeName: "Query"
+      sourceFieldName: "population"
+      sourceArgs: { country: "{root.countryRegion}" }
+    )
+}
+
+extend type Query {
+  stat(country: String!): Stat
+}
+
+type Stat {
+  confirmedRatio: Float
+  deathRatio: Float
+  case: Case
+  population: ApiPopulation
+}
