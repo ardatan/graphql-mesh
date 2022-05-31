@@ -1,5 +1,12 @@
 # @graphql-mesh/utils
 
+## 0.35.1
+
+### Patch Changes
+
+- abe9fcc41: fix(fileURLtoPath): return empty string if url is not valid
+  - @graphql-mesh/types@0.73.1
+
 ## 0.35.0
 
 ### Minor Changes
