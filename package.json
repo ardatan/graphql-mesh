@@ -35,7 +35,7 @@
     "@theguild/prettier-config": "0.0.1",
     "@parcel/packager-raw-url": "2.6.0",
     "@parcel/transformer-webmanifest": "2.6.0",
-    "@types/jest": "27.5.2",
+    "@types/jest": "28.1.0",
     "@types/node": "16.11.38",
     "@typescript-eslint/eslint-plugin": "5.27.0",
     "@typescript-eslint/parser": "5.27.0",
