@@ -1,5 +1,18 @@
 # @omnigraph/json-schema
 
+## 0.20.2
+
+### Patch Changes
+
+- 3c0366d2c: - Support import.meta.env instead of process.env for browsers
+  - Ponyfill `util.inspect` only if it is not Node env
+- Updated dependencies [3c0366d2c]
+- Updated dependencies [3c0366d2c]
+  - @graphql-mesh/cross-helpers@0.1.6
+  - json-machete@0.8.10
+  - @graphql-mesh/utils@0.35.2
+  - @graphql-mesh/types@0.73.2
+
 ## 0.20.1
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @graphql-mesh/cross-helpers
 
+## 0.1.6
+
+### Patch Changes
+
+- 3c0366d2c: - Support import.meta.env instead of process.env for browsers
+  - Ponyfill `util.inspect` only if it is not Node env
+
 ## 0.1.5
 
 ### Patch Changes

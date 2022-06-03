@@ -1,5 +1,18 @@
 # @graphql-mesh/cache-redis
 
+## 0.9.8
+
+### Patch Changes
+
+- 3c0366d2c: - Support import.meta.env instead of process.env for browsers
+  - Ponyfill `util.inspect` only if it is not Node env
+- Updated dependencies [3c0366d2c]
+- Updated dependencies [3c0366d2c]
+  - @graphql-mesh/cross-helpers@0.1.6
+  - @graphql-mesh/utils@0.35.2
+  - @graphql-mesh/cache-localforage@0.6.8
+  - @graphql-mesh/types@0.73.2
+
 ## 0.9.7
 
 ### Patch Changes

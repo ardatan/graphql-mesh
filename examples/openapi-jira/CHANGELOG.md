@@ -1,5 +1,13 @@
 # openapi-jira
 
+## 0.0.16
+
+### Patch Changes
+
+- Updated dependencies [3c0366d2c]
+  - @graphql-mesh/cli@0.71.2
+  - @graphql-mesh/new-openapi@0.4.23
+
 ## 0.0.15
 
 ### Patch Changes
