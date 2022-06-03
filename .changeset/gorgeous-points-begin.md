@@ -25,4 +25,5 @@
 "@graphql-mesh/utils": patch
 ---
 
-Support import.meta.env instead of process.env
+- Support import.meta.env instead of process.env for browsers
+- Ponyfill `util.inspect` only if it is not Node env
