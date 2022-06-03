@@ -29,7 +29,7 @@ function getLoggerMessage(...args: any[]) {
           return arg.slice(0, 100) + '...';
         }
         return arg;
-      } else if (arg.stack != null) {
+      } else if (typeof arg === 'object' && arg?.stack != null) {
         return arg.stack;
       }
       return util.inspect(arg);
