@@ -29,10 +29,21 @@ module.exports.process =
         platform: 'linux',
       };
 
-const { promisify } = require('./promisify');
 const { inspect } = require('@graphql-tools/utils');
 
 module.exports.util = {
-  promisify,
+  promisify(oldSchoolFn) {
+    return function promisifiedFn(...args) {
+      return new Promise(function executor(resolve, reject) {
+        oldSchoolFn(...args, function cb(err, result) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(result);
+          }
+        });
+      });
+    };
+  },
   inspect,
 };

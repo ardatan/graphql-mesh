@@ -86,21 +86,21 @@ type MysqlPromisifiedConnection = ThenArg<ReturnType<typeof getPromisifiedConnec
 type MysqlContext = { mysqlConnection: MysqlPromisifiedConnection };
 
 async function getPromisifiedConnection(pool: Pool) {
-  const getConnection = util.promisify(pool.getConnection, pool);
+  const getConnection = util.promisify(pool.getConnection.bind(pool));
 
   const connection = await getConnection();
 
-  const getDatabaseTables = util.promisify(connection.databaseTables, connection);
-  const getTableFields = util.promisify(connection.fields, connection);
-  const getTableForeigns = util.promisify(connection.foreign, connection);
-  const getTablePrimaryKeyMetadata = util.promisify(connection.primary, connection);
+  const getDatabaseTables = util.promisify(connection.databaseTables.bind(connection));
+  const getTableFields = util.promisify(connection.fields.bind(connection));
+  const getTableForeigns = util.promisify(connection.foreign.bind(connection));
+  const getTablePrimaryKeyMetadata = util.promisify(connection.primary.bind(connection));
 
-  const selectLimit = util.promisify(connection.selectLimit, connection);
-  const select = util.promisify(connection.select, connection);
-  const insert = util.promisify(connection.insert, connection);
-  const update = util.promisify(connection.update, connection);
-  const deleteRow = util.promisify(connection.delete, connection);
-  const count = util.promisify(connection.count, connection);
+  const selectLimit = util.promisify(connection.selectLimit.bind(connection));
+  const select = util.promisify(connection.select.bind(connection));
+  const insert = util.promisify(connection.insert.bind(connection));
+  const update = util.promisify(connection.update.bind(connection));
+  const deleteRow = util.promisify(connection.delete.bind(connection));
+  const count = util.promisify(connection.count.bind(connection));
   const release = connection.release.bind(connection);
 
   return {

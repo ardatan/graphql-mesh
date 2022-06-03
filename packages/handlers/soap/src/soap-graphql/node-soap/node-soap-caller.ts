@@ -13,7 +13,7 @@ export class NodeSoapCaller implements SoapCaller {
   async call(input: SoapCallInput): Promise<any> {
     this.debug(() => [`call operation '${input.operation.name()}' with args '`, input.graphqlArgs]);
 
-    const requestFunction = util.promisify(this.requestFunctionForOperation(input.operation), this);
+    const requestFunction = util.promisify(this.requestFunctionForOperation(input.operation).bind(this));
 
     const requestMessage: any = await this.createSoapRequestMessage(input);
 

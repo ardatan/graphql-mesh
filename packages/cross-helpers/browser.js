@@ -1,6 +1,5 @@
 import path from 'path-browserify';
 import { inspect } from '@graphql-tools/utils';
-import { promisify } from './promisify';
 
 export const fs = {
   promises: {},
@@ -28,6 +27,18 @@ const processObj =
 export { processObj as process };
 
 export const util = {
-  promisify,
+  promisify(oldSchoolFn) {
+    return function promisifiedFn(...args) {
+      return new Promise(function executor(resolve, reject) {
+        oldSchoolFn(...args, function cb(err, result) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(result);
+          }
+        });
+      });
+    };
+  },
   inspect,
 };
