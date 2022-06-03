@@ -1,5 +1,15 @@
 # @graphql-mesh/plugin-live-query
 
+## 0.0.3
+
+### Patch Changes
+
+- 3c0366d2c: - Support import.meta.env instead of process.env for browsers
+  - Ponyfill `util.inspect` only if it is not Node env
+- Updated dependencies [3c0366d2c]
+  - @graphql-mesh/cross-helpers@0.1.6
+  - @graphql-mesh/types@0.73.2
+
 ## 0.0.2
 
 ### Patch Changes

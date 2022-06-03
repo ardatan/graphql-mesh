@@ -1,5 +1,15 @@
 # @graphql-mesh/store
 
+## 0.8.11
+
+### Patch Changes
+
+- Updated dependencies [3c0366d2c]
+- Updated dependencies [3c0366d2c]
+  - @graphql-mesh/cross-helpers@0.1.6
+  - @graphql-mesh/utils@0.35.2
+  - @graphql-mesh/types@0.73.2
+
 ## 0.8.10
 
 ### Patch Changes
