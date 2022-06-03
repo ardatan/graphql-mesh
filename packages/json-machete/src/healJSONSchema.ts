@@ -1,4 +1,4 @@
-import { inspect } from 'util';
+import { util, process } from '@graphql-mesh/cross-helpers';
 import { JSONSchema } from './types';
 import { OnCircularReference, visitJSONSchema } from './visitJSONSchema';
 import toJsonSchema from 'to-json-schema';
@@ -30,7 +30,7 @@ function deduplicateJSONSchema(schema: JSONSchema, seenMap = new Map()) {
       if (titleReserved) {
         schema.title = undefined;
       }
-      const stringified = inspect(schema, undefined, 3);
+      const stringified = util.inspect(schema, undefined, 3);
       if (titleReserved) {
         schema.title = titleReserved;
       }

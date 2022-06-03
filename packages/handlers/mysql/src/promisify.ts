@@ -1,5 +1,3 @@
-import { promisify } from 'util';
-
 declare module 'util' {
   export function promisify<T>(f: (cb: (err: any, res: T) => void) => void, thisContext?: any): () => Promise<T>;
   export function promisify<A, T>(

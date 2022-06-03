@@ -244,7 +244,7 @@ export function getBaseUrl(operation: Operation, logger: Logger): string {
     const url = buildUrl(operation.servers[0]);
 
     if (Array.isArray(operation.servers) && operation.servers.length > 1) {
-      httpLogger.debug(() => `Warning: Randomly selected first server '${url}'`);
+      httpLogger.debug(`Warning: Randomly selected first server '${url}'`);
     }
 
     return url.replace(/\/$/, '');
@@ -256,7 +256,7 @@ export function getBaseUrl(operation: Operation, logger: Logger): string {
     const url = buildUrl(oas.servers[0]);
 
     if (Array.isArray(oas.servers) && oas.servers.length > 1) {
-      httpLogger.debug(() => `Warning: Randomly selected first server '${url}'`);
+      httpLogger.debug(`Warning: Randomly selected first server '${url}'`);
     }
 
     return url.replace(/\/$/, '');

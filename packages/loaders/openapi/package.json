@@ -28,10 +28,11 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@omnigraph/json-schema": "0.20.1",
+    "@graphql-mesh/cross-helpers": "0.1.5",
     "@graphql-mesh/utils": "0.35.1",
     "@graphql-mesh/string-interpolation": "0.2.0",
     "@graphql-mesh/types": "0.73.1",
+    "@omnigraph/json-schema": "0.20.1",
     "json-machete": "0.8.9",
     "openapi-types": "11.0.1",
     "change-case": "4.1.2",

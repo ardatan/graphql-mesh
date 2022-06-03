@@ -35,6 +35,7 @@
     "@creditkarma/thrift-client": "0.17.2",
     "@creditkarma/thrift-parser": "1.2.0",
     "@creditkarma/thrift-server-core": "0.17.2",
+    "@graphql-mesh/cross-helpers": "0.1.5",
     "@graphql-mesh/types": "0.73.1",
     "@graphql-mesh/store": "0.8.10",
     "@graphql-mesh/string-interpolation": "0.2.0",

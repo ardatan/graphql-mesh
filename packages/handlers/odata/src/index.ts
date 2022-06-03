@@ -46,12 +46,14 @@ import { parseResolveInfo, ResolveTree, simplifyParsedResolveInfoFragmentWithTyp
 import DataLoader from 'dataloader';
 import { parseResponse } from 'http-string-parser';
 import { pascalCase } from 'pascal-case';
+// eslint-disable-next-line import/no-nodejs-modules
 import EventEmitter from 'events';
 import { XMLParser } from 'fast-xml-parser';
 import { ExecutionRequest, memoize1 } from '@graphql-tools/utils';
 import { Request, Response } from 'cross-undici-fetch';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
+import { process } from '@graphql-mesh/cross-helpers';
 
 const SCALARS = new Map<string, string>([
   ['Edm.Binary', 'String'],

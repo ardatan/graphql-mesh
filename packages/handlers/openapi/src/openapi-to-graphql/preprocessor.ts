@@ -24,7 +24,7 @@ import { handleWarning, getCommonPropertyNames, MitigationTypes } from './utils'
 import { GraphQLOperationType } from './types/graphql';
 import { methodToHttpMethod } from './oas_3_tools';
 import { Logger } from '@graphql-mesh/types';
-import { inspect } from '@graphql-tools/utils';
+import { util } from '@graphql-mesh/cross-helpers';
 
 /**
  * Given an operation object from the OAS, create an Operation, which contains
@@ -1335,7 +1335,7 @@ function createDataDefFromAnyOf<TSource, TContext, TArgs>(
         handleWarning({
           mitigationType: MitigationTypes.COMBINE_SCHEMAS,
           message:
-            `Schema '${inspect(def.schema)}' contains 'anyOf' and ` +
+            `Schema '${util.inspect(def.schema)}' contains 'anyOf' and ` +
             `some member schemas are object types so create a GraphQL ` +
             `object type but the parent schema is a non-object type ` +
             `so they are not compatible.`,
@@ -1353,7 +1353,7 @@ function createDataDefFromAnyOf<TSource, TContext, TArgs>(
       handleWarning({
         mitigationType: MitigationTypes.COMBINE_SCHEMAS,
         message:
-          `Schema '${inspect(def.schema)}' contains 'anyOf' and ` +
+          `Schema '${util.inspect(def.schema)}' contains 'anyOf' and ` +
           `some member schemas are object types so create a GraphQL ` +
           `object type but some member schemas are non-object types ` +
           `so they are not compatible.`,

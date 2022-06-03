@@ -114,7 +114,7 @@ export function getSubscribe<TSource, TContext, TArgs>({
     typeof customResolvers[title][path][method] === 'object' &&
     typeof customResolvers[title][path][method].subscribe === 'function'
   ) {
-    translationLogger.debug(() => `Use custom publish resolver for ${operation.operationString}`);
+    translationLogger.debug(`Use custom publish resolver for ${operation.operationString}`);
 
     return customResolvers[title][path][method].subscribe;
   }
@@ -156,7 +156,7 @@ export function getSubscribe<TSource, TContext, TArgs>({
         };
       }
 
-      pubSubLogger.debug(() => `Subscription schema: ${JSON.stringify(resolveData.usedPayload)}`);
+      pubSubLogger.debug(`Subscription schema: `, resolveData.usedPayload);
 
       let value = path;
       let paramNameWithoutLocation = paramName;
@@ -172,7 +172,7 @@ export function getSubscribe<TSource, TContext, TArgs>({
       } else {
         // Replace callback expression with appropriate values
         const cbParams = value.match(/{([^}]*)}/g);
-        pubSubLogger.debug(() => `Analyzing subscription path: ${cbParams.toString()}`);
+        pubSubLogger.debug(`Analyzing subscription path: ${cbParams.toString()}`);
 
         cbParams.forEach(cbParam => {
           value = value.replace(
@@ -191,7 +191,7 @@ export function getSubscribe<TSource, TContext, TArgs>({
       }
 
       const topic = args[paramNameWithoutLocation] || 'test';
-      pubSubLogger.debug(() => `Subscribing to: ${topic}`);
+      pubSubLogger.debug(`Subscribing to: ${topic}`);
       return pubsub.asyncIterator(topic);
     } catch (e) {
       console.error(e);
@@ -227,7 +227,7 @@ export function getPublishResolver<TSource, TContext, TArgs>({
     typeof customResolvers[title][path][method] === 'object' &&
     typeof customResolvers[title][path][method].resolve === 'function'
   ) {
-    translationLogger.debug(() => `Use custom publish resolver for ${operation.operationString}`);
+    translationLogger.debug(`Use custom publish resolver for ${operation.operationString}`);
 
     return customResolvers[title][path][method].resolve;
   }
@@ -235,7 +235,7 @@ export function getPublishResolver<TSource, TContext, TArgs>({
   return (payload, args, context, info) => {
     // Validate and format based on operation.responseDefinition
     const typeOfResponse = operation.responseDefinition.targetGraphQLType;
-    pubSubLogger.debug(() => `Message received: ${responseName}, ${typeOfResponse}, ${JSON.stringify(payload)}`);
+    pubSubLogger.debug(`Message received: `, responseName, typeOfResponse, payload);
 
     let responseBody;
     let saneData: any;
@@ -251,7 +251,7 @@ export function getPublishResolver<TSource, TContext, TArgs>({
               `operation ${operation.operationString} ` +
               `even though it has content-type 'application/json'`;
 
-            pubSubLogger.debug(() => errorString);
+            pubSubLogger.debug(errorString);
             return null;
           }
         } else {
@@ -272,7 +272,7 @@ export function getPublishResolver<TSource, TContext, TArgs>({
             `operation ${operation.operationString} ` +
             `even though it has content-type 'application/json'`;
 
-          pubSubLogger.debug(() => errorString);
+          pubSubLogger.debug(errorString);
           return null;
         }
       } else if (typeOfResponse === 'string') {
@@ -280,7 +280,7 @@ export function getPublishResolver<TSource, TContext, TArgs>({
       }
     }
 
-    pubSubLogger.debug(() => `Message forwarded: ${JSON.stringify(saneData || payload)}`);
+    pubSubLogger.debug(`Message forwarded: `, saneData || payload);
     return saneData || payload;
   };
 }
@@ -330,7 +330,7 @@ export function getResolver<TSource, TContext, TArgs>(
     typeof customResolvers[title][path] === 'object' &&
     typeof customResolvers[title][path][method] === 'function'
   ) {
-    translationLogger.debug(() => `Use custom resolver for ${operation.operationString}`);
+    translationLogger.debug(`Use custom resolver for ${operation.operationString}`);
 
     return customResolvers[title][path][method];
   }
@@ -604,12 +604,12 @@ export function getResolver<TSource, TContext, TArgs>(
     try {
       response = await fetchFn(urlObject.href, options, ctx);
     } catch (err) {
-      httpLogger.debug(() => err);
+      httpLogger.debug(err);
       throw err;
     }
     const body = await response.text();
     if (response.status < 200 || response.status > 299) {
-      httpLogger.debug(() => `${response.status} - ${Oas3Tools.trim(body, 100)}`);
+      httpLogger.debug(response.status, ' - ', body);
 
       const errorString = `Could not invoke operation ${operation.operationString}`;
 
@@ -636,7 +636,7 @@ export function getResolver<TSource, TContext, TArgs>(
 
       // Successful response 200-299
     } else {
-      httpLogger.debug(() => `${response.status} - ${Oas3Tools.trim(body, 100)}`);
+      httpLogger.debug(response.status, ' - ', body);
 
       if (response.headers.get('content-type')) {
         /**
@@ -655,7 +655,7 @@ export function getResolver<TSource, TContext, TArgs>(
               `operation ${operation.operationString} ` +
               `even though it has content-type '${response.headers.get('content-type')}'`;
 
-            httpLogger.debug(() => errorString);
+            httpLogger.debug(errorString);
             throw errorString;
           }
 
@@ -749,7 +749,7 @@ export function getResolver<TSource, TContext, TArgs>(
         } else {
           const errorString = 'Response does not have a Content-Type property';
 
-          httpLogger.debug(() => errorString);
+          httpLogger.debug(errorString);
           throw errorString;
         }
       }
@@ -784,7 +784,7 @@ function extractToken<TSource, TContext, TArgs>(
       access_token: token,
     };
   } else {
-    httpLogger.debug(() => `Warning: could not extract OAuth token from context at '${tokenJSONpath}'`);
+    httpLogger.debug(`Warning: could not extract OAuth token from context at '${tokenJSONpath}'`);
     return {};
   }
 }
@@ -813,7 +813,7 @@ function createOAuthHeader<TSource, TContext, TArgs>(
       'User-Agent': 'openapi-to-graphql',
     };
   } else {
-    httpLogger.debug(() => `Warning: could not extract OAuth token from context at ` + `'${tokenJSONpath}'`);
+    httpLogger.debug(`Warning: could not extract OAuth token from context at ` + `'${tokenJSONpath}'`);
     return {};
   }
 }
@@ -964,7 +964,7 @@ function resolveLinkParameter(
       if (Array.isArray(tokens) && tokens.length > 0) {
         return tokens[0];
       } else {
-        httpLogger.debug(() => `Warning: could not extract parameter '${paramName}' from link`);
+        httpLogger.debug(`Warning: could not extract parameter '${paramName}' from link`);
       }
 
       // CASE: parameter in previous query parameter
@@ -1009,7 +1009,7 @@ function resolveLinkParameter(
       if (Array.isArray(tokens) && tokens.length > 0) {
         return tokens[0];
       } else {
-        httpLogger.debug(() => `Warning: could not extract parameter '${paramName}' from link`);
+        httpLogger.debug(`Warning: could not extract parameter '${paramName}' from link`);
       }
 
       // CASE: parameter in query parameter
@@ -1067,7 +1067,7 @@ function resolveRuntimeExpression(
       if (Array.isArray(tokens) && tokens.length > 0) {
         return tokens[0];
       } else {
-        httpLogger.debug(() => `Warning: could not extract parameter '${paramName}' from link`);
+        httpLogger.debug(`Warning: could not extract parameter '${paramName}' from link`);
       }
 
       // CASE: parameter in previous query parameter
@@ -1108,7 +1108,7 @@ function resolveRuntimeExpression(
       if (Array.isArray(tokens) && tokens.length > 0) {
         return tokens[0];
       } else {
-        httpLogger.debug(() => `Warning: could not extract parameter '${paramName}' from link`);
+        httpLogger.debug(`Warning: could not extract parameter '${paramName}' from link`);
       }
 
       // CASE: parameter in query parameter

@@ -38,7 +38,7 @@ import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { Logger } from '@graphql-mesh/types';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
-import { inspect, memoize1 } from '@graphql-tools/utils';
+import { memoize1 } from '@graphql-tools/utils';
 import { visitJSONSchema, JSONSchema } from 'json-machete';
 import { getStringScalarWithMinMaxLength } from './getStringScalarWithMinMaxLength';
 import { getJSONSchemaStringFormatScalarMap } from './getJSONSchemaStringFormatScalarMap';
@@ -86,7 +86,7 @@ export function getComposerFromJSONSchema(
   const formatScalarMap = getJSONSchemaStringFormatScalarMap(ajv);
   const futureTasks = new Set<VoidFunction>();
   return visitJSONSchema(schema, function mutateFn(subSchema, { path }): any {
-    logger?.debug(() => `Processing ${path} for GraphQL Schema`);
+    logger?.debug(`Processing ${path} for GraphQL Schema`);
     const getTypeComposer = (): any => {
       if (typeof subSchema === 'boolean') {
         const typeComposer = schemaComposer.getAnyTC(GraphQLJSON);
@@ -838,9 +838,10 @@ export function getComposerFromJSONSchema(
             output,
           };
       }
-      logger.warn(`GraphQL Type cannot be created for this JSON Schema definition;
-subSchema: ${inspect(subSchema)}
-path: ${inspect(path)}`);
+      logger.warn(`GraphQL Type cannot be created for this JSON Schema definition;`, {
+        subSchema,
+        path,
+      });
       const typeComposer = schemaComposer.getAnyTC(GraphQLJSON);
       return {
         input: typeComposer,

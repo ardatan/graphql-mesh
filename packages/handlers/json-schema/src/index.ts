@@ -3,6 +3,7 @@ import { GetMeshSourceOptions, Logger, MeshHandler, MeshPubSub, YamlConfig } fro
 import { JSONSchemaLoaderBundle, createBundle, getGraphQLSchemaFromBundle } from '@omnigraph/json-schema';
 import { getCachedFetch, readFileOrUrl } from '@graphql-mesh/utils';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
+import { process } from '@graphql-mesh/cross-helpers';
 
 export default class JsonSchemaHandler implements MeshHandler {
   private name: string;

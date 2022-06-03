@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable no-useless-escape */
 import { SoapType, SoapOperationArg, SoapObjectType, SoapField } from '../soap2graphql/soap-endpoint';
-import { inspect } from '@graphql-tools/utils';
 import { NodeSoapOperation } from './node-soap-endpoint';
 import { NodeSoapWsdl } from './node-soap';
-import { LazyLoggerMessage, Logger } from '@graphql-mesh/types';
+import { Logger } from '@graphql-mesh/types';
 
 // an content object ... basically a plain JS object
 type WsdlContent = { [key: string]: any };
@@ -43,18 +42,18 @@ export class NodeSoapWsdlResolver {
 
   constructor(private wsdl: NodeSoapWsdl, private logger: Logger) {}
 
-  warn(message: string): void {
-    this.logger.warn(message);
+  warn(...args: any[]): void {
+    this.logger.warn(...args);
   }
 
-  debug(message: LazyLoggerMessage): void {
-    this.logger.debug(message);
+  debug(...args: any[]): void {
+    this.logger.debug(...args);
   }
 
   createOperationArgs(operation: NodeSoapOperation): SoapOperationArg[] {
     const inputContent: WsdlInputContent = operation.content().input;
 
-    this.debug(() => `creating args for operation '${operation.name()}' from content '${inspect(inputContent)}'`);
+    this.debug(`creating args for operation '${operation.name()}' from content`, inputContent);
 
     if (!inputContent) {
       this.warn(`no input definition for operation '${operation.name()}'`);
@@ -79,7 +78,7 @@ export class NodeSoapWsdlResolver {
     argWsdlFieldName: string,
     argContent: WsdlArgContent
   ): SoapOperationArg {
-    this.debug(() => `creating arg for operation '${operation.name()}' from content '${inspect(argContent)}'`);
+    this.debug(`creating arg for operation '${operation.name()}' from content `, argContent);
 
     const parsedArgName: { name: string; isList: boolean } = parseWsdlFieldName(argWsdlFieldName);
 
@@ -103,7 +102,7 @@ export class NodeSoapWsdlResolver {
   } {
     const outputContent: WsdlOutputContent = operation.content().output;
 
-    this.debug(() => `creating output for operation '${operation.name()}' from content '${inspect(outputContent)}'`);
+    this.debug(`creating output for operation '${operation.name()}' from content `, outputContent);
 
     // determine type and field name
     let resultType: SoapType;
@@ -158,7 +157,7 @@ export class NodeSoapWsdlResolver {
     typeContent: WsdlTypeContent,
     ownerStringForLog: string
   ): SoapType {
-    this.debug(() => `resolving soap type for ${ownerStringForLog} from content '${inspect(typeContent)}'`);
+    this.debug(`resolving soap type for ${ownerStringForLog} from content `, typeContent);
 
     // determine name of the type
     let wsdlTypeName;
@@ -203,7 +202,7 @@ export class NodeSoapWsdlResolver {
     // 2) every type definition (primitive and complex) has only one instance of SoapType
     // 3) resolve circular dependencies between types
     if (this.alreadyResolved.has(namespace + wsdlTypeName)) {
-      this.debug(() => `resolved soap type for namespace: '${namespace}', typeName: '${wsdlTypeName}' from cache`);
+      this.debug(`resolved soap type for namespace: '${namespace}', typeName: '${wsdlTypeName}' from cache`);
       return this.alreadyResolved.get(namespace + wsdlTypeName);
     }
 
@@ -233,9 +232,7 @@ export class NodeSoapWsdlResolver {
       // resolve bindings (field types, base type) after type has been registered to resolve circular dependencies
       this.resolveTypeBody(soapType, namespace, xsdTypeDefinition);
 
-      this.debug(
-        () => `resolved namespace: '${namespace}', typeName: '${wsdlTypeName}' to object type '${inspect(soapType)}'`
-      );
+      this.debug(`resolved namespace: '${namespace}', typeName: '${wsdlTypeName}' to object type `, soapType);
 
       return soapType;
     }
@@ -247,10 +244,8 @@ export class NodeSoapWsdlResolver {
 
   private resolveTypeBody(soapType: SoapObjectType, namespace: string, typeDefinition: XsdTypeDefinition): void {
     this.debug(
-      () =>
-        `resolving body of soap type '${soapType.name}' from namespace '${namespace}', definition '${inspect(
-          typeDefinition
-        )}'`
+      `resolving body of soap type '${soapType.name}' from namespace '${namespace}', definition`,
+      typeDefinition
     );
 
     const typeName: string = typeDefinition.$name;

@@ -434,15 +434,15 @@ function createOrReuseList<TSource, TContext, TArgs>({
 
   // Try to reuse existing Object Type
   if (!isInputObjectType && def.graphQLType && typeof def.graphQLType !== 'undefined') {
-    translationLogger.debug(() => `Reuse GraphQLList '${def.graphQLTypeName}'`);
+    translationLogger.debug(`Reuse GraphQLList '${def.graphQLTypeName}'`);
     return def.graphQLType as GraphQLList<any>;
   } else if (isInputObjectType && def.graphQLInputObjectType && typeof def.graphQLInputObjectType !== 'undefined') {
-    translationLogger.debug(() => `Reuse GraphQLList '${def.graphQLInputObjectTypeName}'`);
+    translationLogger.debug(`Reuse GraphQLList '${def.graphQLInputObjectTypeName}'`);
     return def.graphQLInputObjectType as GraphQLList<any>;
   }
 
   // Create new List Object Type
-  translationLogger.debug(() => `Create GraphQLList '${def.graphQLTypeName}'`);
+  translationLogger.debug(`Create GraphQLList '${def.graphQLTypeName}'`);
 
   // Get definition of the list item, which should be in the sub definitions
   const itemDef = def.subDefinitions as DataDefinition;
@@ -492,10 +492,10 @@ function createOrReuseEnum<TSource, TContext, TArgs>({
    * Enum types do not have an input variant so only check def.ot
    */
   if (def.graphQLType && typeof def.graphQLType !== 'undefined') {
-    translationLogger.debug(() => `Reuse GraphQLEnumType '${def.graphQLTypeName}'`);
+    translationLogger.debug(`Reuse GraphQLEnumType '${def.graphQLTypeName}'`);
     return def.graphQLType as GraphQLEnumType;
   } else {
-    translationLogger.debug(() => `Create GraphQLEnumType '${def.graphQLTypeName}'`);
+    translationLogger.debug(`Create GraphQLEnumType '${def.graphQLTypeName}'`);
 
     const values = {};
     def.schema.enum.forEach(e => {
@@ -635,7 +635,7 @@ function createFields<TSource, TContext, TArgs>({
     !isInputObjectType // Only object type (input object types cannot make use of links)
   ) {
     for (const saneLinkKey in links) {
-      translationLogger.debug(() => `Create link '${saneLinkKey}'...`);
+      translationLogger.debug(`Create link '${saneLinkKey}'...`);
 
       // Check if key is already in fields
       if (saneLinkKey in fields) {

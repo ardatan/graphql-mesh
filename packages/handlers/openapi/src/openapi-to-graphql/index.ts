@@ -49,7 +49,7 @@ import { GraphQLSchemaConfig } from 'graphql/type/schema';
 import { sortObject, handleWarning, MitigationTypes } from './utils';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger } from '@graphql-mesh/utils';
-import { asArray, inspect } from '@graphql-tools/utils';
+import { asArray } from '@graphql-tools/utils';
 
 type Result = {
   schema: GraphQLSchema;
@@ -198,7 +198,7 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
   };
 
   const translationLogger = options.logger.child('translation');
-  translationLogger.debug(() => `Options: ${inspect(options)}`);
+  translationLogger.debug(`Options:`, options);
 
   /**
    * Extract information from the OASs and put it inside a data structure that
@@ -234,7 +234,7 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
 
   // Add Query and Mutation fields
   Object.entries(data.operations).forEach(([operationId, operation]) => {
-    translationLogger.debug(() => `Process operation '${operation.operationString}'...`);
+    translationLogger.debug(`Process operation '${operation.operationString}'...`);
 
     const field = getFieldForOperation(
       operation,
@@ -379,7 +379,7 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
 
   // Add Subscription fields
   Object.entries(data.callbackOperations).forEach(([operationId, operation]) => {
-    translationLogger.debug(() => `Process operation '${operationId}'...`);
+    translationLogger.debug(`Process operation '${operationId}'...`);
 
     const field = getFieldForOperation(
       operation,

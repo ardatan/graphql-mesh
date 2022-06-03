@@ -6,6 +6,7 @@ import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 
 import { mocks as graphqlScalarsMocks } from 'graphql-scalars';
 import { getInterpolatedStringFactory } from '@graphql-mesh/string-interpolation';
+import { process } from '@graphql-mesh/cross-helpers';
 
 export default class MockingTransform implements MeshTransform {
   noWrap = true;

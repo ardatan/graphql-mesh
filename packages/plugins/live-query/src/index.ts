@@ -4,10 +4,11 @@ import { getInterpolatedStringFactory, ResolverDataBasedFactory } from '@graphql
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
 import { useEnvelop, envelop, Plugin } from '@envelop/core';
 import { getOperationAST, TypeInfo, visit, visitWithTypeInfo } from 'graphql';
+import { process } from '@graphql-mesh/cross-helpers';
 
 export default function useMeshLiveQuery(options: MeshPluginOptions<YamlConfig.LiveQueryConfig>): Plugin {
   const liveQueryInvalidationFactoryMap = new Map<string, ResolverDataBasedFactory<string>[]>();
-  options.logger.debug(() => `Creating Live Query Store`);
+  options.logger.debug(`Creating Live Query Store`);
   const liveQueryStore = new InMemoryLiveQueryStore({
     includeIdentifierExtension: true,
   });

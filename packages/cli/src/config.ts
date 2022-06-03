@@ -3,7 +3,7 @@ import { jsonSchema, YamlConfig } from '@graphql-mesh/types';
 import { defaultImportFn, loadYaml, DefaultLogger } from '@graphql-mesh/utils';
 import Ajv from 'ajv';
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
-import { path } from '@graphql-mesh/cross-helpers';
+import { path, process } from '@graphql-mesh/cross-helpers';
 
 export function validateConfig(config: any, filepath: string): asserts config is YamlConfig.Config {
   const ajv = new Ajv({

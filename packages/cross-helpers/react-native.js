@@ -18,3 +18,32 @@ Promise.allSettled =
           }))
       )
     ));
+
+module.exports.process =
+  typeof process !== 'undefined'
+    ? process
+    : {
+        env: {
+          NODE_ENV: 'production',
+        },
+        platform: 'linux',
+      };
+
+const { inspect } = require('@graphql-tools/utils');
+
+module.exports.util = {
+  promisify(oldSchoolFn) {
+    return function promisifiedFn(...args) {
+      return new Promise(function executor(resolve, reject) {
+        oldSchoolFn(...args, function cb(err, result) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(result);
+          }
+        });
+      });
+    };
+  },
+  inspect,
+};

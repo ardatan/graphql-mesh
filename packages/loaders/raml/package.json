@@ -33,6 +33,7 @@
     "@ardatan/raml-1-parser": "1.1.69",
     "json-machete": "0.8.9",
     "to-json-schema": "0.2.5",
+    "@graphql-mesh/cross-helpers": "0.1.5",
     "@graphql-mesh/utils": "0.35.1",
     "@graphql-mesh/string-interpolation": "0.2.0",
     "@graphql-tools/utils": "8.6.12",

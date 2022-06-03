@@ -2,7 +2,6 @@ import { GetMeshSourceOptions, MeshPubSub, MeshHandler, MeshSource, YamlConfig, 
 import { SchemaComposer, EnumTypeComposerValueConfigDefinition } from 'graphql-compose';
 import { TableForeign, createPool, Pool } from 'mysql';
 import { upgrade, introspection } from 'mysql-utilities';
-import { promisify } from 'util';
 import graphqlFields from 'graphql-fields';
 import {
   GraphQLBigInt,
@@ -20,6 +19,7 @@ import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
 import { ExecutionRequest } from '@graphql-tools/utils';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
+import { process, util } from '@graphql-mesh/cross-helpers';
 
 const SCALARS = {
   bigint: 'BigInt',
@@ -86,21 +86,21 @@ type MysqlPromisifiedConnection = ThenArg<ReturnType<typeof getPromisifiedConnec
 type MysqlContext = { mysqlConnection: MysqlPromisifiedConnection };
 
 async function getPromisifiedConnection(pool: Pool) {
-  const getConnection = promisify(pool.getConnection.bind(pool));
+  const getConnection = util.promisify(pool.getConnection.bind(pool));
 
   const connection = await getConnection();
 
-  const getDatabaseTables = promisify(connection.databaseTables.bind(connection));
-  const getTableFields = promisify(connection.fields.bind(connection));
-  const getTableForeigns = promisify(connection.foreign.bind(connection));
-  const getTablePrimaryKeyMetadata = promisify(connection.primary.bind(connection));
+  const getDatabaseTables = util.promisify(connection.databaseTables.bind(connection));
+  const getTableFields = util.promisify(connection.fields.bind(connection));
+  const getTableForeigns = util.promisify(connection.foreign.bind(connection));
+  const getTablePrimaryKeyMetadata = util.promisify(connection.primary.bind(connection));
 
-  const selectLimit = promisify(connection.selectLimit.bind(connection));
-  const select = promisify(connection.select.bind(connection));
-  const insert = promisify(connection.insert.bind(connection));
-  const update = promisify(connection.update.bind(connection));
-  const deleteRow = promisify(connection.delete.bind(connection));
-  const count = promisify(connection.count.bind(connection));
+  const selectLimit = util.promisify(connection.selectLimit.bind(connection));
+  const select = util.promisify(connection.select.bind(connection));
+  const insert = util.promisify(connection.insert.bind(connection));
+  const update = util.promisify(connection.update.bind(connection));
+  const deleteRow = util.promisify(connection.delete.bind(connection));
+  const count = util.promisify(connection.count.bind(connection));
   const release = connection.release.bind(connection);
 
   return {

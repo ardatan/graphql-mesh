@@ -1,4 +1,4 @@
-import { path as pathModule } from '@graphql-mesh/cross-helpers';
+import { path as pathModule, process } from '@graphql-mesh/cross-helpers';
 import { MeshResolvedSource } from '@graphql-mesh/runtime';
 import {
   ImportFn,

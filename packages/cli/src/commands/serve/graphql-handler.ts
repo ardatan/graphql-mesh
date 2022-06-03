@@ -23,7 +23,7 @@ export const graphqlHandler = (
           skipIntrospection: true,
           logFn: (eventName, { args }) => {
             if (eventName.endsWith('-start')) {
-              mesh.logger.debug(() => [`\t headers: `, args.contextValue.headers]);
+              mesh.logger.debug(`\t headers: `, args.contextValue.headers);
             }
           },
         }),

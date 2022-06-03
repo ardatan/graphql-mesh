@@ -6,7 +6,6 @@ export default defineConfig({
   plugins: [react()],
   define: {
     'process.env': JSON.stringify({
-      DEBUG: 1,
       NODE_ENV: 'development',
     }),
   },
