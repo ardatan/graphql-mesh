@@ -58,7 +58,11 @@ export const DEFAULT_CLI_PARAMS: GraphQLMeshCLIParams = {
   additionalPackagePrefixes: [],
 };
 
-export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin(process.argv), cwdPath = process.cwd()) {
+export async function graphqlMesh(
+  cliParams = DEFAULT_CLI_PARAMS,
+  args = hideBin(process.argv),
+  cwdPath = process.cwd()
+) {
   let baseDir = cwdPath;
   let logger: Logger = new DefaultLogger(cliParams.initialLoggerPrefix);
   return yargs(args)

@@ -46,6 +46,7 @@ import { parseResolveInfo, ResolveTree, simplifyParsedResolveInfoFragmentWithTyp
 import DataLoader from 'dataloader';
 import { parseResponse } from 'http-string-parser';
 import { pascalCase } from 'pascal-case';
+// eslint-disable-next-line import/no-nodejs-modules
 import EventEmitter from 'events';
 import { XMLParser } from 'fast-xml-parser';
 import { ExecutionRequest, memoize1 } from '@graphql-tools/utils';

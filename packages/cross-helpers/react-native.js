@@ -19,12 +19,15 @@ Promise.allSettled =
       )
     ));
 
-module.exports.process = typeof process !== 'undefined' ? process : {
-  env: {
-    NODE_ENV: 'production',
-  },
-  platform: 'linux',
-}
+module.exports.process =
+  typeof process !== 'undefined'
+    ? process
+    : {
+        env: {
+          NODE_ENV: 'production',
+        },
+        platform: 'linux',
+      };
 
 const { promisify } = require('./promisify');
 const { inspect } = require('@graphql-tools/utils');
@@ -32,4 +35,4 @@ const { inspect } = require('@graphql-tools/utils');
 module.exports.util = {
   promisify,
   inspect,
-}
+};

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-nodejs-modules */
 /* eslint-disable dot-notation */
 import express, { RequestHandler } from 'express';
 import cluster from 'cluster';
@@ -199,7 +200,8 @@ export async function serveMesh(
         .then(({ pubsub }) => {
           req['pubsub'] = pubsub;
           next();
-        });
+        })
+        .catch(e => handleFatalError(e, logger));
     };
     app.use(pubSubHandler);
 

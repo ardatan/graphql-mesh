@@ -12,6 +12,7 @@ import { Plugin, withPostGraphileContext } from 'postgraphile';
 import { getPostGraphileBuilder } from 'postgraphile-core';
 import pg from 'pg';
 import { path, process } from '@graphql-mesh/cross-helpers';
+// eslint-disable-next-line import/no-nodejs-modules
 import { tmpdir } from 'os';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
@@ -149,7 +150,7 @@ export default class PostGraphileHandler implements MeshHandler {
               extensions,
             }) as any;
           }
-        ) as any
+        ) as any;
       },
     };
   }

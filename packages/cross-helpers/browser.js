@@ -8,23 +8,26 @@ export const fs = {
 
 export { path };
 
-const processObj = typeof process !== 'undefined' ? process : {
-  get env() {
-    try {
-      // eslint-disable-next-line no-new-func
-      return new Function('return import.meta.env')();
-    } catch {
-      return {
-        NODE_ENV: 'production',
-        platform: 'linux',
-      }
-    }
-  }
-}
+const processObj =
+  typeof process !== 'undefined'
+    ? process
+    : {
+        get env() {
+          try {
+            // eslint-disable-next-line no-new-func
+            return new Function('return import.meta.env')();
+          } catch {
+            return {
+              NODE_ENV: 'production',
+              platform: 'linux',
+            };
+          }
+        },
+      };
 
 export { processObj as process };
 
 export const util = {
   promisify,
   inspect,
-}
+};

@@ -325,10 +325,14 @@ export default class GraphQLHandler implements MeshHandler {
         this.getExecutorForHTTPSourceConfig(this.config),
       ]);
       if (schemaResult.status === 'rejected') {
-        throw new Error(`Failed to fetch introspection from ${this.config.endpoint}: ${util.inspect(schemaResult.reason)}`);
+        throw new Error(
+          `Failed to fetch introspection from ${this.config.endpoint}: ${util.inspect(schemaResult.reason)}`
+        );
       }
       if (executorResult.status === 'rejected') {
-        throw new Error(`Failed to create executor for ${this.config.endpoint}: ${util.inspect(executorResult.reason)}`);
+        throw new Error(
+          `Failed to create executor for ${this.config.endpoint}: ${util.inspect(executorResult.reason)}`
+        );
       }
       return {
         schema: schemaResult.value,

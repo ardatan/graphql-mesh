@@ -38,7 +38,7 @@ import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { Logger } from '@graphql-mesh/types';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
-import { inspect, memoize1 } from '@graphql-tools/utils';
+import { memoize1 } from '@graphql-tools/utils';
 import { visitJSONSchema, JSONSchema } from 'json-machete';
 import { getStringScalarWithMinMaxLength } from './getStringScalarWithMinMaxLength';
 import { getJSONSchemaStringFormatScalarMap } from './getJSONSchemaStringFormatScalarMap';
@@ -840,7 +840,7 @@ export function getComposerFromJSONSchema(
       }
       logger.warn(`GraphQL Type cannot be created for this JSON Schema definition;`, {
         subSchema,
-        path
+        path,
       });
       const typeComposer = schemaComposer.getAnyTC(GraphQLJSON);
       return {

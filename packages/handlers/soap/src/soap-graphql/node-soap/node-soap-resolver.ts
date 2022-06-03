@@ -243,7 +243,10 @@ export class NodeSoapWsdlResolver {
   }
 
   private resolveTypeBody(soapType: SoapObjectType, namespace: string, typeDefinition: XsdTypeDefinition): void {
-    this.debug(`resolving body of soap type '${soapType.name}' from namespace '${namespace}', definition`, typeDefinition);
+    this.debug(
+      `resolving body of soap type '${soapType.name}' from namespace '${namespace}', definition`,
+      typeDefinition
+    );
 
     const typeName: string = typeDefinition.$name;
 

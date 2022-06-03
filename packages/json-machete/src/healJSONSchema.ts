@@ -1,8 +1,7 @@
-import { util } from '@graphql-mesh/cross-helpers';
+import { util, process } from '@graphql-mesh/cross-helpers';
 import { JSONSchema } from './types';
 import { OnCircularReference, visitJSONSchema } from './visitJSONSchema';
 import toJsonSchema from 'to-json-schema';
-import { process } from '@graphql-mesh/cross-helpers';
 
 const asArray = <T>(value: T | T[]): T[] => (Array.isArray(value) ? value : [value]);
 

@@ -68,7 +68,17 @@ const memoizedGetEnvelopedFactory = memoize1((plugins: EnvelopPlugins) => envelo
 
 export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Promise<MeshInstance<TMeshContext>> {
   const rawSources: RawSourceOutput[] = [];
-  const { pubsub = new PubSub(), cache, logger = new DefaultLogger('🕸️  Mesh'), additionalEnvelopPlugins = [], sources, merger, additionalResolvers, additionalTypeDefs, transforms } = options;
+  const {
+    pubsub = new PubSub(),
+    cache,
+    logger = new DefaultLogger('🕸️  Mesh'),
+    additionalEnvelopPlugins = [],
+    sources,
+    merger,
+    additionalResolvers,
+    additionalTypeDefs,
+    transforms,
+  } = options;
 
   const getMeshLogger = logger.child('GetMesh');
   getMeshLogger.debug(`Getting subschemas from source handlers`);
@@ -223,12 +233,10 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
               argsFromKeys?: (keys: string[]) => any;
               valuesFromResults?: (result: any, keys?: string[]) => any;
             }) => {
-              inContextSdkLogger.debug(`Called with`,
-                {
-                  args,
-                  key,
-                },
-              );
+              inContextSdkLogger.debug(`Called with`, {
+                args,
+                key,
+              });
               const commonDelegateOptions: IDelegateToSchemaOptions = {
                 schema: rawSourceSubSchemaConfig,
                 rootValue: root,

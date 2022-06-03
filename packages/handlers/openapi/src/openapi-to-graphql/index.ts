@@ -49,7 +49,7 @@ import { GraphQLSchemaConfig } from 'graphql/type/schema';
 import { sortObject, handleWarning, MitigationTypes } from './utils';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger } from '@graphql-mesh/utils';
-import { asArray} from '@graphql-tools/utils';
+import { asArray } from '@graphql-tools/utils';
 
 type Result = {
   schema: GraphQLSchema;

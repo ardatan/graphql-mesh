@@ -2,7 +2,7 @@ import { SchemaComposer } from 'graphql-compose';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { JSONSchemaOperationConfig } from './types';
 import { getOperationMetadata, isPubSubOperationConfig, isFileUpload, cleanObject } from './utils';
-import { inspect, memoize1 } from '@graphql-tools/utils';
+import { memoize1 } from '@graphql-tools/utils';
 import urlJoin from 'url-join';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType';
 import { stringify as qsStringify, parse as qsParse } from 'qs';
