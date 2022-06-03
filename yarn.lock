@@ -10959,10 +10959,10 @@ eslint-webpack-plugin@^2.1.0:
     normalize-path "^3.0.0"
     schema-utils "^3.0.0"
 
-eslint@8.16.0:
-  version "8.16.0"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-8.16.0.tgz#6d936e2d524599f2a86c708483b4c372c5d3bbae"
-  integrity sha512-MBndsoXY/PeVTDJeWsYj7kLZ5hQpJOfMYLsF6LicLHQWbRDG19lK5jOix4DPl8yY4SUFcE3txy86OzFLWT+yoA==
+eslint@8.17.0:
+  version "8.17.0"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-8.17.0.tgz#1cfc4b6b6912f77d24b874ca1506b0fe09328c21"
+  integrity sha512-gq0m0BTJfci60Fz4nczYxNAlED+sMcihltndR8t9t1evnU/azx53x3t2UHXC/uRjcbvRw/XctpaNygSTcQD+Iw==
   dependencies:
     "@eslint/eslintrc" "^1.3.0"
     "@humanwhocodes/config-array" "^0.9.2"
@@ -11914,10 +11914,10 @@ fragment-cache@^0.2.1:
   dependencies:
     map-cache "^0.2.2"
 
-framer-motion@6.3.6:
-  version "6.3.6"
-  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-6.3.6.tgz#9ca52544a7d0c74668f880eb2cab4a5de6dc71a0"
-  integrity sha512-gaCmjkg8J72EBiSQAxjY0elzxVQL3GMPA4jQGIvrMa+kiVDyLG0WXQTwAQnJpsylIa/ySDz3djQt2YyD8AKZ7Q==
+framer-motion@6.3.10:
+  version "6.3.10"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-6.3.10.tgz#e71f8c4ee09612de8328725c4fb1a1c204ae451f"
+  integrity sha512-modFplFb1Fznsm0MrmRAJUC32UDA5jbGU9rDvkGzhAHksru2tnoKbU/Pa3orzdsJI0CJviG4NGBrmwGveU98Cg==
   dependencies:
     framesync "6.0.1"
     hey-listen "^1.0.8"
@@ -18419,10 +18419,10 @@ openapi-diff@0.23.5:
     swagger-parser "^10.0.2"
     verror "^1.10.0"
 
-openapi-types@11.0.1:
-  version "11.0.1"
-  resolved "https://registry.yarnpkg.com/openapi-types/-/openapi-types-11.0.1.tgz#7e1cee2c9b8cb16787d14f2b0f433c5ba0e32e96"
-  integrity sha512-P2pGRlHFXgP8z6vrp5P/MtftOXYtlIY1A+V0VmioOoo85NN6RSPgGbEprRAUNMIsbfRjnCPdx/r8mi8QRR7grQ==
+openapi-types@11.1.0:
+  version "11.1.0"
+  resolved "https://registry.yarnpkg.com/openapi-types/-/openapi-types-11.1.0.tgz#037969f3dfa5999423ee33bf889fb0d12984277e"
+  integrity sha512-ZW+Jf12flFF6DXSij8DGL3svDA4RtSyHXjC/xB/JAh18gg3uVfVIFLvCfScUMowrpvlkxsMMbErakbth2g3/iQ==
 
 openapi3-ts@^2.0.0:
   version "2.0.1"
@@ -23488,10 +23488,10 @@ ts-model@0.0.18:
   dependencies:
     underscore "1.9.1"
 
-ts-node@10.8.0:
-  version "10.8.0"
-  resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-10.8.0.tgz#3ceb5ac3e67ae8025c1950626aafbdecb55d82ce"
-  integrity sha512-/fNd5Qh+zTt8Vt1KbYZjRHCE9sI5i7nqfD/dzBBRDeVXZXS6kToW6R7tTU6Nd4XavFs0mAVCg29Q//ML7WsZYA==
+ts-node@10.8.1:
+  version "10.8.1"
+  resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-10.8.1.tgz#ea2bd3459011b52699d7e88daa55a45a1af4f066"
+  integrity sha512-Wwsnao4DQoJsN034wePSg5nZiw4YKXf56mPIAeD6wVmiv+RytNSWqc2f3fKvcUoV+Yn2+yocD71VOfQHbmVX4g==
   dependencies:
     "@cspotcode/source-map-support" "^0.8.0"
     "@tsconfig/node10" "^1.0.7"
@@ -23821,10 +23821,10 @@ typescript@4.6.3:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.6.3.tgz#eefeafa6afdd31d725584c67a0eaba80f6fc6c6c"
   integrity sha512-yNIatDa5iaofVozS/uQJEl3JRWLKKGJKh6Yaiv0GLGSuhpFJe7P3SbHZ8/yjAHRQwKRoA6YZqlfjXWmVzoVSMw==
 
-typescript@4.7.2, typescript@^4.2.4:
-  version "4.7.2"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.7.2.tgz#1f9aa2ceb9af87cca227813b4310fff0b51593c4"
-  integrity sha512-Mamb1iX2FDUpcTRzltPxgWMKy3fhg0TN378ylbktPGPK/99KbDtMQ4W1hwgsbPAsG3a0xKa1vmw4VKZQbkvz5A==
+typescript@4.7.3, typescript@^4.2.4:
+  version "4.7.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.7.3.tgz#8364b502d5257b540f9de4c40be84c98e23a129d"
+  integrity sha512-WOkT3XYvrpXx4vMMqlD+8R8R37fZkjyLGlxavMc4iB8lrl8L0DeTcHbYgw/v0N/z9wAFsgBhcsF0ruoySS22mA==
 
 typical@^4.0.0:
   version "4.0.0"
