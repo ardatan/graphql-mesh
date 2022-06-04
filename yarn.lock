@@ -2638,17 +2638,17 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
 
-"@envelop/core@2.3.2", "@envelop/core@^2.0.0", "@envelop/core@^2.3.2":
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/@envelop/core/-/core-2.3.2.tgz#b5cc5a2f7a3c0ea4ac2492589190bb19c6126ca0"
-  integrity sha512-NTVY7bajznZyE0S/yzwIu5aimcM8JLqdeWkWUmwmrAHZdE6zjrvOuVCwq1kMIHzgV3bmLdPg2F7534Nxad/HLg==
+"@envelop/core@2.3.3", "@envelop/core@^2.0.0", "@envelop/core@^2.3.2":
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/@envelop/core/-/core-2.3.3.tgz#a77b28930b3090e2eb1ecb4696ffd6e4bdc4ddba"
+  integrity sha512-ZWlBXTd35Uwp4cKRsU36NqgpSwXAIe34tXHWUjI7n/TDgOZ0hcgvhQ+nF1dGLsJted0gqnfVX8ZceX30lTGgDg==
   dependencies:
-    "@envelop/types" "2.2.0"
+    "@envelop/types" "2.2.1"
 
-"@envelop/live-query@3.3.2":
-  version "3.3.2"
-  resolved "https://registry.yarnpkg.com/@envelop/live-query/-/live-query-3.3.2.tgz#5bdc8fa0f91e41b3a35c3fbfd91341082487c211"
-  integrity sha512-cLZEz+plu3l8z8VwLEZvn8WDqusZXIhGh2QJFiLWT/CI46Jp3KLsq+XdHpKC1FNiFYbN4OphtMxOWYiC6orNMg==
+"@envelop/live-query@3.3.3":
+  version "3.3.3"
+  resolved "https://registry.yarnpkg.com/@envelop/live-query/-/live-query-3.3.3.tgz#f95a60acb95be406b02a56309ba8b756f6017456"
+  integrity sha512-lNJrKOuxOneQiuyPVx5l8oLvokN9XXm84vurLLGx3khQG9l3Nv8u07cqOjRis6LK0GO/ONMshO282tnloMsCkw==
   dependencies:
     "@graphql-tools/utils" "^8.6.1"
     "@n1ru4l/graphql-live-query" "^0.9.0"
@@ -2661,10 +2661,10 @@
   dependencies:
     tiny-lru "7.0.6"
 
-"@envelop/types@2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@envelop/types/-/types-2.2.0.tgz#95776d9b63ba8974f52b476d4db5bb169febbe32"
-  integrity sha512-Lghvfs0kh53G5mUKpCMlB/FhHh3O8SSR4hewB7JyE9hOEu/9h/6u+GHH/OEgdaRHky1Sae5Jf4grO+h21ka4ig==
+"@envelop/types@2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@envelop/types/-/types-2.2.1.tgz#5c2e3ae04837533521d0800e7dfa4c3f86f70c4c"
+  integrity sha512-TONrQ8a2/y0emVhdIRhAJzqCXWtaTBLv+JnYVmihR9Iw8ETyVbZOuReB9EuSGZHciKtpkQXTjD/gq5wVMIa47g==
 
 "@envelop/validation-cache@^4.0.0":
   version "4.0.0"

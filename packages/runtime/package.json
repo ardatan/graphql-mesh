@@ -36,8 +36,8 @@
     "@graphql-tools/schema": "8.3.13",
     "@graphql-tools/wrap": "8.4.19",
     "@graphql-tools/utils": "8.6.12",
-    "@envelop/core": "2.3.2",
-    "@envelop/live-query": "3.3.2",
+    "@envelop/core": "2.3.3",
+    "@envelop/live-query": "3.3.3",
     "tslib": "^2.3.1"
   },
   "publishConfig": {

@@ -42,7 +42,7 @@
     "@graphql-tools/code-file-loader": "7.2.17",
     "@graphql-tools/graphql-file-loader": "7.3.14",
     "param-case": "3.0.4",
-    "@envelop/core": "2.3.2",
+    "@envelop/core": "2.3.3",
     "tslib": "^2.3.1",
     "fetchache": "0.1.2",
     "pascal-case": "3.1.2",
