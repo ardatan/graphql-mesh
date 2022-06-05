@@ -51,6 +51,7 @@ export type ConfigProcessOptions = {
   artifactsDir?: string;
   additionalPackagePrefixes?: string[];
   generateCode?: boolean;
+  initialLoggerPrefix?: string;
 };
 
 type EnvelopPlugins = Parameters<typeof envelop>[0]['plugins'];
@@ -150,7 +151,7 @@ export async function processConfig(
     logger,
     importCode: loggerImportCode,
     code: loggerCode,
-  } = await resolveLogger(config.logger, importFn, dir, additionalPackagePrefixes);
+  } = await resolveLogger(config.logger, importFn, dir, additionalPackagePrefixes, options?.initialLoggerPrefix);
   importCodes.push(loggerImportCode);
   codes.push(loggerCode);
 

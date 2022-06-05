@@ -199,7 +199,8 @@ export async function resolveLogger(
   loggerConfig: YamlConfig.Config['logger'],
   importFn: ImportFn,
   cwd: string,
-  additionalPackagePrefixes: string[]
+  additionalPackagePrefixes: string[],
+  initialLoggerPrefix = '🕸️  Mesh'
 ): Promise<{
   importCode: string;
   code: string;
@@ -219,10 +220,10 @@ export async function resolveLogger(
       code: '',
     };
   }
-  const logger = new DefaultLogger('🕸️  Mesh');
+  const logger = new DefaultLogger(initialLoggerPrefix);
   return {
     logger,
     importCode: `import { DefaultLogger } from '@graphql-mesh/utils';`,
-    code: `const logger = new DefaultLogger('🕸️  Mesh');`,
+    code: `const logger = new DefaultLogger(${JSON.stringify(initialLoggerPrefix)});`,
   };
 }

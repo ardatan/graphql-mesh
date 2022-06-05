@@ -142,6 +142,7 @@ export async function graphqlMesh(
             artifactsDir: cliParams.artifactsDir,
             configName: cliParams.configName,
             additionalPackagePrefixes: cliParams.additionalPackagePrefixes,
+            initialLoggerPrefix: cliParams.initialLoggerPrefix,
           });
           logger = meshConfig.logger;
           const meshInstance$ = getMesh(meshConfig);
@@ -172,6 +173,7 @@ export async function graphqlMesh(
                     artifactsDir: ${JSON.stringify(cliParams.artifactsDir)},
                     configName: ${JSON.stringify(cliParams.configName)},
                     additionalPackagePrefixes: ${JSON.stringify(cliParams.additionalPackagePrefixes)},
+                    initialLoggerPrefix: ${JSON.stringify(cliParams.initialLoggerPrefix)},
                   });
                 }
               `,
@@ -290,6 +292,7 @@ export async function graphqlMesh(
             artifactsDir: cliParams.artifactsDir,
             configName: cliParams.configName,
             additionalPackagePrefixes: cliParams.additionalPackagePrefixes,
+            initialLoggerPrefix: cliParams.initialLoggerPrefix,
           });
           logger = meshConfig.logger;
 
@@ -368,6 +371,7 @@ export async function graphqlMesh(
             configName: cliParams.configName,
             additionalPackagePrefixes: cliParams.additionalPackagePrefixes,
             generateCode: true,
+            initialLoggerPrefix: cliParams.initialLoggerPrefix,
           });
           logger = meshConfig.logger;
 
@@ -418,6 +422,7 @@ export async function graphqlMesh(
           artifactsDir: cliParams.artifactsDir,
           configName: cliParams.configName,
           additionalPackagePrefixes: cliParams.additionalPackagePrefixes,
+          initialLoggerPrefix: cliParams.initialLoggerPrefix,
         });
         logger = meshConfig.logger;
         const sourceIndex = meshConfig.sources.findIndex(rawSource => rawSource.name === args.source);
