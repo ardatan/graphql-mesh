@@ -1,5 +1,13 @@
 # @graphql-mesh/cli
 
+## 0.71.3
+
+### Patch Changes
+
+- d17d55881: fix(cli/config): use correct logger prefix
+- Updated dependencies [d17d55881]
+  - @graphql-mesh/config@0.37.3
+
 ## 0.71.2
 
 ### Patch Changes
