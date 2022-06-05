@@ -5,14 +5,18 @@ import Ajv from 'ajv';
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
 import { path, process } from '@graphql-mesh/cross-helpers';
 
-export function validateConfig(config: any, filepath: string): asserts config is YamlConfig.Config {
+export function validateConfig(
+  config: any,
+  filepath: string,
+  initialLoggerPrefix: string
+): asserts config is YamlConfig.Config {
   const ajv = new Ajv({
     strict: false,
   } as any);
   jsonSchema.$schema = undefined;
   const isValid = ajv.validate(jsonSchema, config);
   if (!isValid) {
-    const logger = new DefaultLogger('🕸️  Mesh - Config');
+    const logger = new DefaultLogger(initialLoggerPrefix).child('config');
     logger.warn(
       `${filepath} configuration file is not valid:\n${ajv.errorsText(ajv.errors, {
         separator: '\n',
@@ -22,7 +26,7 @@ export function validateConfig(config: any, filepath: string): asserts config is
 }
 
 export async function findAndParseConfig(options?: ConfigProcessOptions) {
-  const { configName = 'mesh', dir: configDir = '', ...restOptions } = options || {};
+  const { configName = 'mesh', dir: configDir = '', initialLoggerPrefix = '🕸️  Mesh', ...restOptions } = options || {};
   const dir = path.isAbsolute(configDir) ? configDir : path.join(process.cwd(), configDir);
   const explorer = cosmiconfig(configName, {
     searchPlaces: [
@@ -53,8 +57,8 @@ export async function findAndParseConfig(options?: ConfigProcessOptions) {
   }
 
   const config = results.config;
-  validateConfig(config, results.filepath);
-  return processConfig(config, { dir, ...restOptions });
+  validateConfig(config, results.filepath, initialLoggerPrefix);
+  return processConfig(config, { dir, initialLoggerPrefix, ...restOptions });
 }
 
 function customLoader(ext: 'json' | 'yaml' | 'js', importFn = defaultImportFn) {
