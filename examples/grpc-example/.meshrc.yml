@@ -5,7 +5,7 @@ sources:
         endpoint: localhost:50051
         metaData:
           someKey: 'someValue'
-          connection_type: ['headers', 'connection']
+          connection_type: '{req.headers.connection}'
         protoFilePath:
           file: ./proto/service.proto
           load:

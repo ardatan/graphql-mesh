@@ -1,11 +1,18 @@
-import { JsonPointer } from 'json-ptr';
-import { path as pathModule } from '@graphql-mesh/cross-helpers';
+import JsonPointer from 'json-pointer';
+import { path as pathModule, process } from '@graphql-mesh/cross-helpers';
 import urlJoin from 'url-join';
 import { fetch as crossUndiciFetch } from 'cross-undici-fetch';
 import { readFileOrUrl } from '@graphql-mesh/utils';
 
 export const resolvePath = (path: string, root: any): any => {
-  return JsonPointer.get(root, path);
+  try {
+    return JsonPointer.get(root, path);
+  } catch (e) {
+    if (e.message?.startsWith('Invalid reference')) {
+      return undefined;
+    }
+    throw e;
+  }
 };
 function isRefObject(obj: any): obj is { $ref: string } {
   return typeof obj === 'object' && obj.$ref;
@@ -74,12 +81,15 @@ export async function dereferenceObject<T extends object, TRoot = T>(
     headers?: Record<string, string>;
   } = {}
 ): Promise<T> {
-  if (typeof obj === 'object') {
+  if (obj != null && typeof obj === 'object') {
     if (isRefObject(obj)) {
       const $ref = obj.$ref;
       if (refMap.has($ref)) {
         return refMap.get($ref);
       } else {
+        if (process.env.DEBUG) {
+          console.log(`Dereferencing `, obj);
+        }
         const [externalRelativeFilePath, refPath] = $ref.split('#');
         if (externalRelativeFilePath) {
           const externalFilePath = getAbsolutePath(externalRelativeFilePath, cwd);

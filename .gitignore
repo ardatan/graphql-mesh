@@ -1,6 +1,6 @@
-node_modules
+node_modules/
 temp
-dist
+dist/
 out
 build
 generated
@@ -12,7 +12,8 @@ package-lock.json
 .history
 .DS_Store
 .mesh
-.parcel-cache
-/.idea
-.next
+/.idea/
+.next/
 /website/api-sidebar.json
+/website/docs/api
+/.husky/_/

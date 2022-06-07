@@ -1,5 +1,4 @@
 import { OperationTypeNode } from 'graphql';
-import type { Readable } from 'stream';
 import { JSONSchemaOperationConfig, JSONSchemaPubSubOperationConfig, HTTPMethod } from './types';
 
 export function isPubSubOperationConfig(
@@ -56,7 +55,7 @@ export function cleanObject(obj: any) {
   return obj;
 }
 
-export function isFileUpload(obj: any): obj is { createReadStream: () => Readable; mimetype: string } {
+export function isFileUpload(obj: any): obj is { createReadStream: () => AsyncIterable<Uint8Array>; mimetype: string } {
   return typeof obj.createReadStream === 'function';
 }
 

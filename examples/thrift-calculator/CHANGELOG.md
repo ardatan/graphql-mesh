@@ -1,5 +1,192 @@
 # thrift-calculator
 
+## 0.5.225
+
+### Patch Changes
+
+- Updated dependencies [d17d55881]
+  - @graphql-mesh/cli@0.71.3
+
+## 0.5.224
+
+### Patch Changes
+
+- Updated dependencies [3c0366d2c]
+  - @graphql-mesh/cli@0.71.2
+  - @graphql-mesh/thrift@0.8.61
+
+## 0.5.223
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.71.1
+- @graphql-mesh/thrift@0.8.60
+
+## 0.5.222
+
+### Patch Changes
+
+- Updated dependencies [974e703e2]
+- Updated dependencies [19a99c055]
+- Updated dependencies [974e703e2]
+- Updated dependencies [974e703e2]
+  - @graphql-mesh/cli@0.71.0
+  - @graphql-mesh/thrift@0.8.59
+
+## 0.5.221
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.70.4
+- @graphql-mesh/thrift@0.8.58
+
+## 0.5.220
+
+### Patch Changes
+
+- Updated dependencies [55ad5ea44]
+  - @graphql-mesh/cli@0.70.3
+  - @graphql-mesh/thrift@0.8.57
+
+## 0.5.219
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.70.2
+- @graphql-mesh/thrift@0.8.56
+
+## 0.5.218
+
+### Patch Changes
+
+- Updated dependencies [66b9b3ddc]
+- Updated dependencies [66b9b3ddc]
+  - @graphql-mesh/cli@0.70.1
+  - @graphql-mesh/thrift@0.8.55
+
+## 0.5.217
+
+### Patch Changes
+
+- Updated dependencies [f7dda8637]
+  - @graphql-mesh/cli@0.70.0
+
+## 0.5.216
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.69.2
+- @graphql-mesh/thrift@0.8.54
+
+## 0.5.215
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.69.1
+- @graphql-mesh/thrift@0.8.53
+
+## 0.5.214
+
+### Patch Changes
+
+- Updated dependencies [ac2f700bf]
+  - @graphql-mesh/cli@0.69.0
+  - @graphql-mesh/thrift@0.8.52
+
+## 0.5.213
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.68.4
+- @graphql-mesh/thrift@0.8.51
+
+## 0.5.212
+
+### Patch Changes
+
+- Updated dependencies [c1a7c1c09]
+  - @graphql-mesh/cli@0.68.3
+
+## 0.5.211
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.68.2
+- @graphql-mesh/thrift@0.8.50
+
+## 0.5.210
+
+### Patch Changes
+
+- Updated dependencies [7856f92d3]
+  - @graphql-mesh/cli@0.68.1
+  - @graphql-mesh/thrift@0.8.49
+
+## 0.5.209
+
+### Patch Changes
+
+- Updated dependencies [f963b57ce]
+  - @graphql-mesh/cli@0.68.0
+  - @graphql-mesh/thrift@0.8.48
+
+## 0.5.208
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.67.6
+- @graphql-mesh/thrift@0.8.47
+
+## 0.5.207
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.67.5
+
+## 0.5.206
+
+### Patch Changes
+
+- Updated dependencies [36d363d2f]
+  - @graphql-mesh/cli@0.67.4
+  - @graphql-mesh/thrift@0.8.46
+
+## 0.5.205
+
+### Patch Changes
+
+- Updated dependencies [35a55e841]
+  - @graphql-mesh/cli@0.67.3
+  - @graphql-mesh/thrift@0.8.45
+
+## 0.5.204
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.67.2
+
+## 0.5.203
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.67.1
+- @graphql-mesh/thrift@0.8.44
+
+## 0.5.202
+
+### Patch Changes
+
+- Updated dependencies [101adc246]
+  - @graphql-mesh/cli@0.67.0
+
+## 0.5.201
+
+### Patch Changes
+
+- Updated dependencies [b02f5b008]
+  - @graphql-mesh/cli@0.66.2
+  - @graphql-mesh/thrift@0.8.43
+
 ## 0.5.200
 
 ### Patch Changes

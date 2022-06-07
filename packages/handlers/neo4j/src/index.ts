@@ -1,21 +1,48 @@
-import { makeAugmentedSchema, inferSchema } from 'neo4j-graphql-js';
+import { toGraphQLTypeDefs } from '@neo4j/introspector';
+import { Neo4jGraphQL } from '@neo4j/graphql';
 import neo4j, { Driver } from 'neo4j-driver';
 import { YamlConfig, MeshHandler, GetMeshSourceOptions, MeshPubSub, Logger } from '@graphql-mesh/types';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
-import { jitExecutorFactory, readFileOrUrl } from '@graphql-mesh/utils';
-import { ExecutionRequest } from '@graphql-tools/utils';
-import { ExecutionResult } from 'graphql';
+import { readFileOrUrl } from '@graphql-mesh/utils';
+import { process } from '@graphql-mesh/cross-helpers';
+
+function getEventEmitterFromPubSub(pubsub: MeshPubSub): any {
+  return {
+    on(event: string | symbol, listener: (...args: any[]) => void) {
+      pubsub.subscribe(event.toString(), listener).catch(e => console.error(e));
+      return this;
+    },
+    once(event: string | symbol, listener: (...args: any[]) => void) {
+      let id: number;
+      pubsub
+        .subscribe(event.toString(), data => {
+          listener(data);
+          pubsub.unsubscribe(id);
+        })
+        .then(subId => {
+          id = subId;
+        })
+        .catch(e => console.error(e));
+      return this;
+    },
+    emit(event: string | symbol, ...args: any[]) {
+      pubsub.publish(event.toString(), args[0]).catch(e => console.error(e));
+      return true;
+    },
+    addListener(event: string | symbol, listener: (...args: any[]) => void) {
+      return this.on(event, listener);
+    },
+  };
+}
 
 export default class Neo4JHandler implements MeshHandler {
-  private name: string;
   private config: YamlConfig.Neo4JHandler;
   private baseDir: string;
   private pubsub: MeshPubSub;
   private typeDefs: StoreProxy<string>;
   private logger: Logger;
 
-  constructor({ name, config, baseDir, pubsub, store, logger }: GetMeshSourceOptions<YamlConfig.Neo4JHandler>) {
-    this.name = name;
+  constructor({ config, baseDir, pubsub, store, logger }: GetMeshSourceOptions<YamlConfig.Neo4JHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
@@ -23,34 +50,7 @@ export default class Neo4JHandler implements MeshHandler {
     this.logger = logger;
   }
 
-  private driver: Driver;
-
-  getDriver() {
-    if (!this.driver) {
-      this.driver = neo4j.driver(this.config.url, neo4j.auth.basic(this.config.username, this.config.password), {
-        useBigInt: true,
-        logging: {
-          logger: (level, message) => this.logger[level](message),
-        },
-      });
-      this.pubsub
-        .subscribe('destroy', () => {
-          this.logger.debug(() => 'Closing Neo4j');
-          this.driver
-            .close()
-            .then(() => {
-              this.logger.debug(() => 'Neo4j has been closed');
-            })
-            .catch(error => {
-              this.logger.debug(() => `Neo4j couldn't be closed: ${error.message}`);
-            });
-        })
-        .catch(e => this.logger.error(e));
-    }
-    return this.driver;
-  }
-
-  getCachedTypeDefs() {
+  getCachedTypeDefs(driver: Driver) {
     return this.typeDefs.getWithSet(async () => {
       if (this.config.typeDefs) {
         return readFileOrUrl(this.config.typeDefs, {
@@ -59,46 +59,58 @@ export default class Neo4JHandler implements MeshHandler {
           logger: this.logger,
         });
       } else {
-        const { typeDefs } = await inferSchema(this.getDriver(), {
-          alwaysIncludeRelationships: this.config.alwaysIncludeRelationships,
-        });
-        return typeDefs;
+        this.logger.info('Inferring the schema from the database: ', `"${this.config.database || 'neo4j'}"`);
+        return toGraphQLTypeDefs(() =>
+          driver.session({ database: this.config.database, defaultAccessMode: neo4j.session.READ })
+        );
       }
     });
   }
 
   async getMeshSource() {
-    const typeDefs = await this.getCachedTypeDefs();
-
-    const schema = makeAugmentedSchema({
-      typeDefs,
-      config: {
-        experimental: true,
-        debug: !!process.env.DEBUG,
+    const driver = neo4j.driver(this.config.url, neo4j.auth.basic(this.config.username, this.config.password), {
+      useBigInt: true,
+      logging: {
+        logger: (level, message) => this.logger[level](message),
       },
-      logger: this.logger,
     });
 
-    const jitExecutor = jitExecutorFactory(schema, this.name, this.logger);
-    const driverGetter = () => this.getDriver();
-    const neo4jContext = {
-      get driver() {
-        return driverGetter();
+    const id$ = this.pubsub.subscribe('destroy', () => {
+      this.logger.debug('Closing Neo4j');
+      driver
+        .close()
+        .then(() => {
+          this.logger.debug('Neo4j has been closed');
+        })
+        .catch(error => {
+          this.logger.debug(`Neo4j couldn't be closed: `, error);
+        });
+      id$.then(id => this.pubsub.unsubscribe(id)).catch(err => console.error(err));
+    });
+
+    const typeDefs = await this.getCachedTypeDefs(driver);
+
+    const events = getEventEmitterFromPubSub(this.pubsub);
+    const neo4jGraphQL = new Neo4jGraphQL({
+      typeDefs,
+      config: {
+        driverConfig: {
+          database: this.config.database,
+        },
+        enableDebug: !!process.env.DEBUG,
+        skipValidateTypeDefs: true,
       },
-      neo4jDatabase: this.config.database,
-    };
+      plugins: {
+        subscriptions: {
+          events,
+          publish: eventMeta => this.pubsub.publish(eventMeta.event, eventMeta),
+        },
+      },
+      driver,
+    });
 
     return {
-      schema,
-      executor: <TResult>(executionRequest: ExecutionRequest) => {
-        return jitExecutor({
-          ...executionRequest,
-          context: {
-            ...executionRequest.context,
-            ...neo4jContext,
-          },
-        }) as ExecutionResult<TResult>;
-      },
+      schema: await neo4jGraphQL.getSchema(),
     };
   }
 }

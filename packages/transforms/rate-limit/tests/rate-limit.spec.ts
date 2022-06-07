@@ -1,5 +1,5 @@
 import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
-import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
+import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import RateLimitTransform from '../src';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { wrapSchema } from '@graphql-tools/wrap';

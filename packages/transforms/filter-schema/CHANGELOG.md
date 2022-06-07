@@ -1,5 +1,166 @@
 # @graphql-mesh/transform-filter-schema
 
+## 0.14.58
+
+### Patch Changes
+
+- Updated dependencies [3c0366d2c]
+- Updated dependencies [3c0366d2c]
+  - @graphql-mesh/utils@0.35.2
+  - @graphql-mesh/types@0.73.2
+
+## 0.14.57
+
+### Patch Changes
+
+- Updated dependencies [abe9fcc41]
+  - @graphql-mesh/utils@0.35.1
+  - @graphql-mesh/types@0.73.1
+
+## 0.14.56
+
+### Patch Changes
+
+- 974e703e2: Cleanup dependencies
+- Updated dependencies [974e703e2]
+- Updated dependencies [19a99c055]
+- Updated dependencies [974e703e2]
+- Updated dependencies [974e703e2]
+- Updated dependencies [893d526ab]
+- Updated dependencies [974e703e2]
+  - @graphql-mesh/types@0.73.0
+  - @graphql-mesh/utils@0.35.0
+
+## 0.14.55
+
+### Patch Changes
+
+- Updated dependencies [43eb3d2c2]
+  - @graphql-mesh/utils@0.34.10
+  - @graphql-mesh/types@0.72.5
+
+## 0.14.54
+
+### Patch Changes
+
+- Updated dependencies [55ad5ea44]
+  - @graphql-mesh/utils@0.34.9
+  - @graphql-mesh/types@0.72.4
+
+## 0.14.53
+
+### Patch Changes
+
+- Updated dependencies [31efa964e]
+  - @graphql-mesh/utils@0.34.8
+  - @graphql-mesh/types@0.72.3
+
+## 0.14.52
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.34.7
+- @graphql-mesh/types@0.72.2
+
+## 0.14.51
+
+### Patch Changes
+
+- Updated dependencies [b9beacca2]
+  - @graphql-mesh/utils@0.34.6
+  - @graphql-mesh/types@0.72.1
+
+## 0.14.50
+
+### Patch Changes
+
+- Updated dependencies [fa2542468]
+  - @graphql-mesh/types@0.72.0
+  - @graphql-mesh/utils@0.34.5
+
+## 0.14.49
+
+### Patch Changes
+
+- Updated dependencies [ddbbec8a8]
+  - @graphql-mesh/utils@0.34.4
+  - @graphql-mesh/types@0.71.4
+
+## 0.14.48
+
+### Patch Changes
+
+- Updated dependencies [2e9addd80]
+  - @graphql-mesh/utils@0.34.3
+  - @graphql-mesh/types@0.71.3
+
+## 0.14.47
+
+### Patch Changes
+
+- @graphql-mesh/types@0.71.2
+- @graphql-mesh/utils@0.34.2
+
+## 0.14.46
+
+### Patch Changes
+
+- 7856f92d3: Bump all packages
+- Updated dependencies [7856f92d3]
+  - @graphql-mesh/types@0.71.1
+  - @graphql-mesh/utils@0.34.1
+
+## 0.14.45
+
+### Patch Changes
+
+- Updated dependencies [f963b57ce]
+- Updated dependencies [0644f31f2]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+  - @graphql-mesh/types@0.71.0
+  - @graphql-mesh/utils@0.34.0
+
+## 0.14.44
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.33.6
+- @graphql-mesh/types@0.70.6
+
+## 0.14.43
+
+### Patch Changes
+
+- @graphql-mesh/types@0.70.5
+- @graphql-mesh/utils@0.33.5
+
+## 0.14.42
+
+### Patch Changes
+
+- 35a55e841: Bump GraphQL Tools packages
+- Updated dependencies [35a55e841]
+  - @graphql-mesh/types@0.70.4
+  - @graphql-mesh/utils@0.33.4
+
+## 0.14.41
+
+### Patch Changes
+
+- @graphql-mesh/types@0.70.3
+- @graphql-mesh/utils@0.33.3
+
+## 0.14.40
+
+### Patch Changes
+
+- Updated dependencies [b02f5b008]
+  - @graphql-mesh/types@0.70.2
+  - @graphql-mesh/utils@0.33.2
+
 ## 0.14.39
 
 ### Patch Changes

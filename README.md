@@ -8,7 +8,7 @@
 https://www.graphql-mesh.com
 
 GraphQL Mesh allows you to use GraphQL query language to access data in remote APIs that don't run GraphQL (and also ones that do run GraphQL).
-It can be used as a gateway to other services, or run as a local GraphQL schema that aggregates data from remote APIs.
+It can be used as a gateway to other services or run as a local GraphQL schema that aggregates data from remote APIs.
 
 The goal of GraphQL Mesh is to let developers easily access services that are written in other APIs specs (such as gRPC, OpenAPI/Swagger, OData, SOAP/WSDL, Apache Thrift, Mongoose, PostgreSQL, Neo4j, and also GraphQL) with GraphQL queries and mutations.
 
@@ -18,7 +18,7 @@ It allows developers to control the way they fetch data, and overcome issues rel
 
 GraphQL Mesh is acting as a proxy to your data, and uses common libraries to wrap your existing API services. You can use this proxy locally in your service or application by running the GraphQL schema locally (with GraphQL `execute`), or you can deploy this as a gateway layer to your internal service.
 
-## How it works?
+## How does it work?
 
 The way GraphQL Mesh works is:
 
@@ -55,13 +55,11 @@ Then, this handler will be available for you to use in your config file.
 </p>
 </details>
 
-[Basic Usage](https://graphql-mesh.com/docs/getting-started/basic-example)
+[Getting started](https://www.graphql-mesh.com/docs/introduction)
 
-[Supported APIs](https://www.graphql-mesh.com/docs/handlers/handlers-introduction)
+[Supported Source APIs](https://www.graphql-mesh.com/docs/handlers/handlers-introduction)
 
 [Schema Transformations](https://graphql-mesh.com/docs/transforms/transforms-introduction)
-
-[TypeScript Support](https://graphql-mesh.com/docs/recipes/typescript)
 
 ## Contributions
 

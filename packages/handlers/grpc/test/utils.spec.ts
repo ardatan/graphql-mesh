@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 import { Metadata } from '@grpc/grpc-js';
 
 import { addMetaDataToCall } from '../src/utils';
@@ -19,7 +20,7 @@ describe('grpc utils', () => {
 
     test(`when no metadata is supplied by the config`, () => {
       addMetaDataToCall(grpcClientMethod, input, context, undefined);
-      expect(grpcClientMethod).toHaveBeenCalledWith(input);
+      expect(grpcClientMethod).toHaveBeenCalledWith(input, expect.any(Function));
     });
 
     describe.each<[string, Record<string, string | Buffer | string[]>, Metadata]>([
@@ -45,7 +46,7 @@ describe('grpc utils', () => {
 
       test(`when ${type} metadata is supplied by the config`, () => {
         addMetaDataToCall(grpcClientMethod, input, context, config);
-        expect(grpcClientMethod).toHaveBeenCalledWith(input, expectedMetadata);
+        expect(grpcClientMethod).toHaveBeenCalledWith(input, expectedMetadata, expect.any(Function));
       });
     });
 

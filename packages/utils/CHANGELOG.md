@@ -1,5 +1,172 @@
 # @graphql-mesh/utils
 
+## 0.35.2
+
+### Patch Changes
+
+- 3c0366d2c: - Support import.meta.env instead of process.env for browsers
+  - Ponyfill `util.inspect` only if it is not Node env
+- 3c0366d2c: Sanitize "." as "\_" instead of "DOT"
+- Updated dependencies [3c0366d2c]
+  - @graphql-mesh/cross-helpers@0.1.6
+  - @graphql-mesh/types@0.73.2
+
+## 0.35.1
+
+### Patch Changes
+
+- abe9fcc41: fix(fileURLtoPath): return empty string if url is not valid
+  - @graphql-mesh/types@0.73.1
+
+## 0.35.0
+
+### Minor Changes
+
+- 974e703e2: No longer import entire lodash library but instead individual smaller packages
+
+### Patch Changes
+
+- 974e703e2: Cleanup dependencies
+- 974e703e2: Use deeper lodash imports to have better treeshaking and avoid using eval
+- Updated dependencies [974e703e2]
+- Updated dependencies [19a99c055]
+- Updated dependencies [974e703e2]
+- Updated dependencies [974e703e2]
+- Updated dependencies [893d526ab]
+- Updated dependencies [974e703e2]
+  - @graphql-mesh/string-interpolation@0.2.0
+  - @graphql-mesh/types@0.73.0
+  - @graphql-mesh/cross-helpers@0.1.5
+
+## 0.34.10
+
+### Patch Changes
+
+- 43eb3d2c2: fix(additionalResolvers): check if result type matches the abstract source type by respecting interface inheritance
+  - @graphql-mesh/types@0.72.5
+
+## 0.34.9
+
+### Patch Changes
+
+- 55ad5ea44: Fix browser support
+- Updated dependencies [55ad5ea44]
+  - @graphql-mesh/cross-helpers@0.1.4
+  - @graphql-mesh/types@0.72.4
+
+## 0.34.8
+
+### Patch Changes
+
+- 31efa964e: Fix ESM support
+  - @graphql-mesh/types@0.72.3
+
+## 0.34.7
+
+### Patch Changes
+
+- Updated dependencies [66b9b3ddc]
+  - @graphql-mesh/cross-helpers@0.1.3
+  - @graphql-mesh/types@0.72.2
+
+## 0.34.6
+
+### Patch Changes
+
+- b9beacca2: Bump cross-undici-fetch for Node 14 compatibility and performance improvements
+  - @graphql-mesh/types@0.72.1
+
+## 0.34.5
+
+### Patch Changes
+
+- Updated dependencies [fa2542468]
+  - @graphql-mesh/types@0.72.0
+
+## 0.34.4
+
+### Patch Changes
+
+- ddbbec8a8: Supress dynamic import warnings in Vite
+  - @graphql-mesh/types@0.71.4
+
+## 0.34.3
+
+### Patch Changes
+
+- 2e9addd80: Bump cross-undici-fetch for Node 18 compat
+- Updated dependencies [2e9addd80]
+- Updated dependencies [2e9addd80]
+  - @graphql-mesh/string-interpolation@0.1.0
+  - @graphql-mesh/types@0.71.3
+
+## 0.34.2
+
+### Patch Changes
+
+- @graphql-mesh/types@0.71.2
+
+## 0.34.1
+
+### Patch Changes
+
+- 7856f92d3: Bump all packages
+- Updated dependencies [7856f92d3]
+  - @graphql-mesh/cross-helpers@0.1.2
+  - @graphql-mesh/string-interpolation@0.0.1
+  - @graphql-mesh/types@0.71.1
+
+## 0.34.0
+
+### Minor Changes
+
+- f963b57ce: Improve Logging Experience
+- 0644f31f2: Use dayjs instead of date-fns for smaller bundle size
+- 331b62637: feat(utils): add base64 modifier to string interpolator
+- 331b62637: feat(json-schema/openapi): support OpenAPI links and json pointer syntax in string interpolation
+- 331b62637: feat: support JSON string as an input for string file pointers
+
+### Patch Changes
+
+- Updated dependencies [f963b57ce]
+- Updated dependencies [331b62637]
+  - @graphql-mesh/types@0.71.0
+
+## 0.33.6
+
+### Patch Changes
+
+- Updated dependencies [cf0836a64]
+  - @graphql-mesh/cross-helpers@0.1.1
+  - @graphql-mesh/types@0.70.6
+
+## 0.33.5
+
+### Patch Changes
+
+- @graphql-mesh/types@0.70.5
+
+## 0.33.4
+
+### Patch Changes
+
+- 35a55e841: Bump GraphQL Tools packages
+- Updated dependencies [35a55e841]
+  - @graphql-mesh/types@0.70.4
+
+## 0.33.3
+
+### Patch Changes
+
+- @graphql-mesh/types@0.70.3
+
+## 0.33.2
+
+### Patch Changes
+
+- Updated dependencies [b02f5b008]
+  - @graphql-mesh/types@0.70.2
+
 ## 0.33.1
 
 ### Patch Changes

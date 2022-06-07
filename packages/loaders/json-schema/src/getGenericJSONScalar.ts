@@ -1,4 +1,4 @@
-import { inspect } from '@graphql-tools/utils';
+import { util } from '@graphql-mesh/cross-helpers';
 import { JSONSchemaObject } from 'json-machete';
 import { GraphQLJSON, SchemaComposer } from 'graphql-compose';
 import { getValidTypeName } from './getValidTypeName';
@@ -16,7 +16,7 @@ export function getGenericJSONScalar({
 }) {
   function coerceGenericJSONScalar(value: any) {
     if (!validateWithJSONSchema(value)) {
-      throw new Error(`${inspect(value)} is not valid!`);
+      throw new Error(`${util.inspect(value)} is not valid!`);
     }
     return value;
   }

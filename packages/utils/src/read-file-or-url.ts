@@ -8,8 +8,6 @@ import { defaultImportFn } from './defaultImportFn';
 import { memoize1 } from '@graphql-tools/utils';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression';
 
-export { isUrl };
-
 export interface ReadFileOrUrlOptions extends RequestInit {
   allowUnknownExtensions?: boolean;
   fallbackFormat?: 'json' | 'yaml' | 'js' | 'ts';
@@ -30,10 +28,12 @@ export const getCachedFetch = memoize1(function getCachedFetch(cache: KeyValueCa
 
 export async function readFileOrUrl<T>(filePathOrUrl: string, config?: ReadFileOrUrlOptions): Promise<T> {
   if (isUrl(filePathOrUrl)) {
-    config?.logger?.debug(() => `Fetching ${filePathOrUrl} via HTTP`);
+    config?.logger?.debug(`Fetching ${filePathOrUrl} via HTTP`);
     return readUrl(filePathOrUrl, config);
+  } else if (filePathOrUrl.startsWith('{') || filePathOrUrl.startsWith('[')) {
+    return JSON.parse(filePathOrUrl);
   } else {
-    config?.logger?.debug(() => `Reading ${filePathOrUrl} from the file system`);
+    config?.logger?.debug(`Reading ${filePathOrUrl} from the file system`);
     return readFile(filePathOrUrl, config);
   }
 }
@@ -124,7 +124,7 @@ export async function readUrl<T>(path: string, config?: ReadFileOrUrlOptions): P
   const response = await fetch(path, config);
   const contentType = response.headers?.get('content-type') || '';
   const responseText = await response.text();
-  config?.logger?.debug(() => `${path} returned "${responseText?.slice(0, 100) + '...'}"`);
+  config?.logger?.debug(`${path} returned `, responseText);
   if (/json$/.test(path) || contentType.startsWith('application/json') || fallbackFormat === 'json') {
     return JSON.parse(responseText);
   } else if (

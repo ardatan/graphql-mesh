@@ -1,0 +1,142 @@
+---
+id: error-handling
+title: Error handling
+sidebar_label: Error handling
+type: Guide
+---
+
+Mesh Gateway will forward all errors (resolvers and sources) to the end client by default.
+
+This page will guide you in masking the errors and puts the proper error handling practices in your `additionalResolvers`.
+
+<p>&nbsp;</p>
+
+---
+
+<p>&nbsp;</p>
+
+## Enabling Errors masking
+
+To enable error masking on your Mesh Gateway:
+
+1. first, update your configuration as follows:
+
+_`.meshrc.yaml`_
+
+```yaml
+sources:
+  # ...
+transforms:
+  # ...
+additionalEnvelopPlugins: './envelopPlugins'
+```
+
+<p>&nbsp;</p>
+
+2. Configure the [`useMaskedErrors()` Envelop plugin](https://www.envelop.dev/plugins/use-masked-errors)
+
+_`envelopPlugins.ts`_
+
+```ts
+import { useMaskedErrors, PluginOrDisabledPlugin } from '@envelop/core'
+
+const plugins: PluginOrDisabledPlugin = [
+  useMaskedErrors({
+    errorMessage: 'Something went wrong.'
+  })
+]
+
+export default plugins
+```
+
+**Important: the `useMaskedErrors()` plugin should always put last in the plugin list (example: to avoid masking errors to the `useSentry()` plugin**
+
+<p>&nbsp;</p>
+
+### Custom error formatting
+
+Envelop allows you to provide your error formatting function as follow:
+
+_`envelopPlugins.ts`_
+
+```ts
+import { useMaskedErrors, PluginOrDisabledPlugin } from '@envelop/core'
+
+export const formatError: FormatErrorHandler = err => {
+  if (err.originalError && err.originalError instanceof EnvelopError === false) {
+    return new GraphQLError('Sorry, something went wrong.')
+  }
+
+  return err
+}
+
+const plugins: PluginOrDisabledPlugin = [
+  useMaskedErrors({
+    errorMessage: 'Something went wrong.',
+    formatError
+  })
+]
+
+export default plugins
+```
+
+This can be helpful, for example, to provide different error types based on a Source.
+
+<p>&nbsp;</p>
+
+---
+
+<p>&nbsp;</p>
+
+## Custom resolvers error handling
+
+All errors will be hidden from the end-user when error masking is enabled.
+
+However, some might want to throw specific visible errors.
+
+To make an error visible, leverage the `GraphQLError` error class as follows:
+
+**`additionalResolvers.ts`**
+
+```ts
+import { GraphQLError } from 'graphql'
+
+import { Resolvers } from './.mesh'
+
+const resolvers: Resolvers = {
+  Book: {
+    author: {
+      selectionSet: /* GraphQL */ `
+        {
+          authorId
+        }
+      `,
+      resolve: async (root, _args, context, info) => {
+        const result = await context.Authors.Query.authors_v1_AuthorsService_GetAuthor({
+          root,
+          args: {
+            input: {
+              id: root.authorId
+            }
+          },
+          context,
+          info
+        })
+        if (!result) {
+          throw new GraphQLError({
+            message: `Author with id '${root.authorId}' not found.`,
+            extensions: {
+              code: 'AUTHOR_NOT_FOUND',
+              // complex values
+              bookId: root.id,
+              authorId: root.authorId
+            }
+          })
+        } else {
+          return result
+        }
+      }
+    }
+  }
+}
+```

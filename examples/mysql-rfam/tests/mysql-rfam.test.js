@@ -12,7 +12,7 @@ describe.skip('MySQL Rfam', () => {
       dir: join(__dirname, '..'),
     });
     config$.then(config => getMesh(config));
-  })
+  });
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
     expect(

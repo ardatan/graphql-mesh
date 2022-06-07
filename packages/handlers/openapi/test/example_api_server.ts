@@ -302,7 +302,7 @@ export function startServer(PORT: number) {
   const authMiddleware = (req: any, res: any, next: Function) => {
     if (req.headers.authorization) {
       const encoded = req.headers.authorization.split(' ')[1];
-      const decoded = Buffer.from(encoded, 'base64').toString('utf8').split(':');
+      const decoded = Buffer.from(encoded, 'base64').toString('utf-8').split(':');
 
       if (decoded.length === 2) {
         const credentials = {
@@ -318,6 +318,7 @@ export function startServer(PORT: number) {
           message: 'Incorrect credentials',
         });
       } else {
+        console.log({ encoded, decoded });
         res.status(401).send({
           message: 'Basic Auth expects a single username and a single password',
         });
@@ -522,7 +523,6 @@ export function startServer(PORT: number) {
   app.get('/api/products/:id', (req, res) => {
     if (typeof req.params.id !== 'undefined' && typeof req.query['product-tag'] !== 'undefined') {
       const product = {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         product_id: req.params.id,
         'product-tag': req.query['product-tag'],
         'product-name': 'Super Product',

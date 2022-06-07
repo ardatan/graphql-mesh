@@ -1,5 +1,166 @@
 # json-machete
 
+## 0.8.10
+
+### Patch Changes
+
+- 3c0366d2c: - Support import.meta.env instead of process.env for browsers
+  - Ponyfill `util.inspect` only if it is not Node env
+- Updated dependencies [3c0366d2c]
+- Updated dependencies [3c0366d2c]
+  - @graphql-mesh/cross-helpers@0.1.6
+  - @graphql-mesh/utils@0.35.2
+
+## 0.8.9
+
+### Patch Changes
+
+- Updated dependencies [abe9fcc41]
+  - @graphql-mesh/utils@0.35.1
+
+## 0.8.8
+
+### Patch Changes
+
+- 974e703e2: Cleanup dependencies
+- Updated dependencies [974e703e2]
+- Updated dependencies [974e703e2]
+- Updated dependencies [974e703e2]
+  - @graphql-mesh/utils@0.35.0
+  - @graphql-mesh/cross-helpers@0.1.5
+
+## 0.8.7
+
+### Patch Changes
+
+- Updated dependencies [43eb3d2c2]
+  - @graphql-mesh/utils@0.34.10
+
+## 0.8.6
+
+### Patch Changes
+
+- Updated dependencies [55ad5ea44]
+  - @graphql-mesh/cross-helpers@0.1.4
+  - @graphql-mesh/utils@0.34.9
+
+## 0.8.5
+
+### Patch Changes
+
+- Updated dependencies [31efa964e]
+  - @graphql-mesh/utils@0.34.8
+
+## 0.8.4
+
+### Patch Changes
+
+- Updated dependencies [66b9b3ddc]
+  - @graphql-mesh/cross-helpers@0.1.3
+  - @graphql-mesh/utils@0.34.7
+
+## 0.8.3
+
+### Patch Changes
+
+- b9beacca2: Bump cross-undici-fetch for Node 14 compatibility and performance improvements
+- Updated dependencies [b9beacca2]
+  - @graphql-mesh/utils@0.34.6
+
+## 0.8.2
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.34.5
+
+## 0.8.1
+
+### Patch Changes
+
+- Updated dependencies [ddbbec8a8]
+  - @graphql-mesh/utils@0.34.4
+
+## 0.8.0
+
+### Minor Changes
+
+- 2e9addd80: Use platform agnostic json-pointer instead of json-ptr
+
+### Patch Changes
+
+- 2e9addd80: Bump cross-undici-fetch for Node 18 compat
+- Updated dependencies [2e9addd80]
+  - @graphql-mesh/utils@0.34.3
+
+## 0.7.15
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.34.2
+
+## 0.7.14
+
+### Patch Changes
+
+- 7856f92d3: Bump all packages
+- Updated dependencies [7856f92d3]
+  - @graphql-mesh/cross-helpers@0.1.2
+  - @graphql-mesh/utils@0.34.1
+
+## 0.7.13
+
+### Patch Changes
+
+- 331b62637: fix(json-machete): Heal generated schemas
+- 331b62637: fix(json-machete): if anyOf/oneOf/allOf is singular, use that single value directly
+- Updated dependencies [f963b57ce]
+- Updated dependencies [0644f31f2]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+  - @graphql-mesh/utils@0.34.0
+
+## 0.7.12
+
+### Patch Changes
+
+- Updated dependencies [cf0836a64]
+  - @graphql-mesh/cross-helpers@0.1.1
+  - @graphql-mesh/utils@0.33.6
+
+## 0.7.11
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.33.5
+
+## 0.7.10
+
+### Patch Changes
+
+- 35a55e841: Bump GraphQL Tools packages
+- Updated dependencies [35a55e841]
+  - @graphql-mesh/utils@0.33.4
+
+## 0.7.9
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.33.3
+
+## 0.7.8
+
+### Patch Changes
+
+- d64c74b75: fix(json-machete): ignore null values in dereferenceObject
+
+## 0.7.7
+
+### Patch Changes
+
+- 114629e47: fix(json-machete): respect int64 types
+  - @graphql-mesh/utils@0.33.2
+
 ## 0.7.6
 
 ### Patch Changes

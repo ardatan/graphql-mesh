@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { FC } from 'react';
 import dynamic from 'next/dynamic';
 import { HeroGradient, InfoList } from '@theguild/components';
@@ -74,7 +75,7 @@ export default function Index() {
           },
         ]}
       /> */}
-
+      {/* @ts-ignore */}
       <div css={[tw`hidden lg:block px-8 py-12`]}>
         <LiveDemo />
       </div>

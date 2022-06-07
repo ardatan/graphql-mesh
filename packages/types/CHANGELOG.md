@@ -1,5 +1,149 @@
 # @graphql-mesh/types
 
+## 0.73.2
+
+### Patch Changes
+
+- @graphql-mesh/store@0.8.11
+
+## 0.73.1
+
+### Patch Changes
+
+- @graphql-mesh/store@0.8.10
+
+## 0.73.0
+
+### Minor Changes
+
+- 19a99c055: feat(cli/serve): Now you can configure proxy handling settings
+- 974e703e2: Generate more readable code and cleanup the artifacts
+
+  No more export `documentsInSDL`, use `documents` array instead coming from `MeshInstance`
+  No more export `rawConfig` but instead `rawServeConfig` to expose `ServeConfig`
+
+- 893d526ab: POC: Mesh Declarative Plugin System
+
+### Patch Changes
+
+- 974e703e2: Cleanup dependencies
+- Updated dependencies [974e703e2]
+  - @graphql-mesh/store@0.8.9
+
+## 0.72.5
+
+### Patch Changes
+
+- @graphql-mesh/store@0.8.8
+
+## 0.72.4
+
+### Patch Changes
+
+- @graphql-mesh/store@0.8.7
+
+## 0.72.3
+
+### Patch Changes
+
+- @graphql-mesh/store@0.8.6
+
+## 0.72.2
+
+### Patch Changes
+
+- Updated dependencies [66b9b3ddc]
+  - @graphql-mesh/store@0.8.5
+
+## 0.72.1
+
+### Patch Changes
+
+- @graphql-mesh/store@0.8.4
+
+## 0.72.0
+
+### Minor Changes
+
+- fa2542468: Use Localforage by default and drop inmemory-lru
+
+### Patch Changes
+
+- @graphql-mesh/store@0.8.3
+
+## 0.71.4
+
+### Patch Changes
+
+- @graphql-mesh/store@0.8.2
+
+## 0.71.3
+
+### Patch Changes
+
+- @graphql-mesh/store@0.8.1
+
+## 0.71.2
+
+### Patch Changes
+
+- Updated dependencies [8c8b304e5]
+  - @graphql-mesh/store@0.8.0
+
+## 0.71.1
+
+### Patch Changes
+
+- 7856f92d3: Bump all packages
+- Updated dependencies [7856f92d3]
+  - @graphql-mesh/store@0.7.8
+
+## 0.71.0
+
+### Minor Changes
+
+- f963b57ce: Improve Logging Experience
+- 331b62637: feat(json-schema): provide different response schemas for different http status codes
+
+### Patch Changes
+
+- @graphql-mesh/store@0.7.7
+
+## 0.70.6
+
+### Patch Changes
+
+- @graphql-mesh/store@0.7.6
+
+## 0.70.5
+
+### Patch Changes
+
+- Updated dependencies [decbe5fbb]
+  - @graphql-mesh/store@0.7.5
+
+## 0.70.4
+
+### Patch Changes
+
+- 35a55e841: Bump GraphQL Tools packages
+- Updated dependencies [35a55e841]
+  - @graphql-mesh/store@0.7.4
+
+## 0.70.3
+
+### Patch Changes
+
+- Updated dependencies [4fa959de3]
+  - @graphql-mesh/store@0.7.3
+
+## 0.70.2
+
+### Patch Changes
+
+- b02f5b008: enhance(cli): leave body parsing to yoga and cache dns with mesh caching
+  - @graphql-mesh/store@0.7.2
+
 ## 0.70.1
 
 ### Patch Changes

@@ -1,0 +1,2781 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Neo4j should generate correct schema 1`] = `
+"interface ActedInProperties {
+  roles: [String]!
+}
+
+input ActedInPropertiesCreateInput {
+  roles: [String]!
+}
+
+input ActedInPropertiesSort {
+  roles: SortDirection
+}
+
+input ActedInPropertiesUpdateInput {
+  roles: [String]
+}
+
+input ActedInPropertiesWhere {
+  AND: [ActedInPropertiesWhere!]
+  OR: [ActedInPropertiesWhere!]
+  roles: [String]
+  roles_INCLUDES: String
+  roles_NOT: [String]
+  roles_NOT_INCLUDES: String
+}
+
+\\"\\"\\"
+A BigInt value up to 64 bits in size, which can be a number or a string if used inline, or a string only if used as a variable. Always returned as a string.
+\\"\\"\\"
+scalar BigInt
+
+type BigIntAggregateSelectionNonNullable {
+  average: BigInt!
+  max: BigInt!
+  min: BigInt!
+  sum: BigInt!
+}
+
+type BigIntAggregateSelectionNullable {
+  average: BigInt
+  max: BigInt
+  min: BigInt
+  sum: BigInt
+}
+
+type CreateInfo {
+  bookmark: String
+  nodesCreated: Int!
+  relationshipsCreated: Int!
+}
+
+type CreateMoviesMutationResponse {
+  info: CreateInfo!
+  movies: [Movie!]!
+}
+
+type CreatePeopleMutationResponse {
+  info: CreateInfo!
+  people: [Person!]!
+}
+
+type DeleteInfo {
+  bookmark: String
+  nodesDeleted: Int!
+  relationshipsDeleted: Int!
+}
+
+enum EventType {
+  CREATE
+  DELETE
+  UPDATE
+}
+
+type Movie {
+  peopleActedIn(directed: Boolean = true, options: PersonOptions, where: PersonWhere): [Person!]!
+  peopleActedInAggregate(directed: Boolean = true, where: PersonWhere): MoviePersonPeopleActedInAggregationSelection
+  peopleActedInConnection(after: String, directed: Boolean = true, first: Int, sort: [MoviePeopleActedInConnectionSort!], where: MoviePeopleActedInConnectionWhere): MoviePeopleActedInConnection!
+  peopleDirected(directed: Boolean = true, options: PersonOptions, where: PersonWhere): [Person!]!
+  peopleDirectedAggregate(directed: Boolean = true, where: PersonWhere): MoviePersonPeopleDirectedAggregationSelection
+  peopleDirectedConnection(after: String, directed: Boolean = true, first: Int, sort: [MoviePeopleDirectedConnectionSort!], where: MoviePeopleDirectedConnectionWhere): MoviePeopleDirectedConnection!
+  peopleProduced(directed: Boolean = true, options: PersonOptions, where: PersonWhere): [Person!]!
+  peopleProducedAggregate(directed: Boolean = true, where: PersonWhere): MoviePersonPeopleProducedAggregationSelection
+  peopleProducedConnection(after: String, directed: Boolean = true, first: Int, sort: [MoviePeopleProducedConnectionSort!], where: MoviePeopleProducedConnectionWhere): MoviePeopleProducedConnection!
+  peopleReviewed(directed: Boolean = true, options: PersonOptions, where: PersonWhere): [Person!]!
+  peopleReviewedAggregate(directed: Boolean = true, where: PersonWhere): MoviePersonPeopleReviewedAggregationSelection
+  peopleReviewedConnection(after: String, directed: Boolean = true, first: Int, sort: [MoviePeopleReviewedConnectionSort!], where: MoviePeopleReviewedConnectionWhere): MoviePeopleReviewedConnection!
+  peopleWrote(directed: Boolean = true, options: PersonOptions, where: PersonWhere): [Person!]!
+  peopleWroteAggregate(directed: Boolean = true, where: PersonWhere): MoviePersonPeopleWroteAggregationSelection
+  peopleWroteConnection(after: String, directed: Boolean = true, first: Int, sort: [MoviePeopleWroteConnectionSort!], where: MoviePeopleWroteConnectionWhere): MoviePeopleWroteConnection!
+  released: BigInt!
+  tagline: String
+  title: String!
+  votes: BigInt!
+}
+
+type MovieAggregateSelection {
+  count: Int!
+  released: BigIntAggregateSelectionNonNullable!
+  tagline: StringAggregateSelectionNullable!
+  title: StringAggregateSelectionNonNullable!
+  votes: BigIntAggregateSelectionNonNullable!
+}
+
+input MovieConnectInput {
+  peopleActedIn: [MoviePeopleActedInConnectFieldInput!]
+  peopleDirected: [MoviePeopleDirectedConnectFieldInput!]
+  peopleProduced: [MoviePeopleProducedConnectFieldInput!]
+  peopleReviewed: [MoviePeopleReviewedConnectFieldInput!]
+  peopleWrote: [MoviePeopleWroteConnectFieldInput!]
+}
+
+input MovieConnectWhere {
+  node: MovieWhere!
+}
+
+input MovieCreateInput {
+  peopleActedIn: MoviePeopleActedInFieldInput
+  peopleDirected: MoviePeopleDirectedFieldInput
+  peopleProduced: MoviePeopleProducedFieldInput
+  peopleReviewed: MoviePeopleReviewedFieldInput
+  peopleWrote: MoviePeopleWroteFieldInput
+  released: BigInt!
+  tagline: String
+  title: String!
+  votes: BigInt!
+}
+
+type MovieCreatedEvent {
+  createdMovie: MovieEventPayload!
+  event: EventType!
+}
+
+input MovieDeleteInput {
+  peopleActedIn: [MoviePeopleActedInDeleteFieldInput!]
+  peopleDirected: [MoviePeopleDirectedDeleteFieldInput!]
+  peopleProduced: [MoviePeopleProducedDeleteFieldInput!]
+  peopleReviewed: [MoviePeopleReviewedDeleteFieldInput!]
+  peopleWrote: [MoviePeopleWroteDeleteFieldInput!]
+}
+
+type MovieDeletedEvent {
+  deletedMovie: MovieEventPayload!
+  event: EventType!
+}
+
+input MovieDisconnectInput {
+  peopleActedIn: [MoviePeopleActedInDisconnectFieldInput!]
+  peopleDirected: [MoviePeopleDirectedDisconnectFieldInput!]
+  peopleProduced: [MoviePeopleProducedDisconnectFieldInput!]
+  peopleReviewed: [MoviePeopleReviewedDisconnectFieldInput!]
+  peopleWrote: [MoviePeopleWroteDisconnectFieldInput!]
+}
+
+type MovieEdge {
+  cursor: String!
+  node: Movie!
+}
+
+type MovieEventPayload {
+  released: BigInt!
+  tagline: String
+  title: String!
+  votes: BigInt!
+}
+
+input MovieOptions {
+  limit: Int
+  offset: Int
+
+  \\"\\"\\"
+  Specify one or more MovieSort objects to sort Movies by. The sorts will be applied in the order in which they are arranged in the array.
+  \\"\\"\\"
+  sort: [MovieSort!]
+}
+
+input MoviePeopleActedInAggregateInput {
+  AND: [MoviePeopleActedInAggregateInput!]
+  OR: [MoviePeopleActedInAggregateInput!]
+  count: Int
+  count_GT: Int
+  count_GTE: Int
+  count_LT: Int
+  count_LTE: Int
+  node: MoviePeopleActedInNodeAggregationWhereInput
+}
+
+input MoviePeopleActedInConnectFieldInput {
+  connect: [PersonConnectInput!]
+  edge: ActedInPropertiesCreateInput!
+  where: PersonConnectWhere
+}
+
+type MoviePeopleActedInConnection {
+  edges: [MoviePeopleActedInRelationship!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+input MoviePeopleActedInConnectionSort {
+  edge: ActedInPropertiesSort
+  node: PersonSort
+}
+
+input MoviePeopleActedInConnectionWhere {
+  AND: [MoviePeopleActedInConnectionWhere!]
+  OR: [MoviePeopleActedInConnectionWhere!]
+  edge: ActedInPropertiesWhere
+  edge_NOT: ActedInPropertiesWhere
+  node: PersonWhere
+  node_NOT: PersonWhere
+}
+
+input MoviePeopleActedInCreateFieldInput {
+  edge: ActedInPropertiesCreateInput!
+  node: PersonCreateInput!
+}
+
+input MoviePeopleActedInDeleteFieldInput {
+  delete: PersonDeleteInput
+  where: MoviePeopleActedInConnectionWhere
+}
+
+input MoviePeopleActedInDisconnectFieldInput {
+  disconnect: PersonDisconnectInput
+  where: MoviePeopleActedInConnectionWhere
+}
+
+input MoviePeopleActedInFieldInput {
+  connect: [MoviePeopleActedInConnectFieldInput!]
+  create: [MoviePeopleActedInCreateFieldInput!]
+}
+
+input MoviePeopleActedInNodeAggregationWhereInput {
+  AND: [MoviePeopleActedInNodeAggregationWhereInput!]
+  OR: [MoviePeopleActedInNodeAggregationWhereInput!]
+  born_AVERAGE_EQUAL: BigInt
+  born_AVERAGE_GT: BigInt
+  born_AVERAGE_GTE: BigInt
+  born_AVERAGE_LT: BigInt
+  born_AVERAGE_LTE: BigInt
+  born_EQUAL: BigInt
+  born_GT: BigInt
+  born_GTE: BigInt
+  born_LT: BigInt
+  born_LTE: BigInt
+  born_MAX_EQUAL: BigInt
+  born_MAX_GT: BigInt
+  born_MAX_GTE: BigInt
+  born_MAX_LT: BigInt
+  born_MAX_LTE: BigInt
+  born_MIN_EQUAL: BigInt
+  born_MIN_GT: BigInt
+  born_MIN_GTE: BigInt
+  born_MIN_LT: BigInt
+  born_MIN_LTE: BigInt
+  born_SUM_EQUAL: BigInt
+  born_SUM_GT: BigInt
+  born_SUM_GTE: BigInt
+  born_SUM_LT: BigInt
+  born_SUM_LTE: BigInt
+  name_AVERAGE_EQUAL: Float
+  name_AVERAGE_GT: Float
+  name_AVERAGE_GTE: Float
+  name_AVERAGE_LT: Float
+  name_AVERAGE_LTE: Float
+  name_EQUAL: String
+  name_GT: Int
+  name_GTE: Int
+  name_LONGEST_EQUAL: Int
+  name_LONGEST_GT: Int
+  name_LONGEST_GTE: Int
+  name_LONGEST_LT: Int
+  name_LONGEST_LTE: Int
+  name_LT: Int
+  name_LTE: Int
+  name_SHORTEST_EQUAL: Int
+  name_SHORTEST_GT: Int
+  name_SHORTEST_GTE: Int
+  name_SHORTEST_LT: Int
+  name_SHORTEST_LTE: Int
+}
+
+type MoviePeopleActedInRelationship implements ActedInProperties {
+  cursor: String!
+  node: Person!
+  roles: [String]!
+}
+
+input MoviePeopleActedInUpdateConnectionInput {
+  edge: ActedInPropertiesUpdateInput
+  node: PersonUpdateInput
+}
+
+input MoviePeopleActedInUpdateFieldInput {
+  connect: [MoviePeopleActedInConnectFieldInput!]
+  create: [MoviePeopleActedInCreateFieldInput!]
+  delete: [MoviePeopleActedInDeleteFieldInput!]
+  disconnect: [MoviePeopleActedInDisconnectFieldInput!]
+  update: MoviePeopleActedInUpdateConnectionInput
+  where: MoviePeopleActedInConnectionWhere
+}
+
+input MoviePeopleDirectedAggregateInput {
+  AND: [MoviePeopleDirectedAggregateInput!]
+  OR: [MoviePeopleDirectedAggregateInput!]
+  count: Int
+  count_GT: Int
+  count_GTE: Int
+  count_LT: Int
+  count_LTE: Int
+  node: MoviePeopleDirectedNodeAggregationWhereInput
+}
+
+input MoviePeopleDirectedConnectFieldInput {
+  connect: [PersonConnectInput!]
+  where: PersonConnectWhere
+}
+
+type MoviePeopleDirectedConnection {
+  edges: [MoviePeopleDirectedRelationship!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+input MoviePeopleDirectedConnectionSort {
+  node: PersonSort
+}
+
+input MoviePeopleDirectedConnectionWhere {
+  AND: [MoviePeopleDirectedConnectionWhere!]
+  OR: [MoviePeopleDirectedConnectionWhere!]
+  node: PersonWhere
+  node_NOT: PersonWhere
+}
+
+input MoviePeopleDirectedCreateFieldInput {
+  node: PersonCreateInput!
+}
+
+input MoviePeopleDirectedDeleteFieldInput {
+  delete: PersonDeleteInput
+  where: MoviePeopleDirectedConnectionWhere
+}
+
+input MoviePeopleDirectedDisconnectFieldInput {
+  disconnect: PersonDisconnectInput
+  where: MoviePeopleDirectedConnectionWhere
+}
+
+input MoviePeopleDirectedFieldInput {
+  connect: [MoviePeopleDirectedConnectFieldInput!]
+  create: [MoviePeopleDirectedCreateFieldInput!]
+}
+
+input MoviePeopleDirectedNodeAggregationWhereInput {
+  AND: [MoviePeopleDirectedNodeAggregationWhereInput!]
+  OR: [MoviePeopleDirectedNodeAggregationWhereInput!]
+  born_AVERAGE_EQUAL: BigInt
+  born_AVERAGE_GT: BigInt
+  born_AVERAGE_GTE: BigInt
+  born_AVERAGE_LT: BigInt
+  born_AVERAGE_LTE: BigInt
+  born_EQUAL: BigInt
+  born_GT: BigInt
+  born_GTE: BigInt
+  born_LT: BigInt
+  born_LTE: BigInt
+  born_MAX_EQUAL: BigInt
+  born_MAX_GT: BigInt
+  born_MAX_GTE: BigInt
+  born_MAX_LT: BigInt
+  born_MAX_LTE: BigInt
+  born_MIN_EQUAL: BigInt
+  born_MIN_GT: BigInt
+  born_MIN_GTE: BigInt
+  born_MIN_LT: BigInt
+  born_MIN_LTE: BigInt
+  born_SUM_EQUAL: BigInt
+  born_SUM_GT: BigInt
+  born_SUM_GTE: BigInt
+  born_SUM_LT: BigInt
+  born_SUM_LTE: BigInt
+  name_AVERAGE_EQUAL: Float
+  name_AVERAGE_GT: Float
+  name_AVERAGE_GTE: Float
+  name_AVERAGE_LT: Float
+  name_AVERAGE_LTE: Float
+  name_EQUAL: String
+  name_GT: Int
+  name_GTE: Int
+  name_LONGEST_EQUAL: Int
+  name_LONGEST_GT: Int
+  name_LONGEST_GTE: Int
+  name_LONGEST_LT: Int
+  name_LONGEST_LTE: Int
+  name_LT: Int
+  name_LTE: Int
+  name_SHORTEST_EQUAL: Int
+  name_SHORTEST_GT: Int
+  name_SHORTEST_GTE: Int
+  name_SHORTEST_LT: Int
+  name_SHORTEST_LTE: Int
+}
+
+type MoviePeopleDirectedRelationship {
+  cursor: String!
+  node: Person!
+}
+
+input MoviePeopleDirectedUpdateConnectionInput {
+  node: PersonUpdateInput
+}
+
+input MoviePeopleDirectedUpdateFieldInput {
+  connect: [MoviePeopleDirectedConnectFieldInput!]
+  create: [MoviePeopleDirectedCreateFieldInput!]
+  delete: [MoviePeopleDirectedDeleteFieldInput!]
+  disconnect: [MoviePeopleDirectedDisconnectFieldInput!]
+  update: MoviePeopleDirectedUpdateConnectionInput
+  where: MoviePeopleDirectedConnectionWhere
+}
+
+input MoviePeopleProducedAggregateInput {
+  AND: [MoviePeopleProducedAggregateInput!]
+  OR: [MoviePeopleProducedAggregateInput!]
+  count: Int
+  count_GT: Int
+  count_GTE: Int
+  count_LT: Int
+  count_LTE: Int
+  node: MoviePeopleProducedNodeAggregationWhereInput
+}
+
+input MoviePeopleProducedConnectFieldInput {
+  connect: [PersonConnectInput!]
+  where: PersonConnectWhere
+}
+
+type MoviePeopleProducedConnection {
+  edges: [MoviePeopleProducedRelationship!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+input MoviePeopleProducedConnectionSort {
+  node: PersonSort
+}
+
+input MoviePeopleProducedConnectionWhere {
+  AND: [MoviePeopleProducedConnectionWhere!]
+  OR: [MoviePeopleProducedConnectionWhere!]
+  node: PersonWhere
+  node_NOT: PersonWhere
+}
+
+input MoviePeopleProducedCreateFieldInput {
+  node: PersonCreateInput!
+}
+
+input MoviePeopleProducedDeleteFieldInput {
+  delete: PersonDeleteInput
+  where: MoviePeopleProducedConnectionWhere
+}
+
+input MoviePeopleProducedDisconnectFieldInput {
+  disconnect: PersonDisconnectInput
+  where: MoviePeopleProducedConnectionWhere
+}
+
+input MoviePeopleProducedFieldInput {
+  connect: [MoviePeopleProducedConnectFieldInput!]
+  create: [MoviePeopleProducedCreateFieldInput!]
+}
+
+input MoviePeopleProducedNodeAggregationWhereInput {
+  AND: [MoviePeopleProducedNodeAggregationWhereInput!]
+  OR: [MoviePeopleProducedNodeAggregationWhereInput!]
+  born_AVERAGE_EQUAL: BigInt
+  born_AVERAGE_GT: BigInt
+  born_AVERAGE_GTE: BigInt
+  born_AVERAGE_LT: BigInt
+  born_AVERAGE_LTE: BigInt
+  born_EQUAL: BigInt
+  born_GT: BigInt
+  born_GTE: BigInt
+  born_LT: BigInt
+  born_LTE: BigInt
+  born_MAX_EQUAL: BigInt
+  born_MAX_GT: BigInt
+  born_MAX_GTE: BigInt
+  born_MAX_LT: BigInt
+  born_MAX_LTE: BigInt
+  born_MIN_EQUAL: BigInt
+  born_MIN_GT: BigInt
+  born_MIN_GTE: BigInt
+  born_MIN_LT: BigInt
+  born_MIN_LTE: BigInt
+  born_SUM_EQUAL: BigInt
+  born_SUM_GT: BigInt
+  born_SUM_GTE: BigInt
+  born_SUM_LT: BigInt
+  born_SUM_LTE: BigInt
+  name_AVERAGE_EQUAL: Float
+  name_AVERAGE_GT: Float
+  name_AVERAGE_GTE: Float
+  name_AVERAGE_LT: Float
+  name_AVERAGE_LTE: Float
+  name_EQUAL: String
+  name_GT: Int
+  name_GTE: Int
+  name_LONGEST_EQUAL: Int
+  name_LONGEST_GT: Int
+  name_LONGEST_GTE: Int
+  name_LONGEST_LT: Int
+  name_LONGEST_LTE: Int
+  name_LT: Int
+  name_LTE: Int
+  name_SHORTEST_EQUAL: Int
+  name_SHORTEST_GT: Int
+  name_SHORTEST_GTE: Int
+  name_SHORTEST_LT: Int
+  name_SHORTEST_LTE: Int
+}
+
+type MoviePeopleProducedRelationship {
+  cursor: String!
+  node: Person!
+}
+
+input MoviePeopleProducedUpdateConnectionInput {
+  node: PersonUpdateInput
+}
+
+input MoviePeopleProducedUpdateFieldInput {
+  connect: [MoviePeopleProducedConnectFieldInput!]
+  create: [MoviePeopleProducedCreateFieldInput!]
+  delete: [MoviePeopleProducedDeleteFieldInput!]
+  disconnect: [MoviePeopleProducedDisconnectFieldInput!]
+  update: MoviePeopleProducedUpdateConnectionInput
+  where: MoviePeopleProducedConnectionWhere
+}
+
+input MoviePeopleReviewedAggregateInput {
+  AND: [MoviePeopleReviewedAggregateInput!]
+  OR: [MoviePeopleReviewedAggregateInput!]
+  count: Int
+  count_GT: Int
+  count_GTE: Int
+  count_LT: Int
+  count_LTE: Int
+  edge: MoviePeopleReviewedEdgeAggregationWhereInput
+  node: MoviePeopleReviewedNodeAggregationWhereInput
+}
+
+input MoviePeopleReviewedConnectFieldInput {
+  connect: [PersonConnectInput!]
+  edge: ReviewedPropertiesCreateInput!
+  where: PersonConnectWhere
+}
+
+type MoviePeopleReviewedConnection {
+  edges: [MoviePeopleReviewedRelationship!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+input MoviePeopleReviewedConnectionSort {
+  edge: ReviewedPropertiesSort
+  node: PersonSort
+}
+
+input MoviePeopleReviewedConnectionWhere {
+  AND: [MoviePeopleReviewedConnectionWhere!]
+  OR: [MoviePeopleReviewedConnectionWhere!]
+  edge: ReviewedPropertiesWhere
+  edge_NOT: ReviewedPropertiesWhere
+  node: PersonWhere
+  node_NOT: PersonWhere
+}
+
+input MoviePeopleReviewedCreateFieldInput {
+  edge: ReviewedPropertiesCreateInput!
+  node: PersonCreateInput!
+}
+
+input MoviePeopleReviewedDeleteFieldInput {
+  delete: PersonDeleteInput
+  where: MoviePeopleReviewedConnectionWhere
+}
+
+input MoviePeopleReviewedDisconnectFieldInput {
+  disconnect: PersonDisconnectInput
+  where: MoviePeopleReviewedConnectionWhere
+}
+
+input MoviePeopleReviewedEdgeAggregationWhereInput {
+  AND: [MoviePeopleReviewedEdgeAggregationWhereInput!]
+  OR: [MoviePeopleReviewedEdgeAggregationWhereInput!]
+  rating_AVERAGE_EQUAL: BigInt
+  rating_AVERAGE_GT: BigInt
+  rating_AVERAGE_GTE: BigInt
+  rating_AVERAGE_LT: BigInt
+  rating_AVERAGE_LTE: BigInt
+  rating_EQUAL: BigInt
+  rating_GT: BigInt
+  rating_GTE: BigInt
+  rating_LT: BigInt
+  rating_LTE: BigInt
+  rating_MAX_EQUAL: BigInt
+  rating_MAX_GT: BigInt
+  rating_MAX_GTE: BigInt
+  rating_MAX_LT: BigInt
+  rating_MAX_LTE: BigInt
+  rating_MIN_EQUAL: BigInt
+  rating_MIN_GT: BigInt
+  rating_MIN_GTE: BigInt
+  rating_MIN_LT: BigInt
+  rating_MIN_LTE: BigInt
+  rating_SUM_EQUAL: BigInt
+  rating_SUM_GT: BigInt
+  rating_SUM_GTE: BigInt
+  rating_SUM_LT: BigInt
+  rating_SUM_LTE: BigInt
+  summary_AVERAGE_EQUAL: Float
+  summary_AVERAGE_GT: Float
+  summary_AVERAGE_GTE: Float
+  summary_AVERAGE_LT: Float
+  summary_AVERAGE_LTE: Float
+  summary_EQUAL: String
+  summary_GT: Int
+  summary_GTE: Int
+  summary_LONGEST_EQUAL: Int
+  summary_LONGEST_GT: Int
+  summary_LONGEST_GTE: Int
+  summary_LONGEST_LT: Int
+  summary_LONGEST_LTE: Int
+  summary_LT: Int
+  summary_LTE: Int
+  summary_SHORTEST_EQUAL: Int
+  summary_SHORTEST_GT: Int
+  summary_SHORTEST_GTE: Int
+  summary_SHORTEST_LT: Int
+  summary_SHORTEST_LTE: Int
+}
+
+input MoviePeopleReviewedFieldInput {
+  connect: [MoviePeopleReviewedConnectFieldInput!]
+  create: [MoviePeopleReviewedCreateFieldInput!]
+}
+
+input MoviePeopleReviewedNodeAggregationWhereInput {
+  AND: [MoviePeopleReviewedNodeAggregationWhereInput!]
+  OR: [MoviePeopleReviewedNodeAggregationWhereInput!]
+  born_AVERAGE_EQUAL: BigInt
+  born_AVERAGE_GT: BigInt
+  born_AVERAGE_GTE: BigInt
+  born_AVERAGE_LT: BigInt
+  born_AVERAGE_LTE: BigInt
+  born_EQUAL: BigInt
+  born_GT: BigInt
+  born_GTE: BigInt
+  born_LT: BigInt
+  born_LTE: BigInt
+  born_MAX_EQUAL: BigInt
+  born_MAX_GT: BigInt
+  born_MAX_GTE: BigInt
+  born_MAX_LT: BigInt
+  born_MAX_LTE: BigInt
+  born_MIN_EQUAL: BigInt
+  born_MIN_GT: BigInt
+  born_MIN_GTE: BigInt
+  born_MIN_LT: BigInt
+  born_MIN_LTE: BigInt
+  born_SUM_EQUAL: BigInt
+  born_SUM_GT: BigInt
+  born_SUM_GTE: BigInt
+  born_SUM_LT: BigInt
+  born_SUM_LTE: BigInt
+  name_AVERAGE_EQUAL: Float
+  name_AVERAGE_GT: Float
+  name_AVERAGE_GTE: Float
+  name_AVERAGE_LT: Float
+  name_AVERAGE_LTE: Float
+  name_EQUAL: String
+  name_GT: Int
+  name_GTE: Int
+  name_LONGEST_EQUAL: Int
+  name_LONGEST_GT: Int
+  name_LONGEST_GTE: Int
+  name_LONGEST_LT: Int
+  name_LONGEST_LTE: Int
+  name_LT: Int
+  name_LTE: Int
+  name_SHORTEST_EQUAL: Int
+  name_SHORTEST_GT: Int
+  name_SHORTEST_GTE: Int
+  name_SHORTEST_LT: Int
+  name_SHORTEST_LTE: Int
+}
+
+type MoviePeopleReviewedRelationship implements ReviewedProperties {
+  cursor: String!
+  node: Person!
+  rating: BigInt!
+  summary: String!
+}
+
+input MoviePeopleReviewedUpdateConnectionInput {
+  edge: ReviewedPropertiesUpdateInput
+  node: PersonUpdateInput
+}
+
+input MoviePeopleReviewedUpdateFieldInput {
+  connect: [MoviePeopleReviewedConnectFieldInput!]
+  create: [MoviePeopleReviewedCreateFieldInput!]
+  delete: [MoviePeopleReviewedDeleteFieldInput!]
+  disconnect: [MoviePeopleReviewedDisconnectFieldInput!]
+  update: MoviePeopleReviewedUpdateConnectionInput
+  where: MoviePeopleReviewedConnectionWhere
+}
+
+input MoviePeopleWroteAggregateInput {
+  AND: [MoviePeopleWroteAggregateInput!]
+  OR: [MoviePeopleWroteAggregateInput!]
+  count: Int
+  count_GT: Int
+  count_GTE: Int
+  count_LT: Int
+  count_LTE: Int
+  node: MoviePeopleWroteNodeAggregationWhereInput
+}
+
+input MoviePeopleWroteConnectFieldInput {
+  connect: [PersonConnectInput!]
+  where: PersonConnectWhere
+}
+
+type MoviePeopleWroteConnection {
+  edges: [MoviePeopleWroteRelationship!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+input MoviePeopleWroteConnectionSort {
+  node: PersonSort
+}
+
+input MoviePeopleWroteConnectionWhere {
+  AND: [MoviePeopleWroteConnectionWhere!]
+  OR: [MoviePeopleWroteConnectionWhere!]
+  node: PersonWhere
+  node_NOT: PersonWhere
+}
+
+input MoviePeopleWroteCreateFieldInput {
+  node: PersonCreateInput!
+}
+
+input MoviePeopleWroteDeleteFieldInput {
+  delete: PersonDeleteInput
+  where: MoviePeopleWroteConnectionWhere
+}
+
+input MoviePeopleWroteDisconnectFieldInput {
+  disconnect: PersonDisconnectInput
+  where: MoviePeopleWroteConnectionWhere
+}
+
+input MoviePeopleWroteFieldInput {
+  connect: [MoviePeopleWroteConnectFieldInput!]
+  create: [MoviePeopleWroteCreateFieldInput!]
+}
+
+input MoviePeopleWroteNodeAggregationWhereInput {
+  AND: [MoviePeopleWroteNodeAggregationWhereInput!]
+  OR: [MoviePeopleWroteNodeAggregationWhereInput!]
+  born_AVERAGE_EQUAL: BigInt
+  born_AVERAGE_GT: BigInt
+  born_AVERAGE_GTE: BigInt
+  born_AVERAGE_LT: BigInt
+  born_AVERAGE_LTE: BigInt
+  born_EQUAL: BigInt
+  born_GT: BigInt
+  born_GTE: BigInt
+  born_LT: BigInt
+  born_LTE: BigInt
+  born_MAX_EQUAL: BigInt
+  born_MAX_GT: BigInt
+  born_MAX_GTE: BigInt
+  born_MAX_LT: BigInt
+  born_MAX_LTE: BigInt
+  born_MIN_EQUAL: BigInt
+  born_MIN_GT: BigInt
+  born_MIN_GTE: BigInt
+  born_MIN_LT: BigInt
+  born_MIN_LTE: BigInt
+  born_SUM_EQUAL: BigInt
+  born_SUM_GT: BigInt
+  born_SUM_GTE: BigInt
+  born_SUM_LT: BigInt
+  born_SUM_LTE: BigInt
+  name_AVERAGE_EQUAL: Float
+  name_AVERAGE_GT: Float
+  name_AVERAGE_GTE: Float
+  name_AVERAGE_LT: Float
+  name_AVERAGE_LTE: Float
+  name_EQUAL: String
+  name_GT: Int
+  name_GTE: Int
+  name_LONGEST_EQUAL: Int
+  name_LONGEST_GT: Int
+  name_LONGEST_GTE: Int
+  name_LONGEST_LT: Int
+  name_LONGEST_LTE: Int
+  name_LT: Int
+  name_LTE: Int
+  name_SHORTEST_EQUAL: Int
+  name_SHORTEST_GT: Int
+  name_SHORTEST_GTE: Int
+  name_SHORTEST_LT: Int
+  name_SHORTEST_LTE: Int
+}
+
+type MoviePeopleWroteRelationship {
+  cursor: String!
+  node: Person!
+}
+
+input MoviePeopleWroteUpdateConnectionInput {
+  node: PersonUpdateInput
+}
+
+input MoviePeopleWroteUpdateFieldInput {
+  connect: [MoviePeopleWroteConnectFieldInput!]
+  create: [MoviePeopleWroteCreateFieldInput!]
+  delete: [MoviePeopleWroteDeleteFieldInput!]
+  disconnect: [MoviePeopleWroteDisconnectFieldInput!]
+  update: MoviePeopleWroteUpdateConnectionInput
+  where: MoviePeopleWroteConnectionWhere
+}
+
+type MoviePersonPeopleActedInAggregationSelection {
+  count: Int!
+  node: MoviePersonPeopleActedInNodeAggregateSelection
+}
+
+type MoviePersonPeopleActedInNodeAggregateSelection {
+  born: BigIntAggregateSelectionNullable!
+  name: StringAggregateSelectionNonNullable!
+}
+
+type MoviePersonPeopleDirectedAggregationSelection {
+  count: Int!
+  node: MoviePersonPeopleDirectedNodeAggregateSelection
+}
+
+type MoviePersonPeopleDirectedNodeAggregateSelection {
+  born: BigIntAggregateSelectionNullable!
+  name: StringAggregateSelectionNonNullable!
+}
+
+type MoviePersonPeopleProducedAggregationSelection {
+  count: Int!
+  node: MoviePersonPeopleProducedNodeAggregateSelection
+}
+
+type MoviePersonPeopleProducedNodeAggregateSelection {
+  born: BigIntAggregateSelectionNullable!
+  name: StringAggregateSelectionNonNullable!
+}
+
+type MoviePersonPeopleReviewedAggregationSelection {
+  count: Int!
+  edge: MoviePersonPeopleReviewedEdgeAggregateSelection
+  node: MoviePersonPeopleReviewedNodeAggregateSelection
+}
+
+type MoviePersonPeopleReviewedEdgeAggregateSelection {
+  rating: BigIntAggregateSelectionNonNullable!
+  summary: StringAggregateSelectionNonNullable!
+}
+
+type MoviePersonPeopleReviewedNodeAggregateSelection {
+  born: BigIntAggregateSelectionNullable!
+  name: StringAggregateSelectionNonNullable!
+}
+
+type MoviePersonPeopleWroteAggregationSelection {
+  count: Int!
+  node: MoviePersonPeopleWroteNodeAggregateSelection
+}
+
+type MoviePersonPeopleWroteNodeAggregateSelection {
+  born: BigIntAggregateSelectionNullable!
+  name: StringAggregateSelectionNonNullable!
+}
+
+input MovieRelationInput {
+  peopleActedIn: [MoviePeopleActedInCreateFieldInput!]
+  peopleDirected: [MoviePeopleDirectedCreateFieldInput!]
+  peopleProduced: [MoviePeopleProducedCreateFieldInput!]
+  peopleReviewed: [MoviePeopleReviewedCreateFieldInput!]
+  peopleWrote: [MoviePeopleWroteCreateFieldInput!]
+}
+
+\\"\\"\\"
+Fields to sort Movies by. The order in which sorts are applied is not guaranteed when specifying many fields in one MovieSort object.
+\\"\\"\\"
+input MovieSort {
+  released: SortDirection
+  tagline: SortDirection
+  title: SortDirection
+  votes: SortDirection
+}
+
+input MovieSubscriptionWhere {
+  released: BigInt
+  tagline: String
+  title: String
+  votes: BigInt
+}
+
+input MovieUpdateInput {
+  peopleActedIn: [MoviePeopleActedInUpdateFieldInput!]
+  peopleDirected: [MoviePeopleDirectedUpdateFieldInput!]
+  peopleProduced: [MoviePeopleProducedUpdateFieldInput!]
+  peopleReviewed: [MoviePeopleReviewedUpdateFieldInput!]
+  peopleWrote: [MoviePeopleWroteUpdateFieldInput!]
+  released: BigInt
+  tagline: String
+  title: String
+  votes: BigInt
+}
+
+type MovieUpdatedEvent {
+  event: EventType!
+  previousState: MovieEventPayload!
+  updatedMovie: MovieEventPayload!
+}
+
+input MovieWhere {
+  AND: [MovieWhere!]
+  OR: [MovieWhere!]
+  peopleActedIn: PersonWhere @deprecated(reason: \\"Use \`peopleActedIn_SOME\` instead.\\")
+  peopleActedInAggregate: MoviePeopleActedInAggregateInput
+  peopleActedInConnection: MoviePeopleActedInConnectionWhere @deprecated(reason: \\"Use \`peopleActedInConnection_SOME\` instead.\\")
+  peopleActedInConnection_ALL: MoviePeopleActedInConnectionWhere
+  peopleActedInConnection_NONE: MoviePeopleActedInConnectionWhere
+  peopleActedInConnection_NOT: MoviePeopleActedInConnectionWhere @deprecated(reason: \\"Use \`peopleActedInConnection_NONE\` instead.\\")
+  peopleActedInConnection_SINGLE: MoviePeopleActedInConnectionWhere
+  peopleActedInConnection_SOME: MoviePeopleActedInConnectionWhere
+
+  \\"\\"\\"Return Movies where all of the related People match this filter\\"\\"\\"
+  peopleActedIn_ALL: PersonWhere
+
+  \\"\\"\\"Return Movies where none of the related People match this filter\\"\\"\\"
+  peopleActedIn_NONE: PersonWhere
+  peopleActedIn_NOT: PersonWhere @deprecated(reason: \\"Use \`peopleActedIn_NONE\` instead.\\")
+
+  \\"\\"\\"Return Movies where one of the related People match this filter\\"\\"\\"
+  peopleActedIn_SINGLE: PersonWhere
+
+  \\"\\"\\"Return Movies where some of the related People match this filter\\"\\"\\"
+  peopleActedIn_SOME: PersonWhere
+  peopleDirected: PersonWhere @deprecated(reason: \\"Use \`peopleDirected_SOME\` instead.\\")
+  peopleDirectedAggregate: MoviePeopleDirectedAggregateInput
+  peopleDirectedConnection: MoviePeopleDirectedConnectionWhere @deprecated(reason: \\"Use \`peopleDirectedConnection_SOME\` instead.\\")
+  peopleDirectedConnection_ALL: MoviePeopleDirectedConnectionWhere
+  peopleDirectedConnection_NONE: MoviePeopleDirectedConnectionWhere
+  peopleDirectedConnection_NOT: MoviePeopleDirectedConnectionWhere @deprecated(reason: \\"Use \`peopleDirectedConnection_NONE\` instead.\\")
+  peopleDirectedConnection_SINGLE: MoviePeopleDirectedConnectionWhere
+  peopleDirectedConnection_SOME: MoviePeopleDirectedConnectionWhere
+
+  \\"\\"\\"Return Movies where all of the related People match this filter\\"\\"\\"
+  peopleDirected_ALL: PersonWhere
+
+  \\"\\"\\"Return Movies where none of the related People match this filter\\"\\"\\"
+  peopleDirected_NONE: PersonWhere
+  peopleDirected_NOT: PersonWhere @deprecated(reason: \\"Use \`peopleDirected_NONE\` instead.\\")
+
+  \\"\\"\\"Return Movies where one of the related People match this filter\\"\\"\\"
+  peopleDirected_SINGLE: PersonWhere
+
+  \\"\\"\\"Return Movies where some of the related People match this filter\\"\\"\\"
+  peopleDirected_SOME: PersonWhere
+  peopleProduced: PersonWhere @deprecated(reason: \\"Use \`peopleProduced_SOME\` instead.\\")
+  peopleProducedAggregate: MoviePeopleProducedAggregateInput
+  peopleProducedConnection: MoviePeopleProducedConnectionWhere @deprecated(reason: \\"Use \`peopleProducedConnection_SOME\` instead.\\")
+  peopleProducedConnection_ALL: MoviePeopleProducedConnectionWhere
+  peopleProducedConnection_NONE: MoviePeopleProducedConnectionWhere
+  peopleProducedConnection_NOT: MoviePeopleProducedConnectionWhere @deprecated(reason: \\"Use \`peopleProducedConnection_NONE\` instead.\\")
+  peopleProducedConnection_SINGLE: MoviePeopleProducedConnectionWhere
+  peopleProducedConnection_SOME: MoviePeopleProducedConnectionWhere
+
+  \\"\\"\\"Return Movies where all of the related People match this filter\\"\\"\\"
+  peopleProduced_ALL: PersonWhere
+
+  \\"\\"\\"Return Movies where none of the related People match this filter\\"\\"\\"
+  peopleProduced_NONE: PersonWhere
+  peopleProduced_NOT: PersonWhere @deprecated(reason: \\"Use \`peopleProduced_NONE\` instead.\\")
+
+  \\"\\"\\"Return Movies where one of the related People match this filter\\"\\"\\"
+  peopleProduced_SINGLE: PersonWhere
+
+  \\"\\"\\"Return Movies where some of the related People match this filter\\"\\"\\"
+  peopleProduced_SOME: PersonWhere
+  peopleReviewed: PersonWhere @deprecated(reason: \\"Use \`peopleReviewed_SOME\` instead.\\")
+  peopleReviewedAggregate: MoviePeopleReviewedAggregateInput
+  peopleReviewedConnection: MoviePeopleReviewedConnectionWhere @deprecated(reason: \\"Use \`peopleReviewedConnection_SOME\` instead.\\")
+  peopleReviewedConnection_ALL: MoviePeopleReviewedConnectionWhere
+  peopleReviewedConnection_NONE: MoviePeopleReviewedConnectionWhere
+  peopleReviewedConnection_NOT: MoviePeopleReviewedConnectionWhere @deprecated(reason: \\"Use \`peopleReviewedConnection_NONE\` instead.\\")
+  peopleReviewedConnection_SINGLE: MoviePeopleReviewedConnectionWhere
+  peopleReviewedConnection_SOME: MoviePeopleReviewedConnectionWhere
+
+  \\"\\"\\"Return Movies where all of the related People match this filter\\"\\"\\"
+  peopleReviewed_ALL: PersonWhere
+
+  \\"\\"\\"Return Movies where none of the related People match this filter\\"\\"\\"
+  peopleReviewed_NONE: PersonWhere
+  peopleReviewed_NOT: PersonWhere @deprecated(reason: \\"Use \`peopleReviewed_NONE\` instead.\\")
+
+  \\"\\"\\"Return Movies where one of the related People match this filter\\"\\"\\"
+  peopleReviewed_SINGLE: PersonWhere
+
+  \\"\\"\\"Return Movies where some of the related People match this filter\\"\\"\\"
+  peopleReviewed_SOME: PersonWhere
+  peopleWrote: PersonWhere @deprecated(reason: \\"Use \`peopleWrote_SOME\` instead.\\")
+  peopleWroteAggregate: MoviePeopleWroteAggregateInput
+  peopleWroteConnection: MoviePeopleWroteConnectionWhere @deprecated(reason: \\"Use \`peopleWroteConnection_SOME\` instead.\\")
+  peopleWroteConnection_ALL: MoviePeopleWroteConnectionWhere
+  peopleWroteConnection_NONE: MoviePeopleWroteConnectionWhere
+  peopleWroteConnection_NOT: MoviePeopleWroteConnectionWhere @deprecated(reason: \\"Use \`peopleWroteConnection_NONE\` instead.\\")
+  peopleWroteConnection_SINGLE: MoviePeopleWroteConnectionWhere
+  peopleWroteConnection_SOME: MoviePeopleWroteConnectionWhere
+
+  \\"\\"\\"Return Movies where all of the related People match this filter\\"\\"\\"
+  peopleWrote_ALL: PersonWhere
+
+  \\"\\"\\"Return Movies where none of the related People match this filter\\"\\"\\"
+  peopleWrote_NONE: PersonWhere
+  peopleWrote_NOT: PersonWhere @deprecated(reason: \\"Use \`peopleWrote_NONE\` instead.\\")
+
+  \\"\\"\\"Return Movies where one of the related People match this filter\\"\\"\\"
+  peopleWrote_SINGLE: PersonWhere
+
+  \\"\\"\\"Return Movies where some of the related People match this filter\\"\\"\\"
+  peopleWrote_SOME: PersonWhere
+  released: BigInt
+  released_GT: BigInt
+  released_GTE: BigInt
+  released_IN: [BigInt!]
+  released_LT: BigInt
+  released_LTE: BigInt
+  released_NOT: BigInt
+  released_NOT_IN: [BigInt!]
+  tagline: String
+  tagline_CONTAINS: String
+  tagline_ENDS_WITH: String
+  tagline_IN: [String]
+  tagline_NOT: String
+  tagline_NOT_CONTAINS: String
+  tagline_NOT_ENDS_WITH: String
+  tagline_NOT_IN: [String]
+  tagline_NOT_STARTS_WITH: String
+  tagline_STARTS_WITH: String
+  title: String
+  title_CONTAINS: String
+  title_ENDS_WITH: String
+  title_IN: [String!]
+  title_NOT: String
+  title_NOT_CONTAINS: String
+  title_NOT_ENDS_WITH: String
+  title_NOT_IN: [String!]
+  title_NOT_STARTS_WITH: String
+  title_STARTS_WITH: String
+  votes: BigInt
+  votes_GT: BigInt
+  votes_GTE: BigInt
+  votes_IN: [BigInt!]
+  votes_LT: BigInt
+  votes_LTE: BigInt
+  votes_NOT: BigInt
+  votes_NOT_IN: [BigInt!]
+}
+
+type MoviesConnection {
+  edges: [MovieEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type Mutation {
+  createMovies(input: [MovieCreateInput!]!): CreateMoviesMutationResponse!
+  createPeople(input: [PersonCreateInput!]!): CreatePeopleMutationResponse!
+  deleteMovies(delete: MovieDeleteInput, where: MovieWhere): DeleteInfo!
+  deletePeople(delete: PersonDeleteInput, where: PersonWhere): DeleteInfo!
+  updateMovies(connect: MovieConnectInput, create: MovieRelationInput, delete: MovieDeleteInput, disconnect: MovieDisconnectInput, update: MovieUpdateInput, where: MovieWhere): UpdateMoviesMutationResponse!
+  updatePeople(connect: PersonConnectInput, create: PersonRelationInput, delete: PersonDeleteInput, disconnect: PersonDisconnectInput, update: PersonUpdateInput, where: PersonWhere): UpdatePeopleMutationResponse!
+}
+
+\\"\\"\\"Pagination information (Relay)\\"\\"\\"
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+}
+
+type PeopleConnection {
+  edges: [PersonEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type Person {
+  actedInMovies(directed: Boolean = true, options: MovieOptions, where: MovieWhere): [Movie!]!
+  actedInMoviesAggregate(directed: Boolean = true, where: MovieWhere): PersonMovieActedInMoviesAggregationSelection
+  actedInMoviesConnection(after: String, directed: Boolean = true, first: Int, sort: [PersonActedInMoviesConnectionSort!], where: PersonActedInMoviesConnectionWhere): PersonActedInMoviesConnection!
+  born: BigInt
+  directedMovies(directed: Boolean = true, options: MovieOptions, where: MovieWhere): [Movie!]!
+  directedMoviesAggregate(directed: Boolean = true, where: MovieWhere): PersonMovieDirectedMoviesAggregationSelection
+  directedMoviesConnection(after: String, directed: Boolean = true, first: Int, sort: [PersonDirectedMoviesConnectionSort!], where: PersonDirectedMoviesConnectionWhere): PersonDirectedMoviesConnection!
+  followsPeople(directed: Boolean = true, options: PersonOptions, where: PersonWhere): [Person!]!
+  followsPeopleAggregate(directed: Boolean = true, where: PersonWhere): PersonPersonFollowsPeopleAggregationSelection
+  followsPeopleConnection(after: String, directed: Boolean = true, first: Int, sort: [PersonFollowsPeopleConnectionSort!], where: PersonFollowsPeopleConnectionWhere): PersonFollowsPeopleConnection!
+  name: String!
+  peopleFollows(directed: Boolean = true, options: PersonOptions, where: PersonWhere): [Person!]!
+  peopleFollowsAggregate(directed: Boolean = true, where: PersonWhere): PersonPersonPeopleFollowsAggregationSelection
+  peopleFollowsConnection(after: String, directed: Boolean = true, first: Int, sort: [PersonPeopleFollowsConnectionSort!], where: PersonPeopleFollowsConnectionWhere): PersonPeopleFollowsConnection!
+  producedMovies(directed: Boolean = true, options: MovieOptions, where: MovieWhere): [Movie!]!
+  producedMoviesAggregate(directed: Boolean = true, where: MovieWhere): PersonMovieProducedMoviesAggregationSelection
+  producedMoviesConnection(after: String, directed: Boolean = true, first: Int, sort: [PersonProducedMoviesConnectionSort!], where: PersonProducedMoviesConnectionWhere): PersonProducedMoviesConnection!
+  reviewedMovies(directed: Boolean = true, options: MovieOptions, where: MovieWhere): [Movie!]!
+  reviewedMoviesAggregate(directed: Boolean = true, where: MovieWhere): PersonMovieReviewedMoviesAggregationSelection
+  reviewedMoviesConnection(after: String, directed: Boolean = true, first: Int, sort: [PersonReviewedMoviesConnectionSort!], where: PersonReviewedMoviesConnectionWhere): PersonReviewedMoviesConnection!
+  wroteMovies(directed: Boolean = true, options: MovieOptions, where: MovieWhere): [Movie!]!
+  wroteMoviesAggregate(directed: Boolean = true, where: MovieWhere): PersonMovieWroteMoviesAggregationSelection
+  wroteMoviesConnection(after: String, directed: Boolean = true, first: Int, sort: [PersonWroteMoviesConnectionSort!], where: PersonWroteMoviesConnectionWhere): PersonWroteMoviesConnection!
+}
+
+input PersonActedInMoviesAggregateInput {
+  AND: [PersonActedInMoviesAggregateInput!]
+  OR: [PersonActedInMoviesAggregateInput!]
+  count: Int
+  count_GT: Int
+  count_GTE: Int
+  count_LT: Int
+  count_LTE: Int
+  node: PersonActedInMoviesNodeAggregationWhereInput
+}
+
+input PersonActedInMoviesConnectFieldInput {
+  connect: [MovieConnectInput!]
+  edge: ActedInPropertiesCreateInput!
+  where: MovieConnectWhere
+}
+
+type PersonActedInMoviesConnection {
+  edges: [PersonActedInMoviesRelationship!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+input PersonActedInMoviesConnectionSort {
+  edge: ActedInPropertiesSort
+  node: MovieSort
+}
+
+input PersonActedInMoviesConnectionWhere {
+  AND: [PersonActedInMoviesConnectionWhere!]
+  OR: [PersonActedInMoviesConnectionWhere!]
+  edge: ActedInPropertiesWhere
+  edge_NOT: ActedInPropertiesWhere
+  node: MovieWhere
+  node_NOT: MovieWhere
+}
+
+input PersonActedInMoviesCreateFieldInput {
+  edge: ActedInPropertiesCreateInput!
+  node: MovieCreateInput!
+}
+
+input PersonActedInMoviesDeleteFieldInput {
+  delete: MovieDeleteInput
+  where: PersonActedInMoviesConnectionWhere
+}
+
+input PersonActedInMoviesDisconnectFieldInput {
+  disconnect: MovieDisconnectInput
+  where: PersonActedInMoviesConnectionWhere
+}
+
+input PersonActedInMoviesFieldInput {
+  connect: [PersonActedInMoviesConnectFieldInput!]
+  create: [PersonActedInMoviesCreateFieldInput!]
+}
+
+input PersonActedInMoviesNodeAggregationWhereInput {
+  AND: [PersonActedInMoviesNodeAggregationWhereInput!]
+  OR: [PersonActedInMoviesNodeAggregationWhereInput!]
+  released_AVERAGE_EQUAL: BigInt
+  released_AVERAGE_GT: BigInt
+  released_AVERAGE_GTE: BigInt
+  released_AVERAGE_LT: BigInt
+  released_AVERAGE_LTE: BigInt
+  released_EQUAL: BigInt
+  released_GT: BigInt
+  released_GTE: BigInt
+  released_LT: BigInt
+  released_LTE: BigInt
+  released_MAX_EQUAL: BigInt
+  released_MAX_GT: BigInt
+  released_MAX_GTE: BigInt
+  released_MAX_LT: BigInt
+  released_MAX_LTE: BigInt
+  released_MIN_EQUAL: BigInt
+  released_MIN_GT: BigInt
+  released_MIN_GTE: BigInt
+  released_MIN_LT: BigInt
+  released_MIN_LTE: BigInt
+  released_SUM_EQUAL: BigInt
+  released_SUM_GT: BigInt
+  released_SUM_GTE: BigInt
+  released_SUM_LT: BigInt
+  released_SUM_LTE: BigInt
+  tagline_AVERAGE_EQUAL: Float
+  tagline_AVERAGE_GT: Float
+  tagline_AVERAGE_GTE: Float
+  tagline_AVERAGE_LT: Float
+  tagline_AVERAGE_LTE: Float
+  tagline_EQUAL: String
+  tagline_GT: Int
+  tagline_GTE: Int
+  tagline_LONGEST_EQUAL: Int
+  tagline_LONGEST_GT: Int
+  tagline_LONGEST_GTE: Int
+  tagline_LONGEST_LT: Int
+  tagline_LONGEST_LTE: Int
+  tagline_LT: Int
+  tagline_LTE: Int
+  tagline_SHORTEST_EQUAL: Int
+  tagline_SHORTEST_GT: Int
+  tagline_SHORTEST_GTE: Int
+  tagline_SHORTEST_LT: Int
+  tagline_SHORTEST_LTE: Int
+  title_AVERAGE_EQUAL: Float
+  title_AVERAGE_GT: Float
+  title_AVERAGE_GTE: Float
+  title_AVERAGE_LT: Float
+  title_AVERAGE_LTE: Float
+  title_EQUAL: String
+  title_GT: Int
+  title_GTE: Int
+  title_LONGEST_EQUAL: Int
+  title_LONGEST_GT: Int
+  title_LONGEST_GTE: Int
+  title_LONGEST_LT: Int
+  title_LONGEST_LTE: Int
+  title_LT: Int
+  title_LTE: Int
+  title_SHORTEST_EQUAL: Int
+  title_SHORTEST_GT: Int
+  title_SHORTEST_GTE: Int
+  title_SHORTEST_LT: Int
+  title_SHORTEST_LTE: Int
+  votes_AVERAGE_EQUAL: BigInt
+  votes_AVERAGE_GT: BigInt
+  votes_AVERAGE_GTE: BigInt
+  votes_AVERAGE_LT: BigInt
+  votes_AVERAGE_LTE: BigInt
+  votes_EQUAL: BigInt
+  votes_GT: BigInt
+  votes_GTE: BigInt
+  votes_LT: BigInt
+  votes_LTE: BigInt
+  votes_MAX_EQUAL: BigInt
+  votes_MAX_GT: BigInt
+  votes_MAX_GTE: BigInt
+  votes_MAX_LT: BigInt
+  votes_MAX_LTE: BigInt
+  votes_MIN_EQUAL: BigInt
+  votes_MIN_GT: BigInt
+  votes_MIN_GTE: BigInt
+  votes_MIN_LT: BigInt
+  votes_MIN_LTE: BigInt
+  votes_SUM_EQUAL: BigInt
+  votes_SUM_GT: BigInt
+  votes_SUM_GTE: BigInt
+  votes_SUM_LT: BigInt
+  votes_SUM_LTE: BigInt
+}
+
+type PersonActedInMoviesRelationship implements ActedInProperties {
+  cursor: String!
+  node: Movie!
+  roles: [String]!
+}
+
+input PersonActedInMoviesUpdateConnectionInput {
+  edge: ActedInPropertiesUpdateInput
+  node: MovieUpdateInput
+}
+
+input PersonActedInMoviesUpdateFieldInput {
+  connect: [PersonActedInMoviesConnectFieldInput!]
+  create: [PersonActedInMoviesCreateFieldInput!]
+  delete: [PersonActedInMoviesDeleteFieldInput!]
+  disconnect: [PersonActedInMoviesDisconnectFieldInput!]
+  update: PersonActedInMoviesUpdateConnectionInput
+  where: PersonActedInMoviesConnectionWhere
+}
+
+type PersonAggregateSelection {
+  born: BigIntAggregateSelectionNullable!
+  count: Int!
+  name: StringAggregateSelectionNonNullable!
+}
+
+input PersonConnectInput {
+  actedInMovies: [PersonActedInMoviesConnectFieldInput!]
+  directedMovies: [PersonDirectedMoviesConnectFieldInput!]
+  followsPeople: [PersonFollowsPeopleConnectFieldInput!]
+  peopleFollows: [PersonPeopleFollowsConnectFieldInput!]
+  producedMovies: [PersonProducedMoviesConnectFieldInput!]
+  reviewedMovies: [PersonReviewedMoviesConnectFieldInput!]
+  wroteMovies: [PersonWroteMoviesConnectFieldInput!]
+}
+
+input PersonConnectWhere {
+  node: PersonWhere!
+}
+
+input PersonCreateInput {
+  actedInMovies: PersonActedInMoviesFieldInput
+  born: BigInt
+  directedMovies: PersonDirectedMoviesFieldInput
+  followsPeople: PersonFollowsPeopleFieldInput
+  name: String!
+  peopleFollows: PersonPeopleFollowsFieldInput
+  producedMovies: PersonProducedMoviesFieldInput
+  reviewedMovies: PersonReviewedMoviesFieldInput
+  wroteMovies: PersonWroteMoviesFieldInput
+}
+
+type PersonCreatedEvent {
+  createdPerson: PersonEventPayload!
+  event: EventType!
+}
+
+input PersonDeleteInput {
+  actedInMovies: [PersonActedInMoviesDeleteFieldInput!]
+  directedMovies: [PersonDirectedMoviesDeleteFieldInput!]
+  followsPeople: [PersonFollowsPeopleDeleteFieldInput!]
+  peopleFollows: [PersonPeopleFollowsDeleteFieldInput!]
+  producedMovies: [PersonProducedMoviesDeleteFieldInput!]
+  reviewedMovies: [PersonReviewedMoviesDeleteFieldInput!]
+  wroteMovies: [PersonWroteMoviesDeleteFieldInput!]
+}
+
+type PersonDeletedEvent {
+  deletedPerson: PersonEventPayload!
+  event: EventType!
+}
+
+input PersonDirectedMoviesAggregateInput {
+  AND: [PersonDirectedMoviesAggregateInput!]
+  OR: [PersonDirectedMoviesAggregateInput!]
+  count: Int
+  count_GT: Int
+  count_GTE: Int
+  count_LT: Int
+  count_LTE: Int
+  node: PersonDirectedMoviesNodeAggregationWhereInput
+}
+
+input PersonDirectedMoviesConnectFieldInput {
+  connect: [MovieConnectInput!]
+  where: MovieConnectWhere
+}
+
+type PersonDirectedMoviesConnection {
+  edges: [PersonDirectedMoviesRelationship!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+input PersonDirectedMoviesConnectionSort {
+  node: MovieSort
+}
+
+input PersonDirectedMoviesConnectionWhere {
+  AND: [PersonDirectedMoviesConnectionWhere!]
+  OR: [PersonDirectedMoviesConnectionWhere!]
+  node: MovieWhere
+  node_NOT: MovieWhere
+}
+
+input PersonDirectedMoviesCreateFieldInput {
+  node: MovieCreateInput!
+}
+
+input PersonDirectedMoviesDeleteFieldInput {
+  delete: MovieDeleteInput
+  where: PersonDirectedMoviesConnectionWhere
+}
+
+input PersonDirectedMoviesDisconnectFieldInput {
+  disconnect: MovieDisconnectInput
+  where: PersonDirectedMoviesConnectionWhere
+}
+
+input PersonDirectedMoviesFieldInput {
+  connect: [PersonDirectedMoviesConnectFieldInput!]
+  create: [PersonDirectedMoviesCreateFieldInput!]
+}
+
+input PersonDirectedMoviesNodeAggregationWhereInput {
+  AND: [PersonDirectedMoviesNodeAggregationWhereInput!]
+  OR: [PersonDirectedMoviesNodeAggregationWhereInput!]
+  released_AVERAGE_EQUAL: BigInt
+  released_AVERAGE_GT: BigInt
+  released_AVERAGE_GTE: BigInt
+  released_AVERAGE_LT: BigInt
+  released_AVERAGE_LTE: BigInt
+  released_EQUAL: BigInt
+  released_GT: BigInt
+  released_GTE: BigInt
+  released_LT: BigInt
+  released_LTE: BigInt
+  released_MAX_EQUAL: BigInt
+  released_MAX_GT: BigInt
+  released_MAX_GTE: BigInt
+  released_MAX_LT: BigInt
+  released_MAX_LTE: BigInt
+  released_MIN_EQUAL: BigInt
+  released_MIN_GT: BigInt
+  released_MIN_GTE: BigInt
+  released_MIN_LT: BigInt
+  released_MIN_LTE: BigInt
+  released_SUM_EQUAL: BigInt
+  released_SUM_GT: BigInt
+  released_SUM_GTE: BigInt
+  released_SUM_LT: BigInt
+  released_SUM_LTE: BigInt
+  tagline_AVERAGE_EQUAL: Float
+  tagline_AVERAGE_GT: Float
+  tagline_AVERAGE_GTE: Float
+  tagline_AVERAGE_LT: Float
+  tagline_AVERAGE_LTE: Float
+  tagline_EQUAL: String
+  tagline_GT: Int
+  tagline_GTE: Int
+  tagline_LONGEST_EQUAL: Int
+  tagline_LONGEST_GT: Int
+  tagline_LONGEST_GTE: Int
+  tagline_LONGEST_LT: Int
+  tagline_LONGEST_LTE: Int
+  tagline_LT: Int
+  tagline_LTE: Int
+  tagline_SHORTEST_EQUAL: Int
+  tagline_SHORTEST_GT: Int
+  tagline_SHORTEST_GTE: Int
+  tagline_SHORTEST_LT: Int
+  tagline_SHORTEST_LTE: Int
+  title_AVERAGE_EQUAL: Float
+  title_AVERAGE_GT: Float
+  title_AVERAGE_GTE: Float
+  title_AVERAGE_LT: Float
+  title_AVERAGE_LTE: Float
+  title_EQUAL: String
+  title_GT: Int
+  title_GTE: Int
+  title_LONGEST_EQUAL: Int
+  title_LONGEST_GT: Int
+  title_LONGEST_GTE: Int
+  title_LONGEST_LT: Int
+  title_LONGEST_LTE: Int
+  title_LT: Int
+  title_LTE: Int
+  title_SHORTEST_EQUAL: Int
+  title_SHORTEST_GT: Int
+  title_SHORTEST_GTE: Int
+  title_SHORTEST_LT: Int
+  title_SHORTEST_LTE: Int
+  votes_AVERAGE_EQUAL: BigInt
+  votes_AVERAGE_GT: BigInt
+  votes_AVERAGE_GTE: BigInt
+  votes_AVERAGE_LT: BigInt
+  votes_AVERAGE_LTE: BigInt
+  votes_EQUAL: BigInt
+  votes_GT: BigInt
+  votes_GTE: BigInt
+  votes_LT: BigInt
+  votes_LTE: BigInt
+  votes_MAX_EQUAL: BigInt
+  votes_MAX_GT: BigInt
+  votes_MAX_GTE: BigInt
+  votes_MAX_LT: BigInt
+  votes_MAX_LTE: BigInt
+  votes_MIN_EQUAL: BigInt
+  votes_MIN_GT: BigInt
+  votes_MIN_GTE: BigInt
+  votes_MIN_LT: BigInt
+  votes_MIN_LTE: BigInt
+  votes_SUM_EQUAL: BigInt
+  votes_SUM_GT: BigInt
+  votes_SUM_GTE: BigInt
+  votes_SUM_LT: BigInt
+  votes_SUM_LTE: BigInt
+}
+
+type PersonDirectedMoviesRelationship {
+  cursor: String!
+  node: Movie!
+}
+
+input PersonDirectedMoviesUpdateConnectionInput {
+  node: MovieUpdateInput
+}
+
+input PersonDirectedMoviesUpdateFieldInput {
+  connect: [PersonDirectedMoviesConnectFieldInput!]
+  create: [PersonDirectedMoviesCreateFieldInput!]
+  delete: [PersonDirectedMoviesDeleteFieldInput!]
+  disconnect: [PersonDirectedMoviesDisconnectFieldInput!]
+  update: PersonDirectedMoviesUpdateConnectionInput
+  where: PersonDirectedMoviesConnectionWhere
+}
+
+input PersonDisconnectInput {
+  actedInMovies: [PersonActedInMoviesDisconnectFieldInput!]
+  directedMovies: [PersonDirectedMoviesDisconnectFieldInput!]
+  followsPeople: [PersonFollowsPeopleDisconnectFieldInput!]
+  peopleFollows: [PersonPeopleFollowsDisconnectFieldInput!]
+  producedMovies: [PersonProducedMoviesDisconnectFieldInput!]
+  reviewedMovies: [PersonReviewedMoviesDisconnectFieldInput!]
+  wroteMovies: [PersonWroteMoviesDisconnectFieldInput!]
+}
+
+type PersonEdge {
+  cursor: String!
+  node: Person!
+}
+
+type PersonEventPayload {
+  born: BigInt
+  name: String!
+}
+
+input PersonFollowsPeopleAggregateInput {
+  AND: [PersonFollowsPeopleAggregateInput!]
+  OR: [PersonFollowsPeopleAggregateInput!]
+  count: Int
+  count_GT: Int
+  count_GTE: Int
+  count_LT: Int
+  count_LTE: Int
+  node: PersonFollowsPeopleNodeAggregationWhereInput
+}
+
+input PersonFollowsPeopleConnectFieldInput {
+  connect: [PersonConnectInput!]
+  where: PersonConnectWhere
+}
+
+type PersonFollowsPeopleConnection {
+  edges: [PersonFollowsPeopleRelationship!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+input PersonFollowsPeopleConnectionSort {
+  node: PersonSort
+}
+
+input PersonFollowsPeopleConnectionWhere {
+  AND: [PersonFollowsPeopleConnectionWhere!]
+  OR: [PersonFollowsPeopleConnectionWhere!]
+  node: PersonWhere
+  node_NOT: PersonWhere
+}
+
+input PersonFollowsPeopleCreateFieldInput {
+  node: PersonCreateInput!
+}
+
+input PersonFollowsPeopleDeleteFieldInput {
+  delete: PersonDeleteInput
+  where: PersonFollowsPeopleConnectionWhere
+}
+
+input PersonFollowsPeopleDisconnectFieldInput {
+  disconnect: PersonDisconnectInput
+  where: PersonFollowsPeopleConnectionWhere
+}
+
+input PersonFollowsPeopleFieldInput {
+  connect: [PersonFollowsPeopleConnectFieldInput!]
+  create: [PersonFollowsPeopleCreateFieldInput!]
+}
+
+input PersonFollowsPeopleNodeAggregationWhereInput {
+  AND: [PersonFollowsPeopleNodeAggregationWhereInput!]
+  OR: [PersonFollowsPeopleNodeAggregationWhereInput!]
+  born_AVERAGE_EQUAL: BigInt
+  born_AVERAGE_GT: BigInt
+  born_AVERAGE_GTE: BigInt
+  born_AVERAGE_LT: BigInt
+  born_AVERAGE_LTE: BigInt
+  born_EQUAL: BigInt
+  born_GT: BigInt
+  born_GTE: BigInt
+  born_LT: BigInt
+  born_LTE: BigInt
+  born_MAX_EQUAL: BigInt
+  born_MAX_GT: BigInt
+  born_MAX_GTE: BigInt
+  born_MAX_LT: BigInt
+  born_MAX_LTE: BigInt
+  born_MIN_EQUAL: BigInt
+  born_MIN_GT: BigInt
+  born_MIN_GTE: BigInt
+  born_MIN_LT: BigInt
+  born_MIN_LTE: BigInt
+  born_SUM_EQUAL: BigInt
+  born_SUM_GT: BigInt
+  born_SUM_GTE: BigInt
+  born_SUM_LT: BigInt
+  born_SUM_LTE: BigInt
+  name_AVERAGE_EQUAL: Float
+  name_AVERAGE_GT: Float
+  name_AVERAGE_GTE: Float
+  name_AVERAGE_LT: Float
+  name_AVERAGE_LTE: Float
+  name_EQUAL: String
+  name_GT: Int
+  name_GTE: Int
+  name_LONGEST_EQUAL: Int
+  name_LONGEST_GT: Int
+  name_LONGEST_GTE: Int
+  name_LONGEST_LT: Int
+  name_LONGEST_LTE: Int
+  name_LT: Int
+  name_LTE: Int
+  name_SHORTEST_EQUAL: Int
+  name_SHORTEST_GT: Int
+  name_SHORTEST_GTE: Int
+  name_SHORTEST_LT: Int
+  name_SHORTEST_LTE: Int
+}
+
+type PersonFollowsPeopleRelationship {
+  cursor: String!
+  node: Person!
+}
+
+input PersonFollowsPeopleUpdateConnectionInput {
+  node: PersonUpdateInput
+}
+
+input PersonFollowsPeopleUpdateFieldInput {
+  connect: [PersonFollowsPeopleConnectFieldInput!]
+  create: [PersonFollowsPeopleCreateFieldInput!]
+  delete: [PersonFollowsPeopleDeleteFieldInput!]
+  disconnect: [PersonFollowsPeopleDisconnectFieldInput!]
+  update: PersonFollowsPeopleUpdateConnectionInput
+  where: PersonFollowsPeopleConnectionWhere
+}
+
+type PersonMovieActedInMoviesAggregationSelection {
+  count: Int!
+  node: PersonMovieActedInMoviesNodeAggregateSelection
+}
+
+type PersonMovieActedInMoviesNodeAggregateSelection {
+  released: BigIntAggregateSelectionNonNullable!
+  tagline: StringAggregateSelectionNullable!
+  title: StringAggregateSelectionNonNullable!
+  votes: BigIntAggregateSelectionNonNullable!
+}
+
+type PersonMovieDirectedMoviesAggregationSelection {
+  count: Int!
+  node: PersonMovieDirectedMoviesNodeAggregateSelection
+}
+
+type PersonMovieDirectedMoviesNodeAggregateSelection {
+  released: BigIntAggregateSelectionNonNullable!
+  tagline: StringAggregateSelectionNullable!
+  title: StringAggregateSelectionNonNullable!
+  votes: BigIntAggregateSelectionNonNullable!
+}
+
+type PersonMovieProducedMoviesAggregationSelection {
+  count: Int!
+  node: PersonMovieProducedMoviesNodeAggregateSelection
+}
+
+type PersonMovieProducedMoviesNodeAggregateSelection {
+  released: BigIntAggregateSelectionNonNullable!
+  tagline: StringAggregateSelectionNullable!
+  title: StringAggregateSelectionNonNullable!
+  votes: BigIntAggregateSelectionNonNullable!
+}
+
+type PersonMovieReviewedMoviesAggregationSelection {
+  count: Int!
+  edge: PersonMovieReviewedMoviesEdgeAggregateSelection
+  node: PersonMovieReviewedMoviesNodeAggregateSelection
+}
+
+type PersonMovieReviewedMoviesEdgeAggregateSelection {
+  rating: BigIntAggregateSelectionNonNullable!
+  summary: StringAggregateSelectionNonNullable!
+}
+
+type PersonMovieReviewedMoviesNodeAggregateSelection {
+  released: BigIntAggregateSelectionNonNullable!
+  tagline: StringAggregateSelectionNullable!
+  title: StringAggregateSelectionNonNullable!
+  votes: BigIntAggregateSelectionNonNullable!
+}
+
+type PersonMovieWroteMoviesAggregationSelection {
+  count: Int!
+  node: PersonMovieWroteMoviesNodeAggregateSelection
+}
+
+type PersonMovieWroteMoviesNodeAggregateSelection {
+  released: BigIntAggregateSelectionNonNullable!
+  tagline: StringAggregateSelectionNullable!
+  title: StringAggregateSelectionNonNullable!
+  votes: BigIntAggregateSelectionNonNullable!
+}
+
+input PersonOptions {
+  limit: Int
+  offset: Int
+
+  \\"\\"\\"
+  Specify one or more PersonSort objects to sort People by. The sorts will be applied in the order in which they are arranged in the array.
+  \\"\\"\\"
+  sort: [PersonSort!]
+}
+
+input PersonPeopleFollowsAggregateInput {
+  AND: [PersonPeopleFollowsAggregateInput!]
+  OR: [PersonPeopleFollowsAggregateInput!]
+  count: Int
+  count_GT: Int
+  count_GTE: Int
+  count_LT: Int
+  count_LTE: Int
+  node: PersonPeopleFollowsNodeAggregationWhereInput
+}
+
+input PersonPeopleFollowsConnectFieldInput {
+  connect: [PersonConnectInput!]
+  where: PersonConnectWhere
+}
+
+type PersonPeopleFollowsConnection {
+  edges: [PersonPeopleFollowsRelationship!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+input PersonPeopleFollowsConnectionSort {
+  node: PersonSort
+}
+
+input PersonPeopleFollowsConnectionWhere {
+  AND: [PersonPeopleFollowsConnectionWhere!]
+  OR: [PersonPeopleFollowsConnectionWhere!]
+  node: PersonWhere
+  node_NOT: PersonWhere
+}
+
+input PersonPeopleFollowsCreateFieldInput {
+  node: PersonCreateInput!
+}
+
+input PersonPeopleFollowsDeleteFieldInput {
+  delete: PersonDeleteInput
+  where: PersonPeopleFollowsConnectionWhere
+}
+
+input PersonPeopleFollowsDisconnectFieldInput {
+  disconnect: PersonDisconnectInput
+  where: PersonPeopleFollowsConnectionWhere
+}
+
+input PersonPeopleFollowsFieldInput {
+  connect: [PersonPeopleFollowsConnectFieldInput!]
+  create: [PersonPeopleFollowsCreateFieldInput!]
+}
+
+input PersonPeopleFollowsNodeAggregationWhereInput {
+  AND: [PersonPeopleFollowsNodeAggregationWhereInput!]
+  OR: [PersonPeopleFollowsNodeAggregationWhereInput!]
+  born_AVERAGE_EQUAL: BigInt
+  born_AVERAGE_GT: BigInt
+  born_AVERAGE_GTE: BigInt
+  born_AVERAGE_LT: BigInt
+  born_AVERAGE_LTE: BigInt
+  born_EQUAL: BigInt
+  born_GT: BigInt
+  born_GTE: BigInt
+  born_LT: BigInt
+  born_LTE: BigInt
+  born_MAX_EQUAL: BigInt
+  born_MAX_GT: BigInt
+  born_MAX_GTE: BigInt
+  born_MAX_LT: BigInt
+  born_MAX_LTE: BigInt
+  born_MIN_EQUAL: BigInt
+  born_MIN_GT: BigInt
+  born_MIN_GTE: BigInt
+  born_MIN_LT: BigInt
+  born_MIN_LTE: BigInt
+  born_SUM_EQUAL: BigInt
+  born_SUM_GT: BigInt
+  born_SUM_GTE: BigInt
+  born_SUM_LT: BigInt
+  born_SUM_LTE: BigInt
+  name_AVERAGE_EQUAL: Float
+  name_AVERAGE_GT: Float
+  name_AVERAGE_GTE: Float
+  name_AVERAGE_LT: Float
+  name_AVERAGE_LTE: Float
+  name_EQUAL: String
+  name_GT: Int
+  name_GTE: Int
+  name_LONGEST_EQUAL: Int
+  name_LONGEST_GT: Int
+  name_LONGEST_GTE: Int
+  name_LONGEST_LT: Int
+  name_LONGEST_LTE: Int
+  name_LT: Int
+  name_LTE: Int
+  name_SHORTEST_EQUAL: Int
+  name_SHORTEST_GT: Int
+  name_SHORTEST_GTE: Int
+  name_SHORTEST_LT: Int
+  name_SHORTEST_LTE: Int
+}
+
+type PersonPeopleFollowsRelationship {
+  cursor: String!
+  node: Person!
+}
+
+input PersonPeopleFollowsUpdateConnectionInput {
+  node: PersonUpdateInput
+}
+
+input PersonPeopleFollowsUpdateFieldInput {
+  connect: [PersonPeopleFollowsConnectFieldInput!]
+  create: [PersonPeopleFollowsCreateFieldInput!]
+  delete: [PersonPeopleFollowsDeleteFieldInput!]
+  disconnect: [PersonPeopleFollowsDisconnectFieldInput!]
+  update: PersonPeopleFollowsUpdateConnectionInput
+  where: PersonPeopleFollowsConnectionWhere
+}
+
+type PersonPersonFollowsPeopleAggregationSelection {
+  count: Int!
+  node: PersonPersonFollowsPeopleNodeAggregateSelection
+}
+
+type PersonPersonFollowsPeopleNodeAggregateSelection {
+  born: BigIntAggregateSelectionNullable!
+  name: StringAggregateSelectionNonNullable!
+}
+
+type PersonPersonPeopleFollowsAggregationSelection {
+  count: Int!
+  node: PersonPersonPeopleFollowsNodeAggregateSelection
+}
+
+type PersonPersonPeopleFollowsNodeAggregateSelection {
+  born: BigIntAggregateSelectionNullable!
+  name: StringAggregateSelectionNonNullable!
+}
+
+input PersonProducedMoviesAggregateInput {
+  AND: [PersonProducedMoviesAggregateInput!]
+  OR: [PersonProducedMoviesAggregateInput!]
+  count: Int
+  count_GT: Int
+  count_GTE: Int
+  count_LT: Int
+  count_LTE: Int
+  node: PersonProducedMoviesNodeAggregationWhereInput
+}
+
+input PersonProducedMoviesConnectFieldInput {
+  connect: [MovieConnectInput!]
+  where: MovieConnectWhere
+}
+
+type PersonProducedMoviesConnection {
+  edges: [PersonProducedMoviesRelationship!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+input PersonProducedMoviesConnectionSort {
+  node: MovieSort
+}
+
+input PersonProducedMoviesConnectionWhere {
+  AND: [PersonProducedMoviesConnectionWhere!]
+  OR: [PersonProducedMoviesConnectionWhere!]
+  node: MovieWhere
+  node_NOT: MovieWhere
+}
+
+input PersonProducedMoviesCreateFieldInput {
+  node: MovieCreateInput!
+}
+
+input PersonProducedMoviesDeleteFieldInput {
+  delete: MovieDeleteInput
+  where: PersonProducedMoviesConnectionWhere
+}
+
+input PersonProducedMoviesDisconnectFieldInput {
+  disconnect: MovieDisconnectInput
+  where: PersonProducedMoviesConnectionWhere
+}
+
+input PersonProducedMoviesFieldInput {
+  connect: [PersonProducedMoviesConnectFieldInput!]
+  create: [PersonProducedMoviesCreateFieldInput!]
+}
+
+input PersonProducedMoviesNodeAggregationWhereInput {
+  AND: [PersonProducedMoviesNodeAggregationWhereInput!]
+  OR: [PersonProducedMoviesNodeAggregationWhereInput!]
+  released_AVERAGE_EQUAL: BigInt
+  released_AVERAGE_GT: BigInt
+  released_AVERAGE_GTE: BigInt
+  released_AVERAGE_LT: BigInt
+  released_AVERAGE_LTE: BigInt
+  released_EQUAL: BigInt
+  released_GT: BigInt
+  released_GTE: BigInt
+  released_LT: BigInt
+  released_LTE: BigInt
+  released_MAX_EQUAL: BigInt
+  released_MAX_GT: BigInt
+  released_MAX_GTE: BigInt
+  released_MAX_LT: BigInt
+  released_MAX_LTE: BigInt
+  released_MIN_EQUAL: BigInt
+  released_MIN_GT: BigInt
+  released_MIN_GTE: BigInt
+  released_MIN_LT: BigInt
+  released_MIN_LTE: BigInt
+  released_SUM_EQUAL: BigInt
+  released_SUM_GT: BigInt
+  released_SUM_GTE: BigInt
+  released_SUM_LT: BigInt
+  released_SUM_LTE: BigInt
+  tagline_AVERAGE_EQUAL: Float
+  tagline_AVERAGE_GT: Float
+  tagline_AVERAGE_GTE: Float
+  tagline_AVERAGE_LT: Float
+  tagline_AVERAGE_LTE: Float
+  tagline_EQUAL: String
+  tagline_GT: Int
+  tagline_GTE: Int
+  tagline_LONGEST_EQUAL: Int
+  tagline_LONGEST_GT: Int
+  tagline_LONGEST_GTE: Int
+  tagline_LONGEST_LT: Int
+  tagline_LONGEST_LTE: Int
+  tagline_LT: Int
+  tagline_LTE: Int
+  tagline_SHORTEST_EQUAL: Int
+  tagline_SHORTEST_GT: Int
+  tagline_SHORTEST_GTE: Int
+  tagline_SHORTEST_LT: Int
+  tagline_SHORTEST_LTE: Int
+  title_AVERAGE_EQUAL: Float
+  title_AVERAGE_GT: Float
+  title_AVERAGE_GTE: Float
+  title_AVERAGE_LT: Float
+  title_AVERAGE_LTE: Float
+  title_EQUAL: String
+  title_GT: Int
+  title_GTE: Int
+  title_LONGEST_EQUAL: Int
+  title_LONGEST_GT: Int
+  title_LONGEST_GTE: Int
+  title_LONGEST_LT: Int
+  title_LONGEST_LTE: Int
+  title_LT: Int
+  title_LTE: Int
+  title_SHORTEST_EQUAL: Int
+  title_SHORTEST_GT: Int
+  title_SHORTEST_GTE: Int
+  title_SHORTEST_LT: Int
+  title_SHORTEST_LTE: Int
+  votes_AVERAGE_EQUAL: BigInt
+  votes_AVERAGE_GT: BigInt
+  votes_AVERAGE_GTE: BigInt
+  votes_AVERAGE_LT: BigInt
+  votes_AVERAGE_LTE: BigInt
+  votes_EQUAL: BigInt
+  votes_GT: BigInt
+  votes_GTE: BigInt
+  votes_LT: BigInt
+  votes_LTE: BigInt
+  votes_MAX_EQUAL: BigInt
+  votes_MAX_GT: BigInt
+  votes_MAX_GTE: BigInt
+  votes_MAX_LT: BigInt
+  votes_MAX_LTE: BigInt
+  votes_MIN_EQUAL: BigInt
+  votes_MIN_GT: BigInt
+  votes_MIN_GTE: BigInt
+  votes_MIN_LT: BigInt
+  votes_MIN_LTE: BigInt
+  votes_SUM_EQUAL: BigInt
+  votes_SUM_GT: BigInt
+  votes_SUM_GTE: BigInt
+  votes_SUM_LT: BigInt
+  votes_SUM_LTE: BigInt
+}
+
+type PersonProducedMoviesRelationship {
+  cursor: String!
+  node: Movie!
+}
+
+input PersonProducedMoviesUpdateConnectionInput {
+  node: MovieUpdateInput
+}
+
+input PersonProducedMoviesUpdateFieldInput {
+  connect: [PersonProducedMoviesConnectFieldInput!]
+  create: [PersonProducedMoviesCreateFieldInput!]
+  delete: [PersonProducedMoviesDeleteFieldInput!]
+  disconnect: [PersonProducedMoviesDisconnectFieldInput!]
+  update: PersonProducedMoviesUpdateConnectionInput
+  where: PersonProducedMoviesConnectionWhere
+}
+
+input PersonRelationInput {
+  actedInMovies: [PersonActedInMoviesCreateFieldInput!]
+  directedMovies: [PersonDirectedMoviesCreateFieldInput!]
+  followsPeople: [PersonFollowsPeopleCreateFieldInput!]
+  peopleFollows: [PersonPeopleFollowsCreateFieldInput!]
+  producedMovies: [PersonProducedMoviesCreateFieldInput!]
+  reviewedMovies: [PersonReviewedMoviesCreateFieldInput!]
+  wroteMovies: [PersonWroteMoviesCreateFieldInput!]
+}
+
+input PersonReviewedMoviesAggregateInput {
+  AND: [PersonReviewedMoviesAggregateInput!]
+  OR: [PersonReviewedMoviesAggregateInput!]
+  count: Int
+  count_GT: Int
+  count_GTE: Int
+  count_LT: Int
+  count_LTE: Int
+  edge: PersonReviewedMoviesEdgeAggregationWhereInput
+  node: PersonReviewedMoviesNodeAggregationWhereInput
+}
+
+input PersonReviewedMoviesConnectFieldInput {
+  connect: [MovieConnectInput!]
+  edge: ReviewedPropertiesCreateInput!
+  where: MovieConnectWhere
+}
+
+type PersonReviewedMoviesConnection {
+  edges: [PersonReviewedMoviesRelationship!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+input PersonReviewedMoviesConnectionSort {
+  edge: ReviewedPropertiesSort
+  node: MovieSort
+}
+
+input PersonReviewedMoviesConnectionWhere {
+  AND: [PersonReviewedMoviesConnectionWhere!]
+  OR: [PersonReviewedMoviesConnectionWhere!]
+  edge: ReviewedPropertiesWhere
+  edge_NOT: ReviewedPropertiesWhere
+  node: MovieWhere
+  node_NOT: MovieWhere
+}
+
+input PersonReviewedMoviesCreateFieldInput {
+  edge: ReviewedPropertiesCreateInput!
+  node: MovieCreateInput!
+}
+
+input PersonReviewedMoviesDeleteFieldInput {
+  delete: MovieDeleteInput
+  where: PersonReviewedMoviesConnectionWhere
+}
+
+input PersonReviewedMoviesDisconnectFieldInput {
+  disconnect: MovieDisconnectInput
+  where: PersonReviewedMoviesConnectionWhere
+}
+
+input PersonReviewedMoviesEdgeAggregationWhereInput {
+  AND: [PersonReviewedMoviesEdgeAggregationWhereInput!]
+  OR: [PersonReviewedMoviesEdgeAggregationWhereInput!]
+  rating_AVERAGE_EQUAL: BigInt
+  rating_AVERAGE_GT: BigInt
+  rating_AVERAGE_GTE: BigInt
+  rating_AVERAGE_LT: BigInt
+  rating_AVERAGE_LTE: BigInt
+  rating_EQUAL: BigInt
+  rating_GT: BigInt
+  rating_GTE: BigInt
+  rating_LT: BigInt
+  rating_LTE: BigInt
+  rating_MAX_EQUAL: BigInt
+  rating_MAX_GT: BigInt
+  rating_MAX_GTE: BigInt
+  rating_MAX_LT: BigInt
+  rating_MAX_LTE: BigInt
+  rating_MIN_EQUAL: BigInt
+  rating_MIN_GT: BigInt
+  rating_MIN_GTE: BigInt
+  rating_MIN_LT: BigInt
+  rating_MIN_LTE: BigInt
+  rating_SUM_EQUAL: BigInt
+  rating_SUM_GT: BigInt
+  rating_SUM_GTE: BigInt
+  rating_SUM_LT: BigInt
+  rating_SUM_LTE: BigInt
+  summary_AVERAGE_EQUAL: Float
+  summary_AVERAGE_GT: Float
+  summary_AVERAGE_GTE: Float
+  summary_AVERAGE_LT: Float
+  summary_AVERAGE_LTE: Float
+  summary_EQUAL: String
+  summary_GT: Int
+  summary_GTE: Int
+  summary_LONGEST_EQUAL: Int
+  summary_LONGEST_GT: Int
+  summary_LONGEST_GTE: Int
+  summary_LONGEST_LT: Int
+  summary_LONGEST_LTE: Int
+  summary_LT: Int
+  summary_LTE: Int
+  summary_SHORTEST_EQUAL: Int
+  summary_SHORTEST_GT: Int
+  summary_SHORTEST_GTE: Int
+  summary_SHORTEST_LT: Int
+  summary_SHORTEST_LTE: Int
+}
+
+input PersonReviewedMoviesFieldInput {
+  connect: [PersonReviewedMoviesConnectFieldInput!]
+  create: [PersonReviewedMoviesCreateFieldInput!]
+}
+
+input PersonReviewedMoviesNodeAggregationWhereInput {
+  AND: [PersonReviewedMoviesNodeAggregationWhereInput!]
+  OR: [PersonReviewedMoviesNodeAggregationWhereInput!]
+  released_AVERAGE_EQUAL: BigInt
+  released_AVERAGE_GT: BigInt
+  released_AVERAGE_GTE: BigInt
+  released_AVERAGE_LT: BigInt
+  released_AVERAGE_LTE: BigInt
+  released_EQUAL: BigInt
+  released_GT: BigInt
+  released_GTE: BigInt
+  released_LT: BigInt
+  released_LTE: BigInt
+  released_MAX_EQUAL: BigInt
+  released_MAX_GT: BigInt
+  released_MAX_GTE: BigInt
+  released_MAX_LT: BigInt
+  released_MAX_LTE: BigInt
+  released_MIN_EQUAL: BigInt
+  released_MIN_GT: BigInt
+  released_MIN_GTE: BigInt
+  released_MIN_LT: BigInt
+  released_MIN_LTE: BigInt
+  released_SUM_EQUAL: BigInt
+  released_SUM_GT: BigInt
+  released_SUM_GTE: BigInt
+  released_SUM_LT: BigInt
+  released_SUM_LTE: BigInt
+  tagline_AVERAGE_EQUAL: Float
+  tagline_AVERAGE_GT: Float
+  tagline_AVERAGE_GTE: Float
+  tagline_AVERAGE_LT: Float
+  tagline_AVERAGE_LTE: Float
+  tagline_EQUAL: String
+  tagline_GT: Int
+  tagline_GTE: Int
+  tagline_LONGEST_EQUAL: Int
+  tagline_LONGEST_GT: Int
+  tagline_LONGEST_GTE: Int
+  tagline_LONGEST_LT: Int
+  tagline_LONGEST_LTE: Int
+  tagline_LT: Int
+  tagline_LTE: Int
+  tagline_SHORTEST_EQUAL: Int
+  tagline_SHORTEST_GT: Int
+  tagline_SHORTEST_GTE: Int
+  tagline_SHORTEST_LT: Int
+  tagline_SHORTEST_LTE: Int
+  title_AVERAGE_EQUAL: Float
+  title_AVERAGE_GT: Float
+  title_AVERAGE_GTE: Float
+  title_AVERAGE_LT: Float
+  title_AVERAGE_LTE: Float
+  title_EQUAL: String
+  title_GT: Int
+  title_GTE: Int
+  title_LONGEST_EQUAL: Int
+  title_LONGEST_GT: Int
+  title_LONGEST_GTE: Int
+  title_LONGEST_LT: Int
+  title_LONGEST_LTE: Int
+  title_LT: Int
+  title_LTE: Int
+  title_SHORTEST_EQUAL: Int
+  title_SHORTEST_GT: Int
+  title_SHORTEST_GTE: Int
+  title_SHORTEST_LT: Int
+  title_SHORTEST_LTE: Int
+  votes_AVERAGE_EQUAL: BigInt
+  votes_AVERAGE_GT: BigInt
+  votes_AVERAGE_GTE: BigInt
+  votes_AVERAGE_LT: BigInt
+  votes_AVERAGE_LTE: BigInt
+  votes_EQUAL: BigInt
+  votes_GT: BigInt
+  votes_GTE: BigInt
+  votes_LT: BigInt
+  votes_LTE: BigInt
+  votes_MAX_EQUAL: BigInt
+  votes_MAX_GT: BigInt
+  votes_MAX_GTE: BigInt
+  votes_MAX_LT: BigInt
+  votes_MAX_LTE: BigInt
+  votes_MIN_EQUAL: BigInt
+  votes_MIN_GT: BigInt
+  votes_MIN_GTE: BigInt
+  votes_MIN_LT: BigInt
+  votes_MIN_LTE: BigInt
+  votes_SUM_EQUAL: BigInt
+  votes_SUM_GT: BigInt
+  votes_SUM_GTE: BigInt
+  votes_SUM_LT: BigInt
+  votes_SUM_LTE: BigInt
+}
+
+type PersonReviewedMoviesRelationship implements ReviewedProperties {
+  cursor: String!
+  node: Movie!
+  rating: BigInt!
+  summary: String!
+}
+
+input PersonReviewedMoviesUpdateConnectionInput {
+  edge: ReviewedPropertiesUpdateInput
+  node: MovieUpdateInput
+}
+
+input PersonReviewedMoviesUpdateFieldInput {
+  connect: [PersonReviewedMoviesConnectFieldInput!]
+  create: [PersonReviewedMoviesCreateFieldInput!]
+  delete: [PersonReviewedMoviesDeleteFieldInput!]
+  disconnect: [PersonReviewedMoviesDisconnectFieldInput!]
+  update: PersonReviewedMoviesUpdateConnectionInput
+  where: PersonReviewedMoviesConnectionWhere
+}
+
+\\"\\"\\"
+Fields to sort People by. The order in which sorts are applied is not guaranteed when specifying many fields in one PersonSort object.
+\\"\\"\\"
+input PersonSort {
+  born: SortDirection
+  name: SortDirection
+}
+
+input PersonSubscriptionWhere {
+  born: BigInt
+  name: String
+}
+
+input PersonUpdateInput {
+  actedInMovies: [PersonActedInMoviesUpdateFieldInput!]
+  born: BigInt
+  directedMovies: [PersonDirectedMoviesUpdateFieldInput!]
+  followsPeople: [PersonFollowsPeopleUpdateFieldInput!]
+  name: String
+  peopleFollows: [PersonPeopleFollowsUpdateFieldInput!]
+  producedMovies: [PersonProducedMoviesUpdateFieldInput!]
+  reviewedMovies: [PersonReviewedMoviesUpdateFieldInput!]
+  wroteMovies: [PersonWroteMoviesUpdateFieldInput!]
+}
+
+type PersonUpdatedEvent {
+  event: EventType!
+  previousState: PersonEventPayload!
+  updatedPerson: PersonEventPayload!
+}
+
+input PersonWhere {
+  AND: [PersonWhere!]
+  OR: [PersonWhere!]
+  actedInMovies: MovieWhere @deprecated(reason: \\"Use \`actedInMovies_SOME\` instead.\\")
+  actedInMoviesAggregate: PersonActedInMoviesAggregateInput
+  actedInMoviesConnection: PersonActedInMoviesConnectionWhere @deprecated(reason: \\"Use \`actedInMoviesConnection_SOME\` instead.\\")
+  actedInMoviesConnection_ALL: PersonActedInMoviesConnectionWhere
+  actedInMoviesConnection_NONE: PersonActedInMoviesConnectionWhere
+  actedInMoviesConnection_NOT: PersonActedInMoviesConnectionWhere @deprecated(reason: \\"Use \`actedInMoviesConnection_NONE\` instead.\\")
+  actedInMoviesConnection_SINGLE: PersonActedInMoviesConnectionWhere
+  actedInMoviesConnection_SOME: PersonActedInMoviesConnectionWhere
+
+  \\"\\"\\"Return People where all of the related Movies match this filter\\"\\"\\"
+  actedInMovies_ALL: MovieWhere
+
+  \\"\\"\\"Return People where none of the related Movies match this filter\\"\\"\\"
+  actedInMovies_NONE: MovieWhere
+  actedInMovies_NOT: MovieWhere @deprecated(reason: \\"Use \`actedInMovies_NONE\` instead.\\")
+
+  \\"\\"\\"Return People where one of the related Movies match this filter\\"\\"\\"
+  actedInMovies_SINGLE: MovieWhere
+
+  \\"\\"\\"Return People where some of the related Movies match this filter\\"\\"\\"
+  actedInMovies_SOME: MovieWhere
+  born: BigInt
+  born_GT: BigInt
+  born_GTE: BigInt
+  born_IN: [BigInt]
+  born_LT: BigInt
+  born_LTE: BigInt
+  born_NOT: BigInt
+  born_NOT_IN: [BigInt]
+  directedMovies: MovieWhere @deprecated(reason: \\"Use \`directedMovies_SOME\` instead.\\")
+  directedMoviesAggregate: PersonDirectedMoviesAggregateInput
+  directedMoviesConnection: PersonDirectedMoviesConnectionWhere @deprecated(reason: \\"Use \`directedMoviesConnection_SOME\` instead.\\")
+  directedMoviesConnection_ALL: PersonDirectedMoviesConnectionWhere
+  directedMoviesConnection_NONE: PersonDirectedMoviesConnectionWhere
+  directedMoviesConnection_NOT: PersonDirectedMoviesConnectionWhere @deprecated(reason: \\"Use \`directedMoviesConnection_NONE\` instead.\\")
+  directedMoviesConnection_SINGLE: PersonDirectedMoviesConnectionWhere
+  directedMoviesConnection_SOME: PersonDirectedMoviesConnectionWhere
+
+  \\"\\"\\"Return People where all of the related Movies match this filter\\"\\"\\"
+  directedMovies_ALL: MovieWhere
+
+  \\"\\"\\"Return People where none of the related Movies match this filter\\"\\"\\"
+  directedMovies_NONE: MovieWhere
+  directedMovies_NOT: MovieWhere @deprecated(reason: \\"Use \`directedMovies_NONE\` instead.\\")
+
+  \\"\\"\\"Return People where one of the related Movies match this filter\\"\\"\\"
+  directedMovies_SINGLE: MovieWhere
+
+  \\"\\"\\"Return People where some of the related Movies match this filter\\"\\"\\"
+  directedMovies_SOME: MovieWhere
+  followsPeople: PersonWhere @deprecated(reason: \\"Use \`followsPeople_SOME\` instead.\\")
+  followsPeopleAggregate: PersonFollowsPeopleAggregateInput
+  followsPeopleConnection: PersonFollowsPeopleConnectionWhere @deprecated(reason: \\"Use \`followsPeopleConnection_SOME\` instead.\\")
+  followsPeopleConnection_ALL: PersonFollowsPeopleConnectionWhere
+  followsPeopleConnection_NONE: PersonFollowsPeopleConnectionWhere
+  followsPeopleConnection_NOT: PersonFollowsPeopleConnectionWhere @deprecated(reason: \\"Use \`followsPeopleConnection_NONE\` instead.\\")
+  followsPeopleConnection_SINGLE: PersonFollowsPeopleConnectionWhere
+  followsPeopleConnection_SOME: PersonFollowsPeopleConnectionWhere
+
+  \\"\\"\\"Return People where all of the related People match this filter\\"\\"\\"
+  followsPeople_ALL: PersonWhere
+
+  \\"\\"\\"Return People where none of the related People match this filter\\"\\"\\"
+  followsPeople_NONE: PersonWhere
+  followsPeople_NOT: PersonWhere @deprecated(reason: \\"Use \`followsPeople_NONE\` instead.\\")
+
+  \\"\\"\\"Return People where one of the related People match this filter\\"\\"\\"
+  followsPeople_SINGLE: PersonWhere
+
+  \\"\\"\\"Return People where some of the related People match this filter\\"\\"\\"
+  followsPeople_SOME: PersonWhere
+  name: String
+  name_CONTAINS: String
+  name_ENDS_WITH: String
+  name_IN: [String!]
+  name_NOT: String
+  name_NOT_CONTAINS: String
+  name_NOT_ENDS_WITH: String
+  name_NOT_IN: [String!]
+  name_NOT_STARTS_WITH: String
+  name_STARTS_WITH: String
+  peopleFollows: PersonWhere @deprecated(reason: \\"Use \`peopleFollows_SOME\` instead.\\")
+  peopleFollowsAggregate: PersonPeopleFollowsAggregateInput
+  peopleFollowsConnection: PersonPeopleFollowsConnectionWhere @deprecated(reason: \\"Use \`peopleFollowsConnection_SOME\` instead.\\")
+  peopleFollowsConnection_ALL: PersonPeopleFollowsConnectionWhere
+  peopleFollowsConnection_NONE: PersonPeopleFollowsConnectionWhere
+  peopleFollowsConnection_NOT: PersonPeopleFollowsConnectionWhere @deprecated(reason: \\"Use \`peopleFollowsConnection_NONE\` instead.\\")
+  peopleFollowsConnection_SINGLE: PersonPeopleFollowsConnectionWhere
+  peopleFollowsConnection_SOME: PersonPeopleFollowsConnectionWhere
+
+  \\"\\"\\"Return People where all of the related People match this filter\\"\\"\\"
+  peopleFollows_ALL: PersonWhere
+
+  \\"\\"\\"Return People where none of the related People match this filter\\"\\"\\"
+  peopleFollows_NONE: PersonWhere
+  peopleFollows_NOT: PersonWhere @deprecated(reason: \\"Use \`peopleFollows_NONE\` instead.\\")
+
+  \\"\\"\\"Return People where one of the related People match this filter\\"\\"\\"
+  peopleFollows_SINGLE: PersonWhere
+
+  \\"\\"\\"Return People where some of the related People match this filter\\"\\"\\"
+  peopleFollows_SOME: PersonWhere
+  producedMovies: MovieWhere @deprecated(reason: \\"Use \`producedMovies_SOME\` instead.\\")
+  producedMoviesAggregate: PersonProducedMoviesAggregateInput
+  producedMoviesConnection: PersonProducedMoviesConnectionWhere @deprecated(reason: \\"Use \`producedMoviesConnection_SOME\` instead.\\")
+  producedMoviesConnection_ALL: PersonProducedMoviesConnectionWhere
+  producedMoviesConnection_NONE: PersonProducedMoviesConnectionWhere
+  producedMoviesConnection_NOT: PersonProducedMoviesConnectionWhere @deprecated(reason: \\"Use \`producedMoviesConnection_NONE\` instead.\\")
+  producedMoviesConnection_SINGLE: PersonProducedMoviesConnectionWhere
+  producedMoviesConnection_SOME: PersonProducedMoviesConnectionWhere
+
+  \\"\\"\\"Return People where all of the related Movies match this filter\\"\\"\\"
+  producedMovies_ALL: MovieWhere
+
+  \\"\\"\\"Return People where none of the related Movies match this filter\\"\\"\\"
+  producedMovies_NONE: MovieWhere
+  producedMovies_NOT: MovieWhere @deprecated(reason: \\"Use \`producedMovies_NONE\` instead.\\")
+
+  \\"\\"\\"Return People where one of the related Movies match this filter\\"\\"\\"
+  producedMovies_SINGLE: MovieWhere
+
+  \\"\\"\\"Return People where some of the related Movies match this filter\\"\\"\\"
+  producedMovies_SOME: MovieWhere
+  reviewedMovies: MovieWhere @deprecated(reason: \\"Use \`reviewedMovies_SOME\` instead.\\")
+  reviewedMoviesAggregate: PersonReviewedMoviesAggregateInput
+  reviewedMoviesConnection: PersonReviewedMoviesConnectionWhere @deprecated(reason: \\"Use \`reviewedMoviesConnection_SOME\` instead.\\")
+  reviewedMoviesConnection_ALL: PersonReviewedMoviesConnectionWhere
+  reviewedMoviesConnection_NONE: PersonReviewedMoviesConnectionWhere
+  reviewedMoviesConnection_NOT: PersonReviewedMoviesConnectionWhere @deprecated(reason: \\"Use \`reviewedMoviesConnection_NONE\` instead.\\")
+  reviewedMoviesConnection_SINGLE: PersonReviewedMoviesConnectionWhere
+  reviewedMoviesConnection_SOME: PersonReviewedMoviesConnectionWhere
+
+  \\"\\"\\"Return People where all of the related Movies match this filter\\"\\"\\"
+  reviewedMovies_ALL: MovieWhere
+
+  \\"\\"\\"Return People where none of the related Movies match this filter\\"\\"\\"
+  reviewedMovies_NONE: MovieWhere
+  reviewedMovies_NOT: MovieWhere @deprecated(reason: \\"Use \`reviewedMovies_NONE\` instead.\\")
+
+  \\"\\"\\"Return People where one of the related Movies match this filter\\"\\"\\"
+  reviewedMovies_SINGLE: MovieWhere
+
+  \\"\\"\\"Return People where some of the related Movies match this filter\\"\\"\\"
+  reviewedMovies_SOME: MovieWhere
+  wroteMovies: MovieWhere @deprecated(reason: \\"Use \`wroteMovies_SOME\` instead.\\")
+  wroteMoviesAggregate: PersonWroteMoviesAggregateInput
+  wroteMoviesConnection: PersonWroteMoviesConnectionWhere @deprecated(reason: \\"Use \`wroteMoviesConnection_SOME\` instead.\\")
+  wroteMoviesConnection_ALL: PersonWroteMoviesConnectionWhere
+  wroteMoviesConnection_NONE: PersonWroteMoviesConnectionWhere
+  wroteMoviesConnection_NOT: PersonWroteMoviesConnectionWhere @deprecated(reason: \\"Use \`wroteMoviesConnection_NONE\` instead.\\")
+  wroteMoviesConnection_SINGLE: PersonWroteMoviesConnectionWhere
+  wroteMoviesConnection_SOME: PersonWroteMoviesConnectionWhere
+
+  \\"\\"\\"Return People where all of the related Movies match this filter\\"\\"\\"
+  wroteMovies_ALL: MovieWhere
+
+  \\"\\"\\"Return People where none of the related Movies match this filter\\"\\"\\"
+  wroteMovies_NONE: MovieWhere
+  wroteMovies_NOT: MovieWhere @deprecated(reason: \\"Use \`wroteMovies_NONE\` instead.\\")
+
+  \\"\\"\\"Return People where one of the related Movies match this filter\\"\\"\\"
+  wroteMovies_SINGLE: MovieWhere
+
+  \\"\\"\\"Return People where some of the related Movies match this filter\\"\\"\\"
+  wroteMovies_SOME: MovieWhere
+}
+
+input PersonWroteMoviesAggregateInput {
+  AND: [PersonWroteMoviesAggregateInput!]
+  OR: [PersonWroteMoviesAggregateInput!]
+  count: Int
+  count_GT: Int
+  count_GTE: Int
+  count_LT: Int
+  count_LTE: Int
+  node: PersonWroteMoviesNodeAggregationWhereInput
+}
+
+input PersonWroteMoviesConnectFieldInput {
+  connect: [MovieConnectInput!]
+  where: MovieConnectWhere
+}
+
+type PersonWroteMoviesConnection {
+  edges: [PersonWroteMoviesRelationship!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+input PersonWroteMoviesConnectionSort {
+  node: MovieSort
+}
+
+input PersonWroteMoviesConnectionWhere {
+  AND: [PersonWroteMoviesConnectionWhere!]
+  OR: [PersonWroteMoviesConnectionWhere!]
+  node: MovieWhere
+  node_NOT: MovieWhere
+}
+
+input PersonWroteMoviesCreateFieldInput {
+  node: MovieCreateInput!
+}
+
+input PersonWroteMoviesDeleteFieldInput {
+  delete: MovieDeleteInput
+  where: PersonWroteMoviesConnectionWhere
+}
+
+input PersonWroteMoviesDisconnectFieldInput {
+  disconnect: MovieDisconnectInput
+  where: PersonWroteMoviesConnectionWhere
+}
+
+input PersonWroteMoviesFieldInput {
+  connect: [PersonWroteMoviesConnectFieldInput!]
+  create: [PersonWroteMoviesCreateFieldInput!]
+}
+
+input PersonWroteMoviesNodeAggregationWhereInput {
+  AND: [PersonWroteMoviesNodeAggregationWhereInput!]
+  OR: [PersonWroteMoviesNodeAggregationWhereInput!]
+  released_AVERAGE_EQUAL: BigInt
+  released_AVERAGE_GT: BigInt
+  released_AVERAGE_GTE: BigInt
+  released_AVERAGE_LT: BigInt
+  released_AVERAGE_LTE: BigInt
+  released_EQUAL: BigInt
+  released_GT: BigInt
+  released_GTE: BigInt
+  released_LT: BigInt
+  released_LTE: BigInt
+  released_MAX_EQUAL: BigInt
+  released_MAX_GT: BigInt
+  released_MAX_GTE: BigInt
+  released_MAX_LT: BigInt
+  released_MAX_LTE: BigInt
+  released_MIN_EQUAL: BigInt
+  released_MIN_GT: BigInt
+  released_MIN_GTE: BigInt
+  released_MIN_LT: BigInt
+  released_MIN_LTE: BigInt
+  released_SUM_EQUAL: BigInt
+  released_SUM_GT: BigInt
+  released_SUM_GTE: BigInt
+  released_SUM_LT: BigInt
+  released_SUM_LTE: BigInt
+  tagline_AVERAGE_EQUAL: Float
+  tagline_AVERAGE_GT: Float
+  tagline_AVERAGE_GTE: Float
+  tagline_AVERAGE_LT: Float
+  tagline_AVERAGE_LTE: Float
+  tagline_EQUAL: String
+  tagline_GT: Int
+  tagline_GTE: Int
+  tagline_LONGEST_EQUAL: Int
+  tagline_LONGEST_GT: Int
+  tagline_LONGEST_GTE: Int
+  tagline_LONGEST_LT: Int
+  tagline_LONGEST_LTE: Int
+  tagline_LT: Int
+  tagline_LTE: Int
+  tagline_SHORTEST_EQUAL: Int
+  tagline_SHORTEST_GT: Int
+  tagline_SHORTEST_GTE: Int
+  tagline_SHORTEST_LT: Int
+  tagline_SHORTEST_LTE: Int
+  title_AVERAGE_EQUAL: Float
+  title_AVERAGE_GT: Float
+  title_AVERAGE_GTE: Float
+  title_AVERAGE_LT: Float
+  title_AVERAGE_LTE: Float
+  title_EQUAL: String
+  title_GT: Int
+  title_GTE: Int
+  title_LONGEST_EQUAL: Int
+  title_LONGEST_GT: Int
+  title_LONGEST_GTE: Int
+  title_LONGEST_LT: Int
+  title_LONGEST_LTE: Int
+  title_LT: Int
+  title_LTE: Int
+  title_SHORTEST_EQUAL: Int
+  title_SHORTEST_GT: Int
+  title_SHORTEST_GTE: Int
+  title_SHORTEST_LT: Int
+  title_SHORTEST_LTE: Int
+  votes_AVERAGE_EQUAL: BigInt
+  votes_AVERAGE_GT: BigInt
+  votes_AVERAGE_GTE: BigInt
+  votes_AVERAGE_LT: BigInt
+  votes_AVERAGE_LTE: BigInt
+  votes_EQUAL: BigInt
+  votes_GT: BigInt
+  votes_GTE: BigInt
+  votes_LT: BigInt
+  votes_LTE: BigInt
+  votes_MAX_EQUAL: BigInt
+  votes_MAX_GT: BigInt
+  votes_MAX_GTE: BigInt
+  votes_MAX_LT: BigInt
+  votes_MAX_LTE: BigInt
+  votes_MIN_EQUAL: BigInt
+  votes_MIN_GT: BigInt
+  votes_MIN_GTE: BigInt
+  votes_MIN_LT: BigInt
+  votes_MIN_LTE: BigInt
+  votes_SUM_EQUAL: BigInt
+  votes_SUM_GT: BigInt
+  votes_SUM_GTE: BigInt
+  votes_SUM_LT: BigInt
+  votes_SUM_LTE: BigInt
+}
+
+type PersonWroteMoviesRelationship {
+  cursor: String!
+  node: Movie!
+}
+
+input PersonWroteMoviesUpdateConnectionInput {
+  node: MovieUpdateInput
+}
+
+input PersonWroteMoviesUpdateFieldInput {
+  connect: [PersonWroteMoviesConnectFieldInput!]
+  create: [PersonWroteMoviesCreateFieldInput!]
+  delete: [PersonWroteMoviesDeleteFieldInput!]
+  disconnect: [PersonWroteMoviesDisconnectFieldInput!]
+  update: PersonWroteMoviesUpdateConnectionInput
+  where: PersonWroteMoviesConnectionWhere
+}
+
+type Query {
+  movies(options: MovieOptions, where: MovieWhere): [Movie!]!
+  moviesAggregate(where: MovieWhere): MovieAggregateSelection!
+  moviesConnection(after: String, first: Int, sort: [MovieSort], where: MovieWhere): MoviesConnection!
+  people(options: PersonOptions, where: PersonWhere): [Person!]!
+  peopleAggregate(where: PersonWhere): PersonAggregateSelection!
+  peopleConnection(after: String, first: Int, sort: [PersonSort], where: PersonWhere): PeopleConnection!
+}
+
+interface ReviewedProperties {
+  rating: BigInt!
+  summary: String!
+}
+
+input ReviewedPropertiesCreateInput {
+  rating: BigInt!
+  summary: String!
+}
+
+input ReviewedPropertiesSort {
+  rating: SortDirection
+  summary: SortDirection
+}
+
+input ReviewedPropertiesUpdateInput {
+  rating: BigInt
+  summary: String
+}
+
+input ReviewedPropertiesWhere {
+  AND: [ReviewedPropertiesWhere!]
+  OR: [ReviewedPropertiesWhere!]
+  rating: BigInt
+  rating_GT: BigInt
+  rating_GTE: BigInt
+  rating_IN: [BigInt!]
+  rating_LT: BigInt
+  rating_LTE: BigInt
+  rating_NOT: BigInt
+  rating_NOT_IN: [BigInt!]
+  summary: String
+  summary_CONTAINS: String
+  summary_ENDS_WITH: String
+  summary_IN: [String!]
+  summary_NOT: String
+  summary_NOT_CONTAINS: String
+  summary_NOT_ENDS_WITH: String
+  summary_NOT_IN: [String!]
+  summary_NOT_STARTS_WITH: String
+  summary_STARTS_WITH: String
+}
+
+enum SortDirection {
+  \\"\\"\\"Sort by field values in ascending order.\\"\\"\\"
+  ASC
+
+  \\"\\"\\"Sort by field values in descending order.\\"\\"\\"
+  DESC
+}
+
+type StringAggregateSelectionNonNullable {
+  longest: String!
+  shortest: String!
+}
+
+type StringAggregateSelectionNullable {
+  longest: String
+  shortest: String
+}
+
+type Subscription {
+  movieCreated(where: MovieSubscriptionWhere): MovieCreatedEvent!
+  movieDeleted(where: MovieSubscriptionWhere): MovieDeletedEvent!
+  movieUpdated(where: MovieSubscriptionWhere): MovieUpdatedEvent!
+  personCreated(where: PersonSubscriptionWhere): PersonCreatedEvent!
+  personDeleted(where: PersonSubscriptionWhere): PersonDeletedEvent!
+  personUpdated(where: PersonSubscriptionWhere): PersonUpdatedEvent!
+}
+
+type UpdateInfo {
+  bookmark: String
+  nodesCreated: Int!
+  nodesDeleted: Int!
+  relationshipsCreated: Int!
+  relationshipsDeleted: Int!
+}
+
+type UpdateMoviesMutationResponse {
+  info: UpdateInfo!
+  movies: [Movie!]!
+}
+
+type UpdatePeopleMutationResponse {
+  info: UpdateInfo!
+  people: [Person!]!
+}"
+`;
+
+exports[`Neo4j should give correct response for example queries: example-query.graphql-query-result 1`] = `
+Object {
+  "data": Object {
+    "movies": Array [
+      Object {
+        "peopleActedIn": Array [
+          Object {
+            "name": "Emil Eifrem",
+          },
+          Object {
+            "name": "Hugo Weaving",
+          },
+        ],
+        "title": "The Matrix",
+      },
+      Object {
+        "peopleActedIn": Array [
+          Object {
+            "name": "Hugo Weaving",
+          },
+          Object {
+            "name": "Laurence Fishburne",
+          },
+        ],
+        "title": "The Matrix Reloaded",
+      },
+    ],
+  },
+}
+`;

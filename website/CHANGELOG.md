@@ -1,4 +1,4 @@
-# @graphql-mesh/website
+# website
 
 ## 0.8.2
 

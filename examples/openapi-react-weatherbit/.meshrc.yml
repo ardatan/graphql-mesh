@@ -1,4 +1,3 @@
-merger: bare
 sources:
   - name: Weatherbit
     handler:
@@ -8,13 +7,9 @@ sources:
     transforms:
       - cache:
           # Forcast data might change, so we can cache it for 1 hour only
-          - field: Query.getForecastDailyLatequalToLatLonLon
+          - field: Query.forecast_daily_by_lat_by_lon
             invalidate:
               ttl: 864000 # Cache daily data for 24 hours
-
-cache:
-  localforage:
-    driver: [WEBSQL, INDEXEDDB, LOCALSTORAGE]
 
 documents:
   - ./*.graphql

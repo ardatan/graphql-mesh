@@ -2,21 +2,24 @@ import { SchemaComposer } from 'graphql-compose';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { JSONSchemaOperationConfig } from './types';
 import { getOperationMetadata, isPubSubOperationConfig, isFileUpload, cleanObject } from './utils';
-import { jsonFlatStringify, parseInterpolationStrings, stringInterpolator } from '@graphql-mesh/utils';
-import { inspect, memoize1 } from '@graphql-tools/utils';
+import { memoize1 } from '@graphql-tools/utils';
 import urlJoin from 'url-join';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType';
 import { stringify as qsStringify, parse as qsParse } from 'qs';
 import {
   getNamedType,
   GraphQLError,
+  GraphQLFieldResolver,
   GraphQLOutputType,
+  GraphQLResolveInfo,
   isListType,
   isNonNullType,
   isScalarType,
   isUnionType,
 } from 'graphql';
-import _ from 'lodash';
+import lodashSet from 'lodash.set';
+import { stringInterpolator, parseInterpolationStrings } from '@graphql-mesh/string-interpolation';
+import { process } from '@graphql-mesh/cross-helpers';
 
 export interface AddExecutionLogicToComposerOptions {
   baseUrl: string;
@@ -25,6 +28,7 @@ export interface AddExecutionLogicToComposerOptions {
   fetch: WindowOrWorkerGlobalScope['fetch'];
   logger: Logger;
   pubsub?: MeshPubSub;
+  queryParams?: Record<string, string>;
 }
 
 const isListTypeOrNonNullListType = memoize1(function isListTypeOrNonNullListType(type: GraphQLOutputType) {
@@ -38,6 +42,29 @@ function createError(message: string, extensions?: any) {
   return new GraphQLError(message, undefined, undefined, undefined, undefined, undefined, extensions);
 }
 
+function linkResolver(
+  linkObjArgs: any,
+  actualResolver: GraphQLFieldResolver<any, any>,
+  root: any,
+  args: any,
+  context: any,
+  info: GraphQLResolveInfo
+) {
+  for (const argKey in linkObjArgs) {
+    const argInterpolation = linkObjArgs[argKey];
+    const actualValue = stringInterpolator.parse(argInterpolation, {
+      root,
+      args,
+      context,
+      info,
+      env: process.env,
+    });
+    lodashSet(args, argKey, actualValue);
+    lodashSet(args, `input.${argKey}`, actualValue);
+  }
+  return actualResolver(root, args, context, info);
+}
+
 export async function addExecutionLogicToComposer(
   schemaComposer: SchemaComposer,
   {
@@ -47,14 +74,19 @@ export async function addExecutionLogicToComposer(
     operationHeaders,
     baseUrl,
     pubsub: globalPubsub,
+    queryParams,
   }: AddExecutionLogicToComposerOptions
 ) {
-  logger.debug(() => `Attaching execution logic to the schema`);
+  logger.debug(`Attaching execution logic to the schema`);
   for (const operationConfig of operations) {
     const { httpMethod, rootTypeName, fieldName } = getOperationMetadata(operationConfig);
     const operationLogger = logger.child(`${rootTypeName}.${fieldName}`);
 
-    const interpolationStrings: string[] = [...Object.values(operationHeaders || {}), baseUrl];
+    const interpolationStrings: string[] = [
+      ...Object.values(operationHeaders || {}),
+      ...Object.values(queryParams || {}),
+      baseUrl,
+    ];
 
     const rootTypeComposer = schemaComposer[rootTypeName];
 
@@ -69,27 +101,27 @@ export async function addExecutionLogicToComposer(
         }
         const interpolationData = { root, args, context, info, env: process.env };
         const pubsubTopic = stringInterpolator.parse(operationConfig.pubsubTopic, interpolationData);
-        operationLogger.debug(() => `=> Subscribing to pubSubTopic: ${pubsubTopic}`);
+        operationLogger.debug(`=> Subscribing to pubSubTopic: ${pubsubTopic}`);
         return pubsub.asyncIterator(pubsubTopic);
       };
       field.resolve = root => {
-        operationLogger.debug(() => `Received ${inspect(root)} from ${operationConfig.pubsubTopic}`);
+        operationLogger.debug('Received ', root, ' from ', operationConfig.pubsubTopic);
         return root;
       };
       interpolationStrings.push(operationConfig.pubsubTopic);
     } else if (operationConfig.path) {
       if (process.env.DEBUG) {
         field.description = `
-    Original Description: ${operationConfig.description || '(none)'}
-    Method: ${operationConfig.method}
-    baseUrl: ${baseUrl}
-    Path: ${operationConfig.path}
+    ***Original Description***: ${operationConfig.description || '(none)'}
+    ***Method***: ${operationConfig.method}
+    ***Base URL***: ${baseUrl}
+    ***Path***: ${operationConfig.path}
 `;
       } else {
         field.description = operationConfig.description;
       }
       field.resolve = async (root, args, context) => {
-        operationLogger.debug(() => `=> Resolving`);
+        operationLogger.debug(`=> Resolving`);
         const interpolationData = { root, args, context, env: process.env };
         const interpolatedBaseUrl = stringInterpolator.parse(baseUrl, interpolationData);
         const interpolatedPath = stringInterpolator.parse(operationConfig.path, interpolationData);
@@ -105,6 +137,18 @@ export async function addExecutionLogicToComposer(
           method: httpMethod,
           headers,
         };
+        if (queryParams) {
+          const interpolatedQueryParams: Record<string, any> = {};
+          for (const queryParamName in queryParams) {
+            interpolatedQueryParams[queryParamName] = stringInterpolator.parse(
+              queryParams[queryParamName],
+              interpolationData
+            );
+          }
+          const queryParamsString = qsStringify(interpolatedQueryParams, { indices: false });
+          fullPath += fullPath.includes('?') ? '&' : '?';
+          fullPath += queryParamsString;
+        }
         // Handle binary data
         if ('binary' in operationConfig) {
           const binaryUpload = await args.input;
@@ -131,18 +175,18 @@ export async function addExecutionLogicToComposer(
               const configValue = operationConfig.requestBaseBody[key];
               if (typeof configValue === 'string') {
                 const value = stringInterpolator.parse(configValue, interpolationData);
-                _.set(args.input, key, value);
+                lodashSet(args.input, key, value);
               } else {
                 args.input[key] = configValue;
               }
             }
           }
           // Resolve union input
-          const input = resolveDataByUnionInputType(
+          const input = (args.input = resolveDataByUnionInputType(
             cleanObject(args.input),
             field.args?.input?.type?.getType(),
             schemaComposer
-          );
+          ));
           if (input != null) {
             switch (httpMethod) {
               case 'GET':
@@ -163,7 +207,7 @@ export async function addExecutionLogicToComposer(
                 if (contentType?.startsWith('application/x-www-form-urlencoded')) {
                   requestInit.body = qsStringify(input, { indices: false });
                 } else {
-                  requestInit.body = jsonFlatStringify(input);
+                  requestInit.body = JSON.stringify(input);
                 }
                 break;
               }
@@ -184,7 +228,7 @@ export async function addExecutionLogicToComposer(
           fullPath = actualPath + '?' + qsStringify(cleanedQueryParams, { indices: false });
         }
 
-        operationLogger.debug(() => `=> Fetching ${fullPath}=>${inspect(requestInit)}`);
+        operationLogger.debug(`=> Fetching `, fullPath, `=>`, requestInit);
         const fetch: typeof globalFetch = context?.fetch || globalFetch;
         if (!fetch) {
           return createError(`You should have fetch defined in either the config or the context!`, {
@@ -193,14 +237,15 @@ export async function addExecutionLogicToComposer(
           });
         }
         const response = await fetch(fullPath, requestInit);
+        // If return type is a file
+        if (field.type.getTypeName() === 'File') {
+          return response.blob();
+        }
         const responseText = await response.text();
-        operationLogger.debug(
-          () =>
-            `=> Received ${inspect({
-              headers: response.headers,
-              text: responseText,
-            })}`
-        );
+        operationLogger.debug(`=> Received`, {
+          headers: response.headers,
+          text: responseText,
+        });
         let responseJson: any;
         try {
           responseJson = JSON.parse(responseText);
@@ -208,15 +253,18 @@ export async function addExecutionLogicToComposer(
           const returnNamedGraphQLType = getNamedType(field.type.getType());
           // The result might be defined as scalar
           if (isScalarType(returnNamedGraphQLType)) {
-            operationLogger.debug(() => ` => Return type is not a JSON so returning ${responseText}`);
+            operationLogger.debug(` => Return type is not a JSON so returning ${responseText}`);
             return responseText;
+          } else if (response.status === 204) {
+            responseJson = {};
+          } else {
+            return createError(`Unexpected response`, {
+              url: fullPath,
+              method: httpMethod,
+              responseText,
+              error,
+            });
           }
-          return createError(`Unexpected response`, {
-            url: fullPath,
-            method: httpMethod,
-            responseText,
-            error,
-          });
         }
 
         if (!response.status.toString().startsWith('2')) {
@@ -231,40 +279,101 @@ export async function addExecutionLogicToComposer(
           }
         }
 
-        operationLogger.debug(() => `=> Returning ${inspect(responseJson)}`);
+        operationLogger.debug(`Returning `, responseJson);
         // Sometimes API returns an array but the return type is not an array
         const isListReturnType = isListTypeOrNonNullListType(field.type.getType());
         const isArrayResponse = Array.isArray(responseJson);
         if (isListReturnType && !isArrayResponse) {
-          operationLogger.debug(() => `Response is not array but return type is list. Normalizing the response`);
+          operationLogger.debug(`Response is not array but return type is list. Normalizing the response`);
           responseJson = [responseJson];
         }
         if (!isListReturnType && isArrayResponse) {
-          operationLogger.debug(() => `Response is array but return type is not list. Normalizing the response`);
+          operationLogger.debug(`Response is array but return type is not list. Normalizing the response`);
           responseJson = responseJson[0];
         }
 
-        const addResponseMetadata = (obj: any) => ({
-          ...obj,
-          __response: {
-            url: fullPath,
-            method: httpMethod,
-            status: response.status,
-            statusText: response.statusText,
-          },
-        });
-        operationLogger.debug(() => `Adding response metadata to the response object`);
+        const addResponseMetadata = (obj: any) => {
+          return {
+            ...obj,
+            $url: fullPath,
+            $method: httpMethod,
+            $request: {
+              query: {
+                ...obj,
+                ...args,
+                ...args.input,
+              },
+              path: {
+                ...obj,
+                ...args,
+              },
+              header: requestInit.headers,
+            },
+            $response: {
+              url: fullPath,
+              method: httpMethod,
+              status: response.status,
+              statusText: response.statusText,
+              body: obj,
+            },
+          };
+        };
+        operationLogger.debug(`Adding response metadata to the response object`);
         return Array.isArray(responseJson)
           ? responseJson.map(obj => addResponseMetadata(obj))
           : addResponseMetadata(responseJson);
       };
       interpolationStrings.push(...Object.values(operationConfig.headers || {}));
       interpolationStrings.push(operationConfig.path);
+
+      if ('links' in operationConfig) {
+        for (const linkName in operationConfig.links) {
+          const linkObj = operationConfig.links[linkName];
+          const typeTC = schemaComposer.getOTC(field.type.getTypeName());
+          typeTC.addFields({
+            [linkName]: () => {
+              const targetField = schemaComposer.Query.getField(linkObj.fieldName);
+              return {
+                ...targetField,
+                args: {},
+                description: linkObj.description || targetField.description,
+                resolve: (root, args, context, info) =>
+                  linkResolver(linkObj.args, targetField.resolve, root, args, context, info),
+              };
+            },
+          });
+        }
+      } else if ('responseByStatusCode' in operationConfig) {
+        const unionOrSingleTC = schemaComposer.getAnyTC(getNamedType(field.type.getType()));
+        const types = 'getTypes' in unionOrSingleTC ? unionOrSingleTC.getTypes() : [unionOrSingleTC];
+        const statusCodeOneOfIndexMap =
+          (unionOrSingleTC.getExtension('statusCodeOneOfIndexMap') as Record<string, number>) || {};
+        for (const statusCode in operationConfig.responseByStatusCode) {
+          const responseConfig = operationConfig.responseByStatusCode[statusCode];
+          for (const linkName in responseConfig.links) {
+            const typeTCThunked = types[statusCodeOneOfIndexMap[statusCode] || 0];
+            const typeTC = schemaComposer.getOTC(typeTCThunked.getTypeName());
+            typeTC.addFields({
+              [linkName]: () => {
+                const linkObj = responseConfig.links[linkName];
+                const targetField = schemaComposer.Query.getField(linkObj.fieldName);
+                return {
+                  ...targetField,
+                  args: {},
+                  description: linkObj.description || targetField.description,
+                  resolve: (root, args, context, info) =>
+                    linkResolver(linkObj.args, targetField.resolve, root, args, context, info),
+                };
+              },
+            });
+          }
+        }
+      }
     }
     const { args: globalArgs } = parseInterpolationStrings(interpolationStrings, operationConfig.argTypeMap);
     rootTypeComposer.addFieldArgs(fieldName, globalArgs);
   }
 
-  logger.debug(() => `Building the executable schema.`);
+  logger.debug(`Building the executable schema.`);
   return schemaComposer;
 }

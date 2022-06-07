@@ -10,40 +10,25 @@ import {
   OperationResult,
   getOperationName,
 } from '@urql/core';
-import { MeshInstance } from '@graphql-mesh/runtime';
-import { DocumentNode } from 'graphql';
+import { ExecuteMeshFn, SubscribeMeshFn } from '@graphql-mesh/runtime';
+import { isAsyncIterable } from '@graphql-tools/utils';
 
-const asyncIterator = typeof Symbol !== 'undefined' ? Symbol.asyncIterator : null;
-
-const makeExecuteSource = (
-  operation: Operation,
-  mesh$: Promise<MeshInstance>,
-  document: DocumentNode,
-  variables: Record<string, any>,
-  context: Record<string, any>,
-  operationName: string,
-  rootValue: any
-): Source<OperationResult> => {
+const ROOT_VALUE = {};
+const makeExecuteSource = (operation: Operation, options: MeshExchangeOptions): Source<OperationResult> => {
+  const operationFn = operation.kind === 'subscription' ? options.subscribe : options.execute;
+  const operationName = getOperationName(operation.query);
   return make<OperationResult>(observer => {
     let ended = false;
-
-    Promise.resolve(mesh$)
-      .then((mesh): any => {
-        if (ended) return;
-        if (operation.kind === 'subscription') {
-          return mesh.subscribe(document, variables, context, rootValue, operationName);
-        }
-        return mesh.execute(document, variables, context, rootValue, operationName);
-      })
+    operationFn(operation.query, operation.variables, operation.context, ROOT_VALUE, operationName)
       .then((result: ExecutionResult | AsyncIterable<ExecutionResult>): any => {
         if (ended || !result) {
           return;
-        } else if (!asyncIterator || !result[asyncIterator]) {
-          observer.next(makeResult(operation, result as ExecutionResult));
+        } else if (!isAsyncIterable(result)) {
+          observer.next(makeResult(operation, result));
           return;
         }
 
-        const iterator: AsyncIterator<ExecutionResult> = result[asyncIterator!]();
+        const iterator: AsyncIterator<ExecutionResult> = result[Symbol.asyncIterator]();
         let prevResult: OperationResult | null = null;
 
         function next({ done, value }: { done?: boolean; value: ExecutionResult }): any {
@@ -56,8 +41,8 @@ const makeExecuteSource = (
           if (!done && !ended) {
             return iterator.next().then(next);
           }
-          if (ended) {
-            iterator.return && iterator.return();
+          if (ended && iterator.return != null) {
+            return iterator.return();
           }
         }
 
@@ -77,11 +62,15 @@ const makeExecuteSource = (
   });
 };
 
+export interface MeshExchangeOptions {
+  execute: ExecuteMeshFn;
+  subscribe?: SubscribeMeshFn;
+}
+
 /** Exchange for executing queries locally on a schema using graphql-js. */
 export const meshExchange =
-  (getBuiltMesh: () => Promise<MeshInstance>): Exchange =>
+  (options: MeshExchangeOptions): Exchange =>
   ({ forward }) => {
-    const mesh$ = getBuiltMesh();
     return ops$ => {
       const sharedOps$ = share(ops$);
 
@@ -97,18 +86,7 @@ export const meshExchange =
             filter(op => op.kind === 'teardown' && op.key === key)
           );
 
-          return pipe(
-            makeExecuteSource(
-              operation,
-              mesh$,
-              operation.query,
-              operation.variables,
-              {},
-              getOperationName(operation.query)!,
-              {}
-            ),
-            takeUntil(teardown$)
-          );
+          return pipe(makeExecuteSource(operation, options), takeUntil(teardown$));
         })
       );
 

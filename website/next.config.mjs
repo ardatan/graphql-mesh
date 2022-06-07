@@ -1,4 +1,4 @@
-import { createRequire } from 'node:module';
+import { createRequire } from 'module';
 import { withGuildDocs } from '@guild-docs/server';
 import nextBundleAnalyzer from '@next/bundle-analyzer';
 import { register } from 'esbuild-register/dist/node.js';
@@ -24,6 +24,6 @@ export default withBundleAnalyzer(
           permanent: true,
         },
       ];
-    }
-  }),
+    },
+  })
 );

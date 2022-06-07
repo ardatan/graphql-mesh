@@ -12,7 +12,7 @@ describe('graphExchange', () => {
     mesh = await getTestMesh();
     client = createClient({
       url: 'http://mesh.com',
-      exchanges: [meshExchange(async () => mesh)],
+      exchanges: [meshExchange(mesh)],
     });
   });
   afterEach(() => {

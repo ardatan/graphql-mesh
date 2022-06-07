@@ -16,9 +16,7 @@ jest.setTimeout(30000);
 describe('Type Merging and Batching Example', () => {
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
-    expect(
-      printSchemaWithDirectives(lexicographicSortSchema(schema))
-    ).toMatchSnapshot();
+    expect(printSchemaWithDirectives(lexicographicSortSchema(schema))).toMatchSnapshot();
   });
   it('should give correct response for example queries', async () => {
     const { documents } = await config$;

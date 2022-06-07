@@ -1,4 +1,4 @@
-import { path as pathModule } from '@graphql-mesh/cross-helpers';
+import { path as pathModule, process } from '@graphql-mesh/cross-helpers';
 import { MeshResolvedSource } from '@graphql-mesh/runtime';
 import {
   ImportFn,
@@ -6,6 +6,7 @@ import {
   MeshHandlerLibrary,
   MeshMerger,
   MeshMergerLibrary,
+  MeshPluginFactory,
   MeshPubSub,
   MeshTransform,
   MeshTransformLibrary,
@@ -13,7 +14,7 @@ import {
 } from '@graphql-mesh/types';
 import { IResolvers, Source } from '@graphql-tools/utils';
 import { KeyValueCache } from 'fetchache';
-import { DocumentNode, print } from 'graphql';
+import { concatAST, DocumentNode, print, visit } from 'graphql';
 import {
   getPackage,
   resolveAdditionalTypeDefs,
@@ -25,8 +26,21 @@ import {
 import { FsStoreStorageAdapter, MeshStore, InMemoryStoreStorageAdapter } from '@graphql-mesh/store';
 import { pascalCase } from 'pascal-case';
 import { camelCase } from 'camel-case';
-import { defaultImportFn, resolveAdditionalResolvers } from '@graphql-mesh/utils';
-import { envelop } from '@envelop/core';
+import { defaultImportFn, parseWithCache, resolveAdditionalResolvers } from '@graphql-mesh/utils';
+import { envelop, useMaskedErrors, useImmediateIntrospection } from '@envelop/core';
+
+const ENVELOP_CORE_PLUGINS_MAP = {
+  maskedErrors: {
+    moduleName: '@envelop/core',
+    importName: 'useMaskedErrors',
+    pluginFactory: useMaskedErrors,
+  },
+  immediateIntrospection: {
+    moduleName: '@envelop/core',
+    importName: 'useImmediateIntrospection',
+    pluginFactory: useImmediateIntrospection,
+  },
+};
 
 export type ConfigProcessOptions = {
   dir?: string;
@@ -35,6 +49,9 @@ export type ConfigProcessOptions = {
   ignoreAdditionalResolvers?: boolean;
   configName?: string;
   artifactsDir?: string;
+  additionalPackagePrefixes?: string[];
+  generateCode?: boolean;
+  initialLoggerPrefix?: string;
 };
 
 type EnvelopPlugins = Parameters<typeof envelop>[0]['plugins'];
@@ -86,16 +103,21 @@ export async function processConfig(
   }
 
   const importCodes: string[] = [
-    `import { GetMeshOptions } from '@graphql-mesh/runtime';`,
-    `import { YamlConfig } from '@graphql-mesh/types';`,
-    `import { parse } from 'graphql';`,
+    `import type { GetMeshOptions } from '@graphql-mesh/runtime';`,
+    `import type { YamlConfig } from '@graphql-mesh/types';`,
   ];
   const codes: string[] = [
-    `export const rawConfig: YamlConfig.Config = ${JSON.stringify(config)} as any`,
+    `export const rawServeConfig: YamlConfig.Config['serve'] = ${JSON.stringify(config.serve)} as any`,
     `export async function getMeshOptions(): Promise<GetMeshOptions> {`,
   ];
 
-  const { dir, importFn = defaultImportFn, store: providedStore, artifactsDir } = options || {};
+  const {
+    dir,
+    importFn = defaultImportFn,
+    store: providedStore,
+    artifactsDir,
+    additionalPackagePrefixes,
+  } = options || {};
 
   if (config.require) {
     await Promise.all(config.require.map(mod => importFn(mod)));
@@ -106,7 +128,11 @@ export async function processConfig(
 
   const rootStore = providedStore || getDefaultMeshStore(dir, importFn, artifactsDir || '.mesh');
 
-  const { pubsub, importCode: pubsubImportCode, code: pubsubCode } = await resolvePubSub(config.pubsub, importFn, dir);
+  const {
+    pubsub,
+    importCode: pubsubImportCode,
+    code: pubsubCode,
+  } = await resolvePubSub(config.pubsub, importFn, dir, additionalPackagePrefixes);
   importCodes.push(pubsubImportCode);
   codes.push(pubsubCode);
 
@@ -114,45 +140,58 @@ export async function processConfig(
     cache,
     importCode: cacheImportCode,
     code: cacheCode,
-  } = await resolveCache(config.cache, importFn, rootStore, dir, pubsub);
+  } = await resolveCache(config.cache, importFn, rootStore, dir, pubsub, additionalPackagePrefixes);
   importCodes.push(cacheImportCode);
   codes.push(cacheCode);
 
   const sourcesStore = rootStore.child('sources');
   codes.push(`const sourcesStore = rootStore.child('sources');`);
 
-  const { logger, importCode: loggerImportCode, code: loggerCode } = await resolveLogger(config.logger, importFn, dir);
+  const {
+    logger,
+    importCode: loggerImportCode,
+    code: loggerCode,
+  } = await resolveLogger(config.logger, importFn, dir, additionalPackagePrefixes, options?.initialLoggerPrefix);
   importCodes.push(loggerImportCode);
   codes.push(loggerCode);
 
   codes.push(`const sources = [];`);
   codes.push(`const transforms = [];`);
+  codes.push(`const additionalEnvelopPlugins = [];`);
 
   const mergerName = config.merger || (config.sources.length > 1 ? 'stitching' : 'bare');
 
-  const [sources, transforms, additionalTypeDefs, additionalResolvers, merger, documents] = await Promise.all([
-    Promise.all(
-      config.sources.map<Promise<MeshResolvedSource>>(async (source, sourceIndex) => {
-        const handlerName = Object.keys(source.handler)[0].toString();
-        const handlerConfig = source.handler[handlerName];
-        const handlerVariableName = camelCase(`${source.name}_Handler`);
-        const transformsVariableName = camelCase(`${source.name}_Transforms`);
-        codes.push(`const ${transformsVariableName} = [];`);
-        const [handler, transforms] = await Promise.all([
-          await getPackage<MeshHandlerLibrary>({ name: handlerName, type: 'handler', importFn, cwd: dir }).then(
-            ({ resolved: HandlerCtor, moduleName }) => {
-              const handlerImportName = pascalCase(handlerName + '_Handler');
-              importCodes.push(`import ${handlerImportName} from '${moduleName}'`);
-              codes.push(`const ${handlerVariableName} = new ${handlerImportName}({
-              name: rawConfig.sources[${sourceIndex}].name,
-              config: rawConfig.sources[${sourceIndex}].handler[${JSON.stringify(handlerName)}],
+  const [sources, transforms, additionalEnvelopPlugins, additionalTypeDefs, additionalResolvers, merger, documents] =
+    await Promise.all([
+      Promise.all(
+        config.sources.map<Promise<MeshResolvedSource>>(async (source, sourceIndex) => {
+          const handlerName = Object.keys(source.handler)[0].toString();
+          const handlerConfig = source.handler[handlerName];
+          const handlerVariableName = camelCase(`${source.name}_Handler`);
+          const transformsVariableName = camelCase(`${source.name}_Transforms`);
+          codes.push(`const ${transformsVariableName} = [];`);
+          const [handler, transforms] = await Promise.all([
+            await getPackage<MeshHandlerLibrary>({
+              name: handlerName,
+              type: 'handler',
+              importFn,
+              cwd: dir,
+              additionalPrefixes: additionalPackagePrefixes,
+            }).then(({ resolved: HandlerCtor, moduleName }) => {
+              if (options.generateCode) {
+                const handlerImportName = pascalCase(handlerName + '_Handler');
+                importCodes.push(`import ${handlerImportName} from ${JSON.stringify(moduleName)}`);
+                codes.push(`const ${handlerVariableName} = new ${handlerImportName}({
+              name: ${JSON.stringify(source.name)},
+              config: ${JSON.stringify(handlerConfig)},
               baseDir,
               cache,
               pubsub,
-              store: sourcesStore.child(rawConfig.sources[${sourceIndex}].name),
-              logger: logger.child(rawConfig.sources[${sourceIndex}].name),
+              store: sourcesStore.child(${JSON.stringify(source.name)}),
+              logger: logger.child(${JSON.stringify(source.name)}),
               importFn
             });`);
+              }
               return new HandlerCtor({
                 name: source.name,
                 config: handlerConfig,
@@ -163,158 +202,223 @@ export async function processConfig(
                 logger: logger.child(source.name),
                 importFn,
               });
-            }
-          ),
-          Promise.all(
-            (source.transforms || []).map(async (t, transformIndex) => {
-              const transformName = Object.keys(t)[0].toString();
-              const transformConfig = t[transformName];
-              const { resolved: TransformCtor, moduleName } = await getPackage<MeshTransformLibrary>({
-                name: transformName,
-                type: 'transform',
-                importFn,
-                cwd: dir,
-              });
+            }),
+            Promise.all(
+              (source.transforms || []).map(async (t, transformIndex) => {
+                const transformName = Object.keys(t)[0].toString();
+                const transformConfig = t[transformName];
+                const { resolved: TransformCtor, moduleName } = await getPackage<MeshTransformLibrary>({
+                  name: transformName,
+                  type: 'transform',
+                  importFn,
+                  cwd: dir,
+                  additionalPrefixes: additionalPackagePrefixes,
+                });
 
-              const transformImportName = pascalCase(transformName + '_Transform');
-              importCodes.push(`import ${transformImportName} from '${moduleName}';`);
-              codes.push(`${transformsVariableName}.push(
+                if (options.generateCode) {
+                  const transformImportName = pascalCase(transformName + '_Transform');
+                  importCodes.push(`import ${transformImportName} from ${JSON.stringify(moduleName)};`);
+                  codes.push(`${transformsVariableName}.push(
                 new ${transformImportName}({
-                  apiName: rawConfig.sources[${sourceIndex}].name,
-                  config: rawConfig.sources[${sourceIndex}].transforms[${transformIndex}][${JSON.stringify(
-                transformName
-              )}],
+                  apiName: ${JSON.stringify(source.name)},
+                  config: ${JSON.stringify(transformConfig)},
                   baseDir,
                   cache,
                   pubsub,
                   importFn
                 })
               );`);
+                }
 
-              return new TransformCtor({
-                apiName: source.name,
-                config: transformConfig,
-                baseDir: dir,
-                cache,
-                pubsub,
-                importFn,
-              });
-            })
-          ),
-        ]);
+                return new TransformCtor({
+                  apiName: source.name,
+                  config: transformConfig,
+                  baseDir: dir,
+                  cache,
+                  pubsub,
+                  importFn,
+                });
+              })
+            ),
+          ]);
 
-        codes.push(`sources.push({
+          if (options.generateCode) {
+            codes.push(`sources.push({
           name: '${source.name}',
           handler: ${handlerVariableName},
           transforms: ${transformsVariableName}
         })`);
+          }
 
-        return {
-          name: source.name,
-          handler,
-          transforms,
-        };
-      })
-    ),
-    Promise.all(
-      config.transforms?.map(async (t, transformIndex) => {
-        const transformName = Object.keys(t)[0].toString();
-        const transformConfig = t[transformName];
-        const { resolved: TransformLibrary, moduleName } = await getPackage<MeshTransformLibrary>({
-          name: transformName,
-          type: 'transform',
-          importFn,
-          cwd: dir,
-        });
+          return {
+            name: source.name,
+            handler,
+            transforms,
+          };
+        })
+      ),
+      Promise.all(
+        config.transforms?.map(async (t, transformIndex) => {
+          const transformName = Object.keys(t)[0].toString();
+          const transformConfig = t[transformName];
+          const { resolved: TransformLibrary, moduleName } = await getPackage<MeshTransformLibrary>({
+            name: transformName,
+            type: 'transform',
+            importFn,
+            cwd: dir,
+            additionalPrefixes: additionalPackagePrefixes,
+          });
 
-        const transformImportName = pascalCase(transformName + '_Transform');
-        importCodes.push(`import ${transformImportName} from '${moduleName}';`);
+          if (options.generateCode) {
+            const transformImportName = pascalCase(transformName + '_Transform');
+            importCodes.push(`import ${transformImportName} from ${JSON.stringify(moduleName)};`);
 
-        codes.push(`transforms.push(
+            codes.push(`transforms.push(
           new (${transformImportName} as any)({
             apiName: '',
-            config: rawConfig.transforms[${transformIndex}][${JSON.stringify(transformName)}],
+            config: ${JSON.stringify(transformConfig)},
             baseDir,
             cache,
             pubsub,
             importFn
           })
         )`);
-        return new TransformLibrary({
-          apiName: '',
-          config: transformConfig,
-          baseDir: dir,
-          cache,
-          pubsub,
-          importFn,
-        });
-      }) || []
-    ),
-    resolveAdditionalTypeDefs(dir, config.additionalTypeDefs).then(additionalTypeDefs => {
-      codes.push(
-        `const additionalTypeDefs = [${(additionalTypeDefs || []).map(
-          parsedTypeDefs => `parse(${JSON.stringify(print(parsedTypeDefs))}),`
-        )}] as any[];`
-      );
-      return additionalTypeDefs;
-    }),
-    options?.ignoreAdditionalResolvers
-      ? []
-      : resolveAdditionalResolvers(dir, config.additionalResolvers, importFn, pubsub),
-    getPackage<MeshMergerLibrary>({ name: mergerName, type: 'merger', importFn, cwd: dir }).then(
-      ({ resolved: Merger, moduleName }) => {
-        const mergerImportName = pascalCase(`${mergerName}Merger`);
-        importCodes.push(`import ${mergerImportName} from '${moduleName}';`);
-        codes.push(`const merger = new(${mergerImportName} as any)({
+          }
+          return new TransformLibrary({
+            apiName: '',
+            config: transformConfig,
+            baseDir: dir,
+            cache,
+            pubsub,
+            importFn,
+          });
+        }) || []
+      ),
+      Promise.all(
+        config.plugins?.map(async (p, pluginIndex) => {
+          const pluginName = Object.keys(p)[0].toString();
+          const pluginConfig = p[pluginName];
+          if (ENVELOP_CORE_PLUGINS_MAP[pluginName] != null) {
+            const { importName, moduleName, pluginFactory } = ENVELOP_CORE_PLUGINS_MAP[pluginName];
+            if (options.generateCode) {
+              importCodes.push(`import { ${importName} } from ${JSON.stringify(moduleName)};`);
+              codes.push(`additionalEnvelopPlugins.push(${importName}(${JSON.stringify(pluginConfig)}))`);
+            }
+            return pluginFactory(pluginConfig);
+          }
+          let importName: string;
+          const { resolved: possiblePluginFactory, moduleName } = await getPackage<any>({
+            name: pluginName,
+            type: 'plugin',
+            importFn,
+            cwd: dir,
+            additionalPrefixes: [...additionalPackagePrefixes, '@envelop/'],
+          });
+          let pluginFactory: MeshPluginFactory<YamlConfig.Plugin[keyof YamlConfig.Plugin]>;
+          if (typeof possiblePluginFactory === 'function') {
+            pluginFactory = possiblePluginFactory;
+            if (options.generateCode) {
+              importName = pascalCase('use_' + pluginName);
+              importCodes.push(`import ${importName} from ${JSON.stringify(moduleName)};`);
+              codes.push(`additionalEnvelopPlugins.push(${importName}({
+          ...(${JSON.stringify(pluginConfig)}),
+          logger: logger.child(${JSON.stringify(pluginName)}),
+        }))`);
+            }
+          } else {
+            Object.keys(possiblePluginFactory).forEach(key => {
+              if (key.toString().startsWith('use') && typeof possiblePluginFactory[key] === 'function') {
+                pluginFactory = possiblePluginFactory[key];
+                if (options.generateCode) {
+                  importCodes.push(`import { ${importName} } from ${JSON.stringify(moduleName)};`);
+                  codes.push(`additionalEnvelopPlugins.push(${importName}(${JSON.stringify(pluginConfig)}])`);
+                }
+              }
+            });
+          }
+          return pluginFactory({
+            ...pluginConfig,
+            logger: logger.child(pluginName),
+          });
+        }) || []
+      ),
+      resolveAdditionalTypeDefs(dir, config.additionalTypeDefs).then(additionalTypeDefs => {
+        if (options.generateCode) {
+          codes.push(
+            `const additionalTypeDefs = [${(additionalTypeDefs || []).map(
+              parsedTypeDefs => `parse(${JSON.stringify(print(parsedTypeDefs))}),`
+            )}] as any[];`
+          );
+          if (additionalTypeDefs?.length) {
+            importCodes.push(`import { parse } from 'graphql';`);
+          }
+        }
+        return additionalTypeDefs;
+      }),
+      options?.ignoreAdditionalResolvers
+        ? []
+        : resolveAdditionalResolvers(dir, config.additionalResolvers, importFn, pubsub),
+      getPackage<MeshMergerLibrary>({
+        name: mergerName,
+        type: 'merger',
+        importFn,
+        cwd: dir,
+        additionalPrefixes: additionalPackagePrefixes,
+      }).then(({ resolved: Merger, moduleName }) => {
+        if (options.generateCode) {
+          const mergerImportName = pascalCase(`${mergerName}Merger`);
+          importCodes.push(`import ${mergerImportName} from ${JSON.stringify(moduleName)};`);
+          codes.push(`const merger = new(${mergerImportName} as any)({
         cache,
         pubsub,
-        logger: logger.child('${mergerImportName}'),
+        logger: logger.child('${mergerName}Merger'),
         store: rootStore.child('${mergerName}Merger')
       })`);
+        }
         return new Merger({
           cache,
           pubsub,
-          logger: logger.child(mergerImportName),
+          logger: logger.child(`${mergerName}Merger`),
           store: rootStore.child(`${mergerName}Merger`),
         });
+      }),
+      resolveDocuments(config.documents, dir),
+    ]);
+
+  if (options.generateCode) {
+    if (config.additionalResolvers?.length) {
+      importCodes.push(`import { resolveAdditionalResolvers } from '@graphql-mesh/utils';`);
+
+      codes.push(`const additionalResolversRawConfig = [];`);
+
+      for (const additionalResolverDefinitionIndex in config.additionalResolvers) {
+        const additionalResolverDefinition = config.additionalResolvers[additionalResolverDefinitionIndex];
+        if (typeof additionalResolverDefinition === 'string') {
+          importCodes.push(
+            `import * as additionalResolvers$${additionalResolverDefinitionIndex} from '${pathModule
+              .join('..', additionalResolverDefinition)
+              .split('\\')
+              .join('/')}';`
+          );
+          codes.push(
+            `additionalResolversRawConfig.push(additionalResolvers$${additionalResolverDefinitionIndex}.resolvers || additionalResolvers$${additionalResolverDefinitionIndex}.default || additionalResolvers$${additionalResolverDefinitionIndex})`
+          );
+        } else {
+          codes.push(`additionalResolversRawConfig.push(${JSON.stringify(additionalResolverDefinition)});`);
+        }
       }
-    ),
-    resolveDocuments(config.documents, dir),
-  ]);
 
-  importCodes.push(`import { resolveAdditionalResolvers } from '@graphql-mesh/utils';`);
-
-  codes.push(`const additionalResolversRawConfig = [];`);
-
-  for (const additionalResolverDefinitionIndex in config.additionalResolvers) {
-    const additionalResolverDefinition = config.additionalResolvers[additionalResolverDefinitionIndex];
-    if (typeof additionalResolverDefinition === 'string') {
-      importCodes.push(
-        `import * as additionalResolvers$${additionalResolverDefinitionIndex} from '${pathModule
-          .join('..', additionalResolverDefinition)
-          .split('\\')
-          .join('/')}';`
-      );
-      codes.push(
-        `additionalResolversRawConfig.push(additionalResolvers$${additionalResolverDefinitionIndex}.resolvers || additionalResolvers$${additionalResolverDefinitionIndex}.default || additionalResolvers$${additionalResolverDefinitionIndex})`
-      );
-    } else {
-      codes.push(
-        `additionalResolversRawConfig.push(rawConfig.additionalResolvers[${additionalResolverDefinitionIndex}]);`
-      );
-    }
-  }
-
-  codes.push(`const additionalResolvers = await resolveAdditionalResolvers(
+      codes.push(`const additionalResolvers = await resolveAdditionalResolvers(
       baseDir,
       additionalResolversRawConfig,
       importFn,
       pubsub
   )`);
+    } else {
+      codes.push(`const additionalResolvers = [] as any[]`);
+    }
+  }
 
-  codes.push(`const liveQueryInvalidations = rawConfig.liveQueryInvalidations;`);
-
-  let additionalEnvelopPlugins = [];
   if (config.additionalEnvelopPlugins) {
     importCodes.push(
       `import importedAdditionalEnvelopPlugins from '${pathModule
@@ -330,33 +434,46 @@ export async function processConfig(
     if (typeof importedAdditionalEnvelopPlugins === 'function') {
       const factoryResult = await importedAdditionalEnvelopPlugins(config);
       if (Array.isArray(factoryResult)) {
-        codes.push(`const additionalEnvelopPlugins = await importedAdditionalEnvelopPlugins(rawConfig);`);
-        additionalEnvelopPlugins = factoryResult;
+        if (options.generateCode) {
+          codes.push(`additionalEnvelopPlugins.push(...(await importedAdditionalEnvelopPlugins()));`);
+        }
+        additionalEnvelopPlugins.push(...factoryResult);
       } else {
-        codes.push(`const additionalEnvelopPlugins = [await importedAdditionalEnvelopPlugins(rawConfig)];`);
-        additionalEnvelopPlugins = [factoryResult];
+        if (options.generateCode) {
+          codes.push(`additionalEnvelopPlugins.push(await importedAdditionalEnvelopPlugins());`);
+        }
+        additionalEnvelopPlugins.push(factoryResult);
       }
     } else {
       if (Array.isArray(importedAdditionalEnvelopPlugins)) {
-        codes.push(`const additionalEnvelopPlugins = importedAdditionalEnvelopPlugins;`);
-        additionalEnvelopPlugins = importedAdditionalEnvelopPlugins;
+        if (options.generateCode) {
+          codes.push(`additionalEnvelopPlugins.push(...importedAdditionalEnvelopPlugins)`);
+        }
+        additionalEnvelopPlugins.push(...importedAdditionalEnvelopPlugins);
       } else {
-        additionalEnvelopPlugins = [importedAdditionalEnvelopPlugins];
-        codes.push(`const additionalEnvelopPlugins = [importedAdditionalEnvelopPlugins];`);
+        if (options.generateCode) {
+          codes.push(`additionalEnvelopPlugins.push(importedAdditionalEnvelopPlugins)`);
+        }
+        additionalEnvelopPlugins.push(importedAdditionalEnvelopPlugins);
       }
     }
-  } else {
-    codes.push(`const additionalEnvelopPlugins = [];`);
   }
 
-  importCodes.push(`import { parseWithCache } from '@graphql-mesh/utils';`);
-  codes.push(`const documents = documentsInSDL.map((documentSdl: string, i: number) => ({
-              rawSDL: documentSdl,
-              document: parseWithCache(documentSdl),
-              location: \`document_\${i}.graphql\`,
-            }))`);
+  if (options.generateCode) {
+    importCodes.push(`import { printWithCache } from '@graphql-mesh/utils';`);
+    const documentVariableNames: string[] = [];
+    if (documents?.length) {
+      const allDocumentNodes: DocumentNode = concatAST(
+        documents.map(document => document.document || parseWithCache(document.rawSDL))
+      );
+      visit(allDocumentNodes, {
+        OperationDefinition(node) {
+          documentVariableNames.push(pascalCase(node.name.value + '_Document'));
+        },
+      });
+    }
 
-  codes.push(`
+    codes.push(`
   return {
     sources,
     transforms,
@@ -366,11 +483,25 @@ export async function processConfig(
     pubsub,
     merger,
     logger,
-    liveQueryInvalidations,
     additionalEnvelopPlugins,
-    documents,
+    get documents() {
+      return [
+      ${documentVariableNames
+        .map(
+          documentVarName => `{
+        document: ${documentVarName},
+        get rawSDL() {
+          return printWithCache(${documentVarName});
+        },
+        location: '${documentVarName}.graphql'
+      }`
+        )
+        .join(',')}
+    ];
+    },
   };
 }`);
+  }
   return {
     sources,
     transforms,

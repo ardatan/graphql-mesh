@@ -1,35 +1,27 @@
 {
   "name": "openapi-react-weatherbit",
-  "version": "0.3.162",
+  "version": "0.3.176",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.11.6",
-    "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
-    "@types/jest": "^26.0.14",
-    "@types/node": "^14.14.3",
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^16.9.9",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "typescript": "~4.0.5",
-    "@graphql-mesh/runtime": "0.33.8",
-    "@graphql-mesh/new-openapi": "0.4.2",
-    "@graphql-mesh/cache-localforage": "0.5.56",
-    "@graphql-mesh/merger-bare": "0.13.31",
-    "@graphql-mesh/transform-cache": "0.11.39",
-    "graphql": "16.3.0"
+    "graphql": "16.3.0",
+    "react": "17.0.2",
+    "react-dom": "17.0.2"
   },
   "devDependencies": {
-    "@graphql-mesh/cli": "0.66.1",
-    "parcel": "2.3.2"
+    "@graphql-mesh/cli": "0.71.3",
+    "@types/react": "17.0.33",
+    "@types/react-dom": "17.0.10",
+    "@vitejs/plugin-react": "1.3.1",
+    "typescript": "4.6.3",
+    "vite": "2.9.5"
   },
   "scripts": {
     "build:mesh": "yarn mesh build",
     "prestart": "yarn build:mesh",
-    "start": "parcel ./public/index.html",
-    "prebuild": "yarn build:mesh",
-    "build": "parcel build ./public/index.html"
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "prebuild": "yarn build:mesh"
   },
   "eslintConfig": {
     "extends": "react-app"

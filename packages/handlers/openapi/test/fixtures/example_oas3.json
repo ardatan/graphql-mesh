@@ -216,7 +216,6 @@
     },
     "links": {
       "Employee": {
-        "$ref": "ThisIsHereAndFormattedThisWayBecauseOfAnIssueWithADependency",
         "operationRef": "Example API#/paths/~1users~1{username}/get",
         "parameters": {
           "username": "$request.path.authorId"

@@ -11,22 +11,18 @@ _Progress of the issue based on the [Contributor Workflow](https://github.com/th
 
 - [ ] 1. The issue provides a reproduction available on [Github](https://github.com/Urigo/graphql-mesh/tree/master/examples/hello-world), [Stackblitz](https://stackblitz.com/github/Urigo/graphql-mesh/tree/master/examples/hello-world) or [CodeSandbox](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/hello-world)
 
-_Make sure to fork this template and run `yarn generate` in the terminal._
-
-_Please make sure the Codegen and plugins version under `package.json` matches yours._
+> Make sure to fork this template and run `yarn generate` in the terminal.
+>
+> Please make sure Mesh package versions under `package.json` matches yours.
 
 - [ ] 2. A failing test has been provided
-
 - [ ] 3. A local solution has been provided
-
 - [ ] 4. A pull request is pending review
-
-
 
 ---
 
-
 **Describe the bug**
+
 <!-- A clear and concise description of what the bug is. -->
 
 **To Reproduce**
@@ -35,6 +31,7 @@ Steps to reproduce the behavior:
 <!-- Adding a codesandbox can help us understand the bug better and speed up things -->
 
 **Expected behavior**
+
 <!-- A clear and concise description of what you expected to happen. -->
 
 **Environment:**
@@ -44,4 +41,5 @@ Steps to reproduce the behavior:
 - NodeJS:
 
 **Additional context**
+
 <!-- Add any other context about the problem here. -->

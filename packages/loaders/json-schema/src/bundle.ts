@@ -41,6 +41,7 @@ export async function createBundle(
     ignoreErrorResponses = false,
   }: JSONSchemaLoaderBundleOptions
 ): Promise<JSONSchemaLoaderBundle> {
+  logger.debug(`Creating the dereferenced schema from operations config`);
   const dereferencedSchema = await getDereferencedJSONSchemaFromOperations({
     operations,
     cwd,
@@ -49,8 +50,10 @@ export async function createBundle(
     schemaHeaders,
     ignoreErrorResponses,
   });
+  logger.debug(`Creating references from dereferenced schema`);
   const referencedSchema = await referenceJSONSchema(dereferencedSchema);
 
+  logger.debug(`Bundle generation finished`);
   return {
     name,
     baseUrl,
@@ -67,6 +70,7 @@ export interface JSONSchemaLoaderBundleToGraphQLSchemaOptions {
   logger?: Logger;
   baseUrl?: string;
   operationHeaders?: Record<string, string>;
+  queryParams?: Record<string, string>;
 }
 
 /**
@@ -88,14 +92,17 @@ export async function getGraphQLSchemaFromBundle(
     logger = new DefaultLogger(name),
     baseUrl: overwrittenBaseUrl,
     operationHeaders: additionalOperationHeaders = {},
+    queryParams,
   }: JSONSchemaLoaderBundleToGraphQLSchemaOptions = {}
 ): Promise<GraphQLSchema> {
+  logger.info(`Dereferencing the bundle`);
   const fullyDeferencedSchema = await dereferenceObject(referencedSchema, {
     cwd,
     fetch,
   });
 
   const operationHeaders = { ...bundledOperationHeaders, ...additionalOperationHeaders };
+  logger.info(`Creating the GraphQL Schema from dereferenced schema`);
   return getGraphQLSchemaFromDereferencedJSONSchema(fullyDeferencedSchema, {
     fetch,
     pubsub,
@@ -103,5 +110,6 @@ export async function getGraphQLSchemaFromBundle(
     baseUrl: overwrittenBaseUrl || bundledBaseUrl,
     operations,
     operationHeaders,
+    queryParams,
   });
 }

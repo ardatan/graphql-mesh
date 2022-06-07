@@ -1,5 +1,192 @@
 # @graphql-mesh/cache-redis
 
+## 0.9.8
+
+### Patch Changes
+
+- 3c0366d2c: - Support import.meta.env instead of process.env for browsers
+  - Ponyfill `util.inspect` only if it is not Node env
+- Updated dependencies [3c0366d2c]
+- Updated dependencies [3c0366d2c]
+  - @graphql-mesh/cross-helpers@0.1.6
+  - @graphql-mesh/utils@0.35.2
+  - @graphql-mesh/cache-localforage@0.6.8
+  - @graphql-mesh/types@0.73.2
+
+## 0.9.7
+
+### Patch Changes
+
+- Updated dependencies [abe9fcc41]
+  - @graphql-mesh/utils@0.35.1
+  - @graphql-mesh/cache-localforage@0.6.7
+  - @graphql-mesh/types@0.73.1
+
+## 0.9.6
+
+### Patch Changes
+
+- 974e703e2: Cleanup dependencies
+- Updated dependencies [974e703e2]
+- Updated dependencies [19a99c055]
+- Updated dependencies [974e703e2]
+- Updated dependencies [974e703e2]
+- Updated dependencies [893d526ab]
+- Updated dependencies [974e703e2]
+  - @graphql-mesh/string-interpolation@0.2.0
+  - @graphql-mesh/types@0.73.0
+  - @graphql-mesh/utils@0.35.0
+  - @graphql-mesh/cache-localforage@0.6.6
+
+## 0.9.5
+
+### Patch Changes
+
+- Updated dependencies [43eb3d2c2]
+  - @graphql-mesh/utils@0.34.10
+  - @graphql-mesh/cache-localforage@0.6.5
+  - @graphql-mesh/types@0.72.5
+
+## 0.9.4
+
+### Patch Changes
+
+- Updated dependencies [55ad5ea44]
+  - @graphql-mesh/cache-localforage@0.6.4
+  - @graphql-mesh/utils@0.34.9
+  - @graphql-mesh/types@0.72.4
+
+## 0.9.3
+
+### Patch Changes
+
+- Updated dependencies [31efa964e]
+  - @graphql-mesh/utils@0.34.8
+  - @graphql-mesh/cache-localforage@0.6.3
+  - @graphql-mesh/types@0.72.3
+
+## 0.9.2
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.34.7
+- @graphql-mesh/types@0.72.2
+- @graphql-mesh/cache-localforage@0.6.2
+
+## 0.9.1
+
+### Patch Changes
+
+- Updated dependencies [b9beacca2]
+  - @graphql-mesh/utils@0.34.6
+  - @graphql-mesh/cache-localforage@0.6.1
+  - @graphql-mesh/types@0.72.1
+
+## 0.9.0
+
+### Minor Changes
+
+- fa2542468: Use Localforage by default and drop inmemory-lru
+
+### Patch Changes
+
+- Updated dependencies [fa2542468]
+  - @graphql-mesh/cache-localforage@0.6.0
+  - @graphql-mesh/types@0.72.0
+  - @graphql-mesh/utils@0.34.5
+
+## 0.8.12
+
+### Patch Changes
+
+- Updated dependencies [ddbbec8a8]
+  - @graphql-mesh/utils@0.34.4
+  - @graphql-mesh/cache-inmemory-lru@0.6.18
+  - @graphql-mesh/types@0.71.4
+
+## 0.8.11
+
+### Patch Changes
+
+- Updated dependencies [2e9addd80]
+  - @graphql-mesh/utils@0.34.3
+  - @graphql-mesh/cache-inmemory-lru@0.6.17
+  - @graphql-mesh/types@0.71.3
+
+## 0.8.10
+
+### Patch Changes
+
+- @graphql-mesh/types@0.71.2
+- @graphql-mesh/cache-inmemory-lru@0.6.16
+- @graphql-mesh/utils@0.34.2
+
+## 0.8.9
+
+### Patch Changes
+
+- 7856f92d3: Bump all packages
+- Updated dependencies [7856f92d3]
+  - @graphql-mesh/cache-inmemory-lru@0.6.15
+  - @graphql-mesh/types@0.71.1
+  - @graphql-mesh/utils@0.34.1
+
+## 0.8.8
+
+### Patch Changes
+
+- Updated dependencies [f963b57ce]
+- Updated dependencies [0644f31f2]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+  - @graphql-mesh/types@0.71.0
+  - @graphql-mesh/utils@0.34.0
+  - @graphql-mesh/cache-inmemory-lru@0.6.14
+
+## 0.8.7
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.33.6
+- @graphql-mesh/types@0.70.6
+- @graphql-mesh/cache-inmemory-lru@0.6.13
+
+## 0.8.6
+
+### Patch Changes
+
+- @graphql-mesh/types@0.70.5
+- @graphql-mesh/cache-inmemory-lru@0.6.12
+- @graphql-mesh/utils@0.33.5
+
+## 0.8.5
+
+### Patch Changes
+
+- Updated dependencies [35a55e841]
+  - @graphql-mesh/types@0.70.4
+  - @graphql-mesh/utils@0.33.4
+  - @graphql-mesh/cache-inmemory-lru@0.6.11
+
+## 0.8.4
+
+### Patch Changes
+
+- @graphql-mesh/types@0.70.3
+- @graphql-mesh/cache-inmemory-lru@0.6.10
+- @graphql-mesh/utils@0.33.3
+
+## 0.8.3
+
+### Patch Changes
+
+- Updated dependencies [b02f5b008]
+  - @graphql-mesh/types@0.70.2
+  - @graphql-mesh/cache-inmemory-lru@0.6.9
+  - @graphql-mesh/utils@0.33.2
+
 ## 0.8.2
 
 ### Patch Changes

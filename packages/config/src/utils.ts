@@ -1,6 +1,6 @@
 import { KeyValueCache, YamlConfig, ImportFn, MeshPubSub, Logger } from '@graphql-mesh/types';
 import { path } from '@graphql-mesh/cross-helpers';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { printSchemaWithDirectives, Source } from '@graphql-tools/utils';
 import { paramCase } from 'param-case';
 import { loadDocuments, loadTypedefs } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
@@ -18,20 +18,29 @@ interface GetPackageOptions {
   type: string;
   importFn: ImportFn;
   cwd: string;
+  additionalPrefixes?: string[];
 }
 
-export async function getPackage<T>({ name, type, importFn, cwd }: GetPackageOptions): Promise<ResolvedPackage<T>> {
+export async function getPackage<T>({
+  name,
+  type,
+  importFn,
+  cwd,
+  additionalPrefixes = [],
+}: GetPackageOptions): Promise<ResolvedPackage<T>> {
   const casedName = paramCase(name);
   const casedType = paramCase(type);
-  const possibleNames = [
-    `@graphql-mesh/${casedName}`,
-    `@graphql-mesh/${casedName}-${casedType}`,
-    `@graphql-mesh/${casedType}-${casedName}`,
-    casedName,
-    `${casedName}-${casedType}`,
-    `${casedType}-${casedName}`,
-    casedType,
-  ];
+  const prefixes = ['@graphql-mesh/', ...additionalPrefixes];
+  const initialPossibleNames = [casedName, `${casedName}-${casedType}`, `${casedType}-${casedName}`, casedType];
+  const possibleNames: string[] = [];
+  for (const prefix of prefixes) {
+    for (const possibleName of initialPossibleNames) {
+      possibleNames.push(`${prefix}${possibleName}`);
+    }
+  }
+  for (const possibleName of initialPossibleNames) {
+    possibleNames.push(possibleName);
+  }
   if (name.includes('-')) {
     possibleNames.push(name);
   }
@@ -39,7 +48,7 @@ export async function getPackage<T>({ name, type, importFn, cwd }: GetPackageOpt
 
   for (const moduleName of possibleModules) {
     try {
-      const exported = await importFn(moduleName);
+      const exported = await importFn(moduleName, true);
       const resolved = exported.default || (exported as T);
       return {
         moduleName,
@@ -74,11 +83,14 @@ export async function resolveAdditionalTypeDefs(baseDir: string, additionalTypeD
 }
 
 export async function resolveCache(
-  cacheConfig: YamlConfig.Config['cache'] = { inmemoryLru: {} },
+  cacheConfig: YamlConfig.Config['cache'] = {
+    localforage: {},
+  },
   importFn: ImportFn,
   rootStore: MeshStore,
   cwd: string,
-  pubsub: MeshPubSub
+  pubsub: MeshPubSub,
+  additionalPackagePrefixes: string[]
 ): Promise<{
   cache: KeyValueCache;
   importCode: string;
@@ -87,7 +99,13 @@ export async function resolveCache(
   const cacheName = Object.keys(cacheConfig)[0].toString();
   const config = cacheConfig[cacheName];
 
-  const { moduleName, resolved: Cache } = await getPackage<any>({ name: cacheName, type: 'cache', importFn, cwd });
+  const { moduleName, resolved: Cache } = await getPackage<any>({
+    name: cacheName,
+    type: 'cache',
+    importFn,
+    cwd,
+    additionalPrefixes: additionalPackagePrefixes,
+  });
 
   const cache = new Cache({
     ...config,
@@ -97,12 +115,12 @@ export async function resolveCache(
   });
 
   const code = `const cache = new (MeshCache as any)({
-      ...(rawConfig.cache || {}),
+      ...(${JSON.stringify(config)} as any),
       importFn,
       store: rootStore.child('cache'),
       pubsub,
     } as any)`;
-  const importCode = `import MeshCache from '${moduleName}';`;
+  const importCode = `import MeshCache from ${JSON.stringify(moduleName)};`;
 
   return {
     cache,
@@ -114,7 +132,8 @@ export async function resolveCache(
 export async function resolvePubSub(
   pubsubYamlConfig: YamlConfig.Config['pubsub'],
   importFn: ImportFn,
-  cwd: string
+  cwd: string,
+  additionalPackagePrefixes: string[]
 ): Promise<{
   importCode: string;
   code: string;
@@ -130,12 +149,18 @@ export async function resolvePubSub(
       pubsubConfig = pubsubYamlConfig.config;
     }
 
-    const { moduleName, resolved: PubSub } = await getPackage<any>({ name: pubsubName, type: 'pubsub', importFn, cwd });
+    const { moduleName, resolved: PubSub } = await getPackage<any>({
+      name: pubsubName,
+      type: 'pubsub',
+      importFn,
+      cwd,
+      additionalPrefixes: additionalPackagePrefixes,
+    });
 
     const pubsub = new PubSub(pubsubConfig);
 
-    const importCode = `import PubSub from '${moduleName}'`;
-    const code = `const pubsub = new PubSub(rawConfig.pubsub);`;
+    const importCode = `import PubSub from ${JSON.stringify(moduleName)}`;
+    const code = `const pubsub = new PubSub(${JSON.stringify(pubsubConfig)});`;
 
     return {
       importCode,
@@ -156,7 +181,10 @@ export async function resolvePubSub(
   }
 }
 
-export async function resolveDocuments(documentsConfig: YamlConfig.Config['documents'], cwd: string) {
+export async function resolveDocuments(
+  documentsConfig: YamlConfig.Config['documents'],
+  cwd: string
+): Promise<Source[]> {
   if (!documentsConfig) {
     return [];
   }
@@ -170,7 +198,9 @@ export async function resolveDocuments(documentsConfig: YamlConfig.Config['docum
 export async function resolveLogger(
   loggerConfig: YamlConfig.Config['logger'],
   importFn: ImportFn,
-  cwd: string
+  cwd: string,
+  additionalPackagePrefixes: string[],
+  initialLoggerPrefix = '🕸️  Mesh'
 ): Promise<{
   importCode: string;
   code: string;
@@ -182,17 +212,18 @@ export async function resolveLogger(
       type: 'logger',
       importFn,
       cwd,
+      additionalPrefixes: additionalPackagePrefixes,
     });
     return {
       logger,
-      importCode: `import logger from '${moduleName}';`,
+      importCode: `import logger from ${JSON.stringify(moduleName)};`,
       code: '',
     };
   }
-  const logger = new DefaultLogger('🕸️');
+  const logger = new DefaultLogger(initialLoggerPrefix);
   return {
     logger,
     importCode: `import { DefaultLogger } from '@graphql-mesh/utils';`,
-    code: `const logger = new DefaultLogger('🕸️');`,
+    code: `const logger = new DefaultLogger(${JSON.stringify(initialLoggerPrefix)});`,
   };
 }

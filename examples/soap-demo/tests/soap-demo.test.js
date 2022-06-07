@@ -4,7 +4,7 @@ const { basename, join } = require('path');
 
 const { lexicographicSortSchema } = require('graphql');
 const { MeshStore, InMemoryStoreStorageAdapter } = require('@graphql-mesh/store');
-const { printSchemaWithDirectives } = require('@graphql-tools/utils')
+const { printSchemaWithDirectives } = require('@graphql-tools/utils');
 
 const store = new MeshStore('soap', new InMemoryStoreStorageAdapter(), {
   readonly: false,
@@ -21,9 +21,7 @@ jest.setTimeout(30000);
 describe('SOAP Country Info', () => {
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
-    expect(
-      printSchemaWithDirectives(lexicographicSortSchema(schema))
-    ).toMatchSnapshot('soap-demo-schema');
+    expect(printSchemaWithDirectives(lexicographicSortSchema(schema))).toMatchSnapshot('soap-demo-schema');
   });
   it('should give correct response for example queries', async () => {
     const { documents } = await config$;

@@ -4,35 +4,41 @@ title: Cache Transform
 sidebar_label: Cache
 ---
 
-The `cache` transform allow you to apply caching over your data-sources easily.
+The `cache` transform allows you to easily apply caching over your data sources.
 
-It allows you to configure custom invalidation rules (by ttl / mutation), and selective caching, according to your needs.
+It allows you to configure custom invalidation rules (by TTL/mutation) and selective caching according to your needs.
 
-> This transform is being applied globally, because of the need to communicate with other GraphQL operations from your mesh.
+> This transform is being applied globally because of the need to communicate with other GraphQL operations from your mesh.
 
 To get started with this transform, install it:
 
 <PackageInstall packages="@graphql-mesh/transform-cache" />
 
-> GraphQL Mesh uses a default in-memory LRU cache, but you can replace it with any other key=>value cache mechanism. See [cache section](/docs/cache/inmemory-lru) for more info.
+> GraphQL Mesh uses a default localforage cache(it is fallbacked to LRU cache in NodeJS), but you can replace it with any other key=>value cache mechanism. See [cache section](/docs/cache/localforage) for more info.
 
-> We'd recommend this transform to be used on the root level, not handler level. It might not work as expected if you use it on a handler level.
+> We'd recommend this transform be used on the root level, not the handler level. It might not work as expected if you use it on a handler level.
+
+<p>&nbsp;</p>
+
+---
+
+<p>&nbsp;</p>
 
 ## How to use?
 
 ### Simple caching
 
-To cache some of your queries, apply the following transform rule. This following example will cache all `Query.*` in your schema, forever:
+To cache some of your queries, apply the following transform rule. The following example will cache all `Query.*` in your schema forever:
 
-```yml
+```yaml
 transforms:
   - cache:
       - field: Query.*
 ```
 
-You can also apply it to a specific field, or multiple fields:
+You can also apply it to a specific field or multiple fields:
 
-```yml
+```yaml
 transforms:
   - cache:
       - field: Query.users
@@ -40,20 +46,28 @@ transforms:
       - field: Query.posts
 ```
 
+<p>&nbsp;</p>
+
 ### The Cache Key
 
-Each cache record is being stored with a key. The default way of creating this key is to use the GraphQL type name, the GraphQL field name, and a hash of the `args` object. This is in order to make that we can distinct the cache key according to the data it's storing.
+Each cache record is stored with a key. The default way of creating this key is to use the GraphQL type name, the GraphQL field name, and a hash of the `args` object. This is in order to make that we can distinct the cache key according to the data it's storing.
 
 You can customize the `cacheKey` according to your needs, and you can use custom helpers to help you create those cache keys dynamically.
 
-The following example creates a `cacheKey` by an GraphQL query argument called `userId`, per day:
+The following example creates a `cacheKey` by a GraphQL query argument called `userId` per day:
 
-```yml
+```yaml
 transforms:
   - cache:
       - field: Query.user
         cacheKey: user-{args.id}-{yyyy-mm-dd | date}
 ```
+
+<p>&nbsp;</p>
+
+---
+
+<p>&nbsp;</p>
 
 ## Cache Invalidation
 
@@ -61,7 +75,7 @@ transforms:
 
 Invalidation by TTL is the simplest way to deal with your cache. You can specify any time (in seconds) to keep your cache.
 
-```yml
+```yaml
 transforms:
   - cache:
       - field: Query.*
@@ -69,11 +83,13 @@ transforms:
           ttl: 3600 # 1 hour
 ```
 
+<p>&nbsp;</p>
+
 ### Operation-based
 
 GraphQL Mesh has a built-in operation-based caching solution.
 
-You can cache data easily, and invalidate it only when it changes by a mutation.
+You can cache data easily and invalidate it only when it changes by a mutation.
 
 For example, given the following schema:
 
@@ -98,9 +114,9 @@ input UpdateUserInput {
 }
 ```
 
-You can set a simple caching, based on a user id:
+You can set a simple caching based on a user id:
 
-```yml
+```yaml
 transforms:
   - cache:
       - field: Query.user
@@ -109,7 +125,7 @@ transforms:
 
 And you can add operation-based invalidation, so when `updateUser` is done successfully, it will invalidate the matching cache record to make sure the data will be fetched next time from the remote source:
 
-```yml
+```yaml
 transforms:
   - cache:
       - field: Query.user
@@ -120,29 +136,44 @@ transforms:
               matchKey: user-{args.userIdToUpdate}
 ```
 
-This way, when someone uses `updateUser` with a specific user id, it will update the data record, and then invalidate the cache automatically.
+This way, when someone uses `updateUser` with a specific user id, it will automatically update the data record and then invalidate the cache
+
+<p>&nbsp;</p>
 
 ### Programmatic
 
 The `getBuiltMesh` method of GraphQL Mesh artifacts returns the general key=>value cache it uses at the moment, so you can easily access it and invalidate records according to your needs:
 
 ```ts
-const { getBuiltMesh } = require('./.mesh');
-const { schema, execute, cache } = getBuiltMesh();
+const { getBuiltMesh } = require('./.mesh')
+const { schema, execute, cache } = getBuiltMesh()
 
-cache.delete(SOME_KEY);
+cache.delete(SOME_KEY)
 ```
+
+<p>&nbsp;</p>
+
+---
+
+<p>&nbsp;</p>
 
 ## Codesandbox Example
 
-You can check Location Weather example that uses OpenAPI handler with cache transform;
+You can check the ["Location Weather" example](https://github.com/Urigo/graphql-mesh/tree/master/examples/openapi-location-weather/) that uses OpenAPI handler with cache transform;
 
 <iframe
-     src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/openapi-location-weather?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
-     style={{width:"100%", height:"500px", border:"0", borderRadius: "4px", overflow:"hidden"}}
-     title="typescript-location-weather-example"
-     allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
-     sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"/>
+  src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/openapi-location-weather?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
+  style={{ width: '100%', height: '500px', border: '0', borderRadius: '4px', overflow: 'hidden' }}
+  title="typescript-location-weather-example"
+  allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+  sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+/>
+
+<p>&nbsp;</p>
+
+---
+
+<p>&nbsp;</p>
 
 ## Config API Reference
 

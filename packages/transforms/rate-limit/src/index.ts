@@ -1,8 +1,9 @@
-import { MeshTransform, MeshTransformOptions, ResolverData, YamlConfig } from '@graphql-mesh/types';
-import type { ExecutionRequest } from '@graphql-tools/utils';
+import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import { AggregateError, ExecutionRequest } from '@graphql-tools/utils';
 import type { DelegationContext } from '@graphql-tools/delegate';
 import { ExecutionResult, GraphQLError, TypeInfo, visit, visitWithTypeInfo } from 'graphql';
-import { AggregateError, stringInterpolator } from '@graphql-mesh/utils';
+import { ResolverData, stringInterpolator } from '@graphql-mesh/string-interpolation';
+import { process } from '@graphql-mesh/cross-helpers';
 
 export default class RateLimitTransform implements MeshTransform {
   private pathRateLimitDef = new Map<string, YamlConfig.RateLimitTransformConfig>();
@@ -15,11 +16,10 @@ export default class RateLimitTransform implements MeshTransform {
       });
     }
     if (options.pubsub) {
-      options.pubsub
-        .subscribe('destroy', () => {
-          this.timeouts.forEach(timeout => clearTimeout(timeout));
-        })
-        .catch(e => console.warn(`Error cleaning up rate limit transform: ${e.stack || e.message || e}`));
+      const id$ = options.pubsub.subscribe('destroy', () => {
+        this.timeouts.forEach(timeout => clearTimeout(timeout));
+        id$.then(id => options.pubsub.unsubscribe(id)).catch(err => console.error(err));
+      });
     }
   }
 

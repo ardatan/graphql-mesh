@@ -1,23 +1,18 @@
 import {
   YamlConfig,
-  ResolverData,
   MeshHandler,
   GetMeshSourceOptions,
   MeshSource,
   KeyValueCache,
   ImportFn,
-  Logger,
 } from '@graphql-mesh/types';
+import { readFileOrUrl, getCachedFetch, loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import {
-  parseInterpolationStrings,
   getInterpolatedHeadersFactory,
-  readFileOrUrl,
-  jsonFlatStringify,
-  getCachedFetch,
-  loadFromModuleExportExpression,
+  parseInterpolationStrings,
+  ResolverData,
   stringInterpolator,
-  jitExecutorFactory,
-} from '@graphql-mesh/utils';
+} from '@graphql-mesh/string-interpolation';
 import urljoin from 'url-join';
 import {
   SchemaComposer,
@@ -51,11 +46,14 @@ import { parseResolveInfo, ResolveTree, simplifyParsedResolveInfoFragmentWithTyp
 import DataLoader from 'dataloader';
 import { parseResponse } from 'http-string-parser';
 import { pascalCase } from 'pascal-case';
+// eslint-disable-next-line import/no-nodejs-modules
 import EventEmitter from 'events';
 import { XMLParser } from 'fast-xml-parser';
 import { ExecutionRequest, memoize1 } from '@graphql-tools/utils';
 import { Request, Response } from 'cross-undici-fetch';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
+import { createDefaultExecutor } from '@graphql-tools/delegate';
+import { process } from '@graphql-mesh/cross-helpers';
 
 const SCALARS = new Map<string, string>([
   ['Edm.Binary', 'String'],
@@ -129,7 +127,6 @@ export default class ODataHandler implements MeshHandler {
   private eventEmitterSet = new Set<EventEmitter>();
   private metadataJson: any;
   private importFn: ImportFn;
-  private logger: Logger;
   private xmlParser = new XMLParser({
     attributeNamePrefix: '',
     attributesGroupName: 'attributes',
@@ -141,22 +138,13 @@ export default class ODataHandler implements MeshHandler {
     preserveOrder: false,
   });
 
-  constructor({
-    name,
-    config,
-    baseDir,
-    cache,
-    store,
-    importFn,
-    logger,
-  }: GetMeshSourceOptions<YamlConfig.ODataHandler>) {
+  constructor({ name, config, baseDir, cache, store, importFn }: GetMeshSourceOptions<YamlConfig.ODataHandler>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
     this.cache = cache;
     this.metadataJson = store.proxy('metadata.json', PredefinedProxyOptions.JsonWithoutValidation);
     this.importFn = importFn;
-    this.logger = logger;
   }
 
   async getCachedMetadataJson(fetch: ReturnType<typeof getCachedFetch>) {
@@ -475,7 +463,7 @@ export default class ODataHandler implements MeshHandler {
       }
       return requests.map((_req, index) => {
         const responseObj = batchResponseJson.responses.find((res: any) => res.id === index.toString());
-        return new Response(jsonFlatStringify(responseObj.body), {
+        return new Response(JSON.stringify(responseObj.body), {
           status: responseObj.status,
           headers: responseObj.headers,
         });
@@ -550,7 +538,7 @@ export default class ODataHandler implements MeshHandler {
           batchHeaders['content-type'] = 'application/json';
           const batchResponse = await fetch(urljoin(baseUrl, '$batch'), {
             method: 'POST',
-            body: jsonFlatStringify({
+            body: JSON.stringify({
               requests: await Promise.all(
                 requests.map(async (request, index) => {
                   const id = index.toString();
@@ -1086,7 +1074,7 @@ export default class ODataHandler implements MeshHandler {
                   },
                   method
                 ),
-                body: jsonFlatStringify(args),
+                body: JSON.stringify(args),
               });
               const response = await context[contextDataloaderName].load(request);
               const responseText = await response.text();
@@ -1160,7 +1148,7 @@ export default class ODataHandler implements MeshHandler {
                     },
                     method
                   ),
-                  body: jsonFlatStringify(args),
+                  body: JSON.stringify(args),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
@@ -1429,7 +1417,7 @@ export default class ODataHandler implements MeshHandler {
                     },
                     method
                   ),
-                  body: jsonFlatStringify(args.input),
+                  body: JSON.stringify(args.input),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
@@ -1498,7 +1486,7 @@ export default class ODataHandler implements MeshHandler {
                     },
                     method
                   ),
-                  body: jsonFlatStringify(args.input),
+                  body: JSON.stringify(args.input),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
@@ -1517,7 +1505,7 @@ export default class ODataHandler implements MeshHandler {
     this.eventEmitterSet.forEach(ee => ee.removeAllListeners());
     this.eventEmitterSet.clear();
 
-    const jitExecutor = jitExecutorFactory(schema, this.name, this.logger);
+    const executor = createDefaultExecutor(schema);
 
     return {
       schema,
@@ -1525,7 +1513,7 @@ export default class ODataHandler implements MeshHandler {
         const odataContext = {
           [contextDataloaderName]: dataLoaderFactory(executionRequest.context),
         };
-        return jitExecutor({
+        return executor({
           ...executionRequest,
           context: {
             ...executionRequest.context,

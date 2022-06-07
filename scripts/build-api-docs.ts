@@ -24,7 +24,8 @@ async function buildApiDocs(): Promise<void> {
       !packageJsonPath.includes('./website/') &&
       !packageJsonContent.private &&
       packageJsonContent.name !== MONOREPO &&
-      !packageJsonContent.name.endsWith('/container')
+      !packageJsonContent.name.endsWith('/container') &&
+      !packageJsonContent.name.endsWith('/cross-helpers')
     ) {
       modules.push([
         packageJsonContent.name,

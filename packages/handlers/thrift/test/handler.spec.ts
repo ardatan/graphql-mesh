@@ -1,5 +1,5 @@
 import ThriftHandler from '../src';
-import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
+import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { join } from 'path';
 import { printSchema } from 'graphql';
 import { PubSub } from '@graphql-mesh/utils';

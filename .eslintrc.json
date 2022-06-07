@@ -25,6 +25,7 @@
     "@typescript-eslint/return-await": "error",
     "@typescript-eslint/naming-convention": "off",
     "@typescript-eslint/no-floating-promises": "error",
+    "import/no-nodejs-modules": "error",
     "no-eval": "off",
     "no-use-before-define": "off",
     "import/no-extraneous-dependencies": ["error", { "devDependencies": ["**/*.test.ts", "**/*.spec.ts"] }]

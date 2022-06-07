@@ -1,55 +1,39 @@
-import { ImportFn, KeyValueCache, KeyValueCacheSetOptions, YamlConfig } from '@graphql-mesh/types';
+import { KeyValueCache, KeyValueCacheSetOptions, YamlConfig } from '@graphql-mesh/types';
+import { createInMemoryLRUDriver } from './InMemoryLRUDriver';
+import LocalForage from 'localforage';
+
+LocalForage.defineDriver(createInMemoryLRUDriver()).catch(err =>
+  console.error('Failed at defining InMemoryLRU driver', err)
+);
 
 export default class LocalforageCache<V = any> implements KeyValueCache<V> {
-  private localforage$: Promise<typeof import('localforage')>;
-  constructor(config: YamlConfig.LocalforageConfig & { importFn: ImportFn }) {
-    if (!globalThis.localStorage) {
-      const storage = new Map();
-      globalThis.localStorage = {
-        get length() {
-          return storage.size;
-        },
-        clear: () => storage.clear(),
-        getItem: key => storage.get(key),
-        key: index => storage.keys()[index],
-        removeItem: key => storage.delete(key),
-        setItem: (key, value) => storage.set(key, value),
-      };
-    }
-    this.localforage$ = config
-      .importFn('localforage')
-      .then(localforage => localforage.default || localforage)
-      .then(localforage => {
-        const driverNames = config?.driver || ['INDEXEDDB', 'WEBSQL', 'LOCALSTORAGE'];
-        const runtimeConfig = {
-          ...config,
-          driver: driverNames.map(driverName => localforage[driverName]),
-        };
-        localforage.config(runtimeConfig);
-        return localforage;
-      });
+  private localforage: LocalForage;
+  constructor(config?: YamlConfig.LocalforageConfig) {
+    const driverNames = config?.driver || ['INDEXEDDB', 'WEBSQL', 'LOCALSTORAGE', 'INMEMORY_LRU'];
+    this.localforage = LocalForage.createInstance({
+      name: config?.name || 'graphql-mesh-cache',
+      storeName: config?.storeName || 'graphql-mesh-cache-store',
+      driver: driverNames.map(driverName => LocalForage[driverName] ?? driverName),
+    });
   }
 
   async get(key: string) {
-    const localforage = await this.localforage$;
-    const expiresAt = await localforage.getItem<number>(`${key}.expiresAt`);
+    const expiresAt = await this.localforage.getItem<number>(`${key}.expiresAt`);
     if (expiresAt && Date.now() > expiresAt) {
-      await localforage.removeItem(key);
+      await this.localforage.removeItem(key);
     }
-    return localforage.getItem<V>(key.toString());
+    return this.localforage.getItem<V>(key.toString());
   }
 
   async set(key: string, value: V, options?: KeyValueCacheSetOptions) {
-    const localforage = await this.localforage$;
-    const jobs: Promise<any>[] = [localforage.setItem<V>(key, value)];
+    const jobs: Promise<any>[] = [this.localforage.setItem<V>(key, value)];
     if (options?.ttl) {
-      jobs.push(localforage.setItem(`${key}.expiresAt`, Date.now() + options.ttl * 1000));
+      jobs.push(this.localforage.setItem(`${key}.expiresAt`, Date.now() + options.ttl * 1000));
     }
     await Promise.all(jobs);
   }
 
-  async delete(key: string) {
-    const localforage = await this.localforage$;
-    return localforage.removeItem(key);
+  delete(key: string) {
+    return this.localforage.removeItem(key);
   }
 }

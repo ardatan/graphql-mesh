@@ -1,16 +1,7 @@
-import {
-  GetMeshSourceOptions,
-  MeshPubSub,
-  MeshHandler,
-  MeshSource,
-  YamlConfig,
-  ImportFn,
-  Logger,
-} from '@graphql-mesh/types';
+import { GetMeshSourceOptions, MeshPubSub, MeshHandler, MeshSource, YamlConfig, ImportFn } from '@graphql-mesh/types';
 import { SchemaComposer, EnumTypeComposerValueConfigDefinition } from 'graphql-compose';
 import { TableForeign, createPool, Pool } from 'mysql';
 import { upgrade, introspection } from 'mysql-utilities';
-import { promisify } from 'util';
 import graphqlFields from 'graphql-fields';
 import {
   GraphQLBigInt,
@@ -22,15 +13,13 @@ import {
   GraphQLUnsignedInt,
   GraphQLUnsignedFloat,
 } from 'graphql-scalars';
-import { specifiedDirectives } from 'graphql';
-import {
-  jitExecutorFactory,
-  loadFromModuleExportExpression,
-  sanitizeNameForGraphQL,
-  stringInterpolator,
-} from '@graphql-mesh/utils';
+import { GraphQLResolveInfo, specifiedDirectives } from 'graphql';
+import { loadFromModuleExportExpression, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
 import { ExecutionRequest } from '@graphql-tools/utils';
+import { createDefaultExecutor } from '@graphql-tools/delegate';
+import { process, util } from '@graphql-mesh/cross-helpers';
 
 const SCALARS = {
   bigint: 'BigInt',
@@ -97,21 +86,21 @@ type MysqlPromisifiedConnection = ThenArg<ReturnType<typeof getPromisifiedConnec
 type MysqlContext = { mysqlConnection: MysqlPromisifiedConnection };
 
 async function getPromisifiedConnection(pool: Pool) {
-  const getConnection = promisify(pool.getConnection.bind(pool));
+  const getConnection = util.promisify(pool.getConnection.bind(pool));
 
   const connection = await getConnection();
 
-  const getDatabaseTables = promisify(connection.databaseTables.bind(connection));
-  const getTableFields = promisify(connection.fields.bind(connection));
-  const getTableForeigns = promisify(connection.foreign.bind(connection));
-  const getTablePrimaryKeyMetadata = promisify(connection.primary.bind(connection));
+  const getDatabaseTables = util.promisify(connection.databaseTables.bind(connection));
+  const getTableFields = util.promisify(connection.fields.bind(connection));
+  const getTableForeigns = util.promisify(connection.foreign.bind(connection));
+  const getTablePrimaryKeyMetadata = util.promisify(connection.primary.bind(connection));
 
-  const selectLimit = promisify(connection.selectLimit.bind(connection));
-  const select = promisify(connection.select.bind(connection));
-  const insert = promisify(connection.insert.bind(connection));
-  const update = promisify(connection.update.bind(connection));
-  const deleteRow = promisify(connection.delete.bind(connection));
-  const count = promisify(connection.count.bind(connection));
+  const selectLimit = util.promisify(connection.selectLimit.bind(connection));
+  const select = util.promisify(connection.select.bind(connection));
+  const insert = util.promisify(connection.insert.bind(connection));
+  const update = util.promisify(connection.update.bind(connection));
+  const deleteRow = util.promisify(connection.delete.bind(connection));
+  const count = util.promisify(connection.count.bind(connection));
   const release = connection.release.bind(connection);
 
   return {
@@ -130,14 +119,19 @@ async function getPromisifiedConnection(pool: Pool) {
   };
 }
 
+function getFieldsFromResolveInfo(info: GraphQLResolveInfo) {
+  const fieldMap: Record<string, any> = graphqlFields(info);
+  return Object.keys(fieldMap).filter(
+    fieldName => Object.keys(fieldMap[fieldName]).length === 0 && fieldName !== '__typename'
+  );
+}
+
 export default class MySQLHandler implements MeshHandler {
-  private name: string;
   private config: YamlConfig.MySQLHandler;
   private baseDir: string;
   private pubsub: MeshPubSub;
   private store: MeshStore;
   private importFn: ImportFn;
-  private logger: Logger;
 
   constructor({
     name,
@@ -148,13 +142,11 @@ export default class MySQLHandler implements MeshHandler {
     importFn,
     logger,
   }: GetMeshSourceOptions<YamlConfig.MySQLHandler>) {
-    this.name = name;
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
     this.store = store;
     this.importFn = importFn;
-    this.logger = logger;
   }
 
   private getCachedIntrospectionConnection(pool: Pool) {
@@ -273,13 +265,16 @@ export default class MySQLHandler implements MeshHandler {
           extensions: table,
           fields: {},
         });
-        const primaryKeyMetadata = await introspectionConnection.getTablePrimaryKeyMetadata(tableName);
+        const primaryKeys = new Set<string>();
         const fields = await introspectionConnection.getTableFields(tableName);
         const fieldNames =
           this.config.tableFields?.find(({ table }) => table === tableName)?.fields || Object.keys(fields);
         await Promise.all(
           fieldNames.map(async fieldName => {
             const tableField = fields[fieldName];
+            if (tableField.Key === 'PRI') {
+              primaryKeys.add(fieldName);
+            }
             const typePattern = tableField.Type;
             const [realTypeNameCased, restTypePattern] = typePattern.split('(');
             const [typeDetails] = restTypePattern?.split(')') || [];
@@ -342,8 +337,9 @@ export default class MySQLHandler implements MeshHandler {
           })
         );
         const tableForeigns = await introspectionConnection.getTableForeigns(tableName);
+        const tableForeignNames = Object.keys(tableForeigns);
         await Promise.all(
-          Object.keys(tableForeigns).map(async foreignName => {
+          tableForeignNames.map(async foreignName => {
             const tableForeign = tableForeigns[foreignName];
             const columnName = tableForeign.COLUMN_NAME;
             if (!fieldNames.includes(columnName)) {
@@ -374,20 +370,67 @@ export default class MySQLHandler implements MeshHandler {
                 },
                 extensions: tableForeign,
                 resolve: async (root, args, { mysqlConnection }, info) => {
-                  const fieldMap: Record<string, any> = graphqlFields(info);
-                  const fields = Object.keys(fieldMap).filter(
-                    fieldName => Object.keys(fieldMap[fieldName]).length === 0 && fieldName !== '__typename'
-                  );
                   const where = {
                     [foreignColumnName]: root[columnName],
                     ...args?.where,
                   };
                   // Generate limit statement
                   const limit: number[] = [args.limit, args.offset].filter(Boolean);
+                  const fields = getFieldsFromResolveInfo(info);
                   if (limit.length) {
                     return mysqlConnection.selectLimit(foreignTableName, fields, limit, where, args?.orderBy);
                   } else {
                     return mysqlConnection.select(foreignTableName, fields, where, args?.orderBy);
+                  }
+                },
+              },
+            });
+            const foreignOTC = schemaComposer.getOTC(foreignObjectTypeName);
+            foreignOTC.addFields({
+              [tableName]: {
+                type: '[' + objectTypeName + ']',
+                args: {
+                  limit: {
+                    type: 'Int',
+                  },
+                  offset: {
+                    type: 'Int',
+                  },
+                  where: {
+                    type: whereInputName,
+                  },
+                  orderBy: {
+                    type: orderByInputName,
+                  },
+                },
+                extensions: {
+                  COLUMN_NAME: foreignColumnName,
+                },
+                resolve: (root, args, { mysqlConnection }, info) => {
+                  const where = {
+                    [columnName]: root[foreignColumnName],
+                    ...args?.where,
+                  };
+                  const fieldMap: Record<string, any> = graphqlFields(info);
+                  const fields: string[] = [];
+                  for (const fieldName in fieldMap) {
+                    if (fieldName !== '__typename') {
+                      const subFieldMap = fieldMap[fieldName];
+                      if (Object.keys(subFieldMap).length === 0) {
+                        fields.push(fieldName);
+                      } else {
+                        const tableForeign = schemaComposer.getOTC(objectTypeName).getField(fieldName)
+                          .extensions as TableForeign;
+                        fields.push(tableForeign.COLUMN_NAME);
+                      }
+                    }
+                  }
+                  // Generate limit statement
+                  const limit = [args.limit, args.offset].filter(Boolean);
+                  if (limit.length) {
+                    return mysqlConnection.selectLimit(tableName, fields, limit, where, args?.orderBy);
+                  } else {
+                    return mysqlConnection.select(tableName, fields, where, args?.orderBy);
                   }
                 },
               },
@@ -458,13 +501,11 @@ export default class MySQLHandler implements MeshHandler {
             resolve: async (root, args, { mysqlConnection }, info) => {
               const input = args[tableName];
               const { recordId } = await mysqlConnection.insert(tableName, input);
-              const fieldMap: Record<string, any> = graphqlFields(info);
-              const fields = Object.keys(fieldMap).filter(
-                fieldName => Object.keys(fieldMap[fieldName]).length === 0 && fieldName !== '__typename'
-              );
-              const where: any = {};
-              const primaryColumnName = primaryKeyMetadata.Column_name;
-              where[primaryColumnName] = input[primaryColumnName] || recordId;
+              const fields = getFieldsFromResolveInfo(info);
+              const where: Record<string, any> = {};
+              for (const primaryColumnName of primaryKeys) {
+                where[primaryColumnName] = input[primaryColumnName] || recordId;
+              }
               const result = await mysqlConnection.select(tableName, fields, where, {});
               return result[0];
             },
@@ -481,10 +522,7 @@ export default class MySQLHandler implements MeshHandler {
             },
             resolve: async (root, args, { mysqlConnection }, info) => {
               await mysqlConnection.update(tableName, args[tableName], args.where);
-              const fieldMap: Record<string, any> = graphqlFields(info);
-              const fields = Object.keys(fieldMap).filter(
-                fieldName => Object.keys(fieldMap[fieldName]).length === 0 && fieldName !== '__typename'
-              );
+              const fields = getFieldsFromResolveInfo(info);
               const result = await mysqlConnection.select(tableName, fields, args.where, {});
               return result[0];
             },
@@ -504,23 +542,24 @@ export default class MySQLHandler implements MeshHandler {
     );
     introspectionConnection.release();
 
-    this.pubsub
-      .subscribe('destroy', () => pool.end())
-      .catch(e => this.logger.error(`Couldn't release pool: ${e.stack || e.message || e}`));
+    const id$ = this.pubsub.subscribe('destroy', () => {
+      pool.end();
+      id$.then(id => this.pubsub.unsubscribe(id)).catch(err => console.error(err));
+    });
 
     // graphql-compose doesn't add @defer and @stream to the schema
     specifiedDirectives.forEach(directive => schemaComposer.addDirective(directive));
 
     const schema = schemaComposer.buildSchema();
 
-    const jitExecutor = jitExecutorFactory(schema, this.name, this.logger);
+    const executor = createDefaultExecutor(schema);
 
     return {
       schema,
       async executor(executionRequest: ExecutionRequest) {
         const mysqlConnection = await getPromisifiedConnection(pool);
         try {
-          return await jitExecutor({
+          return await executor({
             ...executionRequest,
             context: {
               ...executionRequest.context,

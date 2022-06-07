@@ -1,4 +1,4 @@
-import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
+import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { MeshPubSub } from '@graphql-mesh/types';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { buildSchema, GraphQLField, GraphQLObjectType, printSchema } from 'graphql';

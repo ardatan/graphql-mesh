@@ -11,7 +11,7 @@ import {
   SoapObjectType,
 } from './soap-endpoint';
 import { SoapCaller } from './soap-caller';
-import { inspect } from '@graphql-tools/utils';
+import { util } from '@graphql-mesh/cross-helpers';
 import {
   GraphQLObjectType,
   GraphQLFieldConfigMap,
@@ -204,7 +204,7 @@ export class SchemaResolver {
       description: `Operation ${operation.name()}, port ${operation.port().name()}, service ${operation
         .service()
         .name()}`,
-      args: args,
+      args,
       resolve: resolver,
     };
   }
@@ -272,11 +272,11 @@ export class SchemaResolver {
       graphqlInfo: GraphQLResolveInfo
     ) => {
       return this.soapCaller.call({
-        operation: operation,
-        graphqlSource: graphqlSource,
-        graphqlArgs: graphqlArgs,
-        graphqlContext: graphqlContext,
-        graphqlInfo: graphqlInfo,
+        operation,
+        graphqlSource,
+        graphqlArgs,
+        graphqlContext,
+        graphqlInfo,
       });
     };
   }
@@ -293,7 +293,7 @@ class GraphqlOutputFieldResolver {
       const type: GraphQLOutputType = this.resolveOutputType(input.type);
       return input.isList ? new GraphQLList(type) : type;
     } catch (err) {
-      const errStacked = new Error(`could not resolve output type for ${inspect(input)}`);
+      const errStacked = new Error(`could not resolve output type for ${util.inspect(input)}`);
       errStacked.stack += '\nCaused by: ' + err.stack;
       throw errStacked;
     }
@@ -318,7 +318,7 @@ class GraphqlOutputFieldResolver {
       }
     }
 
-    this.logger.warn(`could not resolve output type '${inspect(soapType)}'; using GraphQLJSON instead`);
+    this.logger.warn(`could not resolve output type '`, soapType, `'; using GraphQLJSON instead`);
     this.alreadyResolvedOutputTypes.set(soapType, GraphQLJSON);
     return GraphQLJSON;
   }
@@ -342,8 +342,8 @@ class GraphqlOutputFieldResolver {
 
     return {
       name: this.options.outputNameResolver(soapType),
-      fields: fields,
-      interfaces: interfaces,
+      fields,
+      interfaces,
     };
   }
 
@@ -388,7 +388,7 @@ class GraphqlOutputFieldResolver {
 
     return {
       name: this.options.interfaceNameResolver(soapType),
-      fields: fields,
+      fields,
       // should never be called, since the schema will not contain ambigous return types
       resolveType: (value: any, context: any, info: GraphQLResolveInfo) => {
         throw Error('no interface resolving available');
@@ -418,7 +418,7 @@ class GraphqlInputFieldResolver {
       const type: GraphQLInputType = this.resolveInputType(input.type);
       return input.isList ? new GraphQLList(type) : type;
     } catch (err) {
-      const errStacked = new Error(`could not resolve output type for ${inspect(input)}`);
+      const errStacked = new Error(`could not resolve output type for ${util.inspect(input)}`);
       errStacked.stack += '\nCaused by: ' + err.stack;
       throw errStacked;
     }
@@ -461,7 +461,7 @@ class GraphqlInputFieldResolver {
 
     return {
       name: this.options.inputNameResolver(soapType),
-      fields: fields,
+      fields,
     };
   }
 

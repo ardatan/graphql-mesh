@@ -19,11 +19,21 @@ type GraphQLHandlerMultipleHTTPConfiguration {
   Handling strategy (default: fallback)
   """
   strategy: GraphQLHandlerMultipleHTTPSourceStrategy
+  """
+  Handling strategy configuration
+  """
+  strategyConfig: GraphQLHandlerhighestValueStrategyConfig
+}
+
+type GraphQLHandlerhighestValueStrategyConfig {
+  selectionSet: String!
+  value: String!
 }
 
 enum GraphQLHandlerMultipleHTTPSourceStrategy {
   fallback
   race
+  highestValue
 }
 
 type GraphQLHandlerCodeFirstConfiguration @md {

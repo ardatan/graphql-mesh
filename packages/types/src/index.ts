@@ -7,6 +7,7 @@ import { Transform, MergedTypeConfig } from '@graphql-tools/delegate';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { MeshStore } from '@graphql-mesh/store';
 import configSchema from './config-schema.json';
+import type { Plugin } from '@envelop/core';
 
 export const jsonSchema: any = configSchema;
 
@@ -38,15 +39,6 @@ export interface MeshHandler<TContext = any> {
 export interface MeshHandlerLibrary<TConfig = any, TContext = any> {
   new (options: GetMeshSourceOptions<TConfig>): MeshHandler<TContext>;
 }
-
-export type ResolverData<TParent = any, TArgs = any, TContext = any, TResult = any> = {
-  root?: TParent;
-  args?: TArgs;
-  context?: TContext;
-  info?: GraphQLResolveInfo;
-  result?: TResult;
-  env: Record<string, string>;
-};
 
 // Hooks
 export type AllHooks = {
@@ -110,6 +102,12 @@ export interface MeshMerger {
   getUnifiedSchema(mergerContext: MeshMergerContext): GraphQLSchema | Promise<GraphQLSchema>;
 }
 
+export type MeshPluginOptions<TConfig> = TConfig & {
+  logger: Logger;
+};
+
+export type MeshPluginFactory<TConfig> = (options: MeshPluginOptions<TConfig>) => Plugin;
+
 export type RawSourceOutput = {
   name: string;
   schema: GraphQLSchema;
@@ -123,17 +121,17 @@ export type RawSourceOutput = {
 
 export type GraphQLOperation<TData, TVariables> = TypedDocumentNode<TData, TVariables> | string;
 
-export type ImportFn = <T = any>(moduleId: string) => Promise<T>;
+export type ImportFn = <T = any>(moduleId: string, noCache?: boolean) => Promise<T>;
 
-export type LazyLoggerMessage = (() => string) | string;
+export type LazyLoggerMessage = (() => any | any[]) | any;
 
 export type Logger = {
   name?: string;
-  log: (message: string) => void;
-  warn: (message: string) => void;
-  info: (message: string) => void;
-  error: (message: string) => void;
-  debug: (message: LazyLoggerMessage) => void;
+  log: (...args: any[]) => void;
+  warn: (...args: any[]) => void;
+  info: (...args: any[]) => void;
+  error: (...args: any[]) => void;
+  debug: (...lazyArgs: LazyLoggerMessage[]) => void;
   child: (name: string) => Logger;
 };
 

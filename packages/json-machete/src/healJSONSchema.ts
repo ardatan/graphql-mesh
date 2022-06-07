@@ -1,4 +1,4 @@
-import { inspect } from 'util';
+import { util, process } from '@graphql-mesh/cross-helpers';
 import { JSONSchema } from './types';
 import { OnCircularReference, visitJSONSchema } from './visitJSONSchema';
 import toJsonSchema from 'to-json-schema';
@@ -30,7 +30,7 @@ function deduplicateJSONSchema(schema: JSONSchema, seenMap = new Map()) {
       if (titleReserved) {
         schema.title = undefined;
       }
-      const stringified = inspect(schema, undefined, 3);
+      const stringified = util.inspect(schema, undefined, 3);
       if (titleReserved) {
         schema.title = titleReserved;
       }
@@ -65,7 +65,7 @@ async function getDeduplicatedTitles(schema: JSONSchema): Promise<Set<string>> {
       visitedSubschemaResultMap: new WeakMap(),
       path: '',
       keepObjectRef: true,
-      onCircularReference: OnCircularReference.IGNORE,
+      onCircularReference: process.env.DEBUG ? OnCircularReference.WARN : OnCircularReference.IGNORE,
     }
   );
   return duplicatedTypeNames;
@@ -75,8 +75,48 @@ export async function healJSONSchema(schema: JSONSchema) {
   const duplicatedTypeNames = await getDeduplicatedTitles(deduplicatedSchema);
   return visitJSONSchema<JSONSchema>(
     deduplicatedSchema,
-    (subSchema, { path }) => {
+    async function healSubschema(subSchema, { path }) {
       if (typeof subSchema === 'object') {
+        if (process.env.DEBUG) {
+          console.log(`Healing ${path}`);
+        }
+        // We don't support following properties
+        delete subSchema.readOnly;
+        delete subSchema.writeOnly;
+        const keys = Object.keys(subSchema);
+        if (keys.length === 0) {
+          subSchema.type = 'object';
+          subSchema.additionalProperties = true;
+        }
+        if (typeof subSchema.additionalProperties === 'object') {
+          delete subSchema.additionalProperties.readOnly;
+          delete subSchema.additionalProperties.writeOnly;
+          if (Object.keys(subSchema.additionalProperties).length === 0) {
+            subSchema.additionalProperties = true;
+          }
+        }
+        if (subSchema.allOf != null && subSchema.allOf.length === 1) {
+          const realSubschema = subSchema.allOf[0];
+          delete subSchema.allOf;
+          return realSubschema;
+        }
+        if (subSchema.anyOf != null && subSchema.anyOf.length === 1) {
+          const realSubschema = subSchema.anyOf[0];
+          delete subSchema.anyOf;
+          return realSubschema;
+        }
+        if (subSchema.oneOf != null && subSchema.oneOf.length === 1) {
+          const realSubschema = subSchema.oneOf[0];
+          delete subSchema.oneOf;
+          return realSubschema;
+        }
+        if (subSchema.description != null) {
+          subSchema.description = subSchema.description.trim();
+          if (keys.length === 1) {
+            subSchema.type = 'object';
+            subSchema.additionalProperties = true;
+          }
+        }
         // Some JSON Schemas use this broken pattern and refer the type using `items`
         if (subSchema.type === 'object' && subSchema.items) {
           const realSubschema = subSchema.items;
@@ -88,6 +128,9 @@ export async function healJSONSchema(schema: JSONSchema) {
         }
         if (duplicatedTypeNames.has(subSchema.title)) {
           delete subSchema.title;
+        }
+        if (typeof subSchema.example === 'object' && !subSchema.type) {
+          subSchema.type = 'object';
         }
         // Try to find the type
         if (!subSchema.type) {
@@ -114,6 +157,12 @@ export async function healJSONSchema(schema: JSONSchema) {
           if (subSchema.items) {
             subSchema.type = 'array';
           }
+          if (subSchema.format === 'int64') {
+            subSchema.type = 'integer';
+          }
+          if (subSchema.format) {
+            subSchema.type = 'string';
+          }
         }
         if (subSchema.type === 'string' && !subSchema.format && (subSchema.examples || subSchema.example)) {
           const examples = asArray(subSchema.examples || subSchema.example || []);
@@ -127,7 +176,7 @@ export async function healJSONSchema(schema: JSONSchema) {
         if (subSchema.format === 'dateTime') {
           subSchema.format = 'date-time';
         }
-        if (subSchema.format) {
+        if (subSchema.type === 'string' && subSchema.format) {
           if (!JSONSchemaStringFormats.includes(subSchema.format)) {
             delete subSchema.format;
           }
@@ -138,7 +187,7 @@ export async function healJSONSchema(schema: JSONSchema) {
           }
         }
         // If it is an object type but no properties given while example is available
-        if (subSchema.type === 'object' && !subSchema.properties && subSchema.example) {
+        if (((subSchema.type === 'object' && !subSchema.properties) || !subSchema.type) && subSchema.example) {
           const generatedSchema = toJsonSchema(subSchema.example, {
             required: false,
             objects: {
@@ -151,7 +200,9 @@ export async function healJSONSchema(schema: JSONSchema) {
               mode: 'first',
             },
           });
-          subSchema.properties = generatedSchema.properties;
+          const healedGeneratedSchema = await healJSONSchema(generatedSchema as any);
+          subSchema.type = asArray(healedGeneratedSchema.type)[0] as any;
+          subSchema.properties = healedGeneratedSchema.properties;
           // If type for properties is already given, use it
           if (typeof subSchema.additionalProperties === 'object') {
             for (const propertyName in subSchema.properties) {
@@ -203,8 +254,9 @@ export async function healJSONSchema(schema: JSONSchema) {
             pathBasedName += '_';
           }
         }
-        if (subSchema.description != null) {
-          subSchema.description = subSchema.description.trim();
+        if (subSchema.type === 'object' && subSchema.properties && Object.keys(subSchema.properties).length === 0) {
+          delete subSchema.properties;
+          subSchema.additionalProperties = true;
         }
       }
       return subSchema;
@@ -213,7 +265,7 @@ export async function healJSONSchema(schema: JSONSchema) {
       visitedSubschemaResultMap: new WeakMap(),
       path: '',
       keepObjectRef: true,
-      onCircularReference: OnCircularReference.IGNORE,
+      onCircularReference: process.env.DEBUG ? OnCircularReference.WARN : OnCircularReference.IGNORE,
     }
   );
 }

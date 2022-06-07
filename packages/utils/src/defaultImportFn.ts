@@ -1,5 +1,11 @@
 export async function defaultImportFn(path: string) {
-  let module = await import(path);
+  let module = await import(/* @vite-ignore */ path).catch(e => {
+    if (e.message.includes('Must use import to load ES Module')) {
+      // eslint-disable-next-line no-new-func
+      return new Function(`return import(${JSON.stringify(path)})`)();
+    }
+    throw e;
+  });
   if (module.default != null) {
     module = module.default;
   }

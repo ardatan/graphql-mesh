@@ -14,9 +14,10 @@ export async function getGraphQLSchemaFromDereferencedJSONSchema(
     baseUrl,
     pubsub,
     generateInterfaceFromSharedFields,
+    queryParams,
   }: AddExecutionLogicToComposerOptions & { generateInterfaceFromSharedFields?: boolean }
 ) {
-  logger.debug(() => `Generating GraphQL Schema from the bundled JSON Schema`);
+  logger.debug(`Generating GraphQL Schema from the bundled JSON Schema`);
   const visitorResult = await getComposerFromJSONSchema(
     fullyDeferencedSchema,
     logger,
@@ -41,7 +42,17 @@ export async function getGraphQLSchemaFromDereferencedJSONSchema(
     operationHeaders,
     baseUrl,
     pubsub,
+    queryParams,
   });
+
+  if (schemaComposerWithExecutionLogic.Query.getFieldNames().length === 0) {
+    schemaComposerWithExecutionLogic.Query.addFields({
+      dummy: {
+        type: 'String',
+        resolve: () => 'dummy',
+      },
+    });
+  }
 
   return schemaComposerWithExecutionLogic.buildSchema();
 }

@@ -1,4 +1,4 @@
-import { getInterpolatedHeadersFactory, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { HTTPMethod, JSONSchemaOperationConfig, JSONSchemaOperationResponseConfig } from '@omnigraph/json-schema';
 import { getAbsolutePath, getCwd, JSONSchemaObject } from 'json-machete';
 import { api10, loadApi } from '@ardatan/raml-1-parser';
@@ -8,6 +8,8 @@ import { RAMLLoaderOptions } from './types';
 import { asArray } from '@graphql-tools/utils';
 import { getFieldNameFromPath } from './utils';
 import { GraphQLEnumType, GraphQLEnumValueConfigMap, GraphQLInputType } from 'graphql';
+import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
+import { process } from '@graphql-mesh/cross-helpers';
 
 function resolveTraitsByIs(base: { is: () => api10.TraitRef[] }) {
   const allTraits: api10.Trait[] = [];

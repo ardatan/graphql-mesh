@@ -1,5 +1,14 @@
-import { FC, useState } from 'react';
+import { FC, useState, useEffect, useCallback } from 'react';
 import tw from 'twin.macro';
+
+function useOnLoad(cb: () => void) {
+  useEffect(() => {
+    window.addEventListener('load', cb);
+    return () => {
+      window.removeEventListener('load', cb);
+    };
+  }, [cb]);
+}
 
 const EXAMPLES = {
   OpenAPI: {
@@ -38,10 +47,19 @@ const EXAMPLES = {
   gRPC: {
     'Movies Example': 'grpc-example',
   },
+  Neo4J: {
+    'Movies Example': 'neo4j-example',
+  },
 };
 
 const LiveDemo: FC<{ className?: string }> = ({ className }) => {
   const [exampleRepo, setExampleRepo] = useState('json-schema-example');
+  const [visible, setVisible] = useState(false);
+  const loadCodeSandbox = useCallback(() => {
+    setVisible(true);
+  }, [setVisible]);
+  useOnLoad(loadCodeSandbox);
+
   return (
     <div className={className}>
       Choose Live Example:{' '}
@@ -61,13 +79,22 @@ const LiveDemo: FC<{ className?: string }> = ({ className }) => {
           </optgroup>
         ))}
       </select>
-      <iframe
-        src={`https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/${exampleRepo}?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml`}
-        css={[tw`w-full h-[500px] rounded pt-8`]}
-        title={exampleRepo}
-        allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
-        sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
-      />
+      {visible ? (
+        <iframe
+          loading="lazy"
+          src={`https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/${exampleRepo}?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml`}
+          /* @ts-ignore */
+          css={[tw`w-full h-[500px] rounded pt-8`]}
+          title={exampleRepo}
+          allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+          sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+        />
+      ) : (
+        /* @ts-ignore */
+        <div css={[tw`w-full h-[500px] rounded pt-8 flex justify-center items-center`]}>
+          <div>Loading...</div>
+        </div>
+      )}
     </div>
   );
 };

@@ -5,7 +5,7 @@ import { JSONSchemaOperationResponseConfig } from '.';
 import { JSONSchemaOperationConfig } from './types';
 import { getOperationMetadata } from './utils';
 
-const anySchema: JSONSchemaObject = {
+export const anySchema: JSONSchemaObject = {
   title: 'Any',
   anyOf: [
     {
@@ -158,9 +158,8 @@ export async function getReferencedJSONSchemaFromOperations({
     });
     if ('binary' in operationConfig) {
       const generatedSchema = {
-        title: operationConfig.requestTypeName || 'Upload',
-        type: 'string',
-        format: 'upload',
+        title: operationConfig.requestTypeName || 'File',
+        type: 'file',
       };
       rootTypeInputTypeDefinition.properties[fieldName] = generatedSchema;
     } else if ('requestSchema' in operationConfig && operationConfig.requestSchema) {

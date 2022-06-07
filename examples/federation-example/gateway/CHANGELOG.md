@@ -1,5 +1,219 @@
 # federation-gateway
 
+## 0.0.89
+
+### Patch Changes
+
+- Updated dependencies [d17d55881]
+  - @graphql-mesh/cli@0.71.3
+
+## 0.0.88
+
+### Patch Changes
+
+- Updated dependencies [3c0366d2c]
+  - @graphql-mesh/cli@0.71.2
+  - @graphql-mesh/graphql@0.26.2
+  - @graphql-mesh/transform-federation@0.9.2
+
+## 0.0.87
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.71.1
+- @graphql-mesh/graphql@0.26.1
+- @graphql-mesh/transform-federation@0.9.1
+
+## 0.0.86
+
+### Patch Changes
+
+- Updated dependencies [974e703e2]
+- Updated dependencies [19a99c055]
+- Updated dependencies [974e703e2]
+- Updated dependencies [974e703e2]
+  - @graphql-mesh/cli@0.71.0
+  - @graphql-mesh/graphql@0.26.0
+  - @graphql-mesh/transform-federation@0.9.0
+
+## 0.0.85
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.70.4
+- @graphql-mesh/graphql@0.25.6
+- @graphql-mesh/transform-federation@0.8.56
+
+## 0.0.84
+
+### Patch Changes
+
+- Updated dependencies [55ad5ea44]
+  - @graphql-mesh/cli@0.70.3
+  - @graphql-mesh/graphql@0.25.5
+  - @graphql-mesh/transform-federation@0.8.55
+
+## 0.0.83
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.70.2
+- @graphql-mesh/graphql@0.25.4
+- @graphql-mesh/transform-federation@0.8.54
+
+## 0.0.82
+
+### Patch Changes
+
+- Updated dependencies [66b9b3ddc]
+- Updated dependencies [66b9b3ddc]
+  - @graphql-mesh/cli@0.70.1
+  - @graphql-mesh/graphql@0.25.3
+  - @graphql-mesh/transform-federation@0.8.53
+
+## 0.0.81
+
+### Patch Changes
+
+- Updated dependencies [f7dda8637]
+  - @graphql-mesh/cli@0.70.0
+
+## 0.0.80
+
+### Patch Changes
+
+- Updated dependencies [b9beacca2]
+  - @graphql-mesh/graphql@0.25.2
+  - @graphql-mesh/cli@0.69.2
+  - @graphql-mesh/transform-federation@0.8.52
+
+## 0.0.79
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.69.1
+- @graphql-mesh/graphql@0.25.1
+- @graphql-mesh/transform-federation@0.8.51
+
+## 0.0.78
+
+### Patch Changes
+
+- Updated dependencies [ac2f700bf]
+- Updated dependencies [ac2f700bf]
+  - @graphql-mesh/graphql@0.25.0
+  - @graphql-mesh/cli@0.69.0
+  - @graphql-mesh/transform-federation@0.8.50
+
+## 0.0.77
+
+### Patch Changes
+
+- Updated dependencies [2e9addd80]
+  - @graphql-mesh/graphql@0.24.0
+  - @graphql-mesh/cli@0.68.4
+  - @graphql-mesh/transform-federation@0.8.49
+
+## 0.0.76
+
+### Patch Changes
+
+- Updated dependencies [c1a7c1c09]
+  - @graphql-mesh/cli@0.68.3
+
+## 0.0.75
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.68.2
+- @graphql-mesh/graphql@0.23.10
+- @graphql-mesh/transform-federation@0.8.48
+
+## 0.0.74
+
+### Patch Changes
+
+- Updated dependencies [7856f92d3]
+  - @graphql-mesh/cli@0.68.1
+  - @graphql-mesh/graphql@0.23.9
+  - @graphql-mesh/transform-federation@0.8.47
+
+## 0.0.73
+
+### Patch Changes
+
+- Updated dependencies [f963b57ce]
+  - @graphql-mesh/cli@0.68.0
+  - @graphql-mesh/graphql@0.23.8
+  - @graphql-mesh/transform-federation@0.8.46
+
+## 0.0.72
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.67.6
+- @graphql-mesh/graphql@0.23.7
+- @graphql-mesh/transform-federation@0.8.45
+
+## 0.0.71
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.67.5
+
+## 0.0.70
+
+### Patch Changes
+
+- Updated dependencies [c0387e8ac]
+- Updated dependencies [36d363d2f]
+  - @graphql-mesh/graphql@0.23.6
+  - @graphql-mesh/cli@0.67.4
+  - @graphql-mesh/transform-federation@0.8.44
+
+## 0.0.69
+
+### Patch Changes
+
+- Updated dependencies [35a55e841]
+  - @graphql-mesh/cli@0.67.3
+  - @graphql-mesh/graphql@0.23.5
+  - @graphql-mesh/transform-federation@0.8.43
+
+## 0.0.68
+
+### Patch Changes
+
+- Updated dependencies [1dbe6b6c3]
+- Updated dependencies [403f4c5e3]
+  - @graphql-mesh/graphql@0.23.4
+  - @graphql-mesh/transform-federation@0.8.42
+  - @graphql-mesh/cli@0.67.2
+
+## 0.0.67
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.67.1
+- @graphql-mesh/graphql@0.23.3
+- @graphql-mesh/transform-federation@0.8.41
+
+## 0.0.66
+
+### Patch Changes
+
+- Updated dependencies [101adc246]
+  - @graphql-mesh/cli@0.67.0
+
+## 0.0.65
+
+### Patch Changes
+
+- Updated dependencies [b02f5b008]
+  - @graphql-mesh/cli@0.66.2
+  - @graphql-mesh/graphql@0.23.2
+  - @graphql-mesh/transform-federation@0.8.40
+
 ## 0.0.64
 
 ### Patch Changes

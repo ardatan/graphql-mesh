@@ -143,7 +143,7 @@ export async function generateTsArtifacts(
     meshConfigCode,
     logger,
     sdkConfig,
-    tsOnly = true,
+    fileType,
     codegenConfig = {},
   }: {
     unifiedSchema: GraphQLSchema;
@@ -156,7 +156,7 @@ export async function generateTsArtifacts(
     meshConfigCode: string;
     logger: Logger;
     sdkConfig: YamlConfig.SDKConfig;
-    tsOnly: boolean;
+    fileType: 'ts' | 'json' | 'js';
     codegenConfig: any;
   },
   cliParams: GraphQLMeshCLIParams
@@ -168,14 +168,42 @@ export async function generateTsArtifacts(
     const sdl = printSchemaWithDirectives(transformedSchema);
     await writeFile(pathModule.join(artifactsDir, `sources/${rawSource.name}/schema.graphql`), sdl);
   }
+  const documentsInput = sdkConfig?.generateOperations
+    ? generateOperations(unifiedSchema, sdkConfig.generateOperations)
+    : documents;
+  const pluginsInput: Record<string, any>[] = [
+    {
+      typescript: {},
+    },
+    {
+      resolvers: {},
+    },
+    {
+      contextSdk: {},
+    },
+  ];
+  if (documentsInput.length) {
+    pluginsInput.push(
+      {
+        typescriptOperations: {},
+      },
+      {
+        typedDocumentNode: {},
+      },
+      {
+        typescriptGenericSdk: {
+          documentMode: 'external',
+          importDocumentNodeExternallyFrom: 'NOWHERE',
+        },
+      }
+    );
+  }
   const codegenOutput =
     '// @ts-nocheck\n' +
     (
       await codegen({
         filename: 'types.ts',
-        documents: sdkConfig?.generateOperations
-          ? generateOperations(unifiedSchema, sdkConfig.generateOperations)
-          : documents,
+        documents: documentsInput,
         config: {
           skipTypename: true,
           flattenGeneratedTypes: flattenTypes,
@@ -236,47 +264,44 @@ export async function generateTsArtifacts(
                 .join(' & ')} & BaseMeshContext;`;
 
               const importCodes = [
-                `import { getMesh } from '@graphql-mesh/runtime';`,
+                `import { getMesh, ExecuteMeshFn, SubscribeMeshFn } from '@graphql-mesh/runtime';`,
                 `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
                 `import { path as pathModule } from '@graphql-mesh/cross-helpers';`,
-                `import { fileURLToPath } from '@graphql-mesh/utils';`,
               ];
-              const importedModulesCodes: string[] = [...importedModulesSet].map((importedModuleName, i) => {
-                let moduleMapProp = importedModuleName;
-                let importPath = importedModuleName;
-                if (importPath.startsWith('.')) {
-                  importPath = pathModule.join(baseDir, importPath);
-                }
-                if (pathModule.isAbsolute(importPath)) {
-                  moduleMapProp = pathModule.relative(baseDir, importedModuleName).split('\\').join('/');
-                  importPath = `./${pathModule.relative(artifactsDir, importedModuleName).split('\\').join('/')}`;
-                }
-                const importedModuleVariable = pascalCase(`ExternalModule$${i}`);
-                importCodes.push(`import ${importedModuleVariable} from '${importPath}';`);
-                return `  // @ts-ignore\n  [${JSON.stringify(moduleMapProp)}]: ${importedModuleVariable}`;
-              });
 
-              const meshMethods = `
+              let meshMethods = `
 ${importCodes.join('\n')}
-
-const importedModules: Record<string, any> = {
-${importedModulesCodes.join(',\n')}
-};
 
 ${BASEDIR_ASSIGNMENT_COMMENT}
 
 const importFn = (moduleId: string) => {
   const relativeModuleId = (pathModule.isAbsolute(moduleId) ? pathModule.relative(baseDir, moduleId) : moduleId).split('\\\\').join('/').replace(baseDir + '/', '');
-  if (!(relativeModuleId in importedModules)) {
-    throw new Error(\`Cannot find module '\${relativeModuleId}'.\`);
+  switch(relativeModuleId) {${[...importedModulesSet]
+    .map(importedModuleName => {
+      let moduleMapProp = importedModuleName;
+      let importPath = importedModuleName;
+      if (importPath.startsWith('.')) {
+        importPath = pathModule.join(baseDir, importPath);
+      }
+      if (pathModule.isAbsolute(importPath)) {
+        moduleMapProp = pathModule.relative(baseDir, importedModuleName).split('\\').join('/');
+        importPath = `./${pathModule.relative(artifactsDir, importedModuleName).split('\\').join('/')}`;
+      }
+      return `
+    case ${JSON.stringify(moduleMapProp)}:
+      return import(${JSON.stringify(importPath)});
+    `;
+    })
+    .join('')}
+    default:
+      return Promise.reject(new Error(\`Cannot find module '\${relativeModuleId}'.\`));
   }
-  return Promise.resolve(importedModules[relativeModuleId]);
 };
 
 const rootStore = new MeshStore('${cliParams.artifactsDir}', new FsStoreStorageAdapter({
   cwd: baseDir,
   importFn,
-  fileType: 'ts',
+  fileType: ${JSON.stringify(fileType)},
 }), {
   readonly: true,
   validate: false
@@ -284,21 +309,36 @@ const rootStore = new MeshStore('${cliParams.artifactsDir}', new FsStoreStorageA
 
 ${meshConfigCode}
 
-export const documentsInSDL = /*#__PURE__*/ [${documents.map(
-                documentSource => `/* GraphQL */\`${documentSource.rawSDL}\``
-              )}];
+let meshInstance$: Promise<MeshInstance<MeshContext>>;
 
-export async function ${cliParams.builtMeshFactoryName}(): Promise<MeshInstance<MeshContext>> {
-  const meshConfig = await getMeshOptions();
-  return getMesh<MeshContext>(meshConfig);
+export function ${cliParams.builtMeshFactoryName}(): Promise<MeshInstance<MeshContext>> {
+  if (meshInstance$ == null) {
+    meshInstance$ = getMeshOptions().then(meshOptions => getMesh<MeshContext>(meshOptions)).then(mesh => {
+      const id$ = mesh.pubsub.subscribe('destroy', () => {
+        meshInstance$ = undefined;
+        id$.then(id => mesh.pubsub.unsubscribe(id)).catch(err => console.error(err));
+      });
+      return mesh;
+    });
+  }
+  return meshInstance$;
 }
 
-export async function ${
-                cliParams.builtMeshSDKFactoryName
-              }<TGlobalContext = any, TOperationContext = any>(globalContext?: TGlobalContext) {
-  const { sdkRequesterFactory } = await ${cliParams.builtMeshFactoryName}();
-  return getSdk<TOperationContext>(sdkRequesterFactory(globalContext));
+export const execute: ExecuteMeshFn = (...args) => ${
+                cliParams.builtMeshFactoryName
+              }().then(({ execute }) => execute(...args));
+
+export const subscribe: SubscribeMeshFn = (...args) => ${
+                cliParams.builtMeshFactoryName
+              }().then(({ subscribe }) => subscribe(...args));`;
+
+              if (documentsInput.length) {
+                meshMethods += `
+export function ${cliParams.builtMeshSDKFactoryName}<TGlobalContext = any, TOperationContext = any>(globalContext?: TGlobalContext) {
+  const sdkRequester$ = ${cliParams.builtMeshFactoryName}().then(({ sdkRequesterFactory }) => sdkRequesterFactory(globalContext));
+  return getSdk<TOperationContext>((...args) => sdkRequester$.then(sdkRequester => sdkRequester(...args)));
 }`;
+              }
 
               return {
                 content: [...commonTypes, ...sdkItems, ...contextItems, contextType, meshMethods].join('\n\n'),
@@ -306,39 +346,18 @@ export async function ${
             },
           },
         },
-        plugins: [
-          {
-            typescript: {},
-          },
-          {
-            resolvers: {},
-          },
-          {
-            contextSdk: {},
-          },
-          {
-            typescriptOperations: {},
-          },
-          {
-            typedDocumentNode: {},
-          },
-          {
-            typescriptGenericSdk: {
-              documentMode: 'external',
-              importDocumentNodeExternallyFrom: 'NOWHERE',
-            },
-          },
-        ],
+        plugins: pluginsInput,
       })
     )
       .replace(`import * as Operations from 'NOWHERE';\n`, '')
       .replace(`import { DocumentNode } from 'graphql';`, '');
 
-  const baseUrlAssignmentESM = `const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url)), '${pathModule.relative(
+  const baseUrlAssignmentESM = `import { fileURLToPath } from '@graphql-mesh/utils';
+const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url)), '${pathModule.relative(
     artifactsDir,
     baseDir
   )}');`;
-  const baseUrlAssignmentCJS = `const baseDir = pathModule.join(__dirname, '${pathModule.relative(
+  const baseUrlAssignmentCJS = `const baseDir = pathModule.join(typeof __dirname === 'string' ? __dirname : '/', '${pathModule.relative(
     artifactsDir,
     baseDir
   )}');`;
@@ -358,7 +377,7 @@ export async function ${
       await fs.promises.unlink(esmJsFilePath);
     }
 
-    if (!tsOnly) {
+    if (fileType !== 'ts') {
       logger.info(`Compiling TS file as ES Module to "index.${ext}"`);
       compileTS(tsFilePath, ts.ModuleKind.ESNext, [jsFilePath, dtsFilePath]);
 
@@ -379,7 +398,7 @@ export async function ${
     if (await pathExists(jsFilePath)) {
       await fs.promises.unlink(jsFilePath);
     }
-    if (!tsOnly) {
+    if (fileType !== 'ts') {
       logger.info('Compiling TS file as CommonJS Module to `index.js`');
       compileTS(tsFilePath, ts.ModuleKind.CommonJS, [jsFilePath, dtsFilePath]);
 
@@ -418,19 +437,21 @@ export async function ${
     const tsConfig = JSON.parse(stripJSONComments(tsConfigStr));
     if (tsConfig?.compilerOptions?.module?.toLowerCase()?.startsWith('es')) {
       jobs.push(esmJob('js'));
-      if (!tsOnly) {
+      if (fileType !== 'ts') {
         jobs.push(packageJsonJob('module'));
       }
     } else {
       jobs.push(cjsJob);
-      if (!tsOnly) {
+      if (fileType !== 'ts') {
         jobs.push(packageJsonJob('commonjs'));
       }
     }
   } else {
     jobs.push(esmJob('mjs'));
-    jobs.push(cjsJob);
-    if (!tsOnly) {
+    if (fileType === 'js') {
+      jobs.push(packageJsonJob('module'));
+    } else {
+      jobs.push(cjsJob);
       jobs.push(packageJsonJob('commonjs'));
     }
   }

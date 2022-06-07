@@ -3312,14 +3312,7 @@
           "id": {
             "type": "string",
             "description": "server-generated error code",
-            "enum": [
-              "NO_RESULTS_FOUND",
-              "SAVE_FAILED",
-              "ADD_FAILED",
-              "UPLOAD_FAILED",
-              "SCAN_FAILED",
-              "DELETE_FAILED"
-            ]
+            "enum": ["NO_RESULTS_FOUND", "SAVE_FAILED", "ADD_FAILED", "UPLOAD_FAILED", "SCAN_FAILED", "DELETE_FAILED"]
           },
           "message": {
             "type": "string",

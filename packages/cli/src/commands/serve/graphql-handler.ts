@@ -1,13 +1,12 @@
 import { MeshInstance } from '@graphql-mesh/runtime';
 import { RequestHandler } from 'express';
-import { createServer, useExtendContext } from '@graphql-yoga/node';
-import { IncomingMessage } from 'http';
+import { createServer, useExtendContext, useLogger } from '@graphql-yoga/node';
 
-function shouldRenderGraphiQL(req: IncomingMessage) {
-  return req.method.toLowerCase() === 'get' && req.headers.accept.includes('text/html');
-}
-
-export const graphqlHandler = (mesh$: Promise<MeshInstance>): RequestHandler => {
+export const graphqlHandler = (
+  mesh$: Promise<MeshInstance>,
+  playgroundTitle: string,
+  playgroundEnabled: boolean
+): RequestHandler => {
   const yoga$ = mesh$.then(mesh =>
     createServer({
       parserCache: false,
@@ -20,40 +19,46 @@ export const graphqlHandler = (mesh$: Promise<MeshInstance>): RequestHandler => 
           cookies: req.cookies,
           res,
         })),
+        useLogger({
+          skipIntrospection: true,
+          logFn: (eventName, { args }) => {
+            if (eventName.endsWith('-start')) {
+              mesh.logger.debug(`\t headers: `, args.contextValue.headers);
+            }
+          },
+        }),
       ],
       logging: mesh.logger,
       maskedErrors: false,
+      graphiql: playgroundEnabled && {
+        title: playgroundTitle,
+      },
     })
   );
-  return function (req, res, next) {
-    // Determine whether we should render GraphiQL instead of returning an API response
-    if (shouldRenderGraphiQL(req)) {
-      next();
-    } else {
-      yoga$
-        .then(yoga => yoga.requestListener(req, res))
-        .catch((e: Error | AggregateError) => {
-          res.status(500);
-          res.write(
-            JSON.stringify({
-              errors:
-                'errors' in e
-                  ? e.errors.map((e: Error) => ({
+  return function (req, res) {
+    yoga$
+      .then(yoga => yoga.requestListener(req, res))
+      .catch((e: Error | AggregateError) => {
+        res.status(500);
+        res.write(
+          JSON.stringify({
+            errors:
+              'errors' in e
+                ? e.errors.map((e: Error) => ({
+                    name: e.name,
+                    message: e.message,
+                    stack: e.stack,
+                  }))
+                : [
+                    {
                       name: e.name,
                       message: e.message,
                       stack: e.stack,
-                    }))
-                  : [
-                      {
-                        name: e.name,
-                        message: e.message,
-                        stack: e.stack,
-                      },
-                    ],
-            })
-          );
-          res.end();
-        });
-    }
+                    },
+                  ],
+          })
+        );
+        res.end();
+      });
   };
 };

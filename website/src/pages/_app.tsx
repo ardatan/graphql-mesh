@@ -1,16 +1,46 @@
 import { FC } from 'react';
 import type { AppProps } from 'next/app';
+import Script from 'next/script';
 import { appWithTranslation } from 'next-i18next';
-import { extendTheme, theme as chakraTheme } from '@chakra-ui/react';
+import { extendTheme, LinkProps, theme as chakraTheme } from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
-import { AppSeoProps, CombinedThemeProvider, DocsPage, ExtendComponents, handlePushRoute } from '@guild-docs/client';
+import {
+  AppSeoProps,
+  CombinedThemeProvider,
+  DocsPage,
+  ExtendComponents,
+  handlePushRoute,
+  Link,
+  useGoogleAnalytics,
+} from '@guild-docs/client';
 import { FooterExtended, Header, Subheader } from '@theguild/components';
+import type { LinkProps as NextLinkProps } from 'next/link';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
+
+import '@algolia/autocomplete-theme-classic';
+import '@theguild/components/dist/static/css/SearchBarV2.css';
+
 import '../../public/style.css';
+
+const LinkNewTabIfExternal = (props: LinkProps & NextLinkProps) => {
+  return props.href.startsWith('/') ? (
+    // @ts-expect-error type incompatibility
+    <Link {...props} color="accentColor" sx={{ '&:hover': { textDecoration: 'none' } }} />
+  ) : (
+    <>
+      {/* @ts-expect-error type incompatibility */}
+      <Link {...props} isExternal={true} color="accentColor" sx={{ '&:hover': { textDecoration: 'none' } }} />{' '}
+      <ExternalLinkIcon />
+    </>
+  );
+};
 
 ExtendComponents({
   HelloWorld() {
     return <p>Hello World!</p>;
   },
+  Link: LinkNewTabIfExternal,
+  a: LinkNewTabIfExternal,
 });
 
 const styles: typeof chakraTheme['styles'] = {
@@ -56,11 +86,12 @@ const mdxRoutes = { data: serializedMdx && JSON.parse(serializedMdx) };
 
 const AppContent: FC<AppProps> = appProps => {
   const { Component, pageProps, router } = appProps;
+  const analytics = useGoogleAnalytics({ router, trackingId: 'G-TPQZLLF5T5' });
   const isDocs = router.asPath.startsWith('/docs');
 
   return (
     <>
-      <Header accentColor={accentColor} activeLink="/open-source" themeSwitch />
+      <Header accentColor={accentColor} activeLink="/open-source" themeSwitch searchBarProps={{ version: 'v2' }} />
       <Subheader
         activeLink={router.asPath}
         product={{
@@ -101,6 +132,8 @@ const AppContent: FC<AppProps> = appProps => {
           rel: 'noopener noreferrer',
         }}
       />
+      <Script {...analytics.loadScriptProps} />
+      <Script {...analytics.configScriptProps} />
       {isDocs ? (
         <DocsPage appProps={appProps} accentColor={accentColor} mdxRoutes={mdxRoutes} />
       ) : (

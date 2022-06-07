@@ -30,8 +30,11 @@ describe('gRPC Example', () => {
     const result = await execute(GetMoviesQuery);
     expect(result).toMatchSnapshot('get-movies-grpc-example-result');
   });
-  it.skip('should fetch movies by cast as a subscription correctly', async () => {
-    const MoviesByCastSubscription = await readFile(join(__dirname, '../example-queries/MoviesByCast.subscription.graphql'), 'utf8');
+  it('should fetch movies by cast as a subscription correctly', async () => {
+    const MoviesByCastSubscription = await readFile(
+      join(__dirname, '../example-queries/MoviesByCast.subscription.graphql'),
+      'utf8'
+    );
     const { subscribe } = await mesh$;
     await grpc$;
     const result = await subscribe(MoviesByCastSubscription);
@@ -40,9 +43,9 @@ describe('gRPC Example', () => {
     expect(await resultIterator.next()).toMatchSnapshot('movies-by-cast-grpc-example-result-1');
     expect(await resultIterator.next()).toMatchSnapshot('movies-by-cast-grpc-example-result-2');
     await resultIterator.return();
-  })
+  });
   afterAll(() => {
-      mesh$.then(mesh => mesh.destroy());
-      grpc$.then(grpc => grpc.forceShutdown());
+    mesh$.then(mesh => mesh.destroy());
+    grpc$.then(grpc => grpc.forceShutdown());
   });
 });

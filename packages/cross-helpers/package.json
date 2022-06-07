@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cross-helpers",
-  "version": "0.1.0",
+  "version": "0.1.6",
   "description": "Cross Platform Helpers for GraphQL Mesh",
   "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",
   "repository": {
@@ -15,9 +15,9 @@
   "react-native": "react-native.js",
   "types": "index.d.ts",
   "dependencies": {
-    "react-native-fs": "2.19.0",
+    "@graphql-tools/utils": "8.6.12",
+    "react-native-fs": "2.20.0",
     "react-native-path": "0.0.5",
-    "browserify-fs": "1.0.0",
     "path-browserify": "1.0.1"
   },
   "publishConfig": {

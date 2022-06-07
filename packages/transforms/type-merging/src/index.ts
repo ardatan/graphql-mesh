@@ -1,6 +1,5 @@
 import { MeshTransform, MeshTransformOptions, ImportFn, YamlConfig } from '@graphql-mesh/types';
 import { GraphQLSchema } from 'graphql';
-import _ from 'lodash';
 import { SubschemaConfig } from '@graphql-tools/delegate';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 
@@ -25,9 +24,7 @@ export default class TypeMerging implements MeshTransform {
       });
       if (typeof additionalConfiguration !== 'object' || additionalConfiguration == null) {
         throw new Error(
-          `Invalid additional type merging configuration provided in ${this.config.additionalConfiguration}: ${inspect(
-            additionalConfiguration
-          )}`
+          `Invalid additional type merging configuration provided in ${this.config.additionalConfiguration}`
         );
       }
       subschemaConfig.merge = subschemaConfig.merge || {};

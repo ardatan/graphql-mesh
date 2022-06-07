@@ -45,7 +45,7 @@ GH_ACCESS_TOKEN="your token here" yarn mesh:serve
 
 ## Using the Generated SDK
 
-This example also generates SDK based on operations (located under `./src/test.query.graphql`). 
+This example also generates SDK based on operations (located under `./src/test.query.graphql`).
 
 The following command will generate the fully type-safe SDK for you:
 
@@ -58,4 +58,3 @@ You can find the code that uses the generates SDK under `./src/test.ts`, it impo
 ```
 GH_ACCESS_TOKEN="your token here" yarn test:sdk
 ```
-

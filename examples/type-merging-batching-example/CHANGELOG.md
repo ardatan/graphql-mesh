@@ -1,5 +1,237 @@
 # type-merging-batching-example
 
+## 0.0.127
+
+### Patch Changes
+
+- Updated dependencies [d17d55881]
+  - @graphql-mesh/cli@0.71.3
+
+## 0.0.126
+
+### Patch Changes
+
+- Updated dependencies [3c0366d2c]
+  - @graphql-mesh/cli@0.71.2
+  - @graphql-mesh/graphql@0.26.2
+  - @graphql-mesh/transform-rename@0.12.48
+  - @graphql-mesh/transform-type-merging@0.4.2
+
+## 0.0.125
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.71.1
+- @graphql-mesh/graphql@0.26.1
+- @graphql-mesh/transform-rename@0.12.47
+- @graphql-mesh/transform-type-merging@0.4.1
+
+## 0.0.124
+
+### Patch Changes
+
+- Updated dependencies [974e703e2]
+- Updated dependencies [19a99c055]
+- Updated dependencies [974e703e2]
+- Updated dependencies [974e703e2]
+  - @graphql-mesh/cli@0.71.0
+  - @graphql-mesh/graphql@0.26.0
+  - @graphql-mesh/transform-rename@0.12.46
+  - @graphql-mesh/transform-type-merging@0.4.0
+
+## 0.0.123
+
+### Patch Changes
+
+- Updated dependencies [242b969cd]
+  - @graphql-mesh/transform-rename@0.12.45
+  - @graphql-mesh/cli@0.70.4
+  - @graphql-mesh/graphql@0.25.6
+  - @graphql-mesh/transform-type-merging@0.3.54
+
+## 0.0.122
+
+### Patch Changes
+
+- Updated dependencies [55ad5ea44]
+  - @graphql-mesh/cli@0.70.3
+  - @graphql-mesh/transform-rename@0.12.44
+  - @graphql-mesh/graphql@0.25.5
+  - @graphql-mesh/transform-type-merging@0.3.53
+
+## 0.0.121
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.70.2
+- @graphql-mesh/graphql@0.25.4
+- @graphql-mesh/transform-rename@0.12.43
+- @graphql-mesh/transform-type-merging@0.3.52
+
+## 0.0.120
+
+### Patch Changes
+
+- Updated dependencies [66b9b3ddc]
+- Updated dependencies [66b9b3ddc]
+  - @graphql-mesh/cli@0.70.1
+  - @graphql-mesh/graphql@0.25.3
+  - @graphql-mesh/transform-rename@0.12.42
+  - @graphql-mesh/transform-type-merging@0.3.51
+
+## 0.0.119
+
+### Patch Changes
+
+- Updated dependencies [f7dda8637]
+  - @graphql-mesh/cli@0.70.0
+
+## 0.0.118
+
+### Patch Changes
+
+- Updated dependencies [b9beacca2]
+  - @graphql-mesh/graphql@0.25.2
+  - @graphql-mesh/cli@0.69.2
+  - @graphql-mesh/transform-rename@0.12.41
+  - @graphql-mesh/transform-type-merging@0.3.50
+
+## 0.0.117
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.69.1
+- @graphql-mesh/transform-rename@0.12.40
+- @graphql-mesh/graphql@0.25.1
+- @graphql-mesh/transform-type-merging@0.3.49
+
+## 0.0.116
+
+### Patch Changes
+
+- Updated dependencies [ac2f700bf]
+- Updated dependencies [ac2f700bf]
+  - @graphql-mesh/graphql@0.25.0
+  - @graphql-mesh/cli@0.69.0
+  - @graphql-mesh/transform-rename@0.12.39
+  - @graphql-mesh/transform-type-merging@0.3.48
+
+## 0.0.115
+
+### Patch Changes
+
+- Updated dependencies [2e9addd80]
+  - @graphql-mesh/graphql@0.24.0
+  - @graphql-mesh/cli@0.68.4
+  - @graphql-mesh/transform-rename@0.12.38
+  - @graphql-mesh/transform-type-merging@0.3.47
+
+## 0.0.114
+
+### Patch Changes
+
+- Updated dependencies [c1a7c1c09]
+  - @graphql-mesh/cli@0.68.3
+
+## 0.0.113
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.68.2
+- @graphql-mesh/graphql@0.23.10
+- @graphql-mesh/transform-rename@0.12.37
+- @graphql-mesh/transform-type-merging@0.3.46
+
+## 0.0.112
+
+### Patch Changes
+
+- Updated dependencies [7856f92d3]
+  - @graphql-mesh/cli@0.68.1
+  - @graphql-mesh/graphql@0.23.9
+  - @graphql-mesh/transform-rename@0.12.36
+  - @graphql-mesh/transform-type-merging@0.3.45
+
+## 0.0.111
+
+### Patch Changes
+
+- Updated dependencies [f963b57ce]
+  - @graphql-mesh/cli@0.68.0
+  - @graphql-mesh/graphql@0.23.8
+  - @graphql-mesh/transform-rename@0.12.35
+  - @graphql-mesh/transform-type-merging@0.3.44
+
+## 0.0.110
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.67.6
+- @graphql-mesh/graphql@0.23.7
+- @graphql-mesh/transform-rename@0.12.34
+- @graphql-mesh/transform-type-merging@0.3.43
+
+## 0.0.109
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.67.5
+
+## 0.0.108
+
+### Patch Changes
+
+- Updated dependencies [c0387e8ac]
+- Updated dependencies [36d363d2f]
+  - @graphql-mesh/graphql@0.23.6
+  - @graphql-mesh/cli@0.67.4
+  - @graphql-mesh/transform-rename@0.12.33
+  - @graphql-mesh/transform-type-merging@0.3.42
+
+## 0.0.107
+
+### Patch Changes
+
+- Updated dependencies [35a55e841]
+  - @graphql-mesh/cli@0.67.3
+  - @graphql-mesh/graphql@0.23.5
+  - @graphql-mesh/transform-rename@0.12.32
+  - @graphql-mesh/transform-type-merging@0.3.41
+
+## 0.0.106
+
+### Patch Changes
+
+- Updated dependencies [1dbe6b6c3]
+  - @graphql-mesh/graphql@0.23.4
+  - @graphql-mesh/cli@0.67.2
+
+## 0.0.105
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.67.1
+- @graphql-mesh/graphql@0.23.3
+- @graphql-mesh/transform-rename@0.12.31
+- @graphql-mesh/transform-type-merging@0.3.40
+
+## 0.0.104
+
+### Patch Changes
+
+- Updated dependencies [101adc246]
+  - @graphql-mesh/cli@0.67.0
+
+## 0.0.103
+
+### Patch Changes
+
+- Updated dependencies [b02f5b008]
+  - @graphql-mesh/cli@0.66.2
+  - @graphql-mesh/graphql@0.23.2
+  - @graphql-mesh/transform-rename@0.12.30
+  - @graphql-mesh/transform-type-merging@0.3.39
+
 ## 0.0.102
 
 ### Patch Changes

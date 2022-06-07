@@ -1,7 +1,7 @@
 import { createServer } from '@graphql-yoga/node';
 import { getMesh } from '@graphql-mesh/runtime';
 import GraphQLHandler from '@graphql-mesh/graphql';
-import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
+import LocalforageCache from '@graphql-mesh/cache-localforage';
 import { PubSub, DefaultLogger } from '@graphql-mesh/utils';
 import StitchingMerger from '@graphql-mesh/merger-stitching';
 import { MeshStore, InMemoryStoreStorageAdapter } from '@graphql-mesh/store';
@@ -10,7 +10,7 @@ export async function getTestMesh() {
   const yoga = createServer({
     logging: false,
   });
-  const cache = new InMemoryLRUCache();
+  const cache = new LocalforageCache();
   const pubsub = new PubSub();
   const logger = new DefaultLogger('Test');
   const store = new MeshStore('.mesh', new InMemoryStoreStorageAdapter(), {
@@ -18,9 +18,9 @@ export async function getTestMesh() {
     validate: false,
   });
   await yoga.start();
-  const subId = await pubsub.subscribe('destroy', async () => {
+  const subId$ = pubsub.subscribe('destroy', async () => {
     await yoga.stop();
-    pubsub.unsubscribe(subId);
+    subId$.then(subId => pubsub.unsubscribe(subId)).catch(err => console.error(err));
   });
   const mesh = await getMesh({
     sources: [

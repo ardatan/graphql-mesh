@@ -1,5 +1,223 @@
 # grpc-example
 
+## 0.5.236
+
+### Patch Changes
+
+- Updated dependencies [d17d55881]
+  - @graphql-mesh/cli@0.71.3
+
+## 0.5.235
+
+### Patch Changes
+
+- Updated dependencies [3c0366d2c]
+  - @graphql-mesh/cli@0.71.2
+  - @graphql-mesh/grpc@0.24.2
+  - @graphql-mesh/transform-naming-convention@0.10.48
+
+## 0.5.234
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.71.1
+- @graphql-mesh/grpc@0.24.1
+- @graphql-mesh/transform-naming-convention@0.10.47
+
+## 0.5.233
+
+### Patch Changes
+
+- Updated dependencies [974e703e2]
+- Updated dependencies [19a99c055]
+- Updated dependencies [974e703e2]
+- Updated dependencies [974e703e2]
+- Updated dependencies [974e703e2]
+  - @graphql-mesh/cli@0.71.0
+  - @graphql-mesh/grpc@0.24.0
+  - @graphql-mesh/transform-naming-convention@0.10.46
+
+## 0.5.232
+
+### Patch Changes
+
+- Updated dependencies [5095f84dd]
+  - @graphql-mesh/grpc@0.23.0
+  - @graphql-mesh/cli@0.70.4
+  - @graphql-mesh/transform-naming-convention@0.10.45
+
+## 0.5.231
+
+### Patch Changes
+
+- Updated dependencies [d4c3facb2]
+- Updated dependencies [f12dcb309]
+  - @graphql-mesh/grpc@0.22.0
+
+## 0.5.230
+
+### Patch Changes
+
+- Updated dependencies [55ad5ea44]
+  - @graphql-mesh/cli@0.70.3
+  - @graphql-mesh/grpc@0.21.20
+  - @graphql-mesh/transform-naming-convention@0.10.44
+
+## 0.5.229
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.70.2
+- @graphql-mesh/grpc@0.21.19
+- @graphql-mesh/transform-naming-convention@0.10.43
+
+## 0.5.228
+
+### Patch Changes
+
+- Updated dependencies [66b9b3ddc]
+- Updated dependencies [66b9b3ddc]
+  - @graphql-mesh/cli@0.70.1
+  - @graphql-mesh/grpc@0.21.18
+  - @graphql-mesh/transform-naming-convention@0.10.42
+
+## 0.5.227
+
+### Patch Changes
+
+- Updated dependencies [f7dda8637]
+  - @graphql-mesh/cli@0.70.0
+
+## 0.5.226
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.69.2
+- @graphql-mesh/grpc@0.21.17
+- @graphql-mesh/transform-naming-convention@0.10.41
+
+## 0.5.225
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.69.1
+- @graphql-mesh/grpc@0.21.16
+- @graphql-mesh/transform-naming-convention@0.10.40
+
+## 0.5.224
+
+### Patch Changes
+
+- Updated dependencies [ac2f700bf]
+  - @graphql-mesh/cli@0.69.0
+  - @graphql-mesh/grpc@0.21.15
+  - @graphql-mesh/transform-naming-convention@0.10.39
+
+## 0.5.223
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.68.4
+- @graphql-mesh/grpc@0.21.14
+- @graphql-mesh/transform-naming-convention@0.10.38
+
+## 0.5.222
+
+### Patch Changes
+
+- Updated dependencies [c1a7c1c09]
+  - @graphql-mesh/cli@0.68.3
+
+## 0.5.221
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.68.2
+- @graphql-mesh/grpc@0.21.13
+- @graphql-mesh/transform-naming-convention@0.10.37
+
+## 0.5.220
+
+### Patch Changes
+
+- Updated dependencies [7856f92d3]
+  - @graphql-mesh/cli@0.68.1
+  - @graphql-mesh/grpc@0.21.12
+  - @graphql-mesh/transform-naming-convention@0.10.36
+
+## 0.5.219
+
+### Patch Changes
+
+- Updated dependencies [f963b57ce]
+  - @graphql-mesh/cli@0.68.0
+  - @graphql-mesh/grpc@0.21.11
+  - @graphql-mesh/transform-naming-convention@0.10.35
+
+## 0.5.218
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.67.6
+- @graphql-mesh/grpc@0.21.10
+- @graphql-mesh/transform-naming-convention@0.10.34
+
+## 0.5.217
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.67.5
+
+## 0.5.216
+
+### Patch Changes
+
+- Updated dependencies [36d363d2f]
+  - @graphql-mesh/cli@0.67.4
+  - @graphql-mesh/grpc@0.21.9
+  - @graphql-mesh/transform-naming-convention@0.10.33
+
+## 0.5.215
+
+### Patch Changes
+
+- Updated dependencies [35a55e841]
+  - @graphql-mesh/cli@0.67.3
+  - @graphql-mesh/transform-naming-convention@0.10.32
+  - @graphql-mesh/grpc@0.21.8
+
+## 0.5.214
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.67.2
+
+## 0.5.213
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.67.1
+- @graphql-mesh/grpc@0.21.7
+- @graphql-mesh/transform-naming-convention@0.10.31
+
+## 0.5.212
+
+### Patch Changes
+
+- Updated dependencies [537ae2793]
+- Updated dependencies [101adc246]
+  - @graphql-mesh/grpc@0.21.6
+  - @graphql-mesh/cli@0.67.0
+
+## 0.5.211
+
+### Patch Changes
+
+- Updated dependencies [b02f5b008]
+  - @graphql-mesh/cli@0.66.2
+  - @graphql-mesh/grpc@0.21.5
+  - @graphql-mesh/transform-naming-convention@0.10.30
+
 ## 0.5.210
 
 ### Patch Changes

@@ -2,7 +2,7 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { YamlConfig, MeshPubSub, ImportFn } from '@graphql-mesh/types';
 import { buildSchema, execute, graphql, parse } from 'graphql';
-import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
+import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { PubSub } from '@graphql-mesh/utils';
 import MockingTransform from '../src';
 

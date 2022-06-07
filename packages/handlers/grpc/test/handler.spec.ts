@@ -1,12 +1,12 @@
 import { join } from 'path';
 import { GraphQLSchema, printSchema, validateSchema } from 'graphql';
 
-import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
+import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { PubSub } from '@graphql-mesh/utils';
 import GrpcHandler from '../src';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { DefaultLogger } from '@graphql-mesh/utils';
-import { YamlConfig } from '@graphql-mesh/types';
+import type { YamlConfig } from '@graphql-mesh/types';
 
 describe.each<[string, string]>([
   ['Movie', 'movie.proto'],
@@ -19,6 +19,7 @@ describe.each<[string, string]>([
   ['Outside', 'outside.proto'],
   ['Custom Message', 'custom-message.proto'],
   ['Custom Message2', 'custom-message-2.proto'],
+  ['Comments', 'comments.proto'],
 ])('Interpreting Protos', (name, file) => {
   test(`should load the ${name} proto`, async () => {
     const cache = new InMemoryLRUCache();

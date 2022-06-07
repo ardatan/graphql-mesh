@@ -1,0 +1,5 @@
+query ListPets {
+  findPetsByStatus(input: { status: [available] }) {
+    name
+  }
+}

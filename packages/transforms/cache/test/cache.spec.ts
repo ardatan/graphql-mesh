@@ -1,5 +1,5 @@
 import { YamlConfig, MeshPubSub, KeyValueCache, MeshTransformOptions, ImportFn } from '@graphql-mesh/types';
-import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
+import LocalforageCache from '@graphql-mesh/cache-localforage';
 import { addResolversToSchema, makeExecutableSchema } from '@graphql-tools/schema';
 import {
   GraphQLSchema,
@@ -13,9 +13,9 @@ import {
 } from 'graphql';
 import CacheTransform from '../src';
 import { computeCacheKey } from '../src/compute-cache-key';
-import { hashObject, PubSub } from '@graphql-mesh/utils';
-import { format } from 'date-fns';
-import { cloneSchema } from 'neo4j-graphql-js/node_modules/graphql-tools';
+import { PubSub } from '@graphql-mesh/utils';
+import dayjs from 'dayjs';
+import { hashObject } from '@graphql-mesh/string-interpolation';
 
 const wait = (seconds: number) => new Promise(resolve => setTimeout(resolve, seconds * 1000));
 const importFn: ImportFn = m => import(m);
@@ -151,7 +151,7 @@ describe('cache', () => {
       resolvers: spies,
     });
 
-    cache = new InMemoryLRUCache();
+    cache = new LocalforageCache();
     pubsub = new PubSub();
 
     spies.Query.user.mockClear();
@@ -401,7 +401,7 @@ describe('cache', () => {
     });
 
     it('Should work correctly with date helper', async () => {
-      const expectedHash = `1-${format(new Date(), `yyyy-MM-dd`)}`;
+      const expectedHash = `1-${dayjs(new Date()).format(`yyyy-MM-dd`)}`;
 
       await checkCache(
         [
@@ -606,26 +606,28 @@ describe('cache', () => {
           pubsub,
           baseDir,
         };
-        const schema = makeExecutableSchema({
-          typeDefs: /* GraphQL */ `
-            type Query {
-              foo: String
-            }
-          `,
-          resolvers: {
-            Query: {
-              foo: async () => {
-                callCount++;
-                await new Promise(resolve => setTimeout(resolve, 300));
-                return 'FOO';
+        function getNewSchema() {
+          return makeExecutableSchema({
+            typeDefs: /* GraphQL */ `
+              type Query {
+                foo: String
+              }
+            `,
+            resolvers: {
+              Query: {
+                foo: async () => {
+                  callCount++;
+                  await new Promise(resolve => setTimeout(resolve, 300));
+                  return 'FOO';
+                },
               },
             },
-          },
-        });
+          });
+        }
         const transform1 = new CacheTransform(options);
-        const transformedSchema1 = transform1.transformSchema(cloneSchema(schema));
+        const transformedSchema1 = transform1.transformSchema(getNewSchema());
         const transform2 = new CacheTransform(options);
-        const transformedSchema2 = transform2.transformSchema(cloneSchema(schema));
+        const transformedSchema2 = transform2.transformSchema(getNewSchema());
         const query = /* GraphQL */ `
           {
             foo
@@ -660,26 +662,28 @@ describe('cache', () => {
           pubsub,
           baseDir,
         };
-        const schema = makeExecutableSchema({
-          typeDefs: /* GraphQL */ `
-            type Query {
-              foo: String
-            }
-          `,
-          resolvers: {
-            Query: {
-              foo: async () => {
-                callCount++;
-                await new Promise(resolve => setTimeout(resolve, 300));
-                return 'FOO';
+        function getNewSchema() {
+          return makeExecutableSchema({
+            typeDefs: /* GraphQL */ `
+              type Query {
+                foo: String
+              }
+            `,
+            resolvers: {
+              Query: {
+                foo: async () => {
+                  callCount++;
+                  await new Promise(resolve => setTimeout(resolve, 300));
+                  return 'FOO';
+                },
               },
             },
-          },
-        });
+          });
+        }
         const transform1 = new CacheTransform(options);
-        const transformedSchema1 = transform1.transformSchema(cloneSchema(schema));
+        const transformedSchema1 = transform1.transformSchema(getNewSchema());
         const transform2 = new CacheTransform(options);
-        const transformedSchema2 = transform2.transformSchema(cloneSchema(schema));
+        const transformedSchema2 = transform2.transformSchema(getNewSchema());
         const query = /* GraphQL */ `
           {
             foo

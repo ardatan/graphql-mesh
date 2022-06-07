@@ -1,7 +1,8 @@
 import { KeyValueCache, KeyValueCacheSetOptions, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 import Redis from 'ioredis';
-import { jsonFlatStringify, stringInterpolator } from '@graphql-mesh/utils';
-import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import LocalforageCache from '@graphql-mesh/cache-localforage';
+import { process } from '@graphql-mesh/cross-helpers';
 
 function interpolateStrWithEnv(str: string): string {
   return stringInterpolator.parse(str, { env: process.env });
@@ -10,7 +11,7 @@ function interpolateStrWithEnv(str: string): string {
 export default class RedisCache<V = string> implements KeyValueCache<V> {
   private client: Redis;
 
-  constructor(options: YamlConfig.Transform['redis'] & { pubsub: MeshPubSub }) {
+  constructor(options: YamlConfig.Cache['redis'] & { pubsub: MeshPubSub }) {
     if (options.url) {
       const redisUrl = new URL(options.url);
 
@@ -40,16 +41,22 @@ export default class RedisCache<V = string> implements KeyValueCache<V> {
           enableOfflineQueue: true,
         });
       } else {
-        return new InMemoryLRUCache() as any;
+        return new LocalforageCache(options as any) as any;
       }
     }
-    options.pubsub.subscribe('destroy', () => {
-      this.client.disconnect(false);
-    });
+    const id$ = options.pubsub
+      .subscribe('destroy', () => {
+        this.client.disconnect(false);
+        id$.then(id => options.pubsub.unsubscribe(id)).catch(err => console.error(err));
+      })
+      .catch(err => {
+        console.error(err);
+        return 0;
+      });
   }
 
   async set(key: string, value: V, options?: KeyValueCacheSetOptions): Promise<void> {
-    const stringifiedValue = jsonFlatStringify(value);
+    const stringifiedValue = JSON.stringify(value);
     if (options?.ttl) {
       await this.client.set(key, stringifiedValue, 'EX', options.ttl);
     } else {

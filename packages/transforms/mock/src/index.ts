@@ -2,9 +2,11 @@ import { GraphQLSchema, GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql
 import { MeshTransform, YamlConfig, MeshTransformOptions, ImportFn } from '@graphql-mesh/types';
 import { addMocksToSchema, createMockStore, IMocks } from '@graphql-tools/mock';
 import faker from 'faker';
-import { getInterpolatedStringFactory, loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 
 import { mocks as graphqlScalarsMocks } from 'graphql-scalars';
+import { getInterpolatedStringFactory } from '@graphql-mesh/string-interpolation';
+import { process } from '@graphql-mesh/cross-helpers';
 
 export default class MockingTransform implements MeshTransform {
   noWrap = true;

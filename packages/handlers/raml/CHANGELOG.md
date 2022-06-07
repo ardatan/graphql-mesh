@@ -1,5 +1,219 @@
 # @graphql-mesh/raml
 
+## 0.3.23
+
+### Patch Changes
+
+- Updated dependencies [3c0366d2c]
+- Updated dependencies [3c0366d2c]
+  - @omnigraph/raml@0.5.46
+  - @graphql-mesh/utils@0.35.2
+  - @graphql-mesh/store@0.8.11
+  - @graphql-mesh/types@0.73.2
+
+## 0.3.22
+
+### Patch Changes
+
+- Updated dependencies [abe9fcc41]
+  - @graphql-mesh/utils@0.35.1
+  - @omnigraph/raml@0.5.45
+  - @graphql-mesh/store@0.8.10
+  - @graphql-mesh/types@0.73.1
+
+## 0.3.21
+
+### Patch Changes
+
+- 974e703e2: Cleanup dependencies
+- Updated dependencies [974e703e2]
+- Updated dependencies [19a99c055]
+- Updated dependencies [974e703e2]
+- Updated dependencies [974e703e2]
+- Updated dependencies [893d526ab]
+- Updated dependencies [974e703e2]
+  - @omnigraph/raml@0.5.44
+  - @graphql-mesh/store@0.8.9
+  - @graphql-mesh/types@0.73.0
+  - @graphql-mesh/utils@0.35.0
+
+## 0.3.20
+
+### Patch Changes
+
+- Updated dependencies [43eb3d2c2]
+  - @graphql-mesh/utils@0.34.10
+  - @omnigraph/raml@0.5.43
+  - @graphql-mesh/store@0.8.8
+  - @graphql-mesh/types@0.72.5
+
+## 0.3.19
+
+### Patch Changes
+
+- Updated dependencies [55ad5ea44]
+  - @graphql-mesh/utils@0.34.9
+  - @graphql-mesh/store@0.8.7
+  - @omnigraph/raml@0.5.42
+  - @graphql-mesh/types@0.72.4
+
+## 0.3.18
+
+### Patch Changes
+
+- Updated dependencies [31efa964e]
+  - @graphql-mesh/utils@0.34.8
+  - @omnigraph/raml@0.5.41
+  - @graphql-mesh/store@0.8.6
+  - @graphql-mesh/types@0.72.3
+
+## 0.3.17
+
+### Patch Changes
+
+- Updated dependencies [66b9b3ddc]
+  - @graphql-mesh/store@0.8.5
+  - @graphql-mesh/utils@0.34.7
+  - @graphql-mesh/types@0.72.2
+  - @omnigraph/raml@0.5.40
+
+## 0.3.16
+
+### Patch Changes
+
+- Updated dependencies [b9beacca2]
+  - @omnigraph/raml@0.5.39
+  - @graphql-mesh/utils@0.34.6
+  - @graphql-mesh/store@0.8.4
+  - @graphql-mesh/types@0.72.1
+
+## 0.3.15
+
+### Patch Changes
+
+- Updated dependencies [fa2542468]
+  - @graphql-mesh/types@0.72.0
+  - @graphql-mesh/store@0.8.3
+  - @graphql-mesh/utils@0.34.5
+  - @omnigraph/raml@0.5.38
+
+## 0.3.14
+
+### Patch Changes
+
+- Updated dependencies [ddbbec8a8]
+  - @graphql-mesh/utils@0.34.4
+  - @omnigraph/raml@0.5.37
+  - @graphql-mesh/store@0.8.2
+  - @graphql-mesh/types@0.71.4
+
+## 0.3.13
+
+### Patch Changes
+
+- Updated dependencies [2e9addd80]
+  - @omnigraph/raml@0.5.36
+  - @graphql-mesh/utils@0.34.3
+  - @graphql-mesh/store@0.8.1
+  - @graphql-mesh/types@0.71.3
+
+## 0.3.12
+
+### Patch Changes
+
+- @omnigraph/raml@0.5.35
+
+## 0.3.11
+
+### Patch Changes
+
+- Updated dependencies [8c8b304e5]
+  - @graphql-mesh/store@0.8.0
+  - @graphql-mesh/types@0.71.2
+  - @graphql-mesh/utils@0.34.2
+  - @omnigraph/raml@0.5.34
+
+## 0.3.10
+
+### Patch Changes
+
+- 7856f92d3: Bump all packages
+- Updated dependencies [7856f92d3]
+  - @omnigraph/raml@0.5.33
+  - @graphql-mesh/store@0.7.8
+  - @graphql-mesh/types@0.71.1
+  - @graphql-mesh/utils@0.34.1
+
+## 0.3.9
+
+### Patch Changes
+
+- Updated dependencies [f963b57ce]
+- Updated dependencies [0644f31f2]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+  - @graphql-mesh/types@0.71.0
+  - @graphql-mesh/utils@0.34.0
+  - @omnigraph/raml@0.5.32
+  - @graphql-mesh/store@0.7.7
+
+## 0.3.8
+
+### Patch Changes
+
+- @graphql-mesh/store@0.7.6
+- @graphql-mesh/utils@0.33.6
+- @omnigraph/raml@0.5.31
+- @graphql-mesh/types@0.70.6
+
+## 0.3.7
+
+### Patch Changes
+
+- Updated dependencies [decbe5fbb]
+  - @graphql-mesh/store@0.7.5
+  - @graphql-mesh/types@0.70.5
+  - @graphql-mesh/utils@0.33.5
+  - @omnigraph/raml@0.5.30
+
+## 0.3.6
+
+### Patch Changes
+
+- Updated dependencies [35a55e841]
+  - @omnigraph/raml@0.5.29
+  - @graphql-mesh/store@0.7.4
+  - @graphql-mesh/types@0.70.4
+  - @graphql-mesh/utils@0.33.4
+
+## 0.3.5
+
+### Patch Changes
+
+- Updated dependencies [4fa959de3]
+  - @graphql-mesh/store@0.7.3
+  - @graphql-mesh/types@0.70.3
+  - @graphql-mesh/utils@0.33.3
+  - @omnigraph/raml@0.5.28
+
+## 0.3.4
+
+### Patch Changes
+
+- @omnigraph/raml@0.5.27
+
+## 0.3.3
+
+### Patch Changes
+
+- Updated dependencies [b02f5b008]
+  - @graphql-mesh/types@0.70.2
+  - @graphql-mesh/store@0.7.2
+  - @graphql-mesh/utils@0.33.2
+  - @omnigraph/raml@0.5.26
+
 ## 0.3.2
 
 ### Patch Changes

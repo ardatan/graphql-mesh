@@ -35,5 +35,8 @@ export function getFieldNameFromPath(path: string, method: string, responseTypeS
   if (methodPrefix === 'get') {
     return fieldNameWithoutMethod;
   }
-  return methodPrefix + '_' + fieldNameWithoutMethod;
+  if (fieldNameWithoutMethod) {
+    return methodPrefix + '_' + fieldNameWithoutMethod;
+  }
+  return methodPrefix;
 }

@@ -8,9 +8,6 @@
         "file": {
           "$ref": "#/definitions/FileCacheConfig"
         },
-        "inmemoryLRU": {
-          "$ref": "#/definitions/InMemoryLRUConfig"
-        },
         "localforage": {
           "$ref": "#/definitions/LocalforageConfig"
         },
@@ -26,19 +23,6 @@
       "properties": {
         "path": {
           "type": "string"
-        }
-      }
-    },
-    "InMemoryLRUConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "InMemoryLRUConfig",
-      "properties": {
-        "max": {
-          "type": "integer"
-        },
-        "ttl": {
-          "type": "integer"
         }
       }
     },
@@ -152,17 +136,6 @@
           "type": "boolean",
           "description": "Show GraphiQL Playground"
         },
-        "maxRequestBodySize": {
-          "description": "Controls the maximum request body size. If this is a number, then the value specifies the number of bytes; if it is a string, the value is passed to the bytes library for parsing. Defaults to '100kb'. (Any of: Int, String)",
-          "anyOf": [
-            {
-              "type": "integer"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
         "sslCredentials": {
           "$ref": "#/definitions/HTTPSConfig",
           "description": "SSL Credentials for HTTPS Server\nIf this is provided, Mesh will be served via HTTPS"
@@ -189,6 +162,10 @@
         "playgroundTitle": {
           "type": "string",
           "description": "Title of GraphiQL Playground"
+        },
+        "trustProxy": {
+          "type": "string",
+          "description": "Configure Express Proxy Handling\n[Learn more](https://expressjs.com/en/guide/behind-proxies.html)"
         }
       }
     },
@@ -560,6 +537,44 @@
         }
       }
     },
+    "Plugin": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Plugin",
+      "properties": {
+        "maskedErrors": {
+          "$ref": "#/definitions/MaskedErrorsPluginConfig"
+        },
+        "immediateIntrospection": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
+        },
+        "liveQuery": {
+          "$ref": "#/definitions/LiveQueryConfig"
+        }
+      }
+    },
+    "MaskedErrorsPluginConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MaskedErrorsPluginConfig",
+      "properties": {
+        "errorMessage": {
+          "type": "string"
+        }
+      }
+    },
     "AdditionalStitchingResolverObject": {
       "additionalProperties": false,
       "type": "object",
@@ -705,24 +720,6 @@
       },
       "required": ["name"]
     },
-    "LiveQueryInvalidation": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "LiveQueryInvalidation",
-      "properties": {
-        "field": {
-          "type": "string"
-        },
-        "invalidate": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false
-        }
-      },
-      "required": ["field", "invalidate"]
-    },
     "GraphQLHandlerMultipleHTTPConfiguration": {
       "additionalProperties": false,
       "type": "object",
@@ -738,11 +735,29 @@
         },
         "strategy": {
           "type": "string",
-          "enum": ["fallback", "race"],
-          "description": "Handling strategy (default: fallback) (Allowed values: fallback, race)"
+          "enum": ["fallback", "race", "highestValue"],
+          "description": "Handling strategy (default: fallback) (Allowed values: fallback, race, highestValue)"
+        },
+        "strategyConfig": {
+          "$ref": "#/definitions/GraphQLHandlerhighestValueStrategyConfig",
+          "description": "Handling strategy configuration"
         }
       },
       "required": ["sources"]
+    },
+    "GraphQLHandlerhighestValueStrategyConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "GraphQLHandlerhighestValueStrategyConfig",
+      "properties": {
+        "selectionSet": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": ["selectionSet", "value"]
     },
     "GraphQLHandlerCodeFirstConfiguration": {
       "additionalProperties": false,
@@ -1027,6 +1042,21 @@
         },
         "ignoreErrorResponses": {
           "type": "boolean"
+        },
+        "queryParams": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
         }
       },
       "required": ["operations"]
@@ -1136,6 +1166,22 @@
         "responseTypeName": {
           "type": "string",
           "description": "Inset any name for the type of the response body."
+        },
+        "responseByStatusCode": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ],
+          "description": "You can define your response schemas by status codes;\n\nresponseByStatusCode:\n  200:\n    responseSchema: ./someschema.json#/somepath\n  404:\n    responseSample: ./error-sample.json\n    responseTypeName: MyError"
         },
         "argTypeMap": {
           "type": "object",
@@ -1814,6 +1860,21 @@
             "$ref": "#/definitions/OASSelectQueryOrMutationFieldConfig"
           },
           "additionalItems": false
+        },
+        "queryParams": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
         }
       },
       "required": ["oasFilePath"]
@@ -2001,6 +2062,39 @@
         }
       }
     },
+    "LiveQueryConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "LiveQueryConfig",
+      "properties": {
+        "liveQueryInvalidations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LiveQueryInvalidation"
+          },
+          "additionalItems": false,
+          "description": "Live Query Invalidations"
+        }
+      }
+    },
+    "LiveQueryInvalidation": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "LiveQueryInvalidation",
+      "properties": {
+        "field": {
+          "type": "string"
+        },
+        "invalidate": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        }
+      },
+      "required": ["field", "invalidate"]
+    },
     "PostGraphileHandler": {
       "additionalProperties": false,
       "type": "object",
@@ -2100,6 +2194,21 @@
             "$ref": "#/definitions/RAMLSelectQueryOrMutationFieldConfig"
           },
           "additionalItems": false
+        },
+        "queryParams": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
         }
       },
       "required": ["ramlFilePath"]
@@ -3392,14 +3501,6 @@
         }
       ]
     },
-    "liveQueryInvalidations": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/LiveQueryInvalidation"
-      },
-      "additionalItems": false,
-      "description": "Live Query Invalidations"
-    },
     "documents": {
       "type": "array",
       "items": {
@@ -3431,6 +3532,13 @@
     "additionalEnvelopPlugins": {
       "type": "string",
       "description": "You can provide Envelop plugins"
+    },
+    "plugins": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Plugin"
+      },
+      "additionalItems": false
     }
   },
   "additionalProperties": false

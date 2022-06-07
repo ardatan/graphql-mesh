@@ -11,10 +11,13 @@ import {
 import { Plugin, withPostGraphileContext } from 'postgraphile';
 import { getPostGraphileBuilder } from 'postgraphile-core';
 import pg from 'pg';
-import { path } from '@graphql-mesh/cross-helpers';
+import { path, process } from '@graphql-mesh/cross-helpers';
+// eslint-disable-next-line import/no-nodejs-modules
 import { tmpdir } from 'os';
-import { jitExecutorFactory, loadFromModuleExportExpression, stringInterpolator } from '@graphql-mesh/utils';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
+import { createDefaultExecutor } from '@graphql-tools/delegate';
 
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;
@@ -58,14 +61,15 @@ export default class PostGraphileHandler implements MeshHandler {
       const pgLogger = this.logger.child('PostgreSQL');
       pgPool = new pg.Pool({
         connectionString: stringInterpolator.parse(this.config.connectionString, { env: process.env }),
-        log: messages => pgLogger.debug(() => messages),
+        log: messages => pgLogger.debug(messages),
         ...this.config?.pool,
       });
     }
 
-    await this.pubsub.subscribe('destroy', () => {
-      this.logger.debug(() => 'Destroying PostgreSQL pool');
+    const id$ = this.pubsub.subscribe('destroy', () => {
+      this.logger.debug('Destroying PostgreSQL pool');
       pgPool.end();
+      id$.then(id => this.pubsub.unsubscribe(id)).catch(err => console.error(err));
     });
 
     const cacheKey = this.name + '_introspection.json';
@@ -115,6 +119,7 @@ export default class PostGraphileHandler implements MeshHandler {
     });
 
     const schema = builder.buildSchema();
+    const defaultExecutor = createDefaultExecutor(schema);
 
     if (!cachedIntrospection) {
       await writeCache();
@@ -122,20 +127,18 @@ export default class PostGraphileHandler implements MeshHandler {
       await this.pgCache.set(cachedIntrospection);
     }
 
-    const jitExecutor = jitExecutorFactory(schema, this.name, this.logger);
-
     return {
       schema,
-      executor: ({ document, variables, context: meshContext, rootValue, operationName, extensions }) =>
-        withPostGraphileContext(
+      executor({ document, variables, context: meshContext, rootValue, operationName, extensions }) {
+        return withPostGraphileContext(
           {
             pgPool,
             queryDocumentAst: document,
             operationName,
             variables,
           },
-          pgContext =>
-            jitExecutor({
+          function withPgContextCallback(pgContext) {
+            return defaultExecutor({
               document,
               variables,
               context: {
@@ -145,8 +148,10 @@ export default class PostGraphileHandler implements MeshHandler {
               rootValue,
               operationName,
               extensions,
-            }) as any
-        ) as any,
+            }) as any;
+          }
+        ) as any;
+      },
     };
   }
 }

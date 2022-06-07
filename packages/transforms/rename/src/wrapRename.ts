@@ -73,23 +73,31 @@ export default class WrapRename implements MeshTransform {
 
       if (
         fromTypeName &&
-        fromTypeName === toTypeName &&
+        (fromTypeName === toTypeName || useRegExpForTypes) &&
         toFieldName &&
-        fromFieldName === toFieldName &&
+        (fromFieldName === toFieldName || useRegExpForFields) &&
         fromArgumentName &&
         fromArgumentName !== toArgumentName
       ) {
         let replaceArgNameFn: (typeName: string, fieldName: string, argName: string) => string;
 
+        const fieldNameMatch = (fieldName: string) =>
+          fieldName ===
+          (useRegExpForFields ? fieldName.replace(new RegExp(fromFieldName, regExpFlags), toFieldName) : toFieldName);
+
+        const typeNameMatch = (typeName: string) =>
+          typeName ===
+          (useRegExpForTypes ? typeName.replace(new RegExp(fromTypeName, regExpFlags), toTypeName) : toTypeName);
+
         if (useRegExpForArguments) {
           const argNameRegExp = new RegExp(fromArgumentName, regExpFlags);
           replaceArgNameFn = (typeName, fieldName, argName) =>
-            typeName === toTypeName && fieldName === toFieldName
-              ? fieldName.replace(argNameRegExp, toArgumentName)
+            typeNameMatch(typeName) && fieldNameMatch(fieldName)
+              ? argName.replace(argNameRegExp, toArgumentName)
               : argName;
         } else {
           replaceArgNameFn = (typeName, fieldName, argName) =>
-            typeName === toTypeName && fieldName === fromFieldName && argName === fromArgumentName
+            typeNameMatch(typeName) && fieldNameMatch(fieldName) && argName === fromArgumentName
               ? toArgumentName
               : argName;
         }

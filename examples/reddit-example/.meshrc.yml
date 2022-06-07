@@ -1,0 +1,14 @@
+sources:
+  - name: reddit
+    handler:
+      jsonSchema:
+        baseUrl: https://www.reddit.com/
+        operations:
+          - type: Query
+            field: subreddit
+            path: /r/{args.subreddit}.json
+            method: GET
+            responseSample: https://www.reddit.com/r/AskReddit.json
+            responseTypeName: Subreddit
+            argTypeMap:
+              subreddit: String

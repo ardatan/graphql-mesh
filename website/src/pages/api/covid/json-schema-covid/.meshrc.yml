@@ -1,0 +1,34 @@
+sources: !includes sources
+
+additionalTypeDefs: |
+  extend type Case {
+    population: ApiPopulation
+  }
+  extend type Query {
+    stat(country: String!): Stat
+  }
+  type Stat {
+    confirmedRatio: Float
+    deathRatio: Float
+    case: Case
+    population: ApiPopulation
+  }
+additionalResolvers:
+  - targetTypeName: Case
+    targetFieldName: population
+    requiredSelectionSet: |
+      {
+        countryRegion
+      }
+    sourceName: WorldPop
+    sourceTypeName: Query
+    sourceFieldName: population
+    sourceArgs:
+      country: '{root.countryRegion}'
+  - ./src/query-additional-resolvers
+
+documents:
+  - example-queries/*.graphql
+
+serve:
+  playground: true

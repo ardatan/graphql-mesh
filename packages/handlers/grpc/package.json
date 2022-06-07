@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/grpc",
-  "version": "0.21.4",
+  "version": "0.24.2",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -28,20 +28,25 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/cross-helpers": "0.1.0",
-    "@graphql-mesh/types": "0.70.1",
-    "@graphql-mesh/utils": "0.33.1",
-    "@graphql-mesh/store": "0.7.1",
+    "@graphql-mesh/cross-helpers": "0.1.6",
+    "@graphql-mesh/types": "0.73.2",
+    "@graphql-mesh/utils": "0.35.2",
+    "@graphql-mesh/store": "0.8.11",
+    "@graphql-mesh/string-interpolation": "0.2.0",
     "@grpc/grpc-js": "^1.1.7",
-    "@grpc/proto-loader": "0.6.9",
+    "@grpc/proto-loader": "0.6.13",
     "graphql-scalars": "1.17.0",
     "graphql-compose": "9.0.8",
     "grpc-reflection-js": "0.1.2",
     "globby": "11.1.0",
     "long": "4.0.0",
-    "protobufjs": "6.11.2",
-    "lodash": "4.17.21",
+    "protobufjs": "6.11.3",
+    "lodash.get": "4.4.2",
+    "lodash.has": "4.5.2",
     "tslib": "^2.3.1"
+  },
+  "devDependencies": {
+    "@types/lodash.has": "4.5.7"
   },
   "publishConfig": {
     "access": "public",

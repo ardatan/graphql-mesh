@@ -1,11 +1,6 @@
 import { GetMeshSourceOptions, MeshHandler, YamlConfig } from '@graphql-mesh/types';
 import { parse, ThriftDocument, SyntaxType, Comment, FunctionType } from '@creditkarma/thrift-parser';
-import {
-  readFileOrUrl,
-  parseInterpolationStrings,
-  getInterpolatedHeadersFactory,
-  AggregateError,
-} from '@graphql-mesh/utils';
+import { readFileOrUrl } from '@graphql-mesh/utils';
 import {
   GraphQLEnumType,
   GraphQLEnumValueConfigMap,
@@ -43,7 +38,9 @@ import {
 } from '@creditkarma/thrift-server-core';
 import { pascalCase } from 'pascal-case';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
-import { inspect } from '@graphql-tools/utils';
+import { AggregateError } from '@graphql-tools/utils';
+import { parseInterpolationStrings, getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
+import { process, util } from '@graphql-mesh/cross-helpers';
 
 export default class ThriftHandler implements MeshHandler {
   private config: YamlConfig.ThriftHandler;
@@ -399,7 +396,7 @@ export default class ThriftHandler implements MeshHandler {
           break;
         }
         default:
-          throw new Error(`Unknown function type: ${inspect(functionType)}!`);
+          throw new Error(`Unknown function type: ${util.inspect(functionType)}!`);
       }
       return {
         inputType: inputType!,

@@ -6,9 +6,9 @@ sources:
         operationIdFieldNames: true
 
 additionalTypeDefs: |
-      extend type Query {
-        viewsInPastMonth(project: String!): Float!
-      }
+  extend type Query {
+    viewsInPastMonth(project: String!): Float!
+  }
 additionalResolvers:
   - ./additional-resolvers.ts
 

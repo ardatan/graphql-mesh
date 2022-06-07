@@ -1,5 +1,5 @@
-import { getInterpolatedHeadersFactory, readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
-import { JSONSchemaObject } from 'json-machete';
+import { readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import { JSONSchemaObject, dereferenceObject, resolvePath } from 'json-machete';
 import { OpenAPIV3, OpenAPIV2 } from 'openapi-types';
 import {
   HTTPMethod,
@@ -11,6 +11,8 @@ import { getFieldNameFromPath } from './utils';
 import { OperationTypeNode } from 'graphql';
 import { OpenAPILoaderSelectQueryOrMutationFieldConfig } from './types';
 import { Logger } from '@graphql-mesh/types';
+import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
+import { process } from '@graphql-mesh/cross-helpers';
 
 interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
   oasFilePath: OpenAPIV3.Document | OpenAPIV2.Document | string;
@@ -40,7 +42,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
     fieldTypeMap[fieldName] = type;
   }
   const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders);
-  logger?.debug(() => `Fetching OpenAPI Document from ${oasFilePath}`);
+  logger?.debug(`Fetching OpenAPI Document from ${oasFilePath}`);
   const oasOrSwagger: OpenAPIV3.Document | OpenAPIV2.Document =
     typeof oasFilePath === 'string'
       ? await readFileOrUrl(oasFilePath, {
@@ -65,7 +67,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
         method: method.toUpperCase() as HTTPMethod,
         path: relativePath,
         type: method.toUpperCase() === 'GET' ? 'query' : 'mutation',
-        field: methodObj.operationId,
+        field: methodObj.operationId && sanitizeNameForGraphQL(methodObj.operationId),
         description: methodObj.description || methodObj.summary,
         schemaHeaders,
         operationHeaders,
@@ -84,7 +86,8 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
                 type: 'object',
                 properties: {},
               }) as JSONSchemaObject;
-              requestSchema.properties[paramObj.name] = paramObj.schema || paramObj;
+              requestSchema.properties[paramObj.name] =
+                paramObj.schema || paramObj.content?.['application/json']?.schema || paramObj;
               if (!requestSchema.properties[paramObj.name].title) {
                 requestSchema.properties[paramObj.name].name = paramObj.name;
               }
@@ -124,7 +127,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
             break;
           }
           case 'body':
-            if (paramObj.schema) {
+            if (paramObj.schema && Object.keys(paramObj.schema).length > 0) {
               operationConfig.requestSchema = `${oasFilePath}#/paths/${relativePath
                 .split('/')
                 .join('~1')}/${method}/parameters/${paramObjIndex}/schema`;
@@ -167,7 +170,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
         if ('content' in requestBodyObj) {
           const contentKey = Object.keys(requestBodyObj.content)[0];
           const contentSchema = requestBodyObj.content[contentKey]?.schema;
-          if (contentSchema) {
+          if (contentSchema && Object.keys(contentSchema).length > 0) {
             operationConfig.requestSchema = `${oasFilePath}#/paths/${relativePath
               .split('/')
               .join('~1')}/${method}/requestBody/content/${contentKey?.toString().split('/').join('~1')}/schema`;
@@ -184,12 +187,13 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
       // Handling multiple response types
       for (const responseKey in methodObj.responses) {
         const responseObj = methodObj.responses[responseKey] as OpenAPIV3.ResponseObject | OpenAPIV2.ResponseObject;
+
         let schemaObj: JSONSchemaObject;
 
         if ('content' in responseObj) {
           const contentKey = Object.keys(responseObj.content)[0];
           schemaObj = responseObj.content[contentKey].schema as any;
-          if (schemaObj) {
+          if (schemaObj && Object.keys(schemaObj).length > 0) {
             responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
             responseByStatusCode[responseKey].responseSchema = `${oasFilePath}#/paths/${relativePath
               .split('/')
@@ -210,22 +214,84 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
           }
         } else if ('schema' in responseObj) {
           schemaObj = responseObj.schema as any;
-          if (schemaObj) {
+          if (schemaObj && Object.keys(schemaObj).length > 0) {
             responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
             responseByStatusCode[responseKey].responseSchema = `${oasFilePath}#/paths/${relativePath
               .split('/')
               .join('~1')}/${method}/responses/${responseKey}/schema`;
           }
-          if (responseObj.examples) {
-            const examples = Object.values(responseObj.examples);
-            responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
-            responseByStatusCode[responseKey].responseSample = examples[0];
+        } else if ('examples' in responseObj) {
+          const examples = Object.values(responseObj.examples);
+          responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
+          responseByStatusCode[responseKey].responseSample = examples[0];
+        } else if (responseKey.toString() === '204') {
+          responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
+          responseByStatusCode[responseKey].responseSchema = {
+            type: 'null',
+            description: responseObj.description,
+          };
+        }
+
+        if ('links' in responseObj) {
+          const dereferencedLinkObj = await dereferenceObject(
+            {
+              links: responseObj.links,
+            },
+            {
+              cwd,
+              root: oasOrSwagger,
+              fetch,
+              headers: schemaHeaders,
+            }
+          );
+          responseByStatusCode[responseKey].links = responseByStatusCode[responseKey].links || {};
+          for (const linkName in dereferencedLinkObj.links) {
+            const linkObj = responseObj.links[linkName];
+            if ('$ref' in linkObj) {
+              throw new Error('Unexpected $ref in dereferenced link object');
+            }
+            const args: Record<string, string> = {};
+            for (const parameterName in linkObj.parameters || {}) {
+              const parameterExp = linkObj.parameters[parameterName].split('-').join('_') as string;
+              args[sanitizeNameForGraphQL(parameterName)] = parameterExp.startsWith('$')
+                ? `{root.${parameterExp}}`
+                : parameterExp.split('$').join('root.$');
+            }
+            if ('operationRef' in linkObj) {
+              const [externalPath, ref] = linkObj.operationRef.split('#');
+              if (externalPath) {
+                if (process.env.DEBUG) {
+                  console.warn(
+                    `Skipping external operation reference ${linkObj.operationRef}\n Use additionalTypeDefs and additionalResolvers instead.`
+                  );
+                }
+              } else {
+                const actualOperation = resolvePath(ref, oasOrSwagger);
+                if (actualOperation.operationId) {
+                  const fieldName = sanitizeNameForGraphQL(actualOperation.operationId);
+                  responseByStatusCode[responseKey].links[linkName] = {
+                    fieldName,
+                    args,
+                    description: linkObj.description,
+                  };
+                } else {
+                  console.warn('Missing operationId skipping...');
+                }
+              }
+            } else if ('operationId' in linkObj) {
+              responseByStatusCode[responseKey].links[linkName] = {
+                fieldName: sanitizeNameForGraphQL(linkObj.operationId),
+                args,
+                description: linkObj.description,
+              };
+            }
           }
         }
 
         if (!operationConfig.field) {
+          methodObj.operationId = getFieldNameFromPath(relativePath, method, schemaObj?.$ref);
           // Operation ID might not be avaiable so let's generate field name from path and response type schema
-          operationConfig.field = sanitizeNameForGraphQL(getFieldNameFromPath(relativePath, method, schemaObj?.$ref));
+          operationConfig.field = sanitizeNameForGraphQL(methodObj.operationId);
         }
 
         // Give a better name to the request input object

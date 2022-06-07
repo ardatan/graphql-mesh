@@ -9,19 +9,27 @@ export function getRoutes(): IRoutes {
       },
       'getting-started': {
         $name: 'Getting Started',
-        $routes: ['overview', 'installation', 'your-first-mesh-gateway', 'cli-commands', 'comparison'],
-      },
-      recipes: {
-        $name: 'Recipes',
         $routes: [
-          'multiple-apis',
-          'build-mesh-artifacts',
-          'typescript',
-          'as-sdk',
-          'as-gateway',
-          'custom-server',
-          'subscriptions-webhooks',
+          'overview',
+          'installation',
+          'your-first-mesh-gateway',
+          'combine-multiple-sources',
+          'sources-with-no-definition',
+          'customize-mesh-server',
+          'deploy-mesh-gateway',
+          'comparison',
+        ],
+      },
+      guides: {
+        $name: 'Guides',
+        $routes: [
+          'extending-unified-schema',
+          'graphql-code-generator',
           'live-queries',
+          'subscriptions-webhooks',
+          'performances-best-practices',
+          'error-handling',
+          'file-uploads',
         ],
       },
       handlers: {
@@ -59,20 +67,24 @@ export function getRoutes(): IRoutes {
           'type-merging',
           'federation',
           'extend',
+          'prune',
         ],
       },
       cache: {
         $name: 'Cache',
-        $routes: ['inmemory-lru', 'file', 'localforage', 'redis'],
+        $routes: ['file', 'localforage', 'redis'],
       },
       api: apiSidebar,
+      'cli-commands': {
+        $name: 'CLI commands',
+      },
     },
   };
 
   GenerateRoutes({
     Routes,
     folderPattern: 'docs',
-    ignorePaths: ['extend', 'generated-markdown'],
+    ignorePaths: ['extend', 'generated-markdown', 'recipes'],
   });
 
   return {

@@ -1,9 +1,9 @@
 import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
-import { flatString, writeFile, AggregateError } from '@graphql-mesh/utils';
+import { writeFile } from '@graphql-mesh/utils';
 import { CriticalityLevel, diff } from '@graphql-inspector/core';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { getDocumentNodeFromSchema, AggregateError } from '@graphql-tools/utils';
 import { ImportFn } from '@graphql-mesh/types';
-import { buildSchema } from 'graphql';
+import { buildASTSchema } from 'graphql';
 
 export class ReadonlyStoreError extends Error {}
 
@@ -38,7 +38,7 @@ export class InMemoryStoreStorageAdapter implements StoreStorageAdapter {
 export interface FsStoreStorageAdapterOptions {
   cwd: string;
   importFn: ImportFn;
-  fileType: 'ts' | 'json';
+  fileType: 'ts' | 'json' | 'js';
 }
 
 export class FsStoreStorageAdapter implements StoreStorageAdapter {
@@ -47,10 +47,17 @@ export class FsStoreStorageAdapter implements StoreStorageAdapter {
     return pathModule.isAbsolute(jsFileName) ? jsFileName : pathModule.join(this.options.cwd, jsFileName);
   }
 
-  async read<TData>(key: string): Promise<TData> {
-    const absoluteModulePath = this.getAbsolutePath(key);
+  async read<TData, TJSONData = any>(key: string, options: ProxyOptions<TData, TJSONData>): Promise<TData> {
+    let absoluteModulePath = this.getAbsolutePath(key);
+    if (this.options.fileType !== 'ts') {
+      absoluteModulePath += '.' + this.options.fileType;
+    }
     try {
-      return await this.options.importFn(absoluteModulePath).then(m => m.default || m);
+      const importedData = await this.options.importFn(absoluteModulePath).then(m => m.default || m);
+      if (this.options.fileType === 'json') {
+        return await options.fromJSON(importedData, key);
+      }
+      return importedData;
     } catch (e) {
       if (e.message.startsWith('Cannot find module')) {
         return undefined;
@@ -59,15 +66,19 @@ export class FsStoreStorageAdapter implements StoreStorageAdapter {
     }
   }
 
-  async write<TData>(key: string, data: TData, options: ProxyOptions<any>): Promise<void> {
+  async write<TData, TJSONData = any>(
+    key: string,
+    data: TData,
+    options: ProxyOptions<TData, TJSONData>
+  ): Promise<void> {
     const asString =
-      this.options.fileType === 'ts'
-        ? `// @ts-nocheck\n` + (await options.codify(data, key))
-        : await options.stringify(data, key);
+      this.options.fileType === 'json'
+        ? JSON.stringify(await options.toJSON(data, key))
+        : `// @ts-nocheck\n` + (await options.codify(data, key));
     const modulePath = this.getAbsolutePath(key);
     const filePath = modulePath + '.' + this.options.fileType;
-    await writeFile(filePath, flatString(asString));
-    await this.options.importFn(modulePath);
+    await writeFile(filePath, asString);
+    await this.options.importFn(this.options.fileType !== 'ts' ? filePath : modulePath);
   }
 
   async delete(key: string): Promise<void> {
@@ -83,10 +94,10 @@ export type StoreProxy<TData> = {
   delete(): Promise<void>;
 };
 
-export type ProxyOptions<TData> = {
+export type ProxyOptions<TData, TJSONData = any> = {
   codify: (value: TData, identifier: string) => string | Promise<string>;
-  parse: (stringifiedData: string, identifier: string) => TData | Promise<TData>;
-  stringify: (value: TData, identifier: string) => string | Promise<string>;
+  fromJSON: (jsonData: TJSONData, identifier: string) => TData | Promise<TData>;
+  toJSON: (value: TData, identifier: string) => TJSONData | Promise<TJSONData>;
   validate: (oldValue: TData, newValue: TData, identifier: string) => void | Promise<void>;
 };
 
@@ -101,37 +112,33 @@ export enum PredefinedProxyOptionsName {
   GraphQLSchemaWithDiffing = 'GraphQLSchemaWithDiffing',
 }
 
-const escapeForTemplateLiteral = (str: string) => str.split('`').join('\\`').split('$').join('\\$');
-
 export const PredefinedProxyOptions: Record<PredefinedProxyOptionsName, ProxyOptions<any>> = {
   JsonWithoutValidation: {
-    codify: v => `export default ${JSON.stringify(v)} as any;`,
-    parse: v => JSON.parse(v),
-    stringify: v => JSON.stringify(v),
+    codify: v => `export default ${JSON.stringify(v, null, 2)}`,
+    fromJSON: v => v,
+    toJSON: v => v,
     validate: () => null,
   },
   StringWithoutValidation: {
-    codify: v => `export default \`${escapeForTemplateLiteral(v)}\``,
-    parse: v => v,
-    stringify: v => v,
+    codify: v => `export default ${JSON.stringify(v, null, 2)}`,
+    fromJSON: v => v,
+    toJSON: v => v,
     validate: () => null,
   },
   GraphQLSchemaWithDiffing: {
-    codify: (schema, identifier) =>
+    codify: schema =>
       `
-import { buildSchema, Source } from 'graphql';
+import { buildASTSchema } from 'graphql';
 
-const source = new Source(/* GraphQL */\`
-${escapeForTemplateLiteral(printSchemaWithDirectives(schema))}
-\`, \`${identifier}\`);
+const schemaAST = ${JSON.stringify(getDocumentNodeFromSchema(schema), null, 2)};
 
-export default buildSchema(source, {
+export default buildASTSchema(schemaAST, {
   assumeValid: true,
   assumeValidSDL: true
 });
     `.trim(),
-    parse: sdl => buildSchema(sdl),
-    stringify: schema => printSchemaWithDirectives(schema),
+    fromJSON: schemaAST => buildASTSchema(schemaAST, { assumeValid: true, assumeValidSDL: true }),
+    toJSON: schema => getDocumentNodeFromSchema(schema),
     validate: async (oldSchema, newSchema) => {
       const changes = await diff(oldSchema, newSchema);
       const errors: string[] = [];

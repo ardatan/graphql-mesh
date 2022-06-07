@@ -1,5 +1,238 @@
 # @omnigraph/openapi
 
+## 0.6.11
+
+### Patch Changes
+
+- 3c0366d2c: - Support import.meta.env instead of process.env for browsers
+  - Ponyfill `util.inspect` only if it is not Node env
+- Updated dependencies [3c0366d2c]
+- Updated dependencies [3c0366d2c]
+  - @graphql-mesh/cross-helpers@0.1.6
+  - json-machete@0.8.10
+  - @omnigraph/json-schema@0.20.2
+  - @graphql-mesh/utils@0.35.2
+  - @graphql-mesh/types@0.73.2
+
+## 0.6.10
+
+### Patch Changes
+
+- Updated dependencies [abe9fcc41]
+  - @graphql-mesh/utils@0.35.1
+  - json-machete@0.8.9
+  - @omnigraph/json-schema@0.20.1
+  - @graphql-mesh/types@0.73.1
+
+## 0.6.9
+
+### Patch Changes
+
+- 974e703e2: Cleanup dependencies
+- Updated dependencies [974e703e2]
+- Updated dependencies [19a99c055]
+- Updated dependencies [974e703e2]
+- Updated dependencies [974e703e2]
+- Updated dependencies [893d526ab]
+- Updated dependencies [974e703e2]
+  - json-machete@0.8.8
+  - @omnigraph/json-schema@0.20.0
+  - @graphql-mesh/string-interpolation@0.2.0
+  - @graphql-mesh/types@0.73.0
+  - @graphql-mesh/utils@0.35.0
+
+## 0.6.8
+
+### Patch Changes
+
+- Updated dependencies [43eb3d2c2]
+  - @graphql-mesh/utils@0.34.10
+  - json-machete@0.8.7
+  - @omnigraph/json-schema@0.19.8
+  - @graphql-mesh/types@0.72.5
+
+## 0.6.7
+
+### Patch Changes
+
+- Updated dependencies [55ad5ea44]
+  - @graphql-mesh/utils@0.34.9
+  - json-machete@0.8.6
+  - @omnigraph/json-schema@0.19.7
+  - @graphql-mesh/types@0.72.4
+
+## 0.6.6
+
+### Patch Changes
+
+- Updated dependencies [31efa964e]
+  - @graphql-mesh/utils@0.34.8
+  - json-machete@0.8.5
+  - @omnigraph/json-schema@0.19.6
+  - @graphql-mesh/types@0.72.3
+
+## 0.6.5
+
+### Patch Changes
+
+- json-machete@0.8.4
+- @graphql-mesh/utils@0.34.7
+- @graphql-mesh/types@0.72.2
+- @omnigraph/json-schema@0.19.5
+
+## 0.6.4
+
+### Patch Changes
+
+- Updated dependencies [b9beacca2]
+  - json-machete@0.8.3
+  - @omnigraph/json-schema@0.19.4
+  - @graphql-mesh/utils@0.34.6
+  - @graphql-mesh/types@0.72.1
+
+## 0.6.3
+
+### Patch Changes
+
+- Updated dependencies [fa2542468]
+  - @graphql-mesh/types@0.72.0
+  - @omnigraph/json-schema@0.19.3
+  - @graphql-mesh/utils@0.34.5
+  - json-machete@0.8.2
+
+## 0.6.2
+
+### Patch Changes
+
+- Updated dependencies [ddbbec8a8]
+  - @graphql-mesh/utils@0.34.4
+  - json-machete@0.8.1
+  - @omnigraph/json-schema@0.19.2
+  - @graphql-mesh/types@0.71.4
+
+## 0.6.1
+
+### Patch Changes
+
+- 2e9addd80: Bump cross-undici-fetch for Node 18 compat
+- Updated dependencies [2e9addd80]
+- Updated dependencies [2e9addd80]
+  - json-machete@0.8.0
+  - @omnigraph/json-schema@0.19.1
+  - @graphql-mesh/utils@0.34.3
+  - @graphql-mesh/types@0.71.3
+
+## 0.6.0
+
+### Minor Changes
+
+- 2f395a4b2: feat(openapi): support empty values
+
+### Patch Changes
+
+- Updated dependencies [2f395a4b2]
+  - @omnigraph/json-schema@0.19.0
+
+## 0.5.2
+
+### Patch Changes
+
+- @graphql-mesh/types@0.71.2
+- @omnigraph/json-schema@0.18.2
+- @graphql-mesh/utils@0.34.2
+- json-machete@0.7.15
+
+## 0.5.1
+
+### Patch Changes
+
+- 7856f92d3: Bump all packages
+- Updated dependencies [7856f92d3]
+  - json-machete@0.7.14
+  - @omnigraph/json-schema@0.18.1
+  - @graphql-mesh/types@0.71.1
+  - @graphql-mesh/utils@0.34.1
+
+## 0.5.0
+
+### Minor Changes
+
+- 331b62637: feat(json-schema/openapi): support OpenAPI links and json pointer syntax in string interpolation
+
+### Patch Changes
+
+- 331b62637: fix(openapi): sanitize operationId before settings it as a GraphQL field name in the root type
+- 331b62637: fix(openapi): handle empty responses(204) correctly
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+- Updated dependencies [f963b57ce]
+- Updated dependencies [0644f31f2]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+  - json-machete@0.7.13
+  - @omnigraph/json-schema@0.18.0
+  - @graphql-mesh/types@0.71.0
+  - @graphql-mesh/utils@0.34.0
+
+## 0.4.9
+
+### Patch Changes
+
+- json-machete@0.7.12
+- @graphql-mesh/utils@0.33.6
+- @omnigraph/json-schema@0.17.26
+- @graphql-mesh/types@0.70.6
+
+## 0.4.8
+
+### Patch Changes
+
+- @graphql-mesh/types@0.70.5
+- @omnigraph/json-schema@0.17.25
+- @graphql-mesh/utils@0.33.5
+- json-machete@0.7.11
+
+## 0.4.7
+
+### Patch Changes
+
+- Updated dependencies [35a55e841]
+  - json-machete@0.7.10
+  - @omnigraph/json-schema@0.17.24
+  - @graphql-mesh/types@0.70.4
+  - @graphql-mesh/utils@0.33.4
+
+## 0.4.6
+
+### Patch Changes
+
+- @graphql-mesh/types@0.70.3
+- @omnigraph/json-schema@0.17.23
+- @graphql-mesh/utils@0.33.3
+- json-machete@0.7.9
+
+## 0.4.5
+
+### Patch Changes
+
+- Updated dependencies [d64c74b75]
+  - json-machete@0.7.8
+  - @omnigraph/json-schema@0.17.22
+
+## 0.4.4
+
+### Patch Changes
+
+- Updated dependencies [b02f5b008]
+- Updated dependencies [114629e47]
+  - @graphql-mesh/types@0.70.2
+  - json-machete@0.7.7
+  - @omnigraph/json-schema@0.17.21
+  - @graphql-mesh/utils@0.33.2
+
 ## 0.4.3
 
 ### Patch Changes

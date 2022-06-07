@@ -35,9 +35,8 @@ import { InternalOptions } from './types/options';
 // Imports:
 import * as Swagger2OpenAPI from 'swagger2openapi';
 import { handleWarning, MitigationTypes } from './utils';
-import * as jsonptr from 'json-ptr';
+import JsonPointer from 'json-pointer';
 import pluralize from 'pluralize';
-import { jsonFlatStringify } from '@graphql-mesh/utils';
 import { Logger } from '@graphql-mesh/types';
 
 // Type definitions & exports:
@@ -219,7 +218,14 @@ export function countOperationsWithPayload(oas: Oas3): number {
  * Resolves the given reference in the given object.
  */
 export function resolveRef(ref: string, oas: Oas3): any {
-  return jsonptr.JsonPointer.get(oas, ref);
+  try {
+    return JsonPointer.get(oas, ref.replace('#/', '/'));
+  } catch (e) {
+    if (e.message.startsWith('Invalid reference')) {
+      return undefined;
+    }
+    throw e;
+  }
 }
 
 /**
@@ -238,7 +244,7 @@ export function getBaseUrl(operation: Operation, logger: Logger): string {
     const url = buildUrl(operation.servers[0]);
 
     if (Array.isArray(operation.servers) && operation.servers.length > 1) {
-      httpLogger.debug(() => `Warning: Randomly selected first server '${url}'`);
+      httpLogger.debug(`Warning: Randomly selected first server '${url}'`);
     }
 
     return url.replace(/\/$/, '');
@@ -250,7 +256,7 @@ export function getBaseUrl(operation: Operation, logger: Logger): string {
     const url = buildUrl(oas.servers[0]);
 
     if (Array.isArray(oas.servers) && oas.servers.length > 1) {
-      httpLogger.debug(() => `Warning: Randomly selected first server '${url}'`);
+      httpLogger.debug(`Warning: Randomly selected first server '${url}'`);
     }
 
     return url.replace(/\/$/, '');
@@ -540,7 +546,7 @@ export function getRequestSchemaAndNames(path: string, operation: OperationObjec
       }
 
       payloadSchema = {
-        description: description,
+        description,
         type: 'string',
       };
     }
@@ -652,7 +658,7 @@ export function getResponseSchemaAndNames<TSource, TContext, TArgs>(
       }
 
       responseSchema = {
-        description: description,
+        description,
         type: 'string',
       };
     }
@@ -1036,7 +1042,7 @@ export function storeSaneName(
  */
 export function trim(str: string, length: number): string {
   if (typeof str !== 'string') {
-    str = jsonFlatStringify(str);
+    str = JSON.stringify(str);
   }
 
   if (str && str.length > length) {

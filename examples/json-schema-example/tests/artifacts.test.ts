@@ -21,7 +21,7 @@ describe('Artifacts', () => {
   });
   it('should load and run SDK correctly', async () => {
     const { getMeshSDK } = await import('../.mesh/index');
-    const meshSdk = await getMeshSDK();
+    const meshSdk = getMeshSDK();
     const sdkResult = await meshSdk.ExampleMeQuery();
     expect(sdkResult?.me?.firstName).toBeDefined();
     expect(sdkResult?.me?.jobTitle).toBeDefined();

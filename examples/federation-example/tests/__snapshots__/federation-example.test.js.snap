@@ -1,0 +1,460 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Federation Example should give correct response for example queries 1`] = `
+Object {
+  "topProducts": Array [
+    Object {
+      "inStock": true,
+      "name": "Table",
+      "price": 899,
+      "reviews": Array [
+        Object {
+          "author": Object {
+            "id": "1",
+            "name": "Ada Lovelace",
+            "reviews": Array [
+              Object {
+                "body": "Love it!",
+                "id": "1",
+                "product": Object {
+                  "inStock": true,
+                  "name": "Table",
+                  "price": 899,
+                  "shippingEstimate": 50,
+                  "upc": "1",
+                  "weight": 100,
+                },
+              },
+              Object {
+                "body": "Too expensive.",
+                "id": "2",
+                "product": Object {
+                  "inStock": false,
+                  "name": "Couch",
+                  "price": 1299,
+                  "shippingEstimate": 0,
+                  "upc": "2",
+                  "weight": 1000,
+                },
+              },
+            ],
+            "username": "@ada",
+          },
+          "body": "Love it!",
+          "id": "1",
+        },
+        Object {
+          "author": Object {
+            "id": "2",
+            "name": "Alan Turing",
+            "reviews": Array [
+              Object {
+                "body": "Could be better.",
+                "id": "3",
+                "product": Object {
+                  "inStock": true,
+                  "name": "Chair",
+                  "price": 54,
+                  "shippingEstimate": 25,
+                  "upc": "3",
+                  "weight": 50,
+                },
+              },
+              Object {
+                "body": "Prefer something else.",
+                "id": "4",
+                "product": Object {
+                  "inStock": true,
+                  "name": "Table",
+                  "price": 899,
+                  "shippingEstimate": 50,
+                  "upc": "1",
+                  "weight": 100,
+                },
+              },
+            ],
+            "username": "@complete",
+          },
+          "body": "Prefer something else.",
+          "id": "4",
+        },
+      ],
+      "shippingEstimate": 50,
+      "upc": "1",
+      "weight": 100,
+    },
+    Object {
+      "inStock": false,
+      "name": "Couch",
+      "price": 1299,
+      "reviews": Array [
+        Object {
+          "author": Object {
+            "id": "1",
+            "name": "Ada Lovelace",
+            "reviews": Array [
+              Object {
+                "body": "Love it!",
+                "id": "1",
+                "product": Object {
+                  "inStock": true,
+                  "name": "Table",
+                  "price": 899,
+                  "shippingEstimate": 50,
+                  "upc": "1",
+                  "weight": 100,
+                },
+              },
+              Object {
+                "body": "Too expensive.",
+                "id": "2",
+                "product": Object {
+                  "inStock": false,
+                  "name": "Couch",
+                  "price": 1299,
+                  "shippingEstimate": 0,
+                  "upc": "2",
+                  "weight": 1000,
+                },
+              },
+            ],
+            "username": "@ada",
+          },
+          "body": "Too expensive.",
+          "id": "2",
+        },
+      ],
+      "shippingEstimate": 0,
+      "upc": "2",
+      "weight": 1000,
+    },
+    Object {
+      "inStock": true,
+      "name": "Chair",
+      "price": 54,
+      "reviews": Array [
+        Object {
+          "author": Object {
+            "id": "2",
+            "name": "Alan Turing",
+            "reviews": Array [
+              Object {
+                "body": "Could be better.",
+                "id": "3",
+                "product": Object {
+                  "inStock": true,
+                  "name": "Chair",
+                  "price": 54,
+                  "shippingEstimate": 25,
+                  "upc": "3",
+                  "weight": 50,
+                },
+              },
+              Object {
+                "body": "Prefer something else.",
+                "id": "4",
+                "product": Object {
+                  "inStock": true,
+                  "name": "Table",
+                  "price": 899,
+                  "shippingEstimate": 50,
+                  "upc": "1",
+                  "weight": 100,
+                },
+              },
+            ],
+            "username": "@complete",
+          },
+          "body": "Could be better.",
+          "id": "3",
+        },
+      ],
+      "shippingEstimate": 25,
+      "upc": "3",
+      "weight": 50,
+    },
+  ],
+  "users": Array [
+    Object {
+      "id": "1",
+      "name": "Ada Lovelace",
+      "reviews": Array [
+        Object {
+          "body": "Love it!",
+          "id": "1",
+          "product": Object {
+            "inStock": true,
+            "name": "Table",
+            "price": 899,
+            "reviews": Array [
+              Object {
+                "author": Object {
+                  "id": "1",
+                  "name": "Ada Lovelace",
+                  "reviews": Array [
+                    Object {
+                      "body": "Love it!",
+                      "id": "1",
+                      "product": Object {
+                        "inStock": true,
+                        "name": "Table",
+                        "price": 899,
+                        "shippingEstimate": 50,
+                        "upc": "1",
+                        "weight": 100,
+                      },
+                    },
+                    Object {
+                      "body": "Too expensive.",
+                      "id": "2",
+                      "product": Object {
+                        "inStock": false,
+                        "name": "Couch",
+                        "price": 1299,
+                        "shippingEstimate": 0,
+                        "upc": "2",
+                        "weight": 1000,
+                      },
+                    },
+                  ],
+                  "username": "@ada",
+                },
+                "body": "Love it!",
+                "id": "1",
+              },
+              Object {
+                "author": Object {
+                  "id": "2",
+                  "name": "Alan Turing",
+                  "reviews": Array [
+                    Object {
+                      "body": "Could be better.",
+                      "id": "3",
+                      "product": Object {
+                        "inStock": true,
+                        "name": "Chair",
+                        "price": 54,
+                        "shippingEstimate": 25,
+                        "upc": "3",
+                        "weight": 50,
+                      },
+                    },
+                    Object {
+                      "body": "Prefer something else.",
+                      "id": "4",
+                      "product": Object {
+                        "inStock": true,
+                        "name": "Table",
+                        "price": 899,
+                        "shippingEstimate": 50,
+                        "upc": "1",
+                        "weight": 100,
+                      },
+                    },
+                  ],
+                  "username": "@complete",
+                },
+                "body": "Prefer something else.",
+                "id": "4",
+              },
+            ],
+            "shippingEstimate": 50,
+            "upc": "1",
+            "weight": 100,
+          },
+        },
+        Object {
+          "body": "Too expensive.",
+          "id": "2",
+          "product": Object {
+            "inStock": false,
+            "name": "Couch",
+            "price": 1299,
+            "reviews": Array [
+              Object {
+                "author": Object {
+                  "id": "1",
+                  "name": "Ada Lovelace",
+                  "reviews": Array [
+                    Object {
+                      "body": "Love it!",
+                      "id": "1",
+                      "product": Object {
+                        "inStock": true,
+                        "name": "Table",
+                        "price": 899,
+                        "shippingEstimate": 50,
+                        "upc": "1",
+                        "weight": 100,
+                      },
+                    },
+                    Object {
+                      "body": "Too expensive.",
+                      "id": "2",
+                      "product": Object {
+                        "inStock": false,
+                        "name": "Couch",
+                        "price": 1299,
+                        "shippingEstimate": 0,
+                        "upc": "2",
+                        "weight": 1000,
+                      },
+                    },
+                  ],
+                  "username": "@ada",
+                },
+                "body": "Too expensive.",
+                "id": "2",
+              },
+            ],
+            "shippingEstimate": 0,
+            "upc": "2",
+            "weight": 1000,
+          },
+        },
+      ],
+      "username": "@ada",
+    },
+    Object {
+      "id": "2",
+      "name": "Alan Turing",
+      "reviews": Array [
+        Object {
+          "body": "Could be better.",
+          "id": "3",
+          "product": Object {
+            "inStock": true,
+            "name": "Chair",
+            "price": 54,
+            "reviews": Array [
+              Object {
+                "author": Object {
+                  "id": "2",
+                  "name": "Alan Turing",
+                  "reviews": Array [
+                    Object {
+                      "body": "Could be better.",
+                      "id": "3",
+                      "product": Object {
+                        "inStock": true,
+                        "name": "Chair",
+                        "price": 54,
+                        "shippingEstimate": 25,
+                        "upc": "3",
+                        "weight": 50,
+                      },
+                    },
+                    Object {
+                      "body": "Prefer something else.",
+                      "id": "4",
+                      "product": Object {
+                        "inStock": true,
+                        "name": "Table",
+                        "price": 899,
+                        "shippingEstimate": 50,
+                        "upc": "1",
+                        "weight": 100,
+                      },
+                    },
+                  ],
+                  "username": "@complete",
+                },
+                "body": "Could be better.",
+                "id": "3",
+              },
+            ],
+            "shippingEstimate": 25,
+            "upc": "3",
+            "weight": 50,
+          },
+        },
+        Object {
+          "body": "Prefer something else.",
+          "id": "4",
+          "product": Object {
+            "inStock": true,
+            "name": "Table",
+            "price": 899,
+            "reviews": Array [
+              Object {
+                "author": Object {
+                  "id": "1",
+                  "name": "Ada Lovelace",
+                  "reviews": Array [
+                    Object {
+                      "body": "Love it!",
+                      "id": "1",
+                      "product": Object {
+                        "inStock": true,
+                        "name": "Table",
+                        "price": 899,
+                        "shippingEstimate": 50,
+                        "upc": "1",
+                        "weight": 100,
+                      },
+                    },
+                    Object {
+                      "body": "Too expensive.",
+                      "id": "2",
+                      "product": Object {
+                        "inStock": false,
+                        "name": "Couch",
+                        "price": 1299,
+                        "shippingEstimate": 0,
+                        "upc": "2",
+                        "weight": 1000,
+                      },
+                    },
+                  ],
+                  "username": "@ada",
+                },
+                "body": "Love it!",
+                "id": "1",
+              },
+              Object {
+                "author": Object {
+                  "id": "2",
+                  "name": "Alan Turing",
+                  "reviews": Array [
+                    Object {
+                      "body": "Could be better.",
+                      "id": "3",
+                      "product": Object {
+                        "inStock": true,
+                        "name": "Chair",
+                        "price": 54,
+                        "shippingEstimate": 25,
+                        "upc": "3",
+                        "weight": 50,
+                      },
+                    },
+                    Object {
+                      "body": "Prefer something else.",
+                      "id": "4",
+                      "product": Object {
+                        "inStock": true,
+                        "name": "Table",
+                        "price": 899,
+                        "shippingEstimate": 50,
+                        "upc": "1",
+                        "weight": 100,
+                      },
+                    },
+                  ],
+                  "username": "@complete",
+                },
+                "body": "Prefer something else.",
+                "id": "4",
+              },
+            ],
+            "shippingEstimate": 50,
+            "upc": "1",
+            "weight": 100,
+          },
+        },
+      ],
+      "username": "@complete",
+    },
+  ],
+}
+`;

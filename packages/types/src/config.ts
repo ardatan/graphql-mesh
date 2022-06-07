@@ -44,10 +44,6 @@ export interface Config {
    */
   pubsub?: string | PubSubConfig;
   /**
-   * Live Query Invalidations
-   */
-  liveQueryInvalidations?: LiveQueryInvalidation[];
-  /**
    * Provide a query or queries for GraphQL Playground, validation and SDK Generation
    * The value can be the file path, glob expression for the file paths or the SDL.
    * (.js, .jsx, .graphql, .gql, .ts and .tsx files are supported.
@@ -65,6 +61,7 @@ export interface Config {
    * You can provide Envelop plugins
    */
   additionalEnvelopPlugins?: string;
+  plugins?: Plugin[];
 }
 /**
  * Configuration for `mesh start` or `mesh dev` command.
@@ -96,10 +93,6 @@ export interface ServeConfig {
    * Show GraphiQL Playground
    */
   playground?: boolean;
-  /**
-   * Controls the maximum request body size. If this is a number, then the value specifies the number of bytes; if it is a string, the value is passed to the bytes library for parsing. Defaults to '100kb'. (Any of: Int, String)
-   */
-  maxRequestBodySize?: number | string;
   sslCredentials?: HTTPSConfig;
   /**
    * Path to GraphQL Endpoint (default: /graphql)
@@ -119,6 +112,11 @@ export interface ServeConfig {
    * Title of GraphiQL Playground
    */
   playgroundTitle?: string;
+  /**
+   * Configure Express Proxy Handling
+   * [Learn more](https://expressjs.com/en/guide/behind-proxies.html)
+   */
+  trustProxy?: string;
 }
 /**
  * Configuration for CORS
@@ -300,9 +298,17 @@ export interface GraphQLHandlerMultipleHTTPConfiguration {
    */
   sources: GraphQLHandlerHTTPConfiguration[];
   /**
-   * Handling strategy (default: fallback) (Allowed values: fallback, race)
+   * Handling strategy (default: fallback) (Allowed values: fallback, race, highestValue)
    */
-  strategy?: 'fallback' | 'race';
+  strategy?: 'fallback' | 'race' | 'highestValue';
+  strategyConfig?: GraphQLHandlerhighestValueStrategyConfig;
+}
+/**
+ * Handling strategy configuration
+ */
+export interface GraphQLHandlerhighestValueStrategyConfig {
+  selectionSet: string;
+  value: string;
 }
 /**
  * Handler for gRPC and Protobuf schemas
@@ -370,6 +376,7 @@ export interface JsonSchemaHandler {
    */
   operations: (JsonSchemaHTTPOperation | JsonSchemaPubSubOperation)[];
   ignoreErrorResponses?: boolean;
+  queryParams?: any;
 }
 export interface JsonSchemaHTTPOperation {
   /**
@@ -417,6 +424,17 @@ export interface JsonSchemaHTTPOperation {
    * Inset any name for the type of the response body.
    */
   responseTypeName?: string;
+  /**
+   * You can define your response schemas by status codes;
+   *
+   * responseByStatusCode:
+   *   200:
+   *     responseSchema: ./someschema.json#/somepath
+   *   404:
+   *     responseSample: ./error-sample.json
+   *     responseTypeName: MyError
+   */
+  responseByStatusCode?: any;
   /**
    * Mapping the JSON Schema and define the arguments of the operation.
    * Example: 'argTypeMap: ID: String'
@@ -755,6 +773,7 @@ export interface NewOpenapiHandler {
   };
   ignoreErrorResponses?: boolean;
   selectQueryOrMutationField?: OASSelectQueryOrMutationFieldConfig[];
+  queryParams?: any;
 }
 export interface OASSelectQueryOrMutationFieldConfig {
   /**
@@ -938,6 +957,7 @@ export interface RAMLHandler {
   };
   ignoreErrorResponses?: boolean;
   selectQueryOrMutationField?: RAMLSelectQueryOrMutationFieldConfig[];
+  queryParams?: any;
 }
 export interface RAMLSelectQueryOrMutationFieldConfig {
   /**
@@ -1764,17 +1784,12 @@ export interface AdditionalSubscriptionObject {
  */
 export interface Cache {
   file?: FileCacheConfig;
-  inmemoryLRU?: InMemoryLRUConfig;
   localforage?: LocalforageConfig;
   redis?: RedisConfig;
   [k: string]: any;
 }
 export interface FileCacheConfig {
   path?: string;
-}
-export interface InMemoryLRUConfig {
-  max?: number;
-  ttl?: number;
 }
 export interface LocalforageConfig {
   /**
@@ -1796,6 +1811,21 @@ export interface RedisConfig {
 export interface PubSubConfig {
   name: string;
   config?: any;
+}
+export interface Plugin {
+  maskedErrors?: MaskedErrorsPluginConfig;
+  immediateIntrospection?: any;
+  liveQuery?: LiveQueryConfig;
+  [k: string]: any;
+}
+export interface MaskedErrorsPluginConfig {
+  errorMessage?: string;
+}
+export interface LiveQueryConfig {
+  /**
+   * Live Query Invalidations
+   */
+  liveQueryInvalidations?: LiveQueryInvalidation[];
 }
 export interface LiveQueryInvalidation {
   field: string;

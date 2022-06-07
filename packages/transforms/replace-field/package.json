@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-replace-field",
-  "version": "0.3.38",
+  "version": "0.3.57",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -28,12 +28,12 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.70.1",
-    "@graphql-mesh/utils": "0.33.1",
-    "@graphql-tools/code-file-loader": "7.2.10",
-    "@graphql-tools/graphql-file-loader": "7.3.7",
-    "@graphql-tools/load": "7.5.6",
-    "@graphql-tools/utils": "8.6.5",
+    "@graphql-mesh/types": "0.73.2",
+    "@graphql-mesh/utils": "0.35.2",
+    "@graphql-tools/code-file-loader": "7.2.17",
+    "@graphql-tools/graphql-file-loader": "7.3.14",
+    "@graphql-tools/load": "7.5.13",
+    "@graphql-tools/utils": "8.6.12",
     "tslib": "^2.3.1"
   },
   "publishConfig": {
@@ -41,7 +41,7 @@
     "directory": "dist"
   },
   "devDependencies": {
-    "@graphql-mesh/cache-inmemory-lru": "^0.6.8",
-    "@graphql-tools/schema": "8.3.6"
+    "@graphql-mesh/cache-localforage": "0.6.8",
+    "@graphql-tools/schema": "8.3.13"
   }
 }

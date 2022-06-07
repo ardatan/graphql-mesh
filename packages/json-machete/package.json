@@ -1,6 +1,6 @@
 {
   "name": "json-machete",
-  "version": "0.7.6",
+  "version": "0.8.10",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -26,11 +26,11 @@
   },
   "dependencies": {
     "@json-schema-tools/meta-schema": "1.6.19",
-    "cross-undici-fetch": "0.1.28",
-    "json-ptr": "3.1.0",
-    "@graphql-mesh/utils": "0.33.1",
-    "@graphql-mesh/cross-helpers": "0.1.0",
-    "@graphql-tools/utils": "8.6.5",
+    "cross-undici-fetch": "^0.4.0",
+    "json-pointer": "0.6.2",
+    "@graphql-mesh/utils": "0.35.2",
+    "@graphql-mesh/cross-helpers": "0.1.6",
+    "@graphql-tools/utils": "8.6.12",
     "url-join": "4.0.1",
     "to-json-schema": "0.2.5",
     "tslib": "^2.3.1"

@@ -1,5 +1,321 @@
 # @graphql-mesh/config
 
+## 0.37.3
+
+### Patch Changes
+
+- d17d55881: fix(cli/config): use correct logger prefix
+
+## 0.37.2
+
+### Patch Changes
+
+- 3c0366d2c: - Support import.meta.env instead of process.env for browsers
+  - Ponyfill `util.inspect` only if it is not Node env
+- Updated dependencies [3c0366d2c]
+- Updated dependencies [3c0366d2c]
+  - @graphql-mesh/cross-helpers@0.1.6
+  - @graphql-mesh/utils@0.35.2
+  - @graphql-mesh/store@0.8.11
+  - @graphql-mesh/cache-localforage@0.6.8
+  - @graphql-mesh/merger-bare@0.13.50
+  - @graphql-mesh/merger-stitching@0.15.52
+  - @graphql-mesh/runtime@0.35.2
+  - @graphql-mesh/types@0.73.2
+
+## 0.37.1
+
+### Patch Changes
+
+- Updated dependencies [abe9fcc41]
+  - @graphql-mesh/utils@0.35.1
+  - @graphql-mesh/cache-localforage@0.6.7
+  - @graphql-mesh/merger-bare@0.13.49
+  - @graphql-mesh/merger-stitching@0.15.51
+  - @graphql-mesh/runtime@0.35.1
+  - @graphql-mesh/store@0.8.10
+  - @graphql-mesh/types@0.73.1
+
+## 0.37.0
+
+### Minor Changes
+
+- 974e703e2: Generate more readable code and cleanup the artifacts
+
+  No more export `documentsInSDL`, use `documents` array instead coming from `MeshInstance`
+  No more export `rawConfig` but instead `rawServeConfig` to expose `ServeConfig`
+
+- 893d526ab: POC: Mesh Declarative Plugin System
+
+### Patch Changes
+
+- 974e703e2: Cleanup dependencies
+- Updated dependencies [974e703e2]
+- Updated dependencies [19a99c055]
+- Updated dependencies [974e703e2]
+- Updated dependencies [974e703e2]
+- Updated dependencies [893d526ab]
+- Updated dependencies [974e703e2]
+  - @graphql-mesh/merger-stitching@0.15.50
+  - @graphql-mesh/runtime@0.35.0
+  - @graphql-mesh/store@0.8.9
+  - @graphql-mesh/types@0.73.0
+  - @graphql-mesh/utils@0.35.0
+  - @graphql-mesh/cache-localforage@0.6.6
+  - @graphql-mesh/cross-helpers@0.1.5
+  - @graphql-mesh/merger-bare@0.13.48
+
+## 0.36.5
+
+### Patch Changes
+
+- Updated dependencies [43eb3d2c2]
+  - @graphql-mesh/utils@0.34.10
+  - @graphql-mesh/cache-localforage@0.6.5
+  - @graphql-mesh/merger-bare@0.13.47
+  - @graphql-mesh/merger-stitching@0.15.49
+  - @graphql-mesh/runtime@0.34.10
+  - @graphql-mesh/store@0.8.8
+  - @graphql-mesh/types@0.72.5
+
+## 0.36.4
+
+### Patch Changes
+
+- 55ad5ea44: Cleanup generated artifacts
+- Updated dependencies [55ad5ea44]
+  - @graphql-mesh/cache-localforage@0.6.4
+  - @graphql-mesh/cross-helpers@0.1.4
+  - @graphql-mesh/utils@0.34.9
+  - @graphql-mesh/store@0.8.7
+  - @graphql-mesh/merger-bare@0.13.46
+  - @graphql-mesh/merger-stitching@0.15.48
+  - @graphql-mesh/runtime@0.34.9
+  - @graphql-mesh/types@0.72.4
+
+## 0.36.3
+
+### Patch Changes
+
+- Updated dependencies [31efa964e]
+  - @graphql-mesh/utils@0.34.8
+  - @graphql-mesh/cache-localforage@0.6.3
+  - @graphql-mesh/merger-bare@0.13.45
+  - @graphql-mesh/merger-stitching@0.15.47
+  - @graphql-mesh/runtime@0.34.8
+  - @graphql-mesh/store@0.8.6
+  - @graphql-mesh/types@0.72.3
+
+## 0.36.2
+
+### Patch Changes
+
+- Updated dependencies [66b9b3ddc]
+  - @graphql-mesh/cross-helpers@0.1.3
+  - @graphql-mesh/store@0.8.5
+  - @graphql-mesh/utils@0.34.7
+  - @graphql-mesh/merger-stitching@0.15.46
+  - @graphql-mesh/types@0.72.2
+  - @graphql-mesh/cache-localforage@0.6.2
+  - @graphql-mesh/merger-bare@0.13.44
+  - @graphql-mesh/runtime@0.34.7
+
+## 0.36.1
+
+### Patch Changes
+
+- Updated dependencies [b9beacca2]
+  - @graphql-mesh/utils@0.34.6
+  - @graphql-mesh/cache-localforage@0.6.1
+  - @graphql-mesh/merger-bare@0.13.43
+  - @graphql-mesh/merger-stitching@0.15.45
+  - @graphql-mesh/runtime@0.34.6
+  - @graphql-mesh/store@0.8.4
+  - @graphql-mesh/types@0.72.1
+
+## 0.36.0
+
+### Minor Changes
+
+- fa2542468: Use Localforage by default and drop inmemory-lru
+
+### Patch Changes
+
+- Updated dependencies [efe797ff9]
+- Updated dependencies [fa2542468]
+  - @graphql-mesh/runtime@0.34.5
+  - @graphql-mesh/cache-localforage@0.6.0
+  - @graphql-mesh/types@0.72.0
+  - @graphql-mesh/merger-bare@0.13.42
+  - @graphql-mesh/merger-stitching@0.15.44
+  - @graphql-mesh/store@0.8.3
+  - @graphql-mesh/utils@0.34.5
+
+## 0.35.4
+
+### Patch Changes
+
+- Updated dependencies [ddbbec8a8]
+  - @graphql-mesh/utils@0.34.4
+  - @graphql-mesh/cache-inmemory-lru@0.6.18
+  - @graphql-mesh/merger-bare@0.13.41
+  - @graphql-mesh/merger-stitching@0.15.43
+  - @graphql-mesh/runtime@0.34.4
+  - @graphql-mesh/store@0.8.2
+  - @graphql-mesh/types@0.71.4
+
+## 0.35.3
+
+### Patch Changes
+
+- Updated dependencies [2e9addd80]
+  - @graphql-mesh/utils@0.34.3
+  - @graphql-mesh/cache-inmemory-lru@0.6.17
+  - @graphql-mesh/merger-bare@0.13.40
+  - @graphql-mesh/merger-stitching@0.15.42
+  - @graphql-mesh/runtime@0.34.3
+  - @graphql-mesh/store@0.8.1
+  - @graphql-mesh/types@0.71.3
+
+## 0.35.2
+
+### Patch Changes
+
+- Updated dependencies [8c8b304e5]
+  - @graphql-mesh/store@0.8.0
+  - @graphql-mesh/merger-stitching@0.15.41
+  - @graphql-mesh/types@0.71.2
+  - @graphql-mesh/cache-inmemory-lru@0.6.16
+  - @graphql-mesh/merger-bare@0.13.39
+  - @graphql-mesh/runtime@0.34.2
+  - @graphql-mesh/utils@0.34.2
+
+## 0.35.1
+
+### Patch Changes
+
+- 7856f92d3: Bump all packages
+- Updated dependencies [7856f92d3]
+  - @graphql-mesh/cache-inmemory-lru@0.6.15
+  - @graphql-mesh/cross-helpers@0.1.2
+  - @graphql-mesh/merger-bare@0.13.38
+  - @graphql-mesh/merger-stitching@0.15.40
+  - @graphql-mesh/runtime@0.34.1
+  - @graphql-mesh/store@0.7.8
+  - @graphql-mesh/types@0.71.1
+  - @graphql-mesh/utils@0.34.1
+
+## 0.35.0
+
+### Minor Changes
+
+- f963b57ce: Improve Logging Experience
+
+### Patch Changes
+
+- Updated dependencies [f963b57ce]
+- Updated dependencies [0644f31f2]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+- Updated dependencies [331b62637]
+  - @graphql-mesh/runtime@0.34.0
+  - @graphql-mesh/types@0.71.0
+  - @graphql-mesh/utils@0.34.0
+  - @graphql-mesh/cache-inmemory-lru@0.6.14
+  - @graphql-mesh/merger-bare@0.13.37
+  - @graphql-mesh/merger-stitching@0.15.39
+  - @graphql-mesh/store@0.7.7
+
+## 0.34.6
+
+### Patch Changes
+
+- Updated dependencies [cf0836a64]
+  - @graphql-mesh/cross-helpers@0.1.1
+  - @graphql-mesh/store@0.7.6
+  - @graphql-mesh/utils@0.33.6
+  - @graphql-mesh/merger-stitching@0.15.38
+  - @graphql-mesh/types@0.70.6
+  - @graphql-mesh/cache-inmemory-lru@0.6.13
+  - @graphql-mesh/merger-bare@0.13.36
+  - @graphql-mesh/runtime@0.33.15
+
+## 0.34.5
+
+### Patch Changes
+
+- Updated dependencies [b974d9bd0]
+  - @graphql-mesh/merger-stitching@0.15.37
+  - @graphql-mesh/runtime@0.33.14
+
+## 0.34.4
+
+### Patch Changes
+
+- Updated dependencies [c0387e8ac]
+- Updated dependencies [decbe5fbb]
+  - @graphql-mesh/runtime@0.33.13
+  - @graphql-mesh/store@0.7.5
+  - @graphql-mesh/merger-stitching@0.15.36
+  - @graphql-mesh/types@0.70.5
+  - @graphql-mesh/cache-inmemory-lru@0.6.12
+  - @graphql-mesh/merger-bare@0.13.35
+  - @graphql-mesh/utils@0.33.5
+
+## 0.34.3
+
+### Patch Changes
+
+- 35a55e841: Bump GraphQL Tools packages
+- Updated dependencies [35a55e841]
+  - @graphql-mesh/merger-bare@0.13.34
+  - @graphql-mesh/merger-stitching@0.15.35
+  - @graphql-mesh/runtime@0.33.12
+  - @graphql-mesh/store@0.7.4
+  - @graphql-mesh/types@0.70.4
+  - @graphql-mesh/utils@0.33.4
+  - @graphql-mesh/cache-inmemory-lru@0.6.11
+
+## 0.34.2
+
+### Patch Changes
+
+- Updated dependencies [1dbe6b6c3]
+  - @graphql-mesh/runtime@0.33.11
+
+## 0.34.1
+
+### Patch Changes
+
+- Updated dependencies [4fa959de3]
+  - @graphql-mesh/store@0.7.3
+  - @graphql-mesh/merger-stitching@0.15.34
+  - @graphql-mesh/types@0.70.3
+  - @graphql-mesh/cache-inmemory-lru@0.6.10
+  - @graphql-mesh/merger-bare@0.13.33
+  - @graphql-mesh/runtime@0.33.10
+  - @graphql-mesh/utils@0.33.3
+
+## 0.34.0
+
+### Minor Changes
+
+- 101adc246: Allow custom package prefixes besides @graphql-mesh/\*
+
+## 0.33.5
+
+### Patch Changes
+
+- Updated dependencies [b02f5b008]
+  - @graphql-mesh/types@0.70.2
+  - @graphql-mesh/cache-inmemory-lru@0.6.9
+  - @graphql-mesh/merger-bare@0.13.32
+  - @graphql-mesh/merger-stitching@0.15.33
+  - @graphql-mesh/runtime@0.33.9
+  - @graphql-mesh/store@0.7.2
+  - @graphql-mesh/utils@0.33.2
+
 ## 0.33.4
 
 ### Patch Changes

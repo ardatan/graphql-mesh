@@ -1,17 +1,16 @@
+/* eslint-disable import/no-nodejs-modules */
 /* eslint-disable dot-notation */
 import express, { RequestHandler } from 'express';
 import cluster from 'cluster';
-import { cpus, platform } from 'os';
+import { cpus, platform, release } from 'os';
 import 'json-bigint-patch';
 import { createServer as createHTTPServer, Server } from 'http';
-import { playgroundMiddlewareFactory } from './playground';
 import ws from 'ws';
 import cors from 'cors';
-import { defaultImportFn, loadFromModuleExportExpression, pathExists, stringInterpolator } from '@graphql-mesh/utils';
-import _ from 'lodash';
-import bodyParser from 'body-parser';
+import { defaultImportFn, loadFromModuleExportExpression, pathExists } from '@graphql-mesh/utils';
+import lodashGet from 'lodash.get';
 import cookieParser from 'cookie-parser';
-import { path , fs } from '@graphql-mesh/cross-helpers';
+import { path, fs, process } from '@graphql-mesh/cross-helpers';
 import { graphqlHandler } from './graphql-handler';
 
 import { createServer as createHTTPSServer } from 'https';
@@ -19,44 +18,45 @@ import { MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
 import { handleFatalError } from '../../handleFatalError';
 import open from 'open';
 import { useServer } from 'graphql-ws/lib/use/ws';
-import { env, on as processOn } from 'process';
-import { inspect } from '@graphql-tools/utils';
 import dnscache from 'dnscache';
 import { GraphQLMeshCLIParams } from '../..';
-
-dnscache({ enable: true });
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 
 const terminateEvents = ['SIGINT', 'SIGTERM'];
 
 function registerTerminateHandler(callback: (eventName: string) => void) {
   for (const eventName of terminateEvents) {
-    processOn(eventName, () => callback(eventName));
+    process.on(eventName, () => callback(eventName));
   }
 }
 
 export async function serveMesh(
-  { baseDir, argsPort, getBuiltMesh, logger, rawConfig, playgroundTitle }: ServeMeshOptions,
+  { baseDir, argsPort, getBuiltMesh, logger, rawServeConfig = {}, playgroundTitle }: ServeMeshOptions,
   cliParams: GraphQLMeshCLIParams
 ) {
   const {
     fork,
     port: configPort,
-    hostname = platform() === 'win32' ? 'localhost' : '0.0.0.0',
+    hostname = platform() === 'win32' ||
+    // is WSL?
+    release().toLowerCase().includes('microsoft')
+      ? '127.0.0.1'
+      : '0.0.0.0',
     cors: corsConfig,
     handlers,
     staticFiles,
-    playground,
-    maxRequestBodySize = '100kb',
+    playground: playgroundEnabled = process.env.NODE_ENV !== 'production',
     sslCredentials,
     endpoint: graphqlPath = '/graphql',
     browser,
-  } = rawConfig.serve || {};
-  const port = argsPort || parseInt(env.PORT) || configPort || 4000;
+    trustProxy = 'loopback',
+  } = rawServeConfig;
+  const port = argsPort || parseInt(process.env.PORT) || configPort || 4000;
 
   const protocol = sslCredentials ? 'https' : 'http';
   const serverUrl = `${protocol}://${hostname}:${port}`;
   if (!playgroundTitle) {
-    playgroundTitle = rawConfig.serve?.playgroundTitle || cliParams.playgroundTitle;
+    playgroundTitle = rawServeConfig?.playgroundTitle || cliParams.playgroundTitle;
   }
   if (!cluster.isWorker && Boolean(fork)) {
     const forkNum = fork > 0 && typeof fork === 'number' ? fork : cpus().length;
@@ -71,9 +71,26 @@ export async function serveMesh(
     const mesh$: Promise<MeshInstance> = getBuiltMesh()
       .then(mesh => {
         readyFlag = true;
+        dnscache({
+          enable: true,
+          cache: function CacheCtor({ ttl }: { ttl: number }) {
+            return {
+              get: (key: string, callback: CallableFunction) =>
+                mesh.cache
+                  .get(key)
+                  .then(value => callback(null, value))
+                  .catch(e => callback(e)),
+              set: (key: string, value: string, callback: CallableFunction) =>
+                mesh.cache
+                  .set(key, value, { ttl })
+                  .then(() => callback())
+                  .catch(e => callback(e)),
+            };
+          },
+        });
         logger.info(`${cliParams.serveMessage}: ${serverUrl}`);
         registerTerminateHandler(eventName => {
-          const eventLogger = logger.child(`${eventName}💀`);
+          const eventLogger = logger.child(`${eventName}  💀`);
           eventLogger.info(`Destroying the server`);
           mesh.destroy();
         });
@@ -81,7 +98,7 @@ export async function serveMesh(
       })
       .catch(e => handleFatalError(e, logger));
     const app = express();
-    app.set('trust proxy', 'loopback');
+    app.set('trust proxy', trustProxy);
     let httpServer: Server;
 
     if (sslCredentials) {
@@ -96,12 +113,12 @@ export async function serveMesh(
 
     registerTerminateHandler(eventName => {
       const eventLogger = logger.child(`${eventName}💀`);
-      eventLogger.debug(() => `Stopping HTTP Server`);
+      eventLogger.debug(`Stopping HTTP Server`);
       httpServer.close(error => {
         if (error) {
-          eventLogger.debug(() => `HTTP Server couldn't be stopped: ${error.message}`);
+          eventLogger.debug(`HTTP Server couldn't be stopped: `, error);
         } else {
-          eventLogger.debug(() => `HTTP Server has been stopped`);
+          eventLogger.debug(`HTTP Server has been stopped`);
         }
       });
     });
@@ -110,11 +127,6 @@ export async function serveMesh(
       app.use(cors(corsConfig));
     }
 
-    app.use(
-      bodyParser.json({
-        limit: maxRequestBodySize,
-      })
-    );
     app.use(cookieParser());
 
     const wsServer = new ws.Server({
@@ -124,12 +136,12 @@ export async function serveMesh(
 
     registerTerminateHandler(eventName => {
       const eventLogger = logger.child(`${eventName}💀`);
-      eventLogger.debug(() => `Stopping WebSocket Server`);
+      eventLogger.debug(`Stopping WebSocket Server`);
       wsServer.close(error => {
         if (error) {
-          eventLogger.debug(() => `WebSocket Server couldn't be stopped: ${error.message}`);
+          eventLogger.debug(`WebSocket Server couldn't be stopped: `, error);
         } else {
-          eventLogger.debug(() => `WebSocket Server has been stopped`);
+          eventLogger.debug(`WebSocket Server has been stopped`);
         }
       });
     });
@@ -172,14 +184,14 @@ export async function serveMesh(
 
     registerTerminateHandler(eventName => {
       const eventLogger = logger.child(`${eventName}💀`);
-      eventLogger.debug(() => `Stopping GraphQL WS`);
+      eventLogger.debug(`Stopping GraphQL WS`);
       Promise.resolve()
         .then(() => stopGraphQLWSServer())
         .then(() => {
-          eventLogger.debug(() => `GraphQL WS has been stopped`);
+          eventLogger.debug(`GraphQL WS has been stopped`);
         })
         .catch(error => {
-          eventLogger.debug(() => `GraphQL WS couldn't be stopped: ${error.message}`);
+          eventLogger.debug(`GraphQL WS couldn't be stopped: `, error);
         });
     });
 
@@ -208,20 +220,20 @@ export async function serveMesh(
         } else if ('pubsubTopic' in handlerConfig) {
           handlerFn = (req: any, res: any) => {
             let payload = req.body;
-            handlerLogger.debug(() => `Payload received; ${inspect(payload)}`);
+            handlerLogger.debug(`Payload received;`, payload);
             if (handlerConfig.payload) {
-              payload = _.get(payload, handlerConfig.payload);
-              handlerLogger.debug(() => `Extracting ${handlerConfig.payload}; ${inspect(payload)}`);
+              payload = lodashGet(payload, handlerConfig.payload);
+              handlerLogger.debug([`Extracting ${handlerConfig.payload};`, payload]);
             }
             const interpolationData = {
               req,
               res,
               payload,
             };
-            handlerLogger.debug(() => `Interpolating ${handlerConfig.pubsubTopic} with ${inspect(interpolationData)}`);
+            handlerLogger.debug(`Interpolating ${handlerConfig.pubsubTopic} with `, interpolationData);
             const pubsubTopic = stringInterpolator.parse(handlerConfig.pubsubTopic, interpolationData);
             req['pubsub'].publish(pubsubTopic, payload);
-            handlerLogger.debug(() => `Payload sent to ${pubsubTopic}`);
+            handlerLogger.debug(`Payload sent to ${pubsubTopic}`);
             res.end();
           };
         }
@@ -240,24 +252,19 @@ export async function serveMesh(
       }
     }
 
-    app.use(graphqlPath, graphqlHandler(mesh$));
+    app.use(graphqlPath, graphqlHandler(mesh$, playgroundTitle, playgroundEnabled));
 
-    if (typeof playground !== 'undefined' ? playground : env.NODE_ENV?.toLowerCase() !== 'production') {
-      const playgroundMiddleware = playgroundMiddlewareFactory({
-        baseDir,
-        graphqlPath,
-        logger,
-        title: playgroundTitle,
-      });
-      if (!staticFiles) {
-        app.get('/', playgroundMiddleware);
+    app.get('/', (req, res, next) => {
+      if (staticFiles) {
+        next();
+      } else {
+        res.redirect(graphqlPath);
       }
-      app.get(graphqlPath, playgroundMiddleware);
-    }
+    });
 
     httpServer
       .listen(parseInt(port.toString()), hostname, () => {
-        const shouldntOpenBrowser = env.NODE_ENV?.toLowerCase() === 'production' || browser === false;
+        const shouldntOpenBrowser = process.env.NODE_ENV?.toLowerCase() === 'production' || browser === false;
         if (!shouldntOpenBrowser) {
           open(serverUrl, typeof browser === 'string' ? { app: browser } : undefined).catch(() => {});
         }
@@ -269,7 +276,7 @@ export async function serveMesh(
       httpServer,
       app,
       readyFlag,
-      logger: logger,
+      logger,
     }));
   }
   return null;

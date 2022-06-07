@@ -2,7 +2,7 @@ import { findAndParseConfig } from './config';
 import { getMesh, GetMeshOptions, ServeMeshOptions } from '@graphql-mesh/runtime';
 import { generateTsArtifacts } from './commands/ts-artifacts';
 import { serveMesh } from './commands/serve/serve';
-import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
+import { fs, path as pathModule, process } from '@graphql-mesh/cross-helpers';
 import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import {
   writeFile,
@@ -13,16 +13,14 @@ import {
   defaultImportFn,
 } from '@graphql-mesh/utils';
 import { handleFatalError } from './handleFatalError';
-import { cwd, env } from 'process';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { YamlConfig } from '@graphql-mesh/types';
+import { Logger, YamlConfig } from '@graphql-mesh/types';
 import { register as tsNodeRegister } from 'ts-node';
 import { register as tsConfigPathsRegister } from 'tsconfig-paths';
 import { config as dotEnvRegister } from 'dotenv';
 import { printSchema } from 'graphql';
 import { stripJSONComments } from './utils';
-import { inspect } from 'util';
 
 export { generateTsArtifacts, serveMesh, findAndParseConfig };
 
@@ -40,11 +38,12 @@ export interface GraphQLMeshCLIParams {
   buildArtifactsCommand: string;
   sourceServerCommand: string;
   validateCommand: string;
+  additionalPackagePrefixes: string[];
 }
 
 export const DEFAULT_CLI_PARAMS: GraphQLMeshCLIParams = {
   commandName: 'mesh',
-  initialLoggerPrefix: '🕸️',
+  initialLoggerPrefix: '🕸️  Mesh',
   configName: 'mesh',
   artifactsDir: '.mesh',
   serveMessage: 'Serving GraphQL Mesh',
@@ -56,11 +55,16 @@ export const DEFAULT_CLI_PARAMS: GraphQLMeshCLIParams = {
   buildArtifactsCommand: 'build',
   sourceServerCommand: 'serve-source',
   validateCommand: 'validate',
+  additionalPackagePrefixes: [],
 };
 
-export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin(process.argv), cwdPath = cwd()) {
+export async function graphqlMesh(
+  cliParams = DEFAULT_CLI_PARAMS,
+  args = hideBin(process.argv),
+  cwdPath = process.cwd()
+) {
   let baseDir = cwdPath;
-  let logger = new DefaultLogger(cliParams.initialLoggerPrefix);
+  let logger: Logger = new DefaultLogger(cliParams.initialLoggerPrefix);
   return yargs(args)
     .help()
     .option('r', {
@@ -92,7 +96,6 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
         tsNodeRegister({
           transpileOnly: true,
           typeCheck: false,
-          preferTsExts: true,
           dir: baseDir,
           require: ['graphql-import-node/register'],
           compilerOptions: {
@@ -111,7 +114,7 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
               });
             }
           } catch (e) {
-            logger.warn(`Unable to read TSConfig file ${tsConfigPath};\n ${e.stack || e.message || inspect(e)}`);
+            logger.warn(`Unable to read TSConfig file ${tsConfigPath};\n`, e);
           }
         }
         if (fs.existsSync(pathModule.join(baseDir, '.env'))) {
@@ -133,11 +136,13 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
         try {
           const outputDir = pathModule.join(baseDir, cliParams.artifactsDir);
 
-          env.NODE_ENV = 'development';
+          process.env.NODE_ENV = 'development';
           const meshConfig = await findAndParseConfig({
             dir: baseDir,
             artifactsDir: cliParams.artifactsDir,
             configName: cliParams.configName,
+            additionalPackagePrefixes: cliParams.additionalPackagePrefixes,
+            initialLoggerPrefix: cliParams.initialLoggerPrefix,
           });
           logger = meshConfig.logger;
           const meshInstance$ = getMesh(meshConfig);
@@ -167,12 +172,14 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
                     dir: baseDir,
                     artifactsDir: ${JSON.stringify(cliParams.artifactsDir)},
                     configName: ${JSON.stringify(cliParams.configName)},
+                    additionalPackagePrefixes: ${JSON.stringify(cliParams.additionalPackagePrefixes)},
+                    initialLoggerPrefix: ${JSON.stringify(cliParams.initialLoggerPrefix)},
                   });
                 }
               `,
                   logger,
                   sdkConfig: meshConfig.config.sdk,
-                  tsOnly: true,
+                  fileType: 'ts',
                   codegenConfig: meshConfig.config.codegen,
                 },
                 cliParams
@@ -186,7 +193,7 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
             argsPort: args.port,
             getBuiltMesh: () => meshInstance$,
             logger: meshConfig.logger.child('Server'),
-            rawConfig: meshConfig.config,
+            rawServeConfig: meshConfig.config.serve,
           };
           if (meshConfig.config.serve?.customServerHandler) {
             const customServerHandler = await loadFromModuleExportExpression<any>(
@@ -222,21 +229,21 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
               `Seems like you haven't build the artifacts yet to start production server! You need to build artifacts first with "${cliParams.commandName} build" command!`
             );
           }
-          env.NODE_ENV = 'production';
+          process.env.NODE_ENV = 'production';
           const mainModule = pathModule.join(builtMeshArtifactsPath, 'index');
           const builtMeshArtifacts = await defaultImportFn(mainModule);
           const getMeshOptions: GetMeshOptions = await builtMeshArtifacts.getMeshOptions();
           logger = getMeshOptions.logger;
-          const rawConfig: YamlConfig.Config = builtMeshArtifacts.rawConfig;
+          const rawServeConfig: YamlConfig.Config['serve'] = builtMeshArtifacts.rawServeConfig;
           const serveMeshOptions: ServeMeshOptions = {
             baseDir,
             argsPort: args.port,
             getBuiltMesh: () => getMesh(getMeshOptions),
             logger: getMeshOptions.logger.child('Server'),
-            rawConfig: builtMeshArtifacts.rawConfig,
+            rawServeConfig,
           };
-          if (rawConfig.serve?.customServerHandler) {
-            const customServerHandler = await loadFromModuleExportExpression<any>(rawConfig.serve.customServerHandler, {
+          if (rawServeConfig?.customServerHandler) {
+            const customServerHandler = await loadFromModuleExportExpression<any>(rawServeConfig.customServerHandler, {
               defaultExportName: 'default',
               cwd: baseDir,
               importFn: defaultImportFn,
@@ -284,6 +291,8 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
             ignoreAdditionalResolvers: true,
             artifactsDir: cliParams.artifactsDir,
             configName: cliParams.configName,
+            additionalPackagePrefixes: cliParams.additionalPackagePrefixes,
+            initialLoggerPrefix: cliParams.initialLoggerPrefix,
           });
           logger = meshConfig.logger;
 
@@ -299,13 +308,13 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
         }
       }
     )
-    .command<{ fileType: 'json' | 'ts' }>(
+    .command<{ fileType: 'json' | 'ts' | 'js' }>(
       cliParams.buildArtifactsCommand,
       'Builds artifacts',
       builder => {
         builder.option('fileType', {
           type: 'string',
-          choices: ['json', 'ts'],
+          choices: ['json', 'ts', 'js'],
           default: 'ts',
         });
       },
@@ -318,7 +327,7 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
 
           const importedModulesSet = new Set<string>();
           const importPromises: Promise<any>[] = [];
-          const importFn = (moduleId: string) => {
+          const importFn = (moduleId: string, noCache: boolean) => {
             const importPromise = defaultImportFn(moduleId)
               .catch(e => {
                 if (e.message.includes('getter')) {
@@ -328,7 +337,9 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
                 }
               })
               .then(m => {
-                importedModulesSet.add(moduleId);
+                if (!noCache) {
+                  importedModulesSet.add(moduleId);
+                }
                 return m;
               });
             importPromises.push(importPromise.catch(() => {}));
@@ -358,6 +369,9 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
             ignoreAdditionalResolvers: true,
             artifactsDir: cliParams.artifactsDir,
             configName: cliParams.configName,
+            additionalPackagePrefixes: cliParams.additionalPackagePrefixes,
+            generateCode: true,
+            initialLoggerPrefix: cliParams.initialLoggerPrefix,
           });
           logger = meshConfig.logger;
 
@@ -378,7 +392,7 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
               meshConfigCode: meshConfig.code,
               logger,
               sdkConfig: meshConfig.config.sdk,
-              tsOnly: true,
+              fileType: args.fileType,
               codegenConfig: meshConfig.config.codegen,
             },
             cliParams
@@ -402,11 +416,13 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
         });
       },
       async args => {
-        env.NODE_ENV = 'development';
+        process.env.NODE_ENV = 'development';
         const meshConfig = await findAndParseConfig({
           dir: baseDir,
           artifactsDir: cliParams.artifactsDir,
           configName: cliParams.configName,
+          additionalPackagePrefixes: cliParams.additionalPackagePrefixes,
+          initialLoggerPrefix: cliParams.initialLoggerPrefix,
         });
         logger = meshConfig.logger;
         const sourceIndex = meshConfig.sources.findIndex(rawSource => rawSource.name === args.source);
@@ -425,7 +441,7 @@ export async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = hideBin
           argsPort: 4000 + sourceIndex + 1,
           getBuiltMesh: () => meshInstance$,
           logger: meshConfig.logger.child('Server'),
-          rawConfig: meshConfig.config,
+          rawServeConfig: meshConfig.config.serve,
           playgroundTitle: `${args.source} GraphiQL`,
         };
         if (meshConfig.config.serve?.customServerHandler) {
