@@ -1,5 +1,11 @@
 # openapi-jira
 
+## 0.0.18
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.71.4
+
 ## 0.0.17
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @graphql-mesh/runtime
 
+## 0.35.3
+
+### Patch Changes
+
+- 930bbd3ee: Remove unused dependencies
+
 ## 0.35.2
 
 ### Patch Changes
