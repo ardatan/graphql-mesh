@@ -1,5 +1,5 @@
 import { path as pathModule, process } from '@graphql-mesh/cross-helpers';
-import { MeshResolvedSource } from '@graphql-mesh/runtime';
+import type { MeshResolvedSource } from '@graphql-mesh/runtime';
 import {
   ImportFn,
   Logger,
@@ -11,9 +11,9 @@ import {
   MeshTransform,
   MeshTransformLibrary,
   YamlConfig,
+  KeyValueCache,
 } from '@graphql-mesh/types';
 import { IResolvers, Source } from '@graphql-tools/utils';
-import { KeyValueCache } from 'fetchache';
 import { concatAST, DocumentNode, print, visit } from 'graphql';
 import {
   getPackage,
