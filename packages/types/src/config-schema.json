@@ -1067,15 +1067,17 @@
       "title": "JsonSchemaHTTPOperation",
       "properties": {
         "field": {
-          "type": "string"
+          "type": "string",
+          "description": "This Field based on the field name of the URL path.\nExample: \"https://MyAPIURL.com/FieldNameHere/\",\nso we will set the \"field: FieldNameHere\"."
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "description": "Your chance to describe the operation!\nMake sure the description is clear and concise."
         },
         "type": {
           "type": "string",
           "enum": ["Query", "Mutation", "Subscription"],
-          "description": "Allowed values: Query, Mutation, Subscription"
+          "description": "Type field is set the opertion type: Query, Mutation or Subscription. (Allowed values: Query, Mutation, Subscription)"
         },
         "requestSchema": {
           "anyOf": [
@@ -1090,7 +1092,8 @@
               "type": "array",
               "additionalItems": true
             }
-          ]
+          ],
+          "description": "Your chance to provide request schema name."
         },
         "requestSample": {
           "anyOf": [
@@ -1105,10 +1108,12 @@
               "type": "array",
               "additionalItems": true
             }
-          ]
+          ],
+          "description": "The path definition of the JSON Schema sample.\nExample: \"./jsons/questions.response.json\"."
         },
         "requestTypeName": {
-          "type": "string"
+          "type": "string",
+          "description": "Inset any name for the type of the request body."
         },
         "requestBaseBody": {
           "anyOf": [
@@ -1124,7 +1129,7 @@
               "additionalItems": true
             }
           ],
-          "description": "This body will be merged with the request body sent with the underlying HTTP request"
+          "description": "This body will be merged with the request body sent with\nthe underlying HTTP request"
         },
         "responseSchema": {
           "anyOf": [
@@ -1139,7 +1144,8 @@
               "type": "array",
               "additionalItems": true
             }
-          ]
+          ],
+          "description": "Yay! Now you can provide the response schema name."
         },
         "responseSample": {
           "anyOf": [
@@ -1154,10 +1160,12 @@
               "type": "array",
               "additionalItems": true
             }
-          ]
+          ],
+          "description": "Did you use Sample? Provide the respone sample path."
         },
         "responseTypeName": {
-          "type": "string"
+          "type": "string",
+          "description": "Inset any name for the type of the response body."
         },
         "responseByStatusCode": {
           "anyOf": [
@@ -1177,7 +1185,8 @@
         },
         "argTypeMap": {
           "type": "object",
-          "properties": {}
+          "properties": {},
+          "description": "Mapping the JSON Schema and define the arguments of the operation.\nExample: 'argTypeMap: ID: String'"
         },
         "path": {
           "type": "string"
@@ -1261,7 +1270,7 @@
               "additionalItems": true
             }
           ],
-          "description": "This body will be merged with the request body sent with the underlying HTTP request"
+          "description": "This body will be merged with the request body sent with\nthe underlying HTTP request"
         },
         "responseSchema": {
           "anyOf": [
