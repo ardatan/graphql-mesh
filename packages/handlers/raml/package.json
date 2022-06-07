@@ -32,7 +32,7 @@
     "@graphql-mesh/types": "0.73.2",
     "@omnigraph/raml": "0.5.46",
     "@graphql-mesh/utils": "0.35.2",
-    "tslib": "^2.3.1"
+    "tslib": "^2.4.0"
   },
   "publishConfig": {
     "access": "public",

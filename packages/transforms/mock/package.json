@@ -39,7 +39,7 @@
     "@graphql-tools/mock": "8.6.11",
     "faker": "5.5.3",
     "graphql-scalars": "1.17.0",
-    "tslib": "^2.3.1"
+    "tslib": "^2.4.0"
   },
   "publishConfig": {
     "access": "public",

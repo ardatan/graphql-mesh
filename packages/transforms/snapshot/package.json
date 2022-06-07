@@ -38,7 +38,7 @@
     "@graphql-tools/schema": "8.3.13",
     "@graphql-tools/utils": "8.6.12",
     "object-hash": "3.0.0",
-    "tslib": "^2.3.1"
+    "tslib": "^2.4.0"
   },
   "publishConfig": {
     "access": "public",

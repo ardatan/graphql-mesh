@@ -37,7 +37,7 @@
     "upper-case": "2.0.2",
     "lower-case": "2.0.2",
     "graphql-scalars": "1.17.0",
-    "tslib": "^2.3.1"
+    "tslib": "^2.4.0"
   },
   "publishConfig": {
     "access": "public",

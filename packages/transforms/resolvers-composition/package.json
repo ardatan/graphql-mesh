@@ -32,7 +32,7 @@
     "@graphql-mesh/utils": "0.35.2",
     "@graphql-tools/resolvers-composition": "6.4.12",
     "@graphql-tools/schema": "8.3.13",
-    "tslib": "^2.3.1"
+    "tslib": "^2.4.0"
   },
   "publishConfig": {
     "access": "public",

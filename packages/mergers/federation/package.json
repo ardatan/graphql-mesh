@@ -36,7 +36,7 @@
     "@graphql-mesh/utils": "0.35.2",
     "@graphql-tools/utils": "8.6.12",
     "@graphql-mesh/store": "0.8.11",
-    "tslib": "^2.3.1"
+    "tslib": "^2.4.0"
   },
   "publishConfig": {
     "access": "public",

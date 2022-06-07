@@ -45,7 +45,7 @@
     "graphql-scalars": "1.17.0",
     "url-join": "4.0.1",
     "thrift": "0.16.0",
-    "tslib": "^2.3.1",
+    "tslib": "^2.4.0",
     "pascal-case": "3.1.2"
   },
   "publishConfig": {

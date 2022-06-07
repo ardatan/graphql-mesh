@@ -37,7 +37,7 @@
     "@graphql-mesh/cross-helpers": "0.1.6",
     "graphql-compose": "9.0.8",
     "@omnigraph/json-schema": "0.20.2",
-    "tslib": "^2.3.1",
+    "tslib": "^2.4.0",
     "@json-schema-tools/meta-schema": "1.6.19"
   },
   "publishConfig": {
