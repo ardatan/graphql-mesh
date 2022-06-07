@@ -12,8 +12,6 @@ jobs:
     steps:
       - name: Checkout Master
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
       - name: Use Node
         uses: actions/setup-node@v3
         with:
@@ -42,8 +40,6 @@ jobs:
     steps:
       - name: Checkout Master
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
       - name: Use Node
         uses: actions/setup-node@v3
         with:
@@ -99,8 +95,6 @@ jobs:
     steps:
       - name: Checkout Master
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
       - name: Use Node ${{matrix.node-version}}
         uses: actions/setup-node@v3
         with:
