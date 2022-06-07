@@ -33,8 +33,6 @@
     "@babel/preset-typescript": "7.17.12",
     "@changesets/cli": "2.21.1",
     "@theguild/prettier-config": "0.0.1",
-    "@parcel/packager-raw-url": "2.6.0",
-    "@parcel/transformer-webmanifest": "2.6.0",
     "@types/jest": "28.1.1",
     "@types/node": "16.11.38",
     "@typescript-eslint/eslint-plugin": "5.27.1",
@@ -90,8 +88,6 @@
     ]
   },
   "resolutions": {
-    "babel-jest": "28.1.1",
-    "jest-runner": "28.1.1",
     "graphql": "16.5.0",
     "@changesets/apply-release-plan": "6.0.0"
   }
