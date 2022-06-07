@@ -9,9 +9,6 @@ const tsconfig = require(TSCONFIG);
 process.env.LC_ALL = 'en_US';
 
 module.exports = {
-  transform: {
-    '^.+\\.(t|j)sx?$': ['@swc/jest'],
-  },
   testEnvironment: 'node',
   rootDir: ROOT_DIR,
   restoreMocks: true,
