@@ -3226,12 +3226,12 @@
     lodash "^4.17.21"
     remove-markdown "0.5.0"
 
-"@guild-docs/client@3.1.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-3.1.0.tgz#1418fb607adeda5997053ec8b3aa7be6ccb6659e"
-  integrity sha512-Uc2dv+30qYPNEg02PZ1r5PGZSPkgM7C5mblKEMUArqJhM6bxpFJG5JBi248f//O/y07/x7oEZaRbLn4Ktn0MPw==
+"@guild-docs/client@4.0.0-alpha-b500768.0":
+  version "4.0.0-alpha-b500768.0"
+  resolved "https://registry.yarnpkg.com/@guild-docs/client/-/client-4.0.0-alpha-b500768.0.tgz#f9d4c3f86c042d2e481b5bb577f67ba0e634101a"
+  integrity sha512-HU2T+2VNSRifiwHzX0D/d4vs3bHws18Uddwq9BV23iy07HzRu2+DNLrUfbk3gfI1Kym9DOE1X9cK9sVGmIQpKQ==
   dependencies:
-    "@guild-docs/mdx-remote" "^2.0.2"
+    "@guild-docs/mdx-remote" "^3.0.0-alpha-b500768.0"
     "@guild-docs/types" "^3.0.0"
     immer "9.0.12"
     mdx-mermaid "1.2.2"
@@ -3244,10 +3244,10 @@
     use-immer "0.7.0"
     zustand "3.7.2"
 
-"@guild-docs/mdx-remote@^2.0.2":
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/@guild-docs/mdx-remote/-/mdx-remote-2.0.2.tgz#9c6b14399021a84f02978951dac9ea0fae644b1a"
-  integrity sha512-g35B/Lo7s4l3HLcB9Z7jvTYrhMjCLMbfeS4i3rEhzhP54S0lvQ6gFTbVY25nDGZjZGMgMpkykY4Rk/p73UF2qQ==
+"@guild-docs/mdx-remote@^3.0.0-alpha-b500768.0":
+  version "3.0.0-alpha-b500768.0"
+  resolved "https://registry.yarnpkg.com/@guild-docs/mdx-remote/-/mdx-remote-3.0.0-alpha-b500768.0.tgz#abb210fdbfbbed278854c9eafccebd89a27867b8"
+  integrity sha512-SN84PTc0ZNkLXqLUtitIY2Bko/yPSVzzPfx5fwqoSfOjUSL61sr71l5m92hmKeIQU+w3ELbQMl3xMLnyDVeMgg==
   dependencies:
     "@babel/code-frame" "7.16.7"
     "@guild-docs/types" "^3.0.0"
@@ -3259,12 +3259,12 @@
     vfile "5.3.2"
     vfile-matter "3.0.1"
 
-"@guild-docs/server@4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@guild-docs/server/-/server-4.0.0.tgz#f0ef566c95f2c47a20d10d3ca41b2156644f5989"
-  integrity sha512-LlDr4U8LMwoE3LEmbMgUXlmFBUdHVKzGIOofKG1SR6VNwZEQ8/qAR5eEIdl3xA5VyOCs4PJ0lDJg5pzoECxq8w==
+"@guild-docs/server@5.0.0-alpha-b500768.0":
+  version "5.0.0-alpha-b500768.0"
+  resolved "https://registry.yarnpkg.com/@guild-docs/server/-/server-5.0.0-alpha-b500768.0.tgz#65cf1f7a624cff35f94036cf8b52df72060e09ef"
+  integrity sha512-W0fPGK1rEyPpj4KCvvyPiiaYO1ffOi0aVsSpm3XSy52W0RcAI7aQL9N//k81oq3GdhuARubBYjD2tyXDDqkWjg==
   dependencies:
-    "@guild-docs/mdx-remote" "^2.0.2"
+    "@guild-docs/mdx-remote" "^3.0.0-alpha-b500768.0"
     "@guild-docs/types" "^3.0.0"
     "@stefanprobst/remark-shiki" "2.1.0"
     github-slugger "1.4.0"
@@ -5711,17 +5711,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-dom@17.0.17":
-  version "17.0.17"
-  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-17.0.17.tgz#2e3743277a793a96a99f1bf87614598289da68a1"
-  integrity sha512-VjnqEmqGnasQKV0CWLevqMTXBYG9GbwuE6x3VetERLh0cq2LTptFE73MrQi2S7GkKXCf2GgwItB/melLnxfnsg==
-  dependencies:
-    "@types/react" "^17"
-
-"@types/react@*", "@types/react@17.0.45", "@types/react@>=16", "@types/react@^17", "@types/react@^17.0.4":
-  version "17.0.45"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.45.tgz#9b3d5b661fd26365fefef0e766a1c6c30ccf7b3f"
-  integrity sha512-YfhQ22Lah2e3CHPsb93tRwIGNiSwkuz1/blk4e6QrWS0jQzCSNbGLtOEYhPg02W0yGTTmpajp7dCTbBAMN3qsg==
+"@types/react@*", "@types/react@18.0.9", "@types/react@>=16", "@types/react@^18.0.1":
+  version "18.0.9"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.0.9.tgz#d6712a38bd6cd83469603e7359511126f122e878"
+  integrity sha512-9bjbg1hJHUm4De19L1cHiW0Jvx3geel6Qczhjd0qY5VKVE2X5+x77YxAepuCwVh4vrgZJdgEJw48zrhRIeF4Nw==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -5736,10 +5729,10 @@
     "@types/scheduler" "*"
     csstype "^3.0.2"
 
-"@types/react@^18.0.1":
-  version "18.0.9"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.0.9.tgz#d6712a38bd6cd83469603e7359511126f122e878"
-  integrity sha512-9bjbg1hJHUm4De19L1cHiW0Jvx3geel6Qczhjd0qY5VKVE2X5+x77YxAepuCwVh4vrgZJdgEJw48zrhRIeF4Nw==
+"@types/react@^17.0.4":
+  version "17.0.45"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.45.tgz#9b3d5b661fd26365fefef0e766a1c6c30ccf7b3f"
+  integrity sha512-YfhQ22Lah2e3CHPsb93tRwIGNiSwkuz1/blk4e6QrWS0jQzCSNbGLtOEYhPg02W0yGTTmpajp7dCTbBAMN3qsg==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -20384,6 +20377,14 @@ react-dom@17.0.2, react-dom@^17.0.1:
     object-assign "^4.1.1"
     scheduler "^0.20.2"
 
+react-dom@18.1.0:
+  version "18.1.0"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-18.1.0.tgz#7f6dd84b706408adde05e1df575b3a024d7e8a2f"
+  integrity sha512-fU1Txz7Budmvamp7bshe4Zi32d0ll7ect+ccxNu9FlObT605GOEB8BfO4tmRJ39R5Zj831VCpvQ05QPBW5yb+w==
+  dependencies:
+    loose-envify "^1.1.0"
+    scheduler "^0.22.0"
+
 react-error-overlay@^6.0.9:
   version "6.0.9"
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.9.tgz#3c743010c9359608c375ecd6bc76f35d93995b0a"
@@ -20636,6 +20637,13 @@ react@17.0.2, react@^17.0.1:
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
+
+react@18.1.0:
+  version "18.1.0"
+  resolved "https://registry.yarnpkg.com/react/-/react-18.1.0.tgz#6f8620382decb17fdc5cc223a115e2adbf104890"
+  integrity sha512-4oL8ivCz5ZEPyclFQXaNksK3adutVS8l2xzZU0cqEFrE9Sb7fC0EFK5uEk74wIreL1DERyjvsU915j1pcT2uEQ==
+  dependencies:
+    loose-envify "^1.1.0"
 
 read-pkg-up@^3.0.0:
   version "3.0.0"
@@ -21488,6 +21496,13 @@ scheduler@^0.20.2:
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
+
+scheduler@^0.22.0:
+  version "0.22.0"
+  resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.22.0.tgz#83a5d63594edf074add9a7198b1bae76c3db01b8"
+  integrity sha512-6QAm1BgQI88NPYymgGQLCZgvep4FyePDWFpXVK+zNSUgHwlqpJy8VEh8Et0KxTACS4VWwMousBElAZOH9nkkoQ==
+  dependencies:
+    loose-envify "^1.1.0"
 
 schema-utils@^1.0.0:
   version "1.0.0"

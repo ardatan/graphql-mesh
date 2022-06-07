@@ -40,7 +40,6 @@ export default function Index() {
           title: 'Get started with GraphQL Mesh',
           onClick: e => handlePushRoute('/docs/introduction', e),
         }}
-        // eslint-disable-next-line react/jsx-curly-brace-presence
         version={<NPMBadge name="@graphql-mesh/cli" />}
         colors={['#000', '#1cc8ee']}
       />
