@@ -24,6 +24,8 @@ jobs:
         with:
           path: '**/node_modules'
           key: ${{runner.os}}-18-node-modules-${{hashFiles('yarn.lock')}}
+          restore-keys: |
+            ${{runner.os}}-18-node-modules-
 
       - name: Install Dependencies using Yarn
         run: yarn install --ignore-engines --frozen-lockfile --immutable
@@ -52,6 +54,8 @@ jobs:
         with:
           path: '**/node_modules'
           key: ${{runner.os}}-18-node-modules-${{hashFiles('yarn.lock')}}
+          restore-keys: |
+            ${{runner.os}}-18-node-modules-
 
       - name: Install Dependencies using Yarn
         run: yarn install --ignore-engines --frozen-lockfile --immutable
@@ -107,6 +111,8 @@ jobs:
         with:
           path: '**/node_modules'
           key: ${{runner.os}}-${{matrix.node-version}}-node-modules-${{hashFiles('yarn.lock')}}
+          restore-keys: |
+            ${{runner.os}}-${{matrix.node-version}}-node-modules-
 
       - name: Install Dependencies using Yarn
         run: yarn install --ignore-engines --frozen-lockfile --immutable
@@ -117,6 +123,8 @@ jobs:
         with:
           path: .cache/jest
           key: ${{ runner.os }}-${{matrix.node-version}}-jest-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{runner.os}}-${{matrix.node-version}}-jest-
 
       - name: Download Postgres Dump
         run: 'curl https://raw.githubusercontent.com/morenoh149/postgresDBSamples/master/worldDB-1.0/world.sql -o /tmp/backup.sql'
