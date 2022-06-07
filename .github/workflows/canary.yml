@@ -42,8 +42,20 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
 
+      - name: Cache Node Modules
+        uses: actions/cache@v3
+        id: node-modules-cache-canary
+        with:
+          path: node_modules
+          key: ${{runner.os}}-18-node-modules-${{hashFiles('yarn.lock')}}
+          restore-keys: |
+            ${{runner.os}}-18-node-modules-${{hashFiles('yarn.lock')}}
+            ${{runner.os}}-18-node-modules
+
       - name: Install Dependencies using Yarn
         run: yarn install --ignore-engines --frozen-lockfile --immutable
+        if: steps.node-modules-cache-canary.outputs.cache-hit != 'true'
+
       - name: Release Canary
         id: canary
         uses: 'kamilkisiela/release-canary@master'
