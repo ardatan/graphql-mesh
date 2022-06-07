@@ -24,7 +24,7 @@ jobs:
         uses: actions/cache@v3
         id: node-modules-cache-lint
         with:
-          path: node_modules
+          path: '**/node_modules'
           key: ${{runner.os}}-18-node-modules-${{hashFiles('yarn.lock')}}
 
       - name: Install Dependencies using Yarn
@@ -54,7 +54,7 @@ jobs:
         uses: actions/cache@v3
         id: node-modules-cache-type-check
         with:
-          path: node_modules
+          path: '**/node_modules'
           key: ${{runner.os}}-18-node-modules-${{hashFiles('yarn.lock')}}
 
       - name: Install Dependencies using Yarn
@@ -111,7 +111,7 @@ jobs:
         uses: actions/cache@v3
         id: node-modules-cache-test
         with:
-          path: node_modules
+          path: '**/node_modules'
           key: ${{runner.os}}-${{matrix.node-version}}-node-modules-${{hashFiles('yarn.lock')}}
 
       - name: Install Dependencies using Yarn

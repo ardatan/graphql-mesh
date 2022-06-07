@@ -37,7 +37,7 @@ jobs:
         uses: actions/cache@v3
         id: node-modules-cache-release
         with:
-          path: node_modules
+          path: '**/node_modules'
           key: ${{runner.os}}-18-node-modules-${{hashFiles('yarn.lock')}}
 
       - name: Install Dependencies using Yarn
