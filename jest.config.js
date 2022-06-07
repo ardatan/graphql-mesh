@@ -19,7 +19,7 @@ module.exports = {
       prefix: `${ROOT_DIR}/`,
     }),
     'formdata-node': '<rootDir>/node_modules/formdata-node/lib/cjs/index.js',
-    'uuid': '<rootDir>/node_modules/uuid/index.js',
+    uuid: '<rootDir>/node_modules/uuid/index.js',
   },
   collectCoverage: false,
   cacheDirectory: resolve(ROOT_DIR, `${CI ? '' : 'node_modules/'}.cache/jest`),
