@@ -302,7 +302,7 @@ export async function processConfig(
             const { importName, moduleName, pluginFactory } = ENVELOP_CORE_PLUGINS_MAP[pluginName];
             if (options.generateCode) {
               importCodes.push(`import { ${importName} } from ${JSON.stringify(moduleName)};`);
-              codes.push(`additionalEnvelopPlugins.push(${importName}(${JSON.stringify(pluginConfig)}))`);
+              codes.push(`additionalEnvelopPlugins.push(${importName}(${JSON.stringify(pluginConfig, null, 2)}))`);
             }
             return pluginFactory(pluginConfig);
           }
@@ -321,7 +321,7 @@ export async function processConfig(
               importName = pascalCase('use_' + pluginName);
               importCodes.push(`import ${importName} from ${JSON.stringify(moduleName)};`);
               codes.push(`additionalEnvelopPlugins.push(${importName}({
-          ...(${JSON.stringify(pluginConfig)}),
+          ...(${JSON.stringify(pluginConfig, null, 2)}),
           logger: logger.child(${JSON.stringify(pluginName)}),
         }))`);
             }
@@ -331,7 +331,7 @@ export async function processConfig(
                 pluginFactory = possiblePluginFactory[key];
                 if (options.generateCode) {
                   importCodes.push(`import { ${importName} } from ${JSON.stringify(moduleName)};`);
-                  codes.push(`additionalEnvelopPlugins.push(${importName}(${JSON.stringify(pluginConfig)}])`);
+                  codes.push(`additionalEnvelopPlugins.push(${importName}(${JSON.stringify(pluginConfig, null, 2)}])`);
                 }
               }
             });
@@ -387,44 +387,34 @@ export async function processConfig(
 
   if (options.generateCode) {
     if (config.additionalResolvers?.length) {
-      importCodes.push(`import { resolveAdditionalResolvers } from '@graphql-mesh/utils';`);
+      importCodes.push(`import { resolveAdditionalResolversWithoutImport } from '@graphql-mesh/utils';`);
 
-      codes.push(`const additionalResolversRawConfig = [];`);
-
-      for (const additionalResolverDefinitionIndex in config.additionalResolvers) {
-        const additionalResolverDefinition = config.additionalResolvers[additionalResolverDefinitionIndex];
-        if (typeof additionalResolverDefinition === 'string') {
-          importCodes.push(
-            `import * as additionalResolvers$${additionalResolverDefinitionIndex} from '${pathModule
-              .join('..', additionalResolverDefinition)
-              .split('\\')
-              .join('/')}';`
-          );
-          codes.push(
-            `additionalResolversRawConfig.push(additionalResolvers$${additionalResolverDefinitionIndex}.resolvers || additionalResolvers$${additionalResolverDefinitionIndex}.default || additionalResolvers$${additionalResolverDefinitionIndex})`
-          );
-        } else {
-          codes.push(`additionalResolversRawConfig.push(${JSON.stringify(additionalResolverDefinition)});`);
-        }
-      }
-
-      codes.push(`const additionalResolvers = await resolveAdditionalResolvers(
-      baseDir,
-      additionalResolversRawConfig,
-      importFn,
-      pubsub
-  )`);
+      codes.push(`const additionalResolvers = await Promise.all([
+        ${config.additionalResolvers
+          .map(additionalResolverDefinition => {
+            if (typeof additionalResolverDefinition === 'string') {
+              return `import(${JSON.stringify(
+                pathModule.join('..', additionalResolverDefinition).split('\\').join('/')
+              )})
+            .then(m => m.resolvers || m.default || m)`;
+            } else {
+              return `resolveAdditionalResolversWithoutImport(
+            ${JSON.stringify(additionalResolverDefinition, null, 2)}
+          )`;
+            }
+          })
+          .join(',\n')}
+      ]);`);
     } else {
       codes.push(`const additionalResolvers = [] as any[]`);
     }
   }
 
   if (config.additionalEnvelopPlugins) {
-    importCodes.push(
-      `import importedAdditionalEnvelopPlugins from '${pathModule
-        .join('..', config.additionalEnvelopPlugins)
-        .split('\\')
-        .join('/')}';`
+    codes.push(
+      `const importedAdditionalEnvelopPlugins = await import(${JSON.stringify(
+        pathModule.join('..', config.additionalEnvelopPlugins).split('\\').join('/')
+      )}).then(m => m.default || m);`
     );
     const importedAdditionalEnvelopPlugins = await importFn(
       pathModule.isAbsolute(config.additionalEnvelopPlugins)
