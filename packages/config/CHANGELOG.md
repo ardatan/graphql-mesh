@@ -1,5 +1,19 @@
 # @graphql-mesh/config
 
+## 0.37.6
+
+### Patch Changes
+
+- 41cfb46b4: Dynamically import additional resolvers instead of static imports
+- Updated dependencies [41cfb46b4]
+  - @graphql-mesh/utils@0.35.5
+  - @graphql-mesh/cache-localforage@0.6.11
+  - @graphql-mesh/merger-bare@0.13.53
+  - @graphql-mesh/merger-stitching@0.15.55
+  - @graphql-mesh/runtime@0.36.1
+  - @graphql-mesh/store@0.8.14
+  - @graphql-mesh/types@0.74.1
+
 ## 1.0.0
 
 ### Patch Changes

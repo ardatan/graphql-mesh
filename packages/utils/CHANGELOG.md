@@ -1,5 +1,12 @@
 # @graphql-mesh/utils
 
+## 0.35.5
+
+### Patch Changes
+
+- 41cfb46b4: Dynamically import additional resolvers instead of static imports
+  - @graphql-mesh/types@0.74.1
+
 ## 0.35.4
 
 ### Patch Changes

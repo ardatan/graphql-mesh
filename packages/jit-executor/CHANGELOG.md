@@ -1,5 +1,13 @@
 # @graphql-mesh/jit-executor
 
+## 0.0.6
+
+### Patch Changes
+
+- Updated dependencies [41cfb46b4]
+  - @graphql-mesh/utils@0.35.5
+  - @graphql-mesh/types@0.74.1
+
 ## 0.0.5
 
 ### Patch Changes
