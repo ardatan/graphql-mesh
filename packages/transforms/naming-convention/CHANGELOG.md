@@ -1,5 +1,13 @@
 # @graphql-mesh/transform-naming-convention
 
+## 0.10.49
+
+### Patch Changes
+
+- Updated dependencies [9733f490c]
+  - @graphql-mesh/utils@0.35.3
+  - @graphql-mesh/types@0.73.3
+
 ## 0.10.48
 
 ### Patch Changes
