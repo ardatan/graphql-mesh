@@ -29,7 +29,6 @@ describe('compareJSONSchemas', () => {
       await compareJSONSchemas(oldSchema, newSchema);
       expect(true).toBe(false);
     } catch (e) {
-      console.log(e);
       expect(e.errors).toBeDefined();
       const errors = [...e.errors];
       expect(errors).toHaveLength(2);

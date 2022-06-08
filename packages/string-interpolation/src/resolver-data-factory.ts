@@ -32,7 +32,7 @@ export function parseInterpolationStrings(
     const varName = interpolationKeyParts[interpolationKeyParts.length - 1];
     const initialObject = interpolationKeyParts[0];
     const argType =
-      argTypeMap && varName in argTypeMap ? argTypeMap[varName] : interpolationKeyParts.length > 2 ? 'ID' : 'JSON';
+      argTypeMap && varName in argTypeMap ? argTypeMap[varName] : interpolationKeyParts.length > 2 ? 'JSON' : 'ID';
     switch (initialObject) {
       case 'args':
         args[varName] = {
