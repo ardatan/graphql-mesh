@@ -387,43 +387,34 @@ export async function processConfig(
 
   if (options.generateCode) {
     if (config.additionalResolvers?.length) {
-      importCodes.push(`import { resolveAdditionalResolvers } from '@graphql-mesh/utils';`);
+      importCodes.push(`import { resolveAdditionalResolversWithoutImport } from '@graphql-mesh/utils';`);
 
-      codes.push(`const additionalResolversRawConfig = [];`);
-      codes.push(`const additionalResolversImports = [];`);
-
-      for (const additionalResolverDefinitionIndex in config.additionalResolvers) {
-        const additionalResolverDefinition = config.additionalResolvers[additionalResolverDefinitionIndex];
-        if (typeof additionalResolverDefinition === 'string') {
-          codes.push(`additionalResolversImports.push(
+      codes.push(`const additionalResolvers = await Promise.all([
+        ${config.additionalResolvers
+          .map(additionalResolverDefinition => {
+            if (typeof additionalResolverDefinition === 'string') {
+              return `additionalResolvers$.push(
           import(${JSON.stringify(pathModule.join('..', additionalResolverDefinition).split('\\').join('/'))})
           .then(m => m.resolvers || m.default || m)
-          .then(additionalResolver => additionalResolversRawConfig.push(additionalResolver))
-          );`);
-        } else {
-          codes.push(`additionalResolversRawConfig.push(${JSON.stringify(additionalResolverDefinition)});`);
-        }
-      }
-
-      codes.push(`await Promise.all(additionalResolversImports);`);
-
-      codes.push(`const additionalResolvers = await resolveAdditionalResolvers(
-      baseDir,
-      additionalResolversRawConfig,
-      importFn,
-      pubsub
-  )`);
+          );`;
+            } else {
+              return `additionalResolvers$.push(
+            resolveAdditionalResolversWithoutImport(${JSON.stringify(additionalResolverDefinition)})
+          );`;
+            }
+          })
+          .join(',\n')}
+      ]);`);
     } else {
       codes.push(`const additionalResolvers = [] as any[]`);
     }
   }
 
   if (config.additionalEnvelopPlugins) {
-    importCodes.push(
-      `import importedAdditionalEnvelopPlugins from '${pathModule
-        .join('..', config.additionalEnvelopPlugins)
-        .split('\\')
-        .join('/')}';`
+    codes.push(
+      `const importedAdditionalEnvelopPlugins = await import(${JSON.stringify(
+        pathModule.join('..', config.additionalEnvelopPlugins).split('\\').join('/')
+      )}).then(m => m.default || m);`
     );
     const importedAdditionalEnvelopPlugins = await importFn(
       pathModule.isAbsolute(config.additionalEnvelopPlugins)
