@@ -393,14 +393,14 @@ export async function processConfig(
         ${config.additionalResolvers
           .map(additionalResolverDefinition => {
             if (typeof additionalResolverDefinition === 'string') {
-              return `additionalResolvers$.push(
-          import(${JSON.stringify(pathModule.join('..', additionalResolverDefinition).split('\\').join('/'))})
-          .then(m => m.resolvers || m.default || m)
-          );`;
+              return `import(${JSON.stringify(
+                pathModule.join('..', additionalResolverDefinition).split('\\').join('/')
+              )})
+            .then(m => m.resolvers || m.default || m)`;
             } else {
-              return `additionalResolvers$.push(
-            resolveAdditionalResolversWithoutImport(${JSON.stringify(additionalResolverDefinition)})
-          );`;
+              return `resolveAdditionalResolversWithoutImport(
+            ${JSON.stringify(additionalResolverDefinition)})
+          )`;
             }
           })
           .join(',\n')}
