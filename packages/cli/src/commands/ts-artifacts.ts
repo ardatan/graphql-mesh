@@ -123,9 +123,9 @@ ${Object.values(subscriptionsOperationMap).join(',\n')}
   const context = {
     identifier: contextIdentifier,
     codeAst: `export type ${contextIdentifier} = {
-      ["${
+      [${JSON.stringify(
         options.name
-      }"]: { Query: Query${sdkIdentifier}, Mutation: Mutation${sdkIdentifier}, Subscription: Subscription${sdkIdentifier} },
+      )}]: { Query: Query${sdkIdentifier}, Mutation: Mutation${sdkIdentifier}, Subscription: Subscription${sdkIdentifier} },
       ${Object.keys(options.contextVariables)
         .map(key => `[${JSON.stringify(key)}]: ${options.contextVariables[key]}`)
         .join(',\n')}
