@@ -10,48 +10,52 @@ const errorColor: MessageTransformer = chalk.red;
 const debugColor: MessageTransformer = chalk.magenta;
 const titleBold: MessageTransformer = chalk.bold;
 
-function handleLazyMessage(...lazyArgs: LazyLoggerMessage[]) {
-  const flattenedArgs = lazyArgs.flat(Infinity).flatMap(arg => {
-    if (typeof arg === 'function') {
-      return arg();
-    }
-    return arg;
-  });
-  return getLoggerMessage(flattenedArgs);
-}
-
-function getLoggerMessage(...args: any[]) {
-  return args
-    .flat(Infinity)
-    .map(arg => {
-      if (typeof arg === 'string') {
-        if (arg.length > 100) {
-          return arg.slice(0, 100) + '...';
-        }
-        return arg;
-      } else if (typeof arg === 'object' && arg?.stack != null) {
-        return arg.stack;
-      }
-      return util.inspect(arg);
-    })
-    .join(` `);
-}
-
 export class DefaultLogger implements Logger {
   constructor(public name?: string) {}
 
-  private getPrefix() {
+  private getLoggerMessage(...args: any[]) {
+    return args
+      .flat(Infinity)
+      .map(arg => {
+        if (typeof arg === 'string') {
+          if (arg.length > 100 && !this.isDebug) {
+            return arg.slice(0, 100) + '...';
+          }
+          return arg;
+        } else if (typeof arg === 'object' && arg?.stack != null) {
+          return arg.stack;
+        }
+        return util.inspect(arg);
+      })
+      .join(` `);
+  }
+
+  private handleLazyMessage(...lazyArgs: LazyLoggerMessage[]) {
+    const flattenedArgs = lazyArgs.flat(Infinity).flatMap(arg => {
+      if (typeof arg === 'function') {
+        return arg();
+      }
+      return arg;
+    });
+    return this.getLoggerMessage(flattenedArgs);
+  }
+
+  private get isDebug() {
+    return (process.env.DEBUG && process.env.DEBUG === '1') || this.name.includes(process.env.DEBUG);
+  }
+
+  private get prefix() {
     return this.name ? titleBold(this.name) : ``;
   }
 
   log(...args: any[]) {
-    const message = getLoggerMessage(...args);
-    return console.log(`${this.getPrefix()} ${message}`);
+    const message = this.getLoggerMessage(...args);
+    return console.log(`${this.prefix} ${message}`);
   }
 
   warn(...args: any[]) {
-    const message = getLoggerMessage(...args);
-    const fullMessage = `⚠️ ${this.getPrefix()} ${warnColor(message)}`;
+    const message = this.getLoggerMessage(...args);
+    const fullMessage = `⚠️ ${this.prefix} ${warnColor(message)}`;
     if (console.warn) {
       console.warn(fullMessage);
     } else {
@@ -60,8 +64,8 @@ export class DefaultLogger implements Logger {
   }
 
   info(...args: any[]) {
-    const message = getLoggerMessage(...args);
-    const fullMessage = `💡 ${this.getPrefix()} ${infoColor(message)}`;
+    const message = this.getLoggerMessage(...args);
+    const fullMessage = `💡 ${this.prefix} ${infoColor(message)}`;
     if (console.info) {
       console.info(fullMessage);
     } else {
@@ -70,8 +74,8 @@ export class DefaultLogger implements Logger {
   }
 
   error(...args: any[]) {
-    const message = getLoggerMessage(...args);
-    const fullMessage = `💥 ${this.getPrefix()} ${errorColor(message)}`;
+    const message = this.getLoggerMessage(...args);
+    const fullMessage = `💥 ${this.prefix} ${errorColor(message)}`;
     if (console.error) {
       console.error(fullMessage);
     } else {
@@ -80,9 +84,9 @@ export class DefaultLogger implements Logger {
   }
 
   debug(...lazyArgs: LazyLoggerMessage[]) {
-    if ((process.env.DEBUG && process.env.DEBUG === '1') || this.name.includes(process.env.DEBUG)) {
-      const message = handleLazyMessage(lazyArgs);
-      const fullMessage = `🐛 ${this.getPrefix()} ${debugColor(message)}`;
+    if (this.isDebug) {
+      const message = this.handleLazyMessage(lazyArgs);
+      const fullMessage = `🐛 ${this.prefix} ${debugColor(message)}`;
       if (console.debug) {
         console.debug(fullMessage);
       } else {
