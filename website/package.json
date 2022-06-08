@@ -14,7 +14,7 @@
     "analyze": "cross-env ANALYZE=true next build"
   },
   "dependencies": {
-    "@graphql-yoga/node": "2.9.0",
+    "@graphql-yoga/node": "2.9.1",
     "@chakra-ui/icons": "2.0.2",
     "@chakra-ui/react": "2.2.1",
     "@chakra-ui/theme-tools": "2.0.2",
@@ -47,11 +47,11 @@
   "devDependencies": {
     "@guild-docs/algolia": "0.0.6",
     "@next/bundle-analyzer": "12.1.6",
-    "@types/node": "16.11.38",
+    "@types/node": "16.11.39",
     "@types/react": "18.0.12",
     "concurrently": "7.2.1",
     "cross-env": "7.0.3",
-    "esbuild": "0.14.42",
+    "esbuild": "0.14.43",
     "esbuild-register": "3.3.3",
     "eslint-config-next": "12.1.6",
     "next-remote-watch": "1.0.0",
