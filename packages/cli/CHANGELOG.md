@@ -1,5 +1,17 @@
 # @graphql-mesh/cli
 
+## 0.72.1
+
+### Patch Changes
+
+- c402b2c97: Handle tsconfig.json files as JSON5
+- Updated dependencies [41cfb46b4]
+  - @graphql-mesh/config@0.37.6
+  - @graphql-mesh/utils@0.35.5
+  - @graphql-mesh/runtime@0.36.1
+  - @graphql-mesh/store@0.8.14
+  - @graphql-mesh/types@0.74.1
+
 ## 0.72.0
 
 ### Minor Changes

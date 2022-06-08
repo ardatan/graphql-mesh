@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cache-localforage",
-  "version": "0.6.10",
+  "version": "0.6.11",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -28,8 +28,8 @@
     }
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.74.0",
-    "@graphql-mesh/utils": "0.35.4",
+    "@graphql-mesh/types": "0.74.1",
+    "@graphql-mesh/utils": "0.35.5",
     "localforage": "1.10.0",
     "tslib": "^2.4.0"
   },
