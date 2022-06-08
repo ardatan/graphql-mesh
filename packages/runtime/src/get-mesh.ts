@@ -112,7 +112,7 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
           schema: apiSchema,
           executor: source.executor,
           transforms,
-          contextVariables: source.contextVariables || [],
+          contextVariables: source.contextVariables || {},
           handler: apiSource.handler,
           batch: 'batch' in source ? source.batch : true,
           merge: apiSource.merge,

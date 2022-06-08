@@ -28,9 +28,9 @@ export type GetMeshOptions = {
   documents?: Source[];
 };
 
-export type MeshResolvedSource<TContext = any> = {
+export type MeshResolvedSource = {
   name: string;
-  handler: MeshHandler<TContext>;
+  handler: MeshHandler;
   transforms?: MeshTransform[];
   merge?: Record<string, MergedTypeConfig>;
 };
