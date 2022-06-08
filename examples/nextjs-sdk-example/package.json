@@ -1,6 +1,6 @@
 {
   "name": "nextjs-sdk-example",
-  "version": "0.0.28",
+  "version": "0.0.29",
   "private": true,
   "scripts": {
     "prestart": "yarn build:mesh",
@@ -12,10 +12,10 @@
     "serve:mesh": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.71.5",
-    "@graphql-mesh/config": "0.37.5",
-    "@graphql-mesh/new-openapi": "0.4.24",
-    "@graphql-mesh/runtime": "0.35.4",
+    "@graphql-mesh/cli": "0.72.0",
+    "@graphql-mesh/config": "1.0.0",
+    "@graphql-mesh/new-openapi": "0.4.25",
+    "@graphql-mesh/runtime": "0.36.0",
     "apollo-server-micro": "^2.24.0",
     "graphql": "^15.5.0",
     "next": "12.1.0",

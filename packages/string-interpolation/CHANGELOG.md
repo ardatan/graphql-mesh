@@ -1,5 +1,11 @@
 # @graphql-mesh/string-interpolation
 
+## 0.3.0
+
+### Minor Changes
+
+- 13b9b30f7: Add interpolation strings to the generated MeshContext type
+
 ## 0.2.0
 
 ### Minor Changes

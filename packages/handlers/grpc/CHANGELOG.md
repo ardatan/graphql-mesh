@@ -1,5 +1,15 @@
 # @graphql-mesh/grpc
 
+## 0.24.4
+
+### Patch Changes
+
+- Updated dependencies [13b9b30f7]
+  - @graphql-mesh/string-interpolation@0.3.0
+  - @graphql-mesh/types@0.74.0
+  - @graphql-mesh/utils@0.35.4
+  - @graphql-mesh/store@0.8.13
+
 ## 0.24.3
 
 ### Patch Changes

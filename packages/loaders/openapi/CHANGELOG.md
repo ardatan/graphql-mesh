@@ -1,5 +1,16 @@
 # @omnigraph/openapi
 
+## 0.6.13
+
+### Patch Changes
+
+- Updated dependencies [13b9b30f7]
+  - @graphql-mesh/string-interpolation@0.3.0
+  - @graphql-mesh/types@0.74.0
+  - @omnigraph/json-schema@0.20.4
+  - @graphql-mesh/utils@0.35.4
+  - json-machete@0.8.12
+
 ## 0.6.12
 
 ### Patch Changes
