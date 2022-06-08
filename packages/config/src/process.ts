@@ -390,23 +390,22 @@ export async function processConfig(
       importCodes.push(`import { resolveAdditionalResolvers } from '@graphql-mesh/utils';`);
 
       codes.push(`const additionalResolversRawConfig = [];`);
+      codes.push(`const additionalResolversImports = [];`);
 
       for (const additionalResolverDefinitionIndex in config.additionalResolvers) {
         const additionalResolverDefinition = config.additionalResolvers[additionalResolverDefinitionIndex];
         if (typeof additionalResolverDefinition === 'string') {
-          importCodes.push(
-            `import * as additionalResolvers$${additionalResolverDefinitionIndex} from '${pathModule
-              .join('..', additionalResolverDefinition)
-              .split('\\')
-              .join('/')}';`
-          );
-          codes.push(
-            `additionalResolversRawConfig.push(additionalResolvers$${additionalResolverDefinitionIndex}.resolvers || additionalResolvers$${additionalResolverDefinitionIndex}.default || additionalResolvers$${additionalResolverDefinitionIndex})`
-          );
+          codes.push(`additionalResolversImports.push(
+          import(${JSON.stringify(pathModule.join('..', additionalResolverDefinition).split('\\').join('/'))})
+          .then(m => m.resolvers || m.default || m)
+          .then(additionalResolver => additionalResolversRawConfig.push(additionalResolver))
+          );`);
         } else {
           codes.push(`additionalResolversRawConfig.push(${JSON.stringify(additionalResolverDefinition)});`);
         }
       }
+
+      codes.push(`await Promise.all(additionalResolversImports);`);
 
       codes.push(`const additionalResolvers = await resolveAdditionalResolvers(
       baseDir,
