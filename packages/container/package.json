@@ -30,7 +30,7 @@
     "@graphql-mesh/transform-extend": "0.10.23",
     "@graphql-mesh/transform-rename": "0.12.48",
     "@graphql-mesh/transform-resolvers-composition": "0.12.57",
-    "tslib": "^2.4.0"
+    "tslib": "2.4.0"
   },
   "publishConfig": {
     "access": "public"
