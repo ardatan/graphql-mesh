@@ -19,24 +19,29 @@ export function getInterpolationKeys(...interpolationStrings: string[]) {
 }
 
 export function parseInterpolationStrings(
-  interpolationStrings: string[],
+  interpolationStrings: Iterable<string>,
   argTypeMap?: Record<string, string | GraphQLInputType>
 ) {
   const interpolationKeys = getInterpolationKeys(...interpolationStrings);
 
   const args: Record<string, { type: string | GraphQLInputType }> = {};
-  const contextVariables: string[] = [];
+  const contextVariables: Record<string, string> = {};
 
   for (const interpolationKey of interpolationKeys) {
     const interpolationKeyParts = interpolationKey.split('.');
     const varName = interpolationKeyParts[interpolationKeyParts.length - 1];
-    if (interpolationKeyParts[0] === 'args') {
-      const argType = argTypeMap && varName in argTypeMap ? argTypeMap[varName] : 'ID';
-      args[varName] = {
-        type: argType,
-      };
-    } else if (interpolationKeyParts[0] === 'context') {
-      contextVariables.push(varName);
+    const initialObject = interpolationKeyParts[0];
+    const argType =
+      argTypeMap && varName in argTypeMap ? argTypeMap[varName] : interpolationKeyParts.length > 2 ? 'JSON' : 'ID';
+    switch (initialObject) {
+      case 'args':
+        args[varName] = {
+          type: argType,
+        };
+        break;
+      case 'context':
+        contextVariables[varName] = `Scalars['${argType}']`;
+        break;
     }
   }
 

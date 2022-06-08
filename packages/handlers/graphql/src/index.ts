@@ -30,7 +30,11 @@ import {
 } from '@graphql-tools/utils';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import lodashGet from 'lodash.get';
-import { getInterpolatedHeadersFactory, getInterpolatedStringFactory } from '@graphql-mesh/string-interpolation';
+import {
+  getInterpolatedHeadersFactory,
+  getInterpolatedStringFactory,
+  parseInterpolationStrings,
+} from '@graphql-mesh/string-interpolation';
 import { process, util } from '@graphql-mesh/cross-helpers';
 
 const getResolverData = memoize1(function getResolverData(params: ExecutionRequest) {
@@ -60,6 +64,12 @@ export default class GraphQLHandler implements MeshHandler {
     this.importFn = importFn;
   }
 
+  private interpolationStringSet = new Set<string>();
+
+  private getArgsAndContextVariables() {
+    return parseInterpolationStrings(this.interpolationStringSet);
+  }
+
   private getCustomFetchImpl(customFetchConfig: string): FetchFn | Promise<FetchFn> {
     return customFetchConfig
       ? loadFromModuleExportExpression<FetchFn>(customFetchConfig, {
@@ -73,7 +83,13 @@ export default class GraphQLHandler implements MeshHandler {
   async getExecutorForHTTPSourceConfig(
     httpSourceConfig: YamlConfig.GraphQLHandlerHTTPConfiguration
   ): Promise<MeshSource['executor']> {
-    const { endpoint, customFetch: customFetchConfig, operationHeaders } = httpSourceConfig;
+    const { endpoint, customFetch: customFetchConfig, operationHeaders = {} } = httpSourceConfig;
+
+    this.interpolationStringSet.add(endpoint);
+    Object.keys(operationHeaders).forEach(headerName => {
+      this.interpolationStringSet.add(headerName.toString());
+    });
+
     const customFetch = await this.getCustomFetchImpl(customFetchConfig);
     const endpointFactory = getInterpolatedStringFactory(endpoint);
     const operationHeadersFactory = getInterpolatedHeadersFactory(operationHeaders);
@@ -99,6 +115,11 @@ export default class GraphQLHandler implements MeshHandler {
   async getNonExecutableSchemaForHTTPSource(
     httpSourceConfig: YamlConfig.GraphQLHandlerHTTPConfiguration
   ): Promise<GraphQLSchema> {
+    this.interpolationStringSet.add(httpSourceConfig.endpoint);
+    Object.keys(httpSourceConfig.schemaHeaders || {}).forEach(headerName => {
+      this.interpolationStringSet.add(headerName.toString());
+    });
+
     const schemaHeadersFactory = getInterpolatedHeadersFactory(httpSourceConfig.schemaHeaders || {});
     const customFetch = await this.getCustomFetchImpl(httpSourceConfig.customFetch);
     if (httpSourceConfig.introspection) {
@@ -154,8 +175,10 @@ export default class GraphQLHandler implements MeshHandler {
         importFn: this.importFn,
       });
       const schema = buildSchema(rawSDL);
+      const { contextVariables } = this.getArgsAndContextVariables();
       return {
         schema,
+        contextVariables,
       };
     } else {
       // Loaders logic should be here somehow
@@ -180,8 +203,10 @@ export default class GraphQLHandler implements MeshHandler {
           )}': expected GraphQLSchema, SDL or DocumentNode.`
         );
       }
+      const { contextVariables } = this.getArgsAndContextVariables();
       return {
         schema,
+        contextVariables,
       };
     }
   }
@@ -235,10 +260,13 @@ export default class GraphQLHandler implements MeshHandler {
 
         const executor = this.getRaceExecutor(executors);
 
+        const { contextVariables } = this.getArgsAndContextVariables();
+
         return {
           schema,
           executor,
           batch,
+          contextVariables,
         };
       } else if (this.config.strategy === 'highestValue') {
         if (this.config.strategyConfig == null) {
@@ -285,11 +313,14 @@ export default class GraphQLHandler implements MeshHandler {
           return resultWithHighestResult;
         };
 
+        const { contextVariables } = this.getArgsAndContextVariables();
+
         return {
           schema,
           executor: highestValueExecutor,
           // Batching doesn't make sense with fallback strategy
           batch: false,
+          contextVariables,
         };
       } else {
         let schema: GraphQLSchema;
@@ -312,11 +343,14 @@ export default class GraphQLHandler implements MeshHandler {
         const executors = await Promise.all(executorPromises);
         const executor = this.getFallbackExecutor(executors);
 
+        const { contextVariables } = this.getArgsAndContextVariables();
+
         return {
           schema,
           executor,
           // Batching doesn't make sense with fallback strategy
           batch: false,
+          contextVariables,
         };
       }
     } else if ('endpoint' in this.config) {
@@ -334,10 +368,13 @@ export default class GraphQLHandler implements MeshHandler {
           `Failed to create executor for ${this.config.endpoint}: ${util.inspect(executorResult.reason)}`
         );
       }
+      const { contextVariables } = this.getArgsAndContextVariables();
+
       return {
         schema: schemaResult.value,
         executor: executorResult.value,
         batch: this.config.batch != null ? this.config.batch : true,
+        contextVariables,
       };
     } else if ('schema' in this.config) {
       return this.getCodeFirstSource(this.config);

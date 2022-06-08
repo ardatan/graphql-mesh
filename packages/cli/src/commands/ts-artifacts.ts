@@ -59,7 +59,11 @@ function buildSignatureBasedOnRootFields(
   return operationMap;
 }
 
-async function generateTypesForApi(options: { schema: GraphQLSchema; name: string }) {
+async function generateTypesForApi(options: {
+  schema: GraphQLSchema;
+  name: string;
+  contextVariables: Record<string, string>;
+}) {
   const baseTypes = await codegen({
     filename: options.name + '_types.ts',
     documents: [],
@@ -119,7 +123,12 @@ ${Object.values(subscriptionsOperationMap).join(',\n')}
   const context = {
     identifier: contextIdentifier,
     codeAst: `export type ${contextIdentifier} = {
-      ["${options.name}"]: { Query: Query${sdkIdentifier}, Mutation: Mutation${sdkIdentifier}, Subscription: Subscription${sdkIdentifier} },
+      [${JSON.stringify(
+        options.name
+      )}]: { Query: Query${sdkIdentifier}, Mutation: Mutation${sdkIdentifier}, Subscription: Subscription${sdkIdentifier} },
+      ${Object.keys(options.contextVariables)
+        .map(key => `[${JSON.stringify(key)}]: ${options.contextVariables[key]}`)
+        .join(',\n')}
     };`,
   };
 
@@ -244,6 +253,7 @@ export async function generateTsArtifacts(
                   const item = await generateTypesForApi({
                     schema: sourceSchema,
                     name: source.name,
+                    contextVariables: source.contextVariables,
                   });
 
                   if (item) {

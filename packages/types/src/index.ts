@@ -13,10 +13,10 @@ export const jsonSchema: any = configSchema;
 
 export { YamlConfig };
 
-export type MeshSource<ContextType = any, InitialContext = any> = {
+export type MeshSource = {
   schema: GraphQLSchema;
   executor?: Executor;
-  contextVariables?: (keyof InitialContext)[];
+  contextVariables?: Record<string, string>;
   batch?: boolean;
 };
 
@@ -32,12 +32,12 @@ export type GetMeshSourceOptions<THandlerConfig> = {
 };
 
 // Handlers
-export interface MeshHandler<TContext = any> {
-  getMeshSource: () => Promise<MeshSource<TContext>>;
+export interface MeshHandler {
+  getMeshSource: () => Promise<MeshSource>;
 }
 
-export interface MeshHandlerLibrary<TConfig = any, TContext = any> {
-  new (options: GetMeshSourceOptions<TConfig>): MeshHandler<TContext>;
+export interface MeshHandlerLibrary<TConfig = any> {
+  new (options: GetMeshSourceOptions<TConfig>): MeshHandler;
 }
 
 // Hooks
@@ -113,7 +113,7 @@ export type RawSourceOutput = {
   schema: GraphQLSchema;
   executor?: Executor;
   transforms: MeshTransform[];
-  contextVariables: (keyof any)[];
+  contextVariables: Record<string, string>;
   handler: MeshHandler;
   batch: boolean;
   merge?: Record<string, MergedTypeConfig>;

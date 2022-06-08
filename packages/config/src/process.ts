@@ -57,7 +57,7 @@ export type ConfigProcessOptions = {
 type EnvelopPlugins = Parameters<typeof envelop>[0]['plugins'];
 
 export type ProcessedConfig = {
-  sources: MeshResolvedSource<any>[];
+  sources: MeshResolvedSource[];
   transforms: MeshTransform[];
   additionalTypeDefs: DocumentNode[];
   additionalResolvers: IResolvers[];
