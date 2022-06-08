@@ -20,7 +20,7 @@ import { register as tsNodeRegister } from 'ts-node';
 import { register as tsConfigPathsRegister } from 'tsconfig-paths';
 import { config as dotEnvRegister } from 'dotenv';
 import { printSchema } from 'graphql';
-import { stripJSONComments } from './utils';
+import JSON5 from 'json5';
 
 export { generateTsArtifacts, serveMesh, findAndParseConfig };
 
@@ -105,8 +105,7 @@ export async function graphqlMesh(
         if (tsConfigExists) {
           try {
             const tsConfigStr = fs.readFileSync(tsConfigPath, 'utf-8');
-            const tsConfigStrWithoutComments = stripJSONComments(tsConfigStr);
-            const tsConfig = JSON.parse(tsConfigStrWithoutComments);
+            const tsConfig = JSON5.parse(tsConfigStr);
             if (tsConfig.compilerOptions?.paths) {
               tsConfigPathsRegister({
                 baseUrl: baseDir,

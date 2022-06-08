@@ -13,7 +13,7 @@ import ts from 'typescript';
 import { pathExists, writeFile, writeJSON } from '@graphql-mesh/utils';
 import { generateOperations } from './generate-operations';
 import { GraphQLMeshCLIParams } from '..';
-import { stripJSONComments } from '../utils';
+import JSON5 from 'json5';
 
 const unifiedContextIdentifier = 'MeshContext';
 
@@ -444,7 +444,7 @@ const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url
   const tsConfigPath = pathModule.join(baseDir, 'tsconfig.json');
   if (await pathExists(tsConfigPath)) {
     const tsConfigStr = await fs.promises.readFile(tsConfigPath, 'utf-8');
-    const tsConfig = JSON.parse(stripJSONComments(tsConfigStr));
+    const tsConfig = JSON5.parse(tsConfigStr);
     if (tsConfig?.compilerOptions?.module?.toLowerCase()?.startsWith('es')) {
       jobs.push(esmJob('js'));
       if (fileType !== 'ts') {
