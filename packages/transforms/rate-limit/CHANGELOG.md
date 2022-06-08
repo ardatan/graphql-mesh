@@ -1,5 +1,14 @@
 # @graphql-mesh/transform-rate-limit
 
+## 0.1.28
+
+### Patch Changes
+
+- Updated dependencies [13b9b30f7]
+  - @graphql-mesh/string-interpolation@0.3.0
+  - @graphql-mesh/types@0.74.0
+  - @graphql-mesh/utils@0.35.4
+
 ## 0.1.27
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # @graphql-mesh/transform-cache
 
+## 0.12.15
+
+### Patch Changes
+
+- Updated dependencies [13b9b30f7]
+  - @graphql-mesh/string-interpolation@0.3.0
+  - @graphql-mesh/types@0.74.0
+  - @graphql-mesh/utils@0.35.4
+
 ## 0.12.14
 
 ### Patch Changes
