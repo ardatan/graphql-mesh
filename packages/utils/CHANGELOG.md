@@ -1,5 +1,12 @@
 # @graphql-mesh/utils
 
+## 0.35.3
+
+### Patch Changes
+
+- 9733f490c: Do not strip long messages if DEBUG mode enabled
+  - @graphql-mesh/types@0.73.3
+
 ## 0.35.2
 
 ### Patch Changes
