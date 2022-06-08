@@ -302,7 +302,7 @@ export async function processConfig(
             const { importName, moduleName, pluginFactory } = ENVELOP_CORE_PLUGINS_MAP[pluginName];
             if (options.generateCode) {
               importCodes.push(`import { ${importName} } from ${JSON.stringify(moduleName)};`);
-              codes.push(`additionalEnvelopPlugins.push(${importName}(${JSON.stringify(pluginConfig)}))`);
+              codes.push(`additionalEnvelopPlugins.push(${importName}(${JSON.stringify(pluginConfig, null, 2)}))`);
             }
             return pluginFactory(pluginConfig);
           }
@@ -321,7 +321,7 @@ export async function processConfig(
               importName = pascalCase('use_' + pluginName);
               importCodes.push(`import ${importName} from ${JSON.stringify(moduleName)};`);
               codes.push(`additionalEnvelopPlugins.push(${importName}({
-          ...(${JSON.stringify(pluginConfig)}),
+          ...(${JSON.stringify(pluginConfig, null, 2)}),
           logger: logger.child(${JSON.stringify(pluginName)}),
         }))`);
             }
@@ -331,7 +331,7 @@ export async function processConfig(
                 pluginFactory = possiblePluginFactory[key];
                 if (options.generateCode) {
                   importCodes.push(`import { ${importName} } from ${JSON.stringify(moduleName)};`);
-                  codes.push(`additionalEnvelopPlugins.push(${importName}(${JSON.stringify(pluginConfig)}])`);
+                  codes.push(`additionalEnvelopPlugins.push(${importName}(${JSON.stringify(pluginConfig, null, 2)}])`);
                 }
               }
             });
@@ -399,7 +399,7 @@ export async function processConfig(
             .then(m => m.resolvers || m.default || m)`;
             } else {
               return `resolveAdditionalResolversWithoutImport(
-            ${JSON.stringify(additionalResolverDefinition)})
+            ${JSON.stringify(additionalResolverDefinition, null, 2)}
           )`;
             }
           })
