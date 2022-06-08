@@ -31,9 +31,9 @@
     "@graphql-mesh/types": "0.73.2",
     "@graphql-mesh/utils": "0.35.2",
     "fetchache": "0.1.2",
-    "@graphql-tools/schema": "8.3.13",
-    "@graphql-tools/wrap": "8.4.19",
-    "@graphql-tools/utils": "8.6.12",
+    "@graphql-tools/schema": "8.3.14",
+    "@graphql-tools/wrap": "8.4.20",
+    "@graphql-tools/utils": "8.6.13",
     "tslib": "^2.4.0"
   },
   "publishConfig": {

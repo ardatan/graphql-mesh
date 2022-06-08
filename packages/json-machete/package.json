@@ -30,7 +30,7 @@
     "json-pointer": "0.6.2",
     "@graphql-mesh/utils": "0.35.2",
     "@graphql-mesh/cross-helpers": "0.1.6",
-    "@graphql-tools/utils": "8.6.12",
+    "@graphql-tools/utils": "8.6.13",
     "url-join": "4.0.1",
     "to-json-schema": "0.2.5",
     "tslib": "^2.4.0"

@@ -28,13 +28,13 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@apollo/subgraph": "2.0.4",
+    "@apollo/subgraph": "2.0.5",
     "@graphql-mesh/types": "0.73.2",
     "@graphql-mesh/utils": "0.35.2",
     "graphql-transform-federation": "2.2.0",
-    "@graphql-tools/utils": "8.6.12",
-    "@graphql-tools/stitching-directives": "2.2.17",
-    "@graphql-tools/delegate": "8.7.10",
+    "@graphql-tools/utils": "8.6.13",
+    "@graphql-tools/stitching-directives": "2.2.18",
+    "@graphql-tools/delegate": "8.7.11",
     "tslib": "^2.4.0"
   },
   "publishConfig": {
