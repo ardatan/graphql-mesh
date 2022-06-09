@@ -37,21 +37,20 @@ import {
   memoize1,
   parseSelectionSet,
 } from '@graphql-tools/utils';
-import { envelop, useErrorHandler, useExtendContext, useSchema } from '@envelop/core';
-
-type EnvelopPlugins = Parameters<typeof envelop>[0]['plugins'];
+import { enableIf, envelop, PluginOrDisabledPlugin, useExtendContext, useSchema } from '@envelop/core';
+import { OneOfInputObjectsRule, useExtendedValidation } from '@envelop/extended-validation';
 
 export interface MeshInstance<TMeshContext = any> {
   execute: ExecuteMeshFn;
   subscribe: SubscribeMeshFn;
   schema: GraphQLSchema;
-  rawSources: RawSourceOutput[];
+  rawSources: readonly RawSourceOutput[];
   destroy: () => void;
   pubsub: MeshPubSub;
   cache: KeyValueCache;
   logger: Logger;
   meshContext: TMeshContext;
-  plugins: EnvelopPlugins;
+  plugins: readonly PluginOrDisabledPlugin[];
   getEnveloped: ReturnType<typeof envelop>;
   sdkRequesterFactory: (globalContext: any) => (document: DocumentNode, variables?: any, operationContext?: any) => any;
 }
@@ -64,7 +63,12 @@ const memoizedGetOperationType = memoize1((document: DocumentNode) => {
   return operationAST.operation;
 });
 
-const memoizedGetEnvelopedFactory = memoize1((plugins: EnvelopPlugins) => envelop({ plugins }));
+const memoizedGetEnvelopedFactory = memoize1(function getEnvelopedFactory(plugins: PluginOrDisabledPlugin[]) {
+  const getEnveloped = envelop({ plugins });
+  return memoize1(function getEnvelopedByContext(initialContext: any) {
+    return getEnveloped(initialContext);
+  });
+});
 
 export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Promise<MeshInstance<TMeshContext>> {
   const rawSources: RawSourceOutput[] = [];
@@ -321,12 +325,14 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
     })
   );
 
-  const plugins: EnvelopPlugins = [
+  const plugins: PluginOrDisabledPlugin[] = [
     useSchema(unifiedSchema),
     useExtendContext(() => meshContext),
-    useErrorHandler(errors => {
-      errors.forEach(error => logger.error(error.stack || error.message));
-    }),
+    enableIf(!!unifiedSchema.getDirective('oneOf'), () =>
+      useExtendedValidation({
+        rules: [OneOfInputObjectsRule],
+      })
+    ),
     {
       onParse({ setParseFn }) {
         setParseFn(parseWithCache);
@@ -423,7 +429,7 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
     meshContext: meshContext as TMeshContext,
     plugins,
     get getEnveloped() {
-      return memoizedGetEnvelopedFactory(plugins);
+      return memoizedGetEnvelopedFactory(plugins) as ReturnType<typeof envelop>;
     },
     sdkRequesterFactory,
   };

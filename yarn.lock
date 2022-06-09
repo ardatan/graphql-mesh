@@ -2646,6 +2646,13 @@
   dependencies:
     "@envelop/types" "2.2.1"
 
+"@envelop/extended-validation@1.6.3":
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/@envelop/extended-validation/-/extended-validation-1.6.3.tgz#6b899c08eb203217873ae9ea6f853a7ce32d056b"
+  integrity sha512-qFw7ZmdyORGAVeKWqD/KKsY+Cbm3QM48uBcMWlO2DHqVqoEg7zGY5c9Eu2RE9gn5eFHSgHupIDeMt8ilZVLQ/Q==
+  dependencies:
+    "@graphql-tools/utils" "^8.6.1"
+
 "@envelop/live-query@3.3.3":
   version "3.3.3"
   resolved "https://registry.yarnpkg.com/@envelop/live-query/-/live-query-3.3.3.tgz#f95a60acb95be406b02a56309ba8b756f6017456"

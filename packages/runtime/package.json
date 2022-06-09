@@ -36,6 +36,7 @@
     "@graphql-tools/wrap": "8.4.20",
     "@graphql-tools/utils": "8.6.13",
     "@envelop/core": "2.3.3",
+    "@envelop/extended-validation": "1.6.3",
     "tslib": "^2.4.0"
   },
   "publishConfig": {
