@@ -156,7 +156,7 @@ export async function generateTsArtifacts(
     codegenConfig = {},
   }: {
     unifiedSchema: GraphQLSchema;
-    rawSources: RawSourceOutput[];
+    rawSources: readonly RawSourceOutput[];
     mergerType: string;
     documents: Source[];
     flattenTypes: boolean;

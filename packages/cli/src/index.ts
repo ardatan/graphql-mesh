@@ -19,7 +19,7 @@ import { Logger, YamlConfig } from '@graphql-mesh/types';
 import { register as tsNodeRegister } from 'ts-node';
 import { register as tsConfigPathsRegister } from 'tsconfig-paths';
 import { config as dotEnvRegister } from 'dotenv';
-import { printSchema } from 'graphql';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import JSON5 from 'json5';
 
 export { generateTsArtifacts, serveMesh, findAndParseConfig };
@@ -146,7 +146,9 @@ export async function graphqlMesh(
           logger = meshConfig.logger;
           const meshInstance$ = getMesh(meshConfig);
           meshInstance$
-            .then(({ schema }) => writeFile(pathModule.join(outputDir, 'schema.graphql'), printSchema(schema)))
+            .then(({ schema }) =>
+              writeFile(pathModule.join(outputDir, 'schema.graphql'), printSchemaWithDirectives(schema))
+            )
             .catch(e => {
               logger.error(`An error occured while writing the schema file: ${e.stack || e.message}`);
             });
@@ -376,7 +378,7 @@ export async function graphqlMesh(
 
           logger.info(`Generating the unified schema`);
           const { schema, destroy, rawSources } = await getMesh(meshConfig);
-          await writeFile(pathModule.join(outputDir, 'schema.graphql'), printSchema(schema));
+          await writeFile(pathModule.join(outputDir, 'schema.graphql'), printSchemaWithDirectives(schema));
 
           logger.info(`Generating artifacts`);
           await generateTsArtifacts(
