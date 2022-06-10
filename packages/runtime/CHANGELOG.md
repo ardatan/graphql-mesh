@@ -1,5 +1,11 @@
 # @graphql-mesh/runtime
 
+## 0.37.0
+
+### Minor Changes
+
+- ab93f1697: Handle @oneOf validation if used by any sources
+
 ## 0.36.1
 
 ### Patch Changes
