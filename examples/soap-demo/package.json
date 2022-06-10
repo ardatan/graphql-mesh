@@ -1,6 +1,6 @@
 {
   "name": "soap-demo",
-  "version": "0.0.105",
+  "version": "0.0.106",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -11,8 +11,8 @@
     "start": "yarn dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.73.0",
-    "@graphql-mesh/soap": "0.10.61",
+    "@graphql-mesh/cli": "0.73.1",
+    "@graphql-mesh/soap": "0.10.62",
     "graphql": "16.0.1"
   },
   "devDependencies": {

@@ -1,5 +1,19 @@
 # @graphql-mesh/config
 
+## 1.0.1
+
+### Patch Changes
+
+- ed9ba7f48: fix(config): generate artifacts by respecting the order of transforms & sources
+- Updated dependencies [ed9ba7f48]
+  - @graphql-mesh/types@0.74.2
+  - @graphql-mesh/utils@0.35.6
+  - @graphql-mesh/cache-localforage@0.6.12
+  - @graphql-mesh/merger-bare@0.13.54
+  - @graphql-mesh/merger-stitching@0.15.56
+  - @graphql-mesh/runtime@0.37.1
+  - @graphql-mesh/store@0.8.15
+
 ## 1.0.0
 
 ### Patch Changes

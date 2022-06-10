@@ -1,5 +1,12 @@
 # reddit-example
 
+## 0.0.31
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.73.1
+- @graphql-mesh/json-schema@0.28.18
+
 ## 0.0.30
 
 ### Patch Changes

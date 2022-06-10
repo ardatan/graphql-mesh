@@ -1,5 +1,12 @@
 # @graphql-mesh/types
 
+## 0.74.2
+
+### Patch Changes
+
+- ed9ba7f48: Small improvements for relaxing event loop
+  - @graphql-mesh/store@0.8.15
+
 ## 0.74.1
 
 ### Patch Changes
