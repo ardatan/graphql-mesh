@@ -1,5 +1,17 @@
 # @graphql-mesh/cli
 
+## 0.73.0
+
+### Minor Changes
+
+- 4534e71ca: Use printSchemaWithDirectives in favor of printSchema to have directives in the printed schema
+
+### Patch Changes
+
+- Updated dependencies [ab93f1697]
+  - @graphql-mesh/runtime@0.37.0
+  - @graphql-mesh/config@1.0.0
+
 ## 0.72.1
 
 ### Patch Changes
