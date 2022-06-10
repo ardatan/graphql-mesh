@@ -18,9 +18,9 @@ export async function getTestMesh() {
     validate: false,
   });
   await yoga.start();
-  const subId$ = pubsub.subscribe('destroy', async () => {
+  const subId = pubsub.subscribe('destroy', async () => {
+    pubsub.unsubscribe(subId);
     await yoga.stop();
-    subId$.then(subId => pubsub.unsubscribe(subId)).catch(err => console.error(err));
   });
   const mesh = await getMesh({
     sources: [

@@ -15,9 +15,7 @@ describe('Rate Limit Transform', () => {
   });
 
   afterEach(() => {
-    pubsub
-      .publish('destroy', {} as any)
-      .catch(e => console.warn(`Error on emitting destroy: ${e.stack || e.message || e}`));
+    pubsub.publish('destroy', {} as any);
   });
 
   const baseDir = process.cwd();

@@ -484,7 +484,7 @@
           "description": "Handler for gRPC and Protobuf schemas"
         },
         "jsonSchema": {
-          "description": "Handler for JSON Schema specification. Source could be a local json file, or a url to it. (Any of: JsonSchemaHandler, JsonSchemaHandlerBundle)",
+          "description": "Handler for JSON Schema specification.\nSource could be a local json file, or a url to it. (Any of: JsonSchemaHandler, JsonSchemaHandlerBundle)",
           "anyOf": [
             {
               "$ref": "#/definitions/JsonSchemaHandler"

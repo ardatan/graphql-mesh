@@ -104,9 +104,9 @@ export default class FederationMerger implements MeshMerger {
       },
       batch: true,
     });
-    const id$ = this.pubsub.subscribe('destroy', () => {
-      gateway.stop().catch(err => this.logger.error(err));
-      id$.then(id => this.pubsub.unsubscribe(id)).catch(err => console.error(err));
+    const id = this.pubsub.subscribe('destroy', async () => {
+      this.pubsub.unsubscribe(id);
+      await gateway.stop();
     });
     this.logger.debug(`Applying additionalTypeDefs`);
     typeDefs?.forEach(typeDef => {

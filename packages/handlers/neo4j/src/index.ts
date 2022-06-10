@@ -9,24 +9,19 @@ import { process } from '@graphql-mesh/cross-helpers';
 function getEventEmitterFromPubSub(pubsub: MeshPubSub): any {
   return {
     on(event: string | symbol, listener: (...args: any[]) => void) {
-      pubsub.subscribe(event.toString(), listener).catch(e => console.error(e));
+      pubsub.subscribe(event.toString(), listener);
       return this;
     },
     once(event: string | symbol, listener: (...args: any[]) => void) {
-      let id: number;
-      pubsub
-        .subscribe(event.toString(), data => {
-          listener(data);
-          pubsub.unsubscribe(id);
-        })
-        .then(subId => {
-          id = subId;
-        })
-        .catch(e => console.error(e));
+      const id = pubsub.subscribe(event.toString(), data => {
+        listener(data);
+        pubsub.unsubscribe(id);
+      });
+
       return this;
     },
     emit(event: string | symbol, ...args: any[]) {
-      pubsub.publish(event.toString(), args[0]).catch(e => console.error(e));
+      pubsub.publish(event.toString(), args[0]);
       return true;
     },
     addListener(event: string | symbol, listener: (...args: any[]) => void) {
@@ -75,17 +70,11 @@ export default class Neo4JHandler implements MeshHandler {
       },
     });
 
-    const id$ = this.pubsub.subscribe('destroy', () => {
+    const id = this.pubsub.subscribe('destroy', async () => {
+      this.pubsub.unsubscribe(id);
       this.logger.debug('Closing Neo4j');
-      driver
-        .close()
-        .then(() => {
-          this.logger.debug('Neo4j has been closed');
-        })
-        .catch(error => {
-          this.logger.debug(`Neo4j couldn't be closed: `, error);
-        });
-      id$.then(id => this.pubsub.unsubscribe(id)).catch(err => console.error(err));
+      await driver.close();
+      this.logger.debug('Neo4j closed');
     });
 
     const typeDefs = await this.getCachedTypeDefs(driver);

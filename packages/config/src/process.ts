@@ -218,16 +218,14 @@ export async function processConfig(
                 if (options.generateCode) {
                   const transformImportName = pascalCase(transformName + '_Transform');
                   importCodes.push(`import ${transformImportName} from ${JSON.stringify(moduleName)};`);
-                  codes.push(`${transformsVariableName}.push(
-                new ${transformImportName}({
+                  codes.push(`${transformsVariableName}[${transformIndex}] = new ${transformImportName}({
                   apiName: ${JSON.stringify(source.name)},
                   config: ${JSON.stringify(transformConfig)},
                   baseDir,
                   cache,
                   pubsub,
                   importFn
-                })
-              );`);
+                });`);
                 }
 
                 return new TransformCtor({
@@ -243,11 +241,11 @@ export async function processConfig(
           ]);
 
           if (options.generateCode) {
-            codes.push(`sources.push({
+            codes.push(`sources[${sourceIndex}] = {
           name: '${source.name}',
           handler: ${handlerVariableName},
           transforms: ${transformsVariableName}
-        })`);
+        }`);
           }
 
           return {
@@ -273,16 +271,14 @@ export async function processConfig(
             const transformImportName = pascalCase(transformName + '_Transform');
             importCodes.push(`import ${transformImportName} from ${JSON.stringify(moduleName)};`);
 
-            codes.push(`transforms.push(
-          new (${transformImportName} as any)({
+            codes.push(`transforms[${transformIndex}] = new (${transformImportName} as any)({
             apiName: '',
             config: ${JSON.stringify(transformConfig)},
             baseDir,
             cache,
             pubsub,
             importFn
-          })
-        )`);
+          })`);
           }
           return new TransformLibrary({
             apiName: '',
@@ -302,7 +298,9 @@ export async function processConfig(
             const { importName, moduleName, pluginFactory } = ENVELOP_CORE_PLUGINS_MAP[pluginName];
             if (options.generateCode) {
               importCodes.push(`import { ${importName} } from ${JSON.stringify(moduleName)};`);
-              codes.push(`additionalEnvelopPlugins.push(${importName}(${JSON.stringify(pluginConfig, null, 2)}))`);
+              codes.push(
+                `additionalEnvelopPlugins[${pluginIndex}] = ${importName}(${JSON.stringify(pluginConfig, null, 2)}))`
+              );
             }
             return pluginFactory(pluginConfig);
           }
@@ -320,10 +318,10 @@ export async function processConfig(
             if (options.generateCode) {
               importName = pascalCase('use_' + pluginName);
               importCodes.push(`import ${importName} from ${JSON.stringify(moduleName)};`);
-              codes.push(`additionalEnvelopPlugins.push(${importName}({
+              codes.push(`additionalEnvelopPlugins[${pluginIndex}] = ${importName}({
           ...(${JSON.stringify(pluginConfig, null, 2)}),
           logger: logger.child(${JSON.stringify(pluginName)}),
-        }))`);
+        })`);
             }
           } else {
             Object.keys(possiblePluginFactory).forEach(key => {
@@ -331,7 +329,9 @@ export async function processConfig(
                 pluginFactory = possiblePluginFactory[key];
                 if (options.generateCode) {
                   importCodes.push(`import { ${importName} } from ${JSON.stringify(moduleName)};`);
-                  codes.push(`additionalEnvelopPlugins.push(${importName}(${JSON.stringify(pluginConfig, null, 2)}])`);
+                  codes.push(
+                    `additionalEnvelopPlugins[${pluginIndex}] = ${importName}(${JSON.stringify(pluginConfig, null, 2)}]`
+                  );
                 }
               }
             });

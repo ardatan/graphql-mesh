@@ -44,15 +44,10 @@ export default class RedisCache<V = string> implements KeyValueCache<V> {
         return new LocalforageCache(options as any) as any;
       }
     }
-    const id$ = options.pubsub
-      .subscribe('destroy', () => {
-        this.client.disconnect(false);
-        id$.then(id => options.pubsub.unsubscribe(id)).catch(err => console.error(err));
-      })
-      .catch(err => {
-        console.error(err);
-        return 0;
-      });
+    const id = options.pubsub.subscribe('destroy', () => {
+      this.client.disconnect(false);
+      options.pubsub.unsubscribe(id);
+    });
   }
 
   async set(key: string, value: V, options?: KeyValueCacheSetOptions): Promise<void> {

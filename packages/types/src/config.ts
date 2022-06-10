@@ -207,7 +207,8 @@ export interface Handler {
     | GraphQLHandlerMultipleHTTPConfiguration;
   grpc?: GrpcHandler;
   /**
-   * Handler for JSON Schema specification. Source could be a local json file, or a url to it. (Any of: JsonSchemaHandler, JsonSchemaHandlerBundle)
+   * Handler for JSON Schema specification.
+   * Source could be a local json file, or a url to it. (Any of: JsonSchemaHandler, JsonSchemaHandlerBundle)
    */
   jsonSchema?: JsonSchemaHandler | JsonSchemaHandlerBundle;
   mongoose?: MongooseHandler;

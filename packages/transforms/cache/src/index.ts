@@ -148,8 +148,8 @@ export default class CacheTransform implements MeshTransform {
 
   private waitAndReturn(pubsubTopic: string) {
     return new Promise((resolve, reject) => {
-      const subId$ = this.options.pubsub.subscribe(pubsubTopic, async ({ result, error }) => {
-        subId$.then(subId => this.options.pubsub.unsubscribe(subId));
+      const subId = this.options.pubsub.subscribe(pubsubTopic, ({ result, error }) => {
+        this.options.pubsub.unsubscribe(subId);
 
         if (error) {
           reject(error);

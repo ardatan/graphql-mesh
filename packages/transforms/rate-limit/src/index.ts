@@ -16,9 +16,9 @@ export default class RateLimitTransform implements MeshTransform {
       });
     }
     if (options.pubsub) {
-      const id$ = options.pubsub.subscribe('destroy', () => {
+      const id = options.pubsub.subscribe('destroy', () => {
+        options.pubsub.unsubscribe(id);
         this.timeouts.forEach(timeout => clearTimeout(timeout));
-        id$.then(id => options.pubsub.unsubscribe(id)).catch(err => console.error(err));
       });
     }
   }
