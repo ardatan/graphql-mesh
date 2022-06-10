@@ -44,13 +44,13 @@ export interface MeshInstance<TMeshContext = any> {
   execute: ExecuteMeshFn;
   subscribe: SubscribeMeshFn;
   schema: GraphQLSchema;
-  rawSources: readonly RawSourceOutput[];
-  destroy: () => void;
+  rawSources: RawSourceOutput[];
+  destroy(): void;
   pubsub: MeshPubSub;
   cache: KeyValueCache;
   logger: Logger;
   meshContext: TMeshContext;
-  plugins: readonly PluginOrDisabledPlugin[];
+  plugins: PluginOrDisabledPlugin[];
   getEnveloped: ReturnType<typeof envelop>;
   sdkRequesterFactory: (globalContext: any) => (document: DocumentNode, variables?: any, operationContext?: any) => any;
 }
@@ -424,7 +424,9 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
     rawSources,
     cache,
     pubsub,
-    destroy: () => pubsub.publish('destroy', undefined),
+    destroy() {
+      return pubsub.publish('destroy', undefined);
+    },
     logger,
     meshContext: meshContext as TMeshContext,
     plugins,
