@@ -9,7 +9,7 @@ type LoadFromModuleExportExpressionOptions = {
   importFn: ImportFn;
 };
 
-export function loadFromModuleExportExpression<T>(
+export async function loadFromModuleExportExpression<T>(
   expression: T | string,
   options: LoadFromModuleExportExpressionOptions
 ): Promise<T> {
@@ -19,16 +19,17 @@ export function loadFromModuleExportExpression<T>(
 
   const { defaultExportName, cwd, importFn = defaultImportFn } = options || {};
   const [modulePath, exportName = defaultExportName] = expression.split('#');
-  return tryImport(modulePath, cwd, importFn).then(
-    mod => mod[exportName] || (mod.default && mod.default[exportName]) || mod.default || mod
-  );
+  const mod = await tryImport(modulePath, cwd, importFn);
+  return mod[exportName] || (mod.default && mod.default[exportName]) || mod.default || mod;
 }
 
-function tryImport(modulePath: string, cwd: string, importFn: ImportFn) {
-  return importFn(modulePath).catch((e1: Error): any => {
+async function tryImport(modulePath: string, cwd: string, importFn: ImportFn) {
+  try {
+    return await importFn(modulePath);
+  } catch {
     if (!path.isAbsolute(modulePath)) {
       const absoluteModulePath = path.isAbsolute(modulePath) ? modulePath : path.join(cwd, modulePath);
       return importFn(absoluteModulePath);
     }
-  });
+  }
 }

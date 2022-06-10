@@ -8,14 +8,14 @@ export class PubSub implements MeshPubSub {
   private listenerEventMap = new Map<Listener, HookName>();
   private eventNameListenersMap = new Map<HookName, Set<Listener>>();
 
-  async publish<THook extends HookName>(triggerName: THook, detail: AllHooks[THook]): Promise<void> {
+  publish<THook extends HookName>(triggerName: THook, detail: AllHooks[THook]): void {
     const eventNameListeners = this.eventNameListenersMap.get(triggerName);
     if (eventNameListeners) {
       Promise.allSettled([...eventNameListeners].map(listener => listener(detail))).catch(e => console.error(e));
     }
   }
 
-  async subscribe<THook extends HookName>(triggerName: THook, onMessage: Listener<THook>): Promise<number> {
+  subscribe<THook extends HookName>(triggerName: THook, onMessage: Listener<THook>): number {
     let eventNameListeners = this.eventNameListenersMap.get(triggerName);
     if (!eventNameListeners) {
       eventNameListeners = new Set();
@@ -46,9 +46,9 @@ export class PubSub implements MeshPubSub {
   asyncIterator<THook extends HookName>(triggerName: THook): AsyncIterable<AllHooks[THook]> {
     return observableToAsyncIterable({
       subscribe: observer => {
-        const subId$ = this.subscribe(triggerName, data => observer.next(data));
+        const subId = this.subscribe(triggerName, data => observer.next(data));
         return {
-          unsubscribe: () => subId$.then(subId => this.unsubscribe(subId)),
+          unsubscribe: () => this.unsubscribe(subId),
         };
       },
     });
