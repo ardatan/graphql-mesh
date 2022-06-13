@@ -37,7 +37,7 @@
     "@graphql-mesh/store": "0.8.15",
     "@graphql-mesh/utils": "0.35.6",
     "@graphql-mesh/types": "0.74.2",
-    "neo4j-driver": "4.4.5",
+    "neo4j-driver": "4.4.6",
     "tslib": "^2.4.0",
     "@graphql-tools/utils": "8.6.13"
   },
