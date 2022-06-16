@@ -562,6 +562,9 @@
         },
         "liveQuery": {
           "$ref": "#/definitions/LiveQueryConfig"
+        },
+        "responseCache": {
+          "$ref": "#/definitions/ResponseCacheConfig"
         }
       }
     },
@@ -2094,6 +2097,63 @@
         }
       },
       "required": ["field", "invalidate"]
+    },
+    "ResponseCacheConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ResponseCacheConfig",
+      "properties": {
+        "ttl": {
+          "type": "number",
+          "description": "Maximum age in ms. Defaults to `Infinity`. Set it to 0 for disabling the global TTL."
+        },
+        "ttlPerCoordinate": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ResponseCacheTTLConfig"
+          },
+          "additionalItems": false,
+          "description": "Overwrite the ttl for query operations whose selection contains a specific schema coordinate (e.g. Query.users).\nUseful if the selection of a specific field should reduce the TTL of the query operation."
+        },
+        "ignoredTypes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "Skip caching of following the types."
+        },
+        "idFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "List of fields that are used to identify the entity."
+        },
+        "invalidateViaMutation": {
+          "type": "boolean",
+          "description": "Whether the mutation execution result should be used for invalidating resources.\nDefaults to `true`"
+        },
+        "includeExtensionMetadata": {
+          "type": "boolean",
+          "description": "Include extension values that provide useful information, such as whether the cache was hit or which resources a mutation invalidated."
+        }
+      }
+    },
+    "ResponseCacheTTLConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ResponseCacheTTLConfig",
+      "properties": {
+        "coordinate": {
+          "type": "string"
+        },
+        "ttl": {
+          "type": "number"
+        }
+      },
+      "required": ["coordinate", "ttl"]
     },
     "PostGraphileHandler": {
       "additionalProperties": false,

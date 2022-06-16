@@ -23,16 +23,16 @@ sources:
             to:
               type: WeatherError
 
-transforms:
-  - cache:
-      # Geo data doesn't change frequently, so we can cache it forever
-      - field: Query.*
-      # Forcast data might change, so we can cache it for 1 hour only
-      - field: PopulatedPlaceSummary.dailyForecast
-        invalidate:
+plugins:
+  - responseCache:
+      ttlPerCoordinate:
+        # Geo data doesn't change frequently, so we can cache it forever
+        - coordinate: Query.*
+          ttl: 0
+        # Forcast data might change, so we can cache it for 1 hour only
+        - coordinate: PopulatedPlaceSummary.dailyForecast
           ttl: 3600
-      - field: PopulatedPlaceSummary.todayForecast
-        invalidate:
+        - coordinate: PopulatedPlaceSummary.todayForecast
           ttl: 3600
 
 additionalTypeDefs: |

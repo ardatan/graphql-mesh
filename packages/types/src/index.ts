@@ -104,6 +104,7 @@ export interface MeshMerger {
 
 export type MeshPluginOptions<TConfig> = TConfig & {
   logger: Logger;
+  cache: KeyValueCache;
 };
 
 export type MeshPluginFactory<TConfig> = (options: MeshPluginOptions<TConfig>) => Plugin;
