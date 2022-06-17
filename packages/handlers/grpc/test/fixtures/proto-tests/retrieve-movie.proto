@@ -32,6 +32,10 @@ message movie_request {
     Movie movie = 1;
 }
 
+message movie_request_by_ids {
+    repeated string movieIds = 1;
+}
+
 message SearchByCastRequest {
     string castName = 1;
 }
@@ -53,6 +57,11 @@ service Example {
   rpc GetMovies (movie_request) returns (MoviesResult) {}
 
   /**
+  * get movies
+  */
+  rpc RetrieveMovies (movie_request_by_ids) returns (MoviesResult) {}
+
+  /**
   * search movies by the name of the cast
   */
   rpc SearchMoviesByCast (SearchByCastRequest) returns (stream Movie) {}
@@ -64,6 +73,11 @@ service AnotherExample {
   * get all movies
   */
   rpc GetMovies (movie_request) returns (MoviesResult) {}
+
+  /**
+  * get movies
+  */
+  rpc RetrieveMovies (movie_request_by_ids) returns (MoviesResult) {}
 
   /**
   * search movies by the name of the cast

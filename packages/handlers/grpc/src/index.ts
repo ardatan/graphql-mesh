@@ -407,7 +407,6 @@ ${rootJsonAndDecodedDescriptorSets
         } else {
           const methodNameLowerCased = methodName.toLowerCase();
           const prefixQueryMethod = this.config.prefixQueryMethod || QUERY_METHOD_PREFIXES;
-          this.logger.info("hahaha", prefixQueryMethod)
           const rootTypeComposer = prefixQueryMethod.some(prefix => methodNameLowerCased.startsWith(prefix))
             ? this.schemaComposer.Query
             : this.schemaComposer.Mutation;
