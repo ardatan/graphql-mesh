@@ -1,4 +1,4 @@
-import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import { YamlConfig } from '@graphql-mesh/types';
 import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
 import { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
 import { ExecutionResult, ExecutionRequest } from '@graphql-tools/utils';
@@ -10,18 +10,14 @@ import {
   TransformCompositeFields,
 } from '@graphql-tools/wrap';
 import { GraphQLSchema } from 'graphql';
-import { matcher } from 'micromatch';
+import micromatch from 'micromatch';
 
-export default class WrapFilter implements MeshTransform {
+export default class WrapFilter implements Transform {
   private transforms: Transform[] = [];
-  constructor(options: MeshTransformOptions<YamlConfig.FilterSchemaTransform>) {
-    const {
-      config: { filters },
-    } = options;
-
+  constructor({ config: { filters } }: { config: YamlConfig.FilterSchemaTransform }) {
     for (const filter of filters) {
       const [typeName, fieldNameOrGlob, argsGlob] = filter.split('.');
-      const isTypeMatch = matcher(typeName);
+      const isTypeMatch = micromatch.matcher(typeName);
 
       // TODO: deprecate this in next major release as dscussed in #1605
       if (!fieldNameOrGlob) {
@@ -39,19 +35,19 @@ export default class WrapFilter implements MeshTransform {
       }
       fixedFieldGlob = fixedFieldGlob.split(', ').join(',');
 
-      const isMatch = matcher(fixedFieldGlob.trim());
+      const isMatch = micromatch.matcher(fixedFieldGlob.trim());
 
       if (typeName === 'Type') {
         this.transforms.push(
           new FilterTypes(type => {
             return isMatch(type.name);
-          }) as any
+          })
         );
         continue;
       }
 
       if (argsGlob) {
-        const isFieldMatch = matcher(fieldNameOrGlob);
+        const isFieldMatch = micromatch.matcher(fieldNameOrGlob);
 
         this.transforms.push(
           new TransformCompositeFields((fieldTypeName, fieldName, fieldConfig) => {
@@ -64,7 +60,7 @@ export default class WrapFilter implements MeshTransform {
               return { ...fieldConfig, args: fieldArgs };
             }
             return undefined;
-          }) as any
+          })
         );
         continue;
       }
@@ -76,7 +72,7 @@ export default class WrapFilter implements MeshTransform {
             return isMatch(rootFieldName);
           }
           return true;
-        }) as any
+        })
       );
 
       this.transforms.push(
@@ -85,7 +81,7 @@ export default class WrapFilter implements MeshTransform {
             return isMatch(objectFieldName);
           }
           return true;
-        }) as any
+        })
       );
 
       this.transforms.push(
@@ -94,7 +90,7 @@ export default class WrapFilter implements MeshTransform {
             return isMatch(inputObjectFieldName);
           }
           return true;
-        }) as any
+        })
       );
     }
   }

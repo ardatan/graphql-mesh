@@ -2692,6 +2692,15 @@
   dependencies:
     tiny-lru "7.0.6"
 
+"@envelop/response-cache@2.3.3":
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/@envelop/response-cache/-/response-cache-2.3.3.tgz#85cb016f71c31677a2169547c27d9dfc63b0829d"
+  integrity sha512-kNAtpqWmUTihAbTCgJY+Fuapx2wTrEpKARLSPEak5clo3J/C9aQ4ubt9qzfwTrTvI7fOF7SLFE4IIRm9VYsa5w==
+  dependencies:
+    "@graphql-tools/utils" "^8.6.1"
+    fast-json-stable-stringify "^2.1.0"
+    lru-cache "^6.0.0"
+
 "@envelop/types@2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@envelop/types/-/types-2.2.1.tgz#5c2e3ae04837533521d0800e7dfa4c3f86f70c4c"

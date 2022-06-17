@@ -1,5 +1,5 @@
 import { GraphQLSchema } from 'graphql';
-import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
+import { YamlConfig } from '@graphql-mesh/types';
 import {
   RenameTypes,
   RenameObjectFields,
@@ -22,11 +22,10 @@ const ignoreList = [
   ...Object.keys(scalarsResolversMap),
 ];
 
-export default class WrapRename implements MeshTransform {
+export default class WrapRename implements Transform {
   private transforms: Transform[] = [];
 
-  constructor(options: MeshTransformOptions<YamlConfig.RenameTransform>) {
-    const { config } = options;
+  constructor({ config }: { config: YamlConfig.RenameTransform }) {
     for (const change of config.renames) {
       const {
         from: { type: fromTypeName, field: fromFieldName, argument: fromArgumentName },

@@ -116,7 +116,7 @@ export async function processConfig(
     importFn = defaultImportFn,
     store: providedStore,
     artifactsDir,
-    additionalPackagePrefixes,
+    additionalPackagePrefixes = [],
   } = options || {};
 
   if (config.require) {
@@ -321,6 +321,7 @@ export async function processConfig(
               codes.push(`additionalEnvelopPlugins[${pluginIndex}] = ${importName}({
           ...(${JSON.stringify(pluginConfig, null, 2)}),
           logger: logger.child(${JSON.stringify(pluginName)}),
+          cache,
         })`);
             }
           } else {
@@ -339,6 +340,7 @@ export async function processConfig(
           return pluginFactory({
             ...pluginConfig,
             logger: logger.child(pluginName),
+            cache,
           });
         }) || []
       ),

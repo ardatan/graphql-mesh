@@ -1817,6 +1817,7 @@ export interface Plugin {
   maskedErrors?: MaskedErrorsPluginConfig;
   immediateIntrospection?: any;
   liveQuery?: LiveQueryConfig;
+  responseCache?: ResponseCacheConfig;
   [k: string]: any;
 }
 export interface MaskedErrorsPluginConfig {
@@ -1831,4 +1832,36 @@ export interface LiveQueryConfig {
 export interface LiveQueryInvalidation {
   field: string;
   invalidate: string[];
+}
+export interface ResponseCacheConfig {
+  /**
+   * Maximum age in ms. Defaults to `Infinity`. Set it to 0 for disabling the global TTL.
+   */
+  ttl?: number;
+  /**
+   * Overwrite the ttl for query operations whose selection contains a specific schema coordinate (e.g. Query.users).
+   * Useful if the selection of a specific field should reduce the TTL of the query operation.
+   */
+  ttlPerCoordinate?: ResponseCacheTTLConfig[];
+  /**
+   * Skip caching of following the types.
+   */
+  ignoredTypes?: string[];
+  /**
+   * List of fields that are used to identify the entity.
+   */
+  idFields?: string[];
+  /**
+   * Whether the mutation execution result should be used for invalidating resources.
+   * Defaults to `true`
+   */
+  invalidateViaMutation?: boolean;
+  /**
+   * Include extension values that provide useful information, such as whether the cache was hit or which resources a mutation invalidated.
+   */
+  includeExtensionMetadata?: boolean;
+}
+export interface ResponseCacheTTLConfig {
+  coordinate: string;
+  ttl: number;
 }

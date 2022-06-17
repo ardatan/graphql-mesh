@@ -24,7 +24,14 @@ import {
 } from '@graphql-mesh/types';
 
 import { MESH_CONTEXT_SYMBOL, MESH_API_CONTEXT_SYMBOL } from './constants';
-import { applySchemaTransforms, groupTransforms, DefaultLogger, parseWithCache, PubSub } from '@graphql-mesh/utils';
+import {
+  applySchemaTransforms,
+  groupTransforms,
+  DefaultLogger,
+  parseWithCache,
+  PubSub,
+  printWithCache,
+} from '@graphql-mesh/utils';
 
 import { delegateToSchema, IDelegateToSchemaOptions, StitchingInfo, SubschemaConfig } from '@graphql-tools/delegate';
 import { BatchDelegateOptions, batchDelegateToSchema } from '@graphql-tools/batch-delegate';
@@ -408,6 +415,8 @@ export async function getMesh<TMeshContext = any>(options: GetMeshOptions): Prom
         const result = await meshExecute(document, variables, {
           ...globalContext,
           ...contextValue,
+          query: printWithCache(document),
+          variables,
         });
         if (result?.errors?.length) {
           return new AggregateError(result.errors);
