@@ -39,7 +39,7 @@ export default class WrapFilter implements MeshTransform {
       }
       fixedFieldGlob = fixedFieldGlob.split(', ').join(',');
 
-      const isMatch = matcher(fixedFieldGlob.trim());
+      const isMatch = micromatch.matcher(fixedFieldGlob.trim());
 
       if (typeName === 'Type') {
         this.transforms.push(
@@ -51,7 +51,7 @@ export default class WrapFilter implements MeshTransform {
       }
 
       if (argsGlob) {
-        const isFieldMatch = matcher(fieldNameOrGlob);
+        const isFieldMatch = micromatch.matcher(fieldNameOrGlob);
 
         this.transforms.push(
           new TransformCompositeFields((fieldTypeName, fieldName, fieldConfig) => {
