@@ -5,6 +5,8 @@ exports[`Type Merging and Batching Example should generate correct schema 1`] = 
   query: Query
 }
 
+directive @resolveTo(additionalArgs: ResolveToSourceArgs, keyField: String, keysArg: String, requiredSelectionSet: String, result: String, resultType: String, sourceArgs: ResolveToSourceArgs, sourceFieldName: String!, sourceName: String!, sourceSelectionSet: String, sourceTypeName: String!) on FIELD_DEFINITION
+
 type Author {
   books: [Book]
   id: ID
@@ -12,7 +14,7 @@ type Author {
 }
 
 type Book {
-  author: Author
+  author: Author @resolveTo(sourceName: \\"AuthorService\\", sourceTypeName: \\"Query\\", sourceFieldName: \\"authors\\", keyField: \\"authorId\\", keysArg: \\"ids\\")
   authorId: ID
   id: ID
   title: String
@@ -23,7 +25,9 @@ type Query {
   authors(ids: [ID]): [Author] @merge(keyField: \\"id\\")
   book(id: ID): Book @merge(keyField: \\"id\\")
   books: [Book]
-}"
+}
+
+scalar ResolveToSourceArgs"
 `;
 
 exports[`Type Merging and Batching Example should give correct response for example queries: Author.graphql-query-result 1`] = `

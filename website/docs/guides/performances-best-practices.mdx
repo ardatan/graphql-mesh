@@ -92,20 +92,17 @@ transforms:
 additionalTypeDefs: |
   # ...
   extend type Book {
-    author: authors_v1_Author
-  }
-additionalResolvers:
-  - targetTypeName: Book
-    targetFieldName: author
-    sourceName: Authors # Which source does the target field belong to?
-    sourceTypeName: Query # Which root type does the target field belong to?
-    sourceFieldName: authors_v1_AuthorsService_GetAuthor # What is the source field name?
-    requiredSelectionSet: |
-      {
-        authorId
+    author: authors_v1_Author @resolveTo(
+      sourceName: "Authors", # Which source does the target field belong to?
+      sourceTypeName: "Query", # Which root type does the target field belong to?
+      sourceFieldName: "authors_v1_AuthorsService_GetAuthor", # What is the source field name?
+      requiredSelectionSet: "{ authorId }",
+      # What args does this need to take?
+      sourceArgs: {
+        "input.id": "{root.authorId}"
       }
-    sourceArgs: # What args does this need to take?
-      input.id: '{root.authorId}'
+    )
+  }
 ```
 
 Assuming that the "Authors" is exposing a `authors_v1_AuthorsService_GetAuthors(input: authors_v1_GetAuthorsRequest_Input)` with `authors_v1_GetAuthorsRequest_Input` being:
@@ -125,20 +122,20 @@ sources:
   # ...
 transforms:
   # ...
+
+# Create a resolver with batching to solve N+1 problem
 additionalTypeDefs: |
   # ...
   extend type Book {
-    author: authors_v1_Author
+    author: authors_v1_Author @resolveTo(
+      targetTypeName: "Book",
+      targetFieldName: "author",
+      sourceFieldName: "authors_v1_AuthorsService_GetAuthors",
+      keyField: "authorId",
+      keysArg: "input.ids"
+    )
   }
-additionalResolvers:
-  # Create a resolver with batching to solve N+1 problem
-  - sourceName: Authors
-    sourceTypeName: Query
-    targetTypeName: Book
-    targetFieldName: author
-    sourceFieldName: authors_v1_AuthorsService_GetAuthors
-    keyField: authorId
-    keysArg: input.ids
+
 ```
 
 `requiredSelectionSet` and `sourceArgs` got replaced by `keyField` and `keysArg`:

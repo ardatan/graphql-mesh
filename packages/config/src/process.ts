@@ -425,6 +425,9 @@ export async function processConfig(
           sourceFieldName: String!
           sourceSelectionSet: String
           sourceArgs: ResolveToSourceArgs
+          keyField: String
+          keysArg: String
+          additionalArgs: ResolveToSourceArgs
           result: String
           resultType: String
         ) on FIELD_DEFINITION
