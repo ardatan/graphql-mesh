@@ -664,3 +664,100 @@ input io_xtech_SearchByCastRequest_Input {
   castName: String
 }"
 `;
+
+exports[`Load proto with prefixQueryMethod should load the retrieve-movie.proto 1`] = `
+"type Query {
+  \\"\\"\\"get all movies\\"\\"\\"
+  io_xtech_Example_GetMovies(input: io_xtech_movie_request_Input): io_xtech_MoviesResult
+
+  \\"\\"\\"get movies\\"\\"\\"
+  io_xtech_Example_RetrieveMovies(input: io_xtech_movie_request_by_ids_Input): io_xtech_MoviesResult
+  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
+
+  \\"\\"\\"get all movies\\"\\"\\"
+  io_xtech_AnotherExample_GetMovies(input: io_xtech_movie_request_Input): io_xtech_MoviesResult
+
+  \\"\\"\\"get movies\\"\\"\\"
+  io_xtech_AnotherExample_RetrieveMovies(input: io_xtech_movie_request_by_ids_Input): io_xtech_MoviesResult
+  io_xtech_AnotherExample_connectivityState(tryToConnect: Boolean): ConnectivityState
+}
+
+\\"\\"\\"movie result message, contains list of movies\\"\\"\\"
+type io_xtech_MoviesResult {
+  \\"\\"\\"list of movies\\"\\"\\"
+  result: [io_xtech_Movie]
+}
+
+\\"\\"\\"movie message payload\\"\\"\\"
+type io_xtech_Movie {
+  name: String
+  year: Int
+  rating: Float
+
+  \\"\\"\\"list of cast\\"\\"\\"
+  cast: [String]
+  time: google_protobuf_Timestamp
+  genre: io_xtech_Genre
+}
+
+type google_protobuf_Timestamp {
+  seconds: BigInt
+  nanos: Int
+}
+
+\\"\\"\\"
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+\\"\\"\\"
+scalar BigInt
+
+enum io_xtech_Genre {
+  UNSPECIFIED
+  ACTION
+  DRAMA
+}
+
+input io_xtech_movie_request_Input {
+  movie: io_xtech_Movie_Input
+}
+
+\\"\\"\\"movie message payload\\"\\"\\"
+input io_xtech_Movie_Input {
+  name: String
+  year: Int
+  rating: Float
+
+  \\"\\"\\"list of cast\\"\\"\\"
+  cast: [String]
+  time: google_protobuf_Timestamp_Input
+  genre: io_xtech_Genre
+}
+
+input google_protobuf_Timestamp_Input {
+  seconds: BigInt
+  nanos: Int
+}
+
+input io_xtech_movie_request_by_ids_Input {
+  movieIds: [String]
+}
+
+enum ConnectivityState {
+  IDLE
+  CONNECTING
+  READY
+  TRANSIENT_FAILURE
+  SHUTDOWN
+}
+
+type Subscription {
+  \\"\\"\\"search movies by the name of the cast\\"\\"\\"
+  io_xtech_Example_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie
+
+  \\"\\"\\"search movies by the name of the cast\\"\\"\\"
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie
+}
+
+input io_xtech_SearchByCastRequest_Input {
+  castName: String
+}"
+`;

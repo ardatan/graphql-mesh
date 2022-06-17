@@ -347,6 +347,10 @@ export interface GrpcHandler {
    * Use gRPC reflection to automatically gather the connection
    */
   useReflection?: boolean;
+  /**
+   * prefix to collect Query method default: list, get
+   */
+  prefixQueryMethod?: string[];
 }
 export interface ProtoFilePath {
   file: string;

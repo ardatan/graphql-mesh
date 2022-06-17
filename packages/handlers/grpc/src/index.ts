@@ -406,7 +406,8 @@ ${rootJsonAndDecodedDescriptorSets
           });
         } else {
           const methodNameLowerCased = methodName.toLowerCase();
-          const rootTypeComposer = QUERY_METHOD_PREFIXES.some(prefix => methodNameLowerCased.startsWith(prefix))
+          const prefixQueryMethod = this.config.prefixQueryMethod || QUERY_METHOD_PREFIXES;
+          const rootTypeComposer = prefixQueryMethod.some(prefix => methodNameLowerCased.startsWith(prefix))
             ? this.schemaComposer.Query
             : this.schemaComposer.Mutation;
           rootTypeComposer.addFields({

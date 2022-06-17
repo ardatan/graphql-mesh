@@ -54,3 +54,43 @@ describe.each<[string, string]>([
     expect(printSchema(schema)).toMatchSnapshot();
   });
 });
+
+describe("Load proto with prefixQueryMethod", () => {
+  test(`should load the retrieve-movie.proto`, async () => {
+    const name = "retrieve-movie"
+    const file =  "retrieve-movie.proto"
+
+    const cache = new InMemoryLRUCache();
+    const pubsub = new PubSub();
+    const config: YamlConfig.GrpcHandler = {
+      endpoint: 'localhost',
+      protoFilePath: {
+        file: join(__dirname, './fixtures/proto-tests', file),
+        load: { includeDirs: [join(__dirname, './fixtures/proto-tests')] },
+      },
+      prefixQueryMethod: ["get", "list", "retrieve"]
+    };
+    const store = new MeshStore(name, new InMemoryStoreStorageAdapter(), {
+      readonly: false,
+      validate: false,
+    });
+    const logger = new DefaultLogger(name);
+    const handler = new GrpcHandler({
+      name: Date.now().toString(),
+      config,
+      cache,
+      pubsub,
+      store,
+      logger,
+      importFn: m => import(m),
+      baseDir: __dirname,
+    });
+
+    const { schema } = await handler.getMeshSource();
+
+    expect(schema).toBeInstanceOf(GraphQLSchema);
+    expect(validateSchema(schema)).toHaveLength(0);
+    expect(printSchema(schema)).toContain("AnotherExample_RetrieveMovies")
+    expect(printSchema(schema)).toMatchSnapshot();
+  });
+});
