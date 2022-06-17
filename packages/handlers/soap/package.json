@@ -34,7 +34,7 @@
     "@graphql-mesh/utils": "0.35.6",
     "@graphql-tools/utils": "8.6.13",
     "graphql-scalars": "1.17.0",
-    "soap": "0.44.0",
+    "soap": "0.45.0",
     "tslib": "^2.4.0"
   },
   "publishConfig": {
