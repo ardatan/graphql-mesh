@@ -924,6 +924,13 @@
         "useReflection": {
           "type": "boolean",
           "description": "Use gRPC reflection to automatically gather the connection"
+        },
+        "prefixQueryMethod": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
         }
       },
       "required": ["endpoint"]
