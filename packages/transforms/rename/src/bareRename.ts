@@ -1,5 +1,5 @@
 import { GraphQLSchema, defaultFieldResolver, GraphQLFieldConfig } from 'graphql';
-import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import { MeshTransform, YamlConfig } from '@graphql-mesh/types';
 import { renameType, MapperKind, mapSchema } from '@graphql-tools/utils';
 
 type RenameMapObject = Map<string | RegExp, string>;
@@ -25,8 +25,7 @@ export default class BareRename implements MeshTransform {
   fieldsMap: Map<string, RenameMapObject>;
   argsMap: Map<string, RenameMapObject>;
 
-  constructor(options: MeshTransformOptions<YamlConfig.RenameTransform>) {
-    const { config } = options;
+  constructor({ config }: { config: YamlConfig.RenameTransform }) {
     this.typesMap = new Map();
     this.fieldsMap = new Map();
     this.argsMap = new Map();

@@ -1,15 +1,14 @@
-import { YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
+import { YamlConfig } from '@graphql-mesh/types';
 import WrapRename from './wrapRename';
 import BareRename from './bareRename';
 
 interface RenameTransformConstructor {
-  new (options: MeshTransformOptions<YamlConfig.Transform['rename']>): BareRename | WrapRename;
+  new (options: { config: YamlConfig.RenameTransform }): BareRename | WrapRename;
 }
 
-export default (function RenameTransform(options: MeshTransformOptions<YamlConfig.Transform['rename']>) {
+export default (function RenameTransform(options: { config: YamlConfig.RenameTransform }) {
   if (Array.isArray(options.config)) {
     return new WrapRename({
-      ...options,
       config: {
         mode: 'wrap',
         renames: options.config,

@@ -1,5 +1,5 @@
 import { GraphQLSchema } from 'graphql';
-import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import { MeshTransform, YamlConfig } from '@graphql-mesh/types';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
 import micromatch from 'micromatch';
 
@@ -9,10 +9,7 @@ export default class BareFilter implements MeshTransform {
   fieldsMap: Map<string, string[]>;
   argsMap: Map<string, string[]>;
 
-  constructor(options: MeshTransformOptions<YamlConfig.FilterSchemaTransform>) {
-    const {
-      config: { filters },
-    } = options;
+  constructor({ config: { filters } }: { config: YamlConfig.FilterSchemaTransform }) {
     this.typeGlobs = [];
     this.fieldsMap = new Map();
     this.argsMap = new Map();
