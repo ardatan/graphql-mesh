@@ -25,3 +25,107 @@ type Query {
   books: [Book]
 }"
 `;
+
+exports[`Type Merging and Batching Example should give correct response for example queries: Author.graphql-query-result 1`] = `
+Object {
+  "data": Object {
+    "author": Object {
+      "books": Array [
+        Object {
+          "author": Object {
+            "id": "1",
+            "name": "Jane Doe",
+          },
+          "id": "0",
+          "title": "Lorem Ipsum",
+        },
+      ],
+      "id": "1",
+      "name": "Jane Doe",
+    },
+  },
+}
+`;
+
+exports[`Type Merging and Batching Example should give correct response for example queries: Authors.graphql-query-result 1`] = `
+Object {
+  "data": Object {
+    "authors": Array [
+      Object {
+        "books": Array [
+          Object {
+            "author": Object {
+              "id": "0",
+              "name": "John Doe",
+            },
+            "id": "1",
+            "title": "Dolor Sit Amet",
+          },
+        ],
+        "id": "0",
+        "name": "John Doe",
+      },
+      Object {
+        "books": Array [
+          Object {
+            "author": Object {
+              "id": "1",
+              "name": "Jane Doe",
+            },
+            "id": "0",
+            "title": "Lorem Ipsum",
+          },
+        ],
+        "id": "1",
+        "name": "Jane Doe",
+      },
+    ],
+  },
+}
+`;
+
+exports[`Type Merging and Batching Example should give correct response for example queries: Book.graphql-query-result 1`] = `
+Object {
+  "data": Object {
+    "book": Object {
+      "author": Object {
+        "books": Array [
+          Object {
+            "id": "1",
+            "title": "Dolor Sit Amet",
+          },
+        ],
+        "id": "0",
+        "name": "John Doe",
+      },
+      "id": "1",
+      "title": "Dolor Sit Amet",
+    },
+  },
+}
+`;
+
+exports[`Type Merging and Batching Example should give correct response for example queries: Books.graphql-query-result 1`] = `
+Object {
+  "data": Object {
+    "books": Array [
+      Object {
+        "author": Object {
+          "id": "1",
+          "name": "Jane Doe",
+        },
+        "id": "0",
+        "title": "Lorem Ipsum",
+      },
+      Object {
+        "author": Object {
+          "id": "0",
+          "name": "John Doe",
+        },
+        "id": "1",
+        "title": "Dolor Sit Amet",
+      },
+    ],
+  },
+}
+`;
