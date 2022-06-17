@@ -42,7 +42,7 @@
     "cross-undici-fetch": "^0.4.0",
     "deep-equal": "2.0.5",
     "form-urlencoded": "6.0.6",
-    "jsonpath-plus": "6.0.1",
+    "jsonpath-plus": "7.0.0",
     "json-pointer": "0.6.2",
     "openapi-diff": "0.23.5",
     "graphql-scalars": "1.17.0",
