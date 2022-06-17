@@ -582,10 +582,16 @@ exports[`Interpreting Protos should load the With Underscores proto 1`] = `
 "type Query {
   \\"\\"\\"get all movies\\"\\"\\"
   io_xtech_Example_GetMovies(input: io_xtech_movie_request_Input): io_xtech_MoviesResult
+
+  \\"\\"\\"get movies\\"\\"\\"
+  io_xtech_Example_RetrieveMovies(input: io_xtech_movie_request_by_ids_Input): io_xtech_MoviesResult
   io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
 
   \\"\\"\\"get all movies\\"\\"\\"
   io_xtech_AnotherExample_GetMovies(input: io_xtech_movie_request_Input): io_xtech_MoviesResult
+
+  \\"\\"\\"get movies\\"\\"\\"
+  io_xtech_AnotherExample_RetrieveMovies(input: io_xtech_movie_request_by_ids_Input): io_xtech_MoviesResult
   io_xtech_AnotherExample_connectivityState(tryToConnect: Boolean): ConnectivityState
 }
 
@@ -642,6 +648,10 @@ input io_xtech_Movie_Input {
 input google_protobuf_Timestamp_Input {
   seconds: BigInt
   nanos: Int
+}
+
+input io_xtech_movie_request_by_ids_Input {
+  movieIds: [String]
 }
 
 enum ConnectivityState {
