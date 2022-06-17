@@ -112,7 +112,6 @@ type JsonSchemaHTTPOperation implements JsonSchemaBaseOperation {
 
   """
   You can define your response schemas by status codes;
-
   responseByStatusCode:
     200:
       responseSchema: ./someschema.json#/somepath

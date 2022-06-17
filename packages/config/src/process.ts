@@ -116,7 +116,7 @@ export async function processConfig(
     importFn = defaultImportFn,
     store: providedStore,
     artifactsDir,
-    additionalPackagePrefixes,
+    additionalPackagePrefixes = [],
   } = options || {};
 
   if (config.require) {

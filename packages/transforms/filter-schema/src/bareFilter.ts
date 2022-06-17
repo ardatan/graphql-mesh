@@ -1,7 +1,7 @@
 import { GraphQLSchema } from 'graphql';
 import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
-import { matcher } from 'micromatch';
+import micromatch from 'micromatch';
 
 export default class BareFilter implements MeshTransform {
   noWrap = true;
@@ -46,7 +46,7 @@ export default class BareFilter implements MeshTransform {
 
   matchInArray(rulesArray: string[], value: string): null | undefined {
     for (const rule of rulesArray) {
-      const isMatch = matcher(rule);
+      const isMatch = micromatch.matcher(rule);
       if (!isMatch(value)) return null;
     }
     return undefined;

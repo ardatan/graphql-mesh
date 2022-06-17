@@ -10,7 +10,7 @@ import {
   TransformCompositeFields,
 } from '@graphql-tools/wrap';
 import { GraphQLSchema } from 'graphql';
-import { matcher } from 'micromatch';
+import micromatch from 'micromatch';
 
 export default class WrapFilter implements MeshTransform {
   private transforms: Transform[] = [];
@@ -21,7 +21,7 @@ export default class WrapFilter implements MeshTransform {
 
     for (const filter of filters) {
       const [typeName, fieldNameOrGlob, argsGlob] = filter.split('.');
-      const isTypeMatch = matcher(typeName);
+      const isTypeMatch = micromatch.matcher(typeName);
 
       // TODO: deprecate this in next major release as dscussed in #1605
       if (!fieldNameOrGlob) {
