@@ -30,6 +30,7 @@ describe.each<[string, string]>([
         file: join(__dirname, './fixtures/proto-tests', file),
         load: { includeDirs: [join(__dirname, './fixtures/proto-tests')] },
       },
+      prefixQueryMethod: ["get", "list", "retrieve"]
     };
     const store = new MeshStore(name, new InMemoryStoreStorageAdapter(), {
       readonly: false,
