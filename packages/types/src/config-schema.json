@@ -930,7 +930,8 @@
           "items": {
             "type": "string"
           },
-          "additionalItems": false
+          "additionalItems": false,
+          "description": "prefix to collect Query method default: list, get"
         }
       },
       "required": ["endpoint"]
