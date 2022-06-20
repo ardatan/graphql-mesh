@@ -19,7 +19,7 @@ This page will guide you in masking the errors and puts the proper error handlin
 
 To enable error masking on your Mesh Gateway:
 
-1. first, update your configuration as follows:
+Configure the [`useMaskedErrors()` Envelop plugin](https://www.envelop.dev/plugins/use-masked-errors) by adding something like the following;
 
 _`.meshrc.yaml`_
 
@@ -28,32 +28,28 @@ sources:
   # ...
 transforms:
   # ...
-additionalEnvelopPlugins: './envelopPlugins'
+plugins:
+  - maskedErrors:
+      errorMessage: 'Something went wrong.'
 ```
 
 <p>&nbsp;</p>
 
-2. Configure the [`useMaskedErrors()` Envelop plugin](https://www.envelop.dev/plugins/use-masked-errors)
-
-_`envelopPlugins.ts`_
-
-```ts
-import { useMaskedErrors, PluginOrDisabledPlugin } from '@envelop/core'
-
-const plugins: PluginOrDisabledPlugin = [
-  useMaskedErrors({
-    errorMessage: 'Something went wrong.'
-  })
-]
-
-export default plugins
-```
-
-**Important: the `useMaskedErrors()` plugin should always put last in the plugin list (example: to avoid masking errors to the `useSentry()` plugin**
+**Important: the `maskedErrors` plugin should always put last in the plugin list (example: to avoid masking errors to the `useSentry()` plugin**
 
 <p>&nbsp;</p>
 
-### Custom error formatting
+### Custom error formatting programmatically
+
+You can also provide plugins programmatically.
+
+```yaml
+sources:
+  # ...
+transforms:
+  # ...
+additionalEnvelopPlugins: ./envelopPlugins.ts
+```
 
 Envelop allows you to provide your error formatting function as follow:
 
