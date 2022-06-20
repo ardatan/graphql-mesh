@@ -59,17 +59,17 @@ function getSchema(filepath: string, logger: Logger): Schema {
   ]);
 }
 
-export function loadYaml(filepath: string, content: string, logger?: Logger): any {
+export function loadYaml(filepath: string, content: string, logger: Logger): any {
   return loadYamlFromJsYaml(content, {
     filename: filepath,
     schema: getSchema(filepath, logger),
     onWarning(warning) {
-      logger?.warn(`${filepath}: ${warning.message}\n${warning.stack}`);
+      logger.warn(`${filepath}: ${warning.message}\n${warning.stack}`);
     },
   });
 }
 
-export async function readFile<T>(fileExpression: string, config?: ReadFileOrUrlOptions): Promise<T> {
+export async function readFile<T>(fileExpression: string, config: ReadFileOrUrlOptions): Promise<T> {
   const { allowUnknownExtensions, cwd, fallbackFormat, importFn = defaultImportFn } = config || {};
   const [filePath] = fileExpression.split('#');
   if (/js$/.test(filePath) || /ts$/.test(filePath)) {

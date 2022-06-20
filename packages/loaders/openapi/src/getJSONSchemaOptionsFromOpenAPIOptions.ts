@@ -1,4 +1,4 @@
-import { defaultImportFn, readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import { defaultImportFn, DefaultLogger, readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { JSONSchemaObject, dereferenceObject, resolvePath } from 'json-machete';
 import { OpenAPIV3, OpenAPIV2 } from 'openapi-types';
 import {
@@ -35,7 +35,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
   schemaHeaders,
   operationHeaders,
   selectQueryOrMutationField = [],
-  logger,
+  logger = new DefaultLogger('getJSONSchemaOptionsFromOpenAPIOptions'),
 }: GetJSONSchemaOptionsFromOpenAPIOptionsParams) {
   const fieldTypeMap: Record<string, 'query' | 'mutation'> = {};
   for (const { fieldName, type } of selectQueryOrMutationField) {
