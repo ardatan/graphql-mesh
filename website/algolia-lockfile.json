@@ -309,8 +309,8 @@
         "children": [
           {
             "children": [],
-            "title": "Custom error formatting",
-            "anchor": "custom-error-formatting"
+            "title": "Custom error formatting programmatically",
+            "anchor": "custom-error-formatting-programmatically"
           }
         ],
         "title": "Enabling Errors masking",
