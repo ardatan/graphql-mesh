@@ -54,6 +54,10 @@ export interface Config {
    */
   logger?: any;
   /**
+   * Path to a custom W3 Compatible Fetch Implementation
+   */
+  customFetch?: any;
+  /**
    * Allow connections to an SSL endpoint without certificates
    */
   skipSSLValidation?: boolean;
@@ -250,10 +254,6 @@ export interface GraphQLHandlerHTTPConfiguration {
    */
   method?: 'GET' | 'POST';
   /**
-   * Path to a custom W3 Compatible Fetch Implementation
-   */
-  customFetch?: any;
-  /**
    * Path to a custom W3 Compatible WebSocket Implementation
    */
   webSocketImpl?: string;
@@ -431,7 +431,6 @@ export interface JsonSchemaHTTPOperation {
   responseTypeName?: string;
   /**
    * You can define your response schemas by status codes;
-   *
    * responseByStatusCode:
    *   200:
    *     responseSchema: ./someschema.json#/somepath
@@ -819,10 +818,6 @@ export interface ODataHandler {
    * Use $expand for navigation props instead of seperate HTTP requests (Default: false)
    */
   expandNavProps?: boolean;
-  /**
-   * Custom Fetch
-   */
-  customFetch?: any;
 }
 /**
  * Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it.
@@ -860,10 +855,6 @@ export interface OpenapiHandler {
     [k: string]: any;
   };
   /**
-   * W3 Compatible Fetch Implementation
-   */
-  customFetch?: any;
-  /**
    * Include HTTP Response details to the result object
    */
   includeHttpDetails?: boolean;
@@ -885,9 +876,7 @@ export interface OpenapiHandler {
   provideErrorExtensions?: boolean;
   /**
    * Field names can only be sanitized operationIds
-   *
    * By default, query field names are based on the return type type name and mutation field names are based on the operationId, which may be generated if it does not exist.
-   *
    * This option forces OpenAPI handler to only create field names based on the operationId.
    */
   operationIdFieldNames?: boolean;
@@ -995,22 +984,18 @@ export interface SoapHandler {
   /**
    * If true, the ports defined in the WSDL will be represented as GraphQL-Type objects in the schema.
    * The fields of the object will be the operations of the port.
-   *
    * Most soap-endpoints only define one port; so including it in the schema will just be inconvenient.
    * But if there are multiple ports with operations of the same name, you should set this option to true.
    * Otherwise only one of the identical-named operations will be callable.
-   *
    * default: false
    */
   includePorts?: boolean;
   /**
    * If true, the services defined in the WSDL will be represented as GraphQL-Type objects in the schema.
    * The fields of the object will be the ports of the service (or the operation, dependent on 'includePorts').
-   *
    * Most soap-endpoints only define one service; so including it in the schema will just be inconvenient.
    * But if there are multiple services with operations of the same name, you should set this option to true.
    * Otherwise only one of the identical-named operations will be callable.
-   *
    * default: false
    */
   includeServices?: boolean;
@@ -1179,7 +1164,6 @@ export interface CacheTransformConfig {
   /**
    * Cache key to use to store your resolvers responses.
    * The default is: {typeName}-{fieldName}-{argsHash}-{fieldNamesHash}
-   *
    * Available variables:
    * - {args.argName} - use resolver argument
    * - {typeName} - use name of the type
@@ -1187,7 +1171,6 @@ export interface CacheTransformConfig {
    * - {argsHash} - a hash based on the 'args' object
    * - {fieldNamesHash} - a hash based on the field names selected by the client
    * - {info} - the GraphQLResolveInfo of the resolver
-   *
    * Available interpolations:
    * - {format|date} - returns the current date with a specific format
    */

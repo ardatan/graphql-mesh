@@ -28,6 +28,8 @@ import { pascalCase } from 'pascal-case';
 import { camelCase } from 'camel-case';
 import { defaultImportFn, parseWithCache, resolveAdditionalResolvers } from '@graphql-mesh/utils';
 import { envelop, useMaskedErrors, useImmediateIntrospection } from '@envelop/core';
+import { fetch, Request, Response } from 'cross-undici-fetch';
+import { fetchFactory } from 'fetchache';
 
 const ENVELOP_CORE_PLUGINS_MAP = {
   maskedErrors: {
@@ -144,6 +146,23 @@ export async function processConfig(
   importCodes.push(cacheImportCode);
   codes.push(cacheCode);
 
+  if (config.customFetch) {
+    importCodes.push(`import fetchFn from ${JSON.stringify(config.customFetch)}`);
+  } else {
+    importCodes.push(`import { fetchFactory } from 'fetchache';`);
+    importCodes.push(`import { fetch, Request, Response } from 'cross-undici-fetch';`);
+    codes.push('const fetchFn = fetchFactory({ cache, fetch, Request, Response });');
+  }
+
+  const fetchFn = config.customFetch
+    ? await importFn(config.customFetch, true)
+    : fetchFactory({
+        cache,
+        fetch,
+        Request,
+        Response,
+      });
+
   const sourcesStore = rootStore.child('sources');
   codes.push(`const sourcesStore = rootStore.child('sources');`);
 
@@ -189,7 +208,8 @@ export async function processConfig(
               pubsub,
               store: sourcesStore.child(${JSON.stringify(source.name)}),
               logger: logger.child(${JSON.stringify(source.name)}),
-              importFn
+              importFn,
+              fetchFn,
             });`);
               }
               return new HandlerCtor({
@@ -201,6 +221,7 @@ export async function processConfig(
                 store: sourcesStore.child(source.name),
                 logger: logger.child(source.name),
                 importFn,
+                fetchFn,
               });
             }),
             Promise.all(

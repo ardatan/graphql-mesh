@@ -32,10 +32,6 @@ type OpenapiHandler @md {
   """
   qs: JSON
   """
-  W3 Compatible Fetch Implementation
-  """
-  customFetch: Any
-  """
   Include HTTP Response details to the result object
   """
   includeHttpDetails: Boolean

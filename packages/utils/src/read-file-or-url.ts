@@ -1,44 +1,32 @@
-import { fetchFactory, KeyValueCache } from 'fetchache';
-import { fetch as crossFetch, Request, Response } from 'cross-undici-fetch';
 import isUrl from 'is-url';
 import { DEFAULT_SCHEMA, load as loadYamlFromJsYaml, Schema, Type } from 'js-yaml';
 import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import { ImportFn, Logger } from '@graphql-mesh/types';
 import { defaultImportFn } from './defaultImportFn';
-import { memoize1 } from '@graphql-tools/utils';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression';
 
 export interface ReadFileOrUrlOptions extends RequestInit {
   allowUnknownExtensions?: boolean;
   fallbackFormat?: 'json' | 'yaml' | 'js' | 'ts';
-  cwd?: string;
-  fetch?: typeof crossFetch;
-  importFn?: ImportFn;
-  logger?: Logger;
+  cwd: string;
+  fetch: typeof fetch;
+  importFn: ImportFn;
+  logger: Logger;
 }
 
-export const getCachedFetch = memoize1(function getCachedFetch(cache: KeyValueCache): typeof crossFetch {
-  return fetchFactory({
-    fetch: crossFetch,
-    Request,
-    Response,
-    cache,
-  });
-});
-
-export async function readFileOrUrl<T>(filePathOrUrl: string, config?: ReadFileOrUrlOptions): Promise<T> {
+export async function readFileOrUrl<T>(filePathOrUrl: string, config: ReadFileOrUrlOptions): Promise<T> {
   if (isUrl(filePathOrUrl)) {
-    config?.logger?.debug(`Fetching ${filePathOrUrl} via HTTP`);
+    config.logger.debug(`Fetching ${filePathOrUrl} via HTTP`);
     return readUrl(filePathOrUrl, config);
   } else if (filePathOrUrl.startsWith('{') || filePathOrUrl.startsWith('[')) {
     return JSON.parse(filePathOrUrl);
   } else {
-    config?.logger?.debug(`Reading ${filePathOrUrl} from the file system`);
+    config.logger.debug(`Reading ${filePathOrUrl} from the file system`);
     return readFile(filePathOrUrl, config);
   }
 }
 
-function getSchema(filepath: string, logger?: Logger): Schema {
+function getSchema(filepath: string, logger: Logger): Schema {
   return DEFAULT_SCHEMA.extend([
     new Type('!include', {
       kind: 'scalar',
@@ -117,11 +105,10 @@ export async function readFile<T>(fileExpression: string, config?: ReadFileOrUrl
   return rawResult as unknown as T;
 }
 
-export async function readUrl<T>(path: string, config?: ReadFileOrUrlOptions): Promise<T> {
+export async function readUrl<T>(path: string, config: ReadFileOrUrlOptions): Promise<T> {
   const { allowUnknownExtensions, fallbackFormat } = config || {};
-  const fetch = config?.fetch || crossFetch;
   config.headers = config.headers || {};
-  const response = await fetch(path, config);
+  const response = await config.fetch(path, config);
   const contentType = response.headers?.get('content-type') || '';
   const responseText = await response.text();
   config?.logger?.debug(`${path} returned `, responseText);

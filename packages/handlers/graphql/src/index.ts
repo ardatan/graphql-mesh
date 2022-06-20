@@ -1,11 +1,4 @@
-import {
-  GetMeshSourceOptions,
-  MeshHandler,
-  MeshSource,
-  YamlConfig,
-  KeyValueCache,
-  ImportFn,
-} from '@graphql-mesh/types';
+import { GetMeshSourceOptions, MeshHandler, MeshSource, YamlConfig, ImportFn, Logger } from '@graphql-mesh/types';
 import { UrlLoader, SubscriptionProtocol } from '@graphql-tools/url-loader';
 import {
   GraphQLSchema,
@@ -19,7 +12,7 @@ import {
   SelectionNode,
 } from 'graphql';
 import { introspectSchema } from '@graphql-tools/wrap';
-import { loadFromModuleExportExpression, getCachedFetch, readFileOrUrl } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression, readFileOrUrl } from '@graphql-mesh/utils';
 import {
   ExecutionRequest,
   isDocumentNode,
@@ -46,22 +39,29 @@ const getResolverData = memoize1(function getResolverData(params: ExecutionReque
   };
 });
 
-type FetchFn = (input: RequestInfo, init?: RequestInit) => Promise<Response>;
-
 export default class GraphQLHandler implements MeshHandler {
   private config: YamlConfig.Handler['graphql'];
   private baseDir: string;
-  private cache: KeyValueCache<any>;
   private nonExecutableSchema: StoreProxy<GraphQLSchema>;
   private importFn: ImportFn;
+  private fetchFn: typeof fetch;
+  private logger: Logger;
   private urlLoader = new UrlLoader();
 
-  constructor({ config, baseDir, cache, store, importFn }: GetMeshSourceOptions<YamlConfig.Handler['graphql']>) {
+  constructor({
+    config,
+    baseDir,
+    fetchFn,
+    store,
+    importFn,
+    logger,
+  }: GetMeshSourceOptions<YamlConfig.Handler['graphql']>) {
     this.config = config;
     this.baseDir = baseDir;
-    this.cache = cache;
+    this.fetchFn = fetchFn;
     this.nonExecutableSchema = store.proxy('introspectionSchema', PredefinedProxyOptions.GraphQLSchemaWithDiffing);
     this.importFn = importFn;
+    this.logger = logger;
   }
 
   private interpolationStringSet = new Set<string>();
@@ -70,33 +70,22 @@ export default class GraphQLHandler implements MeshHandler {
     return parseInterpolationStrings(this.interpolationStringSet);
   }
 
-  private getCustomFetchImpl(customFetchConfig: string): FetchFn | Promise<FetchFn> {
-    return customFetchConfig
-      ? loadFromModuleExportExpression<FetchFn>(customFetchConfig, {
-          cwd: this.baseDir,
-          defaultExportName: 'default',
-          importFn: this.importFn,
-        })
-      : getCachedFetch(this.cache);
-  }
-
   async getExecutorForHTTPSourceConfig(
     httpSourceConfig: YamlConfig.GraphQLHandlerHTTPConfiguration
   ): Promise<MeshSource['executor']> {
-    const { endpoint, customFetch: customFetchConfig, operationHeaders = {} } = httpSourceConfig;
+    const { endpoint, operationHeaders = {} } = httpSourceConfig;
 
     this.interpolationStringSet.add(endpoint);
     Object.keys(operationHeaders).forEach(headerName => {
       this.interpolationStringSet.add(headerName.toString());
     });
 
-    const customFetch = await this.getCustomFetchImpl(customFetchConfig);
     const endpointFactory = getInterpolatedStringFactory(endpoint);
     const operationHeadersFactory = getInterpolatedHeadersFactory(operationHeaders);
     const executor = this.urlLoader.getExecutorAsync(endpoint, {
       ...httpSourceConfig,
       subscriptionsProtocol: httpSourceConfig.subscriptionsProtocol as SubscriptionProtocol,
-      customFetch,
+      customFetch: this.fetchFn,
     });
 
     return function meshExecutor(params) {
@@ -121,7 +110,6 @@ export default class GraphQLHandler implements MeshHandler {
     });
 
     const schemaHeadersFactory = getInterpolatedHeadersFactory(httpSourceConfig.schemaHeaders || {});
-    const customFetch = await this.getCustomFetchImpl(httpSourceConfig.customFetch);
     if (httpSourceConfig.introspection) {
       const headers = schemaHeadersFactory({
         env: process.env,
@@ -131,7 +119,9 @@ export default class GraphQLHandler implements MeshHandler {
         {
           cwd: this.baseDir,
           allowUnknownExtensions: true,
-          fetch: customFetch,
+          importFn: this.importFn,
+          fetch: this.fetchFn,
+          logger: this.logger,
           headers,
         }
       );
@@ -148,7 +138,7 @@ export default class GraphQLHandler implements MeshHandler {
       const endpointFactory = getInterpolatedStringFactory(httpSourceConfig.endpoint);
       const executor = this.urlLoader.getExecutorAsync(httpSourceConfig.endpoint, {
         ...httpSourceConfig,
-        customFetch,
+        customFetch: this.fetchFn,
         subscriptionsProtocol: httpSourceConfig.subscriptionsProtocol as SubscriptionProtocol,
       });
       return introspectSchema(function meshIntrospectionExecutor(params: ExecutionRequest) {
@@ -173,6 +163,8 @@ export default class GraphQLHandler implements MeshHandler {
         cwd: this.baseDir,
         allowUnknownExtensions: true,
         importFn: this.importFn,
+        fetch: this.fetchFn,
+        logger: this.logger,
       });
       const schema = buildSchema(rawSDL);
       const { contextVariables } = this.getArgsAndContextVariables();

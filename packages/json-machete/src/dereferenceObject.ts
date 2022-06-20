@@ -2,7 +2,7 @@ import JsonPointer from 'json-pointer';
 import { path as pathModule, process } from '@graphql-mesh/cross-helpers';
 import urlJoin from 'url-join';
 import { fetch as crossUndiciFetch } from 'cross-undici-fetch';
-import { readFileOrUrl } from '@graphql-mesh/utils';
+import { defaultImportFn, DefaultLogger, readFileOrUrl } from '@graphql-mesh/utils';
 
 export const resolvePath = (path: string, root: any): any => {
   try {
@@ -70,14 +70,18 @@ export async function dereferenceObject<T extends object, TRoot = T>(
     externalFileCache = new Map<string, any>(),
     refMap = new Map<string, any>(),
     root = obj as any,
-    fetch = crossUndiciFetch,
+    fetchFn: fetch = crossUndiciFetch,
+    importFn = defaultImportFn,
+    logger = new DefaultLogger('dereferenceObject'),
     headers,
   }: {
     cwd?: string;
     externalFileCache?: Map<string, any>;
     refMap?: Map<string, any>;
     root?: TRoot;
-    fetch?: WindowOrWorkerGlobalScope['fetch'];
+    fetchFn?: WindowOrWorkerGlobalScope['fetch'];
+    importFn?: (m: string) => any;
+    logger?: any;
     headers?: Record<string, string>;
   } = {}
 ): Promise<T> {
@@ -100,6 +104,8 @@ export async function dereferenceObject<T extends object, TRoot = T>(
               fetch,
               headers,
               cwd,
+              importFn,
+              logger,
             }).catch(() => {
               throw new Error(`Unable to load ${externalRelativeFilePath} from ${cwd}`);
             });
@@ -156,7 +162,9 @@ export async function dereferenceObject<T extends object, TRoot = T>(
                   throw new Error('Not implemented ' + key.toString());
                 },
               }),
-              fetch,
+              fetchFn: fetch,
+              importFn,
+              logger,
               headers,
               root: externalFile,
             }
@@ -182,7 +190,9 @@ export async function dereferenceObject<T extends object, TRoot = T>(
             externalFileCache,
             refMap,
             root,
-            fetch,
+            fetchFn: fetch,
+            importFn,
+            logger,
             headers,
           });
           refMap.set($ref, result);
@@ -201,7 +211,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
             externalFileCache,
             refMap,
             root,
-            fetch,
+            fetchFn: fetch,
             headers,
           });
         }

@@ -8943,6 +8943,19 @@ cross-spawn@^6.0.0, cross-spawn@^6.0.5:
     shebang-command "^1.2.0"
     which "^1.2.9"
 
+cross-undici-fetch@0.4.7:
+  version "0.4.7"
+  resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.4.7.tgz#50e12694bad4e16e456a88d528791bc8f69a626c"
+  integrity sha512-e5KZdjHigxFECfw1B7cjmXLm3yT8eiffSJYUSyIWxy6c+f/MGiJsV1NHegZvG23ZgQ0o8rNaZxbtu5NdF5FmwQ==
+  dependencies:
+    abort-controller "^3.0.0"
+    busboy "^1.6.0"
+    form-data-encoder "^1.7.1"
+    formdata-node "^4.3.1"
+    node-fetch "^2.6.7"
+    undici "^5.1.0"
+    web-streams-polyfill "^3.2.0"
+
 cross-undici-fetch@^0.3.5:
   version "0.3.5"
   resolved "https://registry.yarnpkg.com/cross-undici-fetch/-/cross-undici-fetch-0.3.5.tgz#36e3219a9b0a8ba30c3d0ea9838c2c0d6eb1be52"

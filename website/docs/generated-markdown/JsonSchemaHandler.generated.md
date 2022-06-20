@@ -20,7 +20,6 @@ the underlying HTTP request
     * `responseSample` (type: `Any`) - Did you use Sample? Provide the respone sample path.
     * `responseTypeName` (type: `String`) - Inset any name for the type of the response body.
     * `responseByStatusCode` (type: `Any`) - You can define your response schemas by status codes;
-
 responseByStatusCode:
   200:
     responseSchema: ./someschema.json#/somepath

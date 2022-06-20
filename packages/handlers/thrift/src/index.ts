@@ -1,4 +1,4 @@
-import { GetMeshSourceOptions, MeshHandler, YamlConfig } from '@graphql-mesh/types';
+import { GetMeshSourceOptions, ImportFn, Logger, MeshHandler, YamlConfig } from '@graphql-mesh/types';
 import { parse, ThriftDocument, SyntaxType, Comment, FunctionType } from '@creditkarma/thrift-parser';
 import { readFileOrUrl } from '@graphql-mesh/utils';
 import {
@@ -46,11 +46,17 @@ export default class ThriftHandler implements MeshHandler {
   private config: YamlConfig.ThriftHandler;
   private baseDir: string;
   private idl: StoreProxy<ThriftDocument>;
+  private fetchFn: typeof fetch;
+  private importFn: ImportFn;
+  private logger: Logger;
 
-  constructor({ config, baseDir, store }: GetMeshSourceOptions<YamlConfig.ThriftHandler>) {
+  constructor({ config, baseDir, store, fetchFn, importFn, logger }: GetMeshSourceOptions<YamlConfig.ThriftHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.idl = store.proxy('idl.json', PredefinedProxyOptions.JsonWithoutValidation);
+    this.fetchFn = fetchFn;
+    this.importFn = importFn;
+    this.logger = logger;
   }
 
   async getMeshSource() {
@@ -61,6 +67,9 @@ export default class ThriftHandler implements MeshHandler {
         allowUnknownExtensions: true,
         cwd: this.baseDir,
         headers: schemaHeaders,
+        fetch: this.fetchFn,
+        logger: this.logger,
+        importFn: this.importFn,
       });
       const parseResult = parse(rawThrift, { organize: false });
       if (parseResult.type === SyntaxType.ThriftErrors) {
