@@ -13,7 +13,7 @@ import {
   isObjectType,
   GraphQLNamedType,
 } from 'graphql';
-import { withFilter } from 'graphql-subscriptions';
+import { withFilter } from './with-filter';
 import lodashGet from 'lodash.get';
 import lodashSet from 'lodash.set';
 import toPath from 'lodash.topath';
