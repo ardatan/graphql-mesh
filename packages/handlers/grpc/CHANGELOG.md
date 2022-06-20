@@ -1,5 +1,17 @@
 # @graphql-mesh/grpc
 
+## 0.24.7
+
+### Patch Changes
+
+- 2df026e90: issue: https://github.com/Urigo/graphql-mesh/issues/3425
+  grpc: add prefix for query method
+- Updated dependencies [d4754ad08]
+- Updated dependencies [2df026e90]
+  - @graphql-mesh/types@0.75.0
+  - @graphql-mesh/store@0.8.16
+  - @graphql-mesh/utils@0.35.7
+
 ## 0.24.6
 
 ### Patch Changes

@@ -477,7 +477,12 @@ export function getResolver<TSource, TContext, TArgs>(
 
     for (const paramName in query) {
       const val = query[paramName];
-      if (val !== undefined) {
+
+      if (Array.isArray(val)) {
+        for (let index = 0; index < val.length; index++) {
+          urlObject.searchParams.append(paramName, val[index]);
+        }
+      } else if (val !== undefined) {
         urlObject.searchParams.set(paramName, val);
       }
     }

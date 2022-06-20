@@ -1,18 +1,17 @@
 import { MeshPubSub, KeyValueCache, Logger } from '@graphql-mesh/types';
 import { printSchema, GraphQLInterfaceType, parse, ExecutionResult } from 'graphql';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { addMock, resetMocks, MockResponse as Response, mockFetch } from './custom-fetch';
-import { readFileSync } from 'fs';
-import { resolve } from 'path';
-import { PubSub } from '@graphql-mesh/utils';
+import { path, fs } from '@graphql-mesh/cross-helpers';
+import { PubSub, DefaultLogger } from '@graphql-mesh/utils';
 import ODataHandler from '../src';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import { DefaultLogger } from '@graphql-mesh/utils';
 
-const TripPinMetadata = readFileSync(resolve(__dirname, './fixtures/trippin-metadata.xml'), 'utf8');
-const PersonMockData = JSON.parse(readFileSync(resolve(__dirname, './fixtures/russellwhyte.json'), 'utf-8'));
-const TripMockData = JSON.parse(readFileSync(resolve(__dirname, './fixtures/trip.json'), 'utf-8'));
-const BasicMetadata = readFileSync(resolve(__dirname, './fixtures/simple-metadata.xml'), 'utf-8');
+const TripPinMetadata = fs.readFileSync(path.resolve(__dirname, './fixtures/trippin-metadata.xml'), 'utf8');
+const PersonMockData = JSON.parse(fs.readFileSync(path.resolve(__dirname, './fixtures/russellwhyte.json'), 'utf-8'));
+const TripMockData = JSON.parse(fs.readFileSync(path.resolve(__dirname, './fixtures/trip.json'), 'utf-8'));
+const BasicMetadata = fs.readFileSync(path.resolve(__dirname, './fixtures/simple-metadata.xml'), 'utf-8');
 
 const baseDir = __dirname;
 const importFn = (id: string) => require(id);
@@ -38,7 +37,6 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -46,6 +44,7 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+      fetchFn: mockFetch,
     });
     const source = await handler.getMeshSource();
     expect(printSchema(source.schema)).toMatchSnapshot();
@@ -56,7 +55,6 @@ describe('odata', () => {
       name: 'SampleService',
       config: {
         baseUrl: 'http://sample.service.com',
-        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -64,6 +62,7 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+      fetchFn: mockFetch,
     });
     const source = await handler.getMeshSource();
     expect(printSchema(source.schema)).toMatchSnapshot();
@@ -74,7 +73,6 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -82,6 +80,7 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+      fetchFn: mockFetch,
     });
     const source = await handler.getMeshSource();
     const personType = source.schema.getType('IPerson') as GraphQLInterfaceType;
@@ -107,7 +106,6 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -115,6 +113,7 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+      fetchFn: mockFetch,
     });
     const source = await handler.getMeshSource();
 
@@ -147,7 +146,6 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -155,6 +153,7 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+      fetchFn: mockFetch,
     });
     const source = await handler.getMeshSource();
 
@@ -196,7 +195,6 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -204,6 +202,7 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+      fetchFn: mockFetch,
     });
     const source = await handler.getMeshSource();
 
@@ -238,7 +237,6 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -246,6 +244,7 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+      fetchFn: mockFetch,
     });
     const source = await handler.getMeshSource();
 
@@ -278,7 +277,6 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -286,6 +284,7 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+      fetchFn: mockFetch,
     });
     const source = await handler.getMeshSource();
 
@@ -336,7 +335,6 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -344,6 +342,7 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+      fetchFn: mockFetch,
     });
     const source = await handler.getMeshSource();
 
@@ -379,7 +378,6 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -387,6 +385,7 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+      fetchFn: mockFetch,
     });
     const source = await handler.getMeshSource();
 
@@ -422,7 +421,6 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -430,6 +428,7 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+      fetchFn: mockFetch,
     });
     const source = await handler.getMeshSource();
 
@@ -472,7 +471,6 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -480,6 +478,7 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+      fetchFn: mockFetch,
     });
     const source = await handler.getMeshSource();
 
@@ -525,7 +524,6 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -533,6 +531,7 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+      fetchFn: mockFetch,
     });
     const source = await handler.getMeshSource();
 
@@ -577,7 +576,6 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -585,6 +583,7 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+      fetchFn: mockFetch,
     });
     const source = await handler.getMeshSource();
 
@@ -620,7 +619,6 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -628,6 +626,7 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+      fetchFn: mockFetch,
     });
     const source = await handler.getMeshSource();
 
@@ -664,7 +663,6 @@ describe('odata', () => {
       name: 'TripPin',
       config: {
         baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
       },
       pubsub,
       cache,
@@ -672,6 +670,7 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+      fetchFn: mockFetch,
     });
     const source = await handler.getMeshSource();
 

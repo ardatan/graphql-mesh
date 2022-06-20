@@ -1,7 +1,6 @@
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import { GetMeshSourceOptions, Logger, MeshHandler, MeshPubSub, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { createBundle, getGraphQLSchemaFromBundle, OpenAPILoaderBundle } from '@omnigraph/openapi';
-import { getCachedFetch } from '@graphql-mesh/utils';
 
 export default class OpenAPIHandler implements MeshHandler {
   private name: string;
@@ -15,7 +14,7 @@ export default class OpenAPIHandler implements MeshHandler {
     name,
     config,
     baseDir,
-    cache,
+    fetchFn,
     store,
     pubsub,
     logger,
@@ -23,7 +22,7 @@ export default class OpenAPIHandler implements MeshHandler {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
-    this.fetch = getCachedFetch(cache);
+    this.fetch = fetchFn;
     this.bundleStoreProxy = store.proxy('jsonSchemaBundle', PredefinedProxyOptions.JsonWithoutValidation);
     this.pubsub = pubsub;
     this.logger = logger;

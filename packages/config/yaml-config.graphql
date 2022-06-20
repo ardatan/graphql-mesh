@@ -39,6 +39,10 @@ type Query {
   """
   logger: Any
   """
+  Path to a custom W3 Compatible Fetch Implementation
+  """
+  customFetch: Any
+  """
   Allow connections to an SSL endpoint without certificates
   """
   skipSSLValidation: Boolean

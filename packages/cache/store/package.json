@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cache-store",
-  "version": "0.1.85",
+  "version": "0.1.86",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -28,8 +28,8 @@
     "definition": "dist/index.d.ts"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.74.2",
-    "@graphql-mesh/store": "0.8.15",
+    "@graphql-mesh/types": "0.75.0",
+    "@graphql-mesh/store": "0.8.16",
     "tslib": "^2.4.0"
   },
   "publishConfig": {

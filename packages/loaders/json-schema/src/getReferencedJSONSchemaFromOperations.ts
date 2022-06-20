@@ -1,4 +1,5 @@
-import { readFileOrUrl } from '@graphql-mesh/utils';
+import { Logger } from '@graphql-mesh/types';
+import { defaultImportFn, DefaultLogger, readFileOrUrl } from '@graphql-mesh/utils';
 import { JSONSchema, JSONSchemaObject } from 'json-machete';
 import toJsonSchema from 'to-json-schema';
 import { JSONSchemaOperationResponseConfig } from '.';
@@ -29,9 +30,13 @@ async function handleOperationResponseConfig(
   {
     schemaHeaders,
     cwd,
+    fetchFn,
+    logger = new DefaultLogger('handleOperationResponseConfig'),
   }: {
     schemaHeaders: Record<string, any>;
     cwd: string;
+    fetchFn: WindowOrWorkerGlobalScope['fetch'];
+    logger?: Logger;
   }
 ): Promise<JSONSchemaObject> {
   if (operationResponseConfig.responseSchema) {
@@ -52,6 +57,9 @@ async function handleOperationResponseConfig(
         ? operationResponseConfig.responseSample
         : await readFileOrUrl(operationResponseConfig.responseSample, {
             cwd,
+            fetch: fetchFn,
+            logger,
+            importFn: defaultImportFn,
             headers: schemaHeaders,
           }).catch((e: any) => {
             throw new Error(`responseSample - ${e.message}`);
@@ -87,11 +95,15 @@ export async function getReferencedJSONSchemaFromOperations({
   cwd,
   schemaHeaders,
   ignoreErrorResponses,
+  logger = new DefaultLogger('getReferencedJSONSchemaFromOperations'),
+  fetchFn,
 }: {
   operations: JSONSchemaOperationConfig[];
   cwd: string;
   schemaHeaders?: { [key: string]: string };
   ignoreErrorResponses?: boolean;
+  logger?: Logger;
+  fetchFn: WindowOrWorkerGlobalScope['fetch'];
 }) {
   const finalJsonSchema: JSONSchema = {
     type: 'object',
@@ -122,6 +134,8 @@ export async function getReferencedJSONSchemaFromOperations({
         const responseOperationSchema = await handleOperationResponseConfig(responseOperationConfig, {
           cwd,
           schemaHeaders,
+          fetchFn,
+          logger,
         });
         statusCodeOneOfIndexMap[statusCode] = responseSchemas.length;
         responseOperationSchema.title = responseOperationSchema.title || `${fieldName}_${statusCode}_response`;
@@ -144,6 +158,8 @@ export async function getReferencedJSONSchemaFromOperations({
         {
           cwd,
           schemaHeaders,
+          fetchFn,
+          logger,
         }
       );
     }
@@ -181,6 +197,9 @@ export async function getReferencedJSONSchemaFromOperations({
           : await readFileOrUrl(operationConfig.requestSample, {
               cwd,
               headers: schemaHeaders,
+              fetch: fetchFn,
+              logger,
+              importFn: defaultImportFn,
             }).catch((e: any) => {
               throw new Error(`requestSample:${operationConfig.requestSample} cannot be read - ${e.message}`);
             });

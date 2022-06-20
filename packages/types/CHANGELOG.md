@@ -1,5 +1,17 @@
 # @graphql-mesh/types
 
+## 0.75.0
+
+### Minor Changes
+
+- d4754ad08: Response Cache Plugin
+
+### Patch Changes
+
+- 2df026e90: issue: https://github.com/Urigo/graphql-mesh/issues/3425
+  grpc: add prefix for query method
+  - @graphql-mesh/store@0.8.16
+
 ## 0.74.2
 
 ### Patch Changes

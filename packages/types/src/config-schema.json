@@ -825,22 +825,6 @@
           "enum": ["GET", "POST"],
           "description": "HTTP method used for GraphQL operations (Allowed values: GET, POST)"
         },
-        "customFetch": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ],
-          "description": "Path to a custom W3 Compatible Fetch Implementation"
-        },
         "webSocketImpl": {
           "type": "string",
           "description": "Path to a custom W3 Compatible WebSocket Implementation"
@@ -924,6 +908,14 @@
         "useReflection": {
           "type": "boolean",
           "description": "Use gRPC reflection to automatically gather the connection"
+        },
+        "prefixQueryMethod": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "prefix to collect Query method default: list, get"
         }
       },
       "required": ["endpoint"]
@@ -1184,7 +1176,7 @@
               "additionalItems": true
             }
           ],
-          "description": "You can define your response schemas by status codes;\n\nresponseByStatusCode:\n  200:\n    responseSchema: ./someschema.json#/somepath\n  404:\n    responseSample: ./error-sample.json\n    responseTypeName: MyError"
+          "description": "You can define your response schemas by status codes;\nresponseByStatusCode:\n  200:\n    responseSchema: ./someschema.json#/somepath\n  404:\n    responseSample: ./error-sample.json\n    responseTypeName: MyError"
         },
         "argTypeMap": {
           "type": "object",
@@ -1929,22 +1921,6 @@
         "expandNavProps": {
           "type": "boolean",
           "description": "Use $expand for navigation props instead of seperate HTTP requests (Default: false)"
-        },
-        "customFetch": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ],
-          "description": "Custom Fetch"
         }
       },
       "required": ["baseUrl"]
@@ -1994,22 +1970,6 @@
           "properties": {},
           "description": "JSON object representing the query search parameters to add to the API calls"
         },
-        "customFetch": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ],
-          "description": "W3 Compatible Fetch Implementation"
-        },
         "includeHttpDetails": {
           "type": "boolean",
           "description": "Include HTTP Response details to the result object"
@@ -2036,7 +1996,7 @@
         },
         "operationIdFieldNames": {
           "type": "boolean",
-          "description": "Field names can only be sanitized operationIds\n\nBy default, query field names are based on the return type type name and mutation field names are based on the operationId, which may be generated if it does not exist.\n\nThis option forces OpenAPI handler to only create field names based on the operationId."
+          "description": "Field names can only be sanitized operationIds\nBy default, query field names are based on the return type type name and mutation field names are based on the operationId, which may be generated if it does not exist.\nThis option forces OpenAPI handler to only create field names based on the operationId."
         }
       },
       "required": ["source"]
@@ -2329,11 +2289,11 @@
         },
         "includePorts": {
           "type": "boolean",
-          "description": "If true, the ports defined in the WSDL will be represented as GraphQL-Type objects in the schema.\nThe fields of the object will be the operations of the port.\n\nMost soap-endpoints only define one port; so including it in the schema will just be inconvenient.\nBut if there are multiple ports with operations of the same name, you should set this option to true.\nOtherwise only one of the identical-named operations will be callable.\n\ndefault: false"
+          "description": "If true, the ports defined in the WSDL will be represented as GraphQL-Type objects in the schema.\nThe fields of the object will be the operations of the port.\nMost soap-endpoints only define one port; so including it in the schema will just be inconvenient.\nBut if there are multiple ports with operations of the same name, you should set this option to true.\nOtherwise only one of the identical-named operations will be callable.\ndefault: false"
         },
         "includeServices": {
           "type": "boolean",
-          "description": "If true, the services defined in the WSDL will be represented as GraphQL-Type objects in the schema.\nThe fields of the object will be the ports of the service (or the operation, dependent on 'includePorts').\n\nMost soap-endpoints only define one service; so including it in the schema will just be inconvenient.\nBut if there are multiple services with operations of the same name, you should set this option to true.\nOtherwise only one of the identical-named operations will be callable.\n\ndefault: false"
+          "description": "If true, the services defined in the WSDL will be represented as GraphQL-Type objects in the schema.\nThe fields of the object will be the ports of the service (or the operation, dependent on 'includePorts').\nMost soap-endpoints only define one service; so including it in the schema will just be inconvenient.\nBut if there are multiple services with operations of the same name, you should set this option to true.\nOtherwise only one of the identical-named operations will be callable.\ndefault: false"
         },
         "selectQueryOrMutationField": {
           "type": "array",
@@ -2477,7 +2437,7 @@
         },
         "cacheKey": {
           "type": "string",
-          "description": "Cache key to use to store your resolvers responses.\nThe default is: {typeName}-{fieldName}-{argsHash}-{fieldNamesHash}\n\nAvailable variables:\n- {args.argName} - use resolver argument\n- {typeName} - use name of the type\n- {fieldName} - use name of the field\n- {argsHash} - a hash based on the 'args' object\n- {fieldNamesHash} - a hash based on the field names selected by the client\n- {info} - the GraphQLResolveInfo of the resolver\n\nAvailable interpolations:\n- {format|date} - returns the current date with a specific format"
+          "description": "Cache key to use to store your resolvers responses.\nThe default is: {typeName}-{fieldName}-{argsHash}-{fieldNamesHash}\nAvailable variables:\n- {args.argName} - use resolver argument\n- {typeName} - use name of the type\n- {fieldName} - use name of the field\n- {argsHash} - a hash based on the 'args' object\n- {fieldNamesHash} - a hash based on the field names selected by the client\n- {info} - the GraphQLResolveInfo of the resolver\nAvailable interpolations:\n- {format|date} - returns the current date with a specific format"
         },
         "invalidate": {
           "$ref": "#/definitions/CacheInvalidateConfig",
@@ -3584,6 +3544,22 @@
         }
       ],
       "description": "Logger instance that matches `Console` interface of NodeJS"
+    },
+    "customFetch": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": true
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "additionalItems": true
+        }
+      ],
+      "description": "Path to a custom W3 Compatible Fetch Implementation"
     },
     "skipSSLValidation": {
       "type": "boolean",

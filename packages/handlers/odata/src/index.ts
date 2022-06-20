@@ -1,12 +1,5 @@
-import {
-  YamlConfig,
-  MeshHandler,
-  GetMeshSourceOptions,
-  MeshSource,
-  KeyValueCache,
-  ImportFn,
-} from '@graphql-mesh/types';
-import { readFileOrUrl, getCachedFetch, loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { YamlConfig, MeshHandler, GetMeshSourceOptions, MeshSource, Logger, ImportFn } from '@graphql-mesh/types';
+import { readFileOrUrl } from '@graphql-mesh/utils';
 import {
   getInterpolatedHeadersFactory,
   parseInterpolationStrings,
@@ -122,11 +115,12 @@ const queryOptionsFields = {
 export default class ODataHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.ODataHandler;
+  private fetchFn: typeof fetch;
+  private logger: Logger;
+  private importFn: ImportFn;
   private baseDir: string;
-  private cache: KeyValueCache;
   private eventEmitterSet = new Set<EventEmitter>();
   private metadataJson: any;
-  private importFn: ImportFn;
   private xmlParser = new XMLParser({
     attributeNamePrefix: '',
     attributesGroupName: 'attributes',
@@ -138,16 +132,25 @@ export default class ODataHandler implements MeshHandler {
     preserveOrder: false,
   });
 
-  constructor({ name, config, baseDir, cache, store, importFn }: GetMeshSourceOptions<YamlConfig.ODataHandler>) {
+  constructor({
+    name,
+    config,
+    baseDir,
+    fetchFn,
+    importFn,
+    logger,
+    store,
+  }: GetMeshSourceOptions<YamlConfig.ODataHandler>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
-    this.cache = cache;
-    this.metadataJson = store.proxy('metadata.json', PredefinedProxyOptions.JsonWithoutValidation);
+    this.fetchFn = fetchFn;
     this.importFn = importFn;
+    this.logger = logger;
+    this.metadataJson = store.proxy('metadata.json', PredefinedProxyOptions.JsonWithoutValidation);
   }
 
-  async getCachedMetadataJson(fetch: ReturnType<typeof getCachedFetch>) {
+  async getCachedMetadataJson() {
     return this.metadataJson.getWithSet(async () => {
       const baseUrl = stringInterpolator.parse(this.config.baseUrl, {
         env: process.env,
@@ -157,7 +160,9 @@ export default class ODataHandler implements MeshHandler {
         allowUnknownExtensions: true,
         cwd: this.baseDir,
         headers: this.config.schemaHeaders,
-        fetch,
+        fetch: this.fetchFn,
+        logger: this.logger,
+        importFn: this.importFn,
       });
 
       return this.xmlParser.parse(metadataText);
@@ -165,20 +170,6 @@ export default class ODataHandler implements MeshHandler {
   }
 
   async getMeshSource(): Promise<MeshSource> {
-    let fetch: ReturnType<typeof getCachedFetch>;
-    if (this.config.customFetch) {
-      fetch =
-        typeof this.config.customFetch === 'string'
-          ? await loadFromModuleExportExpression<ReturnType<typeof getCachedFetch>>(this.config.customFetch, {
-              cwd: this.baseDir,
-              importFn: this.importFn,
-              defaultExportName: 'default',
-            })
-          : this.config.customFetch;
-    } else {
-      fetch = getCachedFetch(this.cache);
-    }
-
     const { baseUrl: nonInterpolatedBaseUrl, operationHeaders } = this.config;
     const baseUrl = stringInterpolator.parse(nonInterpolatedBaseUrl, {
       env: process.env,
@@ -195,7 +186,7 @@ export default class ODataHandler implements MeshHandler {
 
     const aliasNamespaceMap = new Map<string, string>();
 
-    const metadataJson = await this.getCachedMetadataJson(fetch);
+    const metadataJson = await this.getCachedMetadataJson();
     const schemas = metadataJson.Edmx[0].DataServices[0].Schema;
     const multipleSchemas = schemas.length > 1;
     const namespaces = new Set<string>();
@@ -502,7 +493,7 @@ export default class ODataHandler implements MeshHandler {
             'POST'
           );
           batchHeaders['content-type'] = `multipart/mixed;boundary=${requestBoundary}`;
-          const batchResponse = await fetch(urljoin(baseUrl, '$batch'), {
+          const batchResponse = await this.fetchFn(urljoin(baseUrl, '$batch'), {
             method: 'POST',
             body: requestBody,
             headers: batchHeaders,
@@ -536,7 +527,7 @@ export default class ODataHandler implements MeshHandler {
             'POST'
           );
           batchHeaders['content-type'] = 'application/json';
-          const batchResponse = await fetch(urljoin(baseUrl, '$batch'), {
+          const batchResponse = await this.fetchFn(urljoin(baseUrl, '$batch'), {
             method: 'POST',
             body: JSON.stringify({
               requests: await Promise.all(
@@ -565,7 +556,7 @@ export default class ODataHandler implements MeshHandler {
         }),
       none: () =>
         new DataLoader(
-          (requests: Request[]): Promise<Response[]> => Promise.all(requests.map(request => fetch(request)))
+          (requests: Request[]): Promise<Response[]> => Promise.all(requests.map(request => this.fetchFn(request)))
         ),
     };
 

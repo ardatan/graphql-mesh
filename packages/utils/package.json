@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/utils",
-  "version": "0.35.6",
+  "version": "0.35.7",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -40,11 +40,8 @@
     "@graphql-tools/utils": "8.6.13",
     "@graphql-typed-document-node/core": "3.1.1",
     "@graphql-mesh/cross-helpers": "0.1.6",
-    "@graphql-mesh/types": "0.74.2",
-    "cross-undici-fetch": "^0.4.0",
+    "@graphql-mesh/types": "0.75.0",
     "chalk": "4.1.2",
-    "fetchache": "0.1.2",
-    "graphql-subscriptions": "2.0.0",
     "lodash.get": "4.4.2",
     "lodash.set": "4.3.2",
     "lodash.topath": "4.5.2",

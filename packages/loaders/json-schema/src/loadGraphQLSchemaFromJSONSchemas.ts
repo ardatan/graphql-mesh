@@ -11,7 +11,7 @@ export async function loadGraphQLSchemaFromJSONSchemas(name: string, options: JS
     operations,
     cwd,
     logger,
-    fetch: options.fetch,
+    fetchFn: options.fetch,
     schemaHeaders: options.schemaHeaders,
     ignoreErrorResponses: options.ignoreErrorResponses,
   });

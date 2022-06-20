@@ -1,10 +1,13 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { createServer } from '@graphql-yoga/node';
 import { getMesh } from '@graphql-mesh/runtime';
 import GraphQLHandler from '@graphql-mesh/graphql';
 import LocalforageCache from '@graphql-mesh/cache-localforage';
-import { PubSub, DefaultLogger } from '@graphql-mesh/utils';
+import { PubSub, DefaultLogger, defaultImportFn } from '@graphql-mesh/utils';
 import StitchingMerger from '@graphql-mesh/merger-stitching';
 import { MeshStore, InMemoryStoreStorageAdapter } from '@graphql-mesh/store';
+import { fetchFactory } from 'fetchache';
+import { fetch, Request, Response } from 'cross-undici-fetch';
 
 export async function getTestMesh() {
   const yoga = createServer({
@@ -37,7 +40,13 @@ export async function getTestMesh() {
           pubsub,
           store: store.child('sources/Yoga'),
           logger,
-          importFn: m => import(m),
+          importFn: defaultImportFn,
+          fetchFn: fetchFactory({
+            cache,
+            fetch,
+            Request,
+            Response,
+          }),
         }),
       },
     ],

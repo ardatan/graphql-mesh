@@ -23,3 +23,4 @@ Default: 200000
 * `useHTTPS` (type: `Boolean`) - Use https instead of http for gRPC connection
 * `metaData` (type: `JSON`) - MetaData
 * `useReflection` (type: `Boolean`) - Use gRPC reflection to automatically gather the connection
+* `prefixQueryMethod` (type: `Array of String`) - prefix to collect Query method default: list, get

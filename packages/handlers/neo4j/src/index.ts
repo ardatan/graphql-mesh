@@ -1,7 +1,7 @@
 import { toGraphQLTypeDefs } from '@neo4j/introspector';
 import { Neo4jGraphQL } from '@neo4j/graphql';
 import neo4j, { Driver } from 'neo4j-driver';
-import { YamlConfig, MeshHandler, GetMeshSourceOptions, MeshPubSub, Logger } from '@graphql-mesh/types';
+import { YamlConfig, MeshHandler, GetMeshSourceOptions, MeshPubSub, Logger, ImportFn } from '@graphql-mesh/types';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import { readFileOrUrl } from '@graphql-mesh/utils';
 import { process } from '@graphql-mesh/cross-helpers';
@@ -36,13 +36,25 @@ export default class Neo4JHandler implements MeshHandler {
   private pubsub: MeshPubSub;
   private typeDefs: StoreProxy<string>;
   private logger: Logger;
+  fetchFn: typeof fetch;
+  importFn: ImportFn;
 
-  constructor({ config, baseDir, pubsub, store, logger }: GetMeshSourceOptions<YamlConfig.Neo4JHandler>) {
+  constructor({
+    config,
+    baseDir,
+    pubsub,
+    store,
+    logger,
+    fetchFn,
+    importFn,
+  }: GetMeshSourceOptions<YamlConfig.Neo4JHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
     this.typeDefs = store.proxy('typeDefs.graphql', PredefinedProxyOptions.StringWithoutValidation);
     this.logger = logger;
+    this.fetchFn = fetchFn;
+    this.importFn = importFn;
   }
 
   getCachedTypeDefs(driver: Driver) {
@@ -51,6 +63,8 @@ export default class Neo4JHandler implements MeshHandler {
         return readFileOrUrl(this.config.typeDefs, {
           cwd: this.baseDir,
           allowUnknownExtensions: true,
+          importFn: this.importFn,
+          fetch: this.fetchFn,
           logger: this.logger,
         });
       } else {
