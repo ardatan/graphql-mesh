@@ -26,7 +26,13 @@ export function validateConfig(
 }
 
 export async function findAndParseConfig(options?: ConfigProcessOptions) {
-  const { configName = 'mesh', dir: configDir = '', initialLoggerPrefix = '🕸️  Mesh', ...restOptions } = options || {};
+  const {
+    configName = 'mesh',
+    dir: configDir = '',
+    initialLoggerPrefix = '🕸️  Mesh',
+    importFn,
+    ...restOptions
+  } = options || {};
   const dir = path.isAbsolute(configDir) ? configDir : path.join(process.cwd(), configDir);
   const explorer = cosmiconfig(configName, {
     searchPlaces: [
@@ -42,12 +48,12 @@ export async function findAndParseConfig(options?: ConfigProcessOptions) {
       `${configName}.config.cjs`,
     ],
     loaders: {
-      '.json': customLoader('json', options?.importFn),
-      '.yaml': customLoader('yaml', options?.importFn),
-      '.yml': customLoader('yaml', options?.importFn),
-      '.js': customLoader('js', options?.importFn),
-      '.ts': customLoader('js', options?.importFn),
-      noExt: customLoader('yaml', options?.importFn),
+      '.json': customLoader('json', importFn, initialLoggerPrefix),
+      '.yaml': customLoader('yaml', importFn, initialLoggerPrefix),
+      '.yml': customLoader('yaml', importFn, initialLoggerPrefix),
+      '.js': customLoader('js', importFn, initialLoggerPrefix),
+      '.ts': customLoader('js', importFn, initialLoggerPrefix),
+      noExt: customLoader('yaml', importFn, initialLoggerPrefix),
     },
   });
   const results = await explorer.search(dir);
@@ -58,10 +64,11 @@ export async function findAndParseConfig(options?: ConfigProcessOptions) {
 
   const config = results.config;
   validateConfig(config, results.filepath, initialLoggerPrefix);
-  return processConfig(config, { dir, initialLoggerPrefix, ...restOptions });
+  return processConfig(config, { dir, initialLoggerPrefix, importFn, ...restOptions });
 }
 
-function customLoader(ext: 'json' | 'yaml' | 'js', importFn = defaultImportFn) {
+function customLoader(ext: 'json' | 'yaml' | 'js', importFn = defaultImportFn, initialLoggerPrefix = '🕸️  Mesh') {
+  const logger = new DefaultLogger(initialLoggerPrefix).child('config');
   function loader(filepath: string, content: string) {
     if (process.env) {
       content = content.replace(/\$\{(.*?)\}/g, (_, variable) => {
@@ -83,7 +90,7 @@ function customLoader(ext: 'json' | 'yaml' | 'js', importFn = defaultImportFn) {
     }
 
     if (ext === 'yaml') {
-      return loadYaml(filepath, content);
+      return loadYaml(filepath, content, logger);
     }
 
     if (ext === 'js') {
