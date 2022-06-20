@@ -1,5 +1,23 @@
 # @graphql-mesh/config
 
+## 2.0.0
+
+### Minor Changes
+
+- d4754ad08: Response Cache Plugin
+
+### Patch Changes
+
+- Updated dependencies [d4754ad08]
+- Updated dependencies [2df026e90]
+  - @graphql-mesh/runtime@0.38.0
+  - @graphql-mesh/types@0.75.0
+  - @graphql-mesh/cache-localforage@0.6.13
+  - @graphql-mesh/merger-bare@0.13.55
+  - @graphql-mesh/merger-stitching@0.15.57
+  - @graphql-mesh/store@0.8.16
+  - @graphql-mesh/utils@0.35.7
+
 ## 1.0.1
 
 ### Patch Changes
