@@ -2,7 +2,6 @@
 import { IResolvers, Executor } from '@graphql-tools/utils';
 import { GraphQLSchema, GraphQLResolveInfo, DocumentNode, SelectionSetNode } from 'graphql';
 import * as YamlConfig from './config';
-import { KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
 import { Transform, MergedTypeConfig } from '@graphql-tools/delegate';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { MeshStore } from '@graphql-mesh/store';
@@ -20,6 +19,21 @@ export type MeshSource = {
   batch?: boolean;
 };
 
+type FetchFn = (input: RequestInfo, init?: RequestInit) => Promise<Response>;
+
+export interface KeyValueCacheSetOptions {
+  /**
+   * Specified in **seconds**, the time-to-live (TTL) value limits the lifespan
+   * of the data being stored in the cache.
+   */
+  ttl?: number | null;
+}
+export interface KeyValueCache<V = any> {
+  get(key: string): Promise<V | undefined>;
+  set(key: string, value: V, options?: KeyValueCacheSetOptions): Promise<void>;
+  delete(key: string): Promise<boolean | void>;
+}
+
 export type GetMeshSourceOptions<THandlerConfig> = {
   name: string;
   config: THandlerConfig;
@@ -29,6 +43,7 @@ export type GetMeshSourceOptions<THandlerConfig> = {
   store: MeshStore;
   logger: Logger;
   importFn: ImportFn;
+  fetchFn: FetchFn;
 };
 
 // Handlers
@@ -76,8 +91,6 @@ export interface MeshTransform<T = any> extends Transform<T> {
 }
 
 export type Maybe<T> = null | undefined | T;
-
-export { KeyValueCache, KeyValueCacheSetOptions };
 
 export interface MeshMergerOptions {
   cache: KeyValueCache;

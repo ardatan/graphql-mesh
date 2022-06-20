@@ -40,6 +40,8 @@
     "@graphql-tools/load": "7.5.14",
     "@graphql-tools/code-file-loader": "7.2.18",
     "@graphql-tools/graphql-file-loader": "7.3.15",
+    "cross-undici-fetch": "0.4.7",
+    "fetchache": "0.1.2",
     "param-case": "3.0.4",
     "@envelop/core": "2.3.3",
     "tslib": "^2.4.0",

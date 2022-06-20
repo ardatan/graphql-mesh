@@ -6,7 +6,6 @@ other options will be ignored and the schema exported from the file will be used
 * `operationHeaders` (type: `JSON`) - JSON object representing the Headers to add to the runtime of the API calls only for operation during runtime
 * `useGETForQueries` (type: `Boolean`) - Use HTTP GET for Query operations
 * `method` (type: `String (GET | POST)`) - HTTP method used for GraphQL operations
-* `customFetch` (type: `Any`) - Path to a custom W3 Compatible Fetch Implementation
 * `webSocketImpl` (type: `String`) - Path to a custom W3 Compatible WebSocket Implementation
 * `introspection` (type: `String`) - Path to the introspection
 You can seperately give schema introspection

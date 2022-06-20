@@ -1,4 +1,4 @@
-import { readFileOrUrl, loadFromModuleExportExpression, getCachedFetch } from '@graphql-mesh/utils';
+import { readFileOrUrl } from '@graphql-mesh/utils';
 import { asArray } from '@graphql-tools/utils';
 import { createGraphQLSchema, GraphQLOperationType } from './openapi-to-graphql';
 import { Oas3 } from './openapi-to-graphql/types/oas3';
@@ -7,10 +7,9 @@ import {
   YamlConfig,
   GetMeshSourceOptions,
   MeshSource,
-  KeyValueCache,
   MeshPubSub,
-  ImportFn,
   Logger,
+  ImportFn,
 } from '@graphql-mesh/types';
 import { OasTitlePathMethodObject } from './openapi-to-graphql/types/options';
 import { GraphQLArgument, GraphQLID, GraphQLInputType } from 'graphql';
@@ -31,27 +30,28 @@ import {
 export default class OpenAPIHandler implements MeshHandler {
   private config: YamlConfig.OpenapiHandler;
   private baseDir: string;
-  private cache: KeyValueCache;
+  private fetchFn: typeof fetch;
+  private importFn: ImportFn;
   private pubsub: MeshPubSub;
   private oasSchema: StoreProxy<Oas3[]>;
-  private importFn: ImportFn;
   private logger: Logger;
 
   constructor({
     name,
     config,
     baseDir,
-    cache,
+    fetchFn,
+    importFn,
     pubsub,
     store,
-    importFn,
     logger,
   }: GetMeshSourceOptions<YamlConfig.OpenapiHandler>) {
     this.config = config;
     this.baseDir = baseDir;
-    this.cache = cache;
     this.pubsub = pubsub;
     this.logger = logger;
+    this.fetchFn = fetchFn;
+    this.importFn = importFn;
     // TODO: This validation here should be more flexible, probably specific to OAS
     // Because we can handle json/swagger files, and also we might want to use this:
     // https://github.com/Azure/openapi-diff
@@ -79,10 +79,9 @@ export default class OpenAPIHandler implements MeshHandler {
         }
       },
     });
-    this.importFn = importFn;
   }
 
-  private getCachedSpec(fetch: WindowOrWorkerGlobalScope['fetch']): Promise<Oas3[]> {
+  private getCachedSpec(): Promise<Oas3[]> {
     const { source: nonInterpolatedSource } = this.config;
     const source = stringInterpolator.parse(nonInterpolatedSource, {
       env: process.env,
@@ -99,7 +98,8 @@ export default class OpenAPIHandler implements MeshHandler {
           headers: schemaHeadersFactory({
             env: process.env,
           }),
-          fetch,
+          importFn: this.importFn,
+          fetch: this.fetchFn,
           logger: this.logger,
         });
       }
@@ -108,28 +108,10 @@ export default class OpenAPIHandler implements MeshHandler {
   }
 
   async getMeshSource(): Promise<MeshSource> {
-    const {
-      addLimitArgument,
-      baseUrl,
-      customFetch,
-      genericPayloadArgName,
-      operationHeaders,
-      qs,
-      selectQueryOrMutationField,
-    } = this.config;
+    const { addLimitArgument, baseUrl, genericPayloadArgName, operationHeaders, qs, selectQueryOrMutationField } =
+      this.config;
 
-    let fetch: WindowOrWorkerGlobalScope['fetch'];
-    if (customFetch) {
-      fetch = await loadFromModuleExportExpression(customFetch, {
-        defaultExportName: 'default',
-        cwd: this.baseDir,
-        importFn: this.importFn,
-      });
-    } else {
-      fetch = getCachedFetch(this.cache);
-    }
-
-    const spec = await this.getCachedSpec(fetch);
+    const spec = await this.getCachedSpec();
 
     const headersFactory = getInterpolatedHeadersFactory(operationHeaders);
     const queryStringFactoryMap = new Map<string, ResolverDataBasedFactory<string>>();
@@ -144,7 +126,7 @@ export default class OpenAPIHandler implements MeshHandler {
     };
 
     const { schema } = await createGraphQLSchema(spec, {
-      fetch,
+      fetch: this.fetchFn,
       baseUrl,
       operationIdFieldNames: this.config.operationIdFieldNames,
       fillEmptyResponses: true,

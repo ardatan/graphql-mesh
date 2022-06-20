@@ -9,14 +9,14 @@ export async function getDereferencedJSONSchemaFromOperations({
   operations,
   cwd = process.cwd(),
   logger,
-  fetch,
+  fetchFn,
   schemaHeaders,
   ignoreErrorResponses,
 }: {
   operations: JSONSchemaOperationConfig[];
   cwd: string;
   logger: Logger;
-  fetch: WindowOrWorkerGlobalScope['fetch'];
+  fetchFn: WindowOrWorkerGlobalScope['fetch'];
   schemaHeaders?: Record<string, string>;
   ignoreErrorResponses?: boolean;
 }): Promise<JSONSchemaObject> {
@@ -25,12 +25,14 @@ export async function getDereferencedJSONSchemaFromOperations({
     cwd,
     schemaHeaders,
     ignoreErrorResponses,
+    fetchFn,
   });
   logger.debug(`Dereferencing JSON Schema to resolve all $refs`);
   const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders);
   const fullyDeferencedSchema = await dereferenceObject(referencedJSONSchema, {
     cwd,
-    fetch,
+    fetchFn,
+    logger,
     headers: schemaHeadersFactory({ env: process.env }),
   });
   logger.debug(`Healing JSON Schema`);

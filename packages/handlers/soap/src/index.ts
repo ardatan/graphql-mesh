@@ -1,7 +1,7 @@
-import { GetMeshSourceOptions, MeshHandler, YamlConfig, KeyValueCache, ImportFn, Logger } from '@graphql-mesh/types';
+import { GetMeshSourceOptions, MeshHandler, YamlConfig, ImportFn, Logger } from '@graphql-mesh/types';
 import { soapGraphqlSchema, createSoapClient } from './soap-graphql';
 import soap from 'soap';
-import { getCachedFetch, loadFromModuleExportExpression, readFileOrUrl } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression, readFileOrUrl } from '@graphql-mesh/utils';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import type { AxiosRequestConfig, AxiosResponse, AxiosInstance } from 'axios';
 import { process } from '@graphql-mesh/cross-helpers';
@@ -17,15 +17,15 @@ function getHeadersObject(headers: Headers): Record<string, string> {
 export default class SoapHandler implements MeshHandler {
   private config: YamlConfig.SoapHandler;
   private baseDir: string;
-  private cache: KeyValueCache;
+  private fetchFn: typeof fetch;
   private wsdlResponse: StoreProxy<AxiosResponse>;
   private importFn: ImportFn;
   private logger: Logger;
 
-  constructor({ config, baseDir, cache, store, importFn, logger }: GetMeshSourceOptions<YamlConfig.SoapHandler>) {
+  constructor({ config, baseDir, fetchFn, store, importFn, logger }: GetMeshSourceOptions<YamlConfig.SoapHandler>) {
     this.config = config;
     this.baseDir = baseDir;
-    this.cache = cache;
+    this.fetchFn = fetchFn;
     this.wsdlResponse = store.proxy('wsdlResponse.json', PredefinedProxyOptions.JsonWithoutValidation);
     this.importFn = importFn;
     this.logger = logger;
@@ -46,7 +46,6 @@ export default class SoapHandler implements MeshHandler {
     if (schemaHeaders && 'then' in schemaHeaders) {
       schemaHeaders = await schemaHeaders;
     }
-    const fetch = getCachedFetch(this.cache);
     const soapClient = await createSoapClient(this.config.wsdl, {
       basicAuth: this.config.basicAuth,
       options: {
@@ -58,7 +57,7 @@ export default class SoapHandler implements MeshHandler {
               ...(isWsdlRequest ? schemaHeaders : this.config.operationHeaders),
             };
             delete headers.Connection;
-            const res = await fetch(requestObj.url, {
+            const res = await this.fetchFn(requestObj.url, {
               headers,
               method: requestObj.method,
               body: requestObj.data,
@@ -88,18 +87,27 @@ export default class SoapHandler implements MeshHandler {
             readFileOrUrl<string>(securityCertConfig.privateKeyPath, {
               allowUnknownExtensions: true,
               cwd: this.baseDir,
+              importFn: this.importFn,
+              fetch: this.fetchFn,
+              logger: this.logger,
             })),
         securityCertConfig.publicKey ||
           (securityCertConfig.publicKeyPath &&
             readFileOrUrl<string>(securityCertConfig.publicKeyPath, {
               allowUnknownExtensions: true,
               cwd: this.baseDir,
+              importFn: this.importFn,
+              fetch: this.fetchFn,
+              logger: this.logger,
             })),
         securityCertConfig.password ||
           (securityCertConfig.passwordPath &&
             readFileOrUrl<string>(securityCertConfig.passwordPath, {
               allowUnknownExtensions: true,
               cwd: this.baseDir,
+              importFn: this.importFn,
+              fetch: this.fetchFn,
+              logger: this.logger,
             })),
       ]);
       soapClient.setSecurity(new soap.WSSecurityCert(privateKey, publicKey, password));

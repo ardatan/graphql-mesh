@@ -5,4 +5,3 @@
 * `schemaHeaders` (type: `JSON`) - Headers to be used with the $metadata requests
 * `batch` (type: `String (multipart | json)`) - Enable batching
 * `expandNavProps` (type: `Boolean`) - Use $expand for navigation props instead of seperate HTTP requests (Default: false)
-* `customFetch` (type: `Any`) - Custom Fetch

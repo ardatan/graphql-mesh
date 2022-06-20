@@ -1,4 +1,4 @@
-import { readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import { defaultImportFn, DefaultLogger, readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { JSONSchemaObject, dereferenceObject, resolvePath } from 'json-machete';
 import { OpenAPIV3, OpenAPIV2 } from 'openapi-types';
 import {
@@ -30,12 +30,12 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
   oasFilePath,
   fallbackFormat,
   cwd,
-  fetch,
+  fetch: fetchFn,
   baseUrl,
   schemaHeaders,
   operationHeaders,
   selectQueryOrMutationField = [],
-  logger,
+  logger = new DefaultLogger('getJSONSchemaOptionsFromOpenAPIOptions'),
 }: GetJSONSchemaOptionsFromOpenAPIOptionsParams) {
   const fieldTypeMap: Record<string, 'query' | 'mutation'> = {};
   for (const { fieldName, type } of selectQueryOrMutationField) {
@@ -49,7 +49,8 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
           cwd,
           fallbackFormat,
           headers: schemaHeadersFactory({ env: process.env }),
-          fetch,
+          fetch: fetchFn,
+          importFn: defaultImportFn,
           logger,
         })
       : oasFilePath;
@@ -240,7 +241,8 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
             {
               cwd,
               root: oasOrSwagger,
-              fetch,
+              fetchFn,
+              logger,
               headers: schemaHeaders,
             }
           );
@@ -310,7 +312,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
     operations,
     baseUrl,
     cwd,
-    fetch,
+    fetch: fetchFn,
     schemaHeaders,
     operationHeaders,
   };

@@ -1,7 +1,6 @@
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import { GetMeshSourceOptions, Logger, MeshHandler, MeshPubSub, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { createBundle, getGraphQLSchemaFromBundle, RAMLLoaderBundle } from '@omnigraph/raml';
-import { getCachedFetch } from '@graphql-mesh/utils';
 
 export default class RAMLHandler implements MeshHandler {
   private name: string;
@@ -11,11 +10,11 @@ export default class RAMLHandler implements MeshHandler {
   private logger: Logger;
   private fetch: typeof fetch;
   private pubsub: MeshPubSub;
-  constructor({ name, config, baseDir, cache, store, pubsub, logger }: GetMeshSourceOptions<YamlConfig.RAMLHandler>) {
+  constructor({ name, config, baseDir, fetchFn, store, pubsub, logger }: GetMeshSourceOptions<YamlConfig.RAMLHandler>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
-    this.fetch = getCachedFetch(cache);
+    this.fetch = fetchFn;
     this.bundleStoreProxy = store.proxy('jsonSchemaBundle', PredefinedProxyOptions.JsonWithoutValidation);
     this.pubsub = pubsub;
     this.logger = logger;

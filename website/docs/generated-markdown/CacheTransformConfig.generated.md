@@ -2,7 +2,6 @@
 * `field` (type: `String`, required) - The type and field to apply cache to, you can use wild cards as well, for example: `Query.*`
 * `cacheKey` (type: `String`) - Cache key to use to store your resolvers responses.
 The default is: \{typeName}-\{fieldName}-\{argsHash}-\{fieldNamesHash}
-
 Available variables:
 - \{args.argName} - use resolver argument
 - \{typeName} - use name of the type
@@ -10,7 +9,6 @@ Available variables:
 - \{argsHash} - a hash based on the 'args' object
 - \{fieldNamesHash} - a hash based on the field names selected by the client
 - \{info} - the GraphQLResolveInfo of the resolver
-
 Available interpolations:
 - \{format|date} - returns the current date with a specific format
 * `invalidate` (type: `Object`) - Invalidation rules: 

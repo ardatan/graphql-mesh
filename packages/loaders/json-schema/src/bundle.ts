@@ -46,7 +46,7 @@ export async function createBundle(
     operations,
     cwd,
     logger,
-    fetch,
+    fetchFn: fetch,
     schemaHeaders,
     ignoreErrorResponses,
   });
@@ -98,7 +98,8 @@ export async function getGraphQLSchemaFromBundle(
   logger.info(`Dereferencing the bundle`);
   const fullyDeferencedSchema = await dereferenceObject(referencedSchema, {
     cwd,
-    fetch,
+    fetchFn: fetch,
+    logger,
   });
 
   const operationHeaders = { ...bundledOperationHeaders, ...additionalOperationHeaders };

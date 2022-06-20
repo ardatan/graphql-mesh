@@ -134,7 +134,9 @@ sources:
         operationHeaders:
           Authorization-Header: '{context.headers.authorization}'
           Authorization-Cookie: Bearer {context.cookies.accessToken}
-        customFetch: ./src/custom-fetch.js
+
+# You can provide a custom fetch function to override the default fetch function
+customFetch: ./src/custom-fetch.js
 ```
 
 Here in the `meshrc.yaml` configuration we store the cookie in `Authorization-Cookie`, and the header in `Authorization-Header`. To introduce the logic needed to generate the proper `Authorization` header for the Rest API, we need to implement a `customFetch`. It will replace the `fetch` used by GraphQL Mesh to call the Rest API.

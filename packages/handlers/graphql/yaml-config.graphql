@@ -69,10 +69,6 @@ type GraphQLHandlerHTTPConfiguration @md {
   """
   method: GraphQLHandlerHTTPMethod
   """
-  Path to a custom W3 Compatible Fetch Implementation
-  """
-  customFetch: Any
-  """
   Path to a custom W3 Compatible WebSocket Implementation
   """
   webSocketImpl: String

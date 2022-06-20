@@ -6,7 +6,6 @@
 * `baseUrl` (type: `String`) - Specifies the URL on which all paths will be based on.
 Overrides the server object in the OAS.
 * `qs` (type: `JSON`) - JSON object representing the query search parameters to add to the API calls
-* `customFetch` (type: `Any`) - W3 Compatible Fetch Implementation
 * `includeHttpDetails` (type: `Boolean`) - Include HTTP Response details to the result object
 * `addLimitArgument` (type: `Boolean`) - Auto-generate a 'limit' argument for all fields that return lists of objects, including ones produced by links
 * `genericPayloadArgName` (type: `Boolean`) - Set argument name for mutation payload to 'requestBody'. If false, name defaults to camelCased pathname
@@ -17,7 +16,5 @@ Overrides the server object in the OAS.
   * `method` (type: `String`) - Which method is used for this operation
 * `provideErrorExtensions` (type: `Boolean`) - Overwrite automatic wrapping of errors into GraphqlErrors
 * `operationIdFieldNames` (type: `Boolean`) - Field names can only be sanitized operationIds
-
 By default, query field names are based on the return type type name and mutation field names are based on the operationId, which may be generated if it does not exist.
-
 This option forces OpenAPI handler to only create field names based on the operationId.
