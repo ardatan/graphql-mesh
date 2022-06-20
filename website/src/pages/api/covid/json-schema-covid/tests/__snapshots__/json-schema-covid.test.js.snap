@@ -2,6 +2,7 @@
 
 exports[`JSON Schema Covid should generate correct schema: json-schema-covid-schema 1`] = `
 "directive @resolveTo(additionalArgs: ResolveToSourceArgs, keyField: String, keysArg: String, requiredSelectionSet: String, result: String, resultType: String, sourceArgs: ResolveToSourceArgs, sourceFieldName: String!, sourceName: String!, sourceSelectionSet: String, sourceTypeName: String!) on FIELD_DEFINITION
+
 \\"\\"\\"Desc Api Population\\"\\"\\"
 type ApiPopulation {
   records: [Result]
