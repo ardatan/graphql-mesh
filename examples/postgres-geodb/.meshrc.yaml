@@ -35,6 +35,5 @@ additionalTypeDefs: |
     )
   }
 
-
 documents:
   - ./src/test.query.graphql
