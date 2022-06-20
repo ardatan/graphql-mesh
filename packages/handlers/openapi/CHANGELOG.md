@@ -1,5 +1,11 @@
 # @graphql-mesh/openapi
 
+## 0.26.4
+
+### Patch Changes
+
+- f9969f116: Fix serialization of array values in query parameters
+
 ## 0.26.3
 
 ### Patch Changes
