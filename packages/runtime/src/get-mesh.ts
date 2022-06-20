@@ -128,6 +128,8 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     transforms,
   });
 
+  let inContextSDK$: Promise<Record<string, any>>;
+
   const plugins: PluginOrDisabledPlugin[] = [
     useSchema(unifiedSchema),
     useExtendContext(() => ({
@@ -136,9 +138,11 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
       logger,
       [MESH_CONTEXT_SYMBOL]: true,
     })),
-    enableIf(additionalTypeDefs.length > 0 || additionalResolvers.length > 0, () => {
-      const inContextSDK = getInContextSDK(unifiedSchema, rawSources, logger);
-      return useExtendContext(() => inContextSDK);
+    useExtendContext(() => {
+      if (!inContextSDK$) {
+        inContextSDK$ = getInContextSDK(unifiedSchema, rawSources, logger);
+      }
+      return inContextSDK$;
     }),
     enableIf(!!unifiedSchema.getDirective('oneOf'), () =>
       useExtendedValidation({

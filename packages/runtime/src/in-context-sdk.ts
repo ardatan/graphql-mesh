@@ -16,7 +16,7 @@ import {
 } from 'graphql';
 import { MESH_API_CONTEXT_SYMBOL } from './constants';
 
-export function getInContextSDK(unifiedSchema: GraphQLSchema, rawSources: RawSourceOutput[], logger: Logger) {
+export async function getInContextSDK(unifiedSchema: GraphQLSchema, rawSources: RawSourceOutput[], logger: Logger) {
   const inContextSDK: Record<string, any> = {};
   const sourceMap = unifiedSchema.extensions.sourceMap as Map<RawSourceOutput, GraphQLSchema>;
   for (const rawSource of rawSources) {
