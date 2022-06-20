@@ -1,5 +1,12 @@
 # javascript-wiki
 
+## 0.5.245
+
+### Patch Changes
+
+- Updated dependencies [f9969f116]
+  - @graphql-mesh/openapi@0.26.4
+
 ## 0.5.244
 
 ### Patch Changes
