@@ -37,41 +37,42 @@ plugins:
 
 additionalTypeDefs: |
   extend type PopulatedPlaceSummary {
-    dailyForecast: [Forecast]
-    todayForecast: Forecast
+    dailyForecast: [Forecast] @resolveTo(
+      requiredSelectionSet: """
+       {
+          latitude
+          longitude
+        }
+      """,
+      sourceName: "Weather",
+      sourceTypeName: "Query",
+      sourceFieldName: "getForecastDailyLatequalToLatLonLon",
+      sourceArgs: {
+        lat: "{root.latitude}",
+        lon: "{root.longitude}",
+        key: "971a693de7ff47a89127664547988be5"
+      },
+      result: "data"
+    )
+    todayForecast: Forecast @resolveTo(
+      requiredSelectionSet: """
+       {
+          latitude
+          longitude
+        }
+      """,
+      sourceName: "Weather",
+      sourceTypeName: "Query",
+      sourceFieldName: "getForecastDailyLatequalToLatLonLon",
+      sourceArgs: {
+        lat: "{root.latitude}",
+        lon: "{root.longitude}",
+        days: 1
+        key: "971a693de7ff47a89127664547988be5"
+      },
+      result: "data[0]"
+    )
   }
-additionalResolvers:
-  - targetTypeName: PopulatedPlaceSummary
-    targetFieldName: dailyForecast
-    requiredSelectionSet: |
-      {
-        latitude
-        longitude
-      }
-    sourceName: Weather
-    sourceTypeName: Query
-    sourceFieldName: getForecastDailyLatequalToLatLonLon
-    sourceArgs:
-      lat: '{root.latitude}'
-      lon: '{root.longitude}'
-      key: 971a693de7ff47a89127664547988be5
-    result: data
-  - targetTypeName: PopulatedPlaceSummary
-    targetFieldName: todayForecast
-    requiredSelectionSet: |
-      {
-        latitude
-        longitude
-      }
-    sourceName: Weather
-    sourceTypeName: Query
-    sourceFieldName: getForecastDailyLatequalToLatLonLon
-    sourceArgs:
-      lat: '{root.latitude}'
-      lon: '{root.longitude}'
-      days: 1
-      key: 971a693de7ff47a89127664547988be5
-    result: data[0]
 
 documents:
   - ./example-query.graphql

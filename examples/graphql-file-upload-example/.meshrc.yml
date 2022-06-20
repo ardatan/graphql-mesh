@@ -11,19 +11,18 @@ sources:
 
 additionalTypeDefs: |
   extend type File {
-    thumbnailImage(width: Int, height: Int): String
+    thumbnailImage(width: Int, height: Int): String @resolveTo(
+      requiredSelectionSet: "{ thumbnailImage }",
+      sourceName: "ResizeImages",
+      sourceTypeName: "Query",
+      sourceFieldName: "resizeImage",
+      sourceArgs: {
+        image: "{root.base64}"
+        width: "{args.width}"
+        height: "{args.height}"
+      }
+    )
   }
-additionalResolvers:
-  - targetTypeName: File
-    targetFieldName: thumbnailImage
-    requiredSelectionSet: '{ base64 }'
-    sourceName: ResizeImages
-    sourceTypeName: Query
-    sourceFieldName: resizeImage
-    sourceArgs:
-      image: '{root.base64}'
-      width: '{args.width}'
-      height: '{args.height}'
 
 serve:
   cors:

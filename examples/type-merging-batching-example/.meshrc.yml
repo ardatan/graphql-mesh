@@ -41,21 +41,18 @@ sources:
             - queryFieldName: author
               keyField: id
 
+# Create a stitching resolver with batching
+# to solve N+1 problem
 additionalTypeDefs: |
   extend type Book {
-    author: Author
+    author: Author @resolveTo(
+      sourceName: "AuthorService",
+      sourceTypeName: "Query",
+      sourceFieldName: "authors",
+      keyField: "authorId",
+      keysArg: "ids"
+    )
   }
-
-additionalResolvers:
-  # Create a stitching resolver with batching
-  # to solve N+1 problem
-  - sourceName: AuthorService
-    sourceTypeName: Query
-    sourceFieldName: authors
-    keyField: authorId
-    keysArg: ids
-    targetTypeName: Book
-    targetFieldName: author
 
 documents:
   - ./example-queries/*.graphql

@@ -22,16 +22,15 @@ sources:
 
 additionalTypeDefs: |
   extend type Reference {
-    resource: ResourceList
+    resource: ResourceList @resolveTo(
+      sourceName: "FHIR",
+      sourceTypeName: "Query",
+      sourceFieldName: "resourceById",
+      sourceArgs: {
+        resourceType: "{root.reference}"
+      }
+    )
   }
-additionalResolvers:
-  - targetTypeName: Reference
-    targetFieldName: resource
-    sourceName: FHIR
-    sourceTypeName: Query
-    sourceFieldName: resourceById
-    sourceArgs:
-      resourceType: '{root.reference}'
 
 documents:
   - ./example-queries/*.graphql

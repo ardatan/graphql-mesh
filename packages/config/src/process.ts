@@ -14,7 +14,7 @@ import {
   KeyValueCache,
 } from '@graphql-mesh/types';
 import { IResolvers, Source } from '@graphql-tools/utils';
-import { concatAST, DocumentNode, print, visit } from 'graphql';
+import { concatAST, DocumentNode, parse, print, visit } from 'graphql';
 import {
   getPackage,
   resolveAdditionalTypeDefs,
@@ -28,6 +28,7 @@ import { pascalCase } from 'pascal-case';
 import { camelCase } from 'camel-case';
 import { defaultImportFn, parseWithCache, resolveAdditionalResolvers } from '@graphql-mesh/utils';
 import { envelop, useMaskedErrors, useImmediateIntrospection } from '@envelop/core';
+import { getAdditionalResolversFromTypeDefs } from './getAdditionalResolversFromTypeDefs';
 import { fetch, Request, Response } from 'cross-undici-fetch';
 import { fetchFactory } from 'fetchache';
 
@@ -430,6 +431,47 @@ export async function processConfig(
       ]);`);
     } else {
       codes.push(`const additionalResolvers = [] as any[]`);
+    }
+  }
+
+  if (additionalTypeDefs?.length) {
+    const additionalResolversConfigFromTypeDefs = getAdditionalResolversFromTypeDefs(additionalTypeDefs);
+    if (additionalResolversConfigFromTypeDefs?.length) {
+      const resolveToDirectiveDefinition = /* GraphQL */ `
+        scalar ResolveToSourceArgs
+        directive @resolveTo(
+          requiredSelectionSet: String
+          sourceName: String!
+          sourceTypeName: String!
+          sourceFieldName: String!
+          sourceSelectionSet: String
+          sourceArgs: ResolveToSourceArgs
+          keyField: String
+          keysArg: String
+          additionalArgs: ResolveToSourceArgs
+          result: String
+          resultType: String
+        ) on FIELD_DEFINITION
+      `;
+      const resolvedAdditionalResolvers = await resolveAdditionalResolvers(
+        dir,
+        additionalResolversConfigFromTypeDefs,
+        importFn,
+        pubsub
+      );
+      additionalTypeDefs.unshift(parse(resolveToDirectiveDefinition));
+      additionalResolvers.push(...resolvedAdditionalResolvers);
+      if (options.generateCode && resolvedAdditionalResolvers.length) {
+        importCodes.push(`import { resolveAdditionalResolvers } from '@graphql-mesh/utils';`);
+        codes.push(`additionalTypeDefs.unshift(parse(/* GraphQL */\`${resolveToDirectiveDefinition}\`))`);
+        codes.push(`const additionalResolversFromTypeDefs = await resolveAdditionalResolvers(
+          baseDir,
+          ${JSON.stringify(additionalResolversConfigFromTypeDefs)},
+          importFn,
+          pubsub
+        );`);
+        codes.push(`additionalResolvers.push(additionalResolversFromTypeDefs)`);
+      }
     }
   }
 

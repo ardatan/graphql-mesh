@@ -21,24 +21,19 @@ sources:
 
 additionalTypeDefs: |
   extend type GeoCity {
-    developers(limit: Int = 10): [GithubUser]
+    developers(limit: Int = 10): [GithubUser] @resolveTo(
+      requiredSelectionSet: "{ name }",
+      sourceName: "Github",
+      sourceTypeName: "Query",
+      sourceFieldName: "Githubsearch",
+      sourceArgs: {
+        type: "USER",
+        query: "location:{root.name}",
+        first: "{args.limit}"
+      },
+      result: "nodes"
+    )
   }
-
-additionalResolvers:
-  - targetTypeName: GeoCity
-    targetFieldName: developers
-    requiredSelectionSet: |
-      {
-        name
-      }
-    sourceName: Github
-    sourceTypeName: Query
-    sourceFieldName: Githubsearch
-    sourceArgs:
-      type: USER
-      query: location:{root.name}
-      first: '{args.limit}'
-    result: nodes
 
 documents:
   - ./src/test.query.graphql
