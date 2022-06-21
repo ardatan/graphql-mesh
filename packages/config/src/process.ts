@@ -448,6 +448,8 @@ export async function processConfig(
           sourceArgs: ResolveToSourceArgs
           keyField: String
           keysArg: String
+          pubsubTopic: String
+          filterBy: String
           additionalArgs: ResolveToSourceArgs
           result: String
           resultType: String
