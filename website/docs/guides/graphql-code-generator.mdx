@@ -15,11 +15,11 @@ Mesh relies on [GraphQL Code Generator](https://www.graphql-code-generator.com/)
 The generated typed Mesh SDK can also be accessed directly, as shown below:
 
 ```ts
-import { getMeshSdk } from './.mesh'
+import { getMeshSDK } from './.mesh'
 
 async function test() {
   // Load mesh config and get the sdkClient from it
-  const sdk = getMeshSdk()
+  const sdk = getMeshSDK()
 
   // Execute `myQuery` and get a type-safe result
   // Variables and result are typed: { getSomething: { fieldA: string, fieldB: number }, errors?: GraphQLError[] }
