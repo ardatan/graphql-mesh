@@ -1,4 +1,4 @@
-const { GraphQLSchema, GraphQLObjectType, GraphQLString, GraphQLID, GraphQLList } = require('graphql');
+import { GraphQLObjectType, GraphQLID, GraphQLString, GraphQLList, GraphQLSchema } from 'graphql';
 
 const books = [
   {
@@ -50,7 +50,7 @@ const AuthorWithBooksType = new GraphQLObjectType({
   },
 });
 
-module.exports = new GraphQLSchema({
+export default new GraphQLSchema({
   query: new GraphQLObjectType({
     name: 'Query',
     fields: {
