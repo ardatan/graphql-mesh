@@ -1,6 +1,3 @@
-const {
-  promises: { readFile },
-} = require('fs');
 const { Server, loadPackageDefinition, ServerCredentials } = require('@grpc/grpc-js');
 const { load } = require('@grpc/proto-loader');
 const { join } = require('path');
@@ -94,11 +91,6 @@ module.exports = function startServer(subscriptionInterval = 1000, debug = false
           }, subscriptionInterval * (Movies.length + 1));
         },
       });
-      const [rootCA, cert_chain, private_key] = await Promise.all([
-        readFile(join(__dirname, './certs/ca.crt')),
-        readFile(join(__dirname, './certs/server.crt')),
-        readFile(join(__dirname, './certs/server.key')),
-      ]);
       server.bindAsync('0.0.0.0:50051', ServerCredentials.createInsecure(), (error, port) => {
         if (error) {
           reject(error);
