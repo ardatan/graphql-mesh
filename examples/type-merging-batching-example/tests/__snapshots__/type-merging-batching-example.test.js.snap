@@ -5,7 +5,7 @@ exports[`Type Merging and Batching Example should generate correct schema 1`] = 
   query: Query
 }
 
-directive @resolveTo(additionalArgs: ResolveToSourceArgs, keyField: String, keysArg: String, requiredSelectionSet: String, result: String, resultType: String, sourceArgs: ResolveToSourceArgs, sourceFieldName: String!, sourceName: String!, sourceSelectionSet: String, sourceTypeName: String!) on FIELD_DEFINITION
+directive @resolveTo(additionalArgs: ResolveToSourceArgs, filterBy: String, keyField: String, keysArg: String, pubsubTopic: String, requiredSelectionSet: String, result: String, resultType: String, sourceArgs: ResolveToSourceArgs, sourceFieldName: String!, sourceName: String!, sourceSelectionSet: String, sourceTypeName: String!) on FIELD_DEFINITION
 
 type Author {
   books: [Book]
