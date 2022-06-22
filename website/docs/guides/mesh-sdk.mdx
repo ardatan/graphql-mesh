@@ -27,7 +27,6 @@ query myQuery($someVar: String!) {
 
 <p>&nbsp;</p>
 
-
 ### 2. Update your `.meshrc.yml` configuration
 
 Now, update your `.meshrc.yml` to include this GraphQL document, as follows:
@@ -43,11 +42,7 @@ sdk:
     selectionSetDepth: 2 # This is the maximum level of selection set
 ```
 
-
 <p>&nbsp;</p>
-
-
-
 
 ### 3. Build your SDK with Mesh artifacts
 
@@ -57,10 +52,7 @@ This will generate an SDK inside your Mesh artifacts under `.mesh` directory;
 yarn mesh build
 ```
 
-
 <p>&nbsp;</p>
-
-
 
 ### 4. Use the generated SDK in the code
 
@@ -81,7 +73,6 @@ async function test() {
 
 > You can find an example for that [here](https://github.com/Urigo/graphql-mesh/tree/master/examples/postgres-geodb#using-the-generated-sdk)
 
-
 <p>&nbsp;</p>
 
 ---
@@ -93,7 +84,6 @@ async function test() {
 GraphQL Mesh CLI uses [GraphQL Code Generator](https://www.graphql-code-generator.com/) and its [Generic SDK plugin](https://www.graphql-code-generator.com/plugins/typescript-generic-sdk) to generate a fully typed SDK from your unified schema. It is possible to configure it to get more customized experience.
 
 [See 'Configure GraphQL Code Generator' section to learn more](/graphql-code-generator)
-
 
 <p>&nbsp;</p>
 
