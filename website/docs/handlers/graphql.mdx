@@ -78,6 +78,132 @@ sources:
 
 <p>&nbsp;</p>
 
+## Local Schemas
+
+We recommend providing local schema by using the `additionalTypeDefs` and `additionalResolvers` configuration options.
+
+However, it is also possible to use a local GraphQL Schema instance as a GraphQL Mesh source, as showcased below:
+
+```yaml
+sources:
+  - name: MyGraphQLApi
+    handler:
+      graphql:
+        schema: ./my-local-schema.ts
+```
+
+```ts
+// my-local-schema.ts
+import { makeExecutableSchema } from '@graphql-tools/schema'
+export default makeExecutableSchema({
+  typeDefs: /* GraphQL */ `
+    type Query {
+      foo: String
+    }
+  `,
+  resolvers: {
+    Query: {
+      foo: () => 'FOO'
+    }
+  }
+})
+```
+
+<p>&nbsp;</p>
+
+## Fetch Strategies and Multiple HTTP endpoints for the same source
+
+If you want to have an advanced fetch strategy for the GraphQL source such as retrying twice or timeout in 30 seconds etc.
+Also you can have different HTTP endpoints for a single source, and you can configure Mesh to get a better execution flow.
+
+For example, you can make a request to both endpoints and return the fastest response with `race` strategy.
+
+All `fetch` strategies can be combined together to create the ultimate execution flow:
+
+<br />
+
+<details>
+ <summary>`retry`</summary>
+
+The `retry` mechanism allow you to specify the retry attempts for a single GraphQL endpoint/source.
+
+The retry flow will execute in both conditions: a network error, or due to a runtime error.
+
+```yaml
+sources:
+  - name: uniswapv2
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2
+        retry: 2 # specify here, if you have an unstable/error prone indexer
+```
+
+</details>
+
+<details>
+ <summary>`timeout`</summary>
+
+The `timeout` mechanism allow you to specify the `timeout` for a given GraphQL endpoint.
+
+```yaml
+sources:
+  - name: uniswapv2
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2
+        timeout: 5000 # 5 seconds
+```
+
+</details>
+
+<details>
+ <summary>`fallback`</summary>
+
+The `fallback` mechanism allow you to specify use more than one GraphQL endpoint, for the same source.
+
+This is helpful if you have a fallback endpoint for the same GraphQL API.
+
+```yaml
+sources:
+  - name: uniswapv2
+    handler:
+      graphql:
+        strategy: fallback
+        sources:
+          - endpoint: https://bad-uniswap-v2-api.com
+            retry: 2
+            timeout: 5000
+          - endpoint: https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2
+```
+
+</details>
+
+<details>
+ <summary>`race`</summary>
+
+The `race` mechanism allow you to specify use more than one GraphQL endpoint, for the same source, and race on every execution.
+
+If you have different places that service is deployed, this is useful to get the fastest response by racing them.
+
+```yaml
+sources:
+  - name: uniswapv2
+    handler:
+      graphql:
+        strategy: race
+        sources:
+          - endpoint: https://bad-uniswap-v2-api.com
+          - endpoint: https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2
+```
+
+</details>
+
+<p>&nbsp;</p>
+
+---
+
+<p>&nbsp;</p>
+
 ## Config API Reference
 
 {@import ../generated-markdown/GraphQLHandlerHTTPConfiguration.generated.md}
