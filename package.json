@@ -68,7 +68,7 @@
     "packages/**/src/**/*.{ts,tsx}": [
       "eslint --fix"
     ],
-    "**/*.{ts,tsx,graphql,yml,json,md}": [
+    "**/*.{ts,tsx,graphql,yml,json,md,mdx}": [
       "prettier --write"
     ]
   },
