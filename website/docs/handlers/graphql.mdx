@@ -80,7 +80,9 @@ sources:
 
 ## Local Schemas
 
-It is not a good practice usually because you can already provide `additionalTypeDefs` and `additionalResolvers` to GraphQL Mesh but it is still possible to use a local GraphQL Schema instance as a GraphQL Mesh source.
+We recommend providing local schema by using the `additionalTypeDefs` and `additionalResolvers` configuration options.
+
+However, it is also possible to use a local GraphQL Schema instance as a GraphQL Mesh source, as showcased below:
 
 ```yaml
 sources:
@@ -107,13 +109,18 @@ export default makeExecutableSchema({
 })
 ```
 
+<p>&nbsp;</p>
+
 ## Fetch Strategies and Multiple HTTP endpoints for the same source
 
 If you want to have an advanced fetch strategy for the GraphQL source such as retrying twice or timeout in 30 seconds etc.
 Also you can have different HTTP endpoints for a single source, and you can configure Mesh to get a better execution flow.
+
 For example, you can make a request to both endpoints and return the fastest response with `race` strategy.
 
-All `fetch` strategies can be combined together to create the ultimate execution flow.
+All `fetch` strategies can be combined together to create the ultimate execution flow:
+
+<br />
 
 <details>
  <summary>`retry`</summary>
