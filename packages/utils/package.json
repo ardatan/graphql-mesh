@@ -11,7 +11,6 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "@types/is-url": "1.2.30",
     "@types/object-hash": "2.2.1",
     "@types/lodash.set": "4.3.7",
     "@types/lodash.topath": "4.5.7",
@@ -41,11 +40,9 @@
     "@graphql-typed-document-node/core": "3.1.1",
     "@graphql-mesh/cross-helpers": "0.1.6",
     "@graphql-mesh/types": "0.75.0",
-    "chalk": "4.1.2",
     "lodash.get": "4.4.2",
     "lodash.set": "4.3.2",
     "lodash.topath": "4.5.2",
-    "is-url": "1.2.4",
     "js-yaml": "4.1.0",
     "tiny-lru": "8.0.2",
     "tslib": "^2.4.0",

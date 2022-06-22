@@ -1,4 +1,3 @@
-import isUrl from 'is-url';
 import { DEFAULT_SCHEMA, load as loadYamlFromJsYaml, Schema, Type } from 'js-yaml';
 import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import { ImportFn, Logger } from '@graphql-mesh/types';
@@ -12,6 +11,16 @@ export interface ReadFileOrUrlOptions extends RequestInit {
   fetch: typeof fetch;
   importFn: ImportFn;
   logger: Logger;
+}
+
+export function isUrl(str: string): boolean {
+  try {
+    // eslint-disable-next-line no-new
+    new URL(str);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export async function readFileOrUrl<T>(filePathOrUrl: string, config: ReadFileOrUrlOptions): Promise<T> {
