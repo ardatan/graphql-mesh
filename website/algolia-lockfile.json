@@ -477,7 +477,12 @@
   },
   {
     "objectID": "mesh-graphql",
-    "headings": ["Dynamic Header Values (e.g., for Authorization)", "Config API Reference"],
+    "headings": [
+      "Dynamic Header Values (e.g., for Authorization)",
+      "Local Schemas",
+      "Fetch Strategies and Multiple HTTP endpoints for the same source",
+      "Config API Reference"
+    ],
     "toc": [
       {
         "children": [
@@ -495,6 +500,16 @@
         ],
         "title": "Dynamic Header Values (e.g., for Authorization)",
         "anchor": "dynamic-header-values-eg-for-authorization"
+      },
+      {
+        "children": [],
+        "title": "Local Schemas",
+        "anchor": "local-schemas"
+      },
+      {
+        "children": [],
+        "title": "Fetch Strategies and Multiple HTTP endpoints for the same source",
+        "anchor": "fetch-strategies-and-multiple-http-endpoints-for-the-same-source"
       },
       {
         "children": [],
