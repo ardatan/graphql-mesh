@@ -28,12 +28,12 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "@types/micromatch": "4.0.2"
+    "@types/minimatch": "3.0.5"
   },
   "dependencies": {
     "@graphql-mesh/types": "0.75.0",
     "@graphql-mesh/utils": "0.35.7",
-    "micromatch": "4.0.5",
+    "minimatch": "5.1.0",
     "@graphql-tools/wrap": "8.4.20",
     "@graphql-tools/delegate": "8.7.11",
     "@graphql-tools/utils": "8.6.13",
