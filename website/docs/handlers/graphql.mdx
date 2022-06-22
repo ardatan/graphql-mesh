@@ -58,7 +58,7 @@ And for `mesh dev` or `mesh start`, you can pass the value using `x-my-graphql-a
 
 <p>&nbsp;</p>
 
-### From Environment Variable
+### From Environment Variables
 
 `MY_API_TOKEN` is the name of the environment variable you have the value.
 
@@ -92,9 +92,9 @@ sources:
 
 ```ts
 // my-local-schema.ts
-import { makeExecutableSchema } from '@graphql-tools/schema';
+import { makeExecutableSchema } from '@graphql-tools/schema'
 export default makeExecutableSchema({
-  typeDefs: /* GraphQL */`
+  typeDefs: /* GraphQL */ `
     type Query {
       foo: String
     }

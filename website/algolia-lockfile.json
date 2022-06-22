@@ -485,8 +485,8 @@
             "children": [
               {
                 "children": [],
-                "title": "From Environmental Variable",
-                "anchor": "from-environmental-variable"
+                "title": "From Environment Variables",
+                "anchor": "from-environment-variables"
               }
             ],
             "title": "From Context (HTTP Header for `mesh dev` or `mesh start`)",
@@ -722,6 +722,56 @@
     "hierarchy": ["Mesh", "Cache", "LocalForage"],
     "source": "Mesh",
     "title": "LocalForage",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-mesh-sdk",
+    "headings": ["Getting started", "Configuring SDK Generation", "Example with Next.js"],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "2. Update your `.meshrc.yml` configuration",
+                "anchor": "2-update-your-meshrcyml-configuration"
+              },
+              {
+                "children": [],
+                "title": "3. Build your SDK with Mesh artifacts",
+                "anchor": "3-build-your-sdk-with-mesh-artifacts"
+              },
+              {
+                "children": [],
+                "title": "4. Use the generated SDK in the code",
+                "anchor": "4-use-the-generated-sdk-in-the-code"
+              }
+            ],
+            "title": "1. Create or move your GraphQL operations to `.graphql` files",
+            "anchor": "1-create-or-move-your-graphql-operations-to-graphql-files"
+          }
+        ],
+        "title": "Getting started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [],
+        "title": "Configuring SDK Generation",
+        "anchor": "configuring-sdk-generation"
+      },
+      {
+        "children": [],
+        "title": "Example with Next.js",
+        "anchor": "example-with-nextjs"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com/docs/guides/mesh-sdk",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Guides", "Generating fully type safe SDK"],
+    "source": "Mesh",
+    "title": "Generating fully type safe SDK",
     "type": "Documentation"
   },
   {

@@ -9,6 +9,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: git fetch
+        run: |
+          git fetch --all
+
       - name: Use Node 18
         uses: actions/setup-node@v3
         with:
@@ -44,13 +49,13 @@ jobs:
         run: yarn prettier
 
       - name: Compare
-        run: git diff origin/${{ github.base_ref }}.. -- website/algolia-lockfile.json
+        run: git diff origin/${{ github.base_ref }} -- website/algolia-lockfile.json
 
       - name: Diff to file
         if: always()
         id: diff_result
         run: |
-          OUTPUT=$(git diff origin/${{ github.base_ref }}.. -- website/algolia-lockfile.json)
+          OUTPUT=$(git diff origin/${{ github.base_ref }} -- website/algolia-lockfile.json)
           OUTPUT="${OUTPUT//'%'/'%25'}"
           OUTPUT="${OUTPUT//$'\n'/'%0A'}"
           OUTPUT="${OUTPUT//$'\r'/'%0D'}"
