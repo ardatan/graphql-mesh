@@ -10,20 +10,20 @@ import {
   TransformCompositeFields,
 } from '@graphql-tools/wrap';
 import { GraphQLSchema } from 'graphql';
-import micromatch from 'micromatch';
+import minimatch from 'minimatch';
 
 export default class WrapFilter implements Transform {
   private transforms: Transform[] = [];
   constructor({ config: { filters } }: { config: YamlConfig.FilterSchemaTransform }) {
     for (const filter of filters) {
       const [typeName, fieldNameOrGlob, argsGlob] = filter.split('.');
-      const isTypeMatch = micromatch.matcher(typeName);
+      const typeMatcher = new minimatch.Minimatch(typeName);
 
       // TODO: deprecate this in next major release as dscussed in #1605
       if (!fieldNameOrGlob) {
         this.transforms.push(
           new FilterTypes(type => {
-            return isTypeMatch(type.name);
+            return typeMatcher.match(type.name);
           }) as any
         );
         continue;
@@ -35,25 +35,26 @@ export default class WrapFilter implements Transform {
       }
       fixedFieldGlob = fixedFieldGlob.split(', ').join(',');
 
-      const isMatch = micromatch.matcher(fixedFieldGlob.trim());
+      const globalTypeMatcher = new minimatch.Minimatch(fixedFieldGlob.trim());
 
       if (typeName === 'Type') {
         this.transforms.push(
           new FilterTypes(type => {
-            return isMatch(type.name);
+            return globalTypeMatcher.match(type.name);
           })
         );
         continue;
       }
 
       if (argsGlob) {
-        const isFieldMatch = micromatch.matcher(fieldNameOrGlob);
+        const fieldMatcher = new minimatch.Minimatch(fieldNameOrGlob);
 
         this.transforms.push(
           new TransformCompositeFields((fieldTypeName, fieldName, fieldConfig) => {
-            if (isTypeMatch(fieldTypeName) && isFieldMatch(fieldName)) {
+            if (typeMatcher.match(fieldTypeName) && fieldMatcher.match(fieldName)) {
               const fieldArgs = Object.entries(fieldConfig.args).reduce(
-                (args, [argName, argConfig]) => (!isMatch(argName) ? args : { ...args, [argName]: argConfig }),
+                (args, [argName, argConfig]) =>
+                  !globalTypeMatcher.match(argName) ? args : { ...args, [argName]: argConfig },
                 {}
               );
 
@@ -68,8 +69,8 @@ export default class WrapFilter implements Transform {
       // If the glob is not for Types nor Args, finally we register Fields filters
       this.transforms.push(
         new FilterRootFields((rootTypeName, rootFieldName) => {
-          if (isTypeMatch(rootTypeName)) {
-            return isMatch(rootFieldName);
+          if (typeMatcher.match(rootTypeName)) {
+            return globalTypeMatcher.match(rootFieldName);
           }
           return true;
         })
@@ -77,8 +78,8 @@ export default class WrapFilter implements Transform {
 
       this.transforms.push(
         new FilterObjectFields((objectTypeName, objectFieldName) => {
-          if (isTypeMatch(objectTypeName)) {
-            return isMatch(objectFieldName);
+          if (typeMatcher.match(objectTypeName)) {
+            return globalTypeMatcher.match(objectFieldName);
           }
           return true;
         })
@@ -86,8 +87,8 @@ export default class WrapFilter implements Transform {
 
       this.transforms.push(
         new FilterInputObjectFields((inputObjectTypeName, inputObjectFieldName) => {
-          if (isTypeMatch(inputObjectTypeName)) {
-            return isMatch(inputObjectFieldName);
+          if (typeMatcher.match(inputObjectTypeName)) {
+            return globalTypeMatcher.match(inputObjectFieldName);
           }
           return true;
         })

@@ -9,7 +9,6 @@ import {
 import { ExecutionResult, ExecutionRequest } from '@graphql-tools/utils';
 import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
 import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
-import { resolvers as scalarsResolversMap } from 'graphql-scalars';
 
 const ignoreList = [
   'date',
@@ -19,7 +18,64 @@ const ignoreList = [
   'relative-json-pointer',
   'uri-reference',
   'uri-template',
-  ...Object.keys(scalarsResolversMap),
+  'Date',
+  'Time',
+  'DateTime',
+  'Timestamp',
+  'TimeZone',
+  'UtcOffset',
+  'Duration',
+  'ISO8601Duration',
+  'LocalDate',
+  'LocalTime',
+  'LocalEndTime',
+  'EmailAddress',
+  'NegativeFloat',
+  'NegativeInt',
+  'NonEmptyString',
+  'NonNegativeFloat',
+  'NonNegativeInt',
+  'NonPositiveFloat',
+  'NonPositiveInt',
+  'PhoneNumber',
+  'PositiveFloat',
+  'PositiveInt',
+  'PostalCode',
+  'UnsignedFloat',
+  'UnsignedInt',
+  'URL',
+  'BigInt',
+  'Byte',
+  'Long',
+  'SafeInt',
+  'UUID',
+  'GUID',
+  'Hexadecimal',
+  'HexColorCode',
+  'HSL',
+  'HSLA',
+  'IPv4',
+  'IPv6',
+  'ISBN',
+  'JWT',
+  'Latitude',
+  'Longitude',
+  'MAC',
+  'Port',
+  'RGB',
+  'RGBA',
+  'USCurrency',
+  'Currency',
+  'JSON',
+  'JSONObject',
+  'IBAN',
+  'ObjectID',
+  'Void',
+  'DID',
+  'CountryCode',
+  'Locale',
+  'RoutingNumber',
+  'AccountNumber',
 ];
 
 export default class WrapRename implements Transform {
@@ -47,7 +103,7 @@ export default class WrapRename implements Transform {
         }
         this.transforms.push(
           new RenameTypes(typeName => {
-            if (typeName in scalarsResolversMap || ignoreList.includes(typeName)) {
+            if (ignoreList.includes(typeName)) {
               return typeName;
             }
             return replaceTypeNameFn(typeName);
