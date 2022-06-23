@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@creditkarma/thrift-client": "0.17.2",
-    "@creditkarma/thrift-parser": "1.2.0",
+    "@creditkarma/thrift-parser": "2.0.0",
     "@creditkarma/thrift-server-core": "0.17.2",
     "@graphql-mesh/cross-helpers": "0.1.6",
     "@graphql-mesh/types": "0.75.0",

@@ -2488,7 +2488,12 @@
     generic-pool "^3.4.2"
     request "^2.88.0"
 
-"@creditkarma/thrift-parser@1.2.0", "@creditkarma/thrift-parser@^1.2.0":
+"@creditkarma/thrift-parser@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@creditkarma/thrift-parser/-/thrift-parser-2.0.0.tgz#dbfc432891580177907bde04705147e41903f284"
+  integrity sha512-TnUXwCewfyDQikDqsJaI3t+wtJPDCCmx8r5FdK4ui2BlZJNQuemFww+Tp+VH9Kr/2+goUSuLG87mAOWzHKe7rw==
+
+"@creditkarma/thrift-parser@^1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@creditkarma/thrift-parser/-/thrift-parser-1.2.0.tgz#69b47dff3d2a5211e9417ff543ea65f681821906"
   integrity sha512-mSRxjSXvU6sBfWhMBWXl7H/XEKWHQ7x+MUDLwyeFIwwX9UaZKPOc7TgGd0N78kcZtIMk82ArdxO6aFhqnBuNtg==
