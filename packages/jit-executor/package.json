@@ -28,7 +28,7 @@
     }
   },
   "dependencies": {
-    "@graphql-tools/utils": "8.6.13",
+    "@graphql-tools/utils": "8.7.0",
     "graphql-jit": "0.7.4",
     "@graphql-mesh/utils": "0.36.0",
     "@graphql-mesh/types": "0.76.0",
