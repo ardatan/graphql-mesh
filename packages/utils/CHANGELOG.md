@@ -1,5 +1,31 @@
 # @graphql-mesh/utils
 
+## 0.36.0
+
+### Minor Changes
+
+- a0950ac6f: Breaking Change:
+
+  - Now you can set a global `customFetch` instead of setting `customFetch` individually for each handler. `customFetch` configuration field for each handler will no longer work. And also `customFetch` needs to be the path of the code file that exports the function as `default`. `moduleName#exportName` is not supported for now.
+
+  - While programmatically creating the handlers, now you also need `fetchFn` to be passed to the constructor;
+
+  ```ts
+  new GraphQLHandler({
+    ...,
+    fetchFn: myFetchFn,
+  })
+  ```
+
+  - `readFileOrUrl`'s second `config` parameter is now required. Also this second parameter should take an object with `cwd`, `importFn`, `fetch` and `logger`. You can see the diff of handler's codes as an example.
+
+### Patch Changes
+
+- 19d06f6c9: Replace micromatch with minimatch and remove file-path-to-url because both has Node specific dependencies which need polyfills and extra setup for non Node environments
+- 19d06f6c9: Remove chalk dependency
+- Updated dependencies [a0950ac6f]
+  - @graphql-mesh/types@0.76.0
+
 ## 0.35.7
 
 ### Patch Changes

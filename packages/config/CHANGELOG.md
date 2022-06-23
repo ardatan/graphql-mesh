@@ -1,5 +1,76 @@
 # @graphql-mesh/config
 
+## 3.0.0
+
+### Minor Changes
+
+- ee592adbf: Directives Approach for Additional Type Definitions and Resolvers;
+
+  Before we use declarative approach for `additionalResolvers` that is added besides `additionalTypeDefs` which might be confusing once the project grows.
+  And now we introduce new `@resolveTo` directive which has the same declarative syntax inside the SDL instead of the configuration file.
+
+  Before;
+
+  ```yaml
+  additionalTypeDefs: |
+    extend type Book {
+      author: Author
+    }
+
+  additionalResolvers:
+    - targetTypeName: Book
+      targetFieldName: author
+      sourceName: Author
+      sourceTypeName: Query
+      sourceFieldName: authorById
+      requiredSelectionSet: '{ id }'
+      sourceArgs:
+        id: '{root.id}'
+  ```
+
+  After:
+
+  ```graphql
+  extend type Book {
+    author: Author @resolveTo(
+      sourceName: "Author",
+      sourceTypeName: "Query",
+      sourceFieldName: "author",
+      requiredSelectionSet: "{ id }",
+      sourceArgs:
+        id: "{root.id}"
+    )
+  }
+  ```
+
+- a0950ac6f: Breaking Change:
+
+  - Now you can set a global `customFetch` instead of setting `customFetch` individually for each handler. `customFetch` configuration field for each handler will no longer work. And also `customFetch` needs to be the path of the code file that exports the function as `default`. `moduleName#exportName` is not supported for now.
+
+  - While programmatically creating the handlers, now you also need `fetchFn` to be passed to the constructor;
+
+  ```ts
+  new GraphQLHandler({
+    ...,
+    fetchFn: myFetchFn,
+  })
+  ```
+
+  - `readFileOrUrl`'s second `config` parameter is now required. Also this second parameter should take an object with `cwd`, `importFn`, `fetch` and `logger`. You can see the diff of handler's codes as an example.
+
+### Patch Changes
+
+- Updated dependencies [19d06f6c9]
+- Updated dependencies [19d06f6c9]
+- Updated dependencies [a0950ac6f]
+  - @graphql-mesh/utils@0.36.0
+  - @graphql-mesh/merger-bare@0.14.0
+  - @graphql-mesh/runtime@0.39.0
+  - @graphql-mesh/types@0.76.0
+  - @graphql-mesh/cache-localforage@0.6.14
+  - @graphql-mesh/merger-stitching@0.15.58
+  - @graphql-mesh/store@0.8.17
+
 ## 2.0.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-response-cache",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@envelop/response-cache": "2.3.3",
-    "@graphql-mesh/types": "0.75.0",
+    "@graphql-mesh/types": "0.76.0",
     "@envelop/core": "^2.3.2",
     "tslib": "^2.4.0"
   },
