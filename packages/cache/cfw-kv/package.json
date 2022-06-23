@@ -1,11 +1,11 @@
 {
-  "name": "@graphql-mesh/cache-store",
-  "version": "0.1.87",
+  "name": "@graphql-mesh/cache-cfw-kv",
+  "version": "0.0.0",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
-    "directory": "packages/cache/store"
+    "directory": "packages/cache/cfw-kv"
   },
   "peerDependencies": {
     "graphql": "*"
@@ -13,6 +13,10 @@
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
+  "typings": "dist/index.d.ts",
+  "typescript": {
+    "definition": "dist/index.d.ts"
+  },
   "exports": {
     ".": {
       "require": "./dist/index.js",
@@ -23,14 +27,15 @@
       "import": "./dist/*.mjs"
     }
   },
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
   "dependencies": {
     "@graphql-mesh/types": "0.76.0",
-    "@graphql-mesh/store": "0.8.17",
+    "@graphql-mesh/utils": "0.36.0",
+    "@udacity/types-service-worker-mock": "1.2.0",
+    "cloudflare-worker-mock": "1.2.0",
     "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^3.0.0"
   },
   "publishConfig": {
     "access": "public",

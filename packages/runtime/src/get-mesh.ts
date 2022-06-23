@@ -10,14 +10,7 @@ import {
 } from '@graphql-mesh/types';
 
 import { MESH_CONTEXT_SYMBOL } from './constants';
-import {
-  applySchemaTransforms,
-  groupTransforms,
-  DefaultLogger,
-  parseWithCache,
-  PubSub,
-  printWithCache,
-} from '@graphql-mesh/utils';
+import { applySchemaTransforms, groupTransforms, DefaultLogger, parseWithCache, PubSub } from '@graphql-mesh/utils';
 
 import { SubschemaConfig } from '@graphql-tools/delegate';
 import { AggregateError, isAsyncIterable, mapAsyncIterator, memoize1 } from '@graphql-tools/utils';
@@ -224,8 +217,6 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
         const result = await meshExecute(document, variables, {
           ...globalContext,
           ...contextValue,
-          query: printWithCache(document),
-          variables,
         });
         if (result?.errors?.length) {
           return new AggregateError(result.errors);

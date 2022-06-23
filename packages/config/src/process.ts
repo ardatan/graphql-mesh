@@ -344,6 +344,7 @@ export async function processConfig(
           ...(${JSON.stringify(pluginConfig, null, 2)}),
           logger: logger.child(${JSON.stringify(pluginName)}),
           cache,
+          pubsub,
         })`);
             }
           } else {
@@ -363,6 +364,7 @@ export async function processConfig(
             ...pluginConfig,
             logger: logger.child(pluginName),
             cache,
+            pubsub,
           });
         }) || []
       ),

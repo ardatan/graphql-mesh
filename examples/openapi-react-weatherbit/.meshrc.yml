@@ -8,9 +8,9 @@ sources:
 plugins:
   - responseCache:
       ttlPerCoordinate:
-        # Forcast data might change, so we can cache it for 1 hour only
+        # Forecast data might change, so we can cache it for 1 hour only
         - coordinate: Query.forecast_daily_by_lat_by_lon
-          ttl: 864000
+          ttl: 3600
 
 documents:
   - ./*.graphql

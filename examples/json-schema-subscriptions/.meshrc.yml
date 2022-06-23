@@ -37,7 +37,7 @@ additionalTypeDefs: |
 
 plugins:
   - liveQuery:
-      liveQueryInvalidations:
+      invalidations:
         - field: Mutation.addTodo
           invalidate:
             - Query.todos

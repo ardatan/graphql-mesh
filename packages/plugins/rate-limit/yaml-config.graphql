@@ -1,0 +1,10 @@
+extend type Plugin {
+  """
+  RateLimit plugin
+  """
+  rateLimit: RateLimitPluginConfig
+}
+
+type RateLimitPluginConfig @md {
+  config: [RateLimitTransformConfig!]!
+}

@@ -1,0 +1,7 @@
+type Cache {
+  cfwKv: CFWorkersKVCacheConfig
+}
+
+type CFWorkersKVCacheConfig @md {
+  namespace: String
+}

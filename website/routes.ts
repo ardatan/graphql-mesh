@@ -73,7 +73,7 @@ export function getRoutes(): IRoutes {
       },
       cache: {
         $name: 'Cache',
-        $routes: ['file', 'localforage', 'redis'],
+        $routes: ['file', 'localforage', 'cfwKv', 'redis'],
       },
       api: apiSidebar,
       'cli-commands': {

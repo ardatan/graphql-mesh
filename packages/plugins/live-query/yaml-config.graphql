@@ -4,12 +4,24 @@ extend type Plugin {
 
 type LiveQueryConfig {
   """
-  Live Query Invalidations
+  Invalidate a query or queries when a specific operation is done without an error
   """
-  liveQueryInvalidations: [LiveQueryInvalidation]
+  invalidations: [LiveQueryInvalidation]
+  """
+  Allow an operation can be used a live query with polling
+  """
+  polling: [LiveQueryPolling]
 }
 
 type LiveQueryInvalidation {
+  """
+  Path to the operation that could effect it. In a form: Mutation.something. Note that wildcard is not supported in this field.
+  """
   field: String!
+  invalidate: [String!]!
+}
+
+type LiveQueryPolling {
+  interval: Int!
   invalidate: [String!]!
 }

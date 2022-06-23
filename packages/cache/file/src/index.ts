@@ -25,6 +25,11 @@ export default class FileCache<V = any> implements KeyValueCache<V> {
     });
   }
 
+  async getKeysByPrefix(prefix: string) {
+    const json = await this.json$;
+    return Object.keys(json).filter(key => key.startsWith(prefix));
+  }
+
   async get(name: string) {
     const json = await this.json$;
     return json[name];

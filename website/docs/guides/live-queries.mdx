@@ -28,13 +28,13 @@ You only need to add the following to your existing configuration.
 
 ```yaml
 additionalTypeDefs: |
-    directive @live on QUERY
+  directive @live on QUERY
 plugins:
-    - liveQuery:
-        liveQueryInvalidations:
-            - field: Mutation.addTodo
-            invalidate:
-                - Query.todos
+  - liveQuery:
+      invalidations:
+        - field: Mutation.addTodo
+          invalidate:
+            - Query.todos
 ```
 
 Then you can send a live query with `@live` directive.
@@ -72,7 +72,7 @@ query getTodo($id: ID!) {
 If you update this entity with `editTodo` mutation field on your backend, then you want to invalidate this entity specifically instead of validating all `todo` queries;
 
 ```yaml
-liveQueryInvalidations:
+invalidations:
   - field: Mutation.editTodo
     invalidate:
       - Todo:{args.id}
@@ -81,7 +81,7 @@ liveQueryInvalidations:
 In a case where the field resolver resolves null but might resolve to an object type later, e.g., because the visibility got update the field that uses a specific id argument can be invalidated in the following way:
 
 ```yaml
-liveQueryInvalidations:
+invalidations:
   - field: Mutation.editTodo
     invalidate:
       - Query.todo(id:"{args.id}")

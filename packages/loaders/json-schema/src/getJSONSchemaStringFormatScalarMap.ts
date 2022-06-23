@@ -19,7 +19,12 @@ export function getJSONSchemaStringFormatScalarMap(ajv: Ajv): Map<string, GraphQ
       type: 'string',
       format,
     };
-    const validate = ajv.compile(schema);
+    let validate: (value: string) => boolean;
+    try {
+      validate = ajv.compile(schema);
+    } catch (e) {
+      validate = (value: string) => ajv.validate(schema, value);
+    }
     const coerceString = (value: string) => {
       if (validate(value)) {
         return value;

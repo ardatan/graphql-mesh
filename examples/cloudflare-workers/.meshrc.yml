@@ -1,0 +1,22 @@
+sources:
+  - name: OpenBrewery
+    handler:
+      jsonSchema:
+        baseUrl: https://api.openbrewerydb.org
+        operations:
+          - type: Query
+            field: breweries
+            path: breweries
+            method: GET
+            requestSample: ./json-samples/breweriesInput.json
+            responseSample: ./json-samples/breweries.json
+
+plugins:
+  - responseCache:
+      ttlPerCoordinate:
+        - coordinate: Query.*
+          ttl: 3600
+
+cache:
+  cfwKv:
+    namespace: MESH

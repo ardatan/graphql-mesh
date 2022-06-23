@@ -10,7 +10,7 @@
   },
   "license": "MIT",
   "sideEffects": false,
-  "main": "index.js",
+  "main": "node.js",
   "browser": "browser.js",
   "react-native": "react-native.js",
   "types": "index.d.ts",

@@ -1,16 +1,29 @@
 import { memoize2 } from '@graphql-tools/utils';
 import { JSONSchema, resolvePath } from 'json-machete';
-import Ajv from 'ajv';
+import Ajv, { ValidateFunction } from 'ajv';
 
 const ajvMemoizedCompile = memoize2(function ajvCompile(ajv: Ajv, jsonSchema: JSONSchema) {
-  return ajv.compile(
+  const schema: any =
     typeof jsonSchema === 'object'
       ? {
           ...jsonSchema,
           $schema: undefined,
         }
-      : jsonSchema
-  );
+      : jsonSchema;
+  try {
+    return ajv.compile(schema);
+  } catch {
+    // eslint-disable-next-line no-inner-declarations
+    function validateFn(value: string) {
+      return ajv.validate(schema, value);
+    }
+    Object.defineProperty(validateFn, 'errors', {
+      get() {
+        return ajv.errors;
+      },
+    });
+    return validateFn as ValidateFunction;
+  }
 });
 
 export function getValidateFnForSchemaPath(ajv: Ajv, path: string, schema: JSONSchema) {
