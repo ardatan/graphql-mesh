@@ -34,9 +34,9 @@
     "@graphql-mesh/types": "0.76.0",
     "@graphql-mesh/utils": "0.36.0",
     "minimatch": "5.1.0",
-    "@graphql-tools/wrap": "8.4.20",
-    "@graphql-tools/delegate": "8.7.11",
-    "@graphql-tools/utils": "8.6.13",
+    "@graphql-tools/wrap": "8.4.21",
+    "@graphql-tools/delegate": "8.7.12",
+    "@graphql-tools/utils": "8.7.0",
     "tslib": "^2.4.0"
   },
   "publishConfig": {
