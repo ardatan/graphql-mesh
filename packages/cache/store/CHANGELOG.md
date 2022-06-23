@@ -1,5 +1,13 @@
 # @graphql-mesh/cache-store
 
+## 0.1.87
+
+### Patch Changes
+
+- Updated dependencies [a0950ac6f]
+  - @graphql-mesh/types@0.76.0
+  - @graphql-mesh/store@0.8.17
+
 ## 0.1.86
 
 ### Patch Changes
