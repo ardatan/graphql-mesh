@@ -32,7 +32,7 @@
     "@types/url-join": "4.0.1"
   },
   "dependencies": {
-    "@creditkarma/thrift-client": "0.17.2",
+    "@creditkarma/thrift-client": "1.0.4",
     "@creditkarma/thrift-parser": "2.0.0",
     "@creditkarma/thrift-server-core": "1.0.4",
     "@graphql-mesh/cross-helpers": "0.1.6",
