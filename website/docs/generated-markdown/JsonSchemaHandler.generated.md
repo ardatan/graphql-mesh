@@ -26,6 +26,23 @@ responseByStatusCode:
   404:
     responseSample: ./error-sample.json
     responseTypeName: MyError
+    * `exposeResponseMetadata` (type: `Boolean`) - Expose response details done to the upstream API
+When you enable this, you will see a new field in the response type;
+```graphql
+type MyResponseType \{
+  myFooField: String
+  _response: ResponseMetadata
+}
+
+# And a new type for the response metadata object
+type ResponseMetadata \{
+  url: URL
+  status: Int
+  method: String
+  headers: JSON
+  body: String
+}
+```
     * `argTypeMap` (type: `JSON`) - Mapping the JSON Schema and define the arguments of the operation.
 Example: 'argTypeMap: ID: String'
     * `path` (type: `String`, required)

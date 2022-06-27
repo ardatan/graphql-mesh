@@ -17,11 +17,11 @@ export function validateConfig(
   const isValid = ajv.validate(jsonSchema, config);
   if (!isValid) {
     const logger = new DefaultLogger(initialLoggerPrefix).child('config');
-    logger.warn(
-      `${filepath} configuration file is not valid:\n${ajv.errorsText(ajv.errors, {
-        separator: '\n',
-      })}\nThis is just a warning! It doesn't have any effects on runtime.`
-    );
+    logger.warn('Configuration file is not valid!');
+    logger.warn("This is just a warning! It doesn't have any effects on runtime.");
+    ajv.errors.forEach(error => {
+      logger.warn(error.message);
+    });
   }
 }
 

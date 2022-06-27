@@ -8,5 +8,6 @@ handler:
         path: /?dataset=world-population&q={args.country}&rows=1&sort=year&facet=year&facet=country_name
         method: GET
         responseSchema: ./src/json-schemas/worldPop.json
+        exposeResponseMetadata: true
         argTypeMap:
           country: String

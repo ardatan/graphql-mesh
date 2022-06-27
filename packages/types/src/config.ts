@@ -440,6 +440,26 @@ export interface JsonSchemaHTTPOperation {
    */
   responseByStatusCode?: any;
   /**
+   * Expose response details done to the upstream API
+   * When you enable this, you will see a new field in the response type;
+   * ```graphql
+   * type MyResponseType {
+   *   myFooField: String
+   *   _response: ResponseMetadata
+   * }
+   *
+   * # And a new type for the response metadata object
+   * type ResponseMetadata {
+   *   url: URL
+   *   status: Int
+   *   method: String
+   *   headers: JSON
+   *   body: String
+   * }
+   * ```
+   */
+  exposeResponseMetadata?: boolean;
+  /**
    * Mapping the JSON Schema and define the arguments of the operation.
    * Example: 'argTypeMap: ID: String'
    */
