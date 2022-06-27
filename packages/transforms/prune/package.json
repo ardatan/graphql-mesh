@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.76.0",
-    "@graphql-tools/utils": "8.7.0",
+    "@graphql-tools/utils": "8.8.0",
     "tslib": "^2.4.0"
   },
   "publishConfig": {

@@ -31,12 +31,12 @@
     "@graphql-mesh/types": "0.76.0",
     "@graphql-mesh/utils": "0.36.0",
     "@graphql-mesh/string-interpolation": "0.3.0",
-    "@graphql-tools/delegate": "8.7.12",
-    "@graphql-tools/batch-delegate": "8.2.21",
-    "@graphql-tools/wrap": "8.4.21",
-    "@graphql-tools/utils": "8.7.0",
-    "@envelop/core": "2.3.3",
-    "@envelop/extended-validation": "1.6.3",
+    "@graphql-tools/delegate": "8.8.0",
+    "@graphql-tools/batch-delegate": "8.3.0",
+    "@graphql-tools/wrap": "8.5.0",
+    "@graphql-tools/utils": "8.8.0",
+    "@envelop/core": "2.4.0",
+    "@envelop/extended-validation": "1.7.0",
     "tslib": "^2.4.0"
   },
   "publishConfig": {
