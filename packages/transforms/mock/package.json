@@ -35,8 +35,8 @@
     "@graphql-mesh/types": "0.76.0",
     "@graphql-mesh/utils": "0.36.0",
     "@graphql-mesh/string-interpolation": "0.3.0",
-    "@graphql-tools/utils": "8.7.0",
-    "@graphql-tools/mock": "8.6.13",
+    "@graphql-tools/utils": "8.8.0",
+    "@graphql-tools/mock": "8.7.0",
     "faker": "5.5.3",
     "graphql-scalars": "1.17.0",
     "tslib": "^2.4.0"

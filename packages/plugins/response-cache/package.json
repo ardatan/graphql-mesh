@@ -28,7 +28,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@envelop/response-cache": "2.3.3",
+    "@envelop/response-cache": "2.4.0",
     "@graphql-mesh/types": "0.76.0",
     "@envelop/core": "^2.3.2",
     "tslib": "^2.4.0"
