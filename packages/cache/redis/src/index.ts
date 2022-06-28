@@ -13,7 +13,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V> {
 
   constructor(options: YamlConfig.Cache['redis'] & { pubsub: MeshPubSub }) {
     if (options.url) {
-      const redisUrl = new URL(options.url);
+      const redisUrl = new URL(interpolateStrWithEnv(options.url));
 
       redisUrl.searchParams.set('lazyConnect', 'true');
       redisUrl.searchParams.set('enableAutoPipelining', 'true');
@@ -23,10 +23,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V> {
         throw new Error('Redis URL must use either redis:// or rediss://');
       }
 
-      const fullUrl = redisUrl.toString();
-      const parsedFullUrl = interpolateStrWithEnv(fullUrl);
-
-      this.client = new Redis(parsedFullUrl);
+      this.client = new Redis(redisUrl.toString());
     } else {
       const parsedHost = interpolateStrWithEnv(options.host);
       const parsedPort = interpolateStrWithEnv(options.port);
