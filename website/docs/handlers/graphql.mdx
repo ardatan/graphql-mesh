@@ -49,6 +49,7 @@ sources:
         endpoint: http://my-service-url:3000/graphql
         operationHeaders:
           # Please do not use capital letters while getting the headers
+          # Use "{context.headers['x-my-api-token']}" if you want just the value of the header
           Authorization: Bearer {context.headers['x-my-api-token']}
           # You can also access to the cookies like below;
           # Authorization: Bearer {context.cookies.myApiToken}
