@@ -1,6 +1,5 @@
 import { path as pathModule } from '@graphql-mesh/cross-helpers';
-import { ImportFn, MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
-import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadTypedefsSync } from '@graphql-tools/load';
@@ -8,16 +7,43 @@ import { mergeSchemas } from '@graphql-tools/schema';
 import { GraphQLSchema } from 'graphql';
 import { asArray } from '@graphql-tools/utils';
 
+function loadFromModuleExportExpressionSync<T>({
+  expression,
+  defaultExportName,
+  cwd,
+}: {
+  expression: T | string;
+  defaultExportName: string;
+  cwd: string;
+}): T {
+  if (typeof expression !== 'string') {
+    return expression;
+  }
+
+  const [modulePath, exportName = defaultExportName] = expression.split('#');
+  const mod = tryRequire(modulePath, cwd);
+  return mod[exportName] || (mod.default && mod.default[exportName]) || mod.default || mod;
+}
+
+function tryRequire(modulePath: string, cwd: string) {
+  try {
+    return require(modulePath);
+  } catch {
+    if (!pathModule.isAbsolute(modulePath)) {
+      const absoluteModulePath = pathModule.isAbsolute(modulePath) ? modulePath : pathModule.join(cwd, modulePath);
+      return require(absoluteModulePath);
+    }
+  }
+}
+
 export default class ExtendTransform implements MeshTransform {
   noWrap = true;
   private config: YamlConfig.ExtendTransform;
   private baseDir: string;
-  private importFn: ImportFn;
 
-  constructor({ baseDir, config, importFn }: MeshTransformOptions<YamlConfig.ExtendTransform>) {
+  constructor({ baseDir, config }: MeshTransformOptions<YamlConfig.ExtendTransform>) {
     this.config = config;
     this.baseDir = baseDir;
-    this.importFn = importFn;
   }
 
   transformSchema(schema: GraphQLSchema) {
@@ -28,12 +54,11 @@ export default class ExtendTransform implements MeshTransform {
     const typeDefs = sources.map(source => source.document);
     const resolvers = asArray(this.config.resolvers).map(resolverDef => {
       if (typeof resolverDef === 'string') {
-        const fn$ = loadFromModuleExportExpression<any>(resolverDef, {
-          cwd: this.baseDir,
+        return loadFromModuleExportExpressionSync({
+          expression: resolverDef,
           defaultExportName: 'default',
-          importFn: this.importFn,
+          cwd: this.baseDir,
         });
-        return (...args: any[]) => fn$.then(fn => fn(...args));
       } else {
         return resolverDef;
       }
