@@ -1,5 +1,11 @@
 # @graphql-mesh/cross-helpers
 
+## 0.1.7
+
+### Patch Changes
+
+- 12e1e5d72: Do not use index.js because esbuild doesn't pick the correct one in that case
+
 ## 0.1.6
 
 ### Patch Changes

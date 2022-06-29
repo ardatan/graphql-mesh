@@ -1,5 +1,32 @@
 # @graphql-mesh/types
 
+## 0.77.0
+
+### Minor Changes
+
+- 12e1e5d72: **New Cloudflare KV Cache support!**
+
+  Now you can basically use Cloudflare Workers' KV Caching system within Mesh;
+
+  ```yml
+  cache:
+    cfKv:
+      namespace: MESH
+  ```
+
+  **Breaking changes for other cache packages**
+
+  Now cache implementations should implement `getKeysByPrefix` that returns keys starting with the given prefix.
+
+  **Response Cache Plugin Improvements**
+
+  Response Cache plugin needs some complicated cache storage. So the relational entries related to specific cached responses and entities are now kept as seperate cache entries. Thanks to new `getKeysByPrefix`, we can now get a response by an entity id for example easier which is more performant.
+
+### Patch Changes
+
+- 12e1e5d72: New Rate Limit plugin
+  - @graphql-mesh/store@0.8.18
+
 ## 0.76.0
 
 ### Minor Changes

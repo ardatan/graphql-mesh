@@ -1,5 +1,19 @@
 # @graphql-mesh/plugin-live-query
 
+## 0.1.0
+
+### Minor Changes
+
+- 12e1e5d72: Breaking Change: `liveQueryInvalidations` is replaced with `invalidations`
+
+### Patch Changes
+
+- Updated dependencies [12e1e5d72]
+- Updated dependencies [12e1e5d72]
+- Updated dependencies [12e1e5d72]
+  - @graphql-mesh/cross-helpers@0.1.7
+  - @graphql-mesh/types@0.77.0
+
 ## 0.0.9
 
 ### Patch Changes
