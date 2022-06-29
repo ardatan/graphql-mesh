@@ -25,6 +25,11 @@ export default class LocalforageCache<V = any> implements KeyValueCache<V> {
     return this.localforage.getItem<V>(key.toString());
   }
 
+  async getKeysByPrefix(prefix: string) {
+    const keys = await this.localforage.keys();
+    return keys.filter(key => key.startsWith(prefix));
+  }
+
   async set(key: string, value: V, options?: KeyValueCacheSetOptions) {
     const jobs: Promise<any>[] = [this.localforage.setItem<V>(key, value)];
     if (options?.ttl) {

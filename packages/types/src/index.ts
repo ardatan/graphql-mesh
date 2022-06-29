@@ -32,6 +32,7 @@ export interface KeyValueCache<V = any> {
   get(key: string): Promise<V | undefined>;
   set(key: string, value: V, options?: KeyValueCacheSetOptions): Promise<void>;
   delete(key: string): Promise<boolean | void>;
+  getKeysByPrefix(prefix: string): Promise<string[]>;
 }
 
 export type GetMeshSourceOptions<THandlerConfig> = {
@@ -118,6 +119,7 @@ export interface MeshMerger {
 export type MeshPluginOptions<TConfig> = TConfig & {
   logger: Logger;
   cache: KeyValueCache;
+  pubsub: MeshPubSub;
 };
 
 export type MeshPluginFactory<TConfig> = (options: MeshPluginOptions<TConfig>) => Plugin;

@@ -5,6 +5,9 @@
       "type": "object",
       "title": "Cache",
       "properties": {
+        "cfwKv": {
+          "$ref": "#/definitions/CFWorkersKVCacheConfig"
+        },
         "file": {
           "$ref": "#/definitions/FileCacheConfig"
         },
@@ -13,6 +16,16 @@
         },
         "redis": {
           "$ref": "#/definitions/RedisConfig"
+        }
+      }
+    },
+    "CFWorkersKVCacheConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "CFWorkersKVCacheConfig",
+      "properties": {
+        "namespace": {
+          "type": "string"
         }
       }
     },
@@ -562,6 +575,10 @@
         },
         "liveQuery": {
           "$ref": "#/definitions/LiveQueryConfig"
+        },
+        "rateLimit": {
+          "$ref": "#/definitions/RateLimitPluginConfig",
+          "description": "RateLimit plugin"
         },
         "responseCache": {
           "$ref": "#/definitions/ResponseCacheConfig"
@@ -2030,13 +2047,21 @@
       "type": "object",
       "title": "LiveQueryConfig",
       "properties": {
-        "liveQueryInvalidations": {
+        "invalidations": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/LiveQueryInvalidation"
           },
           "additionalItems": false,
-          "description": "Live Query Invalidations"
+          "description": "Invalidate a query or queries when a specific operation is done without an error"
+        },
+        "polling": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LiveQueryPolling"
+          },
+          "additionalItems": false,
+          "description": "Allow an operation can be used a live query with polling"
         }
       }
     },
@@ -2046,7 +2071,8 @@
       "title": "LiveQueryInvalidation",
       "properties": {
         "field": {
-          "type": "string"
+          "type": "string",
+          "description": "Path to the operation that could effect it. In a form: Mutation.something. Note that wildcard is not supported in this field."
         },
         "invalidate": {
           "type": "array",
@@ -2057,6 +2083,39 @@
         }
       },
       "required": ["field", "invalidate"]
+    },
+    "LiveQueryPolling": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "LiveQueryPolling",
+      "properties": {
+        "interval": {
+          "type": "integer"
+        },
+        "invalidate": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        }
+      },
+      "required": ["interval", "invalidate"]
+    },
+    "RateLimitPluginConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "RateLimitPluginConfig",
+      "properties": {
+        "config": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RateLimitTransformConfig"
+          },
+          "additionalItems": false
+        }
+      },
+      "required": ["config"]
     },
     "ResponseCacheConfig": {
       "additionalProperties": false,
@@ -2098,6 +2157,22 @@
         "includeExtensionMetadata": {
           "type": "boolean",
           "description": "Include extension values that provide useful information, such as whether the cache was hit or which resources a mutation invalidated."
+        },
+        "sessionId": {
+          "type": "string",
+          "description": "Allows to cache responses based on the resolved session id.\nReturn a unique value for each session.\nCreates a global session by default.\nExample;\n```yml\nsessionId: \"{context.headers.userId}\"\n```"
+        },
+        "if": {
+          "type": "string",
+          "description": "Specify whether the cache should be used based on the context.\n```yml\nif: \"context.headers.userId != null\"\n```"
+        },
+        "cacheKey": {
+          "type": "string",
+          "description": "Customize the behavior how the response cache key is computed from the documentString, variableValues, contextValue and sessionId.\nIf the given string is interpolated as empty, default behavior is used.\nExample;\n```yml\n# Cache by specific value\ncacheKey: \"{variableValues.userId}\"\n\n# Cache by documentString\ncacheKey: \"{documentString}\"\n\n# Cache by operationName\ncacheKey: \"{operationName}\"\n\n# Cache by some header value\ncacheKey: \"{contextValue.headers.authorization}\"\n\n# Or combine two of each\ncacheKey: \"{contextValue.headers.authorization}-{operationName}\"\n```"
+        },
+        "shouldCacheResult": {
+          "type": "string",
+          "description": "Checks if the result should be cached.\n```yml\nshouldCacheResult: \"result.errors.length > 0\"\n```"
         }
       }
     },

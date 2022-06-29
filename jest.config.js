@@ -15,6 +15,7 @@ module.exports = {
   reporters: ['default'],
   modulePathIgnorePatterns: ['dist'],
   moduleNameMapper: {
+    '@graphql-mesh/cross-helpers': '<rootDir>/packages/cross-helpers/node.js',
     ...pathsToModuleNameMapper(tsconfig.compilerOptions.paths, {
       prefix: `${ROOT_DIR}/`,
     }),

@@ -54,7 +54,11 @@ export class DefaultLogger implements Logger {
   }
 
   private get isDebug() {
-    return (process.env.DEBUG && process.env.DEBUG === '1') || this.name.includes(process.env.DEBUG);
+    return (
+      process.env.DEBUG === '1' ||
+      (globalThis as any).DEBUG === '1' ||
+      this.name.includes(process.env.DEBUG || (globalThis as any).DEBUG)
+    );
   }
 
   private get prefix() {
@@ -89,11 +93,7 @@ export class DefaultLogger implements Logger {
   error(...args: any[]) {
     const message = this.getLoggerMessage(...args);
     const fullMessage = `💥 ${this.prefix} ${errorColor(message)}`;
-    if (console.error) {
-      console.error(fullMessage);
-    } else {
-      console.log(fullMessage);
-    }
+    console.log(fullMessage);
   }
 
   debug(...lazyArgs: LazyLoggerMessage[]) {

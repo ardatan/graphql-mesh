@@ -1,8 +1,8 @@
 import { KeyValueCache, KeyValueCacheSetOptions, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 import Redis from 'ioredis';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import LocalforageCache from '@graphql-mesh/cache-localforage';
 import { process } from '@graphql-mesh/cross-helpers';
+import RedisMock from 'ioredis-mock';
 
 function interpolateStrWithEnv(str: string): string {
   return stringInterpolator.parse(str, { env: process.env });
@@ -41,7 +41,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V> {
           enableOfflineQueue: true,
         });
       } else {
-        return new LocalforageCache(options as any) as any;
+        this.client = new RedisMock();
       }
     }
     const id = options.pubsub.subscribe('destroy', () => {
@@ -66,6 +66,10 @@ export default class RedisCache<V = string> implements KeyValueCache<V> {
       return value;
     }
     return undefined;
+  }
+
+  async getKeysByPrefix(prefix: string): Promise<string[]> {
+    return this.client.keys(`${prefix}*`);
   }
 
   async delete(key: string): Promise<boolean> {

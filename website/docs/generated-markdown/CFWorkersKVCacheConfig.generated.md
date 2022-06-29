@@ -1,0 +1,2 @@
+
+* `namespace` (type: `String`)

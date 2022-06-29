@@ -31,8 +31,8 @@
     "@graphql-mesh/types": "0.76.0",
     "@graphql-mesh/utils": "0.36.0",
     "@graphql-mesh/cross-helpers": "0.1.6",
-    "@graphql-mesh/cache-localforage": "0.6.14",
     "@graphql-mesh/string-interpolation": "0.3.0",
+    "ioredis-mock": "8.2.2",
     "ioredis": "5.1.0",
     "tslib": "^2.4.0"
   },

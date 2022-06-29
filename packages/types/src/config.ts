@@ -1771,10 +1771,14 @@ export interface AdditionalSubscriptionObject {
  * Backend cache
  */
 export interface Cache {
+  cfwKv?: CFWorkersKVCacheConfig;
   file?: FileCacheConfig;
   localforage?: LocalforageConfig;
   redis?: RedisConfig;
   [k: string]: any;
+}
+export interface CFWorkersKVCacheConfig {
+  namespace?: string;
 }
 export interface FileCacheConfig {
   path?: string;
@@ -1804,6 +1808,7 @@ export interface Plugin {
   maskedErrors?: MaskedErrorsPluginConfig;
   immediateIntrospection?: any;
   liveQuery?: LiveQueryConfig;
+  rateLimit?: RateLimitPluginConfig;
   responseCache?: ResponseCacheConfig;
   [k: string]: any;
 }
@@ -1812,13 +1817,30 @@ export interface MaskedErrorsPluginConfig {
 }
 export interface LiveQueryConfig {
   /**
-   * Live Query Invalidations
+   * Invalidate a query or queries when a specific operation is done without an error
    */
-  liveQueryInvalidations?: LiveQueryInvalidation[];
+  invalidations?: LiveQueryInvalidation[];
+  /**
+   * Allow an operation can be used a live query with polling
+   */
+  polling?: LiveQueryPolling[];
 }
 export interface LiveQueryInvalidation {
+  /**
+   * Path to the operation that could effect it. In a form: Mutation.something. Note that wildcard is not supported in this field.
+   */
   field: string;
   invalidate: string[];
+}
+export interface LiveQueryPolling {
+  interval: number;
+  invalidate: string[];
+}
+/**
+ * RateLimit plugin
+ */
+export interface RateLimitPluginConfig {
+  config: RateLimitTransformConfig[];
 }
 export interface ResponseCacheConfig {
   /**
@@ -1847,6 +1869,52 @@ export interface ResponseCacheConfig {
    * Include extension values that provide useful information, such as whether the cache was hit or which resources a mutation invalidated.
    */
   includeExtensionMetadata?: boolean;
+  /**
+   * Allows to cache responses based on the resolved session id.
+   * Return a unique value for each session.
+   * Creates a global session by default.
+   * Example;
+   * ```yml
+   * sessionId: "{context.headers.userId}"
+   * ```
+   */
+  sessionId?: string;
+  /**
+   * Specify whether the cache should be used based on the context.
+   * ```yml
+   * if: "context.headers.userId != null"
+   * ```
+   */
+  if?: string;
+  /**
+   * Customize the behavior how the response cache key is computed from the documentString, variableValues, contextValue and sessionId.
+   * If the given string is interpolated as empty, default behavior is used.
+   * Example;
+   * ```yml
+   * # Cache by specific value
+   * cacheKey: "{variableValues.userId}"
+   *
+   * # Cache by documentString
+   * cacheKey: "{documentString}"
+   *
+   * # Cache by operationName
+   * cacheKey: "{operationName}"
+   *
+   * # Cache by some header value
+   * cacheKey: "{contextValue.headers.authorization}"
+   *
+   * # Or combine two of each
+   * cacheKey: "{contextValue.headers.authorization}-{operationName}"
+   * ```
+   */
+  cacheKey?: string;
+  /**
+   * Checks if the result should be cached.
+   * ```yml
+   * shouldCacheResult: "result.errors.length > 0"
+   * ```
+   */
+  shouldCacheResult?: string;
 }
 export interface ResponseCacheTTLConfig {
   coordinate: string;
