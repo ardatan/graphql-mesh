@@ -1,4 +1,4 @@
-import { SchemaComposer } from 'graphql-compose';
+import { GraphQLJSON, SchemaComposer } from 'graphql-compose';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { JSONSchemaOperationConfig } from './types';
 import { getOperationMetadata, isPubSubOperationConfig, isFileUpload, cleanObject } from './utils';
@@ -10,8 +10,11 @@ import {
   getNamedType,
   GraphQLError,
   GraphQLFieldResolver,
+  GraphQLInt,
+  GraphQLObjectType,
   GraphQLOutputType,
   GraphQLResolveInfo,
+  GraphQLString,
   isListType,
   isNonNullType,
   isScalarType,
@@ -64,6 +67,18 @@ function linkResolver(
   }
   return actualResolver(root, args, context, info);
 }
+
+const responseMetadataType = new GraphQLObjectType({
+  name: 'ResponseMetadata',
+  fields: {
+    url: { type: GraphQLString },
+    method: { type: GraphQLString },
+    status: { type: GraphQLInt },
+    statusTest: { type: GraphQLString },
+    headers: { type: GraphQLJSON },
+    body: { type: GraphQLJSON },
+  },
+});
 
 export async function addExecutionLogicToComposer(
   schemaComposer: SchemaComposer,
@@ -314,6 +329,13 @@ export async function addExecutionLogicToComposer(
               method: httpMethod,
               status: response.status,
               statusText: response.statusText,
+              get headers() {
+                const headersObj = {};
+                response.headers.forEach((value, key) => {
+                  headersObj[key] = value;
+                });
+                return headersObj;
+              },
               body: obj,
             },
           };
@@ -343,29 +365,51 @@ export async function addExecutionLogicToComposer(
             },
           });
         }
-      } else if ('responseByStatusCode' in operationConfig) {
+      }
+
+      if ('exposeResponseMetadata' in operationConfig && operationConfig.exposeResponseMetadata) {
+        const typeTC = schemaComposer.getOTC(field.type.getTypeName());
+        typeTC.addFields({
+          _response: {
+            type: responseMetadataType,
+            resolve: root => root.$response,
+          },
+        });
+      }
+
+      if ('responseByStatusCode' in operationConfig) {
         const unionOrSingleTC = schemaComposer.getAnyTC(getNamedType(field.type.getType()));
         const types = 'getTypes' in unionOrSingleTC ? unionOrSingleTC.getTypes() : [unionOrSingleTC];
         const statusCodeOneOfIndexMap =
           (unionOrSingleTC.getExtension('statusCodeOneOfIndexMap') as Record<string, number>) || {};
         for (const statusCode in operationConfig.responseByStatusCode) {
+          const typeTCThunked = types[statusCodeOneOfIndexMap[statusCode] || 0];
           const responseConfig = operationConfig.responseByStatusCode[statusCode];
-          for (const linkName in responseConfig.links) {
-            const typeTCThunked = types[statusCodeOneOfIndexMap[statusCode] || 0];
-            const typeTC = schemaComposer.getOTC(typeTCThunked.getTypeName());
-            typeTC.addFields({
-              [linkName]: () => {
-                const linkObj = responseConfig.links[linkName];
-                const targetField = schemaComposer.Query.getField(linkObj.fieldName);
-                return {
-                  ...targetField,
-                  args: {},
-                  description: linkObj.description || targetField.description,
-                  resolve: (root, args, context, info) =>
-                    linkResolver(linkObj.args, targetField.resolve, root, args, context, info),
-                };
-              },
-            });
+          const typeTC = schemaComposer.getAnyTC(typeTCThunked.getTypeName());
+          if ('addFieldArgs' in typeTC) {
+            if (responseConfig.exposeResponseMetadata) {
+              typeTC.addFields({
+                _response: {
+                  type: responseMetadataType,
+                  resolve: root => root.$response,
+                },
+              });
+            }
+            for (const linkName in responseConfig.links || []) {
+              typeTC.addFields({
+                [linkName]: () => {
+                  const linkObj = responseConfig.links[linkName];
+                  const targetField = schemaComposer.Query.getField(linkObj.fieldName);
+                  return {
+                    ...targetField,
+                    args: {},
+                    description: linkObj.description || targetField.description,
+                    resolve: (root, args, context, info) =>
+                      linkResolver(linkObj.args, targetField.resolve, root, args, context, info),
+                  };
+                },
+              });
+            }
           }
         }
       }

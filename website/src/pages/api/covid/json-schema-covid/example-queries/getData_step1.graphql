@@ -12,5 +12,9 @@ query getData_step1 {
         country_name
       }
     }
+    _response {
+      status
+      body
+    }
   }
 }

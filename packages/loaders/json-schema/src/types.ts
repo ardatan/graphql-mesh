@@ -22,6 +22,8 @@ export interface JSONSchemaOperationResponseConfig {
   responseSample?: any;
   responseTypeName?: string;
 
+  exposeResponseMetadata?: boolean;
+
   links?: Record<string, JSONSchemaLinkConfig>;
 }
 

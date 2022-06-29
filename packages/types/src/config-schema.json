@@ -1195,6 +1195,10 @@
           ],
           "description": "You can define your response schemas by status codes;\nresponseByStatusCode:\n  200:\n    responseSchema: ./someschema.json#/somepath\n  404:\n    responseSample: ./error-sample.json\n    responseTypeName: MyError"
         },
+        "exposeResponseMetadata": {
+          "type": "boolean",
+          "description": "Expose response details done to the upstream API\nWhen you enable this, you will see a new field in the response type;\n```graphql\ntype MyResponseType {\n  myFooField: String\n  _response: ResponseMetadata\n}\n\n# And a new type for the response metadata object\ntype ResponseMetadata {\n  url: URL\n  status: Int\n  method: String\n  headers: JSON\n  body: String\n}\n```"
+        },
         "argTypeMap": {
           "type": "object",
           "properties": {},
