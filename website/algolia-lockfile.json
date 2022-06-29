@@ -62,6 +62,29 @@
     "type": "Documentation"
   },
   {
+    "objectID": "mesh-cfwKv",
+    "headings": ["How to use?", "Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "How to use?",
+        "anchor": "how-to-use"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "-",
+    "url": "https://www.graphql-mesh.com/docs/cache/cfwKv",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Mesh", "Cache", "CF Workers KV"],
+    "source": "Mesh",
+    "title": "CF Workers KV",
+    "type": "Documentation"
+  },
+  {
     "objectID": "mesh-combine-multiple-sources",
     "headings": [
       "1. Add the \"Authors\" Source",
