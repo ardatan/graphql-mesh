@@ -1,4 +1,4 @@
-import { path, path as pathModule } from '@graphql-mesh/cross-helpers';
+import { path as pathModule } from '@graphql-mesh/cross-helpers';
 import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
@@ -29,8 +29,8 @@ function tryRequire(modulePath: string, cwd: string) {
   try {
     return require(modulePath);
   } catch {
-    if (!path.isAbsolute(modulePath)) {
-      const absoluteModulePath = path.isAbsolute(modulePath) ? modulePath : path.join(cwd, modulePath);
+    if (!pathModule.isAbsolute(modulePath)) {
+      const absoluteModulePath = pathModule.isAbsolute(modulePath) ? modulePath : pathModule.join(cwd, modulePath);
       return require(absoluteModulePath);
     }
   }
