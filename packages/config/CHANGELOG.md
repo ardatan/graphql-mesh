@@ -1,5 +1,21 @@
 # @graphql-mesh/config
 
+## 3.0.1
+
+### Patch Changes
+
+- Updated dependencies [12e1e5d72]
+- Updated dependencies [12e1e5d72]
+- Updated dependencies [12e1e5d72]
+  - @graphql-mesh/cross-helpers@0.1.7
+  - @graphql-mesh/types@0.77.0
+  - @graphql-mesh/store@0.8.18
+  - @graphql-mesh/utils@0.36.1
+  - @graphql-mesh/cache-localforage@0.6.15
+  - @graphql-mesh/merger-bare@0.14.1
+  - @graphql-mesh/merger-stitching@0.15.59
+  - @graphql-mesh/runtime@0.39.1
+
 ## 3.0.0
 
 ### Minor Changes
@@ -23,9 +39,9 @@
       sourceName: Author
       sourceTypeName: Query
       sourceFieldName: authorById
-      requiredSelectionSet: '{ id }'
+      requiredSelectionSet: "{ id }"
       sourceArgs:
-        id: '{root.id}'
+        id: "{root.id}"
   ```
 
   After:

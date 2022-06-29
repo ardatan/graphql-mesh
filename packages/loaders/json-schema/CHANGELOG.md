@@ -1,5 +1,44 @@
 # @omnigraph/json-schema
 
+## 0.22.0
+
+### Minor Changes
+
+- b69746d2c: feat(json-schema): new exposeResponseMetadata flag to expose the details of the HTTP responses received from the upstream
+
+  ```yml
+  responseSchema: ...
+  exposeResponseMetadata: true
+  ```
+
+  Now you will have another field called `$response` in the response type;
+
+  ```graphql
+  type MyResponseType {
+    myFooField: String
+    _response: ResponseMetadata
+  }
+
+  type ResponseMetadata {
+    url: URL
+    status: Int
+    method: String
+    headers: JSON
+    body: String
+  }
+  ```
+
+### Patch Changes
+
+- 12e1e5d72: Do not compile JSON Schemas with ajv if function constructors are not supported. This fixes an issue with Mesh and CF Workers. Previously it throws an error because of "new Function" usage
+- Updated dependencies [12e1e5d72]
+- Updated dependencies [12e1e5d72]
+- Updated dependencies [12e1e5d72]
+  - @graphql-mesh/cross-helpers@0.1.7
+  - @graphql-mesh/types@0.77.0
+  - json-machete@0.9.1
+  - @graphql-mesh/utils@0.36.1
+
 ## 0.21.0
 
 ### Minor Changes
