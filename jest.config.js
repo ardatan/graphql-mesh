@@ -18,7 +18,7 @@ module.exports = {
     ...pathsToModuleNameMapper(tsconfig.compilerOptions.paths, {
       prefix: `${ROOT_DIR}/`,
     }),
-    "/^@graphql\-mesh\/cross\-helpers$/": "/home/runner/work/graphql-mesh/graphql-mesh/packages/cross-helpers/node.js",
+    "@graphql-mesh/cross-helpers": "<rootDir>/packages/cross-helpers/node.js",
     'formdata-node': '<rootDir>/node_modules/formdata-node/lib/cjs/index.js',
     uuid: '<rootDir>/node_modules/uuid/index.js',
   },
