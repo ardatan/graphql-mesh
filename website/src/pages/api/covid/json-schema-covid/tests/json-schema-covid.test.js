@@ -21,11 +21,14 @@ describe('JSON Schema Covid', () => {
       })
     ).toMatchSnapshot('json-schema-covid-schema');
   });
-  it.skip('should give correct response for STEP 1: 2 sources side by side', async () => {
+  it('should give correct response for STEP 1: 2 sources side by side', async () => {
     const getDataStep1Query = await readFile(join(__dirname, '../example-queries/getData_step1.graphql'), 'utf8');
     const { execute } = await mesh$;
     const result = await execute(getDataStep1Query);
     expect(result.errors).toBeFalsy();
+    // Check exposed response metadata
+    expect(result.data?.population?._response).toMatchSnapshot('json-schema-covid-response-metadata');
+
     expect(typeof result?.data?.case?.confirmed).toBe('number');
     expect(result?.data?.case?.countryRegion).toBe('France');
     expect(typeof result?.data?.case?.deaths).toBe('number');

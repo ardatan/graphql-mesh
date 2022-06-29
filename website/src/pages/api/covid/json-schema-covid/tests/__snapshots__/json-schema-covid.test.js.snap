@@ -5,6 +5,7 @@ exports[`JSON Schema Covid should generate correct schema: json-schema-covid-sch
 
 \\"\\"\\"Desc Api Population\\"\\"\\"
 type ApiPopulation {
+  _response: ResponseMetadata
   records: [Result]
 }
 
@@ -108,6 +109,11 @@ type Daily {
 \\"\\"\\"\\"\\"\\"
 scalar Date
 
+\\"\\"\\"
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+\\"\\"\\"
+scalar JSON
+
 \\"\\"\\"\\"\\"\\"
 type Query {
   \\"\\"\\"\\"\\"\\"
@@ -126,6 +132,15 @@ type Query {
 }
 
 scalar ResolveToSourceArgs
+
+type ResponseMetadata {
+  body: JSON
+  headers: JSON
+  method: String
+  status: Int
+  statusTest: String
+  url: String
+}
 
 \\"\\"\\"Result of API\\"\\"\\"
 type Result {
@@ -147,4 +162,123 @@ type query_population_records_items_fields {
   value: Float
   year: String
 }"
+`;
+
+exports[`JSON Schema Covid should give correct response for STEP 1: 2 sources side by side: json-schema-covid-response-metadata 1`] = `
+Object {
+  "body": Object {
+    "facet_groups": Array [
+      Object {
+        "facets": Array [
+          Object {
+            "count": 1,
+            "name": "1990",
+            "path": "1990",
+            "state": "displayed",
+          },
+          Object {
+            "count": 1,
+            "name": "2000",
+            "path": "2000",
+            "state": "displayed",
+          },
+          Object {
+            "count": 1,
+            "name": "2011",
+            "path": "2011",
+            "state": "displayed",
+          },
+          Object {
+            "count": 1,
+            "name": "2012",
+            "path": "2012",
+            "state": "displayed",
+          },
+          Object {
+            "count": 1,
+            "name": "2013",
+            "path": "2013",
+            "state": "displayed",
+          },
+          Object {
+            "count": 1,
+            "name": "2014",
+            "path": "2014",
+            "state": "displayed",
+          },
+          Object {
+            "count": 1,
+            "name": "2015",
+            "path": "2015",
+            "state": "displayed",
+          },
+          Object {
+            "count": 1,
+            "name": "2016",
+            "path": "2016",
+            "state": "displayed",
+          },
+          Object {
+            "count": 1,
+            "name": "2017",
+            "path": "2017",
+            "state": "displayed",
+          },
+          Object {
+            "count": 1,
+            "name": "2018",
+            "path": "2018",
+            "state": "displayed",
+          },
+          Object {
+            "count": 1,
+            "name": "2019",
+            "path": "2019",
+            "state": "displayed",
+          },
+        ],
+        "name": "year",
+      },
+      Object {
+        "facets": Array [
+          Object {
+            "count": 11,
+            "name": "France",
+            "path": "France",
+            "state": "displayed",
+          },
+        ],
+        "name": "country_name",
+      },
+    ],
+    "nhits": 11,
+    "parameters": Object {
+      "dataset": "world-population",
+      "facet": Array [
+        "year",
+        "country_name",
+      ],
+      "format": "json",
+      "q": "France",
+      "rows": 1,
+      "sort": Array [
+        "year",
+      ],
+      "start": 0,
+      "timezone": "UTC",
+    },
+    "records": Array [
+      Object {
+        "datasetid": "world-population",
+        "fields": Object {
+          "country_name": "France",
+          "value": 67059887,
+          "year": "2019",
+        },
+        "recordid": "bd26b46379d53d7f7f52dcbf478c1a6b090e3a94",
+      },
+    ],
+  },
+  "status": 200,
+}
 `;
