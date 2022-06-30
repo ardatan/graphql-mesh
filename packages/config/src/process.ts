@@ -29,8 +29,6 @@ import { camelCase } from 'camel-case';
 import { defaultImportFn, parseWithCache, resolveAdditionalResolvers } from '@graphql-mesh/utils';
 import { envelop, useMaskedErrors, useImmediateIntrospection } from '@envelop/core';
 import { getAdditionalResolversFromTypeDefs } from './getAdditionalResolversFromTypeDefs';
-import { fetch, Request, Response } from 'cross-undici-fetch';
-import { fetchFactory } from 'fetchache';
 
 const ENVELOP_CORE_PLUGINS_MAP = {
   maskedErrors: {
@@ -155,14 +153,14 @@ export async function processConfig(
     codes.push('const fetchFn = fetchFactory({ cache, fetch, Request, Response });');
   }
 
-  const fetchFn = config.customFetch
-    ? await importFn(config.customFetch, true)
-    : fetchFactory({
-        cache,
-        fetch,
-        Request,
-        Response,
-      });
+  const {
+    fetchFn,
+    importCode: fetchFnImportCode,
+    code: fetchFnCode,
+  } = await resolveFetch(config.customFetch, importFn, dir, additionalPackagePrefixes);
+
+  importCodes.push(fetchFnImportCode);
+  codes.push(fetchFnCode);
 
   const sourcesStore = rootStore.child('sources');
   codes.push(`const sourcesStore = rootStore.child('sources');`);
@@ -576,4 +574,12 @@ export async function processConfig(
     additionalEnvelopPlugins,
     code: [...new Set([...importCodes, ...codes])].join('\n'),
   };
+}
+function resolveFetch(
+  customFetch: any,
+  importFn: ImportFn | ((path: string) => Promise<any>),
+  dir: string,
+  additionalPackagePrefixes: string[]
+): { fetchFn: any; importCode: any; code: any } | PromiseLike<{ fetchFn: any; importCode: any; code: any }> {
+  throw new Error('Function not implemented.');
 }

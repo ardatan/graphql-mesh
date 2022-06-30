@@ -7,6 +7,8 @@ import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { PubSub, DefaultLogger, parseWithCache } from '@graphql-mesh/utils';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { MeshStore } from '@graphql-mesh/store';
+import { fetch, Request, Response } from 'cross-undici-fetch';
+import { fetchFactory } from 'fetchache';
 
 type ResolvedPackage<T> = {
   moduleName: string;
@@ -80,6 +82,55 @@ export async function resolveAdditionalTypeDefs(baseDir: string, additionalTypeD
     );
   }
   return undefined;
+}
+
+export async function resolveCustomFetch({
+  fetchConfig,
+  importFn,
+  cwd,
+  cache,
+  additionalPackagePrefixes,
+}: {
+  fetchConfig?: string;
+  importFn: ImportFn;
+  cwd: string;
+  additionalPackagePrefixes: string[];
+  cache: KeyValueCache;
+}): Promise<{
+  fetchFn: ReturnType<typeof fetchFactory>;
+  importCode: string;
+  code: string;
+}> {
+  let importCode = '';
+  if (fetchConfig) {
+    importCode += `import { fetchFactory } from 'fetchache';\n`;
+    importCode += `import { fetch, Request, Response } from 'cross-undici-fetch';\n`;
+    return {
+      fetchFn: fetchFactory({
+        cache,
+        fetch,
+        Request,
+        Response,
+      }),
+      importCode,
+      code: `const fetchFn = fetchFactory({ cache, fetch, Request, Response });`,
+    };
+  }
+  const { moduleName, resolved: fetchFn } = await getPackage<ReturnType<typeof fetchFactory>>({
+    name: fetchConfig,
+    type: 'fetch',
+    importFn,
+    cwd,
+    additionalPrefixes: additionalPackagePrefixes,
+  });
+
+  importCode += `import fetchFn from '${moduleName}';\n`;
+
+  return {
+    fetchFn,
+    importCode,
+    code: '',
+  };
 }
 
 export async function resolveCache(
