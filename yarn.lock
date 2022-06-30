@@ -2486,7 +2486,7 @@
   dependencies:
     mime "^3.0.0"
 
-"@cloudflare/workers-types@^3.0.0":
+"@cloudflare/workers-types@3.13.0":
   version "3.13.0"
   resolved "https://registry.yarnpkg.com/@cloudflare/workers-types/-/workers-types-3.13.0.tgz#4483374809e328535ff136a73fb9c51fa3423e01"
   integrity sha512-oyhzfYlWBLgd9odJ/WHcsD/8B+IaAjSD+OcPEGLzX5kGRONjwcW3NY0WQfsVIhQzZ6AbPzjwkmj4D2VFwU1xRQ==
