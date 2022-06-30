@@ -1,5 +1,16 @@
 # nextjs-apollo-example
 
+## 0.1.122
+
+### Patch Changes
+
+- Updated dependencies [0401c7617]
+- Updated dependencies [0401c7617]
+  - @graphql-mesh/cli@0.74.0
+  - @graphql-mesh/runtime@0.40.0
+  - @graphql-mesh/config@4.0.0
+  - @graphql-mesh/new-openapi@0.5.2
+
 ## 0.1.121
 
 ### Patch Changes

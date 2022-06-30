@@ -1,5 +1,24 @@
 # @graphql-mesh/config
 
+## 4.0.0
+
+### Patch Changes
+
+- 0401c7617: Fix: Resolve `customFetch` properly and write the import statement properly in the artifacts
+
+  If given `customFetch` path is relative, it wasn't reflected properly in the generated artifacts so artifacts were failing. Now it is resolved correctly based on the given working directory(`baseDir`).
+
+- Updated dependencies [66f5d0189]
+- Updated dependencies [0401c7617]
+  - @graphql-mesh/types@0.77.1
+  - @graphql-mesh/cross-helpers@0.2.0
+  - @graphql-mesh/runtime@0.40.0
+  - @graphql-mesh/utils@0.37.0
+  - @graphql-mesh/cache-localforage@0.6.16
+  - @graphql-mesh/merger-bare@0.14.2
+  - @graphql-mesh/merger-stitching@0.15.60
+  - @graphql-mesh/store@0.8.19
+
 ## 3.0.1
 
 ### Patch Changes
