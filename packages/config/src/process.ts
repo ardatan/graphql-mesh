@@ -22,6 +22,7 @@ import {
   resolvePubSub,
   resolveDocuments,
   resolveLogger,
+  resolveCustomFetch,
 } from './utils';
 import { FsStoreStorageAdapter, MeshStore, InMemoryStoreStorageAdapter } from '@graphql-mesh/store';
 import { pascalCase } from 'pascal-case';
@@ -137,31 +138,6 @@ export async function processConfig(
   importCodes.push(pubsubImportCode);
   codes.push(pubsubCode);
 
-  const {
-    cache,
-    importCode: cacheImportCode,
-    code: cacheCode,
-  } = await resolveCache(config.cache, importFn, rootStore, dir, pubsub, additionalPackagePrefixes);
-  importCodes.push(cacheImportCode);
-  codes.push(cacheCode);
-
-  if (config.customFetch) {
-    importCodes.push(`import fetchFn from ${JSON.stringify(config.customFetch)}`);
-  } else {
-    importCodes.push(`import { fetchFactory } from 'fetchache';`);
-    importCodes.push(`import { fetch, Request, Response } from 'cross-undici-fetch';`);
-    codes.push('const fetchFn = fetchFactory({ cache, fetch, Request, Response });');
-  }
-
-  const {
-    fetchFn,
-    importCode: fetchFnImportCode,
-    code: fetchFnCode,
-  } = await resolveFetch(config.customFetch, importFn, dir, additionalPackagePrefixes);
-
-  importCodes.push(fetchFnImportCode);
-  codes.push(fetchFnCode);
-
   const sourcesStore = rootStore.child('sources');
   codes.push(`const sourcesStore = rootStore.child('sources');`);
 
@@ -172,6 +148,29 @@ export async function processConfig(
   } = await resolveLogger(config.logger, importFn, dir, additionalPackagePrefixes, options?.initialLoggerPrefix);
   importCodes.push(loggerImportCode);
   codes.push(loggerCode);
+
+  const {
+    cache,
+    importCode: cacheImportCode,
+    code: cacheCode,
+  } = await resolveCache(config.cache, importFn, rootStore, dir, pubsub, logger, additionalPackagePrefixes);
+  importCodes.push(cacheImportCode);
+  codes.push(cacheCode);
+
+  const {
+    fetchFn,
+    importCode: fetchFnImportCode,
+    code: fetchFnCode,
+  } = await resolveCustomFetch({
+    fetchConfig: config.customFetch,
+    cache,
+    importFn,
+    cwd: dir,
+    additionalPackagePrefixes,
+  });
+
+  importCodes.push(fetchFnImportCode);
+  codes.push(fetchFnCode);
 
   codes.push(`const sources = [];`);
   codes.push(`const transforms = [];`);
@@ -574,12 +573,4 @@ export async function processConfig(
     additionalEnvelopPlugins,
     code: [...new Set([...importCodes, ...codes])].join('\n'),
   };
-}
-function resolveFetch(
-  customFetch: any,
-  importFn: ImportFn | ((path: string) => Promise<any>),
-  dir: string,
-  additionalPackagePrefixes: string[]
-): { fetchFn: any; importCode: any; code: any } | PromiseLike<{ fetchFn: any; importCode: any; code: any }> {
-  throw new Error('Function not implemented.');
 }

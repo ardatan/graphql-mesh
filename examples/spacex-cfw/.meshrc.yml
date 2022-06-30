@@ -1,0 +1,16 @@
+sources:
+  - name: GraphQLAPI
+    handler:
+      graphql:
+        endpoint: '{env.GRAPHQL_API}'
+        credentials: disable
+
+plugins:
+  - responseCache:
+      ttlPerCoordinate:
+        - coordinate: Query.*
+          ttl: 3600
+
+cache:
+  cfwKv:
+    namespace: MESH

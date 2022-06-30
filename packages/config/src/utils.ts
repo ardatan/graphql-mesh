@@ -102,7 +102,7 @@ export async function resolveCustomFetch({
   code: string;
 }> {
   let importCode = '';
-  if (fetchConfig) {
+  if (!fetchConfig) {
     importCode += `import { fetchFactory } from 'fetchache';\n`;
     importCode += `import { fetch, Request, Response } from 'cross-undici-fetch';\n`;
     return {
@@ -124,7 +124,7 @@ export async function resolveCustomFetch({
     additionalPrefixes: additionalPackagePrefixes,
   });
 
-  importCode += `import fetchFn from '${moduleName}';\n`;
+  importCode += `import fetchFn from ${JSON.stringify(moduleName)};\n`;
 
   return {
     fetchFn,
@@ -141,6 +141,7 @@ export async function resolveCache(
   rootStore: MeshStore,
   cwd: string,
   pubsub: MeshPubSub,
+  logger: Logger,
   additionalPackagePrefixes: string[]
 ): Promise<{
   cache: KeyValueCache;
@@ -163,6 +164,7 @@ export async function resolveCache(
     importFn,
     store: rootStore.child('cache'),
     pubsub,
+    logger,
   });
 
   const code = `const cache = new (MeshCache as any)({
@@ -170,6 +172,7 @@ export async function resolveCache(
       importFn,
       store: rootStore.child('cache'),
       pubsub,
+      logger,
     } as any)`;
   const importCode = `import MeshCache from ${JSON.stringify(moduleName)};`;
 

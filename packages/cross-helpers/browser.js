@@ -20,7 +20,7 @@ const processObj =
             return new Proxy(
               {},
               {
-                get(key) {
+                get(_, key) {
                   if (key === 'NODE_ENV') {
                     return 'development';
                   }
