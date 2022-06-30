@@ -25,7 +25,7 @@
   Before we use declarative approach for `additionalResolvers` that is added besides `additionalTypeDefs` which might be confusing once the project grows.
   And now we introduce new `@resolveTo` directive which has the same declarative syntax inside the SDL instead of the configuration file.
 
-  Before;
+  Before:
 
   ```yaml
   additionalTypeDefs: |
@@ -39,9 +39,9 @@
       sourceName: Author
       sourceTypeName: Query
       sourceFieldName: authorById
-      requiredSelectionSet: "{ id }"
+      requiredSelectionSet: '{ id }'
       sourceArgs:
-        id: "{root.id}"
+        id: '{root.id}'
   ```
 
   After:
