@@ -69,6 +69,14 @@ type GraphQLHandlerHTTPConfiguration @md {
   """
   method: GraphQLHandlerHTTPMethod
   """
+  Request Credentials if your environment supports it.
+  [See more](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials)
+
+  Some environments like CF Workers don't even want to have this set.
+  So if you have problems like that. Just pass `disable` here.
+  """
+  credentials: RequestCredentials
+  """
   Path to a custom W3 Compatible WebSocket Implementation
   """
   webSocketImpl: String
@@ -110,4 +118,10 @@ enum SubscriptionProtocol {
 enum GraphQLHandlerHTTPMethod {
   GET
   POST
+}
+
+enum RequestCredentials {
+  omit
+  include
+  disable
 }
