@@ -1,5 +1,5 @@
 diff --git a/node_modules/@cloudflare/workers-types/index.d.ts b/node_modules/@cloudflare/workers-types/index.d.ts
-index 1ba428d..1ca5453 100644
+index 1ba428d..67fcdc1 100644
 --- a/node_modules/@cloudflare/workers-types/index.d.ts
 +++ b/node_modules/@cloudflare/workers-types/index.d.ts
 @@ -1,6 +1,6 @@
@@ -10,7 +10,7 @@ index 1ba428d..1ca5453 100644
  declare class AbortController {
    constructor();
    readonly signal: AbortSignal;
-@@ -2051,3 +2051,4 @@ declare type PagesPluginFunction<
+@@ -2051,3 +2051,5 @@ declare type PagesPluginFunction<
  declare module "assets:*" {
    export const onRequest: PagesFunction;
  }
