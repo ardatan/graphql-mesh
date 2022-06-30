@@ -15,3 +15,4 @@ index 1ba428d..1ca5453 100644
    export const onRequest: PagesFunction;
  }
 +}
++export = CloudflareWorkers;
