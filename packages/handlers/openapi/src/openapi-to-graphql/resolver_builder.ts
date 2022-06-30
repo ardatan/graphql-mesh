@@ -666,16 +666,16 @@ export function getResolver<TSource, TContext, TArgs>(
           );
 
           // Pass on _openAPIToGraphQL to subsequent resolvers
-          if (saneData && typeof saneData === 'object') {
+          if (saneData != null && typeof saneData === 'object') {
             if (Array.isArray(saneData)) {
               saneData.forEach(element => {
-                if (typeof element._openAPIToGraphQL === 'undefined') {
+                if (typeof element === 'object' && typeof element._openAPIToGraphQL === 'undefined') {
                   element._openAPIToGraphQL = {
                     data: {},
                   };
                 }
 
-                if (root && typeof root === 'object' && typeof root._openAPIToGraphQL === 'object') {
+                if (root != null && typeof root === 'object' && typeof root._openAPIToGraphQL === 'object') {
                   Object.assign(element._openAPIToGraphQL, root._openAPIToGraphQL);
                 }
 
@@ -995,7 +995,9 @@ function resolveLinkParameter(
        * _openAPIToGraphQL contains data used by OpenAPI-to-GraphQL to create the GraphQL interface
        * and should not be exposed
        */
-      result._openAPIToGraphQL = undefined;
+      if (typeof result === 'object' && result?._openAPIToGraphQL != null) {
+        result._openAPIToGraphQL = undefined;
+      }
       return result;
 
       // CASE: parameter in body
@@ -1094,7 +1096,9 @@ function resolveRuntimeExpression(
        * _openAPIToGraphQL contains data used by OpenAPI-to-GraphQL to create the GraphQL interface
        * and should not be exposed
        */
-      result._openAPIToGraphQL = undefined;
+      if (typeof result === 'object' && result?._openAPIToGraphQL != null) {
+        result._openAPIToGraphQL = undefined;
+      }
       return result;
 
       // CASE: parameter in body

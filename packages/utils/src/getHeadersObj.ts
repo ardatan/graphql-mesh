@@ -1,11 +1,25 @@
+function headersToJSON(headers: Headers): Record<string, string> {
+  const obj: Record<string, string> = {};
+  headers.forEach((value, key) => {
+    obj[key] = value;
+  });
+  return obj;
+}
+
 export function getHeadersObj(headers: Headers): Record<string, string> {
   return new Proxy(
     {},
     {
       get(_target, name) {
+        if (name === 'toJSON') {
+          return () => headersToJSON(headers);
+        }
         return headers.get(name.toString());
       },
       has(_target, name) {
+        if (name === 'toJSON') {
+          return true;
+        }
         return headers.has(name.toString());
       },
       ownKeys(_target) {
@@ -21,6 +35,9 @@ export function getHeadersObj(headers: Headers): Record<string, string> {
       },
       deleteProperty(_target, name) {
         headers.delete(name.toString());
+        return true;
+      },
+      preventExtensions() {
         return true;
       },
     }
