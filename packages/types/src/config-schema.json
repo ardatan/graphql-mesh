@@ -842,6 +842,11 @@
           "enum": ["GET", "POST"],
           "description": "HTTP method used for GraphQL operations (Allowed values: GET, POST)"
         },
+        "credentials": {
+          "type": "string",
+          "enum": ["omit", "include", "disable"],
+          "description": "Request Credentials if your environment supports it.\n[See more](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials)\n\nSome environments like CF Workers don't even want to have this set.\nSo if you have problems like that. Just pass `disable` here. (Allowed values: omit, include, disable)"
+        },
         "webSocketImpl": {
           "type": "string",
           "description": "Path to a custom W3 Compatible WebSocket Implementation"

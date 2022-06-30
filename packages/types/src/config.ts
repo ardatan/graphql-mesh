@@ -254,6 +254,14 @@ export interface GraphQLHandlerHTTPConfiguration {
    */
   method?: 'GET' | 'POST';
   /**
+   * Request Credentials if your environment supports it.
+   * [See more](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials)
+   *
+   * Some environments like CF Workers don't even want to have this set.
+   * So if you have problems like that. Just pass `disable` here. (Allowed values: omit, include, disable)
+   */
+  credentials?: 'omit' | 'include' | 'disable';
+  /**
    * Path to a custom W3 Compatible WebSocket Implementation
    */
   webSocketImpl?: string;
