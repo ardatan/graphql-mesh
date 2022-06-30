@@ -3226,7 +3226,7 @@
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.1.1.tgz#076d78ce99822258cf813ecc1e7fa460fa74d052"
   integrity sha512-NQ17ii0rK1b34VZonlmT2QMJFI70m0TRwbknO/ihlbatXyaktDhN/98vBiUU6kNBPljqGqyIrl2T4nY2RpFANg==
 
-"@graphql-yoga/common@^2.10.0":
+"@graphql-yoga/common@2.10.0", "@graphql-yoga/common@^2.10.0":
   version "2.10.0"
   resolved "https://registry.yarnpkg.com/@graphql-yoga/common/-/common-2.10.0.tgz#dd377082bf81cc26506ab9781028f16415fb0a91"
   integrity sha512-Ugrj5FbhCmogSn2Ji0qG2kMkYEbCAha60qAIw+c6StYZBRxuE25RnRAw+2mEM1PqEE/UHMZ2bh/UvormAKJGoQ==
