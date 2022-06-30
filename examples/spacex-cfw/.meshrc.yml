@@ -1,0 +1,20 @@
+sources:
+  - name: GraphQLAPI
+    handler:
+      graphql:
+        endpoint: '{env.GRAPHQL_API}'
+        # Use some fetch strategy
+        timeout: 2000
+        retry: 2
+        # The following is needed for Cloudflare Workers
+        credentials: disable
+
+plugins:
+  - responseCache:
+      ttlPerCoordinate:
+        - coordinate: Query.*
+          ttl: 3600
+
+cache:
+  cfwKv:
+    namespace: MESH

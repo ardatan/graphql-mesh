@@ -15,7 +15,6 @@ export const graphqlHandler = (
         ...mesh.plugins,
         useExtendContext(({ req, res }) => ({
           ...req,
-          headers: req.headers,
           cookies: req.cookies,
           res,
         })),

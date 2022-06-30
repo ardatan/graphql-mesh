@@ -11,15 +11,23 @@ const processObj =
   typeof process !== 'undefined'
     ? process
     : {
+        platform: 'linux',
         get env() {
           try {
             // eslint-disable-next-line no-new-func
             return new Function('return import.meta.env')();
           } catch {
-            return {
-              NODE_ENV: 'production',
-              platform: 'linux',
-            };
+            return new Proxy(
+              {},
+              {
+                get(_, key) {
+                  if (key === 'NODE_ENV') {
+                    return 'development';
+                  }
+                  return globalThis[key];
+                },
+              }
+            );
           }
         },
       };

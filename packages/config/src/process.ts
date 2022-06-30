@@ -22,6 +22,7 @@ import {
   resolvePubSub,
   resolveDocuments,
   resolveLogger,
+  resolveCustomFetch,
 } from './utils';
 import { FsStoreStorageAdapter, MeshStore, InMemoryStoreStorageAdapter } from '@graphql-mesh/store';
 import { pascalCase } from 'pascal-case';
@@ -29,8 +30,6 @@ import { camelCase } from 'camel-case';
 import { defaultImportFn, parseWithCache, resolveAdditionalResolvers } from '@graphql-mesh/utils';
 import { envelop, useMaskedErrors, useImmediateIntrospection } from '@envelop/core';
 import { getAdditionalResolversFromTypeDefs } from './getAdditionalResolversFromTypeDefs';
-import { fetch, Request, Response } from 'cross-undici-fetch';
-import { fetchFactory } from 'fetchache';
 
 const ENVELOP_CORE_PLUGINS_MAP = {
   maskedErrors: {
@@ -139,31 +138,6 @@ export async function processConfig(
   importCodes.push(pubsubImportCode);
   codes.push(pubsubCode);
 
-  const {
-    cache,
-    importCode: cacheImportCode,
-    code: cacheCode,
-  } = await resolveCache(config.cache, importFn, rootStore, dir, pubsub, additionalPackagePrefixes);
-  importCodes.push(cacheImportCode);
-  codes.push(cacheCode);
-
-  if (config.customFetch) {
-    importCodes.push(`import fetchFn from ${JSON.stringify(config.customFetch)}`);
-  } else {
-    importCodes.push(`import { fetchFactory } from 'fetchache';`);
-    importCodes.push(`import { fetch, Request, Response } from 'cross-undici-fetch';`);
-    codes.push('const fetchFn = fetchFactory({ cache, fetch, Request, Response });');
-  }
-
-  const fetchFn = config.customFetch
-    ? await importFn(config.customFetch, true)
-    : fetchFactory({
-        cache,
-        fetch,
-        Request,
-        Response,
-      });
-
   const sourcesStore = rootStore.child('sources');
   codes.push(`const sourcesStore = rootStore.child('sources');`);
 
@@ -174,6 +148,29 @@ export async function processConfig(
   } = await resolveLogger(config.logger, importFn, dir, additionalPackagePrefixes, options?.initialLoggerPrefix);
   importCodes.push(loggerImportCode);
   codes.push(loggerCode);
+
+  const {
+    cache,
+    importCode: cacheImportCode,
+    code: cacheCode,
+  } = await resolveCache(config.cache, importFn, rootStore, dir, pubsub, logger, additionalPackagePrefixes);
+  importCodes.push(cacheImportCode);
+  codes.push(cacheCode);
+
+  const {
+    fetchFn,
+    importCode: fetchFnImportCode,
+    code: fetchFnCode,
+  } = await resolveCustomFetch({
+    fetchConfig: config.customFetch,
+    cache,
+    importFn,
+    cwd: dir,
+    additionalPackagePrefixes,
+  });
+
+  importCodes.push(fetchFnImportCode);
+  codes.push(fetchFnCode);
 
   codes.push(`const sources = [];`);
   codes.push(`const transforms = [];`);

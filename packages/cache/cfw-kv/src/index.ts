@@ -7,7 +7,7 @@ export default class CFWorkerKVCache implements KeyValueCache {
     this.kvNamespace = globalThis[config.namespace];
     if (this.kvNamespace === undefined) {
       // We don't use mocks because they increase the bundle size.
-      config.logger.warn(`Disabling caching because ${config.namespace} is not available.`);
+      config.logger.warn(`Make sure KV Namespace: ${config.namespace} exists.`);
     }
   }
 

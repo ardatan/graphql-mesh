@@ -7,6 +7,8 @@ import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { PubSub, DefaultLogger, parseWithCache } from '@graphql-mesh/utils';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { MeshStore } from '@graphql-mesh/store';
+import { fetch, Request, Response } from 'cross-undici-fetch';
+import { fetchFactory } from 'fetchache';
 
 type ResolvedPackage<T> = {
   moduleName: string;
@@ -82,6 +84,55 @@ export async function resolveAdditionalTypeDefs(baseDir: string, additionalTypeD
   return undefined;
 }
 
+export async function resolveCustomFetch({
+  fetchConfig,
+  importFn,
+  cwd,
+  cache,
+  additionalPackagePrefixes,
+}: {
+  fetchConfig?: string;
+  importFn: ImportFn;
+  cwd: string;
+  additionalPackagePrefixes: string[];
+  cache: KeyValueCache;
+}): Promise<{
+  fetchFn: ReturnType<typeof fetchFactory>;
+  importCode: string;
+  code: string;
+}> {
+  let importCode = '';
+  if (!fetchConfig) {
+    importCode += `import { fetchFactory } from 'fetchache';\n`;
+    importCode += `import { fetch, Request, Response } from 'cross-undici-fetch';\n`;
+    return {
+      fetchFn: fetchFactory({
+        cache,
+        fetch,
+        Request,
+        Response,
+      }),
+      importCode,
+      code: `const fetchFn = fetchFactory({ cache, fetch, Request, Response });`,
+    };
+  }
+  const { moduleName, resolved: fetchFn } = await getPackage<ReturnType<typeof fetchFactory>>({
+    name: fetchConfig,
+    type: 'fetch',
+    importFn,
+    cwd,
+    additionalPrefixes: additionalPackagePrefixes,
+  });
+
+  importCode += `import fetchFn from ${JSON.stringify(moduleName)};\n`;
+
+  return {
+    fetchFn,
+    importCode,
+    code: '',
+  };
+}
+
 export async function resolveCache(
   cacheConfig: YamlConfig.Config['cache'] = {
     localforage: {},
@@ -90,6 +141,7 @@ export async function resolveCache(
   rootStore: MeshStore,
   cwd: string,
   pubsub: MeshPubSub,
+  logger: Logger,
   additionalPackagePrefixes: string[]
 ): Promise<{
   cache: KeyValueCache;
@@ -112,6 +164,7 @@ export async function resolveCache(
     importFn,
     store: rootStore.child('cache'),
     pubsub,
+    logger,
   });
 
   const code = `const cache = new (MeshCache as any)({
@@ -119,6 +172,7 @@ export async function resolveCache(
       importFn,
       store: rootStore.child('cache'),
       pubsub,
+      logger,
     } as any)`;
   const importCode = `import MeshCache from ${JSON.stringify(moduleName)};`;
 
