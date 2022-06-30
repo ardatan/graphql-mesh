@@ -25,6 +25,7 @@ import { Path } from 'graphql/jsutils/Path';
 import { ConnectOptions, RequestOptions } from './types/options';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { Headers } from 'cross-undici-fetch';
+import { getHeadersObj } from '@graphql-mesh/utils';
 
 // Type definitions & exports:
 type AuthReqAndProtcolName = {
@@ -50,14 +51,6 @@ type GetResolverParams<TSource, TContext, TArgs> = {
   qs?: Record<string, string>;
   logger: Logger;
 };
-
-function headersToObject(headers: Headers) {
-  const headersObj: HeadersInit = {};
-  headers.forEach((value, key) => {
-    headersObj[key] = value;
-  });
-  return headersObj;
-}
 
 interface ResolveData {
   url: string;
@@ -631,7 +624,7 @@ export function getResolver<TSource, TContext, TArgs>(
           path: operation.path,
           statusText: response.statusText,
           statusCode: response.status,
-          responseHeaders: headersToObject(response.headers),
+          responseHeaders: getHeadersObj(response.headers),
           responseBody,
         };
         throw graphQLErrorWithExtensions(errorString, extensions);
@@ -664,7 +657,7 @@ export function getResolver<TSource, TContext, TArgs>(
             throw errorString;
           }
 
-          resolveData.responseHeaders = headersToObject(response.headers);
+          resolveData.responseHeaders = getHeadersObj(response.headers);
 
           // Deal with the fact that the server might send unsanitized data
           let saneData = Oas3Tools.sanitizeObjectKeys(

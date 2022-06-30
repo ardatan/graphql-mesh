@@ -10,7 +10,14 @@ import {
 } from '@graphql-mesh/types';
 
 import { MESH_CONTEXT_SYMBOL } from './constants';
-import { applySchemaTransforms, groupTransforms, DefaultLogger, parseWithCache, PubSub } from '@graphql-mesh/utils';
+import {
+  applySchemaTransforms,
+  groupTransforms,
+  DefaultLogger,
+  parseWithCache,
+  PubSub,
+  getHeadersObj,
+} from '@graphql-mesh/utils';
 
 import { SubschemaConfig } from '@graphql-tools/delegate';
 import { AggregateError, isAsyncIterable, mapAsyncIterator, memoize1 } from '@graphql-tools/utils';
@@ -125,6 +132,22 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
   const plugins: PluginOrDisabledPlugin[] = [
     useSchema(unifiedSchema),
+    // TODO: Not a good practise to expect users to be a Yoga user
+    useExtendContext(({ request, req }: { request: Request; req?: { headers?: Record<string, string> } }) => {
+      // Maybe Node-like environment
+      if (req?.headers) {
+        return {
+          headers: req.headers,
+        };
+      }
+      // Fetch environment
+      if (request?.headers) {
+        return {
+          headers: getHeadersObj(request.headers),
+        };
+      }
+      return {};
+    }),
     useExtendContext(() => ({
       pubsub,
       cache,

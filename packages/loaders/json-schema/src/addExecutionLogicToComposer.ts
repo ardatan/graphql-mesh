@@ -23,6 +23,7 @@ import {
 import lodashSet from 'lodash.set';
 import { stringInterpolator, parseInterpolationStrings } from '@graphql-mesh/string-interpolation';
 import { process } from '@graphql-mesh/cross-helpers';
+import { getHeadersObj } from '@graphql-mesh/utils';
 
 export interface AddExecutionLogicToComposerOptions {
   baseUrl: string;
@@ -329,13 +330,7 @@ export async function addExecutionLogicToComposer(
               method: httpMethod,
               status: response.status,
               statusText: response.statusText,
-              get headers() {
-                const headersObj = {};
-                response.headers.forEach((value, key) => {
-                  headersObj[key] = value;
-                });
-                return headersObj;
-              },
+              headers: getHeadersObj(response.headers),
               body: obj,
             },
           };
