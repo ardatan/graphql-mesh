@@ -1,0 +1,18 @@
+diff --git a/node_modules/@cloudflare/workers-types/index.d.ts b/node_modules/@cloudflare/workers-types/index.d.ts
+index 1ba428d..67fcdc1 100644
+--- a/node_modules/@cloudflare/workers-types/index.d.ts
++++ b/node_modules/@cloudflare/workers-types/index.d.ts
+@@ -1,6 +1,6 @@
+ // This file is auto-generated. DO NOT MODIFY.
+ // Please refer to the Auto-Generation section of the README.md.
+-
++namespace CloudflareWorkers {
+ declare class AbortController {
+   constructor();
+   readonly signal: AbortSignal;
+@@ -2051,3 +2051,5 @@ declare type PagesPluginFunction<
+ declare module "assets:*" {
+   export const onRequest: PagesFunction;
+ }
++}
++export = CloudflareWorkers;
