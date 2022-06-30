@@ -1,5 +1,28 @@
 # @omnigraph/json-schema
 
+## 0.23.0
+
+### Minor Changes
+
+- 0401c7617: **Improvements on string interpolation ({env.sth} or {context.headers.sth}) for different environments**
+
+  As we mention in most of our docs, we usually expect a key-value `header` object in the context.
+  But Fetch-like environments don't have this kind of object but instead `Headers` object which is a kind `Map`.
+  Now Mesh can detect this and automatically convert it to the key-value object especially for Yoga users.
+
+  Also Mesh now handles `env` in a better way for non-Node environments;
+
+  Consider `import.meta.env` as `env` if available, else take `globalThis` as `env`.
+
+### Patch Changes
+
+- Updated dependencies [66f5d0189]
+- Updated dependencies [0401c7617]
+  - @graphql-mesh/types@0.77.1
+  - @graphql-mesh/cross-helpers@0.2.0
+  - @graphql-mesh/utils@0.37.0
+  - json-machete@0.9.2
+
 ## 0.22.0
 
 ### Minor Changes

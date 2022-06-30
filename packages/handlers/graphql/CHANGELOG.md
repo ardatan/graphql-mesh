@@ -1,5 +1,29 @@
 # @graphql-mesh/graphql
 
+## 0.29.0
+
+### Minor Changes
+
+- 66f5d0189: **New `credentials` configuration option**
+
+  Previously it wasn't possible to configure `credentials` of outgoing `Request` object passed to `fetch`. And the default behavior was `same-origin`.
+  Now it is possible to configure it and you can also remove it completely for the environments (e.g. CF Workers) to avoid errors like `'credentials' hasn't been implemented yet` etc.
+
+  ```yml
+  graphql:
+    endpoint: ...
+    credentials: disable
+  ```
+
+### Patch Changes
+
+- Updated dependencies [66f5d0189]
+- Updated dependencies [0401c7617]
+  - @graphql-mesh/types@0.77.1
+  - @graphql-mesh/cross-helpers@0.2.0
+  - @graphql-mesh/utils@0.37.0
+  - @graphql-mesh/store@0.8.19
+
 ## 0.28.1
 
 ### Patch Changes
