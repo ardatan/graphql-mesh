@@ -25,6 +25,18 @@ export default class BareMerger implements MeshMerger {
         });
       }
     }
+    this.logger.debug(`Attaching a dummy sourceMap to the final schema`);
+    schema.extensions = schema.extensions || {};
+    Object.defineProperty(schema.extensions, 'sourceMap', {
+      get: () => {
+        return {
+          get() {
+            // We should return a version of the schema only with the source-level transforms
+            return applySchemaTransforms(schema, rawSource, schema, rawSource.transforms);
+          },
+        };
+      },
+    });
     return {
       ...rawSource,
       schema,
