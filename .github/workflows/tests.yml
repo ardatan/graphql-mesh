@@ -71,9 +71,6 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         node-version: [14, 18]
-        include:
-          - node-version: 18
-            os: windows-latest
     # Service containers to run with `runner-job`
     services:
       # Label used to access the service container
