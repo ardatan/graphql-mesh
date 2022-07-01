@@ -134,7 +134,7 @@ export default class MockingTransform implements MeshTransform {
       }
       const newResolvers = getResolversFromSchema(
         addMocksToSchema({
-          schema: transformedSchema,
+          schema: transformedSchema || schema,
           store,
           mocks,
           resolvers,
@@ -143,7 +143,7 @@ export default class MockingTransform implements MeshTransform {
         true
       );
       addResolversToSchema({
-        schema: transformedSchema,
+        schema: transformedSchema || schema,
         resolvers: newResolvers,
         updateResolversInPlace: true,
       });
