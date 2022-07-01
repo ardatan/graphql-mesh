@@ -237,31 +237,31 @@ export default class MySQLHandler implements MeshHandler {
         const orderByInputName = sanitizeNameForGraphQL(table.TABLE_NAME + '_OrderByInput');
         const tableTC = schemaComposer.createObjectTC({
           name: objectTypeName,
-          description: table.TABLE_COMMENT,
+          description: table.TABLE_COMMENT || undefined,
           extensions: table,
           fields: {},
         });
         const tableInsertIC = schemaComposer.createInputTC({
           name: insertInputName,
-          description: table.TABLE_COMMENT,
+          description: table.TABLE_COMMENT || undefined,
           extensions: table,
           fields: {},
         });
         const tableUpdateIC = schemaComposer.createInputTC({
           name: updateInputName,
-          description: table.TABLE_COMMENT,
+          description: table.TABLE_COMMENT || undefined,
           extensions: table,
           fields: {},
         });
         const tableWhereIC = schemaComposer.createInputTC({
           name: whereInputName,
-          description: table.TABLE_COMMENT,
+          description: table.TABLE_COMMENT || undefined,
           extensions: table,
           fields: {},
         });
         const tableOrderByIC = schemaComposer.createInputTC({
           name: orderByInputName,
-          description: table.TABLE_COMMENT,
+          description: table.TABLE_COMMENT || undefined,
           extensions: table,
           fields: {},
         });
@@ -307,31 +307,31 @@ export default class MySQLHandler implements MeshHandler {
             tableTC.addFields({
               [fieldName]: {
                 type,
-                description: tableField.Comment,
+                description: tableField.Comment || undefined,
               },
             });
             tableInsertIC.addFields({
               [fieldName]: {
                 type,
-                description: tableField.Comment,
+                description: tableField.Comment || undefined,
               },
             });
             tableUpdateIC.addFields({
               [fieldName]: {
                 type: type.replace('!', ''),
-                description: tableField.Comment,
+                description: tableField.Comment || undefined,
               },
             });
             tableWhereIC.addFields({
               [fieldName]: {
                 type: 'String',
-                description: tableField.Comment,
+                description: tableField.Comment || undefined,
               },
             });
             tableOrderByIC.addFields({
               [fieldName]: {
                 type: 'OrderBy',
-                description: tableField.Comment,
+                description: tableField.Comment || undefined,
               },
             });
           })
