@@ -39,7 +39,8 @@ export async function getInContextSDK(unifiedSchema: GraphQLSchema, rawSources: 
     } else {
       rawSourceSubSchemaConfig = rawSource;
     }
-    const transformedSchema = sourceMap.get(rawSource);
+    // If there is a single source, there is no unifiedSchema
+    const transformedSchema = sourceMap?.get(rawSource) || unifiedSchema;
     const rootTypes: Record<OperationTypeNode, GraphQLObjectType> = {
       query: transformedSchema.getQueryType(),
       mutation: transformedSchema.getMutationType(),

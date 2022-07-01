@@ -29,7 +29,7 @@ export default class FederationMerger implements MeshMerger {
     this.store = options.store;
   }
 
-  async getUnifiedSchema({ rawSources, typeDefs, resolvers, transforms }: MeshMergerContext) {
+  async getUnifiedSchema({ rawSources, typeDefs, resolvers }: MeshMergerContext) {
     this.logger.debug(`Creating localServiceList for gateway`);
     const rawSourceMap = new Map<string, RawSourceOutput>();
     const localServiceList: { name: string; typeDefs: DocumentNode }[] = [];
@@ -76,34 +76,30 @@ export default class FederationMerger implements MeshMerger {
     const schemaHash: any = printSchemaWithDirectives(schema);
     let remoteSchema: GraphQLSchema = schema;
     this.logger.debug(`Wrapping gateway executor in a unified schema`);
-    remoteSchema = wrapSchema({
-      schema: remoteSchema,
-      executor: <TReturn>({ document, info, variables, context, operationName }: ExecutionRequest) => {
-        const documentStr = printWithCache(document);
-        const { operation } = info;
-        // const operationName = operation.name?.value;
-        return gatewayExecutor({
-          document,
-          request: {
-            query: documentStr,
-            operationName,
-            variables,
-          },
+    const executor = <TReturn>({ document, info, variables, context, operationName }: ExecutionRequest) => {
+      const documentStr = printWithCache(document);
+      const { operation } = info;
+      // const operationName = operation.name?.value;
+      return gatewayExecutor({
+        document,
+        request: {
+          query: documentStr,
           operationName,
-          cache: this.cache,
-          context,
-          queryHash: documentStr,
-          logger: this.logger,
-          metrics: {},
-          source: documentStr,
-          operation,
-          schema,
-          schemaHash,
-          overallCachePolicy: {} as any,
-        }) as ExecutionResult<TReturn>;
-      },
-      batch: true,
-    });
+          variables,
+        },
+        operationName,
+        cache: this.cache,
+        context,
+        queryHash: documentStr,
+        logger: this.logger,
+        metrics: {},
+        source: documentStr,
+        operation,
+        schema,
+        schemaHash,
+        overallCachePolicy: {} as any,
+      }) as ExecutionResult<TReturn>;
+    };
     const id = this.pubsub.subscribe('destroy', async () => {
       this.pubsub.unsubscribe(id);
       await gateway.stop();
@@ -122,19 +118,14 @@ export default class FederationMerger implements MeshMerger {
         });
       }
     }
-    if (transforms?.length) {
-      this.logger.debug(`Applying root level transforms`);
-      remoteSchema = wrapSchema({
-        schema: remoteSchema,
-        transforms: transforms as any[],
-        batch: true,
-      });
-    }
     this.logger.debug(`Attaching sourceMap to the unified schema`);
     remoteSchema.extensions = remoteSchema.extensions || {};
     Object.defineProperty(remoteSchema.extensions, 'sourceMap', {
       get: () => sourceMap,
     });
-    return remoteSchema;
+    return {
+      schema: remoteSchema,
+      executor,
+    };
   }
 }

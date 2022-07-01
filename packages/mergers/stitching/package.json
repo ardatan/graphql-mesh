@@ -30,7 +30,6 @@
   "dependencies": {
     "@graphql-mesh/types": "0.77.1",
     "@graphql-tools/stitch": "8.7.0",
-    "@graphql-tools/wrap": "8.5.0",
     "@graphql-mesh/utils": "0.37.0",
     "@graphql-tools/delegate": "8.8.0",
     "@graphql-tools/stitching-directives": "2.3.0",

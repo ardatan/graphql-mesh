@@ -2,7 +2,7 @@
 import { IResolvers, Executor } from '@graphql-tools/utils';
 import { GraphQLSchema, GraphQLResolveInfo, DocumentNode, SelectionSetNode } from 'graphql';
 import * as YamlConfig from './config';
-import { Transform, MergedTypeConfig } from '@graphql-tools/delegate';
+import { Transform, MergedTypeConfig, SubschemaConfig } from '@graphql-tools/delegate';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { MeshStore } from '@graphql-mesh/store';
 import configSchema from './config-schema.json';
@@ -108,12 +108,11 @@ export interface MeshMergerContext {
   rawSources: RawSourceOutput[];
   typeDefs?: DocumentNode[];
   resolvers?: IResolvers | IResolvers[];
-  transforms?: Transform[];
 }
 
 export interface MeshMerger {
   name: string;
-  getUnifiedSchema(mergerContext: MeshMergerContext): GraphQLSchema | Promise<GraphQLSchema>;
+  getUnifiedSchema(mergerContext: MeshMergerContext): SubschemaConfig | Promise<SubschemaConfig>;
 }
 
 export type MeshPluginOptions<TConfig> = TConfig & {
