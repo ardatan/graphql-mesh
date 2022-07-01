@@ -1,8 +1,8 @@
 import { MeshMerger, MeshMergerContext, Logger, MeshMergerOptions, RawSourceOutput } from '@graphql-mesh/types';
 import { applySchemaTransforms } from '@graphql-mesh/utils';
 import { addResolversToSchema, mergeSchemas } from '@graphql-tools/schema';
-import { asArray } from '@graphql-tools/utils';
-import { extendSchema, GraphQLSchema } from 'graphql';
+import { asArray, getDocumentNodeFromSchema } from '@graphql-tools/utils';
+import { buildASTSchema, extendSchema, GraphQLSchema } from 'graphql';
 
 export default class BareMerger implements MeshMerger {
   name = 'bare';
@@ -32,7 +32,9 @@ export default class BareMerger implements MeshMerger {
         return {
           get() {
             // We should return a version of the schema only with the source-level transforms
-            return applySchemaTransforms(schema, rawSource, schema, rawSource.transforms);
+            // But we should prevent the existing schema from being mutated internally
+            const nonExecutableSchema = buildASTSchema(getDocumentNodeFromSchema(schema));
+            return applySchemaTransforms(nonExecutableSchema, rawSource, nonExecutableSchema, rawSource.transforms);
           },
         };
       },
