@@ -1,7 +1,6 @@
 import { DEFAULT_SCHEMA, load as loadYamlFromJsYaml, Schema, Type } from 'js-yaml';
 import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import { ImportFn, Logger } from '@graphql-mesh/types';
-import { defaultImportFn } from './defaultImportFn';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression';
 
 export interface ReadFileOrUrlOptions extends RequestInit {
@@ -78,8 +77,10 @@ export function loadYaml(filepath: string, content: string, logger: Logger): any
   });
 }
 
-export async function readFile<T>(fileExpression: string, config: ReadFileOrUrlOptions): Promise<T> {
-  const { allowUnknownExtensions, cwd, fallbackFormat, importFn = defaultImportFn } = config || {};
+export async function readFile<T>(
+  fileExpression: string,
+  { allowUnknownExtensions, cwd, fallbackFormat, importFn, logger }: ReadFileOrUrlOptions
+): Promise<T> {
   const [filePath] = fileExpression.split('#');
   if (/js$/.test(filePath) || /ts$/.test(filePath)) {
     return loadFromModuleExportExpression<T>(fileExpression, {
@@ -88,19 +89,19 @@ export async function readFile<T>(fileExpression: string, config: ReadFileOrUrlO
       defaultExportName: 'default',
     });
   }
-  const actualPath = pathModule.isAbsolute(filePath) ? filePath : pathModule.resolve(cwd || process.cwd(), filePath);
+  const actualPath = pathModule.isAbsolute(filePath) ? filePath : pathModule.join(cwd || process.cwd(), filePath);
   const rawResult = await fs.promises.readFile(actualPath, 'utf-8');
   if (/json$/.test(actualPath)) {
     return JSON.parse(rawResult);
   }
   if (/yaml$/.test(actualPath) || /yml$/.test(actualPath)) {
-    return loadYaml(actualPath, rawResult, config?.logger);
+    return loadYaml(actualPath, rawResult, logger);
   } else if (fallbackFormat) {
     switch (fallbackFormat) {
       case 'json':
         return JSON.parse(rawResult);
       case 'yaml':
-        return loadYaml(actualPath, rawResult, config?.logger);
+        return loadYaml(actualPath, rawResult, logger);
       case 'ts':
       case 'js':
         return importFn(actualPath);
