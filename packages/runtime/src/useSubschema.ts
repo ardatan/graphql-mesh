@@ -51,6 +51,7 @@ function getExecuteFnByArgs(args: TypedExecutionArgs<any>, subschema: SubschemaC
   };
 }
 
+// Creates an envelop plugin to execute a subschema inside Envelop
 export function useSubschema(subschema: SubschemaConfig): {
   transformedSchema: GraphQLSchema;
   plugin: Plugin;
