@@ -66,7 +66,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     merger,
     additionalResolvers = [],
     additionalTypeDefs = [],
-    transforms,
+    transforms = [],
   } = options;
 
   const getMeshLogger = logger.child('GetMesh');
