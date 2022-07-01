@@ -64,11 +64,12 @@ jobs:
         run: yarn transpile-ts --noEmit # We need build for playground
 
   test:
-    name: Testing on Node ${{matrix.node-version}}
+    name: Testing on Node ${{matrix.node-version}} & ${{matrix.os}}
     timeout-minutes: 60
-    runs-on: ubuntu-latest
+    runs-on:
     strategy:
       matrix:
+        os: [ubuntu-latest]
         node-version: [14, 18]
         include:
           - node-version: 18
