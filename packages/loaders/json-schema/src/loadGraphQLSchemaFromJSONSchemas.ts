@@ -14,6 +14,7 @@ export async function loadGraphQLSchemaFromJSONSchemas(name: string, options: JS
     fetchFn: options.fetch,
     schemaHeaders: options.schemaHeaders,
     ignoreErrorResponses: options.ignoreErrorResponses,
+    noDeduplication: options.noDeduplication,
   });
   const graphqlSchema = await getGraphQLSchemaFromDereferencedJSONSchema(fullyDeferencedSchema, {
     fetch: options.fetch,

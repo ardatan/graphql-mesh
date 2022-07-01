@@ -70,8 +70,11 @@ async function getDeduplicatedTitles(schema: JSONSchema): Promise<Set<string>> {
   );
   return duplicatedTypeNames;
 }
-export async function healJSONSchema(schema: JSONSchema) {
-  const deduplicatedSchema = deduplicateJSONSchema(schema);
+export async function healJSONSchema(
+  schema: JSONSchema,
+  options: { noDeduplication?: boolean } = {}
+): Promise<JSONSchema> {
+  const deduplicatedSchema = options?.noDeduplication ? schema : deduplicateJSONSchema(schema);
   const duplicatedTypeNames = await getDeduplicatedTitles(deduplicatedSchema);
   return visitJSONSchema<JSONSchema>(
     deduplicatedSchema,
@@ -200,7 +203,7 @@ export async function healJSONSchema(schema: JSONSchema) {
               mode: 'first',
             },
           });
-          const healedGeneratedSchema = await healJSONSchema(generatedSchema as any);
+          const healedGeneratedSchema: any = await healJSONSchema(generatedSchema as any, options);
           subSchema.type = asArray(healedGeneratedSchema.type)[0] as any;
           subSchema.properties = healedGeneratedSchema.properties;
           // If type for properties is already given, use it

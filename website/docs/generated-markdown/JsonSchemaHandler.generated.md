@@ -67,3 +67,5 @@ the underlying HTTP request
     * `pubsubTopic` (type: `String`, required)
 * `ignoreErrorResponses` (type: `Boolean`)
 * `queryParams` (type: `Any`)
+* `noDeduplication` (type: `Boolean`) - By default, the handler will try to deduplicate the similar types to reduce the complexity of the final schema.
+You can disable this behavior by setting this to true.
