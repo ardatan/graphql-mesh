@@ -3,6 +3,7 @@ import { tmpdir } from 'os';
 import { join, relative } from 'path';
 import { DefaultLogger } from '../src/logger';
 import { readFile } from '../src/read-file-or-url';
+import { fetch } from 'cross-undici-fetch';
 
 describe('readFile', () => {
   it('should convert relative paths to absolute paths correctly', async () => {
