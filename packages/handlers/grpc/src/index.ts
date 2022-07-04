@@ -444,6 +444,9 @@ ${rootJsonAndDecodedDescriptorSets
     this.schemaComposer.add(GraphQLUnsignedInt);
     this.schemaComposer.add(GraphQLVoid);
     this.schemaComposer.add(GraphQLJSON);
+    this.schemaComposer.createScalarTC({
+      name: 'File',
+    });
     // identical of grpc's ConnectivityState
     this.schemaComposer.createEnumTC({
       name: 'ConnectivityState',
