@@ -89,7 +89,7 @@ export async function readFile<T>(
       defaultExportName: 'default',
     });
   }
-  const actualPath = pathModule.isAbsolute(filePath) ? filePath : pathModule.join(cwd || process.cwd(), filePath);
+  const actualPath = pathModule.isAbsolute(filePath) ? filePath : pathModule.join(cwd, filePath);
   const rawResult = await fs.promises.readFile(actualPath, 'utf-8');
   if (/json$/.test(actualPath)) {
     return JSON.parse(rawResult);
