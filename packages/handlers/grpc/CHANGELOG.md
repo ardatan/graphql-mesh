@@ -1,5 +1,11 @@
 # @graphql-mesh/grpc
 
+## 0.24.11
+
+### Patch Changes
+
+- f16df1f9b: Missing scalar 'File' error has been fixed when there is a stream request in the gRPC protobuf schema
+
 ## 0.24.10
 
 ### Patch Changes
