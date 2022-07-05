@@ -1,7 +1,6 @@
 import { Logger, MeshMerger, MeshMergerContext, MeshMergerOptions, RawSourceOutput } from '@graphql-mesh/types';
 import { stitchSchemas, ValidationLevel } from '@graphql-tools/stitch';
-import { wrapSchema } from '@graphql-tools/wrap';
-import { groupTransforms, applySchemaTransforms, extractResolvers } from '@graphql-mesh/utils';
+import { extractResolvers } from '@graphql-mesh/utils';
 import { StitchingInfo } from '@graphql-tools/delegate';
 import {
   stitchingDirectives,
@@ -83,7 +82,7 @@ export default class StitchingMerger implements MeshMerger {
   }
 
   async getUnifiedSchema(context: MeshMergerContext) {
-    const { rawSources, typeDefs, resolvers, transforms } = context;
+    const { rawSources, typeDefs, resolvers } = context;
     this.logger.debug(`Stitching directives are being generated`);
     const defaultStitchingDirectives = stitchingDirectives({
       pathToDirectivesInExtensions: ['directives'],
@@ -108,7 +107,7 @@ export default class StitchingMerger implements MeshMerger {
       })
     );
     this.logger.debug(`Stitching the source schemas`);
-    let unifiedSchema = stitchSchemas({
+    const unifiedSchema = stitchSchemas({
       subschemas,
       typeDefs,
       resolvers,
@@ -140,20 +139,8 @@ export default class StitchingMerger implements MeshMerger {
         },
       }),
     });
-    if (transforms?.length) {
-      this.logger.debug(`Root level transformations are being applied`);
-      const { noWrapTransforms, wrapTransforms } = groupTransforms(transforms);
-      if (wrapTransforms.length) {
-        unifiedSchema = wrapSchema({
-          schema: unifiedSchema,
-          transforms: transforms as any[],
-          batch: true,
-        });
-      }
-      if (noWrapTransforms.length) {
-        unifiedSchema = applySchemaTransforms(unifiedSchema, { schema: unifiedSchema }, null, noWrapTransforms);
-      }
-    }
-    return unifiedSchema;
+    return {
+      schema: unifiedSchema,
+    };
   }
 }

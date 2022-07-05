@@ -7,6 +7,8 @@ import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { mocks as graphqlScalarsMocks } from 'graphql-scalars';
 import { getInterpolatedStringFactory } from '@graphql-mesh/string-interpolation';
 import { process } from '@graphql-mesh/cross-helpers';
+import { getResolversFromSchema } from '@graphql-tools/utils';
+import { addResolversToSchema } from '@graphql-tools/schema';
 
 export default class MockingTransform implements MeshTransform {
   noWrap = true;
@@ -20,7 +22,7 @@ export default class MockingTransform implements MeshTransform {
     this.importFn = importFn;
   }
 
-  transformSchema(schema: GraphQLSchema) {
+  transformSchema(schema: GraphQLSchema, context: any, transformedSchema: GraphQLSchema) {
     const configIf = this.config != null && 'if' in this.config ? this.config.if : true;
     if (configIf) {
       const mocks: IMocks = {
@@ -130,12 +132,20 @@ export default class MockingTransform implements MeshTransform {
         // eslint-disable-next-line no-void
         void initializeStoreFn$.then(fn => fn(store));
       }
-      return addMocksToSchema({
-        schema,
-        store,
-        mocks,
-        resolvers,
-        preserveResolvers: this.config?.preserveResolvers,
+      const newResolvers = getResolversFromSchema(
+        addMocksToSchema({
+          schema: transformedSchema || schema,
+          store,
+          mocks,
+          resolvers,
+          preserveResolvers: this.config?.preserveResolvers,
+        }),
+        true
+      );
+      addResolversToSchema({
+        schema: transformedSchema || schema,
+        resolvers: newResolvers,
+        updateResolversInPlace: true,
       });
     }
     return schema;
