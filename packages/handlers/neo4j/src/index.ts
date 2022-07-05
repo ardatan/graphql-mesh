@@ -58,7 +58,7 @@ export default class Neo4JHandler implements MeshHandler {
   }
 
   getCachedTypeDefs(driver: Driver) {
-    return this.typeDefs.getWithSet(async () => {
+    return this.typeDefs.getWithSet(() => {
       if (this.config.typeDefs) {
         return readFileOrUrl(this.config.typeDefs, {
           cwd: this.baseDir,

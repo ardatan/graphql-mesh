@@ -1,9 +1,6 @@
 import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import { writeFile } from '@graphql-mesh/utils';
-import { CriticalityLevel, diff } from '@graphql-inspector/core';
-import { getDocumentNodeFromSchema, AggregateError } from '@graphql-tools/utils';
 import { ImportFn } from '@graphql-mesh/types';
-import { buildASTSchema } from 'graphql';
 
 export class ReadonlyStoreError extends Error {}
 
@@ -109,7 +106,6 @@ export type StoreFlags = {
 export enum PredefinedProxyOptionsName {
   JsonWithoutValidation = 'JsonWithoutValidation',
   StringWithoutValidation = 'StringWithoutValidation',
-  GraphQLSchemaWithDiffing = 'GraphQLSchemaWithDiffing',
 }
 
 export const PredefinedProxyOptions: Record<PredefinedProxyOptionsName, ProxyOptions<any>> = {
@@ -124,40 +120,6 @@ export const PredefinedProxyOptions: Record<PredefinedProxyOptionsName, ProxyOpt
     fromJSON: v => v,
     toJSON: v => v,
     validate: () => null,
-  },
-  GraphQLSchemaWithDiffing: {
-    codify: schema =>
-      `
-import { buildASTSchema } from 'graphql';
-
-const schemaAST = ${JSON.stringify(getDocumentNodeFromSchema(schema), null, 2)};
-
-export default buildASTSchema(schemaAST, {
-  assumeValid: true,
-  assumeValidSDL: true
-});
-    `.trim(),
-    fromJSON: schemaAST => buildASTSchema(schemaAST, { assumeValid: true, assumeValidSDL: true }),
-    toJSON: schema => getDocumentNodeFromSchema(schema),
-    validate: async (oldSchema, newSchema) => {
-      const changes = await diff(oldSchema, newSchema);
-      const errors: string[] = [];
-      for (const change of changes) {
-        if (
-          change.criticality.level === CriticalityLevel.Breaking ||
-          change.criticality.level === CriticalityLevel.Dangerous
-        ) {
-          errors.push(change.message);
-        }
-      }
-      if (errors.length) {
-        if (errors.length === 1) {
-          throw errors[0];
-        } else {
-          throw new AggregateError(errors);
-        }
-      }
-    },
   },
 };
 

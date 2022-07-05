@@ -12,11 +12,9 @@ export const jsonSchema: any = configSchema;
 
 export { YamlConfig };
 
-export type MeshSource = {
+export type MeshSource = SubschemaConfig & {
   schema: GraphQLSchema;
-  executor?: Executor;
   contextVariables?: Record<string, string>;
-  batch?: boolean;
 };
 
 type FetchFn = (input: RequestInfo, init?: RequestInit) => Promise<Response>;
