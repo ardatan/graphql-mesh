@@ -1074,6 +1074,10 @@
               "additionalItems": true
             }
           ]
+        },
+        "noDeduplication": {
+          "type": "boolean",
+          "description": "By default, the handler will try to deduplicate the similar types to reduce the complexity of the final schema.\nYou can disable this behavior by setting this to true."
         }
       },
       "required": ["operations"]
