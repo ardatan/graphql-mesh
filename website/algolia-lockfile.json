@@ -679,7 +679,7 @@
   },
   {
     "objectID": "mesh-json-schema",
-    "headings": ["Dynamic Values", "Codesandbox Example", "Config API Reference"],
+    "headings": ["Dynamic Values", "Configure deduplication behavior", "Codesandbox Example", "Config API Reference"],
     "toc": [
       {
         "children": [
@@ -707,6 +707,11 @@
         ],
         "title": "Dynamic Values",
         "anchor": "dynamic-values"
+      },
+      {
+        "children": [],
+        "title": "Configure deduplication behavior",
+        "anchor": "configure-deduplication-behavior"
       },
       {
         "children": [],
