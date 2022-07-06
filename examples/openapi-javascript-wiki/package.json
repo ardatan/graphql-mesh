@@ -11,7 +11,7 @@
     "@graphql-mesh/cli": "0.74.0",
     "@graphql-mesh/openapi": "0.28.0",
     "graphql": "16.0.1",
-    "moment": "2.29.2",
+    "moment": "2.29.4",
     "typescript": "4.3.5"
   }
 }
