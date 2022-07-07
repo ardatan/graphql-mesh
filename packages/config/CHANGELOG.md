@@ -1,5 +1,23 @@
 # @graphql-mesh/config
 
+## 5.0.0
+
+### Minor Changes
+
+- ad22cbdac: Previously we were passing the executor and the schema as-is if there is only one source but if there is an additionalResolvers definition with `selectionSet`, we need the query planner of Schema Stitching so we need to use `stitching` merger even if there is one source.
+
+### Patch Changes
+
+- Updated dependencies [6e6fd4ab7]
+- Updated dependencies [bcd9355ee]
+  - @graphql-mesh/utils@0.37.1
+  - @graphql-mesh/merger-bare@0.15.0
+  - @graphql-mesh/merger-stitching@0.16.0
+  - @graphql-mesh/runtime@0.41.0
+  - @graphql-mesh/types@0.78.0
+  - @graphql-mesh/cache-localforage@0.6.17
+  - @graphql-mesh/store@0.8.20
+
 ## 4.0.0
 
 ### Patch Changes

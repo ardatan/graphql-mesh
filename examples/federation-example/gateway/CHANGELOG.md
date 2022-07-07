@@ -1,5 +1,13 @@
 # federation-gateway
 
+## 0.0.100
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.74.1
+- @graphql-mesh/graphql@0.29.1
+- @graphql-mesh/transform-federation@0.9.11
+
 ## 0.0.99
 
 ### Patch Changes

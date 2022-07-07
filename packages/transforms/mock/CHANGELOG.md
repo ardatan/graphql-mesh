@@ -1,5 +1,25 @@
 # @graphql-mesh/transform-mock
 
+## 0.15.0
+
+### Minor Changes
+
+- bcd9355ee: Breaking change in merger API;
+
+  Before a merger should return a `GraphQLSchema`, not it needs to return `SubschemaConfig` from `@graphql-tools/delegate` package.
+  The idea is to prevent the schema from being wrap to reduce the execution complexity.
+  Now if merger returns an executor, it will be used directly as an executor inside Envelop's pipeline.
+  Also it can return `transforms` which will be applied during execution while schema transforms are applied on build time without any modification in the resolvers.
+
+  If there are some root transforms, those are applied together with the source transforms on the execution level in case of a single source.
+
+### Patch Changes
+
+- Updated dependencies [6e6fd4ab7]
+- Updated dependencies [bcd9355ee]
+  - @graphql-mesh/utils@0.37.1
+  - @graphql-mesh/types@0.78.0
+
 ## 0.14.51
 
 ### Patch Changes
