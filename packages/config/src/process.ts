@@ -474,6 +474,7 @@ export async function processConfig(
           }
         }
       }
+      mergerName = 'bare';
     }
   }
 
