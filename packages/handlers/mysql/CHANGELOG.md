@@ -1,5 +1,16 @@
 # @graphql-mesh/mysql
 
+## 0.16.10
+
+### Patch Changes
+
+- bcd9355ee: If there is no comment in a field or table, do not create a description for the relevant fields and types
+- Updated dependencies [6e6fd4ab7]
+- Updated dependencies [bcd9355ee]
+  - @graphql-mesh/utils@0.37.1
+  - @graphql-mesh/types@0.78.0
+  - @graphql-mesh/store@0.8.20
+
 ## 0.16.9
 
 ### Patch Changes

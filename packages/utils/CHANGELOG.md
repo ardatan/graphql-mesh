@@ -1,5 +1,13 @@
 # @graphql-mesh/utils
 
+## 0.37.1
+
+### Patch Changes
+
+- 6e6fd4ab7: Fix path resolution issue on `readFileOrUrl` that causes a bug while loading files from the file system for building artifacts
+- Updated dependencies [bcd9355ee]
+  - @graphql-mesh/types@0.78.0
+
 ## 0.37.0
 
 ### Minor Changes
