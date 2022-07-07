@@ -176,9 +176,7 @@ export async function processConfig(
   codes.push(`const transforms = [];`);
   codes.push(`const additionalEnvelopPlugins = [];`);
 
-  const mergerName = config.merger || (config.sources.length > 1 ? 'stitching' : 'bare');
-
-  const [sources, transforms, additionalEnvelopPlugins, additionalTypeDefs, additionalResolvers, merger, documents] =
+  const [sources, transforms, additionalEnvelopPlugins, additionalTypeDefs, additionalResolvers, documents] =
     await Promise.all([
       Promise.all(
         config.sources.map<Promise<MeshResolvedSource>>(async (source, sourceIndex) => {
@@ -381,30 +379,6 @@ export async function processConfig(
       options?.ignoreAdditionalResolvers
         ? []
         : resolveAdditionalResolvers(dir, config.additionalResolvers, importFn, pubsub),
-      getPackage<MeshMergerLibrary>({
-        name: mergerName,
-        type: 'merger',
-        importFn,
-        cwd: dir,
-        additionalPrefixes: additionalPackagePrefixes,
-      }).then(({ resolved: Merger, moduleName }) => {
-        if (options.generateCode) {
-          const mergerImportName = pascalCase(`${mergerName}Merger`);
-          importCodes.push(`import ${mergerImportName} from ${JSON.stringify(moduleName)};`);
-          codes.push(`const merger = new(${mergerImportName} as any)({
-        cache,
-        pubsub,
-        logger: logger.child('${mergerName}Merger'),
-        store: rootStore.child('${mergerName}Merger')
-      })`);
-        }
-        return new Merger({
-          cache,
-          pubsub,
-          logger: logger.child(`${mergerName}Merger`),
-          store: rootStore.child(`${mergerName}Merger`),
-        });
-      }),
       resolveDocuments(config.documents, dir),
     ]);
 
@@ -475,6 +449,60 @@ export async function processConfig(
       }
     }
   }
+
+  let mergerName = config.merger;
+
+  // Decide what is the default merger
+  if (!mergerName) {
+    if (config.sources.length > 1) {
+      mergerName = 'stitching';
+    } else {
+      // eslint-disable-next-line no-labels
+      typeLoop: for (const typeName in additionalResolvers || {}) {
+        const fieldResolvers = additionalResolvers[typeName];
+        if (typeof fieldResolvers === 'object') {
+          for (const fieldName in fieldResolvers) {
+            const fieldResolveObj = fieldResolvers[fieldName];
+            if (typeof fieldResolveObj === 'object') {
+              // selectionSet needs stitching merger even if there is a single source
+              if (fieldResolveObj.selectionSet != null) {
+                mergerName = 'stitching';
+                // eslint-disable-next-line no-labels
+                break typeLoop;
+              }
+            }
+          }
+        }
+      }
+      mergerName = 'bare';
+    }
+  }
+
+  const { resolved: Merger, moduleName: mergerModuleName } = await getPackage<MeshMergerLibrary>({
+    name: mergerName,
+    type: 'merger',
+    importFn,
+    cwd: dir,
+    additionalPrefixes: additionalPackagePrefixes,
+  });
+
+  if (options.generateCode) {
+    const mergerImportName = pascalCase(`${mergerName}Merger`);
+    importCodes.push(`import ${mergerImportName} from ${JSON.stringify(mergerModuleName)};`);
+    codes.push(`const merger = new(${mergerImportName} as any)({
+        cache,
+        pubsub,
+        logger: logger.child('${mergerName}Merger'),
+        store: rootStore.child('${mergerName}Merger')
+      })`);
+  }
+
+  const merger = new Merger({
+    cache,
+    pubsub,
+    logger: logger.child(`${mergerName}Merger`),
+    store: rootStore.child(`${mergerName}Merger`),
+  });
 
   if (config.additionalEnvelopPlugins) {
     codes.push(
