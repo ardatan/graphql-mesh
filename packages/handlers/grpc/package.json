@@ -40,7 +40,7 @@
     "grpc-reflection-js": "0.1.2",
     "globby": "11.1.0",
     "long": "4.0.0",
-    "protobufjs": "6.11.3",
+    "protobufjs": "7.0.0",
     "lodash.get": "4.4.2",
     "lodash.has": "4.5.2",
     "tslib": "^2.4.0"
