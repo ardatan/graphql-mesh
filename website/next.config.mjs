@@ -13,8 +13,8 @@ export default withBundleAnalyzer(
   withNextra({
     redirects: () => [
       {
-        source: '/docs',
-        destination: '/docs/introduction',
+        source: '/docs/introduction',
+        destination: '/docs',
         permanent: true,
       },
     ],
