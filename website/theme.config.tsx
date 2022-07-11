@@ -9,7 +9,7 @@ export default {
   docsRepositoryBase: 'https://github.com/Urigo/graphql-mesh/tree/master/website', // base URL for the docs repository
   nextLinks: true,
   prevLinks: true,
-  search: true,
+  search: false,
   unstable_flexsearch: null,
   floatTOC: true,
   customSearch: null, // customizable, you can use algolia for example
