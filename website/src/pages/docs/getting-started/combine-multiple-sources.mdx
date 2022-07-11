@@ -1,9 +1,6 @@
----
-id: combine-many-sources
-title: 'How to: Combine multiple Sources'
-sidebar_label: Combine multiple Sources
-type: Guide
----
+import { components } from '@guild-docs/client'
+
+# How to: Combine multiple Sources
 
 All the documentation tutorials and guides rely on the "Books", "Authors" and "Stores" example APIs, available in a dedicated repository: [`graphql-mesh-docs-first-gateway`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway):
 
@@ -22,9 +19,7 @@ The getting started ["Your first Gateway with Mesh"](/docs/getting-started/your-
 
 This guide will show how to add 2 new sources (Authors and Stores) to achieve the following Gateway setup:
 
-<br />
-
-<Graph>
+<components.Graph>
 
 graph TD;
 subgraph AA [" "]
@@ -45,9 +40,7 @@ Z --> E;
 Z --> F;
 Z --> G;
 
-</Graph>
-
-<br />
+</components.Graph>
 
 We will go further than just add new Sources by shaping the Unified Schema to accept the following query:
 
@@ -71,21 +64,13 @@ query bestSellersByStore {
 }
 ```
 
-<p>&nbsp;</p>
-
----
-
-<p>&nbsp;</p>
-
 ## 1. Add the "Authors" Source
 
 The "Authors" Source is a gRPC API: [`authors-service`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/authors-service).
 
 We will use the `grpc` Handler with the `@graphql-mesh/grpc` package and configure in our [`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml) it as follows:
 
-_[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml)_
-
-```yaml
+```yaml filename=".meshrc.yaml"
 sources:
   - name: Books
     handler:
@@ -101,11 +86,7 @@ sources:
 
 Similar to the "Books" API configuration, we just need to provide the path to the service definition file (here, a Proto file) and the base URL.
 
-<br />
-
 We will "clean" the corresponding "Authors" GraphQL Schema later, in the 3rd step, "_Shaping the Unified Schema_".
-
-<p> &nbsp;</p>
 
 ## 2. Add the "Stores" Source
 
@@ -113,9 +94,7 @@ The "Stores" Source is a GraphQL API: [`stores-service`](https://github.com/char
 
 We will use the `graphql` Handler with the `@graphql-mesh/graphql` package and configure it in our [`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml) it as follows:
 
-_[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml)_
-
-```yaml
+```yaml filename=".meshrc.yaml"
 sources:
   - name: Books
     handler:
@@ -135,15 +114,11 @@ sources:
 
 Since the "Stores" is a GraphQL API, Mesh can leverage introspection to get its schema with just the `endpoint` URL.
 
-<p> &nbsp;</p>
-
 ## 3. Shaping the Unified Schema
 
-The following Mesh Gateway configuration:
+The following Mesh Gateway configuration [`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml):
 
-_[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml)_
-
-```yaml
+```yaml filename=".meshrc.yaml"
 sources:
   - name: Books
     handler:
@@ -163,7 +138,7 @@ sources:
 
 Will gives us a "raw" GraphQL schema design that contains unwanted GraphQL Queries, badly named types, and a lack of hierarchy:
 
-_[`.mesh/schema.graphql`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.mesh/schema.graphql)_
+[`.mesh/schema.graphql`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.mesh/schema.graphql)
 
 ```graphql
 type Query {
@@ -179,11 +154,8 @@ type Query {
   bookSells(storeId: ID!): [Sells!]!
 }
 
-# ...
+# …
 ```
-
-<br />
-<br />
 
 In order to achieve a clean Unified Schema design that would allow the following Query:
 
@@ -207,19 +179,13 @@ query bestSellersByStore {
 }
 ```
 
-<p>&nbsp;</p>
-
 We will need to configure multiple transforms:
 
 - Rename the "Authors" queries
 - Remove the unnecessary root queries: `author`, `book`, `categories`, `bookSells`
 - Setup some hierarchy between the queries
 
-<br />
-
 **If you have never configured Transforms before**, we advise you to go through the ["Your first Gateway with Mesh"](/docs/getting-started/your-first-mesh-gateway) tutorial first.
-
-<p>&nbsp;</p>
 
 ### Remove unnecessary Root queries
 
@@ -234,9 +200,7 @@ To build a clean Unified Schema, we need to remove unnecessary Queries such as:
 
 Our updated [`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml) is the following:
 
-_[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml)_
-
-```yaml
+```yaml filename=".meshrc.yaml"
 sources:
   - name: Books
     handler:
@@ -267,7 +231,7 @@ You can notice that the `filterSchema` allows using a bash-like syntax to avoid 
 
 Another way to achieve the same result would be to instruct Mesh only to keep the `Query.stores` root query as follows:
 
-```yaml
+```yaml filename=".meshrc.yaml"
 sources:
   # ...
 transforms:
@@ -276,11 +240,7 @@ transforms:
         - Query.stores
 ```
 
-<br />
-
 More information on the `filterSchema` _Transform_ on [its dedicated documentation page](/docs/transforms/filter-schema).
-
-<p>&nbsp;</p>
 
 ### Setup hierarchy with nested queries
 
@@ -312,11 +272,7 @@ We need to update the schema to add the following fields:
 - `Sells.book: Book`: to get the book of a given store selling record
 - `Book.author: authors_v1_Author`: to get the author of a book
 
-<br />
-
 To achieve this, we will use the `additionalResolvers` and `additionalTypeDefs` configuration from Mesh's `.meshrc.yaml` API.
-
-<p>&nbsp;</p>
 
 **Update our Schema with new fields**
 
@@ -330,9 +286,7 @@ A quick way to build an `additionalTypeDefs` is to refer to the generated GraphQ
 
 For example, the GraphQL Schema of the "Authors" Source can be found at [`.mesh/sources/Authors/schema.graphql`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.mesh/sources/Authors/schema.graphql) file:
 
-_[`.mesh/sources/Authors/schema.graphql`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.mesh/sources/Authors/schema.graphql)_
-
-```graphql
+```graphql filename="schema.graphql"
 schema {
   query: Query
 }
@@ -369,15 +323,15 @@ enum ConnectivityState {
 }
 ```
 
-_Note: Try running the Mesh Gateway first if the `.mesh` folder does not exist._
+import Callout from 'nextra-theme-docs/callout'
 
-<br />
+<Callout>
+  Note: Try running the Mesh Gateway first if the `.mesh` folder does not exist.
+</Callout>
 
-Here we find that an author is described with the `authors_v1_Author` GraphQL type, which allows us to add the following `additionalTypeDefs` configuration:
+Here we find that an author is described with the `authors_v1_Author` GraphQL type, which allows us to add the following `additionalTypeDefs` configuration [`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml):
 
-_[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml)_
-
-```yaml
+```yaml filename=".meshrc.yaml"
 sources:
   # ...
 transforms:
@@ -390,11 +344,9 @@ additionalTypeDefs: |
   }
 ```
 
-By applying the same process for `Store.bookSells` and `Sells.book`, we get the following final `additionalTypeDefs` configuration:
+By applying the same process for `Store.bookSells` and `Sells.book`, we get the following final `additionalTypeDefs` configuration [`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml):
 
-_[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml)_
-
-```yaml
+```yaml filename=".meshrc.yaml"
 sources:
   # ...
 transforms:
@@ -415,19 +367,15 @@ additionalTypeDefs: |
 
 Our Unified Schema definition is now updated; we need to point to Mesh on how to resolve our new field's data.
 
-<p>&nbsp;</p>
-
 **Add resolvers for our new fields**
 
 Now, let's describe **how Mesh should resolve the data on the newly added type definitions** by providing `additionalResolvers`.
 
 Again, let's start with the `Book.author` field.
 
-We need the `Book.author` field to call the `Query.authors_v1_AuthorsService_GetAuthor(input: authors_v1_GetAuthorRequest_Input): authors_v1_Author` Query by providing the following `additionalResolvers` configuration:
+We need the `Book.author` field to call the `Query.authors_v1_AuthorsService_GetAuthor(input: authors_v1_GetAuthorRequest_Input): authors_v1_Author` Query by providing the following `additionalResolvers` configuration [`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml):
 
-_[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml)_
-
-```yaml
+```yaml filename=".meshrc.yaml"
 sources:
   # ...
 transforms:
@@ -468,13 +416,11 @@ Here are configured **target**, and **Source** explained that Querying `Book.aut
 The `requiredSelectionSet` and `sourceArgs` ensure that the required arguments are provided (`requiredSelectionSet`) and adequately mapped to the Source (`sourceArgs`).
 `requiredSelectionSet` ensures that the `Book.author` selection will contains `authorId`, so it can be forward to `Query.authors_v1_AuthorsService_GetAuthor` as the `input.id` argument.
 
-<br />
-
 Applying the same logic to `Stores.bookSells` and `Sells.book` gives us a complete [`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml) configuration.
 
 Our Gateway is now complete; you can start it (along with the Services APIs) by running:
 
-```bash
+```sh
 yarn start-multiple-sources
 ```
 
@@ -504,20 +450,12 @@ Which returns the correct data:
 
 ![GraphQL Unified Schema with GraphiQL](/assets/docs/how-tos/combine-multiple-sources/mesh-final-graphiql.png)
 
-<p>&nbsp;</p>
-
 Congrats! 🎉
 
 You are now familiar with the basics of GraphQL Mesh:
 
 - Configuring _Sources_, _Handlers_, _Transforms_
 - and shaping the _Unified Schema_ with `additionalTypeDefs` and `additionalResolvers`.
-
-<p>&nbsp;</p>
-
----
-
-<p>&nbsp;</p>
 
 ## Going further
 
