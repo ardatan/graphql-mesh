@@ -1,19 +1,15 @@
----
-id: overview
-title: Overview
-sidebar_label: Overview
-image: https://miro.medium.com/max/1400/1*iZfQ7ST9rd7McrHvvVA-BA@2x.png
-fullWidth: true
----
+import { components } from '@guild-docs/client'
+
+# Overview
 
 Working with Mesh means dealing with 4 main concepts: _Sources_, _Handlers_, _Transforms_ and _Unified Schema_:
 
-- In Mesh, a sub-service (GraphQL API, REST API) is called a _Source_.
-- Sources are translated to GraphQL Schemas with the appropriate _Handler_.
-- All Sources' GraphQL Schema are merged into a final _Unified Schema_.
-- Finally, if applicable, configured transformations, called _Transforms_, are applied to the _Unified Schema_.
+1. In Mesh, a sub-service (GraphQL API, REST API) is called a _Source_.
+2. Sources are translated to GraphQL Schemas with the appropriate _Handler_.
+3. All Sources' GraphQL Schema are merged into a final _Unified Schema_.
+4. Finally, if applicable, configured transformations, called _Transforms_, are applied to the _Unified Schema_.
 
-<Graph>
+<components.Graph>
 
 graph LR;
 subgraph A [GraphQL Mesh server]
@@ -46,15 +42,13 @@ B11--translated to GraphQL Schemas by handler-->A111
 B21--translated to GraphQL Schemas by handler-->A121
 B31--translated to GraphQL Schemas by handler-->A311
 
-</Graph>
+</components.Graph>
 
 The above GraphQL Mesh Gateway has 3 configured _Sources_:
 
-- The "City" _Source_ configured with the `@graphql-mesh/openapi` _Handler_.
-- The "Population" _Source_ configured with the `@graphql-mesh/graphql` _Handler_.
-- The "Weather" _Source_ configured with the `@graphql-mesh/raml` _Handler_.
-
-<br />
+1. The "City" _Source_ configured with the `@graphql-mesh/openapi` _Handler_.
+2. The "Population" _Source_ configured with the `@graphql-mesh/graphql` _Handler_.
+3. The "Weather" _Source_ configured with the `@graphql-mesh/raml` _Handler_.
 
 _Sources_, _Handlers_, _Transforms_ are configured in a `.mesh.yaml` (or `.json`, `.js`) configuration file that defines:
 
@@ -63,7 +57,5 @@ _Sources_, _Handlers_, _Transforms_ are configured in a `.mesh.yaml` (or `.json`
 - The path to the declaration of custom resolvers (_optional_)
 - Which cache strategy should be used? (_optional_)
 - Which envelop plugins should be loaded and configured at the server level? (_optional_)
-
-<br />
 
 Let's have a closer look to a `.mesh.yaml` configuration file by [installing Mesh](/docs/getting-started/installation) and [building our first Gateway](/docs/your-first-mesh-gateway)!
