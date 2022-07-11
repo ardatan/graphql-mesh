@@ -5,7 +5,6 @@ import { HeroGradient, InfoList } from '@theguild/components';
 import { handlePushRoute, NPMBadge } from '@guild-docs/client';
 import { Heading, HStack } from '@chakra-ui/react';
 import Image from 'next/image';
-import tw from 'twin.macro';
 import GraphQLLogo from '../../public/assets/GraphQL_Logo.svg';
 import MeshExampleLogo from '../../public/assets/mesh-example.png';
 import OpenSourceLogo from '../../public/assets/open-source.svg';
@@ -75,8 +74,7 @@ export default function Index() {
           },
         ]}
       /> */}
-      {/* @ts-ignore */}
-      <div css={[tw`hidden lg:block px-8 py-12`]}>
+      <div className="hidden lg:block px-8 py-12">
         <LiveDemo />
       </div>
 
