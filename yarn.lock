@@ -3235,10 +3235,10 @@
     dset "^3.1.1"
     tslib "^2.3.1"
 
-"@graphql-yoga/common@^2.11.0":
-  version "2.11.0"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/common/-/common-2.11.0.tgz#7522bf40cf048f98e9adcf1e9129973ab8310d19"
-  integrity sha512-mF11D8hSP9v71aRg5xiMhlfwbvW9KZR4PqIqDgqXKaplJypF+42RFLRFum5hKZloxQojHw2zvAUCfiGQVuKu0g==
+"@graphql-yoga/common@^2.12.1":
+  version "2.12.1"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/common/-/common-2.12.1.tgz#2c28a3d3ae6c56c2fd13d2607b765704554994e3"
+  integrity sha512-umB1CN0DyOFp7/TIhosYMaRgWPBZDdwpHwB3jfEPQEQ7sQ3SpuWrVqh2MvFMjwPPsMD7LIM5x1fR0u1QbM9MjQ==
   dependencies:
     "@envelop/core" "^2.4.0"
     "@envelop/parser-cache" "^4.4.0"
@@ -3246,27 +3246,36 @@
     "@graphql-tools/schema" "^8.5.0"
     "@graphql-tools/utils" "^8.8.0"
     "@graphql-typed-document-node/core" "^3.1.1"
-    "@graphql-yoga/subscription" "^2.1.0"
+    "@graphql-yoga/subscription" "^2.2.1"
     cross-undici-fetch "^0.4.2"
     dset "^3.1.1"
     tslib "^2.3.1"
 
-"@graphql-yoga/node@2.12.0", "@graphql-yoga/node@^2.4.0":
-  version "2.12.0"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/node/-/node-2.12.0.tgz#0b51661414bbf91d933e87d10db9a1a4c1bbbe8f"
-  integrity sha512-p0hcNyOHGX2jsisEfVX+Wl1zPMwBqCuZiC0UH9681DZxkyqLvBYR6tyO9AQRePhQbkBHFlHxiKIMpklWtnx2zA==
+"@graphql-yoga/node@2.13.1", "@graphql-yoga/node@^2.4.0":
+  version "2.13.1"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/node/-/node-2.13.1.tgz#c6295d03f86ed253e5b225f76acc769a2405c492"
+  integrity sha512-AWlm9sbwsdWp1xSmOt3Iub0nrlz6N87HZCgv9xfQJJONyzjhqbK0MzgWlpU6fFAudars+oGH13XJCh+QW9Rxnw==
   dependencies:
     "@envelop/core" "^2.4.0"
     "@graphql-tools/utils" "^8.8.0"
-    "@graphql-yoga/common" "^2.11.0"
-    "@graphql-yoga/subscription" "^2.1.0"
+    "@graphql-yoga/common" "^2.12.1"
+    "@graphql-yoga/subscription" "^2.2.1"
     cross-undici-fetch "^0.4.2"
     tslib "^2.3.1"
 
-"@graphql-yoga/subscription@^2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/subscription/-/subscription-2.1.0.tgz#dc404a9a605284783253d509ec528caa000a2004"
-  integrity sha512-MXqYYGVx3xOQ2DeDEKIMx4ZEkSZm8IvLnT+/IEXgqLrEdn4wGVODddtDDkR9C4d8aQU1pB1eyr7yoj8JjYXKAQ==
+"@graphql-yoga/subscription@^2.1.0", "@graphql-yoga/subscription@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/subscription/-/subscription-2.2.1.tgz#6a5a9ac00be04e175ae2a7b0e967fad8f849b882"
+  integrity sha512-IX0C6zgPxlM89mXvnRruNJKlcO+W3qHAD4TwVIWBuro6P8dh83griOfC/isCfeeaCtw7bqflcvloJb3OJXcIeA==
+  dependencies:
+    "@graphql-yoga/typed-event-target" "^0.1.0"
+    "@repeaterjs/repeater" "^3.0.4"
+    tslib "^2.3.1"
+
+"@graphql-yoga/typed-event-target@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/typed-event-target/-/typed-event-target-0.1.0.tgz#c83b4f3cb2793ba29c3442193c9369884fe8fde6"
+  integrity sha512-3zsJSSUgrJalE1/KoNN1ga1jU6GhTyEnAWACMP2vFzr3hkVyhB3QIkAYaGOVu0sg87K67gfD8QblT+WFZbsX6g==
   dependencies:
     "@repeaterjs/repeater" "^3.0.4"
     tslib "^2.3.1"
@@ -4320,10 +4329,10 @@
     "@n1ru4l/graphql-live-query" "0.9.0"
     "@repeaterjs/repeater" "^3.0.4"
 
-"@neo4j/graphql@3.5.0":
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-3.5.0.tgz#ab28a60b0103233c4c081ee5ceb01fb8c8540946"
-  integrity sha512-IPA0prflVTXhiOf3tgcDjzIG1ZmE+rV/kDEszdbn2Cd23CLghlZ5xHM12cxla98OM71MhifJLEjiprcgOIugiQ==
+"@neo4j/graphql@3.5.1":
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-3.5.1.tgz#f5decc7d281e85acadc56b08f7198be09d76f168"
+  integrity sha512-rnYkQthssEPzbx0ogDyCghZkWhAkMwdyx0VffRvgrPzdTGI6w/vF/I/OTsxUC0Cd2mvq1nIK9TIYkyDafcLRRQ==
   dependencies:
     "@graphql-tools/merge" "^8.2.1"
     "@graphql-tools/resolvers-composition" "^6.4.1"
