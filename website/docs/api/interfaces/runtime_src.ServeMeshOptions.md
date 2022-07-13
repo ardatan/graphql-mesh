@@ -41,15 +41,15 @@ ___
 
 ### getBuiltMesh
 
-• **getBuiltMesh**: () => `Promise`<[`MeshInstance`](runtime_src.MeshInstance)\>
+• **getBuiltMesh**: () => `Promise`\<[`MeshInstance`](runtime_src.MeshInstance)>
 
 #### Type declaration
 
-▸ (): `Promise`<[`MeshInstance`](runtime_src.MeshInstance)\>
+▸ (): `Promise`\<[`MeshInstance`](runtime_src.MeshInstance)>
 
 ##### Returns
 
-`Promise`<[`MeshInstance`](runtime_src.MeshInstance)\>
+`Promise`\<[`MeshInstance`](runtime_src.MeshInstance)>
 
 #### Defined in
 

@@ -30,7 +30,7 @@ title: 'TypeConverterResolversOpts'
 
 ### connection
 
-• `Optional` **connection**: `boolean` \| { `[k: string]`: `any`;  }
+• `Optional` **connection**: `boolean` \| \{ `[k: string]`: `any`;  }
 
 Any of: Boolean, JSON
 

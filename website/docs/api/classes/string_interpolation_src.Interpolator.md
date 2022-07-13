@@ -321,7 +321,7 @@ ___
 | Name | Type | Default value |
 | :------ | :------ | :------ |
 | `str` | `string` | `''` |
-| `data` | `Object` | `{}` |
+| `data` | `Object` | `\{}` |
 
 #### Returns
 

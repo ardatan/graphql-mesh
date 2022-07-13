@@ -33,7 +33,7 @@ title: 'PubSub'
 
 ### asyncIterator
 
-▸ **asyncIterator**<`THook`\>(`triggerName`): `AsyncIterable`<[`AllHooks`](../modules/types_src#allhooks)[`THook`]\>
+▸ **asyncIterator**\<`THook`>(`triggerName`): `AsyncIterable`\<[`AllHooks`](../modules/types_src#allhooks)[`THook`]>
 
 #### Type parameters
 
@@ -49,7 +49,7 @@ title: 'PubSub'
 
 #### Returns
 
-`AsyncIterable`<[`AllHooks`](../modules/types_src#allhooks)[`THook`]\>
+`AsyncIterable`\<[`AllHooks`](../modules/types_src#allhooks)[`THook`]>
 
 #### Implementation of
 
@@ -59,7 +59,7 @@ ___
 
 ### publish
 
-▸ **publish**<`THook`\>(`triggerName`, `detail`): `void`
+▸ **publish**\<`THook`>(`triggerName`, `detail`): `void`
 
 #### Type parameters
 
@@ -86,7 +86,7 @@ ___
 
 ### subscribe
 
-▸ **subscribe**<`THook`\>(`triggerName`, `onMessage`): `number`
+▸ **subscribe**\<`THook`>(`triggerName`, `onMessage`): `number`
 
 #### Type parameters
 
@@ -99,7 +99,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `triggerName` | `THook` |
-| `onMessage` | `Listener`<`THook`\> |
+| `onMessage` | `Listener`\<`THook`> |
 
 #### Returns
 

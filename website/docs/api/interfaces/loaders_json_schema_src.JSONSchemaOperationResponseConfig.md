@@ -30,7 +30,7 @@ ___
 
 ### links
 
-• `Optional` **links**: `Record`<`string`, [`JSONSchemaLinkConfig`](loaders_json_schema_src.JSONSchemaLinkConfig)\>
+• `Optional` **links**: `Record`\<`string`, [`JSONSchemaLinkConfig`](loaders_json_schema_src.JSONSchemaLinkConfig)>
 
 #### Defined in
 

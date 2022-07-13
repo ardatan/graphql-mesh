@@ -30,17 +30,17 @@ title: 'OpenAPIHandler'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)<[`OpenapiHandler`](/docs/api/interfaces/types_src.YamlConfig.OpenapiHandler)\> |
+| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`OpenapiHandler`](/docs/api/interfaces/types_src.YamlConfig.OpenapiHandler)> |
 
 ## Methods
 
 ### getMeshSource
 
-▸ **getMeshSource**(): `Promise`<[`MeshSource`](../modules/types_src#meshsource)\>
+▸ **getMeshSource**(): `Promise`\<[`MeshSource`](../modules/types_src#meshsource)>
 
 #### Returns
 
-`Promise`<[`MeshSource`](../modules/types_src#meshsource)\>
+`Promise`\<[`MeshSource`](../modules/types_src#meshsource)>
 
 #### Implementation of
 

@@ -59,7 +59,7 @@ ___
 | `additionalEnvelopPlugins` | `any`[] |
 | `additionalResolvers` | `IResolvers`[] |
 | `additionalTypeDefs` | `DocumentNode`[] |
-| `cache` | [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)<`string`\> |
+| `cache` | [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)\<`string`> |
 | `code` | `string` |
 | `config` | [`Config`](/docs/api/interfaces/types_src.YamlConfig.Config) |
 | `documents` | `Source`[] |
@@ -78,7 +78,7 @@ ___
 
 ### getPackage
 
-▸ **getPackage**<`T`\>(`__namedParameters`): `Promise`<`ResolvedPackage`<`T`\>\>
+▸ **getPackage**\<`T`>(`__namedParameters`): `Promise`\<`ResolvedPackage`\<`T`>>
 
 #### Type parameters
 
@@ -94,13 +94,13 @@ ___
 
 #### Returns
 
-`Promise`<`ResolvedPackage`<`T`\>\>
+`Promise`\<`ResolvedPackage`\<`T`>>
 
 ___
 
 ### processConfig
 
-▸ **processConfig**(`config`, `options?`): `Promise`<[`ProcessedConfig`](config_src#processedconfig)\>
+▸ **processConfig**(`config`, `options?`): `Promise`\<[`ProcessedConfig`](config_src#processedconfig)>
 
 #### Parameters
 
@@ -111,13 +111,13 @@ ___
 
 #### Returns
 
-`Promise`<[`ProcessedConfig`](config_src#processedconfig)\>
+`Promise`\<[`ProcessedConfig`](config_src#processedconfig)>
 
 ___
 
 ### resolveAdditionalTypeDefs
 
-▸ **resolveAdditionalTypeDefs**(`baseDir`, `additionalTypeDefs`): `Promise`<`DocumentNode`[]\>
+▸ **resolveAdditionalTypeDefs**(`baseDir`, `additionalTypeDefs`): `Promise`\<`DocumentNode`[]>
 
 #### Parameters
 
@@ -128,13 +128,13 @@ ___
 
 #### Returns
 
-`Promise`<`DocumentNode`[]\>
+`Promise`\<`DocumentNode`[]>
 
 ___
 
 ### resolveCache
 
-▸ **resolveCache**(`cacheConfig?`, `importFn`, `rootStore`, `cwd`, `pubsub`, `logger`, `additionalPackagePrefixes`): `Promise`<{ `cache`: [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache) ; `code`: `string` ; `importCode`: `string`  }\>
+▸ **resolveCache**(`cacheConfig?`, `importFn`, `rootStore`, `cwd`, `pubsub`, `logger`, `additionalPackagePrefixes`): `Promise`\<\{ `cache`: [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache) ; `code`: `string` ; `importCode`: `string`  }>
 
 #### Parameters
 
@@ -150,13 +150,13 @@ ___
 
 #### Returns
 
-`Promise`<{ `cache`: [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache) ; `code`: `string` ; `importCode`: `string`  }\>
+`Promise`\<\{ `cache`: [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache) ; `code`: `string` ; `importCode`: `string`  }>
 
 ___
 
 ### resolveCustomFetch
 
-▸ **resolveCustomFetch**(`__namedParameters`): `Promise`<{ `code`: `string` ; `fetchFn`: `ReturnType`<typeof `fetchFactory`\> ; `importCode`: `string`  }\>
+▸ **resolveCustomFetch**(`__namedParameters`): `Promise`\<\{ `code`: `string` ; `fetchFn`: `ReturnType`\<typeof `fetchFactory`> ; `importCode`: `string`  }>
 
 #### Parameters
 
@@ -164,20 +164,20 @@ ___
 | :------ | :------ |
 | `__namedParameters` | `Object` |
 | `__namedParameters.additionalPackagePrefixes` | `string`[] |
-| `__namedParameters.cache` | [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)<`any`\> |
+| `__namedParameters.cache` | [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)\<`any`> |
 | `__namedParameters.cwd` | `string` |
 | `__namedParameters.fetchConfig?` | `string` |
 | `__namedParameters.importFn` | [`ImportFn`](types_src#importfn) |
 
 #### Returns
 
-`Promise`<{ `code`: `string` ; `fetchFn`: `ReturnType`<typeof `fetchFactory`\> ; `importCode`: `string`  }\>
+`Promise`\<\{ `code`: `string` ; `fetchFn`: `ReturnType`\<typeof `fetchFactory`> ; `importCode`: `string`  }>
 
 ___
 
 ### resolveDocuments
 
-▸ **resolveDocuments**(`documentsConfig`, `cwd`): `Promise`<`Source`[]\>
+▸ **resolveDocuments**(`documentsConfig`, `cwd`): `Promise`\<`Source`[]>
 
 #### Parameters
 
@@ -188,13 +188,13 @@ ___
 
 #### Returns
 
-`Promise`<`Source`[]\>
+`Promise`\<`Source`[]>
 
 ___
 
 ### resolveLogger
 
-▸ **resolveLogger**(`loggerConfig`, `importFn`, `cwd`, `additionalPackagePrefixes`, `initialLoggerPrefix?`): `Promise`<{ `code`: `string` ; `importCode`: `string` ; `logger`: [`Logger`](types_src#logger)  }\>
+▸ **resolveLogger**(`loggerConfig`, `importFn`, `cwd`, `additionalPackagePrefixes`, `initialLoggerPrefix?`): `Promise`\<\{ `code`: `string` ; `importCode`: `string` ; `logger`: [`Logger`](types_src#logger)  }>
 
 #### Parameters
 
@@ -208,13 +208,13 @@ ___
 
 #### Returns
 
-`Promise`<{ `code`: `string` ; `importCode`: `string` ; `logger`: [`Logger`](types_src#logger)  }\>
+`Promise`\<\{ `code`: `string` ; `importCode`: `string` ; `logger`: [`Logger`](types_src#logger)  }>
 
 ___
 
 ### resolvePubSub
 
-▸ **resolvePubSub**(`pubsubYamlConfig`, `importFn`, `cwd`, `additionalPackagePrefixes`): `Promise`<{ `code`: `string` ; `importCode`: `string` ; `pubsub`: [`MeshPubSub`](/docs/api/interfaces/types_src.MeshPubSub)  }\>
+▸ **resolvePubSub**(`pubsubYamlConfig`, `importFn`, `cwd`, `additionalPackagePrefixes`): `Promise`\<\{ `code`: `string` ; `importCode`: `string` ; `pubsub`: [`MeshPubSub`](/docs/api/interfaces/types_src.MeshPubSub)  }>
 
 #### Parameters
 
@@ -227,4 +227,4 @@ ___
 
 #### Returns
 
-`Promise`<{ `code`: `string` ; `importCode`: `string` ; `pubsub`: [`MeshPubSub`](/docs/api/interfaces/types_src.MeshPubSub)  }\>
+`Promise`\<\{ `code`: `string` ; `importCode`: `string` ; `pubsub`: [`MeshPubSub`](/docs/api/interfaces/types_src.MeshPubSub)  }>

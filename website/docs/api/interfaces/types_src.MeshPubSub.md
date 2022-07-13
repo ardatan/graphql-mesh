@@ -23,7 +23,7 @@ title: 'MeshPubSub'
 
 ### asyncIterator
 
-▸ **asyncIterator**<`THook`\>(`triggers`): `AsyncIterable`<[`AllHooks`](../modules/types_src#allhooks)[`THook`]\>
+▸ **asyncIterator**\<`THook`>(`triggers`): `AsyncIterable`\<[`AllHooks`](../modules/types_src#allhooks)[`THook`]>
 
 #### Type parameters
 
@@ -39,13 +39,13 @@ title: 'MeshPubSub'
 
 #### Returns
 
-`AsyncIterable`<[`AllHooks`](../modules/types_src#allhooks)[`THook`]\>
+`AsyncIterable`\<[`AllHooks`](../modules/types_src#allhooks)[`THook`]>
 
 ___
 
 ### publish
 
-▸ **publish**<`THook`\>(`triggerName`, `payload`): `void`
+▸ **publish**\<`THook`>(`triggerName`, `payload`): `void`
 
 #### Type parameters
 
@@ -68,7 +68,7 @@ ___
 
 ### subscribe
 
-▸ **subscribe**<`THook`\>(`triggerName`, `onMessage`, `options?`): `number`
+▸ **subscribe**\<`THook`>(`triggerName`, `onMessage`, `options?`): `number`
 
 #### Type parameters
 

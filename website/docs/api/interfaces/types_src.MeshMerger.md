@@ -36,7 +36,7 @@ title: 'MeshMerger'
 
 ### getUnifiedSchema
 
-▸ **getUnifiedSchema**(`mergerContext`): `SubschemaConfig`<`any`, `any`, `any`, `Record`<`string`, `any`\>\> \| `Promise`<`SubschemaConfig`<`any`, `any`, `any`, `Record`<`string`, `any`\>\>\>
+▸ **getUnifiedSchema**(`mergerContext`): `SubschemaConfig`\<`any`, `any`, `any`, `Record`\<`string`, `any`>> \| `Promise`\<`SubschemaConfig`\<`any`, `any`, `any`, `Record`\<`string`, `any`>>>
 
 #### Parameters
 
@@ -46,4 +46,4 @@ title: 'MeshMerger'
 
 #### Returns
 
-`SubschemaConfig`<`any`, `any`, `any`, `Record`<`string`, `any`\>\> \| `Promise`<`SubschemaConfig`<`any`, `any`, `any`, `Record`<`string`, `any`\>\>\>
+`SubschemaConfig`\<`any`, `any`, `any`, `Record`\<`string`, `any`>> \| `Promise`\<`SubschemaConfig`\<`any`, `any`, `any`, `Record`\<`string`, `any`>>>

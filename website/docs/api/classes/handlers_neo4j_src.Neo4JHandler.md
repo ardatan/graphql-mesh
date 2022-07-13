@@ -36,17 +36,17 @@ title: 'Neo4JHandler'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)<[`Neo4JHandler`](/docs/api/interfaces/types_src.YamlConfig.Neo4JHandler)\> |
+| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`Neo4JHandler`](/docs/api/interfaces/types_src.YamlConfig.Neo4JHandler)> |
 
 ## Properties
 
 ### fetchFn
 
-• **fetchFn**: (`input`: `URL` \| `RequestInfo`, `init?`: `RequestInit`) => `Promise`<`Response`\>
+• **fetchFn**: (`input`: `URL` \| `RequestInfo`, `init?`: `RequestInit`) => `Promise`\<`Response`>
 
 #### Type declaration
 
-▸ (`input`, `init?`): `Promise`<`Response`\>
+▸ (`input`, `init?`): `Promise`\<`Response`>
 
 ##### Parameters
 
@@ -57,7 +57,7 @@ title: 'Neo4JHandler'
 
 ##### Returns
 
-`Promise`<`Response`\>
+`Promise`\<`Response`>
 
 #### Defined in
 
@@ -77,7 +77,7 @@ ___
 
 ### getCachedTypeDefs
 
-▸ **getCachedTypeDefs**(`driver`): `Promise`<`string`\>
+▸ **getCachedTypeDefs**(`driver`): `Promise`\<`string`>
 
 #### Parameters
 
@@ -87,17 +87,17 @@ ___
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`>
 
 ___
 
 ### getMeshSource
 
-▸ **getMeshSource**(): `Promise`<{ `schema`: `GraphQLSchema`  }\>
+▸ **getMeshSource**(): `Promise`\<\{ `schema`: `GraphQLSchema`  }>
 
 #### Returns
 
-`Promise`<{ `schema`: `GraphQLSchema`  }\>
+`Promise`\<\{ `schema`: `GraphQLSchema`  }>
 
 #### Implementation of
 

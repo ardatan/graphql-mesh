@@ -38,7 +38,7 @@ title: 'FsStoreStorageAdapter'
 
 ### delete
 
-▸ **delete**(`key`): `Promise`<`void`\>
+▸ **delete**(`key`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -48,7 +48,7 @@ title: 'FsStoreStorageAdapter'
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Implementation of
 
@@ -58,7 +58,7 @@ ___
 
 ### read
 
-▸ **read**<`TData`, `TJSONData`\>(`key`, `options`): `Promise`<`TData`\>
+▸ **read**\<`TData`, `TJSONData`>(`key`, `options`): `Promise`\<`TData`>
 
 #### Type parameters
 
@@ -72,11 +72,11 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `key` | `string` |
-| `options` | [`ProxyOptions`](../modules/store_src#proxyoptions)<`TData`, `TJSONData`\> |
+| `options` | [`ProxyOptions`](../modules/store_src#proxyoptions)\<`TData`, `TJSONData`> |
 
 #### Returns
 
-`Promise`<`TData`\>
+`Promise`\<`TData`>
 
 #### Implementation of
 
@@ -86,7 +86,7 @@ ___
 
 ### write
 
-▸ **write**<`TData`, `TJSONData`\>(`key`, `data`, `options`): `Promise`<`void`\>
+▸ **write**\<`TData`, `TJSONData`>(`key`, `data`, `options`): `Promise`\<`void`>
 
 #### Type parameters
 
@@ -101,11 +101,11 @@ ___
 | :------ | :------ |
 | `key` | `string` |
 | `data` | `TData` |
-| `options` | [`ProxyOptions`](../modules/store_src#proxyoptions)<`TData`, `TJSONData`\> |
+| `options` | [`ProxyOptions`](../modules/store_src#proxyoptions)\<`TData`, `TJSONData`> |
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Implementation of
 

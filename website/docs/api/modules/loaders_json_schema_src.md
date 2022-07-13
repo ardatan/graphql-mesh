@@ -64,7 +64,7 @@ ___
 
 ### JSONSchemaBaseOperationConfig
 
-Ƭ **JSONSchemaBaseOperationConfig**: { `argTypeMap?`: `Record`<`string`, `string` \| `GraphQLInputType`\> ; `description?`: `string` ; `field`: `string` ; `type`: `OperationTypeNode`  } & { `responseByStatusCode?`: `Record`<`string`, [`JSONSchemaOperationResponseConfig`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaOperationResponseConfig)\>  } \| [`JSONSchemaOperationResponseConfig`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaOperationResponseConfig)
+Ƭ **JSONSchemaBaseOperationConfig**: \{ `argTypeMap?`: `Record`\<`string`, `string` \| `GraphQLInputType`> ; `description?`: `string` ; `field`: `string` ; `type`: `OperationTypeNode`  } & \{ `responseByStatusCode?`: `Record`\<`string`, [`JSONSchemaOperationResponseConfig`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaOperationResponseConfig)>  } \| [`JSONSchemaOperationResponseConfig`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaOperationResponseConfig)
 
 #### Defined in
 
@@ -74,7 +74,7 @@ ___
 
 ### JSONSchemaBaseOperationConfigWithJSONRequest
 
-Ƭ **JSONSchemaBaseOperationConfigWithJSONRequest**: [`JSONSchemaBaseOperationConfig`](loaders_json_schema_src#jsonschemabaseoperationconfig) & { `requestBaseBody?`: `any` ; `requestSample?`: `any` ; `requestSchema?`: `string` \| [`JSONSchema`](json_machete_src#jsonschema) ; `requestTypeName?`: `string`  }
+Ƭ **JSONSchemaBaseOperationConfigWithJSONRequest**: [`JSONSchemaBaseOperationConfig`](loaders_json_schema_src#jsonschemabaseoperationconfig) & \{ `requestBaseBody?`: `any` ; `requestSample?`: `any` ; `requestSchema?`: `string` \| [`JSONSchema`](json_machete_src#jsonschema) ; `requestTypeName?`: `string`  }
 
 #### Defined in
 
@@ -84,7 +84,7 @@ ___
 
 ### JSONSchemaHTTPBaseOperationConfig
 
-Ƭ **JSONSchemaHTTPBaseOperationConfig**: [`JSONSchemaBaseOperationConfig`](loaders_json_schema_src#jsonschemabaseoperationconfig) & { `headers?`: `Record`<`string`, `string`\> ; `method?`: [`HTTPMethod`](loaders_json_schema_src#httpmethod) ; `path`: `string`  }
+Ƭ **JSONSchemaHTTPBaseOperationConfig**: [`JSONSchemaBaseOperationConfig`](loaders_json_schema_src#jsonschemabaseoperationconfig) & \{ `headers?`: `Record`\<`string`, `string`> ; `method?`: [`HTTPMethod`](loaders_json_schema_src#httpmethod) ; `path`: `string`  }
 
 #### Defined in
 
@@ -94,7 +94,7 @@ ___
 
 ### JSONSchemaHTTPBinaryConfig
 
-Ƭ **JSONSchemaHTTPBinaryConfig**: [`JSONSchemaHTTPBaseOperationConfig`](loaders_json_schema_src#jsonschemahttpbaseoperationconfig) & { `binary`: ``true`` ; `method?`: [`HTTPMethod`](loaders_json_schema_src#httpmethod) ; `path`: `string` ; `requestTypeName?`: `string`  }
+Ƭ **JSONSchemaHTTPBinaryConfig**: [`JSONSchemaHTTPBaseOperationConfig`](loaders_json_schema_src#jsonschemahttpbaseoperationconfig) & \{ `binary`: ``true`` ; `method?`: [`HTTPMethod`](loaders_json_schema_src#httpmethod) ; `path`: `string` ; `requestTypeName?`: `string`  }
 
 #### Defined in
 
@@ -124,7 +124,7 @@ ___
 
 ### JSONSchemaPubSubOperationConfig
 
-Ƭ **JSONSchemaPubSubOperationConfig**: [`JSONSchemaBaseOperationConfigWithJSONRequest`](loaders_json_schema_src#jsonschemabaseoperationconfigwithjsonrequest) & { `pubsubTopic`: `string`  }
+Ƭ **JSONSchemaPubSubOperationConfig**: [`JSONSchemaBaseOperationConfigWithJSONRequest`](loaders_json_schema_src#jsonschemabaseoperationconfigwithjsonrequest) & \{ `pubsubTopic`: `string`  }
 
 #### Defined in
 
@@ -144,7 +144,7 @@ ___
 
 ### createBundle
 
-▸ **createBundle**(`name`, `__namedParameters`): `Promise`<[`JSONSchemaLoaderBundle`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaLoaderBundle)\>
+▸ **createBundle**(`name`, `__namedParameters`): `Promise`\<[`JSONSchemaLoaderBundle`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaLoaderBundle)>
 
 #### Parameters
 
@@ -155,13 +155,13 @@ ___
 
 #### Returns
 
-`Promise`<[`JSONSchemaLoaderBundle`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaLoaderBundle)\>
+`Promise`\<[`JSONSchemaLoaderBundle`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaLoaderBundle)>
 
 ___
 
 ### getComposerFromJSONSchema
 
-▸ **getComposerFromJSONSchema**(`schema`, `logger`, `generateInterfaceFromSharedFields?`): `Promise`<`TypeComposers`\>
+▸ **getComposerFromJSONSchema**(`schema`, `logger`, `generateInterfaceFromSharedFields?`): `Promise`\<`TypeComposers`>
 
 #### Parameters
 
@@ -173,13 +173,13 @@ ___
 
 #### Returns
 
-`Promise`<`TypeComposers`\>
+`Promise`\<`TypeComposers`>
 
 ___
 
 ### getDereferencedJSONSchemaFromOperations
 
-▸ **getDereferencedJSONSchemaFromOperations**(`__namedParameters`): `Promise`<[`JSONSchemaObject`](/docs/api/interfaces/json_machete_src.JSONSchemaObject)\>
+▸ **getDereferencedJSONSchemaFromOperations**(`__namedParameters`): `Promise`\<[`JSONSchemaObject`](/docs/api/interfaces/json_machete_src.JSONSchemaObject)>
 
 #### Parameters
 
@@ -187,22 +187,22 @@ ___
 | :------ | :------ |
 | `__namedParameters` | `Object` |
 | `__namedParameters.cwd` | `string` |
-| `__namedParameters.fetchFn` | (`input`: `URL` \| `RequestInfo`, `init?`: `RequestInit`) => `Promise`<`Response`\> |
+| `__namedParameters.fetchFn` | (`input`: `URL` \| `RequestInfo`, `init?`: `RequestInit`) => `Promise`\<`Response`> |
 | `__namedParameters.ignoreErrorResponses?` | `boolean` |
 | `__namedParameters.logger` | [`Logger`](types_src#logger) |
 | `__namedParameters.noDeduplication?` | `boolean` |
 | `__namedParameters.operations` | [`JSONSchemaOperationConfig`](loaders_json_schema_src#jsonschemaoperationconfig)[] |
-| `__namedParameters.schemaHeaders?` | `Record`<`string`, `string`\> |
+| `__namedParameters.schemaHeaders?` | `Record`\<`string`, `string`> |
 
 #### Returns
 
-`Promise`<[`JSONSchemaObject`](/docs/api/interfaces/json_machete_src.JSONSchemaObject)\>
+`Promise`\<[`JSONSchemaObject`](/docs/api/interfaces/json_machete_src.JSONSchemaObject)>
 
 ___
 
 ### getGraphQLSchemaFromBundle
 
-▸ **getGraphQLSchemaFromBundle**(`__namedParameters`, `__namedParameters?`): `Promise`<`GraphQLSchema`\>
+▸ **getGraphQLSchemaFromBundle**(`__namedParameters`, `__namedParameters?`): `Promise`\<`GraphQLSchema`>
 
 Generates a local GraphQLSchema instance from
 previously generated JSON Schema bundle
@@ -216,30 +216,30 @@ previously generated JSON Schema bundle
 
 #### Returns
 
-`Promise`<`GraphQLSchema`\>
+`Promise`\<`GraphQLSchema`>
 
 ___
 
 ### getGraphQLSchemaFromDereferencedJSONSchema
 
-▸ **getGraphQLSchemaFromDereferencedJSONSchema**(`fullyDeferencedSchema`, `__namedParameters`): `Promise`<`GraphQLSchema`\>
+▸ **getGraphQLSchemaFromDereferencedJSONSchema**(`fullyDeferencedSchema`, `__namedParameters`): `Promise`\<`GraphQLSchema`>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `fullyDeferencedSchema` | [`JSONSchemaObject`](/docs/api/interfaces/json_machete_src.JSONSchemaObject) |
-| `__namedParameters` | `AddExecutionLogicToComposerOptions` & { `generateInterfaceFromSharedFields?`: `boolean`  } |
+| `__namedParameters` | `AddExecutionLogicToComposerOptions` & \{ `generateInterfaceFromSharedFields?`: `boolean`  } |
 
 #### Returns
 
-`Promise`<`GraphQLSchema`\>
+`Promise`\<`GraphQLSchema`>
 
 ___
 
 ### getReferencedJSONSchemaFromOperations
 
-▸ **getReferencedJSONSchemaFromOperations**(`__namedParameters`): `Promise`<[`JSONSchemaObject`](/docs/api/interfaces/json_machete_src.JSONSchemaObject)\>
+▸ **getReferencedJSONSchemaFromOperations**(`__namedParameters`): `Promise`\<[`JSONSchemaObject`](/docs/api/interfaces/json_machete_src.JSONSchemaObject)>
 
 #### Parameters
 
@@ -247,7 +247,7 @@ ___
 | :------ | :------ |
 | `__namedParameters` | `Object` |
 | `__namedParameters.cwd` | `string` |
-| `__namedParameters.fetchFn` | (`input`: `URL` \| `RequestInfo`, `init?`: `RequestInit`) => `Promise`<`Response`\> |
+| `__namedParameters.fetchFn` | (`input`: `URL` \| `RequestInfo`, `init?`: `RequestInit`) => `Promise`\<`Response`> |
 | `__namedParameters.ignoreErrorResponses?` | `boolean` |
 | `__namedParameters.logger?` | [`Logger`](types_src#logger) |
 | `__namedParameters.operations` | [`JSONSchemaOperationConfig`](loaders_json_schema_src#jsonschemaoperationconfig)[] |
@@ -255,13 +255,13 @@ ___
 
 #### Returns
 
-`Promise`<[`JSONSchemaObject`](/docs/api/interfaces/json_machete_src.JSONSchemaObject)\>
+`Promise`\<[`JSONSchemaObject`](/docs/api/interfaces/json_machete_src.JSONSchemaObject)>
 
 ___
 
 ### loadGraphQLSchemaFromJSONSchemas
 
-▸ **loadGraphQLSchemaFromJSONSchemas**(`name`, `options`): `Promise`<`GraphQLSchema`\>
+▸ **loadGraphQLSchemaFromJSONSchemas**(`name`, `options`): `Promise`\<`GraphQLSchema`>
 
 #### Parameters
 
@@ -272,4 +272,4 @@ ___
 
 #### Returns
 
-`Promise`<`GraphQLSchema`\>
+`Promise`\<`GraphQLSchema`>

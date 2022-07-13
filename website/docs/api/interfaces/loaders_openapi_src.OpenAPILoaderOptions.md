@@ -8,7 +8,7 @@ title: 'OpenAPILoaderOptions'
 
 ## Hierarchy
 
-- `Partial`<[`JSONSchemaLoaderOptions`](loaders_json_schema_src.JSONSchemaLoaderOptions)\>
+- `Partial`\<[`JSONSchemaLoaderOptions`](loaders_json_schema_src.JSONSchemaLoaderOptions)>
 
   ↳ **`OpenAPILoaderOptions`**
 
@@ -195,11 +195,11 @@ ___
 
 ### fetch
 
-• `Optional` **fetch**: (`input`: `URL` \| `RequestInfo`, `init?`: `RequestInit`) => `Promise`<`Response`\>
+• `Optional` **fetch**: (`input`: `URL` \| `RequestInfo`, `init?`: `RequestInit`) => `Promise`\<`Response`>
 
 #### Type declaration
 
-▸ (`input`, `init?`): `Promise`<`Response`\>
+▸ (`input`, `init?`): `Promise`\<`Response`>
 
 ##### Parameters
 
@@ -210,7 +210,7 @@ ___
 
 ##### Returns
 
-`Promise`<`Response`\>
+`Promise`\<`Response`>
 
 #### Inherited from
 
@@ -318,7 +318,7 @@ ___
 
 ### operationHeaders
 
-• `Optional` **operationHeaders**: `Record`<`string`, `string`\>
+• `Optional` **operationHeaders**: `Record`\<`string`, `string`>
 
 #### Inherited from
 
@@ -360,7 +360,7 @@ ___
 
 ### queryParams
 
-• `Optional` **queryParams**: `Record`<`string`, `string`\>
+• `Optional` **queryParams**: `Record`\<`string`, `string`>
 
 #### Inherited from
 
@@ -374,7 +374,7 @@ ___
 
 ### schemaHeaders
 
-• `Optional` **schemaHeaders**: `Record`<`string`, `string`\>
+• `Optional` **schemaHeaders**: `Record`\<`string`, `string`>
 
 #### Inherited from
 

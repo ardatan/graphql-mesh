@@ -17,7 +17,7 @@ title: 'MeshExchangeOptions'
 
 ### execute
 
-• **execute**: [`ExecuteMeshFn`](../modules/runtime_src#executemeshfn)<`any`, `any`, `any`, `any`\>
+• **execute**: [`ExecuteMeshFn`](../modules/runtime_src#executemeshfn)\<`any`, `any`, `any`, `any`>
 
 #### Defined in
 
@@ -27,7 +27,7 @@ ___
 
 ### subscribe
 
-• `Optional` **subscribe**: [`SubscribeMeshFn`](../modules/runtime_src#subscribemeshfn)<`any`, `any`, `any`, `any`\>
+• `Optional` **subscribe**: [`SubscribeMeshFn`](../modules/runtime_src#subscribemeshfn)\<`any`, `any`, `any`, `any`>
 
 #### Defined in
 

@@ -2,7 +2,7 @@
 title: 'MeshHandlerLibrary'
 ---
 
-# Interface: MeshHandlerLibrary<TConfig\>
+# Interface: MeshHandlerLibrary\<TConfig>
 
 [types/src](../modules/types_src).MeshHandlerLibrary
 
@@ -28,4 +28,4 @@ title: 'MeshHandlerLibrary'
 
 | Name | Type |
 | :------ | :------ |
-| `options` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)<`TConfig`\> |
+| `options` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<`TConfig`> |

@@ -2,7 +2,7 @@
 title: 'RedisCache'
 ---
 
-# Class: RedisCache<V\>
+# Class: RedisCache\<V>
 
 [cache/redis/src](../modules/cache_redis_src).RedisCache
 
@@ -14,7 +14,7 @@ title: 'RedisCache'
 
 ## Implements
 
-- [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)<`V`\>
+- [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)\<`V`>
 
 ## Table of contents
 
@@ -33,7 +33,7 @@ title: 'RedisCache'
 
 ### constructor
 
-• **new RedisCache**<`V`\>(`options`)
+• **new RedisCache**\<`V`>(`options`)
 
 #### Type parameters
 
@@ -45,13 +45,13 @@ title: 'RedisCache'
 
 | Name | Type |
 | :------ | :------ |
-| `options` | [`RedisConfig`](/docs/api/interfaces/types_src.YamlConfig.RedisConfig) & { `pubsub`: [`MeshPubSub`](/docs/api/interfaces/types_src.MeshPubSub)  } |
+| `options` | [`RedisConfig`](/docs/api/interfaces/types_src.YamlConfig.RedisConfig) & \{ `pubsub`: [`MeshPubSub`](/docs/api/interfaces/types_src.MeshPubSub)  } |
 
 ## Methods
 
 ### delete
 
-▸ **delete**(`key`): `Promise`<`boolean`\>
+▸ **delete**(`key`): `Promise`\<`boolean`>
 
 #### Parameters
 
@@ -61,7 +61,7 @@ title: 'RedisCache'
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`>
 
 #### Implementation of
 
@@ -71,7 +71,7 @@ ___
 
 ### get
 
-▸ **get**(`key`): `Promise`<`V`\>
+▸ **get**(`key`): `Promise`\<`V`>
 
 #### Parameters
 
@@ -81,7 +81,7 @@ ___
 
 #### Returns
 
-`Promise`<`V`\>
+`Promise`\<`V`>
 
 #### Implementation of
 
@@ -91,7 +91,7 @@ ___
 
 ### getKeysByPrefix
 
-▸ **getKeysByPrefix**(`prefix`): `Promise`<`string`[]\>
+▸ **getKeysByPrefix**(`prefix`): `Promise`\<`string`[]>
 
 #### Parameters
 
@@ -101,7 +101,7 @@ ___
 
 #### Returns
 
-`Promise`<`string`[]\>
+`Promise`\<`string`[]>
 
 #### Implementation of
 
@@ -111,7 +111,7 @@ ___
 
 ### set
 
-▸ **set**(`key`, `value`, `options?`): `Promise`<`void`\>
+▸ **set**(`key`, `value`, `options?`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -123,7 +123,7 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Implementation of
 

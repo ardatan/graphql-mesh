@@ -20,7 +20,7 @@ sidebar_label: "plugin-response-cache"
 
 | Name | Type |
 | :------ | :------ |
-| `options` | [`MeshPluginOptions`](types_src#meshpluginoptions)<[`ResponseCacheConfig`](/docs/api/interfaces/types_src.YamlConfig.ResponseCacheConfig)\> |
+| `options` | [`MeshPluginOptions`](types_src#meshpluginoptions)\<[`ResponseCacheConfig`](/docs/api/interfaces/types_src.YamlConfig.ResponseCacheConfig)> |
 
 #### Returns
 

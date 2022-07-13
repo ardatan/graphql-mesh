@@ -55,7 +55,7 @@ Faker.js expression or function
 Read more (https://github.com/marak/Faker.js/#fakerfake)
 Example:
 faker: name.firstName
-faker: "{{ name.firstName }} {{ name.lastName }}"
+faker: "\{\{ name.firstName }} \{\{ name.lastName }}"
 
 #### Defined in
 
@@ -68,7 +68,7 @@ ___
 • `Optional` **if**: `boolean`
 
 If this expression is truthy, mocking would be enabled
-You can use environment variables expression, for example: `${MOCKING_ENABLED}`
+You can use environment variables expression, for example: `$\{MOCKING_ENABLED}`
 
 #### Defined in
 

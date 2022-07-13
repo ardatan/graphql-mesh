@@ -43,7 +43,7 @@ ___
 
 ### delete
 
-▸ **delete**(`key`): `Promise`<`void`\>
+▸ **delete**(`key`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -53,7 +53,7 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Implementation of
 
@@ -63,7 +63,7 @@ ___
 
 ### read
 
-▸ **read**<`TData`\>(`key`, `options`): `Promise`<`TData`\>
+▸ **read**\<`TData`>(`key`, `options`): `Promise`\<`TData`>
 
 #### Type parameters
 
@@ -76,11 +76,11 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `key` | `string` |
-| `options` | [`ProxyOptions`](../modules/store_src#proxyoptions)<`any`, `any`\> |
+| `options` | [`ProxyOptions`](../modules/store_src#proxyoptions)\<`any`, `any`> |
 
 #### Returns
 
-`Promise`<`TData`\>
+`Promise`\<`TData`>
 
 #### Implementation of
 
@@ -90,7 +90,7 @@ ___
 
 ### write
 
-▸ **write**<`TData`\>(`key`, `data`, `options`): `Promise`<`void`\>
+▸ **write**\<`TData`>(`key`, `data`, `options`): `Promise`\<`void`>
 
 #### Type parameters
 
@@ -104,11 +104,11 @@ ___
 | :------ | :------ |
 | `key` | `string` |
 | `data` | `TData` |
-| `options` | [`ProxyOptions`](../modules/store_src#proxyoptions)<`any`, `any`\> |
+| `options` | [`ProxyOptions`](../modules/store_src#proxyoptions)\<`any`, `any`> |
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Implementation of
 

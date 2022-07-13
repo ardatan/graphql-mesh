@@ -36,7 +36,7 @@ title: 'MeshHoistField'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)<[`HoistFieldTransformConfig`](/docs/api/interfaces/types_src.YamlConfig.HoistFieldTransformConfig)[]\> |
+| `__namedParameters` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)\<[`HoistFieldTransformConfig`](/docs/api/interfaces/types_src.YamlConfig.HoistFieldTransformConfig)[]> |
 
 ## Properties
 
@@ -56,19 +56,19 @@ title: 'MeshHoistField'
 
 ### transformRequest
 
-▸ **transformRequest**(`originalRequest`, `delegationContext`, `transformationContext`): `ExecutionRequest`<`Record`<`string`, `any`\>, `any`, `any`, `Record`<`string`, `any`\>\>
+▸ **transformRequest**(`originalRequest`, `delegationContext`, `transformationContext`): `ExecutionRequest`\<`Record`\<`string`, `any`>, `any`, `any`, `Record`\<`string`, `any`>>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `originalRequest` | `ExecutionRequest`<`Record`<`string`, `any`\>, `any`, `any`, `Record`<`string`, `any`\>\> |
-| `delegationContext` | `DelegationContext`<`Record`<`string`, `any`\>\> |
-| `transformationContext` | `Record`<`string`, `any`\> |
+| `originalRequest` | `ExecutionRequest`\<`Record`\<`string`, `any`>, `any`, `any`, `Record`\<`string`, `any`>> |
+| `delegationContext` | `DelegationContext`\<`Record`\<`string`, `any`>> |
+| `transformationContext` | `Record`\<`string`, `any`> |
 
 #### Returns
 
-`ExecutionRequest`<`Record`<`string`, `any`\>, `any`, `any`, `Record`<`string`, `any`\>\>
+`ExecutionRequest`\<`Record`\<`string`, `any`>, `any`, `any`, `Record`\<`string`, `any`>>
 
 #### Implementation of
 
@@ -78,19 +78,19 @@ ___
 
 ### transformResult
 
-▸ **transformResult**(`originalResult`, `delegationContext`, `transformationContext`): `ExecutionResult`<`Record`<`string`, `any`\>\>
+▸ **transformResult**(`originalResult`, `delegationContext`, `transformationContext`): `ExecutionResult`\<`Record`\<`string`, `any`>>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `originalResult` | `ExecutionResult`<`Record`<`string`, `any`\>\> |
-| `delegationContext` | `DelegationContext`<`Record`<`string`, `any`\>\> |
+| `originalResult` | `ExecutionResult`\<`Record`\<`string`, `any`>> |
+| `delegationContext` | `DelegationContext`\<`Record`\<`string`, `any`>> |
 | `transformationContext` | `any` |
 
 #### Returns
 
-`ExecutionResult`<`Record`<`string`, `any`\>\>
+`ExecutionResult`\<`Record`\<`string`, `any`>>
 
 #### Implementation of
 
@@ -107,7 +107,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `originalWrappingSchema` | `GraphQLSchema` |
-| `subschemaConfig` | `SubschemaConfig`<`any`, `any`, `any`, `Record`<`string`, `any`\>\> |
+| `subschemaConfig` | `SubschemaConfig`\<`any`, `any`, `any`, `Record`\<`string`, `any`>> |
 | `transformedSchema?` | `GraphQLSchema` |
 
 #### Returns

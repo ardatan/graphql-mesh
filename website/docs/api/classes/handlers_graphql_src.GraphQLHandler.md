@@ -35,13 +35,13 @@ title: 'GraphQLHandler'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)<[`GraphQLHandlerHTTPConfiguration`](/docs/api/interfaces/types_src.YamlConfig.GraphQLHandlerHTTPConfiguration) \| [`GraphQLHandlerCodeFirstConfiguration`](/docs/api/interfaces/types_src.YamlConfig.GraphQLHandlerCodeFirstConfiguration) \| [`GraphQLHandlerMultipleHTTPConfiguration`](/docs/api/interfaces/types_src.YamlConfig.GraphQLHandlerMultipleHTTPConfiguration)\> |
+| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`GraphQLHandlerHTTPConfiguration`](/docs/api/interfaces/types_src.YamlConfig.GraphQLHandlerHTTPConfiguration) \| [`GraphQLHandlerCodeFirstConfiguration`](/docs/api/interfaces/types_src.YamlConfig.GraphQLHandlerCodeFirstConfiguration) \| [`GraphQLHandlerMultipleHTTPConfiguration`](/docs/api/interfaces/types_src.YamlConfig.GraphQLHandlerMultipleHTTPConfiguration)> |
 
 ## Methods
 
 ### getCodeFirstSource
 
-▸ **getCodeFirstSource**(`__namedParameters`): `Promise`<[`MeshSource`](../modules/types_src#meshsource)\>
+▸ **getCodeFirstSource**(`__namedParameters`): `Promise`\<[`MeshSource`](../modules/types_src#meshsource)>
 
 #### Parameters
 
@@ -51,13 +51,13 @@ title: 'GraphQLHandler'
 
 #### Returns
 
-`Promise`<[`MeshSource`](../modules/types_src#meshsource)\>
+`Promise`\<[`MeshSource`](../modules/types_src#meshsource)>
 
 ___
 
 ### getExecutorForHTTPSourceConfig
 
-▸ **getExecutorForHTTPSourceConfig**(`httpSourceConfig`): `Promise`<`Executor`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>\>
+▸ **getExecutorForHTTPSourceConfig**(`httpSourceConfig`): `Promise`\<`Executor`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>>>
 
 #### Parameters
 
@@ -67,33 +67,33 @@ ___
 
 #### Returns
 
-`Promise`<`Executor`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>\>
+`Promise`\<`Executor`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>>>
 
 ___
 
 ### getFallbackExecutor
 
-▸ **getFallbackExecutor**(`executors`): `Executor`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>
+▸ **getFallbackExecutor**(`executors`): `Executor`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `executors` | `Executor`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>[] |
+| `executors` | `Executor`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>>[] |
 
 #### Returns
 
-`Executor`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>
+`Executor`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>>
 
 ___
 
 ### getMeshSource
 
-▸ **getMeshSource**(): `Promise`<[`MeshSource`](../modules/types_src#meshsource)\>
+▸ **getMeshSource**(): `Promise`\<[`MeshSource`](../modules/types_src#meshsource)>
 
 #### Returns
 
-`Promise`<[`MeshSource`](../modules/types_src#meshsource)\>
+`Promise`\<[`MeshSource`](../modules/types_src#meshsource)>
 
 #### Implementation of
 
@@ -103,7 +103,7 @@ ___
 
 ### getNonExecutableSchemaForHTTPSource
 
-▸ **getNonExecutableSchemaForHTTPSource**(`httpSourceConfig`): `Promise`<`GraphQLSchema`\>
+▸ **getNonExecutableSchemaForHTTPSource**(`httpSourceConfig`): `Promise`\<`GraphQLSchema`>
 
 #### Parameters
 
@@ -113,20 +113,20 @@ ___
 
 #### Returns
 
-`Promise`<`GraphQLSchema`\>
+`Promise`\<`GraphQLSchema`>
 
 ___
 
 ### getRaceExecutor
 
-▸ **getRaceExecutor**(`executors`): `Executor`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>
+▸ **getRaceExecutor**(`executors`): `Executor`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `executors` | `Executor`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>[] |
+| `executors` | `Executor`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>>[] |
 
 #### Returns
 
-`Executor`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>
+`Executor`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>>

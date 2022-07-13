@@ -31,27 +31,27 @@ title: 'JsonSchemaHandler'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)<[`JsonSchemaHandler`](/docs/api/interfaces/types_src.YamlConfig.JsonSchemaHandler) \| [`JsonSchemaHandlerBundle`](/docs/api/interfaces/types_src.YamlConfig.JsonSchemaHandlerBundle)\> |
+| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`JsonSchemaHandler`](/docs/api/interfaces/types_src.YamlConfig.JsonSchemaHandler) \| [`JsonSchemaHandlerBundle`](/docs/api/interfaces/types_src.YamlConfig.JsonSchemaHandlerBundle)> |
 
 ## Methods
 
 ### getDereferencedBundle
 
-▸ **getDereferencedBundle**(): `Promise`<[`JSONSchemaLoaderBundle`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaLoaderBundle)\>
+▸ **getDereferencedBundle**(): `Promise`\<[`JSONSchemaLoaderBundle`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaLoaderBundle)>
 
 #### Returns
 
-`Promise`<[`JSONSchemaLoaderBundle`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaLoaderBundle)\>
+`Promise`\<[`JSONSchemaLoaderBundle`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaLoaderBundle)>
 
 ___
 
 ### getMeshSource
 
-▸ **getMeshSource**(): `Promise`<{ `schema`: `GraphQLSchema`  }\>
+▸ **getMeshSource**(): `Promise`\<\{ `schema`: `GraphQLSchema`  }>
 
 #### Returns
 
-`Promise`<{ `schema`: `GraphQLSchema`  }\>
+`Promise`\<\{ `schema`: `GraphQLSchema`  }>
 
 #### Implementation of
 

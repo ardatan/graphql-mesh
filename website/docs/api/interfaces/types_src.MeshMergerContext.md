@@ -28,7 +28,7 @@ ___
 
 ### resolvers
 
-• `Optional` **resolvers**: `IResolvers`<`any`, `any`, `Record`<`string`, `any`\>, `any`\> \| `IResolvers`<`any`, `any`, `Record`<`string`, `any`\>, `any`\>[]
+• `Optional` **resolvers**: `IResolvers`\<`any`, `any`, `Record`\<`string`, `any`>, `any`> \| `IResolvers`\<`any`, `any`, `Record`\<`string`, `any`>, `any`>[]
 
 #### Defined in
 

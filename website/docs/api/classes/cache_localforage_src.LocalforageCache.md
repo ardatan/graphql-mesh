@@ -2,7 +2,7 @@
 title: 'LocalforageCache'
 ---
 
-# Class: LocalforageCache<V\>
+# Class: LocalforageCache\<V>
 
 [cache/localforage/src](../modules/cache_localforage_src).LocalforageCache
 
@@ -14,7 +14,7 @@ title: 'LocalforageCache'
 
 ## Implements
 
-- [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)<`V`\>
+- [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache)\<`V`>
 
 ## Table of contents
 
@@ -33,7 +33,7 @@ title: 'LocalforageCache'
 
 ### constructor
 
-• **new LocalforageCache**<`V`\>(`config?`)
+• **new LocalforageCache**\<`V`>(`config?`)
 
 #### Type parameters
 
@@ -51,7 +51,7 @@ title: 'LocalforageCache'
 
 ### delete
 
-▸ **delete**(`key`): `Promise`<`void`\>
+▸ **delete**(`key`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -61,7 +61,7 @@ title: 'LocalforageCache'
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Implementation of
 
@@ -71,7 +71,7 @@ ___
 
 ### get
 
-▸ **get**(`key`): `Promise`<`V`\>
+▸ **get**(`key`): `Promise`\<`V`>
 
 #### Parameters
 
@@ -81,7 +81,7 @@ ___
 
 #### Returns
 
-`Promise`<`V`\>
+`Promise`\<`V`>
 
 #### Implementation of
 
@@ -91,7 +91,7 @@ ___
 
 ### getKeysByPrefix
 
-▸ **getKeysByPrefix**(`prefix`): `Promise`<`string`[]\>
+▸ **getKeysByPrefix**(`prefix`): `Promise`\<`string`[]>
 
 #### Parameters
 
@@ -101,7 +101,7 @@ ___
 
 #### Returns
 
-`Promise`<`string`[]\>
+`Promise`\<`string`[]>
 
 #### Implementation of
 
@@ -111,7 +111,7 @@ ___
 
 ### set
 
-▸ **set**(`key`, `value`, `options?`): `Promise`<`void`\>
+▸ **set**(`key`, `value`, `options?`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -123,7 +123,7 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Implementation of
 
