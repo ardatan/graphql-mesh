@@ -1,8 +1,6 @@
----
-id: snapshot
-title: Snapshot Transform
-sidebar_label: Snapshot
----
+import { PackageCmd } from '@theguild/components'
+
+# Snapshot Transform
 
 The `snapshot` transform allows applying snapshot for development usage.
 
@@ -10,13 +8,7 @@ The snapshot transform writes the responses of your remote data source to your f
 
 To get started with this transform, install it:
 
-<PackageInstall packages="@graphql-mesh/transform-snapshot" />
-
-<p>&nbsp;</p>
-
----
-
-<p>&nbsp;</p>
+<PackageCmd packages={['@graphql-mesh/transform-snapshot']} />
 
 ## How to use?
 
@@ -35,30 +27,18 @@ The following snapshot will work if you are in a development environment (see th
 
 To modify your snapshots and change the responses, go to `__snapshots__` and modify the responses under those files.
 
-<p>&nbsp;</p>
-
----
-
-<p>&nbsp;</p>
-
 ## Codesandbox Example
 
 You can check out our example that uses SOAP Handler with snapshot transform.
 
 <iframe
   src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/soap-country-info?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
-  style={{ width: '100%', height: '500px', border: '0', borderRadius: '4px', overflow: 'hidden' }}
+  className='mt-6 w-full h-[500px] rounded-md'
   title="country-info-example"
   allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
   sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
 />
 
-<p>&nbsp;</p>
-
----
-
-<p>&nbsp;</p>
-
 ## Config API Reference
 
-{@import ../generated-markdown/SnapshotTransformConfig.generated.md}
+{'@import ../generated-markdown/SnapshotTransformConfig.generated.md'}
