@@ -1,9 +1,6 @@
----
-id: subscriptions-webhooks
-title: Handle Webhooks with GraphQL Subscriptions
-sidebar_label: Subscriptions & Webhooks
-type: Guide
----
+import { Callout } from '@theguild/components'
+
+# Handle Webhooks with GraphQL Subscriptions
 
 GraphQL Mesh can consume Webhooks as GraphQL Subscriptions in the unified schema by using the built-in PubSub implementation
 
@@ -31,32 +28,22 @@ additionalResolvers:
 
 We can use existing types from our unified schema, and this root field is subscribed to our specific `topic` in our PubSub service.
 
-<p>&nbsp;</p>
-
 ### Use JSON Schema Handler instead
 
 You can also use the JSON Schema handler if you don't want to write an extra GraphQL type definition. You can generate GraphQL type definitions from sample JSON response;
 
 Just add the following to your existing JSON schema handler configuration in `.meshrc.yml` file;
 
-```yaml
+```yaml filename=".meshrc.yml"
 - type: Subscription
   field: todoAdded
   pubsubTopic: todoAdded
   responseSample: ./todo.json
 ```
 
-<p>&nbsp;</p>
-
----
-
-<p>&nbsp;</p>
-
 ## Handle Webhook HTTP Requests
 
 Add a custom express handler to listen to a specific path for your HTTP Webhook on Mesh CLI Server. You can do it either in a programmatic or declarative way.
-
-<p>&nbsp;</p>
 
 ### Using Declarative API
 
@@ -73,8 +60,6 @@ serve:
 
 `path` defines the path in our server that will receive HTTP requests as "Webhook" from our API and then send it to `pubsubTopic`.
 
-<p>&nbsp;</p>
-
 ### Custom Handler in Code
 
 `handler` can get any kind of Express request handler. So you can extend Mesh Server however you want.
@@ -89,7 +74,7 @@ serve:
 
 and in `todo_added_handler.js`, we have something like the following;
 
-```js
+```js filename="todo_added_handler.js"
 module.exports = (req, res) => {
   // Mesh PubSub instance is available under `req`
   req.pubsub.publish('todoAdded', req.body)
@@ -97,11 +82,13 @@ module.exports = (req, res) => {
 }
 ```
 
-> You can check out our example
+<Callout>
+You can check out our example
+</Callout>
 
 <iframe
   src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/json-schema-subscriptions?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
-  style={{ width: '100%', height: '500px', border: '0', borderRadius: '4px', overflow: 'hidden' }}
+  className='w-full mt-6 h-[500px] rounded-md'
   title="json-schema-subscriptions"
   allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
   sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
