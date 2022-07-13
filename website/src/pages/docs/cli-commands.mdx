@@ -1,35 +1,29 @@
----
-id: cli-commands
-title: CLI commands
-sidebar_label: CLI commands
----
+import { Callout } from '@theguild/components'
+
+# CLI commands
 
 ## Global Options
 
 All commands can take two global optional options.
 
-<p>&nbsp;</p>
-
 ### `-r (alias: require) [array]`
 
 Loads specific require.extensions before running the codegen and reading the configuration.
 
-```bash
+```sh /-r/
 yarn graphql-mesh -r lodash
+```
+```sh /--require/
 yarn graphql-mesh --require lodash fluke2
 ```
-
-<p>&nbsp;</p>
 
 ### `--dir [string]`
 
 Used to modify the base directory for looking for a `.meshrc` config file.
 
-```
+```sh /--dir/
 yarn graphql-mesh --dir ./mystuff/meshproject
 ```
-
-<p>&nbsp;</p>
 
 ## List of Commands
 
@@ -39,7 +33,9 @@ Serves a GraphQL server with a GraphQL interface to test your Mesh API locally.
 
 Can have an optional `--port` argument.
 
-> GraphQL Mesh does not currently support hot reloading.
+<Callout>
+  GraphQL Mesh does not currently support hot reloading.
+</Callout>
 
 **Options**
 
@@ -49,19 +45,15 @@ The system port on which graphql-mesh will be made available.
 
 This should be one of the normal system ports [1-65386] not currently used by any other service.
 
-```bash
+```sh /--port/
 yarn graphql-mesh dev --port 4002
 ```
-
-<p>&nbsp;</p>
 
 ### `mesh build`
 
 Builds artifacts required to use `mesh start` for a gateway (production) server.
 
 More information about this on the [Build Artifacts](/docs/recipes/build-mesh-artifacts) page.
-
-<p>&nbsp;</p>
 
 ### `mesh validate`
 
@@ -73,8 +65,6 @@ The validation will check the following:
 - configured sources are valid
 
 More information about this on the [Build Artifacts](/docs/recipes/build-mesh-artifacts) page.
-
-<p>&nbsp;</p>
 
 ### `mesh start`
 
@@ -95,11 +85,9 @@ The system port on which graphql-mesh will be made available.
 
 This should be one of the normal system ports [1-65386] not currently used by any other service.
 
-```bash
+```sh /--port/
 yarn graphql-mesh start --port 4002
 ```
-
-<p>&nbsp;</p>
 
 ### `mesh serve-source`
 
@@ -139,10 +127,8 @@ sources:
 
 You can test that the "Weather" source is properly ingested by mesh by running:
 
-```bash
+```sh
 yarn graphql-mesh serve-source Weather
 ```
 
 Then, Mesh will serve a GraphQL API only exposing the "Weather" source.
-
-<p>&nbsp;</p>
