@@ -1,8 +1,6 @@
----
-id: postgraphile
-title: PostgreSQL / PostGraphile
-sidebar_label: PostgreSQL / PostGraphile
----
+import { PackageCmd, Callout } from '@theguild/components'
+
+# PostgreSQL / PostGraphile
 
 ![image](https://user-images.githubusercontent.com/20847995/79219670-5ae06300-7e5b-11ea-81f1-d0c08a884607.png)
 
@@ -10,11 +8,11 @@ This handler allows you to use the GraphQL schema created by [PostGraphile](http
 
 To get started, install the handler library:
 
-<PackageInstall packages="@graphql-mesh/postgraphile" />
+<PackageCmd packages={['@graphql-mesh/postgraphile']} />
 
 Now, you can use it directly in your Mesh config file:
 
-```yaml
+```yaml {4-7}
 sources:
   - name: MyDb
     handler:
@@ -24,24 +22,20 @@ sources:
         # connectionString: postgres://{env.POSTGRES_USER}:{env.POSTGRES_PASSWORD}@localhost/postgres
 ```
 
-> You can check out our example that uses schema stitching with a PostgreSQL data source.
-> [Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/postgres-geodb)
-
-<p>&nbsp;</p>
-
----
-
-<p>&nbsp;</p>
+<Callout>
+  You can check out our example that uses schema stitching with a PostgreSQL data source.
+  [Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/postgres-geodb).
+</Callout>
 
 ## External Plugins (e.g. FederationPlugin, PgManyToManyPlugin, PostgisPlugin)
 
 You can add [PostGraphile plugins](https://graphile.org/postgraphile/community-plugins) for example FederationPlugin. You can install it like below:
 
-<PackageInstall packages="@graphile/federation" />
+<PackageCmd packages={['@graphile/federation']} />
 
 and add those in your configuration file;
 
-```yaml
+```yaml {6-7}
 sources:
   - name: MyDb
     handler:
@@ -51,38 +45,30 @@ sources:
           - '@graphile/federation'
 ```
 
-[Learn more about PostGraphile plugins](https://graphile.org/postgraphile/extending)
-
-<p>&nbsp;</p>
+<Callout>
+  Learn more about PostGraphile plugins [here](https://graphile.org/postgraphile/extending).
+</Callout>
 
 ### Federation and Automatic Type Merging support
 
 The Federation plugin converts your Postgraphile schema into a federated schema that can also be recognized by Stitching, which brings Automatic Type Merging. So you can install `@graphile/federation` package like above and add it under `appendPlugins`.
 
-<p>&nbsp;</p>
-
 ### Many-to-Many support
 
 Suppose you want to have automatic many-to-many mapping across your entities. You can install `@graphile-contrib/pg-many-to-many` and add it under `appendPlugins`.
 
-<PackageInstall packages="@graphile-contrib/pg-many-to-many" />
-
-<p>&nbsp;</p>
+<PackageCmd packages={['@graphile-contrib/pg-many-to-many']} />
 
 ### PostGIS Support
 
 If you use `PostGIS` in your PostgreSQL database, you need to install `@graphile/postgis` package and add it under `appendPlugins`.
 
-<PackageInstall packages="@graphile/postgis" />
+<PackageCmd packages={['@graphile/postgis']} />
 
-> See more [plugins](https://graphile.org/postgraphile/community-plugins) to improve the experience!
-
-<p>&nbsp;</p>
-
----
-
-<p>&nbsp;</p>
+<Callout>
+  See more [plugins](https://graphile.org/postgraphile/community-plugins) to improve the experience!
+</Callout>
 
 ## Config API Reference
 
-{@import ../generated-markdown/PostGraphileHandler.generated.md}
+{'@import ../generated-markdown/PostGraphileHandler.generated.md'}
