@@ -1,8 +1,6 @@
----
-id: installation
-title: Installation
-sidebar_label: Installation
----
+import { PackageCmd, Callout } from '@theguild/components'
+
+# Installation
 
 GraphQL Mesh comes in multiple packages, which you should install according to your needs.
 
@@ -10,15 +8,11 @@ GraphQL Mesh comes in multiple packages, which you should install according to y
 
 To get started, let's first install locally the Mesh CLI package (and dependencies):
 
-<PackageInstall packages="graphql @graphql-mesh/cli" />
+<PackageCmd packages={['@graphql-mesh/cli graphql']} />
 
-_Note: Avoid installing Mesh CLI as a global dependency_
-
-<p>&nbsp;</p>
-
----
-
-<p>&nbsp;</p>
+<Callout emoji="⚠️" type="warning">
+  Note: Avoid installing Mesh CLI as a global dependency
+</Callout>
 
 ## Handlers and Transforms packages
 

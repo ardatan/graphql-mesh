@@ -6,7 +6,7 @@ export default {
   titleSuffix: ` – ${SITE_NAME}`,
   projectLink: 'https://github.com/urigo/graphql-mesh', // GitHub link in the navbar
   github: null,
-  docsRepositoryBase: 'https://github.com/Urigo/graphql-mesh/tree/master/website', // base URL for the docs repository
+  docsRepositoryBase: 'https://github.com/Urigo/graphql-mesh/tree/master/website/src/pages', // base URL for the docs repository
   nextLinks: true,
   prevLinks: true,
   search: false,
