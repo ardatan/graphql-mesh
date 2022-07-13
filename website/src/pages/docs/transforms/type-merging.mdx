@@ -1,16 +1,8 @@
----
-id: type-merging
-title: Type Merging Transform
-sidebar_label: Type Merging
----
+import { Callout } from '@theguild/components'
+
+# Type Merging Transform
 
 This transform helps you to use [Type Merging](https://graphql-tools.com/docs/stitch-type-merging) approach of Schema Stitching in your GraphQL Mesh sources.
-
-<p>&nbsp;</p>
-
----
-
-<p>&nbsp;</p>
 
 ## What is Type Merging?
 
@@ -89,9 +81,9 @@ then you expect the following query works fine;
 }
 ```
 
-But it won't work because Mesh doesn't know which field belongs to where and how to combine those. You could add `additionalResolvers` then extract `books` from `AuthorWithBooks` then return it as `books` field of `Author` type, but this sounds a little bit overhead. So let's try Type Merging here;
+But it won't work because Mesh doesn't know which field belongs to where and how to combine those. You could add `additionalResolvers` then extract `books` from `AuthorWithBooks` then return it as `books` field of `Author` type, but this sounds a little overhead. So let's try Type Merging here.
 
-We have Type Merging transform to teach Mesh how to fetch entities from different sources;
+We have Type Merging transform to teach Mesh how to fetch entities from different sources:
 
 ```yaml
 sources:
@@ -145,7 +137,7 @@ Then now, our query will work as expected!
 
 ### Prevent N+1 problem with Type Merging
 
-The example above works fine, but there is an N+1 problem. It sends `n` requests for `n` entities. But we have `authors` and `books`. Type Merging is smart enough to handle batching if you point it to a field that returns a list of entities. Let's update our configuration for this;
+The example above works fine, but there is an N+1 problem. It sends `n` requests for `n` entities. But we have `authors` and `books`. Type Merging is smart enough to handle batching if you point it to a field that returns a list of entities. Let's update our configuration for this:
 
 ```yaml
 sources:
@@ -196,12 +188,6 @@ sources:
 
 And now it batches the requests to the inner sources.
 
-<p>&nbsp;</p>
-
----
-
-<p>&nbsp;</p>
-
 ## Using the Type Merging Transform
 
 ```yaml
@@ -249,22 +235,18 @@ sources:
               keyField: id
 ```
 
-> You can check out our example that uses Type Merging
+<Callout>
+  You can check out our example that uses Type Merging
+</Callout>
 
 <iframe
   src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/type-merging-batching-example?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
-  style={{ width: '100%', height: '500px', border: '0', borderRadius: '4px', overflow: 'hidden' }}
+  className='mt-6 w-full h-[500px] rounded-md'
   title="federation-example"
   allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
   sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
 />
 
-<p>&nbsp;</p>
-
----
-
-<p>&nbsp;</p>
-
 ## Config API Reference
 
-{@import ../generated-markdown/TypeMergingConfig.generated.md}
+{'@import ../generated-markdown/TypeMergingConfig.generated.md'}
