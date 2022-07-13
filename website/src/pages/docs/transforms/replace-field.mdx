@@ -1,22 +1,16 @@
----
-id: replace-field
-title: Replace Field
-sidebar_label: Replace Field
----
+import { PackageCmd, Callout } from '@theguild/components'
+
+# Replace Field
 
 The `replace-field` transform allows you to replace configuration properties of a GraphQL field (source) with the ones of another field (target).
 
 This is extremely useful when hoisting field values from one subfield to its parent. Still, it can be customized to completely replace and/or compose resolve functions with a great degree of customization.
 
-<PackageInstall packages="@graphql-mesh/transform-replace-field" />
+<PackageCmd packages={['@graphql-mesh/transform-replace-field']} />
 
-> Note: currently this transform supports `bare` mode only. For information about "bare" and "wrap" modes, please read the [dedicated section](/docs/transforms/transforms-introduction#two-different-modes).
-
-<p>&nbsp;</p>
-
----
-
-<p>&nbsp;</p>
+<Callout>
+  Note: currently this transform supports `bare` mode only. For information about "bare" and "wrap" modes, please read the [dedicated section](/docs/transforms/transforms-introduction#two-different-modes).
+</Callout>
 
 ## How to use?
 
@@ -103,12 +97,6 @@ Allowing you to request a GraphQL document like this:
 }
 ```
 
-<p>&nbsp;</p>
-
----
-
-<p>&nbsp;</p>
-
 ## How the transform works
 
 Let's understand more about how this transformation works.
@@ -134,12 +122,6 @@ To summarise, with the configuration above, we want the field `books` in type `Q
 
 Finally, since we no longer reference `BooksApiResponse` this becomes a loose type. So the transform will purge it from the GraphQL schema.
 
-<p>&nbsp;</p>
-
----
-
-<p>&nbsp;</p>
-
 ## Transform scopes
 
 We explored how to use the transform to replace field Types.
@@ -149,11 +131,9 @@ However, the transform also allows you to pass a scope property, which values ca
 
 We could say that the scope property could also take a `type` value. Still, since it's the minimum requirement to replace the Type, this is considered the default scope and so it wouldn't make sense to pass it when you desire just this behaviour.
 
-<p>&nbsp;</p>
+### `scope: config{:yaml}`
 
-### scope: config
-
-The transform will replace the full field config when you pass `scope: config`.
+The transform will replace the full field config when you pass `scope: config{:yaml}`.
 
 A field config includes properties of the field such as `description`, `type`, `args`, `resolve`, `subscribe`, `deprecationReason`, `extensions`, `astNode`.
 
@@ -162,28 +142,29 @@ As you can see, this is very comprehensive as it includes things like arguments 
 This can be useful when you have custom resolve functions on your target field. So you are happy to replace the source field entirely.
 However, you should be careful when you fully understand the implications of the behavior for your replaced field.
 
-<p>&nbsp;</p>
-
-### scope: hoistValue
+### `scope: hoistValue{:yaml}`
 
 We have seen how `hoistValue` can be useful in the full example described in the "How to use?" paragraph.
 
 Once again, by default, the transform will replace the Type of the field only.
-When passing `scope: hoistValue` in addition to replacing the Type, the transform will wrap the resolve function of the original field (source) with an extra function. This function intercepts the return value of the resolver to ultimately return only the direct child property that has the same name as the target field; hence performing value hoisting.
+When passing `scope: hoistValue{:yaml}` in addition to replacing the Type, the transform will wrap the resolve function of the original field (source) with an extra function. This function intercepts the return value of the resolver to ultimately return only the direct child property that has the same name as the target field; hence performing value hoisting.
 
 Taking into account the original schema shared above, originally, `Query.books` would return a value like this:
 
-```js
+```jsonc
 {
   books: {
-    books: [{ title: 'abc', author: 'def' }, { title: 'ghi', author: 'lmn' }]
+    books: [
+      { title: 'abc', author: 'def' },
+      { title: 'ghi', author: 'lmn' }
+    ]
   }
 }
 ```
 
 But the wrapping function applied to the original resolver, when passing `hoistValue` scope, will change the value above to this:
 
-```json5
+```jsonc
 {
   books: [
     { title: 'abc', author: 'def' },
@@ -191,12 +172,6 @@ But the wrapping function applied to the original resolver, when passing `hoistV
   ]
 }
 ```
-
-<p>&nbsp;</p>
-
----
-
-<p>&nbsp;</p>
 
 ## Additional type definitions
 
@@ -214,7 +189,7 @@ transforms:
         type NewAuthor {
           age: String
         }
-      # typeDefs: ./customTypeDefs.graphql # for conveniency, you can also pass a .graphql file
+      # typeDefs: ./customTypeDefs.graphql # for convenience, you can also pass a .graphql file
       replacements:
         - from:
             type: Author
@@ -224,29 +199,15 @@ transforms:
             field: age
 ```
 
-The config above will change the `Author` type from this:
+The config above will change the `Author` type to this:
 
-```graphql
+```diff
 type Author {
   name: String!
-  age: Int!
+- age: Int!
++ age: String
 }
 ```
-
-To this:
-
-```graphql
-type Author {
-  name: String!
-  age: String
-}
-```
-
-<p>&nbsp;</p>
-
----
-
-<p>&nbsp;</p>
 
 ## Custom composers
 
@@ -278,9 +239,7 @@ transforms:
           composer: ./customComposers.js#isAvailable
 ```
 
-```js
-// customResolvers.js
-
+```js filename="customResolvers.js"
 module.exports = {
   isAvailable: next => async (root, args, context, info) => {
     // 'next' is the field resolve function
@@ -291,12 +250,6 @@ module.exports = {
 ```
 
 Now our `code` field will return a Boolean as per custom logic implemented through the javascript function above.
-
-<p>&nbsp;</p>
-
----
-
-<p>&nbsp;</p>
 
 ## Renaming fields
 
@@ -350,12 +303,6 @@ type Author {
 }
 ```
 
-<p>&nbsp;</p>
-
----
-
-<p>&nbsp;</p>
-
 ## Config API Reference
 
-{@import ../generated-markdown/ReplaceFieldTransformConfig.generated.md}
+{'@import ../generated-markdown/ReplaceFieldTransformConfig.generated.md'}
