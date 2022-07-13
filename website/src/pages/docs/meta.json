@@ -6,5 +6,8 @@
   "transforms": "Transforms",
   "cache": "Cache",
   "api": "API",
-  "cli-commands": "CLI commands"
+  "cli-commands": "CLI commands",
+  "extend": {
+    "hidden": true
+  }
 }
