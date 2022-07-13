@@ -403,7 +403,7 @@ function checkAmbiguousMemberTypes<TSource, TContext, TArgs>(
         handleWarning({
           mitigationType: MitigationTypes.AMBIGUOUS_UNION_MEMBERS,
           message:
-            `Union created from schema '${JSON.stringify(def)}' contains ` +
+            `Union created from schema '${JSON.stringify(def.schema)}' contains ` +
             `member types such as '${currentType}' and '${otherType}' ` +
             `which are ambiguous. Ambiguous member types can cause ` +
             `problems when trying to resolve types.`,
