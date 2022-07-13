@@ -1,18 +1,18 @@
----
-id: grpc
-title: gRPC / Protobuf
-sidebar_label: gRPC / Protobuf
----
+import { PackageCmd, Callout } from '@theguild/components'
 
-![image](https://user-images.githubusercontent.com/20847995/79218793-b27dcf00-7e59-11ea-8f0f-df97503f5494.png)
+# gRPC / Protobuf
+
+<div className='bg-[#244c5a]/90 rounded-md dark:bg-transparent inline-block'>
+  ![image](https://user-images.githubusercontent.com/20847995/79218793-b27dcf00-7e59-11ea-8f0f-df97503f5494.png)
+</div>
 
 This Handler allows you to load [gRPC](https://grpc.io) definition files (`.proto`).
 
-<PackageInstall packages="@graphql-mesh/grpc" />
+<PackageCmd packages={["@graphql-mesh/grpc"]} />
 
 Now, you can use it directly in your Mesh config file:
 
-```yaml
+```yaml {6}
 sources:
   - name: MyGrpcApi
     handler:
@@ -21,14 +21,16 @@ sources:
         protoFilePath: grpc/proto/Example.proto
 ```
 
-> You can check out our example that uses gRPC Handler.
-> [Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/grpc-example)
+<Callout>
+  You can check out our example that uses gRPC Handler.
+  [Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/grpc-example)
+</Callout>
 
 ## Use Reflection instead of proto files
 
 If you have configured reflection in your gRPC server, you can use `useReflection` flag to load the schema from reflection instead of loading proto files.
 
-```yaml
+```yaml {6}
 sources:
   - name: gRPC Example
     handler:
@@ -37,14 +39,16 @@ sources:
         useReflection: true
 ```
 
-> You can check out our example that uses gRPC Handler with reflection.
-> [Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/grpc-reflection-example)
+<Callout>
+  You can check out our example that uses gRPC Handler with reflection.
+  [Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/grpc-reflection-example)
+</Callout>
 
 ## Custom Metadata for Authorization
 
 Here you can use `metaData` field to pass some custom metadata from the context.
 
-```yaml
+```yaml {7-9}
 sources:
   - name: MyGrpcApi
     handler:
@@ -56,12 +60,6 @@ sources:
           someStaticValue: 'MyStaticValue'
 ```
 
-<p>&nbsp;</p>
-
----
-
-<p>&nbsp;</p>
-
 ## Config API Reference
 
-{@import ../generated-markdown/GrpcHandler.generated.md}
+{'@import ../generated-markdown/GrpcHandler.generated.md'}
