@@ -1,21 +1,19 @@
----
-id: customize-mesh-server
-title: 'How to: Customize the Mesh server'
-sidebar_label: Customize the Mesh server
-type: Guide
----
+import { components } from '@guild-docs/client'
+import { Callout } from '@theguild/components'
 
-GraphQL Mesh provides a **reliable and production-ready server implementation** built with [GraphQL Yoga](https://www.graphql-yoga.com/) and [Envelop](https://www.envelop.dev/) with, out of the box support for:
+# How to: Customize the Mesh server
+
+GraphQL Mesh provides a **reliable and production-ready server implementation** built with [GraphQL Yoga](https://graphql-yoga.com) and [Envelop](https://envelop.dev) with, out of the box support for:
 
 - Persisted queries
 - Live queries
 - Files upload
 - Serverless deployment
-- [and more...](https://www.graphql-yoga.com/docs/quick-start)
+- [and more...](https://graphql-yoga.com/docs/quick-start)
 
 {/* TODO(charly): add links to "persisted queries" and "live queries" */}
 
-<Graph>
+<components.Graph>
 
 graph LR;
 subgraph A [GraphQL Mesh Gateway]
@@ -39,22 +37,16 @@ A22 --> A21
 A21 --> A34
 A33 & A34 --> A35
 
-</Graph>
+</components.Graph>
 
 Customizing your GraphQL Mesh Gateway server can be achieved in 2 ways:
 
 - **Configure and provide Envelop plugins**: to add behaviors such as caching, authentication, tracing to your Gateway
 - **Provide a standalone server implementation**: to completely replace the server used by the Gateway
 
-<p>&nbsp;</p>
-
----
-
-<p>&nbsp;</p>
-
 ## Configure and provide Envelop plugins
 
-[Envelop](https://www.envelop.dev/) is a library that helps build GraphQL API faster and flexibly with plugin-based architecture.
+[Envelop](https://envelop.dev) is a library that helps build GraphQL API faster and flexibly with plugin-based architecture.
 
 Similar to Express middlewares allowing you to customize requests' behavior, Envelop applies the same idea to GraphQL requests.
 
@@ -68,8 +60,6 @@ By exposing hooks in all the phases of a GraphQL Request execution, Envelop enab
 - Logging
 - Tracing: NewRelic, Datadog, StatsD, Apollo Tracing
 
-<br />
-
 An Envelop plugin is a standalone `npm` package that provides a plugin function that can be used in an Envelop setup to customize a GraphQL API behavior.
 
 Examples of plugins are:
@@ -77,22 +67,16 @@ Examples of plugins are:
 - `useGenericAuth` (`@envelop/generic-auth`): Custom authentication flow by providing a custom user resolver.
 - `useDepthLimit` (`@envelop/depth-limit`): Limit the depth of executed selection sets.
 
-<br />
-
 The GraphQL Mesh configuration accepts a `additionalEnvelopPlugins` parameter that should point to a file that exports a list of Envelop plugins, as shown below:
 
-_`.meshrc.yaml`_
-
-```yaml
+```yaml filename=".meshrc.yaml"
 sources:
-  # ...
+  # …
 
 additionalEnvelopPlugins: './envelopPlugins'
 ```
 
-_`envelopPlugins.ts`_
-
-```ts
+```ts filename="envelopPlugins.ts"
 import { PluginOrDisabledPlugin } from '@envelop/core'
 import { useDepthLimit } from '@envelop/depth-limit'
 import { useSentry } from '@envelop/sentry'
@@ -109,13 +93,7 @@ const plugins: PluginOrDisabledPlugin = [
 export default plugins
 ```
 
-_Note: The file can also export a factory function returning a `PluginOrDisabledPlugin` list_
-
-<p>&nbsp;</p>
-
----
-
-<p>&nbsp;</p>
+<Callout>Note: The file can also export a factory function returning a `PluginOrDisabledPlugin` list</Callout>
 
 ## Provide a standalone server implementation
 
@@ -123,11 +101,9 @@ _Note: The file can also export a factory function returning a `PluginOrDisabled
 
 The following example shows how to replace GraphQL Mesh's default server implementation with [Apollo Server](https://apollographql.com/docs/apollo-server).
 
-GraphQL Mesh uses [Envelop](https://envelop.dev) under the hood, so you need to check other integrations to see how to use `getEnveloped` with other server frameworks. [Envelop Integrations](https://www.envelop.dev/docs/integrations)
+GraphQL Mesh uses [Envelop](https://envelop.dev) under the hood, so you need to check other integrations to see how to use `getEnveloped` with other server frameworks. [Envelop Integrations](https://envelop.dev/docs/integrations)
 
-_`myServerHandler.ts`_
-
-```js
+```ts filename="myServerHandler.ts"
 import { ApolloServer } from 'apollo-server'
 import type { ServeMeshOptions } from '@graphql-mesh/runtime'
 
@@ -135,11 +111,11 @@ export default async function ({ getBuiltMesh, logger, argsPort }: ServeMeshOpti
   const { schema, getEnveloped } = await getBuiltMesh()
   const apolloServer = new ApolloServer({
     schema,
-    executor: async requestContext => {
+    async executor(requestContext) {
       const { schema, execute, contextFactory } = getEnveloped({ req: requestContext.request.http })
 
       return execute({
-        schema: schema,
+        schema,
         document: requestContext.document,
         contextValue: await contextFactory(),
         variableValues: requestContext.request.variables,
@@ -153,23 +129,17 @@ export default async function ({ getBuiltMesh, logger, argsPort }: ServeMeshOpti
 }
 ```
 
-Then add the following line to your configuration file.
+Then add the following line to your configuration file:
 
-_`.meshrc.yaml`_
-
-```yaml
+```yaml filename=".meshrc.yaml"
 serve:
   customServerHandler: ./myServerHandler
 ```
 
-> When you use a custom server handler, you won't be able to use configuration options under `serve`!
-
-<p>&nbsp;</p>
-
----
-
-<p>&nbsp;</p>
+<Callout>
+  When you use a custom server handler, you won't be able to use configuration options under `serve`!
+</Callout>
 
 ## Configuration: `serve` reference
 
-{@import ../generated-markdown/ServeConfig.generated.md}
+{'@import ../generated-markdown/ServeConfig.generated.md'}
