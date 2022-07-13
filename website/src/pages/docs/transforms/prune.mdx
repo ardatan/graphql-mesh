@@ -1,0 +1,21 @@
+import { PackageCmd } from '@theguild/components'
+
+# Prune Transform
+
+The `prune` transform allows you removing unused and empty types.
+
+<PackageCmd packages={['@graphql-mesh/transform-prune']} />
+
+## How to use?
+
+Add the following configuration to your Mesh config file:
+
+```yaml {2-3}
+transforms:
+  - prune:
+      skipPruning: []
+```
+
+## Config API Reference
+
+{'@import ../generated-markdown/PruneTransformConfig.generated.md'}

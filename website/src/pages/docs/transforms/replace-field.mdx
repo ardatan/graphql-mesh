@@ -131,7 +131,7 @@ However, the transform also allows you to pass a scope property, which values ca
 
 We could say that the scope property could also take a `type` value. Still, since it's the minimum requirement to replace the Type, this is considered the default scope and so it wouldn't make sense to pass it when you desire just this behaviour.
 
-### `scope: config{:yaml}`
+### `scope: config`
 
 The transform will replace the full field config when you pass `scope: config{:yaml}`.
 
@@ -142,7 +142,7 @@ As you can see, this is very comprehensive as it includes things like arguments 
 This can be useful when you have custom resolve functions on your target field. So you are happy to replace the source field entirely.
 However, you should be careful when you fully understand the implications of the behavior for your replaced field.
 
-### `scope: hoistValue{:yaml}`
+### `scope: hoistValue`
 
 We have seen how `hoistValue` can be useful in the full example described in the "How to use?" paragraph.
 
