@@ -1,14 +1,12 @@
----
-id: cache-redis
-title: Redis Cache
-sidebar_label: Redis
----
+import { PackageCmd } from '@theguild/components'
+
+# Redis Cache
 
 This caching strategy will use your Redis instance as the storage.
 
 To get started with this caching strategy, install it:
 
-<PackageInstall packages="@graphql-mesh/cache-redis" />
+<PackageCmd packages={['@graphql-mesh/cache-redis']} />
 
 ## How to use?
 
@@ -22,4 +20,4 @@ cache:
 
 ## Config API Reference
 
-{@import ../generated-markdown/RedisConfig.generated.md}
+{'@import ../generated-markdown/RedisConfig.generated.md'}

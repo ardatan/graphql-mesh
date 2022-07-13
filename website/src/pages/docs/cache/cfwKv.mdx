@@ -1,14 +1,12 @@
----
-id: cache-cfwKv
-title: CF Workers KV
-sidebar_label: CF Workers KV
----
+import { PackageCmd } from '@theguild/components'
+
+# CF Workers KV
 
 If you are using Mesh on Cloudflare Workers, you can use KV cache as a storage.
 
 To get started with this caching strategy, install it:
 
-<PackageInstall packages="@graphql-mesh/cache-cfkw" />
+<PackageCmd packages={['@graphql-mesh/cache-cfkw']} />
 
 ## How to use?
 
@@ -20,4 +18,4 @@ cache:
 
 ## Config API Reference
 
-{@import ../generated-markdown/CFWorkersKVCacheConfig.generated.md}
+{'@import ../generated-markdown/CFWorkersKVCacheConfig.generated.md'}
