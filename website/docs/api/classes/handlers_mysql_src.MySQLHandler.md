@@ -30,17 +30,17 @@ title: 'MySQLHandler'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)<[`MySQLHandler`](/docs/api/interfaces/types_src.YamlConfig.MySQLHandler)\> |
+| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`MySQLHandler`](/docs/api/interfaces/types_src.YamlConfig.MySQLHandler)> |
 
 ## Methods
 
 ### getMeshSource
 
-▸ **getMeshSource**(): `Promise`<[`MeshSource`](../modules/types_src#meshsource)\>
+▸ **getMeshSource**(): `Promise`\<[`MeshSource`](../modules/types_src#meshsource)>
 
 #### Returns
 
-`Promise`<[`MeshSource`](../modules/types_src#meshsource)\>
+`Promise`\<[`MeshSource`](../modules/types_src#meshsource)>
 
 #### Implementation of
 

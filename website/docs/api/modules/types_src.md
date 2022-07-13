@@ -76,7 +76,7 @@ ___
 
 ### GetMeshSourceOptions
 
-Ƭ **GetMeshSourceOptions**<`THandlerConfig`\>: `Object`
+Ƭ **GetMeshSourceOptions**\<`THandlerConfig`>: `Object`
 
 #### Type parameters
 
@@ -106,7 +106,7 @@ ___
 
 ### GraphQLOperation
 
-Ƭ **GraphQLOperation**<`TData`, `TVariables`\>: `TypedDocumentNode`<`TData`, `TVariables`\> \| `string`
+Ƭ **GraphQLOperation**\<`TData`, `TVariables`>: `TypedDocumentNode`\<`TData`, `TVariables`> \| `string`
 
 #### Type parameters
 
@@ -133,11 +133,11 @@ ___
 
 ### ImportFn
 
-Ƭ **ImportFn**: <T\>(`moduleId`: `string`, `noCache?`: `boolean`) => `Promise`<`T`\>
+Ƭ **ImportFn**: \<T>(`moduleId`: `string`, `noCache?`: `boolean`) => `Promise`\<`T`>
 
 #### Type declaration
 
-▸ <`T`\>(`moduleId`, `noCache?`): `Promise`<`T`\>
+▸ \<`T`>(`moduleId`, `noCache?`): `Promise`\<`T`>
 
 ##### Type parameters
 
@@ -154,7 +154,7 @@ ___
 
 ##### Returns
 
-`Promise`<`T`\>
+`Promise`\<`T`>
 
 #### Defined in
 
@@ -164,7 +164,7 @@ ___
 
 ### InContextSdkMethod
 
-Ƭ **InContextSdkMethod**<`TDefaultReturn`, `TArgs`, `TContext`\>: <TKey, TReturn\>(`params`: [`InContextSdkMethodParams`](types_src#incontextsdkmethodparams)<`TDefaultReturn`, `TArgs`, `TContext`, `TKey`, `TReturn`\>) => `Promise`<`TReturn`\>
+Ƭ **InContextSdkMethod**\<`TDefaultReturn`, `TArgs`, `TContext`>: \<TKey, TReturn>(`params`: [`InContextSdkMethodParams`](types_src#incontextsdkmethodparams)\<`TDefaultReturn`, `TArgs`, `TContext`, `TKey`, `TReturn`>) => `Promise`\<`TReturn`>
 
 #### Type parameters
 
@@ -176,7 +176,7 @@ ___
 
 #### Type declaration
 
-▸ <`TKey`, `TReturn`\>(`params`): `Promise`<`TReturn`\>
+▸ \<`TKey`, `TReturn`>(`params`): `Promise`\<`TReturn`>
 
 ##### Type parameters
 
@@ -189,11 +189,11 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `params` | [`InContextSdkMethodParams`](types_src#incontextsdkmethodparams)<`TDefaultReturn`, `TArgs`, `TContext`, `TKey`, `TReturn`\> |
+| `params` | [`InContextSdkMethodParams`](types_src#incontextsdkmethodparams)\<`TDefaultReturn`, `TArgs`, `TContext`, `TKey`, `TReturn`> |
 
 ##### Returns
 
-`Promise`<`TReturn`\>
+`Promise`\<`TReturn`>
 
 #### Defined in
 
@@ -203,7 +203,7 @@ ___
 
 ### InContextSdkMethodBatchingParams
 
-Ƭ **InContextSdkMethodBatchingParams**<`TDefaultReturn`, `TArgs`, `TKey`, `TReturn`\>: `Object`
+Ƭ **InContextSdkMethodBatchingParams**\<`TDefaultReturn`, `TArgs`, `TKey`, `TReturn`>: `Object`
 
 #### Type parameters
 
@@ -263,7 +263,7 @@ ___
 
 ### InContextSdkMethodParams
 
-Ƭ **InContextSdkMethodParams**<`TDefaultReturn`, `TArgs`, `TContext`, `TKey`, `TReturn`\>: { `context`: `TContext` ; `root?`: `any`  } & [`InContextSdkMethodCustomSelectionSetParams`](types_src#incontextsdkmethodcustomselectionsetparams) \| [`InContextSdkMethodInfoParams`](types_src#incontextsdkmethodinfoparams) & [`InContextSdkMethodBatchingParams`](types_src#incontextsdkmethodbatchingparams)<`TDefaultReturn`, `TArgs`, `TKey`, `TReturn`\> \| [`InContextSdkMethodRegularParams`](types_src#incontextsdkmethodregularparams)<`TDefaultReturn`, `TArgs`, `TReturn`\>
+Ƭ **InContextSdkMethodParams**\<`TDefaultReturn`, `TArgs`, `TContext`, `TKey`, `TReturn`>: \{ `context`: `TContext` ; `root?`: `any`  } & [`InContextSdkMethodCustomSelectionSetParams`](types_src#incontextsdkmethodcustomselectionsetparams) \| [`InContextSdkMethodInfoParams`](types_src#incontextsdkmethodinfoparams) & [`InContextSdkMethodBatchingParams`](types_src#incontextsdkmethodbatchingparams)\<`TDefaultReturn`, `TArgs`, `TKey`, `TReturn`> \| [`InContextSdkMethodRegularParams`](types_src#incontextsdkmethodregularparams)\<`TDefaultReturn`, `TArgs`, `TReturn`>
 
 #### Type parameters
 
@@ -283,7 +283,7 @@ ___
 
 ### InContextSdkMethodRegularParams
 
-Ƭ **InContextSdkMethodRegularParams**<`TDefaultReturn`, `TArgs`, `TReturn`\>: `Object`
+Ƭ **InContextSdkMethodRegularParams**\<`TDefaultReturn`, `TArgs`, `TReturn`>: `Object`
 
 #### Type parameters
 
@@ -340,7 +340,7 @@ ___
 
 ### Maybe
 
-Ƭ **Maybe**<`T`\>: ``null`` \| `undefined` \| `T`
+Ƭ **Maybe**\<`T`>: ``null`` \| `undefined` \| `T`
 
 #### Type parameters
 
@@ -356,7 +356,7 @@ ___
 
 ### MeshPluginFactory
 
-Ƭ **MeshPluginFactory**<`TConfig`\>: (`options`: [`MeshPluginOptions`](types_src#meshpluginoptions)<`TConfig`\>) => `Plugin`
+Ƭ **MeshPluginFactory**\<`TConfig`>: (`options`: [`MeshPluginOptions`](types_src#meshpluginoptions)\<`TConfig`>) => `Plugin`
 
 #### Type parameters
 
@@ -372,7 +372,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `options` | [`MeshPluginOptions`](types_src#meshpluginoptions)<`TConfig`\> |
+| `options` | [`MeshPluginOptions`](types_src#meshpluginoptions)\<`TConfig`> |
 
 ##### Returns
 
@@ -386,7 +386,7 @@ ___
 
 ### MeshPluginOptions
 
-Ƭ **MeshPluginOptions**<`TConfig`\>: `TConfig` & { `cache`: [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache) ; `logger`: [`Logger`](types_src#logger) ; `pubsub`: [`MeshPubSub`](/docs/api/interfaces/types_src.MeshPubSub)  }
+Ƭ **MeshPluginOptions**\<`TConfig`>: `TConfig` & \{ `cache`: [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache) ; `logger`: [`Logger`](types_src#logger) ; `pubsub`: [`MeshPubSub`](/docs/api/interfaces/types_src.MeshPubSub)  }
 
 #### Type parameters
 
@@ -409,7 +409,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `batch?` | `boolean` |
-| `contextVariables?` | `Record`<`string`, `string`\> |
+| `contextVariables?` | `Record`\<`string`, `string`> |
 | `executor?` | `Executor` |
 | `schema` | `GraphQLSchema` |
 
@@ -428,10 +428,10 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `batch` | `boolean` |
-| `contextVariables` | `Record`<`string`, `string`\> |
+| `contextVariables` | `Record`\<`string`, `string`> |
 | `executor?` | `Executor` |
 | `handler` | [`MeshHandler`](/docs/api/interfaces/types_src.MeshHandler) |
-| `merge?` | `Record`<`string`, `MergedTypeConfig`\> |
+| `merge?` | `Record`\<`string`, `MergedTypeConfig`> |
 | `name` | `string` |
 | `schema` | `GraphQLSchema` |
 | `transforms` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)[] |

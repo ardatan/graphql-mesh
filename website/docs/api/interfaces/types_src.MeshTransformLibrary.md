@@ -2,7 +2,7 @@
 title: 'MeshTransformLibrary'
 ---
 
-# Interface: MeshTransformLibrary<Config\>
+# Interface: MeshTransformLibrary\<Config>
 
 [types/src](../modules/types_src).MeshTransformLibrary
 
@@ -28,4 +28,4 @@ title: 'MeshTransformLibrary'
 
 | Name | Type |
 | :------ | :------ |
-| `options` | [`MeshTransformOptions`](types_src.MeshTransformOptions)<`Config`\> |
+| `options` | [`MeshTransformOptions`](types_src.MeshTransformOptions)\<`Config`> |

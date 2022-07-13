@@ -33,7 +33,7 @@ title: 'MeshStore'
 | Name | Type |
 | :------ | :------ |
 | `identifier` | `string` |
-| `storage` | [`StoreStorageAdapter`](../modules/store_src#storestorageadapter)<`any`, `string`\> |
+| `storage` | [`StoreStorageAdapter`](../modules/store_src#storestorageadapter)\<`any`, `string`> |
 | `flags` | [`StoreFlags`](../modules/store_src#storeflags) |
 
 ## Properties
@@ -67,7 +67,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `childIdentifier` | `string` |
-| `flags?` | `Partial`<[`StoreFlags`](../modules/store_src#storeflags)\> |
+| `flags?` | `Partial`\<[`StoreFlags`](../modules/store_src#storeflags)> |
 
 #### Returns
 
@@ -77,7 +77,7 @@ ___
 
 ### proxy
 
-▸ **proxy**<`TData`\>(`id`, `options`): [`StoreProxy`](../modules/store_src#storeproxy)<`TData`\>
+▸ **proxy**\<`TData`>(`id`, `options`): [`StoreProxy`](../modules/store_src#storeproxy)\<`TData`>
 
 #### Type parameters
 
@@ -90,8 +90,8 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `id` | `string` |
-| `options` | [`ProxyOptions`](../modules/store_src#proxyoptions)<`TData`, `any`\> |
+| `options` | [`ProxyOptions`](../modules/store_src#proxyoptions)\<`TData`, `any`> |
 
 #### Returns
 
-[`StoreProxy`](../modules/store_src#storeproxy)<`TData`\>
+[`StoreProxy`](../modules/store_src#storeproxy)\<`TData`>

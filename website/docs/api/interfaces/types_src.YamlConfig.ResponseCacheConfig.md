@@ -32,19 +32,19 @@ If the given string is interpolated as empty, default behavior is used.
 Example;
 ```yml
 # Cache by specific value
-cacheKey: "{variableValues.userId}"
+cacheKey: "\{variableValues.userId}"
 
 # Cache by documentString
-cacheKey: "{documentString}"
+cacheKey: "\{documentString}"
 
 # Cache by operationName
-cacheKey: "{operationName}"
+cacheKey: "\{operationName}"
 
 # Cache by some header value
-cacheKey: "{contextValue.headers.authorization}"
+cacheKey: "\{contextValue.headers.authorization}"
 
 # Or combine two of each
-cacheKey: "{contextValue.headers.authorization}-{operationName}"
+cacheKey: "\{contextValue.headers.authorization}-\{operationName}"
 ```
 
 #### Defined in
@@ -126,7 +126,7 @@ Return a unique value for each session.
 Creates a global session by default.
 Example;
 ```yml
-sessionId: "{context.headers.userId}"
+sessionId: "\{context.headers.userId}"
 ```
 
 #### Defined in

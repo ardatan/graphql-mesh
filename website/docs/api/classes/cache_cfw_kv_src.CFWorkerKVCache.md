@@ -41,7 +41,7 @@ title: 'CFWorkerKVCache'
 
 ### delete
 
-▸ **delete**(`key`): `Promise`<`void`\>
+▸ **delete**(`key`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -51,7 +51,7 @@ title: 'CFWorkerKVCache'
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Implementation of
 
@@ -61,7 +61,7 @@ ___
 
 ### get
 
-▸ **get**<`T`\>(`key`): `Promise`<`T`\>
+▸ **get**\<`T`>(`key`): `Promise`\<`T`>
 
 #### Type parameters
 
@@ -77,7 +77,7 @@ ___
 
 #### Returns
 
-`Promise`<`T`\>
+`Promise`\<`T`>
 
 #### Implementation of
 
@@ -87,7 +87,7 @@ ___
 
 ### getKeysByPrefix
 
-▸ **getKeysByPrefix**(`prefix`): `Promise`<`string`[]\>
+▸ **getKeysByPrefix**(`prefix`): `Promise`\<`string`[]>
 
 #### Parameters
 
@@ -97,7 +97,7 @@ ___
 
 #### Returns
 
-`Promise`<`string`[]\>
+`Promise`\<`string`[]>
 
 #### Implementation of
 
@@ -107,7 +107,7 @@ ___
 
 ### set
 
-▸ **set**(`key`, `value`, `options?`): `Promise`<`void`\>
+▸ **set**(`key`, `value`, `options?`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -120,7 +120,7 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 #### Implementation of
 

@@ -20,7 +20,7 @@ sidebar_label: "plugin-live-query"
 
 | Name | Type |
 | :------ | :------ |
-| `options` | [`MeshPluginOptions`](types_src#meshpluginoptions)<[`LiveQueryConfig`](/docs/api/interfaces/types_src.YamlConfig.LiveQueryConfig)\> |
+| `options` | [`MeshPluginOptions`](types_src#meshpluginoptions)\<[`LiveQueryConfig`](/docs/api/interfaces/types_src.YamlConfig.LiveQueryConfig)> |
 
 #### Returns
 

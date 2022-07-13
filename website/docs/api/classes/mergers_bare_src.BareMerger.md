@@ -55,7 +55,7 @@ title: 'BareMerger'
 
 ### getUnifiedSchema
 
-▸ **getUnifiedSchema**(`__namedParameters`): `Promise`<{ `batch`: `boolean` ; `contextVariables`: `Record`<`string`, `string`\> ; `executor?`: `Executor`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>\> ; `handler`: [`MeshHandler`](/docs/api/interfaces/types_src.MeshHandler) ; `merge?`: `Record`<`string`, `MergedTypeConfig`<`any`, `any`, `Record`<`string`, `any`\>\>\> ; `name`: `string` ; `schema`: `GraphQLSchema` ; `transforms`: [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)<`any`\>[]  } \| { `schema`: `GraphQLSchema` = unifiedSchema }\>
+▸ **getUnifiedSchema**(`__namedParameters`): `Promise`\<\{ `batch`: `boolean` ; `contextVariables`: `Record`\<`string`, `string`> ; `executor?`: `Executor`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>> ; `handler`: [`MeshHandler`](/docs/api/interfaces/types_src.MeshHandler) ; `merge?`: `Record`\<`string`, `MergedTypeConfig`\<`any`, `any`, `Record`\<`string`, `any`>>> ; `name`: `string` ; `schema`: `GraphQLSchema` ; `transforms`: [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)\<`any`>[]  } \| \{ `schema`: `GraphQLSchema` = unifiedSchema }>
 
 #### Parameters
 
@@ -65,7 +65,7 @@ title: 'BareMerger'
 
 #### Returns
 
-`Promise`<{ `batch`: `boolean` ; `contextVariables`: `Record`<`string`, `string`\> ; `executor?`: `Executor`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>\> ; `handler`: [`MeshHandler`](/docs/api/interfaces/types_src.MeshHandler) ; `merge?`: `Record`<`string`, `MergedTypeConfig`<`any`, `any`, `Record`<`string`, `any`\>\>\> ; `name`: `string` ; `schema`: `GraphQLSchema` ; `transforms`: [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)<`any`\>[]  } \| { `schema`: `GraphQLSchema` = unifiedSchema }\>
+`Promise`\<\{ `batch`: `boolean` ; `contextVariables`: `Record`\<`string`, `string`> ; `executor?`: `Executor`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>> ; `handler`: [`MeshHandler`](/docs/api/interfaces/types_src.MeshHandler) ; `merge?`: `Record`\<`string`, `MergedTypeConfig`\<`any`, `any`, `Record`\<`string`, `any`>>> ; `name`: `string` ; `schema`: `GraphQLSchema` ; `transforms`: [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)\<`any`>[]  } \| \{ `schema`: `GraphQLSchema` = unifiedSchema }>
 
 #### Implementation of
 
@@ -90,10 +90,10 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `batch` | `boolean` |
-| `contextVariables` | `Record`<`string`, `string`\> |
-| `executor?` | `Executor`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>\> |
+| `contextVariables` | `Record`\<`string`, `string`> |
+| `executor?` | `Executor`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>> |
 | `handler` | [`MeshHandler`](/docs/api/interfaces/types_src.MeshHandler) |
-| `merge?` | `Record`<`string`, `MergedTypeConfig`<`any`, `any`, `Record`<`string`, `any`\>\>\> |
+| `merge?` | `Record`\<`string`, `MergedTypeConfig`\<`any`, `any`, `Record`\<`string`, `any`>>> |
 | `name` | `string` |
 | `schema` | `GraphQLSchema` |
-| `transforms` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)<`any`\>[] |
+| `transforms` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)\<`any`>[] |

@@ -18,7 +18,7 @@ title: 'JSONSchemaLinkConfig'
 
 ### args
 
-• `Optional` **args**: `Record`<`string`, `string`\>
+• `Optional` **args**: `Record`\<`string`, `string`>
 
 #### Defined in
 

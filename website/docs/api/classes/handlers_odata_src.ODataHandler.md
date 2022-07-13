@@ -31,27 +31,27 @@ title: 'ODataHandler'
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)<[`ODataHandler`](/docs/api/interfaces/types_src.YamlConfig.ODataHandler)\> |
+| `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`ODataHandler`](/docs/api/interfaces/types_src.YamlConfig.ODataHandler)> |
 
 ## Methods
 
 ### getCachedMetadataJson
 
-▸ **getCachedMetadataJson**(): `Promise`<`any`\>
+▸ **getCachedMetadataJson**(): `Promise`\<`any`>
 
 #### Returns
 
-`Promise`<`any`\>
+`Promise`\<`any`>
 
 ___
 
 ### getMeshSource
 
-▸ **getMeshSource**(): `Promise`<[`MeshSource`](../modules/types_src#meshsource)\>
+▸ **getMeshSource**(): `Promise`\<[`MeshSource`](../modules/types_src#meshsource)>
 
 #### Returns
 
-`Promise`<[`MeshSource`](../modules/types_src#meshsource)\>
+`Promise`\<[`MeshSource`](../modules/types_src#meshsource)>
 
 #### Implementation of
 

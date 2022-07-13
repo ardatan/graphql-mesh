@@ -33,15 +33,15 @@ title: 'MeshHandler'
 
 ### getMeshSource
 
-• **getMeshSource**: () => `Promise`<[`MeshSource`](../modules/types_src#meshsource)\>
+• **getMeshSource**: () => `Promise`\<[`MeshSource`](../modules/types_src#meshsource)>
 
 #### Type declaration
 
-▸ (): `Promise`<[`MeshSource`](../modules/types_src#meshsource)\>
+▸ (): `Promise`\<[`MeshSource`](../modules/types_src#meshsource)>
 
 ##### Returns
 
-`Promise`<[`MeshSource`](../modules/types_src#meshsource)\>
+`Promise`\<[`MeshSource`](../modules/types_src#meshsource)>
 
 #### Defined in
 

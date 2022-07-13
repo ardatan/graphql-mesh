@@ -2,7 +2,7 @@
 title: 'KeyValueCache'
 ---
 
-# Interface: KeyValueCache<V\>
+# Interface: KeyValueCache\<V>
 
 [types/src](../modules/types_src).KeyValueCache
 
@@ -32,7 +32,7 @@ title: 'KeyValueCache'
 
 ### delete
 
-▸ **delete**(`key`): `Promise`<`boolean` \| `void`\>
+▸ **delete**(`key`): `Promise`\<`boolean` \| `void`>
 
 #### Parameters
 
@@ -42,13 +42,13 @@ title: 'KeyValueCache'
 
 #### Returns
 
-`Promise`<`boolean` \| `void`\>
+`Promise`\<`boolean` \| `void`>
 
 ___
 
 ### get
 
-▸ **get**(`key`): `Promise`<`V`\>
+▸ **get**(`key`): `Promise`\<`V`>
 
 #### Parameters
 
@@ -58,13 +58,13 @@ ___
 
 #### Returns
 
-`Promise`<`V`\>
+`Promise`\<`V`>
 
 ___
 
 ### getKeysByPrefix
 
-▸ **getKeysByPrefix**(`prefix`): `Promise`<`string`[]\>
+▸ **getKeysByPrefix**(`prefix`): `Promise`\<`string`[]>
 
 #### Parameters
 
@@ -74,13 +74,13 @@ ___
 
 #### Returns
 
-`Promise`<`string`[]\>
+`Promise`\<`string`[]>
 
 ___
 
 ### set
 
-▸ **set**(`key`, `value`, `options?`): `Promise`<`void`\>
+▸ **set**(`key`, `value`, `options?`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -92,4 +92,4 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>

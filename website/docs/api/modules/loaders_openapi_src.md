@@ -37,7 +37,7 @@ Re-exports [getGraphQLSchemaFromBundle](loaders_json_schema_src#getgraphqlschema
 
 ### createBundle
 
-▸ **createBundle**(`name`, `openApiLoaderOptions`): `Promise`<[`JSONSchemaLoaderBundle`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaLoaderBundle)\>
+▸ **createBundle**(`name`, `openApiLoaderOptions`): `Promise`\<[`JSONSchemaLoaderBundle`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaLoaderBundle)>
 
 Creates a bundle by downloading and resolving the internal references once
 to load the schema locally later
@@ -51,13 +51,13 @@ to load the schema locally later
 
 #### Returns
 
-`Promise`<[`JSONSchemaLoaderBundle`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaLoaderBundle)\>
+`Promise`\<[`JSONSchemaLoaderBundle`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaLoaderBundle)>
 
 ___
 
 ### getJSONSchemaOptionsFromOpenAPIOptions
 
-▸ **getJSONSchemaOptionsFromOpenAPIOptions**(`__namedParameters`): `Promise`<{ `baseUrl`: `string` ; `cwd`: `string` ; `fetch`: (`input`: `URL` \| `RequestInfo`, `init?`: `RequestInit`) => `Promise`<`Response`\> = fetchFn; `operationHeaders`: `Record`<`string`, `string`\> ; `operations`: [`JSONSchemaOperationConfig`](loaders_json_schema_src#jsonschemaoperationconfig)[] ; `schemaHeaders`: `Record`<`string`, `string`\>  }\>
+▸ **getJSONSchemaOptionsFromOpenAPIOptions**(`__namedParameters`): `Promise`\<\{ `baseUrl`: `string` ; `cwd`: `string` ; `fetch`: (`input`: `URL` \| `RequestInfo`, `init?`: `RequestInit`) => `Promise`\<`Response`> = fetchFn; `operationHeaders`: `Record`\<`string`, `string`> ; `operations`: [`JSONSchemaOperationConfig`](loaders_json_schema_src#jsonschemaoperationconfig)[] ; `schemaHeaders`: `Record`\<`string`, `string`>  }>
 
 #### Parameters
 
@@ -67,13 +67,13 @@ ___
 
 #### Returns
 
-`Promise`<{ `baseUrl`: `string` ; `cwd`: `string` ; `fetch`: (`input`: `URL` \| `RequestInfo`, `init?`: `RequestInit`) => `Promise`<`Response`\> = fetchFn; `operationHeaders`: `Record`<`string`, `string`\> ; `operations`: [`JSONSchemaOperationConfig`](loaders_json_schema_src#jsonschemaoperationconfig)[] ; `schemaHeaders`: `Record`<`string`, `string`\>  }\>
+`Promise`\<\{ `baseUrl`: `string` ; `cwd`: `string` ; `fetch`: (`input`: `URL` \| `RequestInfo`, `init?`: `RequestInit`) => `Promise`\<`Response`> = fetchFn; `operationHeaders`: `Record`\<`string`, `string`> ; `operations`: [`JSONSchemaOperationConfig`](loaders_json_schema_src#jsonschemaoperationconfig)[] ; `schemaHeaders`: `Record`\<`string`, `string`>  }>
 
 ___
 
 ### loadGraphQLSchemaFromOpenAPI
 
-▸ **loadGraphQLSchemaFromOpenAPI**(`name`, `options`): `Promise`<`GraphQLSchema`\>
+▸ **loadGraphQLSchemaFromOpenAPI**(`name`, `options`): `Promise`\<`GraphQLSchema`>
 
 Creates a local GraphQLSchema instance from a OpenAPI Document.
 Everytime this function is called, the OpenAPI file and its dependencies will be resolved on runtime.
@@ -89,4 +89,4 @@ then load it with `loadGraphQLSchemaFromBundle`.
 
 #### Returns
 
-`Promise`<`GraphQLSchema`\>
+`Promise`\<`GraphQLSchema`>

@@ -118,11 +118,11 @@ ___
 
 ### fetch
 
-• **fetch**: (`input`: `URL` \| `RequestInfo`, `init?`: `RequestInit`) => `Promise`<`Response`\>
+• **fetch**: (`input`: `URL` \| `RequestInfo`, `init?`: `RequestInit`) => `Promise`\<`Response`>
 
 #### Type declaration
 
-▸ (`input`, `init?`): `Promise`<`Response`\>
+▸ (`input`, `init?`): `Promise`\<`Response`>
 
 ##### Parameters
 
@@ -133,7 +133,7 @@ ___
 
 ##### Returns
 
-`Promise`<`Response`\>
+`Promise`\<`Response`>
 
 #### Defined in
 

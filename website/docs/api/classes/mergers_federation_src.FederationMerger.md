@@ -54,7 +54,7 @@ title: 'FederationMerger'
 
 ### getUnifiedSchema
 
-▸ **getUnifiedSchema**(`__namedParameters`): `Promise`<{ `executor`: <TReturn\>(`__namedParameters`: `ExecutionRequest`<`Record`<`string`, `any`\>, `any`, `any`, `Record`<`string`, `any`\>\>) => `ExecutionResult`<`TReturn`, `ObjMap`<`unknown`\>\> ; `schema`: `GraphQLSchema` = remoteSchema }\>
+▸ **getUnifiedSchema**(`__namedParameters`): `Promise`\<\{ `executor`: \<TReturn>(`__namedParameters`: `ExecutionRequest`\<`Record`\<`string`, `any`>, `any`, `any`, `Record`\<`string`, `any`>>) => `ExecutionResult`\<`TReturn`, `ObjMap`\<`unknown`>> ; `schema`: `GraphQLSchema` = remoteSchema }>
 
 #### Parameters
 
@@ -64,7 +64,7 @@ title: 'FederationMerger'
 
 #### Returns
 
-`Promise`<{ `executor`: <TReturn\>(`__namedParameters`: `ExecutionRequest`<`Record`<`string`, `any`\>, `any`, `any`, `Record`<`string`, `any`\>\>) => `ExecutionResult`<`TReturn`, `ObjMap`<`unknown`\>\> ; `schema`: `GraphQLSchema` = remoteSchema }\>
+`Promise`\<\{ `executor`: \<TReturn>(`__namedParameters`: `ExecutionRequest`\<`Record`\<`string`, `any`>, `any`, `any`, `Record`\<`string`, `any`>>) => `ExecutionResult`\<`TReturn`, `ObjMap`\<`unknown`>> ; `schema`: `GraphQLSchema` = remoteSchema }>
 
 #### Implementation of
 

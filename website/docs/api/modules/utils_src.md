@@ -68,39 +68,39 @@ sidebar_label: "utils"
 
 ### applyRequestTransforms
 
-▸ **applyRequestTransforms**(`originalRequest`, `delegationContext`, `transformationContext`, `transforms`): `ExecutionRequest`<`Record`<`string`, `any`\>, `any`, `any`, `Record`<`string`, `any`\>\>
+▸ **applyRequestTransforms**(`originalRequest`, `delegationContext`, `transformationContext`, `transforms`): `ExecutionRequest`\<`Record`\<`string`, `any`>, `any`, `any`, `Record`\<`string`, `any`>>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `originalRequest` | `ExecutionRequest`<`Record`<`string`, `any`\>, `any`, `any`, `Record`<`string`, `any`\>\> |
-| `delegationContext` | `DelegationContext`<`Record`<`string`, `any`\>\> |
-| `transformationContext` | `Record`<`string`, `any`\> |
-| `transforms` | `Transform`<`any`, `Record`<`string`, `any`\>\>[] |
+| `originalRequest` | `ExecutionRequest`\<`Record`\<`string`, `any`>, `any`, `any`, `Record`\<`string`, `any`>> |
+| `delegationContext` | `DelegationContext`\<`Record`\<`string`, `any`>> |
+| `transformationContext` | `Record`\<`string`, `any`> |
+| `transforms` | `Transform`\<`any`, `Record`\<`string`, `any`>>[] |
 
 #### Returns
 
-`ExecutionRequest`<`Record`<`string`, `any`\>, `any`, `any`, `Record`<`string`, `any`\>\>
+`ExecutionRequest`\<`Record`\<`string`, `any`>, `any`, `any`, `Record`\<`string`, `any`>>
 
 ___
 
 ### applyResultTransforms
 
-▸ **applyResultTransforms**(`originalResult`, `delegationContext`, `transformationContext`, `transforms`): `ExecutionResult`<`Record`<`string`, `any`\>\>
+▸ **applyResultTransforms**(`originalResult`, `delegationContext`, `transformationContext`, `transforms`): `ExecutionResult`\<`Record`\<`string`, `any`>>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `originalResult` | `ExecutionResult`<`Record`<`string`, `any`\>\> |
-| `delegationContext` | `DelegationContext`<`Record`<`string`, `any`\>\> |
-| `transformationContext` | `Record`<`string`, `any`\> |
-| `transforms` | `Transform`<`any`, `Record`<`string`, `any`\>\>[] |
+| `originalResult` | `ExecutionResult`\<`Record`\<`string`, `any`>> |
+| `delegationContext` | `DelegationContext`\<`Record`\<`string`, `any`>> |
+| `transformationContext` | `Record`\<`string`, `any`> |
+| `transforms` | `Transform`\<`any`, `Record`\<`string`, `any`>>[] |
 
 #### Returns
 
-`ExecutionResult`<`Record`<`string`, `any`\>\>
+`ExecutionResult`\<`Record`\<`string`, `any`>>
 
 ___
 
@@ -113,9 +113,9 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `originalWrappingSchema` | `GraphQLSchema` |
-| `subschemaConfig` | `SubschemaConfig`<`any`, `any`, `any`, `Record`<`string`, `any`\>\> |
+| `subschemaConfig` | `SubschemaConfig`\<`any`, `any`, `any`, `Record`\<`string`, `any`>> |
 | `transformedSchema` | `GraphQLSchema` |
-| `transforms` | `Transform`<`any`, `Record`<`string`, `any`\>\>[] |
+| `transforms` | `Transform`\<`any`, `Record`\<`string`, `any`>>[] |
 
 #### Returns
 
@@ -125,7 +125,7 @@ ___
 
 ### createLruCache
 
-▸ **createLruCache**(`max?`, `ttl?`): `Lru`<`any`\>
+▸ **createLruCache**(`max?`, `ttl?`): `Lru`\<`any`>
 
 #### Parameters
 
@@ -136,7 +136,7 @@ ___
 
 #### Returns
 
-`Lru`<`any`\>
+`Lru`\<`any`>
 
 ___
 
@@ -158,7 +158,7 @@ ___
 
 ### defaultImportFn
 
-▸ **defaultImportFn**(`path`): `Promise`<`any`\>
+▸ **defaultImportFn**(`path`): `Promise`\<`any`>
 
 #### Parameters
 
@@ -168,7 +168,7 @@ ___
 
 #### Returns
 
-`Promise`<`any`\>
+`Promise`\<`any`>
 
 ___
 
@@ -222,7 +222,7 @@ ___
 
 ### getHeadersObj
 
-▸ **getHeadersObj**(`headers`): `Record`<`string`, `string`\>
+▸ **getHeadersObj**(`headers`): `Record`\<`string`, `string`>
 
 #### Parameters
 
@@ -232,7 +232,7 @@ ___
 
 #### Returns
 
-`Record`<`string`, `string`\>
+`Record`\<`string`, `string`>
 
 ___
 
@@ -261,7 +261,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `transforms` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)<`any`\>[] |
+| `transforms` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)\<`any`>[] |
 
 #### Returns
 
@@ -269,8 +269,8 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `noWrapTransforms` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)<`any`\>[] |
-| `wrapTransforms` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)<`any`\>[] |
+| `noWrapTransforms` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)\<`any`>[] |
+| `wrapTransforms` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)\<`any`>[] |
 
 ___
 
@@ -308,7 +308,7 @@ ___
 
 ### loadFromModuleExportExpression
 
-▸ **loadFromModuleExportExpression**<`T`\>(`expression`, `options`): `Promise`<`T`\>
+▸ **loadFromModuleExportExpression**\<`T`>(`expression`, `options`): `Promise`\<`T`>
 
 #### Type parameters
 
@@ -325,7 +325,7 @@ ___
 
 #### Returns
 
-`Promise`<`T`\>
+`Promise`\<`T`>
 
 ___
 
@@ -349,7 +349,7 @@ ___
 
 ### mkdir
 
-▸ **mkdir**(`path`, `options?`): `Promise`<`void`\>
+▸ **mkdir**(`path`, `options?`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -360,7 +360,7 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 ___
 
@@ -382,7 +382,7 @@ ___
 
 ### pathExists
 
-▸ **pathExists**(`path`): `Promise`<`boolean`\>
+▸ **pathExists**(`path`): `Promise`\<`boolean`>
 
 #### Parameters
 
@@ -392,7 +392,7 @@ ___
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`>
 
 ___
 
@@ -414,7 +414,7 @@ ___
 
 ### readFile
 
-▸ **readFile**<`T`\>(`fileExpression`, `__namedParameters`): `Promise`<`T`\>
+▸ **readFile**\<`T`>(`fileExpression`, `__namedParameters`): `Promise`\<`T`>
 
 #### Type parameters
 
@@ -431,13 +431,13 @@ ___
 
 #### Returns
 
-`Promise`<`T`\>
+`Promise`\<`T`>
 
 ___
 
 ### readFileOrUrl
 
-▸ **readFileOrUrl**<`T`\>(`filePathOrUrl`, `config`): `Promise`<`T`\>
+▸ **readFileOrUrl**\<`T`>(`filePathOrUrl`, `config`): `Promise`\<`T`>
 
 #### Type parameters
 
@@ -454,13 +454,13 @@ ___
 
 #### Returns
 
-`Promise`<`T`\>
+`Promise`\<`T`>
 
 ___
 
 ### readUrl
 
-▸ **readUrl**<`T`\>(`path`, `config`): `Promise`<`T`\>
+▸ **readUrl**\<`T`>(`path`, `config`): `Promise`\<`T`>
 
 #### Type parameters
 
@@ -477,13 +477,13 @@ ___
 
 #### Returns
 
-`Promise`<`T`\>
+`Promise`\<`T`>
 
 ___
 
 ### resolveAdditionalResolvers
 
-▸ **resolveAdditionalResolvers**(`baseDir`, `additionalResolvers`, `importFn`, `pubsub`): `Promise`<`IResolvers`[]\>
+▸ **resolveAdditionalResolvers**(`baseDir`, `additionalResolvers`, `importFn`, `pubsub`): `Promise`\<`IResolvers`[]>
 
 #### Parameters
 
@@ -496,7 +496,7 @@ ___
 
 #### Returns
 
-`Promise`<`IResolvers`[]\>
+`Promise`\<`IResolvers`[]>
 
 ___
 
@@ -519,7 +519,7 @@ ___
 
 ### rmdirs
 
-▸ **rmdirs**(`dir`): `Promise`<`void`\>
+▸ **rmdirs**(`dir`): `Promise`\<`void`>
 
 #### Parameters
 
@@ -529,7 +529,7 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 ___
 
@@ -583,7 +583,7 @@ ___
 
 ### withCancel
 
-▸ **withCancel**<`T`\>(`asyncIterable`, `onCancel`): `AsyncIterable`<`T` \| `undefined`\>
+▸ **withCancel**\<`T`>(`asyncIterable`, `onCancel`): `AsyncIterable`\<`T` \| `undefined`>
 
 #### Type parameters
 
@@ -595,18 +595,18 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `asyncIterable` | `AsyncIterable`<`T`\> |
+| `asyncIterable` | `AsyncIterable`\<`T`> |
 | `onCancel` | () => `void` |
 
 #### Returns
 
-`AsyncIterable`<`T` \| `undefined`\>
+`AsyncIterable`\<`T` \| `undefined`>
 
 ___
 
 ### writeFile
 
-▸ **writeFile**(`file`, `data`, `options?`): `Promise`<`void`\>
+▸ **writeFile**(`file`, `data`, `options?`): `Promise`\<`void`>
 
 Asynchronously writes data to a file, replacing the file if it already exists.`data` can be a string, a `Buffer`, or, an object with an own (not inherited)`toString` function property.
 
@@ -630,20 +630,20 @@ Cancelation is "best effort", and some amount of data is likely still
 to be written.
 
 ```js
-import { writeFile } from 'fs/promises';
-import { Buffer } from 'buffer';
+import \{ writeFile } from 'fs/promises';
+import \{ Buffer } from 'buffer';
 
-try {
+try \{
   const controller = new AbortController();
-  const { signal } = controller;
+  const \{ signal } = controller;
   const data = new Uint8Array(Buffer.from('Hello Node.js'));
-  const promise = writeFile('message.txt', data, { signal });
+  const promise = writeFile('message.txt', data, \{ signal });
 
   // Abort the request before the promise settles.
   controller.abort();
 
   await promise;
-} catch (err) {
+} catch (err) \{
   // When a request is aborted - err is an AbortError
   console.error(err);
 }
@@ -661,12 +661,12 @@ v10.0.0
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `file` | `PathLike` \| `FileHandle` | filename or `FileHandle` |
-| `data` | `string` \| `ArrayBufferView` \| `Iterable`<`string` \| `ArrayBufferView`\> \| `AsyncIterable`<`string` \| `ArrayBufferView`\> \| `Stream` | - |
-| `options?` | `BufferEncoding` \| `ObjectEncodingOptions` & { `flag?`: `OpenMode` ; `mode?`: `Mode`  } & `Abortable` | - |
+| `data` | `string` \| `ArrayBufferView` \| `Iterable`\<`string` \| `ArrayBufferView`> \| `AsyncIterable`\<`string` \| `ArrayBufferView`> \| `Stream` | - |
+| `options?` | `BufferEncoding` \| `ObjectEncodingOptions` & \{ `flag?`: `OpenMode` ; `mode?`: `Mode`  } & `Abortable` | - |
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>
 
 Fulfills with `undefined` upon success.
 
@@ -674,7 +674,7 @@ ___
 
 ### writeJSON
 
-▸ **writeJSON**<`T`\>(`path`, `data`, `replacer?`, `space?`): `Promise`<`void`\>
+▸ **writeJSON**\<`T`>(`path`, `data`, `replacer?`, `space?`): `Promise`\<`void`>
 
 #### Type parameters
 
@@ -693,4 +693,4 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`>

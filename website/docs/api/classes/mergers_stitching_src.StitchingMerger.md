@@ -54,7 +54,7 @@ title: 'StitchingMerger'
 
 ### getUnifiedSchema
 
-▸ **getUnifiedSchema**(`context`): `Promise`<{ `schema`: `GraphQLSchema` = unifiedSchema }\>
+▸ **getUnifiedSchema**(`context`): `Promise`\<\{ `schema`: `GraphQLSchema` = unifiedSchema }>
 
 #### Parameters
 
@@ -64,7 +64,7 @@ title: 'StitchingMerger'
 
 #### Returns
 
-`Promise`<{ `schema`: `GraphQLSchema` = unifiedSchema }\>
+`Promise`\<\{ `schema`: `GraphQLSchema` = unifiedSchema }>
 
 #### Implementation of
 

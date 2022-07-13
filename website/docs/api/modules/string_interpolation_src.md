@@ -31,7 +31,7 @@ sidebar_label: "string-interpolation"
 
 ### ResolverData
 
-Ƭ **ResolverData**<`TParent`, `TArgs`, `TContext`, `TResult`\>: `Object`
+Ƭ **ResolverData**\<`TParent`, `TArgs`, `TContext`, `TResult`>: `Object`
 
 #### Type parameters
 
@@ -48,7 +48,7 @@ sidebar_label: "string-interpolation"
 | :------ | :------ |
 | `args?` | `TArgs` |
 | `context?` | `TContext` |
-| `env` | `Record`<`string`, `string`\> |
+| `env` | `Record`\<`string`, `string`> |
 | `info?` | `GraphQLResolveInfo` |
 | `result?` | `TResult` |
 | `root?` | `TParent` |
@@ -61,7 +61,7 @@ ___
 
 ### ResolverDataBasedFactory
 
-Ƭ **ResolverDataBasedFactory**<`T`\>: (`data`: [`ResolverData`](string_interpolation_src#resolverdata)) => `T`
+Ƭ **ResolverDataBasedFactory**\<`T`>: (`data`: [`ResolverData`](string_interpolation_src#resolverdata)) => `T`
 
 #### Type parameters
 
@@ -101,23 +101,23 @@ ___
 
 ### getInterpolatedHeadersFactory
 
-▸ **getInterpolatedHeadersFactory**(`nonInterpolatedHeaders?`): [`ResolverDataBasedFactory`](string_interpolation_src#resolverdatabasedfactory)<`Record`<`string`, `string`\>\>
+▸ **getInterpolatedHeadersFactory**(`nonInterpolatedHeaders?`): [`ResolverDataBasedFactory`](string_interpolation_src#resolverdatabasedfactory)\<`Record`\<`string`, `string`>>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `nonInterpolatedHeaders` | `Record`<`string`, `string`\> |
+| `nonInterpolatedHeaders` | `Record`\<`string`, `string`> |
 
 #### Returns
 
-[`ResolverDataBasedFactory`](string_interpolation_src#resolverdatabasedfactory)<`Record`<`string`, `string`\>\>
+[`ResolverDataBasedFactory`](string_interpolation_src#resolverdatabasedfactory)\<`Record`\<`string`, `string`>>
 
 ___
 
 ### getInterpolatedStringFactory
 
-▸ **getInterpolatedStringFactory**(`nonInterpolatedString`): [`ResolverDataBasedFactory`](string_interpolation_src#resolverdatabasedfactory)<`string`\>
+▸ **getInterpolatedStringFactory**(`nonInterpolatedString`): [`ResolverDataBasedFactory`](string_interpolation_src#resolverdatabasedfactory)\<`string`>
 
 #### Parameters
 
@@ -127,7 +127,7 @@ ___
 
 #### Returns
 
-[`ResolverDataBasedFactory`](string_interpolation_src#resolverdatabasedfactory)<`string`\>
+[`ResolverDataBasedFactory`](string_interpolation_src#resolverdatabasedfactory)\<`string`>
 
 ___
 
@@ -171,8 +171,8 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `interpolationStrings` | `Iterable`<`string`\> |
-| `argTypeMap?` | `Record`<`string`, `string` \| `GraphQLInputType`\> |
+| `interpolationStrings` | `Iterable`\<`string`> |
+| `argTypeMap?` | `Record`\<`string`, `string` \| `GraphQLInputType`> |
 
 #### Returns
 
@@ -180,5 +180,5 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `args` | `Record`<`string`, { `type`: `string` \| `GraphQLInputType`  }\> |
-| `contextVariables` | `Record`<`string`, `string`\> |
+| `args` | `Record`\<`string`, \{ `type`: `string` \| `GraphQLInputType`  }> |
+| `contextVariables` | `Record`\<`string`, `string`> |

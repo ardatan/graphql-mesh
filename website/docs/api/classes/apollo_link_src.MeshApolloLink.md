@@ -70,7 +70,7 @@ ___
 
 ### request
 
-▸ **request**(`operation`, `forward?`): `Observable`<`FetchResult`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>\>
+▸ **request**(`operation`, `forward?`): `Observable`\<`FetchResult`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>, `Record`\<`string`, `any`>>>
 
 #### Parameters
 
@@ -81,7 +81,7 @@ ___
 
 #### Returns
 
-`Observable`<`FetchResult`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>\>
+`Observable`\<`FetchResult`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>, `Record`\<`string`, `any`>>>
 
 #### Inherited from
 
@@ -97,7 +97,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `fn` | (`error`: `any`, `observer?`: `Observer`<`FetchResult`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>\>) => ``false`` \| `void` |
+| `fn` | (`error`: `any`, `observer?`: `Observer`\<`FetchResult`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>, `Record`\<`string`, `any`>>>) => ``false`` \| `void` |
 
 #### Returns
 
@@ -168,7 +168,7 @@ ___
 
 ### execute
 
-▸ `Static` **execute**(`link`, `operation`): `Observable`<`FetchResult`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>\>
+▸ `Static` **execute**(`link`, `operation`): `Observable`\<`FetchResult`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>, `Record`\<`string`, `any`>>>
 
 #### Parameters
 
@@ -179,7 +179,7 @@ ___
 
 #### Returns
 
-`Observable`<`FetchResult`<`Record`<`string`, `any`\>, `Record`<`string`, `any`\>, `Record`<`string`, `any`\>\>\>
+`Observable`\<`FetchResult`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>, `Record`\<`string`, `any`>>>
 
 #### Inherited from
 

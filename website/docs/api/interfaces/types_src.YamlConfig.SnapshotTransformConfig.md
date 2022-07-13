@@ -26,7 +26,7 @@ Configuration for Snapshot extension
 Resolver to be applied
 For example;
   apply:
-      - Query.* <- * will apply this extension to all fields of Query type
+      - Query.* \<- * will apply this extension to all fields of Query type
       - Mutation.someMutationButProbablyYouWontNeedIt
 
 #### Defined in

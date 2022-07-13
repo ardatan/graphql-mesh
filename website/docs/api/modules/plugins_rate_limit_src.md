@@ -20,7 +20,7 @@ sidebar_label: "plugin-rate-limit"
 
 | Name | Type |
 | :------ | :------ |
-| `options` | [`MeshPluginOptions`](types_src#meshpluginoptions)<[`RateLimitPluginConfig`](/docs/api/interfaces/types_src.YamlConfig.RateLimitPluginConfig)\> |
+| `options` | [`MeshPluginOptions`](types_src#meshpluginoptions)\<[`RateLimitPluginConfig`](/docs/api/interfaces/types_src.YamlConfig.RateLimitPluginConfig)> |
 
 #### Returns
 

@@ -37,7 +37,7 @@ sidebar_label: "store"
 
 ### ProxyOptions
 
-Ƭ **ProxyOptions**<`TData`, `TJSONData`\>: `Object`
+Ƭ **ProxyOptions**\<`TData`, `TJSONData`>: `Object`
 
 #### Type parameters
 
@@ -50,10 +50,10 @@ sidebar_label: "store"
 
 | Name | Type |
 | :------ | :------ |
-| `codify` | (`value`: `TData`, `identifier`: `string`) => `string` \| `Promise`<`string`\> |
-| `fromJSON` | (`jsonData`: `TJSONData`, `identifier`: `string`) => `TData` \| `Promise`<`TData`\> |
-| `toJSON` | (`value`: `TData`, `identifier`: `string`) => `TJSONData` \| `Promise`<`TJSONData`\> |
-| `validate` | (`oldValue`: `TData`, `newValue`: `TData`, `identifier`: `string`) => `void` \| `Promise`<`void`\> |
+| `codify` | (`value`: `TData`, `identifier`: `string`) => `string` \| `Promise`\<`string`> |
+| `fromJSON` | (`jsonData`: `TJSONData`, `identifier`: `string`) => `TData` \| `Promise`\<`TData`> |
+| `toJSON` | (`value`: `TData`, `identifier`: `string`) => `TJSONData` \| `Promise`\<`TJSONData`> |
+| `validate` | (`oldValue`: `TData`, `newValue`: `TData`, `identifier`: `string`) => `void` \| `Promise`\<`void`> |
 
 #### Defined in
 
@@ -80,7 +80,7 @@ ___
 
 ### StoreProxy
 
-Ƭ **StoreProxy**<`TData`\>: `Object`
+Ƭ **StoreProxy**\<`TData`>: `Object`
 
 #### Type parameters
 
@@ -92,10 +92,10 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `delete` | () => `Promise`<`void`\> |
-| `get` | () => `Promise`<`TData`\> |
-| `getWithSet` | (`setterFn`: () => `TData` \| `Promise`<`TData`\>) => `Promise`<`TData`\> |
-| `set` | (`value`: `TData`) => `Promise`<`void`\> |
+| `delete` | () => `Promise`\<`void`> |
+| `get` | () => `Promise`\<`TData`> |
+| `getWithSet` | (`setterFn`: () => `TData` \| `Promise`\<`TData`>) => `Promise`\<`TData`> |
+| `set` | (`value`: `TData`) => `Promise`\<`void`> |
 
 #### Defined in
 
@@ -105,7 +105,7 @@ ___
 
 ### StoreStorageAdapter
 
-Ƭ **StoreStorageAdapter**<`TData`, `TKey`\>: `Object`
+Ƭ **StoreStorageAdapter**\<`TData`, `TKey`>: `Object`
 
 #### Type parameters
 
@@ -118,9 +118,9 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `delete` | (`key`: `TKey`) => `Promise`<`void`\> |
-| `read` | (`key`: `TKey`, `options`: [`ProxyOptions`](store_src#proxyoptions)<`TData`\>) => `Promise`<`TData`\> |
-| `write` | (`key`: `TKey`, `data`: `TData`, `options`: [`ProxyOptions`](store_src#proxyoptions)<`TData`\>) => `Promise`<`TData`\> |
+| `delete` | (`key`: `TKey`) => `Promise`\<`void`> |
+| `read` | (`key`: `TKey`, `options`: [`ProxyOptions`](store_src#proxyoptions)\<`TData`>) => `Promise`\<`TData`> |
+| `write` | (`key`: `TKey`, `data`: `TData`, `options`: [`ProxyOptions`](store_src#proxyoptions)\<`TData`>) => `Promise`\<`TData`> |
 
 #### Defined in
 
@@ -130,7 +130,7 @@ ___
 
 ### PredefinedProxyOptions
 
-• `Const` **PredefinedProxyOptions**: `Record`<[`PredefinedProxyOptionsName`](/docs/api/enums/store_src.PredefinedProxyOptionsName), [`ProxyOptions`](store_src#proxyoptions)<`any`\>\>
+• `Const` **PredefinedProxyOptions**: `Record`\<[`PredefinedProxyOptionsName`](/docs/api/enums/store_src.PredefinedProxyOptionsName), [`ProxyOptions`](store_src#proxyoptions)\<`any`>>
 
 #### Defined in
 

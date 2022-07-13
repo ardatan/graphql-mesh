@@ -18,13 +18,13 @@ sidebar_label: "transform-resolvers-composition"
 
 ### ResolversComposition
 
-Ƭ **ResolversComposition**<`Resolver`\>: (`next`: `Resolver`) => `Resolver`
+Ƭ **ResolversComposition**\<`Resolver`>: (`next`: `Resolver`) => `Resolver`
 
 #### Type parameters
 
 | Name | Type |
 | :------ | :------ |
-| `Resolver` | extends `GraphQLFieldResolver`<`any`, `any`, `any`\> = `GraphQLFieldResolver`<`any`, `any`\> |
+| `Resolver` | extends `GraphQLFieldResolver`\<`any`, `any`, `any`> = `GraphQLFieldResolver`\<`any`, `any`> |
 
 #### Type declaration
 
