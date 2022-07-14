@@ -2534,10 +2534,10 @@
     "@types/lodash" "^4.14.136"
     lodash "^4.17.15"
 
-"@creditkarma/thrift-server-express@0.16.1":
-  version "0.16.1"
-  resolved "https://registry.yarnpkg.com/@creditkarma/thrift-server-express/-/thrift-server-express-0.16.1.tgz#09117b018bd2c5ff9b77b99a502bb377c845fea3"
-  integrity sha512-XPUPRnnJkGbLCZZMwLRSNGMZgxlC0n1LYIW2CXuH24aZIcTd9hQP09xc1khs5STMZii6q79wWx2hg6H/oZDDYA==
+"@creditkarma/thrift-server-express@1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@creditkarma/thrift-server-express/-/thrift-server-express-1.0.4.tgz#ae557e80e6c204cb0cccde981d859a7f245984bd"
+  integrity sha512-sbiIZsYnrQEyqjC6969XxZH11rftEtbjoHUrWRl6eePNiPwVF71YF+1u2mvwEAlfOsaCzbHFbp3h2xjNftqqNA==
   dependencies:
     zipkin "^0.15.0"
 
