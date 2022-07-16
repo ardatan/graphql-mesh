@@ -1900,14 +1900,14 @@ export interface ResponseCacheConfig {
    * Return a unique value for each session.
    * Creates a global session by default.
    * Example;
-   * ```yml
+   * ```yaml
    * sessionId: "{context.headers.userId}"
    * ```
    */
   sessionId?: string;
   /**
    * Specify whether the cache should be used based on the context.
-   * ```yml
+   * ```yaml
    * if: "context.headers.userId != null"
    * ```
    */
@@ -1916,7 +1916,7 @@ export interface ResponseCacheConfig {
    * Customize the behavior how the response cache key is computed from the documentString, variableValues, contextValue and sessionId.
    * If the given string is interpolated as empty, default behavior is used.
    * Example;
-   * ```yml
+   * ```yaml
    * # Cache by specific value
    * cacheKey: "{variableValues.userId}"
    *
@@ -1936,7 +1936,7 @@ export interface ResponseCacheConfig {
   cacheKey?: string;
   /**
    * Checks if the result should be cached.
-   * ```yml
+   * ```yaml
    * shouldCacheResult: "result.errors.length > 0"
    * ```
    */
