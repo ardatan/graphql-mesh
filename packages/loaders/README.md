@@ -6,16 +6,16 @@ You can consume this `GraphQLSchema` inside any tools in GraphQL Ecosystem such 
 
 ### GraphQL Config
 
-GraphQL Config is a way of specifying your GraphQL Project in a standard way so the most of tools around GraphQL Ecosystem can recognize your project such as VSCode GraphQL Extension, GraphQL ESLint and GraphQL Code Generator
+GraphQL Config is a way of specifying your GraphQL Project in a standard way so the most of the tools around GraphQL Ecosystem can recognize your project such as VSCode GraphQL Extension, GraphQL ESLint and GraphQL Code Generator
 
-```yml
+```yaml
 schema: ./packages/server/modules/**/*.graphql # Backend
 documents: ./packages/client/pages/**/*.graphql # Frontend
 ```
 
 Omnigraph acts like as a custom loader with GraphQL Config
 
-```yml
+```yaml
 schema:
   MyOmnigraph:
     loader: '@omnigraph/openapi' # This provides GraphQLSchema to GraphQL Config
@@ -30,7 +30,7 @@ Let's say we want to create a type-safe SDK from the generated schema using Grap
 
 Like any other GraphQL project. We can use `extensions.codegen`
 
-```yml
+```yaml
 schema:
   MyOmnigraph:
     loader: '@omnigraph/openapi' # This provides GraphQLSchema to GraphQL Config
@@ -112,7 +112,7 @@ export default function loadSchemaFromBundle() {
 
 And use our new loader in GraphQL Config by replacing `loader`
 
-```yml
+```yaml
 schema:
   MyOmnigraph:
     loader: ./load-schema-from-bundle.js # This provides GraphQLSchema to GraphQL Config
