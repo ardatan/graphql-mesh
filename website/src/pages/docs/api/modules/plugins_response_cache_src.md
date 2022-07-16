@@ -1,0 +1,30 @@
+---
+id: "plugin-response-cache"
+title: "@graphql-mesh/plugin-response-cache"
+---
+
+## Table of contents
+
+### Functions
+
+- [useMeshResponseCache](plugins_response_cache_src#usemeshresponsecache)
+
+## Functions
+
+### useMeshResponseCache
+
+▸ **useMeshResponseCache**(`options`): `Plugin`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | [`MeshPluginOptions`](types_src#meshpluginoptions)\<[`ResponseCacheConfig`](/docs/api/interfaces/types_src.YamlConfig.ResponseCacheConfig)> |
+
+#### Returns
+
+`Plugin`
+
+#### Defined in
+
+[packages/plugins/response-cache/src/index.ts:98](https://github.com/Urigo/graphql-mesh/blob/master/packages/plugins/response-cache/src/index.ts#L98)
