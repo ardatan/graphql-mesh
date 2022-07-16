@@ -33,10 +33,6 @@ title: 'ODataHandler'
 | :------ | :------ |
 | `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`ODataHandler`](/docs/api/interfaces/types_src.YamlConfig.ODataHandler)> |
 
-#### Defined in
-
-[packages/handlers/odata/src/index.ts:135](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/odata/src/index.ts#L135)
-
 ## Methods
 
 ### getCachedMetadataJson
@@ -46,10 +42,6 @@ title: 'ODataHandler'
 #### Returns
 
 `Promise`\<`any`>
-
-#### Defined in
-
-[packages/handlers/odata/src/index.ts:153](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/odata/src/index.ts#L153)
 
 ___
 
@@ -64,7 +56,3 @@ ___
 #### Implementation of
 
 [MeshHandler](/docs/api/interfaces/types_src.MeshHandler).[getMeshSource](/docs/api/interfaces/types_src.MeshHandler#getmeshsource)
-
-#### Defined in
-
-[packages/handlers/odata/src/index.ts:172](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/odata/src/index.ts#L172)

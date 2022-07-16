@@ -32,10 +32,6 @@ title: 'OpenAPIHandler'
 | :------ | :------ |
 | `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`OpenapiHandler`](/docs/api/interfaces/types_src.YamlConfig.OpenapiHandler)> |
 
-#### Defined in
-
-[packages/handlers/openapi/src/index.ts:39](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/openapi/src/index.ts#L39)
-
 ## Methods
 
 ### getMeshSource
@@ -49,7 +45,3 @@ title: 'OpenAPIHandler'
 #### Implementation of
 
 [MeshHandler](/docs/api/interfaces/types_src.MeshHandler).[getMeshSource](/docs/api/interfaces/types_src.MeshHandler#getmeshsource)
-
-#### Defined in
-
-[packages/handlers/openapi/src/index.ts:110](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/openapi/src/index.ts#L110)

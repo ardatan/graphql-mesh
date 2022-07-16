@@ -38,10 +38,6 @@ title: 'Neo4JHandler'
 | :------ | :------ |
 | `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`Neo4JHandler`](/docs/api/interfaces/types_src.YamlConfig.Neo4JHandler)> |
 
-#### Defined in
-
-[packages/handlers/neo4j/src/index.ts:42](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/neo4j/src/index.ts#L42)
-
 ## Properties
 
 ### fetchFn
@@ -93,10 +89,6 @@ ___
 
 `Promise`\<`string`>
 
-#### Defined in
-
-[packages/handlers/neo4j/src/index.ts:60](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/neo4j/src/index.ts#L60)
-
 ___
 
 ### getMeshSource
@@ -110,7 +102,3 @@ ___
 #### Implementation of
 
 [MeshHandler](/docs/api/interfaces/types_src.MeshHandler).[getMeshSource](/docs/api/interfaces/types_src.MeshHandler#getmeshsource)
-
-#### Defined in
-
-[packages/handlers/neo4j/src/index.ts:79](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/neo4j/src/index.ts#L79)

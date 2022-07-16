@@ -59,10 +59,6 @@ title: 'Interpolator'
 | `options` | `Object` | `defaultOptions` |
 | `options.delimiter` | `string`[] | `undefined` |
 
-#### Defined in
-
-[packages/string-interpolation/src/interpolator.js:7](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/interpolator.js#L7)
-
 ## Properties
 
 ### aliases
@@ -72,6 +68,8 @@ title: 'Interpolator'
 #### Defined in
 
 [packages/string-interpolation/src/interpolator.js:10](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/interpolator.js#L10)
+
+[packages/string-interpolation/src/interpolator.js:178](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/interpolator.js#L178)
 
 ___
 
@@ -109,10 +107,6 @@ ___
 
 `string`[]
 
-#### Defined in
-
-[packages/string-interpolation/src/interpolator.js:19](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/interpolator.js#L19)
-
 ## Methods
 
 ### addAlias
@@ -130,10 +124,6 @@ ___
 
 [`Interpolator`](string_interpolation_src.Interpolator)
 
-#### Defined in
-
-[packages/string-interpolation/src/interpolator.js:168](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/interpolator.js#L168)
-
 ___
 
 ### applyData
@@ -150,10 +140,6 @@ ___
 #### Returns
 
 `any`
-
-#### Defined in
-
-[packages/string-interpolation/src/interpolator.js:138](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/interpolator.js#L138)
 
 ___
 
@@ -173,10 +159,6 @@ ___
 
 `any`
 
-#### Defined in
-
-[packages/string-interpolation/src/interpolator.js:158](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/interpolator.js#L158)
-
 ___
 
 ### applyRule
@@ -195,10 +177,6 @@ ___
 
 `any`
 
-#### Defined in
-
-[packages/string-interpolation/src/interpolator.js:119](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/interpolator.js#L119)
-
 ___
 
 ### delimiterEnd
@@ -209,10 +187,6 @@ ___
 
 `string`
 
-#### Defined in
-
-[packages/string-interpolation/src/interpolator.js:27](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/interpolator.js#L27)
-
 ___
 
 ### delimiterStart
@@ -222,10 +196,6 @@ ___
 #### Returns
 
 `string`
-
-#### Defined in
-
-[packages/string-interpolation/src/interpolator.js:23](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/interpolator.js#L23)
 
 ___
 
@@ -244,10 +214,6 @@ ___
 
 `any`
 
-#### Defined in
-
-[packages/string-interpolation/src/interpolator.js:81](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/interpolator.js#L81)
-
 ___
 
 ### extractRules
@@ -263,10 +229,6 @@ ___
 #### Returns
 
 `any`
-
-#### Defined in
-
-[packages/string-interpolation/src/interpolator.js:53](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/interpolator.js#L53)
 
 ___
 
@@ -284,10 +246,6 @@ ___
 
 `any`
 
-#### Defined in
-
-[packages/string-interpolation/src/interpolator.js:85](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/interpolator.js#L85)
-
 ___
 
 ### getFromAlias
@@ -303,10 +261,6 @@ ___
 #### Returns
 
 `any`
-
-#### Defined in
-
-[packages/string-interpolation/src/interpolator.js:134](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/interpolator.js#L134)
 
 ___
 
@@ -324,10 +278,6 @@ ___
 
 `any`
 
-#### Defined in
-
-[packages/string-interpolation/src/interpolator.js:66](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/interpolator.js#L66)
-
 ___
 
 ### getModifier
@@ -343,10 +293,6 @@ ___
 #### Returns
 
 `any`
-
-#### Defined in
-
-[packages/string-interpolation/src/interpolator.js:154](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/interpolator.js#L154)
 
 ___
 
@@ -364,10 +310,6 @@ ___
 
 `any`
 
-#### Defined in
-
-[packages/string-interpolation/src/interpolator.js:97](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/interpolator.js#L97)
-
 ___
 
 ### parse
@@ -384,10 +326,6 @@ ___
 #### Returns
 
 `any`
-
-#### Defined in
-
-[packages/string-interpolation/src/interpolator.js:106](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/interpolator.js#L106)
 
 ___
 
@@ -407,10 +345,6 @@ ___
 
 `any`
 
-#### Defined in
-
-[packages/string-interpolation/src/interpolator.js:115](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/interpolator.js#L115)
-
 ___
 
 ### parseRules
@@ -427,10 +361,6 @@ ___
 
 `any`
 
-#### Defined in
-
-[packages/string-interpolation/src/interpolator.js:44](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/interpolator.js#L44)
-
 ___
 
 ### registerBuiltInModifiers
@@ -440,10 +370,6 @@ ___
 #### Returns
 
 [`Interpolator`](string_interpolation_src.Interpolator)
-
-#### Defined in
-
-[packages/string-interpolation/src/interpolator.js:14](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/interpolator.js#L14)
 
 ___
 
@@ -462,10 +388,6 @@ ___
 
 `Error` \| [`Interpolator`](string_interpolation_src.Interpolator)
 
-#### Defined in
-
-[packages/string-interpolation/src/interpolator.js:31](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/interpolator.js#L31)
-
 ___
 
 ### removeAfter
@@ -483,10 +405,6 @@ ___
 
 `any`
 
-#### Defined in
-
-[packages/string-interpolation/src/interpolator.js:77](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/interpolator.js#L77)
-
 ___
 
 ### removeAlias
@@ -503,10 +421,6 @@ ___
 
 [`Interpolator`](string_interpolation_src.Interpolator)
 
-#### Defined in
-
-[packages/string-interpolation/src/interpolator.js:177](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/interpolator.js#L177)
-
 ___
 
 ### removeDelimiter
@@ -522,7 +436,3 @@ ___
 #### Returns
 
 `any`
-
-#### Defined in
-
-[packages/string-interpolation/src/interpolator.js:73](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/interpolator.js#L73)

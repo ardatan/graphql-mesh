@@ -34,10 +34,6 @@ title: 'FsStoreStorageAdapter'
 | :------ | :------ |
 | `options` | [`FsStoreStorageAdapterOptions`](/docs/api/interfaces/store_src.FsStoreStorageAdapterOptions) |
 
-#### Defined in
-
-[packages/store/src/index.ts:45](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L45)
-
 ## Methods
 
 ### delete
@@ -57,10 +53,6 @@ title: 'FsStoreStorageAdapter'
 #### Implementation of
 
 StoreStorageAdapter.delete
-
-#### Defined in
-
-[packages/store/src/index.ts:84](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L84)
 
 ___
 
@@ -90,10 +82,6 @@ ___
 
 StoreStorageAdapter.read
 
-#### Defined in
-
-[packages/store/src/index.ts:50](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L50)
-
 ___
 
 ### write
@@ -122,7 +110,3 @@ ___
 #### Implementation of
 
 StoreStorageAdapter.write
-
-#### Defined in
-
-[packages/store/src/index.ts:69](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L69)

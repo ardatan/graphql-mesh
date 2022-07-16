@@ -36,21 +36,25 @@ title: 'MeshStore'
 | `storage` | [`StoreStorageAdapter`](../modules/store_src#storestorageadapter)\<`any`, `string`> |
 | `flags` | [`StoreFlags`](../modules/store_src#storeflags) |
 
-#### Defined in
-
-[packages/store/src/index.ts:161](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L161)
-
 ## Properties
 
 ### flags
 
 • **flags**: [`StoreFlags`](../modules/store_src#storeflags)
 
+#### Defined in
+
+[packages/store/src/index.ts:161](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L161)
+
 ___
 
 ### identifier
 
 • **identifier**: `string`
+
+#### Defined in
+
+[packages/store/src/index.ts:161](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L161)
 
 ## Methods
 
@@ -68,10 +72,6 @@ ___
 #### Returns
 
 [`MeshStore`](store_src.MeshStore)
-
-#### Defined in
-
-[packages/store/src/index.ts:163](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L163)
 
 ___
 
@@ -95,7 +95,3 @@ ___
 #### Returns
 
 [`StoreProxy`](../modules/store_src#storeproxy)\<`TData`>
-
-#### Defined in
-
-[packages/store/src/index.ts:170](https://github.com/Urigo/graphql-mesh/blob/master/packages/store/src/index.ts#L170)

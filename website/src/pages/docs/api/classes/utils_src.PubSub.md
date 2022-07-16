@@ -55,10 +55,6 @@ title: 'PubSub'
 
 [MeshPubSub](/docs/api/interfaces/types_src.MeshPubSub).[asyncIterator](/docs/api/interfaces/types_src.MeshPubSub#asynciterator)
 
-#### Defined in
-
-[packages/utils/src/pubsub.ts:46](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/pubsub.ts#L46)
-
 ___
 
 ### publish
@@ -85,10 +81,6 @@ ___
 #### Implementation of
 
 [MeshPubSub](/docs/api/interfaces/types_src.MeshPubSub).[publish](/docs/api/interfaces/types_src.MeshPubSub#publish)
-
-#### Defined in
-
-[packages/utils/src/pubsub.ts:11](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/pubsub.ts#L11)
 
 ___
 
@@ -117,10 +109,6 @@ ___
 
 [MeshPubSub](/docs/api/interfaces/types_src.MeshPubSub).[subscribe](/docs/api/interfaces/types_src.MeshPubSub#subscribe)
 
-#### Defined in
-
-[packages/utils/src/pubsub.ts:18](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/pubsub.ts#L18)
-
 ___
 
 ### unsubscribe
@@ -140,7 +128,3 @@ ___
 #### Implementation of
 
 [MeshPubSub](/docs/api/interfaces/types_src.MeshPubSub).[unsubscribe](/docs/api/interfaces/types_src.MeshPubSub#unsubscribe)
-
-#### Defined in
-
-[packages/utils/src/pubsub.ts:31](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/pubsub.ts#L31)

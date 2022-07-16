@@ -32,10 +32,6 @@ title: 'MongooseHandler'
 | :------ | :------ |
 | `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`MongooseHandler`](/docs/api/interfaces/types_src.YamlConfig.MongooseHandler)> |
 
-#### Defined in
-
-[packages/handlers/mongoose/src/index.ts:38](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/mongoose/src/index.ts#L38)
-
 ## Methods
 
 ### getMeshSource
@@ -49,7 +45,3 @@ title: 'MongooseHandler'
 #### Implementation of
 
 [MeshHandler](/docs/api/interfaces/types_src.MeshHandler).[getMeshSource](/docs/api/interfaces/types_src.MeshHandler#getmeshsource)
-
-#### Defined in
-
-[packages/handlers/mongoose/src/index.ts:45](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/mongoose/src/index.ts#L45)

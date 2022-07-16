@@ -37,10 +37,6 @@ title: 'GraphQLHandler'
 | :------ | :------ |
 | `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`GraphQLHandlerHTTPConfiguration`](/docs/api/interfaces/types_src.YamlConfig.GraphQLHandlerHTTPConfiguration) \| [`GraphQLHandlerCodeFirstConfiguration`](/docs/api/interfaces/types_src.YamlConfig.GraphQLHandlerCodeFirstConfiguration) \| [`GraphQLHandlerMultipleHTTPConfiguration`](/docs/api/interfaces/types_src.YamlConfig.GraphQLHandlerMultipleHTTPConfiguration)> |
 
-#### Defined in
-
-[packages/handlers/graphql/src/index.ts:51](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/graphql/src/index.ts#L51)
-
 ## Methods
 
 ### getCodeFirstSource
@@ -56,10 +52,6 @@ title: 'GraphQLHandler'
 #### Returns
 
 `Promise`\<[`MeshSource`](../modules/types_src#meshsource)>
-
-#### Defined in
-
-[packages/handlers/graphql/src/index.ts:158](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/graphql/src/index.ts#L158)
 
 ___
 
@@ -77,10 +69,6 @@ ___
 
 `Promise`\<`Executor`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>>>
 
-#### Defined in
-
-[packages/handlers/graphql/src/index.ts:73](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/graphql/src/index.ts#L73)
-
 ___
 
 ### getFallbackExecutor
@@ -97,10 +85,6 @@ ___
 
 `Executor`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>>
 
-#### Defined in
-
-[packages/handlers/graphql/src/index.ts:212](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/graphql/src/index.ts#L212)
-
 ___
 
 ### getMeshSource
@@ -114,10 +98,6 @@ ___
 #### Implementation of
 
 [MeshHandler](/docs/api/interfaces/types_src.MeshHandler).[getMeshSource](/docs/api/interfaces/types_src.MeshHandler#getmeshsource)
-
-#### Defined in
-
-[packages/handlers/graphql/src/index.ts:236](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/graphql/src/index.ts#L236)
 
 ___
 
@@ -135,10 +115,6 @@ ___
 
 `Promise`\<`GraphQLSchema`>
 
-#### Defined in
-
-[packages/handlers/graphql/src/index.ts:104](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/graphql/src/index.ts#L104)
-
 ___
 
 ### getRaceExecutor
@@ -154,7 +130,3 @@ ___
 #### Returns
 
 `Executor`\<`Record`\<`string`, `any`>, `Record`\<`string`, `any`>>
-
-#### Defined in
-
-[packages/handlers/graphql/src/index.ts:206](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/graphql/src/index.ts#L206)

@@ -47,10 +47,6 @@ title: 'RedisCache'
 | :------ | :------ |
 | `options` | [`RedisConfig`](/docs/api/interfaces/types_src.YamlConfig.RedisConfig) & \{ `pubsub`: [`MeshPubSub`](/docs/api/interfaces/types_src.MeshPubSub)  } |
 
-#### Defined in
-
-[packages/cache/redis/src/index.ts:14](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/redis/src/index.ts#L14)
-
 ## Methods
 
 ### delete
@@ -70,10 +66,6 @@ title: 'RedisCache'
 #### Implementation of
 
 [KeyValueCache](/docs/api/interfaces/types_src.KeyValueCache).[delete](/docs/api/interfaces/types_src.KeyValueCache#delete)
-
-#### Defined in
-
-[packages/cache/redis/src/index.ts:72](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/redis/src/index.ts#L72)
 
 ___
 
@@ -95,10 +87,6 @@ ___
 
 [KeyValueCache](/docs/api/interfaces/types_src.KeyValueCache).[get](/docs/api/interfaces/types_src.KeyValueCache#get)
 
-#### Defined in
-
-[packages/cache/redis/src/index.ts:59](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/redis/src/index.ts#L59)
-
 ___
 
 ### getKeysByPrefix
@@ -118,10 +106,6 @@ ___
 #### Implementation of
 
 [KeyValueCache](/docs/api/interfaces/types_src.KeyValueCache).[getKeysByPrefix](/docs/api/interfaces/types_src.KeyValueCache#getkeysbyprefix)
-
-#### Defined in
-
-[packages/cache/redis/src/index.ts:68](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/redis/src/index.ts#L68)
 
 ___
 
@@ -144,7 +128,3 @@ ___
 #### Implementation of
 
 [KeyValueCache](/docs/api/interfaces/types_src.KeyValueCache).[set](/docs/api/interfaces/types_src.KeyValueCache#set)
-
-#### Defined in
-
-[packages/cache/redis/src/index.ts:50](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/redis/src/index.ts#L50)

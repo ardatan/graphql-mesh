@@ -36,10 +36,6 @@ title: 'StitchingMerger'
 | :------ | :------ |
 | `options` | [`MeshMergerOptions`](/docs/api/interfaces/types_src.MeshMergerOptions) |
 
-#### Defined in
-
-[packages/mergers/stitching/src/index.ts:27](https://github.com/Urigo/graphql-mesh/blob/master/packages/mergers/stitching/src/index.ts#L27)
-
 ## Properties
 
 ### name
@@ -73,7 +69,3 @@ title: 'StitchingMerger'
 #### Implementation of
 
 [MeshMerger](/docs/api/interfaces/types_src.MeshMerger).[getUnifiedSchema](/docs/api/interfaces/types_src.MeshMerger#getunifiedschema)
-
-#### Defined in
-
-[packages/mergers/stitching/src/index.ts:84](https://github.com/Urigo/graphql-mesh/blob/master/packages/mergers/stitching/src/index.ts#L84)

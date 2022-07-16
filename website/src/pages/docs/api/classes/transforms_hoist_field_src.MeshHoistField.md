@@ -38,10 +38,6 @@ title: 'MeshHoistField'
 | :------ | :------ |
 | `__namedParameters` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)\<[`HoistFieldTransformConfig`](/docs/api/interfaces/types_src.YamlConfig.HoistFieldTransformConfig)[]> |
 
-#### Defined in
-
-[packages/transforms/hoist-field/src/index.ts:15](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/hoist-field/src/index.ts#L15)
-
 ## Properties
 
 ### noWrap
@@ -78,10 +74,6 @@ title: 'MeshHoistField'
 
 MeshTransform.transformRequest
 
-#### Defined in
-
-[packages/transforms/hoist-field/src/index.ts:66](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/hoist-field/src/index.ts#L66)
-
 ___
 
 ### transformResult
@@ -104,10 +96,6 @@ ___
 
 MeshTransform.transformResult
 
-#### Defined in
-
-[packages/transforms/hoist-field/src/index.ts:74](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/hoist-field/src/index.ts#L74)
-
 ___
 
 ### transformSchema
@@ -129,7 +117,3 @@ ___
 #### Implementation of
 
 MeshTransform.transformSchema
-
-#### Defined in
-
-[packages/transforms/hoist-field/src/index.ts:58](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/hoist-field/src/index.ts#L58)

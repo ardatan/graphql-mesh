@@ -36,10 +36,6 @@ title: 'FederationMerger'
 | :------ | :------ |
 | `options` | [`MeshMergerOptions`](/docs/api/interfaces/types_src.MeshMergerOptions) |
 
-#### Defined in
-
-[packages/mergers/federation/src/index.ts:25](https://github.com/Urigo/graphql-mesh/blob/master/packages/mergers/federation/src/index.ts#L25)
-
 ## Properties
 
 ### name
@@ -73,7 +69,3 @@ title: 'FederationMerger'
 #### Implementation of
 
 [MeshMerger](/docs/api/interfaces/types_src.MeshMerger).[getUnifiedSchema](/docs/api/interfaces/types_src.MeshMerger#getunifiedschema)
-
-#### Defined in
-
-[packages/mergers/federation/src/index.ts:32](https://github.com/Urigo/graphql-mesh/blob/master/packages/mergers/federation/src/index.ts#L32)

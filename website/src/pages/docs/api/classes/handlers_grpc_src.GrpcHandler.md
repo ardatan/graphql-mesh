@@ -39,10 +39,6 @@ title: 'GrpcHandler'
 | :------ | :------ |
 | `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`GrpcHandler`](/docs/api/interfaces/types_src.YamlConfig.GrpcHandler)> |
 
-#### Defined in
-
-[packages/handlers/grpc/src/index.ts:47](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/grpc/src/index.ts#L47)
-
 ## Methods
 
 ### getCachedDescriptorSets
@@ -59,10 +55,6 @@ title: 'GrpcHandler'
 
 `Promise`\<`RootJsonAndDecodedDescriptorSet`[]>
 
-#### Defined in
-
-[packages/handlers/grpc/src/index.ts:180](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/grpc/src/index.ts#L180)
-
 ___
 
 ### getCredentials
@@ -72,10 +64,6 @@ ___
 #### Returns
 
 `Promise`\<`ChannelCredentials`>
-
-#### Defined in
-
-[packages/handlers/grpc/src/index.ts:218](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/grpc/src/index.ts#L218)
 
 ___
 
@@ -91,10 +79,6 @@ ___
 
 [MeshHandler](/docs/api/interfaces/types_src.MeshHandler).[getMeshSource](/docs/api/interfaces/types_src.MeshHandler#getmeshsource)
 
-#### Defined in
-
-[packages/handlers/grpc/src/index.ts:439](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/grpc/src/index.ts#L439)
-
 ___
 
 ### getRootPromiseFromDescriptorFilePath
@@ -105,10 +89,6 @@ ___
 
 `Promise`\<`Root`>
 
-#### Defined in
-
-[packages/handlers/grpc/src/index.ts:104](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/grpc/src/index.ts#L104)
-
 ___
 
 ### getRootPromiseFromProtoFilePath
@@ -118,10 +98,6 @@ ___
 #### Returns
 
 `Promise`\<`Root`>
-
-#### Defined in
-
-[packages/handlers/grpc/src/index.ts:141](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/grpc/src/index.ts#L141)
 
 ___
 
@@ -138,10 +114,6 @@ ___
 #### Returns
 
 `Promise`\<`Promise`\<`Root`>[]>
-
-#### Defined in
-
-[packages/handlers/grpc/src/index.ts:90](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/grpc/src/index.ts#L90)
 
 ___
 
@@ -166,10 +138,6 @@ ___
 
 `void`
 
-#### Defined in
-
-[packages/handlers/grpc/src/index.ts:259](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/grpc/src/index.ts#L259)
-
 ___
 
 ### walkToFindTypePath
@@ -187,7 +155,3 @@ ___
 #### Returns
 
 `string`[]
-
-#### Defined in
-
-[packages/handlers/grpc/src/index.ts:248](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/grpc/src/index.ts#L248)

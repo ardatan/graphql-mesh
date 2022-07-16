@@ -41,10 +41,6 @@ title: 'DefaultLogger'
 | :------ | :------ |
 | `name?` | `string` |
 
-#### Defined in
-
-[packages/utils/src/logger.ts:27](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L27)
-
 ## Properties
 
 ### name
@@ -54,6 +50,10 @@ title: 'DefaultLogger'
 #### Implementation of
 
 Logger.name
+
+#### Defined in
+
+[packages/utils/src/logger.ts:27](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L27)
 
 ## Methods
 
@@ -75,10 +75,6 @@ Logger.name
 
 Logger.child
 
-#### Defined in
-
-[packages/utils/src/logger.ts:111](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L111)
-
 ___
 
 ### debug
@@ -98,10 +94,6 @@ ___
 #### Implementation of
 
 Logger.debug
-
-#### Defined in
-
-[packages/utils/src/logger.ts:99](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L99)
 
 ___
 
@@ -123,10 +115,6 @@ ___
 
 Logger.error
 
-#### Defined in
-
-[packages/utils/src/logger.ts:93](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L93)
-
 ___
 
 ### info
@@ -146,10 +134,6 @@ ___
 #### Implementation of
 
 Logger.info
-
-#### Defined in
-
-[packages/utils/src/logger.ts:83](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L83)
 
 ___
 
@@ -171,10 +155,6 @@ ___
 
 Logger.log
 
-#### Defined in
-
-[packages/utils/src/logger.ts:68](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L68)
-
 ___
 
 ### warn
@@ -194,7 +174,3 @@ ___
 #### Implementation of
 
 Logger.warn
-
-#### Defined in
-
-[packages/utils/src/logger.ts:73](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L73)

@@ -36,10 +36,6 @@ title: 'CacheTransform'
 | :------ | :------ |
 | `options` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)\<[`CacheTransformConfig`](/docs/api/interfaces/types_src.YamlConfig.CacheTransformConfig)[]> |
 
-#### Defined in
-
-[packages/transforms/cache/src/index.ts:16](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/cache/src/index.ts#L16)
-
 ## Properties
 
 ### noWrap
@@ -73,7 +69,3 @@ title: 'CacheTransform'
 #### Implementation of
 
 MeshTransform.transformSchema
-
-#### Defined in
-
-[packages/transforms/cache/src/index.ts:17](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/cache/src/index.ts#L17)

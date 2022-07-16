@@ -55,10 +55,6 @@ title: 'FileCache'
 | `__namedParameters.importFn` | [`ImportFn`](../modules/types_src#importfn) |
 | `__namedParameters.path` | `string` |
 
-#### Defined in
-
-[packages/cache/file/src/index.ts:10](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L10)
-
 ## Properties
 
 ### absolutePath
@@ -109,10 +105,6 @@ ___
 
 [KeyValueCache](/docs/api/interfaces/types_src.KeyValueCache).[delete](/docs/api/interfaces/types_src.KeyValueCache#delete)
 
-#### Defined in
-
-[packages/cache/file/src/index.ts:44](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L44)
-
 ___
 
 ### get
@@ -132,10 +124,6 @@ ___
 #### Implementation of
 
 [KeyValueCache](/docs/api/interfaces/types_src.KeyValueCache).[get](/docs/api/interfaces/types_src.KeyValueCache#get)
-
-#### Defined in
-
-[packages/cache/file/src/index.ts:33](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L33)
 
 ___
 
@@ -157,10 +145,6 @@ ___
 
 [KeyValueCache](/docs/api/interfaces/types_src.KeyValueCache).[getKeysByPrefix](/docs/api/interfaces/types_src.KeyValueCache#getkeysbyprefix)
 
-#### Defined in
-
-[packages/cache/file/src/index.ts:28](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L28)
-
 ___
 
 ### set
@@ -181,7 +165,3 @@ ___
 #### Implementation of
 
 [KeyValueCache](/docs/api/interfaces/types_src.KeyValueCache).[set](/docs/api/interfaces/types_src.KeyValueCache#set)
-
-#### Defined in
-
-[packages/cache/file/src/index.ts:38](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/file/src/index.ts#L38)

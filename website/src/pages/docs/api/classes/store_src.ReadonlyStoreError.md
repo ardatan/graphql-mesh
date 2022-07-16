@@ -47,10 +47,6 @@ title: 'ReadonlyStoreError'
 
 Error.constructor
 
-#### Defined in
-
-node_modules/typescript/lib/lib.es5.d.ts:1034
-
 • **new ReadonlyStoreError**(`message?`, `options?`)
 
 #### Parameters
@@ -63,10 +59,6 @@ node_modules/typescript/lib/lib.es5.d.ts:1034
 #### Inherited from
 
 Error.constructor
-
-#### Defined in
-
-node_modules/typescript/lib/lib.es2022.error.d.ts:30
 
 ## Properties
 
@@ -134,10 +126,6 @@ ___
 
 ▸ (`err`, `stackTraces`): `any`
 
-Optional override for formatting stack traces
-
-**`see`** https://v8.dev/docs/stack-trace-api#customizing-stack-traces
-
 ##### Parameters
 
 | Name | Type |
@@ -177,8 +165,6 @@ node_modules/@types/node/globals.d.ts:13
 
 ▸ `Static` **captureStackTrace**(`targetObject`, `constructorOpt?`): `void`
 
-Create .stack property on a target object
-
 #### Parameters
 
 | Name | Type |
@@ -193,7 +179,3 @@ Create .stack property on a target object
 #### Inherited from
 
 Error.captureStackTrace
-
-#### Defined in
-
-node_modules/@types/node/globals.d.ts:4

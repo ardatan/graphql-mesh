@@ -32,10 +32,6 @@ title: 'FederationTransform'
 | :------ | :------ |
 | `__namedParameters` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)\<[`FederationTransform`](/docs/api/interfaces/types_src.YamlConfig.FederationTransform)> |
 
-#### Defined in
-
-[packages/transforms/federation/src/index.ts:25](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/federation/src/index.ts#L25)
-
 ## Methods
 
 ### transformSchema
@@ -56,7 +52,3 @@ title: 'FederationTransform'
 #### Implementation of
 
 MeshTransform.transformSchema
-
-#### Defined in
-
-[packages/transforms/federation/src/index.ts:32](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/federation/src/index.ts#L32)

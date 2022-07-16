@@ -46,10 +46,6 @@ title: 'MeshApolloLink'
 
 ApolloLink.constructor
 
-#### Defined in
-
-[packages/apollo-link/src/index.ts:54](https://github.com/Urigo/graphql-mesh/blob/master/packages/apollo-link/src/index.ts#L54)
-
 ## Methods
 
 ### concat
@@ -69,10 +65,6 @@ ApolloLink.constructor
 #### Inherited from
 
 ApolloLink.concat
-
-#### Defined in
-
-node_modules/@apollo/client/link/core/ApolloLink.d.ts:11
 
 ___
 
@@ -95,10 +87,6 @@ ___
 
 ApolloLink.request
 
-#### Defined in
-
-node_modules/@apollo/client/link/core/ApolloLink.d.ts:12
-
 ___
 
 ### setOnError
@@ -118,10 +106,6 @@ ___
 #### Inherited from
 
 ApolloLink.setOnError
-
-#### Defined in
-
-node_modules/@apollo/client/link/core/ApolloLink.d.ts:14
 
 ___
 
@@ -145,10 +129,6 @@ ___
 
 ApolloLink.split
 
-#### Defined in
-
-node_modules/@apollo/client/link/core/ApolloLink.d.ts:10
-
 ___
 
 ### concat
@@ -170,10 +150,6 @@ ___
 
 ApolloLink.concat
 
-#### Defined in
-
-node_modules/@apollo/client/link/core/ApolloLink.d.ts:8
-
 ___
 
 ### empty
@@ -187,10 +163,6 @@ ___
 #### Inherited from
 
 ApolloLink.empty
-
-#### Defined in
-
-node_modules/@apollo/client/link/core/ApolloLink.d.ts:4
 
 ___
 
@@ -213,10 +185,6 @@ ___
 
 ApolloLink.execute
 
-#### Defined in
-
-node_modules/@apollo/client/link/core/ApolloLink.d.ts:7
-
 ___
 
 ### from
@@ -236,10 +204,6 @@ ___
 #### Inherited from
 
 ApolloLink.from
-
-#### Defined in
-
-node_modules/@apollo/client/link/core/ApolloLink.d.ts:5
 
 ___
 
@@ -262,7 +226,3 @@ ___
 #### Inherited from
 
 ApolloLink.split
-
-#### Defined in
-
-node_modules/@apollo/client/link/core/ApolloLink.d.ts:6

@@ -36,10 +36,6 @@ title: 'SnapshotTransform'
 | :------ | :------ |
 | `__namedParameters` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)\<[`SnapshotTransformConfig`](/docs/api/interfaces/types_src.YamlConfig.SnapshotTransformConfig)> |
 
-#### Defined in
-
-[packages/transforms/snapshot/src/index.ts:23](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/snapshot/src/index.ts#L23)
-
 ## Properties
 
 ### noWrap
@@ -73,7 +69,3 @@ title: 'SnapshotTransform'
 #### Implementation of
 
 MeshTransform.transformSchema
-
-#### Defined in
-
-[packages/transforms/snapshot/src/index.ts:29](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/snapshot/src/index.ts#L29)

@@ -47,10 +47,6 @@ title: 'LocalforageCache'
 | :------ | :------ |
 | `config?` | [`LocalforageConfig`](/docs/api/interfaces/types_src.YamlConfig.LocalforageConfig) |
 
-#### Defined in
-
-[packages/cache/localforage/src/index.ts:11](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/localforage/src/index.ts#L11)
-
 ## Methods
 
 ### delete
@@ -70,10 +66,6 @@ title: 'LocalforageCache'
 #### Implementation of
 
 [KeyValueCache](/docs/api/interfaces/types_src.KeyValueCache).[delete](/docs/api/interfaces/types_src.KeyValueCache#delete)
-
-#### Defined in
-
-[packages/cache/localforage/src/index.ts:41](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/localforage/src/index.ts#L41)
 
 ___
 
@@ -95,10 +87,6 @@ ___
 
 [KeyValueCache](/docs/api/interfaces/types_src.KeyValueCache).[get](/docs/api/interfaces/types_src.KeyValueCache#get)
 
-#### Defined in
-
-[packages/cache/localforage/src/index.ts:20](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/localforage/src/index.ts#L20)
-
 ___
 
 ### getKeysByPrefix
@@ -118,10 +106,6 @@ ___
 #### Implementation of
 
 [KeyValueCache](/docs/api/interfaces/types_src.KeyValueCache).[getKeysByPrefix](/docs/api/interfaces/types_src.KeyValueCache#getkeysbyprefix)
-
-#### Defined in
-
-[packages/cache/localforage/src/index.ts:28](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/localforage/src/index.ts#L28)
 
 ___
 
@@ -144,7 +128,3 @@ ___
 #### Implementation of
 
 [KeyValueCache](/docs/api/interfaces/types_src.KeyValueCache).[set](/docs/api/interfaces/types_src.KeyValueCache#set)
-
-#### Defined in
-
-[packages/cache/localforage/src/index.ts:33](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/localforage/src/index.ts#L33)

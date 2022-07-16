@@ -36,10 +36,6 @@ title: 'ResolversCompositionTransform'
 | :------ | :------ |
 | `__namedParameters` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)\<`any`> |
 
-#### Defined in
-
-[packages/transforms/resolvers-composition/src/index.ts:13](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/resolvers-composition/src/index.ts#L13)
-
 ## Properties
 
 ### noWrap
@@ -73,7 +69,3 @@ title: 'ResolversCompositionTransform'
 #### Implementation of
 
 MeshTransform.transformSchema
-
-#### Defined in
-
-[packages/transforms/resolvers-composition/src/index.ts:20](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/resolvers-composition/src/index.ts#L20)

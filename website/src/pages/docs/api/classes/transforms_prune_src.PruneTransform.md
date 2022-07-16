@@ -36,10 +36,6 @@ title: 'PruneTransform'
 | :------ | :------ |
 | `options` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)\<[`PruneTransformConfig`](/docs/api/interfaces/types_src.YamlConfig.PruneTransformConfig)> |
 
-#### Defined in
-
-[packages/transforms/prune/src/index.ts:7](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/prune/src/index.ts#L7)
-
 ## Properties
 
 ### noWrap
@@ -73,7 +69,3 @@ title: 'PruneTransform'
 #### Implementation of
 
 MeshTransform.transformSchema
-
-#### Defined in
-
-[packages/transforms/prune/src/index.ts:8](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/prune/src/index.ts#L8)

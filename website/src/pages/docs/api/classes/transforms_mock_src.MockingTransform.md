@@ -36,10 +36,6 @@ title: 'MockingTransform'
 | :------ | :------ |
 | `__namedParameters` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)\<[`MockingConfig`](/docs/api/interfaces/types_src.YamlConfig.MockingConfig)> |
 
-#### Defined in
-
-[packages/transforms/mock/src/index.ts:19](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/mock/src/index.ts#L19)
-
 ## Properties
 
 ### noWrap
@@ -75,7 +71,3 @@ title: 'MockingTransform'
 #### Implementation of
 
 MeshTransform.transformSchema
-
-#### Defined in
-
-[packages/transforms/mock/src/index.ts:25](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/mock/src/index.ts#L25)

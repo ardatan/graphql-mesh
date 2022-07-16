@@ -36,10 +36,6 @@ title: 'ExtendTransform'
 | :------ | :------ |
 | `__namedParameters` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)\<[`ExtendTransform`](/docs/api/interfaces/types_src.YamlConfig.ExtendTransform)> |
 
-#### Defined in
-
-[packages/transforms/extend/src/index.ts:44](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/extend/src/index.ts#L44)
-
 ## Properties
 
 ### noWrap
@@ -73,7 +69,3 @@ title: 'ExtendTransform'
 #### Implementation of
 
 MeshTransform.transformSchema
-
-#### Defined in
-
-[packages/transforms/extend/src/index.ts:49](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/extend/src/index.ts#L49)

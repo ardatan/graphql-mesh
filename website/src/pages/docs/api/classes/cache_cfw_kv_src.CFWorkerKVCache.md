@@ -37,10 +37,6 @@ title: 'CFWorkerKVCache'
 | `config.logger` | [`Logger`](../modules/types_src#logger) |
 | `config.namespace` | `string` |
 
-#### Defined in
-
-[packages/cache/cfw-kv/src/index.ts:6](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/cfw-kv/src/index.ts#L6)
-
 ## Methods
 
 ### delete
@@ -60,10 +56,6 @@ title: 'CFWorkerKVCache'
 #### Implementation of
 
 [KeyValueCache](/docs/api/interfaces/types_src.KeyValueCache).[delete](/docs/api/interfaces/types_src.KeyValueCache#delete)
-
-#### Defined in
-
-[packages/cache/cfw-kv/src/index.ts:36](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/cfw-kv/src/index.ts#L36)
 
 ___
 
@@ -91,10 +83,6 @@ ___
 
 [KeyValueCache](/docs/api/interfaces/types_src.KeyValueCache).[get](/docs/api/interfaces/types_src.KeyValueCache#get)
 
-#### Defined in
-
-[packages/cache/cfw-kv/src/index.ts:14](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/cfw-kv/src/index.ts#L14)
-
 ___
 
 ### getKeysByPrefix
@@ -114,10 +102,6 @@ ___
 #### Implementation of
 
 [KeyValueCache](/docs/api/interfaces/types_src.KeyValueCache).[getKeysByPrefix](/docs/api/interfaces/types_src.KeyValueCache#getkeysbyprefix)
-
-#### Defined in
-
-[packages/cache/cfw-kv/src/index.ts:18](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/cfw-kv/src/index.ts#L18)
 
 ___
 
@@ -141,7 +125,3 @@ ___
 #### Implementation of
 
 [KeyValueCache](/docs/api/interfaces/types_src.KeyValueCache).[set](/docs/api/interfaces/types_src.KeyValueCache#set)
-
-#### Defined in
-
-[packages/cache/cfw-kv/src/index.ts:30](https://github.com/Urigo/graphql-mesh/blob/master/packages/cache/cfw-kv/src/index.ts#L30)

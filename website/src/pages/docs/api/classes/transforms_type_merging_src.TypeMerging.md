@@ -36,10 +36,6 @@ title: 'TypeMerging'
 | :------ | :------ |
 | `__namedParameters` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)\<[`TypeMergingConfig`](/docs/api/interfaces/types_src.YamlConfig.TypeMergingConfig)> |
 
-#### Defined in
-
-[packages/transforms/type-merging/src/index.ts:10](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/type-merging/src/index.ts#L10)
-
 ## Properties
 
 ### importFn
@@ -70,7 +66,3 @@ title: 'TypeMerging'
 #### Implementation of
 
 MeshTransform.transformSchema
-
-#### Defined in
-
-[packages/transforms/type-merging/src/index.ts:16](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/type-merging/src/index.ts#L16)

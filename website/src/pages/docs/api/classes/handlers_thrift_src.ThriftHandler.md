@@ -32,10 +32,6 @@ title: 'ThriftHandler'
 | :------ | :------ |
 | `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`ThriftHandler`](/docs/api/interfaces/types_src.YamlConfig.ThriftHandler)> |
 
-#### Defined in
-
-[packages/handlers/thrift/src/index.ts:53](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/thrift/src/index.ts#L53)
-
 ## Methods
 
 ### getMeshSource
@@ -49,7 +45,3 @@ title: 'ThriftHandler'
 #### Implementation of
 
 [MeshHandler](/docs/api/interfaces/types_src.MeshHandler).[getMeshSource](/docs/api/interfaces/types_src.MeshHandler#getmeshsource)
-
-#### Defined in
-
-[packages/handlers/thrift/src/index.ts:62](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/thrift/src/index.ts#L62)

@@ -32,10 +32,6 @@ title: 'TuqlHandler'
 | :------ | :------ |
 | `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`TuqlHandler`](/docs/api/interfaces/types_src.YamlConfig.TuqlHandler)> |
 
-#### Defined in
-
-[packages/handlers/tuql/src/index.ts:8](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/tuql/src/index.ts#L8)
-
 ## Methods
 
 ### getMeshSource
@@ -49,7 +45,3 @@ title: 'TuqlHandler'
 #### Implementation of
 
 [MeshHandler](/docs/api/interfaces/types_src.MeshHandler).[getMeshSource](/docs/api/interfaces/types_src.MeshHandler#getmeshsource)
-
-#### Defined in
-
-[packages/handlers/tuql/src/index.ts:13](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/tuql/src/index.ts#L13)

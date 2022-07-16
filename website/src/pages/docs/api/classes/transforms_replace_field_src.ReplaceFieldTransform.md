@@ -36,10 +36,6 @@ title: 'ReplaceFieldTransform'
 | :------ | :------ |
 | `options` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)\<[`ReplaceFieldTransformConfig`](/docs/api/interfaces/types_src.YamlConfig.ReplaceFieldTransformConfig)> |
 
-#### Defined in
-
-[packages/transforms/replace-field/src/index.ts:27](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/replace-field/src/index.ts#L27)
-
 ## Properties
 
 ### noWrap
@@ -73,7 +69,3 @@ title: 'ReplaceFieldTransform'
 #### Implementation of
 
 MeshTransform.transformSchema
-
-#### Defined in
-
-[packages/transforms/replace-field/src/index.ts:62](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/replace-field/src/index.ts#L62)

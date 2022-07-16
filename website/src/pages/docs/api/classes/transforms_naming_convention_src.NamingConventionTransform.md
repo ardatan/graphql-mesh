@@ -34,10 +34,6 @@ title: 'NamingConventionTransform'
 | :------ | :------ |
 | `options` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)\<[`NamingConventionTransformConfig`](/docs/api/interfaces/types_src.YamlConfig.NamingConventionTransformConfig)> |
 
-#### Defined in
-
-[packages/transforms/naming-convention/src/index.ts:69](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/naming-convention/src/index.ts#L69)
-
 ## Methods
 
 ### transformRequest
@@ -59,10 +55,6 @@ title: 'NamingConventionTransform'
 #### Implementation of
 
 MeshTransform.transformRequest
-
-#### Defined in
-
-[packages/transforms/naming-convention/src/index.ts:128](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/naming-convention/src/index.ts#L128)
 
 ___
 
@@ -86,10 +78,6 @@ ___
 
 MeshTransform.transformResult
 
-#### Defined in
-
-[packages/transforms/naming-convention/src/index.ts:136](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/naming-convention/src/index.ts#L136)
-
 ___
 
 ### transformSchema
@@ -111,7 +99,3 @@ ___
 #### Implementation of
 
 MeshTransform.transformSchema
-
-#### Defined in
-
-[packages/transforms/naming-convention/src/index.ts:120](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/naming-convention/src/index.ts#L120)

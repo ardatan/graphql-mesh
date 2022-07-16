@@ -32,10 +32,6 @@ title: 'PostGraphileHandler'
 | :------ | :------ |
 | `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`PostGraphileHandler`](/docs/api/interfaces/types_src.YamlConfig.PostGraphileHandler)> |
 
-#### Defined in
-
-[packages/handlers/postgraphile/src/index.ts:31](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/postgraphile/src/index.ts#L31)
-
 ## Methods
 
 ### getMeshSource
@@ -49,7 +45,3 @@ title: 'PostGraphileHandler'
 #### Implementation of
 
 [MeshHandler](/docs/api/interfaces/types_src.MeshHandler).[getMeshSource](/docs/api/interfaces/types_src.MeshHandler#getmeshsource)
-
-#### Defined in
-
-[packages/handlers/postgraphile/src/index.ts:49](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/postgraphile/src/index.ts#L49)

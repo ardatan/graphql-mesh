@@ -32,10 +32,6 @@ title: 'SoapHandler'
 | :------ | :------ |
 | `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`SoapHandler`](/docs/api/interfaces/types_src.YamlConfig.SoapHandler)> |
 
-#### Defined in
-
-[packages/handlers/soap/src/index.ts:17](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/soap/src/index.ts#L17)
-
 ## Methods
 
 ### getMeshSource
@@ -49,7 +45,3 @@ title: 'SoapHandler'
 #### Implementation of
 
 [MeshHandler](/docs/api/interfaces/types_src.MeshHandler).[getMeshSource](/docs/api/interfaces/types_src.MeshHandler#getmeshsource)
-
-#### Defined in
-
-[packages/handlers/soap/src/index.ts:26](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/soap/src/index.ts#L26)

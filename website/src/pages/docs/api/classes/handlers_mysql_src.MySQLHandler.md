@@ -32,10 +32,6 @@ title: 'MySQLHandler'
 | :------ | :------ |
 | `__namedParameters` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<[`MySQLHandler`](/docs/api/interfaces/types_src.YamlConfig.MySQLHandler)> |
 
-#### Defined in
-
-[packages/handlers/mysql/src/index.ts:136](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/mysql/src/index.ts#L136)
-
 ## Methods
 
 ### getMeshSource
@@ -49,7 +45,3 @@ title: 'MySQLHandler'
 #### Implementation of
 
 [MeshHandler](/docs/api/interfaces/types_src.MeshHandler).[getMeshSource](/docs/api/interfaces/types_src.MeshHandler#getmeshsource)
-
-#### Defined in
-
-[packages/handlers/mysql/src/index.ts:173](https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/mysql/src/index.ts#L173)

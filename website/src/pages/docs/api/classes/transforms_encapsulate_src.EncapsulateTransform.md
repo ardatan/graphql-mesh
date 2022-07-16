@@ -35,10 +35,6 @@ title: 'EncapsulateTransform'
 | :------ | :------ |
 | `options` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)\<[`EncapsulateTransformObject`](/docs/api/interfaces/types_src.YamlConfig.EncapsulateTransformObject)> |
 
-#### Defined in
-
-[packages/transforms/encapsulate/src/index.ts:20](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/encapsulate/src/index.ts#L20)
-
 ## Methods
 
 ### generateSchemaTransforms
@@ -54,10 +50,6 @@ title: 'EncapsulateTransform'
 #### Returns
 
 `Generator`\<`Transform`\<`any`, `Record`\<`string`, `any`>>, `void`, `unknown`>
-
-#### Defined in
-
-[packages/transforms/encapsulate/src/index.ts:43](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/encapsulate/src/index.ts#L43)
 
 ___
 
@@ -81,10 +73,6 @@ ___
 
 MeshTransform.transformRequest
 
-#### Defined in
-
-[packages/transforms/encapsulate/src/index.ts:61](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/encapsulate/src/index.ts#L61)
-
 ___
 
 ### transformResult
@@ -107,10 +95,6 @@ ___
 
 MeshTransform.transformResult
 
-#### Defined in
-
-[packages/transforms/encapsulate/src/index.ts:69](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/encapsulate/src/index.ts#L69)
-
 ___
 
 ### transformSchema
@@ -132,7 +116,3 @@ ___
 #### Implementation of
 
 MeshTransform.transformSchema
-
-#### Defined in
-
-[packages/transforms/encapsulate/src/index.ts:52](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/encapsulate/src/index.ts#L52)

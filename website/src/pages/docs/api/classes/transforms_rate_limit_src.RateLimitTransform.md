@@ -33,10 +33,6 @@ title: 'RateLimitTransform'
 | :------ | :------ |
 | `options` | [`MeshTransformOptions`](/docs/api/interfaces/types_src.MeshTransformOptions)\<[`RateLimitTransformConfig`](/docs/api/interfaces/types_src.YamlConfig.RateLimitTransformConfig)[]> |
 
-#### Defined in
-
-[packages/transforms/rate-limit/src/index.ts:12](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/rate-limit/src/index.ts#L12)
-
 ## Methods
 
 ### transformRequest
@@ -58,10 +54,6 @@ title: 'RateLimitTransform'
 
 MeshTransform.transformRequest
 
-#### Defined in
-
-[packages/transforms/rate-limit/src/index.ts:28](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/rate-limit/src/index.ts#L28)
-
 ___
 
 ### transformResult
@@ -82,7 +74,3 @@ ___
 #### Implementation of
 
 MeshTransform.transformResult
-
-#### Defined in
-
-[packages/transforms/rate-limit/src/index.ts:92](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/rate-limit/src/index.ts#L92)

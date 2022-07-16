@@ -37,10 +37,6 @@ title: 'BareMerger'
 | :------ | :------ |
 | `options` | [`MeshMergerOptions`](/docs/api/interfaces/types_src.MeshMergerOptions) |
 
-#### Defined in
-
-[packages/mergers/bare/src/index.ts:10](https://github.com/Urigo/graphql-mesh/blob/master/packages/mergers/bare/src/index.ts#L10)
-
 ## Properties
 
 ### name
@@ -75,10 +71,6 @@ title: 'BareMerger'
 
 [MeshMerger](/docs/api/interfaces/types_src.MeshMerger).[getUnifiedSchema](/docs/api/interfaces/types_src.MeshMerger#getunifiedschema)
 
-#### Defined in
-
-[packages/mergers/bare/src/index.ts:48](https://github.com/Urigo/graphql-mesh/blob/master/packages/mergers/bare/src/index.ts#L48)
-
 ___
 
 ### handleSingleSource
@@ -105,7 +97,3 @@ ___
 | `name` | `string` |
 | `schema` | `GraphQLSchema` |
 | `transforms` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)\<`any`>[] |
-
-#### Defined in
-
-[packages/mergers/bare/src/index.ts:14](https://github.com/Urigo/graphql-mesh/blob/master/packages/mergers/bare/src/index.ts#L14)
