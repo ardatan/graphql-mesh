@@ -14,10 +14,10 @@ index 9016f08..0000000
 -module.exports = require('./dist/ssg')
 diff --git a/node_modules/nextra/dist/compile.mjs b/node_modules/nextra/dist/compile.mjs
 new file mode 100644
-index 0000000..7fe44de
+index 0000000..b688c27
 --- /dev/null
 +++ b/node_modules/nextra/dist/compile.mjs
-@@ -0,0 +1,555 @@
+@@ -0,0 +1,552 @@
 +var __defProp = Object.defineProperty;
 +var __defProps = Object.defineProperties;
 +var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
@@ -562,10 +562,7 @@ index 0000000..7fe44de
 +        structurizedData
 +      });
 +    } catch (err) {
-+      console.error(`
-+Error compiling ${resourcePath}
-+${err}
-+`);
++      console.error(`[nextra] Error compiling ${resourcePath}.`);
 +      throw err;
 +    }
 +  });
@@ -573,10 +570,17 @@ index 0000000..7fe44de
 +export {
 +  compileMdx
 +};
+diff --git a/node_modules/nextra/dist/constants.d.ts b/node_modules/nextra/dist/constants.d.ts
+new file mode 100644
+index 0000000..62c74d3
+--- /dev/null
++++ b/node_modules/nextra/dist/constants.d.ts
+@@ -0,0 +1,3 @@
++export declare const MARKDOWN_EXTENSION_REGEX: RegExp;
++export declare const IS_PRODUCTION: boolean;
++export declare const LOCALE_REGEX: RegExp;
 diff --git a/node_modules/nextra/dist/content-dump.d.ts b/node_modules/nextra/dist/content-dump.d.ts
-old mode 100644
-new mode 100755
-index 44028fa..77e6504
+index 44028fa..77e6504 100644
 --- a/node_modules/nextra/dist/content-dump.d.ts
 +++ b/node_modules/nextra/dist/content-dump.d.ts
 @@ -4,5 +4,5 @@ export declare function addPage({ fileLocale, route, title, data, structurizedDa
@@ -586,36 +590,57 @@ index 44028fa..77e6504
 -}): Promise<void>;
 +}): void;
  export declare function restoreCache(): Promise<void>;
-diff --git a/node_modules/nextra/dist/context.js b/node_modules/nextra/dist/context.js
-old mode 100644
-new mode 100755
-diff --git a/node_modules/nextra/dist/filter-route-locale.d.ts b/node_modules/nextra/dist/filter-route-locale.d.ts
-old mode 100644
-new mode 100755
 diff --git a/node_modules/nextra/dist/index.js b/node_modules/nextra/dist/index.js
-old mode 100644
-new mode 100755
-index d288128..895c186
+index d288128..3e512ed 100644
 --- a/node_modules/nextra/dist/index.js
 +++ b/node_modules/nextra/dist/index.js
-@@ -65,27 +65,25 @@ function getLocaleFromFilename(name) {
-   const match = name.match(localeRegex);
-   if (match)
-     return match[1];
+@@ -56,73 +56,76 @@ var __async = (__this, __arguments, generator) => {
+ 
+ // src/plugin.ts
+ var import_graceful_fs2 = __toESM(require("graceful-fs"));
+-var import_util = __toESM(require("util"));
++var import_util = require("util");
+ 
+ // src/utils.ts
+ var import_fs = __toESM(require("fs"));
+-function getLocaleFromFilename(name) {
+-  const localeRegex = /\.([a-zA-Z-]+)?\.(mdx?|jsx?|json)$/;
+-  const match = name.match(localeRegex);
+-  if (match)
+-    return match[1];
 -  return void 0;
+-}
+-function removeExtension(name) {
+-  const match = name.match(/^([^.]+)/);
+-  return match !== null ? match[1] : "";
++var import_path = __toESM(require("path"));
++
++// src/constants.ts
++var MARKDOWN_EXTENSION_REGEX = /\.mdx?$/;
++var IS_PRODUCTION = process.env.NODE_ENV === "production";
++var LOCALE_REGEX = /\.([a-z]{2}(-[A-Z]{2})?)$/;
++
++// src/utils.ts
++function parseFileName(filePath) {
++  var _a;
++  const { name, ext } = import_path.default.parse(filePath);
++  const locale = ((_a = name.match(LOCALE_REGEX)) == null ? void 0 : _a[1]) || "";
++  return {
++    name: locale ? name.replace(LOCALE_REGEX, "") : name,
++    locale,
++    ext
++  };
  }
- function removeExtension(name) {
-   const match = name.match(/^([^.]+)/);
-   return match !== null ? match[1] : "";
- }
- var parseJsonFile = (content, path4) => {
+-var parseJsonFile = (content, path4) => {
 -  let parsed = {};
++var parseJsonFile = (content, path5) => {
    try {
 -    parsed = JSON.parse(content);
 +    return JSON.parse(content);
    } catch (err) {
-     console.error(`Error parsing ${path4}, make sure it's a valid JSON 
- ` + err);
+-    console.error(`Error parsing ${path4}, make sure it's a valid JSON 
+-` + err);
++    console.error(`[nextra] Error parsing ${path5}, make sure it's a valid JSON`, err);
 +    return {};
    }
 -  return parsed;
@@ -631,8 +656,37 @@ index d288128..895c186
      return false;
    }
  };
-@@ -115,14 +113,14 @@ var cacheDir = import_path2.default.join(process.cwd(), ".next", "cache");
- var assetDir = import_path2.default.join(process.cwd(), ".next", "static", "chunks");
+ 
+ // src/plugin.ts
+-var import_path3 = __toESM(require("path"));
++var import_path4 = __toESM(require("path"));
+ var import_slash = __toESM(require("slash"));
+ var import_gray_matter = __toESM(require("gray-matter"));
+ 
+ // src/page-map.ts
+-var import_path = __toESM(require("path"));
+-var extension = /\.mdx?$/;
+-var metaExtension = /meta\.?([a-zA-Z-]+)?\.json/;
++var import_path2 = __toESM(require("path"));
+ function findPagesDir(dir = process.cwd()) {
+-  if (existsSync(import_path.default.join(dir, "pages")))
++  if (existsSync(import_path2.default.join(dir, "pages")))
+     return "pages";
+-  if (existsSync(import_path.default.join(dir, "src/pages")))
++  if (existsSync(import_path2.default.join(dir, "src/pages")))
+     return "src/pages";
+   throw new Error("> Couldn't find a `pages` directory. Please create one under the project root");
+ }
+ 
+ // src/content-dump.ts
+ var import_graceful_fs = __toESM(require("graceful-fs"));
+-var import_path2 = __toESM(require("path"));
++var import_path3 = __toESM(require("path"));
+ var { statSync, mkdirSync } = import_graceful_fs.default;
+-var cacheDir = import_path2.default.join(process.cwd(), ".next", "cache");
+-var assetDir = import_path2.default.join(process.cwd(), ".next", "static", "chunks");
++var cacheDir = import_path3.default.join(process.cwd(), ".next", "cache");
++var assetDir = import_path3.default.join(process.cwd(), ".next", "static", "chunks");
  try {
    statSync(assetDir);
 -} catch (err) {
@@ -648,7 +702,7 @@ index d288128..895c186
    mkdirSync(cacheDir, { recursive: true });
  }
  function restoreCache() {
-@@ -130,7 +128,7 @@ function restoreCache() {
+@@ -130,13 +133,13 @@ function restoreCache() {
      if (cacheDirExist) {
        try {
          statSync(assetDir);
@@ -657,7 +711,78 @@ index d288128..895c186
          mkdirSync(assetDir, { recursive: true });
        }
        const files = import_graceful_fs.default.readdirSync(cacheDir);
-@@ -216,12 +214,13 @@ var PageMapCache = class {
+       for (const file of files) {
+         if (file.startsWith("nextra-data-")) {
+-          import_graceful_fs.default.copyFileSync(import_path2.default.join(cacheDir, file), import_path2.default.join(assetDir, file));
++          import_graceful_fs.default.copyFileSync(import_path3.default.join(cacheDir, file), import_path3.default.join(assetDir, file));
+         }
+       }
+     }
+@@ -144,13 +147,15 @@ function restoreCache() {
+ }
+ 
+ // src/plugin.ts
+-var { readdir, readFile } = import_graceful_fs2.default;
++var readdir = (0, import_util.promisify)(import_graceful_fs2.default.readdir);
++var readFile = (0, import_util.promisify)(import_graceful_fs2.default.readFile);
+ function collectFiles(_0) {
+   return __async(this, arguments, function* (dir, route = "/", fileMap = {}) {
+-    const files = yield import_util.default.promisify(readdir)(dir, { withFileTypes: true });
++    const files = yield readdir(dir, { withFileTypes: true });
+     const items = (yield Promise.all(files.map((f) => __async(this, null, function* () {
+-      const filePath = import_path3.default.resolve(dir, f.name);
+-      const fileRoute = (0, import_slash.default)(import_path3.default.join(route, removeExtension(f.name).replace(/^index$/, "")));
++      const filePath = import_path4.default.resolve(dir, f.name);
++      const { name, locale, ext } = parseFileName(f.name);
++      const fileRoute = (0, import_slash.default)(import_path4.default.join(route, name.replace(/^index$/, "")));
+       if (f.isDirectory()) {
+         if (fileRoute === "/api")
+           return null;
+@@ -162,33 +167,21 @@ function collectFiles(_0) {
+           children,
+           route: fileRoute
+         };
+-      } else if (extension.test(f.name)) {
+-        const locale = getLocaleFromFilename(f.name);
+-        const fileContents = yield import_util.default.promisify(readFile)(filePath, "utf-8");
+-        const { data } = (0, import_gray_matter.default)(fileContents);
+-        if (Object.keys(data).length) {
+-          fileMap[filePath] = {
+-            name: removeExtension(f.name),
+-            route: fileRoute,
+-            frontMatter: data,
+-            locale
+-          };
+-          return fileMap[filePath];
+-        }
+-        fileMap[filePath] = {
+-          name: removeExtension(f.name),
++      } else if (MARKDOWN_EXTENSION_REGEX.test(ext)) {
++        const content = yield readFile(filePath, "utf8");
++        const { data } = (0, import_gray_matter.default)(content);
++        fileMap[filePath] = __spreadValues({
++          name,
+           route: fileRoute,
+           locale
+-        };
++        }, Object.keys(data).length && { frontMatter: data });
+         return fileMap[filePath];
+-      } else if (metaExtension.test(f.name)) {
+-        const content = yield import_util.default.promisify(readFile)(filePath, "utf-8");
+-        const meta = parseJsonFile(content, filePath);
+-        const locale = f.name.match(metaExtension)[1];
++      } else if (ext === ".json" && name === "meta") {
++        const content = yield readFile(filePath, "utf8");
+         fileMap[filePath] = {
+           name: "meta.json",
+-          meta,
+-          locale
++          locale,
++          meta: parseJsonFile(content, filePath)
+         };
+         return fileMap[filePath];
+       }
+@@ -216,15 +209,16 @@ var PageMapCache = class {
  };
  var pageMapCache = new PageMapCache();
  var NextraPlugin = class {
@@ -673,8 +798,26 @@ index d288128..895c186
 +      if ((_a = this.config) == null ? void 0 : _a.unstable_flexsearch) {
          restoreCache();
        }
-       const result = yield collectFiles(import_path3.default.join(process.cwd(), findPagesDir()), "/");
-@@ -251,6 +250,7 @@ module.exports = (...args) => (nextConfig = {}) => {
+-      const result = yield collectFiles(import_path3.default.join(process.cwd(), findPagesDir()), "/");
++      const result = yield collectFiles(import_path4.default.join(process.cwd(), findPagesDir()), "/");
+       pageMapCache.set(result);
+       callback();
+     }));
+@@ -234,7 +228,6 @@ var NextraPlugin = class {
+ // src/index.js
+ var defaultExtensions = ["js", "jsx", "ts", "tsx"];
+ var markdownExtensions = ["md", "mdx"];
+-var markdownExtensionTest = /\.mdx?$/;
+ module.exports = (...args) => (nextConfig = {}) => {
+   var _a, _b;
+   const nextraConfig = typeof args[0] === "string" ? {
+@@ -246,11 +239,12 @@ module.exports = (...args) => (nextConfig = {}) => {
+   let pageExtensions = nextConfig.pageExtensions || [...defaultExtensions];
+   pageExtensions = pageExtensions.concat(markdownExtensions);
+   if (locales) {
+-    console.log("[Nextra] You have Next.js i18n enabled, read here (TODO: link) for the docs.");
++    console.log("[nextra] You have Next.js i18n enabled, read here (TODO: link) for the docs.");
+   }
    return Object.assign({}, nextConfig, {
      pageExtensions,
      webpack(config, options) {
@@ -682,7 +825,13 @@ index d288128..895c186
        const nextra = new NextraPlugin(nextraConfig);
        if (!config.plugins) {
          config.plugins = [nextra];
-@@ -263,7 +263,12 @@ module.exports = (...args) => (nextConfig = {}) => {
+@@ -258,12 +252,17 @@ module.exports = (...args) => (nextConfig = {}) => {
+         config.plugins.push(nextra);
+       }
+       config.module.rules.push({
+-        test: markdownExtensionTest,
++        test: MARKDOWN_EXTENSION_REGEX,
+         use: [
            options.defaultLoaders.babel,
            {
              loader: "nextra/loader",
@@ -697,9 +846,18 @@ index d288128..895c186
          ]
        });
 diff --git a/node_modules/nextra/dist/loader.mjs b/node_modules/nextra/dist/loader.mjs
-index 486c1fb..1eabd7b 100644
+index 486c1fb..251241d 100644
 --- a/node_modules/nextra/dist/loader.mjs
 +++ b/node_modules/nextra/dist/loader.mjs
+@@ -39,7 +39,7 @@ var __async = (__this, __arguments, generator) => {
+ };
+ 
+ // src/loader.ts
+-import path4 from "path";
++import path5 from "path";
+ import grayMatter2 from "gray-matter";
+ import slash2 from "slash";
+ import { Repository } from "@napi-rs/simple-git";
 @@ -54,14 +54,14 @@ var asset = {};
  var cached = /* @__PURE__ */ new Map();
  try {
@@ -717,7 +875,7 @@ index 486c1fb..1eabd7b 100644
    mkdirSync(cacheDir, { recursive: true });
  }
  function initFromCache(filename) {
-@@ -76,26 +76,22 @@ function initFromCache(filename) {
+@@ -76,56 +76,57 @@ function initFromCache(filename) {
    }
    return {};
  }
@@ -760,24 +918,45 @@ index 486c1fb..1eabd7b 100644
  }
  
  // src/utils.ts
-@@ -105,27 +101,25 @@ function getLocaleFromFilename(name2) {
-   const match = name2.match(localeRegex);
-   if (match)
-     return match[1];
+ import fs2 from "fs";
+-function getLocaleFromFilename(name2) {
+-  const localeRegex = /\.([a-zA-Z-]+)?\.(mdx?|jsx?|json)$/;
+-  const match = name2.match(localeRegex);
+-  if (match)
+-    return match[1];
 -  return void 0;
+-}
+-function removeExtension(name2) {
+-  const match = name2.match(/^([^.]+)/);
+-  return match !== null ? match[1] : "";
++import path2 from "path";
++
++// src/constants.ts
++var MARKDOWN_EXTENSION_REGEX = /\.mdx?$/;
++var IS_PRODUCTION = process.env.NODE_ENV === "production";
++var LOCALE_REGEX = /\.([a-z]{2}(-[A-Z]{2})?)$/;
++
++// src/utils.ts
++function parseFileName(filePath) {
++  var _a;
++  const { name: name2, ext } = path2.parse(filePath);
++  const locale = ((_a = name2.match(LOCALE_REGEX)) == null ? void 0 : _a[1]) || "";
++  return {
++    name: locale ? name2.replace(LOCALE_REGEX, "") : name2,
++    locale,
++    ext
++  };
  }
- function removeExtension(name2) {
-   const match = name2.match(/^([^.]+)/);
-   return match !== null ? match[1] : "";
- }
- var parseJsonFile = (content, path5) => {
+-var parseJsonFile = (content, path5) => {
 -  let parsed = {};
++var parseJsonFile = (content, path6) => {
    try {
 -    parsed = JSON.parse(content);
 +    return JSON.parse(content);
    } catch (err) {
-     console.error(`Error parsing ${path5}, make sure it's a valid JSON 
- ` + err);
+-    console.error(`Error parsing ${path5}, make sure it's a valid JSON 
+-` + err);
++    console.error(`[nextra] Error parsing ${path6}, make sure it's a valid JSON`, err);
 +    return {};
    }
 -  return parsed;
@@ -793,7 +972,7 @@ index 486c1fb..1eabd7b 100644
      return false;
    }
  };
-@@ -134,6 +128,7 @@ var existsSync = (f) => {
+@@ -134,6 +135,7 @@ var existsSync = (f) => {
  import { createProcessor } from "@mdx-js/mdx";
  import remarkGfm from "remark-gfm";
  import rehypePrettyCode from "rehype-pretty-code";
@@ -801,7 +980,7 @@ index 486c1fb..1eabd7b 100644
  
  // src/mdx-plugins/static-image.js
  var relative = /^\.{1,2}\//;
-@@ -252,17 +247,7 @@ function remarkHeadings() {
+@@ -252,17 +254,7 @@ function remarkHeadings() {
          const heading = __spreadProps(__spreadValues({}, node), {
            value: getFlattenedValue(node)
          });
@@ -820,7 +999,7 @@ index 486c1fb..1eabd7b 100644
        } else if (node.name === "summary" || node.name === "details") {
          if (node.data) {
            delete node.data._mdxExplicitJsx;
-@@ -594,34 +579,31 @@ var theme_default = {
+@@ -594,34 +586,31 @@ var theme_default = {
  var createCompiler = (mdxOptions) => {
    const compiler = createProcessor(mdxOptions);
    compiler.data("headingMeta", {
@@ -866,7 +1045,7 @@ index 486c1fb..1eabd7b 100644
        providerImportSource: "@mdx-js/react",
        remarkPlugins: [
          ...mdxOptions.remarkPlugins || [],
-@@ -634,6 +616,7 @@ function compileMdx(_0) {
+@@ -634,6 +623,7 @@ function compileMdx(_0) {
          ...mdxOptions.rehypePlugins || [],
          parseMeta,
          [rehypePrettyCode, rehypePrettyCodeOptions],
@@ -874,18 +1053,170 @@ index 486c1fb..1eabd7b 100644
          attachMeta
        ].filter(Boolean)
      });
-@@ -646,8 +629,8 @@ function compileMdx(_0) {
+@@ -645,17 +635,14 @@ function compileMdx(_0) {
+         structurizedData
        });
      } catch (err) {
-       console.error(`
+-      console.error(`
 -Error compiling ${resourcePath}`);
 -      console.error(`${err}
-+Error compiling ${resourcePath}
-+${err}
- `);
+-`);
++      console.error(`[nextra] Error compiling ${resourcePath}.`);
        throw err;
      }
-@@ -827,16 +810,7 @@ function loader(context, source) {
+   });
+ }
+ 
+ // src/page-map.ts
+-import path2 from "path";
++import path3 from "path";
+ 
+ // src/filter-route-locale.ts
+ function filterRouteLocale(pageMap, locale, defaultLocale) {
+@@ -688,46 +675,43 @@ function filterRouteLocale(pageMap, locale, defaultLocale) {
+ }
+ 
+ // src/page-map.ts
+-var extension = /\.mdx?$/;
+-var metaExtension = /meta\.?([a-zA-Z-]+)?\.json/;
+ function findPagesDir(dir = process.cwd()) {
+-  if (existsSync(path2.join(dir, "pages")))
++  if (existsSync(path3.join(dir, "pages")))
+     return "pages";
+-  if (existsSync(path2.join(dir, "src/pages")))
++  if (existsSync(path3.join(dir, "src/pages")))
+     return "src/pages";
+   throw new Error("> Couldn't find a `pages` directory. Please create one under the project root");
+ }
+-function getPageMap(currentResourcePath, pageMaps, fileMap, defaultLocale) {
++function getPageMap(currentResourcePath, pageMap, fileMap, defaultLocale) {
+   var _a, _b;
+-  const activeRouteLocale = getLocaleFromFilename(currentResourcePath);
++  const activeRouteLocale = parseFileName(currentResourcePath).locale;
+   const pageItem = fileMap[currentResourcePath];
+-  const metaPath = path2.dirname(currentResourcePath);
+-  const metaExtension2 = activeRouteLocale ? `${activeRouteLocale}.json` : `json`;
+-  const pageMeta = (_b = (_a = fileMap[`${metaPath}/meta.${metaExtension2}`]) == null ? void 0 : _a.meta) == null ? void 0 : _b[pageItem.name];
++  const metaPath = path3.dirname(currentResourcePath);
++  const metaExtension = activeRouteLocale ? `${activeRouteLocale}.json` : `json`;
++  const pageMeta = (_b = (_a = fileMap[`${metaPath}/meta.${metaExtension}`]) == null ? void 0 : _a.meta) == null ? void 0 : _b[pageItem.name];
+   const title = (typeof pageMeta === "string" ? pageMeta : pageMeta == null ? void 0 : pageMeta.title) || pageItem.name;
+-  if (activeRouteLocale) {
+-    return [
+-      filterRouteLocale(pageMaps, activeRouteLocale, defaultLocale),
+-      fileMap[currentResourcePath].route,
+-      title
+-    ];
+-  }
+-  return [pageMaps, fileMap[currentResourcePath].route, title];
++  return [
++    activeRouteLocale ? filterRouteLocale(pageMap, activeRouteLocale, defaultLocale) : pageMap,
++    pageItem.route,
++    title
++  ];
+ }
+ 
+ // src/plugin.ts
+ import fs3 from "graceful-fs";
+-import util from "util";
+-import path3 from "path";
++import { promisify } from "util";
++import path4 from "path";
+ import slash from "slash";
+ import grayMatter from "gray-matter";
+-var { readdir, readFile } = fs3;
++var readdir = promisify(fs3.readdir);
++var readFile = promisify(fs3.readFile);
+ function collectFiles(_0) {
+   return __async(this, arguments, function* (dir, route = "/", fileMap = {}) {
+-    const files = yield util.promisify(readdir)(dir, { withFileTypes: true });
++    const files = yield readdir(dir, { withFileTypes: true });
+     const items = (yield Promise.all(files.map((f) => __async(this, null, function* () {
+-      const filePath = path3.resolve(dir, f.name);
+-      const fileRoute = slash(path3.join(route, removeExtension(f.name).replace(/^index$/, "")));
++      const filePath = path4.resolve(dir, f.name);
++      const { name: name2, locale, ext } = parseFileName(f.name);
++      const fileRoute = slash(path4.join(route, name2.replace(/^index$/, "")));
+       if (f.isDirectory()) {
+         if (fileRoute === "/api")
+           return null;
+@@ -739,33 +723,21 @@ function collectFiles(_0) {
+           children,
+           route: fileRoute
+         };
+-      } else if (extension.test(f.name)) {
+-        const locale = getLocaleFromFilename(f.name);
+-        const fileContents = yield util.promisify(readFile)(filePath, "utf-8");
+-        const { data } = grayMatter(fileContents);
+-        if (Object.keys(data).length) {
+-          fileMap[filePath] = {
+-            name: removeExtension(f.name),
+-            route: fileRoute,
+-            frontMatter: data,
+-            locale
+-          };
+-          return fileMap[filePath];
+-        }
+-        fileMap[filePath] = {
+-          name: removeExtension(f.name),
++      } else if (MARKDOWN_EXTENSION_REGEX.test(ext)) {
++        const content = yield readFile(filePath, "utf8");
++        const { data } = grayMatter(content);
++        fileMap[filePath] = __spreadValues({
++          name: name2,
+           route: fileRoute,
+           locale
+-        };
++        }, Object.keys(data).length && { frontMatter: data });
+         return fileMap[filePath];
+-      } else if (metaExtension.test(f.name)) {
+-        const content = yield util.promisify(readFile)(filePath, "utf-8");
+-        const meta = parseJsonFile(content, filePath);
+-        const locale = f.name.match(metaExtension)[1];
++      } else if (ext === ".json" && name2 === "meta") {
++        const content = yield readFile(filePath, "utf8");
+         fileMap[filePath] = {
+           name: "meta.json",
+-          meta,
+-          locale
++          locale,
++          meta: parseJsonFile(content, filePath)
+         };
+         return fileMap[filePath];
+       }
+@@ -794,17 +766,15 @@ var PageMapCache = class {
+ var pageMapCache = new PageMapCache();
+ 
+ // src/loader.ts
+-var extension2 = /\.mdx?$/;
+-var isProductionBuild = process.env.NODE_ENV === "production";
+ var indexContentEmitted = /* @__PURE__ */ new Set();
+-var pagesDir = path4.resolve(findPagesDir());
++var pagesDir = path5.resolve(findPagesDir());
+ var [repository, gitRoot] = function() {
+   try {
+     const repo = Repository.discover(process.cwd());
+-    const gitRoot2 = path4.join(repo.path(), "..");
++    const gitRoot2 = path5.join(repo.path(), "..");
+     return [repo, gitRoot2];
+   } catch (e) {
+-    console.warn("Init git repository failed", e);
++    console.warn("[nextra] Init git repository failed", e);
+     return [];
+   }
+ }();
+@@ -822,23 +792,18 @@ function loader(context, source) {
+       pageMapCache: pageMapCache2
+     } = options;
+     const { resourcePath } = context;
+-    const filename = resourcePath.slice(resourcePath.lastIndexOf("/") + 1);
+-    const fileLocale = getLocaleFromFilename(filename);
++    if (resourcePath.includes("/pages/api/")) {
++      console.warn(`[nextra] Ignoring ${resourcePath} because it is located in the "pages/api" folder.`);
++      return "";
++    }
++    const filename = path5.basename(resourcePath);
++    const fileLocale = parseFileName(filename).locale;
      if (!theme) {
        throw new Error("No Nextra theme found!");
      }
@@ -899,11 +1230,14 @@ index 486c1fb..1eabd7b 100644
 -      pageMapResult = data2.items;
 -      fileMap = data2.fileMap;
 -    }
-+    const { items: pageMapResult, fileMap } = isProductionBuild ? pageMapCache2.get() : yield collectFiles(pagesDir, "/");
++    const { items: pageMapResult, fileMap } = IS_PRODUCTION ? pageMapCache2.get() : yield collectFiles(pagesDir, "/");
      const [pageMap, route, title] = getPageMap(resourcePath, pageMapResult, fileMap, defaultLocale);
-     if (!isProductionBuild) {
+-    if (!isProductionBuild) {
++    if (!IS_PRODUCTION) {
        context.addContextDependency(pagesDir);
-@@ -847,7 +821,7 @@ function loader(context, source) {
+     } else {
+       Object.entries(fileMap).forEach(([filePath, { name: name2, meta, locale }]) => {
+@@ -847,27 +812,25 @@ function loader(context, source) {
          }
        });
      }
@@ -912,8 +1246,15 @@ index 486c1fb..1eabd7b 100644
      let layout = theme;
      let layoutConfig = themeConfig || null;
      if (theme.startsWith(".") || theme.startsWith("/")) {
-@@ -859,15 +833,13 @@ function loader(context, source) {
-     if (isProductionBuild && indexContentEmitted.has(filename)) {
+-      layout = path4.resolve(theme);
++      layout = path5.resolve(theme);
+     }
+     if (layoutConfig) {
+-      layoutConfig = slash2(path4.resolve(layoutConfig));
++      layoutConfig = slash2(path5.resolve(layoutConfig));
+     }
+-    if (isProductionBuild && indexContentEmitted.has(filename)) {
++    if (IS_PRODUCTION && indexContentEmitted.has(filename)) {
        unstable_flexsearch = false;
      }
 -    const { result, titleText, headings, hasH1, structurizedData } = yield compileMdx(content, mdxOptions, {
@@ -924,13 +1265,30 @@ index 486c1fb..1eabd7b 100644
 -    content = result;
 -    content = content.replace("export default MDXContent;", "");
      if (unstable_flexsearch) {
-       if (extension2.test(filename) && data.searchable !== false) {
+-      if (extension2.test(filename) && data.searchable !== false) {
 -        yield addPage({
++      if (MARKDOWN_EXTENSION_REGEX.test(filename) && data.searchable !== false) {
 +        addPage({
            fileLocale: fileLocale || "default",
            route,
            title,
-@@ -893,34 +865,45 @@ function loader(context, source) {
+@@ -881,46 +844,57 @@ function loader(context, source) {
+     if (repository && gitRoot) {
+       if (repository.isShallow()) {
+         if (process.env.VERCEL) {
+-          console.warn(`The repository is shallow cloned, so the latest modified time will not be presented. Set the VERCEL_DEEP_CLONE=true environment variable to enable deep cloning.`);
++          console.warn("[nextra] The repository is shallow cloned, so the latest modified time will not be presented. Set the VERCEL_DEEP_CLONE=true environment variable to enable deep cloning.");
+         } else if (process.env.GITHUB_ACTION) {
+-          console.warn(`The repository is shallow cloned, so the latest modified time will not be presented. See https://github.com/actions/checkout#fetch-all-history-for-all-tags-and-branches to fetch all the history.`);
++          console.warn("[nextra] The repository is shallow cloned, so the latest modified time will not be presented. See https://github.com/actions/checkout#fetch-all-history-for-all-tags-and-branches to fetch all the history.");
+         } else {
+-          console.warn(`The repository is shallow cloned, so the latest modified time will not be presented.`);
++          console.warn("[nextra] The repository is shallow cloned, so the latest modified time will not be presented.");
+         }
+       }
+       try {
+-        timestamp = yield repository.getFileLatestModifiedDateAsync(path4.relative(gitRoot, resourcePath));
++        timestamp = yield repository.getFileLatestModifiedDateAsync(path5.relative(gitRoot, resourcePath));
        } catch (e) {
        }
      }
@@ -996,15 +1354,34 @@ index 486c1fb..1eabd7b 100644
  }
  function syncLoader(source, callback) {
 diff --git a/node_modules/nextra/dist/locales.js b/node_modules/nextra/dist/locales.js
-old mode 100644
-new mode 100755
+index 85a453d..3b6c915 100644
+--- a/node_modules/nextra/dist/locales.js
++++ b/node_modules/nextra/dist/locales.js
+@@ -28,10 +28,9 @@ __export(locales_exports, {
+   withLocales: () => withLocales
+ });
+ var import_server = require("next/server");
+-var PUBLIC_FILE = /\.(.*)$/;
+ function locales(request) {
+   const { nextUrl } = request;
+-  const shouldHandleLocale = !PUBLIC_FILE.test(nextUrl.pathname) && !nextUrl.pathname.includes("/api/") && !nextUrl.pathname.includes("/_next/") && nextUrl.locale !== "";
++  const shouldHandleLocale = !/^\/(api|_next)\//.test(nextUrl.pathname) && !/\.(jpe?g|svg|png|webmanifest)$/.test(nextUrl.pathname) && nextUrl.locale !== "";
+   if (!shouldHandleLocale)
+     return;
+   const fullUrl = nextUrl.toString();
 diff --git a/node_modules/nextra/dist/page-map.d.ts b/node_modules/nextra/dist/page-map.d.ts
-old mode 100644
-new mode 100755
+index 613c963..a271721 100644
+--- a/node_modules/nextra/dist/page-map.d.ts
++++ b/node_modules/nextra/dist/page-map.d.ts
+@@ -1,5 +1,3 @@
+ import { PageMapItem } from './types';
+-export declare const extension: RegExp;
+-export declare const metaExtension: RegExp;
+ export declare function findPagesDir(dir?: string): string;
+-export declare function getPageMap(currentResourcePath: string, pageMaps: PageMapItem[], fileMap: Record<string, PageMapItem>, defaultLocale: string): any[];
++export declare function getPageMap(currentResourcePath: string, pageMap: PageMapItem[], fileMap: Record<string, PageMapItem>, defaultLocale: string): [PageMapItem[], string, string];
 diff --git a/node_modules/nextra/dist/plugin.d.ts b/node_modules/nextra/dist/plugin.d.ts
-old mode 100644
-new mode 100755
-index ae1d17f..f7732e7
+index ae1d17f..f7732e7 100644
 --- a/node_modules/nextra/dist/plugin.d.ts
 +++ b/node_modules/nextra/dist/plugin.d.ts
 @@ -1,4 +1,4 @@
@@ -1026,13 +1403,8 @@ index ae1d17f..f7732e7
      apply(compiler: Compiler): void;
  }
 -export { NextraPlugin };
-diff --git a/node_modules/nextra/dist/ssg.js b/node_modules/nextra/dist/ssg.js
-old mode 100644
-new mode 100755
 diff --git a/node_modules/nextra/dist/types.d.ts b/node_modules/nextra/dist/types.d.ts
-old mode 100644
-new mode 100755
-index 9a63bef..189f9bc
+index 9a63bef..189f9bc 100644
 --- a/node_modules/nextra/dist/types.d.ts
 +++ b/node_modules/nextra/dist/types.d.ts
 @@ -1,15 +1,12 @@
@@ -1062,16 +1434,18 @@ index 9a63bef..189f9bc
  export declare type PageMapResult = [
      pageMap: PageMapItem[],
 diff --git a/node_modules/nextra/dist/utils.d.ts b/node_modules/nextra/dist/utils.d.ts
-old mode 100644
-new mode 100755
-index adf3d93..6ab4e73
+index adf3d93..39d4927 100644
 --- a/node_modules/nextra/dist/utils.d.ts
 +++ b/node_modules/nextra/dist/utils.d.ts
-@@ -1,5 +1,5 @@
+@@ -1,5 +1,7 @@
 -export declare function getLocaleFromFilename(name: string): string | undefined;
-+export declare function getLocaleFromFilename(name: string): string | void;
- export declare function removeExtension(name: string): string;
- export declare function getFileName(resourcePath: string): string;
+-export declare function removeExtension(name: string): string;
+-export declare function getFileName(resourcePath: string): string;
++export declare function parseFileName(filePath: string): {
++    name: string;
++    locale: string;
++    ext: string;
++};
  export declare const parseJsonFile: (content: string, path: string) => Record<string, any>;
 -export declare const existsSync: (f: string) => boolean;
 +export declare const existsSync: (filePath: string) => boolean;
