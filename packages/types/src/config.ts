@@ -1188,16 +1188,16 @@ export interface CacheTransformConfig {
   field: string;
   /**
    * Cache key to use to store your resolvers responses.
-   * The default is: {typeName}-{fieldName}-{argsHash}-{fieldNamesHash}
+   * The default is: `{typeName}-{fieldName}-{argsHash}-{fieldNamesHash}`
    * Available variables:
-   * - {args.argName} - use resolver argument
-   * - {typeName} - use name of the type
-   * - {fieldName} - use name of the field
-   * - {argsHash} - a hash based on the 'args' object
-   * - {fieldNamesHash} - a hash based on the field names selected by the client
-   * - {info} - the GraphQLResolveInfo of the resolver
+   * - `{args.argName}` - use resolver argument
+   * - `{typeName}` - use name of the type
+   * - `{fieldName}` - use name of the field
+   * - `{argsHash}` - a hash based on the 'args' object
+   * - `{fieldNamesHash}` - a hash based on the field names selected by the client
+   * - `{info}` - the GraphQLResolveInfo of the resolver
    * Available interpolations:
-   * - {format|date} - returns the current date with a specific format
+   * - `{format|date}` - returns the current date with a specific format
    */
   cacheKey?: string;
   invalidate?: CacheInvalidateConfig;
@@ -1361,7 +1361,7 @@ export interface MockingFieldConfig {
    * Read more (https://github.com/marak/Faker.js/#fakerfake)
    * Example:
    * faker: name.firstName
-   * faker: "{{ name.firstName }} {{ name.lastName }}"
+   * faker: `{{ name.firstName }} {{ name.lastName }}`
    */
   faker?: string;
   /**
@@ -1537,7 +1537,7 @@ export interface RateLimitTransformConfig {
    */
   ttl: number;
   /**
-   * The identifier expression that determines the identity of the request (e.g. "{context.req.socket.remoteAddress}")
+   * The identifier expression that determines the identity of the request (e.g. `{context.req.socket.remoteAddress}`)
    */
   identifier: string;
 }
@@ -1647,7 +1647,7 @@ export interface SnapshotTransformConfig {
    * Resolver to be applied
    * For example;
    *   apply:
-   *       - Query.* <- * will apply this extension to all fields of Query type
+   *       - Query.* \<- * will apply this extension to all fields of Query type
    *       - Mutation.someMutationButProbablyYouWontNeedIt
    */
   apply: string[];
