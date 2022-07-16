@@ -46,10 +46,6 @@ title: "@graphql-mesh/cli"
 
 `Promise`\<[`ProcessedConfig`](config_src#processedconfig)>
 
-#### Defined in
-
-[packages/cli/src/config.ts:28](https://github.com/Urigo/graphql-mesh/blob/master/packages/cli/src/config.ts#L28)
-
 ___
 
 ### generateTsArtifacts
@@ -79,10 +75,6 @@ ___
 
 `Promise`\<`void`>
 
-#### Defined in
-
-[packages/cli/src/commands/ts-artifacts.ts:143](https://github.com/Urigo/graphql-mesh/blob/master/packages/cli/src/commands/ts-artifacts.ts#L143)
-
 ___
 
 ### graphqlMesh
@@ -101,10 +93,6 @@ ___
 
 `Promise`\<\{ `$0`: `string` ; `_`: (`string` \| `number`)[] ; `source`: `string`  } \| \{ `$0`: `string` ; `_`: (`string` \| `number`)[] ; `source`: `string`  }>
 
-#### Defined in
-
-[packages/cli/src/index.ts:61](https://github.com/Urigo/graphql-mesh/blob/master/packages/cli/src/index.ts#L61)
-
 ___
 
 ### serveMesh
@@ -121,7 +109,3 @@ ___
 #### Returns
 
 `Promise`\<\{ `app`: `Express` ; `httpServer`: `Server` ; `logger`: [`Logger`](types_src#logger) ; `mesh`: [`MeshInstance`](/docs/api/interfaces/runtime_src.MeshInstance) ; `readyFlag`: `boolean`  }>
-
-#### Defined in
-
-[packages/cli/src/commands/serve/serve.ts:33](https://github.com/Urigo/graphql-mesh/blob/master/packages/cli/src/commands/serve/serve.ts#L33)

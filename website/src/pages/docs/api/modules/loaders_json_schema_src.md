@@ -156,10 +156,6 @@ ___
 
 `Promise`\<[`JSONSchemaLoaderBundle`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaLoaderBundle)>
 
-#### Defined in
-
-[packages/loaders/json-schema/src/bundle.ts:32](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/json-schema/src/bundle.ts#L32)
-
 ___
 
 ### getComposerFromJSONSchema
@@ -177,10 +173,6 @@ ___
 #### Returns
 
 `Promise`\<`TypeComposers`>
-
-#### Defined in
-
-[packages/loaders/json-schema/src/getComposerFromJSONSchema.ts:76](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/json-schema/src/getComposerFromJSONSchema.ts#L76)
 
 ___
 
@@ -205,10 +197,6 @@ ___
 
 `Promise`\<[`JSONSchemaObject`](/docs/api/interfaces/json_machete_src.JSONSchemaObject)>
 
-#### Defined in
-
-[packages/loaders/json-schema/src/getDereferencedJSONSchemaFromOperations.ts:8](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/json-schema/src/getDereferencedJSONSchemaFromOperations.ts#L8)
-
 ___
 
 ### getGraphQLSchemaFromBundle
@@ -229,10 +217,6 @@ previously generated JSON Schema bundle
 
 `Promise`\<`GraphQLSchema`>
 
-#### Defined in
-
-[packages/loaders/json-schema/src/bundle.ts:83](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/json-schema/src/bundle.ts#L83)
-
 ___
 
 ### getGraphQLSchemaFromDereferencedJSONSchema
@@ -249,10 +233,6 @@ ___
 #### Returns
 
 `Promise`\<`GraphQLSchema`>
-
-#### Defined in
-
-[packages/loaders/json-schema/src/getGraphQLSchemaFromDereferencedJSONSchema.ts:7](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/json-schema/src/getGraphQLSchemaFromDereferencedJSONSchema.ts#L7)
 
 ___
 
@@ -276,10 +256,6 @@ ___
 
 `Promise`\<[`JSONSchemaObject`](/docs/api/interfaces/json_machete_src.JSONSchemaObject)>
 
-#### Defined in
-
-[packages/loaders/json-schema/src/getReferencedJSONSchemaFromOperations.ts:93](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/json-schema/src/getReferencedJSONSchemaFromOperations.ts#L93)
-
 ___
 
 ### loadGraphQLSchemaFromJSONSchemas
@@ -296,7 +272,3 @@ ___
 #### Returns
 
 `Promise`\<`GraphQLSchema`>
-
-#### Defined in
-
-[packages/loaders/json-schema/src/loadGraphQLSchemaFromJSONSchemas.ts:6](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/json-schema/src/loadGraphQLSchemaFromJSONSchemas.ts#L6)

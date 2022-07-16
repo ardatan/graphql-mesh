@@ -18,7 +18,7 @@ title: 'OnCircularReference'
 
 ### ERROR
 
-• **ERROR**
+• **ERROR** = ``"ERROR"``
 
 #### Defined in
 
@@ -28,7 +28,7 @@ ___
 
 ### IGNORE
 
-• **IGNORE**
+• **IGNORE** = ``"IGNORE"``
 
 #### Defined in
 
@@ -38,7 +38,7 @@ ___
 
 ### WARN
 
-• **WARN**
+• **WARN** = ``"WARN"``
 
 #### Defined in
 

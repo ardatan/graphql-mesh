@@ -29,7 +29,3 @@ title: 'MeshHandlerLibrary'
 | Name | Type |
 | :------ | :------ |
 | `options` | [`GetMeshSourceOptions`](../modules/types_src#getmeshsourceoptions)\<`TConfig`> |
-
-#### Defined in
-
-[packages/types/src/index.ts:56](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L56)

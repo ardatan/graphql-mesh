@@ -19,8 +19,6 @@ title: "@graphql-mesh/urql-exchange"
 
 ▸ **meshExchange**(`options`): `Exchange`
 
-Exchange for executing queries locally on a schema using graphql-js.
-
 #### Parameters
 
 | Name | Type |
@@ -30,7 +28,3 @@ Exchange for executing queries locally on a schema using graphql-js.
 #### Returns
 
 `Exchange`
-
-#### Defined in
-
-[packages/urql/src/index.ts:71](https://github.com/Urigo/graphql-mesh/blob/master/packages/urql/src/index.ts#L71)

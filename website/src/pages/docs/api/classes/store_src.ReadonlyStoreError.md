@@ -126,6 +126,12 @@ ___
 
 ▸ (`err`, `stackTraces`): `any`
 
+Optional override for formatting stack traces
+
+**`See`**
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
 ##### Parameters
 
 | Name | Type |
@@ -164,6 +170,8 @@ node_modules/@types/node/globals.d.ts:13
 ### captureStackTrace
 
 ▸ `Static` **captureStackTrace**(`targetObject`, `constructorOpt?`): `void`
+
+Create .stack property on a target object
 
 #### Parameters
 

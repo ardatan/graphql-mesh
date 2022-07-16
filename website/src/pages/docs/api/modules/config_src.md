@@ -95,10 +95,6 @@ ___
 
 `Promise`\<`ResolvedPackage`\<`T`>>
 
-#### Defined in
-
-[packages/config/src/utils.ts:26](https://github.com/Urigo/graphql-mesh/blob/master/packages/config/src/utils.ts#L26)
-
 ___
 
 ### processConfig
@@ -116,10 +112,6 @@ ___
 
 `Promise`\<[`ProcessedConfig`](config_src#processedconfig)>
 
-#### Defined in
-
-[packages/config/src/process.ts:99](https://github.com/Urigo/graphql-mesh/blob/master/packages/config/src/process.ts#L99)
-
 ___
 
 ### resolveAdditionalTypeDefs
@@ -136,10 +128,6 @@ ___
 #### Returns
 
 `Promise`\<`DocumentNode`[]>
-
-#### Defined in
-
-[packages/config/src/utils.ts:74](https://github.com/Urigo/graphql-mesh/blob/master/packages/config/src/utils.ts#L74)
 
 ___
 
@@ -163,10 +151,6 @@ ___
 
 `Promise`\<\{ `cache`: [`KeyValueCache`](/docs/api/interfaces/types_src.KeyValueCache) ; `code`: `string` ; `importCode`: `string`  }>
 
-#### Defined in
-
-[packages/config/src/utils.ts:136](https://github.com/Urigo/graphql-mesh/blob/master/packages/config/src/utils.ts#L136)
-
 ___
 
 ### resolveCustomFetch
@@ -188,10 +172,6 @@ ___
 
 `Promise`\<\{ `code`: `string` ; `fetchFn`: `ReturnType`\<typeof `fetchFactory`> ; `importCode`: `string`  }>
 
-#### Defined in
-
-[packages/config/src/utils.ts:87](https://github.com/Urigo/graphql-mesh/blob/master/packages/config/src/utils.ts#L87)
-
 ___
 
 ### resolveDocuments
@@ -208,10 +188,6 @@ ___
 #### Returns
 
 `Promise`\<`Source`[]>
-
-#### Defined in
-
-[packages/config/src/utils.ts:238](https://github.com/Urigo/graphql-mesh/blob/master/packages/config/src/utils.ts#L238)
 
 ___
 
@@ -233,10 +209,6 @@ ___
 
 `Promise`\<\{ `code`: `string` ; `importCode`: `string` ; `logger`: [`Logger`](types_src#logger)  }>
 
-#### Defined in
-
-[packages/config/src/utils.ts:252](https://github.com/Urigo/graphql-mesh/blob/master/packages/config/src/utils.ts#L252)
-
 ___
 
 ### resolvePubSub
@@ -255,7 +227,3 @@ ___
 #### Returns
 
 `Promise`\<\{ `code`: `string` ; `importCode`: `string` ; `pubsub`: [`MeshPubSub`](/docs/api/interfaces/types_src.MeshPubSub)  }>
-
-#### Defined in
-
-[packages/config/src/utils.ts:186](https://github.com/Urigo/graphql-mesh/blob/master/packages/config/src/utils.ts#L186)

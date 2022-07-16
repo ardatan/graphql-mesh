@@ -79,7 +79,3 @@ ___
 #### Returns
 
 `Promise`\<[`MeshInstance`](runtime_src.MeshInstance)>
-
-#### Defined in
-
-[packages/runtime/src/types.ts:60](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/types.ts#L60)

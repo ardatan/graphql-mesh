@@ -24,7 +24,3 @@ title: "@graphql-mesh/plugin-rate-limit"
 #### Returns
 
 `Plugin`
-
-#### Defined in
-
-[packages/plugins/rate-limit/src/index.ts:22](https://github.com/Urigo/graphql-mesh/blob/master/packages/plugins/rate-limit/src/index.ts#L22)

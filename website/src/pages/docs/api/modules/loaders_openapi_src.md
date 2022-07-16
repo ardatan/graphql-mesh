@@ -52,10 +52,6 @@ to load the schema locally later
 
 `Promise`\<[`JSONSchemaLoaderBundle`](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaLoaderBundle)>
 
-#### Defined in
-
-[packages/loaders/openapi/src/bundle.ts:13](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/openapi/src/bundle.ts#L13)
-
 ___
 
 ### getJSONSchemaOptionsFromOpenAPIOptions
@@ -71,10 +67,6 @@ ___
 #### Returns
 
 `Promise`\<\{ `baseUrl`: `string` ; `cwd`: `string` ; `fetch`: (`input`: `URL` \| `RequestInfo`, `init?`: `RequestInit`) => `Promise`\<`Response`> = fetchFn; `operationHeaders`: `Record`\<`string`, `string`> ; `operations`: [`JSONSchemaOperationConfig`](loaders_json_schema_src#jsonschemaoperationconfig)[] ; `schemaHeaders`: `Record`\<`string`, `string`>  }>
-
-#### Defined in
-
-[packages/loaders/openapi/src/getJSONSchemaOptionsFromOpenAPIOptions.ts:29](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/openapi/src/getJSONSchemaOptionsFromOpenAPIOptions.ts#L29)
 
 ___
 
@@ -97,7 +89,3 @@ then load it with `loadGraphQLSchemaFromBundle`.
 #### Returns
 
 `Promise`\<`GraphQLSchema`>
-
-#### Defined in
-
-[packages/loaders/openapi/src/loadGraphQLSchemaFromOpenAPI.ts:11](https://github.com/Urigo/graphql-mesh/blob/master/packages/loaders/openapi/src/loadGraphQLSchemaFromOpenAPI.ts#L11)

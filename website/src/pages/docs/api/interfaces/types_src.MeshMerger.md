@@ -47,7 +47,3 @@ title: 'MeshMerger'
 #### Returns
 
 `SubschemaConfig`\<`any`, `any`, `any`, `Record`\<`string`, `any`>> \| `Promise`\<`SubschemaConfig`\<`any`, `any`, `any`, `Record`\<`string`, `any`>>>
-
-#### Defined in
-
-[packages/types/src/index.ts:115](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L115)

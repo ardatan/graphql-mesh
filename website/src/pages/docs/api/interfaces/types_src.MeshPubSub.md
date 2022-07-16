@@ -41,10 +41,6 @@ title: 'MeshPubSub'
 
 `AsyncIterable`\<[`AllHooks`](../modules/types_src#allhooks)[`THook`]>
 
-#### Defined in
-
-[packages/types/src/index.ts:74](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L74)
-
 ___
 
 ### publish
@@ -67,10 +63,6 @@ ___
 #### Returns
 
 `void`
-
-#### Defined in
-
-[packages/types/src/index.ts:67](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L67)
 
 ___
 
@@ -96,10 +88,6 @@ ___
 
 `number`
 
-#### Defined in
-
-[packages/types/src/index.ts:68](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L68)
-
 ___
 
 ### unsubscribe
@@ -115,7 +103,3 @@ ___
 #### Returns
 
 `void`
-
-#### Defined in
-
-[packages/types/src/index.ts:73](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L73)

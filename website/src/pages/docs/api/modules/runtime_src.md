@@ -167,10 +167,6 @@ ___
 
 `Promise`\<[`MeshInstance`](/docs/api/interfaces/runtime_src.MeshInstance)>
 
-#### Defined in
-
-[packages/runtime/src/get-mesh.ts:58](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/get-mesh.ts#L58)
-
 ___
 
 ### useSubschema
@@ -191,7 +187,3 @@ ___
 | :------ | :------ |
 | `plugin` | `Plugin` |
 | `transformedSchema` | `GraphQLSchema` |
-
-#### Defined in
-
-[packages/runtime/src/useSubschema.ts:55](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/useSubschema.ts#L55)

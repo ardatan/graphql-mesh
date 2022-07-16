@@ -18,7 +18,7 @@ title: 'PredefinedProxyOptionsName'
 
 ### GraphQLSchemaWithDiffing
 
-• **GraphQLSchemaWithDiffing**
+• **GraphQLSchemaWithDiffing** = ``"GraphQLSchemaWithDiffing"``
 
 #### Defined in
 
@@ -28,7 +28,7 @@ ___
 
 ### JsonWithoutValidation
 
-• **JsonWithoutValidation**
+• **JsonWithoutValidation** = ``"JsonWithoutValidation"``
 
 #### Defined in
 
@@ -38,7 +38,7 @@ ___
 
 ### StringWithoutValidation
 
-• **StringWithoutValidation**
+• **StringWithoutValidation** = ``"StringWithoutValidation"``
 
 #### Defined in
 

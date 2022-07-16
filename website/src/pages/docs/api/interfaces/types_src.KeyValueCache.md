@@ -44,10 +44,6 @@ title: 'KeyValueCache'
 
 `Promise`\<`boolean` \| `void`>
 
-#### Defined in
-
-[packages/types/src/index.ts:34](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L34)
-
 ___
 
 ### get
@@ -64,10 +60,6 @@ ___
 
 `Promise`\<`V`>
 
-#### Defined in
-
-[packages/types/src/index.ts:32](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L32)
-
 ___
 
 ### getKeysByPrefix
@@ -83,10 +75,6 @@ ___
 #### Returns
 
 `Promise`\<`string`[]>
-
-#### Defined in
-
-[packages/types/src/index.ts:35](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L35)
 
 ___
 
@@ -105,7 +93,3 @@ ___
 #### Returns
 
 `Promise`\<`void`>
-
-#### Defined in
-
-[packages/types/src/index.ts:33](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L33)

@@ -112,10 +112,6 @@ ___
 
 [`ResolverDataBasedFactory`](string_interpolation_src#resolverdatabasedfactory)\<`Record`\<`string`, `string`>>
 
-#### Defined in
-
-[packages/string-interpolation/src/resolver-data-factory.ts:58](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/resolver-data-factory.ts#L58)
-
 ___
 
 ### getInterpolatedStringFactory
@@ -131,10 +127,6 @@ ___
 #### Returns
 
 [`ResolverDataBasedFactory`](string_interpolation_src#resolverdatabasedfactory)\<`string`>
-
-#### Defined in
-
-[packages/string-interpolation/src/resolver-data-factory.ts:54](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/resolver-data-factory.ts#L54)
 
 ___
 
@@ -152,10 +144,6 @@ ___
 
 `any`[]
 
-#### Defined in
-
-[packages/string-interpolation/src/resolver-data-factory.ts:14](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/resolver-data-factory.ts#L14)
-
 ___
 
 ### hashObject
@@ -171,10 +159,6 @@ ___
 #### Returns
 
 `string`
-
-#### Defined in
-
-[packages/string-interpolation/src/index.ts:6](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/index.ts#L6)
 
 ___
 
@@ -197,7 +181,3 @@ ___
 | :------ | :------ |
 | `args` | `Record`\<`string`, \{ `type`: `string` \| `GraphQLInputType`  }> |
 | `contextVariables` | `Record`\<`string`, `string`> |
-
-#### Defined in
-
-[packages/string-interpolation/src/resolver-data-factory.ts:21](https://github.com/Urigo/graphql-mesh/blob/master/packages/string-interpolation/src/resolver-data-factory.ts#L21)

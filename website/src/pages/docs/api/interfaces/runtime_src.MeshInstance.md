@@ -125,10 +125,6 @@ ___
 
 `void`
 
-#### Defined in
-
-[packages/runtime/src/get-mesh.ts:34](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/get-mesh.ts#L34)
-
 ___
 
 ### sdkRequesterFactory
@@ -158,7 +154,3 @@ ___
 ##### Returns
 
 `any`
-
-#### Defined in
-
-[packages/runtime/src/get-mesh.ts:40](https://github.com/Urigo/graphql-mesh/blob/master/packages/runtime/src/get-mesh.ts#L40)

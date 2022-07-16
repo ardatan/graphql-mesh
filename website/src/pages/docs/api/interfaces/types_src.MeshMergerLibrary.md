@@ -23,7 +23,3 @@ title: 'MeshMergerLibrary'
 | Name | Type |
 | :------ | :------ |
 | `options` | [`MeshMergerOptions`](types_src.MeshMergerOptions) |
-
-#### Defined in
-
-[packages/types/src/index.ts:104](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L104)

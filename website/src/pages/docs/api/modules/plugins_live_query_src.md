@@ -24,7 +24,3 @@ title: "@graphql-mesh/plugin-live-query"
 #### Returns
 
 `Plugin`
-
-#### Defined in
-
-[packages/plugins/live-query/src/index.ts:7](https://github.com/Urigo/graphql-mesh/blob/master/packages/plugins/live-query/src/index.ts#L7)

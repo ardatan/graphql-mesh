@@ -29,7 +29,3 @@ title: 'MeshTransformLibrary'
 | Name | Type |
 | :------ | :------ |
 | `options` | [`MeshTransformOptions`](types_src.MeshTransformOptions)\<`Config`> |
-
-#### Defined in
-
-[packages/types/src/index.ts:87](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L87)

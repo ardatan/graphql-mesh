@@ -24,7 +24,3 @@ title: "@graphql-mesh/plugin-response-cache"
 #### Returns
 
 `Plugin`
-
-#### Defined in
-
-[packages/plugins/response-cache/src/index.ts:98](https://github.com/Urigo/graphql-mesh/blob/master/packages/plugins/response-cache/src/index.ts#L98)

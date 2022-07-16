@@ -39,7 +39,7 @@ title: "json-machete"
 
 Ƭ **JSONSchema**: [`JSONSchemaObject`](/docs/api/interfaces/json_machete_src.JSONSchemaObject) \| `JSONSchemaBoolean`
 
-**`default`** \{}
+**`Default`**
 
 #### Defined in
 
@@ -71,10 +71,6 @@ node_modules/@json-schema-tools/meta-schema/index.d.ts:119
 #### Returns
 
 `Promise`\<`void`>
-
-#### Defined in
-
-[packages/json-machete/src/compareJSONSchemas.ts:7](https://github.com/Urigo/graphql-mesh/blob/master/packages/json-machete/src/compareJSONSchemas.ts#L7)
 
 ___
 
@@ -108,10 +104,6 @@ ___
 
 `Promise`\<`T`>
 
-#### Defined in
-
-[packages/json-machete/src/dereferenceObject.ts:66](https://github.com/Urigo/graphql-mesh/blob/master/packages/json-machete/src/dereferenceObject.ts#L66)
-
 ___
 
 ### getAbsolutePath
@@ -129,10 +121,6 @@ ___
 
 `string`
 
-#### Defined in
-
-[packages/json-machete/src/dereferenceObject.ts:48](https://github.com/Urigo/graphql-mesh/blob/master/packages/json-machete/src/dereferenceObject.ts#L48)
-
 ___
 
 ### getCwd
@@ -148,10 +136,6 @@ ___
 #### Returns
 
 `string`
-
-#### Defined in
-
-[packages/json-machete/src/dereferenceObject.ts:61](https://github.com/Urigo/graphql-mesh/blob/master/packages/json-machete/src/dereferenceObject.ts#L61)
 
 ___
 
@@ -171,10 +155,6 @@ ___
 
 `Promise`\<[`JSONSchema`](json_machete_src#jsonschema)>
 
-#### Defined in
-
-[packages/json-machete/src/healJSONSchema.ts:73](https://github.com/Urigo/graphql-mesh/blob/master/packages/json-machete/src/healJSONSchema.ts#L73)
-
 ___
 
 ### referenceJSONSchema
@@ -190,10 +170,6 @@ ___
 #### Returns
 
 `Promise`\<`any`>
-
-#### Defined in
-
-[packages/json-machete/src/referenceJSONSchema.ts:5](https://github.com/Urigo/graphql-mesh/blob/master/packages/json-machete/src/referenceJSONSchema.ts#L5)
 
 ___
 
@@ -211,10 +187,6 @@ ___
 #### Returns
 
 `any`
-
-#### Defined in
-
-[packages/json-machete/src/dereferenceObject.ts:7](https://github.com/Urigo/graphql-mesh/blob/master/packages/json-machete/src/dereferenceObject.ts#L7)
 
 ___
 
@@ -239,7 +211,3 @@ ___
 #### Returns
 
 `Promise`\<`any`>
-
-#### Defined in
-
-[packages/json-machete/src/visitJSONSchema.ts:19](https://github.com/Urigo/graphql-mesh/blob/master/packages/json-machete/src/visitJSONSchema.ts#L19)

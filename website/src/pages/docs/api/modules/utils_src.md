@@ -82,10 +82,6 @@ title: "@graphql-mesh/utils"
 
 `ExecutionRequest`\<`Record`\<`string`, `any`>, `any`, `any`, `Record`\<`string`, `any`>>
 
-#### Defined in
-
-[packages/utils/src/apply-transforms.ts:17](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/apply-transforms.ts#L17)
-
 ___
 
 ### applyResultTransforms
@@ -104,10 +100,6 @@ ___
 #### Returns
 
 `ExecutionResult`\<`Record`\<`string`, `any`>>
-
-#### Defined in
-
-[packages/utils/src/apply-transforms.ts:41](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/apply-transforms.ts#L41)
 
 ___
 
@@ -128,10 +120,6 @@ ___
 
 `GraphQLSchema`
 
-#### Defined in
-
-[packages/utils/src/apply-transforms.ts:5](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/apply-transforms.ts#L5)
-
 ___
 
 ### createLruCache
@@ -149,10 +137,6 @@ ___
 
 `Lru`\<`any`>
 
-#### Defined in
-
-[packages/utils/src/global-lru-cache.ts:3](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/global-lru-cache.ts#L3)
-
 ___
 
 ### debugColor
@@ -168,10 +152,6 @@ ___
 #### Returns
 
 `string`
-
-#### Defined in
-
-[packages/utils/src/logger.ts:23](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L23)
 
 ___
 
@@ -189,10 +169,6 @@ ___
 
 `Promise`\<`any`>
 
-#### Defined in
-
-[packages/utils/src/defaultImportFn.ts:1](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/defaultImportFn.ts#L1)
-
 ___
 
 ### errorColor
@@ -208,10 +184,6 @@ ___
 #### Returns
 
 `string`
-
-#### Defined in
-
-[packages/utils/src/logger.ts:22](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L22)
 
 ___
 
@@ -229,10 +201,6 @@ ___
 
 `any`
 
-#### Defined in
-
-[packages/utils/src/extract-resolvers.ts:4](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/extract-resolvers.ts#L4)
-
 ___
 
 ### fileURLToPath
@@ -248,10 +216,6 @@ ___
 #### Returns
 
 `string`
-
-#### Defined in
-
-[packages/utils/src/fileURLToPath.ts:42](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/fileURLToPath.ts#L42)
 
 ___
 
@@ -269,10 +233,6 @@ ___
 
 `Record`\<`string`, `string`>
 
-#### Defined in
-
-[packages/utils/src/getHeadersObj.ts:9](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/getHeadersObj.ts#L9)
-
 ___
 
 ### gql
@@ -289,10 +249,6 @@ ___
 #### Returns
 
 `DocumentNode`
-
-#### Defined in
-
-[packages/utils/src/parseAndPrintWithCache.ts:30](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/parseAndPrintWithCache.ts#L30)
 
 ___
 
@@ -315,10 +271,6 @@ ___
 | `noWrapTransforms` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)\<`any`>[] |
 | `wrapTransforms` | [`MeshTransform`](/docs/api/interfaces/types_src.MeshTransform)\<`any`>[] |
 
-#### Defined in
-
-[packages/utils/src/group-transforms.ts:3](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/group-transforms.ts#L3)
-
 ___
 
 ### infoColor
@@ -335,10 +287,6 @@ ___
 
 `string`
 
-#### Defined in
-
-[packages/utils/src/logger.ts:21](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L21)
-
 ___
 
 ### isUrl
@@ -354,10 +302,6 @@ ___
 #### Returns
 
 `boolean`
-
-#### Defined in
-
-[packages/utils/src/read-file-or-url.ts:15](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L15)
 
 ___
 
@@ -382,10 +326,6 @@ ___
 
 `Promise`\<`T`>
 
-#### Defined in
-
-[packages/utils/src/load-from-module-export-expression.ts:12](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/load-from-module-export-expression.ts#L12)
-
 ___
 
 ### loadYaml
@@ -404,10 +344,6 @@ ___
 
 `any`
 
-#### Defined in
-
-[packages/utils/src/read-file-or-url.ts:70](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L70)
-
 ___
 
 ### mkdir
@@ -425,10 +361,6 @@ ___
 
 `Promise`\<`void`>
 
-#### Defined in
-
-[packages/utils/src/fs-operations.ts:39](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/fs-operations.ts#L39)
-
 ___
 
 ### parseWithCache
@@ -444,10 +376,6 @@ ___
 #### Returns
 
 `DocumentNode`
-
-#### Defined in
-
-[packages/utils/src/parseAndPrintWithCache.ts:8](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/parseAndPrintWithCache.ts#L8)
 
 ___
 
@@ -465,10 +393,6 @@ ___
 
 `Promise`\<`boolean`>
 
-#### Defined in
-
-[packages/utils/src/fs-operations.ts:3](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/fs-operations.ts#L3)
-
 ___
 
 ### printWithCache
@@ -484,10 +408,6 @@ ___
 #### Returns
 
 `string`
-
-#### Defined in
-
-[packages/utils/src/parseAndPrintWithCache.ts:19](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/parseAndPrintWithCache.ts#L19)
 
 ___
 
@@ -512,10 +432,6 @@ ___
 
 `Promise`\<`T`>
 
-#### Defined in
-
-[packages/utils/src/read-file-or-url.ts:80](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L80)
-
 ___
 
 ### readFileOrUrl
@@ -538,10 +454,6 @@ ___
 #### Returns
 
 `Promise`\<`T`>
-
-#### Defined in
-
-[packages/utils/src/read-file-or-url.ts:25](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L25)
 
 ___
 
@@ -566,10 +478,6 @@ ___
 
 `Promise`\<`T`>
 
-#### Defined in
-
-[packages/utils/src/read-file-or-url.ts:118](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/read-file-or-url.ts#L118)
-
 ___
 
 ### resolveAdditionalResolvers
@@ -589,10 +497,6 @@ ___
 
 `Promise`\<`IResolvers`[]>
 
-#### Defined in
-
-[packages/utils/src/resolve-additional-resolvers.ts:278](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/resolve-additional-resolvers.ts#L278)
-
 ___
 
 ### resolveAdditionalResolversWithoutImport
@@ -610,10 +514,6 @@ ___
 
 `IResolvers`
 
-#### Defined in
-
-[packages/utils/src/resolve-additional-resolvers.ts:146](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/resolve-additional-resolvers.ts#L146)
-
 ___
 
 ### rmdirs
@@ -629,10 +529,6 @@ ___
 #### Returns
 
 `Promise`\<`void`>
-
-#### Defined in
-
-[packages/utils/src/fs-operations.ts:46](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/fs-operations.ts#L46)
 
 ___
 
@@ -650,10 +546,6 @@ ___
 
 `string`
 
-#### Defined in
-
-[packages/utils/src/sanitize-name-for-graphql.ts:40](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/sanitize-name-for-graphql.ts#L40)
-
 ___
 
 ### titleBold
@@ -670,10 +562,6 @@ ___
 
 `string`
 
-#### Defined in
-
-[packages/utils/src/logger.ts:24](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L24)
-
 ___
 
 ### warnColor
@@ -689,10 +577,6 @@ ___
 #### Returns
 
 `string`
-
-#### Defined in
-
-[packages/utils/src/logger.ts:20](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/logger.ts#L20)
 
 ___
 
@@ -717,31 +601,73 @@ ___
 
 `AsyncIterable`\<`T` \| `undefined`>
 
-#### Defined in
-
-[packages/utils/src/with-cancel.ts:1](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/with-cancel.ts#L1)
-
 ___
 
 ### writeFile
 
 ▸ **writeFile**(`file`, `data`, `options?`): `Promise`\<`void`>
 
+Asynchronously writes data to a file, replacing the file if it already exists.`data` can be a string, a `Buffer`, or, an object with an own (not inherited)`toString` function property.
+
+The `encoding` option is ignored if `data` is a buffer.
+
+If `options` is a string, then it specifies the encoding.
+
+The `mode` option only affects the newly created file. See `fs.open()` for more details.
+
+Any specified `FileHandle` has to support writing.
+
+It is unsafe to use `fsPromises.writeFile()` multiple times on the same file
+without waiting for the promise to be settled.
+
+Similarly to `fsPromises.readFile` \- `fsPromises.writeFile` is a convenience
+method that performs multiple `write` calls internally to write the buffer
+passed to it. For performance sensitive code consider using `fs.createWriteStream()`.
+
+It is possible to use an `AbortSignal` to cancel an `fsPromises.writeFile()`.
+Cancelation is "best effort", and some amount of data is likely still
+to be written.
+
+```js
+import \{ writeFile } from 'fs/promises';
+import \{ Buffer } from 'buffer';
+
+try \{
+  const controller = new AbortController();
+  const \{ signal } = controller;
+  const data = new Uint8Array(Buffer.from('Hello Node.js'));
+  const promise = writeFile('message.txt', data, \{ signal });
+
+  // Abort the request before the promise settles.
+  controller.abort();
+
+  await promise;
+} catch (err) \{
+  // When a request is aborted - err is an AbortError
+  console.error(err);
+}
+```
+
+Aborting an ongoing request does not abort individual operating
+system requests but rather the internal buffering `fs.writeFile` performs.
+
+**`Since`**
+
+v10.0.0
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `file` | `PathLike` \| `FileHandle` |
-| `data` | `string` \| `ArrayBufferView` \| `Iterable`\<`string` \| `ArrayBufferView`> \| `AsyncIterable`\<`string` \| `ArrayBufferView`> \| `Stream` |
-| `options?` | `BufferEncoding` \| `ObjectEncodingOptions` & \{ `flag?`: `OpenMode` ; `mode?`: `Mode`  } & `Abortable` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `file` | `PathLike` \| `FileHandle` | filename or `FileHandle` |
+| `data` | `string` \| `ArrayBufferView` \| `Iterable`\<`string` \| `ArrayBufferView`> \| `AsyncIterable`\<`string` \| `ArrayBufferView`> \| `Stream` | - |
+| `options?` | `BufferEncoding` \| `ObjectEncodingOptions` & \{ `flag?`: `OpenMode` ; `mode?`: `Mode`  } & `Abortable` | - |
 
 #### Returns
 
 `Promise`\<`void`>
 
-#### Defined in
-
-[packages/utils/src/fs-operations.ts:29](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/fs-operations.ts#L29)
+Fulfills with `undefined` upon success.
 
 ___
 
@@ -767,7 +693,3 @@ ___
 #### Returns
 
 `Promise`\<`void`>
-
-#### Defined in
-
-[packages/utils/src/fs-operations.ts:19](https://github.com/Urigo/graphql-mesh/blob/master/packages/utils/src/fs-operations.ts#L19)

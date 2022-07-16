@@ -26,7 +26,3 @@ title: "@graphql-mesh/jit-executor"
 #### Returns
 
 `Executor`
-
-#### Defined in
-
-[packages/jit-executor/src/index.ts:11](https://github.com/Urigo/graphql-mesh/blob/master/packages/jit-executor/src/index.ts#L11)

@@ -38,7 +38,3 @@ title: 'MeshHandler'
 #### Returns
 
 `Promise`\<[`MeshSource`](../modules/types_src#meshsource)>
-
-#### Defined in
-
-[packages/types/src/index.ts:52](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/index.ts#L52)
