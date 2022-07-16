@@ -50,8 +50,8 @@
   "transforms_resolvers_composition_src": "transforms_resolvers_composition_src",
   "transforms_snapshot_src": "transforms_snapshot_src",
   "transforms_type_merging_src": "transforms_type_merging_src",
-  "types_src.YamlConfig": "YamlConfig",
   "types_src": "types_src",
   "urql_src": "urql_src",
-  "utils_src": "utils_src"
+  "utils_src": "utils_src",
+  "types_src.YamlConfig": "YamlConfig"
 }
