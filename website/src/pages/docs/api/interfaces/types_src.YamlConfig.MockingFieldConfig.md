@@ -68,7 +68,7 @@ ___
 • `Optional` **if**: `boolean`
 
 If this expression is truthy, mocking would be enabled
-You can use environment variables expression, for example: `$\{MOCKING_ENABLED}`
+You can use environment variables expression, for example: `${MOCKING_ENABLED}`
 
 #### Defined in
 

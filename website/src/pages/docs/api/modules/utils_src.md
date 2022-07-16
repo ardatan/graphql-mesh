@@ -629,20 +629,20 @@ Cancelation is "best effort", and some amount of data is likely still
 to be written.
 
 ```js
-import \{ writeFile } from 'fs/promises';
-import \{ Buffer } from 'buffer';
+import { writeFile } from 'fs/promises';
+import { Buffer } from 'buffer';
 
-try \{
+try {
   const controller = new AbortController();
-  const \{ signal } = controller;
+  const { signal } = controller;
   const data = new Uint8Array(Buffer.from('Hello Node.js'));
-  const promise = writeFile('message.txt', data, \{ signal });
+  const promise = writeFile('message.txt', data, { signal });
 
   // Abort the request before the promise settles.
   controller.abort();
 
   await promise;
-} catch (err) \{
+} catch (err) {
   // When a request is aborted - err is an AbortError
   console.error(err);
 }
