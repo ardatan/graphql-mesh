@@ -1,20 +1,19 @@
 import { MeshLogo } from '@theguild/components';
+import { DocsThemeConfig } from 'nextra-theme-docs';
 
 const SITE_NAME = 'GraphQL Mesh';
 
-export default {
+const config: DocsThemeConfig = {
   titleSuffix: ` – ${SITE_NAME}`,
   projectLink: 'https://github.com/urigo/graphql-mesh', // GitHub link in the navbar
-  github: null,
   docsRepositoryBase: 'https://github.com/Urigo/graphql-mesh/tree/master/website/src/pages', // base URL for the docs repository
   nextLinks: true,
   prevLinks: true,
-  search: false,
-  unstable_flexsearch: null,
+  search: true,
+  unstable_flexsearch: true,
   floatTOC: true,
-  customSearch: null, // customizable, you can use algolia for example
   darkMode: true,
-  footer: null,
+  footer: false,
   footerEditLink: 'Edit this page on GitHub',
   logo: (
     <>
@@ -33,4 +32,9 @@ export default {
     </>
   ),
   gitTimestamp: 'Last updated on',
+  defaultMenuCollapsed: true,
+  feedbackLink: 'Question? Give us feedback →',
+  feedbackLabels: 'kind/docs',
 };
+
+export default config;
