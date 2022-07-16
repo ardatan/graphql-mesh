@@ -853,7 +853,7 @@
         },
         "introspection": {
           "type": "string",
-          "description": "Path to the introspection\nYou can seperately give schema introspection"
+          "description": "Path to the introspection\nYou can separately give schema introspection"
         },
         "multipart": {
           "type": "boolean",

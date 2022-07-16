@@ -9,11 +9,11 @@ title: "@graphql-mesh/transform-resolvers-composition"
 
 - [ResolversCompositionTransform](/docs/api/classes/transforms_resolvers_composition_src.ResolversCompositionTransform)
 
-### Type aliases
+### Type Aliases
 
 - [ResolversComposition](transforms_resolvers_composition_src#resolverscomposition)
 
-## Type aliases
+## Type Aliases
 
 ### ResolversComposition
 

@@ -7,7 +7,7 @@ title: "@omnigraph/json-schema"
 
 ### References
 
-- [default](loaders_json_schema_src#default)
+- [src](loaders_json_schema_src#src)
 
 ### Interfaces
 
@@ -18,7 +18,7 @@ title: "@omnigraph/json-schema"
 - [JSONSchemaLoaderOptions](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaLoaderOptions)
 - [JSONSchemaOperationResponseConfig](/docs/api/interfaces/loaders_json_schema_src.JSONSchemaOperationResponseConfig)
 
-### Type aliases
+### Type Aliases
 
 - [HTTPMethod](loaders_json_schema_src#httpmethod)
 - [JSONSchemaBaseOperationConfig](loaders_json_schema_src#jsonschemabaseoperationconfig)
@@ -45,11 +45,11 @@ title: "@omnigraph/json-schema"
 
 ## References
 
-### default
+### src
 
 Renames and re-exports [loadGraphQLSchemaFromJSONSchemas](loaders_json_schema_src#loadgraphqlschemafromjsonschemas)
 
-## Type aliases
+## Type Aliases
 
 ### HTTPMethod
 

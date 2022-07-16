@@ -8,17 +8,17 @@ title: 'OnCircularReference'
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [ERROR](json_machete_src.OnCircularReference#error)
 - [IGNORE](json_machete_src.OnCircularReference#ignore)
 - [WARN](json_machete_src.OnCircularReference#warn)
 
-## Enumeration members
+## Enumeration Members
 
 ### ERROR
 
-• **ERROR** = `"ERROR"`
+• **ERROR**
 
 #### Defined in
 
@@ -28,7 +28,7 @@ ___
 
 ### IGNORE
 
-• **IGNORE** = `"IGNORE"`
+• **IGNORE**
 
 #### Defined in
 
@@ -38,7 +38,7 @@ ___
 
 ### WARN
 
-• **WARN** = `"WARN"`
+• **WARN**
 
 #### Defined in
 

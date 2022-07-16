@@ -14,7 +14,7 @@ title: "@graphql-mesh/utils"
 
 - [ReadFileOrUrlOptions](/docs/api/interfaces/utils_src.ReadFileOrUrlOptions)
 
-### Type aliases
+### Type Aliases
 
 - [LRUCache](utils_src#lrucache)
 
@@ -53,7 +53,7 @@ title: "@graphql-mesh/utils"
 - [writeFile](utils_src#writefile)
 - [writeJSON](utils_src#writejson)
 
-## Type aliases
+## Type Aliases
 
 ### LRUCache
 

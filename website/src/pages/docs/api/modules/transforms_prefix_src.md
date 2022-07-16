@@ -5,12 +5,16 @@ title: "@graphql-mesh/transform-prefix"
 
 ## Table of contents
 
-### Properties
+### Variables
 
-- [default](transforms_prefix_src#default)
+- [src](transforms_prefix_src#src)
 
-## Properties
+## Variables
 
-### default
+### src
 
-• **default**: `PrefixTransformConstructor`
+• **src**: `PrefixTransformConstructor`
+
+#### Defined in
+
+[packages/transforms/prefix/src/index.ts:9](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/prefix/src/index.ts#L9)

@@ -8,17 +8,17 @@ title: 'PredefinedProxyOptionsName'
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [GraphQLSchemaWithDiffing](store_src.PredefinedProxyOptionsName#graphqlschemawithdiffing)
 - [JsonWithoutValidation](store_src.PredefinedProxyOptionsName#jsonwithoutvalidation)
 - [StringWithoutValidation](store_src.PredefinedProxyOptionsName#stringwithoutvalidation)
 
-## Enumeration members
+## Enumeration Members
 
 ### GraphQLSchemaWithDiffing
 
-• **GraphQLSchemaWithDiffing** = `"GraphQLSchemaWithDiffing"`
+• **GraphQLSchemaWithDiffing**
 
 #### Defined in
 
@@ -28,7 +28,7 @@ ___
 
 ### JsonWithoutValidation
 
-• **JsonWithoutValidation** = `"JsonWithoutValidation"`
+• **JsonWithoutValidation**
 
 #### Defined in
 
@@ -38,7 +38,7 @@ ___
 
 ### StringWithoutValidation
 
-• **StringWithoutValidation** = `"StringWithoutValidation"`
+• **StringWithoutValidation**
 
 #### Defined in
 

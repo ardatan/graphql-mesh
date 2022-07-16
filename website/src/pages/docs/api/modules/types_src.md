@@ -24,7 +24,7 @@ title: "@graphql-mesh/types"
 - [MeshTransformLibrary](/docs/api/interfaces/types_src.MeshTransformLibrary)
 - [MeshTransformOptions](/docs/api/interfaces/types_src.MeshTransformOptions)
 
-### Type aliases
+### Type Aliases
 
 - [AllHooks](types_src#allhooks)
 - [GetMeshSourceOptions](types_src#getmeshsourceoptions)
@@ -51,7 +51,7 @@ title: "@graphql-mesh/types"
 
 - [jsonSchema](types_src#jsonschema)
 
-## Type aliases
+## Type Aliases
 
 ### AllHooks
 

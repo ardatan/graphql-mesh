@@ -10,7 +10,7 @@ title: "@graphql-mesh/runtime"
 - [MeshInstance](/docs/api/interfaces/runtime_src.MeshInstance)
 - [ServeMeshOptions](/docs/api/interfaces/runtime_src.ServeMeshOptions)
 
-### Type aliases
+### Type Aliases
 
 - [ExecuteMeshFn](runtime_src#executemeshfn)
 - [GetMeshOptions](runtime_src#getmeshoptions)
@@ -23,7 +23,7 @@ title: "@graphql-mesh/runtime"
 - [getMesh](runtime_src#getmesh)
 - [useSubschema](runtime_src#usesubschema)
 
-## Type aliases
+## Type Aliases
 
 ### ExecuteMeshFn
 

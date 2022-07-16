@@ -14,7 +14,7 @@ title: "json-machete"
 - [JSONSchemaObject](/docs/api/interfaces/json_machete_src.JSONSchemaObject)
 - [JSONSchemaVisitorContext](/docs/api/interfaces/json_machete_src.JSONSchemaVisitorContext)
 
-### Type aliases
+### Type Aliases
 
 - [JSONSchema](json_machete_src#jsonschema)
 
@@ -33,7 +33,7 @@ title: "json-machete"
 - [resolvePath](json_machete_src#resolvepath)
 - [visitJSONSchema](json_machete_src#visitjsonschema)
 
-## Type aliases
+## Type Aliases
 
 ### JSONSchema
 

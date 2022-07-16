@@ -5,12 +5,16 @@ title: "@graphql-mesh/transform-filter-schema"
 
 ## Table of contents
 
-### Properties
+### Variables
 
-- [default](transforms_filter_schema_src#default)
+- [src](transforms_filter_schema_src#src)
 
-## Properties
+## Variables
 
-### default
+### src
 
-• **default**: `FilterTransformConstructor`
+• **src**: `FilterTransformConstructor`
+
+#### Defined in
+
+[packages/transforms/filter-schema/src/index.ts:9](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/filter-schema/src/index.ts#L9)

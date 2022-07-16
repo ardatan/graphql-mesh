@@ -5,7 +5,7 @@ title: "@graphql-mesh/config"
 
 ## Table of contents
 
-### Type aliases
+### Type Aliases
 
 - [ConfigProcessOptions](config_src#configprocessoptions)
 - [ProcessedConfig](config_src#processedconfig)
@@ -21,7 +21,7 @@ title: "@graphql-mesh/config"
 - [resolveLogger](config_src#resolvelogger)
 - [resolvePubSub](config_src#resolvepubsub)
 
-## Type aliases
+## Type Aliases
 
 ### ConfigProcessOptions
 

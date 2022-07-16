@@ -5,12 +5,16 @@ title: "@graphql-mesh/transform-rename"
 
 ## Table of contents
 
-### Properties
+### Variables
 
-- [default](transforms_rename_src#default)
+- [src](transforms_rename_src#src)
 
-## Properties
+## Variables
 
-### default
+### src
 
-• **default**: `RenameTransformConstructor`
+• **src**: `RenameTransformConstructor`
+
+#### Defined in
+
+[packages/transforms/rename/src/index.ts:9](https://github.com/Urigo/graphql-mesh/blob/master/packages/transforms/rename/src/index.ts#L9)

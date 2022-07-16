@@ -21,7 +21,7 @@ title: "@graphql-mesh/store"
 
 - [FsStoreStorageAdapterOptions](/docs/api/interfaces/store_src.FsStoreStorageAdapterOptions)
 
-### Type aliases
+### Type Aliases
 
 - [ProxyOptions](store_src#proxyoptions)
 - [StoreFlags](store_src#storeflags)
@@ -32,7 +32,7 @@ title: "@graphql-mesh/store"
 
 - [PredefinedProxyOptions](store_src#predefinedproxyoptions)
 
-## Type aliases
+## Type Aliases
 
 ### ProxyOptions
 

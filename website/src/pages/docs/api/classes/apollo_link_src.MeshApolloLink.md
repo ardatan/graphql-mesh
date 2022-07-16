@@ -24,11 +24,11 @@ title: 'MeshApolloLink'
 - [request](apollo_link_src.MeshApolloLink#request)
 - [setOnError](apollo_link_src.MeshApolloLink#setonerror)
 - [split](apollo_link_src.MeshApolloLink#split)
-- [concat](apollo_link_src.MeshApolloLink#concat)
+- [concat](apollo_link_src.MeshApolloLink#concat-1)
 - [empty](apollo_link_src.MeshApolloLink#empty)
 - [execute](apollo_link_src.MeshApolloLink#execute)
 - [from](apollo_link_src.MeshApolloLink#from)
-- [split](apollo_link_src.MeshApolloLink#split)
+- [split](apollo_link_src.MeshApolloLink#split-1)
 
 ## Constructors
 

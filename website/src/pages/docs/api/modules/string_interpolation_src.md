@@ -9,7 +9,7 @@ title: "@graphql-mesh/string-interpolation"
 
 - [Interpolator](/docs/api/classes/string_interpolation_src.Interpolator)
 
-### Type aliases
+### Type Aliases
 
 - [ResolverData](string_interpolation_src#resolverdata)
 - [ResolverDataBasedFactory](string_interpolation_src#resolverdatabasedfactory)
@@ -26,7 +26,7 @@ title: "@graphql-mesh/string-interpolation"
 - [hashObject](string_interpolation_src#hashobject)
 - [parseInterpolationStrings](string_interpolation_src#parseinterpolationstrings)
 
-## Type aliases
+## Type Aliases
 
 ### ResolverData
 
