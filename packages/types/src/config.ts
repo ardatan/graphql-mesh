@@ -231,7 +231,7 @@ export interface GraphQLHandlerHTTPConfiguration {
   webSocketImpl?: string;
   /**
    * Path to the introspection
-   * You can seperately give schema introspection
+   * You can separately give schema introspection
    */
   introspection?: string;
   /**

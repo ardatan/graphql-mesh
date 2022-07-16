@@ -13,7 +13,7 @@ Some environments like CF Workers don't even want to have this set.
 So if you have problems like that. Just pass `disable` here.
 * `webSocketImpl` (type: `String`) - Path to a custom W3 Compatible WebSocket Implementation
 * `introspection` (type: `String`) - Path to the introspection
-You can seperately give schema introspection
+You can separately give schema introspection
 * `multipart` (type: `Boolean`) - Enable multipart/formdata in order to support file uploads
 * `subscriptionsProtocol` (type: `String (SSE | WS | LEGACY_WS)`) - SSE - Server Sent Events
 WS - New graphql-ws
