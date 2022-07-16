@@ -49,7 +49,7 @@ ___
 
 ### getEnveloped
 
-• **getEnveloped**: `GetEnvelopedFn`\<\{}>
+• **getEnveloped**: `GetEnvelopedFn`\<{}>
 
 #### Defined in
 

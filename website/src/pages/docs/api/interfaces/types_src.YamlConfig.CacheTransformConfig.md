@@ -21,16 +21,16 @@ title: 'CacheTransformConfig'
 • `Optional` **cacheKey**: `string`
 
 Cache key to use to store your resolvers responses.
-The default is: \{typeName}-\{fieldName}-\{argsHash}-\{fieldNamesHash}
+The default is: `{typeName}-{fieldName}-{argsHash}-{fieldNamesHash}`
 Available variables:
-- \{args.argName} - use resolver argument
-- \{typeName} - use name of the type
-- \{fieldName} - use name of the field
-- \{argsHash} - a hash based on the 'args' object
-- \{fieldNamesHash} - a hash based on the field names selected by the client
-- \{info} - the GraphQLResolveInfo of the resolver
+- `{args.argName}` - use resolver argument
+- `{typeName}` - use name of the type
+- `{fieldName}` - use name of the field
+- `{argsHash}` - a hash based on the 'args' object
+- `{fieldNamesHash}` - a hash based on the field names selected by the client
+- `{info}` - the GraphQLResolveInfo of the resolver
 Available interpolations:
-- \{format|date} - returns the current date with a specific format
+- `{format|date}` - returns the current date with a specific format
 
 #### Defined in
 

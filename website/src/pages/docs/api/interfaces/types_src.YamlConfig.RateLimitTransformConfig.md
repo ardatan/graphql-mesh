@@ -34,7 +34,7 @@ ___
 
 • **identifier**: `string`
 
-The identifier expression that determines the identity of the request (e.g. "\{context.req.socket.remoteAddress}")
+The identifier expression that determines the identity of the request (e.g. `{context.req.socket.remoteAddress}`)
 
 #### Defined in
 
