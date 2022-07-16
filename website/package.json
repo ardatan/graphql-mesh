@@ -23,7 +23,6 @@
     "@guild-docs/client": "4.0.0-alpha-977f9d3.0",
     "@guild-docs/server": "5.0.0-alpha-b500768.0",
     "@theguild/components": "2.0.0-alpha-9d29815.0",
-    "classnames": "2.3.1",
     "framer-motion": "6.4.3",
     "next": "12.2.2",
     "next-i18next": "11.0.0",
