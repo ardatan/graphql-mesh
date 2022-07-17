@@ -1363,7 +1363,7 @@ export interface MockingFieldConfig {
    * Faker.js expression or function
    * Read more (https://github.com/marak/Faker.js/#fakerfake)
    * Example:
-   * faker: name.firstName
+   * faker: `name.firstName`
    * faker: `{{ name.firstName }} {{ name.lastName }}`
    */
   faker?: string;

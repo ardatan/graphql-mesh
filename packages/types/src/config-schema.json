@@ -2869,7 +2869,7 @@
         },
         "faker": {
           "type": "string",
-          "description": "Faker.js expression or function\nRead more (https://github.com/marak/Faker.js/#fakerfake)\nExample:\nfaker: name.firstName\nfaker: `{{ name.firstName }} {{ name.lastName }}`"
+          "description": "Faker.js expression or function\nRead more (https://github.com/marak/Faker.js/#fakerfake)\nExample:\nfaker: `name.firstName`\nfaker: `{{ name.firstName }} {{ name.lastName }}`"
         },
         "custom": {
           "type": "string",

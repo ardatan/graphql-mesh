@@ -1,5 +1,5 @@
 /.changeset/*.md
-/website/docs/generated-markdown/
+/website/src/generated-markdown/
 .next/
 dist/
 .mesh/
