@@ -54,7 +54,7 @@ index 0000000..5db98cb
 +}): JSX.Element;
 +export {};
 diff --git a/node_modules/nextra-theme-docs/dist/index.js b/node_modules/nextra-theme-docs/dist/index.js
-index 0f5435d..e7b6ef9 100644
+index 0f5435d..6dc6b89 100644
 --- a/node_modules/nextra-theme-docs/dist/index.js
 +++ b/node_modules/nextra-theme-docs/dist/index.js
 @@ -51,7 +51,7 @@ var __async = (__this, __arguments, generator) => {
@@ -1435,7 +1435,7 @@ index 0f5435d..e7b6ef9 100644
 -      }
 -      restChildren.push(c);
 +      return;
-+    }
+     }
 +    let c = child;
 +    if (!summary && typeof child === "object" && child && child.type !== Details && "props" in child && child.props) {
 +      const result = findSummary(child.props.children);
@@ -1444,7 +1444,7 @@ index 0f5435d..e7b6ef9 100644
 +        children: ((_a = result[1]) == null ? void 0 : _a.length) ? result[1] : void 0,
 +        key: index
 +      }));
-     }
++    }
 +    restChildren.push(c);
    });
    return [summary, restChildren];
@@ -2121,7 +2121,7 @@ index 0f5435d..e7b6ef9 100644
      directories: docsDirectories,
      flatDirectories,
      fullDirectories: directories,
-@@ -2314,28 +2282,29 @@ var Content = ({
+@@ -2314,47 +2282,44 @@ var Content = ({
      isRTL,
      asPopover: activeType === "page" || hideSidebar,
      includePlaceholder: themeContext.layout === "default"
@@ -2160,8 +2160,10 @@ index 0f5435d..e7b6ef9 100644
 +  const nextThemes = extendedConfig.nextThemes || {};
    let layoutUsed = false;
    const Page = ({ children }) => {
-     if (!layoutUsed && isProduction) {
-@@ -2345,16 +2314,15 @@ var createLayout = (opts, _config) => {
+-    if (!layoutUsed && isProduction) {
+-      throw new Error("[Nextra] Please add the `getLayout` logic to your _app.js, see https://nextjs.org/docs/basic-features/layouts#per-page-layouts.");
+-    }
+     return children;
    };
    Page.getLayout = (page) => {
      layoutUsed = true;
