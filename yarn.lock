@@ -8715,7 +8715,7 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
-classnames@2.3.1, classnames@^2.2.5, classnames@^2.2.6:
+classnames@^2.2.5, classnames@^2.2.6:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.3.1.tgz#dfcfa3891e306ec1dad105d0e88f4417b8535e8e"
   integrity sha512-OlQdbZ7gLfGarSqxesMesDa5uz7KFbID8Kpq/SxIoNGDqY8lSYs0D+hhtBXhcdB3rcbXArFr7vlHheLk1voeNA==
@@ -17105,10 +17105,10 @@ markdown-table@^3.0.0:
   resolved "https://registry.yarnpkg.com/markdown-table/-/markdown-table-3.0.2.tgz#9b59eb2c1b22fe71954a65ff512887065a7bb57c"
   integrity sha512-y8j3a5/DkJCmS5x4dMCQL+OR0+2EAq3DOtio1COSHsmW2BGXnNCK3v12hJt1LrUz5iZH5g0LmuYOjDdI+czghA==
 
-marked@^4.0.12:
-  version "4.0.12"
-  resolved "https://registry.yarnpkg.com/marked/-/marked-4.0.12.tgz#2262a4e6fd1afd2f13557726238b69a48b982f7d"
-  integrity sha512-hgibXWrEDNBWgGiK18j/4lkS6ihTe9sxtV4Q1OQppb/0zzyPSzoFANBa5MfsG/zgsWklmNnhm0XACZOH/0HBiQ==
+marked@^4.0.16:
+  version "4.0.18"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-4.0.18.tgz#cd0ac54b2e5610cfb90e8fd46ccaa8292c9ed569"
+  integrity sha512-wbLDJ7Zh0sqA0Vdg6aqlbT+yPxqLblpAZh1mK2+AO2twQkPywvvqQNfEPVwSSRjZ7dZcdeVBIAgiO7MMp3Dszw==
 
 marked@~0.3.6:
   version "0.3.19"
@@ -17966,7 +17966,7 @@ minimatch@3.0.4:
   dependencies:
     brace-expansion "^1.1.7"
 
-minimatch@5.1.0, minimatch@^5.0.1:
+minimatch@5.1.0, minimatch@^5.0.1, minimatch@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-5.1.0.tgz#1717b464f4971b144f6aabe8f2d0b8e4511e09c7"
   integrity sha512-9TPBGGak4nHfGZsPBohm9AWg6NoT7QTCehS3BIJABslyZbzxfV78QM2Y6+i741OPZIafFAaiiEMh5OyIrJPgtg==
@@ -24707,27 +24707,26 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typedoc-plugin-markdown@3.11.14:
-  version "3.11.14"
-  resolved "https://registry.yarnpkg.com/typedoc-plugin-markdown/-/typedoc-plugin-markdown-3.11.14.tgz#2a7a04abd50b8f1e5d46793061d70229d504d2cd"
-  integrity sha512-lh47OQvl0079nB18YL9wuTRRhMpjo300SZKfx/xpQY8qG+GINeSxTod95QBELeI0NP81sNtUbemRDrn5nyef4Q==
+typedoc-plugin-markdown@3.13.3:
+  version "3.13.3"
+  resolved "https://registry.yarnpkg.com/typedoc-plugin-markdown/-/typedoc-plugin-markdown-3.13.3.tgz#4a242b1927e5f06f3bacfd7d6e38204b1d2a13ac"
+  integrity sha512-KKvFkQphRcH26NoBCKjjZ7a3rkPBQAOuWg1F4s+snDSWXfTyGWO5isgoe19VUbG87W8X/0x3uc/O0Nj7Qle3TQ==
   dependencies:
     handlebars "^4.7.7"
 
-typedoc-plugin-rename-defaults@0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/typedoc-plugin-rename-defaults/-/typedoc-plugin-rename-defaults-0.4.0.tgz#9739bb87ce7c084d7d48feb485ede4d4014a9b49"
-  integrity sha512-7m7MbNZKcxCA4Z+0MW06sFEmuQ+he1xfc+rLRtvvQcQypPTd3fgFmkEJKVu42t8mONC+kKS/WkbmqwzsiqI1YQ==
+typedoc-plugin-rename-defaults@0.6.4:
+  version "0.6.4"
+  resolved "https://registry.yarnpkg.com/typedoc-plugin-rename-defaults/-/typedoc-plugin-rename-defaults-0.6.4.tgz#8019bbfdbb4616682a0af8ecf1e8f42d053d4a40"
+  integrity sha512-0rAeNttAfu6ixbi1yu6d+DqNZN8SfRivj2QbnZ4zVa+5HcCPcmQrlR6WHjNzdDfpkGytiiqPTtRD6pAfW/yACg==
 
-typedoc@0.22.13:
-  version "0.22.13"
-  resolved "https://registry.yarnpkg.com/typedoc/-/typedoc-0.22.13.tgz#d061f8f0fb7c9d686e48814f245bddeea4564e66"
-  integrity sha512-NHNI7Dr6JHa/I3+c62gdRNXBIyX7P33O9TafGLd07ur3MqzcKgwTvpg18EtvCLHJyfeSthAtCLpM7WkStUmDuQ==
+typedoc@0.23.1:
+  version "0.23.1"
+  resolved "https://registry.yarnpkg.com/typedoc/-/typedoc-0.23.1.tgz#4bb6ed19ee683bce7b032af0de006445fe6f42e3"
+  integrity sha512-6Lb8E+RTEUPzdPUNugQQTOQYccq0iSfZgZ875fzSynByJWC7RbKNwLIx0Osv8pcJyiByy3jH/wdZR0tajuijLQ==
   dependencies:
-    glob "^7.2.0"
     lunr "^2.3.9"
-    marked "^4.0.12"
-    minimatch "^5.0.1"
+    marked "^4.0.16"
+    minimatch "^5.1.0"
     shiki "^0.10.1"
 
 typescript@3.5.x:
