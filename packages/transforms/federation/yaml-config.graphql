@@ -26,8 +26,7 @@ type ResolveReferenceObject {
   """
   queryFieldName: String!
   """
-  If the root field name has multiple args,
-  you need to define which argument should receive the key
+  If the root field name has multiple args, you need to define which argument should receive the key
   """
   keyArg: String
 }

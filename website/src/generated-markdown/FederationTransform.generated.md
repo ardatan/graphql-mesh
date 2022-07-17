@@ -14,5 +14,4 @@
       * `String`
       * `object`: 
         * `queryFieldName` (type: `String`, required) - Name of root field name that resolves the reference
-        * `keyArg` (type: `String`) - If the root field name has multiple args,
-you need to define which argument should receive the key
+        * `keyArg` (type: `String`) - If the root field name has multiple args, you need to define which argument should receive the key

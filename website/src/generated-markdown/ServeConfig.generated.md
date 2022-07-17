@@ -32,7 +32,7 @@ If this is provided, Mesh will be served via HTTPS:
   * `cert` (type: `String`, required)
 * `endpoint` (type: `String`) - Path to GraphQL Endpoint (default: /graphql)
 * `browser` -  - Path to the browser that will be used by `mesh serve` to open a playground window in development mode
-This feature can be disable by passing `false` One of: 
+This feature can be disabled by passing `false` One of: 
   * `String`
   * `Boolean`
 * `customServerHandler` (type: `String`) - If you want to use a custom GraphQL server, you can pass the path of the code file that exports a custom Mesh Server Handler

@@ -1,3 +1,2 @@
-
-* `max` (type: `Int`)
-* `ttl` (type: `Int`)
+- `max` (type: `Int`)
+- `ttl` (type: `Int`)

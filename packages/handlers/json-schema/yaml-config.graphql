@@ -108,22 +108,23 @@ type JsonSchemaHTTPOperation implements JsonSchemaBaseOperation {
   """
   responseSchema: Any
   """
-  Did you use Sample? Provide the respone sample path.
+  Did you use Sample? Provide the response sample path.
   """
   responseSample: Any
   """
   Inset any name for the type of the response body.
   """
   responseTypeName: String
-
   """
   You can define your response schemas by status codes;
+  ```yaml
   responseByStatusCode:
     200:
       responseSchema: ./someschema.json#/somepath
     404:
       responseSample: ./error-sample.json
       responseTypeName: MyError
+  ```
   """
   responseByStatusCode: Any
 
