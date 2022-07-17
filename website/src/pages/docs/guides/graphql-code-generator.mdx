@@ -23,7 +23,7 @@ async function test() {
 ```
 
 <Callout>
-Remember you need operation documents to get this SDK generated. [See here for more details](/generate-sdk)
+  Remember you need operation documents to get this SDK generated. [See here for more details](/generate-sdk)
 </Callout>
 
 ## GraphQL Code Generator default configuration
@@ -57,15 +57,15 @@ codegen:
 ```
 
 <Callout>
-  **Please note**, that the `codegen` parameter allows you to update the configuration passed to the GraphQL Code Generator plugins used by Mesh:
+**Please note**, that the `codegen` parameter allows you to update the configuration passed to the GraphQL Code Generator plugins used by Mesh:
+- [`typescript`](https://graphql-code-generator.com/plugins/typescript)
+- [`typescript-operations`](https://graphql-code-generator.com/plugins/typescript-operations)
+- [`typescript-resolvers`](https://graphql-code-generator.com/plugins/typescript-resolvers)
+- [`typed-document-node`](https://graphql-code-generator.com/plugins/typed-document-node)
+- [`typescript-generic-sdk`](https://graphql-code-generator.com/plugins/typescript-generic-sdk)
 
-  - [`typescript`](https://graphql-code-generator.com/plugins/typescript)
-  - [`typescript-operations`](https://graphql-code-generator.com/plugins/typescript-operations)
-  - [`typescript-resolvers`](https://graphql-code-generator.com/plugins/typescript-resolvers)
-  - [`typed-document-node`](https://graphql-code-generator.com/plugins/typed-document-node)
-  - [`typescript-generic-sdk`](https://graphql-code-generator.com/plugins/typescript-generic-sdk)
 </Callout>
 
-<Callout emoji="⚠️" type='warning'>
+<Callout emoji="⚠️" type="warning">
   The `codegen` parameter won't allow you to add or remove plugins.
 </Callout>

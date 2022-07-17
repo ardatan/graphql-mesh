@@ -5,7 +5,7 @@ This package generates `GraphQLSchema` instance from **RAML API Document** (`.ra
 ```yaml
 schema:
   myOmnigraph:
-    loader: "@omnigraph/raml"
+    loader: '@omnigraph/raml'
     ramlFilePath: https://www.my-api.com/api.raml
     operationHeaders:
       Authorization: Bearer {context.apiToken}

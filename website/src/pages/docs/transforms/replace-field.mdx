@@ -9,7 +9,8 @@ This is extremely useful when hoisting field values from one subfield to its par
 <PackageCmd packages={['@graphql-mesh/transform-replace-field']} />
 
 <Callout>
-  Note: currently this transform supports `bare` mode only. For information about "bare" and "wrap" modes, please read the [dedicated section](/docs/transforms/transforms-introduction#two-different-modes).
+  Note: currently this transform supports `bare` mode only. For information about "bare" and "wrap" modes, please read
+  the [dedicated section](/docs/transforms/transforms-introduction#two-different-modes).
 </Callout>
 
 ## How to use?
@@ -151,12 +152,12 @@ When passing `scope: hoistValue{:yaml}` in addition to replacing the Type, the t
 
 Taking into account the original schema shared above, originally, `Query.books` would return a value like this:
 
-```jsonc
+```json
 {
-  books: {
-    books: [
-      { title: 'abc', author: 'def' },
-      { title: 'ghi', author: 'lmn' }
+  "books": {
+    "books": [
+      { "title": "abc", "author": "def" },
+      { "title": "ghi", "author": "lmn" }
     ]
   }
 }
@@ -164,11 +165,11 @@ Taking into account the original schema shared above, originally, `Query.books` 
 
 But the wrapping function applied to the original resolver, when passing `hoistValue` scope, will change the value above to this:
 
-```jsonc
+```json
 {
-  books: [
-    { title: 'abc', author: 'def' },
-    { title: 'ghi', author: 'lmn' }
+  "books": [
+    { "title": "abc", "author": "def" },
+    { "title": "ghi", "author": "lmn" }
   ]
 }
 ```

@@ -134,7 +134,8 @@ type query_book {
 ```
 
 <Callout>
-  Note: The `query_book` type has been generated thanks to our `packages/single-source-no-source-definition/samples/book-1.json` sample file.
+  Note: The `query_book` type has been generated thanks to our
+  `packages/single-source-no-source-definition/samples/book-1.json` sample file.
 </Callout>
 
 We can open the browser at and http://0.0.0.0:4000 try the following Query with GraphiQL:
@@ -421,10 +422,10 @@ Note that you can also leverage the `responseByStatusCode` parameter to provide 
 
 ```yaml
 operations:
-   # …
-   responseByStatusCode:
-      404:
-        responseSchema: ...
-      200:
-        responseSchmea: ...
+  # …
+  responseByStatusCode:
+    404:
+      responseSchema: ...
+    200:
+      responseSchmea: ...
 ```

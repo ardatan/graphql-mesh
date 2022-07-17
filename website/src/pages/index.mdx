@@ -2,16 +2,16 @@
 title: Home
 ---
 
-import dynamic from 'next/dynamic';
-import { HeroGradient, FeatureList } from '@theguild/components';
-import { handlePushRoute, NPMBadge } from '@guild-docs/client';
-import GraphQLLogo from '../../public/assets/GraphQL_Logo.svg';
-import MeshExampleLogo from '../../public/assets/mesh-example.png';
-import OpenSourceLogo from '../../public/assets/open-source.svg';
+import dynamic from 'next/dynamic'
+import { HeroGradient, FeatureList } from '@theguild/components'
+import { handlePushRoute, NPMBadge } from '@guild-docs/client'
+import GraphQLLogo from '../../public/assets/GraphQL_Logo.svg'
+import MeshExampleLogo from '../../public/assets/mesh-example.png'
+import OpenSourceLogo from '../../public/assets/open-source.svg'
 
 export const LiveDemo = dynamic(() => import('../components/live-demo').then(mod => mod.LiveDemo), {
-  ssr: false,
-});
+  ssr: false
+})
 
 <HeroGradient
   title="GraphQL Mesh"
@@ -20,13 +20,13 @@ export const LiveDemo = dynamic(() => import('../components/live-demo').then(mod
     href: '/docs/introduction',
     children: 'View Docs',
     title: 'Get started with GraphQL Mesh',
-    onClick: e => handlePushRoute('/docs', e),
+    onClick: e => handlePushRoute('/docs', e)
   }}
   version={<NPMBadge name="@graphql-mesh/cli" />}
   colors={['#000', '#1cc8ee']}
 />
 
-<LiveDemo className='hidden lg:block mt-12' />
+<LiveDemo className="hidden lg:block mt-12" />
 
 <FeatureList
   containerProps={{ className: 'pt-12 pb-0' }}
