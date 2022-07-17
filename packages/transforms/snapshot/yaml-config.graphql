@@ -15,7 +15,7 @@ type SnapshotTransformConfig @md {
   Resolver to be applied
   For example;
     apply:
-        - Query.* <- * will apply this extension to all fields of Query type
+        - Query.* \<- * will apply this extension to all fields of Query type
         - Mutation.someMutationButProbablyYouWontNeedIt
   """
   apply: [String!]!

@@ -2173,19 +2173,19 @@
         },
         "sessionId": {
           "type": "string",
-          "description": "Allows to cache responses based on the resolved session id.\nReturn a unique value for each session.\nCreates a global session by default.\nExample;\n```yml\nsessionId: \"{context.headers.userId}\"\n```"
+          "description": "Allows to cache responses based on the resolved session id.\nReturn a unique value for each session.\nCreates a global session by default.\nExample;\n```yaml\nsessionId: \"{context.headers.userId}\"\n```"
         },
         "if": {
           "type": "string",
-          "description": "Specify whether the cache should be used based on the context.\n```yml\nif: \"context.headers.userId != null\"\n```"
+          "description": "Specify whether the cache should be used based on the context.\n```yaml\nif: \"context.headers.userId != null\"\n```"
         },
         "cacheKey": {
           "type": "string",
-          "description": "Customize the behavior how the response cache key is computed from the documentString, variableValues, contextValue and sessionId.\nIf the given string is interpolated as empty, default behavior is used.\nExample;\n```yml\n# Cache by specific value\ncacheKey: \"{variableValues.userId}\"\n\n# Cache by documentString\ncacheKey: \"{documentString}\"\n\n# Cache by operationName\ncacheKey: \"{operationName}\"\n\n# Cache by some header value\ncacheKey: \"{contextValue.headers.authorization}\"\n\n# Or combine two of each\ncacheKey: \"{contextValue.headers.authorization}-{operationName}\"\n```"
+          "description": "Customize the behavior how the response cache key is computed from the documentString, variableValues, contextValue and sessionId.\nIf the given string is interpolated as empty, default behavior is used.\nExample;\n```yaml\n# Cache by specific value\ncacheKey: \"{variableValues.userId}\"\n\n# Cache by documentString\ncacheKey: \"{documentString}\"\n\n# Cache by operationName\ncacheKey: \"{operationName}\"\n\n# Cache by some header value\ncacheKey: \"{contextValue.headers.authorization}\"\n\n# Or combine two of each\ncacheKey: \"{contextValue.headers.authorization}-{operationName}\"\n```"
         },
         "shouldCacheResult": {
           "type": "string",
-          "description": "Checks if the result should be cached.\n```yml\nshouldCacheResult: \"result.errors.length > 0\"\n```"
+          "description": "Checks if the result should be cached.\n```yaml\nshouldCacheResult: \"result.errors.length > 0\"\n```"
         }
       }
     },
@@ -2525,7 +2525,7 @@
         },
         "cacheKey": {
           "type": "string",
-          "description": "Cache key to use to store your resolvers responses.\nThe default is: {typeName}-{fieldName}-{argsHash}-{fieldNamesHash}\nAvailable variables:\n- {args.argName} - use resolver argument\n- {typeName} - use name of the type\n- {fieldName} - use name of the field\n- {argsHash} - a hash based on the 'args' object\n- {fieldNamesHash} - a hash based on the field names selected by the client\n- {info} - the GraphQLResolveInfo of the resolver\nAvailable interpolations:\n- {format|date} - returns the current date with a specific format"
+          "description": "Cache key to use to store your resolvers responses.\nThe default is: `{typeName}-{fieldName}-{argsHash}-{fieldNamesHash}`\nAvailable variables:\n- `{args.argName}` - use resolver argument\n- `{typeName}` - use name of the type\n- `{fieldName}` - use name of the field\n- `{argsHash}` - a hash based on the 'args' object\n- `{fieldNamesHash}` - a hash based on the field names selected by the client\n- `{info}` - the GraphQLResolveInfo of the resolver\nAvailable interpolations:\n- `{format|date}` - returns the current date with a specific format"
         },
         "invalidate": {
           "$ref": "#/definitions/CacheInvalidateConfig",
@@ -2880,7 +2880,7 @@
         },
         "faker": {
           "type": "string",
-          "description": "Faker.js expression or function\nRead more (https://github.com/marak/Faker.js/#fakerfake)\nExample:\nfaker: name.firstName\nfaker: \"{{ name.firstName }} {{ name.lastName }}\""
+          "description": "Faker.js expression or function\nRead more (https://github.com/marak/Faker.js/#fakerfake)\nExample:\nfaker: name.firstName\nfaker: `{{ name.firstName }} {{ name.lastName }}`"
         },
         "custom": {
           "type": "string",
@@ -3109,7 +3109,7 @@
         },
         "identifier": {
           "type": "string",
-          "description": "The identifier expression that determines the identity of the request (e.g. \"{context.req.socket.remoteAddress}\")"
+          "description": "The identifier expression that determines the identity of the request (e.g. `{context.req.socket.remoteAddress}`)"
         }
       },
       "required": ["type", "field", "max", "ttl", "identifier"]
@@ -3335,7 +3335,7 @@
             "type": "string"
           },
           "additionalItems": false,
-          "description": "Resolver to be applied\nFor example;\n  apply:\n      - Query.* <- * will apply this extension to all fields of Query type\n      - Mutation.someMutationButProbablyYouWontNeedIt"
+          "description": "Resolver to be applied\nFor example;\n  apply:\n      - Query.* \\<- * will apply this extension to all fields of Query type\n      - Mutation.someMutationButProbablyYouWontNeedIt"
         },
         "outputDir": {
           "type": "string",
