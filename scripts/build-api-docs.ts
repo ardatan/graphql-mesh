@@ -8,11 +8,10 @@ import workspacePackageJson from '../package.json';
 const MONOREPO = workspacePackageJson.name.replace('-monorepo', '');
 const CWD = process.cwd();
 // Where to generate the API docs
-const OUTPUT_PATH = path.join(CWD, 'website/docs/api');
-const SIDEBAR_PATH = path.join(CWD, 'website/api-sidebar.json');
+const OUTPUT_PATH = path.join(CWD, 'website/src/pages/docs/api');
 
 async function buildApiDocs(): Promise<void> {
-  // An array of tuples where the first element is the package's name and the
+  // An array of tuples where the first element is the package's name and
   // the second element is the relative path to the package's entry point
   const packageJsonFiles = globby.sync(workspacePackageJson.workspaces.packages.map(f => `${f}/package.json`));
   const modules = [];
@@ -50,6 +49,7 @@ async function buildApiDocs(): Promise<void> {
     gitRevision: 'master',
     tsconfig: path.join(CWD, 'tsconfig.build.json'),
     entryPoints: modules.map(([_name, filePath]) => filePath),
+    githubPages: false,
     // @ts-ignore -- typedoc-plugin-markdown option
     hideBreadcrumbs: true,
   });
@@ -61,13 +61,6 @@ async function buildApiDocs(): Promise<void> {
   async function patchMarkdownFile(filePath: string): Promise<void> {
     const contents = await fsPromises.readFile(filePath, 'utf-8');
     const contentsTrimmed = contents
-      // Escape `<` because MDX2 parse him as JSX tags
-      .replace(/</g, '\\<')
-      // Escape `>` is unnecessary
-      .replace(/\\>/g, '>')
-      // Escape `{` because MDX2 parse him as expressions
-      // (\\)? is need because some `{` already escaped
-      .replace(/(\\)?{/g, '\\{')
       // Fix title
       .replace(/^# .+/g, match => {
         const title = match
@@ -92,10 +85,25 @@ async function buildApiDocs(): Promise<void> {
     const lsStat = await fsPromises.lstat(filePath);
     if (lsStat.isFile()) {
       await patchMarkdownFile(filePath);
-    } else {
-      const filesInDirectory = await fsPromises.readdir(filePath);
-      await Promise.all(filesInDirectory.map(fileName => visitMarkdownFile(path.join(filePath, fileName))));
+      return;
     }
+    const filesInDirectory = await fsPromises.readdir(filePath);
+    await Promise.all(filesInDirectory.map(fileName => visitMarkdownFile(path.join(filePath, fileName))));
+    await fsPromises.writeFile(
+      path.join(filePath, 'meta.json'),
+      JSON.stringify(
+        Object.fromEntries(
+          filesInDirectory
+            .map(fileName => {
+              fileName = fileName.replace(/\.md$/, '');
+              return [fileName, fileName.replace(/^.*\./, '')];
+            })
+            .sort((a, b) => a[1].localeCompare(b[1]))
+        ),
+        null,
+        2
+      )
+    );
   }
 
   // Patch the generated markdown
@@ -106,6 +114,16 @@ async function buildApiDocs(): Promise<void> {
       await visitMarkdownFile(subDirName);
     })
   );
+  await fsPromises.writeFile(
+    path.join(OUTPUT_PATH, 'meta.json'),
+    JSON.stringify(
+      Object.fromEntries(
+        ['classes', 'enums', 'interfaces', 'modules'].map(name => [name, name[0].toUpperCase() + name.slice(1)])
+      ),
+      null,
+      2
+    )
+  );
 
   // Remove the generated "README.md" file
   await fsPromises.unlink(path.join(OUTPUT_PATH, 'README.md'));
@@ -114,7 +132,6 @@ async function buildApiDocs(): Promise<void> {
   await Promise.all(
     modules.map(async ([name, originalFilePath]) => {
       const filePath = path.join(OUTPUT_PATH, 'modules', convertEntryFilePath(originalFilePath));
-
       const isExists = await fsPromises
         .stat(filePath)
         .then(() => true)
@@ -131,32 +148,11 @@ async function buildApiDocs(): Promise<void> {
       const finalContent = `---
 id: "${id}"
 title: "${name}"
-sidebar_label: "${id}"
 ---
 ${necessaryPart}`;
 
       await fsPromises.writeFile(filePath, finalContent);
     })
-  );
-
-  await fsPromises.writeFile(
-    SIDEBAR_PATH,
-    JSON.stringify(
-      {
-        $name: 'API Reference',
-        _: Object.fromEntries(
-          ['modules', 'classes', 'interfaces', 'enums'].map(key => [
-            key,
-            {
-              $name: key[0].toUpperCase() + key.slice(1),
-              $routes: getSidebarItemsByDirectory(key),
-            },
-          ])
-        ),
-      },
-      null,
-      2
-    )
   );
 
   function convertEntryFilePath(filePath: string): string {
@@ -166,26 +162,6 @@ ${necessaryPart}`;
 
   function convertNameToId(name: string): string {
     return name.replace(`@${MONOREPO}/`, '').replace('/', '_');
-  }
-
-  function getSidebarItemsByDirectory(dirName: string): string[] {
-    const dirPath = path.join(OUTPUT_PATH, dirName);
-
-    if (!fs.existsSync(dirPath)) {
-      console.warn(`${dirPath} doesn't exist! Ignoring.`);
-      return [];
-    }
-
-    const filesInDirectory = fs.readdirSync(dirPath);
-
-    return filesInDirectory
-      .flatMap(fileName => {
-        const absoluteFilePath = path.join(dirPath, fileName);
-        return fs.lstatSync(absoluteFilePath).isFile()
-          ? path.parse(fileName).name
-          : getSidebarItemsByDirectory(absoluteFilePath);
-      })
-      .sort((a, b) => a.split('.').pop().localeCompare(b.split('.').pop()));
   }
 }
 
