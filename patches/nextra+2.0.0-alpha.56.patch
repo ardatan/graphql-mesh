@@ -591,7 +591,7 @@ index 44028fa..77e6504 100644
 +}): void;
  export declare function restoreCache(): Promise<void>;
 diff --git a/node_modules/nextra/dist/index.js b/node_modules/nextra/dist/index.js
-index d288128..3e512ed 100644
+index d288128..72c2de2 100644
 --- a/node_modules/nextra/dist/index.js
 +++ b/node_modules/nextra/dist/index.js
 @@ -56,73 +56,76 @@ var __async = (__this, __arguments, generator) => {
@@ -718,13 +718,35 @@ index d288128..3e512ed 100644
          }
        }
      }
-@@ -144,13 +147,15 @@ function restoreCache() {
+@@ -144,54 +147,50 @@ function restoreCache() {
  }
  
  // src/plugin.ts
 -var { readdir, readFile } = import_graceful_fs2.default;
 +var readdir = (0, import_util.promisify)(import_graceful_fs2.default.readdir);
 +var readFile = (0, import_util.promisify)(import_graceful_fs2.default.readFile);
++var collectFile = (filePath, fileMap, route = "") => __async(void 0, null, function* () {
++  const { name, locale, ext } = parseFileName(filePath);
++  if (MARKDOWN_EXTENSION_REGEX.test(ext)) {
++    const content = yield readFile(filePath, "utf8");
++    const { data } = (0, import_gray_matter.default)(content);
++    fileMap[filePath] = __spreadValues({
++      name,
++      route,
++      locale
++    }, Object.keys(data).length && { frontMatter: data });
++    return fileMap[filePath];
++  }
++  if (ext === ".json" && name === "meta") {
++    const content = yield readFile(filePath, "utf8");
++    fileMap[filePath] = {
++      name: "meta.json",
++      locale,
++      meta: parseJsonFile(content, filePath)
++    };
++    return fileMap[filePath];
++  }
++});
  function collectFiles(_0) {
    return __async(this, arguments, function* (dir, route = "/", fileMap = {}) {
 -    const files = yield import_util.default.promisify(readdir)(dir, { withFileTypes: true });
@@ -733,13 +755,22 @@ index d288128..3e512ed 100644
 -      const filePath = import_path3.default.resolve(dir, f.name);
 -      const fileRoute = (0, import_slash.default)(import_path3.default.join(route, removeExtension(f.name).replace(/^index$/, "")));
 +      const filePath = import_path4.default.resolve(dir, f.name);
-+      const { name, locale, ext } = parseFileName(f.name);
++      const { name } = parseFileName(filePath);
 +      const fileRoute = (0, import_slash.default)(import_path4.default.join(route, name.replace(/^index$/, "")));
        if (f.isDirectory()) {
          if (fileRoute === "/api")
-           return null;
-@@ -162,33 +167,21 @@ function collectFiles(_0) {
-           children,
+-          return null;
+-        const { items: children } = yield collectFiles(filePath, fileRoute, fileMap);
+-        if (!children || !children.length)
+-          return null;
++          return;
++        const { items: items2 } = yield collectFiles(filePath, fileRoute, fileMap);
++        if (!items2.length)
++          return;
+         return {
+           name: f.name,
+-          children,
++          children: items2,
            route: fileRoute
          };
 -      } else if (extension.test(f.name)) {
@@ -757,32 +788,26 @@ index d288128..3e512ed 100644
 -        }
 -        fileMap[filePath] = {
 -          name: removeExtension(f.name),
-+      } else if (MARKDOWN_EXTENSION_REGEX.test(ext)) {
-+        const content = yield readFile(filePath, "utf8");
-+        const { data } = (0, import_gray_matter.default)(content);
-+        fileMap[filePath] = __spreadValues({
-+          name,
-           route: fileRoute,
-           locale
+-          route: fileRoute,
+-          locale
 -        };
-+        }, Object.keys(data).length && { frontMatter: data });
-         return fileMap[filePath];
+-        return fileMap[filePath];
 -      } else if (metaExtension.test(f.name)) {
 -        const content = yield import_util.default.promisify(readFile)(filePath, "utf-8");
 -        const meta = parseJsonFile(content, filePath);
 -        const locale = f.name.match(metaExtension)[1];
-+      } else if (ext === ".json" && name === "meta") {
-+        const content = yield readFile(filePath, "utf8");
-         fileMap[filePath] = {
-           name: "meta.json",
+-        fileMap[filePath] = {
+-          name: "meta.json",
 -          meta,
 -          locale
-+          locale,
-+          meta: parseJsonFile(content, filePath)
-         };
-         return fileMap[filePath];
+-        };
+-        return fileMap[filePath];
        }
-@@ -216,15 +209,16 @@ var PageMapCache = class {
++      return collectFile(filePath, fileMap, fileRoute);
+     })))).filter(Boolean);
+     return {
+       items,
+@@ -216,15 +215,16 @@ var PageMapCache = class {
  };
  var pageMapCache = new PageMapCache();
  var NextraPlugin = class {
@@ -803,7 +828,7 @@ index d288128..3e512ed 100644
        pageMapCache.set(result);
        callback();
      }));
-@@ -234,7 +228,6 @@ var NextraPlugin = class {
+@@ -234,7 +234,6 @@ var NextraPlugin = class {
  // src/index.js
  var defaultExtensions = ["js", "jsx", "ts", "tsx"];
  var markdownExtensions = ["md", "mdx"];
@@ -811,7 +836,7 @@ index d288128..3e512ed 100644
  module.exports = (...args) => (nextConfig = {}) => {
    var _a, _b;
    const nextraConfig = typeof args[0] === "string" ? {
-@@ -246,11 +239,12 @@ module.exports = (...args) => (nextConfig = {}) => {
+@@ -246,11 +245,12 @@ module.exports = (...args) => (nextConfig = {}) => {
    let pageExtensions = nextConfig.pageExtensions || [...defaultExtensions];
    pageExtensions = pageExtensions.concat(markdownExtensions);
    if (locales) {
@@ -825,7 +850,7 @@ index d288128..3e512ed 100644
        const nextra = new NextraPlugin(nextraConfig);
        if (!config.plugins) {
          config.plugins = [nextra];
-@@ -258,12 +252,17 @@ module.exports = (...args) => (nextConfig = {}) => {
+@@ -258,12 +258,17 @@ module.exports = (...args) => (nextConfig = {}) => {
          config.plugins.push(nextra);
        }
        config.module.rules.push({
@@ -846,7 +871,7 @@ index d288128..3e512ed 100644
          ]
        });
 diff --git a/node_modules/nextra/dist/loader.mjs b/node_modules/nextra/dist/loader.mjs
-index 486c1fb..251241d 100644
+index 486c1fb..c20209a 100644
 --- a/node_modules/nextra/dist/loader.mjs
 +++ b/node_modules/nextra/dist/loader.mjs
 @@ -39,7 +39,7 @@ var __async = (__this, __arguments, generator) => {
@@ -1073,7 +1098,7 @@ index 486c1fb..251241d 100644
  
  // src/filter-route-locale.ts
  function filterRouteLocale(pageMap, locale, defaultLocale) {
-@@ -688,46 +675,43 @@ function filterRouteLocale(pageMap, locale, defaultLocale) {
+@@ -688,87 +675,78 @@ function filterRouteLocale(pageMap, locale, defaultLocale) {
  }
  
  // src/page-map.ts
@@ -1127,6 +1152,28 @@ index 486c1fb..251241d 100644
 -var { readdir, readFile } = fs3;
 +var readdir = promisify(fs3.readdir);
 +var readFile = promisify(fs3.readFile);
++var collectFile = (filePath, fileMap, route = "") => __async(void 0, null, function* () {
++  const { name: name2, locale, ext } = parseFileName(filePath);
++  if (MARKDOWN_EXTENSION_REGEX.test(ext)) {
++    const content = yield readFile(filePath, "utf8");
++    const { data } = grayMatter(content);
++    fileMap[filePath] = __spreadValues({
++      name: name2,
++      route,
++      locale
++    }, Object.keys(data).length && { frontMatter: data });
++    return fileMap[filePath];
++  }
++  if (ext === ".json" && name2 === "meta") {
++    const content = yield readFile(filePath, "utf8");
++    fileMap[filePath] = {
++      name: "meta.json",
++      locale,
++      meta: parseJsonFile(content, filePath)
++    };
++    return fileMap[filePath];
++  }
++});
  function collectFiles(_0) {
    return __async(this, arguments, function* (dir, route = "/", fileMap = {}) {
 -    const files = yield util.promisify(readdir)(dir, { withFileTypes: true });
@@ -1135,13 +1182,22 @@ index 486c1fb..251241d 100644
 -      const filePath = path3.resolve(dir, f.name);
 -      const fileRoute = slash(path3.join(route, removeExtension(f.name).replace(/^index$/, "")));
 +      const filePath = path4.resolve(dir, f.name);
-+      const { name: name2, locale, ext } = parseFileName(f.name);
++      const { name: name2 } = parseFileName(filePath);
 +      const fileRoute = slash(path4.join(route, name2.replace(/^index$/, "")));
        if (f.isDirectory()) {
          if (fileRoute === "/api")
-           return null;
-@@ -739,33 +723,21 @@ function collectFiles(_0) {
-           children,
+-          return null;
+-        const { items: children } = yield collectFiles(filePath, fileRoute, fileMap);
+-        if (!children || !children.length)
+-          return null;
++          return;
++        const { items: items2 } = yield collectFiles(filePath, fileRoute, fileMap);
++        if (!items2.length)
++          return;
+         return {
+           name: f.name,
+-          children,
++          children: items2,
            route: fileRoute
          };
 -      } else if (extension.test(f.name)) {
@@ -1159,32 +1215,26 @@ index 486c1fb..251241d 100644
 -        }
 -        fileMap[filePath] = {
 -          name: removeExtension(f.name),
-+      } else if (MARKDOWN_EXTENSION_REGEX.test(ext)) {
-+        const content = yield readFile(filePath, "utf8");
-+        const { data } = grayMatter(content);
-+        fileMap[filePath] = __spreadValues({
-+          name: name2,
-           route: fileRoute,
-           locale
+-          route: fileRoute,
+-          locale
 -        };
-+        }, Object.keys(data).length && { frontMatter: data });
-         return fileMap[filePath];
+-        return fileMap[filePath];
 -      } else if (metaExtension.test(f.name)) {
 -        const content = yield util.promisify(readFile)(filePath, "utf-8");
 -        const meta = parseJsonFile(content, filePath);
 -        const locale = f.name.match(metaExtension)[1];
-+      } else if (ext === ".json" && name2 === "meta") {
-+        const content = yield readFile(filePath, "utf8");
-         fileMap[filePath] = {
-           name: "meta.json",
+-        fileMap[filePath] = {
+-          name: "meta.json",
 -          meta,
 -          locale
-+          locale,
-+          meta: parseJsonFile(content, filePath)
-         };
-         return fileMap[filePath];
+-        };
+-        return fileMap[filePath];
        }
-@@ -794,17 +766,15 @@ var PageMapCache = class {
++      return collectFile(filePath, fileMap, fileRoute);
+     })))).filter(Boolean);
+     return {
+       items,
+@@ -794,17 +772,15 @@ var PageMapCache = class {
  var pageMapCache = new PageMapCache();
  
  // src/loader.ts
@@ -1205,7 +1255,7 @@ index 486c1fb..251241d 100644
      return [];
    }
  }();
-@@ -822,23 +792,18 @@ function loader(context, source) {
+@@ -822,23 +798,22 @@ function loader(context, source) {
        pageMapCache: pageMapCache2
      } = options;
      const { resourcePath } = context;
@@ -1229,15 +1279,18 @@ index 486c1fb..251241d 100644
 -      const data2 = yield collectFiles(pagesDir, "/");
 -      pageMapResult = data2.items;
 -      fileMap = data2.fileMap;
--    }
 +    const { items: pageMapResult, fileMap } = IS_PRODUCTION ? pageMapCache2.get() : yield collectFiles(pagesDir, "/");
++    if (!fileMap[resourcePath]) {
++      yield collectFile(resourcePath, fileMap);
++      context.addMissingDependency(resourcePath);
+     }
      const [pageMap, route, title] = getPageMap(resourcePath, pageMapResult, fileMap, defaultLocale);
 -    if (!isProductionBuild) {
 +    if (!IS_PRODUCTION) {
        context.addContextDependency(pagesDir);
      } else {
        Object.entries(fileMap).forEach(([filePath, { name: name2, meta, locale }]) => {
-@@ -847,27 +812,25 @@ function loader(context, source) {
+@@ -847,27 +822,25 @@ function loader(context, source) {
          }
        });
      }
@@ -1272,7 +1325,7 @@ index 486c1fb..251241d 100644
            fileLocale: fileLocale || "default",
            route,
            title,
-@@ -881,46 +844,57 @@ function loader(context, source) {
+@@ -881,46 +854,57 @@ function loader(context, source) {
      if (repository && gitRoot) {
        if (repository.isShallow()) {
          if (process.env.VERCEL) {
@@ -1381,16 +1434,18 @@ index 613c963..a271721 100644
 -export declare function getPageMap(currentResourcePath: string, pageMaps: PageMapItem[], fileMap: Record<string, PageMapItem>, defaultLocale: string): any[];
 +export declare function getPageMap(currentResourcePath: string, pageMap: PageMapItem[], fileMap: Record<string, PageMapItem>, defaultLocale: string): [PageMapItem[], string, string];
 diff --git a/node_modules/nextra/dist/plugin.d.ts b/node_modules/nextra/dist/plugin.d.ts
-index ae1d17f..f7732e7 100644
+index ae1d17f..8364f01 100644
 --- a/node_modules/nextra/dist/plugin.d.ts
 +++ b/node_modules/nextra/dist/plugin.d.ts
-@@ -1,4 +1,4 @@
+@@ -1,5 +1,6 @@
 -import { PageMapItem } from './types';
 +import { NextraConfig, PageMapItem } from './types';
  import { Compiler } from 'webpack';
++export declare const collectFile: (filePath: string, fileMap: Record<string, any>, route?: string) => Promise<any>;
  export declare function collectFiles(dir: string, route?: string, fileMap?: Record<string, any>): Promise<{
      items: PageMapItem[];
-@@ -21,9 +21,8 @@ export declare class PageMapCache {
+     fileMap: Record<string, any>;
+@@ -21,9 +22,8 @@ export declare class PageMapCache {
      } | null;
  }
  export declare const pageMapCache: PageMapCache;

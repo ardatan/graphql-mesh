@@ -29,13 +29,13 @@ responseByStatusCode:
     * `exposeResponseMetadata` (type: `Boolean`) - Expose response details done to the upstream API
 When you enable this, you will see a new field in the response type;
 ```graphql
-type MyResponseType \{
+type MyResponseType {
   myFooField: String
   _response: ResponseMetadata
 }
 
 # And a new type for the response metadata object
-type ResponseMetadata \{
+type ResponseMetadata {
   url: URL
   status: Int
   method: String
