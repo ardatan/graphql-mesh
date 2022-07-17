@@ -7,7 +7,8 @@ The `cache` transform allows you to easily apply caching over your data sources.
 It allows you to configure custom invalidation rules (by TTL/mutation) and selective caching according to your needs.
 
 <Callout>
-  This transform is being applied globally because of the need to communicate with other GraphQL operations from your mesh.
+  This transform is being applied globally because of the need to communicate with other GraphQL operations from your
+  mesh.
 </Callout>
 
 To get started with this transform, install it:
@@ -16,8 +17,8 @@ To get started with this transform, install it:
 
 <Callout>
   GraphQL Mesh uses a default localforage cache (it is fallback to LRU cache in NodeJS), but you can replace it with any other key=>value cache mechanism. See [cache section](/docs/cache/localforage) for more info.
-
   We'd recommend this transform be used on the root level, not the handler level. It might not work as expected if you use it on a handler level.
+
 </Callout>
 
 ## How to use?
@@ -141,7 +142,7 @@ You can check the ["Location Weather" example](https://github.com/Urigo/graphql-
 
 <iframe
   src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/openapi-location-weather?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
-  className='mt-6 w-full h-[500px] rounded-md'
+  className="mt-6 w-full h-[500px] rounded-md"
   title="typescript-location-weather-example"
   allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
   sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"

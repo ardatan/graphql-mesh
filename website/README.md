@@ -40,7 +40,7 @@ This command generates static content into the `build` directory and can be serv
 
 ### Deployment
 
-```sh
+```
 GIT_USER=<YOUR_GITHUB_USERNAME> USE_SSH=true yarn deploy
 ```
 

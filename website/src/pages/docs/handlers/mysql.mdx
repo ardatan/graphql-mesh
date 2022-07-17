@@ -36,15 +36,9 @@ Every CRUD operation has `where` field in its input, so you can see all the colu
 
 ```graphql
 {
-  getProduct(where: {
-    id: 5
-    year: ">2010"
-    price: "100..200"
-    level: "<=3"
-    sn: "*str?"
-    label: "str"
-    code: "(1,2,4,10,11)"
-  }) {
+  getProduct(
+    where: { id: 5, year: ">2010", price: "100..200", level: "<=3", sn: "*str?", label: "str", code: "(1,2,4,10,11)" }
+  ) {
     id
     name
   }
@@ -59,7 +53,7 @@ SELECT id, name FROM product WHERE id = 5 AND year > '2010' AND (price BETWEEN '
 
 <iframe
   src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/mysql-rfam?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
-  className='mt-6 w-full h-[500px] rounded-md'
+  className="mt-6 w-full h-[500px] rounded-md"
   title="mysql-rfam-example"
   allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
   sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"

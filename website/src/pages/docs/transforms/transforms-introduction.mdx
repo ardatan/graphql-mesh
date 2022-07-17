@@ -50,8 +50,9 @@ transforms:
 
 Specifying transforms at the Source level helps to isolate each Source definition better.
 
-<Callout emoji='⚠️' type='warning'>
-  However, be careful: transforms performed at the Source level or Root level does not result in the same final SDK (potentially later used in `additionalResolvers`).
+<Callout emoji="⚠️" type="warning">
+  However, be careful: transforms performed at the Source level or Root level does not result in the same final SDK
+  (potentially later used in `additionalResolvers`).
 </Callout>
 
 The diagram below explains how Mesh process applied when building the final unified Schema and SDK:
@@ -139,7 +140,8 @@ Because Mesh process transforms in the definition order, when `filterSchema` is 
 The `Query.books_list` does not exist anymore, replaced by the `Query.booksList` query.
 
 <Callout>
-  Note: the number of configured transforms does not impact performances (build or runtime) since Mesh processes them in a chained way
+  Note: the number of configured transforms does not impact performances (build or runtime) since Mesh processes them in
+  a chained way
 </Callout>
 
 ### Beware of which transforms are used at the source level
@@ -194,7 +196,10 @@ The wrap mode is the default mode for schema manipulation transforms because it 
   If you don't want/can't opt into "bare" mode, this can be easily solved by explicitly declaring a `SelectionSet`, within your custom resolver to list all properties required to compute your custom data.
 
 <Callout>
-  Note: "wrap" is the only approach that works with data sources that already "speaks" GraphQL, or when you want to transform at all sources (root) level, unless you're using [merger-bare](/docs/api/modules/merger-bare). If you want to remove the possible runtime implications, consider either moving your transforms at the data source level or opting into `merger-bare`; in order to take advantage of "bare" mode.
+  Note: "wrap" is the only approach that works with data sources that already "speaks" GraphQL, or when you want to
+  transform at all sources (root) level, unless you're using [merger-bare](/docs/api/modules/merger-bare). If you want
+  to remove the possible runtime implications, consider either moving your transforms at the data source level or opting
+  into `merger-bare`; in order to take advantage of "bare" mode.
 </Callout>
 
 Example:
@@ -241,7 +246,7 @@ transforms:
             field: code
 ```
 
-<Callout emoji='🪄'>
+<Callout emoji="🪄">
   ProTip: When you want to use "wrap", you can omit the "mode" property since this is already applied by default.
 </Callout>
 

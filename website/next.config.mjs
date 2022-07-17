@@ -24,5 +24,5 @@ export default withBundleAnalyzer(
         permanent: true,
       },
     ],
-  }),
+  })
 );
