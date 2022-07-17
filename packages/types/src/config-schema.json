@@ -142,7 +142,7 @@
           "description": "Path to GraphQL Endpoint (default: /graphql)"
         },
         "browser": {
-          "description": "Path to the browser that will be used by `mesh serve` to open a playground window in development mode\nThis feature can be disable by passing `false` (Any of: String, Boolean)",
+          "description": "Path to the browser that will be used by `mesh serve` to open a playground window in development mode\nThis feature can be disabled by passing `false` (Any of: String, Boolean)",
           "anyOf": [
             {
               "type": "string"
@@ -1146,7 +1146,7 @@
               "additionalItems": true
             }
           ],
-          "description": "Did you use Sample? Provide the respone sample path."
+          "description": "Did you use Sample? Provide the response sample path."
         },
         "responseTypeName": {
           "type": "string",
@@ -1166,7 +1166,7 @@
               "additionalItems": true
             }
           ],
-          "description": "You can define your response schemas by status codes;\nresponseByStatusCode:\n  200:\n    responseSchema: ./someschema.json#/somepath\n  404:\n    responseSample: ./error-sample.json\n    responseTypeName: MyError"
+          "description": "You can define your response schemas by status codes;\n```yaml\nresponseByStatusCode:\n  200:\n    responseSchema: ./someschema.json#/somepath\n  404:\n    responseSample: ./error-sample.json\n    responseTypeName: MyError\n```"
         },
         "exposeResponseMetadata": {
           "type": "boolean",
@@ -2366,11 +2366,11 @@
         },
         "includePorts": {
           "type": "boolean",
-          "description": "If true, the ports defined in the WSDL will be represented as GraphQL-Type objects in the schema.\nThe fields of the object will be the operations of the port.\nMost soap-endpoints only define one port; so including it in the schema will just be inconvenient.\nBut if there are multiple ports with operations of the same name, you should set this option to true.\nOtherwise only one of the identical-named operations will be callable.\ndefault: false"
+          "description": "If true, the ports defined in the WSDL will be represented as GraphQL-Type objects in the schema.\nThe fields of the object will be the operations of the port.\nMost soap-endpoints only define one port; so including it in the schema will just be inconvenient.\nBut if there are multiple ports with operations of the same name, you should set this option to true.\nOtherwise, only one of the identical-named operations will be callable.\ndefault: false"
         },
         "includeServices": {
           "type": "boolean",
-          "description": "If true, the services defined in the WSDL will be represented as GraphQL-Type objects in the schema.\nThe fields of the object will be the ports of the service (or the operation, dependent on 'includePorts').\nMost soap-endpoints only define one service; so including it in the schema will just be inconvenient.\nBut if there are multiple services with operations of the same name, you should set this option to true.\nOtherwise only one of the identical-named operations will be callable.\ndefault: false"
+          "description": "If true, the services defined in the WSDL will be represented as GraphQL-Type objects in the schema.\nThe fields of the object will be the ports of the service (or the operation, dependent on 'includePorts').\nMost soap-endpoints only define one service; so including it in the schema will just be inconvenient.\nBut if there are multiple services with operations of the same name, you should set this option to true.\nOtherwise, only one of the identical-named operations will be callable.\ndefault: false"
         },
         "selectQueryOrMutationField": {
           "type": "array",
@@ -2514,7 +2514,7 @@
         },
         "cacheKey": {
           "type": "string",
-          "description": "Cache key to use to store your resolvers responses.\nThe default is: `{typeName}-{fieldName}-{argsHash}-{fieldNamesHash}`\nAvailable variables:\n- `{args.argName}` - use resolver argument\n- `{typeName}` - use name of the type\n- `{fieldName}` - use name of the field\n- `{argsHash}` - a hash based on the 'args' object\n- `{fieldNamesHash}` - a hash based on the field names selected by the client\n- `{info}` - the GraphQLResolveInfo of the resolver\nAvailable interpolations:\n- `{format|date}` - returns the current date with a specific format"
+          "description": "Cache key to use to store your resolvers responses.\nThe default is: `{typeName}-{fieldName}-{argsHash}-{fieldNamesHash}`\n\nAvailable variables:\n  - `{args.argName}` - use resolver argument\n  - `{typeName}` - use name of the type\n  - `{fieldName}` - use name of the field\n  - `{argsHash}` - a hash based on the 'args' object\n  - `{fieldNamesHash}` - a hash based on the field names selected by the client\n  - `{info}` - the GraphQLResolveInfo of the resolver\n\nAvailable interpolations:\n  - `{format|date}` - returns the current date with a specific format"
         },
         "invalidate": {
           "$ref": "#/definitions/CacheInvalidateConfig",
@@ -2700,7 +2700,7 @@
         },
         "keyArg": {
           "type": "string",
-          "description": "If the root field name has multiple args,\nyou need to define which argument should receive the key"
+          "description": "If the root field name has multiple args, you need to define which argument should receive the key"
         }
       },
       "required": ["queryFieldName"]

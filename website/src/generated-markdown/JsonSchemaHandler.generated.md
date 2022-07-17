@@ -17,15 +17,17 @@ Example: "./jsons/questions.response.json".
     * `requestBaseBody` (type: `Any`) - This body will be merged with the request body sent with
 the underlying HTTP request
     * `responseSchema` (type: `Any`) - Yay! Now you can provide the response schema name.
-    * `responseSample` (type: `Any`) - Did you use Sample? Provide the respone sample path.
+    * `responseSample` (type: `Any`) - Did you use Sample? Provide the response sample path.
     * `responseTypeName` (type: `String`) - Inset any name for the type of the response body.
     * `responseByStatusCode` (type: `Any`) - You can define your response schemas by status codes;
+```yaml
 responseByStatusCode:
   200:
     responseSchema: ./someschema.json#/somepath
   404:
     responseSample: ./error-sample.json
     responseTypeName: MyError
+```
     * `exposeResponseMetadata` (type: `Boolean`) - Expose response details done to the upstream API
 When you enable this, you will see a new field in the response type;
 ```graphql

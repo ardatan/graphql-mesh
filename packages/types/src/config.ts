@@ -100,7 +100,7 @@ export interface ServeConfig {
   endpoint?: string;
   /**
    * Path to the browser that will be used by `mesh serve` to open a playground window in development mode
-   * This feature can be disable by passing `false` (Any of: String, Boolean)
+   * This feature can be disabled by passing `false` (Any of: String, Boolean)
    */
   browser?: string | boolean;
   /**
@@ -400,7 +400,7 @@ export interface JsonSchemaHTTPOperation {
    */
   responseSchema?: any;
   /**
-   * Did you use Sample? Provide the respone sample path.
+   * Did you use Sample? Provide the response sample path.
    */
   responseSample?: any;
   /**
@@ -409,12 +409,14 @@ export interface JsonSchemaHTTPOperation {
   responseTypeName?: string;
   /**
    * You can define your response schemas by status codes;
+   * ```yaml
    * responseByStatusCode:
    *   200:
    *     responseSchema: ./someschema.json#/somepath
    *   404:
    *     responseSample: ./error-sample.json
    *     responseTypeName: MyError
+   * ```
    */
   responseByStatusCode?: any;
   /**
@@ -1011,7 +1013,7 @@ export interface SoapHandler {
    * The fields of the object will be the operations of the port.
    * Most soap-endpoints only define one port; so including it in the schema will just be inconvenient.
    * But if there are multiple ports with operations of the same name, you should set this option to true.
-   * Otherwise only one of the identical-named operations will be callable.
+   * Otherwise, only one of the identical-named operations will be callable.
    * default: false
    */
   includePorts?: boolean;
@@ -1020,7 +1022,7 @@ export interface SoapHandler {
    * The fields of the object will be the ports of the service (or the operation, dependent on 'includePorts').
    * Most soap-endpoints only define one service; so including it in the schema will just be inconvenient.
    * But if there are multiple services with operations of the same name, you should set this option to true.
-   * Otherwise only one of the identical-named operations will be callable.
+   * Otherwise, only one of the identical-named operations will be callable.
    * default: false
    */
   includeServices?: boolean;
@@ -1189,15 +1191,17 @@ export interface CacheTransformConfig {
   /**
    * Cache key to use to store your resolvers responses.
    * The default is: `{typeName}-{fieldName}-{argsHash}-{fieldNamesHash}`
+   *
    * Available variables:
-   * - `{args.argName}` - use resolver argument
-   * - `{typeName}` - use name of the type
-   * - `{fieldName}` - use name of the field
-   * - `{argsHash}` - a hash based on the 'args' object
-   * - `{fieldNamesHash}` - a hash based on the field names selected by the client
-   * - `{info}` - the GraphQLResolveInfo of the resolver
+   *   - `{args.argName}` - use resolver argument
+   *   - `{typeName}` - use name of the type
+   *   - `{fieldName}` - use name of the field
+   *   - `{argsHash}` - a hash based on the 'args' object
+   *   - `{fieldNamesHash}` - a hash based on the field names selected by the client
+   *   - `{info}` - the GraphQLResolveInfo of the resolver
+   *
    * Available interpolations:
-   * - `{format|date}` - returns the current date with a specific format
+   *   - `{format|date}` - returns the current date with a specific format
    */
   cacheKey?: string;
   invalidate?: CacheInvalidateConfig;
@@ -1278,8 +1282,7 @@ export interface ResolveReferenceObject {
    */
   queryFieldName: string;
   /**
-   * If the root field name has multiple args,
-   * you need to define which argument should receive the key
+   * If the root field name has multiple args, you need to define which argument should receive the key
    */
   keyArg?: string;
 }
