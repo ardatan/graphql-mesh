@@ -23,7 +23,7 @@ title: 'RedisConfig'
 
 #### Defined in
 
-[packages/types/src/config.ts:1831](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1831)
+[packages/types/src/config.ts:1834](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1834)
 
 ___
 
@@ -33,7 +33,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1833](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1833)
+[packages/types/src/config.ts:1836](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1836)
 
 ___
 
@@ -43,7 +43,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1832](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1832)
+[packages/types/src/config.ts:1835](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1835)
 
 ___
 
@@ -53,4 +53,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1834](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1834)
+[packages/types/src/config.ts:1837](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1837)

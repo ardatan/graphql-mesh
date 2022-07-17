@@ -23,7 +23,7 @@ Path to the operation that could effect it. In a form: Mutation.something. Note 
 
 #### Defined in
 
-[packages/types/src/config.ts:1865](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1865)
+[packages/types/src/config.ts:1868](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1868)
 
 ___
 
@@ -33,4 +33,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1866](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1866)
+[packages/types/src/config.ts:1869](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1869)

@@ -21,7 +21,7 @@ title: 'ResponseCacheTTLConfig'
 
 #### Defined in
 
-[packages/types/src/config.ts:1953](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1953)
+[packages/types/src/config.ts:1956](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1956)
 
 ___
 
@@ -31,4 +31,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1954](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1954)
+[packages/types/src/config.ts:1957](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1957)

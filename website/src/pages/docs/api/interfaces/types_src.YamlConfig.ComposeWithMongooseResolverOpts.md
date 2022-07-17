@@ -24,7 +24,7 @@ title: 'ComposeWithMongooseResolverOpts'
 
 #### Defined in
 
-[packages/types/src/config.ts:640](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L640)
+[packages/types/src/config.ts:642](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L642)
 
 ___
 
@@ -34,7 +34,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:642](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L642)
+[packages/types/src/config.ts:644](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L644)
 
 ___
 
@@ -44,7 +44,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:643](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L643)
+[packages/types/src/config.ts:645](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L645)
 
 ___
 
@@ -54,7 +54,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:644](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L644)
+[packages/types/src/config.ts:646](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L646)
 
 ___
 
@@ -64,4 +64,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:641](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L641)
+[packages/types/src/config.ts:643](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L643)

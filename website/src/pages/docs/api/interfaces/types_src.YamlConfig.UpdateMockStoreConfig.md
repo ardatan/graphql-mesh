@@ -23,7 +23,7 @@ title: 'UpdateMockStoreConfig'
 
 #### Defined in
 
-[packages/types/src/config.ts:1404](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1404)
+[packages/types/src/config.ts:1407](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1407)
 
 ___
 
@@ -33,7 +33,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1403](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1403)
+[packages/types/src/config.ts:1406](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1406)
 
 ___
 
@@ -43,7 +43,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1402](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1402)
+[packages/types/src/config.ts:1405](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1405)
 
 ___
 
@@ -53,4 +53,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1405](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1405)
+[packages/types/src/config.ts:1408](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1408)

@@ -25,7 +25,7 @@ Array of rules to replace fields
 
 #### Defined in
 
-[packages/types/src/config.ts:1603](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1603)
+[packages/types/src/config.ts:1606](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1606)
 
 ___
 
@@ -37,4 +37,4 @@ Additional type definition to used to replace field types
 
 #### Defined in
 
-[packages/types/src/config.ts:1599](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1599)
+[packages/types/src/config.ts:1602](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1602)

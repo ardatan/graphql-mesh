@@ -23,7 +23,7 @@ Invalidate a query or queries when a specific operation is done without an error
 
 #### Defined in
 
-[packages/types/src/config.ts:1855](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1855)
+[packages/types/src/config.ts:1858](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1858)
 
 ___
 
@@ -35,4 +35,4 @@ Allow an operation can be used a live query with polling
 
 #### Defined in
 
-[packages/types/src/config.ts:1859](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1859)
+[packages/types/src/config.ts:1862](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1862)

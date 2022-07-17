@@ -20,4 +20,4 @@ title: 'MaskedErrorsPluginConfig'
 
 #### Defined in
 
-[packages/types/src/config.ts:1849](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1849)
+[packages/types/src/config.ts:1852](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1852)

@@ -23,7 +23,7 @@ title: 'RecordHelperArgsOpts'
 
 #### Defined in
 
-[packages/types/src/config.ts:669](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L669)
+[packages/types/src/config.ts:671](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L671)
 
 ___
 
@@ -33,7 +33,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:668](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L668)
+[packages/types/src/config.ts:670](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L670)
 
 ___
 
@@ -43,7 +43,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:670](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L670)
+[packages/types/src/config.ts:672](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L672)
 
 ___
 
@@ -53,4 +53,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:671](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L671)
+[packages/types/src/config.ts:673](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L673)

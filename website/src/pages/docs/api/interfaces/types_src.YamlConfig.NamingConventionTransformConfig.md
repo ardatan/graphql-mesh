@@ -27,7 +27,7 @@ Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCas
 
 #### Defined in
 
-[packages/types/src/config.ts:1448](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1448)
+[packages/types/src/config.ts:1451](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1451)
 
 ___
 
@@ -39,7 +39,7 @@ Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCas
 
 #### Defined in
 
-[packages/types/src/config.ts:1465](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1465)
+[packages/types/src/config.ts:1468](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1468)
 
 ___
 
@@ -51,7 +51,7 @@ Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCas
 
 #### Defined in
 
-[packages/types/src/config.ts:1431](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1431)
+[packages/types/src/config.ts:1434](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1434)
 
 ___
 
@@ -63,4 +63,4 @@ Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCas
 
 #### Defined in
 
-[packages/types/src/config.ts:1414](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1414)
+[packages/types/src/config.ts:1417](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1417)

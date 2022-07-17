@@ -35,7 +35,7 @@ title: 'AdditionalStitchingBatchResolverObject'
 
 #### Defined in
 
-[packages/types/src/config.ts:1781](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1781)
+[packages/types/src/config.ts:1784](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1784)
 
 ___
 
@@ -45,7 +45,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1779](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1779)
+[packages/types/src/config.ts:1782](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1782)
 
 ___
 
@@ -55,7 +55,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1780](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1780)
+[packages/types/src/config.ts:1783](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1783)
 
 ___
 
@@ -65,7 +65,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1778](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1778)
+[packages/types/src/config.ts:1781](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1781)
 
 ___
 
@@ -77,7 +77,7 @@ Extract specific property from the result
 
 #### Defined in
 
-[packages/types/src/config.ts:1789](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1789)
+[packages/types/src/config.ts:1792](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1792)
 
 ___
 
@@ -90,7 +90,7 @@ you can specify a result type to apply inline fragment
 
 #### Defined in
 
-[packages/types/src/config.ts:1794](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1794)
+[packages/types/src/config.ts:1797](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1797)
 
 ___
 
@@ -100,7 +100,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1776](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1776)
+[packages/types/src/config.ts:1779](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1779)
 
 ___
 
@@ -110,7 +110,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1774](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1774)
+[packages/types/src/config.ts:1777](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1777)
 
 ___
 
@@ -120,7 +120,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1777](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1777)
+[packages/types/src/config.ts:1780](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1780)
 
 ___
 
@@ -130,7 +130,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1775](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1775)
+[packages/types/src/config.ts:1778](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1778)
 
 ___
 
@@ -140,7 +140,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1785](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1785)
+[packages/types/src/config.ts:1788](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1788)
 
 ___
 
@@ -150,4 +150,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1784](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1784)
+[packages/types/src/config.ts:1787](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1787)

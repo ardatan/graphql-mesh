@@ -35,7 +35,7 @@ Auto-generate a 'limit' argument for all fields that return lists of objects, in
 
 #### Defined in
 
-[packages/types/src/config.ts:897](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L897)
+[packages/types/src/config.ts:899](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L899)
 
 ___
 
@@ -48,7 +48,7 @@ Overrides the server object in the OAS.
 
 #### Defined in
 
-[packages/types/src/config.ts:883](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L883)
+[packages/types/src/config.ts:885](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L885)
 
 ___
 
@@ -60,7 +60,7 @@ Set argument name for mutation payload to 'requestBody'. If false, name defaults
 
 #### Defined in
 
-[packages/types/src/config.ts:901](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L901)
+[packages/types/src/config.ts:903](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L903)
 
 ___
 
@@ -72,7 +72,7 @@ Include HTTP Response details to the result object
 
 #### Defined in
 
-[packages/types/src/config.ts:893](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L893)
+[packages/types/src/config.ts:895](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L895)
 
 ___
 
@@ -88,7 +88,7 @@ JSON object representing the Headers to add to the runtime of the API calls
 
 #### Defined in
 
-[packages/types/src/config.ts:870](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L870)
+[packages/types/src/config.ts:872](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L872)
 
 ___
 
@@ -102,7 +102,7 @@ This option forces OpenAPI handler to only create field names based on the opera
 
 #### Defined in
 
-[packages/types/src/config.ts:915](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L915)
+[packages/types/src/config.ts:917](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L917)
 
 ___
 
@@ -114,7 +114,7 @@ Overwrite automatic wrapping of errors into GraphqlErrors
 
 #### Defined in
 
-[packages/types/src/config.ts:909](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L909)
+[packages/types/src/config.ts:911](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L911)
 
 ___
 
@@ -130,7 +130,7 @@ JSON object representing the query search parameters to add to the API calls
 
 #### Defined in
 
-[packages/types/src/config.ts:887](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L887)
+[packages/types/src/config.ts:889](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L889)
 
 ___
 
@@ -146,7 +146,7 @@ If you are using a remote URL endpoint to fetch your schema, you can set headers
 
 #### Defined in
 
-[packages/types/src/config.ts:876](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L876)
+[packages/types/src/config.ts:878](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L878)
 
 ___
 
@@ -158,7 +158,7 @@ Allows to explicitly override the default operation (Query or Mutation) for any 
 
 #### Defined in
 
-[packages/types/src/config.ts:905](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L905)
+[packages/types/src/config.ts:907](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L907)
 
 ___
 
@@ -170,7 +170,7 @@ A pointer to your API source - could be a local file, remote file or url endpoin
 
 #### Defined in
 
-[packages/types/src/config.ts:862](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L862)
+[packages/types/src/config.ts:864](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L864)
 
 ___
 
@@ -182,4 +182,4 @@ Format of the source file (Allowed values: json, yaml)
 
 #### Defined in
 
-[packages/types/src/config.ts:866](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L866)
+[packages/types/src/config.ts:868](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L868)

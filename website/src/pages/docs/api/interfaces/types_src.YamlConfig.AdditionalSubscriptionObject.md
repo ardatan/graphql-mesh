@@ -24,7 +24,7 @@ title: 'AdditionalSubscriptionObject'
 
 #### Defined in
 
-[packages/types/src/config.ts:1801](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1801)
+[packages/types/src/config.ts:1804](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1804)
 
 ___
 
@@ -34,7 +34,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1799](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1799)
+[packages/types/src/config.ts:1802](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1802)
 
 ___
 
@@ -44,7 +44,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1800](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1800)
+[packages/types/src/config.ts:1803](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1803)
 
 ___
 
@@ -54,7 +54,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1798](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1798)
+[packages/types/src/config.ts:1801](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1801)
 
 ___
 
@@ -64,4 +64,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1797](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1797)
+[packages/types/src/config.ts:1800](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1800)

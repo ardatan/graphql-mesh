@@ -29,7 +29,7 @@ Base URL for OData API
 
 #### Defined in
 
-[packages/types/src/config.ts:829](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L829)
+[packages/types/src/config.ts:831](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L831)
 
 ___
 
@@ -41,7 +41,7 @@ Enable batching (Allowed values: multipart, json)
 
 #### Defined in
 
-[packages/types/src/config.ts:849](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L849)
+[packages/types/src/config.ts:851](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L851)
 
 ___
 
@@ -53,7 +53,7 @@ Use $expand for navigation props instead of seperate HTTP requests (Default: fal
 
 #### Defined in
 
-[packages/types/src/config.ts:853](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L853)
+[packages/types/src/config.ts:855](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L855)
 
 ___
 
@@ -65,7 +65,7 @@ Custom $metadata File or URL
 
 #### Defined in
 
-[packages/types/src/config.ts:833](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L833)
+[packages/types/src/config.ts:835](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L835)
 
 ___
 
@@ -81,7 +81,7 @@ Headers to be used with the operation requests
 
 #### Defined in
 
-[packages/types/src/config.ts:837](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L837)
+[packages/types/src/config.ts:839](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L839)
 
 ___
 
@@ -97,4 +97,4 @@ Headers to be used with the $metadata requests
 
 #### Defined in
 
-[packages/types/src/config.ts:843](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L843)
+[packages/types/src/config.ts:845](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L845)

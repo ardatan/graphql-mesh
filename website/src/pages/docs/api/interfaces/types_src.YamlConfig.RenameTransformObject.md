@@ -25,7 +25,7 @@ title: 'RenameTransformObject'
 
 #### Defined in
 
-[packages/types/src/config.ts:1563](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1563)
+[packages/types/src/config.ts:1566](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1566)
 
 ___
 
@@ -37,7 +37,7 @@ Flags to use in the Regular Expression
 
 #### Defined in
 
-[packages/types/src/config.ts:1580](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1580)
+[packages/types/src/config.ts:1583](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1583)
 
 ___
 
@@ -47,7 +47,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1564](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1564)
+[packages/types/src/config.ts:1567](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1567)
 
 ___
 
@@ -59,7 +59,7 @@ Use Regular Expression for field names
 
 #### Defined in
 
-[packages/types/src/config.ts:1576](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1576)
+[packages/types/src/config.ts:1579](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1579)
 
 ___
 
@@ -71,7 +71,7 @@ Use Regular Expression for field names
 
 #### Defined in
 
-[packages/types/src/config.ts:1572](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1572)
+[packages/types/src/config.ts:1575](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1575)
 
 ___
 
@@ -83,4 +83,4 @@ Use Regular Expression for type names
 
 #### Defined in
 
-[packages/types/src/config.ts:1568](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1568)
+[packages/types/src/config.ts:1571](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1571)

@@ -25,7 +25,7 @@ title: 'FilterHelperArgsOpts'
 
 #### Defined in
 
-[packages/types/src/config.ts:647](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L647)
+[packages/types/src/config.ts:649](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L649)
 
 ___
 
@@ -35,7 +35,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:648](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L648)
+[packages/types/src/config.ts:650](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L650)
 
 ___
 
@@ -45,7 +45,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:649](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L649)
+[packages/types/src/config.ts:651](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L651)
 
 ___
 
@@ -57,7 +57,7 @@ Any of: Boolean, JSON
 
 #### Defined in
 
-[packages/types/src/config.ts:654](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L654)
+[packages/types/src/config.ts:656](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L656)
 
 ___
 
@@ -67,7 +67,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:659](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L659)
+[packages/types/src/config.ts:661](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L661)
 
 ___
 
@@ -77,4 +77,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:650](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L650)
+[packages/types/src/config.ts:652](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L652)

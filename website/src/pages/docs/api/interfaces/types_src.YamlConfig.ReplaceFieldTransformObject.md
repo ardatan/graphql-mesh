@@ -24,7 +24,7 @@ title: 'ReplaceFieldTransformObject'
 
 #### Defined in
 
-[packages/types/src/config.ts:1612](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1612)
+[packages/types/src/config.ts:1615](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1615)
 
 ___
 
@@ -34,7 +34,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1606](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1606)
+[packages/types/src/config.ts:1609](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1609)
 
 ___
 
@@ -44,7 +44,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1613](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1613)
+[packages/types/src/config.ts:1616](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1616)
 
 ___
 
@@ -56,7 +56,7 @@ Allowed values: config, hoistValue
 
 #### Defined in
 
-[packages/types/src/config.ts:1611](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1611)
+[packages/types/src/config.ts:1614](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1614)
 
 ___
 
@@ -66,4 +66,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1607](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1607)
+[packages/types/src/config.ts:1610](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1610)

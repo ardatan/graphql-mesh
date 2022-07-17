@@ -26,7 +26,7 @@ The field of the type that the rate limit is applied to
 
 #### Defined in
 
-[packages/types/src/config.ts:1538](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1538)
+[packages/types/src/config.ts:1541](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1541)
 
 ___
 
@@ -38,7 +38,7 @@ The identifier expression that determines the identity of the request (e.g. `{co
 
 #### Defined in
 
-[packages/types/src/config.ts:1550](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1550)
+[packages/types/src/config.ts:1553](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1553)
 
 ___
 
@@ -50,7 +50,7 @@ The maximum number of requests that can be made in a given time period
 
 #### Defined in
 
-[packages/types/src/config.ts:1542](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1542)
+[packages/types/src/config.ts:1545](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1545)
 
 ___
 
@@ -62,7 +62,7 @@ The time period in which the rate limit is applied
 
 #### Defined in
 
-[packages/types/src/config.ts:1546](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1546)
+[packages/types/src/config.ts:1549](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1549)
 
 ___
 
@@ -74,4 +74,4 @@ The type name that the following field belongs to
 
 #### Defined in
 
-[packages/types/src/config.ts:1534](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1534)
+[packages/types/src/config.ts:1537](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1537)

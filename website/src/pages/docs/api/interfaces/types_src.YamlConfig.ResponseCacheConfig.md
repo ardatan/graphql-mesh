@@ -49,7 +49,7 @@ cacheKey: "{contextValue.headers.authorization}-{operationName}"
 
 #### Defined in
 
-[packages/types/src/config.ts:1943](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1943)
+[packages/types/src/config.ts:1946](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1946)
 
 ___
 
@@ -61,7 +61,7 @@ List of fields that are used to identify the entity.
 
 #### Defined in
 
-[packages/types/src/config.ts:1895](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1895)
+[packages/types/src/config.ts:1898](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1898)
 
 ___
 
@@ -76,7 +76,7 @@ if: "context.headers.userId != null"
 
 #### Defined in
 
-[packages/types/src/config.ts:1921](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1921)
+[packages/types/src/config.ts:1924](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1924)
 
 ___
 
@@ -88,7 +88,7 @@ Skip caching of following the types.
 
 #### Defined in
 
-[packages/types/src/config.ts:1891](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1891)
+[packages/types/src/config.ts:1894](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1894)
 
 ___
 
@@ -100,7 +100,7 @@ Include extension values that provide useful information, such as whether the ca
 
 #### Defined in
 
-[packages/types/src/config.ts:1904](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1904)
+[packages/types/src/config.ts:1907](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1907)
 
 ___
 
@@ -113,7 +113,7 @@ Defaults to `true`
 
 #### Defined in
 
-[packages/types/src/config.ts:1900](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1900)
+[packages/types/src/config.ts:1903](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1903)
 
 ___
 
@@ -131,7 +131,7 @@ sessionId: "{context.headers.userId}"
 
 #### Defined in
 
-[packages/types/src/config.ts:1914](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1914)
+[packages/types/src/config.ts:1917](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1917)
 
 ___
 
@@ -146,7 +146,7 @@ shouldCacheResult: "result.errors.length > 0"
 
 #### Defined in
 
-[packages/types/src/config.ts:1950](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1950)
+[packages/types/src/config.ts:1953](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1953)
 
 ___
 
@@ -158,7 +158,7 @@ Maximum age in ms. Defaults to `Infinity`. Set it to 0 for disabling the global 
 
 #### Defined in
 
-[packages/types/src/config.ts:1882](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1882)
+[packages/types/src/config.ts:1885](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1885)
 
 ___
 
@@ -171,4 +171,4 @@ Useful if the selection of a specific field should reduce the TTL of the query o
 
 #### Defined in
 
-[packages/types/src/config.ts:1887](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1887)
+[packages/types/src/config.ts:1890](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1890)

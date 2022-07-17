@@ -28,7 +28,7 @@ title: 'Plugin'
 
 #### Defined in
 
-[packages/types/src/config.ts:1842](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1842)
+[packages/types/src/config.ts:1845](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1845)
 
 ___
 
@@ -38,7 +38,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1843](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1843)
+[packages/types/src/config.ts:1846](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1846)
 
 ___
 
@@ -48,7 +48,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1841](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1841)
+[packages/types/src/config.ts:1844](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1844)
 
 ___
 
@@ -58,7 +58,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1844](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1844)
+[packages/types/src/config.ts:1847](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1847)
 
 ___
 
@@ -68,4 +68,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1845](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1845)
+[packages/types/src/config.ts:1848](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1848)

@@ -20,4 +20,4 @@ title: 'CFWorkersKVCacheConfig'
 
 #### Defined in
 
-[packages/types/src/config.ts:1814](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1814)
+[packages/types/src/config.ts:1817](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1817)

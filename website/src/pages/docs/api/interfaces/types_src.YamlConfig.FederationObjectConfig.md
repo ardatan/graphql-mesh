@@ -23,7 +23,7 @@ title: 'FederationObjectConfig'
 
 #### Defined in
 
-[packages/types/src/config.ts:1267](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1267)
+[packages/types/src/config.ts:1271](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1271)
 
 ___
 
@@ -33,7 +33,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1268](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1268)
+[packages/types/src/config.ts:1272](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1272)
 
 ___
 
@@ -43,7 +43,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1266](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1266)
+[packages/types/src/config.ts:1270](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1270)
 
 ___
 
@@ -55,4 +55,4 @@ Any of: String, ResolveReferenceObject
 
 #### Defined in
 
-[packages/types/src/config.ts:1272](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1272)
+[packages/types/src/config.ts:1276](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1276)

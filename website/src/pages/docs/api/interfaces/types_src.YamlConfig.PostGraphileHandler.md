@@ -31,7 +31,7 @@ Extra Postgraphile Plugins to append
 
 #### Defined in
 
-[packages/types/src/config.ts:954](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L954)
+[packages/types/src/config.ts:956](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L956)
 
 ___
 
@@ -43,7 +43,7 @@ A connection string to your Postgres database
 
 #### Defined in
 
-[packages/types/src/config.ts:942](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L942)
+[packages/types/src/config.ts:944](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L944)
 
 ___
 
@@ -55,7 +55,7 @@ Enables live-query support via GraphQL subscriptions (sends updated payload any 
 
 #### Defined in
 
-[packages/types/src/config.ts:974](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L974)
+[packages/types/src/config.ts:976](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L976)
 
 ___
 
@@ -67,7 +67,7 @@ Extra Postgraphile options that will be added to the postgraphile constructor. I
 
 #### Defined in
 
-[packages/types/src/config.ts:962](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L962)
+[packages/types/src/config.ts:964](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L964)
 
 ___
 
@@ -79,7 +79,7 @@ Connection Pool instance or settings or you can provide the path of a code file 
 
 #### Defined in
 
-[packages/types/src/config.ts:950](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L950)
+[packages/types/src/config.ts:952](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L952)
 
 ___
 
@@ -91,7 +91,7 @@ An array of strings which specifies the PostgreSQL schemas that PostGraphile wil
 
 #### Defined in
 
-[packages/types/src/config.ts:946](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L946)
+[packages/types/src/config.ts:948](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L948)
 
 ___
 
@@ -103,7 +103,7 @@ Postgraphile Plugins to skip (e.g. "graphile-build#NodePlugin")
 
 #### Defined in
 
-[packages/types/src/config.ts:958](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L958)
+[packages/types/src/config.ts:960](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L960)
 
 ___
 
@@ -115,4 +115,4 @@ Enable GraphQL websocket transport support for subscriptions (default: true)
 
 #### Defined in
 
-[packages/types/src/config.ts:970](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L970)
+[packages/types/src/config.ts:972](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L972)

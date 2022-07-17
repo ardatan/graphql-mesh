@@ -23,7 +23,7 @@ title: 'JsonSchemaHandlerBundle'
 
 #### Defined in
 
-[packages/types/src/config.ts:531](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L531)
+[packages/types/src/config.ts:533](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L533)
 
 ___
 
@@ -39,7 +39,7 @@ HTTP Headers to receive the bundle
 
 #### Defined in
 
-[packages/types/src/config.ts:528](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L528)
+[packages/types/src/config.ts:530](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L530)
 
 ___
 
@@ -51,7 +51,7 @@ Path to the bundle file
 
 #### Defined in
 
-[packages/types/src/config.ts:524](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L524)
+[packages/types/src/config.ts:526](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L526)
 
 ___
 
@@ -65,4 +65,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:532](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L532)
+[packages/types/src/config.ts:534](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L534)

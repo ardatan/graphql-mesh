@@ -24,7 +24,7 @@ title: 'HoistFieldTransformConfig'
 
 #### Defined in
 
-[packages/types/src/config.ts:1317](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1317)
+[packages/types/src/config.ts:1320](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1320)
 
 ___
 
@@ -36,7 +36,7 @@ Defines if args in path are filtered (default = false)
 
 #### Defined in
 
-[packages/types/src/config.ts:1321](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1321)
+[packages/types/src/config.ts:1324](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1324)
 
 ___
 
@@ -48,7 +48,7 @@ Name the hoisted field should have when hoisted to the type specified in typeNam
 
 #### Defined in
 
-[packages/types/src/config.ts:1316](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1316)
+[packages/types/src/config.ts:1319](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1319)
 
 ___
 
@@ -60,7 +60,7 @@ Array of fieldsNames to reach the field to be hoisted (Any of: String, HoistFiel
 
 #### Defined in
 
-[packages/types/src/config.ts:1312](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1312)
+[packages/types/src/config.ts:1315](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1315)
 
 ___
 
@@ -72,4 +72,4 @@ Type name that defines where field should be hoisted to
 
 #### Defined in
 
-[packages/types/src/config.ts:1308](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1308)
+[packages/types/src/config.ts:1311](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1311)

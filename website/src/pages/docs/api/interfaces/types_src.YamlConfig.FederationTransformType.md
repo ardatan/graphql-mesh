@@ -21,7 +21,7 @@ title: 'FederationTransformType'
 
 #### Defined in
 
-[packages/types/src/config.ts:1263](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1263)
+[packages/types/src/config.ts:1267](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1267)
 
 ___
 
@@ -31,4 +31,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1262](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1262)
+[packages/types/src/config.ts:1266](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1266)

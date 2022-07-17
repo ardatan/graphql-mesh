@@ -20,4 +20,4 @@ title: 'PaginationResolverOpts'
 
 #### Defined in
 
-[packages/types/src/config.ts:674](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L674)
+[packages/types/src/config.ts:676](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L676)

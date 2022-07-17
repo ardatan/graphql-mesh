@@ -43,7 +43,7 @@ Example: 'argTypeMap: ID: String'
 
 #### Defined in
 
-[packages/types/src/config.ts:479](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L479)
+[packages/types/src/config.ts:481](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L481)
 
 ___
 
@@ -57,7 +57,7 @@ unless you define an explicit Content-Type header
 
 #### Defined in
 
-[packages/types/src/config.ts:495](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L495)
+[packages/types/src/config.ts:497](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L497)
 
 ___
 
@@ -98,7 +98,7 @@ type ResponseMetadata {
 
 #### Defined in
 
-[packages/types/src/config.ts:474](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L474)
+[packages/types/src/config.ts:476](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L476)
 
 ___
 
@@ -126,7 +126,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:487](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L487)
+[packages/types/src/config.ts:489](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L489)
 
 ___
 
@@ -138,7 +138,7 @@ Allowed values: GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TRACE, PATCH
 
 #### Defined in
 
-[packages/types/src/config.ts:486](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L486)
+[packages/types/src/config.ts:488](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L488)
 
 ___
 
@@ -148,7 +148,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:482](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L482)
+[packages/types/src/config.ts:484](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L484)
 
 ___
 
@@ -207,16 +207,18 @@ ___
 • `Optional` **responseByStatusCode**: `any`
 
 You can define your response schemas by status codes;
+```yaml
 responseByStatusCode:
   200:
     responseSchema: ./someschema.json#/somepath
   404:
     responseSample: ./error-sample.json
     responseTypeName: MyError
+```
 
 #### Defined in
 
-[packages/types/src/config.ts:454](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L454)
+[packages/types/src/config.ts:456](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L456)
 
 ___
 
@@ -224,7 +226,7 @@ ___
 
 • `Optional` **responseSample**: `any`
 
-Did you use Sample? Provide the respone sample path.
+Did you use Sample? Provide the response sample path.
 
 #### Defined in
 

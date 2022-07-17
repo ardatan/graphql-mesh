@@ -21,7 +21,7 @@ title: 'PubSubConfig'
 
 #### Defined in
 
-[packages/types/src/config.ts:1838](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1838)
+[packages/types/src/config.ts:1841](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1841)
 
 ___
 
@@ -31,4 +31,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1837](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1837)
+[packages/types/src/config.ts:1840](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1840)

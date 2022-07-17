@@ -25,7 +25,7 @@ Invalidate the cache when a specific operation is done without an error
 
 #### Defined in
 
-[packages/types/src/config.ts:1220](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1220)
+[packages/types/src/config.ts:1224](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1224)
 
 ___
 
@@ -37,4 +37,4 @@ Specified in seconds, the time-to-live (TTL) value limits the lifespan
 
 #### Defined in
 
-[packages/types/src/config.ts:1224](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1224)
+[packages/types/src/config.ts:1228](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1228)

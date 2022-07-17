@@ -26,7 +26,7 @@ title: 'RAMLHandler'
 
 #### Defined in
 
-[packages/types/src/config.ts:978](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L978)
+[packages/types/src/config.ts:980](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L980)
 
 ___
 
@@ -36,7 +36,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:985](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L985)
+[packages/types/src/config.ts:987](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L987)
 
 ___
 
@@ -50,7 +50,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:982](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L982)
+[packages/types/src/config.ts:984](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L984)
 
 ___
 
@@ -60,7 +60,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:987](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L987)
+[packages/types/src/config.ts:989](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L989)
 
 ___
 
@@ -70,7 +70,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:977](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L977)
+[packages/types/src/config.ts:979](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L979)
 
 ___
 
@@ -84,7 +84,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:979](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L979)
+[packages/types/src/config.ts:981](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L981)
 
 ___
 
@@ -94,4 +94,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:986](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L986)
+[packages/types/src/config.ts:988](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L988)

@@ -24,7 +24,7 @@ Get the data from the mock store
 
 #### Defined in
 
-[packages/types/src/config.ts:1399](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1399)
+[packages/types/src/config.ts:1402](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1402)
 
 ___
 
@@ -34,7 +34,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1398](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1398)
+[packages/types/src/config.ts:1401](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1401)
 
 ___
 
@@ -44,4 +44,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1397](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1397)
+[packages/types/src/config.ts:1400](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1400)

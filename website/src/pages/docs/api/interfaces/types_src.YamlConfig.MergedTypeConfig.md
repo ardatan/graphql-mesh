@@ -26,7 +26,7 @@ that provide a [canonical definition](https://www.graphql-tools.com/docs/stitch-
 
 #### Defined in
 
-[packages/types/src/config.ts:1701](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1701)
+[packages/types/src/config.ts:1704](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1704)
 
 ___
 
@@ -36,7 +36,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1702](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1702)
+[packages/types/src/config.ts:1705](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1705)
 
 ___
 
@@ -46,7 +46,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1696](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1696)
+[packages/types/src/config.ts:1699](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1699)
 
 ___
 
@@ -58,4 +58,4 @@ Name of the type (Query by default)
 
 #### Defined in
 
-[packages/types/src/config.ts:1695](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1695)
+[packages/types/src/config.ts:1698](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1698)

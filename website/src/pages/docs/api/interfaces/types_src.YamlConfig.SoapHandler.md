@@ -30,7 +30,7 @@ Handler for SOAP
 
 #### Defined in
 
-[packages/types/src/config.ts:1004](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1004)
+[packages/types/src/config.ts:1006](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1006)
 
 ___
 
@@ -42,12 +42,12 @@ If true, the ports defined in the WSDL will be represented as GraphQL-Type objec
 The fields of the object will be the operations of the port.
 Most soap-endpoints only define one port; so including it in the schema will just be inconvenient.
 But if there are multiple ports with operations of the same name, you should set this option to true.
-Otherwise only one of the identical-named operations will be callable.
+Otherwise, only one of the identical-named operations will be callable.
 default: false
 
 #### Defined in
 
-[packages/types/src/config.ts:1025](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1025)
+[packages/types/src/config.ts:1027](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1027)
 
 ___
 
@@ -59,12 +59,12 @@ If true, the services defined in the WSDL will be represented as GraphQL-Type ob
 The fields of the object will be the ports of the service (or the operation, dependent on 'includePorts').
 Most soap-endpoints only define one service; so including it in the schema will just be inconvenient.
 But if there are multiple services with operations of the same name, you should set this option to true.
-Otherwise only one of the identical-named operations will be callable.
+Otherwise, only one of the identical-named operations will be callable.
 default: false
 
 #### Defined in
 
-[packages/types/src/config.ts:1034](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1034)
+[packages/types/src/config.ts:1036](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1036)
 
 ___
 
@@ -80,7 +80,7 @@ JSON object representing the Headers to add to the runtime of the API calls only
 
 #### Defined in
 
-[packages/types/src/config.ts:1014](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1014)
+[packages/types/src/config.ts:1016](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1016)
 
 ___
 
@@ -93,7 +93,7 @@ You can also provide `.js` or `.ts` file path that exports schemaHeaders as an o
 
 #### Defined in
 
-[packages/types/src/config.ts:1010](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1010)
+[packages/types/src/config.ts:1012](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1012)
 
 ___
 
@@ -103,7 +103,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1005](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1005)
+[packages/types/src/config.ts:1007](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1007)
 
 ___
 
@@ -115,7 +115,7 @@ Automatically put operations starts with `query` or `get` into the Query type
 
 #### Defined in
 
-[packages/types/src/config.ts:1042](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1042)
+[packages/types/src/config.ts:1044](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1044)
 
 ___
 
@@ -127,7 +127,7 @@ Allows to explicitly override the default operation (Query or Mutation) for any 
 
 #### Defined in
 
-[packages/types/src/config.ts:1038](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1038)
+[packages/types/src/config.ts:1040](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1040)
 
 ___
 
@@ -139,4 +139,4 @@ A url to your WSDL
 
 #### Defined in
 
-[packages/types/src/config.ts:1003](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1003)
+[packages/types/src/config.ts:1005](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1005)

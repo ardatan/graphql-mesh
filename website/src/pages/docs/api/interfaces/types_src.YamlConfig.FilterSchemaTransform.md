@@ -23,7 +23,7 @@ Array of filter rules
 
 #### Defined in
 
-[packages/types/src/config.ts:1302](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1302)
+[packages/types/src/config.ts:1305](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1305)
 
 ___
 
@@ -35,4 +35,4 @@ Specify to apply filter-schema transforms to bare schema or by wrapping original
 
 #### Defined in
 
-[packages/types/src/config.ts:1298](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1298)
+[packages/types/src/config.ts:1301](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1301)

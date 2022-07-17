@@ -25,7 +25,7 @@ Enable Automatic Type Merging/Federation support
 
 #### Defined in
 
-[packages/types/src/config.ts:543](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L543)
+[packages/types/src/config.ts:545](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L545)
 
 ___
 
@@ -35,7 +35,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:537](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L537)
+[packages/types/src/config.ts:539](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L539)
 
 ___
 
@@ -45,7 +45,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:539](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L539)
+[packages/types/src/config.ts:541](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L541)
 
 ___
 
@@ -55,4 +55,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:538](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L538)
+[packages/types/src/config.ts:540](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L540)

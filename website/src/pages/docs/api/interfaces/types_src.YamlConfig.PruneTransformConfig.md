@@ -28,7 +28,7 @@ Set to `true` to skip pruning object types or interfaces with no fields
 
 #### Defined in
 
-[packages/types/src/config.ts:1516](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1516)
+[packages/types/src/config.ts:1519](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1519)
 
 ___
 
@@ -40,7 +40,7 @@ Set to `true` to skip pruning empty unions
 
 #### Defined in
 
-[packages/types/src/config.ts:1524](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1524)
+[packages/types/src/config.ts:1527](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1527)
 
 ___
 
@@ -52,7 +52,7 @@ Types to skip pruning
 
 #### Defined in
 
-[packages/types/src/config.ts:1512](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1512)
+[packages/types/src/config.ts:1515](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1515)
 
 ___
 
@@ -64,7 +64,7 @@ Set to `true` to skip pruning interfaces that are not implemented by any other t
 
 #### Defined in
 
-[packages/types/src/config.ts:1520](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1520)
+[packages/types/src/config.ts:1523](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1523)
 
 ___
 
@@ -76,4 +76,4 @@ Set to `true` to skip pruning unused types
 
 #### Defined in
 
-[packages/types/src/config.ts:1528](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1528)
+[packages/types/src/config.ts:1531](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1531)

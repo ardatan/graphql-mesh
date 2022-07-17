@@ -29,7 +29,7 @@ Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/sw
 
 #### Defined in
 
-[packages/types/src/config.ts:804](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L804)
+[packages/types/src/config.ts:806](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L806)
 
 ___
 
@@ -41,7 +41,7 @@ Allowed values: json, yaml, js, ts
 
 #### Defined in
 
-[packages/types/src/config.ts:803](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L803)
+[packages/types/src/config.ts:805](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L805)
 
 ___
 
@@ -51,7 +51,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:811](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L811)
+[packages/types/src/config.ts:813](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L813)
 
 ___
 
@@ -61,7 +61,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:799](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L799)
+[packages/types/src/config.ts:801](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L801)
 
 ___
 
@@ -75,7 +75,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:808](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L808)
+[packages/types/src/config.ts:810](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L810)
 
 ___
 
@@ -85,7 +85,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:813](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L813)
+[packages/types/src/config.ts:815](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L815)
 
 ___
 
@@ -99,7 +99,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:805](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L805)
+[packages/types/src/config.ts:807](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L807)
 
 ___
 
@@ -109,4 +109,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:812](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L812)
+[packages/types/src/config.ts:814](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L814)

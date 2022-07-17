@@ -22,7 +22,7 @@ title: 'RenameConfig'
 
 #### Defined in
 
-[packages/types/src/config.ts:1585](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1585)
+[packages/types/src/config.ts:1588](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1588)
 
 ___
 
@@ -32,7 +32,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1584](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1584)
+[packages/types/src/config.ts:1587](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1587)
 
 ___
 
@@ -42,4 +42,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1583](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1583)
+[packages/types/src/config.ts:1586](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1586)

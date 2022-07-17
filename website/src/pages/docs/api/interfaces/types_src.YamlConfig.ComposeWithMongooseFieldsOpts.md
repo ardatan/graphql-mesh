@@ -22,7 +22,7 @@ title: 'ComposeWithMongooseFieldsOpts'
 
 #### Defined in
 
-[packages/types/src/config.ts:558](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L558)
+[packages/types/src/config.ts:560](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L560)
 
 ___
 
@@ -32,7 +32,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:559](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L559)
+[packages/types/src/config.ts:561](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L561)
 
 ___
 
@@ -42,4 +42,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:560](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L560)
+[packages/types/src/config.ts:562](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L562)

@@ -23,7 +23,7 @@ Cache key to invalidate on successful resolver (no error), see `cacheKey` for li
 
 #### Defined in
 
-[packages/types/src/config.ts:1234](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1234)
+[packages/types/src/config.ts:1238](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1238)
 
 ___
 
@@ -35,4 +35,4 @@ Path to the operation that could effect it. In a form: Mutation.something. Note 
 
 #### Defined in
 
-[packages/types/src/config.ts:1230](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1230)
+[packages/types/src/config.ts:1234](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1234)

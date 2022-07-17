@@ -26,7 +26,7 @@ The path to a code file that has additional type merging configuration
 
 #### Defined in
 
-[packages/types/src/config.ts:1689](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1689)
+[packages/types/src/config.ts:1692](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1692)
 
 ___
 
@@ -43,7 +43,7 @@ Directive arguments tune the merge behavior
 
 #### Defined in
 
-[packages/types/src/config.ts:1685](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1685)
+[packages/types/src/config.ts:1688](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1688)
 
 ___
 
@@ -53,4 +53,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1676](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1676)
+[packages/types/src/config.ts:1679](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1679)

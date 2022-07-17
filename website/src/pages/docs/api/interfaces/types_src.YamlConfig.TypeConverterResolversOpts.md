@@ -36,7 +36,7 @@ Any of: Boolean, JSON
 
 #### Defined in
 
-[packages/types/src/config.ts:629](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L629)
+[packages/types/src/config.ts:631](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L631)
 
 ___
 
@@ -48,7 +48,7 @@ Any of: Boolean, ComposeWithMongooseResolverOpts
 
 #### Defined in
 
-[packages/types/src/config.ts:625](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L625)
+[packages/types/src/config.ts:627](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L627)
 
 ___
 
@@ -60,7 +60,7 @@ Any of: Boolean, ComposeWithMongooseResolverOpts
 
 #### Defined in
 
-[packages/types/src/config.ts:621](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L621)
+[packages/types/src/config.ts:623](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L623)
 
 ___
 
@@ -72,7 +72,7 @@ Any of: Boolean, ComposeWithMongooseResolverOpts
 
 #### Defined in
 
-[packages/types/src/config.ts:617](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L617)
+[packages/types/src/config.ts:619](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L619)
 
 ___
 
@@ -84,7 +84,7 @@ Any of: Boolean, ComposeWithMongooseResolverOpts
 
 #### Defined in
 
-[packages/types/src/config.ts:577](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L577)
+[packages/types/src/config.ts:579](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L579)
 
 ___
 
@@ -96,7 +96,7 @@ Any of: Boolean, ComposeWithMongooseResolverOpts
 
 #### Defined in
 
-[packages/types/src/config.ts:581](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L581)
+[packages/types/src/config.ts:583](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L583)
 
 ___
 
@@ -108,7 +108,7 @@ Any of: Boolean, ComposeWithMongooseResolverOpts
 
 #### Defined in
 
-[packages/types/src/config.ts:589](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L589)
+[packages/types/src/config.ts:591](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L591)
 
 ___
 
@@ -120,7 +120,7 @@ Any of: Boolean, ComposeWithMongooseResolverOpts
 
 #### Defined in
 
-[packages/types/src/config.ts:585](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L585)
+[packages/types/src/config.ts:587](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L587)
 
 ___
 
@@ -132,7 +132,7 @@ Any of: Boolean, PaginationResolverOpts
 
 #### Defined in
 
-[packages/types/src/config.ts:637](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L637)
+[packages/types/src/config.ts:639](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L639)
 
 ___
 
@@ -144,7 +144,7 @@ Any of: Boolean, ComposeWithMongooseResolverOpts
 
 #### Defined in
 
-[packages/types/src/config.ts:605](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L605)
+[packages/types/src/config.ts:607](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L607)
 
 ___
 
@@ -156,7 +156,7 @@ Any of: Boolean, ComposeWithMongooseResolverOpts
 
 #### Defined in
 
-[packages/types/src/config.ts:613](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L613)
+[packages/types/src/config.ts:615](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L615)
 
 ___
 
@@ -168,7 +168,7 @@ Any of: Boolean, ComposeWithMongooseResolverOpts
 
 #### Defined in
 
-[packages/types/src/config.ts:609](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L609)
+[packages/types/src/config.ts:611](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L611)
 
 ___
 
@@ -180,7 +180,7 @@ Any of: Boolean, ComposeWithMongooseResolverOpts
 
 #### Defined in
 
-[packages/types/src/config.ts:593](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L593)
+[packages/types/src/config.ts:595](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L595)
 
 ___
 
@@ -192,7 +192,7 @@ Any of: Boolean, ComposeWithMongooseResolverOpts
 
 #### Defined in
 
-[packages/types/src/config.ts:601](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L601)
+[packages/types/src/config.ts:603](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L603)
 
 ___
 
@@ -204,4 +204,4 @@ Any of: Boolean, ComposeWithMongooseResolverOpts
 
 #### Defined in
 
-[packages/types/src/config.ts:597](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L597)
+[packages/types/src/config.ts:599](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L599)

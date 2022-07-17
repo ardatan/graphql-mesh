@@ -29,7 +29,7 @@ Example: User.firstName
 
 #### Defined in
 
-[packages/types/src/config.ts:1361](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1361)
+[packages/types/src/config.ts:1364](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1364)
 
 ___
 
@@ -43,7 +43,7 @@ Both "moduleName#exportName" or only "moduleName" would work
 
 #### Defined in
 
-[packages/types/src/config.ts:1380](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1380)
+[packages/types/src/config.ts:1383](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1383)
 
 ___
 
@@ -54,12 +54,12 @@ ___
 Faker.js expression or function
 Read more (https://github.com/marak/Faker.js/#fakerfake)
 Example:
-faker: name.firstName
+faker: `name.firstName`
 faker: `{{ name.firstName }} {{ name.lastName }}`
 
 #### Defined in
 
-[packages/types/src/config.ts:1374](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1374)
+[packages/types/src/config.ts:1377](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1377)
 
 ___
 
@@ -72,7 +72,7 @@ You can use environment variables expression, for example: `${MOCKING_ENABLED}`
 
 #### Defined in
 
-[packages/types/src/config.ts:1366](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1366)
+[packages/types/src/config.ts:1369](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1369)
 
 ___
 
@@ -86,7 +86,7 @@ default: 2
 
 #### Defined in
 
-[packages/types/src/config.ts:1386](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1386)
+[packages/types/src/config.ts:1389](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1389)
 
 ___
 
@@ -96,7 +96,7 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1387](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1387)
+[packages/types/src/config.ts:1390](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1390)
 
 ___
 
@@ -108,4 +108,4 @@ Update the data on the mock store
 
 #### Defined in
 
-[packages/types/src/config.ts:1391](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1391)
+[packages/types/src/config.ts:1394](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1394)

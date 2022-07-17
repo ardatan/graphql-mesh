@@ -25,7 +25,7 @@ Pointer to your SQLite database
 
 #### Defined in
 
-[packages/types/src/config.ts:1149](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1149)
+[packages/types/src/config.ts:1151](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1151)
 
 ___
 
@@ -37,4 +37,4 @@ Path to the SQL Dump file if you want to build a in-memory database
 
 #### Defined in
 
-[packages/types/src/config.ts:1153](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1153)
+[packages/types/src/config.ts:1155](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1155)

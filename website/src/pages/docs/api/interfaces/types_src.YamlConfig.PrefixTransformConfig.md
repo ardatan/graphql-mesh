@@ -28,7 +28,7 @@ List of ignored types
 
 #### Defined in
 
-[packages/types/src/config.ts:1495](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1495)
+[packages/types/src/config.ts:1498](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1498)
 
 ___
 
@@ -40,7 +40,7 @@ Changes root types and changes the field names (default: false)
 
 #### Defined in
 
-[packages/types/src/config.ts:1499](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1499)
+[packages/types/src/config.ts:1502](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1502)
 
 ___
 
@@ -52,7 +52,7 @@ Changes types (default: true)
 
 #### Defined in
 
-[packages/types/src/config.ts:1503](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1503)
+[packages/types/src/config.ts:1506](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1506)
 
 ___
 
@@ -64,7 +64,7 @@ Specify to apply prefix transform to bare schema or by wrapping original schema 
 
 #### Defined in
 
-[packages/types/src/config.ts:1487](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1487)
+[packages/types/src/config.ts:1490](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1490)
 
 ___
 
@@ -76,4 +76,4 @@ The prefix to apply to the schema types. By default it's the API name.
 
 #### Defined in
 
-[packages/types/src/config.ts:1491](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1491)
+[packages/types/src/config.ts:1494](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1494)

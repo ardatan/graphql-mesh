@@ -19,12 +19,11 @@ title: 'ResolveReferenceObject'
 
 • `Optional` **keyArg**: `string`
 
-If the root field name has multiple args,
-you need to define which argument should receive the key
+If the root field name has multiple args, you need to define which argument should receive the key
 
 #### Defined in
 
-[packages/types/src/config.ts:1292](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1292)
+[packages/types/src/config.ts:1295](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1295)
 
 ___
 
@@ -36,4 +35,4 @@ Name of root field name that resolves the reference
 
 #### Defined in
 
-[packages/types/src/config.ts:1287](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1287)
+[packages/types/src/config.ts:1291](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1291)

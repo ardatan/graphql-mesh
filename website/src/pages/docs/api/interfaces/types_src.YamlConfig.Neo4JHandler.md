@@ -29,7 +29,7 @@ Specifies whether relationships should always be included in the type definition
 
 #### Defined in
 
-[packages/types/src/config.ts:785](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L785)
+[packages/types/src/config.ts:787](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L787)
 
 ___
 
@@ -41,7 +41,7 @@ Specifies database name
 
 #### Defined in
 
-[packages/types/src/config.ts:789](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L789)
+[packages/types/src/config.ts:791](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L791)
 
 ___
 
@@ -53,7 +53,7 @@ Password for basic authentication
 
 #### Defined in
 
-[packages/types/src/config.ts:781](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L781)
+[packages/types/src/config.ts:783](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L783)
 
 ___
 
@@ -65,7 +65,7 @@ Provide GraphQL Type Definitions instead of inferring
 
 #### Defined in
 
-[packages/types/src/config.ts:793](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L793)
+[packages/types/src/config.ts:795](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L795)
 
 ___
 
@@ -77,7 +77,7 @@ URL for the Neo4j Instance e.g. neo4j://localhost
 
 #### Defined in
 
-[packages/types/src/config.ts:773](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L773)
+[packages/types/src/config.ts:775](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L775)
 
 ___
 
@@ -89,4 +89,4 @@ Username for basic authentication
 
 #### Defined in
 
-[packages/types/src/config.ts:777](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L777)
+[packages/types/src/config.ts:779](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L779)

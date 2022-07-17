@@ -21,7 +21,7 @@ title: 'LiveQueryPolling'
 
 #### Defined in
 
-[packages/types/src/config.ts:1869](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1869)
+[packages/types/src/config.ts:1872](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1872)
 
 ___
 
@@ -31,4 +31,4 @@ ___
 
 #### Defined in
 
-[packages/types/src/config.ts:1870](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1870)
+[packages/types/src/config.ts:1873](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L1873)

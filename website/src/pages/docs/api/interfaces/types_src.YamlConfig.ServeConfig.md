@@ -34,7 +34,7 @@ Those commands won't be available in programmatic usage.
 • `Optional` **browser**: `string` \| `boolean`
 
 Path to the browser that will be used by `mesh serve` to open a playground window in development mode
-This feature can be disable by passing `false` (Any of: String, Boolean)
+This feature can be disabled by passing `false` (Any of: String, Boolean)
 
 #### Defined in
 

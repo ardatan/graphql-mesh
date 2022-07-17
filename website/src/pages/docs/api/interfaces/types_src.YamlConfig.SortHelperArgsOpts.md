@@ -20,4 +20,4 @@ title: 'SortHelperArgsOpts'
 
 #### Defined in
 
-[packages/types/src/config.ts:662](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L662)
+[packages/types/src/config.ts:664](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L664)

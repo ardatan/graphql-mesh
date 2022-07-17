@@ -21,7 +21,7 @@ title: 'OASSelectQueryOrMutationFieldConfig'
 
 #### Defined in
 
-[packages/types/src/config.ts:820](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L820)
+[packages/types/src/config.ts:822](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L822)
 
 ___
 
@@ -33,4 +33,4 @@ Allowed values: query, mutation, Query, Mutation
 
 #### Defined in
 
-[packages/types/src/config.ts:819](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L819)
+[packages/types/src/config.ts:821](https://github.com/Urigo/graphql-mesh/blob/master/packages/types/src/config.ts#L821)
