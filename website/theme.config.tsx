@@ -9,8 +9,8 @@ const config: DocsThemeConfig = {
   docsRepositoryBase: 'https://github.com/Urigo/graphql-mesh/tree/master/website/src/pages', // base URL for the docs repository
   nextLinks: true,
   prevLinks: true,
-  search: true,
-  unstable_flexsearch: true,
+  search: false,
+  unstable_flexsearch: false,
   floatTOC: true,
   darkMode: true,
   footer: false,
