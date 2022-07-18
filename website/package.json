@@ -46,7 +46,7 @@
     ]
   },
   "devDependencies": {
-    "@guild-docs/algolia": "0.0.6",
+    "@guild-docs/algolia": "0.1.0-alpha-4da5dd0.0",
     "@next/bundle-analyzer": "12.2.3",
     "@types/node": "16.11.45",
     "@types/react": "18.0.15",
