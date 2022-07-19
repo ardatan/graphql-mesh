@@ -36,6 +36,7 @@ import {
 
 // Imports:
 import { GraphQLJSON, GraphQLBigInt, GraphQLDateTime } from 'graphql-scalars';
+import { inspect } from '@graphql-tools/utils';
 import * as Oas3Tools from './oas_3_tools';
 import { getResolver } from './resolver_builder';
 import { createDataDef } from './preprocessor';
@@ -403,7 +404,7 @@ function checkAmbiguousMemberTypes<TSource, TContext, TArgs>(
         handleWarning({
           mitigationType: MitigationTypes.AMBIGUOUS_UNION_MEMBERS,
           message:
-            `Union created from schema '${JSON.stringify(def.schema)}' contains ` +
+            `Union created from schema '${inspect(def)}' contains ` +
             `member types such as '${currentType}' and '${otherType}' ` +
             `which are ambiguous. Ambiguous member types can cause ` +
             `problems when trying to resolve types.`,
@@ -474,7 +475,7 @@ function createOrReuseList<TSource, TContext, TArgs>({
     return listObjectType;
   } else {
     throw new Error(`Cannot create list item object type '${itemsName}' in list
-    '${name}' with schema '${JSON.stringify(itemsSchema)}'`);
+    '${name}' with schema '${inspect(itemsSchema)}'`);
   }
 }
 
@@ -623,7 +624,7 @@ function createFields<TSource, TContext, TArgs>({
         mitigationType: MitigationTypes.CANNOT_GET_FIELD_TYPE,
         message:
           `Cannot obtain GraphQL type for field '${fieldTypeKey}' in ` +
-          `GraphQL type '${JSON.stringify(def.schema)}'.`,
+          `GraphQL type '${inspect(def.schema)}'.`,
         data,
         logger: translationLogger,
       });
@@ -1084,7 +1085,7 @@ export function getArgs<TSource, TContext, TArgs>({
         mitigationType: MitigationTypes.INVALID_OAS,
         message:
           `The operation '${operation.operationString}' contains a ` +
-          `parameter '${JSON.stringify(parameter)}' with no 'name' property`,
+          `parameter '${inspect(parameter)}' with no 'name' property`,
         data,
         logger: translationLogger,
       });
@@ -1121,7 +1122,7 @@ export function getArgs<TSource, TContext, TArgs>({
           mitigationType: MitigationTypes.NON_APPLICATION_JSON_SCHEMA,
           message:
             `The operation '${operation.operationString}' contains a ` +
-            `parameter '${JSON.stringify(parameter)}' that has a 'content' ` +
+            `parameter '${inspect(parameter)}' that has a 'content' ` +
             `property but no schemas in application/json format. The ` +
             `parameter will not be created`,
           data,
@@ -1135,7 +1136,7 @@ export function getArgs<TSource, TContext, TArgs>({
         mitigationType: MitigationTypes.INVALID_OAS,
         message:
           `The operation '${operation.operationString}' contains a ` +
-          `parameter '${JSON.stringify(parameter)}' with no 'schema' or ` +
+          `parameter '${inspect(parameter)}' with no 'schema' or ` +
           `'content' property`,
         data,
         logger: translationLogger,
