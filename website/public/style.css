@@ -2,9 +2,9 @@
 @tailwind utilities;
 
 /* quick fix for menu on mobile */
-/*.nextra-sidebar-search {*/
-/*  display: none;*/
-/*}*/
+.nextra-sidebar-search {
+  display: none;
+}
 
 /*code[class*='language-'],*/
 /*pre[class*='language-'] {*/
