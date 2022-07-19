@@ -73,6 +73,9 @@ export default class ThriftHandler implements MeshHandler {
       });
       const parseResult = parse(rawThrift, { organize: false });
       if (parseResult.type === SyntaxType.ThriftErrors) {
+        if (parseResult.errors.length === 1) {
+          throw parseResult.errors[0];
+        }
         throw new AggregateError(parseResult.errors);
       }
       return parseResult;
