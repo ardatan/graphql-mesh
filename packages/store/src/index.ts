@@ -151,7 +151,11 @@ export default buildASTSchema(schemaAST, {
         }
       }
       if (errors.length) {
-        throw new AggregateError(errors);
+        if (errors.length === 1) {
+          throw errors[0];
+        } else {
+          throw new AggregateError(errors);
+        }
       }
     },
   },

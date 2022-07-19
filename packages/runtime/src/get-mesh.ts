@@ -20,7 +20,7 @@ import {
 } from '@graphql-mesh/utils';
 
 import { SubschemaConfig } from '@graphql-tools/delegate';
-import { AggregateError, isAsyncIterable, mapAsyncIterator, memoize1 } from '@graphql-tools/utils';
+import { AggregateError, ExecutionResult, isAsyncIterable, mapAsyncIterator, memoize1 } from '@graphql-tools/utils';
 import { enableIf, envelop, PluginOrDisabledPlugin, useExtendContext } from '@envelop/core';
 import { OneOfInputObjectsRule, useExtendedValidation } from '@envelop/extended-validation';
 import { getInContextSDK } from './in-context-sdk';
@@ -226,33 +226,15 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
   function sdkRequesterFactory(globalContext: any) {
     return async function meshSdkRequester(document: DocumentNode, variables: any, contextValue: any) {
-      if (memoizedGetOperationType(document) === 'subscription') {
-        const result = await meshSubscribe(document, variables, {
-          ...globalContext,
-          ...contextValue,
-        });
-        if (isAsyncIterable(result)) {
-          return mapAsyncIterator(result, result => {
-            if (result?.errors?.length) {
-              return new AggregateError(result.errors);
-            }
-            return result?.data;
-          });
-        }
-        if (result?.errors?.length) {
-          return new AggregateError(result.errors);
-        }
-        return result?.data;
-      } else {
-        const result = await meshExecute(document, variables, {
-          ...globalContext,
-          ...contextValue,
-        });
-        if (result?.errors?.length) {
-          return new AggregateError(result.errors);
-        }
-        return result?.data;
+      const executeFn = memoizedGetOperationType(document) === 'subscription' ? meshSubscribe : meshExecute;
+      const result = await executeFn(document, variables, {
+        ...globalContext,
+        ...contextValue,
+      });
+      if (isAsyncIterable(result)) {
+        return mapAsyncIterator(result, extractDataOrThrowErrors);
       }
+      return extractDataOrThrowErrors(result);
     };
   }
 
@@ -273,4 +255,14 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     },
     sdkRequesterFactory,
   };
+}
+
+function extractDataOrThrowErrors<T>(result: ExecutionResult<T>): T {
+  if (result.errors) {
+    if (result.errors.length === 1) {
+      throw result.errors[0];
+    }
+    throw new AggregateError(result.errors);
+  }
+  return result.data;
 }
