@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/utils",
-  "version": "0.37.1",
+  "version": "0.37.2",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -39,7 +39,7 @@
     "@graphql-tools/utils": "8.8.0",
     "@graphql-typed-document-node/core": "3.1.1",
     "@graphql-mesh/cross-helpers": "0.2.0",
-    "@graphql-mesh/types": "0.78.0",
+    "@graphql-mesh/types": "0.78.1",
     "lodash.get": "4.4.2",
     "lodash.set": "4.3.2",
     "lodash.topath": "4.5.2",
