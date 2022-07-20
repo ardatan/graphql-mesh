@@ -3,7 +3,7 @@ import { DefaultLogger } from '@graphql-mesh/utils';
 import { getDereferencedJSONSchemaFromOperations } from './getDereferencedJSONSchemaFromOperations';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { JSONSchemaOperationConfig } from './types';
-import { fetch as crossUndiciFetch } from 'cross-undici-fetch';
+import { fetch as crossUndiciFetch } from '@whatwg-node/fetch';
 import { GraphQLSchema } from 'graphql';
 import { getGraphQLSchemaFromDereferencedJSONSchema } from './getGraphQLSchemaFromDereferencedJSONSchema';
 

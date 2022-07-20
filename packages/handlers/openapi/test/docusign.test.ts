@@ -9,7 +9,7 @@
 
 import * as openAPIToGraphQL from '../src/openapi-to-graphql/index';
 import { Options } from '../src/openapi-to-graphql/types/options';
-import { fetch } from 'cross-undici-fetch';
+import { fetch } from '@whatwg-node/fetch';
 
 const oas = require('./fixtures/docusign.json');
 

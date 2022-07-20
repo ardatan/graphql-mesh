@@ -107,7 +107,7 @@
           ]
         },
         "port": {
-          "description": "TCP Port to listen (default: `3000`) (Any of: Int, String)",
+          "description": "TCP Port to listen (default: `4000`) (Any of: Int, String)",
           "anyOf": [
             {
               "type": "integer"
@@ -128,18 +128,10 @@
         "handlers": {
           "type": "array",
           "items": {
-            "description": "Any of: WebhookHandler, ExpressHandler",
-            "anyOf": [
-              {
-                "$ref": "#/definitions/WebhookHandler"
-              },
-              {
-                "$ref": "#/definitions/ExpressHandler"
-              }
-            ]
+            "$ref": "#/definitions/ExpressHandler"
           },
           "additionalItems": false,
-          "description": "Express/Connect compatible handlers and middlewares extend GraphQL Mesh HTTP Server (Any of: WebhookHandler, ExpressHandler)"
+          "description": "Express/Connect compatible handlers and middlewares extend GraphQL Mesh HTTP Server"
         },
         "staticFiles": {
           "type": "string",
@@ -582,6 +574,10 @@
         },
         "responseCache": {
           "$ref": "#/definitions/ResponseCacheConfig"
+        },
+        "webhook": {
+          "$ref": "#/definitions/WebhookPluginConfig",
+          "description": "Webhook plugin"
         }
       }
     },
@@ -2202,6 +2198,31 @@
         }
       },
       "required": ["coordinate", "ttl"]
+    },
+    "WebhookPluginConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "WebhookPluginConfig",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Path that remote API will ping"
+        },
+        "method": {
+          "type": "string",
+          "enum": ["GET", "POST", "DELETE", "PATCH"],
+          "description": "HTTP Method that the handler will control (Allowed values: GET, POST, DELETE, PATCH)"
+        },
+        "pubsubTopic": {
+          "type": "string",
+          "description": "Name of the topic you want to pass incoming payload"
+        },
+        "payload": {
+          "type": "string",
+          "description": "Part of the object you want to pass (e.g. `data.messages`)"
+        }
+      },
+      "required": ["path", "pubsubTopic"]
     },
     "PostGraphileHandler": {
       "additionalProperties": false,

@@ -2,7 +2,7 @@ import { execute, parse } from 'graphql';
 import { join } from 'path';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 import { startServer, stopServer } from '../../../handlers/openapi/test/example_api_server';
-import { fetch } from 'cross-undici-fetch';
+import { fetch } from '@whatwg-node/fetch';
 
 const PORT = 3003;
 const oasFilePath = join(__dirname, '../../../handlers/openapi/test/fixtures/example_oas.json');

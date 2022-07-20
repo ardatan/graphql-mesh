@@ -1,0 +1,32 @@
+extend type Plugin {
+  """
+  Webhook plugin
+  """
+  webhook: WebhookPluginConfig
+}
+
+enum WebhookPluginHTTPMethod {
+  GET
+  POST
+  DELETE
+  PATCH
+}
+
+type WebhookPluginConfig @md {
+  """
+  Path that remote API will ping
+  """
+  path: String!
+  """
+  HTTP Method that the handler will control
+  """
+  method: WebhookPluginHTTPMethod
+  """
+  Name of the topic you want to pass incoming payload
+  """
+  pubsubTopic: String!
+  """
+  Part of the object you want to pass (e.g. `data.messages`)
+  """
+  payload: String
+}

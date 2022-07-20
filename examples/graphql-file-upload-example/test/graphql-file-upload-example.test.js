@@ -1,6 +1,6 @@
 const uploadFilesServer = require('../upload-files/server');
 const resizeImageServer = require('../resize-image/server');
-const { File } = require('cross-undici-fetch');
+const { File } = require('@whatwg-node/fetch');
 const { findAndParseConfig } = require('@graphql-mesh/cli');
 const { join } = require('path');
 const { getMesh } = require('@graphql-mesh/runtime');

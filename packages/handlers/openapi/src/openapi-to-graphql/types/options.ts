@@ -287,7 +287,7 @@ export type InternalOptions<TSource, TContext, TArgs> = {
   /**
    * Custom fetch implementation
    */
-  fetch: typeof import('cross-undici-fetch').fetch;
+  fetch: typeof import('@whatwg-node/fetch').fetch;
 
   /**
    * Middlewares for Resolver Factory

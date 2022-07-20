@@ -24,7 +24,7 @@ import urlJoin from 'url-join';
 import { Path } from 'graphql/jsutils/Path';
 import { ConnectOptions, RequestOptions } from './types/options';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
-import { Headers } from 'cross-undici-fetch';
+import { Headers } from '@whatwg-node/fetch';
 import { getHeadersObj } from '@graphql-mesh/utils';
 
 // Type definitions & exports:

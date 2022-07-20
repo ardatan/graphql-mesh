@@ -12,7 +12,7 @@ import { graphql, parse, validate, GraphQLSchema } from 'graphql';
 import * as openAPIToGraphQL from '../src/openapi-to-graphql/index';
 import { Options } from '../src/openapi-to-graphql/types/options';
 import { startServer, stopServer } from './example_api6_server';
-import { fetch } from 'cross-undici-fetch';
+import { fetch } from '@whatwg-node/fetch';
 
 const oas = require('./fixtures/example_oas6.json');
 const PORT = 3008;

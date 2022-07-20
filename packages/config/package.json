@@ -40,7 +40,7 @@
     "@graphql-tools/load": "7.7.0",
     "@graphql-tools/code-file-loader": "7.3.0",
     "@graphql-tools/graphql-file-loader": "7.4.0",
-    "cross-undici-fetch": "0.4.11",
+    "@whatwg-node/fetch": "^0.0.2",
     "fetchache": "0.1.2",
     "param-case": "3.0.4",
     "@envelop/core": "2.4.0",

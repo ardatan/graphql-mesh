@@ -1,7 +1,7 @@
 import JsonPointer from 'json-pointer';
 import { path as pathModule, process } from '@graphql-mesh/cross-helpers';
 import urlJoin from 'url-join';
-import { fetch as crossUndiciFetch } from 'cross-undici-fetch';
+import { fetch as crossUndiciFetch } from '@whatwg-node/fetch';
 import { defaultImportFn, DefaultLogger, readFileOrUrl } from '@graphql-mesh/utils';
 
 export const resolvePath = (path: string, root: any): any => {
