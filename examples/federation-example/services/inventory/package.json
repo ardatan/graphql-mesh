@@ -9,6 +9,6 @@
   "dependencies": {
     "@apollo/subgraph": "0.4.2",
     "apollo-server": "3.10.0",
-    "graphql": "15.8.0"
+    "graphql": "16.5.0"
   }
 }
