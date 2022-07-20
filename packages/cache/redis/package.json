@@ -33,7 +33,7 @@
     "@graphql-mesh/cross-helpers": "0.2.0",
     "@graphql-mesh/string-interpolation": "0.3.0",
     "ioredis-mock": "8.2.2",
-    "ioredis": "5.2.0",
+    "ioredis": "5.2.1",
     "tslib": "^2.4.0"
   },
   "publishConfig": {

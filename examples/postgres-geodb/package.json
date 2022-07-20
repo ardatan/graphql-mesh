@@ -9,7 +9,7 @@
     "mesh:build": "mesh build"
   },
   "devDependencies": {
-    "@types/node": "14.14.3",
+    "@types/node": "14.18.22",
     "ts-node": "8.10.2",
     "typescript": "4.7.4",
     "cross-env": "7.0.3"
@@ -22,9 +22,9 @@
     "@graphql-mesh/cache-file": "0.9.3",
     "@graphql-mesh/config": "5.0.1",
     "@graphql-mesh/runtime": "0.41.1",
-    "graphql": "16.0.1"
+    "graphql": "16.5.0"
   },
   "resolutions": {
-    "graphql": "16.0.1"
+    "graphql": "16.5.0"
   }
 }
