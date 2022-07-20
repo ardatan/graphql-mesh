@@ -10,7 +10,7 @@ import lodashGet from 'lodash.get';
 import lodashHas from 'lodash.has';
 import { AnyNestedObject, IParseOptions, Message, RootConstructor } from 'protobufjs';
 import protobufjs from 'protobufjs';
-import grpcReflection from 'grpc-reflection-js';
+import grpcReflection from '@ardatan/grpc-reflection-js';
 import { IFileDescriptorSet } from 'protobufjs/ext/descriptor';
 import { FileDescriptorSet } from 'protobufjs/ext/descriptor/index.js';
 import descriptor from 'protobufjs/ext/descriptor/index.js';

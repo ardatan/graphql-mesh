@@ -405,6 +405,17 @@
     mkdirp "1.0.3"
     yargs "15.3.1"
 
+"@ardatan/grpc-reflection-js@0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@ardatan/grpc-reflection-js/-/grpc-reflection-js-0.0.1.tgz#1e08dbbbf949bd666738a3e6bcdf2be34d82b56c"
+  integrity sha512-dnguvH+xhEyULvbNlPSi6AByv/4nAYXen057Tr5kyng3EFOx4TFSO/J69Sb7U+MGDD8dhCMIL6O5Vs2c2b3TiA==
+  dependencies:
+    "@types/google-protobuf" "^3.7.2"
+    "@types/lodash.set" "^4.3.6"
+    google-protobuf "^3.12.2"
+    lodash.set "^4.3.2"
+    protobufjs "^7.0.0"
+
 "@ardatan/raml-1-parser@1.1.69":
   version "1.1.69"
   resolved "https://registry.yarnpkg.com/@ardatan/raml-1-parser/-/raml-1-parser-1.1.69.tgz#c6fa1c8430f5f93abe47385e33c29312f793ecbf"
@@ -3330,7 +3341,18 @@
     lodash.camelcase "^4.3.0"
     protobufjs "^6.8.6"
 
-"@grpc/proto-loader@0.6.13", "@grpc/proto-loader@^0.6.0-pre14", "@grpc/proto-loader@^0.6.0-pre17":
+"@grpc/proto-loader@0.7.0":
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/@grpc/proto-loader/-/proto-loader-0.7.0.tgz#743cc8a941cc251620c66ebe0d330e1411a33535"
+  integrity sha512-SGPZtVmqOvNfPFOA/nNPn+0Weqa5wubBgQ56+JgTbeLY2VezwtMjwPPFzh0kvQccwWT3a2TXT0ZGK/pJoOTk1A==
+  dependencies:
+    "@types/long" "^4.0.1"
+    lodash.camelcase "^4.3.0"
+    long "^4.0.0"
+    protobufjs "^7.0.0"
+    yargs "^16.2.0"
+
+"@grpc/proto-loader@^0.6.0-pre14", "@grpc/proto-loader@^0.6.0-pre17":
   version "0.6.13"
   resolved "https://registry.yarnpkg.com/@grpc/proto-loader/-/proto-loader-0.6.13.tgz#008f989b72a40c60c96cd4088522f09b05ac66bc"
   integrity sha512-FjxPYDRTn6Ec3V0arm1FtSpmP6V50wuph2yILpyvTKzjc76oDdoihXqM1DzOW5ubvCC8GivfCnNtfaRE8myJ7g==
@@ -13098,17 +13120,6 @@ grpc-node-server-reflection@1.0.2:
     "@grpc/proto-loader" "^0.6.0-pre17"
     google-protobuf "^3.15.1"
 
-grpc-reflection-js@0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/grpc-reflection-js/-/grpc-reflection-js-0.1.2.tgz#c1dda07a488771bd9238697428c48da9bdcb6667"
-  integrity sha512-ecLGJDCoRRyTNQ2jQYLsMQ0H9a/ZZ/6brU+6haGPS8GpQ93uYoFOc60ptO3bebS3xRPJQSIiSZClkBS5L9PYuw==
-  dependencies:
-    "@types/google-protobuf" "^3.7.2"
-    "@types/lodash.set" "^4.3.6"
-    google-protobuf "^3.12.2"
-    lodash.set "^4.3.2"
-    protobufjs "^6.9.0"
-
 gtoken@^5.0.4:
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/gtoken/-/gtoken-5.3.0.tgz#6536eb2880d9829f0b9d78f756795d4d9064b217"
@@ -16784,6 +16795,11 @@ long@4.0.0, long@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/long/-/long-4.0.0.tgz#9a7b71cfb7d361a194ea555241c92f7468d5bf28"
   integrity sha512-XsP+KhQif4bjX1kbuSiySJFNAehNxgLb6hPRGJ9QsUr8ajHkuXGdrHmFUTUUXhDwVX2R5bY4JNZEwbUiMhV+MA==
+
+long@^5.0.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/long/-/long-5.2.0.tgz#2696dadf4b4da2ce3f6f6b89186085d94d52fd61"
+  integrity sha512-9RTUNjK60eJbx3uz+TEGF7fUr29ZDxR5QzXcyDpeSfeH28S9ycINflOgOlppit5U+4kNTe83KQnMEerw7GmE8w==
 
 longest-streak@^3.0.0:
   version "3.0.1"
@@ -20610,7 +20626,26 @@ property-information@^6.0.0:
   resolved "https://registry.yarnpkg.com/property-information/-/property-information-6.1.1.tgz#5ca85510a3019726cb9afed4197b7b8ac5926a22"
   integrity sha512-hrzC564QIl0r0vy4l6MvRLhafmUowhO/O3KgVSoXIbbA2Sz4j8HGpJc6T2cubRVwMwpdiG/vKGfhT4IixmKN9w==
 
-protobufjs@6.11.3, protobufjs@^6.11.3, protobufjs@^6.8.6, protobufjs@^6.9.0:
+protobufjs@7.0.0, protobufjs@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/protobufjs/-/protobufjs-7.0.0.tgz#8c678e1351fd926178fce5a4213913e8d990974f"
+  integrity sha512-ffNIEm+quOcYtQvHdW406v1NQmZSuqVklxsXk076BtuFnlYZfigLU+JOMrTD8TUOyqHYbRI/fSVNvgd25YeN3w==
+  dependencies:
+    "@protobufjs/aspromise" "^1.1.2"
+    "@protobufjs/base64" "^1.1.2"
+    "@protobufjs/codegen" "^2.0.4"
+    "@protobufjs/eventemitter" "^1.1.0"
+    "@protobufjs/fetch" "^1.1.0"
+    "@protobufjs/float" "^1.0.2"
+    "@protobufjs/inquire" "^1.1.0"
+    "@protobufjs/path" "^1.1.2"
+    "@protobufjs/pool" "^1.1.0"
+    "@protobufjs/utf8" "^1.1.0"
+    "@types/long" "^4.0.1"
+    "@types/node" ">=13.7.0"
+    long "^5.0.0"
+
+protobufjs@^6.11.3, protobufjs@^6.8.6:
   version "6.11.3"
   resolved "https://registry.yarnpkg.com/protobufjs/-/protobufjs-6.11.3.tgz#637a527205a35caa4f3e2a9a4a13ddffe0e7af74"
   integrity sha512-xL96WDdCZYdU7Slin569tFX712BxsxslWwAfAhCYjQKGTq7dAU91Lomy6nLLhh/dyGhk/YH4TwTSRxTzhuHyZg==
