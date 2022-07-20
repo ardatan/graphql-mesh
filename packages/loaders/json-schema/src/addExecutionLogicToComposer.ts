@@ -142,12 +142,14 @@ export async function addExecutionLogicToComposer(
         const interpolatedBaseUrl = stringInterpolator.parse(baseUrl, interpolationData);
         const interpolatedPath = stringInterpolator.parse(operationConfig.path, interpolationData);
         let fullPath = urlJoin(interpolatedBaseUrl, interpolatedPath);
-        const headers = {
+        const nonInterpolatedHeaders = {
           ...operationHeaders,
           ...operationConfig?.headers,
         };
-        for (const headerName in headers) {
-          const interpolatedValue = stringInterpolator.parse(headers[headerName], interpolationData);
+        const headers: Record<string, any> = {};
+        for (const headerName in nonInterpolatedHeaders) {
+          const nonInterpolatedValue = nonInterpolatedHeaders[headerName];
+          const interpolatedValue = stringInterpolator.parse(nonInterpolatedValue, interpolationData);
           if (interpolatedValue) {
             headers[headerName] = interpolatedValue;
           }
