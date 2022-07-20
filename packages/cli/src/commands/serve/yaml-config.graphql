@@ -20,7 +20,7 @@ type ServeConfig @md {
   """
   fork: Fork
   """
-  TCP Port to listen (default: `3000`)
+  TCP Port to listen (default: `4000`)
   """
   port: Port
   """
