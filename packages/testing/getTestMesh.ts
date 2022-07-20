@@ -7,7 +7,7 @@ import { PubSub, DefaultLogger, defaultImportFn } from '@graphql-mesh/utils';
 import StitchingMerger from '@graphql-mesh/merger-stitching';
 import { MeshStore, InMemoryStoreStorageAdapter } from '@graphql-mesh/store';
 import { fetchFactory } from 'fetchache';
-import { fetch, Request, Response } from 'cross-undici-fetch';
+import { fetch, Request, Response } from '@whatwg-node/fetch';
 
 export async function getTestMesh() {
   const yoga = createServer({

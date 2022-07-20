@@ -2,7 +2,7 @@ import { execute, GraphQLSchema, parse } from 'graphql';
 import { join } from 'path';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { fetch } from 'cross-undici-fetch';
+import { fetch } from '@whatwg-node/fetch';
 import { startServer, stopServer } from '../../../handlers/openapi/test/example_api_server';
 
 const PORT = 3010;

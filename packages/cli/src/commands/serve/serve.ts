@@ -1,14 +1,13 @@
 /* eslint-disable import/no-nodejs-modules */
 /* eslint-disable dot-notation */
-import express, { RequestHandler } from 'express';
+import express from 'express';
 import cluster from 'cluster';
 import { cpus, platform, release } from 'os';
 import 'json-bigint-patch';
 import { createServer as createHTTPServer, Server } from 'http';
 import ws from 'ws';
 import cors from 'cors';
-import { defaultImportFn, loadFromModuleExportExpression, pathExists } from '@graphql-mesh/utils';
-import lodashGet from 'lodash.get';
+import { pathExists } from '@graphql-mesh/utils';
 import cookieParser from 'cookie-parser';
 import { path, fs, process } from '@graphql-mesh/cross-helpers';
 import { graphqlHandler } from './graphql-handler';
@@ -20,7 +19,6 @@ import open from 'open';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import dnscache from 'dnscache';
 import { GraphQLMeshCLIParams } from '../..';
-import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 
 const terminateEvents = ['SIGINT', 'SIGTERM'];
 
@@ -43,7 +41,6 @@ export async function serveMesh(
       ? '127.0.0.1'
       : '0.0.0.0',
     cors: corsConfig,
-    handlers,
     staticFiles,
     playground: playgroundEnabled = process.env.NODE_ENV !== 'production',
     sslCredentials,
@@ -194,52 +191,6 @@ export async function serveMesh(
           eventLogger.debug(`GraphQL WS couldn't be stopped: `, error);
         });
     });
-
-    const pubSubHandler: RequestHandler = (req, _res, next) => {
-      mesh$
-        .then(({ pubsub }) => {
-          req['pubsub'] = pubsub;
-          next();
-        })
-        .catch(e => handleFatalError(e, logger));
-    };
-    app.use(pubSubHandler);
-
-    const registeredPaths = new Set<string>();
-    await Promise.all(
-      handlers?.map(async handlerConfig => {
-        registeredPaths.add(handlerConfig.path);
-        let handlerFn: any;
-        const handlerLogger = logger.child(handlerConfig.path);
-        if ('handler' in handlerConfig) {
-          handlerFn = await loadFromModuleExportExpression<RequestHandler>(handlerConfig.handler, {
-            cwd: baseDir,
-            defaultExportName: 'default',
-            importFn: defaultImportFn,
-          });
-        } else if ('pubsubTopic' in handlerConfig) {
-          handlerFn = (req: any, res: any) => {
-            let payload = req.body;
-            handlerLogger.debug(`Payload received;`, payload);
-            if (handlerConfig.payload) {
-              payload = lodashGet(payload, handlerConfig.payload);
-              handlerLogger.debug([`Extracting ${handlerConfig.payload};`, payload]);
-            }
-            const interpolationData = {
-              req,
-              res,
-              payload,
-            };
-            handlerLogger.debug(`Interpolating ${handlerConfig.pubsubTopic} with `, interpolationData);
-            const pubsubTopic = stringInterpolator.parse(handlerConfig.pubsubTopic, interpolationData);
-            req['pubsub'].publish(pubsubTopic, payload);
-            handlerLogger.debug(`Payload sent to ${pubsubTopic}`);
-            res.end();
-          };
-        }
-        app[handlerConfig.method?.toLowerCase() || 'use'](handlerConfig.path, handlerFn);
-      }) || []
-    );
 
     app.get('/healthcheck', (_req, res) => res.sendStatus(200));
     app.get('/readiness', (_req, res) => res.sendStatus(readyFlag ? 200 : 500));

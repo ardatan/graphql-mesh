@@ -32,10 +32,6 @@ type ServeConfig @md {
   """
   cors: CorsConfig
   """
-  Express/Connect compatible handlers and middlewares extend GraphQL Mesh HTTP Server
-  """
-  handlers: [ServeHandler]
-  """
   Path to your static files you want to be served with GraphQL Mesh HTTP Server
   """
   staticFiles: String
@@ -89,49 +85,6 @@ type CorsConfig {
   maxAge: Int
   preflightContinue: Boolean
   optionsSuccessStatus: Int
-}
-
-union ServeHandler = WebhookHandler | ExpressHandler
-
-type ExpressHandler {
-  """
-  Path that the handler will control
-  """
-  path: String!
-  """
-  Path of the handler's code
-  """
-  handler: String!
-  """
-  HTTP Method that the handler will control
-  """
-  method: ExpressHandlerMethod
-}
-
-enum ExpressHandlerMethod {
-  GET
-  POST
-  DELETE
-  PATCH
-}
-
-type WebhookHandler {
-  """
-  Path that remote API will ping
-  """
-  path: String!
-  """
-  HTTP Method that the handler will control
-  """
-  method: ExpressHandlerMethod
-  """
-  Name of the topic you want to pass incoming payload
-  """
-  pubsubTopic: String!
-  """
-  Part of the object you want to pass (e.g. `data.messages`)
-  """
-  payload: String
 }
 
 type HTTPSConfig {

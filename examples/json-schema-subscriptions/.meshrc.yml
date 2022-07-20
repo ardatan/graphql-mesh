@@ -22,13 +22,6 @@ sources:
             pubsubTopic: todoAdded
             responseSample: ./todo.json
 
-serve:
-  port: 4000
-  handlers:
-    - path: /webhooks/todo_added
-      method: POST
-      pubsubTopic: todoAdded
-
 documents:
   - ./example-queries/**/*.graphql
 
@@ -36,6 +29,10 @@ additionalTypeDefs: |
   directive @live on QUERY
 
 plugins:
+  - webhook:
+      path: /webhooks/todo_added
+      method: POST
+      pubsubTopic: todoAdded
   - liveQuery:
       invalidations:
         - field: Mutation.addTodo

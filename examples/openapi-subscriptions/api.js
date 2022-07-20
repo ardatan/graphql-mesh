@@ -1,5 +1,5 @@
 const express = require('express');
-const { fetch } = require('cross-undici-fetch');
+const { fetch } = require('@whatwg-node/fetch');
 const bodyParser = require('body-parser');
 
 const app = express();

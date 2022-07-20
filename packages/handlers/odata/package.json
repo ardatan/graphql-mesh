@@ -39,7 +39,7 @@
     "@graphql-mesh/utils": "0.37.2",
     "@graphql-tools/utils": "8.8.0",
     "http-string-parser": "0.0.6",
-    "cross-undici-fetch": "^0.4.0",
+    "@whatwg-node/fetch": "^0.0.2",
     "dataloader": "2.1.0",
     "fast-xml-parser": "4.0.9",
     "graphql-compose": "9.0.8",

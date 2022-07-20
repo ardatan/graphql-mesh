@@ -2,7 +2,7 @@
 * `fork` -  - Spawn multiple server instances as node clusters (default: `1`) One of: 
   * `Int`
   * `Boolean`
-* `port` -  - TCP Port to listen (default: `3000`) One of: 
+* `port` -  - TCP Port to listen (default: `4000`) One of: 
   * `Int`
   * `String`
 * `hostname` (type: `String`) - The binding hostname (default: `localhost`)
@@ -14,16 +14,10 @@
   * `maxAge` (type: `Int`)
   * `preflightContinue` (type: `Boolean`)
   * `optionsSuccessStatus` (type: `Int`)
-* `handlers` -  - Express/Connect compatible handlers and middlewares extend GraphQL Mesh HTTP Server Array of: 
-  * `object`: 
-    * `path` (type: `String`, required) - Path that remote API will ping
-    * `method` (type: `String (GET | POST | DELETE | PATCH)`) - HTTP Method that the handler will control
-    * `pubsubTopic` (type: `String`, required) - Name of the topic you want to pass incoming payload
-    * `payload` (type: `String`) - Part of the object you want to pass (e.g. `data.messages`)
-  * `object`: 
-    * `path` (type: `String`, required) - Path that the handler will control
-    * `handler` (type: `String`, required) - Path of the handler's code
-    * `method` (type: `String (GET | POST | DELETE | PATCH)`) - HTTP Method that the handler will control
+* `handlers` (type: `Array of Object`) - Express/Connect compatible handlers and middlewares extend GraphQL Mesh HTTP Server: 
+  * `path` (type: `String`, required) - Path that the handler will control
+  * `handler` (type: `String`, required) - Path of the handler's code
+  * `method` (type: `String (GET | POST | DELETE | PATCH)`) - HTTP Method that the handler will control
 * `staticFiles` (type: `String`) - Path to your static files you want to be served with GraphQL Mesh HTTP Server
 * `playground` (type: `Boolean`) - Show GraphiQL Playground
 * `sslCredentials` (type: `Object`) - SSL Credentials for HTTPS Server

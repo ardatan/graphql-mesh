@@ -3,7 +3,7 @@ import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAP
 
 import { startServer, stopServer } from '../../../handlers/openapi/test/example_api_server';
 import { join } from 'path';
-import { fetch } from 'cross-undici-fetch';
+import { fetch } from '@whatwg-node/fetch';
 
 let createdSchema: GraphQLSchema;
 const PORT = 3002;

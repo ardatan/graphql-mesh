@@ -13,7 +13,7 @@ import { graphql, GraphQLSchema } from 'graphql';
 import * as openAPIToGraphQL from '../src/openapi-to-graphql/index';
 import { startServer, stopServer } from './example_api_server';
 
-import { fetch } from 'cross-undici-fetch';
+import { fetch } from '@whatwg-node/fetch';
 
 const oas = require('./fixtures/example_oas.json');
 const PORT = 3003;

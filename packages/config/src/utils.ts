@@ -7,7 +7,7 @@ import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { PubSub, DefaultLogger, parseWithCache } from '@graphql-mesh/utils';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { MeshStore } from '@graphql-mesh/store';
-import { fetch, Request, Response } from 'cross-undici-fetch';
+import { fetch, Request, Response } from '@whatwg-node/fetch';
 import { fetchFactory } from 'fetchache';
 
 type ResolvedPackage<T> = {
@@ -104,7 +104,7 @@ export async function resolveCustomFetch({
   let importCode = '';
   if (!fetchConfig) {
     importCode += `import { fetchFactory } from 'fetchache';\n`;
-    importCode += `import { fetch, Request, Response } from 'cross-undici-fetch';\n`;
+    importCode += `import { fetch, Request, Response } from '@whatwg-node/fetch';\n`;
     return {
       fetchFn: fetchFactory({
         cache,

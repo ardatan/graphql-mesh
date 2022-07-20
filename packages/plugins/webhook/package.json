@@ -1,12 +1,6 @@
 {
-  "name": "json-machete",
-  "version": "0.10.1",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "Urigo/graphql-mesh",
-    "directory": "packages/json-machete"
-  },
+  "name": "@graphql-mesh/plugin-webhook",
+  "version": "0.0.0",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -24,15 +18,17 @@
       "import": "./dist/*.mjs"
     }
   },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/plugins/webhook"
+  },
   "dependencies": {
-    "@json-schema-tools/meta-schema": "1.6.19",
-    "@whatwg-node/fetch": "^0.0.2",
-    "json-pointer": "0.6.2",
-    "@graphql-mesh/utils": "0.37.2",
-    "@graphql-mesh/cross-helpers": "0.2.0",
-    "@graphql-tools/utils": "8.8.0",
-    "url-join": "4.0.1",
-    "to-json-schema": "0.2.5",
+    "@graphql-yoga/common": "2.12.3",
+    "@graphql-mesh/types": "0.78.1",
+    "lodash.get": "4.4.2",
+    "@graphql-mesh/string-interpolation": "0.3.0",
     "tslib": "^2.4.0"
   },
   "publishConfig": {

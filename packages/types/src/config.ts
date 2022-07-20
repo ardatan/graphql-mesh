@@ -77,7 +77,7 @@ export interface ServeConfig {
    */
   fork?: number | boolean;
   /**
-   * TCP Port to listen (default: `3000`) (Any of: Int, String)
+   * TCP Port to listen (default: `4000`) (Any of: Int, String)
    */
   port?: number | string;
   /**
@@ -86,9 +86,9 @@ export interface ServeConfig {
   hostname?: string;
   cors?: CorsConfig;
   /**
-   * Express/Connect compatible handlers and middlewares extend GraphQL Mesh HTTP Server (Any of: WebhookHandler, ExpressHandler)
+   * Express/Connect compatible handlers and middlewares extend GraphQL Mesh HTTP Server
    */
-  handlers?: (WebhookHandler | ExpressHandler)[];
+  handlers?: ExpressHandler[];
   /**
    * Path to your static files you want to be served with GraphQL Mesh HTTP Server
    */
@@ -133,24 +133,6 @@ export interface CorsConfig {
   maxAge?: number;
   preflightContinue?: boolean;
   optionsSuccessStatus?: number;
-}
-export interface WebhookHandler {
-  /**
-   * Path that remote API will ping
-   */
-  path: string;
-  /**
-   * HTTP Method that the handler will control (Allowed values: GET, POST, DELETE, PATCH)
-   */
-  method?: 'GET' | 'POST' | 'DELETE' | 'PATCH';
-  /**
-   * Name of the topic you want to pass incoming payload
-   */
-  pubsubTopic: string;
-  /**
-   * Part of the object you want to pass (e.g. `data.messages`)
-   */
-  payload?: string;
 }
 export interface ExpressHandler {
   /**
@@ -1843,6 +1825,7 @@ export interface Plugin {
   liveQuery?: LiveQueryConfig;
   rateLimit?: RateLimitPluginConfig;
   responseCache?: ResponseCacheConfig;
+  webhook?: WebhookPluginConfig;
   [k: string]: any;
 }
 export interface MaskedErrorsPluginConfig {
@@ -1952,4 +1935,25 @@ export interface ResponseCacheConfig {
 export interface ResponseCacheTTLConfig {
   coordinate: string;
   ttl: number;
+}
+/**
+ * Webhook plugin
+ */
+export interface WebhookPluginConfig {
+  /**
+   * Path that remote API will ping
+   */
+  path: string;
+  /**
+   * HTTP Method that the handler will control (Allowed values: GET, POST, DELETE, PATCH)
+   */
+  method?: 'GET' | 'POST' | 'DELETE' | 'PATCH';
+  /**
+   * Name of the topic you want to pass incoming payload
+   */
+  pubsubTopic: string;
+  /**
+   * Part of the object you want to pass (e.g. `data.messages`)
+   */
+  payload?: string;
 }

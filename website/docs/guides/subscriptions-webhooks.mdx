@@ -63,10 +63,9 @@ Add a custom express handler to listen to a specific path for your HTTP Webhook 
 You have a running GraphQL Mesh server listening `4000` port, and you need to listen to a specific route for upcoming HTTP requests as HTTP Webhook.
 
 ```yaml
-serve:
-  port: 4000
-  handlers:
-    - path: /webhooks/todo_added
+plugins:
+  - webhook:
+      path: /webhooks/todo_added
       pubsubTopic: todoAdded
       # payload: data # you can get `data` prop of the received data
 ```
@@ -77,23 +76,35 @@ serve:
 
 ### Custom Handler in Code
 
-`handler` can get any kind of Express request handler. So you can extend Mesh Server however you want.
+`handler` gets a GraphQL Yoga plugin. So you can extend Mesh Server however you want.
 
 ```yaml
-serve:
-  port: 4000
-  handlers:
-    - path: /webhooks/todo_added
-      handler: ./todo_added.handler.js
+plugins:
+  - ./my-todo_added_handler.ts:
+      someOption: true
 ```
 
-and in `todo_added_handler.js`, we have something like the following;
+and in `todo_added_handler.ts`, we have something like the following;
 
 ```js
-module.exports = (req, res) => {
-  // Mesh PubSub instance is available under `req`
-  req.pubsub.publish('todoAdded', req.body)
-  res.end() // Don't forget to finish the HTTP connection
+import { MeshPluginOptions } from '@graphql-mesh/types'
+
+export default useMyPlugin(opts: MeshPluginOptions<{ someOption: boolean }>) {
+    return {
+      onRequest({ request, fetchAPI, endResponse }) {
+        if (request.url.endsWith('/my-path')) {
+          // Mesh PubSub instance is available under `opts`
+          const body = await request.json();
+          opts.pubsub.publish('todoAdded', body)
+          // Don't forget to finish the HTTP connection
+          endResponse(
+            new fetchAPI.Response(null, {
+              status: 200,
+            })
+          )
+        }
+      }
+    }
 }
 ```
 
