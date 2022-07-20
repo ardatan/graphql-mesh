@@ -623,8 +623,7 @@ function createFields<TSource, TContext, TArgs>({
       handleWarning({
         mitigationType: MitigationTypes.CANNOT_GET_FIELD_TYPE,
         message:
-          `Cannot obtain GraphQL type for field '${fieldTypeKey}' in ` +
-          `GraphQL type '${inspect(def.schema)}'.`,
+          `Cannot obtain GraphQL type for field '${fieldTypeKey}' in ` + `GraphQL type '${inspect(def.schema)}'.`,
         data,
         logger: translationLogger,
       });
