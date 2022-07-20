@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/postgraphile",
-  "version": "0.20.34",
+  "version": "0.20.35",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -29,10 +29,10 @@
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.2.0",
-    "@graphql-mesh/types": "0.78.1",
-    "@graphql-mesh/store": "0.8.21",
+    "@graphql-mesh/types": "0.78.2",
+    "@graphql-mesh/store": "0.8.22",
     "@graphql-mesh/string-interpolation": "0.3.0",
-    "@graphql-mesh/utils": "0.37.2",
+    "@graphql-mesh/utils": "0.37.3",
     "postgraphile-core": "4.12.3",
     "postgraphile": "4.12.11",
     "pg": "^8.6.0",
