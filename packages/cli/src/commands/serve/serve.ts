@@ -51,7 +51,7 @@ export async function serveMesh(
     browser,
     trustProxy = 'loopback',
   } = rawServeConfig;
-  const port = argsPort || parseInt(process.env.PORT) || configPort || 4000;
+  const port = argsPort || configPort || parseInt(process.env.PORT) || 4000;
 
   const protocol = sslCredentials ? 'https' : 'http';
   const serverUrl = `${protocol}://${hostname}:${port}`;
