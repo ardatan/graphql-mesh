@@ -1,5 +1,13 @@
 # @graphql-mesh/store
 
+## 0.8.21
+
+### Patch Changes
+
+- 2e89d814b: Now if there is only one error to be thrown, throw it as it is instead of using AggregateError in SDK and handlers
+  - @graphql-mesh/types@0.78.1
+  - @graphql-mesh/utils@0.37.2
+
 ## 0.8.20
 
 ### Patch Changes

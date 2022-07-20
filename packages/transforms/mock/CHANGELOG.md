@@ -1,5 +1,12 @@
 # @graphql-mesh/transform-mock
 
+## 0.15.1
+
+### Patch Changes
+
+- @graphql-mesh/types@0.78.1
+- @graphql-mesh/utils@0.37.2
+
 ## 0.15.0
 
 ### Minor Changes

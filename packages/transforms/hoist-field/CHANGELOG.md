@@ -1,5 +1,12 @@
 # @graphql-mesh/transform-hoist-field
 
+## 0.1.33
+
+### Patch Changes
+
+- @graphql-mesh/types@0.78.1
+- @graphql-mesh/utils@0.37.2
+
 ## 0.1.32
 
 ### Patch Changes
