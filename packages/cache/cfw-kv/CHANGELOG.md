@@ -1,5 +1,13 @@
 # @graphql-mesh/cache-cfw-kv
 
+## 0.0.5
+
+### Patch Changes
+
+- Updated dependencies [a2ef35c35]
+  - @graphql-mesh/types@0.78.2
+  - @graphql-mesh/utils@0.37.3
+
 ## 0.0.4
 
 ### Patch Changes
