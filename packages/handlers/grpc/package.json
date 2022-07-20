@@ -37,7 +37,7 @@
     "@grpc/proto-loader": "0.7.0",
     "graphql-scalars": "1.17.0",
     "graphql-compose": "9.0.8",
-    "@ardatan/grpc-reflection-js": "0.0.1",
+    "@ardatan/grpc-reflection-js": "0.0.2",
     "globby": "11.1.0",
     "long": "4.0.0",
     "protobufjs": "7.0.0",

@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "json-pointer": "0.6.2",
-    "dayjs": "1.11.3",
+    "dayjs": "1.11.4",
     "lodash.get": "4.4.2"
   },
   "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",
