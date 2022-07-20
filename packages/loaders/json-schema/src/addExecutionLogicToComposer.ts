@@ -147,7 +147,10 @@ export async function addExecutionLogicToComposer(
           ...operationConfig?.headers,
         };
         for (const headerName in headers) {
-          headers[headerName] = stringInterpolator.parse(headers[headerName], interpolationData);
+          const interpolatedValue = stringInterpolator.parse(headers[headerName], interpolationData);
+          if (interpolatedValue) {
+            headers[headerName] = interpolatedValue;
+          }
         }
         const requestInit: RequestInit = {
           method: httpMethod,
