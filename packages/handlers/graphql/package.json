@@ -33,7 +33,7 @@
     "@graphql-mesh/string-interpolation": "0.3.0",
     "@graphql-mesh/utils": "0.37.4",
     "@graphql-mesh/types": "0.78.3",
-    "@graphql-tools/url-loader": "7.12.1",
+    "@graphql-tools/url-loader": "7.12.4",
     "@graphql-tools/wrap": "8.5.0",
     "@graphql-tools/delegate": "8.8.0",
     "@graphql-tools/utils": "8.8.0",
