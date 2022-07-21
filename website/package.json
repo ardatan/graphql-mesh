@@ -29,7 +29,7 @@
     "react-dom": "18.2.0",
     "react-icons": "4.4.0",
     "react-use": "17.4.0",
-    "next-seo": "5.4.0",
+    "next-seo": "5.5.0",
     "@mdx-js/react": "2.1.2"
   },
   "browserslist": {
