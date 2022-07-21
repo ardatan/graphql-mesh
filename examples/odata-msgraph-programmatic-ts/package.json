@@ -13,6 +13,6 @@
     "@graphql-mesh/runtime": "0.41.2",
     "@graphql-mesh/odata": "0.18.5",
     "graphql": "16.5.0",
-    "ts-node": "9.1.1"
+    "ts-node": "10.9.1"
   }
 }
