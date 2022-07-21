@@ -7,7 +7,7 @@ import 'json-bigint-patch';
 import { createServer as createHTTPServer, Server } from 'http';
 import ws from 'ws';
 import cors from 'cors';
-import { pathExists } from '@graphql-mesh/utils';
+import { pathExists, portSelectorFn } from '@graphql-mesh/utils';
 import cookieParser from 'cookie-parser';
 import { path, fs, process } from '@graphql-mesh/cross-helpers';
 import { graphqlHandler } from './graphql-handler';
@@ -48,7 +48,8 @@ export async function serveMesh(
     browser,
     trustProxy = 'loopback',
   } = rawServeConfig;
-  const port = argsPort || configPort || parseInt(process.env.PORT) || 4000;
+
+  const port = portSelectorFn([argsPort, parseInt(configPort.toString()), parseInt(process.env.PORT)], logger);
 
   const protocol = sslCredentials ? 'https' : 'http';
   const serverUrl = `${protocol}://${hostname}:${port}`;
@@ -214,7 +215,7 @@ export async function serveMesh(
     });
 
     httpServer
-      .listen(parseInt(port.toString()), hostname, () => {
+      .listen(port, hostname, () => {
         const shouldntOpenBrowser = process.env.NODE_ENV?.toLowerCase() === 'production' || browser === false;
         if (!shouldntOpenBrowser) {
           open(serverUrl, typeof browser === 'string' ? { app: browser } : undefined).catch(() => {});
