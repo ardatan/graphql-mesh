@@ -7,7 +7,7 @@ import 'json-bigint-patch';
 import { createServer as createHTTPServer, Server } from 'http';
 import ws from 'ws';
 import cors from 'cors';
-import { pathExists, portSelectorFn } from '@graphql-mesh/utils';
+import { pathExists } from '@graphql-mesh/utils';
 import cookieParser from 'cookie-parser';
 import { path, fs, process } from '@graphql-mesh/cross-helpers';
 import { graphqlHandler } from './graphql-handler';
@@ -19,6 +19,7 @@ import open from 'open';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import dnscache from 'dnscache';
 import { GraphQLMeshCLIParams } from '../..';
+import type { Logger } from '@graphql-mesh/types';
 
 const terminateEvents = ['SIGINT', 'SIGTERM'];
 
@@ -26,6 +27,25 @@ function registerTerminateHandler(callback: (eventName: string) => void) {
   for (const eventName of terminateEvents) {
     process.on(eventName, () => callback(eventName));
   }
+}
+
+function portSelectorFn(sources: [number, number, number], logger: Logger) {
+  const port = sources.find(source => Boolean(source)) || 4000;
+  if (sources.filter(source => Boolean(source)).length > 1) {
+    const activeSources: Array<string> = [];
+    if (sources[0]) {
+      activeSources.push('CLI');
+    }
+    if (sources[1]) {
+      activeSources.push('serve configuration');
+    }
+    if (sources[2]) {
+      activeSources.push('environment variable');
+    }
+    logger.warn(`Multiple ports specified (${activeSources.join(', ')}), using ${port}`);
+  }
+
+  return port;
 }
 
 export async function serveMesh(
