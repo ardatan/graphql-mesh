@@ -130,9 +130,9 @@
       sourceName: Author
       sourceTypeName: Query
       sourceFieldName: authorById
-      requiredSelectionSet: "{ id }"
+      requiredSelectionSet: '{ id }'
       sourceArgs:
-        id: "{root.id}"
+        id: '{root.id}'
   ```
 
   After:
