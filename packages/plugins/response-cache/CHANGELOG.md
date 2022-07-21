@@ -1,5 +1,13 @@
 # @graphql-mesh/plugin-response-cache
 
+## 0.1.7
+
+### Patch Changes
+
+- Updated dependencies [738e2f378]
+  - @graphql-mesh/types@0.78.3
+  - @graphql-mesh/utils@0.37.4
+
 ## 0.1.6
 
 ### Patch Changes

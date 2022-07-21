@@ -1,5 +1,12 @@
 # @graphql-mesh/types
 
+## 0.78.3
+
+### Patch Changes
+
+- 738e2f378: Do not visit union elements if links or exposeResponseMetadata is not used during schema generation
+  - @graphql-mesh/store@0.8.23
+
 ## 0.78.2
 
 ### Patch Changes

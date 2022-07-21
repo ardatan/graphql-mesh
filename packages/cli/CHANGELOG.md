@@ -1,5 +1,17 @@
 # @graphql-mesh/cli
 
+## 0.75.1
+
+### Patch Changes
+
+- 42d6c3f4d: Better logging of PORT selection
+- Updated dependencies [738e2f378]
+  - @graphql-mesh/types@0.78.3
+  - @graphql-mesh/config@5.1.1
+  - @graphql-mesh/runtime@0.41.3
+  - @graphql-mesh/store@0.8.23
+  - @graphql-mesh/utils@0.37.4
+
 ## 0.75.0
 
 ### Minor Changes

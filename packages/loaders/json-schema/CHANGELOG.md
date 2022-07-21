@@ -1,5 +1,15 @@
 # @omnigraph/json-schema
 
+## 0.24.3
+
+### Patch Changes
+
+- 738e2f378: Do not visit union elements if links or exposeResponseMetadata is not used during schema generation
+- Updated dependencies [738e2f378]
+  - @graphql-mesh/types@0.78.3
+  - @graphql-mesh/utils@0.37.4
+  - json-machete@0.10.3
+
 ## 0.24.2
 
 ### Patch Changes
