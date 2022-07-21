@@ -14,10 +14,6 @@
   * `maxAge` (type: `Int`)
   * `preflightContinue` (type: `Boolean`)
   * `optionsSuccessStatus` (type: `Int`)
-* `handlers` (type: `Array of Object`) - Express/Connect compatible handlers and middlewares extend GraphQL Mesh HTTP Server: 
-  * `path` (type: `String`, required) - Path that the handler will control
-  * `handler` (type: `String`, required) - Path of the handler's code
-  * `method` (type: `String (GET | POST | DELETE | PATCH)`) - HTTP Method that the handler will control
 * `staticFiles` (type: `String`) - Path to your static files you want to be served with GraphQL Mesh HTTP Server
 * `playground` (type: `Boolean`) - Show GraphiQL Playground
 * `sslCredentials` (type: `Object`) - SSL Credentials for HTTPS Server

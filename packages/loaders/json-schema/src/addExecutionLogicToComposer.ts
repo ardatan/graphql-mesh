@@ -383,32 +383,34 @@ export async function addExecutionLogicToComposer(
         const statusCodeOneOfIndexMap =
           (unionOrSingleTC.getExtension('statusCodeOneOfIndexMap') as Record<string, number>) || {};
         for (const statusCode in operationConfig.responseByStatusCode) {
-          const typeTCThunked = types[statusCodeOneOfIndexMap[statusCode] || 0];
           const responseConfig = operationConfig.responseByStatusCode[statusCode];
-          const typeTC = schemaComposer.getAnyTC(typeTCThunked.getTypeName());
-          if ('addFieldArgs' in typeTC) {
-            if (responseConfig.exposeResponseMetadata) {
-              typeTC.addFields({
-                _response: {
-                  type: responseMetadataType,
-                  resolve: root => root.$response,
-                },
-              });
-            }
-            for (const linkName in responseConfig.links || []) {
-              typeTC.addFields({
-                [linkName]: () => {
-                  const linkObj = responseConfig.links[linkName];
-                  const targetField = schemaComposer.Query.getField(linkObj.fieldName);
-                  return {
-                    ...targetField,
-                    args: {},
-                    description: linkObj.description || targetField.description,
-                    resolve: (root, args, context, info) =>
-                      linkResolver(linkObj.args, targetField.resolve, root, args, context, info),
-                  };
-                },
-              });
+          if (responseConfig.links || responseConfig.exposeResponseMetadata) {
+            const typeTCThunked = types[statusCodeOneOfIndexMap[statusCode] || 0];
+            const typeTC = schemaComposer.getAnyTC(typeTCThunked.getTypeName());
+            if ('addFieldArgs' in typeTC) {
+              if (responseConfig.exposeResponseMetadata) {
+                typeTC.addFields({
+                  _response: {
+                    type: responseMetadataType,
+                    resolve: root => root.$response,
+                  },
+                });
+              }
+              for (const linkName in responseConfig.links || []) {
+                typeTC.addFields({
+                  [linkName]: () => {
+                    const linkObj = responseConfig.links[linkName];
+                    const targetField = schemaComposer.Query.getField(linkObj.fieldName);
+                    return {
+                      ...targetField,
+                      args: {},
+                      description: linkObj.description || targetField.description,
+                      resolve: (root, args, context, info) =>
+                        linkResolver(linkObj.args, targetField.resolve, root, args, context, info),
+                    };
+                  },
+                });
+              }
             }
           }
         }
