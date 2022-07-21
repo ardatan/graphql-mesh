@@ -86,10 +86,6 @@ export interface ServeConfig {
   hostname?: string;
   cors?: CorsConfig;
   /**
-   * Express/Connect compatible handlers and middlewares extend GraphQL Mesh HTTP Server
-   */
-  handlers?: ExpressHandler[];
-  /**
    * Path to your static files you want to be served with GraphQL Mesh HTTP Server
    */
   staticFiles?: string;
@@ -133,20 +129,6 @@ export interface CorsConfig {
   maxAge?: number;
   preflightContinue?: boolean;
   optionsSuccessStatus?: number;
-}
-export interface ExpressHandler {
-  /**
-   * Path that the handler will control
-   */
-  path: string;
-  /**
-   * Path of the handler's code
-   */
-  handler: string;
-  /**
-   * HTTP Method that the handler will control (Allowed values: GET, POST, DELETE, PATCH)
-   */
-  method?: 'GET' | 'POST' | 'DELETE' | 'PATCH';
 }
 /**
  * SSL Credentials for HTTPS Server
