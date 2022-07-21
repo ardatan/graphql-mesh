@@ -19,6 +19,7 @@ import open from 'open';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import dnscache from 'dnscache';
 import { GraphQLMeshCLIParams } from '../..';
+import type { Logger } from '@graphql-mesh/types';
 
 const terminateEvents = ['SIGINT', 'SIGTERM'];
 
@@ -26,6 +27,25 @@ function registerTerminateHandler(callback: (eventName: string) => void) {
   for (const eventName of terminateEvents) {
     process.on(eventName, () => callback(eventName));
   }
+}
+
+function portSelectorFn(sources: [number, number, number], logger: Logger) {
+  const port = sources.find(source => Boolean(source)) || 4000;
+  if (sources.filter(source => Boolean(source)).length > 1) {
+    const activeSources: Array<string> = [];
+    if (sources[0]) {
+      activeSources.push('CLI');
+    }
+    if (sources[1]) {
+      activeSources.push('serve configuration');
+    }
+    if (sources[2]) {
+      activeSources.push('environment variable');
+    }
+    logger.warn(`Multiple ports specified (${activeSources.join(', ')}), using ${port}`);
+  }
+
+  return port;
 }
 
 export async function serveMesh(
@@ -48,7 +68,8 @@ export async function serveMesh(
     browser,
     trustProxy = 'loopback',
   } = rawServeConfig;
-  const port = argsPort || configPort || parseInt(process.env.PORT) || 4000;
+
+  const port = portSelectorFn([argsPort, parseInt(configPort?.toString()), parseInt(process.env.PORT)], logger);
 
   const protocol = sslCredentials ? 'https' : 'http';
   const serverUrl = `${protocol}://${hostname}:${port}`;
@@ -214,7 +235,7 @@ export async function serveMesh(
     });
 
     httpServer
-      .listen(parseInt(port.toString()), hostname, () => {
+      .listen(port, hostname, () => {
         const shouldntOpenBrowser = process.env.NODE_ENV?.toLowerCase() === 'production' || browser === false;
         if (!shouldntOpenBrowser) {
           open(serverUrl, typeof browser === 'string' ? { app: browser } : undefined).catch(() => {});
