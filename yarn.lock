@@ -6357,7 +6357,7 @@
     "@webassemblyjs/wast-parser" "1.9.0"
     "@xtuc/long" "4.2.2"
 
-"@whatwg-node/fetch@^0.0.2":
+"@whatwg-node/fetch@0.0.2", "@whatwg-node/fetch@^0.0.2":
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.0.2.tgz#4242c4e36714b5018ccac0ab76f4ab5a208fbc1c"
   integrity sha512-qiZn8dYRg0POzUvmHBs7blLxl6DPL+b+Z0JUsGaj7/8PFe2BJG9onrUVX6OWh6Z9YhcYw8yu+wtCAme5ZMiCKQ==
