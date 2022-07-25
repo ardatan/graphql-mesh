@@ -69,3 +69,5 @@ the underlying HTTP request
 * `queryParams` (type: `Any`)
 * `noDeduplication` (type: `Boolean`) - By default, the handler will try to deduplicate the similar types to reduce the complexity of the final schema.
 You can disable this behavior by setting this to true.
+* `indices` (type: `Boolean`) - By default, when request body arrays are stringified, they are NOT given explicit indices.
+You can enable this behavior by setting this to true.

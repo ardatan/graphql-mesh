@@ -20,6 +20,11 @@ type JsonSchemaHandlerBundle @md {
 
   baseUrl: String
   operationHeaders: JSON
+  """
+  By default, when request body arrays are stringified, they are NOT given explicit indices.
+  You can enable this behavior by setting this to true.
+  """
+  indices: Boolean
 }
 
 type JsonSchemaHandler @md {
@@ -34,6 +39,11 @@ type JsonSchemaHandler @md {
   You can disable this behavior by setting this to true.
   """
   noDeduplication: Boolean
+  """
+  By default, when request body arrays are stringified, they are NOT given explicit indices.
+  You can enable this behavior by setting this to true.
+  """
+  indices: Boolean
 }
 
 enum JsonSchemaOperationType {

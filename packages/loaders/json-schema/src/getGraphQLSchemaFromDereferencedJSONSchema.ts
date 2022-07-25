@@ -15,6 +15,7 @@ export async function getGraphQLSchemaFromDereferencedJSONSchema(
     pubsub,
     generateInterfaceFromSharedFields,
     queryParams,
+    queryStringOptions,
   }: AddExecutionLogicToComposerOptions & { generateInterfaceFromSharedFields?: boolean }
 ) {
   logger.debug(`Generating GraphQL Schema from the bundled JSON Schema`);
@@ -43,6 +44,7 @@ export async function getGraphQLSchemaFromDereferencedJSONSchema(
     baseUrl,
     pubsub,
     queryParams,
+    queryStringOptions,
   });
 
   if (schemaComposerWithExecutionLogic.Query.getFieldNames().length === 0) {

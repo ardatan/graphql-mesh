@@ -359,6 +359,11 @@ export interface JsonSchemaHandler {
    * You can disable this behavior by setting this to true.
    */
   noDeduplication?: boolean;
+  /**
+   * By default, when request body arrays are stringified, they are NOT given explicit indices.
+   * You can enable this behavior by setting this to true.
+   */
+  indices?: boolean;
 }
 export interface JsonSchemaHTTPOperation {
   /**
@@ -496,6 +501,11 @@ export interface JsonSchemaHandlerBundle {
   operationHeaders?: {
     [k: string]: any;
   };
+  /**
+   * By default, when request body arrays are stringified, they are NOT given explicit indices.
+   * You can enable this behavior by setting this to true.
+   */
+  indices?: boolean;
 }
 export interface MongooseHandler {
   connectionString?: string;

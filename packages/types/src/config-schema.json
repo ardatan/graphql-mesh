@@ -963,6 +963,10 @@
         "operationHeaders": {
           "type": "object",
           "properties": {}
+        },
+        "indices": {
+          "type": "boolean",
+          "description": "By default, when request body arrays are stringified, they are NOT given explicit indices.\nYou can enable this behavior by setting this to true."
         }
       },
       "required": ["bundlePath"]
@@ -1020,6 +1024,10 @@
         "noDeduplication": {
           "type": "boolean",
           "description": "By default, the handler will try to deduplicate the similar types to reduce the complexity of the final schema.\nYou can disable this behavior by setting this to true."
+        },
+        "indices": {
+          "type": "boolean",
+          "description": "By default, when request body arrays are stringified, they are NOT given explicit indices.\nYou can enable this behavior by setting this to true."
         }
       },
       "required": ["operations"]
