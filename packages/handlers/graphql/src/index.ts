@@ -20,8 +20,9 @@ import {
   getOperationASTFromRequest,
   parseSelectionSet,
   isAsyncIterable,
+  getDocumentNodeFromSchema,
 } from '@graphql-tools/utils';
-import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
+import { ProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import lodashGet from 'lodash.get';
 import {
   getInterpolatedHeadersFactory,
@@ -38,6 +39,40 @@ const getResolverData = memoize1(function getResolverData(params: ExecutionReque
     env: process.env,
   };
 });
+
+const GraphQLSchemaWithDiffing: ProxyOptions<GraphQLSchema> = {
+  codify: schema =>
+    `
+import { buildASTSchema } from 'graphql';
+
+const schemaAST = ${JSON.stringify(getDocumentNodeFromSchema(schema), null, 2)};
+
+export default buildASTSchema(schemaAST, {
+  assumeValid: true,
+  assumeValidSDL: true
+});
+    `.trim(),
+  fromJSON: schemaAST => buildASTSchema(schemaAST, { assumeValid: true, assumeValidSDL: true }),
+  toJSON: schema => getDocumentNodeFromSchema(schema),
+  validate: () => {},
+  /*
+      validate: async (oldSchema, newSchema) => {
+        const changes = await diff(oldSchema, newSchema);
+        const errors: string[] = [];
+        for (const change of changes) {
+          if (
+            change.criticality.level === CriticalityLevel.Breaking ||
+            change.criticality.level === CriticalityLevel.Dangerous
+          ) {
+            errors.push(change.message);
+          }
+        }
+        if (errors.length) {
+          throw new AggregateError(errors);
+        }
+      },
+      */
+};
 
 export default class GraphQLHandler implements MeshHandler {
   private config: YamlConfig.Handler['graphql'];
@@ -59,7 +94,7 @@ export default class GraphQLHandler implements MeshHandler {
     this.config = config;
     this.baseDir = baseDir;
     this.fetchFn = fetchFn;
-    this.nonExecutableSchema = store.proxy('introspectionSchema', PredefinedProxyOptions.GraphQLSchemaWithDiffing);
+    this.nonExecutableSchema = store.proxy('introspectionSchema', GraphQLSchemaWithDiffing);
     this.importFn = importFn;
     this.logger = logger;
   }
