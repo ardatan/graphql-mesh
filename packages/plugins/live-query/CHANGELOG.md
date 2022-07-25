@@ -1,5 +1,11 @@
 # @graphql-mesh/plugin-live-query
 
+## 0.1.6
+
+### Patch Changes
+
+- @graphql-mesh/types@0.78.4
+
 ## 0.1.5
 
 ### Patch Changes
