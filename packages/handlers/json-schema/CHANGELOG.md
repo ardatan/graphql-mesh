@@ -1,5 +1,16 @@
 # @graphql-mesh/json-schema
 
+## 0.30.4
+
+### Patch Changes
+
+- Updated dependencies [30d046724]
+  - @graphql-mesh/utils@0.37.5
+  - json-machete@0.10.4
+  - @omnigraph/json-schema@0.24.4
+  - @graphql-mesh/store@0.8.24
+  - @graphql-mesh/types@0.78.4
+
 ## 0.30.3
 
 ### Patch Changes

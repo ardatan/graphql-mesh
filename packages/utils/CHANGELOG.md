@@ -1,5 +1,12 @@
 # @graphql-mesh/utils
 
+## 0.37.5
+
+### Patch Changes
+
+- 30d046724: Fix critical issue when there is a single source with a "bare" transform
+  - @graphql-mesh/types@0.78.4
+
 ## 0.37.4
 
 ### Patch Changes
