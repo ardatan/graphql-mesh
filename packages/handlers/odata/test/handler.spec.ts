@@ -363,7 +363,7 @@ describe('odata', () => {
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
     expect(sentRequest!.url).toBe(correctUrl);
-    expect(await sentRequest!.json()).toStrictEqual(correctBody);
+    expect(await sentRequest!.json()).toMatchObject(correctBody);
   });
   it('should generate correct HTTP request for deleting an entity', async () => {
     addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
