@@ -89,6 +89,6 @@
   },
   "resolutions": {
     "graphql": "16.5.0",
-    "@changesets/apply-release-plan": "6.0.0"
+    "@changesets/apply-release-plan": "6.0.3"
   }
 }
