@@ -6,13 +6,16 @@ export function applySchemaTransforms(
   originalWrappingSchema: GraphQLSchema,
   subschemaConfig: SubschemaConfig,
   transformedSchema: GraphQLSchema,
-  transforms: Transform[]
+  transforms?: Transform[]
 ) {
-  return transforms.reduce(
-    (schema, transform) =>
-      'transformSchema' in transform ? transform.transformSchema(schema, subschemaConfig, transformedSchema) : schema,
-    originalWrappingSchema
-  );
+  if (transforms?.length) {
+    return transforms.reduce(
+      (schema, transform) =>
+        'transformSchema' in transform ? transform.transformSchema(schema, subschemaConfig, transformedSchema) : schema,
+      originalWrappingSchema
+    );
+  }
+  return originalWrappingSchema;
 }
 export function applyRequestTransforms(
   originalRequest: ExecutionRequest,

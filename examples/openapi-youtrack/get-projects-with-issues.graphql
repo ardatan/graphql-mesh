@@ -1,5 +1,5 @@
 query getProjectsWithIssues {
-  getAdminProjects {
+  adminProjects {
     shortName
     issues {
       summary
