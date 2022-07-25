@@ -108,20 +108,20 @@ export enum PredefinedProxyOptionsName {
   StringWithoutValidation = 'StringWithoutValidation',
 }
 
-export const PredefinedProxyOptions: Record<PredefinedProxyOptionsName, ProxyOptions<any>> = {
+export const PredefinedProxyOptions = {
   JsonWithoutValidation: {
-    codify: v => `export default ${JSON.stringify(v, null, 2)}`,
-    fromJSON: v => v,
-    toJSON: v => v,
-    validate: () => null,
+    codify: (v: any) => `export default ${JSON.stringify(v, null, 2)}`,
+    fromJSON: (v: any) => v,
+    toJSON: (v: any) => v,
+    validate: (): void => null,
   },
   StringWithoutValidation: {
-    codify: v => `export default ${JSON.stringify(v, null, 2)}`,
-    fromJSON: v => v,
-    toJSON: v => v,
-    validate: () => null,
+    codify: (v: string) => `export default ${JSON.stringify(v, null, 2)}`,
+    fromJSON: (v: string) => v,
+    toJSON: (v: string) => v,
+    validate: (): void => null,
   },
-};
+} as const;
 
 export class MeshStore {
   constructor(public identifier: string, protected storage: StoreStorageAdapter, public flags: StoreFlags) {}

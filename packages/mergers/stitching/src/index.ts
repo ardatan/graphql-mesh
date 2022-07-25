@@ -49,8 +49,8 @@ export default class StitchingMerger implements MeshMerger {
     rawSourceLogger.debug(`Extracting existing resolvers if available`);
     const resolvers = extractResolvers(oldSchema);
 
-    let newSchema = await this.store
-      .proxy(`${name}_stitching`, PredefinedProxyOptions.GraphQLSchemaWithDiffing)
+    const sdl = await this.store
+      .proxy(`${name}_stitching`, PredefinedProxyOptions.StringWithoutValidation)
       .getWithSet(async () => {
         this.logger.debug(`Fetching Apollo Federated Service SDL for ${name}`);
         const sdlQueryResult: any = (await executor({
@@ -61,12 +61,13 @@ export default class StitchingMerger implements MeshMerger {
         }
         const federationSdl = sdlQueryResult.data._service.sdl;
         this.logger.debug(`Generating Stitching SDL for ${name}`);
-        const stitchingSdl = federationToStitchingSDL(federationSdl, stitchingDirectives);
-        return buildSchema(stitchingSdl, {
-          assumeValid: true,
-          assumeValidSDL: true,
-        });
+        return federationToStitchingSDL(federationSdl, stitchingDirectives);
       });
+
+    let newSchema = buildSchema(sdl, {
+      assumeValid: true,
+      assumeValidSDL: true,
+    });
 
     rawSourceLogger.debug(`Adding existing resolvers back to the schema`);
     newSchema = addResolversToSchema({
