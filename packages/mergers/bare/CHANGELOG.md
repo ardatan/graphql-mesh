@@ -1,5 +1,11 @@
 # @graphql-mesh/merger-bare
 
+## 0.15.5
+
+### Patch Changes
+
+- a0adc23e9: Fix a bug that is causing the additional resolvers to be ignored when there is a single source with an executor(GraphQL handler e.g.) because resolvers are added to the schema while the execution should respect those.
+
 ## 0.15.4
 
 ### Patch Changes

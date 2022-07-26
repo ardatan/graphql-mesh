@@ -1,5 +1,11 @@
 # hello-world-esm
 
+## 0.0.24
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.75.3
+
 ## 0.0.23
 
 ### Patch Changes

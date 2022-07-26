@@ -1,5 +1,13 @@
 # @graphql-mesh/config
 
+## 5.1.3
+
+### Patch Changes
+
+- a0adc23e9: Fix a bug that is causing the additional resolvers to be ignored when there is a single source with an executor(GraphQL handler e.g.) because resolvers are added to the schema while the execution should respect those.
+- Updated dependencies [a0adc23e9]
+  - @graphql-mesh/merger-bare@0.15.5
+
 ## 5.1.2
 
 ### Patch Changes
@@ -143,9 +151,9 @@
       sourceName: Author
       sourceTypeName: Query
       sourceFieldName: authorById
-      requiredSelectionSet: '{ id }'
+      requiredSelectionSet: "{ id }"
       sourceArgs:
-        id: '{root.id}'
+        id: "{root.id}"
   ```
 
   After:
