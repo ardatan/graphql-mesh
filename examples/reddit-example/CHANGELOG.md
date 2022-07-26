@@ -1,5 +1,11 @@
 # reddit-example
 
+## 0.0.41
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.75.3
+
 ## 0.0.40
 
 ### Patch Changes
