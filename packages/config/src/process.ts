@@ -458,23 +458,27 @@ export async function processConfig(
       mergerName = 'stitching';
     } else {
       // eslint-disable-next-line no-labels
-      typeLoop: for (const typeName in additionalResolvers || {}) {
-        const fieldResolvers = additionalResolvers[typeName];
-        if (typeof fieldResolvers === 'object') {
-          for (const fieldName in fieldResolvers) {
-            const fieldResolveObj = fieldResolvers[fieldName];
-            if (typeof fieldResolveObj === 'object') {
-              // selectionSet needs stitching merger even if there is a single source
-              if (fieldResolveObj.selectionSet != null) {
-                mergerName = 'stitching';
-                // eslint-disable-next-line no-labels
-                break typeLoop;
+      resolversLoop: for (const resolversObj of additionalResolvers || []) {
+        for (const typeName in resolversObj || {}) {
+          const fieldResolvers = resolversObj[typeName];
+          if (typeof fieldResolvers === 'object') {
+            for (const fieldName in fieldResolvers) {
+              const fieldResolveObj = fieldResolvers[fieldName];
+              if (typeof fieldResolveObj === 'object') {
+                // selectionSet needs stitching merger even if there is a single source
+                if (fieldResolveObj.selectionSet != null) {
+                  mergerName = 'stitching';
+                  // eslint-disable-next-line no-labels
+                  break resolversLoop;
+                }
               }
             }
           }
         }
       }
-      mergerName = 'bare';
+      if (!mergerName) {
+        mergerName = 'bare';
+      }
     }
   }
 
