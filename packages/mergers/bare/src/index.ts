@@ -2,6 +2,7 @@ import { MeshMerger, MeshMergerContext, Logger, MeshMergerOptions, RawSourceOutp
 import { applySchemaTransforms } from '@graphql-mesh/utils';
 import { addResolversToSchema, mergeSchemas } from '@graphql-tools/schema';
 import { asArray, getDocumentNodeFromSchema } from '@graphql-tools/utils';
+import { wrapSchema } from '@graphql-tools/wrap';
 import { buildASTSchema, extendSchema, GraphQLSchema } from 'graphql';
 
 export default class BareMerger implements MeshMerger {
@@ -11,7 +12,38 @@ export default class BareMerger implements MeshMerger {
     this.logger = options.logger;
   }
 
-  handleSingleSource({ rawSources: [rawSource], typeDefs, resolvers }: MeshMergerContext) {
+  handleSingleWrappedSource({ rawSources: [rawSource], typeDefs, resolvers }: MeshMergerContext) {
+    let schema = wrapSchema(rawSource);
+    if (typeDefs.length > 0 || asArray(resolvers).length > 0) {
+      for (const typeDef of typeDefs) {
+        schema = extendSchema(schema, typeDef);
+      }
+      for (const resolversObj of asArray(resolvers)) {
+        addResolversToSchema({
+          schema,
+          resolvers: resolversObj,
+          updateResolversInPlace: true,
+        });
+      }
+    }
+    this.logger.debug(`Attaching a dummy sourceMap to the final schema`);
+    schema.extensions = schema.extensions || {};
+    Object.defineProperty(schema.extensions, 'sourceMap', {
+      get: () => {
+        return {
+          get() {
+            return schema;
+          },
+        };
+      },
+    });
+    return {
+      ...rawSource,
+      schema,
+    };
+  }
+
+  handleSingleBareSource({ rawSources: [rawSource], typeDefs, resolvers }: MeshMergerContext) {
     let schema = rawSource.schema;
     if (typeDefs.length > 0 || asArray(resolvers).length > 0) {
       for (const typeDef of typeDefs) {
@@ -47,7 +79,10 @@ export default class BareMerger implements MeshMerger {
 
   async getUnifiedSchema({ rawSources, typeDefs, resolvers }: MeshMergerContext) {
     if (rawSources.length === 1) {
-      return this.handleSingleSource({ rawSources, typeDefs, resolvers });
+      if (rawSources[0].executor || rawSources[0].transforms?.length) {
+        return this.handleSingleWrappedSource({ rawSources, typeDefs, resolvers });
+      }
+      return this.handleSingleBareSource({ rawSources, typeDefs, resolvers });
     }
     const sourceMap = new Map<RawSourceOutput, GraphQLSchema>();
     this.logger.debug(`Applying transforms for each source`);
