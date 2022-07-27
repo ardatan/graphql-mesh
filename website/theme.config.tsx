@@ -1,5 +1,4 @@
-import { MeshLogo } from '@theguild/components';
-import { DocsThemeConfig } from 'nextra-theme-docs';
+import { MeshLogo, DocsThemeConfig } from '@theguild/components';
 
 const SITE_NAME = 'GraphQL Mesh';
 
@@ -10,7 +9,6 @@ const config: DocsThemeConfig = {
   nextLinks: true,
   prevLinks: true,
   search: false,
-  unstable_flexsearch: false,
   floatTOC: true,
   darkMode: true,
   footer: false,

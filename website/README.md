@@ -1,6 +1,6 @@
 # Website
 
-### Installation
+## Installation
 
 ```sh
 yarn --ignore-optional
