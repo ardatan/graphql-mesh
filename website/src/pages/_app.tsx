@@ -7,8 +7,8 @@ import 'guild-docs/style.css';
 
 export default function App({ Component, pageProps, router }: AppProps): ReactElement {
   const analytics = useGoogleAnalytics({ router, trackingId: 'G-TPQZLLF5T5' });
-// @ts-expect-error -- getLayout is custom function from nextra
-  const { getLayout = (page) => page } = Component;
+  // @ts-expect-error -- getLayout is custom function from nextra
+  const { getLayout = page => page } = Component;
 
   return (
     <ThemeProvider>

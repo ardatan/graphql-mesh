@@ -72,19 +72,21 @@
       "prettier --write"
     ]
   },
-  "workspaces": [
-    "./website",
-    "./packages/*",
-    "./packages/cache/*",
-    "./packages/handlers/*",
-    "./packages/transforms/*",
-    "./packages/mergers/*",
-    "./packages/plugins/*",
-    "./examples/*",
-    "./examples/federation-example/*",
-    "./examples/graphql-file-upload-example/frontend",
-    "./packages/loaders/*"
-  ],
+  "workspaces": {
+    "packages": [
+      "./website",
+      "./packages/*",
+      "./packages/cache/*",
+      "./packages/handlers/*",
+      "./packages/transforms/*",
+      "./packages/mergers/*",
+      "./packages/plugins/*",
+      "./examples/*",
+      "./examples/federation-example/*",
+      "./examples/graphql-file-upload-example/frontend",
+      "./packages/loaders/*"
+    ]
+  },
   "resolutions": {
     "graphql": "16.5.0",
     "@changesets/apply-release-plan": "6.0.0"
