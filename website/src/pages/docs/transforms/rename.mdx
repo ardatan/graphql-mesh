@@ -1,0 +1,79 @@
+import { PackageCmd, Callout } from '@theguild/components'
+
+# Rename Transform
+
+The `rename` transform allows you to rename:
+
+- GraphQL types
+- GraphQL fields
+- GraphQL field arguments
+
+<PackageCmd packages={['@graphql-mesh/transform-rename']} />
+
+## How to use?
+
+Add the following configuration to your Mesh config file:
+
+```yaml
+transforms:
+  - rename:
+      mode: bare | wrap
+      renames:
+        # rename type
+        - from:
+            type: ApiUser
+          to:
+            type: User
+        # rename type fields
+        - from:
+            type: Query
+            field: apiUser
+          to:
+            type: Query
+            field: user
+        # rename field arguments
+        - from:
+            type: Query
+            field: user
+            argument: user_id
+          to:
+            type: Query
+            field: user
+            argument: userId
+```
+
+<Callout type="warning" emoji="⚠️">
+  `type` and `field` are mandatory to rename a field argument with `argument`.
+</Callout>
+
+or you can use regular expressions to rename multiple types, fields or both
+
+```yaml
+- rename:
+    mode: bare | wrap
+    renames:
+      - from:
+          type: Api(.*)
+        to:
+          type: $1
+        useRegExpForTypes: true
+
+      - from:
+          type: Query
+          field: api(.*)
+        to:
+          type: Query
+          field: $1
+        useRegExpForFields: true
+```
+
+<Callout>
+  For information about "bare" and "wrap" modes, please read the [dedicated
+  section](/docs/transforms/transforms-introduction#two-different-modes).
+</Callout>
+
+## Config API Reference
+
+import API from '../../../generated-markdown/RenameTransform.generated.md'
+
+<API />

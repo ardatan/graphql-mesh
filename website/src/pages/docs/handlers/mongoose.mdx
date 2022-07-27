@@ -1,0 +1,35 @@
+import { PackageCmd, Callout } from '@theguild/components'
+
+# MongoDB / Mongoose
+
+![image](https://user-images.githubusercontent.com/20847995/79219137-5f584c00-7e5a-11ea-83fb-800f9ac73fd8.png)
+
+This handler allows you to use the GraphQL schema created by `graphql-compose-mongoose`.
+
+To get started, install the handler library:
+
+<PackageCmd packages={['@graphql-mesh/mongoose']} />
+
+Now, you can use it directly in your Mesh config file:
+
+```yaml {4-8}
+sources:
+  - name: Mongoose
+    handler:
+      mongoose:
+        connectionString: mongodb://localhost:27017/test
+        models:
+          - name: User
+            path: ./src/models#User
+```
+
+<Callout>
+  You can check out our example that uses Mongoose handler. [Click here to open the example on
+  GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/mongoose-example)
+</Callout>
+
+## Config API Reference
+
+import API from '../../../generated-markdown/MongooseHandler.generated.md'
+
+<API />

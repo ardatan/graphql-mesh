@@ -1,0 +1,25 @@
+import { PackageCmd } from '@theguild/components'
+
+# Redis Cache
+
+This caching strategy will use your Redis instance as the storage.
+
+To get started with this caching strategy, install it:
+
+<PackageCmd packages={['@graphql-mesh/cache-redis']} />
+
+## How to use?
+
+```yaml
+cache:
+  redis:
+    host: localhost
+    port: 9876
+    password: MY_SECRET_PASSWORD
+```
+
+## Config API Reference
+
+import API from '../../../generated-markdown/RedisConfig.generated.md'
+
+<API />

@@ -1,0 +1,67 @@
+import { PackageCmd, Callout } from '@theguild/components'
+
+# gRPC / Protobuf
+
+<div className="bg-[#244c5a]/90 rounded-md dark:bg-transparent inline-block">
+  ![image](https://user-images.githubusercontent.com/20847995/79218793-b27dcf00-7e59-11ea-8f0f-df97503f5494.png)
+</div>
+
+This Handler allows you to load [gRPC](https://grpc.io) definition files (`.proto`).
+
+<PackageCmd packages={['@graphql-mesh/grpc']} />
+
+Now, you can use it directly in your Mesh config file:
+
+```yaml {6}
+sources:
+  - name: MyGrpcApi
+    handler:
+      grpc:
+        endpoint: localhost:50051
+        protoFilePath: grpc/proto/Example.proto
+```
+
+<Callout>
+  You can check out our example that uses gRPC Handler. [Click here to open the example on
+  GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/grpc-example)
+</Callout>
+
+## Use Reflection instead of proto files
+
+If you have configured reflection in your gRPC server, you can use `useReflection` flag to load the schema from reflection instead of loading proto files.
+
+```yaml {6}
+sources:
+  - name: gRPC Example
+    handler:
+      grpc:
+        endpoint: localhost:50051
+        useReflection: true
+```
+
+<Callout>
+  You can check out our example that uses gRPC Handler with reflection. [Click here to open the example on
+  GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/grpc-reflection-example)
+</Callout>
+
+## Custom Metadata for Authorization
+
+Here you can use `metaData` field to pass some custom metadata from the context.
+
+```yaml {7-9}
+sources:
+  - name: MyGrpcApi
+    handler:
+      grpc:
+        endpoint: localhost:50051
+        protoFilePath: grpc/proto/Example.proto
+        metaData:
+          authorization: '{req.headers.authorization}'
+          someStaticValue: 'MyStaticValue'
+```
+
+## Config API Reference
+
+import API from '../../../generated-markdown/GrpcHandler.generated.md'
+
+<API />

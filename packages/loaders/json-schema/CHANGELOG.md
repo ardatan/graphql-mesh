@@ -183,7 +183,7 @@
 
 - b69746d2c: feat(json-schema): new exposeResponseMetadata flag to expose the details of the HTTP responses received from the upstream
 
-  ```yml
+  ```yaml
   responseSchema: ...
   exposeResponseMetadata: true
   ```

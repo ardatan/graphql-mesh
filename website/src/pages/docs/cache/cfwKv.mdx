@@ -1,0 +1,23 @@
+import { PackageCmd } from '@theguild/components'
+
+# CF Workers KV
+
+If you are using Mesh on Cloudflare Workers, you can use KV cache as a storage.
+
+To get started with this caching strategy, install it:
+
+<PackageCmd packages={['@graphql-mesh/cache-cfkw']} />
+
+## How to use?
+
+```yaml
+cache:
+  file:
+    namespace: MY_MESH_CACHE
+```
+
+## Config API Reference
+
+import API from '../../../generated-markdown/CFWorkersKVCacheConfig.generated.md'
+
+<API />

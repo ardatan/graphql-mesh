@@ -1,0 +1,6 @@
+{
+  "file": "File",
+  "localforage": "LocalForage",
+  "cfwKv": "CF Workers KV",
+  "redis": "Redis"
+}

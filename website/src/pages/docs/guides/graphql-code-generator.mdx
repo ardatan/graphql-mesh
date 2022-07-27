@@ -1,0 +1,71 @@
+import { Callout } from '@theguild/components'
+
+# Configure GraphQL Code Generator
+
+Mesh relies on [GraphQL Code Generator](https://graphql-code-generator.com) to generate the `Resolvers` type that give you access to:
+
+- fully typed resolvers map
+- fully typed SDK (through the `context`) to fetch data from Sources
+
+The generated typed Mesh SDK can also be accessed directly, as shown below:
+
+```ts
+import { getMeshSDK } from './.mesh'
+
+async function test() {
+  // Load mesh config and get the sdkClient from it
+  const sdk = getMeshSDK()
+
+  // Execute `myQuery` and get a type-safe result
+  // Variables and result are typed: { getSomething: { fieldA: string, fieldB: number }, errors?: GraphQLError[] }
+  const { getSomething } = await sdk.myQuery({ someVar: 'foo' })
+}
+```
+
+<Callout>
+  Remember you need operation documents to get this SDK generated. [See here for more details](/generate-sdk)
+</Callout>
+
+## GraphQL Code Generator default configuration
+
+Mesh provides a default GraphQL Code Generator configuration, shown below:
+
+```json
+{
+  "skipTypename": true,
+  "flattenGeneratedTypes": false,
+  "onlyOperationTypes": false,
+  "preResolveTypes": false,
+  "namingConvention": "keep",
+  "documentMode": "graphQLTag",
+  "gqlImport": "@graphql-mesh/utils#gql",
+  "enumsAsTypes": true,
+  "ignoreEnumValuesFromSchema": true,
+  "useIndexSignature": true,
+  "contextType": "MeshContext"
+}
+```
+
+## Customizing the GraphQL Code Generator configuration
+
+The above default configuration can be overridden with the `codegen` root parameter, as shown below:
+
+```yaml
+codegen:
+  skipTypename: false
+  contextType: './context#MyContextType'
+```
+
+<Callout>
+**Please note**, that the `codegen` parameter allows you to update the configuration passed to the GraphQL Code Generator plugins used by Mesh:
+- [`typescript`](https://graphql-code-generator.com/plugins/typescript)
+- [`typescript-operations`](https://graphql-code-generator.com/plugins/typescript-operations)
+- [`typescript-resolvers`](https://graphql-code-generator.com/plugins/typescript-resolvers)
+- [`typed-document-node`](https://graphql-code-generator.com/plugins/typed-document-node)
+- [`typescript-generic-sdk`](https://graphql-code-generator.com/plugins/typescript-generic-sdk)
+
+</Callout>
+
+<Callout emoji="⚠️" type="warning">
+  The `codegen` parameter won't allow you to add or remove plugins.
+</Callout>

@@ -1,0 +1,10 @@
+{
+  "extending-unified-schema": "Extending the Unified Schema",
+  "graphql-code-generator": "Configure GraphQL Code Generator",
+  "mesh-sdk": "Mesh as SDK",
+  "live-queries": "Live Queries",
+  "subscriptions-webhooks": "Subscriptions & Webhooks",
+  "performances-best-practices": "Performances best practices",
+  "error-handling": "Error handling",
+  "file-uploads": "File uploads"
+}

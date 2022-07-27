@@ -1,22 +1,13 @@
-import { createRequire } from 'node:module';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { indexToAlgolia } from '@guild-docs/algolia';
-import { register } from 'esbuild-register/dist/node.js';
 
-register({ extensions: ['.ts', '.tsx'] });
-
-const require = createRequire(import.meta.url);
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const { getRoutes } = require('../routes.ts');
-
-const routes = [{ ...getRoutes() }];
-// do not push API reference to search for now
-delete routes[0]._['docs/api'];
-
 indexToAlgolia({
-  routes,
+  nextra: {
+    docsBaseDir: resolve(__dirname, '../src/pages/'),
+  },
   source: 'Mesh',
   dryMode: process.env.ALGOLIA_DRY_RUN === 'true',
   domain: process.env.SITE_URL,

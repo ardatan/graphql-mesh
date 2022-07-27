@@ -1,0 +1,53 @@
+import { PackageCmd, Callout } from '@theguild/components'
+
+# Resolvers Composition Transform
+
+The `resolversComposition` transform allows adding middleware to your existing resolvers.
+
+<PackageCmd packages={['@graphql-mesh/transform-resolvers-composition']} />
+
+## How to use?
+
+Add the following configuration to your Mesh config file:
+
+```yaml
+transforms:
+  - resolversComposition:
+      mode: bare | wrap
+      compositions:
+        - resolver: 'Query.me'
+          composer: is-auth#isAuth
+        - resolver: 'Mutation.*'
+          composer: is-admin#isAdmin
+```
+
+```ts
+module.exports = {
+  isAuth: next => (root, args, context, info) => {
+    // Check if Authorization header is present
+    if (!context.headers.authorization) {
+      throw new Error('Unauthorized')
+    }
+    return next(root, args, context, info)
+  }
+}
+```
+
+<Callout>
+  For information about "bare" and "wrap" modes, please read the [dedicated
+  section](/docs/transforms/transforms-introduction#two-different-modes).
+</Callout>
+
+<iframe
+  src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/openapi-youtrack?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
+  className="mt-6 w-full h-[500px] rounded-md"
+  title="odata-trippin-example"
+  allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+  sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+/>
+
+## Config API Reference
+
+import API from '../../../generated-markdown/ResolversCompositionTransform.generated.md'
+
+<API />

@@ -58,7 +58,7 @@
 
   Now you can basically use Cloudflare Workers' KV Caching system within Mesh;
 
-  ```yml
+  ```yaml
   cache:
     cfKv:
       namespace: MESH

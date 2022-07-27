@@ -1,0 +1,31 @@
+import { PackageCmd, Callout } from '@theguild/components'
+
+# Naming Convention Transform
+
+The `naming-convention` transform allows applying naming convention to GraphQL types and GraphQL fields easily.
+
+<PackageCmd packages={['@graphql-mesh/transform-naming-convention']} />
+
+## How to use?
+
+Add the following configuration to your Mesh config file:
+
+```yaml
+transforms:
+  - namingConvention:
+      typeNames: pascalCase
+      enumValues: upperCase
+      fieldNames: camelCase
+      fieldArgumentNames: camelCase
+```
+
+<Callout>
+  You can see our gRPC example that uses this transform to see its application. [Click here to open the example on
+  GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/grpc-example).
+</Callout>
+
+## Config API Reference
+
+import API from '../../../generated-markdown/NamingConventionTransformConfig.generated.md'
+
+<API />

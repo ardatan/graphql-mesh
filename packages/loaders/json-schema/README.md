@@ -2,7 +2,7 @@
 
 This package generates GraphQL Schema from JSON Schema and sample JSON request and responses. You can define your root field endpoints like below in your GraphQL Config for example;
 
-```yml
+```yaml
 schema:
   myOmnigraph:
     loader: '@omnigraph/json-schema'

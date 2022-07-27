@@ -1,0 +1,109 @@
+import { PackageCmd, Callout } from '@theguild/components'
+
+# Hoist Field Transform
+
+The `hoist` transform allows you to lift a field from one object type to a 'parent' root or object type. It is currently only available as a `wrap` transform.
+
+<PackageCmd packages={['@graphql-mesh/transform-hoist-field']} />
+
+<Callout>Underneath it leverages the `HoistField` transform from the `@graphql-tools/wrap` package.</Callout>
+
+## How to use?
+
+Given the following schema:
+
+```graphql
+type Query {
+  users(limit: Int!, page: Int): UserSearchResult
+}
+
+type UserSearchResult {
+  page: Int!
+  results: [User!]!
+}
+
+type User {
+  id: ID!
+}
+```
+
+### Simple hoisting
+
+```yaml
+transforms:
+  - hoist-field:
+      - typeName: Query
+        pathConfig:
+          - users
+          - results
+        newFieldName: users
+```
+
+Will transform the given schema to:
+
+```graphql
+type Query {
+  users(limit: Int!, page: Int): [User!]!
+}
+
+type User {
+  id: ID!
+}
+```
+
+### Filtering args via a default for the entire path
+
+```yaml
+transforms:
+  - hoist-field:
+      - typeName: Query
+        pathConfig:
+          - users
+          - results
+        newFieldName: users
+        filterArgsInPath: true # This flag sets the default for the entire path
+```
+
+Will transform the given schema to:
+
+```graphql
+type Query {
+  users: [User!]!
+}
+
+type User {
+  id: ID!
+}
+```
+
+### Filtering args via on specific levels of the path
+
+```yaml
+transforms:
+  - hoist-field:
+      - typeName: Query
+        pathConfig:
+          - fieldName: users
+            filterArgs:
+              - limit
+          - results
+        newFieldName: users
+```
+
+Will transform the given schema to:
+
+```graphql
+type Query {
+  users(page: Int): [User!]!
+}
+
+type User {
+  id: ID!
+}
+```
+
+## Config API Reference
+
+import API from '../../../generated-markdown/HoistFieldTransformConfig.generated.md'
+
+<API />

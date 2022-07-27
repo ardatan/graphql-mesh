@@ -1,0 +1,23 @@
+import { PackageCmd } from '@theguild/components'
+
+# File Cache
+
+This caching strategy will use the file system as the storage.
+
+To get started with this caching strategy, install it:
+
+<PackageCmd packages={['@graphql-mesh/cache-file']} />
+
+## How to use?
+
+```yaml
+cache:
+  file:
+    path: ./my-cache.json # the extension should be .json
+```
+
+## Config API Reference
+
+import API from '../../../generated-markdown/FileCacheConfig.generated.md'
+
+<API />

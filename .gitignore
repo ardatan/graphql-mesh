@@ -14,6 +14,5 @@ package-lock.json
 .mesh
 /.idea/
 .next/
-/website/api-sidebar.json
-/website/docs/api
+/website/src/pages/docs/api/
 /.husky/_/

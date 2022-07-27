@@ -1,0 +1,37 @@
+import { PackageCmd } from '@theguild/components'
+
+# Neo4j
+
+![image](https://user-images.githubusercontent.com/20847995/79219440-f1605480-7e5a-11ea-980e-6ba54ee1450e.png)
+
+This handler allows you to use the GraphQL schema created by [`@neo4j/graphql`](https://github.com/neo4j/graphql).
+
+To get started, install the handler library:
+
+<PackageCmd packages={['@graphql-mesh/neo4j']} />
+
+Now, you can use it directly in your Mesh config file:
+
+```yaml {4-7}
+sources:
+  - name: Neo4j
+    handler:
+      neo4j:
+        url: neo4j://localhost
+        username: neo4j
+        password: MY_PASSWORD
+```
+
+<iframe
+  src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/neo4j-example?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
+  className="mt-6 w-full h-[500px] rounded-md"
+  title="neo4j-example"
+  allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+  sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+/>
+
+## Config API Reference
+
+import API from '../../../generated-markdown/Neo4jHandler.generated.md'
+
+<API />

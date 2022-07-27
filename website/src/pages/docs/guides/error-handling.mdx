@@ -1,0 +1,115 @@
+import { Callout } from '@theguild/components'
+
+# Error handling
+
+Mesh Gateway will forward all errors (resolvers and sources) to the end client by default.
+
+This page will guide you in masking the errors and puts the proper error handling practices in your `additionalResolvers`.
+
+## Enabling Errors masking
+
+To enable error masking on your Mesh Gateway:
+
+Configure the [`useMaskedErrors()` Envelop plugin](https://envelop.dev/plugins/use-masked-errors) by adding something like the following;
+
+```yaml filename=".meshrc.yaml"
+sources:
+  # …
+transforms:
+  # …
+plugins:
+  - maskedErrors:
+      errorMessage: 'Something went wrong.'
+```
+
+<Callout emoji="⚠️" type="warning">
+  The `maskedErrors` plugin should always put last in the plugin list (example: to avoid masking errors to the
+  `useSentry()` plugin.
+</Callout>
+
+### Custom error formatting programmatically
+
+You can also provide plugins programmatically.
+
+```yaml
+sources:
+  # …
+transforms:
+  # …
+additionalEnvelopPlugins: ./envelopPlugins.ts
+```
+
+Envelop allows you to provide your error formatting function as follows:
+
+```ts filename="envelopPlugins.ts"
+import { GraphQLError } from 'graphql'
+import { useMaskedErrors, PluginOrDisabledPlugin } from '@envelop/core'
+
+export const formatError: FormatErrorHandler = err => {
+  if (err.originalError && err.originalError instanceof EnvelopError === false) {
+    return new GraphQLError('Sorry, something went wrong.')
+  }
+
+  return err
+}
+
+const plugins: PluginOrDisabledPlugin = [
+  useMaskedErrors({
+    errorMessage: 'Something went wrong.',
+    formatError
+  })
+]
+
+export default plugins
+```
+
+This can be helpful, for example, to provide different error types based on a Source.
+
+## Custom resolvers error handling
+
+All errors will be hidden from the end-user when error masking is enabled.
+
+However, some might want to throw specific visible errors.
+
+To make an error visible, leverage the `GraphQLError` error class as follows:
+
+```ts filename="additionalResolvers.ts"
+import { GraphQLError } from 'graphql'
+import { Resolvers } from './.mesh'
+
+const resolvers: Resolvers = {
+  Book: {
+    author: {
+      selectionSet: /* GraphQL */ `
+        {
+          authorId
+        }
+      `,
+      async resolve(root, _args, context, info) {
+        const result = await context.Authors.Query.authors_v1_AuthorsService_GetAuthor({
+          root,
+          args: {
+            input: {
+              id: root.authorId
+            }
+          },
+          context,
+          info
+        })
+        if (!result) {
+          throw new GraphQLError({
+            message: `Author with id '${root.authorId}' not found.`,
+            extensions: {
+              code: 'AUTHOR_NOT_FOUND',
+              // complex values
+              bookId: root.id,
+              authorId: root.authorId
+            }
+          })
+        }
+        return result
+      }
+    }
+  }
+}
+```

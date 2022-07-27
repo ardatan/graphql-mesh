@@ -1,0 +1,189 @@
+import { PackageCmd, Callout } from '@theguild/components'
+
+# GraphQL
+
+![image](https://user-images.githubusercontent.com/20847995/79219047-333ccb00-7e5a-11ea-9fce-57ff137ba924.png)
+
+This handler allows you to load remote GraphQL schemas and use them with schema-stitching based on `graphql-tools`.
+
+To get started, install the handler library:
+
+<PackageCmd packages={['@graphql-mesh/graphql']} />
+
+Now, you can use it directly in your Mesh config file:
+
+```yaml
+sources:
+  - name: MyGraphQLApi
+    handler:
+      graphql:
+        endpoint: http://my-service-url:3000/graphql
+```
+
+<Callout>
+  You can check out our example that uses schema stitching with a PostgreSQL data source.
+  [Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/postgres-geodb)
+
+</Callout>
+
+## Dynamic Header Values (e.g., for Authorization)
+
+Mesh can take dynamic values from the GraphQL Context or the environmental variables. For example, if you use `mesh dev` or `mesh start`, GraphQL Context will be the incoming HTTP request.
+
+The expression inside dynamic values should be as in JS.
+
+### From Context (HTTP Header for `mesh dev` or `mesh start`)
+
+```yaml
+sources:
+  - name: MyGraphQLApi
+    handler:
+      graphql:
+        endpoint: http://my-service-url:3000/graphql
+        operationHeaders:
+          # Please do not use capital letters while getting the headers
+          # Use "{context.headers['x-my-api-token']}" if you want just the value of the header
+          Authorization: Bearer {context.headers['x-my-api-token']}
+          # You can also access to the cookies like below;
+          # Authorization: Bearer {context.cookies.myApiToken}
+```
+
+And for `mesh dev` or `mesh start`, you can pass the value using `x-my-graphql-api-token` HTTP header.
+
+### From Environment Variables
+
+`MY_API_TOKEN` is the name of the environment variable you have the value.
+
+```yaml {7}
+sources:
+  - name: MyGraphQLApi
+    handler:
+      graphql:
+        endpoint: http://my-service-url:3000/graphql
+        operationHeaders:
+          Authorization: Bearer {env.MY_API_TOKEN}
+```
+
+## Local Schemas
+
+We recommend providing local schema by using the `additionalTypeDefs` and `additionalResolvers` configuration options.
+
+However, it is also possible to use a local GraphQL Schema instance as a GraphQL Mesh source, as showcased below:
+
+```yaml
+sources:
+  - name: MyGraphQLApi
+    handler:
+      graphql:
+        schema: ./my-local-schema.ts
+```
+
+```ts filename="my-local-schema.ts"
+import { makeExecutableSchema } from '@graphql-tools/schema'
+export default makeExecutableSchema({
+  typeDefs: /* GraphQL */ `
+    type Query {
+      foo: String
+    }
+  `,
+  resolvers: {
+    Query: {
+      foo: () => 'FOO'
+    }
+  }
+})
+```
+
+## Fetch Strategies and Multiple HTTP endpoints for the same source
+
+If you want to have an advanced fetch strategy for the GraphQL source such as retrying twice or timeout in 30 seconds etc.
+Also, you can have different HTTP endpoints for a single source, and you can configure Mesh to get a better execution flow.
+
+For example, you can make a request to both endpoints and return the fastest response with `race` strategy.
+
+All `fetch` strategies can be combined to create the ultimate execution flow:
+
+<details>
+ <summary>`retry`</summary>
+
+The `retry` mechanism allow you to specify the retry attempts for a single GraphQL endpoint/source.
+
+The retry flow will execute in both conditions: a network error, or due to a runtime error.
+
+```yaml {6}
+sources:
+  - name: uniswapv2
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2
+        retry: 2 # specify here, if you have an unstable/error prone indexer
+```
+
+</details>
+
+<details>
+ <summary>`timeout`</summary>
+
+The `timeout` mechanism allow you to specify the `timeout` for a given GraphQL endpoint.
+
+```yaml {6}
+sources:
+  - name: uniswapv2
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2
+        timeout: 5000 # 5 seconds
+```
+
+</details>
+
+<details>
+ <summary>`fallback`</summary>
+
+The `fallback` mechanism allow you to specify use more than one GraphQL endpoint, for the same source.
+
+This is helpful if you have a fallback endpoint for the same GraphQL API.
+
+```yaml {5}
+sources:
+  - name: uniswapv2
+    handler:
+      graphql:
+        strategy: fallback
+        sources:
+          - endpoint: https://bad-uniswap-v2-api.com
+            retry: 2
+            timeout: 5000
+          - endpoint: https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2
+```
+
+</details>
+
+<details>
+ <summary>`race`</summary>
+
+The `race` mechanism allow you to specify use more than one GraphQL endpoint, for the same source, and race on every execution.
+
+If you have different places that service is deployed, this is useful to get the fastest response by racing them.
+
+```yaml {5}
+sources:
+  - name: uniswapv2
+    handler:
+      graphql:
+        strategy: race
+        sources:
+          - endpoint: https://bad-uniswap-v2-api.com
+          - endpoint: https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2
+```
+
+</details>
+
+## Config API Reference
+
+import API1 from '../../../generated-markdown/GraphQLHandlerHTTPConfiguration.generated.md'
+import API2 from '../../../generated-markdown/GraphQLHandlerCodeFirstConfiguration.generated.md'
+
+<API1 />
+or
+<API2 />

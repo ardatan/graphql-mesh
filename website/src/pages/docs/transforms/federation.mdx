@@ -1,0 +1,63 @@
+import { PackageCmd, Callout } from '@theguild/components'
+
+# Apollo Federation Transform
+
+The `federation` transform allows the resolvers and directives to conform to the federation specification. Much of the federation source code could be reused, ensuring it is compliant with the specification. This transform uses [`graphql-transform-federation`](https://github.com/0xR/graphql-transform-federation) package.
+
+<PackageCmd packages={['@graphql-mesh/transform-federation']} />
+
+## How to use?
+
+Add the following configuration to your Mesh config file:
+
+```yaml
+transforms:
+  - federation:
+      types:
+        # Ensure the root queries of this schema show up the combined schema
+        - name: Query
+          config:
+            extend: true
+        - name: Product
+          config:
+            # extend Product {
+            extend: true
+            # Product @key(fields: "id") {
+            keyFields:
+              - id
+            fields:
+              # id: Int! @external
+              - name: id
+                external: true
+            resolveReference:
+              queryFieldName: user
+```
+
+### Add Reference Resolver as a Code File
+
+To add more complex business logic, you can point to a code file that exports a resolver function.
+
+```yaml
+resolveReference: ./userResolveReference.js
+```
+
+```js filename="userResolveReference.js"
+// So we can point to an existing query field to resolve that entity
+module.exports = (root, context, info) => {
+  return context.accounts.Query.user({ root, args: { id: root.id }, context, info })
+}
+```
+
+<Callout>You can check out our example that uses Federation as a merging strategy.</Callout>
+
+<iframe
+  src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/federation-example?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
+  className="mt-6 w-full h-[500px] rounded-md"
+  title="federation-example"
+  allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+  sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+/>
+
+import API from '../../../generated-markdown/FederationTransform.generated.md'
+
+<API />
