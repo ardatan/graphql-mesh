@@ -25,9 +25,7 @@ export async function loadGraphQLSchemaFromJSONSchemas(name: string, options: JS
     pubsub: options.pubsub,
     generateInterfaceFromSharedFields: options.generateInterfaceFromSharedFields,
     queryParams: options.queryParams,
-    queryStringOptions: {
-      indices: options.indices,
-    },
+    queryStringOptions: options.queryStringOptions,
   });
   return graphqlSchema;
 }

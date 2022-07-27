@@ -359,11 +359,7 @@ export interface JsonSchemaHandler {
    * You can disable this behavior by setting this to true.
    */
   noDeduplication?: boolean;
-  /**
-   * By default, when request body arrays are stringified, they are NOT given explicit indices.
-   * You can enable this behavior by setting this to true.
-   */
-  indices?: boolean;
+  queryStringOptions?: QueryStringOptions;
 }
 export interface JsonSchemaHTTPOperation {
   /**
@@ -486,6 +482,19 @@ export interface JsonSchemaPubSubOperation {
   };
   pubsubTopic: string;
 }
+export interface QueryStringOptions {
+  /**
+   * When arrays are stringified, by default they are not given explicit indices:
+   * `a=b&a=c&a=d`
+   * You may override this by setting the indices option to true:
+   * `a[0]=b&a[1]=c&a[2]=d`
+   */
+  indices?: boolean;
+  /**
+   * You can configure how to format arrays in the query strings. (Allowed values: indices, brackets, repeat, comma)
+   */
+  arrayFormat?: 'indices' | 'brackets' | 'repeat' | 'comma';
+}
 export interface JsonSchemaHandlerBundle {
   /**
    * Path to the bundle file
@@ -501,11 +510,20 @@ export interface JsonSchemaHandlerBundle {
   operationHeaders?: {
     [k: string]: any;
   };
+  queryStringOptions?: QueryStringOptions1;
+}
+export interface QueryStringOptions1 {
   /**
-   * By default, when request body arrays are stringified, they are NOT given explicit indices.
-   * You can enable this behavior by setting this to true.
+   * When arrays are stringified, by default they are not given explicit indices:
+   * `a=b&a=c&a=d`
+   * You may override this by setting the indices option to true:
+   * `a[0]=b&a[1]=c&a[2]=d`
    */
   indices?: boolean;
+  /**
+   * You can configure how to format arrays in the query strings. (Allowed values: indices, brackets, repeat, comma)
+   */
+  arrayFormat?: 'indices' | 'brackets' | 'repeat' | 'comma';
 }
 export interface MongooseHandler {
   connectionString?: string;

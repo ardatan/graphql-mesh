@@ -157,7 +157,9 @@ describe('Execution', () => {
           );
         },
         baseUrl: 'http://localhost:3000',
-        indices: true,
+        queryStringOptions: {
+          indices: true,
+        },
         operations: [
           {
             type: OperationTypeNode.QUERY,
@@ -187,7 +189,125 @@ describe('Execution', () => {
       expect(result).toEqual({
         data: {
           test: {
-            url: 'http://localhost:3000/test?foo%5B0%5D=bar&foo%5B1%5D=baz',
+            url: `http://localhost:3000/test?foo${encodeURIComponent('[0]')}=bar&foo${encodeURIComponent('[1]')}=baz`,
+          },
+        },
+      });
+    });
+    it('should not add indices if arrayFormat is configured to brackets', async () => {
+      const schema = await loadGraphQLSchemaFromJSONSchemas('test', {
+        async fetch(info: RequestInfo, init?: RequestInit) {
+          let request: Request;
+          if (typeof info !== 'object') {
+            request = new Request(info, init);
+          } else {
+            request = info;
+          }
+          return new Response(
+            JSON.stringify({
+              url: request.url,
+            }),
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+        },
+        baseUrl: 'http://localhost:3000',
+        queryStringOptions: {
+          arrayFormat: 'brackets',
+        },
+        operations: [
+          {
+            type: OperationTypeNode.QUERY,
+            field: 'test',
+            method: 'GET',
+            path: '/test',
+            requestSample: {
+              foo: ['bar', 'baz'],
+            },
+            responseSample: {
+              url: 'http://localhost:3000/test?foo[]=bar&foo[]=baz',
+            },
+          },
+        ],
+      });
+      const query = /* GraphQL */ `
+        query Test {
+          test(input: { foo: ["bar", "baz"] }) {
+            url
+          }
+        }
+      `;
+      const result = await execute({
+        schema,
+        document: parse(query),
+      });
+      console.log(result.errors);
+      expect(result).toEqual({
+        data: {
+          test: {
+            url: `http://localhost:3000/test?foo${encodeURIComponent('[]')}=bar&foo${encodeURIComponent('[]')}=baz`,
+          },
+        },
+      });
+    });
+    it('should add brackets even if there is a single item in the array and arrayFormat is brackets together with commaRoundTrip: true', async () => {
+      const schema = await loadGraphQLSchemaFromJSONSchemas('test', {
+        async fetch(info: RequestInfo, init?: RequestInit) {
+          let request: Request;
+          if (typeof info !== 'object') {
+            request = new Request(info, init);
+          } else {
+            request = info;
+          }
+          return new Response(
+            JSON.stringify({
+              url: request.url,
+            }),
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+        },
+        baseUrl: 'http://localhost:3000',
+        queryStringOptions: {
+          arrayFormat: 'brackets',
+        },
+        operations: [
+          {
+            type: OperationTypeNode.QUERY,
+            field: 'test',
+            method: 'GET',
+            path: '/test',
+            requestSample: {
+              foo: ['bar'],
+            },
+            responseSample: {
+              url: 'http://localhost:3000/test?foo[]=bar',
+            },
+          },
+        ],
+      });
+      const query = /* GraphQL */ `
+        query Test {
+          test(input: { foo: ["bar"] }) {
+            url
+          }
+        }
+      `;
+      const result = await execute({
+        schema,
+        document: parse(query),
+      });
+      console.log(result.errors);
+      expect(result).toEqual({
+        data: {
+          test: {
+            url: `http://localhost:3000/test?foo${encodeURIComponent('[]')}=bar`,
           },
         },
       });

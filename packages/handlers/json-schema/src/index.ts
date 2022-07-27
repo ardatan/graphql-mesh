@@ -72,9 +72,7 @@ export default class JsonSchemaHandler implements MeshHandler {
       logger: this.logger,
       baseUrl: this.config.baseUrl,
       operationHeaders: this.config.operationHeaders,
-      queryStringOptions: {
-        indices: this.config.indices,
-      },
+      queryStringOptions: this.config.queryStringOptions,
     });
     return {
       schema,
