@@ -21,8 +21,10 @@ type JsonSchemaHandlerBundle @md {
   baseUrl: String
   operationHeaders: JSON
   """
-  By default, when request body arrays are stringified, they are NOT given explicit indices.
-  You can enable this behavior by setting this to true.
+  When arrays are stringified, by default they are not given explicit indices:
+  `a=b&a=c&a=d`
+  You may override this by setting the indices option to true:
+  `a[0]=b&a[1]=c&a[2]=d`
   """
   indices: Boolean
 }
