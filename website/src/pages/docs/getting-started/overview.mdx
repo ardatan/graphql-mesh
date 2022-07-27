@@ -7,8 +7,7 @@ Working with Mesh means dealing with 4 main concepts: _Sources_, _Handlers_, _Tr
 3. All Sources' GraphQL Schema are merged into a final _Unified Schema_.
 4. Finally, if applicable, configured transformations, called _Transforms_, are applied to the _Unified Schema_.
 
-<components.Graph>
-
+```mermaid
 graph LR;
 subgraph A [GraphQL Mesh server]
 A0[Unified Schema]
@@ -39,8 +38,7 @@ end
 B11--translated to GraphQL Schemas by handler-->A111
 B21--translated to GraphQL Schemas by handler-->A121
 B31--translated to GraphQL Schemas by handler-->A311
-
-</components.Graph>
+```
 
 The above GraphQL Mesh Gateway has 3 configured _Sources_:
 

@@ -1,4 +1,4 @@
-import Callout from 'nextra-theme-docs/callout'
+import { Callout } from '@theguild/components'
 
 # How to: Configure Sources with no definition
 
@@ -14,15 +14,14 @@ We will again use the ["Books" example REST API](https://github.com/charlypoly/g
 
 However, let's pretend that the "Books" API is not providing any OpenAPI definition file:
 
-<components.Graph>
+```mermaid
 graph TD;
 subgraph BB [" "]
   G[Books REST API without OpenAPI definition];
 end
 Z[Mesh Gateway GraphQL API]
 Z --> G;
-
-</components.Graph>
+```
 
 Once again, GraphQL Mesh gots you covered with the `@graphql-mesh/json-schema` handler that will help provide a definition of the API.
 

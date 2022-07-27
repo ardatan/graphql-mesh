@@ -1,6 +1,9 @@
 import { withGuildDocs } from 'guild-docs/next.config';
 
 export default withGuildDocs({
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   redirects: () => [
     {
       source: '/docs/introduction',
@@ -8,4 +11,4 @@ export default withGuildDocs({
       permanent: true,
     },
   ],
-})
+});

@@ -56,8 +56,7 @@ Specifying transforms at the Source level helps to isolate each Source definitio
 
 The diagram below explains how Mesh process applied when building the final unified Schema and SDK:
 
-<components.Graph>
-
+```mermaid
 graph LR;
 subgraph A [GraphQL Mesh server]
 subgraph A1 [Sources]
@@ -99,8 +98,7 @@ A115 & A125 & A315 --> A23 --> A32
 A114 & A124 & A314 --> A21
 A21 --> A22 --> A34
 A32 & A33 & A34 --> A35
-
-</components.Graph>
+```
 
 The above diagram highlights 2 important points when working with transforms:
 

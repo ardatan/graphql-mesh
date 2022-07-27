@@ -8,8 +8,7 @@ Fortunately, GraphQL Mesh provides a way to batch requests with specific `additi
 
 Our [`multiple-sources`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources) example Gateway:
 
-<components.Graph>
-
+```mermaid
 graph TD;
 subgraph AA [" "]
 A[Mobile app];
@@ -28,8 +27,7 @@ C --> Z;
 Z --> E;
 Z --> F;
 Z --> G;
-
-</components.Graph>
+```
 
 Will emit multiple requests to the "Authors" API when resolving the nested `Book.author` field:
 
@@ -53,8 +51,7 @@ query bestSellersByStore {
 }
 ```
 
-<components.Graph>
-
+```mermaid
 sequenceDiagram
 participant Mesh Gateway
 participant Book.author resolver
@@ -65,8 +62,7 @@ Mesh Gateway->>Book.author resolver: Query.stores[0].bookSells[0].book[6].author
 Book.author resolver->>Authors API: GetAuthor(input: \{ id: "754" \})
 Mesh Gateway->>Book.author resolver: Query.stores[0].bookSells[0].book[7].author
 Book.author resolver->>Authors API: GetAuthor(input: \{ id: "332" \})
-
-</components.Graph>
+```
 
 Fortunately, Mesh allows an extra directive-based configuration to provide a "batching" query that will help resolve many record of the same type.
 
@@ -132,8 +128,7 @@ additionalTypeDefs: |
 
 Now, our Mesh Gateway will try to batch calls to the "Authors" API when resolving `Book.author`:
 
-<components.Graph>
-
+```mermaid
 sequenceDiagram
 participant Mesh Gateway
 participant Book.author resolver
@@ -142,5 +137,4 @@ Mesh Gateway->>Book.author resolver: Query.stores[0].bookSells[0].book[0].author
 Mesh Gateway->>Book.author resolver: Query.stores[0].bookSells[0].book[6].author
 Mesh Gateway->>Book.author resolver: Query.stores[0].bookSells[0].book[7].author
 Book.author resolver->>Authors API: GetAuthors(input: \{ ids: ["123", "754", "332"] \})
-
-</components.Graph>
+```

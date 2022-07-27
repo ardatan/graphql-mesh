@@ -17,8 +17,7 @@ All the documentation tutorials and guides rely on the "Books", "Authors" and "S
 
 Our goal is to build a Unified GraphQL Schema through a Mesh Gateway that incorporates our 3 example services as follows:
 
-<components.Graph>
-
+```mermaid
 graph TD;
 subgraph AA [" "]
 A[Mobile app];
@@ -37,13 +36,11 @@ C --> Z;
 Z --> E;
 Z --> F;
 Z --> G;
-
-</components.Graph>
+```
 
 In this tutorial, **we will first start by creating a Mesh configuration that incorporates the Books REST API**, as follows:
 
-<components.Graph>
-
+```mermaid
 graph TD;
 subgraph AA [" "]
 A[Mobile app];
@@ -58,8 +55,7 @@ A --> Z;
 B --> Z;
 C --> Z;
 Z --> G;
-
-</components.Graph>
+```
 
 Creating the complete Mesh Gateway that combines "Books", "Authors", and "Stores" APIs in a unified Schema will be covered in the ["Setup a Gateway with many Sources" guide](/docs/guides/combine-many-sources).
 

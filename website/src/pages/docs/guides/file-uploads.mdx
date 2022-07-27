@@ -8,8 +8,7 @@ Similarly, just a few configuration changes will be necessary to forward file up
 
 The following Gateway integrates a "UploadFiles" Source that has file upload capabilities:
 
-<components.Graph>
-
+```mermaid
 graph TD;
 subgraph BB [" "]
 E[ResizeImages API];
@@ -18,8 +17,7 @@ end
 Z[Mesh Gateway GraphQL API];
 Z --> E;
 Z --> F;
-
-</components.Graph>
+```
 
 To support forwarding file uploads to the "UploadFiles" Source, we will need to add the `maxRequestBodySize` to the `serve` configuration:
 
