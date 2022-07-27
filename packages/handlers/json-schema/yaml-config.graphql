@@ -20,6 +20,47 @@ type JsonSchemaHandlerBundle @md {
 
   baseUrl: String
   operationHeaders: JSON
+  queryStringOptions: QueryStringOptions
+}
+
+type QueryStringOptions @md {
+  """
+  When arrays are stringified, by default they are not given explicit indices:
+  `a=b&a=c&a=d`
+  You may override this by setting the indices option to true:
+  `a[0]=b&a[1]=c&a[2]=d`
+  """
+  indices: Boolean
+  """
+  You can configure how to format arrays in the query strings.
+
+  Note: when using arrayFormat set to 'comma', you can also pass the commaRoundTrip option set to true or false, to append [] on single-item arrays, so that they can round trip through a parse.
+  """
+  arrayFormat: QueryStringArrayFormat
+  """
+  Even if there is a single item in an array, this option treats them as arrays
+  (default: false)
+  """
+  commaRoundTrip: Boolean
+}
+
+enum QueryStringArrayFormat {
+  """
+  `a[0]=b&a[1]=c`
+  """
+  indices
+  """
+  `a[]=b&a[]=c`
+  """
+  brackets
+  """
+  `a=b&a=c`
+  """
+  repeat
+  """
+  `a=b,c`
+  """
+  comma
 }
 
 type JsonSchemaHandler @md {
@@ -34,6 +75,7 @@ type JsonSchemaHandler @md {
   You can disable this behavior by setting this to true.
   """
   noDeduplication: Boolean
+  queryStringOptions: QueryStringOptions
 }
 
 enum JsonSchemaOperationType {

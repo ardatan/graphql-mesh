@@ -6,6 +6,7 @@ import { JSONSchemaOperationConfig } from './types';
 import { fetch as crossUndiciFetch } from '@whatwg-node/fetch';
 import { GraphQLSchema } from 'graphql';
 import { getGraphQLSchemaFromDereferencedJSONSchema } from './getGraphQLSchemaFromDereferencedJSONSchema';
+import type { IStringifyOptions } from 'qs';
 
 export interface JSONSchemaLoaderBundle {
   name?: string;
@@ -74,6 +75,7 @@ export interface JSONSchemaLoaderBundleToGraphQLSchemaOptions {
   baseUrl?: string;
   operationHeaders?: Record<string, string>;
   queryParams?: Record<string, string>;
+  queryStringOptions?: IStringifyOptions;
 }
 
 /**
@@ -96,6 +98,7 @@ export async function getGraphQLSchemaFromBundle(
     baseUrl: overwrittenBaseUrl,
     operationHeaders: additionalOperationHeaders = {},
     queryParams,
+    queryStringOptions,
   }: JSONSchemaLoaderBundleToGraphQLSchemaOptions = {}
 ): Promise<GraphQLSchema> {
   logger.info(`Dereferencing the bundle`);
@@ -115,5 +118,6 @@ export async function getGraphQLSchemaFromBundle(
     operations,
     operationHeaders,
     queryParams,
+    queryStringOptions,
   });
 }

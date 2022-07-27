@@ -2,6 +2,7 @@ import { MeshPubSub, Logger } from '@graphql-mesh/types';
 import { BaseLoaderOptions } from '@graphql-tools/utils';
 import { GraphQLInputType, OperationTypeNode } from 'graphql';
 import { JSONSchema, JSONSchemaObject } from 'json-machete';
+import { IStringifyOptions } from 'qs';
 
 export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   baseUrl?: string;
@@ -16,6 +17,7 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   ignoreErrorResponses?: boolean;
   queryParams?: Record<string, string>;
   noDeduplication?: boolean;
+  queryStringOptions?: IStringifyOptions;
 }
 
 export interface JSONSchemaOperationResponseConfig {

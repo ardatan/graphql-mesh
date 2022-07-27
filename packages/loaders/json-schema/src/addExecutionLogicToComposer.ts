@@ -5,7 +5,7 @@ import { getOperationMetadata, isPubSubOperationConfig, isFileUpload, cleanObjec
 import { memoize1 } from '@graphql-tools/utils';
 import urlJoin from 'url-join';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType';
-import { stringify as qsStringify, parse as qsParse } from 'qs';
+import { stringify as qsStringify, parse as qsParse, IStringifyOptions } from 'qs';
 import {
   getNamedType,
   GraphQLError,
@@ -33,7 +33,12 @@ export interface AddExecutionLogicToComposerOptions {
   logger: Logger;
   pubsub?: MeshPubSub;
   queryParams?: Record<string, string>;
+  queryStringOptions?: IStringifyOptions;
 }
+
+const defaultQsOptions: IStringifyOptions = {
+  indices: false,
+};
 
 const isListTypeOrNonNullListType = memoize1(function isListTypeOrNonNullListType(type: GraphQLOutputType) {
   if (isNonNullType(type)) {
@@ -91,9 +96,11 @@ export async function addExecutionLogicToComposer(
     baseUrl,
     pubsub: globalPubsub,
     queryParams,
+    queryStringOptions = {},
   }: AddExecutionLogicToComposerOptions
 ) {
   logger.debug(`Attaching execution logic to the schema`);
+  const qsOptions = { ...defaultQsOptions, ...queryStringOptions };
   for (const operationConfig of operations) {
     const { httpMethod, rootTypeName, fieldName } = getOperationMetadata(operationConfig);
     const operationLogger = logger.child(`${rootTypeName}.${fieldName}`);
@@ -166,7 +173,7 @@ export async function addExecutionLogicToComposer(
               interpolationData
             );
           }
-          const queryParamsString = qsStringify(interpolatedQueryParams, { indices: false });
+          const queryParamsString = qsStringify(interpolatedQueryParams, qsOptions);
           fullPath += fullPath.includes('?') ? '&' : '?';
           fullPath += queryParamsString;
         }
@@ -216,7 +223,7 @@ export async function addExecutionLogicToComposer(
               case 'OPTIONS':
               case 'TRACE': {
                 fullPath += fullPath.includes('?') ? '&' : '?';
-                fullPath += qsStringify(input, { indices: false });
+                fullPath += qsStringify(input, qsOptions);
                 break;
               }
               case 'POST':
@@ -226,7 +233,7 @@ export async function addExecutionLogicToComposer(
                 const [, contentType] =
                   Object.entries(headers).find(([key]) => key.toLowerCase() === 'content-type') || [];
                 if (contentType?.startsWith('application/x-www-form-urlencoded')) {
-                  requestInit.body = qsStringify(input, { indices: false });
+                  requestInit.body = qsStringify(input, qsOptions);
                 } else {
                   requestInit.body = JSON.stringify(input);
                 }
@@ -246,7 +253,7 @@ export async function addExecutionLogicToComposer(
         if (queryString) {
           const queryParams = qsParse(queryString);
           const cleanedQueryParams = cleanObject(queryParams);
-          fullPath = actualPath + '?' + qsStringify(cleanedQueryParams, { indices: false });
+          fullPath = actualPath + '?' + qsStringify(cleanedQueryParams, qsOptions);
         }
 
         operationLogger.debug(`=> Fetching `, fullPath, `=>`, requestInit);

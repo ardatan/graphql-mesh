@@ -963,9 +963,28 @@
         "operationHeaders": {
           "type": "object",
           "properties": {}
+        },
+        "queryStringOptions": {
+          "$ref": "#/definitions/QueryStringOptions"
         }
       },
       "required": ["bundlePath"]
+    },
+    "QueryStringOptions": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "QueryStringOptions",
+      "properties": {
+        "indices": {
+          "type": "boolean",
+          "description": "When arrays are stringified, by default they are not given explicit indices:\n`a=b&a=c&a=d`\nYou may override this by setting the indices option to true:\n`a[0]=b&a[1]=c&a[2]=d`"
+        },
+        "arrayFormat": {
+          "type": "string",
+          "enum": ["indices", "brackets", "repeat", "comma"],
+          "description": "You can configure how to format arrays in the query strings. (Allowed values: indices, brackets, repeat, comma)"
+        }
+      }
     },
     "JsonSchemaHandler": {
       "additionalProperties": false,
@@ -1020,6 +1039,9 @@
         "noDeduplication": {
           "type": "boolean",
           "description": "By default, the handler will try to deduplicate the similar types to reduce the complexity of the final schema.\nYou can disable this behavior by setting this to true."
+        },
+        "queryStringOptions": {
+          "$ref": "#/definitions/QueryStringOptions"
         }
       },
       "required": ["operations"]
