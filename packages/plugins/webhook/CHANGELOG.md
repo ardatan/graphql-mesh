@@ -1,5 +1,12 @@
 # @graphql-mesh/plugin-webhook
 
+## 0.0.4
+
+### Patch Changes
+
+- Updated dependencies [c88a34d82]
+  - @graphql-mesh/types@0.78.5
+
 ## 0.0.3
 
 ### Patch Changes

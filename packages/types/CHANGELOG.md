@@ -1,5 +1,22 @@
 # @graphql-mesh/types
 
+## 0.78.5
+
+### Patch Changes
+
+- c88a34d82: Now you can configure JSON Schema handler how to stringify query parameters;
+
+  ```yml
+  queryStringOptions:
+    indices: false
+    arrayFormat: brackets
+  ```
+
+  Check out the configuration schema to see the options;
+  https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/json-schema/yaml-config.graphql#L25
+
+  - @graphql-mesh/store@0.8.25
+
 ## 0.78.4
 
 ### Patch Changes
