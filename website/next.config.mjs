@@ -13,6 +13,7 @@ export default withGuildDocs({
     {
       source: '/docs/recipes/build-mesh-artifacts',
       destination: '/docs/guides/mesh-sdk',
+      permanent: true,
     },
   ],
 });
