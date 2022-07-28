@@ -28,11 +28,11 @@
     "directory": "packages/handlers/tuql"
   },
   "peerDependencies": {
-    "graphql": "*"
+    "graphql": "*",
+    "@graphql-mesh/types": "^0.78.5"
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.2.0",
-    "@graphql-mesh/types": "0.78.5",
     "tuql": "1.7.0",
     "tslib": "^2.4.0"
   },

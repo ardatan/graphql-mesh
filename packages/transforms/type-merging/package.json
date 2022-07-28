@@ -25,10 +25,10 @@
     "directory": "packages/transforms/type-merging"
   },
   "peerDependencies": {
-    "graphql": "*"
+    "graphql": "*",
+    "@graphql-mesh/types": "^0.78.5"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.78.5",
     "@graphql-tools/stitching-directives": "2.3.1",
     "@graphql-tools/delegate": "8.8.1",
     "@graphql-mesh/utils": "0.37.6",

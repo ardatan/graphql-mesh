@@ -8,7 +8,8 @@
     "directory": "packages/utils"
   },
   "peerDependencies": {
-    "graphql": "*"
+    "graphql": "*",
+    "@graphql-mesh/types": "^0.78.5"
   },
   "devDependencies": {
     "@types/object-hash": "2.2.1",
@@ -39,7 +40,6 @@
     "@graphql-tools/utils": "8.9.0",
     "@graphql-typed-document-node/core": "3.1.1",
     "@graphql-mesh/cross-helpers": "0.2.0",
-    "@graphql-mesh/types": "0.78.5",
     "lodash.get": "4.4.2",
     "lodash.set": "4.3.2",
     "lodash.topath": "4.5.2",

@@ -25,10 +25,10 @@
     "directory": "packages/transforms/encapsulate"
   },
   "peerDependencies": {
-    "graphql": "*"
+    "graphql": "*",
+    "@graphql-mesh/types": "^0.78.5"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.78.5",
     "@graphql-mesh/utils": "0.37.6",
     "@graphql-tools/delegate": "8.8.1",
     "@graphql-tools/wrap": "8.5.1",

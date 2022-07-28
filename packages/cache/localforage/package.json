@@ -8,7 +8,8 @@
     "directory": "packages/cache/localforage"
   },
   "peerDependencies": {
-    "graphql": "*"
+    "graphql": "*",
+    "@graphql-mesh/types": "^0.78.5"
   },
   "sideEffects": false,
   "main": "dist/index.js",
@@ -28,7 +29,6 @@
     }
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.78.5",
     "@graphql-mesh/utils": "0.37.6",
     "localforage": "1.10.0",
     "tslib": "^2.4.0"

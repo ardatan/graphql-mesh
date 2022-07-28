@@ -25,10 +25,10 @@
     "directory": "packages/mergers/bare"
   },
   "peerDependencies": {
-    "graphql": "*"
+    "graphql": "*",
+    "@graphql-mesh/types": "^0.78.5"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.78.5",
     "@graphql-mesh/utils": "0.37.6",
     "@graphql-tools/wrap": "8.5.1",
     "@graphql-tools/schema": "8.5.1",

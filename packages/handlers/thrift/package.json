@@ -25,7 +25,8 @@
     "directory": "packages/handlers/thrift"
   },
   "peerDependencies": {
-    "graphql": "*"
+    "graphql": "*",
+    "@graphql-mesh/types": "^0.78.5"
   },
   "devDependencies": {
     "@types/thrift": "0.10.11",
@@ -36,7 +37,6 @@
     "@creditkarma/thrift-parser": "2.0.0",
     "@creditkarma/thrift-server-core": "1.0.4",
     "@graphql-mesh/cross-helpers": "0.2.0",
-    "@graphql-mesh/types": "0.78.5",
     "@graphql-mesh/store": "0.8.25",
     "@graphql-mesh/string-interpolation": "0.3.0",
     "@graphql-mesh/utils": "0.37.6",

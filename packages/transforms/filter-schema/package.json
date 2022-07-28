@@ -25,13 +25,13 @@
     "directory": "packages/transforms/filter-schema"
   },
   "peerDependencies": {
-    "graphql": "*"
+    "graphql": "*",
+    "@graphql-mesh/types": "^0.78.5"
   },
   "devDependencies": {
     "@types/minimatch": "3.0.5"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.78.5",
     "@graphql-mesh/utils": "0.37.6",
     "minimatch": "5.1.0",
     "@graphql-tools/wrap": "8.5.1",

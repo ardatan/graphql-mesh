@@ -8,7 +8,8 @@
     "directory": "packages/cache/cfw-kv"
   },
   "peerDependencies": {
-    "graphql": "*"
+    "graphql": "*",
+    "@graphql-mesh/types": "^0.78.5"
   },
   "sideEffects": false,
   "main": "dist/index.js",
@@ -28,7 +29,6 @@
     }
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.78.5",
     "@graphql-mesh/utils": "0.37.6",
     "@udacity/types-service-worker-mock": "1.2.0",
     "cloudflare-worker-mock": "1.2.0",

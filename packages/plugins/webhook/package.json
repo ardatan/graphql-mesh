@@ -26,7 +26,6 @@
   },
   "dependencies": {
     "@graphql-yoga/common": "2.12.4",
-    "@graphql-mesh/types": "0.78.5",
     "lodash.get": "4.4.2",
     "@graphql-mesh/string-interpolation": "0.3.0",
     "tslib": "^2.4.0"
@@ -34,5 +33,8 @@
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "peerDependencies": {
+    "@graphql-mesh/types": "^0.78.5"
   }
 }

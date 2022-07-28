@@ -25,10 +25,10 @@
     "directory": "packages/transforms/prune"
   },
   "peerDependencies": {
-    "graphql": "*"
+    "graphql": "*",
+    "@graphql-mesh/types": "^0.78.5"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.78.5",
     "@graphql-tools/utils": "8.9.0",
     "tslib": "^2.4.0"
   },

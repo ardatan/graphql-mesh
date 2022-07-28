@@ -25,7 +25,8 @@
     "directory": "packages/loaders/json-schema"
   },
   "peerDependencies": {
-    "graphql": "*"
+    "graphql": "*",
+    "@graphql-mesh/types": "^0.78.5"
   },
   "devDependencies": {
     "@types/to-json-schema": "0.2.1",
@@ -35,7 +36,6 @@
   "dependencies": {
     "@whatwg-node/fetch": "^0.2.7",
     "json-machete": "0.10.5",
-    "@graphql-mesh/types": "0.78.5",
     "@graphql-mesh/string-interpolation": "0.3.0",
     "@graphql-mesh/utils": "0.37.6",
     "@graphql-tools/utils": "8.9.0",

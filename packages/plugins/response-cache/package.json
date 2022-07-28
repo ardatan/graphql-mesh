@@ -25,11 +25,11 @@
     "directory": "packages/plugins/response-cache"
   },
   "peerDependencies": {
-    "graphql": "*"
+    "graphql": "*",
+    "@graphql-mesh/types": "^0.78.5"
   },
   "dependencies": {
     "@envelop/response-cache": "3.0.1",
-    "@graphql-mesh/types": "0.78.5",
     "@graphql-mesh/cross-helpers": "0.2.0",
     "@graphql-mesh/string-interpolation": "0.3.0",
     "@graphql-mesh/utils": "0.37.6",
