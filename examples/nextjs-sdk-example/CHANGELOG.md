@@ -1,5 +1,14 @@
 # nextjs-sdk-example
 
+## 0.0.43
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.75.4
+- @graphql-mesh/config@5.1.4
+- @graphql-mesh/new-openapi@0.5.8
+- @graphql-mesh/runtime@0.41.5
+
 ## 0.0.42
 
 ### Patch Changes

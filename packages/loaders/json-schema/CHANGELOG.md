@@ -1,5 +1,25 @@
 # @omnigraph/json-schema
 
+## 0.24.5
+
+### Patch Changes
+
+- c88a34d82: Now you can configure JSON Schema handler how to stringify query parameters;
+
+  ```yml
+  queryStringOptions:
+    indices: false
+    arrayFormat: brackets
+  ```
+
+  Check out the configuration schema to see the options;
+  https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/json-schema/yaml-config.graphql#L25
+
+- Updated dependencies [c88a34d82]
+  - @graphql-mesh/types@0.78.5
+  - @graphql-mesh/utils@0.37.6
+  - json-machete@0.10.5
+
 ## 0.24.4
 
 ### Patch Changes

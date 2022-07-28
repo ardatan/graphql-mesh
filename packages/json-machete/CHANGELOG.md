@@ -1,5 +1,11 @@
 # json-machete
 
+## 0.10.5
+
+### Patch Changes
+
+- @graphql-mesh/utils@0.37.6
+
 ## 0.10.4
 
 ### Patch Changes
