@@ -26,11 +26,11 @@
   },
   "peerDependencies": {
     "graphql": "*",
-    "@graphql-mesh/types": "^0.78.5"
+    "@graphql-mesh/types": "^0.78.5",
+    "@graphql-mesh/utils": "^0.37.6"
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.2.0",
-    "@graphql-mesh/utils": "0.37.6",
     "@graphql-mesh/string-interpolation": "0.3.0",
     "@omnigraph/json-schema": "0.24.5",
     "json-machete": "0.10.5",

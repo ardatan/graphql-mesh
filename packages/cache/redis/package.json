@@ -9,7 +9,8 @@
   },
   "peerDependencies": {
     "graphql": "*",
-    "@graphql-mesh/types": "^0.78.5"
+    "@graphql-mesh/types": "^0.78.5",
+    "@graphql-mesh/utils": "^0.37.6"
   },
   "sideEffects": false,
   "main": "dist/index.js",
@@ -29,7 +30,6 @@
     }
   },
   "dependencies": {
-    "@graphql-mesh/utils": "0.37.6",
     "@graphql-mesh/cross-helpers": "0.2.0",
     "@graphql-mesh/string-interpolation": "0.3.0",
     "ioredis-mock": "8.2.2",

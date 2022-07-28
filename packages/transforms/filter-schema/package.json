@@ -26,13 +26,13 @@
   },
   "peerDependencies": {
     "graphql": "*",
-    "@graphql-mesh/types": "^0.78.5"
+    "@graphql-mesh/types": "^0.78.5",
+    "@graphql-mesh/utils": "^0.37.6"
   },
   "devDependencies": {
     "@types/minimatch": "3.0.5"
   },
   "dependencies": {
-    "@graphql-mesh/utils": "0.37.6",
     "minimatch": "5.1.0",
     "@graphql-tools/wrap": "8.5.1",
     "@graphql-tools/delegate": "8.8.1",

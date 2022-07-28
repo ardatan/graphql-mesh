@@ -50,4 +50,5 @@
 "@graphql-mesh/utils": minor
 ---
 
-@graphql-mesh/types is now a peer dependency of other packages except cli package.
+**BREAKING**
+`@graphql-mesh/types` and `@graphql-mesh/utils` are now a peer dependency of other packages except `@graphql-mesh/cli` package.

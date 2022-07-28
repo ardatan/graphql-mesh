@@ -26,14 +26,14 @@
   },
   "peerDependencies": {
     "graphql": "*",
-    "@graphql-mesh/types": "^0.78.5"
+    "@graphql-mesh/types": "^0.78.5",
+    "@graphql-mesh/utils": "^0.37.6"
   },
   "devDependencies": {
     "@graphql-mesh/cache-localforage": "0.6.22",
     "@graphql-tools/schema": "8.5.1"
   },
   "dependencies": {
-    "@graphql-mesh/utils": "0.37.6",
     "@graphql-tools/delegate": "8.8.1",
     "@graphql-tools/wrap": "8.5.1",
     "@graphql-tools/utils": "8.9.0",

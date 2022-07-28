@@ -26,13 +26,13 @@
   },
   "peerDependencies": {
     "graphql": "*",
-    "@graphql-mesh/types": "^0.78.5"
+    "@graphql-mesh/types": "^0.78.5",
+    "@graphql-mesh/utils": "^0.37.6"
   },
   "dependencies": {
     "@envelop/response-cache": "3.0.1",
     "@graphql-mesh/cross-helpers": "0.2.0",
     "@graphql-mesh/string-interpolation": "0.3.0",
-    "@graphql-mesh/utils": "0.37.6",
     "@envelop/core": "^2.3.2",
     "tslib": "^2.4.0"
   },

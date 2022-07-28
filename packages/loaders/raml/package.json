@@ -25,7 +25,8 @@
     "directory": "packages/loaders/raml"
   },
   "peerDependencies": {
-    "graphql": "*"
+    "graphql": "*",
+    "@graphql-mesh/utils": "^0.37.6"
   },
   "dependencies": {
     "@whatwg-node/fetch": "^0.2.7",
@@ -34,7 +35,6 @@
     "json-machete": "0.10.5",
     "to-json-schema": "0.2.5",
     "@graphql-mesh/cross-helpers": "0.2.0",
-    "@graphql-mesh/utils": "0.37.6",
     "@graphql-mesh/string-interpolation": "0.3.0",
     "@graphql-tools/utils": "8.9.0",
     "tslib": "^2.4.0",

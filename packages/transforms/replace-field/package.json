@@ -26,10 +26,10 @@
   },
   "peerDependencies": {
     "graphql": "*",
-    "@graphql-mesh/types": "^0.78.5"
+    "@graphql-mesh/types": "^0.78.5",
+    "@graphql-mesh/utils": "^0.37.6"
   },
   "dependencies": {
-    "@graphql-mesh/utils": "0.37.6",
     "@graphql-tools/code-file-loader": "7.3.1",
     "@graphql-tools/graphql-file-loader": "7.5.0",
     "@graphql-tools/load": "7.7.1",

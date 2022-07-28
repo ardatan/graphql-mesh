@@ -26,14 +26,14 @@
   },
   "peerDependencies": {
     "graphql": "*",
-    "@graphql-mesh/types": "^0.78.5"
+    "@graphql-mesh/types": "^0.78.5",
+    "@graphql-mesh/utils": "^0.37.6"
   },
   "devDependencies": {
     "graphql-fields": "2.0.3"
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.2.0",
-    "@graphql-mesh/utils": "0.37.6",
     "@graphql-tools/resolvers-composition": "6.5.1",
     "@graphql-tools/schema": "8.5.1",
     "@graphql-tools/utils": "8.9.0",

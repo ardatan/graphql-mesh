@@ -26,13 +26,13 @@
   },
   "peerDependencies": {
     "graphql": "*",
-    "@graphql-mesh/types": "^0.78.5"
+    "@graphql-mesh/types": "^0.78.5",
+    "@graphql-mesh/utils": "^0.37.6"
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.2.0",
     "@graphql-mesh/store": "0.8.25",
     "@graphql-mesh/string-interpolation": "0.3.0",
-    "@graphql-mesh/utils": "0.37.6",
     "postgraphile-core": "4.12.3",
     "postgraphile": "4.12.11",
     "pg": "^8.6.0",

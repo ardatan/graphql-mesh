@@ -9,7 +9,8 @@
   },
   "peerDependencies": {
     "graphql": "*",
-    "@graphql-mesh/types": "^0.78.5"
+    "@graphql-mesh/types": "^0.78.5",
+    "@graphql-mesh/utils": "^0.37.6"
   },
   "sideEffects": false,
   "main": "dist/index.js",
@@ -29,7 +30,6 @@
     }
   },
   "dependencies": {
-    "@graphql-mesh/utils": "0.37.6",
     "@graphql-mesh/string-interpolation": "0.3.0",
     "@graphql-tools/delegate": "8.8.1",
     "@graphql-tools/batch-delegate": "8.3.1",

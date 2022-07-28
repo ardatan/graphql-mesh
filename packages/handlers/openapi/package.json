@@ -31,13 +31,13 @@
   },
   "peerDependencies": {
     "graphql": "*",
-    "@graphql-mesh/types": "^0.78.5"
+    "@graphql-mesh/types": "^0.78.5",
+    "@graphql-mesh/utils": "^0.37.6"
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.2.0",
     "@graphql-mesh/store": "0.8.25",
     "@graphql-mesh/string-interpolation": "0.3.0",
-    "@graphql-mesh/utils": "0.37.6",
     "@graphql-tools/utils": "8.9.0",
     "@whatwg-node/fetch": "^0.2.7",
     "deep-equal": "2.0.5",

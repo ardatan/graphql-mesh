@@ -27,13 +27,13 @@
   "peerDependencies": {
     "graphql": "*",
     "mongoose": "*",
-    "@graphql-mesh/types": "^0.78.5"
+    "@graphql-mesh/types": "^0.78.5",
+    "@graphql-mesh/utils": "^0.37.6"
   },
   "devDependencies": {
     "mongoose": "6.5.1"
   },
   "dependencies": {
-    "@graphql-mesh/utils": "0.37.6",
     "graphql-compose": "9.0.8",
     "graphql-compose-mongoose": "9.7.1",
     "graphql-compose-connection": "8.2.1",
