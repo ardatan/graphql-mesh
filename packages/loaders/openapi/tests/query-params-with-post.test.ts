@@ -44,6 +44,8 @@ describe('Query Params with POST', () => {
       document: parse(query),
     });
 
+    expect(result.errors?.length).toBeFalsy();
+
     expect(result).toEqual({
       data: {
         postWithParam: {
