@@ -1,0 +1,48 @@
+swagger: '2.0'
+info:
+  title: Sample API
+  description: API description in Markdown.
+  version: 1.0.0
+host: api.example.com
+basePath: /v1
+schemes:
+  - https
+paths:
+  /post-with-param:
+    post:
+      operationId: postWithParam
+      parameters:
+        - in: query
+          name: queryparamfirst
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: queryparamsecond
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/definitions/RandomInput'
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: '#/definitions/UrlResult'
+
+definitions:
+  RandomInput:
+    type: object
+    properties:
+      randomField:
+        type: string
+  UrlResult:
+    type: object
+    properties:
+      url:
+        type: string

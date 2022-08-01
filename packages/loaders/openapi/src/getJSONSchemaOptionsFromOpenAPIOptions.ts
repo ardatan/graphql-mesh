@@ -106,6 +106,9 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
               if (!operationConfig.path.includes('?')) {
                 operationConfig.path += '?';
               }
+              if (operationConfig.path !== '?') {
+                operationConfig.path += '&';
+              }
               operationConfig.path += `${paramObj.name}={args.${argName}}`;
             }
             break;
