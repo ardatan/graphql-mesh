@@ -46,7 +46,7 @@ export async function referenceJSONSchema(schema: JSONSchemaObject) {
       definitions: initialDefinitions,
     },
     {
-      leave: (subSchema, { path }) => {
+      enter: subSchema => {
         if (typeof subSchema === 'object') {
           if (subSchema.$ref) {
             return {
