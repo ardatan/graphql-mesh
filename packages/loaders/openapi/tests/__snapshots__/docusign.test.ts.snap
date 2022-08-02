@@ -80,7 +80,7 @@ type Query {
   \\"Gets the envelope audit events for the specified envelope.\\"
   AuditEvents_GetAuditEvents(accountId: String!, envelopeId: String!): envelopeAuditEventResponse
   \\"Retrieves the custom field information for the specified envelope. You can use these fields in the envelopes for your account to record information about the envelope, help search for envelopes, and track information. The envelope custom fields are shown in the Envelope Settings section when a user is creating an envelope in the DocuSign member console. The envelope custom fields are not seen by the envelope recipients.\\\\n\\\\nThere are two types of envelope custom fields, text, and list. A text custom field lets the sender enter the value for the field. With a list custom field, the sender selects the value of the field from a pre-made list.\\"
-  CustomFields_GetCustomFields(accountId: String!, envelopeId: String!): customFieldsEnvelope
+  CustomFields_GetCustomFields(accountId: String!, envelopeId: String!): AccountCustomFields
   \\"Retrieves a list of documents associated with the specified envelope.\\"
   Documents_GetDocuments(input: Documents_GetDocuments_request_Input, accountId: String!, envelopeId: String!): EnvelopeDocuments
   \\"Retrieves the specified document from the envelope. If the account has the Highlight Data Changes feature enabled, there is an option to request that any changes in the envelope be highlighted.\\\\n\\\\nThe \`{documentID}\` parameter takes two special values:\\\\n\\\\n| Value      | Description |\\\\n| :---       | :--- |\\\\n| \`combined\` | Retrieve a PDF that contains the combined content of all documents and the certificate. |\\\\n| \`archive\`  | Retrieve a ZIP archive that contains all of the PDF documents, the certificate, and any .WAV files used for voice authentication. |\\\\n\\"
@@ -92,9 +92,9 @@ type Query {
   \\"Retrieves a page image for display from the specified envelope.\\"
   Pages_GetPageImage(input: Pages_GetPageImage_request_Input, accountId: String!, envelopeId: String!, documentId: String!, pageNumber: String!): File
   \\"Returns tabs on the specified page.\\"
-  Tabs_GetPageTabs(accountId: String!, envelopeId: String!, documentId: String!, pageNumber: String!): EnvelopeDocumentTabs
+  Tabs_GetPageTabs(accountId: String!, envelopeId: String!, documentId: String!, pageNumber: String!): EnvelopeRecipientTabs
   \\"Returns tabs on the document.\\"
-  Tabs_GetDocumentTabs(input: Tabs_GetDocumentTabs_request_Input, accountId: String!, envelopeId: String!, documentId: String!): EnvelopeDocumentTabs
+  Tabs_GetDocumentTabs(input: Tabs_GetDocumentTabs_request_Input, accountId: String!, envelopeId: String!, documentId: String!): EnvelopeRecipientTabs
   \\"Retrieves the templates associated with a document in the specified envelope.\\"
   Templates_GetDocumentTemplates(input: Templates_GetDocumentTemplates_request_Input, accountId: String!, envelopeId: String!, documentId: String!): EnvelopeTemplates
   \\"Retrieves the email override settings for the specified envelope.\\"
@@ -110,9 +110,9 @@ type Query {
   \\"Retrieves the bulk recipient file information from an envelope that has a bulk recipient.\\"
   Recipients_GetBulkRecipients(input: Recipients_GetBulkRecipients_request_Input, accountId: String!, envelopeId: String!, recipientId: String!): EnvelopeBulkRecipients
   \\"Retrieves the Electronic Record and Signature Disclosure, with html formatting, associated with the account. You can use an optional query string to set the language for the disclosure.\\"
-  ConsumerDisclosure_GetConsumerDisclosureEnvelopeIdRecipientId(input: ConsumerDisclosure_GetConsumerDisclosureEnvelopeIdRecipientId_request_Input, accountId: String!, envelopeId: String!, recipientId: String!): EnvelopeConsumerDisclosures
+  ConsumerDisclosure_GetConsumerDisclosureEnvelopeIdRecipientId(input: ConsumerDisclosure_GetConsumerDisclosureEnvelopeIdRecipientId_request_Input, accountId: String!, envelopeId: String!, recipientId: String!): AccountConsumerDisclosures
   \\"Reserved: Retrieves the Electronic Record and Signature Disclosure, with HTML formatting, associated with the account.\\"
-  ConsumerDisclosure_GetConsumerDisclosureEnvelopeIdRecipientIdLangCode(input: ConsumerDisclosure_GetConsumerDisclosureEnvelopeIdRecipientId_request_Input, accountId: String!, envelopeId: String!, recipientId: String!, langCode: String): EnvelopeConsumerDisclosures
+  ConsumerDisclosure_GetConsumerDisclosureEnvelopeIdRecipientIdLangCode(input: ConsumerDisclosure_GetConsumerDisclosureEnvelopeIdRecipientId_request_Input, accountId: String!, envelopeId: String!, recipientId: String!, langCode: String): AccountConsumerDisclosures
   \\"Returns document visibility for the recipients\\"
   Recipients_GetRecipientDocumentVisibility(accountId: String!, envelopeId: String!, recipientId: String!): EnvelopeDocumentVisibility
   \\"Retrieves the initials image for the specified user. The image is returned in the same format as it was uploaded. In the request you can specify if the chrome (the added line and identifier around the initial image) is returned with the image.\\\\n\\\\nThe userId specified in the endpoint must match the authenticated user's user id and the user must be a member of the account.\\\\n\\\\nThe \`signatureIdOrName\` paramter accepts signature ID or signature name. DocuSign recommends you use signature ID (\`signatureId\`), since some names contain characters that do not properly URL encode. If you use the user name, it is likely that the name includes spaces and you might need to URL encode the name before using it in the endpoint. \\\\n\\\\nFor example: \\\\\\"Bob Smith\\\\\\" to \\\\\\"Bob%20Smith\\\\\\"\\\\n\\\\nOlder envelopes might only contain chromed images. If getting the non-chromed image fails, try getting the chromed image.\\"
@@ -132,7 +132,7 @@ type Query {
   \\"Retrieves information about groups associated with the account.\\"
   Groups_GetGroups(input: Groups_GetGroups_request_Input, accountId: String!): Groups
   \\"Retrieves information about the brands associated with the requested group.\\"
-  Brands_GetGroupBrands(accountId: String!, groupId: String!): GroupBrands
+  Brands_GetGroupBrands(accountId: String!, groupId: String!): AccountBrands
   \\"Retrieves a list of users in a group.\\"
   Groups_GetGroupUsers(input: Groups_GetGroupUsers_request_Input, accountId: String!, groupId: String!): GroupUsers
   \\"List payment gateway account information\\"
@@ -182,33 +182,33 @@ type Query {
   \\"Retrieves the definition of the specified template.\\"
   Templates_GetTemplate(input: ChunkedUploads_GetChunkedUpload_request_Input, accountId: String!, templateId: String!): Templates
   \\"Retrieves the custom document field information from an existing template.\\"
-  CustomFields_GetTemplateCustomFields(accountId: String!, templateId: String!): TemplateCustomFields
+  CustomFields_GetTemplateCustomFields(accountId: String!, templateId: String!): AccountCustomFields
   \\"Retrieves a list of documents associated with the specified template.\\"
   Documents_GetTemplateDocuments(accountId: String!, templateId: String!): TemplateDocuments
   \\"Retrieves one or more PDF documents from the specified template.\\\\n\\\\nYou can specify the ID of the document to retrieve or can specify \`combined\` to retrieve all documents in the template as one pdf.\\"
   Documents_GetTemplateDocument(input: Documents_GetTemplateDocument_request_Input, accountId: String!, templateId: String!, documentId: String!): File
   \\"Retrieves the custom document fields for an existing template document.\\"
-  DocumentFields_GetTemplateDocumentFields(accountId: String!, templateId: String!, documentId: String!): TemplateDocumentFields
+  DocumentFields_GetTemplateDocumentFields(accountId: String!, templateId: String!, documentId: String!): EnvelopeDocumentFields
   \\"Returns document page image(s) based on input.\\"
   Pages_GetTemplatePageImages(input: Pages_GetPageImages_request_Input, accountId: String!, templateId: String!, documentId: String!): pageImages
   \\"Retrieves a page image for display from the specified template.\\"
   Pages_GetTemplatePageImage(input: Pages_GetTemplatePageImage_request_Input, accountId: String!, templateId: String!, documentId: String!, pageNumber: String!): File
   \\"Returns tabs on the specified page.\\"
-  Tabs_GetTemplatePageTabs(accountId: String!, templateId: String!, documentId: String!, pageNumber: String!): TemplateDocumentTabs
+  Tabs_GetTemplatePageTabs(accountId: String!, templateId: String!, documentId: String!, pageNumber: String!): EnvelopeRecipientTabs
   \\"Returns tabs on the document.\\"
-  Tabs_GetTemplateDocumentTabs(input: Tabs_GetDocumentTabs_request_Input, accountId: String!, templateId: String!, documentId: String!): TemplateDocumentTabs
+  Tabs_GetTemplateDocumentTabs(input: Tabs_GetDocumentTabs_request_Input, accountId: String!, templateId: String!, documentId: String!): EnvelopeRecipientTabs
   \\"Retrieves general information about the template lock.\\\\n\\\\nIf the call is made by the user who has the lock and the request has the same integrator key as original, then the \`X-DocuSign-Edit\` header  field and additional lock information is included in the response. This allows users to recover a lost editing session token and the \`X-DocuSign-Edit\` header.\\"
-  Lock_GetTemplateLock(accountId: String!, templateId: String!): TemplateLocks
+  Lock_GetTemplateLock(accountId: String!, templateId: String!): EnvelopeLocks
   \\"Retrieves the envelope notification, reminders and expirations, information for an existing template.\\"
   Notification_GetTemplatesTemplateIdNotification(accountId: String!, templateId: String!): notification
   \\"Retrieves the information for all recipients in the specified template.\\"
-  Recipients_GetTemplateRecipients(input: Recipients_GetTemplateRecipients_request_Input, accountId: String!, templateId: String!): TemplateRecipients
+  Recipients_GetTemplateRecipients(input: Recipients_GetTemplateRecipients_request_Input, accountId: String!, templateId: String!): EnvelopeRecipients
   \\"Retrieves the bulk recipient file information from a template that has a bulk recipient.\\"
-  Recipients_GetTemplateBulkRecipients(input: Recipients_GetTemplateBulkRecipients_request_Input, accountId: String!, templateId: String!, recipientId: String!): TemplateBulkRecipients
+  Recipients_GetTemplateBulkRecipients(input: Recipients_GetTemplateBulkRecipients_request_Input, accountId: String!, templateId: String!, recipientId: String!): EnvelopeBulkRecipients
   \\"Returns document visibility for the recipients\\"
   Recipients_GetTemplateRecipientDocumentVisibility(accountId: String!, templateId: String!, recipientId: String!): EnvelopeDocumentVisibility
   \\"Gets the tabs information for a signer or sign-in-person recipient in a template.\\"
-  Recipients_GetTemplateRecipientTabs(input: Recipients_GetRecipientTabs_request_Input, accountId: String!, templateId: String!, recipientId: String!): TemplateRecipientTabs
+  Recipients_GetTemplateRecipientTabs(input: Recipients_GetRecipientTabs_request_Input, accountId: String!, templateId: String!, recipientId: String!): EnvelopeRecipientTabs
   \\"Retrieves a list of file types (mime-types and file-extensions) that are not supported for upload through the DocuSign system.\\"
   UnsupportedFileTypes_GetUnsupportedFileTypes(accountId: String!): fileTypeList
   \\"Retrieves the list of users for the specified account.\\\\n\\\\nThe response returns the list of users for the account along with the information about the result set. If the \`additional_info\` query was added to the endpoint and set to **true**, the full user information is returned for each user\\"
@@ -1499,7 +1499,7 @@ type EnvelopeRecipients {
   \\"Specifies a signer that is in the same physical location as a DocuSign user who will act as a Signing Host for the transaction. The recipient added is the Signing Host and new separate Signer Name field appears after Sign in person is selected.\\"
   inPersonSigners: [inPersonSigner]
   \\"Identifies a recipient that can, but is not required to, add name and email information for recipients at the same or subsequent level in the routing order (until subsequent Agents, Editors or Intermediaries recipient types are added).\\"
-  intermediaries: [intermediary]
+  intermediaries: [agent]
   \\"The list of recipient event statuses that will trigger Connect to send updates to the url. It can be a two-part list with:\\\\n\\\\n* recipientEventStatusCode - The recipient status, this can be Sent, Delivered, Completed, Declined, AuthenticationFailed, and AutoResponded.\\\\n* includeDocuments - When set to **true**, the envelope time zone information is included in the message.\\"
   recipientCount: String
   \\"A complex type containing information about the Signer recipient.\\"
@@ -2165,21 +2165,21 @@ type EnvelopeRecipientTabs {
   \\"Specifies a tag on the document where you want to give the recipient the option of declining an envelope. If the recipient clicks the Decline tag during the signing process, the envelope is voided.\\"
   declineTabs: [decline]
   \\"Specifies a location on the document where you want where you want the recipient's email, as entered in the recipient information, to display.\\"
-  emailAddressTabs: [emailAddress]
+  emailAddressTabs: [dateSigned]
   \\"Specifies a tag on the document where you want the recipient to enter an email. Email tags are single-line fields that accept any characters. The system checks that a valid email format (i.e. xxx@yyy.zzz) is entered in the tag. It uses the same parameters as a Text tab, with the validation message and pattern set for email information.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  emailTabs: [email]
+  emailTabs: [date]
   \\"Specifies a tag on the document where you want the envelope ID for to appear. Recipients cannot enter or change the information in this tab, it is for informational purposes only.\\"
   envelopeIdTabs: [envelopeId]
   \\"Specifies tag on a document where you want the recipient's first name to appear. This tag takes the recipient's name, as entered in the recipient information, splits it into sections based on spaces and uses the first section as the first name.\\"
-  firstNameTabs: [firstName]
+  firstNameTabs: [dateSigned]
   \\"A list of formula tabs.\\\\n\\\\nThe value of a formula tab is calculated\\\\nfrom the values of other\\\\nnumber or date tabs in the document.\\\\nWhen the recipient completes the underlying fields,\\\\nthe formula tab calculates and displays the result.\\\\n\\\\nThe \`formula\` property of the tab\\\\ncontains the references\\\\nto the underlying tabs.\\\\nSee [Calculated Fields][calculatedfields]\\\\nin the DocuSign Support Center\\\\nto learn more about formulas.\\\\n\\\\nIf a formula tab contains\\\\na \`paymentDetails\` property,\\\\nthe tab is considered a payment item.\\\\nSee [Requesting Payments Along with Signatures][paymentguide]\\\\nin the DocuSign Support Center\\\\nto learn more about payments.\\\\n\\\\n[calculatedfields]: https://support.docusign.com/en/guides/ndse-user-guide-calculated-fields\\\\n[paymentguide]:     https://support.docusign.com/en/guides/requesting-payments-along-with-signatures\\"
   formulaTabs: [formulaTab]
   \\"Specifies a tag on the document where you want the recipient's name to appear.\\"
-  fullNameTabs: [fullName]
+  fullNameTabs: [dateSigned]
   \\"Specifies a tag location in the document at which a recipient will place their initials. The \`optional\` parameter specifies whether the initials are required or optional.\\"
   initialHereTabs: [initialHere]
   \\"Specifies a tag on a document where you want the recipient's last name to appear. This tag takes the recipient's name, as entered in the recipient information, splits it into sections based on spaces and uses the last section as the last name.\\"
-  lastNameTabs: [lastName]
+  lastNameTabs: [dateSigned]
   \\"Specify this tag to give your recipient a list of options, presented as a drop-down list, from which they can select.\\"
   listTabs: [list]
   \\"Specifies a location on the document where you want to place additional information, in the form of a note, for a recipient.\\"
@@ -2642,158 +2642,6 @@ type decline {
   yPosition: String
 }
 
-type emailAddress {
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nWhen set to **true**, the anchor string does not consider case when matching strings in the document. The default value is **true**.\\\\n-->\\"
-  anchorCaseSensitive: String
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nSpecifies the alignment of anchor tabs with anchor strings. Possible values are **left** or **right**. The default value is **left**.\\\\n-->\\"
-  anchorHorizontalAlignment: String
-  \\"When set to **true**, this tab is ignored if anchorString is not found in the document.\\"
-  anchorIgnoreIfNotPresent: String
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nWhen set to **true**, the anchor string in this tab matches whole words only (strings embedded in other strings are ignored.) The default value is **true**.\\\\n-->\\"
-  anchorMatchWholeWord: String
-  \\"Anchor text information for a radio button.\\"
-  anchorString: String
-  \\"Specifies units of the X and Y offset. Units could be pixels, millimeters, centimeters, or inches.\\"
-  anchorUnits: String
-  \\"Specifies the X axis location of the tab, in achorUnits, relative to the anchorString.\\"
-  anchorXOffset: String
-  \\"Specifies the Y axis location of the tab, in achorUnits, relative to the anchorString.\\"
-  anchorYOffset: String
-  \\"When set to **true**, the information in the tab is bold.\\"
-  bold: String
-  \\"For conditional fields this is the TabLabel of the parent tab that controls this tab's visibility.\\"
-  conditionalParentLabel: String
-  \\"For conditional fields, this is the value of the parent tab that controls the tab's visibility.\\\\n\\\\nIf the parent tab is a Checkbox, Radio button, Optional Signature, or Optional Initial use \\\\\\"on\\\\\\" as the value to show that the parent tab is active.\\"
-  conditionalParentValue: String
-  \\"The DocuSign generated custom tab ID for the custom tab to be applied. This can only be used when adding new tabs for a recipient. When used, the new tab inherits all the custom tab properties.\\"
-  customTabId: String
-  \\"Specifies the document ID number that the tab is placed on. This must refer to an existing Document's ID attribute.\\"
-  documentId: String
-  errorDetails: errorDetails
-  \\"The font to be used for the tab value. Supported Fonts: Arial, Arial, ArialNarrow, Calibri, CourierNew, Garamond, Georgia, Helvetica,   LucidaConsole, Tahoma, TimesNewRoman, Trebuchet, Verdana, MSGothic, MSMincho, Default.\\"
-  font: String
-  \\"The font color used for the information in the tab.\\\\n\\\\nPossible values are: Black, BrightBlue, BrightRed, DarkGreen, DarkRed, Gold, Green, NavyBlue, Purple, or White.\\"
-  fontColor: String
-  \\"The font size used for the information in the tab.\\\\n\\\\nPossible values are: Size7, Size8, Size9, Size10, Size11, Size12, Size14, Size16, Size18, Size20, Size22, Size24, Size26, Size28, Size36, Size48, or Size72.\\"
-  fontSize: String
-  \\"When set to **true**, the information in the tab is italic.\\"
-  italic: String
-  mergeField: mergeField
-  name: String
-  \\"Specifies the page number on which the tab is located.\\\\nMust be 1 for [supplemental documents][supdocs].\\\\n\\\\n[supdocs]: /esign/guide/appendix/glossary.html#supplemental-documents\\"
-  pageNumber: String
-  \\"Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.\\"
-  recipientId: String
-  \\"Indicates the envelope status. Valid values are:\\\\n\\\\n* sent - The envelope is sent to the recipients. \\\\n* created - The envelope is saved as a draft and can be modified and sent later.\\"
-  status: String
-  \\"The unique identifier for the tab. The tabid can be retrieved with the [ML:GET call].\\"
-  tabId: String
-  \\"The label string associated with the tab.\\\\nThe string may be the empty string.\\\\nIf no value is provided, the tab type is used as the value.\\\\n\\\\nMaximum of 500 characters.\\"
-  tabLabel: String
-  tabOrder: String
-  \\"When set to **true**, the sender cannot change any attributes of the recipient. Used only when working with template recipients.\\"
-  templateLocked: String
-  \\"When set to **true**, the sender may not remove the recipient. Used only when working with template recipients.\\"
-  templateRequired: String
-  \\"When set to **true**, the information in the tab is underlined.\\"
-  underline: String
-  \\"Specifies the value of the tab.\\"
-  value: String
-  \\"This indicates the horizontal offset of the object on the page.\\\\nDocuSign uses 72 DPI when determining position.\\\\nRequired. May be zero.\\"
-  xPosition: String
-  \\"This indicates the vertical offset of the object on the page. DocuSign uses 72 DPI when determining position.\\"
-  yPosition: String
-}
-
-type email {
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nWhen set to **true**, the anchor string does not consider case when matching strings in the document. The default value is **true**.\\\\n-->\\"
-  anchorCaseSensitive: String
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nSpecifies the alignment of anchor tabs with anchor strings. Possible values are **left** or **right**. The default value is **left**.\\\\n-->\\"
-  anchorHorizontalAlignment: String
-  \\"When set to **true**, this tab is ignored if anchorString is not found in the document.\\"
-  anchorIgnoreIfNotPresent: String
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nWhen set to **true**, the anchor string in this tab matches whole words only (strings embedded in other strings are ignored.) The default value is **true**.\\\\n-->\\"
-  anchorMatchWholeWord: String
-  \\"Anchor text information for a radio button.\\"
-  anchorString: String
-  \\"Specifies units of the X and Y offset. Units could be pixels, millimeters, centimeters, or inches.\\"
-  anchorUnits: String
-  \\"Specifies the X axis location of the tab, in achorUnits, relative to the anchorString.\\"
-  anchorXOffset: String
-  \\"Specifies the Y axis location of the tab, in achorUnits, relative to the anchorString.\\"
-  anchorYOffset: String
-  \\"When set to **true**, the information in the tab is bold.\\"
-  bold: String
-  \\"When set to **true**, the field appears normally while the recipient is adding or modifying the information in the field, but the data is not visible (the characters are hidden by asterisks) to any other signer or the sender.\\\\n\\\\nWhen an envelope is completed the information is available to the sender through the Form Data link in the DocuSign Console.\\\\n\\\\nThis setting applies only to text boxes and does not affect list boxes, radio buttons, or check boxes.\\"
-  concealValueOnDocument: String
-  \\"For conditional fields this is the TabLabel of the parent tab that controls this tab's visibility.\\"
-  conditionalParentLabel: String
-  \\"For conditional fields, this is the value of the parent tab that controls the tab's visibility.\\\\n\\\\nIf the parent tab is a Checkbox, Radio button, Optional Signature, or Optional Initial use \\\\\\"on\\\\\\" as the value to show that the parent tab is active.\\"
-  conditionalParentValue: String
-  \\"The DocuSign generated custom tab ID for the custom tab to be applied. This can only be used when adding new tabs for a recipient. When used, the new tab inherits all the custom tab properties.\\"
-  customTabId: String
-  \\"When set to **true**, disables the auto sizing of single line text boxes in the signing screen when the signer enters data. If disabled users will only be able enter as much data as the text box can hold. By default this is false. This property only affects single line text boxes.\\"
-  disableAutoSize: String
-  \\"Specifies the document ID number that the tab is placed on. This must refer to an existing Document's ID attribute.\\"
-  documentId: String
-  errorDetails: errorDetails
-  \\"The font to be used for the tab value. Supported Fonts: Arial, Arial, ArialNarrow, Calibri, CourierNew, Garamond, Georgia, Helvetica,   LucidaConsole, Tahoma, TimesNewRoman, Trebuchet, Verdana, MSGothic, MSMincho, Default.\\"
-  font: String
-  \\"The font color used for the information in the tab.\\\\n\\\\nPossible values are: Black, BrightBlue, BrightRed, DarkGreen, DarkRed, Gold, Green, NavyBlue, Purple, or White.\\"
-  fontColor: String
-  \\"The font size used for the information in the tab.\\\\n\\\\nPossible values are: Size7, Size8, Size9, Size10, Size11, Size12, Size14, Size16, Size18, Size20, Size22, Size24, Size26, Size28, Size36, Size48, or Size72.\\"
-  fontSize: String
-  \\"When set to **true**, the information in the tab is italic.\\"
-  italic: String
-  \\"When set to **true**, the signer cannot change the data of the custom tab.\\"
-  locked: String
-  \\"An optional value that describes the maximum length of the property when the property is a string.\\"
-  maxLength: Int
-  mergeField: mergeField
-  name: String
-  \\"The initial value of the tab when it was sent to the recipient.\\"
-  originalValue: String
-  \\"Specifies the page number on which the tab is located.\\\\nMust be 1 for [supplemental documents][supdocs].\\\\n\\\\n[supdocs]: /esign/guide/appendix/glossary.html#supplemental-documents\\"
-  pageNumber: String
-  \\"Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.\\"
-  recipientId: String
-  \\"When set to **true** and shared is true, information must be entered in this field to complete the envelope.\\"
-  requireAll: String
-  \\"Optional element for field markup. When set to **true**, the signer is required to initial when they modify a shared field.\\"
-  requireInitialOnSharedChange: String
-  \\"When set to **true**, the signer is required to fill out this tab\\"
-  required: String
-  \\"When set to **true**, the sender must populate the tab before an envelope can be sent using the template. \\\\n\\\\nThis value tab can only be changed by modifying (PUT) the template. \\\\n\\\\nTabs with a \`senderRequired\` value of true cannot be deleted from an envelope.\\"
-  senderRequired: String
-  \\"When set to **true**, this custom tab is shared.\\"
-  shared: String
-  \\"Indicates the envelope status. Valid values are:\\\\n\\\\n* sent - The envelope is sent to the recipients. \\\\n* created - The envelope is saved as a draft and can be modified and sent later.\\"
-  status: String
-  \\"The unique identifier for the tab. The tabid can be retrieved with the [ML:GET call].\\"
-  tabId: String
-  \\"The label string associated with the tab.\\\\nThe string may be the empty string.\\\\nIf no value is provided, the tab type is used as the value.\\\\n\\\\nMaximum of 500 characters.\\"
-  tabLabel: String
-  tabOrder: String
-  \\"When set to **true**, the sender cannot change any attributes of the recipient. Used only when working with template recipients.\\"
-  templateLocked: String
-  \\"When set to **true**, the sender may not remove the recipient. Used only when working with template recipients.\\"
-  templateRequired: String
-  \\"When set to **true**, the information in the tab is underlined.\\"
-  underline: String
-  \\"The message displayed if the custom tab fails input validation (either custom of embedded).\\"
-  validationMessage: String
-  \\"A regular expressionn used to validate input for the tab.\\"
-  validationPattern: String
-  \\"Specifies the value of the tab.\\"
-  value: String
-  \\"Width of the tab in pixels.\\"
-  width: Int
-  \\"This indicates the horizontal offset of the object on the page.\\\\nDocuSign uses 72 DPI when determining position.\\\\nRequired. May be zero.\\"
-  xPosition: String
-  \\"This indicates the vertical offset of the object on the page. DocuSign uses 72 DPI when determining position.\\"
-  yPosition: String
-}
-
 type envelopeId {
   \\"Reserved for DocuSign.\\\\n<!--\\\\nWhen set to **true**, the anchor string does not consider case when matching strings in the document. The default value is **true**.\\\\n-->\\"
   anchorCaseSensitive: String
@@ -2849,69 +2697,6 @@ type envelopeId {
   templateRequired: String
   \\"When set to **true**, the information in the tab is underlined.\\"
   underline: String
-  \\"This indicates the horizontal offset of the object on the page.\\\\nDocuSign uses 72 DPI when determining position.\\\\nRequired. May be zero.\\"
-  xPosition: String
-  \\"This indicates the vertical offset of the object on the page. DocuSign uses 72 DPI when determining position.\\"
-  yPosition: String
-}
-
-type firstName {
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nWhen set to **true**, the anchor string does not consider case when matching strings in the document. The default value is **true**.\\\\n-->\\"
-  anchorCaseSensitive: String
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nSpecifies the alignment of anchor tabs with anchor strings. Possible values are **left** or **right**. The default value is **left**.\\\\n-->\\"
-  anchorHorizontalAlignment: String
-  \\"When set to **true**, this tab is ignored if anchorString is not found in the document.\\"
-  anchorIgnoreIfNotPresent: String
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nWhen set to **true**, the anchor string in this tab matches whole words only (strings embedded in other strings are ignored.) The default value is **true**.\\\\n-->\\"
-  anchorMatchWholeWord: String
-  \\"Anchor text information for a radio button.\\"
-  anchorString: String
-  \\"Specifies units of the X and Y offset. Units could be pixels, millimeters, centimeters, or inches.\\"
-  anchorUnits: String
-  \\"Specifies the X axis location of the tab, in achorUnits, relative to the anchorString.\\"
-  anchorXOffset: String
-  \\"Specifies the Y axis location of the tab, in achorUnits, relative to the anchorString.\\"
-  anchorYOffset: String
-  \\"When set to **true**, the information in the tab is bold.\\"
-  bold: String
-  \\"For conditional fields this is the TabLabel of the parent tab that controls this tab's visibility.\\"
-  conditionalParentLabel: String
-  \\"For conditional fields, this is the value of the parent tab that controls the tab's visibility.\\\\n\\\\nIf the parent tab is a Checkbox, Radio button, Optional Signature, or Optional Initial use \\\\\\"on\\\\\\" as the value to show that the parent tab is active.\\"
-  conditionalParentValue: String
-  \\"The DocuSign generated custom tab ID for the custom tab to be applied. This can only be used when adding new tabs for a recipient. When used, the new tab inherits all the custom tab properties.\\"
-  customTabId: String
-  \\"Specifies the document ID number that the tab is placed on. This must refer to an existing Document's ID attribute.\\"
-  documentId: String
-  errorDetails: errorDetails
-  \\"The font to be used for the tab value. Supported Fonts: Arial, Arial, ArialNarrow, Calibri, CourierNew, Garamond, Georgia, Helvetica,   LucidaConsole, Tahoma, TimesNewRoman, Trebuchet, Verdana, MSGothic, MSMincho, Default.\\"
-  font: String
-  \\"The font color used for the information in the tab.\\\\n\\\\nPossible values are: Black, BrightBlue, BrightRed, DarkGreen, DarkRed, Gold, Green, NavyBlue, Purple, or White.\\"
-  fontColor: String
-  \\"The font size used for the information in the tab.\\\\n\\\\nPossible values are: Size7, Size8, Size9, Size10, Size11, Size12, Size14, Size16, Size18, Size20, Size22, Size24, Size26, Size28, Size36, Size48, or Size72.\\"
-  fontSize: String
-  \\"When set to **true**, the information in the tab is italic.\\"
-  italic: String
-  mergeField: mergeField
-  name: String
-  \\"Specifies the page number on which the tab is located.\\\\nMust be 1 for [supplemental documents][supdocs].\\\\n\\\\n[supdocs]: /esign/guide/appendix/glossary.html#supplemental-documents\\"
-  pageNumber: String
-  \\"Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.\\"
-  recipientId: String
-  \\"Indicates the envelope status. Valid values are:\\\\n\\\\n* sent - The envelope is sent to the recipients. \\\\n* created - The envelope is saved as a draft and can be modified and sent later.\\"
-  status: String
-  \\"The unique identifier for the tab. The tabid can be retrieved with the [ML:GET call].\\"
-  tabId: String
-  \\"The label string associated with the tab.\\\\nThe string may be the empty string.\\\\nIf no value is provided, the tab type is used as the value.\\\\n\\\\nMaximum of 500 characters.\\"
-  tabLabel: String
-  tabOrder: String
-  \\"When set to **true**, the sender cannot change any attributes of the recipient. Used only when working with template recipients.\\"
-  templateLocked: String
-  \\"When set to **true**, the sender may not remove the recipient. Used only when working with template recipients.\\"
-  templateRequired: String
-  \\"When set to **true**, the information in the tab is underlined.\\"
-  underline: String
-  \\"Specifies the value of the tab.\\"
-  value: String
   \\"This indicates the horizontal offset of the object on the page.\\\\nDocuSign uses 72 DPI when determining position.\\\\nRequired. May be zero.\\"
   xPosition: String
   \\"This indicates the vertical offset of the object on the page. DocuSign uses 72 DPI when determining position.\\"
@@ -3052,69 +2837,6 @@ type money {
   displayAmount: String
 }
 
-type fullName {
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nWhen set to **true**, the anchor string does not consider case when matching strings in the document. The default value is **true**.\\\\n-->\\"
-  anchorCaseSensitive: String
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nSpecifies the alignment of anchor tabs with anchor strings. Possible values are **left** or **right**. The default value is **left**.\\\\n-->\\"
-  anchorHorizontalAlignment: String
-  \\"When set to **true**, this tab is ignored if anchorString is not found in the document.\\"
-  anchorIgnoreIfNotPresent: String
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nWhen set to **true**, the anchor string in this tab matches whole words only (strings embedded in other strings are ignored.) The default value is **true**.\\\\n-->\\"
-  anchorMatchWholeWord: String
-  \\"Anchor text information for a radio button.\\"
-  anchorString: String
-  \\"Specifies units of the X and Y offset. Units could be pixels, millimeters, centimeters, or inches.\\"
-  anchorUnits: String
-  \\"Specifies the X axis location of the tab, in achorUnits, relative to the anchorString.\\"
-  anchorXOffset: String
-  \\"Specifies the Y axis location of the tab, in achorUnits, relative to the anchorString.\\"
-  anchorYOffset: String
-  \\"When set to **true**, the information in the tab is bold.\\"
-  bold: String
-  \\"For conditional fields this is the TabLabel of the parent tab that controls this tab's visibility.\\"
-  conditionalParentLabel: String
-  \\"For conditional fields, this is the value of the parent tab that controls the tab's visibility.\\\\n\\\\nIf the parent tab is a Checkbox, Radio button, Optional Signature, or Optional Initial use \\\\\\"on\\\\\\" as the value to show that the parent tab is active.\\"
-  conditionalParentValue: String
-  \\"The DocuSign generated custom tab ID for the custom tab to be applied. This can only be used when adding new tabs for a recipient. When used, the new tab inherits all the custom tab properties.\\"
-  customTabId: String
-  \\"Specifies the document ID number that the tab is placed on. This must refer to an existing Document's ID attribute.\\"
-  documentId: String
-  errorDetails: errorDetails
-  \\"The font to be used for the tab value. Supported Fonts: Arial, Arial, ArialNarrow, Calibri, CourierNew, Garamond, Georgia, Helvetica,   LucidaConsole, Tahoma, TimesNewRoman, Trebuchet, Verdana, MSGothic, MSMincho, Default.\\"
-  font: String
-  \\"The font color used for the information in the tab.\\\\n\\\\nPossible values are: Black, BrightBlue, BrightRed, DarkGreen, DarkRed, Gold, Green, NavyBlue, Purple, or White.\\"
-  fontColor: String
-  \\"The font size used for the information in the tab.\\\\n\\\\nPossible values are: Size7, Size8, Size9, Size10, Size11, Size12, Size14, Size16, Size18, Size20, Size22, Size24, Size26, Size28, Size36, Size48, or Size72.\\"
-  fontSize: String
-  \\"When set to **true**, the information in the tab is italic.\\"
-  italic: String
-  mergeField: mergeField
-  name: String
-  \\"Specifies the page number on which the tab is located.\\\\nMust be 1 for [supplemental documents][supdocs].\\\\n\\\\n[supdocs]: /esign/guide/appendix/glossary.html#supplemental-documents\\"
-  pageNumber: String
-  \\"Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.\\"
-  recipientId: String
-  \\"Indicates the envelope status. Valid values are:\\\\n\\\\n* sent - The envelope is sent to the recipients. \\\\n* created - The envelope is saved as a draft and can be modified and sent later.\\"
-  status: String
-  \\"The unique identifier for the tab. The tabid can be retrieved with the [ML:GET call].\\"
-  tabId: String
-  \\"The label string associated with the tab.\\\\nThe string may be the empty string.\\\\nIf no value is provided, the tab type is used as the value.\\\\n\\\\nMaximum of 500 characters.\\"
-  tabLabel: String
-  tabOrder: String
-  \\"When set to **true**, the sender cannot change any attributes of the recipient. Used only when working with template recipients.\\"
-  templateLocked: String
-  \\"When set to **true**, the sender may not remove the recipient. Used only when working with template recipients.\\"
-  templateRequired: String
-  \\"When set to **true**, the information in the tab is underlined.\\"
-  underline: String
-  \\"Specifies the value of the tab.\\"
-  value: String
-  \\"This indicates the horizontal offset of the object on the page.\\\\nDocuSign uses 72 DPI when determining position.\\\\nRequired. May be zero.\\"
-  xPosition: String
-  \\"This indicates the vertical offset of the object on the page. DocuSign uses 72 DPI when determining position.\\"
-  yPosition: String
-}
-
 type initialHere {
   \\"Reserved for DocuSign.\\\\n<!--\\\\nWhen set to **true**, the anchor string does not consider case when matching strings in the document. The default value is **true**.\\\\n-->\\"
   anchorCaseSensitive: String
@@ -3162,69 +2884,6 @@ type initialHere {
   templateLocked: String
   \\"When set to **true**, the sender may not remove the recipient. Used only when working with template recipients.\\"
   templateRequired: String
-  \\"This indicates the horizontal offset of the object on the page.\\\\nDocuSign uses 72 DPI when determining position.\\\\nRequired. May be zero.\\"
-  xPosition: String
-  \\"This indicates the vertical offset of the object on the page. DocuSign uses 72 DPI when determining position.\\"
-  yPosition: String
-}
-
-type lastName {
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nWhen set to **true**, the anchor string does not consider case when matching strings in the document. The default value is **true**.\\\\n-->\\"
-  anchorCaseSensitive: String
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nSpecifies the alignment of anchor tabs with anchor strings. Possible values are **left** or **right**. The default value is **left**.\\\\n-->\\"
-  anchorHorizontalAlignment: String
-  \\"When set to **true**, this tab is ignored if anchorString is not found in the document.\\"
-  anchorIgnoreIfNotPresent: String
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nWhen set to **true**, the anchor string in this tab matches whole words only (strings embedded in other strings are ignored.) The default value is **true**.\\\\n-->\\"
-  anchorMatchWholeWord: String
-  \\"Anchor text information for a radio button.\\"
-  anchorString: String
-  \\"Specifies units of the X and Y offset. Units could be pixels, millimeters, centimeters, or inches.\\"
-  anchorUnits: String
-  \\"Specifies the X axis location of the tab, in achorUnits, relative to the anchorString.\\"
-  anchorXOffset: String
-  \\"Specifies the Y axis location of the tab, in achorUnits, relative to the anchorString.\\"
-  anchorYOffset: String
-  \\"When set to **true**, the information in the tab is bold.\\"
-  bold: String
-  \\"For conditional fields this is the TabLabel of the parent tab that controls this tab's visibility.\\"
-  conditionalParentLabel: String
-  \\"For conditional fields, this is the value of the parent tab that controls the tab's visibility.\\\\n\\\\nIf the parent tab is a Checkbox, Radio button, Optional Signature, or Optional Initial use \\\\\\"on\\\\\\" as the value to show that the parent tab is active.\\"
-  conditionalParentValue: String
-  \\"The DocuSign generated custom tab ID for the custom tab to be applied. This can only be used when adding new tabs for a recipient. When used, the new tab inherits all the custom tab properties.\\"
-  customTabId: String
-  \\"Specifies the document ID number that the tab is placed on. This must refer to an existing Document's ID attribute.\\"
-  documentId: String
-  errorDetails: errorDetails
-  \\"The font to be used for the tab value. Supported Fonts: Arial, Arial, ArialNarrow, Calibri, CourierNew, Garamond, Georgia, Helvetica,   LucidaConsole, Tahoma, TimesNewRoman, Trebuchet, Verdana, MSGothic, MSMincho, Default.\\"
-  font: String
-  \\"The font color used for the information in the tab.\\\\n\\\\nPossible values are: Black, BrightBlue, BrightRed, DarkGreen, DarkRed, Gold, Green, NavyBlue, Purple, or White.\\"
-  fontColor: String
-  \\"The font size used for the information in the tab.\\\\n\\\\nPossible values are: Size7, Size8, Size9, Size10, Size11, Size12, Size14, Size16, Size18, Size20, Size22, Size24, Size26, Size28, Size36, Size48, or Size72.\\"
-  fontSize: String
-  \\"When set to **true**, the information in the tab is italic.\\"
-  italic: String
-  mergeField: mergeField
-  name: String
-  \\"Specifies the page number on which the tab is located.\\\\nMust be 1 for [supplemental documents][supdocs].\\\\n\\\\n[supdocs]: /esign/guide/appendix/glossary.html#supplemental-documents\\"
-  pageNumber: String
-  \\"Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.\\"
-  recipientId: String
-  \\"Indicates the envelope status. Valid values are:\\\\n\\\\n* sent - The envelope is sent to the recipients. \\\\n* created - The envelope is saved as a draft and can be modified and sent later.\\"
-  status: String
-  \\"The unique identifier for the tab. The tabid can be retrieved with the [ML:GET call].\\"
-  tabId: String
-  \\"The label string associated with the tab.\\\\nThe string may be the empty string.\\\\nIf no value is provided, the tab type is used as the value.\\\\n\\\\nMaximum of 500 characters.\\"
-  tabLabel: String
-  tabOrder: String
-  \\"When set to **true**, the sender cannot change any attributes of the recipient. Used only when working with template recipients.\\"
-  templateLocked: String
-  \\"When set to **true**, the sender may not remove the recipient. Used only when working with template recipients.\\"
-  templateRequired: String
-  \\"When set to **true**, the information in the tab is underlined.\\"
-  underline: String
-  \\"Specifies the value of the tab.\\"
-  value: String
   \\"This indicates the horizontal offset of the object on the page.\\\\nDocuSign uses 72 DPI when determining position.\\\\nRequired. May be zero.\\"
   xPosition: String
   \\"This indicates the vertical offset of the object on the page. DocuSign uses 72 DPI when determining position.\\"
@@ -4066,81 +3725,6 @@ type zip {
   yPosition: String
 }
 
-type intermediary {
-  \\"If a value is provided, the recipient must enter the value as the access code to view and sign the envelope. \\\\n\\\\nMaximum Length: 50 characters and it must conform to the account's access code format setting.\\\\n\\\\nIf blank, but the signer \`accessCode\` property is set in the envelope, then that value is used.\\\\n\\\\nIf blank and the signer \`accessCode\` property is not set, then the access code is not required.\\"
-  accessCode: String
-  \\"This Optional attribute indicates that the access code will be added to the email sent to the recipient; this nullifies the Security measure of Access Code on the recipient.\\"
-  addAccessCodeToEmail: String
-  \\"Specifies whether the recipient is embedded or remote. \\\\n\\\\nIf the \`clientUserId\` property is not null then the recipient is embedded. Use this field to associate the signer with their userId in your app. Authenticating the user is the responsibility of your app when you use embedded signing.\\\\n\\\\nNote: if the \`clientUserId\` property is set and either \`SignerMustHaveAccount\` or \`SignerMustLoginToSign\` property of the account settings is set to  **true**, an error is generated on sending. \\\\n\\\\nMaximum length: 100 characters.\\"
-  clientUserId: String
-  \\"An optional array of strings that allows the sender to provide custom data about the recipient. This information is returned in the envelope status but otherwise not used by DocuSign. Each customField string can be a maximum of 100 characters.\\"
-  customFields: [String]
-  \\"The date and time the recipient declined the document.\\"
-  declinedDateTime: String
-  \\"The reason the recipient declined the document.\\"
-  declinedReason: String
-  \\"Reserved: For DocuSign use only.\\"
-  deliveredDateTime: String
-  \\"Reserved: For DocuSign use only.\\"
-  deliveryMethod: String
-  documentVisibility: [documentVisibility]
-  \\"Email id of the recipient. Notification of the document to sign is sent to this email id. \\\\n\\\\nMaximum length: 100 characters.\\"
-  email: String
-  emailNotification: recipientEmailNotification
-  emailRecipientPostSigningURL: String
-  \\"Specifies a sender provided valid URL string for redirecting an embedded recipient. When using this option, the embedded recipient still receives an email from DocuSign, just as a remote recipient would. When the document link in the email is clicked the recipient is redirected, through DocuSign, to the supplied URL to complete their actions. When routing to the URL, the sender's system (the server responding to the URL) must request a recipient token to launch a signing session. \\\\n\\\\nIf set to \`SIGN_AT_DOCUSIGN\`, the recipient is directed to an embedded signing or viewing process directly at DocuSign. The signing or viewing action is initiated by the DocuSign system and the transaction activity and Certificate of Completion records will reflect this. In all other ways the process is identical to an embedded signing or viewing operation that is launched by any partner.\\\\n\\\\nIt is important to remember that in a typical embedded workflow the authentication of an embedded recipient is the responsibility of the sending application, DocuSign expects that senders will follow their own process for establishing the recipient's identity. In this workflow the recipient goes through the sending application before the embedded signing or viewing process in initiated. However, when the sending application sets \`EmbeddedRecipientStartURL=SIGN_AT_DOCUSIGN\`, the recipient goes directly to the embedded signing or viewing process bypassing the sending application and any authentication steps the sending application would use. In this case, DocuSign recommends that you use one of the normal DocuSign authentication features (Access Code, Phone Authentication, SMS Authentication, etc.) to verify the identity of the recipient.\\\\n\\\\nIf the \`clientUserId\` property is NOT set, and the \`embeddedRecipientStartURL\` is set, DocuSign will ignore the redirect URL and launch the standard signing process for the email recipient. Information can be appended to the embedded recipient start URL using merge fields. The available merge fields items are: envelopeId, recipientId, recipientName, recipientEmail, and customFields. The \`customFields\` property must be set fort the recipient or envelope. The merge fields are enclosed in double brackets. \\\\n\\\\n*Example*: \\\\n\\\\n\`http://senderHost/[[mergeField1]]/ beginSigningSession? [[mergeField2]]&[[mergeField3]]\`\\"
-  embeddedRecipientStartURL: String
-  errorDetails: errorDetails
-  \\"Specifies the documents that are not visible to this recipient. Document Visibility must be enabled for the account and the \`enforceSignerVisibility\` property must be set to **true** for the envelope to use this.\\\\n\\\\nWhen enforce signer visibility is enabled, documents with tabs can only be viewed by signers that have a tab on that document. Recipients that have an administrative role (Agent, Editor, or Intermediaries) or informational role (Certified Deliveries or Carbon Copies) can always see all the documents in an envelope, unless they are specifically excluded using this setting when an envelope is sent. Documents that do not have tabs are always visible to all recipients, unless they are specifically excluded using this setting when an envelope is sent.\\"
-  excludedDocuments: [String]
-  \\"Reserved:\\"
-  faxNumber: String
-  \\"Specifies authentication check by name. The names used here must be the same as the authentication type names used by the account (these name can also be found in the web console sending interface in the Identify list for a recipient,) This overrides any default authentication setting.\\\\n\\\\n*Example*: Your account has ID Check and SMS Authentication available and in the web console Identify list these appear as 'ID Check $' and 'SMS Auth $'. To use ID check in an envelope, the idCheckConfigurationName should be 'ID Check '. If you wanted to use SMS, it would be 'SMS Auth $' and you would need to add you would need to add phone number information to the \`smsAuthentication\` node.\\"
-  idCheckConfigurationName: String
-  idCheckInformationInput: idCheckInformationInput
-  \\"When set to **true** and the envelope recipient creates a DocuSign account after signing, the Manage Account Email Notification settings are used as the default settings for the recipient's account.\\"
-  inheritEmailNotificationConfiguration: String
-  name: String
-  \\"A note sent to the recipient in the signing email.\\\\nThis note is unique to this recipient.\\\\nIn the user interface,\\\\nit appears near the upper left corner\\\\nof the document\\\\non the signing screen.\\\\n\\\\nMaximum Length: 1000 characters.\\"
-  note: String
-  phoneAuthentication: recipientPhoneAuthentication
-  \\"Reserved:\\"
-  recipientAttachments: [recipientAttachment]
-  recipientAuthenticationStatus: authenticationStatus
-  \\"Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.\\"
-  recipientId: String
-  recipientIdGuid: String
-  \\"When set to **true**, the recipient is required to use the specified ID check method (including Phone and SMS authentication) to validate their identity.\\"
-  requireIdLookup: String
-  \\"Optional element. Specifies the role name associated with the recipient.<br/><br/>This is required when working with template recipients.\\"
-  roleName: String
-  \\"Specifies the routing order of the recipient in the envelope.\\"
-  routingOrder: String
-  samlAuthentication: recipientSAMLAuthentication
-  \\"The date and time the envelope was sent.\\"
-  sentDateTime: String
-  \\"Reserved: For DocuSign use only.\\"
-  signedDateTime: String
-  \\"When set to **true** and the feature is enabled in the sender's account, the signing recipient is required to draw signatures and initials at each signature/initial tab ( instead of adopting a signature/initial style or only drawing a signature/initial once).\\"
-  signingGroupId: String
-  \\"The display name for the signing group. \\\\n\\\\nMaximum Length: 100 characters.\\"
-  signingGroupName: String
-  \\"A complex type that contains information about users in the signing group.\\"
-  signingGroupUsers: [userInfo]
-  smsAuthentication: recipientSMSAuthentication
-  \\"Lists the social ID type that can be used for recipient authentication.\\"
-  socialAuthentications: [socialAuthentication]
-  \\"Indicates the envelope status. Valid values are:\\\\n\\\\n* sent - The envelope is sent to the recipients. \\\\n* created - The envelope is saved as a draft and can be modified and sent later.\\"
-  status: String
-  \\"When set to **true**, the sender cannot change any attributes of the recipient. Used only when working with template recipients.\\"
-  templateLocked: String
-  \\"When set to **true**, the sender may not remove the recipient. Used only when working with template recipients.\\"
-  templateRequired: String
-  totalTabCount: String
-  \\"The user ID of the user being accessed. Generally this is the user ID of the authenticated user, but if the authenticated user is an Admin on the account, this may be another user the Admin user is accessing.\\"
-  userId: String
-}
-
 type signer {
   \\"If a value is provided, the recipient must enter the value as the access code to view and sign the envelope. \\\\n\\\\nMaximum Length: 50 characters and it must conform to the account's access code format setting.\\\\n\\\\nIf blank, but the signer \`accessCode\` property is set in the envelope, then that value is used.\\\\n\\\\nIf blank and the signer \`accessCode\` property is not set, then the access code is not required.\\"
   accessCode: String
@@ -4319,13 +3903,6 @@ type envelopeAuditEvent {
   eventFields: [nameValue]
 }
 
-type customFieldsEnvelope {
-  \\"An array of list custom fields.\\"
-  listCustomFields: [listCustomField]
-  \\"An array of text custom fields.\\"
-  textCustomFields: [textCustomField]
-}
-
 \\"Envelope documents\\"
 type EnvelopeDocuments {
   envelopeDocuments: [envelopeDocument]
@@ -4447,58 +4024,6 @@ input Pages_GetPageImage_request_Input {
   show_changes: String
 }
 
-type EnvelopeDocumentTabs {
-  \\"A tab that allows the recipient to approve documents\\\\nwithout placing a signature or initials on the\\\\ndocument. If the recipient clicks the Approve tab during the signing\\\\nprocess, the recipient is considered to have signed the document. No\\\\ninformation is shown on the document for the approval, but it is\\\\nrecorded as a signature in the envelope history.\\"
-  approveTabs: [approve]
-  \\"Specifies a tag on the document in a location where the recipient can select an option.\\"
-  checkboxTabs: [checkbox]
-  \\"Specifies a tag on the document where you want the recipient's company name to appear.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  companyTabs: [company]
-  \\"Specifies a tab on the document where the date the document was signed will automatically appear.\\"
-  dateSignedTabs: [dateSigned]
-  \\"Specifies a tab on the document where you want the recipient to enter a date. Date tabs are single-line fields that allow date information to be entered in any format. The tooltip for this tab recommends entering the date as MM/DD/YYYY, but this is not enforced. The format entered by the signer is retained. \\\\n\\\\nIf you need a particular date format enforced, DocuSign recommends using a Text tab with a Validation Pattern and Validation Message to enforce the format.\\"
-  dateTabs: [date]
-  \\"Specifies a tag on the document where you want to give the recipient the option of declining an envelope. If the recipient clicks the Decline tag during the signing process, the envelope is voided.\\"
-  declineTabs: [decline]
-  \\"Specifies a location on the document where you want where you want the recipient's email, as entered in the recipient information, to display.\\"
-  emailAddressTabs: [emailAddress]
-  \\"Specifies a tag on the document where you want the recipient to enter an email. Email tags are single-line fields that accept any characters. The system checks that a valid email format (i.e. xxx@yyy.zzz) is entered in the tag. It uses the same parameters as a Text tab, with the validation message and pattern set for email information.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  emailTabs: [email]
-  \\"Specifies a tag on the document where you want the envelope ID for to appear. Recipients cannot enter or change the information in this tab, it is for informational purposes only.\\"
-  envelopeIdTabs: [envelopeId]
-  \\"Specifies tag on a document where you want the recipient's first name to appear. This tag takes the recipient's name, as entered in the recipient information, splits it into sections based on spaces and uses the first section as the first name.\\"
-  firstNameTabs: [firstName]
-  \\"A list of formula tabs.\\\\n\\\\nThe value of a formula tab is calculated\\\\nfrom the values of other\\\\nnumber or date tabs in the document.\\\\nWhen the recipient completes the underlying fields,\\\\nthe formula tab calculates and displays the result.\\\\n\\\\nThe \`formula\` property of the tab\\\\ncontains the references\\\\nto the underlying tabs.\\\\nSee [Calculated Fields][calculatedfields]\\\\nin the DocuSign Support Center\\\\nto learn more about formulas.\\\\n\\\\nIf a formula tab contains\\\\na \`paymentDetails\` property,\\\\nthe tab is considered a payment item.\\\\nSee [Requesting Payments Along with Signatures][paymentguide]\\\\nin the DocuSign Support Center\\\\nto learn more about payments.\\\\n\\\\n[calculatedfields]: https://support.docusign.com/en/guides/ndse-user-guide-calculated-fields\\\\n[paymentguide]:     https://support.docusign.com/en/guides/requesting-payments-along-with-signatures\\"
-  formulaTabs: [formulaTab]
-  \\"Specifies a tag on the document where you want the recipient's name to appear.\\"
-  fullNameTabs: [fullName]
-  \\"Specifies a tag location in the document at which a recipient will place their initials. The \`optional\` parameter specifies whether the initials are required or optional.\\"
-  initialHereTabs: [initialHere]
-  \\"Specifies a tag on a document where you want the recipient's last name to appear. This tag takes the recipient's name, as entered in the recipient information, splits it into sections based on spaces and uses the last section as the last name.\\"
-  lastNameTabs: [lastName]
-  \\"Specify this tag to give your recipient a list of options, presented as a drop-down list, from which they can select.\\"
-  listTabs: [list]
-  \\"Specifies a location on the document where you want to place additional information, in the form of a note, for a recipient.\\"
-  noteTabs: [note]
-  \\"Specifies a tag on the document where you want the recipient to enter a number. It uses the same parameters as a Text tab, with the validation message and pattern set for number information.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  numberTabs: [number]
-  \\"Specifies a tag on the document in a location where the recipient can select one option from a group of options using a radio button. The radio buttons do not have to be on the same page in a document.\\"
-  radioGroupTabs: [radioGroup]
-  \\"A complex type the contains information about the tag that specifies where the recipient places their signature in the document. The \\\\\\"optional\\\\\\" parameter sets if the signature is required or optional.\\"
-  signHereTabs: [signHere]
-  \\"Specifies a tag on the document when you want the recipient to add supporting documents to an envelope.\\"
-  signerAttachmentTabs: [signerAttachment]
-  \\"Specifies a tag on the document where you want the recipient to enter a Social Security Number (SSN). A SSN can be typed with or without dashes. It uses the same parameters as a Text tab, with the validation message and pattern set for SSN information.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  ssnTabs: [ssn]
-  \\"Specifies a that that is an adaptable field that allows the recipient to enter different text information.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  textTabs: [text]
-  \\"Specifies a tag on the document where you want the recipient's title to appear.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  titleTabs: [title]
-  viewTabs: [view]
-  \\"Specifies a tag on the document where you want the recipient to enter a ZIP code. The ZIP code can be a five numbers or the ZIP+4 format with nine numbers. The zip code can be typed with or without dashes. It uses the same parameters as a Text tab, with the validation message and pattern set for ZIP code information.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  zipTabs: [zip]
-}
-
 input Tabs_GetDocumentTabs_request_Input {
   page_numbers: String
 }
@@ -4604,16 +4129,10 @@ type bulkRecipient {
   recipientSignatureProviderInfo: [bulkRecipientSignatureProvider]
   rowNumber: String
   \\"Specifies values used to populate recipient tabs with information. This allows each bulk recipient signer to have different values for their associated tabs. Any number of \`tabLabel\` columns can be added to the bulk recipient file.\\\\n\\\\nThe information used in the bulk recipient file header must be the same as the \`tabLabel\` for the tab.\\\\n\\\\nThe values entered in this column are automatically inserted into the corresponding tab for the recipient in the same row.\\\\n\\\\nNote that this option cannot be used for tabs that do not have data or that are automatically populated data such as Signature, Full Name, Email Address, Company, Title, and Date Signed tabs.\\"
-  tabLabels: [bulkRecipientTabLabel]
+  tabLabels: [bulkRecipientSignatureProvider]
 }
 
 type bulkRecipientSignatureProvider {
-  name: String
-  \\"Specifies the value of the tab.\\"
-  value: String
-}
-
-type bulkRecipientTabLabel {
   name: String
   \\"Specifies the value of the tab.\\"
   value: String
@@ -4624,60 +4143,6 @@ input Recipients_GetBulkRecipients_request_Input {
   include_tabs: String
   \\"Reserved for DocuSign.\\"
   start_position: String
-}
-
-\\"Envelope consumer disclosures\\"
-type EnvelopeConsumerDisclosures {
-  \\"A GUID identifying the account associated with the consumer disclosure\\"
-  accountEsignId: String
-  \\"Indicates whether the customer can withdraw their acceptance of the consumer disclosure.\\"
-  allowCDWithdraw: String
-  allowCDWithdrawMetadata: settingsMetadata
-  changeEmail: String
-  changeEmailOther: String
-  \\"The name of the company associated with the consumer disclosure.\\"
-  companyName: String
-  \\"The phone number of the company associated with the consumer disclosure.\\"
-  companyPhone: String
-  copyCostPerPage: String
-  \\"Specifies the fee collection method for cases in which the customer requires paper copies of the document.\\\\n\\\\nMaximum Length: 255 characters\\"
-  copyFeeCollectionMethod: String
-  copyRequestEmail: String
-  custom: String
-  enableEsign: String
-  \\"The Electronic Record and Signature Disclosure text. The disclosure text includes the html formatting.\\"
-  esignAgreement: String
-  esignText: String
-  languageCode: String
-  mustAgreeToEsign: String
-  pdfId: String
-  useBrand: String
-  useConsumerDisclosureWithinAccount: String
-  useConsumerDisclosureWithinAccountMetadata: settingsMetadata
-  \\"Contains the first address line of the postal address to which a customer can send a consent withdrawal notification.\\\\n\\\\nMaximum length: 100 characters.\\"
-  withdrawAddressLine1: String
-  \\"Contains the second address line of the postal address to which a customer can send a consent withdrawal notification.\\\\n\\\\nMaximum length: 100 characters.\\"
-  withdrawAddressLine2: String
-  \\"Indicates whether the customer can withdraw consent by email.\\"
-  withdrawByEmail: String
-  \\"Indicates whether the customer can withdraw consent by postal mail.\\"
-  withdrawByMail: String
-  \\"Indicates whether the customer can withdraw consent by phone.\\"
-  withdrawByPhone: String
-  \\"Contains the city of the postal address to which a customer can send a consent withdrawal notification.\\\\n\\\\nMaximum length: 50 characters.\\"
-  withdrawCity: String
-  \\"Indicates the consequences of withdrawing consent.\\"
-  withdrawConsequences: String
-  \\"Contains the email address to which a customer can send a consent withdrawal notification.\\\\n\\\\nMaximum length: 100 characters.\\"
-  withdrawEmail: String
-  \\"Indicates other information need to withdraw consent.\\\\n\\\\nMaximum length: 255 characters.\\"
-  withdrawOther: String
-  \\"Contains the phone number which a customer can call to register consent withdrawal notification.\\\\n\\\\nMaximum length: 20 characters.\\"
-  withdrawPhone: String
-  \\"Contains the postal code of the postal address to which a customer can send a consent withdrawal notification.\\\\n\\\\nMaximum length: 20 characters.\\"
-  withdrawPostalCode: String
-  \\"Contains the state of the postal address to which a customer can send a consent withdrawal notification.\\"
-  withdrawState: String
 }
 
 input ConsumerDisclosure_GetConsumerDisclosureEnvelopeIdRecipientId_request_Input {
@@ -4933,16 +4398,6 @@ input Groups_GetGroups_request_Input {
   search_text: String
   \\"Starting value for the list.\\"
   start_position: String
-}
-
-\\"Brand management for groups\\"
-type GroupBrands {
-  \\"The list of brands.\\"
-  brands: [brand]
-  \\"The brand seen by envelope recipients when a brand is not explicitly set.\\"
-  recipientBrandIdDefault: String
-  \\"The brand seen by envelope senders when a brand is not explicitly set.\\"
-  senderBrandIdDefault: String
 }
 
 \\"Groups' users\\"
@@ -5530,7 +4985,7 @@ type templateSharedItem {
   \\"When set to **true**, this custom tab is shared.\\"
   shared: String
   sharedGroups: [memberGroupSharedItem]
-  sharedUsers: [userSharedItem]
+  sharedUsers: [sharedItem]
   \\"The unique identifier of the template. If this is not provided, DocuSign will generate a value.\\"
   templateId: String
   templateName: String
@@ -5541,13 +4996,6 @@ type memberGroupSharedItem {
   group: group
   \\"When set to **true**, this custom tab is shared.\\"
   shared: String
-}
-
-type userSharedItem {
-  errorDetails: errorDetails
-  \\"When set to **true**, this custom tab is shared.\\"
-  shared: String
-  user: userInfo
 }
 
 input SharedAccess_GetSharedAccess_request_Input {
@@ -6056,14 +5504,6 @@ type envelopeTemplateDefinition {
   uri: String
 }
 
-\\"Template custom fields\\"
-type TemplateCustomFields {
-  \\"An array of list custom fields.\\"
-  listCustomFields: [listCustomField]
-  \\"An array of text custom fields.\\"
-  textCustomFields: [textCustomField]
-}
-
 \\"Template documents\\"
 type TemplateDocuments {
   templateDocuments: [envelopeDocument]
@@ -6076,12 +5516,6 @@ input Documents_GetTemplateDocument_request_Input {
   show_changes: String
 }
 
-\\"Template document fields\\"
-type TemplateDocumentFields {
-  \\"The array of name/value custom data strings to be added to a document. Custom document field information is returned in the status, but otherwise is not used by DocuSign. The array contains the elements: \\\\n\\\\n* name - A string that can be a maximum of 50 characters. \\\\n* value - A string that can be a maximum of 200 characters.\\\\n\\\\n*IMPORTANT*: If you are using xml, the name/value pair is contained in a nameValue element.\\"
-  documentFields: [nameValue]
-}
-
 input Pages_GetTemplatePageImage_request_Input {
   \\"Number of dots per inch for the resulting image. The default if not used is 94. The range is 1-310.\\"
   dpi: String
@@ -6090,98 +5524,6 @@ input Pages_GetTemplatePageImage_request_Input {
   \\"Sets the maximum width (in pixels) of the returned image.\\"
   max_width: String
   show_changes: String
-}
-
-type TemplateDocumentTabs {
-  \\"A tab that allows the recipient to approve documents\\\\nwithout placing a signature or initials on the\\\\ndocument. If the recipient clicks the Approve tab during the signing\\\\nprocess, the recipient is considered to have signed the document. No\\\\ninformation is shown on the document for the approval, but it is\\\\nrecorded as a signature in the envelope history.\\"
-  approveTabs: [approve]
-  \\"Specifies a tag on the document in a location where the recipient can select an option.\\"
-  checkboxTabs: [checkbox]
-  \\"Specifies a tag on the document where you want the recipient's company name to appear.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  companyTabs: [company]
-  \\"Specifies a tab on the document where the date the document was signed will automatically appear.\\"
-  dateSignedTabs: [dateSigned]
-  \\"Specifies a tab on the document where you want the recipient to enter a date. Date tabs are single-line fields that allow date information to be entered in any format. The tooltip for this tab recommends entering the date as MM/DD/YYYY, but this is not enforced. The format entered by the signer is retained. \\\\n\\\\nIf you need a particular date format enforced, DocuSign recommends using a Text tab with a Validation Pattern and Validation Message to enforce the format.\\"
-  dateTabs: [date]
-  \\"Specifies a tag on the document where you want to give the recipient the option of declining an envelope. If the recipient clicks the Decline tag during the signing process, the envelope is voided.\\"
-  declineTabs: [decline]
-  \\"Specifies a location on the document where you want where you want the recipient's email, as entered in the recipient information, to display.\\"
-  emailAddressTabs: [emailAddress]
-  \\"Specifies a tag on the document where you want the recipient to enter an email. Email tags are single-line fields that accept any characters. The system checks that a valid email format (i.e. xxx@yyy.zzz) is entered in the tag. It uses the same parameters as a Text tab, with the validation message and pattern set for email information.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  emailTabs: [email]
-  \\"Specifies a tag on the document where you want the envelope ID for to appear. Recipients cannot enter or change the information in this tab, it is for informational purposes only.\\"
-  envelopeIdTabs: [envelopeId]
-  \\"Specifies tag on a document where you want the recipient's first name to appear. This tag takes the recipient's name, as entered in the recipient information, splits it into sections based on spaces and uses the first section as the first name.\\"
-  firstNameTabs: [firstName]
-  \\"A list of formula tabs.\\\\n\\\\nThe value of a formula tab is calculated\\\\nfrom the values of other\\\\nnumber or date tabs in the document.\\\\nWhen the recipient completes the underlying fields,\\\\nthe formula tab calculates and displays the result.\\\\n\\\\nThe \`formula\` property of the tab\\\\ncontains the references\\\\nto the underlying tabs.\\\\nSee [Calculated Fields][calculatedfields]\\\\nin the DocuSign Support Center\\\\nto learn more about formulas.\\\\n\\\\nIf a formula tab contains\\\\na \`paymentDetails\` property,\\\\nthe tab is considered a payment item.\\\\nSee [Requesting Payments Along with Signatures][paymentguide]\\\\nin the DocuSign Support Center\\\\nto learn more about payments.\\\\n\\\\n[calculatedfields]: https://support.docusign.com/en/guides/ndse-user-guide-calculated-fields\\\\n[paymentguide]:     https://support.docusign.com/en/guides/requesting-payments-along-with-signatures\\"
-  formulaTabs: [formulaTab]
-  \\"Specifies a tag on the document where you want the recipient's name to appear.\\"
-  fullNameTabs: [fullName]
-  \\"Specifies a tag location in the document at which a recipient will place their initials. The \`optional\` parameter specifies whether the initials are required or optional.\\"
-  initialHereTabs: [initialHere]
-  \\"Specifies a tag on a document where you want the recipient's last name to appear. This tag takes the recipient's name, as entered in the recipient information, splits it into sections based on spaces and uses the last section as the last name.\\"
-  lastNameTabs: [lastName]
-  \\"Specify this tag to give your recipient a list of options, presented as a drop-down list, from which they can select.\\"
-  listTabs: [list]
-  \\"Specifies a location on the document where you want to place additional information, in the form of a note, for a recipient.\\"
-  noteTabs: [note]
-  \\"Specifies a tag on the document where you want the recipient to enter a number. It uses the same parameters as a Text tab, with the validation message and pattern set for number information.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  numberTabs: [number]
-  \\"Specifies a tag on the document in a location where the recipient can select one option from a group of options using a radio button. The radio buttons do not have to be on the same page in a document.\\"
-  radioGroupTabs: [radioGroup]
-  \\"A complex type the contains information about the tag that specifies where the recipient places their signature in the document. The \\\\\\"optional\\\\\\" parameter sets if the signature is required or optional.\\"
-  signHereTabs: [signHere]
-  \\"Specifies a tag on the document when you want the recipient to add supporting documents to an envelope.\\"
-  signerAttachmentTabs: [signerAttachment]
-  \\"Specifies a tag on the document where you want the recipient to enter a Social Security Number (SSN). A SSN can be typed with or without dashes. It uses the same parameters as a Text tab, with the validation message and pattern set for SSN information.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  ssnTabs: [ssn]
-  \\"Specifies a that that is an adaptable field that allows the recipient to enter different text information.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  textTabs: [text]
-  \\"Specifies a tag on the document where you want the recipient's title to appear.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  titleTabs: [title]
-  viewTabs: [view]
-  \\"Specifies a tag on the document where you want the recipient to enter a ZIP code. The ZIP code can be a five numbers or the ZIP+4 format with nine numbers. The zip code can be typed with or without dashes. It uses the same parameters as a Text tab, with the validation message and pattern set for ZIP code information.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  zipTabs: [zip]
-}
-
-\\"Template locks\\"
-type TemplateLocks {
-  errorDetails: errorDetails
-  \\"Sets the time, in seconds, until the lock expires when there is no activity on the envelope.\\\\n\\\\nIf no value is entered, then the default value of 300 seconds is used. The maximum value is 1,800 seconds.\\\\n\\\\nThe lock duration can be extended.\\"
-  lockDurationInSeconds: String
-  \\"A unique identifier provided to the owner of the envelope lock.   Used to prove ownership of the lock.\\"
-  lockToken: String
-  \\"The type of envelope lock.  Currently \\\\\\"edit\\\\\\" is the only supported type.\\"
-  lockType: String
-  \\"Specifies the friendly name of  the application that is locking the envelope.\\"
-  lockedByApp: String
-  lockedByUser: userInfo
-  \\"The datetime until the envelope lock expires.\\"
-  lockedUntilDateTime: String
-  \\"Reserved for future use.\\\\n\\\\nIndicates whether a scratchpad is used for editing information.\\"
-  useScratchPad: String
-}
-
-\\"Template recipients\\"
-type TemplateRecipients {
-  \\"A complex type defining the management and access rights of a recipient assigned assigned as an agent on the document.\\"
-  agents: [agent]
-  \\"A complex type containing information about recipients who should receive a copy of the envelope, but does not need to sign it.\\"
-  carbonCopies: [carbonCopy]
-  \\"A complex type containing information on a recipient the must receive the completed documents for the envelope to be completed, but the recipient does not need to sign, initial, date, or add information to any of the documents.\\"
-  certifiedDeliveries: [certifiedDelivery]
-  currentRoutingOrder: String
-  \\"A complex type defining the management and access rights of a recipient assigned assigned as an editor on the document.\\"
-  editors: [editor]
-  errorDetails: errorDetails
-  \\"Specifies a signer that is in the same physical location as a DocuSign user who will act as a Signing Host for the transaction. The recipient added is the Signing Host and new separate Signer Name field appears after Sign in person is selected.\\"
-  inPersonSigners: [inPersonSigner]
-  \\"Identifies a recipient that can, but is not required to, add name and email information for recipients at the same or subsequent level in the routing order (until subsequent Agents, Editors or Intermediaries recipient types are added).\\"
-  intermediaries: [intermediary]
-  \\"The list of recipient event statuses that will trigger Connect to send updates to the url. It can be a two-part list with:\\\\n\\\\n* recipientEventStatusCode - The recipient status, this can be Sent, Delivered, Completed, Declined, AuthenticationFailed, and AutoResponded.\\\\n* includeDocuments - When set to **true**, the envelope time zone information is included in the message.\\"
-  recipientCount: String
-  \\"A complex type containing information about the Signer recipient.\\"
-  signers: [signer]
 }
 
 input Recipients_GetTemplateRecipients_request_Input {
@@ -6193,82 +5535,11 @@ input Recipients_GetTemplateRecipients_request_Input {
   include_tabs: String
 }
 
-\\"Template bulk recipients\\"
-type TemplateBulkRecipients {
-  \\"A complex type containing information about the bulk recipients in the response.\\"
-  bulkRecipients: [bulkRecipient]
-  \\"The last position in the result set.\\"
-  endPosition: String
-  \\"The URI for the next chunk of records based on the search request. It is \`null\` if this is the last set of results for the search.\\"
-  nextUri: String
-  \\"The URI for the prior chunk of records based on the search request. It is \`null\` if this is the first set of results for the search.\\"
-  previousUri: String
-  \\"The number of results returned in this response.\\"
-  resultSetSize: String
-  \\"Starting position of the current result set.\\"
-  startPosition: String
-  \\"The total number of items in the search's result set. It will always be greater than or equal to the value of the \`resultSetSize\` field.\\"
-  totalSetSize: String
-}
-
 input Recipients_GetTemplateBulkRecipients_request_Input {
   \\"When set to **true**, the tab information associated with the recipient is included in the response.\\"
   include_tabs: String
   \\"Reserved for DocuSign.\\"
   start_position: String
-}
-
-\\"Template tabs\\"
-type TemplateRecipientTabs {
-  \\"A tab that allows the recipient to approve documents\\\\nwithout placing a signature or initials on the\\\\ndocument. If the recipient clicks the Approve tab during the signing\\\\nprocess, the recipient is considered to have signed the document. No\\\\ninformation is shown on the document for the approval, but it is\\\\nrecorded as a signature in the envelope history.\\"
-  approveTabs: [approve]
-  \\"Specifies a tag on the document in a location where the recipient can select an option.\\"
-  checkboxTabs: [checkbox]
-  \\"Specifies a tag on the document where you want the recipient's company name to appear.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  companyTabs: [company]
-  \\"Specifies a tab on the document where the date the document was signed will automatically appear.\\"
-  dateSignedTabs: [dateSigned]
-  \\"Specifies a tab on the document where you want the recipient to enter a date. Date tabs are single-line fields that allow date information to be entered in any format. The tooltip for this tab recommends entering the date as MM/DD/YYYY, but this is not enforced. The format entered by the signer is retained. \\\\n\\\\nIf you need a particular date format enforced, DocuSign recommends using a Text tab with a Validation Pattern and Validation Message to enforce the format.\\"
-  dateTabs: [date]
-  \\"Specifies a tag on the document where you want to give the recipient the option of declining an envelope. If the recipient clicks the Decline tag during the signing process, the envelope is voided.\\"
-  declineTabs: [decline]
-  \\"Specifies a location on the document where you want where you want the recipient's email, as entered in the recipient information, to display.\\"
-  emailAddressTabs: [emailAddress]
-  \\"Specifies a tag on the document where you want the recipient to enter an email. Email tags are single-line fields that accept any characters. The system checks that a valid email format (i.e. xxx@yyy.zzz) is entered in the tag. It uses the same parameters as a Text tab, with the validation message and pattern set for email information.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  emailTabs: [email]
-  \\"Specifies a tag on the document where you want the envelope ID for to appear. Recipients cannot enter or change the information in this tab, it is for informational purposes only.\\"
-  envelopeIdTabs: [envelopeId]
-  \\"Specifies tag on a document where you want the recipient's first name to appear. This tag takes the recipient's name, as entered in the recipient information, splits it into sections based on spaces and uses the first section as the first name.\\"
-  firstNameTabs: [firstName]
-  \\"A list of formula tabs.\\\\n\\\\nThe value of a formula tab is calculated\\\\nfrom the values of other\\\\nnumber or date tabs in the document.\\\\nWhen the recipient completes the underlying fields,\\\\nthe formula tab calculates and displays the result.\\\\n\\\\nThe \`formula\` property of the tab\\\\ncontains the references\\\\nto the underlying tabs.\\\\nSee [Calculated Fields][calculatedfields]\\\\nin the DocuSign Support Center\\\\nto learn more about formulas.\\\\n\\\\nIf a formula tab contains\\\\na \`paymentDetails\` property,\\\\nthe tab is considered a payment item.\\\\nSee [Requesting Payments Along with Signatures][paymentguide]\\\\nin the DocuSign Support Center\\\\nto learn more about payments.\\\\n\\\\n[calculatedfields]: https://support.docusign.com/en/guides/ndse-user-guide-calculated-fields\\\\n[paymentguide]:     https://support.docusign.com/en/guides/requesting-payments-along-with-signatures\\"
-  formulaTabs: [formulaTab]
-  \\"Specifies a tag on the document where you want the recipient's name to appear.\\"
-  fullNameTabs: [fullName]
-  \\"Specifies a tag location in the document at which a recipient will place their initials. The \`optional\` parameter specifies whether the initials are required or optional.\\"
-  initialHereTabs: [initialHere]
-  \\"Specifies a tag on a document where you want the recipient's last name to appear. This tag takes the recipient's name, as entered in the recipient information, splits it into sections based on spaces and uses the last section as the last name.\\"
-  lastNameTabs: [lastName]
-  \\"Specify this tag to give your recipient a list of options, presented as a drop-down list, from which they can select.\\"
-  listTabs: [list]
-  \\"Specifies a location on the document where you want to place additional information, in the form of a note, for a recipient.\\"
-  noteTabs: [note]
-  \\"Specifies a tag on the document where you want the recipient to enter a number. It uses the same parameters as a Text tab, with the validation message and pattern set for number information.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  numberTabs: [number]
-  \\"Specifies a tag on the document in a location where the recipient can select one option from a group of options using a radio button. The radio buttons do not have to be on the same page in a document.\\"
-  radioGroupTabs: [radioGroup]
-  \\"A complex type the contains information about the tag that specifies where the recipient places their signature in the document. The \\\\\\"optional\\\\\\" parameter sets if the signature is required or optional.\\"
-  signHereTabs: [signHere]
-  \\"Specifies a tag on the document when you want the recipient to add supporting documents to an envelope.\\"
-  signerAttachmentTabs: [signerAttachment]
-  \\"Specifies a tag on the document where you want the recipient to enter a Social Security Number (SSN). A SSN can be typed with or without dashes. It uses the same parameters as a Text tab, with the validation message and pattern set for SSN information.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  ssnTabs: [ssn]
-  \\"Specifies a that that is an adaptable field that allows the recipient to enter different text information.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  textTabs: [text]
-  \\"Specifies a tag on the document where you want the recipient's title to appear.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  titleTabs: [title]
-  viewTabs: [view]
-  \\"Specifies a tag on the document where you want the recipient to enter a ZIP code. The ZIP code can be a five numbers or the ZIP+4 format with nine numbers. The zip code can be typed with or without dashes. It uses the same parameters as a Text tab, with the validation message and pattern set for ZIP code information.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  zipTabs: [zip]
 }
 
 type fileTypeList {
@@ -6878,13 +6149,13 @@ type Mutation {
   \\"Deletes the specified DocuSign Connect configuration.\\\\n\\\\n\\\\n \\\\n\\"
   Connect_DeleteConnectConfig(accountId: String!, connectId: String!): Any
   \\"Update Consumer Disclosure.\\"
-  ConsumerDisclosure_PutConsumerDisclosure(input: EnvelopeConsumerDisclosures_Input, accountId: String!, langCode: String!, include_metadata: String): EnvelopeConsumerDisclosures
+  ConsumerDisclosure_PutConsumerDisclosure(input: AccountConsumerDisclosures_Input, accountId: String!, langCode: String!, include_metadata: String): AccountConsumerDisclosures
   \\"Delete contacts associated with an account for the DocuSign service.\\"
-  Contacts_DeleteContacts(input: contactModRequest_Input, accountId: String!): contactUpdateResponse
+  Contacts_DeleteContacts(input: contactUpdateResponse_Input, accountId: String!): contactUpdateResponse
   \\"Imports multiple new contacts into the contacts collection from CSV, JSON, or XML (based on content type).\\"
-  Contacts_PostContacts(input: contactModRequest_Input, accountId: String!): contactUpdateResponse
+  Contacts_PostContacts(input: contactUpdateResponse_Input, accountId: String!): contactUpdateResponse
   \\"Replaces contacts associated with an account for the DocuSign service.\\"
-  Contacts_PutContacts(input: contactModRequest_Input, accountId: String!): contactUpdateResponse
+  Contacts_PutContacts(input: contactUpdateResponse_Input, accountId: String!): contactUpdateResponse
   \\"Replaces a particular contact associated with an account for the DocuSign service.\\"
   Contacts_DeleteContactWithId(accountId: String!, contactId: String!): contactUpdateResponse
   \\"Creates an acount custom field.\\"
@@ -6908,11 +6179,11 @@ type Mutation {
   \\"Add an attachment to a DRAFT or IN-PROCESS envelope.\\"
   Attachments_PutAttachment(input: attachment_Input, accountId: String!, envelopeId: String!, attachmentId: String!): envelopeAttachmentsResult
   \\"Deletes envelope custom fields for draft and in-process envelopes.\\"
-  CustomFields_DeleteCustomFields(input: EnvelopeCustomFields_Input, accountId: String!, envelopeId: String!): EnvelopeCustomFields
+  CustomFields_DeleteCustomFields(input: AccountCustomFields_Input, accountId: String!, envelopeId: String!): AccountCustomFields
   \\"Updates the envelope custom fields for draft and in-process envelopes.\\\\n\\\\nEach custom field used in an envelope must have a unique name.\\"
-  CustomFields_PostCustomFields(input: EnvelopeCustomFields_Input, accountId: String!, envelopeId: String!): EnvelopeCustomFields
+  CustomFields_PostCustomFields(input: AccountCustomFields_Input, accountId: String!, envelopeId: String!): AccountCustomFields
   \\"Updates the envelope custom fields in draft and in-process envelopes.\\\\n\\\\nEach custom field used in an envelope must have a unique name.\\\\n\\"
-  CustomFields_PutCustomFields(input: EnvelopeCustomFields_Input, accountId: String!, envelopeId: String!): EnvelopeCustomFields
+  CustomFields_PutCustomFields(input: AccountCustomFields_Input, accountId: String!, envelopeId: String!): AccountCustomFields
   \\"Deletes one or more documents from an existing draft envelope.\\"
   Documents_DeleteDocuments(input: envelopeDefinition_Input, accountId: String!, envelopeId: String!): EnvelopeDocuments
   \\"Adds one or more documents to an existing envelope document.\\"
@@ -6946,7 +6217,7 @@ type Mutation {
   \\"Updates the lock duration time or update the \`lockedByApp\` property information for the specified envelope. The user and integrator key must match the user specified by the \`lockByUser\` property and integrator key information and the \`X-DocuSign-Edit\` header must be included or an error will be generated.\\"
   Lock_PutEnvelopeLock(input: lockRequest_Input, accountId: String!, envelopeId: String!): EnvelopeLocks
   \\"Sets envelope notification (Reminders/Expirations) structure for an existing envelope.\\"
-  Notification_PutEnvelopesEnvelopeIdNotification(input: envelopeNotificationRequest_Input, accountId: String!, envelopeId: String!): notification
+  Notification_PutEnvelopesEnvelopeIdNotification(input: notification_Input, accountId: String!, envelopeId: String!): notification
   \\"Deletes one or more recipients from a draft or sent envelope. Recipients to be deleted are listed in the request, with the \`recipientId\` being used as the key for deleting recipients.\\\\n\\\\nIf the envelope is \`In Process\`, meaning that it has been sent and has not  been completed or voided, recipients that have completed their actions cannot be deleted.\\"
   Recipients_DeleteRecipients(input: EnvelopeRecipients_Input, accountId: String!, envelopeId: String!): EnvelopeRecipients
   \\"Adds one or more recipients to an envelope.\\\\n\\\\nFor an in process envelope, one that has been sent and has not been completed or voided, an email is sent to a new recipient when they are reached in the routing order. If the new recipient's routing order is before or the same as the envelope's next recipient, an email is only sent if the optional \`resend_envelope\` query string is set to **true**.\\"
@@ -6992,9 +6263,9 @@ type Mutation {
   \\"Updates the group name and modifies, or sets, the permission profile for the group.\\"
   Groups_PutGroups(input: Groups_Input, accountId: String!): Groups
   \\"Deletes brand information from the requested group.\\"
-  Brands_DeleteGroupBrands(input: brandsRequest_Input, accountId: String!, groupId: String!): GroupBrands
+  Brands_DeleteGroupBrands(input: brandsRequest_Input, accountId: String!, groupId: String!): AccountBrands
   \\"Adds group brand ID information to a group.\\"
-  Brands_PutGroupBrands(input: brandsRequest_Input, accountId: String!, groupId: String!): GroupBrands
+  Brands_PutGroupBrands(input: brandsRequest_Input, accountId: String!, groupId: String!): AccountBrands
   \\"Deletes one or more users from a group.\\\\n\\"
   Groups_DeleteGroupUsers(input: userInfoList_Input, accountId: String!, groupId: String!): GroupUsers
   \\"Adds one or more users to an existing group.\\"
@@ -7046,13 +6317,13 @@ type Mutation {
   \\"Creates a template definition using a multipart request.\\\\n\\\\n\\\\nCall this endpoint to insert a recipient name and email address merge fields into the email subject line when creating or sending from a template.\\\\n\\\\nThe merge fields, based on the recipient's role name, are added to the \`emailSubject\` property when the template is created or when the template is used to create an envelope. After a template sender adds the name and email information for the recipient and sends the envelope, the recipient information is automatically merged into the appropriate fields in the email subject line.\\\\n\\\\nBoth the sender and the recipients will see the information in the email subject line for any emails associated with the template. This provides an easy way for senders to organize their envelope emails without having to open an envelope to check the recipient.\\\\n\\\\nTo add a recipient's name in the subject line add the following text in the \`emailSubject\` property when creating the template or when sending an envelope from a template:\\\\n\\\\n\`[[<roleName>_UserName]]\`\\\\n\\\\nExample:\\\\n\\\\n\`\\\\\\"emailSubject\\\\\\":\\\\\\"[[Signer 1_UserName]], Please sign this NDA\\\\\\",\`\\\\n\\\\nTo add a recipient's email address in the subject line add the following text in the \`emailSubject\` property when creating the template or when sending an envelope from a template:\\\\n\\\\n\`[[<roleName>_Email]]\`\\\\n\\\\nExample:\\\\n\\\\n\`\\\\\\"emailSubject\\\\\\":\\\\\\"[[Signer 1_Email]], Please sign this NDA\\\\\\",\`\\\\n\\\\n\\\\nIn both cases the <roleName> is the recipient's contents of the \`roleName\` property in the template.\\\\n\\\\nFor cases where another recipient (such as an Agent, Editor, or Intermediary recipient) is entering the name and email information for the recipient included in the email subject, then \`[[<roleName>_UserName]]\` or \`[[<roleName>_Email]]\` is shown in the email subject.\\"
   Templates_PostTemplates(input: Templates_Input, accountId: String!): templateSummary
   \\"Updates an existing template.\\"
-  Templates_PutTemplate(input: Templates_Input, accountId: String!, templateId: String!): templateUpdateSummary
+  Templates_PutTemplate(input: Templates_Input, accountId: String!, templateId: String!): envelopeUpdateSummary
   \\"Deletes envelope custom fields in a template.\\"
-  CustomFields_DeleteTemplateCustomFields(input: templateCustomFields_Input, accountId: String!, templateId: String!): TemplateCustomFields
+  CustomFields_DeleteTemplateCustomFields(input: AccountCustomFields_Input, accountId: String!, templateId: String!): AccountCustomFields
   \\"Creates custom document fields in an existing template document.\\"
-  CustomFields_PostTemplateCustomFields(input: templateCustomFields_Input, accountId: String!, templateId: String!): TemplateCustomFields
+  CustomFields_PostTemplateCustomFields(input: AccountCustomFields_Input, accountId: String!, templateId: String!): AccountCustomFields
   \\"Updates the custom fields in a template.\\\\n\\\\nEach custom field used in a template must have a unique name.\\"
-  CustomFields_PutTemplateCustomFields(input: templateCustomFields_Input, accountId: String!, templateId: String!): TemplateCustomFields
+  CustomFields_PutTemplateCustomFields(input: AccountCustomFields_Input, accountId: String!, templateId: String!): AccountCustomFields
   \\"Deletes one or more documents from an existing template.\\"
   Documents_DeleteTemplateDocuments(input: envelopeDefinition_Input, accountId: String!, templateId: String!): TemplateDocuments
   \\"Adds one or more documents to an existing template document.\\"
@@ -7060,47 +6331,47 @@ type Mutation {
   \\"Adds the specified document to an existing template document.\\"
   Documents_PutTemplateDocument(input: envelopeDefinition_Input, accountId: String!, templateId: String!, documentId: String!, apply_document_fields: String, is_envelope_definition: String): envelopeDocument
   \\"Deletes custom document fields from an existing template document.\\"
-  DocumentFields_DeleteTemplateDocumentFields(input: TemplateDocumentFields_Input, accountId: String!, templateId: String!, documentId: String!): TemplateDocumentFields
+  DocumentFields_DeleteTemplateDocumentFields(input: EnvelopeDocumentFields_Input, accountId: String!, templateId: String!, documentId: String!): EnvelopeDocumentFields
   \\"Creates custom document fields in an existing template document.\\"
-  DocumentFields_PostTemplateDocumentFields(input: TemplateDocumentFields_Input, accountId: String!, templateId: String!, documentId: String!): TemplateDocumentFields
+  DocumentFields_PostTemplateDocumentFields(input: EnvelopeDocumentFields_Input, accountId: String!, templateId: String!, documentId: String!): EnvelopeDocumentFields
   \\"Updates existing custom document fields in an existing template document.\\"
-  DocumentFields_PutTemplateDocumentFields(input: TemplateDocumentFields_Input, accountId: String!, templateId: String!, documentId: String!): TemplateDocumentFields
+  DocumentFields_PutTemplateDocumentFields(input: EnvelopeDocumentFields_Input, accountId: String!, templateId: String!, documentId: String!): EnvelopeDocumentFields
   \\"Deletes a page from a document in a template based on the page number.\\"
   Pages_DeleteTemplatePage(input: pageRequest_Input, accountId: String!, templateId: String!, documentId: String!, pageNumber: String!): Any
   \\"Rotates page image from a template for display. The page image can be rotated to the left or right.\\"
   Pages_PutTemplatePageImage(input: pageRequest_Input, accountId: String!, templateId: String!, documentId: String!, pageNumber: String!): Any
   \\"Deletes the lock from the specified template. The \`X-DocuSign-Edit\` header must be included in the request.\\"
-  Lock_DeleteTemplateLock(input: lockRequest_Input, accountId: String!, templateId: String!): TemplateLocks
+  Lock_DeleteTemplateLock(input: lockRequest_Input, accountId: String!, templateId: String!): EnvelopeLocks
   \\"Locks the specified template, and sets the time until the lock expires, to prevent other users or recipients from accessing and changing the template.\\"
-  Lock_PostTemplateLock(input: lockRequest_Input, accountId: String!, templateId: String!): TemplateLocks
+  Lock_PostTemplateLock(input: lockRequest_Input, accountId: String!, templateId: String!): EnvelopeLocks
   \\"Updates the lock duration time or update the \`lockedByApp\` property information for the specified template. The user and integrator key must match the user specified by the \`lockByUser\` property and integrator key information and the \`X-DocuSign-Edit\` header must be included or an error will be generated.\\"
-  Lock_PutTemplateLock(input: lockRequest_Input, accountId: String!, templateId: String!): TemplateLocks
+  Lock_PutTemplateLock(input: lockRequest_Input, accountId: String!, templateId: String!): EnvelopeLocks
   \\"Updates the notification structure for an existing template. Use this endpoint to set reminder and expiration notifications.\\"
   Notification_PutTemplatesTemplateIdNotification(input: templateNotificationRequest_Input, accountId: String!, templateId: String!): notification
   \\"Deletes one or more recipients from a template. Recipients to be deleted are listed in the request, with the \`recipientId\` being used as the key for deleting recipients.\\"
-  Recipients_DeleteTemplateRecipients(input: templateRecipients_Input, accountId: String!, templateId: String!): TemplateRecipients
+  Recipients_DeleteTemplateRecipients(input: templateRecipients_Input, accountId: String!, templateId: String!): EnvelopeRecipients
   \\"Adds one or more recipients to a template.\\"
-  Recipients_PostTemplateRecipients(input: templateRecipients_Input, accountId: String!, templateId: String!, resend_envelope: String): TemplateRecipients
+  Recipients_PostTemplateRecipients(input: templateRecipients_Input, accountId: String!, templateId: String!, resend_envelope: String): EnvelopeRecipients
   \\"Updates recipients in a template. \\\\n\\\\nYou can edit the following properties: \`email\`, \`userName\`, \`routingOrder\`, \`faxNumber\`, \`deliveryMethod\`, \`accessCode\`, and \`requireIdLookup\`.\\"
   Recipients_PutTemplateRecipients(input: templateRecipients_Input, accountId: String!, templateId: String!, resend_envelope: String): recipientsUpdateSummary
   \\"Updates document visibility for the recipients\\"
-  Recipients_PutTemplateRecipientsDocumentVisibility(input: TemplateDocumentVisibility_Input, accountId: String!, templateId: String!): TemplateDocumentVisibility
+  Recipients_PutTemplateRecipientsDocumentVisibility(input: EnvelopeDocumentVisibility_Input, accountId: String!, templateId: String!): EnvelopeDocumentVisibility
   \\"Deletes the specified recipient file from the specified template.\\"
-  Recipients_DeleteTemplateRecipient(input: templateRecipients_Input, accountId: String!, templateId: String!, recipientId: String!): TemplateRecipients
+  Recipients_DeleteTemplateRecipient(input: templateRecipients_Input, accountId: String!, templateId: String!, recipientId: String!): EnvelopeRecipients
   \\"Deletes the bulk recipient list on a template.\\"
   Recipients_DeleteTemplateBulkRecipientsFile(accountId: String!, templateId: String!, recipientId: String!): bulkRecipientsUpdateResponse
   \\"Updates the bulk recipients in a template using a file upload. The Content-Type supported for uploading a bulk recipient file is CSV (text/csv).\\\\n\\\\nThe REST API does not support modifying individual rows or values in the bulk recipients file. It only allows the entire file to be added or replaced with a new file.\\"
   Recipients_PutTemplateBulkRecipients(input: bulkRecipientsRequest_Input, accountId: String!, templateId: String!, recipientId: String!): bulkRecipientsSummaryResponse
   \\"Updates document visibility for the recipients\\"
-  Recipients_PutTemplateRecipientDocumentVisibility(input: TemplateDocumentVisibility_Input, accountId: String!, templateId: String!, recipientId: String!): TemplateDocumentVisibility
+  Recipients_PutTemplateRecipientDocumentVisibility(input: EnvelopeDocumentVisibility_Input, accountId: String!, templateId: String!, recipientId: String!): EnvelopeDocumentVisibility
   \\"Deletes one or more tabs associated with a recipient in a template.\\"
-  Recipients_DeleteTemplateRecipientTabs(input: templateTabs_Input, accountId: String!, templateId: String!, recipientId: String!): TemplateRecipientTabs
+  Recipients_DeleteTemplateRecipientTabs(input: EnvelopeRecipientTabs_Input, accountId: String!, templateId: String!, recipientId: String!): EnvelopeRecipientTabs
   \\"Adds one or more tabs for a recipient.\\"
-  Recipients_PostTemplateRecipientTabs(input: templateTabs_Input, accountId: String!, templateId: String!, recipientId: String!): TemplateRecipientTabs
+  Recipients_PostTemplateRecipientTabs(input: EnvelopeRecipientTabs_Input, accountId: String!, templateId: String!, recipientId: String!): EnvelopeRecipientTabs
   \\"Updates one or more tabs for a recipient in a template.\\"
-  Recipients_PutTemplateRecipientTabs(input: templateTabs_Input, accountId: String!, templateId: String!, recipientId: String!): TemplateRecipientTabs
+  Recipients_PutTemplateRecipientTabs(input: EnvelopeRecipientTabs_Input, accountId: String!, templateId: String!, recipientId: String!): EnvelopeRecipientTabs
   \\"Provides a URL to start an edit view of the Template UI\\"
-  Views_PostTemplateEditView(input: returnUrlRequest_Input, accountId: String!, templateId: String!): TemplateViews
+  Views_PostTemplateEditView(input: returnUrlRequest_Input, accountId: String!, templateId: String!): EnvelopeViews
   \\"Removes a member group's sharing permissions for a specified template.\\"
   Templates_DeleteTemplatePart(input: Groups_Input, accountId: String!, templateId: String!, templatePart: String!): Groups
   \\"Shares a template with the specified members group.\\"
@@ -7808,8 +7079,8 @@ input connectFailureFilter_Input {
   synchronous: String
 }
 
-\\"Envelope consumer disclosures\\"
-input EnvelopeConsumerDisclosures_Input {
+\\"Account consumer disclosures\\"
+input AccountConsumerDisclosures_Input {
   \\"A GUID identifying the account associated with the consumer disclosure\\"
   accountEsignId: String
   \\"Indicates whether the customer can withdraw their acceptance of the consumer disclosure.\\"
@@ -7866,7 +7137,7 @@ type contactUpdateResponse {
   contacts: [Contacts]
 }
 
-input contactModRequest_Input {
+input contactUpdateResponse_Input {
   contacts: [Contacts_Input]
 }
 
@@ -8319,7 +7590,7 @@ input EnvelopeRecipients_Input {
   \\"Specifies a signer that is in the same physical location as a DocuSign user who will act as a Signing Host for the transaction. The recipient added is the Signing Host and new separate Signer Name field appears after Sign in person is selected.\\"
   inPersonSigners: [inPersonSigner_Input]
   \\"Identifies a recipient that can, but is not required to, add name and email information for recipients at the same or subsequent level in the routing order (until subsequent Agents, Editors or Intermediaries recipient types are added).\\"
-  intermediaries: [intermediary_Input]
+  intermediaries: [agent_Input]
   \\"The list of recipient event statuses that will trigger Connect to send updates to the url. It can be a two-part list with:\\\\n\\\\n* recipientEventStatusCode - The recipient status, this can be Sent, Delivered, Completed, Declined, AuthenticationFailed, and AutoResponded.\\\\n* includeDocuments - When set to **true**, the envelope time zone information is included in the message.\\"
   recipientCount: String
   \\"A complex type containing information about the Signer recipient.\\"
@@ -8985,21 +8256,21 @@ input EnvelopeRecipientTabs_Input {
   \\"Specifies a tag on the document where you want to give the recipient the option of declining an envelope. If the recipient clicks the Decline tag during the signing process, the envelope is voided.\\"
   declineTabs: [decline_Input]
   \\"Specifies a location on the document where you want where you want the recipient's email, as entered in the recipient information, to display.\\"
-  emailAddressTabs: [emailAddress_Input]
+  emailAddressTabs: [dateSigned_Input]
   \\"Specifies a tag on the document where you want the recipient to enter an email. Email tags are single-line fields that accept any characters. The system checks that a valid email format (i.e. xxx@yyy.zzz) is entered in the tag. It uses the same parameters as a Text tab, with the validation message and pattern set for email information.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  emailTabs: [email_Input]
+  emailTabs: [date_Input]
   \\"Specifies a tag on the document where you want the envelope ID for to appear. Recipients cannot enter or change the information in this tab, it is for informational purposes only.\\"
   envelopeIdTabs: [envelopeId_Input]
   \\"Specifies tag on a document where you want the recipient's first name to appear. This tag takes the recipient's name, as entered in the recipient information, splits it into sections based on spaces and uses the first section as the first name.\\"
-  firstNameTabs: [firstName_Input]
+  firstNameTabs: [dateSigned_Input]
   \\"A list of formula tabs.\\\\n\\\\nThe value of a formula tab is calculated\\\\nfrom the values of other\\\\nnumber or date tabs in the document.\\\\nWhen the recipient completes the underlying fields,\\\\nthe formula tab calculates and displays the result.\\\\n\\\\nThe \`formula\` property of the tab\\\\ncontains the references\\\\nto the underlying tabs.\\\\nSee [Calculated Fields][calculatedfields]\\\\nin the DocuSign Support Center\\\\nto learn more about formulas.\\\\n\\\\nIf a formula tab contains\\\\na \`paymentDetails\` property,\\\\nthe tab is considered a payment item.\\\\nSee [Requesting Payments Along with Signatures][paymentguide]\\\\nin the DocuSign Support Center\\\\nto learn more about payments.\\\\n\\\\n[calculatedfields]: https://support.docusign.com/en/guides/ndse-user-guide-calculated-fields\\\\n[paymentguide]:     https://support.docusign.com/en/guides/requesting-payments-along-with-signatures\\"
   formulaTabs: [formulaTab_Input]
   \\"Specifies a tag on the document where you want the recipient's name to appear.\\"
-  fullNameTabs: [fullName_Input]
+  fullNameTabs: [dateSigned_Input]
   \\"Specifies a tag location in the document at which a recipient will place their initials. The \`optional\` parameter specifies whether the initials are required or optional.\\"
   initialHereTabs: [initialHere_Input]
   \\"Specifies a tag on a document where you want the recipient's last name to appear. This tag takes the recipient's name, as entered in the recipient information, splits it into sections based on spaces and uses the last section as the last name.\\"
-  lastNameTabs: [lastName_Input]
+  lastNameTabs: [dateSigned_Input]
   \\"Specify this tag to give your recipient a list of options, presented as a drop-down list, from which they can select.\\"
   listTabs: [list_Input]
   \\"Specifies a location on the document where you want to place additional information, in the form of a note, for a recipient.\\"
@@ -9462,158 +8733,6 @@ input decline_Input {
   yPosition: String
 }
 
-input emailAddress_Input {
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nWhen set to **true**, the anchor string does not consider case when matching strings in the document. The default value is **true**.\\\\n-->\\"
-  anchorCaseSensitive: String
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nSpecifies the alignment of anchor tabs with anchor strings. Possible values are **left** or **right**. The default value is **left**.\\\\n-->\\"
-  anchorHorizontalAlignment: String
-  \\"When set to **true**, this tab is ignored if anchorString is not found in the document.\\"
-  anchorIgnoreIfNotPresent: String
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nWhen set to **true**, the anchor string in this tab matches whole words only (strings embedded in other strings are ignored.) The default value is **true**.\\\\n-->\\"
-  anchorMatchWholeWord: String
-  \\"Anchor text information for a radio button.\\"
-  anchorString: String
-  \\"Specifies units of the X and Y offset. Units could be pixels, millimeters, centimeters, or inches.\\"
-  anchorUnits: String
-  \\"Specifies the X axis location of the tab, in achorUnits, relative to the anchorString.\\"
-  anchorXOffset: String
-  \\"Specifies the Y axis location of the tab, in achorUnits, relative to the anchorString.\\"
-  anchorYOffset: String
-  \\"When set to **true**, the information in the tab is bold.\\"
-  bold: String
-  \\"For conditional fields this is the TabLabel of the parent tab that controls this tab's visibility.\\"
-  conditionalParentLabel: String
-  \\"For conditional fields, this is the value of the parent tab that controls the tab's visibility.\\\\n\\\\nIf the parent tab is a Checkbox, Radio button, Optional Signature, or Optional Initial use \\\\\\"on\\\\\\" as the value to show that the parent tab is active.\\"
-  conditionalParentValue: String
-  \\"The DocuSign generated custom tab ID for the custom tab to be applied. This can only be used when adding new tabs for a recipient. When used, the new tab inherits all the custom tab properties.\\"
-  customTabId: String
-  \\"Specifies the document ID number that the tab is placed on. This must refer to an existing Document's ID attribute.\\"
-  documentId: String
-  errorDetails: errorDetails_Input
-  \\"The font to be used for the tab value. Supported Fonts: Arial, Arial, ArialNarrow, Calibri, CourierNew, Garamond, Georgia, Helvetica,   LucidaConsole, Tahoma, TimesNewRoman, Trebuchet, Verdana, MSGothic, MSMincho, Default.\\"
-  font: String
-  \\"The font color used for the information in the tab.\\\\n\\\\nPossible values are: Black, BrightBlue, BrightRed, DarkGreen, DarkRed, Gold, Green, NavyBlue, Purple, or White.\\"
-  fontColor: String
-  \\"The font size used for the information in the tab.\\\\n\\\\nPossible values are: Size7, Size8, Size9, Size10, Size11, Size12, Size14, Size16, Size18, Size20, Size22, Size24, Size26, Size28, Size36, Size48, or Size72.\\"
-  fontSize: String
-  \\"When set to **true**, the information in the tab is italic.\\"
-  italic: String
-  mergeField: mergeField_Input
-  name: String
-  \\"Specifies the page number on which the tab is located.\\\\nMust be 1 for [supplemental documents][supdocs].\\\\n\\\\n[supdocs]: /esign/guide/appendix/glossary.html#supplemental-documents\\"
-  pageNumber: String
-  \\"Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.\\"
-  recipientId: String
-  \\"Indicates the envelope status. Valid values are:\\\\n\\\\n* sent - The envelope is sent to the recipients. \\\\n* created - The envelope is saved as a draft and can be modified and sent later.\\"
-  status: String
-  \\"The unique identifier for the tab. The tabid can be retrieved with the [ML:GET call].\\"
-  tabId: String
-  \\"The label string associated with the tab.\\\\nThe string may be the empty string.\\\\nIf no value is provided, the tab type is used as the value.\\\\n\\\\nMaximum of 500 characters.\\"
-  tabLabel: String
-  tabOrder: String
-  \\"When set to **true**, the sender cannot change any attributes of the recipient. Used only when working with template recipients.\\"
-  templateLocked: String
-  \\"When set to **true**, the sender may not remove the recipient. Used only when working with template recipients.\\"
-  templateRequired: String
-  \\"When set to **true**, the information in the tab is underlined.\\"
-  underline: String
-  \\"Specifies the value of the tab.\\"
-  value: String
-  \\"This indicates the horizontal offset of the object on the page.\\\\nDocuSign uses 72 DPI when determining position.\\\\nRequired. May be zero.\\"
-  xPosition: String
-  \\"This indicates the vertical offset of the object on the page. DocuSign uses 72 DPI when determining position.\\"
-  yPosition: String
-}
-
-input email_Input {
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nWhen set to **true**, the anchor string does not consider case when matching strings in the document. The default value is **true**.\\\\n-->\\"
-  anchorCaseSensitive: String
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nSpecifies the alignment of anchor tabs with anchor strings. Possible values are **left** or **right**. The default value is **left**.\\\\n-->\\"
-  anchorHorizontalAlignment: String
-  \\"When set to **true**, this tab is ignored if anchorString is not found in the document.\\"
-  anchorIgnoreIfNotPresent: String
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nWhen set to **true**, the anchor string in this tab matches whole words only (strings embedded in other strings are ignored.) The default value is **true**.\\\\n-->\\"
-  anchorMatchWholeWord: String
-  \\"Anchor text information for a radio button.\\"
-  anchorString: String
-  \\"Specifies units of the X and Y offset. Units could be pixels, millimeters, centimeters, or inches.\\"
-  anchorUnits: String
-  \\"Specifies the X axis location of the tab, in achorUnits, relative to the anchorString.\\"
-  anchorXOffset: String
-  \\"Specifies the Y axis location of the tab, in achorUnits, relative to the anchorString.\\"
-  anchorYOffset: String
-  \\"When set to **true**, the information in the tab is bold.\\"
-  bold: String
-  \\"When set to **true**, the field appears normally while the recipient is adding or modifying the information in the field, but the data is not visible (the characters are hidden by asterisks) to any other signer or the sender.\\\\n\\\\nWhen an envelope is completed the information is available to the sender through the Form Data link in the DocuSign Console.\\\\n\\\\nThis setting applies only to text boxes and does not affect list boxes, radio buttons, or check boxes.\\"
-  concealValueOnDocument: String
-  \\"For conditional fields this is the TabLabel of the parent tab that controls this tab's visibility.\\"
-  conditionalParentLabel: String
-  \\"For conditional fields, this is the value of the parent tab that controls the tab's visibility.\\\\n\\\\nIf the parent tab is a Checkbox, Radio button, Optional Signature, or Optional Initial use \\\\\\"on\\\\\\" as the value to show that the parent tab is active.\\"
-  conditionalParentValue: String
-  \\"The DocuSign generated custom tab ID for the custom tab to be applied. This can only be used when adding new tabs for a recipient. When used, the new tab inherits all the custom tab properties.\\"
-  customTabId: String
-  \\"When set to **true**, disables the auto sizing of single line text boxes in the signing screen when the signer enters data. If disabled users will only be able enter as much data as the text box can hold. By default this is false. This property only affects single line text boxes.\\"
-  disableAutoSize: String
-  \\"Specifies the document ID number that the tab is placed on. This must refer to an existing Document's ID attribute.\\"
-  documentId: String
-  errorDetails: errorDetails_Input
-  \\"The font to be used for the tab value. Supported Fonts: Arial, Arial, ArialNarrow, Calibri, CourierNew, Garamond, Georgia, Helvetica,   LucidaConsole, Tahoma, TimesNewRoman, Trebuchet, Verdana, MSGothic, MSMincho, Default.\\"
-  font: String
-  \\"The font color used for the information in the tab.\\\\n\\\\nPossible values are: Black, BrightBlue, BrightRed, DarkGreen, DarkRed, Gold, Green, NavyBlue, Purple, or White.\\"
-  fontColor: String
-  \\"The font size used for the information in the tab.\\\\n\\\\nPossible values are: Size7, Size8, Size9, Size10, Size11, Size12, Size14, Size16, Size18, Size20, Size22, Size24, Size26, Size28, Size36, Size48, or Size72.\\"
-  fontSize: String
-  \\"When set to **true**, the information in the tab is italic.\\"
-  italic: String
-  \\"When set to **true**, the signer cannot change the data of the custom tab.\\"
-  locked: String
-  \\"An optional value that describes the maximum length of the property when the property is a string.\\"
-  maxLength: Int
-  mergeField: mergeField_Input
-  name: String
-  \\"The initial value of the tab when it was sent to the recipient.\\"
-  originalValue: String
-  \\"Specifies the page number on which the tab is located.\\\\nMust be 1 for [supplemental documents][supdocs].\\\\n\\\\n[supdocs]: /esign/guide/appendix/glossary.html#supplemental-documents\\"
-  pageNumber: String
-  \\"Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.\\"
-  recipientId: String
-  \\"When set to **true** and shared is true, information must be entered in this field to complete the envelope.\\"
-  requireAll: String
-  \\"Optional element for field markup. When set to **true**, the signer is required to initial when they modify a shared field.\\"
-  requireInitialOnSharedChange: String
-  \\"When set to **true**, the signer is required to fill out this tab\\"
-  required: String
-  \\"When set to **true**, the sender must populate the tab before an envelope can be sent using the template. \\\\n\\\\nThis value tab can only be changed by modifying (PUT) the template. \\\\n\\\\nTabs with a \`senderRequired\` value of true cannot be deleted from an envelope.\\"
-  senderRequired: String
-  \\"When set to **true**, this custom tab is shared.\\"
-  shared: String
-  \\"Indicates the envelope status. Valid values are:\\\\n\\\\n* sent - The envelope is sent to the recipients. \\\\n* created - The envelope is saved as a draft and can be modified and sent later.\\"
-  status: String
-  \\"The unique identifier for the tab. The tabid can be retrieved with the [ML:GET call].\\"
-  tabId: String
-  \\"The label string associated with the tab.\\\\nThe string may be the empty string.\\\\nIf no value is provided, the tab type is used as the value.\\\\n\\\\nMaximum of 500 characters.\\"
-  tabLabel: String
-  tabOrder: String
-  \\"When set to **true**, the sender cannot change any attributes of the recipient. Used only when working with template recipients.\\"
-  templateLocked: String
-  \\"When set to **true**, the sender may not remove the recipient. Used only when working with template recipients.\\"
-  templateRequired: String
-  \\"When set to **true**, the information in the tab is underlined.\\"
-  underline: String
-  \\"The message displayed if the custom tab fails input validation (either custom of embedded).\\"
-  validationMessage: String
-  \\"A regular expressionn used to validate input for the tab.\\"
-  validationPattern: String
-  \\"Specifies the value of the tab.\\"
-  value: String
-  \\"Width of the tab in pixels.\\"
-  width: Int
-  \\"This indicates the horizontal offset of the object on the page.\\\\nDocuSign uses 72 DPI when determining position.\\\\nRequired. May be zero.\\"
-  xPosition: String
-  \\"This indicates the vertical offset of the object on the page. DocuSign uses 72 DPI when determining position.\\"
-  yPosition: String
-}
-
 input envelopeId_Input {
   \\"Reserved for DocuSign.\\\\n<!--\\\\nWhen set to **true**, the anchor string does not consider case when matching strings in the document. The default value is **true**.\\\\n-->\\"
   anchorCaseSensitive: String
@@ -9669,69 +8788,6 @@ input envelopeId_Input {
   templateRequired: String
   \\"When set to **true**, the information in the tab is underlined.\\"
   underline: String
-  \\"This indicates the horizontal offset of the object on the page.\\\\nDocuSign uses 72 DPI when determining position.\\\\nRequired. May be zero.\\"
-  xPosition: String
-  \\"This indicates the vertical offset of the object on the page. DocuSign uses 72 DPI when determining position.\\"
-  yPosition: String
-}
-
-input firstName_Input {
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nWhen set to **true**, the anchor string does not consider case when matching strings in the document. The default value is **true**.\\\\n-->\\"
-  anchorCaseSensitive: String
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nSpecifies the alignment of anchor tabs with anchor strings. Possible values are **left** or **right**. The default value is **left**.\\\\n-->\\"
-  anchorHorizontalAlignment: String
-  \\"When set to **true**, this tab is ignored if anchorString is not found in the document.\\"
-  anchorIgnoreIfNotPresent: String
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nWhen set to **true**, the anchor string in this tab matches whole words only (strings embedded in other strings are ignored.) The default value is **true**.\\\\n-->\\"
-  anchorMatchWholeWord: String
-  \\"Anchor text information for a radio button.\\"
-  anchorString: String
-  \\"Specifies units of the X and Y offset. Units could be pixels, millimeters, centimeters, or inches.\\"
-  anchorUnits: String
-  \\"Specifies the X axis location of the tab, in achorUnits, relative to the anchorString.\\"
-  anchorXOffset: String
-  \\"Specifies the Y axis location of the tab, in achorUnits, relative to the anchorString.\\"
-  anchorYOffset: String
-  \\"When set to **true**, the information in the tab is bold.\\"
-  bold: String
-  \\"For conditional fields this is the TabLabel of the parent tab that controls this tab's visibility.\\"
-  conditionalParentLabel: String
-  \\"For conditional fields, this is the value of the parent tab that controls the tab's visibility.\\\\n\\\\nIf the parent tab is a Checkbox, Radio button, Optional Signature, or Optional Initial use \\\\\\"on\\\\\\" as the value to show that the parent tab is active.\\"
-  conditionalParentValue: String
-  \\"The DocuSign generated custom tab ID for the custom tab to be applied. This can only be used when adding new tabs for a recipient. When used, the new tab inherits all the custom tab properties.\\"
-  customTabId: String
-  \\"Specifies the document ID number that the tab is placed on. This must refer to an existing Document's ID attribute.\\"
-  documentId: String
-  errorDetails: errorDetails_Input
-  \\"The font to be used for the tab value. Supported Fonts: Arial, Arial, ArialNarrow, Calibri, CourierNew, Garamond, Georgia, Helvetica,   LucidaConsole, Tahoma, TimesNewRoman, Trebuchet, Verdana, MSGothic, MSMincho, Default.\\"
-  font: String
-  \\"The font color used for the information in the tab.\\\\n\\\\nPossible values are: Black, BrightBlue, BrightRed, DarkGreen, DarkRed, Gold, Green, NavyBlue, Purple, or White.\\"
-  fontColor: String
-  \\"The font size used for the information in the tab.\\\\n\\\\nPossible values are: Size7, Size8, Size9, Size10, Size11, Size12, Size14, Size16, Size18, Size20, Size22, Size24, Size26, Size28, Size36, Size48, or Size72.\\"
-  fontSize: String
-  \\"When set to **true**, the information in the tab is italic.\\"
-  italic: String
-  mergeField: mergeField_Input
-  name: String
-  \\"Specifies the page number on which the tab is located.\\\\nMust be 1 for [supplemental documents][supdocs].\\\\n\\\\n[supdocs]: /esign/guide/appendix/glossary.html#supplemental-documents\\"
-  pageNumber: String
-  \\"Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.\\"
-  recipientId: String
-  \\"Indicates the envelope status. Valid values are:\\\\n\\\\n* sent - The envelope is sent to the recipients. \\\\n* created - The envelope is saved as a draft and can be modified and sent later.\\"
-  status: String
-  \\"The unique identifier for the tab. The tabid can be retrieved with the [ML:GET call].\\"
-  tabId: String
-  \\"The label string associated with the tab.\\\\nThe string may be the empty string.\\\\nIf no value is provided, the tab type is used as the value.\\\\n\\\\nMaximum of 500 characters.\\"
-  tabLabel: String
-  tabOrder: String
-  \\"When set to **true**, the sender cannot change any attributes of the recipient. Used only when working with template recipients.\\"
-  templateLocked: String
-  \\"When set to **true**, the sender may not remove the recipient. Used only when working with template recipients.\\"
-  templateRequired: String
-  \\"When set to **true**, the information in the tab is underlined.\\"
-  underline: String
-  \\"Specifies the value of the tab.\\"
-  value: String
   \\"This indicates the horizontal offset of the object on the page.\\\\nDocuSign uses 72 DPI when determining position.\\\\nRequired. May be zero.\\"
   xPosition: String
   \\"This indicates the vertical offset of the object on the page. DocuSign uses 72 DPI when determining position.\\"
@@ -9872,69 +8928,6 @@ input money_Input {
   displayAmount: String
 }
 
-input fullName_Input {
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nWhen set to **true**, the anchor string does not consider case when matching strings in the document. The default value is **true**.\\\\n-->\\"
-  anchorCaseSensitive: String
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nSpecifies the alignment of anchor tabs with anchor strings. Possible values are **left** or **right**. The default value is **left**.\\\\n-->\\"
-  anchorHorizontalAlignment: String
-  \\"When set to **true**, this tab is ignored if anchorString is not found in the document.\\"
-  anchorIgnoreIfNotPresent: String
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nWhen set to **true**, the anchor string in this tab matches whole words only (strings embedded in other strings are ignored.) The default value is **true**.\\\\n-->\\"
-  anchorMatchWholeWord: String
-  \\"Anchor text information for a radio button.\\"
-  anchorString: String
-  \\"Specifies units of the X and Y offset. Units could be pixels, millimeters, centimeters, or inches.\\"
-  anchorUnits: String
-  \\"Specifies the X axis location of the tab, in achorUnits, relative to the anchorString.\\"
-  anchorXOffset: String
-  \\"Specifies the Y axis location of the tab, in achorUnits, relative to the anchorString.\\"
-  anchorYOffset: String
-  \\"When set to **true**, the information in the tab is bold.\\"
-  bold: String
-  \\"For conditional fields this is the TabLabel of the parent tab that controls this tab's visibility.\\"
-  conditionalParentLabel: String
-  \\"For conditional fields, this is the value of the parent tab that controls the tab's visibility.\\\\n\\\\nIf the parent tab is a Checkbox, Radio button, Optional Signature, or Optional Initial use \\\\\\"on\\\\\\" as the value to show that the parent tab is active.\\"
-  conditionalParentValue: String
-  \\"The DocuSign generated custom tab ID for the custom tab to be applied. This can only be used when adding new tabs for a recipient. When used, the new tab inherits all the custom tab properties.\\"
-  customTabId: String
-  \\"Specifies the document ID number that the tab is placed on. This must refer to an existing Document's ID attribute.\\"
-  documentId: String
-  errorDetails: errorDetails_Input
-  \\"The font to be used for the tab value. Supported Fonts: Arial, Arial, ArialNarrow, Calibri, CourierNew, Garamond, Georgia, Helvetica,   LucidaConsole, Tahoma, TimesNewRoman, Trebuchet, Verdana, MSGothic, MSMincho, Default.\\"
-  font: String
-  \\"The font color used for the information in the tab.\\\\n\\\\nPossible values are: Black, BrightBlue, BrightRed, DarkGreen, DarkRed, Gold, Green, NavyBlue, Purple, or White.\\"
-  fontColor: String
-  \\"The font size used for the information in the tab.\\\\n\\\\nPossible values are: Size7, Size8, Size9, Size10, Size11, Size12, Size14, Size16, Size18, Size20, Size22, Size24, Size26, Size28, Size36, Size48, or Size72.\\"
-  fontSize: String
-  \\"When set to **true**, the information in the tab is italic.\\"
-  italic: String
-  mergeField: mergeField_Input
-  name: String
-  \\"Specifies the page number on which the tab is located.\\\\nMust be 1 for [supplemental documents][supdocs].\\\\n\\\\n[supdocs]: /esign/guide/appendix/glossary.html#supplemental-documents\\"
-  pageNumber: String
-  \\"Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.\\"
-  recipientId: String
-  \\"Indicates the envelope status. Valid values are:\\\\n\\\\n* sent - The envelope is sent to the recipients. \\\\n* created - The envelope is saved as a draft and can be modified and sent later.\\"
-  status: String
-  \\"The unique identifier for the tab. The tabid can be retrieved with the [ML:GET call].\\"
-  tabId: String
-  \\"The label string associated with the tab.\\\\nThe string may be the empty string.\\\\nIf no value is provided, the tab type is used as the value.\\\\n\\\\nMaximum of 500 characters.\\"
-  tabLabel: String
-  tabOrder: String
-  \\"When set to **true**, the sender cannot change any attributes of the recipient. Used only when working with template recipients.\\"
-  templateLocked: String
-  \\"When set to **true**, the sender may not remove the recipient. Used only when working with template recipients.\\"
-  templateRequired: String
-  \\"When set to **true**, the information in the tab is underlined.\\"
-  underline: String
-  \\"Specifies the value of the tab.\\"
-  value: String
-  \\"This indicates the horizontal offset of the object on the page.\\\\nDocuSign uses 72 DPI when determining position.\\\\nRequired. May be zero.\\"
-  xPosition: String
-  \\"This indicates the vertical offset of the object on the page. DocuSign uses 72 DPI when determining position.\\"
-  yPosition: String
-}
-
 input initialHere_Input {
   \\"Reserved for DocuSign.\\\\n<!--\\\\nWhen set to **true**, the anchor string does not consider case when matching strings in the document. The default value is **true**.\\\\n-->\\"
   anchorCaseSensitive: String
@@ -9982,69 +8975,6 @@ input initialHere_Input {
   templateLocked: String
   \\"When set to **true**, the sender may not remove the recipient. Used only when working with template recipients.\\"
   templateRequired: String
-  \\"This indicates the horizontal offset of the object on the page.\\\\nDocuSign uses 72 DPI when determining position.\\\\nRequired. May be zero.\\"
-  xPosition: String
-  \\"This indicates the vertical offset of the object on the page. DocuSign uses 72 DPI when determining position.\\"
-  yPosition: String
-}
-
-input lastName_Input {
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nWhen set to **true**, the anchor string does not consider case when matching strings in the document. The default value is **true**.\\\\n-->\\"
-  anchorCaseSensitive: String
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nSpecifies the alignment of anchor tabs with anchor strings. Possible values are **left** or **right**. The default value is **left**.\\\\n-->\\"
-  anchorHorizontalAlignment: String
-  \\"When set to **true**, this tab is ignored if anchorString is not found in the document.\\"
-  anchorIgnoreIfNotPresent: String
-  \\"Reserved for DocuSign.\\\\n<!--\\\\nWhen set to **true**, the anchor string in this tab matches whole words only (strings embedded in other strings are ignored.) The default value is **true**.\\\\n-->\\"
-  anchorMatchWholeWord: String
-  \\"Anchor text information for a radio button.\\"
-  anchorString: String
-  \\"Specifies units of the X and Y offset. Units could be pixels, millimeters, centimeters, or inches.\\"
-  anchorUnits: String
-  \\"Specifies the X axis location of the tab, in achorUnits, relative to the anchorString.\\"
-  anchorXOffset: String
-  \\"Specifies the Y axis location of the tab, in achorUnits, relative to the anchorString.\\"
-  anchorYOffset: String
-  \\"When set to **true**, the information in the tab is bold.\\"
-  bold: String
-  \\"For conditional fields this is the TabLabel of the parent tab that controls this tab's visibility.\\"
-  conditionalParentLabel: String
-  \\"For conditional fields, this is the value of the parent tab that controls the tab's visibility.\\\\n\\\\nIf the parent tab is a Checkbox, Radio button, Optional Signature, or Optional Initial use \\\\\\"on\\\\\\" as the value to show that the parent tab is active.\\"
-  conditionalParentValue: String
-  \\"The DocuSign generated custom tab ID for the custom tab to be applied. This can only be used when adding new tabs for a recipient. When used, the new tab inherits all the custom tab properties.\\"
-  customTabId: String
-  \\"Specifies the document ID number that the tab is placed on. This must refer to an existing Document's ID attribute.\\"
-  documentId: String
-  errorDetails: errorDetails_Input
-  \\"The font to be used for the tab value. Supported Fonts: Arial, Arial, ArialNarrow, Calibri, CourierNew, Garamond, Georgia, Helvetica,   LucidaConsole, Tahoma, TimesNewRoman, Trebuchet, Verdana, MSGothic, MSMincho, Default.\\"
-  font: String
-  \\"The font color used for the information in the tab.\\\\n\\\\nPossible values are: Black, BrightBlue, BrightRed, DarkGreen, DarkRed, Gold, Green, NavyBlue, Purple, or White.\\"
-  fontColor: String
-  \\"The font size used for the information in the tab.\\\\n\\\\nPossible values are: Size7, Size8, Size9, Size10, Size11, Size12, Size14, Size16, Size18, Size20, Size22, Size24, Size26, Size28, Size36, Size48, or Size72.\\"
-  fontSize: String
-  \\"When set to **true**, the information in the tab is italic.\\"
-  italic: String
-  mergeField: mergeField_Input
-  name: String
-  \\"Specifies the page number on which the tab is located.\\\\nMust be 1 for [supplemental documents][supdocs].\\\\n\\\\n[supdocs]: /esign/guide/appendix/glossary.html#supplemental-documents\\"
-  pageNumber: String
-  \\"Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.\\"
-  recipientId: String
-  \\"Indicates the envelope status. Valid values are:\\\\n\\\\n* sent - The envelope is sent to the recipients. \\\\n* created - The envelope is saved as a draft and can be modified and sent later.\\"
-  status: String
-  \\"The unique identifier for the tab. The tabid can be retrieved with the [ML:GET call].\\"
-  tabId: String
-  \\"The label string associated with the tab.\\\\nThe string may be the empty string.\\\\nIf no value is provided, the tab type is used as the value.\\\\n\\\\nMaximum of 500 characters.\\"
-  tabLabel: String
-  tabOrder: String
-  \\"When set to **true**, the sender cannot change any attributes of the recipient. Used only when working with template recipients.\\"
-  templateLocked: String
-  \\"When set to **true**, the sender may not remove the recipient. Used only when working with template recipients.\\"
-  templateRequired: String
-  \\"When set to **true**, the information in the tab is underlined.\\"
-  underline: String
-  \\"Specifies the value of the tab.\\"
-  value: String
   \\"This indicates the horizontal offset of the object on the page.\\\\nDocuSign uses 72 DPI when determining position.\\\\nRequired. May be zero.\\"
   xPosition: String
   \\"This indicates the vertical offset of the object on the page. DocuSign uses 72 DPI when determining position.\\"
@@ -10886,81 +9816,6 @@ input zip_Input {
   yPosition: String
 }
 
-input intermediary_Input {
-  \\"If a value is provided, the recipient must enter the value as the access code to view and sign the envelope. \\\\n\\\\nMaximum Length: 50 characters and it must conform to the account's access code format setting.\\\\n\\\\nIf blank, but the signer \`accessCode\` property is set in the envelope, then that value is used.\\\\n\\\\nIf blank and the signer \`accessCode\` property is not set, then the access code is not required.\\"
-  accessCode: String
-  \\"This Optional attribute indicates that the access code will be added to the email sent to the recipient; this nullifies the Security measure of Access Code on the recipient.\\"
-  addAccessCodeToEmail: String
-  \\"Specifies whether the recipient is embedded or remote. \\\\n\\\\nIf the \`clientUserId\` property is not null then the recipient is embedded. Use this field to associate the signer with their userId in your app. Authenticating the user is the responsibility of your app when you use embedded signing.\\\\n\\\\nNote: if the \`clientUserId\` property is set and either \`SignerMustHaveAccount\` or \`SignerMustLoginToSign\` property of the account settings is set to  **true**, an error is generated on sending. \\\\n\\\\nMaximum length: 100 characters.\\"
-  clientUserId: String
-  \\"An optional array of strings that allows the sender to provide custom data about the recipient. This information is returned in the envelope status but otherwise not used by DocuSign. Each customField string can be a maximum of 100 characters.\\"
-  customFields: [String]
-  \\"The date and time the recipient declined the document.\\"
-  declinedDateTime: String
-  \\"The reason the recipient declined the document.\\"
-  declinedReason: String
-  \\"Reserved: For DocuSign use only.\\"
-  deliveredDateTime: String
-  \\"Reserved: For DocuSign use only.\\"
-  deliveryMethod: String
-  documentVisibility: [documentVisibility_Input]
-  \\"Email id of the recipient. Notification of the document to sign is sent to this email id. \\\\n\\\\nMaximum length: 100 characters.\\"
-  email: String
-  emailNotification: recipientEmailNotification_Input
-  emailRecipientPostSigningURL: String
-  \\"Specifies a sender provided valid URL string for redirecting an embedded recipient. When using this option, the embedded recipient still receives an email from DocuSign, just as a remote recipient would. When the document link in the email is clicked the recipient is redirected, through DocuSign, to the supplied URL to complete their actions. When routing to the URL, the sender's system (the server responding to the URL) must request a recipient token to launch a signing session. \\\\n\\\\nIf set to \`SIGN_AT_DOCUSIGN\`, the recipient is directed to an embedded signing or viewing process directly at DocuSign. The signing or viewing action is initiated by the DocuSign system and the transaction activity and Certificate of Completion records will reflect this. In all other ways the process is identical to an embedded signing or viewing operation that is launched by any partner.\\\\n\\\\nIt is important to remember that in a typical embedded workflow the authentication of an embedded recipient is the responsibility of the sending application, DocuSign expects that senders will follow their own process for establishing the recipient's identity. In this workflow the recipient goes through the sending application before the embedded signing or viewing process in initiated. However, when the sending application sets \`EmbeddedRecipientStartURL=SIGN_AT_DOCUSIGN\`, the recipient goes directly to the embedded signing or viewing process bypassing the sending application and any authentication steps the sending application would use. In this case, DocuSign recommends that you use one of the normal DocuSign authentication features (Access Code, Phone Authentication, SMS Authentication, etc.) to verify the identity of the recipient.\\\\n\\\\nIf the \`clientUserId\` property is NOT set, and the \`embeddedRecipientStartURL\` is set, DocuSign will ignore the redirect URL and launch the standard signing process for the email recipient. Information can be appended to the embedded recipient start URL using merge fields. The available merge fields items are: envelopeId, recipientId, recipientName, recipientEmail, and customFields. The \`customFields\` property must be set fort the recipient or envelope. The merge fields are enclosed in double brackets. \\\\n\\\\n*Example*: \\\\n\\\\n\`http://senderHost/[[mergeField1]]/ beginSigningSession? [[mergeField2]]&[[mergeField3]]\`\\"
-  embeddedRecipientStartURL: String
-  errorDetails: errorDetails_Input
-  \\"Specifies the documents that are not visible to this recipient. Document Visibility must be enabled for the account and the \`enforceSignerVisibility\` property must be set to **true** for the envelope to use this.\\\\n\\\\nWhen enforce signer visibility is enabled, documents with tabs can only be viewed by signers that have a tab on that document. Recipients that have an administrative role (Agent, Editor, or Intermediaries) or informational role (Certified Deliveries or Carbon Copies) can always see all the documents in an envelope, unless they are specifically excluded using this setting when an envelope is sent. Documents that do not have tabs are always visible to all recipients, unless they are specifically excluded using this setting when an envelope is sent.\\"
-  excludedDocuments: [String]
-  \\"Reserved:\\"
-  faxNumber: String
-  \\"Specifies authentication check by name. The names used here must be the same as the authentication type names used by the account (these name can also be found in the web console sending interface in the Identify list for a recipient,) This overrides any default authentication setting.\\\\n\\\\n*Example*: Your account has ID Check and SMS Authentication available and in the web console Identify list these appear as 'ID Check $' and 'SMS Auth $'. To use ID check in an envelope, the idCheckConfigurationName should be 'ID Check '. If you wanted to use SMS, it would be 'SMS Auth $' and you would need to add you would need to add phone number information to the \`smsAuthentication\` node.\\"
-  idCheckConfigurationName: String
-  idCheckInformationInput: idCheckInformationInput_Input
-  \\"When set to **true** and the envelope recipient creates a DocuSign account after signing, the Manage Account Email Notification settings are used as the default settings for the recipient's account.\\"
-  inheritEmailNotificationConfiguration: String
-  name: String
-  \\"A note sent to the recipient in the signing email.\\\\nThis note is unique to this recipient.\\\\nIn the user interface,\\\\nit appears near the upper left corner\\\\nof the document\\\\non the signing screen.\\\\n\\\\nMaximum Length: 1000 characters.\\"
-  note: String
-  phoneAuthentication: recipientPhoneAuthentication_Input
-  \\"Reserved:\\"
-  recipientAttachments: [recipientAttachment_Input]
-  recipientAuthenticationStatus: authenticationStatus_Input
-  \\"Unique for the recipient. It is used by the tab element to indicate which recipient is to sign the Document.\\"
-  recipientId: String
-  recipientIdGuid: String
-  \\"When set to **true**, the recipient is required to use the specified ID check method (including Phone and SMS authentication) to validate their identity.\\"
-  requireIdLookup: String
-  \\"Optional element. Specifies the role name associated with the recipient.<br/><br/>This is required when working with template recipients.\\"
-  roleName: String
-  \\"Specifies the routing order of the recipient in the envelope.\\"
-  routingOrder: String
-  samlAuthentication: recipientSAMLAuthentication_Input
-  \\"The date and time the envelope was sent.\\"
-  sentDateTime: String
-  \\"Reserved: For DocuSign use only.\\"
-  signedDateTime: String
-  \\"When set to **true** and the feature is enabled in the sender's account, the signing recipient is required to draw signatures and initials at each signature/initial tab ( instead of adopting a signature/initial style or only drawing a signature/initial once).\\"
-  signingGroupId: String
-  \\"The display name for the signing group. \\\\n\\\\nMaximum Length: 100 characters.\\"
-  signingGroupName: String
-  \\"A complex type that contains information about users in the signing group.\\"
-  signingGroupUsers: [userInfo_Input]
-  smsAuthentication: recipientSMSAuthentication_Input
-  \\"Lists the social ID type that can be used for recipient authentication.\\"
-  socialAuthentications: [socialAuthentication_Input]
-  \\"Indicates the envelope status. Valid values are:\\\\n\\\\n* sent - The envelope is sent to the recipients. \\\\n* created - The envelope is saved as a draft and can be modified and sent later.\\"
-  status: String
-  \\"When set to **true**, the sender cannot change any attributes of the recipient. Used only when working with template recipients.\\"
-  templateLocked: String
-  \\"When set to **true**, the sender may not remove the recipient. Used only when working with template recipients.\\"
-  templateRequired: String
-  totalTabCount: String
-  \\"The user ID of the user being accessed. Generally this is the user ID of the authenticated user, but if the authenticated user is an Admin on the account, this may be another user the Admin user is accessing.\\"
-  userId: String
-}
-
 input signer_Input {
   \\"If a value is provided, the recipient must enter the value as the access code to view and sign the envelope. \\\\n\\\\nMaximum Length: 50 characters and it must conform to the account's access code format setting.\\\\n\\\\nIf blank, but the signer \`accessCode\` property is set in the envelope, then that value is used.\\\\n\\\\nIf blank and the signer \`accessCode\` property is not set, then the access code is not required.\\"
   accessCode: String
@@ -11169,22 +10024,6 @@ input envelopeAttachmentsRequest_Input {
   attachments: [attachment_Input]
 }
 
-\\"Envelope custom fields\\"
-type EnvelopeCustomFields {
-  \\"An array of list custom fields.\\"
-  listCustomFields: [listCustomField]
-  \\"An array of text custom fields.\\"
-  textCustomFields: [textCustomField]
-}
-
-\\"Envelope custom fields\\"
-input EnvelopeCustomFields_Input {
-  \\"An array of list custom fields.\\"
-  listCustomFields: [listCustomField_Input]
-  \\"An array of text custom fields.\\"
-  textCustomFields: [textCustomField_Input]
-}
-
 \\"Envelope document fields\\"
 input EnvelopeDocumentFields_Input {
   \\"The array of name/value custom data strings to be added to a document. Custom document field information is returned in the status, but otherwise is not used by DocuSign. The array contains the elements: \\\\n\\\\n* name - A string that can be a maximum of 50 characters. \\\\n* value - A string that can be a maximum of 200 characters.\\\\n\\\\n*IMPORTANT*: If you are using xml, the name/value pair is contained in a nameValue element.\\"
@@ -11237,13 +10076,6 @@ input lockRequest_Input {
   useScratchPad: String
 }
 
-input envelopeNotificationRequest_Input {
-  expirations: expirations_Input
-  reminders: reminders_Input
-  \\"When set to **true**, the account default notification settings are used for the envelope.\\"
-  useAccountDefaults: String
-}
-
 type recipientsUpdateSummary {
   recipientUpdateResults: [recipientUpdateResponse]
 }
@@ -11290,16 +10122,10 @@ input bulkRecipient_Input {
   recipientSignatureProviderInfo: [bulkRecipientSignatureProvider_Input]
   rowNumber: String
   \\"Specifies values used to populate recipient tabs with information. This allows each bulk recipient signer to have different values for their associated tabs. Any number of \`tabLabel\` columns can be added to the bulk recipient file.\\\\n\\\\nThe information used in the bulk recipient file header must be the same as the \`tabLabel\` for the tab.\\\\n\\\\nThe values entered in this column are automatically inserted into the corresponding tab for the recipient in the same row.\\\\n\\\\nNote that this option cannot be used for tabs that do not have data or that are automatically populated data such as Signature, Full Name, Email Address, Company, Title, and Date Signed tabs.\\"
-  tabLabels: [bulkRecipientTabLabel_Input]
+  tabLabels: [bulkRecipientSignatureProvider_Input]
 }
 
 input bulkRecipientSignatureProvider_Input {
-  name: String
-  \\"Specifies the value of the tab.\\"
-  value: String
-}
-
-input bulkRecipientTabLabel_Input {
   name: String
   \\"Specifies the value of the tab.\\"
   value: String
@@ -11676,7 +10502,7 @@ input templateSharedItem_Input {
   \\"When set to **true**, this custom tab is shared.\\"
   shared: String
   sharedGroups: [memberGroupSharedItem_Input]
-  sharedUsers: [userSharedItem_Input]
+  sharedUsers: [sharedItem_Input]
   \\"The unique identifier of the template. If this is not provided, DocuSign will generate a value.\\"
   templateId: String
   templateName: String
@@ -11687,13 +10513,6 @@ input memberGroupSharedItem_Input {
   group: group_Input
   \\"When set to **true**, this custom tab is shared.\\"
   shared: String
-}
-
-input userSharedItem_Input {
-  errorDetails: errorDetails_Input
-  \\"When set to **true**, this custom tab is shared.\\"
-  shared: String
-  user: userInfo_Input
 }
 
 input signingGroupInformation_Input {
@@ -11929,31 +10748,6 @@ input envelopeTemplateDefinition_Input {
   uri: String
 }
 
-type templateUpdateSummary {
-  bulkEnvelopeStatus: bulkEnvelopeStatus
-  \\"The envelope ID of the envelope status that failed to post.\\"
-  envelopeId: String
-  errorDetails: errorDetails
-  listCustomFieldUpdateResults: [listCustomField]
-  lockInformation: EnvelopeLocks
-  recipientUpdateResults: [recipientUpdateResponse]
-  tabUpdateResults: EnvelopeRecipientTabs
-  textCustomFieldUpdateResults: [textCustomField]
-}
-
-input templateCustomFields_Input {
-  \\"An array of list custom fields.\\"
-  listCustomFields: [listCustomField_Input]
-  \\"An array of text custom fields.\\"
-  textCustomFields: [textCustomField_Input]
-}
-
-\\"Template document fields\\"
-input TemplateDocumentFields_Input {
-  \\"The array of name/value custom data strings to be added to a document. Custom document field information is returned in the status, but otherwise is not used by DocuSign. The array contains the elements: \\\\n\\\\n* name - A string that can be a maximum of 50 characters. \\\\n* value - A string that can be a maximum of 200 characters.\\\\n\\\\n*IMPORTANT*: If you are using xml, the name/value pair is contained in a nameValue element.\\"
-  documentFields: [nameValue_Input]
-}
-
 input templateNotificationRequest_Input {
   expirations: expirations_Input
   password: String
@@ -11975,77 +10769,11 @@ input templateRecipients_Input {
   \\"Specifies a signer that is in the same physical location as a DocuSign user who will act as a Signing Host for the transaction. The recipient added is the Signing Host and new separate Signer Name field appears after Sign in person is selected.\\"
   inPersonSigners: [inPersonSigner_Input]
   \\"Identifies a recipient that can, but is not required to, add name and email information for recipients at the same or subsequent level in the routing order (until subsequent Agents, Editors or Intermediaries recipient types are added).\\"
-  intermediaries: [intermediary_Input]
+  intermediaries: [agent_Input]
   \\"The list of recipient event statuses that will trigger Connect to send updates to the url. It can be a two-part list with:\\\\n\\\\n* recipientEventStatusCode - The recipient status, this can be Sent, Delivered, Completed, Declined, AuthenticationFailed, and AutoResponded.\\\\n* includeDocuments - When set to **true**, the envelope time zone information is included in the message.\\"
   recipientCount: String
   \\"A complex type containing information about the Signer recipient.\\"
   signers: [signer_Input]
-}
-
-type TemplateDocumentVisibility {
-  documentVisibility: [documentVisibility]
-}
-
-input TemplateDocumentVisibility_Input {
-  documentVisibility: [documentVisibility_Input]
-}
-
-input templateTabs_Input {
-  \\"A tab that allows the recipient to approve documents\\\\nwithout placing a signature or initials on the\\\\ndocument. If the recipient clicks the Approve tab during the signing\\\\nprocess, the recipient is considered to have signed the document. No\\\\ninformation is shown on the document for the approval, but it is\\\\nrecorded as a signature in the envelope history.\\"
-  approveTabs: [approve_Input]
-  \\"Specifies a tag on the document in a location where the recipient can select an option.\\"
-  checkboxTabs: [checkbox_Input]
-  \\"Specifies a tag on the document where you want the recipient's company name to appear.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  companyTabs: [company_Input]
-  \\"Specifies a tab on the document where the date the document was signed will automatically appear.\\"
-  dateSignedTabs: [dateSigned_Input]
-  \\"Specifies a tab on the document where you want the recipient to enter a date. Date tabs are single-line fields that allow date information to be entered in any format. The tooltip for this tab recommends entering the date as MM/DD/YYYY, but this is not enforced. The format entered by the signer is retained. \\\\n\\\\nIf you need a particular date format enforced, DocuSign recommends using a Text tab with a Validation Pattern and Validation Message to enforce the format.\\"
-  dateTabs: [date_Input]
-  \\"Specifies a tag on the document where you want to give the recipient the option of declining an envelope. If the recipient clicks the Decline tag during the signing process, the envelope is voided.\\"
-  declineTabs: [decline_Input]
-  \\"Specifies a location on the document where you want where you want the recipient's email, as entered in the recipient information, to display.\\"
-  emailAddressTabs: [emailAddress_Input]
-  \\"Specifies a tag on the document where you want the recipient to enter an email. Email tags are single-line fields that accept any characters. The system checks that a valid email format (i.e. xxx@yyy.zzz) is entered in the tag. It uses the same parameters as a Text tab, with the validation message and pattern set for email information.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  emailTabs: [email_Input]
-  \\"Specifies a tag on the document where you want the envelope ID for to appear. Recipients cannot enter or change the information in this tab, it is for informational purposes only.\\"
-  envelopeIdTabs: [envelopeId_Input]
-  \\"Specifies tag on a document where you want the recipient's first name to appear. This tag takes the recipient's name, as entered in the recipient information, splits it into sections based on spaces and uses the first section as the first name.\\"
-  firstNameTabs: [firstName_Input]
-  \\"A list of formula tabs.\\\\n\\\\nThe value of a formula tab is calculated\\\\nfrom the values of other\\\\nnumber or date tabs in the document.\\\\nWhen the recipient completes the underlying fields,\\\\nthe formula tab calculates and displays the result.\\\\n\\\\nThe \`formula\` property of the tab\\\\ncontains the references\\\\nto the underlying tabs.\\\\nSee [Calculated Fields][calculatedfields]\\\\nin the DocuSign Support Center\\\\nto learn more about formulas.\\\\n\\\\nIf a formula tab contains\\\\na \`paymentDetails\` property,\\\\nthe tab is considered a payment item.\\\\nSee [Requesting Payments Along with Signatures][paymentguide]\\\\nin the DocuSign Support Center\\\\nto learn more about payments.\\\\n\\\\n[calculatedfields]: https://support.docusign.com/en/guides/ndse-user-guide-calculated-fields\\\\n[paymentguide]:     https://support.docusign.com/en/guides/requesting-payments-along-with-signatures\\"
-  formulaTabs: [formulaTab_Input]
-  \\"Specifies a tag on the document where you want the recipient's name to appear.\\"
-  fullNameTabs: [fullName_Input]
-  \\"Specifies a tag location in the document at which a recipient will place their initials. The \`optional\` parameter specifies whether the initials are required or optional.\\"
-  initialHereTabs: [initialHere_Input]
-  \\"Specifies a tag on a document where you want the recipient's last name to appear. This tag takes the recipient's name, as entered in the recipient information, splits it into sections based on spaces and uses the last section as the last name.\\"
-  lastNameTabs: [lastName_Input]
-  \\"Specify this tag to give your recipient a list of options, presented as a drop-down list, from which they can select.\\"
-  listTabs: [list_Input]
-  \\"Specifies a location on the document where you want to place additional information, in the form of a note, for a recipient.\\"
-  noteTabs: [note_Input]
-  \\"Specifies a tag on the document where you want the recipient to enter a number. It uses the same parameters as a Text tab, with the validation message and pattern set for number information.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  numberTabs: [number_Input]
-  \\"Specifies a tag on the document in a location where the recipient can select one option from a group of options using a radio button. The radio buttons do not have to be on the same page in a document.\\"
-  radioGroupTabs: [radioGroup_Input]
-  \\"A complex type the contains information about the tag that specifies where the recipient places their signature in the document. The \\\\\\"optional\\\\\\" parameter sets if the signature is required or optional.\\"
-  signHereTabs: [signHere_Input]
-  \\"Specifies a tag on the document when you want the recipient to add supporting documents to an envelope.\\"
-  signerAttachmentTabs: [signerAttachment_Input]
-  \\"Specifies a tag on the document where you want the recipient to enter a Social Security Number (SSN). A SSN can be typed with or without dashes. It uses the same parameters as a Text tab, with the validation message and pattern set for SSN information.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  ssnTabs: [ssn_Input]
-  \\"Specifies a that that is an adaptable field that allows the recipient to enter different text information.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  textTabs: [text_Input]
-  \\"Specifies a tag on the document where you want the recipient's title to appear.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  titleTabs: [title_Input]
-  viewTabs: [view_Input]
-  \\"Specifies a tag on the document where you want the recipient to enter a ZIP code. The ZIP code can be a five numbers or the ZIP+4 format with nine numbers. The zip code can be typed with or without dashes. It uses the same parameters as a Text tab, with the validation message and pattern set for ZIP code information.\\\\n\\\\nWhen getting information that includes this tab type, the original value of the tab when the associated envelope was sent is included in the response.\\"
-  zipTabs: [zip_Input]
-}
-
-\\"Embedding template views\\"
-type TemplateViews {
-  \\"The view URL to be navigated to.\\"
-  url: String
 }
 
 type newUsersSummary {

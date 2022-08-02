@@ -1,7 +1,8 @@
-import { util, process } from '@graphql-mesh/cross-helpers';
-import { JSONSchema } from './types';
+import { process } from '@graphql-mesh/cross-helpers';
+import { JSONSchema, JSONSchemaObject } from './types';
 import { visitJSONSchema } from './visitJSONSchema';
 import toJsonSchema from 'to-json-schema';
+import { inspect } from '@graphql-tools/utils';
 
 const asArray = <T>(value: T | T[]): T[] => (Array.isArray(value) ? value : [value]);
 
@@ -23,29 +24,97 @@ const JSONSchemaStringFormats = [
   'uri',
 ];
 
-function deduplicateJSONSchema(schema: JSONSchema, seenMap = new Map()) {
-  if (typeof schema === 'object' && schema != null) {
+const titleResolvedRefReservedMap = new WeakMap<
+  JSONSchemaObject,
+  {
+    title?: string;
+    $resolvedRef?: string;
+  }
+>();
+
+function removeTitlesAndResolvedRefs(schema: JSONSchema) {
+  if (typeof schema === 'object' && schema != null && !titleResolvedRefReservedMap.has(schema)) {
     if (!schema.$comment) {
       const titleReserved = schema.title;
       if (titleReserved) {
         schema.title = undefined;
       }
-      const stringified = util.inspect(schema, undefined, 3);
-      if (titleReserved) {
-        schema.title = titleReserved;
+      const resolvedRefReserved = schema.$resolvedRef;
+      if (resolvedRefReserved) {
+        schema.$resolvedRef = undefined;
       }
+      titleResolvedRefReservedMap.set(schema, {
+        title: titleReserved,
+        $resolvedRef: resolvedRefReserved,
+      });
+      for (const key in schema) {
+        if (key === 'properties') {
+          for (const propertyName in schema.properties) {
+            schema[key][propertyName] = removeTitlesAndResolvedRefs(schema[key][propertyName]);
+          }
+        } else {
+          schema[key] = removeTitlesAndResolvedRefs(schema[key]);
+        }
+      }
+    }
+  }
+  return schema;
+}
+
+function deduplicateJSONSchema(schema: JSONSchema, seenMap = new Map()) {
+  if (typeof schema === 'object' && schema != null) {
+    if (!schema.$comment) {
+      const stringified = inspect(schema.properties || schema)
+        .split('[Circular]')
+        .join('[Object]');
       const seen = seenMap.get(stringified);
       if (seen) {
         return seen;
       }
       seenMap.set(stringified, schema);
-    }
-    for (const key in schema) {
-      schema[key] = deduplicateJSONSchema(schema[key], seenMap);
+      for (const key in schema) {
+        if (key === 'properties') {
+          for (const propertyName in schema.properties) {
+            schema.properties[propertyName] = deduplicateJSONSchema(schema.properties[propertyName], seenMap);
+          }
+        } else {
+          schema[key] = deduplicateJSONSchema(schema[key], seenMap);
+        }
+      }
     }
   }
   return schema;
 }
+
+const visited = new WeakSet();
+
+function addTitlesAndResolvedRefs(schema: JSONSchema) {
+  if (typeof schema === 'object' && schema != null && !visited.has(schema)) {
+    visited.add(schema);
+    if (!schema.$comment) {
+      const reservedTitleAndResolveRef = titleResolvedRefReservedMap.get(schema);
+      if (reservedTitleAndResolveRef) {
+        if (!schema.title && reservedTitleAndResolveRef.title) {
+          schema.title = reservedTitleAndResolveRef.title;
+        }
+        if (!schema.$resolvedRef && reservedTitleAndResolveRef.$resolvedRef) {
+          schema.$resolvedRef = reservedTitleAndResolveRef.$resolvedRef;
+        }
+      }
+      for (const key in schema) {
+        if (key === 'properties') {
+          for (const propertyName in schema.properties) {
+            schema.properties[propertyName] = addTitlesAndResolvedRefs(schema.properties[propertyName]);
+          }
+        } else {
+          schema[key] = addTitlesAndResolvedRefs(schema[key]);
+        }
+      }
+    }
+  }
+  return schema;
+}
+
 async function getDeduplicatedTitles(schema: JSONSchema): Promise<Set<string>> {
   const duplicatedTypeNames = new Set<string>();
   const seenTypeNames = new Set<string>();
@@ -74,10 +143,18 @@ export async function healJSONSchema(
   schema: JSONSchema,
   options: { noDeduplication?: boolean } = {}
 ): Promise<JSONSchema> {
-  const deduplicatedSchema = options?.noDeduplication ? schema : deduplicateJSONSchema(schema);
-  const duplicatedTypeNames = await getDeduplicatedTitles(deduplicatedSchema);
+  let readySchema = schema;
+  if (!options?.noDeduplication) {
+    const schemaWithoutResolvedRefAndTitles = removeTitlesAndResolvedRefs(schema);
+    const deduplicatedSchemaWithoutResolvedRefAndTitles = options?.noDeduplication
+      ? schema
+      : deduplicateJSONSchema(schemaWithoutResolvedRefAndTitles);
+    const deduplicatedSchema = addTitlesAndResolvedRefs(deduplicatedSchemaWithoutResolvedRefAndTitles);
+    readySchema = deduplicatedSchema;
+  }
+  const duplicatedTypeNames = await getDeduplicatedTitles(readySchema);
   return visitJSONSchema(
-    deduplicatedSchema,
+    readySchema,
     {
       enter: async function healSubschema(subSchema, { path }) {
         if (typeof subSchema === 'object') {
