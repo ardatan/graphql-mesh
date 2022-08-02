@@ -493,9 +493,16 @@ export interface QueryStringOptions {
    */
   indices?: boolean;
   /**
-   * You can configure how to format arrays in the query strings. (Allowed values: indices, brackets, repeat, comma)
+   * You can configure how to format arrays in the query strings.
+   *
+   * Note: when using arrayFormat set to 'comma', you can also pass the commaRoundTrip option set to true or false, to append [] on single-item arrays, so that they can round trip through a parse. (Allowed values: indices, brackets, repeat, comma)
    */
   arrayFormat?: 'indices' | 'brackets' | 'repeat' | 'comma';
+  /**
+   * Even if there is a single item in an array, this option treats them as arrays
+   * (default: false)
+   */
+  commaRoundTrip?: boolean;
 }
 export interface JsonSchemaHandlerBundle {
   /**
@@ -523,9 +530,16 @@ export interface QueryStringOptions1 {
    */
   indices?: boolean;
   /**
-   * You can configure how to format arrays in the query strings. (Allowed values: indices, brackets, repeat, comma)
+   * You can configure how to format arrays in the query strings.
+   *
+   * Note: when using arrayFormat set to 'comma', you can also pass the commaRoundTrip option set to true or false, to append [] on single-item arrays, so that they can round trip through a parse. (Allowed values: indices, brackets, repeat, comma)
    */
   arrayFormat?: 'indices' | 'brackets' | 'repeat' | 'comma';
+  /**
+   * Even if there is a single item in an array, this option treats them as arrays
+   * (default: false)
+   */
+  commaRoundTrip?: boolean;
 }
 export interface MongooseHandler {
   connectionString?: string;

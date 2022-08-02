@@ -127,7 +127,6 @@ describe('Execution', () => {
         schema,
         document: parse(query),
       });
-      console.log(result.errors);
       expect(result).toEqual({
         data: {
           test: {
@@ -244,7 +243,6 @@ describe('Execution', () => {
         schema,
         document: parse(query),
       });
-      console.log(result.errors);
       expect(result).toEqual({
         data: {
           test: {
@@ -303,7 +301,6 @@ describe('Execution', () => {
         schema,
         document: parse(query),
       });
-      console.log(result.errors);
       expect(result).toEqual({
         data: {
           test: {

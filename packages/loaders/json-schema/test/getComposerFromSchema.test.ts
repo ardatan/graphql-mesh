@@ -592,7 +592,8 @@ type ExampleAnyOf {
     expect(isScalarType(outputComposer.ofType.getType())).toBeTruthy();
     expect(outputComposer.ofType.getTypeName()).toBe(title);
   });
-  it('should return union type inside a list type if array definition has items as an array', async () => {
+  // This is not valid and should be healed first
+  it.skip('should return union type inside a list type if array definition has items as an array', async () => {
     const title = 'FooOrBar';
     const inputSchema: JSONSchema = {
       title: 'ExampleObject',
