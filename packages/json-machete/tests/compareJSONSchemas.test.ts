@@ -32,8 +32,8 @@ describe('compareJSONSchemas', () => {
       expect(e.errors).toBeDefined();
       const errors = [...e.errors];
       expect(errors).toHaveLength(2);
-      expect(errors[0].message).toBe(`/properties/bar/type is changed from string to undefined`);
-      expect(errors[1].message).toBe(`/properties doesn't have bar`);
+      expect(errors[0].message).toBe(`/properties doesn't have bar`);
+      expect(errors[1].message).toBe(`/properties/bar/type is changed from string to undefined`);
     }
   });
 });
