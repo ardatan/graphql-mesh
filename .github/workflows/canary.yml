@@ -4,6 +4,8 @@ on:
   pull_request:
     branches:
       - master
+    paths:
+      - '.changeset/**/*.md'
   workflow_dispatch:
     inputs:
       onDemand:
@@ -14,9 +16,6 @@ on:
         description: 'NPM Tag'
         required: true
         default: 'alpha'
-      npmVersionSuffix:
-        description: 'Custom NPM Version Suffix'
-        required: false
 jobs:
   publish-canary:
     name: Publish Canary
@@ -33,15 +32,6 @@ jobs:
         with:
           node-version: 18
           cache: yarn
-      - name: Configure Git Credentials
-        run: |
-          git config --global user.email "theguild-bot@users.noreply.github.com"
-          git config --global user.name "theguild-bot"
-          echo "machine github.com login theguild-bot password ${{secrets.GH_API_TOKEN}}" > ~/.netrc
-      - name: Setup NPM credentials
-        run: echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" >> ~/.npmrc
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
 
       - name: Cache Node Modules
         uses: actions/cache@v3
@@ -58,34 +48,10 @@ jobs:
 
       - name: Release Canary
         id: canary
-        uses: 'kamilkisiela/release-canary@master'
+        uses: 'the-guild-org/changesets-snapshot-action@main'
         with:
-          npm-token: ${{ secrets.NODE_AUTH_TOKEN }}
-          npm-script: 'yarn release:canary'
-          changesets: true
+          tag: ${{github.event.inputs.npmTag || 'alpha'}}
+          prepareScript: 'yarn build'
         env:
-          ON_DEMAND: ${{github.event.inputs.onDemand}}
-          NPM_TAG: ${{github.event.inputs.npmTag || 'alpha'}}
-          NPM_VERSION_SUFFIX: ${{github.event.inputs.npmVersionSuffix}}
-      - name: Publish a message
-        if: steps.canary.outputs.released
-        uses: 'kamilkisiela/pr-comment@master'
-        with:
-          message: |
-            The latest changes of this PR are available as alpha in npm (based on the declared `changesets`):
-
-            ```
-            ${{ steps.canary.outputs.changesetsPublishedPackages}}
-            ```
-          bot-token: ${{ secrets.GH_API_TOKEN }}
-          bot: 'theguild-bot'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Publish a empty message
-        if: steps.canary.outputs.released == 'false'
-        uses: 'kamilkisiela/pr-comment@master'
-        with:
-          message: |
-            The latest changes of this PR are not available as alpha, since there are no linked `changesets` for this PR.
-          bot-token: ${{ secrets.GH_API_TOKEN }}
-          bot: 'theguild-bot'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
