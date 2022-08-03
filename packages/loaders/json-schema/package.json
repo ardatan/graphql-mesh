@@ -33,7 +33,7 @@
     "@types/qs": "6.9.7"
   },
   "dependencies": {
-    "@whatwg-node/fetch": "^0.2.0",
+    "@whatwg-node/fetch": "^0.2.7",
     "json-machete": "0.10.5",
     "@graphql-mesh/types": "0.78.5",
     "@graphql-mesh/string-interpolation": "0.3.0",

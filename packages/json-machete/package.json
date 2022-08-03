@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@json-schema-tools/meta-schema": "1.6.19",
-    "@whatwg-node/fetch": "^0.2.0",
+    "@whatwg-node/fetch": "^0.2.7",
     "json-pointer": "0.6.2",
     "@graphql-mesh/utils": "0.37.6",
     "@graphql-mesh/cross-helpers": "0.2.0",

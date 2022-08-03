@@ -39,7 +39,7 @@
     "@graphql-mesh/string-interpolation": "0.3.0",
     "@graphql-mesh/utils": "0.37.6",
     "@graphql-tools/utils": "8.9.0",
-    "@whatwg-node/fetch": "^0.2.0",
+    "@whatwg-node/fetch": "^0.2.7",
     "deep-equal": "2.0.5",
     "form-urlencoded": "6.1.0",
     "jsonpath-plus": "7.0.0",
