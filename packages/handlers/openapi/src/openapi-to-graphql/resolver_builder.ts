@@ -18,6 +18,7 @@ import { PreprocessingData } from './types/preprocessing_data';
 // Imports:
 import * as Oas3Tools from './oas_3_tools';
 import * as JSONPath from 'jsonpath-plus';
+import qs from 'qs';
 import { GraphQLError, GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql';
 import formurlencoded from 'form-urlencoded';
 import urlJoin from 'url-join';
@@ -468,17 +469,9 @@ export function getResolver<TSource, TContext, TArgs>(
       };
     }
 
-    for (const paramName in query) {
-      const val = query[paramName];
+    const allQueryParams = {};
 
-      if (Array.isArray(val)) {
-        for (let index = 0; index < val.length; index++) {
-          urlObject.searchParams.append(paramName, val[index]);
-        }
-      } else if (val !== undefined) {
-        urlObject.searchParams.set(paramName, val);
-      }
-    }
+    Object.assign(allQueryParams, query);
 
     /**
      * Determine possible payload
@@ -521,22 +514,12 @@ export function getResolver<TSource, TContext, TArgs>(
       }
       // Query string:
       if (typeof data.options.qs === 'object') {
-        for (const query in data.options.qs) {
-          const val = data.options.qs[query];
-          if (val) {
-            urlObject.searchParams.set(query, val);
-          }
-        }
+        Object.assign(allQueryParams, data.options.qs);
       }
     }
 
     if (typeof customQs === 'object') {
-      for (const query in customQs) {
-        const val = customQs[query];
-        if (val) {
-          urlObject.searchParams.set(query, val);
-        }
-      }
+      Object.assign(allQueryParams, customQs);
     }
 
     // Get authentication headers and query parameters
@@ -550,12 +533,8 @@ export function getResolver<TSource, TContext, TArgs>(
           options.headers[headerName] = headerValue;
         }
       }
-      for (const query in authQs) {
-        const val = authQs[query];
-        if (val) {
-          urlObject.searchParams.set(query, val);
-        }
-      }
+
+      Object.assign(allQueryParams, authQs);
 
       // Add authentication cookie if created
       if (authCookie !== null) {
@@ -567,12 +546,7 @@ export function getResolver<TSource, TContext, TArgs>(
     // Extract OAuth token from context (if available)
     if (data.options.sendOAuthTokenInQuery) {
       const oauthQueryObj = createOAuthQS(data, ctx, logger);
-      for (const query in oauthQueryObj) {
-        const val = oauthQueryObj[query];
-        if (val) {
-          urlObject.searchParams.set(query, val);
-        }
-      }
+      Object.assign(allQueryParams, oauthQueryObj);
     } else {
       const oauthHeader = createOAuthHeader(data, ctx, logger);
       for (const headerName in oauthHeader) {
@@ -582,6 +556,8 @@ export function getResolver<TSource, TContext, TArgs>(
         }
       }
     }
+
+    urlObject.search = qs.stringify(allQueryParams);
 
     const urlWithoutQuery = urlObject.href.replace(urlObject.search, '');
     resolveData.url = urlWithoutQuery;
