@@ -1,0 +1,665 @@
+openapi: 3.0.0
+info:
+  version: '2022.02'
+  title: Toto
+  description: |-
+    ## General
+
+    High level documentation can be found in the [BitBucket Wiki](https://bitbucket.org/test/test-api-documentation/wiki/browse).
+
+    Documentation that applies to all endpoints:
+
+    * [Default Endpoint Behavior](https://bitbucket.org/test/test-api-documentation/wiki/Default%20Endpoint%20Behavior)
+    * [API Conventions](https://bitbucket.org/test/test-api-documentation/wiki/API%20Conventions)
+    * [Error Handling](https://bitbucket.org/test/test-api-documentation/wiki/Error%20Handling)
+  x-codegen-values:
+    apiVersionString: v1
+    apiVersionInt: 1
+    filePath: api/v1/v1_api-knowledge-center.yml
+servers:
+  - url: https://dev-api.test.com/api/v1
+    description: The dev API server
+paths:
+  /api/v1/companies/{companyId}/knowledgecenter/folders/{folderId}/resources:
+    parameters:
+      - $ref: '#/components/parameters/companyId'
+      - $ref: '#/components/parameters/folderId'
+      - $ref: '#/components/parameters/Accept-Language'
+      - $ref: '#/components/parameters/X-Correlation-Id'
+    get:
+      operationId: list-resources-at-any-folder-v1
+      summary: List Resources At Any Folder Level
+      tags:
+        - Resources controller
+      description: List Resources At Any Folder Level
+      parameters:
+        - $ref: '#/components/parameters/querySearch'
+        - $ref: '#/components/parameters/minSize'
+        - $ref: '#/components/parameters/maxSize'
+        - $ref: '#/components/parameters/status'
+        - $ref: '#/components/parameters/directoryOnly'
+        - $ref: '#/components/parameters/order'
+        - $ref: '#/components/parameters/targetAudience'
+        - $ref: '#/components/parameters/publicationStartDate'
+        - $ref: '#/components/parameters/publicationEndDate'
+        - $ref: '#/components/parameters/startKey'
+        - $ref: '#/components/parameters/size'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  anyOf:
+                    - $ref: '#/components/schemas/FileGetWithLocalizedNameDTO'
+                    - $ref: '#/components/schemas/FolderGetWithLocalizedNameDTO'
+    post:
+      operationId: create-resource-at-any-folder-v1
+      summary: Create Resources At Any Folder Level
+      tags:
+        - Resources controller
+      description: Create resources at any folder level
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/FileCreateDTO'
+                - $ref: '#/components/schemas/FolderCreateDTO'
+      responses:
+        '201':
+          description: CREATED
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/FileGetWithI18nDTO'
+                  - $ref: '#/components/schemas/FolderGetWithI18nDTO'
+  /api/v1/companies/{companyId}/knowledgecenter/folders/{folderId}/resources/{resourceId}:
+    parameters:
+      - $ref: '#/components/parameters/companyId'
+      - $ref: '#/components/parameters/folderId'
+      - $ref: '#/components/parameters/resourceId'
+      - $ref: '#/components/parameters/Accept-Language'
+      - $ref: '#/components/parameters/X-Correlation-Id'
+    put:
+      operationId: update-resource-at-any-folder-v1
+      summary: Update A Resource At Any Folder Level
+      tags:
+        - Resources controller
+      description: Update A Resource At Any Folder Level
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/FileUpdateDTO'
+                - $ref: '#/components/schemas/FolderUpdateDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/FileGetWithI18nDTO'
+                  - $ref: '#/components/schemas/FolderGetWithI18nDTO'
+
+  /api/v1/companies/{companyId}/knowledgecenter/resources:
+    parameters:
+      - $ref: '#/components/parameters/companyId'
+      - $ref: '#/components/parameters/Accept-Language'
+      - $ref: '#/components/parameters/X-Correlation-Id'
+    get:
+      operationId: list-resources-at-the-root-folder-v1
+      summary: List All Resources At The Root Folder
+      tags:
+        - Resources controller
+      description: List All Resources At The Root Folder
+      parameters:
+        - $ref: '#/components/parameters/querySearch'
+        - $ref: '#/components/parameters/minSize'
+        - $ref: '#/components/parameters/maxSize'
+        - $ref: '#/components/parameters/status'
+        - $ref: '#/components/parameters/directoryOnly'
+        - $ref: '#/components/parameters/order'
+        - $ref: '#/components/parameters/targetAudience'
+        - $ref: '#/components/parameters/publicationStartDate'
+        - $ref: '#/components/parameters/publicationEndDate'
+        - $ref: '#/components/parameters/startKey'
+        - $ref: '#/components/parameters/size'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  anyOf:
+                    - $ref: '#/components/schemas/FileGetWithLocalizedNameDTO'
+                    - $ref: '#/components/schemas/FolderGetWithLocalizedNameDTO'
+    post:
+      operationId: create-resource-at-the-root-folder-v1
+      summary: Create A Resource At The Root Folder
+      tags:
+        - Resources controller
+      description: Create A Resource At The Root Folder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/FileCreateDTO'
+                - $ref: '#/components/schemas/FolderCreateDTO'
+      responses:
+        '201':
+          description: CREATED
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/FileGetWithI18nDTO'
+                  - $ref: '#/components/schemas/FolderGetWithI18nDTO'
+
+  /api/v1/companies/{companyId}/knowledgecenter/resources/{resourceId}:
+    parameters:
+      - $ref: '#/components/parameters/companyId'
+      - $ref: '#/components/parameters/resourceId'
+      - $ref: '#/components/parameters/Accept-Language'
+      - $ref: '#/components/parameters/X-Correlation-Id'
+    get:
+      operationId: get-resource-by-id-v1
+      summary: Get Resource by ID
+      tags:
+        - Resources controller
+      description: Get Resource by ID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/FileGetWithI18nDTO'
+                  - $ref: '#/components/schemas/FolderGetWithI18nDTO'
+    put:
+      operationId: update-resource-at-the-root-folder-v1
+      summary: Update A Resource At The Root Folder
+      tags:
+        - Resources controller
+      description: Update A Resource At The Root Folder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/FileUpdateDTO'
+                - $ref: '#/components/schemas/FolderUpdateDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/FileGetWithI18nDTO'
+                  - $ref: '#/components/schemas/FolderGetWithI18nDTO'
+    delete:
+      operationId: delete-resource-at-the-root-folder-v1
+      summary: Delete A Resource At The Root Folder
+      tags:
+        - Resources controller
+      description: Delete A Resource At The Root Folder
+      responses:
+        '204':
+          description: No Content
+        default:
+          $ref: '#/components/responses/common_Error'
+
+components:
+  schemas:
+    FilePropertiesDTO:
+      type: object
+      properties:
+        size:
+          type: integer
+          format: int32
+        url:
+          type: string
+        contentType:
+          type: string
+    FolderPropertiesDTO:
+      type: object
+      properties:
+        fileCount:
+          type: integer
+          format: int32
+        childFolderCount:
+          type: integer
+          format: int32
+    ResourceTimestampDataDTO:
+      type: object
+      properties:
+        lastUpdateTimestamp:
+          type: string
+          format: date-time
+        lastUpdateUserId:
+          type: string
+
+    BaseResourceDTO:
+      type: object
+      properties:
+        parentFolderId:
+          type: string
+        status:
+          $ref: '#/components/schemas/ResourceStatus'
+        publicationStartTimestamp:
+          type: string
+          format: date-time
+        publicationEndTimestamp:
+          type: string
+          format: date-time
+        previewUrl:
+          type: string
+        allowedTargetAudiences:
+          type: array
+          items:
+            type: string
+        shiftFenced:
+          type: boolean
+        punchedFenced:
+          type: boolean
+        geoFenced:
+          type: boolean
+        pinned:
+          type: boolean
+
+    BaseResourceUpdateDTO:
+      allOf:
+        - $ref: '#/components/schemas/BaseResourceDTO'
+        - type: object
+          properties:
+            i18n:
+              type: object
+              additionalProperties:
+                type: object
+                additionalProperties:
+                  type: string
+
+    ResourceGetDTO:
+      allOf:
+        - type: object
+          properties:
+            parentHierarchy:
+              type: array
+              items:
+                $ref: '#/components/schemas/ParentFolderGetWithLocalizedNameDTO'
+        - $ref: '#/components/schemas/BaseResourceDTO'
+        - type: object
+          properties:
+            type:
+              $ref: '#/components/schemas/ResourceType'
+            id:
+              type: string
+        - $ref: '#/components/schemas/ResourceTimestampDataDTO'
+      required:
+        - id
+        - status
+        - type
+    FileGetWithI18nDTO:
+      allOf:
+        - $ref: '#/components/schemas/ResourceGetDTO'
+        - $ref: '#/components/schemas/FilePropertiesDTO'
+        - type: object
+          properties:
+            i18n:
+              type: object
+              additionalProperties:
+                type: object
+                additionalProperties:
+                  type: string
+      required:
+        - size
+        - url
+        - contentType
+        - i18n
+    FolderGetWithI18nDTO:
+      allOf:
+        - $ref: '#/components/schemas/ResourceGetDTO'
+        - $ref: '#/components/schemas/FolderPropertiesDTO'
+        - type: object
+          properties:
+            i18n:
+              type: object
+              additionalProperties:
+                type: object
+                additionalProperties:
+                  type: string
+      required:
+        - i18n
+    FileGetWithLocalizedNameDTO:
+      allOf:
+        - $ref: '#/components/schemas/ResourceGetDTO'
+        - $ref: '#/components/schemas/FilePropertiesDTO'
+        - type: object
+          properties:
+            name:
+              type: string
+      required:
+        - size
+        - url
+        - contentType
+        - name
+    FolderGetWithLocalizedNameDTO:
+      allOf:
+        - $ref: '#/components/schemas/ResourceGetDTO'
+        - $ref: '#/components/schemas/FolderPropertiesDTO'
+        - type: object
+          properties:
+            name:
+              type: string
+      required:
+        - name
+    ParentFolderGetWithLocalizedNameDTO:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/ResourceType'
+        id:
+          type: string
+        status:
+          $ref: '#/components/schemas/ResourceStatus'
+        publicationStartTimestamp:
+          type: string
+          format: date-time
+        publicationEndTimestamp:
+          type: string
+          format: date-time
+        previewUrl:
+          type: string
+        allowedTargetAudiences:
+          type: array
+          items:
+            type: string
+        isShiftFenced:
+          type: boolean
+        isPunchedFenced:
+          type: boolean
+        isGeoFenced:
+          type: boolean
+        isPinned:
+          type: boolean
+        name:
+          type: string
+        creationTimestamp:
+          type: string
+          format: date-time
+        creationUserId:
+          type: string
+        lastUpdateTimestamp:
+          type: string
+          format: date-time
+        lastUpdateUserId:
+          type: string
+        fileCount:
+          type: integer
+          format: int32
+        childFolderCount:
+          type: integer
+          format: int32
+      required:
+        - name
+        - id
+        - status
+        - type
+        - lastUpdateTimestamp
+        - lastUpdateUserId
+    ResourceCreateDTO:
+      allOf:
+        - $ref: '#/components/schemas/BaseResourceUpdateDTO'
+        - type: object
+          properties:
+            type:
+              $ref: '#/components/schemas/ResourceType'
+          required:
+            - status
+            - type
+            - i18n
+            - size
+            - url
+            - contentType
+    FileCreateDTO:
+      allOf:
+        - $ref: '#/components/schemas/ResourceCreateDTO'
+        - $ref: '#/components/schemas/FilePropertiesDTO'
+    FolderCreateDTO:
+      allOf:
+        - $ref: '#/components/schemas/ResourceCreateDTO'
+
+    ResourceUpdateDTO:
+      allOf:
+        - $ref: '#/components/schemas/BaseResourceUpdateDTO'
+    FileUpdateDTO:
+      allOf:
+        - $ref: '#/components/schemas/ResourceUpdateDTO'
+        - $ref: '#/components/schemas/FilePropertiesDTO'
+    FolderUpdateDTO:
+      allOf:
+        - $ref: '#/components/schemas/ResourceUpdateDTO'
+    ResourceStatus:
+      type: array
+      items:
+        type: string
+        enum:
+          - ACTIVE
+          - INACTIVE
+          - SCHEDULED
+    ResourceType:
+      type: array
+      items:
+        type: string
+        enum:
+          - FILE
+          - FOLDER
+
+    v1_common_error:
+      title: Error
+      type: object
+      additionalProperties: false
+      externalDocs:
+        description: Refer to the Error Handling wiki page for domains and reasons.
+        url: https://bitbucket.org/test/test-api-documentation/wiki/Error%20Handling
+      properties:
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        exception:
+          type: string
+        path:
+          type: string
+        message:
+          type: string
+          description: Localized and human readable message taken from the first error.
+          pattern: ^(?![A-Z_]*$).*$
+        debugMessage:
+          type: string
+          description: Message for debug purposes. Not intended to be shown the users.
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/v1_common_error_details'
+      required:
+        - status
+        - timestamp
+        - path
+        - message
+        - localizedMessage
+    v1_common_error_details:
+      title: Error Details
+      type: object
+      properties:
+        domain:
+          type: string
+          enum:
+            - KNOWLEDGE_CENTER
+        reason:
+          type: string
+          pattern: ^[A-Z_]+$
+        location:
+          type: string
+        locationType:
+          type: string
+          enum:
+            - HEADER
+            - PARAMETER
+            - FIELD
+            - PERMISSION
+        message:
+          type: string
+          description: Localized and human readable message.
+          pattern: ^(?![A-Z_]*$).*$
+      required:
+        - domain
+        - reason
+        - message
+  responses:
+    common_Error:
+      description: Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/v1_common_error'
+  parameters:
+    # Path Parameters
+    companyId:
+      name: companyId
+      in: path
+      required: true
+      schema:
+        type: string
+    folderId:
+      name: folderId
+      in: path
+      required: true
+      schema:
+        type: string
+    resourceId:
+      name: resourceId
+      in: path
+      required: true
+      schema:
+        type: string
+    querySearch:
+      name: querySearch
+      description: Text to search in title
+      in: query
+      required: false
+      schema:
+        type: string
+    minSize:
+      name: minSize
+      description: Minimum size of a resource
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+    maxSize:
+      name: maxSize
+      description: Maximum size of a resource
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+    status:
+      name: status
+      description: Status of the resource
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/ResourceStatus'
+    directoryOnly:
+      name: directoryOnly
+      in: query
+      required: false
+      schema:
+        type: boolean
+        default: false
+    order:
+      name: order
+      description: List of order
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+          pattern: '^(FILE_TYPE|NAME|LAST_UPDATE_DATE)(,(ASC|DESC))?$'
+    targetAudience:
+      name: targetAudience
+      description: Target of the resource (the resource need to have all of the target audience passed in the list)
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+    publicationStartDate:
+      name: publicationStartDate
+      description: Publication start date
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date
+    publicationEndDate:
+      name: publicationEndDate
+      description: Publication end date
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date
+    startKey:
+      name: startKey
+      description: The page number
+      in: query
+      required: false
+      schema:
+        type: string
+    size:
+      name: size
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+    # Header Parameters
+    Accept-Language:
+      name: Accept-Language
+      in: header
+      description: As defined in RFC 3282 https://tools.ietf.org/html/rfc3282
+      schema:
+        type: string
+    X-Correlation-Id:
+      name: X-Correlation-Id
+      in: header
+      description: Correlation ID from the auth call.
+      schema:
+        type: string
+    X-Last-Evaluated-Key:
+      name: X-Last-Evaluated-Key
+      in: header
+      description: Contains the page as string for the next call.
+      schema:
+        type: string

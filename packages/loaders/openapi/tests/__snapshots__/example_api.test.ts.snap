@@ -291,6 +291,7 @@ type project_with_id {
 }
 
 input get_Status_request_Input {
+  globalquery: String!
   limit: Int!
 }
 
@@ -316,8 +317,7 @@ type Mutation {
   \\"Used to test link parameters with variables\\"
   postScanner(input: String, path: String!, query: String): getCopier_200_response
   \\"Endpoint to test placeholder objects to wrap response objects.\\"
-  post_status(input: paths_status_post_requestBody_content_application_json_schema_Input): String
-  undefined: Any
+  post_status(input: paths_status_post_requestBody_content_application_json_schema_Input, globalquery: String!): String
   \\"Add new contents to the trashcan of a specific owner\\"
   postOfficeTrashCan(input: paths_trashcans__LEFT_CURLY_BRACE_username_RIGHT_CURLY_BRACE__post_requestBody_content_application_json_schema_Input, username: String!): trashcan
 }
@@ -384,8 +384,6 @@ input project_with_id_Input {
 input paths_status_post_requestBody_content_application_json_schema_Input {
   hello: String
 }
-
-scalar Any
 
 scalar paths_trashcans__LEFT_CURLY_BRACE_username_RIGHT_CURLY_BRACE__post_requestBody_content_application_json_schema_Input"
 `;

@@ -62,7 +62,11 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
 
   for (const relativePath in oasOrSwagger.paths) {
     const pathObj = oasOrSwagger.paths[relativePath];
+    const pathParameters = pathObj.parameters;
     for (const method in pathObj) {
+      if (method === 'parameters') {
+        continue;
+      }
       const methodObj = pathObj[method] as OpenAPIV2.OperationObject | OpenAPIV3.OperationObject;
       const operationConfig = {
         method: method.toUpperCase() as HTTPMethod,
@@ -77,8 +81,20 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
         responseByStatusCode: Record<string, JSONSchemaOperationResponseConfig>;
       };
       operations.push(operationConfig);
-      for (const paramObjIndex in methodObj.parameters) {
-        const paramObj = methodObj.parameters[paramObjIndex] as OpenAPIV2.ParameterObject | OpenAPIV3.ParameterObject;
+      let allParams;
+      if (methodObj.parameters && Array.isArray(methodObj.parameters)) {
+        allParams = [...(pathParameters || []), ...methodObj.parameters];
+      } else {
+        allParams = {
+          ...(pathParameters || {}),
+          ...((methodObj.parameters || {}) as any),
+        };
+      }
+      for (const paramObjIndex in allParams) {
+        let paramObj = allParams[paramObjIndex] as OpenAPIV2.ParameterObject | OpenAPIV3.ParameterObject;
+        if ('$ref' in paramObj) {
+          paramObj = resolvePath(paramObj.$ref.split('#')[1], oasOrSwagger);
+        }
         const argName = sanitizeNameForGraphQL(paramObj.name);
         switch (paramObj.in) {
           case 'query':
@@ -101,6 +117,12 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
               if (paramObj.required) {
                 requestSchema.required = requestSchema.required || [];
                 requestSchema.required.push(paramObj.name);
+              }
+              // Fix the reference
+              if (requestSchema.properties[paramObj.name].$ref?.startsWith('#')) {
+                requestSchema.properties[paramObj.name].$ref = `${oasFilePath}${
+                  requestSchema.properties[paramObj.name].$ref
+                }`;
               }
             } else {
               if (!operationConfig.path.includes('?')) {
