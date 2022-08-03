@@ -1,0 +1,730 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generate the schema 1`] = `
+"schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  \\"\\"\\"
+  Returns all company assets
+  
+  Equivalent to GET /assets/{companyId}
+  \\"\\"\\"
+  asset(companyId: String!): [AssetListItem]
+  \\"\\"\\"
+  Used to test empty responses
+  
+  Equivalent to GET /bonuses
+  \\"\\"\\"
+  bonuses: JSON
+  \\"\\"\\"
+  Returns a car to test nesting of sub operations
+  
+  Equivalent to GET /users/{username}/car
+  \\"\\"\\"
+  car(
+    \\"\\"\\"Identifier of a user.\\"\\"\\"
+    username: String!
+  ): Car
+  \\"\\"\\"
+  Returns information about all employee cars
+  
+  Equivalent to GET /cars
+  \\"\\"\\"
+  cars: [Car]
+  \\"\\"\\"
+  Used to test generation of object types with matching schema.
+  
+  Equivalent to GET /cleanDesks
+  \\"\\"\\"
+  cleanDesks: String
+  \\"\\"\\"
+  Returns the profile of a company with the given ID.
+  
+  Equivalent to GET /companies/{id}
+  \\"\\"\\"
+  company(id: String!): Company
+  \\"\\"\\"
+  Used to test cookies.
+  
+  Equivalent to GET /cookie
+  \\"\\"\\"
+  cookie(cookieSize: CookieSize!, cookieType: CookieType!): String
+  \\"\\"\\"
+  Used to find the nearest coffee machine based on the user's coordinates. Used to test the content field in parameter objects.
+  
+  Equivalent to GET /coffeeLocation
+  \\"\\"\\"
+  coordinates(lat: Float, long: Float): Coordinates
+  \\"\\"\\"
+  Used to test link parameters with variables
+  
+  Equivalent to GET /copier
+  \\"\\"\\"
+  copier(query: String): Copier
+  \\"\\"\\"
+  Used to test generation of object types with matching schema.
+  
+  Equivalent to GET /dirtyDesks
+  \\"\\"\\"
+  dirtyDesks: String
+  \\"\\"\\"
+  It could be anything!
+  
+  Equivalent to GET /mystery
+  \\"\\"\\"
+  mystery: Mystery
+  \\"\\"\\"
+  Return an office.
+  
+  Equivalent to GET /offices/{id}
+  \\"\\"\\"
+  office(
+    \\"\\"\\"
+    Describes the format of the return values. By default, the return type is \`text/plain\` and the return value is the two-letter language code for the identified language, for example, \`en\` for English or \`es\` for Spanish. To retrieve a JSON object that contains a ranking of identified languages with confidence scores, set the accept header parameter to \`application/json\`.
+    \\"\\"\\"
+    accept: Accept
+    \\"\\"\\"Office ID\\"\\"\\"
+    id: Int!
+  ): Office
+  \\"\\"\\"
+  Return a list of papers. Endpoint to test 2XX status code.
+  
+  Equivalent to GET /papers
+  \\"\\"\\"
+  papers: [Paper]
+  \\"\\"\\"
+  Obtain reviews for a product.
+  
+  Equivalent to GET /products/{id}/reviews
+  \\"\\"\\"
+  productReviews(id: String!, productTag: String): [ProductReviewsListItem]
+  \\"\\"\\"
+  Another endpoint to test unsanitized parameters and data.
+  
+  Equivalent to GET /products/{product-id}
+  \\"\\"\\"
+  productWithId(productId: String!, productTag: String!): ProductWithId
+  \\"\\"\\"
+  Used to test link parameters with variables
+  
+  Equivalent to GET /scanner
+  \\"\\"\\"
+  scanner(query: String): Scanner
+  \\"\\"\\"
+  Used to test OAuth token being present in header.
+  
+  Equivalent to GET /secure
+  \\"\\"\\"
+  secure: String
+  \\"\\"\\"
+  Endpoint to test sending of headers.
+  
+  Equivalent to GET /snack
+  \\"\\"\\"
+  snack(snackSize: SnackSize!, snackType: SnackType!): String
+  \\"\\"\\"
+  Endpoint to test sending of options.
+  
+  Equivalent to GET /status
+  \\"\\"\\"
+  status2(globalquery: String!, limit: Int!): String
+  \\"\\"\\"
+  Returns the (contents of a) trashcan from a specific owner
+  
+  Equivalent to GET /trashcans/{username}
+  \\"\\"\\"
+  trashcan(
+    \\"\\"\\"Identifier of a user.\\"\\"\\"
+    username: String!
+  ): Trashcan
+  \\"\\"\\"
+  Returns the (contents of a) trashcan from a specific office
+  
+  Equivalent to GET /trashcans
+  \\"\\"\\"
+  trashcans: [Trashcan]
+  \\"\\"\\"
+  Returns a user from the system.
+  
+  Equivalent to GET /users/{username}
+  \\"\\"\\"
+  user(
+    \\"\\"\\"Identifier of a user.\\"\\"\\"
+    username: String!
+  ): User
+  \\"\\"\\"
+  Returns a user's friends to test pagination
+  
+  Equivalent to GET /users/{username}/friends
+  \\"\\"\\"
+  userFriends(
+    \\"\\"\\"Identifier of a user.\\"\\"\\"
+    username: String!
+  ): [User]
+  \\"\\"\\"
+  Return a list of users.
+  
+  Equivalent to GET /users
+  \\"\\"\\"
+  users(
+    \\"\\"\\"Limit of the number of users to return.\\"\\"\\"
+    limit: Int!
+  ): [User]
+  \\"\\"\\"
+  A viewer that wraps all operations authenticated via security scheme 'example_api_basic_protocol', which is of type 'http' 'basic'
+  \\"\\"\\"
+  viewerBasicAuth(username: String!, password: String!): ViewerBasicAuth
+  \\"\\"\\"
+  A viewer that wraps all operations authenticated via security scheme 'example_api_key_protocol', which is of type 'apiKey'
+  \\"\\"\\"
+  viewerApiKey(apiKey: String!): ViewerApiKey
+  \\"\\"\\"
+  A viewer that wraps all operations authenticated via security scheme 'example_api_key_protocol_2', which is of type 'apiKey'
+  \\"\\"\\"
+  viewerApiKey2(apiKey: String!): ViewerApiKey2
+  \\"\\"\\"
+  A viewer that wraps all operations authenticated via security scheme 'example_api_key_protocol_3', which is of type 'apiKey'
+  \\"\\"\\"
+  viewerApiKey3(apiKey: String!): ViewerApiKey3
+  \\"\\"\\"
+  A viewer that wraps operations for all available authentication mechanisms
+  \\"\\"\\"
+  viewerAnyAuth(exampleApiBasicProtocol: ExampleApiBasicProtocolInput, exampleApiKeyProtocol: ExampleApiKeyProtocolInput, exampleApiKeyProtocol2: ExampleApiKeyProtocol2Input, exampleApiKeyProtocol3: ExampleApiKeyProtocol3Input): ViewerAnyAuth
+}
+
+\\"\\"\\"No description available.\\"\\"\\"
+union AssetListItem = Trashcan | Car | User
+
+type Trashcan {
+  brand: JSON
+  contents: [JSON]
+}
+
+\\"\\"\\"
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+\\"\\"\\"
+scalar JSON @specifiedBy(url: \\"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf\\")
+
+\\"\\"\\"A car\\"\\"\\"
+type Car {
+  \\"\\"\\"The color of the car.\\"\\"\\"
+  color: String
+  features: JSON
+  kind: Kind
+  \\"\\"\\"The model of the car.\\"\\"\\"
+  model: String
+  \\"\\"\\"The rating of the car.\\"\\"\\"
+  rating: Rating
+  \\"\\"\\"Arbitrary (string) tags describing an entity.\\"\\"\\"
+  tags: JSON
+}
+
+enum Kind {
+  SEDAN
+  SUV
+  MINIVAN
+  LIMOSINE
+  RACE_CAR
+}
+
+enum Rating {
+  _100
+  _101
+  _200
+}
+
+\\"\\"\\"A user represents a natural person\\"\\"\\"
+type User {
+  \\"\\"\\"The legal address of a user\\"\\"\\"
+  address: Address!
+  \\"\\"\\"The legal address of a user\\"\\"\\"
+  address2: Address
+  \\"\\"\\"
+  Allows to fetch the user's employer company.
+  
+  Equivalent to GET /companies/{id}
+  \\"\\"\\"
+  employerCompany: Company
+  \\"\\"\\"The identifier of the company a user works for\\"\\"\\"
+  employerId: String!
+  \\"\\"\\"
+  Allows to fetch the user's friends.
+  
+  Equivalent to GET /users/{username}/friends
+  \\"\\"\\"
+  friends: [User]
+  \\"\\"\\"The hobbies of this user\\"\\"\\"
+  hobbies: [String]!
+  \\"\\"\\"The legal name of a user\\"\\"\\"
+  name: String!
+  nomenclature: Nomenclature
+  status: Status
+  \\"\\"\\"The identifier of a user\\"\\"\\"
+  username: String
+}
+
+\\"\\"\\"The legal address of a user\\"\\"\\"
+type Address {
+  \\"\\"\\"The city a user lives in\\"\\"\\"
+  city: String
+  \\"\\"\\"The street a user lives in\\"\\"\\"
+  street: String
+}
+
+\\"\\"\\"A company is the employer of many users\\"\\"\\"
+type Company {
+  \\"\\"\\"
+  Allows to fetch the company's CEO user.
+  
+  Equivalent to GET /users/{username}
+  \\"\\"\\"
+  ceoUser: User
+  \\"\\"\\"The identifier of the user who is CEO of the company\\"\\"\\"
+  ceoUsername: String
+  \\"\\"\\"The identifier of a company\\"\\"\\"
+  id: ID
+  \\"\\"\\"The legal form of a company\\"\\"\\"
+  legalForm: String
+  \\"\\"\\"The legal name of a company\\"\\"\\"
+  name: String
+  \\"\\"\\"The offices of a company\\"\\"\\"
+  offices: [Address]
+}
+
+type Nomenclature {
+  family: String!
+  familyCircular: FamilyObject
+  genus: String
+  species: String
+  suborder: String
+}
+
+type FamilyObject {
+  family: String!
+  familyCircular: FamilyObject
+}
+
+enum Status {
+  STAFF
+  CONTRACTOR
+  ALUMNI
+}
+
+enum CookieSize {
+  BITE_SIZED
+  REGULAR
+  MEGA_SIZED
+}
+
+enum CookieType {
+  CHOCOLATE_CHIP
+  OATMEAL_RAISIN
+  SUGAR
+}
+
+type Coordinates {
+  lat: Float!
+  long: Float!
+}
+
+type Copier {
+  basicLink: Copier
+  body: String
+  constantLink: Copier
+  everythingLink: Copier
+  variableLink: Copier
+}
+
+\\"\\"\\"No description available.\\"\\"\\"
+union Mystery = MysteryMember | MysteryMember2
+
+type MysteryMember {
+  commonAttribute: String
+}
+
+type MysteryMember2 {
+  differentAttribute: String
+}
+
+\\"\\"\\"An office\\"\\"\\"
+type Office {
+  \\"\\"\\"
+  Allows to fetch the user's employer company.
+  
+  Equivalent to GET /companies/{id}
+  \\"\\"\\"
+  company: Company
+  \\"\\"\\"The owner ID of the office\\"\\"\\"
+  employeeId: String
+  \\"\\"\\"The identifier of the company a user works for\\"\\"\\"
+  employerId: String
+  \\"\\"\\"
+  Allows to fetch the user who invented a product.
+  
+  Equivalent to GET /users/{username}
+  \\"\\"\\"
+  owner: User
+  \\"\\"\\"The room number of the office\\"\\"\\"
+  roomNumber: Int
+}
+
+enum Accept {
+  APPLICATION_JSON
+  TEXT_PLAIN
+}
+
+\\"\\"\\"A research paper\\"\\"\\"
+type Paper {
+  \\"\\"\\"The name of the paper\\"\\"\\"
+  name: String
+  \\"\\"\\"Whether the paper is published\\"\\"\\"
+  published: Boolean
+}
+
+type ProductReviewsListItem {
+  text: String
+  timestamp: Float
+}
+
+\\"\\"\\"A product\\"\\"\\"
+type ProductWithId {
+  \\"\\"\\"The id of the product\\"\\"\\"
+  productId: String
+  \\"\\"\\"The name of the product\\"\\"\\"
+  productName: String
+  \\"\\"\\"A tag associated with the product\\"\\"\\"
+  productTag: String
+  reviews: [ProductReviewsListItem]
+  reviewsWithOperationRef: [ProductReviewsListItem]
+}
+
+type Scanner {
+  basicLink: Copier
+  body: String
+  constantLink: Copier
+  everythingLink: Copier
+  everythingLink2: Copier
+  variableLink: Copier
+}
+
+enum SnackSize {
+  LARGE
+  SMALL
+}
+
+enum SnackType {
+  CHIPS
+  SODA
+}
+
+\\"\\"\\"A viewer for security scheme 'example_api_basic_protocol'\\"\\"\\"
+type ViewerBasicAuth {
+  \\"\\"\\"
+  An endpoint to test authentication.
+  
+  Equivalent to GET /patents/{patent-id}
+  \\"\\"\\"
+  patentWithId(patentId: String!): PatentWithId
+}
+
+\\"\\"\\"A patent\\"\\"\\"
+type PatentWithId {
+  \\"\\"\\"
+  Allows to fetch the user who invented a product.
+  
+  Equivalent to GET /users/{username}
+  \\"\\"\\"
+  inventor: User
+  \\"\\"\\"The id of the inventor\\"\\"\\"
+  inventorId: String
+  \\"\\"\\"The id of the patent\\"\\"\\"
+  patentId: String!
+}
+
+\\"\\"\\"A viewer for security scheme 'example_api_key_protocol'\\"\\"\\"
+type ViewerApiKey {
+  \\"\\"\\"
+  Another endpoint to test authentication.
+  
+  Equivalent to GET /projects/{project-id}
+  \\"\\"\\"
+  projectWithId(projectId: Int!): ProjectWithId
+}
+
+\\"\\"\\"A project\\"\\"\\"
+type ProjectWithId {
+  \\"\\"\\"Whether the project is active\\"\\"\\"
+  active: Boolean
+  \\"\\"\\"The id of the lead\\"\\"\\"
+  leadId: String
+  \\"\\"\\"
+  Allows to fetch a patent.
+  
+  Equivalent to GET /patents/{patent-id}
+  \\"\\"\\"
+  patent: PatentWithId
+  \\"\\"\\"The patent associated with a project if applicable\\"\\"\\"
+  patentId2: String
+  \\"\\"\\"The id of the project\\"\\"\\"
+  projectId: Int
+  \\"\\"\\"
+  Allows to fetch the user leading a project.
+  
+  Equivalent to GET /users/{username}
+  \\"\\"\\"
+  projectLead: User
+}
+
+\\"\\"\\"A viewer for security scheme 'example_api_key_protocol_2'\\"\\"\\"
+type ViewerApiKey2 {
+  \\"\\"\\"
+  An endpoint to test authentication.
+  
+  Equivalent to GET /patents/{patent-id}
+  \\"\\"\\"
+  patentWithId(patentId: String!): PatentWithId
+  \\"\\"\\"
+  Another endpoint to test authentication.
+  
+  Equivalent to GET /projects/{project-id}
+  \\"\\"\\"
+  projectWithId(projectId: Int!): ProjectWithId
+}
+
+\\"\\"\\"A viewer for security scheme 'example_api_key_protocol_3'\\"\\"\\"
+type ViewerApiKey3 {
+  \\"\\"\\"
+  An endpoint to test authentication.
+  
+  Equivalent to GET /patents/{patent-id}
+  \\"\\"\\"
+  patentWithId(patentId: String!): PatentWithId
+  \\"\\"\\"
+  Another endpoint to test authentication.
+  
+  Equivalent to GET /projects/{project-id}
+  \\"\\"\\"
+  projectWithId(projectId: Int!): ProjectWithId
+}
+
+\\"\\"\\"Warning: Not every request will work with this viewer type\\"\\"\\"
+type ViewerAnyAuth {
+  \\"\\"\\"
+  An endpoint to test authentication.
+  
+  Equivalent to GET /patents/{patent-id}
+  \\"\\"\\"
+  patentWithId(patentId: String!): PatentWithId
+  \\"\\"\\"
+  Another endpoint to test authentication.
+  
+  Equivalent to GET /projects/{project-id}
+  \\"\\"\\"
+  projectWithId(projectId: Int!): ProjectWithId
+}
+
+\\"\\"\\"
+Basic auth credentials for security protocol 'example_api_basic_protocol'
+\\"\\"\\"
+input ExampleApiBasicProtocolInput {
+  password: String
+  username: String
+}
+
+\\"\\"\\"
+API key credentials for the security protocol 'example_api_key_protocol'
+\\"\\"\\"
+input ExampleApiKeyProtocolInput {
+  apiKey: String
+}
+
+\\"\\"\\"
+API key credentials for the security protocol 'example_api_key_protocol_2'
+\\"\\"\\"
+input ExampleApiKeyProtocol2Input {
+  apiKey: String
+}
+
+\\"\\"\\"
+API key credentials for the security protocol 'example_api_key_protocol_3'
+\\"\\"\\"
+input ExampleApiKeyProtocol3Input {
+  apiKey: String
+}
+
+type Mutation {
+  \\"\\"\\"
+  Add new contents to the trashcan of a specific owner
+  
+  Equivalent to POST /trashcans/{username}
+  \\"\\"\\"
+  postOfficeTrashCan(
+    trashcan2Input: JSON
+    \\"\\"\\"Identifier of a user.\\"\\"\\"
+    username: String!
+  ): Trashcan
+  \\"\\"\\"
+  Create a new paper in the system. Endpoint to test non-application/json request and response bodies.
+  
+  Equivalent to POST /papers
+  \\"\\"\\"
+  postPaper(
+    \\"\\"\\"String represents payload of content type 'text/plain'\\"\\"\\"
+    textPlainInput: String!
+  ): String
+  \\"\\"\\"
+  Endpoint to test unsanitized parameters and data.
+  
+  Equivalent to POST /products
+  \\"\\"\\"
+  postProductWithId(
+    \\"\\"\\"A product\\"\\"\\"
+    productWithIdInput: ProductWithIdInput!
+  ): ProductWithId
+  \\"\\"\\"
+  Used to test link parameters with variables
+  
+  Equivalent to POST /scanner/{path}
+  \\"\\"\\"
+  postScanner(
+    path: String!
+    query: String
+    \\"\\"\\"String represents payload of content type 'text/plain'\\"\\"\\"
+    textPlain2Input: String!
+  ): Scanner
+  \\"\\"\\"
+  Endpoint to test placeholder objects to wrap response objects.
+  
+  Equivalent to POST /status
+  \\"\\"\\"
+  postStatus(globalquery: String!, status3Input: Status3Input!): String
+  \\"\\"\\"
+  Create a new user in the system.
+  
+  Equivalent to POST /users
+  \\"\\"\\"
+  postUser(
+    \\"\\"\\"A user represents a natural person\\"\\"\\"
+    userInput: UserInput!
+  ): User
+  \\"\\"\\"
+  A viewer that wraps all operations authenticated via security scheme 'example_api_key_protocol', which is of type 'apiKey'
+  \\"\\"\\"
+  mutationViewerApiKey(apiKey: String!): MutationViewerApiKey
+  \\"\\"\\"
+  A viewer that wraps all operations authenticated via security scheme 'example_api_key_protocol_2', which is of type 'apiKey'
+  \\"\\"\\"
+  mutationViewerApiKey2(apiKey: String!): MutationViewerApiKey2
+  \\"\\"\\"
+  A viewer that wraps operations for all available authentication mechanisms
+  \\"\\"\\"
+  mutationViewerAnyAuth(exampleApiBasicProtocol: ExampleApiBasicProtocolInput, exampleApiKeyProtocol: ExampleApiKeyProtocolInput, exampleApiKeyProtocol2: ExampleApiKeyProtocol2Input, exampleApiKeyProtocol3: ExampleApiKeyProtocol3Input): MutationViewerAnyAuth
+}
+
+\\"\\"\\"A product\\"\\"\\"
+input ProductWithIdInput {
+  \\"\\"\\"The id of the product\\"\\"\\"
+  productId: String
+  \\"\\"\\"The name of the product\\"\\"\\"
+  productName: String
+  \\"\\"\\"A tag associated with the product\\"\\"\\"
+  productTag: String
+}
+
+input Status3Input {
+  hello: String
+}
+
+\\"\\"\\"A user represents a natural person\\"\\"\\"
+input UserInput {
+  \\"\\"\\"The legal address of a user\\"\\"\\"
+  address: AddressInput!
+  \\"\\"\\"The legal address of a user\\"\\"\\"
+  address2: AddressInput
+  \\"\\"\\"The identifier of the company a user works for\\"\\"\\"
+  employerId: String!
+  \\"\\"\\"The hobbies of this user\\"\\"\\"
+  hobbies: [String]!
+  \\"\\"\\"The legal name of a user\\"\\"\\"
+  name: String!
+  nomenclature: NomenclatureInput
+  status: Status
+  \\"\\"\\"The identifier of a user\\"\\"\\"
+  username: String
+}
+
+\\"\\"\\"The legal address of a user\\"\\"\\"
+input AddressInput {
+  \\"\\"\\"The city a user lives in\\"\\"\\"
+  city: String
+  \\"\\"\\"The street a user lives in\\"\\"\\"
+  street: String
+}
+
+input NomenclatureInput {
+  family: String!
+  familyCircular: FamilyObjectInput
+  genus: String
+  species: String
+  suborder: String
+}
+
+input FamilyObjectInput {
+  family: String!
+  familyCircular: FamilyObjectInput
+}
+
+\\"\\"\\"A viewer for security scheme 'example_api_key_protocol'\\"\\"\\"
+type MutationViewerApiKey {
+  \\"\\"\\"
+  An endpoint to test authenticated POST requests.
+  
+  Equivalent to POST /projects
+  \\"\\"\\"
+  postProjectWithId(
+    \\"\\"\\"A project\\"\\"\\"
+    projectWithIdInput: ProjectWithIdInput!
+  ): ProjectWithId
+}
+
+\\"\\"\\"A project\\"\\"\\"
+input ProjectWithIdInput {
+  \\"\\"\\"Whether the project is active\\"\\"\\"
+  active: Boolean
+  \\"\\"\\"The id of the lead\\"\\"\\"
+  leadId: String
+  \\"\\"\\"The patent associated with a project if applicable\\"\\"\\"
+  patentId3: String
+  \\"\\"\\"The id of the project\\"\\"\\"
+  projectId: Int
+}
+
+\\"\\"\\"A viewer for security scheme 'example_api_key_protocol_2'\\"\\"\\"
+type MutationViewerApiKey2 {
+  \\"\\"\\"
+  An endpoint to test authenticated POST requests.
+  
+  Equivalent to POST /projects
+  \\"\\"\\"
+  postProjectWithId(
+    \\"\\"\\"A project\\"\\"\\"
+    projectWithIdInput: ProjectWithIdInput!
+  ): ProjectWithId
+}
+
+\\"\\"\\"Warning: Not every request will work with this viewer type\\"\\"\\"
+type MutationViewerAnyAuth {
+  \\"\\"\\"
+  An endpoint to test authenticated POST requests.
+  
+  Equivalent to POST /projects
+  \\"\\"\\"
+  postProjectWithId(
+    \\"\\"\\"A project\\"\\"\\"
+    projectWithIdInput: ProjectWithIdInput!
+  ): ProjectWithId
+}"
+`;

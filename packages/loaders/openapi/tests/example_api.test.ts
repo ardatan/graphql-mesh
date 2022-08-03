@@ -4,6 +4,7 @@ import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAP
 import { startServer, stopServer } from '../../../handlers/openapi/test/example_api_server';
 import { join } from 'path';
 import { fetch } from '@whatwg-node/fetch';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 let createdSchema: GraphQLSchema;
 const PORT = 3002;
@@ -527,5 +528,8 @@ describe('example_api', () => {
         ],
       },
     });
+  });
+  it('should generate the schema correctly', () => {
+    expect(printSchemaWithDirectives(createdSchema)).toMatchSnapshot();
   });
 });

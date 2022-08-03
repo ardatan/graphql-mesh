@@ -16,6 +16,7 @@ import { Options } from '../src/openapi-to-graphql/types/options';
 import { startServer, stopServer } from './example_api_server';
 import { GraphQLOperationType } from '../src/openapi-to-graphql/types/graphql';
 import { fetch } from '@whatwg-node/fetch';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 const oas = require('./fixtures/example_oas.json');
 const PORT = 3002;
@@ -2445,4 +2446,8 @@ test('Non-nullable properties from nested allOf', () => {
       });
     });
   });
+});
+
+test('generate the schema', () => {
+  expect(printSchemaWithDirectives(createdSchema)).toMatchSnapshot();
 });

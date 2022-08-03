@@ -62,7 +62,9 @@ const GraphQLVoid = new GraphQLScalarType({
 export interface TypeComposers {
   input?: AnyTypeComposer<any>;
   output: AnyTypeComposer<any> | SchemaComposer;
+  // Information for future field definitions
   description?: string;
+  nullable?: boolean;
 }
 
 const GraphQLFile = new GraphQLScalarType({
@@ -117,6 +119,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
         return {
           input: typeComposer,
           output: typeComposer,
+          nullable: subSchema.nullable,
         };
       }
       if (subSchema.const) {
@@ -137,6 +140,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
         return {
           input: typeComposer,
           output: typeComposer,
+          nullable: subSchema.nullable,
         };
       }
       if (subSchema.enum && subSchema.type !== 'boolean') {
@@ -171,6 +175,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
         return {
           input: typeComposer,
           output: typeComposer,
+          nullable: subSchema.nullable,
         };
       }
 
@@ -184,6 +189,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           return {
             input: typeComposer,
             output: typeComposer,
+            nullable: subSchema.nullable,
           };
         } else {
           const typeComposer = getGenericJSONScalar({
@@ -195,6 +201,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           return {
             input: typeComposer,
             output: typeComposer,
+            nullable: subSchema.nullable,
           };
         }
       }
@@ -206,6 +213,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             input: typeComposer,
             output: typeComposer,
             description: subSchema.description,
+            nullable: subSchema.nullable,
           };
         }
         case 'boolean': {
@@ -214,6 +222,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             input: typeComposer,
             output: typeComposer,
             description: subSchema.description,
+            nullable: subSchema.nullable,
           };
         }
         case 'null': {
@@ -222,6 +231,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             input: typeComposer,
             output: typeComposer,
             description: subSchema.description,
+            nullable: subSchema.nullable,
           };
         }
         case 'integer': {
@@ -231,6 +241,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
               input: typeComposer,
               output: typeComposer,
               description: subSchema.description,
+              nullable: subSchema.nullable,
             };
           }
           const typeComposer = schemaComposer.getAnyTC(GraphQLInt);
@@ -238,6 +249,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             input: typeComposer,
             output: typeComposer,
             description: subSchema.description,
+            nullable: subSchema.nullable,
           };
         }
         case 'number': {
@@ -246,6 +258,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             input: typeComposer,
             output: typeComposer,
             description: subSchema.description,
+            nullable: subSchema.nullable,
           };
         }
         case 'string': {
@@ -259,6 +272,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
               input: typeComposer,
               output: typeComposer,
               description: subSchema.description,
+              nullable: subSchema.nullable,
             };
           }
           switch (subSchema.format) {
@@ -268,6 +282,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
                 input: typeComposer,
                 output: typeComposer,
                 description: subSchema.description,
+                nullable: subSchema.nullable,
               };
             }
             case 'time': {
@@ -276,6 +291,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
                 input: typeComposer,
                 output: typeComposer,
                 description: subSchema.description,
+                nullable: subSchema.nullable,
               };
             }
             case 'email': {
@@ -284,6 +300,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
                 input: typeComposer,
                 output: typeComposer,
                 description: subSchema.description,
+                nullable: subSchema.nullable,
               };
             }
             case 'ipv4': {
@@ -292,6 +309,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
                 input: typeComposer,
                 output: typeComposer,
                 description: subSchema.description,
+                nullable: subSchema.nullable,
               };
             }
             case 'ipv6': {
@@ -300,6 +318,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
                 input: typeComposer,
                 output: typeComposer,
                 description: subSchema.description,
+                nullable: subSchema.nullable,
               };
             }
             case 'uri': {
@@ -308,6 +327,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
                 input: typeComposer,
                 output: typeComposer,
                 description: subSchema.description,
+                nullable: subSchema.nullable,
               };
             }
             default: {
@@ -317,6 +337,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
                 input: typeComposer,
                 output: typeComposer,
                 description: subSchema.description,
+                nullable: subSchema.nullable,
               };
             }
           }
@@ -327,9 +348,6 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
               // These are filled after enter
               get input() {
                 const typeComposers = visitedSubschemaResultMap.get(subSchema.items as any);
-                if (!typeComposers.input) {
-                  console.log(typeComposers);
-                }
                 return typeComposers.input.getTypePlural();
               },
               get output() {
@@ -350,6 +368,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             return {
               input: typeComposer,
               output: typeComposer,
+              nullable: subSchema.nullable,
             };
           }
           // If it doesn't have any clue
@@ -365,6 +384,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
               input: typeComposer,
               output: typeComposer,
               description: subSchema.description,
+              nullable: subSchema.nullable,
             };
           }
         case 'object': {
@@ -481,6 +501,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           return {
             input: genericJSONScalar,
             output: genericJSONScalar,
+            nullable: subSchema.nullable,
           };
         }
         const input = schemaComposer.createInputTC({
@@ -541,6 +562,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           return {
             input: input.getTypePlural(),
             output: output.getTypePlural(),
+            nullable: subSchemaAndTypeComposers.nullable,
           };
         }
         return getUnionTypeComposers({
@@ -618,6 +640,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
         return {
           input: inputTypeComposer,
           output: subSchemaAndTypeComposers.output,
+          nullable: subSchemaAndTypeComposers.nullable,
         };
       }
 
@@ -688,6 +711,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
         return {
           input: inputTypeComposer,
           output: subSchemaAndTypeComposers.output,
+          nullable: subSchemaAndTypeComposers.nullable,
         };
       }
 
@@ -705,9 +729,18 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
               fieldMap[fieldName] = {
                 type: () => {
                   const typeComposers = subSchemaAndTypeComposers.properties[propertyName];
-                  return subSchemaAndTypeComposers.required?.includes(propertyName)
-                    ? typeComposers.output.getTypeNonNull()
-                    : typeComposers.output;
+                  let nullable = true;
+                  if (subSchemaAndTypeComposers.required?.includes(propertyName)) {
+                    nullable = false;
+                  }
+                  // Nullable has more priority
+                  if (typeComposers.nullable === false) {
+                    nullable = false;
+                  }
+                  if (typeComposers.nullable === true) {
+                    nullable = true;
+                  }
+                  return !nullable ? typeComposers.output.getTypeNonNull() : typeComposers.output;
                 },
                 // Make sure you get the right property
                 resolve: root => {
@@ -731,9 +764,18 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
               inputFieldMap[fieldName] = {
                 type: () => {
                   const typeComposers = subSchemaAndTypeComposers.properties[propertyName];
-                  return subSchemaAndTypeComposers.required?.includes(propertyName)
-                    ? typeComposers.input?.getTypeNonNull()
-                    : typeComposers.input;
+                  let nullable = true;
+                  if (subSchemaAndTypeComposers.required?.includes(propertyName)) {
+                    nullable = false;
+                  }
+                  // Nullable has more priority
+                  if (typeComposers.nullable === false) {
+                    nullable = false;
+                  }
+                  if (typeComposers.nullable === true) {
+                    nullable = true;
+                  }
+                  return !nullable ? typeComposers.input?.getTypeNonNull() : typeComposers.input;
                 },
                 // Let execution logic know what is the expected propertyName
                 extensions: {
@@ -854,6 +896,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           return {
             input,
             output,
+            nullable: subSchemaAndTypeComposers.nullable,
           };
       }
 
@@ -862,6 +905,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           input: subSchemaAndTypeComposers.input,
           output: subSchemaAndTypeComposers.output,
           description: subSchemaAndTypeComposers.description,
+          nullable: subSchemaAndTypeComposers.nullable,
         };
       } else {
         logger.warn(`GraphQL Type cannot be created for this JSON Schema definition;`, {
@@ -872,6 +916,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
         return {
           input: typeComposer,
           output: typeComposer,
+          nullable: subSchemaAndTypeComposers.nullable,
         };
       }
     },
