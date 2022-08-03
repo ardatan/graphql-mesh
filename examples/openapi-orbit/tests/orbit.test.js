@@ -10,7 +10,7 @@ const config$ = findAndParseConfig({
 const mesh$ = config$.then(config => getMesh(config));
 jest.setTimeout(15000);
 
-describe('Jira', () => {
+describe('Orbit', () => {
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
     expect(printSchemaWithDirectives(schema)).toMatchSnapshot();
