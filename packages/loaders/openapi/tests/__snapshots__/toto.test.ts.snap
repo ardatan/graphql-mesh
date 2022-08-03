@@ -1,0 +1,1254 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Toto should generate the correct bundle 1`] = `
+Object {
+  "baseUrl": "https://dev-api.test.com/api/v1",
+  "name": "toto",
+  "operationHeaders": undefined,
+  "operations": Array [
+    Object {
+      "argTypeMap": Object {
+        "Accept_Language": "String",
+        "X_Correlation_Id": "String",
+        "companyId": "String!",
+        "directoryOnly": "Boolean",
+        "folderId": "String!",
+        "maxSize": "Int",
+        "minSize": "Int",
+        "publicationEndDate": "String",
+        "publicationStartDate": "String",
+        "querySearch": "String",
+        "size": "Int",
+        "startKey": "String",
+      },
+      "description": "List Resources At Any Folder Level",
+      "field": "list_resources_at_any_folder_v1",
+      "headers": Object {
+        "Accept-Language": "{args.Accept_Language}",
+        "X-Correlation-Id": "{args.X_Correlation_Id}",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/api/v1/companies/{args.companyId}/knowledgecenter/folders/{args.folderId}/resources",
+      "requestSchema": Object {
+        "properties": Object {
+          "directoryOnly": Object {
+            "$ref": "#/definitions/queryInput_list_resources_at_any_folder_v1_directoryOnly",
+          },
+          "maxSize": Object {
+            "$ref": "#/definitions/int323",
+          },
+          "minSize": Object {
+            "$ref": "#/definitions/int322",
+          },
+          "order": Object {
+            "description": "List of order",
+            "items": Object {
+              "$ref": "#/definitions/queryInput_list_resources_at_any_folder_v1_order_items",
+            },
+            "name": "order",
+            "type": "array",
+          },
+          "publicationEndDate": Object {
+            "$ref": "#/definitions/date2",
+          },
+          "publicationStartDate": Object {
+            "$ref": "#/definitions/date",
+          },
+          "querySearch": Object {
+            "description": "Text to search in title",
+            "name": "querySearch",
+            "type": "string",
+          },
+          "size": Object {
+            "$ref": "#/definitions/int324",
+          },
+          "startKey": Object {
+            "description": "The page number",
+            "name": "startKey",
+            "type": "string",
+          },
+          "status": Object {
+            "$ref": "#/definitions/ResourceStatus",
+          },
+          "targetAudience": Object {
+            "description": "Target of the resource (the resource need to have all of the target audience passed in the list)",
+            "items": Object {
+              "type": "string",
+            },
+            "name": "targetAudience",
+            "type": "array",
+          },
+        },
+        "title": "list_resources_at_any_folder_v1_request",
+        "type": "object",
+      },
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources/get/responses/200/content/application~1json/schema",
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "argTypeMap": Object {
+        "Accept_Language": "String",
+        "X_Correlation_Id": "String",
+        "companyId": "String!",
+        "folderId": "String!",
+      },
+      "description": "Create resources at any folder level",
+      "field": "create_resource_at_any_folder_v1",
+      "headers": Object {
+        "Accept-Language": "{args.Accept_Language}",
+        "X-Correlation-Id": "{args.X_Correlation_Id}",
+      },
+      "method": "POST",
+      "operationHeaders": undefined,
+      "path": "/api/v1/companies/{args.companyId}/knowledgecenter/folders/{args.folderId}/resources",
+      "requestSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources/post/requestBody/content/application~1json/schema",
+      "responseByStatusCode": Object {
+        "201": Object {
+          "responseSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources/post/responses/201/content/application~1json/schema",
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "mutation",
+    },
+    Object {
+      "argTypeMap": Object {
+        "Accept_Language": "String",
+        "X_Correlation_Id": "String",
+        "companyId": "String!",
+        "folderId": "String!",
+        "resourceId": "String!",
+      },
+      "description": "Update A Resource At Any Folder Level",
+      "field": "update_resource_at_any_folder_v1",
+      "headers": Object {
+        "Accept-Language": "{args.Accept_Language}",
+        "X-Correlation-Id": "{args.X_Correlation_Id}",
+      },
+      "method": "PUT",
+      "operationHeaders": undefined,
+      "path": "/api/v1/companies/{args.companyId}/knowledgecenter/folders/{args.folderId}/resources/{args.resourceId}",
+      "requestSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources~1{resourceId}/put/requestBody/content/application~1json/schema",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources~1{resourceId}/put/responses/200/content/application~1json/schema",
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "mutation",
+    },
+    Object {
+      "argTypeMap": Object {
+        "Accept_Language": "String",
+        "X_Correlation_Id": "String",
+        "companyId": "String!",
+        "directoryOnly": "Boolean",
+        "maxSize": "Int",
+        "minSize": "Int",
+        "publicationEndDate": "String",
+        "publicationStartDate": "String",
+        "querySearch": "String",
+        "size": "Int",
+        "startKey": "String",
+      },
+      "description": "List All Resources At The Root Folder",
+      "field": "list_resources_at_the_root_folder_v1",
+      "headers": Object {
+        "Accept-Language": "{args.Accept_Language}",
+        "X-Correlation-Id": "{args.X_Correlation_Id}",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/api/v1/companies/{args.companyId}/knowledgecenter/resources",
+      "requestSchema": Object {
+        "properties": Object {
+          "directoryOnly": Object {
+            "default": false,
+            "description": undefined,
+            "name": "directoryOnly",
+            "title": "queryInput_list_resources_at_any_folder_v1_directoryOnly",
+            "type": "boolean",
+          },
+          "maxSize": Object {
+            "description": "Maximum size of a resource",
+            "format": "int32",
+            "name": "maxSize",
+            "title": "int32",
+            "type": "integer",
+          },
+          "minSize": Object {
+            "description": "Minimum size of a resource",
+            "format": "int32",
+            "name": "minSize",
+            "title": "int32",
+            "type": "integer",
+          },
+          "order": Object {
+            "description": "List of order",
+            "items": Object {
+              "$ref": "#/definitions/queryInput_list_resources_at_any_folder_v1_order_items",
+            },
+            "name": "order",
+            "type": "array",
+          },
+          "publicationEndDate": Object {
+            "description": "Publication end date",
+            "format": "date",
+            "name": "publicationEndDate",
+            "title": "date",
+            "type": "string",
+          },
+          "publicationStartDate": Object {
+            "description": "Publication start date",
+            "format": "date",
+            "name": "publicationStartDate",
+            "title": "date",
+            "type": "string",
+          },
+          "querySearch": Object {
+            "description": "Text to search in title",
+            "name": "querySearch",
+            "type": "string",
+          },
+          "size": Object {
+            "description": undefined,
+            "format": "int32",
+            "name": "size",
+            "title": "int32",
+            "type": "integer",
+          },
+          "startKey": Object {
+            "description": "The page number",
+            "name": "startKey",
+            "type": "string",
+          },
+          "status": Object {
+            "$resolvedRef": "/components/schemas/ResourceStatus",
+            "items": Object {
+              "enum": Array [
+                "ACTIVE",
+                "INACTIVE",
+                "SCHEDULED",
+              ],
+              "title": "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items",
+              "type": "string",
+            },
+            "title": "ResourceStatus",
+            "type": "array",
+          },
+          "targetAudience": Object {
+            "description": "Target of the resource (the resource need to have all of the target audience passed in the list)",
+            "items": Object {
+              "type": "string",
+            },
+            "name": "targetAudience",
+            "type": "array",
+          },
+        },
+        "title": undefined,
+        "type": "object",
+      },
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources/get/responses/200/content/application~1json/schema",
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "argTypeMap": Object {
+        "Accept_Language": "String",
+        "X_Correlation_Id": "String",
+        "companyId": "String!",
+      },
+      "description": "Create A Resource At The Root Folder",
+      "field": "create_resource_at_the_root_folder_v1",
+      "headers": Object {
+        "Accept-Language": "{args.Accept_Language}",
+        "X-Correlation-Id": "{args.X_Correlation_Id}",
+      },
+      "method": "POST",
+      "operationHeaders": undefined,
+      "path": "/api/v1/companies/{args.companyId}/knowledgecenter/resources",
+      "requestSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources/post/requestBody/content/application~1json/schema",
+      "responseByStatusCode": Object {
+        "201": Object {
+          "responseSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources/post/responses/201/content/application~1json/schema",
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "mutation",
+    },
+    Object {
+      "argTypeMap": Object {
+        "Accept_Language": "String",
+        "X_Correlation_Id": "String",
+        "companyId": "String!",
+        "resourceId": "String!",
+      },
+      "description": "Get Resource by ID",
+      "field": "get_resource_by_id_v1",
+      "headers": Object {
+        "Accept-Language": "{args.Accept_Language}",
+        "X-Correlation-Id": "{args.X_Correlation_Id}",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/api/v1/companies/{args.companyId}/knowledgecenter/resources/{args.resourceId}",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources~1{resourceId}/get/responses/200/content/application~1json/schema",
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "argTypeMap": Object {
+        "Accept_Language": "String",
+        "X_Correlation_Id": "String",
+        "companyId": "String!",
+        "resourceId": "String!",
+      },
+      "description": "Update A Resource At The Root Folder",
+      "field": "update_resource_at_the_root_folder_v1",
+      "headers": Object {
+        "Accept-Language": "{args.Accept_Language}",
+        "X-Correlation-Id": "{args.X_Correlation_Id}",
+      },
+      "method": "PUT",
+      "operationHeaders": undefined,
+      "path": "/api/v1/companies/{args.companyId}/knowledgecenter/resources/{args.resourceId}",
+      "requestSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources~1{resourceId}/put/requestBody/content/application~1json/schema",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources~1{resourceId}/put/responses/200/content/application~1json/schema",
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "mutation",
+    },
+    Object {
+      "argTypeMap": Object {
+        "Accept_Language": "String",
+        "X_Correlation_Id": "String",
+        "companyId": "String!",
+        "resourceId": "String!",
+      },
+      "description": "Delete A Resource At The Root Folder",
+      "field": "delete_resource_at_the_root_folder_v1",
+      "headers": Object {
+        "Accept-Language": "{args.Accept_Language}",
+        "X-Correlation-Id": "{args.X_Correlation_Id}",
+      },
+      "method": "DELETE",
+      "operationHeaders": undefined,
+      "path": "/api/v1/companies/{args.companyId}/knowledgecenter/resources/{args.resourceId}",
+      "responseByStatusCode": Object {
+        "204": Object {
+          "responseSchema": Object {
+            "description": "No Content",
+            "title": "delete_resource_at_the_root_folder_v1_204_response",
+            "type": "null",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "mutation",
+    },
+  ],
+  "referencedSchema": Object {
+    "$ref": "#/definitions/_schema",
+    "definitions": Object {
+      "BaseResourceDTO": Object {
+        "$resolvedRef": "/components/schemas/BaseResourceDTO",
+        "properties": Object {
+          "allowedTargetAudiences": Object {
+            "items": Object {
+              "type": "string",
+            },
+            "type": "array",
+          },
+          "geoFenced": Object {
+            "$ref": "#/definitions/query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_isShiftFenced",
+          },
+          "parentFolderId": Object {
+            "type": "string",
+          },
+          "pinned": Object {
+            "$ref": "#/definitions/query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_isShiftFenced",
+          },
+          "previewUrl": Object {
+            "type": "string",
+          },
+          "publicationEndTimestamp": Object {
+            "$ref": "#/definitions/date-time",
+          },
+          "publicationStartTimestamp": Object {
+            "$ref": "#/definitions/date-time",
+          },
+          "punchedFenced": Object {
+            "$ref": "#/definitions/query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_isShiftFenced",
+          },
+          "shiftFenced": Object {
+            "$ref": "#/definitions/query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_isShiftFenced",
+          },
+          "status": Object {
+            "$ref": "#/definitions/ResourceStatus",
+          },
+        },
+        "title": "BaseResourceDTO",
+        "type": "object",
+      },
+      "BaseResourceUpdateDTO": Object {
+        "$resolvedRef": "/components/schemas/BaseResourceUpdateDTO",
+        "allOf": Array [
+          Object {
+            "$ref": "#/definitions/BaseResourceDTO",
+          },
+          Object {
+            "$ref": "#/definitions/query_get_resource_by_id_v1_oneOf_0_allOf_2",
+          },
+        ],
+        "title": "BaseResourceUpdateDTO",
+      },
+      "FileCreateDTO": Object {
+        "$resolvedRef": "/components/schemas/FileCreateDTO",
+        "allOf": Array [
+          Object {
+            "$ref": "#/definitions/ResourceCreateDTO",
+          },
+          Object {
+            "$ref": "#/definitions/FilePropertiesDTO",
+          },
+        ],
+        "title": "FileCreateDTO",
+      },
+      "FileGetWithI18nDTO": Object {
+        "$resolvedRef": "/components/schemas/FileGetWithI18nDTO",
+        "allOf": Array [
+          Object {
+            "$ref": "#/definitions/ResourceGetDTO",
+          },
+          Object {
+            "$ref": "#/definitions/FilePropertiesDTO",
+          },
+          Object {
+            "$ref": "#/definitions/query_get_resource_by_id_v1_oneOf_0_allOf_2",
+          },
+        ],
+        "required": Array [
+          "size",
+          "url",
+          "contentType",
+          "i18n",
+        ],
+        "title": "FileGetWithI18nDTO",
+      },
+      "FileGetWithLocalizedNameDTO": Object {
+        "$resolvedRef": "/components/schemas/FileGetWithLocalizedNameDTO",
+        "allOf": Array [
+          Object {
+            "$ref": "#/definitions/ResourceGetDTO",
+          },
+          Object {
+            "$ref": "#/definitions/FilePropertiesDTO",
+          },
+          Object {
+            "$ref": "#/definitions/query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_2",
+          },
+        ],
+        "required": Array [
+          "size",
+          "url",
+          "contentType",
+          "name",
+        ],
+        "title": "FileGetWithLocalizedNameDTO",
+      },
+      "FilePropertiesDTO": Object {
+        "$resolvedRef": "/components/schemas/FilePropertiesDTO",
+        "properties": Object {
+          "contentType": Object {
+            "type": "string",
+          },
+          "size": Object {
+            "$ref": "#/definitions/int32",
+          },
+          "url": Object {
+            "type": "string",
+          },
+        },
+        "title": "FilePropertiesDTO",
+        "type": "object",
+      },
+      "FolderGetWithI18nDTO": Object {
+        "$resolvedRef": "/components/schemas/FolderGetWithI18nDTO",
+        "allOf": Array [
+          Object {
+            "$ref": "#/definitions/ResourceGetDTO",
+          },
+          Object {
+            "$ref": "#/definitions/FolderPropertiesDTO",
+          },
+          Object {
+            "$ref": "#/definitions/query_get_resource_by_id_v1_oneOf_0_allOf_2",
+          },
+        ],
+        "required": Array [
+          "i18n",
+        ],
+        "title": "FolderGetWithI18nDTO",
+      },
+      "FolderGetWithLocalizedNameDTO": Object {
+        "$resolvedRef": "/components/schemas/FolderGetWithLocalizedNameDTO",
+        "allOf": Array [
+          Object {
+            "$ref": "#/definitions/ResourceGetDTO",
+          },
+          Object {
+            "$ref": "#/definitions/FolderPropertiesDTO",
+          },
+          Object {
+            "$ref": "#/definitions/query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_2",
+          },
+        ],
+        "required": Array [
+          "name",
+        ],
+        "title": "FolderGetWithLocalizedNameDTO",
+      },
+      "FolderPropertiesDTO": Object {
+        "$resolvedRef": "/components/schemas/FolderPropertiesDTO",
+        "properties": Object {
+          "childFolderCount": Object {
+            "$ref": "#/definitions/int32",
+          },
+          "fileCount": Object {
+            "$ref": "#/definitions/int32",
+          },
+        },
+        "title": "FolderPropertiesDTO",
+        "type": "object",
+      },
+      "Mutation": Object {
+        "properties": Object {
+          "create_resource_at_any_folder_v1": Object {
+            "$ref": "#/definitions/get_resource_by_id_v1_200_response",
+          },
+          "create_resource_at_the_root_folder_v1": Object {
+            "$ref": "#/definitions/get_resource_by_id_v1_200_response",
+          },
+          "delete_resource_at_the_root_folder_v1": Object {
+            "$ref": "#/definitions/delete_resource_at_the_root_folder_v1_204_response",
+          },
+          "update_resource_at_any_folder_v1": Object {
+            "$ref": "#/definitions/get_resource_by_id_v1_200_response",
+          },
+          "update_resource_at_the_root_folder_v1": Object {
+            "$ref": "#/definitions/get_resource_by_id_v1_200_response",
+          },
+        },
+        "title": "Mutation",
+        "type": "object",
+      },
+      "MutationInput": Object {
+        "properties": Object {
+          "create_resource_at_any_folder_v1": Object {
+            "$ref": "#/definitions/paths_api_v1_companies_{companyId}_knowledgecenter_folders_{folderId}_resources_post_requestBody_content_application_json_schema",
+          },
+          "create_resource_at_the_root_folder_v1": Object {
+            "$ref": "#/definitions/paths_api_v1_companies_{companyId}_knowledgecenter_folders_{folderId}_resources_post_requestBody_content_application_json_schema",
+          },
+          "update_resource_at_any_folder_v1": Object {
+            "$ref": "#/definitions/paths_api_v1_companies_{companyId}_knowledgecenter_folders_{folderId}_resources_post_requestBody_content_application_json_schema",
+          },
+          "update_resource_at_the_root_folder_v1": Object {
+            "$ref": "#/definitions/paths_api_v1_companies_{companyId}_knowledgecenter_folders_{folderId}_resources_post_requestBody_content_application_json_schema",
+          },
+        },
+        "title": "MutationInput",
+        "type": "object",
+      },
+      "ParentFolderGetWithLocalizedNameDTO": Object {
+        "$resolvedRef": "/components/schemas/ParentFolderGetWithLocalizedNameDTO",
+        "properties": Object {
+          "allowedTargetAudiences": Object {
+            "items": Object {
+              "type": "string",
+            },
+            "type": "array",
+          },
+          "childFolderCount": Object {
+            "$ref": "#/definitions/int32",
+          },
+          "creationTimestamp": Object {
+            "$ref": "#/definitions/date-time",
+          },
+          "creationUserId": Object {
+            "type": "string",
+          },
+          "fileCount": Object {
+            "$ref": "#/definitions/int32",
+          },
+          "id": Object {
+            "type": "string",
+          },
+          "isGeoFenced": Object {
+            "$ref": "#/definitions/query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_isShiftFenced",
+          },
+          "isPinned": Object {
+            "$ref": "#/definitions/query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_isShiftFenced",
+          },
+          "isPunchedFenced": Object {
+            "$ref": "#/definitions/query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_isShiftFenced",
+          },
+          "isShiftFenced": Object {
+            "$ref": "#/definitions/query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_isShiftFenced",
+          },
+          "lastUpdateTimestamp": Object {
+            "$ref": "#/definitions/date-time",
+          },
+          "lastUpdateUserId": Object {
+            "type": "string",
+          },
+          "name": Object {
+            "type": "string",
+          },
+          "previewUrl": Object {
+            "type": "string",
+          },
+          "publicationEndTimestamp": Object {
+            "$ref": "#/definitions/date-time",
+          },
+          "publicationStartTimestamp": Object {
+            "$ref": "#/definitions/date-time",
+          },
+          "status": Object {
+            "$ref": "#/definitions/ResourceStatus",
+          },
+          "type": Object {
+            "$ref": "#/definitions/ResourceType",
+          },
+        },
+        "required": Array [
+          "name",
+          "id",
+          "status",
+          "type",
+          "lastUpdateTimestamp",
+          "lastUpdateUserId",
+        ],
+        "title": "ParentFolderGetWithLocalizedNameDTO",
+        "type": "object",
+      },
+      "Query": Object {
+        "properties": Object {
+          "get_resource_by_id_v1": Object {
+            "$ref": "#/definitions/get_resource_by_id_v1_200_response",
+          },
+          "list_resources_at_any_folder_v1": Object {
+            "$ref": "#/definitions/list_resources_at_any_folder_v1_200_response",
+          },
+          "list_resources_at_the_root_folder_v1": Object {
+            "$ref": "#/definitions/list_resources_at_any_folder_v1_200_response",
+          },
+        },
+        "title": "Query",
+        "type": "object",
+      },
+      "QueryInput": Object {
+        "properties": Object {
+          "list_resources_at_any_folder_v1": Object {
+            "$ref": "#/definitions/list_resources_at_any_folder_v1_request",
+          },
+          "list_resources_at_the_root_folder_v1": Object {
+            "$ref": "#/definitions/list_resources_at_any_folder_v1_request",
+          },
+        },
+        "title": "QueryInput",
+        "type": "object",
+      },
+      "ResourceCreateDTO": Object {
+        "$resolvedRef": "/components/schemas/ResourceCreateDTO",
+        "allOf": Array [
+          Object {
+            "$ref": "#/definitions/BaseResourceUpdateDTO",
+          },
+          Object {
+            "$ref": "#/definitions/mutationInput_create_resource_at_any_folder_v1_oneOf_0_allOf_0_allOf_1",
+          },
+        ],
+        "title": "ResourceCreateDTO",
+      },
+      "ResourceGetDTO": Object {
+        "$resolvedRef": "/components/schemas/ResourceGetDTO",
+        "allOf": Array [
+          Object {
+            "$ref": "#/definitions/query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0",
+          },
+          Object {
+            "$ref": "#/definitions/BaseResourceDTO",
+          },
+          Object {
+            "$ref": "#/definitions/query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_2",
+          },
+          Object {
+            "$ref": "#/definitions/ResourceTimestampDataDTO",
+          },
+        ],
+        "required": Array [
+          "id",
+          "status",
+          "type",
+        ],
+        "title": "ResourceGetDTO",
+      },
+      "ResourceStatus": Object {
+        "$resolvedRef": "/components/schemas/ResourceStatus",
+        "items": Object {
+          "enum": Array [
+            "ACTIVE",
+            "INACTIVE",
+            "SCHEDULED",
+          ],
+          "title": "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items",
+          "type": "string",
+        },
+        "title": "ResourceStatus",
+        "type": "array",
+      },
+      "ResourceTimestampDataDTO": Object {
+        "$resolvedRef": "/components/schemas/ResourceTimestampDataDTO",
+        "properties": Object {
+          "lastUpdateTimestamp": Object {
+            "$ref": "#/definitions/date-time",
+          },
+          "lastUpdateUserId": Object {
+            "type": "string",
+          },
+        },
+        "title": "ResourceTimestampDataDTO",
+        "type": "object",
+      },
+      "ResourceType": Object {
+        "$resolvedRef": "/components/schemas/ResourceType",
+        "items": Object {
+          "enum": Array [
+            "FILE",
+            "FOLDER",
+          ],
+          "title": "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_type_items",
+          "type": "string",
+        },
+        "title": "ResourceType",
+        "type": "array",
+      },
+      "_schema": Object {
+        "properties": Object {
+          "mutation": Object {
+            "$ref": "#/definitions/Mutation",
+          },
+          "mutationInput": Object {
+            "$ref": "#/definitions/MutationInput",
+          },
+          "query": Object {
+            "$ref": "#/definitions/Query",
+          },
+          "queryInput": Object {
+            "$ref": "#/definitions/QueryInput",
+          },
+        },
+        "required": Array [
+          "query",
+        ],
+        "title": "_schema",
+        "type": "object",
+      },
+      "date": Object {
+        "description": "Publication start date",
+        "format": "date",
+        "name": "publicationStartDate",
+        "title": "date",
+        "type": "string",
+      },
+      "date-time": Object {
+        "format": "date-time",
+        "title": "date-time",
+        "type": "string",
+      },
+      "date2": Object {
+        "description": "Publication end date",
+        "format": "date",
+        "name": "publicationEndDate",
+        "title": "date",
+        "type": "string",
+      },
+      "delete_resource_at_the_root_folder_v1_204_response": Object {
+        "description": "No Content",
+        "title": "delete_resource_at_the_root_folder_v1_204_response",
+        "type": "null",
+      },
+      "get_resource_by_id_v1_200_response": Object {
+        "$resolvedRef": "/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources~1{resourceId}/get/responses/200/content/application~1json/schema",
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/FileGetWithI18nDTO",
+          },
+          Object {
+            "$ref": "#/definitions/FolderGetWithI18nDTO",
+          },
+        ],
+        "title": "get_resource_by_id_v1_200_response",
+      },
+      "int32": Object {
+        "format": "int32",
+        "title": "int32",
+        "type": "integer",
+      },
+      "int322": Object {
+        "description": "Minimum size of a resource",
+        "format": "int32",
+        "name": "minSize",
+        "title": "int32",
+        "type": "integer",
+      },
+      "int323": Object {
+        "description": "Maximum size of a resource",
+        "format": "int32",
+        "name": "maxSize",
+        "title": "int32",
+        "type": "integer",
+      },
+      "int324": Object {
+        "description": undefined,
+        "format": "int32",
+        "name": "size",
+        "title": "int32",
+        "type": "integer",
+      },
+      "list_resources_at_any_folder_v1_200_response": Object {
+        "$resolvedRef": "/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources/get/responses/200/content/application~1json/schema",
+        "items": Object {
+          "anyOf": Array [
+            Object {
+              "$ref": "#/definitions/FileGetWithLocalizedNameDTO",
+            },
+            Object {
+              "$ref": "#/definitions/FolderGetWithLocalizedNameDTO",
+            },
+          ],
+          "title": "query_list_resources_at_any_folder_v1_items",
+        },
+        "title": "list_resources_at_any_folder_v1_200_response",
+        "type": "array",
+      },
+      "list_resources_at_any_folder_v1_request": Object {
+        "properties": Object {
+          "directoryOnly": Object {
+            "$ref": "#/definitions/queryInput_list_resources_at_any_folder_v1_directoryOnly",
+          },
+          "maxSize": Object {
+            "$ref": "#/definitions/int323",
+          },
+          "minSize": Object {
+            "$ref": "#/definitions/int322",
+          },
+          "order": Object {
+            "description": "List of order",
+            "items": Object {
+              "$ref": "#/definitions/queryInput_list_resources_at_any_folder_v1_order_items",
+            },
+            "name": "order",
+            "type": "array",
+          },
+          "publicationEndDate": Object {
+            "$ref": "#/definitions/date2",
+          },
+          "publicationStartDate": Object {
+            "$ref": "#/definitions/date",
+          },
+          "querySearch": Object {
+            "description": "Text to search in title",
+            "name": "querySearch",
+            "type": "string",
+          },
+          "size": Object {
+            "$ref": "#/definitions/int324",
+          },
+          "startKey": Object {
+            "description": "The page number",
+            "name": "startKey",
+            "type": "string",
+          },
+          "status": Object {
+            "$ref": "#/definitions/ResourceStatus",
+          },
+          "targetAudience": Object {
+            "description": "Target of the resource (the resource need to have all of the target audience passed in the list)",
+            "items": Object {
+              "type": "string",
+            },
+            "name": "targetAudience",
+            "type": "array",
+          },
+        },
+        "title": "list_resources_at_any_folder_v1_request",
+        "type": "object",
+      },
+      "mutationInput_create_resource_at_any_folder_v1_oneOf_0_allOf_0_allOf_1": Object {
+        "properties": Object {
+          "type": Object {
+            "$ref": "#/definitions/ResourceType",
+          },
+        },
+        "required": Array [
+          "status",
+          "type",
+          "i18n",
+          "size",
+          "url",
+          "contentType",
+        ],
+        "title": "mutationInput_create_resource_at_any_folder_v1_oneOf_0_allOf_0_allOf_1",
+        "type": "object",
+      },
+      "paths_api_v1_companies_{companyId}_knowledgecenter_folders_{folderId}_resources_post_requestBody_content_application_json_schema": Object {
+        "$resolvedRef": "/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources/post/requestBody/content/application~1json/schema",
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/FileCreateDTO",
+          },
+          Object {
+            "$ref": "#/definitions/ResourceCreateDTO",
+          },
+        ],
+        "title": "paths_api_v1_companies_{companyId}_knowledgecenter_folders_{folderId}_resources_post_requestBody_content_application_json_schema",
+      },
+      "queryInput_list_resources_at_any_folder_v1_directoryOnly": Object {
+        "default": false,
+        "description": undefined,
+        "name": "directoryOnly",
+        "title": "queryInput_list_resources_at_any_folder_v1_directoryOnly",
+        "type": "boolean",
+      },
+      "queryInput_list_resources_at_any_folder_v1_order_items": Object {
+        "pattern": "^(FILE_TYPE|NAME|LAST_UPDATE_DATE)(,(ASC|DESC))?$",
+        "title": "queryInput_list_resources_at_any_folder_v1_order_items",
+        "type": "string",
+      },
+      "query_get_resource_by_id_v1_oneOf_0_allOf_2": Object {
+        "properties": Object {
+          "i18n": Object {
+            "$ref": "#/definitions/query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n",
+          },
+        },
+        "title": "query_get_resource_by_id_v1_oneOf_0_allOf_2",
+        "type": "object",
+      },
+      "query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n": Object {
+        "additionalProperties": Object {
+          "additionalProperties": Object {
+            "type": "string",
+          },
+          "title": "query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties",
+          "type": "object",
+        },
+        "title": "query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n",
+        "type": "object",
+      },
+      "query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties": Object {
+        "additionalProperties": Object {
+          "type": "string",
+        },
+        "title": "query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties",
+        "type": "object",
+      },
+      "query_list_resources_at_any_folder_v1_items": Object {
+        "anyOf": Array [
+          Object {
+            "$ref": "#/definitions/FileGetWithLocalizedNameDTO",
+          },
+          Object {
+            "$ref": "#/definitions/FolderGetWithLocalizedNameDTO",
+          },
+        ],
+        "title": "query_list_resources_at_any_folder_v1_items",
+      },
+      "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0": Object {
+        "properties": Object {
+          "parentHierarchy": Object {
+            "items": Object {
+              "$ref": "#/definitions/ParentFolderGetWithLocalizedNameDTO",
+            },
+            "type": "array",
+          },
+        },
+        "title": "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0",
+        "type": "object",
+      },
+      "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_isShiftFenced": Object {
+        "title": "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_isShiftFenced",
+        "type": "boolean",
+      },
+      "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items": Object {
+        "enum": Array [
+          "ACTIVE",
+          "INACTIVE",
+          "SCHEDULED",
+        ],
+        "title": "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items",
+        "type": "string",
+      },
+      "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_type_items": Object {
+        "enum": Array [
+          "FILE",
+          "FOLDER",
+        ],
+        "title": "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_type_items",
+        "type": "string",
+      },
+      "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_2": Object {
+        "properties": Object {
+          "id": Object {
+            "type": "string",
+          },
+          "type": Object {
+            "$ref": "#/definitions/ResourceType",
+          },
+        },
+        "title": "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_2",
+        "type": "object",
+      },
+      "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_2": Object {
+        "properties": Object {
+          "name": Object {
+            "type": "string",
+          },
+        },
+        "title": "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_2",
+        "type": "object",
+      },
+    },
+  },
+}
+`;
+
+exports[`Toto should generate the correct schema 1`] = `
+"schema {
+  query: Query
+  mutation: Mutation
+}
+
+directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
+
+type Query {
+  \\"List Resources At Any Folder Level\\"
+  list_resources_at_any_folder_v1(input: list_resources_at_any_folder_v1_request_Input, Accept_Language: String, X_Correlation_Id: String, companyId: String!, folderId: String!): [query_list_resources_at_any_folder_v1_items]
+  \\"List All Resources At The Root Folder\\"
+  list_resources_at_the_root_folder_v1(input: list_resources_at_any_folder_v1_request_Input, Accept_Language: String, X_Correlation_Id: String, companyId: String!): [query_list_resources_at_any_folder_v1_items]
+  \\"Get Resource by ID\\"
+  get_resource_by_id_v1(Accept_Language: String, X_Correlation_Id: String, companyId: String!, resourceId: String!): get_resource_by_id_v1_200_response
+}
+
+type query_list_resources_at_any_folder_v1_items {
+  parentHierarchy: [ParentFolderGetWithLocalizedNameDTO]
+  parentFolderId: String
+  status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
+  publicationStartTimestamp: DateTime
+  publicationEndTimestamp: DateTime
+  previewUrl: String
+  allowedTargetAudiences: [String]
+  shiftFenced: Boolean
+  punchedFenced: Boolean
+  geoFenced: Boolean
+  pinned: Boolean
+  type: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_type_items]
+  id: String
+  lastUpdateTimestamp: DateTime
+  lastUpdateUserId: String
+  size: Int
+  url: String
+  contentType: String
+  name: String
+  fileCount: Int
+  childFolderCount: Int
+}
+
+type ParentFolderGetWithLocalizedNameDTO {
+  type: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_type_items]!
+  id: String!
+  status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]!
+  publicationStartTimestamp: DateTime
+  publicationEndTimestamp: DateTime
+  previewUrl: String
+  allowedTargetAudiences: [String]
+  isShiftFenced: Boolean
+  isPunchedFenced: Boolean
+  isGeoFenced: Boolean
+  isPinned: Boolean
+  name: String!
+  creationTimestamp: DateTime
+  creationUserId: String
+  lastUpdateTimestamp: DateTime!
+  lastUpdateUserId: String!
+  fileCount: Int
+  childFolderCount: Int
+}
+
+enum query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_type_items {
+  FILE
+  FOLDER
+}
+
+enum query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items {
+  ACTIVE
+  INACTIVE
+  SCHEDULED
+}
+
+\\"A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.\\"
+scalar DateTime
+
+input list_resources_at_any_folder_v1_request_Input {
+  \\"Text to search in title\\"
+  querySearch: String
+  \\"Minimum size of a resource\\"
+  minSize: Int
+  \\"Maximum size of a resource\\"
+  maxSize: Int
+  status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
+  directoryOnly: Boolean
+  \\"List of order\\"
+  order: [queryInput_list_resources_at_any_folder_v1_order_items]
+  \\"Target of the resource (the resource need to have all of the target audience passed in the list)\\"
+  targetAudience: [String]
+  \\"Publication start date\\"
+  publicationStartDate: Date
+  \\"Publication end date\\"
+  publicationEndDate: Date
+  \\"The page number\\"
+  startKey: String
+  size: Int
+}
+
+\\"A field whose value matches /^(FILE_TYPE|NAME|LAST_UPDATE_DATE)(,(ASC|DESC))?$/.\\"
+scalar queryInput_list_resources_at_any_folder_v1_order_items
+
+\\"Represents date values\\"
+scalar Date
+
+union get_resource_by_id_v1_200_response = FileGetWithI18nDTO | FolderGetWithI18nDTO
+
+type FileGetWithI18nDTO {
+  parentHierarchy: [ParentFolderGetWithLocalizedNameDTO]
+  parentFolderId: String
+  status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
+  publicationStartTimestamp: DateTime
+  publicationEndTimestamp: DateTime
+  previewUrl: String
+  allowedTargetAudiences: [String]
+  shiftFenced: Boolean
+  punchedFenced: Boolean
+  geoFenced: Boolean
+  pinned: Boolean
+  type: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_type_items]
+  id: String
+  lastUpdateTimestamp: DateTime
+  lastUpdateUserId: String
+  size: Int
+  url: String
+  contentType: String
+  i18n: query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties
+}
+
+type query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties {
+  additionalProperties: JSON
+}
+
+\\"The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).\\"
+scalar JSON @specifiedBy(url: \\"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf\\")
+
+type FolderGetWithI18nDTO {
+  parentHierarchy: [ParentFolderGetWithLocalizedNameDTO]
+  parentFolderId: String
+  status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
+  publicationStartTimestamp: DateTime
+  publicationEndTimestamp: DateTime
+  previewUrl: String
+  allowedTargetAudiences: [String]
+  shiftFenced: Boolean
+  punchedFenced: Boolean
+  geoFenced: Boolean
+  pinned: Boolean
+  type: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_type_items]
+  id: String
+  lastUpdateTimestamp: DateTime
+  lastUpdateUserId: String
+  fileCount: Int
+  childFolderCount: Int
+  i18n: query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties
+}
+
+type Mutation {
+  \\"Create resources at any folder level\\"
+  create_resource_at_any_folder_v1(input: paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources_post_requestBody_content_application_json_schema_Input, Accept_Language: String, X_Correlation_Id: String, companyId: String!, folderId: String!): get_resource_by_id_v1_200_response
+  \\"Update A Resource At Any Folder Level\\"
+  update_resource_at_any_folder_v1(input: paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources_post_requestBody_content_application_json_schema_Input, Accept_Language: String, X_Correlation_Id: String, companyId: String!, folderId: String!, resourceId: String!): get_resource_by_id_v1_200_response
+  \\"Create A Resource At The Root Folder\\"
+  create_resource_at_the_root_folder_v1(input: paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources_post_requestBody_content_application_json_schema_Input, Accept_Language: String, X_Correlation_Id: String, companyId: String!): get_resource_by_id_v1_200_response
+  \\"Update A Resource At The Root Folder\\"
+  update_resource_at_the_root_folder_v1(input: paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources_post_requestBody_content_application_json_schema_Input, Accept_Language: String, X_Correlation_Id: String, companyId: String!, resourceId: String!): get_resource_by_id_v1_200_response
+  \\"Delete A Resource At The Root Folder\\"
+  delete_resource_at_the_root_folder_v1(Accept_Language: String, X_Correlation_Id: String, companyId: String!, resourceId: String!): Void
+}
+
+input paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources_post_requestBody_content_application_json_schema_Input @oneOf {
+  FileCreateDTO_Input: FileCreateDTO_Input
+  ResourceCreateDTO_Input: ResourceCreateDTO_Input
+}
+
+input FileCreateDTO_Input {
+  parentFolderId: String
+  status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
+  publicationStartTimestamp: DateTime
+  publicationEndTimestamp: DateTime
+  previewUrl: String
+  allowedTargetAudiences: [String]
+  shiftFenced: Boolean
+  punchedFenced: Boolean
+  geoFenced: Boolean
+  pinned: Boolean
+  i18n: query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties_Input2
+  type: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_type_items]!
+  size: Int
+  url: String
+  contentType: String
+}
+
+scalar query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties_Input2
+
+input ResourceCreateDTO_Input {
+  parentFolderId: String
+  status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
+  publicationStartTimestamp: DateTime
+  publicationEndTimestamp: DateTime
+  previewUrl: String
+  allowedTargetAudiences: [String]
+  shiftFenced: Boolean
+  punchedFenced: Boolean
+  geoFenced: Boolean
+  pinned: Boolean
+  i18n: query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties_Input2
+  type: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_type_items]!
+}
+
+\\"Represents empty values\\"
+scalar Void"
+`;

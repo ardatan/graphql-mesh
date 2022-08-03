@@ -24,6 +24,17 @@ const JSONSchemaStringFormats = [
   'uri',
 ];
 
+const AnySchema = {
+  title: 'Any',
+  oneOf: [
+    { type: 'string' },
+    { type: 'integer' },
+    { type: 'boolean' },
+    { type: 'number' },
+    { type: 'object', additionalProperties: true },
+  ],
+};
+
 const titleResolvedRefReservedMap = new WeakMap<
   JSONSchemaObject,
   {
@@ -216,19 +227,11 @@ export async function healJSONSchema(
           // Try to find the type
           if (!subSchema.type) {
             // If required exists without properties
-            if (subSchema.required && !subSchema.properties) {
+            if (subSchema.required && !subSchema.properties && !subSchema.anyOf && !subSchema.allOf) {
               // Add properties
               subSchema.properties = {};
               for (const missingPropertyName of subSchema.required) {
-                subSchema.properties[missingPropertyName] = {
-                  oneOf: [
-                    { type: 'string' },
-                    { type: 'integer' },
-                    { type: 'boolean' },
-                    { type: 'number' },
-                    { type: 'object', additionalProperties: true },
-                  ],
-                };
+                subSchema.properties[missingPropertyName] = AnySchema;
               }
             }
             // Properties only exist in objects
