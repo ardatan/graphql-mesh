@@ -72,11 +72,7 @@ const GraphQLFile = new GraphQLScalarType({
   },
 });
 
-export function getComposerFromJSONSchema(
-  schema: JSONSchema,
-  logger: Logger,
-  generateInterfaceFromSharedFields = false
-): Promise<TypeComposers> {
+export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): Promise<TypeComposers> {
   const schemaComposer = new SchemaComposer();
   const ajv = new Ajv({
     strict: false,

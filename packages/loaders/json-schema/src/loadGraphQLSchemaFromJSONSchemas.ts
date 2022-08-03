@@ -23,7 +23,6 @@ export async function loadGraphQLSchemaFromJSONSchemas(name: string, options: JS
     operationHeaders: options.operationHeaders,
     baseUrl: options.baseUrl,
     pubsub: options.pubsub,
-    generateInterfaceFromSharedFields: options.generateInterfaceFromSharedFields,
     queryParams: options.queryParams,
     queryStringOptions: options.queryStringOptions,
   });

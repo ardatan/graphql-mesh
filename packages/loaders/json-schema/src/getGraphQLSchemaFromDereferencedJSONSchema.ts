@@ -13,17 +13,12 @@ export async function getGraphQLSchemaFromDereferencedJSONSchema(
     operationHeaders,
     baseUrl,
     pubsub,
-    generateInterfaceFromSharedFields,
     queryParams,
     queryStringOptions,
-  }: AddExecutionLogicToComposerOptions & { generateInterfaceFromSharedFields?: boolean }
+  }: AddExecutionLogicToComposerOptions
 ) {
   logger.debug(`Generating GraphQL Schema from the bundled JSON Schema`);
-  const visitorResult = await getComposerFromJSONSchema(
-    fullyDeferencedSchema,
-    logger,
-    generateInterfaceFromSharedFields
-  );
+  const visitorResult = await getComposerFromJSONSchema(fullyDeferencedSchema, logger);
 
   const schemaComposerWithoutExecutionLogic = visitorResult.output;
 

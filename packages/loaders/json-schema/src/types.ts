@@ -13,7 +13,6 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   logger?: Logger;
   pubsub?: MeshPubSub;
   fetch?: WindowOrWorkerGlobalScope['fetch'];
-  generateInterfaceFromSharedFields?: boolean;
   ignoreErrorResponses?: boolean;
   queryParams?: Record<string, string>;
   noDeduplication?: boolean;
