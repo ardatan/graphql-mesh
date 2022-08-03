@@ -310,4 +310,111 @@ describe('Execution', () => {
       });
     });
   });
+  describe('Sanization', () => {
+    it('should recover escaped input field names before preparing the request for GET', async () => {
+      const schema = await loadGraphQLSchemaFromJSONSchemas('test', {
+        async fetch(info: RequestInfo, init?: RequestInit) {
+          let request: Request;
+          if (typeof info !== 'object') {
+            request = new Request(info, init);
+          } else {
+            request = info;
+          }
+          return new Response(
+            JSON.stringify({
+              url: request.url,
+            }),
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+        },
+        baseUrl: 'http://localhost:3000',
+        operations: [
+          {
+            type: OperationTypeNode.QUERY,
+            field: 'test',
+            method: 'GET',
+            path: '/test',
+            requestSample: {
+              'foo-bar': 'baz',
+            },
+            responseSample: {
+              url: 'http://localhost:3000/test?foo-bar=baz',
+            },
+          },
+        ],
+      });
+
+      const query = /* GraphQL */ `
+        query Test {
+          test(input: { foo_bar: "baz" }) {
+            url
+          }
+        }
+      `;
+
+      const result = await execute({
+        schema,
+        document: parse(query),
+      });
+
+      expect(result).toEqual({
+        data: {
+          test: {
+            url: `http://localhost:3000/test?foo-bar=baz`,
+          },
+        },
+      });
+    });
+    it('should recover escaped input field names before preparing the request for POST', async () => {
+      const expectedInput = {
+        'foo-bar': 'baz',
+      };
+      let receivedInput: typeof expectedInput;
+      const schema = await loadGraphQLSchemaFromJSONSchemas('test', {
+        async fetch(info: RequestInfo, init?: RequestInit) {
+          let request: Request;
+          if (typeof info !== 'object') {
+            request = new Request(info, init);
+          } else {
+            request = info;
+          }
+          receivedInput = await request.json();
+          return new Response(JSON.stringify({}), {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+        },
+        baseUrl: 'http://localhost:3000',
+        operations: [
+          {
+            type: OperationTypeNode.QUERY,
+            field: 'test',
+            method: 'POST',
+            path: '/test',
+            requestSample: expectedInput,
+          },
+        ],
+      });
+
+      const query = /* GraphQL */ `
+        query Test {
+          test(input: { foo_bar: "baz" }) {
+            foo_bar
+          }
+        }
+      `;
+
+      await execute({
+        schema,
+        document: parse(query),
+      });
+
+      expect(receivedInput).toEqual(expectedInput);
+    });
+  });
 });
