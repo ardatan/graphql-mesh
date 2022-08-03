@@ -1,0 +1,68 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Infinite Recursion should generate the correct schema 1`] = `
+"schema {
+  query: Query
+  mutation: Mutation
+}
+
+directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
+
+type Query {
+  UsersGetUser(userId: String!): UserGet
+  CompanysGetCompany(companyId: String!): CompanyGet
+  PersonsGetPerson(personId: String!): PersonGet
+  TicketMessagesGetMessages(input: TicketMessagesGetMessages_request_Input): [query_TicketMessagesGetMessages_items]
+}
+
+type UserGet {
+  _resolveType: query_UsersGetUser__resolveType!
+  id: String!
+  Messages: [query_TicketMessagesGetMessages_items]
+}
+
+enum query_UsersGetUser__resolveType {
+  user
+}
+
+union query_TicketMessagesGetMessages_items = TicketUpdateGet | TicketMessageGet
+
+type TicketUpdateGet {
+  id: String!
+  authorId: String!
+  ticketId: String!
+}
+
+type TicketMessageGet {
+  id: String!
+  type: String!
+  authorId: String!
+  ticketId: String!
+  Author: PersonGet
+}
+
+union PersonGet = CompanyGet | UserGet
+
+type CompanyGet {
+  _resolveType: query_CompanysGetCompany__resolveType!
+  id: String!
+  Messages: [query_TicketMessagesGetMessages_items]
+}
+
+enum query_CompanysGetCompany__resolveType {
+  company
+}
+
+input TicketMessagesGetMessages_request_Input {
+  ticketId: String
+  authorId: String
+}
+
+type Mutation {
+  TicketMessagesUpdateTicketMessage(input: TicketMessagePatch_Input!, messageId: String!): TicketMessageGet
+}
+
+input TicketMessagePatch_Input {
+  content: String!
+}"
+`;
