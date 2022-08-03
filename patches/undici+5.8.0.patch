@@ -1,0 +1,18 @@
+diff --git a/node_modules/undici/lib/fetch/index.js b/node_modules/undici/lib/fetch/index.js
+index cf91a5d..76c74f3 100644
+--- a/node_modules/undici/lib/fetch/index.js
++++ b/node_modules/undici/lib/fetch/index.js
+@@ -1861,7 +1861,12 @@ async function httpNetworkFetch (
+ 
+       // 7. Enqueue a Uint8Array wrapping an ArrayBuffer containing bytes
+       // into stream.
+-      fetchParams.controller.controller.enqueue(new Uint8Array(bytes))
++      try {
++        fetchParams.controller.controller.enqueue(new Uint8Array(bytes))
++      } catch(e) {
++        console.error(e);
++        return;
++      }
+ 
+       // 8. If stream is errored, then terminate the ongoing fetch.
+       if (isErrored(stream)) {
