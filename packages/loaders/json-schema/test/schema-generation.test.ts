@@ -2,7 +2,7 @@ import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { OperationTypeNode } from 'graphql';
 import loadGraphQLSchemaFromJSONSchemas, { createBundle } from '../src';
 
-describe('Integration', () => {
+describe('Schema Generation', () => {
   describe('Circular Deps', () => {
     it('should handle circular dependencies while creating a GraphQLSchema', async () => {
       const schema = await loadGraphQLSchemaFromJSONSchemas('test', {
