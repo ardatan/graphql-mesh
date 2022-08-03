@@ -4,7 +4,7 @@
 
 import * as openAPIToGraphQL from '../src/openapi-to-graphql/index';
 import { GraphQLSchema, graphql, parse, validate } from 'graphql';
-import { fetch } from 'cross-undici-fetch';
+import { fetch } from '@whatwg-node/fetch';
 import { startServer, stopServer } from './nested_objects_server';
 
 const oas = require('./fixtures/nested_object.json');
