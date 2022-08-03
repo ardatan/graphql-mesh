@@ -34,7 +34,7 @@
     "@graphql-inspector/core": "3.3.0",
     "@graphql-mesh/cross-helpers": "0.2.0",
     "@graphql-mesh/utils": "0.37.6",
-    "@graphql-tools/utils": "8.8.0",
+    "@graphql-tools/utils": "8.9.0",
     "@graphql-mesh/types": "0.78.5",
     "tslib": "^2.4.0"
   },
