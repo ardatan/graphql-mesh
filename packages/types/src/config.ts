@@ -921,6 +921,14 @@ export interface OpenapiHandler {
    * This option forces OpenAPI handler to only create field names based on the operationId.
    */
   operationIdFieldNames?: boolean;
+  /**
+   * Allow processing to continue if the swagger schema is missing a schema $ref.
+   */
+  allowUndefinedSchemaRefTags?: boolean;
+  /**
+   * Object type to use for missing swagger schemas refs default is object. (Allowed values: string, number, object, array, boolean, integer)
+   */
+  defaultUndefinedSchemaType?: 'string' | 'number' | 'object' | 'array' | 'boolean' | 'integer';
 }
 export interface SelectQueryOrMutationFieldConfig {
   /**

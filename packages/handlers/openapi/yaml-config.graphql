@@ -57,6 +57,14 @@ type OpenapiHandler @md {
   This option forces OpenAPI handler to only create field names based on the operationId.
   """
   operationIdFieldNames: Boolean
+  """
+  Allow processing to continue if the swagger schema is missing a schema $ref.
+  """
+  allowUndefinedSchemaRefTags: Boolean
+  """
+  Object type to use for missing swagger schemas refs default is object.
+  """
+  defaultUndefinedSchemaType: UndefinedSchemaType
 }
 
 enum SourceFormat {
@@ -86,4 +94,13 @@ type SelectQueryOrMutationFieldConfig {
 enum QueryOrMutation {
   Query
   Mutation
+}
+
+enum UndefinedSchemaType {
+  string
+  number
+  object
+  array
+  boolean
+  integer
 }

@@ -201,6 +201,8 @@ export default class OpenAPIHandler implements MeshHandler {
 
         return originalFactory(() => resolverParams, this.logger)(root, args, context, info);
       },
+      allowUndefinedSchemaRefTags: this.config.allowUndefinedSchemaRefTags,
+      defaultUndefinedSchemaType: this.config.defaultUndefinedSchemaType,
     });
 
     const { args, contextVariables } = parseInterpolationStrings(Object.values(operationHeaders || {}));

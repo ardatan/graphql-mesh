@@ -18,3 +18,5 @@ Overrides the server object in the OAS.
 * `operationIdFieldNames` (type: `Boolean`) - Field names can only be sanitized operationIds
 By default, query field names are based on the return type type name and mutation field names are based on the operationId, which may be generated if it does not exist.
 This option forces OpenAPI handler to only create field names based on the operationId.
+* `allowUndefinedSchemaRefTags` (type: `Boolean`) - Allow processing to continue if the swagger schema is missing a schema $ref.
+* `defaultUndefinedSchemaType` (type: `String (string | number | object | array | boolean | integer)`) - Object type to use for missing swagger schemas refs default is object.

@@ -1995,6 +1995,15 @@
         "operationIdFieldNames": {
           "type": "boolean",
           "description": "Field names can only be sanitized operationIds\nBy default, query field names are based on the return type type name and mutation field names are based on the operationId, which may be generated if it does not exist.\nThis option forces OpenAPI handler to only create field names based on the operationId."
+        },
+        "allowUndefinedSchemaRefTags": {
+          "type": "boolean",
+          "description": "Allow processing to continue if the swagger schema is missing a schema $ref."
+        },
+        "defaultUndefinedSchemaType": {
+          "type": "string",
+          "enum": ["string", "number", "object", "array", "boolean", "integer"],
+          "description": "Object type to use for missing swagger schemas refs default is object. (Allowed values: string, number, object, array, boolean, integer)"
         }
       },
       "required": ["source"]

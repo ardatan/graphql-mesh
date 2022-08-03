@@ -300,4 +300,14 @@ export type InternalOptions<TSource, TContext, TArgs> = {
   includeHttpDetails?: boolean;
   pubsub: MeshPubSub;
   logger: Logger;
+
+  /**
+   * Allow processing to continue if the swagger schema is missing a schema $ref.
+   */
+  allowUndefinedSchemaRefTags?: boolean;
+
+  /**
+   * Object type to use for missing swagger schemas refs default is object.
+   */
+  defaultUndefinedSchemaType?: 'string' | 'number' | 'object' | 'array' | 'boolean' | 'integer';
 };
