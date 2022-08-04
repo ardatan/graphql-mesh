@@ -3,7 +3,7 @@
 exports[`Basket should generate the correct bundle 1`] = `
 Object {
   "baseUrl": undefined,
-  "name": "toto",
+  "name": "basket",
   "operationHeaders": undefined,
   "operations": Array [
     Object {
