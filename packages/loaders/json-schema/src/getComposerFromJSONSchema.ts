@@ -911,7 +911,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           nullable: subSchemaAndTypeComposers.nullable,
         };
       } else {
-        logger.warn(`GraphQL Type cannot be created for this JSON Schema definition;`, {
+        logger.debug(`GraphQL Type cannot be created for this JSON Schema definition;`, {
           subSchema: subSchemaOnly,
           path,
         });
