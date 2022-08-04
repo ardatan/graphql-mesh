@@ -2,7 +2,7 @@ sources:
   - name: Jira
     handler:
       newOpenapi:
-        oasFilePath: https://developer.atlassian.com/cloud/jira/platform/swagger-v3.v3.json
+        oasFilePath: ./swagger.json
 
 serve:
   browser: false

@@ -772,9 +772,9 @@ type AttachmentArchiveImpl {
 type AttachmentArchiveEntry {
   entryIndex: BigInt
   abbreviatedName: String
-  mediaType: String
   name: String
   size: BigInt
+  mediaType: String
 }
 
 \\"Container for a list of audit records.\\"
@@ -1081,22 +1081,11 @@ type UserBean {
   active: Boolean
   \\"The account ID of the user, which uniquely identifies the user across all Atlassian products. For example, *5b10ac8d82e05b22cc7d4ef5*.\\"
   accountId: query_getAllDashboards_oneOf_0_dashboards_items_owner_accountId
-  avatarUrls: UserBeanAvatarUrls
+  avatarUrls: AvatarUrlsBean
 }
 
 \\"The account ID of the user, which uniquely identifies the user across all Atlassian products. For example, *5b10ac8d82e05b22cc7d4ef5*.\\"
 scalar query_getAllDashboards_oneOf_0_dashboards_items_owner_accountId
-
-type UserBeanAvatarUrls {
-  \\"The URL of the user's 32x32 pixel avatar.\\"
-  _32x32: URL
-  \\"The URL of the user's 16x16 pixel avatar.\\"
-  _16x16: URL
-  \\"The URL of the user's 48x48 pixel avatar.\\"
-  _48x48: URL
-  \\"The URL of the user's 24x24 pixel avatar.\\"
-  _24x24: URL
-}
 
 \\"Details of a share permission for the filter.\\"
 type SharePermission {
@@ -1389,14 +1378,14 @@ type ProjectLandingPageInfo {
   url: String
   projectKey: String
   projectType: String
+  attributes: query_getAllDashboards_oneOf_0_dashboards_items_sharePermissions_items_project_landingPageInfo_attributes
+  simplified: Boolean
+  queueCategory: String
   boardName: String
+  boardId: BigInt
   simpleBoard: Boolean
   queueId: BigInt
-  boardId: BigInt
   queueName: String
-  queueCategory: String
-  simplified: Boolean
-  attributes: query_getAllDashboards_oneOf_0_dashboards_items_sharePermissions_items_project_landingPageInfo_attributes
 }
 
 type query_getAllDashboards_oneOf_0_dashboards_items_sharePermissions_items_project_landingPageInfo_attributes {
@@ -1420,12 +1409,12 @@ type ProjectRole {
   translatedName: String
   \\"Whether the calling user is part of this role.\\"
   currentUserRole: Boolean
+  \\"Whether this role is the default role for the project\\"
+  default: Boolean
   \\"Whether this role is the admin role for the project.\\"
   admin: Boolean
   \\"Whether the roles are configurable for this project.\\"
   roleConfigurable: Boolean
-  \\"Whether this role is the default role for the project\\"
-  default: Boolean
 }
 
 \\"Details about a user assigned to a project role.\\"
@@ -3559,9 +3548,9 @@ type query_getCreateIssueMeta_projects_items_issuetypes_items_fields_additionalP
 }
 
 type IncludedFields {
+  excluded: [String]
   included: [String]
   actuallyIncluded: [String]
-  excluded: [String]
 }
 
 type query_getIssue_fields {
@@ -4825,13 +4814,10 @@ type PageBeanComponentWithIssueCount {
 type ComponentWithIssueCount {
   \\"Count of issues for the component.\\"
   issueCount: BigInt
-  assignee: User
-  realAssigneeType: query_getComponent_realAssigneeType
-  realAssignee: User
-  \\"Whether a user is associated with \`assigneeType\`. For example, if the \`assigneeType\` is set to \`COMPONENT_LEAD\` but the component lead is not set, then \`false\` is returned.\\"
-  isAssigneeTypeValid: Boolean
-  \\"Not used.\\"
-  projectId: BigInt
+  \\"The name for the component.\\"
+  name: String
+  \\"The unique identifier for the component.\\"
+  id: String
   \\"The description for the component.\\"
   description: String
   \\"The URL for this count of the issues contained in the component.\\"
@@ -4840,10 +4826,13 @@ type ComponentWithIssueCount {
   project: String
   lead: User
   assigneeType: query_getProjectComponentsPaginated_values_items_assigneeType
-  \\"The name for the component.\\"
-  name: String
-  \\"The unique identifier for the component.\\"
-  id: String
+  assignee: User
+  \\"Not used.\\"
+  projectId: BigInt
+  realAssignee: User
+  \\"Whether a user is associated with \`assigneeType\`. For example, if the \`assigneeType\` is set to \`COMPONENT_LEAD\` but the component lead is not set, then \`false\` is returned.\\"
+  isAssigneeTypeValid: Boolean
+  realAssigneeType: query_getComponent_realAssigneeType
 }
 
 \\"The nominal user type used to determine the assignee for issues created with this component. See \`realAssigneeType\` for details on how the type of the user, and hence the user, assigned to issues is determined. Takes the following values:\\\\n\\\\n *  \`PROJECT_LEAD\` the assignee to any issues created with this component is nominally the lead for the project the component is in.\\\\n *  \`COMPONENT_LEAD\` the assignee to any issues created with this component is nominally the lead for the component.\\\\n *  \`UNASSIGNED\` an assignee is not set for issues created with this component.\\\\n *  \`PROJECT_DEFAULT\` the assignee to any issues created with this component is nominally the default assignee for the project that the component is in.\\"
@@ -7498,14 +7487,14 @@ input ProjectLandingPageInfo_Input {
   url: String
   projectKey: String
   projectType: String
+  attributes: query_getAllDashboards_oneOf_0_dashboards_items_sharePermissions_items_project_landingPageInfo_attributes_Input2
+  simplified: Boolean
+  queueCategory: String
   boardName: String
+  boardId: BigInt
   simpleBoard: Boolean
   queueId: BigInt
-  boardId: BigInt
   queueName: String
-  queueCategory: String
-  simplified: Boolean
-  attributes: query_getAllDashboards_oneOf_0_dashboards_items_sharePermissions_items_project_landingPageInfo_attributes_Input2
 }
 
 scalar query_getAllDashboards_oneOf_0_dashboards_items_sharePermissions_items_project_landingPageInfo_attributes_Input2
@@ -7527,12 +7516,12 @@ input ProjectRole_Input {
   translatedName: String
   \\"Whether the calling user is part of this role.\\"
   currentUserRole: Boolean
+  \\"Whether this role is the default role for the project\\"
+  default: Boolean
   \\"Whether this role is the admin role for the project.\\"
   admin: Boolean
   \\"Whether the roles are configurable for this project.\\"
   roleConfigurable: Boolean
-  \\"Whether this role is the default role for the project\\"
-  default: Boolean
 }
 
 \\"Details about a user assigned to a project role.\\"
@@ -7579,18 +7568,7 @@ input UserBean_Input {
   active: Boolean
   \\"The account ID of the user, which uniquely identifies the user across all Atlassian products. For example, *5b10ac8d82e05b22cc7d4ef5*.\\"
   accountId: query_getAllDashboards_oneOf_0_dashboards_items_owner_accountId
-  avatarUrls: UserBeanAvatarUrls_Input
-}
-
-input UserBeanAvatarUrls_Input {
-  \\"The URL of the user's 32x32 pixel avatar.\\"
-  _32x32: URL
-  \\"The URL of the user's 16x16 pixel avatar.\\"
-  _16x16: URL
-  \\"The URL of the user's 48x48 pixel avatar.\\"
-  _48x48: URL
-  \\"The URL of the user's 24x24 pixel avatar.\\"
-  _24x24: URL
+  avatarUrls: AvatarUrlsBean_Input
 }
 
 union addGadget_response = DashboardGadget | ErrorCollection
@@ -9028,6 +9006,9 @@ input IssueEntityProperties_Input {
 }
 
 input JsonNode_Input {
+  array: Boolean
+  fields: mutation_setDashboardItemProperty_errors_Input
+  null: Boolean
   elements: mutation_setDashboardItemProperty_errors_Input
   floatingPointNumber: Boolean
   pojo: Boolean
@@ -9042,9 +9023,9 @@ input JsonNode_Input {
   boolean: Boolean
   binary: Boolean
   containerNode: Boolean
-  missingNode: Boolean
   object: Boolean
   valueNode: Boolean
+  missingNode: Boolean
   numberValue: Float
   numberType: mutationInput_bulkSetIssuesPropertiesList_additionalProperties_numberType
   intValue: Int
@@ -9061,9 +9042,6 @@ input JsonNode_Input {
   fieldNames: mutation_setDashboardItemProperty_errors_Input
   textValue: String
   valueAsText: String
-  array: Boolean
-  fields: mutation_setDashboardItemProperty_errors_Input
-  null: Boolean
 }
 
 scalar mutation_setDashboardItemProperty_errors_Input
@@ -9093,6 +9071,9 @@ input IssueEntityPropertiesForMultiUpdate_Input {
 }
 
 input JsonNode_Input2 {
+  array: Boolean
+  fields: mutation_setDashboardItemProperty_errors_Input
+  null: Boolean
   elements: mutation_setDashboardItemProperty_errors_Input
   floatingPointNumber: Boolean
   pojo: Boolean
@@ -9107,9 +9088,9 @@ input JsonNode_Input2 {
   boolean: Boolean
   binary: Boolean
   containerNode: Boolean
-  missingNode: Boolean
   object: Boolean
   valueNode: Boolean
+  missingNode: Boolean
   numberValue: Float
   numberType: mutationInput_bulkSetIssuesPropertiesList_additionalProperties_numberType
   intValue: Int
@@ -9126,9 +9107,6 @@ input JsonNode_Input2 {
   fieldNames: mutation_setDashboardItemProperty_errors_Input
   textValue: String
   valueAsText: String
-  array: Boolean
-  fields: mutation_setDashboardItemProperty_errors_Input
-  null: Boolean
 }
 
 union bulkSetIssueProperty_response = ErrorCollection
