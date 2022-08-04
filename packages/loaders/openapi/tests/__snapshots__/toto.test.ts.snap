@@ -33,13 +33,22 @@ Object {
       "requestSchema": Object {
         "properties": Object {
           "directoryOnly": Object {
-            "$ref": "#/definitions/queryInput_list_resources_at_any_folder_v1_directoryOnly",
+            "default": false,
+            "description": undefined,
+            "name": "directoryOnly",
+            "type": "boolean",
           },
           "maxSize": Object {
-            "$ref": "#/definitions/int323",
+            "description": "Maximum size of a resource",
+            "format": "int32",
+            "name": "maxSize",
+            "type": "integer",
           },
           "minSize": Object {
-            "$ref": "#/definitions/int322",
+            "description": "Minimum size of a resource",
+            "format": "int32",
+            "name": "minSize",
+            "type": "integer",
           },
           "order": Object {
             "description": "List of order",
@@ -50,10 +59,16 @@ Object {
             "type": "array",
           },
           "publicationEndDate": Object {
-            "$ref": "#/definitions/date2",
+            "description": "Publication end date",
+            "format": "date",
+            "name": "publicationEndDate",
+            "type": "string",
           },
           "publicationStartDate": Object {
-            "$ref": "#/definitions/date",
+            "description": "Publication start date",
+            "format": "date",
+            "name": "publicationStartDate",
+            "type": "string",
           },
           "querySearch": Object {
             "description": "Text to search in title",
@@ -61,7 +76,10 @@ Object {
             "type": "string",
           },
           "size": Object {
-            "$ref": "#/definitions/int324",
+            "description": undefined,
+            "format": "int32",
+            "name": "size",
+            "type": "integer",
           },
           "startKey": Object {
             "description": "The page number",
@@ -171,21 +189,18 @@ Object {
             "default": false,
             "description": undefined,
             "name": "directoryOnly",
-            "title": "queryInput_list_resources_at_any_folder_v1_directoryOnly",
             "type": "boolean",
           },
           "maxSize": Object {
             "description": "Maximum size of a resource",
             "format": "int32",
             "name": "maxSize",
-            "title": "int32",
             "type": "integer",
           },
           "minSize": Object {
             "description": "Minimum size of a resource",
             "format": "int32",
             "name": "minSize",
-            "title": "int32",
             "type": "integer",
           },
           "order": Object {
@@ -200,14 +215,12 @@ Object {
             "description": "Publication end date",
             "format": "date",
             "name": "publicationEndDate",
-            "title": "date",
             "type": "string",
           },
           "publicationStartDate": Object {
             "description": "Publication start date",
             "format": "date",
             "name": "publicationStartDate",
-            "title": "date",
             "type": "string",
           },
           "querySearch": Object {
@@ -219,7 +232,6 @@ Object {
             "description": undefined,
             "format": "int32",
             "name": "size",
-            "title": "int32",
             "type": "integer",
           },
           "startKey": Object {
@@ -376,28 +388,30 @@ Object {
             "type": "array",
           },
           "geoFenced": Object {
-            "$ref": "#/definitions/query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_isShiftFenced",
+            "type": "boolean",
           },
           "parentFolderId": Object {
             "type": "string",
           },
           "pinned": Object {
-            "$ref": "#/definitions/query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_isShiftFenced",
+            "type": "boolean",
           },
           "previewUrl": Object {
             "type": "string",
           },
           "publicationEndTimestamp": Object {
-            "$ref": "#/definitions/date-time",
+            "format": "date-time",
+            "type": "string",
           },
           "publicationStartTimestamp": Object {
-            "$ref": "#/definitions/date-time",
+            "format": "date-time",
+            "type": "string",
           },
           "punchedFenced": Object {
-            "$ref": "#/definitions/query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_isShiftFenced",
+            "type": "boolean",
           },
           "shiftFenced": Object {
-            "$ref": "#/definitions/query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_isShiftFenced",
+            "type": "boolean",
           },
           "status": Object {
             "$ref": "#/definitions/ResourceStatus",
@@ -479,7 +493,8 @@ Object {
             "type": "string",
           },
           "size": Object {
-            "$ref": "#/definitions/int32",
+            "format": "int32",
+            "type": "integer",
           },
           "url": Object {
             "type": "string",
@@ -528,10 +543,12 @@ Object {
         "$resolvedRef": "/components/schemas/FolderPropertiesDTO",
         "properties": Object {
           "childFolderCount": Object {
-            "$ref": "#/definitions/int32",
+            "format": "int32",
+            "type": "integer",
           },
           "fileCount": Object {
-            "$ref": "#/definitions/int32",
+            "format": "int32",
+            "type": "integer",
           },
         },
         "title": "FolderPropertiesDTO",
@@ -586,34 +603,38 @@ Object {
             "type": "array",
           },
           "childFolderCount": Object {
-            "$ref": "#/definitions/int32",
+            "format": "int32",
+            "type": "integer",
           },
           "creationTimestamp": Object {
-            "$ref": "#/definitions/date-time",
+            "format": "date-time",
+            "type": "string",
           },
           "creationUserId": Object {
             "type": "string",
           },
           "fileCount": Object {
-            "$ref": "#/definitions/int32",
+            "format": "int32",
+            "type": "integer",
           },
           "id": Object {
             "type": "string",
           },
           "isGeoFenced": Object {
-            "$ref": "#/definitions/query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_isShiftFenced",
+            "type": "boolean",
           },
           "isPinned": Object {
-            "$ref": "#/definitions/query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_isShiftFenced",
+            "type": "boolean",
           },
           "isPunchedFenced": Object {
-            "$ref": "#/definitions/query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_isShiftFenced",
+            "type": "boolean",
           },
           "isShiftFenced": Object {
-            "$ref": "#/definitions/query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_isShiftFenced",
+            "type": "boolean",
           },
           "lastUpdateTimestamp": Object {
-            "$ref": "#/definitions/date-time",
+            "format": "date-time",
+            "type": "string",
           },
           "lastUpdateUserId": Object {
             "type": "string",
@@ -625,10 +646,12 @@ Object {
             "type": "string",
           },
           "publicationEndTimestamp": Object {
-            "$ref": "#/definitions/date-time",
+            "format": "date-time",
+            "type": "string",
           },
           "publicationStartTimestamp": Object {
-            "$ref": "#/definitions/date-time",
+            "format": "date-time",
+            "type": "string",
           },
           "status": Object {
             "$ref": "#/definitions/ResourceStatus",
@@ -728,7 +751,8 @@ Object {
         "$resolvedRef": "/components/schemas/ResourceTimestampDataDTO",
         "properties": Object {
           "lastUpdateTimestamp": Object {
-            "$ref": "#/definitions/date-time",
+            "format": "date-time",
+            "type": "string",
           },
           "lastUpdateUserId": Object {
             "type": "string",
@@ -771,25 +795,6 @@ Object {
         "title": "_schema",
         "type": "object",
       },
-      "date": Object {
-        "description": "Publication start date",
-        "format": "date",
-        "name": "publicationStartDate",
-        "title": "date",
-        "type": "string",
-      },
-      "date-time": Object {
-        "format": "date-time",
-        "title": "date-time",
-        "type": "string",
-      },
-      "date2": Object {
-        "description": "Publication end date",
-        "format": "date",
-        "name": "publicationEndDate",
-        "title": "date",
-        "type": "string",
-      },
       "delete_resource_at_the_root_folder_v1_204_response": Object {
         "description": "No Content",
         "title": "delete_resource_at_the_root_folder_v1_204_response",
@@ -806,32 +811,6 @@ Object {
           },
         ],
         "title": "get_resource_by_id_v1_200_response",
-      },
-      "int32": Object {
-        "format": "int32",
-        "title": "int32",
-        "type": "integer",
-      },
-      "int322": Object {
-        "description": "Minimum size of a resource",
-        "format": "int32",
-        "name": "minSize",
-        "title": "int32",
-        "type": "integer",
-      },
-      "int323": Object {
-        "description": "Maximum size of a resource",
-        "format": "int32",
-        "name": "maxSize",
-        "title": "int32",
-        "type": "integer",
-      },
-      "int324": Object {
-        "description": undefined,
-        "format": "int32",
-        "name": "size",
-        "title": "int32",
-        "type": "integer",
       },
       "list_resources_at_any_folder_v1_200_response": Object {
         "$resolvedRef": "/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources/get/responses/200/content/application~1json/schema",
@@ -852,13 +831,22 @@ Object {
       "list_resources_at_any_folder_v1_request": Object {
         "properties": Object {
           "directoryOnly": Object {
-            "$ref": "#/definitions/queryInput_list_resources_at_any_folder_v1_directoryOnly",
+            "default": false,
+            "description": undefined,
+            "name": "directoryOnly",
+            "type": "boolean",
           },
           "maxSize": Object {
-            "$ref": "#/definitions/int323",
+            "description": "Maximum size of a resource",
+            "format": "int32",
+            "name": "maxSize",
+            "type": "integer",
           },
           "minSize": Object {
-            "$ref": "#/definitions/int322",
+            "description": "Minimum size of a resource",
+            "format": "int32",
+            "name": "minSize",
+            "type": "integer",
           },
           "order": Object {
             "description": "List of order",
@@ -869,10 +857,16 @@ Object {
             "type": "array",
           },
           "publicationEndDate": Object {
-            "$ref": "#/definitions/date2",
+            "description": "Publication end date",
+            "format": "date",
+            "name": "publicationEndDate",
+            "type": "string",
           },
           "publicationStartDate": Object {
-            "$ref": "#/definitions/date",
+            "description": "Publication start date",
+            "format": "date",
+            "name": "publicationStartDate",
+            "type": "string",
           },
           "querySearch": Object {
             "description": "Text to search in title",
@@ -880,7 +874,10 @@ Object {
             "type": "string",
           },
           "size": Object {
-            "$ref": "#/definitions/int324",
+            "description": undefined,
+            "format": "int32",
+            "name": "size",
+            "type": "integer",
           },
           "startKey": Object {
             "description": "The page number",
@@ -930,13 +927,6 @@ Object {
           },
         ],
         "title": "paths_api_v1_companies_{companyId}_knowledgecenter_folders_{folderId}_resources_post_requestBody_content_application_json_schema",
-      },
-      "queryInput_list_resources_at_any_folder_v1_directoryOnly": Object {
-        "default": false,
-        "description": undefined,
-        "name": "directoryOnly",
-        "title": "queryInput_list_resources_at_any_folder_v1_directoryOnly",
-        "type": "boolean",
       },
       "queryInput_list_resources_at_any_folder_v1_order_items": Object {
         "pattern": "^(FILE_TYPE|NAME|LAST_UPDATE_DATE)(,(ASC|DESC))?$",
@@ -992,10 +982,6 @@ Object {
         },
         "title": "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0",
         "type": "object",
-      },
-      "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_isShiftFenced": Object {
-        "title": "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_isShiftFenced",
-        "type": "boolean",
       },
       "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items": Object {
         "enum": Array [

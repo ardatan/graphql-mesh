@@ -1,3 +1,4 @@
+import { Logger } from '@graphql-mesh/types';
 import { JSONSchemaObject } from '@json-schema-tools/meta-schema';
 import Ajv from 'ajv';
 import {
@@ -20,6 +21,7 @@ export interface GetUnionTypeComposersOpts {
   ajv: Ajv;
   typeComposersList: { input?: AnyTypeComposer<any>; output?: ObjectTypeComposer | UnionTypeComposer }[];
   subSchemaAndTypeComposers: JSONSchemaObject & TypeComposers;
+  logger: Logger;
 }
 
 export function getUnionTypeComposers({
@@ -27,6 +29,7 @@ export function getUnionTypeComposers({
   ajv,
   typeComposersList,
   subSchemaAndTypeComposers,
+  logger,
 }: GetUnionTypeComposersOpts) {
   if (typeComposersList.length === 1) {
     return typeComposersList[0];
@@ -50,9 +53,14 @@ export function getUnionTypeComposers({
     } else {
       outputTypeComposers.push(output);
     }
-    unionInputFields[input.getTypeName()] = {
-      type: input,
-    };
+    if (input) {
+      unionInputFields[input.getTypeName()] = {
+        type: input,
+      };
+    }
+    if (!input) {
+      logger.warn(`No input type composer found for ${output.getTypeName()}`);
+    }
   });
   (subSchemaAndTypeComposers.input as InputTypeComposer).addFields(unionInputFields);
   if (!schemaComposer.hasDirective('oneOf')) {

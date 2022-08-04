@@ -5,9 +5,7 @@
   "private": true,
   "scripts": {
     "download-fhir-schema": "node scripts/download-fhir-schema.js",
-    "prebuild": "yarn download-fhir-schema",
     "build": "mesh build",
-    "prestart": "yarn download-fhir-schema",
     "start": "mesh dev",
     "start:prod": "mesh start"
   },

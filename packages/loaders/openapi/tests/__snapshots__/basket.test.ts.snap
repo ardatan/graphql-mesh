@@ -1,0 +1,220 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Basket should generate the correct bundle 1`] = `
+Object {
+  "baseUrl": undefined,
+  "name": "toto",
+  "operationHeaders": undefined,
+  "operations": Array [
+    Object {
+      "description": undefined,
+      "field": "post_basket",
+      "method": "POST",
+      "operationHeaders": undefined,
+      "path": "/basket",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": "./fixtures/basket.json#/paths/~1basket/post/responses/200/content/application~1json/schema",
+        },
+        "400": Object {
+          "responseSchema": "./fixtures/basket.json#/paths/~1basket/post/responses/400/content/application~1json/schema",
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "mutation",
+    },
+  ],
+  "referencedSchema": Object {
+    "$ref": "#/definitions/_schema",
+    "definitions": Object {
+      "ApiBaseProduct": Object {
+        "$resolvedRef": "/components/schemas/ApiBaseProduct",
+        "additionalProperties": false,
+        "properties": Object {
+          "co2EmissionInGramsPerPassenger": Object {
+            "format": "int32",
+            "nullable": true,
+            "type": "integer",
+          },
+        },
+        "title": "ApiBaseProduct",
+        "type": "object",
+      },
+      "ApiError": Object {
+        "$resolvedRef": "/components/schemas/ApiError",
+        "additionalProperties": false,
+        "properties": Object {
+          "code": Object {
+            "type": "string",
+          },
+        },
+        "required": Array [
+          "code",
+          "description",
+        ],
+        "title": "ApiError",
+        "type": "object",
+      },
+      "ApiProduct": Object {
+        "$resolvedRef": "/components/schemas/ApiProduct",
+        "additionalProperties": false,
+        "allOf": Array [
+          Object {
+            "$ref": "#/definitions/ApiBaseProduct",
+          },
+        ],
+        "properties": Object {
+          "eligibleForVouchers": Object {
+            "type": "boolean",
+          },
+        },
+        "title": "ApiProduct",
+        "type": "object",
+      },
+      "ApiReservedProduct": Object {
+        "$resolvedRef": "/components/schemas/ApiReservedProduct",
+        "additionalProperties": false,
+        "allOf": Array [
+          Object {
+            "$ref": "#/definitions/ApiBaseProduct",
+          },
+        ],
+        "properties": Object {
+          "reservationExpiresAt": Object {
+            "nullable": true,
+            "type": "string",
+          },
+        },
+        "title": "ApiReservedProduct",
+        "type": "object",
+      },
+      "BasketResponse": Object {
+        "$resolvedRef": "/components/schemas/BasketResponse",
+        "additionalProperties": false,
+        "properties": Object {
+          "products": Object {
+            "items": Object {
+              "$ref": "#/definitions/mutation_post_basket_oneOf_0_products_items",
+            },
+            "nullable": true,
+            "type": "array",
+          },
+        },
+        "title": "BasketResponse",
+        "type": "object",
+      },
+      "Mutation": Object {
+        "properties": Object {
+          "post_basket": Object {
+            "$ref": "#/definitions/post_basket_response",
+          },
+        },
+        "title": "Mutation",
+        "type": "object",
+      },
+      "MutationInput": Object {
+        "additionalProperties": true,
+        "title": "MutationInput",
+        "type": "object",
+      },
+      "_schema": Object {
+        "properties": Object {
+          "mutation": Object {
+            "$ref": "#/definitions/Mutation",
+          },
+          "mutationInput": Object {
+            "$ref": "#/definitions/MutationInput",
+          },
+        },
+        "required": Array [
+          "query",
+        ],
+        "title": "_schema",
+        "type": "object",
+      },
+      "mutation_post_basket_oneOf_0_products_items": Object {
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/ApiProduct",
+          },
+          Object {
+            "$ref": "#/definitions/ApiReservedProduct",
+          },
+        ],
+        "title": "mutation_post_basket_oneOf_0_products_items",
+      },
+      "post_basket_400_response": Object {
+        "$resolvedRef": "/paths/~1basket/post/responses/400/content/application~1json/schema",
+        "items": Object {
+          "$resolvedRef": "/components/schemas/ApiError",
+          "additionalProperties": false,
+          "properties": Object {
+            "code": Object {
+              "type": "string",
+            },
+          },
+          "required": Array [
+            "code",
+            "description",
+          ],
+          "title": "ApiError",
+          "type": "object",
+        },
+        "title": "post_basket_400_response",
+        "type": "array",
+      },
+      "post_basket_response": Object {
+        "$comment": "statusCodeOneOfIndexMap:{\\"200\\":0,\\"400\\":1}",
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/BasketResponse",
+          },
+          Object {
+            "$ref": "#/definitions/post_basket_400_response",
+          },
+        ],
+        "title": "post_basket_response",
+      },
+    },
+  },
+}
+`;
+
+exports[`Basket should generate the correct schema 1`] = `
+"schema {
+  query: Query
+  mutation: Mutation
+}
+
+directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
+
+type Query {
+  dummy: String
+}
+
+type Mutation {
+  post_basket: [post_basket_response]
+}
+
+union post_basket_response = BasketResponse | ApiError
+
+type BasketResponse {
+  products: [mutation_post_basket_oneOf_0_products_items]
+}
+
+union mutation_post_basket_oneOf_0_products_items = ApiProduct | ApiReservedProduct
+
+type ApiProduct {
+  eligibleForVouchers: Boolean
+  co2EmissionInGramsPerPassenger: Int
+}
+
+type ApiReservedProduct {
+  reservationExpiresAt: String
+  co2EmissionInGramsPerPassenger: Int
+}
+
+type ApiError {
+  code: String!
+}"
+`;

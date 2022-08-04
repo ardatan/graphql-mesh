@@ -1,0 +1,116 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "API Name",
+    "version": "1.0"
+  },
+  "paths": {
+    "/basket": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BasketResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/ApiError"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ApiBaseProduct": {
+        "type": "object",
+        "properties": {
+          "co2EmissionInGramsPerPassenger": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "BasketResponse": {
+        "type": "object",
+        "properties": {
+          "products": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ApiProduct"
+                },
+                {
+                  "$ref": "#/components/schemas/ApiReservedProduct"
+                }
+              ]
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApiProduct": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ApiBaseProduct"
+          }
+        ],
+        "properties": {
+          "eligibleForVouchers": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApiReservedProduct": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ApiBaseProduct"
+          }
+        ],
+        "properties": {
+          "reservationExpiresAt": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApiError": {
+        "required": ["code", "description"],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}
