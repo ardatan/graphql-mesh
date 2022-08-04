@@ -90,7 +90,6 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
 
   return visitJSONSchema(schema, {
     enter(subSchema: JSONSchema, { path, visitedSubschemaResultMap }) {
-      logger?.debug(`Entering ${path} for GraphQL Schema`);
       if (typeof subSchema === 'boolean') {
         const typeComposer = schemaComposer.getAnyTC(GraphQLJSON);
         return subSchema
@@ -541,7 +540,6 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
       return subSchema;
     },
     leave(subSchemaAndTypeComposers: JSONSchemaObject & TypeComposers, { path }) {
-      logger?.debug(`Leaving ${path} for GraphQL Schema`);
       const validateWithJSONSchema = getValidateFnForSchemaPath(ajv, path, schema);
       const subSchemaOnly: JSONSchemaObject = {
         ...subSchemaAndTypeComposers,

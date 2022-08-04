@@ -133,12 +133,12 @@ export async function addExecutionLogicToComposer(
       };
       interpolationStrings.push(operationConfig.pubsubTopic);
     } else if (operationConfig.path) {
-      if (process.env.DEBUG) {
+      if (process.env.DEBUG === '1' || process.env.DEBUG === 'fieldDetails') {
         field.description = `
-    ***Original Description***: ${operationConfig.description || '(none)'}
-    ***Method***: ${operationConfig.method}
-    ***Base URL***: ${baseUrl}
-    ***Path***: ${operationConfig.path}
+>**Method**: \`${operationConfig.method}\`
+>**Base URL**: \`${baseUrl}\`
+>**Path**: \`${operationConfig.path}\`
+${operationConfig.description || ''}
 `;
       } else {
         field.description = operationConfig.description;

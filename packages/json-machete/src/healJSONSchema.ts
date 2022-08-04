@@ -2,6 +2,8 @@ import { JSONSchema, JSONSchemaObject } from './types';
 import { visitJSONSchema } from './visitJSONSchema';
 import toJsonSchema from 'to-json-schema';
 import { inspect } from '@graphql-tools/utils';
+import { DefaultLogger } from '@graphql-mesh/utils';
+import { Logger } from '@graphql-mesh/types';
 
 const asArray = <T>(value: T | T[]): T[] => (Array.isArray(value) ? value : [value]);
 
@@ -153,8 +155,8 @@ export async function healJSONSchema(
   schema: JSONSchema,
   {
     noDeduplication = false,
-    logger = console,
-  }: { noDeduplication?: boolean; logger?: { debug(msg: string): void } } = {}
+    logger = new DefaultLogger('healJSONSchema'),
+  }: { noDeduplication?: boolean; logger?: Logger } = {}
 ): Promise<JSONSchema> {
   let readySchema = schema;
   if (!noDeduplication) {
@@ -169,7 +171,6 @@ export async function healJSONSchema(
     {
       enter: async function healSubschema(subSchema, { path }) {
         if (typeof subSchema === 'object') {
-          logger.debug(`Healing ${path}`);
           // We don't support following properties
           delete subSchema.readOnly;
           delete subSchema.writeOnly;
@@ -335,7 +336,7 @@ export async function healJSONSchema(
             });
             const healedGeneratedSchema: any = await healJSONSchema(generatedSchema as any, {
               noDeduplication,
-              logger,
+              logger: logger.child('toJsonSchema'),
             });
             subSchema.type = asArray(healedGeneratedSchema.type)[0] as any;
             subSchema.properties = healedGeneratedSchema.properties;

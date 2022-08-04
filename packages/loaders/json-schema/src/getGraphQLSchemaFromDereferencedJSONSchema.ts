@@ -18,7 +18,10 @@ export async function getGraphQLSchemaFromDereferencedJSONSchema(
   }: AddExecutionLogicToComposerOptions
 ) {
   logger.debug(`Generating GraphQL Schema from the bundled JSON Schema`);
-  const visitorResult = await getComposerFromJSONSchema(fullyDeferencedSchema, logger);
+  const visitorResult = await getComposerFromJSONSchema(
+    fullyDeferencedSchema,
+    logger.child('getComposerFromJSONSchema')
+  );
 
   const schemaComposerWithoutExecutionLogic = visitorResult.output;
 

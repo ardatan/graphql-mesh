@@ -34,10 +34,13 @@ export async function getDereferencedJSONSchemaFromOperations({
   const fullyDeferencedSchema = await dereferenceObject(referencedJSONSchema, {
     cwd,
     fetchFn,
-    logger,
+    logger: logger.child('dereferenceObject'),
     headers: schemaHeadersFactory({ env: process.env }),
   });
   logger.debug(`Healing JSON Schema`);
-  const healedSchema = await healJSONSchema(fullyDeferencedSchema, { noDeduplication, logger });
+  const healedSchema = await healJSONSchema(fullyDeferencedSchema, {
+    noDeduplication,
+    logger: logger.child('healJSONSchema'),
+  });
   return healedSchema as JSONSchemaObject;
 }
