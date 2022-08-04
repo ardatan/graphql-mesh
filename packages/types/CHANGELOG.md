@@ -1,5 +1,18 @@
 # @graphql-mesh/types
 
+## 0.78.6
+
+### Patch Changes
+
+- [#4216](https://github.com/Urigo/graphql-mesh/pull/4216) [`f95036a33`](https://github.com/Urigo/graphql-mesh/commit/f95036a3360bd76d9f4b9e2725f4d344343fe41b) Thanks [@ardatan](https://github.com/ardatan)! - Rewrite JSON Schema visitor and support circular dependencies in a better way
+
+  Now `visitJSONSchema` takes two different visitor functions instead of `enter` and `leave`, previously we used to handle only `leave`.
+
+  Also `generateInterfaceFromSharedFields` has been dropped for now because it wasn't working as expected.
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.8.26
+
 ## 0.78.5
 
 ### Patch Changes

@@ -1,5 +1,38 @@
 # @graphql-mesh/openapi
 
+## 0.29.0
+
+### Minor Changes
+
+- [`945f49887`](https://github.com/Urigo/graphql-mesh/commit/945f498874e840ed36884774d1408f7cf354f22a) Thanks [@ascheffe-kenna](https://github.com/ascheffe-kenna)! - Allow swagger docs that don't have defined schema refs. Right now whole app crashes if a schema is missing a \$ref;
+
+  ```ts
+    /**
+     * Allow processing to continue if the swagger schema is missing a schema $ref.
+     */
+    allowUndefinedSchemaRefTags?: boolean;
+
+    /**
+     * Object type to use for missing swagger schemas refs default is object.
+     */
+    defaultUndefinedSchemaType?: 'string' | 'number' | 'object' | 'array' | 'boolean' | 'integer';
+  ```
+
+### Patch Changes
+
+- [#4232](https://github.com/Urigo/graphql-mesh/pull/4232) [`162c06744`](https://github.com/Urigo/graphql-mesh/commit/162c067448c74ff0ed4a8ee78d39c8aecf87f67e) Thanks [@renovate](https://github.com/apps/renovate)! - ### Dependencies Updates
+
+  - Updated dependency ([`openapi-diff@0.23.6` ↗︎](https://www.npmjs.com/package/openapi-diff/v/0.23.6)) (was `0.23.5`, in `dependencies`)
+
+* [#4228](https://github.com/Urigo/graphql-mesh/pull/4228) [`31d5f6eaa`](https://github.com/Urigo/graphql-mesh/commit/31d5f6eaac6342c2d8786ea4b3e5b774fe95a5ff) Thanks [@ardatan](https://github.com/ardatan)! - feat: expand content type handling in openapi handler. possibly resolves for issue #3044
+
+- [#3635](https://github.com/Urigo/graphql-mesh/pull/3635) [`42e19c58c`](https://github.com/Urigo/graphql-mesh/commit/42e19c58c9c6b87ea2bc48a36766f131cc87a153) Thanks [@JasonKong-Quantium](https://github.com/JasonKong-Quantium)! - Use `qs` to stringify query parameters because URLSearchParameters doesn't respect nested values
+
+- Updated dependencies [[`02c018249`](https://github.com/Urigo/graphql-mesh/commit/02c0182498e60c78bee5c44c42dc897a739e8f18), [`f95036a33`](https://github.com/Urigo/graphql-mesh/commit/f95036a3360bd76d9f4b9e2725f4d344343fe41b)]:
+  - @graphql-mesh/utils@0.37.7
+  - @graphql-mesh/types@0.78.6
+  - @graphql-mesh/store@0.8.26
+
 ## 0.28.6
 
 ### Patch Changes

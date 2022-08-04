@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cache-cfw-kv",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -28,8 +28,8 @@
     }
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.78.5",
-    "@graphql-mesh/utils": "0.37.6",
+    "@graphql-mesh/types": "0.78.6",
+    "@graphql-mesh/utils": "0.37.7",
     "@udacity/types-service-worker-mock": "1.2.0",
     "cloudflare-worker-mock": "1.2.0",
     "tslib": "^2.4.0"
