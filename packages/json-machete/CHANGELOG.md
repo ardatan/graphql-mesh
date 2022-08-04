@@ -1,5 +1,26 @@
 # json-machete
 
+## 0.10.6
+
+### Patch Changes
+
+- [#4221](https://github.com/Urigo/graphql-mesh/pull/4221) [`12430d907`](https://github.com/Urigo/graphql-mesh/commit/12430d907ead31fdd5eda532f8087f392a155834) Thanks [@ardatan](https://github.com/ardatan)! - Respect "required" field in anyOf and allOf schemas and fix the bug that puts an Any schema if this kind of schema is present
+
+* [#4237](https://github.com/Urigo/graphql-mesh/pull/4237) [`02c018249`](https://github.com/Urigo/graphql-mesh/commit/02c0182498e60c78bee5c44c42dc897a739e8f18) Thanks [@ardatan](https://github.com/ardatan)! - - Respect `pattern` of `number` types
+  - Dereference first-level circular dependencies properly in `dereferenceObject`
+  - Do not make the schema single if there is one `allOf` or `anyOf` element but with properties
+
+- [#4216](https://github.com/Urigo/graphql-mesh/pull/4216) [`f95036a33`](https://github.com/Urigo/graphql-mesh/commit/f95036a3360bd76d9f4b9e2725f4d344343fe41b) Thanks [@ardatan](https://github.com/ardatan)! - Rewrite JSON Schema visitor and support circular dependencies in a better way
+
+  Now `visitJSONSchema` takes two different visitor functions instead of `enter` and `leave`, previously we used to handle only `leave`.
+
+  Also `generateInterfaceFromSharedFields` has been dropped for now because it wasn't working as expected.
+
+* [#4221](https://github.com/Urigo/graphql-mesh/pull/4221) [`12430d907`](https://github.com/Urigo/graphql-mesh/commit/12430d907ead31fdd5eda532f8087f392a155834) Thanks [@ardatan](https://github.com/ardatan)! - Use single "Any" schema for unknown types defined in "required" in order to prevent duplication
+
+* Updated dependencies [[`02c018249`](https://github.com/Urigo/graphql-mesh/commit/02c0182498e60c78bee5c44c42dc897a739e8f18)]:
+  - @graphql-mesh/utils@0.37.7
+
 ## 0.10.5
 
 ### Patch Changes

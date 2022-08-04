@@ -1,5 +1,15 @@
 # @graphql-mesh/utils
 
+## 0.37.7
+
+### Patch Changes
+
+- [#4237](https://github.com/Urigo/graphql-mesh/pull/4237) [`02c018249`](https://github.com/Urigo/graphql-mesh/commit/02c0182498e60c78bee5c44c42dc897a739e8f18) Thanks [@ardatan](https://github.com/ardatan)! - - Respect `pattern` of `number` types
+  - Dereference first-level circular dependencies properly in `dereferenceObject`
+  - Do not make the schema single if there is one `allOf` or `anyOf` element but with properties
+- Updated dependencies [[`f95036a33`](https://github.com/Urigo/graphql-mesh/commit/f95036a3360bd76d9f4b9e2725f4d344343fe41b)]:
+  - @graphql-mesh/types@0.78.6
+
 ## 0.37.6
 
 ### Patch Changes
