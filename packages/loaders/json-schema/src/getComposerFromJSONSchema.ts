@@ -558,6 +558,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
               output: output.ofType || output,
             })) as any[],
             subSchemaAndTypeComposers,
+            logger,
           });
           return {
             input: input.getTypePlural(),
@@ -570,6 +571,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           ajv,
           typeComposersList: subSchemaAndTypeComposers.oneOf as any[],
           subSchemaAndTypeComposers,
+          logger,
         });
       }
 

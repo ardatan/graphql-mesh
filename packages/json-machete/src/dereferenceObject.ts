@@ -73,6 +73,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
     fetchFn: fetch = crossUndiciFetch,
     importFn = defaultImportFn,
     logger = new DefaultLogger('dereferenceObject'),
+    resolvedObjects = new WeakSet(),
     headers,
   }: {
     cwd?: string;
@@ -82,6 +83,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
     fetchFn?: WindowOrWorkerGlobalScope['fetch'];
     importFn?: (m: string) => any;
     logger?: any;
+    resolvedObjects?: WeakSet<any>;
     headers?: Record<string, string>;
   } = {}
 ): Promise<T> {
@@ -167,9 +169,11 @@ export async function dereferenceObject<T extends object, TRoot = T>(
               logger,
               headers,
               root: externalFile,
+              resolvedObjects,
             }
           );
           refMap.set($ref, result);
+          resolvedObjects.add(result);
           if (result && !result.$resolvedRef) {
             result.$resolvedRef = refPath;
           }
@@ -179,12 +183,15 @@ export async function dereferenceObject<T extends object, TRoot = T>(
           return result;
         } else {
           const resolvedObj = resolvePath(refPath, root);
-          if (typeof resolvedObj === 'object' && !resolvedObj.$ref) {
+          if (resolvedObjects.has(resolvedObj)) {
             refMap.set($ref, resolvedObj);
+            return resolvedObj;
           }
+          /*
           if (resolvedObj && !resolvedObj.$resolvedRef) {
             resolvedObj.$resolvedRef = refPath;
           }
+          */
           const result = await dereferenceObject(resolvedObj, {
             cwd,
             externalFileCache,
@@ -194,26 +201,35 @@ export async function dereferenceObject<T extends object, TRoot = T>(
             importFn,
             logger,
             headers,
+            resolvedObjects,
           });
+          if (!result) {
+            return obj;
+          }
+          resolvedObjects.add(result);
           refMap.set($ref, result);
-          if (result && !result.$resolvedRef) {
+          if (!result.$resolvedRef) {
             result.$resolvedRef = refPath;
           }
           return result;
         }
       }
     } else {
-      for (const key in obj) {
-        const val = obj[key];
-        if (typeof val === 'object') {
-          obj[key] = await dereferenceObject<any>(val, {
-            cwd,
-            externalFileCache,
-            refMap,
-            root,
-            fetchFn: fetch,
-            headers,
-          });
+      if (!resolvedObjects.has(obj)) {
+        resolvedObjects.add(obj);
+        for (const key in obj) {
+          const val = obj[key];
+          if (typeof val === 'object') {
+            obj[key] = await dereferenceObject<any>(val, {
+              cwd,
+              externalFileCache,
+              refMap,
+              root,
+              fetchFn: fetch,
+              headers,
+              resolvedObjects,
+            });
+          }
         }
       }
     }

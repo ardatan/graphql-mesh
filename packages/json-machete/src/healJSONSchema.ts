@@ -252,11 +252,15 @@ export async function healJSONSchema(
                 }
               }
             }
-            if (subSchema.format === 'int64') {
-              subSchema.type = 'integer';
-            }
-            if (subSchema.format) {
-              subSchema.type = 'string';
+            switch (subSchema.format) {
+              case 'int64':
+              case 'int32':
+                subSchema.type = 'integer';
+                break;
+              default:
+                if (subSchema.format != null) {
+                  subSchema.type = 'string';
+                }
             }
           }
           if (subSchema.type === 'string' && !subSchema.format && (subSchema.examples || subSchema.example)) {
@@ -329,20 +333,26 @@ export async function healJSONSchema(
                 if (subSchema.pattern || subSchema.maxLength || subSchema.minLength || subSchema.enum) {
                   subSchema.title = pathBasedName;
                   // Otherwise use the format name
-                } else if (subSchema.format) {
-                  subSchema.title = subSchema.format;
                 }
                 break;
               case 'number':
               case 'integer':
-                if (subSchema.enum) {
+                if (subSchema.enum || subSchema.pattern) {
                   subSchema.title = pathBasedName;
                   // Otherwise use the format name
-                } else if (subSchema.format) {
-                  subSchema.title = subSchema.format;
                 }
                 break;
               case 'array':
+                break;
+              case 'boolean':
+                // pattern is unnecessary for boolean
+                if (subSchema.pattern) {
+                  delete subSchema.pattern;
+                }
+                // enum is unnecessary for boolean
+                if (subSchema.enum) {
+                  delete subSchema.enum;
+                }
                 break;
               default:
                 subSchema.title = subSchema.title || pathBasedName;

@@ -1,4 +1,4 @@
-const reservedNames = ['Query', 'Mutation', 'Subscription'];
+const reservedNames = ['Query', 'Mutation', 'Subscription', 'File'];
 const KNOWN_CHARACTERS = {
   '+': 'PLUS',
   '-': 'MINUS',

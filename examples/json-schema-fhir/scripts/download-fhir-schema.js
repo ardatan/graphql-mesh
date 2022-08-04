@@ -1,5 +1,5 @@
 const fetch = require('node-fetch');
-const { createWriteStream } = require('fs');
+const { createWriteStream, existsSync } = require('fs');
 const { join } = require('path');
 const unzip = require('unzip-stream');
 
