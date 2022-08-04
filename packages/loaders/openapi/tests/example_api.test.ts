@@ -55,7 +55,7 @@ describe('example_api', () => {
   it('Get resource 2', async () => {
     const query = /* GraphQL */ `
       {
-        company(id: "binsol") {
+        getCompanyById(id: "binsol") {
           legalForm
         }
       }
@@ -67,7 +67,7 @@ describe('example_api', () => {
     });
 
     expect(result).toEqual({
-      data: { company: { legalForm: 'public' } },
+      data: { getCompanyById: { legalForm: 'public' } },
     });
   });
 
