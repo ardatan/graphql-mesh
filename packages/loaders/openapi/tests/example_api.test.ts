@@ -52,6 +52,25 @@ describe('example_api', () => {
     });
   });
 
+  it('Get resource 2', async () => {
+    const query = /* GraphQL */ `
+      {
+        company(id: "binsol") {
+          legalForm
+        }
+      }
+    `;
+
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
+
+    expect(result).toEqual({
+      data: { company: { legalForm: 'public' } },
+    });
+  });
+
   // OAS allows you to define response objects with HTTP code with the XX wildcard syntax
   it('should get resource with status code: 2XX', async () => {
     const query = /* GraphQL */ `
