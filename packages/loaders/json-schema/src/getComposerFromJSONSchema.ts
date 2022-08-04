@@ -12,6 +12,7 @@ import {
   SchemaComposer,
   ListComposer,
   UnionTypeComposer,
+  isSomeInputTypeComposer,
 } from 'graphql-compose';
 import {
   getNamedType,
@@ -592,9 +593,9 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             }
           }
 
-          if (outputTypeComposer instanceof ScalarTypeComposer) {
+          if (isSomeInputTypeComposer(outputTypeComposer)) {
             fieldMap[outputTypeComposer.getTypeName()] = {
-              type: outputTypeComposer,
+              type: outputTypeComposer as any,
               resolve: root => root,
             };
           } else if (outputTypeComposer instanceof UnionTypeComposer) {
