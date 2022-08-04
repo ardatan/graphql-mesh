@@ -187,12 +187,12 @@ export async function healJSONSchema(
               subSchema.additionalProperties = true;
             }
           }
-          if (subSchema.allOf != null && subSchema.allOf.length === 1) {
+          if (subSchema.allOf != null && subSchema.allOf.length === 1 && !subSchema.properties) {
             const realSubschema = subSchema.allOf[0];
             delete subSchema.allOf;
             return realSubschema;
           }
-          if (subSchema.anyOf != null && subSchema.anyOf.length === 1) {
+          if (subSchema.anyOf != null && subSchema.anyOf.length === 1 && !subSchema.properties) {
             const realSubschema = subSchema.anyOf[0];
             delete subSchema.anyOf;
             return realSubschema;
