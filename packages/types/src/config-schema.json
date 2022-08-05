@@ -1868,6 +1868,9 @@
               "additionalItems": true
             }
           ]
+        },
+        "noDeduplication": {
+          "type": "boolean"
         }
       },
       "required": ["oasFilePath"]

@@ -819,6 +819,7 @@ export interface NewOpenapiHandler {
   ignoreErrorResponses?: boolean;
   selectQueryOrMutationField?: OASSelectQueryOrMutationFieldConfig[];
   queryParams?: any;
+  noDeduplication?: boolean;
 }
 export interface OASSelectQueryOrMutationFieldConfig {
   /**
