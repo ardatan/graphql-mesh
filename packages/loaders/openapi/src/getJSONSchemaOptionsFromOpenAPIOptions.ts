@@ -290,11 +290,9 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
             if ('operationRef' in linkObj) {
               const [externalPath, ref] = linkObj.operationRef.split('#');
               if (externalPath) {
-                if (process.env.DEBUG) {
-                  console.warn(
-                    `Skipping external operation reference ${linkObj.operationRef}\n Use additionalTypeDefs and additionalResolvers instead.`
-                  );
-                }
+                logger.debug(
+                  `Skipping external operation reference ${linkObj.operationRef}\n Use additionalTypeDefs and additionalResolvers instead.`
+                );
               } else {
                 const actualOperation = resolvePath(ref, oasOrSwagger);
                 if (actualOperation.operationId) {

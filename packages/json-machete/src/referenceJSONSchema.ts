@@ -1,20 +1,18 @@
 import { JSONSchemaObject } from './types';
 import { visitJSONSchema } from './visitJSONSchema';
-import { process } from '@graphql-mesh/cross-helpers';
+import { DefaultLogger } from '@graphql-mesh/utils';
 
-export async function referenceJSONSchema(schema: JSONSchemaObject) {
+export async function referenceJSONSchema(schema: JSONSchemaObject, logger = new DefaultLogger('referenceJSONSchema')) {
   const initialDefinitions: Record<string, JSONSchemaObject> = {};
   const { $ref: initialRef } = await visitJSONSchema(schema, {
     enter: (subSchema, { path }) => {
       if (typeof subSchema === 'object') {
-        if (process.env.DEBUG) {
-          console.log(`Referencing ${path}`);
-        }
         // Remove $id refs
         delete subSchema.$id;
         if (subSchema.$ref) {
           return subSchema;
         } else if (subSchema.title) {
+          logger.debug(`Referencing ${path}`);
           if (subSchema.title in initialDefinitions) {
             let cnt = 2;
             while (`${subSchema.title}${cnt}` in initialDefinitions) {
@@ -35,7 +33,7 @@ export async function referenceJSONSchema(schema: JSONSchemaObject) {
             };
           }
         } else if (subSchema.type === 'object') {
-          console.warn(`${path} cannot be referenced because it has no title`);
+          logger.debug(`${path} cannot be referenced because it has no title`);
         }
       }
       return subSchema;

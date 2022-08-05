@@ -93,9 +93,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
       if (refMap.has($ref)) {
         return refMap.get($ref);
       } else {
-        if (process.env.DEBUG) {
-          console.log(`Dereferencing `, obj);
-        }
+        logger.debug(`Resolving ${$ref}`);
         const [externalRelativeFilePath, refPath] = $ref.split('#');
         if (externalRelativeFilePath) {
           const externalFilePath = getAbsolutePath(externalRelativeFilePath, cwd);
