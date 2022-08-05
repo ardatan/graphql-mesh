@@ -63,6 +63,7 @@ export async function getPackage<T>({
         !error.message.includes(`Cannot find package '${moduleName}'`) &&
         !error.message.includes(`Could not locate module`)
       ) {
+        console.error(error.stack);
         throw new Error(`Unable to load ${type} matching ${name}: ${error.message}`);
       }
     }

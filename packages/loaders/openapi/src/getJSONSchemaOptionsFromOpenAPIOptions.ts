@@ -219,7 +219,10 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
         if ('content' in responseObj) {
           const contentKey = Object.keys(responseObj.content)[0];
           schemaObj = responseObj.content[contentKey].schema as any;
-          if (schemaObj && Object.keys(schemaObj).length > 0) {
+          if (!schemaObj && contentKey.toString().startsWith('text')) {
+            responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
+            responseByStatusCode[responseKey].responseSchema = { type: 'string' };
+          } else if (schemaObj && Object.keys(schemaObj).length > 0) {
             responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
             responseByStatusCode[responseKey].responseSchema = `${oasFilePath}#/paths/${relativePath
               .split('/')
