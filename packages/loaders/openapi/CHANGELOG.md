@@ -1,5 +1,17 @@
 # @omnigraph/openapi
 
+## 0.7.11
+
+### Patch Changes
+
+- [#4246](https://github.com/Urigo/graphql-mesh/pull/4246) [`d0498f79b`](https://github.com/Urigo/graphql-mesh/commit/d0498f79bfc43060d279bad329337de307c13118) Thanks [@ardatan](https://github.com/ardatan)! - Respect "noDeduplication" flag while creating the bundle
+
+* [#4239](https://github.com/Urigo/graphql-mesh/pull/4239) [`755d3d487`](https://github.com/Urigo/graphql-mesh/commit/755d3d487c3069664a96e71732fa25aa2d161b1b) Thanks [@ardatan](https://github.com/ardatan)! - - Set response type to "String" if the response content type is "text/\*" defined in the OpenAPI document
+  - Fix the issue when "allOf" or "anyOf" is used with an enum type and an object type
+* Updated dependencies [[`755d3d487`](https://github.com/Urigo/graphql-mesh/commit/755d3d487c3069664a96e71732fa25aa2d161b1b), [`669abf58f`](https://github.com/Urigo/graphql-mesh/commit/669abf58f86faf5f9d678cf9ad103143488960d6)]:
+  - @omnigraph/json-schema@0.25.0
+  - json-machete@0.11.0
+
 ## 0.7.10
 
 ### Patch Changes
