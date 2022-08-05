@@ -1,0 +1,313 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Deduplication should deduplicate the similar types in the GraphQL Schema by default 1`] = `
+"schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  dummy: String
+}
+
+type Mutation {
+  post_basket: BasketResponse
+}
+
+type BasketResponse {
+  appleSelection: [AppleSelection]
+  bananaSelection: [AppleSelection]
+}
+
+type AppleSelection {
+  id: String
+}"
+`;
+
+exports[`Deduplication should deduplicate the similar types in the bundle by default 1`] = `
+Object {
+  "baseUrl": undefined,
+  "name": "deduplicated",
+  "operationHeaders": undefined,
+  "operations": Array [
+    Object {
+      "description": undefined,
+      "field": "post_basket",
+      "method": "POST",
+      "operationHeaders": undefined,
+      "path": "/basket",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": "./fixtures/deduplication.json#/paths/~1basket/post/responses/200/content/application~1json/schema",
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "mutation",
+    },
+  ],
+  "referencedSchema": Object {
+    "$ref": "#/definitions/_schema",
+    "definitions": Object {
+      "AppleSelection": Object {
+        "$resolvedRef": "/components/schemas/AppleSelection",
+        "additionalProperties": false,
+        "properties": Object {
+          "id": Object {
+            "nullable": true,
+            "type": "string",
+          },
+        },
+        "title": "AppleSelection",
+        "type": "object",
+      },
+      "BasketResponse": Object {
+        "$resolvedRef": "/components/schemas/BasketResponse",
+        "additionalProperties": false,
+        "properties": Object {
+          "appleSelection": Object {
+            "items": Object {
+              "$ref": "#/definitions/AppleSelection",
+            },
+            "nullable": true,
+            "type": "array",
+          },
+          "bananaSelection": Object {
+            "items": Object {
+              "$ref": "#/definitions/AppleSelection",
+            },
+            "nullable": true,
+            "type": "array",
+          },
+        },
+        "title": "BasketResponse",
+        "type": "object",
+      },
+      "Mutation": Object {
+        "properties": Object {
+          "post_basket": Object {
+            "$ref": "#/definitions/BasketResponse",
+          },
+        },
+        "title": "Mutation",
+        "type": "object",
+      },
+      "MutationInput": Object {
+        "additionalProperties": true,
+        "title": "MutationInput",
+        "type": "object",
+      },
+      "_schema": Object {
+        "properties": Object {
+          "mutation": Object {
+            "$ref": "#/definitions/Mutation",
+          },
+          "mutationInput": Object {
+            "$ref": "#/definitions/MutationInput",
+          },
+        },
+        "required": Array [
+          "query",
+        ],
+        "title": "_schema",
+        "type": "object",
+      },
+    },
+  },
+}
+`;
+
+exports[`Deduplication should keep the similar types in the GraphQL Schema with noDeduplication flag 1`] = `
+Object {
+  "baseUrl": undefined,
+  "name": "kept-as-is",
+  "operationHeaders": undefined,
+  "operations": Array [
+    Object {
+      "description": undefined,
+      "field": "post_basket",
+      "method": "POST",
+      "operationHeaders": undefined,
+      "path": "/basket",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": "./fixtures/deduplication.json#/paths/~1basket/post/responses/200/content/application~1json/schema",
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "mutation",
+    },
+  ],
+  "referencedSchema": Object {
+    "$ref": "#/definitions/_schema",
+    "definitions": Object {
+      "AppleSelection": Object {
+        "$resolvedRef": "/components/schemas/AppleSelection",
+        "additionalProperties": false,
+        "properties": Object {
+          "id": Object {
+            "nullable": true,
+            "type": "string",
+          },
+        },
+        "title": "AppleSelection",
+        "type": "object",
+      },
+      "BananaSelection": Object {
+        "$resolvedRef": "/components/schemas/BananaSelection",
+        "additionalProperties": false,
+        "properties": Object {
+          "id": Object {
+            "nullable": true,
+            "type": "string",
+          },
+        },
+        "title": "BananaSelection",
+        "type": "object",
+      },
+      "BasketResponse": Object {
+        "$resolvedRef": "/components/schemas/BasketResponse",
+        "additionalProperties": false,
+        "properties": Object {
+          "appleSelection": Object {
+            "items": Object {
+              "$ref": "#/definitions/AppleSelection",
+            },
+            "nullable": true,
+            "type": "array",
+          },
+          "bananaSelection": Object {
+            "items": Object {
+              "$ref": "#/definitions/BananaSelection",
+            },
+            "nullable": true,
+            "type": "array",
+          },
+        },
+        "title": "BasketResponse",
+        "type": "object",
+      },
+      "Mutation": Object {
+        "properties": Object {
+          "post_basket": Object {
+            "$ref": "#/definitions/BasketResponse",
+          },
+        },
+        "title": "Mutation",
+        "type": "object",
+      },
+      "MutationInput": Object {
+        "additionalProperties": true,
+        "title": "MutationInput",
+        "type": "object",
+      },
+      "_schema": Object {
+        "properties": Object {
+          "mutation": Object {
+            "$ref": "#/definitions/Mutation",
+          },
+          "mutationInput": Object {
+            "$ref": "#/definitions/MutationInput",
+          },
+        },
+        "required": Array [
+          "query",
+        ],
+        "title": "_schema",
+        "type": "object",
+      },
+    },
+  },
+}
+`;
+
+exports[`Deduplication should keep the similar types in the bundle with noDeduplication flag 1`] = `
+Object {
+  "baseUrl": undefined,
+  "name": "deduplicated",
+  "operationHeaders": undefined,
+  "operations": Array [
+    Object {
+      "description": undefined,
+      "field": "post_basket",
+      "method": "POST",
+      "operationHeaders": undefined,
+      "path": "/basket",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": "./fixtures/deduplication.json#/paths/~1basket/post/responses/200/content/application~1json/schema",
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "mutation",
+    },
+  ],
+  "referencedSchema": Object {
+    "$ref": "#/definitions/_schema",
+    "definitions": Object {
+      "AppleSelection": Object {
+        "$resolvedRef": "/components/schemas/AppleSelection",
+        "additionalProperties": false,
+        "properties": Object {
+          "id": Object {
+            "nullable": true,
+            "type": "string",
+          },
+        },
+        "title": "AppleSelection",
+        "type": "object",
+      },
+      "BasketResponse": Object {
+        "$resolvedRef": "/components/schemas/BasketResponse",
+        "additionalProperties": false,
+        "properties": Object {
+          "appleSelection": Object {
+            "items": Object {
+              "$ref": "#/definitions/AppleSelection",
+            },
+            "nullable": true,
+            "type": "array",
+          },
+          "bananaSelection": Object {
+            "items": Object {
+              "$ref": "#/definitions/AppleSelection",
+            },
+            "nullable": true,
+            "type": "array",
+          },
+        },
+        "title": "BasketResponse",
+        "type": "object",
+      },
+      "Mutation": Object {
+        "properties": Object {
+          "post_basket": Object {
+            "$ref": "#/definitions/BasketResponse",
+          },
+        },
+        "title": "Mutation",
+        "type": "object",
+      },
+      "MutationInput": Object {
+        "additionalProperties": true,
+        "title": "MutationInput",
+        "type": "object",
+      },
+      "_schema": Object {
+        "properties": Object {
+          "mutation": Object {
+            "$ref": "#/definitions/Mutation",
+          },
+          "mutationInput": Object {
+            "$ref": "#/definitions/MutationInput",
+          },
+        },
+        "required": Array [
+          "query",
+        ],
+        "title": "_schema",
+        "type": "object",
+      },
+    },
+  },
+}
+`;
