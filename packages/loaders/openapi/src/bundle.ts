@@ -22,7 +22,7 @@ export async function createBundle(
     cwd,
     fetch,
     schemaHeaders,
-    operationHeaders,
+    operationHeaders: typeof operationHeaders === 'object' ? operationHeaders : {},
     ignoreErrorResponses: openApiLoaderOptions.ignoreErrorResponses,
     logger: openApiLoaderOptions.logger,
     noDeduplication: openApiLoaderOptions.noDeduplication,

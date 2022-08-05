@@ -1,6 +1,6 @@
 import { GraphQLJSON, SchemaComposer } from 'graphql-compose';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
-import { JSONSchemaOperationConfig } from './types';
+import { JSONSchemaOperationConfig, OperationHeadersConfiguration } from './types';
 import { getOperationMetadata, isPubSubOperationConfig, isFileUpload, cleanObject } from './utils';
 import { memoize1 } from '@graphql-tools/utils';
 import urlJoin from 'url-join';
@@ -28,7 +28,7 @@ import { getHeadersObj } from '@graphql-mesh/utils';
 export interface AddExecutionLogicToComposerOptions {
   baseUrl: string;
   operations: JSONSchemaOperationConfig[];
-  operationHeaders?: Record<string, string>;
+  operationHeaders?: OperationHeadersConfiguration;
   fetch: WindowOrWorkerGlobalScope['fetch'];
   logger: Logger;
   pubsub?: MeshPubSub;
@@ -106,7 +106,7 @@ export async function addExecutionLogicToComposer(
     const operationLogger = logger.child(`${rootTypeName}.${fieldName}`);
 
     const interpolationStrings: string[] = [
-      ...Object.values(operationHeaders || {}),
+      ...Object.values((typeof operationHeaders === 'object' ? operationHeaders : {}) || {}),
       ...Object.values(queryParams || {}),
       baseUrl,
     ];
@@ -149,8 +149,10 @@ ${operationConfig.description || ''}
         const interpolatedBaseUrl = stringInterpolator.parse(baseUrl, interpolationData);
         const interpolatedPath = stringInterpolator.parse(operationConfig.path, interpolationData);
         let fullPath = urlJoin(interpolatedBaseUrl, interpolatedPath);
+        const operationHeadersObj =
+          typeof operationHeaders === 'object' ? operationHeaders : await operationHeaders(interpolationData);
         const nonInterpolatedHeaders = {
-          ...operationHeaders,
+          ...operationHeadersObj,
           ...operationConfig?.headers,
         };
         const headers: Record<string, any> = {};

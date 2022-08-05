@@ -2,11 +2,12 @@ import { referenceJSONSchema, JSONSchemaObject, dereferenceObject } from 'json-m
 import { DefaultLogger } from '@graphql-mesh/utils';
 import { getDereferencedJSONSchemaFromOperations } from './getDereferencedJSONSchemaFromOperations';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
-import { JSONSchemaOperationConfig } from './types';
+import { JSONSchemaOperationConfig, OperationHeadersConfiguration } from './types';
 import { fetch as crossUndiciFetch } from '@whatwg-node/fetch';
 import { GraphQLSchema } from 'graphql';
 import { getGraphQLSchemaFromDereferencedJSONSchema } from './getGraphQLSchemaFromDereferencedJSONSchema';
 import type { IStringifyOptions } from 'qs';
+import { ResolverData } from '@graphql-mesh/string-interpolation';
 
 export interface JSONSchemaLoaderBundle {
   name?: string;
@@ -62,7 +63,7 @@ export async function createBundle(
     name,
     baseUrl,
     operations,
-    operationHeaders,
+    operationHeaders: typeof operationHeaders === 'object' ? operationHeaders : undefined,
     referencedSchema,
   };
 }
@@ -73,7 +74,7 @@ export interface JSONSchemaLoaderBundleToGraphQLSchemaOptions {
   pubsub?: MeshPubSub;
   logger?: Logger;
   baseUrl?: string;
-  operationHeaders?: Record<string, string>;
+  operationHeaders?: OperationHeadersConfiguration;
   queryParams?: Record<string, string>;
   queryStringOptions?: IStringifyOptions;
 }
@@ -108,7 +109,16 @@ export async function getGraphQLSchemaFromBundle(
     logger,
   });
 
-  const operationHeaders = { ...bundledOperationHeaders, ...additionalOperationHeaders };
+  let operationHeaders = {};
+  if (typeof additionalOperationHeaders === 'function') {
+    operationHeaders = async (resolverData: ResolverData) => {
+      const result = await additionalOperationHeaders(resolverData);
+      return {
+        ...bundledOperationHeaders,
+        ...result,
+      };
+    };
+  }
   logger.info(`Creating the GraphQL Schema from dereferenced schema`);
   return getGraphQLSchemaFromDereferencedJSONSchema(fullyDeferencedSchema, {
     fetch,
