@@ -11,7 +11,7 @@
     "@graphql-mesh/cli": "0.75.5",
     "@graphql-mesh/graphql": "0.29.7",
     "concurrently": "5.3.0",
-    "@graphql-yoga/node": "2.13.5",
+    "@graphql-yoga/node": "2.13.6",
     "sharp": "0.30.7",
     "graphql": "16.5.0"
   }

@@ -35,8 +35,8 @@
     "@graphql-tools/batch-delegate": "8.3.1",
     "@graphql-tools/wrap": "8.5.1",
     "@graphql-tools/utils": "8.9.0",
-    "@envelop/core": "2.4.1",
-    "@envelop/extended-validation": "1.7.1",
+    "@envelop/core": "2.4.2",
+    "@envelop/extended-validation": "1.7.2",
     "tslib": "^2.4.0"
   },
   "publishConfig": {
