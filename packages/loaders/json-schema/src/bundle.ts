@@ -63,7 +63,7 @@ export async function createBundle(
     name,
     baseUrl,
     operations,
-    operationHeaders: typeof operationHeaders === 'object' ? operationHeaders : undefined,
+    operationHeaders: typeof operationHeaders === 'object' ? operationHeaders : {},
     referencedSchema,
   };
 }

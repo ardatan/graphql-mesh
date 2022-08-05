@@ -150,7 +150,7 @@ ${operationConfig.description || ''}
         const interpolatedPath = stringInterpolator.parse(operationConfig.path, interpolationData);
         let fullPath = urlJoin(interpolatedBaseUrl, interpolatedPath);
         const operationHeadersObj =
-          typeof operationHeaders === 'object' ? operationHeaders : await operationHeaders(interpolationData);
+          typeof operationHeaders === 'function' ? await operationHeaders(interpolationData) : operationHeaders;
         const nonInterpolatedHeaders = {
           ...operationHeadersObj,
           ...operationConfig?.headers,
