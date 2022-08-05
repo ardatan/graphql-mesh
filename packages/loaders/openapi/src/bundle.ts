@@ -25,6 +25,7 @@ export async function createBundle(
     operationHeaders,
     ignoreErrorResponses: openApiLoaderOptions.ignoreErrorResponses,
     logger: openApiLoaderOptions.logger,
+    noDeduplication: openApiLoaderOptions.noDeduplication,
   });
 }
 
