@@ -12,7 +12,14 @@ import { RAMLLoaderOptions } from './types';
  */
 export async function createBundle(name: string, ramlLoaderOptions: RAMLLoaderOptions): Promise<RAMLLoaderBundle> {
   const { operations, baseUrl, cwd, fetch } = await getJSONSchemaOptionsFromRAMLOptions(ramlLoaderOptions);
-  return createJSONSchemaLoaderBundle(name, { ...ramlLoaderOptions, baseUrl, operations, cwd, fetch });
+  return createJSONSchemaLoaderBundle(name, {
+    ...ramlLoaderOptions,
+    operationHeaders: typeof ramlLoaderOptions.operationHeaders === 'object' ? ramlLoaderOptions.operationHeaders : {},
+    baseUrl,
+    operations,
+    cwd,
+    fetch,
+  });
 }
 
 export { getGraphQLSchemaFromBundle, RAMLLoaderBundle };

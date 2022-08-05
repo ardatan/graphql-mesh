@@ -1,6 +1,8 @@
 
 * `baseUrl` (type: `String`)
-* `operationHeaders` (type: `JSON`)
+* `operationHeaders` -  One of: 
+  * `JSON`
+  * `String`
 * `schemaHeaders` (type: `JSON`)
 * `operations` -  (required) Array of: 
   * `object`: 

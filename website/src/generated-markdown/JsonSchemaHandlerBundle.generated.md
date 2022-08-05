@@ -2,7 +2,9 @@
 * `bundlePath` (type: `Any`, required) - Path to the bundle file
 * `bundleHeaders` (type: `JSON`) - HTTP Headers to receive the bundle
 * `baseUrl` (type: `String`)
-* `operationHeaders` (type: `JSON`)
+* `operationHeaders` -  One of: 
+  * `JSON`
+  * `String`
 * `queryStringOptions` (type: `Object`): 
   * `indices` (type: `Boolean`) - When arrays are stringified, by default they are not given explicit indices:
 `a=b&a=c&a=d`

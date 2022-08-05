@@ -8,6 +8,7 @@ import {
   MeshSource,
   YamlConfig,
 } from '@graphql-mesh/types';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { createBundle, getGraphQLSchemaFromBundle, OpenAPILoaderBundle } from '@omnigraph/openapi';
 
 export default class OpenAPIHandler implements MeshHandler {
@@ -53,6 +54,7 @@ export default class OpenAPIHandler implements MeshHandler {
           fieldName,
         })),
         fallbackFormat: this.config.fallbackFormat,
+        operationHeaders: typeof this.config.operationHeaders === 'string' ? {} : this.config.operationHeaders,
       });
     });
   }
@@ -63,7 +65,11 @@ export default class OpenAPIHandler implements MeshHandler {
     this.logger?.debug('Generating GraphQL Schema from bundle');
     const operationHeadersConfig =
       typeof this.config.operationHeaders === 'string'
-        ? this.importFn(this.config.operationHeaders)
+        ? await loadFromModuleExportExpression<Record<string, string>>(this.config.operationHeaders, {
+            cwd: this.baseDir,
+            importFn: this.importFn,
+            defaultExportName: 'default',
+          })
         : this.config.operationHeaders;
     const schema = await getGraphQLSchemaFromBundle(bundle, {
       cwd: this.baseDir,

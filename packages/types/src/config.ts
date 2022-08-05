@@ -342,9 +342,14 @@ export interface GrpcCredentialsSsl {
 }
 export interface JsonSchemaHandler {
   baseUrl?: string;
-  operationHeaders?: {
-    [k: string]: any;
-  };
+  /**
+   * Any of: JSON, String
+   */
+  operationHeaders?:
+    | {
+        [k: string]: any;
+      }
+    | string;
   schemaHeaders?: {
     [k: string]: any;
   };
@@ -516,9 +521,14 @@ export interface JsonSchemaHandlerBundle {
     [k: string]: any;
   };
   baseUrl?: string;
-  operationHeaders?: {
-    [k: string]: any;
-  };
+  /**
+   * Any of: JSON, String
+   */
+  operationHeaders?:
+    | {
+        [k: string]: any;
+      }
+    | string;
   queryStringOptions?: QueryStringOptions1;
 }
 export interface QueryStringOptions1 {
@@ -813,9 +823,14 @@ export interface NewOpenapiHandler {
   schemaHeaders?: {
     [k: string]: any;
   };
-  operationHeaders?: {
-    [k: string]: any;
-  };
+  /**
+   * Any of: JSON, String
+   */
+  operationHeaders?:
+    | {
+        [k: string]: any;
+      }
+    | string;
   ignoreErrorResponses?: boolean;
   selectQueryOrMutationField?: OASSelectQueryOrMutationFieldConfig[];
   queryParams?: any;

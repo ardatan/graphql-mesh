@@ -58,6 +58,7 @@ export default class JsonSchemaHandler implements MeshHandler {
           cwd: this.baseDir,
           fetch: this.fetchFn,
           logger: this.logger,
+          operationHeaders: typeof config.operationHeaders === 'string' ? {} : config.operationHeaders,
         });
       });
     }
@@ -67,7 +68,7 @@ export default class JsonSchemaHandler implements MeshHandler {
     const bundle = await this.getDereferencedBundle();
     const operationHeadersConfig =
       typeof this.config.operationHeaders === 'string'
-        ? await loadFromModuleExportExpression(this.config.operationHeaders, {
+        ? await loadFromModuleExportExpression<Record<string, string>>(this.config.operationHeaders, {
             cwd: this.baseDir,
             importFn: this.importFn,
             defaultExportName: 'default',
