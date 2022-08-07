@@ -28,7 +28,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@envelop/response-cache": "3.0.1",
+    "@envelop/response-cache": "3.0.2",
     "@graphql-mesh/types": "0.78.6",
     "@graphql-mesh/cross-helpers": "0.2.0",
     "@graphql-mesh/string-interpolation": "0.3.0",
