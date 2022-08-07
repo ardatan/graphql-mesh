@@ -1,5 +1,13 @@
 # @graphql-mesh/cli
 
+## 0.75.6
+
+### Patch Changes
+
+- [#4254](https://github.com/Urigo/graphql-mesh/pull/4254) [`fb2c0546f`](https://github.com/Urigo/graphql-mesh/commit/fb2c0546f4a3ec116d20f0f097052bfc25f44252) Thanks [@renovate](https://github.com/apps/renovate)! - ### Dependencies Updates
+
+  - Updated dependency ([`tsconfig-paths@4.1.0` ↗︎](https://www.npmjs.com/package/tsconfig-paths/v/4.1.0)) (was `4.0.0`, in `dependencies`)
+
 ## 0.75.5
 
 ### Patch Changes

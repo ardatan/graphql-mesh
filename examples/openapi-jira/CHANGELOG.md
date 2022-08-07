@@ -1,5 +1,12 @@
 # openapi-jira
 
+## 0.0.38
+
+### Patch Changes
+
+- Updated dependencies [[`fb2c0546f`](https://github.com/Urigo/graphql-mesh/commit/fb2c0546f4a3ec116d20f0f097052bfc25f44252)]:
+  - @graphql-mesh/cli@0.75.6
+
 ## 0.0.37
 
 ### Patch Changes
