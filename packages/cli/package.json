@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cli",
-  "version": "0.75.5",
+  "version": "0.75.6",
   "license": "MIT",
   "repository": {
     "type": "git",

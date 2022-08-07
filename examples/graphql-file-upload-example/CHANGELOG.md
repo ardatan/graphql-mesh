@@ -1,5 +1,12 @@
 # graphql-file-upload-example
 
+## 0.6.218
+
+### Patch Changes
+
+- Updated dependencies [[`fb2c0546f`](https://github.com/Urigo/graphql-mesh/commit/fb2c0546f4a3ec116d20f0f097052bfc25f44252)]:
+  - @graphql-mesh/cli@0.75.6
+
 ## 0.6.217
 
 ### Patch Changes
