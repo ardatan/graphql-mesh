@@ -38,7 +38,7 @@
     "@guild-docs/algolia": "0.2.0",
     "@theguild/tailwind-config": "0.0.2",
     "@types/node": "18.6.1",
-    "@types/react": "18.0.15",
+    "@types/react": "18.0.16",
     "cross-env": "7.0.3",
     "eslint-config-next": "12.2.4",
     "postcss-import": "^14.1.0",
