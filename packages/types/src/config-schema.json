@@ -961,8 +961,16 @@
           "type": "string"
         },
         "operationHeaders": {
-          "type": "object",
-          "properties": {}
+          "description": "Any of: JSON, String",
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {}
+            },
+            {
+              "type": "string"
+            }
+          ]
         },
         "queryStringOptions": {
           "$ref": "#/definitions/QueryStringOptions"
@@ -999,8 +1007,16 @@
           "type": "string"
         },
         "operationHeaders": {
-          "type": "object",
-          "properties": {}
+          "description": "Any of: JSON, String",
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {}
+            },
+            {
+              "type": "string"
+            }
+          ]
         },
         "schemaHeaders": {
           "type": "object",
@@ -1841,8 +1857,16 @@
           "properties": {}
         },
         "operationHeaders": {
-          "type": "object",
-          "properties": {}
+          "description": "Any of: JSON, String",
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {}
+            },
+            {
+              "type": "string"
+            }
+          ]
         },
         "ignoreErrorResponses": {
           "type": "boolean"

@@ -19,7 +19,7 @@ type JsonSchemaHandlerBundle @md {
   bundleHeaders: JSON
 
   baseUrl: String
-  operationHeaders: JSON
+  operationHeaders: OperationHeadersDefinition
   queryStringOptions: QueryStringOptions
 }
 
@@ -63,9 +63,11 @@ enum QueryStringArrayFormat {
   comma
 }
 
+union OperationHeadersDefinition = JSON | String
+
 type JsonSchemaHandler @md {
   baseUrl: String
-  operationHeaders: JSON
+  operationHeaders: OperationHeadersDefinition
   schemaHeaders: JSON
   operations: [JsonSchemaOperation!]!
   ignoreErrorResponses: Boolean

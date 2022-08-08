@@ -1,12 +1,14 @@
+import { ResolverData } from '@graphql-mesh/string-interpolation';
 import { MeshPubSub, Logger } from '@graphql-mesh/types';
 import { BaseLoaderOptions } from '@graphql-tools/utils';
 import { GraphQLInputType, OperationTypeNode } from 'graphql';
+import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 import { JSONSchema, JSONSchemaObject } from 'json-machete';
 import { IStringifyOptions } from 'qs';
 
 export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   baseUrl?: string;
-  operationHeaders?: Record<string, string>;
+  operationHeaders?: OperationHeadersConfiguration;
   schemaHeaders?: Record<string, string>;
   operations: JSONSchemaOperationConfig[];
   errorMessage?: string;
@@ -82,3 +84,7 @@ export type JSONSchemaOperationConfig =
   | JSONSchemaHTTPJSONOperationConfig
   | JSONSchemaHTTPBinaryConfig
   | JSONSchemaPubSubOperationConfig;
+
+export type OperationHeadersConfiguration =
+  | Record<string, string>
+  | ((data: ResolverData) => PromiseOrValue<Record<string, string>>);

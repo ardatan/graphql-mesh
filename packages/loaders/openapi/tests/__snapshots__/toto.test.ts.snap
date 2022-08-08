@@ -4,7 +4,7 @@ exports[`Toto should generate the correct bundle 1`] = `
 Object {
   "baseUrl": "https://dev-api.test.com/api/v1",
   "name": "toto",
-  "operationHeaders": undefined,
+  "operationHeaders": Object {},
   "operations": Array [
     Object {
       "argTypeMap": Object {

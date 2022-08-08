@@ -6,6 +6,7 @@ import {
   JSONSchemaHTTPJSONOperationConfig,
   JSONSchemaOperationConfig,
   JSONSchemaOperationResponseConfig,
+  OperationHeadersConfiguration,
 } from '@omnigraph/json-schema';
 import { getFieldNameFromPath } from './utils';
 import { OperationTypeNode } from 'graphql';
@@ -21,7 +22,7 @@ interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
   fetch?: WindowOrWorkerGlobalScope['fetch'];
   baseUrl?: string;
   schemaHeaders?: Record<string, string>;
-  operationHeaders?: Record<string, string>;
+  operationHeaders?: OperationHeadersConfiguration;
   selectQueryOrMutationField?: OpenAPILoaderSelectQueryOrMutationFieldConfig[];
   logger?: Logger;
 }

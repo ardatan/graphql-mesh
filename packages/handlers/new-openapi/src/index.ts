@@ -1,5 +1,14 @@
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
-import { GetMeshSourceOptions, Logger, MeshHandler, MeshPubSub, MeshSource, YamlConfig } from '@graphql-mesh/types';
+import {
+  GetMeshSourceOptions,
+  ImportFn,
+  Logger,
+  MeshHandler,
+  MeshPubSub,
+  MeshSource,
+  YamlConfig,
+} from '@graphql-mesh/types';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { createBundle, getGraphQLSchemaFromBundle, OpenAPILoaderBundle } from '@omnigraph/openapi';
 
 export default class OpenAPIHandler implements MeshHandler {
@@ -10,6 +19,7 @@ export default class OpenAPIHandler implements MeshHandler {
   private logger: Logger;
   private fetch: typeof fetch;
   private pubsub: MeshPubSub;
+  private importFn: ImportFn;
   constructor({
     name,
     config,
@@ -18,6 +28,7 @@ export default class OpenAPIHandler implements MeshHandler {
     store,
     pubsub,
     logger,
+    importFn,
   }: GetMeshSourceOptions<YamlConfig.NewOpenapiHandler>) {
     this.name = name;
     this.config = config;
@@ -26,6 +37,7 @@ export default class OpenAPIHandler implements MeshHandler {
     this.bundleStoreProxy = store.proxy('jsonSchemaBundle', PredefinedProxyOptions.JsonWithoutValidation);
     this.pubsub = pubsub;
     this.logger = logger;
+    this.importFn = importFn;
   }
 
   async getDereferencedBundle() {
@@ -42,6 +54,7 @@ export default class OpenAPIHandler implements MeshHandler {
           fieldName,
         })),
         fallbackFormat: this.config.fallbackFormat,
+        operationHeaders: typeof this.config.operationHeaders === 'string' ? {} : this.config.operationHeaders,
       });
     });
   }
@@ -50,13 +63,21 @@ export default class OpenAPIHandler implements MeshHandler {
     this.logger?.debug('Getting the bundle');
     const bundle = await this.getDereferencedBundle();
     this.logger?.debug('Generating GraphQL Schema from bundle');
+    const operationHeadersConfig =
+      typeof this.config.operationHeaders === 'string'
+        ? await loadFromModuleExportExpression<Record<string, string>>(this.config.operationHeaders, {
+            cwd: this.baseDir,
+            importFn: this.importFn,
+            defaultExportName: 'default',
+          })
+        : this.config.operationHeaders;
     const schema = await getGraphQLSchemaFromBundle(bundle, {
       cwd: this.baseDir,
       fetch: this.fetch,
       pubsub: this.pubsub,
       logger: this.logger,
       baseUrl: this.config.baseUrl,
-      operationHeaders: this.config.operationHeaders,
+      operationHeaders: operationHeadersConfig,
     });
     return {
       schema,

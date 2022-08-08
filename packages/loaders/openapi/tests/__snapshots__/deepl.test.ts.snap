@@ -4,7 +4,7 @@ exports[`DeepL should generate the correct bundle 1`] = `
 Object {
   "baseUrl": "https://api.deepl.com/v2",
   "name": "deepl",
-  "operationHeaders": undefined,
+  "operationHeaders": Object {},
   "operations": Array [
     Object {
       "description": "The translate function.",

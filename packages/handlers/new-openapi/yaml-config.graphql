@@ -10,7 +10,7 @@ type NewOpenapiHandler {
   fallbackFormat: FallbackFormat
   baseUrl: String
   schemaHeaders: JSON
-  operationHeaders: JSON
+  operationHeaders: OperationHeadersDefinition
   ignoreErrorResponses: Boolean
   selectQueryOrMutationField: [OASSelectQueryOrMutationFieldConfig]
   queryParams: Any

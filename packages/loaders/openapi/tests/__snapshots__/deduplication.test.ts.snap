@@ -28,7 +28,7 @@ exports[`Deduplication should deduplicate the similar types in the bundle by def
 Object {
   "baseUrl": undefined,
   "name": "deduplicated",
-  "operationHeaders": undefined,
+  "operationHeaders": Object {},
   "operations": Array [
     Object {
       "description": undefined,
@@ -120,7 +120,7 @@ exports[`Deduplication should keep the similar types in the GraphQL Schema with 
 Object {
   "baseUrl": undefined,
   "name": "kept-as-is",
-  "operationHeaders": undefined,
+  "operationHeaders": Object {},
   "operations": Array [
     Object {
       "description": undefined,
@@ -224,7 +224,7 @@ exports[`Deduplication should keep the similar types in the bundle with noDedupl
 Object {
   "baseUrl": undefined,
   "name": "deduplicated",
-  "operationHeaders": undefined,
+  "operationHeaders": Object {},
   "operations": Array [
     Object {
       "description": undefined,
