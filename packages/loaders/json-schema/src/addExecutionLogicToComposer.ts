@@ -356,10 +356,10 @@ ${operationConfig.description || ''}
                         case 'path':
                           return new Proxy(args, {
                             get(_, prop) {
-                              return args[prop] || args.input?.[prop];
+                              return args[prop] || args.input?.[prop] || obj?.[prop];
                             },
                             has(_, prop) {
-                              return prop in args || (args.input && prop in args.input);
+                              return prop in args || (args.input && prop in args.input) || obj?.[prop];
                             },
                           });
                         case 'header':
@@ -377,10 +377,6 @@ ${operationConfig.description || ''}
                   {
                     get(_, responseProp) {
                       switch (responseProp) {
-                        case 'statusCode':
-                          return response.status;
-                        case 'statusText':
-                          return response.statusText;
                         case 'header':
                           return getHeadersObj(response.headers);
                         case 'body':
