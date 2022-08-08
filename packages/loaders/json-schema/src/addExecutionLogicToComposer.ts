@@ -323,31 +323,71 @@ ${operationConfig.description || ''}
         }
 
         const addResponseMetadata = (obj: any) => {
-          return {
-            ...obj,
-            $url: fullPath,
-            $method: httpMethod,
+          Object.defineProperties(obj, {
+            $url: {
+              get() {
+                return fullPath.split('?')[0];
+              },
+            },
+            $method: {
+              get() {
+                return httpMethod;
+              },
+            },
+            $headers: {
+              get() {
+                return requestInit.headers;
+              },
+            },
             $request: {
-              query: {
-                ...obj,
-                ...args,
-                ...args.input,
+              get() {
+                return new Proxy(
+                  {},
+                  {
+                    get(_, requestProp) {
+                      switch (requestProp) {
+                        case 'query':
+                          return qsParse(fullPath.split('?')[1]);
+                        case 'path':
+                          return new Proxy(args, {
+                            get(_, prop) {
+                              return args[prop] || args.input?.[prop];
+                            },
+                            has(_, prop) {
+                              return prop in args || (args.input && prop in args.input);
+                            },
+                          });
+                        case 'header':
+                          return requestInit.headers;
+                      }
+                    },
+                  }
+                );
               },
-              path: {
-                ...obj,
-                ...args,
-              },
-              header: requestInit.headers,
             },
             $response: {
-              url: fullPath,
-              method: httpMethod,
-              status: response.status,
-              statusText: response.statusText,
-              headers: getHeadersObj(response.headers),
-              body: obj,
+              get() {
+                return new Proxy(
+                  {},
+                  {
+                    get(_, responseProp) {
+                      switch (responseProp) {
+                        case 'status':
+                          return response.status;
+                        case 'statusText':
+                          return response.statusText;
+                        case 'header':
+                          return getHeadersObj(response.headers);
+                        case 'body':
+                          return obj;
+                      }
+                    },
+                  }
+                );
+              },
             },
-          };
+          });
+          return obj;
         };
         operationLogger.debug(`Adding response metadata to the response object`);
         return Array.isArray(responseJson)

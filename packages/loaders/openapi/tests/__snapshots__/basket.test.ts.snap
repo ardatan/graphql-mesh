@@ -9,6 +9,9 @@ Object {
     Object {
       "description": undefined,
       "field": "post_basket",
+      "headers": Object {
+        "Accept": "application/json",
+      },
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/basket",

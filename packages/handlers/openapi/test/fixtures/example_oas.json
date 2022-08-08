@@ -1492,7 +1492,7 @@
       "Friends": {
         "operationId": "getUserFriends",
         "parameters": {
-          "username": "$request.query.username"
+          "username": "$request.path.username"
         },
         "description": "Allows to fetch the user's friends."
       },
