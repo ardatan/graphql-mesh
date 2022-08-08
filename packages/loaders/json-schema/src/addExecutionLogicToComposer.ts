@@ -80,7 +80,7 @@ const responseMetadataType = new GraphQLObjectType({
     url: { type: GraphQLString },
     method: { type: GraphQLString },
     status: { type: GraphQLInt },
-    statusTest: { type: GraphQLString },
+    statusText: { type: GraphQLString },
     headers: { type: GraphQLJSON },
     body: { type: GraphQLJSON },
   },
@@ -339,6 +339,11 @@ ${operationConfig.description || ''}
                 return response.status;
               },
             },
+            $statusText: {
+              get() {
+                return response.statusText;
+              },
+            },
             $headers: {
               get() {
                 return requestInit.headers;
@@ -422,7 +427,14 @@ ${operationConfig.description || ''}
         typeTC.addFields({
           _response: {
             type: responseMetadataType,
-            resolve: root => root.$response,
+            resolve: root => ({
+              url: root.$url,
+              headers: root.$response.header,
+              method: root.$method,
+              status: root.$statusCode,
+              statusText: root.$statusText,
+              body: root.$response.body,
+            }),
           },
         });
       }

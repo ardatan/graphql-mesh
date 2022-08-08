@@ -52,7 +52,7 @@ export function getTypeResolverFromOutputTCs(
         undefined,
         undefined,
         {
-          $url: data.url,
+          $url: data.$url,
           $method: data.$method,
           $statusCode: data.$statusCode,
           $request: {

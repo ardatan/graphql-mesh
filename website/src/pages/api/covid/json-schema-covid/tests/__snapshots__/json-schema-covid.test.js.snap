@@ -138,7 +138,7 @@ type ResponseMetadata {
   headers: JSON
   method: String
   status: Int
-  statusTest: String
+  statusText: String
   url: String
 }
 
