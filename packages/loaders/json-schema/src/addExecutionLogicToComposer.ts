@@ -334,6 +334,11 @@ ${operationConfig.description || ''}
                 return httpMethod;
               },
             },
+            $statusCode: {
+              get() {
+                return response.status;
+              },
+            },
             $headers: {
               get() {
                 return requestInit.headers;
@@ -372,7 +377,7 @@ ${operationConfig.description || ''}
                   {
                     get(_, responseProp) {
                       switch (responseProp) {
-                        case 'status':
+                        case 'statusCode':
                           return response.status;
                         case 'statusText':
                           return response.statusText;
