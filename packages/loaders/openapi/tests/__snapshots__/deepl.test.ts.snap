@@ -10,8 +10,8 @@ Object {
       "description": "The translate function.",
       "field": "translateText",
       "headers": Object {
-        "Accept": "application/json",
         "Content-Type": "application/x-www-form-urlencoded",
+        "accept": "application/json",
       },
       "method": "POST",
       "operationHeaders": undefined,
@@ -66,8 +66,8 @@ You may specify the glossary to use for the document translation using the \`glo
 **Important:** This requires the \`source_lang\` parameter to be set and the language pair of the glossary has to match the language pair of the request.",
       "field": "translateDocument",
       "headers": Object {
-        "Accept": "application/json",
         "Content-Type": "multipart/form-data",
+        "accept": "application/json",
       },
       "method": "POST",
       "operationHeaders": undefined,
@@ -93,7 +93,7 @@ You may specify the glossary to use for the document translation using the \`glo
 If the translation is still in progress, the estimated time remaining is also included in the response.",
       "field": "getDocumentStatus",
       "headers": Object {
-        "Accept": "application/json",
+        "accept": "application/json",
       },
       "method": "POST",
       "operationHeaders": undefined,
@@ -124,7 +124,7 @@ If the translation is still in progress, the estimated time remaining is also in
 For privacy reasons the translated document is automatically removed from the server once it was downloaded and cannot be downloaded again.",
       "field": "downloadDocument",
       "headers": Object {
-        "Accept": "application/octet-stream",
+        "accept": "application/octet-stream",
       },
       "method": "POST",
       "operationHeaders": undefined,
@@ -145,7 +145,7 @@ For privacy reasons the translated document is automatically removed from the se
       "description": "Retrieve the list of language pairs supported by the glossary feature.",
       "field": "listGlossaryLanguages",
       "headers": Object {
-        "Accept": "application/json",
+        "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
@@ -174,8 +174,8 @@ For privacy reasons the translated document is automatically removed from the se
       "description": "Create a Glossary",
       "field": "createGlossary",
       "headers": Object {
-        "Accept": "application/json",
         "Content-Type": "application/x-www-form-urlencoded",
+        "accept": "application/json",
       },
       "method": "POST",
       "operationHeaders": undefined,
@@ -193,7 +193,7 @@ For privacy reasons the translated document is automatically removed from the se
       "description": "List all glossaries and their meta-information, but not the glossary entries.",
       "field": "listGlossaries",
       "headers": Object {
-        "Accept": "application/json",
+        "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
@@ -226,7 +226,7 @@ For privacy reasons the translated document is automatically removed from the se
       "description": "Retrieve meta information for a single glossary, omitting the glossary entries.",
       "field": "getGlossary",
       "headers": Object {
-        "Accept": "application/json",
+        "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
@@ -278,6 +278,7 @@ For privacy reasons the translated document is automatically removed from the se
       "field": "getGlossaryEntries",
       "headers": Object {
         "Accept": "{args.Accept}",
+        "accept": "text/tab-separated-values",
       },
       "method": "GET",
       "operationHeaders": undefined,
@@ -313,7 +314,7 @@ Character usage is only included for developer accounts.
 Document usage is only included for non-developer accounts, and team-combined document usage is only included for non-developer team accounts.",
       "field": "getUsage",
       "headers": Object {
-        "Accept": "application/json",
+        "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
@@ -337,7 +338,7 @@ Document usage is only included for non-developer accounts, and team-combined do
       "description": "Retrieve the list of languages that are currently supported for translation, either as source or target language, respectively.",
       "field": "getLanguages",
       "headers": Object {
-        "Accept": "application/json",
+        "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,

@@ -237,7 +237,7 @@ ${operationConfig.description || ''}
                 if (contentType?.startsWith('application/x-www-form-urlencoded')) {
                   requestInit.body = qsStringify(input, qsOptions);
                 } else {
-                  requestInit.body = JSON.stringify(input);
+                  requestInit.body = typeof input === 'object' ? JSON.stringify(input) : input;
                 }
                 break;
               }
@@ -369,6 +369,8 @@ ${operationConfig.description || ''}
                           });
                         case 'header':
                           return requestInit.headers;
+                        case 'body':
+                          return requestInit.body;
                       }
                     },
                   }
@@ -386,6 +388,17 @@ ${operationConfig.description || ''}
                           return getHeadersObj(response.headers);
                         case 'body':
                           return obj;
+                        case 'query':
+                          return qsParse(fullPath.split('?')[1]);
+                        case 'path':
+                          return new Proxy(args, {
+                            get(_, prop) {
+                              return args[prop] || args.input?.[prop] || obj?.[prop];
+                            },
+                            has(_, prop) {
+                              return prop in args || (args.input && prop in args.input) || obj?.[prop];
+                            },
+                          });
                       }
                     },
                   }
