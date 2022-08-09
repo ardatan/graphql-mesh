@@ -224,9 +224,9 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
 
         if ('content' in responseObj) {
           const contentKey = Object.keys(responseObj.content)[0];
-          if (!operationConfig.headers?.Accept && typeof contentKey === 'string') {
+          if (!operationConfig.headers?.accept && typeof contentKey === 'string') {
             operationConfig.headers = operationConfig.headers || {};
-            operationConfig.headers.Accept = contentKey;
+            operationConfig.headers.accept = contentKey;
           }
           schemaObj = responseObj.content[contentKey].schema as any;
           if (!schemaObj && contentKey.toString().startsWith('text')) {
