@@ -10,7 +10,7 @@ Object {
       "description": undefined,
       "field": "post_basket",
       "headers": Object {
-        "Accept": "application/json",
+        "accept": "application/json",
       },
       "method": "POST",
       "operationHeaders": undefined,
