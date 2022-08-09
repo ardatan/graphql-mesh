@@ -2,12 +2,6 @@ import { GraphQLError, GraphQLResolveInfo, GraphQLTypeResolver } from 'graphql';
 import { ObjectTypeComposer, UnionTypeComposer } from 'graphql-compose';
 import Ajv, { ValidateFunction, ErrorObject } from 'ajv';
 
-interface ResponseData {
-  status: number;
-  url: string;
-  statusText: string;
-}
-
 export function getTypeResolverFromOutputTCs(
   ajv: Ajv,
   outputTypeComposers: (ObjectTypeComposer | UnionTypeComposer)[],
@@ -23,9 +17,8 @@ export function getTypeResolverFromOutputTCs(
     } else if (data.resourceType) {
       return data.resourceType;
     }
-    if (data.$response && statusCodeOneOfIndexMap) {
-      const responseData: ResponseData = data.$response;
-      const type = statusCodeTypeMap.get(responseData.status.toString()) || statusCodeTypeMap.get('default');
+    if (data.$statusCode && statusCodeOneOfIndexMap) {
+      const type = statusCodeTypeMap.get(data.$statusCode.toString()) || statusCodeTypeMap.get('default');
       if (type) {
         if ('getFields' in type) {
           return type.getTypeName();
@@ -51,17 +44,25 @@ export function getTypeResolverFromOutputTCs(
       }
     }
     if (data.$response) {
-      const responseData: ResponseData = data.$response;
       const error = new GraphQLError(
-        `HTTP Error: ${responseData.status}`,
+        `HTTP Error: ${data.$statusCode}`,
         undefined,
         undefined,
         undefined,
         undefined,
         undefined,
         {
-          ...responseData,
-          responseJson: data,
+          $url: data.$url,
+          $method: data.$method,
+          $statusCode: data.$statusCode,
+          $request: {
+            query: data.$request.query,
+            header: data.$request.header,
+          },
+          $response: {
+            header: data.$response.header,
+            body: data.$response.body,
+          },
         }
       );
       console.error(error);

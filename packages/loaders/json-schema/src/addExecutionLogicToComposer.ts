@@ -80,7 +80,7 @@ const responseMetadataType = new GraphQLObjectType({
     url: { type: GraphQLString },
     method: { type: GraphQLString },
     status: { type: GraphQLInt },
-    statusTest: { type: GraphQLString },
+    statusText: { type: GraphQLString },
     headers: { type: GraphQLJSON },
     body: { type: GraphQLJSON },
   },
@@ -323,31 +323,77 @@ ${operationConfig.description || ''}
         }
 
         const addResponseMetadata = (obj: any) => {
-          return {
-            ...obj,
-            $url: fullPath,
-            $method: httpMethod,
+          Object.defineProperties(obj, {
+            $url: {
+              get() {
+                return fullPath.split('?')[0];
+              },
+            },
+            $method: {
+              get() {
+                return httpMethod;
+              },
+            },
+            $statusCode: {
+              get() {
+                return response.status;
+              },
+            },
+            $statusText: {
+              get() {
+                return response.statusText;
+              },
+            },
+            $headers: {
+              get() {
+                return requestInit.headers;
+              },
+            },
             $request: {
-              query: {
-                ...obj,
-                ...args,
-                ...args.input,
+              get() {
+                return new Proxy(
+                  {},
+                  {
+                    get(_, requestProp) {
+                      switch (requestProp) {
+                        case 'query':
+                          return qsParse(fullPath.split('?')[1]);
+                        case 'path':
+                          return new Proxy(args, {
+                            get(_, prop) {
+                              return args[prop] || args.input?.[prop] || obj?.[prop];
+                            },
+                            has(_, prop) {
+                              return prop in args || (args.input && prop in args.input) || obj?.[prop];
+                            },
+                          });
+                        case 'header':
+                          return requestInit.headers;
+                      }
+                    },
+                  }
+                );
               },
-              path: {
-                ...obj,
-                ...args,
-              },
-              header: requestInit.headers,
             },
             $response: {
-              url: fullPath,
-              method: httpMethod,
-              status: response.status,
-              statusText: response.statusText,
-              headers: getHeadersObj(response.headers),
-              body: obj,
+              get() {
+                return new Proxy(
+                  {},
+                  {
+                    get(_, responseProp) {
+                      switch (responseProp) {
+                        case 'header':
+                          return getHeadersObj(response.headers);
+                        case 'body':
+                          return obj;
+                      }
+                    },
+                  }
+                );
+              },
             },
-          };
+          });
+          return obj;
         };
         operationLogger.debug(`Adding response metadata to the response object`);
         return Array.isArray(responseJson)
@@ -381,7 +427,14 @@ ${operationConfig.description || ''}
         typeTC.addFields({
           _response: {
             type: responseMetadataType,
-            resolve: root => root.$response,
+            resolve: root => ({
+              url: root.$url,
+              headers: root.$response.header,
+              method: root.$method,
+              status: root.$statusCode,
+              statusText: root.$statusText,
+              body: root.$response.body,
+            }),
           },
         });
       }

@@ -6,6 +6,7 @@ import {
   JSONSchemaHTTPJSONOperationConfig,
   JSONSchemaOperationConfig,
   JSONSchemaOperationResponseConfig,
+  JSONSchemaPubSubOperationConfig,
   OperationHeadersConfiguration,
 } from '@omnigraph/json-schema';
 import { getFieldNameFromPath } from './utils';
@@ -206,6 +207,10 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
           if (examplesObj) {
             operationConfig.requestSample = Object.values(examplesObj)[0];
           }
+          if (!operationConfig.headers?.['Content-Type'] && typeof contentKey === 'string') {
+            operationConfig.headers = operationConfig.headers || {};
+            operationConfig.headers['Content-Type'] = contentKey;
+          }
         }
       }
 
@@ -219,6 +224,10 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
 
         if ('content' in responseObj) {
           const contentKey = Object.keys(responseObj.content)[0];
+          if (!operationConfig.headers?.Accept && typeof contentKey === 'string') {
+            operationConfig.headers = operationConfig.headers || {};
+            operationConfig.headers.Accept = contentKey;
+          }
           schemaObj = responseObj.content[contentKey].schema as any;
           if (!schemaObj && contentKey.toString().startsWith('text')) {
             responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
@@ -326,6 +335,25 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
         // Give a better name to the request input object
         if (typeof operationConfig.requestSchema === 'object' && !operationConfig.requestSchema.title) {
           operationConfig.requestSchema.title = operationConfig.field + '_request';
+        }
+      }
+
+      if ('callbacks' in methodObj) {
+        for (const callbackKey in methodObj.callbacks) {
+          const callbackObj = methodObj.callbacks[callbackKey];
+          for (const callbackUrlRefKey in callbackObj) {
+            let callbackUrlRefObj = callbackObj[callbackUrlRefKey];
+            if ('$ref' in callbackObj[callbackUrlRefKey]) {
+              callbackUrlRefObj = resolvePath(callbackUrlRefObj.$ref, oasOrSwagger);
+            }
+            const fieldName = sanitizeNameForGraphQL(operationConfig.field + '_' + callbackKey);
+            const callbackOperationConfig: JSONSchemaPubSubOperationConfig = {
+              type: OperationTypeNode.SUBSCRIPTION,
+              field: fieldName,
+              pubsubTopic: '{args.callbackUrl}',
+            };
+            operations.push(callbackOperationConfig);
+          }
         }
       }
 
