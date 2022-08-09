@@ -1,5 +1,15 @@
 # @graphql-mesh/openapi
 
+## 0.30.0
+
+### Minor Changes
+
+- [#4262](https://github.com/Urigo/graphql-mesh/pull/4262) [`be784e653`](https://github.com/Urigo/graphql-mesh/commit/be784e6533f0c66774d1251382082f0a426e0978) Thanks [@ardatan](https://github.com/ardatan)! - Handle callbacks as GraphQL Subscriptions
+
+### Patch Changes
+
+- [#4262](https://github.com/Urigo/graphql-mesh/pull/4262) [`be784e653`](https://github.com/Urigo/graphql-mesh/commit/be784e6533f0c66774d1251382082f0a426e0978) Thanks [@ardatan](https://github.com/ardatan)! - Refactor runtime expression handling in OpenAPI & JSON Schema handlers
+
 ## 0.29.0
 
 ### Minor Changes

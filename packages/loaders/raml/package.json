@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/raml",
-  "version": "0.5.62",
+  "version": "0.5.63",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@whatwg-node/fetch": "^0.2.7",
-    "@omnigraph/json-schema": "0.25.0",
+    "@omnigraph/json-schema": "0.26.0",
     "@ardatan/raml-1-parser": "1.1.69",
     "json-machete": "0.11.0",
     "to-json-schema": "0.2.5",

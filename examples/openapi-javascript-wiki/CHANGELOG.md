@@ -1,5 +1,13 @@
 # javascript-wiki
 
+## 0.5.258
+
+### Patch Changes
+
+- Updated dependencies [[`be784e653`](https://github.com/Urigo/graphql-mesh/commit/be784e6533f0c66774d1251382082f0a426e0978), [`be784e653`](https://github.com/Urigo/graphql-mesh/commit/be784e6533f0c66774d1251382082f0a426e0978)]:
+  - @graphql-mesh/openapi@0.30.0
+  - @graphql-mesh/cli@0.75.7
+
 ## 0.5.257
 
 ### Patch Changes
