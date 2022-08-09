@@ -1,5 +1,15 @@
 # @graphql-mesh/container
 
+## 0.1.130
+
+### Patch Changes
+
+- Updated dependencies [[`be784e653`](https://github.com/Urigo/graphql-mesh/commit/be784e6533f0c66774d1251382082f0a426e0978), [`be784e653`](https://github.com/Urigo/graphql-mesh/commit/be784e6533f0c66774d1251382082f0a426e0978), [`31fc25974`](https://github.com/Urigo/graphql-mesh/commit/31fc259744b77a6a649487562f59e97f2e08e3aa), [`760a60483`](https://github.com/Urigo/graphql-mesh/commit/760a60483c2a95a4453b043d97b72c0ee46e5c65)]:
+  - @graphql-mesh/openapi@0.30.0
+  - @graphql-mesh/json-schema@0.31.0
+  - @graphql-mesh/runtime@0.41.7
+  - @graphql-mesh/cli@0.75.7
+
 ## 0.1.129
 
 ### Patch Changes

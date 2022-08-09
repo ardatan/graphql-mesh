@@ -1,5 +1,11 @@
 # @graphql-mesh/runtime
 
+## 0.41.7
+
+### Patch Changes
+
+- [`760a60483`](https://github.com/Urigo/graphql-mesh/commit/760a60483c2a95a4453b043d97b72c0ee46e5c65) Thanks [@ardatan](https://github.com/ardatan)! - Fix a bug causing the execution args passed to 'execution' ignored in the subsequent envelop plugins
+
 ## 0.41.6
 
 ### Patch Changes

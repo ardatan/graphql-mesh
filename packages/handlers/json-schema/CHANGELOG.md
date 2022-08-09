@@ -1,5 +1,34 @@
 # @graphql-mesh/json-schema
 
+## 0.31.0
+
+### Minor Changes
+
+- [#4247](https://github.com/Urigo/graphql-mesh/pull/4247) [`31fc25974`](https://github.com/Urigo/graphql-mesh/commit/31fc259744b77a6a649487562f59e97f2e08e3aa) Thanks [@ardatan](https://github.com/ardatan)! - Accept a code file for `operationHeaders`
+
+  Now you can generate headers dynamically from the resolver data dynamically like below;
+
+  ```yml
+  operationHeaders: ./myOperationHeaders.ts
+  ```
+
+  And in `myOperationHeaders.ts`
+
+  ```ts
+  export default function myOperationHeaders({ context }: ResolverData) {
+    const someToken = context.request.headers.get("some-token");
+    const anotherToken = await someLogicThatReturnsAnotherToken(someToken);
+    return {
+      "x-bar-token": anotherToken
+    };
+  }
+  ```
+
+### Patch Changes
+
+- Updated dependencies [[`be784e653`](https://github.com/Urigo/graphql-mesh/commit/be784e6533f0c66774d1251382082f0a426e0978), [`be784e653`](https://github.com/Urigo/graphql-mesh/commit/be784e6533f0c66774d1251382082f0a426e0978), [`31fc25974`](https://github.com/Urigo/graphql-mesh/commit/31fc259744b77a6a649487562f59e97f2e08e3aa)]:
+  - @omnigraph/json-schema@0.26.0
+
 ## 0.30.7
 
 ### Patch Changes
