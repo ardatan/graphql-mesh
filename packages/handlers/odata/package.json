@@ -48,7 +48,7 @@
     "pascal-case": "3.1.2",
     "url-join": "4.0.1",
     "tslib": "^2.4.0",
-    "@graphql-tools/delegate": "8.8.1"
+    "@graphql-tools/delegate": "9.0.0"
   },
   "publishConfig": {
     "access": "public",

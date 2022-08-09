@@ -58,7 +58,7 @@
     "@graphql-tools/utils": "8.9.0",
     "@graphql-tools/load": "7.7.1",
     "@graphql-tools/graphql-file-loader": "7.5.0",
-    "@graphql-tools/wrap": "8.5.1",
+    "@graphql-tools/wrap": "9.0.0",
     "@graphql-yoga/node": "^2.4.0",
     "cookie-parser": "1.4.6",
     "cors": "2.8.5",
