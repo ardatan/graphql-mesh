@@ -4,31 +4,31 @@ import { ExecutionRequest, getOperationASTFromRequest, isAsyncIterable } from '@
 import { mapAsyncIterator, Plugin, TypedExecutionArgs } from '@envelop/core';
 import { GraphQLSchema, introspectionFromSchema } from 'graphql';
 
-function getExecuteFnByArgs(args: TypedExecutionArgs<any>, subschema: SubschemaConfig) {
-  const transformationContext: Record<string, any> = {};
-  const originalRequest: ExecutionRequest = {
-    document: args.document,
-    variables: args.variableValues as any,
-    operationName: args.operationName ?? undefined,
-    rootValue: args.rootValue,
-    context: args.contextValue,
-  };
-  const operationAST = getOperationASTFromRequest(originalRequest);
-  const delegationContext: DelegationContext = {
-    subschema,
-    subschemaConfig: subschema,
-    targetSchema: args.schema,
-    operation: operationAST.operation,
-    fieldName: '', // Might not work
-    context: args.contextValue,
-    rootValue: args.rootValue,
-    transforms: subschema.transforms,
-    transformedSchema: args.schema,
-    skipTypeMerging: true,
-    returnType: {} as any, // Might not work
-  };
-  const executor = subschema.executor ?? createDefaultExecutor(subschema.schema);
-  return async function subschemaExecute(): Promise<any> {
+function getExecuteFn(subschema: SubschemaConfig) {
+  return async function subschemaExecute(args: TypedExecutionArgs<any>): Promise<any> {
+    const transformationContext: Record<string, any> = {};
+    const originalRequest: ExecutionRequest = {
+      document: args.document,
+      variables: args.variableValues as any,
+      operationName: args.operationName ?? undefined,
+      rootValue: args.rootValue,
+      context: args.contextValue,
+    };
+    const operationAST = getOperationASTFromRequest(originalRequest);
+    const delegationContext: DelegationContext = {
+      subschema,
+      subschemaConfig: subschema,
+      targetSchema: args.schema,
+      operation: operationAST.operation,
+      fieldName: '', // Might not work
+      context: args.contextValue,
+      rootValue: args.rootValue,
+      transforms: subschema.transforms,
+      transformedSchema: args.schema,
+      skipTypeMerging: true,
+      returnType: {} as any, // Might not work
+    };
+    const executor = subschema.executor ?? createDefaultExecutor(subschema.schema);
     const transformedRequest = applyRequestTransforms(
       originalRequest,
       delegationContext,
@@ -69,10 +69,10 @@ export function useSubschema(subschema: SubschemaConfig): {
           data: introspectionFromSchema(args.schema) as any,
         });
       }
-      setExecuteFn(getExecuteFnByArgs(args, subschema));
+      setExecuteFn(getExecuteFn(subschema));
     },
-    onSubscribe({ args, setSubscribeFn }) {
-      setSubscribeFn(getExecuteFnByArgs(args, subschema));
+    onSubscribe({ setSubscribeFn }) {
+      setSubscribeFn(getExecuteFn(subschema));
     },
   };
 
