@@ -11,7 +11,7 @@
     "codegen": "thrift-typescript --target thrift-server --sourceDir ./src --outDir ./src/codegen"
   },
   "dependencies": {
-    "@creditkarma/thrift-server-core": "0.17.2",
+    "@creditkarma/thrift-server-core": "1.0.4",
     "@creditkarma/thrift-server-express": "1.0.4",
     "@creditkarma/thrift-typescript": "3.7.6",
     "@graphql-mesh/cli": "0.75.7",

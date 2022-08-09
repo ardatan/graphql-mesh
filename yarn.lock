@@ -2345,14 +2345,6 @@
   resolved "https://registry.yarnpkg.com/@creditkarma/thrift-parser/-/thrift-parser-1.2.0.tgz#69b47dff3d2a5211e9417ff543ea65f681821906"
   integrity sha512-mSRxjSXvU6sBfWhMBWXl7H/XEKWHQ7x+MUDLwyeFIwwX9UaZKPOc7TgGd0N78kcZtIMk82ArdxO6aFhqnBuNtg==
 
-"@creditkarma/thrift-server-core@0.17.2":
-  version "0.17.2"
-  resolved "https://registry.yarnpkg.com/@creditkarma/thrift-server-core/-/thrift-server-core-0.17.2.tgz#115630f6cc5b608706eff3d3173595e7d363e9cb"
-  integrity sha512-ohrTJIisrJpTSrRSkSn9UmE4xMj0Q72UP+UfhIWvLE9GuOJ7zMk1PihvYy04+767Y4/POxEsGTCiOHAS8lublQ==
-  dependencies:
-    "@types/lodash" "^4.14.136"
-    lodash "^4.17.15"
-
 "@creditkarma/thrift-server-core@1.0.4":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@creditkarma/thrift-server-core/-/thrift-server-core-1.0.4.tgz#ee66a9bf77add286b762fa724da68d3aec2188fd"
