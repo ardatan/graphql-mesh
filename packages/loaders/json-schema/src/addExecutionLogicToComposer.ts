@@ -165,7 +165,7 @@ ${operationConfig.description || ''}
         }
         const requestInit: RequestInit = {
           method: httpMethod,
-          headers,
+          headers: { accept: 'application/json', ...headers },
         };
         if (queryParams) {
           const interpolatedQueryParams: Record<string, any> = {};
