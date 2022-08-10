@@ -149,9 +149,9 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
           case 'cookie': {
             operationConfig.headers = operationConfig.headers || {};
             operationConfig.headers.cookie = operationConfig.headers.cookie || '';
-            const cookieParams = operationConfig.headers.cookie.split('; ');
-            cookieParams.push(`${paramObj.name}={args.${argName}}`);
-            operationConfig.headers.cookie = cookieParams.join('; ');
+            const cookieParams = operationConfig.headers.cookie.split(' ').filter(c => !!c);
+            cookieParams.push(`${paramObj.name}={args.${argName}};`);
+            operationConfig.headers.cookie = `${cookieParams.join(' ')}`;
             break;
           }
           case 'body':
