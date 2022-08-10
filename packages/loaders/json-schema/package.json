@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/json-schema",
-  "version": "0.26.0",
+  "version": "0.26.1",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -34,10 +34,10 @@
   },
   "dependencies": {
     "@whatwg-node/fetch": "^0.2.7",
-    "json-machete": "0.11.0",
-    "@graphql-mesh/types": "0.78.6",
+    "json-machete": "0.11.1",
+    "@graphql-mesh/types": "0.78.7",
     "@graphql-mesh/string-interpolation": "0.3.0",
-    "@graphql-mesh/utils": "0.37.7",
+    "@graphql-mesh/utils": "0.37.8",
     "@graphql-tools/utils": "8.9.1",
     "to-json-schema": "0.2.5",
     "graphql-compose": "9.0.8",
@@ -49,7 +49,7 @@
     "pascal-case": "3.1.2",
     "lodash.set": "4.3.2",
     "tslib": "^2.4.0",
-    "@graphql-mesh/cross-helpers": "0.2.0",
+    "@graphql-mesh/cross-helpers": "0.2.1",
     "@json-schema-tools/meta-schema": "1.6.19"
   },
   "publishConfig": {

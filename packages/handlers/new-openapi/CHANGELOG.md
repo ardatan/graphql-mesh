@@ -1,5 +1,15 @@
 # @graphql-mesh/new-openapi
 
+## 0.6.1
+
+### Patch Changes
+
+- Updated dependencies [[`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73)]:
+  - @graphql-mesh/store@0.8.27
+  - @graphql-mesh/types@0.78.7
+  - @graphql-mesh/utils@0.37.8
+  - @omnigraph/openapi@0.8.1
+
 ## 0.6.0
 
 ### Minor Changes
@@ -16,11 +26,11 @@
 
   ```ts
   export default function myOperationHeaders({ context }: ResolverData) {
-    const someToken = context.request.headers.get('some-token')
-    const anotherToken = await someLogicThatReturnsAnotherToken(someToken)
+    const someToken = context.request.headers.get("some-token");
+    const anotherToken = await someLogicThatReturnsAnotherToken(someToken);
     return {
-      'x-bar-token': anotherToken
-    }
+      "x-bar-token": anotherToken
+    };
   }
   ```
 

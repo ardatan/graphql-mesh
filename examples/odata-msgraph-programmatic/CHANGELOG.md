@@ -1,5 +1,15 @@
 # odata-msgraph-programmatic
 
+## 0.0.149
+
+### Patch Changes
+
+- Updated dependencies [[`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`eb93907c7`](https://github.com/Urigo/graphql-mesh/commit/eb93907c7c7373a799397f0f7c659c72c44f2c7e), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`90edf18b8`](https://github.com/Urigo/graphql-mesh/commit/90edf18b850ef1b49df201ae412bcd9b3ce3c115)]:
+  - @graphql-mesh/cli@0.75.8
+  - @graphql-mesh/config@5.1.6
+  - @graphql-mesh/odata@0.18.10
+  - @graphql-mesh/runtime@0.41.8
+
 ## 0.0.148
 
 ### Patch Changes

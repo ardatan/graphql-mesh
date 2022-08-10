@@ -1,5 +1,18 @@
 # @graphql-mesh/transform-type-merging
 
+## 0.4.18
+
+### Patch Changes
+
+- [#4263](https://github.com/Urigo/graphql-mesh/pull/4263) [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@graphql-tools/stitching-directives@2.3.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/2.3.2) (was `2.3.1`, in `dependencies`)
+  - Updated dependency [`@graphql-tools/delegate@9.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.0) (was `8.8.1`, in `dependencies`)
+
+- Updated dependencies [[`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73)]:
+  - @graphql-mesh/types@0.78.7
+  - @graphql-mesh/utils@0.37.8
+
 ## 0.4.17
 
 ### Patch Changes

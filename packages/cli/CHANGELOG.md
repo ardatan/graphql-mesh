@@ -1,5 +1,37 @@
 # @graphql-mesh/cli
 
+## 0.75.8
+
+### Patch Changes
+
+- [#4263](https://github.com/Urigo/graphql-mesh/pull/4263) [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@graphql-codegen/core@2.6.1` ↗︎](https://www.npmjs.com/package/@graphql-codegen/core/v/2.6.1) (was `2.6.0`, in `dependencies`)
+  - Updated dependency [`@graphql-codegen/typescript@2.7.3` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typescript/v/2.7.3) (was `2.7.2`, in `dependencies`)
+  - Updated dependency [`@graphql-codegen/typescript-operations@2.5.3` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typescript-operations/v/2.5.3) (was `2.5.2`, in `dependencies`)
+  - Updated dependency [`@graphql-codegen/typed-document-node@2.3.3` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typed-document-node/v/2.3.3) (was `2.3.2`, in `dependencies`)
+  - Updated dependency [`@graphql-codegen/typescript-resolvers@2.7.3` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typescript-resolvers/v/2.7.3) (was `2.7.2`, in `dependencies`)
+  - Updated dependency [`@graphql-tools/code-file-loader@7.3.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/code-file-loader/v/7.3.2) (was `7.3.1`, in `dependencies`)
+  - Updated dependency [`@graphql-tools/utils@8.9.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.9.1) (was `8.9.0`, in `dependencies`)
+  - Updated dependency [`@graphql-tools/load@7.7.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.7.3) (was `7.7.1`, in `dependencies`)
+  - Updated dependency [`@graphql-tools/graphql-file-loader@7.5.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/graphql-file-loader/v/7.5.1) (was `7.5.0`, in `dependencies`)
+  - Updated dependency [`@graphql-tools/wrap@9.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.0) (was `8.5.1`, in `dependencies`)
+  - Updated dependency [`graphql-ws@5.10.0` ↗︎](https://www.npmjs.com/package/graphql-ws/v/5.10.0) (was `5.9.1`, in `dependencies`)
+
+* [#4267](https://github.com/Urigo/graphql-mesh/pull/4267) [`eb93907c7`](https://github.com/Urigo/graphql-mesh/commit/eb93907c7c7373a799397f0f7c659c72c44f2c7e) Thanks [@renovate](https://github.com/apps/renovate)! - ### Dependencies Updates
+
+  - Updated dependency ([`@graphql-codegen/typescript-generic-sdk@3.0.0` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typescript-generic-sdk/v/3.0.0)) (was `2.5.0`, in `dependencies`)
+
+- [#4270](https://github.com/Urigo/graphql-mesh/pull/4270) [`90edf18b8`](https://github.com/Urigo/graphql-mesh/commit/90edf18b850ef1b49df201ae412bcd9b3ce3c115) Thanks [@enisdenjo](https://github.com/enisdenjo)! - WebSocket clients mustn't provide `connectionParams`
+
+- Updated dependencies [[`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73)]:
+  - @graphql-mesh/config@5.1.6
+  - @graphql-mesh/cross-helpers@0.2.1
+  - @graphql-mesh/runtime@0.41.8
+  - @graphql-mesh/store@0.8.27
+  - @graphql-mesh/types@0.78.7
+  - @graphql-mesh/utils@0.37.8
+
 ## 0.75.7
 
 ### Patch Changes
