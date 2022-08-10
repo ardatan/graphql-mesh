@@ -1064,34 +1064,37 @@ describe('example_api', () => {
   //     });
   // });
 
-  // it(
-  //   'Operation id is correctly sanitized, schema names and fields are ' +
-  //     'correctly sanitized, path and query parameters are correctly sanitized, ' +
-  //     'received data is correctly sanitized',
-  //   () => {
-  //     const query = /* GraphQL */ `{
-  //       productWithId(productId: "this-path", productTag: "And a tag") {
-  //         productId
-  //         productTag
-  //       }
-  //     }`;
+  it(
+    'Operation id is correctly sanitized, schema names and fields are ' +
+      'correctly sanitized, path and query parameters are correctly sanitized, ' +
+      'received data is correctly sanitized',
+    async () => {
+      const query = /* GraphQL */ `
+        {
+          get_product_with_id(product_id: "this-path", input: { product_tag: "And a tag" }) {
+            product_id
+            product_name
+            product_tag
+          }
+        }
+      `;
 
-  //
+      const result = await execute({
+        schema: createdSchema,
+        document: parse(query),
+      });
 
-  // const result = await execute({
-  //   schema: createdSchema,
-  //   document: parse(query),
-  // });
-
-  //       expect(result).toEqual({
-  //         data: {
-  //           productWithId: {
-  //             productId: 'this-path',
-  //             productTag: 'And a tag',
-  //           },
-  //         },
-  //       });
-  //     });
+      expect(result).toEqual({
+        data: {
+          get_product_with_id: {
+            product_id: 'this-path',
+            product_name: 'Super Product',
+            product_tag: 'And a tag',
+          },
+        },
+      });
+    }
+  );
   //   }
   // );
 
