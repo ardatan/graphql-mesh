@@ -310,7 +310,7 @@ export async function processConfig(
       Promise.all(
         config.plugins?.map(async (p, pluginIndex) => {
           const pluginName = Object.keys(p)[0].toString();
-          const pluginConfig = p[pluginName];
+          const pluginConfig: any = p[pluginName];
           if (ENVELOP_CORE_PLUGINS_MAP[pluginName] != null) {
             const { importName, moduleName, pluginFactory } = ENVELOP_CORE_PLUGINS_MAP[pluginName];
             if (options.generateCode) {
@@ -340,6 +340,8 @@ export async function processConfig(
           logger: logger.child(${JSON.stringify(pluginName)}),
           cache,
           pubsub,
+          baseDir,
+          importFn,
         })`);
             }
           } else {
@@ -360,6 +362,8 @@ export async function processConfig(
             logger: logger.child(pluginName),
             cache,
             pubsub,
+            baseDir: dir,
+            importFn,
           });
         }) || []
       ),

@@ -1,19 +1,19 @@
 import { PackageCmd, Callout } from '@theguild/components'
 
-# Mock Transform
+# Mock Plugin
 
-The `mock` transform allows you to apply mocking for development usage.
+The `mock` plugin allows you to apply mocking for development usage.
 
-To get started with this transform, install it:
+To get started with this plugin, install it:
 
-<PackageCmd packages={['@graphql-mesh/transform-mock']} />
+<PackageCmd packages={['@graphql-mesh/plugin-mock']} />
 
 ## How to use?
 
 Add the following configuration to your Mesh config file:
 
 ```yaml
-transforms:
+plugins:
   - mock:
       mocks:
         - apply: User.firstName
@@ -27,7 +27,7 @@ The example above will replace the resolver of `User.firstName` with a mock that
 You can mock a specific field of a type;
 
 ```yaml
-transforms:
+plugins:
   - mock:
       mocks:
         - apply: User.fullName
@@ -39,7 +39,7 @@ transforms:
 You can mock types with custom mock functions like below;
 
 ```yaml
-transforms:
+plugins:
   - mock:
       mocks:
         - apply: DateTime
@@ -101,7 +101,7 @@ type User {
 ```
 
 ```yaml
-transforms:
+plugins:
   - mock:
       mocks:
         - apply: User.fullName
@@ -145,7 +145,7 @@ Initially, populating the list of users can be done by utilizing the `initialize
 There is no need to provide a particular array mocking definition, like `length`. It will automatically be taken based on the mock data.
 
 ```yaml
-transforms:
+plugins:
   - mock:
       initializeStore: ./myMock#initializeStore
 ```
@@ -177,7 +177,7 @@ type Query {
 ```
 
 ```yaml
-transforms:
+plugins:
   - mock:
       initializeStore: absolute-path-to-file/myMock#initializeStore
       mocks:
@@ -204,7 +204,7 @@ type Mutation {
 ```
 
 ```yaml
-transforms:
+plugins:
   - mock:
       mocks:
         - apply: Mutation.changeMyName

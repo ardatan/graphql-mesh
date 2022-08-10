@@ -1,6 +1,6 @@
 {
-  "name": "@graphql-mesh/transform-mock",
-  "version": "0.15.6",
+  "name": "@graphql-mesh/plugin-mock",
+  "version": "0.0.0",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -22,13 +22,10 @@
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
-    "directory": "packages/transforms/mock"
+    "directory": "packages/plugins/mock"
   },
   "peerDependencies": {
     "graphql": "*"
-  },
-  "devDependencies": {
-    "@types/faker": "5.5.9"
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.2.0",
@@ -40,7 +37,13 @@
     "@graphql-tools/schema": "9.0.0",
     "faker": "5.5.3",
     "graphql-scalars": "1.17.0",
+    "@envelop/core": "^2.3.2",
     "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "@types/faker": "5.5.9",
+    "@envelop/core": "2.4.2",
+    "@graphql-mesh/cache-localforage": "0.6.23"
   },
   "publishConfig": {
     "access": "public",

@@ -1,4 +1,4 @@
-extend type Transform {
+extend type Plugin {
   """
   Mock configuration for your source
   """

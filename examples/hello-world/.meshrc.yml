@@ -8,7 +8,7 @@ sources:
             method: GET
             path: /
             responseSample: greeting.json
-transforms:
+plugins:
   - mock:
       mocks:
         - apply: Query.greeting

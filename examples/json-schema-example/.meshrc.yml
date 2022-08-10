@@ -51,6 +51,8 @@ transforms:
   - namingConvention:
       typeNames: pascalCase
       fieldNames: camelCase
+
+plugins:
   - mock:
       mocks:
         - apply: User.firstName

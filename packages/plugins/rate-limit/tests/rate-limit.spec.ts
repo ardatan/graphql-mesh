@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import useMeshRateLimit from '../src';
 import { makeExecutableSchema } from '@graphql-tools/schema';
@@ -54,6 +54,8 @@ describe('Rate Limit Plugin', () => {
           logger,
           cache,
           pubsub,
+          baseDir: __dirname,
+          importFn: defaultImportFn,
         }),
       ],
     });
@@ -119,6 +121,8 @@ describe('Rate Limit Plugin', () => {
           cache,
           pubsub,
           logger,
+          baseDir: __dirname,
+          importFn: defaultImportFn,
         }),
       ],
     });
@@ -181,6 +185,8 @@ describe('Rate Limit Plugin', () => {
           cache,
           pubsub,
           logger,
+          baseDir: __dirname,
+          importFn: defaultImportFn,
         }),
       ],
     });
@@ -259,6 +265,8 @@ describe('Rate Limit Plugin', () => {
           cache,
           pubsub,
           logger,
+          baseDir: __dirname,
+          importFn: defaultImportFn,
         }),
       ],
     });
