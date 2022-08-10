@@ -1,0 +1,5 @@
+sources:
+  - name: GraphQL WebSocket only
+    handler:
+      graphql:
+        endpoint: ws://localhost:54000/graphql
