@@ -327,10 +327,6 @@
           "additionalItems": false,
           "description": "Transformer to hoist GraphQL fields"
         },
-        "mock": {
-          "$ref": "#/definitions/MockingConfig",
-          "description": "Mock configuration for your source"
-        },
         "namingConvention": {
           "$ref": "#/definitions/NamingConventionTransformConfig",
           "description": "Transformer to apply naming convention to GraphQL Types"
@@ -513,6 +509,10 @@
         },
         "liveQuery": {
           "$ref": "#/definitions/LiveQueryConfig"
+        },
+        "mock": {
+          "$ref": "#/definitions/MockingConfig",
+          "description": "Mock configuration for your source"
         },
         "rateLimit": {
           "$ref": "#/definitions/RateLimitPluginConfig",
@@ -2119,6 +2119,120 @@
       },
       "required": ["interval", "invalidate"]
     },
+    "MockingConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MockingConfig",
+      "properties": {
+        "if": {
+          "type": "boolean",
+          "description": "If this expression is truthy, mocking would be enabled\nYou can use environment variables expression, for example: `${MOCKING_ENABLED}`"
+        },
+        "preserveResolvers": {
+          "type": "boolean",
+          "description": "Do not mock any other resolvers other than defined in `mocks`.\nFor example, you can enable this if you don't want to mock entire schema but partially."
+        },
+        "mocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MockingFieldConfig"
+          },
+          "additionalItems": false,
+          "description": "Mock configurations"
+        },
+        "initializeStore": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ],
+          "description": "The path to the code runs before the store is attached to the schema"
+        }
+      }
+    },
+    "MockingFieldConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MockingFieldConfig",
+      "properties": {
+        "apply": {
+          "type": "string",
+          "description": "Resolver path\nExample: User.firstName"
+        },
+        "if": {
+          "type": "boolean",
+          "description": "If this expression is truthy, mocking would be enabled\nYou can use environment variables expression, for example: `${MOCKING_ENABLED}`"
+        },
+        "faker": {
+          "type": "string",
+          "description": "Faker.js expression or function\nRead more (https://github.com/marak/Faker.js/#fakerfake)\nExample:\nfaker: `name.firstName`\nfaker: `{{ name.firstName }} {{ name.lastName }}`"
+        },
+        "custom": {
+          "type": "string",
+          "description": "Custom mocking\nIt can be a module or json file.\nBoth \"moduleName#exportName\" or only \"moduleName\" would work"
+        },
+        "length": {
+          "type": "integer",
+          "description": "Length of the mock list\nFor the list types `[ObjectType]`, how many `ObjectType` you want to return?\ndefault: 2"
+        },
+        "store": {
+          "$ref": "#/definitions/GetFromMockStoreConfig",
+          "description": "Get the data from the mock store"
+        },
+        "updateStore": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UpdateMockStoreConfig"
+          },
+          "additionalItems": false,
+          "description": "Update the data on the mock store"
+        }
+      },
+      "required": ["apply"]
+    },
+    "GetFromMockStoreConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "GetFromMockStoreConfig",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "fieldName": {
+          "type": "string"
+        }
+      }
+    },
+    "UpdateMockStoreConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "UpdateMockStoreConfig",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "fieldName": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
     "RateLimitPluginConfig": {
       "additionalProperties": false,
       "type": "object",
@@ -2854,120 +2968,6 @@
         }
       },
       "required": ["fieldName", "filterArgs"]
-    },
-    "MockingConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "MockingConfig",
-      "properties": {
-        "if": {
-          "type": "boolean",
-          "description": "If this expression is truthy, mocking would be enabled\nYou can use environment variables expression, for example: `${MOCKING_ENABLED}`"
-        },
-        "preserveResolvers": {
-          "type": "boolean",
-          "description": "Do not mock any other resolvers other than defined in `mocks`.\nFor example, you can enable this if you don't want to mock entire schema but partially."
-        },
-        "mocks": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/MockingFieldConfig"
-          },
-          "additionalItems": false,
-          "description": "Mock configurations"
-        },
-        "initializeStore": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ],
-          "description": "The path to the code runs before the store is attached to the schema"
-        }
-      }
-    },
-    "MockingFieldConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "MockingFieldConfig",
-      "properties": {
-        "apply": {
-          "type": "string",
-          "description": "Resolver path\nExample: User.firstName"
-        },
-        "if": {
-          "type": "boolean",
-          "description": "If this expression is truthy, mocking would be enabled\nYou can use environment variables expression, for example: `${MOCKING_ENABLED}`"
-        },
-        "faker": {
-          "type": "string",
-          "description": "Faker.js expression or function\nRead more (https://github.com/marak/Faker.js/#fakerfake)\nExample:\nfaker: `name.firstName`\nfaker: `{{ name.firstName }} {{ name.lastName }}`"
-        },
-        "custom": {
-          "type": "string",
-          "description": "Custom mocking\nIt can be a module or json file.\nBoth \"moduleName#exportName\" or only \"moduleName\" would work"
-        },
-        "length": {
-          "type": "integer",
-          "description": "Length of the mock list\nFor the list types `[ObjectType]`, how many `ObjectType` you want to return?\ndefault: 2"
-        },
-        "store": {
-          "$ref": "#/definitions/GetFromMockStoreConfig",
-          "description": "Get the data from the mock store"
-        },
-        "updateStore": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/UpdateMockStoreConfig"
-          },
-          "additionalItems": false,
-          "description": "Update the data on the mock store"
-        }
-      },
-      "required": ["apply"]
-    },
-    "GetFromMockStoreConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "GetFromMockStoreConfig",
-      "properties": {
-        "type": {
-          "type": "string"
-        },
-        "key": {
-          "type": "string"
-        },
-        "fieldName": {
-          "type": "string"
-        }
-      }
-    },
-    "UpdateMockStoreConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "UpdateMockStoreConfig",
-      "properties": {
-        "type": {
-          "type": "string"
-        },
-        "key": {
-          "type": "string"
-        },
-        "fieldName": {
-          "type": "string"
-        },
-        "value": {
-          "type": "string"
-        }
-      }
     },
     "NamingConventionTransformConfig": {
       "additionalProperties": false,

@@ -1,20 +1,22 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { wrapSchema } from '@graphql-tools/wrap';
-import { YamlConfig, MeshPubSub, ImportFn } from '@graphql-mesh/types';
-import { buildSchema, execute, graphql, parse } from 'graphql';
+import { YamlConfig, MeshPubSub, ImportFn, Logger } from '@graphql-mesh/types';
+import { buildSchema, parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
-import { PubSub } from '@graphql-mesh/utils';
-import MockingTransform from '../src';
+import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { envelop, useSchema } from '@envelop/core';
+import useMock from '../src';
 
 describe('mocking', () => {
   let cache: InMemoryLRUCache;
   let pubsub: MeshPubSub;
+  let logger: Logger;
   const baseDir: string = __dirname;
   const importFn: ImportFn = m => import(m);
 
   beforeEach(() => {
     cache = new InMemoryLRUCache();
     pubsub = new PubSub();
+    logger = new DefaultLogger('test-rate-limit');
   });
 
   it('should mock fields and resolvers should not get called', async () => {
@@ -54,29 +56,30 @@ describe('mocking', () => {
         },
       ],
     };
-    const transformedSchema = await wrapSchema({
-      schema,
-      transforms: [
-        new MockingTransform({
-          config: mockingConfig,
+    const getEnveloped = envelop({
+      plugins: [
+        useSchema(schema),
+        useMock({
+          ...mockingConfig,
+          logger,
           cache,
           pubsub,
           baseDir,
-          apiName: '',
           importFn,
         }),
       ],
     });
-    const result = await graphql({
-      schema: transformedSchema,
-      source: /* GraphQL */ `
+    const enveloped = getEnveloped();
+    const result = await enveloped.execute({
+      schema: enveloped.schema,
+      document: enveloped.parse(/* GraphQL */ `
         {
           users {
             id
             fullName
           }
         }
-      `,
+      `),
       contextValue: {},
     });
 
@@ -124,30 +127,30 @@ describe('mocking', () => {
       ],
     };
 
-    const transformedSchema = await wrapSchema({
-      schema,
-      transforms: [
-        new MockingTransform({
-          config: mockingConfig,
+    const getEnveloped = envelop({
+      plugins: [
+        useSchema(schema),
+        useMock({
+          ...mockingConfig,
+          logger,
           cache,
           pubsub,
           baseDir,
-          apiName: '',
           importFn,
         }),
       ],
     });
-
-    const result = await graphql({
-      schema: transformedSchema,
-      source: /* GraphQL */ `
+    const enveloped = getEnveloped();
+    const result = await enveloped.execute({
+      schema: enveloped.schema,
+      document: enveloped.parse(/* GraphQL */ `
         {
           users {
             id
             fullName
           }
         }
-      `,
+      `),
       contextValue: {},
     });
 
@@ -171,35 +174,35 @@ describe('mocking', () => {
         name: String
       }
     `);
-    const mockedSchema = wrapSchema({
-      schema,
-      transforms: [
-        new MockingTransform({
-          config: {
-            mocks: [
-              {
-                apply: 'Query.user',
-                custom: './mocks.ts#GetUserMock',
-              },
-              {
-                apply: 'Mutation.addUser',
-                custom: './mocks.ts#AddUserMock',
-              },
-              {
-                apply: 'Mutation.updateUser',
-                custom: './mocks.ts#UpdateUserMock',
-              },
-            ],
-          },
+
+    const getEnveloped = envelop({
+      plugins: [
+        useSchema(schema),
+        useMock({
+          mocks: [
+            {
+              apply: 'Query.user',
+              custom: './mocks.ts#GetUserMock',
+            },
+            {
+              apply: 'Mutation.addUser',
+              custom: './mocks.ts#AddUserMock',
+            },
+            {
+              apply: 'Mutation.updateUser',
+              custom: './mocks.ts#UpdateUserMock',
+            },
+          ],
+          logger,
           cache,
           pubsub,
           baseDir,
-          apiName: '',
           importFn,
         }),
       ],
     });
-    const ADD_USER = parse(/* GraphQL */ `
+    const enveloped = getEnveloped();
+    const ADD_USER = enveloped.parse(/* GraphQL */ `
       mutation AddUser {
         addUser(name: "John Doe") {
           id
@@ -207,13 +210,13 @@ describe('mocking', () => {
         }
       }
     `);
-    const addUserResult: any = await execute({
-      schema: mockedSchema,
+    const addUserResult: any = await enveloped.execute({
+      schema: enveloped.schema,
       document: ADD_USER,
     });
     expect(addUserResult?.data?.addUser?.name).toBe('John Doe');
     const addedUserId = addUserResult.data.addUser.id;
-    const GET_USER = parse(/* GraphQL */ `
+    const GET_USER = enveloped.parse(/* GraphQL */ `
       query GetUser {
         user(id: "${addedUserId}") {
           id
@@ -221,10 +224,10 @@ describe('mocking', () => {
         }
       }
     `);
-    const getUserResult: any = await execute({ schema: mockedSchema, document: GET_USER });
+    const getUserResult: any = await enveloped.execute({ schema: enveloped.schema, document: GET_USER });
     expect(getUserResult?.data?.user?.id).toBe(addedUserId);
     expect(getUserResult?.data?.user?.name).toBe('John Doe');
-    const UPDATE_USER = parse(/* GraphQL */ `
+    const UPDATE_USER = enveloped.parse(/* GraphQL */ `
       mutation UpdateUser {
         updateUser(id: "${addedUserId}", name: "Jane Doe") {
           id
@@ -232,7 +235,7 @@ describe('mocking', () => {
         }
       }
     `);
-    const updateUserResult: any = await execute({ schema: mockedSchema, document: UPDATE_USER });
+    const updateUserResult: any = await enveloped.execute({ schema: enveloped.schema, document: UPDATE_USER });
     expect(updateUserResult?.data?.updateUser?.id).toBe(addedUserId);
     expect(updateUserResult?.data?.updateUser?.name).toBe('Jane Doe');
   });
@@ -250,60 +253,59 @@ describe('mocking', () => {
         name: String
       }
     `);
-    const mockedSchema = wrapSchema({
-      schema,
-      transforms: [
-        new MockingTransform({
-          config: {
-            mocks: [
-              {
-                apply: 'Query.user',
-                store: {
-                  type: 'User',
-                  key: '{args.id}',
-                },
+    const getEnveloped = envelop({
+      plugins: [
+        useSchema(schema),
+        useMock({
+          mocks: [
+            {
+              apply: 'Query.user',
+              store: {
+                type: 'User',
+                key: '{args.id}',
               },
-              {
-                apply: 'Mutation.addUser',
-                updateStore: [
-                  {
-                    type: 'User',
-                    key: '{random}',
-                    fieldName: 'name',
-                    value: '{args.name}',
-                  },
-                ],
-                store: {
+            },
+            {
+              apply: 'Mutation.addUser',
+              updateStore: [
+                {
                   type: 'User',
                   key: '{random}',
+                  fieldName: 'name',
+                  value: '{args.name}',
                 },
+              ],
+              store: {
+                type: 'User',
+                key: '{random}',
               },
-              {
-                apply: 'Mutation.updateUser',
-                updateStore: [
-                  {
-                    type: 'User',
-                    key: '{args.id}',
-                    fieldName: 'name',
-                    value: '{args.name}',
-                  },
-                ],
-                store: {
+            },
+            {
+              apply: 'Mutation.updateUser',
+              updateStore: [
+                {
                   type: 'User',
                   key: '{args.id}',
+                  fieldName: 'name',
+                  value: '{args.name}',
                 },
+              ],
+              store: {
+                type: 'User',
+                key: '{args.id}',
               },
-            ],
-          },
+            },
+          ],
           cache,
           pubsub,
           baseDir,
-          apiName: '',
           importFn,
+          logger,
         }),
       ],
     });
-    const ADD_USER = parse(/* GraphQL */ `
+    const enveloped = getEnveloped();
+    const ADD_USER = enveloped.parse(/* GraphQL */ `
       mutation AddUser {
         addUser(name: "John Doe") {
           id
@@ -311,10 +313,10 @@ describe('mocking', () => {
         }
       }
     `);
-    const addUserResult: any = await execute({ schema: mockedSchema, document: ADD_USER });
+    const addUserResult: any = await enveloped.execute({ schema: enveloped.schema, document: ADD_USER });
     expect(addUserResult?.data?.addUser?.name).toBe('John Doe');
     const addedUserId = addUserResult.data.addUser.id;
-    const GET_USER = parse(/* GraphQL */ `
+    const GET_USER = enveloped.parse(/* GraphQL */ `
       query GetUser {
         user(id: "${addedUserId}") {
           id
@@ -322,7 +324,7 @@ describe('mocking', () => {
         }
       }
     `);
-    const getUserResult: any = await execute({ schema: mockedSchema, document: GET_USER });
+    const getUserResult: any = await enveloped.execute({ schema: enveloped.schema, document: GET_USER });
     expect(getUserResult?.data?.user?.id).toBe(addedUserId);
     expect(getUserResult?.data?.user?.name).toBe('John Doe');
     const UPDATE_USER = parse(/* GraphQL */ `
@@ -333,7 +335,7 @@ describe('mocking', () => {
         }
       }
     `);
-    const updateUserResult: any = await execute({ schema: mockedSchema, document: UPDATE_USER });
+    const updateUserResult: any = await enveloped.execute({ schema: enveloped.schema, document: UPDATE_USER });
     expect(updateUserResult?.data?.updateUser?.id).toBe(addedUserId);
     expect(updateUserResult?.data?.updateUser?.name).toBe('Jane Doe');
   });

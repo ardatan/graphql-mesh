@@ -31,7 +31,7 @@
     "@graphql-mesh/types": "0.78.6",
     "@graphql-mesh/cross-helpers": "0.2.0",
     "@graphql-mesh/string-interpolation": "0.3.0",
-    "@graphql-tools/utils": "8.9.0",
+    "@graphql-tools/utils": "8.9.1",
     "minimatch": "5.1.0",
     "@envelop/core": "^2.3.2",
     "tslib": "^2.4.0"

@@ -119,6 +119,8 @@ export type MeshPluginOptions<TConfig> = TConfig & {
   logger: Logger;
   cache: KeyValueCache;
   pubsub: MeshPubSub;
+  baseDir: string;
+  importFn: ImportFn;
 };
 
 export type MeshPluginFactory<TConfig> = (options: MeshPluginOptions<TConfig>) => Plugin;

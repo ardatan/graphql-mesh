@@ -192,14 +192,14 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     operationName?: string
   ) {
     const getEnveloped = memoizedGetEnvelopedFactory(plugins);
-    const { execute, contextFactory, parse } = getEnveloped(contextValue);
+    const { schema, execute, contextFactory, parse } = getEnveloped(contextValue);
 
     return execute({
       document: typeof documentOrSDL === 'string' ? parse(documentOrSDL) : documentOrSDL,
       contextValue: await contextFactory(),
       rootValue,
       variableValues: variableValues as any,
-      schema: unifiedSubschema.schema,
+      schema,
       operationName,
     });
   }
@@ -212,14 +212,14 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     operationName?: string
   ) {
     const getEnveloped = memoizedGetEnvelopedFactory(plugins);
-    const { subscribe, contextFactory, parse } = getEnveloped(contextValue);
+    const { schema, subscribe, contextFactory, parse } = getEnveloped(contextValue);
 
     return subscribe({
       document: typeof documentOrSDL === 'string' ? parse(documentOrSDL) : documentOrSDL,
       contextValue: await contextFactory(),
       rootValue,
       variableValues: variableValues as any,
-      schema: unifiedSubschema.schema,
+      schema,
       operationName,
     });
   }

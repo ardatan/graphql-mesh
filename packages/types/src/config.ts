@@ -1200,7 +1200,6 @@ export interface Transform {
    * Transformer to hoist GraphQL fields
    */
   hoistField?: HoistFieldTransformConfig[];
-  mock?: MockingConfig;
   namingConvention?: NamingConventionTransformConfig;
   prefix?: PrefixTransformConfig;
   prune?: PruneTransformConfig;
@@ -1362,80 +1361,6 @@ export interface HoistFieldTransformFieldPathConfigObject {
    * Match fields based on argument, needs to implement `(arg: GraphQLArgument) => boolean`;
    */
   filterArgs: string[];
-}
-/**
- * Mock configuration for your source
- */
-export interface MockingConfig {
-  /**
-   * If this expression is truthy, mocking would be enabled
-   * You can use environment variables expression, for example: `${MOCKING_ENABLED}`
-   */
-  if?: boolean;
-  /**
-   * Do not mock any other resolvers other than defined in `mocks`.
-   * For example, you can enable this if you don't want to mock entire schema but partially.
-   */
-  preserveResolvers?: boolean;
-  /**
-   * Mock configurations
-   */
-  mocks?: MockingFieldConfig[];
-  /**
-   * The path to the code runs before the store is attached to the schema
-   */
-  initializeStore?: any;
-}
-export interface MockingFieldConfig {
-  /**
-   * Resolver path
-   * Example: User.firstName
-   */
-  apply: string;
-  /**
-   * If this expression is truthy, mocking would be enabled
-   * You can use environment variables expression, for example: `${MOCKING_ENABLED}`
-   */
-  if?: boolean;
-  /**
-   * Faker.js expression or function
-   * Read more (https://github.com/marak/Faker.js/#fakerfake)
-   * Example:
-   * faker: `name.firstName`
-   * faker: `{{ name.firstName }} {{ name.lastName }}`
-   */
-  faker?: string;
-  /**
-   * Custom mocking
-   * It can be a module or json file.
-   * Both "moduleName#exportName" or only "moduleName" would work
-   */
-  custom?: string;
-  /**
-   * Length of the mock list
-   * For the list types `[ObjectType]`, how many `ObjectType` you want to return?
-   * default: 2
-   */
-  length?: number;
-  store?: GetFromMockStoreConfig;
-  /**
-   * Update the data on the mock store
-   */
-  updateStore?: UpdateMockStoreConfig[];
-}
-/**
- * Get the data from the mock store
- */
-export interface GetFromMockStoreConfig {
-  type?: string;
-  key?: string;
-  fieldName?: string;
-}
-export interface UpdateMockStoreConfig {
-  type?: string;
-  key?: string;
-  fieldName?: string;
-  value?: string;
 }
 /**
  * Transformer to apply naming convention to GraphQL Types
@@ -1874,6 +1799,7 @@ export interface Plugin {
   maskedErrors?: MaskedErrorsPluginConfig;
   immediateIntrospection?: any;
   liveQuery?: LiveQueryConfig;
+  mock?: MockingConfig;
   rateLimit?: RateLimitPluginConfig;
   responseCache?: ResponseCacheConfig;
   webhook?: WebhookPluginConfig;
@@ -1902,6 +1828,80 @@ export interface LiveQueryInvalidation {
 export interface LiveQueryPolling {
   interval: number;
   invalidate: string[];
+}
+/**
+ * Mock configuration for your source
+ */
+export interface MockingConfig {
+  /**
+   * If this expression is truthy, mocking would be enabled
+   * You can use environment variables expression, for example: `${MOCKING_ENABLED}`
+   */
+  if?: boolean;
+  /**
+   * Do not mock any other resolvers other than defined in `mocks`.
+   * For example, you can enable this if you don't want to mock entire schema but partially.
+   */
+  preserveResolvers?: boolean;
+  /**
+   * Mock configurations
+   */
+  mocks?: MockingFieldConfig[];
+  /**
+   * The path to the code runs before the store is attached to the schema
+   */
+  initializeStore?: any;
+}
+export interface MockingFieldConfig {
+  /**
+   * Resolver path
+   * Example: User.firstName
+   */
+  apply: string;
+  /**
+   * If this expression is truthy, mocking would be enabled
+   * You can use environment variables expression, for example: `${MOCKING_ENABLED}`
+   */
+  if?: boolean;
+  /**
+   * Faker.js expression or function
+   * Read more (https://github.com/marak/Faker.js/#fakerfake)
+   * Example:
+   * faker: `name.firstName`
+   * faker: `{{ name.firstName }} {{ name.lastName }}`
+   */
+  faker?: string;
+  /**
+   * Custom mocking
+   * It can be a module or json file.
+   * Both "moduleName#exportName" or only "moduleName" would work
+   */
+  custom?: string;
+  /**
+   * Length of the mock list
+   * For the list types `[ObjectType]`, how many `ObjectType` you want to return?
+   * default: 2
+   */
+  length?: number;
+  store?: GetFromMockStoreConfig;
+  /**
+   * Update the data on the mock store
+   */
+  updateStore?: UpdateMockStoreConfig[];
+}
+/**
+ * Get the data from the mock store
+ */
+export interface GetFromMockStoreConfig {
+  type?: string;
+  key?: string;
+  fieldName?: string;
+}
+export interface UpdateMockStoreConfig {
+  type?: string;
+  key?: string;
+  fieldName?: string;
+  value?: string;
 }
 /**
  * RateLimit plugin
