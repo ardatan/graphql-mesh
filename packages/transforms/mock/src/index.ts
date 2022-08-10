@@ -22,7 +22,7 @@ export default class MockingTransform implements MeshTransform {
     this.importFn = importFn;
   }
 
-  transformSchema(schema: GraphQLSchema, context: any, transformedSchema: GraphQLSchema) {
+  transformSchema(schema: GraphQLSchema, context: any) {
     const configIf = this.config != null && 'if' in this.config ? this.config.if : true;
     if (configIf) {
       const mocks: IMocks = {
@@ -134,7 +134,7 @@ export default class MockingTransform implements MeshTransform {
       }
       const newResolvers = getResolversFromSchema(
         addMocksToSchema({
-          schema: transformedSchema || schema,
+          schema,
           store,
           mocks,
           resolvers,
@@ -143,7 +143,7 @@ export default class MockingTransform implements MeshTransform {
         true
       );
       addResolversToSchema({
-        schema: transformedSchema || schema,
+        schema,
         resolvers: newResolvers,
         updateResolversInPlace: true,
       });

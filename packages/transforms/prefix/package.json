@@ -30,8 +30,8 @@
   "dependencies": {
     "@graphql-mesh/types": "0.78.6",
     "@graphql-mesh/utils": "0.37.7",
-    "@graphql-tools/delegate": "8.8.1",
-    "@graphql-tools/wrap": "8.5.1",
+    "@graphql-tools/delegate": "9.0.0",
+    "@graphql-tools/wrap": "9.0.0",
     "@graphql-tools/utils": "8.9.1",
     "graphql-scalars": "1.17.0",
     "tslib": "^2.4.0"

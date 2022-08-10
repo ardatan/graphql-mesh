@@ -11,7 +11,7 @@ export function applySchemaTransforms(
   if (transforms?.length) {
     return transforms.reduce(
       (schema, transform) =>
-        'transformSchema' in transform ? transform.transformSchema(schema, subschemaConfig, transformedSchema) : schema,
+        'transformSchema' in transform ? transform.transformSchema(schema, subschemaConfig) : schema,
       originalWrappingSchema
     );
   }
