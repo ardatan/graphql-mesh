@@ -65,7 +65,7 @@ export default class BareMerger implements MeshMerger {
             // We should return a version of the schema only with the source-level transforms
             // But we should prevent the existing schema from being mutated internally
             const nonExecutableSchema = buildASTSchema(getDocumentNodeFromSchema(schema));
-            return applySchemaTransforms(nonExecutableSchema, rawSource, nonExecutableSchema, rawSource.transforms);
+            return applySchemaTransforms(nonExecutableSchema, rawSource, rawSource.transforms);
           },
         };
       },
@@ -92,7 +92,7 @@ export default class BareMerger implements MeshMerger {
       let schema = source.schema;
       let sourceLevelSchema = source.schema;
 
-      schema = applySchemaTransforms(schema, undefined, schema, source.transforms);
+      schema = applySchemaTransforms(schema, source, source.transforms);
 
       // After that step, it will be considered as root level schema
       sourceLevelSchema = schema;

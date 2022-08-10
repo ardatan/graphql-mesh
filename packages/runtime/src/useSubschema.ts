@@ -56,7 +56,7 @@ export function useSubschema(subschema: SubschemaConfig): {
   transformedSchema: GraphQLSchema;
   plugin: Plugin;
 } {
-  const transformedSchema = applySchemaTransforms(subschema.schema, subschema, subschema.schema, subschema.transforms);
+  const transformedSchema = applySchemaTransforms(subschema.schema, subschema, subschema.transforms);
 
   const plugin: Plugin = {
     onPluginInit({ setSchema }) {

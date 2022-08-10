@@ -91,7 +91,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
         if (!wrapTransforms?.length && noWrapTransforms?.length) {
           sourceLogger.debug(`${noWrapTransforms.length} bare transforms found and applying`);
-          apiSchema = applySchemaTransforms(apiSchema, source as SubschemaConfig, null, noWrapTransforms);
+          apiSchema = applySchemaTransforms(apiSchema, source as SubschemaConfig, noWrapTransforms);
         } else {
           transforms = apiSource.transforms;
         }

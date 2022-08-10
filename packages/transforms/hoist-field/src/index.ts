@@ -55,12 +55,8 @@ export default class MeshHoistField implements MeshTransform {
     return pathConfigItem;
   }
 
-  transformSchema(
-    originalWrappingSchema: GraphQLSchema,
-    subschemaConfig: SubschemaConfig,
-    transformedSchema?: GraphQLSchema
-  ) {
-    return applySchemaTransforms(originalWrappingSchema, subschemaConfig, transformedSchema, this.transforms);
+  transformSchema(originalWrappingSchema: GraphQLSchema, subschemaConfig: SubschemaConfig) {
+    return applySchemaTransforms(originalWrappingSchema, subschemaConfig, this.transforms);
   }
 
   transformRequest(

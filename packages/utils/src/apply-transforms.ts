@@ -5,13 +5,12 @@ import { ExecutionResult, ExecutionRequest } from '@graphql-tools/utils';
 export function applySchemaTransforms(
   originalWrappingSchema: GraphQLSchema,
   subschemaConfig: SubschemaConfig,
-  transformedSchema: GraphQLSchema,
   transforms?: Transform[]
 ) {
   if (transforms?.length) {
     return transforms.reduce(
       (schema, transform) =>
-        'transformSchema' in transform ? transform.transformSchema(schema, subschemaConfig, transformedSchema) : schema,
+        'transformSchema' in transform ? transform.transformSchema(schema, subschemaConfig) : schema,
       originalWrappingSchema
     );
   }

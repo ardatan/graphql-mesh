@@ -49,13 +49,9 @@ export default class EncapsulateTransform implements MeshTransform {
     }
   }
 
-  transformSchema(
-    originalWrappingSchema: GraphQLSchema,
-    subschemaConfig: SubschemaConfig,
-    transformedSchema?: GraphQLSchema
-  ) {
+  transformSchema(originalWrappingSchema: GraphQLSchema, subschemaConfig: SubschemaConfig) {
     this.transforms = [...this.generateSchemaTransforms(originalWrappingSchema)];
-    return applySchemaTransforms(originalWrappingSchema, subschemaConfig, transformedSchema, this.transforms);
+    return applySchemaTransforms(originalWrappingSchema, subschemaConfig, this.transforms);
   }
 
   transformRequest(
