@@ -160,7 +160,7 @@ ${operationConfig.description || ''}
           const nonInterpolatedValue = nonInterpolatedHeaders[headerName];
           const interpolatedValue = stringInterpolator.parse(nonInterpolatedValue, interpolationData);
           if (interpolatedValue) {
-            headers[headerName] = interpolatedValue;
+            headers[headerName.toLowerCase()] = interpolatedValue;
           }
         }
         const requestInit: RequestInit = {
