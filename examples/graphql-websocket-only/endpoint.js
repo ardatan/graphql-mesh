@@ -1,4 +1,5 @@
 const { GraphQLSchema, GraphQLObjectType, GraphQLString } = require('graphql');
+const { createServer } = require('http');
 const { WebSocketServer } = require('ws');
 const { useServer } = require('graphql-ws/lib/use/ws');
 
@@ -37,12 +38,37 @@ const schema = new GraphQLSchema({
   }),
 });
 
-useServer(
-  { schema },
-  new WebSocketServer({
-    port: 54000,
-    path: '/graphql',
-  })
-);
+function start() {
+  return new Promise((resolve, reject) => {
+    const server = createServer();
 
-console.log('Listening on port 54000...');
+    useServer(
+      { schema },
+      new WebSocketServer({
+        server,
+        path: '/graphql',
+      })
+    );
+
+    const sockets = new Set();
+    server.on('connection', socket => {
+      sockets.add(socket);
+      server.once('close', () => sockets.delete(socket));
+    });
+    const stop = () =>
+      new Promise(resolve => {
+        for (const socket of sockets) {
+          socket.destroy();
+          sockets.delete(socket);
+        }
+        server.close(() => resolve());
+      });
+
+    server.on('error', err => reject(err));
+    server.on('listening', () => resolve(stop));
+
+    server.listen(54000);
+  });
+}
+
+module.exports = { start };

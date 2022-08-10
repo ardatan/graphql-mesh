@@ -1,16 +1,30 @@
 const { join } = require('path');
+
+const { start: startEndpoint } = require('../endpoint');
+
 const { findAndParseConfig } = require('@graphql-mesh/cli');
 const { getMesh } = require('@graphql-mesh/runtime');
 
 const { introspectionFromSchema, lexicographicSortSchema } = require('graphql');
 
-const mesh$ = findAndParseConfig({
-  dir: join(__dirname, '..'),
-}).then(config => getMesh(config));
+let mesh$ = {},
+  stopEndpoint = () => {};
+beforeAll(async () => {
+  stopEndpoint = await startEndpoint();
+
+  mesh$ = await getMesh(
+    await findAndParseConfig({
+      dir: join(__dirname, '..'),
+    })
+  );
+});
+afterAll(async () => {
+  await stopEndpoint();
+});
 
 describe('GraphQL WebSocket only', () => {
-  it('should generate correct schema', async () => {
-    const { schema } = await mesh$;
+  it('should generate correct schema', () => {
+    const { schema } = mesh$;
     expect(
       introspectionFromSchema(lexicographicSortSchema(schema), {
         descriptions: false,

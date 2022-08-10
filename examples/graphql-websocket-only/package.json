@@ -4,7 +4,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start:endpoint": "node endpoint.js",
+    "start:endpoint": "node -e 'require(\"./endpoint\").start()'",
     "start": "mesh dev",
     "test": "jest"
   },
