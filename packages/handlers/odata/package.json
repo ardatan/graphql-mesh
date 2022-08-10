@@ -37,18 +37,18 @@
     "@graphql-mesh/store": "0.8.27",
     "@graphql-mesh/string-interpolation": "0.3.0",
     "@graphql-mesh/utils": "0.37.8",
-    "@graphql-tools/utils": "8.9.1",
+    "@graphql-tools/utils": "8.10.0",
     "http-string-parser": "0.0.6",
     "@whatwg-node/fetch": "^0.2.7",
     "dataloader": "2.1.0",
     "fast-xml-parser": "4.0.9",
     "graphql-compose": "9.0.8",
     "graphql-parse-resolve-info": "4.12.3",
-    "graphql-scalars": "1.17.0",
+    "graphql-scalars": "1.18.0",
     "pascal-case": "3.1.2",
     "url-join": "4.0.1",
     "tslib": "^2.4.0",
-    "@graphql-tools/delegate": "9.0.0"
+    "@graphql-tools/delegate": "9.0.1"
   },
   "publishConfig": {
     "access": "public",

@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@whatwg-node/fetch": "0.2.8",
-    "@graphql-tools/utils": "8.9.1"
+    "@graphql-tools/utils": "8.10.0"
   },
   "publishConfig": {
     "access": "public",

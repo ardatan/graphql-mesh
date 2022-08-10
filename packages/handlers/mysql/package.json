@@ -40,10 +40,10 @@
     "graphql-fields": "2.0.3",
     "mysql": "2.18.1",
     "mysql-utilities": "1.1.4",
-    "graphql-scalars": "1.17.0",
+    "graphql-scalars": "1.18.0",
     "tslib": "^2.4.0",
-    "@graphql-tools/utils": "8.9.1",
-    "@graphql-tools/delegate": "9.0.0"
+    "@graphql-tools/utils": "8.10.0",
+    "@graphql-tools/delegate": "9.0.1"
   },
   "devDependencies": {
     "@types/graphql-fields": "1.3.4",
