@@ -145,7 +145,11 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
           }
           case 'header': {
             operationConfig.headers = operationConfig.headers || {};
-            operationConfig.headers[paramObj.name] = `{args.${argName}}`;
+            if (paramObj.schema?.default) {
+              operationConfig.headers[paramObj.name] = `{args.${argName}:${paramObj.schema.default}}`;
+            } else {
+              operationConfig.headers[paramObj.name] = `{args.${argName}}`;
+            }
             break;
           }
           case 'cookie': {
@@ -225,33 +229,61 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
         let schemaObj: JSONSchemaObject;
 
         if ('content' in responseObj) {
-          const contentKey = Object.keys(responseObj.content)[0];
-          if (!operationConfig.headers?.accept && typeof contentKey === 'string') {
+          responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
+          responseByStatusCode[responseKey].responseSchema = {
+            oneOf: [],
+          };
+          const responseObjForStatusCode = responseByStatusCode[responseKey].responseSchema as {
+            oneOf: JSONSchemaObject[];
+          };
+
+          const allMimeTypes = Object.keys(responseObj.content);
+          const jsonLikeMimeTypes = allMimeTypes.filter(c => c !== '*/*' && c.toString().includes('json'));
+          const mimeTypes = jsonLikeMimeTypes.length > 0 ? jsonLikeMimeTypes : allMimeTypes;
+
+          // If we have a better accept header, overwrite User's choice
+          if ((!operationConfig.headers?.accept && !operationConfig.headers?.Accept) || mimeTypes.length === 1) {
             operationConfig.headers = operationConfig.headers || {};
-            operationConfig.headers.accept = contentKey;
+            if (operationConfig.headers.Accept) {
+              delete operationConfig.headers.Accept;
+            }
+            operationConfig.headers.accept =
+              jsonLikeMimeTypes.length > 0 ? jsonLikeMimeTypes.join(',') : allMimeTypes[0].toString();
           }
-          schemaObj = responseObj.content[contentKey].schema as any;
-          if (!schemaObj && contentKey.toString().startsWith('text')) {
-            responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
-            responseByStatusCode[responseKey].responseSchema = { type: 'string' };
-          } else if (schemaObj && Object.keys(schemaObj).length > 0) {
-            responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
-            responseByStatusCode[responseKey].responseSchema = `${oasFilePath}#/paths/${relativePath
-              .split('/')
-              .join('~1')}/${method}/responses/${responseKey}/content/${contentKey
-              ?.toString()
-              .split('/')
-              .join('~1')}/schema`;
+
+          for (const contentKey in responseObj.content) {
+            if (!mimeTypes.includes(contentKey)) {
+              continue;
+            }
+            schemaObj = responseObj.content[contentKey].schema as any;
+            if (schemaObj && Object.keys(schemaObj).length > 0) {
+              responseObjForStatusCode.oneOf.push({
+                $ref: `${oasFilePath}#/paths/${relativePath
+                  .split('/')
+                  .join('~1')}/${method}/responses/${responseKey}/content/${contentKey
+                  ?.toString()
+                  .split('/')
+                  .join('~1')}/schema`,
+              });
+            } else if (contentKey.toString().startsWith('text')) {
+              responseObjForStatusCode.oneOf.push({ type: 'string' });
+            }
+            const examplesObj = responseObj.content[contentKey].examples;
+            if (examplesObj) {
+              responseObjForStatusCode.oneOf.push({
+                examples: Object.values(examplesObj),
+              });
+            }
+            const example = responseObj.content[contentKey].example;
+            if (example) {
+              responseObjForStatusCode.oneOf.push({
+                examples: [example],
+              });
+            }
           }
-          const examplesObj = responseObj.content[contentKey].examples;
-          if (examplesObj) {
-            responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
-            responseByStatusCode[responseKey].responseSample = Object.values(examplesObj)[0];
-          }
-          const example = responseObj.content[contentKey].example;
-          if (example) {
-            responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
-            responseByStatusCode[responseKey].responseSample = example;
+
+          if (responseObjForStatusCode.oneOf.length === 1) {
+            responseByStatusCode[responseKey].responseSchema = responseObjForStatusCode.oneOf[0];
           }
         } else if ('schema' in responseObj) {
           schemaObj = responseObj.schema as any;

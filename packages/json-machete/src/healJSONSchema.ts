@@ -199,19 +199,19 @@ export async function healJSONSchema(
             logger.debug(`${path} has an "allOf" definition with only one element. Removing it.`);
             const realSubschema = subSchema.allOf[0];
             delete subSchema.allOf;
-            return realSubschema;
+            subSchema = realSubschema;
           }
           if (subSchema.anyOf != null && subSchema.anyOf.length === 1 && !subSchema.properties) {
             logger.debug(`${path} has an "anyOf" definition with only one element. Removing it.`);
             const realSubschema = subSchema.anyOf[0];
             delete subSchema.anyOf;
-            return realSubschema;
+            subSchema = realSubschema;
           }
           if (subSchema.oneOf != null && subSchema.oneOf.length === 1 && !subSchema.properties) {
             logger.debug(`${path} has an "oneOf" definition with only one element. Removing it.`);
             const realSubschema = subSchema.oneOf[0];
             delete subSchema.oneOf;
-            return realSubschema;
+            subSchema = realSubschema;
           }
           if (subSchema.description != null) {
             subSchema.description = subSchema.description.trim();
@@ -228,7 +228,7 @@ export async function healJSONSchema(
             );
             const realSubschema = subSchema.items;
             delete subSchema.items;
-            return realSubschema;
+            subSchema = realSubschema;
           }
           if (subSchema.properties && subSchema.type !== 'object') {
             logger.debug(`${path} has "properties" with no type defined. Adding a type property with "object" value.`);
