@@ -37,7 +37,7 @@
     "@graphql-mesh/store": "0.8.26",
     "@graphql-mesh/string-interpolation": "0.3.0",
     "@graphql-mesh/utils": "0.37.7",
-    "@graphql-tools/utils": "8.9.0",
+    "@graphql-tools/utils": "8.9.1",
     "http-string-parser": "0.0.6",
     "@whatwg-node/fetch": "^0.2.7",
     "dataloader": "2.1.0",
