@@ -1,5 +1,19 @@
 # @omnigraph/json-schema
 
+## 0.26.1
+
+### Patch Changes
+
+- [#4263](https://github.com/Urigo/graphql-mesh/pull/4263) [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@graphql-tools/utils@8.9.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.9.1) (was `8.9.0`, in `dependencies`)
+
+- Updated dependencies [[`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73)]:
+  - @graphql-mesh/cross-helpers@0.2.1
+  - @graphql-mesh/types@0.78.7
+  - @graphql-mesh/utils@0.37.8
+  - json-machete@0.11.1
+
 ## 0.26.0
 
 ### Minor Changes
@@ -18,11 +32,11 @@
 
   ```ts
   export default function myOperationHeaders({ context }: ResolverData) {
-    const someToken = context.request.headers.get('some-token')
-    const anotherToken = await someLogicThatReturnsAnotherToken(someToken)
+    const someToken = context.request.headers.get("some-token");
+    const anotherToken = await someLogicThatReturnsAnotherToken(someToken);
     return {
-      'x-bar-token': anotherToken
-    }
+      "x-bar-token": anotherToken
+    };
   }
   ```
 

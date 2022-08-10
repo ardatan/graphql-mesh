@@ -1,5 +1,12 @@
 # @graphql-mesh/plugin-webhook
 
+## 0.0.6
+
+### Patch Changes
+
+- Updated dependencies [[`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73)]:
+  - @graphql-mesh/types@0.78.7
+
 ## 0.0.5
 
 ### Patch Changes

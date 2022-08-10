@@ -1,5 +1,20 @@
 # @graphql-mesh/transform-cache
 
+## 0.12.29
+
+### Patch Changes
+
+- [#4263](https://github.com/Urigo/graphql-mesh/pull/4263) [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@graphql-tools/resolvers-composition@6.5.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/resolvers-composition/v/6.5.2) (was `6.5.1`, in `dependencies`)
+  - Updated dependency [`@graphql-tools/schema@9.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/9.0.0) (was `8.5.1`, in `dependencies`)
+  - Updated dependency [`@graphql-tools/utils@8.9.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.9.1) (was `8.9.0`, in `dependencies`)
+
+- Updated dependencies [[`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73)]:
+  - @graphql-mesh/cross-helpers@0.2.1
+  - @graphql-mesh/types@0.78.7
+  - @graphql-mesh/utils@0.37.8
+
 ## 0.12.28
 
 ### Patch Changes

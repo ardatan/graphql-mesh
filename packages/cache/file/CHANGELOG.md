@@ -1,5 +1,14 @@
 # @graphql-mesh/cache-file
 
+## 0.9.9
+
+### Patch Changes
+
+- Updated dependencies [[`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73)]:
+  - @graphql-mesh/cross-helpers@0.2.1
+  - @graphql-mesh/types@0.78.7
+  - @graphql-mesh/utils@0.37.8
+
 ## 0.9.8
 
 ### Patch Changes

@@ -1,5 +1,26 @@
 # @graphql-mesh/config
 
+## 5.1.6
+
+### Patch Changes
+
+- [#4263](https://github.com/Urigo/graphql-mesh/pull/4263) [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@graphql-tools/utils@8.9.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.9.1) (was `8.9.0`, in `dependencies`)
+  - Updated dependency [`@graphql-tools/load@7.7.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.7.3) (was `7.7.1`, in `dependencies`)
+  - Updated dependency [`@graphql-tools/code-file-loader@7.3.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/code-file-loader/v/7.3.2) (was `7.3.1`, in `dependencies`)
+  - Updated dependency [`@graphql-tools/graphql-file-loader@7.5.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/graphql-file-loader/v/7.5.1) (was `7.5.0`, in `dependencies`)
+
+- Updated dependencies [[`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73)]:
+  - @graphql-mesh/cross-helpers@0.2.1
+  - @graphql-mesh/merger-bare@0.15.8
+  - @graphql-mesh/merger-stitching@0.16.7
+  - @graphql-mesh/runtime@0.41.8
+  - @graphql-mesh/store@0.8.27
+  - @graphql-mesh/types@0.78.7
+  - @graphql-mesh/utils@0.37.8
+  - @graphql-mesh/cache-localforage@0.6.24
+
 ## 5.1.5
 
 ### Patch Changes
@@ -177,9 +198,9 @@
       sourceName: Author
       sourceTypeName: Query
       sourceFieldName: authorById
-      requiredSelectionSet: '{ id }'
+      requiredSelectionSet: "{ id }"
       sourceArgs:
-        id: '{root.id}'
+        id: "{root.id}"
   ```
 
   After:
