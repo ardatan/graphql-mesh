@@ -1,0 +1,21 @@
+{
+  "name": "graphql-websocket-only",
+  "version": "1.0.0",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start:endpoint": "node endpoint.js",
+    "start": "mesh dev",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@graphql-mesh/cli": "0.75.7",
+    "@graphql-mesh/graphql": "0.29.7",
+    "graphql": "16.5.0",
+    "graphql-ws": "5.10.0",
+    "ws": "8.8.1"
+  },
+  "devDependencies": {
+    "jest": "28.1.3"
+  }
+}
