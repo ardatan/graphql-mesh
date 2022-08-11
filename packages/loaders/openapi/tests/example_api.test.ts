@@ -2517,8 +2517,4 @@ describe('example_api', () => {
   //       });
   //     });
   // });
-
-  // it('should generate the schema correctly', () => {
-  //   expect(printSchemaWithDirectives(createdSchema)).toMatchSnapshot();
-  // });
 });
