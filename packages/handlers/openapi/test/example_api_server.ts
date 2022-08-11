@@ -523,7 +523,7 @@ export function startServer(PORT: number) {
   app.get('/api/products/:id', (req, res) => {
     if (typeof req.params.id !== 'undefined' && typeof req.query['product-tag'] !== 'undefined') {
       const product = {
-        product_id: req.params.id,
+        'product-id': req.params.id,
         'product-tag': req.query['product-tag'],
         'product-name': 'Super Product',
       };
