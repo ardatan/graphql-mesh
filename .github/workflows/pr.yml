@@ -5,12 +5,12 @@ on:
       - master
 
 jobs:
-  changesets-dependencies:
+  dependencies:
     uses: the-guild-org/shared-config/.github/workflows/changesets-dependencies.yaml@pipelines
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
 
-  alpha-release:
+  release:
     uses: the-guild-org/shared-config/.github/workflows/realease-snapshot.yml@pipelines
     with:
       npmTag: alpha
@@ -18,4 +18,4 @@ jobs:
       nodeVersion: 18
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
-      npmToken: ${{ secrets.GITHUB_TOKEN }}
+      npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
