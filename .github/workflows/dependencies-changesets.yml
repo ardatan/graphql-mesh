@@ -4,6 +4,7 @@ on:
     branches:
       - master
 
+
 jobs:
   changesets-dependencies:
     uses: the-guild-org/shared-config/.github/workflows/changesets-dependencies.yaml@pipelines
