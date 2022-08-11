@@ -39,7 +39,7 @@
     "@graphql-mesh/types": "0.78.7",
     "neo4j-driver": "4.4.7",
     "tslib": "^2.4.0",
-    "@graphql-tools/utils": "8.9.1"
+    "@graphql-tools/utils": "8.10.0"
   },
   "publishConfig": {
     "access": "public",
