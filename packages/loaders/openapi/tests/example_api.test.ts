@@ -1,4 +1,4 @@
-import { execute, GraphQLObjectType, GraphQLSchema, parse } from 'graphql';
+import { execute, graphql, GraphQLObjectType, GraphQLSchema, parse, validate } from 'graphql';
 import 'json-bigint-patch';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 
@@ -6,6 +6,7 @@ import { startServer, stopServer } from '../../../handlers/openapi/test/example_
 import { join } from 'path';
 import { fetch } from '@whatwg-node/fetch';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { OpenAPILoaderOptions } from '../src';
 
 let createdSchema: GraphQLSchema;
 const PORT = 3002;
@@ -1123,425 +1124,429 @@ describe('example_api', () => {
     });
   });
 
-  // it('Fields with arbitrary JSON (e.g., maps) can be returned', async () => {
-  //   // Testing additionalProperties field in schemas
-  //   const query1 = /* GraphQL */ `{
-  //     getAllCars {
-  //       tags
-  //     }
-  //   }`;
+  it('Fields with arbitrary JSON (e.g., maps) can be returned', async () => {
+    // Testing additionalProperties field in schemas
+    const query1 = /* GraphQL */ `
+      {
+        getAllCars {
+          tags
+        }
+      }
+    `;
 
-  //   // Testing empty properties field
-  //   const query2 = /* GraphQL */ `{
-  //     getAllCars {
-  //       features
-  //     }
-  //   }`;
+    // Testing empty properties field
+    const query2 = /* GraphQL */ `
+      {
+        getAllCars {
+          features
+        }
+      }
+    `;
 
-  //   const [result1, result2] = await Promise.all([query1, query2].map(query => execute({
-  //     schema: createdSchema,
-  //     document: parse(query),
-  //   })));
+    const [result1, result2] = await Promise.all(
+      [query1, query2].map(query =>
+        execute({
+          schema: createdSchema,
+          document: parse(query),
+        })
+      )
+    );
 
-  //   expect(result1).toEqual({
-  //     data: {
-  //       getAllCars: [
-  //         {
-  //           tags: null,
-  //         },
-  //         {
-  //           tags: {
-  //             speed: 'extreme',
-  //           },
-  //         },
-  //         {
-  //           tags: {
-  //             impression: 'decadent',
-  //             condition: 'slightly beat-up',
-  //           },
-  //         },
-  //         {
-  //           tags: {
-  //             impression: 'decadent',
-  //           },
-  //         },
-  //       ],
-  //     },
-  //   });
+    expect(result1).toEqual({
+      data: {
+        getAllCars: [
+          {
+            tags: null,
+          },
+          {
+            tags: {
+              speed: 'extreme',
+            },
+          },
+          {
+            tags: {
+              impression: 'decadent',
+              condition: 'slightly beat-up',
+            },
+          },
+          {
+            tags: {
+              impression: 'decadent',
+            },
+          },
+        ],
+      },
+    });
 
-  //   expect(result2).toEqual({
-  //     data: {
-  //       getAllCars: [
-  //         {
-  //           features: {
-  //             color: 'banana yellow to be specific',
-  //           },
-  //         },
-  //         {
-  //           features: null,
-  //         },
-  //         {
-  //           features: null,
-  //         },
-  //         {
-  //           features: null,
-  //         },
-  //       ],
-  //     },
-  //   });
-  // });
+    expect(result2).toEqual({
+      data: {
+        getAllCars: [
+          {
+            features: {
+              color: 'banana yellow to be specific',
+            },
+          },
+          {
+            features: null,
+          },
+          {
+            features: null,
+          },
+          {
+            features: null,
+          },
+        ],
+      },
+    });
+  });
 
-  // it('Capitalized enum values can be returned', async () => {
-  //   const query = /* GraphQL */ `{
-  //     car (username: "arlene") {
-  //       kind
-  //     }
-  //   }`;
+  it('Capitalized enum values can be returned', async () => {
+    const query = /* GraphQL */ `
+      {
+        getUserCar(username: "arlene") {
+          kind
+        }
+      }
+    `;
 
-  //   return graphql({
-  //     schema: createdSchema,
-  //     source: query,
-  //   }).then((result: any) => {
-  //     expect(result).toEqual({
-  //       data: {
-  //         car: {
-  //           kind: 'SEDAN',
-  //         },
-  //       },
-  //     });
-  // });
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
 
-  // it('Define header and query options', async () => {
-  //   const options: Options<any, any, any> = {
-  //     headers: {
-  //       exampleHeader: 'some-value',
-  //     },
-  //     qs: {
-  //       limit: '30',
-  //     },
-  //     fetch,
-  //   };
+    expect(result).toEqual({
+      data: {
+        getUserCar: {
+          kind: 'SEDAN',
+        },
+      },
+    });
+  });
 
-  //   const query = /* GraphQL */ `{
-  //     status2 (globalquery: "test")
-  //   }`;
-  //   return openAPIToGraphQL.createGraphQLSchema(oas, options).then(({ schema }) => {
-  //     // validate that 'limit' parameter is covered by options:
-  //     const ast = parse(query);
-  //     const errors = validate(schema, ast);
-  //     expect(errors).toEqual([]);
-  //     return graphql({ schema, source: query }).then((result: any) => {
-  //       expect(result).toEqual({
-  //         data: {
-  //           status2: 'Ok',
-  //         },
-  //       });
-  //     });
-  // });
+  it('Define header and query options', async () => {
+    const options: OpenAPILoaderOptions = {
+      baseUrl,
+      oasFilePath: join(__dirname, '../../../handlers/openapi/test/fixtures/example_oas.json'),
+      fetch,
+      schemaHeaders: {
+        exampleHeader: 'some-value',
+      },
+      queryParams: {
+        limit: '30',
+      },
+    };
 
-  // it('Resolve simple allOf', async () => {
-  //   const query = /* GraphQL */ `{
-  //     user (username: "arlene") {
-  //       name
-  //       nomenclature {
-  //         genus
-  //         species
-  //       }
-  //     }
-  //   }`;
+    const schema = await loadGraphQLSchemaFromOpenAPI('test', options);
 
-  //   return graphql({
-  //     schema: createdSchema,
-  //     source: query,
-  //   }).then((result: any) => {
-  //     expect(result).toEqual({
-  //       data: {
-  //         user: {
-  //           name: 'Arlene L McMahon',
-  //           nomenclature: {
-  //             genus: 'Homo',
-  //             species: 'sapiens',
-  //           },
-  //         },
-  //       },
-  //     });
-  // });
+    const query = /* GraphQL */ `
+      {
+        get_Status(input: { globalquery: "test" })
+      }
+    `;
 
-  // // The $ref is contained in the suborder field
-  // it('Resolve ref in allOf', async () => {
-  //   const query = /* GraphQL */ `{
-  //     user (username: "arlene") {
-  //       name
-  //       nomenclature {
-  //         suborder
-  //         genus
-  //         species
-  //       }
-  //     }
-  //   }`;
+    // validate that 'limit' parameter is covered by options:
+    const ast = parse(query);
+    const errors = validate(schema, ast);
+    expect(errors).toEqual([]);
 
-  //   return graphql({
-  //     schema: createdSchema,
-  //     source: query,
-  //   }).then((result: any) => {
-  //     expect(result).toEqual({
-  //       data: {
-  //         user: {
-  //           name: 'Arlene L McMahon',
-  //           nomenclature: {
-  //             suborder: 'Haplorhini',
-  //             genus: 'Homo',
-  //             species: 'sapiens',
-  //           },
-  //         },
-  //       },
-  //     });
-  // });
+    const result = await graphql({ schema, source: query });
+    expect(result).toEqual({
+      data: {
+        get_Status: 'Ok',
+      },
+    });
+  });
 
-  // // The nested allOf is contained in the family field
-  // it('Resolve nested allOf', async () => {
-  //   const query = /* GraphQL */ `{
-  //     user (username: "arlene") {
-  //       name
-  //       nomenclature {
-  //         family
-  //         genus
-  //         species
-  //       }
-  //     }
-  //   }`;
+  it('Resolve simple allOf', async () => {
+    const query = /* GraphQL */ `
+      {
+        getUserByUsername(username: "arlene") {
+          name
+          nomenclature {
+            genus
+            species
+          }
+        }
+      }
+    `;
 
-  //   return graphql({
-  //     schema: createdSchema,
-  //     source: query,
-  //   }).then((result: any) => {
-  //     expect(result).toEqual({
-  //       data: {
-  //         user: {
-  //           name: 'Arlene L McMahon',
-  //           nomenclature: {
-  //             family: 'Hominidae',
-  //             genus: 'Homo',
-  //             species: 'sapiens',
-  //           },
-  //         },
-  //       },
-  //     });
-  // });
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
 
-  // // The circular nested allOf is contained in the familyCircular field
-  // it('Resolve circular allOf', async () => {
-  //   const query = /* GraphQL */ `{
-  //     __type(name: "FamilyObject") {
-  //       fields {
-  //         name
-  //         type {
-  //           name
-  //         }
-  //       }
-  //     }
-  //   }`;
+    expect(result).toEqual({
+      data: {
+        getUserByUsername: {
+          name: 'Arlene L McMahon',
+          nomenclature: {
+            genus: 'Homo',
+            species: 'sapiens',
+          },
+        },
+      },
+    });
+  });
 
-  //   return graphql({
-  //     schema: createdSchema,
-  //     source: query,
-  //   }).then((result: any) => {
-  //     expect(
-  //       result.data.__type.fields.find((field: { name: string }) => {
-  //         return field.name === 'familyCircular';
-  //       })
-  //     ).toEqual({
-  //       name: 'familyCircular',
-  //       type: {
-  //         name: 'FamilyObject',
-  //       },
-  //     });
-  // });
+  // The $ref is contained in the suborder field
+  it('Resolve ref in allOf', async () => {
+    const query = /* GraphQL */ `
+      {
+        getUserByUsername(username: "arlene") {
+          name
+          nomenclature {
+            suborder
+            genus
+            species
+          }
+        }
+      }
+    `;
 
-  // it('Resolve oneOf, which becomes a union type', async () => {
-  //   const query = /* GraphQL */ `{
-  //     __type(name: "AssetListItem") {
-  //       kind
-  //       possibleTypes {
-  //         name
-  //         description
-  //       }
-  //     }
-  //   }`;
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
 
-  //   return graphql({
-  //     schema: createdSchema,
-  //     source: query,
-  //   }).then((result: any) => {
-  //     type carType = {
-  //       name: string;
-  //       description: string;
-  //     };
+    expect(result).toEqual({
+      data: {
+        getUserByUsername: {
+          name: 'Arlene L McMahon',
+          nomenclature: {
+            suborder: 'Haplorhini',
+            genus: 'Homo',
+            species: 'sapiens',
+          },
+        },
+      },
+    });
+  });
 
-  //     // Sort result because the order of the possibleTypes can change depending on Node version
-  //     const possibleTypes = result.data.__type.possibleTypes as carType[];
-  //     possibleTypes.sort((a, b) => {
-  //       return a.name.localeCompare(b.name);
-  //     });
+  // The nested allOf is contained in the family field
+  it('Resolve nested allOf', async () => {
+    const query = /* GraphQL */ `
+      {
+        getUserByUsername(username: "arlene") {
+          name
+          nomenclature {
+            family
+            genus
+            species
+          }
+        }
+      }
+    `;
 
-  //     expect(result).toEqual({
-  //       data: {
-  //         __type: {
-  //           kind: 'UNION',
-  //           possibleTypes: [
-  //             {
-  //               name: 'Car',
-  //               description: 'A car',
-  //             },
-  //             {
-  //               name: 'Trashcan',
-  //               description: null,
-  //             },
-  //             {
-  //               name: 'User',
-  //               description: 'A user represents a natural person',
-  //             },
-  //           ],
-  //         },
-  //       },
-  //     });
-  // });
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
 
-  // it('Union type', async () => {
-  //   const query = /* GraphQL */ `{
-  //     asset(companyId: "binsol") {
-  //       ... on User {
-  //         name
-  //         address {
-  //           city
-  //         }
-  //       }
-  //       ... on Trashcan {
-  //         contents
-  //       }
-  //     }
-  //   }`;
+    expect(result).toEqual({
+      data: {
+        getUserByUsername: {
+          name: 'Arlene L McMahon',
+          nomenclature: {
+            family: 'Hominidae',
+            genus: 'Homo',
+            species: 'sapiens',
+          },
+        },
+      },
+    });
+  });
 
-  //   return graphql({
-  //     schema: createdSchema,
-  //     source: query,
-  //   }).then((result: any) => {
-  //     expect(result).toEqual({
-  //       data: {
-  //         asset: [
-  //           {
-  //             name: 'Arlene L McMahon',
-  //             address: {
-  //               city: 'Elk Grove Village',
-  //             },
-  //           },
-  //           {},
-  //           {
-  //             contents: [
-  //               {
-  //                 type: 'apple',
-  //                 message: 'Half-eaten',
-  //               },
-  //               {
-  //                 type: 'sock',
-  //                 message: 'Lost one',
-  //               },
-  //             ],
-  //           },
-  //           {
-  //             name: 'William B Ropp',
-  //             address: {
-  //               city: 'Macomb',
-  //             },
-  //           },
-  //           {},
-  //           {
-  //             contents: [
-  //               {
-  //                 type: 'sock',
-  //                 message: 'Lost one',
-  //               },
-  //             ],
-  //           },
-  //           {
-  //             name: 'John C Barnes',
-  //             address: {
-  //               city: 'Tucson',
-  //             },
-  //           },
-  //           {},
-  //           {
-  //             contents: [],
-  //           },
-  //         ],
-  //       },
-  //     });
-  // });
+  // The circular nested allOf is contained in the familyCircular field
+  it('Resolve circular allOf', async () => {
+    const query = /* GraphQL */ `
+      {
+        __type(name: "familyObject") {
+          fields {
+            name
+            type {
+              name
+            }
+          }
+        }
+      }
+    `;
 
-  // // Extensions provide more information about failed API calls
-  // it('Error contains extension', async () => {
-  //   const query = /* GraphQL */ `query {
-  //     user(username: "abcdef") {
-  //       name
-  //     }
-  //   }`;
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
 
-  //   return graphql({
-  //     schema: createdSchema,
-  //     source: query,
-  //   }).then(error => {
-  //     const extensions = error.errors[0].extensions;
-  //     expect(extensions).toBeDefined();
+    // NOTE: is there better type to replace the "any"?
+    expect(
+      (result.data.__type as any).fields.find((field: { name: string }) => {
+        return field.name === 'familyCircular';
+      })
+    ).toEqual({
+      name: 'familyCircular',
+      type: {
+        name: 'familyObject',
+      },
+    });
+  });
 
-  //     // Remove headers because it contains fields that may change from run to run
-  //     delete extensions.responseHeaders;
-  //     expect(extensions).toEqual({
-  //       method: 'get',
-  //       path: '/users/{username}',
-  //       statusCode: 404,
-  //       statusText: 'Not Found',
-  //       responseBody: {
-  //         message: 'Wrong username',
-  //       },
-  //     });
-  // });
+  it('Resolve oneOf, which becomes a union type', async () => {
+    const query = /* GraphQL */ `
+      {
+        __type(name: "query_getAllAssets_items") {
+          kind
+          possibleTypes {
+            name
+            description
+          }
+        }
+      }
+    `;
 
-  // it('Option provideErrorExtensions should prevent error extensions from being created', async () => {
-  //   const options: Options<any, any, any> = {
-  //     provideErrorExtensions: false,
-  //     fetch,
-  //   };
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
 
-  //   const query = /* GraphQL */ `query {
-  //     user(username: "abcdef") {
-  //       name
-  //     }
-  //   }`;
+    type carType = {
+      name: string;
+      description: string;
+    };
 
-  //   return openAPIToGraphQL.createGraphQLSchema(oas, options).then(({ schema }) => {
-  //     const ast = parse(query);
-  //     const errors = validate(schema, ast);
-  //     expect(errors).toEqual([]);
-  //     return graphql({ schema, source: query }).then((result: any) => {
-  //       expect(result).toMatchObject({
-  //         errors: [
-  //           {
-  //             message: 'Could not invoke operation GET /users/{username}',
-  //             locations: [
-  //               {
-  //                 line: 2,
-  //                 column: 5,
-  //               },
-  //             ],
-  //             path: ['user'],
-  //           },
-  //         ],
-  //         data: {
-  //           user: null,
-  //         },
-  //       });
-  //     });
-  // });
+    // Sort result because the order of the possibleTypes can change depending on Node version
+    const possibleTypes = (result.data.__type as any).possibleTypes as carType[];
+    possibleTypes.sort((a, b) => {
+      return a.name.localeCompare(b.name);
+    });
+
+    expect(result).toEqual({
+      data: {
+        __type: {
+          kind: 'UNION',
+          possibleTypes: [
+            {
+              name: 'car',
+              description: 'A car',
+            },
+            {
+              name: 'trashcan',
+              description: null,
+            },
+            {
+              name: 'user',
+              description: 'A user represents a natural person',
+            },
+          ],
+        },
+      },
+    });
+  });
+
+  it('Union type', async () => {
+    // NOTE: this doesn't work. probably UNION issue
+    const query = /* GraphQL */ `
+      {
+        getAllAssets(companyId: "binsol") {
+          ... on user {
+            name
+            address {
+              city
+            }
+          }
+          ... on trashcan {
+            contents
+          }
+        }
+      }
+    `;
+
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
+
+    expect(result).toEqual({
+      data: {
+        getAllAssets: [
+          {
+            name: 'Arlene L McMahon',
+            address: {
+              city: 'Elk Grove Village',
+            },
+          },
+          {},
+          {
+            contents: [
+              {
+                type: 'apple',
+                message: 'Half-eaten',
+              },
+              {
+                type: 'sock',
+                message: 'Lost one',
+              },
+            ],
+          },
+          {
+            name: 'William B Ropp',
+            address: {
+              city: 'Macomb',
+            },
+          },
+          {},
+          {
+            contents: [
+              {
+                type: 'sock',
+                message: 'Lost one',
+              },
+            ],
+          },
+          {
+            name: 'John C Barnes',
+            address: {
+              city: 'Tucson',
+            },
+          },
+          {},
+          {
+            contents: [],
+          },
+        ],
+      },
+    });
+  });
+
+  // Extensions provide more information about failed API calls
+  it('Error contains extension', async () => {
+    // NOTE: error object is a bit different. should we adjust to match the prev structure?
+    const query = /* GraphQL */ `
+      query {
+        getUserByUsername(username: "abcdef") {
+          name
+        }
+      }
+    `;
+
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
+
+    const extensions = result.errors[0].extensions;
+    expect(extensions).toBeDefined();
+
+    // Remove headers because it contains fields that may change from run to run
+    delete extensions.responseHeaders;
+    expect(extensions).toEqual({
+      method: 'GET',
+      path: '/users/{username}',
+      statusCode: 404,
+      statusText: 'Not Found',
+      responseBody: {
+        message: 'Wrong username',
+      },
+    });
+  });
 
   // it('Option customResolver', async () => {
   //   const options: Options<any, any, any> = {
