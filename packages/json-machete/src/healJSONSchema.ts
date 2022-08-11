@@ -183,7 +183,11 @@ export async function healJSONSchema(
           if (typeof subSchema.additionalProperties === 'object') {
             delete subSchema.additionalProperties.readOnly;
             delete subSchema.additionalProperties.writeOnly;
-            if (Object.keys(subSchema.additionalProperties).length === 0) {
+            const additionalPropertiesKeys = Object.keys(subSchema.additionalProperties);
+            if (
+              additionalPropertiesKeys.length === 0 ||
+              (additionalPropertiesKeys.length === 1 && subSchema.additionalProperties.type === 'string')
+            ) {
               logger.debug(
                 `${path} has an empty additionalProperties object. So this is invalid. Replacing it with 'true'`
               );
