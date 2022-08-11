@@ -6,7 +6,6 @@ on:
 
 jobs:
   stable:
-    id: release
     uses: the-guild-org/shared-config/.github/workflows/release-stable.yml@main
     with:
       releaseScript: release
@@ -16,7 +15,7 @@ jobs:
       npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
 
   docker-image:
-    needs: release
+    needs: stable
     runs-on: ubuntu-latest
     steps:
       - name: checkout
