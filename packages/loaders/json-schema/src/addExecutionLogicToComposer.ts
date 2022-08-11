@@ -300,12 +300,15 @@ ${operationConfig.description || ''}
         if (!response.status.toString().startsWith('2')) {
           const returnNamedGraphQLType = getNamedType(field.type.getType());
           if (!isUnionType(returnNamedGraphQLType)) {
-            return createError(`HTTP Error: ${response.status}`, {
-              url: fullPath,
-              method: httpMethod,
-              ...(response.statusText ? { status: response.statusText } : {}),
-              responseJson,
-            });
+            return createError(
+              `HTTP Error: ${response.status}, Could not invoke operation ${operationConfig.method} ${operationConfig.path}`,
+              {
+                url: fullPath,
+                method: httpMethod,
+                ...(response.statusText ? { status: response.statusText } : {}),
+                responseJson,
+              }
+            );
           }
         }
 
