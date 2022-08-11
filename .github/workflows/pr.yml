@@ -11,7 +11,7 @@ jobs:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
 
   release:
-    uses: the-guild-org/shared-config/.github/workflows/realease-snapshot.yml@pipelines
+    uses: the-guild-org/shared-config/.github/workflows/release-snapshot.yml@pipelines
     with:
       npmTag: alpha
       buildScript: build
