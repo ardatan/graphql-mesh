@@ -28,19 +28,34 @@ export function getTypeResolverFromOutputTCs(
       }
     }
     const validationErrors: Record<string, ErrorObject[]> = {};
-    for (const outputTypeComposer of outputTypeComposers) {
-      const validateFn = outputTypeComposer.getExtension('validateWithJSONSchema') as ValidateFunction;
-      if (validateFn) {
-        const isValid = validateFn(data);
-        const typeName = outputTypeComposer.getTypeName();
-        if (isValid) {
-          if ('getFields' in outputTypeComposer) {
-            return outputTypeComposer.getTypeName();
-          } else {
-            return outputTypeComposer.getResolveType()(data, context, info, outputTypeComposer.getType());
-          }
+    const dataKeys =
+      typeof data === 'object'
+        ? Object.keys(data)
+            // Remove metadata fields used to pass data
+            .filter(property => !property.toString().startsWith('$'))
+        : null;
+    const allOutputTypeComposers = outputTypeComposers.flatMap(typeComposer =>
+      'getFields' in typeComposer ? typeComposer : typeComposer.getTypeComposers()
+    );
+    for (const outputTypeComposer of allOutputTypeComposers) {
+      const typeName = outputTypeComposer.getTypeName();
+      if (dataKeys != null) {
+        const typeFields = outputTypeComposer.getFieldNames();
+        if (
+          dataKeys.length <= typeFields.length &&
+          dataKeys.every(property => typeFields.includes(property.toString()))
+        ) {
+          return typeName;
         }
-        validationErrors[typeName] = ajv.errors || validateFn.errors;
+      } else {
+        const validateFn = outputTypeComposer.getExtension('validateWithJSONSchema') as ValidateFunction;
+        if (validateFn) {
+          const isValid = validateFn(data);
+          if (isValid) {
+            return typeName;
+          }
+          validationErrors[typeName] = ajv.errors || validateFn.errors;
+        }
       }
     }
     if (data.$response) {
@@ -65,13 +80,11 @@ export function getTypeResolverFromOutputTCs(
           },
         }
       );
-      console.error(error);
       return error;
     }
     const error = new GraphQLError(`Received data doesn't met the union`, null, null, null, null, null, {
       validationErrors,
     });
-    console.error(error);
     return error;
   };
 }

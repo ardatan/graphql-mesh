@@ -3,7 +3,6 @@ import 'json-bigint-patch';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 
 import { startServer, stopServer } from '../../../handlers/openapi/test/example_api_server';
-import { join } from 'path';
 import { fetch } from '@whatwg-node/fetch';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { OpenAPILoaderOptions } from '../src';
@@ -19,11 +18,16 @@ describe('example_api', () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
       fetch,
       baseUrl,
-      oasFilePath: join(__dirname, '../../../handlers/openapi/test/fixtures/example_oas.json'),
+      oasFilePath: '../../../handlers/openapi/test/fixtures/example_oas.json',
+      cwd: __dirname,
     });
     await startServer(PORT);
   });
   afterAll(() => stopServer());
+
+  it('should generate the schema correctly', () => {
+    expect(printSchemaWithDirectives(createdSchema)).toMatchSnapshot();
+  });
 
   it('should get descriptions', async () => {
     // Get all the descriptions of the fields on the GraphQL object type car
@@ -1226,7 +1230,8 @@ describe('example_api', () => {
   it('Define header and query options', async () => {
     const options: OpenAPILoaderOptions = {
       baseUrl,
-      oasFilePath: join(__dirname, '../../../handlers/openapi/test/fixtures/example_oas.json'),
+      oasFilePath: '../../../handlers/openapi/test/fixtures/example_oas.json',
+      cwd: __dirname,
       fetch,
       schemaHeaders: {
         exampleHeader: 'some-value',
@@ -2511,9 +2516,5 @@ describe('example_api', () => {
   //         },
   //       });
   //     });
-  // });
-
-  // it('should generate the schema correctly', () => {
-  //   expect(printSchemaWithDirectives(createdSchema)).toMatchSnapshot();
   // });
 });
