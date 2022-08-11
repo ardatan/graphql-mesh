@@ -1,4 +1,5 @@
 import { execute, GraphQLObjectType, GraphQLSchema, parse } from 'graphql';
+import 'json-bigint-patch';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 
 import { startServer, stopServer } from '../../../handlers/openapi/test/example_api_server';
@@ -861,344 +862,333 @@ describe('example_api', () => {
     });
   });
 
-  // /**
-  //  * CASE: 64 bit int - return number instead of integer, leading to use of
-  //  * GraphQLFloat, which can support 64 bits:
-  //  */
-  // it('Get response containing 64-bit integer (using GraphQLBigInt)', async () => {
-  //   const query = /* GraphQL */ `{
-  //     getProductReviews (id: "100", input: {product_tag: "blah"}) {
-  //       timestamp
-  //     }
-  //   }`;
+  /**
+   * CASE: 64 bit int - return number instead of integer, leading to use of
+   * GraphQLFloat, which can support 64 bits:
+   */
+  it('Get response containing 64-bit integer (using GraphQLBigInt)', async () => {
+    const query = /* GraphQL */ `
+      {
+        getProductReviews(id: "100", input: { product_tag: "blah" }) {
+          timestamp
+        }
+      }
+    `;
 
-  //   const result = await execute({
-  //     schema: createdSchema,
-  //     document: parse(query),
-  //   });
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
 
-  //   expect(result).toEqual({
-  //     data: {
-  //       getProductReviews: [{ timestamp: 1502787600000000 }, { timestamp: 1502787400000000 }],
-  //     },
-  //   });
-  // });
+    expect(result).toEqual({
+      data: {
+        getProductReviews: [{ timestamp: BigInt(1502787600000000) }, { timestamp: BigInt(1502787400000000) }],
+      },
+    });
+  });
 
-  // it('Get array of strings', async () => {
-  //   const query = /* GraphQL */ `{
-  //     user (username: "arlene") {
-  //       hobbies
-  //     }
-  //   }`;
+  it('Get array of strings', async () => {
+    const query = /* GraphQL */ `
+      {
+        getUserByUsername(username: "arlene") {
+          hobbies
+        }
+      }
+    `;
 
-  //
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
 
-  // const result = await execute({
-  //   schema: createdSchema,
-  //   document: parse(query),
-  // });
+    expect(result).toEqual({
+      data: {
+        getUserByUsername: {
+          hobbies: ['tap dancing', 'bowling'],
+        },
+      },
+    });
+  });
 
-  //     expect(result).toEqual({
-  //       data: {
-  //         user: {
-  //           hobbies: ['tap dancing', 'bowling'],
-  //         },
-  //       },
-  //     });
-  // });
+  it('Get array of objects', async () => {
+    const query = /* GraphQL */ `
+      {
+        getCompanyById(id: "binsol") {
+          offices {
+            street
+          }
+        }
+      }
+    `;
 
-  // it('Get array of objects', async () => {
-  //   const query = /* GraphQL */ `{
-  //     company (id: "binsol") {
-  //       offices{
-  //         street
-  //       }
-  //     }
-  //   }`;
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
 
-  //
+    expect(result).toEqual({
+      data: {
+        getCompanyById: {
+          offices: [
+            {
+              street: '122 Elk Rd Little',
+            },
+            {
+              street: '124 Elk Rd Little',
+            },
+          ],
+        },
+      },
+    });
+  });
 
-  // const result = await execute({
-  //   schema: createdSchema,
-  //   document: parse(query),
-  // });
+  it('Get single resource', async () => {
+    const query = /* GraphQL */ `
+      {
+        getUserByUsername(username: "arlene") {
+          name
+          address {
+            street
+          }
+          address2 {
+            city
+          }
+        }
+      }
+    `;
 
-  //     expect(result).toEqual({
-  //       data: {
-  //         company: {
-  //           offices: [
-  //             {
-  //               street: '122 Elk Rd Little',
-  //             },
-  //             {
-  //               street: '124 Elk Rd Little',
-  //             },
-  //           ],
-  //         },
-  //       },
-  //     });
-  // });
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
 
-  // it('Get single resource', async () => {
-  //   const query = /* GraphQL */ `{
-  //     user(username: "arlene"){
-  //       name
-  //       address{
-  //         street
-  //       },
-  //       address2{
-  //         city
-  //       }
-  //     }
-  //   }`;
+    expect(result).toEqual({
+      data: {
+        getUserByUsername: {
+          name: 'Arlene L McMahon',
+          address: {
+            street: '4656 Cherry Camp Road',
+          },
+          address2: {
+            city: 'Macomb',
+          },
+        },
+      },
+    });
+  });
 
-  //
+  it('Post resource', async () => {
+    const query = /* GraphQL */ `
+      mutation {
+        postUser(
+          input: {
+            name: "Mr. New Guy"
+            address: { street: "Home streeet 1", city: "Hamburg" }
+            employerId: "binsol"
+            hobbies: "soccer"
+          }
+        ) {
+          name
+        }
+      }
+    `;
 
-  // const result = await execute({
-  //   schema: createdSchema,
-  //   document: parse(query),
-  // });
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
 
-  //     expect(result).toEqual({
-  //       data: {
-  //         user: {
-  //           name: 'Arlene L McMahon',
-  //           address: {
-  //             street: '4656 Cherry Camp Road',
-  //           },
-  //           address2: {
-  //             city: 'Macomb',
-  //           },
-  //         },
-  //       },
-  //     });
-  // });
+    expect(result).toEqual({
+      data: {
+        postUser: {
+          name: 'Mr. New Guy',
+        },
+      },
+    });
+  });
 
-  // it('Post resource', async () => {
-  //   const query = /* GraphQL */ `mutation {
-  //     postUser (userInput: {
-  //       name: "Mr. New Guy"
-  //       address: {
-  //         street: "Home streeet 1"
-  //         city: "Hamburg"
-  //       }
-  //       employerId: "binsol"
-  //       hobbies: "soccer"
-  //     }) {
-  //       name
-  //     }
-  //   }`;
+  it('Post resource and get nested resource back', async () => {
+    const query = /* GraphQL */ `
+      mutation {
+        postUser(
+          input: {
+            name: "Mr. New Guy"
+            address: { street: "Home streeet 1", city: "Hamburg" }
+            employerId: "binsol"
+            hobbies: "soccer"
+          }
+        ) {
+          name
+          employerCompany {
+            ceoUser {
+              name
+            }
+          }
+        }
+      }
+    `;
 
-  //
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
 
-  // const result = await execute({
-  //   schema: createdSchema,
-  //   document: parse(query),
-  // });
+    expect(result).toEqual({
+      data: {
+        postUser: {
+          name: 'Mr. New Guy',
+          employerCompany: {
+            ceoUser: {
+              name: 'John C Barnes',
+            },
+          },
+        },
+      },
+    });
+  });
 
-  //     expect(result).toEqual({
-  //       data: {
-  //         postUser: {
-  //           name: 'Mr. New Guy',
-  //         },
-  //       },
-  //     });
-  // });
+  it('Post resource with non-application/json content-type request and response bodies', async () => {
+    const query = /* GraphQL */ `
+      mutation {
+        postPaper(input: "happy")
+      }
+    `;
 
-  // it('Post resource and get nested resource back', async () => {
-  //   const query = /* GraphQL */ `mutation {
-  //     postUser (userInput: {
-  //       name: "Mr. New Guy"
-  //       address: {
-  //         street: "Home streeet 1"
-  //         city: "Hamburg"
-  //       }
-  //       employerId: "binsol"
-  //       hobbies: "soccer"
-  //     }) {
-  //       name
-  //       employerCompany {
-  //         ceoUser {
-  //           name
-  //         }
-  //       }
-  //     }
-  //   }`;
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
 
-  //
+    expect(result).toEqual({
+      data: {
+        postPaper: 'You sent the paper idea: happy',
+      },
+    });
+  });
 
-  // const result = await execute({
-  //   schema: createdSchema,
-  //   document: parse(query),
-  // });
+  it(
+    'Operation id is correctly sanitized, schema names and fields are ' +
+      'correctly sanitized, path and query parameters are correctly sanitized, ' +
+      'received data is correctly sanitized',
+    async () => {
+      const query = /* GraphQL */ `
+        {
+          get_product_with_id(product_id: "this-path", input: { product_tag: "And a tag" }) {
+            product_id
+            product_tag
+          }
+        }
+      `;
 
-  //     expect(result).toEqual({
-  //       data: {
-  //         postUser: {
-  //           name: 'Mr. New Guy',
-  //           employerCompany: {
-  //             ceoUser: {
-  //               name: 'John C Barnes',
-  //             },
-  //           },
-  //         },
-  //       },
-  //     });
-  // });
+      const result = await execute({
+        schema: createdSchema,
+        document: parse(query),
+      });
 
-  // it('Post resource with non-application/json content-type request and response bodies', async () => {
-  //   const query = /* GraphQL */ `mutation {
-  //     postPaper(textPlainInput: "happy")
-  //   }`;
-  //
+      expect(result).toEqual({
+        data: {
+          get_product_with_id: {
+            product_id: 'this-path',
+            product_tag: 'And a tag',
+          },
+        },
+      });
+    }
+  );
 
-  // const result = await execute({
-  //   schema: createdSchema,
-  //   document: parse(query),
-  // });
+  it('Request data is correctly de-sanitized to be sent', async () => {
+    const query = /* GraphQL */ `
+      mutation {
+        post_product_with_id(input: { product_name: "Soccer ball", product_id: "ball123", product_tag: "sports" }) {
+          product_name
+          product_id
+          product_tag
+        }
+      }
+    `;
 
-  //     expect(result).toEqual({
-  //       data: {
-  //         postPaper: 'You sent the paper idea: happy',
-  //       },
-  //     });
-  // });
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
 
-  // it(
-  //   'Operation id is correctly sanitized, schema names and fields are ' +
-  //     'correctly sanitized, path and query parameters are correctly sanitized, ' +
-  //     'received data is correctly sanitized',
-  //   () => {
-  //     const query = /* GraphQL */ `{
-  //       productWithId(productId: "this-path", productTag: "And a tag") {
-  //         productId
-  //         productTag
-  //       }
-  //     }`;
-
-  //
-
-  // const result = await execute({
-  //   schema: createdSchema,
-  //   document: parse(query),
-  // });
-
-  //       expect(result).toEqual({
-  //         data: {
-  //           productWithId: {
-  //             productId: 'this-path',
-  //             productTag: 'And a tag',
-  //           },
-  //         },
-  //       });
-  //     });
-  //   }
-  // );
-
-  // it('Request data is correctly de-sanitized to be sent', async () => {
-  //   const query = /* GraphQL */ `mutation {
-  //     postProductWithId (productWithIdInput: {
-  //       productName: "Soccer ball"
-  //       productId: "ball123"
-  //       productTag:"sports"
-  //     }) {
-  //       productName
-  //       productId
-  //       productTag
-  //     }
-  //   }`;
-
-  //
-
-  // const result = await execute({
-  //   schema: createdSchema,
-  //   document: parse(query),
-  // });
-
-  //     expect(result).toEqual({
-  //       data: {
-  //         postProductWithId: {
-  //           productName: 'Soccer ball',
-  //           productId: 'ball123',
-  //           productTag: 'sports',
-  //         },
-  //       },
-  //     });
-  // });
+    expect(result).toEqual({
+      data: {
+        post_product_with_id: {
+          product_name: 'Soccer ball',
+          product_id: 'ball123',
+          product_tag: 'sports',
+        },
+      },
+    });
+  });
 
   // it('Fields with arbitrary JSON (e.g., maps) can be returned', async () => {
   //   // Testing additionalProperties field in schemas
-  //   const query = /* GraphQL */ `{
-  //     cars {
+  //   const query1 = /* GraphQL */ `{
+  //     getAllCars {
   //       tags
   //     }
   //   }`;
 
   //   // Testing empty properties field
-  //   const query2 = `{
-  //     cars {
+  //   const query2 = /* GraphQL */ `{
+  //     getAllCars {
   //       features
   //     }
   //   }`;
 
-  //   const promise = graphql({
+  //   const [result1, result2] = await Promise.all([query1, query2].map(query => execute({
   //     schema: createdSchema,
-  //     source: query,
-  //   }).then((result: any) => {
-  //     expect(result).toEqual({
-  //       data: {
-  //         cars: [
-  //           {
-  //             tags: null,
+  //     document: parse(query),
+  //   })));
+
+  //   expect(result1).toEqual({
+  //     data: {
+  //       getAllCars: [
+  //         {
+  //           tags: null,
+  //         },
+  //         {
+  //           tags: {
+  //             speed: 'extreme',
   //           },
-  //           {
-  //             tags: {
-  //               speed: 'extreme',
-  //             },
+  //         },
+  //         {
+  //           tags: {
+  //             impression: 'decadent',
+  //             condition: 'slightly beat-up',
   //           },
-  //           {
-  //             tags: {
-  //               impression: 'decadent',
-  //               condition: 'slightly beat-up',
-  //             },
+  //         },
+  //         {
+  //           tags: {
+  //             impression: 'decadent',
   //           },
-  //           {
-  //             tags: {
-  //               impression: 'decadent',
-  //             },
-  //           },
-  //         ],
-  //       },
-  //     });
+  //         },
+  //       ],
+  //     },
   //   });
 
-  //   const promise2 = graphql({
-  //     schema: createdSchema,
-  //     source: query2,
-  //   }).then((result: any) => {
-  //     expect(result).toEqual({
-  //       data: {
-  //         cars: [
-  //           {
-  //             features: {
-  //               color: 'banana yellow to be specific',
-  //             },
+  //   expect(result2).toEqual({
+  //     data: {
+  //       getAllCars: [
+  //         {
+  //           features: {
+  //             color: 'banana yellow to be specific',
   //           },
-  //           {
-  //             features: null,
-  //           },
-  //           {
-  //             features: null,
-  //           },
-  //           {
-  //             features: null,
-  //           },
-  //         ],
-  //       },
-  //     });
+  //         },
+  //         {
+  //           features: null,
+  //         },
+  //         {
+  //           features: null,
+  //         },
+  //         {
+  //           features: null,
+  //         },
+  //       ],
+  //     },
   //   });
-
-  //   return Promise.all([promise, promise2]);
   // });
 
   // it('Capitalized enum values can be returned', async () => {
