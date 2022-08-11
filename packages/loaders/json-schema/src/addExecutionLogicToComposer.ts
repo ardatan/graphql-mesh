@@ -266,7 +266,7 @@ ${operationConfig.description || ''}
             method: httpMethod,
           });
         }
-        const response = await fetch(fullPath, requestInit);
+        const response = await fetch(fullPath, requestInit, context);
         // If return type is a file
         if (field.type.getTypeName() === 'File') {
           return response.blob();
