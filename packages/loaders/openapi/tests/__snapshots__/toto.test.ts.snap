@@ -955,9 +955,7 @@ Object {
       },
       "query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n": Object {
         "additionalProperties": Object {
-          "additionalProperties": Object {
-            "type": "string",
-          },
+          "additionalProperties": true,
           "title": "query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties",
           "type": "object",
         },
@@ -965,9 +963,7 @@ Object {
         "type": "object",
       },
       "query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties": Object {
-        "additionalProperties": Object {
-          "type": "string",
-        },
+        "additionalProperties": true,
         "title": "query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties",
         "type": "object",
       },
