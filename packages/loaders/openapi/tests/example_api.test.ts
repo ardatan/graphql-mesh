@@ -1233,7 +1233,7 @@ describe('example_api', () => {
       oasFilePath: '../../../handlers/openapi/test/fixtures/example_oas.json',
       cwd: __dirname,
       fetch,
-      schemaHeaders: {
+      operationHeaders: {
         exampleHeader: 'some-value',
       },
       queryParams: {
