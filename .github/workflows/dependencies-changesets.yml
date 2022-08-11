@@ -5,16 +5,7 @@ on:
       - master
 
 jobs:
-  changeset:
-    runs-on: ubuntu-latest
-    if: github.event.pull_request.head.repo.full_name == github.repository
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Create/Update Changesets
-        uses: 'the-guild-org/changesets-dependencies-action@main'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  changesets-dependencies:
+    uses: the-guild-org/shared-config/.github/workflows/changesets-dependencies.yaml@pipelines
+    secrets:
+      githubToken: ${{ secrets.GITHUB_TOKEN }}
