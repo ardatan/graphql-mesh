@@ -24,6 +24,7 @@ interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
   baseUrl?: string;
   schemaHeaders?: Record<string, string>;
   operationHeaders?: OperationHeadersConfiguration;
+  queryParams?: Record<string, any>;
   selectQueryOrMutationField?: OpenAPILoaderSelectQueryOrMutationFieldConfig[];
   logger?: Logger;
 }
@@ -36,6 +37,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
   baseUrl,
   schemaHeaders,
   operationHeaders,
+  queryParams = {},
   selectQueryOrMutationField = [],
   logger = new DefaultLogger('getJSONSchemaOptionsFromOpenAPIOptions'),
 }: GetJSONSchemaOptionsFromOpenAPIOptionsParams) {
@@ -116,7 +118,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
               if (requestSchema.properties.__typename) {
                 delete requestSchema.properties.__typename;
               }
-              if (paramObj.required) {
+              if (paramObj.required && !(paramObj.name in queryParams)) {
                 requestSchema.required = requestSchema.required || [];
                 requestSchema.required.push(paramObj.name);
               }

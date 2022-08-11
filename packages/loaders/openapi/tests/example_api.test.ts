@@ -1226,9 +1226,10 @@ describe('example_api', () => {
   it('Define header and query options', async () => {
     const options: OpenAPILoaderOptions = {
       baseUrl,
-      oasFilePath: join(__dirname, '../../../handlers/openapi/test/fixtures/example_oas.json'),
+      oasFilePath: '../../../handlers/openapi/test/fixtures/example_oas.json',
+      cwd: __dirname,
       fetch,
-      schemaHeaders: {
+      operationHeaders: {
         exampleHeader: 'some-value',
       },
       queryParams: {
