@@ -303,10 +303,11 @@ ${operationConfig.description || ''}
             return createError(
               `HTTP Error: ${response.status}, Could not invoke operation ${operationConfig.method} ${operationConfig.path}`,
               {
-                url: fullPath,
                 method: httpMethod,
-                ...(response.statusText ? { status: response.statusText } : {}),
-                responseJson,
+                url: fullPath,
+                statusCode: response.status,
+                statusText: response.statusText,
+                responseBody: responseJson,
               }
             );
           }

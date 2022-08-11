@@ -1544,7 +1544,7 @@ describe('example_api', () => {
     delete extensions.responseHeaders;
     expect(extensions).toEqual({
       method: 'GET',
-      path: '/users/{username}',
+      url: 'http://localhost:3002/api/users/abcdef',
       statusCode: 404,
       statusText: 'Not Found',
       responseBody: {
