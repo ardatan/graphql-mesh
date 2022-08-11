@@ -1534,7 +1534,7 @@ type mutation_translateText_translations_items {
 
 type mutation_translateText_translations_items_detected_source_language {
   SourceLanguage: SourceLanguage
-  additionalProperties: JSON
+  JSON: JSON
 }
 
 \\"Language of the text to be translated. Options currently available:\\\\n * \`BG\` - Bulgarian\\\\n * \`CS\` - Czech\\\\n * \`DA\` - Danish\\\\n * \`DE\` - German\\\\n * \`EL\` - Greek\\\\n * \`EN\` - English\\\\n * \`ES\` - Spanish\\\\n * \`ET\` - Estonian\\\\n * \`FI\` - Finnish\\\\n * \`FR\` - French\\\\n * \`HU\` - Hungarian\\\\n * \`ID\` - Indonesian\\\\n * \`IT\` - Italian\\\\n * \`JA\` - Japanese\\\\n * \`LT\` - Lithuanian\\\\n * \`LV\` - Latvian\\\\n * \`NL\` - Dutch\\\\n * \`PL\` - Polish\\\\n * \`PT\` - Portuguese (all Portuguese varieties mixed)\\\\n * \`RO\` - Romanian\\\\n * \`RU\` - Russian\\\\n * \`SK\` - Slovak\\\\n * \`SL\` - Slovenian\\\\n * \`SV\` - Swedish\\\\n * \`TR\` - Turkish\\\\n * \`ZH\` - Chinese\\\\n\\\\nIf this parameter is omitted, the API will attempt to detect the language of the text and translate it.\\"

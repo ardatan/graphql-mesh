@@ -832,12 +832,22 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
                   inputFieldMap[fieldName] = inputTCFieldMap[fieldName];
                 }
               }
-            } else {
+            } else if (Object.keys(fieldMap).length > 0) {
               fieldMap.additionalProperties = {
                 type: GraphQLJSON,
                 resolve: (root: any) => root,
               };
               inputFieldMap = {};
+            } else {
+              const typeComposer = schemaComposer.getAnyTC(GraphQLJSON);
+              schemaComposer.delete((subSchemaAndTypeComposers.input as ObjectTypeComposer)?.getTypeName?.());
+              schemaComposer.delete((subSchemaAndTypeComposers.output as ObjectTypeComposer)?.getTypeName?.());
+              return {
+                input: typeComposer,
+                output: typeComposer,
+                description: subSchemaAndTypeComposers.description,
+                nullable: subSchemaAndTypeComposers.nullable,
+              };
             }
           }
 

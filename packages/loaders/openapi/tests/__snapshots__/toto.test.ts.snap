@@ -1158,11 +1158,7 @@ type FileGetWithI18nDTO {
   size: Int
   url: String
   contentType: String
-  i18n: query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties
-}
-
-type query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties {
-  additionalProperties: JSON
+  i18n: JSON
 }
 
 \\"The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).\\"
@@ -1186,7 +1182,7 @@ type FolderGetWithI18nDTO {
   lastUpdateUserId: String
   fileCount: Int
   childFolderCount: Int
-  i18n: query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties
+  i18n: JSON
 }
 
 type Mutation {
@@ -1218,14 +1214,12 @@ input FileCreateDTO_Input {
   punchedFenced: Boolean
   geoFenced: Boolean
   pinned: Boolean
-  i18n: query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties_Input2
+  i18n: JSON
   type: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_type_items]!
   size: Int
   url: String
   contentType: String
 }
-
-scalar query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties_Input2
 
 input ResourceCreateDTO_Input {
   parentFolderId: String
@@ -1238,7 +1232,7 @@ input ResourceCreateDTO_Input {
   punchedFenced: Boolean
   geoFenced: Boolean
   pinned: Boolean
-  i18n: query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties_Input2
+  i18n: JSON
   type: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_type_items]!
 }
 
