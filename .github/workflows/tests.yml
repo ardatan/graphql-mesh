@@ -1,4 +1,4 @@
-name: Tests
+name: pr
 
 on:
   pull_request:
@@ -7,7 +7,6 @@ on:
 
 jobs:
   lint:
-    name: Lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Master
@@ -37,7 +36,6 @@ jobs:
       - name: 🧹 Prettier Check
         run: yarn prettier:check
   typecheck:
-    name: TypeScript Type Checking
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Master
@@ -64,7 +62,7 @@ jobs:
         run: yarn transpile-ts --noEmit # We need build for playground
 
   test:
-    name: Testing on Node ${{matrix.node-version}} & ${{matrix.os}}
+    name: ${{matrix.node-version}} & ${{matrix.os}}
     timeout-minutes: 60
     runs-on: ${{matrix.os}}
     strategy:
