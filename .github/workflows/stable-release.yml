@@ -6,6 +6,7 @@ on:
 
 jobs:
   stable:
+    id: release
     uses: the-guild-org/shared-config/.github/workflows/release-stable.yml@main
     with:
       releaseScript: release
