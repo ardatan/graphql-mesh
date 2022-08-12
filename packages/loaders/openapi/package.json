@@ -39,7 +39,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@whatwg-node/fetch": "0.2.8",
+    "@whatwg-node/fetch": "0.2.9",
     "@graphql-tools/utils": "8.10.0"
   },
   "publishConfig": {

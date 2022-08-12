@@ -33,8 +33,8 @@
     "@graphql-mesh/utils": "0.37.8",
     "graphql-transform-federation": "2.2.0",
     "@graphql-tools/utils": "8.10.0",
-    "@graphql-tools/stitching-directives": "2.3.3",
-    "@graphql-tools/delegate": "9.0.1",
+    "@graphql-tools/stitching-directives": "2.3.6",
+    "@graphql-tools/delegate": "9.0.3",
     "tslib": "^2.4.0"
   },
   "publishConfig": {

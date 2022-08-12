@@ -37,7 +37,7 @@
     "postgraphile": "4.12.11",
     "pg": "^8.6.0",
     "tslib": "^2.4.0",
-    "@graphql-tools/delegate": "9.0.1"
+    "@graphql-tools/delegate": "9.0.3"
   },
   "publishConfig": {
     "access": "public",
