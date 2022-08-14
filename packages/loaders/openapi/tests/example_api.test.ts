@@ -1,4 +1,4 @@
-import { execute, graphql, GraphQLObjectType, GraphQLSchema, parse, validate } from 'graphql';
+import { execute, graphql, GraphQLInputObjectType, GraphQLObjectType, GraphQLSchema, parse, validate } from 'graphql';
 import 'json-bigint-patch';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 
@@ -1553,172 +1553,6 @@ describe('example_api', () => {
     });
   });
 
-  // it('Option customResolver', async () => {
-  //   const options: Options<any, any, any> = {
-  //     customResolvers: {
-  //       'Example API': {
-  //         '/users/{username}': {
-  //           get: () => {
-  //             return {
-  //               name: 'Jenifer Aldric',
-  //             };
-  //           },
-  //         },
-  //       },
-  //     },
-  //     fetch,
-  //   };
-
-  //   const query = /* GraphQL */ `query {
-  //     user(username: "abcdef") {
-  //       name
-  //     }
-  //   }`;
-
-  //   return openAPIToGraphQL.createGraphQLSchema(oas, options).then(({ schema }) => {
-  //     const ast = parse(query);
-  //     const errors = validate(schema, ast);
-  //     expect(errors).toEqual([]);
-  //     return graphql({ schema, source: query }).then((result: any) => {
-  //       expect(result).toEqual({
-  //         data: {
-  //           user: {
-  //             name: 'Jenifer Aldric',
-  //           },
-  //         },
-  //       });
-  //     });
-  // });
-
-  // it('Option customResolver with links', async () => {
-  //   const options: Options<any, any, any> = {
-  //     customResolvers: {
-  //       'Example API': {
-  //         '/users/{username}': {
-  //           get: () => {
-  //             return {
-  //               name: 'Jenifer Aldric',
-  //               employerId: 'binsol',
-  //             };
-  //           },
-  //         },
-  //       },
-  //     },
-  //     fetch,
-  //   };
-
-  //   const query = /* GraphQL */ `query {
-  //     user(username: "abcdef") {
-  //       name
-  //       employerId
-  //       employerCompany {
-  //         name
-  //         ceoUsername
-  //         ceoUser {
-  //           name
-  //         }
-  //       }
-  //     }
-  //   }`;
-
-  //   return openAPIToGraphQL.createGraphQLSchema(oas, options).then(({ schema }) => {
-  //     const ast = parse(query);
-  //     const errors = validate(schema, ast);
-  //     expect(errors).toEqual([]);
-  //     return graphql({ schema, source: query }).then((result: any) => {
-  //       expect(result).toEqual({
-  //         data: {
-  //           user: {
-  //             name: 'Jenifer Aldric',
-  //             employerId: 'binsol',
-  //             employerCompany: {
-  //               name: 'Binary Solutions',
-  //               ceoUsername: 'johnny',
-  //               ceoUser: {
-  //                 name: 'Jenifer Aldric',
-  //               },
-  //             },
-  //           },
-  //         },
-  //       });
-  //     });
-  // });
-
-  // it('Option customResolver using resolver arguments', async () => {
-  //   const options: Options<any, any, any> = {
-  //     customResolvers: {
-  //       'Example API': {
-  //         '/users/{username}': {
-  //           get: (obj, args: any, context, info) => {
-  //             return {
-  //               name: args.username,
-  //             };
-  //           },
-  //         },
-  //       },
-  //     },
-  //     fetch,
-  //   };
-
-  //   const query = /* GraphQL */ `query {
-  //     user(username: "abcdef") {
-  //       name
-  //     }
-  //   }`;
-
-  //   return openAPIToGraphQL.createGraphQLSchema(oas, options).then(({ schema }) => {
-  //     const ast = parse(query);
-  //     const errors = validate(schema, ast);
-  //     expect(errors).toEqual([]);
-  //     return graphql({ schema, source: query }).then((result: any) => {
-  //       expect(result).toEqual({
-  //         data: {
-  //           user: {
-  //             name: 'abcdef',
-  //           },
-  //         },
-  //       });
-  //     });
-  // });
-
-  // it('Option customResolver using resolver arguments that are sanitized', async () => {
-  //   const options: Options<any, any, any> = {
-  //     customResolvers: {
-  //       'Example API': {
-  //         '/products/{product-id}': {
-  //           get: (obj, args, context, info) => {
-  //             return {
-  //               // Note that the argument name is sanitized
-  //               productName: 'abcdef',
-  //             };
-  //           },
-  //         },
-  //       },
-  //     },
-  //     fetch,
-  //   };
-
-  //   const query = /* GraphQL */ `{
-  //     productWithId (productId: "123" productTag: "blah") {
-  //       productName
-  //     }
-  //   }`;
-
-  //   return openAPIToGraphQL.createGraphQLSchema(oas, options).then(({ schema }) => {
-  //     const ast = parse(query);
-  //     const errors = validate(schema, ast);
-  //     expect(errors).toEqual([]);
-  //     return graphql({ schema, source: query }).then((result: any) => {
-  //       expect(result).toEqual({
-  //         data: {
-  //           productWithId: {
-  //             productName: 'abcdef',
-  //           },
-  //         },
-  //       });
-  //     });
-  // });
-
   // it('Option addLimitArgument', async () => {
   //   const options: Options<any, any, any> = {
   //     addLimitArgument: true,
@@ -1820,364 +1654,210 @@ describe('example_api', () => {
   //     });
   // });
 
-  // it('Content property in parameter object', async () => {
-  //   const query = /* GraphQL */ `{
-  //     coordinates(lat: 3, long: 5) {
-  //       lat,
-  //       long
-  //     }
-  //   }`;
+  it('Content property in parameter object', async () => {
+    const query = /* GraphQL */ `
+      {
+        getNearestCoffeeMachine(input: { lat: 3, long: 5 }) {
+          lat
+          long
+        }
+      }
+    `;
 
-  //
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
 
-  // const result = await execute({
-  //   schema: createdSchema,
-  //   document: parse(query),
-  // });
+    expect(result).toEqual({
+      data: {
+        getNearestCoffeeMachine: {
+          lat: 8,
+          long: 10,
+        },
+      },
+    });
+  });
 
-  //     expect(result).toEqual({
-  //       data: {
-  //         coordinates: {
-  //           lat: 8,
-  //           long: 10,
-  //         },
-  //       },
-  //     });
-  // });
+  it('Handle objects without defined properties with arbitrary GraphQL JSON type', async () => {
+    const query = /* GraphQL */ `
+      {
+        getOfficeTrashCan(username: "arlene") {
+          contents
+        }
+        getAllTrashCans {
+          contents
+        }
+      }
+    `;
 
-  // it('Handle objects without defined properties with arbitrary GraphQL JSON type', async () => {
-  //   const query = /* GraphQL */ `{
-  //     trashcan(username:"arlene") {
-  //       brand,
-  //       contents
-  //     }
-  //     trashcans {
-  //       contents
-  //     }
-  //   }`;
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
 
-  //
+    expect(result).toEqual({
+      data: {
+        getOfficeTrashCan: {
+          contents: [
+            {
+              type: 'apple',
+              message: 'Half-eaten',
+            },
+            {
+              type: 'sock',
+              message: 'Lost one',
+            },
+          ],
+        },
+        getAllTrashCans: [
+          {
+            contents: [
+              {
+                type: 'apple',
+                message: 'Half-eaten',
+              },
+              {
+                type: 'sock',
+                message: 'Lost one',
+              },
+            ],
+          },
+          {
+            contents: [
+              {
+                type: 'sock',
+                message: 'Lost one',
+              },
+            ],
+          },
+          {
+            contents: [],
+          },
+          {
+            contents: [
+              {
+                type: 'tissue',
+                message: 'Used',
+              },
+            ],
+          },
+        ],
+      },
+    });
+  });
 
-  // const result = await execute({
-  //   schema: createdSchema,
-  //   document: parse(query),
-  // });
+  it('Throw on unparsable strings value for GraphQL JSON type objects', async () => {
+    const query = /* GraphQL */ `
+      {
+        getOfficeTrashCan(username: "arlene") {
+          brand
+        }
+      }
+    `;
 
-  //     expect(result).toEqual({
-  //       data: {
-  //         trashcan: {
-  //           brand: 'Garbage Emporium',
-  //           contents: [
-  //             {
-  //               type: 'apple',
-  //               message: 'Half-eaten',
-  //             },
-  //             {
-  //               type: 'sock',
-  //               message: 'Lost one',
-  //             },
-  //           ],
-  //         },
-  //         trashcans: [
-  //           {
-  //             contents: [
-  //               {
-  //                 type: 'apple',
-  //                 message: 'Half-eaten',
-  //               },
-  //               {
-  //                 type: 'sock',
-  //                 message: 'Lost one',
-  //               },
-  //             ],
-  //           },
-  //           {
-  //             contents: [
-  //               {
-  //                 type: 'sock',
-  //                 message: 'Lost one',
-  //               },
-  //             ],
-  //           },
-  //           {
-  //             contents: [],
-  //           },
-  //           {
-  //             contents: [
-  //               {
-  //                 type: 'tissue',
-  //                 message: 'Used',
-  //               },
-  //             ],
-  //           },
-  //         ],
-  //       },
-  //     });
-  // });
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
 
-  // it('Handle input objects without defined properties with arbitrary GraphQL JSON type', async () => {
-  //   const query = /* GraphQL */ `mutation {
-  //     postOfficeTrashCan(trashcan2Input: {
-  //       type: "sandwich",
-  //       message: "moldy",
-  //       tasteRating: 0
-  //     }, username: "arlene") {
-  //       brand
-  //       contents
-  //     }
-  //   }`;
+    const errorMessage = result.errors[0].message;
+    expect(errorMessage).toEqual("'Garbage Emporium' is not valid!");
+  });
 
-  //
+  it('Handle input objects without defined properties with arbitrary GraphQL JSON type', async () => {
+    const query = /* GraphQL */ `
+      mutation {
+        postOfficeTrashCan(input: { type: "sandwich", message: "moldy", tasteRating: 0 }, username: "arlene") {
+          # brand
+          contents
+        }
+      }
+    `;
 
-  // const result = await execute({
-  //   schema: createdSchema,
-  //   document: parse(query),
-  // });
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
 
-  //     expect(result).toEqual({
-  //       data: {
-  //         postOfficeTrashCan: {
-  //           brand: 'Garbage Emporium',
-  //           contents: [
-  //             {
-  //               type: 'apple',
-  //               message: 'Half-eaten',
-  //             },
-  //             {
-  //               type: 'sock',
-  //               message: 'Lost one',
-  //             },
-  //             {
-  //               type: 'sandwich',
-  //               message: 'moldy',
-  //               tasteRating: 0,
-  //             },
-  //           ],
-  //         },
-  //       },
-  //     });
-  // });
+    expect(result).toEqual({
+      data: {
+        postOfficeTrashCan: {
+          contents: [
+            {
+              type: 'apple',
+              message: 'Half-eaten',
+            },
+            {
+              type: 'sock',
+              message: 'Lost one',
+            },
+            {
+              type: 'sandwich',
+              message: 'moldy',
+              tasteRating: 0,
+            },
+          ],
+        },
+      },
+    });
+  });
 
-  // it('Generate "Equivalent to..." messages', async () => {
-  //   const options: Options<any, any, any> = {
-  //     // Used to simplify test. Otherwise viewers will polute query/mutation fields.
-  //     viewer: false,
-  //     fetch,
-  //   };
+  it('Throw on unparsable strings value for GraphQL JSON type input', async () => {
+    const query = /* GraphQL */ `
+      mutation {
+        postOfficeTrashCan(input: { type: "sandwich", message: "moldy", tasteRating: 0 }, username: "arlene") {
+          brand
+        }
+      }
+    `;
 
-  //   // Check if query/mutation fields have the message
-  //   const query = /* GraphQL */ `query {
-  //     __schema {
-  //       queryType {
-  //         fields {
-  //           type {
-  //             name
-  //           }
-  //           description
-  //         }
-  //       }
-  //       mutationType {
-  //         fields {
-  //           type {
-  //             name
-  //           }
-  //           description
-  //         }
-  //       }
-  //     }
-  //   }`;
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
 
-  //   const promise = openAPIToGraphQL.createGraphQLSchema(oas, options).then(({ schema }) => {
-  //     const ast = parse(query);
-  //     const errors = validate(schema, ast);
-  //     expect(errors).toEqual([]);
-  //     return graphql({ schema, source: query }).then((result: any) => {
-  //       // Make sure all query fields have the message
-  //       expect(
-  //         result.data.__schema.queryType.fields.every((field: { description: string | string[] }) => {
-  //           return field.description.includes('\n\nEquivalent to GET ');
-  //         })
-  //       ).toBe(true);
+    const errorMessage = result.errors[0].message;
+    expect(errorMessage).toBeDefined();
+  });
 
-  //       // Make sure all mutation fields have the message
-  //       expect(
-  //         result.data.__schema.mutationType.fields.every((field: { description: string | string[] }) => {
-  //           return field.description.includes('\n\nEquivalent to ');
-  //         })
-  //       ).toBe(true);
+  it('UUID format becomes GraphQL UUID type', async () => {
+    const query = /* GraphQL */ `
+      {
+        __type(name: "company") {
+          fields {
+            name
+            type {
+              name
+              kind
+            }
+          }
+        }
+      }
+    `;
 
-  //       // Check full message on a particular field
-  //       expect(
-  //         result.data.__schema.queryType.fields.find((field: { type: { name: string } }) => {
-  //           return field.type.name === 'Car';
-  //         })
-  //       ).toEqual({
-  //         type: {
-  //           name: 'Car',
-  //         },
-  //         description: 'Returns a car to test nesting of sub operations\n\nEquivalent to GET /users/{username}/car',
-  //       });
-  //     });
-  //   });
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
 
-  //   // Check link field description
-  //   const query2 = `query {
-  //     __type(name: "User") {
-  //       fields {
-  //         type {
-  //           name
-  //         }
-  //         description
-  //       }
-  //     }
-  //   }`;
-
-  //   const promise2 = graphql({
-  //     schema: createdSchema,
-  //     source: query2,
-  //   }).then((result: any) => {
-  //     expect(
-  //       result.data.__type.fields.find((field: { type: { name: string } }) => {
-  //         return field.type.name === 'Company';
-  //       })
-  //     ).toEqual({
-  //       type: {
-  //         name: 'Company',
-  //       },
-  //       description: "Allows to fetch the user's employer company.\n\nEquivalent to GET /companies/{id}",
-  //     });
-  //   });
-
-  //   return Promise.all([promise, promise2]);
-  // });
-
-  // it('Withhold "Equivalent to..." messages', async () => {
-  //   const options: Options<any, any, any> = {
-  //     // Used to simplify test. Otherwise viewers will polute query/mutation fields.
-  //     viewer: false,
-  //     equivalentToMessages: false,
-  //     fetch,
-  //   };
-
-  //   // Check query/mutation field descriptions
-  //   const query = /* GraphQL */ `query {
-  //     __schema {
-  //       queryType {
-  //         fields {
-  //           type {
-  //             name
-  //           }
-  //           description
-  //         }
-  //       }
-  //       mutationType {
-  //         fields {
-  //           type {
-  //             name
-  //           }
-  //           description
-  //         }
-  //       }
-  //     }
-  //   }`;
-
-  //   const promise = openAPIToGraphQL.createGraphQLSchema(oas, options).then(({ schema }) => {
-  //     const ast = parse(query);
-  //     const errors = validate(schema, ast);
-  //     expect(errors).toEqual([]);
-  //     return graphql({ schema, source: query }).then((result: any) => {
-  //       expect(
-  //         result.data.__schema.queryType.fields.every((field: { description: string | string[] }) => {
-  //           return field.description.includes('\n\nEquivalent to GET ');
-  //         })
-  //       ).toBe(false);
-
-  //       expect(
-  //         result.data.__schema.mutationType.fields.every((field: { description: string | string[] }) => {
-  //           return field.description.includes('\n\nEquivalent to ');
-  //         })
-  //       ).toBe(false);
-  //     });
-  //   });
-
-  //   // Check link field description
-  //   const query2 = `query {
-  //     __type(name: "User") {
-  //       fields {
-  //         type {
-  //           name
-  //         }
-  //         description
-  //       }
-  //     }
-  //   }`;
-
-  //   const promise2 = openAPIToGraphQL.createGraphQLSchema(oas, options).then(({ schema }) => {
-  //     const ast = parse(query);
-  //     const errors = validate(schema, ast);
-  //     expect(errors).toEqual([]);
-  //     return graphql({
-  //       schema,
-  //       source: query2,
-  //     }).then((result: any) => {
-  //       expect(
-  //         result.data.__type.fields.find((field: { type: { name: string } }) => {
-  //           return field.type.name === 'Company';
-  //         })
-  //       ).toEqual({
-  //         type: {
-  //           name: 'Company',
-  //         },
-  //         description: "Allows to fetch the user's employer company.",
-  //       });
-  //     });
-  //   });
-
-  //   return Promise.all([promise, promise2]);
-  // });
-
-  // it('UUID format becomes GraphQL ID type', async () => {
-  //   const query = /* GraphQL */ `{
-  //     __type(name: "Company") {
-  //       fields {
-  //         name
-  //         type {
-  //           name
-  //           kind
-  //         }
-  //       }
-  //     }
-  //   }`;
-
-  //
-
-  // const result = await execute({
-  //   schema: createdSchema,
-  //   document: parse(query),
-  // });
-
-  //     expect(
-  //       result.data.__type.fields.find((field: { name: string }) => {
-  //         return field.name === 'id';
-  //       })
-  //     ).toEqual({
-  //       name: 'id',
-  //       type: {
-  //         name: 'ID',
-  //         kind: 'SCALAR',
-  //       },
-  //     });
-  // });
+    expect(
+      (result.data.__type as any).fields.find((field: { name: string }) => {
+        return field.name === 'id';
+      })
+    ).toEqual({
+      name: 'id',
+      type: {
+        name: 'UUID',
+        kind: 'SCALAR',
+      },
+    });
+  });
 
   // it('Option idFormats', async () => {
-  //   const options: Options<any, any, any> = {
-  //     idFormats: ['specialIdFormat'],
-  //     fetch,
-  //   };
-
-  //   // Check query/mutation field descriptions
+  //   // NOTE: This test requires feature currently missing in this handler
   //   const query = /* GraphQL */ `{
-  //     __type(name: "PatentWithId") {
+  //     __type(name: "patent_with_id") {
   //       fields {
   //         name
   //         type {
@@ -2191,35 +1871,38 @@ describe('example_api', () => {
   //     }
   //   }`;
 
-  //   return openAPIToGraphQL.createGraphQLSchema(oas, options).then(({ schema }) => {
-  //     const ast = parse(query);
-  //     const errors = validate(schema, ast);
-  //     expect(errors).toEqual([]);
-  //     return graphql({ schema, source: query }).then((result: any) => {
-  //       expect(
-  //         result.data.__type.fields.find((field: { name: string }) => {
-  //           return field.name === 'patentId';
-  //         })
-  //       ).toEqual({
-  //         name: 'patentId',
-  //         type: {
-  //           kind: 'NON_NULL',
-  //           ofType: {
-  //             name: 'ID',
-  //             kind: 'SCALAR',
-  //           },
-  //         },
-  //       });
-  //     });
+  //   const ast = parse(query);
+  //   const errors = validate(createdSchema, ast);
+  //   expect(errors).toEqual([]);
+
+  //   const result = await execute({
+  //     schema: createdSchema,
+  //     document: parse(query),
+  //   });
+
+  //   expect(
+  //     (result.data.__type as any).fields.find((field: { name: string }) => {
+  //       return field.name === 'patent_id';
+  //     })
+  //   ).toEqual({
+  //     name: 'patent_id',
+  //     type: {
+  //       kind: 'NON_NULL',
+  //       ofType: {
+  //         name: 'UUID',
+  //         kind: 'SCALAR',
+  //       },
+  //     },
+  //   });
   // });
 
-  // it('Required properties for input object types', async () => {
-  //   const userInputType = createdSchema.getType('UserInput') as GraphQLInputObjectType;
+  it('Required properties for input object types', async () => {
+    const userInputType = createdSchema.getType('user_Input') as GraphQLInputObjectType;
 
-  //   // The exclamation mark shows that it is a required (non-nullable) property
-  //   expect(userInputType.toConfig().fields.address.type.toString()).toEqual('AddressInput!');
-  //   expect(userInputType.toConfig().fields.address2.type.toString()).toEqual('AddressInput');
-  // });
+    // The exclamation mark shows that it is a required (non-nullable) property
+    expect(userInputType.toConfig().fields.address.type.toString()).toEqual('address_Input!');
+    expect(userInputType.toConfig().fields.address2.type.toString()).toEqual('address_Input');
+  });
 
   // it('Option selectQueryOrMutationField', async () => {
   //   const query = /* GraphQL */ `{
