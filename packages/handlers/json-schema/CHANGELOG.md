@@ -32,11 +32,11 @@
 
   ```ts
   export default function myOperationHeaders({ context }: ResolverData) {
-    const someToken = context.request.headers.get("some-token");
-    const anotherToken = await someLogicThatReturnsAnotherToken(someToken);
+    const someToken = context.request.headers.get('some-token')
+    const anotherToken = await someLogicThatReturnsAnotherToken(someToken)
     return {
-      "x-bar-token": anotherToken
-    };
+      'x-bar-token': anotherToken
+    }
   }
   ```
 
