@@ -28,6 +28,7 @@ import {
   GraphQLDateTime,
   GraphQLEmailAddress,
   GraphQLJSON,
+  GraphQLUUID,
   GraphQLIPv4,
   GraphQLIPv6,
   GraphQLTime,
@@ -323,6 +324,15 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             }
             case 'uri': {
               const typeComposer = schemaComposer.getAnyTC(GraphQLURL);
+              return {
+                input: typeComposer,
+                output: typeComposer,
+                description: subSchema.description,
+                nullable: subSchema.nullable,
+              };
+            }
+            case 'uuid': {
+              const typeComposer = schemaComposer.getAnyTC(GraphQLUUID);
               return {
                 input: typeComposer,
                 output: typeComposer,

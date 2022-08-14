@@ -23,6 +23,7 @@ const JSONSchemaStringFormats = [
   'ipv4',
   'ipv6',
   'uri',
+  'uuid',
 ];
 
 const AnySchema = {
