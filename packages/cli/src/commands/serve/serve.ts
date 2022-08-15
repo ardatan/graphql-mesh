@@ -177,7 +177,10 @@ export async function serveMesh(
             }
           }
           const { getEnveloped } = await mesh$;
-          const { schema, execute, subscribe, contextFactory, parse, validate } = getEnveloped(request);
+          const { schema, execute, subscribe, contextFactory, parse, validate } = getEnveloped({
+            // req object holds the Node request used for extracting the headers (see packages/runtime/src/get-mesh.ts)
+            req: request,
+          });
 
           const args = {
             schema,
