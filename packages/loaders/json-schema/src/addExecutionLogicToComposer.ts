@@ -421,12 +421,13 @@ ${operationConfig.description || ''}
       interpolationStrings.push(operationConfig.path);
 
       if ('links' in operationConfig) {
+        const queryFields = schemaComposer.Query.getFields();
         for (const linkName in operationConfig.links) {
           const linkObj = operationConfig.links[linkName];
           const typeTC = schemaComposer.getOTC(field.type.getTypeName());
           typeTC.addFields({
             [linkName]: () => {
-              const targetField = schemaComposer.Query.getField(linkObj.fieldName);
+              const targetField = queryFields[linkObj.fieldName] || schemaComposer.Mutation.getField(linkObj.fieldName);
               return {
                 ...targetField,
                 args: {},
@@ -475,11 +476,13 @@ ${operationConfig.description || ''}
                   },
                 });
               }
+              const queryFields = schemaComposer.Query.getFields();
               for (const linkName in responseConfig.links || []) {
                 typeTC.addFields({
                   [linkName]: () => {
                     const linkObj = responseConfig.links[linkName];
-                    const targetField = schemaComposer.Query.getField(linkObj.fieldName);
+                    const targetField =
+                      queryFields[linkObj.fieldName] || schemaComposer.Mutation.getField(linkObj.fieldName);
                     return {
                       ...targetField,
                       args: {},
