@@ -496,6 +496,14 @@ ${operationConfig.description || ''}
       }
     }
     const { args: globalArgs } = parseInterpolationStrings(interpolationStrings, operationConfig.argTypeMap);
+    // remove type args if provided by operationHeaders
+    if (typeof operationHeaders === 'object') {
+      for (const header in operationHeaders) {
+        if (header in globalArgs) {
+          delete globalArgs[header];
+        }
+      }
+    }
     rootTypeComposer.addFieldArgs(fieldName, globalArgs);
   }
 
