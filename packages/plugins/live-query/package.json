@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-live-query",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -30,9 +30,9 @@
   "dependencies": {
     "@envelop/live-query": "4.0.1",
     "@n1ru4l/in-memory-live-query-store": "0.10.0",
-    "@graphql-mesh/cross-helpers": "0.2.1",
-    "@graphql-mesh/types": "0.78.7",
-    "@graphql-mesh/string-interpolation": "0.3.0",
+    "@graphql-mesh/cross-helpers": "0.2.2",
+    "@graphql-mesh/types": "0.78.8",
+    "@graphql-mesh/string-interpolation": "0.3.1",
     "@envelop/core": "^2.3.2",
     "tslib": "^2.4.0"
   },

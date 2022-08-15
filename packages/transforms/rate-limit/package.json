@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-rate-limit",
-  "version": "0.1.42",
+  "version": "0.1.43",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -28,15 +28,15 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.78.7",
-    "@graphql-mesh/utils": "0.37.8",
+    "@graphql-mesh/types": "0.78.8",
+    "@graphql-mesh/utils": "0.37.9",
     "@graphql-tools/utils": "8.10.0",
-    "@graphql-mesh/cross-helpers": "0.2.1",
-    "@graphql-mesh/string-interpolation": "0.3.0",
+    "@graphql-mesh/cross-helpers": "0.2.2",
+    "@graphql-mesh/string-interpolation": "0.3.1",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-mesh/cache-localforage": "0.6.24",
+    "@graphql-mesh/cache-localforage": "0.6.25",
     "@graphql-tools/schema": "9.0.1",
     "@graphql-tools/wrap": "9.0.4"
   },

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-rate-limit",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -28,9 +28,9 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.78.7",
-    "@graphql-mesh/cross-helpers": "0.2.1",
-    "@graphql-mesh/string-interpolation": "0.3.0",
+    "@graphql-mesh/types": "0.78.8",
+    "@graphql-mesh/cross-helpers": "0.2.2",
+    "@graphql-mesh/string-interpolation": "0.3.1",
     "@graphql-tools/utils": "8.10.0",
     "minimatch": "5.1.0",
     "@envelop/core": "^2.3.2",
