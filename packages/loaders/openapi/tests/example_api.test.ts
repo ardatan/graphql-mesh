@@ -2,7 +2,7 @@ import { execute, graphql, GraphQLInputObjectType, GraphQLObjectType, GraphQLSch
 import 'json-bigint-patch';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 
-import { startServer, stopServer } from '../../../handlers/openapi/test/example_api_server';
+import { startServer, stopServer } from './example_api_server';
 import { fetch } from '@whatwg-node/fetch';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { OpenAPILoaderOptions } from '../src';
@@ -18,7 +18,7 @@ describe('example_api', () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
       fetch,
       baseUrl,
-      oasFilePath: '../../../handlers/openapi/test/fixtures/example_oas.json',
+      oasFilePath: './fixtures/example_oas.json',
       cwd: __dirname,
     });
     await startServer(PORT);
@@ -1931,53 +1931,6 @@ describe('example_api', () => {
       args: [], // No arguments
     });
   });
-
-  // it('Query string arguments are not created when they are provided through qs option', async () => {
-  //   // NOTE: do we want to match this behavior (options.queryParams removes query input args)?
-  //   // The GET status operation has a limit query string parameter
-  //   const options: OpenAPILoaderOptions = {
-  //     baseUrl,
-  //     oasFilePath: '../../../handlers/openapi/test/fixtures/example_oas.json',
-  //     cwd: __dirname,
-  //     fetch,
-  //     queryParams: {
-  //       limit: "10",
-  //     }
-  //   };
-
-  //   const schema = await loadGraphQLSchemaFromOpenAPI('test', options);
-
-  //   const query = /* GraphQL */ `{
-  //     __schema {
-  //       queryType {
-  //         fields {
-  //           name
-  //           args {
-  //             name
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }`;
-
-  //   const ast = parse(query);
-  //   const errors = validate(schema, ast);
-  //   expect(errors).toEqual([]);
-
-  //   const result = await execute({
-  //     schema,
-  //     document: parse(query),
-  //   });
-
-  //   expect(
-  //     (result.data.__schema as any).queryType.fields.find((field: { name: string }) => {
-  //       return field.name === 'getUsers';
-  //     })
-  //   ).toEqual({
-  //     name: 'getUsers',
-  //     args: [], // No arguments
-  //   });
-  // });
 
   it('Non-nullable properties for object types', async () => {
     const coordinates = createdSchema.getType('coordinates') as GraphQLObjectType;
