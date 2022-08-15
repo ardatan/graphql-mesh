@@ -1,8 +1,8 @@
 diff --git a/node_modules/undici/lib/fetch/index.js b/node_modules/undici/lib/fetch/index.js
-index cf91a5d..76c74f3 100644
+index f9b0954..27a97d0 100644
 --- a/node_modules/undici/lib/fetch/index.js
 +++ b/node_modules/undici/lib/fetch/index.js
-@@ -1861,7 +1861,12 @@ async function httpNetworkFetch (
+@@ -1862,7 +1862,12 @@ async function httpNetworkFetch (
  
        // 7. Enqueue a Uint8Array wrapping an ArrayBuffer containing bytes
        // into stream.
