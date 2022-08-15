@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-webhook",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -26,9 +26,9 @@
   },
   "dependencies": {
     "@graphql-yoga/common": "2.12.5",
-    "@graphql-mesh/types": "0.78.7",
+    "@graphql-mesh/types": "0.78.8",
     "lodash.get": "4.4.2",
-    "@graphql-mesh/string-interpolation": "0.3.0",
+    "@graphql-mesh/string-interpolation": "0.3.1",
     "tslib": "^2.4.0"
   },
   "publishConfig": {

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/utils",
-  "version": "0.37.8",
+  "version": "0.37.9",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -34,12 +34,12 @@
     }
   },
   "dependencies": {
-    "@graphql-mesh/string-interpolation": "0.3.0",
+    "@graphql-mesh/string-interpolation": "0.3.1",
     "@graphql-tools/delegate": "9.0.3",
     "@graphql-tools/utils": "8.10.0",
     "@graphql-typed-document-node/core": "3.1.1",
-    "@graphql-mesh/cross-helpers": "0.2.1",
-    "@graphql-mesh/types": "0.78.7",
+    "@graphql-mesh/cross-helpers": "0.2.2",
+    "@graphql-mesh/types": "0.78.8",
     "lodash.get": "4.4.2",
     "lodash.set": "4.3.2",
     "lodash.topath": "4.5.2",
