@@ -30,7 +30,7 @@
     "@babel/plugin-proposal-class-properties": "7.18.6",
     "@babel/preset-env": "7.18.10",
     "@babel/preset-typescript": "7.18.6",
-    "@changesets/cli": "2.24.2",
+    "@changesets/cli": "2.24.3",
     "@changesets/changelog-github": "0.4.6",
     "@theguild/prettier-config": "0.0.2",
     "@types/jest": "28.1.6",
