@@ -113,7 +113,7 @@ type familyObject {
 \\"A company is the employer of many users\\"
 type company {
   \\"The identifier of a company\\"
-  id: String
+  id: UUID
   \\"The legal name of a company\\"
   name: String
   \\"The legal form of a company\\"
@@ -125,6 +125,9 @@ type company {
   \\"Allows to fetch the company's CEO user.\\"
   ceoUser: user
 }
+
+\\"A field whose value is a generic Universally Unique Identifier: https://en.wikipedia.org/wiki/Universally_unique_identifier.\\"
+scalar UUID
 
 input getUsers_request_Input {
   \\"Limit of the number of users to return.\\"

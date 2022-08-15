@@ -1381,7 +1381,6 @@ describe('example_api', () => {
       document: parse(query),
     });
 
-    // NOTE: is there better type to replace the "any"?
     expect(
       (result.data.__type as any).fields.find((field: { name: string }) => {
         return field.name === 'familyCircular';
@@ -1447,7 +1446,6 @@ describe('example_api', () => {
   });
 
   it('Union type', async () => {
-    // NOTE: this doesn't work. probably UNION issue
     const query = /* GraphQL */ `
       {
         getAllAssets(companyId: "binsol") {
@@ -1523,7 +1521,6 @@ describe('example_api', () => {
 
   // Extensions provide more information about failed API calls
   it('Error contains extension', async () => {
-    // NOTE: error object is a bit different. should we adjust to match the prev structure?
     const query = /* GraphQL */ `
       query {
         getUserByUsername(username: "abcdef") {
@@ -1552,107 +1549,6 @@ describe('example_api', () => {
       },
     });
   });
-
-  // it('Option addLimitArgument', async () => {
-  //   const options: Options<any, any, any> = {
-  //     addLimitArgument: true,
-  //     fetch,
-  //   };
-
-  //   const query = /* GraphQL */ `query {
-  //     user(username: "arlene") {
-  //       name
-  //       friends (limit: 3) {
-  //         name
-  //         friends (limit: 2) {
-  //           name
-  //           friends (limit: 1) {
-  //             name
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }`;
-
-  //   return openAPIToGraphQL.createGraphQLSchema(oas, options).then(({ schema }) => {
-  //     const ast = parse(query);
-  //     const errors = validate(schema, ast);
-  //     expect(errors).toEqual([]);
-  //     return graphql({ schema, source: query }).then((result: any) => {
-  //       expect(result).toEqual({
-  //         data: {
-  //           user: {
-  //             name: 'Arlene L McMahon',
-  //             friends: [
-  //               {
-  //                 name: 'William B Ropp',
-  //                 friends: [
-  //                   {
-  //                     name: 'William B Ropp',
-  //                     friends: [
-  //                       {
-  //                         name: 'William B Ropp',
-  //                       },
-  //                     ],
-  //                   },
-  //                   {
-  //                     name: 'John C Barnes',
-  //                     friends: [
-  //                       {
-  //                         name: 'William B Ropp',
-  //                       },
-  //                     ],
-  //                   },
-  //                 ],
-  //               },
-  //               {
-  //                 name: 'John C Barnes',
-  //                 friends: [
-  //                   {
-  //                     name: 'William B Ropp',
-  //                     friends: [
-  //                       {
-  //                         name: 'William B Ropp',
-  //                       },
-  //                     ],
-  //                   },
-  //                   {
-  //                     name: 'John C Barnes',
-  //                     friends: [
-  //                       {
-  //                         name: 'William B Ropp',
-  //                       },
-  //                     ],
-  //                   },
-  //                 ],
-  //               },
-  //               {
-  //                 name: 'Heather J Tate',
-  //                 friends: [
-  //                   {
-  //                     name: 'William B Ropp',
-  //                     friends: [
-  //                       {
-  //                         name: 'William B Ropp',
-  //                       },
-  //                     ],
-  //                   },
-  //                   {
-  //                     name: 'John C Barnes',
-  //                     friends: [
-  //                       {
-  //                         name: 'William B Ropp',
-  //                       },
-  //                     ],
-  //                   },
-  //                 ],
-  //               },
-  //             ],
-  //           },
-  //         },
-  //       });
-  //     });
-  // });
 
   it('Content property in parameter object', async () => {
     const query = /* GraphQL */ `
@@ -1904,167 +1800,152 @@ describe('example_api', () => {
     expect(userInputType.toConfig().fields.address2.type.toString()).toEqual('address_Input');
   });
 
-  // it('Option selectQueryOrMutationField', async () => {
-  //   const query = /* GraphQL */ `{
-  //     __schema {
-  //       queryType {
-  //         fields {
-  //           name
-  //           description
-  //         }
-  //       }
-  //       mutationType {
-  //         fields {
-  //           name
-  //           description
-  //         }
-  //       }
-  //     }
-  //   }`;
+  it('Option selectQueryOrMutationField', async () => {
+    const query = /* GraphQL */ `
+      {
+        __schema {
+          queryType {
+            fields {
+              name
+              description
+            }
+          }
+          mutationType {
+            fields {
+              name
+              description
+            }
+          }
+        }
+      }
+    `;
 
-  //   // TgetUe users field should exist as a Query field
-  //   const promise = graphql({ schema: createdSchema, source: query }).then((result: any) => {
-  //     expect(
-  //       result.data.__schema.queryType.fields.find((field: { name: string }) => {
-  //         return field.name === 'user';
-  //       })
-  //     ).toEqual({
-  //       name: 'user',
-  //       description: 'Returns a user from the system.\n\nEquivalent to GET /users/{username}',
-  //     });
+    // The users field should exist as a Query field
+    const promise1 = execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
 
-  //     expect(
-  //       result.data.__schema.mutationType.fields.find((field: { name: string }) => {
-  //         return field.name === 'user';
-  //       })
-  //     ).toEqual(undefined);
-  //   });
+    // The users (now named getUserByUsername) field should exist as a Mutation field
+    const options: OpenAPILoaderOptions = {
+      baseUrl,
+      oasFilePath: '../../../handlers/openapi/test/fixtures/example_oas.json',
+      cwd: __dirname,
+      fetch,
+      selectQueryOrMutationField: [
+        {
+          fieldName: 'getUserByUsername',
+          type: 'mutation',
+        },
+      ],
+    };
 
-  //   const options: Options<any, any, any> = {
-  //     selectQueryOrMutationField: {
-  //       'Example API': {
-  //         '/users/{username}': {
-  //           get: GraphQLOperationType.Mutation,
-  //         },
-  //       },
-  //     },
-  //     fetch,
-  //   };
+    const promise2 = loadGraphQLSchemaFromOpenAPI('test', options).then(schema => {
+      const ast = parse(query);
+      const errors = validate(schema, ast);
+      expect(errors).toEqual([]);
+      return execute({
+        schema,
+        document: parse(query),
+      });
+    });
 
-  //   // The users (now named getUserByUsername) field should exist as a Mutation field
-  //   const promise2 = openAPIToGraphQL.createGraphQLSchema(oas, options).then(({ schema }) => {
-  //     const ast = parse(query);
-  //     const errors = validate(schema, ast);
-  //     expect(errors).toEqual([]);
-  //     return graphql({ schema, source: query }).then((result: any) => {
-  //       expect(
-  //         result.data.__schema.queryType.fields.find((field: { name: string }) => {
-  //           return field.name === 'getUserByUsername';
-  //         })
-  //       ).toEqual(undefined);
+    const [result1, result2] = await Promise.all([promise1, promise2]);
 
-  //       expect(
-  //         result.data.__schema.mutationType.fields.find((field: { name: string }) => {
-  //           return field.name === 'getUserByUsername';
-  //         })
-  //       ).toEqual({
-  //         name: 'getUserByUsername',
-  //         description: 'Returns a user from the system.\n\nEquivalent to GET /users/{username}',
-  //       });
-  //     });
-  //   });
+    expect(
+      (result1.data.__schema as any).queryType.fields.find((field: { name: string }) => {
+        return field.name === 'getUserByUsername';
+      })
+    ).toEqual({
+      name: 'getUserByUsername',
+      description: 'Returns a user from the system.',
+    });
 
-  //   return Promise.all([promise, promise2]);
-  // });
+    expect(
+      (result1.data.__schema as any).mutationType.fields.find((field: { name: string }) => {
+        return field.name === 'getUserByUsername';
+      })
+    ).toEqual(undefined);
 
-  // it('Header arguments are not created when they are provided through headers option', async () => {
-  //   // The GET snack operation has a snack_type and snack_size header arguments
-  //   const options: Options<any, any, any> = {
-  //     headers: {
-  //       snack_type: 'chips',
-  //       snack_size: 'large',
-  //     },
-  //     fetch,
-  //   };
+    expect(
+      (result2.data.__schema as any).queryType.fields.find((field: { name: string }) => {
+        return field.name === 'getUserByUsername';
+      })
+    ).toEqual(undefined);
 
-  //   const query = /* GraphQL */ `{
-  //     __schema {
-  //       queryType {
-  //         fields {
-  //           name
-  //           args {
-  //             name
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }`;
+    expect(
+      (result2.data.__schema as any).mutationType.fields.find((field: { name: string }) => {
+        return field.name === 'getUserByUsername';
+      })
+    ).toEqual({
+      name: 'getUserByUsername',
+      description: 'Returns a user from the system.',
+    });
+  });
 
-  //   return openAPIToGraphQL.createGraphQLSchema(oas, options).then(({ schema }) => {
-  //     const ast = parse(query);
-  //     const errors = validate(schema, ast);
-  //     expect(errors).toEqual([]);
-  //     return graphql({ schema, source: query }).then((result: any) => {
-  //       expect(
-  //         result.data.__schema.queryType.fields.find((field: { name: string }) => {
-  //           return field.name === 'snack';
-  //         })
-  //       ).toEqual({
-  //         name: 'snack',
-  //         args: [], // No arguments
-  //       });
-  //     });
-  // });
+  it('Header arguments are not created when they are provided through headers option', async () => {
+    // The GET snack operation has a snack_type and snack_size header arguments
+    const options: OpenAPILoaderOptions = {
+      baseUrl,
+      oasFilePath: '../../../handlers/openapi/test/fixtures/example_oas.json',
+      cwd: __dirname,
+      fetch,
+      operationHeaders: {
+        snack_type: 'chips',
+        snack_size: 'large',
+      },
+    };
 
-  // it('Header arguments are not created when they are provided through requestOptions option', async () => {
-  //   // The GET snack operation has a snack_type and snack_size header arguments
-  //   const options: Options<any, any, any> = {
-  //     requestOptions: {
-  //       headers: {
-  //         snack_type: 'chips',
-  //         snack_size: 'large',
-  //       },
-  //     },
-  //     fetch,
-  //   };
+    const schema = await loadGraphQLSchemaFromOpenAPI('test', options);
 
-  //   const query = /* GraphQL */ `{
-  //     __schema {
-  //       queryType {
-  //         fields {
-  //           name
-  //           args {
-  //             name
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }`;
+    const query = /* GraphQL */ `
+      {
+        __schema {
+          queryType {
+            fields {
+              name
+              args {
+                name
+              }
+            }
+          }
+        }
+      }
+    `;
 
-  //   return openAPIToGraphQL.createGraphQLSchema(oas, options).then(({ schema }) => {
-  //     const ast = parse(query);
-  //     const errors = validate(schema, ast);
-  //     expect(errors).toEqual([]);
-  //     return graphql({ schema, source: query }).then((result: any) => {
-  //       expect(
-  //         result.data.__schema.queryType.fields.find((field: { name: string }) => {
-  //           return field.name === 'snack';
-  //         })
-  //       ).toEqual({
-  //         name: 'snack',
-  //         args: [], // No arguments
-  //       });
-  //     });
-  // });
+    const ast = parse(query);
+    const errors = validate(schema, ast);
+    expect(errors).toEqual([]);
+
+    const result = await execute({
+      schema,
+      document: parse(query),
+    });
+
+    expect(
+      (result.data.__schema as any).queryType.fields.find((field: { name: string }) => {
+        return field.name === 'getSnack';
+      })
+    ).toEqual({
+      name: 'getSnack',
+      args: [], // No arguments
+    });
+  });
 
   // it('Query string arguments are not created when they are provided through qs option', async () => {
+  //   // NOTE: do we want to match this behavior (options.queryParams removes query input args)?
   //   // The GET status operation has a limit query string parameter
-  //   const options: Options<any, any, any> = {
-  //     qs: {
-  //       limit: '10',
-  //     },
+  //   const options: OpenAPILoaderOptions = {
+  //     baseUrl,
+  //     oasFilePath: '../../../handlers/openapi/test/fixtures/example_oas.json',
+  //     cwd: __dirname,
   //     fetch,
+  //     queryParams: {
+  //       limit: "10",
+  //     }
   //   };
+
+  //   const schema = await loadGraphQLSchemaFromOpenAPI('test', options);
 
   //   const query = /* GraphQL */ `{
   //     __schema {
@@ -2079,125 +1960,70 @@ describe('example_api', () => {
   //     }
   //   }`;
 
-  //   return openAPIToGraphQL.createGraphQLSchema(oas, options).then(({ schema }) => {
-  //     const ast = parse(query);
-  //     const errors = validate(schema, ast);
-  //     expect(errors).toEqual([]);
-  //     return graphql({ schema, source: query }).then((result: any) => {
-  //       expect(
-  //         result.data.__schema.queryType.fields.find((field: { name: string }) => {
-  //           return field.name === 'users';
-  //         })
-  //       ).toEqual({
-  //         name: 'users',
-  //         args: [], // No arguments
-  //       });
-  //     });
-  // });
+  //   const ast = parse(query);
+  //   const errors = validate(schema, ast);
+  //   expect(errors).toEqual([]);
 
-  // it('Non-nullable properties for object types', async () => {
-  //   const coordinates = createdSchema.getType('Coordinates') as GraphQLObjectType;
-
-  //   // The exclamation mark shows that it is a required (non-nullable) property
-  //   expect(coordinates.toConfig().fields.lat.type.toString()).toEqual('Float!');
-  //   expect(coordinates.toConfig().fields.long.type.toString()).toEqual('Float!');
-  // });
-
-  // it('Option genericPayloadArgName', async () => {
-  //   const query = /* GraphQL */ `{
-  //     __schema {
-  //       mutationType {
-  //         fields {
-  //           name
-  //           args {
-  //             name
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }`;
-
-  //   // The postUser field should have a userInput argument
-  //   const promise = graphql({ schema: createdSchema, source: query }).then((result: any) => {
-  //     expect(
-  //       result.data.__schema.mutationType.fields.find((field: { name: string }) => {
-  //         return field.name === 'postUser';
-  //       })
-  //     ).toEqual({
-  //       name: 'postUser',
-  //       args: [
-  //         {
-  //           name: 'userInput',
-  //         },
-  //       ],
-  //     });
+  //   const result = await execute({
+  //     schema,
+  //     document: parse(query),
   //   });
 
-  //   const options: Options<any, any, any> = {
-  //     genericPayloadArgName: true,
-  //     fetch,
-  //   };
-
-  //   // The postUser field should now have a requestPody argument
-  //   const promise2 = openAPIToGraphQL.createGraphQLSchema(oas, options).then(({ schema }) => {
-  //     const ast = parse(query);
-  //     const errors = validate(schema, ast);
-  //     expect(errors).toEqual([]);
-  //     return graphql({ schema, source: query }).then((result: any) => {
-  //       expect(
-  //         result.data.__schema.mutationType.fields.find((field: { name: string }) => {
-  //           return field.name === 'postUser';
-  //         })
-  //       ).toEqual({
-  //         name: 'postUser',
-  //         args: [
-  //           {
-  //             name: 'requestBody',
-  //           },
-  //         ],
-  //       });
-  //     });
+  //   expect(
+  //     (result.data.__schema as any).queryType.fields.find((field: { name: string }) => {
+  //       return field.name === 'getUsers';
+  //     })
+  //   ).toEqual({
+  //     name: 'getUsers',
+  //     args: [], // No arguments
   //   });
-
-  //   return Promise.all([promise, promise2]);
   // });
 
-  // it('Non-nullable properties from nested allOf', async () => {
-  //   // Check query/mutation field descriptions
-  //   const query = /* GraphQL */ `{
-  //     __type(name: "Nomenclature") {
-  //       fields {
-  //         name
-  //         type {
-  //           kind
-  //           ofType {
-  //             name
-  //             kind
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }`;
+  it('Non-nullable properties for object types', async () => {
+    const coordinates = createdSchema.getType('coordinates') as GraphQLObjectType;
 
-  //   return openAPIToGraphQL.createGraphQLSchema(oas, { fetch }).then(({ schema }) => {
-  //     const ast = parse(query);
-  //     const errors = validate(schema, ast);
-  //     expect(errors).toEqual([]);
-  //     return graphql({ schema, source: query }).then((result: any) => {
-  //       expect(
-  //         result.data.__type.fields.find((field: { name: string }) => {
-  //           return field.name === 'family';
-  //         })
-  //       ).toEqual({
-  //         name: 'family',
-  //         type: {
-  //           kind: 'NON_NULL',
-  //           ofType: {
-  //             name: 'String',
-  //             kind: 'SCALAR',
-  //           },
-  //         },
-  //       });
-  //     });
-  // });
+    // The exclamation mark shows that it is a required (non-nullable) property
+    expect(coordinates.toConfig().fields.lat.type.toString()).toEqual('Float!');
+    expect(coordinates.toConfig().fields.long.type.toString()).toEqual('Float!');
+  });
+
+  it('Non-nullable properties from nested allOf', async () => {
+    // Check query/mutation field descriptions
+    const query = /* GraphQL */ `
+      {
+        __type(name: "query_getUsers_items_nomenclature") {
+          fields {
+            name
+            type {
+              kind
+              ofType {
+                name
+                kind
+              }
+            }
+          }
+        }
+      }
+    `;
+
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
+
+    expect(
+      (result.data.__type as any).fields.find((field: { name: string }) => {
+        return field.name === 'family';
+      })
+    ).toEqual({
+      name: 'family',
+      type: {
+        kind: 'NON_NULL',
+        ofType: {
+          name: 'String',
+          kind: 'SCALAR',
+        },
+      },
+    });
+  });
 });
