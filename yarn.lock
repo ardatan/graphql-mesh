@@ -3064,10 +3064,10 @@
     valid-url "1.0.9"
     websocket "1.0.31"
 
-"@graphql-tools/url-loader@7.13.8":
-  version "7.13.8"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.13.8.tgz#2cd810e53411e5ab68e19ec3189f6792fe552ac5"
-  integrity sha512-toJI7FyEDD4pVp4QVmek03r7NebQ5qGTmnlDHoz29WMNlwdQQMOYE2hWBqcwRqyGNJceApVpdW4GboDVoV/rfA==
+"@graphql-tools/url-loader@7.13.9":
+  version "7.13.9"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.13.9.tgz#89d6bfe47eb385a7387f44914673a77ec489b7fd"
+  integrity sha512-7vN7hpT/U0/jC1cc2kNqm0H3iQqRis2f4ZbMsiWT8lDGo/GFOAq+LhJJjTO3zx/ivG90usuu6nPy0yrGlLMvGg==
   dependencies:
     "@ardatan/sync-fetch" "0.0.1"
     "@graphql-tools/delegate" "9.0.3"
@@ -9934,10 +9934,10 @@ eslint-webpack-plugin@^3.1.1:
     normalize-path "^3.0.0"
     schema-utils "^4.0.0"
 
-eslint@8.21.0, eslint@^8.3.0:
-  version "8.21.0"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-8.21.0.tgz#1940a68d7e0573cef6f50037addee295ff9be9ef"
-  integrity sha512-/XJ1+Qurf1T9G2M5IHrsjp+xrGT73RZf23xA1z5wB1ZzzEAWSZKvRwhWxTFp1rvkvCfwcvAUNAP31bhKTTGfDA==
+eslint@8.22.0, eslint@^8.3.0:
+  version "8.22.0"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-8.22.0.tgz#78fcb044196dfa7eef30a9d65944f6f980402c48"
+  integrity sha512-ci4t0sz6vSRKdmkOGmprBo6fmI4PrphDFMy5JEq/fNS0gQkJM3rLmrqcp8ipMcdobH3KtUP40KniAE9W19S4wA==
   dependencies:
     "@eslint/eslintrc" "^1.3.0"
     "@humanwhocodes/config-array" "^0.10.4"
@@ -19727,10 +19727,10 @@ ts-invariant@^0.4.0:
   dependencies:
     tslib "^1.9.3"
 
-ts-jest@28.0.7:
-  version "28.0.7"
-  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-28.0.7.tgz#e18757a9e44693da9980a79127e5df5a98b37ac6"
-  integrity sha512-wWXCSmTwBVmdvWrOpYhal79bDpioDy4rTT+0vyUnE3ZzM7LOAAGG9NXwzkEL/a516rQEgnMmS/WKP9jBPCVJyA==
+ts-jest@28.0.8:
+  version "28.0.8"
+  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-28.0.8.tgz#cd204b8e7a2f78da32cf6c95c9a6165c5b99cc73"
+  integrity sha512-5FaG0lXmRPzApix8oFG8RKjAz4ehtm8yMKOTy5HX3fY6W8kmvOrmcY0hKDElW52FJov+clhUbrKAqofnj4mXTg==
   dependencies:
     bs-logger "0.x"
     fast-json-stable-stringify "2.x"
