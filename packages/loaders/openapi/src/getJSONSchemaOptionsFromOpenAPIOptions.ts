@@ -146,10 +146,13 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
           case 'header': {
             operationConfig.headers = operationConfig.headers || {};
             let defaultValue = '';
-            if (typeof operationHeaders === 'object' && Object.keys(operationHeaders).includes(paramObj.name)) {
+            if (typeof operationHeaders === 'object' && !operationHeaders[paramObj.name]?.includes('{')) {
               defaultValue = `:${operationHeaders[paramObj.name]}`;
             } else if (paramObj.schema?.default) {
               defaultValue = `:${paramObj.schema.default}`;
+            }
+            if (defaultValue) {
+              paramObj.required = false;
             }
             operationConfig.headers[paramObj.name] = `{args.${argName}${defaultValue}}`;
             break;

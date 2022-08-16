@@ -206,10 +206,6 @@ ${operationConfig.description || ''}
             field.args?.input?.type?.getType(),
             schemaComposer
           ));
-          // keep input keys for handling duplications
-          if (typeof input === 'object') {
-            queryParamNames.push(...Object.keys(input));
-          }
           if (input != null) {
             switch (httpMethod) {
               case 'GET':
@@ -217,6 +213,10 @@ ${operationConfig.description || ''}
               case 'CONNECT':
               case 'OPTIONS':
               case 'TRACE': {
+                // keep input keys for handling duplications
+                if (typeof input === 'object') {
+                  queryParamNames.push(...Object.keys(input));
+                }
                 fullPath += fullPath.includes('?') ? '&' : '?';
                 fullPath += qsStringify(input, qsOptions);
                 break;
