@@ -7,9 +7,9 @@
     "@graphql-mesh/graphql": "0.29.9",
     "@graphql-mesh/cache-cfw-kv": "0.0.11",
     "@graphql-mesh/plugin-response-cache": "0.1.12",
-    "graphql": "16.5.0"
+    "graphql": "16.6.0"
   },
   "devDependencies": {
-    "wrangler": "2.0.25"
+    "wrangler": "2.0.26"
   }
 }

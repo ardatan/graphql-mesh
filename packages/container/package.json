@@ -11,7 +11,7 @@
     "start": "graphql-mesh dev"
   },
   "dependencies": {
-    "graphql": "16.5.0",
+    "graphql": "16.6.0",
     "@graphql-mesh/cli": "0.75.9",
     "@graphql-mesh/config": "5.1.7",
     "@graphql-mesh/runtime": "0.41.9",

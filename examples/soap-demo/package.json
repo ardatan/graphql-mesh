@@ -13,7 +13,7 @@
   "dependencies": {
     "@graphql-mesh/cli": "0.75.9",
     "@graphql-mesh/soap": "0.12.9",
-    "graphql": "16.5.0"
+    "graphql": "16.6.0"
   },
   "devDependencies": {
     "cross-env": "7.0.3"
