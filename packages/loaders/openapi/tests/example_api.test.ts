@@ -1883,55 +1883,6 @@ describe('example_api', () => {
     });
   });
 
-  it('Header arguments are not created when they are provided through headers option', async () => {
-    // The GET snack operation has a snack_type and snack_size header arguments
-    const options: OpenAPILoaderOptions = {
-      baseUrl,
-      oasFilePath: '../../../handlers/openapi/test/fixtures/example_oas.json',
-      cwd: __dirname,
-      fetch,
-      operationHeaders: {
-        snack_type: 'chips',
-        snack_size: 'large',
-      },
-    };
-
-    const schema = await loadGraphQLSchemaFromOpenAPI('test', options);
-
-    const query = /* GraphQL */ `
-      {
-        __schema {
-          queryType {
-            fields {
-              name
-              args {
-                name
-              }
-            }
-          }
-        }
-      }
-    `;
-
-    const ast = parse(query);
-    const errors = validate(schema, ast);
-    expect(errors).toEqual([]);
-
-    const result = await execute({
-      schema,
-      document: parse(query),
-    });
-
-    expect(
-      (result.data.__schema as any).queryType.fields.find((field: { name: string }) => {
-        return field.name === 'getSnack';
-      })
-    ).toEqual({
-      name: 'getSnack',
-      args: [], // No arguments
-    });
-  });
-
   it('Non-nullable properties for object types', async () => {
     const coordinates = createdSchema.getType('coordinates') as GraphQLObjectType;
 
