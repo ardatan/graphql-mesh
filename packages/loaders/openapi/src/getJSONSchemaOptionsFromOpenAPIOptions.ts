@@ -145,11 +145,16 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
           }
           case 'header': {
             operationConfig.headers = operationConfig.headers || {};
-            if (paramObj.schema?.default) {
-              operationConfig.headers[paramObj.name] = `{args.${argName}:${paramObj.schema.default}}`;
-            } else {
-              operationConfig.headers[paramObj.name] = `{args.${argName}}`;
+            let defaultValue = '';
+            if (typeof operationHeaders === 'object' && !operationHeaders[paramObj.name]?.includes('{')) {
+              defaultValue = `:${operationHeaders[paramObj.name]}`;
+            } else if (paramObj.schema?.default) {
+              defaultValue = `:${paramObj.schema.default}`;
             }
+            if (defaultValue) {
+              paramObj.required = false;
+            }
+            operationConfig.headers[paramObj.name] = `{args.${argName}${defaultValue}}`;
             break;
           }
           case 'cookie': {

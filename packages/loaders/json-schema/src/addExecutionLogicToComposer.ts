@@ -167,18 +167,7 @@ ${operationConfig.description || ''}
           method: httpMethod,
           headers,
         };
-        if (queryParams) {
-          const interpolatedQueryParams: Record<string, any> = {};
-          for (const queryParamName in queryParams) {
-            interpolatedQueryParams[queryParamName] = stringInterpolator.parse(
-              queryParams[queryParamName],
-              interpolationData
-            );
-          }
-          const queryParamsString = qsStringify(interpolatedQueryParams, qsOptions);
-          fullPath += fullPath.includes('?') ? '&' : '?';
-          fullPath += queryParamsString;
-        }
+        const queryParamNames = [];
         // Handle binary data
         if ('binary' in operationConfig) {
           const binaryUpload = await args.input;
@@ -224,6 +213,10 @@ ${operationConfig.description || ''}
               case 'CONNECT':
               case 'OPTIONS':
               case 'TRACE': {
+                // keep input keys for handling duplications
+                if (typeof input === 'object') {
+                  queryParamNames.push(...Object.keys(input));
+                }
                 fullPath += fullPath.includes('?') ? '&' : '?';
                 fullPath += qsStringify(input, qsOptions);
                 break;
@@ -248,6 +241,21 @@ ${operationConfig.description || ''}
                 });
             }
           }
+        }
+        if (queryParams) {
+          const interpolatedQueryParams: Record<string, any> = {};
+          for (const queryParamName in queryParams) {
+            if (queryParamNames.includes(queryParamName)) {
+              continue;
+            }
+            interpolatedQueryParams[queryParamName] = stringInterpolator.parse(
+              queryParams[queryParamName],
+              interpolationData
+            );
+          }
+          const queryParamsString = qsStringify(interpolatedQueryParams, qsOptions);
+          fullPath += fullPath.includes('?') ? '&' : '?';
+          fullPath += queryParamsString;
         }
 
         // Delete unused queryparams

@@ -1930,4 +1930,135 @@ describe('example_api', () => {
       },
     });
   });
+
+  describe('Mixing input arguments and options variables', () => {
+    it('Query string arguments become nullable when provided through queryParams option', async () => {
+      const options: OpenAPILoaderOptions = {
+        baseUrl,
+        oasFilePath: '../../../handlers/openapi/test/fixtures/example_oas.json',
+        cwd: __dirname,
+        fetch,
+        queryParams: {
+          limit: '1',
+        },
+      };
+      const schema = await loadGraphQLSchemaFromOpenAPI('test', options);
+      const query = /* GraphQL */ `
+        {
+          getUsers {
+            name
+          }
+        }
+      `;
+      const result = await execute({
+        schema,
+        document: parse(query),
+      });
+      expect(result).toEqual({
+        data: {
+          getUsers: [
+            {
+              name: 'Arlene L McMahon',
+            },
+          ],
+        },
+      });
+    });
+
+    it('Query string arguments override the values provided through queryParams option', async () => {
+      const options: OpenAPILoaderOptions = {
+        baseUrl,
+        oasFilePath: '../../../handlers/openapi/test/fixtures/example_oas.json',
+        cwd: __dirname,
+        fetch,
+        queryParams: {
+          limit: '1',
+        },
+      };
+      const schema = await loadGraphQLSchemaFromOpenAPI('test', options);
+      const query = /* GraphQL */ `
+        {
+          getUsers(input: { limit: 2 }) {
+            name
+          }
+        }
+      `;
+      const result = await execute({
+        schema,
+        document: parse(query),
+      });
+      expect(result).toEqual({
+        data: {
+          getUsers: [
+            {
+              name: 'Arlene L McMahon',
+            },
+            {
+              name: 'William B Ropp',
+            },
+          ],
+        },
+      });
+    });
+
+    it('Header arguments become nullable when provided through headers option', async () => {
+      const options: OpenAPILoaderOptions = {
+        baseUrl,
+        oasFilePath: '../../../handlers/openapi/test/fixtures/example_oas.json',
+        cwd: __dirname,
+        fetch,
+        operationHeaders: {
+          snack_type: 'chips',
+          snack_size: 'large',
+        },
+      };
+
+      const schema = await loadGraphQLSchemaFromOpenAPI('test', options);
+
+      const query = /* GraphQL */ `
+        {
+          getSnack
+        }
+      `;
+      const result = await execute({
+        schema,
+        document: parse(query),
+      });
+      expect(result).toEqual({
+        data: {
+          getSnack: 'Here is a large chips',
+        },
+      });
+    });
+
+    it('Header arguments override the values provided through operationHeaders option', async () => {
+      const options: OpenAPILoaderOptions = {
+        baseUrl,
+        oasFilePath: '../../../handlers/openapi/test/fixtures/example_oas.json',
+        cwd: __dirname,
+        fetch,
+        operationHeaders: {
+          snack_type: 'chips',
+          snack_size: 'large',
+        },
+      };
+
+      const schema = await loadGraphQLSchemaFromOpenAPI('test', options);
+
+      const query = /* GraphQL */ `
+        {
+          getSnack(snack_type: "soda")
+        }
+      `;
+      const result = await execute({
+        schema,
+        document: parse(query),
+      });
+      expect(result).toEqual({
+        data: {
+          getSnack: 'Here is a large soda',
+        },
+      });
+    });
+  });
 });
