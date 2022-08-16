@@ -13,7 +13,7 @@ module.exports = {
   rootDir: ROOT_DIR,
   restoreMocks: true,
   reporters: ['default'],
-  modulePathIgnorePatterns: ['dist', 'packages/openapi'],
+  modulePathIgnorePatterns: ['dist'],
   moduleNameMapper: {
     '@graphql-mesh/cross-helpers': '<rootDir>/packages/cross-helpers/node.js',
     ...pathsToModuleNameMapper(tsconfig.compilerOptions.paths, {
