@@ -2000,5 +2000,65 @@ describe('example_api', () => {
         },
       });
     });
+
+    it('Header arguments become nullable when provided through headers option', async () => {
+      const options: OpenAPILoaderOptions = {
+        baseUrl,
+        oasFilePath: '../../../handlers/openapi/test/fixtures/example_oas.json',
+        cwd: __dirname,
+        fetch,
+        operationHeaders: {
+          snack_type: 'chips',
+          snack_size: 'large',
+        },
+      };
+
+      const schema = await loadGraphQLSchemaFromOpenAPI('test', options);
+
+      const query = /* GraphQL */ `
+        {
+          getSnack
+        }
+      `;
+      const result = await execute({
+        schema,
+        document: parse(query),
+      });
+      expect(result).toEqual({
+        data: {
+          getSnack: 'Here is a large chips',
+        },
+      });
+    });
+
+    it('Header arguments override the values provided through operationHeaders option', async () => {
+      const options: OpenAPILoaderOptions = {
+        baseUrl,
+        oasFilePath: '../../../handlers/openapi/test/fixtures/example_oas.json',
+        cwd: __dirname,
+        fetch,
+        operationHeaders: {
+          snack_type: 'chips',
+          snack_size: 'large',
+        },
+      };
+
+      const schema = await loadGraphQLSchemaFromOpenAPI('test', options);
+
+      const query = /* GraphQL */ `
+        {
+          getSnack(snack_type: "soda")
+        }
+      `;
+      const result = await execute({
+        schema,
+        document: parse(query),
+      });
+      expect(result).toEqual({
+        data: {
+          getSnack: 'Here is a large soda',
+        },
+      });
+    });
   });
 });
