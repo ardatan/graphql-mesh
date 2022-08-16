@@ -118,6 +118,11 @@ export async function getGraphQLSchemaFromBundle(
         ...result,
       };
     };
+  } else {
+    operationHeaders = {
+      ...bundledOperationHeaders,
+      ...additionalOperationHeaders,
+    };
   }
   logger.info(`Creating the GraphQL Schema from dereferenced schema`);
   return getGraphQLSchemaFromDereferencedJSONSchema(fullyDeferencedSchema, {
