@@ -36,7 +36,7 @@ type Query {
   \\"Used to test empty responses\\"
   getBonuses: Void
   \\"Return an office.\\"
-  getOffice(accept: String, id: Int!): office
+  getOffice(id: Int!): office
   \\"Return a list of papers. Endpoint to test 2XX status code.\\"
   getPapers: [paper]
   \\"Another endpoint to test unsanitized parameters and data.\\"

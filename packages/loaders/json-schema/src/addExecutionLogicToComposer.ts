@@ -372,6 +372,9 @@ ${operationConfig.description || ''}
                             },
                           });
                         case 'header':
+                          if ('get' in requestInit.headers) {
+                            return getHeadersObj(requestInit.headers as Headers);
+                          }
                           return requestInit.headers;
                         case 'body':
                           return requestInit.body;

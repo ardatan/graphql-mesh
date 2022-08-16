@@ -326,8 +326,12 @@ export async function healJSONSchema(
             }
           }
           // If it is an object type but no properties given while example is available
-          if (((subSchema.type === 'object' && !subSchema.properties) || !subSchema.type) && subSchema.example) {
-            const generatedSchema = toJsonSchema(subSchema.example, {
+          if (
+            ((subSchema.type === 'object' && !subSchema.properties) || !subSchema.type) &&
+            (subSchema.example || subSchema.examples)
+          ) {
+            const examples = asArray(subSchema.examples || subSchema.example || []);
+            const generatedSchema = toJsonSchema(examples[0], {
               required: false,
               objects: {
                 additionalProperties: false,
@@ -338,11 +342,14 @@ export async function healJSONSchema(
               arrays: {
                 mode: 'first',
               },
+              postProcessFnc(type, schema, value, defaultFunc) {
+                if (schema.type === 'object' && !schema.properties && Object.keys(value).length === 0) {
+                  return AnySchema as any;
+                }
+                return defaultFunc(type, schema, value);
+              },
             });
-            const healedGeneratedSchema: any = await healJSONSchema(generatedSchema as any, {
-              noDeduplication,
-              logger: logger.child('toJsonSchema'),
-            });
+            const healedGeneratedSchema: any = generatedSchema;
             subSchema.type = asArray(healedGeneratedSchema.type)[0] as any;
             subSchema.properties = healedGeneratedSchema.properties;
             // If type for properties is already given, use it
