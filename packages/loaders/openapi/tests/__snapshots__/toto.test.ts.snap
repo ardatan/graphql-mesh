@@ -104,7 +104,10 @@ Object {
       },
       "responseByStatusCode": Object {
         "200": Object {
-          "responseSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources/get/responses/200/content/application~1json/schema",
+          "responseSchema": Object {
+            "$ref": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources/get/responses/200/content/application~1json/schema",
+            "title": "list_resources_at_any_folder_v1_200_response",
+          },
         },
       },
       "schemaHeaders": undefined,
@@ -131,7 +134,10 @@ Object {
       "requestSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources/post/requestBody/content/application~1json/schema",
       "responseByStatusCode": Object {
         "201": Object {
-          "responseSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources/post/responses/201/content/application~1json/schema",
+          "responseSchema": Object {
+            "$ref": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources/post/responses/201/content/application~1json/schema",
+            "title": "create_resource_at_any_folder_v1_201_response",
+          },
         },
       },
       "schemaHeaders": undefined,
@@ -159,7 +165,10 @@ Object {
       "requestSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources~1{resourceId}/put/requestBody/content/application~1json/schema",
       "responseByStatusCode": Object {
         "200": Object {
-          "responseSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources~1{resourceId}/put/responses/200/content/application~1json/schema",
+          "responseSchema": Object {
+            "$ref": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources~1{resourceId}/put/responses/200/content/application~1json/schema",
+            "title": "update_resource_at_any_folder_v1_200_response",
+          },
         },
       },
       "schemaHeaders": undefined,
@@ -273,7 +282,10 @@ Object {
       },
       "responseByStatusCode": Object {
         "200": Object {
-          "responseSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources/get/responses/200/content/application~1json/schema",
+          "responseSchema": Object {
+            "$ref": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources/get/responses/200/content/application~1json/schema",
+            "title": "list_resources_at_the_root_folder_v1_200_response",
+          },
         },
       },
       "schemaHeaders": undefined,
@@ -299,7 +311,10 @@ Object {
       "requestSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources/post/requestBody/content/application~1json/schema",
       "responseByStatusCode": Object {
         "201": Object {
-          "responseSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources/post/responses/201/content/application~1json/schema",
+          "responseSchema": Object {
+            "$ref": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources/post/responses/201/content/application~1json/schema",
+            "title": "create_resource_at_the_root_folder_v1_201_response",
+          },
         },
       },
       "schemaHeaders": undefined,
@@ -324,7 +339,10 @@ Object {
       "path": "/api/v1/companies/{args.companyId}/knowledgecenter/resources/{args.resourceId}",
       "responseByStatusCode": Object {
         "200": Object {
-          "responseSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources~1{resourceId}/get/responses/200/content/application~1json/schema",
+          "responseSchema": Object {
+            "$ref": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources~1{resourceId}/get/responses/200/content/application~1json/schema",
+            "title": "get_resource_by_id_v1_200_response",
+          },
         },
       },
       "schemaHeaders": undefined,
@@ -351,7 +369,10 @@ Object {
       "requestSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources~1{resourceId}/put/requestBody/content/application~1json/schema",
       "responseByStatusCode": Object {
         "200": Object {
-          "responseSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources~1{resourceId}/put/responses/200/content/application~1json/schema",
+          "responseSchema": Object {
+            "$ref": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources~1{resourceId}/put/responses/200/content/application~1json/schema",
+            "title": "update_resource_at_the_root_folder_v1_200_response",
+          },
         },
       },
       "schemaHeaders": undefined,

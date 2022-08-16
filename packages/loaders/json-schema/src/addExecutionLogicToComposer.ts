@@ -165,7 +165,7 @@ ${operationConfig.description || ''}
         }
         const requestInit: RequestInit = {
           method: httpMethod,
-          headers: { accept: 'application/json', ...headers },
+          headers,
         };
         if (queryParams) {
           const interpolatedQueryParams: Record<string, any> = {};
@@ -372,6 +372,9 @@ ${operationConfig.description || ''}
                             },
                           });
                         case 'header':
+                          if ('get' in requestInit.headers) {
+                            return getHeadersObj(requestInit.headers as Headers);
+                          }
                           return requestInit.headers;
                         case 'body':
                           return requestInit.body;

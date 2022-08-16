@@ -41,7 +41,10 @@ Object {
       "path": "/basket",
       "responseByStatusCode": Object {
         "200": Object {
-          "responseSchema": "./fixtures/deduplication.json#/paths/~1basket/post/responses/200/content/application~1json/schema",
+          "responseSchema": Object {
+            "$ref": "./fixtures/deduplication.json#/paths/~1basket/post/responses/200/content/application~1json/schema",
+            "title": "post_basket_200_response",
+          },
         },
       },
       "schemaHeaders": undefined,
@@ -136,7 +139,10 @@ Object {
       "path": "/basket",
       "responseByStatusCode": Object {
         "200": Object {
-          "responseSchema": "./fixtures/deduplication.json#/paths/~1basket/post/responses/200/content/application~1json/schema",
+          "responseSchema": Object {
+            "$ref": "./fixtures/deduplication.json#/paths/~1basket/post/responses/200/content/application~1json/schema",
+            "title": "post_basket_200_response",
+          },
         },
       },
       "schemaHeaders": undefined,
@@ -243,7 +249,10 @@ Object {
       "path": "/basket",
       "responseByStatusCode": Object {
         "200": Object {
-          "responseSchema": "./fixtures/deduplication.json#/paths/~1basket/post/responses/200/content/application~1json/schema",
+          "responseSchema": Object {
+            "$ref": "./fixtures/deduplication.json#/paths/~1basket/post/responses/200/content/application~1json/schema",
+            "title": "post_basket_200_response",
+          },
         },
       },
       "schemaHeaders": undefined,

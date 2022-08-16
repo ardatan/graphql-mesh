@@ -91,7 +91,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
 
   return visitJSONSchema(schema, {
     enter(subSchema: JSONSchema, { path, visitedSubschemaResultMap }) {
-      if (typeof subSchema === 'boolean') {
+      if (typeof subSchema === 'boolean' || subSchema.title === 'Any') {
         const typeComposer = schemaComposer.getAnyTC(GraphQLJSON);
         return subSchema
           ? {
