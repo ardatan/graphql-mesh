@@ -2,7 +2,7 @@ import { execute, graphql, GraphQLInputObjectType, GraphQLObjectType, GraphQLSch
 import 'json-bigint-patch';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 
-import { startServer, stopServer } from './example_api_server';
+import { startServer, stopServer } from '../../../handlers/openapi/test/example_api_server';
 import { fetch } from '@whatwg-node/fetch';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { OpenAPILoaderOptions } from '../src';
@@ -18,7 +18,7 @@ describe('example_api', () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
       fetch,
       baseUrl,
-      oasFilePath: './fixtures/example_oas.json',
+      oasFilePath: '../../../handlers/openapi/test/fixtures/example_oas.json',
       cwd: __dirname,
     });
     await startServer(PORT);
