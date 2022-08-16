@@ -9,6 +9,6 @@
   "dependencies": {
     "@graphql-mesh/cli": "0.75.9",
     "@graphql-mesh/mysql": "0.16.18",
-    "graphql": "16.5.0"
+    "graphql": "16.6.0"
   }
 }

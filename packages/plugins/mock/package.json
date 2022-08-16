@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "@types/faker": "5.5.9",
-    "@envelop/core": "2.4.2",
+    "@envelop/core": "2.5.0",
     "@graphql-mesh/cache-localforage": "0.6.25"
   },
   "publishConfig": {
