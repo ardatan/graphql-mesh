@@ -145,11 +145,13 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
           }
           case 'header': {
             operationConfig.headers = operationConfig.headers || {};
-            if (paramObj.schema?.default) {
-              operationConfig.headers[paramObj.name] = `{args.${argName}:${paramObj.schema.default}}`;
-            } else {
-              operationConfig.headers[paramObj.name] = `{args.${argName}}`;
+            let defaultValue = '';
+            if (typeof operationHeaders === 'object' && Object.keys(operationHeaders).includes(paramObj.name)) {
+              defaultValue = `:${operationHeaders[paramObj.name]}`;
+            } else if (paramObj.schema?.default) {
+              defaultValue = `:${paramObj.schema.default}`;
             }
+            operationConfig.headers[paramObj.name] = `{args.${argName}${defaultValue}}`;
             break;
           }
           case 'cookie': {
