@@ -1002,11 +1002,3 @@ Object {
   },
 }
 `;
-
-exports[`Hello World should give correct response 2`] = `
-Object {
-  "data": Object {
-    "greeting": "Hello World",
-  },
-}
-`;

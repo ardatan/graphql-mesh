@@ -276,7 +276,7 @@ type Query {
   \\"Returns the value of a [project property](https://developer.atlassian.com/cloud/jira/platform/storing-data-without-a-database/#a-id-jira-entity-properties-a-jira-entity-properties).\\\\n\\\\nThis operation can be accessed anonymously.\\\\n\\\\n**[Permissions](#permissions) required:** *Browse Projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project containing the property.\\"
   getProjectProperty(projectIdOrKey: String!, propertyKey: String!): EntityProperty
   \\"Returns a list of [project roles](https://confluence.atlassian.com/x/3odKLg) for the project returning the name and self URL for each role.\\\\n\\\\nNote that all project roles are shared with all projects in Jira Cloud. See [Get all project roles](#api-rest-api-3-role-get) for more information.\\\\n\\\\nThis operation can be accessed anonymously.\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for any project on the site or *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
-  getProjectRoles(projectIdOrKey: String!): getProjectRoles_200_response
+  getProjectRoles(projectIdOrKey: String!): JSON
   \\"Returns a project role's details and actors associated with the project. The list of actors is sorted by display name.\\\\n\\\\nTo check whether a user belongs to a role based on their group memberships, use [Get user](#api-rest-api-3-user-get) with the \`groups\` expand parameter selected. Then check whether the user keys and groups match with the actors returned for the project.\\\\n\\\\nThis operation can be accessed anonymously.\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project or *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
   getProjectRole(input: getProjectRole_request_Input, projectIdOrKey: String!, id: Int!): ProjectRole
   \\"Returns all [project roles](https://confluence.atlassian.com/x/3odKLg) and the details for each role. Note that the list of project roles is common to all projects.\\\\n\\\\nThis operation can be accessed anonymously.\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg) or *Administer projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project.\\"
@@ -474,13 +474,9 @@ enum query_getBanner_oneOf_0_visibility {
 type ErrorCollection {
   \\"The list of error messages produced by this operation. For example, \\\\\\"input parameter 'key' must be provided\\\\\\"\\"
   errorMessages: [String]
-  errors: query_getBanner_oneOf_1_errors
+  \\"The list of errors by parameter returned by the operation. For example,\\\\\\"projectKey\\\\\\": \\\\\\"Project keys must start with an uppercase letter, followed by one or more uppercase alphanumeric characters.\\\\\\"\\"
+  errors: JSON
   status: Int
-}
-
-\\"The list of errors by parameter returned by the operation. For example,\\\\\\"projectKey\\\\\\": \\\\\\"Project keys must start with an uppercase letter, followed by one or more uppercase alphanumeric characters.\\\\\\"\\"
-type query_getBanner_oneOf_1_errors {
-  additionalProperties: JSON
 }
 
 \\"The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).\\"
@@ -516,18 +512,10 @@ type ContextualConfiguration {
   id: String!
   \\"The ID of the field context the configuration is associated with.\\"
   fieldContextId: String!
-  configuration: query_getCustomFieldConfiguration_values_items_configuration
-  schema: query_getCustomFieldConfiguration_values_items_schema
-}
-
-\\"The field configuration.\\"
-type query_getCustomFieldConfiguration_values_items_configuration {
-  additionalProperties: JSON
-}
-
-\\"The field value schema.\\"
-type query_getCustomFieldConfiguration_values_items_schema {
-  additionalProperties: JSON
+  \\"The field configuration.\\"
+  configuration: JSON
+  \\"The field value schema.\\"
+  schema: JSON
 }
 
 input getCustomFieldConfiguration_request_Input {
@@ -659,7 +647,8 @@ type AttachmentMetadata {
   size: BigInt
   \\"The MIME type of the attachment.\\"
   mimeType: String
-  properties: query_getAttachment
+  \\"Additional properties of the attachment.\\"
+  properties: JSON
   \\"The URL of the attachment.\\"
   content: String
   \\"The URL of a thumbnail representing the attachment.\\"
@@ -728,11 +717,6 @@ scalar ListWrapperCallbackGroupName
 
 \\"A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.\\"
 scalar DateTime
-
-\\"Additional properties of the attachment.\\"
-type query_getAttachment {
-  additionalProperties: JSON
-}
 
 \\"Metadata for an archive (for example a zip) and its contents.\\"
 type AttachmentArchiveMetadataReadable {
@@ -871,12 +855,8 @@ type Avatar {
   isDeletable: Boolean
   \\"The file name of the avatar icon. Returned for system avatars.\\"
   fileName: String
-  urls: query_getAllSystemAvatars_system_items_urls
-  additionalProperties: JSON
-}
-
-\\"The list of avatar icon URLs.\\"
-type query_getAllSystemAvatars_system_items_urls {
+  \\"The list of avatar icon URLs.\\"
+  urls: JSON
   additionalProperties: JSON
 }
 
@@ -898,12 +878,8 @@ type PropertyKey {
 type EntityProperty {
   \\"The key of the property. Required on create and update.\\"
   key: String
-  value: query_getCommentProperty_value
-}
-
-\\"The value of the property. Required on create and update.\\"
-type query_getCommentProperty_value {
-  additionalProperties: JSON
+  \\"The value of the property. Required on create and update.\\"
+  value: JSON
 }
 
 \\"Details about a project component.\\"
@@ -1136,7 +1112,8 @@ type Project {
   versions: [Version]
   \\"The name of the project.\\"
   name: String
-  roles: query_getAllDashboards_oneOf_0_dashboards_items_sharePermissions_items_project_roles
+  \\"The name and self URL for each role defined in the project. For more information, see [Create project role](#api-rest-api-3-role-post).\\"
+  roles: JSON
   avatarUrls: AvatarUrlsBean
   projectCategory: UpdatedProjectCategory
   projectTypeKey: query_getAllDashboards_oneOf_0_dashboards_items_sharePermissions_items_project_issueTypes_items_scope_project_projectTypeKey
@@ -1149,9 +1126,10 @@ type Project {
   isPrivate: Boolean
   issueTypeHierarchy: Hierarchy
   permissions: ProjectPermissions
-  properties: query_getAllDashboards_oneOf_0_dashboards_items_sharePermissions_items_project
+  \\"Map of project properties\\"
+  properties: JSON
   \\"Unique ID for next-gen projects.\\"
-  uuid: String
+  uuid: UUID
   insight: ProjectInsight
   \\"Whether the project is marked as deleted.\\"
   deleted: Boolean
@@ -1185,11 +1163,14 @@ type IssueTypeDetails {
   \\"The ID of the issue type's avatar.\\"
   avatarId: BigInt
   \\"Unique ID for next-gen projects.\\"
-  entityId: String
+  entityId: UUID
   \\"Hierarchy level of the issue type.\\"
   hierarchyLevel: Int
   scope: Scope
 }
+
+\\"A field whose value is a generic Universally Unique Identifier: https://en.wikipedia.org/wiki/Universally_unique_identifier.\\"
+scalar UUID
 
 \\"The projects the item is associated with. Indicated for items associated with [next-gen projects](https://confluence.atlassian.com/x/loMyO).\\"
 type Scope {
@@ -1310,11 +1291,6 @@ type VersionIssuesStatus {
   additionalProperties: JSON
 }
 
-\\"The name and self URL for each role defined in the project. For more information, see [Create project role](#api-rest-api-3-role-post).\\"
-type query_getAllDashboards_oneOf_0_dashboards_items_sharePermissions_items_project_roles {
-  additionalProperties: JSON
-}
-
 \\"The type of the project.\\"
 enum query_getAllDashboards_oneOf_0_dashboards_items_sharePermissions_items_project_style {
   classic
@@ -1345,7 +1321,7 @@ type SimplifiedHierarchyLevel {
   \\"The issue types available in this hierarchy level.\\"
   issueTypeIds: [BigInt]
   \\"The external UUID of the hierarchy level. This property is deprecated, see [Change notice: Removing hierarchy level IDs from next-gen APIs](https://developer.atlassian.com/cloud/jira/platform/change-notice-removing-hierarchy-level-ids-from-next-gen-apis/).\\"
-  externalUuid: String
+  externalUuid: UUID
   globalHierarchyLevel: query_getAllDashboards_oneOf_0_dashboards_items_sharePermissions_items_project_issueTypeHierarchy_levels_items_globalHierarchyLevel
 }
 
@@ -1361,11 +1337,6 @@ type ProjectPermissions {
   canEdit: Boolean
 }
 
-\\"Map of project properties\\"
-type query_getAllDashboards_oneOf_0_dashboards_items_sharePermissions_items_project {
-  additionalProperties: JSON
-}
-
 \\"Additional details about a project.\\"
 type ProjectInsight {
   \\"Total issue count.\\"
@@ -1378,7 +1349,7 @@ type ProjectLandingPageInfo {
   url: String
   projectKey: String
   projectType: String
-  attributes: query_getAllDashboards_oneOf_0_dashboards_items_sharePermissions_items_project_landingPageInfo_attributes
+  attributes: JSON
   simplified: Boolean
   queueCategory: String
   boardName: String
@@ -1386,10 +1357,6 @@ type ProjectLandingPageInfo {
   simpleBoard: Boolean
   queueId: BigInt
   queueName: String
-}
-
-type query_getAllDashboards_oneOf_0_dashboards_items_sharePermissions_items_project_landingPageInfo_attributes {
-  additionalProperties: JSON
 }
 
 \\"Details about the roles in a project.\\"
@@ -1657,12 +1624,8 @@ type JsonTypeBean {
   custom: String
   \\"If the field is a custom field, the custom ID of the field.\\"
   customId: BigInt
-  configuration: query_getFields_items_schema_configuration
-}
-
-\\"If the field is a custom field, the configuration of the field.\\"
-type query_getFields_items_schema_configuration {
-  additionalProperties: JSON
+  \\"If the field is a custom field, the configuration of the field.\\"
+  configuration: JSON
 }
 
 union getFieldsPaginated_response = PageBeanField | ErrorCollection
@@ -2394,13 +2357,9 @@ type IssueFieldOption {
   id: BigInt!
   \\"The option's name, which is displayed in Jira.\\"
   value: String!
-  properties: query_getAllIssueFieldOptions_values_items
+  \\"The properties of the object, as arbitrary key-value pairs. These properties can be searched using JQL, if the extractions (see [Issue Field Option Property Index](https://developer.atlassian.com/cloud/jira/platform/modules/issue-field-option-property-index/)) are defined in the descriptor for the issue field module.\\"
+  properties: JSON
   config: IssueFieldOptionConfiguration
-}
-
-\\"The properties of the object, as arbitrary key-value pairs. These properties can be searched using JQL, if the extractions (see [Issue Field Option Property Index](https://developer.atlassian.com/cloud/jira/platform/modules/issue-field-option-property-index/)) are defined in the descriptor for the issue field module.\\"
-type query_getAllIssueFieldOptions_values_items {
-  additionalProperties: JSON
 }
 
 \\"Details of the projects the option is available in.\\"
@@ -3178,7 +3137,7 @@ type IssueTypeIssueCreateMetadata {
   \\"The ID of the issue type's avatar.\\"
   avatarId: BigInt
   \\"Unique ID for next-gen projects.\\"
-  entityId: String
+  entityId: UUID
   \\"Hierarchy level of the issue type.\\"
   hierarchyLevel: Int
   scope: Scope
@@ -3203,22 +3162,11 @@ type FieldMetadata {
   \\"The list of operations that can be performed on the field.\\"
   operations: [String]!
   \\"The list of values allowed in the field.\\"
-  allowedValues: [query_getCreateIssueMeta_projects_items_issuetypes_items_fields_additionalProperties_allowedValues_items]
-  defaultValue: query_getCreateIssueMeta_projects_items_issuetypes_items_fields_additionalProperties_defaultValue
-  configuration: query_getCreateIssueMeta_projects_items_issuetypes_items_fields_additionalProperties_allowedValues_items2
-}
-
-type query_getCreateIssueMeta_projects_items_issuetypes_items_fields_additionalProperties_allowedValues_items {
-  additionalProperties: JSON
-}
-
-\\"The default value of the field.\\"
-type query_getCreateIssueMeta_projects_items_issuetypes_items_fields_additionalProperties_defaultValue {
-  additionalProperties: JSON
-}
-
-type query_getCreateIssueMeta_projects_items_issuetypes_items_fields_additionalProperties_allowedValues_items2 {
-  additionalProperties: JSON
+  allowedValues: [JSON]
+  \\"The default value of the field.\\"
+  defaultValue: JSON
+  \\"The configuration properties.\\"
+  configuration: JSON
 }
 
 input getCreateIssueMeta_request_Input {
@@ -3295,31 +3243,22 @@ type IssueBean {
   self: URL
   \\"The key of the issue.\\"
   key: String
-  renderedFields: query_getCreateIssueMeta_projects_items_issuetypes_items_fields_additionalProperties_allowedValues_items3
-  properties: query_getCreateIssueMeta_projects_items_issuetypes_items_fields_additionalProperties_allowedValues_items4
-  names: query_getIssue_names
+  \\"The rendered value of each field present on the issue.\\"
+  renderedFields: JSON
+  \\"Details of the issue properties identified in the request.\\"
+  properties: JSON
+  \\"The ID and name of each field present on the issue.\\"
+  names: JSON
   schema: JsonTypeBean2
   \\"The transitions that can be performed on the issue.\\"
   transitions: [IssueTransition]
   operations: Operations
   editmeta: IssueUpdateMetadata
   changelog: PageOfChangelogs
-  versionedRepresentations: query_getCreateIssueMeta_projects_items_issuetypes_items_fields_additionalProperties_allowedValues_items5
+  \\"The versions of each field on the issue.\\"
+  versionedRepresentations: JSON
   fieldsToInclude: IncludedFields
-  fields: query_getIssue_fields
-}
-
-type query_getCreateIssueMeta_projects_items_issuetypes_items_fields_additionalProperties_allowedValues_items3 {
-  additionalProperties: JSON
-}
-
-type query_getCreateIssueMeta_projects_items_issuetypes_items_fields_additionalProperties_allowedValues_items4 {
-  additionalProperties: JSON
-}
-
-\\"The ID and name of each field present on the issue.\\"
-type query_getIssue_names {
-  additionalProperties: JSON
+  fields: JSON
 }
 
 \\"The schema of a field.\\"
@@ -3334,7 +3273,8 @@ type JsonTypeBean2 {
   custom: String
   \\"If the field is a custom field, the custom ID of the field.\\"
   customId: BigInt
-  configuration: query_getFields_items_schema_configuration
+  \\"If the field is a custom field, the configuration of the field.\\"
+  configuration: JSON
 }
 
 \\"Details of an issue transition.\\"
@@ -3408,9 +3348,11 @@ type FieldMetadata2 {
   \\"The list of operations that can be performed on the field.\\"
   operations: [String]!
   \\"The list of values allowed in the field.\\"
-  allowedValues: [query_getCreateIssueMeta_projects_items_issuetypes_items_fields_additionalProperties_allowedValues_items]
-  defaultValue: query_getCreateIssueMeta_projects_items_issuetypes_items_fields_additionalProperties_defaultValue
-  configuration: query_getCreateIssueMeta_projects_items_issuetypes_items_fields_additionalProperties_allowedValues_items2
+  allowedValues: [JSON]
+  \\"The default value of the field.\\"
+  defaultValue: JSON
+  \\"The configuration properties.\\"
+  configuration: JSON
 }
 
 \\"Details of the operations that can be performed on the issue.\\"
@@ -3451,9 +3393,11 @@ type FieldMetadata3 {
   \\"The list of operations that can be performed on the field.\\"
   operations: [String]!
   \\"The list of values allowed in the field.\\"
-  allowedValues: [query_getCreateIssueMeta_projects_items_issuetypes_items_fields_additionalProperties_allowedValues_items]
-  defaultValue: query_getCreateIssueMeta_projects_items_issuetypes_items_fields_additionalProperties_defaultValue
-  configuration: query_getCreateIssueMeta_projects_items_issuetypes_items_fields_additionalProperties_allowedValues_items2
+  allowedValues: [JSON]
+  \\"The default value of the field.\\"
+  defaultValue: JSON
+  \\"The configuration properties.\\"
+  configuration: JSON
 }
 
 \\"A page of changelogs.\\"
@@ -3517,7 +3461,8 @@ type HistoryMetadata {
   actor: HistoryMetadataParticipant
   generator: HistoryMetadataParticipant
   cause: HistoryMetadataParticipant
-  extraData: query_getIssue_changelog_histories_items_historyMetadata_extraData
+  \\"Additional arbitrary information about the history record.\\"
+  extraData: JSON
   additionalProperties: JSON
 }
 
@@ -3538,23 +3483,10 @@ type HistoryMetadataParticipant {
   additionalProperties: JSON
 }
 
-\\"Additional arbitrary information about the history record.\\"
-type query_getIssue_changelog_histories_items_historyMetadata_extraData {
-  additionalProperties: JSON
-}
-
-type query_getCreateIssueMeta_projects_items_issuetypes_items_fields_additionalProperties_allowedValues_items5 {
-  additionalProperties: JSON
-}
-
 type IncludedFields {
   excluded: [String]
   included: [String]
   actuallyIncluded: [String]
-}
-
-type query_getIssue_fields {
-  additionalProperties: JSON
 }
 
 input getIssue_request_Input {
@@ -3615,7 +3547,8 @@ type Comment {
   \\"The ID of the comment.\\"
   id: String
   author: UserDetails
-  body: query_getComments_comments_items_body
+  \\"The comment text in [Atlassian Document Format](https://developer.atlassian.com/cloud/jira/platform/apis/document/structure/).\\"
+  body: JSON
   \\"The rendered version of the comment.\\"
   renderedBody: String
   updateAuthor: UserDetails
@@ -3630,11 +3563,6 @@ type Comment {
   jsdAuthorCanSeeRequest: Boolean
   \\"A list of comment properties. Optional on create and update.\\"
   properties: [EntityProperty]
-  additionalProperties: JSON
-}
-
-\\"The comment text in [Atlassian Document Format](https://developer.atlassian.com/cloud/jira/platform/apis/document/structure/).\\"
-type query_getComments_comments_items_body {
   additionalProperties: JSON
 }
 
@@ -3807,7 +3735,8 @@ type Worklog {
   self: URL
   author: UserDetails
   updateAuthor: UserDetails
-  comment: query_getIssueWorklog_worklogs_items_comment
+  \\"A comment about the worklog in [Atlassian Document Format](https://developer.atlassian.com/cloud/jira/platform/apis/document/structure/). Optional when creating or updating a worklog.\\"
+  comment: JSON
   \\"The datetime on which the worklog was created.\\"
   created: DateTime
   \\"The datetime on which the worklog was last updated.\\"
@@ -3825,11 +3754,6 @@ type Worklog {
   issueId: String
   \\"Details of properties for the worklog. Optional when creating or updating a worklog.\\"
   properties: [EntityProperty]
-  additionalProperties: JSON
-}
-
-\\"A comment about the worklog in [Atlassian Document Format](https://developer.atlassian.com/cloud/jira/platform/apis/document/structure/). Optional when creating or updating a worklog.\\"
-type query_getIssueWorklog_worklogs_items_comment {
   additionalProperties: JSON
 }
 
@@ -4901,10 +4825,6 @@ enum query_getFeaturesForProject_features_items_state {
   COMING_SOON
 }
 
-type getProjectRoles_200_response {
-  additionalProperties: JSON
-}
-
 input getProjectRole_request_Input {
   \\"Exclude inactive users.\\"
   excludeInactiveUsers: Boolean
@@ -5026,7 +4946,7 @@ type ProjectIssueTypeHierarchy {
 \\"Details of an issue type hierarchy level.\\"
 type ProjectIssueTypesHierarchyLevel {
   \\"The ID of the issue type hierarchy level. This property is deprecated, see [Change notice: Removing hierarchy level IDs from next-gen APIs](https://developer.atlassian.com/cloud/jira/platform/change-notice-removing-hierarchy-level-ids-from-next-gen-apis/).\\"
-  entityId: String
+  entityId: UUID
   \\"The level of the issue type hierarchy level.\\"
   level: Int
   \\"The name of the issue type hierarchy level.\\"
@@ -5242,13 +5162,9 @@ type SearchResults {
   issues: [IssueBean]
   \\"Any warnings related to the JQL query.\\"
   warningMessages: [String]
-  names: query_searchForIssuesUsingJql_names
+  \\"The ID and name of each field in the search results.\\"
+  names: JSON
   schema: JsonTypeBean3
-}
-
-\\"The ID and name of each field in the search results.\\"
-type query_searchForIssuesUsingJql_names {
-  additionalProperties: JSON
 }
 
 \\"The schema of a field.\\"
@@ -5263,7 +5179,8 @@ type JsonTypeBean3 {
   custom: String
   \\"If the field is a custom field, the custom ID of the field.\\"
   customId: BigInt
-  configuration: query_getFields_items_schema_configuration
+  \\"If the field is a custom field, the configuration of the field.\\"
+  configuration: JSON
 }
 
 input searchForIssuesUsingJql_request_Input {
@@ -5426,7 +5343,8 @@ type TaskProgressBeanObject {
   status: query_getTask_status!
   \\"Information about the progress of the task.\\"
   message: String
-  result: query_getTask_result
+  \\"The result of the task execution.\\"
+  result: JSON
   \\"The ID of the user who submitted the task.\\"
   submittedBy: BigInt!
   \\"The progress of the task, as a percentage complete.\\"
@@ -5452,11 +5370,6 @@ enum query_getTask_status {
   CANCEL_REQUESTED
   CANCELLED
   DEAD
-}
-
-\\"The result of the task execution.\\"
-type query_getTask_result {
-  additionalProperties: JSON
 }
 
 \\"A page of items.\\"
@@ -6149,7 +6062,8 @@ type Transition {
   type: query_getWorkflowsPaginated_oneOf_0_values_items_transitions_items_type!
   screen: TransitionScreenDetails
   rules: WorkflowRules
-  properties: query_getWorkflowsPaginated_oneOf_0_values_items_transitions_items_additionalProperties
+  \\"The properties of the transition.\\"
+  properties: JSON
 }
 
 \\"The type of the transition.\\"
@@ -6208,17 +6122,8 @@ enum query_getWorkflowsPaginated_oneOf_0_values_items_transitions_items_rules_co
 type WorkflowTransitionRule {
   \\"The type of the transition rule.\\"
   type: String!
-  configuration: query_getWorkflowsPaginated_oneOf_0_values_items_transitions_items_rules_validators_items_configuration
-}
-
-\\"EXPERIMENTAL. The configuration of the transition rule.\\"
-type query_getWorkflowsPaginated_oneOf_0_values_items_transitions_items_rules_validators_items_configuration {
-  additionalProperties: JSON
-}
-
-\\"The properties of the transition.\\"
-type query_getWorkflowsPaginated_oneOf_0_values_items_transitions_items_additionalProperties {
-  additionalProperties: JSON
+  \\"EXPERIMENTAL. The configuration of the transition rule.\\"
+  configuration: JSON
 }
 
 \\"Details of a workflow status.\\"
@@ -6227,12 +6132,8 @@ type WorkflowStatus {
   id: String!
   \\"The name of the status in the workflow.\\"
   name: String!
-  properties: query_getWorkflowsPaginated_oneOf_0_values_items_statuses_items_additionalProperties
-}
-
-\\"Additional properties that modify the behavior of issues in this status. Supports the properties <code>jira.issue.editable</code> and <code>issueEditable</code> (deprecated) that indicate whether issues are editable.\\"
-type query_getWorkflowsPaginated_oneOf_0_values_items_statuses_items_additionalProperties {
-  additionalProperties: JSON
+  \\"Additional properties that modify the behavior of issues in this status. Supports the properties \`jira.issue.editable\` and \`issueEditable\` (deprecated) that indicate whether issues are editable.\\"
+  properties: JSON
 }
 
 \\"The ID and the name of the workflow scheme.\\"
@@ -6335,10 +6236,12 @@ type WorkflowScheme {
   description: String
   \\"The name of the default workflow for the workflow scheme. The default workflow has *All Unassigned Issue Types* assigned to it in Jira. If \`defaultWorkflow\` is not specified when creating a workflow scheme, it is set to *Jira Workflow (jira)*.\\"
   defaultWorkflow: String
-  issueTypeMappings: query_getAllWorkflowSchemes_values_items_issueTypeMappings
+  \\"The issue type to workflow mappings, where each mapping is an issue type ID and workflow name pair. Note that an issue type can only be mapped to one workflow in a workflow scheme.\\"
+  issueTypeMappings: JSON
   \\"For draft workflow schemes, this property is the name of the default workflow for the original workflow scheme. The default workflow has *All Unassigned Issue Types* assigned to it in Jira.\\"
   originalDefaultWorkflow: String
-  originalIssueTypeMappings: query_getAllWorkflowSchemes_values_items_originalIssueTypeMappings
+  \\"For draft workflow schemes, this property is the issue type to workflow mappings for the original workflow scheme, where each mapping is an issue type ID and workflow name pair. Note that an issue type can only be mapped to one workflow in a workflow scheme.\\"
+  originalIssueTypeMappings: JSON
   \\"Whether the workflow scheme is a draft or not.\\"
   draft: Boolean
   lastModifiedUser: User
@@ -6348,16 +6251,6 @@ type WorkflowScheme {
   \\"Whether to create or update a draft workflow scheme when updating an active workflow scheme. An active workflow scheme is a workflow scheme that is used by at least one project. The following examples show how this property works:\\\\n\\\\n *  Update an active workflow scheme with \`updateDraftIfNeeded\` set to \`true\`: If a draft workflow scheme exists, it is updated. Otherwise, a draft workflow scheme is created.\\\\n *  Update an active workflow scheme with \`updateDraftIfNeeded\` set to \`false\`: An error is returned, as active workflow schemes cannot be updated.\\\\n *  Update an inactive workflow scheme with \`updateDraftIfNeeded\` set to \`true\`: The workflow scheme is updated, as inactive workflow schemes do not require drafts to update.\\\\n\\\\nDefaults to \`false\`.\\"
   updateDraftIfNeeded: Boolean
   issueTypes: IssueTypeDetails2
-}
-
-\\"The issue type to workflow mappings, where each mapping is an issue type ID and workflow name pair. Note that an issue type can only be mapped to one workflow in a workflow scheme.\\"
-type query_getAllWorkflowSchemes_values_items_issueTypeMappings {
-  additionalProperties: JSON
-}
-
-\\"For draft workflow schemes, this property is the issue type to workflow mappings for the original workflow scheme, where each mapping is an issue type ID and workflow name pair. Note that an issue type can only be mapped to one workflow in a workflow scheme.\\"
-type query_getAllWorkflowSchemes_values_items_originalIssueTypeMappings {
-  additionalProperties: JSON
 }
 
 \\"Details about an issue type.\\"
@@ -6377,7 +6270,7 @@ type IssueTypeDetails2 {
   \\"The ID of the issue type's avatar.\\"
   avatarId: BigInt
   \\"Unique ID for next-gen projects.\\"
-  entityId: String
+  entityId: UUID
   \\"Hierarchy level of the issue type.\\"
   hierarchyLevel: Int
   scope: Scope
@@ -7083,11 +6976,9 @@ input MultipleCustomFieldValuesUpdate_Input {
   customField: String!
   \\"The list of issue IDs.\\"
   issueIds: [BigInt]!
-  value: mutationInput_updateMultipleCustomFieldValues_updates_items_value_Input2!
+  \\"The value for the custom field. The value must be compatible with the [custom field type](https://developer.atlassian.com/platform/forge/manifest-reference/modules/jira-custom-field/#data-types) as follows:\\\\n\\\\n *  \`string\` the value must be a string.\\\\n *  \`number\` the value must be a number.\\\\n *  \`datetime\` the value must be a string that represents a date in the ISO format or the simplified extended ISO format. For example, \`\\\\\\"2023-01-18T12:00:00-03:00\\\\\\"\` or \`\\\\\\"2023-01-18T12:00:00.000Z\\\\\\"\`. However, the milliseconds part is ignored.\\\\n *  \`user\` the value must be an object that contains the \`accountId\` field.\\\\n *  \`group\` the value must be an object that contains the group \`name\` or \`groupId\` field. Because group names can change, we recommend using \`groupId\`.\\\\n\\\\nA list of appropriate values must be provided if the field is of the \`list\` [collection type](https://developer.atlassian.com/platform/forge/manifest-reference/modules/jira-custom-field/#collection-types).\\"
+  value: JSON!
 }
-
-\\"The value for the custom field. The value must be compatible with the [custom field type](https://developer.atlassian.com/platform/forge/manifest-reference/modules/jira-custom-field/#data-types) as follows:\\\\n\\\\n *  \`string\` the value must be a string.\\\\n *  \`number\` the value must be a number.\\\\n *  \`datetime\` the value must be a string that represents a date in the ISO format or the simplified extended ISO format. For example, \`\\\\\\"2023-01-18T12:00:00-03:00\\\\\\"\` or \`\\\\\\"2023-01-18T12:00:00.000Z\\\\\\"\`. However, the milliseconds part is ignored.\\\\n *  \`user\` the value must be an object that contains the \`accountId\` field.\\\\n *  \`group\` the value must be an object that contains the group \`name\` or \`groupId\` field. Because group names can change, we recommend using \`groupId\`.\\\\n\\\\nA list of appropriate values must be provided if the field is of the \`list\` [collection type](https://developer.atlassian.com/platform/forge/manifest-reference/modules/jira-custom-field/#collection-types).\\"
-scalar mutationInput_updateMultipleCustomFieldValues_updates_items_value_Input2
 
 \\"Details of configurations for a custom field.\\"
 input CustomFieldConfigurations_Input {
@@ -7101,15 +6992,11 @@ input ContextualConfiguration_Input {
   id: String!
   \\"The ID of the field context the configuration is associated with.\\"
   fieldContextId: String!
-  configuration: query_getCustomFieldConfiguration_values_items_configuration_Input2
-  schema: query_getCustomFieldConfiguration_values_items_schema_Input2
+  \\"The field configuration.\\"
+  configuration: JSON
+  \\"The field value schema.\\"
+  schema: JSON
 }
-
-\\"The field configuration.\\"
-scalar query_getCustomFieldConfiguration_values_items_configuration_Input2
-
-\\"The field value schema.\\"
-scalar query_getCustomFieldConfiguration_values_items_schema_Input2
 
 \\"Details of updates for a custom field.\\"
 input CustomFieldValueUpdateDetails_Input {
@@ -7121,7 +7008,8 @@ input CustomFieldValueUpdateDetails_Input {
 input CustomFieldValueUpdate_Input {
   \\"The list of issue IDs.\\"
   issueIds: [BigInt]!
-  value: mutationInput_updateMultipleCustomFieldValues_updates_items_value_Input2!
+  \\"The value for the custom field. The value must be compatible with the [custom field type](https://developer.atlassian.com/platform/forge/manifest-reference/modules/jira-custom-field/#data-types) as follows:\\\\n\\\\n *  \`string\` the value must be a string.\\\\n *  \`number\` the value must be a number.\\\\n *  \`datetime\` the value must be a string that represents a date in the ISO format or the simplified extended ISO format. For example, \`\\\\\\"2023-01-18T12:00:00-03:00\\\\\\"\` or \`\\\\\\"2023-01-18T12:00:00.000Z\\\\\\"\`. However, the milliseconds part is ignored.\\\\n *  \`user\` the value must be an object that contains the \`accountId\` field.\\\\n *  \`group\` the value must be an object that contains the group \`name\` or \`groupId\` field. Because group names can change, we recommend using \`groupId\`.\\\\n\\\\nA list of appropriate values must be provided if the field is of the \`list\` [collection type](https://developer.atlassian.com/platform/forge/manifest-reference/modules/jira-custom-field/#collection-types).\\"
+  value: JSON!
 }
 
 input SimpleApplicationPropertyBean_Input {
@@ -7314,7 +7202,8 @@ input Project_Input {
   versions: [Version_Input]
   \\"The name of the project.\\"
   name: String
-  roles: query_getAllDashboards_oneOf_0_dashboards_items_sharePermissions_items_project_roles_Input2
+  \\"The name and self URL for each role defined in the project. For more information, see [Create project role](#api-rest-api-3-role-post).\\"
+  roles: JSON
   avatarUrls: AvatarUrlsBean_Input
   projectCategory: UpdatedProjectCategory_Input
   projectTypeKey: query_getAllDashboards_oneOf_0_dashboards_items_sharePermissions_items_project_issueTypes_items_scope_project_projectTypeKey
@@ -7327,9 +7216,10 @@ input Project_Input {
   isPrivate: Boolean
   issueTypeHierarchy: Hierarchy_Input
   permissions: ProjectPermissions_Input
-  properties: query_getAllDashboards_oneOf_0_dashboards_items_sharePermissions_items_project_Input2
+  \\"Map of project properties\\"
+  properties: JSON
   \\"Unique ID for next-gen projects.\\"
-  uuid: String
+  uuid: UUID
   insight: ProjectInsight_Input
   \\"Whether the project is marked as deleted.\\"
   deleted: Boolean
@@ -7363,7 +7253,7 @@ input IssueTypeDetails_Input {
   \\"The ID of the issue type's avatar.\\"
   avatarId: BigInt
   \\"Unique ID for next-gen projects.\\"
-  entityId: String
+  entityId: UUID
   \\"Hierarchy level of the issue type.\\"
   hierarchyLevel: Int
   scope: Scope_Input2
@@ -7423,9 +7313,6 @@ input SimpleLink_Input {
 \\"Counts of the number of issues in various statuses.\\"
 scalar VersionIssuesStatus_Input2
 
-\\"The name and self URL for each role defined in the project. For more information, see [Create project role](#api-rest-api-3-role-post).\\"
-scalar query_getAllDashboards_oneOf_0_dashboards_items_sharePermissions_items_project_roles_Input2
-
 \\"A project category.\\"
 input UpdatedProjectCategory_Input {
   \\"The URL of the project category.\\"
@@ -7462,7 +7349,7 @@ input SimplifiedHierarchyLevel_Input {
   \\"The issue types available in this hierarchy level.\\"
   issueTypeIds: [BigInt]
   \\"The external UUID of the hierarchy level. This property is deprecated, see [Change notice: Removing hierarchy level IDs from next-gen APIs](https://developer.atlassian.com/cloud/jira/platform/change-notice-removing-hierarchy-level-ids-from-next-gen-apis/).\\"
-  externalUuid: String
+  externalUuid: UUID
   globalHierarchyLevel: query_getAllDashboards_oneOf_0_dashboards_items_sharePermissions_items_project_issueTypeHierarchy_levels_items_globalHierarchyLevel
 }
 
@@ -7471,9 +7358,6 @@ input ProjectPermissions_Input {
   \\"Whether the logged user can edit the project.\\"
   canEdit: Boolean
 }
-
-\\"Map of project properties\\"
-scalar query_getAllDashboards_oneOf_0_dashboards_items_sharePermissions_items_project_Input2
 
 \\"Additional details about a project.\\"
 input ProjectInsight_Input {
@@ -7487,7 +7371,7 @@ input ProjectLandingPageInfo_Input {
   url: String
   projectKey: String
   projectType: String
-  attributes: query_getAllDashboards_oneOf_0_dashboards_items_sharePermissions_items_project_landingPageInfo_attributes_Input2
+  attributes: JSON
   simplified: Boolean
   queueCategory: String
   boardName: String
@@ -7496,8 +7380,6 @@ input ProjectLandingPageInfo_Input {
   queueId: BigInt
   queueName: String
 }
-
-scalar query_getAllDashboards_oneOf_0_dashboards_items_sharePermissions_items_project_landingPageInfo_attributes_Input2
 
 \\"Details about the roles in a project.\\"
 input ProjectRole_Input {
@@ -7667,35 +7549,25 @@ enum mutation_analyseExpression_oneOf_0_results_items_errors_items_type {
 type JiraExpressionComplexity {
   \\"Information that can be used to determine how many [expensive operations](https://developer.atlassian.com/cloud/jira/platform/jira-expressions/#expensive-operations) the evaluation of the expression will perform. This information may be a formula or number. For example:\\\\n\\\\n *  \`issues.map(i => i.comments)\` performs as many expensive operations as there are issues on the issues list. So this parameter returns \`N\`, where \`N\` is the size of issue list.\\\\n *  \`new Issue(10010).comments\` gets comments for one issue, so its complexity is \`2\` (\`1\` to retrieve issue 10010 from the database plus \`1\` to get its comments).\\"
   expensiveOperations: String!
-  variables: mutation_analyseExpression_oneOf_0_results_items_complexity_variables
-}
-
-\\"Variables used in the formula, mapped to the parts of the expression they refer to.\\"
-type mutation_analyseExpression_oneOf_0_results_items_complexity_variables {
-  additionalProperties: JSON
+  \\"Variables used in the formula, mapped to the parts of the expression they refer to.\\"
+  variables: JSON
 }
 
 \\"Details of Jira expressions for analysis.\\"
 input JiraExpressionForAnalysis_Input {
   \\"The list of Jira expressions to analyse.\\"
   expressions: [String]!
-  contextVariables: mutationInput_analyseExpression_contextVariables_Input2
+  \\"Context variables and their types. The type checker assumes that [common context variables](https://developer.atlassian.com/cloud/jira/platform/jira-expressions/#context-variables), such as \`issue\` or \`project\`, are available in context and sets their type. Use this property to override the default types or provide details of new variables.\\"
+  contextVariables: JSON
 }
-
-\\"Context variables and their types. The type checker assumes that [common context variables](https://developer.atlassian.com/cloud/jira/platform/jira-expressions/#context-variables), such as \`issue\` or \`project\`, are available in context and sets their type. Use this property to override the default types or provide details of new variables.\\"
-scalar mutationInput_analyseExpression_contextVariables_Input2
 
 union evaluateJiraExpression_response = JiraExpressionResult | ErrorCollection
 
 \\"The result of evaluating a Jira expression.\\"
 type JiraExpressionResult {
-  value: mutation_evaluateJiraExpression_oneOf_0_value!
+  \\"The value of the evaluated expression. It may be a primitive JSON value or a Jira REST API object. (Some expressions do not produce any meaningful results—for example, an expression that returns a lambda function—if that's the case a simple string representation is returned. These string representations should not be relied upon and may change without notice.)\\"
+  value: JSON!
   meta: JiraExpressionEvaluationMetaDataBean
-}
-
-\\"The value of the evaluated expression. It may be a primitive JSON value or a Jira REST API object. (Some expressions do not produce any meaningful results—for example, an expression that returns a lambda function—if that's the case a simple string representation is returned. These string representations should not be relied upon and may change without notice.)\\"
-type mutation_evaluateJiraExpression_oneOf_0_value {
-  additionalProperties: JSON
 }
 
 type JiraExpressionEvaluationMetaDataBean {
@@ -8597,12 +8469,10 @@ input IssueFieldOption_Input {
   id: BigInt!
   \\"The option's name, which is displayed in Jira.\\"
   value: String!
-  properties: query_getAllIssueFieldOptions_values_items_Input2
+  \\"The properties of the object, as arbitrary key-value pairs. These properties can be searched using JQL, if the extractions (see [Issue Field Option Property Index](https://developer.atlassian.com/cloud/jira/platform/modules/issue-field-option-property-index/)) are defined in the descriptor for the issue field module.\\"
+  properties: JSON
   config: IssueFieldOptionConfiguration_Input
 }
-
-\\"The properties of the object, as arbitrary key-value pairs. These properties can be searched using JQL, if the extractions (see [Issue Field Option Property Index](https://developer.atlassian.com/cloud/jira/platform/modules/issue-field-option-property-index/)) are defined in the descriptor for the issue field module.\\"
-scalar query_getAllIssueFieldOptions_values_items_Input2
 
 \\"Details of the projects the option is available in.\\"
 input IssueFieldOptionConfiguration_Input {
@@ -8681,15 +8551,11 @@ type RemoveOptionFromIssuesResult {
 }
 
 type SimpleErrorCollection {
-  errors: mutation_replaceIssueFieldOption_oneOf_0_result_errors_errors
+  \\"The list of errors by parameter returned by the operation. For example,\\\\\\"projectKey\\\\\\": \\\\\\"Project keys must start with an uppercase letter, followed by one or more uppercase alphanumeric characters.\\\\\\"\\"
+  errors: JSON
   \\"The list of error messages produced by this operation. For example, \\\\\\"input parameter 'key' must be provided\\\\\\"\\"
   errorMessages: [String]
   httpStatusCode: Int
-}
-
-\\"The list of errors by parameter returned by the operation. For example,\\\\\\"projectKey\\\\\\": \\\\\\"Project keys must start with an uppercase letter, followed by one or more uppercase alphanumeric characters.\\\\\\"\\"
-type mutation_replaceIssueFieldOption_oneOf_0_result_errors_errors {
-  additionalProperties: JSON
 }
 
 type replaceIssueFieldOption_403_response {
@@ -9113,26 +8979,22 @@ union bulkSetIssueProperty_response = ErrorCollection
 
 \\"Bulk issue property update request details.\\"
 input BulkIssuePropertyUpdateRequest_Input {
-  value: mutationInput_bulkSetIssueProperty_value_Input2
+  \\"The value of the property. The value must be a [valid](https://tools.ietf.org/html/rfc4627), non-empty JSON blob. The maximum length is 32768 characters.\\"
+  value: JSON
   \\"EXPERIMENTAL. The Jira expression to calculate the value of the property. The value of the expression must be an object that can be converted to JSON, such as a number, boolean, string, list, or map. The context variables available to the expression are \`issue\` and \`user\`. Issues for which the expression returns a value whose JSON representation is longer than 32768 characters are ignored.\\"
   expression: String
   filter: IssueFilterForBulkPropertySet_Input
 }
 
-\\"The value of the property. The value must be a [valid](https://tools.ietf.org/html/rfc4627), non-empty JSON blob. The maximum length is 32768 characters.\\"
-scalar mutationInput_bulkSetIssueProperty_value_Input2
-
 \\"Bulk operation filter details.\\"
 input IssueFilterForBulkPropertySet_Input {
   \\"List of issues to perform the bulk operation on.\\"
   entityIds: [BigInt]
-  currentValue: mutationInput_bulkSetIssueProperty_filter_currentValue_Input2
+  \\"The value of properties to perform the bulk operation on.\\"
+  currentValue: JSON
   \\"Whether the bulk operation occurs only when the property is present on or absent from an issue.\\"
   hasProperty: Boolean
 }
-
-\\"The value of properties to perform the bulk operation on.\\"
-scalar mutationInput_bulkSetIssueProperty_filter_currentValue_Input2
 
 union bulkDeleteIssueProperty_response = ErrorCollection
 
@@ -9140,17 +9002,14 @@ union bulkDeleteIssueProperty_response = ErrorCollection
 input IssueFilterForBulkPropertyDelete_Input {
   \\"List of issues to perform the bulk delete operation on.\\"
   entityIds: [BigInt]
-  currentValue: mutationInput_bulkSetIssueProperty_filter_currentValue_Input2
+  \\"The value of properties to perform the bulk operation on.\\"
+  currentValue: JSON
 }
 
 \\"A container for the watch status of a list of issues.\\"
 type BulkIssueIsWatching {
-  issuesIsWatching: mutation_getIsWatchingIssueBulk_issuesIsWatching
-}
-
-\\"The map of issue ID to boolean watch status.\\"
-type mutation_getIsWatchingIssueBulk_issuesIsWatching {
-  additionalProperties: JSON
+  \\"The map of issue ID to boolean watch status.\\"
+  issuesIsWatching: JSON
 }
 
 \\"A list of issue IDs.\\"
@@ -10237,11 +10096,9 @@ enum mutationInput_toggleFeatureForProject_state {
 input ProjectRoleActorsUpdateBean_Input {
   \\"The ID of the project role. Use [Get all project roles](#api-rest-api-3-role-get) to get a list of project role IDs.\\"
   id: BigInt
-  categorisedActors: mutationInput_setActors_categorisedActors_Input2
+  \\"The actors to add to the project role.\\\\n\\\\nAdd groups using:\\\\n\\\\n *  \`atlassian-group-role-actor\` and a list of group names.\\\\n *  \`atlassian-group-role-actor-id\` and a list of group IDs.\\\\n\\\\nAs a group's name can change, use of \`atlassian-group-role-actor-id\` is recommended. For example, \`\\\\\\"atlassian-group-role-actor-id\\\\\\":[\\\\\\"eef79f81-0b89-4fca-a736-4be531a10869\\\\\\",\\\\\\"77f6ab39-e755-4570-a6ae-2d7a8df0bcb8\\\\\\"]\`.\\\\n\\\\nAdd users using \`atlassian-user-role-actor\` and a list of account IDs. For example, \`\\\\\\"atlassian-user-role-actor\\\\\\":[\\\\\\"12345678-9abc-def1-2345-6789abcdef12\\\\\\", \\\\\\"abcdef12-3456-789a-bcde-f123456789ab\\\\\\"]\`.\\"
+  categorisedActors: JSON
 }
-
-\\"The actors to add to the project role.\\\\n\\\\nAdd groups using:\\\\n\\\\n *  \`atlassian-group-role-actor\` and a list of group names.\\\\n *  \`atlassian-group-role-actor-id\` and a list of group IDs.\\\\n\\\\nAs a group's name can change, use of \`atlassian-group-role-actor-id\` is recommended. For example, \`\\\\\\"atlassian-group-role-actor-id\\\\\\":[\\\\\\"eef79f81-0b89-4fca-a736-4be531a10869\\\\\\",\\\\\\"77f6ab39-e755-4570-a6ae-2d7a8df0bcb8\\\\\\"]\`.\\\\n\\\\nAdd users using \`atlassian-user-role-actor\` and a list of account IDs. For example, \`\\\\\\"atlassian-user-role-actor\\\\\\":[\\\\\\"12345678-9abc-def1-2345-6789abcdef12\\\\\\", \\\\\\"abcdef12-3456-789a-bcde-f123456789ab\\\\\\"]\`.\\"
-scalar mutationInput_setActors_categorisedActors_Input2
 
 input ActorsMap_Input {
   \\"The user account ID of the user to add.\\"
@@ -10775,7 +10632,8 @@ input CreateWorkflowTransitionDetails_Input {
   type: mutationInput_createWorkflow_transitions_items_type!
   rules: CreateWorkflowTransitionRulesDetails_Input
   screen: CreateWorkflowTransitionScreenDetails_Input
-  properties: mutationInput_createWorkflow_transitions_items_Input2
+  \\"The properties of the transition.\\"
+  properties: JSON
 }
 
 \\"The type of the transition.\\"
@@ -10801,7 +10659,8 @@ input CreateWorkflowCondition_Input {
   conditions: [CreateWorkflowCondition_Input]
   \\"The type of the transition rule.\\"
   type: String
-  configuration: mutationInput_createWorkflow_transitions_items_rules_conditions_conditions_items_configuration_additionalProperties_Input2
+  \\"EXPERIMENTAL. The configuration of the transition rule.\\"
+  configuration: JSON
 }
 
 \\"The compound condition operator.\\"
@@ -10810,14 +10669,12 @@ enum mutationInput_createWorkflow_transitions_items_rules_conditions_operator {
   OR
 }
 
-\\"EXPERIMENTAL. The configuration of the transition rule.\\"
-scalar mutationInput_createWorkflow_transitions_items_rules_conditions_conditions_items_configuration_additionalProperties_Input2
-
 \\"A workflow transition rule.\\"
 input CreateWorkflowTransitionRule_Input {
   \\"The type of the transition rule.\\"
   type: String!
-  configuration: mutationInput_createWorkflow_transitions_items_rules_conditions_conditions_items_configuration_additionalProperties_Input2
+  \\"EXPERIMENTAL. The configuration of the transition rule.\\"
+  configuration: JSON
 }
 
 \\"The details of a transition screen.\\"
@@ -10826,18 +10683,13 @@ input CreateWorkflowTransitionScreenDetails_Input {
   id: String!
 }
 
-\\"The properties of the transition.\\"
-scalar mutationInput_createWorkflow_transitions_items_Input2
-
 \\"The details of a transition status.\\"
 input CreateWorkflowStatusDetails_Input {
   \\"The ID of the status.\\"
   id: String!
-  properties: mutationInput_createWorkflow_statuses_items_Input2
+  \\"The properties of the status.\\"
+  properties: JSON
 }
-
-\\"The properties of the status.\\"
-scalar mutationInput_createWorkflow_statuses_items_Input2
 
 union updateWorkflowTransitionRuleConfigurations_response = WorkflowTransitionRulesUpdateErrors | ErrorCollection
 
@@ -10850,14 +10702,10 @@ type WorkflowTransitionRulesUpdateErrors {
 \\"Details of any errors encountered while updating workflow transition rules for a workflow.\\"
 type WorkflowTransitionRulesUpdateErrorDetails {
   workflowId: WorkflowId!
-  ruleUpdateErrors: mutation_updateWorkflowTransitionRuleConfigurations_oneOf_0_updateResults_items_ruleUpdateErrors!
+  \\"A list of transition rule update errors, indexed by the transition rule ID. Any transition rule that appears here wasn't updated.\\"
+  ruleUpdateErrors: JSON!
   \\"The list of errors that specify why the workflow update failed. The workflow was not updated if the list contains any entries.\\"
   updateErrors: [String]!
-}
-
-\\"A list of transition rule update errors, indexed by the transition rule ID. Any transition rule that appears here wasn't updated.\\"
-type mutation_updateWorkflowTransitionRuleConfigurations_oneOf_0_updateResults_items_ruleUpdateErrors {
-  additionalProperties: JSON
 }
 
 \\"Details about a workflow configuration update request.\\"
@@ -10964,10 +10812,12 @@ input WorkflowScheme_Input {
   description: String
   \\"The name of the default workflow for the workflow scheme. The default workflow has *All Unassigned Issue Types* assigned to it in Jira. If \`defaultWorkflow\` is not specified when creating a workflow scheme, it is set to *Jira Workflow (jira)*.\\"
   defaultWorkflow: String
-  issueTypeMappings: query_getAllWorkflowSchemes_values_items_issueTypeMappings_Input2
+  \\"The issue type to workflow mappings, where each mapping is an issue type ID and workflow name pair. Note that an issue type can only be mapped to one workflow in a workflow scheme.\\"
+  issueTypeMappings: JSON
   \\"For draft workflow schemes, this property is the name of the default workflow for the original workflow scheme. The default workflow has *All Unassigned Issue Types* assigned to it in Jira.\\"
   originalDefaultWorkflow: String
-  originalIssueTypeMappings: query_getAllWorkflowSchemes_values_items_originalIssueTypeMappings_Input2
+  \\"For draft workflow schemes, this property is the issue type to workflow mappings for the original workflow scheme, where each mapping is an issue type ID and workflow name pair. Note that an issue type can only be mapped to one workflow in a workflow scheme.\\"
+  originalIssueTypeMappings: JSON
   \\"Whether the workflow scheme is a draft or not.\\"
   draft: Boolean
   lastModifiedUser: User_Input
@@ -10978,12 +10828,6 @@ input WorkflowScheme_Input {
   updateDraftIfNeeded: Boolean
   issueTypes: IssueTypeDetails_Input2
 }
-
-\\"The issue type to workflow mappings, where each mapping is an issue type ID and workflow name pair. Note that an issue type can only be mapped to one workflow in a workflow scheme.\\"
-scalar query_getAllWorkflowSchemes_values_items_issueTypeMappings_Input2
-
-\\"For draft workflow schemes, this property is the issue type to workflow mappings for the original workflow scheme, where each mapping is an issue type ID and workflow name pair. Note that an issue type can only be mapped to one workflow in a workflow scheme.\\"
-scalar query_getAllWorkflowSchemes_values_items_originalIssueTypeMappings_Input2
 
 \\"Details about an issue type.\\"
 input IssueTypeDetails_Input2 {
@@ -11002,7 +10846,7 @@ input IssueTypeDetails_Input2 {
   \\"The ID of the issue type's avatar.\\"
   avatarId: BigInt
   \\"Unique ID for next-gen projects.\\"
-  entityId: String
+  entityId: UUID
   \\"Hierarchy level of the issue type.\\"
   hierarchyLevel: Int
   scope: Scope_Input2
@@ -11185,9 +11029,9 @@ input EntityPropertyDetails_Input {
 \\"Details of workflow transition rules.\\"
 type WorkflowRulesSearchDetails {
   \\"The workflow ID.\\"
-  workflowEntityId: String
+  workflowEntityId: UUID
   \\"List of workflow rule IDs that do not belong to the workflow or can not be found.\\"
-  invalidRules: [String]
+  invalidRules: [UUID]
   \\"List of valid workflow transition rules.\\"
   validRules: [WorkflowTransitionRules]
 }
@@ -11195,9 +11039,9 @@ type WorkflowRulesSearchDetails {
 \\"Details of the workflow and its transition rules.\\"
 input WorkflowRulesSearch_Input {
   \\"The workflow ID.\\"
-  workflowEntityId: String!
+  workflowEntityId: UUID!
   \\"The list of workflow rule IDs.\\"
-  ruleIds: [String]!
+  ruleIds: [UUID]!
   \\"Use expand to include additional information in the response. This parameter accepts \`transition\` which, for each rule, returns information about the transition the rule is assigned to.\\"
   expand: String
 }"
