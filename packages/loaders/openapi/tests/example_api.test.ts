@@ -11,7 +11,7 @@ let createdSchema: GraphQLSchema;
 const PORT = 3002;
 const baseUrl = `http://localhost:${PORT}/api`;
 
-jest.setTimeout(9999990);
+jest.setTimeout(15000);
 
 describe('example_api', () => {
   beforeAll(async () => {
