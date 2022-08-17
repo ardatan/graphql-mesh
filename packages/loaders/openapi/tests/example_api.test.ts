@@ -160,7 +160,7 @@ describe('example_api', () => {
   it('should get nested resource via link $request.path#/... and $request.query#/', async () => {
     const query = /* GraphQL */ `
       {
-        get_product_with_id(product_id: "123", input: { product_tag: "blah" }) {
+        get_product_with_id(product_id: "123", product_tag: "blah") {
           product_name
           reviews {
             text
@@ -186,7 +186,7 @@ describe('example_api', () => {
   it('should get nested resource via link operationRef', async () => {
     const query = /* GraphQL */ `
       {
-        get_product_with_id(product_id: "123", input: { product_tag: "blah" }) {
+        get_product_with_id(product_id: "123", product_tag: "blah") {
           product_name
           reviewsWithOperationRef {
             text
@@ -384,7 +384,7 @@ describe('example_api', () => {
   it('should get nested lists of resources without specifying a path param for the parent resource', async () => {
     const query = /* GraphQL */ `
       {
-        getUsers(input: { limit: 1 }) {
+        getUsers(limit: 1) {
           name
           friends {
             name
@@ -561,7 +561,7 @@ describe('example_api', () => {
   it('Link parameters as constants and variables', async () => {
     const query = /* GraphQL */ `
       {
-        getScanner(input: { query: "hello" }) {
+        getScanner(query: "hello") {
           body
           basicLink {
             body
@@ -608,7 +608,7 @@ describe('example_api', () => {
   it('Nested links with constants and variables', async () => {
     const query = /* GraphQL */ `
       {
-        getScanner(input: { query: "val" }) {
+        getScanner(query: "val") {
           body
           basicLink {
             body
@@ -714,7 +714,7 @@ describe('example_api', () => {
   it('Get response for users with providing correct parameter', async () => {
     const query = /* GraphQL */ `
       {
-        getUsers(input: { limit: 2 }) {
+        getUsers(limit: 2) {
           name
         }
       }
@@ -735,7 +735,7 @@ describe('example_api', () => {
   it('Get response with providing parameter with falsy value', async () => {
     const query = /* GraphQL */ `
       {
-        getUsers(input: { limit: 0 }) {
+        getUsers(limit: 0) {
           name
         }
       }
@@ -757,7 +757,7 @@ describe('example_api', () => {
     // NOTE: product_tag was missing in the original handler, but here it fails without it. is it a bug?
     const query = /* GraphQL */ `
       {
-        getProductReviews(id: "100", input: { product_tag: "" }) {
+        getProductReviews(id: "100", product_tag: "") {
           text
         }
       }
@@ -778,7 +778,7 @@ describe('example_api', () => {
   it('Get response with header parameters', async () => {
     const query = /* GraphQL */ `
       {
-        getSnack(snack_type: "CHIPS", snack_size: "SMALL")
+        getSnack(snack_type: chips, snack_size: small)
       }
     `;
 
@@ -789,7 +789,7 @@ describe('example_api', () => {
 
     expect(result).toEqual({
       data: {
-        getSnack: 'Here is a SMALL CHIPS',
+        getSnack: 'Here is a small chips',
       },
     });
   });
@@ -826,7 +826,7 @@ describe('example_api', () => {
   it('Get response with cookies', async () => {
     const query = /* GraphQL */ `
       {
-        getCookie(cookie_type: "CHOCOLATE_CHIP", cookie_size: "MEGA_SIZED")
+        getCookie(cookie_type: chocolate_chip, cookie_size: mega_sized)
       }
     `;
 
@@ -837,7 +837,7 @@ describe('example_api', () => {
 
     expect(result).toEqual({
       data: {
-        getCookie: 'Thanks for your cookie preferences: "cookie_type=CHOCOLATE_CHIP; cookie_size=MEGA_SIZED;"',
+        getCookie: 'Thanks for your cookie preferences: "cookie_type=chocolate chip; cookie_size=mega-sized;"',
       },
     });
   });
@@ -874,7 +874,7 @@ describe('example_api', () => {
   it('Get response containing 64-bit integer (using GraphQLBigInt)', async () => {
     const query = /* GraphQL */ `
       {
-        getProductReviews(id: "100", input: { product_tag: "blah" }) {
+        getProductReviews(id: "100", product_tag: "blah") {
           timestamp
         }
       }
@@ -1078,7 +1078,7 @@ describe('example_api', () => {
     async () => {
       const query = /* GraphQL */ `
         {
-          get_product_with_id(product_id: "this-path", input: { product_tag: "And a tag" }) {
+          get_product_with_id(product_id: "this-path", product_tag: "And a tag") {
             product_id
             product_tag
           }
@@ -1245,7 +1245,7 @@ describe('example_api', () => {
 
     const query = /* GraphQL */ `
       {
-        get_Status(input: { globalquery: "test" })
+        get_Status(globalquery: "test")
       }
     `;
 
@@ -1553,7 +1553,7 @@ describe('example_api', () => {
   it('Content property in parameter object', async () => {
     const query = /* GraphQL */ `
       {
-        getNearestCoffeeMachine(input: { lat: 3, long: 5 }) {
+        getNearestCoffeeMachine(lat: 3, long: 5) {
           lat
           long
         }
@@ -1846,7 +1846,7 @@ describe('example_api', () => {
       expect(errors).toEqual([]);
       return execute({
         schema,
-        document: parse(query),
+        document: ast,
       });
     });
 
@@ -1950,9 +1950,12 @@ describe('example_api', () => {
           }
         }
       `;
+      const document = parse(query);
+      const errors = validate(schema, document);
+      expect(errors).toEqual([]);
       const result = await execute({
         schema,
-        document: parse(query),
+        document,
       });
       expect(result).toEqual({
         data: {
@@ -1972,20 +1975,23 @@ describe('example_api', () => {
         cwd: __dirname,
         fetch,
         queryParams: {
-          limit: '1',
+          limit: 1,
         },
       };
       const schema = await loadGraphQLSchemaFromOpenAPI('test', options);
       const query = /* GraphQL */ `
         {
-          getUsers(input: { limit: 2 }) {
+          getUsers(limit: 2) {
             name
           }
         }
       `;
+      const document = parse(query);
+      const errors = validate(schema, document);
+      expect(errors).toEqual([]);
       const result = await execute({
         schema,
-        document: parse(query),
+        document,
       });
       expect(result).toEqual({
         data: {
@@ -2047,7 +2053,7 @@ describe('example_api', () => {
 
       const query = /* GraphQL */ `
         {
-          getSnack(snack_type: "soda")
+          getSnack(snack_type: soda)
         }
       `;
       const result = await execute({
@@ -2060,5 +2066,28 @@ describe('example_api', () => {
         },
       });
     });
+  });
+
+  it('Should error for enum arguments if input value is inappropriate', async () => {
+    // NOTE: make sure to check for values not in the enum, capital/lower case, etc
+    const options: OpenAPILoaderOptions = {
+      baseUrl,
+      oasFilePath: '../../../handlers/openapi/test/fixtures/example_oas.json',
+      cwd: __dirname,
+      fetch,
+    };
+
+    const schema = await loadGraphQLSchemaFromOpenAPI('test', options);
+
+    const query = /* GraphQL */ `
+      {
+        getSnack(snack_type: soda, snack_size: medium)
+      }
+    `;
+
+    const ast = parse(query);
+    const errors = validate(schema, ast);
+    expect(errors.length).toBe(1);
+    expect(errors[0].message).toEqual('Value "medium" does not exist in "queryInput_getSnack_snack_size" enum.');
   });
 });

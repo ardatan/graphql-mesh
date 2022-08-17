@@ -59,7 +59,7 @@ export function getUnionTypeComposers({
       };
     }
     if (!input) {
-      logger.warn(`No input type composer found for ${output.getTypeName()}`);
+      logger.debug(`No input type composer found for ${output.getTypeName()}, skipping...`);
     }
   });
   (subSchemaAndTypeComposers.input as InputTypeComposer).addFields(unionInputFields);

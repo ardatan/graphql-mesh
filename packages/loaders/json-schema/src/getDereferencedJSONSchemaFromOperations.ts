@@ -13,6 +13,9 @@ export async function getDereferencedJSONSchemaFromOperations({
   schemaHeaders,
   ignoreErrorResponses,
   noDeduplication = false,
+  baseUrl,
+  operationHeaders,
+  queryParams,
 }: {
   operations: JSONSchemaOperationConfig[];
   cwd: string;
@@ -21,6 +24,9 @@ export async function getDereferencedJSONSchemaFromOperations({
   schemaHeaders?: Record<string, string>;
   ignoreErrorResponses?: boolean;
   noDeduplication?: boolean;
+  baseUrl: string;
+  operationHeaders: Record<string, string>;
+  queryParams: Record<string, string | number | boolean>;
 }): Promise<JSONSchemaObject> {
   const referencedJSONSchema = await getReferencedJSONSchemaFromOperations({
     operations,
@@ -28,6 +34,9 @@ export async function getDereferencedJSONSchemaFromOperations({
     schemaHeaders,
     ignoreErrorResponses,
     fetchFn,
+    baseUrl,
+    operationHeaders,
+    queryParams,
   });
   logger.debug(`Dereferencing JSON Schema to resolve all $refs`);
   const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders);

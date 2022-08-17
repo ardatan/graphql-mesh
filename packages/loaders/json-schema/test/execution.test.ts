@@ -23,6 +23,7 @@ describe('Execution', () => {
       operations: [
         {
           type: OperationTypeNode.QUERY,
+          method: 'GET',
           field: 'test',
           path: '/test',
           headers: {
@@ -107,8 +108,16 @@ describe('Execution', () => {
             field: 'test',
             method: 'GET',
             path: '/test',
-            requestSample: {
-              foo: ['bar', 'baz'],
+            queryParamArgMap: {
+              foo: 'foo',
+            },
+            argTypeMap: {
+              foo: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
+              },
             },
             responseSample: {
               url: 'http://localhost:3000/test?foo=bar&foo=baz',
@@ -118,7 +127,7 @@ describe('Execution', () => {
       });
       const query = /* GraphQL */ `
         query Test {
-          test(input: { foo: ["bar", "baz"] }) {
+          test(foo: ["bar", "baz"]) {
             url
           }
         }
@@ -165,8 +174,16 @@ describe('Execution', () => {
             field: 'test',
             method: 'GET',
             path: '/test',
-            requestSample: {
-              foo: ['bar', 'baz'],
+            queryParamArgMap: {
+              foo: 'foo',
+            },
+            argTypeMap: {
+              foo: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
+              },
             },
             responseSample: {
               url: 'http://localhost:3000/test?foo[0]=bar&foo[1]=baz',
@@ -176,7 +193,7 @@ describe('Execution', () => {
       });
       const query = /* GraphQL */ `
         query Test {
-          test(input: { foo: ["bar", "baz"] }) {
+          test(foo: ["bar", "baz"]) {
             url
           }
         }
@@ -223,8 +240,16 @@ describe('Execution', () => {
             field: 'test',
             method: 'GET',
             path: '/test',
-            requestSample: {
-              foo: ['bar', 'baz'],
+            queryParamArgMap: {
+              foo: 'foo',
+            },
+            argTypeMap: {
+              foo: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
+              },
             },
             responseSample: {
               url: 'http://localhost:3000/test?foo[]=bar&foo[]=baz',
@@ -234,7 +259,7 @@ describe('Execution', () => {
       });
       const query = /* GraphQL */ `
         query Test {
-          test(input: { foo: ["bar", "baz"] }) {
+          test(foo: ["bar", "baz"]) {
             url
           }
         }
@@ -281,8 +306,16 @@ describe('Execution', () => {
             field: 'test',
             method: 'GET',
             path: '/test',
-            requestSample: {
-              foo: ['bar'],
+            queryParamArgMap: {
+              foo: 'foo',
+            },
+            argTypeMap: {
+              foo: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
+              },
             },
             responseSample: {
               url: 'http://localhost:3000/test?foo[]=bar',
@@ -292,7 +325,7 @@ describe('Execution', () => {
       });
       const query = /* GraphQL */ `
         query Test {
-          test(input: { foo: ["bar"] }) {
+          test(foo: ["bar"]) {
             url
           }
         }
@@ -337,10 +370,7 @@ describe('Execution', () => {
             type: OperationTypeNode.QUERY,
             field: 'test',
             method: 'GET',
-            path: '/test',
-            requestSample: {
-              'foo-bar': 'baz',
-            },
+            path: '/test?foo-bar={args.foo_bar}',
             responseSample: {
               url: 'http://localhost:3000/test?foo-bar=baz',
             },
@@ -350,7 +380,7 @@ describe('Execution', () => {
 
       const query = /* GraphQL */ `
         query Test {
-          test(input: { foo_bar: "baz" }) {
+          test(foo_bar: "baz") {
             url
           }
         }

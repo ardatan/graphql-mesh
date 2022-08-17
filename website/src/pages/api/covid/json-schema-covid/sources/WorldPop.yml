@@ -9,5 +9,3 @@ handler:
         method: GET
         responseSchema: ./src/json-schemas/worldPop.json
         exposeResponseMetadata: true
-        argTypeMap:
-          country: String

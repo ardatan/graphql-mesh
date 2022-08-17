@@ -21,7 +21,7 @@ import {
   isUnionType,
 } from 'graphql';
 import lodashSet from 'lodash.set';
-import { stringInterpolator, parseInterpolationStrings } from '@graphql-mesh/string-interpolation';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { process } from '@graphql-mesh/cross-helpers';
 import { getHeadersObj } from '@graphql-mesh/utils';
 
@@ -32,7 +32,7 @@ export interface AddExecutionLogicToComposerOptions {
   fetch: WindowOrWorkerGlobalScope['fetch'];
   logger: Logger;
   pubsub?: MeshPubSub;
-  queryParams?: Record<string, string>;
+  queryParams?: Record<string, string | number | boolean>;
   queryStringOptions?: IStringifyOptions;
 }
 
@@ -69,7 +69,6 @@ function linkResolver(
       env: process.env,
     });
     lodashSet(args, argKey, actualValue);
-    lodashSet(args, `input.${argKey}`, actualValue);
   }
   return actualResolver(root, args, context, info);
 }
@@ -105,12 +104,6 @@ export async function addExecutionLogicToComposer(
     const { httpMethod, rootTypeName, fieldName } = getOperationMetadata(operationConfig);
     const operationLogger = logger.child(`${rootTypeName}.${fieldName}`);
 
-    const interpolationStrings: string[] = [
-      ...Object.values((typeof operationHeaders === 'object' ? operationHeaders : {}) || {}),
-      ...Object.values(queryParams || {}),
-      baseUrl,
-    ];
-
     const rootTypeComposer = schemaComposer[rootTypeName];
 
     const field = rootTypeComposer.getField(fieldName);
@@ -131,7 +124,6 @@ export async function addExecutionLogicToComposer(
         operationLogger.debug('Received ', root, ' from ', operationConfig.pubsubTopic);
         return root;
       };
-      interpolationStrings.push(operationConfig.pubsubTopic);
     } else if (operationConfig.path) {
       if (process.env.DEBUG === '1' || process.env.DEBUG === 'fieldDetails') {
         field.description = `
@@ -167,7 +159,6 @@ ${operationConfig.description || ''}
           method: httpMethod,
           headers,
         };
-        const queryParamNames = [];
         // Handle binary data
         if ('binary' in operationConfig) {
           const binaryUpload = await args.input;
@@ -207,53 +198,45 @@ ${operationConfig.description || ''}
             schemaComposer
           ));
           if (input != null) {
-            switch (httpMethod) {
-              case 'GET':
-              case 'HEAD':
-              case 'CONNECT':
-              case 'OPTIONS':
-              case 'TRACE': {
-                // keep input keys for handling duplications
-                if (typeof input === 'object') {
-                  queryParamNames.push(...Object.keys(input));
-                }
-                fullPath += fullPath.includes('?') ? '&' : '?';
-                fullPath += qsStringify(input, qsOptions);
-                break;
-              }
-              case 'POST':
-              case 'PUT':
-              case 'PATCH':
-              case 'DELETE': {
-                const [, contentType] =
-                  Object.entries(headers).find(([key]) => key.toLowerCase() === 'content-type') || [];
-                if (contentType?.startsWith('application/x-www-form-urlencoded')) {
-                  requestInit.body = qsStringify(input, qsOptions);
-                } else {
-                  requestInit.body = typeof input === 'object' ? JSON.stringify(input) : input;
-                }
-                break;
-              }
-              default:
-                return createError(`Unknown HTTP Method: ${httpMethod}`, {
-                  url: fullPath,
-                  method: httpMethod,
-                });
+            const [, contentType] = Object.entries(headers).find(([key]) => key.toLowerCase() === 'content-type') || [];
+            if (contentType?.startsWith('application/x-www-form-urlencoded')) {
+              requestInit.body = qsStringify(input, qsOptions);
+            } else {
+              requestInit.body = typeof input === 'object' ? JSON.stringify(input) : input;
             }
           }
         }
         if (queryParams) {
           const interpolatedQueryParams: Record<string, any> = {};
           for (const queryParamName in queryParams) {
-            if (queryParamNames.includes(queryParamName)) {
+            if (
+              args != null &&
+              operationConfig.queryParamArgMap != null &&
+              queryParamName in operationConfig.queryParamArgMap &&
+              operationConfig.queryParamArgMap[queryParamName] in args
+            ) {
               continue;
             }
             interpolatedQueryParams[queryParamName] = stringInterpolator.parse(
-              queryParams[queryParamName],
+              queryParams[queryParamName].toString(),
               interpolationData
             );
           }
           const queryParamsString = qsStringify(interpolatedQueryParams, qsOptions);
+          fullPath += fullPath.includes('?') ? '&' : '?';
+          fullPath += queryParamsString;
+        }
+
+        if (operationConfig.queryParamArgMap) {
+          const queryParamsFromArgs = {};
+          for (const queryParamName in operationConfig.queryParamArgMap) {
+            const argName = operationConfig.queryParamArgMap[queryParamName];
+            const argValue = args[argName];
+            if (argValue != null) {
+              queryParamsFromArgs[queryParamName] = argValue;
+            }
+          }
+          const queryParamsString = qsStringify(queryParamsFromArgs, qsOptions);
           fullPath += fullPath.includes('?') ? '&' : '?';
           fullPath += queryParamsString;
         }
@@ -428,8 +411,6 @@ ${operationConfig.description || ''}
           ? responseJson.map(obj => addResponseMetadata(obj))
           : addResponseMetadata(responseJson);
       };
-      interpolationStrings.push(...Object.values(operationConfig.headers || {}));
-      interpolationStrings.push(operationConfig.path);
 
       if ('links' in operationConfig) {
         const queryFields = schemaComposer.Query.getFields();
@@ -509,8 +490,6 @@ ${operationConfig.description || ''}
         }
       }
     }
-    const { args: globalArgs } = parseInterpolationStrings(interpolationStrings, operationConfig.argTypeMap);
-    rootTypeComposer.addFieldArgs(fieldName, globalArgs);
   }
 
   logger.debug(`Building the executable schema.`);

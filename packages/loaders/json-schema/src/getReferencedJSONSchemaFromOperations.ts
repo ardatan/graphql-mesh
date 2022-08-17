@@ -1,3 +1,4 @@
+import { getInterpolationKeys } from '@graphql-mesh/string-interpolation';
 import { Logger } from '@graphql-mesh/types';
 import { defaultImportFn, DefaultLogger, readFileOrUrl } from '@graphql-mesh/utils';
 import { JSONSchema, JSONSchemaObject } from 'json-machete';
@@ -97,6 +98,9 @@ export async function getReferencedJSONSchemaFromOperations({
   ignoreErrorResponses,
   logger = new DefaultLogger('getReferencedJSONSchemaFromOperations'),
   fetchFn,
+  baseUrl,
+  operationHeaders,
+  queryParams,
 }: {
   operations: JSONSchemaOperationConfig[];
   cwd: string;
@@ -104,6 +108,9 @@ export async function getReferencedJSONSchemaFromOperations({
   ignoreErrorResponses?: boolean;
   logger?: Logger;
   fetchFn: WindowOrWorkerGlobalScope['fetch'];
+  baseUrl: string;
+  operationHeaders: Record<string, string>;
+  queryParams: Record<string, string | number | boolean>;
 }) {
   const finalJsonSchema: JSONSchema = {
     type: 'object',
@@ -121,6 +128,24 @@ export async function getReferencedJSONSchemaFromOperations({
       properties: {},
     });
     rootTypeDefinition.properties = rootTypeDefinition.properties || {};
+
+    const interpolationStrings: string[] = [
+      ...Object.values(operationHeaders || {}),
+      ...Object.values(queryParams || {}).map(val => val.toString()),
+      baseUrl,
+    ];
+
+    if ('pubsubTopic' in operationConfig) {
+      interpolationStrings.push(operationConfig.pubsubTopic);
+    }
+
+    if ('headers' in operationConfig) {
+      interpolationStrings.push(...Object.values(operationConfig.headers || {}));
+    }
+
+    if ('path' in operationConfig) {
+      interpolationStrings.push(operationConfig.path);
+    }
 
     if ('responseByStatusCode' in operationConfig) {
       rootTypeDefinition.properties[fieldName] = rootTypeDefinition.properties[fieldName] || {};
@@ -172,14 +197,55 @@ export async function getReferencedJSONSchemaFromOperations({
       title: rootInputTypeName,
       properties: {},
     });
+
+    const interpolationKeys: string[] = getInterpolationKeys(...interpolationStrings);
+
+    if ('queryParamArgMap' in operationConfig) {
+      interpolationKeys.push(...Object.values(operationConfig.queryParamArgMap).map(key => `args.${key}`));
+    }
+
+    for (const interpolationKey of interpolationKeys) {
+      const interpolationKeyParts = interpolationKey.split('.');
+      const initialObjectName = interpolationKeyParts.shift();
+      if (initialObjectName === 'args') {
+        rootTypeInputTypeDefinition.properties[fieldName] = rootTypeInputTypeDefinition.properties[fieldName] || {
+          type: 'object',
+          properties: {},
+        };
+        const varName = interpolationKeyParts.shift();
+        if (operationConfig.argTypeMap != null && varName in operationConfig.argTypeMap) {
+          const argTypeDef = operationConfig.argTypeMap[varName];
+          if (typeof argTypeDef === 'object') {
+            rootTypeInputTypeDefinition.properties[fieldName].properties[varName] = argTypeDef;
+          } else {
+            rootTypeInputTypeDefinition.properties[fieldName].properties[varName] = {
+              $ref: argTypeDef,
+            };
+          }
+        } else if (!rootTypeInputTypeDefinition.properties[fieldName].properties[varName]) {
+          rootTypeInputTypeDefinition.properties[fieldName].properties[varName] = {
+            type: 'string',
+          };
+        }
+      }
+    }
+
     if ('binary' in operationConfig) {
       const generatedSchema = {
         title: operationConfig.requestTypeName || 'File',
         type: 'file',
       };
-      rootTypeInputTypeDefinition.properties[fieldName] = generatedSchema;
+      rootTypeInputTypeDefinition.properties[fieldName] = rootTypeInputTypeDefinition.properties[fieldName] || {
+        type: 'object',
+        properties: {},
+      };
+      rootTypeInputTypeDefinition.properties[fieldName].properties.input = generatedSchema;
     } else if ('requestSchema' in operationConfig && operationConfig.requestSchema) {
-      rootTypeInputTypeDefinition.properties[fieldName] =
+      rootTypeInputTypeDefinition.properties[fieldName] = rootTypeInputTypeDefinition.properties[fieldName] || {
+        type: 'object',
+        properties: {},
+      };
+      rootTypeInputTypeDefinition.properties[fieldName].properties.input =
         typeof operationConfig.requestSchema === 'string'
           ? {
               $ref: operationConfig.requestSchema,
@@ -187,8 +253,8 @@ export async function getReferencedJSONSchemaFromOperations({
             }
           : operationConfig.requestSchema;
       if (operationConfig.requestSample) {
-        rootTypeInputTypeDefinition.properties[fieldName].examples = rootTypeInputTypeDefinition.properties[fieldName]
-          .examples || [operationConfig.requestSample];
+        rootTypeInputTypeDefinition.properties[fieldName].properties.input.examples = rootTypeInputTypeDefinition
+          .properties[fieldName].properties.input.examples || [operationConfig.requestSample];
       }
     } else if ('requestSample' in operationConfig) {
       const sample =
@@ -217,7 +283,11 @@ export async function getReferencedJSONSchemaFromOperations({
       });
       generatedSchema.title = operationConfig.requestTypeName;
       generatedSchema.examples = [sample];
-      rootTypeInputTypeDefinition.properties[fieldName] = generatedSchema;
+      rootTypeInputTypeDefinition.properties[fieldName] = rootTypeInputTypeDefinition.properties[fieldName] || {
+        type: 'object',
+        properties: {},
+      };
+      rootTypeInputTypeDefinition.properties[fieldName].properties.input = generatedSchema;
     }
   }
   return finalJsonSchema;

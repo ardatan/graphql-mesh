@@ -34,12 +34,12 @@ scalar JSON @specifiedBy(url: \\"http://www.ecma-international.org/publications/
 
 type Mutation {
   createUser(input: CreateUpdateUserInput): User
-  deleteUser(id: ID!): JSON
-  updateUser(id: ID!, input: CreateUpdateUserInput): User
+  deleteUser(id: String!): JSON
+  updateUser(id: String!, input: CreateUpdateUserInput): User
 }
 
 type Query {
-  company(id: ID!): Company
+  company(id: String!): Company
   me: User
 }
 
