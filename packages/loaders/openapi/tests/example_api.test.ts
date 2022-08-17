@@ -2081,13 +2081,13 @@ describe('example_api', () => {
 
     const query = /* GraphQL */ `
       {
-        getSnack(snack_type: "soda", snack_size: "medium")
+        getSnack(snack_type: soda, snack_size: medium)
       }
     `;
 
     const ast = parse(query);
     const errors = validate(schema, ast);
     expect(errors.length).toBe(1);
-    expect(errors[0].message).toEqual('Enum "query_getSnack_parameters_snack_size" cannot represent value: "medium"');
+    expect(errors[0].message).toEqual('Value "medium" does not exist in "queryInput_getSnack_snack_size" enum.');
   });
 });
