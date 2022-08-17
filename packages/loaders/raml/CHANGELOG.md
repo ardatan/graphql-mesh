@@ -1,5 +1,18 @@
 # @omnigraph/raml
 
+## 0.7.0
+
+### Minor Changes
+
+- [#4322](https://github.com/Urigo/graphql-mesh/pull/4322) [`738335788`](https://github.com/Urigo/graphql-mesh/commit/7383357880685447189085204c984e632d36aa61) Thanks [@ardatan](https://github.com/ardatan)! - POSSIBLE BREAKING CHANGE:
+  Previously if the parameter name was not valid for GraphQL and sanitized like `product-tag` to `product_tag`, it was ignored. Now it has been fixed but this change might be a breaking change for you if the actual parameter schema is `integer` while it is represented as `string` today.
+  This also fixes an issue with ignored default values.
+
+### Patch Changes
+
+- Updated dependencies [[`738335788`](https://github.com/Urigo/graphql-mesh/commit/7383357880685447189085204c984e632d36aa61)]:
+  - @omnigraph/json-schema@0.28.0
+
 ## 0.6.0
 
 ### Minor Changes
