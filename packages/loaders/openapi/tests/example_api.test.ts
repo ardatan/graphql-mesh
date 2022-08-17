@@ -2061,4 +2061,27 @@ describe('example_api', () => {
       });
     });
   });
+
+  it('Should error for enum arguments if input value is inappropriate', async () => {
+    // NOTE: make sure to check for values not in the enum, capital/lower case, etc
+    const options: OpenAPILoaderOptions = {
+      baseUrl,
+      oasFilePath: '../../../handlers/openapi/test/fixtures/example_oas.json',
+      cwd: __dirname,
+      fetch,
+    };
+
+    const schema = await loadGraphQLSchemaFromOpenAPI('test', options);
+
+    const query = /* GraphQL */ `
+      {
+        getSnack(snack_type: "soda", snack_size: "medium")
+      }
+    `;
+
+    const ast = parse(query);
+    const errors = validate(schema, ast);
+    expect(errors.length).toBe(1);
+    expect(errors[0].message).toEqual('Enum "query_getSnack_parameters_snack_size" cannot represent value: "medium"');
+  });
 });
