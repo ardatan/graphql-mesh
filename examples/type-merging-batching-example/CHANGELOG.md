@@ -1,5 +1,15 @@
 # type-merging-batching-example
 
+## 0.0.150
+
+### Patch Changes
+
+- Updated dependencies [[`b882f265f`](https://github.com/Urigo/graphql-mesh/commit/b882f265f8b1258f45fa2c27e7cc32b0bc8f2a54), [`e9a251cc8`](https://github.com/Urigo/graphql-mesh/commit/e9a251cc812dbe579a483b06be932e904891b752)]:
+  - @graphql-mesh/graphql@0.29.10
+  - @graphql-mesh/cli@0.75.10
+  - @graphql-mesh/transform-rename@0.12.66
+  - @graphql-mesh/transform-type-merging@0.4.20
+
 ## 0.0.149
 
 ### Patch Changes

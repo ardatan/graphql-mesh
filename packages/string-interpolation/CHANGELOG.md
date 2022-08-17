@@ -1,5 +1,11 @@
 # @graphql-mesh/string-interpolation
 
+## 0.3.2
+
+### Patch Changes
+
+- [#4310](https://github.com/Urigo/graphql-mesh/pull/4310) [`2ad667d96`](https://github.com/Urigo/graphql-mesh/commit/2ad667d964545ed47170cfa4f9393282edc2073b) Thanks [@belgattitude](https://github.com/belgattitude)! - Add MIT licence field in package.json
+
 ## 0.3.1
 
 ### Patch Changes

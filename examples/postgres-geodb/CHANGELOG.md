@@ -1,5 +1,18 @@
 # postgres-geodb-example
 
+## 0.5.251
+
+### Patch Changes
+
+- Updated dependencies [[`cbc00748e`](https://github.com/Urigo/graphql-mesh/commit/cbc00748e8538e17e83b1a858947ff6503c6d5c0), [`b882f265f`](https://github.com/Urigo/graphql-mesh/commit/b882f265f8b1258f45fa2c27e7cc32b0bc8f2a54), [`cbc00748e`](https://github.com/Urigo/graphql-mesh/commit/cbc00748e8538e17e83b1a858947ff6503c6d5c0), [`e9a251cc8`](https://github.com/Urigo/graphql-mesh/commit/e9a251cc812dbe579a483b06be932e904891b752)]:
+  - @graphql-mesh/config@5.1.8
+  - @graphql-mesh/graphql@0.29.10
+  - @graphql-mesh/runtime@0.41.10
+  - @graphql-mesh/cli@0.75.10
+  - @graphql-mesh/cache-file@0.9.11
+  - @graphql-mesh/postgraphile@0.20.42
+  - @graphql-mesh/transform-prefix@0.11.65
+
 ## 0.5.250
 
 ### Patch Changes
