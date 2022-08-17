@@ -19,11 +19,12 @@ export interface JSONSchemaLoaderBundle {
 }
 
 export interface JSONSchemaLoaderBundleOptions {
-  baseUrl?: string;
+  baseUrl: string;
   operations: JSONSchemaOperationConfig[];
-  schemaHeaders?: Record<string, string>;
-  operationHeaders?: Record<string, string>;
-  cwd?: string;
+  schemaHeaders: Record<string, string>;
+  operationHeaders: Record<string, string>;
+  queryParams: Record<string, string | number | boolean>;
+  cwd: string;
   ignoreErrorResponses?: boolean;
   noDeduplication?: boolean;
 
@@ -38,6 +39,7 @@ export async function createBundle(
     operations,
     schemaHeaders,
     operationHeaders,
+    queryParams,
     cwd = process.cwd(),
     fetch = crossUndiciFetch,
     logger = new DefaultLogger(name),
@@ -54,6 +56,9 @@ export async function createBundle(
     schemaHeaders,
     ignoreErrorResponses,
     noDeduplication,
+    baseUrl,
+    operationHeaders,
+    queryParams,
   });
   logger.debug(`Creating references from dereferenced schema`);
   const referencedSchema = await referenceJSONSchema(dereferencedSchema);

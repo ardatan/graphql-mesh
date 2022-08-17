@@ -829,14 +829,10 @@ type Subscription {
     expect((output as SchemaComposer).toSDL()).toBe(
       /* GraphQL */ `
 type Query {
-  foo(input: Foo_Input): String
+  foo(bar: String): String
 }
 
 ${printType(GraphQLString)}
-
-input Foo_Input {
-  bar: String
-}
      `.trim()
     );
   });
@@ -1046,7 +1042,7 @@ input Foo_Input {
       }
 
       type Query {
-        foo(input: Foo_Input_Input): Foo
+        foo(_0BarId: String, _1BazId: String): Foo
       }
 
       type Foo {
@@ -1060,11 +1056,6 @@ input Foo_Input {
 
       type Baz {
         bazId: String
-      }
-
-      input Foo_Input_Input {
-        _0BarId: String
-        _1BazId: String
       }"
     `);
   });

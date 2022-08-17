@@ -9,6 +9,9 @@ export async function loadGraphQLSchemaFromJSONSchemas(name: string, options: JS
   const cwd = options.cwd || process.cwd();
   const fullyDeferencedSchema = await getDereferencedJSONSchemaFromOperations({
     operations,
+    operationHeaders: typeof options.operationHeaders === 'object' ? options.operationHeaders : {},
+    queryParams: options.queryParams,
+    baseUrl: options.baseUrl,
     cwd,
     logger,
     fetchFn: options.fetch,

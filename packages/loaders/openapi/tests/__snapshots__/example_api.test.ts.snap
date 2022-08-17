@@ -10,13 +10,25 @@ directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
 
 type Query {
   \\"Return a list of users.\\"
-  getUsers(input: getUsers_request_Input!): [user]
+  getUsers(
+    \\"Limit of the number of users to return.\\"
+    limit: Int!
+  ): [user]
   \\"Returns a user from the system.\\"
-  getUserByUsername(username: String!): user
+  getUserByUsername(
+    \\"Identifier of a user.\\"
+    username: String!
+  ): user
   \\"Returns a car to test nesting of sub operations\\"
-  getUserCar(username: String!): car
+  getUserCar(
+    \\"Identifier of a user.\\"
+    username: String!
+  ): car
   \\"Returns a user's friends to test pagination\\"
-  getUserFriends(username: String!): [user]
+  getUserFriends(
+    \\"Identifier of a user.\\"
+    username: String!
+  ): [user]
   \\"Returns all company assets\\"
   getAllAssets(companyId: String!): [query_getAllAssets_items]
   \\"Returns information about all employee cars\\"
@@ -24,11 +36,11 @@ type Query {
   \\"Returns the profile of a company with the given ID.\\"
   getCompanyById(id: String!): company
   \\"Used to test cookies.\\"
-  getCookie(cookie_type: String!, cookie_size: String!): String
+  getCookie(cookie_type: queryInput_getCookie_cookie_type!, cookie_size: queryInput_getCookie_cookie_size!): String
   \\"Used to find the nearest coffee machine based on the user's coordinates. Used to test the content field in parameter objects.\\"
-  getNearestCoffeeMachine(input: getNearestCoffeeMachine_request_Input): coordinates
+  getNearestCoffeeMachine(lat: Float, long: Float): coordinates
   \\"Used to test link parameters with variables\\"
-  getCopier(input: getCopier_request_Input): getCopier_200_response
+  getCopier(query: String): getCopier_200_response
   \\"Used to test generation of object types with matching schema.\\"
   getNumberOfCleanDesks: String
   \\"Used to test generation of object types with matching schema.\\"
@@ -36,29 +48,35 @@ type Query {
   \\"Used to test empty responses\\"
   getBonuses: Void
   \\"Return an office.\\"
-  getOffice(id: Int!): office
+  getOffice(
+    \\"Office ID\\"
+    id: Int!
+  ): office
   \\"Return a list of papers. Endpoint to test 2XX status code.\\"
   getPapers: [paper]
   \\"Another endpoint to test unsanitized parameters and data.\\"
-  get_product_with_id(input: get_product_with_id_request_Input!, product_id: String!): product_with_id
+  get_product_with_id(product_id: String, product_tag: String): product_with_id
   \\"Obtain reviews for a product.\\"
-  getProductReviews(input: getProductReviews_request_Input!, id: String!): [query_getProductReviews_items]
+  getProductReviews(id: String!, product_tag: String): [query_getProductReviews_items]
   \\"An endpoint to test authentication.\\"
-  get_patent_with_id(patent_id: String!): patent_with_id
+  get_patent_with_id(patent_id: String): patent_with_id
   \\"Another endpoint to test authentication.\\"
-  get_project_with_id(project_id: Int!): project_with_id
+  get_project_with_id(project_id: String): project_with_id
   \\"Used to test link parameters with variables\\"
-  getScanner(input: getCopier_request_Input): getCopier_200_response
+  getScanner(query: String): getCopier_200_response
   \\"Endpoint to test sending of headers.\\"
-  getSnack(snack_type: String!, snack_size: String!): String
+  getSnack(snack_type: queryInput_getSnack_snack_type!, snack_size: queryInput_getSnack_snack_size!): String
   \\"Endpoint to test sending of options.\\"
-  get_Status(input: get_Status_request_Input!): String
+  get_Status(globalquery: String!, limit: Int!): String
   \\"Used to test OAuth token being present in header.\\"
   getSecure: String
   \\"Returns the (contents of a) trashcan from a specific office\\"
   getAllTrashCans: [trashcan]
   \\"Returns the (contents of a) trashcan from a specific owner\\"
-  getOfficeTrashCan(username: String!): trashcan
+  getOfficeTrashCan(
+    \\"Identifier of a user.\\"
+    username: String!
+  ): trashcan
   \\"It could be anything!\\"
   mystery: mystery_200_response
 }
@@ -129,11 +147,6 @@ type company {
 \\"A field whose value is a generic Universally Unique Identifier: https://en.wikipedia.org/wiki/Universally_unique_identifier.\\"
 scalar UUID
 
-input getUsers_request_Input {
-  \\"Limit of the number of users to return.\\"
-  limit: Int!
-}
-
 \\"A car\\"
 type car {
   \\"The model of the car.\\"
@@ -174,14 +187,21 @@ type trashcan {
 
 scalar query_getAllAssets_items_oneOf_2_brand
 
+enum queryInput_getCookie_cookie_type {
+  chocolate_chip
+  oatmeal_raisin
+  sugar
+}
+
+enum queryInput_getCookie_cookie_size {
+  bite_sized
+  regular
+  mega_sized
+}
+
 type coordinates {
   lat: Float!
   long: Float!
-}
-
-input getNearestCoffeeMachine_request_Input {
-  lat: Float
-  long: Float
 }
 
 type getCopier_200_response {
@@ -196,10 +216,6 @@ type getCopier_200_response {
   everythingLink: getCopier_200_response
   \\"Used to test link parameters with variables\\"
   everythingLink2: getCopier_200_response
-}
-
-input getCopier_request_Input {
-  query: String
 }
 
 \\"Represents empty values\\"
@@ -249,14 +265,6 @@ type query_getProductReviews_items {
 \\"The \`BigInt\` scalar type represents non-fractional signed whole numeric values.\\"
 scalar BigInt
 
-input get_product_with_id_request_Input {
-  product_tag: String!
-}
-
-input getProductReviews_request_Input {
-  product_tag: String!
-}
-
 \\"A patent\\"
 type patent_with_id {
   \\"The id of the patent\\"
@@ -285,9 +293,14 @@ type project_with_id {
   ProjectLead: user
 }
 
-input get_Status_request_Input {
-  globalquery: String!
-  limit: Int!
+enum queryInput_getSnack_snack_type {
+  chips
+  soda
+}
+
+enum queryInput_getSnack_snack_size {
+  large
+  small
 }
 
 union mystery_200_response = query_mystery_oneOf_0 | query_mystery_oneOf_1
@@ -302,7 +315,7 @@ type query_mystery_oneOf_1 {
 
 type Mutation {
   \\"Create a new user in the system.\\"
-  postUser(input: user_Input!): user
+  postUser(input: user_Input): user
   \\"Create a new paper in the system. Endpoint to test non-application/json request and response bodies.\\"
   postPaper(input: String): String
   \\"Endpoint to test unsanitized parameters and data.\\"
@@ -310,11 +323,15 @@ type Mutation {
   \\"An endpoint to test authenticated POST requests.\\"
   post_project_with_id(input: project_with_id_Input): project_with_id
   \\"Used to test link parameters with variables\\"
-  postScanner(input: String, path: String!, query: String): getCopier_200_response
+  postScanner(path: String!, query: String, input: String): getCopier_200_response
   \\"Endpoint to test placeholder objects to wrap response objects.\\"
-  post_status(input: paths_status_post_requestBody_content_application_json_schema_Input, globalquery: String!): String
+  post_status(globalquery: String!, input: paths_status_post_requestBody_content_application_json_schema_Input): String
   \\"Add new contents to the trashcan of a specific owner\\"
-  postOfficeTrashCan(input: paths_trashcans__LEFT_CURLY_BRACE_username_RIGHT_CURLY_BRACE__post_requestBody_content_application_json_schema_Input, username: String!): trashcan
+  postOfficeTrashCan(
+    \\"Identifier of a user.\\"
+    username: String!
+    input: paths_trashcans__LEFT_CURLY_BRACE_username_RIGHT_CURLY_BRACE__post_requestBody_content_application_json_schema_Input
+  ): trashcan
 }
 
 \\"A user represents a natural person\\"

@@ -1,7 +1,7 @@
 import { ResolverData } from '@graphql-mesh/string-interpolation';
 import { MeshPubSub, Logger } from '@graphql-mesh/types';
 import { BaseLoaderOptions } from '@graphql-tools/utils';
-import { GraphQLInputType, OperationTypeNode } from 'graphql';
+import { OperationTypeNode } from 'graphql';
 import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 import { JSONSchema, JSONSchemaObject } from 'json-machete';
 import { IStringifyOptions } from 'qs';
@@ -16,7 +16,7 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   pubsub?: MeshPubSub;
   fetch?: WindowOrWorkerGlobalScope['fetch'];
   ignoreErrorResponses?: boolean;
-  queryParams?: Record<string, string>;
+  queryParams?: Record<string, string | number | boolean>;
   noDeduplication?: boolean;
   queryStringOptions?: IStringifyOptions;
 }
@@ -42,7 +42,7 @@ export type JSONSchemaBaseOperationConfig = {
   field: string;
   description?: string;
 
-  argTypeMap?: Record<string, string | GraphQLInputType>;
+  argTypeMap?: Record<string, string | JSONSchemaObject>;
 } & (
   | {
       responseByStatusCode?: Record<string, JSONSchemaOperationResponseConfig>;
@@ -64,6 +64,7 @@ export type JSONSchemaHTTPBaseOperationConfig = JSONSchemaBaseOperationConfig & 
   method?: HTTPMethod;
 
   headers?: Record<string, string>;
+  queryParamArgMap?: Record<string, string>;
 };
 
 export type JSONSchemaHTTPJSONOperationConfig = JSONSchemaHTTPBaseOperationConfig &

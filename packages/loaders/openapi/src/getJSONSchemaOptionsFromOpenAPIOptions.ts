@@ -100,42 +100,23 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
           paramObj = resolvePath(paramObj.$ref.split('#')[1], oasOrSwagger);
         }
         const argName = sanitizeNameForGraphQL(paramObj.name);
+        const operationArgTypeMap = (operationConfig.argTypeMap = operationConfig.argTypeMap || {}) as Record<
+          string,
+          JSONSchemaObject
+        >;
+
         switch (paramObj.in) {
           case 'query':
-            if (method.toUpperCase() === 'GET') {
-              const requestSchema = (operationConfig.requestSchema = operationConfig.requestSchema || {
-                type: 'object',
-                properties: {},
-              }) as JSONSchemaObject;
-              requestSchema.properties[paramObj.name] =
-                paramObj.schema || paramObj.content?.['application/json']?.schema || paramObj;
-              if (!requestSchema.properties[paramObj.name].title) {
-                requestSchema.properties[paramObj.name].name = paramObj.name;
+            operationConfig.queryParamArgMap = operationConfig.queryParamArgMap || {};
+            operationConfig.queryParamArgMap[paramObj.name] = argName;
+            if (paramObj.name in queryParams) {
+              paramObj.required = false;
+              if (!paramObj.schema?.default) {
+                paramObj.schema = paramObj.schema || {
+                  type: 'string',
+                };
+                paramObj.schema.default = queryParams[paramObj.name];
               }
-              if (!requestSchema.properties[paramObj.name].description) {
-                requestSchema.properties[paramObj.name].description = paramObj.description;
-              }
-              if (requestSchema.properties.__typename) {
-                delete requestSchema.properties.__typename;
-              }
-              if (paramObj.required && !(paramObj.name in queryParams)) {
-                requestSchema.required = requestSchema.required || [];
-                requestSchema.required.push(paramObj.name);
-              }
-              // Fix the reference
-              if (requestSchema.properties[paramObj.name].$ref?.startsWith('#')) {
-                requestSchema.properties[paramObj.name].$ref = `${oasFilePath}${
-                  requestSchema.properties[paramObj.name].$ref
-                }`;
-              }
-            } else {
-              if (!operationConfig.path.includes('?')) {
-                operationConfig.path += '?';
-              }
-              if (operationConfig.path !== '?') {
-                operationConfig.path += '&';
-              }
-              operationConfig.path += `${paramObj.name}={args.${argName}}`;
             }
             break;
           case 'path': {
@@ -179,28 +160,21 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
             }
             break;
         }
-        switch (paramObj.schema?.type || (paramObj as any).type) {
-          case 'string':
-            operationConfig.argTypeMap = operationConfig.argTypeMap || {};
-            operationConfig.argTypeMap[argName] = 'String';
-            break;
-          case 'integer':
-            operationConfig.argTypeMap = operationConfig.argTypeMap || {};
-            operationConfig.argTypeMap[argName] = 'Int';
-            break;
-          case 'number':
-            operationConfig.argTypeMap = operationConfig.argTypeMap || {};
-            operationConfig.argTypeMap[argName] = 'Float';
-            break;
-          case 'boolean':
-            operationConfig.argTypeMap = operationConfig.argTypeMap || {};
-            operationConfig.argTypeMap[argName] = 'Boolean';
-            break;
+
+        operationArgTypeMap[paramObj.name] =
+          paramObj.schema || paramObj.content?.['application/json']?.schema || paramObj;
+        if (!operationArgTypeMap[paramObj.name].title) {
+          operationArgTypeMap[paramObj.name].name = paramObj.name;
+        }
+        if (!operationArgTypeMap[paramObj.name].description) {
+          operationArgTypeMap[paramObj.name].description = paramObj.description;
         }
         if (paramObj.required) {
-          operationConfig.argTypeMap = operationConfig.argTypeMap || {};
-          operationConfig.argTypeMap[argName] = operationConfig.argTypeMap[argName] || 'ID';
-          operationConfig.argTypeMap[argName] += '!';
+          operationArgTypeMap[paramObj.name].nullable = false;
+        }
+        // Fix the reference
+        if (operationArgTypeMap[paramObj.name].$ref?.startsWith('#')) {
+          operationArgTypeMap[paramObj.name].$ref = `${oasFilePath}${operationArgTypeMap[paramObj.name].$ref}`;
         }
       }
 

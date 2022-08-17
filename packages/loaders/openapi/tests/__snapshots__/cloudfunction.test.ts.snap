@@ -12,7 +12,7 @@ type Query {
 
 type Mutation {
   \\"Description of the action\\"
-  post_test_action_2(input: Payload_Input!, usernamePassword: ID, blocking: Boolean, result: Boolean): Response
+  post_test_action_2(usernamePassword: String, blocking: Boolean, result: Boolean, input: Payload_Input): Response
 }
 
 type Response {

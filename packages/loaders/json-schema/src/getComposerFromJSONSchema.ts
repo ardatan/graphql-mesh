@@ -861,31 +861,14 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             }
           }
 
-          const getCorrectInputFieldType = (fieldName: string) => {
-            const inputType: InputTypeComposer | ListComposer<InputTypeComposer> = inputFieldMap[fieldName].type();
-            const actualInputType = isListTC(inputType) ? inputType.ofType : inputType;
-            if (!actualInputType.getFields) {
-              return actualInputType;
-            }
-            const fieldMap = actualInputType.getFields();
-            for (const fieldName in fieldMap) {
-              const fieldConfig = fieldMap[fieldName];
-              if (fieldConfig.type.getTypeName().endsWith('!')) {
-                return inputType.getTypeNonNull();
-              }
-            }
-            return inputType;
-          };
-
           if (subSchemaAndTypeComposers.title in rootInputTypeNameComposerMap) {
             const typeComposer = rootInputTypeNameComposerMap[subSchemaAndTypeComposers.title]();
             for (const fieldName in inputFieldMap) {
-              typeComposer.addFieldArgs(fieldName, {
-                input: {
-                  type: () => getCorrectInputFieldType(fieldName),
-                  description: inputFieldMap[fieldName].description,
-                },
-              });
+              let inputTC = inputFieldMap[fieldName].type();
+              if ('ofType' in inputTC) {
+                inputTC = inputTC.ofType;
+              }
+              typeComposer.addFieldArgs(fieldName, inputTC.getFields());
             }
             return {
               output: typeComposer,

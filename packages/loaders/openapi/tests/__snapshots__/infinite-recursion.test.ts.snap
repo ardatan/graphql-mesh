@@ -12,7 +12,7 @@ type Query {
   UsersGetUser(userId: String!): UserGet
   CompanysGetCompany(companyId: String!): CompanyGet
   PersonsGetPerson(personId: String!): PersonGet
-  TicketMessagesGetMessages(input: TicketMessagesGetMessages_request_Input): [query_TicketMessagesGetMessages_items]
+  TicketMessagesGetMessages(ticketId: String, authorId: String): [query_TicketMessagesGetMessages_items]
 }
 
 type UserGet {
@@ -53,13 +53,8 @@ enum query_CompanysGetCompany__resolveType {
   company
 }
 
-input TicketMessagesGetMessages_request_Input {
-  ticketId: String
-  authorId: String
-}
-
 type Mutation {
-  TicketMessagesUpdateTicketMessage(input: TicketMessagePatch_Input!, messageId: String!): TicketMessageGet
+  TicketMessagesUpdateTicketMessage(messageId: String!, input: TicketMessagePatch_Input): TicketMessageGet
 }
 
 input TicketMessagePatch_Input {
