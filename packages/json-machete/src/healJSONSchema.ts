@@ -23,6 +23,7 @@ const JSONSchemaStringFormats = [
   'ipv4',
   'ipv6',
   'uri',
+  'uuid',
 ];
 
 const AnySchema = {
@@ -183,7 +184,11 @@ export async function healJSONSchema(
           if (typeof subSchema.additionalProperties === 'object') {
             delete subSchema.additionalProperties.readOnly;
             delete subSchema.additionalProperties.writeOnly;
-            if (Object.keys(subSchema.additionalProperties).length === 0) {
+            const additionalPropertiesKeys = Object.keys(subSchema.additionalProperties);
+            if (
+              additionalPropertiesKeys.length === 0 ||
+              (additionalPropertiesKeys.length === 1 && subSchema.additionalProperties.type === 'string')
+            ) {
               logger.debug(
                 `${path} has an empty additionalProperties object. So this is invalid. Replacing it with 'true'`
               );
@@ -194,19 +199,19 @@ export async function healJSONSchema(
             logger.debug(`${path} has an "allOf" definition with only one element. Removing it.`);
             const realSubschema = subSchema.allOf[0];
             delete subSchema.allOf;
-            return realSubschema;
+            subSchema = realSubschema;
           }
           if (subSchema.anyOf != null && subSchema.anyOf.length === 1 && !subSchema.properties) {
             logger.debug(`${path} has an "anyOf" definition with only one element. Removing it.`);
             const realSubschema = subSchema.anyOf[0];
             delete subSchema.anyOf;
-            return realSubschema;
+            subSchema = realSubschema;
           }
           if (subSchema.oneOf != null && subSchema.oneOf.length === 1 && !subSchema.properties) {
             logger.debug(`${path} has an "oneOf" definition with only one element. Removing it.`);
             const realSubschema = subSchema.oneOf[0];
             delete subSchema.oneOf;
-            return realSubschema;
+            subSchema = realSubschema;
           }
           if (subSchema.description != null) {
             subSchema.description = subSchema.description.trim();
@@ -223,7 +228,7 @@ export async function healJSONSchema(
             );
             const realSubschema = subSchema.items;
             delete subSchema.items;
-            return realSubschema;
+            subSchema = realSubschema;
           }
           if (subSchema.properties && subSchema.type !== 'object') {
             logger.debug(`${path} has "properties" with no type defined. Adding a type property with "object" value.`);
@@ -321,8 +326,12 @@ export async function healJSONSchema(
             }
           }
           // If it is an object type but no properties given while example is available
-          if (((subSchema.type === 'object' && !subSchema.properties) || !subSchema.type) && subSchema.example) {
-            const generatedSchema = toJsonSchema(subSchema.example, {
+          if (
+            ((subSchema.type === 'object' && !subSchema.properties) || !subSchema.type) &&
+            (subSchema.example || subSchema.examples)
+          ) {
+            const examples = asArray(subSchema.examples || subSchema.example || []);
+            const generatedSchema = toJsonSchema(examples[0], {
               required: false,
               objects: {
                 additionalProperties: false,
@@ -333,11 +342,14 @@ export async function healJSONSchema(
               arrays: {
                 mode: 'first',
               },
+              postProcessFnc(type, schema, value, defaultFunc) {
+                if (schema.type === 'object' && !schema.properties && Object.keys(value).length === 0) {
+                  return AnySchema as any;
+                }
+                return defaultFunc(type, schema, value);
+              },
             });
-            const healedGeneratedSchema: any = await healJSONSchema(generatedSchema as any, {
-              noDeduplication,
-              logger: logger.child('toJsonSchema'),
-            });
+            const healedGeneratedSchema: any = generatedSchema;
             subSchema.type = asArray(healedGeneratedSchema.type)[0] as any;
             subSchema.properties = healedGeneratedSchema.properties;
             // If type for properties is already given, use it

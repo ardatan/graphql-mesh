@@ -24,6 +24,7 @@ interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
   baseUrl?: string;
   schemaHeaders?: Record<string, string>;
   operationHeaders?: OperationHeadersConfiguration;
+  queryParams?: Record<string, any>;
   selectQueryOrMutationField?: OpenAPILoaderSelectQueryOrMutationFieldConfig[];
   logger?: Logger;
 }
@@ -36,6 +37,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
   baseUrl,
   schemaHeaders,
   operationHeaders,
+  queryParams = {},
   selectQueryOrMutationField = [],
   logger = new DefaultLogger('getJSONSchemaOptionsFromOpenAPIOptions'),
 }: GetJSONSchemaOptionsFromOpenAPIOptionsParams) {
@@ -116,7 +118,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
               if (requestSchema.properties.__typename) {
                 delete requestSchema.properties.__typename;
               }
-              if (paramObj.required) {
+              if (paramObj.required && !(paramObj.name in queryParams)) {
                 requestSchema.required = requestSchema.required || [];
                 requestSchema.required.push(paramObj.name);
               }
@@ -143,15 +145,24 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
           }
           case 'header': {
             operationConfig.headers = operationConfig.headers || {};
-            operationConfig.headers[paramObj.name] = `{args.${argName}}`;
+            let defaultValue = '';
+            if (typeof operationHeaders === 'object' && !operationHeaders[paramObj.name]?.includes('{')) {
+              defaultValue = `:${operationHeaders[paramObj.name]}`;
+            } else if (paramObj.schema?.default) {
+              defaultValue = `:${paramObj.schema.default}`;
+            }
+            if (defaultValue) {
+              paramObj.required = false;
+            }
+            operationConfig.headers[paramObj.name] = `{args.${argName}${defaultValue}}`;
             break;
           }
           case 'cookie': {
             operationConfig.headers = operationConfig.headers || {};
             operationConfig.headers.cookie = operationConfig.headers.cookie || '';
-            const cookieParams = operationConfig.headers.cookie.split('; ');
-            cookieParams.push(`${paramObj.name}={args.${argName}}`);
-            operationConfig.headers.cookie = cookieParams.join('; ');
+            const cookieParams = operationConfig.headers.cookie.split(' ').filter(c => !!c);
+            cookieParams.push(`${paramObj.name}={args.${argName}};`);
+            operationConfig.headers.cookie = `${cookieParams.join(' ')}`;
             break;
           }
           case 'body':
@@ -223,33 +234,76 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
         let schemaObj: JSONSchemaObject;
 
         if ('content' in responseObj) {
-          const contentKey = Object.keys(responseObj.content)[0];
-          if (!operationConfig.headers?.Accept && typeof contentKey === 'string') {
+          const responseObjForStatusCode: {
+            oneOf: JSONSchemaObject[];
+          } = {
+            oneOf: [],
+          };
+
+          const allMimeTypes = Object.keys(responseObj.content);
+          const jsonLikeMimeTypes = allMimeTypes.filter(c => c !== '*/*' && c.toString().includes('json'));
+          const mimeTypes = jsonLikeMimeTypes.length > 0 ? jsonLikeMimeTypes : allMimeTypes;
+
+          // If we have a better accept header, overwrite User's choice
+          if ((!operationConfig.headers?.accept && !operationConfig.headers?.Accept) || mimeTypes.length === 1) {
             operationConfig.headers = operationConfig.headers || {};
-            operationConfig.headers.Accept = contentKey;
+            if (operationConfig.headers.Accept) {
+              delete operationConfig.headers.Accept;
+            }
+            operationConfig.headers.accept =
+              jsonLikeMimeTypes.length > 0 ? jsonLikeMimeTypes.join(',') : allMimeTypes[0].toString();
           }
-          schemaObj = responseObj.content[contentKey].schema as any;
-          if (!schemaObj && contentKey.toString().startsWith('text')) {
-            responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
-            responseByStatusCode[responseKey].responseSchema = { type: 'string' };
-          } else if (schemaObj && Object.keys(schemaObj).length > 0) {
-            responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
-            responseByStatusCode[responseKey].responseSchema = `${oasFilePath}#/paths/${relativePath
-              .split('/')
-              .join('~1')}/${method}/responses/${responseKey}/content/${contentKey
-              ?.toString()
-              .split('/')
-              .join('~1')}/schema`;
+
+          for (const contentKey in responseObj.content) {
+            if (!mimeTypes.includes(contentKey)) {
+              continue;
+            }
+            schemaObj = responseObj.content[contentKey].schema as any;
+            if (schemaObj && Object.keys(schemaObj).length > 0) {
+              responseObjForStatusCode.oneOf.push({
+                $ref: `${oasFilePath}#/paths/${relativePath
+                  .split('/')
+                  .join('~1')}/${method}/responses/${responseKey}/content/${contentKey
+                  ?.toString()
+                  .split('/')
+                  .join('~1')}/schema`,
+              });
+            } else if (contentKey.toString().startsWith('text')) {
+              responseObjForStatusCode.oneOf.push({ type: 'string' });
+            } else {
+              const examplesObj = responseObj.content[contentKey].examples;
+              if (examplesObj) {
+                let examples = Object.values(examplesObj);
+                if (contentKey.includes('json')) {
+                  examples = examples.map(example => {
+                    if (typeof example === 'string') {
+                      return JSON.parse(example);
+                    }
+                    return example;
+                  });
+                }
+                responseObjForStatusCode.oneOf.push({
+                  examples,
+                });
+              }
+              let example = responseObj.content[contentKey].example;
+              if (example) {
+                if (typeof example === 'string' && contentKey.includes('json')) {
+                  example = JSON.parse(example);
+                }
+                responseObjForStatusCode.oneOf.push({
+                  examples: [example],
+                });
+              }
+            }
           }
-          const examplesObj = responseObj.content[contentKey].examples;
-          if (examplesObj) {
+
+          if (responseObjForStatusCode.oneOf.length === 1) {
             responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
-            responseByStatusCode[responseKey].responseSample = Object.values(examplesObj)[0];
-          }
-          const example = responseObj.content[contentKey].example;
-          if (example) {
+            responseByStatusCode[responseKey].responseSchema = responseObjForStatusCode.oneOf[0];
+          } else if (responseObjForStatusCode.oneOf.length > 1) {
             responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
-            responseByStatusCode[responseKey].responseSample = example;
+            responseByStatusCode[responseKey].responseSchema = responseObjForStatusCode.oneOf;
           }
         } else if ('schema' in responseObj) {
           schemaObj = responseObj.schema as any;
@@ -262,7 +316,16 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
         } else if ('examples' in responseObj) {
           const examples = Object.values(responseObj.examples);
           responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
-          responseByStatusCode[responseKey].responseSample = examples[0];
+          let example = examples[0];
+          if (typeof example === 'string') {
+            try {
+              // Parse if possible
+              example = JSON.parse(example);
+            } catch (e) {
+              // Do nothing
+            }
+          }
+          responseByStatusCode[responseKey].responseSample = example;
         } else if (responseKey.toString() === '204') {
           responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
           responseByStatusCode[responseKey].responseSchema = {

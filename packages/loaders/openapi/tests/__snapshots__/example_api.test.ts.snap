@@ -36,7 +36,7 @@ type Query {
   \\"Used to test empty responses\\"
   getBonuses: Void
   \\"Return an office.\\"
-  getOffice(accept: String, id: Int!): office
+  getOffice(id: Int!): office
   \\"Return a list of papers. Endpoint to test 2XX status code.\\"
   getPapers: [paper]
   \\"Another endpoint to test unsanitized parameters and data.\\"
@@ -113,7 +113,7 @@ type familyObject {
 \\"A company is the employer of many users\\"
 type company {
   \\"The identifier of a company\\"
-  id: String
+  id: UUID
   \\"The legal name of a company\\"
   name: String
   \\"The legal form of a company\\"
@@ -126,6 +126,9 @@ type company {
   ceoUser: user
 }
 
+\\"A field whose value is a generic Universally Unique Identifier: https://en.wikipedia.org/wiki/Universally_unique_identifier.\\"
+scalar UUID
+
 input getUsers_request_Input {
   \\"Limit of the number of users to return.\\"
   limit: Int!
@@ -137,23 +140,15 @@ type car {
   model: String
   \\"The color of the car.\\"
   color: String
-  features: query_getUserCar_features
-  tags: Tags
+  features: JSON
+  \\"Arbitrary (string) tags describing an entity.\\"
+  tags: JSON
   kind: query_getUserCar_kind
   rating: query_getUserCar_rating
 }
 
-type query_getUserCar_features {
-  additionalProperties: JSON
-}
-
 \\"The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).\\"
 scalar JSON @specifiedBy(url: \\"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf\\")
-
-\\"Arbitrary (string) tags describing an entity.\\"
-type Tags {
-  additionalProperties: JSON
-}
 
 enum query_getUserCar_kind {
   SEDAN

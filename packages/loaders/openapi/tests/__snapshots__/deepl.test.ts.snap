@@ -10,8 +10,8 @@ Object {
       "description": "The translate function.",
       "field": "translateText",
       "headers": Object {
-        "Accept": "application/json",
         "Content-Type": "application/x-www-form-urlencoded",
+        "accept": "application/json",
       },
       "method": "POST",
       "operationHeaders": undefined,
@@ -28,17 +28,10 @@ Object {
       "requestSchema": "./fixtures/deepl.json#/paths/~1translate/post/requestBody/content/application~1x-www-form-urlencoded/schema",
       "responseByStatusCode": Object {
         "200": Object {
-          "responseSample": Object {
-            "value": Object {
-              "translations": Array [
-                Object {
-                  "detected_source_language": "EN",
-                  "text": "Hallo, Welt!",
-                },
-              ],
-            },
+          "responseSchema": Object {
+            "$ref": "./fixtures/deepl.json#/paths/~1translate/post/responses/200/content/application~1json/schema",
+            "title": "translateText_200_response",
           },
-          "responseSchema": "./fixtures/deepl.json#/paths/~1translate/post/responses/200/content/application~1json/schema",
         },
       },
       "schemaHeaders": undefined,
@@ -66,8 +59,8 @@ You may specify the glossary to use for the document translation using the \`glo
 **Important:** This requires the \`source_lang\` parameter to be set and the language pair of the glossary has to match the language pair of the request.",
       "field": "translateDocument",
       "headers": Object {
-        "Accept": "application/json",
         "Content-Type": "multipart/form-data",
+        "accept": "application/json",
       },
       "method": "POST",
       "operationHeaders": undefined,
@@ -75,11 +68,10 @@ You may specify the glossary to use for the document translation using the \`glo
       "requestSchema": "./fixtures/deepl.json#/paths/~1document/post/requestBody/content/multipart~1form-data/schema",
       "responseByStatusCode": Object {
         "200": Object {
-          "responseSample": Object {
-            "document_id": "04DE5AD98A02647D83285A36021911C6",
-            "document_key": "0CB0054F1C132C1625B392EADDA41CB754A742822F6877173029A6C487E7F60A",
+          "responseSchema": Object {
+            "$ref": "./fixtures/deepl.json#/paths/~1document/post/responses/200/content/application~1json/schema",
+            "title": "translateDocument_200_response",
           },
-          "responseSchema": "./fixtures/deepl.json#/paths/~1document/post/responses/200/content/application~1json/schema",
         },
       },
       "schemaHeaders": undefined,
@@ -93,22 +85,17 @@ You may specify the glossary to use for the document translation using the \`glo
 If the translation is still in progress, the estimated time remaining is also included in the response.",
       "field": "getDocumentStatus",
       "headers": Object {
-        "Accept": "application/json",
+        "accept": "application/json",
       },
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/document/{args.document_id}",
       "responseByStatusCode": Object {
         "200": Object {
-          "responseSample": Object {
-            "summary": "Translating",
-            "value": Object {
-              "document_id": "04DE5AD98A02647D83285A36021911C6",
-              "seconds_remaining": 20,
-              "status": "translating",
-            },
+          "responseSchema": Object {
+            "$ref": "./fixtures/deepl.json#/paths/~1document~1{document_id}/post/responses/200/content/application~1json/schema",
+            "title": "getDocumentStatus_200_response",
           },
-          "responseSchema": "./fixtures/deepl.json#/paths/~1document~1{document_id}/post/responses/200/content/application~1json/schema",
         },
       },
       "schemaHeaders": undefined,
@@ -124,18 +111,17 @@ If the translation is still in progress, the estimated time remaining is also in
 For privacy reasons the translated document is automatically removed from the server once it was downloaded and cannot be downloaded again.",
       "field": "downloadDocument",
       "headers": Object {
-        "Accept": "application/octet-stream",
+        "accept": "application/octet-stream",
       },
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/document/{args.document_id}/result",
       "responseByStatusCode": Object {
         "200": Object {
-          "responseSample": Object {
-            "description": "binary document data",
-            "summary": "OK",
+          "responseSchema": Object {
+            "$ref": "./fixtures/deepl.json#/paths/~1document~1{document_id}~1result/post/responses/200/content/application~1octet-stream/schema",
+            "title": "downloadDocument_200_response",
           },
-          "responseSchema": "./fixtures/deepl.json#/paths/~1document~1{document_id}~1result/post/responses/200/content/application~1octet-stream/schema",
         },
       },
       "schemaHeaders": undefined,
@@ -145,26 +131,17 @@ For privacy reasons the translated document is automatically removed from the se
       "description": "Retrieve the list of language pairs supported by the glossary feature.",
       "field": "listGlossaryLanguages",
       "headers": Object {
-        "Accept": "application/json",
+        "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/glossary-language-pairs",
       "responseByStatusCode": Object {
         "200": Object {
-          "responseSample": Object {
-            "supported_languages": Array [
-              Object {
-                "source_lang": "de",
-                "target_lang": "en",
-              },
-              Object {
-                "source_lang": "en",
-                "target_lang": "de",
-              },
-            ],
+          "responseSchema": Object {
+            "$ref": "./fixtures/deepl.json#/paths/~1glossary-language-pairs/get/responses/200/content/application~1json/schema",
+            "title": "listGlossaryLanguages_200_response",
           },
-          "responseSchema": "./fixtures/deepl.json#/paths/~1glossary-language-pairs/get/responses/200/content/application~1json/schema",
         },
       },
       "schemaHeaders": undefined,
@@ -174,8 +151,8 @@ For privacy reasons the translated document is automatically removed from the se
       "description": "Create a Glossary",
       "field": "createGlossary",
       "headers": Object {
-        "Accept": "application/json",
         "Content-Type": "application/x-www-form-urlencoded",
+        "accept": "application/json",
       },
       "method": "POST",
       "operationHeaders": undefined,
@@ -183,7 +160,10 @@ For privacy reasons the translated document is automatically removed from the se
       "requestSchema": "./fixtures/deepl.json#/paths/~1glossaries/post/requestBody/content/application~1x-www-form-urlencoded/schema",
       "responseByStatusCode": Object {
         "201": Object {
-          "responseSchema": "./fixtures/deepl.json#/paths/~1glossaries/post/responses/201/content/application~1json/schema",
+          "responseSchema": Object {
+            "$ref": "./fixtures/deepl.json#/paths/~1glossaries/post/responses/201/content/application~1json/schema",
+            "title": "createGlossary_201_response",
+          },
         },
       },
       "schemaHeaders": undefined,
@@ -193,27 +173,17 @@ For privacy reasons the translated document is automatically removed from the se
       "description": "List all glossaries and their meta-information, but not the glossary entries.",
       "field": "listGlossaries",
       "headers": Object {
-        "Accept": "application/json",
+        "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/glossaries",
       "responseByStatusCode": Object {
         "200": Object {
-          "responseSample": Object {
-            "glossaries": Array [
-              Object {
-                "creation_time": "2021-08-03T14:16:18.329Z",
-                "entry_count": 1,
-                "glossary_id": "def3a26b-3e84-45b3-84ae-0c0aaf3525f7",
-                "name": "My Glossary",
-                "ready": true,
-                "source_lang": "EN",
-                "target_lang": "DE",
-              },
-            ],
+          "responseSchema": Object {
+            "$ref": "./fixtures/deepl.json#/paths/~1glossaries/get/responses/200/content/application~1json/schema",
+            "title": "listGlossaries_200_response",
           },
-          "responseSchema": "./fixtures/deepl.json#/paths/~1glossaries/get/responses/200/content/application~1json/schema",
         },
       },
       "schemaHeaders": undefined,
@@ -226,23 +196,17 @@ For privacy reasons the translated document is automatically removed from the se
       "description": "Retrieve meta information for a single glossary, omitting the glossary entries.",
       "field": "getGlossary",
       "headers": Object {
-        "Accept": "application/json",
+        "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/glossaries/{args.glossary_id}",
       "responseByStatusCode": Object {
         "200": Object {
-          "responseSample": Object {
-            "creation_time": "2021-08-03T14:16:18.329Z",
-            "entry_count": 1,
-            "id": "def3a26b-3e84-45b3-84ae-0c0aaf3525f7",
-            "name": "My Glossary",
-            "ready": true,
-            "source_lang": "EN",
-            "target_lang": "DE",
+          "responseSchema": Object {
+            "$ref": "./fixtures/deepl.json#/paths/~1glossaries~1{glossary_id}/get/responses/200/content/application~1json/schema",
+            "title": "getGlossary_200_response",
           },
-          "responseSchema": "./fixtures/deepl.json#/paths/~1glossaries~1{glossary_id}/get/responses/200/content/application~1json/schema",
         },
       },
       "schemaHeaders": undefined,
@@ -277,18 +241,14 @@ For privacy reasons the translated document is automatically removed from the se
       "description": "List the entries of a single glossary in the format specified by the \`Accept\` header.",
       "field": "getGlossaryEntries",
       "headers": Object {
-        "Accept": "{args.Accept}",
+        "accept": "text/tab-separated-values",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/glossaries/{args.glossary_id}/entries",
       "responseByStatusCode": Object {
         "200": Object {
-          "responseSample": "Hello!	Guten Tag!",
           "responseSchema": Object {
-            "examples": Array [
-              "Hello!	Guten Tag!",
-            ],
             "title": "getGlossaryEntries_200_response",
             "type": "string",
           },
@@ -313,18 +273,17 @@ Character usage is only included for developer accounts.
 Document usage is only included for non-developer accounts, and team-combined document usage is only included for non-developer team accounts.",
       "field": "getUsage",
       "headers": Object {
-        "Accept": "application/json",
+        "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/usage",
       "responseByStatusCode": Object {
         "200": Object {
-          "responseSample": Object {
-            "character_count": 180118,
-            "character_limit": 1250000,
+          "responseSchema": Object {
+            "$ref": "./fixtures/deepl.json#/paths/~1usage/get/responses/200/content/application~1json/schema",
+            "title": "getUsage_200_response",
           },
-          "responseSchema": "./fixtures/deepl.json#/paths/~1usage/get/responses/200/content/application~1json/schema",
         },
       },
       "schemaHeaders": undefined,
@@ -337,7 +296,7 @@ Document usage is only included for non-developer accounts, and team-combined do
       "description": "Retrieve the list of languages that are currently supported for translation, either as source or target language, respectively.",
       "field": "getLanguages",
       "headers": Object {
-        "Accept": "application/json",
+        "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
@@ -353,149 +312,10 @@ Document usage is only included for non-developer accounts, and team-combined do
       },
       "responseByStatusCode": Object {
         "200": Object {
-          "responseSample": Array [
-            Object {
-              "language": "BG",
-              "name": "Bulgarian",
-              "supports_formality": false,
-            },
-            Object {
-              "language": "CS",
-              "name": "Czech",
-              "supports_formality": false,
-            },
-            Object {
-              "language": "DA",
-              "name": "Danish",
-              "supports_formality": false,
-            },
-            Object {
-              "language": "DE",
-              "name": "German",
-              "supports_formality": true,
-            },
-            Object {
-              "language": "EL",
-              "name": "Greek",
-              "supports_formality": false,
-            },
-            Object {
-              "language": "EN-GB",
-              "name": "English (British)",
-              "supports_formality": false,
-            },
-            Object {
-              "language": "EN-US",
-              "name": "English (American)",
-              "supports_formality": false,
-            },
-            Object {
-              "language": "ES",
-              "name": "Spanish",
-              "supports_formality": true,
-            },
-            Object {
-              "language": "ET",
-              "name": "Estonian",
-              "supports_formality": false,
-            },
-            Object {
-              "language": "FI",
-              "name": "Finnish",
-              "supports_formality": false,
-            },
-            Object {
-              "language": "FR",
-              "name": "French",
-              "supports_formality": true,
-            },
-            Object {
-              "language": "HU",
-              "name": "Hungarian",
-              "supports_formality": false,
-            },
-            Object {
-              "language": "ID",
-              "name": "Indonesian",
-              "supports_formality": false,
-            },
-            Object {
-              "language": "IT",
-              "name": "Italian",
-              "supports_formality": true,
-            },
-            Object {
-              "language": "JA",
-              "name": "Japanese",
-              "supports_formality": false,
-            },
-            Object {
-              "language": "LT",
-              "name": "Lithuanian",
-              "supports_formality": false,
-            },
-            Object {
-              "language": "LV",
-              "name": "Latvian",
-              "supports_formality": false,
-            },
-            Object {
-              "language": "NL",
-              "name": "Dutch",
-              "supports_formality": true,
-            },
-            Object {
-              "language": "PL",
-              "name": "Polish",
-              "supports_formality": true,
-            },
-            Object {
-              "language": "PT-BR",
-              "name": "Portuguese (Brazilian)",
-              "supports_formality": true,
-            },
-            Object {
-              "language": "PT-PT",
-              "name": "Portuguese (European)",
-              "supports_formality": true,
-            },
-            Object {
-              "language": "RO",
-              "name": "Romanian",
-              "supports_formality": false,
-            },
-            Object {
-              "language": "RU",
-              "name": "Russian",
-              "supports_formality": true,
-            },
-            Object {
-              "language": "SK",
-              "name": "Slovak",
-              "supports_formality": false,
-            },
-            Object {
-              "language": "SL",
-              "name": "Slovenian",
-              "supports_formality": false,
-            },
-            Object {
-              "language": "SV",
-              "name": "Swedish",
-              "supports_formality": false,
-            },
-            Object {
-              "language": "TR",
-              "name": "Turkish",
-              "supports_formality": false,
-            },
-            Object {
-              "language": "ZH",
-              "name": "Chinese",
-              "supports_formality": false,
-            },
-          ],
-          "responseSchema": "./fixtures/deepl.json#/paths/~1languages/get/responses/200/content/application~1json/schema",
+          "responseSchema": Object {
+            "$ref": "./fixtures/deepl.json#/paths/~1languages/get/responses/200/content/application~1json/schema",
+            "title": "getLanguages_200_response",
+          },
         },
       },
       "schemaHeaders": undefined,
@@ -875,9 +695,6 @@ This parameter is only included while \`status\` is \`\\"translating\\"\`.",
         "type": "object",
       },
       "getGlossaryEntries_200_response": Object {
-        "examples": Array [
-          "Hello!	Guten Tag!",
-        ],
         "title": "getGlossaryEntries_200_response",
         "type": "string",
       },
@@ -1410,7 +1227,7 @@ type Query {
   \\"Retrieve meta information for a single glossary, omitting the glossary entries.\\"
   getGlossary(glossary_id: String!): Glossary
   \\"List the entries of a single glossary in the format specified by the \`Accept\` header.\\"
-  getGlossaryEntries(Accept: String, glossary_id: String!): String
+  getGlossaryEntries(glossary_id: String!): String
   \\"Retrieve usage information within the current billing period together with the corresponding account limits. Usage is returned for:\\\\n- translated characters\\\\n- translated documents\\\\n- translated documents, team totals (for team accounts only)\\\\n\\\\nCharacter usage includes both text and document translations, and is measured by the source text length in Unicode code points,\\\\nso for example \\\\\\"A\\\\\\", \\\\\\"Δ\\\\\\", \\\\\\"あ\\\\\\", and \\\\\\"深\\\\\\" are each counted as a single character.\\\\n\\\\nDocument usage only includes document translations, and is measured in individual documents.\\\\n\\\\nDepending on the user account type, some usage types will be omitted.\\\\nCharacter usage is only included for developer accounts.\\\\nDocument usage is only included for non-developer accounts, and team-combined document usage is only included for non-developer team accounts.\\"
   getUsage: getUsage_200_response
   \\"Retrieve the list of languages that are currently supported for translation, either as source or target language, respectively.\\"
@@ -1533,7 +1350,7 @@ type mutation_translateText_translations_items {
 
 type mutation_translateText_translations_items_detected_source_language {
   SourceLanguage: SourceLanguage
-  additionalProperties: JSON
+  JSON: JSON
 }
 
 \\"Language of the text to be translated. Options currently available:\\\\n * \`BG\` - Bulgarian\\\\n * \`CS\` - Czech\\\\n * \`DA\` - Danish\\\\n * \`DE\` - German\\\\n * \`EL\` - Greek\\\\n * \`EN\` - English\\\\n * \`ES\` - Spanish\\\\n * \`ET\` - Estonian\\\\n * \`FI\` - Finnish\\\\n * \`FR\` - French\\\\n * \`HU\` - Hungarian\\\\n * \`ID\` - Indonesian\\\\n * \`IT\` - Italian\\\\n * \`JA\` - Japanese\\\\n * \`LT\` - Lithuanian\\\\n * \`LV\` - Latvian\\\\n * \`NL\` - Dutch\\\\n * \`PL\` - Polish\\\\n * \`PT\` - Portuguese (all Portuguese varieties mixed)\\\\n * \`RO\` - Romanian\\\\n * \`RU\` - Russian\\\\n * \`SK\` - Slovak\\\\n * \`SL\` - Slovenian\\\\n * \`SV\` - Swedish\\\\n * \`TR\` - Turkish\\\\n * \`ZH\` - Chinese\\\\n\\\\nIf this parameter is omitted, the API will attempt to detect the language of the text and translate it.\\"

@@ -28,6 +28,7 @@ import {
   GraphQLDateTime,
   GraphQLEmailAddress,
   GraphQLJSON,
+  GraphQLUUID,
   GraphQLIPv4,
   GraphQLIPv6,
   GraphQLTime,
@@ -90,7 +91,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
 
   return visitJSONSchema(schema, {
     enter(subSchema: JSONSchema, { path, visitedSubschemaResultMap }) {
-      if (typeof subSchema === 'boolean') {
+      if (typeof subSchema === 'boolean' || subSchema.title === 'Any') {
         const typeComposer = schemaComposer.getAnyTC(GraphQLJSON);
         return subSchema
           ? {
@@ -323,6 +324,15 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             }
             case 'uri': {
               const typeComposer = schemaComposer.getAnyTC(GraphQLURL);
+              return {
+                input: typeComposer,
+                output: typeComposer,
+                description: subSchema.description,
+                nullable: subSchema.nullable,
+              };
+            }
+            case 'uuid': {
+              const typeComposer = schemaComposer.getAnyTC(GraphQLUUID);
               return {
                 input: typeComposer,
                 output: typeComposer,
@@ -832,12 +842,22 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
                   inputFieldMap[fieldName] = inputTCFieldMap[fieldName];
                 }
               }
-            } else {
+            } else if (Object.keys(fieldMap).length > 0) {
               fieldMap.additionalProperties = {
                 type: GraphQLJSON,
                 resolve: (root: any) => root,
               };
               inputFieldMap = {};
+            } else {
+              const typeComposer = schemaComposer.getAnyTC(GraphQLJSON);
+              schemaComposer.delete((subSchemaAndTypeComposers.input as ObjectTypeComposer)?.getTypeName?.());
+              schemaComposer.delete((subSchemaAndTypeComposers.output as ObjectTypeComposer)?.getTypeName?.());
+              return {
+                input: typeComposer,
+                output: typeComposer,
+                description: subSchemaAndTypeComposers.description,
+                nullable: subSchemaAndTypeComposers.nullable,
+              };
             }
           }
 

@@ -160,25 +160,14 @@ ${operationConfig.description || ''}
           const nonInterpolatedValue = nonInterpolatedHeaders[headerName];
           const interpolatedValue = stringInterpolator.parse(nonInterpolatedValue, interpolationData);
           if (interpolatedValue) {
-            headers[headerName] = interpolatedValue;
+            headers[headerName.toLowerCase()] = interpolatedValue;
           }
         }
         const requestInit: RequestInit = {
           method: httpMethod,
           headers,
         };
-        if (queryParams) {
-          const interpolatedQueryParams: Record<string, any> = {};
-          for (const queryParamName in queryParams) {
-            interpolatedQueryParams[queryParamName] = stringInterpolator.parse(
-              queryParams[queryParamName],
-              interpolationData
-            );
-          }
-          const queryParamsString = qsStringify(interpolatedQueryParams, qsOptions);
-          fullPath += fullPath.includes('?') ? '&' : '?';
-          fullPath += queryParamsString;
-        }
+        const queryParamNames = [];
         // Handle binary data
         if ('binary' in operationConfig) {
           const binaryUpload = await args.input;
@@ -224,6 +213,10 @@ ${operationConfig.description || ''}
               case 'CONNECT':
               case 'OPTIONS':
               case 'TRACE': {
+                // keep input keys for handling duplications
+                if (typeof input === 'object') {
+                  queryParamNames.push(...Object.keys(input));
+                }
                 fullPath += fullPath.includes('?') ? '&' : '?';
                 fullPath += qsStringify(input, qsOptions);
                 break;
@@ -237,7 +230,7 @@ ${operationConfig.description || ''}
                 if (contentType?.startsWith('application/x-www-form-urlencoded')) {
                   requestInit.body = qsStringify(input, qsOptions);
                 } else {
-                  requestInit.body = JSON.stringify(input);
+                  requestInit.body = typeof input === 'object' ? JSON.stringify(input) : input;
                 }
                 break;
               }
@@ -248,6 +241,21 @@ ${operationConfig.description || ''}
                 });
             }
           }
+        }
+        if (queryParams) {
+          const interpolatedQueryParams: Record<string, any> = {};
+          for (const queryParamName in queryParams) {
+            if (queryParamNames.includes(queryParamName)) {
+              continue;
+            }
+            interpolatedQueryParams[queryParamName] = stringInterpolator.parse(
+              queryParams[queryParamName],
+              interpolationData
+            );
+          }
+          const queryParamsString = qsStringify(interpolatedQueryParams, qsOptions);
+          fullPath += fullPath.includes('?') ? '&' : '?';
+          fullPath += queryParamsString;
         }
 
         // Delete unused queryparams
@@ -300,12 +308,16 @@ ${operationConfig.description || ''}
         if (!response.status.toString().startsWith('2')) {
           const returnNamedGraphQLType = getNamedType(field.type.getType());
           if (!isUnionType(returnNamedGraphQLType)) {
-            return createError(`HTTP Error: ${response.status}`, {
-              url: fullPath,
-              method: httpMethod,
-              ...(response.statusText ? { status: response.statusText } : {}),
-              responseJson,
-            });
+            return createError(
+              `HTTP Error: ${response.status}, Could not invoke operation ${operationConfig.method} ${operationConfig.path}`,
+              {
+                method: httpMethod,
+                url: fullPath,
+                statusCode: response.status,
+                statusText: response.statusText,
+                responseBody: responseJson,
+              }
+            );
           }
         }
 
@@ -368,7 +380,12 @@ ${operationConfig.description || ''}
                             },
                           });
                         case 'header':
+                          if ('get' in requestInit.headers) {
+                            return getHeadersObj(requestInit.headers as Headers);
+                          }
                           return requestInit.headers;
+                        case 'body':
+                          return requestInit.body;
                       }
                     },
                   }
@@ -386,6 +403,17 @@ ${operationConfig.description || ''}
                           return getHeadersObj(response.headers);
                         case 'body':
                           return obj;
+                        case 'query':
+                          return qsParse(fullPath.split('?')[1]);
+                        case 'path':
+                          return new Proxy(args, {
+                            get(_, prop) {
+                              return args[prop] || args.input?.[prop] || obj?.[prop];
+                            },
+                            has(_, prop) {
+                              return prop in args || (args.input && prop in args.input) || obj?.[prop];
+                            },
+                          });
                       }
                     },
                   }
@@ -404,12 +432,13 @@ ${operationConfig.description || ''}
       interpolationStrings.push(operationConfig.path);
 
       if ('links' in operationConfig) {
+        const queryFields = schemaComposer.Query.getFields();
         for (const linkName in operationConfig.links) {
           const linkObj = operationConfig.links[linkName];
           const typeTC = schemaComposer.getOTC(field.type.getTypeName());
           typeTC.addFields({
             [linkName]: () => {
-              const targetField = schemaComposer.Query.getField(linkObj.fieldName);
+              const targetField = queryFields[linkObj.fieldName] || schemaComposer.Mutation.getField(linkObj.fieldName);
               return {
                 ...targetField,
                 args: {},
@@ -458,11 +487,13 @@ ${operationConfig.description || ''}
                   },
                 });
               }
+              const queryFields = schemaComposer.Query.getFields();
               for (const linkName in responseConfig.links || []) {
                 typeTC.addFields({
                   [linkName]: () => {
                     const linkObj = responseConfig.links[linkName];
-                    const targetField = schemaComposer.Query.getField(linkObj.fieldName);
+                    const targetField =
+                      queryFields[linkObj.fieldName] || schemaComposer.Mutation.getField(linkObj.fieldName);
                     return {
                       ...targetField,
                       args: {},

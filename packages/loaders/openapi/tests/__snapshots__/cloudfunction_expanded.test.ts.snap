@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Cloudfunction should generate correct schema: cloudfunction-schema 1`] = `
+"schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  dummy: String
+}
+
+type Mutation {
+  \\"Description of the action\\"
+  post_test_action_2(input: Payload_Input!, usernamePassword: ID, blocking: Boolean, result: Boolean): Response
+}
+
+type Response {
+  payload: String!
+  age: Float!
+  valid: Boolean!
+}
+
+input Payload_Input {
+  age: Float!
+}"
+`;

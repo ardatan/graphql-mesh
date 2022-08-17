@@ -24,9 +24,9 @@ Object {
       "description": "List Resources At Any Folder Level",
       "field": "list_resources_at_any_folder_v1",
       "headers": Object {
-        "Accept": "application/json",
         "Accept-Language": "{args.Accept_Language}",
         "X-Correlation-Id": "{args.X_Correlation_Id}",
+        "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
@@ -104,7 +104,10 @@ Object {
       },
       "responseByStatusCode": Object {
         "200": Object {
-          "responseSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources/get/responses/200/content/application~1json/schema",
+          "responseSchema": Object {
+            "$ref": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources/get/responses/200/content/application~1json/schema",
+            "title": "list_resources_at_any_folder_v1_200_response",
+          },
         },
       },
       "schemaHeaders": undefined,
@@ -120,10 +123,10 @@ Object {
       "description": "Create resources at any folder level",
       "field": "create_resource_at_any_folder_v1",
       "headers": Object {
-        "Accept": "application/json",
         "Accept-Language": "{args.Accept_Language}",
         "Content-Type": "application/json",
         "X-Correlation-Id": "{args.X_Correlation_Id}",
+        "accept": "application/json",
       },
       "method": "POST",
       "operationHeaders": undefined,
@@ -131,7 +134,10 @@ Object {
       "requestSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources/post/requestBody/content/application~1json/schema",
       "responseByStatusCode": Object {
         "201": Object {
-          "responseSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources/post/responses/201/content/application~1json/schema",
+          "responseSchema": Object {
+            "$ref": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources/post/responses/201/content/application~1json/schema",
+            "title": "create_resource_at_any_folder_v1_201_response",
+          },
         },
       },
       "schemaHeaders": undefined,
@@ -148,10 +154,10 @@ Object {
       "description": "Update A Resource At Any Folder Level",
       "field": "update_resource_at_any_folder_v1",
       "headers": Object {
-        "Accept": "application/json",
         "Accept-Language": "{args.Accept_Language}",
         "Content-Type": "application/json",
         "X-Correlation-Id": "{args.X_Correlation_Id}",
+        "accept": "application/json",
       },
       "method": "PUT",
       "operationHeaders": undefined,
@@ -159,7 +165,10 @@ Object {
       "requestSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources~1{resourceId}/put/requestBody/content/application~1json/schema",
       "responseByStatusCode": Object {
         "200": Object {
-          "responseSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources~1{resourceId}/put/responses/200/content/application~1json/schema",
+          "responseSchema": Object {
+            "$ref": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources~1{resourceId}/put/responses/200/content/application~1json/schema",
+            "title": "update_resource_at_any_folder_v1_200_response",
+          },
         },
       },
       "schemaHeaders": undefined,
@@ -182,9 +191,9 @@ Object {
       "description": "List All Resources At The Root Folder",
       "field": "list_resources_at_the_root_folder_v1",
       "headers": Object {
-        "Accept": "application/json",
         "Accept-Language": "{args.Accept_Language}",
         "X-Correlation-Id": "{args.X_Correlation_Id}",
+        "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
@@ -273,7 +282,10 @@ Object {
       },
       "responseByStatusCode": Object {
         "200": Object {
-          "responseSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources/get/responses/200/content/application~1json/schema",
+          "responseSchema": Object {
+            "$ref": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources/get/responses/200/content/application~1json/schema",
+            "title": "list_resources_at_the_root_folder_v1_200_response",
+          },
         },
       },
       "schemaHeaders": undefined,
@@ -288,10 +300,10 @@ Object {
       "description": "Create A Resource At The Root Folder",
       "field": "create_resource_at_the_root_folder_v1",
       "headers": Object {
-        "Accept": "application/json",
         "Accept-Language": "{args.Accept_Language}",
         "Content-Type": "application/json",
         "X-Correlation-Id": "{args.X_Correlation_Id}",
+        "accept": "application/json",
       },
       "method": "POST",
       "operationHeaders": undefined,
@@ -299,7 +311,10 @@ Object {
       "requestSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources/post/requestBody/content/application~1json/schema",
       "responseByStatusCode": Object {
         "201": Object {
-          "responseSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources/post/responses/201/content/application~1json/schema",
+          "responseSchema": Object {
+            "$ref": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources/post/responses/201/content/application~1json/schema",
+            "title": "create_resource_at_the_root_folder_v1_201_response",
+          },
         },
       },
       "schemaHeaders": undefined,
@@ -315,16 +330,19 @@ Object {
       "description": "Get Resource by ID",
       "field": "get_resource_by_id_v1",
       "headers": Object {
-        "Accept": "application/json",
         "Accept-Language": "{args.Accept_Language}",
         "X-Correlation-Id": "{args.X_Correlation_Id}",
+        "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/api/v1/companies/{args.companyId}/knowledgecenter/resources/{args.resourceId}",
       "responseByStatusCode": Object {
         "200": Object {
-          "responseSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources~1{resourceId}/get/responses/200/content/application~1json/schema",
+          "responseSchema": Object {
+            "$ref": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources~1{resourceId}/get/responses/200/content/application~1json/schema",
+            "title": "get_resource_by_id_v1_200_response",
+          },
         },
       },
       "schemaHeaders": undefined,
@@ -340,10 +358,10 @@ Object {
       "description": "Update A Resource At The Root Folder",
       "field": "update_resource_at_the_root_folder_v1",
       "headers": Object {
-        "Accept": "application/json",
         "Accept-Language": "{args.Accept_Language}",
         "Content-Type": "application/json",
         "X-Correlation-Id": "{args.X_Correlation_Id}",
+        "accept": "application/json",
       },
       "method": "PUT",
       "operationHeaders": undefined,
@@ -351,7 +369,10 @@ Object {
       "requestSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources~1{resourceId}/put/requestBody/content/application~1json/schema",
       "responseByStatusCode": Object {
         "200": Object {
-          "responseSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources~1{resourceId}/put/responses/200/content/application~1json/schema",
+          "responseSchema": Object {
+            "$ref": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources~1{resourceId}/put/responses/200/content/application~1json/schema",
+            "title": "update_resource_at_the_root_folder_v1_200_response",
+          },
         },
       },
       "schemaHeaders": undefined,
@@ -955,9 +976,7 @@ Object {
       },
       "query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n": Object {
         "additionalProperties": Object {
-          "additionalProperties": Object {
-            "type": "string",
-          },
+          "additionalProperties": true,
           "title": "query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties",
           "type": "object",
         },
@@ -965,9 +984,7 @@ Object {
         "type": "object",
       },
       "query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties": Object {
-        "additionalProperties": Object {
-          "type": "string",
-        },
+        "additionalProperties": true,
         "title": "query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties",
         "type": "object",
       },
@@ -1162,11 +1179,7 @@ type FileGetWithI18nDTO {
   size: Int
   url: String
   contentType: String
-  i18n: query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties
-}
-
-type query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties {
-  additionalProperties: JSON
+  i18n: JSON
 }
 
 \\"The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).\\"
@@ -1190,7 +1203,7 @@ type FolderGetWithI18nDTO {
   lastUpdateUserId: String
   fileCount: Int
   childFolderCount: Int
-  i18n: query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties
+  i18n: JSON
 }
 
 type Mutation {
@@ -1222,14 +1235,12 @@ input FileCreateDTO_Input {
   punchedFenced: Boolean
   geoFenced: Boolean
   pinned: Boolean
-  i18n: query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties_Input2
+  i18n: JSON
   type: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_type_items]!
   size: Int
   url: String
   contentType: String
 }
-
-scalar query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties_Input2
 
 input ResourceCreateDTO_Input {
   parentFolderId: String
@@ -1242,7 +1253,7 @@ input ResourceCreateDTO_Input {
   punchedFenced: Boolean
   geoFenced: Boolean
   pinned: Boolean
-  i18n: query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties_Input2
+  i18n: JSON
   type: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_type_items]!
 }
 
