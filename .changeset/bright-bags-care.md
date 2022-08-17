@@ -1,7 +1,13 @@
 ---
 "@graphql-mesh/openapi": minor
+"@graphql-mesh/json-schema": minor
+"@graphql-mesh/raml": minor
+"@graphql-mesh/types": minor
+"@graphql-mesh/utils": minor
 "@omnigraph/json-schema": minor
 "@omnigraph/openapi": minor
+"@omnigraph/raml": minor
+"json-machete": minor
 ---
 
 - Support "$request.query" and "$request.path" usages in [OpenAPI runtime expressions](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.3.md#runtimeExpression)
@@ -12,6 +18,7 @@
 - Respect the mime types defined in the OpenAPI document. Now it creates a union for each mime type defined in the document, and resolve it by the mime type.
 - Respect JSON examples given in the OpenAPI document correctly even if they are strings with JSON content.
 - Normalize(lowercase header names) and merge final operation headers correctly from different places `operationHeaders` from the bundle and configuration plus `headers` defined for that specific operation.
+- Do not ignore operationHeaders defined in the configuration even if there are some already defined in the bundle
 
 **BREAKING CHANGES:**
 
@@ -33,4 +40,41 @@
 - "responseJson": {}
 + "responseBody": {}
 }
+```
+
+- `requestSchema` and `requestSample` are no longer used for query parameters in GET operations, but instead we introduced new `argTypeMap` and `queryParamsArgMap` to define schemas for query parameters.
+
+For JSON Schema Handler configuration, the following changes are **NEEDED**;
+```diff
+- requestSample: { some_flag: true }
++ queryParamsArgMap:
++   some_flag: some_flag
++ argTypeMap:
++   some_flag:
++     type: boolean
+```
+
+or just use the string interpolation;
+```yaml
+path: /mypath?some_flag={args.some_flag}
+```
+
+- Query parameters no longer uses `input`, and they become an argument of that operation directly.
+
+In the generated GraphQL Schema;
+```diff
+- someOp(input: SomeInput): OpResult
+- input SomeInput {
+-  some_flag: Boolean
+- }
++ someOp(some_flag: Boolean): OpResult
+```
+
+- `argTypeMap` no longer takes GraphQL type names but instead it can take JSON Schema pointer or JSON Schema definition itself. New `argTypeMap` can configure any argument even if it is defined in the headers.
+
+```diff
+argTypeMap:
+- some_flag: Boolean
++ some_flag:
++   type: boolean
 ```
