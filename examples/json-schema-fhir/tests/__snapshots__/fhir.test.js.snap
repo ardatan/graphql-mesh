@@ -1008,6 +1008,7 @@ type Narrative {
   extension: [Extension]
   status: query_resourceById_oneOf_0_text_status
   _status: Element
+  \\"xhtml - escaped html (see specfication)\\"
   div: JSON!
 }
 
