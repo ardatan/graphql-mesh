@@ -16,9 +16,10 @@ jobs:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
 
   typecheck:
-    uses: the-guild-org/shared-config/.github/workflows/ci.yml@shared-setup
+    uses: the-guild-org/shared-config/.github/workflows/ci-node-matrix.yml@shared-setup
     with:
       script: yarn transpile-ts --noEmit
+      nodeVersions: '[14,16,18]'
 
   test:
     name: test / ${{matrix.os}} / node ${{matrix.node-version}}
