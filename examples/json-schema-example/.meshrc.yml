@@ -15,7 +15,9 @@ sources:
             method: GET
             responseSchema: ./json-schemas/company.json#/definitions/Company
             argTypeMap:
-              id: ID!
+              id:
+                type: string
+                nullable: false
           - type: Mutation
             field: createUser
             path: /user
@@ -27,7 +29,9 @@ sources:
             field: updateUser
             path: /user/{args.id}
             argTypeMap:
-              id: ID!
+              id:
+                type: string
+                nullable: false
             method: POST
             requestSample: ./json-samples/user-input.json
             requestTypeName: CreateUpdateUser
@@ -36,7 +40,9 @@ sources:
             field: deleteUser
             path: /user/{args.id}
             argTypeMap:
-              id: ID!
+              id:
+                type: string
+                nullable: false
             method: DELETE
 
 additionalTypeDefs: |
