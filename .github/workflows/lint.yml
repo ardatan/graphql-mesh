@@ -1,0 +1,14 @@
+name: test
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+  lint:
+    uses: the-guild-org/shared-config/.github/workflows/lint.yaml@shared-setup
+    secrets:
+      githubToken: ${{ secrets.GITHUB_TOKEN }}
