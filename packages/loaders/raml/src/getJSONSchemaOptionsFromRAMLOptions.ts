@@ -7,7 +7,6 @@ import toJsonSchema from 'to-json-schema';
 import { RAMLLoaderOptions } from './types';
 import { asArray } from '@graphql-tools/utils';
 import { getFieldNameFromPath } from './utils';
-import { GraphQLEnumType, GraphQLEnumValueConfigMap, GraphQLInputType } from 'graphql';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import { process } from '@graphql-mesh/cross-helpers';
 
@@ -136,101 +135,27 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
       const description = methodNode.description()?.value() || resourceNode.description()?.value();
       const originalFullRelativeUrl = resourceNode.completeRelativeUri();
       let fullRelativeUrl = originalFullRelativeUrl;
-      const argTypeMap: Record<string, string | GraphQLInputType> = {};
+      const argTypeMap: Record<string, JSONSchemaObject> = {};
+      const queryParamArgMap: Record<string, string> = {};
       for (const uriParameterNode of resourceNode.uriParameters()) {
         const paramName = uriParameterNode.name();
-        fullRelativeUrl = fullRelativeUrl.replace(`{${paramName}}`, `{args.${paramName}}`);
+        const argName = sanitizeNameForGraphQL(paramName);
+        fullRelativeUrl = fullRelativeUrl.replace(`{${paramName}}`, `{args.${argName}}`);
         const uriParameterNodeJson = uriParameterNode.toJSON();
-        for (const typeName of asArray(uriParameterNodeJson.type)) {
-          switch (typeName) {
-            case 'number':
-              argTypeMap[paramName] = 'Float';
-              break;
-            case 'boolean':
-              argTypeMap[paramName] = 'Boolean';
-              break;
-            case 'integer':
-              argTypeMap[paramName] = 'Int';
-              break;
-            default:
-              argTypeMap[paramName] = 'String';
-              break;
-          }
+        if (uriParameterNodeJson.displayName) {
+          uriParameterNodeJson.title = uriParameterNodeJson.displayName;
         }
-        /* raml pattern is different
-        if (uriParameterNodeJson.pattern) {
-          const typeName = sanitizeNameForGraphQL(uriParameterNodeJson.displayName || `${fieldName}_${paramName}`);
-          argTypeMap[paramName] = new RegularExpression(typeName, new RegExp(uriParameterNodeJson.pattern), {
-            description: uriParameterNodeJson.description,
-          });
-        }
-        */
-        if (uriParameterNodeJson.enum) {
-          const typeName = sanitizeNameForGraphQL(uriParameterNodeJson.displayName || `${fieldName}_${paramName}`);
-          const values: GraphQLEnumValueConfigMap = {};
-          for (const value of asArray(uriParameterNodeJson.enum)) {
-            let enumKey = sanitizeNameForGraphQL(value.toString());
-            if (enumKey === 'false' || enumKey === 'true' || enumKey === 'null') {
-              enumKey = enumKey.toUpperCase();
-            }
-            if (typeof enumKey === 'string' && enumKey.length === 0) {
-              enumKey = '_';
-            }
-            values[enumKey] = {
-              // Falsy values are ignored by GraphQL
-              // eslint-disable-next-line no-unneeded-ternary
-              value: value ? value : value?.toString(),
-            };
-          }
-          argTypeMap[paramName] = new GraphQLEnumType({
-            name: typeName,
-            description: uriParameterNodeJson.description,
-            values,
-          });
-        }
-        if (uriParameterNodeJson.required) {
-          argTypeMap[paramName] += '!';
-        }
+        argTypeMap[argName] = uriParameterNodeJson;
       }
       for (const queryParameterNode of queryParameters) {
-        requestSchema = requestSchema || {
-          type: 'object',
-          properties: {},
-          required: [],
-        };
         const parameterName = queryParameterNode.name();
+        const argName = sanitizeNameForGraphQL(parameterName);
         const queryParameterNodeJson = queryParameterNode.toJSON();
-        if (queryParameterNodeJson.required) {
-          (requestSchema as JSONSchemaObject).required.push(parameterName);
-        }
-        if (queryParameterNodeJson.enum) {
-          (requestSchema as JSONSchemaObject).properties[parameterName] = {
-            type: 'string',
-            enum: queryParameterNodeJson.enum,
-          };
-        }
-        if (queryParameterNodeJson.type) {
-          (requestSchema as JSONSchemaObject).properties[parameterName] = {
-            type: asArray(queryParameterNodeJson.type)[0] || 'string',
-          };
-        } else {
-          (requestSchema as JSONSchemaObject).properties[parameterName] = toJsonSchema(
-            queryParameterNodeJson.example ?? queryParameterNodeJson.default,
-            {
-              required: false,
-              strings: {
-                detectFormat: true,
-              },
-            }
-          );
-        }
         if (queryParameterNodeJson.displayName) {
-          (requestSchema as JSONSchemaObject).properties[parameterName].title = queryParameterNodeJson.displayName;
+          queryParameterNodeJson.title = queryParameterNodeJson.displayName;
         }
-        if (queryParameterNode.description) {
-          (requestSchema as JSONSchemaObject).properties[parameterName].description =
-            queryParameterNodeJson.description;
-        }
+        queryParamArgMap[parameterName] = argName;
+        argTypeMap[argName] = queryParameterNodeJson;
       }
 
       for (const bodyNode of bodyNodes) {

@@ -19,11 +19,11 @@ export interface JSONSchemaLoaderBundle {
 }
 
 export interface JSONSchemaLoaderBundleOptions {
-  baseUrl: string;
+  baseUrl?: string;
   operations: JSONSchemaOperationConfig[];
-  schemaHeaders: Record<string, string>;
-  operationHeaders: Record<string, string>;
-  queryParams: Record<string, string | number | boolean>;
+  schemaHeaders?: Record<string, string>;
+  operationHeaders?: Record<string, string>;
+  queryParams?: Record<string, string | number | boolean>;
   cwd: string;
   ignoreErrorResponses?: boolean;
   noDeduplication?: boolean;
