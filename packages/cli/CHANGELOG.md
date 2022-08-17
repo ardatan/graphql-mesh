@@ -1,5 +1,18 @@
 # @graphql-mesh/cli
 
+## 0.75.10
+
+### Patch Changes
+
+- [#4304](https://github.com/Urigo/graphql-mesh/pull/4304) [`e9a251cc8`](https://github.com/Urigo/graphql-mesh/commit/e9a251cc812dbe579a483b06be932e904891b752) Thanks [@enisdenjo](https://github.com/enisdenjo)! - WebSocket request must be under `req` for envelop context
+
+- Updated dependencies [[`cbc00748e`](https://github.com/Urigo/graphql-mesh/commit/cbc00748e8538e17e83b1a858947ff6503c6d5c0), [`cbc00748e`](https://github.com/Urigo/graphql-mesh/commit/cbc00748e8538e17e83b1a858947ff6503c6d5c0), [`b162269f7`](https://github.com/Urigo/graphql-mesh/commit/b162269f70a90594962792ffaaa40d3a7ee9f4e4)]:
+  - @graphql-mesh/config@5.1.8
+  - @graphql-mesh/runtime@0.41.10
+  - @graphql-mesh/types@0.79.0
+  - @graphql-mesh/utils@0.38.0
+  - @graphql-mesh/store@0.8.29
+
 ## 0.75.9
 
 ### Patch Changes

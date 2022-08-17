@@ -1,5 +1,13 @@
 # reddit-example
 
+## 0.0.49
+
+### Patch Changes
+
+- Updated dependencies [[`b162269f7`](https://github.com/Urigo/graphql-mesh/commit/b162269f70a90594962792ffaaa40d3a7ee9f4e4), [`e9a251cc8`](https://github.com/Urigo/graphql-mesh/commit/e9a251cc812dbe579a483b06be932e904891b752)]:
+  - @graphql-mesh/json-schema@0.32.0
+  - @graphql-mesh/cli@0.75.10
+
 ## 0.0.48
 
 ### Patch Changes

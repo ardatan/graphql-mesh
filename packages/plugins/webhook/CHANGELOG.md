@@ -1,5 +1,17 @@
 # @graphql-mesh/plugin-webhook
 
+## 0.0.8
+
+### Patch Changes
+
+- [#4314](https://github.com/Urigo/graphql-mesh/pull/4314) [`cbc00748e`](https://github.com/Urigo/graphql-mesh/commit/cbc00748e8538e17e83b1a858947ff6503c6d5c0) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@graphql-yoga/common@2.12.6` ↗︎](https://www.npmjs.com/package/@graphql-yoga/common/v/2.12.6) (from `2.12.5`, in `dependencies`)
+
+- Updated dependencies [[`b162269f7`](https://github.com/Urigo/graphql-mesh/commit/b162269f70a90594962792ffaaa40d3a7ee9f4e4), [`2ad667d96`](https://github.com/Urigo/graphql-mesh/commit/2ad667d964545ed47170cfa4f9393282edc2073b)]:
+  - @graphql-mesh/types@0.79.0
+  - @graphql-mesh/string-interpolation@0.3.2
+
 ## 0.0.7
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @graphql-mesh/store
 
+## 0.8.29
+
+### Patch Changes
+
+- Updated dependencies [[`b162269f7`](https://github.com/Urigo/graphql-mesh/commit/b162269f70a90594962792ffaaa40d3a7ee9f4e4)]:
+  - @graphql-mesh/types@0.79.0
+  - @graphql-mesh/utils@0.38.0
+
 ## 0.8.28
 
 ### Patch Changes

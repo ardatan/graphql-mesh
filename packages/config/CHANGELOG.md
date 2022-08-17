@@ -1,5 +1,22 @@
 # @graphql-mesh/config
 
+## 5.1.8
+
+### Patch Changes
+
+- [#4314](https://github.com/Urigo/graphql-mesh/pull/4314) [`cbc00748e`](https://github.com/Urigo/graphql-mesh/commit/cbc00748e8538e17e83b1a858947ff6503c6d5c0) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@envelop/core@2.5.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/2.5.0) (from `2.4.2`, in `dependencies`)
+
+- Updated dependencies [[`cbc00748e`](https://github.com/Urigo/graphql-mesh/commit/cbc00748e8538e17e83b1a858947ff6503c6d5c0), [`b162269f7`](https://github.com/Urigo/graphql-mesh/commit/b162269f70a90594962792ffaaa40d3a7ee9f4e4)]:
+  - @graphql-mesh/runtime@0.41.10
+  - @graphql-mesh/types@0.79.0
+  - @graphql-mesh/utils@0.38.0
+  - @graphql-mesh/cache-localforage@0.6.26
+  - @graphql-mesh/merger-bare@0.15.10
+  - @graphql-mesh/merger-stitching@0.16.9
+  - @graphql-mesh/store@0.8.29
+
 ## 5.1.7
 
 ### Patch Changes
@@ -219,9 +236,9 @@
       sourceName: Author
       sourceTypeName: Query
       sourceFieldName: authorById
-      requiredSelectionSet: '{ id }'
+      requiredSelectionSet: "{ id }"
       sourceArgs:
-        id: '{root.id}'
+        id: "{root.id}"
   ```
 
   After:
