@@ -10,7 +10,7 @@ jobs:
     name: Push new records if changes
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repo
+      - name: Checkout
         uses: actions/checkout@v3
 
       - uses: the-guild-org/shared-config/setup@shared-setup
