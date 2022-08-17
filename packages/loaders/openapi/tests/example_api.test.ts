@@ -2053,7 +2053,7 @@ describe('example_api', () => {
 
       const query = /* GraphQL */ `
         {
-          getSnack(snack_type: soda, snack_size: large)
+          getSnack(snack_type: soda)
         }
       `;
       const result = await execute({
