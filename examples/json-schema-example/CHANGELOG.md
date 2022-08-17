@@ -1,5 +1,12 @@
 # json-schema-example
 
+## 0.5.279
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.32.1
+
 ## 0.5.278
 
 ### Patch Changes

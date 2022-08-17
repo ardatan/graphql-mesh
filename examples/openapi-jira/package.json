@@ -1,13 +1,13 @@
 {
   "name": "openapi-jira",
-  "version": "0.0.42",
+  "version": "0.0.43",
   "private": true,
   "scripts": {
     "start": "mesh dev"
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.75.10",
-    "@graphql-mesh/new-openapi": "0.6.3",
+    "@graphql-mesh/new-openapi": "0.7.0",
     "graphql": "16.6.0"
   }
 }
