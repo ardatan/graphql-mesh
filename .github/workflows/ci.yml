@@ -14,3 +14,8 @@ jobs:
       script: 'yarn ci:lint'
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
+
+  typecheck:
+    uses: the-guild-org/shared-config/.github/workflows/ci.yml@shared-setup
+    with:
+      script: 'yarn typecheck'
