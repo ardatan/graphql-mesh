@@ -22,7 +22,7 @@ jobs:
       name: ts
 
   test:
-    name: test / ${{matrix.os}} / node ${{matrix.node-version}}
+    name: ${{matrix.os}} / node ${{matrix.node-version}}
     timeout-minutes: 60
     runs-on: ${{matrix.os}}
     strategy:
@@ -56,26 +56,13 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-      - name: Checkout Master
+      - name: Checkout
         uses: actions/checkout@v3
-      - name: Use Node ${{matrix.node-version}}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: yarn
 
-      - name: Cache Node Modules
-        uses: actions/cache@v3
-        id: node-modules-cache-test
+      - uses: the-guild-org/shared-config/setup@shared-setup
+        name: setup env
         with:
-          path: '**/node_modules'
-          key: ${{runner.os}}-${{matrix.node-version}}-node-modules-${{hashFiles('yarn.lock')}}
-          restore-keys: |
-            ${{runner.os}}-${{matrix.node-version}}-node-modules-
-
-      - name: Install Dependencies using Yarn
-        run: yarn install --ignore-engines --frozen-lockfile --immutable
-        if: steps.node-modules-cache-test.outputs.cache-hit != 'true'
+          nodeVersion: 18
 
       - name: Cache Jest
         uses: actions/cache@v3

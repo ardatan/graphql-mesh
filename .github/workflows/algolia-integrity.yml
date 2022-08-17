@@ -7,30 +7,10 @@ jobs:
   algolia-records-check:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Fetch
-        run: git fetch origin master
-
-      - name: Use Node 18
-        uses: actions/setup-node@v3
+      - uses: the-guild-org/shared-config/setup@shared-setup
+        name: setup env
         with:
-          node-version: 18
-          cache: 'yarn'
-
-      - name: Cache Node Modules
-        uses: actions/cache@v3
-        id: node-modules-cache-algolia-integrity
-        with:
-          path: '**/node_modules'
-          key: ${{runner.os}}-18-node-modules-${{hashFiles('yarn.lock')}}
-          restore-keys: |
-            ${{runner.os}}-18-node-modules-
-
-      - name: Install Dependencies using Yarn
-        run: yarn install --ignore-engines --frozen-lockfile --immutable
-        if: steps.node-modules-cache-algolia-integrity.outputs.cache-hit != 'true'
+          nodeVersion: 18
 
       - name: Build Packages
         run: yarn build
