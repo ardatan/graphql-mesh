@@ -12,6 +12,5 @@ jobs:
     uses: the-guild-org/shared-config/.github/workflows/lint.yml@shared-setup
     with:
       script: 'yarn ci:lint'
-      annotations: true
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
