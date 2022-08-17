@@ -161,20 +161,19 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
             break;
         }
 
-        operationArgTypeMap[paramObj.name] =
-          paramObj.schema || paramObj.content?.['application/json']?.schema || paramObj;
-        if (!operationArgTypeMap[paramObj.name].title) {
-          operationArgTypeMap[paramObj.name].name = paramObj.name;
+        operationArgTypeMap[argName] = paramObj.schema || paramObj.content?.['application/json']?.schema || paramObj;
+        if (!operationArgTypeMap[argName].title) {
+          operationArgTypeMap[argName].name = paramObj.name;
         }
-        if (!operationArgTypeMap[paramObj.name].description) {
-          operationArgTypeMap[paramObj.name].description = paramObj.description;
+        if (!operationArgTypeMap[argName].description) {
+          operationArgTypeMap[argName].description = paramObj.description;
         }
         if (paramObj.required) {
-          operationArgTypeMap[paramObj.name].nullable = false;
+          operationArgTypeMap[argName].nullable = false;
         }
         // Fix the reference
-        if (operationArgTypeMap[paramObj.name].$ref?.startsWith('#')) {
-          operationArgTypeMap[paramObj.name].$ref = `${oasFilePath}${operationArgTypeMap[paramObj.name].$ref}`;
+        if (operationArgTypeMap[argName].$ref?.startsWith('#')) {
+          operationArgTypeMap[argName].$ref = `${oasFilePath}${operationArgTypeMap[argName].$ref}`;
         }
       }
 

@@ -1342,7 +1342,7 @@ type Query {
   \\"Retrieve usage information within the current billing period together with the corresponding account limits. Usage is returned for:\\\\n- translated characters\\\\n- translated documents\\\\n- translated documents, team totals (for team accounts only)\\\\n\\\\nCharacter usage includes both text and document translations, and is measured by the source text length in Unicode code points,\\\\nso for example \\\\\\"A\\\\\\", \\\\\\"Δ\\\\\\", \\\\\\"あ\\\\\\", and \\\\\\"深\\\\\\" are each counted as a single character.\\\\n\\\\nDocument usage only includes document translations, and is measured in individual documents.\\\\n\\\\nDepending on the user account type, some usage types will be omitted.\\\\nCharacter usage is only included for developer accounts.\\\\nDocument usage is only included for non-developer accounts, and team-combined document usage is only included for non-developer team accounts.\\"
   getUsage: getUsage_200_response
   \\"Retrieve the list of languages that are currently supported for translation, either as source or target language, respectively.\\"
-  getLanguages(type: queryInput_getLanguages_type): [query_getLanguages_items]
+  getLanguages(type: queryInput_getLanguages_type = source): [query_getLanguages_items]
 }
 
 type listGlossaryLanguages_200_response {
@@ -1507,9 +1507,9 @@ input paths_translate_post_requestBody_content_application_x_www_form_urlencoded
   text: [String]!
   source_lang: SourceLanguage
   target_lang: TargetLanguage!
-  split_sentences: mutationInput_translateText_input_split_sentences
-  preserve_formatting: mutationInput_translateText_input_preserve_formatting
-  formality: Formality
+  split_sentences: mutationInput_translateText_input_split_sentences = _1
+  preserve_formatting: mutationInput_translateText_input_preserve_formatting = _0
+  formality: Formality = default
   \\"Specify the glossary to use for the translation. **Important:** This requires the \`source_lang\` parameter to be set and the language pair of the glossary has to match the language pair of the request.\\"
   glossary_id: String
   tag_handling: mutationInput_translateText_input_tag_handling
@@ -1599,7 +1599,7 @@ input paths_document_post_requestBody_content_multipart_form_data_schema_Input {
   file: String!
   \\"The name of the uploaded file. Can be used as an alternative to including the file name in the file part's content disposition.\\"
   filename: String
-  formality: Formality
+  formality: Formality = default
   \\"A unique ID assigned to a glossary.\\"
   glossary_id: String
 }

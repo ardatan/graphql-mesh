@@ -5,7 +5,7 @@ import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAP
 import { startServer, stopServer } from '../../../handlers/openapi/test/example_api_server';
 import { fetch } from '@whatwg-node/fetch';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { OpenAPILoaderOptions } from '../src';
+import { createBundle, OpenAPILoaderOptions } from '../src';
 
 let createdSchema: GraphQLSchema;
 const PORT = 3002;
@@ -27,6 +27,17 @@ describe('example_api', () => {
 
   it('should generate the schema correctly', () => {
     expect(printSchemaWithDirectives(createdSchema)).toMatchSnapshot();
+  });
+
+  it('should generate the bundle correctly', async () => {
+    expect(
+      await createBundle('test', {
+        fetch,
+        baseUrl,
+        oasFilePath: '../../../handlers/openapi/test/fixtures/example_oas.json',
+        cwd: __dirname,
+      })
+    ).toMatchSnapshot();
   });
 
   it('should get descriptions', async () => {

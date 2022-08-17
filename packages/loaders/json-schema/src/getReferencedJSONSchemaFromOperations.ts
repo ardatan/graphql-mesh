@@ -209,6 +209,7 @@ export async function getReferencedJSONSchemaFromOperations({
       const initialObjectName = interpolationKeyParts.shift();
       if (initialObjectName === 'args') {
         rootTypeInputTypeDefinition.properties[fieldName] = rootTypeInputTypeDefinition.properties[fieldName] || {
+          title: `${rootTypeInputPropertyName}_${fieldName}`,
           type: 'object',
           properties: {},
         };
@@ -236,12 +237,14 @@ export async function getReferencedJSONSchemaFromOperations({
         type: 'file',
       };
       rootTypeInputTypeDefinition.properties[fieldName] = rootTypeInputTypeDefinition.properties[fieldName] || {
+        title: `${rootTypeInputPropertyName}_${fieldName}`,
         type: 'object',
         properties: {},
       };
       rootTypeInputTypeDefinition.properties[fieldName].properties.input = generatedSchema;
     } else if ('requestSchema' in operationConfig && operationConfig.requestSchema) {
       rootTypeInputTypeDefinition.properties[fieldName] = rootTypeInputTypeDefinition.properties[fieldName] || {
+        title: `${rootTypeInputPropertyName}_${fieldName}`,
         type: 'object',
         properties: {},
       };
@@ -284,6 +287,7 @@ export async function getReferencedJSONSchemaFromOperations({
       generatedSchema.title = operationConfig.requestTypeName;
       generatedSchema.examples = [sample];
       rootTypeInputTypeDefinition.properties[fieldName] = rootTypeInputTypeDefinition.properties[fieldName] || {
+        title: `${rootTypeInputPropertyName}_${fieldName}`,
         type: 'object',
         properties: {},
       };

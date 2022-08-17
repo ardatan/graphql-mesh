@@ -28,7 +28,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 100
   ): PageBeanContextualConfiguration
   \\"Returns all application properties or an application property.\\\\n\\\\nIf you specify a value for the \`key\` parameter, then an application property is returned as an object (not in an array). Otherwise, an array of all editable application properties is returned. See [Set application property](#api-rest-api-3-application-properties-id-put) for descriptions of editable properties.\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
   getApplicationProperty(
@@ -53,7 +53,7 @@ type Query {
     \\"The ID of the attachment.\\"
     id: String!
     \\"Whether a redirect is provided for the attachment download. Clients that do not automatically follow redirects can set this to \`false\` to avoid making multiple requests to download the attachment.\\"
-    redirect: Boolean
+    redirect: Boolean = true
   ): getAttachmentContent_200_response
   \\"Returns the attachment settings, that is, whether attachments are enabled and the maximum attachment size allowed.\\\\n\\\\nNote that there are also [project permissions](https://confluence.atlassian.com/x/yodKLg) that restrict whether users can create and delete attachments.\\\\n\\\\nThis operation can be accessed anonymously.\\\\n\\\\n**[Permissions](#permissions) required:** None.\\"
   getAttachmentMeta: AttachmentSettings
@@ -62,9 +62,9 @@ type Query {
     \\"The ID of the attachment.\\"
     id: String!
     \\"Whether a redirect is provided for the attachment download. Clients that do not automatically follow redirects can set this to \`false\` to avoid making multiple requests to download the attachment.\\"
-    redirect: Boolean
+    redirect: Boolean = true
     \\"Whether a default thumbnail is returned when the requested thumbnail is not found.\\"
-    fallbackToDefault: Boolean
+    fallbackToDefault: Boolean = true
     \\"The maximum width to scale the thumbnail to.\\"
     width: Int
     \\"The maximum height to scale the thumbnail to.\\"
@@ -90,7 +90,7 @@ type Query {
     \\"The number of records to skip before returning the first result.\\"
     offset: Int
     \\"The maximum number of results to return.\\"
-    limit: Int
+    limit: Int = 1000
     \\"The strings to match with audit field content, space separated.\\"
     filter: String
     \\"The date and time on or after which returned audit records must have been created. If \`to\` is provided \`from\` must be before \`to\` or no audit records are returned.\\"
@@ -141,7 +141,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: Int
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 20
   ): getAllDashboards_response
   \\"Gets a list of all available gadgets that can be added to all dashboards.\\\\n\\\\n**[Permissions](#permissions) required:** None.\\"
   getAllAvailableDashboardGadgets: getAllAvailableDashboardGadgets_response
@@ -159,12 +159,12 @@ type Query {
     groupId: String
     \\"Project ID used to returns dashboards that are shared with a project that matches \`sharePermissions.project.id\`.\\"
     projectId: BigInt
-    orderBy: queryInput_getDashboardsPaginated_orderBy
+    orderBy: queryInput_getDashboardsPaginated_orderBy = name
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
-    status: queryInput_getDashboardsPaginated_status
+    maxResults: Int = 50
+    status: queryInput_getDashboardsPaginated_status = active
     \\"Use [expand](#expansion) to include additional information about dashboard in the response. This parameter accepts a comma-separated list. Expand options include:\\\\n\\\\n *  \`description\` Returns the description of the dashboard.\\\\n *  \`owner\` Returns the owner of the dashboard.\\\\n *  \`viewUrl\` Returns the URL that is used to view the dashboard.\\\\n *  \`favourite\` Returns \`isFavourite\`, an indicator of whether the user has set the dashboard as a favorite.\\\\n *  \`favouritedCount\` Returns \`popularity\`, a count of how many users have set this dashboard as a favorite.\\\\n *  \`sharePermissions\` Returns details of the share permissions defined for the dashboard.\\\\n *  \`editPermissions\` Returns details of the edit permissions defined for the dashboard.\\\\n *  \`isWritable\` Returns whether the current user has permission to edit the dashboard.\\"
     expand: String
   ): getDashboardsPaginated_response
@@ -209,7 +209,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
     \\"The type of fields to search.\\"
     type: [queryInput_getFieldsPaginated_type_items]
     \\"The IDs of the custom fields to return or, where \`query\` is specified, filter.\\"
@@ -225,7 +225,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
     id: [String]
     \\"String used to perform a case-insensitive partial match with field names or descriptions.\\"
     query: String
@@ -244,7 +244,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
   ): getContextsForField_response
   \\"Returns a [paginated](#pagination) list of defaults for a custom field. The results can be filtered by \`contextId\`, otherwise all values are returned. If no defaults are set for a context, nothing is returned.  \\\\nThe returned object depends on type of the custom field:\\\\n\\\\n *  \`CustomFieldContextDefaultValueDate\` (type \`datepicker\`) for date fields.\\\\n *  \`CustomFieldContextDefaultValueDateTime\` (type \`datetimepicker\`) for date-time fields.\\\\n *  \`CustomFieldContextDefaultValueSingleOption\` (type \`option.single\`) for single choice select lists and radio buttons.\\\\n *  \`CustomFieldContextDefaultValueMultipleOption\` (type \`option.multiple\`) for multiple choice select lists and checkboxes.\\\\n *  \`CustomFieldContextDefaultValueCascadingOption\` (type \`option.cascading\`) for cascading select lists.\\\\n *  \`CustomFieldContextSingleUserPickerDefaults\` (type \`single.user.select\`) for single users.\\\\n *  \`CustomFieldContextDefaultValueMultiUserPicker\` (type \`multi.user.select\`) for user lists.\\\\n *  \`CustomFieldContextDefaultValueSingleGroupPicker\` (type \`grouppicker.single\`) for single choice group pickers.\\\\n *  \`CustomFieldContextDefaultValueMultipleGroupPicker\` (type \`grouppicker.multiple\`) for multiple choice group pickers.\\\\n *  \`CustomFieldContextDefaultValueURL\` (type \`url\`) for URLs.\\\\n *  \`CustomFieldContextDefaultValueProject\` (type \`project\`) for project pickers.\\\\n *  \`CustomFieldContextDefaultValueFloat\` (type \`float\`) for floats (floating-point numbers).\\\\n *  \`CustomFieldContextDefaultValueLabels\` (type \`labels\`) for labels.\\\\n *  \`CustomFieldContextDefaultValueTextField\` (type \`textfield\`) for text fields.\\\\n *  \`CustomFieldContextDefaultValueTextArea\` (type \`textarea\`) for text area fields.\\\\n *  \`CustomFieldContextDefaultValueReadOnly\` (type \`readonly\`) for read only (text) fields.\\\\n *  \`CustomFieldContextDefaultValueMultipleVersion\` (type \`version.multiple\`) for single choice version pickers.\\\\n *  \`CustomFieldContextDefaultValueSingleVersion\` (type \`version.single\`) for multiple choice version pickers.\\\\n\\\\nForge custom fields [types](https://developer.atlassian.com/platform/forge/manifest-reference/modules/jira-custom-field-type/#data-types) are also supported, returning:\\\\n\\\\n *  \`CustomFieldContextDefaultValueForgeStringFieldBean\` (type \`forge.string\`) for Forge string fields.\\\\n *  \`CustomFieldContextDefaultValueForgeMultiStringFieldBean\` (type \`forge.string.list\`) for Forge string collection fields.\\\\n *  \`CustomFieldContextDefaultValueForgeObjectFieldBean\` (type \`forge.object\`) for Forge object fields.\\\\n *  \`CustomFieldContextDefaultValueForgeDateTimeFieldBean\` (type \`forge.datetime\`) for Forge date-time fields.\\\\n *  \`CustomFieldContextDefaultValueForgeGroupFieldBean\` (type \`forge.group\`) for Forge group fields.\\\\n *  \`CustomFieldContextDefaultValueForgeMultiGroupFieldBean\` (type \`forge.group.list\`) for Forge group collection fields.\\\\n *  \`CustomFieldContextDefaultValueForgeNumberFieldBean\` (type \`forge.number\`) for Forge number fields.\\\\n *  \`CustomFieldContextDefaultValueForgeUserFieldBean\` (type \`forge.user\`) for Forge user fields.\\\\n *  \`CustomFieldContextDefaultValueForgeMultiUserFieldBean\` (type \`forge.user.list\`) for Forge user collection fields.\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
   getDefaultValues(
@@ -255,7 +255,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
   ): getDefaultValues_response
   \\"Returns a [paginated](#pagination) list of context to issue type mappings for a custom field. Mappings are returned for all contexts or a list of contexts. Mappings are ordered first by context ID and then by issue type ID.\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
   getIssueTypeMappingsForContexts(
@@ -266,7 +266,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
   ): getIssueTypeMappingsForContexts_response
   \\"Returns a [paginated](#pagination) list of context to project mappings for a custom field. The result can be filtered by \`contextId\`. Otherwise, all mappings are returned. Invalid IDs are ignored.\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
   getProjectContextMapping(
@@ -277,7 +277,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
   ): getProjectContextMapping_response
   \\"Returns a [paginated](#pagination) list of all custom field option for a context. Options are returned first then cascading options, in the order they display in Jira.\\\\n\\\\nThis operation works for custom field options created in Jira or the operations from this resource. **To work with issue field select list options created for Connect apps use the [Issue custom field options (apps)](#api-group-issue-custom-field-options--apps-) operations.**\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
   getOptionsForContext(
@@ -292,7 +292,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 100
   ): getOptionsForContext_response
   \\"Returns a [paginated](#pagination) list of the contexts a field is used in. Deprecated, use [ Get custom field contexts](#api-rest-api-3-field-fieldId-context-get).\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
   getContextsForFieldDeprecated(
@@ -301,7 +301,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 20
   ): PageBeanContext
   \\"Returns a [paginated](#pagination) list of the screens a field is used in.\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
   getScreensForField(
@@ -310,7 +310,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 100
     \\"Use [expand](#expansion) to include additional information about screens in the response. This parameter accepts \`tab\` which returns details about the screen tabs the field is used in.\\"
     expand: String
   ): PageBeanScreenWithTab
@@ -321,7 +321,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
   ): PageBeanIssueFieldOption
   \\"Returns a [paginated](#pagination) list of options for a select list issue field that can be viewed and selected by the user.\\\\n\\\\nNote that this operation **only works for issue field select list options added by Connect apps**, it cannot be used with issue field select list options created in Jira or using operations from the [Issue custom field options](#api-group-Issue-custom-field-options) resource.\\\\n\\\\n**[Permissions](#permissions) required:** Permission to access Jira.\\"
   getSelectableIssueFieldOptions(
@@ -330,7 +330,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
     \\"Filters the results to options that are only available in the specified project.\\"
     projectId: BigInt
   ): PageBeanIssueFieldOption
@@ -357,7 +357,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
     \\"The list of field configuration IDs. To include multiple IDs, provide an ampersand-separated list. For example, \`id=10000&id=10001\`.\\"
     id: [BigInt]
     \\"If *true* returns default field configurations only.\\"
@@ -372,14 +372,14 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
   ): PageBeanFieldConfigurationItem
   \\"Returns a [paginated](#pagination) list of field configuration schemes.\\\\n\\\\nOnly field configuration schemes used in classic projects are returned.\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
   getAllFieldConfigurationSchemes(
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
     \\"The list of field configuration scheme IDs. To include multiple IDs, provide an ampersand-separated list. For example, \`id=10000&id=10001\`.\\"
     id: [BigInt]
   ): PageBeanFieldConfigurationScheme
@@ -388,7 +388,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
     \\"The list of field configuration scheme IDs. To include multiple field configuration schemes separate IDs with ampersand: \`fieldConfigurationSchemeId=10000&fieldConfigurationSchemeId=10001\`.\\"
     fieldConfigurationSchemeId: [BigInt]
   ): PageBeanFieldConfigurationIssueTypeItem
@@ -397,7 +397,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
     \\"The list of project IDs. To include multiple projects, separate IDs with ampersand: \`projectId=10000&projectId=10001\`.\\"
     projectId: [BigInt]!
   ): PageBeanFieldConfigurationSchemeProjects
@@ -436,11 +436,11 @@ type Query {
     projectId: BigInt
     \\"The list of filter IDs. To include multiple IDs, provide an ampersand-separated list. For example, \`id=10000&id=10001\`.\\"
     id: [BigInt]
-    orderBy: queryInput_getFiltersPaginated_orderBy
+    orderBy: queryInput_getFiltersPaginated_orderBy = name
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
     \\"Use [expand](#expansion) to include additional information about filter in the response. This parameter accepts a comma-separated list. Expand options include:\\\\n\\\\n *  \`description\` Returns the description of the filter.\\\\n *  \`favourite\` Returns an indicator of whether the user has set the filter as a favorite.\\\\n *  \`favouritedCount\` Returns a count of how many users have set this filter as a favorite.\\\\n *  \`jql\` Returns the JQL query that the filter uses.\\\\n *  \`owner\` Returns the owner of the filter.\\\\n *  \`searchUrl\` Returns a URL to perform the filter's JQL query.\\\\n *  \`sharePermissions\` Returns the share permissions defined for the filter.\\\\n *  \`editPermissions\` Returns the edit permissions defined for the filter.\\\\n *  \`isWritable\` Returns whether the current user has permission to edit the filter.\\\\n *  \`subscriptions\` Returns the users that are subscribed to the filter.\\\\n *  \`viewUrl\` Returns a URL to view the filter.\\"
     expand: String
     \\"EXPERIMENTAL: Whether share permissions are overridden to enable filters with any share permissions to be returned. Available to users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
@@ -486,7 +486,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
     \\"The ID of a group. To specify multiple IDs, pass multiple \`groupId\` parameters. For example, \`groupId=5b10a2844c20165700ede21g&groupId=5b10ac8d82e05b22cc7d4ef5\`.\\"
     groupId: [String]
     \\"The name of a group. To specify multiple names, pass multiple \`groupName\` parameters. For example, \`groupName=administrators&groupName=jira-software-users\`.\\"
@@ -503,7 +503,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
   ): PageBeanUserDetails
   \\"Returns a list of groups whose names contain a query string. A list of group names can be provided to exclude groups from the results.\\\\n\\\\nThe primary use case for this resource is to populate a group picker suggestions list. To this end, the returned object includes the \`html\` field where the matched query term is highlighted in the group name with the HTML strong tag. Also, the groups list is wrapped in a response object that contains a header for use in the picker, specifically *Showing X of Y matching groups*.\\\\n\\\\nThe list returns with the groups sorted. If no groups match the list criteria, an empty list is returned.\\\\n\\\\nThis operation can be accessed anonymously.\\\\n\\\\n**[Permissions](#permissions) required:** *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg). Anonymous calls and calls by users without the required permission return an empty list.\\"
   findGroups(
@@ -525,7 +525,7 @@ type Query {
     \\"The search string.\\"
     query: String!
     \\"The maximum number of items to return in each list.\\"
-    maxResults: Int
+    maxResults: Int = 50
     \\"Whether the user avatar should be returned. If an invalid value is provided, the default value is used.\\"
     showAvatar: Boolean
     \\"The custom field ID of the field this request is for.\\"
@@ -534,7 +534,7 @@ type Query {
     projectId: [String]
     \\"The ID of an issue type that returned users and groups must have permission to view. To include multiple issue types, provide an ampersand-separated list. For example, \`issueTypeId=10000&issueTypeId=10001\`. Special values, such as \`-1\` (all standard issue types) and \`-2\` (all subtask issue types), are supported. This parameter is only used when \`fieldId\` is present.\\"
     issueTypeId: [String]
-    avatarSize: queryInput_findUsersAndGroups_avatarSize
+    avatarSize: queryInput_findUsersAndGroups_avatarSize = xsmall
     \\"Whether the search for groups should be case insensitive.\\"
     caseInsensitive: Boolean
     \\"Whether Connect app users and groups should be excluded from the search results. If an invalid value is provided, the default value is used.\\"
@@ -592,7 +592,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: Int
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 100
   ): PageBeanChangelog
   \\"Returns all comments for an issue.\\\\n\\\\nThis operation can be accessed anonymously.\\\\n\\\\n**[Permissions](#permissions) required:** Comments are included in the response where the user has:\\\\n\\\\n *  *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project containing the comment.\\\\n *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.\\\\n *  If the comment has visibility restrictions, belongs to the group or has the role visibility is role visibility is restricted to.\\"
   getComments(
@@ -601,7 +601,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
     orderBy: queryInput_getComments_orderBy
     \\"Use [expand](#expansion) to include additional information about comments in the response. This parameter accepts \`renderedBody\`, which returns the comment body rendered in HTML.\\"
     expand: String
@@ -682,7 +682,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 1048576
     \\"The worklog start date and time, as a UNIX timestamp in milliseconds, after which worklogs are returned.\\"
     startedAfter: BigInt
     \\"The worklog start date and time, as a UNIX timestamp in milliseconds, before which worklogs are returned.\\"
@@ -741,7 +741,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
     \\"The list of issue security level IDs. To include multiple issue security levels separate IDs with ampersand: \`issueSecurityLevelId=10000&issueSecurityLevelId=10001\`.\\"
     issueSecurityLevelId: [BigInt]
     \\"Use expand to include additional information in the response. This parameter accepts a comma-separated list. Expand options include:\\\\n\\\\n *  \`all\` Returns all expandable information.\\\\n *  \`field\` Returns information about the custom field granted the permission.\\\\n *  \`group\` Returns information about the group that is granted the permission.\\\\n *  \`projectRole\` Returns information about the project role granted the permission.\\\\n *  \`user\` Returns information about the user who is granted the permission.\\"
@@ -783,10 +783,10 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
     \\"The list of issue type schemes IDs. To include multiple IDs, provide an ampersand-separated list. For example, \`id=10000&id=10001\`.\\"
     id: [BigInt]
-    orderBy: queryInput_getAllIssueTypeSchemes_orderBy
+    orderBy: queryInput_getAllIssueTypeSchemes_orderBy = id
     \\"Use [expand](#expansion) to include additional information in the response. This parameter accepts a comma-separated list. Expand options include:\\\\n\\\\n *  \`projects\` For each issue type schemes, returns information about the projects the issue type scheme is assigned to.\\\\n *  \`issueTypes\` For each issue type schemes, returns information about the issueTypes the issue type scheme have.\\"
     expand: String
     \\"String used to perform a case-insensitive partial match with issue type scheme name.\\"
@@ -797,7 +797,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
     \\"The list of issue type scheme IDs. To include multiple IDs, provide an ampersand-separated list. For example, \`issueTypeSchemeId=10000&issueTypeSchemeId=10001\`.\\"
     issueTypeSchemeId: [BigInt]
   ): PageBeanIssueTypeSchemeMapping
@@ -806,7 +806,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
     \\"The list of project IDs. To include multiple project IDs, provide an ampersand-separated list. For example, \`projectId=10000&projectId=10001\`.\\"
     projectId: [BigInt]!
   ): PageBeanIssueTypeSchemeProjects
@@ -815,12 +815,12 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
     \\"The list of issue type screen scheme IDs. To include multiple IDs, provide an ampersand-separated list. For example, \`id=10000&id=10001\`.\\"
     id: [BigInt]
     \\"String used to perform a case-insensitive partial match with issue type screen scheme name.\\"
     queryString: String
-    orderBy: queryInput_getIssueTypeScreenSchemes_orderBy
+    orderBy: queryInput_getIssueTypeScreenSchemes_orderBy = id
     \\"Use [expand](#expansion) to include additional information in the response. This parameter accepts \`projects\` that, for each issue type screen schemes, returns information about the projects the issue type screen scheme is assigned to.\\"
     expand: String
   ): PageBeanIssueTypeScreenScheme
@@ -829,7 +829,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
     \\"The list of issue type screen scheme IDs. To include multiple issue type screen schemes, separate IDs with ampersand: \`issueTypeScreenSchemeId=10000&issueTypeScreenSchemeId=10001\`.\\"
     issueTypeScreenSchemeId: [BigInt]
   ): PageBeanIssueTypeScreenSchemeItem
@@ -838,7 +838,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
     \\"The list of project IDs. To include multiple projects, separate IDs with ampersand: \`projectId=10000&projectId=10001\`.\\"
     projectId: [BigInt]!
   ): PageBeanIssueTypeScreenSchemesProjects
@@ -849,7 +849,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
     query: String
   ): PageBeanProjectDetails
   \\"Returns reference data for JQL searches. This is a downloadable version of the documentation provided in [Advanced searching - fields reference](https://confluence.atlassian.com/x/gwORLQ) and [Advanced searching - functions reference](https://confluence.atlassian.com/x/hgORLQ), along with a list of JQL-reserved words. Use this information to assist with the programmatic creation of JQL queries or the validation of queries built in a custom query builder.\\\\n\\\\nTo filter visible field details by project or collapse non-unique fields by field type then [Get field reference data (POST)](#api-rest-api-3-jql-autocompletedata-post) can be used.\\\\n\\\\nThis operation can be accessed anonymously.\\\\n\\\\n**[Permissions](#permissions) required:** None.\\"
@@ -870,7 +870,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 1000
   ): PageBeanString
   \\"Returns a list of permissions indicating which permissions the user has. Details of the user's permissions can be obtained in a global, project, issue or comment context.\\\\n\\\\nThe user is reported as having a project permission:\\\\n\\\\n *  in the global context, if the user has the project permission in any project.\\\\n *  for a project, where the project permission is determined using issue data, if the user meets the permission's criteria for any issue in the project. Otherwise, if the user has the project permission in the project.\\\\n *  for an issue, where a project permission is determined using issue data, if the user has the permission in the issue. Otherwise, if the user has the project permission in the project containing the issue.\\\\n *  for a comment, where the user has both the permission to browse the comment and the project permission for the comment's parent issue. Only the BROWSE\\\\\\\\_PROJECTS permission is supported. If a \`commentId\` is provided whose \`permissions\` does not equal BROWSE\\\\\\\\_PROJECTS, a 400 error will be returned.\\\\n\\\\nThis means that users may be shown as having an issue permission (such as EDIT\\\\\\\\_ISSUES) in the global context or a project context but may not have the permission for any or all issues. For example, if Reporters have the EDIT\\\\\\\\_ISSUES permission a user would be shown as having this permission in the global context or the context of a project, because any user can be a reporter. However, if they are not the user who reported the issue queried they would not have EDIT\\\\\\\\_ISSUES permission for that issue.\\\\n\\\\nGlobal permissions are unaffected by context.\\\\n\\\\nThis operation can be accessed anonymously.\\\\n\\\\n**[Permissions](#permissions) required:** None.\\"
   getMyPermissions(
@@ -906,7 +906,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
     \\"Use [expand](#expansion) to include additional information in the response. This parameter accepts a comma-separated list. Expand options include:\\\\n\\\\n *  \`all\` Returns all expandable information.\\\\n *  \`field\` Returns information about any custom fields assigned to receive an event.\\\\n *  \`group\` Returns information about any groups assigned to receive an event.\\\\n *  \`notificationSchemeEvents\` Returns a list of event associations. This list is returned for all expandable information.\\\\n *  \`projectRole\` Returns information about any project roles assigned to receive an event.\\\\n *  \`user\` Returns information about any users assigned to receive an event.\\"
     expand: String
   ): PageBeanNotificationScheme
@@ -954,7 +954,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
     \\"The list of priority IDs. To include multiple IDs, provide an ampersand-separated list. For example, \`id=2&id=3\`.\\"
     id: [String]
     \\"Whether only the default priority is returned.\\"
@@ -986,8 +986,8 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
-    orderBy: queryInput_searchProjects_orderBy
+    maxResults: Int = 50
+    orderBy: queryInput_searchProjects_orderBy = key
     \\"The project IDs to filter the results by. To include multiple IDs, provide an ampersand-separated list. For example, \`id=10000&id=10001\`. Up to 50 project IDs can be provided.\\"
     id: [BigInt]
     \\"The project keys to filter the results by. To include multiple keys, provide an ampersand-separated list. For example, \`keys=PA&keys=PB\`. Up to 50 project keys can be provided.\\"
@@ -998,7 +998,7 @@ type Query {
     typeKey: String
     \\"The ID of the project's category. A complete list of category IDs is found using the [Get all project categories](#api-rest-api-3-projectCategory-get) operation.\\"
     categoryId: BigInt
-    action: queryInput_searchProjects_action
+    action: queryInput_searchProjects_action = view
     \\"Use [expand](#expansion) to include additional information in the response. This parameter accepts a comma-separated list. Expanded options include:\\\\n\\\\n *  \`description\` Returns the project description.\\\\n *  \`projectKeys\` Returns all project keys associated with a project.\\\\n *  \`lead\` Returns information about the project lead.\\\\n *  \`issueTypes\` Returns all issue types associated with the project.\\\\n *  \`url\` Returns the URL associated with the project.\\\\n *  \`insight\` EXPERIMENTAL. Returns the insight details of total issue count and last issue update time for the project.\\"
     expand: String
     \\"EXPERIMENTAL. Filter results by project status:\\\\n\\\\n *  \`live\` Search live projects.\\\\n *  \`archived\` Search archived projects.\\\\n *  \`deleted\` Search deleted projects, those in the recycle bin.\\"
@@ -1037,7 +1037,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
     orderBy: queryInput_getProjectComponentsPaginated_orderBy
     \\"Filter the results using a literal string. Components with a matching \`name\` or \`description\` are returned (case insensitive).\\"
     query: String
@@ -1098,7 +1098,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
     orderBy: queryInput_getProjectVersionsPaginated_orderBy
     \\"Filter the results using a literal string. Versions with matching \`name\` or \`description\` are returned (case insensitive).\\"
     query: String
@@ -1194,7 +1194,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 100
     \\"The list of screen IDs. To include multiple IDs, provide an ampersand-separated list. For example, \`id=10000&id=10001\`.\\"
     id: [BigInt]
     \\"String used to perform a case-insensitive partial match with screen name.\\"
@@ -1229,7 +1229,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 25
     \\"The list of screen scheme IDs. To include multiple IDs, provide an ampersand-separated list. For example, \`id=10000&id=10001\`.\\"
     id: [BigInt]
     \\"Use [expand](#expansion) include additional information in the response. This parameter accepts \`issueTypeScreenSchemes\` that, for each screen schemes, returns information about the issue type screen scheme the screen scheme is assigned to.\\"
@@ -1245,8 +1245,8 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: Int
     \\"The maximum number of items to return per page. To manage page size, Jira may return fewer items per page where a large number of fields are requested. The greatest number of items returned per page is achieved when requesting \`id\` or \`key\` only.\\"
-    maxResults: Int
-    validateQuery: queryInput_searchForIssuesUsingJql_validateQuery
+    maxResults: Int = 50
+    validateQuery: queryInput_searchForIssuesUsingJql_validateQuery = strict
     \\"A list of fields to return for each issue, use it to retrieve a subset of fields. This parameter accepts a comma-separated list. Expand options include:\\\\n\\\\n *  \`*all\` Returns all fields.\\\\n *  \`*navigable\` Returns navigable fields.\\\\n *  Any issue field, prefixed with a minus to exclude.\\\\n\\\\nExamples:\\\\n\\\\n *  \`summary,comment\` Returns only the summary and comments fields.\\\\n *  \`-description\` Returns all navigable (default) fields except description.\\\\n *  \`*all,-comment\` Returns all fields except comments.\\\\n\\\\nThis parameter may be specified multiple times. For example, \`fields=field1,field2&fields=field3\`.\\\\n\\\\nNote: All navigable fields are returned by default. This differs from [GET issue](#api-rest-api-3-issue-issueIdOrKey-get) where the default is all fields.\\"
     fields: [String]
     \\"Use [expand](#expansion) to include additional information about issues in the response. This parameter accepts a comma-separated list. Expand options include:\\\\n\\\\n *  \`renderedFields\` Returns field values rendered in HTML format.\\\\n *  \`names\` Returns the display name of each field.\\\\n *  \`schema\` Returns the schema describing a field type.\\\\n *  \`transitions\` Returns all possible transitions for the issue.\\\\n *  \`operations\` Returns all possible operations for the issue.\\\\n *  \`editmeta\` Returns information about how each field can be edited.\\\\n *  \`changelog\` Returns a list of recent updates to an issue, sorted by date, starting from the most recent.\\\\n *  \`versionedRepresentations\` Instead of \`fields\`, returns \`versionedRepresentations\` a JSON array containing each version of a field's value, with the highest numbered item representing the most recent version.\\"
@@ -1295,7 +1295,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 200
     \\"Term to match status names against or null to search for all statuses in the search scope.\\"
     searchString: queryInput_search_searchString
     \\"Category of the status to filter by. The supported values are: \`TODO\`, \`IN_PROGRESS\`, and \`DONE\`.\\"
@@ -1311,7 +1311,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
     \\"Use expand to include additional information in the response. This parameter accepts a comma-separated list. Expand options include:\\\\n\\\\n *  \`data\` Returns UI modification data.\\\\n *  \`contexts\` Returns UI modification contexts.\\"
     expand: String
   ): PageBeanUiModificationDetails
@@ -1363,7 +1363,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: Int
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
   ): [User]
   \\"Returns a list of users that can be assigned to an issue. Use this operation to find the list of users who can be assigned to:\\\\n\\\\n *  a new issue, by providing the \`projectKeyOrId\`.\\\\n *  an updated issue, by providing the \`issueKey\`.\\\\n *  to an issue during a transition (workflow action), by providing the \`issueKey\` and the transition id in \`actionDescriptorId\`. You can obtain the IDs of an issue's valid transitions using the \`transitions\` option in the \`expand\` parameter of [ Get issue](#api-rest-api-3-issue-issueIdOrKey-get).\\\\n\\\\nIn all these cases, you can pass an account ID to determine if a user can be assigned to an issue. The user is returned in the response if they can be assigned to the issue or issue transition.\\\\n\\\\nThis operation takes the users in the range defined by \`startAt\` and \`maxResults\`, up to the thousandth user, and then returns only the users from that range that can be assigned the issue. This means the operation usually returns fewer users than specified in \`maxResults\`. To get all the users who can be assigned the issue, use [Get all users](#api-rest-api-3-users-search-get) and filter the records in your code.\\\\n\\\\nPrivacy controls are applied to the response based on the users' preferences. This could mean, for example, that the user's email address is hidden. See the [Profile visibility overview](https://developer.atlassian.com/cloud/jira/platform/profile-visibility/) for more details.\\\\n\\\\n**[Permissions](#permissions) required:** Permission to access Jira.\\"
   findAssignableUsers(
@@ -1382,7 +1382,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: Int
     \\"The maximum number of items to return. This operation may return less than the maximum number of items even if more are available. The operation fetches users up to the maximum and then, from the fetched users, returns only the users that can be assigned to the issue.\\"
-    maxResults: Int
+    maxResults: Int = 50
     \\"The ID of the transition.\\"
     actionDescriptorId: Int
     recommend: Boolean
@@ -1392,7 +1392,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 10
     \\"This parameter is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details.\\"
     username: [String]
     \\"This parameter is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details.\\"
@@ -1405,7 +1405,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 10
     \\"Username of a user. To specify multiple users, pass multiple copies of this parameter. For example, \`username=fred&username=barney\`. Required if \`key\` isn't provided. Cannot be provided if \`key\` is present.\\"
     username: [String]
     \\"Key of a user. To specify multiple users, pass multiple copies of this parameter. For example, \`key=fred&key=barney\`. Required if \`username\` isn't provided. Cannot be provided if \`username\` is present.\\"
@@ -1454,14 +1454,14 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: Int
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
   ): [User]
   \\"Returns a list of users whose attributes match the query term. The returned object includes the \`html\` field where the matched query term is highlighted with the HTML strong tag. A list of account IDs can be provided to exclude users from the results.\\\\n\\\\nThis operation takes the users in the range defined by \`maxResults\`, up to the thousandth user, and then returns only the users from that range that match the query term. This means the operation usually returns fewer users than specified in \`maxResults\`. To get all the users who match the query term, use [Get all users](#api-rest-api-3-users-search-get) and filter the records in your code.\\\\n\\\\nPrivacy controls are applied to the response based on the users' preferences. This could mean, for example, that the user's email address is hidden. See the [Profile visibility overview](https://developer.atlassian.com/cloud/jira/platform/profile-visibility/) for more details.\\\\n\\\\nThis operation can be accessed anonymously.\\\\n\\\\n**[Permissions](#permissions) required:** *Browse users and groups* [global permission](https://confluence.atlassian.com/x/x4dKLg). Anonymous calls and calls by users without the required permission return search results for an exact name match only.\\"
   findUsersForPicker(
     \\"A query string that is matched against user attributes, such as \`displayName\`, and \`emailAddress\`, to find relevant users. The string can match the prefix of the attribute's value. For example, *query=john* matches a user with a \`displayName\` of *John Smith* and a user with an \`emailAddress\` of *johnson@example.com*.\\"
     query: String!
     \\"The maximum number of items to return. The total number of matched users is returned in \`total\`.\\"
-    maxResults: Int
+    maxResults: Int = 50
     \\"Include the URI to the user's avatar.\\"
     showAvatar: Boolean
     \\"This parameter is no longer available. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details.\\"
@@ -1501,7 +1501,7 @@ type Query {
     \\"The index of the first item to return in a page of filtered results (page offset).\\"
     startAt: Int
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
     \\"A query string used to search properties. Property keys are specified by path, so property keys containing dot (.) or equals (=) characters cannot be used. The query string cannot be specified using a JSON object. Example: To search for the value of \`nested\` from \`{\\\\\\"something\\\\\\":{\\\\\\"nested\\\\\\":1,\\\\\\"other\\\\\\":2}}\` use \`thepropertykey.something.nested=1\`. Required, unless \`accountId\` or \`query\` is specified.\\"
     property: String
   ): [User]
@@ -1512,7 +1512,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 100
   ): PageBeanUser
   \\"Finds users with a structured query and returns a [paginated](#pagination) list of user keys.\\\\n\\\\nThis operation takes the users in the range defined by \`startAt\` and \`maxResults\`, up to the thousandth user, and then returns only the users from that range that match the structured query. This means the operation usually returns fewer users than specified in \`maxResults\`. To get all the users who match the structured query, use [Get all users](#api-rest-api-3-users-search-get) and filter the records in your code.\\\\n\\\\n**[Permissions](#permissions) required:** *Browse users and groups* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\\\n\\\\nThe query statements are:\\\\n\\\\n *  \`is assignee of PROJ\` Returns the users that are assignees of at least one issue in project *PROJ*.\\\\n *  \`is assignee of (PROJ-1, PROJ-2)\` Returns users that are assignees on the issues *PROJ-1* or *PROJ-2*.\\\\n *  \`is reporter of (PROJ-1, PROJ-2)\` Returns users that are reporters on the issues *PROJ-1* or *PROJ-2*.\\\\n *  \`is watcher of (PROJ-1, PROJ-2)\` Returns users that are watchers on the issues *PROJ-1* or *PROJ-2*.\\\\n *  \`is voter of (PROJ-1, PROJ-2)\` Returns users that are voters on the issues *PROJ-1* or *PROJ-2*.\\\\n *  \`is commenter of (PROJ-1, PROJ-2)\` Returns users that have posted a comment on the issues *PROJ-1* or *PROJ-2*.\\\\n *  \`is transitioner of (PROJ-1, PROJ-2)\` Returns users that have performed a transition on issues *PROJ-1* or *PROJ-2*.\\\\n *  \`[propertyKey].entity.property.path is \\\\\\"property value\\\\\\"\` Returns users with the entity property value.\\\\n\\\\nThe list of issues can be extended as needed, as in *(PROJ-1, PROJ-2, ... PROJ-n)*. Statements can be combined using the \`AND\` and \`OR\` operators to form more complex queries. For example:\\\\n\\\\n\`is assignee of PROJ AND [propertyKey].entity.property.path is \\\\\\"property value\\\\\\"\`\\"
   findUserKeysByQuery(
@@ -1521,7 +1521,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 100
   ): PageBeanUserKey
   \\"Returns a list of users who fulfill these criteria:\\\\n\\\\n *  their user attributes match a search string.\\\\n *  they have permission to browse issues.\\\\n\\\\nUse this resource to find users who can browse:\\\\n\\\\n *  an issue, by providing the \`issueKey\`.\\\\n *  any issue in a project, by providing the \`projectKey\`.\\\\n\\\\nThis operation takes the users in the range defined by \`startAt\` and \`maxResults\`, up to the thousandth user, and then returns only the users from that range that match the search string and have permission to browse issues. This means the operation usually returns fewer users than specified in \`maxResults\`. To get all the users who match the search string and have permission to browse issues, use [Get all users](#api-rest-api-3-users-search-get) and filter the records in your code.\\\\n\\\\nPrivacy controls are applied to the response based on the users' preferences. This could mean, for example, that the user's email address is hidden. See the [Profile visibility overview](https://developer.atlassian.com/cloud/jira/platform/profile-visibility/) for more details.\\\\n\\\\nThis operation can be accessed anonymously.\\\\n\\\\n**[Permissions](#permissions) required:** *Browse users and groups* [global permission](https://confluence.atlassian.com/x/x4dKLg). Anonymous calls and calls by users without the required permission return empty search results.\\"
   findUsersWithBrowsePermission(
@@ -1538,21 +1538,21 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: Int
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
   ): [User]
   \\"Returns a list of all users, including active users, inactive users and previously deleted users that have an Atlassian account.\\\\n\\\\nPrivacy controls are applied to the response based on the users' preferences. This could mean, for example, that the user's email address is hidden. See the [Profile visibility overview](https://developer.atlassian.com/cloud/jira/platform/profile-visibility/) for more details.\\\\n\\\\n**[Permissions](#permissions) required:** *Browse users and groups* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
   getAllUsersDefault(
     \\"The index of the first item to return.\\"
     startAt: Int
     \\"The maximum number of items to return.\\"
-    maxResults: Int
+    maxResults: Int = 50
   ): [User]
   \\"Returns a list of all users, including active users, inactive users and previously deleted users that have an Atlassian account.\\\\n\\\\nPrivacy controls are applied to the response based on the users' preferences. This could mean, for example, that the user's email address is hidden. See the [Profile visibility overview](https://developer.atlassian.com/cloud/jira/platform/profile-visibility/) for more details.\\\\n\\\\n**[Permissions](#permissions) required:** *Browse users and groups* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
   getAllUsers(
     \\"The index of the first item to return.\\"
     startAt: Int
     \\"The maximum number of items to return.\\"
-    maxResults: Int
+    maxResults: Int = 50
   ): [User]
   \\"Returns a project version.\\\\n\\\\nThis operation can be accessed anonymously.\\\\n\\\\n**[Permissions](#permissions) required:** *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project containing the version.\\"
   getVersion(
@@ -1576,7 +1576,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 100
   ): getDynamicWebhooksForApp_response
   \\"Returns webhooks that have recently failed to be delivered to the requesting app after the maximum number of retries.\\\\n\\\\nAfter 72 hours the failure may no longer be returned by this operation.\\\\n\\\\nThe oldest failure is returned first.\\\\n\\\\nThis method uses a cursor-based pagination. To request the next page use the failure time of the last webhook on the list as the \`failedAfter\` value or use the URL provided in \`next\`.\\\\n\\\\n**[Permissions](#permissions) required:** Only [Connect apps](https://developer.atlassian.com/cloud/jira/platform/index/#connect-apps) can use this operation.\\"
   getFailedWebhooks(
@@ -1595,7 +1595,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 10
     \\"The types of the transition rules to return.\\"
     types: [queryInput_getWorkflowTransitionRuleConfigurations_types_items]!
     \\"The transition rule class keys, as defined in the Connect app descriptor, of the transition rules to return.\\"
@@ -1614,7 +1614,7 @@ type Query {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
     \\"The name of a workflow to return. To include multiple workflows, provide an ampersand-separated list. For example, \`workflowName=name1&workflowName=name2\`.\\"
     workflowName: [String]
     \\"Use [expand](#expansion) to include additional information in the response. This parameter accepts a comma-separated list. Expand options include:\\\\n\\\\n *  \`transitions\` For each workflow, returns information about the transitions inside the workflow.\\\\n *  \`transitions.rules\` For each workflow transition, returns information about its rules. Transitions are included automatically if this expand is requested.\\\\n *  \`transitions.properties\` For each workflow transition, returns information about its properties. Transitions are included automatically if this expand is requested.\\\\n *  \`statuses\` For each workflow, returns information about the statuses inside the workflow.\\\\n *  \`statuses.properties\` For each workflow status, returns information about its properties. Statuses are included automatically if this expand is requested.\\\\n *  \`default\` For each workflow, returns information about whether this is the default workflow.\\\\n *  \`schemes\` For each workflow, returns information about the workflow schemes the workflow is assigned to.\\\\n *  \`projects\` For each workflow, returns information about the projects the workflow is assigned to, through workflow schemes.\\\\n *  \`hasDraftWorkflow\` For each workflow, returns information about whether the workflow has a draft version.\\\\n *  \`operations\` For each workflow, returns information about the actions that can be undertaken on the workflow.\\"
@@ -1635,14 +1635,14 @@ type Query {
     key: String
     \\"The name of the workflow that the transition belongs to.\\"
     workflowName: String!
-    workflowMode: queryInput_getWorkflowTransitionProperties_workflowMode
+    workflowMode: queryInput_getWorkflowTransitionProperties_workflowMode = live
   ): WorkflowTransitionProperty
   \\"Returns a [paginated](#pagination) list of all workflow schemes, not including draft workflow schemes.\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
   getAllWorkflowSchemes(
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
   ): PageBeanWorkflowScheme
   \\"Returns a list of the workflow schemes associated with a list of projects. Each returned workflow scheme includes a list of the requested projects associated with it. Any team-managed or non-existent projects in the request are ignored and no errors are returned.\\\\n\\\\nIf the project is associated with the \`Default Workflow Scheme\` no ID is returned. This is because the way the \`Default Workflow Scheme\` is stored means it has no ID.\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
   getWorkflowSchemeProjectAssociations(
@@ -6619,7 +6619,7 @@ type Mutation {
   \\"Updates the value of one or more custom fields on one or more issues. Combinations of custom field and issue should be unique within the request. Custom fields can only be updated by the Forge app that created them.\\\\n\\\\n**[Permissions](#permissions) required:** Only the app that created the custom field can update its values with this operation.\\"
   updateMultipleCustomFieldValues(
     \\"Whether to generate a changelog for this update.\\"
-    generateChangelog: Boolean
+    generateChangelog: Boolean = true
     input: MultipleCustomFieldValuesUpdateDetails_Input
   ): JSON
   \\"Update the configuration for contexts of a custom field created by a [Forge app](https://developer.atlassian.com/platform/forge/).\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg). Jira permissions are not required for the Forge app that created the custom field.\\"
@@ -6633,7 +6633,7 @@ type Mutation {
     \\"The ID or key of the custom field. For example, \`customfield_10010\`.\\"
     fieldIdOrKey: String!
     \\"Whether to generate a changelog for this update.\\"
-    generateChangelog: Boolean
+    generateChangelog: Boolean = true
     input: CustomFieldValueUpdateDetails_Input
   ): JSON
   \\"Changes the value of an application property. For example, you can change the value of the \`jira.clone.prefix\` from its default value of *CLONE -* to *Clone -* if you prefer sentence case capitalization. Editable properties are described below along with their default values.\\\\n\\\\n#### Advanced settings ####\\\\n\\\\nThe advanced settings below are also accessible in [Jira](https://confluence.atlassian.com/x/vYXKM).\\\\n\\\\n| Key | Description | Default value |  \\\\n| -- | -- | -- |  \\\\n| \`jira.clone.prefix\` | The string of text prefixed to the title of a cloned issue. | \`CLONE -\` |  \\\\n| \`jira.date.picker.java.format\` | The date format for the Java (server-side) generated dates. This must be the same as the \`jira.date.picker.javascript.format\` format setting. | \`d/MMM/yy\` |  \\\\n| \`jira.date.picker.javascript.format\` | The date format for the JavaScript (client-side) generated dates. This must be the same as the \`jira.date.picker.java.format\` format setting. | \`%e/%b/%y\` |  \\\\n| \`jira.date.time.picker.java.format\` | The date format for the Java (server-side) generated date times. This must be the same as the \`jira.date.time.picker.javascript.format\` format setting. | \`dd/MMM/yy h:mm a\` |  \\\\n| \`jira.date.time.picker.javascript.format\` | The date format for the JavaScript (client-side) generated date times. This must be the same as the \`jira.date.time.picker.java.format\` format setting. | \`%e/%b/%y %I:%M %p\` |  \\\\n| \`jira.issue.actions.order\` | The default order of actions (such as *Comments* or *Change history*) displayed on the issue view. | \`asc\` |  \\\\n| \`jira.table.cols.subtasks\` | The columns to show while viewing subtask issues in a table. For example, a list of subtasks on an issue. | \`issuetype, status, assignee, progress\` |  \\\\n| \`jira.view.issue.links.sort.order\` | The sort order of the list of issue links on the issue view. | \`type, status, priority\` |  \\\\n| \`jira.comment.collapsing.minimum.hidden\` | The minimum number of comments required for comment collapsing to occur. A value of \`0\` disables comment collapsing. | \`4\` |  \\\\n| \`jira.newsletter.tip.delay.days\` | The number of days before a prompt to sign up to the Jira Insiders newsletter is shown. A value of \`-1\` disables this feature. | \`7\` |  \\\\n\\\\n\\\\n#### Look and feel ####\\\\n\\\\nThe settings listed below adjust the [look and feel](https://confluence.atlassian.com/x/VwCLLg).\\\\n\\\\n| Key | Description | Default value |  \\\\n| -- | -- | -- |  \\\\n| \`jira.lf.date.time\` | The [ time format](https://docs.oracle.com/javase/6/docs/api/index.html?java/text/SimpleDateFormat.html). | \`h:mm a\` |  \\\\n| \`jira.lf.date.day\` | The [ day format](https://docs.oracle.com/javase/6/docs/api/index.html?java/text/SimpleDateFormat.html). | \`EEEE h:mm a\` |  \\\\n| \`jira.lf.date.complete\` | The [ date and time format](https://docs.oracle.com/javase/6/docs/api/index.html?java/text/SimpleDateFormat.html). | \`dd/MMM/yy h:mm a\` |  \\\\n| \`jira.lf.date.dmy\` | The [ date format](https://docs.oracle.com/javase/6/docs/api/index.html?java/text/SimpleDateFormat.html). | \`dd/MMM/yy\` |  \\\\n| \`jira.date.time.picker.use.iso8061\` | When enabled, sets Monday as the first day of the week in the date picker, as specified by the ISO8601 standard. | \`false\` |  \\\\n| \`jira.lf.logo.url\` | The URL of the logo image file. | \`/images/icon-jira-logo.png\` |  \\\\n| \`jira.lf.logo.show.application.title\` | Controls the visibility of the application title on the sidebar. | \`false\` |  \\\\n| \`jira.lf.favicon.url\` | The URL of the favicon. | \`/favicon.ico\` |  \\\\n| \`jira.lf.favicon.hires.url\` | The URL of the high-resolution favicon. | \`/images/64jira.png\` |  \\\\n| \`jira.lf.navigation.bgcolour\` | The background color of the sidebar. | \`#0747A6\` |  \\\\n| \`jira.lf.navigation.highlightcolour\` | The color of the text and logo of the sidebar. | \`#DEEBFF\` |  \\\\n| \`jira.lf.hero.button.base.bg.colour\` | The background color of the hero button. | \`#3b7fc4\` |  \\\\n| \`jira.title\` | The text for the application title. The application title can also be set in *General settings*. | \`Jira\` |  \\\\n| \`jira.option.globalsharing\` | Whether filters and dashboards can be shared with anyone signed into Jira. | \`true\` |  \\\\n| \`xflow.product.suggestions.enabled\` | Whether to expose product suggestions for other Atlassian products within Jira. | \`true\` |  \\\\n\\\\n\\\\n#### Other settings ####\\\\n\\\\n| Key | Description | Default value |  \\\\n| -- | -- | -- |  \\\\n| \`jira.issuenav.criteria.autoupdate\` | Whether instant updates to search criteria is active. | \`true\` |  \\\\n\\\\n\\\\n*Note: Be careful when changing [application properties and advanced settings](https://confluence.atlassian.com/x/vYXKM).*\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
@@ -6741,7 +6741,7 @@ type Mutation {
   \\"Copies a dashboard. Any values provided in the \`dashboard\` parameter replace those in the copied dashboard.\\\\n\\\\n**[Permissions](#permissions) required:** None\\\\n\\\\nThe dashboard to be copied must be owned by or shared with the user.\\"
   copyDashboard(id: String!, input: DashboardDetails_Input): copyDashboard_response
   \\"Analyses and validates Jira expressions.\\\\n\\\\nAs an experimental feature, this operation can also attempt to type-check the expressions.\\\\n\\\\nLearn more about Jira expressions in the [documentation](https://developer.atlassian.com/cloud/jira/platform/jira-expressions/).\\\\n\\\\n**[Permissions](#permissions) required**: None.\\"
-  analyseExpression(check: mutationInput_analyseExpression_check, input: JiraExpressionForAnalysis_Input): analyseExpression_response
+  analyseExpression(check: mutationInput_analyseExpression_check = syntax, input: JiraExpressionForAnalysis_Input): analyseExpression_response
   \\"Evaluates a Jira expression and returns its value.\\\\n\\\\nThis resource can be used to test Jira expressions that you plan to use elsewhere, or to fetch data in a flexible way. Consult the [Jira expressions documentation](https://developer.atlassian.com/cloud/jira/platform/jira-expressions/) for more details.\\\\n\\\\n#### Context variables ####\\\\n\\\\nThe following context variables are available to Jira expressions evaluated by this resource. Their presence depends on various factors; usually you need to manually request them in the context object sent in the payload, but some of them are added automatically under certain conditions.\\\\n\\\\n *  \`user\` ([User](https://developer.atlassian.com/cloud/jira/platform/jira-expressions-type-reference#user)): The current user. Always available and equal to \`null\` if the request is anonymous.\\\\n *  \`app\` ([App](https://developer.atlassian.com/cloud/jira/platform/jira-expressions-type-reference#app)): The [Connect app](https://developer.atlassian.com/cloud/jira/platform/index/#connect-apps) that made the request. Available only for authenticated requests made by Connect Apps (read more here: [Authentication for Connect apps](https://developer.atlassian.com/cloud/jira/platform/security-for-connect-apps/)).\\\\n *  \`issue\` ([Issue](https://developer.atlassian.com/cloud/jira/platform/jira-expressions-type-reference#issue)): The current issue. Available only when the issue is provided in the request context object.\\\\n *  \`issues\` ([List](https://developer.atlassian.com/cloud/jira/platform/jira-expressions-type-reference#list) of [Issues](https://developer.atlassian.com/cloud/jira/platform/jira-expressions-type-reference#issue)): A collection of issues matching a JQL query. Available only when JQL is provided in the request context object.\\\\n *  \`project\` ([Project](https://developer.atlassian.com/cloud/jira/platform/jira-expressions-type-reference#project)): The current project. Available only when the project is provided in the request context object.\\\\n *  \`sprint\` ([Sprint](https://developer.atlassian.com/cloud/jira/platform/jira-expressions-type-reference#sprint)): The current sprint. Available only when the sprint is provided in the request context object.\\\\n *  \`board\` ([Board](https://developer.atlassian.com/cloud/jira/platform/jira-expressions-type-reference#board)): The current board. Available only when the board is provided in the request context object.\\\\n *  \`serviceDesk\` ([ServiceDesk](https://developer.atlassian.com/cloud/jira/platform/jira-expressions-type-reference#servicedesk)): The current service desk. Available only when the service desk is provided in the request context object.\\\\n *  \`customerRequest\` ([CustomerRequest](https://developer.atlassian.com/cloud/jira/platform/jira-expressions-type-reference#customerrequest)): The current customer request. Available only when the customer request is provided in the request context object.\\\\n\\\\nAlso, custom context variables can be passed in the request with their types. Those variables can be accessed by key in the Jira expression. These variable types are available for use in a custom context:\\\\n\\\\n *  \`user\`: A [user](https://developer.atlassian.com/cloud/jira/platform/jira-expressions-type-reference#user) specified as an Atlassian account ID.\\\\n *  \`issue\`: An [issue](https://developer.atlassian.com/cloud/jira/platform/jira-expressions-type-reference#issue) specified by ID or key. All the fields of the issue object are available in the Jira expression.\\\\n *  \`json\`: A JSON object containing custom content.\\\\n *  \`list\`: A JSON list of \`user\`, \`issue\`, or \`json\` variable types.\\\\n\\\\nThis operation can be accessed anonymously.\\\\n\\\\n**[Permissions](#permissions) required**: None. However, an expression may return different results for different users depending on their permissions. For example, different users may see different comments on the same issue.  \\\\nPermission to access Jira Software is required to access Jira Software context variables (\`board\` and \`sprint\`) or fields (for example, \`issue.sprint\`).\\"
   evaluateJiraExpression(
     \\"Use [expand](#expansion) to include additional information in the response. This parameter accepts \`meta.complexity\` that returns information about the expression complexity. For example, the number of expensive operations used by the expression and how close the expression is to reaching the [complexity limit](https://developer.atlassian.com/cloud/jira/platform/jira-expressions/#restrictions). Useful when designing and debugging your expressions.\\"
@@ -6775,7 +6775,7 @@ type Mutation {
     \\"The index of the first item to return in a page of results (page offset).\\"
     startAt: BigInt
     \\"The maximum number of items to return per page.\\"
-    maxResults: Int
+    maxResults: Int = 50
     input: ProjectIssueTypeMappings_Input
   ): getCustomFieldContextsForProjectsAndIssueTypes_response
   \\"Updates a [ custom field context](https://confluence.atlassian.com/adminjiracloud/what-are-custom-field-contexts-991923859.html).\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
@@ -7087,7 +7087,7 @@ type Mutation {
     \\"The ID or key of the issue.\\"
     issueIdOrKey: String!
     \\"Whether a notification email about the issue update is sent to all watchers. To disable the notification, administer Jira or administer project permissions are required. If the user doesn't have the necessary permission the request is ignored.\\"
-    notifyUsers: Boolean
+    notifyUsers: Boolean = true
     \\"Whether screen security is overridden to enable hidden fields to be edited. Available to Connect app users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg) and Forge apps acting on behalf of users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
     overrideScreenSecurity: Boolean
     \\"Whether screen security is overridden to enable uneditable fields to be edited. Available to Connect app users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg) and Forge apps acting on behalf of users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
@@ -7098,7 +7098,7 @@ type Mutation {
   deleteIssue(
     \\"The ID or key of the issue.\\"
     issueIdOrKey: String!
-    deleteSubtasks: mutationInput_deleteIssue_deleteSubtasks
+    deleteSubtasks: mutationInput_deleteIssue_deleteSubtasks = FALSE
   ): Void
   \\"Assigns an issue to a user. Use this operation when the calling user does not have the *Edit Issues* permission but has the *Assign issue* permission for the project that the issue is in.\\\\n\\\\nIf \`name\` or \`accountId\` is set to:\\\\n\\\\n *  \`\\\\\\"-1\\\\\\"\`, the issue is assigned to the default assignee for the project.\\\\n *  \`null\`, the issue is set to unassigned.\\\\n\\\\nThis operation can be accessed anonymously.\\\\n\\\\n**[Permissions](#permissions) required:**\\\\n\\\\n *  *Browse Projects* and *Assign Issues* [ project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue is in.\\\\n *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.\\"
   assignIssue(
@@ -7133,7 +7133,7 @@ type Mutation {
     \\"The ID of the comment.\\"
     id: String!
     \\"Whether users are notified when a comment is updated.\\"
-    notifyUsers: Boolean
+    notifyUsers: Boolean = true
     \\"Whether screen security is overridden to enable uneditable fields to be edited. Available to Connect app users with the *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg) and Forge apps acting on behalf of users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
     overrideEditableFlag: Boolean
     \\"Use [expand](#expansion) to include additional information about comments in the response. This parameter accepts \`renderedBody\`, which returns the comment body rendered in HTML.\\"
@@ -7231,8 +7231,8 @@ type Mutation {
     \\"The ID or key the issue.\\"
     issueIdOrKey: String!
     \\"Whether users watching the issue are notified by email.\\"
-    notifyUsers: Boolean
-    adjustEstimate: mutationInput_addWorklog_adjustEstimate
+    notifyUsers: Boolean = true
+    adjustEstimate: mutationInput_addWorklog_adjustEstimate = auto
     \\"The value to set as the issue's remaining time estimate, as days (\\\\\\\\#d), hours (\\\\\\\\#h), or minutes (\\\\\\\\#m or \\\\\\\\#). For example, *2d*. Required when \`adjustEstimate\` is \`new\`.\\"
     newEstimate: String
     \\"The amount to reduce the issue's remaining estimate by, as days (\\\\\\\\#d), hours (\\\\\\\\#h), or minutes (\\\\\\\\#m). For example, *2d*. Required when \`adjustEstimate\` is \`manual\`.\\"
@@ -7250,8 +7250,8 @@ type Mutation {
     \\"The ID of the worklog.\\"
     id: String!
     \\"Whether users watching the issue are notified by email.\\"
-    notifyUsers: Boolean
-    adjustEstimate: mutationInput_updateWorklog_adjustEstimate
+    notifyUsers: Boolean = true
+    adjustEstimate: mutationInput_updateWorklog_adjustEstimate = auto
     \\"The value to set as the issue's remaining time estimate, as days (\\\\\\\\#d), hours (\\\\\\\\#h), or minutes (\\\\\\\\#m or \\\\\\\\#). For example, *2d*. Required when \`adjustEstimate\` is \`new\`.\\"
     newEstimate: String
     \\"Use [expand](#expansion) to include additional information about worklogs in the response. This parameter accepts \`properties\`, which returns worklog properties.\\"
@@ -7267,8 +7267,8 @@ type Mutation {
     \\"The ID of the worklog.\\"
     id: String!
     \\"Whether users watching the issue are notified by email.\\"
-    notifyUsers: Boolean
-    adjustEstimate: mutationInput_deleteWorklog_adjustEstimate
+    notifyUsers: Boolean = true
+    adjustEstimate: mutationInput_deleteWorklog_adjustEstimate = auto
     \\"The value to set as the issue's remaining time estimate, as days (\\\\\\\\#d), hours (\\\\\\\\#h), or minutes (\\\\\\\\#m or \\\\\\\\#). For example, *2d*. Required when \`adjustEstimate\` is \`new\`.\\"
     newEstimate: String
     \\"The amount to increase the issue's remaining estimate by, as days (\\\\\\\\#d), hours (\\\\\\\\#h), or minutes (\\\\\\\\#m or \\\\\\\\#). For example, *2d*. Required when \`adjustEstimate\` is \`manual\`.\\"
@@ -7426,7 +7426,7 @@ type Mutation {
   \\"Checks whether one or more issues would be returned by one or more JQL queries.\\\\n\\\\n**[Permissions](#permissions) required:** None, however, issues are only matched against JQL queries where the user has:\\\\n\\\\n *  *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue is in.\\\\n *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.\\"
   matchIssues(input: IssuesAndJQLQueries_Input): IssueMatches
   \\"Parses and validates JQL queries.\\\\n\\\\nValidation is performed in context of the current user.\\\\n\\\\nThis operation can be accessed anonymously.\\\\n\\\\n**[Permissions](#permissions) required:** None.\\"
-  parseJqlQueries(validation: mutationInput_parseJqlQueries_validation, input: JqlQueriesToParse_Input): parseJqlQueries_response
+  parseJqlQueries(validation: mutationInput_parseJqlQueries_validation = strict, input: JqlQueriesToParse_Input): parseJqlQueries_response
   \\"Converts one or more JQL queries with user identifiers (username or user key) to equivalent JQL queries with account IDs.\\\\n\\\\nYou may wish to use this operation if your system stores JQL queries and you want to make them GDPR-compliant. For more information about GDPR-related changes, see the [migration guide](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/).\\\\n\\\\n**[Permissions](#permissions) required:** Permission to access Jira.\\"
   migrateQueries(input: JQLPersonalDataMigrationRequest_Input): ConvertedJQLQueries
   \\"Sanitizes one or more JQL queries by converting readable details into IDs where a user doesn't have permission to view the entity.\\\\n\\\\nFor example, if the query contains the clause *project = 'Secret project'*, and a user does not have browse permission for the project \\\\\\"Secret project\\\\\\", the sanitized query replaces the clause with *project = 12345\\\\\\"* (where 12345 is the ID of the project). If a user has the required permission, the clause is not sanitized. If the account ID is null, sanitizing is performed for an anonymous user.\\\\n\\\\nNote that sanitization doesn't make the queries GDPR-compliant, because it doesn't remove user identifiers (username or user key). If you need to make queries GDPR-compliant, use [Convert user identifiers to account IDs in JQL queries](https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-jql/#api-rest-api-3-jql-sanitize-post).\\\\n\\\\nBefore sanitization each JQL query is parsed. The queries are returned in the same order that they were passed.\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
@@ -7918,7 +7918,7 @@ type Mutation {
     key: String!
     \\"The name of the workflow that the transition belongs to.\\"
     workflowName: String!
-    workflowMode: mutationInput_createWorkflowTransitionProperty_workflowMode
+    workflowMode: mutationInput_createWorkflowTransitionProperty_workflowMode = live
     input: WorkflowTransitionProperty_Input2
   ): WorkflowTransitionProperty
   \\"Deletes a property from a workflow transition. Transition properties are used to change the behavior of a transition. For more information, see [Transition properties](https://confluence.atlassian.com/x/zIhKLg#Advancedworkflowconfiguration-transitionproperties) and [Workflow properties](https://confluence.atlassian.com/x/JYlKLg).\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
@@ -8091,11 +8091,24 @@ type Mutation {
     moduleKey: [String]
   ): DynamicModulesResource_removeModules_delete_response
   \\"Updates the value of a custom field added by Connect apps on one or more issues.\\\\nThe values of up to 200 custom fields can be updated.\\\\n\\\\n**[Permissions](#permissions) required:** Only Connect apps can make this request.\\"
-  AppIssueFieldValueUpdateResource_updateIssueFields_put(Atlassian_Transfer_Id: String, input: ConnectCustomFieldValues_Input): JSON
+  AppIssueFieldValueUpdateResource_updateIssueFields_put(
+    \\"The ID of the transfer.\\"
+    Atlassian_Transfer_Id: UUID!
+    input: ConnectCustomFieldValues_Input
+  ): JSON
   \\"Updates the values of multiple entity properties for an object, up to 50 updates per request. This operation is for use by Connect apps during app migration.\\"
-  MigrationResource_updateEntityPropertiesValue_put(Atlassian_Transfer_Id: String, entityType: mutationInput_MigrationResource_updateEntityPropertiesValue_put_entityType!, input: [EntityPropertyDetails_Input]): JSON
+  MigrationResource_updateEntityPropertiesValue_put(
+    \\"The app migration transfer ID.\\"
+    Atlassian_Transfer_Id: UUID!
+    entityType: mutationInput_MigrationResource_updateEntityPropertiesValue_put_entityType!
+    input: [EntityPropertyDetails_Input]
+  ): JSON
   \\"Returns configurations for workflow transition rules migrated from server to cloud and owned by the calling Connect app.\\"
-  MigrationResource_workflowRuleSearch_post(Atlassian_Transfer_Id: String, input: WorkflowRulesSearch_Input): WorkflowRulesSearchDetails
+  MigrationResource_workflowRuleSearch_post(
+    \\"The app migration transfer ID.\\"
+    Atlassian_Transfer_Id: UUID!
+    input: WorkflowRulesSearch_Input
+  ): WorkflowRulesSearchDetails
 }
 
 union setBanner_response = ErrorCollection
@@ -8792,7 +8805,7 @@ input JexpJqlIssues_Input {
   startAt: BigInt
   \\"The maximum number of issues to return from the JQL query. Inspect \`meta.issues.jql.maxResults\` in the response to ensure the maximum value has not been exceeded.\\"
   maxResults: Int
-  validation: mutationInput_evaluateJiraExpression_input_context_issues_jql_validation
+  validation: mutationInput_evaluateJiraExpression_input_context_issues_jql_validation = strict
 }
 
 \\"Determines how to validate the JQL query and treat the validation results.\\"
@@ -11317,7 +11330,7 @@ input SearchRequestBean_Input {
   \\"The index of the first item to return in the page of results (page offset). The base index is \`0\`.\\"
   startAt: Int
   \\"The maximum number of items to return per page.\\"
-  maxResults: Int
+  maxResults: Int = 50
   \\"A list of fields to return for each issue, use it to retrieve a subset of fields. This parameter accepts a comma-separated list. Expand options include:\\\\n\\\\n *  \`*all\` Returns all fields.\\\\n *  \`*navigable\` Returns navigable fields.\\\\n *  Any issue field, prefixed with a minus to exclude.\\\\n\\\\nThe default is \`*navigable\`.\\\\n\\\\nExamples:\\\\n\\\\n *  \`summary,comment\` Returns the summary and comments fields only.\\\\n *  \`-description\` Returns all navigable (default) fields except description.\\\\n *  \`*all,-comment\` Returns all fields except comments.\\\\n\\\\nMultiple \`fields\` parameters can be included in a request.\\\\n\\\\nNote: All navigable fields are returned by default. This differs from [GET issue](#api-rest-api-3-issue-issueIdOrKey-get) where the default is all fields.\\"
   fields: [String]
   validateQuery: mutationInput_searchForIssuesUsingJqlPost_input_validateQuery

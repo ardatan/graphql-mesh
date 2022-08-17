@@ -8,12 +8,12 @@ Object {
   "operations": Array [
     Object {
       "argTypeMap": Object {
-        "Accept-Language": Object {
+        "Accept_Language": Object {
           "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
           "name": "Accept-Language",
           "type": "string",
         },
-        "X-Correlation-Id": Object {
+        "X_Correlation_Id": Object {
           "description": "Correlation ID from the auth call.",
           "name": "X-Correlation-Id",
           "type": "string",
@@ -134,12 +134,12 @@ Object {
     },
     Object {
       "argTypeMap": Object {
-        "Accept-Language": Object {
+        "Accept_Language": Object {
           "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
           "name": "Accept-Language",
           "type": "string",
         },
-        "X-Correlation-Id": Object {
+        "X_Correlation_Id": Object {
           "description": "Correlation ID from the auth call.",
           "name": "X-Correlation-Id",
           "type": "string",
@@ -182,12 +182,12 @@ Object {
     },
     Object {
       "argTypeMap": Object {
-        "Accept-Language": Object {
+        "Accept_Language": Object {
           "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
           "name": "Accept-Language",
           "type": "string",
         },
-        "X-Correlation-Id": Object {
+        "X_Correlation_Id": Object {
           "description": "Correlation ID from the auth call.",
           "name": "X-Correlation-Id",
           "type": "string",
@@ -236,12 +236,12 @@ Object {
     },
     Object {
       "argTypeMap": Object {
-        "Accept-Language": Object {
+        "Accept_Language": Object {
           "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
           "name": "Accept-Language",
           "type": "string",
         },
-        "X-Correlation-Id": Object {
+        "X_Correlation_Id": Object {
           "description": "Correlation ID from the auth call.",
           "name": "X-Correlation-Id",
           "type": "string",
@@ -356,12 +356,12 @@ Object {
     },
     Object {
       "argTypeMap": Object {
-        "Accept-Language": Object {
+        "Accept_Language": Object {
           "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
           "name": "Accept-Language",
           "type": "string",
         },
-        "X-Correlation-Id": Object {
+        "X_Correlation_Id": Object {
           "description": "Correlation ID from the auth call.",
           "name": "X-Correlation-Id",
           "type": "string",
@@ -398,12 +398,12 @@ Object {
     },
     Object {
       "argTypeMap": Object {
-        "Accept-Language": Object {
+        "Accept_Language": Object {
           "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
           "name": "Accept-Language",
           "type": "string",
         },
-        "X-Correlation-Id": Object {
+        "X_Correlation_Id": Object {
           "description": "Correlation ID from the auth call.",
           "name": "X-Correlation-Id",
           "type": "string",
@@ -444,12 +444,12 @@ Object {
     },
     Object {
       "argTypeMap": Object {
-        "Accept-Language": Object {
+        "Accept_Language": Object {
           "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
           "name": "Accept-Language",
           "type": "string",
         },
-        "X-Correlation-Id": Object {
+        "X_Correlation_Id": Object {
           "description": "Correlation ID from the auth call.",
           "name": "X-Correlation-Id",
           "type": "string",
@@ -492,12 +492,12 @@ Object {
     },
     Object {
       "argTypeMap": Object {
-        "Accept-Language": Object {
+        "Accept_Language": Object {
           "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
           "name": "Accept-Language",
           "type": "string",
         },
-        "X-Correlation-Id": Object {
+        "X_Correlation_Id": Object {
           "description": "Correlation ID from the auth call.",
           "name": "X-Correlation-Id",
           "type": "string",
@@ -999,9 +999,13 @@ Object {
       "mutationInput_create_resource_at_any_folder_v1": Object {
         "properties": Object {
           "Accept_Language": Object {
+            "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
+            "name": "Accept-Language",
             "type": "string",
           },
           "X_Correlation_Id": Object {
+            "description": "Correlation ID from the auth call.",
+            "name": "X-Correlation-Id",
             "type": "string",
           },
           "companyId": Object {
@@ -1043,9 +1047,13 @@ Object {
       "mutationInput_create_resource_at_the_root_folder_v1": Object {
         "properties": Object {
           "Accept_Language": Object {
+            "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
+            "name": "Accept-Language",
             "type": "string",
           },
           "X_Correlation_Id": Object {
+            "description": "Correlation ID from the auth call.",
+            "name": "X-Correlation-Id",
             "type": "string",
           },
           "companyId": Object {
@@ -1064,9 +1072,13 @@ Object {
       "mutationInput_update_resource_at_any_folder_v1": Object {
         "properties": Object {
           "Accept_Language": Object {
+            "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
+            "name": "Accept-Language",
             "type": "string",
           },
           "X_Correlation_Id": Object {
+            "description": "Correlation ID from the auth call.",
+            "name": "X-Correlation-Id",
             "type": "string",
           },
           "companyId": Object {
@@ -1097,9 +1109,13 @@ Object {
       "mutationInput_update_resource_at_the_root_folder_v1": Object {
         "properties": Object {
           "Accept_Language": Object {
+            "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
+            "name": "Accept-Language",
             "type": "string",
           },
           "X_Correlation_Id": Object {
+            "description": "Correlation ID from the auth call.",
+            "name": "X-Correlation-Id",
             "type": "string",
           },
           "companyId": Object {
@@ -1136,9 +1152,13 @@ Object {
       "queryInput_get_resource_by_id_v1": Object {
         "properties": Object {
           "Accept_Language": Object {
+            "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
+            "name": "Accept-Language",
             "type": "string",
           },
           "X_Correlation_Id": Object {
+            "description": "Correlation ID from the auth call.",
+            "name": "X-Correlation-Id",
             "type": "string",
           },
           "companyId": Object {
@@ -1160,9 +1180,13 @@ Object {
       "queryInput_list_resources_at_any_folder_v1": Object {
         "properties": Object {
           "Accept_Language": Object {
+            "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
+            "name": "Accept-Language",
             "type": "string",
           },
           "X_Correlation_Id": Object {
+            "description": "Correlation ID from the auth call.",
+            "name": "X-Correlation-Id",
             "type": "string",
           },
           "companyId": Object {
@@ -1254,9 +1278,13 @@ Object {
       "queryInput_list_resources_at_the_root_folder_v1": Object {
         "properties": Object {
           "Accept_Language": Object {
+            "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
+            "name": "Accept-Language",
             "type": "string",
           },
           "X_Correlation_Id": Object {
+            "description": "Correlation ID from the auth call.",
+            "name": "X-Correlation-Id",
             "type": "string",
           },
           "companyId": Object {
@@ -1434,7 +1462,9 @@ directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
 type Query {
   \\"List Resources At Any Folder Level\\"
   list_resources_at_any_folder_v1(
+    \\"As defined in RFC 3282 https://tools.ietf.org/html/rfc3282\\"
     Accept_Language: String
+    \\"Correlation ID from the auth call.\\"
     X_Correlation_Id: String
     companyId: String!
     folderId: String!
@@ -1460,7 +1490,9 @@ type Query {
   ): [query_list_resources_at_any_folder_v1_items]
   \\"List All Resources At The Root Folder\\"
   list_resources_at_the_root_folder_v1(
+    \\"As defined in RFC 3282 https://tools.ietf.org/html/rfc3282\\"
     Accept_Language: String
+    \\"Correlation ID from the auth call.\\"
     X_Correlation_Id: String
     companyId: String!
     \\"Text to search in title\\"
@@ -1484,7 +1516,14 @@ type Query {
     size: Int
   ): [query_list_resources_at_any_folder_v1_items]
   \\"Get Resource by ID\\"
-  get_resource_by_id_v1(Accept_Language: String, X_Correlation_Id: String, companyId: String!, resourceId: String!): get_resource_by_id_v1_200_response
+  get_resource_by_id_v1(
+    \\"As defined in RFC 3282 https://tools.ietf.org/html/rfc3282\\"
+    Accept_Language: String
+    \\"Correlation ID from the auth call.\\"
+    X_Correlation_Id: String
+    companyId: String!
+    resourceId: String!
+  ): get_resource_by_id_v1_200_response
 }
 
 type query_list_resources_at_any_folder_v1_items {
@@ -1602,15 +1641,54 @@ type FolderGetWithI18nDTO {
 
 type Mutation {
   \\"Create resources at any folder level\\"
-  create_resource_at_any_folder_v1(Accept_Language: String, X_Correlation_Id: String, companyId: String!, folderId: String!, input: paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources_post_requestBody_content_application_json_schema_Input): get_resource_by_id_v1_200_response
+  create_resource_at_any_folder_v1(
+    \\"As defined in RFC 3282 https://tools.ietf.org/html/rfc3282\\"
+    Accept_Language: String
+    \\"Correlation ID from the auth call.\\"
+    X_Correlation_Id: String
+    companyId: String!
+    folderId: String!
+    input: paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources_post_requestBody_content_application_json_schema_Input
+  ): get_resource_by_id_v1_200_response
   \\"Update A Resource At Any Folder Level\\"
-  update_resource_at_any_folder_v1(Accept_Language: String, X_Correlation_Id: String, companyId: String!, folderId: String!, resourceId: String!, input: paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources_post_requestBody_content_application_json_schema_Input): get_resource_by_id_v1_200_response
+  update_resource_at_any_folder_v1(
+    \\"As defined in RFC 3282 https://tools.ietf.org/html/rfc3282\\"
+    Accept_Language: String
+    \\"Correlation ID from the auth call.\\"
+    X_Correlation_Id: String
+    companyId: String!
+    folderId: String!
+    resourceId: String!
+    input: paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources_post_requestBody_content_application_json_schema_Input
+  ): get_resource_by_id_v1_200_response
   \\"Create A Resource At The Root Folder\\"
-  create_resource_at_the_root_folder_v1(Accept_Language: String, X_Correlation_Id: String, companyId: String!, input: paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources_post_requestBody_content_application_json_schema_Input): get_resource_by_id_v1_200_response
+  create_resource_at_the_root_folder_v1(
+    \\"As defined in RFC 3282 https://tools.ietf.org/html/rfc3282\\"
+    Accept_Language: String
+    \\"Correlation ID from the auth call.\\"
+    X_Correlation_Id: String
+    companyId: String!
+    input: paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources_post_requestBody_content_application_json_schema_Input
+  ): get_resource_by_id_v1_200_response
   \\"Update A Resource At The Root Folder\\"
-  update_resource_at_the_root_folder_v1(Accept_Language: String, X_Correlation_Id: String, companyId: String!, resourceId: String!, input: paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources_post_requestBody_content_application_json_schema_Input): get_resource_by_id_v1_200_response
+  update_resource_at_the_root_folder_v1(
+    \\"As defined in RFC 3282 https://tools.ietf.org/html/rfc3282\\"
+    Accept_Language: String
+    \\"Correlation ID from the auth call.\\"
+    X_Correlation_Id: String
+    companyId: String!
+    resourceId: String!
+    input: paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources_post_requestBody_content_application_json_schema_Input
+  ): get_resource_by_id_v1_200_response
   \\"Delete A Resource At The Root Folder\\"
-  delete_resource_at_the_root_folder_v1(Accept_Language: String, X_Correlation_Id: String, companyId: String!, resourceId: String!): Void
+  delete_resource_at_the_root_folder_v1(
+    \\"As defined in RFC 3282 https://tools.ietf.org/html/rfc3282\\"
+    Accept_Language: String
+    \\"Correlation ID from the auth call.\\"
+    X_Correlation_Id: String
+    companyId: String!
+    resourceId: String!
+  ): Void
 }
 
 input paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources_post_requestBody_content_application_json_schema_Input @oneOf {
