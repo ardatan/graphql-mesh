@@ -1,3 +1,5 @@
+/* eslint-disable import/no-nodejs-modules */
+/* eslint-disable dot-notation */
 import express from 'express';
 import cluster from 'cluster';
 import { cpus, platform, release } from 'os';
