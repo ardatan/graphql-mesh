@@ -9,6 +9,6 @@ on:
 
 jobs:
   lint:
-    uses: the-guild-org/shared-config/.github/workflows/lint.yaml@shared-setup
+    uses: the-guild-org/shared-config/.github/workflows/lint.yml@shared-setup
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
