@@ -1,5 +1,2354 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`example_api should generate the bundle correctly 1`] = `
+Object {
+  "baseUrl": "http://localhost:3002/api",
+  "name": "test",
+  "operationHeaders": Object {},
+  "operations": Array [
+    Object {
+      "argTypeMap": Object {
+        "limit": Object {
+          "description": "Limit of the number of users to return.",
+          "name": "limit",
+          "nullable": false,
+          "type": "integer",
+        },
+      },
+      "description": "Return a list of users.",
+      "field": "getUsers",
+      "headers": Object {
+        "accept": "application/json",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/users",
+      "queryParamArgMap": Object {
+        "limit": "limit",
+      },
+      "responseByStatusCode": Object {
+        "202": Object {
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1users/get/responses/202/content/application~1json/schema",
+            "title": "getUsers_202_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "description": "Create a new user in the system.",
+      "field": "postUser",
+      "headers": Object {
+        "Content-Type": "application/json",
+        "accept": "application/json",
+      },
+      "method": "POST",
+      "operationHeaders": undefined,
+      "path": "/users",
+      "requestSchema": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1users/post/requestBody/content/application~1json/schema",
+      "responseByStatusCode": Object {
+        "201": Object {
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1users/post/responses/201/content/application~1json/schema",
+            "title": "postUser_201_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "mutation",
+    },
+    Object {
+      "argTypeMap": Object {
+        "username": Object {
+          "description": "Identifier of a user.",
+          "name": "username",
+          "nullable": false,
+          "type": "string",
+        },
+      },
+      "description": "Returns a user from the system.",
+      "field": "getUserByUsername",
+      "headers": Object {
+        "accept": "application/json",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/users/{args.username}",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "links": Object {
+            "employerCompany": Object {
+              "args": Object {
+                "id": "{root.$response.body#/employerId}",
+              },
+              "description": "Allows to fetch the user's employer company.",
+              "fieldName": "getCompanyById",
+            },
+            "friends": Object {
+              "args": Object {
+                "username": "{root.$request.path.username}",
+              },
+              "description": "Allows to fetch the user's friends.",
+              "fieldName": "getUserFriends",
+            },
+          },
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1users~1{username}/get/responses/200/content/application~1json/schema",
+            "title": "getUserByUsername_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "argTypeMap": Object {
+        "username": Object {
+          "description": "Identifier of a user.",
+          "name": "username",
+          "nullable": false,
+          "type": "string",
+        },
+      },
+      "description": "Returns a car to test nesting of sub operations",
+      "field": "getUserCar",
+      "headers": Object {
+        "accept": "application/json",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/users/{args.username}/car",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1users~1{username}~1car/get/responses/200/content/application~1json/schema",
+            "title": "getUserCar_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "argTypeMap": Object {
+        "username": Object {
+          "description": "Identifier of a user.",
+          "name": "username",
+          "nullable": false,
+          "type": "string",
+        },
+      },
+      "description": "Returns a user's friends to test pagination",
+      "field": "getUserFriends",
+      "headers": Object {
+        "accept": "application/json",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/users/{args.username}/friends",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1users~1{username}~1friends/get/responses/200/content/application~1json/schema",
+            "title": "getUserFriends_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "argTypeMap": Object {
+        "companyId": Object {
+          "description": undefined,
+          "name": "companyId",
+          "nullable": false,
+          "type": "string",
+        },
+      },
+      "description": "Returns all company assets",
+      "field": "getAllAssets",
+      "headers": Object {
+        "accept": "application/json",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/assets/{args.companyId}",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1assets~1{companyId}/get/responses/200/content/application~1json/schema",
+            "title": "getAllAssets_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "description": "Returns information about all employee cars",
+      "field": "getAllCars",
+      "headers": Object {
+        "accept": "application/json",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/cars",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1cars/get/responses/200/content/application~1json/schema",
+            "title": "getAllCars_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "argTypeMap": Object {
+        "id": Object {
+          "description": undefined,
+          "name": "id",
+          "nullable": false,
+          "type": "string",
+        },
+      },
+      "description": "Returns the profile of a company with the given ID.",
+      "field": "getCompanyById",
+      "headers": Object {
+        "accept": "application/json",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/companies/{args.id}",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "links": Object {
+            "ceoUser": Object {
+              "args": Object {
+                "username": "{root.$response.body#/ceoUsername}",
+              },
+              "description": "Allows to fetch the company's CEO user.",
+              "fieldName": "getUserByUsername",
+            },
+          },
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1companies~1{id}/get/responses/200/content/application~1json/schema",
+            "title": "getCompanyById_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "argTypeMap": Object {
+        "cookie_size": Object {
+          "description": undefined,
+          "enum": Array [
+            "bite-sized",
+            "regular",
+            "mega-sized",
+          ],
+          "name": "cookie_size",
+          "nullable": false,
+          "title": "queryInput_getCookie_cookie_size",
+          "type": "string",
+        },
+        "cookie_type": Object {
+          "description": undefined,
+          "enum": Array [
+            "chocolate chip",
+            "oatmeal raisin",
+            "sugar",
+          ],
+          "name": "cookie_type",
+          "nullable": false,
+          "title": "queryInput_getCookie_cookie_type",
+          "type": "string",
+        },
+      },
+      "description": "Used to test cookies.",
+      "field": "getCookie",
+      "headers": Object {
+        "accept": "text/plain",
+        "cookie": "cookie_type={args.cookie_type}; cookie_size={args.cookie_size};",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/cookie",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1cookie/get/responses/200/content/text~1plain/schema",
+            "title": "getCookie_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "argTypeMap": Object {
+        "lat": Object {
+          "description": undefined,
+          "name": "lat",
+          "type": "number",
+        },
+        "long": Object {
+          "description": undefined,
+          "name": "long",
+          "type": "number",
+        },
+      },
+      "description": "Used to find the nearest coffee machine based on the user's coordinates. Used to test the content field in parameter objects.",
+      "field": "getNearestCoffeeMachine",
+      "headers": Object {
+        "accept": "application/json",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/coffeeLocation",
+      "queryParamArgMap": Object {
+        "lat": "lat",
+        "long": "long",
+      },
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1coffeeLocation/get/responses/200/content/application~1json/schema",
+            "title": "getNearestCoffeeMachine_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "argTypeMap": Object {
+        "query": Object {
+          "description": undefined,
+          "name": "query",
+          "type": "string",
+        },
+      },
+      "description": "Used to test link parameters with variables",
+      "field": "getCopier",
+      "headers": Object {
+        "accept": "application/json",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/copier",
+      "queryParamArgMap": Object {
+        "query": "query",
+      },
+      "responseByStatusCode": Object {
+        "200": Object {
+          "links": Object {
+            "basicLink": Object {
+              "args": Object {
+                "query": "{root.$request.query.query}",
+              },
+              "description": undefined,
+              "fieldName": "getCopier",
+            },
+            "constantLink": Object {
+              "args": Object {
+                "query": "123",
+              },
+              "description": undefined,
+              "fieldName": "getCopier",
+            },
+            "everythingLink": Object {
+              "args": Object {
+                "query": "{root.$url}_{root.$method}_{root.$statusCode}_{root.$request.query.query}_{root.$request.header.accept}_{root.$response.header.connection}",
+              },
+              "description": undefined,
+              "fieldName": "getCopier",
+            },
+            "variableLink": Object {
+              "args": Object {
+                "query": "_{root.$request.query.query}_{root.$request.query.query}{root.$request.query.query}abc{root.$request.query.query}123",
+              },
+              "description": undefined,
+              "fieldName": "getCopier",
+            },
+          },
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1copier/get/responses/200/content/application~1json/schema",
+            "title": "getCopier_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "description": "Used to test generation of object types with matching schema.",
+      "field": "getNumberOfCleanDesks",
+      "headers": Object {
+        "accept": "text/plain",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/cleanDesks",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1cleanDesks/get/responses/200/content/text~1plain/schema",
+            "title": "getNumberOfCleanDesks_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "description": "Used to test generation of object types with matching schema.",
+      "field": "getNumberOfDirtyDesks",
+      "headers": Object {
+        "accept": "text/plain",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/dirtyDesks",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1dirtyDesks/get/responses/200/content/text~1plain/schema",
+            "title": "getNumberOfDirtyDesks_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "description": "Used to test empty responses",
+      "field": "getBonuses",
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/bonuses",
+      "responseByStatusCode": Object {
+        "204": Object {
+          "responseSchema": Object {
+            "description": "Used to test empty responses",
+            "title": "getBonuses_204_response",
+            "type": "null",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "argTypeMap": Object {
+        "accept": Object {
+          "default": "text/plain",
+          "description": "Describes the format of the return values. By default, the return type is \`text/plain\` and the return value is the two-letter language code for the identified language, for example, \`en\` for English or \`es\` for Spanish. To retrieve a JSON object that contains a ranking of identified languages with confidence scores, set the accept header parameter to \`application/json\`.",
+          "enum": Array [
+            "application/json",
+            "text/plain",
+          ],
+          "name": "accept",
+          "type": "string",
+        },
+        "id": Object {
+          "description": "Office ID",
+          "name": "id",
+          "nullable": false,
+          "type": "integer",
+        },
+      },
+      "description": "Return an office.",
+      "field": "getOffice",
+      "headers": Object {
+        "accept": "application/json",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/offices/{args.id}",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "links": Object {
+            "company": Object {
+              "args": Object {
+                "id": "{root.$response.body#/employerId}",
+              },
+              "description": "Allows to fetch the user's employer company.",
+              "fieldName": "getCompanyById",
+            },
+            "owner": Object {
+              "args": Object {
+                "username": "{root.$response.body#/employeeId}",
+              },
+              "description": "Allows to fetch the user who invented a product.",
+              "fieldName": "getUserByUsername",
+            },
+          },
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1offices~1{id}/get/responses/200/content/application~1json/schema",
+            "title": "getOffice_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "description": "Return a list of papers. Endpoint to test 2XX status code.",
+      "field": "getPapers",
+      "headers": Object {
+        "accept": "application/json",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/papers",
+      "responseByStatusCode": Object {
+        "2XX": Object {
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1papers/get/responses/2XX/content/application~1json/schema",
+            "title": "getPapers_2XX_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "description": "Create a new paper in the system. Endpoint to test non-application/json request and response bodies.",
+      "field": "postPaper",
+      "headers": Object {
+        "Content-Type": "text/plain",
+        "accept": "text/plain",
+      },
+      "method": "POST",
+      "operationHeaders": undefined,
+      "path": "/papers",
+      "requestSchema": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1papers/post/requestBody/content/text~1plain/schema",
+      "responseByStatusCode": Object {
+        "201": Object {
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1papers/post/responses/201/content/text~1plain/schema",
+            "title": "postPaper_201_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "mutation",
+    },
+    Object {
+      "description": "Endpoint to test unsanitized parameters and data.",
+      "field": "post_product_with_id",
+      "headers": Object {
+        "Content-Type": "application/json",
+        "accept": "application/json",
+      },
+      "method": "POST",
+      "operationHeaders": undefined,
+      "path": "/products",
+      "requestSchema": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1products/post/requestBody/content/application~1json/schema",
+      "responseByStatusCode": Object {
+        "201": Object {
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1products/post/responses/201/content/application~1json/schema",
+            "title": "post_product_with_id_201_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "mutation",
+    },
+    Object {
+      "argTypeMap": Object {
+        "product_id": Object {
+          "description": undefined,
+          "name": "product-id",
+          "nullable": false,
+          "type": "string",
+        },
+        "product_tag": Object {
+          "description": undefined,
+          "name": "product-tag",
+          "nullable": false,
+          "type": "string",
+        },
+      },
+      "description": "Another endpoint to test unsanitized parameters and data.",
+      "field": "get_product_with_id",
+      "headers": Object {
+        "accept": "application/json",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/products/{args.product_id}",
+      "queryParamArgMap": Object {
+        "product-tag": "product_tag",
+      },
+      "responseByStatusCode": Object {
+        "200": Object {
+          "links": Object {
+            "reviews": Object {
+              "args": Object {
+                "id": "{root.$request.path.product_id}",
+                "product_tag": "{root.$request.query.product_tag}",
+              },
+              "description": undefined,
+              "fieldName": "getProductReviews",
+            },
+            "reviewsWithOperationRef": Object {
+              "args": Object {
+                "id": "{root.$request.path.product_id}",
+                "product_tag": "{root.$request.query.product_tag}",
+              },
+              "description": undefined,
+              "fieldName": "getProductReviews",
+            },
+          },
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1products~1{product-id}/get/responses/200/content/application~1json/schema",
+            "title": "get_product_with_id_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "argTypeMap": Object {
+        "id": Object {
+          "description": undefined,
+          "name": "id",
+          "nullable": false,
+          "type": "string",
+        },
+        "product_tag": Object {
+          "default": "sport",
+          "description": undefined,
+          "name": "product-tag",
+          "nullable": false,
+          "type": "string",
+        },
+      },
+      "description": "Obtain reviews for a product.",
+      "field": "getProductReviews",
+      "headers": Object {
+        "accept": "application/json",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/products/{args.id}/reviews",
+      "queryParamArgMap": Object {
+        "product-tag": "product_tag",
+      },
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1products~1{id}~1reviews/get/responses/200/content/application~1json/schema",
+            "title": "getProductReviews_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "argTypeMap": Object {
+        "patent_id": Object {
+          "description": undefined,
+          "name": "patent-id",
+          "nullable": false,
+          "type": "string",
+        },
+      },
+      "description": "An endpoint to test authentication.",
+      "field": "get_patent_with_id",
+      "headers": Object {
+        "accept": "application/json",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/patents/{args.patent_id}",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "links": Object {
+            "inventor": Object {
+              "args": Object {
+                "username": "{root.$response.body#/inventorId}",
+              },
+              "description": "Allows to fetch the user who invented a product.",
+              "fieldName": "getUserByUsername",
+            },
+          },
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1patents~1{patent-id}/get/responses/200/content/application~1json/schema",
+            "title": "get_patent_with_id_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "argTypeMap": Object {
+        "project_id": Object {
+          "description": undefined,
+          "name": "project-id",
+          "nullable": false,
+          "type": "integer",
+        },
+      },
+      "description": "Another endpoint to test authentication.",
+      "field": "get_project_with_id",
+      "headers": Object {
+        "accept": "application/json",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/projects/{args.project_id}",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "links": Object {
+            "patent": Object {
+              "args": Object {
+                "patent_id": "{root.$response.body#/patentId}",
+              },
+              "description": "Allows to fetch a patent.",
+              "fieldName": "get_patent_with_id",
+            },
+            "projectLead": Object {
+              "args": Object {
+                "username": "{root.$response.body#/leadId}",
+              },
+              "description": "Allows to fetch the user leading a project.",
+              "fieldName": "getUserByUsername",
+            },
+          },
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1projects~1{project-id}/get/responses/200/content/application~1json/schema",
+            "title": "get_project_with_id_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "description": "An endpoint to test authenticated POST requests.",
+      "field": "post_project_with_id",
+      "headers": Object {
+        "Content-Type": "application/json",
+        "accept": "application/json",
+      },
+      "method": "POST",
+      "operationHeaders": undefined,
+      "path": "/projects",
+      "requestSchema": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1projects/post/requestBody/content/application~1json/schema",
+      "responseByStatusCode": Object {
+        "201": Object {
+          "links": Object {
+            "ProjectLead": Object {
+              "args": Object {
+                "username": "{root.$response.body#/leadId}",
+              },
+              "description": "Allows to fetch the user leading a project.",
+              "fieldName": "getUserByUsername",
+            },
+          },
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1projects/post/responses/201/content/application~1json/schema",
+            "title": "post_project_with_id_201_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "mutation",
+    },
+    Object {
+      "argTypeMap": Object {
+        "query": Object {
+          "description": undefined,
+          "name": "query",
+          "type": "string",
+        },
+      },
+      "description": "Used to test link parameters with variables",
+      "field": "getScanner",
+      "headers": Object {
+        "accept": "application/json",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/scanner",
+      "queryParamArgMap": Object {
+        "query": "query",
+      },
+      "responseByStatusCode": Object {
+        "200": Object {
+          "links": Object {
+            "basicLink": Object {
+              "args": Object {
+                "query": "{root.$request.query.query}",
+              },
+              "description": undefined,
+              "fieldName": "getCopier",
+            },
+            "constantLink": Object {
+              "args": Object {
+                "query": "123",
+              },
+              "description": undefined,
+              "fieldName": "getCopier",
+            },
+            "everythingLink": Object {
+              "args": Object {
+                "query": "{root.$url}_{root.$method}_{root.$statusCode}_{root.$request.query.query}_{root.$request.header.accept}_{root.$response.header.connection}",
+              },
+              "description": undefined,
+              "fieldName": "getCopier",
+            },
+            "variableLink": Object {
+              "args": Object {
+                "query": "_{root.$request.query.query}_{root.$request.query.query}{root.$request.query.query}abc{root.$request.query.query}123",
+              },
+              "description": undefined,
+              "fieldName": "getCopier",
+            },
+          },
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1scanner/get/responses/200/content/application~1json/schema",
+            "title": "getScanner_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "argTypeMap": Object {
+        "path": Object {
+          "description": undefined,
+          "name": "path",
+          "nullable": false,
+          "type": "string",
+        },
+        "query": Object {
+          "description": undefined,
+          "name": "query",
+          "type": "string",
+        },
+      },
+      "description": "Used to test link parameters with variables",
+      "field": "postScanner",
+      "headers": Object {
+        "Content-Type": "text/plain",
+        "accept": "application/json",
+      },
+      "method": "POST",
+      "operationHeaders": undefined,
+      "path": "/scanner/{args.path}",
+      "queryParamArgMap": Object {
+        "query": "query",
+      },
+      "requestSchema": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1scanner~1{path}/post/requestBody/content/text~1plain/schema",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "links": Object {
+            "basicLink": Object {
+              "args": Object {
+                "query": "{root.$request.query.query}",
+              },
+              "description": undefined,
+              "fieldName": "getCopier",
+            },
+            "constantLink": Object {
+              "args": Object {
+                "query": "123",
+              },
+              "description": undefined,
+              "fieldName": "getCopier",
+            },
+            "everythingLink": Object {
+              "args": Object {
+                "query": "{root.$url}_{root.$method}_{root.$statusCode}_{root.$request.query.query}_{root.$request.header.accept}_{root.$response.header.connection}",
+              },
+              "description": undefined,
+              "fieldName": "getCopier",
+            },
+            "everythingLink2": Object {
+              "args": Object {
+                "query": "{root.$url}_{root.$method}_{root.$statusCode}_{root.$request.body}_{root.$request.query.query}_{root.$request.path.path}_{root.$request.header.accept}_{root.$response.body#/body}_{root.$response.query.query}_{root.$response.path.path}_{root.$response.header.connection}",
+              },
+              "description": undefined,
+              "fieldName": "getCopier",
+            },
+            "variableLink": Object {
+              "args": Object {
+                "query": "_{root.$request.query.query}_{root.$request.query.query}{root.$request.query.query}abc{root.$request.query.query}123",
+              },
+              "description": undefined,
+              "fieldName": "getCopier",
+            },
+          },
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1scanner~1{path}/post/responses/200/content/application~1json/schema",
+            "title": "postScanner_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "mutation",
+    },
+    Object {
+      "argTypeMap": Object {
+        "snack_size": Object {
+          "description": undefined,
+          "enum": Array [
+            "large",
+            "small",
+          ],
+          "name": "snack_size",
+          "nullable": false,
+          "title": "queryInput_getSnack_snack_size",
+          "type": "string",
+        },
+        "snack_type": Object {
+          "description": undefined,
+          "enum": Array [
+            "chips",
+            "soda",
+          ],
+          "name": "snack_type",
+          "nullable": false,
+          "title": "queryInput_getSnack_snack_type",
+          "type": "string",
+        },
+      },
+      "description": "Endpoint to test sending of headers.",
+      "field": "getSnack",
+      "headers": Object {
+        "accept": "text/plain",
+        "snack_size": "{args.snack_size}",
+        "snack_type": "{args.snack_type}",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/snack",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1snack/get/responses/200/content/text~1plain/schema",
+            "title": "getSnack_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "argTypeMap": Object {
+        "globalquery": Object {
+          "description": undefined,
+          "name": "globalquery",
+          "nullable": false,
+          "type": "string",
+        },
+        "limit": Object {
+          "description": undefined,
+          "name": "limit",
+          "nullable": false,
+          "type": "integer",
+        },
+      },
+      "description": "Endpoint to test sending of options.",
+      "field": "get_Status",
+      "headers": Object {
+        "accept": "text/plain",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/status",
+      "queryParamArgMap": Object {
+        "globalquery": "globalquery",
+        "limit": "limit",
+      },
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1status/get/responses/200/content/text~1plain/schema",
+            "title": "get_Status_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "argTypeMap": Object {
+        "globalquery": Object {
+          "description": undefined,
+          "name": "globalquery",
+          "nullable": false,
+          "type": "string",
+        },
+      },
+      "description": "Endpoint to test placeholder objects to wrap response objects.",
+      "field": "post_status",
+      "headers": Object {
+        "Content-Type": "application/json",
+        "accept": "text/plain",
+      },
+      "method": "POST",
+      "operationHeaders": undefined,
+      "path": "/status",
+      "queryParamArgMap": Object {
+        "globalquery": "globalquery",
+      },
+      "requestSchema": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1status/post/requestBody/content/application~1json/schema",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1status/post/responses/200/content/text~1plain/schema",
+            "title": "post_status_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "mutation",
+    },
+    Object {
+      "description": "Used to test OAuth token being present in header.",
+      "field": "getSecure",
+      "headers": Object {
+        "accept": "text/plain",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/secure",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1secure/get/responses/200/content/text~1plain/schema",
+            "title": "getSecure_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "description": "Returns the (contents of a) trashcan from a specific office",
+      "field": "getAllTrashCans",
+      "headers": Object {
+        "accept": "application/json",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/trashcans",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1trashcans/get/responses/200/content/application~1json/schema",
+            "title": "getAllTrashCans_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "argTypeMap": Object {
+        "username": Object {
+          "description": "Identifier of a user.",
+          "name": "username",
+          "nullable": false,
+          "type": "string",
+        },
+      },
+      "description": "Returns the (contents of a) trashcan from a specific owner",
+      "field": "getOfficeTrashCan",
+      "headers": Object {
+        "accept": "application/json",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/trashcans/{args.username}",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1trashcans~1{username}/get/responses/200/content/application~1json/schema",
+            "title": "getOfficeTrashCan_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "argTypeMap": Object {
+        "username": Object {
+          "description": "Identifier of a user.",
+          "name": "username",
+          "nullable": false,
+          "type": "string",
+        },
+      },
+      "description": "Add new contents to the trashcan of a specific owner",
+      "field": "postOfficeTrashCan",
+      "headers": Object {
+        "Content-Type": "application/json",
+        "accept": "application/json",
+      },
+      "method": "POST",
+      "operationHeaders": undefined,
+      "path": "/trashcans/{args.username}",
+      "requestSchema": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1trashcans~1{username}/post/requestBody/content/application~1json/schema",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1trashcans~1{username}/post/responses/200/content/application~1json/schema",
+            "title": "postOfficeTrashCan_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "mutation",
+    },
+    Object {
+      "description": "It could be anything!",
+      "field": "mystery",
+      "headers": Object {
+        "accept": "application/json",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/mystery",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": Object {
+            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1mystery/get/responses/200/content/application~1json/schema",
+            "title": "mystery_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+  ],
+  "referencedSchema": Object {
+    "$ref": "#/definitions/_schema",
+    "definitions": Object {
+      "Mutation": Object {
+        "properties": Object {
+          "postOfficeTrashCan": Object {
+            "$ref": "#/definitions/trashcan",
+          },
+          "postPaper": Object {
+            "$ref": "#/definitions/getNumberOfCleanDesks_200_response",
+          },
+          "postScanner": Object {
+            "$ref": "#/definitions/getCopier_200_response",
+          },
+          "postUser": Object {
+            "$ref": "#/definitions/user",
+          },
+          "post_product_with_id": Object {
+            "$ref": "#/definitions/product-with-id",
+          },
+          "post_project_with_id": Object {
+            "$ref": "#/definitions/project-with-id",
+          },
+          "post_status": Object {
+            "$ref": "#/definitions/getNumberOfCleanDesks_200_response",
+          },
+        },
+        "title": "Mutation",
+        "type": "object",
+      },
+      "MutationInput": Object {
+        "properties": Object {
+          "postOfficeTrashCan": Object {
+            "$ref": "#/definitions/mutationInput_postOfficeTrashCan",
+          },
+          "postPaper": Object {
+            "$ref": "#/definitions/mutationInput_postPaper",
+          },
+          "postScanner": Object {
+            "$ref": "#/definitions/mutationInput_postScanner",
+          },
+          "postUser": Object {
+            "$ref": "#/definitions/mutationInput_postUser",
+          },
+          "post_product_with_id": Object {
+            "$ref": "#/definitions/mutationInput_post_product_with_id",
+          },
+          "post_project_with_id": Object {
+            "$ref": "#/definitions/mutationInput_post_project_with_id",
+          },
+          "post_status": Object {
+            "$ref": "#/definitions/mutationInput_post_status",
+          },
+        },
+        "title": "MutationInput",
+        "type": "object",
+      },
+      "Query": Object {
+        "properties": Object {
+          "getAllAssets": Object {
+            "$ref": "#/definitions/getAllAssets_200_response",
+          },
+          "getAllCars": Object {
+            "$ref": "#/definitions/getAllCars_200_response",
+          },
+          "getAllTrashCans": Object {
+            "$ref": "#/definitions/getAllTrashCans_200_response",
+          },
+          "getBonuses": Object {
+            "$ref": "#/definitions/getBonuses_204_response",
+          },
+          "getCompanyById": Object {
+            "$ref": "#/definitions/company",
+          },
+          "getCookie": Object {
+            "$ref": "#/definitions/getCookie_200_response",
+          },
+          "getCopier": Object {
+            "$ref": "#/definitions/getCopier_200_response",
+          },
+          "getNearestCoffeeMachine": Object {
+            "$ref": "#/definitions/coordinates",
+          },
+          "getNumberOfCleanDesks": Object {
+            "$ref": "#/definitions/getNumberOfCleanDesks_200_response",
+          },
+          "getNumberOfDirtyDesks": Object {
+            "$ref": "#/definitions/getNumberOfCleanDesks_200_response",
+          },
+          "getOffice": Object {
+            "$ref": "#/definitions/office",
+          },
+          "getOfficeTrashCan": Object {
+            "$ref": "#/definitions/trashcan",
+          },
+          "getPapers": Object {
+            "$ref": "#/definitions/getPapers_2XX_response",
+          },
+          "getProductReviews": Object {
+            "$ref": "#/definitions/getProductReviews_200_response",
+          },
+          "getScanner": Object {
+            "$ref": "#/definitions/getCopier_200_response",
+          },
+          "getSecure": Object {
+            "$ref": "#/definitions/getSecure_200_response",
+          },
+          "getSnack": Object {
+            "$ref": "#/definitions/getSnack_200_response",
+          },
+          "getUserByUsername": Object {
+            "$ref": "#/definitions/user",
+          },
+          "getUserCar": Object {
+            "$ref": "#/definitions/car",
+          },
+          "getUserFriends": Object {
+            "$ref": "#/definitions/getUsers_202_response",
+          },
+          "getUsers": Object {
+            "$ref": "#/definitions/getUsers_202_response",
+          },
+          "get_Status": Object {
+            "$ref": "#/definitions/get_Status_200_response",
+          },
+          "get_patent_with_id": Object {
+            "$ref": "#/definitions/patent-with-id",
+          },
+          "get_product_with_id": Object {
+            "$ref": "#/definitions/product-with-id",
+          },
+          "get_project_with_id": Object {
+            "$ref": "#/definitions/project-with-id",
+          },
+          "mystery": Object {
+            "$ref": "#/definitions/mystery_200_response",
+          },
+        },
+        "title": "Query",
+        "type": "object",
+      },
+      "QueryInput": Object {
+        "properties": Object {
+          "getAllAssets": Object {
+            "$ref": "#/definitions/queryInput_getAllAssets",
+          },
+          "getCompanyById": Object {
+            "$ref": "#/definitions/queryInput_getCompanyById",
+          },
+          "getCookie": Object {
+            "$ref": "#/definitions/queryInput_getCookie",
+          },
+          "getCopier": Object {
+            "$ref": "#/definitions/queryInput_getCopier",
+          },
+          "getNearestCoffeeMachine": Object {
+            "$ref": "#/definitions/queryInput_getNearestCoffeeMachine",
+          },
+          "getOffice": Object {
+            "$ref": "#/definitions/queryInput_getOffice",
+          },
+          "getOfficeTrashCan": Object {
+            "$ref": "#/definitions/queryInput_getUserByUsername",
+          },
+          "getProductReviews": Object {
+            "$ref": "#/definitions/queryInput_getProductReviews",
+          },
+          "getScanner": Object {
+            "$ref": "#/definitions/queryInput_getCopier",
+          },
+          "getSnack": Object {
+            "$ref": "#/definitions/queryInput_getSnack",
+          },
+          "getUserByUsername": Object {
+            "$ref": "#/definitions/queryInput_getUserByUsername",
+          },
+          "getUserCar": Object {
+            "$ref": "#/definitions/queryInput_getUserByUsername",
+          },
+          "getUserFriends": Object {
+            "$ref": "#/definitions/queryInput_getUserByUsername",
+          },
+          "getUsers": Object {
+            "$ref": "#/definitions/queryInput_getUsers",
+          },
+          "get_Status": Object {
+            "$ref": "#/definitions/queryInput_get_Status",
+          },
+          "get_patent_with_id": Object {
+            "$ref": "#/definitions/queryInput_get_patent_with_id",
+          },
+          "get_product_with_id": Object {
+            "$ref": "#/definitions/queryInput_get_product_with_id",
+          },
+          "get_project_with_id": Object {
+            "$ref": "#/definitions/queryInput_get_project_with_id",
+          },
+        },
+        "title": "QueryInput",
+        "type": "object",
+      },
+      "Tags": Object {
+        "$resolvedRef": "/components/schemas/tags",
+        "additionalProperties": true,
+        "description": "Arbitrary (string) tags describing an entity.",
+        "title": "Tags",
+        "type": "object",
+      },
+      "_schema": Object {
+        "properties": Object {
+          "mutation": Object {
+            "$ref": "#/definitions/Mutation",
+          },
+          "mutationInput": Object {
+            "$ref": "#/definitions/MutationInput",
+          },
+          "query": Object {
+            "$ref": "#/definitions/Query",
+          },
+          "queryInput": Object {
+            "$ref": "#/definitions/QueryInput",
+          },
+        },
+        "required": Array [
+          "query",
+        ],
+        "title": "_schema",
+        "type": "object",
+      },
+      "address": Object {
+        "$resolvedRef": "/components/schemas/address",
+        "description": "The legal address of a user",
+        "properties": Object {
+          "city": Object {
+            "description": "The city a user lives in",
+            "type": "string",
+          },
+          "street": Object {
+            "description": "The street a user lives in",
+            "type": "string",
+          },
+        },
+        "title": "address",
+        "type": "object",
+      },
+      "car": Object {
+        "$resolvedRef": "/components/schemas/car",
+        "description": "A car",
+        "properties": Object {
+          "color": Object {
+            "description": "The color of the car.",
+            "type": "string",
+          },
+          "features": Object {
+            "$ref": "#/definitions/query_getUserCar_features",
+          },
+          "kind": Object {
+            "$ref": "#/definitions/query_getUserCar_kind",
+          },
+          "model": Object {
+            "description": "The model of the car.",
+            "type": "string",
+          },
+          "rating": Object {
+            "$ref": "#/definitions/query_getUserCar_rating",
+          },
+          "tags": Object {
+            "$ref": "#/definitions/Tags",
+          },
+        },
+        "title": "car",
+        "type": "object",
+      },
+      "company": Object {
+        "$resolvedRef": "/components/schemas/company",
+        "description": "A company is the employer of many users",
+        "properties": Object {
+          "ceoUsername": Object {
+            "description": "The identifier of the user who is CEO of the company",
+            "type": "string",
+          },
+          "id": Object {
+            "description": "The identifier of a company",
+            "format": "uuid",
+            "type": "string",
+          },
+          "legalForm": Object {
+            "description": "The legal form of a company",
+            "type": "string",
+          },
+          "name": Object {
+            "description": "The legal name of a company",
+            "type": "string",
+          },
+          "offices": Object {
+            "description": "The offices of a company",
+            "items": Object {
+              "$ref": "#/definitions/address",
+            },
+            "type": "array",
+          },
+        },
+        "title": "company",
+        "type": "object",
+      },
+      "coordinates": Object {
+        "$resolvedRef": "/components/schemas/coordinates",
+        "properties": Object {
+          "lat": Object {
+            "type": "number",
+          },
+          "long": Object {
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "lat",
+          "long",
+        ],
+        "title": "coordinates",
+        "type": "object",
+      },
+      "familyObject": Object {
+        "$resolvedRef": "/components/schemas/familyObject",
+        "allOf": Array [
+          Object {
+            "$ref": "#/definitions/query_getUsers_items_nomenclature_allOf_1_allOf_0",
+          },
+          Object {
+            "$ref": "#/definitions/query_getUsers_items_nomenclature_allOf_1_allOf_1",
+          },
+        ],
+        "title": "familyObject",
+        "type": "object",
+      },
+      "familyString": Object {
+        "$resolvedRef": "/components/schemas/familyString",
+        "title": "familyString",
+        "type": "string",
+      },
+      "getAllAssets_200_response": Object {
+        "$resolvedRef": "/paths/~1assets~1{companyId}/get/responses/200/content/application~1json/schema",
+        "items": Object {
+          "oneOf": Array [
+            Object {
+              "$ref": "#/definitions/car",
+            },
+            Object {
+              "$ref": "#/definitions/user",
+            },
+            Object {
+              "$ref": "#/definitions/trashcan",
+            },
+          ],
+          "title": "query_getAllAssets_items",
+          "type": "object",
+        },
+        "title": "getAllAssets_200_response",
+        "type": "array",
+      },
+      "getAllCars_200_response": Object {
+        "$resolvedRef": "/paths/~1cars/get/responses/200/content/application~1json/schema",
+        "items": Object {
+          "$resolvedRef": "/components/schemas/car",
+          "description": "A car",
+          "properties": Object {
+            "color": Object {
+              "description": "The color of the car.",
+              "type": "string",
+            },
+            "features": Object {
+              "$ref": "#/definitions/query_getUserCar_features",
+            },
+            "kind": Object {
+              "$ref": "#/definitions/query_getUserCar_kind",
+            },
+            "model": Object {
+              "description": "The model of the car.",
+              "type": "string",
+            },
+            "rating": Object {
+              "$ref": "#/definitions/query_getUserCar_rating",
+            },
+            "tags": Object {
+              "$ref": "#/definitions/Tags",
+            },
+          },
+          "title": "car",
+          "type": "object",
+        },
+        "title": "getAllCars_200_response",
+        "type": "array",
+      },
+      "getAllTrashCans_200_response": Object {
+        "$resolvedRef": "/paths/~1trashcans/get/responses/200/content/application~1json/schema",
+        "items": Object {
+          "$resolvedRef": "/components/schemas/trashcan",
+          "properties": Object {
+            "brand": Object {
+              "$ref": "#/definitions/query_getAllAssets_items_oneOf_2_brand",
+            },
+            "contents": Object {
+              "items": Object {
+                "$ref": "#/definitions/query_getAllAssets_items_oneOf_2_brand",
+              },
+              "type": "array",
+            },
+          },
+          "title": "trashcan",
+          "type": "object",
+        },
+        "title": "getAllTrashCans_200_response",
+        "type": "array",
+      },
+      "getBonuses_204_response": Object {
+        "description": "Used to test empty responses",
+        "title": "getBonuses_204_response",
+        "type": "null",
+      },
+      "getCookie_200_response": Object {
+        "$resolvedRef": "/paths/~1cookie/get/responses/200/content/text~1plain/schema",
+        "description": "Used to test generation of object types with matching schema.",
+        "title": "getCookie_200_response",
+        "type": "string",
+      },
+      "getCopier_200_response": Object {
+        "$resolvedRef": "/paths/~1copier/get/responses/200/content/application~1json/schema",
+        "properties": Object {
+          "body": Object {
+            "type": "string",
+          },
+        },
+        "title": "getCopier_200_response",
+        "type": "object",
+      },
+      "getNumberOfCleanDesks_200_response": Object {
+        "$resolvedRef": "/paths/~1cleanDesks/get/responses/200/content/text~1plain/schema",
+        "title": "getNumberOfCleanDesks_200_response",
+        "type": "string",
+      },
+      "getPapers_2XX_response": Object {
+        "$resolvedRef": "/paths/~1papers/get/responses/2XX/content/application~1json/schema",
+        "items": Object {
+          "$resolvedRef": "/components/schemas/paper",
+          "description": "A research paper",
+          "properties": Object {
+            "name": Object {
+              "description": "The name of the paper",
+              "type": "string",
+            },
+            "published": Object {
+              "description": "Whether the paper is published",
+              "type": "boolean",
+            },
+          },
+          "title": "paper",
+          "type": "object",
+        },
+        "title": "getPapers_2XX_response",
+        "type": "array",
+      },
+      "getProductReviews_200_response": Object {
+        "$resolvedRef": "/paths/~1products~1{id}~1reviews/get/responses/200/content/application~1json/schema",
+        "items": Object {
+          "properties": Object {
+            "text": Object {
+              "type": "string",
+            },
+            "timestamp": Object {
+              "format": "int64",
+              "type": "integer",
+            },
+          },
+          "title": "query_getProductReviews_items",
+          "type": "object",
+        },
+        "title": "getProductReviews_200_response",
+        "type": "array",
+      },
+      "getSecure_200_response": Object {
+        "$resolvedRef": "/paths/~1secure/get/responses/200/content/text~1plain/schema",
+        "description": "A secure message.",
+        "title": "getSecure_200_response",
+        "type": "string",
+      },
+      "getSnack_200_response": Object {
+        "$resolvedRef": "/paths/~1snack/get/responses/200/content/text~1plain/schema",
+        "description": "What snack is offered.",
+        "title": "getSnack_200_response",
+        "type": "string",
+      },
+      "getUsers_202_response": Object {
+        "$resolvedRef": "/paths/~1users/get/responses/202/content/application~1json/schema",
+        "items": Object {
+          "$resolvedRef": "/components/schemas/user",
+          "description": "A user represents a natural person",
+          "properties": Object {
+            "address": Object {
+              "$ref": "#/definitions/address",
+            },
+            "address2": Object {
+              "$ref": "#/definitions/address",
+            },
+            "employerId": Object {
+              "description": "The identifier of the company a user works for",
+              "type": "string",
+            },
+            "hobbies": Object {
+              "description": "The hobbies of this user",
+              "items": Object {
+                "type": "string",
+              },
+              "type": "array",
+            },
+            "name": Object {
+              "description": "The legal name of a user",
+              "type": "string",
+            },
+            "nomenclature": Object {
+              "$ref": "#/definitions/query_getUsers_items_nomenclature",
+            },
+            "status": Object {
+              "$ref": "#/definitions/query_getUsers_items_status",
+            },
+            "username": Object {
+              "description": "The identifier of a user",
+              "type": "string",
+            },
+          },
+          "required": Array [
+            "name",
+            "address",
+            "employerId",
+            "hobbies",
+          ],
+          "title": "user",
+          "type": "object",
+        },
+        "title": "getUsers_202_response",
+        "type": "array",
+      },
+      "get_Status_200_response": Object {
+        "$resolvedRef": "/paths/~1status/get/responses/200/content/text~1plain/schema",
+        "description": "What the status is.",
+        "title": "get_Status_200_response",
+        "type": "string",
+      },
+      "mutationInput_postOfficeTrashCan": Object {
+        "properties": Object {
+          "input": Object {
+            "$ref": "#/definitions/paths_trashcans_{username}_post_requestBody_content_application_json_schema",
+          },
+          "username": Object {
+            "description": "Identifier of a user.",
+            "name": "username",
+            "nullable": false,
+            "type": "string",
+          },
+        },
+        "title": "mutationInput_postOfficeTrashCan",
+        "type": "object",
+      },
+      "mutationInput_postPaper": Object {
+        "properties": Object {
+          "input": Object {
+            "$resolvedRef": "/paths/~1papers/post/requestBody/content/text~1plain/schema",
+            "type": "string",
+          },
+        },
+        "title": "mutationInput_postPaper",
+        "type": "object",
+      },
+      "mutationInput_postScanner": Object {
+        "properties": Object {
+          "input": Object {
+            "$resolvedRef": "/paths/~1papers/post/requestBody/content/text~1plain/schema",
+            "type": "string",
+          },
+          "path": Object {
+            "description": undefined,
+            "name": "path",
+            "nullable": false,
+            "type": "string",
+          },
+          "query": Object {
+            "description": undefined,
+            "name": "query",
+            "type": "string",
+          },
+        },
+        "title": "mutationInput_postScanner",
+        "type": "object",
+      },
+      "mutationInput_postUser": Object {
+        "properties": Object {
+          "input": Object {
+            "$ref": "#/definitions/user",
+          },
+        },
+        "title": "mutationInput_postUser",
+        "type": "object",
+      },
+      "mutationInput_post_product_with_id": Object {
+        "properties": Object {
+          "input": Object {
+            "$ref": "#/definitions/product-with-id",
+          },
+        },
+        "title": "mutationInput_post_product_with_id",
+        "type": "object",
+      },
+      "mutationInput_post_project_with_id": Object {
+        "properties": Object {
+          "input": Object {
+            "$ref": "#/definitions/project-with-id",
+          },
+        },
+        "title": "mutationInput_post_project_with_id",
+        "type": "object",
+      },
+      "mutationInput_post_status": Object {
+        "properties": Object {
+          "globalquery": Object {
+            "description": undefined,
+            "name": "globalquery",
+            "nullable": false,
+            "type": "string",
+          },
+          "input": Object {
+            "$ref": "#/definitions/paths_status_post_requestBody_content_application_json_schema",
+          },
+        },
+        "title": "mutationInput_post_status",
+        "type": "object",
+      },
+      "mystery_200_response": Object {
+        "$resolvedRef": "/paths/~1mystery/get/responses/200/content/application~1json/schema",
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/query_mystery_oneOf_0",
+          },
+          Object {
+            "$ref": "#/definitions/query_mystery_oneOf_1",
+          },
+        ],
+        "title": "mystery_200_response",
+      },
+      "office": Object {
+        "$resolvedRef": "/components/schemas/office",
+        "description": "An office",
+        "properties": Object {
+          "employeeId": Object {
+            "description": "The owner ID of the office",
+            "type": "string",
+          },
+          "employerId": Object {
+            "description": "The identifier of the company a user works for",
+            "type": "string",
+          },
+          "room number": Object {
+            "description": "The room number of the office",
+            "type": "integer",
+          },
+        },
+        "title": "office",
+        "type": "object",
+      },
+      "paper": Object {
+        "$resolvedRef": "/components/schemas/paper",
+        "description": "A research paper",
+        "properties": Object {
+          "name": Object {
+            "description": "The name of the paper",
+            "type": "string",
+          },
+          "published": Object {
+            "description": "Whether the paper is published",
+            "type": "boolean",
+          },
+        },
+        "title": "paper",
+        "type": "object",
+      },
+      "patent-with-id": Object {
+        "$resolvedRef": "/components/schemas/patent-with-id",
+        "description": "A patent",
+        "properties": Object {
+          "inventor-id": Object {
+            "description": "The id of the inventor",
+            "nullable": true,
+            "type": "string",
+          },
+          "patent-id": Object {
+            "description": "The id of the patent",
+            "type": "string",
+          },
+        },
+        "required": Array [
+          "patent-name",
+          "patent-id",
+          "inventor-id",
+        ],
+        "title": "patent-with-id",
+        "type": "object",
+      },
+      "paths_status_post_requestBody_content_application_json_schema": Object {
+        "$resolvedRef": "/paths/~1status/post/requestBody/content/application~1json/schema",
+        "properties": Object {
+          "hello": Object {
+            "type": "string",
+          },
+        },
+        "title": "paths_status_post_requestBody_content_application_json_schema",
+        "type": "object",
+      },
+      "paths_trashcans_{username}_post_requestBody_content_application_json_schema": Object {
+        "$resolvedRef": "/paths/~1trashcans~1{username}/post/requestBody/content/application~1json/schema",
+        "title": "paths_trashcans_{username}_post_requestBody_content_application_json_schema",
+        "type": "object",
+      },
+      "product-with-id": Object {
+        "$resolvedRef": "/components/schemas/product-with-id",
+        "description": "A product",
+        "properties": Object {
+          "product-id": Object {
+            "description": "The id of the product",
+            "type": "string",
+          },
+          "product-name": Object {
+            "description": "The name of the product",
+            "type": "string",
+          },
+          "product-tag": Object {
+            "description": "A tag associated with the product",
+            "type": "string",
+          },
+        },
+        "title": "product-with-id",
+        "type": "object",
+      },
+      "project-with-id": Object {
+        "$resolvedRef": "/components/schemas/project-with-id",
+        "description": "A project",
+        "properties": Object {
+          "active": Object {
+            "description": "Whether the project is active",
+            "type": "boolean",
+          },
+          "lead-id": Object {
+            "description": "The id of the lead",
+            "type": "string",
+          },
+          "patentId": Object {
+            "description": "The patent associated with a project if applicable",
+            "type": "string",
+          },
+          "project-id": Object {
+            "description": "The id of the project",
+            "type": "integer",
+          },
+        },
+        "title": "project-with-id",
+        "type": "object",
+      },
+      "queryInput_getAllAssets": Object {
+        "properties": Object {
+          "companyId": Object {
+            "description": undefined,
+            "name": "companyId",
+            "nullable": false,
+            "type": "string",
+          },
+        },
+        "title": "queryInput_getAllAssets",
+        "type": "object",
+      },
+      "queryInput_getCompanyById": Object {
+        "properties": Object {
+          "id": Object {
+            "description": undefined,
+            "name": "id",
+            "nullable": false,
+            "type": "string",
+          },
+        },
+        "title": "queryInput_getCompanyById",
+        "type": "object",
+      },
+      "queryInput_getCookie": Object {
+        "properties": Object {
+          "cookie_size": Object {
+            "$ref": "#/definitions/queryInput_getCookie_cookie_size",
+          },
+          "cookie_type": Object {
+            "$ref": "#/definitions/queryInput_getCookie_cookie_type",
+          },
+        },
+        "title": "queryInput_getCookie",
+        "type": "object",
+      },
+      "queryInput_getCookie_cookie_size": Object {
+        "description": undefined,
+        "enum": Array [
+          "bite-sized",
+          "regular",
+          "mega-sized",
+        ],
+        "name": "cookie_size",
+        "nullable": false,
+        "title": "queryInput_getCookie_cookie_size",
+        "type": "string",
+      },
+      "queryInput_getCookie_cookie_type": Object {
+        "description": undefined,
+        "enum": Array [
+          "chocolate chip",
+          "oatmeal raisin",
+          "sugar",
+        ],
+        "name": "cookie_type",
+        "nullable": false,
+        "title": "queryInput_getCookie_cookie_type",
+        "type": "string",
+      },
+      "queryInput_getCopier": Object {
+        "properties": Object {
+          "query": Object {
+            "description": undefined,
+            "name": "query",
+            "type": "string",
+          },
+        },
+        "title": "queryInput_getCopier",
+        "type": "object",
+      },
+      "queryInput_getNearestCoffeeMachine": Object {
+        "properties": Object {
+          "lat": Object {
+            "description": undefined,
+            "name": "lat",
+            "type": "number",
+          },
+          "long": Object {
+            "description": undefined,
+            "name": "long",
+            "type": "number",
+          },
+        },
+        "title": "queryInput_getNearestCoffeeMachine",
+        "type": "object",
+      },
+      "queryInput_getOffice": Object {
+        "properties": Object {
+          "id": Object {
+            "description": "Office ID",
+            "name": "id",
+            "nullable": false,
+            "type": "integer",
+          },
+        },
+        "title": "queryInput_getOffice",
+        "type": "object",
+      },
+      "queryInput_getProductReviews": Object {
+        "properties": Object {
+          "id": Object {
+            "description": undefined,
+            "name": "id",
+            "nullable": false,
+            "type": "string",
+          },
+          "product_tag": Object {
+            "default": "sport",
+            "description": undefined,
+            "name": "product-tag",
+            "nullable": false,
+            "type": "string",
+          },
+        },
+        "title": "queryInput_getProductReviews",
+        "type": "object",
+      },
+      "queryInput_getSnack": Object {
+        "properties": Object {
+          "snack_size": Object {
+            "$ref": "#/definitions/queryInput_getSnack_snack_size",
+          },
+          "snack_type": Object {
+            "$ref": "#/definitions/queryInput_getSnack_snack_type",
+          },
+        },
+        "title": "queryInput_getSnack",
+        "type": "object",
+      },
+      "queryInput_getSnack_snack_size": Object {
+        "description": undefined,
+        "enum": Array [
+          "large",
+          "small",
+        ],
+        "name": "snack_size",
+        "nullable": false,
+        "title": "queryInput_getSnack_snack_size",
+        "type": "string",
+      },
+      "queryInput_getSnack_snack_type": Object {
+        "description": undefined,
+        "enum": Array [
+          "chips",
+          "soda",
+        ],
+        "name": "snack_type",
+        "nullable": false,
+        "title": "queryInput_getSnack_snack_type",
+        "type": "string",
+      },
+      "queryInput_getUserByUsername": Object {
+        "properties": Object {
+          "username": Object {
+            "description": "Identifier of a user.",
+            "name": "username",
+            "nullable": false,
+            "type": "string",
+          },
+        },
+        "title": "queryInput_getUserByUsername",
+        "type": "object",
+      },
+      "queryInput_getUsers": Object {
+        "properties": Object {
+          "limit": Object {
+            "description": "Limit of the number of users to return.",
+            "name": "limit",
+            "nullable": false,
+            "type": "integer",
+          },
+        },
+        "title": "queryInput_getUsers",
+        "type": "object",
+      },
+      "queryInput_get_Status": Object {
+        "properties": Object {
+          "globalquery": Object {
+            "description": undefined,
+            "name": "globalquery",
+            "nullable": false,
+            "type": "string",
+          },
+          "limit": Object {
+            "description": undefined,
+            "name": "limit",
+            "nullable": false,
+            "type": "integer",
+          },
+        },
+        "title": "queryInput_get_Status",
+        "type": "object",
+      },
+      "queryInput_get_patent_with_id": Object {
+        "properties": Object {
+          "patent_id": Object {
+            "description": undefined,
+            "name": "patent-id",
+            "nullable": false,
+            "type": "string",
+          },
+        },
+        "title": "queryInput_get_patent_with_id",
+        "type": "object",
+      },
+      "queryInput_get_product_with_id": Object {
+        "properties": Object {
+          "product_id": Object {
+            "description": undefined,
+            "name": "product-id",
+            "nullable": false,
+            "type": "string",
+          },
+          "product_tag": Object {
+            "description": undefined,
+            "name": "product-tag",
+            "nullable": false,
+            "type": "string",
+          },
+        },
+        "title": "queryInput_get_product_with_id",
+        "type": "object",
+      },
+      "queryInput_get_project_with_id": Object {
+        "properties": Object {
+          "project_id": Object {
+            "description": undefined,
+            "name": "project-id",
+            "nullable": false,
+            "type": "integer",
+          },
+        },
+        "title": "queryInput_get_project_with_id",
+        "type": "object",
+      },
+      "query_getAllAssets_items": Object {
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/car",
+          },
+          Object {
+            "$ref": "#/definitions/user",
+          },
+          Object {
+            "$ref": "#/definitions/trashcan",
+          },
+        ],
+        "title": "query_getAllAssets_items",
+        "type": "object",
+      },
+      "query_getAllAssets_items_oneOf_2_brand": Object {
+        "title": "query_getAllAssets_items_oneOf_2_brand",
+        "type": "object",
+      },
+      "query_getProductReviews_items": Object {
+        "properties": Object {
+          "text": Object {
+            "type": "string",
+          },
+          "timestamp": Object {
+            "format": "int64",
+            "type": "integer",
+          },
+        },
+        "title": "query_getProductReviews_items",
+        "type": "object",
+      },
+      "query_getUserCar_features": Object {
+        "additionalProperties": true,
+        "title": "query_getUserCar_features",
+        "type": "object",
+      },
+      "query_getUserCar_kind": Object {
+        "enum": Array [
+          "SEDAN",
+          "SUV",
+          "MINIVAN",
+          "LIMOSINE",
+          "RACE_CAR",
+        ],
+        "title": "query_getUserCar_kind",
+        "type": "string",
+      },
+      "query_getUserCar_rating": Object {
+        "description": "The rating of the car.",
+        "enum": Array [
+          100,
+          101,
+          200,
+        ],
+        "title": "query_getUserCar_rating",
+        "type": "number",
+      },
+      "query_getUsers_items_nomenclature": Object {
+        "allOf": Array [
+          Object {
+            "$ref": "#/definitions/suborderObject",
+          },
+          Object {
+            "$ref": "#/definitions/familyObject",
+          },
+          Object {
+            "$ref": "#/definitions/query_getUsers_items_nomenclature_allOf_2",
+          },
+        ],
+        "properties": Object {
+          "species": Object {
+            "type": "string",
+          },
+        },
+        "title": "query_getUsers_items_nomenclature",
+        "type": "object",
+      },
+      "query_getUsers_items_nomenclature_allOf_1_allOf_0": Object {
+        "properties": Object {
+          "family": Object {
+            "$ref": "#/definitions/familyString",
+          },
+        },
+        "required": Array [
+          "family",
+        ],
+        "title": "query_getUsers_items_nomenclature_allOf_1_allOf_0",
+        "type": "object",
+      },
+      "query_getUsers_items_nomenclature_allOf_1_allOf_1": Object {
+        "properties": Object {
+          "familyCircular": Object {
+            "$ref": "#/definitions/familyObject",
+          },
+        },
+        "title": "query_getUsers_items_nomenclature_allOf_1_allOf_1",
+        "type": "object",
+      },
+      "query_getUsers_items_nomenclature_allOf_2": Object {
+        "properties": Object {
+          "genus": Object {
+            "type": "string",
+          },
+        },
+        "title": "query_getUsers_items_nomenclature_allOf_2",
+        "type": "object",
+      },
+      "query_getUsers_items_status": Object {
+        "enum": Array [
+          "staff",
+          "contractor",
+          "alumni",
+        ],
+        "title": "query_getUsers_items_status",
+      },
+      "query_mystery_oneOf_0": Object {
+        "properties": Object {
+          "common_attribute": Object {
+            "type": "string",
+          },
+        },
+        "title": "query_mystery_oneOf_0",
+        "type": "object",
+      },
+      "query_mystery_oneOf_1": Object {
+        "properties": Object {
+          "different_attribute": Object {
+            "type": "string",
+          },
+        },
+        "title": "query_mystery_oneOf_1",
+        "type": "object",
+      },
+      "suborderObject": Object {
+        "$resolvedRef": "/components/schemas/suborderObject",
+        "properties": Object {
+          "suborder": Object {
+            "type": "string",
+          },
+        },
+        "title": "suborderObject",
+        "type": "object",
+      },
+      "trashcan": Object {
+        "$resolvedRef": "/components/schemas/trashcan",
+        "properties": Object {
+          "brand": Object {
+            "$ref": "#/definitions/query_getAllAssets_items_oneOf_2_brand",
+          },
+          "contents": Object {
+            "items": Object {
+              "$ref": "#/definitions/query_getAllAssets_items_oneOf_2_brand",
+            },
+            "type": "array",
+          },
+        },
+        "title": "trashcan",
+        "type": "object",
+      },
+      "user": Object {
+        "$resolvedRef": "/components/schemas/user",
+        "description": "A user represents a natural person",
+        "properties": Object {
+          "address": Object {
+            "$ref": "#/definitions/address",
+          },
+          "address2": Object {
+            "$ref": "#/definitions/address",
+          },
+          "employerId": Object {
+            "description": "The identifier of the company a user works for",
+            "type": "string",
+          },
+          "hobbies": Object {
+            "description": "The hobbies of this user",
+            "items": Object {
+              "type": "string",
+            },
+            "type": "array",
+          },
+          "name": Object {
+            "description": "The legal name of a user",
+            "type": "string",
+          },
+          "nomenclature": Object {
+            "$ref": "#/definitions/query_getUsers_items_nomenclature",
+          },
+          "status": Object {
+            "$ref": "#/definitions/query_getUsers_items_status",
+          },
+          "username": Object {
+            "description": "The identifier of a user",
+            "type": "string",
+          },
+        },
+        "required": Array [
+          "name",
+          "address",
+          "employerId",
+          "hobbies",
+        ],
+        "title": "user",
+        "type": "object",
+      },
+    },
+  },
+}
+`;
+
 exports[`example_api should generate the schema correctly 1`] = `
 "schema {
   query: Query
@@ -55,13 +2404,13 @@ type Query {
   \\"Return a list of papers. Endpoint to test 2XX status code.\\"
   getPapers: [paper]
   \\"Another endpoint to test unsanitized parameters and data.\\"
-  get_product_with_id(product_id: String, product_tag: String): product_with_id
+  get_product_with_id(product_id: String!, product_tag: String!): product_with_id
   \\"Obtain reviews for a product.\\"
-  getProductReviews(id: String!, product_tag: String): [query_getProductReviews_items]
+  getProductReviews(id: String!, product_tag: String! = \\"sport\\"): [query_getProductReviews_items]
   \\"An endpoint to test authentication.\\"
-  get_patent_with_id(patent_id: String): patent_with_id
+  get_patent_with_id(patent_id: String!): patent_with_id
   \\"Another endpoint to test authentication.\\"
-  get_project_with_id(project_id: String): project_with_id
+  get_project_with_id(project_id: Int!): project_with_id
   \\"Used to test link parameters with variables\\"
   getScanner(query: String): getCopier_200_response
   \\"Endpoint to test sending of headers.\\"
