@@ -11,14 +11,14 @@ jobs:
   lint:
     uses: the-guild-org/shared-config/.github/workflows/lint.yml@shared-setup
     with:
-      script: 'yarn ci:lint'
+      script: yarn ci:lint
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
 
   typecheck:
     uses: the-guild-org/shared-config/.github/workflows/ci.yml@shared-setup
     with:
-      script: 'yarn typecheck'
+      script: yarn transpile-ts --noEmit
 
   test:
     name: test / ${{matrix.os}} / node ${{matrix.node-version}}
