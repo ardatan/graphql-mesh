@@ -666,7 +666,7 @@
         "anchor": "handle-webhook-http-requests"
       }
     ],
-    "content": "8125876ec2adfb6033e34fe8f0770b69",
+    "content": "276dde3570cb3493544edbadc7821b9d",
     "url": "https://www.graphql-mesh.com/docs/guides/subscriptions-webhooks",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Guides"],
