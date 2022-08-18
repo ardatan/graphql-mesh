@@ -130,7 +130,8 @@ export async function getGraphQLSchemaFromBundle(
     };
   }
   logger.info(`Creating the GraphQL Schema from dereferenced schema`);
-  return getGraphQLSchemaFromDereferencedJSONSchema(fullyDeferencedSchema, {
+  return getGraphQLSchemaFromDereferencedJSONSchema(name, {
+    fullyDeferencedSchema,
     fetch,
     pubsub,
     logger,

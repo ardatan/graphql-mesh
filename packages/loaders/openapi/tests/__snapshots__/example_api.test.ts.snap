@@ -3,7 +3,7 @@
 exports[`example_api should generate the bundle correctly 1`] = `
 Object {
   "baseUrl": "http://localhost:3002/api",
-  "name": "test",
+  "name": "example_api",
   "operationHeaders": Object {},
   "operations": Array [
     Object {

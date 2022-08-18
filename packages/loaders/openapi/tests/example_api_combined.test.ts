@@ -1,20 +1,19 @@
 import { execute, GraphQLSchema, parse } from 'graphql';
-import { join } from 'path';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch } from '@whatwg-node/fetch';
 import { startServer, stopServer } from '../../../handlers/openapi/test/example_api_server';
 
 const PORT = 3010;
-const oasFilePath = join(__dirname, '../../../handlers/openapi/test/fixtures/example_oas_combined.json');
 const baseUrl = `http://localhost:${PORT}/api`;
 
 describe('Example API Combined', () => {
   let createdSchema: GraphQLSchema;
   beforeAll(async () => {
     await startServer(PORT);
-    createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      oasFilePath,
+    createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api_combined', {
+      oasFilePath: '../../../handlers/openapi/test/fixtures/example_oas_combined.json',
+      cwd: __dirname,
       baseUrl,
       fetch,
     });
