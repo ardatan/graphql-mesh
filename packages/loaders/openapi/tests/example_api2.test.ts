@@ -1,12 +1,3 @@
-// Copyright IBM Corp. 2017,2018. All Rights Reserved.
-// Node module: openapi-to-graphql
-// This file is licensed under the MIT License.
-// License text available at https://opensource.org/licenses/MIT
-
-'use strict';
-
-/* globals beforeAll, test, expect */
-
 import { graphql, GraphQLSchema } from 'graphql';
 
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
