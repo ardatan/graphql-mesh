@@ -18,12 +18,15 @@ describe('Example API Combined', () => {
       fetch,
     });
   });
+
   afterAll(async () => {
     await stopServer();
   });
+
   it('should generate correct schema', () => {
     expect(printSchemaWithDirectives(createdSchema)).toMatchSnapshot('example_oas_combined-schema');
   });
+
   it('should handle allOf correctly', async () => {
     const query = /* GraphQL */ `
       query {
@@ -32,10 +35,12 @@ describe('Example API Combined', () => {
         }
       }
     `;
+
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
     });
+
     expect(result).toMatchSnapshot('example_oas_combined-query-result');
   });
 });
