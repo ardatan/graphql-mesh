@@ -765,10 +765,9 @@ describe('example_api', () => {
   });
 
   it('Get response without providing parameter with default value', async () => {
-    // NOTE: product_tag was missing in the original handler, but here it fails without it. is it a bug?
     const query = /* GraphQL */ `
       {
-        getProductReviews(id: "100", product_tag: "") {
+        getProductReviews(id: "100") {
           text
         }
       }
@@ -885,7 +884,7 @@ describe('example_api', () => {
   it('Get response containing 64-bit integer (using GraphQLBigInt)', async () => {
     const query = /* GraphQL */ `
       {
-        getProductReviews(id: "100", product_tag: "blah") {
+        getProductReviews(id: "100") {
           timestamp
         }
       }
@@ -1676,7 +1675,6 @@ describe('example_api', () => {
     const query = /* GraphQL */ `
       mutation {
         postOfficeTrashCan(input: { type: "sandwich", message: "moldy", tasteRating: 0 }, username: "arlene") {
-          # brand
           contents
         }
       }
@@ -2080,7 +2078,6 @@ describe('example_api', () => {
   });
 
   it('Should error for enum arguments if input value is inappropriate', async () => {
-    // NOTE: make sure to check for values not in the enum, capital/lower case, etc
     const options: OpenAPILoaderOptions = {
       baseUrl,
       oasFilePath: '../../../handlers/openapi/test/fixtures/example_oas.json',
