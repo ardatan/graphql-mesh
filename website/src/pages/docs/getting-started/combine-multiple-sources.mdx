@@ -384,20 +384,16 @@ additionalTypeDefs: |
     book: Book
   }
   extend type Book {
-    author: authors_v1_Author
-  }
-additionalResolvers:
-  - targetTypeName: Book
-    targetFieldName: author
-    sourceName: Authors # Which source does the target field belong to?
-    sourceTypeName: Query # Which root type does the target field belong to?
-    sourceFieldName: authors_v1_AuthorsService_GetAuthor # What is the source field name?
-    requiredSelectionSet: |
-      {
-        authorId
+    author: authors_v1_Author @resolveTo(
+      sourceName: "Authors" # Which source does the target field belong to?
+      sourceTypeName: "Query", # Which root type does the target field belong to?
+      sourceFieldName: "authors_v1_AuthorsService_GetAuthor", # What is the source field name?
+      requiredSelectionSet: "{ authorId }",
+      sourceArgs: # What args does this need to take? {
+        "input.id": "{root.authorId}"
       }
-    sourceArgs: # What args does this need to take?
-      input.id: '{root.authorId}'
+    )
+  }
 ```
 
 Each `additionalResolvers` value is based on 2 main concepts:

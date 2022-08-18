@@ -6,7 +6,7 @@ GraphQL Mesh can consume Webhooks as GraphQL Subscriptions in the unified schema
 
 ## Add a new Subscription field
 
-You can use `additionalTypeDefs` and `additionalResolvers` to add subscription root fields to your unified schema.
+You can use `additionalTypeDefs` and `resolveTo` directive to add subscription root fields to your unified schema.
 
 ```yaml
 additionalTypeDefs: |
@@ -16,14 +16,12 @@ additionalTypeDefs: |
     subscription: Subscription
   }
   type Subscription {
-    todoAdded: Todo
+    todoAdded: Todo @resolveTo(
+      pubsubTopic: "todoAdded"
+    # result: "data.someProp.someOtherProp", # You can get nested fields
+    # filterBy: "root.userId === args.userId" # You can filter the payload by `userId` for example
+    )
   }
-additionalResolvers:
-  - targetTypeName: Subscription
-    targetFieldName: todoAdded
-    pubsubTopic: todoAdded
-    # result: data.someProp.someOtherProp # You can get nested fields
-    # filterBy: root.userId === args.userId # You can filter the payload by `userId` for example
 ```
 
 We can use existing types from our unified schema, and this root field is subscribed to our specific `topic` in our PubSub service.
@@ -47,6 +45,8 @@ Add a custom express handler to listen to a specific path for your HTTP Webhook 
 
 ### Using Declarative API
 
+<PackageCmd packages={['@graphql-mesh/plugin-webhook']} />
+
 You have a running GraphQL Mesh server listening `4000` port, and you need to listen to a specific route for upcoming HTTP requests as HTTP Webhook.
 
 ```yaml
@@ -61,7 +61,8 @@ plugins:
 
 ### Custom Handler in Code
 
-`handler` gets a GraphQL Yoga plugin. So you can extend Mesh Server however you want.
+You can handle webhook requests with a plugin.
+Basically you can extend Mesh Server however you want.
 
 ```yaml
 plugins:
@@ -72,9 +73,9 @@ plugins:
 and in `todo_added_handler.ts`, we have something like the following:
 
 ```js filename="todo_added_handler.ts"
-import { MeshPluginOptions } from '@graphql-mesh/types'
+import { MeshPluginOptions, Plugin } from '@graphql-mesh/types'
 
-export default function useMyPlugin(opts: MeshPluginOptions<{ someOption: boolean }>) {
+export default function useMyPlugin(opts: MeshPluginOptions<{ someOption: boolean }>): Plugin {
   return {
     async onRequest({ request, fetchAPI, endResponse }) {
       if (request.url.endsWith('/my-path')) {
