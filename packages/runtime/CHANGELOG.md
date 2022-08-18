@@ -1,5 +1,17 @@
 # @graphql-mesh/runtime
 
+## 0.42.0
+
+### Minor Changes
+
+- [#4326](https://github.com/Urigo/graphql-mesh/pull/4326) [`209717f0b`](https://github.com/Urigo/graphql-mesh/commit/209717f0b87a56326cfd37fb9f26cb1ccbc47b1a) Thanks [@ardatan](https://github.com/ardatan)! - Enable batching by default when there is a single source, and respect `batch` flag
+
+### Patch Changes
+
+- [#4326](https://github.com/Urigo/graphql-mesh/pull/4326) [`209717f0b`](https://github.com/Urigo/graphql-mesh/commit/209717f0b87a56326cfd37fb9f26cb1ccbc47b1a) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency [`@graphql-tools/batch-execute@8.5.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-execute/v/8.5.3) (to `dependencies`)
+
 ## 0.41.10
 
 ### Patch Changes
