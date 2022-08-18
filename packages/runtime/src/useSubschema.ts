@@ -3,6 +3,7 @@ import { createDefaultExecutor, DelegationContext, SubschemaConfig } from '@grap
 import { ExecutionRequest, getOperationASTFromRequest, isAsyncIterable } from '@graphql-tools/utils';
 import { mapAsyncIterator, Plugin, TypedExecutionArgs } from '@envelop/core';
 import { GraphQLSchema, introspectionFromSchema } from 'graphql';
+import { createBatchingExecutor } from '@graphql-tools/batch-execute';
 
 function getExecuteFn(subschema: SubschemaConfig) {
   return async function subschemaExecute(args: TypedExecutionArgs<any>): Promise<any> {
@@ -28,7 +29,13 @@ function getExecuteFn(subschema: SubschemaConfig) {
       skipTypeMerging: true,
       returnType: {} as any, // Might not work
     };
-    const executor = subschema.executor ?? createDefaultExecutor(subschema.schema);
+    let executor = subschema.executor;
+    if (executor == null) {
+      executor = createDefaultExecutor(subschema.schema);
+    }
+    if (subschema.batch) {
+      executor = createBatchingExecutor(executor);
+    }
     const transformedRequest = applyRequestTransforms(
       originalRequest,
       delegationContext,
