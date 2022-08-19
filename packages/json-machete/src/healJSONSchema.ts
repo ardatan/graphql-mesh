@@ -92,13 +92,13 @@ export async function healJSONSchema(
               subSchema.additionalProperties = true;
             }
           }
-          if (subSchema.allOf != null && subSchema.allOf.length === 1 && !subSchema.properties) {
+          if (subSchema.allOf != null && subSchema.allOf.length === 1 && !subSchema.properties && !subSchema.anyOf) {
             logger.debug(`${path} has an "allOf" definition with only one element. Removing it.`);
             const realSubschema = subSchema.allOf[0];
             delete subSchema.allOf;
             subSchema = realSubschema;
           }
-          if (subSchema.anyOf != null && subSchema.anyOf.length === 1 && !subSchema.properties) {
+          if (subSchema.anyOf != null && subSchema.anyOf.length === 1 && !subSchema.properties && !subSchema.allOf) {
             logger.debug(`${path} has an "anyOf" definition with only one element. Removing it.`);
             const realSubschema = subSchema.anyOf[0];
             delete subSchema.anyOf;

@@ -92,7 +92,7 @@ describe('Handle anyOf and oneOf', () => {
         name: 'anyOf',
         description: 'Basic anyOf test using the same member schemas',
         type: {
-          name: 'AnyOf',
+          name: 'anyOf_200_response',
           kind: 'OBJECT',
           fields: [
             {
@@ -129,7 +129,7 @@ describe('Handle anyOf and oneOf', () => {
         name: 'anyOf2',
         description: 'Basic anyOf test with different member schemas',
         type: {
-          name: 'AnyOf2',
+          name: 'anyOf2_200_response',
           kind: 'OBJECT',
           fields: [
             {
@@ -171,13 +171,13 @@ describe('Handle anyOf and oneOf', () => {
         name: 'anyOf3',
         description: 'anyOf test with the same nested member schemas',
         type: {
-          name: 'AnyOf3',
+          name: 'anyOf3_200_response',
           kind: 'OBJECT',
           fields: [
             {
               name: 'commonAttribute',
               type: {
-                name: 'CommonAttribute5',
+                name: 'commonAttributeObject',
               },
             },
           ],
@@ -208,19 +208,19 @@ describe('Handle anyOf and oneOf', () => {
         name: 'anyOf4',
         description: 'anyOf test with different nested member schemas',
         type: {
-          name: 'AnyOf4',
+          name: 'anyOf4_200_response',
           kind: 'OBJECT',
           fields: [
             {
               name: 'commonAttribute',
               type: {
-                name: 'CommonAttribute5',
+                name: 'commonAttributeObject',
               },
             },
             {
               name: 'differentAttribute',
               type: {
-                name: 'DifferentAttribute3',
+                name: 'commonAttributeObject',
               },
             },
           ],
@@ -251,7 +251,7 @@ describe('Handle anyOf and oneOf', () => {
         name: 'anyOf5',
         description: 'anyOf test with different nested member schemas, leading to conflict',
         type: {
-          name: 'AnyOf5',
+          name: 'anyOf5_200_response',
           kind: 'OBJECT',
           fields: [
             {
@@ -271,8 +271,7 @@ describe('Handle anyOf and oneOf', () => {
      * The member schemas are of different types. One is an object type and the other
      * is an scalar type.
      *
-     * This leads to a conlict. As a result, the field will use the arbitrary JSON
-     * type.
+     * This leads to a conlict. As a result, a nested field with the scalar's name will be generated.
      */
     it('anyOf test with incompatible member schema types', async () => {
       const result = await execute({
@@ -288,9 +287,22 @@ describe('Handle anyOf and oneOf', () => {
         name: 'anyOf6',
         description: 'anyOf test with incompatible member schema types',
         type: {
-          name: 'JSON',
-          kind: 'SCALAR',
-          fields: null,
+          name: 'anyOf6_200_response',
+          kind: 'OBJECT',
+          fields: [
+            {
+              name: 'commonAttribute',
+              type: {
+                name: 'String',
+              },
+            },
+            {
+              name: 'String',
+              type: {
+                name: 'String',
+              },
+            },
+          ],
         },
       });
     });
@@ -300,8 +312,7 @@ describe('Handle anyOf and oneOf', () => {
      *
      * Only one of the member schemas is an object type schema.
      *
-     * The created type should be able to pick out the object type schema without
-     * defaulting to the arbitrary JSON type.
+     * The created type will have a "JSON" field with "JSON" type that resolves the entire object.
      */
     it('anyOf test with some extraneous member schemas', async () => {
       const result = await execute({
@@ -326,6 +337,12 @@ describe('Handle anyOf and oneOf', () => {
                 name: 'String',
               },
             },
+            {
+              name: 'JSON',
+              type: {
+                name: 'JSON',
+              },
+            },
           ],
         },
       });
@@ -334,8 +351,7 @@ describe('Handle anyOf and oneOf', () => {
     /**
      * anyOf contains three member schemas
      *
-     * None of the member schemas are object type schemas. As a result, it defaults to the
-     * arbitrary JSON type.
+     * None of the member schemas are object type schemas. As a result, it will create fields for each scalar type.
      */
     it('anyOf test with no object type member schemas', async () => {
       const result = await execute({
@@ -351,9 +367,22 @@ describe('Handle anyOf and oneOf', () => {
         name: 'anyOf8',
         description: 'anyOf test with no object type member schemas',
         type: {
-          name: 'JSON',
-          kind: 'SCALAR',
-          fields: null,
+          name: 'anyOf8_200_response',
+          kind: 'OBJECT',
+          fields: [
+            {
+              name: 'Int',
+              type: {
+                name: 'Int',
+              },
+            },
+            {
+              name: 'JSON',
+              type: {
+                name: 'JSON',
+              },
+            },
+          ],
         },
       });
     });
@@ -404,7 +433,7 @@ describe('Handle anyOf and oneOf', () => {
         name: 'anyOf10',
         description: 'Basic anyOf test with allOf',
         type: {
-          name: 'AnyOf10',
+          name: 'anyOf10_200_response',
           kind: 'OBJECT',
           fields: [
             {
@@ -451,7 +480,7 @@ describe('Handle anyOf and oneOf', () => {
         name: 'anyOf11',
         description: 'anyOf test with allOf, requiring anyOf collapse',
         type: {
-          name: 'AnyOf11',
+          name: 'anyOf11_200_response',
           kind: 'OBJECT',
           fields: [
             {
@@ -478,7 +507,7 @@ describe('Handle anyOf and oneOf', () => {
     });
   });
 
-  describe('oneOf', () => {
+  describe.only('oneOf', () => {
     const oneOfAst = parse(oneOfQuery);
 
     /**
