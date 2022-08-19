@@ -317,7 +317,7 @@ describe('Handle anyOf and oneOf', () => {
         name: 'anyOf7',
         description: 'anyOf test with some extraneous member schemas',
         type: {
-          name: 'AnyOf7',
+          name: 'anyOf7_200_response',
           kind: 'OBJECT',
           fields: [
             {
@@ -501,11 +501,11 @@ describe('Handle anyOf and oneOf', () => {
         name: 'oneOf',
         description: 'Basic oneOf test',
         type: {
-          name: 'OneOf',
+          name: 'oneOf_200_response',
           kind: 'UNION',
           possibleTypes: [
             {
-              name: 'CommonAttributeObject',
+              name: 'commonAttributeObject',
               fields: [
                 {
                   type: {
@@ -515,7 +515,7 @@ describe('Handle anyOf and oneOf', () => {
               ],
             },
             {
-              name: 'DifferentAttributeObject',
+              name: 'differentAttributeObject',
               fields: [
                 {
                   type: {
@@ -635,7 +635,7 @@ describe('Handle anyOf and oneOf', () => {
           kind: 'UNION',
           possibleTypes: [
             {
-              name: 'CommonAttributeObject',
+              name: 'commonAttributeObject',
               fields: [
                 {
                   type: {
@@ -645,7 +645,7 @@ describe('Handle anyOf and oneOf', () => {
               ],
             },
             {
-              name: 'DifferentAttributeObject',
+              name: 'differentAttributeObject',
               fields: [
                 {
                   type: {
@@ -684,7 +684,7 @@ describe('Handle anyOf and oneOf', () => {
           kind: 'UNION',
           possibleTypes: [
             {
-              name: 'CommonAttributeObject',
+              name: 'commonAttributeObject',
               fields: [
                 {
                   type: {
@@ -694,7 +694,7 @@ describe('Handle anyOf and oneOf', () => {
               ],
             },
             {
-              name: 'DifferentAttributeObject',
+              name: 'differentAttributeObject',
               fields: [
                 {
                   type: {
