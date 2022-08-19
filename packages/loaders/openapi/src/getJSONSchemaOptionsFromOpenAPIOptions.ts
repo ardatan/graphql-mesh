@@ -29,18 +29,21 @@ interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
   logger?: Logger;
 }
 
-export async function getJSONSchemaOptionsFromOpenAPIOptions({
-  oasFilePath,
-  fallbackFormat,
-  cwd,
-  fetch: fetchFn,
-  baseUrl,
-  schemaHeaders,
-  operationHeaders,
-  queryParams = {},
-  selectQueryOrMutationField = [],
-  logger = new DefaultLogger('getJSONSchemaOptionsFromOpenAPIOptions'),
-}: GetJSONSchemaOptionsFromOpenAPIOptionsParams) {
+export async function getJSONSchemaOptionsFromOpenAPIOptions(
+  name: string,
+  {
+    oasFilePath,
+    fallbackFormat,
+    cwd,
+    fetch: fetchFn,
+    baseUrl,
+    schemaHeaders,
+    operationHeaders,
+    queryParams = {},
+    selectQueryOrMutationField = [],
+    logger = new DefaultLogger('getJSONSchemaOptionsFromOpenAPIOptions'),
+  }: GetJSONSchemaOptionsFromOpenAPIOptionsParams
+) {
   const fieldTypeMap: Record<string, 'query' | 'mutation'> = {};
   for (const { fieldName, type } of selectQueryOrMutationField) {
     fieldTypeMap[fieldName] = type;
@@ -322,9 +325,9 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
           );
           responseByStatusCode[responseKey].links = responseByStatusCode[responseKey].links || {};
           for (const linkName in dereferencedLinkObj.links) {
-            const linkObj = responseObj.links[linkName];
+            let linkObj = responseObj.links[linkName];
             if ('$ref' in linkObj) {
-              throw new Error('Unexpected $ref in dereferenced link object');
+              linkObj = resolvePath(linkObj.$ref, oasOrSwagger) as OpenAPIV3.LinkObject;
             }
             const args: Record<string, string> = {};
             for (const parameterName in linkObj.parameters || {}) {
@@ -349,7 +352,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions({
                     description: linkObj.description,
                   };
                 } else {
-                  console.warn('Missing operationId skipping...');
+                  logger.debug('Missing operationId skipping...');
                 }
               }
             } else if ('operationId' in linkObj) {

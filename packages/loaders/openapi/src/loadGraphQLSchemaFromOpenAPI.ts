@@ -9,7 +9,7 @@ import { getJSONSchemaOptionsFromOpenAPIOptions } from './getJSONSchemaOptionsFr
  * then load it with `loadGraphQLSchemaFromBundle`.
  */
 export async function loadGraphQLSchemaFromOpenAPI(name: string, options: OpenAPILoaderOptions) {
-  const extraJSONSchemaOptions = await getJSONSchemaOptionsFromOpenAPIOptions(options);
+  const extraJSONSchemaOptions = await getJSONSchemaOptionsFromOpenAPIOptions(name, options);
   return loadGraphQLSchemaFromJSONSchemas(name, {
     ...options,
     ...extraJSONSchemaOptions,

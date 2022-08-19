@@ -1,6 +1,6 @@
-import { GraphQLJSON, SchemaComposer } from 'graphql-compose';
+import { GraphQLJSON, ObjectTypeComposer, ObjectTypeComposerFieldConfig, SchemaComposer } from 'graphql-compose';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
-import { JSONSchemaOperationConfig, OperationHeadersConfiguration } from './types';
+import { JSONSchemaLinkConfig, JSONSchemaOperationConfig, OperationHeadersConfiguration } from './types';
 import { getOperationMetadata, isPubSubOperationConfig, isFileUpload, cleanObject } from './utils';
 import { memoize1 } from '@graphql-tools/utils';
 import urlJoin from 'url-join';
@@ -26,6 +26,7 @@ import { process } from '@graphql-mesh/cross-helpers';
 import { getHeadersObj } from '@graphql-mesh/utils';
 
 export interface AddExecutionLogicToComposerOptions {
+  schemaComposer: SchemaComposer;
   baseUrl: string;
   operations: JSONSchemaOperationConfig[];
   operationHeaders?: OperationHeadersConfiguration;
@@ -86,8 +87,9 @@ const responseMetadataType = new GraphQLObjectType({
 });
 
 export async function addExecutionLogicToComposer(
-  schemaComposer: SchemaComposer,
+  name: string,
   {
+    schemaComposer,
     fetch: globalFetch,
     logger,
     operations,
@@ -100,6 +102,7 @@ export async function addExecutionLogicToComposer(
 ) {
   logger.debug(`Attaching execution logic to the schema`);
   const qsOptions = { ...defaultQsOptions, ...queryStringOptions };
+  const linkResolverMapByField = new Map<string, Record<string, GraphQLFieldResolver<any, any>>>();
   for (const operationConfig of operations) {
     const { httpMethod, rootTypeName, fieldName } = getOperationMetadata(operationConfig);
     const operationLogger = logger.child(`${rootTypeName}.${fieldName}`);
@@ -279,6 +282,7 @@ ${operationConfig.description || ''}
           } else if (response.status === 204) {
             responseJson = {};
           } else {
+            logger.debug(`Unexpected response in ${fieldName};\n\t${responseText}`);
             return createError(`Unexpected response`, {
               url: fullPath,
               method: httpMethod,
@@ -319,6 +323,11 @@ ${operationConfig.description || ''}
 
         const addResponseMetadata = (obj: any) => {
           Object.defineProperties(obj, {
+            $field: {
+              get() {
+                return operationConfig.field;
+              },
+            },
             $url: {
               get() {
                 return fullPath.split('?')[0];
@@ -412,24 +421,48 @@ ${operationConfig.description || ''}
           : addResponseMetadata(responseJson);
       };
 
-      if ('links' in operationConfig) {
-        const queryFields = schemaComposer.Query.getFields();
-        for (const linkName in operationConfig.links) {
-          const linkObj = operationConfig.links[linkName];
-          const typeTC = schemaComposer.getOTC(field.type.getTypeName());
+      const handleLinkMap = (linkMap: Record<string, JSONSchemaLinkConfig>, typeTC: ObjectTypeComposer) => {
+        for (const linkName in linkMap) {
           typeTC.addFields({
             [linkName]: () => {
-              const targetField = queryFields[linkObj.fieldName] || schemaComposer.Mutation.getField(linkObj.fieldName);
+              const linkObj = linkMap[linkName];
+              let linkResolverFieldMap = linkResolverMapByField.get(operationConfig.field);
+              if (!linkResolverFieldMap) {
+                linkResolverFieldMap = {};
+                linkResolverMapByField.set(operationConfig.field, linkResolverFieldMap);
+              }
+              let targetField: ObjectTypeComposerFieldConfig<any, any> | undefined;
+              try {
+                targetField = schemaComposer.Query.getField(linkObj.fieldName);
+              } catch {
+                try {
+                  targetField = schemaComposer.Mutation.getField(linkObj.fieldName);
+                } catch {}
+              }
+              if (!targetField) {
+                logger.debug(`Field ${linkObj.fieldName} not found in ${name} for link ${linkName}`);
+              }
+              linkResolverFieldMap[linkName] = (root, args, context, info) =>
+                linkResolver(linkObj.args, targetField.resolve, root, args, context, info);
               return {
                 ...targetField,
                 args: {},
                 description: linkObj.description || targetField.description,
-                resolve: (root, args, context, info) =>
-                  linkResolver(linkObj.args, targetField.resolve, root, args, context, info),
+                // Pick the correct link resolver if there are many link for the same return type used by different operations
+                resolve: (root, args, context, info) => {
+                  const linkResolverFieldMapForCurrentField =
+                    linkResolverMapByField.get(root.$field) ?? linkResolverFieldMap;
+                  return linkResolverFieldMapForCurrentField[linkName](root, args, context, info);
+                },
               };
             },
           });
         }
+      };
+
+      if ('links' in operationConfig) {
+        const typeTC = schemaComposer.getOTC(field.type.getTypeName());
+        handleLinkMap(operationConfig.links, typeTC);
       }
 
       if ('exposeResponseMetadata' in operationConfig && operationConfig.exposeResponseMetadata) {
@@ -468,22 +501,8 @@ ${operationConfig.description || ''}
                   },
                 });
               }
-              const queryFields = schemaComposer.Query.getFields();
-              for (const linkName in responseConfig.links || []) {
-                typeTC.addFields({
-                  [linkName]: () => {
-                    const linkObj = responseConfig.links[linkName];
-                    const targetField =
-                      queryFields[linkObj.fieldName] || schemaComposer.Mutation.getField(linkObj.fieldName);
-                    return {
-                      ...targetField,
-                      args: {},
-                      description: linkObj.description || targetField.description,
-                      resolve: (root, args, context, info) =>
-                        linkResolver(linkObj.args, targetField.resolve, root, args, context, info),
-                    };
-                  },
-                });
+              if (responseConfig.links) {
+                handleLinkMap(responseConfig.links, typeTC as ObjectTypeComposer);
               }
             }
           }

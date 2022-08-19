@@ -15,7 +15,7 @@ jest.setTimeout(15000);
 
 describe('example_api', () => {
   beforeAll(async () => {
-    createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
+    createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api', {
       fetch,
       baseUrl,
       oasFilePath: '../../../handlers/openapi/test/fixtures/example_oas.json',
@@ -31,7 +31,7 @@ describe('example_api', () => {
 
   it('should generate the bundle correctly', async () => {
     expect(
-      await createBundle('test', {
+      await createBundle('example_api', {
         fetch,
         baseUrl,
         oasFilePath: '../../../handlers/openapi/test/fixtures/example_oas.json',
@@ -1252,7 +1252,7 @@ describe('example_api', () => {
       },
     };
 
-    const schema = await loadGraphQLSchemaFromOpenAPI('test', options);
+    const schema = await loadGraphQLSchemaFromOpenAPI('example_api', options);
 
     const query = /* GraphQL */ `
       {
@@ -1851,7 +1851,7 @@ describe('example_api', () => {
       ],
     };
 
-    const promise2 = loadGraphQLSchemaFromOpenAPI('test', options).then(schema => {
+    const promise2 = loadGraphQLSchemaFromOpenAPI('example_api', options).then(schema => {
       const ast = parse(query);
       const errors = validate(schema, ast);
       expect(errors).toEqual([]);
@@ -1953,7 +1953,7 @@ describe('example_api', () => {
           limit: '1',
         },
       };
-      const schema = await loadGraphQLSchemaFromOpenAPI('test', options);
+      const schema = await loadGraphQLSchemaFromOpenAPI('example_api', options);
       const query = /* GraphQL */ `
         {
           getUsers {
@@ -1989,7 +1989,7 @@ describe('example_api', () => {
           limit: 1,
         },
       };
-      const schema = await loadGraphQLSchemaFromOpenAPI('test', options);
+      const schema = await loadGraphQLSchemaFromOpenAPI('example_api', options);
       const query = /* GraphQL */ `
         {
           getUsers(limit: 2) {
@@ -2030,7 +2030,7 @@ describe('example_api', () => {
         },
       };
 
-      const schema = await loadGraphQLSchemaFromOpenAPI('test', options);
+      const schema = await loadGraphQLSchemaFromOpenAPI('example_api', options);
 
       const query = /* GraphQL */ `
         {
@@ -2060,7 +2060,7 @@ describe('example_api', () => {
         },
       };
 
-      const schema = await loadGraphQLSchemaFromOpenAPI('test', options);
+      const schema = await loadGraphQLSchemaFromOpenAPI('example_api', options);
 
       const query = /* GraphQL */ `
         {
@@ -2088,7 +2088,7 @@ describe('example_api', () => {
       fetch,
     };
 
-    const schema = await loadGraphQLSchemaFromOpenAPI('test', options);
+    const schema = await loadGraphQLSchemaFromOpenAPI('example_api', options);
 
     const query = /* GraphQL */ `
       {

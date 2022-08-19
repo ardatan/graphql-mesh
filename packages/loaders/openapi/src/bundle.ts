@@ -15,7 +15,7 @@ export async function createBundle(
   openApiLoaderOptions: OpenAPILoaderOptions
 ): Promise<OpenAPILoaderBundle> {
   const { operations, baseUrl, cwd, fetch, schemaHeaders, operationHeaders } =
-    await getJSONSchemaOptionsFromOpenAPIOptions(openApiLoaderOptions);
+    await getJSONSchemaOptionsFromOpenAPIOptions(name, openApiLoaderOptions);
   return createJSONSchemaLoaderBundle(name, {
     operations,
     baseUrl,
