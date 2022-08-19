@@ -1,11 +1,11 @@
 
 * `baseUrl` (type: `String`)
-* `operationHeaders` -  One of: 
+* `operationHeaders` -  One of:
   * `JSON`
   * `String`
 * `schemaHeaders` (type: `JSON`)
-* `operations` -  (required) Array of: 
-  * `object`: 
+* `operations` -  (required) Array of:
+  * `object`:
     * `field` (type: `String`, required) - This Field based on the field name of the URL path.
 Example: "https://MyAPIURL.com/FieldNameHere/",
 so we will set the "field: FieldNameHere".
@@ -55,7 +55,7 @@ Example: 'argTypeMap: ID: String'
     * `binary` (type: `Boolean`) - If true, this operation cannot have requestSchema or requestSample
 And the request body will be passed as binary with its mime type
 unless you define an explicit Content-Type header
-  * `object`: 
+  * `object`:
     * `field` (type: `String`, required)
     * `description` (type: `String`)
     * `type` (type: `String (Query | Mutation | Subscription)`, required)
@@ -71,9 +71,8 @@ the underlying HTTP request
     * `pubsubTopic` (type: `String`, required)
 * `ignoreErrorResponses` (type: `Boolean`)
 * `queryParams` (type: `Any`)
-* `noDeduplication` (type: `Boolean`) - By default, the handler will try to deduplicate the similar types to reduce the complexity of the final schema.
 You can disable this behavior by setting this to true.
-* `queryStringOptions` (type: `Object`): 
+* `queryStringOptions` (type: `Object`):
   * `indices` (type: `Boolean`) - When arrays are stringified, by default they are not given explicit indices:
 `a=b&a=c&a=d`
 You may override this by setting the indices option to true:

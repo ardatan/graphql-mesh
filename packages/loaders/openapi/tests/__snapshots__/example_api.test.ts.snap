@@ -1148,10 +1148,10 @@ Object {
             "$ref": "#/definitions/trashcan",
           },
           "postPaper": Object {
-            "$ref": "#/definitions/getNumberOfCleanDesks_200_response",
+            "$ref": "#/definitions/postPaper_201_response",
           },
           "postScanner": Object {
-            "$ref": "#/definitions/getCopier_200_response",
+            "$ref": "#/definitions/postScanner_200_response",
           },
           "postUser": Object {
             "$ref": "#/definitions/user",
@@ -1163,7 +1163,7 @@ Object {
             "$ref": "#/definitions/project-with-id",
           },
           "post_status": Object {
-            "$ref": "#/definitions/getNumberOfCleanDesks_200_response",
+            "$ref": "#/definitions/post_status_200_response",
           },
         },
         "title": "Mutation",
@@ -1226,7 +1226,7 @@ Object {
             "$ref": "#/definitions/getNumberOfCleanDesks_200_response",
           },
           "getNumberOfDirtyDesks": Object {
-            "$ref": "#/definitions/getNumberOfCleanDesks_200_response",
+            "$ref": "#/definitions/getNumberOfDirtyDesks_200_response",
           },
           "getOffice": Object {
             "$ref": "#/definitions/office",
@@ -1241,7 +1241,7 @@ Object {
             "$ref": "#/definitions/getProductReviews_200_response",
           },
           "getScanner": Object {
-            "$ref": "#/definitions/getCopier_200_response",
+            "$ref": "#/definitions/getScanner_200_response",
           },
           "getSecure": Object {
             "$ref": "#/definitions/getSecure_200_response",
@@ -1256,7 +1256,7 @@ Object {
             "$ref": "#/definitions/car",
           },
           "getUserFriends": Object {
-            "$ref": "#/definitions/getUsers_202_response",
+            "$ref": "#/definitions/getUserFriends_200_response",
           },
           "getUsers": Object {
             "$ref": "#/definitions/getUsers_202_response",
@@ -1301,13 +1301,13 @@ Object {
             "$ref": "#/definitions/queryInput_getOffice",
           },
           "getOfficeTrashCan": Object {
-            "$ref": "#/definitions/queryInput_getUserByUsername",
+            "$ref": "#/definitions/queryInput_getOfficeTrashCan",
           },
           "getProductReviews": Object {
             "$ref": "#/definitions/queryInput_getProductReviews",
           },
           "getScanner": Object {
-            "$ref": "#/definitions/queryInput_getCopier",
+            "$ref": "#/definitions/queryInput_getScanner",
           },
           "getSnack": Object {
             "$ref": "#/definitions/queryInput_getSnack",
@@ -1316,10 +1316,10 @@ Object {
             "$ref": "#/definitions/queryInput_getUserByUsername",
           },
           "getUserCar": Object {
-            "$ref": "#/definitions/queryInput_getUserByUsername",
+            "$ref": "#/definitions/queryInput_getUserCar",
           },
           "getUserFriends": Object {
-            "$ref": "#/definitions/queryInput_getUserByUsername",
+            "$ref": "#/definitions/queryInput_getUserFriends",
           },
           "getUsers": Object {
             "$ref": "#/definitions/queryInput_getUsers",
@@ -1538,11 +1538,11 @@ Object {
           "$resolvedRef": "/components/schemas/trashcan",
           "properties": Object {
             "brand": Object {
-              "$ref": "#/definitions/query_getAllAssets_items_oneOf_2_brand",
+              "type": "object",
             },
             "contents": Object {
               "items": Object {
-                "$ref": "#/definitions/query_getAllAssets_items_oneOf_2_brand",
+                "type": "object",
               },
               "type": "array",
             },
@@ -1577,6 +1577,11 @@ Object {
       "getNumberOfCleanDesks_200_response": Object {
         "$resolvedRef": "/paths/~1cleanDesks/get/responses/200/content/text~1plain/schema",
         "title": "getNumberOfCleanDesks_200_response",
+        "type": "string",
+      },
+      "getNumberOfDirtyDesks_200_response": Object {
+        "$resolvedRef": "/paths/~1dirtyDesks/get/responses/200/content/text~1plain/schema",
+        "title": "getNumberOfDirtyDesks_200_response",
         "type": "string",
       },
       "getPapers_2XX_response": Object {
@@ -1618,6 +1623,16 @@ Object {
         "title": "getProductReviews_200_response",
         "type": "array",
       },
+      "getScanner_200_response": Object {
+        "$resolvedRef": "/paths/~1scanner/get/responses/200/content/application~1json/schema",
+        "properties": Object {
+          "body": Object {
+            "type": "string",
+          },
+        },
+        "title": "getScanner_200_response",
+        "type": "object",
+      },
       "getSecure_200_response": Object {
         "$resolvedRef": "/paths/~1secure/get/responses/200/content/text~1plain/schema",
         "description": "A secure message.",
@@ -1629,6 +1644,56 @@ Object {
         "description": "What snack is offered.",
         "title": "getSnack_200_response",
         "type": "string",
+      },
+      "getUserFriends_200_response": Object {
+        "$resolvedRef": "/paths/~1users~1{username}~1friends/get/responses/200/content/application~1json/schema",
+        "items": Object {
+          "$resolvedRef": "/components/schemas/user",
+          "description": "A user represents a natural person",
+          "properties": Object {
+            "address": Object {
+              "$ref": "#/definitions/address",
+            },
+            "address2": Object {
+              "$ref": "#/definitions/address",
+            },
+            "employerId": Object {
+              "description": "The identifier of the company a user works for",
+              "type": "string",
+            },
+            "hobbies": Object {
+              "description": "The hobbies of this user",
+              "items": Object {
+                "type": "string",
+              },
+              "type": "array",
+            },
+            "name": Object {
+              "description": "The legal name of a user",
+              "type": "string",
+            },
+            "nomenclature": Object {
+              "$ref": "#/definitions/query_getUsers_items_nomenclature",
+            },
+            "status": Object {
+              "$ref": "#/definitions/query_getUsers_items_status",
+            },
+            "username": Object {
+              "description": "The identifier of a user",
+              "type": "string",
+            },
+          },
+          "required": Array [
+            "name",
+            "address",
+            "employerId",
+            "hobbies",
+          ],
+          "title": "user",
+          "type": "object",
+        },
+        "title": "getUserFriends_200_response",
+        "type": "array",
       },
       "getUsers_202_response": Object {
         "$resolvedRef": "/paths/~1users/get/responses/202/content/application~1json/schema",
@@ -1714,7 +1779,7 @@ Object {
       "mutationInput_postScanner": Object {
         "properties": Object {
           "input": Object {
-            "$resolvedRef": "/paths/~1papers/post/requestBody/content/text~1plain/schema",
+            "$resolvedRef": "/paths/~1scanner~1{path}/post/requestBody/content/text~1plain/schema",
             "type": "string",
           },
           "path": Object {
@@ -1859,6 +1924,26 @@ Object {
         "title": "paths_trashcans_{username}_post_requestBody_content_application_json_schema",
         "type": "object",
       },
+      "postPaper_201_response": Object {
+        "$resolvedRef": "/paths/~1papers/post/responses/201/content/text~1plain/schema",
+        "title": "postPaper_201_response",
+        "type": "string",
+      },
+      "postScanner_200_response": Object {
+        "$resolvedRef": "/paths/~1scanner~1{path}/post/responses/200/content/application~1json/schema",
+        "properties": Object {
+          "body": Object {
+            "type": "string",
+          },
+        },
+        "title": "postScanner_200_response",
+        "type": "object",
+      },
+      "post_status_200_response": Object {
+        "$resolvedRef": "/paths/~1status/post/responses/200/content/text~1plain/schema",
+        "title": "post_status_200_response",
+        "type": "string",
+      },
       "product-with-id": Object {
         "$resolvedRef": "/components/schemas/product-with-id",
         "description": "A product",
@@ -2002,6 +2087,18 @@ Object {
         "title": "queryInput_getOffice",
         "type": "object",
       },
+      "queryInput_getOfficeTrashCan": Object {
+        "properties": Object {
+          "username": Object {
+            "description": "Identifier of a user.",
+            "name": "username",
+            "nullable": false,
+            "type": "string",
+          },
+        },
+        "title": "queryInput_getOfficeTrashCan",
+        "type": "object",
+      },
       "queryInput_getProductReviews": Object {
         "properties": Object {
           "id": Object {
@@ -2019,6 +2116,17 @@ Object {
           },
         },
         "title": "queryInput_getProductReviews",
+        "type": "object",
+      },
+      "queryInput_getScanner": Object {
+        "properties": Object {
+          "query": Object {
+            "description": undefined,
+            "name": "query",
+            "type": "string",
+          },
+        },
+        "title": "queryInput_getScanner",
         "type": "object",
       },
       "queryInput_getSnack": Object {
@@ -2065,6 +2173,30 @@ Object {
           },
         },
         "title": "queryInput_getUserByUsername",
+        "type": "object",
+      },
+      "queryInput_getUserCar": Object {
+        "properties": Object {
+          "username": Object {
+            "description": "Identifier of a user.",
+            "name": "username",
+            "nullable": false,
+            "type": "string",
+          },
+        },
+        "title": "queryInput_getUserCar",
+        "type": "object",
+      },
+      "queryInput_getUserFriends": Object {
+        "properties": Object {
+          "username": Object {
+            "description": "Identifier of a user.",
+            "name": "username",
+            "nullable": false,
+            "type": "string",
+          },
+        },
+        "title": "queryInput_getUserFriends",
         "type": "object",
       },
       "queryInput_getUsers": Object {
@@ -2152,10 +2284,6 @@ Object {
           },
         ],
         "title": "query_getAllAssets_items",
-        "type": "object",
-      },
-      "query_getAllAssets_items_oneOf_2_brand": Object {
-        "title": "query_getAllAssets_items_oneOf_2_brand",
         "type": "object",
       },
       "query_getProductReviews_items": Object {
@@ -2287,11 +2415,11 @@ Object {
         "$resolvedRef": "/components/schemas/trashcan",
         "properties": Object {
           "brand": Object {
-            "$ref": "#/definitions/query_getAllAssets_items_oneOf_2_brand",
+            "type": "object",
           },
           "contents": Object {
             "items": Object {
-              "$ref": "#/definitions/query_getAllAssets_items_oneOf_2_brand",
+              "type": "object",
             },
             "type": "array",
           },
@@ -2412,7 +2540,7 @@ type Query {
   \\"Another endpoint to test authentication.\\"
   get_project_with_id(project_id: Int!): project_with_id
   \\"Used to test link parameters with variables\\"
-  getScanner(query: String): getCopier_200_response
+  getScanner(query: String): getScanner_200_response
   \\"Endpoint to test sending of headers.\\"
   getSnack(snack_type: queryInput_getSnack_snack_type!, snack_size: queryInput_getSnack_snack_size!): String
   \\"Endpoint to test sending of options.\\"
@@ -2530,11 +2658,9 @@ enum query_getUserCar_rating {
 union query_getAllAssets_items = car | user | trashcan
 
 type trashcan {
-  brand: query_getAllAssets_items_oneOf_2_brand
-  contents: [query_getAllAssets_items_oneOf_2_brand]
+  brand: JSON
+  contents: [JSON]
 }
-
-scalar query_getAllAssets_items_oneOf_2_brand
 
 enum queryInput_getCookie_cookie_type {
   chocolate_chip
@@ -2563,8 +2689,6 @@ type getCopier_200_response {
   variableLink: getCopier_200_response
   \\"Used to test link parameters with variables\\"
   everythingLink: getCopier_200_response
-  \\"Used to test link parameters with variables\\"
-  everythingLink2: getCopier_200_response
 }
 
 \\"Represents empty values\\"
@@ -2642,6 +2766,18 @@ type project_with_id {
   ProjectLead: user
 }
 
+type getScanner_200_response {
+  body: String
+  \\"Used to test link parameters with variables\\"
+  basicLink: getCopier_200_response
+  \\"Used to test link parameters with variables\\"
+  constantLink: getCopier_200_response
+  \\"Used to test link parameters with variables\\"
+  variableLink: getCopier_200_response
+  \\"Used to test link parameters with variables\\"
+  everythingLink: getCopier_200_response
+}
+
 enum queryInput_getSnack_snack_type {
   chips
   soda
@@ -2672,14 +2808,14 @@ type Mutation {
   \\"An endpoint to test authenticated POST requests.\\"
   post_project_with_id(input: project_with_id_Input): project_with_id
   \\"Used to test link parameters with variables\\"
-  postScanner(path: String!, query: String, input: String): getCopier_200_response
+  postScanner(path: String!, query: String, input: String): postScanner_200_response
   \\"Endpoint to test placeholder objects to wrap response objects.\\"
   post_status(globalquery: String!, input: paths_status_post_requestBody_content_application_json_schema_Input): String
   \\"Add new contents to the trashcan of a specific owner\\"
   postOfficeTrashCan(
     \\"Identifier of a user.\\"
     username: String!
-    input: paths_trashcans__LEFT_CURLY_BRACE_username_RIGHT_CURLY_BRACE__post_requestBody_content_application_json_schema_Input
+    input: JSON
   ): trashcan
 }
 
@@ -2742,9 +2878,21 @@ input project_with_id_Input {
   patentId: String
 }
 
-input paths_status_post_requestBody_content_application_json_schema_Input {
-  hello: String
+type postScanner_200_response {
+  body: String
+  \\"Used to test link parameters with variables\\"
+  basicLink: getCopier_200_response
+  \\"Used to test link parameters with variables\\"
+  constantLink: getCopier_200_response
+  \\"Used to test link parameters with variables\\"
+  variableLink: getCopier_200_response
+  \\"Used to test link parameters with variables\\"
+  everythingLink: getCopier_200_response
+  \\"Used to test link parameters with variables\\"
+  everythingLink2: getCopier_200_response
 }
 
-scalar paths_trashcans__LEFT_CURLY_BRACE_username_RIGHT_CURLY_BRACE__post_requestBody_content_application_json_schema_Input"
+input paths_status_post_requestBody_content_application_json_schema_Input {
+  hello: String
+}"
 `;

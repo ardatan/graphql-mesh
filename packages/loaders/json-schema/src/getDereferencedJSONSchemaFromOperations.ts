@@ -12,7 +12,6 @@ export async function getDereferencedJSONSchemaFromOperations({
   fetchFn,
   schemaHeaders,
   ignoreErrorResponses,
-  noDeduplication = false,
   baseUrl,
   operationHeaders,
   queryParams,
@@ -23,7 +22,6 @@ export async function getDereferencedJSONSchemaFromOperations({
   fetchFn: WindowOrWorkerGlobalScope['fetch'];
   schemaHeaders?: Record<string, string>;
   ignoreErrorResponses?: boolean;
-  noDeduplication?: boolean;
   baseUrl: string;
   operationHeaders: Record<string, string>;
   queryParams: Record<string, string | number | boolean>;
@@ -48,7 +46,6 @@ export async function getDereferencedJSONSchemaFromOperations({
   });
   logger.debug(`Healing JSON Schema`);
   const healedSchema = await healJSONSchema(fullyDeferencedSchema, {
-    noDeduplication,
     logger: logger.child('healJSONSchema'),
   });
   return healedSchema as JSONSchemaObject;

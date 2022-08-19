@@ -1,30 +1,11 @@
 import { getInterpolationKeys } from '@graphql-mesh/string-interpolation';
 import { Logger } from '@graphql-mesh/types';
 import { defaultImportFn, DefaultLogger, readFileOrUrl } from '@graphql-mesh/utils';
-import { JSONSchema, JSONSchemaObject } from 'json-machete';
+import { AnySchema, JSONSchema, JSONSchemaObject } from 'json-machete';
 import toJsonSchema from 'to-json-schema';
 import { JSONSchemaOperationResponseConfig } from '.';
 import { JSONSchemaOperationConfig } from './types';
 import { getOperationMetadata } from './utils';
-
-export const anySchema: JSONSchemaObject = {
-  title: 'Any',
-  anyOf: [
-    {
-      type: 'object',
-      additionalProperties: true,
-    },
-    {
-      type: 'string',
-    },
-    {
-      type: 'number',
-    },
-    {
-      type: 'boolean',
-    },
-  ],
-};
 
 async function handleOperationResponseConfig(
   operationResponseConfig: JSONSchemaOperationResponseConfig,
@@ -81,13 +62,7 @@ async function handleOperationResponseConfig(
     generatedSchema.examples = [sample];
     return generatedSchema as any;
   } else {
-    const generatedSchema: JSONSchemaObject = operationResponseConfig.responseTypeName
-      ? {
-          ...anySchema,
-          title: operationResponseConfig.responseTypeName,
-        }
-      : anySchema;
-    return generatedSchema;
+    return AnySchema as any;
   }
 }
 
@@ -169,7 +144,7 @@ export async function getReferencedJSONSchemaFromOperations({
       if (responseSchemas.length === 1) {
         rootTypeDefinition.properties[fieldName] = responseSchemas[0];
       } else if (responseSchemas.length === 0) {
-        rootTypeDefinition.properties[fieldName] = anySchema;
+        rootTypeDefinition.properties[fieldName] = AnySchema;
       } else {
         rootTypeDefinition.properties[fieldName] = {
           $comment: `statusCodeOneOfIndexMap:${JSON.stringify(statusCodeOneOfIndexMap)}`,

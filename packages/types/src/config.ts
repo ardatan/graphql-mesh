@@ -359,11 +359,6 @@ export interface JsonSchemaHandler {
   operations: (JsonSchemaHTTPOperation | JsonSchemaPubSubOperation)[];
   ignoreErrorResponses?: boolean;
   queryParams?: any;
-  /**
-   * By default, the handler will try to deduplicate the similar types to reduce the complexity of the final schema.
-   * You can disable this behavior by setting this to true.
-   */
-  noDeduplication?: boolean;
   queryStringOptions?: QueryStringOptions;
 }
 export interface JsonSchemaHTTPOperation {
@@ -834,7 +829,6 @@ export interface NewOpenapiHandler {
   ignoreErrorResponses?: boolean;
   selectQueryOrMutationField?: OASSelectQueryOrMutationFieldConfig[];
   queryParams?: any;
-  noDeduplication?: boolean;
 }
 export interface OASSelectQueryOrMutationFieldConfig {
   /**

@@ -14,7 +14,6 @@ type NewOpenapiHandler {
   ignoreErrorResponses: Boolean
   selectQueryOrMutationField: [OASSelectQueryOrMutationFieldConfig]
   queryParams: Any
-  noDeduplication: Boolean
 }
 
 enum FallbackFormat {

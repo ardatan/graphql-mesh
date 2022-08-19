@@ -1653,24 +1653,6 @@ describe('example_api', () => {
     });
   });
 
-  it('Throw on unparsable strings value for GraphQL JSON type objects', async () => {
-    const query = /* GraphQL */ `
-      {
-        getOfficeTrashCan(username: "arlene") {
-          brand
-        }
-      }
-    `;
-
-    const result = await execute({
-      schema: createdSchema,
-      document: parse(query),
-    });
-
-    const errorMessage = result.errors[0].message;
-    expect(errorMessage).toEqual("'Garbage Emporium' is not valid!");
-  });
-
   it('Handle input objects without defined properties with arbitrary GraphQL JSON type', async () => {
     const query = /* GraphQL */ `
       mutation {
@@ -1706,24 +1688,6 @@ describe('example_api', () => {
         },
       },
     });
-  });
-
-  it('Throw on unparsable strings value for GraphQL JSON type input', async () => {
-    const query = /* GraphQL */ `
-      mutation {
-        postOfficeTrashCan(input: { type: "sandwich", message: "moldy", tasteRating: 0 }, username: "arlene") {
-          brand
-        }
-      }
-    `;
-
-    const result = await execute({
-      schema: createdSchema,
-      document: parse(query),
-    });
-
-    const errorMessage = result.errors[0].message;
-    expect(errorMessage).toBeDefined();
   });
 
   it('UUID format becomes GraphQL UUID type', async () => {

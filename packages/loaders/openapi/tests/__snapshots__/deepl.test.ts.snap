@@ -282,7 +282,6 @@ For privacy reasons the translated document is automatically removed from the se
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "title": "getGlossaryEntries_200_response",
             "type": "string",
           },
         },
@@ -502,7 +501,7 @@ of the glossary before using it in a \`translate\` request.",
             "$ref": "#/definitions/mutationInput_deleteGlossary",
           },
           "downloadDocument": Object {
-            "$ref": "#/definitions/mutationInput_getDocumentStatus",
+            "$ref": "#/definitions/mutationInput_downloadDocument",
           },
           "getDocumentStatus": Object {
             "$ref": "#/definitions/mutationInput_getDocumentStatus",
@@ -523,7 +522,7 @@ of the glossary before using it in a \`translate\` request.",
             "$ref": "#/definitions/Glossary",
           },
           "getGlossaryEntries": Object {
-            "$ref": "#/definitions/getGlossaryEntries_200_response",
+            "type": "string",
           },
           "getLanguages": Object {
             "$ref": "#/definitions/getLanguages_200_response",
@@ -544,10 +543,10 @@ of the glossary before using it in a \`translate\` request.",
       "QueryInput": Object {
         "properties": Object {
           "getGlossary": Object {
-            "$ref": "#/definitions/mutationInput_deleteGlossary",
+            "$ref": "#/definitions/queryInput_getGlossary",
           },
           "getGlossaryEntries": Object {
-            "$ref": "#/definitions/mutationInput_deleteGlossary",
+            "$ref": "#/definitions/queryInput_getGlossaryEntries",
           },
           "getLanguages": Object {
             "$ref": "#/definitions/queryInput_getLanguages",
@@ -748,10 +747,6 @@ This parameter is only included while \`status\` is \`\\"translating\\"\`.",
         "title": "getDocumentStatus_200_response",
         "type": "object",
       },
-      "getGlossaryEntries_200_response": Object {
-        "title": "getGlossaryEntries_200_response",
-        "type": "string",
-      },
       "getLanguages_200_response": Object {
         "$resolvedRef": "/paths/~1languages/get/responses/200/content/application~1json/schema",
         "items": Object {
@@ -884,6 +879,18 @@ This parameter is only included while \`status\` is \`\\"translating\\"\`.",
           },
         },
         "title": "mutationInput_deleteGlossary",
+        "type": "object",
+      },
+      "mutationInput_downloadDocument": Object {
+        "properties": Object {
+          "document_id": Object {
+            "description": "The document ID that was sent to the client when the document was uploaded to the API.",
+            "name": "document_id",
+            "nullable": false,
+            "type": "string",
+          },
+        },
+        "title": "mutationInput_downloadDocument",
         "type": "object",
       },
       "mutationInput_getDocumentStatus": Object {
@@ -1220,6 +1227,30 @@ See the example in the \`outline_detection\` parameter's description.",
           "target_lang",
         ],
         "title": "paths_translate_post_requestBody_content_application_x_www_form_urlencoded_schema",
+        "type": "object",
+      },
+      "queryInput_getGlossary": Object {
+        "properties": Object {
+          "glossary_id": Object {
+            "description": "A unique ID assigned to the glossary.",
+            "name": "glossary_id",
+            "nullable": false,
+            "type": "string",
+          },
+        },
+        "title": "queryInput_getGlossary",
+        "type": "object",
+      },
+      "queryInput_getGlossaryEntries": Object {
+        "properties": Object {
+          "glossary_id": Object {
+            "description": "A unique ID assigned to the glossary.",
+            "name": "glossary_id",
+            "nullable": false,
+            "type": "string",
+          },
+        },
+        "title": "queryInput_getGlossaryEntries",
         "type": "object",
       },
       "queryInput_getLanguages": Object {

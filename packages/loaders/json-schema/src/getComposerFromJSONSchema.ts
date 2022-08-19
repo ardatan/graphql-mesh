@@ -523,15 +523,11 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
       }
       if (!subSchema.properties && (subSchema.anyOf || subSchema.allOf)) {
         if (subSchema.title === 'Any') {
-          const genericJSONScalar = getGenericJSONScalar({
-            schemaComposer,
-            isInput: false,
-            subSchema,
-            validateWithJSONSchema,
-          });
+          const typeComposer = schemaComposer.getAnyTC(GraphQLJSON);
           return {
-            input: genericJSONScalar,
-            output: genericJSONScalar,
+            input: typeComposer,
+            output: typeComposer,
+            description: subSchema.description,
             nullable: subSchema.nullable,
             default: subSchema.default,
           };
@@ -904,23 +900,13 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
 
           let output = subSchemaAndTypeComposers.output;
           if (Object.keys(fieldMap).length === 0) {
-            output = getGenericJSONScalar({
-              schemaComposer,
-              isInput: false,
-              subSchema: subSchemaOnly,
-              validateWithJSONSchema,
-            });
+            output = schemaComposer.getAnyTC(GraphQLJSON);
           } else if ('addFields' in output) {
             (output as ObjectTypeComposer).addFields(fieldMap);
           }
           let input = subSchemaAndTypeComposers.input;
           if (Object.keys(inputFieldMap).length === 0) {
-            input = getGenericJSONScalar({
-              schemaComposer,
-              isInput: true,
-              subSchema: subSchemaOnly,
-              validateWithJSONSchema,
-            });
+            input = schemaComposer.getAnyTC(GraphQLJSON);
           } else if (input != null && 'addFields' in input) {
             (input as InputTypeComposer).addFields(inputFieldMap);
           }
