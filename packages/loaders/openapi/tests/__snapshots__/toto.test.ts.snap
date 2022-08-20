@@ -669,13 +669,22 @@ Object {
         "$resolvedRef": "/components/schemas/FileUpdateDTO",
         "allOf": Array [
           Object {
-            "$ref": "#/definitions/BaseResourceUpdateDTO",
+            "$ref": "#/definitions/ResourceUpdateDTO",
           },
           Object {
             "$ref": "#/definitions/FilePropertiesDTO",
           },
         ],
         "title": "FileUpdateDTO",
+      },
+      "FolderCreateDTO": Object {
+        "$resolvedRef": "/components/schemas/FolderCreateDTO",
+        "allOf": Array [
+          Object {
+            "$ref": "#/definitions/ResourceCreateDTO",
+          },
+        ],
+        "title": "FolderCreateDTO",
       },
       "FolderGetWithI18nDTO": Object {
         "$resolvedRef": "/components/schemas/FolderGetWithI18nDTO",
@@ -727,6 +736,15 @@ Object {
         },
         "title": "FolderPropertiesDTO",
         "type": "object",
+      },
+      "FolderUpdateDTO": Object {
+        "$resolvedRef": "/components/schemas/FolderUpdateDTO",
+        "allOf": Array [
+          Object {
+            "$ref": "#/definitions/ResourceUpdateDTO",
+          },
+        ],
+        "title": "FolderUpdateDTO",
       },
       "Mutation": Object {
         "properties": Object {
@@ -956,6 +974,11 @@ Object {
       },
       "ResourceUpdateDTO": Object {
         "$resolvedRef": "/components/schemas/ResourceUpdateDTO",
+        "allOf": Array [
+          Object {
+            "$ref": "#/definitions/BaseResourceUpdateDTO",
+          },
+        ],
         "title": "ResourceUpdateDTO",
       },
       "_schema": Object {
@@ -1251,7 +1274,7 @@ Object {
             "$ref": "#/definitions/FileCreateDTO",
           },
           Object {
-            "$ref": "#/definitions/ResourceCreateDTO",
+            "$ref": "#/definitions/FolderCreateDTO",
           },
         ],
         "title": "paths_api_v1_companies_{companyId}_knowledgecenter_folders_{folderId}_resources_post_requestBody_content_application_json_schema",
@@ -1263,7 +1286,7 @@ Object {
             "$ref": "#/definitions/FileUpdateDTO",
           },
           Object {
-            "$ref": "#/definitions/ResourceUpdateDTO",
+            "$ref": "#/definitions/FolderUpdateDTO",
           },
         ],
         "title": "paths_api_v1_companies_{companyId}_knowledgecenter_folders_{folderId}_resources_{resourceId}_put_requestBody_content_application_json_schema",
@@ -1275,7 +1298,7 @@ Object {
             "$ref": "#/definitions/FileCreateDTO",
           },
           Object {
-            "$ref": "#/definitions/ResourceCreateDTO",
+            "$ref": "#/definitions/FolderCreateDTO",
           },
         ],
         "title": "paths_api_v1_companies_{companyId}_knowledgecenter_resources_post_requestBody_content_application_json_schema",
@@ -1287,7 +1310,7 @@ Object {
             "$ref": "#/definitions/FileUpdateDTO",
           },
           Object {
-            "$ref": "#/definitions/ResourceUpdateDTO",
+            "$ref": "#/definitions/FolderUpdateDTO",
           },
         ],
         "title": "paths_api_v1_companies_{companyId}_knowledgecenter_resources_{resourceId}_put_requestBody_content_application_json_schema",
@@ -1929,7 +1952,7 @@ union create_resource_at_any_folder_v1_201_response = FileGetWithI18nDTO | Folde
 
 input paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources_post_requestBody_content_application_json_schema_Input @oneOf {
   FileCreateDTO_Input: FileCreateDTO_Input
-  ResourceCreateDTO_Input: ResourceCreateDTO_Input
+  FolderCreateDTO_Input: FolderCreateDTO_Input
 }
 
 input FileCreateDTO_Input {
@@ -1950,7 +1973,7 @@ input FileCreateDTO_Input {
   contentType: String
 }
 
-input ResourceCreateDTO_Input {
+input FolderCreateDTO_Input {
   parentFolderId: String
   status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
   publicationStartTimestamp: DateTime
@@ -1969,7 +1992,7 @@ union update_resource_at_any_folder_v1_200_response = FileGetWithI18nDTO | Folde
 
 input paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources__LEFT_CURLY_BRACE_resourceId_RIGHT_CURLY_BRACE__put_requestBody_content_application_json_schema_Input @oneOf {
   FileUpdateDTO_Input: FileUpdateDTO_Input
-  JSON: JSON
+  FolderUpdateDTO_Input: FolderUpdateDTO_Input
 }
 
 input FileUpdateDTO_Input {
@@ -1989,18 +2012,32 @@ input FileUpdateDTO_Input {
   contentType: String
 }
 
+input FolderUpdateDTO_Input {
+  parentFolderId: String
+  status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
+  publicationStartTimestamp: DateTime
+  publicationEndTimestamp: DateTime
+  previewUrl: String
+  allowedTargetAudiences: [String]
+  shiftFenced: Boolean
+  punchedFenced: Boolean
+  geoFenced: Boolean
+  pinned: Boolean
+  i18n: JSON
+}
+
 union create_resource_at_the_root_folder_v1_201_response = FileGetWithI18nDTO | FolderGetWithI18nDTO
 
 input paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_resources_post_requestBody_content_application_json_schema_Input @oneOf {
   FileCreateDTO_Input: FileCreateDTO_Input
-  ResourceCreateDTO_Input: ResourceCreateDTO_Input
+  FolderCreateDTO_Input: FolderCreateDTO_Input
 }
 
 union update_resource_at_the_root_folder_v1_200_response = FileGetWithI18nDTO | FolderGetWithI18nDTO
 
 input paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_resources__LEFT_CURLY_BRACE_resourceId_RIGHT_CURLY_BRACE__put_requestBody_content_application_json_schema_Input @oneOf {
   FileUpdateDTO_Input: FileUpdateDTO_Input
-  JSON: JSON
+  FolderUpdateDTO_Input: FolderUpdateDTO_Input
 }
 
 \\"Represents empty values\\"

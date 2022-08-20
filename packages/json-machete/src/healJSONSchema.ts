@@ -97,12 +97,33 @@ export async function healJSONSchema(
             subSchema.oneOf.push(...subSchema.allOf[0].oneOf);
             delete subSchema.allOf;
           }
-          // if (subSchema.anyOf != null && subSchema.anyOf.length === 1 && !subSchema.properties && !subSchema.allOf) {
-          //   logger.debug(`${path} has an "anyOf" definition with only one element. Removing it.`);
-          //   const realSubschema = subSchema.anyOf[0];
-          //   delete subSchema.anyOf;
-          //   subSchema = realSubschema;
-          // }
+          // If they have title, it makes sense to keep them to reflect the schema in a better way
+          if (!subSchema.title) {
+            if (
+              subSchema.anyOf != null &&
+              subSchema.anyOf.length === 1 &&
+              !subSchema.properties &&
+              !subSchema.allOf &&
+              !subSchema.oneOf
+            ) {
+              logger.debug(`${path} has an "anyOf" definition with only one element. Removing it.`);
+              const realSubschema = subSchema.anyOf[0];
+              delete subSchema.anyOf;
+              subSchema = realSubschema;
+            }
+            if (
+              subSchema.allOf != null &&
+              subSchema.allOf.length === 1 &&
+              !subSchema.properties &&
+              !subSchema.anyOf &&
+              !subSchema.oneOf
+            ) {
+              logger.debug(`${path} has an "allOf" definition with only one element. Removing it.`);
+              const realSubschema = subSchema.allOf[0];
+              delete subSchema.allOf;
+              subSchema = realSubschema;
+            }
+          }
           if (
             subSchema.oneOf != null &&
             subSchema.oneOf.length === 1 &&

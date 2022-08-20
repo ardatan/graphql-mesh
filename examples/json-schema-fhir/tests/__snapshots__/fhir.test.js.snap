@@ -954,11 +954,11 @@ scalar id
 
 \\"The media type of the language for the expression.\\"
 enum query_resourceById_oneOf_0_meta_extension_items_valueExpression_language {
-  text_SLASH_cql
-  text_SLASH_fhirpath
-  application_SLASH_x_fhir_query
-  text_SLASH_cql_identifier
-  text_SLASH_cql_expression
+  text_cql
+  text_fhirpath
+  application_x_fhir_query
+  text_cql_identifier
+  text_cql_expression
 }
 
 \\"The parameters to the module. This collection specifies both the input and output parameters. Input parameters are provided by the caller as part of the $evaluate operation. Output parameters are included in the GuidanceResponse.\\"
