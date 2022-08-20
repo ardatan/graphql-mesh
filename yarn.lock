@@ -2732,10 +2732,10 @@
     change-case-all "1.0.14"
     tslib "~2.4.0"
 
-"@graphql-codegen/typescript-generic-sdk@3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-generic-sdk/-/typescript-generic-sdk-3.0.0.tgz#9555b693a26714c2c96c0e8fe34930d09b8fb72d"
-  integrity sha512-3pWMlXOcvQM2zUPLkZXvEFDm55mJc7s1MWBVb1wzdPAcR3Qx1qN4PiHUqu3KWy3+xLIIEGzdh3C0tS1Mx89CYQ==
+"@graphql-codegen/typescript-generic-sdk@3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-generic-sdk/-/typescript-generic-sdk-3.0.1.tgz#29e63147b11a448906a76b75646be3d28dafbb7d"
+  integrity sha512-XoCuZj1Th1wfLTsMMuqukaZBOgdM9dpQo9ut4pAurZUubxfatMJGB+OxeRJ/tc60mbJ9cEXyn2iN4mlSbtWbTg==
   dependencies:
     "@graphql-codegen/plugin-helpers" "^2.6.2"
     "@graphql-codegen/visitor-plugin-common" "2.12.1"
@@ -3118,10 +3118,10 @@
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.1.1.tgz#076d78ce99822258cf813ecc1e7fa460fa74d052"
   integrity sha512-NQ17ii0rK1b34VZonlmT2QMJFI70m0TRwbknO/ihlbatXyaktDhN/98vBiUU6kNBPljqGqyIrl2T4nY2RpFANg==
 
-"@graphql-yoga/common@2.12.6", "@graphql-yoga/common@^2.12.6":
-  version "2.12.6"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/common/-/common-2.12.6.tgz#b6a88a46aa2d5e9fcf519936b2ce0d0d5a004e79"
-  integrity sha512-HyR0B27JOZwu+C3Vu0X1Pm5KSIzkf6FSojbOiYoUR30ETsJJ7sBgVAOOk60oys0F0dFq4Ja+g6q5OgmbQQlBeg==
+"@graphql-yoga/common@2.12.7", "@graphql-yoga/common@^2.12.7":
+  version "2.12.7"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/common/-/common-2.12.7.tgz#2ec4dd054be9dbc47a9759e21f856277d0cfda4c"
+  integrity sha512-K3NJdtMwC/IKuHWqT4aQS5FrPllYXKX3uGBuOkGCyc0U9IjppLEMQpX/26bO4fa+WstCp4hHU3QxKf1dw78DMQ==
   dependencies:
     "@envelop/core" "^2.5.0"
     "@envelop/parser-cache" "^4.6.0"
@@ -3134,14 +3134,14 @@
     dset "^3.1.1"
     tslib "^2.3.1"
 
-"@graphql-yoga/node@2.13.7", "@graphql-yoga/node@^2.4.0":
-  version "2.13.7"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/node/-/node-2.13.7.tgz#a2ffe3ef6afad724f8f5dc49d2b9bcda8a5e9091"
-  integrity sha512-nrYR3as5tkicq2fLLmutM2UfWGIam/8CvHZGAWjifl6nO3H2fGuAGi2TgJIqrfvItB7CHfl/PpYlA1u/7RqstA==
+"@graphql-yoga/node@2.13.8", "@graphql-yoga/node@^2.4.0":
+  version "2.13.8"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/node/-/node-2.13.8.tgz#ae83149f7058cfd4b58309c596a17545735d5b1d"
+  integrity sha512-OjE00qEHLdmuZLOKVRTHL+7c2rPnYx0W/wv5bCOryv9gupZV+k5srcsBghmGYd5uK2/rOGlf+OsuLE1ftA7mBA==
   dependencies:
     "@envelop/core" "^2.5.0"
     "@graphql-tools/utils" "^8.8.0"
-    "@graphql-yoga/common" "^2.12.6"
+    "@graphql-yoga/common" "^2.12.7"
     "@graphql-yoga/subscription" "^2.2.3"
     "@whatwg-node/fetch" "^0.2.6"
     tslib "^2.3.1"
@@ -5351,10 +5351,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.6.5.tgz#06caea822caf9e59d5034b695186ee74154d2802"
   integrity sha512-Xjt5ZGUa5WusGZJ4WJPbOT8QOqp6nDynVFRKcUt32bOgvXEoc6o085WNkYTMO7ifAj2isEfQQ2cseE+wT6jsRw==
 
-"@types/node@16.11.49":
-  version "16.11.49"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.49.tgz#560b1ea774b61e19a89c3fc72d2dcaa3863f38b2"
-  integrity sha512-Abq9fBviLV93OiXMu+f6r0elxCzRwc0RC5f99cU892uBITL44pTvgvEqlRlPRi8EGcO1z7Cp8A4d0s/p3J/+Nw==
+"@types/node@16.11.50":
+  version "16.11.50"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.50.tgz#525c91f5555bd48b698a1c2b422d9d3b84d07e80"
+  integrity sha512-JKSl7y+w1aaEd+2B1Y6HlMvrHUFDDzL7W3faUT9ZsJ0JhT7ijPPVS24XMhHlNVd76M23mogO7ipuqPjdNrPqxQ==
 
 "@types/node@18.6.1":
   version "18.6.1"
@@ -11234,10 +11234,10 @@ graphql-type-json@0.3.2:
   resolved "https://registry.yarnpkg.com/graphql-type-json/-/graphql-type-json-0.3.2.tgz#f53a851dbfe07bd1c8157d24150064baab41e115"
   integrity sha512-J+vjof74oMlCWXSvt0DOf2APEdZOCdubEvGDUAlqH//VBYcOYsGgRW7Xzorr44LvkjiuvecWc8fChxuZZbChtg==
 
-graphql-ws@5.10.0, graphql-ws@^5.4.1, graphql-ws@^5.6.2:
-  version "5.10.0"
-  resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.10.0.tgz#3fb47a4e809e0d2e7c197f1bca754fa9f31b940e"
-  integrity sha512-ewbPzHQdRZgNCPDH9Yr6xccSeZfk3fmpO/AGGGg4KkM5gc6oAOJQ10Oui1EqprhVOyRbOll9bw2qAkOiOwfTag==
+graphql-ws@5.10.1, graphql-ws@^5.4.1, graphql-ws@^5.6.2:
+  version "5.10.1"
+  resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.10.1.tgz#c5402a62f1be13e244ab90a6306b94f643577312"
+  integrity sha512-MKm/3SRd1vj5Km8NaujsgeGRTKZQjUN5HRnIMJ8dL2UznKoxvrtQyJqTmqJt0f6vQd9AooDg/+baXo3huiY4Ew==
 
 graphql@16.6.0, "graphql@>=0.9 <0.14 || ^14.0.2 || ^15.4.0", "graphql@^0.6.0 || ^0.7.0 || ^0.8.0-b || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.2 || ^15.0.0", graphql@^14.5.3, graphql@^15.3.0:
   version "16.6.0"
@@ -20495,10 +20495,10 @@ vfile@^5.0.0:
     unist-util-stringify-position "^3.0.0"
     vfile-message "^3.0.0"
 
-vite@3.0.8:
-  version "3.0.8"
-  resolved "https://registry.yarnpkg.com/vite/-/vite-3.0.8.tgz#aa095ad8e3e5da46d9ec7e878f262678965d6531"
-  integrity sha512-AOZ4eN7mrkJiOLuw8IA7piS4IdOQyQCA81GxGsAQvAZzMRi9ZwGB3TOaYsj4uLAWK46T5L4AfQ6InNGlxX30IQ==
+vite@3.0.9:
+  version "3.0.9"
+  resolved "https://registry.yarnpkg.com/vite/-/vite-3.0.9.tgz#45fac22c2a5290a970f23d66c1aef56a04be8a30"
+  integrity sha512-waYABTM+G6DBTCpYAxvevpG50UOlZuynR0ckTK5PawNVt7ebX6X7wNXHaGIO6wYYFXSM7/WcuFuO2QzhBB6aMw==
   dependencies:
     esbuild "^0.14.47"
     postcss "^8.4.16"
