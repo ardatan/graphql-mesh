@@ -70,6 +70,7 @@ export function getUnionTypeComposers({
   const resolveType = getTypeResolverFromOutputTCs(
     ajv,
     outputTypeComposers,
+    subSchemaAndTypeComposers,
     (subSchemaAndTypeComposers.output as UnionTypeComposer).getExtension('statusCodeOneOfIndexMap') as any
   );
 

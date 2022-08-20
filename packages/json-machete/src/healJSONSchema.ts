@@ -92,19 +92,24 @@ export async function healJSONSchema(
               subSchema.additionalProperties = true;
             }
           }
-          if (subSchema.allOf != null && subSchema.allOf.length === 1 && !subSchema.properties && !subSchema.anyOf) {
-            logger.debug(`${path} has an "allOf" definition with only one element. Removing it.`);
-            const realSubschema = subSchema.allOf[0];
+          // Really edge case, but we need to support it
+          if (subSchema.allOf != null && subSchema.allOf.length === 1 && subSchema.allOf[0].oneOf && subSchema.oneOf) {
+            subSchema.oneOf.push(...subSchema.allOf[0].oneOf);
             delete subSchema.allOf;
-            subSchema = realSubschema;
           }
-          if (subSchema.anyOf != null && subSchema.anyOf.length === 1 && !subSchema.properties && !subSchema.allOf) {
-            logger.debug(`${path} has an "anyOf" definition with only one element. Removing it.`);
-            const realSubschema = subSchema.anyOf[0];
-            delete subSchema.anyOf;
-            subSchema = realSubschema;
-          }
-          if (subSchema.oneOf != null && subSchema.oneOf.length === 1 && !subSchema.properties) {
+          // if (subSchema.anyOf != null && subSchema.anyOf.length === 1 && !subSchema.properties && !subSchema.allOf) {
+          //   logger.debug(`${path} has an "anyOf" definition with only one element. Removing it.`);
+          //   const realSubschema = subSchema.anyOf[0];
+          //   delete subSchema.anyOf;
+          //   subSchema = realSubschema;
+          // }
+          if (
+            subSchema.oneOf != null &&
+            subSchema.oneOf.length === 1 &&
+            !subSchema.properties &&
+            !subSchema.anyOf &&
+            !subSchema.allOf
+          ) {
             logger.debug(`${path} has an "oneOf" definition with only one element. Removing it.`);
             const realSubschema = subSchema.oneOf[0];
             delete subSchema.oneOf;

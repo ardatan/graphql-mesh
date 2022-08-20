@@ -2593,11 +2593,11 @@ enum query_getUsers_items_status {
 }
 
 type query_getUsers_items_nomenclature {
-  species: String
   suborder: String
   family: String!
   familyCircular: familyObject
   genus: String
+  species: String
 }
 
 type familyObject {
@@ -2844,11 +2844,11 @@ input address_Input {
 }
 
 input query_getUsers_items_nomenclature_Input {
-  species: String
   suborder: String
   family: String!
   familyCircular: familyObject_Input
   genus: String
+  species: String
 }
 
 input familyObject_Input {

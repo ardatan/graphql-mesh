@@ -507,7 +507,7 @@ describe('Handle anyOf and oneOf', () => {
     });
   });
 
-  describe.only('oneOf', () => {
+  describe('oneOf', () => {
     const oneOfAst = parse(oneOfQuery);
 
     /**
@@ -561,8 +561,7 @@ describe('Handle anyOf and oneOf', () => {
     /**
      * oneOf contains two member schemas
      *
-     * Because one of the member schemas is not an object type, then default to
-     * the arbitrary JSON type.
+     * Because one of the member schemas is not an object type, then create fields for each non-object type.
      */
     it('oneOf test with non-object type member schema', async () => {
       const result = await execute({
@@ -578,9 +577,30 @@ describe('Handle anyOf and oneOf', () => {
         name: 'oneOf2',
         description: 'oneOf test with non-object type member schema',
         type: {
-          name: 'JSON',
-          kind: 'SCALAR',
-          possibleTypes: null,
+          kind: 'UNION',
+          name: 'oneOf2_200_response',
+          possibleTypes: [
+            {
+              name: 'commonAttributeObject',
+              fields: [
+                {
+                  type: {
+                    name: 'String',
+                  },
+                },
+              ],
+            },
+            {
+              name: 'Int_container',
+              fields: [
+                {
+                  type: {
+                    name: 'Int',
+                  },
+                },
+              ],
+            },
+          ],
         },
       });
     });
@@ -588,8 +608,7 @@ describe('Handle anyOf and oneOf', () => {
     /**
      * oneOf contains two member schemas
      *
-     * None of the member schemas are object types, therefore default to
-     * the arbitrary JSON type.
+     * None of the member schemas are object types, then create fields for each non-object type.
      */
     it('oneOf test with no object type member schemas', async () => {
       const result = await execute({
@@ -605,9 +624,30 @@ describe('Handle anyOf and oneOf', () => {
         name: 'oneOf3',
         description: 'oneOf test with no object type member schemas',
         type: {
-          name: 'JSON',
-          kind: 'SCALAR',
-          possibleTypes: null,
+          kind: 'UNION',
+          name: 'oneOf3_200_response',
+          possibleTypes: [
+            {
+              name: 'String_container',
+              fields: [
+                {
+                  type: {
+                    name: 'String',
+                  },
+                },
+              ],
+            },
+            {
+              name: 'Int_container',
+              fields: [
+                {
+                  type: {
+                    name: 'Int',
+                  },
+                },
+              ],
+            },
+          ],
         },
       });
     });
@@ -660,7 +700,7 @@ describe('Handle anyOf and oneOf', () => {
         name: 'oneOf5',
         description: 'Basic oneOf test with allOf',
         type: {
-          name: 'OneOf5',
+          name: 'oneOf5_200_response',
           kind: 'UNION',
           possibleTypes: [
             {
@@ -709,7 +749,7 @@ describe('Handle anyOf and oneOf', () => {
         name: 'oneOf6',
         description: 'oneOf test with allOf, requiring oneOf collapse',
         type: {
-          name: 'OneOf6',
+          name: 'oneOf6_200_response',
           kind: 'UNION',
           possibleTypes: [
             {
@@ -733,7 +773,7 @@ describe('Handle anyOf and oneOf', () => {
               ],
             },
             {
-              name: 'AnotherAttributeObject',
+              name: 'anotherAttributeObject',
               fields: [
                 {
                   type: {

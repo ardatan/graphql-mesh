@@ -70650,7 +70650,7 @@ type Mutation {
   createIssueFieldOption(
     \\"The field key is specified in the following format: **$(app-key)\\\\\\\\_\\\\\\\\_$(field-key)**. For example, *example-add-on\\\\\\\\_\\\\\\\\_example-issue-field*. To determine the \`fieldKey\` value, do one of the following:\\\\n\\\\n *  open the app's plugin descriptor, then **app-key** is the key at the top and **field-key** is the key in the \`jiraIssueFields\` module. **app-key** can also be found in the app listing in the Atlassian Universal Plugin Manager.\\\\n *  run [Get fields](#api-rest-api-3-field-get) and in the field details the value is returned in \`key\`. For example, \`\\\\\\"key\\\\\\": \\\\\\"teams-add-on__team-issue-field\\\\\\"\`\\"
     fieldKey: String!
-    input: JSON
+    input: IssueFieldOptionCreateBean_Input
   ): IssueFieldOption
   \\"Updates or creates an option for a select list issue field. This operation requires that the option ID is provided when creating an option, therefore, the option ID needs to be specified as a path and body parameter. The option ID provided in the path and body must be identical.\\\\n\\\\nNote that this operation **only works for issue field select list options added by Connect apps**, it cannot be used with issue field select list options created in Jira or using operations from the [Issue custom field options](#api-group-Issue-custom-field-options) resource.\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg). Jira permissions are not required for the app providing the field.\\"
   updateIssueFieldOption(
@@ -70813,7 +70813,7 @@ type Mutation {
     permissionId: BigInt!
   ): Void
   \\"Creates a group.\\\\n\\\\n**[Permissions](#permissions) required:** Site administration (that is, member of the *site-admin* [group](https://confluence.atlassian.com/x/24xjL)).\\"
-  createGroup(input: JSON): Group
+  createGroup(input: AddGroupBean_Input): Group
   \\"Deletes a group.\\\\n\\\\n**[Permissions](#permissions) required:** Site administration (that is, member of the *site-admin* strategic [group](https://confluence.atlassian.com/x/24xjL)).\\"
   removeGroup(
     \\"As a group's name can change, use of \`groupId\` is recommended to identify a group.  \\\\nThe name of the group. This parameter cannot be used with the \`groupId\` parameter.\\"
@@ -70831,7 +70831,7 @@ type Mutation {
     groupname: String
     \\"The ID of the group. This parameter cannot be used with the \`groupName\` parameter.\\"
     groupId: String
-    input: JSON
+    input: UpdateUserToGroupBean_Input
   ): Group
   \\"Removes a user from a group.\\\\n\\\\n**[Permissions](#permissions) required:** Site administration (that is, member of the *site-admin* [group](https://confluence.atlassian.com/x/24xjL)).\\"
   removeUserFromGroup(
@@ -70848,10 +70848,10 @@ type Mutation {
   createIssue(
     \\"Whether the project in which the issue is created is added to the user's **Recently viewed** project list, as shown under **Projects** in Jira. When provided, the issue type and request type are added to the user's history for a project. These values are then used to provide defaults on the issue create screen.\\"
     updateHistory: Boolean
-    input: JSON
+    input: IssueUpdateDetails_Input
   ): createIssue_response
   \\"Creates upto **50** issues and, where the option to create subtasks is enabled in Jira, subtasks. Transitions may be applied, to move the issues or subtasks to a workflow step other than the default start step, and issue properties set.\\\\n\\\\nThe content of each issue or subtask is defined using \`update\` and \`fields\`. The fields that can be set in the issue or subtask are determined using the [ Get create issue metadata](#api-rest-api-3-issue-createmeta-get). These are the same fields that appear on the issues' create screens. Note that the \`description\`, \`environment\`, and any \`textarea\` type custom fields (multi-line text fields) take Atlassian Document Format content. Single line custom fields (\`textfield\`) accept a string and don't handle Atlassian Document Format content.\\\\n\\\\nCreating a subtask differs from creating an issue as follows:\\\\n\\\\n *  \`issueType\` must be set to a subtask issue type (use [ Get create issue metadata](#api-rest-api-3-issue-createmeta-get) to find subtask issue types).\\\\n *  \`parent\` the must contain the ID or key of the parent issue.\\\\n\\\\n**[Permissions](#permissions) required:** *Browse projects* and *Create issues* [project permissions](https://confluence.atlassian.com/x/yodKLg) for the project in which each issue or subtask is created.\\"
-  createIssues(input: JSON): createIssues_response
+  createIssues(input: IssuesUpdateBean_Input): createIssues_response
   \\"Sets or updates a list of entity property values on issues. A list of up to 10 entity properties can be specified along with up to 10,000 issues on which to set or update that list of entity properties.\\\\n\\\\nThe value of the request body must be a [valid](http://tools.ietf.org/html/rfc4627), non-empty JSON. The maximum length of single issue property value is 32768 characters. This operation can be accessed anonymously.\\\\n\\\\nThis operation is:\\\\n\\\\n *  transactional, either all properties are updated in all eligible issues or, when errors occur, no properties are updated.\\\\n *  [asynchronous](#async). Follow the \`location\` link in the response to determine the status of the task and use [Get task](#api-rest-api-3-task-taskId-get) to obtain subsequent updates.\\\\n\\\\n**[Permissions](#permissions) required:**\\\\n\\\\n *  *Browse projects* and *Edit issues* [project permissions](https://confluence.atlassian.com/x/yodKLg) for the project containing the issue.\\\\n *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.\\"
   bulkSetIssuesPropertiesList(input: IssueEntityProperties_Input): bulkSetIssuesPropertiesList_response
   \\"Sets or updates entity property values on issues. Up to 10 entity properties can be specified for each issue and up to 100 issues included in the request.\\\\n\\\\nThe value of the request body must be a [valid](http://tools.ietf.org/html/rfc4627), non-empty JSON.\\\\n\\\\nThis operation is:\\\\n\\\\n *  [asynchronous](#async). Follow the \`location\` link in the response to determine the status of the task and use [Get task](#api-rest-api-3-task-taskId-get) to obtain subsequent updates.\\\\n *  non-transactional. Updating some entities may fail. Such information will available in the task result.\\\\n\\\\n**[Permissions](#permissions) required:**\\\\n\\\\n *  *Browse projects* and *Edit issues* [project permissions](https://confluence.atlassian.com/x/yodKLg) for the project containing the issue.\\\\n *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.\\"
@@ -70880,7 +70880,7 @@ type Mutation {
     overrideScreenSecurity: Boolean
     \\"Whether screen security is overridden to enable uneditable fields to be edited. Available to Connect app users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg) and Forge apps acting on behalf of users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
     overrideEditableFlag: Boolean
-    input: JSON
+    input: IssueUpdateDetails_Input
   ): JSON
   \\"Deletes an issue.\\\\n\\\\nAn issue cannot be deleted if it has one or more subtasks. To delete an issue with subtasks, set \`deleteSubtasks\`. This causes the issue's subtasks to be deleted with the issue.\\\\n\\\\nThis operation can be accessed anonymously.\\\\n\\\\n**[Permissions](#permissions) required:**\\\\n\\\\n *  *Browse projects* and *Delete issues* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project containing the issue.\\\\n *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.\\"
   deleteIssue(
@@ -70912,7 +70912,7 @@ type Mutation {
     issueIdOrKey: String!
     \\"Use [expand](#expansion) to include additional information about comments in the response. This parameter accepts \`renderedBody\`, which returns the comment body rendered in HTML.\\"
     expand: String
-    input: JSON
+    input: Comment_Input
   ): Comment
   \\"Updates a comment.\\\\n\\\\nThis operation can be accessed anonymously.\\\\n\\\\n**[Permissions](#permissions) required:**\\\\n\\\\n *  *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue containing the comment is in.\\\\n *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.\\\\n *  *Edit all comments*[ project permission](https://confluence.atlassian.com/x/yodKLg) to update any comment or *Edit own comments* to update comment created by the user.\\\\n *  If the comment has visibility restrictions, the user belongs to the group or has the role visibility is restricted to.\\"
   updateComment(
@@ -70926,7 +70926,7 @@ type Mutation {
     overrideEditableFlag: Boolean
     \\"Use [expand](#expansion) to include additional information about comments in the response. This parameter accepts \`renderedBody\`, which returns the comment body rendered in HTML.\\"
     expand: String
-    input: JSON
+    input: Comment_Input
   ): Comment
   \\"Deletes a comment.\\\\n\\\\n**[Permissions](#permissions) required:**\\\\n\\\\n *  *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue containing the comment is in.\\\\n *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.\\\\n *  *Delete all comments*[ project permission](https://confluence.atlassian.com/x/yodKLg) to delete any comment or *Delete own comments* to delete comment created by the user,\\\\n *  If the comment has visibility restrictions, the user belongs to the group or has the role visibility is restricted to.\\"
   deleteComment(
@@ -70939,7 +70939,7 @@ type Mutation {
   notify(
     \\"ID or key of the issue that the notification is sent for.\\"
     issueIdOrKey: String!
-    input: JSON
+    input: Notification_Input
   ): JSON
   \\"Sets the value of an issue's property. Use this resource to store custom data against an issue.\\\\n\\\\nThe value of the request body must be a [valid](http://tools.ietf.org/html/rfc4627), non-empty JSON blob. The maximum length is 32768 characters.\\\\n\\\\nThis operation can be accessed anonymously.\\\\n\\\\n**[Permissions](#permissions) required:**\\\\n\\\\n *  *Browse projects* and *Edit issues* [project permissions](https://confluence.atlassian.com/x/yodKLg) for the project containing the issue.\\\\n *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.\\"
   setIssueProperty(
@@ -70959,7 +70959,7 @@ type Mutation {
   createOrUpdateRemoteIssueLink(
     \\"The ID or key of the issue.\\"
     issueIdOrKey: String!
-    input: JSON
+    input: RemoteIssueLinkRequest_Input
   ): createOrUpdateRemoteIssueLink_response
   \\"Deletes the remote issue link from the issue using the link's global ID. Where the global ID includes reserved URL characters these must be escaped in the request. For example, pass \`system=http://www.mycompany.com/support&id=1\` as \`system%3Dhttp%3A%2F%2Fwww.mycompany.com%2Fsupport%26id%3D1\`.\\\\n\\\\nThis operation requires [issue linking to be active](https://confluence.atlassian.com/x/yoXKM).\\\\n\\\\nThis operation can be accessed anonymously.\\\\n\\\\n**[Permissions](#permissions) required:**\\\\n\\\\n *  *Browse projects* and *Link issues* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue is in.\\\\n *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is implemented, issue-level security permission to view the issue.\\"
   deleteRemoteIssueLinkByGlobalId(
@@ -70974,7 +70974,7 @@ type Mutation {
     issueIdOrKey: String!
     \\"The ID of the remote issue link.\\"
     linkId: String!
-    input: JSON
+    input: RemoteIssueLinkRequest_Input
   ): updateRemoteIssueLink_400_response
   \\"Deletes a remote issue link from an issue.\\\\n\\\\nThis operation requires [issue linking to be active](https://confluence.atlassian.com/x/yoXKM).\\\\n\\\\nThis operation can be accessed anonymously.\\\\n\\\\n**[Permissions](#permissions) required:**\\\\n\\\\n *  *Browse projects*, *Edit issues*, and *Link issues* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue is in.\\\\n *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.\\"
   deleteRemoteIssueLinkById(
@@ -70987,7 +70987,7 @@ type Mutation {
   doTransition(
     \\"The ID or key of the issue.\\"
     issueIdOrKey: String!
-    input: JSON
+    input: IssueUpdateDetails_Input
   ): JSON
   \\"Adds the user's vote to an issue. This is the equivalent of the user clicking *Vote* on an issue in Jira.\\\\n\\\\nThis operation requires the **Allow users to vote on issues** option to be *ON*. This option is set in General configuration for Jira. See [Configuring Jira application options](https://confluence.atlassian.com/x/uYXKM) for details.\\\\n\\\\n**[Permissions](#permissions) required:**\\\\n\\\\n *  *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue is in.\\\\n *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.\\"
   addVote(
@@ -71029,7 +71029,7 @@ type Mutation {
     expand: String
     \\"Whether the worklog entry should be added to the issue even if the issue is not editable, because jira.issue.editable set to false or missing. For example, the issue is closed. Connect and Forge app users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg) can use this flag.\\"
     overrideEditableFlag: Boolean
-    input: JSON
+    input: Worklog_Input
   ): Worklog
   \\"Updates a worklog.\\\\n\\\\nTime tracking must be enabled in Jira, otherwise this operation returns an error. For more information, see [Configuring time tracking](https://confluence.atlassian.com/x/qoXKM).\\\\n\\\\nThis operation can be accessed anonymously.\\\\n\\\\n**[Permissions](#permissions) required:**\\\\n\\\\n *  *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue is in.\\\\n *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.\\\\n *  *Edit all worklogs*[ project permission](https://confluence.atlassian.com/x/yodKLg) to update any worklog or *Edit own worklogs* to update worklogs created by the user.\\\\n *  If the worklog has visibility restrictions, belongs to the group or has the role visibility is restricted to.\\"
   updateWorklog(
@@ -71046,7 +71046,7 @@ type Mutation {
     expand: String
     \\"Whether the worklog should be added to the issue even if the issue is not editable. For example, because the issue is closed. Connect and Forge app users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg) can use this flag.\\"
     overrideEditableFlag: Boolean
-    input: JSON
+    input: Worklog_Input
   ): Worklog
   \\"Deletes a worklog from an issue.\\\\n\\\\nTime tracking must be enabled in Jira, otherwise this operation returns an error. For more information, see [Configuring time tracking](https://confluence.atlassian.com/x/qoXKM).\\\\n\\\\nThis operation can be accessed anonymously.\\\\n\\\\n**[Permissions](#permissions) required:**\\\\n\\\\n *  *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue is in.\\\\n *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.\\\\n *  *Delete all worklogs*[ project permission](https://confluence.atlassian.com/x/yodKLg) to delete any worklog or *Delete own worklogs* to delete worklogs created by the user,\\\\n *  If the worklog has visibility restrictions, belongs to the group or has the role visibility is restricted to.\\"
   deleteWorklog(
@@ -71242,7 +71242,7 @@ type Mutation {
   createPermissionScheme(
     \\"Use expand to include additional information in the response. This parameter accepts a comma-separated list. Note that permissions are always included when you specify any value. Expand options include:\\\\n\\\\n *  \`all\` Returns all expandable information.\\\\n *  \`field\` Returns information about the custom field granted the permission.\\\\n *  \`group\` Returns information about the group that is granted the permission.\\\\n *  \`permissions\` Returns all permission grants for each permission scheme.\\\\n *  \`projectRole\` Returns information about the project role granted the permission.\\\\n *  \`user\` Returns information about the user who is granted the permission.\\"
     expand: String
-    input: JSON
+    input: PermissionScheme_Input
   ): PermissionScheme
   \\"Updates a permission scheme. Below are some important things to note when using this resource:\\\\n\\\\n *  If a permissions list is present in the request, then it is set in the permission scheme, overwriting *all existing* grants.\\\\n *  If you want to update only the name and description, then do not send a permissions list in the request.\\\\n *  Sending an empty list will remove all permission grants from the permission scheme.\\\\n\\\\nIf you want to add or delete a permission grant instead of updating the whole list, see [Create permission grant](#api-rest-api-3-permissionscheme-schemeId-permission-post) or [Delete permission scheme entity](#api-rest-api-3-permissionscheme-schemeId-permission-permissionId-delete).\\\\n\\\\nSee [About permission schemes and grants](../api-group-permission-schemes/#about-permission-schemes-and-grants) for more details.\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
   updatePermissionScheme(
@@ -71250,7 +71250,7 @@ type Mutation {
     schemeId: BigInt!
     \\"Use expand to include additional information in the response. This parameter accepts a comma-separated list. Note that permissions are always included when you specify any value. Expand options include:\\\\n\\\\n *  \`all\` Returns all expandable information.\\\\n *  \`field\` Returns information about the custom field granted the permission.\\\\n *  \`group\` Returns information about the group that is granted the permission.\\\\n *  \`permissions\` Returns all permission grants for each permission scheme.\\\\n *  \`projectRole\` Returns information about the project role granted the permission.\\\\n *  \`user\` Returns information about the user who is granted the permission.\\"
     expand: String
-    input: JSON
+    input: PermissionScheme_Input
   ): PermissionScheme
   \\"Deletes a permission scheme.\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
   deletePermissionScheme(
@@ -71273,12 +71273,12 @@ type Mutation {
     permissionId: BigInt!
   ): Void
   \\"Creates an issue priority.\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
-  createPriority(input: JSON): createPriority_response
+  createPriority(input: CreatePriorityDetails_Input): createPriority_response
   \\"Updates an issue priority.\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
   updatePriority(
     \\"The ID of the issue priority.\\"
     id: String!
-    input: JSON
+    input: UpdatePriorityDetails_Input
   ): updatePriority_response
   \\"Creates a project based on a project type template, as shown in the following table:\\\\n\\\\n| Project Type Key | Project Template Key |  \\\\n|--|--|  \\\\n| \`business\` | \`com.atlassian.jira-core-project-templates:jira-core-simplified-content-management\`, \`com.atlassian.jira-core-project-templates:jira-core-simplified-document-approval\`, \`com.atlassian.jira-core-project-templates:jira-core-simplified-lead-tracking\`, \`com.atlassian.jira-core-project-templates:jira-core-simplified-process-control\`, \`com.atlassian.jira-core-project-templates:jira-core-simplified-procurement\`, \`com.atlassian.jira-core-project-templates:jira-core-simplified-project-management\`, \`com.atlassian.jira-core-project-templates:jira-core-simplified-recruitment\`, \`com.atlassian.jira-core-project-templates:jira-core-simplified-task-tracking\` |  \\\\n| \`service_desk\` | \`com.atlassian.servicedesk:simplified-it-service-management\`, \`com.atlassian.servicedesk:simplified-general-service-desk\`, \`com.atlassian.servicedesk:simplified-internal-service-desk\`, \`com.atlassian.servicedesk:simplified-external-service-desk\`, \`com.atlassian.servicedesk:simplified-hr-service-desk\`, \`com.atlassian.servicedesk:simplified-facilities-service-desk\`, \`com.atlassian.servicedesk:simplified-legal-service-desk\` |  \\\\n| \`software\` | \`com.pyxis.greenhopper.jira:gh-simplified-agility-kanban\`, \`com.pyxis.greenhopper.jira:gh-simplified-agility-scrum\`, \`com.pyxis.greenhopper.jira:gh-simplified-basic\`, \`com.pyxis.greenhopper.jira:gh-simplified-kanban-classic\`, \`com.pyxis.greenhopper.jira:gh-simplified-scrum-classic\` |  \\\\nThe project types are available according to the installed Jira features as follows:\\\\n\\\\n *  Jira Core, the default, enables \`business\` projects.\\\\n *  Jira Service Management enables \`service_desk\` projects.\\\\n *  Jira Software enables \`software\` projects.\\\\n\\\\nTo determine which features are installed, go to **Jira settings** > **Apps** > **Manage apps** and review the System Apps list. To add Jira Software or Jira Service Management into a JIRA instance, use **Jira settings** > **Apps** > **Finding new apps**. For more information, see [ Managing add-ons](https://confluence.atlassian.com/x/S31NLg).\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
   createProject(input: CreateProjectDetails_Input): ProjectIdentifiers
@@ -71306,7 +71306,7 @@ type Mutation {
   updateProjectAvatar(
     \\"The ID or (case-sensitive) key of the project.\\"
     projectIdOrKey: String!
-    input: JSON
+    input: Avatar_Input
   ): JSON
   \\"Deletes a custom avatar from a project. Note that system avatars cannot be deleted.\\\\n\\\\n**[Permissions](#permissions) required:** *Administer projects* [project permission](https://confluence.atlassian.com/x/yodKLg).\\"
   deleteProjectAvatar(
@@ -71594,7 +71594,7 @@ type Mutation {
     id: BigInt!
   ): Void
   \\"Creates a user. This resource is retained for legacy compatibility. As soon as a more suitable alternative is available this resource will be deprecated.\\\\n\\\\nIf the user exists and has access to Jira, the operation returns a 201 status. If the user exists but does not have access to Jira, the operation returns a 400 status.\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
-  createUser(input: JSON): User
+  createUser(input: NewUserDetails_Input): User
   \\"Deletes a user. If the operation completes successfully then the user is removed from Jira's user base. This operation does not delete the user's Atlassian account.\\\\n\\\\n**[Permissions](#permissions) required:** Site administration (that is, membership of the *site-admin* [group](https://confluence.atlassian.com/x/24xjL)).\\"
   removeUser(
     \\"The account ID of the user, which uniquely identifies the user across all Atlassian products. For example, *5b10ac8d82e05b22cc7d4ef5*.\\"
@@ -71696,7 +71696,7 @@ type Mutation {
     \\"The name of the workflow that the transition belongs to.\\"
     workflowName: String!
     workflowMode: mutationInput_updateWorkflowTransitionProperty_workflowMode
-    input: JSON
+    input: WorkflowTransitionProperty_Input
   ): WorkflowTransitionProperty
   \\"Adds a property to a workflow transition. Transition properties are used to change the behavior of a transition. For more information, see [Transition properties](https://confluence.atlassian.com/x/zIhKLg#Advancedworkflowconfiguration-transitionproperties) and [Workflow properties](https://confluence.atlassian.com/x/JYlKLg).\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
   createWorkflowTransitionProperty(
@@ -71707,7 +71707,7 @@ type Mutation {
     \\"The name of the workflow that the transition belongs to.\\"
     workflowName: String!
     workflowMode: mutationInput_createWorkflowTransitionProperty_workflowMode = live
-    input: JSON
+    input: WorkflowTransitionProperty_Input
   ): WorkflowTransitionProperty
   \\"Deletes a property from a workflow transition. Transition properties are used to change the behavior of a transition. For more information, see [Transition properties](https://confluence.atlassian.com/x/zIhKLg#Advancedworkflowconfiguration-transitionproperties) and [Workflow properties](https://confluence.atlassian.com/x/JYlKLg).\\\\n\\\\n**[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).\\"
   deleteWorkflowTransitionProperty(
@@ -72241,7 +72241,42 @@ input IssueTypeDetails_Input {
   entityId: UUID
   \\"Hierarchy level of the issue type.\\"
   hierarchyLevel: Int
-  scope: JSON
+  scope: Scope_Input
+}
+
+\\"The projects the item is associated with. Indicated for items associated with [next-gen projects](https://confluence.atlassian.com/x/loMyO).\\"
+input Scope_Input {
+  type: query_getAllDashboards_oneOf_0_dashboards_items_sharePermissions_items_project_issueTypes_items_scope_type
+  project: ProjectDetails_Input
+}
+
+\\"Details about a project.\\"
+input ProjectDetails_Input {
+  \\"The URL of the project details.\\"
+  self: String
+  \\"The ID of the project.\\"
+  id: String
+  \\"The key of the project.\\"
+  key: String
+  \\"The name of the project.\\"
+  name: String
+  projectTypeKey: query_getAllDashboards_oneOf_0_dashboards_items_sharePermissions_items_project_issueTypes_items_scope_project_projectTypeKey
+  \\"Whether or not the project is simplified.\\"
+  simplified: Boolean
+  avatarUrls: AvatarUrlsBean_Input
+  projectCategory: UpdatedProjectCategory_Input
+}
+
+\\"A project category.\\"
+input UpdatedProjectCategory_Input {
+  \\"The URL of the project category.\\"
+  self: String
+  \\"The ID of the project category.\\"
+  id: String
+  \\"The name of the project category.\\"
+  description: String
+  \\"The description of the project category.\\"
+  name: String
 }
 
 \\"Details about a project version.\\"
@@ -72278,7 +72313,7 @@ input Version_Input {
   moveUnfixedIssuesTo: URL
   \\"If the expand option \`operations\` is used, returns the list of operations available for this version.\\"
   operations: [SimpleLink_Input]
-  issuesStatusForFixVersion: JSON
+  issuesStatusForFixVersion: VersionIssuesStatus_Input
 }
 
 \\"Details about the operations available in this version.\\"
@@ -72290,6 +72325,18 @@ input SimpleLink_Input {
   title: String
   href: String
   weight: Int
+}
+
+\\"Counts of the number of issues in various statuses.\\"
+input VersionIssuesStatus_Input {
+  \\"Count of issues with a status other than *to do*, *in progress*, and *done*.\\"
+  unmapped: BigInt
+  \\"Count of issues with status *to do*.\\"
+  toDo: BigInt
+  \\"Count of issues with status *in progress*.\\"
+  inProgress: BigInt
+  \\"Count of issues with status *done*.\\"
+  done: BigInt
 }
 
 \\"A project category.\\"
@@ -72372,7 +72419,7 @@ input ProjectRole_Input {
   description: String
   \\"The list of users who act in this role.\\"
   actors: [RoleActor_Input]
-  scope: JSON
+  scope: Scope_Input
   \\"The translated name of the project role.\\"
   translatedName: String
   \\"Whether the calling user is part of this role.\\"
@@ -72396,8 +72443,24 @@ input RoleActor_Input {
   name: String
   \\"The avatar of the role actor.\\"
   avatarUrl: URL
-  actorUser: JSON
-  actorGroup: JSON
+  actorUser: ProjectRoleUser_Input
+  actorGroup: ProjectRoleGroup_Input
+}
+
+\\"Details of the user associated with the role.\\"
+input ProjectRoleUser_Input {
+  \\"The account ID of the user, which uniquely identifies the user across all Atlassian products. For example, *5b10ac8d82e05b22cc7d4ef5*. Returns *unknown* if the record is deleted and corrupted, for example, as the result of a server import.\\"
+  accountId: query_getAllDashboards_oneOf_0_dashboards_items_sharePermissions_items_role_actors_items_actorUser_accountId
+}
+
+\\"Details of the group associated with the role.\\"
+input ProjectRoleGroup_Input {
+  \\"The display name of the group.\\"
+  displayName: String
+  \\"The name of the group. As a group's name can change, use of \`groupId\` is recommended to identify the group.\\"
+  name: String
+  \\"The ID of the group.\\"
+  groupId: String
 }
 
 input UserBean_Input {
@@ -73355,13 +73418,10 @@ type removeCustomFieldContextFromProjects_404_response {
   errors: JSON
 }
 
-\\"Details of the options for a select list issue field.\\"
-input IssueFieldOption_Input {
-  \\"The unique identifier for the option. This is only unique within the select field's set of options.\\"
-  id: BigInt!
+input IssueFieldOptionCreateBean_Input {
   \\"The option's name, which is displayed in Jira.\\"
   value: String!
-  \\"The properties of the object, as arbitrary key-value pairs. These properties can be searched using JQL, if the extractions (see [Issue Field Option Property Index](https://developer.atlassian.com/cloud/jira/platform/modules/issue-field-option-property-index/)) are defined in the descriptor for the issue field module.\\"
+  \\"The properties of the option as arbitrary key-value pairs. These properties can be searched using JQL, if the extractions (see https://developer.atlassian.com/cloud/jira/platform/modules/issue-field-option-property-index/) are defined in the descriptor for the issue field module.\\"
   properties: JSON
   config: IssueFieldOptionConfiguration_Input
 }
@@ -73391,6 +73451,17 @@ input ProjectScopeBean_Input {
 input GlobalScopeBean_Input {
   \\"Defines the behavior of the option in the global context.If notSelectable is set, the option cannot be set as the field's value. This is useful for archiving an option that has previously been selected but shouldn't be used anymore.If defaultValue is set, the option is selected by default.\\"
   attributes: [query_getAllIssueFieldOptions_values_items_config_scope_global_attributes_items]
+}
+
+\\"Details of the options for a select list issue field.\\"
+input IssueFieldOption_Input {
+  \\"The unique identifier for the option. This is only unique within the select field's set of options.\\"
+  id: BigInt!
+  \\"The option's name, which is displayed in Jira.\\"
+  value: String!
+  \\"The properties of the object, as arbitrary key-value pairs. These properties can be searched using JQL, if the extractions (see [Issue Field Option Property Index](https://developer.atlassian.com/cloud/jira/platform/modules/issue-field-option-property-index/)) are defined in the descriptor for the issue field module.\\"
+  properties: JSON
+  config: IssueFieldOptionConfiguration_Input
 }
 
 union replaceIssueFieldOption_response = TaskProgressBeanRemoveOptionFromIssuesResult | replaceIssueFieldOption_403_response
@@ -73693,6 +73764,21 @@ enum mutationInput_addSharePermission_input_type {
   authenticated
 }
 
+input AddGroupBean_Input {
+  \\"The name of the group.\\"
+  name: String!
+}
+
+input UpdateUserToGroupBean_Input {
+  \\"This property is no longer available. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details.\\"
+  name: String
+  \\"The account ID of the user, which uniquely identifies the user across all Atlassian products. For example, *5b10ac8d82e05b22cc7d4ef5*.\\"
+  accountId: mutationInput_addUserToGroup_input_accountId
+}
+
+\\"The account ID of the user, which uniquely identifies the user across all Atlassian products. For example, *5b10ac8d82e05b22cc7d4ef5*.\\"
+scalar mutationInput_addUserToGroup_input_accountId
+
 \\"The account ID of the user, which uniquely identifies the user across all Atlassian products. For example, *5b10ac8d82e05b22cc7d4ef5*.\\"
 scalar mutationInput_removeUserFromGroup_accountId
 
@@ -73714,6 +73800,156 @@ type NestedResponse {
   errorCollection: ErrorCollection
 }
 
+\\"Details of an issue update request.\\"
+input IssueUpdateDetails_Input {
+  transition: IssueTransition_Input
+  \\"List of issue screen fields to update, specifying the sub-field to update and its value for each field. This field provides a straightforward option when setting a sub-field. When multiple sub-fields or other operations are required, use \`update\`. Fields included in here cannot be included in \`update\`.\\"
+  fields: JSON
+  \\"A Map containing the field field name and a list of operations to perform on the issue screen field. Note that fields included in here cannot be included in \`fields\`.\\"
+  update: JSON
+  historyMetadata: HistoryMetadata_Input
+  \\"Details of issue properties to be add or update.\\"
+  properties: [EntityProperty_Input]
+}
+
+\\"Details of an issue transition.\\"
+input IssueTransition_Input {
+  \\"The ID of the issue transition. Required when specifying a transition to undertake.\\"
+  id: String
+  \\"The name of the issue transition.\\"
+  name: String
+  to: StatusDetails_Input
+  \\"Whether there is a screen associated with the issue transition.\\"
+  hasScreen: Boolean
+  \\"Whether the issue transition is global, that is, the transition is applied to issues regardless of their status.\\"
+  isGlobal: Boolean
+  \\"Whether this is the initial issue transition for the workflow.\\"
+  isInitial: Boolean
+  \\"Whether the transition is available to be performed.\\"
+  isAvailable: Boolean
+  \\"Whether the issue has to meet criteria before the issue transition is applied.\\"
+  isConditional: Boolean
+  fields: FieldMetadata_Input2
+  \\"Expand options that include additional transition details in the response.\\"
+  expand: String
+  looped: Boolean
+}
+
+\\"A status.\\"
+input StatusDetails_Input {
+  \\"The URL of the status.\\"
+  self: String
+  \\"The description of the status.\\"
+  description: String
+  \\"The URL of the icon used to represent the status.\\"
+  iconUrl: String
+  \\"The name of the status.\\"
+  name: String
+  \\"The ID of the status.\\"
+  id: String
+  statusCategory: StatusCategory_Input
+}
+
+\\"A status category.\\"
+input StatusCategory_Input {
+  \\"The URL of the status category.\\"
+  self: String
+  \\"The ID of the status category.\\"
+  id: BigInt
+  \\"The key of the status category.\\"
+  key: String
+  \\"The name of the color used to represent the status category.\\"
+  colorName: String
+  \\"The name of the status category.\\"
+  name: String
+}
+
+\\"The metadata describing an issue field.\\"
+input FieldMetadata_Input2 {
+  \\"Whether the field is required.\\"
+  required: Boolean!
+  schema: JsonTypeBean_Input!
+  \\"The name of the field.\\"
+  name: String!
+  \\"The key of the field.\\"
+  key: String!
+  \\"The URL that can be used to automatically complete the field.\\"
+  autoCompleteUrl: String
+  \\"Whether the field has a default value.\\"
+  hasDefaultValue: Boolean
+  \\"The list of operations that can be performed on the field.\\"
+  operations: [String]!
+  \\"The list of values allowed in the field.\\"
+  allowedValues: [JSON]
+  \\"The default value of the field.\\"
+  defaultValue: JSON
+  \\"The configuration properties.\\"
+  configuration: JSON
+}
+
+\\"The schema of a field.\\"
+input JsonTypeBean_Input {
+  \\"The data type of the field.\\"
+  type: String!
+  \\"When the data type is an array, the name of the field items within the array.\\"
+  items: String
+  \\"If the field is a system field, the name of the field.\\"
+  system: String
+  \\"If the field is a custom field, the URI of the field.\\"
+  custom: String
+  \\"If the field is a custom field, the custom ID of the field.\\"
+  customId: BigInt
+  \\"If the field is a custom field, the configuration of the field.\\"
+  configuration: JSON
+}
+
+\\"Details of issue history metadata.\\"
+input HistoryMetadata_Input {
+  \\"The type of the history record.\\"
+  type: String
+  \\"The description of the history record.\\"
+  description: String
+  \\"The description key of the history record.\\"
+  descriptionKey: String
+  \\"The activity described in the history record.\\"
+  activityDescription: String
+  \\"The key of the activity described in the history record.\\"
+  activityDescriptionKey: String
+  \\"The description of the email address associated the history record.\\"
+  emailDescription: String
+  \\"The description key of the email address associated the history record.\\"
+  emailDescriptionKey: String
+  actor: HistoryMetadataParticipant_Input
+  generator: HistoryMetadataParticipant_Input
+  cause: HistoryMetadataParticipant_Input
+  \\"Additional arbitrary information about the history record.\\"
+  extraData: JSON
+}
+
+\\"Details of user or system associated with a issue history metadata item.\\"
+input HistoryMetadataParticipant_Input {
+  \\"The ID of the user or system associated with a history record.\\"
+  id: String
+  \\"The display name of the user or system associated with a history record.\\"
+  displayName: String
+  \\"The key of the display name of the user or system associated with a history record.\\"
+  displayNameKey: String
+  \\"The type of the user or system associated with a history record.\\"
+  type: String
+  \\"The URL to an avatar for the user or system associated with a history record.\\"
+  avatarUrl: String
+  \\"The URL of the user or system associated with a history record.\\"
+  url: String
+}
+
+\\"An entity property, for more information see [Entity properties](https://developer.atlassian.com/cloud/jira/platform/jira-entity-properties/).\\"
+input EntityProperty_Input {
+  \\"The key of the property. Required on create and update.\\"
+  key: String
+  \\"The value of the property. Required on create and update.\\"
+  value: JSON
+}
+
 union createIssues_response = CreatedIssues
 
 \\"Details about the issues created and the errors for requests that failed.\\"
@@ -73728,6 +73964,10 @@ type BulkOperationErrorResult {
   status: Int
   elementErrors: ErrorCollection
   failedElementNumber: Int
+}
+
+input IssuesUpdateBean_Input {
+  issueUpdates: [IssueUpdateDetails_Input]
 }
 
 union bulkSetIssuesPropertiesList_response = ErrorCollection
@@ -73918,6 +74158,111 @@ input IssueChangelogIds_Input {
   changelogIds: [BigInt]!
 }
 
+\\"A comment.\\"
+input Comment_Input {
+  \\"The URL of the comment.\\"
+  self: String
+  \\"The ID of the comment.\\"
+  id: String
+  author: UserDetails_Input
+  \\"The comment text in [Atlassian Document Format](https://developer.atlassian.com/cloud/jira/platform/apis/document/structure/).\\"
+  body: JSON
+  \\"The rendered version of the comment.\\"
+  renderedBody: String
+  updateAuthor: UserDetails_Input
+  \\"The date and time at which the comment was created.\\"
+  created: DateTime
+  \\"The date and time at which the comment was updated last.\\"
+  updated: DateTime
+  visibility: Visibility_Input
+  \\"Whether the comment is visible in Jira Service Desk. Defaults to true when comments are created in the Jira Cloud Platform. This includes when the site doesn't use Jira Service Desk or the project isn't a Jira Service Desk project and, therefore, there is no Jira Service Desk for the issue to be visible on. To create a comment with its visibility in Jira Service Desk set to false, use the Jira Service Desk REST API [Create request comment](https://developer.atlassian.com/cloud/jira/service-desk/rest/#api-rest-servicedeskapi-request-issueIdOrKey-comment-post) operation.\\"
+  jsdPublic: Boolean
+  \\"Whether the comment was added from an email sent by a person who is not part of the issue. See [Allow external emails to be added as comments on issues](https://support.atlassian.com/jira-service-management-cloud/docs/allow-external-emails-to-be-added-as-comments-on-issues/)for information on setting up this feature.\\"
+  jsdAuthorCanSeeRequest: Boolean
+  \\"A list of comment properties. Optional on create and update.\\"
+  properties: [EntityProperty_Input]
+}
+
+\\"User details permitted by the user's Atlassian Account privacy settings. However, be aware of these exceptions:\\\\n\\\\n *  User record deleted from Atlassian: This occurs as the result of a right to be forgotten request. In this case, \`displayName\` provides an indication and other parameters have default values or are blank (for example, email is blank).\\\\n *  User record corrupted: This occurs as a results of events such as a server import and can only happen to deleted users. In this case, \`accountId\` returns *unknown* and all other parameters have fallback values.\\\\n *  User record unavailable: This usually occurs due to an internal service outage. In this case, all parameters have fallback values.\\"
+input UserDetails_Input {
+  \\"The URL of the user.\\"
+  self: String
+  \\"This property is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details.\\"
+  name: String
+  \\"This property is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details.\\"
+  key: String
+  \\"The account ID of the user, which uniquely identifies the user across all Atlassian products. For example, *5b10ac8d82e05b22cc7d4ef5*.\\"
+  accountId: query_getGroup_users_items_items_accountId
+  \\"The email address of the user. Depending on the user’s privacy settings, this may be returned as null.\\"
+  emailAddress: String
+  avatarUrls: AvatarUrlsBean_Input
+  \\"The display name of the user. Depending on the user’s privacy settings, this may return an alternative value.\\"
+  displayName: String
+  \\"Whether the user is active.\\"
+  active: Boolean
+  \\"The time zone specified in the user's profile. Depending on the user’s privacy settings, this may be returned as null.\\"
+  timeZone: String
+  \\"The type of account represented by this user. This will be one of 'atlassian' (normal users), 'app' (application user) or 'customer' (Jira Service Desk customer user)\\"
+  accountType: String
+}
+
+\\"The group or role to which this item is visible.\\"
+input Visibility_Input {
+  type: query_getComments_comments_items_visibility_type
+  \\"The name of the group or role that visibility of this item is restricted to. Please note that the name of a group is mutable, to reliably identify a group use \`identifier\`.\\"
+  value: String
+  \\"The ID of the group or the name of the role that visibility of this item is restricted to.\\"
+  identifier: String
+}
+
+\\"Details about a notification.\\"
+input Notification_Input {
+  \\"The subject of the email notification for the issue. If this is not specified, then the subject is set to the issue key and summary.\\"
+  subject: String
+  \\"The plain text body of the email notification for the issue.\\"
+  textBody: String
+  \\"The HTML body of the email notification for the issue.\\"
+  htmlBody: String
+  to: NotificationRecipients_Input
+  restrict: NotificationRecipientsRestrictions_Input
+}
+
+\\"Details of the users and groups to receive the notification.\\"
+input NotificationRecipients_Input {
+  \\"Whether the notification should be sent to the issue's reporter.\\"
+  reporter: Boolean
+  \\"Whether the notification should be sent to the issue's assignees.\\"
+  assignee: Boolean
+  \\"Whether the notification should be sent to the issue's watchers.\\"
+  watchers: Boolean
+  \\"Whether the notification should be sent to the issue's voters.\\"
+  voters: Boolean
+  \\"List of users to receive the notification.\\"
+  users: [UserDetails_Input]
+  \\"List of groups to receive the notification.\\"
+  groups: [GroupName_Input]
+  \\"List of groupIds to receive the notification.\\"
+  groupIds: [String]
+}
+
+\\"Details of the group membership or permissions needed to receive the notification.\\"
+input NotificationRecipientsRestrictions_Input {
+  \\"List of group memberships required to receive the notification.\\"
+  groups: [GroupName_Input]
+  \\"List of groupId memberships required to receive the notification.\\"
+  groupIds: [String]
+  \\"List of permissions required to receive the notification.\\"
+  permissions: [RestrictedPermission_Input]
+}
+
+\\"Details of the permission.\\"
+input RestrictedPermission_Input {
+  \\"The ID of the permission. Either \`id\` or \`key\` must be specified. Use [Get all permissions](#api-rest-api-3-permissions-get) to get the list of permissions.\\"
+  id: String
+  \\"The key of the permission. Either \`id\` or \`key\` must be specified. Use [Get all permissions](#api-rest-api-3-permissions-get) to get the list of permissions.\\"
+  key: String
+}
+
 union createOrUpdateRemoteIssueLink_response = RemoteIssueLinkIdentifies | createOrUpdateRemoteIssueLink_400_response
 
 \\"Details of the identifiers for a created or updated remote issue link.\\"
@@ -73935,6 +74280,53 @@ type createOrUpdateRemoteIssueLink_400_response {
 
 type mutation_createOrUpdateRemoteIssueLink_oneOf_2_errors {
   title: String
+}
+
+\\"Details of a remote issue link.\\"
+input RemoteIssueLinkRequest_Input {
+  \\"An identifier for the remote item in the remote system. For example, the global ID for a remote item in Confluence would consist of the app ID and page ID, like this: \`appId=456&pageId=123\`.\\\\n\\\\nSetting this field enables the remote issue link details to be updated or deleted using remote system and item details as the record identifier, rather than using the record's Jira ID.\\\\n\\\\nThe maximum length is 255 characters.\\"
+  globalId: String
+  application: Application_Input
+  \\"Description of the relationship between the issue and the linked item. If not set, the relationship description \\\\\\"links to\\\\\\" is used in Jira.\\"
+  relationship: String
+  object: RemoteObject_Input!
+}
+
+\\"The application the linked item is in.\\"
+input Application_Input {
+  \\"The name-spaced type of the application, used by registered rendering apps.\\"
+  type: String
+  \\"The name of the application. Used in conjunction with the (remote) object icon title to display a tooltip for the link's icon. The tooltip takes the format \\\\\\"\\\\\\\\[application name\\\\\\\\] icon title\\\\\\". Blank items are excluded from the tooltip title. If both items are blank, the icon tooltop displays as \\\\\\"Web Link\\\\\\". Grouping and sorting of links may place links without an application name last.\\"
+  name: String
+}
+
+\\"The linked item.\\"
+input RemoteObject_Input {
+  \\"The URL of the item.\\"
+  url: String!
+  \\"The title of the item.\\"
+  title: String!
+  \\"The summary details of the item.\\"
+  summary: String
+  icon: Icon_Input
+  status: Status_Input
+}
+
+\\"An icon. If no icon is defined:\\\\n\\\\n *  for a status icon, no status icon displays in Jira.\\\\n *  for the remote object icon, the default link icon displays in Jira.\\"
+input Icon_Input {
+  \\"The URL of an icon that displays at 16x16 pixel in Jira.\\"
+  url16x16: String
+  \\"The title of the icon. This is used as follows:\\\\n\\\\n *  For a status icon it is used as a tooltip on the icon. If not set, the status icon doesn't display a tooltip in Jira.\\\\n *  For the remote object icon it is used in conjunction with the application name to display a tooltip for the link's icon. The tooltip takes the format \\\\\\"\\\\\\\\[application name\\\\\\\\] icon title\\\\\\". Blank itemsare excluded from the tooltip title. If both items are blank, the icon tooltop displays as \\\\\\"Web Link\\\\\\".\\"
+  title: String
+  \\"The URL of the tooltip, used only for a status icon. If not set, the status icon in Jira is not clickable.\\"
+  link: String
+}
+
+\\"The status of the item.\\"
+input Status_Input {
+  \\"Whether the item is resolved. If set to \\\\\\"true\\\\\\", the link to the issue is displayed in a strikethrough font, otherwise the link displays in normal font.\\"
+  resolved: Boolean
+  icon: Icon_Input
 }
 
 type updateRemoteIssueLink_400_response {
@@ -73957,6 +74349,33 @@ enum mutationInput_addWorklog_adjustEstimate {
   auto
 }
 
+\\"Details of a worklog.\\"
+input Worklog_Input {
+  \\"The URL of the worklog item.\\"
+  self: URL
+  author: UserDetails_Input
+  updateAuthor: UserDetails_Input
+  \\"A comment about the worklog in [Atlassian Document Format](https://developer.atlassian.com/cloud/jira/platform/apis/document/structure/). Optional when creating or updating a worklog.\\"
+  comment: JSON
+  \\"The datetime on which the worklog was created.\\"
+  created: DateTime
+  \\"The datetime on which the worklog was last updated.\\"
+  updated: DateTime
+  visibility: Visibility_Input
+  \\"The datetime on which the worklog effort was started. Required when creating a worklog. Optional when updating a worklog.\\"
+  started: DateTime
+  \\"The time spent working on the issue as days (\\\\\\\\#d), hours (\\\\\\\\#h), or minutes (\\\\\\\\#m or \\\\\\\\#). Required when creating a worklog if \`timeSpentSeconds\` isn't provided. Optional when updating a worklog. Cannot be provided if \`timeSpentSecond\` is provided.\\"
+  timeSpent: String
+  \\"The time in seconds spent working on the issue. Required when creating a worklog if \`timeSpent\` isn't provided. Optional when updating a worklog. Cannot be provided if \`timeSpent\` is provided.\\"
+  timeSpentSeconds: BigInt
+  \\"The ID of the worklog record.\\"
+  id: String
+  \\"The ID of the issue this worklog is for.\\"
+  issueId: String
+  \\"Details of properties for the worklog. Optional when creating or updating a worklog.\\"
+  properties: [EntityProperty_Input]
+}
+
 \\"Defines how to update the issue's time estimate, the options are:\\\\n\\\\n *  \`new\` Sets the estimate to a specific value, defined in \`newEstimate\`.\\\\n *  \`leave\` Leaves the estimate unchanged.\\\\n *  \`auto\` Updates the estimate by the difference between the original and updated value of \`timeSpent\` or \`timeSpentSeconds\`.\\"
 enum mutationInput_updateWorklog_adjustEstimate {
   new
@@ -73977,7 +74396,7 @@ input LinkIssueRequestJsonBean_Input {
   type: IssueLinkType_Input!
   inwardIssue: LinkedIssue_Input!
   outwardIssue: LinkedIssue_Input!
-  comment: JSON
+  comment: Comment_Input
 }
 
 \\"This object is used as follows:\\\\n\\\\n *  In the [ issueLink](#api-rest-api-3-issueLink-post) resource it defines and reports on the type of link between the issues. Find a list of issue link types with [Get issue link types](#api-rest-api-3-issueLinkType-get).\\\\n *  In the [ issueLinkType](#api-rest-api-3-issueLinkType-post) resource it defines and reports on issue link types.\\"
@@ -74009,35 +74428,30 @@ input LinkedIssue_Input {
 input Fields_Input {
   \\"The summary description of the linked issue.\\"
   summary: String
-  status: JSON
-  priority: JSON
+  status: StatusDetails_Input
+  priority: Priority_Input
   assignee: UserDetails_Input
   timetracking: TimeTrackingDetails_Input
   issuetype: IssueTypeDetails_Input
   issueType: IssueTypeDetails_Input
 }
 
-\\"User details permitted by the user's Atlassian Account privacy settings. However, be aware of these exceptions:\\\\n\\\\n *  User record deleted from Atlassian: This occurs as the result of a right to be forgotten request. In this case, \`displayName\` provides an indication and other parameters have default values or are blank (for example, email is blank).\\\\n *  User record corrupted: This occurs as a results of events such as a server import and can only happen to deleted users. In this case, \`accountId\` returns *unknown* and all other parameters have fallback values.\\\\n *  User record unavailable: This usually occurs due to an internal service outage. In this case, all parameters have fallback values.\\"
-input UserDetails_Input {
-  \\"The URL of the user.\\"
+\\"An issue priority.\\"
+input Priority_Input {
+  \\"The URL of the issue priority.\\"
   self: String
-  \\"This property is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details.\\"
+  \\"The color used to indicate the issue priority.\\"
+  statusColor: String
+  \\"The description of the issue priority.\\"
+  description: String
+  \\"The URL of the icon for the issue priority.\\"
+  iconUrl: String
+  \\"The name of the issue priority.\\"
   name: String
-  \\"This property is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details.\\"
-  key: String
-  \\"The account ID of the user, which uniquely identifies the user across all Atlassian products. For example, *5b10ac8d82e05b22cc7d4ef5*.\\"
-  accountId: query_getGroup_users_items_items_accountId
-  \\"The email address of the user. Depending on the user’s privacy settings, this may be returned as null.\\"
-  emailAddress: String
-  avatarUrls: AvatarUrlsBean_Input
-  \\"The display name of the user. Depending on the user’s privacy settings, this may return an alternative value.\\"
-  displayName: String
-  \\"Whether the user is active.\\"
-  active: Boolean
-  \\"The time zone specified in the user's profile. Depending on the user’s privacy settings, this may be returned as null.\\"
-  timeZone: String
-  \\"The type of account represented by this user. This will be one of 'atlassian' (normal users), 'app' (application user) or 'customer' (Jira Service Desk customer user)\\"
-  accountType: String
+  \\"The ID of the issue priority.\\"
+  id: String
+  \\"Whether this priority is the default.\\"
+  isDefault: Boolean
 }
 
 \\"Time tracking details.\\"
@@ -74478,16 +74892,11 @@ type JqlQuery {
 type JqlQueryClause {
   \\"The list of nested clauses.\\"
   clauses: [JqlQueryClause]!
-  operator: mutation_parseJqlQueries_oneOf_0_queries_items_structure_where_anyOf_3_operator!
+  operator: JSON
   field: JqlQueryField!
   operand: JqlQueryClauseOperand!
   \\"The list of time predicates.\\"
   predicates: [JqlQueryClauseTimePredicate]!
-}
-
-\\"The operator applied to the field.\\"
-enum mutation_parseJqlQueries_oneOf_0_queries_items_structure_where_anyOf_3_operator {
-  changed
 }
 
 \\"A field used in a JQL query. See [Advanced searching - fields reference](https://confluence.atlassian.com/x/dAiiLQ) for more information about fields in JQL queries.\\"
@@ -74723,6 +75132,23 @@ input PermissionsKeysBean_Input {
   permissions: [String]!
 }
 
+\\"Details of a permission scheme.\\"
+input PermissionScheme_Input {
+  \\"The expand options available for the permission scheme.\\"
+  expand: String
+  \\"The ID of the permission scheme.\\"
+  id: BigInt
+  \\"The URL of the permission scheme.\\"
+  self: URL
+  \\"The name of the permission scheme. Must be unique.\\"
+  name: String!
+  \\"A description for the permission scheme.\\"
+  description: String
+  scope: Scope_Input
+  \\"The permission scheme to create or update. See [About permission schemes and grants](../api-group-permission-schemes/#about-permission-schemes-and-grants) for more information.\\"
+  permissions: [PermissionGrant_Input]
+}
+
 \\"Details about a permission granted to a user or group.\\"
 input PermissionGrant_Input {
   \\"The ID of the permission granted details.\\"
@@ -74755,7 +75181,69 @@ type PriorityId {
   additionalProperties: JSON
 }
 
+\\"Details of an issue priority.\\"
+input CreatePriorityDetails_Input {
+  \\"The name of the priority. Must be unique.\\"
+  name: mutationInput_createPriority_input_name!
+  \\"The description of the priority.\\"
+  description: mutationInput_createPriority_input_description
+  iconUrl: mutationInput_createPriority_input_iconUrl
+  \\"The status color of the priority in 3-digit or 6-digit hexadecimal format.\\"
+  statusColor: String!
+}
+
+\\"The name of the priority. Must be unique.\\"
+scalar mutationInput_createPriority_input_name
+
+\\"The description of the priority.\\"
+scalar mutationInput_createPriority_input_description
+
+\\"The URL of an icon for the priority. Accepted protocols are HTTP and HTTPS. Built in icons can also be used.\\"
+enum mutationInput_createPriority_input_iconUrl {
+  _images_icons_priorities_blocker_png
+  _images_icons_priorities_critical_png
+  _images_icons_priorities_high_png
+  _images_icons_priorities_highest_png
+  _images_icons_priorities_low_png
+  _images_icons_priorities_lowest_png
+  _images_icons_priorities_major_png
+  _images_icons_priorities_medium_png
+  _images_icons_priorities_minor_png
+  _images_icons_priorities_trivial_png
+}
+
 union updatePriority_response = ErrorCollection
+
+\\"Details of an issue priority.\\"
+input UpdatePriorityDetails_Input {
+  \\"The name of the priority. Must be unique.\\"
+  name: mutationInput_updatePriority_input_name
+  \\"The description of the priority.\\"
+  description: mutationInput_updatePriority_input_description
+  iconUrl: mutationInput_updatePriority_input_iconUrl
+  \\"The status color of the priority in 3-digit or 6-digit hexadecimal format.\\"
+  statusColor: String
+}
+
+\\"The name of the priority. Must be unique.\\"
+scalar mutationInput_updatePriority_input_name
+
+\\"The description of the priority.\\"
+scalar mutationInput_updatePriority_input_description
+
+\\"The URL of an icon for the priority. Accepted protocols are HTTP and HTTPS. Built in icons can also be used.\\"
+enum mutationInput_updatePriority_input_iconUrl {
+  _images_icons_priorities_blocker_png
+  _images_icons_priorities_critical_png
+  _images_icons_priorities_high_png
+  _images_icons_priorities_highest_png
+  _images_icons_priorities_low_png
+  _images_icons_priorities_lowest_png
+  _images_icons_priorities_major_png
+  _images_icons_priorities_medium_png
+  _images_icons_priorities_minor_png
+  _images_icons_priorities_trivial_png
+}
 
 \\"Identifiers for a project.\\"
 type ProjectIdentifiers {
@@ -74880,6 +75368,24 @@ scalar mutationInput_updateProject_input_leadAccountId
 enum mutationInput_updateProject_input_assigneeType {
   PROJECT_LEAD
   UNASSIGNED
+}
+
+\\"Details of an avatar.\\"
+input Avatar_Input {
+  \\"The ID of the avatar.\\"
+  id: String!
+  \\"The owner of the avatar. For a system avatar the owner is null (and nothing is returned). For non-system avatars this is the appropriate identifier, such as the ID for a project or the account ID for a user.\\"
+  owner: String
+  \\"Whether the avatar is a system avatar.\\"
+  isSystemAvatar: Boolean
+  \\"Whether the avatar is used in Jira. For example, shown as a project's avatar.\\"
+  isSelected: Boolean
+  \\"Whether the avatar can be deleted.\\"
+  isDeletable: Boolean
+  \\"The file name of the avatar icon. Returned for system avatars.\\"
+  fileName: String
+  \\"The list of avatar icon URLs.\\"
+  urls: JSON
 }
 
 \\"Details of the feature state.\\"
@@ -75304,6 +75810,24 @@ enum mutationInput_deleteAvatar_type {
   issuetype
 }
 
+\\"The user details.\\"
+input NewUserDetails_Input {
+  \\"The URL of the user.\\"
+  self: String
+  \\"This property is no longer available. See the [migration guide](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details.\\"
+  key: String
+  \\"This property is no longer available. See the [migration guide](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details.\\"
+  name: String
+  \\"This property is no longer available. If the user has an Atlassian account, their password is not changed. If the user does not have an Atlassian account, they are sent an email asking them set up an account.\\"
+  password: String
+  \\"The email address for the user.\\"
+  emailAddress: String!
+  \\"This property is no longer available. If the user has an Atlassian account, their display name is not changed. If the user does not have an Atlassian account, they are sent an email asking them set up an account.\\"
+  displayName: String
+  \\"Deprecated, do not use.\\"
+  applicationKeys: [String]
+}
+
 \\"The account ID of the user, which uniquely identifies the user across all Atlassian products. For example, *5b10ac8d82e05b22cc7d4ef5*.\\"
 scalar mutationInput_removeUser_accountId
 
@@ -75571,7 +76095,7 @@ input ConnectWorkflowTransitionRule_Input {
   \\"The key of the rule, as defined in the Connect app descriptor.\\"
   key: String!
   configuration: RuleConfiguration_Input!
-  transition: JSON
+  transition: WorkflowTransition_Input
 }
 
 \\"A rule configuration.\\"
@@ -75582,6 +76106,14 @@ input RuleConfiguration_Input {
   disabled: Boolean
   \\"EXPERIMENTAL: A tag used to filter rules in [Get workflow transition rule configurations](https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-workflow-transition-rules/#api-rest-api-3-workflow-rule-config-get).\\"
   tag: query_getWorkflowTransitionRuleConfigurations_oneOf_0_values_items_postFunctions_items_configuration_tag
+}
+
+\\"A workflow transition.\\"
+input WorkflowTransition_Input {
+  \\"The transition ID.\\"
+  id: Int!
+  \\"The transition name.\\"
+  name: String!
 }
 
 union deleteWorkflowTransitionRuleConfigurations_response = WorkflowTransitionRulesUpdateErrors | ErrorCollection
@@ -75603,6 +76135,16 @@ input WorkflowTransitionRulesDetails_Input {
 enum mutationInput_updateWorkflowTransitionProperty_workflowMode {
   live
   draft
+}
+
+\\"Details about the server Jira is running on.\\"
+input WorkflowTransitionProperty_Input {
+  \\"The key of the transition property. Also known as the name of the transition property.\\"
+  key: String
+  \\"The value of the transition property.\\"
+  value: String!
+  \\"The ID of the transition property.\\"
+  id: String
 }
 
 \\"The workflow status. Set to *live* for inactive workflows or *draft* for draft workflows. Active workflows cannot be edited.\\"
@@ -75681,7 +76223,7 @@ input IssueTypeDetails_Input2 {
   entityId: UUID
   \\"Hierarchy level of the issue type.\\"
   hierarchyLevel: Int
-  scope: JSON
+  scope: Scope_Input
 }
 
 union assignSchemeToProject_response = assignSchemeToProject_400_response | assignSchemeToProject_403_response | assignSchemeToProject_404_response
