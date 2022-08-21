@@ -93,12 +93,12 @@ describe('example_api', () => {
    * 'w-e-i-r-d___n-a-m-e2' contains GraphQL unsafe characters.
    *
    * Because of the simpleNames option, 'w-e-i-r-d___n-a-m-e2' will be turned into
-   * 'weird___name2' and not 'wEIRDNAME2'.
+   * 'w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r' and not 'wEIRDNAME2'.
    */
   it('Basic simpleNames option test with GraphQL unsafe values and a parameter', async () => {
     const query = /* GraphQL */ `
       {
-        weird___name2(funky___parameter: "Arnold") {
+        w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r(f_u_n_k_y___p_a_r_a_m_e_t_e_r: "Arnold") {
           data
         }
       }
@@ -111,7 +111,7 @@ describe('example_api', () => {
 
     expect(result).toEqual({
       data: {
-        weird___name2: {
+        w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r: {
           data: 'weird name 2 param: Arnold',
         },
       },
