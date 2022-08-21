@@ -1,9 +1,9 @@
 import { JSONSchema, JSONSchemaObject } from './types';
 import { visitJSONSchema } from './visitJSONSchema';
 import toJsonSchema from 'to-json-schema';
-import { inspect } from '@graphql-tools/utils';
 import { DefaultLogger } from '@graphql-mesh/utils';
 import { Logger } from '@graphql-mesh/types';
+import { inspect } from '@graphql-tools/utils';
 
 const asArray = <T>(value: T | T[]): T[] => (Array.isArray(value) ? value : [value]);
 
@@ -26,7 +26,7 @@ const JSONSchemaStringFormats = [
   'uuid',
 ];
 
-const AnySchema = {
+export const AnySchema = {
   title: 'Any',
   oneOf: [
     { type: 'string' },
@@ -37,141 +37,38 @@ const AnySchema = {
   ],
 };
 
-const titleResolvedRefReservedMap = new WeakMap<
-  JSONSchemaObject,
-  {
-    title?: string;
-    $resolvedRef?: string;
-  }
->();
-
-function removeTitlesAndResolvedRefs(schema: JSONSchema) {
-  if (typeof schema === 'object' && schema != null && !titleResolvedRefReservedMap.has(schema)) {
-    if (!schema.$comment) {
-      const titleReserved = schema.title;
-      if (titleReserved) {
-        schema.title = undefined;
-      }
-      const resolvedRefReserved = schema.$resolvedRef;
-      if (resolvedRefReserved) {
-        schema.$resolvedRef = undefined;
-      }
-      titleResolvedRefReservedMap.set(schema, {
-        title: titleReserved,
-        $resolvedRef: resolvedRefReserved,
-      });
-      for (const key in schema) {
-        if (key === 'properties') {
-          for (const propertyName in schema.properties) {
-            schema[key][propertyName] = removeTitlesAndResolvedRefs(schema[key][propertyName]);
-          }
-        } else {
-          schema[key] = removeTitlesAndResolvedRefs(schema[key]);
-        }
-      }
-    }
-  }
-  return schema;
-}
-
-function deduplicateJSONSchema(schema: JSONSchema, seenMap = new Map()) {
-  if (typeof schema === 'object' && schema != null) {
-    if (!schema.$comment) {
-      const stringified = inspect(schema.properties || schema)
-        .split('[Circular]')
-        .join('[Object]');
-      const seen = seenMap.get(stringified);
-      if (seen) {
-        return seen;
-      }
-      seenMap.set(stringified, schema);
-      for (const key in schema) {
-        if (key === 'properties') {
-          for (const propertyName in schema.properties) {
-            schema.properties[propertyName] = deduplicateJSONSchema(schema.properties[propertyName], seenMap);
-          }
-        } else {
-          schema[key] = deduplicateJSONSchema(schema[key], seenMap);
-        }
-      }
-    }
-  }
-  return schema;
-}
-
-const visited = new WeakSet();
-
-function addTitlesAndResolvedRefs(schema: JSONSchema) {
-  if (typeof schema === 'object' && schema != null && !visited.has(schema)) {
-    visited.add(schema);
-    if (!schema.$comment) {
-      const reservedTitleAndResolveRef = titleResolvedRefReservedMap.get(schema);
-      if (reservedTitleAndResolveRef) {
-        if (!schema.title && reservedTitleAndResolveRef.title) {
-          schema.title = reservedTitleAndResolveRef.title;
-        }
-        if (!schema.$resolvedRef && reservedTitleAndResolveRef.$resolvedRef) {
-          schema.$resolvedRef = reservedTitleAndResolveRef.$resolvedRef;
-        }
-      }
-      for (const key in schema) {
-        if (key === 'properties') {
-          for (const propertyName in schema.properties) {
-            schema.properties[propertyName] = addTitlesAndResolvedRefs(schema.properties[propertyName]);
-          }
-        } else {
-          schema[key] = addTitlesAndResolvedRefs(schema[key]);
-        }
-      }
-    }
-  }
-  return schema;
-}
-
-async function getDeduplicatedTitles(schema: JSONSchema): Promise<Set<string>> {
-  const duplicatedTypeNames = new Set<string>();
-  const seenTypeNames = new Set<string>();
-  await visitJSONSchema(
-    schema,
-    {
-      leave: subSchema => {
-        if (typeof subSchema === 'object' && subSchema.title) {
-          if (seenTypeNames.has(subSchema.title)) {
-            duplicatedTypeNames.add(subSchema.title);
-          } else {
-            seenTypeNames.add(subSchema.title);
-          }
-        }
-        return subSchema;
-      },
-    },
-    {
-      visitedSubschemaResultMap: new WeakMap(),
-      path: '',
-    }
-  );
-  return duplicatedTypeNames;
-}
 export async function healJSONSchema(
   schema: JSONSchema,
-  {
-    noDeduplication = false,
-    logger = new DefaultLogger('healJSONSchema'),
-  }: { noDeduplication?: boolean; logger?: Logger } = {}
+  { logger = new DefaultLogger('healJSONSchema') }: { logger?: Logger } = {}
 ): Promise<JSONSchema> {
-  let readySchema = schema;
-  if (!noDeduplication) {
-    const schemaWithoutResolvedRefAndTitles = removeTitlesAndResolvedRefs(schema);
-    const deduplicatedSchemaWithoutResolvedRefAndTitles = deduplicateJSONSchema(schemaWithoutResolvedRefAndTitles);
-    const deduplicatedSchema = addTitlesAndResolvedRefs(deduplicatedSchemaWithoutResolvedRefAndTitles);
-    readySchema = deduplicatedSchema;
-  }
-  const duplicatedTypeNames = await getDeduplicatedTitles(readySchema);
+  const schemaByTitle = new Map<string, JSONSchemaObject>();
+  const anySchemaOneOfInspect = inspect(AnySchema.oneOf);
   return visitJSONSchema(
-    readySchema,
+    schema,
     {
       enter: async function healSubschema(subSchema, { path }) {
         if (typeof subSchema === 'object') {
+          if (subSchema.title === 'Any' || (subSchema.oneOf && inspect(subSchema.oneOf) === anySchemaOneOfInspect)) {
+            return AnySchema;
+          }
+          if (subSchema.title) {
+            if (Object.keys(subSchema).length === 2 && subSchema.type) {
+              delete subSchema.title;
+            } else {
+              const existingSubSchema = schemaByTitle.get(subSchema.title);
+              if (existingSubSchema) {
+                if (inspect(subSchema) === inspect(existingSubSchema)) {
+                  return existingSubSchema;
+                } else {
+                  delete subSchema.title;
+                }
+              } else {
+                schemaByTitle.set(subSchema.title, subSchema);
+              }
+            }
+          } else if (Object.keys(subSchema).length === 1 && subSchema.type) {
+            return subSchema;
+          }
           // We don't support following properties
           delete subSchema.readOnly;
           delete subSchema.writeOnly;
@@ -195,19 +92,45 @@ export async function healJSONSchema(
               subSchema.additionalProperties = true;
             }
           }
-          if (subSchema.allOf != null && subSchema.allOf.length === 1 && !subSchema.properties) {
-            logger.debug(`${path} has an "allOf" definition with only one element. Removing it.`);
-            const realSubschema = subSchema.allOf[0];
+          // Really edge case, but we need to support it
+          if (subSchema.allOf != null && subSchema.allOf.length === 1 && subSchema.allOf[0].oneOf && subSchema.oneOf) {
+            subSchema.oneOf.push(...subSchema.allOf[0].oneOf);
             delete subSchema.allOf;
-            subSchema = realSubschema;
           }
-          if (subSchema.anyOf != null && subSchema.anyOf.length === 1 && !subSchema.properties) {
-            logger.debug(`${path} has an "anyOf" definition with only one element. Removing it.`);
-            const realSubschema = subSchema.anyOf[0];
-            delete subSchema.anyOf;
-            subSchema = realSubschema;
+          // If they have title, it makes sense to keep them to reflect the schema in a better way
+          if (!subSchema.title) {
+            if (
+              subSchema.anyOf != null &&
+              subSchema.anyOf.length === 1 &&
+              !subSchema.properties &&
+              !subSchema.allOf &&
+              !subSchema.oneOf
+            ) {
+              logger.debug(`${path} has an "anyOf" definition with only one element. Removing it.`);
+              const realSubschema = subSchema.anyOf[0];
+              delete subSchema.anyOf;
+              subSchema = realSubschema;
+            }
+            if (
+              subSchema.allOf != null &&
+              subSchema.allOf.length === 1 &&
+              !subSchema.properties &&
+              !subSchema.anyOf &&
+              !subSchema.oneOf
+            ) {
+              logger.debug(`${path} has an "allOf" definition with only one element. Removing it.`);
+              const realSubschema = subSchema.allOf[0];
+              delete subSchema.allOf;
+              subSchema = realSubschema;
+            }
           }
-          if (subSchema.oneOf != null && subSchema.oneOf.length === 1 && !subSchema.properties) {
+          if (
+            subSchema.oneOf != null &&
+            subSchema.oneOf.length === 1 &&
+            !subSchema.properties &&
+            !subSchema.anyOf &&
+            !subSchema.allOf
+          ) {
             logger.debug(`${path} has an "oneOf" definition with only one element. Removing it.`);
             const realSubschema = subSchema.oneOf[0];
             delete subSchema.oneOf;
@@ -233,10 +156,6 @@ export async function healJSONSchema(
           if (subSchema.properties && subSchema.type !== 'object') {
             logger.debug(`${path} has "properties" with no type defined. Adding a type property with "object" value.`);
             subSchema.type = 'object';
-          }
-          if (duplicatedTypeNames.has(subSchema.title)) {
-            logger.debug(`${path} has a duplicated title definition. Removing it.`);
-            delete subSchema.title;
           }
           if (typeof subSchema.example === 'object' && !subSchema.type) {
             logger.debug(`${path} has an example object but no type defined. Setting type to "object".`);
@@ -349,16 +268,15 @@ export async function healJSONSchema(
                 return defaultFunc(type, schema, value);
               },
             });
-            const healedGeneratedSchema: any = generatedSchema;
-            subSchema.type = asArray(healedGeneratedSchema.type)[0] as any;
-            subSchema.properties = healedGeneratedSchema.properties;
+            subSchema.type = asArray(generatedSchema.type)[0] as any;
+            subSchema.properties = generatedSchema.properties;
             // If type for properties is already given, use it
             logger.debug(`${path} has an example but no type defined. Setting type to ${subSchema.type}.`);
-            if (typeof subSchema.additionalProperties === 'object') {
-              for (const propertyName in subSchema.properties) {
-                subSchema.properties[propertyName] = subSchema.additionalProperties;
-              }
-            }
+            // if (typeof subSchema.additionalProperties === 'object') {
+            //   for (const propertyName in subSchema.properties) {
+            //     subSchema.properties[propertyName] = subSchema.additionalProperties;
+            //   }
+            // }
           }
           if (!subSchema.title && !subSchema.$ref && subSchema.type !== 'array' && !subSchema.items) {
             const realPath = subSchema.$resolvedRef || path;

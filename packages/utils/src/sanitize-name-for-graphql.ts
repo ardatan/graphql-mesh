@@ -54,7 +54,7 @@ export function sanitizeNameForGraphQL(unsafeName: string): string {
     for (const ch of unsanitizedName) {
       if (/^[_a-zA-Z0-9]$/.test(ch)) {
         sanitizedName += ch;
-      } else if (ch === ' ' || ch === '-' || ch === '.') {
+      } else if (ch === ' ' || ch === '-' || ch === '.' || ch === '/') {
         sanitizedName += '_';
       } else {
         sanitizedName += `_${getKnownCharacterOrCharCode(ch)}_`;

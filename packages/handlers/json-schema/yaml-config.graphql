@@ -72,11 +72,6 @@ type JsonSchemaHandler @md {
   operations: [JsonSchemaOperation!]!
   ignoreErrorResponses: Boolean
   queryParams: Any
-  """
-  By default, the handler will try to deduplicate the similar types to reduce the complexity of the final schema.
-  You can disable this behavior by setting this to true.
-  """
-  noDeduplication: Boolean
   queryStringOptions: QueryStringOptions
 }
 

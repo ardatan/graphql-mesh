@@ -1,8 +1,0 @@
-sources:
-  - name: Jira
-    handler:
-      newOpenapi:
-        oasFilePath: ./swagger.json
-
-serve:
-  browser: false

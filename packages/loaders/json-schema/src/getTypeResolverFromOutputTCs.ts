@@ -1,21 +1,25 @@
 import { GraphQLError, GraphQLResolveInfo, GraphQLTypeResolver } from 'graphql';
 import { ObjectTypeComposer, UnionTypeComposer } from 'graphql-compose';
 import Ajv, { ValidateFunction, ErrorObject } from 'ajv';
+import { JSONSchemaObject } from 'json-machete';
+import { TypeComposers } from './getComposerFromJSONSchema';
 
 export function getTypeResolverFromOutputTCs(
   ajv: Ajv,
   outputTypeComposers: (ObjectTypeComposer | UnionTypeComposer)[],
+  subSchemaAndTypeComposers: JSONSchemaObject & TypeComposers,
   statusCodeOneOfIndexMap?: Record<string, number>
 ): GraphQLTypeResolver<any, any> {
   const statusCodeTypeMap = new Map<string, ObjectTypeComposer | UnionTypeComposer>();
   for (const statusCode in statusCodeOneOfIndexMap) {
     statusCodeTypeMap.set(statusCode.toString(), outputTypeComposers[statusCodeOneOfIndexMap[statusCode]]);
   }
+  const discriminatorField = subSchemaAndTypeComposers.discriminator?.propertyName;
   return function resolveType(data: any, context: any, info: GraphQLResolveInfo) {
     if (data.__typename) {
       return data.__typename;
-    } else if (data.resourceType) {
-      return data.resourceType;
+    } else if (discriminatorField != null && data[discriminatorField]) {
+      return data[discriminatorField];
     }
     if (data.$statusCode && statusCodeOneOfIndexMap) {
       const type = statusCodeTypeMap.get(data.$statusCode.toString()) || statusCodeTypeMap.get('default');

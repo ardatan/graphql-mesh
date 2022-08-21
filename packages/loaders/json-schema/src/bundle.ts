@@ -26,7 +26,6 @@ export interface JSONSchemaLoaderBundleOptions {
   queryParams?: Record<string, string | number | boolean>;
   cwd: string;
   ignoreErrorResponses?: boolean;
-  noDeduplication?: boolean;
 
   fetch?: WindowOrWorkerGlobalScope['fetch'];
   logger?: Logger;
@@ -44,7 +43,6 @@ export async function createBundle(
     fetch = crossUndiciFetch,
     logger = new DefaultLogger(name),
     ignoreErrorResponses = false,
-    noDeduplication = false,
   }: JSONSchemaLoaderBundleOptions
 ): Promise<JSONSchemaLoaderBundle> {
   logger.debug(`Creating the dereferenced schema from operations config`);
@@ -55,7 +53,6 @@ export async function createBundle(
     fetchFn: fetch,
     schemaHeaders,
     ignoreErrorResponses,
-    noDeduplication,
     baseUrl,
     operationHeaders,
     queryParams,

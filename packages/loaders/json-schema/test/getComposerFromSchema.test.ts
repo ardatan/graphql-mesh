@@ -678,35 +678,6 @@ type ExampleObject {
      `.trim()
     );
   });
-  it('should create correct object types from object definition with additionalProperties', async () => {
-    const title = 'ExampleObject';
-    const inputSchema: JSONSchema = {
-      title,
-      type: 'object',
-      properties: {
-        id: {
-          type: 'string',
-        },
-      },
-      additionalProperties: {
-        type: 'string',
-      },
-    };
-    const result = await getComposerFromJSONSchema(inputSchema, logger);
-    expect((result.input as InputTypeComposer).toSDL()).toContain(
-      /* GraphQL */ `
-scalar ExampleObject_Input
-     `.trim()
-    );
-    expect((result.output as InputTypeComposer).toSDL()).toBe(
-      /* GraphQL */ `
-type ExampleObject {
-  id: String
-  additionalProperties: JSON
-}
-     `.trim()
-    );
-  });
   it('should return GraphQLSchema if object definition given with _schema title', async () => {
     const inputSchema: JSONSchema = {
       title: '_schema',

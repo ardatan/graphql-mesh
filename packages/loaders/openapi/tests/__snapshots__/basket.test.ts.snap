@@ -214,13 +214,13 @@ type BasketResponse {
 union mutation_post_basket_oneOf_0_products_items = ApiProduct | ApiReservedProduct
 
 type ApiProduct {
-  eligibleForVouchers: Boolean
   co2EmissionInGramsPerPassenger: Int
+  eligibleForVouchers: Boolean
 }
 
 type ApiReservedProduct {
-  reservationExpiresAt: String
   co2EmissionInGramsPerPassenger: Int
+  reservationExpiresAt: String
 }
 
 type ApiError {

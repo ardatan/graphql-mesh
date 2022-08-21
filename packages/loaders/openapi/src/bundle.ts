@@ -26,7 +26,6 @@ export async function createBundle(
     queryParams: openApiLoaderOptions.queryParams,
     ignoreErrorResponses: openApiLoaderOptions.ignoreErrorResponses,
     logger: openApiLoaderOptions.logger,
-    noDeduplication: openApiLoaderOptions.noDeduplication,
   });
 }
 

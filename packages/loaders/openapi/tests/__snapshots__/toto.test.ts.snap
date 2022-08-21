@@ -589,7 +589,7 @@ Object {
             "$ref": "#/definitions/BaseResourceDTO",
           },
           Object {
-            "$ref": "#/definitions/query_get_resource_by_id_v1_oneOf_0_allOf_2",
+            "$ref": "#/definitions/mutationInput_create_resource_at_any_folder_v1_input_oneOf_0_allOf_0_allOf_0_allOf_1",
           },
         ],
         "title": "BaseResourceUpdateDTO",
@@ -665,6 +665,27 @@ Object {
         "title": "FilePropertiesDTO",
         "type": "object",
       },
+      "FileUpdateDTO": Object {
+        "$resolvedRef": "/components/schemas/FileUpdateDTO",
+        "allOf": Array [
+          Object {
+            "$ref": "#/definitions/ResourceUpdateDTO",
+          },
+          Object {
+            "$ref": "#/definitions/FilePropertiesDTO",
+          },
+        ],
+        "title": "FileUpdateDTO",
+      },
+      "FolderCreateDTO": Object {
+        "$resolvedRef": "/components/schemas/FolderCreateDTO",
+        "allOf": Array [
+          Object {
+            "$ref": "#/definitions/ResourceCreateDTO",
+          },
+        ],
+        "title": "FolderCreateDTO",
+      },
       "FolderGetWithI18nDTO": Object {
         "$resolvedRef": "/components/schemas/FolderGetWithI18nDTO",
         "allOf": Array [
@@ -675,7 +696,7 @@ Object {
             "$ref": "#/definitions/FolderPropertiesDTO",
           },
           Object {
-            "$ref": "#/definitions/query_get_resource_by_id_v1_oneOf_0_allOf_2",
+            "$ref": "#/definitions/query_get_resource_by_id_v1_oneOf_1_allOf_2",
           },
         ],
         "required": Array [
@@ -693,7 +714,7 @@ Object {
             "$ref": "#/definitions/FolderPropertiesDTO",
           },
           Object {
-            "$ref": "#/definitions/query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_2",
+            "$ref": "#/definitions/query_list_resources_at_any_folder_v1_items_anyOf_1_allOf_2",
           },
         ],
         "required": Array [
@@ -716,22 +737,31 @@ Object {
         "title": "FolderPropertiesDTO",
         "type": "object",
       },
+      "FolderUpdateDTO": Object {
+        "$resolvedRef": "/components/schemas/FolderUpdateDTO",
+        "allOf": Array [
+          Object {
+            "$ref": "#/definitions/ResourceUpdateDTO",
+          },
+        ],
+        "title": "FolderUpdateDTO",
+      },
       "Mutation": Object {
         "properties": Object {
           "create_resource_at_any_folder_v1": Object {
-            "$ref": "#/definitions/get_resource_by_id_v1_200_response",
+            "$ref": "#/definitions/create_resource_at_any_folder_v1_201_response",
           },
           "create_resource_at_the_root_folder_v1": Object {
-            "$ref": "#/definitions/get_resource_by_id_v1_200_response",
+            "$ref": "#/definitions/create_resource_at_the_root_folder_v1_201_response",
           },
           "delete_resource_at_the_root_folder_v1": Object {
             "$ref": "#/definitions/delete_resource_at_the_root_folder_v1_204_response",
           },
           "update_resource_at_any_folder_v1": Object {
-            "$ref": "#/definitions/get_resource_by_id_v1_200_response",
+            "$ref": "#/definitions/update_resource_at_any_folder_v1_200_response",
           },
           "update_resource_at_the_root_folder_v1": Object {
-            "$ref": "#/definitions/get_resource_by_id_v1_200_response",
+            "$ref": "#/definitions/update_resource_at_the_root_folder_v1_200_response",
           },
         },
         "title": "Mutation",
@@ -746,7 +776,7 @@ Object {
             "$ref": "#/definitions/mutationInput_create_resource_at_the_root_folder_v1",
           },
           "delete_resource_at_the_root_folder_v1": Object {
-            "$ref": "#/definitions/queryInput_get_resource_by_id_v1",
+            "$ref": "#/definitions/mutationInput_delete_resource_at_the_root_folder_v1",
           },
           "update_resource_at_any_folder_v1": Object {
             "$ref": "#/definitions/mutationInput_update_resource_at_any_folder_v1",
@@ -845,7 +875,7 @@ Object {
             "$ref": "#/definitions/list_resources_at_any_folder_v1_200_response",
           },
           "list_resources_at_the_root_folder_v1": Object {
-            "$ref": "#/definitions/list_resources_at_any_folder_v1_200_response",
+            "$ref": "#/definitions/list_resources_at_the_root_folder_v1_200_response",
           },
         },
         "title": "Query",
@@ -942,6 +972,15 @@ Object {
         "title": "ResourceType",
         "type": "array",
       },
+      "ResourceUpdateDTO": Object {
+        "$resolvedRef": "/components/schemas/ResourceUpdateDTO",
+        "allOf": Array [
+          Object {
+            "$ref": "#/definitions/BaseResourceUpdateDTO",
+          },
+        ],
+        "title": "ResourceUpdateDTO",
+      },
       "_schema": Object {
         "properties": Object {
           "mutation": Object {
@@ -962,6 +1001,30 @@ Object {
         ],
         "title": "_schema",
         "type": "object",
+      },
+      "create_resource_at_any_folder_v1_201_response": Object {
+        "$resolvedRef": "/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources/post/responses/201/content/application~1json/schema",
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/FileGetWithI18nDTO",
+          },
+          Object {
+            "$ref": "#/definitions/FolderGetWithI18nDTO",
+          },
+        ],
+        "title": "create_resource_at_any_folder_v1_201_response",
+      },
+      "create_resource_at_the_root_folder_v1_201_response": Object {
+        "$resolvedRef": "/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources/post/responses/201/content/application~1json/schema",
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/FileGetWithI18nDTO",
+          },
+          Object {
+            "$ref": "#/definitions/FolderGetWithI18nDTO",
+          },
+        ],
+        "title": "create_resource_at_the_root_folder_v1_201_response",
       },
       "delete_resource_at_the_root_folder_v1_204_response": Object {
         "description": "No Content",
@@ -996,6 +1059,22 @@ Object {
         "title": "list_resources_at_any_folder_v1_200_response",
         "type": "array",
       },
+      "list_resources_at_the_root_folder_v1_200_response": Object {
+        "$resolvedRef": "/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources/get/responses/200/content/application~1json/schema",
+        "items": Object {
+          "anyOf": Array [
+            Object {
+              "$ref": "#/definitions/FileGetWithLocalizedNameDTO",
+            },
+            Object {
+              "$ref": "#/definitions/FolderGetWithLocalizedNameDTO",
+            },
+          ],
+          "title": "query_list_resources_at_the_root_folder_v1_items",
+        },
+        "title": "list_resources_at_the_root_folder_v1_200_response",
+        "type": "array",
+      },
       "mutationInput_create_resource_at_any_folder_v1": Object {
         "properties": Object {
           "Accept_Language": Object {
@@ -1025,6 +1104,29 @@ Object {
           },
         },
         "title": "mutationInput_create_resource_at_any_folder_v1",
+        "type": "object",
+      },
+      "mutationInput_create_resource_at_any_folder_v1_input_oneOf_0_allOf_0_allOf_0_allOf_1": Object {
+        "properties": Object {
+          "i18n": Object {
+            "$ref": "#/definitions/mutationInput_create_resource_at_any_folder_v1_input_oneOf_0_allOf_0_allOf_0_allOf_1_i18n",
+          },
+        },
+        "title": "mutationInput_create_resource_at_any_folder_v1_input_oneOf_0_allOf_0_allOf_0_allOf_1",
+        "type": "object",
+      },
+      "mutationInput_create_resource_at_any_folder_v1_input_oneOf_0_allOf_0_allOf_0_allOf_1_i18n": Object {
+        "additionalProperties": Object {
+          "additionalProperties": true,
+          "title": "mutationInput_create_resource_at_any_folder_v1_input_oneOf_0_allOf_0_allOf_0_allOf_1_i18n_additionalProperties",
+          "type": "object",
+        },
+        "title": "mutationInput_create_resource_at_any_folder_v1_input_oneOf_0_allOf_0_allOf_0_allOf_1_i18n",
+        "type": "object",
+      },
+      "mutationInput_create_resource_at_any_folder_v1_input_oneOf_0_allOf_0_allOf_0_allOf_1_i18n_additionalProperties": Object {
+        "additionalProperties": true,
+        "title": "mutationInput_create_resource_at_any_folder_v1_input_oneOf_0_allOf_0_allOf_0_allOf_1_i18n_additionalProperties",
         "type": "object",
       },
       "mutationInput_create_resource_at_any_folder_v1_input_oneOf_0_allOf_0_allOf_1": Object {
@@ -1063,10 +1165,38 @@ Object {
             "type": "string",
           },
           "input": Object {
-            "$ref": "#/definitions/paths_api_v1_companies_{companyId}_knowledgecenter_folders_{folderId}_resources_post_requestBody_content_application_json_schema",
+            "$ref": "#/definitions/paths_api_v1_companies_{companyId}_knowledgecenter_resources_post_requestBody_content_application_json_schema",
           },
         },
         "title": "mutationInput_create_resource_at_the_root_folder_v1",
+        "type": "object",
+      },
+      "mutationInput_delete_resource_at_the_root_folder_v1": Object {
+        "properties": Object {
+          "Accept_Language": Object {
+            "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
+            "name": "Accept-Language",
+            "type": "string",
+          },
+          "X_Correlation_Id": Object {
+            "description": "Correlation ID from the auth call.",
+            "name": "X-Correlation-Id",
+            "type": "string",
+          },
+          "companyId": Object {
+            "description": undefined,
+            "name": "companyId",
+            "nullable": false,
+            "type": "string",
+          },
+          "resourceId": Object {
+            "description": undefined,
+            "name": "resourceId",
+            "nullable": false,
+            "type": "string",
+          },
+        },
+        "title": "mutationInput_delete_resource_at_the_root_folder_v1",
         "type": "object",
       },
       "mutationInput_update_resource_at_any_folder_v1": Object {
@@ -1094,7 +1224,7 @@ Object {
             "type": "string",
           },
           "input": Object {
-            "$ref": "#/definitions/paths_api_v1_companies_{companyId}_knowledgecenter_folders_{folderId}_resources_post_requestBody_content_application_json_schema",
+            "$ref": "#/definitions/paths_api_v1_companies_{companyId}_knowledgecenter_folders_{folderId}_resources_{resourceId}_put_requestBody_content_application_json_schema",
           },
           "resourceId": Object {
             "description": undefined,
@@ -1125,7 +1255,7 @@ Object {
             "type": "string",
           },
           "input": Object {
-            "$ref": "#/definitions/paths_api_v1_companies_{companyId}_knowledgecenter_folders_{folderId}_resources_post_requestBody_content_application_json_schema",
+            "$ref": "#/definitions/paths_api_v1_companies_{companyId}_knowledgecenter_resources_{resourceId}_put_requestBody_content_application_json_schema",
           },
           "resourceId": Object {
             "description": undefined,
@@ -1144,10 +1274,46 @@ Object {
             "$ref": "#/definitions/FileCreateDTO",
           },
           Object {
-            "$ref": "#/definitions/ResourceCreateDTO",
+            "$ref": "#/definitions/FolderCreateDTO",
           },
         ],
         "title": "paths_api_v1_companies_{companyId}_knowledgecenter_folders_{folderId}_resources_post_requestBody_content_application_json_schema",
+      },
+      "paths_api_v1_companies_{companyId}_knowledgecenter_folders_{folderId}_resources_{resourceId}_put_requestBody_content_application_json_schema": Object {
+        "$resolvedRef": "/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources~1{resourceId}/put/requestBody/content/application~1json/schema",
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/FileUpdateDTO",
+          },
+          Object {
+            "$ref": "#/definitions/FolderUpdateDTO",
+          },
+        ],
+        "title": "paths_api_v1_companies_{companyId}_knowledgecenter_folders_{folderId}_resources_{resourceId}_put_requestBody_content_application_json_schema",
+      },
+      "paths_api_v1_companies_{companyId}_knowledgecenter_resources_post_requestBody_content_application_json_schema": Object {
+        "$resolvedRef": "/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources/post/requestBody/content/application~1json/schema",
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/FileCreateDTO",
+          },
+          Object {
+            "$ref": "#/definitions/FolderCreateDTO",
+          },
+        ],
+        "title": "paths_api_v1_companies_{companyId}_knowledgecenter_resources_post_requestBody_content_application_json_schema",
+      },
+      "paths_api_v1_companies_{companyId}_knowledgecenter_resources_{resourceId}_put_requestBody_content_application_json_schema": Object {
+        "$resolvedRef": "/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources~1{resourceId}/put/requestBody/content/application~1json/schema",
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/FileUpdateDTO",
+          },
+          Object {
+            "$ref": "#/definitions/FolderUpdateDTO",
+          },
+        ],
+        "title": "paths_api_v1_companies_{companyId}_knowledgecenter_resources_{resourceId}_put_requestBody_content_application_json_schema",
       },
       "queryInput_get_resource_by_id_v1": Object {
         "properties": Object {
@@ -1385,6 +1551,29 @@ Object {
         "title": "query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties",
         "type": "object",
       },
+      "query_get_resource_by_id_v1_oneOf_1_allOf_2": Object {
+        "properties": Object {
+          "i18n": Object {
+            "$ref": "#/definitions/query_get_resource_by_id_v1_oneOf_1_allOf_2_i18n",
+          },
+        },
+        "title": "query_get_resource_by_id_v1_oneOf_1_allOf_2",
+        "type": "object",
+      },
+      "query_get_resource_by_id_v1_oneOf_1_allOf_2_i18n": Object {
+        "additionalProperties": Object {
+          "additionalProperties": true,
+          "title": "query_get_resource_by_id_v1_oneOf_1_allOf_2_i18n_additionalProperties",
+          "type": "object",
+        },
+        "title": "query_get_resource_by_id_v1_oneOf_1_allOf_2_i18n",
+        "type": "object",
+      },
+      "query_get_resource_by_id_v1_oneOf_1_allOf_2_i18n_additionalProperties": Object {
+        "additionalProperties": true,
+        "title": "query_get_resource_by_id_v1_oneOf_1_allOf_2_i18n_additionalProperties",
+        "type": "object",
+      },
       "query_list_resources_at_any_folder_v1_items": Object {
         "anyOf": Array [
           Object {
@@ -1445,6 +1634,50 @@ Object {
         },
         "title": "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_2",
         "type": "object",
+      },
+      "query_list_resources_at_any_folder_v1_items_anyOf_1_allOf_2": Object {
+        "properties": Object {
+          "name": Object {
+            "type": "string",
+          },
+        },
+        "title": "query_list_resources_at_any_folder_v1_items_anyOf_1_allOf_2",
+        "type": "object",
+      },
+      "query_list_resources_at_the_root_folder_v1_items": Object {
+        "anyOf": Array [
+          Object {
+            "$ref": "#/definitions/FileGetWithLocalizedNameDTO",
+          },
+          Object {
+            "$ref": "#/definitions/FolderGetWithLocalizedNameDTO",
+          },
+        ],
+        "title": "query_list_resources_at_the_root_folder_v1_items",
+      },
+      "update_resource_at_any_folder_v1_200_response": Object {
+        "$resolvedRef": "/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources~1{resourceId}/put/responses/200/content/application~1json/schema",
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/FileGetWithI18nDTO",
+          },
+          Object {
+            "$ref": "#/definitions/FolderGetWithI18nDTO",
+          },
+        ],
+        "title": "update_resource_at_any_folder_v1_200_response",
+      },
+      "update_resource_at_the_root_folder_v1_200_response": Object {
+        "$resolvedRef": "/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources~1{resourceId}/put/responses/200/content/application~1json/schema",
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/FileGetWithI18nDTO",
+          },
+          Object {
+            "$ref": "#/definitions/FolderGetWithI18nDTO",
+          },
+        ],
+        "title": "update_resource_at_the_root_folder_v1_200_response",
       },
     },
   },
@@ -1514,7 +1747,7 @@ type Query {
     \\"The page number\\"
     startKey: String
     size: Int
-  ): [query_list_resources_at_any_folder_v1_items]
+  ): [query_list_resources_at_the_root_folder_v1_items]
   \\"Get Resource by ID\\"
   get_resource_by_id_v1(
     \\"As defined in RFC 3282 https://tools.ietf.org/html/rfc3282\\"
@@ -1591,6 +1824,30 @@ scalar queryInput_list_resources_at_any_folder_v1_order_items
 \\"Represents date values\\"
 scalar Date
 
+type query_list_resources_at_the_root_folder_v1_items {
+  parentHierarchy: [ParentFolderGetWithLocalizedNameDTO]
+  parentFolderId: String
+  status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
+  publicationStartTimestamp: DateTime
+  publicationEndTimestamp: DateTime
+  previewUrl: String
+  allowedTargetAudiences: [String]
+  shiftFenced: Boolean
+  punchedFenced: Boolean
+  geoFenced: Boolean
+  pinned: Boolean
+  type: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_type_items]
+  id: String
+  lastUpdateTimestamp: DateTime
+  lastUpdateUserId: String
+  size: Int
+  url: String
+  contentType: String
+  name: String
+  fileCount: Int
+  childFolderCount: Int
+}
+
 union get_resource_by_id_v1_200_response = FileGetWithI18nDTO | FolderGetWithI18nDTO
 
 type FileGetWithI18nDTO {
@@ -1649,7 +1906,7 @@ type Mutation {
     companyId: String!
     folderId: String!
     input: paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources_post_requestBody_content_application_json_schema_Input
-  ): get_resource_by_id_v1_200_response
+  ): create_resource_at_any_folder_v1_201_response
   \\"Update A Resource At Any Folder Level\\"
   update_resource_at_any_folder_v1(
     \\"As defined in RFC 3282 https://tools.ietf.org/html/rfc3282\\"
@@ -1659,8 +1916,8 @@ type Mutation {
     companyId: String!
     folderId: String!
     resourceId: String!
-    input: paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources_post_requestBody_content_application_json_schema_Input
-  ): get_resource_by_id_v1_200_response
+    input: paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources__LEFT_CURLY_BRACE_resourceId_RIGHT_CURLY_BRACE__put_requestBody_content_application_json_schema_Input
+  ): update_resource_at_any_folder_v1_200_response
   \\"Create A Resource At The Root Folder\\"
   create_resource_at_the_root_folder_v1(
     \\"As defined in RFC 3282 https://tools.ietf.org/html/rfc3282\\"
@@ -1668,8 +1925,8 @@ type Mutation {
     \\"Correlation ID from the auth call.\\"
     X_Correlation_Id: String
     companyId: String!
-    input: paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources_post_requestBody_content_application_json_schema_Input
-  ): get_resource_by_id_v1_200_response
+    input: paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_resources_post_requestBody_content_application_json_schema_Input
+  ): create_resource_at_the_root_folder_v1_201_response
   \\"Update A Resource At The Root Folder\\"
   update_resource_at_the_root_folder_v1(
     \\"As defined in RFC 3282 https://tools.ietf.org/html/rfc3282\\"
@@ -1678,8 +1935,8 @@ type Mutation {
     X_Correlation_Id: String
     companyId: String!
     resourceId: String!
-    input: paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources_post_requestBody_content_application_json_schema_Input
-  ): get_resource_by_id_v1_200_response
+    input: paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_resources__LEFT_CURLY_BRACE_resourceId_RIGHT_CURLY_BRACE__put_requestBody_content_application_json_schema_Input
+  ): update_resource_at_the_root_folder_v1_200_response
   \\"Delete A Resource At The Root Folder\\"
   delete_resource_at_the_root_folder_v1(
     \\"As defined in RFC 3282 https://tools.ietf.org/html/rfc3282\\"
@@ -1691,9 +1948,11 @@ type Mutation {
   ): Void
 }
 
+union create_resource_at_any_folder_v1_201_response = FileGetWithI18nDTO | FolderGetWithI18nDTO
+
 input paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources_post_requestBody_content_application_json_schema_Input @oneOf {
   FileCreateDTO_Input: FileCreateDTO_Input
-  ResourceCreateDTO_Input: ResourceCreateDTO_Input
+  FolderCreateDTO_Input: FolderCreateDTO_Input
 }
 
 input FileCreateDTO_Input {
@@ -1714,7 +1973,7 @@ input FileCreateDTO_Input {
   contentType: String
 }
 
-input ResourceCreateDTO_Input {
+input FolderCreateDTO_Input {
   parentFolderId: String
   status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
   publicationStartTimestamp: DateTime
@@ -1727,6 +1986,58 @@ input ResourceCreateDTO_Input {
   pinned: Boolean
   i18n: JSON
   type: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_type_items]!
+}
+
+union update_resource_at_any_folder_v1_200_response = FileGetWithI18nDTO | FolderGetWithI18nDTO
+
+input paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources__LEFT_CURLY_BRACE_resourceId_RIGHT_CURLY_BRACE__put_requestBody_content_application_json_schema_Input @oneOf {
+  FileUpdateDTO_Input: FileUpdateDTO_Input
+  FolderUpdateDTO_Input: FolderUpdateDTO_Input
+}
+
+input FileUpdateDTO_Input {
+  parentFolderId: String
+  status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
+  publicationStartTimestamp: DateTime
+  publicationEndTimestamp: DateTime
+  previewUrl: String
+  allowedTargetAudiences: [String]
+  shiftFenced: Boolean
+  punchedFenced: Boolean
+  geoFenced: Boolean
+  pinned: Boolean
+  i18n: JSON
+  size: Int
+  url: String
+  contentType: String
+}
+
+input FolderUpdateDTO_Input {
+  parentFolderId: String
+  status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
+  publicationStartTimestamp: DateTime
+  publicationEndTimestamp: DateTime
+  previewUrl: String
+  allowedTargetAudiences: [String]
+  shiftFenced: Boolean
+  punchedFenced: Boolean
+  geoFenced: Boolean
+  pinned: Boolean
+  i18n: JSON
+}
+
+union create_resource_at_the_root_folder_v1_201_response = FileGetWithI18nDTO | FolderGetWithI18nDTO
+
+input paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_resources_post_requestBody_content_application_json_schema_Input @oneOf {
+  FileCreateDTO_Input: FileCreateDTO_Input
+  FolderCreateDTO_Input: FolderCreateDTO_Input
+}
+
+union update_resource_at_the_root_folder_v1_200_response = FileGetWithI18nDTO | FolderGetWithI18nDTO
+
+input paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_resources__LEFT_CURLY_BRACE_resourceId_RIGHT_CURLY_BRACE__put_requestBody_content_application_json_schema_Input @oneOf {
+  FileUpdateDTO_Input: FileUpdateDTO_Input
+  FolderUpdateDTO_Input: FolderUpdateDTO_Input
 }
 
 \\"Represents empty values\\"

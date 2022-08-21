@@ -17,7 +17,6 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   fetch?: WindowOrWorkerGlobalScope['fetch'];
   ignoreErrorResponses?: boolean;
   queryParams?: Record<string, string | number | boolean>;
-  noDeduplication?: boolean;
   queryStringOptions?: IStringifyOptions;
 }
 

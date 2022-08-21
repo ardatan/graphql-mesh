@@ -33,6 +33,7 @@ describe('Authentication', () => {
         }
       }
     `;
+
     const createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
       oasFilePath,
       baseUrl,
@@ -41,10 +42,12 @@ describe('Authentication', () => {
       },
       fetch,
     });
+
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
     });
+
     expect(result).toEqual({
       data: {
         get_patent_with_id: {
@@ -53,6 +56,7 @@ describe('Authentication', () => {
       },
     });
   });
+
   it('Get patent using API key in the header', async () => {
     const query = /* GraphQL */ `
       query {
@@ -61,6 +65,7 @@ describe('Authentication', () => {
         }
       }
     `;
+
     const createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
       oasFilePath,
       baseUrl,
@@ -69,6 +74,7 @@ describe('Authentication', () => {
       },
       fetch,
     });
+
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
@@ -82,6 +88,7 @@ describe('Authentication', () => {
       },
     });
   });
+
   it('Get patent using API key in the cookie', async () => {
     const query = /* GraphQL */ `
       query {
@@ -90,6 +97,7 @@ describe('Authentication', () => {
         }
       }
     `;
+
     const createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
       oasFilePath,
       baseUrl,
@@ -98,6 +106,7 @@ describe('Authentication', () => {
       },
       fetch,
     });
+
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
@@ -111,6 +120,7 @@ describe('Authentication', () => {
       },
     });
   });
+
   it('Get patent using API key in the query string', async () => {
     const query = /* GraphQL */ `
       query {
@@ -119,6 +129,7 @@ describe('Authentication', () => {
         }
       }
     `;
+
     const createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
       oasFilePath,
       baseUrl,
@@ -127,6 +138,7 @@ describe('Authentication', () => {
       },
       fetch,
     });
+
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
