@@ -1,4 +1,4 @@
-import { execute, graphql, GraphQLSchema, parse } from 'graphql';
+import { execute, GraphQLSchema, parse } from 'graphql';
 
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 import { startServer, stopServer } from '../../../handlers/openapi/test/example_api5_server';
