@@ -778,7 +778,7 @@
   },
   {
     "objectID": "mesh-docs-source-handlers-json-schema",
-    "headings": ["Dynamic Values", "Configure deduplication behavior", "Codesandbox Example", "Config API Reference"],
+    "headings": ["Dynamic Values", "Codesandbox Example", "Config API Reference"],
     "toc": [
       {
         "children": [
@@ -809,11 +809,6 @@
       },
       {
         "children": [],
-        "title": "Configure deduplication behavior",
-        "anchor": "configure-deduplication-behavior"
-      },
-      {
-        "children": [],
         "title": "Codesandbox Example",
         "anchor": "codesandbox-example"
       },
@@ -823,7 +818,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "fd0927d83239aea6c4383d937e0ce257",
+    "content": "f1120680b9355c9caf202b8a75a481c0",
     "url": "https://www.graphql-mesh.com/docs/handlers/json-schema",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Source Handlers"],
