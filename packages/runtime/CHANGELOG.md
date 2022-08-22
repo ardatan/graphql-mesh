@@ -1,5 +1,15 @@
 # @graphql-mesh/runtime
 
+## 0.42.1
+
+### Patch Changes
+
+- [#4344](https://github.com/Urigo/graphql-mesh/pull/4344) [`fd9356d31`](https://github.com/Urigo/graphql-mesh/commit/fd9356d31ace0bc411602a31e419a9091b6c3323) Thanks [@ardatan](https://github.com/ardatan)! - fix(runtime): if there is only one source, respect introspection query even if there is no operationName
+
+- Updated dependencies [[`f882aca38`](https://github.com/Urigo/graphql-mesh/commit/f882aca388380ad9dff1d618424e8a36b8607319)]:
+  - @graphql-mesh/types@0.80.0
+  - @graphql-mesh/utils@0.38.1
+
 ## 0.42.0
 
 ### Minor Changes

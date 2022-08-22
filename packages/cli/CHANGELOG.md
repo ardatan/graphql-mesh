@@ -1,5 +1,23 @@
 # @graphql-mesh/cli
 
+## 0.75.12
+
+### Patch Changes
+
+- [#4336](https://github.com/Urigo/graphql-mesh/pull/4336) [`130d7bdeb`](https://github.com/Urigo/graphql-mesh/commit/130d7bdeb190ebf8fa2d6c7565289891e824bb40) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@graphql-codegen/typescript-generic-sdk@3.0.1` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typescript-generic-sdk/v/3.0.1) (from `3.0.0`, in `dependencies`)
+  - Updated dependency [`graphql-ws@5.10.1` ↗︎](https://www.npmjs.com/package/graphql-ws/v/5.10.1) (from `5.10.0`, in `dependencies`)
+
+* [`e81f3e9a1`](https://github.com/Urigo/graphql-mesh/commit/e81f3e9a1729b0e6ffeaf433d29d122e6c0173e5) Thanks [@ardatan](https://github.com/ardatan)! - fix(cli): enable document validation while running codegen with the generated schema and provided documents
+
+* Updated dependencies [[`de7081cdb`](https://github.com/Urigo/graphql-mesh/commit/de7081cdbb4c6ddb8ff60ac15089a19f70ee3a3a), [`fd9356d31`](https://github.com/Urigo/graphql-mesh/commit/fd9356d31ace0bc411602a31e419a9091b6c3323), [`f882aca38`](https://github.com/Urigo/graphql-mesh/commit/f882aca388380ad9dff1d618424e8a36b8607319)]:
+  - @graphql-mesh/config@6.0.1
+  - @graphql-mesh/runtime@0.42.1
+  - @graphql-mesh/types@0.80.0
+  - @graphql-mesh/store@0.8.30
+  - @graphql-mesh/utils@0.38.1
+
 ## 0.75.11
 
 ### Patch Changes

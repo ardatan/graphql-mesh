@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/tuql",
-  "version": "0.5.42",
+  "version": "0.5.43",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.2.2",
-    "@graphql-mesh/types": "0.79.0",
+    "@graphql-mesh/types": "0.80.0",
     "tuql": "1.7.0",
     "tslib": "^2.4.0"
   },

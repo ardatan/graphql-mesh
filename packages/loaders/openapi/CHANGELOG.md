@@ -1,5 +1,29 @@
 # @omnigraph/openapi
 
+## 0.11.0
+
+### Minor Changes
+
+- [#4342](https://github.com/Urigo/graphql-mesh/pull/4342) [`ca6d6206b`](https://github.com/Urigo/graphql-mesh/commit/ca6d6206b02dfaa42eafa83442a04b33bbdf2db9) Thanks [@gilgardosh](https://github.com/gilgardosh)! - ## Some improvements on OAS handling
+  - If there are no parameters defined in OAS links, the handler exposes the arguments of the original operation.
+  - If the name of the link definition is not valid for GraphQL, the handler sanitizes it.
+
+* [#4327](https://github.com/Urigo/graphql-mesh/pull/4327) [`f882aca38`](https://github.com/Urigo/graphql-mesh/commit/f882aca388380ad9dff1d618424e8a36b8607319) Thanks [@gilgardosh](https://github.com/gilgardosh)! - ## BREAKING CHANGES
+  - Named types are no longer deduplicated automatically, so this might introduce new types on your side. Also the types with unknown content are always reflected as "JSON"/"Any" scalar type
+  - `noDeduplicate` option has been dropped, because it is no longer needed.
+
+### Patch Changes
+
+- [#4343](https://github.com/Urigo/graphql-mesh/pull/4343) [`ab89f98cf`](https://github.com/Urigo/graphql-mesh/commit/ab89f98cf7b9a0dceb3b03aed5528b001c3f2496) Thanks [@gilgardosh](https://github.com/gilgardosh)! - Add \_ prefix if the type is Subscription to avoid conflict with the root "Subscription" type
+
+* [#4343](https://github.com/Urigo/graphql-mesh/pull/4343) [`ab89f98cf`](https://github.com/Urigo/graphql-mesh/commit/ab89f98cf7b9a0dceb3b03aed5528b001c3f2496) Thanks [@gilgardosh](https://github.com/gilgardosh)! - Some additional tests
+
+* Updated dependencies [[`de7081cdb`](https://github.com/Urigo/graphql-mesh/commit/de7081cdbb4c6ddb8ff60ac15089a19f70ee3a3a), [`ab89f98cf`](https://github.com/Urigo/graphql-mesh/commit/ab89f98cf7b9a0dceb3b03aed5528b001c3f2496), [`de7081cdb`](https://github.com/Urigo/graphql-mesh/commit/de7081cdbb4c6ddb8ff60ac15089a19f70ee3a3a), [`ca6d6206b`](https://github.com/Urigo/graphql-mesh/commit/ca6d6206b02dfaa42eafa83442a04b33bbdf2db9), [`f882aca38`](https://github.com/Urigo/graphql-mesh/commit/f882aca388380ad9dff1d618424e8a36b8607319)]:
+  - @omnigraph/json-schema@0.29.0
+  - json-machete@0.13.0
+  - @graphql-mesh/types@0.80.0
+  - @graphql-mesh/utils@0.38.1
+
 ## 0.10.0
 
 ### Minor Changes
@@ -140,11 +164,11 @@
 
   ```ts
   export default function myOperationHeaders({ context }: ResolverData) {
-    const someToken = context.request.headers.get("some-token");
-    const anotherToken = await someLogicThatReturnsAnotherToken(someToken);
+    const someToken = context.request.headers.get('some-token')
+    const anotherToken = await someLogicThatReturnsAnotherToken(someToken)
     return {
-      "x-bar-token": anotherToken
-    };
+      'x-bar-token': anotherToken
+    }
   }
   ```
 
