@@ -1,13 +1,14 @@
 import { execute, GraphQLSchema, parse } from 'graphql';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 import { fetch } from '@whatwg-node/fetch';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 let createdSchema: GraphQLSchema;
 
 jest.setTimeout(15000);
 
 // This test suite is used to verify the behavior of anyOf and oneOf handling
-describe('Handle anyOf and oneOf', () => {
+describe('OpenAPI loader: Handle anyOf and oneOf', () => {
   /**
    * Set up the schema
    */
@@ -66,6 +67,10 @@ describe('Handle anyOf and oneOf', () => {
       }
     }
   `;
+
+  it('should generate the schema correctly', () => {
+    expect(printSchemaWithDirectives(createdSchema)).toMatchSnapshot();
+  });
 
   describe('anyOf', () => {
     const anyOfAst = parse(anyOfQuery);
