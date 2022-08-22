@@ -13,6 +13,7 @@ import {
   isSomeInputTypeComposer,
   ComposeOutputType,
   ComposeInputType,
+  EnumTypeComposer,
 } from 'graphql-compose';
 import {
   getNamedType,
@@ -437,10 +438,14 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
                 ...subSchema,
               };
             case 'Subscription':
-              return {
-                output: schemaComposer.Subscription,
-                ...subSchema,
-              };
+              if (path.startsWith('/properties/subscription')) {
+                return {
+                  output: schemaComposer.Subscription,
+                  ...subSchema,
+                };
+              }
+              subSchema.title = 'Subscription_';
+              break;
           }
         }
       }
@@ -573,13 +578,19 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
 
       const fieldMap: ObjectTypeComposerFieldConfigMapDefinition<any, any> = {};
       const inputFieldMap: Record<string, InputTypeComposerFieldConfigAsObjectDefinition & { type: any }> = {};
+      let isList = false;
 
       if (subSchemaAndTypeComposers.allOf) {
         let ableToUseGraphQLInputObjectType = true;
         for (const maybeTypeComposers of subSchemaAndTypeComposers.allOf as any) {
-          const { input: inputTypeComposer, output: outputTypeComposer } = maybeTypeComposers;
+          let { input: inputTypeComposer, output: outputTypeComposer } = maybeTypeComposers;
 
-          if (inputTypeComposer instanceof ScalarTypeComposer) {
+          if (inputTypeComposer instanceof ListComposer) {
+            isList = true;
+            inputTypeComposer = inputTypeComposer.ofType;
+          }
+
+          if (inputTypeComposer instanceof ScalarTypeComposer || inputTypeComposer instanceof EnumTypeComposer) {
             ableToUseGraphQLInputObjectType = false;
           } else {
             const inputTypeElemFieldMap = inputTypeComposer.getFields();
@@ -634,10 +645,18 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
         // It should not have `required` because it is `anyOf` not `allOf`
         let ableToUseGraphQLInputObjectType = true;
         for (const typeComposers of subSchemaAndTypeComposers.anyOf as any) {
-          const { input: inputTypeComposer, output: outputTypeComposer } = typeComposers;
-          if (inputTypeComposer instanceof ScalarTypeComposer) {
+          let { input: inputTypeComposer, output: outputTypeComposer } = typeComposers;
+          if (inputTypeComposer instanceof ListComposer || outputTypeComposer instanceof ListComposer) {
+            isList = true;
+            inputTypeComposer = inputTypeComposer.ofType;
+            outputTypeComposer = outputTypeComposer.ofType;
+          }
+          if (inputTypeComposer instanceof ScalarTypeComposer || inputTypeComposer instanceof EnumTypeComposer) {
             ableToUseGraphQLInputObjectType = false;
           } else {
+            if (!inputTypeComposer.getFields) {
+              console.log(inputTypeComposer);
+            }
             const inputTypeElemFieldMap = inputTypeComposer.getFields();
             for (const fieldName in inputTypeElemFieldMap) {
               // In case of conflict set it to JSON
@@ -854,6 +873,11 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             input = schemaComposer.getAnyTC(GraphQLJSON);
           } else if (input != null && 'addFields' in input) {
             (input as InputTypeComposer).addFields(inputFieldMap);
+          }
+
+          if (isList) {
+            input = input.List;
+            output = (output as ObjectTypeComposer).List;
           }
           return {
             input,
