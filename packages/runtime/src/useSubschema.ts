@@ -1,5 +1,10 @@
-import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
-import { createDefaultExecutor, DelegationContext, SubschemaConfig } from '@graphql-tools/delegate';
+import { applyRequestTransforms, applyResultTransforms } from '@graphql-mesh/utils';
+import {
+  createDefaultExecutor,
+  DelegationContext,
+  SubschemaConfig,
+  applySchemaTransforms,
+} from '@graphql-tools/delegate';
 import { ExecutionRequest, getOperationASTFromRequest, isAsyncIterable } from '@graphql-tools/utils';
 import { mapAsyncIterator, Plugin, TypedExecutionArgs } from '@envelop/core';
 import { GraphQLSchema, introspectionFromSchema } from 'graphql';
@@ -16,6 +21,12 @@ function getExecuteFn(subschema: SubschemaConfig) {
       context: args.contextValue,
     };
     const operationAST = getOperationASTFromRequest(originalRequest);
+    // TODO: We need more elegant solution
+    if (operationAST.name?.value === 'IntrospectionQuery') {
+      return {
+        data: introspectionFromSchema(args.schema),
+      };
+    }
     const delegationContext: DelegationContext = {
       subschema,
       subschemaConfig: subschema,
@@ -63,19 +74,13 @@ export function useSubschema(subschema: SubschemaConfig): {
   transformedSchema: GraphQLSchema;
   plugin: Plugin;
 } {
-  const transformedSchema = applySchemaTransforms(subschema.schema, subschema, subschema.schema, subschema.transforms);
+  const transformedSchema = applySchemaTransforms(subschema.schema, subschema);
 
   const plugin: Plugin = {
     onPluginInit({ setSchema }) {
       setSchema(transformedSchema);
     },
-    onExecute({ args, setExecuteFn, setResultAndStopExecution }) {
-      // TODO: This is a hack to make introspection work properly
-      if (args.operationName === 'IntrospectionQuery') {
-        setResultAndStopExecution({
-          data: introspectionFromSchema(args.schema) as any,
-        });
-      }
+    onExecute({ setExecuteFn }) {
       setExecuteFn(getExecuteFn(subschema));
     },
     onSubscribe({ setSubscribeFn }) {

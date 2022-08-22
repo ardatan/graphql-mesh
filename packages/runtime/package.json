@@ -40,6 +40,9 @@
     "@envelop/extended-validation": "1.8.0",
     "tslib": "^2.4.0"
   },
+  "devDependencies": {
+    "@graphql-tools/schema": "9.0.1"
+  },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
