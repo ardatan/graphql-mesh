@@ -3,6 +3,7 @@ import { execute, GraphQLSchema, parse } from 'graphql';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 import { startServer, stopServer } from '../../../handlers/openapi/test/example_api5_server';
 import { fetch } from '@whatwg-node/fetch';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 let createdSchema: GraphQLSchema;
 const PORT = 3007;
@@ -31,6 +32,10 @@ describe('example_api', () => {
    */
   afterAll(() => {
     return stopServer();
+  });
+
+  it('should generate the schema correctly', () => {
+    expect(printSchemaWithDirectives(createdSchema)).toMatchSnapshot();
   });
 
   /**

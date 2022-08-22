@@ -444,9 +444,11 @@ ${operationConfig.description || ''}
               }
               linkResolverFieldMap[linkName] = (root, args, context, info) =>
                 linkResolver(linkObj.args, targetField.resolve, root, args, context, info);
+              if (!linkObj.args) {
+              }
               return {
                 ...targetField,
-                args: {},
+                args: linkObj.args ? {} : targetField.args,
                 description: linkObj.description || targetField.description,
                 // Pick the correct link resolver if there are many link for the same return type used by different operations
                 resolve: (root, args, context, info) => {

@@ -594,16 +594,16 @@ Object {
           "links": Object {
             "reviews": Object {
               "args": Object {
-                "id": "{root.$request.path.product_id}",
-                "product_tag": "{root.$request.query.product_tag}",
+                "id": "{root.$request.path.product-id}",
+                "product_tag": "{root.$request.query.product-tag}",
               },
               "description": undefined,
               "fieldName": "getProductReviews",
             },
             "reviewsWithOperationRef": Object {
               "args": Object {
-                "id": "{root.$request.path.product_id}",
-                "product_tag": "{root.$request.query.product_tag}",
+                "id": "{root.$request.path.product-id}",
+                "product_tag": "{root.$request.query.product-tag}",
               },
               "description": undefined,
               "fieldName": "getProductReviews",

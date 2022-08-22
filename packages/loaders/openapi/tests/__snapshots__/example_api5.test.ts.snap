@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`example_api should generate the schema correctly 1`] = `
+"schema {
+  query: Query
+}
+
+type Query {
+  \\"Basic simpleNames option test\\"
+  o_d_d___n_a_m_e: o_d_d___n_a_m_e_200_response
+  \\"Basic simpleNames option test with GraphQL unsafe values\\"
+  w_e_i_r_d___n_a_m_e: w_e_i_r_d___n_a_m_e_200_response
+  \\"Basic simpleNames option test with links with hard-coded parameters\\"
+  w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response
+  \\"Basic simpleNames option test with links with exposed parameters\\"
+  w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response
+}
+
+type o_d_d___n_a_m_e_200_response {
+  data: String
+  \\"Basic link\\"
+  w_e_i_r_d___n_a_m_e___l_i_n_k: w_e_i_r_d___n_a_m_e_200_response
+  \\"Hardcoded link parameter\\"
+  w_e_i_r_d___n_a_m_e2___l_i_n_k: w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response
+  \\"Exposed link parameter\\"
+  w_e_i_r_d___n_a_m_e3___l_i_n_k: w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response
+}
+
+type w_e_i_r_d___n_a_m_e_200_response {
+  data: String
+}
+
+type w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response {
+  data: String
+}
+
+type w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response {
+  data: String
+}"
+`;
