@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`example_api2 should generate the schema correctly 1`] = `
+"schema {
+  query: Query
+}
+
+type Query {
+  \\"Return a user.\\"
+  user: user
+  \\"Return a user.\\"
+  User: user
+}
+
+\\"A user represents a natural person\\"
+type user {
+  \\"The legal name of a user\\"
+  name: String
+}"
+`;

@@ -7,8 +7,6 @@ import { inspect } from '@graphql-tools/utils';
 
 const asArray = <T>(value: T | T[]): T[] => (Array.isArray(value) ? value : [value]);
 
-const reservedTypeNames = ['Query', 'Mutation', 'Subscription'];
-
 const JSONSchemaStringFormats = [
   'date',
   'hostname',
@@ -286,7 +284,7 @@ export async function healJSONSchema(
               : realPath.split('/definitions/');
             const maybeDefinitionBasedPath =
               splitByDefinitions.length > 1 ? splitByDefinitions[splitByDefinitions.length - 1] : realPath;
-            let pathBasedName = maybeDefinitionBasedPath
+            const pathBasedName = maybeDefinitionBasedPath
               .split('~1')
               .join('/')
               .split('/properties')
@@ -332,11 +330,6 @@ export async function healJSONSchema(
               default:
                 logger.debug(`${path} has no title. Setting it to ${pathBasedName}`);
                 subSchema.title = subSchema.title || pathBasedName;
-            }
-            // If type name is reserved, add a suffix
-            if (reservedTypeNames.includes(pathBasedName)) {
-              logger.debug(`${path} has a title of ${pathBasedName}. It is a reserved type name. Adding a suffix.`);
-              pathBasedName += '_';
             }
           }
           if (subSchema.type === 'object' && subSchema.properties && Object.keys(subSchema.properties).length === 0) {

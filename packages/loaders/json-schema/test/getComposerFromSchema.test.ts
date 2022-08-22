@@ -758,7 +758,7 @@ type Mutation {
     expect(output instanceof ObjectTypeComposer).toBeTruthy();
     expect((output as SchemaComposer).toSDL()).toContain(
       /* GraphQL */ `
-type Subscription {
+type Subscription_ {
   foo: String
 }
      `.trim()

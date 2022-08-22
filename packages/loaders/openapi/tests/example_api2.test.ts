@@ -3,14 +3,14 @@ import { graphql, GraphQLSchema } from 'graphql';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 import { startServer, stopServer } from '../../../handlers/openapi/test/example_api2_server';
 import { fetch } from '@whatwg-node/fetch';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 let createdSchema: GraphQLSchema;
 const PORT = 3004;
 const baseUrl = `http://localhost:${PORT}/api`;
 
 /**
- * This test suite is used to verify the behavior of the operationIdFieldNames
- * option.
+ * This test suite is used to verify the behavior of the naming convention
  *
  * It is necessary to make a separate OAS because we need all of operations to
  * have operationIDs.
@@ -36,6 +36,10 @@ describe('example_api2', () => {
     return stopServer();
   });
 
+  it('should generate the schema correctly', () => {
+    expect(printSchemaWithDirectives(createdSchema)).toMatchSnapshot();
+  });
+
   /**
    * There should be two operations.
    *
@@ -43,7 +47,7 @@ describe('example_api2', () => {
    * one, because it does not have an operationId defined, will have a
    * name based on the path, i.e. user (Mind the casing)
    */
-  it('The option operationIdFieldNames should allow both operations to be present', () => {
+  it('Should allow both operations to be present', () => {
     const gqlTypes = Object.keys(createdSchema.getQueryType().getFields()).length;
     expect(gqlTypes).toEqual(2);
   });
