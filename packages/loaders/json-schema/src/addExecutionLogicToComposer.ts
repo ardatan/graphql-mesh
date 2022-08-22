@@ -446,7 +446,7 @@ ${operationConfig.description || ''}
                 linkResolver(linkObj.args, targetField.resolve, root, args, context, info);
               return {
                 ...targetField,
-                args: {},
+                args: linkObj.args ? {} : targetField.args,
                 description: linkObj.description || targetField.description,
                 // Pick the correct link resolver if there are many link for the same return type used by different operations
                 resolve: (root, args, context, info) => {

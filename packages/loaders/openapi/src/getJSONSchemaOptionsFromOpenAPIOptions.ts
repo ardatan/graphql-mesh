@@ -67,6 +67,12 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     baseUrl = baseUrl || oasOrSwagger.servers[0].url;
   }
 
+  type OperationConfig = JSONSchemaHTTPJSONOperationConfig & {
+    responseByStatusCode: Record<string, JSONSchemaOperationResponseConfig>;
+  };
+
+  const methodObjFieldMap = new WeakMap<OpenAPIV2.OperationObject | OpenAPIV3.OperationObject, OperationConfig>();
+
   for (const relativePath in oasOrSwagger.paths) {
     const pathObj = oasOrSwagger.paths[relativePath];
     const pathParameters = pathObj.parameters;
@@ -75,7 +81,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
         continue;
       }
       const methodObj = pathObj[method] as OpenAPIV2.OperationObject | OpenAPIV3.OperationObject;
-      const operationConfig = {
+      const operationConfig: OperationConfig = {
         method: method.toUpperCase() as HTTPMethod,
         path: relativePath,
         type: method.toUpperCase() === 'GET' ? 'query' : 'mutation',
@@ -84,10 +90,9 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
         schemaHeaders,
         operationHeaders,
         responseByStatusCode: {},
-      } as JSONSchemaHTTPJSONOperationConfig & {
-        responseByStatusCode: Record<string, JSONSchemaOperationResponseConfig>;
-      };
+      } as OperationConfig;
       operations.push(operationConfig);
+      methodObjFieldMap.set(methodObj, operationConfig);
       let allParams;
       if (methodObj.parameters && Array.isArray(methodObj.parameters)) {
         allParams = [...(pathParameters || []), ...methodObj.parameters];
@@ -329,13 +334,18 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
             if ('$ref' in linkObj) {
               linkObj = resolvePath(linkObj.$ref, oasOrSwagger) as OpenAPIV3.LinkObject;
             }
-            const args: Record<string, string> = {};
-            for (const parameterName in linkObj.parameters || {}) {
-              const parameterExp = linkObj.parameters[parameterName].split('-').join('_') as string;
-              args[sanitizeNameForGraphQL(parameterName)] = parameterExp.startsWith('$')
-                ? `{root.${parameterExp}}`
-                : parameterExp.split('$').join('root.$');
+            let args: Record<string, string>;
+            if (linkObj.parameters) {
+              args = {};
+              for (const parameterName in linkObj.parameters) {
+                const parameterExp = linkObj.parameters[parameterName];
+                const sanitizedParamName = sanitizeNameForGraphQL(parameterName);
+                args[sanitizedParamName] = parameterExp.startsWith('$')
+                  ? `{root.${parameterExp}}`
+                  : parameterExp.split('$').join('root.$');
+              }
             }
+            const sanitizedLinkName = sanitizeNameForGraphQL(linkName);
             if ('operationRef' in linkObj) {
               const [externalPath, ref] = linkObj.operationRef.split('#');
               if (externalPath) {
@@ -344,19 +354,17 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                 );
               } else {
                 const actualOperation = resolvePath(ref, oasOrSwagger);
-                if (actualOperation.operationId) {
-                  const fieldName = sanitizeNameForGraphQL(actualOperation.operationId);
-                  responseByStatusCode[responseKey].links[linkName] = {
-                    fieldName,
-                    args,
-                    description: linkObj.description,
-                  };
-                } else {
-                  logger.debug('Missing operationId skipping...');
-                }
+                responseByStatusCode[responseKey].links[sanitizedLinkName] = {
+                  get fieldName() {
+                    const linkOperationConfig = methodObjFieldMap.get(actualOperation);
+                    return linkOperationConfig.field;
+                  },
+                  args,
+                  description: linkObj.description,
+                };
               }
             } else if ('operationId' in linkObj) {
-              responseByStatusCode[responseKey].links[linkName] = {
+              responseByStatusCode[responseKey].links[sanitizedLinkName] = {
                 fieldName: sanitizeNameForGraphQL(linkObj.operationId),
                 args,
                 description: linkObj.description,
