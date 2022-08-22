@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`example_api should generate the schema correctly 1`] = `
+exports[`OpenAPI loader: instagram should generate the schema correctly 1`] = `
 "schema {
   query: Query
   mutation: Mutation

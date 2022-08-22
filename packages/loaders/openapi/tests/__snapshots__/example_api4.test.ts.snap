@@ -1,0 +1,128 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OpenAPI loader: Handle anyOf and oneOf should generate the schema correctly 1`] = `
+"schema {
+  query: Query
+}
+
+directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
+
+type Query {
+  \\"Basic oneOf test\\"
+  oneOf: oneOf_200_response
+  \\"oneOf test with non-object type member schema\\"
+  oneOf2: oneOf2_200_response
+  \\"oneOf test with no object type member schemas\\"
+  oneOf3: oneOf3_200_response
+  \\"oneOf test with extraneous member schemas\\"
+  oneOf4: Int
+  \\"Basic oneOf test with allOf\\"
+  oneOf5: oneOf5_200_response
+  \\"oneOf test with allOf, requiring oneOf collapse\\"
+  oneOf6: oneOf6_200_response
+  \\"Basic anyOf test using the same member schemas\\"
+  anyOf: anyOf_200_response
+  \\"Basic anyOf test with different member schemas\\"
+  anyOf2: anyOf2_200_response
+  \\"anyOf test with the same nested member schemas\\"
+  anyOf3: anyOf3_200_response
+  \\"anyOf test with different nested member schemas\\"
+  anyOf4: anyOf4_200_response
+  \\"anyOf test with different nested member schemas, leading to conflict\\"
+  anyOf5: anyOf5_200_response
+  \\"anyOf test with incompatible member schema types\\"
+  anyOf6: anyOf6_200_response
+  \\"anyOf test with some extraneous member schemas\\"
+  anyOf7: anyOf7_200_response
+  \\"anyOf test with no object type member schemas\\"
+  anyOf8: anyOf8_200_response
+  \\"anyOf test with extraneous member schemas with external type\\"
+  anyOf9: Int
+  \\"Basic anyOf test with allOf\\"
+  anyOf10: anyOf10_200_response
+  \\"anyOf test with allOf, requiring anyOf collapse\\"
+  anyOf11: anyOf11_200_response
+}
+
+union oneOf_200_response = commonAttributeObject | differentAttributeObject
+
+type commonAttributeObject {
+  commonAttribute: String
+}
+
+type differentAttributeObject {
+  differentAttribute: String
+}
+
+union oneOf2_200_response = commonAttributeObject | Int_container
+
+type Int_container {
+  Int: Int
+}
+
+union oneOf3_200_response = String_container | Int_container
+
+type String_container {
+  String: String
+}
+
+union oneOf5_200_response = commonAttributeObject | differentAttributeObject
+
+union oneOf6_200_response = commonAttributeObject | differentAttributeObject | anotherAttributeObject
+
+type anotherAttributeObject {
+  anotherAttribute: String
+}
+
+type anyOf_200_response {
+  commonAttribute: String
+}
+
+type anyOf2_200_response {
+  commonAttribute: String
+  differentAttribute: String
+}
+
+type anyOf3_200_response {
+  commonAttribute: commonAttributeObject
+}
+
+type anyOf4_200_response {
+  commonAttribute: commonAttributeObject
+  differentAttribute: commonAttributeObject
+}
+
+type anyOf5_200_response {
+  commonAttribute: JSON
+}
+
+\\"The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).\\"
+scalar JSON @specifiedBy(url: \\"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf\\")
+
+type anyOf6_200_response {
+  commonAttribute: String
+  String: String
+}
+
+type anyOf7_200_response {
+  commonAttribute: String
+  JSON: JSON
+}
+
+type anyOf8_200_response {
+  Int: Int
+  JSON: JSON
+}
+
+type anyOf10_200_response {
+  anotherAttribute: String
+  commonAttribute: String
+  differentAttribute: String
+}
+
+type anyOf11_200_response {
+  anotherAttribute: String
+  commonAttribute: String
+  differentAttribute: String
+}"
+`;
