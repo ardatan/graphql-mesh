@@ -1,5 +1,18 @@
 # @graphql-mesh/types
 
+## 0.80.0
+
+### Minor Changes
+
+- [#4327](https://github.com/Urigo/graphql-mesh/pull/4327) [`f882aca38`](https://github.com/Urigo/graphql-mesh/commit/f882aca388380ad9dff1d618424e8a36b8607319) Thanks [@gilgardosh](https://github.com/gilgardosh)! - ## BREAKING CHANGES
+  - Named types are no longer deduplicated automatically, so this might introduce new types on your side. Also the types with unknown content are always reflected as "JSON"/"Any" scalar type
+  - `noDeduplicate` option has been dropped, because it is no longer needed.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.8.30
+
 ## 0.79.0
 
 ### Minor Changes

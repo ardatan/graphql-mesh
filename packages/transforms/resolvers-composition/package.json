@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-resolvers-composition",
-  "version": "0.12.75",
+  "version": "0.12.76",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -28,8 +28,8 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.79.0",
-    "@graphql-mesh/utils": "0.38.0",
+    "@graphql-mesh/types": "0.80.0",
+    "@graphql-mesh/utils": "0.38.1",
     "@graphql-tools/resolvers-composition": "6.5.3",
     "@graphql-tools/schema": "9.0.1",
     "tslib": "^2.4.0"

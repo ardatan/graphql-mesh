@@ -1,5 +1,22 @@
 # @graphql-mesh/config
 
+## 6.0.1
+
+### Patch Changes
+
+- [#4348](https://github.com/Urigo/graphql-mesh/pull/4348) [`de7081cdb`](https://github.com/Urigo/graphql-mesh/commit/de7081cdbb4c6ddb8ff60ac15089a19f70ee3a3a) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@whatwg-node/fetch@^0.3.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/null) (from `^0.2.7`, in `dependencies`)
+
+- Updated dependencies [[`fd9356d31`](https://github.com/Urigo/graphql-mesh/commit/fd9356d31ace0bc411602a31e419a9091b6c3323), [`f882aca38`](https://github.com/Urigo/graphql-mesh/commit/f882aca388380ad9dff1d618424e8a36b8607319)]:
+  - @graphql-mesh/runtime@0.42.1
+  - @graphql-mesh/types@0.80.0
+  - @graphql-mesh/cache-localforage@0.6.27
+  - @graphql-mesh/merger-bare@0.15.11
+  - @graphql-mesh/merger-stitching@0.16.10
+  - @graphql-mesh/store@0.8.30
+  - @graphql-mesh/utils@0.38.1
+
 ## 6.0.0
 
 ### Patch Changes
@@ -243,9 +260,9 @@
       sourceName: Author
       sourceTypeName: Query
       sourceFieldName: authorById
-      requiredSelectionSet: "{ id }"
+      requiredSelectionSet: '{ id }'
       sourceArgs:
-        id: "{root.id}"
+        id: '{root.id}'
   ```
 
   After:

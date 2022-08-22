@@ -1,12 +1,12 @@
 {
   "name": "spacex-cfw",
   "private": true,
-  "version": "0.0.15",
+  "version": "0.0.16",
   "dependencies": {
-    "@graphql-mesh/cli": "0.75.11",
-    "@graphql-mesh/graphql": "0.29.10",
-    "@graphql-mesh/cache-cfw-kv": "0.0.12",
-    "@graphql-mesh/plugin-response-cache": "0.1.13",
+    "@graphql-mesh/cli": "0.75.12",
+    "@graphql-mesh/graphql": "0.29.11",
+    "@graphql-mesh/cache-cfw-kv": "0.0.13",
+    "@graphql-mesh/plugin-response-cache": "0.1.14",
     "graphql": "16.6.0"
   },
   "devDependencies": {

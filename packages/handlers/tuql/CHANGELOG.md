@@ -1,5 +1,12 @@
 # @graphql-mesh/tuql
 
+## 0.5.43
+
+### Patch Changes
+
+- Updated dependencies [[`f882aca38`](https://github.com/Urigo/graphql-mesh/commit/f882aca388380ad9dff1d618424e8a36b8607319)]:
+  - @graphql-mesh/types@0.80.0
+
 ## 0.5.42
 
 ### Patch Changes

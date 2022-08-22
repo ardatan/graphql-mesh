@@ -1,5 +1,18 @@
 # @graphql-mesh/odata
 
+## 0.18.13
+
+### Patch Changes
+
+- [#4348](https://github.com/Urigo/graphql-mesh/pull/4348) [`de7081cdb`](https://github.com/Urigo/graphql-mesh/commit/de7081cdbb4c6ddb8ff60ac15089a19f70ee3a3a) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@whatwg-node/fetch@^0.3.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/null) (from `^0.2.7`, in `dependencies`)
+
+- Updated dependencies [[`f882aca38`](https://github.com/Urigo/graphql-mesh/commit/f882aca388380ad9dff1d618424e8a36b8607319)]:
+  - @graphql-mesh/types@0.80.0
+  - @graphql-mesh/store@0.8.30
+  - @graphql-mesh/utils@0.38.1
+
 ## 0.18.12
 
 ### Patch Changes
