@@ -1,0 +1,521 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`example_api should generate the schema correctly 1`] = `
+"schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  \\"Get recent media from a geography subscription that you created.\\\\n**Note:** You can only access Geographies that were explicitly created by your OAuth client. Check the\\\\nGeography Subscriptions section of the [real-time updates page](https://instagram.com/developer/realtime/).\\\\nWhen you create a subscription to some geography that you define, you will be returned a unique \`geo-id\` that\\\\ncan be used in this query. To backfill photos from the location covered by this geography, use the\\\\n[media search endpoint](https://instagram.com/developer/endpoints/media/).\\\\n**Warning:** [Deprecated](http://instagram.com/developer/changelog/) for Apps created **on or after** Nov 17, 2015\\\\n\\"
+  geographies_by_geo_id_media_recent(
+    \\"The geography ID.\\"
+    geo_id: String!
+    \\"Max number of media to return.\\"
+    count: Int
+    \\"Return media before this \`min_id\`.\\"
+    min_id: String
+  ): MediaListResponse
+  \\"Search for a location by geographic coordinate.\\"
+  locations_search(
+    \\"Default is 1000m (distance=1000), max distance is 5000.\\"
+    distance: Int
+    \\"Returns a location mapped off of a Facebook places id. If used, a Foursquare id and \`lat\`, \`lng\` are not required.\\"
+    facebook_places_id: String
+    \\"Returns a location mapped off of a foursquare v1 api location id. If used, you are not required to use\\\\n\`lat\` and \`lng\`. Note that this method is deprecated; you should use the new foursquare IDs with V2 of their API.\\"
+    foursquare_id: String
+    \\"Latitude of the center search coordinate. If used, \`lng\` is required.\\"
+    lat: Float
+    \\"Longitude of the center search coordinate. If used, \`lat\` is required.\\"
+    lng: Float
+    \\"Returns a location mapped off of a foursquare v2 api location id. If used, you are not required to use\\\\n\`lat\` and \`lng\`.\\"
+    foursquare_v2_id: String
+  ): LocationSearchResponse
+  \\"Get information about a location.\\"
+  locations_by_location_id(
+    \\"The location ID.\\"
+    location_id: String!
+  ): LocationInfoResponse
+  \\"Get a list of recent media objects from a given location.\\"
+  locations_by_location_id_media_recent(
+    \\"The location ID.\\"
+    location_id: String!
+    \\"Return media after this UNIX timestamp.\\"
+    min_timestamp: BigInt
+    \\"Return media before this UNIX timestamp.\\"
+    max_timestamp: BigInt
+    \\"Return media before this \`min_id\`.\\"
+    min_id: String
+    \\"Return media after this \`max_id\`.\\"
+    max_id: String
+  ): MediaListResponse
+  \\"Get a list of what media is most popular at the moment. Can return mix of \`image\` and \`video\` types.\\\\n**Warning:** [Deprecated](http://instagram.com/developer/changelog/) for Apps created **on or after** Nov 17, 2015\\\\n\\"
+  media_popular: MediaSearchResponse
+  \\"Search for media in a given area. The default time span is set to 5 days. The time span must not exceed 7 days.\\\\nDefaults time stamps cover the last 5 days. Can return mix of \`image\` and \`video\` types.\\\\n\\"
+  media_search(
+    \\"Latitude of the center search coordinate. If used, \`lng\` is required.\\"
+    lat: Float!
+    \\"Longitude of the center search coordinate. If used, \`lat\` is required.\\"
+    lng: Float!
+    \\"A unix timestamp. All media returned will be taken later than this timestamp.\\"
+    min_timestamp: BigInt
+    \\"A unix timestamp. All media returned will be taken earlier than this timestamp.\\"
+    max_timestamp: BigInt
+    \\"Default is 1km (distance=1000), max distance is 5km.\\"
+    distance: Int
+  ): MediaSearchResponse
+  \\"This endpoint returns the same response as \`GET /media/{media-id}\`.\\\\nA media object's shortcode can be found in its shortlink URL. An example shortlink is\\\\n\`http://instagram.com/p/D/\`, its corresponding shortcode is \`D\`.\\\\n\\"
+  media_shortcode_by_shortcode(
+    \\"The short code of the media resource.\\"
+    shortcode: String!
+  ): MediaEntryResponse
+  \\"Get information about a media object. The returned type key will allow you to differentiate between image and\\\\nvideo media.\\\\n**Note:** if you authenticate with an OAuth Token, you will receive the user_has_liked key which quickly tells\\\\nyou whether the current user has liked this media item.\\\\n\\"
+  media_by_media_id(
+    \\"The ID of the media resource.\\"
+    media_id: String!
+  ): MediaEntryResponse
+  \\"Get a list of recent comments on a media object.\\"
+  media_by_media_id_comments(
+    \\"The ID of the media resource.\\"
+    media_id: String!
+  ): CommentsResponse
+  \\"Get a list of users who have liked this media.\\"
+  media_by_media_id_likes(
+    \\"The ID of the media resource.\\"
+    media_id: String!
+  ): UsersInfoResponse
+  \\"Search for tags by name.\\"
+  tags_search(
+    \\"A valid tag name without a leading \\\\\\\\#. (eg. snowy, nofilter)\\"
+    q: String!
+  ): TagSearchResponse
+  \\"Get information about a tag object.\\"
+  tags_by_tag_name(
+    \\"The tag name.\\"
+    tag_name: String!
+  ): TagInfoResponse
+  \\"Get a list of recently tagged media. Use the \`max_tag_id\` and \`min_tag_id\` parameters in the pagination\\\\nresponse to paginate through these objects.\\\\n\\"
+  tags_by_tag_name_media_recent(
+    \\"The tag name.\\"
+    tag_name: String!
+    \\"Count of tagged media to return.\\"
+    count: Int
+    \\"Return media before this \`min_tag_id\`.\\"
+    min_tag_id: String
+    \\"Return media after this \`max_tag_id\`.\\"
+    max_tag_id: String
+  ): TagMediaListResponse
+  \\"Search for a user by name.\\"
+  users_search(
+    \\"A query string.\\"
+    q: String!
+    \\"Number of users to return.\\"
+    count: Int
+  ): UsersInfoResponse
+  \\"See the authenticated user's feed.\\\\n**Warning:** [Deprecated](http://instagram.com/developer/changelog/) for Apps created **on or after** Nov 17, 2015\\\\n\\"
+  users_self_feed(
+    \\"Count of media to return.\\"
+    count: Int
+    \\"Return media later than this \`min_id\`.\\"
+    min_id: String
+    \\"Return media earlier than this \`max_id\`.\\"
+    max_id: String
+  ): MediaListResponse
+  \\"See the list of media liked by the authenticated user. Private media is returned as long as the authenticated\\\\nuser has permission to view that media. Liked media lists are only available for the currently authenticated\\\\nuser.\\\\n\\"
+  users_self_media_liked(
+    \\"Count of media to return.\\"
+    count: Int
+    \\"Return media liked before this id.\\"
+    max_like_id: String
+  ): MediaListResponse
+  \\"List the users who have requested this user's permission to follow.\\"
+  users_self_requested_by: UsersInfoResponse
+  \\"Get basic information about a user. To get information about the owner of the access token, you can use\\\\n**self** instead of the \`user-id\`.\\\\nSecurity scope \`public_content\` is required to read information about other users.\\\\n\\"
+  users_by_user_id(
+    \\"The ID of a user to get information about, or **self** to retrieve information about authenticated user.\\"
+    user_id: String!
+  ): UserResponse
+  \\"Get the list of users this user is followed by. To get users followed by the owner of the access token, you\\\\ncan use **self** instead of the \`user-id\`.\\\\n\\"
+  users_by_user_id_followed_by(
+    \\"The ID of a user, or **self** to retrieve information about authenticated user.\\"
+    user_id: String!
+  ): UsersPagingResponse
+  \\"Get the list of users this user follows. To get follows of the owner of the access token, you can use **self**\\\\ninstead of the \`user-id\`.\\\\n\\"
+  users_by_user_id_follows(
+    \\"The ID of a user, or **self** to retrieve information about authenticated user.\\"
+    user_id: String!
+  ): UsersPagingResponse
+  \\"Get the most recent media published by a user. To get the most recent media published by the owner of the\\\\naccess token, you can use **self** instead of the \`user-id\`.\\\\nSecurity scope \`public_content\` is required to read information about other users.\\\\n\\"
+  users_by_user_id_media_recent(
+    \\"The ID of a user to get recent media of, or **self** to retrieve media of authenticated user.\\"
+    user_id: String!
+    \\"Count of media to return.\\"
+    count: Int
+    \\"Return media before this UNIX timestamp.\\"
+    max_timestamp: BigInt
+    \\"Return media after this UNIX timestamp.\\"
+    min_timestamp: BigInt
+    \\"Return media later than this \`min_id\`.\\"
+    min_id: String
+    \\"Return media earlier than this \`max_id\`.\\"
+    max_id: String
+  ): MediaListResponse
+  \\"Get information about a relationship to another user.\\"
+  users_by_user_id_relationship(
+    \\"The ID of a user to get information about.\\"
+    user_id: String!
+  ): RelationshipResponse
+}
+
+type MediaListResponse {
+  \\"List of media entries\\"
+  data: [MediaEntry]
+  meta: MetaData
+  pagination: IdPaginationInfo
+}
+
+type MediaEntry {
+  \\"??? Unknown ???\\"
+  attribution: String
+  caption: CaptionData
+  comments: CommentsCollection
+  \\"Media creation UNIX timestamp\\"
+  created_time: String
+  \\"Filter of this media entry\\"
+  filter: String
+  \\"ID of a media entry\\"
+  id: String
+  images: ImagesData
+  likes: LikesCollection
+  \\"Fixed URL of this media entry\\"
+  link: String
+  location: LocationInfo
+  \\"List of tags assigned to this media\\"
+  tags: [String]
+  type: query_geographies_by_geo_id_media_recent_data_items_type
+  user: UserShortInfo
+  \\"Indicates whether authenticated user has liked this media or not\\"
+  user_has_liked: Boolean
+  \\"Users located on this media entry\\"
+  users_in_photo: [UserInPhoto]
+  videos: VideosData
+}
+
+type CaptionData {
+  \\"Caption creation UNIX timestamp\\"
+  created_time: String
+  from: UserShortInfo
+  \\"ID of this caption\\"
+  id: String
+  \\"Caption text\\"
+  text: String
+}
+
+type UserShortInfo {
+  \\"User full name\\"
+  full_name: String
+  \\"User ID\\"
+  id: String
+  \\"URL to user profile picture\\"
+  profile_picture: String
+  \\"User name, nickname\\"
+  username: String
+}
+
+type CommentsCollection {
+  \\"Nember of comments available, data does not necessary contain all comments\\"
+  count: Int
+  \\"Collection of comment entries; **warning:** deprecated for Apps [created on or after Nov 17, 2015](http://instagram.com/developer/changelog/)\\"
+  data: [CommentEntry]
+}
+
+type CommentEntry {
+  \\"Comment creation UNIX timestamp\\"
+  created_time: String
+  from: UserShortInfo
+  \\"ID of this comment\\"
+  id: String
+  \\"Text of the comment\\"
+  text: String
+}
+
+type ImagesData {
+  low_resolution: ImageInfo
+  standard_resolution: ImageInfo
+  thumbnail: ImageInfo
+}
+
+type ImageInfo {
+  \\"Image/video height in pixels\\"
+  height: Int
+  \\"URL of the image/video resource\\"
+  url: String
+  \\"Image/video width in pixels\\"
+  width: Int
+}
+
+type LikesCollection {
+  \\"Nember of likes available, data does not necessary contain all comments\\"
+  count: Int
+  \\"Collection of users who liked; **warning:** deprecated for Apps [created on or after Nov 17, 2015](http://instagram.com/developer/changelog/)\\"
+  data: [UserShortInfo]
+}
+
+type LocationInfo {
+  \\"ID of this location (in some responses it has a type of 'integer')\\"
+  id: String
+  \\"Location latitude\\"
+  latitude: Float
+  \\"Location longitude\\"
+  longitude: Float
+  \\"Location name\\"
+  name: String
+}
+
+\\"Type of this media entry\\"
+enum query_geographies_by_geo_id_media_recent_data_items_type {
+  image
+  video
+}
+
+type UserInPhoto {
+  position: Position
+  user: UserShortInfo
+}
+
+type Position {
+  \\"X position (horizontal)\\"
+  x: Float
+  \\"Y position (vertical)\\"
+  y: Float
+}
+
+type VideosData {
+  low_resolution: ImageInfo
+  standard_resolution: ImageInfo
+}
+
+type MetaData {
+  \\"HTTP result code\\"
+  code: Int
+}
+
+type IdPaginationInfo {
+  \\"The max ID of the next page\\"
+  next_max_id: String
+  \\"URL to retrieve next page of entries\\"
+  next_url: String
+}
+
+type LocationSearchResponse {
+  \\"List of found locations\\"
+  data: [LocationInfo]
+  meta: MetaData
+}
+
+type LocationInfoResponse {
+  data: LocationInfo
+  meta: MetaData
+}
+
+\\"The \`BigInt\` scalar type represents non-fractional signed whole numeric values.\\"
+scalar BigInt
+
+type MediaSearchResponse {
+  \\"Found media entries; some end-points do not return likes informtaion\\"
+  data: [MediaEntry]
+  meta: MetaData
+}
+
+type MediaEntryResponse {
+  data: MediaEntry
+  meta: MetaData
+}
+
+type CommentsResponse {
+  \\"Collection of comments\\"
+  data: [CommentEntry]
+  meta: MetaData
+}
+
+type UsersInfoResponse {
+  \\"User short information entries\\"
+  data: [UserShortInfo]
+  meta: MetaData
+}
+
+type TagSearchResponse {
+  \\"List of found tags with brief statistics\\"
+  data: [TagInfo]
+  meta: MetaData
+}
+
+type TagInfo {
+  \\"Overall number of media entries taged with this name\\"
+  media_count: BigInt
+  \\"Tag name\\"
+  name: String
+}
+
+type TagInfoResponse {
+  data: TagInfo
+  meta: MetaData
+}
+
+type TagMediaListResponse {
+  \\"List of media entries with this tag\\"
+  data: [MediaEntry]
+  meta: MetaData
+  pagination: TagPaginationInfo
+}
+
+type TagPaginationInfo {
+  \\"The deprication warning, if information is available\\"
+  deprecation_warning: String
+  \\"The min ID of a tag for the next page\\"
+  min_tag_id: String
+  \\"Depricated. Use min_tag_id instead\\"
+  next_max_id: String
+  \\"The max ID of a tag for the next page\\"
+  next_max_tag_id: String
+  \\"Depricated. Use max_tag_id instead\\"
+  next_min_id: String
+  \\"URL to retrieve next page of entries\\"
+  next_url: String
+}
+
+type UserResponse {
+  data: UserInfo
+  meta: MetaData
+}
+
+type UserInfo {
+  \\"User biography\\"
+  bio: String
+  counts: UserCounts
+  \\"User full name\\"
+  full_name: String
+  \\"User ID\\"
+  id: String
+  \\"URL to user profile picture\\"
+  profile_picture: String
+  \\"User name, nickname\\"
+  username: String
+  \\"URL to user web-site\\"
+  website: String
+}
+
+type UserCounts {
+  \\"Number of followers of this user\\"
+  followed_by: Int
+  \\"Number of users followed by this user\\"
+  follows: Int
+  \\"Number of user media\\"
+  media: Int
+}
+
+type UsersPagingResponse {
+  \\"List of user short information entries\\"
+  data: [UserShortInfo]
+  meta: MetaData
+  pagination: CursorPaginationInfo
+}
+
+type CursorPaginationInfo {
+  \\"The cursor ID of the next page\\"
+  next_cursor: String
+  \\"URL to retrieve next page of entries\\"
+  next_url: String
+}
+
+type RelationshipResponse {
+  data: RelationshipInfo
+  meta: MetaData
+}
+
+type RelationshipInfo {
+  incoming_status: query_users_by_user_id_relationship_data_incoming_status
+  outgoing_status: query_users_by_user_id_relationship_data_outgoing_status
+  \\"Indicates whether target user is private or not\\"
+  target_user_is_private: Boolean
+}
+
+\\"Status of incoming relationship\\"
+enum query_users_by_user_id_relationship_data_incoming_status {
+  none
+  followed_by
+  requested_by
+}
+
+\\"Status of outgoing relationship\\"
+enum query_users_by_user_id_relationship_data_outgoing_status {
+  none
+  follows
+  requested
+}
+
+type Mutation {
+  \\"Create a comment on a media object with the following rules:\\\\n\\\\n  * The total length of the comment cannot exceed 300 characters.\\\\n  * The comment cannot contain more than 4 hashtags.\\\\n  * The comment cannot contain more than 1 URL.\\\\n  * The comment cannot consist of all capital letters.\\\\n\\"
+  post_media_by_media_id_comments(
+    \\"The ID of the media resource.\\"
+    media_id: String!
+    \\"Text to post as a comment on the media object as specified in \`media-id\`.\\"
+    text: String!
+  ): StatusResponse
+  \\"Remove a comment either on the authenticated user's media object or authored by the authenticated user.\\\\n\\"
+  delete_media_by_media_id_comments_by_comment_id(
+    \\"The ID of the media resource.\\"
+    media_id: String!
+    \\"The ID of the comment entry.\\"
+    comment_id: String!
+  ): StatusResponse
+  \\"Remove a like on this media by the currently authenticated user.\\"
+  delete_media_by_media_id_likes(
+    \\"The ID of the media resource.\\"
+    media_id: String!
+  ): StatusResponse
+  \\"Set a like on this media by the currently authenticated user.\\"
+  post_media_by_media_id_likes(
+    \\"The ID of the media resource.\\"
+    media_id: String!
+  ): StatusResponse
+  \\"Modify the relationship between the current user and the target user.\\"
+  post_users_by_user_id_relationship(
+    \\"The ID of the target user.\\"
+    user_id: String!
+    action: mutationInput_post_users_by_user_id_relationship_action!
+  ): RelationshipPostResponse
+}
+
+type StatusResponse {
+  \\"No data - 'null'\\"
+  data: String
+  meta: MetaData
+}
+
+type RelationshipPostResponse {
+  data: RelationshipStatus
+  meta: MetaData
+}
+
+type RelationshipStatus {
+  outgoing_status: mutation_post_users_by_user_id_relationship_data_outgoing_status
+}
+
+\\"Status of outgoing relationship\\"
+enum mutation_post_users_by_user_id_relationship_data_outgoing_status {
+  none
+  follows
+  requested
+}
+
+\\"Type of action to apply for relationship with the user.\\"
+enum mutationInput_post_users_by_user_id_relationship_action {
+  follow
+  unfollow
+  block
+  unblock
+  approve
+  ignore
+}"
+`;
