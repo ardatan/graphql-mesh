@@ -23,7 +23,7 @@ type o_d_d___n_a_m_e_200_response {
   \\"Hardcoded link parameter\\"
   w_e_i_r_d___n_a_m_e2___l_i_n_k: w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response
   \\"Exposed link parameter\\"
-  w_e_i_r_d___n_a_m_e3___l_i_n_k: w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response
+  w_e_i_r_d___n_a_m_e3___l_i_n_k(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response
 }
 
 type w_e_i_r_d___n_a_m_e_200_response {
