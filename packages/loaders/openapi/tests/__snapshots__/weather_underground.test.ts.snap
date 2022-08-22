@@ -1,0 +1,282 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`example_api should generate the schema correctly 1`] = `
+"schema {
+  query: Query
+}
+
+type Query {
+  \\"Get current weather conditions for a given place.\\"
+  weatherConditions_by_key_conditions_q_by_state_by_place_json(
+    \\"The API key of the Weather Underground API\\"
+    key: String!
+    \\"The state of the place to get weather information for. For example, 'NY'\\"
+    state: String!
+    \\"The place to get weather information for. For example, 'New York'\\"
+    place: String!
+  ): WeatherConditions
+  \\"Get the weather forecast for the next 3 days for a given place.\\"
+  weatherForecast_by_key_forecast_q_by_state_by_place_json(
+    \\"The API key of the Weather Underground API\\"
+    key: String!
+    \\"The state of the place to get weather information for. For example, 'NY'\\"
+    state: String!
+    \\"The place to get weather information for. For example, 'New York'\\"
+    place: String!
+  ): WeatherForecast
+  \\"Get the weather forecast for the next 10 days for a given place.\\"
+  weatherForecast_by_key_forecast10days_q_by_state_by_place_json(
+    \\"The API key of the Weather Underground API\\"
+    key: String!
+    \\"The state of the place to get weather information for. For example, 'NY'\\"
+    state: String!
+    \\"The place to get weather information for. For example, 'New York'\\"
+    place: String!
+  ): WeatherForecast
+}
+
+type WeatherConditions {
+  response: query_weatherConditions_by_key_conditions_q_by_state_by_place_json_response!
+  current_observation: query_weatherConditions_by_key_conditions_q_by_state_by_place_json_current_observation!
+}
+
+type query_weatherConditions_by_key_conditions_q_by_state_by_place_json_response {
+  version: String!
+  termsofService: String!
+  features: query_weatherConditions_by_key_conditions_q_by_state_by_place_json_response_features!
+}
+
+type query_weatherConditions_by_key_conditions_q_by_state_by_place_json_response_features {
+  conditions: Int!
+}
+
+type query_weatherConditions_by_key_conditions_q_by_state_by_place_json_current_observation {
+  image: query_weatherConditions_by_key_conditions_q_by_state_by_place_json_current_observation_image!
+  display_location: query_weatherConditions_by_key_conditions_q_by_state_by_place_json_current_observation_display_location!
+  observation_location: query_weatherConditions_by_key_conditions_q_by_state_by_place_json_current_observation_observation_location!
+  estimated: JSON!
+  station_id: String!
+  observation_time: String!
+  observation_time_rfc822: String!
+  observation_epoch: String!
+  local_time_rfc822: String!
+  local_epoch: String!
+  local_tz_short: String!
+  local_tz_long: String!
+  local_tz_offset: String!
+  weather: String!
+  temperature_string: String!
+  temp_f: Float!
+  temp_c: Float!
+  relative_humidity: String!
+  wind_string: String!
+  wind_dir: String!
+  wind_degrees: Int!
+  wind_mph: Int!
+  wind_gust_mph: Int!
+  wind_kph: Int!
+  wind_gust_kph: Int!
+  pressure_mb: String!
+  pressure_in: String!
+  pressure_trend: String!
+  dewpoint_string: String!
+  dewpoint_f: Int!
+  dewpoint_c: Int!
+  heat_index_string: String!
+  heat_index_f: String!
+  heat_index_c: String!
+  windchill_string: String!
+  windchill_f: String!
+  windchill_c: String!
+  feelslike_string: String!
+  feelslike_f: String!
+  feelslike_c: String!
+  visibility_mi: String!
+  visibility_km: String!
+  solarradiation: String!
+  UV: String!
+  precip_1hr_string: String!
+  precip_1hr_in: String!
+  precip_1hr_metric: String!
+  precip_today_string: String!
+  precip_today_in: String!
+  precip_today_metric: String!
+  icon: String!
+  icon_url: String!
+  forecast_url: String!
+  history_url: String!
+  ob_url: String!
+  nowcast: String!
+}
+
+type query_weatherConditions_by_key_conditions_q_by_state_by_place_json_current_observation_image {
+  url: String!
+  title: String!
+  link: String!
+}
+
+type query_weatherConditions_by_key_conditions_q_by_state_by_place_json_current_observation_display_location {
+  full: String!
+  city: String!
+  state: String!
+  state_name: String!
+  country: String!
+  country_iso3166: String!
+  zip: String!
+  magic: String!
+  wmo: String!
+  latitude: String!
+  longitude: String!
+  elevation: String!
+}
+
+type query_weatherConditions_by_key_conditions_q_by_state_by_place_json_current_observation_observation_location {
+  full: String!
+  city: String!
+  state: String!
+  country: String!
+  country_iso3166: String!
+  latitude: String!
+  longitude: String!
+  elevation: String!
+}
+
+\\"The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).\\"
+scalar JSON @specifiedBy(url: \\"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf\\")
+
+type WeatherForecast {
+  response: query_weatherForecast_by_key_forecast_q_by_state_by_place_json_response!
+  forecast: query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast!
+}
+
+type query_weatherForecast_by_key_forecast_q_by_state_by_place_json_response {
+  version: String!
+  termsofService: String!
+  features: query_weatherForecast_by_key_forecast_q_by_state_by_place_json_response_features!
+}
+
+type query_weatherForecast_by_key_forecast_q_by_state_by_place_json_response_features {
+  forecast: Int!
+}
+
+type query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast {
+  txt_forecast: query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_txt_forecast!
+  simpleforecast: query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_simpleforecast!
+}
+
+type query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_txt_forecast {
+  date: String!
+  forecastday: [query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_txt_forecast_forecastday_items]!
+}
+
+type query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_txt_forecast_forecastday_items {
+  period: Int!
+  icon: String!
+  icon_url: String!
+  title: String!
+  fcttext: String!
+  fcttext_metric: String!
+  pop: String!
+}
+
+type query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_simpleforecast {
+  forecastday: [query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_simpleforecast_forecastday_items]!
+}
+
+type query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_simpleforecast_forecastday_items {
+  date: query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_simpleforecast_forecastday_items_date!
+  period: Int!
+  high: query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_simpleforecast_forecastday_items_high!
+  low: query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_simpleforecast_forecastday_items_low!
+  conditions: String!
+  icon: String!
+  icon_url: String!
+  skyicon: String!
+  pop: Int!
+  qpf_allday: query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_simpleforecast_forecastday_items_qpf_allday!
+  qpf_day: query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_simpleforecast_forecastday_items_qpf_day!
+  qpf_night: query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_simpleforecast_forecastday_items_qpf_night!
+  snow_allday: query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_simpleforecast_forecastday_items_snow_allday!
+  snow_day: query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_simpleforecast_forecastday_items_snow_day!
+  snow_night: query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_simpleforecast_forecastday_items_snow_night!
+  maxwind: query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_simpleforecast_forecastday_items_maxwind!
+  avewind: query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_simpleforecast_forecastday_items_avewind!
+  avehumidity: Int!
+  maxhumidity: Int!
+  minhumidity: Int!
+}
+
+type query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_simpleforecast_forecastday_items_date {
+  epoch: String!
+  pretty: String!
+  day: Int!
+  month: Int!
+  year: Int!
+  yday: Int!
+  hour: Int!
+  min: String!
+  sec: Int!
+  isdst: String!
+  monthname: String!
+  monthname_short: String!
+  weekday_short: String!
+  weekday: String!
+  ampm: String!
+  tz_short: String!
+  tz_long: String!
+}
+
+type query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_simpleforecast_forecastday_items_high {
+  fahrenheit: String!
+  celsius: String!
+}
+
+type query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_simpleforecast_forecastday_items_low {
+  fahrenheit: String!
+  celsius: String!
+}
+
+type query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_simpleforecast_forecastday_items_qpf_allday {
+  in: Float!
+  mm: Int!
+}
+
+type query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_simpleforecast_forecastday_items_qpf_day {
+  in: Float!
+  mm: Int!
+}
+
+type query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_simpleforecast_forecastday_items_qpf_night {
+  in: Float!
+  mm: Int!
+}
+
+type query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_simpleforecast_forecastday_items_snow_allday {
+  in: Int!
+  cm: Int!
+}
+
+type query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_simpleforecast_forecastday_items_snow_day {
+  in: Int!
+  cm: Int!
+}
+
+type query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_simpleforecast_forecastday_items_snow_night {
+  in: Int!
+  cm: Int!
+}
+
+type query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_simpleforecast_forecastday_items_maxwind {
+  mph: Int!
+  kph: Int!
+  dir: String!
+  degrees: Int!
+}
+
+type query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_simpleforecast_forecastday_items_avewind {
+  mph: Int!
+  kph: Int!
+  dir: String!
+  degrees: Int!
+}"
+`;
