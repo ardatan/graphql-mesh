@@ -231,7 +231,7 @@ export async function generateTsArtifacts(
         },
         schemaAst: unifiedSchema,
         schema: undefined as any, // This is not necessary on codegen.
-        skipDocumentsValidation: true,
+        // skipDocumentsValidation: true,
         pluginMap: {
           typescript: tsBasePlugin,
           typescriptOperations: tsOperationsPlugin,
