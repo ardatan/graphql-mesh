@@ -24,7 +24,10 @@ type Query {
 type object_200_response {
   data: String
   \\"Link with exposed parameter\\"
-  object2Link: getObject2_200_response
+  object2Link(
+    \\"HTTP headers are case-insensitive\\"
+    specialheader: String
+  ): getObject2_200_response
 }
 
 type getObject2_200_response {
