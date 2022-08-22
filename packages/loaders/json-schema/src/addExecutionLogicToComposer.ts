@@ -444,8 +444,6 @@ ${operationConfig.description || ''}
               }
               linkResolverFieldMap[linkName] = (root, args, context, info) =>
                 linkResolver(linkObj.args, targetField.resolve, root, args, context, info);
-              if (!linkObj.args) {
-              }
               return {
                 ...targetField,
                 args: linkObj.args ? {} : targetField.args,
