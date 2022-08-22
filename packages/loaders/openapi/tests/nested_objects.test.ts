@@ -1,6 +1,6 @@
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch } from '@whatwg-node/fetch';
-import { GraphQLSchema, graphql, parse, validate, execute } from 'graphql';
+import { GraphQLSchema, parse, validate, execute } from 'graphql';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 
 import { startServer, stopServer } from '../../../handlers/openapi/test/nested_objects_server';
@@ -8,7 +8,7 @@ import { startServer, stopServer } from '../../../handlers/openapi/test/nested_o
 let createdSchema: GraphQLSchema;
 const PORT = 3009;
 // Update PORT for this test case:
-const baseUrl = `http://localhost:${PORT}/api`;
+const baseUrl = `http://localhost:${PORT}`;
 
 describe('OpanAPI: nested objects', () => {
   /**
@@ -20,6 +20,9 @@ describe('OpanAPI: nested objects', () => {
       baseUrl,
       oasFilePath: '../../../handlers/openapi/test/fixtures/nested_object.json',
       cwd: __dirname,
+      queryStringOptions: {
+        allowDots: true,
+      },
     });
     await startServer(PORT);
   });
@@ -36,9 +39,11 @@ describe('OpanAPI: nested objects', () => {
   it('Get response', async () => {
     const query = /* GraphQL */ `
       {
-        searchCollection(collectionName: "CHECKOUT_SUPER_PRODUCT", searchParameters: { q: "water", queryBy: "name" }) {
-          hits {
-            document
+        searchCollection(collectionName: "CHECKOUT_SUPER_PRODUCT", searchParameters: { q: "water", query_by: "name" }) {
+          ... on SearchResult {
+            hits {
+              document
+            }
           }
         }
       }
