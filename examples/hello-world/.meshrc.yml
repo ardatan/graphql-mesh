@@ -7,7 +7,6 @@ sources:
             field: greeting
             method: GET
             path: /
-            requestSample: random.json
             responseSample: greeting.json
 plugins:
   - mock:
