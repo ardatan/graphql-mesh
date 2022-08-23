@@ -555,13 +555,14 @@ export default class ODataHandler implements MeshHandler {
           return handleBatchJsonResults(batchResponseJson, requests);
         }),
       none: () =>
+        // We should refactor here
         new DataLoader(
           (requests: Request[]): Promise<Response[]> =>
             Promise.all(
-              requests.map(request =>
+              requests.map(async request =>
                 this.fetchFn(request.url, {
                   method: request.method,
-                  body: request.body,
+                  body: request.body && (await request.text()),
                   headers: request.headers,
                 })
               )

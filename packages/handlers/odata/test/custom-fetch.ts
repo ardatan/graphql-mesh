@@ -4,13 +4,17 @@ export const MockRequest = function (url: string, config: RequestInit) {
   return {
     url,
     ...config,
-    text: async () => config.body,
+    text: async () => config.body.toString('utf-8'),
+    json: async () => JSON.parse(config.body.toString('utf-8')),
+    clone() {
+      return this;
+    },
   } as Request;
 } as any as typeof Request;
-export const MockResponse = function (body: string) {
+export const MockResponse = function (body: any) {
   return {
-    text: async () => body,
-    json: async () => JSON.parse(body),
+    text: async () => body.toString('utf-8'),
+    json: async () => JSON.parse(body.toString('utf-8')),
   } as Response;
 } as any as typeof Response;
 
