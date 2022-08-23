@@ -4,11 +4,13 @@ import { defaultImportFn, loadYaml, DefaultLogger } from '@graphql-mesh/utils';
 import Ajv from 'ajv';
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
 import { path, process } from '@graphql-mesh/cross-helpers';
+import { AggregateError } from '@graphql-tools/utils';
 
 export function validateConfig(
   config: any,
   filepath: string,
-  initialLoggerPrefix: string
+  initialLoggerPrefix: string,
+  throwOnInvalidConfig = false
 ): asserts config is YamlConfig.Config {
   const ajv = new Ajv({
     strict: false,
@@ -16,6 +18,17 @@ export function validateConfig(
   jsonSchema.$schema = undefined;
   const isValid = ajv.validate(jsonSchema, config);
   if (!isValid) {
+    if (throwOnInvalidConfig) {
+      const aggregateError = new AggregateError(
+        ajv.errors.map(e => {
+          const error = new Error(e.message);
+          error.stack += `\n    at ${filepath}:0:0`;
+          return error;
+        }),
+        'Configuration file is not valid'
+      );
+      throw aggregateError;
+    }
     const logger = new DefaultLogger(initialLoggerPrefix).child('config');
     logger.warn('Configuration file is not valid!');
     logger.warn("This is just a warning! It doesn't have any effects on runtime.");
