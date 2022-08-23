@@ -2,7 +2,7 @@ sources:
   - name: YouTrack
     handler:
       openapi:
-        source: '{env.YOUTRACK_SERVICE_URL}/api/openapi.json'
+        oasFilePath: '{env.YOUTRACK_SERVICE_URL}/api/openapi.json'
         baseUrl: '{env.YOUTRACK_SERVICE_URL}/api/'
         operationHeaders:
           Authorization: Bearer {env.YOUTRACK_TOKEN}

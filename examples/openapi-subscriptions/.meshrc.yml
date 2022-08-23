@@ -2,7 +2,7 @@ sources:
   - name: OpenAPICallbackExample
     handler:
       openapi:
-        source: ./openapi.yml
+        oasFilePath: ./openapi.yml
         baseUrl: http://localhost:4001
 
 documents:

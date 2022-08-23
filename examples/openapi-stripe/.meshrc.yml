@@ -1,7 +1,7 @@
 sources:
   - name: Stripe
     handler:
-      newOpenapi:
+      openapi:
         oasFilePath: https://raw.githubusercontent.com/stripe/openapi/master/openapi/spec3.json
         baseUrl: https://api.stripe.com
         operationHeaders:
