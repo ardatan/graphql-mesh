@@ -451,10 +451,6 @@
           "$ref": "#/definitions/Neo4jHandler",
           "description": "Handler for Neo4j"
         },
-        "newOpenapi": {
-          "$ref": "#/definitions/NewOpenapiHandler",
-          "description": "Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it."
-        },
         "odata": {
           "$ref": "#/definitions/ODataHandler",
           "description": "Handler for OData"
@@ -1832,10 +1828,45 @@
       },
       "required": ["url", "username", "password"]
     },
-    "NewOpenapiHandler": {
+    "ODataHandler": {
       "additionalProperties": false,
       "type": "object",
-      "title": "NewOpenapiHandler",
+      "title": "ODataHandler",
+      "properties": {
+        "baseUrl": {
+          "type": "string",
+          "description": "Base URL for OData API"
+        },
+        "metadata": {
+          "type": "string",
+          "description": "Custom $metadata File or URL"
+        },
+        "operationHeaders": {
+          "type": "object",
+          "properties": {},
+          "description": "Headers to be used with the operation requests"
+        },
+        "schemaHeaders": {
+          "type": "object",
+          "properties": {},
+          "description": "Headers to be used with the $metadata requests"
+        },
+        "batch": {
+          "type": "string",
+          "enum": ["multipart", "json"],
+          "description": "Enable batching (Allowed values: multipart, json)"
+        },
+        "expandNavProps": {
+          "type": "boolean",
+          "description": "Use $expand for navigation props instead of seperate HTTP requests (Default: false)"
+        }
+      },
+      "required": ["baseUrl"]
+    },
+    "OpenapiHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "OpenapiHandler",
       "properties": {
         "oasFilePath": {
           "type": "string",
@@ -1894,158 +1925,14 @@
       "properties": {
         "type": {
           "type": "string",
-          "enum": ["query", "mutation", "Query", "Mutation"],
-          "description": "Allowed values: query, mutation, Query, Mutation"
+          "enum": ["query", "mutation"],
+          "description": "Allowed values: query, mutation"
         },
         "fieldName": {
           "type": "string"
         }
       },
       "required": ["type", "fieldName"]
-    },
-    "ODataHandler": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "ODataHandler",
-      "properties": {
-        "baseUrl": {
-          "type": "string",
-          "description": "Base URL for OData API"
-        },
-        "metadata": {
-          "type": "string",
-          "description": "Custom $metadata File or URL"
-        },
-        "operationHeaders": {
-          "type": "object",
-          "properties": {},
-          "description": "Headers to be used with the operation requests"
-        },
-        "schemaHeaders": {
-          "type": "object",
-          "properties": {},
-          "description": "Headers to be used with the $metadata requests"
-        },
-        "batch": {
-          "type": "string",
-          "enum": ["multipart", "json"],
-          "description": "Enable batching (Allowed values: multipart, json)"
-        },
-        "expandNavProps": {
-          "type": "boolean",
-          "description": "Use $expand for navigation props instead of seperate HTTP requests (Default: false)"
-        }
-      },
-      "required": ["baseUrl"]
-    },
-    "OpenapiHandler": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "OpenapiHandler",
-      "properties": {
-        "source": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ],
-          "description": "A pointer to your API source - could be a local file, remote file or url endpoint"
-        },
-        "sourceFormat": {
-          "type": "string",
-          "enum": ["json", "yaml"],
-          "description": "Format of the source file (Allowed values: json, yaml)"
-        },
-        "operationHeaders": {
-          "type": "object",
-          "properties": {},
-          "description": "JSON object representing the Headers to add to the runtime of the API calls"
-        },
-        "schemaHeaders": {
-          "type": "object",
-          "properties": {},
-          "description": "If you are using a remote URL endpoint to fetch your schema, you can set headers for the HTTP request to fetch your schema."
-        },
-        "baseUrl": {
-          "type": "string",
-          "description": "Specifies the URL on which all paths will be based on.\nOverrides the server object in the OAS."
-        },
-        "qs": {
-          "type": "object",
-          "properties": {},
-          "description": "JSON object representing the query search parameters to add to the API calls"
-        },
-        "includeHttpDetails": {
-          "type": "boolean",
-          "description": "Include HTTP Response details to the result object"
-        },
-        "addLimitArgument": {
-          "type": "boolean",
-          "description": "Auto-generate a 'limit' argument for all fields that return lists of objects, including ones produced by links"
-        },
-        "genericPayloadArgName": {
-          "type": "boolean",
-          "description": "Set argument name for mutation payload to 'requestBody'. If false, name defaults to camelCased pathname"
-        },
-        "selectQueryOrMutationField": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/SelectQueryOrMutationFieldConfig"
-          },
-          "additionalItems": false,
-          "description": "Allows to explicitly override the default operation (Query or Mutation) for any OAS operation"
-        },
-        "provideErrorExtensions": {
-          "type": "boolean",
-          "description": "Overwrite automatic wrapping of errors into GraphqlErrors"
-        },
-        "operationIdFieldNames": {
-          "type": "boolean",
-          "description": "Field names can only be sanitized operationIds\nBy default, query field names are based on the return type type name and mutation field names are based on the operationId, which may be generated if it does not exist.\nThis option forces OpenAPI handler to only create field names based on the operationId."
-        },
-        "allowUndefinedSchemaRefTags": {
-          "type": "boolean",
-          "description": "Allow processing to continue if the swagger schema is missing a schema $ref."
-        },
-        "defaultUndefinedSchemaType": {
-          "type": "string",
-          "enum": ["string", "number", "object", "array", "boolean", "integer"],
-          "description": "Object type to use for missing swagger schemas refs default is object. (Allowed values: string, number, object, array, boolean, integer)"
-        }
-      },
-      "required": ["source"]
-    },
-    "SelectQueryOrMutationFieldConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "SelectQueryOrMutationFieldConfig",
-      "properties": {
-        "title": {
-          "type": "string",
-          "description": "OAS Title"
-        },
-        "path": {
-          "type": "string",
-          "description": "Operation Path"
-        },
-        "type": {
-          "type": "string",
-          "enum": ["query", "mutation", "Query", "Mutation"],
-          "description": "Target Root Type for this operation (Allowed values: query, mutation, Query, Mutation)"
-        },
-        "method": {
-          "type": "string",
-          "description": "Which method is used for this operation"
-        }
-      }
     },
     "LiveQueryConfig": {
       "additionalProperties": false,
@@ -2459,8 +2346,8 @@
       "properties": {
         "type": {
           "type": "string",
-          "enum": ["query", "mutation", "Query", "Mutation"],
-          "description": "Allowed values: query, mutation, Query, Mutation"
+          "enum": ["query", "mutation"],
+          "description": "Allowed values: query, mutation"
         },
         "fieldName": {
           "type": "string"
