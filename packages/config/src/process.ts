@@ -54,6 +54,7 @@ export type ConfigProcessOptions = {
   additionalPackagePrefixes?: string[];
   generateCode?: boolean;
   initialLoggerPrefix?: string;
+  throwOnInvalidConfig?: boolean;
 };
 
 type EnvelopPlugins = Parameters<typeof envelop>[0]['plugins'];

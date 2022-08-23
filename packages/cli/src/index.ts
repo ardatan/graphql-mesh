@@ -309,7 +309,7 @@ export async function graphqlMesh(
         }
       }
     )
-    .command<{ fileType: 'json' | 'ts' | 'js' }>(
+    .command<{ fileType: 'json' | 'ts' | 'js'; throwOnInvalidConfig: boolean }>(
       cliParams.buildArtifactsCommand,
       'Builds artifacts',
       builder => {
@@ -317,6 +317,10 @@ export async function graphqlMesh(
           type: 'string',
           choices: ['json', 'ts', 'js'],
           default: 'ts',
+        });
+        builder.option('throwOnInvalidConfig', {
+          type: 'boolean',
+          default: false,
         });
       },
       async args => {
@@ -373,6 +377,7 @@ export async function graphqlMesh(
             additionalPackagePrefixes: cliParams.additionalPackagePrefixes,
             generateCode: true,
             initialLoggerPrefix: cliParams.initialLoggerPrefix,
+            throwOnInvalidConfig: args.throwOnInvalidConfig,
           });
           logger = meshConfig.logger;
 

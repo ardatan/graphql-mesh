@@ -26,13 +26,13 @@ export const titleBold: MessageTransformer = msg => ANSI_CODES.bold + msg + ANSI
 export class DefaultLogger implements Logger {
   constructor(public name?: string) {}
 
-  private getLoggerMessage(...args: any[]) {
+  private getLoggerMessage({ args = [], trim = this.isDebug }: { args: any[]; trim?: boolean }) {
     return args
       .flat(Infinity)
       .map(arg => {
         if (typeof arg === 'string') {
-          if (arg.length > 100 && !this.isDebug) {
-            return arg.slice(0, 100) + '...';
+          if (trim && arg.length > 100) {
+            return arg.slice(0, 100) + '...' + '<Error message is too long. Enable DEBUG=1 to see the full message.>';
           }
           return arg;
         } else if (typeof arg === 'object' && arg?.stack != null) {
@@ -43,14 +43,17 @@ export class DefaultLogger implements Logger {
       .join(` `);
   }
 
-  private handleLazyMessage(...lazyArgs: LazyLoggerMessage[]) {
+  private handleLazyMessage({ lazyArgs, trim }: { lazyArgs: LazyLoggerMessage[]; trim?: boolean }) {
     const flattenedArgs = lazyArgs.flat(Infinity).flatMap(arg => {
       if (typeof arg === 'function') {
         return arg();
       }
       return arg;
     });
-    return this.getLoggerMessage(flattenedArgs);
+    return this.getLoggerMessage({
+      args: flattenedArgs,
+      trim,
+    });
   }
 
   private get isDebug() {
@@ -66,12 +69,16 @@ export class DefaultLogger implements Logger {
   }
 
   log(...args: any[]) {
-    const message = this.getLoggerMessage(...args);
+    const message = this.getLoggerMessage({
+      args,
+    });
     return console.log(`${this.prefix} ${message}`);
   }
 
   warn(...args: any[]) {
-    const message = this.getLoggerMessage(...args);
+    const message = this.getLoggerMessage({
+      args,
+    });
     const fullMessage = `⚠️ ${this.prefix} ${warnColor(message)}`;
     if (console.warn) {
       console.warn(fullMessage);
@@ -81,7 +88,9 @@ export class DefaultLogger implements Logger {
   }
 
   info(...args: any[]) {
-    const message = this.getLoggerMessage(...args);
+    const message = this.getLoggerMessage({
+      args,
+    });
     const fullMessage = `💡 ${this.prefix} ${infoColor(message)}`;
     if (console.info) {
       console.info(fullMessage);
@@ -91,14 +100,19 @@ export class DefaultLogger implements Logger {
   }
 
   error(...args: any[]) {
-    const message = this.getLoggerMessage(...args);
+    const message = this.getLoggerMessage({
+      args,
+      trim: false,
+    });
     const fullMessage = `💥 ${this.prefix} ${errorColor(message)}`;
     console.log(fullMessage);
   }
 
   debug(...lazyArgs: LazyLoggerMessage[]) {
     if (this.isDebug) {
-      const message = this.handleLazyMessage(lazyArgs);
+      const message = this.handleLazyMessage({
+        lazyArgs,
+      });
       const fullMessage = `🐛 ${this.prefix} ${debugColor(message)}`;
       if (console.debug) {
         console.debug(fullMessage);
