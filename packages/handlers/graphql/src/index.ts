@@ -12,7 +12,7 @@ import {
   SelectionNode,
 } from 'graphql';
 import { introspectSchema } from '@graphql-tools/wrap';
-import { loadFromModuleExportExpression, readFileOrUrl } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression, MeshFetch, readFileOrUrl } from '@graphql-mesh/utils';
 import {
   ExecutionRequest,
   isDocumentNode,
@@ -44,7 +44,7 @@ export default class GraphQLHandler implements MeshHandler {
   private baseDir: string;
   private nonExecutableSchema: StoreProxy<GraphQLSchema>;
   private importFn: ImportFn;
-  private fetchFn: typeof fetch;
+  private fetchFn: MeshFetch;
   private logger: Logger;
   private urlLoader = new UrlLoader();
 

@@ -23,14 +23,14 @@ import {
 import lodashSet from 'lodash.set';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { process } from '@graphql-mesh/cross-helpers';
-import { getHeadersObj } from '@graphql-mesh/utils';
+import { getHeadersObj, MeshFetch } from '@graphql-mesh/utils';
 
 export interface AddExecutionLogicToComposerOptions {
   schemaComposer: SchemaComposer;
   baseUrl: string;
   operations: JSONSchemaOperationConfig[];
   operationHeaders?: OperationHeadersConfiguration;
-  fetch: WindowOrWorkerGlobalScope['fetch'];
+  fetch: MeshFetch;
   logger: Logger;
   pubsub?: MeshPubSub;
   queryParams?: Record<string, string | number | boolean>;
@@ -260,7 +260,7 @@ ${operationConfig.description || ''}
             method: httpMethod,
           });
         }
-        const response = await fetch(fullPath, requestInit);
+        const response = await fetch(fullPath, requestInit, context);
         // If return type is a file
         if (field.type.getTypeName() === 'File') {
           return response.blob();

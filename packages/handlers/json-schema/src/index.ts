@@ -1,7 +1,7 @@
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import { GetMeshSourceOptions, ImportFn, Logger, MeshHandler, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 import { JSONSchemaLoaderBundle, createBundle, getGraphQLSchemaFromBundle } from '@omnigraph/json-schema';
-import { loadFromModuleExportExpression, readFileOrUrl } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression, MeshFetch, readFileOrUrl } from '@graphql-mesh/utils';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import { process } from '@graphql-mesh/cross-helpers';
 
@@ -11,7 +11,7 @@ export default class JsonSchemaHandler implements MeshHandler {
   private bundleStoreProxy: StoreProxy<JSONSchemaLoaderBundle>;
   private baseDir: string;
   private logger: Logger;
-  private fetchFn: typeof fetch;
+  private fetchFn: MeshFetch;
   private importFn: ImportFn;
   private pubsub: MeshPubSub;
 

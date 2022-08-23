@@ -1,5 +1,5 @@
 import { referenceJSONSchema, JSONSchemaObject, dereferenceObject } from 'json-machete';
-import { DefaultLogger } from '@graphql-mesh/utils';
+import { DefaultLogger, MeshFetch } from '@graphql-mesh/utils';
 import { getDereferencedJSONSchemaFromOperations } from './getDereferencedJSONSchemaFromOperations';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { JSONSchemaOperationConfig, OperationHeadersConfiguration } from './types';
@@ -72,7 +72,7 @@ export async function createBundle(
 
 export interface JSONSchemaLoaderBundleToGraphQLSchemaOptions {
   cwd?: string;
-  fetch?: WindowOrWorkerGlobalScope['fetch'];
+  fetch?: MeshFetch;
   pubsub?: MeshPubSub;
   logger?: Logger;
   baseUrl?: string;

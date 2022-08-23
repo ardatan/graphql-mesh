@@ -1,5 +1,5 @@
 import { YamlConfig, MeshHandler, GetMeshSourceOptions, MeshSource, Logger, ImportFn } from '@graphql-mesh/types';
-import { readFileOrUrl } from '@graphql-mesh/utils';
+import { MeshFetch, readFileOrUrl } from '@graphql-mesh/utils';
 import {
   getInterpolatedHeadersFactory,
   parseInterpolationStrings,
@@ -115,7 +115,7 @@ const queryOptionsFields = {
 export default class ODataHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.ODataHandler;
-  private fetchFn: typeof fetch;
+  private fetchFn: MeshFetch;
   private logger: Logger;
   private importFn: ImportFn;
   private baseDir: string;
@@ -556,7 +556,16 @@ export default class ODataHandler implements MeshHandler {
         }),
       none: () =>
         new DataLoader(
-          (requests: Request[]): Promise<Response[]> => Promise.all(requests.map(request => this.fetchFn(request)))
+          (requests: Request[]): Promise<Response[]> =>
+            Promise.all(
+              requests.map(request =>
+                this.fetchFn(request.url, {
+                  method: request.method,
+                  body: request.body,
+                  headers: request.headers,
+                })
+              )
+            )
         ),
     };
 

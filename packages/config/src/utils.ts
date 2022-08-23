@@ -4,11 +4,9 @@ import { printSchemaWithDirectives, Source } from '@graphql-tools/utils';
 import { paramCase } from 'param-case';
 import { loadDocuments, loadTypedefs } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { PubSub, DefaultLogger, parseWithCache } from '@graphql-mesh/utils';
+import { PubSub, DefaultLogger, parseWithCache, createDefaultMeshFetch, MeshFetch } from '@graphql-mesh/utils';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { MeshStore } from '@graphql-mesh/store';
-import { fetch, Request, Response } from '@whatwg-node/fetch';
-import { fetchFactory } from 'fetchache';
 
 type ResolvedPackage<T> = {
   moduleName: string;
@@ -98,26 +96,20 @@ export async function resolveCustomFetch({
   additionalPackagePrefixes: string[];
   cache: KeyValueCache;
 }): Promise<{
-  fetchFn: ReturnType<typeof fetchFactory>;
+  fetchFn: MeshFetch;
   importCode: string;
   code: string;
 }> {
   let importCode = '';
   if (!fetchConfig) {
-    importCode += `import { fetchFactory } from 'fetchache';\n`;
-    importCode += `import { fetch, Request, Response } from '@whatwg-node/fetch';\n`;
+    importCode += `import { createDefaultMeshFetch } from '@graphql-mesh/utils';\n`;
     return {
-      fetchFn: fetchFactory({
-        cache,
-        fetch,
-        Request,
-        Response,
-      }),
+      fetchFn: createDefaultMeshFetch(cache),
       importCode,
-      code: `const fetchFn = fetchFactory({ cache, fetch, Request, Response });`,
+      code: `const fetchFn = createDefaultMeshFetch(cache);`,
     };
   }
-  const { moduleName, resolved: fetchFn } = await getPackage<ReturnType<typeof fetchFactory>>({
+  const { moduleName, resolved: fetchFn } = await getPackage<MeshFetch>({
     name: fetchConfig,
     type: 'fetch',
     importFn,
