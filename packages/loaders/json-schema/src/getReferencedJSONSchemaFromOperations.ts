@@ -245,7 +245,7 @@ export async function getReferencedJSONSchemaFromOperations({
               logger,
               importFn: defaultImportFn,
             }).catch((e: any) => {
-              throw new Error(`requestSample:${operationConfig.requestSample} cannot be read - ${e.message}`);
+              throw new Error(`${operationConfig.field}.requestSample: ${operationConfig.requestSample}; ${e.message}`);
             });
       const generatedSchema = toJsonSchema(sample, {
         required: false,

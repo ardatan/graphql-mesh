@@ -145,25 +145,25 @@ export async function graphqlMesh(
           });
           logger = meshConfig.logger;
           const meshInstance$ = getMesh(meshConfig);
-          meshInstance$
-            .then(({ schema }) =>
-              writeFile(pathModule.join(outputDir, 'schema.graphql'), printSchemaWithDirectives(schema))
+          // We already handle Mesh instance errors inside `serveMesh`
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
+          meshInstance$.then(({ schema }) =>
+            writeFile(pathModule.join(outputDir, 'schema.graphql'), printSchemaWithDirectives(schema)).catch(e =>
+              logger.error(`An error occured while writing the schema file: `, e)
             )
-            .catch(e => {
-              logger.error(`An error occured while writing the schema file: ${e.stack || e.message}`);
-            });
-          meshInstance$
-            .then(({ schema, rawSources }) =>
-              generateTsArtifacts(
-                {
-                  unifiedSchema: schema,
-                  rawSources,
-                  mergerType: meshConfig.merger.name,
-                  documents: meshConfig.documents,
-                  flattenTypes: false,
-                  importedModulesSet: new Set(),
-                  baseDir,
-                  meshConfigCode: `
+          );
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
+          meshInstance$.then(({ schema, rawSources }) =>
+            generateTsArtifacts(
+              {
+                unifiedSchema: schema,
+                rawSources,
+                mergerType: meshConfig.merger.name,
+                documents: meshConfig.documents,
+                flattenTypes: false,
+                importedModulesSet: new Set(),
+                baseDir,
+                meshConfigCode: `
                 import { findAndParseConfig } from '@graphql-mesh/cli';
                 function getMeshOptions() {
                   console.warn('WARNING: These artifacts are built for development mode. Please run "${
@@ -178,17 +178,16 @@ export async function graphqlMesh(
                   });
                 }
               `,
-                  logger,
-                  sdkConfig: meshConfig.config.sdk,
-                  fileType: 'ts',
-                  codegenConfig: meshConfig.config.codegen,
-                },
-                cliParams
-              )
-            )
-            .catch(e => {
+                logger,
+                sdkConfig: meshConfig.config.sdk,
+                fileType: 'ts',
+                codegenConfig: meshConfig.config.codegen,
+              },
+              cliParams
+            ).catch(e => {
               logger.error(`An error occurred while building the artifacts: ${e.stack || e.message}`);
-            });
+            })
+          );
           const serveMeshOptions: ServeMeshOptions = {
             baseDir,
             argsPort: args.port,
