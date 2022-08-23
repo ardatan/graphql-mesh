@@ -13,7 +13,7 @@ import { createBundle, getGraphQLSchemaFromBundle, OpenAPILoaderBundle } from '@
 
 export default class OpenAPIHandler implements MeshHandler {
   private name: string;
-  private config: YamlConfig.NewOpenapiHandler;
+  private config: YamlConfig.OpenapiHandler;
   private bundleStoreProxy: StoreProxy<OpenAPILoaderBundle>;
   private baseDir: string;
   private logger: Logger;
@@ -29,7 +29,7 @@ export default class OpenAPIHandler implements MeshHandler {
     pubsub,
     logger,
     importFn,
-  }: GetMeshSourceOptions<YamlConfig.NewOpenapiHandler>) {
+  }: GetMeshSourceOptions<YamlConfig.OpenapiHandler>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
