@@ -187,7 +187,7 @@ const resolvers = {
       })
       // if `result` contains a JWT token, you could instead decode it and set `Expires`
       // to the JWT token's expiration date
-      res.set('Set-Cookie', `accessToken=${result}; Path=/; Secure; HttpOnly; Max-Age=${oneYear};`)
+      context.res.set('Set-Cookie', `accessToken=${result}; Path=/; Secure; HttpOnly; Max-Age=${oneYear};`)
 
       return result
     },
