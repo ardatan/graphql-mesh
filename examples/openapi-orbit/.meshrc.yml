@@ -1,7 +1,7 @@
 sources:
   - name: Orbit
     handler:
-      newOpenapi:
+      openapi:
         oasFilePath: https://app.orbit.love/api-docs/v1/swagger.json
 
 serve:
