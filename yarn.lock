@@ -5116,6 +5116,11 @@
   resolved "https://registry.yarnpkg.com/@types/json-buffer/-/json-buffer-3.0.0.tgz#85c1ff0f0948fc159810d4b5be35bf8c20875f64"
   integrity sha512-3YP80IxxFJB4b5tYC2SUPwkg0XQLiu0nWvhRgEatgjf+29IcWO9X1k8xRv5DGssJ/lCrjYTjQPcobJr2yWIVuQ==
 
+"@types/json-pointer@1.0.31":
+  version "1.0.31"
+  resolved "https://registry.yarnpkg.com/@types/json-pointer/-/json-pointer-1.0.31.tgz#8fdcbe1a274468436e974d12ec8c04f16b0b2936"
+  integrity sha512-hTPul7Um6LqsHXHQpdkXTU7Oysjsf+9k4Yfmg6JhSKG/jj9QuQGyMUdj6trPH6WHiIdxw7nYSROgOxeFmCVK2w==
+
 "@types/json-schema@*", "@types/json-schema@^7.0.3", "@types/json-schema@^7.0.4", "@types/json-schema@^7.0.5", "@types/json-schema@^7.0.8", "@types/json-schema@^7.0.9":
   version "7.0.11"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.11.tgz#d421b6c527a3037f7c84433fd2c4229e016863d3"
