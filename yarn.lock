@@ -3118,10 +3118,10 @@
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.1.1.tgz#076d78ce99822258cf813ecc1e7fa460fa74d052"
   integrity sha512-NQ17ii0rK1b34VZonlmT2QMJFI70m0TRwbknO/ihlbatXyaktDhN/98vBiUU6kNBPljqGqyIrl2T4nY2RpFANg==
 
-"@graphql-yoga/common@2.12.7", "@graphql-yoga/common@^2.12.7":
-  version "2.12.7"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/common/-/common-2.12.7.tgz#2ec4dd054be9dbc47a9759e21f856277d0cfda4c"
-  integrity sha512-K3NJdtMwC/IKuHWqT4aQS5FrPllYXKX3uGBuOkGCyc0U9IjppLEMQpX/26bO4fa+WstCp4hHU3QxKf1dw78DMQ==
+"@graphql-yoga/common@2.12.8", "@graphql-yoga/common@^2.12.8":
+  version "2.12.8"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/common/-/common-2.12.8.tgz#1979b0008ef7f79fe21255f629c724b2a99a524f"
+  integrity sha512-c/dd/c9mX/A1chA2N7I/bWIf7LrZGPJbCjMUyq35cXZ2xLWaXs6d1aDS4qbsJjb6JplBu6KX6HAZTFY06UJ7ow==
   dependencies:
     "@envelop/core" "^2.5.0"
     "@envelop/parser-cache" "^4.6.0"
@@ -3134,14 +3134,14 @@
     dset "^3.1.1"
     tslib "^2.3.1"
 
-"@graphql-yoga/node@2.13.8", "@graphql-yoga/node@^2.4.0":
-  version "2.13.8"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/node/-/node-2.13.8.tgz#ae83149f7058cfd4b58309c596a17545735d5b1d"
-  integrity sha512-OjE00qEHLdmuZLOKVRTHL+7c2rPnYx0W/wv5bCOryv9gupZV+k5srcsBghmGYd5uK2/rOGlf+OsuLE1ftA7mBA==
+"@graphql-yoga/node@2.13.9", "@graphql-yoga/node@^2.4.0":
+  version "2.13.9"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/node/-/node-2.13.9.tgz#3942bf6a2717f2b07ca097c852e5b7a2ecae0d2b"
+  integrity sha512-3UWG7ueHherpdPOMYX6kHXh/nzJZQHfRUeeipI7Ig/HS9DYEJlSHyg0RRkTMIa0GkB2sAvAzRWDIQSORhnjZ/g==
   dependencies:
     "@envelop/core" "^2.5.0"
     "@graphql-tools/utils" "^8.8.0"
-    "@graphql-yoga/common" "^2.12.7"
+    "@graphql-yoga/common" "^2.12.8"
     "@graphql-yoga/subscription" "^2.2.3"
     "@whatwg-node/fetch" "^0.2.6"
     tslib "^2.3.1"
@@ -5351,10 +5351,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.6.5.tgz#06caea822caf9e59d5034b695186ee74154d2802"
   integrity sha512-Xjt5ZGUa5WusGZJ4WJPbOT8QOqp6nDynVFRKcUt32bOgvXEoc6o085WNkYTMO7ifAj2isEfQQ2cseE+wT6jsRw==
 
-"@types/node@16.11.53":
-  version "16.11.53"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.53.tgz#0826570a96f46cdba185c7129f11628bd6d3ab11"
-  integrity sha512-3yJerjVV8GlGSWCjEPal2cDymbQEE/1bhUr1NdW5apDPZo6EjBaqHxR7AC4wKmZ24Hzqcz+tgJyAGe9qcGHw7w==
+"@types/node@16.11.54":
+  version "16.11.54"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.54.tgz#1bc17ff09bf340d9350c32200adab22f22753376"
+  integrity sha512-ryOpwe15+BtTUxKFfzABjaI/EtXLPBSBEW4B6D5ygWNcORLVKG/1/FC3WwAr5d7t6lCnlVPRsCY0NH680QT+Pg==
 
 "@types/node@18.6.1":
   version "18.6.1"
@@ -11889,10 +11889,10 @@ ioredis-mock@8.2.2:
     fengari "^0.1.4"
     fengari-interop "^0.1.3"
 
-ioredis@5.2.2:
-  version "5.2.2"
-  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-5.2.2.tgz#212467e04f6779b4e0e800cece7bb7d3d7b546d2"
-  integrity sha512-wryKc1ur8PcCmNwfcGkw5evouzpbDXxxkMkzPK8wl4xQfQf7lHe11Jotell5ikMVAtikXJEu/OJVaoV51BggRQ==
+ioredis@5.2.3:
+  version "5.2.3"
+  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-5.2.3.tgz#d5b37eb13e643241660d6cee4eeb41a026cda8c0"
+  integrity sha512-gQNcMF23/NpvjCaa1b5YycUyQJ9rBNH2xP94LWinNpodMWVUPP5Ai/xXANn/SM7gfIvI62B5CCvZxhg5pOgyMw==
   dependencies:
     "@ioredis/commands" "^1.1.1"
     cluster-key-slot "^1.1.0"
