@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.76.1
+
+### Patch Changes
+
+- [`1fbadb454`](https://github.com/Urigo/graphql-mesh/commit/1fbadb454b21411dabcb4771c2747c2ec49133c9) Thanks [@ardatan](https://github.com/ardatan)! - Do not print duplicate error messages if the schema generation fails
+
 ## 0.76.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @omnigraph/json-schema
 
+## 0.29.2
+
+### Patch Changes
+
+- [`cd13405f5`](https://github.com/Urigo/graphql-mesh/commit/cd13405f5b358af364158c7b5fd36fa08b1d4a60) Thanks [@ardatan](https://github.com/ardatan)! - Better error message for the missing `requestSchema` file
+
 ## 0.29.1
 
 ### Patch Changes
