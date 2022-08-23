@@ -12,14 +12,14 @@ To get started, install the handler library:
 
 <PackageCmd packages={['@graphql-mesh/new-openapi']} />
 
-Now, you can use it directly in your Mesh config file:
+Now, you can use it directly in your Mesh config file / URL:
 
 ```yaml
 sources:
   - name: MyOpenapiApi
     handler:
       openapi:
-        source: ./my-schema.json
+        oasFilePath: ./my-schema.json
 ```
 
 Note that this handler is based on the [JSON Schema handler](/docs/handlers/json-schema) - so it's configurations will apply here as well.
@@ -35,17 +35,28 @@ sources:
   - name: MyOpenapiApi
     handler:
       openapi:
-        source: ./my-schema.json
+        oasFilePath: ./my-schema.json
         selectQueryOrMutationField:
-          - title: 'Weather Service v1' # OAS title
-            path: /weather/current # operation path
-            method: post
+          - fieldName: 'add_weather_forecast' # OAS field name
             type: Query # switch method POST from default Mutation into Query
-          - title: 'Weather Service v1' # OAS title
-            path: /weather/forecast # operation path
-            method: get
+          - fieldName: 'get_weather_forecast' # OAS field name
             type: Mutation # switch method GET from default Query into Mutation
 ```
+
+## Naming convention
+
+We use `operationId` for the names, and aim to keep it as close as possible to origin.
+
+### Type naming
+
+We adjust `operationId` only when necessary according to the GraphQL spec:
+    - Chars  ` ` (white space), `.`, `/` and `-` are replaced with `_` (underscore)
+    - Other chars which are not latin/digits are replaced with their char codes
+    - If first char of the name is a digit, we prefix it with `_` (GraphQL spec doesn’t allow that)
+
+### Unnamed types
+
+We use path-based naming. So names could be structured like, for example, `query_getUsers_items_firstName`
 
 ## Dynamic Header Values
 
