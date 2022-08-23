@@ -2,6 +2,7 @@
   "handlers-introduction": "Introduction",
   "graphql": "GraphQL",
   "openapi": "OpenAPI / Swagger",
+  "new-openapi": "New OpenAPI / Swagger",
   "grpc": "gRPC / Protobuf",
   "json-schema": "JSON Schema or Samples",
   "postgraphile": "PostgreSQL / PostGraphile",
