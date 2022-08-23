@@ -1,5 +1,16 @@
 # @graphql-mesh/json-schema
 
+## 0.33.1
+
+### Patch Changes
+
+- Updated dependencies [[`f23e14eba`](https://github.com/Urigo/graphql-mesh/commit/f23e14ebaf7c6a869207edc43b0e2a8114d0d21f)]:
+  - @graphql-mesh/utils@0.39.0
+  - json-machete@0.13.1
+  - @omnigraph/json-schema@0.29.1
+  - @graphql-mesh/store@0.8.31
+  - @graphql-mesh/types@0.80.1
+
 ## 0.33.0
 
 ### Minor Changes
@@ -166,11 +177,11 @@
 
   ```ts
   export default function myOperationHeaders({ context }: ResolverData) {
-    const someToken = context.request.headers.get('some-token')
-    const anotherToken = await someLogicThatReturnsAnotherToken(someToken)
+    const someToken = context.request.headers.get("some-token");
+    const anotherToken = await someLogicThatReturnsAnotherToken(someToken);
     return {
-      'x-bar-token': anotherToken
-    }
+      "x-bar-token": anotherToken
+    };
   }
   ```
 

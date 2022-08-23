@@ -1,5 +1,22 @@
 # @graphql-mesh/config
 
+## 6.1.0
+
+### Minor Changes
+
+- [#4353](https://github.com/Urigo/graphql-mesh/pull/4353) [`f23e14eba`](https://github.com/Urigo/graphql-mesh/commit/f23e14ebaf7c6a869207edc43b0e2a8114d0d21f) Thanks [@ardatan](https://github.com/ardatan)! - New flag for `mesh build`. You can set `mesh build --throwOnInvalidConfig=true` to make the CLI throw an exception if the configuration file is invalid per Mesh's configuration schema
+
+### Patch Changes
+
+- Updated dependencies [[`f23e14eba`](https://github.com/Urigo/graphql-mesh/commit/f23e14ebaf7c6a869207edc43b0e2a8114d0d21f)]:
+  - @graphql-mesh/utils@0.39.0
+  - @graphql-mesh/cache-localforage@0.6.28
+  - @graphql-mesh/merger-bare@0.15.12
+  - @graphql-mesh/merger-stitching@0.16.11
+  - @graphql-mesh/runtime@0.42.2
+  - @graphql-mesh/store@0.8.31
+  - @graphql-mesh/types@0.80.1
+
 ## 6.0.1
 
 ### Patch Changes
@@ -260,9 +277,9 @@
       sourceName: Author
       sourceTypeName: Query
       sourceFieldName: authorById
-      requiredSelectionSet: '{ id }'
+      requiredSelectionSet: "{ id }"
       sourceArgs:
-        id: '{root.id}'
+        id: "{root.id}"
   ```
 
   After:
