@@ -2801,6 +2801,31 @@
     object-inspect "1.10.3"
     tslib "^2.0.0"
 
+"@graphql-mesh/openapi@0.31.2":
+  version "0.31.2"
+  resolved "https://registry.yarnpkg.com/@graphql-mesh/openapi/-/openapi-0.31.2.tgz#60461ce6e019e0e6b634869d281550a2bda98902"
+  integrity sha512-qCKqLzvTVUfVVN9rQmlqUhaNYbY3vphbL/34Xwi2ePDY9Ll79Aye+6ELmTzDVvPGbFaZTtoaelyOxOMMn9lm0w==
+  dependencies:
+    "@graphql-mesh/cross-helpers" "0.2.2"
+    "@graphql-mesh/store" "0.8.31"
+    "@graphql-mesh/string-interpolation" "0.3.2"
+    "@graphql-mesh/types" "0.80.1"
+    "@graphql-mesh/utils" "0.39.0"
+    "@graphql-tools/utils" "8.10.0"
+    "@whatwg-node/fetch" "^0.3.0"
+    deep-equal "2.0.5"
+    form-urlencoded "6.1.0"
+    graphql-scalars "1.18.0"
+    json-pointer "0.6.2"
+    jsonpath-plus "7.0.0"
+    openapi-diff "0.23.6"
+    openapi-types "12.0.0"
+    pluralize "8.0.0"
+    qs "6.11.0"
+    swagger2openapi "7.0.8"
+    tslib "^2.4.0"
+    url-join "4.0.1"
+
 "@graphql-tools/batch-delegate@8.3.6":
   version "8.3.6"
   resolved "https://registry.yarnpkg.com/@graphql-tools/batch-delegate/-/batch-delegate-8.3.6.tgz#e6f66a07c00f80be5f99adb3c7a714ed191fd665"
@@ -4950,11 +4975,6 @@
   dependencies:
     "@types/ms" "*"
 
-"@types/deep-equal@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@types/deep-equal/-/deep-equal-1.0.1.tgz#71cfabb247c22bcc16d536111f50c0ed12476b03"
-  integrity sha512-mMUu4nWHLBlHtxXY17Fg6+ucS/MnndyOWyOe7MmwkoMYxvfQU2ajtRaEvqSUv+aVkMqH/C0NCI8UoVfRNQ10yg==
-
 "@types/eslint-scope@^3.7.3":
   version "3.7.4"
   resolved "https://registry.yarnpkg.com/@types/eslint-scope/-/eslint-scope-3.7.4.tgz#37fc1223f0786c39627068a12e94d6e6fc61de16"
@@ -5021,11 +5041,6 @@
   version "5.5.9"
   resolved "https://registry.yarnpkg.com/@types/faker/-/faker-5.5.9.tgz#588ede92186dc557bff8341d294335d50d255f0c"
   integrity sha512-uCx6mP3UY5SIO14XlspxsGjgaemrxpssJI0Ol+GfhxtcKpv9pgRZYsS4eeKeHVLje6Qtc8lGszuBI461+gVZBA==
-
-"@types/form-urlencoded@2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@types/form-urlencoded/-/form-urlencoded-2.0.1.tgz#5c7789aca2681564116c3d278359232527e14ba1"
-  integrity sha512-Kz3LwezuNvsQF8ZcswMv4b5ZhKmjTkH2Rxle6l/520Npvaxho6b4HN9lStp6HhGrZsL/rwJHpWK9vM1RA7uZbw==
 
 "@types/fs-capacitor@*":
   version "2.0.0"
@@ -5167,11 +5182,6 @@
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@types/json-buffer/-/json-buffer-3.0.0.tgz#85c1ff0f0948fc159810d4b5be35bf8c20875f64"
   integrity sha512-3YP80IxxFJB4b5tYC2SUPwkg0XQLiu0nWvhRgEatgjf+29IcWO9X1k8xRv5DGssJ/lCrjYTjQPcobJr2yWIVuQ==
-
-"@types/json-pointer@1.0.31":
-  version "1.0.31"
-  resolved "https://registry.yarnpkg.com/@types/json-pointer/-/json-pointer-1.0.31.tgz#8fdcbe1a274468436e974d12ec8c04f16b0b2936"
-  integrity sha512-hTPul7Um6LqsHXHQpdkXTU7Oysjsf+9k4Yfmg6JhSKG/jj9QuQGyMUdj6trPH6WHiIdxw7nYSROgOxeFmCVK2w==
 
 "@types/json-schema@*", "@types/json-schema@^7.0.3", "@types/json-schema@^7.0.4", "@types/json-schema@^7.0.5", "@types/json-schema@^7.0.6", "@types/json-schema@^7.0.8", "@types/json-schema@^7.0.9":
   version "7.0.11"
