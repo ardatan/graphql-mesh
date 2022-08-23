@@ -131,7 +131,7 @@ customFetch: ./src/custom-fetch.js
 Here in the `meshrc.yaml` configuration we store the cookie in `Authorization-Cookie`, and the header in `Authorization-Header`. To introduce the logic needed to generate the proper `Authorization` header for the Rest API, we need to implement a `customFetch`. It will replace the `fetch` used by GraphQL Mesh to call the Rest API.
 
 ```js
-const fetch = require('node-fetch')
+import { fetch } from '@whatwg-node/fetch';
 
 module.exports = (url, args, context) => {
   // Set Authorization header dynamically to context value, or input cookie, or input header
