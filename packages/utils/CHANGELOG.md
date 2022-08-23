@@ -1,5 +1,24 @@
 # @graphql-mesh/utils
 
+## 0.39.0
+
+### Minor Changes
+
+- [#4353](https://github.com/Urigo/graphql-mesh/pull/4353) [`f23e14eba`](https://github.com/Urigo/graphql-mesh/commit/f23e14ebaf7c6a869207edc43b0e2a8114d0d21f) Thanks [@ardatan](https://github.com/ardatan)! - Now CLI reports critical errors with stack traces even if DEBUG isn't enabled, and error messages are no longer trimmed.
+
+  ```diff
+  Schema couldn't be generated because of the following errors:
+  - - Foo bar is n...
+  + - Foo bar is not valid
+  + at /somepath/somejsfile.js:123:2
+  + at /someotherpath/someotherjs.file:232:4
+  ```
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.80.1
+
 ## 0.38.1
 
 ### Patch Changes

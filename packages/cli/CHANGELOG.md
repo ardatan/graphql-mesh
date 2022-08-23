@@ -1,5 +1,30 @@
 # @graphql-mesh/cli
 
+## 0.76.0
+
+### Minor Changes
+
+- [#4353](https://github.com/Urigo/graphql-mesh/pull/4353) [`f23e14eba`](https://github.com/Urigo/graphql-mesh/commit/f23e14ebaf7c6a869207edc43b0e2a8114d0d21f) Thanks [@ardatan](https://github.com/ardatan)! - Now CLI reports critical errors with stack traces even if DEBUG isn't enabled, and error messages are no longer trimmed.
+
+  ```diff
+  Schema couldn't be generated because of the following errors:
+  - - Foo bar is n...
+  + - Foo bar is not valid
+  + at /somepath/somejsfile.js:123:2
+  + at /someotherpath/someotherjs.file:232:4
+  ```
+
+* [#4353](https://github.com/Urigo/graphql-mesh/pull/4353) [`f23e14eba`](https://github.com/Urigo/graphql-mesh/commit/f23e14ebaf7c6a869207edc43b0e2a8114d0d21f) Thanks [@ardatan](https://github.com/ardatan)! - New flag for `mesh build`. You can set `mesh build --throwOnInvalidConfig=true` to make the CLI throw an exception if the configuration file is invalid per Mesh's configuration schema
+
+### Patch Changes
+
+- Updated dependencies [[`f23e14eba`](https://github.com/Urigo/graphql-mesh/commit/f23e14ebaf7c6a869207edc43b0e2a8114d0d21f), [`f23e14eba`](https://github.com/Urigo/graphql-mesh/commit/f23e14ebaf7c6a869207edc43b0e2a8114d0d21f)]:
+  - @graphql-mesh/utils@0.39.0
+  - @graphql-mesh/config@6.1.0
+  - @graphql-mesh/runtime@0.42.2
+  - @graphql-mesh/store@0.8.31
+  - @graphql-mesh/types@0.80.1
+
 ## 0.75.12
 
 ### Patch Changes
