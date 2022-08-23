@@ -8,7 +8,7 @@ The former handler version was based on [OpenAPI-to-GraphQL](https://developer.i
 
 ## Naming conventions
 
-While the former version was somewhat opinionated regarding field names, currently names are adjusted only when necessary according to the GraphQL spec, as explained [here](/docs/handlers/new-openapi#naming-convention)
+While the former version was somewhat opinionated regarding field names, currently names are adjusted only when necessary according to the GraphQL spec, as explained [here](/docs/handlers/openapi#naming-convention)
 
 ## Config options
 
@@ -23,7 +23,7 @@ Some options where replaced/dropped:
 - `headers`: Use `operationHeaders`
 - `idFormats`: Use [additional resolvers](/docs/transforms/resolvers-composition)
 - `includeHttpDetails`: Dropped
-- `operationIdFieldNames`: Dropped. See [naming conventions](/docs/handlers/new-openapi#naming-convention) for further details
+- `operationIdFieldNames`: Dropped. See [naming conventions](/docs/handlers/openapi#naming-convention) for further details
 - `provideErrorExtensions`: Dropped. Using debug mode for that matter is recommend
 - `qs`: Use `queryParams` instead. Note that using this option in the previous handler resulted in removing query input arguments, where now the behavior is making them all nullable, and preferring the input arg over the config params if both exist.
 - `requestOptions`: Dropped

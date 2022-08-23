@@ -104,7 +104,7 @@ sources:
   - name: Cities
     handler:
       openapi:
-        source: https://api.apis.guru/v2/specs/mashape.com/geodb/1.0.0/swagger.json
+        oasFilePath: https://api.apis.guru/v2/specs/mashape.com/geodb/1.0.0/swagger.json
     transforms:
       - rename:
           - from:
@@ -115,7 +115,7 @@ sources:
   - name: Weather
     handler:
       openapi:
-        source: https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json
+        oasFilePath: https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json
     transforms:
       - rename:
           - from:
