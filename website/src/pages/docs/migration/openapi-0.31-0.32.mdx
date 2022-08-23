@@ -1,0 +1,74 @@
+import { PackageCmd } from '@theguild/components'
+
+# Migration guide from OpenAPI handler 0.31 to 0.32
+
+This update includes a complete refactor of the handler, introducing some major changes.
+
+The former handler version was based on [OpenAPI-to-GraphQL](https://developer.ibm.com/open/projects/openapi-to-graphql), where the new one is based on our [JSON Schema handler](/docs/handlers/json-schema).
+
+## Naming conventions
+
+While the former version was somewhat opinionated regarding field names, currently names are adjusted only when necessary according to the GraphQL spec, as explained [here](/docs/handlers/new-openapi#naming-convention)
+
+## Config options
+
+Some options where replaced/dropped:
+
+- `addLimitArgument`: Use [additional resolvers](/docs/transforms/resolvers-composition)
+- `allowUndefinedSchemaRefTags`: Dropped
+- `customResolvers`: Use [additional resolvers](/docs/transforms/resolvers-composition)
+- `defaultUndefinedSchemaType`: Dropped
+- `equivalentToMessages`: Instead, we provide field information by enabling debug mode with `DEBUG=fieldDetails`
+- `genericPayloadArgName`: Dropped. Since we use generic `input` field for `requestBody` anyway, this option became redundant
+- `headers`: Use `operationHeaders`
+- `idFormats`: Use [additional resolvers](/docs/transforms/resolvers-composition)
+- `includeHttpDetails`: Dropped
+- `operationIdFieldNames`: Dropped. See [naming conventions](/docs/handlers/new-openapi#naming-convention) for further details
+- `provideErrorExtensions`: Dropped. Using debug mode for that matter is recommend
+- `qs`: Use `queryParams` instead. Note that using this option in the previous handler resulted in removing query input arguments, where now the behavior is making them all nullable, and preferring the input arg over the config params if both exist.
+- `requestOptions`: Dropped
+- `selectQueryOrMutationField`: Previous structure was simplified. Now this option expects an array of object, each containing `fieldName` (for relevant field name) and `type` for the expected type (`”query”`/`”mutation”`)
+- `simpleNames`: The current convention is equivalent to `simpleNames: true`. For other setups see the [naming convention transform](https://www.graphql-mesh.com/docs/transforms/naming-convention)
+- `source`: Use `oasFilePath`
+- `strict`: Use `ignoreErrorResponses` (input value should be inverted)
+
+## Security
+
+Security scheme definitions can be define with string interpolation, using `operationHeaders` and `queryParams` config options.
+
+Here is an example with batch of usages combined:
+
+```tsx
+const handlerOptions = {
+	operationHeaders: {
+		// Basic auth. Add to the query input: {usernameAndPassword: "user123:pass123"}
+	  authorization: 'Basic {args.usernameAndPassword|base64}',
+		// In the header. Add to the query input: {apiKey: "abcdef"}
+		access_token: '{args.apiKey}',
+		// In the cookie. Add to the query input: {apiKey: "abcdef"}
+		cookie: 'access_token={args.apiKey}',
+	},
+	queryParams: {
+	// In the query string. Add to the query input: {apiKey: "abcdef"}
+		access_token: '{args.apiKey}',
+	},
+}
+```
+
+## Miscellaneous
+
+- Input arguments: Now, users can input parameters both through config options (`operationHeaders` and/or `queryParams`) AND through request query input arguments. In case both exists for the same argument, request query value will override the config value.
+For reference, former behavior was config-defined arguments resulted in complete removal of those arguments from GraphQL type.
+- Error object: used to include `path` (e.g `'/users/{username}'`) now includes `url` instead (e.g `'[http://localhost:3000/api/users/abcdef](http://localhost:3002/api/users/abcdef)'`)
+- string as JSON objects: while old handler accepted simple strings as responses for `type: “object”` fields, the new handler will throw error
+- Request Body: where requestBody exists, it’s input argument will be named `input` and accept both json objects and other types of inputs (where former handler used different field named based on content type or input type name)
+- (minor) objects with `format: “uuid”` will be defined as `field.type.name: ~~“ID”~~ “UUID”`
+- Supporting multiple schemas: while former handler accepted one or more source files, the new handler accepts only one source - mesh as a whole can handle multiple sources (including multiple openAPI schemas)
+- AnyOf and OneOf handle:
+
+| Case                                                       | Previous                                                                      | Currently                                                                              |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------|
+| anyOf contains mixture of object type and scalar           | resolve this case to generic JSON                                             | result will be object containing the object type and a field for the scalar            |
+| anyOf contains mixture of object type and a untyped object | pick out the object type schema without defaulting to the arbitrary JSON type | result will be object containing the object type and a JSON scalar                     |
+| anyOf contains mixture of untyped object and a scalar      | defaults to the arbitrary JSON type                                           | result will be object containing a JSON scalar and a field for the scalar              |
+| oneOf contains mixture of object type and scalar           | resolve this case to generic JSON                                             | result will be union of the object type and a generated type with field for the scalar |
