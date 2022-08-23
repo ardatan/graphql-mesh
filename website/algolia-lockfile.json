@@ -687,6 +687,39 @@
     "type": "Documentation"
   },
   {
+    "objectID": "mesh-docs-migration-guides-openapi-0",
+    "headings": ["Naming conventions", "Config options", "Security", "Miscellaneous"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Naming conventions",
+        "anchor": "naming-conventions"
+      },
+      {
+        "children": [],
+        "title": "Config options",
+        "anchor": "config-options"
+      },
+      {
+        "children": [],
+        "title": "Security",
+        "anchor": "security"
+      },
+      {
+        "children": [],
+        "title": "Miscellaneous",
+        "anchor": "miscellaneous"
+      }
+    ],
+    "content": "60edb582bf91ada0485bf7105fa34d2a",
+    "url": "https://www.graphql-mesh.com/docs/migration/openapi-0",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Docs", "Migration guides"],
+    "source": "Mesh",
+    "title": "openAPI handler `<0.31` to `0.32`",
+    "type": "Documentation"
+  },
+  {
     "objectID": "mesh-docs-source-handlers-graphql",
     "headings": [
       "Dynamic Header Values (e.g., for Authorization)",
@@ -768,7 +801,7 @@
     "objectID": "mesh-docs-source-handlers-handlers-introduction",
     "headings": [],
     "toc": [],
-    "content": "c89b28799d614a39de3b765e03769ba7",
+    "content": "3fd2d8a69c3eed4b88cad88bfb47107b",
     "url": "https://www.graphql-mesh.com/docs/handlers/handlers-introduction",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Source Handlers"],
@@ -878,6 +911,92 @@
     "hierarchy": ["Docs", "Source Handlers"],
     "source": "Mesh",
     "title": "Neo4j",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-source-handlers-new-openapi",
+    "headings": [
+      "Overriding default Query/Mutation operations classification",
+      "Naming convention",
+      "Dynamic Header Values",
+      "Advanced cookies handling",
+      "Examples",
+      "Config API Reference"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "Overriding default Query/Mutation operations classification",
+        "anchor": "overriding-default-querymutation-operations-classification"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Unnamed types",
+                "anchor": "unnamed-types"
+              }
+            ],
+            "title": "Type naming",
+            "anchor": "type-naming"
+          }
+        ],
+        "title": "Naming convention",
+        "anchor": "naming-convention"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "From Environmental Variable",
+                "anchor": "from-environmental-variable"
+              }
+            ],
+            "title": "From Context (HTTP Header for `mesh dev` or `mesh start`)",
+            "anchor": "from-context-http-header-for-mesh-dev-or-mesh-start"
+          }
+        ],
+        "title": "Dynamic Header Values",
+        "anchor": "dynamic-header-values"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Setting / Unsetting the cookie",
+                "anchor": "setting--unsetting-the-cookie"
+              }
+            ],
+            "title": "Accepting one of the cookies, header, or context value",
+            "anchor": "accepting-one-of-the-cookies-header-or-context-value"
+          }
+        ],
+        "title": "Advanced cookies handling",
+        "anchor": "advanced-cookies-handling"
+      },
+      {
+        "children": [],
+        "title": "Examples",
+        "anchor": "examples"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "23a2bad0e18c56f6593fef0854d455dc",
+    "url": "https://www.graphql-mesh.com/docs/handlers/new-openapi",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Docs", "Source Handlers"],
+    "source": "Mesh",
+    "title": "New OpenAPI / Swagger",
     "type": "Documentation"
   },
   {
