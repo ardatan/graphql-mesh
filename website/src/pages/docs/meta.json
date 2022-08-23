@@ -7,6 +7,7 @@
   "cache": "Cache",
   "api": "API",
   "cli-commands": "CLI commands",
+  "migration": "Migration guides",
   "extend": {
     "hidden": true
   }

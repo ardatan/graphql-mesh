@@ -809,26 +809,49 @@ export interface Neo4JHandler {
  * Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it.
  */
 export interface NewOpenapiHandler {
+  /**
+   * A pointer to your API source (Support both JSON and YAML) - could be a local file, remote file or url endpoint
+   */
   oasFilePath: string;
   /**
-   * Allowed values: json, yaml, js, ts
+   * Format of the files referenced from the source file, for cases content type isn't detected automatically (Allowed values: json, yaml, js, ts)
    */
   fallbackFormat?: 'json' | 'yaml' | 'js' | 'ts';
+  /**
+   * Specifies the URL on which all paths will be based on.
+   * Overrides the server object in the OAS.
+   */
   baseUrl?: string;
+  /**
+   * If you are using a remote URL endpoint to fetch your schema, you can set headers for the HTTP request to fetch your schema.
+   */
   schemaHeaders?: {
     [k: string]: any;
   };
   /**
-   * Any of: JSON, String
+   * JSON object representing the Headers to add to the runtime of the API calls (Any of: JSON, String)
    */
   operationHeaders?:
     | {
         [k: string]: any;
       }
     | string;
+  /**
+   * Responses are converted to a Union type grouping all possible responses.
+   * Applying this will ignore all responses with status code other than 2xx, resulting in simpler response types, usualy regular object type instead of union.
+   * Default: false
+   */
   ignoreErrorResponses?: boolean;
+  /**
+   * Allows to explicitly override the default operation (Query or Mutation) for any OAS operation
+   */
   selectQueryOrMutationField?: OASSelectQueryOrMutationFieldConfig[];
-  queryParams?: any;
+  /**
+   * JSON object representing the query search parameters to add to the API calls
+   */
+  queryParams?: {
+    [k: string]: any;
+  };
 }
 export interface OASSelectQueryOrMutationFieldConfig {
   /**
