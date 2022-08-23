@@ -133,7 +133,9 @@ Here in the `meshrc.yaml` configuration we store the cookie in `Authorization-Co
 ```js
 import { fetch } from '@whatwg-node/fetch';
 
-module.exports = (url, args, context) => {
+import { MeshContext } from '@graphql-mesh/types';
+
+export default(url: string, init: RequestInit, context: MeshContext) {
   // Set Authorization header dynamically to context value, or input cookie, or input header
   args.headers['authorization'] =
     context.authorization || args.headers['authorization-cookie'] || args.headers['authorization-header']
