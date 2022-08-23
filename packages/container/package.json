@@ -1,7 +1,7 @@
 {
   "name": "@graphql-mesh/container",
   "license": "MIT",
-  "version": "0.1.137",
+  "version": "0.1.138",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -12,13 +12,13 @@
   },
   "dependencies": {
     "graphql": "16.6.0",
-    "@graphql-mesh/cli": "0.76.0",
+    "@graphql-mesh/cli": "0.76.1",
     "@graphql-mesh/config": "6.1.0",
     "@graphql-mesh/runtime": "0.42.2",
     "@graphql-mesh/openapi": "0.31.2",
     "@graphql-mesh/graphql": "0.29.12",
     "@graphql-mesh/grpc": "0.24.24",
-    "@graphql-mesh/json-schema": "0.33.1",
+    "@graphql-mesh/json-schema": "0.33.2",
     "@graphql-mesh/odata": "0.18.14",
     "@graphql-mesh/soap": "0.12.12",
     "@graphql-mesh/postgraphile": "0.20.44",
