@@ -64,6 +64,7 @@ export type JSONSchemaHTTPBaseOperationConfig = JSONSchemaBaseOperationConfig & 
 
   headers?: Record<string, string>;
   queryParamArgMap?: Record<string, string>;
+  queryStringOptionsByParam?: Record<string, IStringifyOptions>;
 };
 
 export type JSONSchemaHTTPJSONOperationConfig = JSONSchemaHTTPBaseOperationConfig &

@@ -165,6 +165,20 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                 paramObj.schema.default = queryParams[paramObj.name];
               }
             }
+            if ('explode' in paramObj) {
+              operationConfig.queryStringOptionsByParam = operationConfig.queryStringOptionsByParam || {};
+              operationConfig.queryStringOptionsByParam[paramObj.name] =
+                operationConfig.queryStringOptionsByParam[paramObj.name] || {};
+              if (paramObj.explode) {
+                operationConfig.queryStringOptionsByParam[paramObj.name].arrayFormat = 'repeat';
+              } else {
+                if (paramObj.style === 'form') {
+                  operationConfig.queryStringOptionsByParam[paramObj.name].arrayFormat = 'comma';
+                } else {
+                  logger.warn(`Other styles including ${paramObj.style} of query parameters are not supported yet.`);
+                }
+              }
+            }
             break;
           case 'path': {
             // If it is in the path, let JSON Schema handler put it
