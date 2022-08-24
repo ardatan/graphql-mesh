@@ -2,12 +2,13 @@ import { DEFAULT_SCHEMA, load as loadYamlFromJsYaml, Schema, Type } from 'js-yam
 import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import { ImportFn, Logger } from '@graphql-mesh/types';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression';
+import { MeshFetch } from './fetch';
 
 export interface ReadFileOrUrlOptions extends RequestInit {
   allowUnknownExtensions?: boolean;
   fallbackFormat?: 'json' | 'yaml' | 'js' | 'ts';
   cwd: string;
-  fetch: typeof fetch;
+  fetch: MeshFetch;
   importFn: ImportFn;
   logger: Logger;
 }

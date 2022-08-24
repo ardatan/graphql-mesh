@@ -3553,6 +3553,10 @@
       ],
       "description": "Path to a custom W3 Compatible Fetch Implementation"
     },
+    "includeHttpDetailsInExtensions": {
+      "type": "boolean",
+      "description": "Include HTTP details to the extensions"
+    },
     "skipSSLValidation": {
       "type": "boolean",
       "description": "Allow connections to an SSL endpoint without certificates"

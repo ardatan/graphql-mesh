@@ -8,7 +8,7 @@ import {
   MeshSource,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression, MeshFetch } from '@graphql-mesh/utils';
 import { createBundle, getGraphQLSchemaFromBundle, OpenAPILoaderBundle } from '@omnigraph/openapi';
 
 export default class OpenAPIHandler implements MeshHandler {
@@ -17,7 +17,7 @@ export default class OpenAPIHandler implements MeshHandler {
   private bundleStoreProxy: StoreProxy<OpenAPILoaderBundle>;
   private baseDir: string;
   private logger: Logger;
-  private fetch: typeof fetch;
+  private fetch: MeshFetch;
   private pubsub: MeshPubSub;
   private importFn: ImportFn;
   constructor({

@@ -10,9 +10,10 @@ import {
   buildClientSchema,
   ExecutionResult,
   SelectionNode,
+  GraphQLResolveInfo,
 } from 'graphql';
 import { introspectSchema } from '@graphql-tools/wrap';
-import { loadFromModuleExportExpression, readFileOrUrl } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression, MeshFetch, readFileOrUrl } from '@graphql-mesh/utils';
 import {
   ExecutionRequest,
   isDocumentNode,
@@ -20,6 +21,7 @@ import {
   getOperationASTFromRequest,
   parseSelectionSet,
   isAsyncIterable,
+  Executor,
 } from '@graphql-tools/utils';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import lodashGet from 'lodash.get';
@@ -40,15 +42,17 @@ const getResolverData = memoize1(function getResolverData(params: ExecutionReque
 });
 
 export default class GraphQLHandler implements MeshHandler {
+  private name: string;
   private config: YamlConfig.Handler['graphql'];
   private baseDir: string;
   private nonExecutableSchema: StoreProxy<GraphQLSchema>;
   private importFn: ImportFn;
-  private fetchFn: typeof fetch;
+  private fetchFn: MeshFetch;
   private logger: Logger;
   private urlLoader = new UrlLoader();
 
   constructor({
+    name,
     config,
     baseDir,
     fetchFn,
@@ -56,6 +60,7 @@ export default class GraphQLHandler implements MeshHandler {
     importFn,
     logger,
   }: GetMeshSourceOptions<YamlConfig.Handler['graphql']>) {
+    this.name = name;
     this.config = config;
     this.baseDir = baseDir;
     this.fetchFn = fetchFn;
@@ -68,6 +73,15 @@ export default class GraphQLHandler implements MeshHandler {
 
   private getArgsAndContextVariables() {
     return parseInterpolationStrings(this.interpolationStringSet);
+  }
+
+  private wrapExecutorToPassSourceName(executor: Executor) {
+    const sourceName = this.name;
+    return function executorWithSourceName(executionRequest: ExecutionRequest) {
+      executionRequest.info = executionRequest.info || ({} as GraphQLResolveInfo);
+      (executionRequest.info as any).sourceName = sourceName;
+      return executor(executionRequest);
+    };
   }
 
   async getExecutorForHTTPSourceConfig(
@@ -309,7 +323,7 @@ export default class GraphQLHandler implements MeshHandler {
 
         return {
           schema,
-          executor: highestValueExecutor,
+          executor: this.wrapExecutorToPassSourceName(highestValueExecutor),
           // Batching doesn't make sense with fallback strategy
           batch: false,
           contextVariables,
@@ -364,7 +378,7 @@ export default class GraphQLHandler implements MeshHandler {
 
       return {
         schema: schemaResult.value,
-        executor: executorResult.value,
+        executor: this.wrapExecutorToPassSourceName(executorResult.value),
         batch: this.config.batch != null ? this.config.batch : true,
         contextVariables,
       };

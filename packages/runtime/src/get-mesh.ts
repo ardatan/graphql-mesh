@@ -25,6 +25,7 @@ import { enableIf, envelop, PluginOrDisabledPlugin, useExtendContext } from '@en
 import { OneOfInputObjectsRule, useExtendedValidation } from '@envelop/extended-validation';
 import { getInContextSDK } from './in-context-sdk';
 import { useSubschema } from './useSubschema';
+import { process } from '@graphql-mesh/cross-helpers';
 
 export interface MeshInstance {
   execute: ExecuteMeshFn;
@@ -67,6 +68,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     additionalResolvers = [],
     additionalTypeDefs = [],
     transforms = [],
+    includeHttpDetailsInExtensions = process?.env?.DEBUG === '1' || process?.env?.DEBUG?.includes('http'),
   } = options;
 
   const getMeshLogger = logger.child('GetMesh');
@@ -133,7 +135,10 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
   let inContextSDK$: Promise<Record<string, any>>;
 
-  const { plugin: subschemaPlugin, transformedSchema: finalSchema } = useSubschema(unifiedSubschema);
+  const { plugin: subschemaPlugin, transformedSchema: finalSchema } = useSubschema(
+    unifiedSubschema,
+    includeHttpDetailsInExtensions
+  );
 
   finalSchema.extensions = unifiedSubschema.schema.extensions;
 

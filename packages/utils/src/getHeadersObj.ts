@@ -7,6 +7,9 @@ function headersToJSON(headers: Headers): Record<string, string> {
 }
 
 export function getHeadersObj(headers: Headers): Record<string, string> {
+  if (headers == null || !('forEach' in headers)) {
+    return headers as any;
+  }
   return new Proxy(
     {},
     {

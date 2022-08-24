@@ -3,7 +3,7 @@ import { Neo4jGraphQL } from '@neo4j/graphql';
 import neo4j, { Driver } from 'neo4j-driver';
 import { YamlConfig, MeshHandler, GetMeshSourceOptions, MeshPubSub, Logger, ImportFn } from '@graphql-mesh/types';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
-import { readFileOrUrl } from '@graphql-mesh/utils';
+import { MeshFetch, readFileOrUrl } from '@graphql-mesh/utils';
 import { process } from '@graphql-mesh/cross-helpers';
 
 function getEventEmitterFromPubSub(pubsub: MeshPubSub): any {
@@ -36,7 +36,7 @@ export default class Neo4JHandler implements MeshHandler {
   private pubsub: MeshPubSub;
   private typeDefs: StoreProxy<string>;
   private logger: Logger;
-  fetchFn: typeof fetch;
+  fetchFn: MeshFetch;
   importFn: ImportFn;
 
   constructor({

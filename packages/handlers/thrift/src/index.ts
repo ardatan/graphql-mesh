@@ -1,6 +1,6 @@
 import { GetMeshSourceOptions, ImportFn, Logger, MeshHandler, YamlConfig } from '@graphql-mesh/types';
 import { parse, ThriftDocument, SyntaxType, Comment, FunctionType } from '@creditkarma/thrift-parser';
-import { readFileOrUrl } from '@graphql-mesh/utils';
+import { MeshFetch, readFileOrUrl } from '@graphql-mesh/utils';
 import {
   GraphQLEnumType,
   GraphQLEnumValueConfigMap,
@@ -46,7 +46,7 @@ export default class ThriftHandler implements MeshHandler {
   private config: YamlConfig.ThriftHandler;
   private baseDir: string;
   private idl: StoreProxy<ThriftDocument>;
-  private fetchFn: typeof fetch;
+  private fetchFn: MeshFetch;
   private importFn: ImportFn;
   private logger: Logger;
 

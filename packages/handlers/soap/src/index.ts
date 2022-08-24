@@ -1,7 +1,7 @@
 import { GetMeshSourceOptions, MeshHandler, YamlConfig, ImportFn, Logger } from '@graphql-mesh/types';
 import { soapGraphqlSchema, createSoapClient } from './soap-graphql';
 import soap from 'soap';
-import { getHeadersObj, loadFromModuleExportExpression, readFileOrUrl } from '@graphql-mesh/utils';
+import { getHeadersObj, loadFromModuleExportExpression, MeshFetch, readFileOrUrl } from '@graphql-mesh/utils';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import type { AxiosRequestConfig, AxiosResponse, AxiosInstance } from 'axios';
 import { process } from '@graphql-mesh/cross-helpers';
@@ -9,7 +9,7 @@ import { process } from '@graphql-mesh/cross-helpers';
 export default class SoapHandler implements MeshHandler {
   private config: YamlConfig.SoapHandler;
   private baseDir: string;
-  private fetchFn: typeof fetch;
+  private fetchFn: MeshFetch;
   private wsdlResponse: StoreProxy<AxiosResponse>;
   private importFn: ImportFn;
   private logger: Logger;

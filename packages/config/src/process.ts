@@ -73,6 +73,7 @@ export type ProcessedConfig = {
   store: MeshStore;
   code: string;
   additionalEnvelopPlugins: EnvelopPlugins;
+  includeHttpDetailsInExtensions: boolean;
 };
 
 function getDefaultMeshStore(dir: string, importFn: ImportFn, artifactsDir: string) {
@@ -608,6 +609,7 @@ export async function processConfig(
     logger,
     store: rootStore,
     additionalEnvelopPlugins,
+    includeHttpDetailsInExtensions: config.includeHttpDetailsInExtensions,
     code: [...new Set([...importCodes, ...codes])].join('\n'),
   };
 }
