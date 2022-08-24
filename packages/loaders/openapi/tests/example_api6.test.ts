@@ -88,6 +88,8 @@ describe('example_api6', () => {
 
     const [result1, result2] = await Promise.all([promise1, promise2]);
 
+    expect(result1.errors).toBeFalsy();
+
     expect(result1.data).toEqual({
       object: {
         object2Link: {
@@ -98,6 +100,8 @@ describe('example_api6', () => {
         },
       },
     });
+
+    expect(result2.errors).toBeFalsy();
 
     expect(result2).toEqual({
       data: {
@@ -127,6 +131,8 @@ describe('example_api6', () => {
       document: parse(query),
     });
 
+    expect(result.errors).toBeFalsy();
+
     expect(result.data).toEqual({
       post_formUrlEncoded: {
         name: 'Mittens',
@@ -154,6 +160,8 @@ describe('example_api6', () => {
       schema: createdSchema,
       document: parse(query),
     });
+
+    expect(result.errors).toBeFalsy();
 
     expect(result.data).toEqual({
       post_formUrlEncoded: {
@@ -183,6 +191,8 @@ describe('example_api6', () => {
       document: parse(query),
     });
 
+    expect(result.errors).toBeFalsy();
+
     expect(result.data).toEqual({
       post_formUrlEncoded: {
         history: {
@@ -205,6 +215,8 @@ describe('example_api6', () => {
       schema: createdSchema,
       document: parse(query),
     });
+
+    expect(result.errors).toBeFalsy();
 
     expect(result.data).toEqual({
       post_formUrlEncoded: {
@@ -232,6 +244,8 @@ describe('example_api6', () => {
       document: parse(query),
     });
 
+    expect(result.errors).toBeFalsy();
+
     expect(result.data).toEqual({
       cars_by_id: 'Car ID: Super Speed',
     });
@@ -254,6 +268,8 @@ describe('example_api6', () => {
       schema: createdSchema,
       document: parse(query),
     });
+
+    expect(result.errors).toBeFalsy();
 
     expect(result.data).toEqual({
       cacti_by_cactusId: 'Cactus ID: Spikey',
@@ -283,6 +299,8 @@ describe('example_api6', () => {
       document: parse(query),
     });
 
+    expect(result.errors).toBeFalsy();
+
     expect(result.data).toEqual({
       eateries_by_eatery_breads_by_breadName_dishes_by_dishKey: "Parameters combined: Mike's challah bread pudding",
     });
@@ -305,6 +323,8 @@ describe('example_api6', () => {
       schema: createdSchema,
       document: parse(query),
     });
+
+    expect(result.errors).toBeFalsy();
 
     expect(result.data).toEqual({
       nestedReferenceInParameter: 'Gertrude, Tatiana, Lidia',
@@ -340,6 +360,8 @@ describe('example_api6', () => {
       document: parse(query),
     });
 
+    expect(result.errors).toBeFalsy();
+
     expect(
       (result.data.__type as any).fields.find((field: { name: string }) => field.name === 'post_inputUnion')
     ).toEqual({
@@ -370,6 +392,8 @@ describe('example_api6', () => {
       document: parse(query),
     });
 
+    expect(result.errors).toBeFalsy();
+
     expect(result.data).toEqual({
       strictGetOperation: 'Perfect!',
     });
@@ -389,6 +413,8 @@ describe('example_api6', () => {
       schema: createdSchema,
       document: parse(query),
     });
+
+    expect(result.errors).toBeFalsy();
 
     expect(result.data).toEqual({
       noResponseSchema: 'Hello world',
@@ -414,10 +440,12 @@ describe('example_api6', () => {
       document: parse(query),
     });
 
+    expect(result.errors).toBeFalsy();
+
     expect(result.data).toEqual({
       testLinkWithNonStringParam: {
         hello: 'world',
-        return5: '5',
+        return5: 5,
       },
     });
   });
@@ -443,12 +471,14 @@ describe('example_api6', () => {
       document: parse(query),
     });
 
+    expect(result.errors).toBeFalsy();
+
     expect(result.data).toEqual({
       testLinkwithNestedParam: {
         nesting1: {
           nesting2: 5,
         },
-        returnNestedNumber: '5',
+        returnNestedNumber: 5,
       },
     });
   });
