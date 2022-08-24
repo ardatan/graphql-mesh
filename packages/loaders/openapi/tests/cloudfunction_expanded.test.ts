@@ -7,7 +7,7 @@ describe('Cloudfunction', () => {
   let createdSchema: GraphQLSchema;
   beforeAll(async () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      source: join(__dirname, '../../../handlers/openapi/test/fixtures/cloudfunction_expanded.json'),
+      source: join(__dirname, './fixtures/cloudfunction_expanded.json'),
       operationHeaders: {
         Authorization: 'Basic {args.usernamePassword|base64}',
       },

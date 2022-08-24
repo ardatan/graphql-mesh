@@ -3,7 +3,7 @@ import { fetch } from '@whatwg-node/fetch';
 import { GraphQLSchema, parse, validate, execute } from 'graphql';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 
-import { startServer, stopServer } from '../../../handlers/openapi/test/nested_objects_server';
+import { startServer, stopServer } from './nested_objects_server';
 
 let createdSchema: GraphQLSchema;
 const PORT = 3009;
@@ -18,7 +18,7 @@ describe('OpanAPI: nested objects', () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api', {
       fetch,
       baseUrl,
-      source: '../../../handlers/openapi/test/fixtures/nested_object.json',
+      source: './fixtures/nested_object.json',
       cwd: __dirname,
       queryStringOptions: {
         allowDots: true,

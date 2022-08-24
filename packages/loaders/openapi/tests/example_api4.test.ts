@@ -15,7 +15,7 @@ describe('OpenAPI loader: Handle anyOf and oneOf', () => {
   beforeAll(async () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
       fetch,
-      source: '../../../handlers/openapi/test/fixtures/example_oas4.json',
+      source: './fixtures/example_oas4.json',
       cwd: __dirname,
     });
   });

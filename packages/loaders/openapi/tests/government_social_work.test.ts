@@ -13,7 +13,7 @@ describe('openAPI loader: government_social_work', () => {
   beforeAll(async () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api', {
       fetch,
-      source: '../../../handlers/openapi/test/fixtures/government_social_work.json',
+      source: './fixtures/government_social_work.json',
       cwd: __dirname,
     });
   });

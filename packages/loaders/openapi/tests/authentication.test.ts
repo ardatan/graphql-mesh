@@ -1,11 +1,11 @@
 import { execute, parse } from 'graphql';
 import { join } from 'path';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
-import { startServer, stopServer } from '../../../handlers/openapi/test/example_api_server';
+import { startServer, stopServer } from './example_api_server';
 import { fetch } from '@whatwg-node/fetch';
 
 const PORT = 3003;
-const source = join(__dirname, '../../../handlers/openapi/test/fixtures/example_oas.json');
+const source = join(__dirname, './fixtures/example_oas.json');
 const baseUrl = `http://localhost:${PORT}/api`;
 
 // We don't create viewers for each security scheme definition in OAS like openapi-to-graphql

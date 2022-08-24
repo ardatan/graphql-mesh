@@ -1,0 +1,265 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Example API 4",
+    "description": "An API to test converting Open API Specs 3.0 to GraphQL",
+    "version": "1.0.0",
+    "termsOfService": "http://example.com/terms/",
+    "contact": {
+      "name": "Erik Wittern",
+      "url": "http://www.example.com/support"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "externalDocs": {
+    "url": "http://example.com/docs",
+    "description": "Some more natural language description."
+  },
+  "tags": [
+    {
+      "name": "test",
+      "description": "Indicates this API is for testing"
+    }
+  ],
+  "servers": [
+    {
+      "url": "http://localhost:{port}/{basePath}",
+      "description": "The location of the local test server.",
+      "variables": {
+        "port": {
+          "default": "3006"
+        },
+        "basePath": {
+          "default": "api"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/object": {
+      "get": {
+        "description": "An arbitrary object",
+        "responses": {
+          "200": {
+            "description": "Mandatory field",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "links": {
+              "object2Link": {
+                "operationId": "getObject2",
+                "description": "Link with exposed parameter"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/object2": {
+      "get": {
+        "operationId": "getObject2",
+        "description": "Serves as a link of GET /object",
+        "parameters": [
+          {
+            "name": "specialheader",
+            "description": "HTTP headers are case-insensitive",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mandatory field",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/formUrlEncoded": {
+      "post": {
+        "description": "Basic application/x-www-form-urlencoded test",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/pet"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "A pet",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pet"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cars/{id}": {
+      "get": {
+        "description": "A particular car",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mandatory field",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cacti/{cactusId}": {
+      "get": {
+        "description": "A particular cactus",
+        "parameters": [
+          {
+            "name": "cactusId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mandatory field",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/eateries/{eatery}/breads/{breadName}/dishes/{dishKey}": {
+      "get": {
+        "parameters": [
+          {
+            "name": "eatery",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "breadName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dishKey",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mandatory field",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "pet": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Name of the pet",
+            "type": "string"
+          },
+          "status": {
+            "description": "Status of the pet",
+            "type": "string"
+          },
+          "weight": {
+            "description": "Weight of the pet",
+            "type": "number"
+          },
+          "previous_owner": {
+            "description": "Previouw owner of the pet",
+            "type": "string"
+          },
+          "history": {
+            "description": "History of the pet",
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "string"
+              }
+            }
+          },
+          "history2": {
+            "description": "History of the pet",
+            "type": "object"
+          }
+        },
+        "required": ["status"]
+      }
+    }
+  }
+}

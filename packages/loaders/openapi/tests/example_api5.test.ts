@@ -1,7 +1,7 @@
 import { execute, GraphQLSchema, parse } from 'graphql';
 
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
-import { startServer, stopServer } from '../../../handlers/openapi/test/example_api5_server';
+import { startServer, stopServer } from './example_api5_server';
 import { fetch } from '@whatwg-node/fetch';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
@@ -21,7 +21,7 @@ describe('example_api', () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api', {
       fetch,
       baseUrl,
-      source: '../../../handlers/openapi/test/fixtures/example_oas5.json',
+      source: './fixtures/example_oas5.json',
       cwd: __dirname,
     });
     await startServer(PORT);
