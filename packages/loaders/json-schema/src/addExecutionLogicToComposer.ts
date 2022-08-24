@@ -101,7 +101,7 @@ export async function addExecutionLogicToComposer(
   }: AddExecutionLogicToComposerOptions
 ) {
   logger.debug(`Attaching execution logic to the schema`);
-  const qsOptions = { ...defaultQsOptions, ...queryStringOptions };
+  queryStringOptions = { ...defaultQsOptions, ...queryStringOptions };
   const linkResolverMapByField = new Map<string, Record<string, GraphQLFieldResolver<any, any>>>();
   for (const operationConfig of operations) {
     const { httpMethod, rootTypeName, fieldName } = getOperationMetadata(operationConfig);
@@ -203,14 +203,13 @@ ${operationConfig.description || ''}
           if (input != null) {
             const [, contentType] = Object.entries(headers).find(([key]) => key.toLowerCase() === 'content-type') || [];
             if (contentType?.startsWith('application/x-www-form-urlencoded')) {
-              requestInit.body = qsStringify(input, qsOptions);
+              requestInit.body = qsStringify(input, queryStringOptions);
             } else {
               requestInit.body = typeof input === 'object' ? JSON.stringify(input) : input;
             }
           }
         }
         if (queryParams) {
-          const interpolatedQueryParams: Record<string, any> = {};
           for (const queryParamName in queryParams) {
             if (
               args != null &&
@@ -220,36 +219,42 @@ ${operationConfig.description || ''}
             ) {
               continue;
             }
-            interpolatedQueryParams[queryParamName] = stringInterpolator.parse(
+            const interpolatedQueryParam = stringInterpolator.parse(
               queryParams[queryParamName].toString(),
               interpolationData
             );
+            const queryParamsString = qsStringify(
+              {
+                [queryParamName]: interpolatedQueryParam,
+              },
+              {
+                ...queryStringOptions,
+                ...operationConfig.queryStringOptionsByParam[queryParamName],
+              }
+            );
+            fullPath += fullPath.includes('?') ? '&' : '?';
+            fullPath += queryParamsString;
           }
-          const queryParamsString = qsStringify(interpolatedQueryParams, qsOptions);
-          fullPath += fullPath.includes('?') ? '&' : '?';
-          fullPath += queryParamsString;
         }
 
         if (operationConfig.queryParamArgMap) {
-          const queryParamsFromArgs = {};
           for (const queryParamName in operationConfig.queryParamArgMap) {
             const argName = operationConfig.queryParamArgMap[queryParamName];
             const argValue = args[argName];
             if (argValue != null) {
-              queryParamsFromArgs[queryParamName] = argValue;
+              const queryParamsString = qsStringify(
+                {
+                  [queryParamName]: argValue,
+                },
+                {
+                  ...queryStringOptions,
+                  ...operationConfig.queryStringOptionsByParam[queryParamName],
+                }
+              );
+              fullPath += fullPath.includes('?') ? '&' : '?';
+              fullPath += queryParamsString;
             }
           }
-          const queryParamsString = qsStringify(queryParamsFromArgs, qsOptions);
-          fullPath += fullPath.includes('?') ? '&' : '?';
-          fullPath += queryParamsString;
-        }
-
-        // Delete unused queryparams
-        const [actualPath, queryString] = fullPath.split('?');
-        if (queryString) {
-          const queryParams = qsParse(queryString);
-          const cleanedQueryParams = cleanObject(queryParams);
-          fullPath = actualPath + '?' + qsStringify(cleanedQueryParams, qsOptions);
         }
 
         operationLogger.debug(`=> Fetching `, fullPath, `=>`, requestInit);

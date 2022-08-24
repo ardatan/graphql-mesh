@@ -155,6 +155,9 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
         switch (paramObj.in) {
           case 'query':
             operationConfig.queryParamArgMap = operationConfig.queryParamArgMap || {};
+            operationConfig.queryStringOptionsByParam = operationConfig.queryStringOptionsByParam || {};
+            operationConfig.queryStringOptionsByParam[paramObj.name] =
+              operationConfig.queryStringOptionsByParam[paramObj.name] || {};
             operationConfig.queryParamArgMap[paramObj.name] = argName;
             if (paramObj.name in queryParams) {
               paramObj.required = false;
@@ -163,6 +166,15 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                   type: 'string',
                 };
                 paramObj.schema.default = queryParams[paramObj.name];
+              }
+            }
+            if ('explode' in paramObj && paramObj.explode) {
+              operationConfig.queryStringOptionsByParam[paramObj.name].arrayFormat = 'repeat';
+            } else {
+              if (paramObj.style === 'form') {
+                operationConfig.queryStringOptionsByParam[paramObj.name].arrayFormat = 'comma';
+              } else {
+                logger.warn(`Other styles including ${paramObj.style} of query parameters are not supported yet.`);
               }
             }
             break;
