@@ -15,7 +15,7 @@ export const resolvePath = (path: string, root: any): any => {
   }
 };
 function isRefObject(obj: any): obj is { $ref: string } {
-  return typeof obj === 'object' && obj.$ref;
+  return typeof obj === 'object' && typeof obj.$ref === 'string';
 }
 
 function isURL(str: string) {
