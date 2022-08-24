@@ -7,7 +7,7 @@ describe('Docusign', () => {
   let createdSchema: GraphQLSchema;
   beforeAll(async () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      source: join(__dirname, '../../../handlers/openapi/test/fixtures/docusign.json'),
+      source: join(__dirname, './fixtures/docusign.json'),
       ignoreErrorResponses: true,
       // It is not possible to provide a union type with File scalar
     });

@@ -2,7 +2,7 @@ import { execute, GraphQLSchema, parse } from 'graphql';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch } from '@whatwg-node/fetch';
-import { startServer, stopServer } from '../../../handlers/openapi/test/example_api_server';
+import { startServer, stopServer } from './example_api_server';
 
 const PORT = 3010;
 const baseUrl = `http://localhost:${PORT}/api`;
@@ -12,7 +12,7 @@ describe('Example API Combined', () => {
   beforeAll(async () => {
     await startServer(PORT);
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api_combined', {
-      source: '../../../handlers/openapi/test/fixtures/example_oas_combined.json',
+      source: './fixtures/example_oas_combined.json',
       cwd: __dirname,
       baseUrl,
       fetch,

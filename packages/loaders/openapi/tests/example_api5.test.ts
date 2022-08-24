@@ -21,7 +21,7 @@ describe('example_api', () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api', {
       fetch,
       baseUrl,
-      source: '../../../handlers/openapi/test/fixtures/example_oas5.json',
+      source: './fixtures/example_oas5.json',
       cwd: __dirname,
     });
     await startServer(PORT);

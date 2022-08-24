@@ -13,7 +13,7 @@ describe('OpenAPI loader: IBM language translator', () => {
   beforeAll(async () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api', {
       fetch,
-      source: '../../../handlers/openapi/test/fixtures/ibm_language_translator.json',
+      source: './fixtures/ibm_language_translator.json',
       cwd: __dirname,
     });
   });

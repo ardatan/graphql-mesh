@@ -19,7 +19,7 @@ describe('example_api6', () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api6', {
       fetch,
       baseUrl,
-      source: '../../../handlers/openapi/test/fixtures/example_oas6.json',
+      source: './fixtures/example_oas6.json',
       cwd: __dirname,
     });
     await startServer(PORT);
@@ -68,7 +68,7 @@ describe('example_api6', () => {
 
     const options: OpenAPILoaderOptions = {
       baseUrl,
-      source: '../../../handlers/openapi/test/fixtures/example_oas6.json',
+      source: './fixtures/example_oas6.json',
       cwd: __dirname,
       fetch,
       operationHeaders: {

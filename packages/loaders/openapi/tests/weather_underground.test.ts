@@ -14,7 +14,7 @@ describe('example_api', () => {
     // const validOas = await getValidOAS3(oas);
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api', {
       fetch,
-      source: '../../../handlers/openapi/test/fixtures/weather_underground.json',
+      source: './fixtures/weather_underground.json',
       cwd: __dirname,
     });
   });

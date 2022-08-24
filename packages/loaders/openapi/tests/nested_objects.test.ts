@@ -18,7 +18,7 @@ describe('OpanAPI: nested objects', () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api', {
       fetch,
       baseUrl,
-      source: '../../../handlers/openapi/test/fixtures/nested_object.json',
+      source: './fixtures/nested_object.json',
       cwd: __dirname,
       queryStringOptions: {
         allowDots: true,

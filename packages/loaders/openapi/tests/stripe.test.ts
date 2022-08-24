@@ -13,7 +13,7 @@ describe('OpenAPI loader: Stripe', () => {
   beforeAll(async () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('stripe_api', {
       fetch,
-      source: '../../../handlers/openapi/test/fixtures/stripe.json',
+      source: './fixtures/stripe.json',
       cwd: __dirname,
     });
   });

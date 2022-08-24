@@ -2,7 +2,7 @@ import { execute, graphql, GraphQLInputObjectType, GraphQLObjectType, GraphQLSch
 import 'json-bigint-patch';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 
-import { startServer, stopServer } from '../../../handlers/openapi/test/example_api_server';
+import { startServer, stopServer } from './example_api_server';
 import { fetch } from '@whatwg-node/fetch';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { createBundle, OpenAPILoaderOptions } from '../src';
@@ -18,7 +18,7 @@ describe('example_api', () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api', {
       fetch,
       baseUrl,
-      source: '../../../handlers/openapi/test/fixtures/example_oas.json',
+      source: './fixtures/example_oas.json',
       cwd: __dirname,
     });
     await startServer(PORT);
@@ -34,7 +34,7 @@ describe('example_api', () => {
       await createBundle('example_api', {
         fetch,
         baseUrl,
-        source: '../../../handlers/openapi/test/fixtures/example_oas.json',
+        source: './fixtures/example_oas.json',
         cwd: __dirname,
       })
     ).toMatchSnapshot();
@@ -1240,7 +1240,7 @@ describe('example_api', () => {
   it('Define header and query options', async () => {
     const options: OpenAPILoaderOptions = {
       baseUrl,
-      source: '../../../handlers/openapi/test/fixtures/example_oas.json',
+      source: './fixtures/example_oas.json',
       cwd: __dirname,
       fetch,
       operationHeaders: {
@@ -1802,7 +1802,7 @@ describe('example_api', () => {
     // The users (now named getUserByUsername) field should exist as a Mutation field
     const options: OpenAPILoaderOptions = {
       baseUrl,
-      source: '../../../handlers/openapi/test/fixtures/example_oas.json',
+      source: './fixtures/example_oas.json',
       cwd: __dirname,
       fetch,
       selectQueryOrMutationField: [
@@ -1908,7 +1908,7 @@ describe('example_api', () => {
     it('Query string arguments become nullable when provided through queryParams option', async () => {
       const options: OpenAPILoaderOptions = {
         baseUrl,
-        source: '../../../handlers/openapi/test/fixtures/example_oas.json',
+        source: './fixtures/example_oas.json',
         cwd: __dirname,
         fetch,
         queryParams: {
@@ -1944,7 +1944,7 @@ describe('example_api', () => {
     it('Query string arguments override the values provided through queryParams option', async () => {
       const options: OpenAPILoaderOptions = {
         baseUrl,
-        source: '../../../handlers/openapi/test/fixtures/example_oas.json',
+        source: './fixtures/example_oas.json',
         cwd: __dirname,
         fetch,
         queryParams: {
@@ -1983,7 +1983,7 @@ describe('example_api', () => {
     it('Header arguments become nullable when provided through headers option', async () => {
       const options: OpenAPILoaderOptions = {
         baseUrl,
-        source: '../../../handlers/openapi/test/fixtures/example_oas.json',
+        source: './fixtures/example_oas.json',
         cwd: __dirname,
         fetch,
         operationHeaders: {
@@ -2013,7 +2013,7 @@ describe('example_api', () => {
     it('Header arguments override the values provided through operationHeaders option', async () => {
       const options: OpenAPILoaderOptions = {
         baseUrl,
-        source: '../../../handlers/openapi/test/fixtures/example_oas.json',
+        source: './fixtures/example_oas.json',
         cwd: __dirname,
         fetch,
         operationHeaders: {
@@ -2044,7 +2044,7 @@ describe('example_api', () => {
   it('Should error for enum arguments if input value is inappropriate', async () => {
     const options: OpenAPILoaderOptions = {
       baseUrl,
-      source: '../../../handlers/openapi/test/fixtures/example_oas.json',
+      source: './fixtures/example_oas.json',
       cwd: __dirname,
       fetch,
     };
