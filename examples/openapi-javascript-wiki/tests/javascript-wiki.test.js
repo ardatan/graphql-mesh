@@ -27,6 +27,7 @@ describe('JavaScript Wiki', () => {
     );
     const { execute } = await mesh$;
     const result = await execute(viewsInPastMonthQuery);
+    expect(result.errors).toBeFalsy();
     expect(result?.data?.viewsInPastMonth).toBeGreaterThan(0);
   });
   it('should give correct response for wikipediaMetrics within specific range', async () => {
