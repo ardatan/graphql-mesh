@@ -123,6 +123,7 @@ sources:
         operationHeaders:
           Authorization-Header: '{context.headers.authorization}'
           Authorization-Cookie: Bearer {context.cookies.accessToken}
+
 # You can provide a custom fetch function to override the default fetch function
 customFetch: ./src/custom-fetch.js
 ```
@@ -132,6 +133,7 @@ Here in the `meshrc.yaml` configuration we store the cookie in `Authorization-Co
 ```js
 import { MeshContext } from '@graphql-mesh/types';
 import { fetch } from '@whatwg-node/fetch';
+
 export default(url: string, init: RequestInit, context: MeshContext) {
   // Set Authorization header dynamically to context value, or input cookie, or input header
   args.headers['authorization'] =
@@ -169,6 +171,7 @@ Then manage the cookie in the new resolvers:
 ```js
 // lifespan of our cookie
 const oneYear = 365 * 24 * 3600
+
 const resolvers = {
   Mutation: {
     async login(root, args, context, info) {
@@ -184,15 +187,18 @@ const resolvers = {
       // if `result` contains a JWT token, you could instead decode it and set `Expires`
       // to the JWT token's expiration date
       context.res.set('Set-Cookie', `accessToken=${result}; Path=/; Secure; HttpOnly; Max-Age=${oneYear};`)
+
       return result
     },
     logout(root, args, { res }) {
       // use old date to unset cookie
       res.set('Set-Cookie', `accessToken=logout; Path=/; Secure; HttpOnly; Expires=Thu, 1 Jan 1970 00:00:00 GMT;`)
+
       return true
     }
   }
 }
+
 module.exports = { resolvers }
 ```
 
