@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/jit-executor",
-  "version": "0.0.23",
+  "version": "0.0.24",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -30,8 +30,8 @@
   "dependencies": {
     "@graphql-tools/utils": "8.10.0",
     "graphql-jit": "0.7.4",
-    "@graphql-mesh/utils": "0.39.0",
-    "@graphql-mesh/types": "0.80.1",
+    "@graphql-mesh/utils": "0.40.0",
+    "@graphql-mesh/types": "0.80.2",
     "tslib": "^2.4.0"
   },
   "publishConfig": {

@@ -1,5 +1,19 @@
 # @omnigraph/openapi
 
+## 0.12.0
+
+### Minor Changes
+
+- [#4357](https://github.com/Urigo/graphql-mesh/pull/4357) [`be79b20a5`](https://github.com/Urigo/graphql-mesh/commit/be79b20a59b14d5d79bfeb260e4ecabc58c26efb) Thanks [@gilgardosh](https://github.com/gilgardosh)! - BREAKING CHANGE: instead of oasFilePath, use source instead
+
+### Patch Changes
+
+- Updated dependencies [[`b5c59ffce`](https://github.com/Urigo/graphql-mesh/commit/b5c59ffceae7091f8d2b98ee548890acdbd57824), [`be79b20a5`](https://github.com/Urigo/graphql-mesh/commit/be79b20a59b14d5d79bfeb260e4ecabc58c26efb), [`b5c59ffce`](https://github.com/Urigo/graphql-mesh/commit/b5c59ffceae7091f8d2b98ee548890acdbd57824)]:
+  - @graphql-mesh/utils@0.40.0
+  - json-machete@0.13.2
+  - @graphql-mesh/types@0.80.2
+  - @omnigraph/json-schema@0.30.0
+
 ## 0.11.2
 
 ### Patch Changes

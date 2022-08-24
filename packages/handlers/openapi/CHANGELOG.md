@@ -1,5 +1,58 @@
 # @graphql-mesh/openapi
 
+## 0.32.0
+
+### Minor Changes
+
+- [#4357](https://github.com/Urigo/graphql-mesh/pull/4357) [`be79b20a5`](https://github.com/Urigo/graphql-mesh/commit/be79b20a59b14d5d79bfeb260e4ecabc58c26efb) Thanks [@gilgardosh](https://github.com/gilgardosh)! - ## Breaking changes
+
+  OpenAPI has been completely rewritten based on JSON Schema handler from scratch. It's now more stable and supports more features. However, it produces different output and takes different configuration options.
+
+  Please check the migration guide to learn how to migrate your existing OpenAPI handler configuration.
+  [Migration Guide from 0.31 to 0.32](https://www.graphql-mesh.com/docs/migration/openapi-0.31-0.32)
+
+  This rewrite has been done under `@graphql-mesh/new-openapi` name so far, and you can check its changelog to see the progress.
+  [`@graphql-mesh/new-openapi`'s `CHANGELOG`](https://github.com/Urigo/graphql-mesh/blob/99b5691e216b1ae7f46c3db1b3e91345e5351df8/packages/handlers/new-openapi/CHANGELOG.md)
+
+* [#4356](https://github.com/Urigo/graphql-mesh/pull/4356) [`b5c59ffce`](https://github.com/Urigo/graphql-mesh/commit/b5c59ffceae7091f8d2b98ee548890acdbd57824) Thanks [@ardatan](https://github.com/ardatan)! - ## Improvements on outgoing HTTP calls
+
+  - Now Mesh's default fetch implementation deduplicates the same GET JSON requests in the same execution context
+  - You should pass `Accept: application/json` to make this work.
+  - JSON Schema, new OpenAPI and RAML handlers now take GraphQL context as 3rd parameter. If you use `customFetch`, you can use that value to access Mesh internals such as the incoming `Request` object.
+
+  ## HTTP Details in extensions for tracking HTTP calls
+
+  You can add `includeHttpDetailsInExtensions: true` to your configuration file to get more information about HTTP calls done by Mesh during the execution in `extensions` field of the response.
+
+  ![image](https://user-images.githubusercontent.com/20847995/186371035-6a327a2e-c74d-4bf4-a78f-6814b1001501.png)
+
+### Patch Changes
+
+- [#4357](https://github.com/Urigo/graphql-mesh/pull/4357) [`be79b20a5`](https://github.com/Urigo/graphql-mesh/commit/be79b20a59b14d5d79bfeb260e4ecabc58c26efb) Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
+
+  - Added dependency [`@omnigraph/openapi@0.11.2` ↗︎](https://www.npmjs.com/package/@omnigraph/openapi/v/0.11.2) (to `dependencies`)
+  - Removed dependency [`@graphql-mesh/cross-helpers@0.2.2` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cross-helpers/v/0.2.2) (from `dependencies`)
+  - Removed dependency [`@graphql-mesh/string-interpolation@0.3.2` ↗︎](https://www.npmjs.com/package/@graphql-mesh/string-interpolation/v/0.3.2) (from `dependencies`)
+  - Removed dependency [`@graphql-tools/utils@8.10.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.10.0) (from `dependencies`)
+  - Removed dependency [`@whatwg-node/fetch@^0.3.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/null) (from `dependencies`)
+  - Removed dependency [`deep-equal@2.0.5` ↗︎](https://www.npmjs.com/package/deep-equal/v/2.0.5) (from `dependencies`)
+  - Removed dependency [`form-urlencoded@6.1.0` ↗︎](https://www.npmjs.com/package/form-urlencoded/v/6.1.0) (from `dependencies`)
+  - Removed dependency [`jsonpath-plus@7.0.0` ↗︎](https://www.npmjs.com/package/jsonpath-plus/v/7.0.0) (from `dependencies`)
+  - Removed dependency [`json-pointer@0.6.2` ↗︎](https://www.npmjs.com/package/json-pointer/v/0.6.2) (from `dependencies`)
+  - Removed dependency [`openapi-diff@0.23.6` ↗︎](https://www.npmjs.com/package/openapi-diff/v/0.23.6) (from `dependencies`)
+  - Removed dependency [`graphql-scalars@1.18.0` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.18.0) (from `dependencies`)
+  - Removed dependency [`pluralize@8.0.0` ↗︎](https://www.npmjs.com/package/pluralize/v/8.0.0) (from `dependencies`)
+  - Removed dependency [`qs@6.11.0` ↗︎](https://www.npmjs.com/package/qs/v/6.11.0) (from `dependencies`)
+  - Removed dependency [`swagger2openapi@7.0.8` ↗︎](https://www.npmjs.com/package/swagger2openapi/v/7.0.8) (from `dependencies`)
+  - Removed dependency [`url-join@4.0.1` ↗︎](https://www.npmjs.com/package/url-join/v/4.0.1) (from `dependencies`)
+  - Removed dependency [`openapi-types@12.0.0` ↗︎](https://www.npmjs.com/package/openapi-types/v/12.0.0) (from `dependencies`)
+
+- Updated dependencies [[`b5c59ffce`](https://github.com/Urigo/graphql-mesh/commit/b5c59ffceae7091f8d2b98ee548890acdbd57824), [`be79b20a5`](https://github.com/Urigo/graphql-mesh/commit/be79b20a59b14d5d79bfeb260e4ecabc58c26efb), [`be79b20a5`](https://github.com/Urigo/graphql-mesh/commit/be79b20a59b14d5d79bfeb260e4ecabc58c26efb), [`b5c59ffce`](https://github.com/Urigo/graphql-mesh/commit/b5c59ffceae7091f8d2b98ee548890acdbd57824)]:
+  - @graphql-mesh/utils@0.40.0
+  - @graphql-mesh/types@0.80.2
+  - @omnigraph/openapi@0.12.0
+  - @graphql-mesh/store@0.8.32
+
 ## 0.31.2
 
 ### Patch Changes
