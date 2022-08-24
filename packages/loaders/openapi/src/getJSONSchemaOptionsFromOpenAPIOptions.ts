@@ -383,9 +383,13 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
               for (const parameterName in linkObj.parameters) {
                 const parameterExp = linkObj.parameters[parameterName];
                 const sanitizedParamName = sanitizeNameForGraphQL(parameterName);
-                args[sanitizedParamName] = parameterExp.startsWith('$')
-                  ? `{root.${parameterExp}}`
-                  : parameterExp.split('$').join('root.$');
+                if (typeof parameterExp === 'string') {
+                  args[sanitizedParamName] = parameterExp.startsWith('$')
+                    ? `{root.${parameterExp}}`
+                    : parameterExp.split('$').join('root.$');
+                } else {
+                  args[sanitizedParamName] = parameterExp;
+                }
               }
             }
             const sanitizedLinkName = sanitizeNameForGraphQL(linkName);
