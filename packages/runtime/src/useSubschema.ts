@@ -1,4 +1,4 @@
-import { applyRequestTransforms, applyResultTransforms } from '@graphql-mesh/utils';
+import { applyRequestTransforms, applyResultTransforms, httpDetailsByContext } from '@graphql-mesh/utils';
 import {
   createDefaultExecutor,
   DelegationContext,
@@ -10,7 +10,7 @@ import { mapAsyncIterator, Plugin, TypedExecutionArgs } from '@envelop/core';
 import { GraphQLSchema, introspectionFromSchema } from 'graphql';
 import { createBatchingExecutor } from '@graphql-tools/batch-execute';
 
-function getExecuteFn(subschema: SubschemaConfig) {
+function getExecuteFn(subschema: SubschemaConfig, includeHttpDetailsInExtensions: boolean) {
   return async function subschemaExecute(args: TypedExecutionArgs<any>): Promise<any> {
     const transformationContext: Record<string, any> = {};
     const originalRequest: ExecutionRequest = {
@@ -65,12 +65,19 @@ function getExecuteFn(subschema: SubschemaConfig) {
       transformationContext,
       subschema.transforms
     );
+    if (includeHttpDetailsInExtensions) {
+      transformedResult.extensions = transformedResult.extensions || {};
+      transformedResult.extensions.httpDetails = httpDetailsByContext.get(args.contextValue);
+    }
     return transformedResult;
   };
 }
 
 // Creates an envelop plugin to execute a subschema inside Envelop
-export function useSubschema(subschema: SubschemaConfig): {
+export function useSubschema(
+  subschema: SubschemaConfig,
+  includeHttpDetailsInExtensions: boolean
+): {
   transformedSchema: GraphQLSchema;
   plugin: Plugin;
 } {
@@ -81,10 +88,10 @@ export function useSubschema(subschema: SubschemaConfig): {
       setSchema(transformedSchema);
     },
     onExecute({ setExecuteFn }) {
-      setExecuteFn(getExecuteFn(subschema));
+      setExecuteFn(getExecuteFn(subschema, includeHttpDetailsInExtensions));
     },
     onSubscribe({ setSubscribeFn }) {
-      setSubscribeFn(getExecuteFn(subschema));
+      setSubscribeFn(getExecuteFn(subschema, includeHttpDetailsInExtensions));
     },
   };
 

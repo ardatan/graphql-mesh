@@ -138,7 +138,7 @@ ${operationConfig.description || ''}
       } else {
         field.description = operationConfig.description;
       }
-      field.resolve = async (root, args, context) => {
+      field.resolve = async (root, args, context, info) => {
         operationLogger.debug(`=> Resolving`);
         const interpolationData = { root, args, context, env: process.env };
         const interpolatedBaseUrl = stringInterpolator.parse(baseUrl, interpolationData);
@@ -260,7 +260,11 @@ ${operationConfig.description || ''}
             method: httpMethod,
           });
         }
-        const response = await fetch(fullPath, requestInit, context);
+        // Trick to pass `sourceName` to the `fetch` function for tracing
+        const response = await fetch(fullPath, requestInit, context, {
+          ...info,
+          sourceName: name,
+        } as GraphQLResolveInfo);
         // If return type is a file
         if (field.type.getTypeName() === 'File') {
           return response.blob();
@@ -372,10 +376,7 @@ ${operationConfig.description || ''}
                             },
                           });
                         case 'header':
-                          if ('get' in requestInit.headers) {
-                            return getHeadersObj(requestInit.headers as Headers);
-                          }
-                          return requestInit.headers;
+                          return getHeadersObj(requestInit.headers as Headers);
                         case 'body':
                           return requestInit.body;
                       }

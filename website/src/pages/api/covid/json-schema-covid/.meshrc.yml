@@ -10,3 +10,5 @@ documents:
 
 serve:
   playground: true
+
+includeHttpDetailsInExtensions: true

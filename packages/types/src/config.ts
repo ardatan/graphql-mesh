@@ -58,6 +58,10 @@ export interface Config {
    */
   customFetch?: any;
   /**
+   * Include HTTP details to the extensions
+   */
+  includeHttpDetailsInExtensions?: boolean;
+  /**
    * Allow connections to an SSL endpoint without certificates
    */
   skipSSLValidation?: boolean;

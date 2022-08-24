@@ -1,10 +1,17 @@
-import { fetchFactory as useCache } from 'fetchache';
+import { fetchFactory as useCachedFetch } from 'fetchache';
 import { fetch, Request, Response } from '@whatwg-node/fetch';
 import { KeyValueCache } from '@graphql-mesh/types';
 import { memoize1 } from '@graphql-tools/utils';
 import { getHeadersObj } from './getHeadersObj';
+import { Path } from 'graphql/jsutils/Path';
+import { GraphQLResolveInfo } from 'graphql';
 
-export type MeshFetch = (url: string, options?: RequestInit, context?: any) => Promise<Response>;
+export type MeshFetch = (
+  url: string,
+  options?: RequestInit,
+  context?: any,
+  info?: GraphQLResolveInfo
+) => Promise<Response>;
 
 export interface DefaultMeshFetchOptions {
   cache: KeyValueCache;
@@ -20,38 +27,57 @@ const getReqResMapByContext = memoize1((context: any) => {
   >();
 });
 
-export const createDefaultMeshFetch = memoize1(function createDefaultMeshFetch(cache: KeyValueCache): MeshFetch {
-  const cachedFetchFn = useCache({
-    cache,
-    fetch,
-    Request,
-    Response,
-  });
-  return function defaultMeshFetch(url, options = {}, context): Promise<Response> {
+export interface MeshFetchHTTPInformation {
+  sourceName: string;
+  path: Path;
+  request: {
+    timestamp: number;
+    url: string;
+    method: string;
+    headers: Record<string, string>;
+  };
+  response: {
+    timestamp: number;
+    status: number;
+    statusText: string;
+    headers: Record<string, string>;
+  };
+  responseTime: number;
+}
+
+export const httpDetailsByContext = new WeakMap<any, MeshFetchHTTPInformation[]>();
+
+export function pushHttpDetails(httpDetails: MeshFetchHTTPInformation, context: any) {
+  let httpDetailsList = httpDetailsByContext.get(context);
+  if (!httpDetailsList) {
+    httpDetailsList = [];
+    httpDetailsByContext.set(context, httpDetailsList);
+  }
+  httpDetailsList.push(httpDetails);
+}
+
+export function useDeduplicateRequestsFetch(nonDuplicateFetch: MeshFetch): MeshFetch {
+  return function fetchWithDeduplicatedRequests(url, options = {}, context, info): Promise<Response> {
     if (context == null) {
-      return cachedFetchFn(url, options);
+      return nonDuplicateFetch(url, options, context, info);
     }
     let method = 'GET';
     if (options.method) {
       method = options.method;
     }
     if (method !== 'GET') {
-      return fetch(url, options);
+      return nonDuplicateFetch(url, options, context, info);
     }
 
     let headers: Record<string, string> = {};
 
     if (options.headers) {
-      if ('get' in options.headers) {
-        headers = getHeadersObj(options.headers as Headers);
-      } else {
-        headers = options.headers as Record<string, string>;
-      }
+      headers = getHeadersObj(options.headers as Headers);
     }
 
     const acceptHeader = headers.Accept || headers.accept;
     if (!acceptHeader?.includes('application/json')) {
-      return cachedFetchFn(url, options);
+      return nonDuplicateFetch(url, options, context, info);
     }
 
     const reqResMap = getReqResMapByContext(context);
@@ -64,7 +90,7 @@ export const createDefaultMeshFetch = memoize1(function createDefaultMeshFetch(c
     let dedupRes$ = reqResMap.get(dedupCacheKey);
 
     if (dedupRes$ == null) {
-      dedupRes$ = cachedFetchFn(url, options).then(async res => ({
+      dedupRes$ = nonDuplicateFetch(url, options, context, info).then(async res => ({
         res,
         resText: await res.text(),
       }));
@@ -73,4 +99,51 @@ export const createDefaultMeshFetch = memoize1(function createDefaultMeshFetch(c
 
     return dedupRes$.then(({ res, resText }) => new Response(resText, res));
   };
+}
+
+export function useHttpDetailsFetch(nonDetailedFetch: MeshFetch): MeshFetch {
+  return function fetchWithHttpDetails(url, options = {}, context, info): Promise<Response> {
+    if (context == null) {
+      return nonDetailedFetch(url, options, context, info);
+    }
+    const requestTimestamp = Date.now();
+    return nonDetailedFetch(url, options, context, info).then(res => {
+      const responseTimestamp = Date.now();
+      const responseTime = responseTimestamp - requestTimestamp;
+      pushHttpDetails(
+        {
+          sourceName: (info as any)?.sourceName,
+          path: info?.path,
+          request: {
+            timestamp: requestTimestamp,
+            url,
+            method: options.method || 'GET',
+            headers: getHeadersObj(options.headers as Headers),
+          },
+          response: {
+            timestamp: responseTimestamp,
+            status: res.status,
+            statusText: res.statusText,
+            headers: getHeadersObj(res.headers),
+          },
+          responseTime,
+        },
+        context
+      );
+      return res;
+    });
+  };
+}
+
+export const createDefaultMeshFetch = memoize1(function createDefaultMeshFetch(cache: KeyValueCache): MeshFetch {
+  return useHttpDetailsFetch(
+    useDeduplicateRequestsFetch(
+      useCachedFetch({
+        cache,
+        fetch,
+        Request,
+        Response,
+      })
+    )
+  );
 });
