@@ -52,6 +52,47 @@ export function startServer(PORT: number | string) {
     res.send(`Parameters combined: ${req.params.eatery} ${req.params.breadName} ${req.params.dishKey}`);
   });
 
+  // TODO: better types for this
+  function stringifyRussianDolls(russianDoll: any): any {
+    if (!(typeof russianDoll.name === 'string')) {
+      return '';
+    }
+
+    if (typeof russianDoll.nestedDoll === 'object') {
+      return `${russianDoll.name}, ${stringifyRussianDolls(russianDoll.nestedDoll)}`;
+    } else {
+      return russianDoll.name;
+    }
+  }
+
+  app.get('/api/nestedReferenceInParameter', (req, res) => {
+    res.send(stringifyRussianDolls(req.query.russianDoll));
+  });
+
+  app.get('/api/strictGetOperation', (req, res) => {
+    if (req.headers['content-type']) {
+      res.status(400).set('Content-Type', 'text/plain').send('Get request should not have Content-Type');
+    } else {
+      res.set('Content-Type', 'text/plain').send('Perfect!');
+    }
+  });
+
+  app.get('/api/noResponseSchema', (req, res) => {
+    res.set('Content-Type', 'text/plain').send('Hello world');
+  });
+
+  app.get('/api/returnNumber', (req, res) => {
+    res.set('Content-Type', 'text/plain').send(req.headers.number);
+  });
+
+  app.get('/api/testLinkWithNonStringParam', (req, res) => {
+    res.send({ hello: 'world' });
+  });
+
+  app.get('/api/testLinkwithNestedParam', (req, res) => {
+    res.send({ nesting1: { nesting2: 5 } });
+  });
+
   return new Promise(resolve => {
     server = app.listen(PORT, resolve as () => void);
   });

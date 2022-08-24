@@ -5,6 +5,7 @@
 
 import express from 'express';
 import * as bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 import { Server } from 'http';
 
 let server: Server; // holds server object for shutdown
@@ -17,10 +18,10 @@ export function startServer(PORT: number) {
 
   app.use(bodyParser.text());
   app.use(bodyParser.json());
+  app.use(cookieParser());
 
   const Users = {
     arlene: {
-      username: 'arlene',
       name: 'Arlene L McMahon',
       address: {
         street: '4656 Cherry Camp Road',
@@ -42,7 +43,6 @@ export function startServer(PORT: number) {
       friends: ['will', 'johnny', 'heather'],
     },
     will: {
-      username: 'will',
       name: 'William B Ropp',
       address: {
         street: '3180 Little Acres Lane',
@@ -60,7 +60,6 @@ export function startServer(PORT: number) {
       friends: ['arlene', 'johnny'],
     },
     johnny: {
-      username: 'johnny',
       name: 'John C Barnes',
       address: {
         street: '372 Elk Rd Little',
@@ -78,7 +77,6 @@ export function startServer(PORT: number) {
       friends: ['arlene'],
     },
     heather: {
-      username: 'heather',
       name: 'Heather J Tate',
       address: {
         street: '3636 Poplar Chase Lane',
@@ -301,27 +299,37 @@ export function startServer(PORT: number) {
 
   const authMiddleware = (req: any, res: any, next: Function) => {
     if (req.headers.authorization) {
-      const encoded = req.headers.authorization.split(' ')[1];
-      const decoded = Buffer.from(encoded, 'base64').toString('utf-8').split(':');
+      const tokenizedAuth = req.headers.authorization.split(' ');
 
-      if (decoded.length === 2) {
-        const credentials = {
-          username: decoded[0],
-          password: decoded[1],
-        };
-        for (const user in Auth) {
-          if (Auth[user].username === credentials.username && Auth[user].password === credentials.password) {
+      if (tokenizedAuth.length === 2) {
+        const authType = tokenizedAuth[0];
+        const authValue = tokenizedAuth[1];
+
+        if (authType === 'Basic') {
+          // Decode username and password
+          const decoded = Buffer.from(authValue, 'base64').toString('utf8').split(':');
+
+          if (decoded.length === 2) {
+            const credentials = {
+              username: decoded[0],
+              password: decoded[1],
+            };
+
+            for (const user in Auth) {
+              if (Auth[user].username === credentials.username && Auth[user].password === credentials.password) {
+                return next();
+              }
+            }
+          } else {
+            res.status(401).send({
+              message: 'Basic Auth expects a single username and a single password',
+            });
+          }
+        } else if (authType === 'Bearer') {
+          if (authValue === 'master-bearer-token') {
             return next();
           }
         }
-        res.status(401).send({
-          message: 'Incorrect credentials',
-        });
-      } else {
-        console.log({ encoded, decoded });
-        res.status(401).send({
-          message: 'Basic Auth expects a single username and a single password',
-        });
       }
     } else if ('access_token' in req.headers) {
       for (const user in Auth) {
@@ -352,6 +360,7 @@ export function startServer(PORT: number) {
       res.status(401).send({
         message: 'Incorrect credentials',
       });
+      return false;
     } else {
       res.status(401).send({
         message: 'Unknown/missing credentials',
@@ -365,7 +374,7 @@ export function startServer(PORT: number) {
       const results = Object.values(Users).slice(0, Number(limit));
       res.send(results);
     } else {
-      res.send(Object.values(Users));
+      res.status(400).send();
     }
   });
 
@@ -463,13 +472,13 @@ export function startServer(PORT: number) {
   });
 
   app.get('/api/cookie', (req, res) => {
-    if ('cookie' in req.headers) {
+    if (req.cookies && req.cookies.cookie_type && req.cookies.cookie_size) {
       res
         .set('Content-Type', 'text/plain')
         .status(200)
-        .send(`Thanks for your cookie preferences: "${req.headers.cookie.trim()}"`);
+        .send(`You ordered a ${req.cookies.cookie_size} ${req.cookies.cookie_type} cookie!`);
     } else {
-      res.status(400).send('Need Cookie header parameter');
+      res.status(400).send('Need cookie header parameter');
     }
   });
 
@@ -682,6 +691,10 @@ export function startServer(PORT: number) {
         message: 'Wrong username',
       });
     }
+  });
+
+  app.get('/api/random', (req, res) => {
+    res.status(200).send({ status: 'success' });
   });
 
   return new Promise(resolve => {
