@@ -287,4 +287,169 @@ describe('example_api6', () => {
       eateries_by_eatery_breads_by_breadName_dishes_by_dishKey: "Parameters combined: Mike's challah bread pudding",
     });
   });
+
+  /**
+   * '/nestedReferenceInParameter' contains a query parameter 'russianDoll' that
+   * contains reference to a component schema.
+   */
+  it('Nested reference in parameter schema', async () => {
+    const query = /* GraphQL */ `
+      {
+        nestedReferenceInParameter(
+          russianDoll: { name: "Gertrude", nestedDoll: { name: "Tatiana", nestedDoll: { name: "Lidia" } } }
+        )
+      }
+    `;
+
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
+
+    expect(result.data).toEqual({
+      nestedReferenceInParameter: 'Gertrude, Tatiana, Lidia',
+    });
+  });
+
+  /**
+   * 'POST inputUnion' has a request body that contains a oneOf. The request body
+   * will be converted into an input object type while the oneOf will be turned
+   * into a union type. However, according to the spec, input object types cannot
+   * be composed of unions. We create an input type with `@oneOf` directive which
+   * annotates that type as an input union.
+   */
+  it('Input object types composed of union types should default to arbitrary JSON type', async () => {
+    const query = /* GraphQL */ `
+      {
+        __type(name: "Mutation") {
+          fields {
+            name
+            args {
+              name
+              type {
+                name
+              }
+            }
+          }
+        }
+      }
+    `;
+
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
+
+    expect(
+      (result.data.__type as any).fields.find((field: { name: string }) => field.name === 'post_inputUnion')
+    ).toEqual({
+      name: 'post_inputUnion',
+      args: [
+        {
+          name: 'input',
+          type: {
+            name: 'post_inputUnion_request_Input',
+          },
+        },
+      ],
+    });
+  });
+
+  /**
+   * GET /strictGetOperation should not receive a Content-Type header
+   */
+  it('Get operation should not receive Content-Type', async () => {
+    const query = /* GraphQL */ `
+      {
+        strictGetOperation
+      }
+    `;
+
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
+
+    expect(result.data).toEqual({
+      strictGetOperation: 'Perfect!',
+    });
+  });
+
+  /**
+   * GET /noResponseSchema does not have a response schema
+   */
+  it('Handle no response schema', async () => {
+    const query = /* GraphQL */ `
+      {
+        noResponseSchema
+      }
+    `;
+
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
+
+    expect(result.data).toEqual({
+      noResponseSchema: 'Hello world',
+    });
+  });
+
+  /**
+   * GET /testLinkWithNonStringParam has a link object that has a non-string
+   * parameter
+   */
+  it('Handle no response schema', async () => {
+    const query = /* GraphQL */ `
+      {
+        testLinkWithNonStringParam {
+          hello
+          return5
+        }
+      }
+    `;
+
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
+
+    expect(result.data).toEqual({
+      testLinkWithNonStringParam: {
+        hello: 'world',
+        return5: '5',
+      },
+    });
+  });
+
+  /**
+   * GET /testLinkwithNestedParam has a link object that has a nested
+   * parameter
+   */
+  it('Handle no response schema', async () => {
+    const query = /* GraphQL */ `
+      {
+        testLinkwithNestedParam {
+          nesting1 {
+            nesting2
+          }
+          returnNestedNumber
+        }
+      }
+    `;
+
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
+
+    expect(result.data).toEqual({
+      testLinkwithNestedParam: {
+        nesting1: {
+          nesting2: 5,
+        },
+        returnNestedNumber: '5',
+      },
+    });
+  });
 });

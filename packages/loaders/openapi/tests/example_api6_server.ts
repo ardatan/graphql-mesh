@@ -109,5 +109,5 @@ export function stopServer() {
 
 // if run from command line, start server:
 if (require.main === module) {
-  startServer(3006);
+  startServer(3006).catch(console.error);
 }
