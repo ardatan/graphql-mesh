@@ -85,9 +85,19 @@ Object {
           "type": "string",
         },
         "status": Object {
-          "$ref": "./fixtures/toto.yml#/components/schemas/ResourceStatus",
+          "$resolvedRef": "/components/schemas/ResourceStatus",
           "description": "Status of the resource",
-          "name": "status",
+          "items": Object {
+            "enum": Array [
+              "ACTIVE",
+              "INACTIVE",
+              "SCHEDULED",
+            ],
+            "title": "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items",
+            "type": "string",
+          },
+          "title": "ResourceStatus",
+          "type": "array",
         },
         "targetAudience": Object {
           "description": "Target of the resource (the resource need to have all of the target audience passed in the list)",
@@ -124,8 +134,19 @@ Object {
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources/get/responses/200/content/application~1json/schema",
+            "items": Object {
+              "anyOf": Array [
+                Object {
+                  "$ref": "#/definitions/FileGetWithLocalizedNameDTO",
+                },
+                Object {
+                  "$ref": "#/definitions/FolderGetWithLocalizedNameDTO",
+                },
+              ],
+              "title": "query_list_resources_at_any_folder_v1_items",
+            },
             "title": "list_resources_at_any_folder_v1_200_response",
+            "type": "array",
           },
         },
       },
@@ -168,11 +189,28 @@ Object {
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/api/v1/companies/{args.companyId}/knowledgecenter/folders/{args.folderId}/resources",
-      "requestSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources/post/requestBody/content/application~1json/schema",
+      "requestSchema": Object {
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/FileCreateDTO",
+          },
+          Object {
+            "$ref": "#/definitions/FolderCreateDTO",
+          },
+        ],
+        "title": "create_resource_at_any_folder_v1_request",
+      },
       "responseByStatusCode": Object {
         "201": Object {
           "responseSchema": Object {
-            "$ref": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources/post/responses/201/content/application~1json/schema",
+            "oneOf": Array [
+              Object {
+                "$ref": "#/definitions/FileGetWithI18nDTO",
+              },
+              Object {
+                "$ref": "#/definitions/FolderGetWithI18nDTO",
+              },
+            ],
             "title": "create_resource_at_any_folder_v1_201_response",
           },
         },
@@ -222,11 +260,28 @@ Object {
       "method": "PUT",
       "operationHeaders": undefined,
       "path": "/api/v1/companies/{args.companyId}/knowledgecenter/folders/{args.folderId}/resources/{args.resourceId}",
-      "requestSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources~1{resourceId}/put/requestBody/content/application~1json/schema",
+      "requestSchema": Object {
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/FileUpdateDTO",
+          },
+          Object {
+            "$ref": "#/definitions/FolderUpdateDTO",
+          },
+        ],
+        "title": "update_resource_at_any_folder_v1_request",
+      },
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources~1{resourceId}/put/responses/200/content/application~1json/schema",
+            "oneOf": Array [
+              Object {
+                "$ref": "#/definitions/FileGetWithI18nDTO",
+              },
+              Object {
+                "$ref": "#/definitions/FolderGetWithI18nDTO",
+              },
+            ],
             "title": "update_resource_at_any_folder_v1_200_response",
           },
         },
@@ -307,9 +362,19 @@ Object {
           "type": "string",
         },
         "status": Object {
-          "$ref": "./fixtures/toto.yml#/components/schemas/ResourceStatus",
+          "$resolvedRef": "/components/schemas/ResourceStatus",
           "description": "Status of the resource",
-          "name": "status",
+          "items": Object {
+            "enum": Array [
+              "ACTIVE",
+              "INACTIVE",
+              "SCHEDULED",
+            ],
+            "title": "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items",
+            "type": "string",
+          },
+          "title": "ResourceStatus",
+          "type": "array",
         },
         "targetAudience": Object {
           "description": "Target of the resource (the resource need to have all of the target audience passed in the list)",
@@ -346,8 +411,19 @@ Object {
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources/get/responses/200/content/application~1json/schema",
+            "items": Object {
+              "anyOf": Array [
+                Object {
+                  "$ref": "#/definitions/FileGetWithLocalizedNameDTO",
+                },
+                Object {
+                  "$ref": "#/definitions/FolderGetWithLocalizedNameDTO",
+                },
+              ],
+              "title": "query_list_resources_at_the_root_folder_v1_items",
+            },
             "title": "list_resources_at_the_root_folder_v1_200_response",
+            "type": "array",
           },
         },
       },
@@ -384,11 +460,28 @@ Object {
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/api/v1/companies/{args.companyId}/knowledgecenter/resources",
-      "requestSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources/post/requestBody/content/application~1json/schema",
+      "requestSchema": Object {
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/FileCreateDTO",
+          },
+          Object {
+            "$ref": "#/definitions/FolderCreateDTO",
+          },
+        ],
+        "title": "create_resource_at_the_root_folder_v1_request",
+      },
       "responseByStatusCode": Object {
         "201": Object {
           "responseSchema": Object {
-            "$ref": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources/post/responses/201/content/application~1json/schema",
+            "oneOf": Array [
+              Object {
+                "$ref": "#/definitions/FileGetWithI18nDTO",
+              },
+              Object {
+                "$ref": "#/definitions/FolderGetWithI18nDTO",
+              },
+            ],
             "title": "create_resource_at_the_root_folder_v1_201_response",
           },
         },
@@ -434,7 +527,14 @@ Object {
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources~1{resourceId}/get/responses/200/content/application~1json/schema",
+            "oneOf": Array [
+              Object {
+                "$ref": "#/definitions/FileGetWithI18nDTO",
+              },
+              Object {
+                "$ref": "#/definitions/FolderGetWithI18nDTO",
+              },
+            ],
             "title": "get_resource_by_id_v1_200_response",
           },
         },
@@ -478,11 +578,28 @@ Object {
       "method": "PUT",
       "operationHeaders": undefined,
       "path": "/api/v1/companies/{args.companyId}/knowledgecenter/resources/{args.resourceId}",
-      "requestSchema": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources~1{resourceId}/put/requestBody/content/application~1json/schema",
+      "requestSchema": Object {
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/FileUpdateDTO",
+          },
+          Object {
+            "$ref": "#/definitions/FolderUpdateDTO",
+          },
+        ],
+        "title": "update_resource_at_the_root_folder_v1_request",
+      },
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "./fixtures/toto.yml#/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources~1{resourceId}/put/responses/200/content/application~1json/schema",
+            "oneOf": Array [
+              Object {
+                "$ref": "#/definitions/FileGetWithI18nDTO",
+              },
+              Object {
+                "$ref": "#/definitions/FolderGetWithI18nDTO",
+              },
+            ],
             "title": "update_resource_at_the_root_folder_v1_200_response",
           },
         },
@@ -520,6 +637,7 @@ Object {
       "headers": Object {
         "Accept-Language": "{args.Accept_Language}",
         "X-Correlation-Id": "{args.X_Correlation_Id}",
+        "accept": "application/json",
       },
       "method": "DELETE",
       "operationHeaders": undefined,
@@ -530,6 +648,53 @@ Object {
             "description": "No Content",
             "title": "delete_resource_at_the_root_folder_v1_204_response",
             "type": "null",
+          },
+        },
+        "default": Object {
+          "responseSchema": Object {
+            "$resolvedRef": "/components/schemas/v1_common_error",
+            "additionalProperties": false,
+            "externalDocs": Object {
+              "description": "Refer to the Error Handling wiki page for domains and reasons.",
+              "url": "https://bitbucket.org/test/test-api-documentation/wiki/Error%20Handling",
+            },
+            "properties": Object {
+              "debugMessage": Object {
+                "description": "Message for debug purposes. Not intended to be shown the users.",
+                "type": "string",
+              },
+              "errors": Object {
+                "items": Object {
+                  "$ref": "#/definitions/Error_SPACE_Details",
+                },
+                "type": "array",
+              },
+              "exception": Object {
+                "type": "string",
+              },
+              "message": Object {
+                "$ref": "#/definitions/mutation_delete_resource_at_the_root_folder_v1_oneOf_1_message",
+              },
+              "path": Object {
+                "type": "string",
+              },
+              "status": Object {
+                "type": "integer",
+              },
+              "timestamp": Object {
+                "format": "date-time",
+                "type": "string",
+              },
+            },
+            "required": Array [
+              "status",
+              "timestamp",
+              "path",
+              "message",
+              "localizedMessage",
+            ],
+            "title": "Error",
+            "type": "object",
           },
         },
       },
@@ -593,6 +758,78 @@ Object {
           },
         ],
         "title": "BaseResourceUpdateDTO",
+      },
+      "Error": Object {
+        "$resolvedRef": "/components/schemas/v1_common_error",
+        "additionalProperties": false,
+        "externalDocs": Object {
+          "description": "Refer to the Error Handling wiki page for domains and reasons.",
+          "url": "https://bitbucket.org/test/test-api-documentation/wiki/Error%20Handling",
+        },
+        "properties": Object {
+          "debugMessage": Object {
+            "description": "Message for debug purposes. Not intended to be shown the users.",
+            "type": "string",
+          },
+          "errors": Object {
+            "items": Object {
+              "$ref": "#/definitions/Error_SPACE_Details",
+            },
+            "type": "array",
+          },
+          "exception": Object {
+            "type": "string",
+          },
+          "message": Object {
+            "$ref": "#/definitions/mutation_delete_resource_at_the_root_folder_v1_oneOf_1_message",
+          },
+          "path": Object {
+            "type": "string",
+          },
+          "status": Object {
+            "type": "integer",
+          },
+          "timestamp": Object {
+            "format": "date-time",
+            "type": "string",
+          },
+        },
+        "required": Array [
+          "status",
+          "timestamp",
+          "path",
+          "message",
+          "localizedMessage",
+        ],
+        "title": "Error",
+        "type": "object",
+      },
+      "Error_SPACE_Details": Object {
+        "$resolvedRef": "/components/schemas/v1_common_error_details",
+        "properties": Object {
+          "domain": Object {
+            "$ref": "#/definitions/mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_domain",
+          },
+          "location": Object {
+            "type": "string",
+          },
+          "locationType": Object {
+            "$ref": "#/definitions/mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_locationType",
+          },
+          "message": Object {
+            "$ref": "#/definitions/mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_message",
+          },
+          "reason": Object {
+            "$ref": "#/definitions/mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_reason",
+          },
+        },
+        "required": Array [
+          "domain",
+          "reason",
+          "message",
+        ],
+        "title": "Error Details",
+        "type": "object",
       },
       "FileCreateDTO": Object {
         "$resolvedRef": "/components/schemas/FileCreateDTO",
@@ -755,7 +992,7 @@ Object {
             "$ref": "#/definitions/create_resource_at_the_root_folder_v1_201_response",
           },
           "delete_resource_at_the_root_folder_v1": Object {
-            "$ref": "#/definitions/delete_resource_at_the_root_folder_v1_204_response",
+            "$ref": "#/definitions/delete_resource_at_the_root_folder_v1_response",
           },
           "update_resource_at_any_folder_v1": Object {
             "$ref": "#/definitions/update_resource_at_any_folder_v1_200_response",
@@ -933,6 +1170,7 @@ Object {
       },
       "ResourceStatus": Object {
         "$resolvedRef": "/components/schemas/ResourceStatus",
+        "description": "Status of the resource",
         "items": Object {
           "enum": Array [
             "ACTIVE",
@@ -1003,7 +1241,6 @@ Object {
         "type": "object",
       },
       "create_resource_at_any_folder_v1_201_response": Object {
-        "$resolvedRef": "/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources/post/responses/201/content/application~1json/schema",
         "oneOf": Array [
           Object {
             "$ref": "#/definitions/FileGetWithI18nDTO",
@@ -1014,8 +1251,18 @@ Object {
         ],
         "title": "create_resource_at_any_folder_v1_201_response",
       },
+      "create_resource_at_any_folder_v1_request": Object {
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/FileCreateDTO",
+          },
+          Object {
+            "$ref": "#/definitions/FolderCreateDTO",
+          },
+        ],
+        "title": "create_resource_at_any_folder_v1_request",
+      },
       "create_resource_at_the_root_folder_v1_201_response": Object {
-        "$resolvedRef": "/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources/post/responses/201/content/application~1json/schema",
         "oneOf": Array [
           Object {
             "$ref": "#/definitions/FileGetWithI18nDTO",
@@ -1026,13 +1273,35 @@ Object {
         ],
         "title": "create_resource_at_the_root_folder_v1_201_response",
       },
+      "create_resource_at_the_root_folder_v1_request": Object {
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/FileCreateDTO",
+          },
+          Object {
+            "$ref": "#/definitions/FolderCreateDTO",
+          },
+        ],
+        "title": "create_resource_at_the_root_folder_v1_request",
+      },
       "delete_resource_at_the_root_folder_v1_204_response": Object {
         "description": "No Content",
         "title": "delete_resource_at_the_root_folder_v1_204_response",
         "type": "null",
       },
+      "delete_resource_at_the_root_folder_v1_response": Object {
+        "$comment": "statusCodeOneOfIndexMap:{\\"204\\":0,\\"default\\":1}",
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/delete_resource_at_the_root_folder_v1_204_response",
+          },
+          Object {
+            "$ref": "#/definitions/Error",
+          },
+        ],
+        "title": "delete_resource_at_the_root_folder_v1_response",
+      },
       "get_resource_by_id_v1_200_response": Object {
-        "$resolvedRef": "/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources~1{resourceId}/get/responses/200/content/application~1json/schema",
         "oneOf": Array [
           Object {
             "$ref": "#/definitions/FileGetWithI18nDTO",
@@ -1044,7 +1313,6 @@ Object {
         "title": "get_resource_by_id_v1_200_response",
       },
       "list_resources_at_any_folder_v1_200_response": Object {
-        "$resolvedRef": "/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources/get/responses/200/content/application~1json/schema",
         "items": Object {
           "anyOf": Array [
             Object {
@@ -1060,7 +1328,6 @@ Object {
         "type": "array",
       },
       "list_resources_at_the_root_folder_v1_200_response": Object {
-        "$resolvedRef": "/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources/get/responses/200/content/application~1json/schema",
         "items": Object {
           "anyOf": Array [
             Object {
@@ -1100,7 +1367,7 @@ Object {
             "type": "string",
           },
           "input": Object {
-            "$ref": "#/definitions/paths_api_v1_companies_{companyId}_knowledgecenter_folders_{folderId}_resources_post_requestBody_content_application_json_schema",
+            "$ref": "#/definitions/create_resource_at_any_folder_v1_request",
           },
         },
         "title": "mutationInput_create_resource_at_any_folder_v1",
@@ -1165,7 +1432,7 @@ Object {
             "type": "string",
           },
           "input": Object {
-            "$ref": "#/definitions/paths_api_v1_companies_{companyId}_knowledgecenter_resources_post_requestBody_content_application_json_schema",
+            "$ref": "#/definitions/create_resource_at_the_root_folder_v1_request",
           },
         },
         "title": "mutationInput_create_resource_at_the_root_folder_v1",
@@ -1224,7 +1491,7 @@ Object {
             "type": "string",
           },
           "input": Object {
-            "$ref": "#/definitions/paths_api_v1_companies_{companyId}_knowledgecenter_folders_{folderId}_resources_{resourceId}_put_requestBody_content_application_json_schema",
+            "$ref": "#/definitions/update_resource_at_any_folder_v1_request",
           },
           "resourceId": Object {
             "description": undefined,
@@ -1255,7 +1522,7 @@ Object {
             "type": "string",
           },
           "input": Object {
-            "$ref": "#/definitions/paths_api_v1_companies_{companyId}_knowledgecenter_resources_{resourceId}_put_requestBody_content_application_json_schema",
+            "$ref": "#/definitions/update_resource_at_the_root_folder_v1_request",
           },
           "resourceId": Object {
             "description": undefined,
@@ -1267,53 +1534,39 @@ Object {
         "title": "mutationInput_update_resource_at_the_root_folder_v1",
         "type": "object",
       },
-      "paths_api_v1_companies_{companyId}_knowledgecenter_folders_{folderId}_resources_post_requestBody_content_application_json_schema": Object {
-        "$resolvedRef": "/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources/post/requestBody/content/application~1json/schema",
-        "oneOf": Array [
-          Object {
-            "$ref": "#/definitions/FileCreateDTO",
-          },
-          Object {
-            "$ref": "#/definitions/FolderCreateDTO",
-          },
+      "mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_domain": Object {
+        "enum": Array [
+          "KNOWLEDGE_CENTER",
         ],
-        "title": "paths_api_v1_companies_{companyId}_knowledgecenter_folders_{folderId}_resources_post_requestBody_content_application_json_schema",
+        "title": "mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_domain",
+        "type": "string",
       },
-      "paths_api_v1_companies_{companyId}_knowledgecenter_folders_{folderId}_resources_{resourceId}_put_requestBody_content_application_json_schema": Object {
-        "$resolvedRef": "/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources~1{resourceId}/put/requestBody/content/application~1json/schema",
-        "oneOf": Array [
-          Object {
-            "$ref": "#/definitions/FileUpdateDTO",
-          },
-          Object {
-            "$ref": "#/definitions/FolderUpdateDTO",
-          },
+      "mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_locationType": Object {
+        "enum": Array [
+          "HEADER",
+          "PARAMETER",
+          "FIELD",
+          "PERMISSION",
         ],
-        "title": "paths_api_v1_companies_{companyId}_knowledgecenter_folders_{folderId}_resources_{resourceId}_put_requestBody_content_application_json_schema",
+        "title": "mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_locationType",
+        "type": "string",
       },
-      "paths_api_v1_companies_{companyId}_knowledgecenter_resources_post_requestBody_content_application_json_schema": Object {
-        "$resolvedRef": "/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources/post/requestBody/content/application~1json/schema",
-        "oneOf": Array [
-          Object {
-            "$ref": "#/definitions/FileCreateDTO",
-          },
-          Object {
-            "$ref": "#/definitions/FolderCreateDTO",
-          },
-        ],
-        "title": "paths_api_v1_companies_{companyId}_knowledgecenter_resources_post_requestBody_content_application_json_schema",
+      "mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_message": Object {
+        "description": "Localized and human readable message.",
+        "pattern": "^(?![A-Z_]*$).*$",
+        "title": "mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_message",
+        "type": "string",
       },
-      "paths_api_v1_companies_{companyId}_knowledgecenter_resources_{resourceId}_put_requestBody_content_application_json_schema": Object {
-        "$resolvedRef": "/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources~1{resourceId}/put/requestBody/content/application~1json/schema",
-        "oneOf": Array [
-          Object {
-            "$ref": "#/definitions/FileUpdateDTO",
-          },
-          Object {
-            "$ref": "#/definitions/FolderUpdateDTO",
-          },
-        ],
-        "title": "paths_api_v1_companies_{companyId}_knowledgecenter_resources_{resourceId}_put_requestBody_content_application_json_schema",
+      "mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_reason": Object {
+        "pattern": "^[A-Z_]+$",
+        "title": "mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_reason",
+        "type": "string",
+      },
+      "mutation_delete_resource_at_the_root_folder_v1_oneOf_1_message": Object {
+        "description": "Localized and human readable message taken from the first error.",
+        "pattern": "^(?![A-Z_]*$).*$",
+        "title": "mutation_delete_resource_at_the_root_folder_v1_oneOf_1_message",
+        "type": "string",
       },
       "queryInput_get_resource_by_id_v1": Object {
         "properties": Object {
@@ -1656,7 +1909,6 @@ Object {
         "title": "query_list_resources_at_the_root_folder_v1_items",
       },
       "update_resource_at_any_folder_v1_200_response": Object {
-        "$resolvedRef": "/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1folders~1{folderId}~1resources~1{resourceId}/put/responses/200/content/application~1json/schema",
         "oneOf": Array [
           Object {
             "$ref": "#/definitions/FileGetWithI18nDTO",
@@ -1667,8 +1919,18 @@ Object {
         ],
         "title": "update_resource_at_any_folder_v1_200_response",
       },
+      "update_resource_at_any_folder_v1_request": Object {
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/FileUpdateDTO",
+          },
+          Object {
+            "$ref": "#/definitions/FolderUpdateDTO",
+          },
+        ],
+        "title": "update_resource_at_any_folder_v1_request",
+      },
       "update_resource_at_the_root_folder_v1_200_response": Object {
-        "$resolvedRef": "/paths/~1api~1v1~1companies~1{companyId}~1knowledgecenter~1resources~1{resourceId}/put/responses/200/content/application~1json/schema",
         "oneOf": Array [
           Object {
             "$ref": "#/definitions/FileGetWithI18nDTO",
@@ -1678,6 +1940,17 @@ Object {
           },
         ],
         "title": "update_resource_at_the_root_folder_v1_200_response",
+      },
+      "update_resource_at_the_root_folder_v1_request": Object {
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/FileUpdateDTO",
+          },
+          Object {
+            "$ref": "#/definitions/FolderUpdateDTO",
+          },
+        ],
+        "title": "update_resource_at_the_root_folder_v1_request",
       },
     },
   },
@@ -1707,6 +1980,7 @@ type Query {
     minSize: Int
     \\"Maximum size of a resource\\"
     maxSize: Int
+    \\"Status of the resource\\"
     status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
     directoryOnly: Boolean
     \\"List of order\\"
@@ -1734,6 +2008,7 @@ type Query {
     minSize: Int
     \\"Maximum size of a resource\\"
     maxSize: Int
+    \\"Status of the resource\\"
     status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
     directoryOnly: Boolean
     \\"List of order\\"
@@ -1762,6 +2037,7 @@ type Query {
 type query_list_resources_at_any_folder_v1_items {
   parentHierarchy: [ParentFolderGetWithLocalizedNameDTO]
   parentFolderId: String
+  \\"Status of the resource\\"
   status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
   publicationStartTimestamp: DateTime
   publicationEndTimestamp: DateTime
@@ -1786,6 +2062,7 @@ type query_list_resources_at_any_folder_v1_items {
 type ParentFolderGetWithLocalizedNameDTO {
   type: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_type_items]!
   id: String!
+  \\"Status of the resource\\"
   status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]!
   publicationStartTimestamp: DateTime
   publicationEndTimestamp: DateTime
@@ -1827,6 +2104,7 @@ scalar Date
 type query_list_resources_at_the_root_folder_v1_items {
   parentHierarchy: [ParentFolderGetWithLocalizedNameDTO]
   parentFolderId: String
+  \\"Status of the resource\\"
   status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
   publicationStartTimestamp: DateTime
   publicationEndTimestamp: DateTime
@@ -1853,6 +2131,7 @@ union get_resource_by_id_v1_200_response = FileGetWithI18nDTO | FolderGetWithI18
 type FileGetWithI18nDTO {
   parentHierarchy: [ParentFolderGetWithLocalizedNameDTO]
   parentFolderId: String
+  \\"Status of the resource\\"
   status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
   publicationStartTimestamp: DateTime
   publicationEndTimestamp: DateTime
@@ -1878,6 +2157,7 @@ scalar JSON @specifiedBy(url: \\"http://www.ecma-international.org/publications/
 type FolderGetWithI18nDTO {
   parentHierarchy: [ParentFolderGetWithLocalizedNameDTO]
   parentFolderId: String
+  \\"Status of the resource\\"
   status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
   publicationStartTimestamp: DateTime
   publicationEndTimestamp: DateTime
@@ -1905,7 +2185,7 @@ type Mutation {
     X_Correlation_Id: String
     companyId: String!
     folderId: String!
-    input: paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources_post_requestBody_content_application_json_schema_Input
+    input: create_resource_at_any_folder_v1_request_Input
   ): create_resource_at_any_folder_v1_201_response
   \\"Update A Resource At Any Folder Level\\"
   update_resource_at_any_folder_v1(
@@ -1916,7 +2196,7 @@ type Mutation {
     companyId: String!
     folderId: String!
     resourceId: String!
-    input: paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources__LEFT_CURLY_BRACE_resourceId_RIGHT_CURLY_BRACE__put_requestBody_content_application_json_schema_Input
+    input: update_resource_at_any_folder_v1_request_Input
   ): update_resource_at_any_folder_v1_200_response
   \\"Create A Resource At The Root Folder\\"
   create_resource_at_the_root_folder_v1(
@@ -1925,7 +2205,7 @@ type Mutation {
     \\"Correlation ID from the auth call.\\"
     X_Correlation_Id: String
     companyId: String!
-    input: paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_resources_post_requestBody_content_application_json_schema_Input
+    input: create_resource_at_the_root_folder_v1_request_Input
   ): create_resource_at_the_root_folder_v1_201_response
   \\"Update A Resource At The Root Folder\\"
   update_resource_at_the_root_folder_v1(
@@ -1935,7 +2215,7 @@ type Mutation {
     X_Correlation_Id: String
     companyId: String!
     resourceId: String!
-    input: paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_resources__LEFT_CURLY_BRACE_resourceId_RIGHT_CURLY_BRACE__put_requestBody_content_application_json_schema_Input
+    input: update_resource_at_the_root_folder_v1_request_Input
   ): update_resource_at_the_root_folder_v1_200_response
   \\"Delete A Resource At The Root Folder\\"
   delete_resource_at_the_root_folder_v1(
@@ -1945,18 +2225,19 @@ type Mutation {
     X_Correlation_Id: String
     companyId: String!
     resourceId: String!
-  ): Void
+  ): delete_resource_at_the_root_folder_v1_response
 }
 
 union create_resource_at_any_folder_v1_201_response = FileGetWithI18nDTO | FolderGetWithI18nDTO
 
-input paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources_post_requestBody_content_application_json_schema_Input @oneOf {
+input create_resource_at_any_folder_v1_request_Input @oneOf {
   FileCreateDTO_Input: FileCreateDTO_Input
   FolderCreateDTO_Input: FolderCreateDTO_Input
 }
 
 input FileCreateDTO_Input {
   parentFolderId: String
+  \\"Status of the resource\\"
   status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
   publicationStartTimestamp: DateTime
   publicationEndTimestamp: DateTime
@@ -1975,6 +2256,7 @@ input FileCreateDTO_Input {
 
 input FolderCreateDTO_Input {
   parentFolderId: String
+  \\"Status of the resource\\"
   status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
   publicationStartTimestamp: DateTime
   publicationEndTimestamp: DateTime
@@ -1990,13 +2272,14 @@ input FolderCreateDTO_Input {
 
 union update_resource_at_any_folder_v1_200_response = FileGetWithI18nDTO | FolderGetWithI18nDTO
 
-input paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_folders__LEFT_CURLY_BRACE_folderId_RIGHT_CURLY_BRACE__resources__LEFT_CURLY_BRACE_resourceId_RIGHT_CURLY_BRACE__put_requestBody_content_application_json_schema_Input @oneOf {
+input update_resource_at_any_folder_v1_request_Input @oneOf {
   FileUpdateDTO_Input: FileUpdateDTO_Input
   FolderUpdateDTO_Input: FolderUpdateDTO_Input
 }
 
 input FileUpdateDTO_Input {
   parentFolderId: String
+  \\"Status of the resource\\"
   status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
   publicationStartTimestamp: DateTime
   publicationEndTimestamp: DateTime
@@ -2014,6 +2297,7 @@ input FileUpdateDTO_Input {
 
 input FolderUpdateDTO_Input {
   parentFolderId: String
+  \\"Status of the resource\\"
   status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
   publicationStartTimestamp: DateTime
   publicationEndTimestamp: DateTime
@@ -2028,18 +2312,63 @@ input FolderUpdateDTO_Input {
 
 union create_resource_at_the_root_folder_v1_201_response = FileGetWithI18nDTO | FolderGetWithI18nDTO
 
-input paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_resources_post_requestBody_content_application_json_schema_Input @oneOf {
+input create_resource_at_the_root_folder_v1_request_Input @oneOf {
   FileCreateDTO_Input: FileCreateDTO_Input
   FolderCreateDTO_Input: FolderCreateDTO_Input
 }
 
 union update_resource_at_the_root_folder_v1_200_response = FileGetWithI18nDTO | FolderGetWithI18nDTO
 
-input paths_api_v1_companies__LEFT_CURLY_BRACE_companyId_RIGHT_CURLY_BRACE__knowledgecenter_resources__LEFT_CURLY_BRACE_resourceId_RIGHT_CURLY_BRACE__put_requestBody_content_application_json_schema_Input @oneOf {
+input update_resource_at_the_root_folder_v1_request_Input @oneOf {
   FileUpdateDTO_Input: FileUpdateDTO_Input
   FolderUpdateDTO_Input: FolderUpdateDTO_Input
 }
 
+union delete_resource_at_the_root_folder_v1_response = Void_container | Error
+
+type Void_container {
+  Void: Void
+}
+
 \\"Represents empty values\\"
-scalar Void"
+scalar Void
+
+type Error {
+  status: Int!
+  timestamp: DateTime!
+  exception: String
+  path: String!
+  message: mutation_delete_resource_at_the_root_folder_v1_oneOf_1_message!
+  \\"Message for debug purposes. Not intended to be shown the users.\\"
+  debugMessage: String
+  errors: [Error_Details]
+}
+
+\\"Localized and human readable message taken from the first error.\\"
+scalar mutation_delete_resource_at_the_root_folder_v1_oneOf_1_message
+
+type Error_Details {
+  domain: mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_domain!
+  reason: mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_reason!
+  location: String
+  locationType: mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_locationType
+  message: mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_message!
+}
+
+enum mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_domain {
+  KNOWLEDGE_CENTER
+}
+
+\\"A field whose value matches /^[A-Z_]+$/.\\"
+scalar mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_reason
+
+enum mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_locationType {
+  HEADER
+  PARAMETER
+  FIELD
+  PERMISSION
+}
+
+\\"Localized and human readable message.\\"
+scalar mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_message"
 `;

@@ -17,6 +17,11 @@ function getDocumentString(args: ExecutionArgs) {
 }
 
 function generateSessionIdFactory(sessionIdDef: string) {
+  if (sessionIdDef == null) {
+    return function voidSession(): null {
+      return null;
+    };
+  }
   return function session(context: any) {
     return stringInterpolator.parse(sessionIdDef, {
       context,
@@ -116,7 +121,7 @@ export default function useMeshResponseCache(options: MeshPluginOptions<YamlConf
     ttlPerType,
     ttlPerSchemaCoordinate,
     getDocumentString,
-    session: options.sessionId ? generateSessionIdFactory(options.sessionId) : undefined,
+    session: generateSessionIdFactory(options.sessionId),
     enabled: options.if ? generateEnabledFactory(options.if) : undefined,
     buildResponseCacheKey: options.cacheKey ? getBuildResponseCacheKey(options.cacheKey) : undefined,
     shouldCacheResult: options.shouldCacheResult ? getShouldCacheResult(options.shouldCacheResult) : undefined,

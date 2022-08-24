@@ -28,11 +28,12 @@ export const resolvers: Resolvers = {
               }
             `,
           }
-        ).catch(e => console.log(e));
+        );
 
-      return result?.items?.[0]?.views || 0;
+      if (result != null && 'items' in result) {
+        return result?.items?.[0]?.views || 0;
+      }
+      return 0;
     },
   },
 };
-
-('metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_response');
