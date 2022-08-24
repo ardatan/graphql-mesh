@@ -1,5 +1,28 @@
 # @graphql-mesh/neo4j
 
+## 0.19.0
+
+### Minor Changes
+
+- [#4356](https://github.com/Urigo/graphql-mesh/pull/4356) [`b5c59ffce`](https://github.com/Urigo/graphql-mesh/commit/b5c59ffceae7091f8d2b98ee548890acdbd57824) Thanks [@ardatan](https://github.com/ardatan)! - ## Improvements on outgoing HTTP calls
+
+  - Now Mesh's default fetch implementation deduplicates the same GET JSON requests in the same execution context
+  - You should pass `Accept: application/json` to make this work.
+  - JSON Schema, new OpenAPI and RAML handlers now take GraphQL context as 3rd parameter. If you use `customFetch`, you can use that value to access Mesh internals such as the incoming `Request` object.
+
+  ## HTTP Details in extensions for tracking HTTP calls
+
+  You can add `includeHttpDetailsInExtensions: true` to your configuration file to get more information about HTTP calls done by Mesh during the execution in `extensions` field of the response.
+
+  ![image](https://user-images.githubusercontent.com/20847995/186371035-6a327a2e-c74d-4bf4-a78f-6814b1001501.png)
+
+### Patch Changes
+
+- Updated dependencies [[`b5c59ffce`](https://github.com/Urigo/graphql-mesh/commit/b5c59ffceae7091f8d2b98ee548890acdbd57824), [`be79b20a5`](https://github.com/Urigo/graphql-mesh/commit/be79b20a59b14d5d79bfeb260e4ecabc58c26efb), [`b5c59ffce`](https://github.com/Urigo/graphql-mesh/commit/b5c59ffceae7091f8d2b98ee548890acdbd57824)]:
+  - @graphql-mesh/utils@0.40.0
+  - @graphql-mesh/types@0.80.2
+  - @graphql-mesh/store@0.8.32
+
 ## 0.18.15
 
 ### Patch Changes

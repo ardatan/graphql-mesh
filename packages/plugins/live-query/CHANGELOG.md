@@ -1,5 +1,12 @@
 # @graphql-mesh/plugin-live-query
 
+## 0.1.14
+
+### Patch Changes
+
+- Updated dependencies [[`be79b20a5`](https://github.com/Urigo/graphql-mesh/commit/be79b20a59b14d5d79bfeb260e4ecabc58c26efb)]:
+  - @graphql-mesh/types@0.80.2
+
 ## 0.1.13
 
 ### Patch Changes
