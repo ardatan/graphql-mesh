@@ -3,7 +3,6 @@
 "@graphql-mesh/graphql": minor
 "@graphql-mesh/json-schema": minor
 "@graphql-mesh/neo4j": minor
-"@graphql-mesh/new-openapi": minor
 "@graphql-mesh/odata": minor
 "@graphql-mesh/openapi": minor
 "@graphql-mesh/raml": minor
