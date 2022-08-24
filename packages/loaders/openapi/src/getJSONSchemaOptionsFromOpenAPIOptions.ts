@@ -17,7 +17,7 @@ import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolatio
 import { process } from '@graphql-mesh/cross-helpers';
 
 interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
-  oasFilePath: OpenAPIV3.Document | OpenAPIV2.Document | string;
+  source: OpenAPIV3.Document | OpenAPIV2.Document | string;
   fallbackFormat?: 'json' | 'yaml' | 'js' | 'ts';
   cwd?: string;
   fetch?: WindowOrWorkerGlobalScope['fetch'];
@@ -32,7 +32,7 @@ interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
 export async function getJSONSchemaOptionsFromOpenAPIOptions(
   name: string,
   {
-    oasFilePath,
+    source,
     fallbackFormat,
     cwd,
     fetch: fetchFn,
@@ -49,10 +49,10 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     fieldTypeMap[fieldName] = type;
   }
   const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders);
-  logger?.debug(`Fetching OpenAPI Document from ${oasFilePath}`);
-  const oasOrSwagger: OpenAPIV3.Document | OpenAPIV2.Document =
-    typeof oasFilePath === 'string'
-      ? await readFileOrUrl(oasFilePath, {
+  logger?.debug(`Fetching OpenAPI Document from ${source}`);
+  let oasOrSwagger: OpenAPIV3.Document | OpenAPIV2.Document =
+    typeof source === 'string'
+      ? await readFileOrUrl(source, {
           cwd,
           fallbackFormat,
           headers: schemaHeadersFactory({ env: process.env }),
@@ -60,11 +60,53 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
           importFn: defaultImportFn,
           logger,
         })
-      : oasFilePath;
+      : source;
+
+  function handleDefinitions(definitions: Record<string, OpenAPIV2.SchemaObject | OpenAPIV3.SchemaObject>) {
+    const seen = new Map<
+      string,
+      {
+        definitionName: string;
+        definition: OpenAPIV3.SchemaObject | OpenAPIV2.SchemaObject;
+      }
+    >();
+    for (const definitionName in definitions) {
+      const definition = definitions[definitionName];
+      if (!('$ref' in definition)) {
+        if (!definition.title) {
+          definition.title = definitionName;
+        } else {
+          const seenDefinition = seen.get(definition.title);
+          if (seenDefinition) {
+            definition.title = definitionName;
+            seenDefinition.definition.title = seenDefinition.definitionName;
+          }
+          seen.set(definition.title, { definitionName, definition });
+        }
+      }
+    }
+  }
+  if ('definitions' in oasOrSwagger) {
+    handleDefinitions(oasOrSwagger.definitions);
+  }
+  if ('components' in oasOrSwagger && 'schemas' in oasOrSwagger.components) {
+    handleDefinitions(oasOrSwagger.components.schemas);
+  }
+
+  oasOrSwagger = (await dereferenceObject(oasOrSwagger)) as any;
   const operations: JSONSchemaOperationConfig[] = [];
 
-  if ('servers' in oasOrSwagger) {
-    baseUrl = baseUrl || oasOrSwagger.servers[0].url;
+  if (!baseUrl) {
+    if ('servers' in oasOrSwagger) {
+      baseUrl = oasOrSwagger.servers[0].url;
+    }
+
+    if ('schemes' in oasOrSwagger && oasOrSwagger.schemes.length > 0 && oasOrSwagger.host) {
+      baseUrl = oasOrSwagger.schemes[0] + '://' + oasOrSwagger.host;
+      if ('basePath' in oasOrSwagger) {
+        baseUrl += oasOrSwagger.basePath;
+      }
+    }
   }
 
   type OperationConfig = JSONSchemaHTTPJSONOperationConfig & {
@@ -103,10 +145,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
         };
       }
       for (const paramObjIndex in allParams) {
-        let paramObj = allParams[paramObjIndex] as OpenAPIV2.ParameterObject | OpenAPIV3.ParameterObject;
-        if ('$ref' in paramObj) {
-          paramObj = resolvePath(paramObj.$ref.split('#')[1], oasOrSwagger);
-        }
+        const paramObj = allParams[paramObjIndex] as OpenAPIV2.ParameterObject | OpenAPIV3.ParameterObject;
         const argName = sanitizeNameForGraphQL(paramObj.name);
         const operationArgTypeMap = (operationConfig.argTypeMap = operationConfig.argTypeMap || {}) as Record<
           string,
@@ -156,9 +195,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
           }
           case 'body':
             if (paramObj.schema && Object.keys(paramObj.schema).length > 0) {
-              operationConfig.requestSchema = `${oasFilePath}#/paths/${relativePath
-                .split('/')
-                .join('~1')}/${method}/parameters/${paramObjIndex}/schema`;
+              operationConfig.requestSchema = paramObj.schema;
             }
             if (paramObj.example) {
               operationConfig.requestSample = paramObj.example;
@@ -179,10 +216,6 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
         if (paramObj.required) {
           operationArgTypeMap[argName].nullable = false;
         }
-        // Fix the reference
-        if (operationArgTypeMap[argName].$ref?.startsWith('#')) {
-          operationArgTypeMap[argName].$ref = `${oasFilePath}${operationArgTypeMap[argName].$ref}`;
-        }
       }
 
       if ('requestBody' in methodObj) {
@@ -191,9 +224,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
           const contentKey = Object.keys(requestBodyObj.content)[0];
           const contentSchema = requestBodyObj.content[contentKey]?.schema;
           if (contentSchema && Object.keys(contentSchema).length > 0) {
-            operationConfig.requestSchema = `${oasFilePath}#/paths/${relativePath
-              .split('/')
-              .join('~1')}/${method}/requestBody/content/${contentKey?.toString().split('/').join('~1')}/schema`;
+            operationConfig.requestSchema = contentSchema as JSONSchemaObject;
           }
           const examplesObj = requestBodyObj.content[contentKey]?.examples;
           if (examplesObj) {
@@ -213,6 +244,16 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
         const responseObj = methodObj.responses[responseKey] as OpenAPIV3.ResponseObject | OpenAPIV2.ResponseObject;
 
         let schemaObj: JSONSchemaObject;
+
+        if ('consumes' in methodObj) {
+          operationConfig.headers = operationConfig.headers || {};
+          operationConfig.headers['Content-Type'] = methodObj.consumes.join(', ');
+        }
+
+        if ('produces' in methodObj) {
+          operationConfig.headers = operationConfig.headers || {};
+          operationConfig.headers.Accept = methodObj.produces.join(', ');
+        }
 
         if ('content' in responseObj) {
           const responseObjForStatusCode: {
@@ -241,14 +282,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
             }
             schemaObj = responseObj.content[contentKey].schema as any;
             if (schemaObj && Object.keys(schemaObj).length > 0) {
-              responseObjForStatusCode.oneOf.push({
-                $ref: `${oasFilePath}#/paths/${relativePath
-                  .split('/')
-                  .join('~1')}/${method}/responses/${responseKey}/content/${contentKey
-                  ?.toString()
-                  .split('/')
-                  .join('~1')}/schema`,
-              });
+              responseObjForStatusCode.oneOf.push(schemaObj);
             } else if (contentKey.toString().startsWith('text')) {
               responseObjForStatusCode.oneOf.push({ type: 'string' });
             } else {
@@ -290,9 +324,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
           schemaObj = responseObj.schema as any;
           if (schemaObj && Object.keys(schemaObj).length > 0) {
             responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
-            responseByStatusCode[responseKey].responseSchema = `${oasFilePath}#/paths/${relativePath
-              .split('/')
-              .join('~1')}/${method}/responses/${responseKey}/schema`;
+            responseByStatusCode[responseKey].responseSchema = schemaObj;
           }
         } else if ('examples' in responseObj) {
           const examples = Object.values(responseObj.examples);
@@ -330,10 +362,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
           );
           responseByStatusCode[responseKey].links = responseByStatusCode[responseKey].links || {};
           for (const linkName in dereferencedLinkObj.links) {
-            let linkObj = responseObj.links[linkName];
-            if ('$ref' in linkObj) {
-              linkObj = resolvePath(linkObj.$ref, oasOrSwagger) as OpenAPIV3.LinkObject;
-            }
+            const linkObj = responseObj.links[linkName] as OpenAPIV3.LinkObject;
             let args: Record<string, string>;
             if (linkObj.parameters) {
               args = {};
@@ -374,7 +403,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
         }
 
         if (!operationConfig.field) {
-          methodObj.operationId = getFieldNameFromPath(relativePath, method, schemaObj?.$ref);
+          methodObj.operationId = getFieldNameFromPath(relativePath, method, schemaObj?.$resolvedRef);
           // Operation ID might not be avaiable so let's generate field name from path and response type schema
           operationConfig.field = sanitizeNameForGraphQL(methodObj.operationId);
         }
@@ -388,11 +417,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
       if ('callbacks' in methodObj) {
         for (const callbackKey in methodObj.callbacks) {
           const callbackObj = methodObj.callbacks[callbackKey];
-          for (const callbackUrlRefKey in callbackObj) {
-            let callbackUrlRefObj = callbackObj[callbackUrlRefKey];
-            if ('$ref' in callbackObj[callbackUrlRefKey]) {
-              callbackUrlRefObj = resolvePath(callbackUrlRefObj.$ref, oasOrSwagger);
-            }
+          for (const _callbackUrlRefKey in callbackObj) {
             const fieldName = sanitizeNameForGraphQL(operationConfig.field + '_' + callbackKey);
             const callbackOperationConfig: JSONSchemaPubSubOperationConfig = {
               type: OperationTypeNode.SUBSCRIPTION,

@@ -4,14 +4,14 @@ import loadGraphQLSchemaFromOpenAPI, { createBundle } from '../src';
 describe('Basket', () => {
   it('should generate the correct bundle', async () => {
     const bundle = await createBundle('basket', {
-      oasFilePath: './fixtures/basket.json',
+      source: './fixtures/basket.json',
       cwd: __dirname,
     });
     expect(bundle).toMatchSnapshot();
   });
   it('should generate the correct schema', async () => {
     const schema = await loadGraphQLSchemaFromOpenAPI('basket', {
-      oasFilePath: './fixtures/basket.json',
+      source: './fixtures/basket.json',
       cwd: __dirname,
     });
     expect(printSchemaWithDirectives(schema)).toMatchSnapshot();

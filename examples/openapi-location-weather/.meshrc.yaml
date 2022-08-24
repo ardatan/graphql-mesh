@@ -3,6 +3,7 @@ sources:
     handler:
       openapi:
         source: https://api.apis.guru/v2/specs/mashape.com/geodb/1.0.0/swagger.json
+        ignoreErrorResponses: true
         operationHeaders:
           'X-RapidAPI-Key': f93d3b393dmsh13fea7cb6981b2ep1dba0ajsn654ffeb48c26
     transforms:
@@ -16,6 +17,7 @@ sources:
     handler:
       openapi:
         source: https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json
+        ignoreErrorResponses: true
     transforms:
       - rename:
           - from:
@@ -46,7 +48,7 @@ additionalTypeDefs: |
       """,
       sourceName: "Weather",
       sourceTypeName: "Query",
-      sourceFieldName: "getForecastDailyLatequalToLatLonLon",
+      sourceFieldName: "forecast_daily_by_lat_by_lon",
       sourceArgs: {
         lat: "{root.latitude}",
         lon: "{root.longitude}",
@@ -63,7 +65,7 @@ additionalTypeDefs: |
       """,
       sourceName: "Weather",
       sourceTypeName: "Query",
-      sourceFieldName: "getForecastDailyLatequalToLatLonLon",
+      sourceFieldName: "forecast_daily_by_lat_by_lon",
       sourceArgs: {
         lat: "{root.latitude}",
         lon: "{root.longitude}",

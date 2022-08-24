@@ -4,28 +4,36 @@ import type { Resolvers } from './.mesh';
 export const resolvers: Resolvers = {
   Query: {
     async viewsInPastMonth(root, { project }, context, info) {
-      const result = await context.Wiki.Query.getMetricsPageviewsAggregateProjectAccessAgentGranularityStartEnd({
-        root,
-        args: {
-          access: 'ALL_ACCESS',
-          agent: 'USER',
-          end: moment().format('YYYYMMDD'),
-          start: moment().startOf('month').subtract(1, 'month').format('YYYYMMDD'),
-          project,
-          granularity: 'DAILY',
-        },
-        context,
-        info,
-        selectionSet: /* GraphQL */ `
+      const result =
+        await context.Wiki.Query.metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end(
           {
-            items {
-              views
-            }
+            root,
+            args: {
+              access: 'all_access',
+              agent: 'user',
+              end: moment().format('YYYYMMDD'),
+              start: moment().startOf('month').subtract(1, 'month').format('YYYYMMDD'),
+              project,
+              granularity: 'daily',
+            },
+            context,
+            info,
+            selectionSet: /* GraphQL */ `
+              {
+                ... on pageview_project {
+                  items {
+                    views
+                  }
+                }
+              }
+            `,
           }
-        `,
-      });
+        );
 
-      return result?.items?.[0]?.views || 0;
+      if (result != null && 'items' in result) {
+        return result?.items?.[0]?.views || 0n;
+      }
+      return 0;
     },
   },
 };

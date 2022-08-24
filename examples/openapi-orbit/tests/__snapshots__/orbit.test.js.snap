@@ -1512,11 +1512,11 @@ input activity_and_identity_Input {
 }
 
 input mutationInput_post_by_workspace_slug_activities_input_activity_Input @oneOf {
-  Custom_Activity_Input: Custom_Activity_Input
-  Content_Activity_Input: Content_Activity_Input
+  activity_with_member_Input: activity_with_member_Input
+  post_activity_with_member_Input: post_activity_with_member_Input
 }
 
-input Custom_Activity_Input {
+input activity_with_member_Input {
   \\"A description of the activity; displayed in the timeline\\"
   description: String
   \\"A URL for the activity; displayed in the timeline\\"
@@ -1570,7 +1570,7 @@ input member_Input {
   devto: String
 }
 
-input Content_Activity_Input {
+input post_activity_with_member_Input {
   \\"The url representing the post\\"
   url: String!
   \\"The date and time at which the content was published; defaults to now\\"

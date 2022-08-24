@@ -36,6 +36,9 @@
     "to-json-schema": "0.2.5",
     "tslib": "^2.4.0"
   },
+  "devDependencies": {
+    "@types/json-pointer": "1.0.31"
+  },
   "publishConfig": {
     "access": "public",
     "directory": "dist"

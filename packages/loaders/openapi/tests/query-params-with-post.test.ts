@@ -5,7 +5,7 @@ import { Request, Response } from '@whatwg-node/fetch';
 describe('Query Params with POST', () => {
   it('should create URLs with correctly concatenated query params for POST requests', async () => {
     const schema = await loadGraphQLSchemaFromOpenAPI('test', {
-      oasFilePath: './fixtures/query-params-with-post.yml',
+      source: './fixtures/query-params-with-post.yml',
       baseUrl: 'http://localhost:3000',
       async fetch(info: RequestInfo, init?: RequestInit) {
         let request: Request;

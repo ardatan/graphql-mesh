@@ -24,33 +24,14 @@
     "url": "Urigo/graphql-mesh",
     "directory": "packages/handlers/openapi"
   },
-  "devDependencies": {
-    "@types/deep-equal": "1.0.1",
-    "@types/form-urlencoded": "2.0.1",
-    "@types/json-pointer": "1.0.31"
-  },
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/cross-helpers": "0.2.2",
-    "@graphql-mesh/types": "0.80.1",
     "@graphql-mesh/store": "0.8.31",
-    "@graphql-mesh/string-interpolation": "0.3.2",
+    "@graphql-mesh/types": "0.80.1",
+    "@omnigraph/openapi": "0.11.2",
     "@graphql-mesh/utils": "0.39.0",
-    "@graphql-tools/utils": "8.10.0",
-    "@whatwg-node/fetch": "^0.3.0",
-    "deep-equal": "2.0.5",
-    "form-urlencoded": "6.1.0",
-    "jsonpath-plus": "7.0.0",
-    "json-pointer": "0.6.2",
-    "openapi-diff": "0.23.6",
-    "graphql-scalars": "1.18.0",
-    "pluralize": "8.0.0",
-    "qs": "6.11.0",
-    "swagger2openapi": "7.0.8",
-    "url-join": "4.0.1",
-    "openapi-types": "12.0.0",
     "tslib": "^2.4.0"
   },
   "publishConfig": {

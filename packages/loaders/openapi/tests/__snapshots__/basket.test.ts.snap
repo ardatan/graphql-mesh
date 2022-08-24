@@ -18,14 +18,40 @@ Object {
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "./fixtures/basket.json#/paths/~1basket/post/responses/200/content/application~1json/schema",
-            "title": "post_basket_200_response",
+            "$resolvedRef": "/components/schemas/BasketResponse",
+            "additionalProperties": false,
+            "properties": Object {
+              "products": Object {
+                "items": Object {
+                  "$ref": "#/definitions/mutation_post_basket_oneOf_0_products_items",
+                },
+                "nullable": true,
+                "type": "array",
+              },
+            },
+            "title": "BasketResponse",
+            "type": "object",
           },
         },
         "400": Object {
           "responseSchema": Object {
-            "$ref": "./fixtures/basket.json#/paths/~1basket/post/responses/400/content/application~1json/schema",
+            "items": Object {
+              "$resolvedRef": "/components/schemas/ApiError",
+              "additionalProperties": false,
+              "properties": Object {
+                "code": Object {
+                  "type": "string",
+                },
+              },
+              "required": Array [
+                "code",
+                "description",
+              ],
+              "title": "ApiError",
+              "type": "object",
+            },
             "title": "post_basket_400_response",
+            "type": "array",
           },
         },
       },
@@ -153,7 +179,6 @@ Object {
         "title": "mutation_post_basket_oneOf_0_products_items",
       },
       "post_basket_400_response": Object {
-        "$resolvedRef": "/paths/~1basket/post/responses/400/content/application~1json/schema",
         "items": Object {
           "$resolvedRef": "/components/schemas/ApiError",
           "additionalProperties": false,

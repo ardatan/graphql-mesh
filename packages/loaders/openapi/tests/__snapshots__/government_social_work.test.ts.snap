@@ -286,6 +286,7 @@ type Query {
     offset: String!
     \\"limit for pagination (e.g. 20 at a time)\\"
     limit: String!
+    input: [CaseAssessment_Input]
   ): [getRecommendations_response]
   \\"Retrieves a list of available case note types\\"
   getCaseNoteTypes(
@@ -964,6 +965,61 @@ type getRecommendations_200_response {
   pagination: Pagination
 }
 
+\\"Case Assessment\\"
+input CaseAssessment_Input {
+  \\"Assessment timestamp\\"
+  assessmentDate: String
+  \\"Assessment Unique Id\\"
+  assessmentId: String
+  \\"Worker's signature upon submitting the assessment\\"
+  assessmentSignature: String
+  status: query_getCaseAssessments_oneOf_0_data_items_status
+  \\"id of the worker that performed this case assessment\\"
+  worker: String
+  \\"case id\\"
+  case: String
+  assessmentType: [AssessmentType_Input]
+  \\"tagged client's client id\\"
+  taggedClients: [String]
+}
+
+\\"Assessment Type\\"
+input AssessmentType_Input {
+  \\"Unique Assessment Type Id\\"
+  assessmentTypeId: String
+  assessmentTypeDesc: String
+  factors: [AssessmentFactors_Input]
+  recommendation: [Recommendation_Input]
+}
+
+\\"Assessment Factor Name.\\"
+input AssessmentFactors_Input {
+  \\"Unique Assessment Factor Id.\\"
+  factorId: String
+  factorName: String
+  riskSCore: String
+  factorQuestions: [AssessmentFactorQuestion_Input]
+}
+
+\\"Assessment Factor Questions.\\"
+input AssessmentFactorQuestion_Input {
+  \\"Assessment Factor Question Id.\\"
+  questionId: String
+  \\"Assessment Factor Question Text.\\"
+  questionText: String
+  \\"Assessment Factor Answer Text.\\"
+  answerText: String
+}
+
+\\"Recommendations for Assessments.\\"
+input Recommendation_Input {
+  \\"Recommendation Id\\"
+  recommendationId: String
+  \\"Recommendation Description\\"
+  recommendationDsec: String
+  recommendationSelection: query_getCaseAssessments_oneOf_0_data_items_assessmentType_items_recommendation_items_recommendationSelection
+}
+
 union getCaseNoteTypes_response = getCaseNoteTypes_200_response | Error
 
 type getCaseNoteTypes_200_response {
@@ -1183,6 +1239,7 @@ type Mutation {
     User_Agent: String = \\"iPad\\"
     \\"1.1.0\\"
     Api_Version: String = \\"1.1.0\\"
+    input: [ClientPhysician_Input]
   ): [addClientPhysician_response]
   \\"Update/delete client physician for a client id\\"
   updateClientPhysician(
@@ -1196,6 +1253,7 @@ type Mutation {
     Api_Version: String = \\"1.1.0\\"
     \\"Client's physician's id\\"
     physicianId: String!
+    input: [ClientPhysician_Input]
   ): [updateClientPhysician_response]
   \\"Gets a specific file for a given file id or return all files if no specific file id is given\\"
   updateFile(
@@ -1209,6 +1267,7 @@ type Mutation {
     Api_Version: String = \\"1.1.0\\"
     \\"File Id\\"
     fileId: String!
+    input: [File_Input]
   ): [updateFile_response]
   \\"Gets a specific file for a given file id or return all files if no specific file id is given\\"
   putFile(
@@ -1220,6 +1279,7 @@ type Mutation {
     User_Agent: String = \\"iPad\\"
     \\"1.1.0\\"
     Api_Version: String = \\"1.1.0\\"
+    input: [File_Input]
   ): [putFile_response]
   \\"Adds a new Media file to a case [video, audio, picture, etc]\\"
   addMedia(
@@ -1293,6 +1353,7 @@ type Mutation {
     Api_Version: String = \\"1.1.0\\"
     \\"Case Id\\"
     caseId: String!
+    input: [CaseAssessment_Input]
   ): [addCaseAssessment_response]
   \\"Sets a specific assessment for a case as \\\\\\"deleted\\\\\\"\\"
   deleteCaseAssessment(
@@ -1308,6 +1369,7 @@ type Mutation {
     caseId: String!
     \\"Case Assessment Id\\"
     caseAssessmentId: String!
+    input: [CaseAssessment_Input]
   ): [deleteCaseAssessment_response]
 }
 
@@ -1577,6 +1639,21 @@ type addClientPhysician_200_response {
   \\"may return NO_RESULTS_FOUND for this user and search query\\"
   errors: [Error]
   data: ClientPhysician
+}
+
+\\"Client physician details\\"
+input ClientPhysician_Input {
+  physicianId: String
+  gpName: String
+  officeName: String
+  street1: String
+  street2: String
+  city: String
+  state: String
+  zip: String
+  emailId: String
+  phone: String
+  status: query_getClientPhysicians_oneOf_0_data_items_status
 }
 
 union updateClientPhysician_response = updateClientPhysician_200_response | Error

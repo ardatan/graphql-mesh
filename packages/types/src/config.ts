@@ -182,7 +182,6 @@ export interface Handler {
   mongoose?: MongooseHandler;
   mysql?: MySQLHandler;
   neo4j?: Neo4JHandler;
-  newOpenapi?: NewOpenapiHandler;
   odata?: ODataHandler;
   openapi?: OpenapiHandler;
   postgraphile?: PostGraphileHandler;
@@ -806,13 +805,46 @@ export interface Neo4JHandler {
   typeDefs?: string;
 }
 /**
+ * Handler for OData
+ */
+export interface ODataHandler {
+  /**
+   * Base URL for OData API
+   */
+  baseUrl: string;
+  /**
+   * Custom $metadata File or URL
+   */
+  metadata?: string;
+  /**
+   * Headers to be used with the operation requests
+   */
+  operationHeaders?: {
+    [k: string]: any;
+  };
+  /**
+   * Headers to be used with the $metadata requests
+   */
+  schemaHeaders?: {
+    [k: string]: any;
+  };
+  /**
+   * Enable batching (Allowed values: multipart, json)
+   */
+  batch?: 'multipart' | 'json';
+  /**
+   * Use $expand for navigation props instead of seperate HTTP requests (Default: false)
+   */
+  expandNavProps?: boolean;
+}
+/**
  * Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it.
  */
-export interface NewOpenapiHandler {
+export interface OpenapiHandler {
   /**
    * A pointer to your API source (Support both JSON and YAML) - could be a local file, remote file or url endpoint
    */
-  oasFilePath: string;
+  source: string;
   /**
    * Format of the files referenced from the source file, for cases content type isn't detected automatically (Allowed values: json, yaml, js, ts)
    */
@@ -855,131 +887,10 @@ export interface NewOpenapiHandler {
 }
 export interface OASSelectQueryOrMutationFieldConfig {
   /**
-   * Allowed values: query, mutation, Query, Mutation
+   * Allowed values: query, mutation
    */
-  type: 'query' | 'mutation' | 'Query' | 'Mutation';
+  type: 'query' | 'mutation';
   fieldName: string;
-}
-/**
- * Handler for OData
- */
-export interface ODataHandler {
-  /**
-   * Base URL for OData API
-   */
-  baseUrl: string;
-  /**
-   * Custom $metadata File or URL
-   */
-  metadata?: string;
-  /**
-   * Headers to be used with the operation requests
-   */
-  operationHeaders?: {
-    [k: string]: any;
-  };
-  /**
-   * Headers to be used with the $metadata requests
-   */
-  schemaHeaders?: {
-    [k: string]: any;
-  };
-  /**
-   * Enable batching (Allowed values: multipart, json)
-   */
-  batch?: 'multipart' | 'json';
-  /**
-   * Use $expand for navigation props instead of seperate HTTP requests (Default: false)
-   */
-  expandNavProps?: boolean;
-}
-/**
- * Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it.
- */
-export interface OpenapiHandler {
-  /**
-   * A pointer to your API source - could be a local file, remote file or url endpoint
-   */
-  source: any;
-  /**
-   * Format of the source file (Allowed values: json, yaml)
-   */
-  sourceFormat?: 'json' | 'yaml';
-  /**
-   * JSON object representing the Headers to add to the runtime of the API calls
-   */
-  operationHeaders?: {
-    [k: string]: any;
-  };
-  /**
-   * If you are using a remote URL endpoint to fetch your schema, you can set headers for the HTTP request to fetch your schema.
-   */
-  schemaHeaders?: {
-    [k: string]: any;
-  };
-  /**
-   * Specifies the URL on which all paths will be based on.
-   * Overrides the server object in the OAS.
-   */
-  baseUrl?: string;
-  /**
-   * JSON object representing the query search parameters to add to the API calls
-   */
-  qs?: {
-    [k: string]: any;
-  };
-  /**
-   * Include HTTP Response details to the result object
-   */
-  includeHttpDetails?: boolean;
-  /**
-   * Auto-generate a 'limit' argument for all fields that return lists of objects, including ones produced by links
-   */
-  addLimitArgument?: boolean;
-  /**
-   * Set argument name for mutation payload to 'requestBody'. If false, name defaults to camelCased pathname
-   */
-  genericPayloadArgName?: boolean;
-  /**
-   * Allows to explicitly override the default operation (Query or Mutation) for any OAS operation
-   */
-  selectQueryOrMutationField?: SelectQueryOrMutationFieldConfig[];
-  /**
-   * Overwrite automatic wrapping of errors into GraphqlErrors
-   */
-  provideErrorExtensions?: boolean;
-  /**
-   * Field names can only be sanitized operationIds
-   * By default, query field names are based on the return type type name and mutation field names are based on the operationId, which may be generated if it does not exist.
-   * This option forces OpenAPI handler to only create field names based on the operationId.
-   */
-  operationIdFieldNames?: boolean;
-  /**
-   * Allow processing to continue if the swagger schema is missing a schema $ref.
-   */
-  allowUndefinedSchemaRefTags?: boolean;
-  /**
-   * Object type to use for missing swagger schemas refs default is object. (Allowed values: string, number, object, array, boolean, integer)
-   */
-  defaultUndefinedSchemaType?: 'string' | 'number' | 'object' | 'array' | 'boolean' | 'integer';
-}
-export interface SelectQueryOrMutationFieldConfig {
-  /**
-   * OAS Title
-   */
-  title?: string;
-  /**
-   * Operation Path
-   */
-  path?: string;
-  /**
-   * Target Root Type for this operation (Allowed values: query, mutation, Query, Mutation)
-   */
-  type?: 'query' | 'mutation' | 'Query' | 'Mutation';
-  /**
-   * Which method is used for this operation
-   */
-  method?: string;
 }
 /**
  * Handler for Postgres database, based on `postgraphile`
@@ -1037,9 +948,9 @@ export interface RAMLHandler {
 }
 export interface RAMLSelectQueryOrMutationFieldConfig {
   /**
-   * Allowed values: query, mutation, Query, Mutation
+   * Allowed values: query, mutation
    */
-  type: 'query' | 'mutation' | 'Query' | 'Mutation';
+  type: 'query' | 'mutation';
   fieldName: string;
 }
 /**

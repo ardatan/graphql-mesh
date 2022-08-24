@@ -12,7 +12,7 @@ type Query {
   searchCollection(
     \\"The name of the collection to search for the document under\\"
     collectionName: String!
-    searchParameters: SearchParameters_Input
+    searchParameters: SearchParameters_Input!
   ): searchCollection_response
 }
 

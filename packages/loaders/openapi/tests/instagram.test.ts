@@ -10,7 +10,7 @@ describe('OpenAPI loader: instagram', () => {
   beforeAll(async () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api', {
       fetch,
-      oasFilePath: '../../../handlers/openapi/test/fixtures/instagram.json',
+      source: '../../../handlers/openapi/test/fixtures/instagram.json',
       cwd: __dirname,
     });
   });

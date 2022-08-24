@@ -7,100 +7,55 @@ extend type Handler {
 
 type OpenapiHandler @md {
   """
-  A pointer to your API source - could be a local file, remote file or url endpoint
+  A pointer to your API source (Support both JSON and YAML) - could be a local file, remote file or url endpoint
   """
-  source: Any!
+  source: String!
   """
-  Format of the source file
+  Format of the files referenced from the source file, for cases content type isn't detected automatically
   """
-  sourceFormat: SourceFormat
-  """
-  JSON object representing the Headers to add to the runtime of the API calls
-  """
-  operationHeaders: JSON
-  """
-  If you are using a remote URL endpoint to fetch your schema, you can set headers for the HTTP request to fetch your schema.
-  """
-  schemaHeaders: JSON
+  fallbackFormat: FallbackFormat
   """
   Specifies the URL on which all paths will be based on.
   Overrides the server object in the OAS.
   """
   baseUrl: String
   """
-  JSON object representing the query search parameters to add to the API calls
+  If you are using a remote URL endpoint to fetch your schema, you can set headers for the HTTP request to fetch your schema.
   """
-  qs: JSON
+  schemaHeaders: JSON
   """
-  Include HTTP Response details to the result object
+  JSON object representing the Headers to add to the runtime of the API calls
   """
-  includeHttpDetails: Boolean
+  operationHeaders: OperationHeadersDefinition
   """
-  Auto-generate a 'limit' argument for all fields that return lists of objects, including ones produced by links
+  Responses are converted to a Union type grouping all possible responses.
+  Applying this will ignore all responses with status code other than 2xx, resulting in simpler response types, usualy regular object type instead of union.
+  Default: false
   """
-  addLimitArgument: Boolean
-  """
-  Set argument name for mutation payload to 'requestBody'. If false, name defaults to camelCased pathname
-  """
-  genericPayloadArgName: Boolean
+  ignoreErrorResponses: Boolean
   """
   Allows to explicitly override the default operation (Query or Mutation) for any OAS operation
   """
-  selectQueryOrMutationField: [SelectQueryOrMutationFieldConfig]
+  selectQueryOrMutationField: [OASSelectQueryOrMutationFieldConfig]
   """
-  Overwrite automatic wrapping of errors into GraphqlErrors
+  JSON object representing the query search parameters to add to the API calls
   """
-  provideErrorExtensions: Boolean
-  """
-  Field names can only be sanitized operationIds
-  By default, query field names are based on the return type type name and mutation field names are based on the operationId, which may be generated if it does not exist.
-  This option forces OpenAPI handler to only create field names based on the operationId.
-  """
-  operationIdFieldNames: Boolean
-  """
-  Allow processing to continue if the swagger schema is missing a schema $ref.
-  """
-  allowUndefinedSchemaRefTags: Boolean
-  """
-  Object type to use for missing swagger schemas refs default is object.
-  """
-  defaultUndefinedSchemaType: UndefinedSchemaType
+  queryParams: JSON
 }
 
-enum SourceFormat {
+enum FallbackFormat {
   json
   yaml
-}
-
-type SelectQueryOrMutationFieldConfig {
-  """
-  OAS Title
-  """
-  title: String
-  """
-  Operation Path
-  """
-  path: String
-  """
-  Target Root Type for this operation
-  """
-  type: QueryOrMutation
-  """
-  Which method is used for this operation
-  """
-  method: String
+  js
+  ts
 }
 
 enum QueryOrMutation {
-  Query
-  Mutation
+  query
+  mutation
 }
 
-enum UndefinedSchemaType {
-  string
-  number
-  object
-  array
-  boolean
-  integer
+type OASSelectQueryOrMutationFieldConfig {
+  type: QueryOrMutation!
+  fieldName: String!
 }

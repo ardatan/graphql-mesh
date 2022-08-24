@@ -25,12 +25,125 @@ Object {
           ],
         },
       },
-      "requestSchema": "./fixtures/deepl.json#/paths/~1translate/post/requestBody/content/application~1x-www-form-urlencoded/schema",
+      "requestSchema": Object {
+        "examples": Array [
+          Object {
+            "summary": "Basic Example",
+            "value": Object {
+              "target_lang": "DE",
+              "text": Array [
+                "Hello, world",
+              ],
+            },
+          },
+        ],
+        "properties": Object {
+          "formality": Object {
+            "$ref": "#/definitions/Formality",
+          },
+          "glossary_id": Object {
+            "description": "Specify the glossary to use for the translation. **Important:** This requires the \`source_lang\` parameter to be set and the language pair of the glossary has to match the language pair of the request.",
+            "type": "string",
+          },
+          "ignore_tags": Object {
+            "description": "Comma-separated list of XML tags that indicate text not to be translated.
+
+
+Use this paramter to ensure that elements in the original text are not altered in the translation (e.g., trademarks, product names) and insert tags into your original text. In the following example, the \`ignore_tags\` parameter is set to \`keep\`:
+ * Example request:
+\`\`\`
+Please open the page <keep>Settings</keep> to configure your system.
+\`\`\`
+ * Example response:
+\`\`\`
+Bitte öffnen Sie die Seite <keep>Settings</keep> um Ihr System zu konfigurieren.
+\`\`\`",
+            "type": "string",
+          },
+          "non_splitting_tags": Object {
+            "description": "Comma-separated list of XML tags which never split sentences.
+
+
+For some XML files, finding tags with textual content and splitting sentences using those tags won't yield the best results. The following example shows the engine splitting sentences on \`par\` tags and proceeding to translate the parts separately, resulting in an incorrect translation:
+ * Example request:
+\`\`\`
+<par>The firm said it had been </par><par> conducting an internal investigation.</par>
+\`\`\`
+ * Example response:
+\`\`\`
+<par>Die Firma sagte, es sei eine gute Idee gewesen.</par><par> Durchführung einer internen Untersuchung.</par>
+\`\`\`
+
+
+As this can lead to bad translations, this type of structure should either be avoided, or the \`non_splitting_tags\` parameter should be set. The following example shows the same call, with the parameter set to \`par\`:
+ * Example request:
+\`\`\`
+<par>The firm said it had been </par><par> conducting an internal investigation.</par>
+\`\`\`
+ * Example response:
+\`\`\`
+<par>Die Firma sagte, dass sie</par><par> eine interne Untersuchung durchgeführt</par><par> habe</par><par>.</par>
+\`\`\`
+
+
+This time, the sentence is translated as a whole. The XML tags are now considered markup and copied into the translated sentence. As the translation of the words \\"had been\\" has moved to another position in the German sentence, the two par tags are duplicated (which is expected here).",
+            "type": "string",
+          },
+          "outline_detection": Object {
+            "$ref": "#/definitions/mutationInput_translateText_input_outline_detection",
+          },
+          "preserve_formatting": Object {
+            "$ref": "#/definitions/mutationInput_translateText_input_preserve_formatting",
+          },
+          "source_lang": Object {
+            "$ref": "#/definitions/SourceLanguage",
+          },
+          "split_sentences": Object {
+            "$ref": "#/definitions/mutationInput_translateText_input_split_sentences",
+          },
+          "splitting_tags": Object {
+            "description": "Comma-separated list of XML tags which always cause splits.
+
+
+See the example in the \`outline_detection\` parameter's description.",
+            "type": "string",
+          },
+          "tag_handling": Object {
+            "$ref": "#/definitions/mutationInput_translateText_input_tag_handling",
+          },
+          "target_lang": Object {
+            "$ref": "#/definitions/TargetLanguage",
+          },
+          "text": Object {
+            "description": "Text to be translated. Only UTF-8-encoded plain text is supported. The parameter may be specified multiple times and translations are returned in the same order as they are requested. Each of the parameter values may contain multiple sentences. Up to 50 texts can be sent for translation in one request.",
+            "items": Object {
+              "type": "string",
+            },
+            "maxItems": 50,
+            "type": "array",
+          },
+        },
+        "required": Array [
+          "text",
+          "target_lang",
+        ],
+        "title": "translateText_request",
+        "type": "object",
+      },
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "./fixtures/deepl.json#/paths/~1translate/post/responses/200/content/application~1json/schema",
+            "properties": Object {
+              "translations": Object {
+                "items": Object {
+                  "$ref": "#/definitions/mutation_translateText_translations_items",
+                },
+                "minItems": 1,
+                "type": "array",
+              },
+            },
             "title": "translateText_200_response",
+            "type": "object",
           },
         },
       },
@@ -65,12 +178,58 @@ You may specify the glossary to use for the document translation using the \`glo
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/document",
-      "requestSchema": "./fixtures/deepl.json#/paths/~1document/post/requestBody/content/multipart~1form-data/schema",
+      "requestSchema": Object {
+        "properties": Object {
+          "file": Object {
+            "description": "The document file to be translated. The file name should be included in this part's content disposition. As an alternative, the filename parameter can be used. The following file types and extensions are supported:
+  * \`docx\` - Microsoft Word Document
+  * \`pptx\` - Microsoft PowerPoint Document
+  * \`pdf\` - Portable Document Format
+  * \`htm / html\` - HTML Document
+  * \`txt\` - Plain Text Document
+
+Please note that in order to translate PDF documents you need to give one-time consent to using the Adobe API via the account interface.",
+            "type": "string",
+          },
+          "filename": Object {
+            "description": "The name of the uploaded file. Can be used as an alternative to including the file name in the file part's content disposition.",
+            "type": "string",
+          },
+          "formality": Object {
+            "$ref": "#/definitions/Formality",
+          },
+          "glossary_id": Object {
+            "$ref": "#/definitions/GlossaryId",
+          },
+          "source_lang": Object {
+            "$ref": "#/definitions/SourceLanguage",
+          },
+          "target_lang": Object {
+            "$ref": "#/definitions/TargetLanguage",
+          },
+        },
+        "required": Array [
+          "target_lang",
+          "file",
+        ],
+        "title": "translateDocument_request",
+        "type": "object",
+      },
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "./fixtures/deepl.json#/paths/~1document/post/responses/200/content/application~1json/schema",
+            "properties": Object {
+              "document_id": Object {
+                "description": "A unique ID assigned to the uploaded document and the translation process. Must be used when referring to this particular document in subsequent API requests.",
+                "type": "string",
+              },
+              "document_key": Object {
+                "description": "A unique key that is used to encrypt the uploaded document as well as the resulting translation on the server side. Must be provided with every subsequent API request regarding this particular document.",
+                "type": "string",
+              },
+            },
             "title": "translateDocument_200_response",
+            "type": "object",
           },
         },
       },
@@ -90,16 +249,59 @@ You may specify the glossary to use for the document translation using the \`glo
 If the translation is still in progress, the estimated time remaining is also included in the response.",
       "field": "getDocumentStatus",
       "headers": Object {
+        "Content-Type": "application/x-www-form-urlencoded",
         "accept": "application/json",
       },
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/document/{args.document_id}",
+      "requestSchema": Object {
+        "properties": Object {
+          "document_key": Object {
+            "description": "The document encryption key that was sent to the client when the document was uploaded to the API.",
+            "example": "0CB0054F1C132C1625B392EADDA41CB754A742822F6877173029A6C487E7F60A",
+            "type": "string",
+          },
+        },
+        "required": Array [
+          "document_key",
+        ],
+        "title": "getDocumentStatus_request",
+        "type": "object",
+      },
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "./fixtures/deepl.json#/paths/~1document~1{document_id}/post/responses/200/content/application~1json/schema",
+            "properties": Object {
+              "billed_characters": Object {
+                "description": "The number of characters billed to your account.",
+                "type": "integer",
+              },
+              "document_id": Object {
+                "description": "A unique ID assigned to the uploaded document and the requested translation process. The same ID that was used when requesting the translation status.",
+                "type": "string",
+              },
+              "error_message": Object {
+                "description": "A short description of the error, if available.
+Note that the content is subject to change.
+This parameter may be included if an error occurred during translation.",
+                "type": "string",
+              },
+              "seconds_remaining": Object {
+                "description": "Estimated number of seconds until the translation is done.
+This parameter is only included while \`status\` is \`\\"translating\\"\`.",
+                "type": "integer",
+              },
+              "status": Object {
+                "$ref": "#/definitions/mutation_getDocumentStatus_status",
+              },
+            },
+            "required": Array [
+              "document_id",
+              "status",
+            ],
             "title": "getDocumentStatus_200_response",
+            "type": "object",
           },
         },
       },
@@ -121,16 +323,57 @@ If the translation is still in progress, the estimated time remaining is also in
 For privacy reasons the translated document is automatically removed from the server once it was downloaded and cannot be downloaded again.",
       "field": "downloadDocument",
       "headers": Object {
-        "accept": "application/octet-stream",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "accept": "application/json",
       },
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/document/{args.document_id}/result",
+      "requestSchema": Object {
+        "properties": Object {
+          "document_key": Object {
+            "description": "The document encryption key that was sent to the client when the document was uploaded to the API.",
+            "example": "0CB0054F1C132C1625B392EADDA41CB754A742822F6877173029A6C487E7F60A",
+            "type": "string",
+          },
+        },
+        "required": Array [
+          "document_key",
+        ],
+        "title": "getDocumentStatus_request",
+        "type": "object",
+      },
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "./fixtures/deepl.json#/paths/~1document~1{document_id}~1result/post/responses/200/content/application~1octet-stream/schema",
             "title": "downloadDocument_200_response",
+            "type": "string",
+          },
+        },
+        "404": Object {
+          "responseSchema": Object {
+            "$resolvedRef": "/components/schemas/DocumentTranslationError",
+            "properties": Object {
+              "message": Object {
+                "description": "detailed error message",
+                "type": "string",
+              },
+            },
+            "title": "DocumentTranslationError",
+            "type": "object",
+          },
+        },
+        "503": Object {
+          "responseSchema": Object {
+            "$resolvedRef": "/components/schemas/DocumentTranslationError",
+            "properties": Object {
+              "message": Object {
+                "description": "detailed error message",
+                "type": "string",
+              },
+            },
+            "title": "DocumentTranslationError",
+            "type": "object",
           },
         },
       },
@@ -149,8 +392,33 @@ For privacy reasons the translated document is automatically removed from the se
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "./fixtures/deepl.json#/paths/~1glossary-language-pairs/get/responses/200/content/application~1json/schema",
+            "properties": Object {
+              "supported_languages": Object {
+                "description": "The list of supported languages",
+                "items": Object {
+                  "$ref": "#/definitions/query_listGlossaryLanguages_oneOf_0_supported_languages_items",
+                },
+                "type": "array",
+              },
+            },
             "title": "listGlossaryLanguages_200_response",
+            "type": "object",
+          },
+        },
+        "400": Object {
+          "responseSchema": Object {
+            "properties": Object {
+              "detail": Object {
+                "description": "More specific description of the error.",
+                "type": "string",
+              },
+              "message": Object {
+                "description": "Generic description of the error.",
+                "type": "string",
+              },
+            },
+            "title": "listGlossaryLanguages_400_response",
+            "type": "object",
           },
         },
       },
@@ -167,12 +435,99 @@ For privacy reasons the translated document is automatically removed from the se
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/glossaries",
-      "requestSchema": "./fixtures/deepl.json#/paths/~1glossaries/post/requestBody/content/application~1x-www-form-urlencoded/schema",
+      "requestSchema": Object {
+        "properties": Object {
+          "entries": Object {
+            "description": "The entries of the glossary. The entries have to be specified in the format provided by the \`entries_format\` parameter.",
+            "example": "Hello!	Guten Tag!",
+            "type": "string",
+          },
+          "entries_format": Object {
+            "$ref": "#/definitions/mutationInput_createGlossary_input_entries_format",
+          },
+          "name": Object {
+            "description": "Name to be associated with the glossary.",
+            "example": "My Glossary",
+            "type": "string",
+          },
+          "source_lang": Object {
+            "$ref": "#/definitions/GlossarySourceLanguage",
+          },
+          "target_lang": Object {
+            "$ref": "#/definitions/GlossaryTargetLanguage",
+          },
+        },
+        "required": Array [
+          "name",
+          "source_lang",
+          "target_lang",
+          "entries",
+          "entries_format",
+        ],
+        "title": "createGlossary_request",
+        "type": "object",
+      },
       "responseByStatusCode": Object {
         "201": Object {
           "responseSchema": Object {
-            "$ref": "./fixtures/deepl.json#/paths/~1glossaries/post/responses/201/content/application~1json/schema",
-            "title": "createGlossary_201_response",
+            "$resolvedRef": "/components/schemas/Glossary",
+            "example": Object {
+              "creation_time": "2021-08-03T14:16:18.329Z",
+              "entry_count": 1,
+              "glossary_id": "def3a26b-3e84-45b3-84ae-0c0aaf3525f7",
+              "name": "My Glossary",
+              "ready": true,
+              "source_lang": "en",
+              "target_lang": "de",
+            },
+            "properties": Object {
+              "creation_time": Object {
+                "description": "The creation time of the glossary in the ISO 8601-1:2019 format (e.g.: \`2021-08-03T14:16:18.329Z\`).",
+                "format": "date-time",
+                "type": "string",
+              },
+              "entry_count": Object {
+                "description": "The number of entries in the glossary.",
+                "type": "integer",
+              },
+              "glossary_id": Object {
+                "$ref": "#/definitions/GlossaryId",
+              },
+              "name": Object {
+                "description": "Name associated with the glossary.",
+                "type": "string",
+              },
+              "ready": Object {
+                "description": "Indicates if the newly created glossary can already be used in \`translate\` requests.
+If the created glossary is not yet ready, you have to wait and check the \`ready\` status
+of the glossary before using it in a \`translate\` request.",
+                "type": "boolean",
+              },
+              "source_lang": Object {
+                "$ref": "#/definitions/GlossarySourceLanguage",
+              },
+              "target_lang": Object {
+                "$ref": "#/definitions/GlossaryTargetLanguage",
+              },
+            },
+            "title": "Glossary",
+            "type": "object",
+          },
+        },
+        "400": Object {
+          "responseSchema": Object {
+            "properties": Object {
+              "detail": Object {
+                "description": "More specific description of the error.",
+                "type": "string",
+              },
+              "message": Object {
+                "description": "Generic description of the error.",
+                "type": "string",
+              },
+            },
+            "title": "listGlossaryLanguages_400_response",
+            "type": "object",
           },
         },
       },
@@ -191,8 +546,32 @@ For privacy reasons the translated document is automatically removed from the se
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "./fixtures/deepl.json#/paths/~1glossaries/get/responses/200/content/application~1json/schema",
+            "properties": Object {
+              "glossaries": Object {
+                "items": Object {
+                  "$ref": "#/definitions/Glossary",
+                },
+                "type": "array",
+              },
+            },
             "title": "listGlossaries_200_response",
+            "type": "object",
+          },
+        },
+        "400": Object {
+          "responseSchema": Object {
+            "properties": Object {
+              "detail": Object {
+                "description": "More specific description of the error.",
+                "type": "string",
+              },
+              "message": Object {
+                "description": "Generic description of the error.",
+                "type": "string",
+              },
+            },
+            "title": "listGlossaryLanguages_400_response",
+            "type": "object",
           },
         },
       },
@@ -219,8 +598,64 @@ For privacy reasons the translated document is automatically removed from the se
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "./fixtures/deepl.json#/paths/~1glossaries~1{glossary_id}/get/responses/200/content/application~1json/schema",
-            "title": "getGlossary_200_response",
+            "$resolvedRef": "/components/schemas/Glossary",
+            "example": Object {
+              "creation_time": "2021-08-03T14:16:18.329Z",
+              "entry_count": 1,
+              "glossary_id": "def3a26b-3e84-45b3-84ae-0c0aaf3525f7",
+              "name": "My Glossary",
+              "ready": true,
+              "source_lang": "en",
+              "target_lang": "de",
+            },
+            "properties": Object {
+              "creation_time": Object {
+                "description": "The creation time of the glossary in the ISO 8601-1:2019 format (e.g.: \`2021-08-03T14:16:18.329Z\`).",
+                "format": "date-time",
+                "type": "string",
+              },
+              "entry_count": Object {
+                "description": "The number of entries in the glossary.",
+                "type": "integer",
+              },
+              "glossary_id": Object {
+                "$ref": "#/definitions/GlossaryId",
+              },
+              "name": Object {
+                "description": "Name associated with the glossary.",
+                "type": "string",
+              },
+              "ready": Object {
+                "description": "Indicates if the newly created glossary can already be used in \`translate\` requests.
+If the created glossary is not yet ready, you have to wait and check the \`ready\` status
+of the glossary before using it in a \`translate\` request.",
+                "type": "boolean",
+              },
+              "source_lang": Object {
+                "$ref": "#/definitions/GlossarySourceLanguage",
+              },
+              "target_lang": Object {
+                "$ref": "#/definitions/GlossaryTargetLanguage",
+              },
+            },
+            "title": "Glossary",
+            "type": "object",
+          },
+        },
+        "400": Object {
+          "responseSchema": Object {
+            "properties": Object {
+              "detail": Object {
+                "description": "More specific description of the error.",
+                "type": "string",
+              },
+              "message": Object {
+                "description": "Generic description of the error.",
+                "type": "string",
+              },
+            },
+            "title": "listGlossaryLanguages_400_response",
+            "type": "object",
           },
         },
       },
@@ -238,6 +673,9 @@ For privacy reasons the translated document is automatically removed from the se
       },
       "description": "Deletes the specified glossary.",
       "field": "deleteGlossary",
+      "headers": Object {
+        "accept": "application/json",
+      },
       "method": "DELETE",
       "operationHeaders": undefined,
       "path": "/glossaries/{args.glossary_id}",
@@ -247,6 +685,22 @@ For privacy reasons the translated document is automatically removed from the se
             "description": "Returns no content upon success.",
             "title": "deleteGlossary_204_response",
             "type": "null",
+          },
+        },
+        "400": Object {
+          "responseSchema": Object {
+            "properties": Object {
+              "detail": Object {
+                "description": "More specific description of the error.",
+                "type": "string",
+              },
+              "message": Object {
+                "description": "Generic description of the error.",
+                "type": "string",
+              },
+            },
+            "title": "listGlossaryLanguages_400_response",
+            "type": "object",
           },
         },
       },
@@ -274,7 +728,7 @@ For privacy reasons the translated document is automatically removed from the se
       "description": "List the entries of a single glossary in the format specified by the \`Accept\` header.",
       "field": "getGlossaryEntries",
       "headers": Object {
-        "accept": "text/tab-separated-values",
+        "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
@@ -283,6 +737,22 @@ For privacy reasons the translated document is automatically removed from the se
         "200": Object {
           "responseSchema": Object {
             "type": "string",
+          },
+        },
+        "400": Object {
+          "responseSchema": Object {
+            "properties": Object {
+              "detail": Object {
+                "description": "More specific description of the error.",
+                "type": "string",
+              },
+              "message": Object {
+                "description": "Generic description of the error.",
+                "type": "string",
+              },
+            },
+            "title": "listGlossaryLanguages_400_response",
+            "type": "object",
           },
         },
       },
@@ -313,8 +783,40 @@ Document usage is only included for non-developer accounts, and team-combined do
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "./fixtures/deepl.json#/paths/~1usage/get/responses/200/content/application~1json/schema",
+            "properties": Object {
+              "character_count": Object {
+                "description": "Characters translated so far in the current billing period.",
+                "format": "int64",
+                "type": "integer",
+              },
+              "character_limit": Object {
+                "description": "Current maximum number of characters that can be translated per billing period.",
+                "format": "int64",
+                "type": "integer",
+              },
+              "document_count": Object {
+                "description": "Current maximum number of documents that can be translated per billing period.",
+                "format": "int64",
+                "type": "integer",
+              },
+              "document_limit": Object {
+                "description": "Documents translated so far in the current billing period.",
+                "format": "int64",
+                "type": "integer",
+              },
+              "team_document_count": Object {
+                "description": "Current maximum number of documents that can be translated by the team per billing period.",
+                "format": "int64",
+                "type": "integer",
+              },
+              "team_document_limit": Object {
+                "description": "Documents translated by all users in the team so far in the current billing period.",
+                "format": "int64",
+                "type": "integer",
+              },
+            },
             "title": "getUsage_200_response",
+            "type": "object",
           },
         },
       },
@@ -351,8 +853,30 @@ Document usage is only included for non-developer accounts, and team-combined do
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "./fixtures/deepl.json#/paths/~1languages/get/responses/200/content/application~1json/schema",
+            "items": Object {
+              "properties": Object {
+                "language": Object {
+                  "description": "The language code of the given language.",
+                  "type": "string",
+                },
+                "name": Object {
+                  "description": "Name of the language in English.",
+                  "type": "string",
+                },
+                "supports_formality": Object {
+                  "description": "Denotes formality support in case of a target language listing.",
+                  "type": "boolean",
+                },
+              },
+              "required": Array [
+                "language",
+                "name",
+              ],
+              "title": "query_getLanguages_items",
+              "type": "object",
+            },
             "title": "getLanguages_200_response",
+            "type": "array",
           },
         },
       },
@@ -363,6 +887,17 @@ Document usage is only included for non-developer accounts, and team-combined do
   "referencedSchema": Object {
     "$ref": "#/definitions/_schema",
     "definitions": Object {
+      "DocumentTranslationError": Object {
+        "$resolvedRef": "/components/schemas/DocumentTranslationError",
+        "properties": Object {
+          "message": Object {
+            "description": "detailed error message",
+            "type": "string",
+          },
+        },
+        "title": "DocumentTranslationError",
+        "type": "object",
+      },
       "Formality": Object {
         "$resolvedRef": "/components/schemas/Formality",
         "default": "default",
@@ -471,13 +1006,13 @@ of the glossary before using it in a \`translate\` request.",
       "Mutation": Object {
         "properties": Object {
           "createGlossary": Object {
-            "$ref": "#/definitions/Glossary",
+            "$ref": "#/definitions/createGlossary_response",
           },
           "deleteGlossary": Object {
-            "$ref": "#/definitions/deleteGlossary_204_response",
+            "$ref": "#/definitions/deleteGlossary_response",
           },
           "downloadDocument": Object {
-            "$ref": "#/definitions/downloadDocument_200_response",
+            "$ref": "#/definitions/downloadDocument_response",
           },
           "getDocumentStatus": Object {
             "$ref": "#/definitions/getDocumentStatus_200_response",
@@ -519,10 +1054,10 @@ of the glossary before using it in a \`translate\` request.",
       "Query": Object {
         "properties": Object {
           "getGlossary": Object {
-            "$ref": "#/definitions/Glossary",
+            "$ref": "#/definitions/getGlossary_response",
           },
           "getGlossaryEntries": Object {
-            "type": "string",
+            "$ref": "#/definitions/getGlossaryEntries_response",
           },
           "getLanguages": Object {
             "$ref": "#/definitions/getLanguages_200_response",
@@ -531,10 +1066,10 @@ of the glossary before using it in a \`translate\` request.",
             "$ref": "#/definitions/getUsage_200_response",
           },
           "listGlossaries": Object {
-            "$ref": "#/definitions/listGlossaries_200_response",
+            "$ref": "#/definitions/listGlossaries_response",
           },
           "listGlossaryLanguages": Object {
-            "$ref": "#/definitions/listGlossaryLanguages_200_response",
+            "$ref": "#/definitions/listGlossaryLanguages_response",
           },
         },
         "title": "Query",
@@ -704,18 +1239,87 @@ If this parameter is omitted, the API will attempt to detect the language of the
         "title": "_schema",
         "type": "object",
       },
+      "createGlossary_request": Object {
+        "properties": Object {
+          "entries": Object {
+            "description": "The entries of the glossary. The entries have to be specified in the format provided by the \`entries_format\` parameter.",
+            "example": "Hello!	Guten Tag!",
+            "type": "string",
+          },
+          "entries_format": Object {
+            "$ref": "#/definitions/mutationInput_createGlossary_input_entries_format",
+          },
+          "name": Object {
+            "description": "Name to be associated with the glossary.",
+            "example": "My Glossary",
+            "type": "string",
+          },
+          "source_lang": Object {
+            "$ref": "#/definitions/GlossarySourceLanguage",
+          },
+          "target_lang": Object {
+            "$ref": "#/definitions/GlossaryTargetLanguage",
+          },
+        },
+        "required": Array [
+          "name",
+          "source_lang",
+          "target_lang",
+          "entries",
+          "entries_format",
+        ],
+        "title": "createGlossary_request",
+        "type": "object",
+      },
+      "createGlossary_response": Object {
+        "$comment": "statusCodeOneOfIndexMap:{\\"201\\":0,\\"400\\":1}",
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/Glossary",
+          },
+          Object {
+            "$ref": "#/definitions/listGlossaryLanguages_400_response",
+          },
+        ],
+        "title": "createGlossary_response",
+      },
       "deleteGlossary_204_response": Object {
         "description": "Returns no content upon success.",
         "title": "deleteGlossary_204_response",
         "type": "null",
       },
+      "deleteGlossary_response": Object {
+        "$comment": "statusCodeOneOfIndexMap:{\\"204\\":0,\\"400\\":1}",
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/deleteGlossary_204_response",
+          },
+          Object {
+            "$ref": "#/definitions/listGlossaryLanguages_400_response",
+          },
+        ],
+        "title": "deleteGlossary_response",
+      },
       "downloadDocument_200_response": Object {
-        "$resolvedRef": "/paths/~1document~1{document_id}~1result/post/responses/200/content/application~1octet-stream/schema",
         "title": "downloadDocument_200_response",
         "type": "string",
       },
+      "downloadDocument_response": Object {
+        "$comment": "statusCodeOneOfIndexMap:{\\"200\\":0,\\"404\\":1,\\"503\\":2}",
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/downloadDocument_200_response",
+          },
+          Object {
+            "$ref": "#/definitions/DocumentTranslationError",
+          },
+          Object {
+            "$ref": "#/definitions/DocumentTranslationError",
+          },
+        ],
+        "title": "downloadDocument_response",
+      },
       "getDocumentStatus_200_response": Object {
-        "$resolvedRef": "/paths/~1document~1{document_id}/post/responses/200/content/application~1json/schema",
         "properties": Object {
           "billed_characters": Object {
             "description": "The number of characters billed to your account.",
@@ -747,8 +1351,45 @@ This parameter is only included while \`status\` is \`\\"translating\\"\`.",
         "title": "getDocumentStatus_200_response",
         "type": "object",
       },
+      "getDocumentStatus_request": Object {
+        "properties": Object {
+          "document_key": Object {
+            "description": "The document encryption key that was sent to the client when the document was uploaded to the API.",
+            "example": "0CB0054F1C132C1625B392EADDA41CB754A742822F6877173029A6C487E7F60A",
+            "type": "string",
+          },
+        },
+        "required": Array [
+          "document_key",
+        ],
+        "title": "getDocumentStatus_request",
+        "type": "object",
+      },
+      "getGlossaryEntries_response": Object {
+        "$comment": "statusCodeOneOfIndexMap:{\\"200\\":0,\\"400\\":1}",
+        "oneOf": Array [
+          Object {
+            "type": "string",
+          },
+          Object {
+            "$ref": "#/definitions/listGlossaryLanguages_400_response",
+          },
+        ],
+        "title": "getGlossaryEntries_response",
+      },
+      "getGlossary_response": Object {
+        "$comment": "statusCodeOneOfIndexMap:{\\"200\\":0,\\"400\\":1}",
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/Glossary",
+          },
+          Object {
+            "$ref": "#/definitions/listGlossaryLanguages_400_response",
+          },
+        ],
+        "title": "getGlossary_response",
+      },
       "getLanguages_200_response": Object {
-        "$resolvedRef": "/paths/~1languages/get/responses/200/content/application~1json/schema",
         "items": Object {
           "properties": Object {
             "language": Object {
@@ -775,7 +1416,6 @@ This parameter is only included while \`status\` is \`\\"translating\\"\`.",
         "type": "array",
       },
       "getUsage_200_response": Object {
-        "$resolvedRef": "/paths/~1usage/get/responses/200/content/application~1json/schema",
         "properties": Object {
           "character_count": Object {
             "description": "Characters translated so far in the current billing period.",
@@ -812,7 +1452,6 @@ This parameter is only included while \`status\` is \`\\"translating\\"\`.",
         "type": "object",
       },
       "listGlossaries_200_response": Object {
-        "$resolvedRef": "/paths/~1glossaries/get/responses/200/content/application~1json/schema",
         "properties": Object {
           "glossaries": Object {
             "items": Object {
@@ -824,13 +1463,24 @@ This parameter is only included while \`status\` is \`\\"translating\\"\`.",
         "title": "listGlossaries_200_response",
         "type": "object",
       },
+      "listGlossaries_response": Object {
+        "$comment": "statusCodeOneOfIndexMap:{\\"200\\":0,\\"400\\":1}",
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/listGlossaries_200_response",
+          },
+          Object {
+            "$ref": "#/definitions/listGlossaryLanguages_400_response",
+          },
+        ],
+        "title": "listGlossaries_response",
+      },
       "listGlossaryLanguages_200_response": Object {
-        "$resolvedRef": "/paths/~1glossary-language-pairs/get/responses/200/content/application~1json/schema",
         "properties": Object {
           "supported_languages": Object {
             "description": "The list of supported languages",
             "items": Object {
-              "$ref": "#/definitions/query_listGlossaryLanguages_supported_languages_items",
+              "$ref": "#/definitions/query_listGlossaryLanguages_oneOf_0_supported_languages_items",
             },
             "type": "array",
           },
@@ -838,10 +1488,36 @@ This parameter is only included while \`status\` is \`\\"translating\\"\`.",
         "title": "listGlossaryLanguages_200_response",
         "type": "object",
       },
+      "listGlossaryLanguages_400_response": Object {
+        "properties": Object {
+          "detail": Object {
+            "description": "More specific description of the error.",
+            "type": "string",
+          },
+          "message": Object {
+            "description": "Generic description of the error.",
+            "type": "string",
+          },
+        },
+        "title": "listGlossaryLanguages_400_response",
+        "type": "object",
+      },
+      "listGlossaryLanguages_response": Object {
+        "$comment": "statusCodeOneOfIndexMap:{\\"200\\":0,\\"400\\":1}",
+        "oneOf": Array [
+          Object {
+            "$ref": "#/definitions/listGlossaryLanguages_200_response",
+          },
+          Object {
+            "$ref": "#/definitions/listGlossaryLanguages_400_response",
+          },
+        ],
+        "title": "listGlossaryLanguages_response",
+      },
       "mutationInput_createGlossary": Object {
         "properties": Object {
           "input": Object {
-            "$ref": "#/definitions/paths_glossaries_post_requestBody_content_application_x_www_form_urlencoded_schema",
+            "$ref": "#/definitions/createGlossary_request",
           },
         },
         "title": "mutationInput_createGlossary",
@@ -889,6 +1565,9 @@ This parameter is only included while \`status\` is \`\\"translating\\"\`.",
             "nullable": false,
             "type": "string",
           },
+          "input": Object {
+            "$ref": "#/definitions/getDocumentStatus_request",
+          },
         },
         "title": "mutationInput_downloadDocument",
         "type": "object",
@@ -901,6 +1580,9 @@ This parameter is only included while \`status\` is \`\\"translating\\"\`.",
             "nullable": false,
             "type": "string",
           },
+          "input": Object {
+            "$ref": "#/definitions/getDocumentStatus_request",
+          },
         },
         "title": "mutationInput_getDocumentStatus",
         "type": "object",
@@ -908,7 +1590,7 @@ This parameter is only included while \`status\` is \`\\"translating\\"\`.",
       "mutationInput_translateDocument": Object {
         "properties": Object {
           "input": Object {
-            "$ref": "#/definitions/paths_document_post_requestBody_content_multipart_form_data_schema",
+            "$ref": "#/definitions/translateDocument_request",
           },
         },
         "title": "mutationInput_translateDocument",
@@ -917,7 +1599,7 @@ This parameter is only included while \`status\` is \`\\"translating\\"\`.",
       "mutationInput_translateText": Object {
         "properties": Object {
           "input": Object {
-            "$ref": "#/definitions/paths_translate_post_requestBody_content_application_x_www_form_urlencoded_schema",
+            "$ref": "#/definitions/translateText_request",
           },
         },
         "title": "mutationInput_translateText",
@@ -1063,8 +1745,107 @@ Satz.</div>
         "title": "mutation_translateText_translations_items_detected_source_language_allOf_1",
         "type": "object",
       },
-      "paths_document_post_requestBody_content_multipart_form_data_schema": Object {
-        "$resolvedRef": "/paths/~1document/post/requestBody/content/multipart~1form-data/schema",
+      "queryInput_getGlossary": Object {
+        "properties": Object {
+          "glossary_id": Object {
+            "description": "A unique ID assigned to the glossary.",
+            "name": "glossary_id",
+            "nullable": false,
+            "type": "string",
+          },
+        },
+        "title": "queryInput_getGlossary",
+        "type": "object",
+      },
+      "queryInput_getGlossaryEntries": Object {
+        "properties": Object {
+          "glossary_id": Object {
+            "description": "A unique ID assigned to the glossary.",
+            "name": "glossary_id",
+            "nullable": false,
+            "type": "string",
+          },
+        },
+        "title": "queryInput_getGlossaryEntries",
+        "type": "object",
+      },
+      "queryInput_getLanguages": Object {
+        "properties": Object {
+          "type": Object {
+            "$ref": "#/definitions/queryInput_getLanguages_type",
+          },
+        },
+        "title": "queryInput_getLanguages",
+        "type": "object",
+      },
+      "queryInput_getLanguages_type": Object {
+        "default": "source",
+        "description": "Sets whether source or target languages should be listed. Possible options are:
+ * \`source\` (default): For languages that can be used in the \`source_lang\` parameter of [translate](https://www.deepl.com/docs-api/translating-text/translate-text) requests.
+ * \`target\`: For languages that can be used in the \`target_lang\` parameter of [translate](https://www.deepl.com/docs-api/translating-text/translate-text) requests.",
+        "enum": Array [
+          "source",
+          "target",
+        ],
+        "name": "type",
+        "title": "queryInput_getLanguages_type",
+        "type": "string",
+      },
+      "query_getLanguages_items": Object {
+        "properties": Object {
+          "language": Object {
+            "description": "The language code of the given language.",
+            "type": "string",
+          },
+          "name": Object {
+            "description": "Name of the language in English.",
+            "type": "string",
+          },
+          "supports_formality": Object {
+            "description": "Denotes formality support in case of a target language listing.",
+            "type": "boolean",
+          },
+        },
+        "required": Array [
+          "language",
+          "name",
+        ],
+        "title": "query_getLanguages_items",
+        "type": "object",
+      },
+      "query_listGlossaryLanguages_oneOf_0_supported_languages_items": Object {
+        "properties": Object {
+          "source_lang": Object {
+            "description": "The language in which the source texts in the glossary are specified.",
+            "type": "string",
+          },
+          "target_lang": Object {
+            "description": "The language in which the target texts in the glossary are specified.",
+            "type": "string",
+          },
+        },
+        "required": Array [
+          "source_lang",
+          "target_lang",
+        ],
+        "title": "query_listGlossaryLanguages_oneOf_0_supported_languages_items",
+        "type": "object",
+      },
+      "translateDocument_200_response": Object {
+        "properties": Object {
+          "document_id": Object {
+            "description": "A unique ID assigned to the uploaded document and the translation process. Must be used when referring to this particular document in subsequent API requests.",
+            "type": "string",
+          },
+          "document_key": Object {
+            "description": "A unique key that is used to encrypt the uploaded document as well as the resulting translation on the server side. Must be provided with every subsequent API request regarding this particular document.",
+            "type": "string",
+          },
+        },
+        "title": "translateDocument_200_response",
+        "type": "object",
+      },
+      "translateDocument_request": Object {
         "properties": Object {
           "file": Object {
             "description": "The document file to be translated. The file name should be included in this part's content disposition. As an alternative, the filename parameter can be used. The following file types and extensions are supported:
@@ -1098,44 +1879,34 @@ Please note that in order to translate PDF documents you need to give one-time c
           "target_lang",
           "file",
         ],
-        "title": "paths_document_post_requestBody_content_multipart_form_data_schema",
+        "title": "translateDocument_request",
         "type": "object",
       },
-      "paths_glossaries_post_requestBody_content_application_x_www_form_urlencoded_schema": Object {
-        "$resolvedRef": "/paths/~1glossaries/post/requestBody/content/application~1x-www-form-urlencoded/schema",
+      "translateText_200_response": Object {
         "properties": Object {
-          "entries": Object {
-            "description": "The entries of the glossary. The entries have to be specified in the format provided by the \`entries_format\` parameter.",
-            "example": "Hello!	Guten Tag!",
-            "type": "string",
-          },
-          "entries_format": Object {
-            "$ref": "#/definitions/mutationInput_createGlossary_input_entries_format",
-          },
-          "name": Object {
-            "description": "Name to be associated with the glossary.",
-            "example": "My Glossary",
-            "type": "string",
-          },
-          "source_lang": Object {
-            "$ref": "#/definitions/GlossarySourceLanguage",
-          },
-          "target_lang": Object {
-            "$ref": "#/definitions/GlossaryTargetLanguage",
+          "translations": Object {
+            "items": Object {
+              "$ref": "#/definitions/mutation_translateText_translations_items",
+            },
+            "minItems": 1,
+            "type": "array",
           },
         },
-        "required": Array [
-          "name",
-          "source_lang",
-          "target_lang",
-          "entries",
-          "entries_format",
-        ],
-        "title": "paths_glossaries_post_requestBody_content_application_x_www_form_urlencoded_schema",
+        "title": "translateText_200_response",
         "type": "object",
       },
-      "paths_translate_post_requestBody_content_application_x_www_form_urlencoded_schema": Object {
-        "$resolvedRef": "/paths/~1translate/post/requestBody/content/application~1x-www-form-urlencoded/schema",
+      "translateText_request": Object {
+        "examples": Array [
+          Object {
+            "summary": "Basic Example",
+            "value": Object {
+              "target_lang": "DE",
+              "text": Array [
+                "Hello, world",
+              ],
+            },
+          },
+        ],
         "properties": Object {
           "formality": Object {
             "$ref": "#/definitions/Formality",
@@ -1226,122 +1997,7 @@ See the example in the \`outline_detection\` parameter's description.",
           "text",
           "target_lang",
         ],
-        "title": "paths_translate_post_requestBody_content_application_x_www_form_urlencoded_schema",
-        "type": "object",
-      },
-      "queryInput_getGlossary": Object {
-        "properties": Object {
-          "glossary_id": Object {
-            "description": "A unique ID assigned to the glossary.",
-            "name": "glossary_id",
-            "nullable": false,
-            "type": "string",
-          },
-        },
-        "title": "queryInput_getGlossary",
-        "type": "object",
-      },
-      "queryInput_getGlossaryEntries": Object {
-        "properties": Object {
-          "glossary_id": Object {
-            "description": "A unique ID assigned to the glossary.",
-            "name": "glossary_id",
-            "nullable": false,
-            "type": "string",
-          },
-        },
-        "title": "queryInput_getGlossaryEntries",
-        "type": "object",
-      },
-      "queryInput_getLanguages": Object {
-        "properties": Object {
-          "type": Object {
-            "$ref": "#/definitions/queryInput_getLanguages_type",
-          },
-        },
-        "title": "queryInput_getLanguages",
-        "type": "object",
-      },
-      "queryInput_getLanguages_type": Object {
-        "default": "source",
-        "description": "Sets whether source or target languages should be listed. Possible options are:
- * \`source\` (default): For languages that can be used in the \`source_lang\` parameter of [translate](https://www.deepl.com/docs-api/translating-text/translate-text) requests.
- * \`target\`: For languages that can be used in the \`target_lang\` parameter of [translate](https://www.deepl.com/docs-api/translating-text/translate-text) requests.",
-        "enum": Array [
-          "source",
-          "target",
-        ],
-        "name": "type",
-        "title": "queryInput_getLanguages_type",
-        "type": "string",
-      },
-      "query_getLanguages_items": Object {
-        "properties": Object {
-          "language": Object {
-            "description": "The language code of the given language.",
-            "type": "string",
-          },
-          "name": Object {
-            "description": "Name of the language in English.",
-            "type": "string",
-          },
-          "supports_formality": Object {
-            "description": "Denotes formality support in case of a target language listing.",
-            "type": "boolean",
-          },
-        },
-        "required": Array [
-          "language",
-          "name",
-        ],
-        "title": "query_getLanguages_items",
-        "type": "object",
-      },
-      "query_listGlossaryLanguages_supported_languages_items": Object {
-        "properties": Object {
-          "source_lang": Object {
-            "description": "The language in which the source texts in the glossary are specified.",
-            "type": "string",
-          },
-          "target_lang": Object {
-            "description": "The language in which the target texts in the glossary are specified.",
-            "type": "string",
-          },
-        },
-        "required": Array [
-          "source_lang",
-          "target_lang",
-        ],
-        "title": "query_listGlossaryLanguages_supported_languages_items",
-        "type": "object",
-      },
-      "translateDocument_200_response": Object {
-        "$resolvedRef": "/paths/~1document/post/responses/200/content/application~1json/schema",
-        "properties": Object {
-          "document_id": Object {
-            "description": "A unique ID assigned to the uploaded document and the translation process. Must be used when referring to this particular document in subsequent API requests.",
-            "type": "string",
-          },
-          "document_key": Object {
-            "description": "A unique key that is used to encrypt the uploaded document as well as the resulting translation on the server side. Must be provided with every subsequent API request regarding this particular document.",
-            "type": "string",
-          },
-        },
-        "title": "translateDocument_200_response",
-        "type": "object",
-      },
-      "translateText_200_response": Object {
-        "$resolvedRef": "/paths/~1translate/post/responses/200/content/application~1json/schema",
-        "properties": Object {
-          "translations": Object {
-            "items": Object {
-              "$ref": "#/definitions/mutation_translateText_translations_items",
-            },
-            "minItems": 1,
-            "type": "array",
-          },
-        },
-        "title": "translateText_200_response",
+        "title": "translateText_request",
         "type": "object",
       },
     },
@@ -1355,38 +2011,51 @@ exports[`DeepL should generate the correct schema 1`] = `
   mutation: Mutation
 }
 
+directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
+
 type Query {
   \\"Retrieve the list of language pairs supported by the glossary feature.\\"
-  listGlossaryLanguages: listGlossaryLanguages_200_response
+  listGlossaryLanguages: listGlossaryLanguages_response
   \\"List all glossaries and their meta-information, but not the glossary entries.\\"
-  listGlossaries: listGlossaries_200_response
+  listGlossaries: listGlossaries_response
   \\"Retrieve meta information for a single glossary, omitting the glossary entries.\\"
   getGlossary(
     \\"A unique ID assigned to the glossary.\\"
     glossary_id: String!
-  ): Glossary
+  ): getGlossary_response
   \\"List the entries of a single glossary in the format specified by the \`Accept\` header.\\"
   getGlossaryEntries(
     \\"A unique ID assigned to the glossary.\\"
     glossary_id: String!
-  ): String
+  ): getGlossaryEntries_response
   \\"Retrieve usage information within the current billing period together with the corresponding account limits. Usage is returned for:\\\\n- translated characters\\\\n- translated documents\\\\n- translated documents, team totals (for team accounts only)\\\\n\\\\nCharacter usage includes both text and document translations, and is measured by the source text length in Unicode code points,\\\\nso for example \\\\\\"A\\\\\\", \\\\\\"Δ\\\\\\", \\\\\\"あ\\\\\\", and \\\\\\"深\\\\\\" are each counted as a single character.\\\\n\\\\nDocument usage only includes document translations, and is measured in individual documents.\\\\n\\\\nDepending on the user account type, some usage types will be omitted.\\\\nCharacter usage is only included for developer accounts.\\\\nDocument usage is only included for non-developer accounts, and team-combined document usage is only included for non-developer team accounts.\\"
   getUsage: getUsage_200_response
   \\"Retrieve the list of languages that are currently supported for translation, either as source or target language, respectively.\\"
   getLanguages(type: queryInput_getLanguages_type = source): [query_getLanguages_items]
 }
 
+union listGlossaryLanguages_response = listGlossaryLanguages_200_response | listGlossaryLanguages_400_response
+
 type listGlossaryLanguages_200_response {
   \\"The list of supported languages\\"
-  supported_languages: [query_listGlossaryLanguages_supported_languages_items]
+  supported_languages: [query_listGlossaryLanguages_oneOf_0_supported_languages_items]
 }
 
-type query_listGlossaryLanguages_supported_languages_items {
+type query_listGlossaryLanguages_oneOf_0_supported_languages_items {
   \\"The language in which the source texts in the glossary are specified.\\"
   source_lang: String!
   \\"The language in which the target texts in the glossary are specified.\\"
   target_lang: String!
 }
+
+type listGlossaryLanguages_400_response {
+  \\"Generic description of the error.\\"
+  message: String
+  \\"More specific description of the error.\\"
+  detail: String
+}
+
+union listGlossaries_response = listGlossaries_200_response | listGlossaryLanguages_400_response
 
 type listGlossaries_200_response {
   glossaries: [Glossary]
@@ -1428,6 +2097,14 @@ enum GlossaryTargetLanguage {
 \\"A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.\\"
 scalar DateTime
 
+union getGlossary_response = Glossary | listGlossaryLanguages_400_response
+
+union getGlossaryEntries_response = String_container | listGlossaryLanguages_400_response
+
+type String_container {
+  String: String
+}
+
 type getUsage_200_response {
   \\"Characters translated so far in the current billing period.\\"
   character_count: BigInt
@@ -1463,26 +2140,28 @@ enum queryInput_getLanguages_type {
 
 type Mutation {
   \\"The translate function.\\"
-  translateText(input: paths_translate_post_requestBody_content_application_x_www_form_urlencoded_schema_Input): translateText_200_response
+  translateText(input: translateText_request_Input): translateText_200_response
   \\"This call uploads a document and queues it for translation.\\\\nThe call returns once the upload is complete, returning a document ID and key which can be used to\\\\n[query the translation status](https://www.deepl.com/docs-api/documents/get-document-status)\\\\nand to [download the translated document](https://www.deepl.com/docs-api/documents/download-document) once translation is complete.\\\\n\\\\n\\\\n\\\\nBecause the request includes a file upload, it must be an HTTP POST request with content type \`multipart/form-data\`.\\\\n\\\\n\\\\nPlease be aware that the uploaded document is automatically removed from the server once the translated document has been downloaded.\\\\nYou have to upload the document again in order to restart the translation.\\\\n\\\\n\\\\nThe maximum upload limit for any document is 10 MiB and 1.000.000 characters.\\\\n\\\\n\\\\nYou may specify the glossary to use for the document translation using the \`glossary_id\` parameter.\\\\n**Important:** This requires the \`source_lang\` parameter to be set and the language pair of the glossary has to match the language pair of the request.\\"
-  translateDocument(input: paths_document_post_requestBody_content_multipart_form_data_schema_Input): translateDocument_200_response
+  translateDocument(input: translateDocument_request_Input): translateDocument_200_response
   \\"Retrieve the current status of a document translation process.\\\\nIf the translation is still in progress, the estimated time remaining is also included in the response.\\"
   getDocumentStatus(
     \\"The document ID that was sent to the client when the document was uploaded to the API.\\"
     document_id: String!
+    input: getDocumentStatus_request_Input
   ): getDocumentStatus_200_response
   \\"Once the status of the document translation process is \`done\`, the result can be downloaded.\\\\n\\\\n\\\\nFor privacy reasons the translated document is automatically removed from the server once it was downloaded and cannot be downloaded again.\\"
   downloadDocument(
     \\"The document ID that was sent to the client when the document was uploaded to the API.\\"
     document_id: String!
-  ): String
+    input: getDocumentStatus_request_Input
+  ): downloadDocument_response
   \\"Create a Glossary\\"
-  createGlossary(input: paths_glossaries_post_requestBody_content_application_x_www_form_urlencoded_schema_Input): Glossary
+  createGlossary(input: createGlossary_request_Input): createGlossary_response
   \\"Deletes the specified glossary.\\"
   deleteGlossary(
     \\"A unique ID assigned to the glossary.\\"
     glossary_id: String!
-  ): Void
+  ): deleteGlossary_response
 }
 
 type translateText_200_response {
@@ -1533,7 +2212,7 @@ enum SourceLanguage {
 \\"The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).\\"
 scalar JSON @specifiedBy(url: \\"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf\\")
 
-input paths_translate_post_requestBody_content_application_x_www_form_urlencoded_schema_Input {
+input translateText_request_Input {
   \\"Text to be translated. Only UTF-8-encoded plain text is supported. The parameter may be specified multiple times and translations are returned in the same order as they are requested. Each of the parameter values may contain multiple sentences. Up to 50 texts can be sent for translation in one request.\\"
   text: [String]!
   source_lang: SourceLanguage
@@ -1623,7 +2302,7 @@ type translateDocument_200_response {
   document_key: String
 }
 
-input paths_document_post_requestBody_content_multipart_form_data_schema_Input {
+input translateDocument_request_Input {
   source_lang: SourceLanguage
   target_lang: TargetLanguage!
   \\"The document file to be translated. The file name should be included in this part's content disposition. As an alternative, the filename parameter can be used. The following file types and extensions are supported:\\\\n  * \`docx\` - Microsoft Word Document\\\\n  * \`pptx\` - Microsoft PowerPoint Document\\\\n  * \`pdf\` - Portable Document Format\\\\n  * \`htm / html\` - HTML Document\\\\n  * \`txt\` - Plain Text Document\\\\n\\\\nPlease note that in order to translate PDF documents you need to give one-time consent to using the Adobe API via the account interface.\\"
@@ -1655,7 +2334,21 @@ enum mutation_getDocumentStatus_status {
   error
 }
 
-input paths_glossaries_post_requestBody_content_application_x_www_form_urlencoded_schema_Input {
+input getDocumentStatus_request_Input {
+  \\"The document encryption key that was sent to the client when the document was uploaded to the API.\\"
+  document_key: String!
+}
+
+union downloadDocument_response = String_container | DocumentTranslationError
+
+type DocumentTranslationError {
+  \\"detailed error message\\"
+  message: String
+}
+
+union createGlossary_response = Glossary | listGlossaryLanguages_400_response
+
+input createGlossary_request_Input {
   \\"Name to be associated with the glossary.\\"
   name: String!
   source_lang: GlossarySourceLanguage!
@@ -1668,6 +2361,12 @@ input paths_glossaries_post_requestBody_content_application_x_www_form_urlencode
 \\"The format in which the glossary entries are provided. Formats currently available:\\\\n* \`tsv\` - Tab-separated values. Entries have to be specified as tab-separated values with the \\\\\\"source entry\\\\\\" being the text in the source language of the glossary and the \\\\\\"target entry\\\\\\" being the text in the target language of the glossary.\\\\n\\\\n  In addition the following restrictions apply:\\\\n    * Duplicate source entries are not allowed.\\\\n    * Source-target entry pairs are separated by a newline.\\\\n    * Source entries and target entries are separated by a tab.\\\\n    * Source entries and target entries are not empty.\\\\n    * Source and target entries must not contain any [C0 or C1 control characters](https://en.wikipedia.org/wiki/C0_and_C1_control_codes) (including e.g. \`\\\\\\"\\\\\\\\t\\\\\\"\` or \`\\\\\\"\\\\\\\\n\\\\\\"\`) or any [Unicode newline](https://en.wikipedia.org/wiki/Newline#Unicode).\\\\n    * Source and target entries must not contain any leading or trailing Unicode whitespace.\\\\n\\\\n  Valid glossary entries in the TSV format could be created in a programming language with backslash escape sequences (e.g. Python, JavaScript, etc.) like this:\\\\n\\\\n  \`\\\\\\"sourceEntry1\\\\\\\\ttargetEntry1\\\\\\\\nsourceEntry2\\\\\\\\targetEntry2\\\\\\"\`\\"
 enum mutationInput_createGlossary_input_entries_format {
   tsv
+}
+
+union deleteGlossary_response = Void_container | listGlossaryLanguages_400_response
+
+type Void_container {
+  Void: Void
 }
 
 \\"Represents empty values\\"

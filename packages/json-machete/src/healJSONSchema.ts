@@ -244,7 +244,12 @@ export async function healJSONSchema(
           }
           // If it is an object type but no properties given while example is available
           if (
-            ((subSchema.type === 'object' && !subSchema.properties) || !subSchema.type) &&
+            ((subSchema.type === 'object' &&
+              !subSchema.properties &&
+              !subSchema.allOf &&
+              !subSchema.anyOf &&
+              !subSchema.oneOf) ||
+              !subSchema.type) &&
             (subSchema.example || subSchema.examples)
           ) {
             const examples = asArray(subSchema.examples || subSchema.example || []);

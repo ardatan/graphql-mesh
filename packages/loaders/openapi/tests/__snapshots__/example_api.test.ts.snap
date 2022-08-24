@@ -29,8 +29,53 @@ Object {
       "responseByStatusCode": Object {
         "202": Object {
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1users/get/responses/202/content/application~1json/schema",
+            "items": Object {
+              "$resolvedRef": "/components/schemas/user",
+              "description": "A user represents a natural person",
+              "properties": Object {
+                "address": Object {
+                  "$ref": "#/definitions/address",
+                },
+                "address2": Object {
+                  "$ref": "#/definitions/address",
+                },
+                "employerId": Object {
+                  "description": "The identifier of the company a user works for",
+                  "type": "string",
+                },
+                "hobbies": Object {
+                  "description": "The hobbies of this user",
+                  "items": Object {
+                    "type": "string",
+                  },
+                  "type": "array",
+                },
+                "name": Object {
+                  "description": "The legal name of a user",
+                  "type": "string",
+                },
+                "nomenclature": Object {
+                  "$ref": "#/definitions/query_getUsers_items_nomenclature",
+                },
+                "status": Object {
+                  "$ref": "#/definitions/query_getUsers_items_status",
+                },
+                "username": Object {
+                  "description": "The identifier of a user",
+                  "type": "string",
+                },
+              },
+              "required": Array [
+                "name",
+                "address",
+                "employerId",
+                "hobbies",
+              ],
+              "title": "user",
+              "type": "object",
+            },
             "title": "getUsers_202_response",
+            "type": "array",
           },
         },
       },
@@ -47,12 +92,97 @@ Object {
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/users",
-      "requestSchema": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1users/post/requestBody/content/application~1json/schema",
+      "requestSchema": Object {
+        "$resolvedRef": "/components/schemas/user",
+        "description": "A user represents a natural person",
+        "properties": Object {
+          "address": Object {
+            "$ref": "#/definitions/address",
+          },
+          "address2": Object {
+            "$ref": "#/definitions/address",
+          },
+          "employerId": Object {
+            "description": "The identifier of the company a user works for",
+            "type": "string",
+          },
+          "hobbies": Object {
+            "description": "The hobbies of this user",
+            "items": Object {
+              "type": "string",
+            },
+            "type": "array",
+          },
+          "name": Object {
+            "description": "The legal name of a user",
+            "type": "string",
+          },
+          "nomenclature": Object {
+            "$ref": "#/definitions/query_getUsers_items_nomenclature",
+          },
+          "status": Object {
+            "$ref": "#/definitions/query_getUsers_items_status",
+          },
+          "username": Object {
+            "description": "The identifier of a user",
+            "type": "string",
+          },
+        },
+        "required": Array [
+          "name",
+          "address",
+          "employerId",
+          "hobbies",
+        ],
+        "title": "user",
+        "type": "object",
+      },
       "responseByStatusCode": Object {
         "201": Object {
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1users/post/responses/201/content/application~1json/schema",
-            "title": "postUser_201_response",
+            "$resolvedRef": "/components/schemas/user",
+            "description": "A user represents a natural person",
+            "properties": Object {
+              "address": Object {
+                "$ref": "#/definitions/address",
+              },
+              "address2": Object {
+                "$ref": "#/definitions/address",
+              },
+              "employerId": Object {
+                "description": "The identifier of the company a user works for",
+                "type": "string",
+              },
+              "hobbies": Object {
+                "description": "The hobbies of this user",
+                "items": Object {
+                  "type": "string",
+                },
+                "type": "array",
+              },
+              "name": Object {
+                "description": "The legal name of a user",
+                "type": "string",
+              },
+              "nomenclature": Object {
+                "$ref": "#/definitions/query_getUsers_items_nomenclature",
+              },
+              "status": Object {
+                "$ref": "#/definitions/query_getUsers_items_status",
+              },
+              "username": Object {
+                "description": "The identifier of a user",
+                "type": "string",
+              },
+            },
+            "required": Array [
+              "name",
+              "address",
+              "employerId",
+              "hobbies",
+            ],
+            "title": "user",
+            "type": "object",
           },
         },
       },
@@ -95,8 +225,49 @@ Object {
             },
           },
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1users~1{username}/get/responses/200/content/application~1json/schema",
-            "title": "getUserByUsername_200_response",
+            "$resolvedRef": "/components/schemas/user",
+            "description": "A user represents a natural person",
+            "properties": Object {
+              "address": Object {
+                "$ref": "#/definitions/address",
+              },
+              "address2": Object {
+                "$ref": "#/definitions/address",
+              },
+              "employerId": Object {
+                "description": "The identifier of the company a user works for",
+                "type": "string",
+              },
+              "hobbies": Object {
+                "description": "The hobbies of this user",
+                "items": Object {
+                  "type": "string",
+                },
+                "type": "array",
+              },
+              "name": Object {
+                "description": "The legal name of a user",
+                "type": "string",
+              },
+              "nomenclature": Object {
+                "$ref": "#/definitions/query_getUsers_items_nomenclature",
+              },
+              "status": Object {
+                "$ref": "#/definitions/query_getUsers_items_status",
+              },
+              "username": Object {
+                "description": "The identifier of a user",
+                "type": "string",
+              },
+            },
+            "required": Array [
+              "name",
+              "address",
+              "employerId",
+              "hobbies",
+            ],
+            "title": "user",
+            "type": "object",
           },
         },
       },
@@ -123,8 +294,32 @@ Object {
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1users~1{username}~1car/get/responses/200/content/application~1json/schema",
-            "title": "getUserCar_200_response",
+            "$resolvedRef": "/components/schemas/car",
+            "description": "A car",
+            "properties": Object {
+              "color": Object {
+                "description": "The color of the car.",
+                "type": "string",
+              },
+              "features": Object {
+                "$ref": "#/definitions/query_getUserCar_features",
+              },
+              "kind": Object {
+                "$ref": "#/definitions/query_getUserCar_kind",
+              },
+              "model": Object {
+                "description": "The model of the car.",
+                "type": "string",
+              },
+              "rating": Object {
+                "$ref": "#/definitions/query_getUserCar_rating",
+              },
+              "tags": Object {
+                "$ref": "#/definitions/Tags",
+              },
+            },
+            "title": "car",
+            "type": "object",
           },
         },
       },
@@ -151,8 +346,53 @@ Object {
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1users~1{username}~1friends/get/responses/200/content/application~1json/schema",
+            "items": Object {
+              "$resolvedRef": "/components/schemas/user",
+              "description": "A user represents a natural person",
+              "properties": Object {
+                "address": Object {
+                  "$ref": "#/definitions/address",
+                },
+                "address2": Object {
+                  "$ref": "#/definitions/address",
+                },
+                "employerId": Object {
+                  "description": "The identifier of the company a user works for",
+                  "type": "string",
+                },
+                "hobbies": Object {
+                  "description": "The hobbies of this user",
+                  "items": Object {
+                    "type": "string",
+                  },
+                  "type": "array",
+                },
+                "name": Object {
+                  "description": "The legal name of a user",
+                  "type": "string",
+                },
+                "nomenclature": Object {
+                  "$ref": "#/definitions/query_getUsers_items_nomenclature",
+                },
+                "status": Object {
+                  "$ref": "#/definitions/query_getUsers_items_status",
+                },
+                "username": Object {
+                  "description": "The identifier of a user",
+                  "type": "string",
+                },
+              },
+              "required": Array [
+                "name",
+                "address",
+                "employerId",
+                "hobbies",
+              ],
+              "title": "user",
+              "type": "object",
+            },
             "title": "getUserFriends_200_response",
+            "type": "array",
           },
         },
       },
@@ -179,8 +419,23 @@ Object {
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1assets~1{companyId}/get/responses/200/content/application~1json/schema",
+            "items": Object {
+              "oneOf": Array [
+                Object {
+                  "$ref": "#/definitions/car",
+                },
+                Object {
+                  "$ref": "#/definitions/user",
+                },
+                Object {
+                  "$ref": "#/definitions/trashcan",
+                },
+              ],
+              "title": "query_getAllAssets_items",
+              "type": "object",
+            },
             "title": "getAllAssets_200_response",
+            "type": "array",
           },
         },
       },
@@ -199,8 +454,36 @@ Object {
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1cars/get/responses/200/content/application~1json/schema",
+            "items": Object {
+              "$resolvedRef": "/components/schemas/car",
+              "description": "A car",
+              "properties": Object {
+                "color": Object {
+                  "description": "The color of the car.",
+                  "type": "string",
+                },
+                "features": Object {
+                  "$ref": "#/definitions/query_getUserCar_features",
+                },
+                "kind": Object {
+                  "$ref": "#/definitions/query_getUserCar_kind",
+                },
+                "model": Object {
+                  "description": "The model of the car.",
+                  "type": "string",
+                },
+                "rating": Object {
+                  "$ref": "#/definitions/query_getUserCar_rating",
+                },
+                "tags": Object {
+                  "$ref": "#/definitions/Tags",
+                },
+              },
+              "title": "car",
+              "type": "object",
+            },
             "title": "getAllCars_200_response",
+            "type": "array",
           },
         },
       },
@@ -236,8 +519,36 @@ Object {
             },
           },
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1companies~1{id}/get/responses/200/content/application~1json/schema",
-            "title": "getCompanyById_200_response",
+            "$resolvedRef": "/components/schemas/company",
+            "description": "A company is the employer of many users",
+            "properties": Object {
+              "ceoUsername": Object {
+                "description": "The identifier of the user who is CEO of the company",
+                "type": "string",
+              },
+              "id": Object {
+                "description": "The identifier of a company",
+                "format": "uuid",
+                "type": "string",
+              },
+              "legalForm": Object {
+                "description": "The legal form of a company",
+                "type": "string",
+              },
+              "name": Object {
+                "description": "The legal name of a company",
+                "type": "string",
+              },
+              "offices": Object {
+                "description": "The offices of a company",
+                "items": Object {
+                  "$ref": "#/definitions/address",
+                },
+                "type": "array",
+              },
+            },
+            "title": "company",
+            "type": "object",
           },
         },
       },
@@ -283,8 +594,9 @@ Object {
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1cookie/get/responses/200/content/text~1plain/schema",
+            "description": "Used to test generation of object types with matching schema.",
             "title": "getCookie_200_response",
+            "type": "string",
           },
         },
       },
@@ -319,8 +631,21 @@ Object {
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1coffeeLocation/get/responses/200/content/application~1json/schema",
-            "title": "getNearestCoffeeMachine_200_response",
+            "$resolvedRef": "/components/schemas/coordinates",
+            "properties": Object {
+              "lat": Object {
+                "type": "number",
+              },
+              "long": Object {
+                "type": "number",
+              },
+            },
+            "required": Array [
+              "lat",
+              "long",
+            ],
+            "title": "coordinates",
+            "type": "object",
           },
         },
       },
@@ -379,8 +704,13 @@ Object {
             },
           },
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1copier/get/responses/200/content/application~1json/schema",
+            "properties": Object {
+              "body": Object {
+                "type": "string",
+              },
+            },
             "title": "getCopier_200_response",
+            "type": "object",
           },
         },
       },
@@ -399,8 +729,7 @@ Object {
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1cleanDesks/get/responses/200/content/text~1plain/schema",
-            "title": "getNumberOfCleanDesks_200_response",
+            "type": "string",
           },
         },
       },
@@ -419,8 +748,7 @@ Object {
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1dirtyDesks/get/responses/200/content/text~1plain/schema",
-            "title": "getNumberOfDirtyDesks_200_response",
+            "type": "string",
           },
         },
       },
@@ -491,8 +819,24 @@ Object {
             },
           },
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1offices~1{id}/get/responses/200/content/application~1json/schema",
-            "title": "getOffice_200_response",
+            "$resolvedRef": "/components/schemas/office",
+            "description": "An office",
+            "properties": Object {
+              "employeeId": Object {
+                "description": "The owner ID of the office",
+                "type": "string",
+              },
+              "employerId": Object {
+                "description": "The identifier of the company a user works for",
+                "type": "string",
+              },
+              "room number": Object {
+                "description": "The room number of the office",
+                "type": "integer",
+              },
+            },
+            "title": "office",
+            "type": "object",
           },
         },
       },
@@ -511,8 +855,24 @@ Object {
       "responseByStatusCode": Object {
         "2XX": Object {
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1papers/get/responses/2XX/content/application~1json/schema",
+            "items": Object {
+              "$resolvedRef": "/components/schemas/paper",
+              "description": "A research paper",
+              "properties": Object {
+                "name": Object {
+                  "description": "The name of the paper",
+                  "type": "string",
+                },
+                "published": Object {
+                  "description": "Whether the paper is published",
+                  "type": "boolean",
+                },
+              },
+              "title": "paper",
+              "type": "object",
+            },
             "title": "getPapers_2XX_response",
+            "type": "array",
           },
         },
       },
@@ -529,12 +889,13 @@ Object {
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/papers",
-      "requestSchema": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1papers/post/requestBody/content/text~1plain/schema",
+      "requestSchema": Object {
+        "type": "string",
+      },
       "responseByStatusCode": Object {
         "201": Object {
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1papers/post/responses/201/content/text~1plain/schema",
-            "title": "postPaper_201_response",
+            "type": "string",
           },
         },
       },
@@ -551,12 +912,47 @@ Object {
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/products",
-      "requestSchema": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1products/post/requestBody/content/application~1json/schema",
+      "requestSchema": Object {
+        "$resolvedRef": "/components/schemas/product-with-id",
+        "description": "A product",
+        "properties": Object {
+          "product-id": Object {
+            "description": "The id of the product",
+            "type": "string",
+          },
+          "product-name": Object {
+            "description": "The name of the product",
+            "type": "string",
+          },
+          "product-tag": Object {
+            "description": "A tag associated with the product",
+            "type": "string",
+          },
+        },
+        "title": "product-with-id",
+        "type": "object",
+      },
       "responseByStatusCode": Object {
         "201": Object {
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1products/post/responses/201/content/application~1json/schema",
-            "title": "post_product_with_id_201_response",
+            "$resolvedRef": "/components/schemas/product-with-id",
+            "description": "A product",
+            "properties": Object {
+              "product-id": Object {
+                "description": "The id of the product",
+                "type": "string",
+              },
+              "product-name": Object {
+                "description": "The name of the product",
+                "type": "string",
+              },
+              "product-tag": Object {
+                "description": "A tag associated with the product",
+                "type": "string",
+              },
+            },
+            "title": "product-with-id",
+            "type": "object",
           },
         },
       },
@@ -610,8 +1006,24 @@ Object {
             },
           },
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1products~1{product-id}/get/responses/200/content/application~1json/schema",
-            "title": "get_product_with_id_200_response",
+            "$resolvedRef": "/components/schemas/product-with-id",
+            "description": "A product",
+            "properties": Object {
+              "product-id": Object {
+                "description": "The id of the product",
+                "type": "string",
+              },
+              "product-name": Object {
+                "description": "The name of the product",
+                "type": "string",
+              },
+              "product-tag": Object {
+                "description": "A tag associated with the product",
+                "type": "string",
+              },
+            },
+            "title": "product-with-id",
+            "type": "object",
           },
         },
       },
@@ -648,8 +1060,21 @@ Object {
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1products~1{id}~1reviews/get/responses/200/content/application~1json/schema",
+            "items": Object {
+              "properties": Object {
+                "text": Object {
+                  "type": "string",
+                },
+                "timestamp": Object {
+                  "format": "int64",
+                  "type": "integer",
+                },
+              },
+              "title": "query_getProductReviews_items",
+              "type": "object",
+            },
             "title": "getProductReviews_200_response",
+            "type": "array",
           },
         },
       },
@@ -685,8 +1110,26 @@ Object {
             },
           },
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1patents~1{patent-id}/get/responses/200/content/application~1json/schema",
-            "title": "get_patent_with_id_200_response",
+            "$resolvedRef": "/components/schemas/patent-with-id",
+            "description": "A patent",
+            "properties": Object {
+              "inventor-id": Object {
+                "description": "The id of the inventor",
+                "nullable": true,
+                "type": "string",
+              },
+              "patent-id": Object {
+                "description": "The id of the patent",
+                "type": "string",
+              },
+            },
+            "required": Array [
+              "patent-name",
+              "patent-id",
+              "inventor-id",
+            ],
+            "title": "patent-with-id",
+            "type": "object",
           },
         },
       },
@@ -729,8 +1172,28 @@ Object {
             },
           },
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1projects~1{project-id}/get/responses/200/content/application~1json/schema",
-            "title": "get_project_with_id_200_response",
+            "$resolvedRef": "/components/schemas/project-with-id",
+            "description": "A project",
+            "properties": Object {
+              "active": Object {
+                "description": "Whether the project is active",
+                "type": "boolean",
+              },
+              "lead-id": Object {
+                "description": "The id of the lead",
+                "type": "string",
+              },
+              "patentId": Object {
+                "description": "The patent associated with a project if applicable",
+                "type": "string",
+              },
+              "project-id": Object {
+                "description": "The id of the project",
+                "type": "integer",
+              },
+            },
+            "title": "project-with-id",
+            "type": "object",
           },
         },
       },
@@ -747,7 +1210,30 @@ Object {
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/projects",
-      "requestSchema": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1projects/post/requestBody/content/application~1json/schema",
+      "requestSchema": Object {
+        "$resolvedRef": "/components/schemas/project-with-id",
+        "description": "A project",
+        "properties": Object {
+          "active": Object {
+            "description": "Whether the project is active",
+            "type": "boolean",
+          },
+          "lead-id": Object {
+            "description": "The id of the lead",
+            "type": "string",
+          },
+          "patentId": Object {
+            "description": "The patent associated with a project if applicable",
+            "type": "string",
+          },
+          "project-id": Object {
+            "description": "The id of the project",
+            "type": "integer",
+          },
+        },
+        "title": "project-with-id",
+        "type": "object",
+      },
       "responseByStatusCode": Object {
         "201": Object {
           "links": Object {
@@ -760,8 +1246,28 @@ Object {
             },
           },
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1projects/post/responses/201/content/application~1json/schema",
-            "title": "post_project_with_id_201_response",
+            "$resolvedRef": "/components/schemas/project-with-id",
+            "description": "A project",
+            "properties": Object {
+              "active": Object {
+                "description": "Whether the project is active",
+                "type": "boolean",
+              },
+              "lead-id": Object {
+                "description": "The id of the lead",
+                "type": "string",
+              },
+              "patentId": Object {
+                "description": "The patent associated with a project if applicable",
+                "type": "string",
+              },
+              "project-id": Object {
+                "description": "The id of the project",
+                "type": "integer",
+              },
+            },
+            "title": "project-with-id",
+            "type": "object",
           },
         },
       },
@@ -820,8 +1326,13 @@ Object {
             },
           },
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1scanner/get/responses/200/content/application~1json/schema",
+            "properties": Object {
+              "body": Object {
+                "type": "string",
+              },
+            },
             "title": "getScanner_200_response",
+            "type": "object",
           },
         },
       },
@@ -854,7 +1365,9 @@ Object {
       "queryParamArgMap": Object {
         "query": "query",
       },
-      "requestSchema": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1scanner~1{path}/post/requestBody/content/text~1plain/schema",
+      "requestSchema": Object {
+        "type": "string",
+      },
       "responseByStatusCode": Object {
         "200": Object {
           "links": Object {
@@ -895,8 +1408,13 @@ Object {
             },
           },
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1scanner~1{path}/post/responses/200/content/application~1json/schema",
+            "properties": Object {
+              "body": Object {
+                "type": "string",
+              },
+            },
             "title": "postScanner_200_response",
+            "type": "object",
           },
         },
       },
@@ -941,8 +1459,9 @@ Object {
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1snack/get/responses/200/content/text~1plain/schema",
+            "description": "What snack is offered.",
             "title": "getSnack_200_response",
+            "type": "string",
           },
         },
       },
@@ -979,8 +1498,9 @@ Object {
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1status/get/responses/200/content/text~1plain/schema",
+            "description": "What the status is.",
             "title": "get_Status_200_response",
+            "type": "string",
           },
         },
       },
@@ -1008,12 +1528,19 @@ Object {
       "queryParamArgMap": Object {
         "globalquery": "globalquery",
       },
-      "requestSchema": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1status/post/requestBody/content/application~1json/schema",
+      "requestSchema": Object {
+        "properties": Object {
+          "hello": Object {
+            "type": "string",
+          },
+        },
+        "title": "post_status_request",
+        "type": "object",
+      },
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1status/post/responses/200/content/text~1plain/schema",
-            "title": "post_status_200_response",
+            "type": "string",
           },
         },
       },
@@ -1032,8 +1559,9 @@ Object {
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1secure/get/responses/200/content/text~1plain/schema",
+            "description": "A secure message.",
             "title": "getSecure_200_response",
+            "type": "string",
           },
         },
       },
@@ -1052,8 +1580,24 @@ Object {
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1trashcans/get/responses/200/content/application~1json/schema",
+            "items": Object {
+              "$resolvedRef": "/components/schemas/trashcan",
+              "properties": Object {
+                "brand": Object {
+                  "type": "object",
+                },
+                "contents": Object {
+                  "items": Object {
+                    "type": "object",
+                  },
+                  "type": "array",
+                },
+              },
+              "title": "trashcan",
+              "type": "object",
+            },
             "title": "getAllTrashCans_200_response",
+            "type": "array",
           },
         },
       },
@@ -1080,8 +1624,20 @@ Object {
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1trashcans~1{username}/get/responses/200/content/application~1json/schema",
-            "title": "getOfficeTrashCan_200_response",
+            "$resolvedRef": "/components/schemas/trashcan",
+            "properties": Object {
+              "brand": Object {
+                "type": "object",
+              },
+              "contents": Object {
+                "items": Object {
+                  "type": "object",
+                },
+                "type": "array",
+              },
+            },
+            "title": "trashcan",
+            "type": "object",
           },
         },
       },
@@ -1106,12 +1662,27 @@ Object {
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/trashcans/{args.username}",
-      "requestSchema": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1trashcans~1{username}/post/requestBody/content/application~1json/schema",
+      "requestSchema": Object {
+        "title": "mutationInput_postOfficeTrashCan_input",
+        "type": "object",
+      },
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1trashcans~1{username}/post/responses/200/content/application~1json/schema",
-            "title": "postOfficeTrashCan_200_response",
+            "$resolvedRef": "/components/schemas/trashcan",
+            "properties": Object {
+              "brand": Object {
+                "type": "object",
+              },
+              "contents": Object {
+                "items": Object {
+                  "type": "object",
+                },
+                "type": "array",
+              },
+            },
+            "title": "trashcan",
+            "type": "object",
           },
         },
       },
@@ -1130,7 +1701,14 @@ Object {
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
-            "$ref": "../../../handlers/openapi/test/fixtures/example_oas.json#/paths/~1mystery/get/responses/200/content/application~1json/schema",
+            "oneOf": Array [
+              Object {
+                "$ref": "#/definitions/query_mystery_oneOf_0",
+              },
+              Object {
+                "$ref": "#/definitions/query_mystery_oneOf_1",
+              },
+            ],
             "title": "mystery_200_response",
           },
         },
@@ -1148,7 +1726,7 @@ Object {
             "$ref": "#/definitions/trashcan",
           },
           "postPaper": Object {
-            "$ref": "#/definitions/postPaper_201_response",
+            "type": "string",
           },
           "postScanner": Object {
             "$ref": "#/definitions/postScanner_200_response",
@@ -1163,7 +1741,7 @@ Object {
             "$ref": "#/definitions/project-with-id",
           },
           "post_status": Object {
-            "$ref": "#/definitions/post_status_200_response",
+            "type": "string",
           },
         },
         "title": "Mutation",
@@ -1223,10 +1801,10 @@ Object {
             "$ref": "#/definitions/coordinates",
           },
           "getNumberOfCleanDesks": Object {
-            "$ref": "#/definitions/getNumberOfCleanDesks_200_response",
+            "type": "string",
           },
           "getNumberOfDirtyDesks": Object {
-            "$ref": "#/definitions/getNumberOfDirtyDesks_200_response",
+            "type": "string",
           },
           "getOffice": Object {
             "$ref": "#/definitions/office",
@@ -1480,7 +2058,6 @@ Object {
         "type": "string",
       },
       "getAllAssets_200_response": Object {
-        "$resolvedRef": "/paths/~1assets~1{companyId}/get/responses/200/content/application~1json/schema",
         "items": Object {
           "oneOf": Array [
             Object {
@@ -1500,7 +2077,6 @@ Object {
         "type": "array",
       },
       "getAllCars_200_response": Object {
-        "$resolvedRef": "/paths/~1cars/get/responses/200/content/application~1json/schema",
         "items": Object {
           "$resolvedRef": "/components/schemas/car",
           "description": "A car",
@@ -1533,7 +2109,6 @@ Object {
         "type": "array",
       },
       "getAllTrashCans_200_response": Object {
-        "$resolvedRef": "/paths/~1trashcans/get/responses/200/content/application~1json/schema",
         "items": Object {
           "$resolvedRef": "/components/schemas/trashcan",
           "properties": Object {
@@ -1559,13 +2134,11 @@ Object {
         "type": "null",
       },
       "getCookie_200_response": Object {
-        "$resolvedRef": "/paths/~1cookie/get/responses/200/content/text~1plain/schema",
         "description": "Used to test generation of object types with matching schema.",
         "title": "getCookie_200_response",
         "type": "string",
       },
       "getCopier_200_response": Object {
-        "$resolvedRef": "/paths/~1copier/get/responses/200/content/application~1json/schema",
         "properties": Object {
           "body": Object {
             "type": "string",
@@ -1574,18 +2147,7 @@ Object {
         "title": "getCopier_200_response",
         "type": "object",
       },
-      "getNumberOfCleanDesks_200_response": Object {
-        "$resolvedRef": "/paths/~1cleanDesks/get/responses/200/content/text~1plain/schema",
-        "title": "getNumberOfCleanDesks_200_response",
-        "type": "string",
-      },
-      "getNumberOfDirtyDesks_200_response": Object {
-        "$resolvedRef": "/paths/~1dirtyDesks/get/responses/200/content/text~1plain/schema",
-        "title": "getNumberOfDirtyDesks_200_response",
-        "type": "string",
-      },
       "getPapers_2XX_response": Object {
-        "$resolvedRef": "/paths/~1papers/get/responses/2XX/content/application~1json/schema",
         "items": Object {
           "$resolvedRef": "/components/schemas/paper",
           "description": "A research paper",
@@ -1606,7 +2168,6 @@ Object {
         "type": "array",
       },
       "getProductReviews_200_response": Object {
-        "$resolvedRef": "/paths/~1products~1{id}~1reviews/get/responses/200/content/application~1json/schema",
         "items": Object {
           "properties": Object {
             "text": Object {
@@ -1624,7 +2185,6 @@ Object {
         "type": "array",
       },
       "getScanner_200_response": Object {
-        "$resolvedRef": "/paths/~1scanner/get/responses/200/content/application~1json/schema",
         "properties": Object {
           "body": Object {
             "type": "string",
@@ -1634,19 +2194,16 @@ Object {
         "type": "object",
       },
       "getSecure_200_response": Object {
-        "$resolvedRef": "/paths/~1secure/get/responses/200/content/text~1plain/schema",
         "description": "A secure message.",
         "title": "getSecure_200_response",
         "type": "string",
       },
       "getSnack_200_response": Object {
-        "$resolvedRef": "/paths/~1snack/get/responses/200/content/text~1plain/schema",
         "description": "What snack is offered.",
         "title": "getSnack_200_response",
         "type": "string",
       },
       "getUserFriends_200_response": Object {
-        "$resolvedRef": "/paths/~1users~1{username}~1friends/get/responses/200/content/application~1json/schema",
         "items": Object {
           "$resolvedRef": "/components/schemas/user",
           "description": "A user represents a natural person",
@@ -1696,7 +2253,6 @@ Object {
         "type": "array",
       },
       "getUsers_202_response": Object {
-        "$resolvedRef": "/paths/~1users/get/responses/202/content/application~1json/schema",
         "items": Object {
           "$resolvedRef": "/components/schemas/user",
           "description": "A user represents a natural person",
@@ -1746,7 +2302,6 @@ Object {
         "type": "array",
       },
       "get_Status_200_response": Object {
-        "$resolvedRef": "/paths/~1status/get/responses/200/content/text~1plain/schema",
         "description": "What the status is.",
         "title": "get_Status_200_response",
         "type": "string",
@@ -1754,7 +2309,7 @@ Object {
       "mutationInput_postOfficeTrashCan": Object {
         "properties": Object {
           "input": Object {
-            "$ref": "#/definitions/paths_trashcans_{username}_post_requestBody_content_application_json_schema",
+            "$ref": "#/definitions/mutationInput_postOfficeTrashCan_input",
           },
           "username": Object {
             "description": "Identifier of a user.",
@@ -1766,10 +2321,13 @@ Object {
         "title": "mutationInput_postOfficeTrashCan",
         "type": "object",
       },
+      "mutationInput_postOfficeTrashCan_input": Object {
+        "title": "mutationInput_postOfficeTrashCan_input",
+        "type": "object",
+      },
       "mutationInput_postPaper": Object {
         "properties": Object {
           "input": Object {
-            "$resolvedRef": "/paths/~1papers/post/requestBody/content/text~1plain/schema",
             "type": "string",
           },
         },
@@ -1779,7 +2337,6 @@ Object {
       "mutationInput_postScanner": Object {
         "properties": Object {
           "input": Object {
-            "$resolvedRef": "/paths/~1scanner~1{path}/post/requestBody/content/text~1plain/schema",
             "type": "string",
           },
           "path": Object {
@@ -1833,14 +2390,13 @@ Object {
             "type": "string",
           },
           "input": Object {
-            "$ref": "#/definitions/paths_status_post_requestBody_content_application_json_schema",
+            "$ref": "#/definitions/post_status_request",
           },
         },
         "title": "mutationInput_post_status",
         "type": "object",
       },
       "mystery_200_response": Object {
-        "$resolvedRef": "/paths/~1mystery/get/responses/200/content/application~1json/schema",
         "oneOf": Array [
           Object {
             "$ref": "#/definitions/query_mystery_oneOf_0",
@@ -1909,28 +2465,7 @@ Object {
         "title": "patent-with-id",
         "type": "object",
       },
-      "paths_status_post_requestBody_content_application_json_schema": Object {
-        "$resolvedRef": "/paths/~1status/post/requestBody/content/application~1json/schema",
-        "properties": Object {
-          "hello": Object {
-            "type": "string",
-          },
-        },
-        "title": "paths_status_post_requestBody_content_application_json_schema",
-        "type": "object",
-      },
-      "paths_trashcans_{username}_post_requestBody_content_application_json_schema": Object {
-        "$resolvedRef": "/paths/~1trashcans~1{username}/post/requestBody/content/application~1json/schema",
-        "title": "paths_trashcans_{username}_post_requestBody_content_application_json_schema",
-        "type": "object",
-      },
-      "postPaper_201_response": Object {
-        "$resolvedRef": "/paths/~1papers/post/responses/201/content/text~1plain/schema",
-        "title": "postPaper_201_response",
-        "type": "string",
-      },
       "postScanner_200_response": Object {
-        "$resolvedRef": "/paths/~1scanner~1{path}/post/responses/200/content/application~1json/schema",
         "properties": Object {
           "body": Object {
             "type": "string",
@@ -1939,10 +2474,14 @@ Object {
         "title": "postScanner_200_response",
         "type": "object",
       },
-      "post_status_200_response": Object {
-        "$resolvedRef": "/paths/~1status/post/responses/200/content/text~1plain/schema",
-        "title": "post_status_200_response",
-        "type": "string",
+      "post_status_request": Object {
+        "properties": Object {
+          "hello": Object {
+            "type": "string",
+          },
+        },
+        "title": "post_status_request",
+        "type": "object",
       },
       "product-with-id": Object {
         "$resolvedRef": "/components/schemas/product-with-id",
@@ -2810,7 +3349,7 @@ type Mutation {
   \\"Used to test link parameters with variables\\"
   postScanner(path: String!, query: String, input: String): postScanner_200_response
   \\"Endpoint to test placeholder objects to wrap response objects.\\"
-  post_status(globalquery: String!, input: paths_status_post_requestBody_content_application_json_schema_Input): String
+  post_status(globalquery: String!, input: post_status_request_Input): String
   \\"Add new contents to the trashcan of a specific owner\\"
   postOfficeTrashCan(
     \\"Identifier of a user.\\"
@@ -2892,7 +3431,7 @@ type postScanner_200_response {
   everythingLink2: getCopier_200_response
 }
 
-input paths_status_post_requestBody_content_application_json_schema_Input {
+input post_status_request_Input {
   hello: String
 }"
 `;

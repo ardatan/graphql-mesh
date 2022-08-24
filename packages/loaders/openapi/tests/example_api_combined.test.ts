@@ -12,7 +12,7 @@ describe('Example API Combined', () => {
   beforeAll(async () => {
     await startServer(PORT);
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api_combined', {
-      oasFilePath: '../../../handlers/openapi/test/fixtures/example_oas_combined.json',
+      source: '../../../handlers/openapi/test/fixtures/example_oas_combined.json',
       cwd: __dirname,
       baseUrl,
       fetch,

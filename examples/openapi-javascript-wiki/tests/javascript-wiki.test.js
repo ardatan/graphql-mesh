@@ -1,8 +1,8 @@
 const { findAndParseConfig } = require('@graphql-mesh/cli');
 const { getMesh } = require('@graphql-mesh/runtime');
-const { basename, join } = require('path');
+const { join } = require('path');
 
-const { introspectionFromSchema, lexicographicSortSchema } = require('graphql');
+const { lexicographicSortSchema, printSchema } = require('graphql');
 const { readFile } = require('fs-extra');
 
 const config$ = findAndParseConfig({
@@ -15,7 +15,7 @@ describe('JavaScript Wiki', () => {
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
     expect(
-      introspectionFromSchema(lexicographicSortSchema(schema), {
+      printSchema(lexicographicSortSchema(schema), {
         descriptions: false,
       })
     ).toMatchSnapshot('javascript-wiki-schema');
@@ -28,7 +28,7 @@ describe('JavaScript Wiki', () => {
     const { execute } = await mesh$;
     const result = await execute(viewsInPastMonthQuery);
     expect(result.errors).toBeFalsy();
-    expect(typeof result?.data?.viewsInPastMonth).toBe('number');
+    expect(result?.data?.viewsInPastMonth).toBeGreaterThan(0);
   });
   it('should give correct response for wikipediaMetrics within specific range', async () => {
     const wikipediaMetricsQuery = await readFile(
