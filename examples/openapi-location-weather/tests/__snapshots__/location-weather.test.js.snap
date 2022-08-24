@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Location Weather should generate correct schema: location-weather-schema 1`] = `
+exports[`Location Weather should give correct response for todayForecast: location-weather-schema 1`] = `
 "schema {
   query: Query
 }

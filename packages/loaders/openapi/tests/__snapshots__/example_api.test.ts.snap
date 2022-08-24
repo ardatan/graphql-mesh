@@ -60,10 +60,6 @@ Object {
                 "status": Object {
                   "$ref": "#/definitions/query_getUsers_items_status",
                 },
-                "username": Object {
-                  "description": "The identifier of a user",
-                  "type": "string",
-                },
               },
               "required": Array [
                 "name",
@@ -123,10 +119,6 @@ Object {
           "status": Object {
             "$ref": "#/definitions/query_getUsers_items_status",
           },
-          "username": Object {
-            "description": "The identifier of a user",
-            "type": "string",
-          },
         },
         "required": Array [
           "name",
@@ -169,10 +161,6 @@ Object {
               },
               "status": Object {
                 "$ref": "#/definitions/query_getUsers_items_status",
-              },
-              "username": Object {
-                "description": "The identifier of a user",
-                "type": "string",
               },
             },
             "required": Array [
@@ -218,7 +206,7 @@ Object {
             },
             "friends": Object {
               "args": Object {
-                "username": "{root.$request.path.username}",
+                "username": "{root.$request.query.username}",
               },
               "description": "Allows to fetch the user's friends.",
               "fieldName": "getUserFriends",
@@ -254,10 +242,6 @@ Object {
               },
               "status": Object {
                 "$ref": "#/definitions/query_getUsers_items_status",
-              },
-              "username": Object {
-                "description": "The identifier of a user",
-                "type": "string",
               },
             },
             "required": Array [
@@ -376,10 +360,6 @@ Object {
                 },
                 "status": Object {
                   "$ref": "#/definitions/query_getUsers_items_status",
-                },
-                "username": Object {
-                  "description": "The identifier of a user",
-                  "type": "string",
                 },
               },
               "required": Array [
@@ -775,6 +755,71 @@ Object {
     },
     Object {
       "argTypeMap": Object {
+        "parameters": Object {
+          "description": undefined,
+          "name": "parameters",
+          "nullable": false,
+          "properties": Object {
+            "limit": Object {
+              "type": "integer",
+            },
+            "offset": Object {
+              "type": "integer",
+            },
+          },
+          "title": "queryInput_returnAllOffices_parameters",
+          "type": "object",
+        },
+      },
+      "description": "Used to test query parameters with form style and explode",
+      "field": "returnAllOffices",
+      "headers": Object {
+        "accept": "application/json",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/offices",
+      "queryParamArgMap": Object {
+        "parameters": "parameters",
+      },
+      "queryStringOptionsByParam": Object {
+        "parameters": Object {
+          "arrayFormat": "repeat",
+        },
+      },
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": Object {
+            "items": Object {
+              "$resolvedRef": "/components/schemas/office",
+              "description": "An office",
+              "properties": Object {
+                "employeeId": Object {
+                  "description": "The owner ID of the office",
+                  "type": "string",
+                },
+                "employerId": Object {
+                  "description": "The identifier of the company a user works for",
+                  "type": "string",
+                },
+                "room number": Object {
+                  "description": "The room number of the office",
+                  "type": "integer",
+                },
+              },
+              "title": "office",
+              "type": "object",
+            },
+            "title": "returnAllOffices_200_response",
+            "type": "array",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "argTypeMap": Object {
         "accept": Object {
           "default": "text/plain",
           "description": "Describes the format of the return values. By default, the return type is \`text/plain\` and the return value is the two-letter language code for the identified language, for example, \`en\` for English or \`es\` for Spanish. To retrieve a JSON object that contains a ranking of identified languages with confidence scores, set the accept header parameter to \`application/json\`.",
@@ -1115,7 +1160,6 @@ Object {
             "properties": Object {
               "inventor-id": Object {
                 "description": "The id of the inventor",
-                "nullable": true,
                 "type": "string",
               },
               "patent-id": Object {
@@ -1126,73 +1170,8 @@ Object {
             "required": Array [
               "patent-name",
               "patent-id",
-              "inventor-id",
             ],
             "title": "patent-with-id",
-            "type": "object",
-          },
-        },
-      },
-      "schemaHeaders": undefined,
-      "type": "query",
-    },
-    Object {
-      "argTypeMap": Object {
-        "project_id": Object {
-          "description": undefined,
-          "name": "project-id",
-          "nullable": false,
-          "type": "integer",
-        },
-      },
-      "description": "Another endpoint to test authentication.",
-      "field": "get_project_with_id",
-      "headers": Object {
-        "accept": "application/json",
-      },
-      "method": "GET",
-      "operationHeaders": undefined,
-      "path": "/projects/{args.project_id}",
-      "responseByStatusCode": Object {
-        "200": Object {
-          "links": Object {
-            "patent": Object {
-              "args": Object {
-                "patent_id": "{root.$response.body#/patentId}",
-              },
-              "description": "Allows to fetch a patent.",
-              "fieldName": "get_patent_with_id",
-            },
-            "projectLead": Object {
-              "args": Object {
-                "username": "{root.$response.body#/leadId}",
-              },
-              "description": "Allows to fetch the user leading a project.",
-              "fieldName": "getUserByUsername",
-            },
-          },
-          "responseSchema": Object {
-            "$resolvedRef": "/components/schemas/project-with-id",
-            "description": "A project",
-            "properties": Object {
-              "active": Object {
-                "description": "Whether the project is active",
-                "type": "boolean",
-              },
-              "lead-id": Object {
-                "description": "The id of the lead",
-                "type": "string",
-              },
-              "patentId": Object {
-                "description": "The patent associated with a project if applicable",
-                "type": "string",
-              },
-              "project-id": Object {
-                "description": "The id of the project",
-                "type": "integer",
-              },
-            },
-            "title": "project-with-id",
             "type": "object",
           },
         },
@@ -1273,6 +1252,70 @@ Object {
       },
       "schemaHeaders": undefined,
       "type": "mutation",
+    },
+    Object {
+      "argTypeMap": Object {
+        "project_id": Object {
+          "description": undefined,
+          "name": "project-id",
+          "nullable": false,
+          "type": "integer",
+        },
+      },
+      "description": "Another endpoint to test authentication.",
+      "field": "get_project_with_id",
+      "headers": Object {
+        "accept": "application/json",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/projects/{args.project_id}",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "links": Object {
+            "patent": Object {
+              "args": Object {
+                "patent_id": "{root.$response.body#/patentId}",
+              },
+              "description": "Allows to fetch a patent.",
+              "fieldName": "get_patent_with_id",
+            },
+            "projectLead": Object {
+              "args": Object {
+                "username": "{root.$response.body#/leadId}",
+              },
+              "description": "Allows to fetch the user leading a project.",
+              "fieldName": "getUserByUsername",
+            },
+          },
+          "responseSchema": Object {
+            "$resolvedRef": "/components/schemas/project-with-id",
+            "description": "A project",
+            "properties": Object {
+              "active": Object {
+                "description": "Whether the project is active",
+                "type": "boolean",
+              },
+              "lead-id": Object {
+                "description": "The id of the lead",
+                "type": "string",
+              },
+              "patentId": Object {
+                "description": "The patent associated with a project if applicable",
+                "type": "string",
+              },
+              "project-id": Object {
+                "description": "The id of the project",
+                "type": "integer",
+              },
+            },
+            "title": "project-with-id",
+            "type": "object",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
     },
     Object {
       "argTypeMap": Object {
@@ -1716,6 +1759,26 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
+    Object {
+      "description": "Returns an arbitrary JSON object",
+      "field": "random",
+      "headers": Object {
+        "accept": "application/json",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/random",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": Object {
+            "title": "query_random",
+            "type": "object",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
   ],
   "referencedSchema": Object {
     "$ref": "#/definitions/_schema",
@@ -1856,6 +1919,12 @@ Object {
           "mystery": Object {
             "$ref": "#/definitions/mystery_200_response",
           },
+          "random": Object {
+            "$ref": "#/definitions/query_random",
+          },
+          "returnAllOffices": Object {
+            "$ref": "#/definitions/returnAllOffices_200_response",
+          },
         },
         "readOnly": true,
         "title": "Query",
@@ -1916,6 +1985,9 @@ Object {
           },
           "get_project_with_id": Object {
             "$ref": "#/definitions/queryInput_get_project_with_id",
+          },
+          "returnAllOffices": Object {
+            "$ref": "#/definitions/queryInput_returnAllOffices",
           },
         },
         "title": "QueryInput",
@@ -2239,10 +2311,6 @@ Object {
             "status": Object {
               "$ref": "#/definitions/query_getUsers_items_status",
             },
-            "username": Object {
-              "description": "The identifier of a user",
-              "type": "string",
-            },
           },
           "required": Array [
             "name",
@@ -2287,10 +2355,6 @@ Object {
             },
             "status": Object {
               "$ref": "#/definitions/query_getUsers_items_status",
-            },
-            "username": Object {
-              "description": "The identifier of a user",
-              "type": "string",
             },
           },
           "required": Array [
@@ -2453,7 +2517,6 @@ Object {
         "properties": Object {
           "inventor-id": Object {
             "description": "The id of the inventor",
-            "nullable": true,
             "type": "string",
           },
           "patent-id": Object {
@@ -2464,7 +2527,6 @@ Object {
         "required": Array [
           "patent-name",
           "patent-id",
-          "inventor-id",
         ],
         "title": "patent-with-id",
         "type": "object",
@@ -2814,6 +2876,30 @@ Object {
         "title": "queryInput_get_project_with_id",
         "type": "object",
       },
+      "queryInput_returnAllOffices": Object {
+        "properties": Object {
+          "parameters": Object {
+            "$ref": "#/definitions/queryInput_returnAllOffices_parameters",
+          },
+        },
+        "title": "queryInput_returnAllOffices",
+        "type": "object",
+      },
+      "queryInput_returnAllOffices_parameters": Object {
+        "description": undefined,
+        "name": "parameters",
+        "nullable": false,
+        "properties": Object {
+          "limit": Object {
+            "type": "integer",
+          },
+          "offset": Object {
+            "type": "integer",
+          },
+        },
+        "title": "queryInput_returnAllOffices_parameters",
+        "type": "object",
+      },
       "query_getAllAssets_items": Object {
         "oneOf": Array [
           Object {
@@ -2944,6 +3030,34 @@ Object {
         "title": "query_mystery_oneOf_1",
         "type": "object",
       },
+      "query_random": Object {
+        "title": "query_random",
+        "type": "object",
+      },
+      "returnAllOffices_200_response": Object {
+        "items": Object {
+          "$resolvedRef": "/components/schemas/office",
+          "description": "An office",
+          "properties": Object {
+            "employeeId": Object {
+              "description": "The owner ID of the office",
+              "type": "string",
+            },
+            "employerId": Object {
+              "description": "The identifier of the company a user works for",
+              "type": "string",
+            },
+            "room number": Object {
+              "description": "The room number of the office",
+              "type": "integer",
+            },
+          },
+          "title": "office",
+          "type": "object",
+        },
+        "title": "returnAllOffices_200_response",
+        "type": "array",
+      },
       "suborderObject": Object {
         "$resolvedRef": "/components/schemas/suborderObject",
         "properties": Object {
@@ -3000,10 +3114,6 @@ Object {
           },
           "status": Object {
             "$ref": "#/definitions/query_getUsers_items_status",
-          },
-          "username": Object {
-            "description": "The identifier of a user",
-            "type": "string",
           },
         },
         "required": Array [
@@ -3067,6 +3177,8 @@ type Query {
   getNumberOfDirtyDesks: String
   \\"Used to test empty responses\\"
   getBonuses: Void
+  \\"Used to test query parameters with form style and explode\\"
+  returnAllOffices(parameters: queryInput_returnAllOffices_parameters_Input!): [office]
   \\"Return an office.\\"
   getOffice(
     \\"Office ID\\"
@@ -3099,12 +3211,12 @@ type Query {
   ): trashcan
   \\"It could be anything!\\"
   mystery: mystery_200_response
+  \\"Returns an arbitrary JSON object\\"
+  random: JSON
 }
 
 \\"A user represents a natural person\\"
 type user {
-  \\"The identifier of a user\\"
-  username: String
   \\"The legal name of a user\\"
   name: String!
   address: address!
@@ -3251,6 +3363,11 @@ type office {
   company: company
 }
 
+input queryInput_returnAllOffices_parameters_Input {
+  limit: Int
+  offset: Int
+}
+
 \\"A research paper\\"
 type paper {
   \\"The name of the paper\\"
@@ -3302,11 +3419,11 @@ type project_with_id {
   \\"The patent associated with a project if applicable\\"
   patentId: String
   \\"Allows to fetch the user leading a project.\\"
+  ProjectLead: user
+  \\"Allows to fetch the user leading a project.\\"
   projectLead: user
   \\"Allows to fetch a patent.\\"
   patent: patent_with_id
-  \\"Allows to fetch the user leading a project.\\"
-  ProjectLead: user
 }
 
 type getScanner_200_response {
@@ -3364,8 +3481,6 @@ type Mutation {
 
 \\"A user represents a natural person\\"
 input user_Input {
-  \\"The identifier of a user\\"
-  username: String
   \\"The legal name of a user\\"
   name: String!
   address: address_Input!

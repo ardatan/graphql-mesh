@@ -42,6 +42,8 @@ type Query {
   anyOf10: anyOf10_200_response
   \\"anyOf test with allOf, requiring anyOf collapse\\"
   anyOf11: anyOf11_200_response
+  testLink: String
+  oneOfWithAllOfsAndLink: OneOfWithAllOfsAndLink
 }
 
 union oneOf_200_response = commonAttributeObject | differentAttributeObject
@@ -124,5 +126,18 @@ type anyOf11_200_response {
   anotherAttribute: String
   commonAttribute: String
   differentAttribute: String
+}
+
+union OneOfWithAllOfsAndLink = One | Two
+
+type One {
+  commonProp: String
+  differentOneProp: String
+  testLink: String
+}
+
+type Two {
+  commonProp: String
+  differentTwoProp: String
 }"
 `;
