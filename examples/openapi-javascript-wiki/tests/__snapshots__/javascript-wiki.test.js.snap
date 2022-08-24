@@ -667,7 +667,7 @@ type Query {
     \\"\\"\\"The word to lookup\\"\\"\\"
     word: String!
   ): transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider_response
-  viewsInPastMonth(project: String!): Float!
+  viewsInPastMonth(project: String!): BigInt!
 }
 
 type absolute_bytes_difference {

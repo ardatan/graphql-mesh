@@ -20,14 +20,14 @@ describe('JavaScript Wiki', () => {
       })
     ).toMatchSnapshot('javascript-wiki-schema');
   });
-  it.skip('should give correct response for viewsInPastMonth', async () => {
+  it('should give correct response for viewsInPastMonth', async () => {
     const viewsInPastMonthQuery = await readFile(
       join(__dirname, '../example-queries/views-in-past-month.graphql'),
       'utf8'
     );
     const { execute } = await mesh$;
     const result = await execute(viewsInPastMonthQuery);
-    expect(typeof result?.data?.viewsInPastMonth).toBe('number');
+    expect(result?.data?.viewsInPastMonth).toBeGreaterThan(0);
   });
   it('should give correct response for wikipediaMetrics within specific range', async () => {
     const wikipediaMetricsQuery = await readFile(

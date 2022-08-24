@@ -2,7 +2,7 @@ sources:
   - name: StackExchange
     handler:
       openapi:
-        oasFilePath: https://raw.githubusercontent.com/grokify/api-specs/master/stackexchange/stackexchange-api-v2.2_openapi-v3.0.yaml
+        source: https://raw.githubusercontent.com/grokify/api-specs/master/stackexchange/stackexchange-api-v2.2_openapi-v3.0.yaml
 
 documents:
   - list-questions.query.graphql

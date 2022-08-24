@@ -2,7 +2,7 @@ sources:
   - name: Weatherbit
     handler:
       openapi:
-        oasFilePath: https://www.weatherbit.io/static/swagger.json
+        source: https://www.weatherbit.io/static/swagger.json
 
 plugins:
   - responseCache:

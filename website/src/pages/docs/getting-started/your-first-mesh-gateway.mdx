@@ -95,7 +95,7 @@ sources:
     handler:
       openapi:
         baseUrl: http://localhost:3002/
-        oasFilePath: ../books-service/openapi3-definition.json
+        source: ../books-service/openapi3-definition.json
 ```
 
 The configuration is straightforward; we define a _Source_ called "Books" that is configured with the `openapi` _Handler_.
@@ -155,7 +155,7 @@ sources:
     handler:
       openapi:
         baseUrl: http://localhost:3002/
-        oasFilePath: ../books-service/openapi3-definition.json
+        source: ../books-service/openapi3-definition.json
 transforms:
   - filterSchema:
       filters:
@@ -186,7 +186,7 @@ sources:
     handler:
       openapi:
         baseUrl: http://localhost:3002/
-        oasFilePath: ../books-service/openapi3-definition.json
+        source: ../books-service/openapi3-definition.json
 transforms:
   - filterSchema:
       filters:

@@ -844,7 +844,7 @@ export interface OpenapiHandler {
   /**
    * A pointer to your API source (Support both JSON and YAML) - could be a local file, remote file or url endpoint
    */
-  oasFilePath: string;
+  source: string;
   /**
    * Format of the files referenced from the source file, for cases content type isn't detected automatically (Allowed values: json, yaml, js, ts)
    */

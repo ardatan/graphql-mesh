@@ -5,7 +5,7 @@ import { startServer, stopServer } from '../../../handlers/openapi/test/example_
 import { fetch } from '@whatwg-node/fetch';
 
 const PORT = 3003;
-const oasFilePath = join(__dirname, '../../../handlers/openapi/test/fixtures/example_oas.json');
+const source = join(__dirname, '../../../handlers/openapi/test/fixtures/example_oas.json');
 const baseUrl = `http://localhost:${PORT}/api`;
 
 // We don't create viewers for each security scheme definition in OAS like openapi-to-graphql
@@ -35,7 +35,7 @@ describe('Authentication', () => {
     `;
 
     const createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      oasFilePath,
+      source,
       baseUrl,
       operationHeaders: {
         authorization: 'Basic {args.usernameAndPassword|base64}',
@@ -67,7 +67,7 @@ describe('Authentication', () => {
     `;
 
     const createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      oasFilePath,
+      source,
       baseUrl,
       operationHeaders: {
         access_token: '{args.apiKey}',
@@ -99,7 +99,7 @@ describe('Authentication', () => {
     `;
 
     const createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      oasFilePath,
+      source,
       baseUrl,
       operationHeaders: {
         cookie: 'access_token={args.apiKey}',
@@ -131,7 +131,7 @@ describe('Authentication', () => {
     `;
 
     const createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      oasFilePath,
+      source,
       baseUrl,
       queryParams: {
         access_token: '{args.apiKey}',

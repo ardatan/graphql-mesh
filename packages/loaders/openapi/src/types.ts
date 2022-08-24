@@ -2,7 +2,7 @@ import { JSONSchemaLoaderOptions } from '@omnigraph/json-schema';
 
 export interface OpenAPILoaderOptions extends Partial<JSONSchemaLoaderOptions> {
   // The URL or FileSystem path to the OpenAPI Document.
-  oasFilePath: string;
+  source: string;
   selectQueryOrMutationField?: OpenAPILoaderSelectQueryOrMutationFieldConfig[];
   fallbackFormat?: 'json' | 'yaml' | 'js' | 'ts';
 }

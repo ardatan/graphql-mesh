@@ -17,7 +17,7 @@ import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolatio
 import { process } from '@graphql-mesh/cross-helpers';
 
 interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
-  oasFilePath: OpenAPIV3.Document | OpenAPIV2.Document | string;
+  source: OpenAPIV3.Document | OpenAPIV2.Document | string;
   fallbackFormat?: 'json' | 'yaml' | 'js' | 'ts';
   cwd?: string;
   fetch?: WindowOrWorkerGlobalScope['fetch'];
@@ -32,7 +32,7 @@ interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
 export async function getJSONSchemaOptionsFromOpenAPIOptions(
   name: string,
   {
-    oasFilePath,
+    source,
     fallbackFormat,
     cwd,
     fetch: fetchFn,
@@ -49,10 +49,10 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     fieldTypeMap[fieldName] = type;
   }
   const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders);
-  logger?.debug(`Fetching OpenAPI Document from ${oasFilePath}`);
+  logger?.debug(`Fetching OpenAPI Document from ${source}`);
   let oasOrSwagger: OpenAPIV3.Document | OpenAPIV2.Document =
-    typeof oasFilePath === 'string'
-      ? await readFileOrUrl(oasFilePath, {
+    typeof source === 'string'
+      ? await readFileOrUrl(source, {
           cwd,
           fallbackFormat,
           headers: schemaHeadersFactory({ env: process.env }),
@@ -60,7 +60,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
           importFn: defaultImportFn,
           logger,
         })
-      : oasFilePath;
+      : source;
 
   function handleDefinitions(definitions: Record<string, OpenAPIV2.SchemaObject | OpenAPIV3.SchemaObject>) {
     const seen = new Map<

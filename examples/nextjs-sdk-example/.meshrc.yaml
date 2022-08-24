@@ -3,7 +3,7 @@ sources:
     handler:
       openapi:
         baseUrl: https://petstore.swagger.io/v2/
-        oasFilePath: https://petstore.swagger.io/v2/swagger.json
+        source: https://petstore.swagger.io/v2/swagger.json
 
 documents:
   - './list-pets.graphql'

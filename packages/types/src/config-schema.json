@@ -1868,7 +1868,7 @@
       "type": "object",
       "title": "OpenapiHandler",
       "properties": {
-        "oasFilePath": {
+        "source": {
           "type": "string",
           "description": "A pointer to your API source (Support both JSON and YAML) - could be a local file, remote file or url endpoint"
         },
@@ -1916,7 +1916,7 @@
           "description": "JSON object representing the query search parameters to add to the API calls"
         }
       },
-      "required": ["oasFilePath"]
+      "required": ["source"]
     },
     "OASSelectQueryOrMutationFieldConfig": {
       "additionalProperties": false,

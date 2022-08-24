@@ -22,7 +22,7 @@ sources:
     handler:
       openapi:
         baseUrl: http://localhost:3002/
-        oasFilePath: ../books-service/openapi3-definition.json
+        source: ../books-service/openapi3-definition.json
     transforms:
   - rename:
       renames:
@@ -220,7 +220,7 @@ sources:
   - name: Users
     handler:
       openapi:
-        oasFilePath: https://api.../swagger.yaml
+        source: https://api.../swagger.yaml
     transforms:
       - rename:
           mode: wrap # you can use either wrap or bare here
@@ -279,7 +279,7 @@ sources:
   - name: Users
     handler:
       openapi:
-        oasFilePath: https://api.../swagger.yaml
+        source: https://api.../swagger.yaml
     transforms:
       - rename:
           mode: bare # bare is a great choice here, at the data source level

@@ -5,7 +5,7 @@ import loadGraphQLSchemaFromOpenAPI from '../src';
 describe('Multiple Responses Swagger', () => {
   it('should create correct response types with 204 empty response', async () => {
     const schema = await loadGraphQLSchemaFromOpenAPI('test', {
-      oasFilePath: join(__dirname, 'fixtures', 'multiple-responses-swagger.yml'),
+      source: join(__dirname, 'fixtures', 'multiple-responses-swagger.yml'),
     });
     expect(printSchema(schema)).toMatchInlineSnapshot(`
       "directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION

@@ -21,7 +21,7 @@ sources:
   - name: MyOpenapiApi
     handler:
       openapi:
-        oasFilePath: ./my-schema.json
+        source: ./my-schema.json
 ```
 
 Note that this handler is based on the [JSON Schema handler](/docs/handlers/json-schema) - so it's configurations will apply here as well.
@@ -37,7 +37,7 @@ sources:
   - name: MyOpenapiApi
     handler:
       openapi:
-        oasFilePath: ./my-schema.json
+        source: ./my-schema.json
         selectQueryOrMutationField:
           - fieldName: 'add_weather_forecast' # OAS field name
             type: Query # switch method POST from default Mutation into Query
