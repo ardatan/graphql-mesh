@@ -3,7 +3,7 @@ import { fetch } from '@whatwg-node/fetch';
 import { GraphQLSchema, parse, validate, execute } from 'graphql';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 
-import { startServer, stopServer } from '../../../handlers/openapi/test/nested_objects_server';
+import { startServer, stopServer } from './nested_objects_server';
 
 let createdSchema: GraphQLSchema;
 const PORT = 3009;

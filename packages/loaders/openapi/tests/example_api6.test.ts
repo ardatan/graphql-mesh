@@ -2,7 +2,7 @@ import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch } from '@whatwg-node/fetch';
 import { parse, validate, GraphQLSchema, execute } from 'graphql';
 
-import { startServer, stopServer } from '../../../handlers/openapi/test/example_api6_server';
+import { startServer, stopServer } from './example_api6_server';
 import { OpenAPILoaderOptions } from '../src';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 

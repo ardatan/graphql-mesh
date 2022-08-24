@@ -1,7 +1,7 @@
 import { graphql, GraphQLSchema } from 'graphql';
 
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
-import { startServer, stopServer } from '../../../handlers/openapi/test/example_api2_server';
+import { startServer, stopServer } from './example_api2_server';
 import { fetch } from '@whatwg-node/fetch';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
