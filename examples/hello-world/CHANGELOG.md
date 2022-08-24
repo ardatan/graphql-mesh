@@ -1,5 +1,12 @@
 # json-schema-hello-world
 
+## 0.0.214
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.34.1
+
 ## 0.0.213
 
 ### Patch Changes
