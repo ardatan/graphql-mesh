@@ -471,6 +471,48 @@
         }
       }
     },
+    "/offices": {
+      "get": {
+        "x-graphql-field-name": "fetchAllOfficesWithFormStyleAndExplodeTrue",
+        "operationId": "returnAllOffices",
+        "description": "Used to test query parameters with form style and explode",
+        "parameters": [
+          {
+            "name": "parameters",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "type": "integer"
+                },
+                "offset": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of users.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/office"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/offices/{id}": {
       "get": {
         "operationId": "getOffice",
@@ -726,13 +768,57 @@
         },
         "security": [
           {
-            "example_api_basic_protocol": []
-          },
-          {
             "example_api_key_protocol_2": []
           },
           {
             "example_api_key_protocol_3": []
+          },
+          {
+            "example_api_basic_protocol": []
+          },
+          {
+            "example_api_bearer_protocol": []
+          }
+        ]
+      }
+    },
+    "/projects": {
+      "post": {
+        "operationId": "post-project-with-id",
+        "description": "An endpoint to test authenticated POST requests.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/project-with-id"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "A product.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/project-with-id"
+                }
+              }
+            },
+            "links": {
+              "ProjectLead": {
+                "$ref": "#/components/links/ProjectLead"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "example_api_key_protocol": []
+          },
+          {
+            "example_api_key_protocol_2": []
           }
         ]
       }
@@ -780,47 +866,6 @@
           },
           {
             "example_api_key_protocol_3": []
-          }
-        ]
-      }
-    },
-    "/projects": {
-      "post": {
-        "operationId": "post-project-with-id",
-        "description": "An endpoint to test authenticated POST requests.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/project-with-id"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "description": "A product.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/project-with-id"
-                }
-              }
-            },
-            "links": {
-              "ProjectLead": {
-                "$ref": "#/components/links/ProjectLead"
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "example_api_key_protocol": []
-          },
-          {
-            "example_api_key_protocol_2": []
           }
         ]
       }
@@ -1177,6 +1222,23 @@
           }
         }
       }
+    },
+    "/random": {
+      "get": {
+        "description": "Returns an arbitrary JSON object",
+        "responses": {
+          "200": {
+            "description": "Random object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1332,11 +1394,10 @@
           },
           "inventor-id": {
             "type": "string",
-            "description": "The id of the inventor",
-            "nullable": true
+            "description": "The id of the inventor"
           }
         },
-        "required": ["patent-name", "patent-id", "inventor-id"]
+        "required": ["patent-name", "patent-id"]
       },
       "product-with-id": {
         "type": "object",
@@ -1412,10 +1473,6 @@
         "type": "object",
         "description": "A user represents a natural person",
         "properties": {
-          "username": {
-            "type": "string",
-            "description": "The identifier of a user"
-          },
           "name": {
             "type": "string",
             "description": "The legal name of a user"
@@ -1492,7 +1549,7 @@
       "Friends": {
         "operationId": "getUserFriends",
         "parameters": {
-          "username": "$request.path.username"
+          "username": "$request.query.username"
         },
         "description": "Allows to fetch the user's friends."
       },
@@ -1588,6 +1645,10 @@
       "example_api_basic_protocol": {
         "type": "http",
         "scheme": "basic"
+      },
+      "example_api_bearer_protocol": {
+        "type": "http",
+        "scheme": "bearer"
       }
     },
     "parameters": {

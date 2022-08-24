@@ -44,7 +44,7 @@
         "description": "Basic simpleNames option test",
         "responses": {
           "200": {
-            "description": "Mandatory field",
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
@@ -83,7 +83,7 @@
         "description": "Basic simpleNames option test with GraphQL unsafe values",
         "responses": {
           "200": {
-            "description": "Mandatory field",
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
@@ -115,7 +115,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Mandatory field",
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
@@ -147,7 +147,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Mandatory field",
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
@@ -155,6 +155,82 @@
                   "properties": {
                     "data": {
                       "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getEnum": {
+      "get": {
+        "description": "Basic simpleEnumValues option test",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "string",
+                      "enum": ["r-e-d", "a-m-b-e-r", "g-r-e-e-n"]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getNumericalEnum": {
+      "get": {
+        "description": "Basic simpleEnumValues option test on numerical enum",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "number",
+                      "enum": [1, 2, 3, 4, 5]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getObjectEnum": {
+      "get": {
+        "description": "Basic simpleEnumValues option test on object enum",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "enum": [
+                        {
+                          "hello": "world"
+                        },
+                        {
+                          "goodbye": "world"
+                        }
+                      ]
                     }
                   }
                 }
