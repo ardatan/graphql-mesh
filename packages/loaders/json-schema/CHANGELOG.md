@@ -1,5 +1,12 @@
 # @omnigraph/json-schema
 
+## 0.31.0
+
+### Minor Changes
+
+- [#4364](https://github.com/Urigo/graphql-mesh/pull/4364) [`32b3a63c2`](https://github.com/Urigo/graphql-mesh/commit/32b3a63c29a823dde830f7571a2e5b0213e03b12) Thanks [@ardatan](https://github.com/ardatan)! - - Respect `explode: true` or `explode: false` in query parameter definitions in OAS
+  - Introduce a new `queryStringOptionsByParam` option to define `queryStringOptions` for each query parameter
+
 ## 0.30.0
 
 ### Minor Changes
