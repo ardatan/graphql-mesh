@@ -3010,10 +3010,10 @@
     valid-url "1.0.9"
     websocket "1.0.31"
 
-"@graphql-tools/url-loader@7.13.9":
-  version "7.13.9"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.13.9.tgz#89d6bfe47eb385a7387f44914673a77ec489b7fd"
-  integrity sha512-7vN7hpT/U0/jC1cc2kNqm0H3iQqRis2f4ZbMsiWT8lDGo/GFOAq+LhJJjTO3zx/ivG90usuu6nPy0yrGlLMvGg==
+"@graphql-tools/url-loader@7.14.0":
+  version "7.14.0"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.14.0.tgz#ea11addaf394d46e4230fbaaf0862f3d11c3e4b8"
+  integrity sha512-AE3p1JymSUJugTx2y6ysoN9vqDJgHvirLH2g8AYm9Cn59bfTQdjSaQI6I3tFWSbBx8bTnpoxgYiTOz7v/EO//A==
   dependencies:
     "@ardatan/sync-fetch" "0.0.1"
     "@graphql-tools/delegate" "9.0.3"
