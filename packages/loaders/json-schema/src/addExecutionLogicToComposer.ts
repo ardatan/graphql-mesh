@@ -63,13 +63,16 @@ function linkResolver(
 ) {
   for (const argKey in linkObjArgs) {
     const argInterpolation = linkObjArgs[argKey];
-    const actualValue = stringInterpolator.parse(argInterpolation, {
-      root,
-      args,
-      context,
-      info,
-      env: process.env,
-    });
+    const actualValue =
+      typeof argInterpolation === 'string'
+        ? stringInterpolator.parse(argInterpolation, {
+            root,
+            args,
+            context,
+            info,
+            env: process.env,
+          })
+        : argInterpolation;
     lodashSet(args, argKey, actualValue);
   }
   return actualResolver(root, args, context, info);
@@ -351,6 +354,9 @@ ${operationConfig.description || ''}
         }
 
         const addResponseMetadata = (obj: any) => {
+          if (typeof obj !== 'object') {
+            return obj;
+          }
           Object.defineProperties(obj, {
             $field: {
               get() {
