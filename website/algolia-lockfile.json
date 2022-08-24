@@ -711,7 +711,7 @@
         "anchor": "miscellaneous"
       }
     ],
-    "content": "60edb582bf91ada0485bf7105fa34d2a",
+    "content": "1dbf2daee12583645d1f0de8160c04c7",
     "url": "https://www.graphql-mesh.com/docs/migration/openapi-0",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Migration guides"],
@@ -801,7 +801,7 @@
     "objectID": "mesh-docs-source-handlers-handlers-introduction",
     "headings": [],
     "toc": [],
-    "content": "3fd2d8a69c3eed4b88cad88bfb47107b",
+    "content": "113675e8f44012b09211655708e9d4ce",
     "url": "https://www.graphql-mesh.com/docs/handlers/handlers-introduction",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Source Handlers"],
@@ -914,7 +914,47 @@
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-source-handlers-new-openapi",
+    "objectID": "mesh-docs-source-handlers-odata",
+    "headings": ["Dynamic Header Values", "Codesandbox Example", "Config API Reference"],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "From Environmental Variable",
+                "anchor": "from-environmental-variable"
+              }
+            ],
+            "title": "From Context (HTTP Header for `mesh dev` or `mesh start`)",
+            "anchor": "from-context-http-header-for-mesh-dev-or-mesh-start"
+          }
+        ],
+        "title": "Dynamic Header Values",
+        "anchor": "dynamic-header-values"
+      },
+      {
+        "children": [],
+        "title": "Codesandbox Example",
+        "anchor": "codesandbox-example"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "7b0c1d8d448184a0ef5fed6e927ffaf2",
+    "url": "https://www.graphql-mesh.com/docs/handlers/odata",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Docs", "Source Handlers"],
+    "source": "Mesh",
+    "title": "OData / Microsoft Graph",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-source-handlers-openapi",
     "headings": [
       "Overriding default Query/Mutation operations classification",
       "Naming convention",
@@ -991,115 +1031,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "23a2bad0e18c56f6593fef0854d455dc",
-    "url": "https://www.graphql-mesh.com/docs/handlers/new-openapi",
-    "domain": "https://www.graphql-mesh.com/",
-    "hierarchy": ["Docs", "Source Handlers"],
-    "source": "Mesh",
-    "title": "New OpenAPI / Swagger",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "mesh-docs-source-handlers-odata",
-    "headings": ["Dynamic Header Values", "Codesandbox Example", "Config API Reference"],
-    "toc": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "children": [],
-                "title": "From Environmental Variable",
-                "anchor": "from-environmental-variable"
-              }
-            ],
-            "title": "From Context (HTTP Header for `mesh dev` or `mesh start`)",
-            "anchor": "from-context-http-header-for-mesh-dev-or-mesh-start"
-          }
-        ],
-        "title": "Dynamic Header Values",
-        "anchor": "dynamic-header-values"
-      },
-      {
-        "children": [],
-        "title": "Codesandbox Example",
-        "anchor": "codesandbox-example"
-      },
-      {
-        "children": [],
-        "title": "Config API Reference",
-        "anchor": "config-api-reference"
-      }
-    ],
-    "content": "7b0c1d8d448184a0ef5fed6e927ffaf2",
-    "url": "https://www.graphql-mesh.com/docs/handlers/odata",
-    "domain": "https://www.graphql-mesh.com/",
-    "hierarchy": ["Docs", "Source Handlers"],
-    "source": "Mesh",
-    "title": "OData / Microsoft Graph",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "mesh-docs-source-handlers-openapi",
-    "headings": [
-      "Overriding default Query/Mutation operations",
-      "Dynamic Header Values",
-      "Advanced cookies handling",
-      "Examples",
-      "Config API Reference"
-    ],
-    "toc": [
-      {
-        "children": [],
-        "title": "Overriding default Query/Mutation operations",
-        "anchor": "overriding-default-querymutation-operations"
-      },
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "children": [],
-                "title": "From Environmental Variable",
-                "anchor": "from-environmental-variable"
-              }
-            ],
-            "title": "From Context (HTTP Header for `mesh dev` or `mesh start`)",
-            "anchor": "from-context-http-header-for-mesh-dev-or-mesh-start"
-          }
-        ],
-        "title": "Dynamic Header Values",
-        "anchor": "dynamic-header-values"
-      },
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "children": [],
-                "title": "Setting / Unsetting the cookie",
-                "anchor": "setting--unsetting-the-cookie"
-              }
-            ],
-            "title": "Accepting one of the cookies, header, or context value",
-            "anchor": "accepting-one-of-the-cookies-header-or-context-value"
-          }
-        ],
-        "title": "Advanced cookies handling",
-        "anchor": "advanced-cookies-handling"
-      },
-      {
-        "children": [],
-        "title": "Examples",
-        "anchor": "examples"
-      },
-      {
-        "children": [],
-        "title": "Config API Reference",
-        "anchor": "config-api-reference"
-      }
-    ],
-    "content": "cd3e89778d17e7c68d60a333a0e80711",
+    "content": "1d304844f961939ed014ede1bece9a5b",
     "url": "https://www.graphql-mesh.com/docs/handlers/openapi",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Source Handlers"],
