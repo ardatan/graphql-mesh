@@ -229,7 +229,7 @@ ${operationConfig.description || ''}
               },
               {
                 ...queryStringOptions,
-                ...operationConfig.queryStringOptionsByParam[queryParamName],
+                ...operationConfig.queryStringOptionsByParam?.[queryParamName],
               }
             );
             fullPath += fullPath.includes('?') ? '&' : '?';
@@ -248,7 +248,7 @@ ${operationConfig.description || ''}
                 },
                 {
                   ...queryStringOptions,
-                  ...operationConfig.queryStringOptionsByParam[queryParamName],
+                  ...operationConfig.queryStringOptionsByParam?.[queryParamName],
                 }
               );
               fullPath += fullPath.includes('?') ? '&' : '?';
