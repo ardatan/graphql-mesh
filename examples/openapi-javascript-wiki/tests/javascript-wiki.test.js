@@ -20,7 +20,7 @@ describe('JavaScript Wiki', () => {
       })
     ).toMatchSnapshot('javascript-wiki-schema');
   });
-  it('should give correct response for viewsInPastMonth', async () => {
+  it.skip('should give correct response for viewsInPastMonth', async () => {
     const viewsInPastMonthQuery = await readFile(
       join(__dirname, '../example-queries/views-in-past-month.graphql'),
       'utf8'

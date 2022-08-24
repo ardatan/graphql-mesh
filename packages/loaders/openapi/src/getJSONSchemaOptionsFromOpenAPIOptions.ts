@@ -61,22 +61,38 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
           logger,
         })
       : oasFilePath;
-  if ('definitions' in oasOrSwagger) {
-    for (const definitionName in oasOrSwagger.definitions) {
-      const definition = oasOrSwagger.definitions[definitionName];
-      if (!definition.title) {
-        definition.title = definitionName;
+
+  function handleDefinitions(definitions: Record<string, OpenAPIV2.SchemaObject | OpenAPIV3.SchemaObject>) {
+    const seen = new Map<
+      string,
+      {
+        definitionName: string;
+        definition: OpenAPIV3.SchemaObject | OpenAPIV2.SchemaObject;
+      }
+    >();
+    for (const definitionName in definitions) {
+      const definition = definitions[definitionName];
+      if (!('$ref' in definition)) {
+        if (!definition.title) {
+          definition.title = definitionName;
+        } else {
+          const seenDefinition = seen.get(definition.title);
+          if (seenDefinition) {
+            definition.title = definitionName;
+            seenDefinition.definition.title = seenDefinition.definitionName;
+          }
+          seen.set(definition.title, { definitionName, definition });
+        }
       }
     }
+  }
+  if ('definitions' in oasOrSwagger) {
+    handleDefinitions(oasOrSwagger.definitions);
   }
   if ('components' in oasOrSwagger && 'schemas' in oasOrSwagger.components) {
-    for (const definitionName in oasOrSwagger.components.schemas) {
-      const definition = oasOrSwagger.components.schemas[definitionName];
-      if (!('$ref' in definition) && !definition.title) {
-        definition.title = definitionName;
-      }
-    }
+    handleDefinitions(oasOrSwagger.components.schemas);
   }
+
   oasOrSwagger = (await dereferenceObject(oasOrSwagger)) as any;
   const operations: JSONSchemaOperationConfig[] = [];
 
@@ -228,6 +244,16 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
         const responseObj = methodObj.responses[responseKey] as OpenAPIV3.ResponseObject | OpenAPIV2.ResponseObject;
 
         let schemaObj: JSONSchemaObject;
+
+        if ('consumes' in methodObj) {
+          operationConfig.headers = operationConfig.headers || {};
+          operationConfig.headers['Content-Type'] = methodObj.consumes.join(', ');
+        }
+
+        if ('produces' in methodObj) {
+          operationConfig.headers = operationConfig.headers || {};
+          operationConfig.headers.Accept = methodObj.produces.join(', ');
+        }
 
         if ('content' in responseObj) {
           const responseObjForStatusCode: {

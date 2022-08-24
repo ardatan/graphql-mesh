@@ -11834,9 +11834,9 @@ type Account {
 
 scalar queryInput_GetAccount_expand_items
 
-union GetAccountBankAccountsId_response = mutation_PostAccountBankAccounts_oneOf_0 | error
+union GetAccountBankAccountsId_response = external_account | error
 
-type mutation_PostAccountBankAccounts_oneOf_0 {
+type external_account {
   \\"The account this card belongs to. This attribute will not be in the card object if the card belongs to a customer or recipient instead.\\"
   account: JSON
   \\"The name of the person or business that owns the bank account.\\"
@@ -12046,7 +12046,7 @@ scalar query_GetAccountExternalAccounts_oneOf_0_url
 
 scalar queryInput_GetAccountExternalAccounts_expand_items
 
-union GetAccountExternalAccountsId_response = mutation_PostAccountBankAccounts_oneOf_0 | error
+union GetAccountExternalAccountsId_response = external_account | error
 
 scalar queryInput_GetAccountExternalAccountsId_expand_items
 
@@ -12153,7 +12153,7 @@ scalar queryInput_GetAccountsAccount_account
 
 scalar queryInput_GetAccountsAccount_expand_items
 
-union GetAccountsAccountBankAccountsId_response = mutation_PostAccountBankAccounts_oneOf_0 | error
+union GetAccountsAccountBankAccountsId_response = external_account | error
 
 scalar queryInput_GetAccountsAccountBankAccountsId_account
 
@@ -12212,7 +12212,7 @@ scalar queryInput_GetAccountsAccountExternalAccounts_account
 
 scalar queryInput_GetAccountsAccountExternalAccounts_expand_items
 
-union GetAccountsAccountExternalAccountsId_response = mutation_PostAccountBankAccounts_oneOf_0 | error
+union GetAccountsAccountExternalAccountsId_response = external_account | error
 
 scalar queryInput_GetAccountsAccountExternalAccountsId_account
 
@@ -14296,9 +14296,9 @@ scalar queryInput_GetCustomersCustomerSources_expand_items
 \\"Filter sources according to a particular object type.\\"
 scalar queryInput_GetCustomersCustomerSources_object
 
-union GetCustomersCustomerSourcesId_response = mutation_PostCustomersCustomerBankAccounts_oneOf_0 | error
+union GetCustomersCustomerSourcesId_response = payment_source | error
 
-type mutation_PostCustomersCustomerBankAccounts_oneOf_0 {
+type payment_source {
   business_profile: AccountBusinessProfile
   \\"The business type. Can be \`individual\` or \`company\`.\\"
   business_type: mutation_Post3dSecure_oneOf_0_card_account_anyOf_1_business_type
@@ -19748,7 +19748,7 @@ input tos_acceptance_specs_Input {
 
 scalar mutationInput_PostAccount_input_tos_acceptance_user_agent
 
-union PostAccountBankAccounts_response = mutation_PostAccountBankAccounts_oneOf_0 | error
+union PostAccountBankAccounts_response = external_account | error
 
 input PostAccountBankAccounts_request_Input {
   \\"Either a token, like the ones returned by [Stripe.js](https://stripe.com/docs/stripe.js), or a dictionary containing a user's bank account details.\\"
@@ -19768,9 +19768,9 @@ scalar mutationInput_PostAccountBankAccounts_input_expand_items
 \\"Please refer to full [documentation](https://stripe.com/docs/api) instead.\\"
 scalar mutationInput_PostAccountBankAccounts_input_external_account
 
-union DeleteAccountBankAccountsId_response = mutation_DeleteAccountBankAccountsId_oneOf_0 | error
+union DeleteAccountBankAccountsId_response = deleted_external_account | error
 
-type mutation_DeleteAccountBankAccountsId_oneOf_0 {
+type deleted_external_account {
   \\"Three-letter [ISO code for the currency](https://stripe.com/docs/payouts) paid out to the bank account.\\"
   currency: JSON
   \\"Always true for a deleted object\\"
@@ -19780,7 +19780,7 @@ type mutation_DeleteAccountBankAccountsId_oneOf_0 {
   object: JSON
 }
 
-union PostAccountBankAccountsId_response = mutation_PostAccountBankAccounts_oneOf_0 | error
+union PostAccountBankAccountsId_response = external_account | error
 
 input PostAccountBankAccountsId_request_Input {
   \\"The name of the person or business that owns the bank account.\\"
@@ -19861,7 +19861,7 @@ input PostAccountCapabilitiesCapability_request_Input {
 
 scalar mutationInput_PostAccountCapabilitiesCapability_input_expand_items
 
-union PostAccountExternalAccounts_response = mutation_PostAccountBankAccounts_oneOf_0 | error
+union PostAccountExternalAccounts_response = external_account | error
 
 input PostAccountExternalAccounts_request_Input {
   \\"Either a token, like the ones returned by [Stripe.js](https://stripe.com/docs/stripe.js), or a dictionary containing a user's bank account details.\\"
@@ -19881,9 +19881,9 @@ scalar mutationInput_PostAccountExternalAccounts_input_expand_items
 \\"Please refer to full [documentation](https://stripe.com/docs/api) instead.\\"
 scalar mutationInput_PostAccountExternalAccounts_input_external_account
 
-union DeleteAccountExternalAccountsId_response = mutation_DeleteAccountBankAccountsId_oneOf_0 | error
+union DeleteAccountExternalAccountsId_response = deleted_external_account | error
 
-union PostAccountExternalAccountsId_response = mutation_PostAccountBankAccounts_oneOf_0 | error
+union PostAccountExternalAccountsId_response = external_account | error
 
 input PostAccountExternalAccountsId_request_Input {
   \\"The name of the person or business that owns the bank account.\\"
@@ -21473,7 +21473,7 @@ input mutationInput_PostAccountsAccount_input_tos_acceptance_Input {
 
 scalar mutationInput_PostAccountsAccount_input_tos_acceptance_user_agent
 
-union PostAccountsAccountBankAccounts_response = mutation_PostAccountBankAccounts_oneOf_0 | error
+union PostAccountsAccountBankAccounts_response = external_account | error
 
 scalar mutationInput_PostAccountsAccountBankAccounts_account
 
@@ -21495,11 +21495,11 @@ scalar mutationInput_PostAccountsAccountBankAccounts_input_expand_items
 \\"Please refer to full [documentation](https://stripe.com/docs/api) instead.\\"
 scalar mutationInput_PostAccountsAccountBankAccounts_input_external_account
 
-union DeleteAccountsAccountBankAccountsId_response = mutation_DeleteAccountBankAccountsId_oneOf_0 | error
+union DeleteAccountsAccountBankAccountsId_response = deleted_external_account | error
 
 scalar mutationInput_DeleteAccountsAccountBankAccountsId_account
 
-union PostAccountsAccountBankAccountsId_response = mutation_PostAccountBankAccounts_oneOf_0 | error
+union PostAccountsAccountBankAccountsId_response = external_account | error
 
 scalar mutationInput_PostAccountsAccountBankAccountsId_account
 
@@ -21584,7 +21584,7 @@ input PostAccountsAccountCapabilitiesCapability_request_Input {
 
 scalar mutationInput_PostAccountsAccountCapabilitiesCapability_input_expand_items
 
-union PostAccountsAccountExternalAccounts_response = mutation_PostAccountBankAccounts_oneOf_0 | error
+union PostAccountsAccountExternalAccounts_response = external_account | error
 
 scalar mutationInput_PostAccountsAccountExternalAccounts_account
 
@@ -21606,11 +21606,11 @@ scalar mutationInput_PostAccountsAccountExternalAccounts_input_expand_items
 \\"Please refer to full [documentation](https://stripe.com/docs/api) instead.\\"
 scalar mutationInput_PostAccountsAccountExternalAccounts_input_external_account
 
-union DeleteAccountsAccountExternalAccountsId_response = mutation_DeleteAccountBankAccountsId_oneOf_0 | error
+union DeleteAccountsAccountExternalAccountsId_response = deleted_external_account | error
 
 scalar mutationInput_DeleteAccountsAccountExternalAccountsId_account
 
-union PostAccountsAccountExternalAccountsId_response = mutation_PostAccountBankAccounts_oneOf_0 | error
+union PostAccountsAccountExternalAccountsId_response = external_account | error
 
 scalar mutationInput_PostAccountsAccountExternalAccountsId_account
 
@@ -23546,7 +23546,7 @@ scalar mutationInput_PostCustomersCustomerBalanceTransactionsTransaction_input_d
 
 scalar mutationInput_PostCustomersCustomerBalanceTransactionsTransaction_input_expand_items
 
-union PostCustomersCustomerBankAccounts_response = mutation_PostCustomersCustomerBankAccounts_oneOf_0 | error
+union PostCustomersCustomerBankAccounts_response = payment_source | error
 
 scalar mutationInput_PostCustomersCustomerBankAccounts_customer
 
@@ -23958,7 +23958,7 @@ input PostCustomersCustomerBankAccountsIdVerify_request_Input {
 
 scalar mutationInput_PostCustomersCustomerBankAccountsIdVerify_input_expand_items
 
-union PostCustomersCustomerCards_response = mutation_PostCustomersCustomerBankAccounts_oneOf_0 | error
+union PostCustomersCustomerCards_response = payment_source | error
 
 scalar mutationInput_PostCustomersCustomerCards_customer
 
@@ -24369,7 +24369,7 @@ enum mutation_DeleteCustomersCustomerDiscount_oneOf_0_object {
 
 scalar mutationInput_DeleteCustomersCustomerDiscount_customer
 
-union PostCustomersCustomerSources_response = mutation_PostCustomersCustomerBankAccounts_oneOf_0 | error
+union PostCustomersCustomerSources_response = payment_source | error
 
 scalar mutationInput_PostCustomersCustomerSources_customer
 
