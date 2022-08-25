@@ -24,7 +24,6 @@ import lodashSet from 'lodash.set';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { process } from '@graphql-mesh/cross-helpers';
 import { getHeadersObj, MeshFetch } from '@graphql-mesh/utils';
-import { getContainerTC } from './getUnionTypeComposers';
 
 export interface AddExecutionLogicToComposerOptions {
   schemaComposer: SchemaComposer;
@@ -505,7 +504,7 @@ ${operationConfig.description || ''}
                 name: `${operationConfig.field}_${statusCode}_response`,
                 fields: {
                   [originalName]: {
-                    type: typeTC,
+                    type: typeTC as any,
                     resolve: root => root,
                   },
                 },
