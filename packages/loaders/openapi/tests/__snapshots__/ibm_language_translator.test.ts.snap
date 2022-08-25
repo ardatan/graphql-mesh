@@ -150,7 +150,7 @@ type Mutation {
     base_model_id: String!
     \\"The model name. Valid characters are letters, numbers, -, and _. No spaces.\\"
     name: String
-    input: String
+    input: File
   ): createModel_response
   \\"Deletes a custom translation model\\"
   deleteModel(
@@ -164,6 +164,8 @@ type Mutation {
 }
 
 union createModel_response = TranslationModel | ErrorResponse
+
+scalar File
 
 union deleteModel_response = DeleteModelResult | ErrorResponse
 

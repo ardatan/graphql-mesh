@@ -215,16 +215,6 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
       }
 
       switch (subSchema.type as any) {
-        case 'file': {
-          const typeComposer = schemaComposer.getAnyTC(GraphQLFile);
-          return {
-            input: typeComposer,
-            output: typeComposer,
-            description: subSchema.description,
-            nullable: subSchema.nullable,
-            default: subSchema.default,
-          };
-        }
         case 'boolean': {
           const typeComposer = schemaComposer.getAnyTC(GraphQLBoolean);
           return {
@@ -291,6 +281,16 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             };
           }
           switch (subSchema.format) {
+            case 'binary': {
+              const typeComposer = schemaComposer.getAnyTC(GraphQLFile);
+              return {
+                input: typeComposer,
+                output: typeComposer,
+                description: subSchema.description,
+                nullable: subSchema.nullable,
+                default: subSchema.default,
+              };
+            }
             case 'date-time': {
               const typeComposer = schemaComposer.getAnyTC(GraphQLDateTime);
               return {

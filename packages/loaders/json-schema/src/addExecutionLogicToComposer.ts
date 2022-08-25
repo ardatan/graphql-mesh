@@ -1,7 +1,7 @@
 import { GraphQLJSON, ObjectTypeComposer, ObjectTypeComposerFieldConfig, SchemaComposer } from 'graphql-compose';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { JSONSchemaLinkConfig, JSONSchemaOperationConfig, OperationHeadersConfiguration } from './types';
-import { getOperationMetadata, isPubSubOperationConfig, isFileUpload, cleanObject } from './utils';
+import { getOperationMetadata, isPubSubOperationConfig, isFileUpload } from './utils';
 import { memoize1 } from '@graphql-tools/utils';
 import urlJoin from 'url-join';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType';
@@ -24,6 +24,7 @@ import lodashSet from 'lodash.set';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { process } from '@graphql-mesh/cross-helpers';
 import { getHeadersObj, MeshFetch } from '@graphql-mesh/utils';
+import { FormData } from '@whatwg-node/fetch';
 
 export interface AddExecutionLogicToComposerOptions {
   schemaComposer: SchemaComposer;
@@ -196,7 +197,7 @@ ${operationConfig.description || ''}
           }
           // Resolve union input
           const input = (args.input = resolveDataByUnionInputType(
-            cleanObject(args.input),
+            args.input,
             field.args?.input?.type?.getType(),
             schemaComposer
           ));
@@ -204,6 +205,25 @@ ${operationConfig.description || ''}
             const [, contentType] = Object.entries(headers).find(([key]) => key.toLowerCase() === 'content-type') || [];
             if (contentType?.startsWith('application/x-www-form-urlencoded')) {
               requestInit.body = qsStringify(input, queryStringOptions);
+            } else if (contentType?.startsWith('multipart/form-data')) {
+              delete headers['content-type'];
+              delete headers['Content-Type'];
+              const formData = new FormData();
+              for (const key in input) {
+                let formDataValue: Blob | string;
+                const inputValue = input[key];
+                if (typeof inputValue === 'object') {
+                  if (inputValue.toString() === '[object Blob]' || inputValue.toString() === '[object File]') {
+                    formDataValue = inputValue;
+                  } else {
+                    formDataValue = JSON.stringify(inputValue);
+                  }
+                } else {
+                  formDataValue = inputValue.toString();
+                }
+                formData.append(key, formDataValue);
+              }
+              requestInit.body = formData;
             } else {
               requestInit.body = typeof input === 'object' ? JSON.stringify(input) : input;
             }

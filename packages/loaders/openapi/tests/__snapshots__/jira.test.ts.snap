@@ -15229,6 +15229,7 @@ This operation can be accessed anonymously.
       "operationHeaders": undefined,
       "path": "/rest/api/3/issue/{args.issueIdOrKey}/attachments",
       "requestSchema": Object {
+        "format": "binary",
         "title": "addAttachment_request",
         "type": "string",
       },
@@ -62884,10 +62885,6 @@ Defaults to \`false\`.",
         "title": "addAttachment_200_response",
         "type": "array",
       },
-      "addAttachment_request": Object {
-        "title": "addAttachment_request",
-        "type": "string",
-      },
       "addGadget_response": Object {
         "$comment": "statusCodeOneOfIndexMap:{\\"200\\":0,\\"400\\":1,\\"404\\":2}",
         "oneOf": Array [
@@ -68811,7 +68808,8 @@ Nonexistent keys are ignored.",
       "mutationInput_addAttachment": Object {
         "properties": Object {
           "input": Object {
-            "$ref": "#/definitions/addAttachment_request",
+            "format": "binary",
+            "type": "string",
           },
           "issueIdOrKey": Object {
             "description": "The ID or key of the issue that attachments are added to.",
@@ -90012,7 +90010,7 @@ type Mutation {
   addAttachment(
     \\"The ID or key of the issue that attachments are added to.\\"
     issueIdOrKey: String!
-    input: String
+    input: File
   ): [Attachment]
   \\"Returns changelogs for an issue specified by a list of changelog IDs.\\\\n\\\\nThis operation can be accessed anonymously.\\\\n\\\\n**[Permissions](#permissions) required:**\\\\n\\\\n *  *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue is in.\\\\n *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.\\"
   getChangeLogsByIds(
@@ -93265,6 +93263,8 @@ type Attachment {
   thumbnail: String
   additionalProperties: JSON
 }
+
+scalar File
 
 \\"A list of changelog IDs.\\"
 input IssueChangelogIds_Input {

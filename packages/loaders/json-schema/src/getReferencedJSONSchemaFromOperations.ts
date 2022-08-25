@@ -209,7 +209,8 @@ export async function getReferencedJSONSchemaFromOperations({
     if ('binary' in operationConfig) {
       const generatedSchema = {
         title: operationConfig.requestTypeName || 'File',
-        type: 'file',
+        type: 'string',
+        format: 'binary',
       };
       rootTypeInputTypeDefinition.properties[fieldName] = rootTypeInputTypeDefinition.properties[fieldName] || {
         title: `${rootTypeInputPropertyName}_${fieldName}`,
