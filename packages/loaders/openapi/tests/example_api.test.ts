@@ -1881,145 +1881,129 @@ describe('example_api', () => {
     });
   });
 
-  // test('Query string arguments are not created when they are provided through requestOptions option', () => {
-  //   const query = `{
-  //     users(limit: 10) {
-  //       name
-  //     }
-  //   }`
+  it('Query string arguments are not created when they are provided through requestOptions option', async () => {
+    const query1 = /* GraphQL */ `
+      {
+        getUsers(limit: 10) {
+          name
+        }
+      }
+    `;
 
-  //   const promise = graphql(createdSchema, query, null, {}).then(result => {
-  //     expect(result).toEqual({
-  //       data: {
-  //         users: [
-  //           {
-  //             name: 'Arlene L McMahon'
-  //           },
-  //           {
-  //             name: 'William B Ropp'
-  //           },
-  //           {
-  //             name: 'John C Barnes'
-  //           },
-  //           {
-  //             name: 'Heather J Tate'
-  //           }
-  //         ]
-  //       }
-  //     })
-  //   })
+    const promise1 = execute({
+      schema: createdSchema,
+      document: parse(query1),
+    });
 
-  //   // The GET status operation has a limit query string parameter
-  //   const options: Options<any, any, any> = {
-  //     requestOptions: {
-  //       qs: {
-  //         limit: '10'
-  //       },
-  //     }
-  //   }
+    // The GET status operation has a limit query string parameter
+    const options: OpenAPILoaderOptions = {
+      baseUrl,
+      source: './fixtures/example_oas.json',
+      cwd: __dirname,
+      fetch,
+      queryParams: {
+        limit: '10',
+      },
+    };
 
-  //   const query2 = `{
-  //     users {
-  //       name
-  //     }
-  //   }`
+    const query2 = /* GraphQL */ `
+      {
+        getUsers {
+          name
+        }
+      }
+    `;
 
-  //   const promise2 = openAPIToGraphQL
-  //     .createGraphQLSchema(oas, options)
-  //     .then(({ schema }) => {
-  //       const ast = parse(query2)
-  //       const errors = validate(schema, ast)
-  //       expect(errors).toEqual([])
-  //       return graphql(schema, query2).then(result => {
-  //         expect(result).toEqual({
-  //           data: {
-  //             users: [
-  //               {
-  //                 name: 'Arlene L McMahon'
-  //               },
-  //               {
-  //                 name: 'William B Ropp'
-  //               },
-  //               {
-  //                 name: 'John C Barnes'
-  //               },
-  //               {
-  //                 name: 'Heather J Tate'
-  //               }
-  //             ]
-  //           }
-  //         })
-  //       })
-  //     })
+    const promise2 = loadGraphQLSchemaFromOpenAPI('example_api', options).then(schema => {
+      const ast = parse(query2);
+      const errors = validate(schema, ast);
+      expect(errors).toEqual([]);
+      return execute({
+        schema,
+        document: ast,
+      });
+    });
 
-  //   return Promise.all([promise, promise2])
-  // })
+    const [result1, result2] = await Promise.all([promise1, promise2]);
 
-  // test('Use headers option as function', () => {
-  //   const options: Options<any, any, any> = {
-  //     headers: (method, path, title) => {
-  //       if (method === 'get' && path === '/snack') {
-  //         return {
-  //           snack_type: 'chips',
-  //           snack_size: 'small'
-  //         }
-  //       }
-  //     }
-  //   }
+    expect(result1).toEqual({
+      data: {
+        getUsers: [
+          {
+            name: 'Arlene L McMahon',
+          },
+          {
+            name: 'William B Ropp',
+          },
+          {
+            name: 'John C Barnes',
+          },
+          {
+            name: 'Heather J Tate',
+          },
+        ],
+      },
+    });
 
-  //   const query = `{
-  //     snack
-  //   }`
+    expect(result2).toEqual({
+      data: {
+        getUsers: [
+          {
+            name: 'Arlene L McMahon',
+          },
+          {
+            name: 'William B Ropp',
+          },
+          {
+            name: 'John C Barnes',
+          },
+          {
+            name: 'Heather J Tate',
+          },
+        ],
+      },
+    });
+  });
 
-  //   return openAPIToGraphQL
-  //     .createGraphQLSchema(oas, options)
-  //     .then(({ schema }) => {
-  //       const ast = parse(query)
-  //       const errors = validate(schema, ast)
-  //       expect(errors).toEqual([])
-  //       return graphql(schema, query).then(result => {
-  //         expect(result).toEqual({
-  //           data: {
-  //             snack: 'Here is a small chips'
-  //           }
-  //         })
-  //       })
-  //     })
-  // })
+  it('Use headers option as function', async () => {
+    const options: OpenAPILoaderOptions = {
+      baseUrl,
+      source: './fixtures/example_oas.json',
+      cwd: __dirname,
+      fetch,
+      operationHeaders: data => {
+        // if (method === 'get' && path === '/snack') {
+        return {
+          snack_type: 'chips',
+          snack_size: 'small',
+        };
+        // }
+      },
+    };
 
-  // test('Use requestOptions headers option as function', () => {
-  //   const options: Options<any, any, any> = {
-  //     requestOptions: {
-  //       headers: (method, path, title) => {
-  //         if (method === 'get' && path === '/snack') {
-  //           return {
-  //             snack_type: 'chips',
-  //             snack_size: 'small'
-  //           }
-  //         }
-  //       },
-  //     }
-  //   }
+    const query = /* GraphQL */ `
+      {
+        getSnack
+      }
+    `;
 
-  //   const query = `{
-  //     snack
-  //   }`
+    const schema = await loadGraphQLSchemaFromOpenAPI('example_api', options);
 
-  //   return openAPIToGraphQL
-  //     .createGraphQLSchema(oas, options)
-  //     .then(({ schema }) => {
-  //       const ast = parse(query)
-  //       const errors = validate(schema, ast)
-  //       expect(errors).toEqual([])
-  //       return graphql(schema, query).then(result => {
-  //         expect(result).toEqual({
-  //           data: {
-  //             snack: 'Here is a small chips'
-  //           }
-  //         })
-  //       })
-  //     })
-  // })
+    const ast = parse(query);
+    const errors = validate(schema, ast);
+    expect(errors).toEqual([]);
+
+    const result = await execute({
+      schema,
+      document: parse(query),
+    });
+
+    expect(result).toEqual({
+      data: {
+        getSnack: 'Here is a small chips',
+      },
+    });
+  });
 
   it('Non-nullable properties for object types', async () => {
     const coordinates = createdSchema.getType('coordinates') as GraphQLObjectType;
