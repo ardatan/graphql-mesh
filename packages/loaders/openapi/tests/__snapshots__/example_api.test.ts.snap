@@ -60,6 +60,10 @@ Object {
                 "status": Object {
                   "$ref": "#/definitions/query_getUsers_items_status",
                 },
+                "username": Object {
+                  "description": "The identifier of a user",
+                  "type": "string",
+                },
               },
               "required": Array [
                 "name",
@@ -119,6 +123,10 @@ Object {
           "status": Object {
             "$ref": "#/definitions/query_getUsers_items_status",
           },
+          "username": Object {
+            "description": "The identifier of a user",
+            "type": "string",
+          },
         },
         "required": Array [
           "name",
@@ -161,6 +169,10 @@ Object {
               },
               "status": Object {
                 "$ref": "#/definitions/query_getUsers_items_status",
+              },
+              "username": Object {
+                "description": "The identifier of a user",
+                "type": "string",
               },
             },
             "required": Array [
@@ -206,7 +218,7 @@ Object {
             },
             "friends": Object {
               "args": Object {
-                "username": "{root.$request.query.username}",
+                "username": "{root.$request.path.username}",
               },
               "description": "Allows to fetch the user's friends.",
               "fieldName": "getUserFriends",
@@ -242,6 +254,10 @@ Object {
               },
               "status": Object {
                 "$ref": "#/definitions/query_getUsers_items_status",
+              },
+              "username": Object {
+                "description": "The identifier of a user",
+                "type": "string",
               },
             },
             "required": Array [
@@ -360,6 +376,10 @@ Object {
                 },
                 "status": Object {
                   "$ref": "#/definitions/query_getUsers_items_status",
+                },
+                "username": Object {
+                  "description": "The identifier of a user",
+                  "type": "string",
                 },
               },
               "required": Array [
@@ -785,6 +805,7 @@ Object {
       "queryStringOptionsByParam": Object {
         "parameters": Object {
           "arrayFormat": "repeat",
+          "destructObject": true,
         },
       },
       "responseByStatusCode": Object {
@@ -2311,6 +2332,10 @@ Object {
             "status": Object {
               "$ref": "#/definitions/query_getUsers_items_status",
             },
+            "username": Object {
+              "description": "The identifier of a user",
+              "type": "string",
+            },
           },
           "required": Array [
             "name",
@@ -2355,6 +2380,10 @@ Object {
             },
             "status": Object {
               "$ref": "#/definitions/query_getUsers_items_status",
+            },
+            "username": Object {
+              "description": "The identifier of a user",
+              "type": "string",
             },
           },
           "required": Array [
@@ -3115,6 +3144,10 @@ Object {
           "status": Object {
             "$ref": "#/definitions/query_getUsers_items_status",
           },
+          "username": Object {
+            "description": "The identifier of a user",
+            "type": "string",
+          },
         },
         "required": Array [
           "name",
@@ -3217,6 +3250,8 @@ type Query {
 
 \\"A user represents a natural person\\"
 type user {
+  \\"The identifier of a user\\"
+  username: String
   \\"The legal name of a user\\"
   name: String!
   address: address!
@@ -3481,6 +3516,8 @@ type Mutation {
 
 \\"A user represents a natural person\\"
 input user_Input {
+  \\"The identifier of a user\\"
+  username: String
   \\"The legal name of a user\\"
   name: String!
   address: address_Input!

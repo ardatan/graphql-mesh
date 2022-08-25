@@ -1473,6 +1473,10 @@
         "type": "object",
         "description": "A user represents a natural person",
         "properties": {
+          "username": {
+            "type": "string",
+            "description": "The identifier of a user"
+          },
           "name": {
             "type": "string",
             "description": "The legal name of a user"
@@ -1549,7 +1553,7 @@
       "Friends": {
         "operationId": "getUserFriends",
         "parameters": {
-          "username": "$request.query.username"
+          "username": "$request.path.username"
         },
         "description": "Allows to fetch the user's friends."
       },

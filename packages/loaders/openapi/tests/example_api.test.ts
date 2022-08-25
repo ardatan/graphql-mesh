@@ -1971,19 +1971,21 @@ describe('example_api', () => {
       source: './fixtures/example_oas.json',
       cwd: __dirname,
       fetch,
-      operationHeaders: data => {
-        // if (method === 'get' && path === '/snack') {
-        return {
-          snack_type: 'chips',
-          snack_size: 'small',
-        };
-        // }
+      operationHeaders: (_, operationConfig) => {
+        if ('method' in operationConfig) {
+          if (operationConfig.method.toLowerCase() === 'get' && operationConfig.path === '/status') {
+            return {
+              exampleHeader: 'some-value',
+            };
+          }
+        }
+        return {};
       },
     };
 
     const query = /* GraphQL */ `
       {
-        getSnack
+        get_Status(globalquery: "test", limit: 30)
       }
     `;
 
@@ -2000,7 +2002,7 @@ describe('example_api', () => {
 
     expect(result).toEqual({
       data: {
-        getSnack: 'Here is a small chips',
+        get_Status: 'Ok',
       },
     });
   });

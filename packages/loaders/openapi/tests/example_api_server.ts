@@ -22,6 +22,7 @@ export function startServer(PORT: number) {
 
   const Users = {
     arlene: {
+      username: 'arlene',
       name: 'Arlene L McMahon',
       address: {
         street: '4656 Cherry Camp Road',
@@ -43,6 +44,7 @@ export function startServer(PORT: number) {
       friends: ['will', 'johnny', 'heather'],
     },
     will: {
+      username: 'will',
       name: 'William B Ropp',
       address: {
         street: '3180 Little Acres Lane',
@@ -60,6 +62,7 @@ export function startServer(PORT: number) {
       friends: ['arlene', 'johnny'],
     },
     johnny: {
+      username: 'johnny',
       name: 'John C Barnes',
       address: {
         street: '372 Elk Rd Little',
@@ -77,6 +80,7 @@ export function startServer(PORT: number) {
       friends: ['arlene'],
     },
     heather: {
+      username: 'heather',
       name: 'Heather J Tate',
       address: {
         street: '3636 Poplar Chase Lane',

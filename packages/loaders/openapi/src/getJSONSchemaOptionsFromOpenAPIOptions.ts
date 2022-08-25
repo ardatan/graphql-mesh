@@ -171,6 +171,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                 operationConfig.queryStringOptionsByParam[paramObj.name] || {};
               if (paramObj.explode) {
                 operationConfig.queryStringOptionsByParam[paramObj.name].arrayFormat = 'repeat';
+                operationConfig.queryStringOptionsByParam[paramObj.name].destructObject = true;
               } else {
                 if (paramObj.style === 'form') {
                   operationConfig.queryStringOptionsByParam[paramObj.name].arrayFormat = 'comma';
