@@ -1,8 +1,12 @@
 import { createServer } from '@graphql-yoga/node';
-import { fetch, File, FormData } from '@whatwg-node/fetch';
+import { createFetch } from '@whatwg-node/fetch';
 import { graphql, GraphQLSchema } from 'graphql';
 import { startServer as startAPIServer, stopServer as stopAPIServer } from './file_upload_api_server';
 import loadGraphQLSchemaFromOpenAPI from '../src';
+
+const { fetch, File, FormData } = createFetch({
+  useNodeFetch: true,
+});
 
 const PORT = 4090;
 
