@@ -64,7 +64,7 @@ export type JSONSchemaHTTPBaseOperationConfig = JSONSchemaBaseOperationConfig & 
 
   headers?: Record<string, string>;
   queryParamArgMap?: Record<string, string>;
-  queryStringOptionsByParam?: Record<string, IStringifyOptions>;
+  queryStringOptionsByParam?: Record<string, IStringifyOptions & { destructObject?: boolean }>;
 };
 
 export type JSONSchemaHTTPJSONOperationConfig = JSONSchemaHTTPBaseOperationConfig &
@@ -88,4 +88,4 @@ export type JSONSchemaOperationConfig =
 
 export type OperationHeadersConfiguration =
   | Record<string, string>
-  | ((data: ResolverData) => PromiseOrValue<Record<string, string>>);
+  | ((data: ResolverData, operationConfig: JSONSchemaOperationConfig) => PromiseOrValue<Record<string, string>>);

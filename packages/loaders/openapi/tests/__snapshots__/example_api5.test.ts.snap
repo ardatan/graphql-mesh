@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`example_api should generate the schema correctly 1`] = `
+exports[`OpenAPI Loader: Testing the naming convention should generate the schema correctly 1`] = `
 "schema {
   query: Query
 }
@@ -14,6 +14,12 @@ type Query {
   w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response
   \\"Basic simpleNames option test with links with exposed parameters\\"
   w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response
+  \\"Basic simpleEnumValues option test\\"
+  getEnum: getEnum_200_response
+  \\"Basic simpleEnumValues option test on numerical enum\\"
+  getNumericalEnum: getNumericalEnum_200_response
+  \\"Basic simpleEnumValues option test on object enum\\"
+  getObjectEnum: getObjectEnum_200_response
 }
 
 type o_d_d___n_a_m_e_200_response {
@@ -36,5 +42,35 @@ type w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response {
 
 type w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response {
   data: String
+}
+
+type getEnum_200_response {
+  data: query_getEnum_data
+}
+
+enum query_getEnum_data {
+  r_e_d
+  a_m_b_e_r
+  g_r_e_e_n
+}
+
+type getNumericalEnum_200_response {
+  data: query_getNumericalEnum_data
+}
+
+enum query_getNumericalEnum_data {
+  _1
+  _2
+  _3
+  _4
+  _5
+}
+
+type getObjectEnum_200_response {
+  data: query_getObjectEnum_data
+}
+
+enum query_getObjectEnum_data {
+  _LEFT_SQUARE_BRACE_object_Object_RIGHT_SQUARE_BRACE_
 }"
 `;

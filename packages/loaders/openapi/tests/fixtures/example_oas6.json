@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Example API 4",
+    "title": "Example API 6",
     "description": "An API to test converting Open API Specs 3.0 to GraphQL",
     "version": "1.0.0",
     "termsOfService": "http://example.com/terms/",
@@ -44,7 +44,7 @@
         "description": "An arbitrary object",
         "responses": {
           "200": {
-            "description": "Mandatory field",
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
@@ -83,7 +83,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Mandatory field",
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
@@ -141,7 +141,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Mandatory field",
+            "description": "Success",
             "content": {
               "text/html": {
                 "schema": {
@@ -168,7 +168,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Mandatory field",
+            "description": "Success",
             "content": {
               "text/html": {
                 "schema": {
@@ -210,11 +210,206 @@
         ],
         "responses": {
           "200": {
-            "description": "Mandatory field",
+            "description": "Success",
             "content": {
               "text/html": {
                 "schema": {
                   "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/nestedReferenceInParameter": {
+      "get": {
+        "description": "Resolve a nested reference in the parameter schema",
+        "parameters": [
+          {
+            "name": "russianDoll",
+            "in": "query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/russianDoll"
+                }
+              }
+            },
+            "description": "Arbitrary query parameter object"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Names of all the russian dolls",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inputUnion": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "dogBreed": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "catBreed": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/strictGetOperation": {
+      "get": {
+        "description": "An arbitrary object",
+        "responses": {
+          "200": {
+            "description": "Mandatory field",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/noResponseSchema": {
+      "get": {
+        "description": "No provided response schema test",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "example": "Hello world"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/returnNumber": {
+      "get": {
+        "operationId": "returnNumber",
+        "description": "Return a number from the request header.",
+        "parameters": [
+          {
+            "name": "number",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/testLinkWithNonStringParam": {
+      "get": {
+        "description": "Test link object with non-string parameter.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "hello": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "links": {
+              "return5": {
+                "$ref": "#/components/links/Return5"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/testLinkwithNestedParam": {
+      "get": {
+        "description": "Test link object with nested parameter.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "nesting1": {
+                      "type": "object",
+                      "properties": {
+                        "nesting2": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "links": {
+              "returnNestedNumber": {
+                "operationId": "returnNumber",
+                "parameters": {
+                  "number": "$response.body#/nesting1/nesting2"
                 }
               }
             }
@@ -259,6 +454,25 @@
           }
         },
         "required": ["status"]
+      },
+      "russianDoll": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "nestedDoll": {
+            "$ref": "#/components/schemas/russianDoll"
+          }
+        }
+      }
+    },
+    "links": {
+      "Return5": {
+        "operationId": "returnNumber",
+        "parameters": {
+          "number": 5
+        }
       }
     }
   }

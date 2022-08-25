@@ -63,13 +63,16 @@ function linkResolver(
 ) {
   for (const argKey in linkObjArgs) {
     const argInterpolation = linkObjArgs[argKey];
-    const actualValue = stringInterpolator.parse(argInterpolation, {
-      root,
-      args,
-      context,
-      info,
-      env: process.env,
-    });
+    const actualValue =
+      typeof argInterpolation === 'string'
+        ? stringInterpolator.parse(argInterpolation, {
+            root,
+            args,
+            context,
+            info,
+            env: process.env,
+          })
+        : argInterpolation;
     lodashSet(args, argKey, actualValue);
   }
   return actualResolver(root, args, context, info);
@@ -146,7 +149,9 @@ ${operationConfig.description || ''}
         const interpolatedPath = stringInterpolator.parse(operationConfig.path, interpolationData);
         let fullPath = urlJoin(interpolatedBaseUrl, interpolatedPath);
         const operationHeadersObj =
-          typeof operationHeaders === 'function' ? await operationHeaders(interpolationData) : operationHeaders;
+          typeof operationHeaders === 'function'
+            ? await operationHeaders(interpolationData, operationConfig)
+            : operationHeaders;
         const nonInterpolatedHeaders = {
           ...operationHeadersObj,
           ...operationConfig?.headers,
@@ -262,15 +267,17 @@ ${operationConfig.description || ''}
             const argName = operationConfig.queryParamArgMap[queryParamName];
             const argValue = args[argName];
             if (argValue != null) {
-              const queryParamsString = qsStringify(
-                {
+              const opts = {
+                ...queryStringOptions,
+                ...operationConfig.queryStringOptionsByParam?.[queryParamName],
+              };
+              let queryParamObj = argValue;
+              if (Array.isArray(argValue) || !opts.destructObject) {
+                queryParamObj = {
                   [queryParamName]: argValue,
-                },
-                {
-                  ...queryStringOptions,
-                  ...operationConfig.queryStringOptionsByParam?.[queryParamName],
-                }
-              );
+                };
+              }
+              const queryParamsString = qsStringify(queryParamObj, opts);
               fullPath += fullPath.includes('?') ? '&' : '?';
               fullPath += queryParamsString;
             }
@@ -351,6 +358,9 @@ ${operationConfig.description || ''}
         }
 
         const addResponseMetadata = (obj: any) => {
+          if (typeof obj !== 'object') {
+            return obj;
+          }
           Object.defineProperties(obj, {
             $field: {
               get() {

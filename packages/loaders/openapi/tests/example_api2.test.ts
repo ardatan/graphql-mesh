@@ -15,7 +15,7 @@ const baseUrl = `http://localhost:${PORT}/api`;
  * It is necessary to make a separate OAS because we need all of operations to
  * have operationIDs.
  */
-describe('example_api2', () => {
+describe('OpenAPI loader: Naming convention', () => {
   /**
    * Set up the schema first and run example API server
    */

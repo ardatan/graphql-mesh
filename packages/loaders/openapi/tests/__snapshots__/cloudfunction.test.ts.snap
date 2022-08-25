@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Cloudfunction should generate correct schema: cloudfunction-schema 1`] = `
+exports[`OpenAPI Loader: Cloudfunction should generate correct schema: cloudfunction-schema 1`] = `
 "schema {
   query: Query
   mutation: Mutation

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`example_api2 should generate the schema correctly 1`] = `
+exports[`OpenAPI loader: Naming convention should generate the schema correctly 1`] = `
 "schema {
   query: Query
 }

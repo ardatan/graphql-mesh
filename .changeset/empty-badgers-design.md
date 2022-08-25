@@ -6,4 +6,4 @@
 "@graphql-mesh/json-schema": minor
 ---
 
-Support links on non-object fields
+Support non-string link parameters

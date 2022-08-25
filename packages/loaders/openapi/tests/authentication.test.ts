@@ -12,19 +12,21 @@ const baseUrl = `http://localhost:${PORT}/api`;
 // But instead we let user to define them with string interpolation
 // No need to test every single query and mutation because this only tests the interpolation behavior
 
-describe('Authentication', () => {
+describe('OpenAPI Loader: Authentication', () => {
   /**
    * Set up the schema first and run example API server
    */
   beforeAll(async () => {
     await startServer(PORT);
   });
+
   /**
    * Shut down API server
    */
   afterAll(async () => {
     await stopServer();
   });
+
   it('should get patent using basic auth', async () => {
     const query = /* GraphQL */ `
       query {

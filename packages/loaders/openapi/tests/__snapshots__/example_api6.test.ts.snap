@@ -6,6 +6,8 @@ exports[`example_api6 should generate the schema correctly 1`] = `
   mutation: Mutation
 }
 
+directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
+
 type Query {
   \\"An arbitrary object\\"
   object: object_200_response
@@ -19,6 +21,18 @@ type Query {
   \\"A particular cactus\\"
   cacti_by_cactusId(cactusId: String!): String
   eateries_by_eatery_breads_by_breadName_dishes_by_dishKey(eatery: String!, breadName: String!, dishKey: String!): String
+  \\"Resolve a nested reference in the parameter schema\\"
+  nestedReferenceInParameter(russianDoll: russianDoll_Input): String
+  \\"An arbitrary object\\"
+  strictGetOperation: String
+  \\"No provided response schema test\\"
+  noResponseSchema: String
+  \\"Return a number from the request header.\\"
+  returnNumber(number: Float!): Float
+  \\"Test link object with non-string parameter.\\"
+  testLinkWithNonStringParam: testLinkWithNonStringParam_200_response
+  \\"Test link object with nested parameter.\\"
+  testLinkwithNestedParam: testLinkwithNestedParam_200_response
 }
 
 type object_200_response {
@@ -34,9 +48,33 @@ type getObject2_200_response {
   data: String
 }
 
+\\"Arbitrary query parameter object\\"
+input russianDoll_Input {
+  name: String
+  \\"Arbitrary query parameter object\\"
+  nestedDoll: russianDoll_Input
+}
+
+type testLinkWithNonStringParam_200_response {
+  hello: String
+  \\"Return a number from the request header.\\"
+  return5: Float
+}
+
+type testLinkwithNestedParam_200_response {
+  nesting1: query_testLinkwithNestedParam_nesting1
+  \\"Return a number from the request header.\\"
+  returnNestedNumber: Float
+}
+
+type query_testLinkwithNestedParam_nesting1 {
+  nesting2: Float
+}
+
 type Mutation {
   \\"Basic application/x-www-form-urlencoded test\\"
   post_formUrlEncoded(input: pet_Input): pet
+  post_inputUnion(input: post_inputUnion_request_Input): String
 }
 
 type pet {
@@ -76,5 +114,18 @@ input pet_Input {
 \\"History of the pet\\"
 input mutation_post_formUrlEncoded_history_Input {
   data: String
+}
+
+input post_inputUnion_request_Input @oneOf {
+  mutationInput_post_inputUnion_input_oneOf_0_Input: mutationInput_post_inputUnion_input_oneOf_0_Input
+  mutationInput_post_inputUnion_input_oneOf_1_Input: mutationInput_post_inputUnion_input_oneOf_1_Input
+}
+
+input mutationInput_post_inputUnion_input_oneOf_0_Input {
+  dogBreed: String
+}
+
+input mutationInput_post_inputUnion_input_oneOf_1_Input {
+  catBreed: String
 }"
 `;

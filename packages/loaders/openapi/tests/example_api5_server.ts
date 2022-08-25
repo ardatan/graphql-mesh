@@ -50,6 +50,26 @@ export function startServer(PORT: number) {
     });
   });
 
+  app.get('/api/getEnum', (req, res) => {
+    res.send({
+      data: 'a-m-b-e-r',
+    });
+  });
+
+  app.get('/api/getNumericalEnum', (req, res) => {
+    res.send({
+      data: 3,
+    });
+  });
+
+  app.get('/api/getObjectEnum', (req, res) => {
+    res.send({
+      data: {
+        hello: 'world',
+      },
+    });
+  });
+
   return new Promise(resolve => {
     server = app.listen(PORT, resolve as () => void);
   });

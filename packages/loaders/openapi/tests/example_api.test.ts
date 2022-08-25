@@ -140,7 +140,7 @@ describe('example_api', () => {
     });
   });
 
-  // Link objects in the OAS allow OtG to create nested GraphQL objects that resolve on different API calls
+  // Link objects in the OAS allows creation of nested GraphQL objects that resolve on different API calls
   it('should get nested resource via link $response.body#/...', async () => {
     const query = /* GraphQL */ `
       {
@@ -847,7 +847,7 @@ describe('example_api', () => {
 
     expect(result).toEqual({
       data: {
-        getCookie: 'Thanks for your cookie preferences: "cookie_type=chocolate chip; cookie_size=mega-sized;"',
+        getCookie: 'You ordered a mega-sized chocolate chip cookie!',
       },
     });
   });
@@ -1690,6 +1690,31 @@ describe('example_api', () => {
     });
   });
 
+  it('Operation returning arbitrary JSON type should not include _openAPIToGraphQL field', async () => {
+    const query = /* GraphQL */ `
+      {
+        random
+      }
+    `;
+
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
+
+    /**
+     * There should only be the random and status fields but no _openAPIToGraphQL
+     * field.
+     */
+    expect(result).toEqual({
+      data: {
+        random: {
+          status: 'success',
+        },
+      },
+    });
+  });
+
   it('UUID format becomes GraphQL UUID type', async () => {
     const query = /* GraphQL */ `
       {
@@ -1853,6 +1878,132 @@ describe('example_api', () => {
     ).toEqual({
       name: 'getUserByUsername',
       description: 'Returns a user from the system.',
+    });
+  });
+
+  it('Query string arguments are not created when they are provided through requestOptions option', async () => {
+    const query1 = /* GraphQL */ `
+      {
+        getUsers(limit: 10) {
+          name
+        }
+      }
+    `;
+
+    const promise1 = execute({
+      schema: createdSchema,
+      document: parse(query1),
+    });
+
+    // The GET status operation has a limit query string parameter
+    const options: OpenAPILoaderOptions = {
+      baseUrl,
+      source: './fixtures/example_oas.json',
+      cwd: __dirname,
+      fetch,
+      queryParams: {
+        limit: '10',
+      },
+    };
+
+    const query2 = /* GraphQL */ `
+      {
+        getUsers {
+          name
+        }
+      }
+    `;
+
+    const promise2 = loadGraphQLSchemaFromOpenAPI('example_api', options).then(schema => {
+      const ast = parse(query2);
+      const errors = validate(schema, ast);
+      expect(errors).toEqual([]);
+      return execute({
+        schema,
+        document: ast,
+      });
+    });
+
+    const [result1, result2] = await Promise.all([promise1, promise2]);
+
+    expect(result1).toEqual({
+      data: {
+        getUsers: [
+          {
+            name: 'Arlene L McMahon',
+          },
+          {
+            name: 'William B Ropp',
+          },
+          {
+            name: 'John C Barnes',
+          },
+          {
+            name: 'Heather J Tate',
+          },
+        ],
+      },
+    });
+
+    expect(result2).toEqual({
+      data: {
+        getUsers: [
+          {
+            name: 'Arlene L McMahon',
+          },
+          {
+            name: 'William B Ropp',
+          },
+          {
+            name: 'John C Barnes',
+          },
+          {
+            name: 'Heather J Tate',
+          },
+        ],
+      },
+    });
+  });
+
+  it('Use headers option as function', async () => {
+    const options: OpenAPILoaderOptions = {
+      baseUrl,
+      source: './fixtures/example_oas.json',
+      cwd: __dirname,
+      fetch,
+      operationHeaders: (_, operationConfig) => {
+        if ('method' in operationConfig) {
+          if (operationConfig.method.toLowerCase() === 'get' && operationConfig.path === '/status') {
+            return {
+              exampleHeader: 'some-value',
+            };
+          }
+        }
+        return {};
+      },
+    };
+
+    const query = /* GraphQL */ `
+      {
+        get_Status(globalquery: "test", limit: 30)
+      }
+    `;
+
+    const schema = await loadGraphQLSchemaFromOpenAPI('example_api', options);
+
+    const ast = parse(query);
+    const errors = validate(schema, ast);
+    expect(errors).toEqual([]);
+
+    const result = await execute({
+      schema,
+      document: parse(query),
+    });
+
+    expect(result).toEqual({
+      data: {
+        get_Status: 'Ok',
+      },
     });
   });
 
@@ -2061,5 +2212,38 @@ describe('example_api', () => {
     const errors = validate(schema, ast);
     expect(errors.length).toBe(1);
     expect(errors[0].message).toEqual('Value "medium" does not exist in "queryInput_getSnack_snack_size" enum.');
+  });
+
+  it('Format the query params appropriately when style and explode are set to true', async () => {
+    const LIMIT = 10;
+    const OFFSET = 0;
+
+    const query = /* GraphQL */ `
+      query {
+        returnAllOffices(parameters: { limit: ${LIMIT}, offset: ${OFFSET} }) {
+          roomNumber
+          company {
+            id
+          }
+        }
+      }
+    `;
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
+
+    expect(result.errors).toBeDefined();
+
+    result.errors.forEach(error => {
+      expect(error.extensions?.url).toBeDefined();
+
+      const url = new URL(error.extensions.url as string);
+
+      expect(url.searchParams.has('limit')).toBe(true);
+      expect(url.searchParams.get('limit')).toBe(String(LIMIT));
+      expect(url.searchParams.has('offset')).toBe(true);
+      expect(url.searchParams.get('offset')).toBe(String(OFFSET));
+    });
   });
 });
