@@ -1,5 +1,4 @@
 import express from 'express';
-import bodyParser from 'body-parser';
 import http from 'http';
 import multer from 'multer';
 
