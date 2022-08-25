@@ -101,6 +101,7 @@ export async function getReferencedJSONSchemaFromOperations({
       type: 'object',
       title: rootTypeName,
       properties: {},
+      readOnly: true,
     });
     rootTypeDefinition.properties = rootTypeDefinition.properties || {};
 
@@ -171,6 +172,7 @@ export async function getReferencedJSONSchemaFromOperations({
       type: 'object',
       title: rootInputTypeName,
       properties: {},
+      writeOnly: true,
     });
 
     const interpolationKeys: string[] = getInterpolationKeys(...interpolationStrings);

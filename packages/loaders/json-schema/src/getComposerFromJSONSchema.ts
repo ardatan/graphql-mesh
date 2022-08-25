@@ -71,6 +71,8 @@ export interface TypeComposers {
   description?: string;
   nullable?: boolean;
   default?: any;
+  readOnly?: boolean;
+  writeOnly?: boolean;
 }
 
 const GraphQLFile = new GraphQLScalarType({
@@ -125,6 +127,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           input: typeComposer,
           output: typeComposer,
           nullable: subSchema.nullable,
+          readOnly: subSchema.readOnly,
+          writeOnly: subSchema.writeOnly,
         };
       }
       if (subSchema.const) {
@@ -146,6 +150,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           input: typeComposer,
           output: typeComposer,
           nullable: subSchema.nullable,
+          readOnly: subSchema.readOnly,
+          writeOnly: subSchema.writeOnly,
         };
       }
       if (subSchema.enum && subSchema.type !== 'boolean') {
@@ -181,6 +187,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           input: typeComposer,
           output: typeComposer,
           nullable: subSchema.nullable,
+          readOnly: subSchema.readOnly,
+          writeOnly: subSchema.writeOnly,
           default: subSchema.default,
         };
       }
@@ -196,6 +204,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             input: typeComposer,
             output: typeComposer,
             nullable: subSchema.nullable,
+            readOnly: subSchema.readOnly,
+            writeOnly: subSchema.writeOnly,
             default: subSchema.default,
           };
         } else {
@@ -209,6 +219,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             input: typeComposer,
             output: typeComposer,
             nullable: subSchema.nullable,
+            readOnly: subSchema.readOnly,
+            writeOnly: subSchema.writeOnly,
             default: subSchema.default,
           };
         }
@@ -222,6 +234,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             output: typeComposer,
             description: subSchema.description,
             nullable: subSchema.nullable,
+            readOnly: subSchema.readOnly,
+            writeOnly: subSchema.writeOnly,
             default: subSchema.default,
           };
         }
@@ -232,6 +246,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             output: typeComposer,
             description: subSchema.description,
             nullable: subSchema.nullable,
+            readOnly: subSchema.readOnly,
+            writeOnly: subSchema.writeOnly,
             default: subSchema.default,
           };
         }
@@ -243,6 +259,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
               output: typeComposer,
               description: subSchema.description,
               nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
               default: subSchema.default,
             };
           }
@@ -252,6 +270,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             output: typeComposer,
             description: subSchema.description,
             nullable: subSchema.nullable,
+            readOnly: subSchema.readOnly,
+            writeOnly: subSchema.writeOnly,
             default: subSchema.default,
           };
         }
@@ -262,6 +282,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             output: typeComposer,
             description: subSchema.description,
             nullable: subSchema.nullable,
+            readOnly: subSchema.readOnly,
+            writeOnly: subSchema.writeOnly,
             default: subSchema.default,
           };
         }
@@ -277,6 +299,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
               output: typeComposer,
               description: subSchema.description,
               nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
               default: subSchema.default,
             };
           }
@@ -298,6 +322,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
                 output: typeComposer,
                 description: subSchema.description,
                 nullable: subSchema.nullable,
+                readOnly: subSchema.readOnly,
+                writeOnly: subSchema.writeOnly,
                 default: subSchema.default,
               };
             }
@@ -308,6 +334,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
                 output: typeComposer,
                 description: subSchema.description,
                 nullable: subSchema.nullable,
+                readOnly: subSchema.readOnly,
+                writeOnly: subSchema.writeOnly,
                 default: subSchema.default,
               };
             }
@@ -318,6 +346,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
                 output: typeComposer,
                 description: subSchema.description,
                 nullable: subSchema.nullable,
+                readOnly: subSchema.readOnly,
+                writeOnly: subSchema.writeOnly,
                 default: subSchema.default,
               };
             }
@@ -328,6 +358,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
                 output: typeComposer,
                 description: subSchema.description,
                 nullable: subSchema.nullable,
+                readOnly: subSchema.readOnly,
+                writeOnly: subSchema.writeOnly,
                 default: subSchema.default,
               };
             }
@@ -338,6 +370,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
                 output: typeComposer,
                 description: subSchema.description,
                 nullable: subSchema.nullable,
+                readOnly: subSchema.readOnly,
+                writeOnly: subSchema.writeOnly,
                 default: subSchema.default,
               };
             }
@@ -348,6 +382,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
                 output: typeComposer,
                 description: subSchema.description,
                 nullable: subSchema.nullable,
+                readOnly: subSchema.readOnly,
+                writeOnly: subSchema.writeOnly,
                 default: subSchema.default,
               };
             }
@@ -358,6 +394,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
                 output: typeComposer,
                 description: subSchema.description,
                 nullable: subSchema.nullable,
+                readOnly: subSchema.readOnly,
+                writeOnly: subSchema.writeOnly,
                 default: subSchema.default,
               };
             }
@@ -369,6 +407,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
                 output: typeComposer,
                 description: subSchema.description,
                 nullable: subSchema.nullable,
+                readOnly: subSchema.readOnly,
+                writeOnly: subSchema.writeOnly,
                 default: subSchema.default,
               };
             }
@@ -401,6 +441,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
               input: typeComposer,
               output: typeComposer,
               nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
               default: subSchema.default,
             };
           }
@@ -418,6 +460,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
               output: typeComposer,
               description: subSchema.description,
               nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
               default: subSchema.default,
             };
           }
@@ -496,6 +540,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             output: typeComposer,
             description: subSchema.description,
             nullable: subSchema.nullable,
+            readOnly: subSchema.readOnly,
+            writeOnly: subSchema.writeOnly,
             default: subSchema.default,
           };
         }
@@ -574,6 +620,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             output: output.getTypePlural(),
             nullable: subSchemaAndTypeComposers.nullable,
             default: subSchemaAndTypeComposers.default,
+            readOnly: subSchemaAndTypeComposers.readOnly,
+            writeOnly: subSchemaAndTypeComposers.writeOnly,
           };
         }
         return getUnionTypeComposers({
@@ -666,9 +714,6 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           if (inputTypeComposer instanceof ScalarTypeComposer || inputTypeComposer instanceof EnumTypeComposer) {
             ableToUseGraphQLInputObjectType = false;
           } else {
-            if (!inputTypeComposer.getFields) {
-              console.log(inputTypeComposer);
-            }
             const inputTypeElemFieldMap = inputTypeComposer.getFields();
             for (const fieldName in inputTypeElemFieldMap) {
               // In case of conflict set it to JSON
@@ -756,69 +801,73 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
                 continue;
               }
               const fieldName = sanitizeNameForGraphQL(propertyName);
-              fieldMap[fieldName] = {
-                type: () => {
-                  const typeComposers = subSchemaAndTypeComposers.properties[propertyName];
-                  let nullable = true;
-                  if (subSchemaAndTypeComposers.required?.includes(propertyName)) {
-                    nullable = false;
-                  }
-                  // Nullable has more priority
-                  if (typeComposers.nullable === false) {
-                    nullable = false;
-                  }
-                  if (typeComposers.nullable === true) {
-                    nullable = true;
-                  }
-                  return !nullable ? typeComposers.output.getTypeNonNull() : typeComposers.output;
-                },
-                // Make sure you get the right property
-                resolve: root => {
-                  const typeComposers = subSchemaAndTypeComposers.properties[propertyName];
-                  const actualFieldObj = root[propertyName];
-                  if (actualFieldObj != null) {
-                    const isArray = Array.isArray(actualFieldObj);
-                    const isListType = isListTC(typeComposers.output);
-                    if (isListType && !isArray) {
-                      return [actualFieldObj];
-                    } else if (!isListTC(typeComposers.output) && isArray) {
-                      return actualFieldObj[0];
+              if (!subSchemaAndTypeComposers.properties[propertyName].writeOnly) {
+                fieldMap[fieldName] = {
+                  type: () => {
+                    const typeComposers = subSchemaAndTypeComposers.properties[propertyName];
+                    let nullable = true;
+                    if (subSchemaAndTypeComposers.required?.includes(propertyName)) {
+                      nullable = false;
                     }
-                  }
-                  return actualFieldObj;
-                },
-                description:
-                  subSchemaAndTypeComposers.properties[propertyName].description ||
-                  subSchemaAndTypeComposers.properties[propertyName].output?.description,
-              };
-              inputFieldMap[fieldName] = {
-                type: () => {
-                  const typeComposers = subSchemaAndTypeComposers.properties[propertyName];
-                  let nullable = true;
-                  if (subSchemaAndTypeComposers.required?.includes(propertyName)) {
-                    nullable = false;
-                  }
-                  // Nullable has more priority
-                  if (typeComposers.nullable === false) {
-                    nullable = false;
-                  }
-                  if (typeComposers.nullable === true) {
-                    nullable = true;
-                  }
-                  return !nullable ? typeComposers.input?.getTypeNonNull() : typeComposers.input;
-                },
-                // Let execution logic know what is the expected propertyName
-                extensions: {
-                  propertyName,
-                },
-                description:
-                  subSchemaAndTypeComposers.properties[propertyName].description ||
-                  subSchemaAndTypeComposers.properties[propertyName].input?.description,
-                defaultValue:
-                  subSchemaAndTypeComposers.properties[propertyName]?.default ||
-                  subSchemaAndTypeComposers.properties[propertyName]?.extensions?.default ||
-                  subSchemaAndTypeComposers.properties[propertyName]?.input?.default,
-              };
+                    // Nullable has more priority
+                    if (typeComposers.nullable === false) {
+                      nullable = false;
+                    }
+                    if (typeComposers.nullable === true) {
+                      nullable = true;
+                    }
+                    return !nullable ? typeComposers.output.getTypeNonNull() : typeComposers.output;
+                  },
+                  // Make sure you get the right property
+                  resolve: root => {
+                    const typeComposers = subSchemaAndTypeComposers.properties[propertyName];
+                    const actualFieldObj = root[propertyName];
+                    if (actualFieldObj != null) {
+                      const isArray = Array.isArray(actualFieldObj);
+                      const isListType = isListTC(typeComposers.output);
+                      if (isListType && !isArray) {
+                        return [actualFieldObj];
+                      } else if (!isListTC(typeComposers.output) && isArray) {
+                        return actualFieldObj[0];
+                      }
+                    }
+                    return actualFieldObj;
+                  },
+                  description:
+                    subSchemaAndTypeComposers.properties[propertyName].description ||
+                    subSchemaAndTypeComposers.properties[propertyName].output?.description,
+                };
+              }
+              if (!subSchemaAndTypeComposers.properties[propertyName].readOnly) {
+                inputFieldMap[fieldName] = {
+                  type: () => {
+                    const typeComposers = subSchemaAndTypeComposers.properties[propertyName];
+                    let nullable = true;
+                    if (subSchemaAndTypeComposers.required?.includes(propertyName)) {
+                      nullable = false;
+                    }
+                    // Nullable has more priority
+                    if (typeComposers.nullable === false) {
+                      nullable = false;
+                    }
+                    if (typeComposers.nullable === true) {
+                      nullable = true;
+                    }
+                    return !nullable ? typeComposers.input?.getTypeNonNull() : typeComposers.input;
+                  },
+                  // Let execution logic know what is the expected propertyName
+                  extensions: {
+                    propertyName,
+                  },
+                  description:
+                    subSchemaAndTypeComposers.properties[propertyName].description ||
+                    subSchemaAndTypeComposers.properties[propertyName].input?.description,
+                  defaultValue:
+                    subSchemaAndTypeComposers.properties[propertyName]?.default ||
+                    subSchemaAndTypeComposers.properties[propertyName]?.extensions?.default ||
+                    subSchemaAndTypeComposers.properties[propertyName]?.input?.default,
+                };
+              }
             }
           }
 
@@ -856,6 +905,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
                 description: subSchemaAndTypeComposers.description,
                 nullable: subSchemaAndTypeComposers.nullable,
                 default: subSchemaAndTypeComposers.default,
+                readOnly: subSchemaAndTypeComposers.readOnly,
+                writeOnly: subSchemaAndTypeComposers.writeOnly,
               };
             }
           }
@@ -866,6 +917,9 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
               let inputTC = inputFieldMap[fieldName].type();
               if ('ofType' in inputTC) {
                 inputTC = inputTC.ofType;
+              }
+              if (!inputTC.getFields) {
+                console.log(fieldName);
               }
               typeComposer.addFieldArgs(fieldName, inputTC.getFields());
             }
@@ -896,6 +950,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             output,
             nullable: subSchemaAndTypeComposers.nullable,
             default: subSchemaAndTypeComposers.default,
+            readOnly: subSchemaAndTypeComposers.readOnly,
+            writeOnly: subSchemaAndTypeComposers.writeOnly,
           };
       }
 
@@ -906,6 +962,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           description: subSchemaAndTypeComposers.description,
           nullable: subSchemaAndTypeComposers.nullable,
           default: subSchemaAndTypeComposers.default,
+          readOnly: subSchemaAndTypeComposers.readOnly,
+          writeOnly: subSchemaAndTypeComposers.writeOnly,
         };
       } else {
         logger.debug(`GraphQL Type cannot be created for this JSON Schema definition;`, {
@@ -918,6 +976,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           output: typeComposer,
           description: subSchemaAndTypeComposers.description,
           nullable: subSchemaAndTypeComposers.nullable,
+          readOnly: subSchemaAndTypeComposers.readOnly,
+          writeOnly: subSchemaAndTypeComposers.writeOnly,
           default: subSchemaAndTypeComposers.default,
         };
       }

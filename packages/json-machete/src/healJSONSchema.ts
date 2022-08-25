@@ -68,19 +68,16 @@ export async function healJSONSchema(
           } else if (Object.keys(subSchema).length === 1 && subSchema.type) {
             return subSchema;
           }
-          // We don't support following properties
-          delete subSchema.readOnly;
-          delete subSchema.writeOnly;
-          const keys = Object.keys(subSchema);
+          const keys = Object.keys(subSchema).filter(key => key !== 'readOnly' && key !== 'writeOnly');
           if (keys.length === 0) {
             logger.debug(`${path} has an empty definition. Adding an object definition.`);
             subSchema.type = 'object';
             subSchema.additionalProperties = true;
           }
           if (typeof subSchema.additionalProperties === 'object') {
-            delete subSchema.additionalProperties.readOnly;
-            delete subSchema.additionalProperties.writeOnly;
-            const additionalPropertiesKeys = Object.keys(subSchema.additionalProperties);
+            const additionalPropertiesKeys = Object.keys(subSchema.additionalProperties).filter(
+              key => key !== 'readOnly' && key !== 'writeOnly'
+            );
             if (
               additionalPropertiesKeys.length === 0 ||
               (additionalPropertiesKeys.length === 1 && subSchema.additionalProperties.type === 'string')
@@ -351,6 +348,15 @@ export async function healJSONSchema(
             );
             delete subSchema.properties;
             subSchema.additionalProperties = true;
+          }
+          if (subSchema.properties) {
+            const propertyValues: any[] = Object.values(subSchema.properties);
+            if (propertyValues.every(property => property.writeOnly && !property.readOnly)) {
+              subSchema.writeOnly = true;
+            }
+            if (propertyValues.every(property => property.readOnly && !property.writeOnly)) {
+              subSchema.readOnly = true;
+            }
           }
         }
         return subSchema;
