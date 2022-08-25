@@ -3,17 +3,16 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-import { Aedes, aedes, AedesOptions, PublishPacket } from 'aedes';
+import { PubSub } from '@graphql-mesh/utils';
 import * as bodyParser from 'body-parser';
 import express from 'express';
 import { Server } from 'http';
-import { createServer, Server as NetSetver } from 'net';
 
 const app = express();
 
 let server: Server; // holds server object for shutdown
-let mqttBroker: Aedes;
-let tcpServer: NetSetver;
+
+export const pubsub = new PubSub();
 
 const Devices = {
   'Audio-player': {
@@ -29,19 +28,7 @@ const Devices = {
 /**
  * Starts the server at the given port
  */
-export function startServers(HTTP_PORT: number, MQTT_PORT: number) {
-  mqttBroker = aedes({
-    published: (packet, client, cb) => {
-      if (packet.topic.startsWith('$SYS')) {
-        return cb();
-      }
-      console.log(`MQTT packet published on ${packet.topic} by ${client ? client.id : 'broker'}`);
-      cb();
-    },
-  } as AedesOptions);
-
-  tcpServer = createServer(mqttBroker.handle);
-
+export function startServers(HTTP_PORT: number) {
   app.use(bodyParser.json());
 
   app.get('/api/user', (req, res) => {
@@ -58,15 +45,7 @@ export function startServers(HTTP_PORT: number, MQTT_PORT: number) {
     if (req.body.userName && req.body.name) {
       const device = req.body;
       Devices[device.name] = device;
-      const packet: PublishPacket = {
-        topic: `/api/${device.userName}/devices/${req.method.toUpperCase()}/${device.name}`,
-        payload: Buffer.from(JSON.stringify(device)),
-        cmd: 'publish',
-        qos: 0,
-        dup: false,
-        retain: false,
-      };
-      mqttBroker.publish(packet, () => {});
+      pubsub.publish(`/api/${device.userName}/devices/${req.method.toUpperCase()}`, device);
       res.status(200).send(device);
     } else {
       res.status(404).send({
@@ -91,15 +70,7 @@ export function startServers(HTTP_PORT: number, MQTT_PORT: number) {
         const device = req.body;
         delete Devices[req.params.deviceName];
         Devices[device.deviceName] = device;
-        const packet: PublishPacket = {
-          topic: `/api/${device.userName}/devices/${req.method.toUpperCase()}/${device.name}`,
-          payload: Buffer.from(JSON.stringify(device)),
-          cmd: 'publish',
-          qos: 0,
-          dup: false,
-          retain: false,
-        };
-        mqttBroker.publish(packet, () => {});
+        pubsub.publish(`/api/${device.userName}/devices/${req.method.toUpperCase()}`, device);
         res.status(200).send(device);
       } else {
         res.status(404).send({
@@ -113,36 +84,12 @@ export function startServers(HTTP_PORT: number, MQTT_PORT: number) {
     }
   });
 
-  // mqttBroker.on('client', client => {
-  //   console.log(`MQTT client connected`, client ? client.id : client)
-  // })
-
-  // mqttBroker.on('subscribe', (subscriptions, client) => {
-  //   console.log(
-  //     `MQTT client ${
-  //       client ? client.id : client
-  //     } subscribed to topic(s) ${subscriptions.map(s => s.topic).join('\n')}`
-  //   )
-  // })
-
-  // mqttBroker.on('unsubscribe', (subscriptions, client) => {
-  //   console.log(
-  //     `MQTT client ${
-  //       client ? client.id : client
-  //     } unsubscribed from topic(s) ${subscriptions.join('\n')}`
-  //   )
-  // })
-
   return Promise.all([
     new Promise(resolve => {
       server = app.listen(HTTP_PORT, resolve as () => void);
     }),
-    new Promise(resolve => {
-      tcpServer = app.listen(MQTT_PORT, resolve as () => void);
-    }),
   ]).then(() => {
     console.log(`Example HTTP API accessible on port ${HTTP_PORT}`);
-    console.log(`Example MQTT API accessible on port ${MQTT_PORT}`);
   });
 }
 
@@ -150,13 +97,12 @@ export function startServers(HTTP_PORT: number, MQTT_PORT: number) {
  * Stops server.
  */
 export function stopServers() {
-  return Promise.all([server.close(), tcpServer.close(), mqttBroker.close()]).then(() => {
+  return Promise.all([server.close()]).then(() => {
     console.log(`Stopped HTTP API server`);
-    console.log(`Stopped MQTT API server`);
   });
 }
 
 // If run from command line, start server:
 if (require.main === module) {
-  startServers(3008, 1885).catch(console.error);
+  startServers(3008).catch(console.error);
 }

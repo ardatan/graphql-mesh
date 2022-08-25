@@ -2,26 +2,19 @@ import { graphql, execute, subscribe, GraphQLSchema } from 'graphql';
 
 import { createServer, Server } from 'http';
 import { SubscriptionServer, SubscriptionClient, ServerOptions } from 'subscriptions-transport-ws';
-import { MQTTPubSub } from 'graphql-mqtt-subscriptions';
-import { connect, MqttClient } from 'mqtt';
 import ws from 'ws';
+import { fetch } from '@whatwg-node/fetch';
 
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
-import { startServers, stopServers } from './example_api7_server';
+import { startServers, stopServers, pubsub } from './example_api7_server';
 
 let createdSchema: GraphQLSchema;
 const TEST_PORT = 3009;
 const HTTP_PORT = 3008;
-const MQTT_PORT = 1885;
 // Update PORT for this test case:
 const baseUrl = `http://localhost:${HTTP_PORT}/api`;
 
-// const oas = require('./fixtures/example_oas7.json')
-// oas.servers[0].variables.port.default = String(HTTP_PORT)
-// oas.servers[1].variables.port.default = String(MQTT_PORT)
-
 let wsServer: Server;
-let mqttClient: MqttClient;
 let subscriptionServer: SubscriptionServer;
 
 describe('OpenAPI Loader: example_api7', () => {
@@ -38,20 +31,6 @@ describe('OpenAPI Loader: example_api7', () => {
 
     createdSchema = schema;
     try {
-      mqttClient = connect(`mqtt://localhost:${MQTT_PORT}`, {
-        keepalive: 60,
-        reschedulePings: true,
-        protocolId: 'MQTT',
-        protocolVersion: 4,
-        reconnectPeriod: 2000,
-        connectTimeout: 5 * 1000,
-        clean: true,
-      });
-
-      const pubsub = new MQTTPubSub({
-        client: mqttClient,
-      });
-
       wsServer = createServer((req, res) => {
         res.writeHead(404);
         res.end();
@@ -64,8 +43,7 @@ describe('OpenAPI Loader: example_api7', () => {
           execute,
           subscribe,
           schema,
-          onConnect: (params, socket, context) => {
-            // Add pubsub to subscribe context
+          onConnect: () => {
             return { pubsub };
           },
         } as ServerOptions,
@@ -77,7 +55,7 @@ describe('OpenAPI Loader: example_api7', () => {
     } catch (e) {
       console.log('error', e);
     }
-    await startServers(HTTP_PORT, MQTT_PORT);
+    await startServers(HTTP_PORT);
   });
 
   function sleep(ms: number) {
@@ -93,7 +71,7 @@ describe('OpenAPI Loader: example_api7', () => {
      * The timeout allows these to close properly but is there a better way?
      */
     await sleep(500);
-    await Promise.all([subscriptionServer.close(), wsServer.close(), mqttClient.end(), stopServers()]);
+    await Promise.all([subscriptionServer.close(), wsServer.close(), stopServers()]);
     await sleep(500);
   });
 
@@ -101,19 +79,20 @@ describe('OpenAPI Loader: example_api7', () => {
     const userName = 'Carlos';
     const deviceName = 'Bot';
 
-    const query = `subscription watchDevice($topicInput: TopicInput!) {
-      devicesEventListener(topicInput: $topicInput) {
+    const query = `subscription watchDevice($method: String!, $userName: String!) {
+      devicesEventListener(method: $method, userName: $userName) {
         name
-        userName
         status
       }
     }`;
 
-    const query2 = `mutation($deviceInput: DeviceInput!) {
-      createDevice(deviceInput: $deviceInput) {
-        name
-        userName
-        status
+    const query2 = `mutation($deviceInput: Device_Input!) {
+      createDevice(input: $deviceInput) {
+        ... on Device {
+          name
+          userName
+          status
+        }
       }
     }`;
 
@@ -127,10 +106,8 @@ describe('OpenAPI Loader: example_api7', () => {
           query,
           operationName: 'watchDevice',
           variables: {
-            topicInput: {
-              method: 'POST',
-              userName: `${userName}`,
-            },
+            method: 'POST',
+            userName,
           },
         })
         .subscribe({
@@ -142,8 +119,7 @@ describe('OpenAPI Loader: example_api7', () => {
             if (result.data) {
               expect(result.data).toEqual({
                 devicesEventListener: {
-                  name: `${deviceName}`,
-                  userName: `${userName}`,
+                  name: deviceName,
                   status: false,
                 },
               });
@@ -154,15 +130,20 @@ describe('OpenAPI Loader: example_api7', () => {
         });
 
       setTimeout(() => {
-        graphql(createdSchema, query2, null, null, {
-          deviceInput: {
-            name: `${deviceName}`,
-            userName: `${userName}`,
-            status: false,
+        graphql({
+          schema: createdSchema,
+          source: query2,
+          variableValues: {
+            deviceInput: {
+              name: `${deviceName}`,
+              userName: `${userName}`,
+              status: false,
+            },
           },
         })
           .then(res => {
             if (!res.data) {
+              console.log(res.errors?.[0]);
               reject(new Error('Failed mutation'));
             }
           })

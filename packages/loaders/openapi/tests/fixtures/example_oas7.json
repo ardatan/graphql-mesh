@@ -32,18 +32,6 @@
           "default": "api"
         }
       }
-    },
-    {
-      "url": "mqtt://localhost:{port}/{basePath}",
-      "description": "The location of the local MQTT test broker.",
-      "variables": {
-        "port": {
-          "default": "1885"
-        },
-        "basePath": {
-          "default": "api"
-        }
-      }
     }
   ],
   "paths": {
@@ -228,17 +216,6 @@
       }
     },
     "requestBodies": {
-      "EventsBody": {
-        "description": "Properties to generate the event path",
-        "required": true,
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Topic"
-            }
-          }
-        }
-      },
       "DeviceBody": {
         "description": "Device instance to update / create",
         "required": true,
@@ -275,17 +252,12 @@
     },
     "callbacks": {
       "DevicesEvent": {
-        "/api/{$request.body#/userName}/devices/{$request.body#/method}/+": {
+        "/api/{$request.body#/userName}/devices/{$request.body#/method}": {
           "post": {
             "operationId": "devicesEventListener",
             "description": "Listen all devices events owned by userName",
             "requestBody": {
-              "$ref": "#/components/requestBodies/EventsBody"
-            },
-            "responses": {
-              "200": {
-                "$ref": "#/components/responses/DeviceInstance"
-              }
+              "$ref": "#/components/responses/DeviceInstance"
             }
           }
         }

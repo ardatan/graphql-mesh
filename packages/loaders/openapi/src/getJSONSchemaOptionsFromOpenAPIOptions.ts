@@ -96,6 +96,39 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
   oasOrSwagger = (await dereferenceObject(oasOrSwagger)) as any;
   const operations: JSONSchemaOperationConfig[] = [];
 
+  function handleCallback(callbackKey: string, callbackObj: OpenAPIV3.CallbackObject) {
+    for (const callbackUrlRefKey in callbackObj) {
+      const pubsubTopic = callbackUrlRefKey.split('$request.query').join('args').split('$request.body#/').join('args.');
+      const callbackOperationConfig: JSONSchemaPubSubOperationConfig = {
+        type: OperationTypeNode.SUBSCRIPTION,
+        field: '',
+        pubsubTopic,
+      };
+      const callbackUrlObj = callbackObj[callbackUrlRefKey];
+      for (const method in callbackUrlObj) {
+        const callbackOperation: OpenAPIV3.OperationObject = callbackUrlObj[method];
+        callbackOperationConfig.field = callbackOperation.operationId;
+        const requestBodyContents = (callbackOperation.requestBody as OpenAPIV3.RequestBodyObject)?.content;
+        if (requestBodyContents) {
+          callbackOperationConfig.responseSchema = requestBodyContents[Object.keys(requestBodyContents)[0]]
+            .schema as any;
+        }
+        const responses = callbackOperation.responses;
+        if (responses) {
+          const response = responses[Object.keys(responses)[0]];
+          if (response) {
+            const responseContents = (response as OpenAPIV3.ResponseObject).content;
+            if (responseContents) {
+              callbackOperationConfig.requestSchema = responseContents[Object.keys(responseContents)[0]].schema as any;
+            }
+          }
+        }
+      }
+      callbackOperationConfig.field = callbackOperationConfig.field || sanitizeNameForGraphQL(callbackKey);
+      operations.push(callbackOperationConfig);
+    }
+  }
+
   if (!baseUrl) {
     if ('servers' in oasOrSwagger) {
       baseUrl = oasOrSwagger.servers[0].url;
@@ -435,16 +468,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
 
       if ('callbacks' in methodObj) {
         for (const callbackKey in methodObj.callbacks) {
-          const callbackObj = methodObj.callbacks[callbackKey];
-          for (const _callbackUrlRefKey in callbackObj) {
-            const fieldName = sanitizeNameForGraphQL(operationConfig.field + '_' + callbackKey);
-            const callbackOperationConfig: JSONSchemaPubSubOperationConfig = {
-              type: OperationTypeNode.SUBSCRIPTION,
-              field: fieldName,
-              pubsubTopic: '{args.callbackUrl}',
-            };
-            operations.push(callbackOperationConfig);
-          }
+          handleCallback(callbackKey, methodObj.callbacks[callbackKey] as OpenAPIV3.CallbackObject);
         }
       }
 
