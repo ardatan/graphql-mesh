@@ -227,6 +227,13 @@ export async function healJSONSchema(
             logger.debug(`${path} has a format of dateTime. It should be "date-time".`);
             subSchema.format = 'date-time';
           }
+          if (subSchema.format === 'binary') {
+            // Binary should have nothing else
+            subSchema = {
+              type: 'string',
+              format: 'binary',
+            };
+          }
           if (subSchema.type === 'string' && subSchema.format) {
             if (!JSONSchemaStringFormats.includes(subSchema.format)) {
               logger.debug(

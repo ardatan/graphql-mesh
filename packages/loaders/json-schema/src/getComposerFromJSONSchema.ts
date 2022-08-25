@@ -107,7 +107,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
       if (!subSchema) {
         throw new Error(`Something is wrong with ${path}`);
       }
-      if (subSchema.pattern && !subSchema.format) {
+      if (subSchema.pattern) {
         const scalarType = new RegularExpression(
           getValidTypeName({
             schemaComposer,
@@ -265,7 +265,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           };
         }
         case 'string': {
-          if (!subSchema.format && (subSchema.minLength || subSchema.maxLength)) {
+          if (subSchema.minLength || subSchema.maxLength) {
             const scalarType = getStringScalarWithMinMaxLength({
               schemaComposer,
               subSchema,
