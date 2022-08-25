@@ -140,7 +140,7 @@ describe('example_api', () => {
     });
   });
 
-  // Link objects in the OAS allow OtG to create nested GraphQL objects that resolve on different API calls
+  // Link objects in the OAS allows creation of nested GraphQL objects that resolve on different API calls
   it('should get nested resource via link $response.body#/...', async () => {
     const query = /* GraphQL */ `
       {
@@ -847,7 +847,7 @@ describe('example_api', () => {
 
     expect(result).toEqual({
       data: {
-        getCookie: 'Thanks for your cookie preferences: "cookie_type=chocolate chip; cookie_size=mega-sized;"',
+        getCookie: 'You ordered a mega-sized chocolate chip cookie!',
       },
     });
   });
@@ -1690,6 +1690,31 @@ describe('example_api', () => {
     });
   });
 
+  it('Operation returning arbitrary JSON type should not include _openAPIToGraphQL field', async () => {
+    const query = /* GraphQL */ `
+      {
+        random
+      }
+    `;
+
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
+
+    /**
+     * There should only be the random and status fields but no _openAPIToGraphQL
+     * field.
+     */
+    expect(result).toEqual({
+      data: {
+        random: {
+          status: 'success',
+        },
+      },
+    });
+  });
+
   it('UUID format becomes GraphQL UUID type', async () => {
     const query = /* GraphQL */ `
       {
@@ -1855,6 +1880,146 @@ describe('example_api', () => {
       description: 'Returns a user from the system.',
     });
   });
+
+  // test('Query string arguments are not created when they are provided through requestOptions option', () => {
+  //   const query = `{
+  //     users(limit: 10) {
+  //       name
+  //     }
+  //   }`
+
+  //   const promise = graphql(createdSchema, query, null, {}).then(result => {
+  //     expect(result).toEqual({
+  //       data: {
+  //         users: [
+  //           {
+  //             name: 'Arlene L McMahon'
+  //           },
+  //           {
+  //             name: 'William B Ropp'
+  //           },
+  //           {
+  //             name: 'John C Barnes'
+  //           },
+  //           {
+  //             name: 'Heather J Tate'
+  //           }
+  //         ]
+  //       }
+  //     })
+  //   })
+
+  //   // The GET status operation has a limit query string parameter
+  //   const options: Options<any, any, any> = {
+  //     requestOptions: {
+  //       qs: {
+  //         limit: '10'
+  //       },
+  //     }
+  //   }
+
+  //   const query2 = `{
+  //     users {
+  //       name
+  //     }
+  //   }`
+
+  //   const promise2 = openAPIToGraphQL
+  //     .createGraphQLSchema(oas, options)
+  //     .then(({ schema }) => {
+  //       const ast = parse(query2)
+  //       const errors = validate(schema, ast)
+  //       expect(errors).toEqual([])
+  //       return graphql(schema, query2).then(result => {
+  //         expect(result).toEqual({
+  //           data: {
+  //             users: [
+  //               {
+  //                 name: 'Arlene L McMahon'
+  //               },
+  //               {
+  //                 name: 'William B Ropp'
+  //               },
+  //               {
+  //                 name: 'John C Barnes'
+  //               },
+  //               {
+  //                 name: 'Heather J Tate'
+  //               }
+  //             ]
+  //           }
+  //         })
+  //       })
+  //     })
+
+  //   return Promise.all([promise, promise2])
+  // })
+
+  // test('Use headers option as function', () => {
+  //   const options: Options<any, any, any> = {
+  //     headers: (method, path, title) => {
+  //       if (method === 'get' && path === '/snack') {
+  //         return {
+  //           snack_type: 'chips',
+  //           snack_size: 'small'
+  //         }
+  //       }
+  //     }
+  //   }
+
+  //   const query = `{
+  //     snack
+  //   }`
+
+  //   return openAPIToGraphQL
+  //     .createGraphQLSchema(oas, options)
+  //     .then(({ schema }) => {
+  //       const ast = parse(query)
+  //       const errors = validate(schema, ast)
+  //       expect(errors).toEqual([])
+  //       return graphql(schema, query).then(result => {
+  //         expect(result).toEqual({
+  //           data: {
+  //             snack: 'Here is a small chips'
+  //           }
+  //         })
+  //       })
+  //     })
+  // })
+
+  // test('Use requestOptions headers option as function', () => {
+  //   const options: Options<any, any, any> = {
+  //     requestOptions: {
+  //       headers: (method, path, title) => {
+  //         if (method === 'get' && path === '/snack') {
+  //           return {
+  //             snack_type: 'chips',
+  //             snack_size: 'small'
+  //           }
+  //         }
+  //       },
+  //     }
+  //   }
+
+  //   const query = `{
+  //     snack
+  //   }`
+
+  //   return openAPIToGraphQL
+  //     .createGraphQLSchema(oas, options)
+  //     .then(({ schema }) => {
+  //       const ast = parse(query)
+  //       const errors = validate(schema, ast)
+  //       expect(errors).toEqual([])
+  //       return graphql(schema, query).then(result => {
+  //         expect(result).toEqual({
+  //           data: {
+  //             snack: 'Here is a small chips'
+  //           }
+  //         })
+  //       })
+  //     })
+  // })
 
   it('Non-nullable properties for object types', async () => {
     const coordinates = createdSchema.getType('coordinates') as GraphQLObjectType;
@@ -2061,5 +2226,38 @@ describe('example_api', () => {
     const errors = validate(schema, ast);
     expect(errors.length).toBe(1);
     expect(errors[0].message).toEqual('Value "medium" does not exist in "queryInput_getSnack_snack_size" enum.');
+  });
+
+  it('Format the query params appropriately when style and explode are set to true', async () => {
+    const LIMIT = 10;
+    const OFFSET = 0;
+
+    const query = /* GraphQL */ `
+      query {
+        returnAllOffices(parameters: { limit: ${LIMIT}, offset: ${OFFSET} }) {
+          roomNumber
+          company {
+            id
+          }
+        }
+      }
+    `;
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
+
+    expect(result.errors).toBeDefined();
+
+    result.errors.forEach(error => {
+      expect(error.extensions?.url).toBeDefined();
+
+      const url = new URL(error.extensions.url as string);
+
+      expect(url.searchParams.has('limit')).toBe(true);
+      expect(url.searchParams.get('limit')).toBe(String(LIMIT));
+      expect(url.searchParams.has('offset')).toBe(true);
+      expect(url.searchParams.get('offset')).toBe(String(OFFSET));
+    });
   });
 });
