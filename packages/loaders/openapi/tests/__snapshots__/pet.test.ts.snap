@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Pet should generate the correct schema 1`] = `
+"schema {
+  query: Query
+}
+
+type Query {
+  pets_by_id(id: String!): Pet
+  dogs_by_id(id: String!): Dog
+  cats_by_id(id: String!): Cat
+}
+
+interface Pet {
+  name: String!
+  petType: String
+}
+
+type Dog implements Pet {
+  name: String!
+  petType: String
+  dog_exclusive: String
+}
+
+type Cat implements Pet {
+  name: String!
+  petType: String
+  cat_exclusive: String
+}"
+`;

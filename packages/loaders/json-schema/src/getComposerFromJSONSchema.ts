@@ -14,6 +14,7 @@ import {
   ComposeOutputType,
   ComposeInputType,
   EnumTypeComposer,
+  InterfaceTypeComposer,
 } from 'graphql-compose';
 import {
   getNamedType,
@@ -498,6 +499,20 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             default: subSchema.default,
           };
         }
+        const config = {
+          name: getValidTypeName({
+            schemaComposer,
+            isInput: false,
+            subSchema,
+          }),
+          description: subSchema.description,
+          fields: {},
+          extensions: {
+            validateWithJSONSchema,
+            examples: subSchema.examples,
+            default: subSchema.default,
+          },
+        };
         return {
           input: schemaComposer.createInputTC({
             name: getValidTypeName({
@@ -512,20 +527,14 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
               default: subSchema.default,
             },
           }),
-          output: schemaComposer.createObjectTC({
-            name: getValidTypeName({
-              schemaComposer,
-              isInput: false,
-              subSchema,
-            }),
-            description: subSchema.description,
-            fields: {},
-            extensions: {
-              validateWithJSONSchema,
-              examples: subSchema.examples,
-              default: subSchema.default,
-            },
-          }),
+          output: subSchema.discriminator
+            ? schemaComposer.createInterfaceTC({
+                ...config,
+                resolveType(root: any) {
+                  return root[subSchema.discriminator];
+                },
+              })
+            : schemaComposer.createObjectTC(config),
           ...subSchema,
           ...(subSchema.properties ? { properties: { ...subSchema.properties } } : {}),
           ...(subSchema.allOf ? { allOf: [...subSchema.allOf] } : {}),
@@ -615,6 +624,9 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
               }
             }
           } else {
+            if (outputTypeComposer instanceof InterfaceTypeComposer) {
+              (subSchemaAndTypeComposers.output as ObjectTypeComposer).addInterface(outputTypeComposer);
+            }
             const typeElemFieldMap = outputTypeComposer.getFields();
             for (const fieldName in typeElemFieldMap) {
               const field = typeElemFieldMap[fieldName];
