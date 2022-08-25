@@ -1001,6 +1001,7 @@ Object {
             "$ref": "#/definitions/update_resource_at_the_root_folder_v1_200_response",
           },
         },
+        "readOnly": true,
         "title": "Mutation",
         "type": "object",
       },
@@ -1024,6 +1025,7 @@ Object {
         },
         "title": "MutationInput",
         "type": "object",
+        "writeOnly": true,
       },
       "ParentFolderGetWithLocalizedNameDTO": Object {
         "$resolvedRef": "/components/schemas/ParentFolderGetWithLocalizedNameDTO",
@@ -1115,6 +1117,7 @@ Object {
             "$ref": "#/definitions/list_resources_at_the_root_folder_v1_200_response",
           },
         },
+        "readOnly": true,
         "title": "Query",
         "type": "object",
       },
@@ -1132,6 +1135,7 @@ Object {
         },
         "title": "QueryInput",
         "type": "object",
+        "writeOnly": true,
       },
       "ResourceCreateDTO": Object {
         "$resolvedRef": "/components/schemas/ResourceCreateDTO",

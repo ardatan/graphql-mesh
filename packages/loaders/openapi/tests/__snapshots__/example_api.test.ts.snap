@@ -1744,6 +1744,7 @@ Object {
             "type": "string",
           },
         },
+        "readOnly": true,
         "title": "Mutation",
         "type": "object",
       },
@@ -1773,6 +1774,7 @@ Object {
         },
         "title": "MutationInput",
         "type": "object",
+        "writeOnly": true,
       },
       "Query": Object {
         "properties": Object {
@@ -1855,6 +1857,7 @@ Object {
             "$ref": "#/definitions/mystery_200_response",
           },
         },
+        "readOnly": true,
         "title": "Query",
         "type": "object",
       },
@@ -1917,6 +1920,7 @@ Object {
         },
         "title": "QueryInput",
         "type": "object",
+        "writeOnly": true,
       },
       "Tags": Object {
         "$resolvedRef": "/components/schemas/tags",

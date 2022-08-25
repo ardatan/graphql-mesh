@@ -144,6 +144,7 @@ Object {
             "$ref": "#/definitions/post_basket_response",
           },
         },
+        "readOnly": true,
         "title": "Mutation",
         "type": "object",
       },
@@ -151,6 +152,7 @@ Object {
         "additionalProperties": true,
         "title": "MutationInput",
         "type": "object",
+        "writeOnly": true,
       },
       "_schema": Object {
         "properties": Object {

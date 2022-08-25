@@ -92,5 +92,8 @@ export function getUnionTypeComposers({
   return {
     input: subSchemaAndTypeComposers.input as InputTypeComposer,
     output: subSchemaAndTypeComposers.output as UnionTypeComposer,
+    nullable: subSchemaAndTypeComposers.nullable,
+    readOnly: subSchemaAndTypeComposers.readOnly,
+    writeOnly: subSchemaAndTypeComposers.writeOnly,
   };
 }
