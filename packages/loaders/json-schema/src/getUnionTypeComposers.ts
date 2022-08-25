@@ -3,6 +3,7 @@ import { JSONSchemaObject } from '@json-schema-tools/meta-schema';
 import Ajv from 'ajv';
 import {
   AnyTypeComposer,
+  ComposeInputType,
   InputTypeComposer,
   isSomeInputTypeComposer,
   ObjectTypeComposer,
@@ -24,6 +25,18 @@ export interface GetUnionTypeComposersOpts {
   logger: Logger;
 }
 
+export function getContainerTC(schemaComposer: SchemaComposer, output: ComposeInputType) {
+  const containerTypeName = `${output.getTypeName()}_container`;
+  return schemaComposer.getOrCreateOTC(containerTypeName, otc =>
+    otc.addFields({
+      [output.getTypeName()]: {
+        type: output as any,
+        resolve: root => root,
+      },
+    })
+  );
+}
+
 export function getUnionTypeComposers({
   schemaComposer,
   ajv,
@@ -39,17 +52,7 @@ export function getUnionTypeComposers({
   typeComposersList.forEach(typeComposers => {
     const { input, output } = typeComposers;
     if (isSomeInputTypeComposer(output)) {
-      const containerTypeName = `${output.getTypeName()}_container`;
-      outputTypeComposers.push(
-        schemaComposer.getOrCreateOTC(containerTypeName, otc =>
-          otc.addFields({
-            [output.getTypeName()]: {
-              type: output,
-              resolve: root => root,
-            },
-          })
-        )
-      );
+      outputTypeComposers.push(getContainerTC(schemaComposer, output));
     } else {
       outputTypeComposers.push(output);
     }
