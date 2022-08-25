@@ -107,7 +107,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
       if (!subSchema) {
         throw new Error(`Something is wrong with ${path}`);
       }
-      if (subSchema.pattern) {
+      if (subSchema.pattern && !subSchema.format) {
         const scalarType = new RegularExpression(
           getValidTypeName({
             schemaComposer,
@@ -214,16 +214,6 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
       }
 
       switch (subSchema.type as any) {
-        case 'file': {
-          const typeComposer = schemaComposer.getAnyTC(GraphQLFile);
-          return {
-            input: typeComposer,
-            output: typeComposer,
-            description: subSchema.description,
-            nullable: subSchema.nullable,
-            default: subSchema.default,
-          };
-        }
         case 'boolean': {
           const typeComposer = schemaComposer.getAnyTC(GraphQLBoolean);
           return {
@@ -275,7 +265,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           };
         }
         case 'string': {
-          if (subSchema.minLength || subSchema.maxLength) {
+          if (!subSchema.format && (subSchema.minLength || subSchema.maxLength)) {
             const scalarType = getStringScalarWithMinMaxLength({
               schemaComposer,
               subSchema,
@@ -290,6 +280,16 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             };
           }
           switch (subSchema.format) {
+            case 'binary': {
+              const typeComposer = schemaComposer.getAnyTC(GraphQLFile);
+              return {
+                input: typeComposer,
+                output: typeComposer,
+                description: subSchema.description,
+                nullable: subSchema.nullable,
+                default: subSchema.default,
+              };
+            }
             case 'date-time': {
               const typeComposer = schemaComposer.getAnyTC(GraphQLDateTime);
               return {

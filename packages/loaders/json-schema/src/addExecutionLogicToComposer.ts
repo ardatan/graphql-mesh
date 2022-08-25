@@ -24,6 +24,7 @@ import lodashSet from 'lodash.set';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { process } from '@graphql-mesh/cross-helpers';
 import { getHeadersObj, MeshFetch } from '@graphql-mesh/utils';
+import { FormData } from '@whatwg-node/fetch';
 
 export interface AddExecutionLogicToComposerOptions {
   schemaComposer: SchemaComposer;
@@ -204,6 +205,25 @@ ${operationConfig.description || ''}
             const [, contentType] = Object.entries(headers).find(([key]) => key.toLowerCase() === 'content-type') || [];
             if (contentType?.startsWith('application/x-www-form-urlencoded')) {
               requestInit.body = qsStringify(input, queryStringOptions);
+            } else if (contentType?.startsWith('multipart/form-data')) {
+              delete headers['content-type'];
+              delete headers['Content-Type'];
+              const formData = new FormData();
+              for (const key in input) {
+                let formDataValue: Blob | string;
+                const inputValue = input[key];
+                if (typeof inputValue === 'object') {
+                  if (inputValue.toString() === '[object Blob]' || inputValue.toString() === '[object File]') {
+                    formDataValue = inputValue;
+                  } else {
+                    formDataValue = JSON.stringify(inputValue);
+                  }
+                } else {
+                  formDataValue = inputValue.toString();
+                }
+                formData.append(key, formDataValue);
+              }
+              requestInit.body = formData;
             } else {
               requestInit.body = typeof input === 'object' ? JSON.stringify(input) : input;
             }
