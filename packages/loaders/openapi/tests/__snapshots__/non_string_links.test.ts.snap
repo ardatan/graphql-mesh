@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Links on non-object fields should generate the correct schema 1`] = `
+"schema {
+  query: Query
+}
+
+type Query {
+  test: test_200_response
+  testLink: testLink_200_response
+}
+
+type test_200_response {
+  String: String
+  testLink: testLink_200_response
+}
+
+type testLink_200_response {
+  foo: String
+}"
+`;

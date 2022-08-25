@@ -24,6 +24,7 @@ import lodashSet from 'lodash.set';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { process } from '@graphql-mesh/cross-helpers';
 import { getHeadersObj, MeshFetch } from '@graphql-mesh/utils';
+import { getContainerTC } from './getUnionTypeComposers';
 
 export interface AddExecutionLogicToComposerOptions {
   schemaComposer: SchemaComposer;
@@ -497,19 +498,32 @@ ${operationConfig.description || ''}
           const responseConfig = operationConfig.responseByStatusCode[statusCode];
           if (responseConfig.links || responseConfig.exposeResponseMetadata) {
             const typeTCThunked = types[statusCodeOneOfIndexMap[statusCode] || 0];
-            const typeTC = schemaComposer.getAnyTC(typeTCThunked.getTypeName());
-            if ('addFieldArgs' in typeTC) {
-              if (responseConfig.exposeResponseMetadata) {
-                typeTC.addFields({
-                  _response: {
-                    type: responseMetadataType,
-                    resolve: root => root.$response,
+            const originalName = typeTCThunked.getTypeName();
+            let typeTC = schemaComposer.getAnyTC(originalName);
+            if (!('addFieldArgs' in typeTC)) {
+              typeTC = schemaComposer.createObjectTC({
+                name: `${operationConfig.field}_${statusCode}_response`,
+                fields: {
+                  [originalName]: {
+                    type: typeTC,
+                    resolve: root => root,
                   },
-                });
-              }
-              if (responseConfig.links) {
-                handleLinkMap(responseConfig.links, typeTC as ObjectTypeComposer);
-              }
+                },
+              });
+              // If it is a scalar or enum type, it cannot be a union type, so we can set it directly
+              types[0] = typeTC;
+              field.type = typeTC;
+            }
+            if (responseConfig.exposeResponseMetadata) {
+              typeTC.addFields({
+                _response: {
+                  type: responseMetadataType,
+                  resolve: root => root.$response,
+                },
+              });
+            }
+            if (responseConfig.links) {
+              handleLinkMap(responseConfig.links, typeTC as ObjectTypeComposer);
             }
           }
         }

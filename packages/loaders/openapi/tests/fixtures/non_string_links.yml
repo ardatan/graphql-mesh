@@ -1,0 +1,38 @@
+openapi: 3.0.1
+info:
+  title: API
+  description: ''
+  contact: {}
+  version: '1.0'
+servers:
+  - url: http://localhost:7777
+security:
+  - ApiKeyAuth: []
+tags: []
+paths:
+  /test:
+    get:
+      operationId: test
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: string
+          links:
+            testLink:
+              operationId: testLink
+  /test-link:
+    get:
+      operationId: testLink
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  foo:
+                    type: string
