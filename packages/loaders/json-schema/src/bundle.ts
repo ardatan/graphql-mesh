@@ -113,8 +113,8 @@ export async function getGraphQLSchemaFromBundle(
 
   let operationHeaders = {};
   if (typeof additionalOperationHeaders === 'function') {
-    operationHeaders = async (resolverData: ResolverData) => {
-      const result = await additionalOperationHeaders(resolverData);
+    operationHeaders = async (resolverData: ResolverData, operationConfig: JSONSchemaOperationConfig) => {
+      const result = await additionalOperationHeaders(resolverData, operationConfig);
       return {
         ...bundledOperationHeaders,
         ...result,
