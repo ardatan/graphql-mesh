@@ -1,12 +1,8 @@
 import { createServer } from '@graphql-yoga/node';
-import { createFetch } from '@whatwg-node/fetch';
+import { fetch, File, FormData } from '@whatwg-node/fetch';
 import { graphql, GraphQLSchema } from 'graphql';
 import { startServer as startAPIServer, stopServer as stopAPIServer } from './file_upload_api_server';
 import loadGraphQLSchemaFromOpenAPI from '../src';
-
-const { fetch, File, FormData } = createFetch({
-  useNodeFetch: true,
-});
 
 const PORT = 4090;
 
@@ -17,7 +13,7 @@ beforeAll(async () => {
     loadGraphQLSchemaFromOpenAPI('file_upload', {
       source: './fixtures/file_upload.json',
       cwd: __dirname,
-      baseUrl: `http://localhost:${PORT}/api`,
+      baseUrl: `http://127.0.0.1:${PORT}/api`,
       fetch,
     }),
     startAPIServer(PORT),
@@ -129,7 +125,7 @@ test('Upload completes without any error', async () => {
   form.append('map', JSON.stringify({ 0: ['variables.file'] }));
   form.append('0', new File(['Hello World!'], 'hello.txt', { type: 'text/plain' }));
 
-  const response = await fetch(`http://localhost:9864/graphql`, { method: 'POST', body: form });
+  const response = await fetch(`http://127.0.0.1:9864/graphql`, { method: 'POST', body: form });
   const uploadResult: any = await response.json();
 
   expect(uploadResult).toEqual({
