@@ -9786,10 +9786,10 @@ eslint-plugin-n@15.2.5:
     resolve "^1.22.1"
     semver "^7.3.7"
 
-eslint-plugin-promise@6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-promise/-/eslint-plugin-promise-6.0.0.tgz#017652c07c9816413a41e11c30adc42c3d55ff18"
-  integrity sha512-7GPezalm5Bfi/E22PnQxDWH2iW9GTvAlUNTztemeHb6c1BniSyoeTrM87JkC0wYdi6aQrZX9p2qEiAno8aTcbw==
+eslint-plugin-promise@6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-promise/-/eslint-plugin-promise-6.0.1.tgz#a8cddf96a67c4059bdabf4d724a29572188ae423"
+  integrity sha512-uM4Tgo5u3UWQiroOyDEsYcVMOo7re3zmno0IZmB5auxoaQNIceAbXEkSt8RNrKtaYehARHG06pYK6K1JhtP0Zw==
 
 eslint-plugin-react-hooks@^4.3.0, eslint-plugin-react-hooks@^4.5.0:
   version "4.6.0"
@@ -14881,10 +14881,10 @@ mongodb@4.8.1:
   optionalDependencies:
     saslprep "^1.0.3"
 
-mongoose@6.5.2:
-  version "6.5.2"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.5.2.tgz#630ae67c4d2576635ba1f859b2840560b27b7775"
-  integrity sha512-3CFDrSLtK2qjM1pZeZpLTUyqPRkc11Iuh74ZrwS4IwEJ3K2PqGnmyPLw7ex4Kzu37ujIMp3MAuiBlUjfrcb6hw==
+mongoose@6.5.3:
+  version "6.5.3"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.5.3.tgz#776f6c72f411d10cd131135f6b1fce14ebf7f706"
+  integrity sha512-0L2ZOPzNQ7kcIgpdfpmVXc+/SypdhzcTlaHXYa983u1lrVp7/i3ekwHpPiTXxYBvV6FwBAsFoHI7+Ovf8tp3Mg==
   dependencies:
     bson "^4.6.5"
     kareem "2.4.1"
