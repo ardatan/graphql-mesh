@@ -367,7 +367,7 @@ type Query {
     show_changes: String
     \\"When set to **true**, the account has the watermark feature enabled, and the envelope is not complete, the watermark for the account is added to the PDF documents. This option can remove the watermark.\\"
     watermark: String
-  ): File
+  ): JSON
   \\"Retrieves the custom document field information from an existing envelope document.\\"
   DocumentFields_GetDocumentFields(
     \\"The external account number (int) or account ID Guid.\\"
@@ -415,7 +415,7 @@ type Query {
     \\"Sets the maximum width for the page image in pixels. The dpi is recalculated based on this setting.\\"
     max_width: String
     show_changes: String
-  ): File
+  ): JSON
   \\"Returns tabs on the specified page.\\"
   Tabs_GetPageTabs(
     \\"The external account number (int) or account ID Guid.\\"
@@ -543,7 +543,7 @@ type Query {
     recipientId: String!
     \\"The added line and identifier around the initial image. Note: Older envelopes might only have chromed images. If getting the non-chromed image fails, try getting the chromed image.\\"
     include_chrome: String
-  ): File
+  ): JSON
   \\"Retrieves signature information for a signer or sign-in-person recipient.\\"
   Recipients_GetRecipientSignature(
     \\"The external account number (int) or account ID Guid.\\"
@@ -563,7 +563,7 @@ type Query {
     recipientId: String!
     \\"When set to **true**, indicates the chromed version of the signature image should be retrieved.\\"
     include_chrome: String
-  ): File
+  ): JSON
   \\"Retrieves information about the tabs associated with a recipient in a draft envelope.\\"
   Recipients_GetRecipientTabs(
     \\"The external account number (int) or account ID Guid.\\"
@@ -891,7 +891,7 @@ type Query {
     documentId: String!
     encrypt: String
     show_changes: String
-  ): File
+  ): JSON
   \\"Retrieves the custom document fields for an existing template document.\\"
   DocumentFields_GetTemplateDocumentFields(
     \\"The external account number (int) or account ID Guid.\\"
@@ -939,7 +939,7 @@ type Query {
     \\"Sets the maximum width (in pixels) of the returned image.\\"
     max_width: String
     show_changes: String
-  ): File
+  ): JSON
   \\"Returns tabs on the specified page.\\"
   Tabs_GetTemplatePageTabs(
     \\"The external account number (int) or account ID Guid.\\"
@@ -1143,7 +1143,7 @@ type Query {
     \\"The user ID of the user being accessed. Generally this is the user ID of the authenticated user, but if the authenticated user is an Admin on the account, this may be another user the Admin user is accessing.\\"
     userId: String!
     encoding: String
-  ): File
+  ): JSON
   \\"Retrieves a list of the account settings and email notification information for the specified user.\\\\n\\\\nThe response returns the account setting name/value information and the email notification settings for the specified user. For more information about the different user settings, see the [ML:userSettings list].\\"
   UserSettings_GetUserSettings(
     \\"The external account number (int) or account ID Guid.\\"
@@ -1179,7 +1179,7 @@ type Query {
     \\"One of **signature_image** or **initials_image**.\\"
     imageType: String!
     include_chrome: String
-  ): File
+  ): JSON
   \\"Retrieves a list of social accounts linked to a user's account.\\"
   UserSocialLogin_GetUserSocialLogin(
     \\"The external account number (int) or account ID Guid.\\"
@@ -1275,7 +1275,7 @@ type Query {
   \\"Retrieves a list of log entries as a JSON or xml object or as a zip file containing the entries.\\\\n\\\\nIf the Accept header is set to application/zip, the response is a zip file containing individual text files, each representing an API request.\\\\n\\\\nIf the Accept header is set to \`application/json\` or \`application/xml\`, the response returns list of log entries in either JSON or XML. An example JSON response body is shown below. \\"
   APIRequestLog_GetRequestLogs(encoding: String): apiRequestLogsResult
   \\"Retrieves information for a single log entry.\\\\n\\\\n**Request**\\\\nThe \`requestLogfId\` property can be retrieved by getting the list of log entries. The Content-Transfer-Encoding header can be set to base64 to retrieve the API request/response as base 64 string. Otherwise the bytes of the request/response are returned.\\\\n\\\\n**Response**\\\\nIf the Content-Transfer-Encoding header was set to base64, the log is returned as a base64 string.\\"
-  APIRequestLog_GetRequestLog(requestLogId: String!): File
+  APIRequestLog_GetRequestLog(requestLogId: String!): JSON
   \\"Retrieves the current API request logging setting for the user and remaining log entries.\\\\n\\\\n**Response**\\\\nThe response includes the current API request logging setting for the user, along with the maximum log entries and remaining log entries.\\"
   APIRequestLog_GetRequestLogSettings: RequestLogs
   \\"Retrieves account information for the authenticated user. Since the API is sessionless, this method does not actually log you in. \\\\nInstead, the method returns information about the account or accounts that the authenticated user has access to.\\\\n\\\\n\\\\nEach account has a \`baseUrl\` property, returned in the response.\\\\nUse this \`baseUrl\` in all future API calls as the base of the request URL.\\\\n\\\\nFor each account, the \`baseUrl\` property includes the DocuSign server, the API version, and the \`accountId\` property.\\\\n\\\\nIt is not uncommon for an authenticated user to have access to more than one account (and more than one \`baseUrl\`). Depending on your integration's use case, your integration may choose to:\\\\n\\\\n* Use the account whose \`isDefault\` field is \`true\`.\\\\n* List the available accounts and ask the user to choose one.\\\\n* Enable the system administrator to set the account that should be used by your integration.\\\\n\\\\nIf this method returns successfully, then you also know that the user has successfully authenticated with the DocuSign Signature platform.\\\\n\\\\n\\\\n[legacyheader]: ../../../../guide/authentication/legacy_auth.html\\\\n[userinfo]: ../../../../guide/authentication/userinfo.html\\\\n[authcode]: ../../../../guide/authentication/oa2_auth_code.md\\\\n[implicit]: ../../../../guide/authentication/oa2_implicit.md\\\\n\\"
@@ -5219,8 +5219,6 @@ type signatureType {
   \\"Type of the user. Valid values: type_owner, type_participant.\\"
   type: String
 }
-
-scalar File
 
 \\"Envelope document fields\\"
 type EnvelopeDocumentFields {

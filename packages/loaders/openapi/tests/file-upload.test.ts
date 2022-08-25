@@ -4,7 +4,7 @@ import { graphql, GraphQLSchema } from 'graphql';
 import { startServer as startAPIServer, stopServer as stopAPIServer } from './file_upload_api_server';
 import loadGraphQLSchemaFromOpenAPI from '../src';
 
-const PORT = 3010;
+const PORT = 4090;
 
 let createdSchema: GraphQLSchema;
 
@@ -105,6 +105,7 @@ test('Upload completes without any error', async () => {
     schema: createdSchema,
     port: 9864,
     maskedErrors: false,
+    logging: false,
   });
 
   await graphqlServer.start();
@@ -112,7 +113,7 @@ test('Upload completes without any error', async () => {
   // Prepare request to match GraphQL multipart request spec
   // Reference: https://github.com/jaydenseric/graphql-multipart-request-spec
   const form = new FormData();
-  const query = `
+  const query = /* GraphQL */ `
     mutation FileUploadTest($file: File!) {
       fileUploadTest(input: { file: $file }) {
         id
