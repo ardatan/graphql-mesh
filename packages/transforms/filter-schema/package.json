@@ -28,7 +28,7 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "@types/minimatch": "3.0.5"
+    "@types/minimatch": "5.1.0"
   },
   "dependencies": {
     "@graphql-mesh/types": "0.80.2",
