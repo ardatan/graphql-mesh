@@ -28,7 +28,8 @@ transforms:
             fields:
               # id: Int! @external
               - name: id
-                external: true
+                config:
+                  external: true
             resolveReference:
               queryFieldName: user
 ```
