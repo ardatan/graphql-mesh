@@ -46,15 +46,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "required": ["id", "url"],
                   "type": "object",
                   "properties": {
-                    "id": {
-                      "type": "integer",
-                      "format": "int64",
-                      "example": 10
+                    "name": {
+                      "type": "string"
                     },
-                    "url": {
+                    "content": {
                       "type": "string"
                     }
                   }

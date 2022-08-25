@@ -1,7 +1,7 @@
 import { GraphQLJSON, ObjectTypeComposer, ObjectTypeComposerFieldConfig, SchemaComposer } from 'graphql-compose';
 import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { JSONSchemaLinkConfig, JSONSchemaOperationConfig, OperationHeadersConfiguration } from './types';
-import { getOperationMetadata, isPubSubOperationConfig, isFileUpload, cleanObject } from './utils';
+import { getOperationMetadata, isPubSubOperationConfig, isFileUpload } from './utils';
 import { memoize1 } from '@graphql-tools/utils';
 import urlJoin from 'url-join';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType';
@@ -197,7 +197,7 @@ ${operationConfig.description || ''}
           }
           // Resolve union input
           const input = (args.input = resolveDataByUnionInputType(
-            cleanObject(args.input),
+            args.input,
             field.args?.input?.type?.getType(),
             schemaComposer
           ));

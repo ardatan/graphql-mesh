@@ -116,8 +116,8 @@ test('Upload completes without any error', async () => {
   const query = /* GraphQL */ `
     mutation FileUploadTest($file: File!) {
       fileUploadTest(input: { file: $file }) {
-        id
-        url
+        name
+        content
       }
     }
   `;
@@ -125,13 +125,17 @@ test('Upload completes without any error', async () => {
   form.append('map', JSON.stringify({ 0: ['variables.file'] }));
   form.append('0', new File(['Hello World!'], 'hello.txt', { type: 'text/plain' }));
 
-  const uploadResult = await fetch(`http://localhost:9864/graphql`, { method: 'POST', body: form }).then(res =>
-    res.json()
-  );
+  const response = await fetch(`http://localhost:9864/graphql`, { method: 'POST', body: form });
+  const uploadResult: any = await response.json();
 
-  expect(uploadResult.errors).not.toBeDefined();
-  expect(uploadResult.data).toBeDefined();
-  expect(uploadResult.data.fileUploadTest).toBeDefined();
+  expect(uploadResult).toEqual({
+    data: {
+      fileUploadTest: {
+        name: 'hello.txt',
+        content: 'Hello World!',
+      },
+    },
+  });
 
   await graphqlServer.stop();
 });
