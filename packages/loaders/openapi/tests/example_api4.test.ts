@@ -791,5 +791,70 @@ describe('OpenAPI loader: Handle anyOf and oneOf', () => {
         },
       });
     });
+
+    /**
+     * oneOf contains two member schemas, each with allOf
+     *
+     * oneOf also contains a link object
+     *
+     * Resolving the oneOf and allOfs should correctly create a union of two object
+     * types, each object type with a link field from the oneOf schema
+     */
+    it('oneOf test with allOfs, requiring oneOf collapse\n\nEquivalent to GET /OneOfWithAllOfsAndLink', async () => {
+      const result = await execute({
+        schema: createdSchema,
+        document: oneOfAst,
+      });
+
+      expect(
+        (result.data.__schema as any).queryType.fields.find((field: { name: string }) => {
+          return field.name === 'oneOfWithAllOfsAndLink';
+        })
+      ).toEqual({
+        name: 'oneOfWithAllOfsAndLink',
+        description: null, // originaly returned "Equivalent to GET /oneOfWithAllOfsAndLink"
+        type: {
+          name: 'OneOfWithAllOfsAndLink',
+          kind: 'UNION',
+          possibleTypes: [
+            {
+              name: 'One',
+              fields: [
+                {
+                  type: {
+                    name: 'String',
+                  },
+                },
+                {
+                  type: {
+                    name: 'String',
+                  },
+                },
+                {
+                  type: {
+                    name: 'String',
+                  },
+                },
+              ],
+            },
+            {
+              name: 'Two',
+              fields: [
+                {
+                  type: {
+                    name: 'String',
+                  },
+                },
+                {
+                  type: {
+                    name: 'String',
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      });
+    });
   });
 });
