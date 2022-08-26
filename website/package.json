@@ -15,7 +15,7 @@
     "analyze": "cross-env ANALYZE=true next build"
   },
   "dependencies": {
-    "@graphql-yoga/node": "2.13.9",
+    "@graphql-yoga/node": "2.13.11",
     "@theguild/components": "2.0.1",
     "guild-docs": "3.1.0",
     "next": "12.2.5",

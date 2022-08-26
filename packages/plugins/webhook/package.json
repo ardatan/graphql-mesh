@@ -25,7 +25,7 @@
     "directory": "packages/plugins/webhook"
   },
   "dependencies": {
-    "@graphql-yoga/common": "2.12.8",
+    "@graphql-yoga/common": "2.12.10",
     "@graphql-mesh/types": "0.80.2",
     "lodash.get": "4.4.2",
     "@graphql-mesh/string-interpolation": "0.3.2",
