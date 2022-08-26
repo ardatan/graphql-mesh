@@ -104,10 +104,13 @@ async function generateTypesForApi(options: {
   const sdk = {
     identifier: sdkIdentifier,
     codeAst: `
-    export namespace ${namespace} {
-      ${baseTypes}
-    }
-    export type Query${sdkIdentifier} = {
+import { InContextSdkMethod } from '@graphql-mesh/types';
+import { MeshContext } from '@graphql-mesh/runtime';
+
+export namespace ${namespace} {
+  ${baseTypes}
+}
+export type Query${sdkIdentifier} = {
 ${Object.values(queryOperationMap).join(',\n')}
 };
 
@@ -132,7 +135,10 @@ ${Object.values(subscriptionsOperationMap).join(',\n')}
     };`,
   };
 
+  const imports = [contextIdentifier];
+
   return {
+    imports,
     sdk,
     context,
   };
@@ -149,7 +155,8 @@ export async function generateTsArtifacts(
     flattenTypes,
     importedModulesSet,
     baseDir,
-    meshConfigCode,
+    meshConfigImportCodes,
+    meshConfigCodes,
     logger,
     sdkConfig,
     fileType,
@@ -162,7 +169,8 @@ export async function generateTsArtifacts(
     flattenTypes: boolean;
     importedModulesSet: Set<string>;
     baseDir: string;
-    meshConfigCode: string;
+    meshConfigImportCodes: string[];
+    meshConfigCodes: string[];
     logger: Logger;
     sdkConfig: YamlConfig.SDKConfig;
     fileType: 'ts' | 'json' | 'js';
@@ -240,12 +248,12 @@ export async function generateTsArtifacts(
           resolvers: tsResolversPlugin,
           contextSdk: {
             plugin: async () => {
-              const commonTypes = [
-                `import { MeshContext as BaseMeshContext, MeshInstance } from '@graphql-mesh/runtime';`,
-                `import { InContextSdkMethod } from '@graphql-mesh/types';`,
+              const importCodes = [
+                ...meshConfigImportCodes,
+                `import { getMesh, ExecuteMeshFn, SubscribeMeshFn, MeshContext as BaseMeshContext, MeshInstance } from '@graphql-mesh/runtime';`,
+                `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
+                `import { path as pathModule } from '@graphql-mesh/cross-helpers';`,
               ];
-              const sdkItems: string[] = [];
-              const contextItems: string[] = [];
               const results = await Promise.all(
                 rawSources.map(async source => {
                   const sourceMap = unifiedSchema.extensions.sourceMap as Map<RawSourceOutput, GraphQLSchema>;
@@ -257,11 +265,12 @@ export async function generateTsArtifacts(
                   });
 
                   if (item) {
-                    if (item.sdk) {
-                      sdkItems.push(item.sdk.codeAst);
-                    }
-                    if (item.context) {
-                      contextItems.push(item.context.codeAst);
+                    const content = item.sdk.codeAst + '\n' + item.context.codeAst;
+                    await writeFile(pathModule.join(artifactsDir, `sources/${source.name}/types.ts`), content);
+                    if (item.imports) {
+                      importCodes.push(
+                        `import type { ${item.imports.join(', ')} } from './sources/${source.name}/types';`
+                      );
                     }
                   }
                   return item;
@@ -273,15 +282,7 @@ export async function generateTsArtifacts(
                 .filter(Boolean)
                 .join(' & ')} & BaseMeshContext;`;
 
-              const importCodes = [
-                `import { getMesh, ExecuteMeshFn, SubscribeMeshFn } from '@graphql-mesh/runtime';`,
-                `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
-                `import { path as pathModule } from '@graphql-mesh/cross-helpers';`,
-              ];
-
               let meshMethods = `
-${importCodes.join('\n')}
-
 ${BASEDIR_ASSIGNMENT_COMMENT}
 
 const importFn = (moduleId: string) => {
@@ -317,7 +318,7 @@ const rootStore = new MeshStore('${cliParams.artifactsDir}', new FsStoreStorageA
   validate: false
 });
 
-${meshConfigCode}
+${meshConfigCodes.join('\n')}
 
 let meshInstance$: Promise<MeshInstance<MeshContext>>;
 
@@ -351,7 +352,8 @@ export function ${cliParams.builtMeshSDKFactoryName}<TGlobalContext = any, TOper
               }
 
               return {
-                content: [...commonTypes, ...sdkItems, ...contextItems, contextType, meshMethods].join('\n\n'),
+                prepend: [importCodes.join('\n'), '\n\n'],
+                content: [contextType, meshMethods].join('\n\n'),
               };
             },
           },

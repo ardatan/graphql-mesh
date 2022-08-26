@@ -71,7 +71,8 @@ export type ProcessedConfig = {
   documents: Source[];
   logger: Logger;
   store: MeshStore;
-  code: string;
+  importCodes: string[];
+  codes: string[];
   additionalEnvelopPlugins: EnvelopPlugins;
   includeHttpDetailsInExtensions: boolean;
 };
@@ -610,6 +611,7 @@ export async function processConfig(
     store: rootStore,
     additionalEnvelopPlugins,
     includeHttpDetailsInExtensions: config.includeHttpDetailsInExtensions,
-    code: [...new Set([...importCodes, ...codes])].join('\n'),
+    importCodes,
+    codes,
   };
 }

@@ -163,21 +163,23 @@ export async function graphqlMesh(
                 flattenTypes: false,
                 importedModulesSet: new Set(),
                 baseDir,
-                meshConfigCode: `
-                import { findAndParseConfig } from '@graphql-mesh/cli';
-                function getMeshOptions() {
-                  console.warn('WARNING: These artifacts are built for development mode. Please run "${
-                    cliParams.commandName
-                  } build" to build production artifacts');
-                  return findAndParseConfig({
-                    dir: baseDir,
-                    artifactsDir: ${JSON.stringify(cliParams.artifactsDir)},
-                    configName: ${JSON.stringify(cliParams.configName)},
-                    additionalPackagePrefixes: ${JSON.stringify(cliParams.additionalPackagePrefixes)},
-                    initialLoggerPrefix: ${JSON.stringify(cliParams.initialLoggerPrefix)},
-                  });
-                }
-              `,
+                meshConfigImportCodes: [`import { findAndParseConfig } from '@graphql-mesh/cli';`],
+                meshConfigCodes: [
+                  `
+function getMeshOptions() {
+  console.warn('WARNING: These artifacts are built for development mode. Please run "${
+    cliParams.commandName
+  } build" to build production artifacts');
+  return findAndParseConfig({
+    dir: baseDir,
+    artifactsDir: ${JSON.stringify(cliParams.artifactsDir)},
+    configName: ${JSON.stringify(cliParams.configName)},
+    additionalPackagePrefixes: ${JSON.stringify(cliParams.additionalPackagePrefixes)},
+    initialLoggerPrefix: ${JSON.stringify(cliParams.initialLoggerPrefix)},
+  });
+}
+              `.trim(),
+                ],
                 logger,
                 sdkConfig: meshConfig.config.sdk,
                 fileType: 'ts',
@@ -394,7 +396,8 @@ export async function graphqlMesh(
               flattenTypes: false,
               importedModulesSet,
               baseDir,
-              meshConfigCode: meshConfig.code,
+              meshConfigImportCodes: meshConfig.importCodes,
+              meshConfigCodes: meshConfig.codes,
               logger,
               sdkConfig: meshConfig.config.sdk,
               fileType: args.fileType,
