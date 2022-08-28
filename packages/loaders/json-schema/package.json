@@ -38,7 +38,7 @@
     "@graphql-mesh/types": "0.80.2",
     "@graphql-mesh/string-interpolation": "0.3.2",
     "@graphql-mesh/utils": "0.40.0",
-    "@graphql-tools/utils": "8.10.0",
+    "@graphql-tools/utils": "8.10.1",
     "to-json-schema": "0.2.5",
     "graphql-compose": "9.0.8",
     "graphql-scalars": "1.18.0",
