@@ -1,8 +1,7 @@
+import { createServer, YogaNodeServerInstance } from '@graphql-yoga/node';
 import { fetch } from '@whatwg-node/fetch';
-import { createServer, Server } from 'http';
-import { graphql, execute, subscribe, GraphQLSchema } from 'graphql';
-import { SubscriptionServer, SubscriptionClient, ServerOptions } from 'subscriptions-transport-ws';
-import ws from 'ws';
+import { graphql, GraphQLSchema } from 'graphql';
+import EventSource from 'eventsource';
 
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 import { startServer, stopServer, pubsub } from './example_api7_server';
@@ -13,8 +12,7 @@ const HTTP_PORT = 3008;
 // Update PORT for this test case:
 const baseUrl = `http://localhost:${HTTP_PORT}/api`;
 
-let wsServer: Server;
-let subscriptionServer: SubscriptionServer;
+let yogaServer: YogaNodeServerInstance<any, any, any>;
 
 describe('OpenAPI Loader: example_api7', () => {
   // Set up the schema first and run example API servers
@@ -28,27 +26,13 @@ describe('OpenAPI Loader: example_api7', () => {
 
     createdSchema = schema;
     try {
-      wsServer = createServer((req, res) => {
-        res.writeHead(404);
-        res.end();
+      yogaServer = createServer({
+        schema,
+        port: TEST_PORT,
+        context: { pubsub },
       });
 
-      wsServer.listen(TEST_PORT);
-
-      subscriptionServer = new SubscriptionServer(
-        {
-          execute,
-          subscribe,
-          schema,
-          onConnect: () => {
-            return { pubsub };
-          },
-        } as ServerOptions,
-        {
-          server: wsServer,
-          path: '/subscriptions',
-        }
-      );
+      await yogaServer.start();
     } catch (e) {
       console.log('error', e);
     }
@@ -59,7 +43,8 @@ describe('OpenAPI Loader: example_api7', () => {
    * Shut down API servers
    */
   afterAll(async () => {
-    await Promise.all([subscriptionServer.close(), wsServer.close(), stopServer()]);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    await Promise.all([yogaServer.stop(), stopServer()]);
   });
 
   it('Receive data from the subscription after creating a new instance', async () => {
@@ -88,37 +73,39 @@ describe('OpenAPI Loader: example_api7', () => {
     `;
 
     await new Promise<void>((resolve, reject) => {
-      const client = new SubscriptionClient(`ws://localhost:${TEST_PORT}/subscriptions`, {}, ws);
+      const url = new URL(`http://localhost:${TEST_PORT}/graphql`);
 
-      client.onError(e => reject(e));
-
-      client
-        .request({
-          query,
-          operationName: 'watchDevice',
-          variables: {
-            method: 'POST',
-            userName,
-          },
+      url.searchParams.append('query', query);
+      url.searchParams.append(
+        'variables',
+        JSON.stringify({
+          method: 'POST',
+          userName,
         })
-        .subscribe({
-          next: result => {
-            if (result.errors) {
-              reject(result.errors);
-            }
+      );
 
-            if (result.data) {
-              expect(result.data).toEqual({
-                devicesEventListener: {
-                  name: deviceName,
-                  status: false,
-                },
-              });
-              resolve();
-            }
+      const eventsource = new EventSource(url.href, {
+        withCredentials: true, // is this needed?
+      });
+
+      eventsource.onerror = e => {
+        eventsource.close();
+        reject(e);
+      };
+
+      eventsource.onmessage = event => {
+        const res = JSON.parse(event.data);
+
+        expect(res.data).toEqual({
+          devicesEventListener: {
+            name: deviceName,
+            status: false,
           },
-          error: e => reject(e),
         });
+
+        eventsource.close();
+        resolve();
+      };
 
       setTimeout(() => {
         graphql({
