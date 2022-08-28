@@ -28,7 +28,7 @@ const Devices = {
 /**
  * Starts the server at the given port
  */
-export function startServers(HTTP_PORT: number) {
+export function startServer(HTTP_PORT: number) {
   app.use(bodyParser.json());
 
   app.get('/api/user', (req, res) => {
@@ -96,7 +96,7 @@ export function startServers(HTTP_PORT: number) {
 /**
  * Stops server.
  */
-export function stopServers() {
+export function stopServer() {
   return Promise.all([server.close()]).then(() => {
     console.log(`Stopped HTTP API server`);
   });
@@ -104,5 +104,5 @@ export function stopServers() {
 
 // If run from command line, start server:
 if (require.main === module) {
-  startServers(3008).catch(console.error);
+  startServer(3008).catch(console.error);
 }

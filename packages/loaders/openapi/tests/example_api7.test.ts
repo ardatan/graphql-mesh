@@ -1,12 +1,11 @@
-import { graphql, execute, subscribe, GraphQLSchema } from 'graphql';
-
+import { fetch } from '@whatwg-node/fetch';
 import { createServer, Server } from 'http';
+import { graphql, execute, subscribe, GraphQLSchema } from 'graphql';
 import { SubscriptionServer, SubscriptionClient, ServerOptions } from 'subscriptions-transport-ws';
 import ws from 'ws';
-import { fetch } from '@whatwg-node/fetch';
 
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
-import { startServers, stopServers, pubsub } from './example_api7_server';
+import { startServer, stopServer, pubsub } from './example_api7_server';
 
 let createdSchema: GraphQLSchema;
 const TEST_PORT = 3009;
@@ -20,13 +19,11 @@ let subscriptionServer: SubscriptionServer;
 describe('OpenAPI Loader: example_api7', () => {
   // Set up the schema first and run example API servers
   beforeAll(async () => {
-    const schema = await loadGraphQLSchemaFromOpenAPI('example_api6', {
+    const schema = await loadGraphQLSchemaFromOpenAPI('example_api7', {
       fetch,
       baseUrl,
       source: './fixtures/example_oas7.json',
       cwd: __dirname,
-      // fillEmptyResponses: true,
-      // createSubscriptionsFromCallbacks: true
     });
 
     createdSchema = schema;
@@ -55,48 +52,42 @@ describe('OpenAPI Loader: example_api7', () => {
     } catch (e) {
       console.log('error', e);
     }
-    await startServers(HTTP_PORT);
+    await startServer(HTTP_PORT);
   });
-
-  function sleep(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
 
   /**
    * Shut down API servers
    */
   afterAll(async () => {
-    /**
-     * TODO: There seems to be some trouble closing the servers and connections.
-     * The timeout allows these to close properly but is there a better way?
-     */
-    await sleep(500);
-    await Promise.all([subscriptionServer.close(), wsServer.close(), stopServers()]);
-    await sleep(500);
+    await Promise.all([subscriptionServer.close(), wsServer.close(), stopServer()]);
   });
 
-  test('Receive data from the subscription after creating a new instance', () => {
+  it('Receive data from the subscription after creating a new instance', async () => {
     const userName = 'Carlos';
     const deviceName = 'Bot';
 
-    const query = `subscription watchDevice($method: String!, $userName: String!) {
-      devicesEventListener(method: $method, userName: $userName) {
-        name
-        status
-      }
-    }`;
-
-    const query2 = `mutation($deviceInput: Device_Input!) {
-      createDevice(input: $deviceInput) {
-        ... on Device {
+    const query = /* GraphQL */ `
+      subscription watchDevice($method: String!, $userName: String!) {
+        devicesEventListener(method: $method, userName: $userName) {
           name
-          userName
           status
         }
       }
-    }`;
+    `;
 
-    return new Promise<void>((resolve, reject) => {
+    const query2 = /* GraphQL */ `
+      mutation ($deviceInput: Device_Input!) {
+        createDevice(input: $deviceInput) {
+          ... on Device {
+            name
+            userName
+            status
+          }
+        }
+      }
+    `;
+
+    await new Promise<void>((resolve, reject) => {
       const client = new SubscriptionClient(`ws://localhost:${TEST_PORT}/subscriptions`, {}, ws);
 
       client.onError(e => reject(e));
