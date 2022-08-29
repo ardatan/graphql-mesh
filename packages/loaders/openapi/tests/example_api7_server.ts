@@ -1,10 +1,11 @@
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable import/no-nodejs-modules */
 // Copyright IBM Corp. 2017,2018. All Rights Reserved.
 // Node module: openapi-to-graphql
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
 import { PubSub } from '@graphql-mesh/utils';
-import * as bodyParser from 'body-parser';
 import express from 'express';
 import { Server } from 'http';
 
@@ -29,7 +30,7 @@ const Devices = {
  * Starts the server at the given port
  */
 export function startServer(HTTP_PORT: number) {
-  app.use(bodyParser.json());
+  app.use(express.json());
 
   app.get('/api/user', (req, res) => {
     res.send({
@@ -88,21 +89,12 @@ export function startServer(HTTP_PORT: number) {
     new Promise(resolve => {
       server = app.listen(HTTP_PORT, resolve as () => void);
     }),
-  ]).then(() => {
-    console.log(`Example HTTP API accessible on port ${HTTP_PORT}`);
-  });
+  ]);
 }
 
 /**
  * Stops server.
  */
 export function stopServer() {
-  return Promise.all([server.close()]).then(() => {
-    console.log(`Stopped HTTP API server`);
-  });
-}
-
-// If run from command line, start server:
-if (require.main === module) {
-  startServer(3008).catch(console.error);
+  return new Promise(resolve => server.close(resolve));
 }
