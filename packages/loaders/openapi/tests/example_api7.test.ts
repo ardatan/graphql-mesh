@@ -5,19 +5,24 @@ import { GraphQLSchema } from 'graphql';
 
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 import { startServer, stopServer, pubsub } from './example_api7_server';
+import getPort from 'get-port';
 
 let createdSchema: GraphQLSchema;
-const GRAPHQL_PORT = 3009;
-const API_PORT = 3008;
+
+let GRAPHQL_PORT: number;
+let API_PORT: number;
 
 let yogaServer: YogaNodeServerInstance<any, any, any>;
 
 describe('OpenAPI Loader: example_api7', () => {
   // Set up the schema first and run example API servers
   beforeAll(async () => {
+    GRAPHQL_PORT = await getPort();
+    API_PORT = await getPort();
+
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api7', {
       fetch,
-      baseUrl: `http://localhost:${API_PORT}/api`,
+      baseUrl: `http://127.0.0.1:${API_PORT}/api`,
       source: './fixtures/example_oas7.json',
       cwd: __dirname,
       pubsub,
@@ -62,7 +67,7 @@ describe('OpenAPI Loader: example_api7', () => {
         }
       }
     `;
-    const baseUrl = `http://localhost:${GRAPHQL_PORT}/graphql`;
+    const baseUrl = `http://127.0.0.1:${GRAPHQL_PORT}/graphql`;
     const url = new URL(baseUrl);
 
     url.searchParams.append('query', subscriptionOperation);

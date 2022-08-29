@@ -4,10 +4,9 @@ import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAP
 import { startServer, stopServer } from './example_api2_server';
 import { fetch } from '@whatwg-node/fetch';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import getPort from 'get-port';
 
 let createdSchema: GraphQLSchema;
-const PORT = 3004;
-const baseUrl = `http://localhost:${PORT}/api`;
 
 /**
  * This test suite is used to verify the behavior of the naming convention
@@ -20,6 +19,8 @@ describe('OpenAPI loader: Naming convention', () => {
    * Set up the schema first and run example API server
    */
   beforeAll(async () => {
+    const PORT = await getPort();
+    const baseUrl = `http://localhost:${PORT}/api`;
     createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
       fetch,
       baseUrl,

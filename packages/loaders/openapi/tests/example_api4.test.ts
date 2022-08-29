@@ -5,8 +5,6 @@ import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 let createdSchema: GraphQLSchema;
 
-jest.setTimeout(15000);
-
 // This test suite is used to verify the behavior of anyOf and oneOf handling
 describe('OpenAPI loader: Handle anyOf and oneOf', () => {
   /**
@@ -14,6 +12,7 @@ describe('OpenAPI loader: Handle anyOf and oneOf', () => {
    */
   beforeAll(async () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
+      baseUrl: 'http://localhost:8080/api',
       fetch,
       source: './fixtures/example_oas4.json',
       cwd: __dirname,
