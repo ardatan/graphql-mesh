@@ -2,17 +2,25 @@
 
 exports[`example_api should generate the bundle correctly 1`] = `
 Object {
-  "baseUrl": "http://localhost:3002/api",
+  "baseUrl": "http://localhost:{args.port:3001}/{args.basePath:api}",
   "name": "example_api",
   "operationHeaders": Object {},
   "operations": Array [
     Object {
       "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
         "limit": Object {
           "description": "Limit of the number of users to return.",
           "name": "limit",
           "nullable": false,
           "type": "integer",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
         },
       },
       "description": "Return a list of users.",
@@ -83,6 +91,16 @@ Object {
       "type": "query",
     },
     Object {
+      "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
+        },
+      },
       "description": "Create a new user in the system.",
       "field": "postUser",
       "headers": Object {
@@ -191,6 +209,14 @@ Object {
     },
     Object {
       "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
+        },
         "username": Object {
           "description": "Identifier of a user.",
           "name": "username",
@@ -276,6 +302,14 @@ Object {
     },
     Object {
       "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
+        },
         "username": Object {
           "description": "Identifier of a user.",
           "name": "username",
@@ -328,6 +362,14 @@ Object {
     },
     Object {
       "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
+        },
         "username": Object {
           "description": "Identifier of a user.",
           "name": "username",
@@ -401,10 +443,18 @@ Object {
     },
     Object {
       "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
         "companyId": Object {
           "description": undefined,
           "name": "companyId",
           "nullable": false,
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
           "type": "string",
         },
       },
@@ -443,6 +493,16 @@ Object {
       "type": "query",
     },
     Object {
+      "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
+        },
+      },
       "description": "Returns information about all employee cars",
       "field": "getAllCars",
       "headers": Object {
@@ -492,10 +552,18 @@ Object {
     },
     Object {
       "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
         "id": Object {
           "description": undefined,
           "name": "id",
           "nullable": false,
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
           "type": "string",
         },
       },
@@ -557,6 +625,10 @@ Object {
     },
     Object {
       "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
         "cookie_size": Object {
           "description": undefined,
           "enum": Array [
@@ -579,6 +651,10 @@ Object {
           "name": "cookie_type",
           "nullable": false,
           "title": "queryInput_getCookie_cookie_type",
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
           "type": "string",
         },
       },
@@ -605,6 +681,10 @@ Object {
     },
     Object {
       "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
         "lat": Object {
           "description": undefined,
           "name": "lat",
@@ -614,6 +694,10 @@ Object {
           "description": undefined,
           "name": "long",
           "type": "number",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
         },
       },
       "description": "Used to find the nearest coffee machine based on the user's coordinates. Used to test the content field in parameter objects.",
@@ -654,6 +738,14 @@ Object {
     },
     Object {
       "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
+        },
         "query": Object {
           "description": undefined,
           "name": "query",
@@ -718,6 +810,16 @@ Object {
       "type": "query",
     },
     Object {
+      "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
+        },
+      },
       "description": "Used to test generation of object types with matching schema.",
       "field": "getNumberOfCleanDesks",
       "headers": Object {
@@ -737,6 +839,16 @@ Object {
       "type": "query",
     },
     Object {
+      "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
+        },
+      },
       "description": "Used to test generation of object types with matching schema.",
       "field": "getNumberOfDirtyDesks",
       "headers": Object {
@@ -756,6 +868,16 @@ Object {
       "type": "query",
     },
     Object {
+      "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
+        },
+      },
       "description": "Used to test empty responses",
       "field": "getBonuses",
       "method": "GET",
@@ -775,6 +897,10 @@ Object {
     },
     Object {
       "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
         "parameters": Object {
           "description": undefined,
           "name": "parameters",
@@ -789,6 +915,10 @@ Object {
           },
           "title": "queryInput_returnAllOffices_parameters",
           "type": "object",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
         },
       },
       "description": "Used to test query parameters with form style and explode",
@@ -851,11 +981,19 @@ Object {
           "name": "accept",
           "type": "string",
         },
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
         "id": Object {
           "description": "Office ID",
           "name": "id",
           "nullable": false,
           "type": "integer",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
         },
       },
       "description": "Return an office.",
@@ -910,6 +1048,16 @@ Object {
       "type": "query",
     },
     Object {
+      "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
+        },
+      },
       "description": "Return a list of papers. Endpoint to test 2XX status code.",
       "field": "getPapers",
       "headers": Object {
@@ -946,6 +1094,16 @@ Object {
       "type": "query",
     },
     Object {
+      "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
+        },
+      },
       "description": "Create a new paper in the system. Endpoint to test non-application/json request and response bodies.",
       "field": "postPaper",
       "headers": Object {
@@ -969,6 +1127,16 @@ Object {
       "type": "mutation",
     },
     Object {
+      "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
+        },
+      },
       "description": "Endpoint to test unsanitized parameters and data.",
       "field": "post_product_with_id",
       "headers": Object {
@@ -1027,6 +1195,14 @@ Object {
     },
     Object {
       "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
+        },
         "product_id": Object {
           "description": undefined,
           "name": "product-id",
@@ -1098,10 +1274,18 @@ Object {
     },
     Object {
       "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
         "id": Object {
           "description": undefined,
           "name": "id",
           "nullable": false,
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
           "type": "string",
         },
         "product_tag": Object {
@@ -1149,10 +1333,18 @@ Object {
     },
     Object {
       "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
         "patent_id": Object {
           "description": undefined,
           "name": "patent-id",
           "nullable": false,
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
           "type": "string",
         },
       },
@@ -1201,6 +1393,16 @@ Object {
       "type": "query",
     },
     Object {
+      "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
+        },
+      },
       "description": "An endpoint to test authenticated POST requests.",
       "field": "post_project_with_id",
       "headers": Object {
@@ -1276,6 +1478,14 @@ Object {
     },
     Object {
       "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
+        },
         "project_id": Object {
           "description": undefined,
           "name": "project-id",
@@ -1340,6 +1550,14 @@ Object {
     },
     Object {
       "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
+        },
         "query": Object {
           "description": undefined,
           "name": "query",
@@ -1405,10 +1623,18 @@ Object {
     },
     Object {
       "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
         "path": Object {
           "description": undefined,
           "name": "path",
           "nullable": false,
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
           "type": "string",
         },
         "query": Object {
@@ -1487,6 +1713,14 @@ Object {
     },
     Object {
       "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
+        },
         "snack_size": Object {
           "description": undefined,
           "enum": Array [
@@ -1534,6 +1768,10 @@ Object {
     },
     Object {
       "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
         "globalquery": Object {
           "description": undefined,
           "name": "globalquery",
@@ -1545,6 +1783,10 @@ Object {
           "name": "limit",
           "nullable": false,
           "type": "integer",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
         },
       },
       "description": "Endpoint to test sending of options.",
@@ -1573,10 +1815,18 @@ Object {
     },
     Object {
       "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
         "globalquery": Object {
           "description": undefined,
           "name": "globalquery",
           "nullable": false,
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
           "type": "string",
         },
       },
@@ -1612,6 +1862,16 @@ Object {
       "type": "mutation",
     },
     Object {
+      "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
+        },
+      },
       "description": "Used to test OAuth token being present in header.",
       "field": "getSecure",
       "headers": Object {
@@ -1633,6 +1893,16 @@ Object {
       "type": "query",
     },
     Object {
+      "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
+        },
+      },
       "description": "Returns the (contents of a) trashcan from a specific office",
       "field": "getAllTrashCans",
       "headers": Object {
@@ -1670,6 +1940,14 @@ Object {
     },
     Object {
       "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
+        },
         "username": Object {
           "description": "Identifier of a user.",
           "name": "username",
@@ -1710,6 +1988,14 @@ Object {
     },
     Object {
       "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
+        },
         "username": Object {
           "description": "Identifier of a user.",
           "name": "username",
@@ -1754,6 +2040,16 @@ Object {
       "type": "mutation",
     },
     Object {
+      "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
+        },
+      },
       "description": "It could be anything!",
       "field": "mystery",
       "headers": Object {
@@ -1781,6 +2077,16 @@ Object {
       "type": "query",
     },
     Object {
+      "argTypeMap": Object {
+        "basePath": Object {
+          "default": "api",
+          "type": "string",
+        },
+        "port": Object {
+          "default": "3001",
+          "type": "string",
+        },
+      },
       "description": "Returns an arbitrary JSON object",
       "field": "random",
       "headers": Object {
@@ -1956,6 +2262,15 @@ Object {
           "getAllAssets": Object {
             "$ref": "#/definitions/queryInput_getAllAssets",
           },
+          "getAllCars": Object {
+            "$ref": "#/definitions/queryInput_getAllCars",
+          },
+          "getAllTrashCans": Object {
+            "$ref": "#/definitions/queryInput_getAllTrashCans",
+          },
+          "getBonuses": Object {
+            "$ref": "#/definitions/queryInput_getBonuses",
+          },
           "getCompanyById": Object {
             "$ref": "#/definitions/queryInput_getCompanyById",
           },
@@ -1968,17 +2283,29 @@ Object {
           "getNearestCoffeeMachine": Object {
             "$ref": "#/definitions/queryInput_getNearestCoffeeMachine",
           },
+          "getNumberOfCleanDesks": Object {
+            "$ref": "#/definitions/queryInput_getNumberOfCleanDesks",
+          },
+          "getNumberOfDirtyDesks": Object {
+            "$ref": "#/definitions/queryInput_getNumberOfDirtyDesks",
+          },
           "getOffice": Object {
             "$ref": "#/definitions/queryInput_getOffice",
           },
           "getOfficeTrashCan": Object {
             "$ref": "#/definitions/queryInput_getOfficeTrashCan",
           },
+          "getPapers": Object {
+            "$ref": "#/definitions/queryInput_getPapers",
+          },
           "getProductReviews": Object {
             "$ref": "#/definitions/queryInput_getProductReviews",
           },
           "getScanner": Object {
             "$ref": "#/definitions/queryInput_getScanner",
+          },
+          "getSecure": Object {
+            "$ref": "#/definitions/queryInput_getSecure",
           },
           "getSnack": Object {
             "$ref": "#/definitions/queryInput_getSnack",
@@ -2006,6 +2333,12 @@ Object {
           },
           "get_project_with_id": Object {
             "$ref": "#/definitions/queryInput_get_project_with_id",
+          },
+          "mystery": Object {
+            "$ref": "#/definitions/queryInput_mystery",
+          },
+          "random": Object {
+            "$ref": "#/definitions/queryInput_random",
           },
           "returnAllOffices": Object {
             "$ref": "#/definitions/queryInput_returnAllOffices",
@@ -2405,8 +2738,16 @@ Object {
       },
       "mutationInput_postOfficeTrashCan": Object {
         "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
           "input": Object {
             "$ref": "#/definitions/mutationInput_postOfficeTrashCan_input",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
           },
           "username": Object {
             "description": "Identifier of a user.",
@@ -2424,7 +2765,15 @@ Object {
       },
       "mutationInput_postPaper": Object {
         "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
           "input": Object {
+            "type": "string",
+          },
+          "port": Object {
+            "default": "3001",
             "type": "string",
           },
         },
@@ -2433,6 +2782,10 @@ Object {
       },
       "mutationInput_postScanner": Object {
         "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
           "input": Object {
             "type": "string",
           },
@@ -2440,6 +2793,10 @@ Object {
             "description": undefined,
             "name": "path",
             "nullable": false,
+            "type": "string",
+          },
+          "port": Object {
+            "default": "3001",
             "type": "string",
           },
           "query": Object {
@@ -2453,8 +2810,16 @@ Object {
       },
       "mutationInput_postUser": Object {
         "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
           "input": Object {
             "$ref": "#/definitions/user",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
           },
         },
         "title": "mutationInput_postUser",
@@ -2462,8 +2827,16 @@ Object {
       },
       "mutationInput_post_product_with_id": Object {
         "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
           "input": Object {
             "$ref": "#/definitions/product-with-id",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
           },
         },
         "title": "mutationInput_post_product_with_id",
@@ -2471,8 +2844,16 @@ Object {
       },
       "mutationInput_post_project_with_id": Object {
         "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
           "input": Object {
             "$ref": "#/definitions/project-with-id",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
           },
         },
         "title": "mutationInput_post_project_with_id",
@@ -2480,6 +2861,10 @@ Object {
       },
       "mutationInput_post_status": Object {
         "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
           "globalquery": Object {
             "description": undefined,
             "name": "globalquery",
@@ -2488,6 +2873,10 @@ Object {
           },
           "input": Object {
             "$ref": "#/definitions/post_status_request",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
           },
         },
         "title": "mutationInput_post_status",
@@ -2624,22 +3013,80 @@ Object {
       },
       "queryInput_getAllAssets": Object {
         "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
           "companyId": Object {
             "description": undefined,
             "name": "companyId",
             "nullable": false,
             "type": "string",
           },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
+          },
         },
         "title": "queryInput_getAllAssets",
         "type": "object",
       },
+      "queryInput_getAllCars": Object {
+        "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
+          },
+        },
+        "title": "queryInput_getAllCars",
+        "type": "object",
+      },
+      "queryInput_getAllTrashCans": Object {
+        "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
+          },
+        },
+        "title": "queryInput_getAllTrashCans",
+        "type": "object",
+      },
+      "queryInput_getBonuses": Object {
+        "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
+          },
+        },
+        "title": "queryInput_getBonuses",
+        "type": "object",
+      },
       "queryInput_getCompanyById": Object {
         "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
           "id": Object {
             "description": undefined,
             "name": "id",
             "nullable": false,
+            "type": "string",
+          },
+          "port": Object {
+            "default": "3001",
             "type": "string",
           },
         },
@@ -2648,11 +3095,19 @@ Object {
       },
       "queryInput_getCookie": Object {
         "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
           "cookie_size": Object {
             "$ref": "#/definitions/queryInput_getCookie_cookie_size",
           },
           "cookie_type": Object {
             "$ref": "#/definitions/queryInput_getCookie_cookie_type",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
           },
         },
         "title": "queryInput_getCookie",
@@ -2684,6 +3139,14 @@ Object {
       },
       "queryInput_getCopier": Object {
         "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
+          },
           "query": Object {
             "description": undefined,
             "name": "query",
@@ -2695,6 +3158,10 @@ Object {
       },
       "queryInput_getNearestCoffeeMachine": Object {
         "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
           "lat": Object {
             "description": undefined,
             "name": "lat",
@@ -2705,17 +3172,57 @@ Object {
             "name": "long",
             "type": "number",
           },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
+          },
         },
         "title": "queryInput_getNearestCoffeeMachine",
         "type": "object",
       },
+      "queryInput_getNumberOfCleanDesks": Object {
+        "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
+          },
+        },
+        "title": "queryInput_getNumberOfCleanDesks",
+        "type": "object",
+      },
+      "queryInput_getNumberOfDirtyDesks": Object {
+        "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
+          },
+        },
+        "title": "queryInput_getNumberOfDirtyDesks",
+        "type": "object",
+      },
       "queryInput_getOffice": Object {
         "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
           "id": Object {
             "description": "Office ID",
             "name": "id",
             "nullable": false,
             "type": "integer",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
           },
         },
         "title": "queryInput_getOffice",
@@ -2723,6 +3230,14 @@ Object {
       },
       "queryInput_getOfficeTrashCan": Object {
         "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
+          },
           "username": Object {
             "description": "Identifier of a user.",
             "name": "username",
@@ -2733,12 +3248,34 @@ Object {
         "title": "queryInput_getOfficeTrashCan",
         "type": "object",
       },
+      "queryInput_getPapers": Object {
+        "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
+          },
+        },
+        "title": "queryInput_getPapers",
+        "type": "object",
+      },
       "queryInput_getProductReviews": Object {
         "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
           "id": Object {
             "description": undefined,
             "name": "id",
             "nullable": false,
+            "type": "string",
+          },
+          "port": Object {
+            "default": "3001",
             "type": "string",
           },
           "product_tag": Object {
@@ -2754,6 +3291,14 @@ Object {
       },
       "queryInput_getScanner": Object {
         "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
+          },
           "query": Object {
             "description": undefined,
             "name": "query",
@@ -2763,8 +3308,30 @@ Object {
         "title": "queryInput_getScanner",
         "type": "object",
       },
+      "queryInput_getSecure": Object {
+        "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
+          },
+        },
+        "title": "queryInput_getSecure",
+        "type": "object",
+      },
       "queryInput_getSnack": Object {
         "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
+          },
           "snack_size": Object {
             "$ref": "#/definitions/queryInput_getSnack_snack_size",
           },
@@ -2799,6 +3366,14 @@ Object {
       },
       "queryInput_getUserByUsername": Object {
         "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
+          },
           "username": Object {
             "description": "Identifier of a user.",
             "name": "username",
@@ -2811,6 +3386,14 @@ Object {
       },
       "queryInput_getUserCar": Object {
         "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
+          },
           "username": Object {
             "description": "Identifier of a user.",
             "name": "username",
@@ -2823,6 +3406,14 @@ Object {
       },
       "queryInput_getUserFriends": Object {
         "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
+          },
           "username": Object {
             "description": "Identifier of a user.",
             "name": "username",
@@ -2835,11 +3426,19 @@ Object {
       },
       "queryInput_getUsers": Object {
         "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
           "limit": Object {
             "description": "Limit of the number of users to return.",
             "name": "limit",
             "nullable": false,
             "type": "integer",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
           },
         },
         "title": "queryInput_getUsers",
@@ -2847,6 +3446,10 @@ Object {
       },
       "queryInput_get_Status": Object {
         "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
           "globalquery": Object {
             "description": undefined,
             "name": "globalquery",
@@ -2859,16 +3462,28 @@ Object {
             "nullable": false,
             "type": "integer",
           },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
+          },
         },
         "title": "queryInput_get_Status",
         "type": "object",
       },
       "queryInput_get_patent_with_id": Object {
         "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
           "patent_id": Object {
             "description": undefined,
             "name": "patent-id",
             "nullable": false,
+            "type": "string",
+          },
+          "port": Object {
+            "default": "3001",
             "type": "string",
           },
         },
@@ -2877,6 +3492,14 @@ Object {
       },
       "queryInput_get_product_with_id": Object {
         "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
+          },
           "product_id": Object {
             "description": undefined,
             "name": "product-id",
@@ -2895,6 +3518,14 @@ Object {
       },
       "queryInput_get_project_with_id": Object {
         "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
+          },
           "project_id": Object {
             "description": undefined,
             "name": "project-id",
@@ -2905,10 +3536,46 @@ Object {
         "title": "queryInput_get_project_with_id",
         "type": "object",
       },
+      "queryInput_mystery": Object {
+        "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
+          },
+        },
+        "title": "queryInput_mystery",
+        "type": "object",
+      },
+      "queryInput_random": Object {
+        "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
+          },
+        },
+        "title": "queryInput_random",
+        "type": "object",
+      },
       "queryInput_returnAllOffices": Object {
         "properties": Object {
+          "basePath": Object {
+            "default": "api",
+            "type": "string",
+          },
           "parameters": Object {
             "$ref": "#/definitions/queryInput_returnAllOffices_parameters",
+          },
+          "port": Object {
+            "default": "3001",
+            "type": "string",
           },
         },
         "title": "queryInput_returnAllOffices",

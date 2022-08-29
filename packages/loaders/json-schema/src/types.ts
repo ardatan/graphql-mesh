@@ -42,12 +42,8 @@ export type JSONSchemaBaseOperationConfig = {
   description?: string;
 
   argTypeMap?: Record<string, string | JSONSchemaObject>;
-} & (
-  | {
-      responseByStatusCode?: Record<string, JSONSchemaOperationResponseConfig>;
-    }
-  | JSONSchemaOperationResponseConfig
-);
+  responseByStatusCode?: Record<string, JSONSchemaOperationResponseConfig>;
+} & JSONSchemaOperationResponseConfig;
 
 export type JSONSchemaBaseOperationConfigWithJSONRequest = JSONSchemaBaseOperationConfig & {
   requestSchema?: string | JSONSchema;

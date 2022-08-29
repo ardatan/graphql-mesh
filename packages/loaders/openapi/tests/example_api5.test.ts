@@ -4,19 +4,18 @@ import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAP
 import { startServer, stopServer } from './example_api5_server';
 import { fetch } from '@whatwg-node/fetch';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import getPort from 'get-port';
 
 let createdSchema: GraphQLSchema;
-const PORT = 3007;
-// Update PORT for this test case:
-const baseUrl = `http://localhost:${PORT}/api`;
-
-jest.setTimeout(15000);
 
 describe('OpenAPI Loader: Testing the naming convention', () => {
   /**
    * Set up the schema first and run example API server
    */
   beforeAll(async () => {
+    const PORT = await getPort();
+    // Update PORT for this test case:
+    const baseUrl = `http://localhost:${PORT}/api`;
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api', {
       fetch,
       baseUrl,

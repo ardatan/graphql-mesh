@@ -5,17 +5,18 @@ import { parse, validate, GraphQLSchema, execute } from 'graphql';
 import { startServer, stopServer } from './example_api6_server';
 import { OpenAPILoaderOptions } from '../src';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
+import getPort from 'get-port';
 
 let createdSchema: GraphQLSchema;
-const PORT = 3008;
-// Update PORT for this test case:
-const baseUrl = `http://localhost:${PORT}/api`;
+let baseUrl: string;
 
 describe('example_api6', () => {
   /**
    * Set up the schema first and run example API server
    */
   beforeAll(async () => {
+    const PORT = await getPort();
+    baseUrl = `http://localhost:${PORT}/api`;
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api6', {
       fetch,
       baseUrl,

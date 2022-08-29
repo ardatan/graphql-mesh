@@ -1,20 +1,21 @@
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch } from '@whatwg-node/fetch';
+import getPort from 'get-port';
 import { GraphQLSchema, parse, validate, execute } from 'graphql';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 
 import { startServer, stopServer } from './nested_objects_server';
 
 let createdSchema: GraphQLSchema;
-const PORT = 3009;
-// Update PORT for this test case:
-const baseUrl = `http://localhost:${PORT}`;
 
 describe('OpanAPI: nested objects', () => {
   /**
    * Set up the schema first and run example API server
    */
   beforeAll(async () => {
+    const PORT = await getPort();
+    // Update PORT for this test case:
+    const baseUrl = `http://localhost:${PORT}`;
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api', {
       fetch,
       baseUrl,

@@ -202,6 +202,14 @@ const resolvers = {
 module.exports = { resolvers }
 ```
 
+## Callbacks as Subscriptions
+
+OpenAPI handler is able to process OAS Callbacks as GraphQL Subscriptions. It uses your PubSub implementation to consume the data. But you have to define webhooks for individual callbacks to make it work.
+
+See [Subscriptions & Webhooks](../subscriptions-webhooks.md) to create an endpoint to consume a webhook. You should use the callback url as `pubSubTopic` in the webhook configuration.
+
+Also see our example; [Subscriptions Example with Webhooks](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/openapi-subscriptions).
+
 ## Examples
 
 We have a lot of examples for OpenAPI Handler;

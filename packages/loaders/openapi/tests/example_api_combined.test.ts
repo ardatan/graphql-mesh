@@ -3,13 +3,13 @@ import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAP
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch } from '@whatwg-node/fetch';
 import { startServer, stopServer } from './example_api_server';
-
-const PORT = 3010;
-const baseUrl = `http://localhost:${PORT}/api`;
+import getPort from 'get-port';
 
 describe('Example API Combined', () => {
   let createdSchema: GraphQLSchema;
   beforeAll(async () => {
+    const PORT = await getPort();
+    const baseUrl = `http://localhost:${PORT}/api`;
     await startServer(PORT);
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api_combined', {
       source: './fixtures/example_oas_combined.json',

@@ -1,29 +1,33 @@
-import { createServer } from '@graphql-yoga/node';
+import { createServer, YogaNodeServerInstance } from '@graphql-yoga/node';
 import { fetch, File, FormData } from '@whatwg-node/fetch';
 import { graphql, GraphQLSchema } from 'graphql';
 import { startServer as startAPIServer, stopServer as stopAPIServer } from './file_upload_api_server';
 import loadGraphQLSchemaFromOpenAPI from '../src';
-
-const PORT = 4090;
+import getPort from 'get-port';
 
 let createdSchema: GraphQLSchema;
+let yoga: YogaNodeServerInstance<any, any, any>;
 
 beforeAll(async () => {
-  const [schema] = await Promise.all([
-    loadGraphQLSchemaFromOpenAPI('file_upload', {
-      source: './fixtures/file_upload.json',
-      cwd: __dirname,
-      baseUrl: `http://127.0.0.1:${PORT}/api`,
-      fetch,
-    }),
-    startAPIServer(PORT),
-  ]);
-
-  createdSchema = schema;
+  const API_PORT = await getPort();
+  createdSchema = await loadGraphQLSchemaFromOpenAPI('file_upload', {
+    source: './fixtures/file_upload.json',
+    cwd: __dirname,
+    baseUrl: `http://127.0.0.1:${API_PORT}/api`,
+    fetch,
+  });
+  const GRAPHQL_PORT = await getPort();
+  yoga = createServer({
+    schema: createdSchema,
+    port: GRAPHQL_PORT,
+    maskedErrors: false,
+    logging: false,
+  });
+  await Promise.all([yoga.start(), startAPIServer(API_PORT)]);
 });
 
 afterAll(async () => {
-  await stopAPIServer();
+  await Promise.all([stopAPIServer(), yoga.stop()]);
 });
 
 test('Registers the File scalar type', async () => {

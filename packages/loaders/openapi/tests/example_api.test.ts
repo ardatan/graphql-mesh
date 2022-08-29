@@ -6,15 +6,15 @@ import { startServer, stopServer } from './example_api_server';
 import { fetch } from '@whatwg-node/fetch';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { createBundle, OpenAPILoaderOptions } from '../src';
+import getPort from 'get-port';
 
 let createdSchema: GraphQLSchema;
-const PORT = 3002;
-const baseUrl = `http://localhost:${PORT}/api`;
-
-jest.setTimeout(15000);
+let baseUrl: string;
 
 describe('example_api', () => {
   beforeAll(async () => {
+    const PORT = await getPort();
+    baseUrl = `http://localhost:${PORT}/api`;
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api', {
       fetch,
       baseUrl,
@@ -33,7 +33,6 @@ describe('example_api', () => {
     expect(
       await createBundle('example_api', {
         fetch,
-        baseUrl,
         source: './fixtures/example_oas.json',
         cwd: __dirname,
       })
@@ -609,7 +608,7 @@ describe('example_api', () => {
             body: '123',
           },
           everythingLink: {
-            body: 'http://localhost:3002/api/scanner_GET_200_hello_application/json_keep-alive',
+            body: baseUrl + '/scanner_GET_200_hello_application/json_keep-alive',
           },
         },
       },
@@ -675,9 +674,13 @@ describe('example_api', () => {
             constantLink: {
               body: '123',
               everythingLink: {
-                body: 'http://localhost:3002/api/copier_GET_200_123_application/json_keep-alive',
+                body: baseUrl + '/copier_GET_200_123_application/json_keep-alive',
                 everythingLink: {
-                  body: 'http://localhost:3002/api/copier_GET_200_http://localhost:3002/api/copier_GET_200_123_application/json_keep-alive_application/json_keep-alive',
+                  body:
+                    baseUrl +
+                    '/copier_GET_200_' +
+                    baseUrl +
+                    '/copier_GET_200_123_application/json_keep-alive_application/json_keep-alive',
                 },
               },
             },
@@ -686,7 +689,7 @@ describe('example_api', () => {
             body: '123',
           },
           everythingLink: {
-            body: 'http://localhost:3002/api/scanner_GET_200_val_application/json_keep-alive',
+            body: baseUrl + '/scanner_GET_200_val_application/json_keep-alive',
           },
         },
       },
@@ -715,7 +718,9 @@ describe('example_api', () => {
         postScanner: {
           body: 'req.body: body, req.query.query: query, req.path.path: path',
           everythingLink2: {
-            body: 'http://localhost:3002/api/scanner/path_POST_200_body_query_path_application/json_req.body: body, req.query.query: query, req.path.path: path_query_path_keep-alive',
+            body:
+              baseUrl +
+              '/scanner/path_POST_200_body_query_path_application/json_req.body: body, req.query.query: query, req.path.path: path_query_path_keep-alive',
           },
         },
       },
@@ -1551,7 +1556,7 @@ describe('example_api', () => {
     delete extensions.responseHeaders;
     expect(extensions).toEqual({
       method: 'GET',
-      url: 'http://localhost:3002/api/users/abcdef',
+      url: `${baseUrl}/users/abcdef`,
       statusCode: 404,
       statusText: 'Not Found',
       responseBody: {

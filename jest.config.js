@@ -6,6 +6,8 @@ const ROOT_DIR = __dirname;
 const TSCONFIG = resolve(ROOT_DIR, 'tsconfig.json');
 const tsconfig = require(TSCONFIG);
 
+const ESM_PACKAGES = ['get-port'];
+
 process.env.LC_ALL = 'en_US';
 
 module.exports = {
@@ -24,4 +26,10 @@ module.exports = {
   collectCoverage: false,
   cacheDirectory: resolve(ROOT_DIR, `${CI ? '' : 'node_modules/'}.cache/jest`),
   extensionsToTreatAsEsm: ['.ts'],
+  transform: {
+    '^.+\\.mjs?$': 'babel-jest',
+    '^.+\\.ts?$': 'babel-jest',
+    '^.+\\.js$': 'babel-jest',
+  },
+  transformIgnorePatterns: [`node_modules/(?!(${ESM_PACKAGES.join('|')})/)`],
 };
