@@ -960,6 +960,7 @@
       "Naming convention",
       "Dynamic Header Values",
       "Advanced cookies handling",
+      "Callbacks as Subscriptions",
       "Examples",
       "Config API Reference"
     ],
@@ -1022,6 +1023,11 @@
       },
       {
         "children": [],
+        "title": "Callbacks as Subscriptions",
+        "anchor": "callbacks-as-subscriptions"
+      },
+      {
+        "children": [],
         "title": "Examples",
         "anchor": "examples"
       },
@@ -1031,7 +1037,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "1d304844f961939ed014ede1bece9a5b",
+    "content": "0a95d26a886583a0909a889068f157c8",
     "url": "https://www.graphql-mesh.com/docs/handlers/openapi",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Source Handlers"],
