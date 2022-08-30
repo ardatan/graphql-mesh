@@ -14,7 +14,15 @@ import { getBuiltMesh } from './.mesh'
 async function executeQuery(document, variables) {
   const { execute } = await getBuiltMesh();
 
-  return await execute(document, variables);
+  return await execute(/* GraphQL */`
+    query myQuery($someVar: String!) {
+       foo(someArg: $someVar) {
+          bar
+       }
+    }
+  `, {
+     someArg: 'SOME_VALUE'
+  });
 }
 ```
 
