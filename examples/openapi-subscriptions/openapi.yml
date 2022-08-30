@@ -25,6 +25,7 @@ paths:
           content:
             application/json:
               schema:
+                title: SubscriptionInfo
                 description: subscription information
                 required:
                   - subscriptionId
@@ -38,13 +39,14 @@ paths:
         onData:
           # when data is sent, it will be sent to the `callbackUrl` provided
           # when making the subscription PLUS the suffix `/data`
-          '{$request.body#/callbackUrl}':
+          '/callback/{$response.body#/subscriptionId}':
             post:
               requestBody:
                 description: subscription payload
                 content:
                   application/json:
                     schema:
+                      title: SubscriptionPayload
                       type: object
                       properties:
                         timestamp:

@@ -1,5 +1,5 @@
-mutation {
-  postStreams(streamsInput: { callbackUrl: "http://localhost:4000/callback" }) {
+mutation startWebhook {
+  post_streams(input: { callbackUrl: "http://localhost:4000/callback" }) {
     subscriptionId
   }
 }

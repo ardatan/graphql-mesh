@@ -8,10 +8,5 @@ sources:
 documents:
   - ./example-queries/**/*.graphql
 
-plugins:
-  - webhook:
-      path: /callback
-      pubsubTopic: http://localhost:4000/callback
-
 serve:
   port: 4000

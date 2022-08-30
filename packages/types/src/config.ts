@@ -1734,7 +1734,6 @@ export interface Plugin {
   mock?: MockingConfig;
   rateLimit?: RateLimitPluginConfig;
   responseCache?: ResponseCacheConfig;
-  webhook?: WebhookPluginConfig;
   [k: string]: any;
 }
 export interface MaskedErrorsPluginConfig {
@@ -1918,25 +1917,4 @@ export interface ResponseCacheConfig {
 export interface ResponseCacheTTLConfig {
   coordinate: string;
   ttl: number;
-}
-/**
- * Webhook plugin
- */
-export interface WebhookPluginConfig {
-  /**
-   * Path that remote API will ping
-   */
-  path: string;
-  /**
-   * HTTP Method that the handler will control (Allowed values: GET, POST, DELETE, PATCH)
-   */
-  method?: 'GET' | 'POST' | 'DELETE' | 'PATCH';
-  /**
-   * Name of the topic you want to pass incoming payload
-   */
-  pubsubTopic: string;
-  /**
-   * Part of the object you want to pass (e.g. `data.messages`)
-   */
-  payload?: string;
 }

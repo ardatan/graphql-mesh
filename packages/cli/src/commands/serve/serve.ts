@@ -219,6 +219,29 @@ export async function serveMesh(
     app.get('/healthcheck', (_req, res) => res.sendStatus(200));
     app.get('/readiness', (_req, res) => res.sendStatus(readyFlag ? 200 : 500));
 
+    app.use((req, res, next) => {
+      mesh$
+        .then(async ({ pubsub }) => {
+          for (const eventName of pubsub.getEventNames()) {
+            if (eventName === `webhook:${req.method.toLowerCase()}:${req.path}`) {
+              const chunks: Buffer[] = [];
+              for await (const chunk of req) {
+                chunks.push(chunk);
+              }
+              const body = Buffer.concat(chunks).toString('utf-8');
+              logger.debug(`Received webhook request for ${req.path}`, body);
+              pubsub.publish(eventName, req.headers['content-type'] === 'application/json' ? JSON.parse(body) : body);
+              res.status(200).send('OK');
+              return;
+            }
+          }
+          next();
+        })
+        .catch(() => {
+          next();
+        });
+    });
+
     if (staticFiles) {
       app.use(express.static(staticFiles));
       const indexPath = path.join(baseDir, staticFiles, 'index.html');
