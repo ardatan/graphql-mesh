@@ -1,14 +1,38 @@
 import { Callout } from '@theguild/components'
 
-# Generating fully type safe SDK
+# Programmatic usage of Mesh / SDK
 
-You can use GraphQL Mesh as a completely type-safe SDK in your existing TypeScript project.
+You can use GraphQL Mesh as a completely type-safe SDK in your existing TypeScript project, or for programmatically executing queries.
+
+## Executing queries programmatically
+
+Mesh's execute function could be used to directly carry out a query:
+
+```ts
+import { getBuiltMesh } from './.mesh'
+
+async function executeQuery(document, variables) {
+  const { execute } = await getBuiltMesh();
+
+  return await execute(/* GraphQL */`
+    query myQuery($someVar: String!) {
+       foo(someArg: $someVar) {
+          bar
+       }
+    }
+  `, {
+     someArg: 'SOME_VALUE'
+  });
+}
+```
+
+## Generating fully type safe SDK
 
 Instead of using GraphQL operations as string with `execute` - you can use GraphQL Mesh and generate a ready-to-use TypeScript SDK to fetch your data. It will make sure to have type-safety and auto-complete for variables and returned data.
 
-## Getting started
+### Getting started
 
-### 1. Create or move your GraphQL operations to `.graphql` files
+#### 1. Create or move your GraphQL operations to `.graphql` files
 
 Create your own GraphQL operations in a `.graphql` file for your SDK, for example:
 
@@ -21,7 +45,7 @@ query myQuery($someVar: String!) {
 }
 ```
 
-### 2. Update your `.meshrc.yml` configuration
+#### 2. Update your `.meshrc.yml` configuration
 
 Now, update your `.meshrc.yml` to include this GraphQL document, as follows:
 
@@ -36,7 +60,7 @@ sdk:
     selectionSetDepth: 2 # This is the maximum level of selection set
 ```
 
-### 3. Build your SDK with Mesh artifacts
+#### 3. Build your SDK with Mesh artifacts
 
 This will generate an SDK inside your Mesh artifacts under `.mesh` directory;
 
@@ -44,7 +68,7 @@ This will generate an SDK inside your Mesh artifacts under `.mesh` directory;
 yarn mesh build
 ```
 
-### 4. Use the generated SDK in the code
+#### 4. Use the generated SDK in the code
 
 Now, instead of using `execute` manually, you can use the generated `getSdk` method with your GraphQL Mesh client, and use the functions that are generated based on your operations:
 
@@ -66,13 +90,13 @@ async function test() {
   [here](https://github.com/Urigo/graphql-mesh/tree/master/examples/postgres-geodb#using-the-generated-sdk)
 </Callout>
 
-## Configuring SDK Generation
+### Configuring SDK Generation
 
 GraphQL Mesh CLI uses [GraphQL Code Generator](https://graphql-code-generator.com) and its [Generic SDK plugin](https://graphql-code-generator.com/plugins/typescript-generic-sdk) to generate a fully typed SDK from your unified schema. It is possible to configure it to get more customized experience.
 
 [See 'Configure GraphQL Code Generator' section to learn more](/graphql-code-generator)
 
-## Example with Next.js
+### Example with Next.js
 
 <Callout>
   Watch [Episode #15 of `graphql.wtf`](https://graphql.wtf/episodes/15-graphql-mesh-sdk-with-nextjs) for a quick
