@@ -567,52 +567,42 @@
   },
   {
     "objectID": "mesh-docs-guides-mesh-sdk",
-    "headings": ["Getting started", "Configuring SDK Generation", "Example with Next.js"],
+    "headings": ["Executing queries programmatically", "Generating fully type safe SDK"],
     "toc": [
+      {
+        "children": [],
+        "title": "Executing queries programmatically",
+        "anchor": "executing-queries-programmatically"
+      },
       {
         "children": [
           {
             "children": [
               {
                 "children": [],
-                "title": "2. Update your `.meshrc.yml` configuration",
-                "anchor": "2-update-your-meshrcyml-configuration"
+                "title": "Configuring SDK Generation",
+                "anchor": "configuring-sdk-generation"
               },
               {
                 "children": [],
-                "title": "3. Build your SDK with Mesh artifacts",
-                "anchor": "3-build-your-sdk-with-mesh-artifacts"
-              },
-              {
-                "children": [],
-                "title": "4. Use the generated SDK in the code",
-                "anchor": "4-use-the-generated-sdk-in-the-code"
+                "title": "Example with Next.js",
+                "anchor": "example-with-nextjs"
               }
             ],
-            "title": "1. Create or move your GraphQL operations to `.graphql` files",
-            "anchor": "1-create-or-move-your-graphql-operations-to-graphql-files"
+            "title": "Getting started",
+            "anchor": "getting-started"
           }
         ],
-        "title": "Getting started",
-        "anchor": "getting-started"
-      },
-      {
-        "children": [],
-        "title": "Configuring SDK Generation",
-        "anchor": "configuring-sdk-generation"
-      },
-      {
-        "children": [],
-        "title": "Example with Next.js",
-        "anchor": "example-with-nextjs"
+        "title": "Generating fully type safe SDK",
+        "anchor": "generating-fully-type-safe-sdk"
       }
     ],
-    "content": "34f39c8cd7162638139335d236153c03",
+    "content": "e0bd35caeeddeed5f94c45964b5b3222",
     "url": "https://www.graphql-mesh.com/docs/guides/mesh-sdk",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Guides"],
     "source": "Mesh",
-    "title": "Mesh as SDK",
+    "title": "Programmatic usage /  SDK",
     "type": "Documentation"
   },
   {
