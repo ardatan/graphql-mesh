@@ -1,0 +1,48 @@
+{
+  "name": "@graphql-mesh/plugin-newrelic",
+  "version": "0.0.0",
+  "sideEffects": false,
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "typings": "dist/index.d.ts",
+  "typescript": {
+    "definition": "dist/index.d.ts"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./*": {
+      "require": "./dist/*.js",
+      "import": "./dist/*.mjs"
+    }
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/plugins/newrelic"
+  },
+  "peerDependencies": {
+    "graphql": "*",
+    "newrelic": "^7 || ^8.0.0"
+  },
+  "dependencies": {
+    "@envelop/newrelic": "4.2.0",
+    "@graphql-mesh/types": "0.80.2",
+    "@graphql-mesh/utils": "0.40.0",
+    "@graphql-mesh/cross-helpers": "0.2.2",
+    "@graphql-mesh/string-interpolation": "0.3.2",
+    "@envelop/core": "^2.3.2",
+    "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "@types/newrelic": "7.0.3",
+    "newrelic": "8.8.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  }
+}

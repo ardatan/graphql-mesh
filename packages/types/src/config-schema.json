@@ -510,6 +510,9 @@
           "$ref": "#/definitions/MockingConfig",
           "description": "Mock configuration for your source"
         },
+        "newrelic": {
+          "$ref": "#/definitions/NewrelicConfig"
+        },
         "rateLimit": {
           "$ref": "#/definitions/RateLimitPluginConfig",
           "description": "RateLimit plugin"
@@ -2100,6 +2103,34 @@
           "type": "string"
         },
         "value": {
+          "type": "string"
+        }
+      }
+    },
+    "NewrelicConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "NewrelicConfig",
+      "properties": {
+        "includeOperationDocument": {
+          "type": "boolean"
+        },
+        "includeExecuteVariables": {
+          "type": "boolean"
+        },
+        "includeRawResult": {
+          "type": "boolean"
+        },
+        "trackResolvers": {
+          "type": "boolean"
+        },
+        "includeResolverArgs": {
+          "type": "boolean"
+        },
+        "rootFieldsNaming": {
+          "type": "boolean"
+        },
+        "extractOperationName": {
           "type": "string"
         }
       }
