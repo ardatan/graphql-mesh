@@ -123,7 +123,12 @@ export async function addExecutionLogicToComposer(
           return new GraphQLError(`You should have PubSub defined in either the config or the context!`);
         }
         const interpolationData = { root, args, context, info, env: process.env };
-        const pubsubTopic = stringInterpolator.parse(operationConfig.pubsubTopic, interpolationData);
+        let pubsubTopic: string = stringInterpolator.parse(operationConfig.pubsubTopic, interpolationData);
+        if (pubsubTopic.startsWith('webhook:')) {
+          const [, expectedMethod, expectedUrl] = pubsubTopic.split(':');
+          const expectedPath = new URL(expectedUrl, 'http://localhost').pathname;
+          pubsubTopic = `webhook:${expectedMethod}:${expectedPath}`;
+        }
         operationLogger.debug(`=> Subscribing to pubSubTopic: ${pubsubTopic}`);
         return pubsub.asyncIterator(pubsubTopic);
       };

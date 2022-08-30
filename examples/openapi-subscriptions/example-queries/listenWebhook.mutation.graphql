@@ -1,5 +1,5 @@
-subscription {
-  postRequestBodyCallbackUrlData(streamsInput: { callbackUrl: "http://localhost:4000/callback" }) {
+subscription listenWebhook($subscriptionId: String!) {
+  onData(subscriptionId: $subscriptionId) {
     userData
   }
 }

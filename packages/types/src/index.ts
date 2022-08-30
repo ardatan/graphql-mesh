@@ -71,6 +71,7 @@ export interface MeshPubSub {
     options?: any
   ): number;
   unsubscribe(subId: number): void;
+  getEventNames(): Iterable<string>;
   asyncIterator<THook extends HookName>(triggers: THook): AsyncIterable<AllHooks[THook]>;
 }
 

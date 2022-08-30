@@ -462,19 +462,22 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
             if (callbackUrlRefKey.startsWith('$')) {
               continue;
             }
-            const pubsubTopic = callbackUrlRefKey
+            const pubsubTopicSuffix = callbackUrlRefKey
               .split('$request.query')
               .join('args')
               .split('$request.body#/')
+              .join('args.')
+              .split('$response.body#/')
               .join('args.');
             const callbackOperationConfig: JSONSchemaPubSubOperationConfig = {
               type: OperationTypeNode.SUBSCRIPTION,
               field: '',
-              pubsubTopic,
+              pubsubTopic: '',
             };
             const callbackUrlObj = callbackObj[callbackUrlRefKey];
             for (const method in callbackUrlObj) {
               const callbackOperation: OpenAPIV3.OperationObject = callbackUrlObj[method];
+              callbackOperationConfig.pubsubTopic = `webhook:${method}:${pubsubTopicSuffix}`;
               callbackOperationConfig.field = callbackOperation.operationId;
               callbackOperationConfig.description = callbackOperation.description || callbackOperation.summary;
               const requestBodyContents = (callbackOperation.requestBody as OpenAPIV3.RequestBodyObject)?.content;

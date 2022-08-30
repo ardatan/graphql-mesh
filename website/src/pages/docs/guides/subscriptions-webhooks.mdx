@@ -8,6 +8,8 @@ GraphQL Mesh can consume Webhooks as GraphQL Subscriptions in the unified schema
 
 You can use `additionalTypeDefs` and `resolveTo` directive to add subscription root fields to your unified schema.
 
+If you subscribe a pubSub topic with `webhook:EXPECTED_METHOD:EXPECTED_PATH`, the server will automatically bind that path to that topic.
+
 ```yaml
 additionalTypeDefs: |
   # If you don't have Subscription type defined anywhere
@@ -17,7 +19,7 @@ additionalTypeDefs: |
   }
   type Subscription {
     todoAdded: Todo @resolveTo(
-      pubsubTopic: "todoAdded"
+      pubsubTopic: "webhook:post:todo-added"
     # result: "data.someProp.someOtherProp", # You can get nested fields
     # filterBy: "root.userId === args.userId" # You can filter the payload by `userId` for example
     )
@@ -35,59 +37,8 @@ Just add the following to your existing JSON schema handler configuration in `.m
 ```yaml filename=".meshrc.yml"
 - type: Subscription
   field: todoAdded
-  pubsubTopic: todoAdded
+  pubsubTopic: webhook:post:todo-added
   responseSample: ./todo.json
-```
-
-## Handle Webhook HTTP Requests
-
-Add a custom express handler to listen to a specific path for your HTTP Webhook on Mesh CLI Server. You can do it either in a programmatic or declarative way.
-
-### Using Declarative API
-
-<PackageCmd packages={['@graphql-mesh/plugin-webhook']} />
-
-You have a running GraphQL Mesh server listening `4000` port, and you need to listen to a specific route for upcoming HTTP requests as HTTP Webhook.
-
-```yaml
-plugins:
-  - webhook:
-      path: /webhooks/todo_added
-      pubsubTopic: todoAdded
-      # payload: data # you can get `data` prop of the received data
-```
-
-`path` defines the path in our server that will receive HTTP requests as "Webhook" from our API and then send it to `pubsubTopic`.
-
-### Custom Handler in Code
-
-You can handle webhook requests with a plugin.
-Basically you can extend Mesh Server however you want.
-
-```yaml
-plugins:
-  - ./my-todo_added_handler.ts:
-      someOption: true
-```
-
-and in `todo_added_handler.ts`, we have something like the following:
-
-```js filename="todo_added_handler.ts"
-import { MeshPluginOptions, Plugin } from '@graphql-mesh/types'
-
-export default function useMyPlugin(opts: MeshPluginOptions<{ someOption: boolean }>): Plugin {
-  return {
-    async onRequest({ request, fetchAPI, endResponse }) {
-      if (request.url.endsWith('/my-path')) {
-        // Mesh PubSub instance is available under `opts`
-        const body = await request.json()
-        opts.pubsub.publish('todoAdded', body)
-        // Don't forget to finish the HTTP connection
-        endResponse(new fetchAPI.Response(null, { status: 200 }))
-      }
-    }
-  }
-}
 ```
 
 <Callout>You can check out our example</Callout>

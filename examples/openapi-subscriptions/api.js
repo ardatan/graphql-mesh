@@ -1,19 +1,22 @@
 const express = require('express');
 const { fetch } = require('@whatwg-node/fetch');
 const bodyParser = require('body-parser');
+const urljoin = require('url-join');
 
 const app = express();
 app.use(bodyParser.json());
 
 app.post('/streams', async (req, res) => {
   const { callbackUrl } = req.body;
+  const subscriptionId = Date.now().toString();
   setInterval(() => {
     const body = JSON.stringify({
       timestamp: new Date().toJSON(),
       userData: 'RANDOM_DATA',
     });
-    console.info('Webhook ping -> ', callbackUrl, body);
-    fetch(callbackUrl, {
+    const fullCallbackUrl = urljoin(callbackUrl, subscriptionId);
+    console.info('Webhook ping -> ', fullCallbackUrl, body);
+    fetch(fullCallbackUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -22,7 +25,7 @@ app.post('/streams', async (req, res) => {
     }).catch(console.log);
   }, 1000);
   res.json({
-    subscriptionId: Date.now().toString(),
+    subscriptionId,
   });
 });
 

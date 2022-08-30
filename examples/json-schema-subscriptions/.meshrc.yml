@@ -19,7 +19,7 @@ sources:
             responseSample: ./todo.json
           - type: Subscription
             field: todoAdded
-            pubsubTopic: todoAdded
+            pubsubTopic: webhook:post:/webhooks/todo_added
             responseSample: ./todo.json
 
 documents:
@@ -29,10 +29,6 @@ additionalTypeDefs: |
   directive @live on QUERY
 
 plugins:
-  - webhook:
-      path: /webhooks/todo_added
-      method: POST
-      pubsubTopic: todoAdded
   - liveQuery:
       invalidations:
         - field: Mutation.addTodo

@@ -8,6 +8,10 @@ export class PubSub implements MeshPubSub {
   private listenerEventMap = new Map<Listener, HookName>();
   private eventNameListenersMap = new Map<HookName, Set<Listener>>();
 
+  getEventNames(): Iterable<string> {
+    return this.eventNameListenersMap.keys();
+  }
+
   publish<THook extends HookName>(triggerName: THook, detail: AllHooks[THook]): void {
     const eventNameListeners = this.eventNameListenersMap.get(triggerName);
     if (eventNameListeners) {
