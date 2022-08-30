@@ -625,7 +625,7 @@
   },
   {
     "objectID": "mesh-docs-guides-subscriptions-webhooks",
-    "headings": ["Add a new Subscription field", "Handle Webhook HTTP Requests"],
+    "headings": ["Add a new Subscription field"],
     "toc": [
       {
         "children": [
@@ -637,26 +637,9 @@
         ],
         "title": "Add a new Subscription field",
         "anchor": "add-a-new-subscription-field"
-      },
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "children": [],
-                "title": "Custom Handler in Code",
-                "anchor": "custom-handler-in-code"
-              }
-            ],
-            "title": "Using Declarative API",
-            "anchor": "using-declarative-api"
-          }
-        ],
-        "title": "Handle Webhook HTTP Requests",
-        "anchor": "handle-webhook-http-requests"
       }
     ],
-    "content": "276dde3570cb3493544edbadc7821b9d",
+    "content": "6dc24c054c64de7ee14acdb6a92ffccc",
     "url": "https://www.graphql-mesh.com/docs/guides/subscriptions-webhooks",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Guides"],
