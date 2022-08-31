@@ -1,7 +1,7 @@
 import { referenceJSONSchema, JSONSchemaObject, dereferenceObject } from 'json-machete';
-import { DefaultLogger, MeshFetch } from '@graphql-mesh/utils';
+import { DefaultLogger } from '@graphql-mesh/utils';
 import { getDereferencedJSONSchemaFromOperations } from './getDereferencedJSONSchemaFromOperations';
-import { Logger, MeshPubSub } from '@graphql-mesh/types';
+import { Logger, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
 import { JSONSchemaOperationConfig, OperationHeadersConfiguration } from './types';
 import { fetch as crossUndiciFetch } from '@whatwg-node/fetch';
 import { GraphQLSchema } from 'graphql';

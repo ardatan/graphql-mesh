@@ -1,4 +1,4 @@
-import { GetMeshSourceOptions, MeshPubSub, MeshHandler, MeshSource, YamlConfig, ImportFn } from '@graphql-mesh/types';
+import { MeshHandlerOptions, MeshPubSub, MeshHandler, MeshSource, YamlConfig, ImportFn } from '@graphql-mesh/types';
 import { SchemaComposer, EnumTypeComposerValueConfigDefinition } from 'graphql-compose';
 import { TableForeign, createPool, Pool } from 'mysql';
 import { upgrade, introspection } from 'mysql-utilities';
@@ -133,15 +133,7 @@ export default class MySQLHandler implements MeshHandler {
   private store: MeshStore;
   private importFn: ImportFn;
 
-  constructor({
-    name,
-    config,
-    baseDir,
-    pubsub,
-    store,
-    importFn,
-    logger,
-  }: GetMeshSourceOptions<YamlConfig.MySQLHandler>) {
+  constructor({ name, config, baseDir, pubsub, store, importFn, logger }: MeshHandlerOptions<YamlConfig.MySQLHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;

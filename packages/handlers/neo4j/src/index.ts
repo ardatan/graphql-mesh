@@ -1,9 +1,19 @@
 import { toGraphQLTypeDefs } from '@neo4j/introspector';
 import { Neo4jGraphQL } from '@neo4j/graphql';
 import neo4j, { Driver } from 'neo4j-driver';
-import { YamlConfig, MeshHandler, GetMeshSourceOptions, MeshPubSub, Logger, ImportFn } from '@graphql-mesh/types';
+import {
+  YamlConfig,
+  MeshHandler,
+  MeshHandlerOptions,
+  MeshPubSub,
+  Logger,
+  ImportFn,
+  MeshFetch,
+  GetMeshSourcePayload,
+  MeshSource,
+} from '@graphql-mesh/types';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
-import { MeshFetch, readFileOrUrl } from '@graphql-mesh/utils';
+import { readFileOrUrl } from '@graphql-mesh/utils';
 import { process } from '@graphql-mesh/cross-helpers';
 
 function getEventEmitterFromPubSub(pubsub: MeshPubSub): any {
@@ -39,21 +49,12 @@ export default class Neo4JHandler implements MeshHandler {
   fetchFn: MeshFetch;
   importFn: ImportFn;
 
-  constructor({
-    config,
-    baseDir,
-    pubsub,
-    store,
-    logger,
-    fetchFn,
-    importFn,
-  }: GetMeshSourceOptions<YamlConfig.Neo4JHandler>) {
+  constructor({ config, baseDir, pubsub, store, logger, importFn }: MeshHandlerOptions<YamlConfig.Neo4JHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
     this.typeDefs = store.proxy('typeDefs.graphql', PredefinedProxyOptions.StringWithoutValidation);
     this.logger = logger;
-    this.fetchFn = fetchFn;
     this.importFn = importFn;
   }
 
@@ -76,7 +77,8 @@ export default class Neo4JHandler implements MeshHandler {
     });
   }
 
-  async getMeshSource() {
+  async getMeshSource({ fetchFn }: GetMeshSourcePayload): Promise<MeshSource> {
+    this.fetchFn = fetchFn;
     const driver = neo4j.driver(this.config.url, neo4j.auth.basic(this.config.username, this.config.password), {
       useBigInt: true,
       logging: {

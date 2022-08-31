@@ -1,11 +1,11 @@
 import { buildSchemaFromDatabase, buildSchemaFromInfile } from 'tuql';
-import { GetMeshSourceOptions, MeshHandler, MeshSource, YamlConfig } from '@graphql-mesh/types';
+import { MeshHandlerOptions, MeshHandler, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { path } from '@graphql-mesh/cross-helpers';
 
 export default class TuqlHandler implements MeshHandler {
   private config: YamlConfig.TuqlHandler;
   private baseDir: string;
-  constructor({ config, baseDir }: GetMeshSourceOptions<YamlConfig.TuqlHandler>) {
+  constructor({ config, baseDir }: MeshHandlerOptions<YamlConfig.TuqlHandler>) {
     this.config = config;
     this.baseDir = baseDir;
   }

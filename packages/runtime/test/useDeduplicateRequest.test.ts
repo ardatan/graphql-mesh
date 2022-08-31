@@ -1,10 +1,11 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import LocalforageCache from '@graphql-mesh/cache-localforage';
-import { createDefaultMeshFetch } from '../src/fetch';
+import { wrapFetchWithPlugins } from '../src/get-mesh';
+import { useDeduplicateRequest } from '../src/plugins/useDeduplicateRequest';
 // eslint-disable-next-line import/no-nodejs-modules
 import http from 'http';
+import { fetch as originalFetch } from '@whatwg-node/fetch';
 
-describe('MeshFetch', () => {
+describe('useDeduplicateRequest', () => {
   let server: http.Server;
 
   let reqCount: number;
@@ -36,7 +37,14 @@ describe('MeshFetch', () => {
 
   it('should deduplicate the same GET requests in the same context sequentially', async () => {
     const context = {};
-    const fetchFn = createDefaultMeshFetch(new LocalforageCache());
+    const fetchFn = wrapFetchWithPlugins([
+      {
+        onFetch({ setFetchFn }) {
+          setFetchFn(originalFetch);
+        },
+      },
+      useDeduplicateRequest(),
+    ]);
     const url = 'http://localhost:9856/somePath';
     const response = await fetchFn(
       url,
@@ -62,7 +70,14 @@ describe('MeshFetch', () => {
   });
   it('should deduplicate the same GET request in the same context in parallel', async () => {
     const context = {};
-    const fetchFn = createDefaultMeshFetch(new LocalforageCache());
+    const fetchFn = wrapFetchWithPlugins([
+      {
+        onFetch({ setFetchFn }) {
+          setFetchFn(originalFetch);
+        },
+      },
+      useDeduplicateRequest(),
+    ]);
     const url = 'http://localhost:9856/somePath';
     const [response, response2] = await Promise.all([
       fetchFn(
@@ -89,7 +104,14 @@ describe('MeshFetch', () => {
   });
   it('should not deduplicate the different GET requests in the same context sent sequentially', async () => {
     const context = {};
-    const fetchFn = createDefaultMeshFetch(new LocalforageCache());
+    const fetchFn = wrapFetchWithPlugins([
+      {
+        onFetch({ setFetchFn }) {
+          setFetchFn(originalFetch);
+        },
+      },
+      useDeduplicateRequest(),
+    ]);
     const url = 'http://localhost:9856/somePath';
     const response = await fetchFn(
       url,
@@ -115,7 +137,14 @@ describe('MeshFetch', () => {
   });
   it('should not deduplicate the different GET requests in the same context sent in parallel', async () => {
     const context = {};
-    const fetchFn = createDefaultMeshFetch(new LocalforageCache());
+    const fetchFn = wrapFetchWithPlugins([
+      {
+        onFetch({ setFetchFn }) {
+          setFetchFn(originalFetch);
+        },
+      },
+      useDeduplicateRequest(),
+    ]);
     const url = 'http://localhost:9856/somePath';
     const [response, response2] = await Promise.all([
       fetchFn(
@@ -143,7 +172,14 @@ describe('MeshFetch', () => {
   it('should not deduplicate the same GET request in different contexts sent sequentially', async () => {
     const context = {};
     const context2 = {};
-    const fetchFn = createDefaultMeshFetch(new LocalforageCache());
+    const fetchFn = wrapFetchWithPlugins([
+      {
+        onFetch({ setFetchFn }) {
+          setFetchFn(originalFetch);
+        },
+      },
+      useDeduplicateRequest(),
+    ]);
     const url = 'http://localhost:9856/somePath';
     const response = await fetchFn(
       url,
@@ -170,7 +206,14 @@ describe('MeshFetch', () => {
   it('should not deduplicate the same GET request in different contexts sent in parallel', async () => {
     const context = {};
     const context2 = {};
-    const fetchFn = createDefaultMeshFetch(new LocalforageCache());
+    const fetchFn = wrapFetchWithPlugins([
+      {
+        onFetch({ setFetchFn }) {
+          setFetchFn(originalFetch);
+        },
+      },
+      useDeduplicateRequest(),
+    ]);
     const url = 'http://localhost:9856/somePath';
     const [response, response2] = await Promise.all([
       fetchFn(

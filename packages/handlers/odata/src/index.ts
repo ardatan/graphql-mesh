@@ -1,5 +1,14 @@
-import { YamlConfig, MeshHandler, GetMeshSourceOptions, MeshSource, Logger, ImportFn } from '@graphql-mesh/types';
-import { MeshFetch, readFileOrUrl } from '@graphql-mesh/utils';
+import {
+  YamlConfig,
+  MeshHandler,
+  MeshHandlerOptions,
+  MeshSource,
+  Logger,
+  ImportFn,
+  MeshFetch,
+  GetMeshSourcePayload,
+} from '@graphql-mesh/types';
+import { readFileOrUrl } from '@graphql-mesh/utils';
 import {
   getInterpolatedHeadersFactory,
   parseInterpolationStrings,
@@ -132,19 +141,10 @@ export default class ODataHandler implements MeshHandler {
     preserveOrder: false,
   });
 
-  constructor({
-    name,
-    config,
-    baseDir,
-    fetchFn,
-    importFn,
-    logger,
-    store,
-  }: GetMeshSourceOptions<YamlConfig.ODataHandler>) {
+  constructor({ name, config, baseDir, importFn, logger, store }: MeshHandlerOptions<YamlConfig.ODataHandler>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
-    this.fetchFn = fetchFn;
     this.importFn = importFn;
     this.logger = logger;
     this.metadataJson = store.proxy('metadata.json', PredefinedProxyOptions.JsonWithoutValidation);
@@ -169,7 +169,8 @@ export default class ODataHandler implements MeshHandler {
     });
   }
 
-  async getMeshSource(): Promise<MeshSource> {
+  async getMeshSource({ fetchFn }: GetMeshSourcePayload): Promise<MeshSource> {
+    this.fetchFn = fetchFn;
     const { baseUrl: nonInterpolatedBaseUrl, operationHeaders } = this.config;
     const baseUrl = stringInterpolator.parse(nonInterpolatedBaseUrl, {
       env: process.env,

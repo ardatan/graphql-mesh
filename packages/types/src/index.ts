@@ -7,6 +7,7 @@ import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { MeshStore } from '@graphql-mesh/store';
 import configSchema from './config-schema.json';
 import type { Plugin } from '@envelop/core';
+import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 
 export const jsonSchema: any = configSchema;
 
@@ -18,8 +19,6 @@ export type MeshSource = {
   contextVariables?: Record<string, string>;
   batch?: boolean;
 };
-
-type FetchFn = (input: RequestInfo, init?: RequestInit) => Promise<Response>;
 
 export interface KeyValueCacheSetOptions {
   /**
@@ -35,7 +34,7 @@ export interface KeyValueCache<V = any> {
   getKeysByPrefix(prefix: string): Promise<string[]>;
 }
 
-export type GetMeshSourceOptions<THandlerConfig> = {
+export type MeshHandlerOptions<THandlerConfig> = {
   name: string;
   config: THandlerConfig;
   baseDir: string;
@@ -44,16 +43,19 @@ export type GetMeshSourceOptions<THandlerConfig> = {
   store: MeshStore;
   logger: Logger;
   importFn: ImportFn;
-  fetchFn: FetchFn;
+};
+
+export type GetMeshSourcePayload = {
+  fetchFn: MeshFetch;
 };
 
 // Handlers
 export interface MeshHandler {
-  getMeshSource: () => Promise<MeshSource>;
+  getMeshSource: (payload: GetMeshSourcePayload) => Promise<MeshSource>;
 }
 
 export interface MeshHandlerLibrary<TConfig = any> {
-  new (options: GetMeshSourceOptions<TConfig>): MeshHandler;
+  new (options: MeshHandlerOptions<TConfig>): MeshHandler;
 }
 
 // Hooks
@@ -125,6 +127,35 @@ export type MeshPluginOptions<TConfig> = TConfig & {
 };
 
 export type MeshPluginFactory<TConfig> = (options: MeshPluginOptions<TConfig>) => Plugin;
+
+export type MeshPlugin<TContext> = Plugin<TContext> & {
+  onFetch?: OnFetchHook<TContext>;
+};
+
+export type MeshFetch = (
+  url: string,
+  options?: RequestInit,
+  context?: any,
+  info?: GraphQLResolveInfo
+) => Promise<Response>;
+
+export interface OnFetchHookPayload<TContext> {
+  url: string;
+  options: RequestInit;
+  context: TContext;
+  info: GraphQLResolveInfo;
+  fetchFn: MeshFetch;
+  setFetchFn: (fetchFn: MeshFetch) => void;
+}
+
+export interface OnFetchHookDonePayload {
+  response: Response;
+  setResponse: (response: Response) => void;
+}
+
+export type OnFetchHookDone = (payload: OnFetchHookDonePayload) => PromiseOrValue<void>;
+
+export type OnFetchHook<TContext> = (payload: OnFetchHookPayload<TContext>) => PromiseOrValue<void | OnFetchHookDone>;
 
 export type RawSourceOutput = {
   name: string;

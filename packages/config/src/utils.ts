@@ -1,10 +1,11 @@
-import { KeyValueCache, YamlConfig, ImportFn, MeshPubSub, Logger } from '@graphql-mesh/types';
+import { KeyValueCache, YamlConfig, ImportFn, MeshPubSub, Logger, MeshFetch } from '@graphql-mesh/types';
 import { path } from '@graphql-mesh/cross-helpers';
 import { printSchemaWithDirectives, Source } from '@graphql-tools/utils';
 import { paramCase } from 'param-case';
 import { loadDocuments, loadTypedefs } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { PubSub, DefaultLogger, parseWithCache, createDefaultMeshFetch, MeshFetch } from '@graphql-mesh/utils';
+import { PubSub, DefaultLogger, parseWithCache } from '@graphql-mesh/utils';
+import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { MeshStore } from '@graphql-mesh/store';
 
@@ -101,11 +102,11 @@ export async function resolveCustomFetch({
 }> {
   let importCode = '';
   if (!fetchConfig) {
-    importCode += `import { createDefaultMeshFetch } from '@graphql-mesh/utils';\n`;
+    importCode += `import { fetch as fetchFn } from '@whatwg-node/fetch';\n`;
     return {
-      fetchFn: createDefaultMeshFetch(cache),
+      fetchFn: defaultFetch,
       importCode,
-      code: `const fetchFn = createDefaultMeshFetch(cache);`,
+      code: ``,
     };
   }
   const { moduleName, resolved: fetchFn } = await getPackage<MeshFetch>({

@@ -1,6 +1,15 @@
-import { GetMeshSourceOptions, ImportFn, Logger, MeshHandler, YamlConfig } from '@graphql-mesh/types';
+import {
+  MeshHandlerOptions,
+  ImportFn,
+  Logger,
+  MeshHandler,
+  YamlConfig,
+  MeshFetch,
+  GetMeshSourcePayload,
+  MeshSource,
+} from '@graphql-mesh/types';
 import { parse, ThriftDocument, SyntaxType, Comment, FunctionType } from '@creditkarma/thrift-parser';
-import { MeshFetch, readFileOrUrl } from '@graphql-mesh/utils';
+import { readFileOrUrl } from '@graphql-mesh/utils';
 import {
   GraphQLEnumType,
   GraphQLEnumValueConfigMap,
@@ -50,16 +59,16 @@ export default class ThriftHandler implements MeshHandler {
   private importFn: ImportFn;
   private logger: Logger;
 
-  constructor({ config, baseDir, store, fetchFn, importFn, logger }: GetMeshSourceOptions<YamlConfig.ThriftHandler>) {
+  constructor({ config, baseDir, store, importFn, logger }: MeshHandlerOptions<YamlConfig.ThriftHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.idl = store.proxy('idl.json', PredefinedProxyOptions.JsonWithoutValidation);
-    this.fetchFn = fetchFn;
     this.importFn = importFn;
     this.logger = logger;
   }
 
-  async getMeshSource() {
+  async getMeshSource({ fetchFn }: GetMeshSourcePayload): Promise<MeshSource> {
+    this.fetchFn = fetchFn;
     const { schemaHeaders, serviceName, operationHeaders } = this.config;
 
     const thriftAST = await this.idl.getWithSet(async () => {

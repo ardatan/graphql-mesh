@@ -7,6 +7,7 @@ import {
   YamlConfig,
   Logger,
   MeshMerger,
+  MeshFetch,
 } from '@graphql-mesh/types';
 import { DocumentNode, ExecutionResult } from 'graphql';
 import { IResolvers, Source } from '@graphql-tools/utils';
@@ -27,6 +28,7 @@ export type GetMeshOptions = {
   additionalEnvelopPlugins?: Parameters<typeof envelop>[0]['plugins'];
   documents?: Source[];
   includeHttpDetailsInExtensions?: boolean;
+  fetchFn?: MeshFetch;
 };
 
 export type MeshResolvedSource = {

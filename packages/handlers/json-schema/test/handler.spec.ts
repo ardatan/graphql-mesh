@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { defaultImportFn, DefaultLogger, getHeadersObj, PubSub } from '@graphql-mesh/utils';
 import { execute, parse } from 'graphql';
@@ -38,6 +39,9 @@ describe('JSON Schema Handler', () => {
       pubsub: new PubSub(),
       logger: new DefaultLogger('test'),
       importFn: defaultImportFn,
+    });
+
+    const { schema } = await handler.getMeshSource({
       async fetchFn(info: RequestInfo, init?: RequestInit) {
         const headers = typeof info === 'string' ? init?.headers : info.headers;
         const headersObj = getHeadersObj(new Headers(headers || {}));
@@ -48,8 +52,6 @@ describe('JSON Schema Handler', () => {
         });
       },
     });
-
-    const { schema } = await handler.getMeshSource();
 
     const query = /* GraphQL */ `
       query Test {

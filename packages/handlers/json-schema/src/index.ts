@@ -1,7 +1,17 @@
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
-import { GetMeshSourceOptions, ImportFn, Logger, MeshHandler, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
+import {
+  MeshHandlerOptions,
+  ImportFn,
+  Logger,
+  MeshHandler,
+  MeshPubSub,
+  YamlConfig,
+  GetMeshSourcePayload,
+  MeshSource,
+  MeshFetch,
+} from '@graphql-mesh/types';
 import { JSONSchemaLoaderBundle, createBundle, getGraphQLSchemaFromBundle } from '@omnigraph/json-schema';
-import { loadFromModuleExportExpression, MeshFetch, readFileOrUrl } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression, readFileOrUrl } from '@graphql-mesh/utils';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import { process } from '@graphql-mesh/cross-helpers';
 
@@ -23,12 +33,10 @@ export default class JsonSchemaHandler implements MeshHandler {
     pubsub,
     logger,
     importFn,
-    fetchFn,
-  }: GetMeshSourceOptions<YamlConfig.Handler['jsonSchema']>) {
+  }: MeshHandlerOptions<YamlConfig.Handler['jsonSchema']>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
-    this.fetchFn = fetchFn;
     this.importFn = importFn;
     this.bundleStoreProxy = store.proxy('jsonSchemaBundle', PredefinedProxyOptions.JsonWithoutValidation);
     this.pubsub = pubsub;
@@ -64,7 +72,8 @@ export default class JsonSchemaHandler implements MeshHandler {
     }
   }
 
-  async getMeshSource() {
+  async getMeshSource({ fetchFn }: GetMeshSourcePayload): Promise<MeshSource> {
+    this.fetchFn = fetchFn;
     const bundle = await this.getDereferencedBundle();
     const operationHeadersConfig =
       typeof this.config.operationHeaders === 'string'

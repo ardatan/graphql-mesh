@@ -1,3 +1,5 @@
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable import/no-nodejs-modules */
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import GraphQLHandler from '../src';
 import { PubSub, defaultImportFn, DefaultLogger } from '@graphql-mesh/utils';
@@ -5,6 +7,7 @@ import { promises as fsPromises } from 'fs';
 import { join } from 'path';
 import { buildASTSchema, buildSchema, introspectionFromSchema } from 'graphql';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
+import { fetch as fetchFn } from '@whatwg-node/fetch';
 
 const { readFile } = fsPromises;
 
@@ -32,7 +35,9 @@ describe('graphql', () => {
     const absoluteFilePath = join(__dirname, sdlFilePath);
     const schemaStringFromFile = await readFile(absoluteFilePath, 'utf-8');
     const schemaFromFile = buildSchema(schemaStringFromFile);
-    const { schema: schemaFromHandler } = await handler.getMeshSource();
+    const { schema: schemaFromHandler } = await handler.getMeshSource({
+      fetchFn,
+    });
     expect(introspectionFromSchema(schemaFromHandler)).toStrictEqual(introspectionFromSchema(schemaFromFile));
   });
   it('handle code files exports GraphQLSchema correctly', async () => {
@@ -55,7 +60,9 @@ describe('graphql', () => {
     });
     const absoluteFilePath = join(__dirname, schemaFilePath);
     const schemaFromFile = require(absoluteFilePath);
-    const { schema: schemaFromHandler } = await handler.getMeshSource();
+    const { schema: schemaFromHandler } = await handler.getMeshSource({
+      fetchFn,
+    });
     expect(introspectionFromSchema(schemaFromHandler)).toStrictEqual(introspectionFromSchema(schemaFromFile));
   });
   it('handle code files exports DocumentNode correctly', async () => {
@@ -79,7 +86,9 @@ describe('graphql', () => {
     const absoluteFilePath = join(__dirname, schemaFilePath);
     const schemaDocumentFromFile = require(absoluteFilePath);
     const schemaFromFile = buildASTSchema(schemaDocumentFromFile);
-    const { schema: schemaFromHandler } = await handler.getMeshSource();
+    const { schema: schemaFromHandler } = await handler.getMeshSource({
+      fetchFn,
+    });
     expect(introspectionFromSchema(schemaFromHandler)).toStrictEqual(introspectionFromSchema(schemaFromFile));
   });
   it('handle code files exports string correctly', async () => {
@@ -103,7 +112,9 @@ describe('graphql', () => {
     const absoluteFilePath = join(__dirname, schemaFilePath);
     const schemaStringFromFile = require(absoluteFilePath);
     const schemaFromFile = buildSchema(schemaStringFromFile);
-    const { schema: schemaFromHandler } = await handler.getMeshSource();
+    const { schema: schemaFromHandler } = await handler.getMeshSource({
+      fetchFn,
+    });
     expect(introspectionFromSchema(schemaFromHandler)).toStrictEqual(introspectionFromSchema(schemaFromFile));
   });
 });

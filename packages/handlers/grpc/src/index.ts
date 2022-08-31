@@ -1,6 +1,6 @@
 /* eslint-disable import/no-duplicates */
 import './patchLongJs';
-import { GetMeshSourceOptions, Logger, MeshHandler, YamlConfig } from '@graphql-mesh/types';
+import { MeshHandlerOptions, Logger, MeshHandler, YamlConfig } from '@graphql-mesh/types';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { ChannelCredentials, credentials, loadPackageDefinition } from '@grpc/grpc-js';
 import { loadFileDescriptorSetFromObject } from '@grpc/proto-loader';
@@ -44,7 +44,7 @@ export default class GrpcHandler implements MeshHandler {
   private rootJsonAndDecodedDescriptorSets: StoreProxy<RootJsonAndDecodedDescriptorSet[]>;
   private logger: Logger;
 
-  constructor({ config, baseDir, store, logger }: GetMeshSourceOptions<YamlConfig.GrpcHandler>) {
+  constructor({ config, baseDir, store, logger }: MeshHandlerOptions<YamlConfig.GrpcHandler>) {
     this.logger = logger;
     this.config = config;
     this.baseDir = baseDir;

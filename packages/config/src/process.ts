@@ -1,19 +1,14 @@
 import { path as pathModule, process } from '@graphql-mesh/cross-helpers';
-import type { MeshResolvedSource } from '@graphql-mesh/runtime';
+import type { GetMeshOptions, MeshResolvedSource } from '@graphql-mesh/runtime';
 import {
   ImportFn,
-  Logger,
   MeshHandlerLibrary,
-  MeshMerger,
   MeshMergerLibrary,
   MeshPluginFactory,
-  MeshPubSub,
-  MeshTransform,
   MeshTransformLibrary,
   YamlConfig,
-  KeyValueCache,
 } from '@graphql-mesh/types';
-import { IResolvers, Source } from '@graphql-tools/utils';
+import { Source } from '@graphql-tools/utils';
 import { concatAST, DocumentNode, parse, print, visit } from 'graphql';
 import {
   getPackage,
@@ -28,7 +23,7 @@ import { FsStoreStorageAdapter, MeshStore, InMemoryStoreStorageAdapter } from '@
 import { pascalCase } from 'pascal-case';
 import { camelCase } from 'camel-case';
 import { defaultImportFn, parseWithCache, resolveAdditionalResolvers } from '@graphql-mesh/utils';
-import { envelop, useMaskedErrors, useImmediateIntrospection } from '@envelop/core';
+import { useMaskedErrors, useImmediateIntrospection } from '@envelop/core';
 import { getAdditionalResolversFromTypeDefs } from './getAdditionalResolversFromTypeDefs';
 
 const ENVELOP_CORE_PLUGINS_MAP = {
@@ -57,24 +52,12 @@ export type ConfigProcessOptions = {
   throwOnInvalidConfig?: boolean;
 };
 
-type EnvelopPlugins = Parameters<typeof envelop>[0]['plugins'];
-
-export type ProcessedConfig = {
-  sources: MeshResolvedSource[];
-  transforms: MeshTransform[];
-  additionalTypeDefs: DocumentNode[];
-  additionalResolvers: IResolvers[];
-  cache: KeyValueCache<string>;
-  merger: MeshMerger;
-  pubsub: MeshPubSub;
+export type ProcessedConfig = GetMeshOptions & {
   config: YamlConfig.Config;
   documents: Source[];
-  logger: Logger;
   store: MeshStore;
   importCodes: string[];
   codes: string[];
-  additionalEnvelopPlugins: EnvelopPlugins;
-  includeHttpDetailsInExtensions: boolean;
 };
 
 function getDefaultMeshStore(dir: string, importFn: ImportFn, artifactsDir: string) {
@@ -208,7 +191,6 @@ export async function processConfig(
               store: sourcesStore.child(${JSON.stringify(source.name)}),
               logger: logger.child(${JSON.stringify(source.name)}),
               importFn,
-              fetchFn,
             });`);
               }
               return new HandlerCtor({
@@ -220,7 +202,6 @@ export async function processConfig(
                 store: sourcesStore.child(source.name),
                 logger: logger.child(source.name),
                 importFn,
-                fetchFn,
               });
             }),
             Promise.all(
@@ -594,6 +575,7 @@ export async function processConfig(
         .join(',')}
     ];
     },
+    fetchFn,
   };
 }`);
   }
@@ -613,5 +595,6 @@ export async function processConfig(
     includeHttpDetailsInExtensions: config.includeHttpDetailsInExtensions,
     importCodes,
     codes,
+    fetchFn,
   };
 }
