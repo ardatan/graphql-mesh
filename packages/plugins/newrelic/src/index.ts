@@ -49,30 +49,33 @@ export default function useMeshNewrelic(options: MeshPluginOptions<YamlConfig.Ne
     async onFetch({ url, options, info }) {
       const instrumentationApi = await instrumentationApi$;
       const logger = await logger$;
-      const transactionNameState = instrumentationApi.agent.tracer.getTransaction().nameState;
-      const delimiter = transactionNameState.delimiter;
-      const operationSegment = instrumentationApi.getActiveSegment();
-      const formattedPath = flattenPath(info.path, delimiter);
-      const sourceSegment = instrumentationApi.createSegment(
-        `source${delimiter}${(info as any).sourceName || 'unknown'}${delimiter}${formattedPath}`,
-        null,
-        operationSegment
-      );
-      if (!sourceSegment) {
-        logger.trace('Source segment was not created (%s).', formattedPath);
-        return undefined;
-      }
-      const httpDetailSegment = instrumentationApi.createSegment(url, null, sourceSegment);
-      httpDetailSegment.addAttribute('method', options.method);
-      httpDetailSegment.addAttribute('headers', JSON.stringify(getHeadersObj(options.headers as Headers)));
+      const transactionNameState = instrumentationApi?.agent?.tracer?.getTransaction()?.nameState;
+      if (transactionNameState) {
+        const delimiter = transactionNameState.delimiter;
+        const operationSegment = instrumentationApi.getActiveSegment();
+        const formattedPath = flattenPath(info.path, delimiter);
+        const sourceSegment = instrumentationApi.createSegment(
+          `source${delimiter}${(info as any).sourceName || 'unknown'}${delimiter}${formattedPath}`,
+          null,
+          operationSegment
+        );
+        if (!sourceSegment) {
+          logger.trace('Source segment was not created (%s).', formattedPath);
+          return undefined;
+        }
+        const httpDetailSegment = instrumentationApi.createSegment(url, null, sourceSegment);
+        httpDetailSegment.addAttribute('method', options.method);
+        httpDetailSegment.addAttribute('headers', JSON.stringify(getHeadersObj(options.headers as Headers)));
 
-      return ({ response }) => {
-        httpDetailSegment.addAttribute('response.status', response.status);
-        httpDetailSegment.addAttribute('response.statusText', response.statusText);
-        httpDetailSegment.addAttribute('response.headers', JSON.stringify(getHeadersObj(response.headers)));
-        sourceSegment.end();
-        httpDetailSegment.end();
-      };
+        return ({ response }) => {
+          httpDetailSegment.addAttribute('response.status', response.status);
+          httpDetailSegment.addAttribute('response.statusText', response.statusText);
+          httpDetailSegment.addAttribute('response.headers', JSON.stringify(getHeadersObj(response.headers)));
+          sourceSegment.end();
+          httpDetailSegment.end();
+        };
+      }
+      return undefined;
     },
   };
 }
