@@ -13,3 +13,7 @@ declare module 'ioredis-mock' {
 declare module 'newrelic' {
   const shim: any;
 }
+
+declare module 'newrelic/*' {
+  export = shim;
+}
