@@ -9,3 +9,11 @@ declare module 'ioredis-mock' {
   import Redis from 'ioredis';
   export default Redis;
 }
+
+declare module 'newrelic' {
+  const shim: any;
+}
+
+declare module 'newrelic/*' {
+  export = shim;
+}

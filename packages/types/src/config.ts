@@ -1732,6 +1732,7 @@ export interface Plugin {
   immediateIntrospection?: any;
   liveQuery?: LiveQueryConfig;
   mock?: MockingConfig;
+  newrelic?: NewrelicConfig;
   rateLimit?: RateLimitPluginConfig;
   responseCache?: ResponseCacheConfig;
   [k: string]: any;
@@ -1833,6 +1834,15 @@ export interface UpdateMockStoreConfig {
   key?: string;
   fieldName?: string;
   value?: string;
+}
+export interface NewrelicConfig {
+  includeOperationDocument?: boolean;
+  includeExecuteVariables?: boolean;
+  includeRawResult?: boolean;
+  trackResolvers?: boolean;
+  includeResolverArgs?: boolean;
+  rootFieldsNaming?: boolean;
+  extractOperationName?: string;
 }
 /**
  * RateLimit plugin

@@ -2585,6 +2585,11 @@
     "@n1ru4l/graphql-live-query-patch" "^0.7.0"
     "@n1ru4l/in-memory-live-query-store" "^0.10.0"
 
+"@envelop/newrelic@4.2.0":
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@envelop/newrelic/-/newrelic-4.2.0.tgz#6e702022d7d0a9d0a7c33146d86815529e4a9f41"
+  integrity sha512-WhvoR/2W63JyIMAG0MCKY15N2ta69S9blYjH2qIbgnxgDQaRphuD2h9/6TlnuEavgyar1ZyYs6A0ZtMW/FLzCg==
+
 "@envelop/parser-cache@^4.6.0":
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/@envelop/parser-cache/-/parser-cache-4.6.0.tgz#3ff71acdfbc51097d0dd8051cb961f856cddc400"
@@ -3159,6 +3164,14 @@
     "@grpc/proto-loader" "^0.7.0"
     "@types/node" ">=12.12.47"
 
+"@grpc/grpc-js@^1.5.5":
+  version "1.6.11"
+  resolved "https://registry.yarnpkg.com/@grpc/grpc-js/-/grpc-js-1.6.11.tgz#74c04cde0cde4e8a88ffc514bd9cd1bb307815b9"
+  integrity sha512-e/adiPjUxf5cKYiAlV4m+0jJS4k6g2w78X7WTZB3ISOBzcCwm+cwjB2dSRfBHbu46inGGzQMmWAmsgYLg8yT5g==
+  dependencies:
+    "@grpc/proto-loader" "^0.7.0"
+    "@types/node" ">=12.12.47"
+
 "@grpc/proto-loader@0.7.2", "@grpc/proto-loader@^0.7.0":
   version "0.7.2"
   resolved "https://registry.yarnpkg.com/@grpc/proto-loader/-/proto-loader-0.7.2.tgz#fa63178853afe1473c50cff89fe572f7c8b20154"
@@ -3170,7 +3183,7 @@
     protobufjs "^7.0.0"
     yargs "^16.2.0"
 
-"@grpc/proto-loader@^0.6.0-pre17":
+"@grpc/proto-loader@^0.6.0-pre17", "@grpc/proto-loader@^0.6.9":
   version "0.6.13"
   resolved "https://registry.yarnpkg.com/@grpc/proto-loader/-/proto-loader-0.6.13.tgz#008f989b72a40c60c96cd4088522f09b05ac66bc"
   integrity sha512-FjxPYDRTn6Ec3V0arm1FtSpmP6V50wuph2yILpyvTKzjc76oDdoihXqM1DzOW5ubvCC8GivfCnNtfaRE8myJ7g==
@@ -4051,6 +4064,32 @@
     camelcase "^6.2.0"
     debug "^4.3.2"
     pluralize "^8.0.0"
+
+"@newrelic/aws-sdk@^4.1.1":
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/@newrelic/aws-sdk/-/aws-sdk-4.1.2.tgz#6548bbe408542cd9ee2999319dc14c11e37e4a95"
+  integrity sha512-B83gZDS6eseNAMd41s8FTyd+JSxKHl4cN8kQnh1k5aYe0XB/Mi3hxn0/mxGzui84L4kL0GJCCg/UOg+A2ciSQg==
+  dependencies:
+    semver "^7.3.5"
+
+"@newrelic/koa@^6.1.0":
+  version "6.1.2"
+  resolved "https://registry.yarnpkg.com/@newrelic/koa/-/koa-6.1.2.tgz#98e8e24ea0bee97197f02030e3ad09912dadacf2"
+  integrity sha512-nmjr5hv+nRDC2NaRF4+iex41K6iJ/UCujgnj8oyht1grazJXQHq0dJZdMxUVNMMO+m4ukTeisSlI4d/H/W9JUw==
+
+"@newrelic/native-metrics@^7.1.1":
+  version "7.1.2"
+  resolved "https://registry.yarnpkg.com/@newrelic/native-metrics/-/native-metrics-7.1.2.tgz#e18af9447894d3f637c85bca19474cb81dc71d99"
+  integrity sha512-Ay0iLiwb/TIlbxxuWqxhrW1FxOSokKS09NKcRi1VXsMCMmvJiVhq6wvJcFvpoGLzvkTLLMFrJAHP0eJBKUpZfQ==
+  dependencies:
+    https-proxy-agent "^5.0.0"
+    nan "^2.15.0"
+    semver "^5.5.1"
+
+"@newrelic/superagent@^5.1.0":
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/@newrelic/superagent/-/superagent-5.1.1.tgz#57e61878903718e1ba4310a365f65fae14a2b1a6"
+  integrity sha512-Bp2QtknriKHLKSfrBRyg4PjGJ8CCSkxYfZEDppOWmrGukJAP/9Vvr+ya0Mmj7SU8eIMMhaTvAnjvb2mVmX8wBw==
 
 "@next/bundle-analyzer@^12.2.3":
   version "12.2.3"
@@ -5316,6 +5355,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/newrelic@7.0.3":
+  version "7.0.3"
+  resolved "https://registry.yarnpkg.com/@types/newrelic/-/newrelic-7.0.3.tgz#07ae3d0175f712e0fcaef69564dbe06b6039febb"
+  integrity sha512-MAaZYpJ9HEumg8MR4OFNDu8Cy4LnNc89aZ4pqXcBiQyo8SaQVv0sPj2JzzR1rQ/Rk86WL9vLjrDjuEg2vDMimg==
+
 "@types/node-fetch@2.6.1":
   version "2.6.1"
   resolved "https://registry.yarnpkg.com/@types/node-fetch/-/node-fetch-2.6.1.tgz#8f127c50481db65886800ef496f20bbf15518975"
@@ -5725,6 +5769,11 @@
   dependencies:
     "@typescript-eslint/types" "5.35.1"
     eslint-visitor-keys "^3.3.0"
+
+"@tyriar/fibonacci-heap@^2.0.7":
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/@tyriar/fibonacci-heap/-/fibonacci-heap-2.0.9.tgz#df3dcbdb1b9182168601f6318366157ee16666e9"
+  integrity sha512-bYuSNomfn4hu2tPiDN+JZtnzCpSpbJ/PNeulmocDy3xN2X5OkJL65zo6rPZp65cPPhLF9vfT/dgE+RtFRCSxOA==
 
 "@udacity/types-service-worker-mock@1.2.0":
   version "1.2.0"
@@ -7810,6 +7859,16 @@ concat-stream@^1.5.2:
     buffer-from "^1.0.0"
     inherits "^2.0.3"
     readable-stream "^2.2.2"
+    typedarray "^0.0.6"
+
+concat-stream@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/concat-stream/-/concat-stream-2.0.0.tgz#414cf5af790a48c60ab9be4527d56d5e41133cb1"
+  integrity sha512-MWufYdFw53ccGjCA+Ol7XJYpAlW6/prSMzuPOTRnJGcGzuhLn4Scrz7qf6o8bROZ514ltazcIFJZevcfbo0x7A==
+  dependencies:
+    buffer-from "^1.0.0"
+    inherits "^2.0.3"
+    readable-stream "^3.0.2"
     typedarray "^0.0.6"
 
 concurrently@5.3.0:
@@ -13296,7 +13355,7 @@ json-stable-stringify@1.0.1:
   dependencies:
     jsonify "~0.0.0"
 
-json-stringify-safe@^5.0.1:
+json-stringify-safe@^5.0.0, json-stringify-safe@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
   integrity sha1-Epai1Y/UXxmg9s4B1lcB4sc1tus=
@@ -15030,6 +15089,11 @@ nan@^2.12.1, nan@^2.14.0:
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.15.0.tgz#3f34a473ff18e15c1b5626b62903b5ad6e665fee"
   integrity sha512-8ZtvEnA2c5aYCZYd1cvgdnU6cqwixRoYg70xPLWUws5ORTa/lnw+u4amixRS/Ac5U5mQVgp9pnlSUnbNWFaWZQ==
 
+nan@^2.15.0:
+  version "2.16.0"
+  resolved "https://registry.yarnpkg.com/nan/-/nan-2.16.0.tgz#664f43e45460fb98faf00edca0bb0d7b8dce7916"
+  integrity sha512-UdAqHyFngu7TfQKsCBgAA6pWDkT8MAO7d0jyOecVhN5354xbLqdn8mV9Tat9gepAupm0bt2DbeaSC8vS52MuFA==
+
 nano-css@^5.3.1:
   version "5.3.4"
   resolved "https://registry.yarnpkg.com/nano-css/-/nano-css-5.3.4.tgz#40af6a83a76f84204f346e8ccaa9169cdae9167b"
@@ -15101,6 +15165,26 @@ neo4j-driver@4.4.7:
     neo4j-driver-bolt-connection "^4.4.7"
     neo4j-driver-core "^4.4.7"
     rxjs "^6.6.3"
+
+newrelic@8.8.0:
+  version "8.8.0"
+  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-8.8.0.tgz#bb8aa8915ec402709be300d1ba4a19a23f0176fa"
+  integrity sha512-1aaI7WigG2drbNWWfPITdwKWfVCbjdlHfsNa3AWk4mt9KahU/O0iS0R/OvWNInYIQNQ1hwMTGue5N2PfPKGxBw==
+  dependencies:
+    "@grpc/grpc-js" "^1.5.5"
+    "@grpc/proto-loader" "^0.6.9"
+    "@newrelic/aws-sdk" "^4.1.1"
+    "@newrelic/koa" "^6.1.0"
+    "@newrelic/superagent" "^5.1.0"
+    "@tyriar/fibonacci-heap" "^2.0.7"
+    async "^3.2.3"
+    concat-stream "^2.0.0"
+    https-proxy-agent "^5.0.0"
+    json-stringify-safe "^5.0.0"
+    readable-stream "^3.6.0"
+    semver "^5.3.0"
+  optionalDependencies:
+    "@newrelic/native-metrics" "^7.1.1"
 
 next-seo@5.5.0:
   version "5.5.0"
@@ -17413,7 +17497,7 @@ readable-stream@2.3.7, readable-stream@^2.0.1, readable-stream@^2.0.6, readable-
     string_decoder "~1.1.1"
     util-deprecate "~1.0.1"
 
-readable-stream@^3.0.0, readable-stream@^3.0.6, readable-stream@^3.1.1, readable-stream@^3.4.0:
+readable-stream@^3.0.0, readable-stream@^3.0.2, readable-stream@^3.0.6, readable-stream@^3.1.1, readable-stream@^3.4.0, readable-stream@^3.6.0:
   version "3.6.0"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-3.6.0.tgz#337bbda3adc0706bd3e024426a286d4b4b2c9198"
   integrity sha512-BViHy7LKeTz4oNnkcLJ+lVSL6vpiFeX6/d3oSH8zCW7UxP2onchk+vTGB143xuFjHS3deTgkKoXXymXqymiIdA==
@@ -18019,7 +18103,7 @@ semiver@^1.1.0:
   resolved "https://registry.yarnpkg.com/semiver/-/semiver-1.1.0.tgz#9c97fb02c21c7ce4fcf1b73e2c7a24324bdddd5f"
   integrity sha512-QNI2ChmuioGC1/xjyYwyZYADILWyW6AmS1UH6gDj/SFUUUS4MBAWs/7mxnkRPc/F4iHezDP+O8t0dO8WHiEOdg==
 
-"semver@2 || 3 || 4 || 5", semver@^5.3.0, semver@^5.4.1, semver@^5.5.0, semver@^5.6.0, semver@^5.7.1:
+"semver@2 || 3 || 4 || 5", semver@^5.3.0, semver@^5.4.1, semver@^5.5.0, semver@^5.5.1, semver@^5.6.0, semver@^5.7.1:
   version "5.7.1"
   resolved "https://registry.yarnpkg.com/semver/-/semver-5.7.1.tgz#a954f931aeba508d307bbf069eff0c01c96116f7"
   integrity sha512-sauaDf/PZdVgrLTNYHRtpXa1iRiKcaebiKQ1BJdpQlWH2lCvexQdX55snPFyK7QzpudqbCI0qXFfOasHdyNDGQ==

@@ -1,0 +1,13 @@
+extend type Plugin {
+  newrelic: NewrelicConfig
+}
+
+type NewrelicConfig @md {
+  includeOperationDocument: Boolean
+  includeExecuteVariables: Boolean
+  includeRawResult: Boolean
+  trackResolvers: Boolean
+  includeResolverArgs: Boolean
+  rootFieldsNaming: Boolean
+  extractOperationName: String
+}
