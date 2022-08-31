@@ -1,4 +1,13 @@
-import { GetMeshSourceOptions, MeshHandler, MeshSource, YamlConfig, ImportFn, Logger } from '@graphql-mesh/types';
+import {
+  MeshHandlerOptions,
+  MeshHandler,
+  MeshSource,
+  YamlConfig,
+  ImportFn,
+  Logger,
+  MeshFetch,
+  GetMeshSourcePayload,
+} from '@graphql-mesh/types';
 import { UrlLoader, SubscriptionProtocol } from '@graphql-tools/url-loader';
 import {
   GraphQLSchema,
@@ -13,7 +22,7 @@ import {
   GraphQLResolveInfo,
 } from 'graphql';
 import { introspectSchema } from '@graphql-tools/wrap';
-import { loadFromModuleExportExpression, MeshFetch, readFileOrUrl } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression, readFileOrUrl } from '@graphql-mesh/utils';
 import {
   ExecutionRequest,
   isDocumentNode,
@@ -51,19 +60,10 @@ export default class GraphQLHandler implements MeshHandler {
   private logger: Logger;
   private urlLoader = new UrlLoader();
 
-  constructor({
-    name,
-    config,
-    baseDir,
-    fetchFn,
-    store,
-    importFn,
-    logger,
-  }: GetMeshSourceOptions<YamlConfig.Handler['graphql']>) {
+  constructor({ name, config, baseDir, store, importFn, logger }: MeshHandlerOptions<YamlConfig.Handler['graphql']>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
-    this.fetchFn = fetchFn;
     this.nonExecutableSchema = store.proxy('introspectionSchema', PredefinedProxyOptions.GraphQLSchemaWithDiffing);
     this.importFn = importFn;
     this.logger = logger;
@@ -247,7 +247,8 @@ export default class GraphQLHandler implements MeshHandler {
     };
   }
 
-  async getMeshSource(): Promise<MeshSource> {
+  async getMeshSource({ fetchFn }: GetMeshSourcePayload): Promise<MeshSource> {
+    this.fetchFn = fetchFn;
     if ('sources' in this.config) {
       if (this.config.strategy === 'race') {
         const schemaPromises: Promise<GraphQLSchema>[] = [];

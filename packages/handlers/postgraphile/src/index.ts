@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
-  GetMeshSourceOptions,
+  MeshHandlerOptions,
   MeshHandler,
   MeshSource,
   YamlConfig,
@@ -36,7 +36,7 @@ export default class PostGraphileHandler implements MeshHandler {
     store,
     logger,
     importFn,
-  }: GetMeshSourceOptions<YamlConfig.PostGraphileHandler>) {
+  }: MeshHandlerOptions<YamlConfig.PostGraphileHandler>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;

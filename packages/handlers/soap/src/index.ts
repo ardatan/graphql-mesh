@@ -1,7 +1,16 @@
-import { GetMeshSourceOptions, MeshHandler, YamlConfig, ImportFn, Logger } from '@graphql-mesh/types';
+import {
+  MeshHandlerOptions,
+  MeshHandler,
+  YamlConfig,
+  ImportFn,
+  Logger,
+  GetMeshSourcePayload,
+  MeshSource,
+  MeshFetch,
+} from '@graphql-mesh/types';
 import { soapGraphqlSchema, createSoapClient } from './soap-graphql';
 import soap from 'soap';
-import { getHeadersObj, loadFromModuleExportExpression, MeshFetch, readFileOrUrl } from '@graphql-mesh/utils';
+import { getHeadersObj, loadFromModuleExportExpression, readFileOrUrl } from '@graphql-mesh/utils';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import type { AxiosRequestConfig, AxiosResponse, AxiosInstance } from 'axios';
 import { process } from '@graphql-mesh/cross-helpers';
@@ -14,16 +23,16 @@ export default class SoapHandler implements MeshHandler {
   private importFn: ImportFn;
   private logger: Logger;
 
-  constructor({ config, baseDir, fetchFn, store, importFn, logger }: GetMeshSourceOptions<YamlConfig.SoapHandler>) {
+  constructor({ config, baseDir, store, importFn, logger }: MeshHandlerOptions<YamlConfig.SoapHandler>) {
     this.config = config;
     this.baseDir = baseDir;
-    this.fetchFn = fetchFn;
     this.wsdlResponse = store.proxy('wsdlResponse.json', PredefinedProxyOptions.JsonWithoutValidation);
     this.importFn = importFn;
     this.logger = logger;
   }
 
-  async getMeshSource() {
+  async getMeshSource({ fetchFn }: GetMeshSourcePayload): Promise<MeshSource> {
+    this.fetchFn = fetchFn;
     let schemaHeaders =
       typeof this.config.schemaHeaders === 'string'
         ? await loadFromModuleExportExpression(this.config.schemaHeaders, {

@@ -1,6 +1,6 @@
 import { composeWithMongoose, composeWithMongooseDiscriminators } from 'graphql-compose-mongoose';
 import { SchemaComposer } from 'graphql-compose';
-import { GetMeshSourceOptions, MeshPubSub, MeshHandler, MeshSource, YamlConfig, ImportFn } from '@graphql-mesh/types';
+import { MeshHandlerOptions, MeshPubSub, MeshHandler, MeshSource, YamlConfig, ImportFn } from '@graphql-mesh/types';
 import { connect, disconnect, ConnectOptions, Document, Model } from 'mongoose';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { specifiedDirectives } from 'graphql';
@@ -35,7 +35,7 @@ export default class MongooseHandler implements MeshHandler {
   private pubsub: MeshPubSub;
   private importFn: ImportFn;
 
-  constructor({ config, baseDir, pubsub, importFn }: GetMeshSourceOptions<YamlConfig.MongooseHandler>) {
+  constructor({ config, baseDir, pubsub, importFn }: MeshHandlerOptions<YamlConfig.MongooseHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;

@@ -1,14 +1,16 @@
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import {
-  GetMeshSourceOptions,
+  MeshHandlerOptions,
   ImportFn,
   Logger,
   MeshHandler,
   MeshPubSub,
   MeshSource,
   YamlConfig,
+  GetMeshSourcePayload,
+  MeshFetch,
 } from '@graphql-mesh/types';
-import { loadFromModuleExportExpression, MeshFetch } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { createBundle, getGraphQLSchemaFromBundle, OpenAPILoaderBundle } from '@omnigraph/openapi';
 
 export default class OpenAPIHandler implements MeshHandler {
@@ -17,23 +19,21 @@ export default class OpenAPIHandler implements MeshHandler {
   private bundleStoreProxy: StoreProxy<OpenAPILoaderBundle>;
   private baseDir: string;
   private logger: Logger;
-  private fetch: MeshFetch;
+  private fetchFn: MeshFetch;
   private pubsub: MeshPubSub;
   private importFn: ImportFn;
   constructor({
     name,
     config,
     baseDir,
-    fetchFn,
     store,
     pubsub,
     logger,
     importFn,
-  }: GetMeshSourceOptions<YamlConfig.OpenapiHandler>) {
+  }: MeshHandlerOptions<YamlConfig.OpenapiHandler>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
-    this.fetch = fetchFn;
     this.bundleStoreProxy = store.proxy('jsonSchemaBundle', PredefinedProxyOptions.JsonWithoutValidation);
     this.pubsub = pubsub;
     this.logger = logger;
@@ -46,7 +46,7 @@ export default class OpenAPIHandler implements MeshHandler {
       return createBundle(this.name, {
         ...this.config,
         cwd: this.baseDir,
-        fetch: this.fetch,
+        fetch: this.fetchFn,
         logger: this.logger,
         ignoreErrorResponses: this.config.ignoreErrorResponses,
         selectQueryOrMutationField: this.config.selectQueryOrMutationField?.map(({ type, fieldName }) => ({
@@ -59,7 +59,8 @@ export default class OpenAPIHandler implements MeshHandler {
     });
   }
 
-  async getMeshSource(): Promise<MeshSource> {
+  async getMeshSource({ fetchFn }: GetMeshSourcePayload): Promise<MeshSource> {
+    this.fetchFn = fetchFn;
     this.logger?.debug('Getting the bundle');
     const bundle = await this.getDereferencedBundle();
     this.logger?.debug('Generating GraphQL Schema from bundle');
@@ -73,7 +74,7 @@ export default class OpenAPIHandler implements MeshHandler {
         : this.config.operationHeaders;
     const schema = await getGraphQLSchemaFromBundle(bundle, {
       cwd: this.baseDir,
-      fetch: this.fetch,
+      fetch: this.fetchFn,
       pubsub: this.pubsub,
       logger: this.logger,
       baseUrl: this.config.baseUrl,

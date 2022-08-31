@@ -1,5 +1,5 @@
 import { GraphQLJSON, ObjectTypeComposer, ObjectTypeComposerFieldConfig, SchemaComposer } from 'graphql-compose';
-import { Logger, MeshPubSub } from '@graphql-mesh/types';
+import { Logger, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
 import { JSONSchemaLinkConfig, JSONSchemaOperationConfig, OperationHeadersConfiguration } from './types';
 import { getOperationMetadata, isPubSubOperationConfig, isFileUpload } from './utils';
 import { memoize1 } from '@graphql-tools/utils';
@@ -23,7 +23,7 @@ import {
 import lodashSet from 'lodash.set';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { process } from '@graphql-mesh/cross-helpers';
-import { getHeadersObj, MeshFetch } from '@graphql-mesh/utils';
+import { getHeadersObj } from '@graphql-mesh/utils';
 import { FormData } from '@whatwg-node/fetch';
 
 export interface AddExecutionLogicToComposerOptions {

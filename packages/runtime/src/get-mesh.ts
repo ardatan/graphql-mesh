@@ -7,6 +7,10 @@ import {
   GraphQLOperation,
   Logger,
   MeshTransform,
+  OnFetchHookPayload,
+  MeshFetch,
+  MeshPlugin,
+  OnFetchHookDone,
 } from '@graphql-mesh/types';
 
 import { MESH_CONTEXT_SYMBOL } from './constants';
@@ -26,6 +30,9 @@ import { OneOfInputObjectsRule, useExtendedValidation } from '@envelop/extended-
 import { getInContextSDK } from './in-context-sdk';
 import { useSubschema } from './useSubschema';
 import { process } from '@graphql-mesh/cross-helpers';
+import { useIncludeHttpDetailsInExtensions } from './plugins/useIncludeHttpDetailsInExtensions';
+import { useFetchache } from './plugins/useFetchache';
+import { useDeduplicateRequest } from './plugins/useDeduplicateRequest';
 
 export interface MeshInstance {
   execute: ExecuteMeshFn;
@@ -49,12 +56,39 @@ const memoizedGetOperationType = memoize1((document: DocumentNode) => {
   return operationAST.operation;
 });
 
-const memoizedGetEnvelopedFactory = memoize1(function getEnvelopedFactory(plugins: PluginOrDisabledPlugin[]) {
-  const getEnveloped = envelop({ plugins });
-  return memoize1(function getEnvelopedByContext(initialContext: any) {
-    return getEnveloped(initialContext);
-  });
-});
+export function wrapFetchWithPlugins(plugins: MeshPlugin<any>[]): MeshFetch {
+  return async function wrappedFetchFn(url, options, context, info) {
+    let fetchFn: MeshFetch;
+    const doneHooks: OnFetchHookDone[] = [];
+    for (const plugin of plugins as MeshPlugin<any>[]) {
+      if (plugin?.onFetch != null) {
+        const doneHook = await plugin.onFetch({
+          fetchFn,
+          setFetchFn(newFetchFn) {
+            fetchFn = newFetchFn;
+          },
+          url,
+          options,
+          context,
+          info,
+        });
+        if (doneHook) {
+          doneHooks.push(doneHook);
+        }
+      }
+    }
+    let response = await fetchFn(url, options, context, info);
+    for (const doneHook of doneHooks) {
+      await doneHook({
+        response,
+        setResponse(newResponse) {
+          response = newResponse;
+        },
+      });
+    }
+    return response;
+  };
+}
 
 export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   const rawSources: RawSourceOutput[] = [];
@@ -69,18 +103,60 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     additionalTypeDefs = [],
     transforms = [],
     includeHttpDetailsInExtensions = process?.env?.DEBUG === '1' || process?.env?.DEBUG?.includes('http'),
+    fetchFn,
   } = options;
 
   const getMeshLogger = logger.child('GetMesh');
   getMeshLogger.debug(`Getting subschemas from source handlers`);
   let failed = false;
+  const initialPluginList: MeshPlugin<any>[] = [
+    // TODO: Not a good practise to expect users to be a Yoga user
+    useExtendContext(({ request, req }: { request: Request; req?: { headers?: Record<string, string> } }) => {
+      // Maybe Node-like environment
+      if (req?.headers) {
+        return {
+          headers: req.headers,
+        };
+      }
+      // Fetch environment
+      if (request?.headers) {
+        return {
+          headers: getHeadersObj(request.headers),
+        };
+      }
+      return {};
+    }),
+    useExtendContext(() => ({
+      pubsub,
+      cache,
+      logger,
+      [MESH_CONTEXT_SYMBOL]: true,
+    })),
+    {
+      onFetch({ setFetchFn }: OnFetchHookPayload<any>) {
+        setFetchFn(fetchFn);
+      },
+    },
+    useFetchache(cache),
+    useDeduplicateRequest(),
+    includeHttpDetailsInExtensions ? useIncludeHttpDetailsInExtensions() : {},
+    {
+      onParse({ setParseFn }) {
+        setParseFn(parseWithCache);
+      },
+    },
+    ...(additionalEnvelopPlugins as MeshPlugin<any>[]),
+  ];
+  const wrappedFetchFn: MeshFetch = wrapFetchWithPlugins(initialPluginList);
   await Promise.allSettled(
     sources.map(async apiSource => {
       const apiName = apiSource.name;
       const sourceLogger = logger.child(apiName);
       sourceLogger.debug(`Generating the schema`);
       try {
-        const source = await apiSource.handler.getMeshSource();
+        const source = await apiSource.handler.getMeshSource({
+          fetchFn: wrappedFetchFn,
+        });
         sourceLogger.debug(`The schema has been generated successfully`);
 
         let apiSchema = source.schema;
@@ -135,55 +211,29 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
   let inContextSDK$: Promise<Record<string, any>>;
 
-  const { plugin: subschemaPlugin, transformedSchema: finalSchema } = useSubschema(
-    unifiedSubschema,
-    includeHttpDetailsInExtensions
-  );
+  const inContextSDKPlugin = useExtendContext(() => {
+    if (!inContextSDK$) {
+      inContextSDK$ = getInContextSDK(finalSchema, rawSources, logger);
+    }
+    return inContextSDK$;
+  });
+
+  const { plugin: subschemaPlugin, transformedSchema: finalSchema } = useSubschema(unifiedSubschema);
 
   finalSchema.extensions = unifiedSubschema.schema.extensions;
 
-  const plugins: PluginOrDisabledPlugin[] = [
-    subschemaPlugin,
-    // TODO: Not a good practise to expect users to be a Yoga user
-    useExtendContext(({ request, req }: { request: Request; req?: { headers?: Record<string, string> } }) => {
-      // Maybe Node-like environment
-      if (req?.headers) {
-        return {
-          headers: req.headers,
-        };
-      }
-      // Fetch environment
-      if (request?.headers) {
-        return {
-          headers: getHeadersObj(request.headers),
-        };
-      }
-      return {};
-    }),
-    useExtendContext(() => ({
-      pubsub,
-      cache,
-      logger,
-      [MESH_CONTEXT_SYMBOL]: true,
-    })),
-    useExtendContext(() => {
-      if (!inContextSDK$) {
-        inContextSDK$ = getInContextSDK(finalSchema, rawSources, logger);
-      }
-      return inContextSDK$;
-    }),
-    enableIf(!!finalSchema.getDirective('oneOf'), () =>
-      useExtendedValidation({
-        rules: [OneOfInputObjectsRule],
-      })
-    ),
-    {
-      onParse({ setParseFn }) {
-        setParseFn(parseWithCache);
-      },
-    },
-    ...additionalEnvelopPlugins,
-  ];
+  const getEnveloped = envelop({
+    plugins: [
+      subschemaPlugin,
+      inContextSDKPlugin,
+      enableIf(!!finalSchema.getDirective('oneOf'), () =>
+        useExtendedValidation({
+          rules: [OneOfInputObjectsRule],
+        })
+      ),
+      ...initialPluginList,
+    ],
+  });
 
   const EMPTY_ROOT_VALUE: any = {};
   const EMPTY_CONTEXT_VALUE: any = {};
@@ -196,7 +246,6 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     rootValue: TRootValue = EMPTY_ROOT_VALUE,
     operationName?: string
   ) {
-    const getEnveloped = memoizedGetEnvelopedFactory(plugins);
     const { schema, execute, contextFactory, parse } = getEnveloped(contextValue);
 
     return execute({
@@ -216,7 +265,6 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     rootValue: TRootValue = EMPTY_ROOT_VALUE,
     operationName?: string
   ) {
-    const getEnveloped = memoizedGetEnvelopedFactory(plugins);
     const { schema, subscribe, contextFactory, parse } = getEnveloped(contextValue);
 
     return subscribe({
@@ -254,10 +302,8 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
       return pubsub.publish('destroy', undefined);
     },
     logger,
-    plugins,
-    get getEnveloped() {
-      return memoizedGetEnvelopedFactory(plugins) as ReturnType<typeof envelop>;
-    },
+    plugins: getEnveloped._plugins,
+    getEnveloped,
     sdkRequesterFactory,
   };
 }

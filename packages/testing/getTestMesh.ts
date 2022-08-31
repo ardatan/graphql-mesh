@@ -3,7 +3,7 @@ import { createServer } from '@graphql-yoga/node';
 import { getMesh } from '@graphql-mesh/runtime';
 import GraphQLHandler from '@graphql-mesh/graphql';
 import LocalforageCache from '@graphql-mesh/cache-localforage';
-import { PubSub, DefaultLogger, defaultImportFn, createDefaultMeshFetch } from '@graphql-mesh/utils';
+import { PubSub, DefaultLogger, defaultImportFn } from '@graphql-mesh/utils';
 import StitchingMerger from '@graphql-mesh/merger-stitching';
 import { MeshStore, InMemoryStoreStorageAdapter } from '@graphql-mesh/store';
 
@@ -39,7 +39,6 @@ export async function getTestMesh() {
           store: store.child('sources/Yoga'),
           logger,
           importFn: defaultImportFn,
-          fetchFn: createDefaultMeshFetch(cache),
         }),
       },
     ],

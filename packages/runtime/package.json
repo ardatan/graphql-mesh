@@ -37,6 +37,8 @@
     "@graphql-tools/batch-execute": "8.5.4",
     "@graphql-tools/wrap": "9.0.5",
     "@graphql-tools/utils": "8.10.1",
+    "fetchache": "0.1.2",
+    "@whatwg-node/fetch": "0.3.2",
     "@envelop/core": "2.5.0",
     "@envelop/extended-validation": "1.8.0",
     "tslib": "^2.4.0"

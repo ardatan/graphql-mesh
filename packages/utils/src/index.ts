@@ -14,4 +14,3 @@ export * from './defaultImportFn';
 export * from './pubsub';
 export * from './fileURLToPath';
 export * from './getHeadersObj';
-export * from './fetch';
