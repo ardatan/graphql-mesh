@@ -26,7 +26,7 @@
   },
   "peerDependencies": {
     "graphql": "*",
-    "newrelic": "^7 || ^8.0.0"
+    "newrelic": "^7 || ^8.0.0 || ^9.0.0"
   },
   "dependencies": {
     "@envelop/newrelic": "4.2.0",
@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "@types/newrelic": "7.0.3",
-    "newrelic": "8.8.0"
+    "newrelic": "9.0.2"
   },
   "publishConfig": {
     "access": "public",
