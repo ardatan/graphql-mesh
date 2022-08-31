@@ -47,9 +47,10 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+    });
+    const source = await handler.getMeshSource({
       fetchFn: mockFetch,
     });
-    const source = await handler.getMeshSource();
     expect(printSchema(source.schema)).toMatchSnapshot();
   });
   it('should create correct GraphQL schema for functions with entity set paths', async () => {
@@ -65,9 +66,10 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+    });
+    const source = await handler.getMeshSource({
       fetchFn: mockFetch,
     });
-    const source = await handler.getMeshSource();
     expect(printSchema(source.schema)).toMatchSnapshot();
   });
   it('should declare arguments for fields created from bound functions', async () => {
@@ -86,9 +88,10 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+    });
+    const source = await handler.getMeshSource({
       fetchFn: mockFetch,
     });
-    const source = await handler.getMeshSource();
     const personType = source.schema.getType('IPerson') as GraphQLInterfaceType;
     const getFriendsTripsFunction = personType.getFields().GetFriendsTrips;
     expect(getFriendsTripsFunction.args).toHaveLength(2);
@@ -122,9 +125,10 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+    });
+    const source = await handler.getMeshSource({
       fetchFn: mockFetch,
     });
-    const source = await handler.getMeshSource();
 
     const graphqlResult = (await source.executor({
       context: {},
@@ -165,9 +169,10 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+    });
+    const source = await handler.getMeshSource({
       fetchFn: mockFetch,
     });
-    const source = await handler.getMeshSource();
 
     const graphqlResult = (await source.executor({
       context: {},
@@ -217,9 +222,10 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+    });
+    const source = await handler.getMeshSource({
       fetchFn: mockFetch,
     });
-    const source = await handler.getMeshSource();
 
     const graphqlResult = (await source.executor({
       context: {},
@@ -262,9 +268,10 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+    });
+    const source = await handler.getMeshSource({
       fetchFn: mockFetch,
     });
-    const source = await handler.getMeshSource();
 
     const graphqlResult = (await source.executor({
       context: {},
@@ -305,9 +312,10 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+    });
+    const source = await handler.getMeshSource({
       fetchFn: mockFetch,
     });
-    const source = await handler.getMeshSource();
 
     const graphqlResult = (await source.executor({
       context: {},
@@ -366,9 +374,10 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+    });
+    const source = await handler.getMeshSource({
       fetchFn: mockFetch,
     });
-    const source = await handler.getMeshSource();
 
     const graphqlResult = (await source.executor({
       context: {},
@@ -412,9 +421,10 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+    });
+    const source = await handler.getMeshSource({
       fetchFn: mockFetch,
     });
-    const source = await handler.getMeshSource();
 
     const graphqlResult = (await source.executor({
       context: {},
@@ -458,9 +468,10 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+    });
+    const source = await handler.getMeshSource({
       fetchFn: mockFetch,
     });
-    const source = await handler.getMeshSource();
 
     const graphqlResult = (await source.executor({
       context: {},
@@ -511,9 +522,10 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+    });
+    const source = await handler.getMeshSource({
       fetchFn: mockFetch,
     });
-    const source = await handler.getMeshSource();
 
     const graphqlResult = (await source.executor({
       context: {},
@@ -567,9 +579,10 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+    });
+    const source = await handler.getMeshSource({
       fetchFn: mockFetch,
     });
-    const source = await handler.getMeshSource();
 
     const graphqlResult = (await source.executor({
       context: {},
@@ -622,9 +635,10 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+    });
+    const source = await handler.getMeshSource({
       fetchFn: mockFetch,
     });
-    const source = await handler.getMeshSource();
 
     const graphqlResult = (await source.executor({
       context: {},
@@ -668,9 +682,10 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+    });
+    const source = await handler.getMeshSource({
       fetchFn: mockFetch,
     });
-    const source = await handler.getMeshSource();
 
     const graphqlResult = (await source.executor({
       context: {},
@@ -715,9 +730,10 @@ describe('odata', () => {
       baseDir,
       importFn,
       logger,
+    });
+    const source = await handler.getMeshSource({
       fetchFn: mockFetch,
     });
-    const source = await handler.getMeshSource();
 
     const graphqlResult = (await source.executor({
       context: {},

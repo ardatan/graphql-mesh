@@ -33,6 +33,7 @@ import { process } from '@graphql-mesh/cross-helpers';
 import { useIncludeHttpDetailsInExtensions } from './plugins/useIncludeHttpDetailsInExtensions';
 import { useFetchache } from './plugins/useFetchache';
 import { useDeduplicateRequest } from './plugins/useDeduplicateRequest';
+import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 
 export interface MeshInstance {
   execute: ExecuteMeshFn;
@@ -103,7 +104,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     additionalTypeDefs = [],
     transforms = [],
     includeHttpDetailsInExtensions = process?.env?.DEBUG === '1' || process?.env?.DEBUG?.includes('http'),
-    fetchFn,
+    fetchFn = defaultFetchFn,
   } = options;
 
   const getMeshLogger = logger.child('GetMesh');

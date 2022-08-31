@@ -6,10 +6,12 @@ import LocalforageCache from '@graphql-mesh/cache-localforage';
 import { PubSub, DefaultLogger, defaultImportFn } from '@graphql-mesh/utils';
 import StitchingMerger from '@graphql-mesh/merger-stitching';
 import { MeshStore, InMemoryStoreStorageAdapter } from '@graphql-mesh/store';
+import getPort from 'get-port';
 
 export async function getTestMesh() {
   const yoga = createServer({
     logging: false,
+    port: await getPort(),
   });
   const cache = new LocalforageCache();
   const pubsub = new PubSub();
