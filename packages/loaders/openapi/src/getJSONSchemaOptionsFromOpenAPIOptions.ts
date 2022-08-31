@@ -355,7 +355,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
             responseByStatusCode[responseKey].responseSchema = responseObjForStatusCode.oneOf[0];
           } else if (responseObjForStatusCode.oneOf.length > 1) {
             responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
-            responseByStatusCode[responseKey].responseSchema = responseObjForStatusCode.oneOf;
+            responseByStatusCode[responseKey].responseSchema = responseObjForStatusCode;
           }
         } else if ('schema' in responseObj) {
           schemaObj = responseObj.schema as any;

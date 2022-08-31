@@ -37,6 +37,49 @@
           }
         }
       }
+    },
+    "/customers/{customerId}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Data found, returned attributes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerAttributes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Locations": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LocationModel"
+                  }
+                }
+              },
+              "application/custom-thingy.v3+json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LocationModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -110,6 +153,43 @@
           }
         },
         "additionalProperties": false
+      },
+      "CustomerAttributes": {
+        "required": ["attributes"],
+        "type": "object",
+        "properties": {
+          "attributes": {
+            "type": "array",
+            "properties": {},
+            "items": {
+              "$ref": "#/components/schemas/Attribute"
+            }
+          }
+        }
+      },
+      "Attribute": {
+        "required": ["name"],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "LocationModel": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "pattern": "^(?(\")(\".+?(?<!\\\\)\"@)|(([0-9a-zA-Z]((\\.(?!\\.))|[-!#\\$%&'\\*\\+/=\\?\\^`\\{\\}\\|~\\w])*)(?<=[0-9a-zA-Z\\-_])@))(?(\\[)(\\[(\\d{1,3}\\.){3}\\d{1,3}\\])|(([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]*\\.)+[a-zA-Z0-9][\\-a-zA-Z0-9]{0,22}[a-zA-Z0-9]))$"
+          },
+          "parents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationModel"
+            }
+          }
+        }
       }
     }
   }
