@@ -111,25 +111,31 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
         throw new Error(`Something is wrong with ${path}`);
       }
       if (subSchema.pattern) {
-        const scalarType = new RegularExpression(
-          getValidTypeName({
-            schemaComposer,
-            isInput: false,
-            subSchema,
-          }),
-          new RegExp(subSchema.pattern),
-          {
-            description: subSchema.description,
-          }
-        );
-        const typeComposer = schemaComposer.getAnyTC(scalarType);
-        return {
-          input: typeComposer,
-          output: typeComposer,
-          nullable: subSchema.nullable,
-          readOnly: subSchema.readOnly,
-          writeOnly: subSchema.writeOnly,
-        };
+        let regexp: RegExp;
+        try {
+          regexp = new RegExp(subSchema.pattern);
+          const scalarType = new RegularExpression(
+            getValidTypeName({
+              schemaComposer,
+              isInput: false,
+              subSchema,
+            }),
+            regexp,
+            {
+              description: subSchema.description,
+            }
+          );
+          const typeComposer = schemaComposer.getAnyTC(scalarType);
+          return {
+            input: typeComposer,
+            output: typeComposer,
+            nullable: subSchema.nullable,
+            readOnly: subSchema.readOnly,
+            writeOnly: subSchema.writeOnly,
+          };
+        } catch (e) {
+          logger.debug(`RegExp: ${subSchema.pattern} is not valid`, e);
+        }
       }
       if (subSchema.const) {
         const tsTypeName = JSON.stringify(subSchema.const);

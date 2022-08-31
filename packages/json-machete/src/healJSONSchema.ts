@@ -157,6 +157,28 @@ export async function healJSONSchema(
             logger.debug(`${path} has an example object but no type defined. Setting type to "object".`);
             subSchema.type = 'object';
           }
+          // Items only exist in arrays
+          if (subSchema.items) {
+            logger.debug(`${path} has an items definition but no type defined. Setting type to "array".`);
+            subSchema.type = 'array';
+            if (subSchema.properties) {
+              delete subSchema.properties;
+            }
+            // Items should be an object
+            if (Array.isArray(subSchema.items)) {
+              if (subSchema.items.length === 0) {
+                logger.debug(`${path} has an items array with a single value. Setting items to an object.`);
+                subSchema.items = subSchema.items[0];
+              } else {
+                logger.debug(
+                  `${path} has an items array with multiple values. Setting items to an object with oneOf definition.`
+                );
+                subSchema.items = {
+                  oneOf: subSchema.items,
+                };
+              }
+            }
+          }
           // Try to find the type
           if (!subSchema.type) {
             logger.debug(`${path} has no type defined. Trying to find it.`);
@@ -177,25 +199,6 @@ export async function healJSONSchema(
                 `${path} has properties or patternProperties or additionalProperties. Setting type to "object".`
               );
               subSchema.type = 'object';
-            }
-            // Items only exist in arrays
-            if (subSchema.items) {
-              logger.debug(`${path} has an items definition but no type defined. Setting type to "array".`);
-              subSchema.type = 'array';
-              // Items should be an object
-              if (Array.isArray(subSchema.items)) {
-                if (subSchema.items.length === 0) {
-                  logger.debug(`${path} has an items array with a single value. Setting items to an object.`);
-                  subSchema.items = subSchema.items[0];
-                } else {
-                  logger.debug(
-                    `${path} has an items array with multiple values. Setting items to an object with oneOf definition.`
-                  );
-                  subSchema.items = {
-                    oneOf: subSchema.items,
-                  };
-                }
-              }
             }
             switch (subSchema.format) {
               case 'int64':

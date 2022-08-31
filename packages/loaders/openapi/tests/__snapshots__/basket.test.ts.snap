@@ -58,6 +58,71 @@ Object {
       "schemaHeaders": undefined,
       "type": "mutation",
     },
+    Object {
+      "description": undefined,
+      "field": "customers_by_customerId",
+      "headers": Object {
+        "accept": "application/json",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/customers/{customerId}",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": Object {
+            "$resolvedRef": "/components/schemas/CustomerAttributes",
+            "properties": Object {
+              "attributes": Object {
+                "items": Object {
+                  "$ref": "#/definitions/Attribute",
+                },
+                "type": "array",
+              },
+            },
+            "required": Array [
+              "attributes",
+            ],
+            "title": "CustomerAttributes",
+            "type": "object",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
+    Object {
+      "description": undefined,
+      "field": "Locations",
+      "headers": Object {
+        "accept": "application/json,application/custom-thingy.v3+json",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/Locations",
+      "responseByStatusCode": Object {
+        "200": Object {
+          "responseSchema": Object {
+            "oneOf": Array [
+              Object {
+                "items": Object {
+                  "$ref": "#/definitions/LocationModel",
+                },
+                "type": "array",
+              },
+              Object {
+                "items": Object {
+                  "$ref": "#/definitions/LocationModel",
+                },
+                "type": "array",
+              },
+            ],
+            "title": "Locations_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
   ],
   "referencedSchema": Object {
     "$ref": "#/definitions/_schema",
@@ -123,6 +188,19 @@ Object {
         "title": "ApiReservedProduct",
         "type": "object",
       },
+      "Attribute": Object {
+        "$resolvedRef": "/components/schemas/Attribute",
+        "properties": Object {
+          "name": Object {
+            "type": "string",
+          },
+        },
+        "required": Array [
+          "name",
+        ],
+        "title": "Attribute",
+        "type": "object",
+      },
       "BasketResponse": Object {
         "$resolvedRef": "/components/schemas/BasketResponse",
         "additionalProperties": false,
@@ -137,6 +215,55 @@ Object {
         },
         "title": "BasketResponse",
         "type": "object",
+      },
+      "CustomerAttributes": Object {
+        "$resolvedRef": "/components/schemas/CustomerAttributes",
+        "properties": Object {
+          "attributes": Object {
+            "items": Object {
+              "$ref": "#/definitions/Attribute",
+            },
+            "type": "array",
+          },
+        },
+        "required": Array [
+          "attributes",
+        ],
+        "title": "CustomerAttributes",
+        "type": "object",
+      },
+      "LocationModel": Object {
+        "$resolvedRef": "/components/schemas/LocationModel",
+        "properties": Object {
+          "email": Object {
+            "$ref": "#/definitions/query_Locations_oneOf_0_items_email",
+          },
+          "parents": Object {
+            "items": Object {
+              "$ref": "#/definitions/LocationModel",
+            },
+            "type": "array",
+          },
+        },
+        "title": "LocationModel",
+        "type": "object",
+      },
+      "Locations_200_response": Object {
+        "oneOf": Array [
+          Object {
+            "items": Object {
+              "$ref": "#/definitions/LocationModel",
+            },
+            "type": "array",
+          },
+          Object {
+            "items": Object {
+              "$ref": "#/definitions/LocationModel",
+            },
+            "type": "array",
+          },
+        ],
+        "title": "Locations_200_response",
       },
       "Mutation": Object {
         "properties": Object {
@@ -154,6 +281,25 @@ Object {
         "type": "object",
         "writeOnly": true,
       },
+      "Query": Object {
+        "properties": Object {
+          "Locations": Object {
+            "$ref": "#/definitions/Locations_200_response",
+          },
+          "customers_by_customerId": Object {
+            "$ref": "#/definitions/CustomerAttributes",
+          },
+        },
+        "readOnly": true,
+        "title": "Query",
+        "type": "object",
+      },
+      "QueryInput": Object {
+        "additionalProperties": true,
+        "title": "QueryInput",
+        "type": "object",
+        "writeOnly": true,
+      },
       "_schema": Object {
         "properties": Object {
           "mutation": Object {
@@ -161,6 +307,12 @@ Object {
           },
           "mutationInput": Object {
             "$ref": "#/definitions/MutationInput",
+          },
+          "query": Object {
+            "$ref": "#/definitions/Query",
+          },
+          "queryInput": Object {
+            "$ref": "#/definitions/QueryInput",
           },
         },
         "required": Array [
@@ -211,6 +363,11 @@ Object {
         ],
         "title": "post_basket_response",
       },
+      "query_Locations_oneOf_0_items_email": Object {
+        "pattern": "^(?(\\")(\\".+?(?<!\\\\\\\\)\\"@)|(([0-9a-zA-Z]((\\\\.(?!\\\\.))|[-!#\\\\$%&'\\\\*\\\\+/=\\\\?\\\\^\`\\\\{\\\\}\\\\|~\\\\w])*)(?<=[0-9a-zA-Z\\\\-_])@))(?(\\\\[)(\\\\[(\\\\d{1,3}\\\\.){3}\\\\d{1,3}\\\\])|(([0-9a-zA-Z][-\\\\w]*[0-9a-zA-Z]*\\\\.)+[a-zA-Z0-9][\\\\-a-zA-Z0-9]{0,22}[a-zA-Z0-9]))$",
+        "title": "query_Locations_oneOf_0_items_email",
+        "type": "string",
+      },
     },
   },
 }
@@ -225,7 +382,23 @@ exports[`Basket should generate the correct schema 1`] = `
 directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
 
 type Query {
-  dummy: String
+  customers_by_customerId: CustomerAttributes
+  Locations: [Locations_200_response]
+}
+
+type CustomerAttributes {
+  attributes: [Attribute]!
+}
+
+type Attribute {
+  name: String!
+}
+
+union Locations_200_response = LocationModel
+
+type LocationModel {
+  email: String
+  parents: [LocationModel]
 }
 
 type Mutation {
