@@ -7,13 +7,13 @@ export default function useMeshPrometheus(
   pluginOptions: MeshPluginOptions<YamlConfig.PrometheusConfig>
 ): MeshPlugin<any> {
   const fetchHistogram = new Histogram({
-    name: 'graphql_mesh_fetch',
+    name: 'graphql_mesh_fetch_duration',
     help: 'Time spent on outgoing HTTP calls',
     labelNames: ['url', 'method', 'requestHeaders', 'statusCode', 'statusText', 'responseHeaders'],
     registers: [defaultRegistry],
   });
   const delegateHistogram = new Histogram({
-    name: 'graphql_mesh_delegate',
+    name: 'graphql_mesh_delegate_duration',
     help: 'Time spent on delegate execution',
     labelNames: ['sourceName', 'typeName', 'fieldName', 'args', 'key'],
   });
