@@ -10,11 +10,15 @@ Object {
       "description": undefined,
       "field": "post_basket",
       "headers": Object {
+        "Content-Type": "application/json",
         "accept": "application/json",
       },
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/basket",
+      "requestSchema": Object {
+        "type": "string",
+      },
       "responseByStatusCode": Object {
         "200": Object {
           "responseSchema": Object {
@@ -279,7 +283,11 @@ Object {
         "type": "object",
       },
       "MutationInput": Object {
-        "additionalProperties": true,
+        "properties": Object {
+          "post_basket": Object {
+            "$ref": "#/definitions/mutationInput_post_basket",
+          },
+        },
         "title": "MutationInput",
         "type": "object",
         "writeOnly": true,
@@ -322,6 +330,15 @@ Object {
           "query",
         ],
         "title": "_schema",
+        "type": "object",
+      },
+      "mutationInput_post_basket": Object {
+        "properties": Object {
+          "input": Object {
+            "type": "string",
+          },
+        },
+        "title": "mutationInput_post_basket",
         "type": "object",
       },
       "mutation_post_basket_oneOf_0_products_items": Object {
@@ -418,7 +435,7 @@ type LocationModel {
 }
 
 type Mutation {
-  post_basket: [post_basket_response]
+  post_basket(input: String): [post_basket_response]
 }
 
 union post_basket_response = BasketResponse | ApiError

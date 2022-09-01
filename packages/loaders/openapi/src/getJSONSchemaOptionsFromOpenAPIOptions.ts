@@ -299,7 +299,16 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
             oneOf: [],
           };
 
-          const allMimeTypes = Object.keys(responseObj.content);
+          let allMimeTypes: string[] = [];
+          if (typeof operationHeaders === 'object') {
+            const acceptFromOperationHeader = operationHeaders.accept || operationHeaders.Accept;
+            if (acceptFromOperationHeader) {
+              allMimeTypes = [acceptFromOperationHeader];
+            }
+          }
+          if (allMimeTypes.length === 0) {
+            allMimeTypes = Object.keys(responseObj.content) as string[];
+          }
           const jsonLikeMimeTypes = allMimeTypes.filter(c => c !== '*/*' && c.toString().includes('json'));
           const mimeTypes = jsonLikeMimeTypes.length > 0 ? jsonLikeMimeTypes : allMimeTypes;
 
