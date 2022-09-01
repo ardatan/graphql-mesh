@@ -1,5 +1,46 @@
 # @graphql-mesh/json-schema
 
+## 0.35.0
+
+### Minor Changes
+
+- [#4378](https://github.com/Urigo/graphql-mesh/pull/4378) [`5742f4598`](https://github.com/Urigo/graphql-mesh/commit/5742f4598fe32bbbdb78b65ea8d6e1e4723308aa) Thanks [@ardatan](https://github.com/ardatan)! - If an object type has a discriminator, it becomes an interface type and any other allOf references with that implements that interface
+
+- [#4369](https://github.com/Urigo/graphql-mesh/pull/4369) [`06904b29d`](https://github.com/Urigo/graphql-mesh/commit/06904b29d36cbad1d604fff5e6558d248570e78b) Thanks [@gilgardosh](https://github.com/gilgardosh)! - Support non-string link parameters
+
+- [#4369](https://github.com/Urigo/graphql-mesh/pull/4369) [`06904b29d`](https://github.com/Urigo/graphql-mesh/commit/06904b29d36cbad1d604fff5e6558d248570e78b) Thanks [@gilgardosh](https://github.com/gilgardosh)! - If you pass a function to operationHeaders, it takes the operation config as second parameter including path, method and other details about the request
+
+- [#4376](https://github.com/Urigo/graphql-mesh/pull/4376) [`3473a2686`](https://github.com/Urigo/graphql-mesh/commit/3473a2686284f824b46af823ff4be42ae5c008f8) Thanks [@ardatan](https://github.com/ardatan)! - Support links on non-object fields
+
+- [#4369](https://github.com/Urigo/graphql-mesh/pull/4369) [`06904b29d`](https://github.com/Urigo/graphql-mesh/commit/06904b29d36cbad1d604fff5e6558d248570e78b) Thanks [@gilgardosh](https://github.com/gilgardosh)! - Introduce "destructObject" in query stringify options to spread the parameter content into the query parameters in order to support OAS explode: true behavior with query parameters that are objects
+
+- [#4404](https://github.com/Urigo/graphql-mesh/pull/4404) [`d87907736`](https://github.com/Urigo/graphql-mesh/commit/d87907736588520628acb32d9a83e3d39dba7b2f) Thanks [@ardatan](https://github.com/ardatan)! - New `onFetch` hook!
+
+- [#4375](https://github.com/Urigo/graphql-mesh/pull/4375) [`0b3517539`](https://github.com/Urigo/graphql-mesh/commit/0b3517539024b1ae63a046c8ba6bedfb111a7395) Thanks [@ardatan](https://github.com/ardatan)! - `multipart/form-data` and **File Uploads** support (`type: string`, `format: binary`)
+
+  If there is `type: string` and `format: binary` definitions in a schema type definition, it is considered as `File` scalar type and resolved as **WHATWG** [`File`](https://developer.mozilla.org/en-US/docs/Web/API/File) object.
+  When the request content-type is `multipart/form-data`, the handler creates a **WHATWG** [`FormData`](https://developer.mozilla.org/en-US/docs/Web/API/File) object and puts the input arguments in it.
+
+- [#4379](https://github.com/Urigo/graphql-mesh/pull/4379) [`7f0d02686`](https://github.com/Urigo/graphql-mesh/commit/7f0d026868b55e011d26fe41ecbb5173e9d195ed) Thanks [@ardatan](https://github.com/ardatan)! - Support readOnly and writeOnly. Now the fields flagged as writeOnly are not included in object types while writeOnly ones are not included in the input types, too.
+
+### Patch Changes
+
+- [#4380](https://github.com/Urigo/graphql-mesh/pull/4380) [`e69462cac`](https://github.com/Urigo/graphql-mesh/commit/e69462cac667c4ffb2d9ba35adeef15264d263fd) Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
+
+  - Updated dependency [`@graphql-tools/utils@8.10.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.10.1) (from `8.10.0`, in `dependencies`)
+
+- [#4389](https://github.com/Urigo/graphql-mesh/pull/4389) [`12ae4469a`](https://github.com/Urigo/graphql-mesh/commit/12ae4469aa89d613bfd36a87579adc1ae62c4a1f) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@graphql-tools/utils@8.10.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.10.1) (from `8.10.0`, in `dependencies`)
+
+- Updated dependencies [[`e69462cac`](https://github.com/Urigo/graphql-mesh/commit/e69462cac667c4ffb2d9ba35adeef15264d263fd), [`12ae4469a`](https://github.com/Urigo/graphql-mesh/commit/12ae4469aa89d613bfd36a87579adc1ae62c4a1f), [`e69462cac`](https://github.com/Urigo/graphql-mesh/commit/e69462cac667c4ffb2d9ba35adeef15264d263fd), [`12ae4469a`](https://github.com/Urigo/graphql-mesh/commit/12ae4469aa89d613bfd36a87579adc1ae62c4a1f), [`e69462cac`](https://github.com/Urigo/graphql-mesh/commit/e69462cac667c4ffb2d9ba35adeef15264d263fd), [`12ae4469a`](https://github.com/Urigo/graphql-mesh/commit/12ae4469aa89d613bfd36a87579adc1ae62c4a1f), [`15f315959`](https://github.com/Urigo/graphql-mesh/commit/15f315959f4eb70327e3df4c97fa081b75021f5f), [`e69462cac`](https://github.com/Urigo/graphql-mesh/commit/e69462cac667c4ffb2d9ba35adeef15264d263fd), [`12ae4469a`](https://github.com/Urigo/graphql-mesh/commit/12ae4469aa89d613bfd36a87579adc1ae62c4a1f), [`e69462cac`](https://github.com/Urigo/graphql-mesh/commit/e69462cac667c4ffb2d9ba35adeef15264d263fd), [`12ae4469a`](https://github.com/Urigo/graphql-mesh/commit/12ae4469aa89d613bfd36a87579adc1ae62c4a1f), [`5742f4598`](https://github.com/Urigo/graphql-mesh/commit/5742f4598fe32bbbdb78b65ea8d6e1e4723308aa), [`06904b29d`](https://github.com/Urigo/graphql-mesh/commit/06904b29d36cbad1d604fff5e6558d248570e78b), [`06904b29d`](https://github.com/Urigo/graphql-mesh/commit/06904b29d36cbad1d604fff5e6558d248570e78b), [`3473a2686`](https://github.com/Urigo/graphql-mesh/commit/3473a2686284f824b46af823ff4be42ae5c008f8), [`df37c40f4`](https://github.com/Urigo/graphql-mesh/commit/df37c40f47c6c53949f5d5f71e062c09fe5e1bd0), [`30bac0246`](https://github.com/Urigo/graphql-mesh/commit/30bac0246d4d8e58aaee2011c1178b4334c42a88), [`30bac0246`](https://github.com/Urigo/graphql-mesh/commit/30bac0246d4d8e58aaee2011c1178b4334c42a88), [`e69462cac`](https://github.com/Urigo/graphql-mesh/commit/e69462cac667c4ffb2d9ba35adeef15264d263fd), [`12ae4469a`](https://github.com/Urigo/graphql-mesh/commit/12ae4469aa89d613bfd36a87579adc1ae62c4a1f), [`30bac0246`](https://github.com/Urigo/graphql-mesh/commit/30bac0246d4d8e58aaee2011c1178b4334c42a88), [`06904b29d`](https://github.com/Urigo/graphql-mesh/commit/06904b29d36cbad1d604fff5e6558d248570e78b), [`d87907736`](https://github.com/Urigo/graphql-mesh/commit/d87907736588520628acb32d9a83e3d39dba7b2f), [`0b3517539`](https://github.com/Urigo/graphql-mesh/commit/0b3517539024b1ae63a046c8ba6bedfb111a7395), [`7a4023a2c`](https://github.com/Urigo/graphql-mesh/commit/7a4023a2cac2dacc8e78e10dabee65427b9a5e54), [`7f0d02686`](https://github.com/Urigo/graphql-mesh/commit/7f0d026868b55e011d26fe41ecbb5173e9d195ed), [`15f315959`](https://github.com/Urigo/graphql-mesh/commit/15f315959f4eb70327e3df4c97fa081b75021f5f)]:
+  - @graphql-mesh/cross-helpers@0.2.3
+  - @graphql-mesh/store@0.8.33
+  - @graphql-mesh/types@0.81.0
+  - @graphql-mesh/utils@0.41.0
+  - @omnigraph/json-schema@0.32.0
+  - json-machete@0.14.0
+
 ## 0.34.1
 
 ### Patch Changes
@@ -216,11 +257,11 @@
 
   ```ts
   export default function myOperationHeaders({ context }: ResolverData) {
-    const someToken = context.request.headers.get("some-token");
-    const anotherToken = await someLogicThatReturnsAnotherToken(someToken);
+    const someToken = context.request.headers.get('some-token')
+    const anotherToken = await someLogicThatReturnsAnotherToken(someToken)
     return {
-      "x-bar-token": anotherToken
-    };
+      'x-bar-token': anotherToken
+    }
   }
   ```
 
