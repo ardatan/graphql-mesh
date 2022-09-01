@@ -11,6 +11,7 @@ import {
   MeshFetch,
   MeshPlugin,
   OnFetchHookDone,
+  OnDelegateHook,
 } from '@graphql-mesh/types';
 
 import { MESH_CONTEXT_SYMBOL } from './constants';
@@ -214,7 +215,13 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
   const inContextSDKPlugin = useExtendContext(() => {
     if (!inContextSDK$) {
-      inContextSDK$ = getInContextSDK(finalSchema, rawSources, logger);
+      const onDelegateHooks: OnDelegateHook<any>[] = [];
+      for (const plugin of initialPluginList) {
+        if (plugin?.onDelegate != null) {
+          onDelegateHooks.push(plugin.onDelegate);
+        }
+      }
+      inContextSDK$ = getInContextSDK(finalSchema, rawSources, logger, onDelegateHooks);
     }
     return inContextSDK$;
   });

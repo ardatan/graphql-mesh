@@ -2,12 +2,13 @@
 import { IResolvers, Executor } from '@graphql-tools/utils';
 import { GraphQLSchema, GraphQLResolveInfo, DocumentNode, SelectionSetNode } from 'graphql';
 import * as YamlConfig from './config';
-import { Transform, MergedTypeConfig, SubschemaConfig } from '@graphql-tools/delegate';
+import { Transform, MergedTypeConfig, SubschemaConfig, IDelegateToSchemaOptions } from '@graphql-tools/delegate';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { MeshStore } from '@graphql-mesh/store';
 import configSchema from './config-schema.json';
 import type { Plugin } from '@envelop/core';
 import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
+import { BatchDelegateOptions } from '@graphql-tools/batch-delegate';
 
 export const jsonSchema: any = configSchema;
 
@@ -128,8 +129,27 @@ export type MeshPluginOptions<TConfig> = TConfig & {
 
 export type MeshPluginFactory<TConfig> = (options: MeshPluginOptions<TConfig>) => Plugin;
 
+export type OnDelegateHookPayload<TContext> = Partial<BatchDelegateOptions<TContext>> &
+  Partial<IDelegateToSchemaOptions<TContext>> & {
+    sourceName: string;
+    typeName: string;
+    fieldName: string;
+  };
+
+export type OnDelegateHook<TContext> = (
+  payload: OnDelegateHookPayload<TContext>
+) => PromiseOrValue<OnDelegateHookDone | void>;
+
+export type OnDelegateHookDonePayload = {
+  result: any;
+  setResult: (result: any) => void;
+};
+
+export type OnDelegateHookDone = (payload: OnDelegateHookDonePayload) => PromiseOrValue<void>;
+
 export type MeshPlugin<TContext> = Plugin<TContext> & {
   onFetch?: OnFetchHook<TContext>;
+  onDelegate?: OnDelegateHook<TContext>;
 };
 
 export type MeshFetch = (

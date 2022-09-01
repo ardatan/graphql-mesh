@@ -1,4 +1,11 @@
-import { Logger, RawSourceOutput, SelectionSetParam, SelectionSetParamOrFactory } from '@graphql-mesh/types';
+import {
+  Logger,
+  OnDelegateHook,
+  OnDelegateHookDone,
+  RawSourceOutput,
+  SelectionSetParam,
+  SelectionSetParamOrFactory,
+} from '@graphql-mesh/types';
 import { printWithCache } from '@graphql-mesh/utils';
 import { BatchDelegateOptions, batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import { SubschemaConfig, StitchingInfo, IDelegateToSchemaOptions, delegateToSchema } from '@graphql-tools/delegate';
@@ -16,7 +23,12 @@ import {
 } from 'graphql';
 import { MESH_API_CONTEXT_SYMBOL } from './constants';
 
-export async function getInContextSDK(unifiedSchema: GraphQLSchema, rawSources: RawSourceOutput[], logger: Logger) {
+export async function getInContextSDK(
+  unifiedSchema: GraphQLSchema,
+  rawSources: RawSourceOutput[],
+  logger: Logger,
+  onDelegateHooks: OnDelegateHook<any>[]
+) {
   const inContextSDK: Record<string, any> = {};
   const sourceMap = unifiedSchema.extensions.sourceMap as Map<RawSourceOutput, GraphQLSchema>;
   for (const rawSource of rawSources) {
@@ -58,7 +70,7 @@ export async function getInContextSDK(unifiedSchema: GraphQLSchema, rawSources: 
           const inContextSdkLogger = rawSourceLogger.child(`InContextSDK.${rootType.name}.${fieldName}`);
           const namedReturnType = getNamedType(rootTypeField.type);
           const shouldHaveSelectionSet = !isLeafType(namedReturnType);
-          rawSourceContext[rootType.name][fieldName] = ({
+          rawSourceContext[rootType.name][fieldName] = async ({
             root,
             args,
             context,
@@ -169,7 +181,28 @@ export async function getInContextSDK(unifiedSchema: GraphQLSchema, rawSources: 
                 const wrapQueryTransform = new WrapQuery(path, selectionSetFactory, identical);
                 batchDelegationOptions.transforms = [wrapQueryTransform as any];
               }
-              return batchDelegateToSchema(batchDelegationOptions);
+              const onDelegateHookDones: OnDelegateHookDone[] = [];
+              for (const onDelegateHook of onDelegateHooks) {
+                const onDelegateDone = await onDelegateHook({
+                  ...batchDelegationOptions,
+                  sourceName: rawSource.name,
+                  typeName: rootType.name,
+                  fieldName,
+                });
+                if (onDelegateDone) {
+                  onDelegateHookDones.push(onDelegateDone);
+                }
+              }
+              let result = await batchDelegateToSchema(batchDelegationOptions);
+              for (const onDelegateHookDone of onDelegateHookDones) {
+                await onDelegateHookDone({
+                  result,
+                  setResult(newResult) {
+                    result = newResult;
+                  },
+                });
+              }
+              return result;
             } else {
               const regularDelegateOptions: IDelegateToSchemaOptions = {
                 ...commonDelegateOptions,
@@ -181,7 +214,28 @@ export async function getInContextSDK(unifiedSchema: GraphQLSchema, rawSources: 
                 const wrapQueryTransform = new WrapQuery(path, selectionSetFactory, valuesFromResults || identical);
                 regularDelegateOptions.transforms = [wrapQueryTransform as any];
               }
-              return delegateToSchema(regularDelegateOptions);
+              const onDelegateHookDones: OnDelegateHookDone[] = [];
+              for (const onDelegateHook of onDelegateHooks) {
+                const onDelegateDone = await onDelegateHook({
+                  ...regularDelegateOptions,
+                  sourceName: rawSource.name,
+                  typeName: rootType.name,
+                  fieldName,
+                });
+                if (onDelegateDone) {
+                  onDelegateHookDones.push(onDelegateDone);
+                }
+              }
+              let result = await delegateToSchema(regularDelegateOptions);
+              for (const onDelegateHookDone of onDelegateHookDones) {
+                await onDelegateHookDone({
+                  result,
+                  setResult(newResult) {
+                    result = newResult;
+                  },
+                });
+              }
+              return result;
             }
           };
         }
