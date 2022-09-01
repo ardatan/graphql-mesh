@@ -170,7 +170,7 @@ export default class FederationTransform implements MeshTransform {
         if (!isObjectType(type)) {
           throw new Error(`Type "${objectName}" is not an object type and can't have a resolveReference function`);
         }
-        type.resolveObject = currentFederationConfig.resolveReference;
+        (type as any).resolveObject = currentFederationConfig.resolveReference;
       }
     });
 

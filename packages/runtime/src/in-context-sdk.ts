@@ -96,10 +96,6 @@ export async function getInContextSDK(
                 },
               },
               variableValues: {},
-              cacheControl: {
-                setCacheHint: () => {},
-                cacheHint: {},
-              },
             },
             selectionSet,
             key,
