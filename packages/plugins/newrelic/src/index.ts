@@ -24,7 +24,7 @@ export default function useMeshNewrelic(options: MeshPluginOptions<YamlConfig.Ne
 
   const logger = instrumentationApi.logger.child({ component: EnvelopAttributeName });
 
-  const segmentByContext = new WeakMap<any, any>();
+  const segmentByRequestContext = new WeakMap<any, any>();
 
   return {
     onPluginInit({ addPlugin }) {
@@ -43,11 +43,13 @@ export default function useMeshNewrelic(options: MeshPluginOptions<YamlConfig.Ne
     },
     onExecute({ args: { contextValue } }) {
       const operationSegment = instrumentationApi.getActiveSegment() || instrumentationApi.getSegment();
-      segmentByContext.set(contextValue, operationSegment);
+      segmentByRequestContext.set(contextValue.request || contextValue, operationSegment);
     },
     onDelegate({ sourceName, fieldName, args, context, key }) {
       const parentSegment =
-        instrumentationApi.getActiveSegment() || instrumentationApi.getSegment() || segmentByContext.get(context);
+        instrumentationApi.getActiveSegment() ||
+        instrumentationApi.getSegment() ||
+        segmentByRequestContext.get(context.request || context);
       const transaction = parentSegment?.transaction;
       if (transaction != null) {
         const transactionNameState = transaction.nameState;
@@ -74,7 +76,9 @@ export default function useMeshNewrelic(options: MeshPluginOptions<YamlConfig.Ne
     onFetch({ url, options, context }) {
       const agent = instrumentationApi?.agent;
       const parentSegment =
-        instrumentationApi.getActiveSegment() || instrumentationApi.getSegment() || segmentByContext.get(context);
+        instrumentationApi.getActiveSegment() ||
+        instrumentationApi.getSegment() ||
+        segmentByRequestContext.get(context.request || context);
       const transaction = parentSegment?.transaction;
       if (transaction != null) {
         const parsedUrl = new URL(url);
