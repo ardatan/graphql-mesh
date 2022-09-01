@@ -1,0 +1,21 @@
+extend type Plugin {
+  prometheus: PrometheusConfig
+}
+
+type PrometheusConfig @md {
+  requestCount: Boolean
+  requestTotalDuration: Boolean
+  requestSummary: Boolean
+  parse: Boolean
+  validate: Boolean
+  contextBuilding: Boolean
+  execute: Boolean
+  errors: Boolean
+  resolvers: Boolean
+  resolversWhiteList: [String]
+  deprecatedFields: Boolean
+  delegation: Boolean
+  fetch: Boolean
+  skipIntrospection: Boolean
+  registry: String
+}

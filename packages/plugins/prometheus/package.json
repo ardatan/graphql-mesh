@@ -1,0 +1,44 @@
+{
+  "name": "@graphql-mesh/plugin-prometheus",
+  "version": "0.0.0",
+  "sideEffects": false,
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "typings": "dist/index.d.ts",
+  "typescript": {
+    "definition": "dist/index.d.ts"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./*": {
+      "require": "./dist/*.js",
+      "import": "./dist/*.mjs"
+    }
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/plugins/prometheus"
+  },
+  "peerDependencies": {
+    "graphql": "*",
+    "prom-client": "^13 || ^14.0.0"
+  },
+  "dependencies": {
+    "@envelop/prometheus": "6.6.0",
+    "@graphql-mesh/utils": "0.41.0",
+    "@graphql-mesh/types": "0.81.0",
+    "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "prom-client": "14.0.1"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  }
+}

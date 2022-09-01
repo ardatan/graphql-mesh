@@ -1733,6 +1733,7 @@ export interface Plugin {
   liveQuery?: LiveQueryConfig;
   mock?: MockingConfig;
   newrelic?: NewrelicConfig;
+  prometheus?: PrometheusConfig;
   rateLimit?: RateLimitPluginConfig;
   responseCache?: ResponseCacheConfig;
   [k: string]: any;
@@ -1843,6 +1844,23 @@ export interface NewrelicConfig {
   includeResolverArgs?: boolean;
   rootFieldsNaming?: boolean;
   extractOperationName?: string;
+}
+export interface PrometheusConfig {
+  requestCount?: boolean;
+  requestTotalDuration?: boolean;
+  requestSummary?: boolean;
+  parse?: boolean;
+  validate?: boolean;
+  contextBuilding?: boolean;
+  execute?: boolean;
+  errors?: boolean;
+  resolvers?: boolean;
+  resolversWhiteList?: string[];
+  deprecatedFields?: boolean;
+  delegation?: boolean;
+  fetch?: boolean;
+  skipIntrospection?: boolean;
+  registry?: string;
 }
 /**
  * RateLimit plugin

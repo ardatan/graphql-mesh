@@ -513,6 +513,9 @@
         "newrelic": {
           "$ref": "#/definitions/NewrelicConfig"
         },
+        "prometheus": {
+          "$ref": "#/definitions/PrometheusConfig"
+        },
         "rateLimit": {
           "$ref": "#/definitions/RateLimitPluginConfig",
           "description": "RateLimit plugin"
@@ -2131,6 +2134,62 @@
           "type": "boolean"
         },
         "extractOperationName": {
+          "type": "string"
+        }
+      }
+    },
+    "PrometheusConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "PrometheusConfig",
+      "properties": {
+        "requestCount": {
+          "type": "boolean"
+        },
+        "requestTotalDuration": {
+          "type": "boolean"
+        },
+        "requestSummary": {
+          "type": "boolean"
+        },
+        "parse": {
+          "type": "boolean"
+        },
+        "validate": {
+          "type": "boolean"
+        },
+        "contextBuilding": {
+          "type": "boolean"
+        },
+        "execute": {
+          "type": "boolean"
+        },
+        "errors": {
+          "type": "boolean"
+        },
+        "resolvers": {
+          "type": "boolean"
+        },
+        "resolversWhiteList": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        },
+        "deprecatedFields": {
+          "type": "boolean"
+        },
+        "delegation": {
+          "type": "boolean"
+        },
+        "fetch": {
+          "type": "boolean"
+        },
+        "skipIntrospection": {
+          "type": "boolean"
+        },
+        "registry": {
           "type": "string"
         }
       }
