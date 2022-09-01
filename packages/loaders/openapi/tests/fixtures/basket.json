@@ -173,6 +173,9 @@
         "properties": {
           "name": {
             "type": "string"
+          },
+          "more": {
+            "type": ["string", "number", "boolean", "integer", "array"]
           }
         }
       },

@@ -65,7 +65,7 @@ export async function healJSONSchema(
                 schemaByTitle.set(subSchema.title, subSchema);
               }
             }
-          } else if (Object.keys(subSchema).length === 1 && subSchema.type) {
+          } else if (Object.keys(subSchema).length === 1 && subSchema.type && !Array.isArray(subSchema.type)) {
             return subSchema;
           }
           const keys = Object.keys(subSchema).filter(key => key !== 'readOnly' && key !== 'writeOnly');

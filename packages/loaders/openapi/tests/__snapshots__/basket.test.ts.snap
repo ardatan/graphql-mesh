@@ -191,6 +191,9 @@ Object {
       "Attribute": Object {
         "$resolvedRef": "/components/schemas/Attribute",
         "properties": Object {
+          "more": Object {
+            "$ref": "#/definitions/query_customers_by_customerId_attributes_items_more",
+          },
           "name": Object {
             "type": "string",
           },
@@ -368,6 +371,16 @@ Object {
         "title": "query_Locations_oneOf_0_items_email",
         "type": "string",
       },
+      "query_customers_by_customerId_attributes_items_more": Object {
+        "title": "query_customers_by_customerId_attributes_items_more",
+        "type": Array [
+          "string",
+          "number",
+          "boolean",
+          "integer",
+          "array",
+        ],
+      },
     },
   },
 }
@@ -392,7 +405,10 @@ type CustomerAttributes {
 
 type Attribute {
   name: String!
+  more: query_customers_by_customerId_attributes_items_more_Input
 }
+
+scalar query_customers_by_customerId_attributes_items_more_Input
 
 union Locations_200_response = LocationModel
 
