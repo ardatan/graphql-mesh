@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/raml",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -28,10 +28,10 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/store": "0.8.33",
-    "@graphql-mesh/types": "0.81.0",
-    "@omnigraph/raml": "0.7.6",
-    "@graphql-mesh/utils": "0.41.0",
+    "@graphql-mesh/store": "0.8.34",
+    "@graphql-mesh/types": "0.82.0",
+    "@omnigraph/raml": "0.7.7",
+    "@graphql-mesh/utils": "0.41.1",
     "tslib": "^2.4.0"
   },
   "publishConfig": {
