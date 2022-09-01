@@ -6,30 +6,23 @@ import recordExternal from 'newrelic/lib/metrics/recorders/http_external';
 import NAMES from 'newrelic/lib/metrics/names';
 import cat from 'newrelic/lib/util/cat';
 import { getHeadersObj } from '@graphql-mesh/utils';
+import { shim as instrumentationApi } from 'newrelic';
 
-enum AttributeName {
-  COMPONENT_NAME = 'Envelop_NewRelic_Plugin',
-}
+const EnvelopAttributeName = 'Envelop_NewRelic_Plugin';
 
 export default function useMeshNewrelic(options: MeshPluginOptions<YamlConfig.NewrelicConfig>): MeshPlugin<any> {
-  const instrumentationApi$ = import('newrelic')
-    .then(m => m.default || m)
-    .then(({ shim }) => {
-      if (!shim?.agent) {
-        throw new Error(
-          'Agent unavailable. Please check your New Relic Agent configuration and ensure New Relic is enabled.'
-        );
-      }
-      shim.agent.metrics
-        .getOrCreateMetric(`Supportability/ExternalModules/${AttributeName.COMPONENT_NAME}`)
-        .incrementCallCount();
-      return shim;
-    });
-  const logger$ = instrumentationApi$.then(({ logger }) => {
-    const childLogger = logger.child({ component: AttributeName.COMPONENT_NAME });
-    childLogger.info(`${AttributeName.COMPONENT_NAME} registered`);
-    return childLogger;
-  });
+  if (!instrumentationApi?.agent) {
+    options.logger.error(
+      'Agent unavailable. Please check your New Relic Agent configuration and ensure New Relic is enabled.'
+    );
+    return {};
+  }
+
+  instrumentationApi.agent.metrics
+    .getOrCreateMetric(`Supportability/ExternalModules/${EnvelopAttributeName}`)
+    .incrementCallCount();
+
+  const logger = instrumentationApi.logger.child({ component: EnvelopAttributeName });
 
   const segmentByContext = new WeakMap<any, any>();
 
@@ -48,13 +41,11 @@ export default function useMeshNewrelic(options: MeshPluginOptions<YamlConfig.Ne
         })
       );
     },
-    async onExecute({ args: { contextValue } }) {
-      const instrumentationApi = await instrumentationApi$;
+    onExecute({ args: { contextValue } }) {
       const operationSegment = instrumentationApi.getActiveSegment() || instrumentationApi.getSegment();
       segmentByContext.set(contextValue, operationSegment);
     },
-    async onDelegate({ sourceName, fieldName, args, context, key }) {
-      const instrumentationApi = await instrumentationApi$;
+    onDelegate({ sourceName, fieldName, args, context, key }) {
       const parentSegment =
         instrumentationApi.getActiveSegment() || instrumentationApi.getSegment() || segmentByContext.get(context);
       const transaction = parentSegment?.transaction;
@@ -80,9 +71,7 @@ export default function useMeshNewrelic(options: MeshPluginOptions<YamlConfig.Ne
       }
       return undefined;
     },
-    async onFetch({ url, options, context }) {
-      const instrumentationApi = await instrumentationApi$;
-      const logger = await logger$;
+    onFetch({ url, options, context }) {
       const agent = instrumentationApi?.agent;
       const parentSegment =
         instrumentationApi.getActiveSegment() || instrumentationApi.getSegment() || segmentByContext.get(context);
