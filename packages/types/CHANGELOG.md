@@ -1,5 +1,18 @@
 # @graphql-mesh/types
 
+## 0.82.0
+
+### Minor Changes
+
+- [#4411](https://github.com/Urigo/graphql-mesh/pull/4411) [`ca7994fad`](https://github.com/Urigo/graphql-mesh/commit/ca7994fad35d8d88e66117cb166e329ccda09bf9) Thanks [@ardatan](https://github.com/ardatan)! - New Prometheus Plugin
+
+- [#4411](https://github.com/Urigo/graphql-mesh/pull/4411) [`ca7994fad`](https://github.com/Urigo/graphql-mesh/commit/ca7994fad35d8d88e66117cb166e329ccda09bf9) Thanks [@ardatan](https://github.com/ardatan)! - Plugin factories now can return promises
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.8.34
+
 ## 0.81.0
 
 ### Minor Changes

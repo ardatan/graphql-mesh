@@ -1,5 +1,21 @@
 # json-machete
 
+## 0.14.1
+
+### Patch Changes
+
+- [#4412](https://github.com/Urigo/graphql-mesh/pull/4412) [`7e9482723`](https://github.com/Urigo/graphql-mesh/commit/7e94827235f4abb81d7434d26c55d4fd9a07bdd5) Thanks [@ardatan](https://github.com/ardatan)! - Accept an array for "type" property in JSON Schema because it was broken and causing a bug that creates an invalid `undefined` scalar type.
+
+  ```json
+  {
+    "type": ["string", "number", "boolean", "integer", "array"]
+  }
+  ```
+
+- Updated dependencies [[`ca7994fad`](https://github.com/Urigo/graphql-mesh/commit/ca7994fad35d8d88e66117cb166e329ccda09bf9), [`ca7994fad`](https://github.com/Urigo/graphql-mesh/commit/ca7994fad35d8d88e66117cb166e329ccda09bf9)]:
+  - @graphql-mesh/types@0.82.0
+  - @graphql-mesh/utils@0.41.1
+
 ## 0.14.0
 
 ### Minor Changes
