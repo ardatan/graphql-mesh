@@ -49,7 +49,7 @@ export default function useMeshNewrelic(options: MeshPluginOptions<YamlConfig.Ne
       const parentSegment =
         instrumentationApi.getActiveSegment() ||
         instrumentationApi.getSegment() ||
-        segmentByRequestContext.get(context || context.request);
+        segmentByRequestContext.get(context.request || context);
       const transaction = parentSegment?.transaction;
       if (transaction != null) {
         const transactionNameState = transaction.nameState;
@@ -78,7 +78,7 @@ export default function useMeshNewrelic(options: MeshPluginOptions<YamlConfig.Ne
       const parentSegment =
         instrumentationApi.getActiveSegment() ||
         instrumentationApi.getSegment() ||
-        segmentByRequestContext.get(context || context.request);
+        segmentByRequestContext.get(context.request || context);
       const transaction = parentSegment?.transaction;
       if (transaction != null) {
         const parsedUrl = new URL(url);
