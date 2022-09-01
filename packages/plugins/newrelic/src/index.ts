@@ -1,4 +1,3 @@
-import { Path } from '@envelop/core';
 import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
 import { useNewRelic } from '@envelop/newrelic';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
@@ -54,31 +53,47 @@ export default function useMeshNewrelic(options: MeshPluginOptions<YamlConfig.Ne
       const operationSegment = instrumentationApi.getActiveSegment() || instrumentationApi.getSegment();
       segmentByContext.set(contextValue, operationSegment);
     },
-    async onFetch({ url, options, context, info }) {
+    async onDelegate({ sourceName, fieldName, args, context, key }) {
       const instrumentationApi = await instrumentationApi$;
-      const logger = await logger$;
-      const agent = instrumentationApi?.agent;
-      const operationSegment = segmentByContext.get(context);
-      const transaction = operationSegment?.transaction;
+      const parentSegment =
+        instrumentationApi.getActiveSegment() || instrumentationApi.getSegment() || segmentByContext.get(context);
+      const transaction = parentSegment?.transaction;
       if (transaction != null) {
         const transactionNameState = transaction.nameState;
         const delimiter = transactionNameState?.delimiter || '/';
-        const formattedPath = flattenPath(info.path, delimiter);
         const sourceSegment = instrumentationApi.createSegment(
-          `source${delimiter}${(info as any).sourceName || 'unknown'}${delimiter}${formattedPath}`,
+          `source${delimiter}${sourceName || 'unknown'}${delimiter}${fieldName}`,
           null,
-          operationSegment
+          parentSegment
         );
-        if (!sourceSegment) {
-          logger.trace('Source segment was not created (%s).', formattedPath);
-          return undefined;
+        if (args) {
+          sourceSegment.addAttribute('args', JSON.stringify(args));
         }
+        if (key) {
+          sourceSegment.addAttribute('key', JSON.stringify(key));
+        }
+        sourceSegment.start();
+        return ({ result }) => {
+          sourceSegment.addAttribute('result', JSON.stringify(result));
+          sourceSegment.end();
+        };
+      }
+      return undefined;
+    },
+    async onFetch({ url, options, context }) {
+      const instrumentationApi = await instrumentationApi$;
+      const logger = await logger$;
+      const agent = instrumentationApi?.agent;
+      const parentSegment =
+        instrumentationApi.getActiveSegment() || instrumentationApi.getSegment() || segmentByContext.get(context);
+      const transaction = parentSegment?.transaction;
+      if (transaction != null) {
         const parsedUrl = new URL(url);
         const name = NAMES.EXTERNAL.PREFIX + parsedUrl.host + parsedUrl.pathname;
         const httpDetailSegment = instrumentationApi.createSegment(
           name,
           recordExternal(parsedUrl.host, 'graphql-mesh'),
-          sourceSegment
+          parentSegment
         );
         if (httpDetailSegment) {
           httpDetailSegment.start();
@@ -101,13 +116,20 @@ export default function useMeshNewrelic(options: MeshPluginOptions<YamlConfig.Ne
           for (const key in outboundHeaders) {
             options.headers[key] = outboundHeaders[key];
           }
+          for (const key in options.headers) {
+            httpDetailSegment.addAttribute(`request.headers.${key}`, options.headers[key]);
+          }
         }
         return ({ response }) => {
           httpDetailSegment.addAttribute('http.statusCode', response.status);
           httpDetailSegment.addAttribute('http.statusText', response.statusText);
+          const responseHeadersObj = getHeadersObj(response.headers);
+          for (const key in responseHeadersObj) {
+            httpDetailSegment.addAttribute(`response.headers.${key}`, responseHeadersObj[key]);
+          }
           if (agent.config.cross_application_tracer.enabled && !agent.config.distributed_tracing.enabled) {
             try {
-              const { appData } = cat.extractCatHeaders(getHeadersObj(response.headers));
+              const { appData } = cat.extractCatHeaders(responseHeadersObj);
               const decodedAppData = cat.parseAppData(agent.config, appData);
               const attrs = httpDetailSegment.getAttributes();
               const url = new URL(attrs.url);
@@ -116,25 +138,10 @@ export default function useMeshNewrelic(options: MeshPluginOptions<YamlConfig.Ne
               logger.warn(err, 'Cannot add CAT data to segment');
             }
           }
-          sourceSegment.end();
           httpDetailSegment.end();
         };
       }
       return undefined;
     },
   };
-}
-
-function flattenPath(fieldPath: Path, delimiter = '/') {
-  const pathArray = [];
-  let thisPath: Path | undefined = fieldPath;
-
-  while (thisPath) {
-    if (typeof thisPath.key !== 'number') {
-      pathArray.push(thisPath.key);
-    }
-    thisPath = thisPath.prev;
-  }
-
-  return pathArray.reverse().join(delimiter);
 }
