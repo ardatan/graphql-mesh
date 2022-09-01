@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/openapi",
-  "version": "0.14.1",
+  "version": "0.14.2",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",

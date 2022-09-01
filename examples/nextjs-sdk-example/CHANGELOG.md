@@ -1,5 +1,12 @@
 # nextjs-sdk-example
 
+## 0.0.61
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/openapi@0.33.2
+
 ## 0.0.60
 
 ### Patch Changes
