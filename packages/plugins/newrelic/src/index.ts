@@ -50,91 +50,87 @@ export default function useMeshNewrelic(options: MeshPluginOptions<YamlConfig.Ne
         instrumentationApi.getActiveSegment() ||
         instrumentationApi.getSegment() ||
         segmentByRequestContext.get(context.request || context);
-      const transaction = parentSegment?.transaction;
-      if (transaction != null) {
-        const transactionNameState = transaction.nameState;
-        const delimiter = transactionNameState?.delimiter || '/';
-        const sourceSegment = instrumentationApi.createSegment(
-          `source${delimiter}${sourceName || 'unknown'}${delimiter}${fieldName}`,
-          null,
-          parentSegment
-        );
-        if (args) {
-          sourceSegment.addAttribute('args', JSON.stringify(args));
-        }
-        if (key) {
-          sourceSegment.addAttribute('key', JSON.stringify(key));
-        }
-        sourceSegment.start();
-        return ({ result }) => {
-          sourceSegment.addAttribute('result', JSON.stringify(result));
-          sourceSegment.end();
-        };
+      const delimiter = parentSegment?.transaction?.nameState?.delimiter || '/';
+      const sourceSegment = instrumentationApi.createSegment(
+        `source${delimiter}${sourceName || 'unknown'}${delimiter}${fieldName}`,
+        null,
+        parentSegment
+      );
+      if (args) {
+        sourceSegment.addAttribute('args', JSON.stringify(args));
       }
-      return undefined;
+      if (key) {
+        sourceSegment.addAttribute('key', JSON.stringify(key));
+      }
+      sourceSegment.start();
+      return ({ result }) => {
+        sourceSegment.addAttribute('result', JSON.stringify(result));
+        sourceSegment.end();
+      };
     },
     onFetch({ url, options, context }) {
       const agent = instrumentationApi?.agent;
       const parentSegment =
         instrumentationApi.getActiveSegment() ||
         instrumentationApi.getSegment() ||
-        segmentByRequestContext.get(context.request || context);
+        (context ? segmentByRequestContext.get(context.request || context) : undefined);
+      const parsedUrl = new URL(url);
+      const name = NAMES.EXTERNAL.PREFIX + parsedUrl.host + parsedUrl.pathname;
+      const httpDetailSegment = instrumentationApi.createSegment(
+        name,
+        recordExternal(parsedUrl.host, 'graphql-mesh'),
+        parentSegment
+      );
+      if (!httpDetailSegment) {
+        logger.error(`Unable to create segment for external request: ${name}`);
+        return undefined;
+      }
+      httpDetailSegment.start();
+      httpDetailSegment.addAttribute('url', url);
+      parsedUrl.searchParams.forEach((value, key) => {
+        httpDetailSegment.addAttribute(`request.parameters.${key}`, value);
+      });
+      httpDetailSegment.addAttribute('procedure', options.method || 'GET');
       const transaction = parentSegment?.transaction;
-      if (transaction != null) {
-        const parsedUrl = new URL(url);
-        const name = NAMES.EXTERNAL.PREFIX + parsedUrl.host + parsedUrl.pathname;
-        const httpDetailSegment = instrumentationApi.createSegment(
-          name,
-          recordExternal(parsedUrl.host, 'graphql-mesh'),
-          parentSegment
-        );
-        if (httpDetailSegment) {
-          httpDetailSegment.start();
-          httpDetailSegment.addAttribute('url', url);
-          parsedUrl.searchParams.forEach((value, key) => {
-            httpDetailSegment.addAttribute(`request.parameters.${key}`, value);
-          });
-          httpDetailSegment.addAttribute('procedure', options.method || 'GET');
-          const outboundHeaders = Object.create(null);
-          if (agent.config.encoding_key && transaction.syntheticsHeader) {
-            outboundHeaders['x-newrelic-synthetics'] = transaction.syntheticsHeader;
-          }
-          if (agent.config.distributed_tracing.enabled) {
-            transaction.insertDistributedTraceHeaders(outboundHeaders);
-          } else if (agent.config.cross_application_tracer.enabled) {
-            cat.addCatHeaders(agent.config, transaction, outboundHeaders);
-          } else {
-            logger.trace('Both DT and CAT are disabled, not adding headers!');
-          }
-          for (const key in outboundHeaders) {
-            options.headers[key] = outboundHeaders[key];
-          }
-          for (const key in options.headers) {
-            httpDetailSegment.addAttribute(`request.headers.${key}`, options.headers[key]);
+      if (transaction) {
+        const outboundHeaders = Object.create(null);
+        if (agent.config.encoding_key && transaction.syntheticsHeader) {
+          outboundHeaders['x-newrelic-synthetics'] = transaction.syntheticsHeader;
+        }
+        if (agent.config.distributed_tracing.enabled) {
+          transaction.insertDistributedTraceHeaders(outboundHeaders);
+        } else if (agent.config.cross_application_tracer.enabled) {
+          cat.addCatHeaders(agent.config, transaction, outboundHeaders);
+        } else {
+          logger.trace('Both DT and CAT are disabled, not adding headers!');
+        }
+        for (const key in outboundHeaders) {
+          options.headers[key] = outboundHeaders[key];
+        }
+      }
+      for (const key in options.headers) {
+        httpDetailSegment.addAttribute(`request.headers.${key}`, options.headers[key]);
+      }
+      return ({ response }) => {
+        httpDetailSegment.addAttribute('http.statusCode', response.status);
+        httpDetailSegment.addAttribute('http.statusText', response.statusText);
+        const responseHeadersObj = getHeadersObj(response.headers);
+        for (const key in responseHeadersObj) {
+          httpDetailSegment.addAttribute(`response.headers.${key}`, responseHeadersObj[key]);
+        }
+        if (agent.config.cross_application_tracer.enabled && !agent.config.distributed_tracing.enabled) {
+          try {
+            const { appData } = cat.extractCatHeaders(responseHeadersObj);
+            const decodedAppData = cat.parseAppData(agent.config, appData);
+            const attrs = httpDetailSegment.getAttributes();
+            const url = new URL(attrs.url);
+            cat.assignCatToSegment(decodedAppData, httpDetailSegment, url.host);
+          } catch (err) {
+            logger.warn(err, 'Cannot add CAT data to segment');
           }
         }
-        return ({ response }) => {
-          httpDetailSegment.addAttribute('http.statusCode', response.status);
-          httpDetailSegment.addAttribute('http.statusText', response.statusText);
-          const responseHeadersObj = getHeadersObj(response.headers);
-          for (const key in responseHeadersObj) {
-            httpDetailSegment.addAttribute(`response.headers.${key}`, responseHeadersObj[key]);
-          }
-          if (agent.config.cross_application_tracer.enabled && !agent.config.distributed_tracing.enabled) {
-            try {
-              const { appData } = cat.extractCatHeaders(responseHeadersObj);
-              const decodedAppData = cat.parseAppData(agent.config, appData);
-              const attrs = httpDetailSegment.getAttributes();
-              const url = new URL(attrs.url);
-              cat.assignCatToSegment(decodedAppData, httpDetailSegment, url.host);
-            } catch (err) {
-              logger.warn(err, 'Cannot add CAT data to segment');
-            }
-          }
-          httpDetailSegment.end();
-        };
-      }
-      return undefined;
+        httpDetailSegment.end();
+      };
     },
   };
 }
