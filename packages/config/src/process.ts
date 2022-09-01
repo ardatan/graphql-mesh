@@ -300,7 +300,11 @@ export async function processConfig(
             if (options.generateCode) {
               importCodes.push(`import { ${importName} } from ${JSON.stringify(moduleName)};`);
               codes.push(
-                `additionalEnvelopPlugins[${pluginIndex}] = ${importName}(${JSON.stringify(pluginConfig, null, 2)}))`
+                `additionalEnvelopPlugins[${pluginIndex}] = await ${importName}(${JSON.stringify(
+                  pluginConfig,
+                  null,
+                  2
+                )}))`
               );
             }
             return pluginFactory(pluginConfig);
@@ -319,7 +323,7 @@ export async function processConfig(
             if (options.generateCode) {
               importName = pascalCase('use_' + pluginName);
               importCodes.push(`import ${importName} from ${JSON.stringify(moduleName)};`);
-              codes.push(`additionalEnvelopPlugins[${pluginIndex}] = ${importName}({
+              codes.push(`additionalEnvelopPlugins[${pluginIndex}] = await ${importName}({
           ...(${JSON.stringify(pluginConfig, null, 2)}),
           logger: logger.child(${JSON.stringify(pluginName)}),
           cache,
@@ -335,7 +339,11 @@ export async function processConfig(
                 if (options.generateCode) {
                   importCodes.push(`import { ${importName} } from ${JSON.stringify(moduleName)};`);
                   codes.push(
-                    `additionalEnvelopPlugins[${pluginIndex}] = ${importName}(${JSON.stringify(pluginConfig, null, 2)}]`
+                    `additionalEnvelopPlugins[${pluginIndex}] = await ${importName}(${JSON.stringify(
+                      pluginConfig,
+                      null,
+                      2
+                    )}]`
                   );
                 }
               }

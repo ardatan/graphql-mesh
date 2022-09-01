@@ -13,3 +13,4 @@
 * `delegation` (type: `Boolean`)
 * `fetch` (type: `Boolean`)
 * `skipIntrospection` (type: `Boolean`)
+* `registry` (type: `String`)

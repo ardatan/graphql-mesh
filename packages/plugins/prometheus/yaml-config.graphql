@@ -17,4 +17,5 @@ type PrometheusConfig @md {
   delegation: Boolean
   fetch: Boolean
   skipIntrospection: Boolean
+  registry: String
 }

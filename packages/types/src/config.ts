@@ -1860,6 +1860,7 @@ export interface PrometheusConfig {
   delegation?: boolean;
   fetch?: boolean;
   skipIntrospection?: boolean;
+  registry?: string;
 }
 /**
  * RateLimit plugin

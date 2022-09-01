@@ -1,25 +1,38 @@
 import { usePrometheus } from '@envelop/prometheus';
 import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
-import { getHeadersObj } from '@graphql-mesh/utils';
-import { Histogram, register as defaultRegistry } from 'prom-client';
+import { getHeadersObj, loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { Histogram, register as defaultRegistry, Registry } from 'prom-client';
 
-export default function useMeshPrometheus(
+export default async function useMeshPrometheus(
   pluginOptions: MeshPluginOptions<YamlConfig.PrometheusConfig>
-): MeshPlugin<any> {
+): Promise<MeshPlugin<any>> {
+  const registry = pluginOptions.registry
+    ? await loadFromModuleExportExpression<Registry>(pluginOptions.registry, {
+        cwd: pluginOptions.baseDir,
+        importFn: pluginOptions.importFn,
+        defaultExportName: 'default',
+      })
+    : defaultRegistry;
   const fetchHistogram = new Histogram({
     name: 'graphql_mesh_fetch_duration',
     help: 'Time spent on outgoing HTTP calls',
     labelNames: ['url', 'method', 'requestHeaders', 'statusCode', 'statusText', 'responseHeaders'],
-    registers: [defaultRegistry],
+    registers: [registry],
   });
   const delegateHistogram = new Histogram({
     name: 'graphql_mesh_delegate_duration',
     help: 'Time spent on delegate execution',
     labelNames: ['sourceName', 'typeName', 'fieldName', 'args', 'key'],
+    registers: [registry],
   });
   return {
     onPluginInit({ addPlugin }) {
-      addPlugin(usePrometheus(pluginOptions));
+      addPlugin(
+        usePrometheus({
+          ...pluginOptions,
+          registry,
+        })
+      );
     },
     onDelegate({ sourceName, typeName, fieldName, args, key }) {
       if (pluginOptions.delegation !== false) {
