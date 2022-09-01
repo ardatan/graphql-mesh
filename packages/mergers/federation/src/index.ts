@@ -97,6 +97,7 @@ export default class FederationMerger implements MeshMerger {
         operation,
         schema,
         schemaHash,
+        overallCachePolicy: undefined,
       }) as ExecutionResult<TReturn>;
     };
     const id = this.pubsub.subscribe('destroy', async () => {
