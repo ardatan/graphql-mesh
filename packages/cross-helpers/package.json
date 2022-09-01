@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cross-helpers",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Cross Platform Helpers for GraphQL Mesh",
   "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",
   "repository": {

@@ -1,5 +1,13 @@
 # chinook
 
+## 0.5.253
+
+### Patch Changes
+
+- Updated dependencies [[`e69462cac`](https://github.com/Urigo/graphql-mesh/commit/e69462cac667c4ffb2d9ba35adeef15264d263fd), [`5351278f0`](https://github.com/Urigo/graphql-mesh/commit/5351278f0073b27d339c1bbcad410e9520638709), [`12ae4469a`](https://github.com/Urigo/graphql-mesh/commit/12ae4469aa89d613bfd36a87579adc1ae62c4a1f), [`df37c40f4`](https://github.com/Urigo/graphql-mesh/commit/df37c40f47c6c53949f5d5f71e062c09fe5e1bd0), [`3d8d45685`](https://github.com/Urigo/graphql-mesh/commit/3d8d45685741ca132104de7c8a37ac92b407c2f9), [`d87907736`](https://github.com/Urigo/graphql-mesh/commit/d87907736588520628acb32d9a83e3d39dba7b2f)]:
+  - @graphql-mesh/cli@0.77.0
+  - @graphql-mesh/tuql@0.6.0
+
 ## 0.5.252
 
 ### Patch Changes
