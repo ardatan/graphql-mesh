@@ -1,5 +1,11 @@
 # @graphql-mesh/plugin-newrelic
 
+## 0.1.2
+
+### Patch Changes
+
+- [#4414](https://github.com/Urigo/graphql-mesh/pull/4414) [`bea2cd91e`](https://github.com/Urigo/graphql-mesh/commit/bea2cd91e074db0dec777b0383218dab423aa87c) Thanks [@ardatan](https://github.com/ardatan)! - Use Request object to find operationSegment if possible
+
 ## 0.1.1
 
 ### Patch Changes
