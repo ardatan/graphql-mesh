@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/json-schema",
-  "version": "0.35.2",
+  "version": "0.35.3",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -28,7 +28,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "json-machete": "0.14.2",
+    "json-machete": "0.14.3",
     "@graphql-mesh/types": "0.82.1",
     "@graphql-mesh/utils": "0.41.2",
     "@graphql-mesh/store": "0.8.35",
@@ -36,7 +36,7 @@
     "@graphql-tools/utils": "8.10.1",
     "@graphql-mesh/cross-helpers": "0.2.3",
     "graphql-compose": "9.0.8",
-    "@omnigraph/json-schema": "0.32.2",
+    "@omnigraph/json-schema": "0.33.0",
     "tslib": "^2.4.0",
     "@json-schema-tools/meta-schema": "1.6.19"
   },

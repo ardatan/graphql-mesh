@@ -1,5 +1,11 @@
 # @graphql-mesh/grpc
 
+## 0.25.3
+
+### Patch Changes
+
+- [#4423](https://github.com/Urigo/graphql-mesh/pull/4423) [`4ff76b3ee`](https://github.com/Urigo/graphql-mesh/commit/4ff76b3ee644ec2b00d461f8372f9a954a616159) Thanks [@ardatan](https://github.com/ardatan)! - Handle maps as JSON instead of the value type which is an incorrect behavior
+
 ## 0.25.2
 
 ### Patch Changes
