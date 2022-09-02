@@ -65514,6 +65514,11 @@ Defaults to \`false\`.",
         "title": "addAttachment_200_response",
         "type": "array",
       },
+      "addAttachment_request": Object {
+        "format": "binary",
+        "title": "addAttachment_request",
+        "type": "string",
+      },
       "addGadget_response": Object {
         "$comment": "statusCodeOneOfIndexMap:{\\"200\\":0,\\"400\\":1,\\"404\\":2}",
         "oneOf": Array [
@@ -71642,8 +71647,7 @@ Nonexistent keys are ignored.",
       "mutationInput_addAttachment": Object {
         "properties": Object {
           "input": Object {
-            "format": "binary",
-            "type": "string",
+            "$ref": "#/definitions/addAttachment_request",
           },
           "issueIdOrKey": Object {
             "description": "The ID or key of the issue that attachments are added to.",

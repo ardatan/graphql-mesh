@@ -108,12 +108,12 @@ type anyOf6_200_response {
 
 type anyOf7_200_response {
   commonAttribute: String
-  JSON: JSON
+  Float: Float
 }
 
 type anyOf8_200_response {
   Int: Int
-  JSON: JSON
+  Float: Float
 }
 
 type anyOf10_200_response {

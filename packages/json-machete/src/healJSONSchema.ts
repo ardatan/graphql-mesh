@@ -212,6 +212,10 @@ export async function healJSONSchema(
                   subSchema.type = 'string';
                 }
             }
+            if (subSchema.minimum || subSchema.maximum) {
+              logger.debug(`${path} has a minimum or maximum. Setting type to "number".`);
+              subSchema.type = 'number';
+            }
           }
           if (subSchema.type === 'string' && !subSchema.format && (subSchema.examples || subSchema.example)) {
             const examples = asArray(subSchema.examples || subSchema.example || []);
@@ -226,13 +230,6 @@ export async function healJSONSchema(
           if (subSchema.format === 'dateTime') {
             logger.debug(`${path} has a format of dateTime. It should be "date-time".`);
             subSchema.format = 'date-time';
-          }
-          if (subSchema.format === 'binary') {
-            // Binary should have nothing else
-            subSchema = {
-              type: 'string',
-              format: 'binary',
-            };
           }
           if (subSchema.type === 'string' && subSchema.format) {
             if (!JSONSchemaStringFormats.includes(subSchema.format)) {

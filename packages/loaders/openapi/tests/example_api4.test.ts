@@ -342,9 +342,9 @@ describe('OpenAPI loader: Handle anyOf and oneOf', () => {
               },
             },
             {
-              name: 'JSON',
+              name: 'Float',
               type: {
-                name: 'JSON',
+                name: 'Float',
               },
             },
           ],
@@ -381,9 +381,9 @@ describe('OpenAPI loader: Handle anyOf and oneOf', () => {
               },
             },
             {
-              name: 'JSON',
+              name: 'Float',
               type: {
-                name: 'JSON',
+                name: 'Float',
               },
             },
           ],

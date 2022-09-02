@@ -30,8 +30,6 @@
                 "type": "object",
                 "properties": {
                   "file": {
-                    "maxLength": 255,
-                    "pattern": "^[0-9a-zA-Z_./ -]*$",
                     "type": "string",
                     "format": "binary"
                   }

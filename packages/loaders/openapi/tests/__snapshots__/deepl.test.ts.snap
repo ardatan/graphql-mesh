@@ -181,6 +181,14 @@ You may specify the glossary to use for the document translation using the \`glo
       "requestSchema": Object {
         "properties": Object {
           "file": Object {
+            "description": "The document file to be translated. The file name should be included in this part's content disposition. As an alternative, the filename parameter can be used. The following file types and extensions are supported:
+  * \`docx\` - Microsoft Word Document
+  * \`pptx\` - Microsoft PowerPoint Document
+  * \`pdf\` - Portable Document Format
+  * \`htm / html\` - HTML Document
+  * \`txt\` - Plain Text Document
+
+Please note that in order to translate PDF documents you need to give one-time consent to using the Adobe API via the account interface.",
             "format": "binary",
             "type": "string",
           },
@@ -1298,12 +1306,16 @@ If this parameter is omitted, the API will attempt to detect the language of the
         ],
         "title": "deleteGlossary_response",
       },
+      "downloadDocument_200_response": Object {
+        "format": "binary",
+        "title": "downloadDocument_200_response",
+        "type": "string",
+      },
       "downloadDocument_response": Object {
         "$comment": "statusCodeOneOfIndexMap:{\\"200\\":0,\\"404\\":1,\\"503\\":2}",
         "oneOf": Array [
           Object {
-            "format": "binary",
-            "type": "string",
+            "$ref": "#/definitions/downloadDocument_200_response",
           },
           Object {
             "$ref": "#/definitions/DocumentTranslationError",
@@ -1843,6 +1855,14 @@ Satz.</div>
       "translateDocument_request": Object {
         "properties": Object {
           "file": Object {
+            "description": "The document file to be translated. The file name should be included in this part's content disposition. As an alternative, the filename parameter can be used. The following file types and extensions are supported:
+  * \`docx\` - Microsoft Word Document
+  * \`pptx\` - Microsoft PowerPoint Document
+  * \`pdf\` - Portable Document Format
+  * \`htm / html\` - HTML Document
+  * \`txt\` - Plain Text Document
+
+Please note that in order to translate PDF documents you need to give one-time consent to using the Adobe API via the account interface.",
             "format": "binary",
             "type": "string",
           },
@@ -2293,6 +2313,7 @@ type translateDocument_200_response {
 input translateDocument_request_Input {
   source_lang: SourceLanguage
   target_lang: TargetLanguage!
+  \\"The document file to be translated. The file name should be included in this part's content disposition. As an alternative, the filename parameter can be used. The following file types and extensions are supported:\\\\n  * \`docx\` - Microsoft Word Document\\\\n  * \`pptx\` - Microsoft PowerPoint Document\\\\n  * \`pdf\` - Portable Document Format\\\\n  * \`htm / html\` - HTML Document\\\\n  * \`txt\` - Plain Text Document\\\\n\\\\nPlease note that in order to translate PDF documents you need to give one-time consent to using the Adobe API via the account interface.\\"
   file: File!
   \\"The name of the uploaded file. Can be used as an alternative to including the file name in the file part's content disposition.\\"
   filename: String

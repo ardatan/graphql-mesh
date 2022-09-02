@@ -14,5 +14,3 @@ additionalResolvers:
 documents:
   - example-queries/*.graphql
 
-plugins:
-  - newrelic: {}
