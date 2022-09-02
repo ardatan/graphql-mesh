@@ -6,5 +6,6 @@
   "subscriptions-webhooks": "Subscriptions & Webhooks",
   "performances-best-practices": "Performances best practices",
   "error-handling": "Error handling",
-  "file-uploads": "File uploads"
+  "file-uploads": "File uploads",
+  "monitoring-and-tracing": "Monitoring and Tracing"
 }

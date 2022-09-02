@@ -19,17 +19,6 @@ Z --> E;
 Z --> F;
 ```
 
-To support forwarding file uploads to the "UploadFiles" Source, we will need to add the `maxRequestBodySize` to the `serve` configuration:
-
-[`.meshrc.yaml`](https://github.com/Urigo/graphql-mesh/tree/master/examples/graphql-file-upload-example/.meshrc.yml)
-
-```yaml filename=".meshrc.yaml"
-# …
-
-serve:
-  maxRequestBodySize: 10mb
-```
-
 You will find the complete example in [`examples/graphql-file-upload-example/.meshrc.yml`](https://github.com/Urigo/graphql-mesh/tree/master/examples/graphql-file-upload-example/.meshrc.yml).
 
 ## Custom resolvers file uploads

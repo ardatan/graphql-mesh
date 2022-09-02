@@ -16,12 +16,6 @@ You can install it in Linux based distributions using `sudo apt update && sudo a
 
 More about this [here](https://github.com/Urigo/graphql-mesh/issues/1543)
 
-## Generate API Docs (on the root directory)
-
-This command generates API Documentation and its sidebar configuration.
-
-`yarn build:api-docs`
-
 ### Local Development
 
 ```sh

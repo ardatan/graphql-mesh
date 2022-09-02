@@ -522,6 +522,9 @@
         },
         "responseCache": {
           "$ref": "#/definitions/ResponseCacheConfig"
+        },
+        "statsd": {
+          "$ref": "#/definitions/StatsdPlugin"
         }
       }
     },
@@ -2116,25 +2119,32 @@
       "title": "NewrelicConfig",
       "properties": {
         "includeOperationDocument": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "default `false`. When set to `true`, includes the GraphQL document defining the operations and fragments"
         },
         "includeExecuteVariables": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "default `false`. When set to `true`, includes all the operation variables with their values"
         },
         "includeRawResult": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "default: `false`. When set to `true`, includes the execution result"
         },
         "trackResolvers": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "default `false`. When set to `true`, track resolvers as segments to monitor their performance"
         },
         "includeResolverArgs": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "default `false`. When set to `true`, includes all the arguments passed to resolvers with their values"
         },
         "rootFieldsNaming": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "default `false`. When set to `true` append the names of operation root fields to the transaction name"
         },
         "extractOperationName": {
-          "type": "string"
+          "type": "string",
+          "description": "Allows to set a custom operation name to be used as transaction name and attribute\n`extractOperationName: {context.headers['x-operation-name']}`"
         }
       }
     },
@@ -2281,6 +2291,118 @@
         }
       },
       "required": ["coordinate", "ttl"]
+    },
+    "StatsdPlugin": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "StatsdPlugin",
+      "properties": {
+        "skipIntrospection": {
+          "type": "boolean",
+          "description": "If you wish to disable introspection for logging (default: false)"
+        },
+        "prefix": {
+          "type": "string",
+          "description": "prefix.operations.count (default: graphql)"
+        },
+        "client": {
+          "$ref": "#/definitions/StatsdClientConfiguration",
+          "description": "Client Configuration"
+        }
+      }
+    },
+    "StatsdClientConfiguration": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "StatsdClientConfiguration",
+      "properties": {
+        "bufferFlushInterval": {
+          "type": "integer"
+        },
+        "bufferHolder": {
+          "$ref": "#/definitions/StatsdClientBufferHolder"
+        },
+        "cacheDns": {
+          "type": "boolean"
+        },
+        "cacheDnsTtl": {
+          "type": "integer"
+        },
+        "globalTags": {
+          "type": "object",
+          "properties": {}
+        },
+        "globalize": {
+          "type": "boolean"
+        },
+        "host": {
+          "type": "string"
+        },
+        "isChild": {
+          "type": "boolean"
+        },
+        "maxBufferSize": {
+          "type": "integer"
+        },
+        "mock": {
+          "type": "boolean"
+        },
+        "path": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer"
+        },
+        "protocol": {
+          "type": "string",
+          "enum": ["tcp", "udp", "uds", "stream"],
+          "description": "Allowed values: tcp, udp, uds, stream"
+        },
+        "sampleRate": {
+          "type": "number"
+        },
+        "suffix": {
+          "type": "string"
+        },
+        "telegraf": {
+          "type": "boolean"
+        },
+        "useDefaultRoute": {
+          "type": "boolean"
+        },
+        "tagPrefix": {
+          "type": "string"
+        },
+        "tagSeperator": {
+          "type": "string"
+        },
+        "tcpGracefulErrorHandling": {
+          "type": "boolean"
+        },
+        "tcpGracefulRestartRateLimit": {
+          "type": "integer"
+        },
+        "udsGracefulErrorHandling": {
+          "type": "boolean"
+        },
+        "udsGracefulRestartRateLimit": {
+          "type": "integer"
+        },
+        "closingFlushInterval": {
+          "type": "integer"
+        }
+      }
+    },
+    "StatsdClientBufferHolder": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "StatsdClientBufferHolder",
+      "properties": {
+        "buffer": {
+          "type": "string"
+        }
+      },
+      "required": ["buffer"]
     },
     "PostGraphileHandler": {
       "additionalProperties": false,

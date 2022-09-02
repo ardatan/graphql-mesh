@@ -1736,6 +1736,7 @@ export interface Plugin {
   prometheus?: PrometheusConfig;
   rateLimit?: RateLimitPluginConfig;
   responseCache?: ResponseCacheConfig;
+  statsd?: StatsdPlugin;
   [k: string]: any;
 }
 export interface MaskedErrorsPluginConfig {
@@ -1837,12 +1838,34 @@ export interface UpdateMockStoreConfig {
   value?: string;
 }
 export interface NewrelicConfig {
+  /**
+   * default `false`. When set to `true`, includes the GraphQL document defining the operations and fragments
+   */
   includeOperationDocument?: boolean;
+  /**
+   * default `false`. When set to `true`, includes all the operation variables with their values
+   */
   includeExecuteVariables?: boolean;
+  /**
+   * default: `false`. When set to `true`, includes the execution result
+   */
   includeRawResult?: boolean;
+  /**
+   * default `false`. When set to `true`, track resolvers as segments to monitor their performance
+   */
   trackResolvers?: boolean;
+  /**
+   * default `false`. When set to `true`, includes all the arguments passed to resolvers with their values
+   */
   includeResolverArgs?: boolean;
+  /**
+   * default `false`. When set to `true` append the names of operation root fields to the transaction name
+   */
   rootFieldsNaming?: boolean;
+  /**
+   * Allows to set a custom operation name to be used as transaction name and attribute
+   * `extractOperationName: {context.headers['x-operation-name']}`
+   */
   extractOperationName?: string;
 }
 export interface PrometheusConfig {
@@ -1945,4 +1968,52 @@ export interface ResponseCacheConfig {
 export interface ResponseCacheTTLConfig {
   coordinate: string;
   ttl: number;
+}
+export interface StatsdPlugin {
+  /**
+   * If you wish to disable introspection for logging (default: false)
+   */
+  skipIntrospection?: boolean;
+  /**
+   * prefix.operations.count (default: graphql)
+   */
+  prefix?: string;
+  client?: StatsdClientConfiguration;
+}
+/**
+ * Client Configuration
+ */
+export interface StatsdClientConfiguration {
+  bufferFlushInterval?: number;
+  bufferHolder?: StatsdClientBufferHolder;
+  cacheDns?: boolean;
+  cacheDnsTtl?: number;
+  globalTags?: {
+    [k: string]: any;
+  };
+  globalize?: boolean;
+  host?: string;
+  isChild?: boolean;
+  maxBufferSize?: number;
+  mock?: boolean;
+  path?: string;
+  port?: number;
+  /**
+   * Allowed values: tcp, udp, uds, stream
+   */
+  protocol?: 'tcp' | 'udp' | 'uds' | 'stream';
+  sampleRate?: number;
+  suffix?: string;
+  telegraf?: boolean;
+  useDefaultRoute?: boolean;
+  tagPrefix?: string;
+  tagSeperator?: string;
+  tcpGracefulErrorHandling?: boolean;
+  tcpGracefulRestartRateLimit?: number;
+  udsGracefulErrorHandling?: boolean;
+  udsGracefulRestartRateLimit?: number;
+  closingFlushInterval?: number;
+}
+export interface StatsdClientBufferHolder {
+  buffer: string;
 }

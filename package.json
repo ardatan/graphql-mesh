@@ -5,13 +5,12 @@
   "private": true,
   "scripts": {
     "postinstall": "patch-package && husky install",
-    "prebuild:website": "yarn build && yarn build:api-docs",
+    "prebuild:website": "yarn build",
     "build:website": "cd website && yarn build",
     "generate-config-schema": "graphql-to-config-schema --schema ./**/yaml-config.graphql --json ./packages/types/src/config-schema.json --typings ./packages/types/src/config.ts --markdown ./website/src/generated-markdown && prettier --write ./packages/types/src",
     "prebuild": "yarn generate-config-schema",
     "transpile-ts": "tsc --project tsconfig.build.json",
     "build": "yarn transpile-ts && bob build",
-    "build:api-docs": "ts-node --compiler-options='{\"module\":\"commonjs\"}' scripts/build-api-docs",
     "copy-config-schema": "cp ./packages/types/src/config-schema.json ./packages/types/dist/",
     "fix-bin": "node scripts/fix-bin.js",
     "postbuild": "yarn copy-config-schema && yarn fix-bin",
@@ -55,9 +54,6 @@
     "patch-package": "6.4.7",
     "prettier": "2.7.1",
     "ts-jest": "28.0.8",
-    "typedoc": "0.23.1",
-    "typedoc-plugin-markdown": "3.13.3",
-    "typedoc-plugin-rename-defaults": "0.6.4",
     "typescript": "4.8.2"
   },
   "husky": {
