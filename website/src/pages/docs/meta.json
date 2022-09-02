@@ -5,7 +5,6 @@
   "handlers": "Source Handlers",
   "transforms": "Transforms",
   "cache": "Cache",
-  "api": "API",
   "cli-commands": "CLI commands",
   "migration": "Migration guides",
   "extend": {
