@@ -3178,10 +3178,10 @@
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.1.1.tgz#076d78ce99822258cf813ecc1e7fa460fa74d052"
   integrity sha512-NQ17ii0rK1b34VZonlmT2QMJFI70m0TRwbknO/ihlbatXyaktDhN/98vBiUU6kNBPljqGqyIrl2T4nY2RpFANg==
 
-"@graphql-yoga/common@2.12.10", "@graphql-yoga/common@^2.12.10":
-  version "2.12.10"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/common/-/common-2.12.10.tgz#22908e41285b6c21c6b921c9028524eddd874f4d"
-  integrity sha512-nd+Ed5f4DLmopsip342Ocryk5cPHQKCbyroOpGtnCQ7n+is8033j+BrEvFMz8Qy4UlQXBsErfsbbfwSkOaYCTQ==
+"@graphql-yoga/common@2.12.11", "@graphql-yoga/common@^2.12.11":
+  version "2.12.11"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/common/-/common-2.12.11.tgz#82f18e07985af8614724a777de1ebb4c15c783c8"
+  integrity sha512-MQ5AFFSwKvi3/nmvT7LYyQscwNMyz7+d2Yxqr8pY25eh7TlHZY45BLtFj4xRlphuogS9HiNEWTWMqhAo2Rxdew==
   dependencies:
     "@envelop/core" "^2.5.0"
     "@envelop/parser-cache" "^4.6.0"
@@ -3194,14 +3194,14 @@
     dset "^3.1.1"
     tslib "^2.3.1"
 
-"@graphql-yoga/node@2.13.11", "@graphql-yoga/node@^2.4.0":
-  version "2.13.11"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/node/-/node-2.13.11.tgz#ae86a26650b814118fc55077dbbeb88822963a54"
-  integrity sha512-Y8EVDdP+rpaN6HssAayRf97bTV2RLwvj+uIMU3WNlcxplpZcLlJsNem2QmAEbKc0WaCR0J7KU8pziI5HygtTRg==
+"@graphql-yoga/node@2.13.12", "@graphql-yoga/node@^2.4.0":
+  version "2.13.12"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/node/-/node-2.13.12.tgz#d2bdcf6e7eda6ea97cca639b63d498b61201d4de"
+  integrity sha512-QVlMTSLyOWw1uCsS8Lm4lufGMcQs9R4PIo/LkFU9w9e+NHfFdrU+VaHODU2+3CY5KksIHnX9OmWX9N+3d9rBfA==
   dependencies:
     "@envelop/core" "^2.5.0"
     "@graphql-tools/utils" "^8.8.0"
-    "@graphql-yoga/common" "^2.12.10"
+    "@graphql-yoga/common" "^2.12.11"
     "@graphql-yoga/subscription" "^2.2.3"
     "@whatwg-node/fetch" "^0.3.0"
     tslib "^2.3.1"
@@ -11537,10 +11537,10 @@ hosted-git-info@^4.0.1:
   dependencies:
     lru-cache "^6.0.0"
 
-hot-shots@9.0.0:
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/hot-shots/-/hot-shots-9.0.0.tgz#b88421aa81c1ef37f4cc53ade7f1e3daaa584b5e"
-  integrity sha512-fpljto22PvfzDGznnzUpWgFMgccyZRtWo+fY8R4ktwipkv3ywDyeaTLijYaM629DEZvtnEDAN00yV6zxzivnpQ==
+hot-shots@9.2.0:
+  version "9.2.0"
+  resolved "https://registry.yarnpkg.com/hot-shots/-/hot-shots-9.2.0.tgz#b1460f63b7f2789d301bcd9f4bbfc46c3cb24777"
+  integrity sha512-MNn/562GiAMo3LIua/CLUHIkIr7Myh8ycGl/0mgbRh9w+iW+uDFme6+TbW2TAGeMMjJmRjvTAJdYetOZn3zGxw==
   optionalDependencies:
     unix-dgram "2.0.x"
 

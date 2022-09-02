@@ -35,7 +35,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "hot-shots": "9.0.0"
+    "hot-shots": "9.2.0"
   },
   "publishConfig": {
     "access": "public",
