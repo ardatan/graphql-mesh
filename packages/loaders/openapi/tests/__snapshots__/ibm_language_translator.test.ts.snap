@@ -140,8 +140,11 @@ type IdentifiedLanguage {
   \\"The code for an identified language.\\"
   language: String!
   \\"The confidence score for the identified language.\\"
-  confidence: Float!
+  confidence: NonNegativeFloat!
 }
+
+\\"Floats that will have a value of 0 or more.\\"
+scalar NonNegativeFloat
 
 type Mutation {
   \\"Uploads a TMX glossary file on top of a domain to customize a translation model\\"

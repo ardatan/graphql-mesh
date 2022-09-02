@@ -212,7 +212,7 @@ export async function healJSONSchema(
                   subSchema.type = 'string';
                 }
             }
-            if (subSchema.minimum || subSchema.maximum) {
+            if (subSchema.minimum != null || subSchema.maximum != null) {
               logger.debug(`${path} has a minimum or maximum. Setting type to "number".`);
               subSchema.type = 'number';
             }

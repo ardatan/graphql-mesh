@@ -37,6 +37,11 @@ import {
   GraphQLTime,
   GraphQLURL,
   RegularExpression,
+  GraphQLNonNegativeFloat,
+  GraphQLPositiveFloat,
+  GraphQLNonPositiveFloat,
+  GraphQLNegativeFloat,
+  GraphQLNonEmptyString,
 } from 'graphql-scalars';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { Logger } from '@graphql-mesh/types';
@@ -114,6 +119,22 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
         let regexp: RegExp;
         try {
           regexp = new RegExp(subSchema.pattern);
+          let codegenScalarType: string;
+          switch (subSchema.type) {
+            case 'string':
+              codegenScalarType = 'string';
+              break;
+            case 'number':
+              codegenScalarType = 'number';
+              break;
+            case 'integer':
+              if (subSchema.format === 'int64') {
+                codegenScalarType = 'bigint';
+              } else {
+                codegenScalarType = 'number';
+              }
+              break;
+          }
           const scalarType = new RegularExpression(
             getValidTypeName({
               schemaComposer,
@@ -125,6 +146,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
               description: subSchema.description,
             }
           );
+          scalarType.extensions = scalarType.extensions || {};
+          (scalarType.extensions as any).codegenScalarType = codegenScalarType;
           const typeComposer = schemaComposer.getAnyTC(scalarType);
           return {
             input: typeComposer,
@@ -282,7 +305,17 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           };
         }
         case 'number': {
-          const typeComposer = schemaComposer.getAnyTC(GraphQLFloat);
+          let typeComposer = schemaComposer.getAnyTC(GraphQLFloat);
+          if (subSchema.minimum === 0) {
+            typeComposer = schemaComposer.getAnyTC(GraphQLNonNegativeFloat);
+          } else if (subSchema.minimum > 0) {
+            typeComposer = schemaComposer.getAnyTC(GraphQLPositiveFloat);
+          }
+          if (subSchema.maximum === 0) {
+            typeComposer = schemaComposer.getAnyTC(GraphQLNonPositiveFloat);
+          } else if (subSchema.maximum < 0) {
+            typeComposer = schemaComposer.getAnyTC(GraphQLNegativeFloat);
+          }
           return {
             input: typeComposer,
             output: typeComposer,
@@ -294,6 +327,18 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           };
         }
         case 'string': {
+          if (subSchema.minLength === 1 && subSchema.maxLength == null) {
+            const tc = schemaComposer.getAnyTC(GraphQLNonEmptyString);
+            return {
+              input: tc,
+              output: tc,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+            };
+          }
           if (subSchema.minLength || subSchema.maxLength) {
             const scalarType = getStringScalarWithMinMaxLength({
               schemaComposer,
