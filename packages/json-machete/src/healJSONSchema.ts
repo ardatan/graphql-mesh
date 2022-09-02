@@ -24,7 +24,6 @@ const JSONSchemaStringFormats = [
   'uuid',
   'binary',
   'byte',
-  'password',
   'int64',
   'int32',
   'unix-time',
