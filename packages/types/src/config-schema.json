@@ -522,6 +522,9 @@
         },
         "responseCache": {
           "$ref": "#/definitions/ResponseCacheConfig"
+        },
+        "statsd": {
+          "$ref": "#/definitions/StatsdPlugin"
         }
       }
     },
@@ -2281,6 +2284,118 @@
         }
       },
       "required": ["coordinate", "ttl"]
+    },
+    "StatsdPlugin": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "StatsdPlugin",
+      "properties": {
+        "skipIntrospection": {
+          "type": "boolean",
+          "description": "If you wish to disable introspection for logging (default: false)"
+        },
+        "prefix": {
+          "type": "string",
+          "description": "<prefix>.operations.count (default: graphql)"
+        },
+        "client": {
+          "$ref": "#/definitions/StatsdClientConfiguration",
+          "description": "Client Configuration"
+        }
+      }
+    },
+    "StatsdClientConfiguration": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "StatsdClientConfiguration",
+      "properties": {
+        "bufferFlushInterval": {
+          "type": "integer"
+        },
+        "bufferHolder": {
+          "$ref": "#/definitions/StatsdClientBufferHolder"
+        },
+        "cacheDns": {
+          "type": "boolean"
+        },
+        "cacheDnsTtl": {
+          "type": "integer"
+        },
+        "globalTags": {
+          "type": "object",
+          "properties": {}
+        },
+        "globalize": {
+          "type": "boolean"
+        },
+        "host": {
+          "type": "string"
+        },
+        "isChild": {
+          "type": "boolean"
+        },
+        "maxBufferSize": {
+          "type": "integer"
+        },
+        "mock": {
+          "type": "boolean"
+        },
+        "path": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer"
+        },
+        "protocol": {
+          "type": "string",
+          "enum": ["tcp", "udp", "uds", "stream"],
+          "description": "Allowed values: tcp, udp, uds, stream"
+        },
+        "sampleRate": {
+          "type": "number"
+        },
+        "suffix": {
+          "type": "string"
+        },
+        "telegraf": {
+          "type": "boolean"
+        },
+        "useDefaultRoute": {
+          "type": "boolean"
+        },
+        "tagPrefix": {
+          "type": "string"
+        },
+        "tagSeperator": {
+          "type": "string"
+        },
+        "tcpGracefulErrorHandling": {
+          "type": "boolean"
+        },
+        "tcpGracefulRestartRateLimit": {
+          "type": "integer"
+        },
+        "udsGracefulErrorHandling": {
+          "type": "boolean"
+        },
+        "udsGracefulRestartRateLimit": {
+          "type": "integer"
+        },
+        "closingFlushInterval": {
+          "type": "integer"
+        }
+      }
+    },
+    "StatsdClientBufferHolder": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "StatsdClientBufferHolder",
+      "properties": {
+        "buffer": {
+          "type": "string"
+        }
+      },
+      "required": ["buffer"]
     },
     "PostGraphileHandler": {
       "additionalProperties": false,

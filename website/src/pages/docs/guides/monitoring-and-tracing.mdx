@@ -1,0 +1,198 @@
+# Monitoring and Tracing
+
+If something is not working as it should within your GraphQL gateway, you would not want it to go unnoticed.
+You can use GraphQL Mesh plugins to trace and monitor your GraphQL Mesh gateway's GraphQL execution flow together with all outgoing HTTP calls and internal query planning.
+GraphQL Mesh plugins are extended versions of [the existing Envelop plugins.](https://www.envelop.dev/docs/guides/monitoring-and-tracing)
+
+## GraphQL Result Extensions
+You can expose the details of outgoing HTTP requests done by GraphQL Mesh source handlers within `extensions` property of the GraphQL execution.
+
+All you have to do is just enable the following flag;
+```yml
+includeHttpDetailsInExtensions: true
+```
+
+Then you get the results like below;
+```json
+{
+  "data": {
+    "someData": "someResult"
+  },
+  "extensions": {
+    "httpDetails": [
+      {
+        "sourceName": "MySource",
+        "path": {
+          "key": "sourceFieldName"
+        },
+        "request": {
+          "timestamp": "2020-01-01T00:00:00.000Z",
+          "url": "http://localhost:8080/some-external-service/some-path",
+          "method": "GET",
+          "headers": {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+          },
+        },
+        "response": {
+          "timestamp": "2020-01-01T00:00:00.000Z",
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "Content-Type": "application/json",
+          },
+        },
+        "responseTime": 9999,
+      }
+    ]
+  }
+}
+```
+
+## DataDog, InfluxDB, Telegraf, StatsD
+
+You can use `@graphql-mesh/plugin-statsd` plugin to collect and send metrics to Datadog's DogStatsD and InfluxDB's Telegraf StatsD services.
+
+Compatible with:
+
+- Datadog's DogStatsD server
+- InfluxDB's Telegraf StatsD server
+- Etsy's StatsD serve
+
+Available metrics:
+
+- `graphql.operations.count` - the number of performed operations (including failures)
+- `graphql.operations.error.count` - the number of failed operations
+- `graphql.operations.latency` - a histogram of response times (in milliseconds)
+- `graphql.delegations.count` - the number of delegated operations to the sources
+- `graphql.delegations.error.count` - the number of failed delegated operations
+- `graphql.delegations.latency` - a histogram of delegated response times (in milliseconds)
+- `graphql.fetch.count` - the number of outgoing HTTP requests
+- `graphql.fetch.error.count` - the number of failed outgoing HTTP requests
+- `graphql.fetch.latency` - a histogram of outgoing HTTP response times (in milliseconds)
+
+> You can also customize the `graphql` prefix and add custom tags to the metrics.
+
+### Getting Started
+
+<PackageCmd packages={['@graphql-mesh/plugin-statsd', 'hot-shots']} />
+
+### Example Configuration
+
+```yml
+# ...
+plugins:
+  - statsd:
+      # Configure `hot-shots`
+      client:
+        port: 8020
+      # results in `gql.operations.count` instead of `graphql.operations.count`
+      prefix: my-graphql-mesh
+      # If you wish to disable introspection logging
+      skipIntrospection: true
+```
+
+# Prometheus
+
+Prometheus is a platform for scraping metrics from services and utilities.
+You can use `@graphql-mesh/plugin-prometheus` plugin to expose and collect metrics from all phases of your GraphQL execution including internal query planning and outgoing HTTP requests.
+
+This plugin tracks the complete gateway execution flow and exposes the following metrics:
+- Successful requests (`requestCount`)
+- Request summary (`requestSummary`)
+- errors (categorized by `phase`)
+- resolvers tracing and runtime
+- deprecated fields usage
+- count of graphql operations
+- `parse` execution time
+- `validate` execution time
+- `contextBuilding` execution time
+- `execute` execution time
+- Latency of outgoing HTTP request
+- Latency of the delegation to the individual sources
+
+### Getting Started
+
+<PackageCmd packages={['@graphql-mesh/plugin-prometheus', 'prom-client']} />
+
+### Example Configuration
+
+```yml
+# ...
+plugins:
+  - prometheus:
+    # all optional, and by default, all set to false, please opt-in to the metrics you wish to get
+
+    # requires `execute` to be true
+    requestCount: true
+    # requires `execute` to be true
+    requestSummary: true
+    parse: true
+    validate: true
+    contextBuilding: true
+    execute: true
+    errors: true
+    resolvers: true
+    # reports metrics also for these resolvers, by default all fields are reported
+    resolversWhiteList:
+      - Mutation.*
+      - Query.user
+    deprecatedFields: true
+```
+
+> Note: Tracing resolvers using `resovlers: true` might have a performance impact on your GraphQL runtime. Please consider to test it locally first and then decide if it's needed.
+
+### Custom Registry
+
+You can customize the client's registry by passing a custom registry to the `registry` option.
+
+```ts
+// myRegistry.ts
+import { Registry } from 'prom-client';
+
+export default const myRegistry = new Registry();
+```
+
+```yml
+# ...
+plugins:
+  - prometheus:
+      # ...
+      registry: ./myRegistry.ts
+```
+
+## NewRelic
+
+If you wish to integrate NewRelic for tracing, monitoring and error reporting, you can use `@graphql-mesh/plugin-newrelic`.
+
+You can instrument your GraphQL application with New Relic reporting in order to take advantage of Distributed tracing to monitor performance and errors whilst ultimately getting to the root cause of issues.
+
+![image](https://user-images.githubusercontent.com/20847995/188124061-f824e446-634c-485c-9021-392ee52c3594.png)
+
+### Getting Started
+
+<PackageCmd packages={['@graphql-mesh/plugin-newrelic', 'newrelic']} />
+
+### Example Configuration
+
+```yml
+# ...
+plugins:
+  - newrelic:
+      # default `false`. When set to `true`, includes the GraphQL document defining the operations and fragments
+      includeDocument: true
+      # default `false`. When set to `true`, includes all the operation variables with their values
+      includeExecuteVariables: false
+      # default: `false`. When set to `true`, includes the execution result
+      includeRawResult: false
+      # default `false`. When set to `true`, track resolvers as segments to monitor their performance
+      trackResolvers: true
+      # default `false`. When set to `true`, includes all the arguments passed to resolvers with their values
+      includeResolverArgs: false
+      # default `false`. When set to `true` append the names of operation root fields to the transaction name
+      rootFieldsNaming: true
+      # Allows to set a custom operation name to be used as transaction name and attribute
+      extractOperationName: "{context.headers['x-operation-name']}"
+```
+
+[See here for more advances options](https://github.com/n1ru4l/envelop/blob/main/packages/plugins/newrelic/README.md#agent-configuration)

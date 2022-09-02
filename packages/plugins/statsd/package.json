@@ -1,0 +1,44 @@
+{
+  "name": "@graphql-mesh/plugin-statsd",
+  "version": "0.0.0",
+  "sideEffects": false,
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "typings": "dist/index.d.ts",
+  "typescript": {
+    "definition": "dist/index.d.ts"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./*": {
+      "require": "./dist/*.js",
+      "import": "./dist/*.mjs"
+    }
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/plugins/statsd"
+  },
+  "peerDependencies": {
+    "graphql": "*",
+    "hot-shots": "^8.0.0 || ^9.0.0"
+  },
+  "dependencies": {
+    "@envelop/statsd": "2.6.0",
+    "@graphql-mesh/utils": "0.41.1",
+    "@graphql-mesh/types": "0.82.0",
+    "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "hot-shots": "9.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  }
+}

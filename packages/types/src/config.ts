@@ -1736,6 +1736,7 @@ export interface Plugin {
   prometheus?: PrometheusConfig;
   rateLimit?: RateLimitPluginConfig;
   responseCache?: ResponseCacheConfig;
+  statsd?: StatsdPlugin;
   [k: string]: any;
 }
 export interface MaskedErrorsPluginConfig {
@@ -1945,4 +1946,52 @@ export interface ResponseCacheConfig {
 export interface ResponseCacheTTLConfig {
   coordinate: string;
   ttl: number;
+}
+export interface StatsdPlugin {
+  /**
+   * If you wish to disable introspection for logging (default: false)
+   */
+  skipIntrospection?: boolean;
+  /**
+   * <prefix>.operations.count (default: graphql)
+   */
+  prefix?: string;
+  client?: StatsdClientConfiguration;
+}
+/**
+ * Client Configuration
+ */
+export interface StatsdClientConfiguration {
+  bufferFlushInterval?: number;
+  bufferHolder?: StatsdClientBufferHolder;
+  cacheDns?: boolean;
+  cacheDnsTtl?: number;
+  globalTags?: {
+    [k: string]: any;
+  };
+  globalize?: boolean;
+  host?: string;
+  isChild?: boolean;
+  maxBufferSize?: number;
+  mock?: boolean;
+  path?: string;
+  port?: number;
+  /**
+   * Allowed values: tcp, udp, uds, stream
+   */
+  protocol?: 'tcp' | 'udp' | 'uds' | 'stream';
+  sampleRate?: number;
+  suffix?: string;
+  telegraf?: boolean;
+  useDefaultRoute?: boolean;
+  tagPrefix?: string;
+  tagSeperator?: string;
+  tcpGracefulErrorHandling?: boolean;
+  tcpGracefulRestartRateLimit?: number;
+  udsGracefulErrorHandling?: boolean;
+  udsGracefulRestartRateLimit?: number;
+  closingFlushInterval?: number;
+}
+export interface StatsdClientBufferHolder {
+  buffer: string;
 }

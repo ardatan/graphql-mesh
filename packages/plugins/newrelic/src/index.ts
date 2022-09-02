@@ -63,8 +63,7 @@ export default function useMeshNewrelic(options: MeshPluginOptions<YamlConfig.Ne
         sourceSegment.addAttribute('key', JSON.stringify(key));
       }
       sourceSegment.start();
-      return ({ result }) => {
-        sourceSegment.addAttribute('result', JSON.stringify(result));
+      return () => {
         sourceSegment.end();
       };
     },
