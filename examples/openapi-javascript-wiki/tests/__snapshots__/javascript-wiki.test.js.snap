@@ -41,6 +41,9 @@ type Mutation {
   ): post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_response
 }
 
+\\"\\"\\"A string that cannot be passed as an empty value\\"\\"\\"
+scalar NonEmptyString
+
 type Query {
   \\"Gets availability of featured feed content for the apps by wiki domain.\\\\n\\\\nStability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)\\\\n\\"
   feed_availability: feed_availability_response
@@ -48,7 +51,7 @@ type Query {
   \\"Returns the previously-stored formula via \`/media/math/check/{type}\` for\\\\nthe given hash.\\\\n\\\\nStability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable).\\\\n\\"
   media_math_formula_by_hash(
     \\"\\"\\"The hash string of the previous POST data\\"\\"\\"
-    hash: queryInput_media_math_formula_by_hash_hash!
+    hash: NonEmptyString!
   ): media_math_formula_by_hash_response
 
   \\"Given a request hash, renders a TeX formula into its mathematic\\\\nrepresentation in the given format. When a request is issued to the\\\\n\`/media/math/check/{format}\` POST endpoint, the response contains the\\\\n\`x-resource-location\` header denoting the hash ID of the POST data. Once\\\\nobtained, this endpoint has to be used to obtain the actual render.\\\\n\\\\nStability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable).\\\\n\\"
@@ -56,7 +59,7 @@ type Query {
     format: queryInput_media_math_render_by_format_by_hash_format!
 
     \\"\\"\\"The hash string of the previous POST data\\"\\"\\"
-    hash: queryInput_media_math_render_by_format_by_hash_hash!
+    hash: NonEmptyString!
   ): media_math_render_by_format_by_hash_response
 
   \\"Given a Mediawiki project and a date range, returns a timeseries of absolute bytes\\\\ndifference sums. You can filter by editors-type (all-editor-types, anonymous, group-bot,\\\\nname-bot, user) and page-type (all-page-types, content, non-content). You can choose\\\\nbetween daily and monthly granularity as well.\\\\n\\\\n- Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)\\\\n- Rate limit: 25 req/s\\\\n- License: Data accessible via this endpoint is available under the\\\\n  [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).\\\\n\\"
@@ -862,18 +865,12 @@ type problem {
   uri: String
 }
 
-\\"\\"\\"The hash string of the previous POST data\\"\\"\\"
-scalar queryInput_media_math_formula_by_hash_hash
-
 \\"\\"\\"The output format; can be svg or mml\\"\\"\\"
 enum queryInput_media_math_render_by_format_by_hash_format {
   mml
   png
   svg
 }
-
-\\"\\"\\"The hash string of the previous POST data\\"\\"\\"
-scalar queryInput_media_math_render_by_format_by_hash_hash
 
 \\"\\"\\"
 If you want to filter by editor-type, use one of anonymous, group-bot (registered

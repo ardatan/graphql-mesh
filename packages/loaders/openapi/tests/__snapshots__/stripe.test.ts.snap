@@ -4421,7 +4421,7 @@ type Plan {
   \\"The amount in %s to be charged on the interval specified.\\"
   amount: Int
   \\"Same as \`amount\`, but contains a decimal value with at most 12 decimal places.\\"
-  amount_decimal: String
+  amount_decimal: Float
   billing_scheme: mutation_Post3dSecure_oneOf_0_card_account_anyOf_1_external_accounts_data_items_anyOf_0_customer_anyOf_1_subscriptions_data_items_items_data_items_plan_billing_scheme
   \\"Time at which the object was created. Measured in seconds since the Unix epoch.\\"
   created: Timestamp!
@@ -4571,11 +4571,11 @@ type PlanTier {
   \\"Price for the entire tier.\\"
   flat_amount: Int
   \\"Same as \`flat_amount\`, but contains a decimal value with at most 12 decimal places.\\"
-  flat_amount_decimal: String
+  flat_amount_decimal: Float
   \\"Per unit price for units relevant to the tier.\\"
   unit_amount: Int
   \\"Same as \`unit_amount\`, but contains a decimal value with at most 12 decimal places.\\"
-  unit_amount_decimal: String
+  unit_amount_decimal: Float
   \\"Up to and including to this quantity will be contained in the tier.\\"
   up_to: Int
 }
@@ -10897,7 +10897,7 @@ type mutation_Post3dSecure_oneOf_0_card_account_anyOf_1_external_accounts_data_i
   \\"The amount in %s to be charged on the interval specified.\\"
   amount: Int
   \\"Same as \`amount\`, but contains a decimal value with at most 12 decimal places.\\"
-  amount_decimal: String
+  amount_decimal: Float
   billing_scheme: mutation_Post3dSecure_oneOf_0_card_account_anyOf_1_external_accounts_data_items_anyOf_0_customer_anyOf_1_subscriptions_data_items_items_data_items_plan_billing_scheme
   \\"Time at which the object was created. Measured in seconds since the Unix epoch.\\"
   created: Timestamp!
@@ -14871,7 +14871,7 @@ type InvoiceItem {
   \\"Unit Amount (in the \`currency\` specified) of the invoice item.\\"
   unit_amount: Int
   \\"Same as \`unit_amount\`, but contains a decimal value with at most 12 decimal places.\\"
-  unit_amount_decimal: String
+  unit_amount_decimal: Float
 }
 
 \\"The ID of the customer who will be billed when this invoice item is billed.\\"
@@ -15324,7 +15324,7 @@ input invoice_item_preview_params_Input {
   quantity: Int
   tax_rates: JSON
   unit_amount: Int
-  unit_amount_decimal: String
+  unit_amount_decimal: Float
 }
 
 scalar queryInput_GetInvoicesUpcoming_invoice_items_items_description
@@ -15398,7 +15398,7 @@ input queryInput_GetInvoicesUpcomingLines_invoice_items_items_Input {
   quantity: Int
   tax_rates: JSON
   unit_amount: Int
-  unit_amount_decimal: String
+  unit_amount_decimal: Float
 }
 
 scalar queryInput_GetInvoicesUpcomingLines_invoice_items_items_description
@@ -25270,7 +25270,7 @@ input PostInvoiceitems_request_Input {
   \\"The integer unit amount in **%s** of the charge to be applied to the upcoming invoice. This \`unit_amount\` will be multiplied by the quantity to get the full amount. Passing in a negative \`unit_amount\` will reduce the \`amount_due\` on the invoice.\\"
   unit_amount: Int
   \\"Same as \`unit_amount\`, but accepts a decimal value with at most 12 decimal places. Only one of \`unit_amount\` and \`unit_amount_decimal\` can be set.\\"
-  unit_amount_decimal: String
+  unit_amount_decimal: Float
 }
 
 \\"The ID of the customer who will be billed when this invoice item is billed.\\"
@@ -25339,7 +25339,7 @@ input PostInvoiceitemsInvoiceitem_request_Input {
   \\"The integer unit amount in **%s** of the charge to be applied to the upcoming invoice. This unit_amount will be multiplied by the quantity to get the full amount. If you want to apply a credit to the customer's account, pass a negative unit_amount.\\"
   unit_amount: Int
   \\"Same as \`unit_amount\`, but accepts a decimal value with at most 12 decimal places. Only one of \`unit_amount\` and \`unit_amount_decimal\` can be set.\\"
-  unit_amount_decimal: String
+  unit_amount_decimal: Float
 }
 
 \\"An arbitrary string which you can attach to the invoice item. The description is displayed in the invoice for easy tracking.\\"
@@ -29520,7 +29520,7 @@ input PostPlans_request_Input {
   \\"A positive integer in %s (or 0 for a free plan) representing how much to charge on a recurring basis.\\"
   amount: Int
   \\"Same as \`amount\`, but accepts a decimal value with at most 12 decimal places. Only one of \`amount\` and \`amount_decimal\` can be set.\\"
-  amount_decimal: String
+  amount_decimal: Float
   billing_scheme: mutationInput_PostPlans_input_billing_scheme
   \\"Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).\\"
   currency: String!
@@ -29577,9 +29577,9 @@ scalar mutationInput_PostPlans_input_nickname
 
 input plan_tier_param_Input {
   flat_amount: Int
-  flat_amount_decimal: String
+  flat_amount_decimal: Float
   unit_amount: Int
-  unit_amount_decimal: String
+  unit_amount_decimal: Float
   up_to: JSON!
 }
 

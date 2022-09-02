@@ -29,6 +29,7 @@ const JSONSchemaStringFormats = [
   'unix-time',
   'double',
   'float',
+  'decimal',
 ];
 
 export const AnySchema = {
@@ -351,6 +352,9 @@ export async function healJSONSchema(
               default:
                 logger.debug(`${path} has no title. Setting it to ${pathBasedName}`);
                 subSchema.title = subSchema.title || pathBasedName;
+            }
+            if (subSchema.const) {
+              subSchema.title = subSchema.const.toString() + '_const';
             }
           }
           if (subSchema.type === 'object' && subSchema.properties && Object.keys(subSchema.properties).length === 0) {
