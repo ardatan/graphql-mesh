@@ -23,6 +23,13 @@ const JSONSchemaStringFormats = [
   'uri',
   'uuid',
   'binary',
+  'byte',
+  'password',
+  'int64',
+  'int32',
+  'unix-time',
+  'double',
+  'float',
 ];
 
 export const AnySchema = {
@@ -206,6 +213,11 @@ export async function healJSONSchema(
                 logger.debug(`${path} has a format of ${subSchema.format}. Setting type to "integer".`);
                 subSchema.type = 'integer';
                 break;
+              case 'float':
+              case 'double':
+                logger.debug(`${path} has a format of ${subSchema.format}. Setting type to "number".`);
+                subSchema.type = 'number';
+                break;
               default:
                 if (subSchema.format != null) {
                   logger.debug(`${path} has a format of ${subSchema.format}. Setting type to "string".`);
@@ -221,7 +233,7 @@ export async function healJSONSchema(
             const examples = asArray(subSchema.examples || subSchema.example || []);
             if (examples?.length) {
               const { format } = toJsonSchema(examples[0]);
-              if (format) {
+              if (format && format !== 'utc-millisec' && format !== 'style') {
                 logger.debug(`${path} has a format of ${format} according to the example. Setting type to "string".`);
                 subSchema.format = format;
               }
@@ -231,7 +243,7 @@ export async function healJSONSchema(
             logger.debug(`${path} has a format of dateTime. It should be "date-time".`);
             subSchema.format = 'date-time';
           }
-          if (subSchema.type === 'string' && subSchema.format) {
+          if (subSchema.format) {
             if (!JSONSchemaStringFormats.includes(subSchema.format)) {
               logger.debug(
                 `${path} has a format of ${subSchema.format}. It should be one of ${JSONSchemaStringFormats.join(
