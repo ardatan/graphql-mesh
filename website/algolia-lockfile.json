@@ -519,7 +519,7 @@
         "anchor": "custom-resolvers-file-uploads"
       }
     ],
-    "content": "cd6b9484131e830a8d199a80c1bc732c",
+    "content": "a8255a5d56fcb45a1a2ed58157af0cf0",
     "url": "https://www.graphql-mesh.com/docs/guides/file-uploads",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Guides"],
@@ -603,6 +603,86 @@
     "hierarchy": ["Docs", "Guides"],
     "source": "Mesh",
     "title": "Programmatic usage /  SDK",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-guides-monitoring-and-tracing",
+    "headings": ["GraphQL Result Extensions", "DataDog, InfluxDB, Telegraf, StatsD", "Prometheus", "NewRelic"],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [],
+            "title": "Getting Started",
+            "anchor": "getting-started"
+          }
+        ],
+        "title": "GraphQL Result Extensions",
+        "anchor": "graphql-result-extensions"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Example Configuration",
+                "anchor": "example-configuration"
+              }
+            ],
+            "title": "Getting Started",
+            "anchor": "getting-started-1"
+          }
+        ],
+        "title": "DataDog, InfluxDB, Telegraf, StatsD",
+        "anchor": "datadog-influxdb-telegraf-statsd"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Example Configuration",
+                "anchor": "example-configuration-1"
+              },
+              {
+                "children": [],
+                "title": "Custom Registry",
+                "anchor": "custom-registry"
+              }
+            ],
+            "title": "Getting Started",
+            "anchor": "getting-started-2"
+          }
+        ],
+        "title": "Prometheus",
+        "anchor": "prometheus"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Example Configuration",
+                "anchor": "example-configuration-2"
+              }
+            ],
+            "title": "Getting Started",
+            "anchor": "getting-started-3"
+          }
+        ],
+        "title": "NewRelic",
+        "anchor": "newrelic"
+      }
+    ],
+    "content": "b8e5eca14f05edc2ed60526fd080e0f5",
+    "url": "https://www.graphql-mesh.com/docs/guides/monitoring-and-tracing",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Docs", "Guides"],
+    "source": "Mesh",
+    "title": "Monitoring and Tracing",
     "type": "Documentation"
   },
   {
