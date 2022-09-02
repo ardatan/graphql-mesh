@@ -7,10 +7,14 @@ You can use GraphQL Mesh plugins to trace and monitor your GraphQL Mesh gateway'
 GraphQL Mesh plugins are extended versions of [the existing Envelop plugins.](https://www.envelop.dev/docs/guides/monitoring-and-tracing)
 
 ## GraphQL Result Extensions
+
 You can expose the details of outgoing HTTP requests done by GraphQL Mesh source handlers within `extensions` property of the GraphQL execution.
 
-All you have to do is just enable the following flag;
+### Getting Started
+
 ```yaml
+# .meshrc.yml
+# You need to enable this flag to expose the details in the extensions.
 includeHttpDetailsInExtensions: true
 ```
 
@@ -94,7 +98,7 @@ plugins:
       skipIntrospection: true
 ```
 
-# Prometheus
+## Prometheus
 
 Prometheus is a platform for scraping metrics from services and utilities.
 You can use `@graphql-mesh/plugin-prometheus` plugin to expose and collect metrics from all phases of your GraphQL execution including internal query planning and outgoing HTTP requests.
