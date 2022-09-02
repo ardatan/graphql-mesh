@@ -1,5 +1,22 @@
 # @graphql-mesh/config
 
+## 7.1.1
+
+### Patch Changes
+
+- [#4418](https://github.com/Urigo/graphql-mesh/pull/4418) [`59dbb1985`](https://github.com/Urigo/graphql-mesh/commit/59dbb1985b07a250f0113d70e0f55e467dc17812) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@envelop/core@2.6.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/2.6.0) (from `2.5.0`, in `dependencies`)
+
+- Updated dependencies [[`59dbb1985`](https://github.com/Urigo/graphql-mesh/commit/59dbb1985b07a250f0113d70e0f55e467dc17812), [`3165827f7`](https://github.com/Urigo/graphql-mesh/commit/3165827f74b48a914b9604b024cd1318c211aa14)]:
+  - @graphql-mesh/runtime@0.43.2
+  - @graphql-mesh/types@0.82.1
+  - @graphql-mesh/cache-localforage@0.6.32
+  - @graphql-mesh/merger-bare@0.15.16
+  - @graphql-mesh/merger-stitching@0.16.15
+  - @graphql-mesh/store@0.8.35
+  - @graphql-mesh/utils@0.41.2
+
 ## 7.1.0
 
 ### Minor Changes
