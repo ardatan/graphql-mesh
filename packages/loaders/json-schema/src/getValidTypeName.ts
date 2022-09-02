@@ -1,4 +1,5 @@
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import { inspect } from '@graphql-tools/utils';
 import { JSONSchemaObject } from '@json-schema-tools/meta-schema';
 import { SchemaComposer } from 'graphql-compose';
 
@@ -11,6 +12,9 @@ export function getValidTypeName({
   isInput: boolean;
   subSchema: JSONSchemaObject;
 }): string {
+  if (!subSchema.title) {
+    throw new Error('Missing title for schema; ' + inspect(subSchema));
+  }
   const sanitizedName = sanitizeNameForGraphQL(isInput ? subSchema.title + '_Input' : subSchema.title);
   if (schemaComposer.has(sanitizedName)) {
     let i = 2;

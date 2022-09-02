@@ -37,6 +37,17 @@ import {
   GraphQLTime,
   GraphQLURL,
   RegularExpression,
+  GraphQLNonNegativeFloat,
+  GraphQLPositiveFloat,
+  GraphQLNonPositiveFloat,
+  GraphQLNegativeFloat,
+  GraphQLNonEmptyString,
+  GraphQLNonNegativeInt,
+  GraphQLPositiveInt,
+  GraphQLNonPositiveInt,
+  GraphQLNegativeInt,
+  GraphQLByte,
+  GraphQLTimestamp,
 } from 'graphql-scalars';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { Logger } from '@graphql-mesh/types';
@@ -114,6 +125,22 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
         let regexp: RegExp;
         try {
           regexp = new RegExp(subSchema.pattern);
+          let codegenScalarType: string;
+          switch (subSchema.type) {
+            case 'string':
+              codegenScalarType = 'string';
+              break;
+            case 'number':
+              codegenScalarType = 'number';
+              break;
+            case 'integer':
+              if (subSchema.format === 'int64') {
+                codegenScalarType = 'bigint';
+              } else {
+                codegenScalarType = 'number';
+              }
+              break;
+          }
           const scalarType = new RegularExpression(
             getValidTypeName({
               schemaComposer,
@@ -125,6 +152,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
               description: subSchema.description,
             }
           );
+          scalarType.extensions = scalarType.extensions || {};
+          (scalarType.extensions as any).codegenScalarType = codegenScalarType;
           const typeComposer = schemaComposer.getAnyTC(scalarType);
           return {
             input: typeComposer,
@@ -138,20 +167,24 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
         }
       }
       if (subSchema.const) {
-        const tsTypeName = JSON.stringify(subSchema.const);
         const scalarTypeName = getValidTypeName({
           schemaComposer,
           isInput: false,
           subSchema,
         });
-        const scalarType = new RegularExpression(scalarTypeName, new RegExp(subSchema.const), {
-          description: subSchema.description || `A field whose value is ${tsTypeName}`,
-          errorMessage: (_r, v: string) => `Expected ${tsTypeName} but got ${JSON.stringify(v)}`,
+        const typeComposer = schemaComposer.createEnumTC({
+          name: scalarTypeName,
+          values: {
+            [sanitizeNameForGraphQL(subSchema.const)]: {
+              value: subSchema.const,
+            },
+          },
+          extensions: {
+            codegenScalarType: JSON.stringify(subSchema.const),
+            examples: [subSchema.const],
+            default: subSchema.const,
+          },
         });
-        scalarType.extensions = {
-          codegenScalarType: tsTypeName,
-        };
-        const typeComposer = schemaComposer.createScalarTC(scalarType);
         return {
           input: typeComposer,
           output: typeComposer,
@@ -232,6 +265,246 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
         }
       }
 
+      if (subSchema.format) {
+        switch (subSchema.format) {
+          case 'byte': {
+            const typeComposer = schemaComposer.getAnyTC(GraphQLByte);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              default: subSchema.default,
+            };
+          }
+          case 'binary': {
+            const typeComposer = schemaComposer.getAnyTC(GraphQLFile);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              default: subSchema.default,
+            };
+          }
+          case 'date-time': {
+            const typeComposer = schemaComposer.getAnyTC(GraphQLDateTime);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+            };
+          }
+          case 'time': {
+            const typeComposer = schemaComposer.getAnyTC(GraphQLTime);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+            };
+          }
+          case 'email': {
+            const typeComposer = schemaComposer.getAnyTC(GraphQLEmailAddress);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+            };
+          }
+          case 'ipv4': {
+            const typeComposer = schemaComposer.getAnyTC(GraphQLIPv4);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+            };
+          }
+          case 'ipv6': {
+            const typeComposer = schemaComposer.getAnyTC(GraphQLIPv6);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+            };
+          }
+          case 'uri': {
+            const typeComposer = schemaComposer.getAnyTC(GraphQLURL);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+            };
+          }
+          case 'uuid': {
+            const typeComposer = schemaComposer.getAnyTC(GraphQLUUID);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+            };
+          }
+          case 'unix-time': {
+            const typeComposer = schemaComposer.createScalarTC(GraphQLTimestamp);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+            };
+          }
+          case 'int64': {
+            const typeComposer = schemaComposer.createScalarTC(GraphQLBigInt);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+            };
+          }
+          case 'int32': {
+            const typeComposer = schemaComposer.createScalarTC(GraphQLInt);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+            };
+          }
+          case 'decimal':
+          case 'float': {
+            const typeComposer = schemaComposer.createScalarTC(GraphQLFloat);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+            };
+          }
+          default: {
+            const formatScalar = formatScalarMap.get(subSchema.format);
+            if (formatScalar) {
+              const typeComposer = schemaComposer.getAnyTC(formatScalar);
+              return {
+                input: typeComposer,
+                output: typeComposer,
+                description: subSchema.description,
+                nullable: subSchema.nullable,
+                readOnly: subSchema.readOnly,
+                writeOnly: subSchema.writeOnly,
+                default: subSchema.default,
+              };
+            }
+          }
+        }
+      }
+
+      if (subSchema.minimum === 0) {
+        const typeComposer = schemaComposer.getAnyTC(
+          subSchema.type === 'integer' ? GraphQLNonNegativeInt : GraphQLNonNegativeFloat
+        );
+        return {
+          input: typeComposer,
+          output: typeComposer,
+          description: subSchema.description,
+          nullable: subSchema.nullable,
+          readOnly: subSchema.readOnly,
+          writeOnly: subSchema.writeOnly,
+          default: subSchema.default,
+        };
+      } else if (subSchema.minimum > 0) {
+        const typeComposer = schemaComposer.getAnyTC(
+          subSchema.type === 'integer' ? GraphQLPositiveInt : GraphQLPositiveFloat
+        );
+        return {
+          input: typeComposer,
+          output: typeComposer,
+          description: subSchema.description,
+          nullable: subSchema.nullable,
+          readOnly: subSchema.readOnly,
+          writeOnly: subSchema.writeOnly,
+          default: subSchema.default,
+        };
+      }
+      if (subSchema.maximum === 0) {
+        const typeComposer = schemaComposer.getAnyTC(
+          subSchema.type === 'integer' ? GraphQLNonPositiveInt : GraphQLNonPositiveFloat
+        );
+        return {
+          input: typeComposer,
+          output: typeComposer,
+          description: subSchema.description,
+          nullable: subSchema.nullable,
+          readOnly: subSchema.readOnly,
+          writeOnly: subSchema.writeOnly,
+          default: subSchema.default,
+        };
+      } else if (subSchema.maximum < 0) {
+        const typeComposer = schemaComposer.getAnyTC(
+          subSchema.type === 'integer' ? GraphQLNegativeInt : GraphQLNegativeFloat
+        );
+        return {
+          input: typeComposer,
+          output: typeComposer,
+          description: subSchema.description,
+          nullable: subSchema.nullable,
+          readOnly: subSchema.readOnly,
+          writeOnly: subSchema.writeOnly,
+          default: subSchema.default,
+        };
+      }
+      if (subSchema.maximum > Number.MAX_SAFE_INTEGER || subSchema.minimum < Number.MIN_SAFE_INTEGER) {
+        const typeComposer = schemaComposer.getAnyTC(GraphQLBigInt);
+        return {
+          input: typeComposer,
+          output: typeComposer,
+          description: subSchema.description,
+          nullable: subSchema.nullable,
+          readOnly: subSchema.readOnly,
+          writeOnly: subSchema.writeOnly,
+          default: subSchema.default,
+        };
+      }
+
       switch (subSchema.type as any) {
         case 'boolean': {
           const typeComposer = schemaComposer.getAnyTC(GraphQLBoolean);
@@ -258,18 +531,6 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           };
         }
         case 'integer': {
-          if (subSchema.format === 'int64') {
-            const typeComposer = schemaComposer.getAnyTC(GraphQLBigInt);
-            return {
-              input: typeComposer,
-              output: typeComposer,
-              description: subSchema.description,
-              nullable: subSchema.nullable,
-              readOnly: subSchema.readOnly,
-              writeOnly: subSchema.writeOnly,
-              default: subSchema.default,
-            };
-          }
           const typeComposer = schemaComposer.getAnyTC(GraphQLInt);
           return {
             input: typeComposer,
@@ -294,6 +555,18 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           };
         }
         case 'string': {
+          if (subSchema.minLength === 1 && subSchema.maxLength == null) {
+            const tc = schemaComposer.getAnyTC(GraphQLNonEmptyString);
+            return {
+              input: tc,
+              output: tc,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+            };
+          }
           if (subSchema.minLength || subSchema.maxLength) {
             const scalarType = getStringScalarWithMinMaxLength({
               schemaComposer,
@@ -310,115 +583,16 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
               default: subSchema.default,
             };
           }
-          switch (subSchema.format) {
-            case 'binary': {
-              const typeComposer = schemaComposer.getAnyTC(GraphQLFile);
-              return {
-                input: typeComposer,
-                output: typeComposer,
-                description: subSchema.description,
-                nullable: subSchema.nullable,
-                default: subSchema.default,
-              };
-            }
-            case 'date-time': {
-              const typeComposer = schemaComposer.getAnyTC(GraphQLDateTime);
-              return {
-                input: typeComposer,
-                output: typeComposer,
-                description: subSchema.description,
-                nullable: subSchema.nullable,
-                readOnly: subSchema.readOnly,
-                writeOnly: subSchema.writeOnly,
-                default: subSchema.default,
-              };
-            }
-            case 'time': {
-              const typeComposer = schemaComposer.getAnyTC(GraphQLTime);
-              return {
-                input: typeComposer,
-                output: typeComposer,
-                description: subSchema.description,
-                nullable: subSchema.nullable,
-                readOnly: subSchema.readOnly,
-                writeOnly: subSchema.writeOnly,
-                default: subSchema.default,
-              };
-            }
-            case 'email': {
-              const typeComposer = schemaComposer.getAnyTC(GraphQLEmailAddress);
-              return {
-                input: typeComposer,
-                output: typeComposer,
-                description: subSchema.description,
-                nullable: subSchema.nullable,
-                readOnly: subSchema.readOnly,
-                writeOnly: subSchema.writeOnly,
-                default: subSchema.default,
-              };
-            }
-            case 'ipv4': {
-              const typeComposer = schemaComposer.getAnyTC(GraphQLIPv4);
-              return {
-                input: typeComposer,
-                output: typeComposer,
-                description: subSchema.description,
-                nullable: subSchema.nullable,
-                readOnly: subSchema.readOnly,
-                writeOnly: subSchema.writeOnly,
-                default: subSchema.default,
-              };
-            }
-            case 'ipv6': {
-              const typeComposer = schemaComposer.getAnyTC(GraphQLIPv6);
-              return {
-                input: typeComposer,
-                output: typeComposer,
-                description: subSchema.description,
-                nullable: subSchema.nullable,
-                readOnly: subSchema.readOnly,
-                writeOnly: subSchema.writeOnly,
-                default: subSchema.default,
-              };
-            }
-            case 'uri': {
-              const typeComposer = schemaComposer.getAnyTC(GraphQLURL);
-              return {
-                input: typeComposer,
-                output: typeComposer,
-                description: subSchema.description,
-                nullable: subSchema.nullable,
-                readOnly: subSchema.readOnly,
-                writeOnly: subSchema.writeOnly,
-                default: subSchema.default,
-              };
-            }
-            case 'uuid': {
-              const typeComposer = schemaComposer.getAnyTC(GraphQLUUID);
-              return {
-                input: typeComposer,
-                output: typeComposer,
-                description: subSchema.description,
-                nullable: subSchema.nullable,
-                readOnly: subSchema.readOnly,
-                writeOnly: subSchema.writeOnly,
-                default: subSchema.default,
-              };
-            }
-            default: {
-              const formatScalar = formatScalarMap.get(subSchema.format) || GraphQLString;
-              const typeComposer = schemaComposer.getAnyTC(formatScalar);
-              return {
-                input: typeComposer,
-                output: typeComposer,
-                description: subSchema.description,
-                nullable: subSchema.nullable,
-                readOnly: subSchema.readOnly,
-                writeOnly: subSchema.writeOnly,
-                default: subSchema.default,
-              };
-            }
-          }
+          const typeComposer = schemaComposer.getAnyTC(GraphQLString);
+          return {
+            input: typeComposer,
+            output: typeComposer,
+            description: subSchema.description,
+            nullable: subSchema.nullable,
+            readOnly: subSchema.readOnly,
+            writeOnly: subSchema.writeOnly,
+            default: subSchema.default,
+          };
         }
         case 'array':
           if (typeof subSchema.items === 'object' && Object.keys(subSchema.items).length > 0) {

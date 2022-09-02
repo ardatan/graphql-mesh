@@ -23,6 +23,13 @@ const JSONSchemaStringFormats = [
   'uri',
   'uuid',
   'binary',
+  'byte',
+  'int64',
+  'int32',
+  'unix-time',
+  'double',
+  'float',
+  'decimal',
 ];
 
 export const AnySchema = {
@@ -206,13 +213,18 @@ export async function healJSONSchema(
                 logger.debug(`${path} has a format of ${subSchema.format}. Setting type to "integer".`);
                 subSchema.type = 'integer';
                 break;
+              case 'float':
+              case 'double':
+                logger.debug(`${path} has a format of ${subSchema.format}. Setting type to "number".`);
+                subSchema.type = 'number';
+                break;
               default:
                 if (subSchema.format != null) {
                   logger.debug(`${path} has a format of ${subSchema.format}. Setting type to "string".`);
                   subSchema.type = 'string';
                 }
             }
-            if (subSchema.minimum || subSchema.maximum) {
+            if (subSchema.minimum != null || subSchema.maximum != null) {
               logger.debug(`${path} has a minimum or maximum. Setting type to "number".`);
               subSchema.type = 'number';
             }
@@ -221,7 +233,7 @@ export async function healJSONSchema(
             const examples = asArray(subSchema.examples || subSchema.example || []);
             if (examples?.length) {
               const { format } = toJsonSchema(examples[0]);
-              if (format) {
+              if (format && format !== 'utc-millisec' && format !== 'style') {
                 logger.debug(`${path} has a format of ${format} according to the example. Setting type to "string".`);
                 subSchema.format = format;
               }
@@ -231,7 +243,7 @@ export async function healJSONSchema(
             logger.debug(`${path} has a format of dateTime. It should be "date-time".`);
             subSchema.format = 'date-time';
           }
-          if (subSchema.type === 'string' && subSchema.format) {
+          if (subSchema.format) {
             if (!JSONSchemaStringFormats.includes(subSchema.format)) {
               logger.debug(
                 `${path} has a format of ${subSchema.format}. It should be one of ${JSONSchemaStringFormats.join(
@@ -340,6 +352,9 @@ export async function healJSONSchema(
               default:
                 logger.debug(`${path} has no title. Setting it to ${pathBasedName}`);
                 subSchema.title = subSchema.title || pathBasedName;
+            }
+            if (subSchema.const) {
+              subSchema.title = subSchema.const.toString() + '_const';
             }
           }
           if (subSchema.type === 'object' && subSchema.properties && Object.keys(subSchema.properties).length === 0) {

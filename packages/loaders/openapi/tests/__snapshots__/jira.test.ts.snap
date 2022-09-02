@@ -54004,6 +54004,7 @@ Defaults to \`0\`.",
           },
           "binaryValue": Object {
             "items": Object {
+              "format": "byte",
               "type": "string",
             },
             "type": "array",
@@ -72171,6 +72172,7 @@ The name of the group. This parameter cannot be used with the \`groupId\` parame
             },
             "binaryValue": Object {
               "items": Object {
+                "format": "byte",
                 "type": "string",
               },
               "type": "array",
@@ -72341,6 +72343,7 @@ The name of the group. This parameter cannot be used with the \`groupId\` parame
             },
             "binaryValue": Object {
               "items": Object {
+                "format": "byte",
                 "type": "string",
               },
               "type": "array",
@@ -95626,7 +95629,7 @@ input JsonNode_Input {
   doubleValue: Float
   decimalValue: Float
   booleanValue: Boolean
-  binaryValue: [String]
+  binaryValue: [Byte]
   valueAsInt: Int
   valueAsLong: BigInt
   valueAsDouble: Float
@@ -95644,6 +95647,9 @@ enum mutationInput_bulkSetIssuesPropertiesList_input_additionalProperties_number
   DOUBLE
   BIG_DECIMAL
 }
+
+\\"The \`Byte\` scalar type represents byte value as a Buffer\\"
+scalar Byte
 
 union bulkSetIssuePropertiesByIssue_response = ErrorCollection
 
@@ -95689,7 +95695,7 @@ input JsonNode_Input2 {
   doubleValue: Float
   decimalValue: Float
   booleanValue: Boolean
-  binaryValue: [String]
+  binaryValue: [Byte]
   valueAsInt: Int
   valueAsLong: BigInt
   valueAsDouble: Float
@@ -96530,10 +96536,11 @@ enum mutationInput_parseJqlQueries_validation {
 \\"A list of JQL queries to parse.\\"
 input JqlQueriesToParse_Input {
   \\"A list of queries to parse.\\"
-  queries: [mutationInput_parseJqlQueries_input_queries_items]!
+  queries: [NonEmptyString]!
 }
 
-scalar mutationInput_parseJqlQueries_input_queries_items
+\\"A string that cannot be passed as an empty value\\"
+scalar NonEmptyString
 
 \\"The converted JQL queries.\\"
 type ConvertedJQLQueries {
