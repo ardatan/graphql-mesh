@@ -5,6 +5,7 @@ import {
   GraphQLFloat,
   GraphQLInt,
   GraphQLString,
+  isEnumType,
   isListType,
   isObjectType,
   isScalarType,
@@ -71,12 +72,12 @@ describe('getComposerFromJSONSchema', () => {
     const result = await getComposerFromJSONSchema(inputSchema, logger);
     // Scalar types are both input and output types
     expect(result.input).toBe(result.output);
-    const outputComposer = result.output as ScalarTypeComposer;
-    expect(isScalarType(outputComposer.getType())).toBeTruthy();
+    const outputComposer = result.output as EnumTypeComposer;
+    const enumType = outputComposer.getType();
+    expect(isEnumType(enumType)).toBeTruthy();
     expect(outputComposer.getTypeName()).toBe(title);
-    const serializeFn = outputComposer.getSerialize();
-    expect(() => serializeFn('bar')).toThrow();
-    expect(serializeFn(constStr)).toBe(constStr);
+    expect(() => enumType.parseValue('bar')).toThrow();
+    expect(enumType.parseValue(constStr)).toBe(constStr);
   });
   it('should generate a new enum type from enum schema', async () => {
     const enumValues = ['foo', 'bar', 'qux'];
