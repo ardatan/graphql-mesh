@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package io.xtech;
+
+message MapRequest {
+    map<string, string> map = 1;
+}
+
+message MapResponse {
+    map<string, string> map = 1;
+}
+
+service MapService {
+  rpc GetMap (MapRequest) returns (MapResponse) {}
+}

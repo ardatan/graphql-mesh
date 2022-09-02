@@ -309,7 +309,10 @@ ${rootJsonAndDecodedDescriptorSets
       const inputTypeName = typeName + '_Input';
       const outputTypeName = typeName;
       const description = (nested as any).comment;
-      const fieldEntries = Object.entries(nested.fields) as [string, protobufjs.IField & { comment: string }][];
+      const fieldEntries = Object.entries(nested.fields) as [
+        string,
+        protobufjs.IField & { comment: string; keyType?: string }
+      ][];
       if (fieldEntries.length) {
         const inputTC = this.schemaComposer.createInputTC({
           name: inputTypeName,
@@ -321,14 +324,19 @@ ${rootJsonAndDecodedDescriptorSets
           description,
           fields: {},
         });
-        for (const [fieldName, { type, rule, comment }] of fieldEntries) {
+        for (const [fieldName, { type, rule, comment, keyType }] of fieldEntries) {
           logger.debug(`Visiting ${currentPath}.nested.fields[${fieldName}]`);
           const baseFieldTypePath = type.split('.');
           inputTC.addFields({
             [fieldName]: {
               type: () => {
-                const fieldTypePath = this.walkToFindTypePath(rootJson, pathWithName, baseFieldTypePath);
-                const fieldInputTypeName = getTypeName(this.schemaComposer, fieldTypePath, true);
+                let fieldInputTypeName: string;
+                if (keyType) {
+                  fieldInputTypeName = 'JSON';
+                } else {
+                  const fieldTypePath = this.walkToFindTypePath(rootJson, pathWithName, baseFieldTypePath);
+                  fieldInputTypeName = getTypeName(this.schemaComposer, fieldTypePath, true);
+                }
                 return rule === 'repeated' ? `[${fieldInputTypeName}]` : fieldInputTypeName;
               },
               description: comment,
@@ -337,8 +345,13 @@ ${rootJsonAndDecodedDescriptorSets
           outputTC.addFields({
             [fieldName]: {
               type: () => {
-                const fieldTypePath = this.walkToFindTypePath(rootJson, pathWithName, baseFieldTypePath);
-                const fieldTypeName = getTypeName(this.schemaComposer, fieldTypePath, false);
+                let fieldTypeName: string;
+                if (keyType) {
+                  fieldTypeName = 'JSON';
+                } else {
+                  const fieldTypePath = this.walkToFindTypePath(rootJson, pathWithName, baseFieldTypePath);
+                  fieldTypeName = getTypeName(this.schemaComposer, fieldTypePath, false);
+                }
                 return rule === 'repeated' ? `[${fieldTypeName}]` : fieldTypeName;
               },
               description: comment,
