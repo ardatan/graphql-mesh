@@ -1,5 +1,11 @@
 # @omnigraph/openapi
 
+## 0.14.2
+
+### Patch Changes
+
+- [#4419](https://github.com/Urigo/graphql-mesh/pull/4419) [`2772150e7`](https://github.com/Urigo/graphql-mesh/commit/2772150e7230ed796aa8e7a33337c96eb2fb0a76) Thanks [@ardatan](https://github.com/ardatan)! - fix(openapi): allow user to override accept from the schema
+
 ## 0.14.1
 
 ### Patch Changes
