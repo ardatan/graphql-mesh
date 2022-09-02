@@ -2119,25 +2119,32 @@
       "title": "NewrelicConfig",
       "properties": {
         "includeOperationDocument": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "default `false`. When set to `true`, includes the GraphQL document defining the operations and fragments"
         },
         "includeExecuteVariables": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "default `false`. When set to `true`, includes all the operation variables with their values"
         },
         "includeRawResult": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "default: `false`. When set to `true`, includes the execution result"
         },
         "trackResolvers": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "default `false`. When set to `true`, track resolvers as segments to monitor their performance"
         },
         "includeResolverArgs": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "default `false`. When set to `true`, includes all the arguments passed to resolvers with their values"
         },
         "rootFieldsNaming": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "default `false`. When set to `true` append the names of operation root fields to the transaction name"
         },
         "extractOperationName": {
-          "type": "string"
+          "type": "string",
+          "description": "Allows to set a custom operation name to be used as transaction name and attribute\n`extractOperationName: {context.headers['x-operation-name']}`"
         }
       }
     },
@@ -2296,7 +2303,7 @@
         },
         "prefix": {
           "type": "string",
-          "description": "<prefix>.operations.count (default: graphql)"
+          "description": "prefix.operations.count (default: graphql)"
         },
         "client": {
           "$ref": "#/definitions/StatsdClientConfiguration",

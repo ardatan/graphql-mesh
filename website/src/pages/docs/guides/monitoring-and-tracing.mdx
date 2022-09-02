@@ -8,7 +8,7 @@ GraphQL Mesh plugins are extended versions of [the existing Envelop plugins.](ht
 You can expose the details of outgoing HTTP requests done by GraphQL Mesh source handlers within `extensions` property of the GraphQL execution.
 
 All you have to do is just enable the following flag;
-```yml
+```yaml
 includeHttpDetailsInExtensions: true
 ```
 
@@ -79,7 +79,7 @@ Available metrics:
 
 ### Example Configuration
 
-```yml
+```yaml
 # ...
 plugins:
   - statsd:
@@ -117,7 +117,7 @@ This plugin tracks the complete gateway execution flow and exposes the following
 
 ### Example Configuration
 
-```yml
+```yaml
 # ...
 plugins:
   - prometheus:
@@ -153,7 +153,7 @@ import { Registry } from 'prom-client';
 export default const myRegistry = new Registry();
 ```
 
-```yml
+```yaml
 # ...
 plugins:
   - prometheus:
@@ -175,7 +175,7 @@ You can instrument your GraphQL application with New Relic reporting in order to
 
 ### Example Configuration
 
-```yml
+```yaml
 # ...
 plugins:
   - newrelic:

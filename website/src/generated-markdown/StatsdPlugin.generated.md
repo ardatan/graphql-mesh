@@ -1,6 +1,6 @@
 
 * `skipIntrospection` (type: `Boolean`) - If you wish to disable introspection for logging (default: false)
-* `prefix` (type: `String`) - <prefix>.operations.count (default: graphql)
+* `prefix` (type: `String`) - prefix.operations.count (default: graphql)
 * `client` (type: `Object`) - Client Configuration: 
   * `bufferFlushInterval` (type: `Int`)
   * `bufferHolder` (type: `Object`): 

@@ -8,7 +8,7 @@ type StatsdPlugin @md {
   """
   skipIntrospection: Boolean
   """
-  <prefix>.operations.count (default: graphql)
+  prefix.operations.count (default: graphql)
   """
   prefix: String
 
