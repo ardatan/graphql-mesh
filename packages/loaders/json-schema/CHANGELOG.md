@@ -1,5 +1,22 @@
 # @omnigraph/json-schema
 
+## 0.33.0
+
+### Minor Changes
+
+- [#4426](https://github.com/Urigo/graphql-mesh/pull/4426) [`3571324cd`](https://github.com/Urigo/graphql-mesh/commit/3571324cdca5d731d67ee1cc8829225986360409) Thanks [@ardatan](https://github.com/ardatan)! - Use more accurate scalar types if minimum and maximum exist for number types (`NonNegativeFloat`, `NonPositiveFloat`, `NegativeFloat`, `PositiveFloat`, `NonNegativeInt`, `NonPositiveInt`, `NegativeInt`, `PositiveInt`).
+
+  Also use `Byte` for `format: byte`
+
+  Now `const` generates an enum instead of a scalar type with a better name.
+
+### Patch Changes
+
+- [#4426](https://github.com/Urigo/graphql-mesh/pull/4426) [`3571324cd`](https://github.com/Urigo/graphql-mesh/commit/3571324cdca5d731d67ee1cc8829225986360409) Thanks [@ardatan](https://github.com/ardatan)! - Respect original type for GraphQL Codegen TS definitions while generating a scalar type based on a RegExp pattern
+
+- Updated dependencies [[`3571324cd`](https://github.com/Urigo/graphql-mesh/commit/3571324cdca5d731d67ee1cc8829225986360409)]:
+  - json-machete@0.14.3
+
 ## 0.32.2
 
 ### Patch Changes

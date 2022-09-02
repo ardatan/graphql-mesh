@@ -1,5 +1,11 @@
 # json-machete
 
+## 0.14.3
+
+### Patch Changes
+
+- [#4426](https://github.com/Urigo/graphql-mesh/pull/4426) [`3571324cd`](https://github.com/Urigo/graphql-mesh/commit/3571324cdca5d731d67ee1cc8829225986360409) Thanks [@ardatan](https://github.com/ardatan)! - Respect original type for GraphQL Codegen TS definitions while generating a scalar type based on a RegExp pattern
+
 ## 0.14.2
 
 ### Patch Changes
