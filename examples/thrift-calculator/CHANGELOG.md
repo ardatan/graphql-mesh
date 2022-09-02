@@ -1,5 +1,13 @@
 # thrift-calculator
 
+## 0.5.256
+
+### Patch Changes
+
+- Updated dependencies [[`59dbb1985`](https://github.com/Urigo/graphql-mesh/commit/59dbb1985b07a250f0113d70e0f55e467dc17812)]:
+  - @graphql-mesh/cli@0.77.2
+  - @graphql-mesh/thrift@0.11.2
+
 ## 0.5.255
 
 ### Patch Changes

@@ -1,5 +1,22 @@
 # @graphql-mesh/plugin-newrelic
 
+## 0.1.3
+
+### Patch Changes
+
+- [#4418](https://github.com/Urigo/graphql-mesh/pull/4418) [`59dbb1985`](https://github.com/Urigo/graphql-mesh/commit/59dbb1985b07a250f0113d70e0f55e467dc17812) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@envelop/newrelic@4.3.0` ↗︎](https://www.npmjs.com/package/@envelop/newrelic/v/4.3.0) (from `4.2.0`, in `dependencies`)
+
+- [#4422](https://github.com/Urigo/graphql-mesh/pull/4422) [`3165827f7`](https://github.com/Urigo/graphql-mesh/commit/3165827f74b48a914b9604b024cd1318c211aa14) Thanks [@ardatan](https://github.com/ardatan)! - 🚀🚀🚀 **New StatsD plugin** 🚀🚀🚀
+
+  You can learn more about tracing and monitoring in GraphQL with different plugins (StatsD, Prometheus, NewRelic and more) in our documentation.
+  [Tracing and Monitoring in GraphQL Mesh](http://www.graphql-mesh.com/docs/guides/monitoring-and-tracing)
+
+- Updated dependencies [[`3165827f7`](https://github.com/Urigo/graphql-mesh/commit/3165827f74b48a914b9604b024cd1318c211aa14)]:
+  - @graphql-mesh/types@0.82.1
+  - @graphql-mesh/utils@0.41.2
+
 ## 0.1.2
 
 ### Patch Changes

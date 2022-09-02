@@ -1,5 +1,13 @@
 # @graphql-mesh/transform-snapshot
 
+## 0.14.48
+
+### Patch Changes
+
+- Updated dependencies [[`3165827f7`](https://github.com/Urigo/graphql-mesh/commit/3165827f74b48a914b9604b024cd1318c211aa14)]:
+  - @graphql-mesh/types@0.82.1
+  - @graphql-mesh/utils@0.41.2
+
 ## 0.14.47
 
 ### Patch Changes
