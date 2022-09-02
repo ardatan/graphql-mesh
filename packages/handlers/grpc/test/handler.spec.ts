@@ -20,6 +20,7 @@ describe.each<[string, string]>([
   ['Custom Message', 'custom-message.proto'],
   ['Custom Message2', 'custom-message-2.proto'],
   ['Comments', 'comments.proto'],
+  ['Map', 'map.proto'],
 ])('Interpreting Protos', (name, file) => {
   test(`should load the ${name} proto`, async () => {
     const cache = new InMemoryLRUCache();

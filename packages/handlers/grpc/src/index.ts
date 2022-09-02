@@ -321,12 +321,15 @@ ${rootJsonAndDecodedDescriptorSets
           description,
           fields: {},
         });
-        for (const [fieldName, { type, rule, comment }] of fieldEntries) {
+        for (const [fieldName, { type, rule, comment, keyType }] of fieldEntries) {
           logger.debug(`Visiting ${currentPath}.nested.fields[${fieldName}]`);
           const baseFieldTypePath = type.split('.');
           inputTC.addFields({
             [fieldName]: {
               type: () => {
+                if (keyType) {
+                  return GraphQLJSON;
+                }
                 const fieldTypePath = this.walkToFindTypePath(rootJson, pathWithName, baseFieldTypePath);
                 const fieldInputTypeName = getTypeName(this.schemaComposer, fieldTypePath, true);
                 return rule === 'repeated' ? `[${fieldInputTypeName}]` : fieldInputTypeName;
