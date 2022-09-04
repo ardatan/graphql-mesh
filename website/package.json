@@ -6,8 +6,8 @@
   "scripts": {
     "algolia-sync": "node scripts/algolia-ci.mjs",
     "build-mesh": "cd src/pages/api/covid/json-schema-covid && mesh build",
-    "prebuild": "yarn build-mesh",
-    "build": "next build",
+    "prebuild": "yarn build-mesh ",
+    "build": "next build && next-sitemap",
     "predev": "yarn build-mesh",
     "dev": "next dev",
     "next": "next",
@@ -19,6 +19,7 @@
     "@theguild/components": "3.0.3",
     "guild-docs": "4.1.0",
     "next": "12.2.5",
+    "next-sitemap": "^3.1.21",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
