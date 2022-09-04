@@ -56,14 +56,19 @@ export default function useMeshNewrelic(options: MeshPluginOptions<YamlConfig.Ne
         null,
         parentSegment
       );
-      if (args) {
-        sourceSegment.addAttribute('args', JSON.stringify(args));
-      }
-      if (key) {
-        sourceSegment.addAttribute('key', JSON.stringify(key));
+      if (options.includeResolverArgs) {
+        if (args) {
+          sourceSegment.addAttribute('args', JSON.stringify(args));
+        }
+        if (key) {
+          sourceSegment.addAttribute('key', JSON.stringify(key));
+        }
       }
       sourceSegment.start();
-      return () => {
+      return ({ result }) => {
+        if (options.includeRawResult) {
+          sourceSegment.addAttribute('result', JSON.stringify(result));
+        }
         sourceSegment.end();
       };
     },

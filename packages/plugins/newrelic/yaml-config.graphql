@@ -12,7 +12,7 @@ type NewrelicConfig @md {
   """
   includeExecuteVariables: Boolean
   """
-  default: `false`. When set to `true`, includes the execution result
+  default: `false`. When set to `true`, includes the execution result of both delegation and execution
   """
   includeRawResult: Boolean
   """
@@ -20,7 +20,7 @@ type NewrelicConfig @md {
   """
   trackResolvers: Boolean
   """
-  default `false`. When set to `true`, includes all the arguments passed to resolvers with their values
+  default `false`. When set to `true`, includes all the arguments passed to resolvers and delegation with their values
   """
   includeResolverArgs: Boolean
   """
