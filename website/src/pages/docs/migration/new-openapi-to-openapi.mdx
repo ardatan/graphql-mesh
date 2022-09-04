@@ -1,0 +1,15 @@
+import { PackageCmd, Callout } from '@theguild/components'
+
+# new-openAPI handler renamed openAPI
+
+After a period of development the new-openAPI handler (v0.8.2) was merged with the openAPI handler (v0.32.0), effectively replacing it.
+
+<Callout>Note: If you migrate from new-openAPI handler prior to v0.8.2 or to openAPI handler later than v0.32.0, some additional steps might be required.</Callout>
+
+## Dependency Update
+
+Please replace the `"@graphql-mesh/new-openapi": "0.8.2"` dependency with `"@graphql-mesh/openapi": "0.32.0"`.
+
+## Config Update
+
+Please replace the `new-openAPI` handler with `openAPI` handler.
