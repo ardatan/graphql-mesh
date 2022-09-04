@@ -8,39 +8,39 @@ exports[`OpenAPI loader: Handle anyOf and oneOf should generate the schema corre
 directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
 
 type Query {
-  \\"Basic oneOf test\\"
+  "Basic oneOf test"
   oneOf: oneOf_200_response
-  \\"oneOf test with non-object type member schema\\"
+  "oneOf test with non-object type member schema"
   oneOf2: oneOf2_200_response
-  \\"oneOf test with no object type member schemas\\"
+  "oneOf test with no object type member schemas"
   oneOf3: oneOf3_200_response
-  \\"oneOf test with extraneous member schemas\\"
+  "oneOf test with extraneous member schemas"
   oneOf4: Int
-  \\"Basic oneOf test with allOf\\"
+  "Basic oneOf test with allOf"
   oneOf5: oneOf5_200_response
-  \\"oneOf test with allOf, requiring oneOf collapse\\"
+  "oneOf test with allOf, requiring oneOf collapse"
   oneOf6: oneOf6_200_response
-  \\"Basic anyOf test using the same member schemas\\"
+  "Basic anyOf test using the same member schemas"
   anyOf: anyOf_200_response
-  \\"Basic anyOf test with different member schemas\\"
+  "Basic anyOf test with different member schemas"
   anyOf2: anyOf2_200_response
-  \\"anyOf test with the same nested member schemas\\"
+  "anyOf test with the same nested member schemas"
   anyOf3: anyOf3_200_response
-  \\"anyOf test with different nested member schemas\\"
+  "anyOf test with different nested member schemas"
   anyOf4: anyOf4_200_response
-  \\"anyOf test with different nested member schemas, leading to conflict\\"
+  "anyOf test with different nested member schemas, leading to conflict"
   anyOf5: anyOf5_200_response
-  \\"anyOf test with incompatible member schema types\\"
+  "anyOf test with incompatible member schema types"
   anyOf6: anyOf6_200_response
-  \\"anyOf test with some extraneous member schemas\\"
+  "anyOf test with some extraneous member schemas"
   anyOf7: anyOf7_200_response
-  \\"anyOf test with no object type member schemas\\"
+  "anyOf test with no object type member schemas"
   anyOf8: anyOf8_200_response
-  \\"anyOf test with extraneous member schemas with external type\\"
+  "anyOf test with extraneous member schemas with external type"
   anyOf9: Int
-  \\"Basic anyOf test with allOf\\"
+  "Basic anyOf test with allOf"
   anyOf10: anyOf10_200_response
-  \\"anyOf test with allOf, requiring anyOf collapse\\"
+  "anyOf test with allOf, requiring anyOf collapse"
   anyOf11: anyOf11_200_response
   testLink: String
   oneOfWithAllOfsAndLink: OneOfWithAllOfsAndLink
@@ -98,8 +98,8 @@ type anyOf5_200_response {
   commonAttribute: JSON
 }
 
-\\"The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).\\"
-scalar JSON @specifiedBy(url: \\"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf\\")
+"The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf)."
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 type anyOf6_200_response {
   commonAttribute: String

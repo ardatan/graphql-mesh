@@ -11,7 +11,7 @@ describe('Multiple Responses Swagger', () => {
       "directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
 
       type Query {
-        \\"\\"\\"Optional extended description in Markdown.\\"\\"\\"
+        """Optional extended description in Markdown."""
         foo_by_id: foo_by_id_response
       }
 
@@ -27,7 +27,7 @@ describe('Multiple Responses Swagger', () => {
       }
 
       type Mutation {
-        \\"\\"\\"Optional extended description in Markdown.\\"\\"\\"
+        """Optional extended description in Markdown."""
         post: post_response
       }
 
@@ -37,7 +37,7 @@ describe('Multiple Responses Swagger', () => {
         Void: Void
       }
 
-      \\"\\"\\"Represents empty values\\"\\"\\"
+      """Represents empty values"""
       scalar Void"
     `);
   });

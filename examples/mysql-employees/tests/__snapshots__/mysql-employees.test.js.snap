@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`MySQL Employees should generate correct schema: mysql-employees-schema 1`] = `
-"\\"\\"\\"
+""""
 A date string, such as 2007-12-03, compliant with the \`full-date\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
-\\"\\"\\"
+"""
 scalar Date
 
 type Mutation {
@@ -67,7 +67,7 @@ type Query {
   v_full_employees(limit: Int, offset: Int, orderBy: v_full_employees_OrderByInput, where: v_full_employees_WhereInput): [v_full_employees]
 }
 
-\\"\\"\\"VIEW\\"\\"\\"
+"""VIEW"""
 type current_dept_emp {
   dept_no: String!
   emp_no: Int!
@@ -75,7 +75,7 @@ type current_dept_emp {
   to_date: Date
 }
 
-\\"\\"\\"VIEW\\"\\"\\"
+"""VIEW"""
 input current_dept_emp_InsertInput {
   dept_no: String!
   emp_no: Int!
@@ -83,7 +83,7 @@ input current_dept_emp_InsertInput {
   to_date: Date
 }
 
-\\"\\"\\"VIEW\\"\\"\\"
+"""VIEW"""
 input current_dept_emp_OrderByInput {
   dept_no: OrderBy
   emp_no: OrderBy
@@ -91,7 +91,7 @@ input current_dept_emp_OrderByInput {
   to_date: OrderBy
 }
 
-\\"\\"\\"VIEW\\"\\"\\"
+"""VIEW"""
 input current_dept_emp_UpdateInput {
   dept_no: String
   emp_no: Int
@@ -99,7 +99,7 @@ input current_dept_emp_UpdateInput {
   to_date: Date
 }
 
-\\"\\"\\"VIEW\\"\\"\\"
+"""VIEW"""
 input current_dept_emp_WhereInput {
   dept_no: String
   emp_no: String
@@ -171,35 +171,35 @@ input dept_emp_WhereInput {
   to_date: String
 }
 
-\\"\\"\\"VIEW\\"\\"\\"
+"""VIEW"""
 type dept_emp_latest_date {
   emp_no: Int!
   from_date: Date
   to_date: Date
 }
 
-\\"\\"\\"VIEW\\"\\"\\"
+"""VIEW"""
 input dept_emp_latest_date_InsertInput {
   emp_no: Int!
   from_date: Date
   to_date: Date
 }
 
-\\"\\"\\"VIEW\\"\\"\\"
+"""VIEW"""
 input dept_emp_latest_date_OrderByInput {
   emp_no: OrderBy
   from_date: OrderBy
   to_date: OrderBy
 }
 
-\\"\\"\\"VIEW\\"\\"\\"
+"""VIEW"""
 input dept_emp_latest_date_UpdateInput {
   emp_no: Int
   from_date: Date
   to_date: Date
 }
 
-\\"\\"\\"VIEW\\"\\"\\"
+"""VIEW"""
 input dept_emp_latest_date_WhereInput {
   emp_no: String
   from_date: String
@@ -369,42 +369,42 @@ input titles_WhereInput {
   to_date: String
 }
 
-\\"\\"\\"VIEW\\"\\"\\"
+"""VIEW"""
 type v_full_departments {
   dept_name: String!
   dept_no: String!
   manager: String
 }
 
-\\"\\"\\"VIEW\\"\\"\\"
+"""VIEW"""
 input v_full_departments_InsertInput {
   dept_name: String!
   dept_no: String!
   manager: String
 }
 
-\\"\\"\\"VIEW\\"\\"\\"
+"""VIEW"""
 input v_full_departments_OrderByInput {
   dept_name: OrderBy
   dept_no: OrderBy
   manager: OrderBy
 }
 
-\\"\\"\\"VIEW\\"\\"\\"
+"""VIEW"""
 input v_full_departments_UpdateInput {
   dept_name: String
   dept_no: String
   manager: String
 }
 
-\\"\\"\\"VIEW\\"\\"\\"
+"""VIEW"""
 input v_full_departments_WhereInput {
   dept_name: String
   dept_no: String
   manager: String
 }
 
-\\"\\"\\"VIEW\\"\\"\\"
+"""VIEW"""
 type v_full_employees {
   birth_date: Date!
   department: String
@@ -415,7 +415,7 @@ type v_full_employees {
   last_name: String!
 }
 
-\\"\\"\\"VIEW\\"\\"\\"
+"""VIEW"""
 input v_full_employees_InsertInput {
   birth_date: Date!
   department: String
@@ -426,7 +426,7 @@ input v_full_employees_InsertInput {
   last_name: String!
 }
 
-\\"\\"\\"VIEW\\"\\"\\"
+"""VIEW"""
 input v_full_employees_OrderByInput {
   birth_date: OrderBy
   department: OrderBy
@@ -437,7 +437,7 @@ input v_full_employees_OrderByInput {
   last_name: OrderBy
 }
 
-\\"\\"\\"VIEW\\"\\"\\"
+"""VIEW"""
 input v_full_employees_UpdateInput {
   birth_date: Date
   department: String
@@ -448,7 +448,7 @@ input v_full_employees_UpdateInput {
   last_name: String
 }
 
-\\"\\"\\"VIEW\\"\\"\\"
+"""VIEW"""
 input v_full_employees_WhereInput {
   birth_date: String
   department: String
@@ -466,16 +466,16 @@ enum v_full_employees_gender {
 `;
 
 exports[`MySQL Employees should give correct response for example queries: example-query.graphql-query-result 1`] = `
-Object {
-  "data": Object {
-    "employees": Array [
-      Object {
+{
+  "data": {
+    "employees": [
+      {
         "__typename": "employees",
         "birth_date": "1953-09-02",
-        "dept_emp": Array [
-          Object {
-            "departments": Array [
-              Object {
+        "dept_emp": [
+          {
+            "departments": [
+              {
                 "dept_name": "Development",
                 "dept_no": "d005",
               },
@@ -492,13 +492,13 @@ Object {
         "hire_date": "1986-06-26",
         "last_name": "Facello",
       },
-      Object {
+      {
         "__typename": "employees",
         "birth_date": "1964-06-02",
-        "dept_emp": Array [
-          Object {
-            "departments": Array [
-              Object {
+        "dept_emp": [
+          {
+            "departments": [
+              {
                 "dept_name": "Sales",
                 "dept_no": "d007",
               },
@@ -515,13 +515,13 @@ Object {
         "hire_date": "1985-11-21",
         "last_name": "Simmel",
       },
-      Object {
+      {
         "__typename": "employees",
         "birth_date": "1959-12-03",
-        "dept_emp": Array [
-          Object {
-            "departments": Array [
-              Object {
+        "dept_emp": [
+          {
+            "departments": [
+              {
                 "dept_name": "Production",
                 "dept_no": "d004",
               },
@@ -538,13 +538,13 @@ Object {
         "hire_date": "1986-08-28",
         "last_name": "Bamford",
       },
-      Object {
+      {
         "__typename": "employees",
         "birth_date": "1954-05-01",
-        "dept_emp": Array [
-          Object {
-            "departments": Array [
-              Object {
+        "dept_emp": [
+          {
+            "departments": [
+              {
                 "dept_name": "Production",
                 "dept_no": "d004",
               },
@@ -561,13 +561,13 @@ Object {
         "hire_date": "1986-12-01",
         "last_name": "Koblick",
       },
-      Object {
+      {
         "__typename": "employees",
         "birth_date": "1955-01-21",
-        "dept_emp": Array [
-          Object {
-            "departments": Array [
-              Object {
+        "dept_emp": [
+          {
+            "departments": [
+              {
                 "dept_name": "Human Resources",
                 "dept_no": "d003",
               },

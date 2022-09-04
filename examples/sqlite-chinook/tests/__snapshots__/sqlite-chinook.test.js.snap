@@ -1,17 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`SQLite Chinook should generate correct schema: sqlite-chinook-schema 1`] = `
-Object {
-  "__schema": Object {
-    "directives": Array [
-      Object {
-        "args": Array [
-          Object {
-            "defaultValue": "\\"No longer supported\\"",
+{
+  "__schema": {
+    "directives": [
+      {
+        "args": [
+          {
+            "defaultValue": ""No longer supported"",
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "reason",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -19,7 +19,7 @@ Object {
           },
         ],
         "isRepeatable": false,
-        "locations": Array [
+        "locations": [
           "ARGUMENT_DEFINITION",
           "ENUM_VALUE",
           "FIELD_DEFINITION",
@@ -27,17 +27,17 @@ Object {
         ],
         "name": "deprecated",
       },
-      Object {
-        "args": Array [
-          Object {
+      {
+        "args": [
+          {
             "defaultValue": null,
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "if",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "Boolean",
                 "ofType": null,
@@ -46,24 +46,24 @@ Object {
           },
         ],
         "isRepeatable": false,
-        "locations": Array [
+        "locations": [
           "FIELD",
           "FRAGMENT_SPREAD",
           "INLINE_FRAGMENT",
         ],
         "name": "include",
       },
-      Object {
-        "args": Array [
-          Object {
+      {
+        "args": [
+          {
             "defaultValue": null,
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "if",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "Boolean",
                 "ofType": null,
@@ -72,24 +72,24 @@ Object {
           },
         ],
         "isRepeatable": false,
-        "locations": Array [
+        "locations": [
           "FIELD",
           "FRAGMENT_SPREAD",
           "INLINE_FRAGMENT",
         ],
         "name": "skip",
       },
-      Object {
-        "args": Array [
-          Object {
+      {
+        "args": [
+          {
             "defaultValue": null,
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "url",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "String",
                 "ofType": null,
@@ -98,120 +98,120 @@ Object {
           },
         ],
         "isRepeatable": false,
-        "locations": Array [
+        "locations": [
           "SCALAR",
         ],
         "name": "specifiedBy",
       },
     ],
-    "mutationType": Object {
+    "mutationType": {
       "name": "Mutation",
     },
-    "queryType": Object {
+    "queryType": {
       "name": "Query",
     },
     "subscriptionType": null,
-    "types": Array [
-      Object {
+    "types": [
+      {
         "enumValues": null,
-        "fields": Array [
-          Object {
-            "args": Array [],
+        "fields": [
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "albumId",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "Int",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "artist",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Artist",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "artistId",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "Int",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "title",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "String",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "limit",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "offset",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "order",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -221,10 +221,10 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "tracks",
-            "type": Object {
+            "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "OBJECT",
                 "name": "Track",
                 "ofType": null,
@@ -233,56 +233,56 @@ Object {
           },
         ],
         "inputFields": null,
-        "interfaces": Array [],
+        "interfaces": [],
         "kind": "OBJECT",
         "name": "Album",
         "possibleTypes": null,
         "specifiedByURL": null,
       },
-      Object {
+      {
         "enumValues": null,
-        "fields": Array [
-          Object {
-            "args": Array [
-              Object {
+        "fields": [
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "limit",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "offset",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "order",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -292,37 +292,37 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "albums",
-            "type": Object {
+            "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "OBJECT",
                 "name": "Album",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "artistId",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "Int",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "name",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -330,13 +330,13 @@ Object {
           },
         ],
         "inputFields": null,
-        "interfaces": Array [],
+        "interfaces": [],
         "kind": "OBJECT",
         "name": "Artist",
         "possibleTypes": null,
         "specifiedByURL": null,
       },
-      Object {
+      {
         "enumValues": null,
         "fields": null,
         "inputFields": null,
@@ -346,161 +346,161 @@ Object {
         "possibleTypes": null,
         "specifiedByURL": null,
       },
-      Object {
+      {
         "enumValues": null,
-        "fields": Array [
-          Object {
-            "args": Array [],
+        "fields": [
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "address",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "city",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "company",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "country",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "customerId",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "Int",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "email",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "String",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "employee",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Employee",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "fax",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "firstName",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "String",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "limit",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "offset",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "order",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -510,70 +510,70 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "invoices",
-            "type": Object {
+            "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "OBJECT",
                 "name": "Invoice",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "lastName",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "String",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "phone",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "postalCode",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "state",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "supportRepId",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "Int",
               "ofType": null,
@@ -581,100 +581,100 @@ Object {
           },
         ],
         "inputFields": null,
-        "interfaces": Array [],
+        "interfaces": [],
         "kind": "OBJECT",
         "name": "Customer",
         "possibleTypes": null,
         "specifiedByURL": null,
       },
-      Object {
+      {
         "enumValues": null,
-        "fields": Array [
-          Object {
-            "args": Array [],
+        "fields": [
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "address",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "birthDate",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "city",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "country",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "limit",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "offset",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "order",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -684,94 +684,94 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "customers",
-            "type": Object {
+            "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "OBJECT",
                 "name": "Customer",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "email",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "employee",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Employee",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "employeeId",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "Int",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "limit",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "offset",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "order",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -781,118 +781,118 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "employees",
-            "type": Object {
+            "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "OBJECT",
                 "name": "Employee",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "fax",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "firstName",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "String",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "hireDate",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "lastName",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "String",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "phone",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "postalCode",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "reportsTo",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "Int",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "state",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "title",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -900,21 +900,21 @@ Object {
           },
         ],
         "inputFields": null,
-        "interfaces": Array [],
+        "interfaces": [],
         "kind": "OBJECT",
         "name": "Employee",
         "possibleTypes": null,
         "specifiedByURL": null,
       },
-      Object {
+      {
         "enumValues": null,
-        "fields": Array [
-          Object {
-            "args": Array [],
+        "fields": [
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "success",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "Boolean",
               "ofType": null,
@@ -922,82 +922,82 @@ Object {
           },
         ],
         "inputFields": null,
-        "interfaces": Array [],
+        "interfaces": [],
         "kind": "OBJECT",
         "name": "GenericResponse",
         "possibleTypes": null,
         "specifiedByURL": null,
       },
-      Object {
+      {
         "enumValues": null,
-        "fields": Array [
-          Object {
-            "args": Array [],
+        "fields": [
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "genreId",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "Int",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "name",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "limit",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "offset",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "order",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -1007,10 +1007,10 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "tracks",
-            "type": Object {
+            "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "OBJECT",
                 "name": "Track",
                 "ofType": null,
@@ -1019,13 +1019,13 @@ Object {
           },
         ],
         "inputFields": null,
-        "interfaces": Array [],
+        "interfaces": [],
         "kind": "OBJECT",
         "name": "Genre",
         "possibleTypes": null,
         "specifiedByURL": null,
       },
-      Object {
+      {
         "enumValues": null,
         "fields": null,
         "inputFields": null,
@@ -1035,161 +1035,161 @@ Object {
         "possibleTypes": null,
         "specifiedByURL": null,
       },
-      Object {
+      {
         "enumValues": null,
-        "fields": Array [
-          Object {
-            "args": Array [],
+        "fields": [
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "billingAddress",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "billingCity",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "billingCountry",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "billingPostalCode",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "billingState",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "customer",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Customer",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "customerId",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "Int",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "invoiceDate",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "String",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "invoiceId",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "Int",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "limit",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "offset",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "order",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -1199,25 +1199,25 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "invoiceItems",
-            "type": Object {
+            "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "OBJECT",
                 "name": "InvoiceItem",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "total",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "String",
                 "ofType": null,
@@ -1226,106 +1226,106 @@ Object {
           },
         ],
         "inputFields": null,
-        "interfaces": Array [],
+        "interfaces": [],
         "kind": "OBJECT",
         "name": "Invoice",
         "possibleTypes": null,
         "specifiedByURL": null,
       },
-      Object {
+      {
         "enumValues": null,
-        "fields": Array [
-          Object {
-            "args": Array [],
+        "fields": [
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "invoice",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Invoice",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "invoiceId",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "Int",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "invoiceLineId",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "Int",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "quantity",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "Int",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "track",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Track",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "trackId",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "Int",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "unitPrice",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "String",
                 "ofType": null,
@@ -1334,82 +1334,82 @@ Object {
           },
         ],
         "inputFields": null,
-        "interfaces": Array [],
+        "interfaces": [],
         "kind": "OBJECT",
         "name": "InvoiceItem",
         "possibleTypes": null,
         "specifiedByURL": null,
       },
-      Object {
+      {
         "enumValues": null,
-        "fields": Array [
-          Object {
-            "args": Array [],
+        "fields": [
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "mediaTypeId",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "Int",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "name",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "limit",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "offset",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "order",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -1419,10 +1419,10 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "tracks",
-            "type": Object {
+            "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "OBJECT",
                 "name": "Track",
                 "ofType": null,
@@ -1431,41 +1431,41 @@ Object {
           },
         ],
         "inputFields": null,
-        "interfaces": Array [],
+        "interfaces": [],
         "kind": "OBJECT",
         "name": "MediaType",
         "possibleTypes": null,
         "specifiedByURL": null,
       },
-      Object {
+      {
         "enumValues": null,
-        "fields": Array [
-          Object {
-            "args": Array [
-              Object {
+        "fields": [
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "playlistId",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "Int",
                     "ofType": null,
                   },
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "trackId",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "Int",
                     "ofType": null,
@@ -1476,38 +1476,38 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "addPlaylistToTrack",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "GenericResponse",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "playlistId",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "Int",
                     "ofType": null,
                   },
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "trackId",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "Int",
                     "ofType": null,
@@ -1518,38 +1518,38 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "addTrackToPlaylist",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "GenericResponse",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "artistId",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "Int",
                     "ofType": null,
                   },
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "title",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "String",
                     "ofType": null,
@@ -1560,20 +1560,20 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "createAlbum",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Album",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "name",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
@@ -1583,153 +1583,153 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "createArtist",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Artist",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "address",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "city",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "company",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "country",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "email",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "String",
                     "ofType": null,
                   },
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "fax",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "firstName",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "String",
                     "ofType": null,
                   },
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "lastName",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "String",
                     "ofType": null,
                   },
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "phone",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "postalCode",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "state",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "supportRepId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
@@ -1739,171 +1739,171 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "createCustomer",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Customer",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "address",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "birthDate",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "city",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "country",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "email",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "fax",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "firstName",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "String",
                     "ofType": null,
                   },
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "hireDate",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "lastName",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "String",
                     "ofType": null,
                   },
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "phone",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "postalCode",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "reportsTo",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "state",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "title",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
@@ -1913,20 +1913,20 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "createEmployee",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Employee",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "name",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
@@ -1936,108 +1936,108 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "createGenre",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Genre",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "billingAddress",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "billingCity",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "billingCountry",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "billingPostalCode",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "billingState",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "customerId",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "Int",
                     "ofType": null,
                   },
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "invoiceDate",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "String",
                     "ofType": null,
                   },
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "total",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "String",
                     "ofType": null,
@@ -2048,68 +2048,68 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "createInvoice",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Invoice",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "invoiceId",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "Int",
                     "ofType": null,
                   },
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "quantity",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "Int",
                     "ofType": null,
                   },
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "trackId",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "Int",
                     "ofType": null,
                   },
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "unitPrice",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "String",
                     "ofType": null,
@@ -2120,20 +2120,20 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "createInvoiceItem",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "InvoiceItem",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "name",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
@@ -2143,20 +2143,20 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "createMediaType",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "MediaType",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "name",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
@@ -2166,112 +2166,112 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "createPlaylist",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Playlist",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "albumId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "bytes",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "composer",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "genreId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "mediaTypeId",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "Int",
                     "ofType": null,
                   },
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "milliseconds",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "Int",
                     "ofType": null,
                   },
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "name",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "String",
                     "ofType": null,
                   },
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "unitPrice",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "String",
                     "ofType": null,
@@ -2282,23 +2282,23 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "createTrack",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Track",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "albumId",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "Int",
                     "ofType": null,
@@ -2309,23 +2309,23 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "deleteAlbum",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "GenericResponse",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "artistId",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "Int",
                     "ofType": null,
@@ -2336,23 +2336,23 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "deleteArtist",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "GenericResponse",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "customerId",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "Int",
                     "ofType": null,
@@ -2363,23 +2363,23 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "deleteCustomer",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "GenericResponse",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "employeeId",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "Int",
                     "ofType": null,
@@ -2390,23 +2390,23 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "deleteEmployee",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "GenericResponse",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "genreId",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "Int",
                     "ofType": null,
@@ -2417,23 +2417,23 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "deleteGenre",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "GenericResponse",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "invoiceId",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "Int",
                     "ofType": null,
@@ -2444,23 +2444,23 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "deleteInvoice",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "GenericResponse",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "invoiceLineId",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "Int",
                     "ofType": null,
@@ -2471,23 +2471,23 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "deleteInvoiceItem",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "GenericResponse",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "mediaTypeId",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "Int",
                     "ofType": null,
@@ -2498,23 +2498,23 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "deleteMediaType",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "GenericResponse",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "playlistId",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "Int",
                     "ofType": null,
@@ -2525,23 +2525,23 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "deletePlaylist",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "GenericResponse",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "trackId",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "Int",
                     "ofType": null,
@@ -2552,38 +2552,38 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "deleteTrack",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "GenericResponse",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "playlistId",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "Int",
                     "ofType": null,
                   },
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "trackId",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "Int",
                     "ofType": null,
@@ -2594,38 +2594,38 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "removePlaylistFromTrack",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "GenericResponse",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "playlistId",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "Int",
                     "ofType": null,
                   },
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "trackId",
-                "type": Object {
+                "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "SCALAR",
                     "name": "Int",
                     "ofType": null,
@@ -2636,42 +2636,42 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "removeTrackFromPlaylist",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "GenericResponse",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "albumId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "artistId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "title",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
@@ -2681,31 +2681,31 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "updateAlbum",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Album",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "artistId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "name",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
@@ -2715,152 +2715,152 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "updateArtist",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Artist",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "address",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "city",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "company",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "country",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "customerId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "email",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "fax",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "firstName",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "lastName",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "phone",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "postalCode",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "state",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "supportRepId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
@@ -2870,174 +2870,174 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "updateCustomer",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Customer",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "address",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "birthDate",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "city",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "country",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "email",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "employeeId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "fax",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "firstName",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "hireDate",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "lastName",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "phone",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "postalCode",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "reportsTo",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "state",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "title",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
@@ -3047,31 +3047,31 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "updateEmployee",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Employee",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "genreId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "name",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
@@ -3081,108 +3081,108 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "updateGenre",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Genre",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "billingAddress",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "billingCity",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "billingCountry",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "billingPostalCode",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "billingState",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "customerId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "invoiceDate",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "invoiceId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "total",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
@@ -3192,64 +3192,64 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "updateInvoice",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Invoice",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "invoiceId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "invoiceLineId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "quantity",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "trackId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "unitPrice",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
@@ -3259,31 +3259,31 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "updateInvoiceItem",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "InvoiceItem",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "mediaTypeId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "name",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
@@ -3293,31 +3293,31 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "updateMediaType",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "MediaType",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "name",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "playlistId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
@@ -3327,108 +3327,108 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "updatePlaylist",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Playlist",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "albumId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "bytes",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "composer",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "genreId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "mediaTypeId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "milliseconds",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "name",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "trackId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "unitPrice",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
@@ -3438,7 +3438,7 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "updateTrack",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Track",
               "ofType": null,
@@ -3446,50 +3446,50 @@ Object {
           },
         ],
         "inputFields": null,
-        "interfaces": Array [],
+        "interfaces": [],
         "kind": "OBJECT",
         "name": "Mutation",
         "possibleTypes": null,
         "specifiedByURL": null,
       },
-      Object {
+      {
         "enumValues": null,
-        "fields": Array [
-          Object {
-            "args": Array [],
+        "fields": [
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "name",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "playlistId",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "Int",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "tracks",
-            "type": Object {
+            "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "OBJECT",
                 "name": "Track",
                 "ofType": null,
@@ -3498,34 +3498,34 @@ Object {
           },
         ],
         "inputFields": null,
-        "interfaces": Array [],
+        "interfaces": [],
         "kind": "OBJECT",
         "name": "Playlist",
         "possibleTypes": null,
         "specifiedByURL": null,
       },
-      Object {
+      {
         "enumValues": null,
-        "fields": Array [
-          Object {
-            "args": Array [
-              Object {
+        "fields": [
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "albumId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -3535,53 +3535,53 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "album",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Album",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "limit",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "offset",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "order",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -3591,35 +3591,35 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "albums",
-            "type": Object {
+            "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "OBJECT",
                 "name": "Album",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "artistId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -3629,53 +3629,53 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "artist",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Artist",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "limit",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "offset",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "order",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -3685,35 +3685,35 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "artists",
-            "type": Object {
+            "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "OBJECT",
                 "name": "Artist",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "customerId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -3723,53 +3723,53 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "customer",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Customer",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "limit",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "offset",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "order",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -3779,35 +3779,35 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "customers",
-            "type": Object {
+            "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "OBJECT",
                 "name": "Customer",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "employeeId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -3817,53 +3817,53 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "employee",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Employee",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "limit",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "offset",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "order",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -3873,35 +3873,35 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "employees",
-            "type": Object {
+            "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "OBJECT",
                 "name": "Employee",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "genreId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -3911,53 +3911,53 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "genre",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Genre",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "limit",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "offset",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "order",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -3967,35 +3967,35 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "genres",
-            "type": Object {
+            "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "OBJECT",
                 "name": "Genre",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "invoiceId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -4005,31 +4005,31 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "invoice",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Invoice",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "invoiceLineId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -4039,53 +4039,53 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "invoiceItem",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "InvoiceItem",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "limit",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "offset",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "order",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -4095,57 +4095,57 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "invoiceItems",
-            "type": Object {
+            "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "OBJECT",
                 "name": "InvoiceItem",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "limit",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "offset",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "order",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -4155,35 +4155,35 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "invoices",
-            "type": Object {
+            "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "OBJECT",
                 "name": "Invoice",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "mediaTypeId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -4193,53 +4193,53 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "mediaType",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "MediaType",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "limit",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "offset",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "order",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -4249,35 +4249,35 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "mediaTypes",
-            "type": Object {
+            "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "OBJECT",
                 "name": "MediaType",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "playlistId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -4287,53 +4287,53 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "playlist",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Playlist",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "limit",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "offset",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "order",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -4343,35 +4343,35 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "playlists",
-            "type": Object {
+            "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "OBJECT",
                 "name": "Playlist",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "trackId",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -4381,53 +4381,53 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "track",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Track",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "limit",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "offset",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "order",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -4437,10 +4437,10 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "tracks",
-            "type": Object {
+            "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "OBJECT",
                 "name": "Track",
                 "ofType": null,
@@ -4449,13 +4449,13 @@ Object {
           },
         ],
         "inputFields": null,
-        "interfaces": Array [],
+        "interfaces": [],
         "kind": "OBJECT",
         "name": "Query",
         "possibleTypes": null,
         "specifiedByURL": null,
       },
-      Object {
+      {
         "enumValues": null,
         "fields": null,
         "inputFields": null,
@@ -4465,7 +4465,7 @@ Object {
         "possibleTypes": null,
         "specifiedByURL": null,
       },
-      Object {
+      {
         "enumValues": null,
         "fields": null,
         "inputFields": null,
@@ -4475,116 +4475,116 @@ Object {
         "possibleTypes": null,
         "specifiedByURL": null,
       },
-      Object {
+      {
         "enumValues": null,
-        "fields": Array [
-          Object {
-            "args": Array [],
+        "fields": [
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "album",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Album",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "albumId",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "Int",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "bytes",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "Int",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "composer",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "genre",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "Genre",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "genreId",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "Int",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "limit",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "offset",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Int",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "order",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null,
                 },
               },
-              Object {
+              {
                 "defaultValue": null,
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "where",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "SequelizeJSON",
                   "ofType": null,
@@ -4594,111 +4594,111 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "invoiceItems",
-            "type": Object {
+            "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "OBJECT",
                 "name": "InvoiceItem",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "mediaType",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "MediaType",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "mediaTypeId",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "Int",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "milliseconds",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "Int",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "name",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "String",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "playlists",
-            "type": Object {
+            "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "OBJECT",
                 "name": "Playlist",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "trackId",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "Int",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "unitPrice",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "String",
                 "ofType": null,
@@ -4707,71 +4707,71 @@ Object {
           },
         ],
         "inputFields": null,
-        "interfaces": Array [],
+        "interfaces": [],
         "kind": "OBJECT",
         "name": "Track",
         "possibleTypes": null,
         "specifiedByURL": null,
       },
-      Object {
+      {
         "enumValues": null,
-        "fields": Array [
-          Object {
-            "args": Array [],
+        "fields": [
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "name",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "String",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "description",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "isRepeatable",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "Boolean",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "locations",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "LIST",
                 "name": null,
-                "ofType": Object {
+                "ofType": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "ENUM",
                     "name": "__DirectiveLocation",
                     "ofType": null,
@@ -4780,14 +4780,14 @@ Object {
               },
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": "false",
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "includeDeprecated",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Boolean",
                   "ofType": null,
@@ -4797,16 +4797,16 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "args",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "LIST",
                 "name": null,
-                "ofType": Object {
+                "ofType": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "OBJECT",
                     "name": "__InputValue",
                     "ofType": null,
@@ -4817,105 +4817,105 @@ Object {
           },
         ],
         "inputFields": null,
-        "interfaces": Array [],
+        "interfaces": [],
         "kind": "OBJECT",
         "name": "__Directive",
         "possibleTypes": null,
         "specifiedByURL": null,
       },
-      Object {
-        "enumValues": Array [
-          Object {
+      {
+        "enumValues": [
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "QUERY",
           },
-          Object {
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "MUTATION",
           },
-          Object {
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "SUBSCRIPTION",
           },
-          Object {
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "FIELD",
           },
-          Object {
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "FRAGMENT_DEFINITION",
           },
-          Object {
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "FRAGMENT_SPREAD",
           },
-          Object {
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "INLINE_FRAGMENT",
           },
-          Object {
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "VARIABLE_DEFINITION",
           },
-          Object {
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "SCHEMA",
           },
-          Object {
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "SCALAR",
           },
-          Object {
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "OBJECT",
           },
-          Object {
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "FIELD_DEFINITION",
           },
-          Object {
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "ARGUMENT_DEFINITION",
           },
-          Object {
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "INTERFACE",
           },
-          Object {
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "UNION",
           },
-          Object {
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "ENUM",
           },
-          Object {
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "ENUM_VALUE",
           },
-          Object {
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "INPUT_OBJECT",
           },
-          Object {
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "INPUT_FIELD_DEFINITION",
@@ -4929,56 +4929,56 @@ Object {
         "possibleTypes": null,
         "specifiedByURL": null,
       },
-      Object {
+      {
         "enumValues": null,
-        "fields": Array [
-          Object {
-            "args": Array [],
+        "fields": [
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "name",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "String",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "description",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "isDeprecated",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "Boolean",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "deprecationReason",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -4986,49 +4986,49 @@ Object {
           },
         ],
         "inputFields": null,
-        "interfaces": Array [],
+        "interfaces": [],
         "kind": "OBJECT",
         "name": "__EnumValue",
         "possibleTypes": null,
         "specifiedByURL": null,
       },
-      Object {
+      {
         "enumValues": null,
-        "fields": Array [
-          Object {
-            "args": Array [],
+        "fields": [
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "name",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "String",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "description",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": "false",
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "includeDeprecated",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Boolean",
                   "ofType": null,
@@ -5038,16 +5038,16 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "args",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "LIST",
                 "name": null,
-                "ofType": Object {
+                "ofType": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "OBJECT",
                     "name": "__InputValue",
                     "ofType": null,
@@ -5056,42 +5056,42 @@ Object {
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "type",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "OBJECT",
                 "name": "__Type",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "isDeprecated",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "Boolean",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "deprecationReason",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -5099,88 +5099,88 @@ Object {
           },
         ],
         "inputFields": null,
-        "interfaces": Array [],
+        "interfaces": [],
         "kind": "OBJECT",
         "name": "__Field",
         "possibleTypes": null,
         "specifiedByURL": null,
       },
-      Object {
+      {
         "enumValues": null,
-        "fields": Array [
-          Object {
-            "args": Array [],
+        "fields": [
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "name",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "String",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "description",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "type",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "OBJECT",
                 "name": "__Type",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "defaultValue",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "isDeprecated",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "SCALAR",
                 "name": "Boolean",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "deprecationReason",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
@@ -5188,41 +5188,41 @@ Object {
           },
         ],
         "inputFields": null,
-        "interfaces": Array [],
+        "interfaces": [],
         "kind": "OBJECT",
         "name": "__InputValue",
         "possibleTypes": null,
         "specifiedByURL": null,
       },
-      Object {
+      {
         "enumValues": null,
-        "fields": Array [
-          Object {
-            "args": Array [],
+        "fields": [
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "description",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "types",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "LIST",
                 "name": null,
-                "ofType": Object {
+                "ofType": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "OBJECT",
                     "name": "__Type",
                     "ofType": null,
@@ -5231,58 +5231,58 @@ Object {
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "queryType",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "OBJECT",
                 "name": "__Type",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "mutationType",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "__Type",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "subscriptionType",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "__Type",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "directives",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "LIST",
                 "name": null,
-                "ofType": Object {
+                "ofType": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": Object {
+                  "ofType": {
                     "kind": "OBJECT",
                     "name": "__Directive",
                     "ofType": null,
@@ -5293,71 +5293,71 @@ Object {
           },
         ],
         "inputFields": null,
-        "interfaces": Array [],
+        "interfaces": [],
         "kind": "OBJECT",
         "name": "__Schema",
         "possibleTypes": null,
         "specifiedByURL": null,
       },
-      Object {
+      {
         "enumValues": null,
-        "fields": Array [
-          Object {
-            "args": Array [],
+        "fields": [
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "kind",
-            "type": Object {
+            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "ENUM",
                 "name": "__TypeKind",
                 "ofType": null,
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "name",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "description",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "specifiedByURL",
-            "type": Object {
+            "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null,
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": "false",
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "includeDeprecated",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Boolean",
                   "ofType": null,
@@ -5367,13 +5367,13 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "fields",
-            "type": Object {
+            "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "NON_NULL",
                 "name": null,
-                "ofType": Object {
+                "ofType": {
                   "kind": "OBJECT",
                   "name": "__Field",
                   "ofType": null,
@@ -5381,18 +5381,18 @@ Object {
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "interfaces",
-            "type": Object {
+            "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "NON_NULL",
                 "name": null,
-                "ofType": Object {
+                "ofType": {
                   "kind": "OBJECT",
                   "name": "__Type",
                   "ofType": null,
@@ -5400,18 +5400,18 @@ Object {
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "possibleTypes",
-            "type": Object {
+            "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "NON_NULL",
                 "name": null,
-                "ofType": Object {
+                "ofType": {
                   "kind": "OBJECT",
                   "name": "__Type",
                   "ofType": null,
@@ -5419,14 +5419,14 @@ Object {
               },
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": "false",
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "includeDeprecated",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Boolean",
                   "ofType": null,
@@ -5436,13 +5436,13 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "enumValues",
-            "type": Object {
+            "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "NON_NULL",
                 "name": null,
-                "ofType": Object {
+                "ofType": {
                   "kind": "OBJECT",
                   "name": "__EnumValue",
                   "ofType": null,
@@ -5450,14 +5450,14 @@ Object {
               },
             },
           },
-          Object {
-            "args": Array [
-              Object {
+          {
+            "args": [
+              {
                 "defaultValue": "false",
                 "deprecationReason": null,
                 "isDeprecated": false,
                 "name": "includeDeprecated",
-                "type": Object {
+                "type": {
                   "kind": "SCALAR",
                   "name": "Boolean",
                   "ofType": null,
@@ -5467,13 +5467,13 @@ Object {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "inputFields",
-            "type": Object {
+            "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": Object {
+              "ofType": {
                 "kind": "NON_NULL",
                 "name": null,
-                "ofType": Object {
+                "ofType": {
                   "kind": "OBJECT",
                   "name": "__InputValue",
                   "ofType": null,
@@ -5481,12 +5481,12 @@ Object {
               },
             },
           },
-          Object {
-            "args": Array [],
+          {
+            "args": [],
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "ofType",
-            "type": Object {
+            "type": {
               "kind": "OBJECT",
               "name": "__Type",
               "ofType": null,
@@ -5494,50 +5494,50 @@ Object {
           },
         ],
         "inputFields": null,
-        "interfaces": Array [],
+        "interfaces": [],
         "kind": "OBJECT",
         "name": "__Type",
         "possibleTypes": null,
         "specifiedByURL": null,
       },
-      Object {
-        "enumValues": Array [
-          Object {
+      {
+        "enumValues": [
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "SCALAR",
           },
-          Object {
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "OBJECT",
           },
-          Object {
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "INTERFACE",
           },
-          Object {
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "UNION",
           },
-          Object {
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "ENUM",
           },
-          Object {
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "INPUT_OBJECT",
           },
-          Object {
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "LIST",
           },
-          Object {
+          {
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "NON_NULL",
@@ -5557,19 +5557,19 @@ Object {
 `;
 
 exports[`SQLite Chinook should give correct response for example queries: example-query.graphql-sqlite-chinook-result 1`] = `
-Object {
-  "data": Object {
-    "albums": Array [
-      Object {
+{
+  "data": {
+    "albums": [
+      {
         "albumId": 1,
-        "artist": Object {
+        "artist": {
           "name": "AC/DC",
         },
         "title": "For Those About To Rock We Salute You",
       },
-      Object {
+      {
         "albumId": 2,
-        "artist": Object {
+        "artist": {
           "name": "Accept",
         },
         "title": "Balls to the Wall",

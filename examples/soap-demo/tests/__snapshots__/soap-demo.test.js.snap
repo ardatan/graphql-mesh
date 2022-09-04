@@ -21,29 +21,29 @@ type ArrayOfPersonIdentificationPersonIdentification {
   PersonIdentification: [PersonIdentification]
 }
 
-\\"\\"\\"
+"""
 The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
-\\"\\"\\"
+"""
 scalar BigInt
 
-\\"\\"\\"
+"""
 A date string, such as 2007-12-03, compliant with the \`full-date\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
-\\"\\"\\"
+"""
 scalar Date
 
-\\"\\"\\"
+"""
 The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-\\"\\"\\"
-scalar JSON @specifiedBy(url: \\"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf\\")
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 type Mutation {
-  \\"\\"\\"Operation AddInteger, port SOAPDemoSoap, service SOAPDemo\\"\\"\\"
+  """Operation AddInteger, port SOAPDemoSoap, service SOAPDemo"""
   AddInteger(Arg1: BigInt, Arg2: BigInt): BigInt
-  \\"\\"\\"Operation DivideInteger, port SOAPDemoSoap, service SOAPDemo\\"\\"\\"
+  """Operation DivideInteger, port SOAPDemoSoap, service SOAPDemo"""
   DivideInteger(Arg1: BigInt, Arg2: BigInt): BigInt
-  \\"\\"\\"Operation LookupCity, port SOAPDemoSoap, service SOAPDemo\\"\\"\\"
+  """Operation LookupCity, port SOAPDemoSoap, service SOAPDemo"""
   LookupCity(zip: String): Address
-  \\"\\"\\"Operation Mission, port SOAPDemoSoap, service SOAPDemo\\"\\"\\"
+  """Operation Mission, port SOAPDemoSoap, service SOAPDemo"""
   Mission: String
 }
 
@@ -66,55 +66,55 @@ type PersonIdentification {
 }
 
 type Query {
-  \\"\\"\\"Operation FindPerson, port SOAPDemoSoap, service SOAPDemo\\"\\"\\"
+  """Operation FindPerson, port SOAPDemoSoap, service SOAPDemo"""
   FindPerson(id: String): Person
-  \\"\\"\\"Operation GetByName, port SOAPDemoSoap, service SOAPDemo\\"\\"\\"
+  """Operation GetByName, port SOAPDemoSoap, service SOAPDemo"""
   GetByName(name: String): JSON
-  \\"\\"\\"Operation GetDataSetByName, port SOAPDemoSoap, service SOAPDemo\\"\\"\\"
+  """Operation GetDataSetByName, port SOAPDemoSoap, service SOAPDemo"""
   GetDataSetByName(name: String): JSON
-  \\"\\"\\"Operation GetListByName, port SOAPDemoSoap, service SOAPDemo\\"\\"\\"
+  """Operation GetListByName, port SOAPDemoSoap, service SOAPDemo"""
   GetListByName(name: String): ArrayOfPersonIdentificationPersonIdentification
-  \\"\\"\\"Operation QueryByName, port SOAPDemoSoap, service SOAPDemo\\"\\"\\"
+  """Operation QueryByName, port SOAPDemoSoap, service SOAPDemo"""
   QueryByName(name: String): JSON
   description: String
 }"
 `;
 
 exports[`SOAP Country Info should give correct response for example queries: AddInteger.graphql-soap-demo-result 1`] = `
-Object {
-  "data": Object {
+{
+  "data": {
     "AddInteger": 5n,
   },
 }
 `;
 
 exports[`SOAP Country Info should give correct response for example queries: DivideInteger.graphql-soap-demo-result 1`] = `
-Object {
-  "data": Object {
+{
+  "data": {
     "DivideInteger": 5n,
   },
 }
 `;
 
 exports[`SOAP Country Info should give correct response for example queries: FindPerson.graphql-soap-demo-result 1`] = `
-Object {
-  "data": Object {
-    "FindPerson": Object {
+{
+  "data": {
+    "FindPerson": {
       "Age": 22n,
       "DOB": "2000-03-20",
-      "FavoriteColors": Object {
-        "FavoriteColorsItem": Array [
+      "FavoriteColors": {
+        "FavoriteColorsItem": [
           "Red",
         ],
       },
-      "Home": Object {
+      "Home": {
         "City": "Pueblo",
         "State": "AK",
         "Street": "6977 First Street",
         "Zip": "63163",
       },
       "Name": "Newton,Dave R.",
-      "Office": Object {
+      "Office": {
         "City": "Washington",
         "State": "MN",
         "Street": "9984 Second Blvd",
@@ -127,17 +127,17 @@ Object {
 `;
 
 exports[`SOAP Country Info should give correct response for example queries: GetListByName.graphql-soap-demo-result 1`] = `
-Object {
-  "data": Object {
-    "GetListByName": Object {
-      "PersonIdentification": Array [
-        Object {
+{
+  "data": {
+    "GetListByName": {
+      "PersonIdentification": [
+        {
           "DOB": "2000-03-20",
           "ID": "1",
           "Name": "Newton,Dave R.",
           "SSN": "384-10-6538",
         },
-        Object {
+        {
           "DOB": "2004-11-17",
           "ID": "29",
           "Name": "Newton,Mario B.",

@@ -14,16 +14,16 @@ type Author {
 }
 
 type Book {
-  author: Author @resolveTo(sourceName: \\"AuthorService\\", sourceTypeName: \\"Query\\", sourceFieldName: \\"authors\\", keyField: \\"authorId\\", keysArg: \\"ids\\")
+  author: Author @resolveTo(sourceName: "AuthorService", sourceTypeName: "Query", sourceFieldName: "authors", keyField: "authorId", keysArg: "ids")
   authorId: ID
   id: ID
   title: String
 }
 
 type Query {
-  author(id: ID): Author @merge(keyField: \\"id\\")
-  authors(ids: [ID]): [Author] @merge(keyField: \\"id\\")
-  book(id: ID): Book @merge(keyField: \\"id\\")
+  author(id: ID): Author @merge(keyField: "id")
+  authors(ids: [ID]): [Author] @merge(keyField: "id")
+  book(id: ID): Book @merge(keyField: "id")
   books: [Book]
 }
 
@@ -31,12 +31,12 @@ scalar ResolveToSourceArgs"
 `;
 
 exports[`Type Merging and Batching Example should give correct response for example queries: Author.graphql-query-result 1`] = `
-Object {
-  "data": Object {
-    "author": Object {
-      "books": Array [
-        Object {
-          "author": Object {
+{
+  "data": {
+    "author": {
+      "books": [
+        {
+          "author": {
             "id": "1",
             "name": "Jane Doe",
           },
@@ -52,13 +52,13 @@ Object {
 `;
 
 exports[`Type Merging and Batching Example should give correct response for example queries: Authors.graphql-query-result 1`] = `
-Object {
-  "data": Object {
-    "authors": Array [
-      Object {
-        "books": Array [
-          Object {
-            "author": Object {
+{
+  "data": {
+    "authors": [
+      {
+        "books": [
+          {
+            "author": {
               "id": "0",
               "name": "John Doe",
             },
@@ -69,10 +69,10 @@ Object {
         "id": "0",
         "name": "John Doe",
       },
-      Object {
-        "books": Array [
-          Object {
-            "author": Object {
+      {
+        "books": [
+          {
+            "author": {
               "id": "1",
               "name": "Jane Doe",
             },
@@ -89,12 +89,12 @@ Object {
 `;
 
 exports[`Type Merging and Batching Example should give correct response for example queries: Book.graphql-query-result 1`] = `
-Object {
-  "data": Object {
-    "book": Object {
-      "author": Object {
-        "books": Array [
-          Object {
+{
+  "data": {
+    "book": {
+      "author": {
+        "books": [
+          {
             "id": "1",
             "title": "Dolor Sit Amet",
           },
@@ -110,19 +110,19 @@ Object {
 `;
 
 exports[`Type Merging and Batching Example should give correct response for example queries: Books.graphql-query-result 1`] = `
-Object {
-  "data": Object {
-    "books": Array [
-      Object {
-        "author": Object {
+{
+  "data": {
+    "books": [
+      {
+        "author": {
           "id": "1",
           "name": "Jane Doe",
         },
         "id": "0",
         "title": "Lorem Ipsum",
       },
-      Object {
-        "author": Object {
+      {
+        "author": {
           "id": "0",
           "name": "John Doe",
         },

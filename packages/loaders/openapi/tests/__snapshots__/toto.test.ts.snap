@@ -1,94 +1,94 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Toto should generate the correct bundle 1`] = `
-Object {
+{
   "baseUrl": "https://dev-api.test.com/api/v1",
   "name": "toto",
-  "operationHeaders": Object {},
-  "operations": Array [
-    Object {
-      "argTypeMap": Object {
-        "Accept_Language": Object {
+  "operationHeaders": {},
+  "operations": [
+    {
+      "argTypeMap": {
+        "Accept_Language": {
           "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
           "name": "Accept-Language",
           "type": "string",
         },
-        "X_Correlation_Id": Object {
+        "X_Correlation_Id": {
           "description": "Correlation ID from the auth call.",
           "name": "X-Correlation-Id",
           "type": "string",
         },
-        "companyId": Object {
+        "companyId": {
           "description": undefined,
           "name": "companyId",
           "nullable": false,
           "type": "string",
         },
-        "directoryOnly": Object {
+        "directoryOnly": {
           "default": false,
           "description": undefined,
           "name": "directoryOnly",
           "type": "boolean",
         },
-        "folderId": Object {
+        "folderId": {
           "description": undefined,
           "name": "folderId",
           "nullable": false,
           "type": "string",
         },
-        "maxSize": Object {
+        "maxSize": {
           "description": "Maximum size of a resource",
           "format": "int32",
           "name": "maxSize",
           "type": "integer",
         },
-        "minSize": Object {
+        "minSize": {
           "description": "Minimum size of a resource",
           "format": "int32",
           "name": "minSize",
           "type": "integer",
         },
-        "order": Object {
+        "order": {
           "description": "List of order",
-          "items": Object {
+          "items": {
             "$ref": "#/definitions/queryInput_list_resources_at_any_folder_v1_order_items",
           },
           "name": "order",
           "type": "array",
         },
-        "publicationEndDate": Object {
+        "publicationEndDate": {
           "description": "Publication end date",
           "format": "date",
           "name": "publicationEndDate",
           "type": "string",
         },
-        "publicationStartDate": Object {
+        "publicationStartDate": {
           "description": "Publication start date",
           "format": "date",
           "name": "publicationStartDate",
           "type": "string",
         },
-        "querySearch": Object {
+        "querySearch": {
           "description": "Text to search in title",
           "name": "querySearch",
           "type": "string",
         },
-        "size": Object {
+        "size": {
           "description": undefined,
           "format": "int32",
           "name": "size",
           "type": "integer",
         },
-        "startKey": Object {
+        "startKey": {
           "description": "The page number",
           "name": "startKey",
           "type": "string",
         },
-        "status": Object {
+        "status": {
           "$resolvedRef": "/components/schemas/ResourceStatus",
           "description": "Status of the resource",
-          "items": Object {
-            "enum": Array [
+          "items": {
+            "enum": [
               "ACTIVE",
               "INACTIVE",
               "SCHEDULED",
@@ -99,9 +99,9 @@ Object {
           "title": "ResourceStatus",
           "type": "array",
         },
-        "targetAudience": Object {
+        "targetAudience": {
           "description": "Target of the resource (the resource need to have all of the target audience passed in the list)",
-          "items": Object {
+          "items": {
             "type": "string",
           },
           "name": "targetAudience",
@@ -110,7 +110,7 @@ Object {
       },
       "description": "List Resources At Any Folder Level",
       "field": "list_resources_at_any_folder_v1",
-      "headers": Object {
+      "headers": {
         "Accept-Language": "{args.Accept_Language}",
         "X-Correlation-Id": "{args.X_Correlation_Id}",
         "accept": "application/json",
@@ -118,7 +118,7 @@ Object {
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/api/v1/companies/{args.companyId}/knowledgecenter/folders/{args.folderId}/resources",
-      "queryParamArgMap": Object {
+      "queryParamArgMap": {
         "directoryOnly": "directoryOnly",
         "maxSize": "maxSize",
         "minSize": "minSize",
@@ -131,15 +131,15 @@ Object {
         "status": "status",
         "targetAudience": "targetAudience",
       },
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
-            "items": Object {
-              "anyOf": Array [
-                Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
+            "items": {
+              "anyOf": [
+                {
                   "$ref": "#/definitions/FileGetWithLocalizedNameDTO",
                 },
-                Object {
+                {
                   "$ref": "#/definitions/FolderGetWithLocalizedNameDTO",
                 },
               ],
@@ -153,25 +153,25 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "Accept_Language": Object {
+    {
+      "argTypeMap": {
+        "Accept_Language": {
           "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
           "name": "Accept-Language",
           "type": "string",
         },
-        "X_Correlation_Id": Object {
+        "X_Correlation_Id": {
           "description": "Correlation ID from the auth call.",
           "name": "X-Correlation-Id",
           "type": "string",
         },
-        "companyId": Object {
+        "companyId": {
           "description": undefined,
           "name": "companyId",
           "nullable": false,
           "type": "string",
         },
-        "folderId": Object {
+        "folderId": {
           "description": undefined,
           "name": "folderId",
           "nullable": false,
@@ -180,7 +180,7 @@ Object {
       },
       "description": "Create resources at any folder level",
       "field": "create_resource_at_any_folder_v1",
-      "headers": Object {
+      "headers": {
         "Accept-Language": "{args.Accept_Language}",
         "Content-Type": "application/json",
         "X-Correlation-Id": "{args.X_Correlation_Id}",
@@ -189,25 +189,25 @@ Object {
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/api/v1/companies/{args.companyId}/knowledgecenter/folders/{args.folderId}/resources",
-      "requestSchema": Object {
-        "oneOf": Array [
-          Object {
+      "requestSchema": {
+        "oneOf": [
+          {
             "$ref": "#/definitions/FileCreateDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/FolderCreateDTO",
           },
         ],
         "title": "create_resource_at_any_folder_v1_request",
       },
-      "responseByStatusCode": Object {
-        "201": Object {
-          "responseSchema": Object {
-            "oneOf": Array [
-              Object {
+      "responseByStatusCode": {
+        "201": {
+          "responseSchema": {
+            "oneOf": [
+              {
                 "$ref": "#/definitions/FileGetWithI18nDTO",
               },
-              Object {
+              {
                 "$ref": "#/definitions/FolderGetWithI18nDTO",
               },
             ],
@@ -218,31 +218,31 @@ Object {
       "schemaHeaders": undefined,
       "type": "mutation",
     },
-    Object {
-      "argTypeMap": Object {
-        "Accept_Language": Object {
+    {
+      "argTypeMap": {
+        "Accept_Language": {
           "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
           "name": "Accept-Language",
           "type": "string",
         },
-        "X_Correlation_Id": Object {
+        "X_Correlation_Id": {
           "description": "Correlation ID from the auth call.",
           "name": "X-Correlation-Id",
           "type": "string",
         },
-        "companyId": Object {
+        "companyId": {
           "description": undefined,
           "name": "companyId",
           "nullable": false,
           "type": "string",
         },
-        "folderId": Object {
+        "folderId": {
           "description": undefined,
           "name": "folderId",
           "nullable": false,
           "type": "string",
         },
-        "resourceId": Object {
+        "resourceId": {
           "description": undefined,
           "name": "resourceId",
           "nullable": false,
@@ -251,7 +251,7 @@ Object {
       },
       "description": "Update A Resource At Any Folder Level",
       "field": "update_resource_at_any_folder_v1",
-      "headers": Object {
+      "headers": {
         "Accept-Language": "{args.Accept_Language}",
         "Content-Type": "application/json",
         "X-Correlation-Id": "{args.X_Correlation_Id}",
@@ -260,25 +260,25 @@ Object {
       "method": "PUT",
       "operationHeaders": undefined,
       "path": "/api/v1/companies/{args.companyId}/knowledgecenter/folders/{args.folderId}/resources/{args.resourceId}",
-      "requestSchema": Object {
-        "oneOf": Array [
-          Object {
+      "requestSchema": {
+        "oneOf": [
+          {
             "$ref": "#/definitions/FileUpdateDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/FolderUpdateDTO",
           },
         ],
         "title": "update_resource_at_any_folder_v1_request",
       },
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
-            "oneOf": Array [
-              Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
+            "oneOf": [
+              {
                 "$ref": "#/definitions/FileGetWithI18nDTO",
               },
-              Object {
+              {
                 "$ref": "#/definitions/FolderGetWithI18nDTO",
               },
             ],
@@ -289,83 +289,83 @@ Object {
       "schemaHeaders": undefined,
       "type": "mutation",
     },
-    Object {
-      "argTypeMap": Object {
-        "Accept_Language": Object {
+    {
+      "argTypeMap": {
+        "Accept_Language": {
           "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
           "name": "Accept-Language",
           "type": "string",
         },
-        "X_Correlation_Id": Object {
+        "X_Correlation_Id": {
           "description": "Correlation ID from the auth call.",
           "name": "X-Correlation-Id",
           "type": "string",
         },
-        "companyId": Object {
+        "companyId": {
           "description": undefined,
           "name": "companyId",
           "nullable": false,
           "type": "string",
         },
-        "directoryOnly": Object {
+        "directoryOnly": {
           "default": false,
           "description": undefined,
           "name": "directoryOnly",
           "type": "boolean",
         },
-        "maxSize": Object {
+        "maxSize": {
           "description": "Maximum size of a resource",
           "format": "int32",
           "name": "maxSize",
           "type": "integer",
         },
-        "minSize": Object {
+        "minSize": {
           "description": "Minimum size of a resource",
           "format": "int32",
           "name": "minSize",
           "type": "integer",
         },
-        "order": Object {
+        "order": {
           "description": "List of order",
-          "items": Object {
+          "items": {
             "$ref": "#/definitions/queryInput_list_resources_at_any_folder_v1_order_items",
           },
           "name": "order",
           "type": "array",
         },
-        "publicationEndDate": Object {
+        "publicationEndDate": {
           "description": "Publication end date",
           "format": "date",
           "name": "publicationEndDate",
           "type": "string",
         },
-        "publicationStartDate": Object {
+        "publicationStartDate": {
           "description": "Publication start date",
           "format": "date",
           "name": "publicationStartDate",
           "type": "string",
         },
-        "querySearch": Object {
+        "querySearch": {
           "description": "Text to search in title",
           "name": "querySearch",
           "type": "string",
         },
-        "size": Object {
+        "size": {
           "description": undefined,
           "format": "int32",
           "name": "size",
           "type": "integer",
         },
-        "startKey": Object {
+        "startKey": {
           "description": "The page number",
           "name": "startKey",
           "type": "string",
         },
-        "status": Object {
+        "status": {
           "$resolvedRef": "/components/schemas/ResourceStatus",
           "description": "Status of the resource",
-          "items": Object {
-            "enum": Array [
+          "items": {
+            "enum": [
               "ACTIVE",
               "INACTIVE",
               "SCHEDULED",
@@ -376,9 +376,9 @@ Object {
           "title": "ResourceStatus",
           "type": "array",
         },
-        "targetAudience": Object {
+        "targetAudience": {
           "description": "Target of the resource (the resource need to have all of the target audience passed in the list)",
-          "items": Object {
+          "items": {
             "type": "string",
           },
           "name": "targetAudience",
@@ -387,7 +387,7 @@ Object {
       },
       "description": "List All Resources At The Root Folder",
       "field": "list_resources_at_the_root_folder_v1",
-      "headers": Object {
+      "headers": {
         "Accept-Language": "{args.Accept_Language}",
         "X-Correlation-Id": "{args.X_Correlation_Id}",
         "accept": "application/json",
@@ -395,7 +395,7 @@ Object {
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/api/v1/companies/{args.companyId}/knowledgecenter/resources",
-      "queryParamArgMap": Object {
+      "queryParamArgMap": {
         "directoryOnly": "directoryOnly",
         "maxSize": "maxSize",
         "minSize": "minSize",
@@ -408,15 +408,15 @@ Object {
         "status": "status",
         "targetAudience": "targetAudience",
       },
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
-            "items": Object {
-              "anyOf": Array [
-                Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
+            "items": {
+              "anyOf": [
+                {
                   "$ref": "#/definitions/FileGetWithLocalizedNameDTO",
                 },
-                Object {
+                {
                   "$ref": "#/definitions/FolderGetWithLocalizedNameDTO",
                 },
               ],
@@ -430,19 +430,19 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "Accept_Language": Object {
+    {
+      "argTypeMap": {
+        "Accept_Language": {
           "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
           "name": "Accept-Language",
           "type": "string",
         },
-        "X_Correlation_Id": Object {
+        "X_Correlation_Id": {
           "description": "Correlation ID from the auth call.",
           "name": "X-Correlation-Id",
           "type": "string",
         },
-        "companyId": Object {
+        "companyId": {
           "description": undefined,
           "name": "companyId",
           "nullable": false,
@@ -451,7 +451,7 @@ Object {
       },
       "description": "Create A Resource At The Root Folder",
       "field": "create_resource_at_the_root_folder_v1",
-      "headers": Object {
+      "headers": {
         "Accept-Language": "{args.Accept_Language}",
         "Content-Type": "application/json",
         "X-Correlation-Id": "{args.X_Correlation_Id}",
@@ -460,25 +460,25 @@ Object {
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/api/v1/companies/{args.companyId}/knowledgecenter/resources",
-      "requestSchema": Object {
-        "oneOf": Array [
-          Object {
+      "requestSchema": {
+        "oneOf": [
+          {
             "$ref": "#/definitions/FileCreateDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/FolderCreateDTO",
           },
         ],
         "title": "create_resource_at_the_root_folder_v1_request",
       },
-      "responseByStatusCode": Object {
-        "201": Object {
-          "responseSchema": Object {
-            "oneOf": Array [
-              Object {
+      "responseByStatusCode": {
+        "201": {
+          "responseSchema": {
+            "oneOf": [
+              {
                 "$ref": "#/definitions/FileGetWithI18nDTO",
               },
-              Object {
+              {
                 "$ref": "#/definitions/FolderGetWithI18nDTO",
               },
             ],
@@ -489,25 +489,25 @@ Object {
       "schemaHeaders": undefined,
       "type": "mutation",
     },
-    Object {
-      "argTypeMap": Object {
-        "Accept_Language": Object {
+    {
+      "argTypeMap": {
+        "Accept_Language": {
           "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
           "name": "Accept-Language",
           "type": "string",
         },
-        "X_Correlation_Id": Object {
+        "X_Correlation_Id": {
           "description": "Correlation ID from the auth call.",
           "name": "X-Correlation-Id",
           "type": "string",
         },
-        "companyId": Object {
+        "companyId": {
           "description": undefined,
           "name": "companyId",
           "nullable": false,
           "type": "string",
         },
-        "resourceId": Object {
+        "resourceId": {
           "description": undefined,
           "name": "resourceId",
           "nullable": false,
@@ -516,7 +516,7 @@ Object {
       },
       "description": "Get Resource by ID",
       "field": "get_resource_by_id_v1",
-      "headers": Object {
+      "headers": {
         "Accept-Language": "{args.Accept_Language}",
         "X-Correlation-Id": "{args.X_Correlation_Id}",
         "accept": "application/json",
@@ -524,14 +524,14 @@ Object {
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/api/v1/companies/{args.companyId}/knowledgecenter/resources/{args.resourceId}",
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
-            "oneOf": Array [
-              Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
+            "oneOf": [
+              {
                 "$ref": "#/definitions/FileGetWithI18nDTO",
               },
-              Object {
+              {
                 "$ref": "#/definitions/FolderGetWithI18nDTO",
               },
             ],
@@ -542,25 +542,25 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "Accept_Language": Object {
+    {
+      "argTypeMap": {
+        "Accept_Language": {
           "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
           "name": "Accept-Language",
           "type": "string",
         },
-        "X_Correlation_Id": Object {
+        "X_Correlation_Id": {
           "description": "Correlation ID from the auth call.",
           "name": "X-Correlation-Id",
           "type": "string",
         },
-        "companyId": Object {
+        "companyId": {
           "description": undefined,
           "name": "companyId",
           "nullable": false,
           "type": "string",
         },
-        "resourceId": Object {
+        "resourceId": {
           "description": undefined,
           "name": "resourceId",
           "nullable": false,
@@ -569,7 +569,7 @@ Object {
       },
       "description": "Update A Resource At The Root Folder",
       "field": "update_resource_at_the_root_folder_v1",
-      "headers": Object {
+      "headers": {
         "Accept-Language": "{args.Accept_Language}",
         "Content-Type": "application/json",
         "X-Correlation-Id": "{args.X_Correlation_Id}",
@@ -578,25 +578,25 @@ Object {
       "method": "PUT",
       "operationHeaders": undefined,
       "path": "/api/v1/companies/{args.companyId}/knowledgecenter/resources/{args.resourceId}",
-      "requestSchema": Object {
-        "oneOf": Array [
-          Object {
+      "requestSchema": {
+        "oneOf": [
+          {
             "$ref": "#/definitions/FileUpdateDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/FolderUpdateDTO",
           },
         ],
         "title": "update_resource_at_the_root_folder_v1_request",
       },
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
-            "oneOf": Array [
-              Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
+            "oneOf": [
+              {
                 "$ref": "#/definitions/FileGetWithI18nDTO",
               },
-              Object {
+              {
                 "$ref": "#/definitions/FolderGetWithI18nDTO",
               },
             ],
@@ -607,25 +607,25 @@ Object {
       "schemaHeaders": undefined,
       "type": "mutation",
     },
-    Object {
-      "argTypeMap": Object {
-        "Accept_Language": Object {
+    {
+      "argTypeMap": {
+        "Accept_Language": {
           "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
           "name": "Accept-Language",
           "type": "string",
         },
-        "X_Correlation_Id": Object {
+        "X_Correlation_Id": {
           "description": "Correlation ID from the auth call.",
           "name": "X-Correlation-Id",
           "type": "string",
         },
-        "companyId": Object {
+        "companyId": {
           "description": undefined,
           "name": "companyId",
           "nullable": false,
           "type": "string",
         },
-        "resourceId": Object {
+        "resourceId": {
           "description": undefined,
           "name": "resourceId",
           "nullable": false,
@@ -634,7 +634,7 @@ Object {
       },
       "description": "Delete A Resource At The Root Folder",
       "field": "delete_resource_at_the_root_folder_v1",
-      "headers": Object {
+      "headers": {
         "Accept-Language": "{args.Accept_Language}",
         "X-Correlation-Id": "{args.X_Correlation_Id}",
         "accept": "application/json",
@@ -642,51 +642,51 @@ Object {
       "method": "DELETE",
       "operationHeaders": undefined,
       "path": "/api/v1/companies/{args.companyId}/knowledgecenter/resources/{args.resourceId}",
-      "responseByStatusCode": Object {
-        "204": Object {
-          "responseSchema": Object {
+      "responseByStatusCode": {
+        "204": {
+          "responseSchema": {
             "description": "No Content",
             "title": "delete_resource_at_the_root_folder_v1_204_response",
             "type": "null",
           },
         },
-        "default": Object {
-          "responseSchema": Object {
+        "default": {
+          "responseSchema": {
             "$resolvedRef": "/components/schemas/v1_common_error",
             "additionalProperties": false,
-            "externalDocs": Object {
+            "externalDocs": {
               "description": "Refer to the Error Handling wiki page for domains and reasons.",
               "url": "https://bitbucket.org/test/test-api-documentation/wiki/Error%20Handling",
             },
-            "properties": Object {
-              "debugMessage": Object {
+            "properties": {
+              "debugMessage": {
                 "description": "Message for debug purposes. Not intended to be shown the users.",
                 "type": "string",
               },
-              "errors": Object {
-                "items": Object {
+              "errors": {
+                "items": {
                   "$ref": "#/definitions/Error_SPACE_Details",
                 },
                 "type": "array",
               },
-              "exception": Object {
+              "exception": {
                 "type": "string",
               },
-              "message": Object {
+              "message": {
                 "$ref": "#/definitions/mutation_delete_resource_at_the_root_folder_v1_oneOf_1_message",
               },
-              "path": Object {
+              "path": {
                 "type": "string",
               },
-              "status": Object {
+              "status": {
                 "type": "integer",
               },
-              "timestamp": Object {
+              "timestamp": {
                 "format": "date-time",
                 "type": "string",
               },
             },
-            "required": Array [
+            "required": [
               "status",
               "timestamp",
               "path",
@@ -702,99 +702,99 @@ Object {
       "type": "mutation",
     },
   ],
-  "referencedSchema": Object {
+  "referencedSchema": {
     "$ref": "#/definitions/_schema",
-    "definitions": Object {
-      "BaseResourceDTO": Object {
+    "definitions": {
+      "BaseResourceDTO": {
         "$resolvedRef": "/components/schemas/BaseResourceDTO",
-        "properties": Object {
-          "allowedTargetAudiences": Object {
-            "items": Object {
+        "properties": {
+          "allowedTargetAudiences": {
+            "items": {
               "type": "string",
             },
             "type": "array",
           },
-          "geoFenced": Object {
+          "geoFenced": {
             "type": "boolean",
           },
-          "parentFolderId": Object {
+          "parentFolderId": {
             "type": "string",
           },
-          "pinned": Object {
+          "pinned": {
             "type": "boolean",
           },
-          "previewUrl": Object {
+          "previewUrl": {
             "type": "string",
           },
-          "publicationEndTimestamp": Object {
+          "publicationEndTimestamp": {
             "format": "date-time",
             "type": "string",
           },
-          "publicationStartTimestamp": Object {
+          "publicationStartTimestamp": {
             "format": "date-time",
             "type": "string",
           },
-          "punchedFenced": Object {
+          "punchedFenced": {
             "type": "boolean",
           },
-          "shiftFenced": Object {
+          "shiftFenced": {
             "type": "boolean",
           },
-          "status": Object {
+          "status": {
             "$ref": "#/definitions/ResourceStatus",
           },
         },
         "title": "BaseResourceDTO",
         "type": "object",
       },
-      "BaseResourceUpdateDTO": Object {
+      "BaseResourceUpdateDTO": {
         "$resolvedRef": "/components/schemas/BaseResourceUpdateDTO",
-        "allOf": Array [
-          Object {
+        "allOf": [
+          {
             "$ref": "#/definitions/BaseResourceDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/mutationInput_create_resource_at_any_folder_v1_input_oneOf_0_allOf_0_allOf_0_allOf_1",
           },
         ],
         "title": "BaseResourceUpdateDTO",
       },
-      "Error": Object {
+      "Error": {
         "$resolvedRef": "/components/schemas/v1_common_error",
         "additionalProperties": false,
-        "externalDocs": Object {
+        "externalDocs": {
           "description": "Refer to the Error Handling wiki page for domains and reasons.",
           "url": "https://bitbucket.org/test/test-api-documentation/wiki/Error%20Handling",
         },
-        "properties": Object {
-          "debugMessage": Object {
+        "properties": {
+          "debugMessage": {
             "description": "Message for debug purposes. Not intended to be shown the users.",
             "type": "string",
           },
-          "errors": Object {
-            "items": Object {
+          "errors": {
+            "items": {
               "$ref": "#/definitions/Error_SPACE_Details",
             },
             "type": "array",
           },
-          "exception": Object {
+          "exception": {
             "type": "string",
           },
-          "message": Object {
+          "message": {
             "$ref": "#/definitions/mutation_delete_resource_at_the_root_folder_v1_oneOf_1_message",
           },
-          "path": Object {
+          "path": {
             "type": "string",
           },
-          "status": Object {
+          "status": {
             "type": "integer",
           },
-          "timestamp": Object {
+          "timestamp": {
             "format": "date-time",
             "type": "string",
           },
         },
-        "required": Array [
+        "required": [
           "status",
           "timestamp",
           "path",
@@ -804,26 +804,26 @@ Object {
         "title": "Error",
         "type": "object",
       },
-      "Error_SPACE_Details": Object {
+      "Error_SPACE_Details": {
         "$resolvedRef": "/components/schemas/v1_common_error_details",
-        "properties": Object {
-          "domain": Object {
+        "properties": {
+          "domain": {
             "$ref": "#/definitions/mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_domain",
           },
-          "location": Object {
+          "location": {
             "type": "string",
           },
-          "locationType": Object {
+          "locationType": {
             "$ref": "#/definitions/mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_locationType",
           },
-          "message": Object {
+          "message": {
             "$ref": "#/definitions/mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_message",
           },
-          "reason": Object {
+          "reason": {
             "$ref": "#/definitions/mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_reason",
           },
         },
-        "required": Array [
+        "required": [
           "domain",
           "reason",
           "message",
@@ -831,32 +831,32 @@ Object {
         "title": "Error Details",
         "type": "object",
       },
-      "FileCreateDTO": Object {
+      "FileCreateDTO": {
         "$resolvedRef": "/components/schemas/FileCreateDTO",
-        "allOf": Array [
-          Object {
+        "allOf": [
+          {
             "$ref": "#/definitions/ResourceCreateDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/FilePropertiesDTO",
           },
         ],
         "title": "FileCreateDTO",
       },
-      "FileGetWithI18nDTO": Object {
+      "FileGetWithI18nDTO": {
         "$resolvedRef": "/components/schemas/FileGetWithI18nDTO",
-        "allOf": Array [
-          Object {
+        "allOf": [
+          {
             "$ref": "#/definitions/ResourceGetDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/FilePropertiesDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/query_get_resource_by_id_v1_oneOf_0_allOf_2",
           },
         ],
-        "required": Array [
+        "required": [
           "size",
           "url",
           "contentType",
@@ -864,20 +864,20 @@ Object {
         ],
         "title": "FileGetWithI18nDTO",
       },
-      "FileGetWithLocalizedNameDTO": Object {
+      "FileGetWithLocalizedNameDTO": {
         "$resolvedRef": "/components/schemas/FileGetWithLocalizedNameDTO",
-        "allOf": Array [
-          Object {
+        "allOf": [
+          {
             "$ref": "#/definitions/ResourceGetDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/FilePropertiesDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_2",
           },
         ],
-        "required": Array [
+        "required": [
           "size",
           "url",
           "contentType",
@@ -885,88 +885,88 @@ Object {
         ],
         "title": "FileGetWithLocalizedNameDTO",
       },
-      "FilePropertiesDTO": Object {
+      "FilePropertiesDTO": {
         "$resolvedRef": "/components/schemas/FilePropertiesDTO",
-        "properties": Object {
-          "contentType": Object {
+        "properties": {
+          "contentType": {
             "type": "string",
           },
-          "size": Object {
+          "size": {
             "format": "int32",
             "type": "integer",
           },
-          "url": Object {
+          "url": {
             "type": "string",
           },
         },
         "title": "FilePropertiesDTO",
         "type": "object",
       },
-      "FileUpdateDTO": Object {
+      "FileUpdateDTO": {
         "$resolvedRef": "/components/schemas/FileUpdateDTO",
-        "allOf": Array [
-          Object {
+        "allOf": [
+          {
             "$ref": "#/definitions/ResourceUpdateDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/FilePropertiesDTO",
           },
         ],
         "title": "FileUpdateDTO",
       },
-      "FolderCreateDTO": Object {
+      "FolderCreateDTO": {
         "$resolvedRef": "/components/schemas/FolderCreateDTO",
-        "allOf": Array [
-          Object {
+        "allOf": [
+          {
             "$ref": "#/definitions/ResourceCreateDTO",
           },
         ],
         "title": "FolderCreateDTO",
       },
-      "FolderGetWithI18nDTO": Object {
+      "FolderGetWithI18nDTO": {
         "$resolvedRef": "/components/schemas/FolderGetWithI18nDTO",
-        "allOf": Array [
-          Object {
+        "allOf": [
+          {
             "$ref": "#/definitions/ResourceGetDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/FolderPropertiesDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/query_get_resource_by_id_v1_oneOf_1_allOf_2",
           },
         ],
-        "required": Array [
+        "required": [
           "i18n",
         ],
         "title": "FolderGetWithI18nDTO",
       },
-      "FolderGetWithLocalizedNameDTO": Object {
+      "FolderGetWithLocalizedNameDTO": {
         "$resolvedRef": "/components/schemas/FolderGetWithLocalizedNameDTO",
-        "allOf": Array [
-          Object {
+        "allOf": [
+          {
             "$ref": "#/definitions/ResourceGetDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/FolderPropertiesDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/query_list_resources_at_any_folder_v1_items_anyOf_1_allOf_2",
           },
         ],
-        "required": Array [
+        "required": [
           "name",
         ],
         "title": "FolderGetWithLocalizedNameDTO",
       },
-      "FolderPropertiesDTO": Object {
+      "FolderPropertiesDTO": {
         "$resolvedRef": "/components/schemas/FolderPropertiesDTO",
-        "properties": Object {
-          "childFolderCount": Object {
+        "properties": {
+          "childFolderCount": {
             "format": "int32",
             "type": "integer",
           },
-          "fileCount": Object {
+          "fileCount": {
             "format": "int32",
             "type": "integer",
           },
@@ -974,30 +974,30 @@ Object {
         "title": "FolderPropertiesDTO",
         "type": "object",
       },
-      "FolderUpdateDTO": Object {
+      "FolderUpdateDTO": {
         "$resolvedRef": "/components/schemas/FolderUpdateDTO",
-        "allOf": Array [
-          Object {
+        "allOf": [
+          {
             "$ref": "#/definitions/ResourceUpdateDTO",
           },
         ],
         "title": "FolderUpdateDTO",
       },
-      "Mutation": Object {
-        "properties": Object {
-          "create_resource_at_any_folder_v1": Object {
+      "Mutation": {
+        "properties": {
+          "create_resource_at_any_folder_v1": {
             "$ref": "#/definitions/create_resource_at_any_folder_v1_201_response",
           },
-          "create_resource_at_the_root_folder_v1": Object {
+          "create_resource_at_the_root_folder_v1": {
             "$ref": "#/definitions/create_resource_at_the_root_folder_v1_201_response",
           },
-          "delete_resource_at_the_root_folder_v1": Object {
+          "delete_resource_at_the_root_folder_v1": {
             "$ref": "#/definitions/delete_resource_at_the_root_folder_v1_response",
           },
-          "update_resource_at_any_folder_v1": Object {
+          "update_resource_at_any_folder_v1": {
             "$ref": "#/definitions/update_resource_at_any_folder_v1_200_response",
           },
-          "update_resource_at_the_root_folder_v1": Object {
+          "update_resource_at_the_root_folder_v1": {
             "$ref": "#/definitions/update_resource_at_the_root_folder_v1_200_response",
           },
         },
@@ -1005,21 +1005,21 @@ Object {
         "title": "Mutation",
         "type": "object",
       },
-      "MutationInput": Object {
-        "properties": Object {
-          "create_resource_at_any_folder_v1": Object {
+      "MutationInput": {
+        "properties": {
+          "create_resource_at_any_folder_v1": {
             "$ref": "#/definitions/mutationInput_create_resource_at_any_folder_v1",
           },
-          "create_resource_at_the_root_folder_v1": Object {
+          "create_resource_at_the_root_folder_v1": {
             "$ref": "#/definitions/mutationInput_create_resource_at_the_root_folder_v1",
           },
-          "delete_resource_at_the_root_folder_v1": Object {
+          "delete_resource_at_the_root_folder_v1": {
             "$ref": "#/definitions/mutationInput_delete_resource_at_the_root_folder_v1",
           },
-          "update_resource_at_any_folder_v1": Object {
+          "update_resource_at_any_folder_v1": {
             "$ref": "#/definitions/mutationInput_update_resource_at_any_folder_v1",
           },
-          "update_resource_at_the_root_folder_v1": Object {
+          "update_resource_at_the_root_folder_v1": {
             "$ref": "#/definitions/mutationInput_update_resource_at_the_root_folder_v1",
           },
         },
@@ -1027,74 +1027,74 @@ Object {
         "type": "object",
         "writeOnly": true,
       },
-      "ParentFolderGetWithLocalizedNameDTO": Object {
+      "ParentFolderGetWithLocalizedNameDTO": {
         "$resolvedRef": "/components/schemas/ParentFolderGetWithLocalizedNameDTO",
-        "properties": Object {
-          "allowedTargetAudiences": Object {
-            "items": Object {
+        "properties": {
+          "allowedTargetAudiences": {
+            "items": {
               "type": "string",
             },
             "type": "array",
           },
-          "childFolderCount": Object {
+          "childFolderCount": {
             "format": "int32",
             "type": "integer",
           },
-          "creationTimestamp": Object {
+          "creationTimestamp": {
             "format": "date-time",
             "type": "string",
           },
-          "creationUserId": Object {
+          "creationUserId": {
             "type": "string",
           },
-          "fileCount": Object {
+          "fileCount": {
             "format": "int32",
             "type": "integer",
           },
-          "id": Object {
+          "id": {
             "type": "string",
           },
-          "isGeoFenced": Object {
+          "isGeoFenced": {
             "type": "boolean",
           },
-          "isPinned": Object {
+          "isPinned": {
             "type": "boolean",
           },
-          "isPunchedFenced": Object {
+          "isPunchedFenced": {
             "type": "boolean",
           },
-          "isShiftFenced": Object {
+          "isShiftFenced": {
             "type": "boolean",
           },
-          "lastUpdateTimestamp": Object {
+          "lastUpdateTimestamp": {
             "format": "date-time",
             "type": "string",
           },
-          "lastUpdateUserId": Object {
+          "lastUpdateUserId": {
             "type": "string",
           },
-          "name": Object {
+          "name": {
             "type": "string",
           },
-          "previewUrl": Object {
+          "previewUrl": {
             "type": "string",
           },
-          "publicationEndTimestamp": Object {
+          "publicationEndTimestamp": {
             "format": "date-time",
             "type": "string",
           },
-          "publicationStartTimestamp": Object {
+          "publicationStartTimestamp": {
             "format": "date-time",
             "type": "string",
           },
-          "status": Object {
+          "status": {
             "$ref": "#/definitions/ResourceStatus",
           },
-          "type": Object {
+          "type": {
             "$ref": "#/definitions/ResourceType",
           },
         },
-        "required": Array [
+        "required": [
           "name",
           "id",
           "status",
@@ -1105,15 +1105,15 @@ Object {
         "title": "ParentFolderGetWithLocalizedNameDTO",
         "type": "object",
       },
-      "Query": Object {
-        "properties": Object {
-          "get_resource_by_id_v1": Object {
+      "Query": {
+        "properties": {
+          "get_resource_by_id_v1": {
             "$ref": "#/definitions/get_resource_by_id_v1_200_response",
           },
-          "list_resources_at_any_folder_v1": Object {
+          "list_resources_at_any_folder_v1": {
             "$ref": "#/definitions/list_resources_at_any_folder_v1_200_response",
           },
-          "list_resources_at_the_root_folder_v1": Object {
+          "list_resources_at_the_root_folder_v1": {
             "$ref": "#/definitions/list_resources_at_the_root_folder_v1_200_response",
           },
         },
@@ -1121,15 +1121,15 @@ Object {
         "title": "Query",
         "type": "object",
       },
-      "QueryInput": Object {
-        "properties": Object {
-          "get_resource_by_id_v1": Object {
+      "QueryInput": {
+        "properties": {
+          "get_resource_by_id_v1": {
             "$ref": "#/definitions/queryInput_get_resource_by_id_v1",
           },
-          "list_resources_at_any_folder_v1": Object {
+          "list_resources_at_any_folder_v1": {
             "$ref": "#/definitions/queryInput_list_resources_at_any_folder_v1",
           },
-          "list_resources_at_the_root_folder_v1": Object {
+          "list_resources_at_the_root_folder_v1": {
             "$ref": "#/definitions/queryInput_list_resources_at_the_root_folder_v1",
           },
         },
@@ -1137,46 +1137,46 @@ Object {
         "type": "object",
         "writeOnly": true,
       },
-      "ResourceCreateDTO": Object {
+      "ResourceCreateDTO": {
         "$resolvedRef": "/components/schemas/ResourceCreateDTO",
-        "allOf": Array [
-          Object {
+        "allOf": [
+          {
             "$ref": "#/definitions/BaseResourceUpdateDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/mutationInput_create_resource_at_any_folder_v1_input_oneOf_0_allOf_0_allOf_1",
           },
         ],
         "title": "ResourceCreateDTO",
       },
-      "ResourceGetDTO": Object {
+      "ResourceGetDTO": {
         "$resolvedRef": "/components/schemas/ResourceGetDTO",
-        "allOf": Array [
-          Object {
+        "allOf": [
+          {
             "$ref": "#/definitions/query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0",
           },
-          Object {
+          {
             "$ref": "#/definitions/BaseResourceDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_2",
           },
-          Object {
+          {
             "$ref": "#/definitions/ResourceTimestampDataDTO",
           },
         ],
-        "required": Array [
+        "required": [
           "id",
           "status",
           "type",
         ],
         "title": "ResourceGetDTO",
       },
-      "ResourceStatus": Object {
+      "ResourceStatus": {
         "$resolvedRef": "/components/schemas/ResourceStatus",
         "description": "Status of the resource",
-        "items": Object {
-          "enum": Array [
+        "items": {
+          "enum": [
             "ACTIVE",
             "INACTIVE",
             "SCHEDULED",
@@ -1187,24 +1187,24 @@ Object {
         "title": "ResourceStatus",
         "type": "array",
       },
-      "ResourceTimestampDataDTO": Object {
+      "ResourceTimestampDataDTO": {
         "$resolvedRef": "/components/schemas/ResourceTimestampDataDTO",
-        "properties": Object {
-          "lastUpdateTimestamp": Object {
+        "properties": {
+          "lastUpdateTimestamp": {
             "format": "date-time",
             "type": "string",
           },
-          "lastUpdateUserId": Object {
+          "lastUpdateUserId": {
             "type": "string",
           },
         },
         "title": "ResourceTimestampDataDTO",
         "type": "object",
       },
-      "ResourceType": Object {
+      "ResourceType": {
         "$resolvedRef": "/components/schemas/ResourceType",
-        "items": Object {
-          "enum": Array [
+        "items": {
+          "enum": [
             "FILE",
             "FOLDER",
           ],
@@ -1214,115 +1214,115 @@ Object {
         "title": "ResourceType",
         "type": "array",
       },
-      "ResourceUpdateDTO": Object {
+      "ResourceUpdateDTO": {
         "$resolvedRef": "/components/schemas/ResourceUpdateDTO",
-        "allOf": Array [
-          Object {
+        "allOf": [
+          {
             "$ref": "#/definitions/BaseResourceUpdateDTO",
           },
         ],
         "title": "ResourceUpdateDTO",
       },
-      "_schema": Object {
-        "properties": Object {
-          "mutation": Object {
+      "_schema": {
+        "properties": {
+          "mutation": {
             "$ref": "#/definitions/Mutation",
           },
-          "mutationInput": Object {
+          "mutationInput": {
             "$ref": "#/definitions/MutationInput",
           },
-          "query": Object {
+          "query": {
             "$ref": "#/definitions/Query",
           },
-          "queryInput": Object {
+          "queryInput": {
             "$ref": "#/definitions/QueryInput",
           },
         },
-        "required": Array [
+        "required": [
           "query",
         ],
         "title": "_schema",
         "type": "object",
       },
-      "create_resource_at_any_folder_v1_201_response": Object {
-        "oneOf": Array [
-          Object {
+      "create_resource_at_any_folder_v1_201_response": {
+        "oneOf": [
+          {
             "$ref": "#/definitions/FileGetWithI18nDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/FolderGetWithI18nDTO",
           },
         ],
         "title": "create_resource_at_any_folder_v1_201_response",
       },
-      "create_resource_at_any_folder_v1_request": Object {
-        "oneOf": Array [
-          Object {
+      "create_resource_at_any_folder_v1_request": {
+        "oneOf": [
+          {
             "$ref": "#/definitions/FileCreateDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/FolderCreateDTO",
           },
         ],
         "title": "create_resource_at_any_folder_v1_request",
       },
-      "create_resource_at_the_root_folder_v1_201_response": Object {
-        "oneOf": Array [
-          Object {
+      "create_resource_at_the_root_folder_v1_201_response": {
+        "oneOf": [
+          {
             "$ref": "#/definitions/FileGetWithI18nDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/FolderGetWithI18nDTO",
           },
         ],
         "title": "create_resource_at_the_root_folder_v1_201_response",
       },
-      "create_resource_at_the_root_folder_v1_request": Object {
-        "oneOf": Array [
-          Object {
+      "create_resource_at_the_root_folder_v1_request": {
+        "oneOf": [
+          {
             "$ref": "#/definitions/FileCreateDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/FolderCreateDTO",
           },
         ],
         "title": "create_resource_at_the_root_folder_v1_request",
       },
-      "delete_resource_at_the_root_folder_v1_204_response": Object {
+      "delete_resource_at_the_root_folder_v1_204_response": {
         "description": "No Content",
         "title": "delete_resource_at_the_root_folder_v1_204_response",
         "type": "null",
       },
-      "delete_resource_at_the_root_folder_v1_response": Object {
-        "$comment": "statusCodeOneOfIndexMap:{\\"204\\":0,\\"default\\":1}",
-        "oneOf": Array [
-          Object {
+      "delete_resource_at_the_root_folder_v1_response": {
+        "$comment": "statusCodeOneOfIndexMap:{"204":0,"default":1}",
+        "oneOf": [
+          {
             "$ref": "#/definitions/delete_resource_at_the_root_folder_v1_204_response",
           },
-          Object {
+          {
             "$ref": "#/definitions/Error",
           },
         ],
         "title": "delete_resource_at_the_root_folder_v1_response",
       },
-      "get_resource_by_id_v1_200_response": Object {
-        "oneOf": Array [
-          Object {
+      "get_resource_by_id_v1_200_response": {
+        "oneOf": [
+          {
             "$ref": "#/definitions/FileGetWithI18nDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/FolderGetWithI18nDTO",
           },
         ],
         "title": "get_resource_by_id_v1_200_response",
       },
-      "list_resources_at_any_folder_v1_200_response": Object {
-        "items": Object {
-          "anyOf": Array [
-            Object {
+      "list_resources_at_any_folder_v1_200_response": {
+        "items": {
+          "anyOf": [
+            {
               "$ref": "#/definitions/FileGetWithLocalizedNameDTO",
             },
-            Object {
+            {
               "$ref": "#/definitions/FolderGetWithLocalizedNameDTO",
             },
           ],
@@ -1331,13 +1331,13 @@ Object {
         "title": "list_resources_at_any_folder_v1_200_response",
         "type": "array",
       },
-      "list_resources_at_the_root_folder_v1_200_response": Object {
-        "items": Object {
-          "anyOf": Array [
-            Object {
+      "list_resources_at_the_root_folder_v1_200_response": {
+        "items": {
+          "anyOf": [
+            {
               "$ref": "#/definitions/FileGetWithLocalizedNameDTO",
             },
-            Object {
+            {
               "$ref": "#/definitions/FolderGetWithLocalizedNameDTO",
             },
           ],
@@ -1346,48 +1346,48 @@ Object {
         "title": "list_resources_at_the_root_folder_v1_200_response",
         "type": "array",
       },
-      "mutationInput_create_resource_at_any_folder_v1": Object {
-        "properties": Object {
-          "Accept_Language": Object {
+      "mutationInput_create_resource_at_any_folder_v1": {
+        "properties": {
+          "Accept_Language": {
             "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
             "name": "Accept-Language",
             "type": "string",
           },
-          "X_Correlation_Id": Object {
+          "X_Correlation_Id": {
             "description": "Correlation ID from the auth call.",
             "name": "X-Correlation-Id",
             "type": "string",
           },
-          "companyId": Object {
+          "companyId": {
             "description": undefined,
             "name": "companyId",
             "nullable": false,
             "type": "string",
           },
-          "folderId": Object {
+          "folderId": {
             "description": undefined,
             "name": "folderId",
             "nullable": false,
             "type": "string",
           },
-          "input": Object {
+          "input": {
             "$ref": "#/definitions/create_resource_at_any_folder_v1_request",
           },
         },
         "title": "mutationInput_create_resource_at_any_folder_v1",
         "type": "object",
       },
-      "mutationInput_create_resource_at_any_folder_v1_input_oneOf_0_allOf_0_allOf_0_allOf_1": Object {
-        "properties": Object {
-          "i18n": Object {
+      "mutationInput_create_resource_at_any_folder_v1_input_oneOf_0_allOf_0_allOf_0_allOf_1": {
+        "properties": {
+          "i18n": {
             "$ref": "#/definitions/mutationInput_create_resource_at_any_folder_v1_input_oneOf_0_allOf_0_allOf_0_allOf_1_i18n",
           },
         },
         "title": "mutationInput_create_resource_at_any_folder_v1_input_oneOf_0_allOf_0_allOf_0_allOf_1",
         "type": "object",
       },
-      "mutationInput_create_resource_at_any_folder_v1_input_oneOf_0_allOf_0_allOf_0_allOf_1_i18n": Object {
-        "additionalProperties": Object {
+      "mutationInput_create_resource_at_any_folder_v1_input_oneOf_0_allOf_0_allOf_0_allOf_1_i18n": {
+        "additionalProperties": {
           "additionalProperties": true,
           "title": "mutationInput_create_resource_at_any_folder_v1_input_oneOf_0_allOf_0_allOf_0_allOf_1_i18n_additionalProperties",
           "type": "object",
@@ -1395,18 +1395,18 @@ Object {
         "title": "mutationInput_create_resource_at_any_folder_v1_input_oneOf_0_allOf_0_allOf_0_allOf_1_i18n",
         "type": "object",
       },
-      "mutationInput_create_resource_at_any_folder_v1_input_oneOf_0_allOf_0_allOf_0_allOf_1_i18n_additionalProperties": Object {
+      "mutationInput_create_resource_at_any_folder_v1_input_oneOf_0_allOf_0_allOf_0_allOf_1_i18n_additionalProperties": {
         "additionalProperties": true,
         "title": "mutationInput_create_resource_at_any_folder_v1_input_oneOf_0_allOf_0_allOf_0_allOf_1_i18n_additionalProperties",
         "type": "object",
       },
-      "mutationInput_create_resource_at_any_folder_v1_input_oneOf_0_allOf_0_allOf_1": Object {
-        "properties": Object {
-          "type": Object {
+      "mutationInput_create_resource_at_any_folder_v1_input_oneOf_0_allOf_0_allOf_1": {
+        "properties": {
+          "type": {
             "$ref": "#/definitions/ResourceType",
           },
         },
-        "required": Array [
+        "required": [
           "status",
           "type",
           "i18n",
@@ -1417,50 +1417,50 @@ Object {
         "title": "mutationInput_create_resource_at_any_folder_v1_input_oneOf_0_allOf_0_allOf_1",
         "type": "object",
       },
-      "mutationInput_create_resource_at_the_root_folder_v1": Object {
-        "properties": Object {
-          "Accept_Language": Object {
+      "mutationInput_create_resource_at_the_root_folder_v1": {
+        "properties": {
+          "Accept_Language": {
             "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
             "name": "Accept-Language",
             "type": "string",
           },
-          "X_Correlation_Id": Object {
+          "X_Correlation_Id": {
             "description": "Correlation ID from the auth call.",
             "name": "X-Correlation-Id",
             "type": "string",
           },
-          "companyId": Object {
+          "companyId": {
             "description": undefined,
             "name": "companyId",
             "nullable": false,
             "type": "string",
           },
-          "input": Object {
+          "input": {
             "$ref": "#/definitions/create_resource_at_the_root_folder_v1_request",
           },
         },
         "title": "mutationInput_create_resource_at_the_root_folder_v1",
         "type": "object",
       },
-      "mutationInput_delete_resource_at_the_root_folder_v1": Object {
-        "properties": Object {
-          "Accept_Language": Object {
+      "mutationInput_delete_resource_at_the_root_folder_v1": {
+        "properties": {
+          "Accept_Language": {
             "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
             "name": "Accept-Language",
             "type": "string",
           },
-          "X_Correlation_Id": Object {
+          "X_Correlation_Id": {
             "description": "Correlation ID from the auth call.",
             "name": "X-Correlation-Id",
             "type": "string",
           },
-          "companyId": Object {
+          "companyId": {
             "description": undefined,
             "name": "companyId",
             "nullable": false,
             "type": "string",
           },
-          "resourceId": Object {
+          "resourceId": {
             "description": undefined,
             "name": "resourceId",
             "nullable": false,
@@ -1470,34 +1470,34 @@ Object {
         "title": "mutationInput_delete_resource_at_the_root_folder_v1",
         "type": "object",
       },
-      "mutationInput_update_resource_at_any_folder_v1": Object {
-        "properties": Object {
-          "Accept_Language": Object {
+      "mutationInput_update_resource_at_any_folder_v1": {
+        "properties": {
+          "Accept_Language": {
             "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
             "name": "Accept-Language",
             "type": "string",
           },
-          "X_Correlation_Id": Object {
+          "X_Correlation_Id": {
             "description": "Correlation ID from the auth call.",
             "name": "X-Correlation-Id",
             "type": "string",
           },
-          "companyId": Object {
+          "companyId": {
             "description": undefined,
             "name": "companyId",
             "nullable": false,
             "type": "string",
           },
-          "folderId": Object {
+          "folderId": {
             "description": undefined,
             "name": "folderId",
             "nullable": false,
             "type": "string",
           },
-          "input": Object {
+          "input": {
             "$ref": "#/definitions/update_resource_at_any_folder_v1_request",
           },
-          "resourceId": Object {
+          "resourceId": {
             "description": undefined,
             "name": "resourceId",
             "nullable": false,
@@ -1507,28 +1507,28 @@ Object {
         "title": "mutationInput_update_resource_at_any_folder_v1",
         "type": "object",
       },
-      "mutationInput_update_resource_at_the_root_folder_v1": Object {
-        "properties": Object {
-          "Accept_Language": Object {
+      "mutationInput_update_resource_at_the_root_folder_v1": {
+        "properties": {
+          "Accept_Language": {
             "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
             "name": "Accept-Language",
             "type": "string",
           },
-          "X_Correlation_Id": Object {
+          "X_Correlation_Id": {
             "description": "Correlation ID from the auth call.",
             "name": "X-Correlation-Id",
             "type": "string",
           },
-          "companyId": Object {
+          "companyId": {
             "description": undefined,
             "name": "companyId",
             "nullable": false,
             "type": "string",
           },
-          "input": Object {
+          "input": {
             "$ref": "#/definitions/update_resource_at_the_root_folder_v1_request",
           },
-          "resourceId": Object {
+          "resourceId": {
             "description": undefined,
             "name": "resourceId",
             "nullable": false,
@@ -1538,15 +1538,15 @@ Object {
         "title": "mutationInput_update_resource_at_the_root_folder_v1",
         "type": "object",
       },
-      "mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_domain": Object {
-        "enum": Array [
+      "mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_domain": {
+        "enum": [
           "KNOWLEDGE_CENTER",
         ],
         "title": "mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_domain",
         "type": "string",
       },
-      "mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_locationType": Object {
-        "enum": Array [
+      "mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_locationType": {
+        "enum": [
           "HEADER",
           "PARAMETER",
           "FIELD",
@@ -1555,42 +1555,42 @@ Object {
         "title": "mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_locationType",
         "type": "string",
       },
-      "mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_message": Object {
+      "mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_message": {
         "description": "Localized and human readable message.",
         "pattern": "^(?![A-Z_]*$).*$",
         "title": "mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_message",
         "type": "string",
       },
-      "mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_reason": Object {
+      "mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_reason": {
         "pattern": "^[A-Z_]+$",
         "title": "mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_reason",
         "type": "string",
       },
-      "mutation_delete_resource_at_the_root_folder_v1_oneOf_1_message": Object {
+      "mutation_delete_resource_at_the_root_folder_v1_oneOf_1_message": {
         "description": "Localized and human readable message taken from the first error.",
         "pattern": "^(?![A-Z_]*$).*$",
         "title": "mutation_delete_resource_at_the_root_folder_v1_oneOf_1_message",
         "type": "string",
       },
-      "queryInput_get_resource_by_id_v1": Object {
-        "properties": Object {
-          "Accept_Language": Object {
+      "queryInput_get_resource_by_id_v1": {
+        "properties": {
+          "Accept_Language": {
             "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
             "name": "Accept-Language",
             "type": "string",
           },
-          "X_Correlation_Id": Object {
+          "X_Correlation_Id": {
             "description": "Correlation ID from the auth call.",
             "name": "X-Correlation-Id",
             "type": "string",
           },
-          "companyId": Object {
+          "companyId": {
             "description": undefined,
             "name": "companyId",
             "nullable": false,
             "type": "string",
           },
-          "resourceId": Object {
+          "resourceId": {
             "description": undefined,
             "name": "resourceId",
             "nullable": false,
@@ -1600,90 +1600,90 @@ Object {
         "title": "queryInput_get_resource_by_id_v1",
         "type": "object",
       },
-      "queryInput_list_resources_at_any_folder_v1": Object {
-        "properties": Object {
-          "Accept_Language": Object {
+      "queryInput_list_resources_at_any_folder_v1": {
+        "properties": {
+          "Accept_Language": {
             "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
             "name": "Accept-Language",
             "type": "string",
           },
-          "X_Correlation_Id": Object {
+          "X_Correlation_Id": {
             "description": "Correlation ID from the auth call.",
             "name": "X-Correlation-Id",
             "type": "string",
           },
-          "companyId": Object {
+          "companyId": {
             "description": undefined,
             "name": "companyId",
             "nullable": false,
             "type": "string",
           },
-          "directoryOnly": Object {
+          "directoryOnly": {
             "default": false,
             "description": undefined,
             "name": "directoryOnly",
             "type": "boolean",
           },
-          "folderId": Object {
+          "folderId": {
             "description": undefined,
             "name": "folderId",
             "nullable": false,
             "type": "string",
           },
-          "maxSize": Object {
+          "maxSize": {
             "description": "Maximum size of a resource",
             "format": "int32",
             "name": "maxSize",
             "type": "integer",
           },
-          "minSize": Object {
+          "minSize": {
             "description": "Minimum size of a resource",
             "format": "int32",
             "name": "minSize",
             "type": "integer",
           },
-          "order": Object {
+          "order": {
             "description": "List of order",
-            "items": Object {
+            "items": {
               "$ref": "#/definitions/queryInput_list_resources_at_any_folder_v1_order_items",
             },
             "name": "order",
             "type": "array",
           },
-          "publicationEndDate": Object {
+          "publicationEndDate": {
             "description": "Publication end date",
             "format": "date",
             "name": "publicationEndDate",
             "type": "string",
           },
-          "publicationStartDate": Object {
+          "publicationStartDate": {
             "description": "Publication start date",
             "format": "date",
             "name": "publicationStartDate",
             "type": "string",
           },
-          "querySearch": Object {
+          "querySearch": {
             "description": "Text to search in title",
             "name": "querySearch",
             "type": "string",
           },
-          "size": Object {
+          "size": {
             "description": undefined,
             "format": "int32",
             "name": "size",
             "type": "integer",
           },
-          "startKey": Object {
+          "startKey": {
             "description": "The page number",
             "name": "startKey",
             "type": "string",
           },
-          "status": Object {
+          "status": {
             "$ref": "#/definitions/ResourceStatus",
           },
-          "targetAudience": Object {
+          "targetAudience": {
             "description": "Target of the resource (the resource need to have all of the target audience passed in the list)",
-            "items": Object {
+            "items": {
               "type": "string",
             },
             "name": "targetAudience",
@@ -1693,89 +1693,89 @@ Object {
         "title": "queryInput_list_resources_at_any_folder_v1",
         "type": "object",
       },
-      "queryInput_list_resources_at_any_folder_v1_order_items": Object {
+      "queryInput_list_resources_at_any_folder_v1_order_items": {
         "pattern": "^(FILE_TYPE|NAME|LAST_UPDATE_DATE)(,(ASC|DESC))?$",
         "title": "queryInput_list_resources_at_any_folder_v1_order_items",
         "type": "string",
       },
-      "queryInput_list_resources_at_the_root_folder_v1": Object {
-        "properties": Object {
-          "Accept_Language": Object {
+      "queryInput_list_resources_at_the_root_folder_v1": {
+        "properties": {
+          "Accept_Language": {
             "description": "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282",
             "name": "Accept-Language",
             "type": "string",
           },
-          "X_Correlation_Id": Object {
+          "X_Correlation_Id": {
             "description": "Correlation ID from the auth call.",
             "name": "X-Correlation-Id",
             "type": "string",
           },
-          "companyId": Object {
+          "companyId": {
             "description": undefined,
             "name": "companyId",
             "nullable": false,
             "type": "string",
           },
-          "directoryOnly": Object {
+          "directoryOnly": {
             "default": false,
             "description": undefined,
             "name": "directoryOnly",
             "type": "boolean",
           },
-          "maxSize": Object {
+          "maxSize": {
             "description": "Maximum size of a resource",
             "format": "int32",
             "name": "maxSize",
             "type": "integer",
           },
-          "minSize": Object {
+          "minSize": {
             "description": "Minimum size of a resource",
             "format": "int32",
             "name": "minSize",
             "type": "integer",
           },
-          "order": Object {
+          "order": {
             "description": "List of order",
-            "items": Object {
+            "items": {
               "$ref": "#/definitions/queryInput_list_resources_at_any_folder_v1_order_items",
             },
             "name": "order",
             "type": "array",
           },
-          "publicationEndDate": Object {
+          "publicationEndDate": {
             "description": "Publication end date",
             "format": "date",
             "name": "publicationEndDate",
             "type": "string",
           },
-          "publicationStartDate": Object {
+          "publicationStartDate": {
             "description": "Publication start date",
             "format": "date",
             "name": "publicationStartDate",
             "type": "string",
           },
-          "querySearch": Object {
+          "querySearch": {
             "description": "Text to search in title",
             "name": "querySearch",
             "type": "string",
           },
-          "size": Object {
+          "size": {
             "description": undefined,
             "format": "int32",
             "name": "size",
             "type": "integer",
           },
-          "startKey": Object {
+          "startKey": {
             "description": "The page number",
             "name": "startKey",
             "type": "string",
           },
-          "status": Object {
+          "status": {
             "$ref": "#/definitions/ResourceStatus",
           },
-          "targetAudience": Object {
+          "targetAudience": {
             "description": "Target of the resource (the resource need to have all of the target audience passed in the list)",
-            "items": Object {
+            "items": {
               "type": "string",
             },
             "name": "targetAudience",
@@ -1785,17 +1785,17 @@ Object {
         "title": "queryInput_list_resources_at_the_root_folder_v1",
         "type": "object",
       },
-      "query_get_resource_by_id_v1_oneOf_0_allOf_2": Object {
-        "properties": Object {
-          "i18n": Object {
+      "query_get_resource_by_id_v1_oneOf_0_allOf_2": {
+        "properties": {
+          "i18n": {
             "$ref": "#/definitions/query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n",
           },
         },
         "title": "query_get_resource_by_id_v1_oneOf_0_allOf_2",
         "type": "object",
       },
-      "query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n": Object {
-        "additionalProperties": Object {
+      "query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n": {
+        "additionalProperties": {
           "additionalProperties": true,
           "title": "query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties",
           "type": "object",
@@ -1803,22 +1803,22 @@ Object {
         "title": "query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n",
         "type": "object",
       },
-      "query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties": Object {
+      "query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties": {
         "additionalProperties": true,
         "title": "query_get_resource_by_id_v1_oneOf_0_allOf_2_i18n_additionalProperties",
         "type": "object",
       },
-      "query_get_resource_by_id_v1_oneOf_1_allOf_2": Object {
-        "properties": Object {
-          "i18n": Object {
+      "query_get_resource_by_id_v1_oneOf_1_allOf_2": {
+        "properties": {
+          "i18n": {
             "$ref": "#/definitions/query_get_resource_by_id_v1_oneOf_1_allOf_2_i18n",
           },
         },
         "title": "query_get_resource_by_id_v1_oneOf_1_allOf_2",
         "type": "object",
       },
-      "query_get_resource_by_id_v1_oneOf_1_allOf_2_i18n": Object {
-        "additionalProperties": Object {
+      "query_get_resource_by_id_v1_oneOf_1_allOf_2_i18n": {
+        "additionalProperties": {
           "additionalProperties": true,
           "title": "query_get_resource_by_id_v1_oneOf_1_allOf_2_i18n_additionalProperties",
           "type": "object",
@@ -1826,26 +1826,26 @@ Object {
         "title": "query_get_resource_by_id_v1_oneOf_1_allOf_2_i18n",
         "type": "object",
       },
-      "query_get_resource_by_id_v1_oneOf_1_allOf_2_i18n_additionalProperties": Object {
+      "query_get_resource_by_id_v1_oneOf_1_allOf_2_i18n_additionalProperties": {
         "additionalProperties": true,
         "title": "query_get_resource_by_id_v1_oneOf_1_allOf_2_i18n_additionalProperties",
         "type": "object",
       },
-      "query_list_resources_at_any_folder_v1_items": Object {
-        "anyOf": Array [
-          Object {
+      "query_list_resources_at_any_folder_v1_items": {
+        "anyOf": [
+          {
             "$ref": "#/definitions/FileGetWithLocalizedNameDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/FolderGetWithLocalizedNameDTO",
           },
         ],
         "title": "query_list_resources_at_any_folder_v1_items",
       },
-      "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0": Object {
-        "properties": Object {
-          "parentHierarchy": Object {
-            "items": Object {
+      "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0": {
+        "properties": {
+          "parentHierarchy": {
+            "items": {
               "$ref": "#/definitions/ParentFolderGetWithLocalizedNameDTO",
             },
             "type": "array",
@@ -1854,8 +1854,8 @@ Object {
         "title": "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0",
         "type": "object",
       },
-      "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items": Object {
-        "enum": Array [
+      "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items": {
+        "enum": [
           "ACTIVE",
           "INACTIVE",
           "SCHEDULED",
@@ -1863,94 +1863,94 @@ Object {
         "title": "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items",
         "type": "string",
       },
-      "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_type_items": Object {
-        "enum": Array [
+      "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_type_items": {
+        "enum": [
           "FILE",
           "FOLDER",
         ],
         "title": "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_type_items",
         "type": "string",
       },
-      "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_2": Object {
-        "properties": Object {
-          "id": Object {
+      "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_2": {
+        "properties": {
+          "id": {
             "type": "string",
           },
-          "type": Object {
+          "type": {
             "$ref": "#/definitions/ResourceType",
           },
         },
         "title": "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_2",
         "type": "object",
       },
-      "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_2": Object {
-        "properties": Object {
-          "name": Object {
+      "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_2": {
+        "properties": {
+          "name": {
             "type": "string",
           },
         },
         "title": "query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_2",
         "type": "object",
       },
-      "query_list_resources_at_any_folder_v1_items_anyOf_1_allOf_2": Object {
-        "properties": Object {
-          "name": Object {
+      "query_list_resources_at_any_folder_v1_items_anyOf_1_allOf_2": {
+        "properties": {
+          "name": {
             "type": "string",
           },
         },
         "title": "query_list_resources_at_any_folder_v1_items_anyOf_1_allOf_2",
         "type": "object",
       },
-      "query_list_resources_at_the_root_folder_v1_items": Object {
-        "anyOf": Array [
-          Object {
+      "query_list_resources_at_the_root_folder_v1_items": {
+        "anyOf": [
+          {
             "$ref": "#/definitions/FileGetWithLocalizedNameDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/FolderGetWithLocalizedNameDTO",
           },
         ],
         "title": "query_list_resources_at_the_root_folder_v1_items",
       },
-      "update_resource_at_any_folder_v1_200_response": Object {
-        "oneOf": Array [
-          Object {
+      "update_resource_at_any_folder_v1_200_response": {
+        "oneOf": [
+          {
             "$ref": "#/definitions/FileGetWithI18nDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/FolderGetWithI18nDTO",
           },
         ],
         "title": "update_resource_at_any_folder_v1_200_response",
       },
-      "update_resource_at_any_folder_v1_request": Object {
-        "oneOf": Array [
-          Object {
+      "update_resource_at_any_folder_v1_request": {
+        "oneOf": [
+          {
             "$ref": "#/definitions/FileUpdateDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/FolderUpdateDTO",
           },
         ],
         "title": "update_resource_at_any_folder_v1_request",
       },
-      "update_resource_at_the_root_folder_v1_200_response": Object {
-        "oneOf": Array [
-          Object {
+      "update_resource_at_the_root_folder_v1_200_response": {
+        "oneOf": [
+          {
             "$ref": "#/definitions/FileGetWithI18nDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/FolderGetWithI18nDTO",
           },
         ],
         "title": "update_resource_at_the_root_folder_v1_200_response",
       },
-      "update_resource_at_the_root_folder_v1_request": Object {
-        "oneOf": Array [
-          Object {
+      "update_resource_at_the_root_folder_v1_request": {
+        "oneOf": [
+          {
             "$ref": "#/definitions/FileUpdateDTO",
           },
-          Object {
+          {
             "$ref": "#/definitions/FolderUpdateDTO",
           },
         ],
@@ -1970,68 +1970,68 @@ exports[`Toto should generate the correct schema 1`] = `
 directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
 
 type Query {
-  \\"List Resources At Any Folder Level\\"
+  "List Resources At Any Folder Level"
   list_resources_at_any_folder_v1(
-    \\"As defined in RFC 3282 https://tools.ietf.org/html/rfc3282\\"
+    "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282"
     Accept_Language: String
-    \\"Correlation ID from the auth call.\\"
+    "Correlation ID from the auth call."
     X_Correlation_Id: String
     companyId: String!
     folderId: String!
-    \\"Text to search in title\\"
+    "Text to search in title"
     querySearch: String
-    \\"Minimum size of a resource\\"
+    "Minimum size of a resource"
     minSize: Int
-    \\"Maximum size of a resource\\"
+    "Maximum size of a resource"
     maxSize: Int
-    \\"Status of the resource\\"
+    "Status of the resource"
     status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
     directoryOnly: Boolean
-    \\"List of order\\"
+    "List of order"
     order: [queryInput_list_resources_at_any_folder_v1_order_items]
-    \\"Target of the resource (the resource need to have all of the target audience passed in the list)\\"
+    "Target of the resource (the resource need to have all of the target audience passed in the list)"
     targetAudience: [String]
-    \\"Publication start date\\"
+    "Publication start date"
     publicationStartDate: Date
-    \\"Publication end date\\"
+    "Publication end date"
     publicationEndDate: Date
-    \\"The page number\\"
+    "The page number"
     startKey: String
     size: Int
   ): [query_list_resources_at_any_folder_v1_items]
-  \\"List All Resources At The Root Folder\\"
+  "List All Resources At The Root Folder"
   list_resources_at_the_root_folder_v1(
-    \\"As defined in RFC 3282 https://tools.ietf.org/html/rfc3282\\"
+    "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282"
     Accept_Language: String
-    \\"Correlation ID from the auth call.\\"
+    "Correlation ID from the auth call."
     X_Correlation_Id: String
     companyId: String!
-    \\"Text to search in title\\"
+    "Text to search in title"
     querySearch: String
-    \\"Minimum size of a resource\\"
+    "Minimum size of a resource"
     minSize: Int
-    \\"Maximum size of a resource\\"
+    "Maximum size of a resource"
     maxSize: Int
-    \\"Status of the resource\\"
+    "Status of the resource"
     status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
     directoryOnly: Boolean
-    \\"List of order\\"
+    "List of order"
     order: [queryInput_list_resources_at_any_folder_v1_order_items]
-    \\"Target of the resource (the resource need to have all of the target audience passed in the list)\\"
+    "Target of the resource (the resource need to have all of the target audience passed in the list)"
     targetAudience: [String]
-    \\"Publication start date\\"
+    "Publication start date"
     publicationStartDate: Date
-    \\"Publication end date\\"
+    "Publication end date"
     publicationEndDate: Date
-    \\"The page number\\"
+    "The page number"
     startKey: String
     size: Int
   ): [query_list_resources_at_the_root_folder_v1_items]
-  \\"Get Resource by ID\\"
+  "Get Resource by ID"
   get_resource_by_id_v1(
-    \\"As defined in RFC 3282 https://tools.ietf.org/html/rfc3282\\"
+    "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282"
     Accept_Language: String
-    \\"Correlation ID from the auth call.\\"
+    "Correlation ID from the auth call."
     X_Correlation_Id: String
     companyId: String!
     resourceId: String!
@@ -2041,7 +2041,7 @@ type Query {
 type query_list_resources_at_any_folder_v1_items {
   parentHierarchy: [ParentFolderGetWithLocalizedNameDTO]
   parentFolderId: String
-  \\"Status of the resource\\"
+  "Status of the resource"
   status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
   publicationStartTimestamp: DateTime
   publicationEndTimestamp: DateTime
@@ -2066,7 +2066,7 @@ type query_list_resources_at_any_folder_v1_items {
 type ParentFolderGetWithLocalizedNameDTO {
   type: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_type_items]!
   id: String!
-  \\"Status of the resource\\"
+  "Status of the resource"
   status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]!
   publicationStartTimestamp: DateTime
   publicationEndTimestamp: DateTime
@@ -2096,19 +2096,19 @@ enum query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentH
   SCHEDULED
 }
 
-\\"A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.\\"
+"A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar."
 scalar DateTime
 
-\\"A field whose value matches /^(FILE_TYPE|NAME|LAST_UPDATE_DATE)(,(ASC|DESC))?$/.\\"
+"A field whose value matches /^(FILE_TYPE|NAME|LAST_UPDATE_DATE)(,(ASC|DESC))?$/."
 scalar queryInput_list_resources_at_any_folder_v1_order_items
 
-\\"Represents date values\\"
+"Represents date values"
 scalar Date
 
 type query_list_resources_at_the_root_folder_v1_items {
   parentHierarchy: [ParentFolderGetWithLocalizedNameDTO]
   parentFolderId: String
-  \\"Status of the resource\\"
+  "Status of the resource"
   status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
   publicationStartTimestamp: DateTime
   publicationEndTimestamp: DateTime
@@ -2135,7 +2135,7 @@ union get_resource_by_id_v1_200_response = FileGetWithI18nDTO | FolderGetWithI18
 type FileGetWithI18nDTO {
   parentHierarchy: [ParentFolderGetWithLocalizedNameDTO]
   parentFolderId: String
-  \\"Status of the resource\\"
+  "Status of the resource"
   status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
   publicationStartTimestamp: DateTime
   publicationEndTimestamp: DateTime
@@ -2155,13 +2155,13 @@ type FileGetWithI18nDTO {
   i18n: JSON
 }
 
-\\"The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).\\"
-scalar JSON @specifiedBy(url: \\"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf\\")
+"The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf)."
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 type FolderGetWithI18nDTO {
   parentHierarchy: [ParentFolderGetWithLocalizedNameDTO]
   parentFolderId: String
-  \\"Status of the resource\\"
+  "Status of the resource"
   status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
   publicationStartTimestamp: DateTime
   publicationEndTimestamp: DateTime
@@ -2181,51 +2181,51 @@ type FolderGetWithI18nDTO {
 }
 
 type Mutation {
-  \\"Create resources at any folder level\\"
+  "Create resources at any folder level"
   create_resource_at_any_folder_v1(
-    \\"As defined in RFC 3282 https://tools.ietf.org/html/rfc3282\\"
+    "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282"
     Accept_Language: String
-    \\"Correlation ID from the auth call.\\"
+    "Correlation ID from the auth call."
     X_Correlation_Id: String
     companyId: String!
     folderId: String!
     input: create_resource_at_any_folder_v1_request_Input
   ): create_resource_at_any_folder_v1_201_response
-  \\"Update A Resource At Any Folder Level\\"
+  "Update A Resource At Any Folder Level"
   update_resource_at_any_folder_v1(
-    \\"As defined in RFC 3282 https://tools.ietf.org/html/rfc3282\\"
+    "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282"
     Accept_Language: String
-    \\"Correlation ID from the auth call.\\"
+    "Correlation ID from the auth call."
     X_Correlation_Id: String
     companyId: String!
     folderId: String!
     resourceId: String!
     input: update_resource_at_any_folder_v1_request_Input
   ): update_resource_at_any_folder_v1_200_response
-  \\"Create A Resource At The Root Folder\\"
+  "Create A Resource At The Root Folder"
   create_resource_at_the_root_folder_v1(
-    \\"As defined in RFC 3282 https://tools.ietf.org/html/rfc3282\\"
+    "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282"
     Accept_Language: String
-    \\"Correlation ID from the auth call.\\"
+    "Correlation ID from the auth call."
     X_Correlation_Id: String
     companyId: String!
     input: create_resource_at_the_root_folder_v1_request_Input
   ): create_resource_at_the_root_folder_v1_201_response
-  \\"Update A Resource At The Root Folder\\"
+  "Update A Resource At The Root Folder"
   update_resource_at_the_root_folder_v1(
-    \\"As defined in RFC 3282 https://tools.ietf.org/html/rfc3282\\"
+    "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282"
     Accept_Language: String
-    \\"Correlation ID from the auth call.\\"
+    "Correlation ID from the auth call."
     X_Correlation_Id: String
     companyId: String!
     resourceId: String!
     input: update_resource_at_the_root_folder_v1_request_Input
   ): update_resource_at_the_root_folder_v1_200_response
-  \\"Delete A Resource At The Root Folder\\"
+  "Delete A Resource At The Root Folder"
   delete_resource_at_the_root_folder_v1(
-    \\"As defined in RFC 3282 https://tools.ietf.org/html/rfc3282\\"
+    "As defined in RFC 3282 https://tools.ietf.org/html/rfc3282"
     Accept_Language: String
-    \\"Correlation ID from the auth call.\\"
+    "Correlation ID from the auth call."
     X_Correlation_Id: String
     companyId: String!
     resourceId: String!
@@ -2241,7 +2241,7 @@ input create_resource_at_any_folder_v1_request_Input @oneOf {
 
 input FileCreateDTO_Input {
   parentFolderId: String
-  \\"Status of the resource\\"
+  "Status of the resource"
   status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
   publicationStartTimestamp: DateTime
   publicationEndTimestamp: DateTime
@@ -2260,7 +2260,7 @@ input FileCreateDTO_Input {
 
 input FolderCreateDTO_Input {
   parentFolderId: String
-  \\"Status of the resource\\"
+  "Status of the resource"
   status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
   publicationStartTimestamp: DateTime
   publicationEndTimestamp: DateTime
@@ -2283,7 +2283,7 @@ input update_resource_at_any_folder_v1_request_Input @oneOf {
 
 input FileUpdateDTO_Input {
   parentFolderId: String
-  \\"Status of the resource\\"
+  "Status of the resource"
   status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
   publicationStartTimestamp: DateTime
   publicationEndTimestamp: DateTime
@@ -2301,7 +2301,7 @@ input FileUpdateDTO_Input {
 
 input FolderUpdateDTO_Input {
   parentFolderId: String
-  \\"Status of the resource\\"
+  "Status of the resource"
   status: [query_list_resources_at_any_folder_v1_items_anyOf_0_allOf_0_allOf_0_parentHierarchy_items_status_items]
   publicationStartTimestamp: DateTime
   publicationEndTimestamp: DateTime
@@ -2334,7 +2334,7 @@ type Void_container {
   Void: Void
 }
 
-\\"Represents empty values\\"
+"Represents empty values"
 scalar Void
 
 type Error {
@@ -2343,12 +2343,12 @@ type Error {
   exception: String
   path: String!
   message: mutation_delete_resource_at_the_root_folder_v1_oneOf_1_message!
-  \\"Message for debug purposes. Not intended to be shown the users.\\"
+  "Message for debug purposes. Not intended to be shown the users."
   debugMessage: String
   errors: [Error_Details]
 }
 
-\\"Localized and human readable message taken from the first error.\\"
+"Localized and human readable message taken from the first error."
 scalar mutation_delete_resource_at_the_root_folder_v1_oneOf_1_message
 
 type Error_Details {
@@ -2363,7 +2363,7 @@ enum mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_domain 
   KNOWLEDGE_CENTER
 }
 
-\\"A field whose value matches /^[A-Z_]+$/.\\"
+"A field whose value matches /^[A-Z_]+$/."
 scalar mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_reason
 
 enum mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_locationType {
@@ -2373,6 +2373,6 @@ enum mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_locatio
   PERMISSION
 }
 
-\\"Localized and human readable message.\\"
+"Localized and human readable message."
 scalar mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_message"
 `;

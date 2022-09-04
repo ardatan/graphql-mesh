@@ -1,22 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Federation Example should give correct response for example queries 1`] = `
-Object {
-  "topProducts": Array [
-    Object {
+{
+  "topProducts": [
+    {
       "inStock": true,
       "name": "Table",
       "price": 899,
-      "reviews": Array [
-        Object {
-          "author": Object {
+      "reviews": [
+        {
+          "author": {
             "id": "1",
             "name": "Ada Lovelace",
-            "reviews": Array [
-              Object {
+            "reviews": [
+              {
                 "body": "Love it!",
                 "id": "1",
-                "product": Object {
+                "product": {
                   "inStock": true,
                   "name": "Table",
                   "price": 899,
@@ -25,10 +25,10 @@ Object {
                   "weight": 100,
                 },
               },
-              Object {
+              {
                 "body": "Too expensive.",
                 "id": "2",
-                "product": Object {
+                "product": {
                   "inStock": false,
                   "name": "Couch",
                   "price": 1299,
@@ -43,15 +43,15 @@ Object {
           "body": "Love it!",
           "id": "1",
         },
-        Object {
-          "author": Object {
+        {
+          "author": {
             "id": "2",
             "name": "Alan Turing",
-            "reviews": Array [
-              Object {
+            "reviews": [
+              {
                 "body": "Could be better.",
                 "id": "3",
-                "product": Object {
+                "product": {
                   "inStock": true,
                   "name": "Chair",
                   "price": 54,
@@ -60,10 +60,10 @@ Object {
                   "weight": 50,
                 },
               },
-              Object {
+              {
                 "body": "Prefer something else.",
                 "id": "4",
-                "product": Object {
+                "product": {
                   "inStock": true,
                   "name": "Table",
                   "price": 899,
@@ -83,20 +83,20 @@ Object {
       "upc": "1",
       "weight": 100,
     },
-    Object {
+    {
       "inStock": false,
       "name": "Couch",
       "price": 1299,
-      "reviews": Array [
-        Object {
-          "author": Object {
+      "reviews": [
+        {
+          "author": {
             "id": "1",
             "name": "Ada Lovelace",
-            "reviews": Array [
-              Object {
+            "reviews": [
+              {
                 "body": "Love it!",
                 "id": "1",
-                "product": Object {
+                "product": {
                   "inStock": true,
                   "name": "Table",
                   "price": 899,
@@ -105,10 +105,10 @@ Object {
                   "weight": 100,
                 },
               },
-              Object {
+              {
                 "body": "Too expensive.",
                 "id": "2",
-                "product": Object {
+                "product": {
                   "inStock": false,
                   "name": "Couch",
                   "price": 1299,
@@ -128,20 +128,20 @@ Object {
       "upc": "2",
       "weight": 1000,
     },
-    Object {
+    {
       "inStock": true,
       "name": "Chair",
       "price": 54,
-      "reviews": Array [
-        Object {
-          "author": Object {
+      "reviews": [
+        {
+          "author": {
             "id": "2",
             "name": "Alan Turing",
-            "reviews": Array [
-              Object {
+            "reviews": [
+              {
                 "body": "Could be better.",
                 "id": "3",
-                "product": Object {
+                "product": {
                   "inStock": true,
                   "name": "Chair",
                   "price": 54,
@@ -150,10 +150,10 @@ Object {
                   "weight": 50,
                 },
               },
-              Object {
+              {
                 "body": "Prefer something else.",
                 "id": "4",
-                "product": Object {
+                "product": {
                   "inStock": true,
                   "name": "Table",
                   "price": 899,
@@ -174,28 +174,28 @@ Object {
       "weight": 50,
     },
   ],
-  "users": Array [
-    Object {
+  "users": [
+    {
       "id": "1",
       "name": "Ada Lovelace",
-      "reviews": Array [
-        Object {
+      "reviews": [
+        {
           "body": "Love it!",
           "id": "1",
-          "product": Object {
+          "product": {
             "inStock": true,
             "name": "Table",
             "price": 899,
-            "reviews": Array [
-              Object {
-                "author": Object {
+            "reviews": [
+              {
+                "author": {
                   "id": "1",
                   "name": "Ada Lovelace",
-                  "reviews": Array [
-                    Object {
+                  "reviews": [
+                    {
                       "body": "Love it!",
                       "id": "1",
-                      "product": Object {
+                      "product": {
                         "inStock": true,
                         "name": "Table",
                         "price": 899,
@@ -204,10 +204,10 @@ Object {
                         "weight": 100,
                       },
                     },
-                    Object {
+                    {
                       "body": "Too expensive.",
                       "id": "2",
-                      "product": Object {
+                      "product": {
                         "inStock": false,
                         "name": "Couch",
                         "price": 1299,
@@ -222,15 +222,15 @@ Object {
                 "body": "Love it!",
                 "id": "1",
               },
-              Object {
-                "author": Object {
+              {
+                "author": {
                   "id": "2",
                   "name": "Alan Turing",
-                  "reviews": Array [
-                    Object {
+                  "reviews": [
+                    {
                       "body": "Could be better.",
                       "id": "3",
-                      "product": Object {
+                      "product": {
                         "inStock": true,
                         "name": "Chair",
                         "price": 54,
@@ -239,10 +239,10 @@ Object {
                         "weight": 50,
                       },
                     },
-                    Object {
+                    {
                       "body": "Prefer something else.",
                       "id": "4",
-                      "product": Object {
+                      "product": {
                         "inStock": true,
                         "name": "Table",
                         "price": 899,
@@ -263,23 +263,23 @@ Object {
             "weight": 100,
           },
         },
-        Object {
+        {
           "body": "Too expensive.",
           "id": "2",
-          "product": Object {
+          "product": {
             "inStock": false,
             "name": "Couch",
             "price": 1299,
-            "reviews": Array [
-              Object {
-                "author": Object {
+            "reviews": [
+              {
+                "author": {
                   "id": "1",
                   "name": "Ada Lovelace",
-                  "reviews": Array [
-                    Object {
+                  "reviews": [
+                    {
                       "body": "Love it!",
                       "id": "1",
-                      "product": Object {
+                      "product": {
                         "inStock": true,
                         "name": "Table",
                         "price": 899,
@@ -288,10 +288,10 @@ Object {
                         "weight": 100,
                       },
                     },
-                    Object {
+                    {
                       "body": "Too expensive.",
                       "id": "2",
-                      "product": Object {
+                      "product": {
                         "inStock": false,
                         "name": "Couch",
                         "price": 1299,
@@ -315,27 +315,27 @@ Object {
       ],
       "username": "@ada",
     },
-    Object {
+    {
       "id": "2",
       "name": "Alan Turing",
-      "reviews": Array [
-        Object {
+      "reviews": [
+        {
           "body": "Could be better.",
           "id": "3",
-          "product": Object {
+          "product": {
             "inStock": true,
             "name": "Chair",
             "price": 54,
-            "reviews": Array [
-              Object {
-                "author": Object {
+            "reviews": [
+              {
+                "author": {
                   "id": "2",
                   "name": "Alan Turing",
-                  "reviews": Array [
-                    Object {
+                  "reviews": [
+                    {
                       "body": "Could be better.",
                       "id": "3",
-                      "product": Object {
+                      "product": {
                         "inStock": true,
                         "name": "Chair",
                         "price": 54,
@@ -344,10 +344,10 @@ Object {
                         "weight": 50,
                       },
                     },
-                    Object {
+                    {
                       "body": "Prefer something else.",
                       "id": "4",
-                      "product": Object {
+                      "product": {
                         "inStock": true,
                         "name": "Table",
                         "price": 899,
@@ -368,23 +368,23 @@ Object {
             "weight": 50,
           },
         },
-        Object {
+        {
           "body": "Prefer something else.",
           "id": "4",
-          "product": Object {
+          "product": {
             "inStock": true,
             "name": "Table",
             "price": 899,
-            "reviews": Array [
-              Object {
-                "author": Object {
+            "reviews": [
+              {
+                "author": {
                   "id": "1",
                   "name": "Ada Lovelace",
-                  "reviews": Array [
-                    Object {
+                  "reviews": [
+                    {
                       "body": "Love it!",
                       "id": "1",
-                      "product": Object {
+                      "product": {
                         "inStock": true,
                         "name": "Table",
                         "price": 899,
@@ -393,10 +393,10 @@ Object {
                         "weight": 100,
                       },
                     },
-                    Object {
+                    {
                       "body": "Too expensive.",
                       "id": "2",
-                      "product": Object {
+                      "product": {
                         "inStock": false,
                         "name": "Couch",
                         "price": 1299,
@@ -411,15 +411,15 @@ Object {
                 "body": "Love it!",
                 "id": "1",
               },
-              Object {
-                "author": Object {
+              {
+                "author": {
                   "id": "2",
                   "name": "Alan Turing",
-                  "reviews": Array [
-                    Object {
+                  "reviews": [
+                    {
                       "body": "Could be better.",
                       "id": "3",
-                      "product": Object {
+                      "product": {
                         "inStock": true,
                         "name": "Chair",
                         "price": 54,
@@ -428,10 +428,10 @@ Object {
                         "weight": 50,
                       },
                     },
-                    Object {
+                    {
                       "body": "Prefer something else.",
                       "id": "4",
-                      "product": Object {
+                      "product": {
                         "inStock": true,
                         "name": "Table",
                         "price": 899,

@@ -9,364 +9,364 @@ exports[`openAPI loader: government_social_work should generate the schema corre
 directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
 
 type Query {
-  \\"Gets all \`Assessment\` types\\"
+  "Gets all \`Assessment\` types"
   getAssessmentTypes(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"offset for pagination (e.g. start at 40)\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "offset for pagination (e.g. start at 40)"
     offset: String!
-    \\"limit for pagination (e.g. 20 at a time)\\"
+    "limit for pagination (e.g. 20 at a time)"
     limit: String!
   ): [getAssessmentTypes_response]
-  \\"Gets case details for a given case id\\"
+  "Gets case details for a given case id"
   getCase(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"Case Id\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "Case Id"
     caseId: String!
   ): [getCase_response]
-  \\"Gets profile date for the case worker\\"
+  "Gets profile date for the case worker"
   getWorkersProfile(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"Worker Id\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "Worker Id"
     userName: String!
-    \\"offset for pagination (e.g. start at 40)\\"
+    "offset for pagination (e.g. start at 40)"
     offset: String!
-    \\"limit for pagination (e.g. 20 at a time)\\"
+    "limit for pagination (e.g. 20 at a time)"
     limit: String!
   ): [getWorkersProfile_response]
-  \\"Gets All \`Case\` objects for a social worker\\"
+  "Gets All \`Case\` objects for a social worker"
   getWorkersCases(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"Worker Id\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "Worker Id"
     userName: String!
-    \\"offset for pagination (e.g. start at 40)\\"
+    "offset for pagination (e.g. start at 40)"
     offset: String!
-    \\"limit for pagination (e.g. 20 at a time)\\"
+    "limit for pagination (e.g. 20 at a time)"
     limit: String!
   ): [getWorkersCases_response]
-  \\"Gets the assigned \`Family\` objects for a social worker\\"
+  "Gets the assigned \`Family\` objects for a social worker"
   getWorkersFamilies(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"Worker Id\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "Worker Id"
     userName: String!
-    \\"offset for pagination (e.g. start at 40)\\"
+    "offset for pagination (e.g. start at 40)"
     offset: String!
-    \\"limit for pagination (e.g. 20 at a time)\\"
+    "limit for pagination (e.g. 20 at a time)"
     limit: String!
   ): [getWorkersFamilies_response]
-  \\"Gets a specific case visit data for a given case id/case visit id combination\\"
+  "Gets a specific case visit data for a given case id/case visit id combination"
   getCaseVisit(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"Case Id\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "Case Id"
     caseId: String!
-    \\"Visit Id\\"
+    "Visit Id"
     visitId: String!
   ): [getCaseVisit_response]
-  \\"Gets a specific family's data\\"
+  "Gets a specific family's data"
   getFamily(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"FamilyId to find family data\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "FamilyId to find family data"
     familyId: String!
   ): [getFamily_response]
-  \\"Gets a specific client data\\"
+  "Gets a specific client data"
   getClient(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"ClientId to find Client\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "ClientId to find Client"
     clientId: String!
   ): [getClient_response]
-  \\"Gets all persons\\"
+  "Gets all persons"
   getPersons(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"offset for pagination (e.g. start at 40)\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "offset for pagination (e.g. start at 40)"
     offset: String!
-    \\"limit for pagination (e.g. 20 at a time)\\"
+    "limit for pagination (e.g. 20 at a time)"
     limit: String!
   ): [getPersons_response]
-  \\"Gets client's contacts  - not marked as \\\\\\"Deleted\\\\\\" - with their email/phone information\\"
+  "Gets client's contacts  - not marked as \\"Deleted\\" - with their email/phone information"
   getClientContacts(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"ClientId to find Client\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "ClientId to find Client"
     clientId: String!
-    \\"offset for pagination (e.g. start at 40)\\"
+    "offset for pagination (e.g. start at 40)"
     offset: String!
-    \\"limit for pagination (e.g. 20 at a time)\\"
+    "limit for pagination (e.g. 20 at a time)"
     limit: String!
   ): [getClientContacts_response]
-  \\"Gets client's schools information\\"
+  "Gets client's schools information"
   getClientSchools(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"ClientId to find Client\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "ClientId to find Client"
     clientId: String!
-    \\"offset for pagination (e.g. start at 40)\\"
+    "offset for pagination (e.g. start at 40)"
     offset: String!
-    \\"limit for pagination (e.g. 20 at a time)\\"
+    "limit for pagination (e.g. 20 at a time)"
     limit: String!
   ): [getClientSchools_response]
-  \\"Gets client's physicians information  - not marked as \\\\\\"Deleted\\\\\\"\\"
+  "Gets client's physicians information  - not marked as \\"Deleted\\""
   getClientPhysicians(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"ClientId to find Client\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "ClientId to find Client"
     clientId: String!
-    \\"offset for pagination (e.g. start at 40)\\"
+    "offset for pagination (e.g. start at 40)"
     offset: String!
-    \\"limit for pagination (e.g. 20 at a time)\\"
+    "limit for pagination (e.g. 20 at a time)"
     limit: String!
   ): [getClientPhysicians_response]
-  \\"Gets all experts\\"
+  "Gets all experts"
   getExperts(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"offset for pagination (e.g. start at 40)\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "offset for pagination (e.g. start at 40)"
     offset: String!
-    \\"limit for pagination (e.g. 20 at a time)\\"
+    "limit for pagination (e.g. 20 at a time)"
     limit: String!
   ): [getExperts_response]
-  \\"Gets a specific file for a given file id or return all files if no specific file id is given\\"
+  "Gets a specific file for a given file id or return all files if no specific file id is given"
   getFile(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"File Id\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "File Id"
     fileId: String!
   ): [getFile_response]
-  \\"Gets a specific file for a given manual id\\"
+  "Gets a specific file for a given manual id"
   getManual(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"Manual Id\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "Manual Id"
     manualId: String!
   ): [getManual_response]
-  \\"Gets all media files of the mediaType  - not marked as \\\\\\"Deleted\\\\\\"\\"
+  "Gets all media files of the mediaType  - not marked as \\"Deleted\\""
   getMedia(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"Case Id\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "Case Id"
     caseId: String!
   ): [getMedia_response]
-  \\"Retrieves past assessments - not marked as \\\\\\"Deleted\\\\\\" - for a case; if a worker id is specified in the query then retrieves only those assessments  - not marked as \\\\\\"Deleted\\\\\\" - for this case and for this worked id\\"
+  "Retrieves past assessments - not marked as \\"Deleted\\" - for a case; if a worker id is specified in the query then retrieves only those assessments  - not marked as \\"Deleted\\" - for this case and for this worked id"
   getCaseAssessments(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"Case Id\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "Case Id"
     caseId: String!
-    \\"offset for pagination (e.g. start at 40)\\"
+    "offset for pagination (e.g. start at 40)"
     offset: String!
-    \\"limit for pagination (e.g. 20 at a time)\\"
+    "limit for pagination (e.g. 20 at a time)"
     limit: String!
   ): [getCaseAssessments_response]
-  \\"This api sends along the case assessment data to the backend analytics engine which sends back recommendations to the app\\"
+  "This api sends along the case assessment data to the backend analytics engine which sends back recommendations to the app"
   getRecommendations(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"Case Id\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "Case Id"
     caseId: String!
-    \\"Case Assessment Id\\"
+    "Case Assessment Id"
     caseAssessmentId: String!
-    \\"Assessment Type Id\\"
+    "Assessment Type Id"
     assessmentTypeId: String!
-    \\"offset for pagination (e.g. start at 40)\\"
+    "offset for pagination (e.g. start at 40)"
     offset: String!
-    \\"limit for pagination (e.g. 20 at a time)\\"
+    "limit for pagination (e.g. 20 at a time)"
     limit: String!
     input: [CaseAssessment_Input]
   ): [getRecommendations_response]
-  \\"Retrieves a list of available case note types\\"
+  "Retrieves a list of available case note types"
   getCaseNoteTypes(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"Case Id\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "Case Id"
     caseId: String!
-    \\"offset for pagination (e.g. start at 40)\\"
+    "offset for pagination (e.g. start at 40)"
     offset: String!
-    \\"limit for pagination (e.g. 20 at a time)\\"
+    "limit for pagination (e.g. 20 at a time)"
     limit: String!
   ): [getCaseNoteTypes_response]
-  \\"Retrieves past notes  - not marked as \\\\\\"Deleted\\\\\\" - for a case\\"
+  "Retrieves past notes  - not marked as \\"Deleted\\" - for a case"
   getCaseNotes(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"Case Id\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "Case Id"
     caseId: String!
-    \\"offset for pagination (e.g. start at 40)\\"
+    "offset for pagination (e.g. start at 40)"
     offset: String!
-    \\"limit for pagination (e.g. 20 at a time)\\"
+    "limit for pagination (e.g. 20 at a time)"
     limit: String!
   ): [getCaseNotes_response]
-  \\"Gets all the client relationships  - not marked as \\\\\\"Deleted\\\\\\" - for the given client\\"
+  "Gets all the client relationships  - not marked as \\"Deleted\\" - for the given client"
   getRelationships(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"ClientId to find Client\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "ClientId to find Client"
     clientId: String!
-    \\"offset for pagination (e.g. start at 40)\\"
+    "offset for pagination (e.g. start at 40)"
     offset: String!
-    \\"limit for pagination (e.g. 20 at a time)\\"
+    "limit for pagination (e.g. 20 at a time)"
     limit: String!
   ): [getRelationships_response]
-  \\"Gets all the client relationship types\\"
+  "Gets all the client relationship types"
   getRelationshipTypes(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"offset for pagination (e.g. start at 40)\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "offset for pagination (e.g. start at 40)"
     offset: String!
-    \\"limit for pagination (e.g. 20 at a time)\\"
+    "limit for pagination (e.g. 20 at a time)"
     limit: String!
   ): [getRelationshipTypes_response]
-  \\"Gets all score categories\\"
+  "Gets all score categories"
   getScoreCategories(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"offset for pagination (e.g. start at 40)\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "offset for pagination (e.g. start at 40)"
     offset: String!
-    \\"limit for pagination (e.g. 20 at a time)\\"
+    "limit for pagination (e.g. 20 at a time)"
     limit: String!
   ): [getScoreCategories_response]
 }
@@ -374,21 +374,21 @@ type Query {
 union getAssessmentTypes_response = getAssessmentTypes_200_response | Error
 
 type getAssessmentTypes_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: [AssessmentTypeMaster]
   pagination: Pagination
 }
 
-\\"warnings and errors from backend systems.  Message is for debug only, app should lookup localized message from local based on id\\"
+"warnings and errors from backend systems.  Message is for debug only, app should lookup localized message from local based on id"
 type Error {
   id: query_getAssessmentTypes_oneOf_0_errors_items_id
-  \\"message for debug only, not to be displayed\\"
+  "message for debug only, not to be displayed"
   message: String
   level: query_getAssessmentTypes_oneOf_0_errors_items_level
 }
 
-\\"server-generated error code\\"
+"server-generated error code"
 enum query_getAssessmentTypes_oneOf_0_errors_items_id {
   NO_RESULTS_FOUND
   SAVE_FAILED
@@ -398,46 +398,46 @@ enum query_getAssessmentTypes_oneOf_0_errors_items_id {
   DELETE_FAILED
 }
 
-\\"message level\\"
+"message level"
 enum query_getAssessmentTypes_oneOf_0_errors_items_level {
   INFO
   WARNING
   ERROR
 }
 
-\\"Assessment Type\\"
+"Assessment Type"
 type AssessmentTypeMaster {
-  \\"Unique Assessment Type Id\\"
+  "Unique Assessment Type Id"
   assessmentTypeId: String
   assessmentTypeDesc: String
   factorsTemplate: [AssessmentFactorsTemplate]
 }
 
-\\"Assessment Factor Name.\\"
+"Assessment Factor Name."
 type AssessmentFactorsTemplate {
-  \\"Unique Assessment Factor Id.\\"
+  "Unique Assessment Factor Id."
   factorId: String
   factorName: String
   factorQuestionsTemplate: [AssessmentFactorQuestionTemplate]
 }
 
-\\"Assessment Factor Questions.\\"
+"Assessment Factor Questions."
 type AssessmentFactorQuestionTemplate {
-  \\"Assessment Factor Question Id.\\"
+  "Assessment Factor Question Id."
   questionId: String
-  \\"Assessment Factor Question Text.\\"
+  "Assessment Factor Question Text."
   questionText: String
   answerType: query_getAssessmentTypes_oneOf_0_data_items_factorsTemplate_items_factorQuestionsTemplate_items_answerType
 }
 
-\\"Assessment Factor Question Type.\\"
+"Assessment Factor Question Type."
 enum query_getAssessmentTypes_oneOf_0_data_items_factorsTemplate_items_factorQuestionsTemplate_items_answerType {
   Yes
   No
   N_A
 }
 
-\\"Used to limit number of results returned at one time so the app or server do not get overloaded, and to keep payloads small.\\"
+"Used to limit number of results returned at one time so the app or server do not get overloaded, and to keep payloads small."
 type Pagination {
   count: Int
   first: String
@@ -451,202 +451,202 @@ type Pagination {
 union getCase_response = getCase_200_response | Error
 
 type getCase_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: [Case]
 }
 
-\\"Client Case Narrative.\\"
+"Client Case Narrative."
 type Case {
-  \\"Unique Case Id.\\"
+  "Unique Case Id."
   caseId: String
   caseNarative: String
-  \\"Primary Location for Case.\\"
+  "Primary Location for Case."
   location: String
-  \\"Next Action Time Stamp.\\"
+  "Next Action Time Stamp."
   nextActionDate: String
-  \\"Overall Case Risk Score.\\"
+  "Overall Case Risk Score."
   riskScore: String
-  \\"Case Status\\"
+  "Case Status"
   status: String
-  \\"Case Title.\\"
+  "Case Title."
   title: String
-  \\"Type of Case.\\"
+  "Type of Case."
   type: String
   visits: [CaseVisit]
-  \\"array of assigbed case workers' ids\\"
+  "array of assigbed case workers' ids"
   worker: [String]
   media: [String]
   caseAssessment: [String]
-  \\"client's id for this case\\"
+  "client's id for this case"
   client: String
   notes: [String]
 }
 
-\\"Date of Client Visit.\\"
+"Date of Client Visit."
 type CaseVisit {
-  \\"Case visit check-in date/time by the case worker\\"
+  "Case visit check-in date/time by the case worker"
   checkIn: String
-  \\"Case visit check-out date/time by the case worker\\"
+  "Case visit check-out date/time by the case worker"
   checkOut: String
-  \\"Location where client was visited.\\"
+  "Location where client was visited."
   location: String
-  \\"Risk score for visit.\\"
+  "Risk score for visit."
   riskScore: String
-  \\"Client Visit Title.\\"
+  "Client Visit Title."
   title: String
-  \\"Unique visit Id (auto generated)\\"
+  "Unique visit Id (auto generated)"
   visitId: String
-  \\"case id\\"
+  "case id"
   case: String
 }
 
 union getWorkersProfile_response = getWorkersProfile_200_response | Error
 
 type getWorkersProfile_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: [SocialWorker]
   pagination: Pagination
 }
 
-\\"Social Workers Assigned to Clients.\\"
+"Social Workers Assigned to Clients."
 type SocialWorker {
   userName: String
   case: [Case]
   family: [Family]
 }
 
-\\"Family data\\"
+"Family data"
 type Family {
-  \\"Family Unique Id (auto generated)\\"
+  "Family Unique Id (auto generated)"
   familyId: String
-  \\"Family name\\"
+  "Family name"
   familyName: String
   client: [Client]
 }
 
-\\"Client profile data\\"
+"Client profile data"
 type Client {
-  \\"Client Unique Id (auto generated)\\"
+  "Client Unique Id (auto generated)"
   clientId: String
   person: Person
   contact: [String]
   physician: [String]
   school: [String]
   case: [Case]
-  \\"client's family id\\"
+  "client's family id"
   family: String
   participants: [ClientRelationship]
 }
 
-\\"Person profile data\\"
+"Person profile data"
 type Person {
-  \\"Person Address.\\"
+  "Person Address."
   address: String
-  \\"Person Address line 2\\"
+  "Person Address line 2"
   address2: String
-  \\"Person Address line 3\\"
+  "Person Address line 3"
   address3: String
-  \\"Person city name\\"
+  "Person city name"
   city: String
-  \\"Person state or province\\"
+  "Person state or province"
   state: String
-  \\"Person postal code\\"
+  "Person postal code"
   postalCode: String
-  \\"Person postal district or county\\"
+  "Person postal district or county"
   district: String
-  \\"Person country\\"
+  "Person country"
   country: String
-  \\"Person Date of Birth.\\"
+  "Person Date of Birth."
   birthDate: String
-  \\"Person Unique Id (auto generated)\\"
+  "Person Unique Id (auto generated)"
   personId: String
-  \\"Person's ethnicity\\"
+  "Person's ethnicity"
   ethnicity: String
   gender: query_getWorkersProfile_oneOf_0_data_items_family_items_client_items_person_gender
-  \\"Person Location Latitude.\\"
+  "Person Location Latitude."
   lat: String
-  \\"Person location longitude.\\"
+  "Person location longitude."
   lng: String
-  \\"Person First Name.\\"
+  "Person First Name."
   firstName: String
-  \\"Person Middle Name.\\"
+  "Person Middle Name."
   middleName: String
-  \\"Person Last Name.\\"
+  "Person Last Name."
   lastName: String
-  \\"Person Nick Name.\\"
+  "Person Nick Name."
   nickName: String
-  \\"Person Legal Status.\\"
+  "Person Legal Status."
   legalStatus: String
-  \\"Person personal characteristics.\\"
+  "Person personal characteristics."
   personalCharacteristics: String
-  \\"Person health concerns, allergies, illnesses, etc.\\"
+  "Person health concerns, allergies, illnesses, etc."
   healthConcerns: String
-  \\"Person Phone Number.\\"
+  "Person Phone Number."
   phone: String
-  \\"Person email address.\\"
+  "Person email address."
   email: String
   avatarPhoto: File_
 }
 
-\\"Person Gender.\\"
+"Person Gender."
 enum query_getWorkersProfile_oneOf_0_data_items_family_items_client_items_person_gender {
   Male
   Female
 }
 
-\\"Keeps references to various files used across the system.\\"
+"Keeps references to various files used across the system."
 type File_ {
-  \\"Caption For the File.\\"
+  "Caption For the File."
   caption: String
-  \\"File content\\"
+  "File content"
   content: String
-  \\"Unique File Id.\\"
+  "Unique File Id."
   fileId: String
-  \\"Physical File Location URI.\\"
+  "Physical File Location URI."
   fileLocation: String
-  \\"File Type.\\"
+  "File Type."
   fileType: String
 }
 
-\\"Client relationship data\\"
+"Client relationship data"
 type ClientRelationship {
-  \\"Participant's Id\\"
+  "Participant's Id"
   participantId: String
   status: query_getWorkersProfile_oneOf_0_data_items_family_items_client_items_participants_items_status
   role: Roles
-  \\"Participant's person Id - an object should exist in the Person entity for this participant\\"
+  "Participant's person Id - an object should exist in the Person entity for this participant"
   personId: String
-  \\"this relationship's client id of the case client\\"
+  "this relationship's client id of the case client"
   clientId: String
   relationshipType: ClientRelationshipType
 }
 
-\\"Realtionship active/deleted status\\"
+"Realtionship active/deleted status"
 enum query_getWorkersProfile_oneOf_0_data_items_family_items_client_items_participants_items_status {
   Active
   Deleted
 }
 
-\\"Roles Lookup Table.\\"
+"Roles Lookup Table."
 type Roles {
-  \\"Role Name.\\"
+  "Role Name."
   name: String
-  \\"Roles Unique Id.\\"
+  "Roles Unique Id."
   roleId: String
 }
 
-\\"Lookup table for Client Relationship Types.\\"
+"Lookup table for Client Relationship Types."
 type ClientRelationshipType {
-  \\"Unique Id for relationship type.\\"
+  "Unique Id for relationship type."
   relationId: String
-  \\"Name of relationship.\\"
+  "Name of relationship."
   relationName: String
   category: query_getWorkersProfile_oneOf_0_data_items_family_items_client_items_participants_items_relationshipType_category
 }
 
-\\"Household/Non-household grouping\\"
+"Household/Non-household grouping"
 enum query_getWorkersProfile_oneOf_0_data_items_family_items_client_items_participants_items_relationshipType_category {
   Household
   Non_household
@@ -655,7 +655,7 @@ enum query_getWorkersProfile_oneOf_0_data_items_family_items_client_items_partic
 union getWorkersCases_response = getWorkersCases_200_response | Error
 
 type getWorkersCases_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: [Case]
   pagination: Pagination
@@ -664,7 +664,7 @@ type getWorkersCases_200_response {
 union getWorkersFamilies_response = getWorkersFamilies_200_response | Error
 
 type getWorkersFamilies_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: [Family]
   pagination: Pagination
@@ -673,7 +673,7 @@ type getWorkersFamilies_200_response {
 union getCaseVisit_response = getCaseVisit_200_response | Error
 
 type getCaseVisit_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: [CaseVisit]
 }
@@ -681,7 +681,7 @@ type getCaseVisit_200_response {
 union getFamily_response = getFamily_200_response | Error
 
 type getFamily_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: [Family]
 }
@@ -689,7 +689,7 @@ type getFamily_200_response {
 union getClient_response = getClient_200_response | Error
 
 type getClient_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: [Client]
 }
@@ -697,7 +697,7 @@ type getClient_200_response {
 union getPersons_response = getPersons_200_response | Error
 
 type getPersons_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: [Person]
   pagination: Pagination
@@ -706,13 +706,13 @@ type getPersons_200_response {
 union getClientContacts_response = getClientContacts_200_response | Error
 
 type getClientContacts_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: [ClientContact]
   pagination: Pagination
 }
 
-\\"Client contact details\\"
+"Client contact details"
 type ClientContact {
   contactId: String
   contactDescription: String
@@ -728,7 +728,7 @@ enum query_getClientContacts_oneOf_0_data_items_phoneType {
   Work
 }
 
-\\"Client contact status\\"
+"Client contact status"
 enum query_getClientContacts_oneOf_0_data_items_status {
   Active
   Deleted
@@ -737,13 +737,13 @@ enum query_getClientContacts_oneOf_0_data_items_status {
 union getClientSchools_response = getClientSchools_200_response | Error
 
 type getClientSchools_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: [ClientSchool]
   pagination: Pagination
 }
 
-\\"Client school details\\"
+"Client school details"
 type ClientSchool {
   schoolId: String
   schoolName: String
@@ -755,7 +755,7 @@ type ClientSchool {
   status: query_getClientSchools_oneOf_0_data_items_status
 }
 
-\\"Client school status\\"
+"Client school status"
 enum query_getClientSchools_oneOf_0_data_items_status {
   Active
   Deleted
@@ -764,13 +764,13 @@ enum query_getClientSchools_oneOf_0_data_items_status {
 union getClientPhysicians_response = getClientPhysicians_200_response | Error
 
 type getClientPhysicians_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: [ClientPhysician]
   pagination: Pagination
 }
 
-\\"Client physician details\\"
+"Client physician details"
 type ClientPhysician {
   physicianId: String
   gpName: String
@@ -785,7 +785,7 @@ type ClientPhysician {
   status: query_getClientPhysicians_oneOf_0_data_items_status
 }
 
-\\"Client Physician status\\"
+"Client Physician status"
 enum query_getClientPhysicians_oneOf_0_data_items_status {
   Active
   Deleted
@@ -794,27 +794,27 @@ enum query_getClientPhysicians_oneOf_0_data_items_status {
 union getExperts_response = getExperts_200_response | Error
 
 type getExperts_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: [Expert]
   pagination: Pagination
 }
 
-\\"Expert Entity.\\"
+"Expert Entity."
 type Expert {
-  \\"Expert email address.\\"
+  "Expert email address."
   email: String
-  \\"Expert Id ( auto generated).\\"
+  "Expert Id ( auto generated)."
   expertId: String
-  \\"First Name of Expert.\\"
+  "First Name of Expert."
   firstName: String
-  \\"Expert Last Name.\\"
+  "Expert Last Name."
   lastName: String
-  \\"Expert Online Status.\\"
+  "Expert Online Status."
   onlineStatus: String
-  \\"Expert Phone Number\\"
+  "Expert Phone Number"
   phoneNumber: String
-  \\"Expert User Name.\\"
+  "Expert User Name."
   userName: String
   avatarPicture: File_
   role: Roles
@@ -823,7 +823,7 @@ type Expert {
 union getFile_response = getFile_200_response | Error
 
 type getFile_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: [File_]
 }
@@ -831,45 +831,45 @@ type getFile_200_response {
 union getManual_response = getManual_200_response | Error
 
 type getManual_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: [Manual]
 }
 
-\\"Manual Entity.\\"
+"Manual Entity."
 type Manual {
-  \\"Description for Manual File.\\"
+  "Description for Manual File."
   desc: String
-  \\"unique Id for Manual.\\"
+  "unique Id for Manual."
   manualId: String
-  \\"file id of the manual\\"
+  "file id of the manual"
   file: String
 }
 
 union getMedia_response = getMedia_200_response | Error
 
 type getMedia_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: [Media]
 }
 
-\\"Media Entity.\\"
+"Media Entity."
 type Media {
   status: query_getMedia_oneOf_0_data_items_status
-  \\"Date Media was created.\\"
+  "Date Media was created."
   date: String
-  \\"Media Id.\\"
+  "Media Id."
   mediaId: String
-  \\"case id of the case to which this media belongs\\"
+  "case id of the case to which this media belongs"
   case: String
   file: File_
   mediaType: MediaTypeName
-  \\"tagged client's client id\\"
+  "tagged client's client id"
   taggedClients: [String]
 }
 
-\\"Status\\"
+"Status"
 enum query_getMedia_oneOf_0_data_items_status {
   Submitted
   Deleted
@@ -883,74 +883,74 @@ type MediaTypeName {
 union getCaseAssessments_response = getCaseAssessments_200_response | Error
 
 type getCaseAssessments_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: [CaseAssessment]
   pagination: Pagination
 }
 
-\\"Case Assessment\\"
+"Case Assessment"
 type CaseAssessment {
-  \\"Assessment timestamp\\"
+  "Assessment timestamp"
   assessmentDate: String
-  \\"Assessment Unique Id\\"
+  "Assessment Unique Id"
   assessmentId: String
-  \\"Worker's signature upon submitting the assessment\\"
+  "Worker's signature upon submitting the assessment"
   assessmentSignature: String
   status: query_getCaseAssessments_oneOf_0_data_items_status
-  \\"id of the worker that performed this case assessment\\"
+  "id of the worker that performed this case assessment"
   worker: String
-  \\"case id\\"
+  "case id"
   case: String
   assessmentType: [AssessmentType]
-  \\"tagged client's client id\\"
+  "tagged client's client id"
   taggedClients: [String]
 }
 
-\\"Case assesement status\\"
+"Case assesement status"
 enum query_getCaseAssessments_oneOf_0_data_items_status {
   Submitted
   Deleted
 }
 
-\\"Assessment Type\\"
+"Assessment Type"
 type AssessmentType {
-  \\"Unique Assessment Type Id\\"
+  "Unique Assessment Type Id"
   assessmentTypeId: String
   assessmentTypeDesc: String
   factors: [AssessmentFactors]
   recommendation: [Recommendation]
 }
 
-\\"Assessment Factor Name.\\"
+"Assessment Factor Name."
 type AssessmentFactors {
-  \\"Unique Assessment Factor Id.\\"
+  "Unique Assessment Factor Id."
   factorId: String
   factorName: String
   riskSCore: String
   factorQuestions: [AssessmentFactorQuestion]
 }
 
-\\"Assessment Factor Questions.\\"
+"Assessment Factor Questions."
 type AssessmentFactorQuestion {
-  \\"Assessment Factor Question Id.\\"
+  "Assessment Factor Question Id."
   questionId: String
-  \\"Assessment Factor Question Text.\\"
+  "Assessment Factor Question Text."
   questionText: String
-  \\"Assessment Factor Answer Text.\\"
+  "Assessment Factor Answer Text."
   answerText: String
 }
 
-\\"Recommendations for Assessments.\\"
+"Recommendations for Assessments."
 type Recommendation {
-  \\"Recommendation Id\\"
+  "Recommendation Id"
   recommendationId: String
-  \\"Recommendation Description\\"
+  "Recommendation Description"
   recommendationDsec: String
   recommendationSelection: query_getCaseAssessments_oneOf_0_data_items_assessmentType_items_recommendation_items_recommendationSelection
 }
 
-\\"Recommendation Selection\\"
+"Recommendation Selection"
 enum query_getCaseAssessments_oneOf_0_data_items_assessmentType_items_recommendation_items_recommendationSelection {
   Yes
   No
@@ -959,63 +959,63 @@ enum query_getCaseAssessments_oneOf_0_data_items_assessmentType_items_recommenda
 union getRecommendations_response = getRecommendations_200_response | Error
 
 type getRecommendations_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: [CaseAssessment]
   pagination: Pagination
 }
 
-\\"Case Assessment\\"
+"Case Assessment"
 input CaseAssessment_Input {
-  \\"Assessment timestamp\\"
+  "Assessment timestamp"
   assessmentDate: String
-  \\"Assessment Unique Id\\"
+  "Assessment Unique Id"
   assessmentId: String
-  \\"Worker's signature upon submitting the assessment\\"
+  "Worker's signature upon submitting the assessment"
   assessmentSignature: String
   status: query_getCaseAssessments_oneOf_0_data_items_status
-  \\"id of the worker that performed this case assessment\\"
+  "id of the worker that performed this case assessment"
   worker: String
-  \\"case id\\"
+  "case id"
   case: String
   assessmentType: [AssessmentType_Input]
-  \\"tagged client's client id\\"
+  "tagged client's client id"
   taggedClients: [String]
 }
 
-\\"Assessment Type\\"
+"Assessment Type"
 input AssessmentType_Input {
-  \\"Unique Assessment Type Id\\"
+  "Unique Assessment Type Id"
   assessmentTypeId: String
   assessmentTypeDesc: String
   factors: [AssessmentFactors_Input]
   recommendation: [Recommendation_Input]
 }
 
-\\"Assessment Factor Name.\\"
+"Assessment Factor Name."
 input AssessmentFactors_Input {
-  \\"Unique Assessment Factor Id.\\"
+  "Unique Assessment Factor Id."
   factorId: String
   factorName: String
   riskSCore: String
   factorQuestions: [AssessmentFactorQuestion_Input]
 }
 
-\\"Assessment Factor Questions.\\"
+"Assessment Factor Questions."
 input AssessmentFactorQuestion_Input {
-  \\"Assessment Factor Question Id.\\"
+  "Assessment Factor Question Id."
   questionId: String
-  \\"Assessment Factor Question Text.\\"
+  "Assessment Factor Question Text."
   questionText: String
-  \\"Assessment Factor Answer Text.\\"
+  "Assessment Factor Answer Text."
   answerText: String
 }
 
-\\"Recommendations for Assessments.\\"
+"Recommendations for Assessments."
 input Recommendation_Input {
-  \\"Recommendation Id\\"
+  "Recommendation Id"
   recommendationId: String
-  \\"Recommendation Description\\"
+  "Recommendation Description"
   recommendationDsec: String
   recommendationSelection: query_getCaseAssessments_oneOf_0_data_items_assessmentType_items_recommendation_items_recommendationSelection
 }
@@ -1023,7 +1023,7 @@ input Recommendation_Input {
 union getCaseNoteTypes_response = getCaseNoteTypes_200_response | Error
 
 type getCaseNoteTypes_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: [NotesType]
   pagination: Pagination
@@ -1037,7 +1037,7 @@ type NotesType {
 union getCaseNotes_response = getCaseNotes_200_response | Error
 
 type getCaseNotes_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: [Notes]
   pagination: Pagination
@@ -1048,14 +1048,14 @@ type Notes {
   noteId: String
   date: String
   note: String
-  \\"tagged client's client id\\"
+  "tagged client's client id"
   taggedClients: [String]
-  \\"case id of the case where this notes belongs\\"
+  "case id of the case where this notes belongs"
   case: String
   notesType: NotesType
 }
 
-\\"Status\\"
+"Status"
 enum query_getCaseNotes_oneOf_0_data_items_status {
   Submitted
   Deleted
@@ -1064,7 +1064,7 @@ enum query_getCaseNotes_oneOf_0_data_items_status {
 union getRelationships_response = getRelationships_200_response | Error
 
 type getRelationships_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: [ClientRelationship]
   pagination: Pagination
@@ -1073,7 +1073,7 @@ type getRelationships_200_response {
 union getRelationshipTypes_response = getRelationshipTypes_200_response | Error
 
 type getRelationshipTypes_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: [ClientRelationshipType]
   pagination: Pagination
@@ -1082,292 +1082,292 @@ type getRelationshipTypes_200_response {
 union getScoreCategories_response = getScoreCategories_200_response | Error
 
 type getScoreCategories_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: [ScoreCategories]
   pagination: Pagination
 }
 
-\\"Score Categories Criteria.\\"
+"Score Categories Criteria."
 type ScoreCategories {
-  \\"Risk Score Category Name.\\"
+  "Risk Score Category Name."
   scoreCategories: String
-  \\"Risk Score Threashold.\\"
+  "Risk Score Threashold."
   threasholdValue: String
-  \\"Risk Score Threashold description.\\"
+  "Risk Score Threashold description."
   threasholdDescription: String
 }
 
 type Mutation {
-  \\"Adds a new case visit to the given case\\"
+  "Adds a new case visit to the given case"
   addVisit(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"Case Id\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "Case Id"
     caseId: String!
     input: [CaseVisit_Input]
   ): [addVisit_response]
-  \\"Add a new client record to store the person details of a client participant\\"
+  "Add a new client record to store the person details of a client participant"
   addPerson(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
     input: [Person_Input]
   ): [addPerson_response]
-  \\"Update person data\\"
+  "Update person data"
   updatePerson(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"personId to find Person\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "personId to find Person"
     personId: String!
     input: [Person_Input]
   ): [updatePerson_response]
-  \\"Updates a specific client data\\"
+  "Updates a specific client data"
   updateClient(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
     input: [Client_Input]
   ): [updateClient_response]
-  \\"Add a new client relationship with relationshipId=clientId\\"
+  "Add a new client relationship with relationshipId=clientId"
   addClientRelationship(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"ClientId to find Client\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "ClientId to find Client"
     clientId: String!
     input: [ClientRelationship_Input]
   ): [addClientRelationship_response]
-  \\"Sets a specific client relationship as \\\\\\"deleted\\\\\\"  or do other updates\\"
+  "Sets a specific client relationship as \\"deleted\\"  or do other updates"
   deleteClientRelationship(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
     input: [ClientRelationship_Input]
   ): [deleteClientRelationship_response]
-  \\"Add a new client contact with phone/email for a client id\\"
+  "Add a new client contact with phone/email for a client id"
   addClientContact(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
     input: [ClientContact_Input]
   ): [addClientContact_response]
-  \\"Update/delete client contact for a client id\\"
+  "Update/delete client contact for a client id"
   updateClientContact(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"Client's contact's id\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "Client's contact's id"
     contactId: String!
     input: [ClientContact_Input]
   ): [updateClientContact_response]
-  \\"Add a new client school detail for a client id\\"
+  "Add a new client school detail for a client id"
   addClientSchool(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
     input: [ClientSchool_Input]
   ): [addClientSchool_response]
-  \\"Update/delete client school\\"
+  "Update/delete client school"
   updateClientSchool(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"Client's school's id\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "Client's school's id"
     schoolId: String!
     input: [ClientSchool_Input]
   ): [updateClientSchool_response]
-  \\"Add a new client physician for a client id\\"
+  "Add a new client physician for a client id"
   addClientPhysician(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
     input: [ClientPhysician_Input]
   ): [addClientPhysician_response]
-  \\"Update/delete client physician for a client id\\"
+  "Update/delete client physician for a client id"
   updateClientPhysician(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"Client's physician's id\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "Client's physician's id"
     physicianId: String!
     input: [ClientPhysician_Input]
   ): [updateClientPhysician_response]
-  \\"Gets a specific file for a given file id or return all files if no specific file id is given\\"
+  "Gets a specific file for a given file id or return all files if no specific file id is given"
   updateFile(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"File Id\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "File Id"
     fileId: String!
     input: [File_Input]
   ): [updateFile_response]
-  \\"Gets a specific file for a given file id or return all files if no specific file id is given\\"
+  "Gets a specific file for a given file id or return all files if no specific file id is given"
   putFile(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
     input: [File_Input]
   ): [putFile_response]
-  \\"Adds a new Media file to a case [video, audio, picture, etc]\\"
+  "Adds a new Media file to a case [video, audio, picture, etc]"
   addMedia(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"Case Id\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "Case Id"
     caseId: String!
     input: [Media_Input]
   ): [addMedia_response]
-  \\"Sets a specific assessment for a case as \\\\\\"deleted\\\\\\" or update tagged participants\\"
+  "Sets a specific assessment for a case as \\"deleted\\" or update tagged participants"
   deleteMedia(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"Case Id\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "Case Id"
     caseId: String!
-    \\"Media Id\\"
+    "Media Id"
     mediaId: String!
     input: [Media_Input]
   ): [deleteMedia_response]
-  \\"Adds a case notes record for a case\\"
+  "Adds a case notes record for a case"
   addCaseNotes(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"Case Id\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "Case Id"
     caseId: String!
     input: [Notes_Input]
   ): [addCaseNotes_response]
-  \\"Sets a specific case note as \\\\\\"deleted\\\\\\" or update tagged participants\\"
+  "Sets a specific case note as \\"deleted\\" or update tagged participants"
   deleteCaseNote(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"Case Id\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "Case Id"
     caseId: String!
-    \\"Case Note Id\\"
+    "Case Note Id"
     noteId: String!
     input: [Notes_Input]
   ): [deleteCaseNote_response]
-  \\"Adds a new assessment record for a case - along with recommedndations elected by the user\\"
+  "Adds a new assessment record for a case - along with recommedndations elected by the user"
   addCaseAssessment(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"Case Id\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "Case Id"
     caseId: String!
     input: [CaseAssessment_Input]
   ): [addCaseAssessment_response]
-  \\"Sets a specific assessment for a case as \\\\\\"deleted\\\\\\"\\"
+  "Sets a specific assessment for a case as \\"deleted\\""
   deleteCaseAssessment(
-    \\"to support API localization\\"
+    "to support API localization"
     Content_Type: String!
-    \\"to support API localization\\"
+    "to support API localization"
     Accept_Language: String!
-    \\"iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator\\"
-    User_Agent: String = \\"iPad\\"
-    \\"1.1.0\\"
-    Api_Version: String = \\"1.1.0\\"
-    \\"Case Id\\"
+    "iPod Touch, iPhone, iPhone Simulator, iPad, iPad Simulator"
+    User_Agent: String = "iPad"
+    "1.1.0"
+    Api_Version: String = "1.1.0"
+    "Case Id"
     caseId: String!
-    \\"Case Assessment Id\\"
+    "Case Assessment Id"
     caseAssessmentId: String!
     input: [CaseAssessment_Input]
   ): [deleteCaseAssessment_response]
@@ -1376,186 +1376,186 @@ type Mutation {
 union addVisit_response = addVisit_200_response | Error
 
 type addVisit_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: CaseVisit
 }
 
-\\"Date of Client Visit.\\"
+"Date of Client Visit."
 input CaseVisit_Input {
-  \\"Case visit check-in date/time by the case worker\\"
+  "Case visit check-in date/time by the case worker"
   checkIn: String
-  \\"Case visit check-out date/time by the case worker\\"
+  "Case visit check-out date/time by the case worker"
   checkOut: String
-  \\"Location where client was visited.\\"
+  "Location where client was visited."
   location: String
-  \\"Risk score for visit.\\"
+  "Risk score for visit."
   riskScore: String
-  \\"Client Visit Title.\\"
+  "Client Visit Title."
   title: String
-  \\"Unique visit Id (auto generated)\\"
+  "Unique visit Id (auto generated)"
   visitId: String
-  \\"case id\\"
+  "case id"
   case: String
 }
 
 union addPerson_response = addPerson_200_response | Error
 
 type addPerson_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: Person
 }
 
-\\"Person profile data\\"
+"Person profile data"
 input Person_Input {
-  \\"Person Address.\\"
+  "Person Address."
   address: String
-  \\"Person Address line 2\\"
+  "Person Address line 2"
   address2: String
-  \\"Person Address line 3\\"
+  "Person Address line 3"
   address3: String
-  \\"Person city name\\"
+  "Person city name"
   city: String
-  \\"Person state or province\\"
+  "Person state or province"
   state: String
-  \\"Person postal code\\"
+  "Person postal code"
   postalCode: String
-  \\"Person postal district or county\\"
+  "Person postal district or county"
   district: String
-  \\"Person country\\"
+  "Person country"
   country: String
-  \\"Person Date of Birth.\\"
+  "Person Date of Birth."
   birthDate: String
-  \\"Person Unique Id (auto generated)\\"
+  "Person Unique Id (auto generated)"
   personId: String
-  \\"Person's ethnicity\\"
+  "Person's ethnicity"
   ethnicity: String
   gender: query_getWorkersProfile_oneOf_0_data_items_family_items_client_items_person_gender
-  \\"Person Location Latitude.\\"
+  "Person Location Latitude."
   lat: String
-  \\"Person location longitude.\\"
+  "Person location longitude."
   lng: String
-  \\"Person First Name.\\"
+  "Person First Name."
   firstName: String
-  \\"Person Middle Name.\\"
+  "Person Middle Name."
   middleName: String
-  \\"Person Last Name.\\"
+  "Person Last Name."
   lastName: String
-  \\"Person Nick Name.\\"
+  "Person Nick Name."
   nickName: String
-  \\"Person Legal Status.\\"
+  "Person Legal Status."
   legalStatus: String
-  \\"Person personal characteristics.\\"
+  "Person personal characteristics."
   personalCharacteristics: String
-  \\"Person health concerns, allergies, illnesses, etc.\\"
+  "Person health concerns, allergies, illnesses, etc."
   healthConcerns: String
-  \\"Person Phone Number.\\"
+  "Person Phone Number."
   phone: String
-  \\"Person email address.\\"
+  "Person email address."
   email: String
   avatarPhoto: File_Input
 }
 
-\\"Keeps references to various files used across the system.\\"
+"Keeps references to various files used across the system."
 input File_Input {
-  \\"Caption For the File.\\"
+  "Caption For the File."
   caption: String
-  \\"File content\\"
+  "File content"
   content: String
-  \\"Unique File Id.\\"
+  "Unique File Id."
   fileId: String
-  \\"Physical File Location URI.\\"
+  "Physical File Location URI."
   fileLocation: String
-  \\"File Type.\\"
+  "File Type."
   fileType: String
 }
 
 union updatePerson_response = updatePerson_200_response | Error
 
 type updatePerson_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
-  \\"Success\\"
+  "Success"
   data: Boolean
 }
 
 union updateClient_response = updateClient_200_response | Error
 
 type updateClient_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
-  \\"Update Success\\"
+  "Update Success"
   data: Boolean
 }
 
-\\"Client profile data\\"
+"Client profile data"
 input Client_Input {
-  \\"Client Unique Id (auto generated)\\"
+  "Client Unique Id (auto generated)"
   clientId: String
   person: Person_Input
   contact: [String]
   physician: [String]
   school: [String]
   case: [Case_Input]
-  \\"client's family id\\"
+  "client's family id"
   family: String
   participants: [ClientRelationship_Input]
 }
 
-\\"Client Case Narrative.\\"
+"Client Case Narrative."
 input Case_Input {
-  \\"Unique Case Id.\\"
+  "Unique Case Id."
   caseId: String
   caseNarative: String
-  \\"Primary Location for Case.\\"
+  "Primary Location for Case."
   location: String
-  \\"Next Action Time Stamp.\\"
+  "Next Action Time Stamp."
   nextActionDate: String
-  \\"Overall Case Risk Score.\\"
+  "Overall Case Risk Score."
   riskScore: String
-  \\"Case Status\\"
+  "Case Status"
   status: String
-  \\"Case Title.\\"
+  "Case Title."
   title: String
-  \\"Type of Case.\\"
+  "Type of Case."
   type: String
   visits: [CaseVisit_Input]
-  \\"array of assigbed case workers' ids\\"
+  "array of assigbed case workers' ids"
   worker: [String]
   media: [String]
   caseAssessment: [String]
-  \\"client's id for this case\\"
+  "client's id for this case"
   client: String
   notes: [String]
 }
 
-\\"Client relationship data\\"
+"Client relationship data"
 input ClientRelationship_Input {
-  \\"Participant's Id\\"
+  "Participant's Id"
   participantId: String
   status: query_getWorkersProfile_oneOf_0_data_items_family_items_client_items_participants_items_status
   role: Roles_Input
-  \\"Participant's person Id - an object should exist in the Person entity for this participant\\"
+  "Participant's person Id - an object should exist in the Person entity for this participant"
   personId: String
-  \\"this relationship's client id of the case client\\"
+  "this relationship's client id of the case client"
   clientId: String
   relationshipType: ClientRelationshipType_Input
 }
 
-\\"Roles Lookup Table.\\"
+"Roles Lookup Table."
 input Roles_Input {
-  \\"Role Name.\\"
+  "Role Name."
   name: String
-  \\"Roles Unique Id.\\"
+  "Roles Unique Id."
   roleId: String
 }
 
-\\"Lookup table for Client Relationship Types.\\"
+"Lookup table for Client Relationship Types."
 input ClientRelationshipType_Input {
-  \\"Unique Id for relationship type.\\"
+  "Unique Id for relationship type."
   relationId: String
-  \\"Name of relationship.\\"
+  "Name of relationship."
   relationName: String
   category: query_getWorkersProfile_oneOf_0_data_items_family_items_client_items_participants_items_relationshipType_category
 }
@@ -1563,7 +1563,7 @@ input ClientRelationshipType_Input {
 union addClientRelationship_response = addClientRelationship_200_response | Error
 
 type addClientRelationship_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: ClientRelationship
 }
@@ -1571,21 +1571,21 @@ type addClientRelationship_200_response {
 union deleteClientRelationship_response = deleteClientRelationship_200_response | Error
 
 type deleteClientRelationship_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
-  \\"Delete Success\\"
+  "Delete Success"
   data: Boolean
 }
 
 union addClientContact_response = addClientContact_200_response | Error
 
 type addClientContact_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: ClientContact
 }
 
-\\"Client contact details\\"
+"Client contact details"
 input ClientContact_Input {
   contactId: String
   contactDescription: String
@@ -1598,21 +1598,21 @@ input ClientContact_Input {
 union updateClientContact_response = updateClientContact_200_response | Error
 
 type updateClientContact_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
-  \\"Client contact update successful\\"
+  "Client contact update successful"
   data: Boolean
 }
 
 union addClientSchool_response = addClientSchool_200_response | Error
 
 type addClientSchool_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: ClientSchool
 }
 
-\\"Client school details\\"
+"Client school details"
 input ClientSchool_Input {
   schoolId: String
   schoolName: String
@@ -1627,21 +1627,21 @@ input ClientSchool_Input {
 union updateClientSchool_response = updateClientSchool_200_response | Error
 
 type updateClientSchool_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
-  \\"Client school update successful\\"
+  "Client school update successful"
   data: Boolean
 }
 
 union addClientPhysician_response = addClientPhysician_200_response | Error
 
 type addClientPhysician_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: ClientPhysician
 }
 
-\\"Client physician details\\"
+"Client physician details"
 input ClientPhysician_Input {
   physicianId: String
   gpName: String
@@ -1659,16 +1659,16 @@ input ClientPhysician_Input {
 union updateClientPhysician_response = updateClientPhysician_200_response | Error
 
 type updateClientPhysician_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
-  \\"Client physician update successful\\"
+  "Client physician update successful"
   data: Boolean
 }
 
 union updateFile_response = updateFile_200_response | Error
 
 type updateFile_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: File_
 }
@@ -1676,7 +1676,7 @@ type updateFile_200_response {
 union putFile_response = putFile_200_response | Error
 
 type putFile_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: File_
 }
@@ -1684,23 +1684,23 @@ type putFile_200_response {
 union addMedia_response = addMedia_200_response | Error
 
 type addMedia_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: Media
 }
 
-\\"Media Entity.\\"
+"Media Entity."
 input Media_Input {
   status: query_getMedia_oneOf_0_data_items_status
-  \\"Date Media was created.\\"
+  "Date Media was created."
   date: String
-  \\"Media Id.\\"
+  "Media Id."
   mediaId: String
-  \\"case id of the case to which this media belongs\\"
+  "case id of the case to which this media belongs"
   case: String
   file: File_Input
   mediaType: MediaTypeName_Input
-  \\"tagged client's client id\\"
+  "tagged client's client id"
   taggedClients: [String]
 }
 
@@ -1712,16 +1712,16 @@ input MediaTypeName_Input {
 union deleteMedia_response = deleteMedia_200_response | Error
 
 type deleteMedia_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
-  \\"Delete Success\\"
+  "Delete Success"
   data: Boolean
 }
 
 union addCaseNotes_response = addCaseNotes_200_response | Error
 
 type addCaseNotes_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: Notes
 }
@@ -1731,9 +1731,9 @@ input Notes_Input {
   noteId: String
   date: String
   note: String
-  \\"tagged client's client id\\"
+  "tagged client's client id"
   taggedClients: [String]
-  \\"case id of the case where this notes belongs\\"
+  "case id of the case where this notes belongs"
   case: String
   notesType: NotesType_Input
 }
@@ -1746,16 +1746,16 @@ input NotesType_Input {
 union deleteCaseNote_response = deleteCaseNote_200_response | Error
 
 type deleteCaseNote_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
-  \\"Delete Success\\"
+  "Delete Success"
   data: Boolean
 }
 
 union addCaseAssessment_response = addCaseAssessment_200_response | Error
 
 type addCaseAssessment_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   data: CaseAssessment
 }
@@ -1763,9 +1763,9 @@ type addCaseAssessment_200_response {
 union deleteCaseAssessment_response = deleteCaseAssessment_200_response | Error
 
 type deleteCaseAssessment_200_response {
-  \\"may return NO_RESULTS_FOUND for this user and search query\\"
+  "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
-  \\"Delete Success\\"
+  "Delete Success"
   data: Boolean
 }"
 `;
