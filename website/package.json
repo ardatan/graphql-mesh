@@ -16,8 +16,8 @@
   },
   "dependencies": {
     "@graphql-yoga/node": "2.13.12",
-    "@theguild/components": "2.1.0-alpha-20220818233926-7ce4562",
-    "guild-docs": "3.1.0",
+    "@theguild/components": "3.0.3",
+    "guild-docs": "4.1.0",
     "next": "12.2.5",
     "react": "18.2.0",
     "react-dom": "18.2.0"
