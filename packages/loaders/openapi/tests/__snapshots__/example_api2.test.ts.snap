@@ -6,15 +6,15 @@ exports[`OpenAPI loader: Naming convention should generate the schema correctly 
 }
 
 type Query {
-  \\"Return a user.\\"
+  "Return a user."
   user: user
-  \\"Return a user.\\"
+  "Return a user."
   User: user
 }
 
-\\"A user represents a natural person\\"
+"A user represents a natural person"
 type user {
-  \\"The legal name of a user\\"
+  "The legal name of a user"
   name: String
 }"
 `;

@@ -6,31 +6,31 @@ exports[`example_api should generate the schema correctly 1`] = `
 }
 
 type Query {
-  \\"Get current weather conditions for a given place.\\"
+  "Get current weather conditions for a given place."
   weatherConditions_by_key_conditions_q_by_state_by_place_json(
-    \\"The API key of the Weather Underground API\\"
+    "The API key of the Weather Underground API"
     key: String!
-    \\"The state of the place to get weather information for. For example, 'NY'\\"
+    "The state of the place to get weather information for. For example, 'NY'"
     state: String!
-    \\"The place to get weather information for. For example, 'New York'\\"
+    "The place to get weather information for. For example, 'New York'"
     place: String!
   ): WeatherConditions
-  \\"Get the weather forecast for the next 3 days for a given place.\\"
+  "Get the weather forecast for the next 3 days for a given place."
   weatherForecast_by_key_forecast_q_by_state_by_place_json(
-    \\"The API key of the Weather Underground API\\"
+    "The API key of the Weather Underground API"
     key: String!
-    \\"The state of the place to get weather information for. For example, 'NY'\\"
+    "The state of the place to get weather information for. For example, 'NY'"
     state: String!
-    \\"The place to get weather information for. For example, 'New York'\\"
+    "The place to get weather information for. For example, 'New York'"
     place: String!
   ): WeatherForecast
-  \\"Get the weather forecast for the next 10 days for a given place.\\"
+  "Get the weather forecast for the next 10 days for a given place."
   weatherForecast_by_key_forecast10days_q_by_state_by_place_json(
-    \\"The API key of the Weather Underground API\\"
+    "The API key of the Weather Underground API"
     key: String!
-    \\"The state of the place to get weather information for. For example, 'NY'\\"
+    "The state of the place to get weather information for. For example, 'NY'"
     state: String!
-    \\"The place to get weather information for. For example, 'New York'\\"
+    "The place to get weather information for. For example, 'New York'"
     place: String!
   ): WeatherForecast
 }
@@ -141,8 +141,8 @@ type query_weatherConditions_by_key_conditions_q_by_state_by_place_json_current_
   elevation: String!
 }
 
-\\"The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).\\"
-scalar JSON @specifiedBy(url: \\"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf\\")
+"The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf)."
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 type WeatherForecast {
   response: query_weatherForecast_by_key_forecast_q_by_state_by_place_json_response!

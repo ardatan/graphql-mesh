@@ -902,19 +902,19 @@ ${printType(GraphQLString)}
     const enumTypeComposer = output as EnumTypeComposer;
     const enumValuesMap = enumTypeComposer.getFields();
     expect(enumValuesMap).toMatchInlineSnapshot(`
-      Object {
-        "NEGATIVE_1": Object {
+      {
+        "NEGATIVE_1": {
           "deprecationReason": undefined,
           "description": undefined,
-          "directives": Array [],
-          "extensions": Object {},
+          "directives": [],
+          "extensions": {},
           "value": -1,
         },
-        "_1": Object {
+        "_1": {
           "deprecationReason": undefined,
           "description": undefined,
-          "directives": Array [],
-          "extensions": Object {},
+          "directives": [],
+          "extensions": {},
           "value": 1,
         },
       }
@@ -932,19 +932,19 @@ ${printType(GraphQLString)}
     const enumTypeComposer = output as EnumTypeComposer;
     const enumValuesMap = enumTypeComposer.getFields();
     expect(enumValuesMap).toMatchInlineSnapshot(`
-      Object {
-        "_1499__1503_": Object {
+      {
+        "_1499__1503_": {
           "deprecationReason": undefined,
           "description": undefined,
-          "directives": Array [],
-          "extensions": Object {},
+          "directives": [],
+          "extensions": {},
           "value": "כן",
         },
-        "_1500__1488_": Object {
+        "_1500__1488_": {
           "deprecationReason": undefined,
           "description": undefined,
-          "directives": Array [],
-          "extensions": Object {},
+          "directives": [],
+          "extensions": {},
           "value": "לא",
         },
       }

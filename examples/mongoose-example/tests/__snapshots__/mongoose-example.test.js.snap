@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Mongoose should generate correct schema 1`] = `
-"\\"\\"\\"
+""""
 The \`Decimal\` scalar type uses the IEEE 754 decimal128 decimal-based floating-point numbering format. Supports 34 decimal digits of precision, a max value of approximately 10^6145, and min value of approximately -10^6145
-\\"\\"\\"
+"""
 scalar BSONDecimal
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input CreateManyUserInput {
   address: UserAddressInput
   age: Float
@@ -16,27 +16,27 @@ input CreateManyUserInput {
   name: String
   salaryDecimal: BSONDecimal
 
-  \\"\\"\\"Some dynamic data\\"\\"\\"
+  """Some dynamic data"""
   someMixed: JSON
 }
 
 type CreateManyUserPayload {
-  \\"\\"\\"Number of created documents\\"\\"\\"
+  """Number of created documents"""
   createdCount: Int!
 
-  \\"\\"\\"
+  """
   Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root \`errors\` field of GraphQL response.
-  \\"\\"\\"
+  """
   error: ErrorInterface
 
-  \\"\\"\\"Documents IDs\\"\\"\\"
+  """Documents IDs"""
   recordIds: [MongoID!]!
 
-  \\"\\"\\"Created documents\\"\\"\\"
+  """Created documents"""
   records: [User!]
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input CreateOneUserInput {
   address: UserAddressInput
   age: Float
@@ -46,20 +46,20 @@ input CreateOneUserInput {
   name: String
   salaryDecimal: BSONDecimal
 
-  \\"\\"\\"Some dynamic data\\"\\"\\"
+  """Some dynamic data"""
   someMixed: JSON
 }
 
 type CreateOneUserPayload {
-  \\"\\"\\"
+  """
   Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root \`errors\` field of GraphQL response.
-  \\"\\"\\"
+  """
   error: ErrorInterface
 
-  \\"\\"\\"Created document\\"\\"\\"
+  """Created document"""
   record: User
 
-  \\"\\"\\"Document ID\\"\\"\\"
+  """Document ID"""
   recordId: MongoID
 }
 
@@ -76,11 +76,11 @@ enum EnumUserLanguagesSkill {
 }
 
 interface ErrorInterface {
-  \\"\\"\\"Generic error message\\"\\"\\"
+  """Generic error message"""
   message: String
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterCountUserAddressInput {
   _id: MongoID
   geo: [Float]
@@ -98,7 +98,7 @@ input FilterCountUserAgeOperatorsInput {
   nin: [Float]
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterCountUserContactsInput {
   email: String
   phones: [String]
@@ -115,13 +115,13 @@ input FilterCountUserGenderOperatorsInput {
   nin: [EnumUserGender]
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterCountUserInput {
   AND: [FilterCountUserInput!]
   OR: [FilterCountUserInput!]
   _id: MongoID
 
-  \\"\\"\\"List of *indexed* fields that can be filtered via operators.\\"\\"\\"
+  """List of *indexed* fields that can be filtered via operators."""
   _operators: FilterCountUserOperatorsInput
   address: FilterCountUserAddressInput
   age: Float
@@ -131,11 +131,11 @@ input FilterCountUserInput {
   name: String
   salaryDecimal: BSONDecimal
 
-  \\"\\"\\"Some dynamic data\\"\\"\\"
+  """Some dynamic data"""
   someMixed: JSON
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterCountUserLanguagesInput {
   language: String
   skill: EnumUserLanguagesSkill
@@ -153,7 +153,7 @@ input FilterCountUserNameOperatorsInput {
   regex: RegExpAsString
 }
 
-\\"\\"\\"For performance reason this type contains only *indexed* fields.\\"\\"\\"
+"""For performance reason this type contains only *indexed* fields."""
 input FilterCountUserOperatorsInput {
   _id: FilterCountUser_idOperatorsInput
   age: FilterCountUserAgeOperatorsInput
@@ -184,7 +184,7 @@ input FilterCountUser_idOperatorsInput {
   nin: [MongoID]
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterFindManyUserAddressInput {
   _id: MongoID
   geo: [Float]
@@ -202,7 +202,7 @@ input FilterFindManyUserAgeOperatorsInput {
   nin: [Float]
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterFindManyUserContactsInput {
   email: String
   phones: [String]
@@ -219,13 +219,13 @@ input FilterFindManyUserGenderOperatorsInput {
   nin: [EnumUserGender]
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterFindManyUserInput {
   AND: [FilterFindManyUserInput!]
   OR: [FilterFindManyUserInput!]
   _id: MongoID
 
-  \\"\\"\\"List of *indexed* fields that can be filtered via operators.\\"\\"\\"
+  """List of *indexed* fields that can be filtered via operators."""
   _operators: FilterFindManyUserOperatorsInput
   address: FilterFindManyUserAddressInput
   age: Float
@@ -235,11 +235,11 @@ input FilterFindManyUserInput {
   name: String
   salaryDecimal: BSONDecimal
 
-  \\"\\"\\"Some dynamic data\\"\\"\\"
+  """Some dynamic data"""
   someMixed: JSON
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterFindManyUserLanguagesInput {
   language: String
   skill: EnumUserLanguagesSkill
@@ -257,7 +257,7 @@ input FilterFindManyUserNameOperatorsInput {
   regex: RegExpAsString
 }
 
-\\"\\"\\"For performance reason this type contains only *indexed* fields.\\"\\"\\"
+"""For performance reason this type contains only *indexed* fields."""
 input FilterFindManyUserOperatorsInput {
   _id: FilterFindManyUser_idOperatorsInput
   age: FilterFindManyUserAgeOperatorsInput
@@ -288,7 +288,7 @@ input FilterFindManyUser_idOperatorsInput {
   nin: [MongoID]
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterFindOneUserAddressInput {
   _id: MongoID
   geo: [Float]
@@ -306,7 +306,7 @@ input FilterFindOneUserAgeOperatorsInput {
   nin: [Float]
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterFindOneUserContactsInput {
   email: String
   phones: [String]
@@ -323,13 +323,13 @@ input FilterFindOneUserGenderOperatorsInput {
   nin: [EnumUserGender]
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterFindOneUserInput {
   AND: [FilterFindOneUserInput!]
   OR: [FilterFindOneUserInput!]
   _id: MongoID
 
-  \\"\\"\\"List of *indexed* fields that can be filtered via operators.\\"\\"\\"
+  """List of *indexed* fields that can be filtered via operators."""
   _operators: FilterFindOneUserOperatorsInput
   address: FilterFindOneUserAddressInput
   age: Float
@@ -339,11 +339,11 @@ input FilterFindOneUserInput {
   name: String
   salaryDecimal: BSONDecimal
 
-  \\"\\"\\"Some dynamic data\\"\\"\\"
+  """Some dynamic data"""
   someMixed: JSON
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterFindOneUserLanguagesInput {
   language: String
   skill: EnumUserLanguagesSkill
@@ -361,7 +361,7 @@ input FilterFindOneUserNameOperatorsInput {
   regex: RegExpAsString
 }
 
-\\"\\"\\"For performance reason this type contains only *indexed* fields.\\"\\"\\"
+"""For performance reason this type contains only *indexed* fields."""
 input FilterFindOneUserOperatorsInput {
   _id: FilterFindOneUser_idOperatorsInput
   age: FilterFindOneUserAgeOperatorsInput
@@ -392,7 +392,7 @@ input FilterFindOneUser_idOperatorsInput {
   nin: [MongoID]
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterRemoveManyUserAddressInput {
   _id: MongoID
   geo: [Float]
@@ -410,7 +410,7 @@ input FilterRemoveManyUserAgeOperatorsInput {
   nin: [Float]
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterRemoveManyUserContactsInput {
   email: String
   phones: [String]
@@ -427,13 +427,13 @@ input FilterRemoveManyUserGenderOperatorsInput {
   nin: [EnumUserGender]
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterRemoveManyUserInput {
   AND: [FilterRemoveManyUserInput!]
   OR: [FilterRemoveManyUserInput!]
   _id: MongoID
 
-  \\"\\"\\"List of *indexed* fields that can be filtered via operators.\\"\\"\\"
+  """List of *indexed* fields that can be filtered via operators."""
   _operators: FilterRemoveManyUserOperatorsInput
   address: FilterRemoveManyUserAddressInput
   age: Float
@@ -443,11 +443,11 @@ input FilterRemoveManyUserInput {
   name: String
   salaryDecimal: BSONDecimal
 
-  \\"\\"\\"Some dynamic data\\"\\"\\"
+  """Some dynamic data"""
   someMixed: JSON
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterRemoveManyUserLanguagesInput {
   language: String
   skill: EnumUserLanguagesSkill
@@ -465,7 +465,7 @@ input FilterRemoveManyUserNameOperatorsInput {
   regex: RegExpAsString
 }
 
-\\"\\"\\"For performance reason this type contains only *indexed* fields.\\"\\"\\"
+"""For performance reason this type contains only *indexed* fields."""
 input FilterRemoveManyUserOperatorsInput {
   _id: FilterRemoveManyUser_idOperatorsInput
   age: FilterRemoveManyUserAgeOperatorsInput
@@ -496,7 +496,7 @@ input FilterRemoveManyUser_idOperatorsInput {
   nin: [MongoID]
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterRemoveOneUserAddressInput {
   _id: MongoID
   geo: [Float]
@@ -514,7 +514,7 @@ input FilterRemoveOneUserAgeOperatorsInput {
   nin: [Float]
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterRemoveOneUserContactsInput {
   email: String
   phones: [String]
@@ -531,13 +531,13 @@ input FilterRemoveOneUserGenderOperatorsInput {
   nin: [EnumUserGender]
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterRemoveOneUserInput {
   AND: [FilterRemoveOneUserInput!]
   OR: [FilterRemoveOneUserInput!]
   _id: MongoID
 
-  \\"\\"\\"List of *indexed* fields that can be filtered via operators.\\"\\"\\"
+  """List of *indexed* fields that can be filtered via operators."""
   _operators: FilterRemoveOneUserOperatorsInput
   address: FilterRemoveOneUserAddressInput
   age: Float
@@ -547,11 +547,11 @@ input FilterRemoveOneUserInput {
   name: String
   salaryDecimal: BSONDecimal
 
-  \\"\\"\\"Some dynamic data\\"\\"\\"
+  """Some dynamic data"""
   someMixed: JSON
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterRemoveOneUserLanguagesInput {
   language: String
   skill: EnumUserLanguagesSkill
@@ -569,7 +569,7 @@ input FilterRemoveOneUserNameOperatorsInput {
   regex: RegExpAsString
 }
 
-\\"\\"\\"For performance reason this type contains only *indexed* fields.\\"\\"\\"
+"""For performance reason this type contains only *indexed* fields."""
 input FilterRemoveOneUserOperatorsInput {
   _id: FilterRemoveOneUser_idOperatorsInput
   age: FilterRemoveOneUserAgeOperatorsInput
@@ -600,7 +600,7 @@ input FilterRemoveOneUser_idOperatorsInput {
   nin: [MongoID]
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterUpdateManyUserAddressInput {
   _id: MongoID
   geo: [Float]
@@ -618,7 +618,7 @@ input FilterUpdateManyUserAgeOperatorsInput {
   nin: [Float]
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterUpdateManyUserContactsInput {
   email: String
   phones: [String]
@@ -635,13 +635,13 @@ input FilterUpdateManyUserGenderOperatorsInput {
   nin: [EnumUserGender]
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterUpdateManyUserInput {
   AND: [FilterUpdateManyUserInput!]
   OR: [FilterUpdateManyUserInput!]
   _id: MongoID
 
-  \\"\\"\\"List of *indexed* fields that can be filtered via operators.\\"\\"\\"
+  """List of *indexed* fields that can be filtered via operators."""
   _operators: FilterUpdateManyUserOperatorsInput
   address: FilterUpdateManyUserAddressInput
   age: Float
@@ -651,11 +651,11 @@ input FilterUpdateManyUserInput {
   name: String
   salaryDecimal: BSONDecimal
 
-  \\"\\"\\"Some dynamic data\\"\\"\\"
+  """Some dynamic data"""
   someMixed: JSON
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterUpdateManyUserLanguagesInput {
   language: String
   skill: EnumUserLanguagesSkill
@@ -673,7 +673,7 @@ input FilterUpdateManyUserNameOperatorsInput {
   regex: RegExpAsString
 }
 
-\\"\\"\\"For performance reason this type contains only *indexed* fields.\\"\\"\\"
+"""For performance reason this type contains only *indexed* fields."""
 input FilterUpdateManyUserOperatorsInput {
   _id: FilterUpdateManyUser_idOperatorsInput
   age: FilterUpdateManyUserAgeOperatorsInput
@@ -704,7 +704,7 @@ input FilterUpdateManyUser_idOperatorsInput {
   nin: [MongoID]
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterUpdateOneUserAddressInput {
   _id: MongoID
   geo: [Float]
@@ -722,7 +722,7 @@ input FilterUpdateOneUserAgeOperatorsInput {
   nin: [Float]
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterUpdateOneUserContactsInput {
   email: String
   phones: [String]
@@ -739,13 +739,13 @@ input FilterUpdateOneUserGenderOperatorsInput {
   nin: [EnumUserGender]
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterUpdateOneUserInput {
   AND: [FilterUpdateOneUserInput!]
   OR: [FilterUpdateOneUserInput!]
   _id: MongoID
 
-  \\"\\"\\"List of *indexed* fields that can be filtered via operators.\\"\\"\\"
+  """List of *indexed* fields that can be filtered via operators."""
   _operators: FilterUpdateOneUserOperatorsInput
   address: FilterUpdateOneUserAddressInput
   age: Float
@@ -755,11 +755,11 @@ input FilterUpdateOneUserInput {
   name: String
   salaryDecimal: BSONDecimal
 
-  \\"\\"\\"Some dynamic data\\"\\"\\"
+  """Some dynamic data"""
   someMixed: JSON
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input FilterUpdateOneUserLanguagesInput {
   language: String
   skill: EnumUserLanguagesSkill
@@ -777,7 +777,7 @@ input FilterUpdateOneUserNameOperatorsInput {
   regex: RegExpAsString
 }
 
-\\"\\"\\"For performance reason this type contains only *indexed* fields.\\"\\"\\"
+"""For performance reason this type contains only *indexed* fields."""
 input FilterUpdateOneUserOperatorsInput {
   _id: FilterUpdateOneUser_idOperatorsInput
   age: FilterUpdateOneUserAgeOperatorsInput
@@ -808,60 +808,60 @@ input FilterUpdateOneUser_idOperatorsInput {
   nin: [MongoID]
 }
 
-\\"\\"\\"
+"""
 The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-\\"\\"\\"
+"""
 scalar JSON
 
-\\"\\"\\"
+"""
 The \`ID\` scalar type represents a unique MongoDB identifier in collection. MongoDB by default use 12-byte ObjectId value (https://docs.mongodb.com/manual/reference/bson-types/#objectid). But MongoDB also may accepts string or integer as correct values for _id field.
-\\"\\"\\"
+"""
 scalar MongoID
 
 type Mutation {
-  \\"\\"\\"
+  """
   Creates Many documents with mongoose defaults, setters, hooks and validation
-  \\"\\"\\"
+  """
   User_createMany(records: [CreateManyUserInput!]!): CreateManyUserPayload
 
-  \\"\\"\\"
+  """
   Create one document with mongoose defaults, setters, hooks and validation
-  \\"\\"\\"
+  """
   User_createOne(record: CreateOneUserInput!): CreateOneUserPayload
 
-  \\"\\"\\"
+  """
   Remove one document: 1) Retrieve one document and remove with hooks via findByIdAndRemove. 2) Return removed document.
-  \\"\\"\\"
+  """
   User_removeById(_id: MongoID!): RemoveByIdUserPayload
 
-  \\"\\"\\"
+  """
   Remove many documents without returning them: Use Query.remove mongoose method. Do not apply mongoose defaults, setters, hooks and validation. 
-  \\"\\"\\"
+  """
   User_removeMany(
-    \\"\\"\\"Filter by fields\\"\\"\\"
+    """Filter by fields"""
     filter: FilterRemoveManyUserInput!
     limit: Int = 100
   ): RemoveManyUserPayload
 
-  \\"\\"\\"
+  """
   Remove one document: 1) Remove with hooks via findOneAndRemove. 2) Return removed document.
-  \\"\\"\\"
+  """
   User_removeOne(
-    \\"\\"\\"Filter by fields\\"\\"\\"
+    """Filter by fields"""
     filter: FilterRemoveOneUserInput
     sort: SortRemoveOneUserInput
   ): RemoveOneUserPayload
 
-  \\"\\"\\"
+  """
   Update one document: 1) Retrieve one document by findById. 2) Apply updates to mongoose document. 3) Mongoose applies defaults, setters, hooks and validation. 4) And save it.
-  \\"\\"\\"
+  """
   User_updateById(_id: MongoID!, record: UpdateByIdUserInput!): UpdateByIdUserPayload
 
-  \\"\\"\\"
+  """
   Update many documents without returning them: Use Query.update mongoose method. Do not apply mongoose defaults, setters, hooks and validation. 
-  \\"\\"\\"
+  """
   User_updateMany(
-    \\"\\"\\"Filter by fields\\"\\"\\"
+    """Filter by fields"""
     filter: FilterUpdateManyUserInput
     limit: Int = 100
     record: UpdateManyUserInput!
@@ -869,11 +869,11 @@ type Mutation {
     sort: SortUpdateManyUserInput
   ): UpdateManyUserPayload
 
-  \\"\\"\\"
+  """
   Update one document: 1) Retrieve one document via findOne. 2) Apply updates to mongoose document. 3) Mongoose applies defaults, setters, hooks and validation. 4) And save it.
-  \\"\\"\\"
+  """
   User_updateOne(
-    \\"\\"\\"Filter by fields\\"\\"\\"
+    """Filter by fields"""
     filter: FilterUpdateOneUserInput
     record: UpdateOneUserInput!
     skip: Int
@@ -881,18 +881,18 @@ type Mutation {
   ): UpdateOneUserPayload
 }
 
-\\"\\"\\"Information about pagination in a connection.\\"\\"\\"
+"""Information about pagination in a connection."""
 type PageInfo {
-  \\"\\"\\"When paginating forwards, the cursor to continue.\\"\\"\\"
+  """When paginating forwards, the cursor to continue."""
   endCursor: String
 
-  \\"\\"\\"When paginating forwards, are there more items?\\"\\"\\"
+  """When paginating forwards, are there more items?"""
   hasNextPage: Boolean!
 
-  \\"\\"\\"When paginating backwards, are there more items?\\"\\"\\"
+  """When paginating backwards, are there more items?"""
   hasPreviousPage: Boolean!
 
-  \\"\\"\\"When paginating backwards, the cursor to continue.\\"\\"\\"
+  """When paginating backwards, the cursor to continue."""
   startCursor: String
 }
 
@@ -907,26 +907,26 @@ type PaginationInfo {
 
 type Query {
   User_connection(
-    \\"\\"\\"Forward pagination argument for returning at most first edges\\"\\"\\"
+    """Forward pagination argument for returning at most first edges"""
     after: String
 
-    \\"\\"\\"Backward pagination argument for returning at most last edges\\"\\"\\"
+    """Backward pagination argument for returning at most last edges"""
     before: String
 
-    \\"\\"\\"Filter by fields\\"\\"\\"
+    """Filter by fields"""
     filter: FilterFindManyUserInput
 
-    \\"\\"\\"Forward pagination argument for returning at most first edges\\"\\"\\"
+    """Forward pagination argument for returning at most first edges"""
     first: Int
 
-    \\"\\"\\"Backward pagination argument for returning at most last edges\\"\\"\\"
+    """Backward pagination argument for returning at most last edges"""
     last: Int
 
-    \\"\\"\\"Sort argument for data ordering\\"\\"\\"
+    """Sort argument for data ordering"""
     sort: SortConnectionUserEnum = _ID_DESC
   ): UserConnection
   User_count(
-    \\"\\"\\"Filter by fields\\"\\"\\"
+    """Filter by fields"""
     filter: FilterCountUserInput
   ): Int
   User_dataLoader(_id: MongoID!): User
@@ -934,69 +934,69 @@ type Query {
   User_findById(_id: MongoID!): User
   User_findByIds(_ids: [MongoID!]!, limit: Int = 100, sort: SortFindByIdsUserInput): [User!]!
   User_findMany(
-    \\"\\"\\"Filter by fields\\"\\"\\"
+    """Filter by fields"""
     filter: FilterFindManyUserInput
     limit: Int = 100
     skip: Int
     sort: SortFindManyUserInput
   ): [User!]!
   User_findOne(
-    \\"\\"\\"Filter by fields\\"\\"\\"
+    """Filter by fields"""
     filter: FilterFindOneUserInput
     skip: Int
     sort: SortFindOneUserInput
   ): User
   User_pagination(
-    \\"\\"\\"Filter by fields\\"\\"\\"
+    """Filter by fields"""
     filter: FilterFindManyUserInput
 
-    \\"\\"\\"Page number for displaying\\"\\"\\"
+    """Page number for displaying"""
     page: Int
 
-    \\"\\"\\"\\"\\"\\"
+    """"""
     perPage: Int = 20
     sort: SortFindManyUserInput
   ): UserPagination
 }
 
-\\"\\"\\"
-The string representation of JavaScript regexp. You may provide it with flags \\"/^abc.*/i\\" or without flags like \\"^abc.*\\". More info about RegExp characters and flags: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
-\\"\\"\\"
-scalar RegExpAsString @specifiedBy(url: \\"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-262.pdf\\")
+"""
+The string representation of JavaScript regexp. You may provide it with flags "/^abc.*/i" or without flags like "^abc.*". More info about RegExp characters and flags: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
+"""
+scalar RegExpAsString @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-262.pdf")
 
 type RemoveByIdUserPayload {
-  \\"\\"\\"
+  """
   Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root \`errors\` field of GraphQL response.
-  \\"\\"\\"
+  """
   error: ErrorInterface
 
-  \\"\\"\\"Removed document\\"\\"\\"
+  """Removed document"""
   record: User
 
-  \\"\\"\\"Document ID\\"\\"\\"
+  """Document ID"""
   recordId: MongoID
 }
 
 type RemoveManyUserPayload {
-  \\"\\"\\"
+  """
   Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root \`errors\` field of GraphQL response.
-  \\"\\"\\"
+  """
   error: ErrorInterface
 
-  \\"\\"\\"Affected documents number\\"\\"\\"
+  """Affected documents number"""
   numAffected: Int
 }
 
 type RemoveOneUserPayload {
-  \\"\\"\\"
+  """
   Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root \`errors\` field of GraphQL response.
-  \\"\\"\\"
+  """
   error: ErrorInterface
 
-  \\"\\"\\"Removed document\\"\\"\\"
+  """Removed document"""
   record: User
 
-  \\"\\"\\"Document ID\\"\\"\\"
+  """Document ID"""
   recordId: MongoID
 }
 
@@ -1095,20 +1095,20 @@ enum SortUpdateOneUserInput {
   _ID_DESC
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input UpdateByIdUserAddressInput {
   _id: MongoID
   geo: [Float]
   street: String
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input UpdateByIdUserContactsInput {
   email: String
   phones: [String]
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input UpdateByIdUserInput {
   address: UpdateByIdUserAddressInput
   age: Float
@@ -1118,43 +1118,43 @@ input UpdateByIdUserInput {
   name: String
   salaryDecimal: BSONDecimal
 
-  \\"\\"\\"Some dynamic data\\"\\"\\"
+  """Some dynamic data"""
   someMixed: JSON
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input UpdateByIdUserLanguagesInput {
   language: String
   skill: EnumUserLanguagesSkill
 }
 
 type UpdateByIdUserPayload {
-  \\"\\"\\"
+  """
   Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root \`errors\` field of GraphQL response.
-  \\"\\"\\"
+  """
   error: ErrorInterface
 
-  \\"\\"\\"Updated document\\"\\"\\"
+  """Updated document"""
   record: User
 
-  \\"\\"\\"Document ID\\"\\"\\"
+  """Document ID"""
   recordId: MongoID
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input UpdateManyUserAddressInput {
   _id: MongoID
   geo: [Float]
   street: String
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input UpdateManyUserContactsInput {
   email: String
   phones: [String]
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input UpdateManyUserInput {
   address: UpdateManyUserAddressInput
   age: Float
@@ -1164,40 +1164,40 @@ input UpdateManyUserInput {
   name: String
   salaryDecimal: BSONDecimal
 
-  \\"\\"\\"Some dynamic data\\"\\"\\"
+  """Some dynamic data"""
   someMixed: JSON
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input UpdateManyUserLanguagesInput {
   language: String
   skill: EnumUserLanguagesSkill
 }
 
 type UpdateManyUserPayload {
-  \\"\\"\\"
+  """
   Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root \`errors\` field of GraphQL response.
-  \\"\\"\\"
+  """
   error: ErrorInterface
 
-  \\"\\"\\"Affected documents number\\"\\"\\"
+  """Affected documents number"""
   numAffected: Int
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input UpdateOneUserAddressInput {
   _id: MongoID
   geo: [Float]
   street: String
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input UpdateOneUserContactsInput {
   email: String
   phones: [String]
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input UpdateOneUserInput {
   address: UpdateOneUserAddressInput
   age: Float
@@ -1207,26 +1207,26 @@ input UpdateOneUserInput {
   name: String
   salaryDecimal: BSONDecimal
 
-  \\"\\"\\"Some dynamic data\\"\\"\\"
+  """Some dynamic data"""
   someMixed: JSON
 }
 
-\\"\\"\\"\\"\\"\\"
+""""""
 input UpdateOneUserLanguagesInput {
   language: String
   skill: EnumUserLanguagesSkill
 }
 
 type UpdateOneUserPayload {
-  \\"\\"\\"
+  """
   Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root \`errors\` field of GraphQL response.
-  \\"\\"\\"
+  """
   error: ErrorInterface
 
-  \\"\\"\\"Updated document\\"\\"\\"
+  """Updated document"""
   record: User
 
-  \\"\\"\\"Document ID\\"\\"\\"
+  """Document ID"""
   recordId: MongoID
 }
 
@@ -1240,7 +1240,7 @@ type User {
   name: String
   salaryDecimal: BSONDecimal
 
-  \\"\\"\\"Some dynamic data\\"\\"\\"
+  """Some dynamic data"""
   someMixed: JSON
 }
 
@@ -1256,15 +1256,15 @@ input UserAddressInput {
   street: String
 }
 
-\\"\\"\\"A connection to a list of items.\\"\\"\\"
+"""A connection to a list of items."""
 type UserConnection {
-  \\"\\"\\"Total object count.\\"\\"\\"
+  """Total object count."""
   count: Int!
 
-  \\"\\"\\"Information to aid in pagination.\\"\\"\\"
+  """Information to aid in pagination."""
   edges: [UserEdge!]!
 
-  \\"\\"\\"Information to aid in pagination.\\"\\"\\"
+  """Information to aid in pagination."""
   pageInfo: PageInfo!
 }
 
@@ -1278,12 +1278,12 @@ input UserContactsInput {
   phones: [String]
 }
 
-\\"\\"\\"An edge in a connection.\\"\\"\\"
+"""An edge in a connection."""
 type UserEdge {
-  \\"\\"\\"A cursor for use in pagination\\"\\"\\"
+  """A cursor for use in pagination"""
   cursor: String!
 
-  \\"\\"\\"The item at the end of the edge\\"\\"\\"
+  """The item at the end of the edge"""
   node: User!
 }
 
@@ -1297,15 +1297,15 @@ input UserLanguagesInput {
   skill: EnumUserLanguagesSkill
 }
 
-\\"\\"\\"List of items with pagination.\\"\\"\\"
+"""List of items with pagination."""
 type UserPagination {
-  \\"\\"\\"Total object count.\\"\\"\\"
+  """Total object count."""
   count: Int
 
-  \\"\\"\\"Array of objects.\\"\\"\\"
+  """Array of objects."""
   items: [User!]
 
-  \\"\\"\\"Information to aid in pagination.\\"\\"\\"
+  """Information to aid in pagination."""
   pageInfo: PaginationInfo!
 }"
 `;

@@ -1,32 +1,32 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Basket should generate the correct bundle 1`] = `
-Object {
+{
   "baseUrl": undefined,
   "name": "basket",
-  "operationHeaders": Object {},
-  "operations": Array [
-    Object {
+  "operationHeaders": {},
+  "operations": [
+    {
       "description": undefined,
       "field": "post_basket",
-      "headers": Object {
+      "headers": {
         "Content-Type": "application/json",
         "accept": "application/json",
       },
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/basket",
-      "requestSchema": Object {
+      "requestSchema": {
         "type": "string",
       },
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
             "$resolvedRef": "/components/schemas/BasketResponse",
             "additionalProperties": false,
-            "properties": Object {
-              "products": Object {
-                "items": Object {
+            "properties": {
+              "products": {
+                "items": {
                   "$ref": "#/definitions/mutation_post_basket_oneOf_0_products_items",
                 },
                 "nullable": true,
@@ -37,17 +37,17 @@ Object {
             "type": "object",
           },
         },
-        "400": Object {
-          "responseSchema": Object {
-            "items": Object {
+        "400": {
+          "responseSchema": {
+            "items": {
               "$resolvedRef": "/components/schemas/ApiError",
               "additionalProperties": false,
-              "properties": Object {
-                "code": Object {
+              "properties": {
+                "code": {
                   "type": "string",
                 },
               },
-              "required": Array [
+              "required": [
                 "code",
                 "description",
               ],
@@ -62,28 +62,28 @@ Object {
       "schemaHeaders": undefined,
       "type": "mutation",
     },
-    Object {
+    {
       "description": undefined,
       "field": "customers_by_customerId",
-      "headers": Object {
+      "headers": {
         "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/customers/{customerId}",
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
             "$resolvedRef": "/components/schemas/CustomerAttributes",
-            "properties": Object {
-              "attributes": Object {
-                "items": Object {
+            "properties": {
+              "attributes": {
+                "items": {
                   "$ref": "#/definitions/Attribute",
                 },
                 "type": "array",
               },
             },
-            "required": Array [
+            "required": [
               "attributes",
             ],
             "title": "CustomerAttributes",
@@ -94,27 +94,27 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
+    {
       "description": undefined,
       "field": "Locations",
-      "headers": Object {
+      "headers": {
         "accept": "application/json,application/custom-thingy.v3+json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/Locations",
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
-            "oneOf": Array [
-              Object {
-                "items": Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
+            "oneOf": [
+              {
+                "items": {
                   "$ref": "#/definitions/LocationModel",
                 },
                 "type": "array",
               },
-              Object {
-                "items": Object {
+              {
+                "items": {
                   "$ref": "#/definitions/LocationModel",
                 },
                 "type": "array",
@@ -128,14 +128,14 @@ Object {
       "type": "query",
     },
   ],
-  "referencedSchema": Object {
+  "referencedSchema": {
     "$ref": "#/definitions/_schema",
-    "definitions": Object {
-      "ApiBaseProduct": Object {
+    "definitions": {
+      "ApiBaseProduct": {
         "$resolvedRef": "/components/schemas/ApiBaseProduct",
         "additionalProperties": false,
-        "properties": Object {
-          "co2EmissionInGramsPerPassenger": Object {
+        "properties": {
+          "co2EmissionInGramsPerPassenger": {
             "format": "int32",
             "nullable": true,
             "type": "integer",
@@ -144,47 +144,47 @@ Object {
         "title": "ApiBaseProduct",
         "type": "object",
       },
-      "ApiError": Object {
+      "ApiError": {
         "$resolvedRef": "/components/schemas/ApiError",
         "additionalProperties": false,
-        "properties": Object {
-          "code": Object {
+        "properties": {
+          "code": {
             "type": "string",
           },
         },
-        "required": Array [
+        "required": [
           "code",
           "description",
         ],
         "title": "ApiError",
         "type": "object",
       },
-      "ApiProduct": Object {
+      "ApiProduct": {
         "$resolvedRef": "/components/schemas/ApiProduct",
         "additionalProperties": false,
-        "allOf": Array [
-          Object {
+        "allOf": [
+          {
             "$ref": "#/definitions/ApiBaseProduct",
           },
         ],
-        "properties": Object {
-          "eligibleForVouchers": Object {
+        "properties": {
+          "eligibleForVouchers": {
             "type": "boolean",
           },
         },
         "title": "ApiProduct",
         "type": "object",
       },
-      "ApiReservedProduct": Object {
+      "ApiReservedProduct": {
         "$resolvedRef": "/components/schemas/ApiReservedProduct",
         "additionalProperties": false,
-        "allOf": Array [
-          Object {
+        "allOf": [
+          {
             "$ref": "#/definitions/ApiBaseProduct",
           },
         ],
-        "properties": Object {
-          "reservationExpiresAt": Object {
+        "properties": {
+          "reservationExpiresAt": {
             "nullable": true,
             "type": "string",
           },
@@ -192,28 +192,28 @@ Object {
         "title": "ApiReservedProduct",
         "type": "object",
       },
-      "Attribute": Object {
+      "Attribute": {
         "$resolvedRef": "/components/schemas/Attribute",
-        "properties": Object {
-          "more": Object {
+        "properties": {
+          "more": {
             "$ref": "#/definitions/query_customers_by_customerId_attributes_items_more",
           },
-          "name": Object {
+          "name": {
             "type": "string",
           },
         },
-        "required": Array [
+        "required": [
           "name",
         ],
         "title": "Attribute",
         "type": "object",
       },
-      "BasketResponse": Object {
+      "BasketResponse": {
         "$resolvedRef": "/components/schemas/BasketResponse",
         "additionalProperties": false,
-        "properties": Object {
-          "products": Object {
-            "items": Object {
+        "properties": {
+          "products": {
+            "items": {
               "$ref": "#/definitions/mutation_post_basket_oneOf_0_products_items",
             },
             "nullable": true,
@@ -223,30 +223,30 @@ Object {
         "title": "BasketResponse",
         "type": "object",
       },
-      "CustomerAttributes": Object {
+      "CustomerAttributes": {
         "$resolvedRef": "/components/schemas/CustomerAttributes",
-        "properties": Object {
-          "attributes": Object {
-            "items": Object {
+        "properties": {
+          "attributes": {
+            "items": {
               "$ref": "#/definitions/Attribute",
             },
             "type": "array",
           },
         },
-        "required": Array [
+        "required": [
           "attributes",
         ],
         "title": "CustomerAttributes",
         "type": "object",
       },
-      "LocationModel": Object {
+      "LocationModel": {
         "$resolvedRef": "/components/schemas/LocationModel",
-        "properties": Object {
-          "email": Object {
+        "properties": {
+          "email": {
             "$ref": "#/definitions/query_Locations_oneOf_0_items_email",
           },
-          "parents": Object {
-            "items": Object {
+          "parents": {
+            "items": {
               "$ref": "#/definitions/LocationModel",
             },
             "type": "array",
@@ -255,16 +255,16 @@ Object {
         "title": "LocationModel",
         "type": "object",
       },
-      "Locations_200_response": Object {
-        "oneOf": Array [
-          Object {
-            "items": Object {
+      "Locations_200_response": {
+        "oneOf": [
+          {
+            "items": {
               "$ref": "#/definitions/LocationModel",
             },
             "type": "array",
           },
-          Object {
-            "items": Object {
+          {
+            "items": {
               "$ref": "#/definitions/LocationModel",
             },
             "type": "array",
@@ -272,9 +272,9 @@ Object {
         ],
         "title": "Locations_200_response",
       },
-      "Mutation": Object {
-        "properties": Object {
-          "post_basket": Object {
+      "Mutation": {
+        "properties": {
+          "post_basket": {
             "$ref": "#/definitions/post_basket_response",
           },
         },
@@ -282,9 +282,9 @@ Object {
         "title": "Mutation",
         "type": "object",
       },
-      "MutationInput": Object {
-        "properties": Object {
-          "post_basket": Object {
+      "MutationInput": {
+        "properties": {
+          "post_basket": {
             "$ref": "#/definitions/mutationInput_post_basket",
           },
         },
@@ -292,12 +292,12 @@ Object {
         "type": "object",
         "writeOnly": true,
       },
-      "Query": Object {
-        "properties": Object {
-          "Locations": Object {
+      "Query": {
+        "properties": {
+          "Locations": {
             "$ref": "#/definitions/Locations_200_response",
           },
-          "customers_by_customerId": Object {
+          "customers_by_customerId": {
             "$ref": "#/definitions/CustomerAttributes",
           },
         },
@@ -305,63 +305,63 @@ Object {
         "title": "Query",
         "type": "object",
       },
-      "QueryInput": Object {
+      "QueryInput": {
         "additionalProperties": true,
         "title": "QueryInput",
         "type": "object",
         "writeOnly": true,
       },
-      "_schema": Object {
-        "properties": Object {
-          "mutation": Object {
+      "_schema": {
+        "properties": {
+          "mutation": {
             "$ref": "#/definitions/Mutation",
           },
-          "mutationInput": Object {
+          "mutationInput": {
             "$ref": "#/definitions/MutationInput",
           },
-          "query": Object {
+          "query": {
             "$ref": "#/definitions/Query",
           },
-          "queryInput": Object {
+          "queryInput": {
             "$ref": "#/definitions/QueryInput",
           },
         },
-        "required": Array [
+        "required": [
           "query",
         ],
         "title": "_schema",
         "type": "object",
       },
-      "mutationInput_post_basket": Object {
-        "properties": Object {
-          "input": Object {
+      "mutationInput_post_basket": {
+        "properties": {
+          "input": {
             "type": "string",
           },
         },
         "title": "mutationInput_post_basket",
         "type": "object",
       },
-      "mutation_post_basket_oneOf_0_products_items": Object {
-        "oneOf": Array [
-          Object {
+      "mutation_post_basket_oneOf_0_products_items": {
+        "oneOf": [
+          {
             "$ref": "#/definitions/ApiProduct",
           },
-          Object {
+          {
             "$ref": "#/definitions/ApiReservedProduct",
           },
         ],
         "title": "mutation_post_basket_oneOf_0_products_items",
       },
-      "post_basket_400_response": Object {
-        "items": Object {
+      "post_basket_400_response": {
+        "items": {
           "$resolvedRef": "/components/schemas/ApiError",
           "additionalProperties": false,
-          "properties": Object {
-            "code": Object {
+          "properties": {
+            "code": {
               "type": "string",
             },
           },
-          "required": Array [
+          "required": [
             "code",
             "description",
           ],
@@ -371,26 +371,26 @@ Object {
         "title": "post_basket_400_response",
         "type": "array",
       },
-      "post_basket_response": Object {
-        "$comment": "statusCodeOneOfIndexMap:{\\"200\\":0,\\"400\\":1}",
-        "oneOf": Array [
-          Object {
+      "post_basket_response": {
+        "$comment": "statusCodeOneOfIndexMap:{"200":0,"400":1}",
+        "oneOf": [
+          {
             "$ref": "#/definitions/BasketResponse",
           },
-          Object {
+          {
             "$ref": "#/definitions/post_basket_400_response",
           },
         ],
         "title": "post_basket_response",
       },
-      "query_Locations_oneOf_0_items_email": Object {
-        "pattern": "^(?(\\")(\\".+?(?<!\\\\\\\\)\\"@)|(([0-9a-zA-Z]((\\\\.(?!\\\\.))|[-!#\\\\$%&'\\\\*\\\\+/=\\\\?\\\\^\`\\\\{\\\\}\\\\|~\\\\w])*)(?<=[0-9a-zA-Z\\\\-_])@))(?(\\\\[)(\\\\[(\\\\d{1,3}\\\\.){3}\\\\d{1,3}\\\\])|(([0-9a-zA-Z][-\\\\w]*[0-9a-zA-Z]*\\\\.)+[a-zA-Z0-9][\\\\-a-zA-Z0-9]{0,22}[a-zA-Z0-9]))$",
+      "query_Locations_oneOf_0_items_email": {
+        "pattern": "^(?(")(".+?(?<!\\\\)"@)|(([0-9a-zA-Z]((\\.(?!\\.))|[-!#\\$%&'\\*\\+/=\\?\\^\`\\{\\}\\|~\\w])*)(?<=[0-9a-zA-Z\\-_])@))(?(\\[)(\\[(\\d{1,3}\\.){3}\\d{1,3}\\])|(([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]*\\.)+[a-zA-Z0-9][\\-a-zA-Z0-9]{0,22}[a-zA-Z0-9]))$",
         "title": "query_Locations_oneOf_0_items_email",
         "type": "string",
       },
-      "query_customers_by_customerId_attributes_items_more": Object {
+      "query_customers_by_customerId_attributes_items_more": {
         "title": "query_customers_by_customerId_attributes_items_more",
-        "type": Array [
+        "type": [
           "string",
           "number",
           "boolean",

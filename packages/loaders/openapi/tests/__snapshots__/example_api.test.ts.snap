@@ -1,79 +1,79 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`example_api should generate the bundle correctly 1`] = `
-Object {
+{
   "baseUrl": "http://localhost:{args.port:3001}/{args.basePath:api}",
   "name": "example_api",
-  "operationHeaders": Object {},
-  "operations": Array [
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+  "operationHeaders": {},
+  "operations": [
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "limit": Object {
+        "limit": {
           "description": "Limit of the number of users to return.",
           "name": "limit",
           "nullable": false,
           "type": "integer",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
       },
       "description": "Return a list of users.",
       "field": "getUsers",
-      "headers": Object {
+      "headers": {
         "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/users",
-      "queryParamArgMap": Object {
+      "queryParamArgMap": {
         "limit": "limit",
       },
-      "responseByStatusCode": Object {
-        "202": Object {
-          "responseSchema": Object {
-            "items": Object {
+      "responseByStatusCode": {
+        "202": {
+          "responseSchema": {
+            "items": {
               "$resolvedRef": "/components/schemas/user",
               "description": "A user represents a natural person",
-              "properties": Object {
-                "address": Object {
+              "properties": {
+                "address": {
                   "$ref": "#/definitions/address",
                 },
-                "address2": Object {
+                "address2": {
                   "$ref": "#/definitions/address",
                 },
-                "employerId": Object {
+                "employerId": {
                   "description": "The identifier of the company a user works for",
                   "type": "string",
                 },
-                "hobbies": Object {
+                "hobbies": {
                   "description": "The hobbies of this user",
-                  "items": Object {
+                  "items": {
                     "type": "string",
                   },
                   "type": "array",
                 },
-                "name": Object {
+                "name": {
                   "description": "The legal name of a user",
                   "type": "string",
                 },
-                "nomenclature": Object {
+                "nomenclature": {
                   "$ref": "#/definitions/query_getUsers_items_nomenclature",
                 },
-                "status": Object {
+                "status": {
                   "$ref": "#/definitions/query_getUsers_items_status",
                 },
-                "username": Object {
+                "username": {
                   "description": "The identifier of a user",
                   "type": "string",
                 },
               },
-              "required": Array [
+              "required": [
                 "name",
                 "address",
                 "employerId",
@@ -90,63 +90,63 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
       },
       "description": "Create a new user in the system.",
       "field": "postUser",
-      "headers": Object {
+      "headers": {
         "Content-Type": "application/json",
         "accept": "application/json",
       },
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/users",
-      "requestSchema": Object {
+      "requestSchema": {
         "$resolvedRef": "/components/schemas/user",
         "description": "A user represents a natural person",
-        "properties": Object {
-          "address": Object {
+        "properties": {
+          "address": {
             "$ref": "#/definitions/address",
           },
-          "address2": Object {
+          "address2": {
             "$ref": "#/definitions/address",
           },
-          "employerId": Object {
+          "employerId": {
             "description": "The identifier of the company a user works for",
             "type": "string",
           },
-          "hobbies": Object {
+          "hobbies": {
             "description": "The hobbies of this user",
-            "items": Object {
+            "items": {
               "type": "string",
             },
             "type": "array",
           },
-          "name": Object {
+          "name": {
             "description": "The legal name of a user",
             "type": "string",
           },
-          "nomenclature": Object {
+          "nomenclature": {
             "$ref": "#/definitions/query_getUsers_items_nomenclature",
           },
-          "status": Object {
+          "status": {
             "$ref": "#/definitions/query_getUsers_items_status",
           },
-          "username": Object {
+          "username": {
             "description": "The identifier of a user",
             "type": "string",
           },
         },
-        "required": Array [
+        "required": [
           "name",
           "address",
           "employerId",
@@ -155,45 +155,45 @@ Object {
         "title": "user",
         "type": "object",
       },
-      "responseByStatusCode": Object {
-        "201": Object {
-          "responseSchema": Object {
+      "responseByStatusCode": {
+        "201": {
+          "responseSchema": {
             "$resolvedRef": "/components/schemas/user",
             "description": "A user represents a natural person",
-            "properties": Object {
-              "address": Object {
+            "properties": {
+              "address": {
                 "$ref": "#/definitions/address",
               },
-              "address2": Object {
+              "address2": {
                 "$ref": "#/definitions/address",
               },
-              "employerId": Object {
+              "employerId": {
                 "description": "The identifier of the company a user works for",
                 "type": "string",
               },
-              "hobbies": Object {
+              "hobbies": {
                 "description": "The hobbies of this user",
-                "items": Object {
+                "items": {
                   "type": "string",
                 },
                 "type": "array",
               },
-              "name": Object {
+              "name": {
                 "description": "The legal name of a user",
                 "type": "string",
               },
-              "nomenclature": Object {
+              "nomenclature": {
                 "$ref": "#/definitions/query_getUsers_items_nomenclature",
               },
-              "status": Object {
+              "status": {
                 "$ref": "#/definitions/query_getUsers_items_status",
               },
-              "username": Object {
+              "username": {
                 "description": "The identifier of a user",
                 "type": "string",
               },
             },
-            "required": Array [
+            "required": [
               "name",
               "address",
               "employerId",
@@ -207,17 +207,17 @@ Object {
       "schemaHeaders": undefined,
       "type": "mutation",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
-        "username": Object {
+        "username": {
           "description": "Identifier of a user.",
           "name": "username",
           "nullable": false,
@@ -226,67 +226,67 @@ Object {
       },
       "description": "Returns a user from the system.",
       "field": "getUserByUsername",
-      "headers": Object {
+      "headers": {
         "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/users/{args.username}",
-      "responseByStatusCode": Object {
-        "200": Object {
-          "links": Object {
-            "employerCompany": Object {
-              "args": Object {
+      "responseByStatusCode": {
+        "200": {
+          "links": {
+            "employerCompany": {
+              "args": {
                 "id": "{root.$response.body#/employerId}",
               },
               "description": "Allows to fetch the user's employer company.",
               "fieldName": "getCompanyById",
             },
-            "friends": Object {
-              "args": Object {
+            "friends": {
+              "args": {
                 "username": "{root.$request.path.username}",
               },
               "description": "Allows to fetch the user's friends.",
               "fieldName": "getUserFriends",
             },
           },
-          "responseSchema": Object {
+          "responseSchema": {
             "$resolvedRef": "/components/schemas/user",
             "description": "A user represents a natural person",
-            "properties": Object {
-              "address": Object {
+            "properties": {
+              "address": {
                 "$ref": "#/definitions/address",
               },
-              "address2": Object {
+              "address2": {
                 "$ref": "#/definitions/address",
               },
-              "employerId": Object {
+              "employerId": {
                 "description": "The identifier of the company a user works for",
                 "type": "string",
               },
-              "hobbies": Object {
+              "hobbies": {
                 "description": "The hobbies of this user",
-                "items": Object {
+                "items": {
                   "type": "string",
                 },
                 "type": "array",
               },
-              "name": Object {
+              "name": {
                 "description": "The legal name of a user",
                 "type": "string",
               },
-              "nomenclature": Object {
+              "nomenclature": {
                 "$ref": "#/definitions/query_getUsers_items_nomenclature",
               },
-              "status": Object {
+              "status": {
                 "$ref": "#/definitions/query_getUsers_items_status",
               },
-              "username": Object {
+              "username": {
                 "description": "The identifier of a user",
                 "type": "string",
               },
             },
-            "required": Array [
+            "required": [
               "name",
               "address",
               "employerId",
@@ -300,17 +300,17 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
-        "username": Object {
+        "username": {
           "description": "Identifier of a user.",
           "name": "username",
           "nullable": false,
@@ -319,36 +319,36 @@ Object {
       },
       "description": "Returns a car to test nesting of sub operations",
       "field": "getUserCar",
-      "headers": Object {
+      "headers": {
         "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/users/{args.username}/car",
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
             "$resolvedRef": "/components/schemas/car",
             "description": "A car",
-            "properties": Object {
-              "color": Object {
+            "properties": {
+              "color": {
                 "description": "The color of the car.",
                 "type": "string",
               },
-              "features": Object {
+              "features": {
                 "$ref": "#/definitions/query_getUserCar_features",
               },
-              "kind": Object {
+              "kind": {
                 "$ref": "#/definitions/query_getUserCar_kind",
               },
-              "model": Object {
+              "model": {
                 "description": "The model of the car.",
                 "type": "string",
               },
-              "rating": Object {
+              "rating": {
                 "$ref": "#/definitions/query_getUserCar_rating",
               },
-              "tags": Object {
+              "tags": {
                 "$ref": "#/definitions/Tags",
               },
             },
@@ -360,17 +360,17 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
-        "username": Object {
+        "username": {
           "description": "Identifier of a user.",
           "name": "username",
           "nullable": false,
@@ -379,52 +379,52 @@ Object {
       },
       "description": "Returns a user's friends to test pagination",
       "field": "getUserFriends",
-      "headers": Object {
+      "headers": {
         "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/users/{args.username}/friends",
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
-            "items": Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
+            "items": {
               "$resolvedRef": "/components/schemas/user",
               "description": "A user represents a natural person",
-              "properties": Object {
-                "address": Object {
+              "properties": {
+                "address": {
                   "$ref": "#/definitions/address",
                 },
-                "address2": Object {
+                "address2": {
                   "$ref": "#/definitions/address",
                 },
-                "employerId": Object {
+                "employerId": {
                   "description": "The identifier of the company a user works for",
                   "type": "string",
                 },
-                "hobbies": Object {
+                "hobbies": {
                   "description": "The hobbies of this user",
-                  "items": Object {
+                  "items": {
                     "type": "string",
                   },
                   "type": "array",
                 },
-                "name": Object {
+                "name": {
                   "description": "The legal name of a user",
                   "type": "string",
                 },
-                "nomenclature": Object {
+                "nomenclature": {
                   "$ref": "#/definitions/query_getUsers_items_nomenclature",
                 },
-                "status": Object {
+                "status": {
                   "$ref": "#/definitions/query_getUsers_items_status",
                 },
-                "username": Object {
+                "username": {
                   "description": "The identifier of a user",
                   "type": "string",
                 },
               },
-              "required": Array [
+              "required": [
                 "name",
                 "address",
                 "employerId",
@@ -441,43 +441,43 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "companyId": Object {
+        "companyId": {
           "description": undefined,
           "name": "companyId",
           "nullable": false,
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
       },
       "description": "Returns all company assets",
       "field": "getAllAssets",
-      "headers": Object {
+      "headers": {
         "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/assets/{args.companyId}",
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
-            "items": Object {
-              "oneOf": Array [
-                Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
+            "items": {
+              "oneOf": [
+                {
                   "$ref": "#/definitions/car",
                 },
-                Object {
+                {
                   "$ref": "#/definitions/user",
                 },
-                Object {
+                {
                   "$ref": "#/definitions/trashcan",
                 },
               ],
@@ -492,50 +492,50 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
       },
       "description": "Returns information about all employee cars",
       "field": "getAllCars",
-      "headers": Object {
+      "headers": {
         "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/cars",
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
-            "items": Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
+            "items": {
               "$resolvedRef": "/components/schemas/car",
               "description": "A car",
-              "properties": Object {
-                "color": Object {
+              "properties": {
+                "color": {
                   "description": "The color of the car.",
                   "type": "string",
                 },
-                "features": Object {
+                "features": {
                   "$ref": "#/definitions/query_getUserCar_features",
                 },
-                "kind": Object {
+                "kind": {
                   "$ref": "#/definitions/query_getUserCar_kind",
                 },
-                "model": Object {
+                "model": {
                   "description": "The model of the car.",
                   "type": "string",
                 },
-                "rating": Object {
+                "rating": {
                   "$ref": "#/definitions/query_getUserCar_rating",
                 },
-                "tags": Object {
+                "tags": {
                   "$ref": "#/definitions/Tags",
                 },
               },
@@ -550,66 +550,66 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "id": Object {
+        "id": {
           "description": undefined,
           "name": "id",
           "nullable": false,
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
       },
       "description": "Returns the profile of a company with the given ID.",
       "field": "getCompanyById",
-      "headers": Object {
+      "headers": {
         "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/companies/{args.id}",
-      "responseByStatusCode": Object {
-        "200": Object {
-          "links": Object {
-            "ceoUser": Object {
-              "args": Object {
+      "responseByStatusCode": {
+        "200": {
+          "links": {
+            "ceoUser": {
+              "args": {
                 "username": "{root.$response.body#/ceoUsername}",
               },
               "description": "Allows to fetch the company's CEO user.",
               "fieldName": "getUserByUsername",
             },
           },
-          "responseSchema": Object {
+          "responseSchema": {
             "$resolvedRef": "/components/schemas/company",
             "description": "A company is the employer of many users",
-            "properties": Object {
-              "ceoUsername": Object {
+            "properties": {
+              "ceoUsername": {
                 "description": "The identifier of the user who is CEO of the company",
                 "type": "string",
               },
-              "id": Object {
+              "id": {
                 "description": "The identifier of a company",
                 "format": "uuid",
                 "type": "string",
               },
-              "legalForm": Object {
+              "legalForm": {
                 "description": "The legal form of a company",
                 "type": "string",
               },
-              "name": Object {
+              "name": {
                 "description": "The legal name of a company",
                 "type": "string",
               },
-              "offices": Object {
+              "offices": {
                 "description": "The offices of a company",
-                "items": Object {
+                "items": {
                   "$ref": "#/definitions/address",
                 },
                 "type": "array",
@@ -623,15 +623,15 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "cookie_size": Object {
+        "cookie_size": {
           "description": undefined,
-          "enum": Array [
+          "enum": [
             "bite-sized",
             "regular",
             "mega-sized",
@@ -641,9 +641,9 @@ Object {
           "title": "queryInput_getCookie_cookie_size",
           "type": "string",
         },
-        "cookie_type": Object {
+        "cookie_type": {
           "description": undefined,
-          "enum": Array [
+          "enum": [
             "chocolate chip",
             "oatmeal raisin",
             "sugar",
@@ -653,23 +653,23 @@ Object {
           "title": "queryInput_getCookie_cookie_type",
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
       },
       "description": "Used to test cookies.",
       "field": "getCookie",
-      "headers": Object {
+      "headers": {
         "accept": "text/plain",
         "cookie": "cookie_type={args.cookie_type}; cookie_size={args.cookie_size};",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/cookie",
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
             "description": "Used to test generation of object types with matching schema.",
             "title": "getCookie_200_response",
             "type": "string",
@@ -679,52 +679,52 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "lat": Object {
+        "lat": {
           "description": undefined,
           "name": "lat",
           "type": "number",
         },
-        "long": Object {
+        "long": {
           "description": undefined,
           "name": "long",
           "type": "number",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
       },
       "description": "Used to find the nearest coffee machine based on the user's coordinates. Used to test the content field in parameter objects.",
       "field": "getNearestCoffeeMachine",
-      "headers": Object {
+      "headers": {
         "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/coffeeLocation",
-      "queryParamArgMap": Object {
+      "queryParamArgMap": {
         "lat": "lat",
         "long": "long",
       },
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
             "$resolvedRef": "/components/schemas/coordinates",
-            "properties": Object {
-              "lat": Object {
+            "properties": {
+              "lat": {
                 "type": "number",
               },
-              "long": Object {
+              "long": {
                 "type": "number",
               },
             },
-            "required": Array [
+            "required": [
               "lat",
               "long",
             ],
@@ -736,17 +736,17 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
-        "query": Object {
+        "query": {
           "description": undefined,
           "name": "query",
           "type": "string",
@@ -754,50 +754,50 @@ Object {
       },
       "description": "Used to test link parameters with variables",
       "field": "getCopier",
-      "headers": Object {
+      "headers": {
         "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/copier",
-      "queryParamArgMap": Object {
+      "queryParamArgMap": {
         "query": "query",
       },
-      "responseByStatusCode": Object {
-        "200": Object {
-          "links": Object {
-            "basicLink": Object {
-              "args": Object {
+      "responseByStatusCode": {
+        "200": {
+          "links": {
+            "basicLink": {
+              "args": {
                 "query": "{root.$request.query.query}",
               },
               "description": undefined,
               "fieldName": "getCopier",
             },
-            "constantLink": Object {
-              "args": Object {
+            "constantLink": {
+              "args": {
                 "query": "123",
               },
               "description": undefined,
               "fieldName": "getCopier",
             },
-            "everythingLink": Object {
-              "args": Object {
+            "everythingLink": {
+              "args": {
                 "query": "{root.$url}_{root.$method}_{root.$statusCode}_{root.$request.query.query}_{root.$request.header.accept}_{root.$response.header.connection}",
               },
               "description": undefined,
               "fieldName": "getCopier",
             },
-            "variableLink": Object {
-              "args": Object {
+            "variableLink": {
+              "args": {
                 "query": "_{root.$request.query.query}_{root.$request.query.query}{root.$request.query.query}abc{root.$request.query.query}123",
               },
               "description": undefined,
               "fieldName": "getCopier",
             },
           },
-          "responseSchema": Object {
-            "properties": Object {
-              "body": Object {
+          "responseSchema": {
+            "properties": {
+              "body": {
                 "type": "string",
               },
             },
@@ -809,28 +809,28 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
       },
       "description": "Used to test generation of object types with matching schema.",
       "field": "getNumberOfCleanDesks",
-      "headers": Object {
+      "headers": {
         "accept": "text/plain",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/cleanDesks",
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
             "type": "string",
           },
         },
@@ -838,28 +838,28 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
       },
       "description": "Used to test generation of object types with matching schema.",
       "field": "getNumberOfDirtyDesks",
-      "headers": Object {
+      "headers": {
         "accept": "text/plain",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/dirtyDesks",
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
             "type": "string",
           },
         },
@@ -867,13 +867,13 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
@@ -883,9 +883,9 @@ Object {
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/bonuses",
-      "responseByStatusCode": Object {
-        "204": Object {
-          "responseSchema": Object {
+      "responseByStatusCode": {
+        "204": {
+          "responseSchema": {
             "description": "Used to test empty responses",
             "title": "getBonuses_204_response",
             "type": "null",
@@ -895,65 +895,65 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "parameters": Object {
+        "parameters": {
           "description": undefined,
           "name": "parameters",
           "nullable": false,
-          "properties": Object {
-            "limit": Object {
+          "properties": {
+            "limit": {
               "type": "integer",
             },
-            "offset": Object {
+            "offset": {
               "type": "integer",
             },
           },
           "title": "queryInput_returnAllOffices_parameters",
           "type": "object",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
       },
       "description": "Used to test query parameters with form style and explode",
       "field": "returnAllOffices",
-      "headers": Object {
+      "headers": {
         "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/offices",
-      "queryParamArgMap": Object {
+      "queryParamArgMap": {
         "parameters": "parameters",
       },
-      "queryStringOptionsByParam": Object {
-        "parameters": Object {
+      "queryStringOptionsByParam": {
+        "parameters": {
           "arrayFormat": "repeat",
           "destructObject": true,
         },
       },
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
-            "items": Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
+            "items": {
               "$resolvedRef": "/components/schemas/office",
               "description": "An office",
-              "properties": Object {
-                "employeeId": Object {
+              "properties": {
+                "employeeId": {
                   "description": "The owner ID of the office",
                   "type": "string",
                 },
-                "employerId": Object {
+                "employerId": {
                   "description": "The identifier of the company a user works for",
                   "type": "string",
                 },
-                "room number": Object {
+                "room number": {
                   "description": "The room number of the office",
                   "type": "integer",
                 },
@@ -969,72 +969,72 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "accept": Object {
+    {
+      "argTypeMap": {
+        "accept": {
           "default": "text/plain",
           "description": "Describes the format of the return values. By default, the return type is \`text/plain\` and the return value is the two-letter language code for the identified language, for example, \`en\` for English or \`es\` for Spanish. To retrieve a JSON object that contains a ranking of identified languages with confidence scores, set the accept header parameter to \`application/json\`.",
-          "enum": Array [
+          "enum": [
             "application/json",
             "text/plain",
           ],
           "name": "accept",
           "type": "string",
         },
-        "basePath": Object {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "id": Object {
+        "id": {
           "description": "Office ID",
           "name": "id",
           "nullable": false,
           "type": "integer",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
       },
       "description": "Return an office.",
       "field": "getOffice",
-      "headers": Object {
+      "headers": {
         "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/offices/{args.id}",
-      "responseByStatusCode": Object {
-        "200": Object {
-          "links": Object {
-            "company": Object {
-              "args": Object {
+      "responseByStatusCode": {
+        "200": {
+          "links": {
+            "company": {
+              "args": {
                 "id": "{root.$response.body#/employerId}",
               },
               "description": "Allows to fetch the user's employer company.",
               "fieldName": "getCompanyById",
             },
-            "owner": Object {
-              "args": Object {
+            "owner": {
+              "args": {
                 "username": "{root.$response.body#/employeeId}",
               },
               "description": "Allows to fetch the user who invented a product.",
               "fieldName": "getUserByUsername",
             },
           },
-          "responseSchema": Object {
+          "responseSchema": {
             "$resolvedRef": "/components/schemas/office",
             "description": "An office",
-            "properties": Object {
-              "employeeId": Object {
+            "properties": {
+              "employeeId": {
                 "description": "The owner ID of the office",
                 "type": "string",
               },
-              "employerId": Object {
+              "employerId": {
                 "description": "The identifier of the company a user works for",
                 "type": "string",
               },
-              "room number": Object {
+              "room number": {
                 "description": "The room number of the office",
                 "type": "integer",
               },
@@ -1047,37 +1047,37 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
       },
       "description": "Return a list of papers. Endpoint to test 2XX status code.",
       "field": "getPapers",
-      "headers": Object {
+      "headers": {
         "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/papers",
-      "responseByStatusCode": Object {
-        "2XX": Object {
-          "responseSchema": Object {
-            "items": Object {
+      "responseByStatusCode": {
+        "2XX": {
+          "responseSchema": {
+            "items": {
               "$resolvedRef": "/components/schemas/paper",
               "description": "A research paper",
-              "properties": Object {
-                "name": Object {
+              "properties": {
+                "name": {
                   "description": "The name of the paper",
                   "type": "string",
                 },
-                "published": Object {
+                "published": {
                   "description": "Whether the paper is published",
                   "type": "boolean",
                 },
@@ -1093,32 +1093,32 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
       },
       "description": "Create a new paper in the system. Endpoint to test non-application/json request and response bodies.",
       "field": "postPaper",
-      "headers": Object {
+      "headers": {
         "Content-Type": "text/plain",
         "accept": "text/plain",
       },
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/papers",
-      "requestSchema": Object {
+      "requestSchema": {
         "type": "string",
       },
-      "responseByStatusCode": Object {
-        "201": Object {
-          "responseSchema": Object {
+      "responseByStatusCode": {
+        "201": {
+          "responseSchema": {
             "type": "string",
           },
         },
@@ -1126,39 +1126,39 @@ Object {
       "schemaHeaders": undefined,
       "type": "mutation",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
       },
       "description": "Endpoint to test unsanitized parameters and data.",
       "field": "post_product_with_id",
-      "headers": Object {
+      "headers": {
         "Content-Type": "application/json",
         "accept": "application/json",
       },
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/products",
-      "requestSchema": Object {
+      "requestSchema": {
         "$resolvedRef": "/components/schemas/product-with-id",
         "description": "A product",
-        "properties": Object {
-          "product-id": Object {
+        "properties": {
+          "product-id": {
             "description": "The id of the product",
             "type": "string",
           },
-          "product-name": Object {
+          "product-name": {
             "description": "The name of the product",
             "type": "string",
           },
-          "product-tag": Object {
+          "product-tag": {
             "description": "A tag associated with the product",
             "type": "string",
           },
@@ -1166,21 +1166,21 @@ Object {
         "title": "product-with-id",
         "type": "object",
       },
-      "responseByStatusCode": Object {
-        "201": Object {
-          "responseSchema": Object {
+      "responseByStatusCode": {
+        "201": {
+          "responseSchema": {
             "$resolvedRef": "/components/schemas/product-with-id",
             "description": "A product",
-            "properties": Object {
-              "product-id": Object {
+            "properties": {
+              "product-id": {
                 "description": "The id of the product",
                 "type": "string",
               },
-              "product-name": Object {
+              "product-name": {
                 "description": "The name of the product",
                 "type": "string",
               },
-              "product-tag": Object {
+              "product-tag": {
                 "description": "A tag associated with the product",
                 "type": "string",
               },
@@ -1193,23 +1193,23 @@ Object {
       "schemaHeaders": undefined,
       "type": "mutation",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
-        "product_id": Object {
+        "product_id": {
           "description": undefined,
           "name": "product-id",
           "nullable": false,
           "type": "string",
         },
-        "product_tag": Object {
+        "product_tag": {
           "description": undefined,
           "name": "product-tag",
           "nullable": false,
@@ -1218,28 +1218,28 @@ Object {
       },
       "description": "Another endpoint to test unsanitized parameters and data.",
       "field": "get_product_with_id",
-      "headers": Object {
+      "headers": {
         "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/products/{args.product_id}",
-      "queryParamArgMap": Object {
+      "queryParamArgMap": {
         "product-tag": "product_tag",
       },
-      "responseByStatusCode": Object {
-        "200": Object {
-          "links": Object {
-            "reviews": Object {
-              "args": Object {
+      "responseByStatusCode": {
+        "200": {
+          "links": {
+            "reviews": {
+              "args": {
                 "id": "{root.$request.path.product-id}",
                 "product_tag": "{root.$request.query.product-tag}",
               },
               "description": undefined,
               "fieldName": "getProductReviews",
             },
-            "reviewsWithOperationRef": Object {
-              "args": Object {
+            "reviewsWithOperationRef": {
+              "args": {
                 "id": "{root.$request.path.product-id}",
                 "product_tag": "{root.$request.query.product-tag}",
               },
@@ -1247,19 +1247,19 @@ Object {
               "fieldName": "getProductReviews",
             },
           },
-          "responseSchema": Object {
+          "responseSchema": {
             "$resolvedRef": "/components/schemas/product-with-id",
             "description": "A product",
-            "properties": Object {
-              "product-id": Object {
+            "properties": {
+              "product-id": {
                 "description": "The id of the product",
                 "type": "string",
               },
-              "product-name": Object {
+              "product-name": {
                 "description": "The name of the product",
                 "type": "string",
               },
-              "product-tag": Object {
+              "product-tag": {
                 "description": "A tag associated with the product",
                 "type": "string",
               },
@@ -1272,23 +1272,23 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "id": Object {
+        "id": {
           "description": undefined,
           "name": "id",
           "nullable": false,
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
-        "product_tag": Object {
+        "product_tag": {
           "default": "sport",
           "description": undefined,
           "name": "product-tag",
@@ -1298,24 +1298,24 @@ Object {
       },
       "description": "Obtain reviews for a product.",
       "field": "getProductReviews",
-      "headers": Object {
+      "headers": {
         "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/products/{args.id}/reviews",
-      "queryParamArgMap": Object {
+      "queryParamArgMap": {
         "product-tag": "product_tag",
       },
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
-            "items": Object {
-              "properties": Object {
-                "text": Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
+            "items": {
+              "properties": {
+                "text": {
                   "type": "string",
                 },
-                "timestamp": Object {
+                "timestamp": {
                   "format": "int64",
                   "type": "integer",
                 },
@@ -1331,56 +1331,56 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "patent_id": Object {
+        "patent_id": {
           "description": undefined,
           "name": "patent-id",
           "nullable": false,
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
       },
       "description": "An endpoint to test authentication.",
       "field": "get_patent_with_id",
-      "headers": Object {
+      "headers": {
         "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/patents/{args.patent_id}",
-      "responseByStatusCode": Object {
-        "200": Object {
-          "links": Object {
-            "inventor": Object {
-              "args": Object {
+      "responseByStatusCode": {
+        "200": {
+          "links": {
+            "inventor": {
+              "args": {
                 "username": "{root.$response.body#/inventorId}",
               },
               "description": "Allows to fetch the user who invented a product.",
               "fieldName": "getUserByUsername",
             },
           },
-          "responseSchema": Object {
+          "responseSchema": {
             "$resolvedRef": "/components/schemas/patent-with-id",
             "description": "A patent",
-            "properties": Object {
-              "inventor-id": Object {
+            "properties": {
+              "inventor-id": {
                 "description": "The id of the inventor",
                 "type": "string",
               },
-              "patent-id": Object {
+              "patent-id": {
                 "description": "The id of the patent",
                 "type": "string",
               },
             },
-            "required": Array [
+            "required": [
               "patent-name",
               "patent-id",
             ],
@@ -1392,43 +1392,43 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
       },
       "description": "An endpoint to test authenticated POST requests.",
       "field": "post_project_with_id",
-      "headers": Object {
+      "headers": {
         "Content-Type": "application/json",
         "accept": "application/json",
       },
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/projects",
-      "requestSchema": Object {
+      "requestSchema": {
         "$resolvedRef": "/components/schemas/project-with-id",
         "description": "A project",
-        "properties": Object {
-          "active": Object {
+        "properties": {
+          "active": {
             "description": "Whether the project is active",
             "type": "boolean",
           },
-          "lead-id": Object {
+          "lead-id": {
             "description": "The id of the lead",
             "type": "string",
           },
-          "patentId": Object {
+          "patentId": {
             "description": "The patent associated with a project if applicable",
             "type": "string",
           },
-          "project-id": Object {
+          "project-id": {
             "description": "The id of the project",
             "type": "integer",
           },
@@ -1436,34 +1436,34 @@ Object {
         "title": "project-with-id",
         "type": "object",
       },
-      "responseByStatusCode": Object {
-        "201": Object {
-          "links": Object {
-            "ProjectLead": Object {
-              "args": Object {
+      "responseByStatusCode": {
+        "201": {
+          "links": {
+            "ProjectLead": {
+              "args": {
                 "username": "{root.$response.body#/leadId}",
               },
               "description": "Allows to fetch the user leading a project.",
               "fieldName": "getUserByUsername",
             },
           },
-          "responseSchema": Object {
+          "responseSchema": {
             "$resolvedRef": "/components/schemas/project-with-id",
             "description": "A project",
-            "properties": Object {
-              "active": Object {
+            "properties": {
+              "active": {
                 "description": "Whether the project is active",
                 "type": "boolean",
               },
-              "lead-id": Object {
+              "lead-id": {
                 "description": "The id of the lead",
                 "type": "string",
               },
-              "patentId": Object {
+              "patentId": {
                 "description": "The patent associated with a project if applicable",
                 "type": "string",
               },
-              "project-id": Object {
+              "project-id": {
                 "description": "The id of the project",
                 "type": "integer",
               },
@@ -1476,17 +1476,17 @@ Object {
       "schemaHeaders": undefined,
       "type": "mutation",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
-        "project_id": Object {
+        "project_id": {
           "description": undefined,
           "name": "project-id",
           "nullable": false,
@@ -1495,47 +1495,47 @@ Object {
       },
       "description": "Another endpoint to test authentication.",
       "field": "get_project_with_id",
-      "headers": Object {
+      "headers": {
         "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/projects/{args.project_id}",
-      "responseByStatusCode": Object {
-        "200": Object {
-          "links": Object {
-            "patent": Object {
-              "args": Object {
+      "responseByStatusCode": {
+        "200": {
+          "links": {
+            "patent": {
+              "args": {
                 "patent_id": "{root.$response.body#/patentId}",
               },
               "description": "Allows to fetch a patent.",
               "fieldName": "get_patent_with_id",
             },
-            "projectLead": Object {
-              "args": Object {
+            "projectLead": {
+              "args": {
                 "username": "{root.$response.body#/leadId}",
               },
               "description": "Allows to fetch the user leading a project.",
               "fieldName": "getUserByUsername",
             },
           },
-          "responseSchema": Object {
+          "responseSchema": {
             "$resolvedRef": "/components/schemas/project-with-id",
             "description": "A project",
-            "properties": Object {
-              "active": Object {
+            "properties": {
+              "active": {
                 "description": "Whether the project is active",
                 "type": "boolean",
               },
-              "lead-id": Object {
+              "lead-id": {
                 "description": "The id of the lead",
                 "type": "string",
               },
-              "patentId": Object {
+              "patentId": {
                 "description": "The patent associated with a project if applicable",
                 "type": "string",
               },
-              "project-id": Object {
+              "project-id": {
                 "description": "The id of the project",
                 "type": "integer",
               },
@@ -1548,17 +1548,17 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
-        "query": Object {
+        "query": {
           "description": undefined,
           "name": "query",
           "type": "string",
@@ -1566,50 +1566,50 @@ Object {
       },
       "description": "Used to test link parameters with variables",
       "field": "getScanner",
-      "headers": Object {
+      "headers": {
         "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/scanner",
-      "queryParamArgMap": Object {
+      "queryParamArgMap": {
         "query": "query",
       },
-      "responseByStatusCode": Object {
-        "200": Object {
-          "links": Object {
-            "basicLink": Object {
-              "args": Object {
+      "responseByStatusCode": {
+        "200": {
+          "links": {
+            "basicLink": {
+              "args": {
                 "query": "{root.$request.query.query}",
               },
               "description": undefined,
               "fieldName": "getCopier",
             },
-            "constantLink": Object {
-              "args": Object {
+            "constantLink": {
+              "args": {
                 "query": "123",
               },
               "description": undefined,
               "fieldName": "getCopier",
             },
-            "everythingLink": Object {
-              "args": Object {
+            "everythingLink": {
+              "args": {
                 "query": "{root.$url}_{root.$method}_{root.$statusCode}_{root.$request.query.query}_{root.$request.header.accept}_{root.$response.header.connection}",
               },
               "description": undefined,
               "fieldName": "getCopier",
             },
-            "variableLink": Object {
-              "args": Object {
+            "variableLink": {
+              "args": {
                 "query": "_{root.$request.query.query}_{root.$request.query.query}{root.$request.query.query}abc{root.$request.query.query}123",
               },
               "description": undefined,
               "fieldName": "getCopier",
             },
           },
-          "responseSchema": Object {
-            "properties": Object {
-              "body": Object {
+          "responseSchema": {
+            "properties": {
+              "body": {
                 "type": "string",
               },
             },
@@ -1621,23 +1621,23 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "path": Object {
+        "path": {
           "description": undefined,
           "name": "path",
           "nullable": false,
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
-        "query": Object {
+        "query": {
           "description": undefined,
           "name": "query",
           "type": "string",
@@ -1645,61 +1645,61 @@ Object {
       },
       "description": "Used to test link parameters with variables",
       "field": "postScanner",
-      "headers": Object {
+      "headers": {
         "Content-Type": "text/plain",
         "accept": "application/json",
       },
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/scanner/{args.path}",
-      "queryParamArgMap": Object {
+      "queryParamArgMap": {
         "query": "query",
       },
-      "requestSchema": Object {
+      "requestSchema": {
         "type": "string",
       },
-      "responseByStatusCode": Object {
-        "200": Object {
-          "links": Object {
-            "basicLink": Object {
-              "args": Object {
+      "responseByStatusCode": {
+        "200": {
+          "links": {
+            "basicLink": {
+              "args": {
                 "query": "{root.$request.query.query}",
               },
               "description": undefined,
               "fieldName": "getCopier",
             },
-            "constantLink": Object {
-              "args": Object {
+            "constantLink": {
+              "args": {
                 "query": "123",
               },
               "description": undefined,
               "fieldName": "getCopier",
             },
-            "everythingLink": Object {
-              "args": Object {
+            "everythingLink": {
+              "args": {
                 "query": "{root.$url}_{root.$method}_{root.$statusCode}_{root.$request.query.query}_{root.$request.header.accept}_{root.$response.header.connection}",
               },
               "description": undefined,
               "fieldName": "getCopier",
             },
-            "everythingLink2": Object {
-              "args": Object {
+            "everythingLink2": {
+              "args": {
                 "query": "{root.$url}_{root.$method}_{root.$statusCode}_{root.$request.body}_{root.$request.query.query}_{root.$request.path.path}_{root.$request.header.accept}_{root.$response.body#/body}_{root.$response.query.query}_{root.$response.path.path}_{root.$response.header.connection}",
               },
               "description": undefined,
               "fieldName": "getCopier",
             },
-            "variableLink": Object {
-              "args": Object {
+            "variableLink": {
+              "args": {
                 "query": "_{root.$request.query.query}_{root.$request.query.query}{root.$request.query.query}abc{root.$request.query.query}123",
               },
               "description": undefined,
               "fieldName": "getCopier",
             },
           },
-          "responseSchema": Object {
-            "properties": Object {
-              "body": Object {
+          "responseSchema": {
+            "properties": {
+              "body": {
                 "type": "string",
               },
             },
@@ -1711,19 +1711,19 @@ Object {
       "schemaHeaders": undefined,
       "type": "mutation",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
-        "snack_size": Object {
+        "snack_size": {
           "description": undefined,
-          "enum": Array [
+          "enum": [
             "large",
             "small",
           ],
@@ -1732,9 +1732,9 @@ Object {
           "title": "queryInput_getSnack_snack_size",
           "type": "string",
         },
-        "snack_type": Object {
+        "snack_type": {
           "description": undefined,
-          "enum": Array [
+          "enum": [
             "chips",
             "soda",
           ],
@@ -1746,7 +1746,7 @@ Object {
       },
       "description": "Endpoint to test sending of headers.",
       "field": "getSnack",
-      "headers": Object {
+      "headers": {
         "accept": "text/plain",
         "snack_size": "{args.snack_size}",
         "snack_type": "{args.snack_type}",
@@ -1754,9 +1754,9 @@ Object {
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/snack",
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
             "description": "What snack is offered.",
             "title": "getSnack_200_response",
             "type": "string",
@@ -1766,44 +1766,44 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "globalquery": Object {
+        "globalquery": {
           "description": undefined,
           "name": "globalquery",
           "nullable": false,
           "type": "string",
         },
-        "limit": Object {
+        "limit": {
           "description": undefined,
           "name": "limit",
           "nullable": false,
           "type": "integer",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
       },
       "description": "Endpoint to test sending of options.",
       "field": "get_Status",
-      "headers": Object {
+      "headers": {
         "accept": "text/plain",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/status",
-      "queryParamArgMap": Object {
+      "queryParamArgMap": {
         "globalquery": "globalquery",
         "limit": "limit",
       },
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
             "description": "What the status is.",
             "title": "get_Status_200_response",
             "type": "string",
@@ -1813,47 +1813,47 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "globalquery": Object {
+        "globalquery": {
           "description": undefined,
           "name": "globalquery",
           "nullable": false,
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
       },
       "description": "Endpoint to test placeholder objects to wrap response objects.",
       "field": "post_status",
-      "headers": Object {
+      "headers": {
         "Content-Type": "application/json",
         "accept": "text/plain",
       },
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/status",
-      "queryParamArgMap": Object {
+      "queryParamArgMap": {
         "globalquery": "globalquery",
       },
-      "requestSchema": Object {
-        "properties": Object {
-          "hello": Object {
+      "requestSchema": {
+        "properties": {
+          "hello": {
             "type": "string",
           },
         },
         "title": "post_status_request",
         "type": "object",
       },
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
             "type": "string",
           },
         },
@@ -1861,28 +1861,28 @@ Object {
       "schemaHeaders": undefined,
       "type": "mutation",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
       },
       "description": "Used to test OAuth token being present in header.",
       "field": "getSecure",
-      "headers": Object {
+      "headers": {
         "accept": "text/plain",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/secure",
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
             "description": "A secure message.",
             "title": "getSecure_200_response",
             "type": "string",
@@ -1892,36 +1892,36 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
       },
       "description": "Returns the (contents of a) trashcan from a specific office",
       "field": "getAllTrashCans",
-      "headers": Object {
+      "headers": {
         "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/trashcans",
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
-            "items": Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
+            "items": {
               "$resolvedRef": "/components/schemas/trashcan",
-              "properties": Object {
-                "brand": Object {
+              "properties": {
+                "brand": {
                   "type": "object",
                 },
-                "contents": Object {
-                  "items": Object {
+                "contents": {
+                  "items": {
                     "type": "object",
                   },
                   "type": "array",
@@ -1938,17 +1938,17 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
-        "username": Object {
+        "username": {
           "description": "Identifier of a user.",
           "name": "username",
           "nullable": false,
@@ -1957,22 +1957,22 @@ Object {
       },
       "description": "Returns the (contents of a) trashcan from a specific owner",
       "field": "getOfficeTrashCan",
-      "headers": Object {
+      "headers": {
         "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/trashcans/{args.username}",
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
             "$resolvedRef": "/components/schemas/trashcan",
-            "properties": Object {
-              "brand": Object {
+            "properties": {
+              "brand": {
                 "type": "object",
               },
-              "contents": Object {
-                "items": Object {
+              "contents": {
+                "items": {
                   "type": "object",
                 },
                 "type": "array",
@@ -1986,17 +1986,17 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
-        "username": Object {
+        "username": {
           "description": "Identifier of a user.",
           "name": "username",
           "nullable": false,
@@ -2005,27 +2005,27 @@ Object {
       },
       "description": "Add new contents to the trashcan of a specific owner",
       "field": "postOfficeTrashCan",
-      "headers": Object {
+      "headers": {
         "Content-Type": "application/json",
         "accept": "application/json",
       },
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/trashcans/{args.username}",
-      "requestSchema": Object {
+      "requestSchema": {
         "title": "mutationInput_postOfficeTrashCan_input",
         "type": "object",
       },
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
             "$resolvedRef": "/components/schemas/trashcan",
-            "properties": Object {
-              "brand": Object {
+            "properties": {
+              "brand": {
                 "type": "object",
               },
-              "contents": Object {
-                "items": Object {
+              "contents": {
+                "items": {
                   "type": "object",
                 },
                 "type": "array",
@@ -2039,33 +2039,33 @@ Object {
       "schemaHeaders": undefined,
       "type": "mutation",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
       },
       "description": "It could be anything!",
       "field": "mystery",
-      "headers": Object {
+      "headers": {
         "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/mystery",
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
-            "oneOf": Array [
-              Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
+            "oneOf": [
+              {
                 "$ref": "#/definitions/query_mystery_oneOf_0",
               },
-              Object {
+              {
                 "$ref": "#/definitions/query_mystery_oneOf_1",
               },
             ],
@@ -2076,28 +2076,28 @@ Object {
       "schemaHeaders": undefined,
       "type": "query",
     },
-    Object {
-      "argTypeMap": Object {
-        "basePath": Object {
+    {
+      "argTypeMap": {
+        "basePath": {
           "default": "api",
           "type": "string",
         },
-        "port": Object {
+        "port": {
           "default": "3001",
           "type": "string",
         },
       },
       "description": "Returns an arbitrary JSON object",
       "field": "random",
-      "headers": Object {
+      "headers": {
         "accept": "application/json",
       },
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/random",
-      "responseByStatusCode": Object {
-        "200": Object {
-          "responseSchema": Object {
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
             "title": "query_random",
             "type": "object",
           },
@@ -2107,30 +2107,30 @@ Object {
       "type": "query",
     },
   ],
-  "referencedSchema": Object {
+  "referencedSchema": {
     "$ref": "#/definitions/_schema",
-    "definitions": Object {
-      "Mutation": Object {
-        "properties": Object {
-          "postOfficeTrashCan": Object {
+    "definitions": {
+      "Mutation": {
+        "properties": {
+          "postOfficeTrashCan": {
             "$ref": "#/definitions/trashcan",
           },
-          "postPaper": Object {
+          "postPaper": {
             "type": "string",
           },
-          "postScanner": Object {
+          "postScanner": {
             "$ref": "#/definitions/postScanner_200_response",
           },
-          "postUser": Object {
+          "postUser": {
             "$ref": "#/definitions/user",
           },
-          "post_product_with_id": Object {
+          "post_product_with_id": {
             "$ref": "#/definitions/product-with-id",
           },
-          "post_project_with_id": Object {
+          "post_project_with_id": {
             "$ref": "#/definitions/project-with-id",
           },
-          "post_status": Object {
+          "post_status": {
             "type": "string",
           },
         },
@@ -2138,27 +2138,27 @@ Object {
         "title": "Mutation",
         "type": "object",
       },
-      "MutationInput": Object {
-        "properties": Object {
-          "postOfficeTrashCan": Object {
+      "MutationInput": {
+        "properties": {
+          "postOfficeTrashCan": {
             "$ref": "#/definitions/mutationInput_postOfficeTrashCan",
           },
-          "postPaper": Object {
+          "postPaper": {
             "$ref": "#/definitions/mutationInput_postPaper",
           },
-          "postScanner": Object {
+          "postScanner": {
             "$ref": "#/definitions/mutationInput_postScanner",
           },
-          "postUser": Object {
+          "postUser": {
             "$ref": "#/definitions/mutationInput_postUser",
           },
-          "post_product_with_id": Object {
+          "post_product_with_id": {
             "$ref": "#/definitions/mutationInput_post_product_with_id",
           },
-          "post_project_with_id": Object {
+          "post_project_with_id": {
             "$ref": "#/definitions/mutationInput_post_project_with_id",
           },
-          "post_status": Object {
+          "post_status": {
             "$ref": "#/definitions/mutationInput_post_status",
           },
         },
@@ -2166,90 +2166,90 @@ Object {
         "type": "object",
         "writeOnly": true,
       },
-      "Query": Object {
-        "properties": Object {
-          "getAllAssets": Object {
+      "Query": {
+        "properties": {
+          "getAllAssets": {
             "$ref": "#/definitions/getAllAssets_200_response",
           },
-          "getAllCars": Object {
+          "getAllCars": {
             "$ref": "#/definitions/getAllCars_200_response",
           },
-          "getAllTrashCans": Object {
+          "getAllTrashCans": {
             "$ref": "#/definitions/getAllTrashCans_200_response",
           },
-          "getBonuses": Object {
+          "getBonuses": {
             "$ref": "#/definitions/getBonuses_204_response",
           },
-          "getCompanyById": Object {
+          "getCompanyById": {
             "$ref": "#/definitions/company",
           },
-          "getCookie": Object {
+          "getCookie": {
             "$ref": "#/definitions/getCookie_200_response",
           },
-          "getCopier": Object {
+          "getCopier": {
             "$ref": "#/definitions/getCopier_200_response",
           },
-          "getNearestCoffeeMachine": Object {
+          "getNearestCoffeeMachine": {
             "$ref": "#/definitions/coordinates",
           },
-          "getNumberOfCleanDesks": Object {
+          "getNumberOfCleanDesks": {
             "type": "string",
           },
-          "getNumberOfDirtyDesks": Object {
+          "getNumberOfDirtyDesks": {
             "type": "string",
           },
-          "getOffice": Object {
+          "getOffice": {
             "$ref": "#/definitions/office",
           },
-          "getOfficeTrashCan": Object {
+          "getOfficeTrashCan": {
             "$ref": "#/definitions/trashcan",
           },
-          "getPapers": Object {
+          "getPapers": {
             "$ref": "#/definitions/getPapers_2XX_response",
           },
-          "getProductReviews": Object {
+          "getProductReviews": {
             "$ref": "#/definitions/getProductReviews_200_response",
           },
-          "getScanner": Object {
+          "getScanner": {
             "$ref": "#/definitions/getScanner_200_response",
           },
-          "getSecure": Object {
+          "getSecure": {
             "$ref": "#/definitions/getSecure_200_response",
           },
-          "getSnack": Object {
+          "getSnack": {
             "$ref": "#/definitions/getSnack_200_response",
           },
-          "getUserByUsername": Object {
+          "getUserByUsername": {
             "$ref": "#/definitions/user",
           },
-          "getUserCar": Object {
+          "getUserCar": {
             "$ref": "#/definitions/car",
           },
-          "getUserFriends": Object {
+          "getUserFriends": {
             "$ref": "#/definitions/getUserFriends_200_response",
           },
-          "getUsers": Object {
+          "getUsers": {
             "$ref": "#/definitions/getUsers_202_response",
           },
-          "get_Status": Object {
+          "get_Status": {
             "$ref": "#/definitions/get_Status_200_response",
           },
-          "get_patent_with_id": Object {
+          "get_patent_with_id": {
             "$ref": "#/definitions/patent-with-id",
           },
-          "get_product_with_id": Object {
+          "get_product_with_id": {
             "$ref": "#/definitions/product-with-id",
           },
-          "get_project_with_id": Object {
+          "get_project_with_id": {
             "$ref": "#/definitions/project-with-id",
           },
-          "mystery": Object {
+          "mystery": {
             "$ref": "#/definitions/mystery_200_response",
           },
-          "random": Object {
+          "random": {
             "$ref": "#/definitions/query_random",
           },
-          "returnAllOffices": Object {
+          "returnAllOffices": {
             "$ref": "#/definitions/returnAllOffices_200_response",
           },
         },
@@ -2257,90 +2257,90 @@ Object {
         "title": "Query",
         "type": "object",
       },
-      "QueryInput": Object {
-        "properties": Object {
-          "getAllAssets": Object {
+      "QueryInput": {
+        "properties": {
+          "getAllAssets": {
             "$ref": "#/definitions/queryInput_getAllAssets",
           },
-          "getAllCars": Object {
+          "getAllCars": {
             "$ref": "#/definitions/queryInput_getAllCars",
           },
-          "getAllTrashCans": Object {
+          "getAllTrashCans": {
             "$ref": "#/definitions/queryInput_getAllTrashCans",
           },
-          "getBonuses": Object {
+          "getBonuses": {
             "$ref": "#/definitions/queryInput_getBonuses",
           },
-          "getCompanyById": Object {
+          "getCompanyById": {
             "$ref": "#/definitions/queryInput_getCompanyById",
           },
-          "getCookie": Object {
+          "getCookie": {
             "$ref": "#/definitions/queryInput_getCookie",
           },
-          "getCopier": Object {
+          "getCopier": {
             "$ref": "#/definitions/queryInput_getCopier",
           },
-          "getNearestCoffeeMachine": Object {
+          "getNearestCoffeeMachine": {
             "$ref": "#/definitions/queryInput_getNearestCoffeeMachine",
           },
-          "getNumberOfCleanDesks": Object {
+          "getNumberOfCleanDesks": {
             "$ref": "#/definitions/queryInput_getNumberOfCleanDesks",
           },
-          "getNumberOfDirtyDesks": Object {
+          "getNumberOfDirtyDesks": {
             "$ref": "#/definitions/queryInput_getNumberOfDirtyDesks",
           },
-          "getOffice": Object {
+          "getOffice": {
             "$ref": "#/definitions/queryInput_getOffice",
           },
-          "getOfficeTrashCan": Object {
+          "getOfficeTrashCan": {
             "$ref": "#/definitions/queryInput_getOfficeTrashCan",
           },
-          "getPapers": Object {
+          "getPapers": {
             "$ref": "#/definitions/queryInput_getPapers",
           },
-          "getProductReviews": Object {
+          "getProductReviews": {
             "$ref": "#/definitions/queryInput_getProductReviews",
           },
-          "getScanner": Object {
+          "getScanner": {
             "$ref": "#/definitions/queryInput_getScanner",
           },
-          "getSecure": Object {
+          "getSecure": {
             "$ref": "#/definitions/queryInput_getSecure",
           },
-          "getSnack": Object {
+          "getSnack": {
             "$ref": "#/definitions/queryInput_getSnack",
           },
-          "getUserByUsername": Object {
+          "getUserByUsername": {
             "$ref": "#/definitions/queryInput_getUserByUsername",
           },
-          "getUserCar": Object {
+          "getUserCar": {
             "$ref": "#/definitions/queryInput_getUserCar",
           },
-          "getUserFriends": Object {
+          "getUserFriends": {
             "$ref": "#/definitions/queryInput_getUserFriends",
           },
-          "getUsers": Object {
+          "getUsers": {
             "$ref": "#/definitions/queryInput_getUsers",
           },
-          "get_Status": Object {
+          "get_Status": {
             "$ref": "#/definitions/queryInput_get_Status",
           },
-          "get_patent_with_id": Object {
+          "get_patent_with_id": {
             "$ref": "#/definitions/queryInput_get_patent_with_id",
           },
-          "get_product_with_id": Object {
+          "get_product_with_id": {
             "$ref": "#/definitions/queryInput_get_product_with_id",
           },
-          "get_project_with_id": Object {
+          "get_project_with_id": {
             "$ref": "#/definitions/queryInput_get_project_with_id",
           },
-          "mystery": Object {
+          "mystery": {
             "$ref": "#/definitions/queryInput_mystery",
           },
-          "random": Object {
+          "random": {
             "$ref": "#/definitions/queryInput_random",
           },
-          "returnAllOffices": Object {
+          "returnAllOffices": {
             "$ref": "#/definitions/queryInput_returnAllOffices",
           },
         },
@@ -2348,43 +2348,43 @@ Object {
         "type": "object",
         "writeOnly": true,
       },
-      "Tags": Object {
+      "Tags": {
         "$resolvedRef": "/components/schemas/tags",
         "additionalProperties": true,
         "description": "Arbitrary (string) tags describing an entity.",
         "title": "Tags",
         "type": "object",
       },
-      "_schema": Object {
-        "properties": Object {
-          "mutation": Object {
+      "_schema": {
+        "properties": {
+          "mutation": {
             "$ref": "#/definitions/Mutation",
           },
-          "mutationInput": Object {
+          "mutationInput": {
             "$ref": "#/definitions/MutationInput",
           },
-          "query": Object {
+          "query": {
             "$ref": "#/definitions/Query",
           },
-          "queryInput": Object {
+          "queryInput": {
             "$ref": "#/definitions/QueryInput",
           },
         },
-        "required": Array [
+        "required": [
           "query",
         ],
         "title": "_schema",
         "type": "object",
       },
-      "address": Object {
+      "address": {
         "$resolvedRef": "/components/schemas/address",
         "description": "The legal address of a user",
-        "properties": Object {
-          "city": Object {
+        "properties": {
+          "city": {
             "description": "The city a user lives in",
             "type": "string",
           },
-          "street": Object {
+          "street": {
             "description": "The street a user lives in",
             "type": "string",
           },
@@ -2392,58 +2392,58 @@ Object {
         "title": "address",
         "type": "object",
       },
-      "car": Object {
+      "car": {
         "$resolvedRef": "/components/schemas/car",
         "description": "A car",
-        "properties": Object {
-          "color": Object {
+        "properties": {
+          "color": {
             "description": "The color of the car.",
             "type": "string",
           },
-          "features": Object {
+          "features": {
             "$ref": "#/definitions/query_getUserCar_features",
           },
-          "kind": Object {
+          "kind": {
             "$ref": "#/definitions/query_getUserCar_kind",
           },
-          "model": Object {
+          "model": {
             "description": "The model of the car.",
             "type": "string",
           },
-          "rating": Object {
+          "rating": {
             "$ref": "#/definitions/query_getUserCar_rating",
           },
-          "tags": Object {
+          "tags": {
             "$ref": "#/definitions/Tags",
           },
         },
         "title": "car",
         "type": "object",
       },
-      "company": Object {
+      "company": {
         "$resolvedRef": "/components/schemas/company",
         "description": "A company is the employer of many users",
-        "properties": Object {
-          "ceoUsername": Object {
+        "properties": {
+          "ceoUsername": {
             "description": "The identifier of the user who is CEO of the company",
             "type": "string",
           },
-          "id": Object {
+          "id": {
             "description": "The identifier of a company",
             "format": "uuid",
             "type": "string",
           },
-          "legalForm": Object {
+          "legalForm": {
             "description": "The legal form of a company",
             "type": "string",
           },
-          "name": Object {
+          "name": {
             "description": "The legal name of a company",
             "type": "string",
           },
-          "offices": Object {
+          "offices": {
             "description": "The offices of a company",
-            "items": Object {
+            "items": {
               "$ref": "#/definitions/address",
             },
             "type": "array",
@@ -2452,51 +2452,51 @@ Object {
         "title": "company",
         "type": "object",
       },
-      "coordinates": Object {
+      "coordinates": {
         "$resolvedRef": "/components/schemas/coordinates",
-        "properties": Object {
-          "lat": Object {
+        "properties": {
+          "lat": {
             "type": "number",
           },
-          "long": Object {
+          "long": {
             "type": "number",
           },
         },
-        "required": Array [
+        "required": [
           "lat",
           "long",
         ],
         "title": "coordinates",
         "type": "object",
       },
-      "familyObject": Object {
+      "familyObject": {
         "$resolvedRef": "/components/schemas/familyObject",
-        "allOf": Array [
-          Object {
+        "allOf": [
+          {
             "$ref": "#/definitions/query_getUsers_items_nomenclature_allOf_1_allOf_0",
           },
-          Object {
+          {
             "$ref": "#/definitions/query_getUsers_items_nomenclature_allOf_1_allOf_1",
           },
         ],
         "title": "familyObject",
         "type": "object",
       },
-      "familyString": Object {
+      "familyString": {
         "$resolvedRef": "/components/schemas/familyString",
         "title": "familyString",
         "type": "string",
       },
-      "getAllAssets_200_response": Object {
-        "items": Object {
-          "oneOf": Array [
-            Object {
+      "getAllAssets_200_response": {
+        "items": {
+          "oneOf": [
+            {
               "$ref": "#/definitions/car",
             },
-            Object {
+            {
               "$ref": "#/definitions/user",
             },
-            Object {
+            {
               "$ref": "#/definitions/trashcan",
             },
           ],
@@ -2506,29 +2506,29 @@ Object {
         "title": "getAllAssets_200_response",
         "type": "array",
       },
-      "getAllCars_200_response": Object {
-        "items": Object {
+      "getAllCars_200_response": {
+        "items": {
           "$resolvedRef": "/components/schemas/car",
           "description": "A car",
-          "properties": Object {
-            "color": Object {
+          "properties": {
+            "color": {
               "description": "The color of the car.",
               "type": "string",
             },
-            "features": Object {
+            "features": {
               "$ref": "#/definitions/query_getUserCar_features",
             },
-            "kind": Object {
+            "kind": {
               "$ref": "#/definitions/query_getUserCar_kind",
             },
-            "model": Object {
+            "model": {
               "description": "The model of the car.",
               "type": "string",
             },
-            "rating": Object {
+            "rating": {
               "$ref": "#/definitions/query_getUserCar_rating",
             },
-            "tags": Object {
+            "tags": {
               "$ref": "#/definitions/Tags",
             },
           },
@@ -2538,15 +2538,15 @@ Object {
         "title": "getAllCars_200_response",
         "type": "array",
       },
-      "getAllTrashCans_200_response": Object {
-        "items": Object {
+      "getAllTrashCans_200_response": {
+        "items": {
           "$resolvedRef": "/components/schemas/trashcan",
-          "properties": Object {
-            "brand": Object {
+          "properties": {
+            "brand": {
               "type": "object",
             },
-            "contents": Object {
-              "items": Object {
+            "contents": {
+              "items": {
                 "type": "object",
               },
               "type": "array",
@@ -2558,35 +2558,35 @@ Object {
         "title": "getAllTrashCans_200_response",
         "type": "array",
       },
-      "getBonuses_204_response": Object {
+      "getBonuses_204_response": {
         "description": "Used to test empty responses",
         "title": "getBonuses_204_response",
         "type": "null",
       },
-      "getCookie_200_response": Object {
+      "getCookie_200_response": {
         "description": "Used to test generation of object types with matching schema.",
         "title": "getCookie_200_response",
         "type": "string",
       },
-      "getCopier_200_response": Object {
-        "properties": Object {
-          "body": Object {
+      "getCopier_200_response": {
+        "properties": {
+          "body": {
             "type": "string",
           },
         },
         "title": "getCopier_200_response",
         "type": "object",
       },
-      "getPapers_2XX_response": Object {
-        "items": Object {
+      "getPapers_2XX_response": {
+        "items": {
           "$resolvedRef": "/components/schemas/paper",
           "description": "A research paper",
-          "properties": Object {
-            "name": Object {
+          "properties": {
+            "name": {
               "description": "The name of the paper",
               "type": "string",
             },
-            "published": Object {
+            "published": {
               "description": "Whether the paper is published",
               "type": "boolean",
             },
@@ -2597,13 +2597,13 @@ Object {
         "title": "getPapers_2XX_response",
         "type": "array",
       },
-      "getProductReviews_200_response": Object {
-        "items": Object {
-          "properties": Object {
-            "text": Object {
+      "getProductReviews_200_response": {
+        "items": {
+          "properties": {
+            "text": {
               "type": "string",
             },
-            "timestamp": Object {
+            "timestamp": {
               "format": "int64",
               "type": "integer",
             },
@@ -2614,63 +2614,63 @@ Object {
         "title": "getProductReviews_200_response",
         "type": "array",
       },
-      "getScanner_200_response": Object {
-        "properties": Object {
-          "body": Object {
+      "getScanner_200_response": {
+        "properties": {
+          "body": {
             "type": "string",
           },
         },
         "title": "getScanner_200_response",
         "type": "object",
       },
-      "getSecure_200_response": Object {
+      "getSecure_200_response": {
         "description": "A secure message.",
         "title": "getSecure_200_response",
         "type": "string",
       },
-      "getSnack_200_response": Object {
+      "getSnack_200_response": {
         "description": "What snack is offered.",
         "title": "getSnack_200_response",
         "type": "string",
       },
-      "getUserFriends_200_response": Object {
-        "items": Object {
+      "getUserFriends_200_response": {
+        "items": {
           "$resolvedRef": "/components/schemas/user",
           "description": "A user represents a natural person",
-          "properties": Object {
-            "address": Object {
+          "properties": {
+            "address": {
               "$ref": "#/definitions/address",
             },
-            "address2": Object {
+            "address2": {
               "$ref": "#/definitions/address",
             },
-            "employerId": Object {
+            "employerId": {
               "description": "The identifier of the company a user works for",
               "type": "string",
             },
-            "hobbies": Object {
+            "hobbies": {
               "description": "The hobbies of this user",
-              "items": Object {
+              "items": {
                 "type": "string",
               },
               "type": "array",
             },
-            "name": Object {
+            "name": {
               "description": "The legal name of a user",
               "type": "string",
             },
-            "nomenclature": Object {
+            "nomenclature": {
               "$ref": "#/definitions/query_getUsers_items_nomenclature",
             },
-            "status": Object {
+            "status": {
               "$ref": "#/definitions/query_getUsers_items_status",
             },
-            "username": Object {
+            "username": {
               "description": "The identifier of a user",
               "type": "string",
             },
           },
-          "required": Array [
+          "required": [
             "name",
             "address",
             "employerId",
@@ -2682,44 +2682,44 @@ Object {
         "title": "getUserFriends_200_response",
         "type": "array",
       },
-      "getUsers_202_response": Object {
-        "items": Object {
+      "getUsers_202_response": {
+        "items": {
           "$resolvedRef": "/components/schemas/user",
           "description": "A user represents a natural person",
-          "properties": Object {
-            "address": Object {
+          "properties": {
+            "address": {
               "$ref": "#/definitions/address",
             },
-            "address2": Object {
+            "address2": {
               "$ref": "#/definitions/address",
             },
-            "employerId": Object {
+            "employerId": {
               "description": "The identifier of the company a user works for",
               "type": "string",
             },
-            "hobbies": Object {
+            "hobbies": {
               "description": "The hobbies of this user",
-              "items": Object {
+              "items": {
                 "type": "string",
               },
               "type": "array",
             },
-            "name": Object {
+            "name": {
               "description": "The legal name of a user",
               "type": "string",
             },
-            "nomenclature": Object {
+            "nomenclature": {
               "$ref": "#/definitions/query_getUsers_items_nomenclature",
             },
-            "status": Object {
+            "status": {
               "$ref": "#/definitions/query_getUsers_items_status",
             },
-            "username": Object {
+            "username": {
               "description": "The identifier of a user",
               "type": "string",
             },
           },
-          "required": Array [
+          "required": [
             "name",
             "address",
             "employerId",
@@ -2731,25 +2731,25 @@ Object {
         "title": "getUsers_202_response",
         "type": "array",
       },
-      "get_Status_200_response": Object {
+      "get_Status_200_response": {
         "description": "What the status is.",
         "title": "get_Status_200_response",
         "type": "string",
       },
-      "mutationInput_postOfficeTrashCan": Object {
-        "properties": Object {
-          "basePath": Object {
+      "mutationInput_postOfficeTrashCan": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "input": Object {
+          "input": {
             "$ref": "#/definitions/mutationInput_postOfficeTrashCan_input",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
-          "username": Object {
+          "username": {
             "description": "Identifier of a user.",
             "name": "username",
             "nullable": false,
@@ -2759,20 +2759,20 @@ Object {
         "title": "mutationInput_postOfficeTrashCan",
         "type": "object",
       },
-      "mutationInput_postOfficeTrashCan_input": Object {
+      "mutationInput_postOfficeTrashCan_input": {
         "title": "mutationInput_postOfficeTrashCan_input",
         "type": "object",
       },
-      "mutationInput_postPaper": Object {
-        "properties": Object {
-          "basePath": Object {
+      "mutationInput_postPaper": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "input": Object {
+          "input": {
             "type": "string",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
@@ -2780,26 +2780,26 @@ Object {
         "title": "mutationInput_postPaper",
         "type": "object",
       },
-      "mutationInput_postScanner": Object {
-        "properties": Object {
-          "basePath": Object {
+      "mutationInput_postScanner": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "input": Object {
+          "input": {
             "type": "string",
           },
-          "path": Object {
+          "path": {
             "description": undefined,
             "name": "path",
             "nullable": false,
             "type": "string",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
-          "query": Object {
+          "query": {
             "description": undefined,
             "name": "query",
             "type": "string",
@@ -2808,16 +2808,16 @@ Object {
         "title": "mutationInput_postScanner",
         "type": "object",
       },
-      "mutationInput_postUser": Object {
-        "properties": Object {
-          "basePath": Object {
+      "mutationInput_postUser": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "input": Object {
+          "input": {
             "$ref": "#/definitions/user",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
@@ -2825,16 +2825,16 @@ Object {
         "title": "mutationInput_postUser",
         "type": "object",
       },
-      "mutationInput_post_product_with_id": Object {
-        "properties": Object {
-          "basePath": Object {
+      "mutationInput_post_product_with_id": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "input": Object {
+          "input": {
             "$ref": "#/definitions/product-with-id",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
@@ -2842,16 +2842,16 @@ Object {
         "title": "mutationInput_post_product_with_id",
         "type": "object",
       },
-      "mutationInput_post_project_with_id": Object {
-        "properties": Object {
-          "basePath": Object {
+      "mutationInput_post_project_with_id": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "input": Object {
+          "input": {
             "$ref": "#/definitions/project-with-id",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
@@ -2859,22 +2859,22 @@ Object {
         "title": "mutationInput_post_project_with_id",
         "type": "object",
       },
-      "mutationInput_post_status": Object {
-        "properties": Object {
-          "basePath": Object {
+      "mutationInput_post_status": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "globalquery": Object {
+          "globalquery": {
             "description": undefined,
             "name": "globalquery",
             "nullable": false,
             "type": "string",
           },
-          "input": Object {
+          "input": {
             "$ref": "#/definitions/post_status_request",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
@@ -2882,30 +2882,30 @@ Object {
         "title": "mutationInput_post_status",
         "type": "object",
       },
-      "mystery_200_response": Object {
-        "oneOf": Array [
-          Object {
+      "mystery_200_response": {
+        "oneOf": [
+          {
             "$ref": "#/definitions/query_mystery_oneOf_0",
           },
-          Object {
+          {
             "$ref": "#/definitions/query_mystery_oneOf_1",
           },
         ],
         "title": "mystery_200_response",
       },
-      "office": Object {
+      "office": {
         "$resolvedRef": "/components/schemas/office",
         "description": "An office",
-        "properties": Object {
-          "employeeId": Object {
+        "properties": {
+          "employeeId": {
             "description": "The owner ID of the office",
             "type": "string",
           },
-          "employerId": Object {
+          "employerId": {
             "description": "The identifier of the company a user works for",
             "type": "string",
           },
-          "room number": Object {
+          "room number": {
             "description": "The room number of the office",
             "type": "integer",
           },
@@ -2913,15 +2913,15 @@ Object {
         "title": "office",
         "type": "object",
       },
-      "paper": Object {
+      "paper": {
         "$resolvedRef": "/components/schemas/paper",
         "description": "A research paper",
-        "properties": Object {
-          "name": Object {
+        "properties": {
+          "name": {
             "description": "The name of the paper",
             "type": "string",
           },
-          "published": Object {
+          "published": {
             "description": "Whether the paper is published",
             "type": "boolean",
           },
@@ -2929,57 +2929,57 @@ Object {
         "title": "paper",
         "type": "object",
       },
-      "patent-with-id": Object {
+      "patent-with-id": {
         "$resolvedRef": "/components/schemas/patent-with-id",
         "description": "A patent",
-        "properties": Object {
-          "inventor-id": Object {
+        "properties": {
+          "inventor-id": {
             "description": "The id of the inventor",
             "type": "string",
           },
-          "patent-id": Object {
+          "patent-id": {
             "description": "The id of the patent",
             "type": "string",
           },
         },
-        "required": Array [
+        "required": [
           "patent-name",
           "patent-id",
         ],
         "title": "patent-with-id",
         "type": "object",
       },
-      "postScanner_200_response": Object {
-        "properties": Object {
-          "body": Object {
+      "postScanner_200_response": {
+        "properties": {
+          "body": {
             "type": "string",
           },
         },
         "title": "postScanner_200_response",
         "type": "object",
       },
-      "post_status_request": Object {
-        "properties": Object {
-          "hello": Object {
+      "post_status_request": {
+        "properties": {
+          "hello": {
             "type": "string",
           },
         },
         "title": "post_status_request",
         "type": "object",
       },
-      "product-with-id": Object {
+      "product-with-id": {
         "$resolvedRef": "/components/schemas/product-with-id",
         "description": "A product",
-        "properties": Object {
-          "product-id": Object {
+        "properties": {
+          "product-id": {
             "description": "The id of the product",
             "type": "string",
           },
-          "product-name": Object {
+          "product-name": {
             "description": "The name of the product",
             "type": "string",
           },
-          "product-tag": Object {
+          "product-tag": {
             "description": "A tag associated with the product",
             "type": "string",
           },
@@ -2987,23 +2987,23 @@ Object {
         "title": "product-with-id",
         "type": "object",
       },
-      "project-with-id": Object {
+      "project-with-id": {
         "$resolvedRef": "/components/schemas/project-with-id",
         "description": "A project",
-        "properties": Object {
-          "active": Object {
+        "properties": {
+          "active": {
             "description": "Whether the project is active",
             "type": "boolean",
           },
-          "lead-id": Object {
+          "lead-id": {
             "description": "The id of the lead",
             "type": "string",
           },
-          "patentId": Object {
+          "patentId": {
             "description": "The patent associated with a project if applicable",
             "type": "string",
           },
-          "project-id": Object {
+          "project-id": {
             "description": "The id of the project",
             "type": "integer",
           },
@@ -3011,19 +3011,19 @@ Object {
         "title": "project-with-id",
         "type": "object",
       },
-      "queryInput_getAllAssets": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_getAllAssets": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "companyId": Object {
+          "companyId": {
             "description": undefined,
             "name": "companyId",
             "nullable": false,
             "type": "string",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
@@ -3031,13 +3031,13 @@ Object {
         "title": "queryInput_getAllAssets",
         "type": "object",
       },
-      "queryInput_getAllCars": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_getAllCars": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
@@ -3045,13 +3045,13 @@ Object {
         "title": "queryInput_getAllCars",
         "type": "object",
       },
-      "queryInput_getAllTrashCans": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_getAllTrashCans": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
@@ -3059,13 +3059,13 @@ Object {
         "title": "queryInput_getAllTrashCans",
         "type": "object",
       },
-      "queryInput_getBonuses": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_getBonuses": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
@@ -3073,19 +3073,19 @@ Object {
         "title": "queryInput_getBonuses",
         "type": "object",
       },
-      "queryInput_getCompanyById": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_getCompanyById": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "id": Object {
+          "id": {
             "description": undefined,
             "name": "id",
             "nullable": false,
             "type": "string",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
@@ -3093,19 +3093,19 @@ Object {
         "title": "queryInput_getCompanyById",
         "type": "object",
       },
-      "queryInput_getCookie": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_getCookie": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "cookie_size": Object {
+          "cookie_size": {
             "$ref": "#/definitions/queryInput_getCookie_cookie_size",
           },
-          "cookie_type": Object {
+          "cookie_type": {
             "$ref": "#/definitions/queryInput_getCookie_cookie_type",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
@@ -3113,9 +3113,9 @@ Object {
         "title": "queryInput_getCookie",
         "type": "object",
       },
-      "queryInput_getCookie_cookie_size": Object {
+      "queryInput_getCookie_cookie_size": {
         "description": undefined,
-        "enum": Array [
+        "enum": [
           "bite-sized",
           "regular",
           "mega-sized",
@@ -3125,9 +3125,9 @@ Object {
         "title": "queryInput_getCookie_cookie_size",
         "type": "string",
       },
-      "queryInput_getCookie_cookie_type": Object {
+      "queryInput_getCookie_cookie_type": {
         "description": undefined,
-        "enum": Array [
+        "enum": [
           "chocolate chip",
           "oatmeal raisin",
           "sugar",
@@ -3137,17 +3137,17 @@ Object {
         "title": "queryInput_getCookie_cookie_type",
         "type": "string",
       },
-      "queryInput_getCopier": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_getCopier": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
-          "query": Object {
+          "query": {
             "description": undefined,
             "name": "query",
             "type": "string",
@@ -3156,23 +3156,23 @@ Object {
         "title": "queryInput_getCopier",
         "type": "object",
       },
-      "queryInput_getNearestCoffeeMachine": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_getNearestCoffeeMachine": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "lat": Object {
+          "lat": {
             "description": undefined,
             "name": "lat",
             "type": "number",
           },
-          "long": Object {
+          "long": {
             "description": undefined,
             "name": "long",
             "type": "number",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
@@ -3180,13 +3180,13 @@ Object {
         "title": "queryInput_getNearestCoffeeMachine",
         "type": "object",
       },
-      "queryInput_getNumberOfCleanDesks": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_getNumberOfCleanDesks": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
@@ -3194,13 +3194,13 @@ Object {
         "title": "queryInput_getNumberOfCleanDesks",
         "type": "object",
       },
-      "queryInput_getNumberOfDirtyDesks": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_getNumberOfDirtyDesks": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
@@ -3208,19 +3208,19 @@ Object {
         "title": "queryInput_getNumberOfDirtyDesks",
         "type": "object",
       },
-      "queryInput_getOffice": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_getOffice": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "id": Object {
+          "id": {
             "description": "Office ID",
             "name": "id",
             "nullable": false,
             "type": "integer",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
@@ -3228,17 +3228,17 @@ Object {
         "title": "queryInput_getOffice",
         "type": "object",
       },
-      "queryInput_getOfficeTrashCan": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_getOfficeTrashCan": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
-          "username": Object {
+          "username": {
             "description": "Identifier of a user.",
             "name": "username",
             "nullable": false,
@@ -3248,13 +3248,13 @@ Object {
         "title": "queryInput_getOfficeTrashCan",
         "type": "object",
       },
-      "queryInput_getPapers": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_getPapers": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
@@ -3262,23 +3262,23 @@ Object {
         "title": "queryInput_getPapers",
         "type": "object",
       },
-      "queryInput_getProductReviews": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_getProductReviews": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "id": Object {
+          "id": {
             "description": undefined,
             "name": "id",
             "nullable": false,
             "type": "string",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
-          "product_tag": Object {
+          "product_tag": {
             "default": "sport",
             "description": undefined,
             "name": "product-tag",
@@ -3289,17 +3289,17 @@ Object {
         "title": "queryInput_getProductReviews",
         "type": "object",
       },
-      "queryInput_getScanner": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_getScanner": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
-          "query": Object {
+          "query": {
             "description": undefined,
             "name": "query",
             "type": "string",
@@ -3308,13 +3308,13 @@ Object {
         "title": "queryInput_getScanner",
         "type": "object",
       },
-      "queryInput_getSecure": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_getSecure": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
@@ -3322,29 +3322,29 @@ Object {
         "title": "queryInput_getSecure",
         "type": "object",
       },
-      "queryInput_getSnack": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_getSnack": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
-          "snack_size": Object {
+          "snack_size": {
             "$ref": "#/definitions/queryInput_getSnack_snack_size",
           },
-          "snack_type": Object {
+          "snack_type": {
             "$ref": "#/definitions/queryInput_getSnack_snack_type",
           },
         },
         "title": "queryInput_getSnack",
         "type": "object",
       },
-      "queryInput_getSnack_snack_size": Object {
+      "queryInput_getSnack_snack_size": {
         "description": undefined,
-        "enum": Array [
+        "enum": [
           "large",
           "small",
         ],
@@ -3353,9 +3353,9 @@ Object {
         "title": "queryInput_getSnack_snack_size",
         "type": "string",
       },
-      "queryInput_getSnack_snack_type": Object {
+      "queryInput_getSnack_snack_type": {
         "description": undefined,
-        "enum": Array [
+        "enum": [
           "chips",
           "soda",
         ],
@@ -3364,17 +3364,17 @@ Object {
         "title": "queryInput_getSnack_snack_type",
         "type": "string",
       },
-      "queryInput_getUserByUsername": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_getUserByUsername": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
-          "username": Object {
+          "username": {
             "description": "Identifier of a user.",
             "name": "username",
             "nullable": false,
@@ -3384,17 +3384,17 @@ Object {
         "title": "queryInput_getUserByUsername",
         "type": "object",
       },
-      "queryInput_getUserCar": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_getUserCar": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
-          "username": Object {
+          "username": {
             "description": "Identifier of a user.",
             "name": "username",
             "nullable": false,
@@ -3404,17 +3404,17 @@ Object {
         "title": "queryInput_getUserCar",
         "type": "object",
       },
-      "queryInput_getUserFriends": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_getUserFriends": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
-          "username": Object {
+          "username": {
             "description": "Identifier of a user.",
             "name": "username",
             "nullable": false,
@@ -3424,19 +3424,19 @@ Object {
         "title": "queryInput_getUserFriends",
         "type": "object",
       },
-      "queryInput_getUsers": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_getUsers": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "limit": Object {
+          "limit": {
             "description": "Limit of the number of users to return.",
             "name": "limit",
             "nullable": false,
             "type": "integer",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
@@ -3444,25 +3444,25 @@ Object {
         "title": "queryInput_getUsers",
         "type": "object",
       },
-      "queryInput_get_Status": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_get_Status": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "globalquery": Object {
+          "globalquery": {
             "description": undefined,
             "name": "globalquery",
             "nullable": false,
             "type": "string",
           },
-          "limit": Object {
+          "limit": {
             "description": undefined,
             "name": "limit",
             "nullable": false,
             "type": "integer",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
@@ -3470,19 +3470,19 @@ Object {
         "title": "queryInput_get_Status",
         "type": "object",
       },
-      "queryInput_get_patent_with_id": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_get_patent_with_id": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "patent_id": Object {
+          "patent_id": {
             "description": undefined,
             "name": "patent-id",
             "nullable": false,
             "type": "string",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
@@ -3490,23 +3490,23 @@ Object {
         "title": "queryInput_get_patent_with_id",
         "type": "object",
       },
-      "queryInput_get_product_with_id": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_get_product_with_id": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
-          "product_id": Object {
+          "product_id": {
             "description": undefined,
             "name": "product-id",
             "nullable": false,
             "type": "string",
           },
-          "product_tag": Object {
+          "product_tag": {
             "description": undefined,
             "name": "product-tag",
             "nullable": false,
@@ -3516,17 +3516,17 @@ Object {
         "title": "queryInput_get_product_with_id",
         "type": "object",
       },
-      "queryInput_get_project_with_id": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_get_project_with_id": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
-          "project_id": Object {
+          "project_id": {
             "description": undefined,
             "name": "project-id",
             "nullable": false,
@@ -3536,13 +3536,13 @@ Object {
         "title": "queryInput_get_project_with_id",
         "type": "object",
       },
-      "queryInput_mystery": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_mystery": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
@@ -3550,13 +3550,13 @@ Object {
         "title": "queryInput_mystery",
         "type": "object",
       },
-      "queryInput_random": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_random": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
@@ -3564,16 +3564,16 @@ Object {
         "title": "queryInput_random",
         "type": "object",
       },
-      "queryInput_returnAllOffices": Object {
-        "properties": Object {
-          "basePath": Object {
+      "queryInput_returnAllOffices": {
+        "properties": {
+          "basePath": {
             "default": "api",
             "type": "string",
           },
-          "parameters": Object {
+          "parameters": {
             "$ref": "#/definitions/queryInput_returnAllOffices_parameters",
           },
-          "port": Object {
+          "port": {
             "default": "3001",
             "type": "string",
           },
@@ -3581,42 +3581,42 @@ Object {
         "title": "queryInput_returnAllOffices",
         "type": "object",
       },
-      "queryInput_returnAllOffices_parameters": Object {
+      "queryInput_returnAllOffices_parameters": {
         "description": undefined,
         "name": "parameters",
         "nullable": false,
-        "properties": Object {
-          "limit": Object {
+        "properties": {
+          "limit": {
             "type": "integer",
           },
-          "offset": Object {
+          "offset": {
             "type": "integer",
           },
         },
         "title": "queryInput_returnAllOffices_parameters",
         "type": "object",
       },
-      "query_getAllAssets_items": Object {
-        "oneOf": Array [
-          Object {
+      "query_getAllAssets_items": {
+        "oneOf": [
+          {
             "$ref": "#/definitions/car",
           },
-          Object {
+          {
             "$ref": "#/definitions/user",
           },
-          Object {
+          {
             "$ref": "#/definitions/trashcan",
           },
         ],
         "title": "query_getAllAssets_items",
         "type": "object",
       },
-      "query_getProductReviews_items": Object {
-        "properties": Object {
-          "text": Object {
+      "query_getProductReviews_items": {
+        "properties": {
+          "text": {
             "type": "string",
           },
-          "timestamp": Object {
+          "timestamp": {
             "format": "int64",
             "type": "integer",
           },
@@ -3624,13 +3624,13 @@ Object {
         "title": "query_getProductReviews_items",
         "type": "object",
       },
-      "query_getUserCar_features": Object {
+      "query_getUserCar_features": {
         "additionalProperties": true,
         "title": "query_getUserCar_features",
         "type": "object",
       },
-      "query_getUserCar_kind": Object {
-        "enum": Array [
+      "query_getUserCar_kind": {
+        "enum": [
           "SEDAN",
           "SUV",
           "MINIVAN",
@@ -3640,9 +3640,9 @@ Object {
         "title": "query_getUserCar_kind",
         "type": "string",
       },
-      "query_getUserCar_rating": Object {
+      "query_getUserCar_rating": {
         "description": "The rating of the car.",
-        "enum": Array [
+        "enum": [
           100,
           101,
           200,
@@ -3650,100 +3650,100 @@ Object {
         "title": "query_getUserCar_rating",
         "type": "number",
       },
-      "query_getUsers_items_nomenclature": Object {
-        "allOf": Array [
-          Object {
+      "query_getUsers_items_nomenclature": {
+        "allOf": [
+          {
             "$ref": "#/definitions/suborderObject",
           },
-          Object {
+          {
             "$ref": "#/definitions/familyObject",
           },
-          Object {
+          {
             "$ref": "#/definitions/query_getUsers_items_nomenclature_allOf_2",
           },
         ],
-        "properties": Object {
-          "species": Object {
+        "properties": {
+          "species": {
             "type": "string",
           },
         },
         "title": "query_getUsers_items_nomenclature",
         "type": "object",
       },
-      "query_getUsers_items_nomenclature_allOf_1_allOf_0": Object {
-        "properties": Object {
-          "family": Object {
+      "query_getUsers_items_nomenclature_allOf_1_allOf_0": {
+        "properties": {
+          "family": {
             "$ref": "#/definitions/familyString",
           },
         },
-        "required": Array [
+        "required": [
           "family",
         ],
         "title": "query_getUsers_items_nomenclature_allOf_1_allOf_0",
         "type": "object",
       },
-      "query_getUsers_items_nomenclature_allOf_1_allOf_1": Object {
-        "properties": Object {
-          "familyCircular": Object {
+      "query_getUsers_items_nomenclature_allOf_1_allOf_1": {
+        "properties": {
+          "familyCircular": {
             "$ref": "#/definitions/familyObject",
           },
         },
         "title": "query_getUsers_items_nomenclature_allOf_1_allOf_1",
         "type": "object",
       },
-      "query_getUsers_items_nomenclature_allOf_2": Object {
-        "properties": Object {
-          "genus": Object {
+      "query_getUsers_items_nomenclature_allOf_2": {
+        "properties": {
+          "genus": {
             "type": "string",
           },
         },
         "title": "query_getUsers_items_nomenclature_allOf_2",
         "type": "object",
       },
-      "query_getUsers_items_status": Object {
-        "enum": Array [
+      "query_getUsers_items_status": {
+        "enum": [
           "staff",
           "contractor",
           "alumni",
         ],
         "title": "query_getUsers_items_status",
       },
-      "query_mystery_oneOf_0": Object {
-        "properties": Object {
-          "common_attribute": Object {
+      "query_mystery_oneOf_0": {
+        "properties": {
+          "common_attribute": {
             "type": "string",
           },
         },
         "title": "query_mystery_oneOf_0",
         "type": "object",
       },
-      "query_mystery_oneOf_1": Object {
-        "properties": Object {
-          "different_attribute": Object {
+      "query_mystery_oneOf_1": {
+        "properties": {
+          "different_attribute": {
             "type": "string",
           },
         },
         "title": "query_mystery_oneOf_1",
         "type": "object",
       },
-      "query_random": Object {
+      "query_random": {
         "title": "query_random",
         "type": "object",
       },
-      "returnAllOffices_200_response": Object {
-        "items": Object {
+      "returnAllOffices_200_response": {
+        "items": {
           "$resolvedRef": "/components/schemas/office",
           "description": "An office",
-          "properties": Object {
-            "employeeId": Object {
+          "properties": {
+            "employeeId": {
               "description": "The owner ID of the office",
               "type": "string",
             },
-            "employerId": Object {
+            "employerId": {
               "description": "The identifier of the company a user works for",
               "type": "string",
             },
-            "room number": Object {
+            "room number": {
               "description": "The room number of the office",
               "type": "integer",
             },
@@ -3754,24 +3754,24 @@ Object {
         "title": "returnAllOffices_200_response",
         "type": "array",
       },
-      "suborderObject": Object {
+      "suborderObject": {
         "$resolvedRef": "/components/schemas/suborderObject",
-        "properties": Object {
-          "suborder": Object {
+        "properties": {
+          "suborder": {
             "type": "string",
           },
         },
         "title": "suborderObject",
         "type": "object",
       },
-      "trashcan": Object {
+      "trashcan": {
         "$resolvedRef": "/components/schemas/trashcan",
-        "properties": Object {
-          "brand": Object {
+        "properties": {
+          "brand": {
             "type": "object",
           },
-          "contents": Object {
-            "items": Object {
+          "contents": {
+            "items": {
               "type": "object",
             },
             "type": "array",
@@ -3780,43 +3780,43 @@ Object {
         "title": "trashcan",
         "type": "object",
       },
-      "user": Object {
+      "user": {
         "$resolvedRef": "/components/schemas/user",
         "description": "A user represents a natural person",
-        "properties": Object {
-          "address": Object {
+        "properties": {
+          "address": {
             "$ref": "#/definitions/address",
           },
-          "address2": Object {
+          "address2": {
             "$ref": "#/definitions/address",
           },
-          "employerId": Object {
+          "employerId": {
             "description": "The identifier of the company a user works for",
             "type": "string",
           },
-          "hobbies": Object {
+          "hobbies": {
             "description": "The hobbies of this user",
-            "items": Object {
+            "items": {
               "type": "string",
             },
             "type": "array",
           },
-          "name": Object {
+          "name": {
             "description": "The legal name of a user",
             "type": "string",
           },
-          "nomenclature": Object {
+          "nomenclature": {
             "$ref": "#/definitions/query_getUsers_items_nomenclature",
           },
-          "status": Object {
+          "status": {
             "$ref": "#/definitions/query_getUsers_items_status",
           },
-          "username": Object {
+          "username": {
             "description": "The identifier of a user",
             "type": "string",
           },
         },
-        "required": Array [
+        "required": [
           "name",
           "address",
           "employerId",
@@ -3839,107 +3839,107 @@ exports[`example_api should generate the schema correctly 1`] = `
 directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
 
 type Query {
-  \\"Return a list of users.\\"
+  "Return a list of users."
   getUsers(
-    \\"Limit of the number of users to return.\\"
+    "Limit of the number of users to return."
     limit: Int!
   ): [user]
-  \\"Returns a user from the system.\\"
+  "Returns a user from the system."
   getUserByUsername(
-    \\"Identifier of a user.\\"
+    "Identifier of a user."
     username: String!
   ): user
-  \\"Returns a car to test nesting of sub operations\\"
+  "Returns a car to test nesting of sub operations"
   getUserCar(
-    \\"Identifier of a user.\\"
+    "Identifier of a user."
     username: String!
   ): car
-  \\"Returns a user's friends to test pagination\\"
+  "Returns a user's friends to test pagination"
   getUserFriends(
-    \\"Identifier of a user.\\"
+    "Identifier of a user."
     username: String!
   ): [user]
-  \\"Returns all company assets\\"
+  "Returns all company assets"
   getAllAssets(companyId: String!): [query_getAllAssets_items]
-  \\"Returns information about all employee cars\\"
+  "Returns information about all employee cars"
   getAllCars: [car]
-  \\"Returns the profile of a company with the given ID.\\"
+  "Returns the profile of a company with the given ID."
   getCompanyById(id: String!): company
-  \\"Used to test cookies.\\"
+  "Used to test cookies."
   getCookie(cookie_type: queryInput_getCookie_cookie_type!, cookie_size: queryInput_getCookie_cookie_size!): String
-  \\"Used to find the nearest coffee machine based on the user's coordinates. Used to test the content field in parameter objects.\\"
+  "Used to find the nearest coffee machine based on the user's coordinates. Used to test the content field in parameter objects."
   getNearestCoffeeMachine(lat: Float, long: Float): coordinates
-  \\"Used to test link parameters with variables\\"
+  "Used to test link parameters with variables"
   getCopier(query: String): getCopier_200_response
-  \\"Used to test generation of object types with matching schema.\\"
+  "Used to test generation of object types with matching schema."
   getNumberOfCleanDesks: String
-  \\"Used to test generation of object types with matching schema.\\"
+  "Used to test generation of object types with matching schema."
   getNumberOfDirtyDesks: String
-  \\"Used to test empty responses\\"
+  "Used to test empty responses"
   getBonuses: Void
-  \\"Used to test query parameters with form style and explode\\"
+  "Used to test query parameters with form style and explode"
   returnAllOffices(parameters: queryInput_returnAllOffices_parameters_Input!): [office]
-  \\"Return an office.\\"
+  "Return an office."
   getOffice(
-    \\"Office ID\\"
+    "Office ID"
     id: Int!
   ): office
-  \\"Return a list of papers. Endpoint to test 2XX status code.\\"
+  "Return a list of papers. Endpoint to test 2XX status code."
   getPapers: [paper]
-  \\"Another endpoint to test unsanitized parameters and data.\\"
+  "Another endpoint to test unsanitized parameters and data."
   get_product_with_id(product_id: String!, product_tag: String!): product_with_id
-  \\"Obtain reviews for a product.\\"
-  getProductReviews(id: String!, product_tag: String! = \\"sport\\"): [query_getProductReviews_items]
-  \\"An endpoint to test authentication.\\"
+  "Obtain reviews for a product."
+  getProductReviews(id: String!, product_tag: String! = "sport"): [query_getProductReviews_items]
+  "An endpoint to test authentication."
   get_patent_with_id(patent_id: String!): patent_with_id
-  \\"Another endpoint to test authentication.\\"
+  "Another endpoint to test authentication."
   get_project_with_id(project_id: Int!): project_with_id
-  \\"Used to test link parameters with variables\\"
+  "Used to test link parameters with variables"
   getScanner(query: String): getScanner_200_response
-  \\"Endpoint to test sending of headers.\\"
+  "Endpoint to test sending of headers."
   getSnack(snack_type: queryInput_getSnack_snack_type!, snack_size: queryInput_getSnack_snack_size!): String
-  \\"Endpoint to test sending of options.\\"
+  "Endpoint to test sending of options."
   get_Status(globalquery: String!, limit: Int!): String
-  \\"Used to test OAuth token being present in header.\\"
+  "Used to test OAuth token being present in header."
   getSecure: String
-  \\"Returns the (contents of a) trashcan from a specific office\\"
+  "Returns the (contents of a) trashcan from a specific office"
   getAllTrashCans: [trashcan]
-  \\"Returns the (contents of a) trashcan from a specific owner\\"
+  "Returns the (contents of a) trashcan from a specific owner"
   getOfficeTrashCan(
-    \\"Identifier of a user.\\"
+    "Identifier of a user."
     username: String!
   ): trashcan
-  \\"It could be anything!\\"
+  "It could be anything!"
   mystery: mystery_200_response
-  \\"Returns an arbitrary JSON object\\"
+  "Returns an arbitrary JSON object"
   random: JSON
 }
 
-\\"A user represents a natural person\\"
+"A user represents a natural person"
 type user {
-  \\"The identifier of a user\\"
+  "The identifier of a user"
   username: String
-  \\"The legal name of a user\\"
+  "The legal name of a user"
   name: String!
   address: address!
   address2: address
-  \\"The identifier of the company a user works for\\"
+  "The identifier of the company a user works for"
   employerId: String!
-  \\"The hobbies of this user\\"
+  "The hobbies of this user"
   hobbies: [String]!
   status: query_getUsers_items_status
   nomenclature: query_getUsers_items_nomenclature
-  \\"Allows to fetch the user's employer company.\\"
+  "Allows to fetch the user's employer company."
   employerCompany: company
-  \\"Allows to fetch the user's friends.\\"
+  "Allows to fetch the user's friends."
   friends: [user]
 }
 
-\\"The legal address of a user\\"
+"The legal address of a user"
 type address {
-  \\"The street a user lives in\\"
+  "The street a user lives in"
   street: String
-  \\"The city a user lives in\\"
+  "The city a user lives in"
   city: String
 }
 
@@ -3962,40 +3962,40 @@ type familyObject {
   familyCircular: familyObject
 }
 
-\\"A company is the employer of many users\\"
+"A company is the employer of many users"
 type company {
-  \\"The identifier of a company\\"
+  "The identifier of a company"
   id: UUID
-  \\"The legal name of a company\\"
+  "The legal name of a company"
   name: String
-  \\"The legal form of a company\\"
+  "The legal form of a company"
   legalForm: String
-  \\"The identifier of the user who is CEO of the company\\"
+  "The identifier of the user who is CEO of the company"
   ceoUsername: String
-  \\"The offices of a company\\"
+  "The offices of a company"
   offices: [address]
-  \\"Allows to fetch the company's CEO user.\\"
+  "Allows to fetch the company's CEO user."
   ceoUser: user
 }
 
-\\"A field whose value is a generic Universally Unique Identifier: https://en.wikipedia.org/wiki/Universally_unique_identifier.\\"
+"A field whose value is a generic Universally Unique Identifier: https://en.wikipedia.org/wiki/Universally_unique_identifier."
 scalar UUID
 
-\\"A car\\"
+"A car"
 type car {
-  \\"The model of the car.\\"
+  "The model of the car."
   model: String
-  \\"The color of the car.\\"
+  "The color of the car."
   color: String
   features: JSON
-  \\"Arbitrary (string) tags describing an entity.\\"
+  "Arbitrary (string) tags describing an entity."
   tags: JSON
   kind: query_getUserCar_kind
   rating: query_getUserCar_rating
 }
 
-\\"The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).\\"
-scalar JSON @specifiedBy(url: \\"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf\\")
+"The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf)."
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 enum query_getUserCar_kind {
   SEDAN
@@ -4005,7 +4005,7 @@ enum query_getUserCar_kind {
   RACE_CAR
 }
 
-\\"The rating of the car.\\"
+"The rating of the car."
 enum query_getUserCar_rating {
   _100
   _101
@@ -4038,30 +4038,30 @@ type coordinates {
 
 type getCopier_200_response {
   body: String
-  \\"Used to test link parameters with variables\\"
+  "Used to test link parameters with variables"
   basicLink: getCopier_200_response
-  \\"Used to test link parameters with variables\\"
+  "Used to test link parameters with variables"
   constantLink: getCopier_200_response
-  \\"Used to test link parameters with variables\\"
+  "Used to test link parameters with variables"
   variableLink: getCopier_200_response
-  \\"Used to test link parameters with variables\\"
+  "Used to test link parameters with variables"
   everythingLink: getCopier_200_response
 }
 
-\\"Represents empty values\\"
+"Represents empty values"
 scalar Void
 
-\\"An office\\"
+"An office"
 type office {
-  \\"The owner ID of the office\\"
+  "The owner ID of the office"
   employeeId: String
-  \\"The room number of the office\\"
+  "The room number of the office"
   room_number: Int
-  \\"The identifier of the company a user works for\\"
+  "The identifier of the company a user works for"
   employerId: String
-  \\"Allows to fetch the user who invented a product.\\"
+  "Allows to fetch the user who invented a product."
   owner: user
-  \\"Allows to fetch the user's employer company.\\"
+  "Allows to fetch the user's employer company."
   company: company
 }
 
@@ -4070,25 +4070,25 @@ input queryInput_returnAllOffices_parameters_Input {
   offset: Int
 }
 
-\\"A research paper\\"
+"A research paper"
 type paper {
-  \\"The name of the paper\\"
+  "The name of the paper"
   name: String
-  \\"Whether the paper is published\\"
+  "Whether the paper is published"
   published: Boolean
 }
 
-\\"A product\\"
+"A product"
 type product_with_id {
-  \\"The name of the product\\"
+  "The name of the product"
   product_name: String
-  \\"The id of the product\\"
+  "The id of the product"
   product_id: String
-  \\"A tag associated with the product\\"
+  "A tag associated with the product"
   product_tag: String
-  \\"Obtain reviews for a product.\\"
+  "Obtain reviews for a product."
   reviews: [query_getProductReviews_items]
-  \\"Obtain reviews for a product.\\"
+  "Obtain reviews for a product."
   reviewsWithOperationRef: [query_getProductReviews_items]
 }
 
@@ -4097,46 +4097,46 @@ type query_getProductReviews_items {
   timestamp: BigInt
 }
 
-\\"The \`BigInt\` scalar type represents non-fractional signed whole numeric values.\\"
+"The \`BigInt\` scalar type represents non-fractional signed whole numeric values."
 scalar BigInt
 
-\\"A patent\\"
+"A patent"
 type patent_with_id {
-  \\"The id of the patent\\"
+  "The id of the patent"
   patent_id: String!
-  \\"The id of the inventor\\"
+  "The id of the inventor"
   inventor_id: String
-  \\"Allows to fetch the user who invented a product.\\"
+  "Allows to fetch the user who invented a product."
   inventor: user
 }
 
-\\"A project\\"
+"A project"
 type project_with_id {
-  \\"The id of the project\\"
+  "The id of the project"
   project_id: Int
-  \\"The id of the lead\\"
+  "The id of the lead"
   lead_id: String
-  \\"Whether the project is active\\"
+  "Whether the project is active"
   active: Boolean
-  \\"The patent associated with a project if applicable\\"
+  "The patent associated with a project if applicable"
   patentId: String
-  \\"Allows to fetch the user leading a project.\\"
+  "Allows to fetch the user leading a project."
   ProjectLead: user
-  \\"Allows to fetch the user leading a project.\\"
+  "Allows to fetch the user leading a project."
   projectLead: user
-  \\"Allows to fetch a patent.\\"
+  "Allows to fetch a patent."
   patent: patent_with_id
 }
 
 type getScanner_200_response {
   body: String
-  \\"Used to test link parameters with variables\\"
+  "Used to test link parameters with variables"
   basicLink: getCopier_200_response
-  \\"Used to test link parameters with variables\\"
+  "Used to test link parameters with variables"
   constantLink: getCopier_200_response
-  \\"Used to test link parameters with variables\\"
+  "Used to test link parameters with variables"
   variableLink: getCopier_200_response
-  \\"Used to test link parameters with variables\\"
+  "Used to test link parameters with variables"
   everythingLink: getCopier_200_response
 }
 
@@ -4161,47 +4161,47 @@ type query_mystery_oneOf_1 {
 }
 
 type Mutation {
-  \\"Create a new user in the system.\\"
+  "Create a new user in the system."
   postUser(input: user_Input): user
-  \\"Create a new paper in the system. Endpoint to test non-application/json request and response bodies.\\"
+  "Create a new paper in the system. Endpoint to test non-application/json request and response bodies."
   postPaper(input: String): String
-  \\"Endpoint to test unsanitized parameters and data.\\"
+  "Endpoint to test unsanitized parameters and data."
   post_product_with_id(input: product_with_id_Input): product_with_id
-  \\"An endpoint to test authenticated POST requests.\\"
+  "An endpoint to test authenticated POST requests."
   post_project_with_id(input: project_with_id_Input): project_with_id
-  \\"Used to test link parameters with variables\\"
+  "Used to test link parameters with variables"
   postScanner(path: String!, query: String, input: String): postScanner_200_response
-  \\"Endpoint to test placeholder objects to wrap response objects.\\"
+  "Endpoint to test placeholder objects to wrap response objects."
   post_status(globalquery: String!, input: post_status_request_Input): String
-  \\"Add new contents to the trashcan of a specific owner\\"
+  "Add new contents to the trashcan of a specific owner"
   postOfficeTrashCan(
-    \\"Identifier of a user.\\"
+    "Identifier of a user."
     username: String!
     input: JSON
   ): trashcan
 }
 
-\\"A user represents a natural person\\"
+"A user represents a natural person"
 input user_Input {
-  \\"The identifier of a user\\"
+  "The identifier of a user"
   username: String
-  \\"The legal name of a user\\"
+  "The legal name of a user"
   name: String!
   address: address_Input!
   address2: address_Input
-  \\"The identifier of the company a user works for\\"
+  "The identifier of the company a user works for"
   employerId: String!
-  \\"The hobbies of this user\\"
+  "The hobbies of this user"
   hobbies: [String]!
   status: query_getUsers_items_status
   nomenclature: query_getUsers_items_nomenclature_Input
 }
 
-\\"The legal address of a user\\"
+"The legal address of a user"
 input address_Input {
-  \\"The street a user lives in\\"
+  "The street a user lives in"
   street: String
-  \\"The city a user lives in\\"
+  "The city a user lives in"
   city: String
 }
 
@@ -4218,39 +4218,39 @@ input familyObject_Input {
   familyCircular: familyObject_Input
 }
 
-\\"A product\\"
+"A product"
 input product_with_id_Input {
-  \\"The name of the product\\"
+  "The name of the product"
   product_name: String
-  \\"The id of the product\\"
+  "The id of the product"
   product_id: String
-  \\"A tag associated with the product\\"
+  "A tag associated with the product"
   product_tag: String
 }
 
-\\"A project\\"
+"A project"
 input project_with_id_Input {
-  \\"The id of the project\\"
+  "The id of the project"
   project_id: Int
-  \\"The id of the lead\\"
+  "The id of the lead"
   lead_id: String
-  \\"Whether the project is active\\"
+  "Whether the project is active"
   active: Boolean
-  \\"The patent associated with a project if applicable\\"
+  "The patent associated with a project if applicable"
   patentId: String
 }
 
 type postScanner_200_response {
   body: String
-  \\"Used to test link parameters with variables\\"
+  "Used to test link parameters with variables"
   basicLink: getCopier_200_response
-  \\"Used to test link parameters with variables\\"
+  "Used to test link parameters with variables"
   constantLink: getCopier_200_response
-  \\"Used to test link parameters with variables\\"
+  "Used to test link parameters with variables"
   variableLink: getCopier_200_response
-  \\"Used to test link parameters with variables\\"
+  "Used to test link parameters with variables"
   everythingLink: getCopier_200_response
-  \\"Used to test link parameters with variables\\"
+  "Used to test link parameters with variables"
   everythingLink2: getCopier_200_response
 }
 
