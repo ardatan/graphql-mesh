@@ -1,5 +1,13 @@
 # json-machete
 
+## 0.14.4
+
+### Patch Changes
+
+- Updated dependencies [[`b9bb80094`](https://github.com/Urigo/graphql-mesh/commit/b9bb8009407d27440267a5e9a7ec5dbfecc9bf8f)]:
+  - @graphql-mesh/types@0.82.2
+  - @graphql-mesh/utils@0.41.3
+
 ## 0.14.3
 
 ### Patch Changes

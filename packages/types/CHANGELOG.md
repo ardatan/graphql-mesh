@@ -1,5 +1,14 @@
 # @graphql-mesh/types
 
+## 0.82.2
+
+### Patch Changes
+
+- [#4440](https://github.com/Urigo/graphql-mesh/pull/4440) [`b9bb80094`](https://github.com/Urigo/graphql-mesh/commit/b9bb8009407d27440267a5e9a7ec5dbfecc9bf8f) Thanks [@ardatan](https://github.com/ardatan)! - Bump graphql-compose to fix incompatibility issues with non Node.js environments
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.8.36
+
 ## 0.82.1
 
 ### Patch Changes
