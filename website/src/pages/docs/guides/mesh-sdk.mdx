@@ -9,21 +9,21 @@ You can use GraphQL Mesh as a completely type-safe SDK in your existing TypeScri
 Mesh's execute function could be used to directly carry out a query:
 
 ```ts
-import { getBuiltMesh } from './.mesh'
+import { execute } from './.mesh'
 
-async function executeQuery(document, variables) {
-  const { execute } = await getBuiltMesh();
+const exampleDocument = /* GraphQL */`
+  query myQuery($someVar: String!) {
+      foo(someArg: $someVar) {
+        bar
+      }
+  }
+`;
 
-  return await execute(/* GraphQL */`
-    query myQuery($someVar: String!) {
-       foo(someArg: $someVar) {
-          bar
-       }
-    }
-  `, {
-     someArg: 'SOME_VALUE'
-  });
-}
+const exampleVariables = {
+  someArg: 'SOME_VALUE'
+};
+
+execute(ducument, variables);
 ```
 
 ## Generating fully type safe SDK
