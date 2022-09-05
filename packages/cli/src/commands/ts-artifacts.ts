@@ -169,8 +169,8 @@ export async function generateTsArtifacts(
     flattenTypes: boolean;
     importedModulesSet: Set<string>;
     baseDir: string;
-    meshConfigImportCodes: string[];
-    meshConfigCodes: string[];
+    meshConfigImportCodes: Set<string>;
+    meshConfigCodes: Set<string>;
     logger: Logger;
     sdkConfig: YamlConfig.SDKConfig;
     fileType: 'ts' | 'json' | 'js';
@@ -248,12 +248,12 @@ export async function generateTsArtifacts(
           resolvers: tsResolversPlugin,
           contextSdk: {
             plugin: async () => {
-              const importCodes = [
+              const importCodes = new Set([
                 ...meshConfigImportCodes,
                 `import { getMesh, ExecuteMeshFn, SubscribeMeshFn, MeshContext as BaseMeshContext, MeshInstance } from '@graphql-mesh/runtime';`,
                 `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
                 `import { path as pathModule } from '@graphql-mesh/cross-helpers';`,
-              ];
+              ]);
               const results = await Promise.all(
                 rawSources.map(async source => {
                   const sourceMap = unifiedSchema.extensions.sourceMap as Map<RawSourceOutput, GraphQLSchema>;
@@ -268,7 +268,7 @@ export async function generateTsArtifacts(
                     const content = item.sdk.codeAst + '\n' + item.context.codeAst;
                     await writeFile(pathModule.join(artifactsDir, `sources/${source.name}/types.ts`), content);
                     if (item.imports) {
-                      importCodes.push(
+                      importCodes.add(
                         `import type { ${item.imports.join(', ')} } from './sources/${source.name}/types';`
                       );
                     }
@@ -318,7 +318,7 @@ const rootStore = new MeshStore('${cliParams.artifactsDir}', new FsStoreStorageA
   validate: false
 });
 
-${meshConfigCodes.join('\n')}
+${[...meshConfigCodes].join('\n')}
 
 let meshInstance$: Promise<MeshInstance<MeshContext>>;
 
@@ -352,7 +352,7 @@ export function ${cliParams.builtMeshSDKFactoryName}<TGlobalContext = any, TOper
               }
 
               return {
-                prepend: [importCodes.join('\n'), '\n\n'],
+                prepend: [[...importCodes].join('\n'), '\n\n'],
                 content: [contextType, meshMethods].join('\n\n'),
               };
             },
