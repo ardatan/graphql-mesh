@@ -1,5 +1,11 @@
 # @graphql-mesh/plugin-newrelic
 
+## 0.2.0
+
+### Minor Changes
+
+- [`8cb6e33c6`](https://github.com/Urigo/graphql-mesh/commit/8cb6e33c6267e007a4c628f9cda81198375ae770) Thanks [@ardatan](https://github.com/ardatan)! - Now `args` and `key` are not sent by default. You should enable `includeResolverArgs` to send them to NewRelic and also `includeRawResult` allows you to send delegation result to NewRelic
+
 ## 0.1.3
 
 ### Patch Changes
