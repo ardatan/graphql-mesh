@@ -293,6 +293,31 @@
                 "children": [],
                 "title": "Deploy Mesh on Cloudflare Workers",
                 "anchor": "deploy-mesh-on-cloudflare-workers"
+              },
+              {
+                "children": [],
+                "title": "Mesh as an Express route",
+                "anchor": "mesh-as-an-express-route"
+              },
+              {
+                "children": [],
+                "title": "Mesh as a Fastify route",
+                "anchor": "mesh-as-a-fastify-route"
+              },
+              {
+                "children": [],
+                "title": "Mesh as a Node.js request handler",
+                "anchor": "mesh-as-a-nodejs-request-handler"
+              },
+              {
+                "children": [],
+                "title": "Mesh as a Koa route",
+                "anchor": "mesh-as-a-koa-route"
+              },
+              {
+                "children": [],
+                "title": "Mesh and Sveltekit",
+                "anchor": "mesh-and-sveltekit"
               }
             ],
             "title": "Deploy Mesh on Vercel with Next.js API Routes",
@@ -308,7 +333,7 @@
         "anchor": "mesh-and-docker"
       }
     ],
-    "content": "9e6a43de0991997af620772f02916d23",
+    "content": "d3fd437f5bf2b2b717ec5eeff8ab0402",
     "url": "https://www.graphql-mesh.com/docs/getting-started/deploy-mesh-gateway",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Getting Started"],
