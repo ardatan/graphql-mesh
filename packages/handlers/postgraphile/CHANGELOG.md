@@ -1,5 +1,19 @@
 # @graphql-mesh/postgraphile
 
+## 0.21.4
+
+### Patch Changes
+
+- [#4443](https://github.com/Urigo/graphql-mesh/pull/4443) [`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@graphql-tools/delegate@9.0.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.5) (from `9.0.4`, in `dependencies`)
+
+- Updated dependencies [[`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53), [`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53), [`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53), [`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53)]:
+  - @graphql-mesh/cross-helpers@0.2.4
+  - @graphql-mesh/store@0.8.37
+  - @graphql-mesh/types@0.82.3
+  - @graphql-mesh/utils@0.41.4
+
 ## 0.21.3
 
 ### Patch Changes
