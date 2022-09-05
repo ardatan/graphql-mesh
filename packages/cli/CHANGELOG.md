@@ -1,5 +1,45 @@
 # @graphql-mesh/cli
 
+## 0.78.0
+
+### Minor Changes
+
+- [#4440](https://github.com/Urigo/graphql-mesh/pull/4440) [`b9bb80094`](https://github.com/Urigo/graphql-mesh/commit/b9bb8009407d27440267a5e9a7ec5dbfecc9bf8f) Thanks [@ardatan](https://github.com/ardatan)! - - Drop express and other Node specific server packages
+
+  - Introduce a new platform agnostic HTTP handler package using itty-router and @whatwg-node/server
+  - Introduce a new function in the artifacts that allows you to create a platform agnostic HTTP handler;
+
+  For example in CF Workers
+
+  ```ts
+  import { createBuiltMeshHTTPHandler } from '../.mesh'
+
+  self.addEventListener('fetch', createBuiltMeshHTTPHandler())
+  ```
+
+### Patch Changes
+
+- [#4440](https://github.com/Urigo/graphql-mesh/pull/4440) [`b9bb80094`](https://github.com/Urigo/graphql-mesh/commit/b9bb8009407d27440267a5e9a7ec5dbfecc9bf8f) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency [`@graphql-mesh/http@0.0.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/http/v/0.0.0) (to `dependencies`)
+  - Added dependency [`@whatwg-node/server@0.1.2` ↗︎](https://www.npmjs.com/package/@whatwg-node/server/v/0.1.2) (to `dependencies`)
+  - Added dependency [`@whatwg-node/fetch@0.3.2` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.3.2) (to `dependencies`)
+  - Added dependency [`graphql-yoga@3.0.0-alpha-20220905163021-e923bb34` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.0-alpha-20220905163021-e923bb34) (to `dependencies`)
+  - Added dependency [`itty-router@2.6.1` ↗︎](https://www.npmjs.com/package/itty-router/v/2.6.1) (to `dependencies`)
+  - Added dependency [`itty-router-extras@0.4.2` ↗︎](https://www.npmjs.com/package/itty-router-extras/v/0.4.2) (to `dependencies`)
+  - Removed dependency [`@graphql-yoga/node@^2.4.0` ↗︎](https://www.npmjs.com/package/@graphql-yoga/node/v/null) (from `dependencies`)
+  - Removed dependency [`cookie-parser@1.4.6` ↗︎](https://www.npmjs.com/package/cookie-parser/v/1.4.6) (from `dependencies`)
+  - Removed dependency [`cors@2.8.5` ↗︎](https://www.npmjs.com/package/cors/v/2.8.5) (from `dependencies`)
+  - Removed dependency [`express@4.18.1` ↗︎](https://www.npmjs.com/package/express/v/4.18.1) (from `dependencies`)
+
+- Updated dependencies [[`b9bb80094`](https://github.com/Urigo/graphql-mesh/commit/b9bb8009407d27440267a5e9a7ec5dbfecc9bf8f), [`b9bb80094`](https://github.com/Urigo/graphql-mesh/commit/b9bb8009407d27440267a5e9a7ec5dbfecc9bf8f)]:
+  - @graphql-mesh/http@0.1.0
+  - @graphql-mesh/types@0.82.2
+  - @graphql-mesh/config@7.1.3
+  - @graphql-mesh/runtime@0.43.3
+  - @graphql-mesh/store@0.8.36
+  - @graphql-mesh/utils@0.41.3
+
 ## 0.77.3
 
 ### Patch Changes
