@@ -224,10 +224,9 @@ export interface GraphQLHandlerHTTPConfiguration {
    * Request Credentials if your environment supports it.
    * [See more](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials)
    *
-   * Some environments like CF Workers don't even want to have this set.
-   * So if you have problems like that. Just pass `disable` here. (Allowed values: omit, include, disable)
+   * @default "same-origin" (Allowed values: omit, include)
    */
-  credentials?: 'omit' | 'include' | 'disable';
+  credentials?: 'omit' | 'include';
   /**
    * Path to a custom W3 Compatible WebSocket Implementation
    */
@@ -1847,7 +1846,7 @@ export interface NewrelicConfig {
    */
   includeExecuteVariables?: boolean;
   /**
-   * default: `false`. When set to `true`, includes the execution result
+   * default: `false`. When set to `true`, includes the execution result of both delegation and execution
    */
   includeRawResult?: boolean;
   /**
@@ -1855,7 +1854,7 @@ export interface NewrelicConfig {
    */
   trackResolvers?: boolean;
   /**
-   * default `false`. When set to `true`, includes all the arguments passed to resolvers with their values
+   * default `false`. When set to `true`, includes all the arguments passed to resolvers and delegation with their values
    */
   includeResolverArgs?: boolean;
   /**

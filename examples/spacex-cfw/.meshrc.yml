@@ -6,8 +6,6 @@ sources:
         # Use some fetch strategy
         timeout: 2000
         retry: 2
-        # The following is needed for Cloudflare Workers
-        credentials: disable
 
 plugins:
   - responseCache:

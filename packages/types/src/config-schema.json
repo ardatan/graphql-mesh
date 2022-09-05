@@ -787,8 +787,8 @@
         },
         "credentials": {
           "type": "string",
-          "enum": ["omit", "include", "disable"],
-          "description": "Request Credentials if your environment supports it.\n[See more](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials)\n\nSome environments like CF Workers don't even want to have this set.\nSo if you have problems like that. Just pass `disable` here. (Allowed values: omit, include, disable)"
+          "enum": ["omit", "include"],
+          "description": "Request Credentials if your environment supports it.\n[See more](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials)\n\n@default \"same-origin\" (Allowed values: omit, include)"
         },
         "webSocketImpl": {
           "type": "string",
@@ -2128,7 +2128,7 @@
         },
         "includeRawResult": {
           "type": "boolean",
-          "description": "default: `false`. When set to `true`, includes the execution result"
+          "description": "default: `false`. When set to `true`, includes the execution result of both delegation and execution"
         },
         "trackResolvers": {
           "type": "boolean",
@@ -2136,7 +2136,7 @@
         },
         "includeResolverArgs": {
           "type": "boolean",
-          "description": "default `false`. When set to `true`, includes all the arguments passed to resolvers with their values"
+          "description": "default `false`. When set to `true`, includes all the arguments passed to resolvers and delegation with their values"
         },
         "rootFieldsNaming": {
           "type": "boolean",

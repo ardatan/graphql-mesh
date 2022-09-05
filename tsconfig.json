@@ -31,6 +31,7 @@
       "@graphql-mesh/types": ["packages/types/src/index.ts"],
       "@graphql-mesh/utils": ["packages/utils/src/index.ts"],
       "@graphql-mesh/store": ["packages/store/src/index.ts"],
+      "@graphql-mesh/http": ["packages/http/src/index.ts"],
       "@graphql-mesh/cache-*": ["packages/cache/*/src/index.ts"],
       "@graphql-mesh/transform-*": ["packages/transforms/*/src/index.ts"],
       "@graphql-mesh/merger-*": ["packages/mergers/*/src/index.ts"],

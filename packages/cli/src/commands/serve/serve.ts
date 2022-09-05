@@ -1,16 +1,11 @@
 /* eslint-disable import/no-nodejs-modules */
 /* eslint-disable dot-notation */
-import express from 'express';
 import cluster from 'cluster';
 import { cpus, platform, release } from 'os';
 import 'json-bigint-patch';
 import { createServer as createHTTPServer, Server } from 'http';
 import ws from 'ws';
-import cors from 'cors';
-import { pathExists } from '@graphql-mesh/utils';
-import cookieParser from 'cookie-parser';
-import { path, fs, process } from '@graphql-mesh/cross-helpers';
-import { graphqlHandler } from './graphql-handler';
+import { fs, process } from '@graphql-mesh/cross-helpers';
 
 import { createServer as createHTTPSServer } from 'https';
 import { MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
@@ -20,6 +15,7 @@ import { useServer } from 'graphql-ws/lib/use/ws';
 import dnscache from 'dnscache';
 import { GraphQLMeshCLIParams } from '../..';
 import type { Logger } from '@graphql-mesh/types';
+import { createMeshHTTPHandler } from '@graphql-mesh/http';
 
 const terminateEvents = ['SIGINT', 'SIGTERM'];
 
@@ -60,13 +56,11 @@ export async function serveMesh(
     release().toLowerCase().includes('microsoft')
       ? '127.0.0.1'
       : '0.0.0.0',
-    cors: corsConfig,
-    staticFiles,
-    playground: playgroundEnabled = process.env.NODE_ENV !== 'production',
     sslCredentials,
     endpoint: graphqlPath = '/graphql',
     browser,
-    trustProxy = 'loopback',
+    // TODO
+    // trustProxy = 'loopback',
   } = rawServeConfig;
 
   const port = portSelectorFn([argsPort, parseInt(configPort?.toString()), parseInt(process.env.PORT)], logger);
@@ -85,10 +79,9 @@ export async function serveMesh(
     logger.info(`${cliParams.serveMessage}: ${serverUrl} in ${forkNum} forks`);
   } else {
     logger.info(`Generating the unified schema...`);
-    let readyFlag = false;
+
     const mesh$: Promise<MeshInstance> = getBuiltMesh()
       .then(mesh => {
-        readyFlag = true;
         dnscache({
           enable: true,
           cache: function CacheCtor({ ttl }: { ttl: number }) {
@@ -115,18 +108,26 @@ export async function serveMesh(
         return mesh;
       })
       .catch(e => handleFatalError(e, logger));
-    const app = express();
-    app.set('trust proxy', trustProxy);
+
     let httpServer: Server;
+
+    const requestHandler = createMeshHTTPHandler({
+      baseDir,
+      argsPort,
+      getBuiltMesh,
+      logger,
+      rawServeConfig,
+      playgroundTitle,
+    });
 
     if (sslCredentials) {
       const [key, cert] = await Promise.all([
         fs.promises.readFile(sslCredentials.key, 'utf-8'),
         fs.promises.readFile(sslCredentials.cert, 'utf-8'),
       ]);
-      httpServer = createHTTPSServer({ key, cert }, app);
+      httpServer = createHTTPSServer({ key, cert }, requestHandler);
     } else {
-      httpServer = createHTTPServer(app);
+      httpServer = createHTTPServer(requestHandler);
     }
 
     registerTerminateHandler(eventName => {
@@ -140,12 +141,6 @@ export async function serveMesh(
         }
       });
     });
-
-    if (corsConfig) {
-      app.use(cors(corsConfig));
-    }
-
-    app.use(cookieParser());
 
     const wsServer = new ws.Server({
       path: graphqlPath,
@@ -216,50 +211,6 @@ export async function serveMesh(
         });
     });
 
-    app.get('/healthcheck', (_req, res) => res.sendStatus(200));
-    app.get('/readiness', (_req, res) => res.sendStatus(readyFlag ? 200 : 500));
-
-    app.use((req, res, next) => {
-      mesh$
-        .then(async ({ pubsub }) => {
-          for (const eventName of pubsub.getEventNames()) {
-            if (eventName === `webhook:${req.method.toLowerCase()}:${req.path}`) {
-              const chunks: Buffer[] = [];
-              for await (const chunk of req) {
-                chunks.push(chunk);
-              }
-              const body = Buffer.concat(chunks).toString('utf-8');
-              logger.debug(`Received webhook request for ${req.path}`, body);
-              pubsub.publish(eventName, req.headers['content-type'] === 'application/json' ? JSON.parse(body) : body);
-              res.status(200).send('OK');
-              return;
-            }
-          }
-          next();
-        })
-        .catch(() => {
-          next();
-        });
-    });
-
-    if (staticFiles) {
-      app.use(express.static(staticFiles));
-      const indexPath = path.join(baseDir, staticFiles, 'index.html');
-      if (await pathExists(indexPath)) {
-        app.get('/', (_req, res) => res.sendFile(indexPath));
-      }
-    }
-
-    app.use(graphqlPath, graphqlHandler(mesh$, playgroundTitle, playgroundEnabled));
-
-    app.get('/', (req, res, next) => {
-      if (staticFiles) {
-        next();
-      } else {
-        res.redirect(graphqlPath);
-      }
-    });
-
     httpServer
       .listen(port, hostname, () => {
         const shouldntOpenBrowser = process.env.NODE_ENV?.toLowerCase() === 'production' || browser === false;
@@ -272,8 +223,6 @@ export async function serveMesh(
     return mesh$.then(mesh => ({
       mesh,
       httpServer,
-      app,
-      readyFlag,
       logger,
     }));
   }

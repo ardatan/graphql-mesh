@@ -152,6 +152,7 @@ export async function graphqlMesh(
               logger.error(`An error occured while writing the schema file: `, e)
             )
           );
+
           // eslint-disable-next-line @typescript-eslint/no-floating-promises
           meshInstance$.then(({ schema, rawSources }) =>
             generateTsArtifacts(
@@ -163,10 +164,13 @@ export async function graphqlMesh(
                 flattenTypes: false,
                 importedModulesSet: new Set(),
                 baseDir,
-                meshConfigImportCodes: new Set([`import { findAndParseConfig } from '@graphql-mesh/cli';`]),
+                meshConfigImportCodes: new Set([
+                  `import { findAndParseConfig } from '@graphql-mesh/cli';`,
+                  `import { createMeshHTTPHandler } from '@graphql-mesh/http';`,
+                ]),
                 meshConfigCodes: new Set([
                   `
-function getMeshOptions() {
+export function getMeshOptions() {
   console.warn('WARNING: These artifacts are built for development mode. Please run "${
     cliParams.commandName
   } build" to build production artifacts');
@@ -177,6 +181,14 @@ function getMeshOptions() {
     additionalPackagePrefixes: ${JSON.stringify(cliParams.additionalPackagePrefixes)},
     initialLoggerPrefix: ${JSON.stringify(cliParams.initialLoggerPrefix)},
   });
+}
+
+export function createBuiltMeshHTTPHandler() {
+  return createMeshHTTPHandler({
+    baseDir,
+    getBuiltMesh,
+    rawServeConfig: ${JSON.stringify(meshConfig.config.serve)},
+  })
 }
               `.trim(),
                 ]),
@@ -387,6 +399,16 @@ function getMeshOptions() {
           await writeFile(pathModule.join(outputDir, 'schema.graphql'), printSchemaWithDirectives(schema));
 
           logger.info(`Generating artifacts`);
+          meshConfig.importCodes.add(`import { createMeshHTTPHandler } from '@graphql-mesh/http';`);
+          meshConfig.codes.add(`
+export function createBuiltMeshHTTPHandler() {
+  return createMeshHTTPHandler({
+    baseDir,
+    getBuiltMesh,
+    rawServeConfig: ${JSON.stringify(meshConfig.config.serve)},
+  })
+}
+`);
           await generateTsArtifacts(
             {
               unifiedSchema: schema,
