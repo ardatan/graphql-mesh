@@ -1,6 +1,6 @@
 {
   "name": "hello-world-esm",
-  "version": "0.0.43",
+  "version": "0.0.44",
   "type": "module",
   "main": "index.js",
   "license": "MIT",
@@ -10,7 +10,7 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.77.2",
+    "@graphql-mesh/cli": "0.77.3",
     "@graphql-mesh/json-schema": "0.35.3",
     "@graphql-mesh/plugin-mock": "0.0.9",
     "graphql": "16.6.0"
