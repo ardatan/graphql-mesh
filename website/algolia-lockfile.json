@@ -740,6 +740,29 @@
     "type": "Documentation"
   },
   {
+    "objectID": "mesh-docs-migration-guides-new-openapi-to-openapi",
+    "headings": ["Dependency Update", "Config Update"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Dependency Update",
+        "anchor": "dependency-update"
+      },
+      {
+        "children": [],
+        "title": "Config Update",
+        "anchor": "config-update"
+      }
+    ],
+    "content": "cc76828a13aee81e78dabb0a2f7b6ead",
+    "url": "https://www.graphql-mesh.com/docs/migration/new-openapi-to-openapi",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Docs", "Migration guides"],
+    "source": "Mesh",
+    "title": "new-openAPI to openAPI handler",
+    "type": "Documentation"
+  },
+  {
     "objectID": "mesh-docs-migration-guides-openapi-0",
     "headings": ["Naming conventions", "Config options", "Security", "Miscellaneous"],
     "toc": [
