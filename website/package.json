@@ -6,7 +6,7 @@
   "scripts": {
     "algolia-sync": "node scripts/algolia-ci.mjs",
     "build-mesh": "cd src/pages/api/covid/json-schema-covid && mesh build",
-    "prebuild": "yarn build-mesh && next-sitemap",
+    "prebuild": "yarn build-mesh",
     "build": "next build",
     "predev": "yarn build-mesh",
     "dev": "next dev",
