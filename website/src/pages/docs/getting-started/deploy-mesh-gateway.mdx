@@ -56,7 +56,7 @@ For this reason, we will add a `prebuild` step:
 }
 ```
 
-Now, let's integrate our Mesh Gateway in a Next.js API Routes using GraphQL Yoga:
+Now, let's integrate our Mesh Gateway in a Next.js API Routes:
 
 ```ts filename="website/src/pages/api/graphql/index.ts"
 import { createBuiltMeshHTTPHandler } from './.mesh'
@@ -96,6 +96,104 @@ import { createBuiltMeshHTTPHandler } from './.mesh'
 
 // Pass Mesh's HTTP handler as an event listener
 self.addEventListener('fetch', createBuiltMeshHTTPHandler())
+```
+
+### Mesh as an Express route
+
+Similarly to regular and Vercel deployment, we will need to add the `mesh build` command in the build step.
+
+```ts filename="index.ts"
+import { createBuiltMeshHTTPHandler } from './.mesh'
+
+const app = express()
+app.use('/my-api', createBuiltMeshHTTPHandler())
+```
+
+### Mesh as a Fastify route
+
+Similarly to regular and Vercel deployment, we will need to add the `mesh build` command in the build step.
+
+```ts filename="index.ts"
+import { createBuiltMeshHTTPHandler } from './.mesh'
+
+const app = fastify()
+
+const meshHttp = createBuiltMeshHTTPHandler()
+
+app.route({
+  url: '/graphql',
+  method: ['GET', 'POST', 'OPTIONS'],
+  async handler(req, reply) {
+    // Second parameter adds Fastify's `req` and `reply` to the GraphQL Context
+    const response = await meshHttp.handleNodeRequest(req, {
+      req,
+      reply,
+    })
+    response.headers.forEach((value, key) => {
+      reply.header(key, value)
+    })
+
+    reply.status(response.status)
+
+    reply.send(response.body)
+
+    return reply
+  },
+})
+```
+
+### Mesh as a Node.js request handler
+
+Similarly to regular and Vercel deployment, we will need to add the `mesh build` command in the build step.
+
+```ts filename="index.ts"
+import { createBuiltMeshHTTPHandler } from './.mesh'
+import { createServer } from 'node:http'
+
+const server = createServer(createBuiltMeshHTTPHandler())
+server.listen(4000)
+```
+
+### Mesh as a Koa route
+
+Similarly to regular and Vercel deployment, we will need to add the `mesh build` command in the build step.
+
+```ts filename="index.ts"
+import { createBuiltMeshHTTPHandler } from './.mesh'
+
+const app = new Koa()
+
+const meshHttp = createBuiltMeshHTTPHandler()
+app.use(async (ctx) => {
+  // Second parameter adds Koa's context into GraphQL Context
+  const response = await meshHttp.handleNodeRequest(ctx.req, ctx)
+
+  // Set status code
+  ctx.status = response.status
+
+  // Set headers
+  response.headers.forEach((value, key) => {
+    ctx.append(key, value)
+  })
+
+  // Converts ReadableStream to a NodeJS Stream
+  ctx.body = response.body
+})
+```
+
+### Mesh and Sveltekit
+
+Similarly to regular and Vercel deployment, we will need to add the `mesh build` command in the build step.
+
+```ts filename="index.ts"
+import { createBuiltMeshHTTPHandler } from './.mesh'
+
+const meshHttp = createBuiltMeshHTTPHandler()
+
+export {
+  meshHttp as get,
+  meshHttp as post,
+}
 ```
 
 ## Mesh and Docker
