@@ -6,11 +6,10 @@ other options will be ignored and the schema exported from the file will be used
 * `operationHeaders` (type: `JSON`) - JSON object representing the Headers to add to the runtime of the API calls only for operation during runtime
 * `useGETForQueries` (type: `Boolean`) - Use HTTP GET for Query operations
 * `method` (type: `String (GET | POST)`) - HTTP method used for GraphQL operations
-* `credentials` (type: `String (omit | include | disable)`) - Request Credentials if your environment supports it.
+* `credentials` (type: `String (omit | include)`) - Request Credentials if your environment supports it.
 [See more](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials)
 
-Some environments like CF Workers don't even want to have this set.
-So if you have problems like that. Just pass `disable` here.
+@default "same-origin"
 * `webSocketImpl` (type: `String`) - Path to a custom W3 Compatible WebSocket Implementation
 * `introspection` (type: `String`) - Path to the introspection
 You can separately give schema introspection

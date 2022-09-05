@@ -40,7 +40,7 @@
     "@graphql-mesh/utils": "0.41.2",
     "@graphql-tools/utils": "8.10.1",
     "to-json-schema": "0.2.5",
-    "graphql-compose": "9.0.8",
+    "graphql-compose": "9.0.9",
     "graphql-scalars": "1.18.0",
     "ajv": "8.11.0",
     "ajv-formats": "2.1.1",

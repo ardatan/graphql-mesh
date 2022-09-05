@@ -36,7 +36,7 @@
     "@graphql-mesh/store": "0.8.35",
     "@graphql-mesh/string-interpolation": "0.3.2",
     "@graphql-mesh/utils": "0.41.2",
-    "graphql-compose": "9.0.8",
+    "graphql-compose": "9.0.9",
     "graphql-fields": "2.0.3",
     "mysql": "2.18.1",
     "mysql-utilities": "1.1.4",

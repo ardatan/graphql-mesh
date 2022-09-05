@@ -1,0 +1,53 @@
+{
+  "name": "@graphql-mesh/http",
+  "version": "0.0.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/http"
+  },
+  "peerDependencies": {
+    "graphql": "*"
+  },
+  "sideEffects": false,
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "typings": "dist/index.d.ts",
+  "typescript": {
+    "definition": "dist/index.d.ts"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./*": {
+      "require": "./dist/*.js",
+      "import": "./dist/*.mjs"
+    }
+  },
+  "dependencies": {
+    "@whatwg-node/server": "0.1.2",
+    "@whatwg-node/fetch": "0.3.2",
+    "@graphql-mesh/cross-helpers": "0.2.3",
+    "@graphql-mesh/runtime": "0.43.2",
+    "@graphql-mesh/utils": "0.41.2",
+    "graphql-yoga": "3.0.0-alpha-20220905163021-e923bb34",
+    "itty-router": "2.6.1",
+    "itty-router-extras": "0.4.2",
+    "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "@types/itty-router-extras": "0.4.0",
+    "@types/mkdirp": "1.0.2",
+    "@types/yargs": "17.0.12",
+    "@types/ws": "8.5.3",
+    "@types/rimraf": "3.0.2",
+    "@types/lodash.get": "4.4.7"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  }
+}

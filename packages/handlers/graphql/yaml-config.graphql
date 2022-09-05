@@ -72,8 +72,7 @@ type GraphQLHandlerHTTPConfiguration @md {
   Request Credentials if your environment supports it.
   [See more](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials)
 
-  Some environments like CF Workers don't even want to have this set.
-  So if you have problems like that. Just pass `disable` here.
+  @default "same-origin"
   """
   credentials: RequestCredentials
   """
@@ -123,5 +122,4 @@ enum GraphQLHandlerHTTPMethod {
 enum RequestCredentials {
   omit
   include
-  disable
 }
