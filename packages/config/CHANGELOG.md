@@ -1,5 +1,11 @@
 # @graphql-mesh/config
 
+## 7.1.2
+
+### Patch Changes
+
+- [#4434](https://github.com/Urigo/graphql-mesh/pull/4434) [`14c2c4830`](https://github.com/Urigo/graphql-mesh/commit/14c2c4830aa1994dadf4ae4a425e97aedb27fb76) Thanks [@ardatan](https://github.com/ardatan)! - Deduplicate imports in the artifacts to prevent `Identifier 'X' has already been declared.` error
+
 ## 7.1.1
 
 ### Patch Changes
