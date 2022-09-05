@@ -87,6 +87,6 @@
   "resolutions": {
     "graphql": "16.6.0",
     "undici": "5.10.0",
-    "uuid": "7.0.3"
+    "uuid": "9.0.0"
   }
 }
