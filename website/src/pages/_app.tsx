@@ -3,14 +3,11 @@ import type { AppProps } from 'next/app';
 import { FooterExtended, Header, ThemeProvider } from '@theguild/components';
 import 'guild-docs/style.css';
 
-export default function App({ Component, pageProps, router }: AppProps): ReactElement {
-  // @ts-expect-error -- getLayout is custom function from nextra
-  const { getLayout = page => page } = Component;
-
+export default function App({ Component, pageProps }: AppProps): ReactElement {
   return (
     <ThemeProvider>
       <Header accentColor="#1cc8ee" themeSwitch searchBarProps={{ version: 'v2' }} />
-      {getLayout(<Component {...pageProps} />)}
+      <Component {...pageProps} />)
       <FooterExtended />
     </ThemeProvider>
   );
