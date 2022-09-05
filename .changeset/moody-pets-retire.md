@@ -3,4 +3,4 @@
 '@graphql-mesh/config': patch
 ---
 
-fix(cli/config): deduplicate imports in the artifacts
+Deduplicate imports in the artifacts to prevent `Identifier 'X' has already been declared.` error
