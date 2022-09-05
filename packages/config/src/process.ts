@@ -56,8 +56,8 @@ export type ProcessedConfig = GetMeshOptions & {
   config: YamlConfig.Config;
   documents: Source[];
   store: MeshStore;
-  importCodes: string[];
-  codes: string[];
+  importCodes: Set<string>;
+  codes: Set<string>;
 };
 
 function getDefaultMeshStore(dir: string, importFn: ImportFn, artifactsDir: string) {
@@ -90,14 +90,14 @@ export async function processConfig(
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
   }
 
-  const importCodes: string[] = [
+  const importCodes = new Set([
     `import type { GetMeshOptions } from '@graphql-mesh/runtime';`,
     `import type { YamlConfig } from '@graphql-mesh/types';`,
-  ];
-  const codes: string[] = [
+  ]);
+  const codes = new Set([
     `export const rawServeConfig: YamlConfig.Config['serve'] = ${JSON.stringify(config.serve)} as any`,
     `export async function getMeshOptions(): Promise<GetMeshOptions> {`,
-  ];
+  ]);
 
   const {
     dir,
@@ -110,7 +110,7 @@ export async function processConfig(
   if (config.require) {
     await Promise.all(config.require.map(mod => importFn(mod)));
     for (const mod of config.require) {
-      importCodes.push(`import '${mod}';`);
+      importCodes.add(`import '${mod}';`);
     }
   }
 
@@ -121,27 +121,27 @@ export async function processConfig(
     importCode: pubsubImportCode,
     code: pubsubCode,
   } = await resolvePubSub(config.pubsub, importFn, dir, additionalPackagePrefixes);
-  importCodes.push(pubsubImportCode);
-  codes.push(pubsubCode);
+  importCodes.add(pubsubImportCode);
+  codes.add(pubsubCode);
 
   const sourcesStore = rootStore.child('sources');
-  codes.push(`const sourcesStore = rootStore.child('sources');`);
+  codes.add(`const sourcesStore = rootStore.child('sources');`);
 
   const {
     logger,
     importCode: loggerImportCode,
     code: loggerCode,
   } = await resolveLogger(config.logger, importFn, dir, additionalPackagePrefixes, options?.initialLoggerPrefix);
-  importCodes.push(loggerImportCode);
-  codes.push(loggerCode);
+  importCodes.add(loggerImportCode);
+  codes.add(loggerCode);
 
   const {
     cache,
     importCode: cacheImportCode,
     code: cacheCode,
   } = await resolveCache(config.cache, importFn, rootStore, dir, pubsub, logger, additionalPackagePrefixes);
-  importCodes.push(cacheImportCode);
-  codes.push(cacheCode);
+  importCodes.add(cacheImportCode);
+  codes.add(cacheCode);
 
   const {
     fetchFn,
@@ -155,12 +155,12 @@ export async function processConfig(
     additionalPackagePrefixes,
   });
 
-  importCodes.push(fetchFnImportCode);
-  codes.push(fetchFnCode);
+  importCodes.add(fetchFnImportCode);
+  codes.add(fetchFnCode);
 
-  codes.push(`const sources = [];`);
-  codes.push(`const transforms = [];`);
-  codes.push(`const additionalEnvelopPlugins = [];`);
+  codes.add(`const sources = [];`);
+  codes.add(`const transforms = [];`);
+  codes.add(`const additionalEnvelopPlugins = [];`);
 
   const [sources, transforms, additionalEnvelopPlugins, additionalTypeDefs, additionalResolvers, documents] =
     await Promise.all([
@@ -170,7 +170,7 @@ export async function processConfig(
           const handlerConfig = source.handler[handlerName];
           const handlerVariableName = camelCase(`${source.name}_Handler`);
           const transformsVariableName = camelCase(`${source.name}_Transforms`);
-          codes.push(`const ${transformsVariableName} = [];`);
+          codes.add(`const ${transformsVariableName} = [];`);
           const [handler, transforms] = await Promise.all([
             await getPackage<MeshHandlerLibrary>({
               name: handlerName,
@@ -181,8 +181,8 @@ export async function processConfig(
             }).then(({ resolved: HandlerCtor, moduleName }) => {
               if (options.generateCode) {
                 const handlerImportName = pascalCase(handlerName + '_Handler');
-                importCodes.push(`import ${handlerImportName} from ${JSON.stringify(moduleName)}`);
-                codes.push(`const ${handlerVariableName} = new ${handlerImportName}({
+                importCodes.add(`import ${handlerImportName} from ${JSON.stringify(moduleName)}`);
+                codes.add(`const ${handlerVariableName} = new ${handlerImportName}({
               name: ${JSON.stringify(source.name)},
               config: ${JSON.stringify(handlerConfig)},
               baseDir,
@@ -218,8 +218,8 @@ export async function processConfig(
 
                 if (options.generateCode) {
                   const transformImportName = pascalCase(transformName + '_Transform');
-                  importCodes.push(`import ${transformImportName} from ${JSON.stringify(moduleName)};`);
-                  codes.push(`${transformsVariableName}[${transformIndex}] = new ${transformImportName}({
+                  importCodes.add(`import ${transformImportName} from ${JSON.stringify(moduleName)};`);
+                  codes.add(`${transformsVariableName}[${transformIndex}] = new ${transformImportName}({
                   apiName: ${JSON.stringify(source.name)},
                   config: ${JSON.stringify(transformConfig)},
                   baseDir,
@@ -242,7 +242,7 @@ export async function processConfig(
           ]);
 
           if (options.generateCode) {
-            codes.push(`sources[${sourceIndex}] = {
+            codes.add(`sources[${sourceIndex}] = {
           name: '${source.name}',
           handler: ${handlerVariableName},
           transforms: ${transformsVariableName}
@@ -270,9 +270,9 @@ export async function processConfig(
 
           if (options.generateCode) {
             const transformImportName = pascalCase(transformName + '_Transform');
-            importCodes.push(`import ${transformImportName} from ${JSON.stringify(moduleName)};`);
+            importCodes.add(`import ${transformImportName} from ${JSON.stringify(moduleName)};`);
 
-            codes.push(`transforms[${transformIndex}] = new (${transformImportName} as any)({
+            codes.add(`transforms[${transformIndex}] = new (${transformImportName} as any)({
             apiName: '',
             config: ${JSON.stringify(transformConfig)},
             baseDir,
@@ -298,8 +298,8 @@ export async function processConfig(
           if (ENVELOP_CORE_PLUGINS_MAP[pluginName] != null) {
             const { importName, moduleName, pluginFactory } = ENVELOP_CORE_PLUGINS_MAP[pluginName];
             if (options.generateCode) {
-              importCodes.push(`import { ${importName} } from ${JSON.stringify(moduleName)};`);
-              codes.push(
+              importCodes.add(`import { ${importName} } from ${JSON.stringify(moduleName)};`);
+              codes.add(
                 `additionalEnvelopPlugins[${pluginIndex}] = await ${importName}(${JSON.stringify(
                   pluginConfig,
                   null,
@@ -322,8 +322,8 @@ export async function processConfig(
             pluginFactory = possiblePluginFactory;
             if (options.generateCode) {
               importName = pascalCase('use_' + pluginName);
-              importCodes.push(`import ${importName} from ${JSON.stringify(moduleName)};`);
-              codes.push(`additionalEnvelopPlugins[${pluginIndex}] = await ${importName}({
+              importCodes.add(`import ${importName} from ${JSON.stringify(moduleName)};`);
+              codes.add(`additionalEnvelopPlugins[${pluginIndex}] = await ${importName}({
           ...(${JSON.stringify(pluginConfig, null, 2)}),
           logger: logger.child(${JSON.stringify(pluginName)}),
           cache,
@@ -337,8 +337,8 @@ export async function processConfig(
               if (key.toString().startsWith('use') && typeof possiblePluginFactory[key] === 'function') {
                 pluginFactory = possiblePluginFactory[key];
                 if (options.generateCode) {
-                  importCodes.push(`import { ${importName} } from ${JSON.stringify(moduleName)};`);
-                  codes.push(
+                  importCodes.add(`import { ${importName} } from ${JSON.stringify(moduleName)};`);
+                  codes.add(
                     `additionalEnvelopPlugins[${pluginIndex}] = await ${importName}(${JSON.stringify(
                       pluginConfig,
                       null,
@@ -361,13 +361,13 @@ export async function processConfig(
       ),
       resolveAdditionalTypeDefs(dir, config.additionalTypeDefs).then(additionalTypeDefs => {
         if (options.generateCode) {
-          codes.push(
+          codes.add(
             `const additionalTypeDefs = [${(additionalTypeDefs || []).map(
               parsedTypeDefs => `parse(${JSON.stringify(print(parsedTypeDefs))}),`
             )}] as any[];`
           );
           if (additionalTypeDefs?.length) {
-            importCodes.push(`import { parse } from 'graphql';`);
+            importCodes.add(`import { parse } from 'graphql';`);
           }
         }
         return additionalTypeDefs;
@@ -380,9 +380,9 @@ export async function processConfig(
 
   if (options.generateCode) {
     if (config.additionalResolvers?.length) {
-      importCodes.push(`import { resolveAdditionalResolversWithoutImport } from '@graphql-mesh/utils';`);
+      importCodes.add(`import { resolveAdditionalResolversWithoutImport } from '@graphql-mesh/utils';`);
 
-      codes.push(`const additionalResolvers = await Promise.all([
+      codes.add(`const additionalResolvers = await Promise.all([
         ${config.additionalResolvers
           .map(additionalResolverDefinition => {
             if (typeof additionalResolverDefinition === 'string') {
@@ -399,7 +399,7 @@ export async function processConfig(
           .join(',\n')}
       ]);`);
     } else {
-      codes.push(`const additionalResolvers = [] as any[]`);
+      codes.add(`const additionalResolvers = [] as any[]`);
     }
   }
 
@@ -433,15 +433,15 @@ export async function processConfig(
       additionalTypeDefs.unshift(parse(resolveToDirectiveDefinition));
       additionalResolvers.push(...resolvedAdditionalResolvers);
       if (options.generateCode && resolvedAdditionalResolvers.length) {
-        importCodes.push(`import { resolveAdditionalResolvers } from '@graphql-mesh/utils';`);
-        codes.push(`additionalTypeDefs.unshift(parse(/* GraphQL */\`${resolveToDirectiveDefinition}\`))`);
-        codes.push(`const additionalResolversFromTypeDefs = await resolveAdditionalResolvers(
+        importCodes.add(`import { resolveAdditionalResolvers } from '@graphql-mesh/utils';`);
+        codes.add(`additionalTypeDefs.unshift(parse(/* GraphQL */\`${resolveToDirectiveDefinition}\`))`);
+        codes.add(`const additionalResolversFromTypeDefs = await resolveAdditionalResolvers(
           baseDir,
           ${JSON.stringify(additionalResolversConfigFromTypeDefs)},
           importFn,
           pubsub
         );`);
-        codes.push(`additionalResolvers.push(additionalResolversFromTypeDefs)`);
+        codes.add(`additionalResolvers.push(additionalResolversFromTypeDefs)`);
       }
     }
   }
@@ -488,8 +488,8 @@ export async function processConfig(
 
   if (options.generateCode) {
     const mergerImportName = pascalCase(`${mergerName}Merger`);
-    importCodes.push(`import ${mergerImportName} from ${JSON.stringify(mergerModuleName)};`);
-    codes.push(`const merger = new(${mergerImportName} as any)({
+    importCodes.add(`import ${mergerImportName} from ${JSON.stringify(mergerModuleName)};`);
+    codes.add(`const merger = new(${mergerImportName} as any)({
         cache,
         pubsub,
         logger: logger.child('${mergerName}Merger'),
@@ -505,7 +505,7 @@ export async function processConfig(
   });
 
   if (config.additionalEnvelopPlugins) {
-    codes.push(
+    codes.add(
       `const importedAdditionalEnvelopPlugins = await import(${JSON.stringify(
         pathModule.join('..', config.additionalEnvelopPlugins).split('\\').join('/')
       )}).then(m => m.default || m);`
@@ -519,24 +519,24 @@ export async function processConfig(
       const factoryResult = await importedAdditionalEnvelopPlugins(config);
       if (Array.isArray(factoryResult)) {
         if (options.generateCode) {
-          codes.push(`additionalEnvelopPlugins.push(...(await importedAdditionalEnvelopPlugins()));`);
+          codes.add(`additionalEnvelopPlugins.push(...(await importedAdditionalEnvelopPlugins()));`);
         }
         additionalEnvelopPlugins.push(...factoryResult);
       } else {
         if (options.generateCode) {
-          codes.push(`additionalEnvelopPlugins.push(await importedAdditionalEnvelopPlugins());`);
+          codes.add(`additionalEnvelopPlugins.push(await importedAdditionalEnvelopPlugins());`);
         }
         additionalEnvelopPlugins.push(factoryResult);
       }
     } else {
       if (Array.isArray(importedAdditionalEnvelopPlugins)) {
         if (options.generateCode) {
-          codes.push(`additionalEnvelopPlugins.push(...importedAdditionalEnvelopPlugins)`);
+          codes.add(`additionalEnvelopPlugins.push(...importedAdditionalEnvelopPlugins)`);
         }
         additionalEnvelopPlugins.push(...importedAdditionalEnvelopPlugins);
       } else {
         if (options.generateCode) {
-          codes.push(`additionalEnvelopPlugins.push(importedAdditionalEnvelopPlugins)`);
+          codes.add(`additionalEnvelopPlugins.push(importedAdditionalEnvelopPlugins)`);
         }
         additionalEnvelopPlugins.push(importedAdditionalEnvelopPlugins);
       }
@@ -544,7 +544,7 @@ export async function processConfig(
   }
 
   if (options.generateCode) {
-    importCodes.push(`import { printWithCache } from '@graphql-mesh/utils';`);
+    importCodes.add(`import { printWithCache } from '@graphql-mesh/utils';`);
     const documentVariableNames: string[] = [];
     if (documents?.length) {
       const allDocumentNodes: DocumentNode = concatAST(
@@ -557,7 +557,7 @@ export async function processConfig(
       });
     }
 
-    codes.push(`
+    codes.add(`
   return {
     sources,
     transforms,
