@@ -34,9 +34,9 @@
     "@graphql-mesh/cross-helpers": "0.2.3",
     "@graphql-mesh/types": "0.82.2",
     "@graphql-mesh/utils": "0.41.3",
-    "@graphql-tools/resolvers-composition": "6.5.4",
-    "@graphql-tools/schema": "9.0.2",
-    "@graphql-tools/utils": "8.10.1",
+    "@graphql-tools/resolvers-composition": "6.5.5",
+    "@graphql-tools/schema": "9.0.3",
+    "@graphql-tools/utils": "8.11.0",
     "object-hash": "3.0.0",
     "tslib": "^2.4.0"
   },
