@@ -6,7 +6,10 @@ import { PubSub } from '@graphql-mesh/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { addResolversToSchema } from '@graphql-tools/schema';
 
-describe('namingConvention', () => {
+describe.each<{ mode: 'wrap' | 'bare'}>([
+  { mode: 'wrap'},
+  { mode: 'bare'}
+])('namingConvention', (config) => {
   const schema = buildSchema(/* GraphQL */ `
     type Query {
       user: user!
@@ -40,6 +43,7 @@ describe('namingConvention', () => {
           apiName: '',
           importFn,
           config: {
+            ...config,
             typeNames: 'pascalCase',
             enumValues: 'upperCase',
             fieldNames: 'camelCase',
@@ -110,6 +114,7 @@ describe('namingConvention', () => {
           cache,
           pubsub,
           config: {
+            ...config,
             fieldNames: 'camelCase',
             fieldArgumentNames: 'snakeCase',
           },
@@ -186,6 +191,7 @@ describe('namingConvention', () => {
           cache,
           pubsub,
           config: {
+            ...config,
             fieldNames: 'camelCase',
           },
           baseDir,
@@ -217,6 +223,7 @@ type Query {
           cache,
           pubsub,
           config: {
+            ...config,
             fieldNames: 'snakeCase',
           },
           baseDir,

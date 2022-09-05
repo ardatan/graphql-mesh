@@ -17,3 +17,21 @@ enum UserType {
   NEWBIE
 }"
 `;
+
+exports[`namingConvention should change the name of a types, enums, fields and fieldArguments 2`] = `
+"type Query {
+  user: User!
+  userById(user_id: ID!): User!
+}
+
+type User {
+  id: ID!
+  type: UserType
+}
+
+enum UserType {
+  ADMIN
+  MODERATOR
+  NEWBIE
+}"
+`;
