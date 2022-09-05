@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/openapi",
-  "version": "0.14.5",
+  "version": "0.14.6",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -28,13 +28,13 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/cross-helpers": "0.2.3",
+    "@graphql-mesh/cross-helpers": "0.2.4",
     "@graphql-mesh/string-interpolation": "0.3.2",
-    "@graphql-mesh/types": "0.82.2",
-    "@graphql-mesh/utils": "0.41.3",
-    "@omnigraph/json-schema": "0.33.1",
+    "@graphql-mesh/types": "0.82.3",
+    "@graphql-mesh/utils": "0.41.4",
+    "@omnigraph/json-schema": "0.33.2",
     "change-case": "4.1.2",
-    "json-machete": "0.14.4",
+    "json-machete": "0.14.5",
     "openapi-types": "12.0.2",
     "tslib": "^2.4.0"
   },

@@ -1,5 +1,17 @@
 # @graphql-mesh/mongoose
 
+## 0.11.4
+
+### Patch Changes
+
+- [#4443](https://github.com/Urigo/graphql-mesh/pull/4443) [`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@graphql-tools/stitching-directives@2.3.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/2.3.8) (from `2.3.7`, in `dependencies`)
+
+- Updated dependencies [[`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53), [`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53)]:
+  - @graphql-mesh/types@0.82.3
+  - @graphql-mesh/utils@0.41.4
+
 ## 0.11.3
 
 ### Patch Changes

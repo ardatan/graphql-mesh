@@ -1,5 +1,13 @@
 # @graphql-mesh/cache-cfw-kv
 
+## 0.0.20
+
+### Patch Changes
+
+- Updated dependencies [[`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53), [`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53)]:
+  - @graphql-mesh/types@0.82.3
+  - @graphql-mesh/utils@0.41.4
+
 ## 0.0.19
 
 ### Patch Changes
