@@ -2128,7 +2128,7 @@
         },
         "includeRawResult": {
           "type": "boolean",
-          "description": "default: `false`. When set to `true`, includes the execution result"
+          "description": "default: `false`. When set to `true`, includes the execution result of both delegation and execution"
         },
         "trackResolvers": {
           "type": "boolean",
@@ -2136,7 +2136,7 @@
         },
         "includeResolverArgs": {
           "type": "boolean",
-          "description": "default `false`. When set to `true`, includes all the arguments passed to resolvers with their values"
+          "description": "default `false`. When set to `true`, includes all the arguments passed to resolvers and delegation with their values"
         },
         "rootFieldsNaming": {
           "type": "boolean",
@@ -3032,6 +3032,11 @@
       "type": "object",
       "title": "NamingConventionTransformConfig",
       "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["bare", "wrap"],
+          "description": "Allowed values: bare, wrap"
+        },
         "typeNames": {
           "type": "string",
           "enum": [

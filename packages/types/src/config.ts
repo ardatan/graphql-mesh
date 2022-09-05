@@ -1299,6 +1299,10 @@ export interface HoistFieldTransformFieldPathConfigObject {
  */
 export interface NamingConventionTransformConfig {
   /**
+   * Allowed values: bare, wrap
+   */
+  mode?: 'bare' | 'wrap';
+  /**
    * Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase
    */
   typeNames?:
@@ -1847,7 +1851,7 @@ export interface NewrelicConfig {
    */
   includeExecuteVariables?: boolean;
   /**
-   * default: `false`. When set to `true`, includes the execution result
+   * default: `false`. When set to `true`, includes the execution result of both delegation and execution
    */
   includeRawResult?: boolean;
   /**
@@ -1855,7 +1859,7 @@ export interface NewrelicConfig {
    */
   trackResolvers?: boolean;
   /**
-   * default `false`. When set to `true`, includes all the arguments passed to resolvers with their values
+   * default `false`. When set to `true`, includes all the arguments passed to resolvers and delegation with their values
    */
   includeResolverArgs?: boolean;
   /**
