@@ -163,8 +163,8 @@ export async function graphqlMesh(
                 flattenTypes: false,
                 importedModulesSet: new Set(),
                 baseDir,
-                meshConfigImportCodes: [`import { findAndParseConfig } from '@graphql-mesh/cli';`],
-                meshConfigCodes: [
+                meshConfigImportCodes: new Set([`import { findAndParseConfig } from '@graphql-mesh/cli';`]),
+                meshConfigCodes: new Set([
                   `
 function getMeshOptions() {
   console.warn('WARNING: These artifacts are built for development mode. Please run "${
@@ -179,7 +179,7 @@ function getMeshOptions() {
   });
 }
               `.trim(),
-                ],
+                ]),
                 logger,
                 sdkConfig: meshConfig.config.sdk,
                 fileType: 'ts',
