@@ -6,6 +6,7 @@ extend type Transform {
 }
 
 type NamingConventionTransformConfig @md {
+  mode: RenameTransformMode
   typeNames: NamingConventionType
   fieldNames: NamingConventionType
   enumValues: NamingConventionType
@@ -26,4 +27,9 @@ enum NamingConventionType {
   snakeCase
   upperCase
   lowerCase
+}
+
+enum RenameTransformMode {
+  bare
+  wrap
 }

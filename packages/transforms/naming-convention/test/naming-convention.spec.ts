@@ -1,4 +1,4 @@
-import NamingConventionTransform from '../src/index';
+import NamingConventionTransform from '../src/wrapNamingConvention';
 import { buildSchema, printSchema, GraphQLObjectType, GraphQLEnumType, execute, parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
