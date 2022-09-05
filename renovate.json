@@ -1,5 +1,5 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["github>the-guild-org/shared-config:renovate"],
-  "ignoreDeps": ["@theguild/components", "guild-docs"]
+  "ignoreDeps": ["@theguild/components", "guild-docs", "graphql-yoga"]
 }
