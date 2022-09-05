@@ -1892,11 +1892,6 @@
   resolved "https://registry.yarnpkg.com/@colors/colors/-/colors-1.5.0.tgz#bb504579c1cae923e6576a4f5da43d25f97bdbd9"
   integrity sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==
 
-"@corex/deepmerge@^4.0.29":
-  version "4.0.29"
-  resolved "https://registry.yarnpkg.com/@corex/deepmerge/-/deepmerge-4.0.29.tgz#af9debf07d7f6b0d2a9d04a266abf2c1418ed2f6"
-  integrity sha512-q/yVUnqckA8Do+EvAfpy7RLdumnBy9ZsducMUtZTvpdbJC7azEf1hGtnYYxm0QfphYxjwggv6XtH64prvS1W+A==
-
 "@creditkarma/thrift-client@1.0.4":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@creditkarma/thrift-client/-/thrift-client-1.0.4.tgz#1b0dd1ceffefeff23df1b833b9c23e275cba6c88"
@@ -4445,10 +4440,10 @@
   resolved "https://registry.yarnpkg.com/@testing-library/user-event/-/user-event-14.4.3.tgz#af975e367743fa91989cd666666aec31a8f50591"
   integrity sha512-kCUc5MEwaEMakkO5x7aoD+DLi02ehmEM2QCGWvNqAS1dV/fAvORWEjnjsEIvml59M7Y5kCkWN6fCCyPOe8OL6Q==
 
-"@theguild/components@3.0.2":
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/@theguild/components/-/components-3.0.2.tgz#6a69f96811a3f0034a2bc1d2449590365eda60b6"
-  integrity sha512-hKjPeLCeTYXE+w4xiyvhEr9Ot8xVcd5tyrIx7Pjs1OpCdBw1xF3+Rx5VQ3I8sEbOcpOz9uYe3tfK/xFE7aNSfw==
+"@theguild/components@3.0.3":
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/@theguild/components/-/components-3.0.3.tgz#63e44c375c592612db37bf5303eb0729905ba34b"
+  integrity sha512-QTuZtVtFQ76uOCjiHn4hPcHZ6VEjJD/4vr/zpP7dxPqMa6LB/arfdNr9WofMtqOmGAaB69kSS4uGeAwlV61wig==
   dependencies:
     "@algolia/autocomplete-js" "1.7.1"
     "@algolia/autocomplete-plugin-algolia-insights" "1.7.1"
@@ -15014,14 +15009,6 @@ next-seo@5.5.0:
   version "5.5.0"
   resolved "https://registry.yarnpkg.com/next-seo/-/next-seo-5.5.0.tgz#12bdfce60a6ae098f49617357a166c2d44dbc29e"
   integrity sha512-5ouBHFtx8YrSDW44lj0qIEQ+oMcz6stgoITB+SqHUZbhgizoJsyLmq73gJ0lxtEKpcN8vG2QgRIJfdb8OAPChw==
-
-next-sitemap@3.1.21:
-  version "3.1.21"
-  resolved "https://registry.yarnpkg.com/next-sitemap/-/next-sitemap-3.1.21.tgz#aa543acd59f15f7c1f11d5855a84adb9a4bddeb6"
-  integrity sha512-8upGCtI91FvjNBpeKDZzrzRBlY4BH6qjG7dMe89sdBzJ9B++PVLTzRPlpLHJYOEPukBROsxi2zVuAvePBtsrdw==
-  dependencies:
-    "@corex/deepmerge" "^4.0.29"
-    minimist "^1.2.6"
 
 next-themes@^0.2.0-beta.2:
   version "0.2.0"
