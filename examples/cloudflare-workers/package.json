@@ -7,7 +7,7 @@
     "@graphql-mesh/json-schema": "0.35.4",
     "@graphql-mesh/cache-cfw-kv": "0.0.19",
     "@graphql-mesh/plugin-response-cache": "0.1.20",
-    "@graphql-yoga/common": "2.12.11",
+    "@graphql-yoga/common": "2.12.12",
     "graphql": "16.6.0"
   },
   "devDependencies": {
