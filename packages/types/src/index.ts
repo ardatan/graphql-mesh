@@ -2,7 +2,13 @@
 import { IResolvers, Executor } from '@graphql-tools/utils';
 import { GraphQLSchema, GraphQLResolveInfo, DocumentNode, SelectionSetNode } from 'graphql';
 import * as YamlConfig from './config';
-import { Transform, MergedTypeConfig, SubschemaConfig, IDelegateToSchemaOptions } from '@graphql-tools/delegate';
+import {
+  Transform,
+  MergedTypeConfig,
+  SubschemaConfig,
+  IDelegateToSchemaOptions,
+  CreateProxyingResolverFn,
+} from '@graphql-tools/delegate';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { MeshStore } from '@graphql-mesh/store';
 import configSchema from './config-schema.json';
@@ -186,6 +192,7 @@ export type RawSourceOutput = {
   handler: MeshHandler;
   batch: boolean;
   merge?: Record<string, MergedTypeConfig>;
+  createProxyingResolver: CreateProxyingResolverFn<any>;
 };
 
 export type GraphQLOperation<TData, TVariables> = TypedDocumentNode<TData, TVariables> | string;

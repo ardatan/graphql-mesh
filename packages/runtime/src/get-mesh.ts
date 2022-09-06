@@ -24,7 +24,7 @@ import {
   getHeadersObj,
 } from '@graphql-mesh/utils';
 
-import { SubschemaConfig } from '@graphql-tools/delegate';
+import { CreateProxyingResolverFn, SubschemaConfig } from '@graphql-tools/delegate';
 import { AggregateError, ExecutionResult, isAsyncIterable, mapAsyncIterator, memoize1 } from '@graphql-tools/utils';
 import { enableIf, envelop, PluginOrDisabledPlugin, useExtendContext } from '@envelop/core';
 import { OneOfInputObjectsRule, useExtendedValidation } from '@envelop/extended-validation';
@@ -89,6 +89,15 @@ export function wrapFetchWithPlugins(plugins: MeshPlugin<any>[]): MeshFetch {
       });
     }
     return response;
+  };
+}
+
+// Use in-context-sdk for tracing
+function createProxyingResolverFactory(apiName: string): CreateProxyingResolverFn {
+  return function createProxyingResolver() {
+    return function proxyingResolver(root, args, context, info) {
+      return context[apiName][info.parentType.name][info.fieldName]({ root, args, context, info });
+    };
   };
 }
 
@@ -185,6 +194,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
           handler: apiSource.handler,
           batch: 'batch' in source ? source.batch : true,
           merge: apiSource.merge,
+          createProxyingResolver: createProxyingResolverFactory(apiName),
         });
       } catch (e: any) {
         sourceLogger.error(`Failed to generate the schema`, e);
