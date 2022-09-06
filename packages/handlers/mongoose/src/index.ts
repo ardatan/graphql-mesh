@@ -4,7 +4,6 @@ import { MeshHandlerOptions, MeshPubSub, MeshHandler, MeshSource, YamlConfig, Im
 import { connect, disconnect, ConnectOptions, Document, Model } from 'mongoose';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { specifiedDirectives } from 'graphql';
-import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 
 const modelQueryOperations = [
   'findById',
@@ -53,6 +52,8 @@ export default class MongooseHandler implements MeshHandler {
     }
 
     const schemaComposer = new SchemaComposer();
+    const typeMergingOptions: MeshSource['merge'] = {};
+
     await Promise.all([
       Promise.all(
         this.config.models?.map(async modelConfig => {
@@ -81,16 +82,13 @@ export default class MongooseHandler implements MeshHandler {
               )
             ),
           ]);
-          if (this.config.autoTypeMerging) {
-            modelTC.setDirectiveByName('key', {
-              selectionSet: /* GraphQL */ `
-                {
-                  id
-                }
-              `,
-            });
-            modelTC.setFieldDirectiveByName(`${modelConfig.name}_dataLoaderMany`, 'merge');
-          }
+          const typeName = modelTC.getTypeName();
+          typeMergingOptions[typeName] = {
+            selectionSet: `{ id }`,
+            key: ({ id }) => id,
+            argsFromKeys: ids => ({ ids }),
+            fieldName: `${typeName}_dataLoaderMany`,
+          };
         }) || []
       ),
       Promise.all(
@@ -117,27 +115,19 @@ export default class MongooseHandler implements MeshHandler {
               )
             ),
           ]);
-          if (this.config.autoTypeMerging) {
-            discriminatorTC.setDirectiveByName('key', {
-              selectionSet: /* GraphQL */ `
-                {
-                  id
-                }
-              `,
-            });
-            discriminatorTC.setFieldDirectiveByName(`${discriminatorConfig.name}_dataLoaderMany`, 'merge');
-          }
+          const typeName = discriminatorTC.getTypeName();
+          typeMergingOptions[typeName] = {
+            selectionSet: `{ id }`,
+            key: ({ id }) => id,
+            argsFromKeys: ids => ({ ids }),
+            fieldName: `${typeName}_dataLoaderMany`,
+          };
         }) || []
       ),
     ]);
 
     // graphql-compose doesn't add @defer and @stream to the schema
     specifiedDirectives.forEach(directive => schemaComposer.addDirective(directive));
-
-    if (this.config.autoTypeMerging) {
-      const defaultStitchingDirectives = stitchingDirectives();
-      defaultStitchingDirectives.allStitchingDirectives.forEach(directive => schemaComposer.addDirective(directive));
-    }
 
     const schema = schemaComposer.buildSchema();
 

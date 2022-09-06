@@ -25,6 +25,7 @@ export type MeshSource = {
   executor?: Executor;
   contextVariables?: Record<string, string>;
   batch?: boolean;
+  merge?: Record<string, MergedTypeConfig>;
 };
 
 export interface KeyValueCacheSetOptions {

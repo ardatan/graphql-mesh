@@ -6,10 +6,6 @@ type MongooseHandler @md {
   connectionString: String
   models: [MongooseModel]
   discriminators: [MongooseModel]
-  """
-  Enable Automatic Type Merging/Federation support
-  """
-  autoTypeMerging: Boolean
 }
 
 type MongooseModel {

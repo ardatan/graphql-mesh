@@ -193,7 +193,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
           contextVariables: source.contextVariables || {},
           handler: apiSource.handler,
           batch: 'batch' in source ? source.batch : true,
-          merge: apiSource.merge,
+          merge: source.merge,
           createProxyingResolver: createProxyingResolverFactory(apiName),
         });
       } catch (e: any) {

@@ -216,6 +216,7 @@ export default class MySQLHandler implements MeshHandler {
     });
     const tables = await introspectionConnection.getDatabaseTables(pool.config.connectionConfig.database);
     const tableNames = this.config.tables || Object.keys(tables);
+    const typeMergingOptions: MeshSource['merge'] = {};
     await Promise.all(
       tableNames.map(async tableName => {
         if (this.config.tables && !this.config.tables.includes(tableName)) {
@@ -429,6 +430,19 @@ export default class MySQLHandler implements MeshHandler {
             });
           })
         );
+        typeMergingOptions[objectTypeName] = {
+          selectionSet: `{ ${[...primaryKeys].join(' ')} }`,
+          args: obj => {
+            const where = {};
+            for (const primaryKey of primaryKeys) {
+              where[primaryKey] = obj[primaryKey];
+            }
+            return {
+              where,
+            };
+          },
+          valuesFromResults: results => results[0],
+        };
         schemaComposer.Query.addFields({
           [tableName]: {
             type: '[' + objectTypeName + ']',
