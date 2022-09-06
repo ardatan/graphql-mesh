@@ -1,5 +1,11 @@
 # @graphql-mesh/neo4j
 
+## 0.20.5
+
+### Patch Changes
+
+- [`1df64e84e`](https://github.com/Urigo/graphql-mesh/commit/1df64e84e7c2e04146ed8dc753eca08d218b73f0) Thanks [@ardatan](https://github.com/ardatan)! - fix(neo4j): add setMaxListeners to events object
+
 ## 0.20.4
 
 ### Patch Changes

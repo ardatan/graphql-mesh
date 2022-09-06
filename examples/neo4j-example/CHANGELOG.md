@@ -1,5 +1,12 @@
 # neo4j-example
 
+## 0.6.246
+
+### Patch Changes
+
+- Updated dependencies [[`1df64e84e`](https://github.com/Urigo/graphql-mesh/commit/1df64e84e7c2e04146ed8dc753eca08d218b73f0)]:
+  - @graphql-mesh/neo4j@0.20.5
+
 ## 0.6.245
 
 ### Patch Changes
