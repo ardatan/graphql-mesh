@@ -15,6 +15,8 @@ input ActedInPropertiesSort {
 
 input ActedInPropertiesUpdateInput {
   roles: [String]
+  roles_POP: Int
+  roles_PUSH: [String]
 }
 
 input ActedInPropertiesWhere {
@@ -26,9 +28,9 @@ input ActedInPropertiesWhere {
   roles_NOT_INCLUDES: String
 }
 
-\\"\\"\\"
+"""
 A BigInt value up to 64 bits in size, which can be a number or a string if used inline, or a string only if used as a variable. Always returned as a string.
-\\"\\"\\"
+"""
 scalar BigInt
 
 type BigIntAggregateSelectionNonNullable {
@@ -130,6 +132,7 @@ input MovieCreateInput {
 type MovieCreatedEvent {
   createdMovie: MovieEventPayload!
   event: EventType!
+  timestamp: Float!
 }
 
 input MovieDeleteInput {
@@ -143,6 +146,7 @@ input MovieDeleteInput {
 type MovieDeletedEvent {
   deletedMovie: MovieEventPayload!
   event: EventType!
+  timestamp: Float!
 }
 
 input MovieDisconnectInput {
@@ -169,9 +173,9 @@ input MovieOptions {
   limit: Int
   offset: Int
 
-  \\"\\"\\"
+  """
   Specify one or more MovieSort objects to sort Movies by. The sorts will be applied in the order in which they are arranged in the array.
-  \\"\\"\\"
+  """
   sort: [MovieSort!]
 }
 
@@ -905,9 +909,9 @@ input MovieRelationInput {
   peopleWrote: [MoviePeopleWroteCreateFieldInput!]
 }
 
-\\"\\"\\"
+"""
 Fields to sort Movies by. The order in which sorts are applied is not guaranteed when specifying many fields in one MovieSort object.
-\\"\\"\\"
+"""
 input MovieSort {
   released: SortDirection
   tagline: SortDirection
@@ -929,124 +933,129 @@ input MovieUpdateInput {
   peopleReviewed: [MoviePeopleReviewedUpdateFieldInput!]
   peopleWrote: [MoviePeopleWroteUpdateFieldInput!]
   released: BigInt
+  released_DECREMENT: BigInt
+  released_INCREMENT: BigInt
   tagline: String
   title: String
   votes: BigInt
+  votes_DECREMENT: BigInt
+  votes_INCREMENT: BigInt
 }
 
 type MovieUpdatedEvent {
   event: EventType!
   previousState: MovieEventPayload!
+  timestamp: Float!
   updatedMovie: MovieEventPayload!
 }
 
 input MovieWhere {
   AND: [MovieWhere!]
   OR: [MovieWhere!]
-  peopleActedIn: PersonWhere @deprecated(reason: \\"Use \`peopleActedIn_SOME\` instead.\\")
+  peopleActedIn: PersonWhere @deprecated(reason: "Use \`peopleActedIn_SOME\` instead.")
   peopleActedInAggregate: MoviePeopleActedInAggregateInput
-  peopleActedInConnection: MoviePeopleActedInConnectionWhere @deprecated(reason: \\"Use \`peopleActedInConnection_SOME\` instead.\\")
+  peopleActedInConnection: MoviePeopleActedInConnectionWhere @deprecated(reason: "Use \`peopleActedInConnection_SOME\` instead.")
   peopleActedInConnection_ALL: MoviePeopleActedInConnectionWhere
   peopleActedInConnection_NONE: MoviePeopleActedInConnectionWhere
-  peopleActedInConnection_NOT: MoviePeopleActedInConnectionWhere @deprecated(reason: \\"Use \`peopleActedInConnection_NONE\` instead.\\")
+  peopleActedInConnection_NOT: MoviePeopleActedInConnectionWhere @deprecated(reason: "Use \`peopleActedInConnection_NONE\` instead.")
   peopleActedInConnection_SINGLE: MoviePeopleActedInConnectionWhere
   peopleActedInConnection_SOME: MoviePeopleActedInConnectionWhere
 
-  \\"\\"\\"Return Movies where all of the related People match this filter\\"\\"\\"
+  """Return Movies where all of the related People match this filter"""
   peopleActedIn_ALL: PersonWhere
 
-  \\"\\"\\"Return Movies where none of the related People match this filter\\"\\"\\"
+  """Return Movies where none of the related People match this filter"""
   peopleActedIn_NONE: PersonWhere
-  peopleActedIn_NOT: PersonWhere @deprecated(reason: \\"Use \`peopleActedIn_NONE\` instead.\\")
+  peopleActedIn_NOT: PersonWhere @deprecated(reason: "Use \`peopleActedIn_NONE\` instead.")
 
-  \\"\\"\\"Return Movies where one of the related People match this filter\\"\\"\\"
+  """Return Movies where one of the related People match this filter"""
   peopleActedIn_SINGLE: PersonWhere
 
-  \\"\\"\\"Return Movies where some of the related People match this filter\\"\\"\\"
+  """Return Movies where some of the related People match this filter"""
   peopleActedIn_SOME: PersonWhere
-  peopleDirected: PersonWhere @deprecated(reason: \\"Use \`peopleDirected_SOME\` instead.\\")
+  peopleDirected: PersonWhere @deprecated(reason: "Use \`peopleDirected_SOME\` instead.")
   peopleDirectedAggregate: MoviePeopleDirectedAggregateInput
-  peopleDirectedConnection: MoviePeopleDirectedConnectionWhere @deprecated(reason: \\"Use \`peopleDirectedConnection_SOME\` instead.\\")
+  peopleDirectedConnection: MoviePeopleDirectedConnectionWhere @deprecated(reason: "Use \`peopleDirectedConnection_SOME\` instead.")
   peopleDirectedConnection_ALL: MoviePeopleDirectedConnectionWhere
   peopleDirectedConnection_NONE: MoviePeopleDirectedConnectionWhere
-  peopleDirectedConnection_NOT: MoviePeopleDirectedConnectionWhere @deprecated(reason: \\"Use \`peopleDirectedConnection_NONE\` instead.\\")
+  peopleDirectedConnection_NOT: MoviePeopleDirectedConnectionWhere @deprecated(reason: "Use \`peopleDirectedConnection_NONE\` instead.")
   peopleDirectedConnection_SINGLE: MoviePeopleDirectedConnectionWhere
   peopleDirectedConnection_SOME: MoviePeopleDirectedConnectionWhere
 
-  \\"\\"\\"Return Movies where all of the related People match this filter\\"\\"\\"
+  """Return Movies where all of the related People match this filter"""
   peopleDirected_ALL: PersonWhere
 
-  \\"\\"\\"Return Movies where none of the related People match this filter\\"\\"\\"
+  """Return Movies where none of the related People match this filter"""
   peopleDirected_NONE: PersonWhere
-  peopleDirected_NOT: PersonWhere @deprecated(reason: \\"Use \`peopleDirected_NONE\` instead.\\")
+  peopleDirected_NOT: PersonWhere @deprecated(reason: "Use \`peopleDirected_NONE\` instead.")
 
-  \\"\\"\\"Return Movies where one of the related People match this filter\\"\\"\\"
+  """Return Movies where one of the related People match this filter"""
   peopleDirected_SINGLE: PersonWhere
 
-  \\"\\"\\"Return Movies where some of the related People match this filter\\"\\"\\"
+  """Return Movies where some of the related People match this filter"""
   peopleDirected_SOME: PersonWhere
-  peopleProduced: PersonWhere @deprecated(reason: \\"Use \`peopleProduced_SOME\` instead.\\")
+  peopleProduced: PersonWhere @deprecated(reason: "Use \`peopleProduced_SOME\` instead.")
   peopleProducedAggregate: MoviePeopleProducedAggregateInput
-  peopleProducedConnection: MoviePeopleProducedConnectionWhere @deprecated(reason: \\"Use \`peopleProducedConnection_SOME\` instead.\\")
+  peopleProducedConnection: MoviePeopleProducedConnectionWhere @deprecated(reason: "Use \`peopleProducedConnection_SOME\` instead.")
   peopleProducedConnection_ALL: MoviePeopleProducedConnectionWhere
   peopleProducedConnection_NONE: MoviePeopleProducedConnectionWhere
-  peopleProducedConnection_NOT: MoviePeopleProducedConnectionWhere @deprecated(reason: \\"Use \`peopleProducedConnection_NONE\` instead.\\")
+  peopleProducedConnection_NOT: MoviePeopleProducedConnectionWhere @deprecated(reason: "Use \`peopleProducedConnection_NONE\` instead.")
   peopleProducedConnection_SINGLE: MoviePeopleProducedConnectionWhere
   peopleProducedConnection_SOME: MoviePeopleProducedConnectionWhere
 
-  \\"\\"\\"Return Movies where all of the related People match this filter\\"\\"\\"
+  """Return Movies where all of the related People match this filter"""
   peopleProduced_ALL: PersonWhere
 
-  \\"\\"\\"Return Movies where none of the related People match this filter\\"\\"\\"
+  """Return Movies where none of the related People match this filter"""
   peopleProduced_NONE: PersonWhere
-  peopleProduced_NOT: PersonWhere @deprecated(reason: \\"Use \`peopleProduced_NONE\` instead.\\")
+  peopleProduced_NOT: PersonWhere @deprecated(reason: "Use \`peopleProduced_NONE\` instead.")
 
-  \\"\\"\\"Return Movies where one of the related People match this filter\\"\\"\\"
+  """Return Movies where one of the related People match this filter"""
   peopleProduced_SINGLE: PersonWhere
 
-  \\"\\"\\"Return Movies where some of the related People match this filter\\"\\"\\"
+  """Return Movies where some of the related People match this filter"""
   peopleProduced_SOME: PersonWhere
-  peopleReviewed: PersonWhere @deprecated(reason: \\"Use \`peopleReviewed_SOME\` instead.\\")
+  peopleReviewed: PersonWhere @deprecated(reason: "Use \`peopleReviewed_SOME\` instead.")
   peopleReviewedAggregate: MoviePeopleReviewedAggregateInput
-  peopleReviewedConnection: MoviePeopleReviewedConnectionWhere @deprecated(reason: \\"Use \`peopleReviewedConnection_SOME\` instead.\\")
+  peopleReviewedConnection: MoviePeopleReviewedConnectionWhere @deprecated(reason: "Use \`peopleReviewedConnection_SOME\` instead.")
   peopleReviewedConnection_ALL: MoviePeopleReviewedConnectionWhere
   peopleReviewedConnection_NONE: MoviePeopleReviewedConnectionWhere
-  peopleReviewedConnection_NOT: MoviePeopleReviewedConnectionWhere @deprecated(reason: \\"Use \`peopleReviewedConnection_NONE\` instead.\\")
+  peopleReviewedConnection_NOT: MoviePeopleReviewedConnectionWhere @deprecated(reason: "Use \`peopleReviewedConnection_NONE\` instead.")
   peopleReviewedConnection_SINGLE: MoviePeopleReviewedConnectionWhere
   peopleReviewedConnection_SOME: MoviePeopleReviewedConnectionWhere
 
-  \\"\\"\\"Return Movies where all of the related People match this filter\\"\\"\\"
+  """Return Movies where all of the related People match this filter"""
   peopleReviewed_ALL: PersonWhere
 
-  \\"\\"\\"Return Movies where none of the related People match this filter\\"\\"\\"
+  """Return Movies where none of the related People match this filter"""
   peopleReviewed_NONE: PersonWhere
-  peopleReviewed_NOT: PersonWhere @deprecated(reason: \\"Use \`peopleReviewed_NONE\` instead.\\")
+  peopleReviewed_NOT: PersonWhere @deprecated(reason: "Use \`peopleReviewed_NONE\` instead.")
 
-  \\"\\"\\"Return Movies where one of the related People match this filter\\"\\"\\"
+  """Return Movies where one of the related People match this filter"""
   peopleReviewed_SINGLE: PersonWhere
 
-  \\"\\"\\"Return Movies where some of the related People match this filter\\"\\"\\"
+  """Return Movies where some of the related People match this filter"""
   peopleReviewed_SOME: PersonWhere
-  peopleWrote: PersonWhere @deprecated(reason: \\"Use \`peopleWrote_SOME\` instead.\\")
+  peopleWrote: PersonWhere @deprecated(reason: "Use \`peopleWrote_SOME\` instead.")
   peopleWroteAggregate: MoviePeopleWroteAggregateInput
-  peopleWroteConnection: MoviePeopleWroteConnectionWhere @deprecated(reason: \\"Use \`peopleWroteConnection_SOME\` instead.\\")
+  peopleWroteConnection: MoviePeopleWroteConnectionWhere @deprecated(reason: "Use \`peopleWroteConnection_SOME\` instead.")
   peopleWroteConnection_ALL: MoviePeopleWroteConnectionWhere
   peopleWroteConnection_NONE: MoviePeopleWroteConnectionWhere
-  peopleWroteConnection_NOT: MoviePeopleWroteConnectionWhere @deprecated(reason: \\"Use \`peopleWroteConnection_NONE\` instead.\\")
+  peopleWroteConnection_NOT: MoviePeopleWroteConnectionWhere @deprecated(reason: "Use \`peopleWroteConnection_NONE\` instead.")
   peopleWroteConnection_SINGLE: MoviePeopleWroteConnectionWhere
   peopleWroteConnection_SOME: MoviePeopleWroteConnectionWhere
 
-  \\"\\"\\"Return Movies where all of the related People match this filter\\"\\"\\"
+  """Return Movies where all of the related People match this filter"""
   peopleWrote_ALL: PersonWhere
 
-  \\"\\"\\"Return Movies where none of the related People match this filter\\"\\"\\"
+  """Return Movies where none of the related People match this filter"""
   peopleWrote_NONE: PersonWhere
-  peopleWrote_NOT: PersonWhere @deprecated(reason: \\"Use \`peopleWrote_NONE\` instead.\\")
+  peopleWrote_NOT: PersonWhere @deprecated(reason: "Use \`peopleWrote_NONE\` instead.")
 
-  \\"\\"\\"Return Movies where one of the related People match this filter\\"\\"\\"
+  """Return Movies where one of the related People match this filter"""
   peopleWrote_SINGLE: PersonWhere
 
-  \\"\\"\\"Return Movies where some of the related People match this filter\\"\\"\\"
+  """Return Movies where some of the related People match this filter"""
   peopleWrote_SOME: PersonWhere
   released: BigInt
   released_GT: BigInt
@@ -1101,7 +1110,7 @@ type Mutation {
   updatePeople(connect: PersonConnectInput, create: PersonRelationInput, delete: PersonDeleteInput, disconnect: PersonDisconnectInput, update: PersonUpdateInput, where: PersonWhere): UpdatePeopleMutationResponse!
 }
 
-\\"\\"\\"Pagination information (Relay)\\"\\"\\"
+"""Pagination information (Relay)"""
 type PageInfo {
   endCursor: String
   hasNextPage: Boolean!
@@ -1348,6 +1357,7 @@ input PersonCreateInput {
 type PersonCreatedEvent {
   createdPerson: PersonEventPayload!
   event: EventType!
+  timestamp: Float!
 }
 
 input PersonDeleteInput {
@@ -1363,6 +1373,7 @@ input PersonDeleteInput {
 type PersonDeletedEvent {
   deletedPerson: PersonEventPayload!
   event: EventType!
+  timestamp: Float!
 }
 
 input PersonDirectedMoviesAggregateInput {
@@ -1740,9 +1751,9 @@ input PersonOptions {
   limit: Int
   offset: Int
 
-  \\"\\"\\"
+  """
   Specify one or more PersonSort objects to sort People by. The sorts will be applied in the order in which they are arranged in the array.
-  \\"\\"\\"
+  """
   sort: [PersonSort!]
 }
 
@@ -2285,9 +2296,9 @@ input PersonReviewedMoviesUpdateFieldInput {
   where: PersonReviewedMoviesConnectionWhere
 }
 
-\\"\\"\\"
+"""
 Fields to sort People by. The order in which sorts are applied is not guaranteed when specifying many fields in one PersonSort object.
-\\"\\"\\"
+"""
 input PersonSort {
   born: SortDirection
   name: SortDirection
@@ -2301,6 +2312,8 @@ input PersonSubscriptionWhere {
 input PersonUpdateInput {
   actedInMovies: [PersonActedInMoviesUpdateFieldInput!]
   born: BigInt
+  born_DECREMENT: BigInt
+  born_INCREMENT: BigInt
   directedMovies: [PersonDirectedMoviesUpdateFieldInput!]
   followsPeople: [PersonFollowsPeopleUpdateFieldInput!]
   name: String
@@ -2313,32 +2326,33 @@ input PersonUpdateInput {
 type PersonUpdatedEvent {
   event: EventType!
   previousState: PersonEventPayload!
+  timestamp: Float!
   updatedPerson: PersonEventPayload!
 }
 
 input PersonWhere {
   AND: [PersonWhere!]
   OR: [PersonWhere!]
-  actedInMovies: MovieWhere @deprecated(reason: \\"Use \`actedInMovies_SOME\` instead.\\")
+  actedInMovies: MovieWhere @deprecated(reason: "Use \`actedInMovies_SOME\` instead.")
   actedInMoviesAggregate: PersonActedInMoviesAggregateInput
-  actedInMoviesConnection: PersonActedInMoviesConnectionWhere @deprecated(reason: \\"Use \`actedInMoviesConnection_SOME\` instead.\\")
+  actedInMoviesConnection: PersonActedInMoviesConnectionWhere @deprecated(reason: "Use \`actedInMoviesConnection_SOME\` instead.")
   actedInMoviesConnection_ALL: PersonActedInMoviesConnectionWhere
   actedInMoviesConnection_NONE: PersonActedInMoviesConnectionWhere
-  actedInMoviesConnection_NOT: PersonActedInMoviesConnectionWhere @deprecated(reason: \\"Use \`actedInMoviesConnection_NONE\` instead.\\")
+  actedInMoviesConnection_NOT: PersonActedInMoviesConnectionWhere @deprecated(reason: "Use \`actedInMoviesConnection_NONE\` instead.")
   actedInMoviesConnection_SINGLE: PersonActedInMoviesConnectionWhere
   actedInMoviesConnection_SOME: PersonActedInMoviesConnectionWhere
 
-  \\"\\"\\"Return People where all of the related Movies match this filter\\"\\"\\"
+  """Return People where all of the related Movies match this filter"""
   actedInMovies_ALL: MovieWhere
 
-  \\"\\"\\"Return People where none of the related Movies match this filter\\"\\"\\"
+  """Return People where none of the related Movies match this filter"""
   actedInMovies_NONE: MovieWhere
-  actedInMovies_NOT: MovieWhere @deprecated(reason: \\"Use \`actedInMovies_NONE\` instead.\\")
+  actedInMovies_NOT: MovieWhere @deprecated(reason: "Use \`actedInMovies_NONE\` instead.")
 
-  \\"\\"\\"Return People where one of the related Movies match this filter\\"\\"\\"
+  """Return People where one of the related Movies match this filter"""
   actedInMovies_SINGLE: MovieWhere
 
-  \\"\\"\\"Return People where some of the related Movies match this filter\\"\\"\\"
+  """Return People where some of the related Movies match this filter"""
   actedInMovies_SOME: MovieWhere
   born: BigInt
   born_GT: BigInt
@@ -2348,47 +2362,47 @@ input PersonWhere {
   born_LTE: BigInt
   born_NOT: BigInt
   born_NOT_IN: [BigInt]
-  directedMovies: MovieWhere @deprecated(reason: \\"Use \`directedMovies_SOME\` instead.\\")
+  directedMovies: MovieWhere @deprecated(reason: "Use \`directedMovies_SOME\` instead.")
   directedMoviesAggregate: PersonDirectedMoviesAggregateInput
-  directedMoviesConnection: PersonDirectedMoviesConnectionWhere @deprecated(reason: \\"Use \`directedMoviesConnection_SOME\` instead.\\")
+  directedMoviesConnection: PersonDirectedMoviesConnectionWhere @deprecated(reason: "Use \`directedMoviesConnection_SOME\` instead.")
   directedMoviesConnection_ALL: PersonDirectedMoviesConnectionWhere
   directedMoviesConnection_NONE: PersonDirectedMoviesConnectionWhere
-  directedMoviesConnection_NOT: PersonDirectedMoviesConnectionWhere @deprecated(reason: \\"Use \`directedMoviesConnection_NONE\` instead.\\")
+  directedMoviesConnection_NOT: PersonDirectedMoviesConnectionWhere @deprecated(reason: "Use \`directedMoviesConnection_NONE\` instead.")
   directedMoviesConnection_SINGLE: PersonDirectedMoviesConnectionWhere
   directedMoviesConnection_SOME: PersonDirectedMoviesConnectionWhere
 
-  \\"\\"\\"Return People where all of the related Movies match this filter\\"\\"\\"
+  """Return People where all of the related Movies match this filter"""
   directedMovies_ALL: MovieWhere
 
-  \\"\\"\\"Return People where none of the related Movies match this filter\\"\\"\\"
+  """Return People where none of the related Movies match this filter"""
   directedMovies_NONE: MovieWhere
-  directedMovies_NOT: MovieWhere @deprecated(reason: \\"Use \`directedMovies_NONE\` instead.\\")
+  directedMovies_NOT: MovieWhere @deprecated(reason: "Use \`directedMovies_NONE\` instead.")
 
-  \\"\\"\\"Return People where one of the related Movies match this filter\\"\\"\\"
+  """Return People where one of the related Movies match this filter"""
   directedMovies_SINGLE: MovieWhere
 
-  \\"\\"\\"Return People where some of the related Movies match this filter\\"\\"\\"
+  """Return People where some of the related Movies match this filter"""
   directedMovies_SOME: MovieWhere
-  followsPeople: PersonWhere @deprecated(reason: \\"Use \`followsPeople_SOME\` instead.\\")
+  followsPeople: PersonWhere @deprecated(reason: "Use \`followsPeople_SOME\` instead.")
   followsPeopleAggregate: PersonFollowsPeopleAggregateInput
-  followsPeopleConnection: PersonFollowsPeopleConnectionWhere @deprecated(reason: \\"Use \`followsPeopleConnection_SOME\` instead.\\")
+  followsPeopleConnection: PersonFollowsPeopleConnectionWhere @deprecated(reason: "Use \`followsPeopleConnection_SOME\` instead.")
   followsPeopleConnection_ALL: PersonFollowsPeopleConnectionWhere
   followsPeopleConnection_NONE: PersonFollowsPeopleConnectionWhere
-  followsPeopleConnection_NOT: PersonFollowsPeopleConnectionWhere @deprecated(reason: \\"Use \`followsPeopleConnection_NONE\` instead.\\")
+  followsPeopleConnection_NOT: PersonFollowsPeopleConnectionWhere @deprecated(reason: "Use \`followsPeopleConnection_NONE\` instead.")
   followsPeopleConnection_SINGLE: PersonFollowsPeopleConnectionWhere
   followsPeopleConnection_SOME: PersonFollowsPeopleConnectionWhere
 
-  \\"\\"\\"Return People where all of the related People match this filter\\"\\"\\"
+  """Return People where all of the related People match this filter"""
   followsPeople_ALL: PersonWhere
 
-  \\"\\"\\"Return People where none of the related People match this filter\\"\\"\\"
+  """Return People where none of the related People match this filter"""
   followsPeople_NONE: PersonWhere
-  followsPeople_NOT: PersonWhere @deprecated(reason: \\"Use \`followsPeople_NONE\` instead.\\")
+  followsPeople_NOT: PersonWhere @deprecated(reason: "Use \`followsPeople_NONE\` instead.")
 
-  \\"\\"\\"Return People where one of the related People match this filter\\"\\"\\"
+  """Return People where one of the related People match this filter"""
   followsPeople_SINGLE: PersonWhere
 
-  \\"\\"\\"Return People where some of the related People match this filter\\"\\"\\"
+  """Return People where some of the related People match this filter"""
   followsPeople_SOME: PersonWhere
   name: String
   name_CONTAINS: String
@@ -2400,89 +2414,89 @@ input PersonWhere {
   name_NOT_IN: [String!]
   name_NOT_STARTS_WITH: String
   name_STARTS_WITH: String
-  peopleFollows: PersonWhere @deprecated(reason: \\"Use \`peopleFollows_SOME\` instead.\\")
+  peopleFollows: PersonWhere @deprecated(reason: "Use \`peopleFollows_SOME\` instead.")
   peopleFollowsAggregate: PersonPeopleFollowsAggregateInput
-  peopleFollowsConnection: PersonPeopleFollowsConnectionWhere @deprecated(reason: \\"Use \`peopleFollowsConnection_SOME\` instead.\\")
+  peopleFollowsConnection: PersonPeopleFollowsConnectionWhere @deprecated(reason: "Use \`peopleFollowsConnection_SOME\` instead.")
   peopleFollowsConnection_ALL: PersonPeopleFollowsConnectionWhere
   peopleFollowsConnection_NONE: PersonPeopleFollowsConnectionWhere
-  peopleFollowsConnection_NOT: PersonPeopleFollowsConnectionWhere @deprecated(reason: \\"Use \`peopleFollowsConnection_NONE\` instead.\\")
+  peopleFollowsConnection_NOT: PersonPeopleFollowsConnectionWhere @deprecated(reason: "Use \`peopleFollowsConnection_NONE\` instead.")
   peopleFollowsConnection_SINGLE: PersonPeopleFollowsConnectionWhere
   peopleFollowsConnection_SOME: PersonPeopleFollowsConnectionWhere
 
-  \\"\\"\\"Return People where all of the related People match this filter\\"\\"\\"
+  """Return People where all of the related People match this filter"""
   peopleFollows_ALL: PersonWhere
 
-  \\"\\"\\"Return People where none of the related People match this filter\\"\\"\\"
+  """Return People where none of the related People match this filter"""
   peopleFollows_NONE: PersonWhere
-  peopleFollows_NOT: PersonWhere @deprecated(reason: \\"Use \`peopleFollows_NONE\` instead.\\")
+  peopleFollows_NOT: PersonWhere @deprecated(reason: "Use \`peopleFollows_NONE\` instead.")
 
-  \\"\\"\\"Return People where one of the related People match this filter\\"\\"\\"
+  """Return People where one of the related People match this filter"""
   peopleFollows_SINGLE: PersonWhere
 
-  \\"\\"\\"Return People where some of the related People match this filter\\"\\"\\"
+  """Return People where some of the related People match this filter"""
   peopleFollows_SOME: PersonWhere
-  producedMovies: MovieWhere @deprecated(reason: \\"Use \`producedMovies_SOME\` instead.\\")
+  producedMovies: MovieWhere @deprecated(reason: "Use \`producedMovies_SOME\` instead.")
   producedMoviesAggregate: PersonProducedMoviesAggregateInput
-  producedMoviesConnection: PersonProducedMoviesConnectionWhere @deprecated(reason: \\"Use \`producedMoviesConnection_SOME\` instead.\\")
+  producedMoviesConnection: PersonProducedMoviesConnectionWhere @deprecated(reason: "Use \`producedMoviesConnection_SOME\` instead.")
   producedMoviesConnection_ALL: PersonProducedMoviesConnectionWhere
   producedMoviesConnection_NONE: PersonProducedMoviesConnectionWhere
-  producedMoviesConnection_NOT: PersonProducedMoviesConnectionWhere @deprecated(reason: \\"Use \`producedMoviesConnection_NONE\` instead.\\")
+  producedMoviesConnection_NOT: PersonProducedMoviesConnectionWhere @deprecated(reason: "Use \`producedMoviesConnection_NONE\` instead.")
   producedMoviesConnection_SINGLE: PersonProducedMoviesConnectionWhere
   producedMoviesConnection_SOME: PersonProducedMoviesConnectionWhere
 
-  \\"\\"\\"Return People where all of the related Movies match this filter\\"\\"\\"
+  """Return People where all of the related Movies match this filter"""
   producedMovies_ALL: MovieWhere
 
-  \\"\\"\\"Return People where none of the related Movies match this filter\\"\\"\\"
+  """Return People where none of the related Movies match this filter"""
   producedMovies_NONE: MovieWhere
-  producedMovies_NOT: MovieWhere @deprecated(reason: \\"Use \`producedMovies_NONE\` instead.\\")
+  producedMovies_NOT: MovieWhere @deprecated(reason: "Use \`producedMovies_NONE\` instead.")
 
-  \\"\\"\\"Return People where one of the related Movies match this filter\\"\\"\\"
+  """Return People where one of the related Movies match this filter"""
   producedMovies_SINGLE: MovieWhere
 
-  \\"\\"\\"Return People where some of the related Movies match this filter\\"\\"\\"
+  """Return People where some of the related Movies match this filter"""
   producedMovies_SOME: MovieWhere
-  reviewedMovies: MovieWhere @deprecated(reason: \\"Use \`reviewedMovies_SOME\` instead.\\")
+  reviewedMovies: MovieWhere @deprecated(reason: "Use \`reviewedMovies_SOME\` instead.")
   reviewedMoviesAggregate: PersonReviewedMoviesAggregateInput
-  reviewedMoviesConnection: PersonReviewedMoviesConnectionWhere @deprecated(reason: \\"Use \`reviewedMoviesConnection_SOME\` instead.\\")
+  reviewedMoviesConnection: PersonReviewedMoviesConnectionWhere @deprecated(reason: "Use \`reviewedMoviesConnection_SOME\` instead.")
   reviewedMoviesConnection_ALL: PersonReviewedMoviesConnectionWhere
   reviewedMoviesConnection_NONE: PersonReviewedMoviesConnectionWhere
-  reviewedMoviesConnection_NOT: PersonReviewedMoviesConnectionWhere @deprecated(reason: \\"Use \`reviewedMoviesConnection_NONE\` instead.\\")
+  reviewedMoviesConnection_NOT: PersonReviewedMoviesConnectionWhere @deprecated(reason: "Use \`reviewedMoviesConnection_NONE\` instead.")
   reviewedMoviesConnection_SINGLE: PersonReviewedMoviesConnectionWhere
   reviewedMoviesConnection_SOME: PersonReviewedMoviesConnectionWhere
 
-  \\"\\"\\"Return People where all of the related Movies match this filter\\"\\"\\"
+  """Return People where all of the related Movies match this filter"""
   reviewedMovies_ALL: MovieWhere
 
-  \\"\\"\\"Return People where none of the related Movies match this filter\\"\\"\\"
+  """Return People where none of the related Movies match this filter"""
   reviewedMovies_NONE: MovieWhere
-  reviewedMovies_NOT: MovieWhere @deprecated(reason: \\"Use \`reviewedMovies_NONE\` instead.\\")
+  reviewedMovies_NOT: MovieWhere @deprecated(reason: "Use \`reviewedMovies_NONE\` instead.")
 
-  \\"\\"\\"Return People where one of the related Movies match this filter\\"\\"\\"
+  """Return People where one of the related Movies match this filter"""
   reviewedMovies_SINGLE: MovieWhere
 
-  \\"\\"\\"Return People where some of the related Movies match this filter\\"\\"\\"
+  """Return People where some of the related Movies match this filter"""
   reviewedMovies_SOME: MovieWhere
-  wroteMovies: MovieWhere @deprecated(reason: \\"Use \`wroteMovies_SOME\` instead.\\")
+  wroteMovies: MovieWhere @deprecated(reason: "Use \`wroteMovies_SOME\` instead.")
   wroteMoviesAggregate: PersonWroteMoviesAggregateInput
-  wroteMoviesConnection: PersonWroteMoviesConnectionWhere @deprecated(reason: \\"Use \`wroteMoviesConnection_SOME\` instead.\\")
+  wroteMoviesConnection: PersonWroteMoviesConnectionWhere @deprecated(reason: "Use \`wroteMoviesConnection_SOME\` instead.")
   wroteMoviesConnection_ALL: PersonWroteMoviesConnectionWhere
   wroteMoviesConnection_NONE: PersonWroteMoviesConnectionWhere
-  wroteMoviesConnection_NOT: PersonWroteMoviesConnectionWhere @deprecated(reason: \\"Use \`wroteMoviesConnection_NONE\` instead.\\")
+  wroteMoviesConnection_NOT: PersonWroteMoviesConnectionWhere @deprecated(reason: "Use \`wroteMoviesConnection_NONE\` instead.")
   wroteMoviesConnection_SINGLE: PersonWroteMoviesConnectionWhere
   wroteMoviesConnection_SOME: PersonWroteMoviesConnectionWhere
 
-  \\"\\"\\"Return People where all of the related Movies match this filter\\"\\"\\"
+  """Return People where all of the related Movies match this filter"""
   wroteMovies_ALL: MovieWhere
 
-  \\"\\"\\"Return People where none of the related Movies match this filter\\"\\"\\"
+  """Return People where none of the related Movies match this filter"""
   wroteMovies_NONE: MovieWhere
-  wroteMovies_NOT: MovieWhere @deprecated(reason: \\"Use \`wroteMovies_NONE\` instead.\\")
+  wroteMovies_NOT: MovieWhere @deprecated(reason: "Use \`wroteMovies_NONE\` instead.")
 
-  \\"\\"\\"Return People where one of the related Movies match this filter\\"\\"\\"
+  """Return People where one of the related Movies match this filter"""
   wroteMovies_SINGLE: MovieWhere
 
-  \\"\\"\\"Return People where some of the related Movies match this filter\\"\\"\\"
+  """Return People where some of the related Movies match this filter"""
   wroteMovies_SOME: MovieWhere
 }
 
@@ -2677,6 +2691,8 @@ input ReviewedPropertiesSort {
 
 input ReviewedPropertiesUpdateInput {
   rating: BigInt
+  rating_DECREMENT: BigInt
+  rating_INCREMENT: BigInt
   summary: String
 }
 
@@ -2704,10 +2720,10 @@ input ReviewedPropertiesWhere {
 }
 
 enum SortDirection {
-  \\"\\"\\"Sort by field values in ascending order.\\"\\"\\"
+  """Sort by field values in ascending order."""
   ASC
 
-  \\"\\"\\"Sort by field values in descending order.\\"\\"\\"
+  """Sort by field values in descending order."""
   DESC
 }
 
@@ -2750,26 +2766,26 @@ type UpdatePeopleMutationResponse {
 `;
 
 exports[`Neo4j should give correct response for example queries: example-query.graphql-query-result 1`] = `
-Object {
-  "data": Object {
-    "movies": Array [
-      Object {
-        "peopleActedIn": Array [
-          Object {
+{
+  "data": {
+    "movies": [
+      {
+        "peopleActedIn": [
+          {
             "name": "Emil Eifrem",
           },
-          Object {
+          {
             "name": "Hugo Weaving",
           },
         ],
         "title": "The Matrix",
       },
-      Object {
-        "peopleActedIn": Array [
-          Object {
+      {
+        "peopleActedIn": [
+          {
             "name": "Hugo Weaving",
           },
-          Object {
+          {
             "name": "Laurence Fishburne",
           },
         ],

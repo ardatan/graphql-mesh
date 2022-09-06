@@ -37,6 +37,9 @@ function getEventEmitterFromPubSub(pubsub: MeshPubSub): any {
     addListener(event: string | symbol, listener: (...args: any[]) => void) {
       return this.on(event, listener);
     },
+    setMaxListeners() {
+      return this;
+    },
   };
 }
 

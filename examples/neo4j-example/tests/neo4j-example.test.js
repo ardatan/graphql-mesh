@@ -4,7 +4,7 @@ const { basename, join } = require('path');
 
 const { printSchema, lexicographicSortSchema } = require('graphql');
 
-describe.skip('Neo4j', () => {
+describe('Neo4j', () => {
   let config$, mesh$;
   beforeAll(() => {
     config$ = findAndParseConfig({
