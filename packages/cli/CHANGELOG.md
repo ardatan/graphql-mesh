@@ -1,5 +1,31 @@
 # @graphql-mesh/cli
 
+## 0.78.2
+
+### Patch Changes
+
+- [#4451](https://github.com/Urigo/graphql-mesh/pull/4451) [`a56ebcec5`](https://github.com/Urigo/graphql-mesh/commit/a56ebcec503402fbdb3d4e3561fd2e38e4dd5c43) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency [`graphql-scalars@1.18.0` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.18.0) (to `dependencies`)
+
+- [#4451](https://github.com/Urigo/graphql-mesh/pull/4451) [`a56ebcec5`](https://github.com/Urigo/graphql-mesh/commit/a56ebcec503402fbdb3d4e3561fd2e38e4dd5c43) Thanks [@ardatan](https://github.com/ardatan)! - Fix TypeScript typings for additional scalars;
+
+  For example;
+
+  - `BigInt` should be `bigint`
+  - `PositiveInt` should be `int`
+  - `File` should be `File`
+  - `NonEmptyString` should be `string`
+  - `DateTime` should be `Date`
+
+- Updated dependencies [[`a56ebcec5`](https://github.com/Urigo/graphql-mesh/commit/a56ebcec503402fbdb3d4e3561fd2e38e4dd5c43), [`24afabece`](https://github.com/Urigo/graphql-mesh/commit/24afabece51aee171f902776d3f59b4a17026c49), [`44b868196`](https://github.com/Urigo/graphql-mesh/commit/44b86819695a298e60b1d7b6c54ae2772e8f1588)]:
+  - @graphql-mesh/types@0.83.0
+  - @graphql-mesh/runtime@0.44.0
+  - @graphql-mesh/config@8.0.0
+  - @graphql-mesh/store@0.8.38
+  - @graphql-mesh/utils@0.41.5
+  - @graphql-mesh/http@0.1.2
+
 ## 0.78.1
 
 ### Patch Changes

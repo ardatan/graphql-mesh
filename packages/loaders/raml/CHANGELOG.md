@@ -1,5 +1,14 @@
 # @omnigraph/raml
 
+## 0.7.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - json-machete@0.14.6
+  - @omnigraph/json-schema@0.33.3
+  - @graphql-mesh/utils@0.41.5
+
 ## 0.7.11
 
 ### Patch Changes
