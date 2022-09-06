@@ -1,0 +1,12 @@
+diff --git a/node_modules/guild-docs/esm/mermaid.js b/node_modules/guild-docs/esm/mermaid.js
+index 11b549d..57ed32c 100644
+--- a/node_modules/guild-docs/esm/mermaid.js
++++ b/node_modules/guild-docs/esm/mermaid.js
+@@ -1,6 +1,6 @@
+ import React, { useEffect, useState } from 'react';
+ import mermaid from 'mermaid';
+-import { useTheme } from '@theguild/components';
++import { useTheme } from 'next-themes';
+ /**
+  * Assign a unique ID to each mermaid svg as per requirements of `mermaid.render`.
+  */
