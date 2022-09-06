@@ -63,6 +63,7 @@
     "@whatwg-node/server": "0.1.2",
     "@whatwg-node/fetch": "0.3.2",
     "graphql-yoga": "3.0.0-alpha-20220905163021-e923bb34",
+    "graphql-scalars": "1.18.0",
     "itty-router": "2.6.1",
     "itty-router-extras": "0.4.2",
     "dotenv": "16.0.2",

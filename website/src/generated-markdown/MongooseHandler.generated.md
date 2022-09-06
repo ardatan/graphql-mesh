@@ -1210,4 +1210,3 @@
         * `Boolean`
         * `object`: 
           * `perPage` (type: `Int`)
-* `autoTypeMerging` (type: `Boolean`) - Enable Automatic Type Merging/Federation support

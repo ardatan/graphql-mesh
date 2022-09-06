@@ -10,7 +10,7 @@ sources:
         endpoint: http://localhost:3002/graphql
 
 additionalTypeDefs: |
-  extend type File {
+  extend type FileResult {
     thumbnailImage(width: Int, height: Int): String @resolveTo(
       requiredSelectionSet: "{ thumbnailImage }",
       sourceName: "ResizeImages",

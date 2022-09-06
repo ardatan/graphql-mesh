@@ -552,10 +552,6 @@ export interface MongooseHandler {
   connectionString?: string;
   models?: MongooseModel[];
   discriminators?: MongooseModel[];
-  /**
-   * Enable Automatic Type Merging/Federation support
-   */
-  autoTypeMerging?: boolean;
 }
 export interface MongooseModel {
   name: string;

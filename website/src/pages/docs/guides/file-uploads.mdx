@@ -33,10 +33,10 @@ sources:
 transforms:
   # …
 additionalTypeDefs: |
-  scalar Upload
+  scalar File
 
   extend type Mutation {
-    uploadFile(upload: Upload!): File!
+    uploadFile(upload: File!): FileResult!
   }
 
 additionalResolvers:
