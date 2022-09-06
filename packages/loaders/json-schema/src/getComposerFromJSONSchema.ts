@@ -88,6 +88,7 @@ export interface TypeComposers {
 
 const GraphQLFile = new GraphQLScalarType({
   name: 'File',
+  description: 'The `File` scalar type represents a file upload.',
   extensions: {
     codegenScalarType: 'File',
   },

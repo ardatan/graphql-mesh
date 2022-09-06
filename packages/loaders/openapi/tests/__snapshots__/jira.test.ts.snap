@@ -95776,6 +95776,7 @@ type Attachment {
   additionalProperties: JSON
 }
 
+"The \`File\` scalar type represents a file upload."
 scalar File
 
 "A list of changelog IDs."
