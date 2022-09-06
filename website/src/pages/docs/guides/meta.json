@@ -4,7 +4,7 @@
   "mesh-sdk": "Programmatic usage /  SDK",
   "live-queries": "Live Queries",
   "subscriptions-webhooks": "Subscriptions & Webhooks",
-  "performances-best-practices": "Performances best practices",
+  "batching": "Batching for N+1 problem",
   "error-handling": "Error handling",
   "file-uploads": "File uploads",
   "monitoring-and-tracing": "Monitoring and Tracing"
