@@ -380,8 +380,6 @@ export async function processConfig(
 
   if (options.generateCode) {
     if (config.additionalResolvers?.length) {
-      importCodes.add(`import { resolveAdditionalResolversWithoutImport } from '@graphql-mesh/utils';`);
-
       codes.add(`const additionalResolvers = await Promise.all([
         ${config.additionalResolvers
           .map(additionalResolverDefinition => {
@@ -391,6 +389,7 @@ export async function processConfig(
               )})
             .then(m => m.resolvers || m.default || m)`;
             } else {
+              importCodes.add(`import { resolveAdditionalResolversWithoutImport } from '@graphql-mesh/utils';`);
               return `resolveAdditionalResolversWithoutImport(
             ${JSON.stringify(additionalResolverDefinition, null, 2)}
           )`;
