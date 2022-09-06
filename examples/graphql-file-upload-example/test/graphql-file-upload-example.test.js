@@ -25,7 +25,7 @@ describe('Upload Example', () => {
     const file = new File([Buffer.from('CONTENT')], 'test.txt');
     const result = await execute(
       /* GraphQL */ `
-        mutation UploadFile($upload: Upload!) {
+        mutation UploadFile($upload: File!) {
           uploadFile(upload: $upload) {
             filename
           }

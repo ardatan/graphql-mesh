@@ -218,7 +218,10 @@ export async function generateTsArtifacts(
       }
     );
   }
-  const codegenScalarsConfig = {};
+  const codegenScalarsConfig = {
+    File: 'File',
+    Upload: 'File',
+  };
   for (const resolverName in scalarResolvers) {
     const scalarResolver = scalarResolvers[resolverName];
     codegenScalarsConfig[scalarResolver.name] = scalarResolver.extensions?.codegenScalarType;

@@ -13,15 +13,15 @@ if (!existsSync(FILES_DIR)) {
 module.exports = createServer({
   schema: {
     typeDefs: /* GraphQL */ `
-      scalar Upload
+      scalar File
       type Query {
-        files: [File]
+        files: [FileResult]
       }
       type Mutation {
-        uploadFile(upload: Upload!): File!
+        uploadFile(upload: File!): FileResult!
         deleteFile(filename: String): Boolean
       }
-      type File {
+      type FileResult {
         filename: String
         base64: String
       }

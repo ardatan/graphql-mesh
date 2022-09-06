@@ -10,7 +10,7 @@ export const GET_FILES = gql`
 `;
 
 export const UPLOAD_FILE = gql`
-  mutation uploadFile($upload: Upload!) {
+  mutation uploadFile($upload: File!) {
     uploadFile(upload: $upload) {
       filename
       thumbnailImage(width: 320, height: 240)
