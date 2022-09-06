@@ -472,6 +472,24 @@
     "type": "Documentation"
   },
   {
+    "objectID": "mesh-docs-guides-batching",
+    "headings": ["Enable requests batching"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Enable requests batching",
+        "anchor": "enable-requests-batching"
+      }
+    ],
+    "content": "f99ba536b06fc18e1f4ab4b145c5a06b",
+    "url": "https://www.graphql-mesh.com/docs/guides/batching",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Docs", "Guides"],
+    "source": "Mesh",
+    "title": "Batching for N+1 problem",
+    "type": "Documentation"
+  },
+  {
     "objectID": "mesh-docs-guides-error-handling",
     "headings": ["Enabling Errors masking", "Custom resolvers error handling"],
     "toc": [
@@ -708,24 +726,6 @@
     "hierarchy": ["Docs", "Guides"],
     "source": "Mesh",
     "title": "Monitoring and Tracing",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "mesh-docs-guides-performances-best-practices",
-    "headings": ["Enable requests batching"],
-    "toc": [
-      {
-        "children": [],
-        "title": "Enable requests batching",
-        "anchor": "enable-requests-batching"
-      }
-    ],
-    "content": "1ffee1ebe3e9a9d3936c76efdd7b1a36",
-    "url": "https://www.graphql-mesh.com/docs/guides/performances-best-practices",
-    "domain": "https://www.graphql-mesh.com/",
-    "hierarchy": ["Docs", "Guides"],
-    "source": "Mesh",
-    "title": "Performances best practices",
     "type": "Documentation"
   },
   {
