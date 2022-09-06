@@ -14,6 +14,7 @@ import { pathExists, writeFile, writeJSON } from '@graphql-mesh/utils';
 import { generateOperations } from './generate-operations';
 import { GraphQLMeshCLIParams } from '..';
 import JSON5 from 'json5';
+import { resolvers as scalarResolvers } from 'graphql-scalars';
 
 const unifiedContextIdentifier = 'MeshContext';
 
@@ -63,6 +64,7 @@ async function generateTypesForApi(options: {
   schema: GraphQLSchema;
   name: string;
   contextVariables: Record<string, string>;
+  codegenScalarsConfig: Record<string, string>;
 }) {
   const baseTypes = await codegen({
     filename: options.name + '_types.ts',
@@ -72,6 +74,7 @@ async function generateTypesForApi(options: {
       namingConvention: 'keep',
       enumsAsTypes: true,
       ignoreEnumValuesFromSchema: true,
+      scalars: options.codegenScalarsConfig,
     },
     schemaAst: options.schema,
     schema: undefined as any, // This is not necessary on codegen. Will be removed later
@@ -215,6 +218,18 @@ export async function generateTsArtifacts(
       }
     );
   }
+  const codegenScalarsConfig = {};
+  for (const resolverName in scalarResolvers) {
+    const scalarResolver = scalarResolvers[resolverName];
+    codegenScalarsConfig[scalarResolver.name] = scalarResolver.extensions?.codegenScalarType;
+  }
+  for (const typeName in unifiedSchema.getTypeMap()) {
+    const type = unifiedSchema.getType(typeName);
+    const codegenScalarType = type.extensions.codegenScalarType;
+    if (codegenScalarType) {
+      codegenScalarsConfig[typeName] = codegenScalarType;
+    }
+  }
   const codegenOutput =
     '// @ts-nocheck\n' +
     (
@@ -235,6 +250,7 @@ export async function generateTsArtifacts(
           noSchemaStitching: mergerType !== 'stitching',
           contextType: unifiedContextIdentifier,
           federation: mergerType === 'federation',
+          scalars: codegenScalarsConfig,
           ...codegenConfig,
         },
         schemaAst: unifiedSchema,
@@ -262,6 +278,7 @@ export async function generateTsArtifacts(
                     schema: sourceSchema,
                     name: source.name,
                     contextVariables: source.contextVariables,
+                    codegenScalarsConfig,
                   });
 
                   if (item) {
