@@ -1,10 +1,7 @@
 import { MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 
 import WrapNamingConvention from './wrapNamingConvention';
-
-class BareNamingConvention extends WrapNamingConvention {
-  noWrap = true;
-}
+import BareNamingConvention from './bareNamingConvention';
 
 interface NamingConventionTransformConstructor {
   new (options: MeshTransformOptions<YamlConfig.NamingConventionTransformConfig>): WrapNamingConvention | BareNamingConvention;

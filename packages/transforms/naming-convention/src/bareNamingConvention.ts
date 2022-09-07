@@ -63,8 +63,9 @@ const IGNORED_TYPE_NAMES = [
   ...Object.keys(scalarsResolversMap),
 ];
 
-export default class WrapNamingConventionTransform implements MeshTransform {
+export default class BareNamingConventionTransform implements MeshTransform {
   private transforms: Transform[] = [];
+  noWrap = true;
 
   constructor(options: MeshTransformOptions<YamlConfig.NamingConventionTransformConfig>) {
     if (options.config.typeNames) {
