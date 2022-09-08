@@ -33,7 +33,6 @@ export default withGuildDocs({
       '/docs/api/modules/urql_src': '/docs',
       '/docs/guides': '/docs',
       '/docs/recipes/multiple-apis': '/docs/getting-started/combine-multiple-sources',
-      '/docs/recipes': '/docs',
       '/docs/recipes/as-sdk': '/docs/guides/mesh-sdk',
       '/docs/migration/openapi-0': '/docs/migration/openapi-0.31-0.32',
       '/docs/recipes/build-mesh-artifacts': '/docs/guides/mesh-sdk',
