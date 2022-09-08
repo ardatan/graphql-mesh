@@ -1,4 +1,5 @@
 import { withGuildDocs } from 'guild-docs/next.config';
+import { applyUnderscoreRedirects } from 'guild-docs/underscore-redirects';
 
 export default withGuildDocs({
   basePath: process.env.NEXT_BASE_PATH && process.env.NEXT_BASE_PATH !== '' ? process.env.NEXT_BASE_PATH : undefined,
@@ -10,6 +11,11 @@ export default withGuildDocs({
   },
   eslint: {
     ignoreDuringBuilds: true,
+  },
+  webpack(config, meta) {
+    applyUnderscoreRedirects(config, meta);
+
+    return config;
   },
   redirects: () =>
     Object.entries({
@@ -58,6 +64,8 @@ export default withGuildDocs({
       '/docs/api/interfaces/types_src.YamlConfig.Transform': '/docs/getting-started/customize-mesh-server',
       '/docs/api/interfaces/types_src.MeshTransform': '/docs/getting-started/customize-mesh-server',
       '/docs/api/modules/transforms_rename_src': '/docs/transforms/rename',
+      '/docs/api/modules/config': '/docs',
+      '/docs/api/modules/config_src': '/docs',
     }).map(([from, to]) => ({
       source: from,
       destination: to,
