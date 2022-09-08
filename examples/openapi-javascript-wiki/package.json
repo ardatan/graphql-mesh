@@ -12,6 +12,6 @@
     "@graphql-mesh/openapi": "0.33.7",
     "graphql": "16.6.0",
     "moment": "2.29.4",
-    "typescript": "4.8.2"
+    "typescript": "4.8.3"
   }
 }
