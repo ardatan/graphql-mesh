@@ -66,6 +66,9 @@ export default withGuildDocs({
       '/docs/api/modules/transforms_rename_src': '/docs/transforms/rename',
       '/docs/api/modules/config': '/docs',
       '/docs/api/modules/config_src': '/docs',
+      '/docs/api/modules/transforms_prefix_src': '/docs',
+      '/docs/api/interfaces/types_src.YamlConfig.PrefixTransformConfig': '/docs',
+      '/docs/api/interfaces': '/docs',
     }).map(([from, to]) => ({
       source: from,
       destination: to,
