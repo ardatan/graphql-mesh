@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/http",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -30,9 +30,9 @@
   "dependencies": {
     "@whatwg-node/server": "0.2.0",
     "@whatwg-node/fetch": "0.4.2",
-    "@graphql-mesh/cross-helpers": "0.2.4",
-    "@graphql-mesh/runtime": "0.44.2",
-    "@graphql-mesh/utils": "0.41.7",
+    "@graphql-mesh/cross-helpers": "0.2.5",
+    "@graphql-mesh/runtime": "0.44.3",
+    "@graphql-mesh/utils": "0.41.8",
     "graphql-yoga": "3.0.0-alpha-20220905163021-e923bb34",
     "itty-router": "2.6.1",
     "itty-router-extras": "0.4.2",
