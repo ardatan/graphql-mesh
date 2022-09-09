@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-replace-field",
-  "version": "0.3.84",
+  "version": "0.3.85",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -28,8 +28,8 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.83.0",
-    "@graphql-mesh/utils": "0.41.5",
+    "@graphql-mesh/types": "0.83.1",
+    "@graphql-mesh/utils": "0.41.6",
     "@graphql-tools/code-file-loader": "7.3.5",
     "@graphql-tools/graphql-file-loader": "7.5.4",
     "@graphql-tools/load": "7.7.6",
@@ -41,7 +41,7 @@
     "directory": "dist"
   },
   "devDependencies": {
-    "@graphql-mesh/cache-localforage": "0.6.35",
+    "@graphql-mesh/cache-localforage": "0.6.36",
     "@graphql-tools/schema": "9.0.3"
   }
 }
