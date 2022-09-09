@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.78.7
+
+### Patch Changes
+
+- [`497cb187c`](https://github.com/Urigo/graphql-mesh/commit/497cb187c08540d31570ca618a70195518e5d9ae) Thanks [@ardatan](https://github.com/ardatan)! - Cleanup unused dependencies
+
 ## 0.78.6
 
 ### Patch Changes

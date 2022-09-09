@@ -1,5 +1,12 @@
 # openapi-stripe
 
+## 0.5.281
+
+### Patch Changes
+
+- Updated dependencies [[`497cb187c`](https://github.com/Urigo/graphql-mesh/commit/497cb187c08540d31570ca618a70195518e5d9ae)]:
+  - @graphql-mesh/cli@0.78.7
+
 ## 0.5.280
 
 ### Patch Changes

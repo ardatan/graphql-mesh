@@ -1,5 +1,11 @@
 # @graphql-mesh/graphql
 
+## 0.31.9
+
+### Patch Changes
+
+- [`3186f405d`](https://github.com/Urigo/graphql-mesh/commit/3186f405deb03985f8816e2e481103244a2e7202) Thanks [@ardatan](https://github.com/ardatan)! - Drop unnecessary `multipart` flag
+
 ## 0.31.8
 
 ### Patch Changes
