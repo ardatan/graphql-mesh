@@ -1,5 +1,12 @@
 # hello-world-esm
 
+## 0.0.53
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.78.8
+
 ## 0.0.52
 
 ### Patch Changes
