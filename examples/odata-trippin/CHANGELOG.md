@@ -1,5 +1,12 @@
 # odata-trippin-example
 
+## 0.7.261
+
+### Patch Changes
+
+- Updated dependencies [[`35366d0b5`](https://github.com/Urigo/graphql-mesh/commit/35366d0b585a7d25d75f493648b6a679a876ec2a)]:
+  - @graphql-mesh/cli@0.78.5
+
 ## 0.7.260
 
 ### Patch Changes

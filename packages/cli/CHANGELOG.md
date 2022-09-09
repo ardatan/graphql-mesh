@@ -1,5 +1,11 @@
 # @graphql-mesh/cli
 
+## 0.78.5
+
+### Patch Changes
+
+- [`35366d0b5`](https://github.com/Urigo/graphql-mesh/commit/35366d0b585a7d25d75f493648b6a679a876ec2a) Thanks [@ardatan](https://github.com/ardatan)! - Fix `Cannot read properties of undefined (reading 'codegenScalarType')`
+
 ## 0.78.4
 
 ### Patch Changes
