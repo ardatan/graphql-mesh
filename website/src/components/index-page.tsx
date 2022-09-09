@@ -36,13 +36,19 @@ export function IndexPage(): ReactElement {
               src: GraphQLLogo,
               loading: 'eager',
               placeholder: 'empty',
+              alt: 'GraphQL Logo',
             },
           },
           {
             title: 'Any Data Source',
             description:
               'Use GraphQL as a query language to fetch data from your data-sources directly, without the need for a running gateway server, or any other bottleneck.',
-            image: MeshExampleLogo,
+            image: {
+              src: MeshExampleLogo,
+              loading: 'eager',
+              placeholder: 'empty',
+              alt: 'GraphQL Mesh Logo',
+            },
           },
           {
             title: 'Open Source',
@@ -52,6 +58,7 @@ export function IndexPage(): ReactElement {
               src: OpenSourceLogo,
               loading: 'eager',
               placeholder: 'empty',
+              alt: 'Open Source Logo',
             },
           },
         ]}
