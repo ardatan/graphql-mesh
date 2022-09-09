@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-cache",
-  "version": "0.12.42",
+  "version": "0.12.43",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -28,18 +28,18 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.83.2",
-    "@graphql-mesh/utils": "0.41.7",
+    "@graphql-mesh/types": "0.83.3",
+    "@graphql-mesh/utils": "0.41.8",
     "@graphql-mesh/string-interpolation": "0.3.2",
     "dayjs": "1.11.5",
-    "@graphql-mesh/cross-helpers": "0.2.4",
+    "@graphql-mesh/cross-helpers": "0.2.5",
     "@graphql-tools/resolvers-composition": "6.5.6",
     "@graphql-tools/schema": "9.0.4",
     "@graphql-tools/utils": "8.12.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-mesh/cache-localforage": "0.6.37"
+    "@graphql-mesh/cache-localforage": "0.6.38"
   },
   "publishConfig": {
     "access": "public",

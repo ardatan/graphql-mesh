@@ -1,5 +1,29 @@
 # @graphql-mesh/container
 
+## 0.1.153
+
+### Patch Changes
+
+- Updated dependencies [[`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f), [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f), [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f), [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f), [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f), [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f), [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f), [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f), [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f), [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f), [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f), [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f), [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f), [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f), [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f), [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f)]:
+  - @graphql-mesh/cli@0.78.6
+  - @graphql-mesh/config@8.0.3
+  - @graphql-mesh/graphql@0.31.8
+  - @graphql-mesh/json-schema@0.35.9
+  - @graphql-mesh/odata@0.20.8
+  - @graphql-mesh/plugin-mock@0.0.15
+  - @graphql-mesh/postgraphile@0.21.8
+  - @graphql-mesh/runtime@0.44.3
+  - @graphql-mesh/soap@0.14.8
+  - @graphql-mesh/transform-cache@0.12.43
+  - @graphql-mesh/transform-encapsulate@0.3.89
+  - @graphql-mesh/transform-extend@0.10.53
+  - @graphql-mesh/transform-filter-schema@0.14.88
+  - @graphql-mesh/transform-prefix@0.11.77
+  - @graphql-mesh/transform-rename@0.12.78
+  - @graphql-mesh/transform-resolvers-composition@0.12.87
+  - @graphql-mesh/grpc@0.25.9
+  - @graphql-mesh/openapi@0.33.10
+
 ## 0.1.152
 
 ### Patch Changes
