@@ -228,7 +228,7 @@ export async function generateTsArtifacts(
   }
   for (const typeName in unifiedSchema.getTypeMap()) {
     const type = unifiedSchema.getType(typeName);
-    const codegenScalarType = type.extensions.codegenScalarType;
+    const codegenScalarType = type.extensions?.codegenScalarType;
     if (codegenScalarType) {
       codegenScalarsConfig[typeName] = codegenScalarType;
     }
