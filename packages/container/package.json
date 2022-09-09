@@ -1,7 +1,7 @@
 {
   "name": "@graphql-mesh/container",
   "license": "MIT",
-  "version": "0.1.151",
+  "version": "0.1.152",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "graphql": "16.6.0",
-    "@graphql-mesh/cli": "0.78.4",
+    "@graphql-mesh/cli": "0.78.5",
     "@graphql-mesh/config": "8.0.2",
     "@graphql-mesh/runtime": "0.44.2",
     "@graphql-mesh/openapi": "0.33.9",
