@@ -28,8 +28,8 @@
     }
   },
   "dependencies": {
-    "@whatwg-node/server": "0.1.2",
-    "@whatwg-node/fetch": "0.3.2",
+    "@whatwg-node/server": "0.2.0",
+    "@whatwg-node/fetch": "0.4.2",
     "@graphql-mesh/cross-helpers": "0.2.4",
     "@graphql-mesh/runtime": "0.44.0",
     "@graphql-mesh/utils": "0.41.5",

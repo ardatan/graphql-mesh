@@ -4926,10 +4926,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.6.5.tgz#06caea822caf9e59d5034b695186ee74154d2802"
   integrity sha512-Xjt5ZGUa5WusGZJ4WJPbOT8QOqp6nDynVFRKcUt32bOgvXEoc6o085WNkYTMO7ifAj2isEfQQ2cseE+wT6jsRw==
 
-"@types/node@16.11.57":
-  version "16.11.57"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.57.tgz#786f74cef16acf2c5eb11795b6c3f7ae93596662"
-  integrity sha512-diBb5AE2V8h9Fs9zEDtBwSeLvIACng/aAkdZ3ujMV+cGuIQ9Nc/V+wQqurk9HJp8ni5roBxQHW21z/ZYbGDivg==
+"@types/node@16.11.58":
+  version "16.11.58"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.58.tgz#0a3698dee3492617a8d5fe7998d18d7520b63026"
+  integrity sha512-uMVxJ111wpHzkx/vshZFb6Qni3BOMnlWLq7q9jrwej7Yw/KvjsEbpxCCxw+hLKxexFMc8YmpG8J9tnEe/rKsIg==
 
 "@types/node@18.6.1":
   version "18.6.1"
@@ -5476,7 +5476,22 @@
     "@webassemblyjs/ast" "1.11.1"
     "@xtuc/long" "4.2.2"
 
-"@whatwg-node/fetch@0.3.2", "@whatwg-node/fetch@^0.3.0", "@whatwg-node/fetch@^0.3.2":
+"@whatwg-node/fetch@0.4.2", "@whatwg-node/fetch@^0.4.0":
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.4.2.tgz#a5045d66b1ef09f02c07f997c40302a49e82cbf8"
+  integrity sha512-5ACCCexn6i5Ud45wHxcqSzlcRes1FfKgRpEs87V1Ha6gJTc7wNdw7TJQE7qoYMI0dGjVmKbDvP0+Em4HKF8JLQ==
+  dependencies:
+    "@peculiar/webcrypto" "^1.4.0"
+    abort-controller "^3.0.0"
+    busboy "^1.6.0"
+    event-target-polyfill "^0.0.3"
+    form-data-encoder "^1.7.1"
+    formdata-node "^4.3.1"
+    node-fetch "^2.6.7"
+    undici "^5.8.0"
+    web-streams-polyfill "^3.2.0"
+
+"@whatwg-node/fetch@^0.3.0", "@whatwg-node/fetch@^0.3.2":
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.3.2.tgz#da4323795c26c135563ba01d49dc16037bec4287"
   integrity sha512-Bs5zAWQs0tXsLa4mRmLw7Psps1EN78vPtgcLpw3qPY8s6UYPUM67zFZ9cy+7tZ64PXhfwzxJn+m7RH2Lq48RNQ==
@@ -5491,7 +5506,15 @@
     undici "^5.8.0"
     web-streams-polyfill "^3.2.0"
 
-"@whatwg-node/server@0.1.2", "@whatwg-node/server@^0.1.0":
+"@whatwg-node/server@0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.2.0.tgz#db426349a71520295db18ab702b07014afdba25b"
+  integrity sha512-zXtaU1Oi+azPdT333bfHyQX46xaxLZLQr5mThHd9iHZiNrj09JC5pglQ0enzKrvF811aB1PtwrnZXrbddGFYMw==
+  dependencies:
+    "@whatwg-node/fetch" "^0.4.0"
+    tslib "^2.3.1"
+
+"@whatwg-node/server@^0.1.0":
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.1.2.tgz#512d23381991a389ab7c274974864b71c38b46ed"
   integrity sha512-DUzxx9oAMwGjLyBlMJkkJVWdflBatYV3haeGcTYKqF9HVX8DTdRrqMA/KFdsiVyfaNkPgaL5RnGE4KngGFSF6Q==
@@ -10058,10 +10081,10 @@ fengari@^0.1.4:
     sprintf-js "^1.1.1"
     tmp "^0.0.33"
 
-fetchache@0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/fetchache/-/fetchache-0.1.2.tgz#b0cde43eec27fb2a69727b5249bd42116662e988"
-  integrity sha512-pee+DWKu3tlxAZJzl1DRvFkCa5skZAUWPdEwbU3fufUC9TnQhmogntLmC75o4GHe26aDIz2CuT4YG7Nqyc8i3Q==
+fetchache@0.1.3:
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/fetchache/-/fetchache-0.1.3.tgz#15ccbfaa8a368cf6ac01ae77aa006fdf421358ed"
+  integrity sha512-BJpTVbMFj0Lio4oh3/nSxleN5kf/evhwdWtWjxj5GSWCXSRCiATWwlpX/SEyMGpC2HaN36Lb0i5QueHzgS8niA==
   dependencies:
     http-cache-semantics "^4.1.0"
     tslib "^2.3.1"
@@ -14686,10 +14709,10 @@ mongodb@4.8.1:
   optionalDependencies:
     saslprep "^1.0.3"
 
-mongoose@6.5.4:
-  version "6.5.4"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.5.4.tgz#05c57c569d919fb55e656df1e49735a931fdc647"
-  integrity sha512-8hKV+9baDa7fyWRADQcSN/c0/QQbnewA2D0xOqdFb7f1UGYAHk4YSMNu9Hu2bdRUfQbK/daFuqlcmI17j6/8eg==
+mongoose@6.5.5:
+  version "6.5.5"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.5.5.tgz#750ced2a6939312e4ab6fc56afbf291977b92512"
+  integrity sha512-sfRRRmkDAPV1H8Qy+zbCEVo8E2jLENF1GA5oaNOrDe1pNTqBtudbnZETOG+5XgGeH52kpPLNzcTCSOijcy505g==
   dependencies:
     bson "^4.6.5"
     kareem "2.4.1"
@@ -14827,28 +14850,28 @@ neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-neo4j-driver-bolt-connection@^4.4.7:
-  version "4.4.7"
-  resolved "https://registry.yarnpkg.com/neo4j-driver-bolt-connection/-/neo4j-driver-bolt-connection-4.4.7.tgz#0582d54de1f213e60c374209193d1f645ba523ea"
-  integrity sha512-6Q4hCtvWE6gzN64N09UqZqf/3rDl7FUWZZXiVQL0ZRbaMkJpZNC2NmrDIgGXYE05XEEbRBexf2tVv5OTYZYrow==
+neo4j-driver-bolt-connection@^4.4.8:
+  version "4.4.8"
+  resolved "https://registry.yarnpkg.com/neo4j-driver-bolt-connection/-/neo4j-driver-bolt-connection-4.4.8.tgz#7ea43677d63fc16503fc204780de500c7eaad117"
+  integrity sha512-N8ZdnqsgOru3oq2swUDBDulhho8rE/Sg3pwioi/SL1176rlWT+/4COZZggjKAMuuh3Yks/C6yzkSZjqCEkUBOw==
   dependencies:
     buffer "^6.0.3"
-    neo4j-driver-core "^4.4.7"
+    neo4j-driver-core "^4.4.8"
     string_decoder "^1.3.0"
 
-neo4j-driver-core@^4.4.7:
-  version "4.4.7"
-  resolved "https://registry.yarnpkg.com/neo4j-driver-core/-/neo4j-driver-core-4.4.7.tgz#d2475e107b3fea2b9d1c36b0c273da5c5a291c37"
-  integrity sha512-NhvVuQYgG7eO/vXxRaoJfkWUNkjvIpmCIS9UWU9Bbhb4V+wCOyX/MVOXqD0Yizhs4eyIkD7x90OXb79q+vi+oA==
+neo4j-driver-core@^4.4.8:
+  version "4.4.8"
+  resolved "https://registry.yarnpkg.com/neo4j-driver-core/-/neo4j-driver-core-4.4.8.tgz#340d114bb3798ec40847bcad79ca5e5858051955"
+  integrity sha512-OLyZ+n3w305FyBJhci4dYVi8emm1z9frRxIAPlWdI1amjG1GK2bCifTd+cAK5br4Aq7oddkqevXVmIOcMrylnw==
 
-neo4j-driver@4.4.7:
-  version "4.4.7"
-  resolved "https://registry.yarnpkg.com/neo4j-driver/-/neo4j-driver-4.4.7.tgz#51b3fb48241e66eb3be94e90032cc494c44e59f3"
-  integrity sha512-N7GddPhp12gVJe4eB84u5ik5SmrtRv8nH3rK47Qy7IUKnJkVEos/F1QjOJN6zt1jLnDXwDcGzCKK8XklYpzogw==
+neo4j-driver@4.4.8:
+  version "4.4.8"
+  resolved "https://registry.yarnpkg.com/neo4j-driver/-/neo4j-driver-4.4.8.tgz#17c23a9366cfd3b7101ee470cf70e096cc0ceaee"
+  integrity sha512-8hZZPEciR2IF5pewjLCuXyYhCbaogpj/0uDn+N7OD/2HnWs1OtzOEkI2KPPtp1Gjy9/fu3zTNFu3KVStxQiKzA==
   dependencies:
     "@babel/runtime" "^7.5.5"
-    neo4j-driver-bolt-connection "^4.4.7"
-    neo4j-driver-core "^4.4.7"
+    neo4j-driver-bolt-connection "^4.4.8"
+    neo4j-driver-core "^4.4.8"
     rxjs "^6.6.3"
 
 newrelic@8.17.1:
