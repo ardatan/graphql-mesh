@@ -10,19 +10,11 @@ const mesh$ = findAndParseConfig({
 }).then(config => getMesh(config));
 
 describe('Upload Example', () => {
-  beforeAll(async () => {
-    await uploadFilesServer.start();
-    await resizeImageServer.start();
-  });
-  afterAll(async () => {
-    await uploadFilesServer.stop();
-    await resizeImageServer.stop();
-    const mesh = await mesh$;
-    mesh.destroy();
-  });
+  beforeAll(() => Promise.all([uploadFilesServer.start(), resizeImageServer.start()]));
+  afterAll(() => Promise.all([uploadFilesServer.stop(), resizeImageServer.stop(), mesh$.then(mesh => mesh.destroy())]));
   it('should give correct response', async () => {
     const { execute } = await mesh$;
-    const file = new File([Buffer.from('CONTENT')], 'test.txt');
+    const file = new File(['CONTENT'], 'test.txt');
     const result = await execute(
       /* GraphQL */ `
         mutation UploadFile($upload: File!) {

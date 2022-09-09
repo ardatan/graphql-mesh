@@ -3,7 +3,6 @@ sources:
     handler:
       graphql:
         endpoint: http://localhost:3001/graphql
-        multipart: true
   - name: ResizeImages
     handler:
       graphql:
@@ -23,7 +22,3 @@ additionalTypeDefs: |
       }
     )
   }
-
-serve:
-  cors:
-    origin: '*'

@@ -85,10 +85,6 @@ type GraphQLHandlerHTTPConfiguration @md {
   """
   introspection: String
   """
-  Enable multipart/formdata in order to support file uploads
-  """
-  multipart: Boolean
-  """
   SSE - Server Sent Events
   WS - New graphql-ws
   LEGACY_WS - Legacy subscriptions-transport-ws
