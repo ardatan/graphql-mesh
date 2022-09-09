@@ -54,7 +54,7 @@
     "patch-package": "6.4.7",
     "prettier": "2.7.1",
     "ts-jest": "28.0.8",
-    "typescript": "4.8.2"
+    "typescript": "4.8.3"
   },
   "husky": {
     "hooks": {
