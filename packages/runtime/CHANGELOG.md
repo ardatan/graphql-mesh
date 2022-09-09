@@ -1,5 +1,17 @@
 # @graphql-mesh/runtime
 
+## 0.44.2
+
+### Patch Changes
+
+- [#4462](https://github.com/Urigo/graphql-mesh/pull/4462) [`d84f81d94`](https://github.com/Urigo/graphql-mesh/commit/d84f81d9487ce228125863b8b283adab75daff19) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`fetchache@0.1.4` ↗︎](https://www.npmjs.com/package/fetchache/v/0.1.4) (from `0.1.3`, in `dependencies`)
+
+- Updated dependencies [[`d84f81d94`](https://github.com/Urigo/graphql-mesh/commit/d84f81d9487ce228125863b8b283adab75daff19)]:
+  - @graphql-mesh/utils@0.41.7
+  - @graphql-mesh/types@0.83.2
+
 ## 0.44.1
 
 ### Patch Changes
