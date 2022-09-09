@@ -5,6 +5,7 @@ import { createServerAdapter, ServerAdapter } from '@whatwg-node/server';
 import { Router } from 'itty-router';
 import { withCookies } from 'itty-router-extras';
 import { graphqlHandler } from './graphqlHandler';
+import { Response } from '@whatwg-node/fetch';
 
 export function createMeshHTTPHandler<TServerContext>({
   baseDir,
