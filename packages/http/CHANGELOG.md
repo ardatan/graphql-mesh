@@ -1,5 +1,11 @@
 # @graphql-mesh/http
 
+## 0.1.6
+
+### Patch Changes
+
+- [`e7f2fd8dd`](https://github.com/Urigo/graphql-mesh/commit/e7f2fd8dde7bac82ffaf6a5021797e7850227cc4) Thanks [@ardatan](https://github.com/ardatan)! - fix older version support
+
 ## 0.1.5
 
 ### Patch Changes
