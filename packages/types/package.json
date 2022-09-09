@@ -28,10 +28,10 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-tools/batch-delegate": "8.3.8",
+    "@graphql-tools/batch-delegate": "8.3.9",
     "@graphql-mesh/store": "0.8.40",
-    "@graphql-tools/delegate": "9.0.5",
-    "@graphql-tools/utils": "8.11.0",
+    "@graphql-tools/delegate": "9.0.6",
+    "@graphql-tools/utils": "8.12.0",
     "@graphql-typed-document-node/core": "3.1.1",
     "tslib": "^2.4.0"
   },
