@@ -237,10 +237,6 @@ export interface GraphQLHandlerHTTPConfiguration {
    */
   introspection?: string;
   /**
-   * Enable multipart/formdata in order to support file uploads
-   */
-  multipart?: boolean;
-  /**
    * SSE - Server Sent Events
    * WS - New graphql-ws
    * LEGACY_WS - Legacy subscriptions-transport-ws (Allowed values: SSE, WS, LEGACY_WS)

@@ -798,10 +798,6 @@
           "type": "string",
           "description": "Path to the introspection\nYou can separately give schema introspection"
         },
-        "multipart": {
-          "type": "boolean",
-          "description": "Enable multipart/formdata in order to support file uploads"
-        },
         "subscriptionsProtocol": {
           "type": "string",
           "enum": ["SSE", "WS", "LEGACY_WS"],

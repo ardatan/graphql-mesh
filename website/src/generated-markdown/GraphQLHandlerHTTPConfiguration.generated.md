@@ -13,7 +13,6 @@ other options will be ignored and the schema exported from the file will be used
 * `webSocketImpl` (type: `String`) - Path to a custom W3 Compatible WebSocket Implementation
 * `introspection` (type: `String`) - Path to the introspection
 You can separately give schema introspection
-* `multipart` (type: `Boolean`) - Enable multipart/formdata in order to support file uploads
 * `subscriptionsProtocol` (type: `String (SSE | WS | LEGACY_WS)`) - SSE - Server Sent Events
 WS - New graphql-ws
 LEGACY_WS - Legacy subscriptions-transport-ws
