@@ -1504,10 +1504,10 @@
     core-js-pure "^3.15.0"
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.2", "@babel/runtime@^7.10.4", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.5", "@babel/runtime@^7.13.10", "@babel/runtime@^7.16.3", "@babel/runtime@^7.18.3", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.4", "@babel/runtime@^7.9.2":
-  version "7.18.9"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.18.9.tgz#b4fcfce55db3d2e5e080d2490f608a3b9f407f4a"
-  integrity sha512-lkqXDcvlFT5rvEjiu6+QYO+1GXrEHRo2LOtS7E4GtX5ESIZOgepqsZBVIj6Pv+a6zqsya9VCgiK1KAK4BvJDAw==
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.2", "@babel/runtime@^7.10.4", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.5", "@babel/runtime@^7.13.10", "@babel/runtime@^7.16.3", "@babel/runtime@^7.17.8", "@babel/runtime@^7.18.3", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.4", "@babel/runtime@^7.9.2":
+  version "7.19.0"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.19.0.tgz#22b11c037b094d27a8a2504ea4dcff00f50e2259"
+  integrity sha512-eR8Lo9hnDS7tqkO7NsV+mKvCmv5boaXFSZ70DnfhcgiEne8hv9oCEd36Klw74EtizEqLsy4YnW8UWwpBVolHZA==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -14850,29 +14850,29 @@ neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-neo4j-driver-bolt-connection@^4.4.8:
-  version "4.4.8"
-  resolved "https://registry.yarnpkg.com/neo4j-driver-bolt-connection/-/neo4j-driver-bolt-connection-4.4.8.tgz#7ea43677d63fc16503fc204780de500c7eaad117"
-  integrity sha512-N8ZdnqsgOru3oq2swUDBDulhho8rE/Sg3pwioi/SL1176rlWT+/4COZZggjKAMuuh3Yks/C6yzkSZjqCEkUBOw==
+neo4j-driver-bolt-connection@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/neo4j-driver-bolt-connection/-/neo4j-driver-bolt-connection-5.0.0.tgz#785428c4651326575f750c239d65406346da3640"
+  integrity sha512-X/RyUYiX6brgGHJs2j8/WrX1c1X6cJ/RAZ7DJbLtPV73nPldQi1O/8j8UbH0UZLxsm9kNidb3z4NNs7793Yokw==
   dependencies:
     buffer "^6.0.3"
-    neo4j-driver-core "^4.4.8"
+    neo4j-driver-core "^5.0.0"
     string_decoder "^1.3.0"
 
-neo4j-driver-core@^4.4.8:
-  version "4.4.8"
-  resolved "https://registry.yarnpkg.com/neo4j-driver-core/-/neo4j-driver-core-4.4.8.tgz#340d114bb3798ec40847bcad79ca5e5858051955"
-  integrity sha512-OLyZ+n3w305FyBJhci4dYVi8emm1z9frRxIAPlWdI1amjG1GK2bCifTd+cAK5br4Aq7oddkqevXVmIOcMrylnw==
+neo4j-driver-core@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/neo4j-driver-core/-/neo4j-driver-core-5.0.0.tgz#e17173674a6b1d63b6023ad876af1127f8d25e5c"
+  integrity sha512-NPFSw4mXAUVEfEnUXp3/9weUMTC1B98H1fSKCZC12O6O0l8YnDnKC5+gKNFrDjW/1LCvpqbU9TLRT5XvKK64Eg==
 
-neo4j-driver@4.4.8:
-  version "4.4.8"
-  resolved "https://registry.yarnpkg.com/neo4j-driver/-/neo4j-driver-4.4.8.tgz#17c23a9366cfd3b7101ee470cf70e096cc0ceaee"
-  integrity sha512-8hZZPEciR2IF5pewjLCuXyYhCbaogpj/0uDn+N7OD/2HnWs1OtzOEkI2KPPtp1Gjy9/fu3zTNFu3KVStxQiKzA==
+neo4j-driver@5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/neo4j-driver/-/neo4j-driver-5.0.0.tgz#e4c40c327e03b7de0b48c428d996afc42b43b7e4"
+  integrity sha512-gNRE5FAA0nHpT/gSbFmMjhsCTefuOHvhWGPVV5vioU3RqBLTkoz6Y01egmRJJB9T36YE1rwkeHomlqztfwERyw==
   dependencies:
-    "@babel/runtime" "^7.5.5"
-    neo4j-driver-bolt-connection "^4.4.8"
-    neo4j-driver-core "^4.4.8"
-    rxjs "^6.6.3"
+    "@babel/runtime" "^7.17.8"
+    neo4j-driver-bolt-connection "^5.0.0"
+    neo4j-driver-core "^5.0.0"
+    rxjs "^7.5.5"
 
 newrelic@8.17.1:
   version "8.17.1"
@@ -17616,7 +17616,7 @@ rw@1:
   resolved "https://registry.yarnpkg.com/rw/-/rw-1.3.3.tgz#3f862dfa91ab766b14885ef4d01124bfda074fb4"
   integrity sha1-P4Yt+pGrdmsUiF700BEkv9oHT7Q=
 
-rxjs@^6.5.2, rxjs@^6.6.3:
+rxjs@^6.5.2:
   version "6.6.7"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.6.7.tgz#90ac018acabf491bf65044235d5863c4dab804c9"
   integrity sha512-hTdwr+7yYNIT5n4AMYp85KA6yw2Va0FLa3Rguvbpa4W3I5xynaBZo41cM3XM+4Q6fRMj3sBYIR1VAmZMXYJvRQ==
