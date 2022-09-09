@@ -1,5 +1,13 @@
 # @graphql-mesh/mongoose
 
+## 0.11.7
+
+### Patch Changes
+
+- Updated dependencies [[`d84f81d94`](https://github.com/Urigo/graphql-mesh/commit/d84f81d9487ce228125863b8b283adab75daff19)]:
+  - @graphql-mesh/utils@0.41.7
+  - @graphql-mesh/types@0.83.2
+
 ## 0.11.6
 
 ### Patch Changes
