@@ -1,5 +1,13 @@
 # @graphql-mesh/grpc
 
+## 0.25.10
+
+### Patch Changes
+
+- [#4471](https://github.com/Urigo/graphql-mesh/pull/4471) [`633fc3630`](https://github.com/Urigo/graphql-mesh/commit/633fc36302bb6df21f5f1581b36db55e83c2098a) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`protobufjs@7.1.1` ↗︎](https://www.npmjs.com/package/protobufjs/v/7.1.1) (from `7.1.0`, in `dependencies`)
+
 ## 0.25.9
 
 ### Patch Changes
