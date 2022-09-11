@@ -15,7 +15,7 @@
     "@theguild/components": "3.0.3",
     "guild-docs": "4.1.0",
     "next": "12.3.0",
-    "next-sitemap": "3.1.21",
+    "next-sitemap": "3.1.22",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
@@ -35,7 +35,7 @@
     "@guild-docs/algolia": "0.2.2",
     "@theguild/tailwind-config": "0.0.2",
     "@types/node": "18.6.1",
-    "@types/react": "18.0.18",
+    "@types/react": "18.0.19",
     "cross-env": "7.0.3",
     "eslint-config-next": "12.3.0",
     "postcss-import": "15.0.0",
