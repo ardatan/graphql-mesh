@@ -85,6 +85,9 @@ export default withGuildDocs({
       '/docs/recipes/typescript': '/docs',
       '/docs/api/modules/plugins_mock_src': '/docs',
       '/docs/transforms': '/docs',
+      '/docs/api/modules/plugins_webhook_src': '/docs',
+      '/docs/cache/inmemory-lru': '/docs',
+      '/docs/cache': '/docs',
     }).map(([from, to]) => ({
       source: from,
       destination: to,
