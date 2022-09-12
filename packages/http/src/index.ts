@@ -100,7 +100,7 @@ export function createMeshHTTPHandler<TServerContext>({
       return undefined;
     });
   } else {
-    router.get('/', request => Response.redirect(new URL(graphqlPath, request.url)));
+    router.get('/', () => Response.redirect(graphqlPath));
   }
 
   router.all(
