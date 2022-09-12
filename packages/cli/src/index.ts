@@ -186,7 +186,7 @@ export function getMeshOptions() {
 export function createBuiltMeshHTTPHandler() {
   return createMeshHTTPHandler({
     baseDir,
-    getBuiltMesh,
+    getBuiltMesh: ${cliParams.builtMeshFactoryName},
     rawServeConfig: ${JSON.stringify(meshConfig.config.serve)},
   })
 }
@@ -404,7 +404,7 @@ export function createBuiltMeshHTTPHandler() {
 export function createBuiltMeshHTTPHandler() {
   return createMeshHTTPHandler({
     baseDir,
-    getBuiltMesh,
+    getBuiltMesh: ${cliParams.builtMeshFactoryName},
     rawServeConfig: ${JSON.stringify(meshConfig.config.serve)},
   })
 }
