@@ -1,5 +1,12 @@
 # openapi-subscriptions
 
+## 0.0.273
+
+### Patch Changes
+
+- Updated dependencies [[`f95e19b8f`](https://github.com/Urigo/graphql-mesh/commit/f95e19b8f240a3326380c04f2cf73eeaebc523b1)]:
+  - @graphql-mesh/cli@0.78.10
+
 ## 0.0.272
 
 ### Patch Changes
