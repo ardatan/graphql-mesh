@@ -40,7 +40,7 @@
     "@graphql-tools/load": "7.7.7",
     "@graphql-tools/code-file-loader": "7.3.6",
     "@graphql-tools/graphql-file-loader": "7.5.5",
-    "@whatwg-node/fetch": "0.4.2",
+    "@whatwg-node/fetch": "^0.4.3",
     "param-case": "3.0.4",
     "@envelop/core": "2.6.0",
     "tslib": "^2.4.0",
