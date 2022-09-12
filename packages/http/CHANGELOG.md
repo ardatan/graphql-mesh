@@ -1,5 +1,16 @@
 # @graphql-mesh/http
 
+## 0.1.7
+
+### Patch Changes
+
+- [`317f6b454`](https://github.com/Urigo/graphql-mesh/commit/317f6b454db59e351cf6360df5575248cb579dd4) Thanks [@ardatan](https://github.com/ardatan)! - Bump fetch and server packages and avoid using Response.redirect which needs a full path but instead Response with Location header works better
+
+- Updated dependencies [[`78599180d`](https://github.com/Urigo/graphql-mesh/commit/78599180d76f71e6d23114a0115e6338785a44d2), [`78599180d`](https://github.com/Urigo/graphql-mesh/commit/78599180d76f71e6d23114a0115e6338785a44d2), [`78599180d`](https://github.com/Urigo/graphql-mesh/commit/78599180d76f71e6d23114a0115e6338785a44d2), [`317f6b454`](https://github.com/Urigo/graphql-mesh/commit/317f6b454db59e351cf6360df5575248cb579dd4)]:
+  - @graphql-mesh/cross-helpers@0.2.6
+  - @graphql-mesh/runtime@0.44.4
+  - @graphql-mesh/utils@0.41.9
+
 ## 0.1.6
 
 ### Patch Changes
