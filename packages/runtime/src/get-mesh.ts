@@ -26,7 +26,7 @@ import {
 
 import { CreateProxyingResolverFn, Subschema, SubschemaConfig } from '@graphql-tools/delegate';
 import { AggregateError, ExecutionResult, isAsyncIterable, mapAsyncIterator, memoize1 } from '@graphql-tools/utils';
-import { enableIf, envelop, PluginOrDisabledPlugin, useExtendContext } from '@envelop/core';
+import { envelop, PluginOrDisabledPlugin, useExtendContext } from '@envelop/core';
 import { OneOfInputObjectsRule, useExtendedValidation } from '@envelop/extended-validation';
 import { getInContextSDK } from './in-context-sdk';
 import { useSubschema } from './useSubschema';
@@ -243,11 +243,9 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
         }
         return inContextSDK$;
       }),
-      enableIf(!!subschema.transformedSchema.getDirective('oneOf'), () =>
-        useExtendedValidation({
-          rules: [OneOfInputObjectsRule],
-        })
-      ),
+      useExtendedValidation({
+        rules: [OneOfInputObjectsRule],
+      }),
       ...initialPluginList,
     ],
   });
@@ -302,7 +300,9 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     pubsub,
     destroy: meshDestroy,
     logger,
-    plugins: getEnveloped._plugins,
+    get plugins() {
+      return getEnveloped._plugins;
+    },
     getEnveloped,
     createExecutor,
     get execute() {
