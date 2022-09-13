@@ -1,4 +1,10 @@
-import { GraphQLNamedType, GraphQLSchema, GraphQLFieldConfig, isSpecifiedScalarType } from 'graphql';
+import {
+  GraphQLNamedType,
+  GraphQLSchema,
+  GraphQLFieldConfig,
+  isSpecifiedScalarType,
+  GraphQLAbstractType,
+} from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
 import { MapperKind, mapSchema, renameType } from '@graphql-tools/utils';
 
@@ -39,6 +45,14 @@ export default class BarePrefix implements MeshTransform {
           }
         }
         return undefined;
+      },
+      [MapperKind.ABSTRACT_TYPE]: (type: GraphQLAbstractType) => {
+        const existingResolver = type.resolveType;
+        type.resolveType = (data, context, info, abstractType) => {
+          const typeName = existingResolver(data, context, info, abstractType);
+          return this.prefix + typeName;
+        };
+        return type;
       },
       [MapperKind.ROOT_OBJECT]() {
         return undefined;
