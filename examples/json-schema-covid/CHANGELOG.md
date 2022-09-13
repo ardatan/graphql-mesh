@@ -1,5 +1,14 @@
 # covid-mesh
 
+## 0.5.307
+
+### Patch Changes
+
+- Updated dependencies [[`add1020c9`](https://github.com/Urigo/graphql-mesh/commit/add1020c903fc47850054165968ee602fe2b3cc5)]:
+  - @graphql-mesh/cli@0.78.11
+  - @graphql-mesh/graphql@0.31.11
+  - @graphql-mesh/json-schema@0.35.11
+
 ## 0.5.306
 
 ### Patch Changes

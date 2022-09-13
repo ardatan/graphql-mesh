@@ -1,5 +1,15 @@
 # @graphql-mesh/transform-prefix
 
+## 0.11.79
+
+### Patch Changes
+
+- [#4483](https://github.com/Urigo/graphql-mesh/pull/4483) [`782259da9`](https://github.com/Urigo/graphql-mesh/commit/782259da9558b22f19b6a18e299aef66a4b4baa0) Thanks [@ardatan](https://github.com/ardatan)! - Handle type resolvers correctly in bare mode
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.83.5
+  - @graphql-mesh/utils@0.41.10
+
 ## 0.11.78
 
 ### Patch Changes
