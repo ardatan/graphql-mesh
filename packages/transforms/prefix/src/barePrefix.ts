@@ -47,12 +47,16 @@ export default class BarePrefix implements MeshTransform {
         return undefined;
       },
       [MapperKind.ABSTRACT_TYPE]: (type: GraphQLAbstractType) => {
-        const existingResolver = type.resolveType;
-        type.resolveType = (data, context, info, abstractType) => {
-          const typeName = existingResolver(data, context, info, abstractType);
-          return this.prefix + typeName;
-        };
-        return type;
+        if (this.includeTypes && !isSpecifiedScalarType(type)) {
+          const existingResolver = type.resolveType;
+          type.resolveType = (data, context, info, abstractType) => {
+            const typeName = existingResolver(data, context, info, abstractType);
+            return this.prefix + typeName;
+          };
+          const currentName = type.name;
+          return renameType(type, this.prefix + currentName) as GraphQLAbstractType;
+        }
+        return undefined;
       },
       [MapperKind.ROOT_OBJECT]() {
         return undefined;
