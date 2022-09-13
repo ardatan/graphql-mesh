@@ -60440,7 +60440,7 @@ type Mutation {
     "Id of pull."
     number: Int!
     input: mergePullBody_Input!
-  ): put_repos_by_owner_by_repo_pulls_by_number_merge_response
+  ): merge
   "Create a release\\nUsers with push access to the repository can create a release.\\n"
   post_repos_by_owner_by_repo_releases(
     "You can check the current version of media type in responses."
@@ -61457,8 +61457,6 @@ input pullsCommentPost_Input {
   path: String
   position: Float
 }
-
-union put_repos_by_owner_by_repo_pulls_by_number_merge_response = merge
 
 type merge {
   merged: Boolean

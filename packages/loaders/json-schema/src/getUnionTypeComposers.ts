@@ -65,26 +65,37 @@ export function getUnionTypeComposers({
       logger.debug(`No input type composer found for ${output.getTypeName()}, skipping...`);
     }
   });
-  (subSchemaAndTypeComposers.input as InputTypeComposer).addFields(unionInputFields);
-  if (!schemaComposer.hasDirective('oneOf')) {
-    schemaComposer.addTypeDefs(ONE_OF_DEFINITION);
+
+  if (Object.keys(unionInputFields).length === 1) {
+    subSchemaAndTypeComposers.input = Object.values(unionInputFields)[0].type;
+  } else {
+    (subSchemaAndTypeComposers.input as InputTypeComposer).addFields(unionInputFields);
+    if (!schemaComposer.hasDirective('oneOf')) {
+      schemaComposer.addTypeDefs(ONE_OF_DEFINITION);
+    }
   }
 
-  const resolveType = getTypeResolverFromOutputTCs(
-    ajv,
-    outputTypeComposers,
-    subSchemaAndTypeComposers,
-    (subSchemaAndTypeComposers.output as UnionTypeComposer).getExtension('statusCodeOneOfIndexMap') as any
-  );
+  const dedupSet = new Set(outputTypeComposers);
 
-  (subSchemaAndTypeComposers.output as UnionTypeComposer).setResolveType(resolveType);
+  if (dedupSet.size === 1) {
+    subSchemaAndTypeComposers.output = outputTypeComposers[0];
+  } else {
+    const resolveType = getTypeResolverFromOutputTCs(
+      ajv,
+      outputTypeComposers,
+      subSchemaAndTypeComposers,
+      (subSchemaAndTypeComposers.output as UnionTypeComposer).getExtension('statusCodeOneOfIndexMap') as any
+    );
 
-  for (const outputTypeComposer of outputTypeComposers) {
-    if ('getFields' in outputTypeComposer) {
-      (subSchemaAndTypeComposers.output as UnionTypeComposer).addType(outputTypeComposer);
-    } else {
-      for (const possibleType of outputTypeComposer.getTypes()) {
-        (subSchemaAndTypeComposers.output as UnionTypeComposer).addType(possibleType);
+    (subSchemaAndTypeComposers.output as UnionTypeComposer).setResolveType(resolveType);
+
+    for (const outputTypeComposer of outputTypeComposers) {
+      if ('getFields' in outputTypeComposer) {
+        (subSchemaAndTypeComposers.output as UnionTypeComposer).addType(outputTypeComposer);
+      } else {
+        for (const possibleType of outputTypeComposer.getTypes()) {
+          (subSchemaAndTypeComposers.output as UnionTypeComposer).addType(possibleType);
+        }
       }
     }
   }

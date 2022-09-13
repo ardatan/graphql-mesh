@@ -127,6 +127,39 @@ exports[`Basket should generate the correct bundle 1`] = `
       "schemaHeaders": undefined,
       "type": "query",
     },
+    {
+      "description": undefined,
+      "field": "Cards",
+      "headers": {
+        "accept": "application/json,application/custom.v3+json",
+      },
+      "method": "GET",
+      "operationHeaders": undefined,
+      "path": "/Cards",
+      "responseByStatusCode": {
+        "200": {
+          "responseSchema": {
+            "oneOf": [
+              {
+                "items": {
+                  "$ref": "#/definitions/CardModel",
+                },
+                "type": "array",
+              },
+              {
+                "items": {
+                  "$ref": "#/definitions/CardModel",
+                },
+                "type": "array",
+              },
+            ],
+            "title": "Cards_200_response",
+          },
+        },
+      },
+      "schemaHeaders": undefined,
+      "type": "query",
+    },
   ],
   "referencedSchema": {
     "$ref": "#/definitions/_schema",
@@ -223,6 +256,34 @@ exports[`Basket should generate the correct bundle 1`] = `
         "title": "BasketResponse",
         "type": "object",
       },
+      "CardModel": {
+        "$resolvedRef": "/components/schemas/CardModel",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+          },
+        },
+        "title": "CardModel",
+        "type": "object",
+      },
+      "Cards_200_response": {
+        "oneOf": [
+          {
+            "items": {
+              "$ref": "#/definitions/CardModel",
+            },
+            "type": "array",
+          },
+          {
+            "items": {
+              "$ref": "#/definitions/CardModel",
+            },
+            "type": "array",
+          },
+        ],
+        "title": "Cards_200_response",
+      },
       "CustomerAttributes": {
         "$resolvedRef": "/components/schemas/CustomerAttributes",
         "properties": {
@@ -294,6 +355,9 @@ exports[`Basket should generate the correct bundle 1`] = `
       },
       "Query": {
         "properties": {
+          "Cards": {
+            "$ref": "#/definitions/Cards_200_response",
+          },
           "Locations": {
             "$ref": "#/definitions/Locations_200_response",
           },
@@ -413,7 +477,8 @@ directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
 
 type Query {
   customers_by_customerId: CustomerAttributes
-  Locations: [Locations_200_response]
+  Locations: [LocationModel]
+  Cards: [CardModel]
 }
 
 type CustomerAttributes {
@@ -427,11 +492,13 @@ type Attribute {
 
 scalar query_customers_by_customerId_attributes_items_more_Input
 
-union Locations_200_response = LocationModel
-
 type LocationModel {
   email: String
   parents: [LocationModel]
+}
+
+type CardModel {
+  id: String
 }
 
 type Mutation {
