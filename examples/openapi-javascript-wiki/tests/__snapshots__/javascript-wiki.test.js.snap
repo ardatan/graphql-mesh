@@ -19,7 +19,7 @@ type JSON_container {
 
 type Mutation {
   "Checks the supplied TeX formula for correctness and returns the\\nnormalised formula representation as well as information about\\nidentifiers. Available types are tex and inline-tex. The response\\ncontains the \`x-resource-location\` header which can be used to retrieve\\nthe render of the checked formula in one of the supported rendering\\nformats. Just append the value of the header to \`/media/math/{format}/\`\\nand perform a GET request against that URL.\\n\\nStability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable).\\n"
-  post_media_math_check_by_type(type: mutationInput_post_media_math_check_by_type_type!): post_media_math_check_by_type_response
+  post_media_math_check_by_type(type: mutationInput_post_media_math_check_by_type_type!): problem
 
   "Fetches the machine translation for the posted content from the source\\nto the destination language.\\n\\nStability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable)\\n"
   post_transform_html_from_by_from_lang_to_by_to_lang(
@@ -52,7 +52,7 @@ type Query {
   media_math_formula_by_hash(
     """The hash string of the previous POST data"""
     hash: NonEmptyString!
-  ): media_math_formula_by_hash_response
+  ): problem
 
   "Given a request hash, renders a TeX formula into its mathematic\\nrepresentation in the given format. When a request is issued to the\\n\`/media/math/check/{format}\` POST endpoint, the response contains the\\n\`x-resource-location\` header denoting the hash ID of the POST data. Once\\nobtained, this endpoint has to be used to obtain the actual render.\\n\\nStability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable).\\n"
   media_math_render_by_format_by_hash(
@@ -60,7 +60,7 @@ type Query {
 
     """The hash string of the previous POST data"""
     hash: NonEmptyString!
-  ): media_math_render_by_format_by_hash_response
+  ): problem
 
   "Given a Mediawiki project and a date range, returns a timeseries of absolute bytes\\ndifference sums. You can filter by editors-type (all-editor-types, anonymous, group-bot,\\nname-bot, user) and page-type (all-page-types, content, non-content). You can choose\\nbetween daily and monthly granularity as well.\\n\\n- Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)\\n- Rate limit: 25 req/s\\n- License: Data accessible via this endpoint is available under the\\n  [CC0 1.0 license](https://creativecommons.org/publicdomain/zero/1.0/).\\n"
   metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end(
@@ -756,10 +756,6 @@ type edits_per_page {
 
 union feed_availability_response = availability | problem
 
-union media_math_formula_by_hash_response = problem
-
-union media_math_render_by_format_by_hash_response = problem
-
 union metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response = absolute_bytes_difference | problem
 
 union metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response = absolute_bytes_difference_per_page | problem
@@ -849,8 +845,6 @@ type pageview_project {
 type pageview_tops {
   items: [query_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_oneOf_0_items_items]
 }
-
-union post_media_math_check_by_type_response = problem
 
 union post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_response = cx_mt | problem
 
