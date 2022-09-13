@@ -1,5 +1,19 @@
 # @graphql-mesh/merger-bare
 
+## 0.15.25
+
+### Patch Changes
+
+- [#4487](https://github.com/Urigo/graphql-mesh/pull/4487) [`39f440e36`](https://github.com/Urigo/graphql-mesh/commit/39f440e36018f98a41a37b5465ea6617c5fc6c7e) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency [`@graphql-mesh/merger-stitching@0.16.23` ↗︎](https://www.npmjs.com/package/@graphql-mesh/merger-stitching/v/0.16.23) (to `dependencies`)
+  - Removed dependency [`@graphql-tools/wrap@9.2.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.0) (from `dependencies`)
+
+- [#4487](https://github.com/Urigo/graphql-mesh/pull/4487) [`39f440e36`](https://github.com/Urigo/graphql-mesh/commit/39f440e36018f98a41a37b5465ea6617c5fc6c7e) Thanks [@ardatan](https://github.com/ardatan)! - - Do not assume scalars' types by using graphql-scalars
+  - Create unified executor only once at startup
+  - Respect predefined type definitions for scalars in the source types `.mesh/sources/SOURCE_NAME/types.ts` like `BigInt: bigint`
+  - Respect introspection fields correctly
+
 ## 0.15.24
 
 ### Patch Changes
