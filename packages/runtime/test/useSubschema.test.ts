@@ -1,4 +1,5 @@
 import { envelop } from '@envelop/core';
+import { Subschema } from '@graphql-tools/delegate';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { RenameRootFields } from '@graphql-tools/wrap';
 import { buildClientSchema, ExecutionResult, getIntrospectionQuery, IntrospectionQuery, printSchema } from 'graphql';
@@ -18,17 +19,19 @@ describe('useSubschema', () => {
       },
     },
   });
-  const { plugin } = useSubschema({
-    schema,
-    transforms: [
-      new RenameRootFields((operation, name) => {
-        if (operation === 'Query' && name === 'foo') {
-          return 'bar';
-        }
-        return name;
-      }),
-    ],
-  });
+  const plugin = useSubschema(
+    new Subschema({
+      schema,
+      transforms: [
+        new RenameRootFields((operation, name) => {
+          if (operation === 'Query' && name === 'foo') {
+            return 'bar';
+          }
+          return name;
+        }),
+      ],
+    })
+  );
   const getEnveloped = envelop({
     plugins: [plugin],
   });

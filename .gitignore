@@ -16,3 +16,4 @@ package-lock.json
 .next/
 /website/src/pages/docs/api/
 /.husky/_/
+newrelic-agent.log
