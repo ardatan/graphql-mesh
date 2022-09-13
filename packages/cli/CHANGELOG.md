@@ -1,5 +1,22 @@
 # @graphql-mesh/cli
 
+## 0.78.12
+
+### Patch Changes
+
+- [#4487](https://github.com/Urigo/graphql-mesh/pull/4487) [`39f440e36`](https://github.com/Urigo/graphql-mesh/commit/39f440e36018f98a41a37b5465ea6617c5fc6c7e) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Removed dependency [`graphql-scalars@1.18.0` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.18.0) (from `dependencies`)
+
+- [#4487](https://github.com/Urigo/graphql-mesh/pull/4487) [`39f440e36`](https://github.com/Urigo/graphql-mesh/commit/39f440e36018f98a41a37b5465ea6617c5fc6c7e) Thanks [@ardatan](https://github.com/ardatan)! - - Do not assume scalars' types by using graphql-scalars
+  - Create unified executor only once at startup
+  - Respect predefined type definitions for scalars in the source types `.mesh/sources/SOURCE_NAME/types.ts` like `BigInt: bigint`
+  - Respect introspection fields correctly
+- Updated dependencies [[`39f440e36`](https://github.com/Urigo/graphql-mesh/commit/39f440e36018f98a41a37b5465ea6617c5fc6c7e)]:
+  - @graphql-mesh/runtime@0.44.6
+  - @graphql-mesh/config@8.0.6
+  - @graphql-mesh/http@0.1.9
+
 ## 0.78.11
 
 ### Patch Changes

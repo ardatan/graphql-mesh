@@ -1,5 +1,12 @@
 # openapi-youtrack
 
+## 0.5.286
+
+### Patch Changes
+
+- Updated dependencies [[`39f440e36`](https://github.com/Urigo/graphql-mesh/commit/39f440e36018f98a41a37b5465ea6617c5fc6c7e), [`39f440e36`](https://github.com/Urigo/graphql-mesh/commit/39f440e36018f98a41a37b5465ea6617c5fc6c7e)]:
+  - @graphql-mesh/cli@0.78.12
+
 ## 0.5.285
 
 ### Patch Changes
