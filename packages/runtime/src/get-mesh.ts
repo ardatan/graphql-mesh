@@ -1,5 +1,5 @@
 import { GraphQLSchema, getOperationAST, DocumentNode } from 'graphql';
-import { ExecuteMeshFn, GetMeshOptions, SubscribeMeshFn } from './types';
+import { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types';
 import {
   MeshPubSub,
   KeyValueCache,
@@ -36,10 +36,13 @@ import { useFetchache } from './plugins/useFetchache';
 import { useDeduplicateRequest } from './plugins/useDeduplicateRequest';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 
+type SdkRequester = (document: DocumentNode, variables?: any, operationContext?: any) => any;
+
 export interface MeshInstance {
   execute: ExecuteMeshFn;
   subscribe: SubscribeMeshFn;
   schema: GraphQLSchema;
+  createExecutor(globalContext: any): MeshExecutor;
   rawSources: RawSourceOutput[];
   destroy(): void;
   pubsub: MeshPubSub;
@@ -47,7 +50,7 @@ export interface MeshInstance {
   logger: Logger;
   plugins: PluginOrDisabledPlugin[];
   getEnveloped: ReturnType<typeof envelop>;
-  sdkRequesterFactory: (globalContext: any) => (document: DocumentNode, variables?: any, operationContext?: any) => any;
+  sdkRequesterFactory(globalContext: any): SdkRequester;
 }
 
 const memoizedGetOperationType = memoize1((document: DocumentNode) => {
@@ -253,71 +256,61 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   const EMPTY_CONTEXT_VALUE: any = {};
   const EMPTY_VARIABLES_VALUE: any = {};
 
-  async function meshExecute<TVariables = any, TContext = any, TRootValue = any, TData = any>(
-    documentOrSDL: GraphQLOperation<TData, TVariables>,
-    variableValues: TVariables = EMPTY_VARIABLES_VALUE,
-    contextValue: TContext = EMPTY_CONTEXT_VALUE,
-    rootValue: TRootValue = EMPTY_ROOT_VALUE,
-    operationName?: string
-  ) {
-    const { schema, execute, contextFactory, parse } = getEnveloped(contextValue);
-
-    return execute({
-      document: typeof documentOrSDL === 'string' ? parse(documentOrSDL) : documentOrSDL,
-      contextValue: await contextFactory(),
-      rootValue,
-      variableValues: variableValues as any,
-      schema,
-      operationName,
-    });
-  }
-
-  async function meshSubscribe<TVariables = any, TContext = any, TRootValue = any, TData = any>(
-    documentOrSDL: GraphQLOperation<TData, TVariables>,
-    variableValues: TVariables = EMPTY_VARIABLES_VALUE,
-    contextValue: TContext = EMPTY_CONTEXT_VALUE,
-    rootValue: TRootValue = EMPTY_ROOT_VALUE,
-    operationName?: string
-  ) {
-    const { schema, subscribe, contextFactory, parse } = getEnveloped(contextValue);
-
-    return subscribe({
-      document: typeof documentOrSDL === 'string' ? parse(documentOrSDL) : documentOrSDL,
-      contextValue: await contextFactory(),
-      rootValue,
-      variableValues: variableValues as any,
-      schema,
-      operationName,
-    });
-  }
-
-  function sdkRequesterFactory(globalContext: any) {
-    return async function meshSdkRequester(document: DocumentNode, variables: any, contextValue: any) {
-      const executeFn = memoizedGetOperationType(document) === 'subscription' ? meshSubscribe : meshExecute;
-      const result = await executeFn(document, variables, {
-        ...globalContext,
-        ...contextValue,
+  function createExecutor(globalContext: any = EMPTY_CONTEXT_VALUE): MeshExecutor {
+    const { schema, parse, execute, subscribe, contextFactory } = getEnveloped(globalContext);
+    return async function meshExecutor<TVariables = any, TContext = any, TRootValue = any, TData = any>(
+      documentOrSDL: GraphQLOperation<TData, TVariables>,
+      variableValues: TVariables = EMPTY_VARIABLES_VALUE,
+      contextValue: TContext = EMPTY_CONTEXT_VALUE,
+      rootValue: TRootValue = EMPTY_ROOT_VALUE,
+      operationName?: string
+    ) {
+      const document = typeof documentOrSDL === 'string' ? parse(documentOrSDL) : documentOrSDL;
+      const executeFn = memoizedGetOperationType(document) === 'subscription' ? subscribe : execute;
+      return executeFn({
+        schema,
+        document,
+        contextValue: await contextFactory(contextValue),
+        rootValue,
+        variableValues: variableValues as any,
+        operationName,
       });
+    } as MeshExecutor;
+  }
+
+  function sdkRequesterFactory(globalContext: any): SdkRequester {
+    const executor = createExecutor(globalContext);
+    return async function sdkRequester(...args) {
+      const result = await executor(...args);
       if (isAsyncIterable(result)) {
-        return mapAsyncIterator(result, extractDataOrThrowErrors);
+        return mapAsyncIterator(result as AsyncIterableIterator<any>, extractDataOrThrowErrors);
       }
       return extractDataOrThrowErrors(result);
     };
   }
 
+  function meshDestroy() {
+    return pubsub.publish('destroy', undefined);
+  }
+
   return {
-    execute: meshExecute,
-    subscribe: meshSubscribe,
-    schema: subschema.transformedSchema,
+    get schema() {
+      return subschema.transformedSchema;
+    },
     rawSources,
     cache,
     pubsub,
-    destroy() {
-      return pubsub.publish('destroy', undefined);
-    },
+    destroy: meshDestroy,
     logger,
     plugins: getEnveloped._plugins,
     getEnveloped,
+    createExecutor,
+    get execute() {
+      return createExecutor();
+    },
+    get subscribe() {
+      return createExecutor();
+    },
     sdkRequesterFactory,
   };
 }

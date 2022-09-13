@@ -64,3 +64,11 @@ export interface ServeMeshOptions {
   argsPort?: number;
   playgroundTitle?: string;
 }
+
+export type MeshExecutor = <TData, TVariables, TContext, TRootValue>(
+  documentOrSDL: GraphQLOperation<TData, TVariables>,
+  variables?: TVariables,
+  context?: TContext,
+  rootValue?: TRootValue,
+  operationName?: string
+) => Promise<TData | AsyncIterable<TData>>;

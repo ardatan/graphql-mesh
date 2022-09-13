@@ -72,18 +72,18 @@ function getExecuteFn(subschema: SubschemaConfig) {
 
 // Creates an envelop plugin to execute a subschema inside Envelop
 export function useSubschema(subschema: Subschema): Plugin {
-  // To prevent unwanted warnings from stitching
-  if (!('_transformedSchema' in subschema)) {
-    subschema.transformedSchema = applySchemaTransforms(subschema.schema, subschema);
-  }
-
-  subschema.transformedSchema.extensions = subschema.transformedSchema.extensions || subschema.schema.extensions || {};
-  Object.assign(subschema.transformedSchema.extensions, subschema.schema.extensions);
-
   const executeFn = getExecuteFn(subschema);
 
   const plugin: Plugin = {
     onPluginInit({ setSchema }) {
+      // To prevent unwanted warnings from stitching
+      if (!('_transformedSchema' in subschema)) {
+        subschema.transformedSchema = applySchemaTransforms(subschema.schema, subschema);
+      }
+
+      subschema.transformedSchema.extensions =
+        subschema.transformedSchema.extensions || subschema.schema.extensions || {};
+      Object.assign(subschema.transformedSchema.extensions, subschema.schema.extensions);
       setSchema(subschema.transformedSchema);
     },
     onExecute({ setExecuteFn }) {
