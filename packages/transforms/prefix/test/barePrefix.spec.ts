@@ -1,9 +1,10 @@
 import PrefixTransform from '../src';
-import { buildSchema, printSchema, GraphQLSchema, GraphQLObjectType } from 'graphql';
+import { buildSchema, printSchema, GraphQLSchema, GraphQLObjectType, execute, parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { MeshPubSub } from '@graphql-mesh/types';
 import { PubSub } from '@graphql-mesh/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 
 describe('barePrefix', () => {
   let schema: GraphQLSchema;
@@ -12,42 +13,59 @@ describe('barePrefix', () => {
   const baseDir: string = undefined;
 
   beforeEach(() => {
-    schema = buildSchema(/* GraphQL */ `
-      type Query {
-        user: User!
-        posts: [Post!]!
-      }
+    schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          user: User!
+          posts: [Post!]!
+          node(id: ID!): Node
+        }
 
-      type User {
-        id: ID!
-      }
+        union Node = User | Post
 
-      type Post {
-        id: ID!
-        title: String!
-      }
-    `);
+        type User {
+          id: ID!
+        }
+
+        type Post {
+          id: ID!
+          title: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          node(_, { id }) {
+            return {
+              id,
+            };
+          },
+        },
+        Node: {
+          __resolveType(obj: any) {
+            if (obj.title) {
+              return 'Post';
+            }
+            return 'User';
+          },
+        },
+      },
+    });
     cache = new InMemoryLRUCache();
     pubsub = new PubSub();
   });
 
   it('should prefix all schema types when prefix is specified explicitly', () => {
-    const newSchema = wrapSchema({
-      schema,
-      transforms: [
-        new PrefixTransform({
-          config: {
-            mode: 'bare',
-            value: 'T_',
-          },
-          apiName: '',
-          baseDir,
-          cache,
-          pubsub,
-          importFn: m => import(m),
-        }),
-      ],
-    });
+    const newSchema = new PrefixTransform({
+      config: {
+        mode: 'bare',
+        value: 'T_',
+      },
+      apiName: '',
+      baseDir,
+      cache,
+      pubsub,
+      importFn: m => import(m),
+    }).transformSchema(schema, { schema }, schema);
 
     expect(newSchema.getType('User')).toBeUndefined();
     expect(newSchema.getType('T_User')).toBeDefined();
@@ -55,44 +73,34 @@ describe('barePrefix', () => {
   });
 
   it('should not modify root types', () => {
-    const newSchema = wrapSchema({
-      schema,
-      transforms: [
-        new PrefixTransform({
-          config: {
-            mode: 'bare',
-            value: 'T_',
-          },
-          apiName: '',
-          baseDir,
-          cache,
-          pubsub,
-          importFn: m => import(m),
-        }),
-      ],
-    });
+    const newSchema = new PrefixTransform({
+      config: {
+        mode: 'bare',
+        value: 'T_',
+      },
+      apiName: '',
+      baseDir,
+      cache,
+      pubsub,
+      importFn: m => import(m),
+    }).transformSchema(schema, { schema }, schema);
 
     expect(newSchema.getType('Query')).toBeDefined();
     expect(newSchema.getType('T_Query')).toBeUndefined();
   });
 
   it('should not modify default scalar types', () => {
-    const newSchema = wrapSchema({
-      schema,
-      transforms: [
-        new PrefixTransform({
-          config: {
-            mode: 'bare',
-            value: 'T_',
-          },
-          apiName: '',
-          baseDir,
-          cache,
-          pubsub,
-          importFn: m => import(m),
-        }),
-      ],
-    });
+    const newSchema = new PrefixTransform({
+      config: {
+        mode: 'bare',
+        value: 'T_',
+      },
+      apiName: '',
+      baseDir,
+      cache,
+      pubsub,
+      importFn: m => import(m),
+    }).transformSchema(schema, { schema }, schema);
 
     const postFields = (newSchema.getType('T_Post') as GraphQLObjectType).getFields();
     expect(postFields.id.type.toString()).toBe('ID!');
@@ -100,19 +108,14 @@ describe('barePrefix', () => {
   });
 
   it('should use apiName when its available', () => {
-    const newSchema = wrapSchema({
-      schema,
-      transforms: [
-        new PrefixTransform({
-          apiName: 'MyApi',
-          config: { mode: 'bare' },
-          baseDir,
-          cache,
-          pubsub,
-          importFn: m => import(m),
-        }),
-      ],
-    });
+    const newSchema = new PrefixTransform({
+      apiName: 'MyApi',
+      config: { mode: 'bare' },
+      baseDir,
+      cache,
+      pubsub,
+      importFn: m => import(m),
+    }).transformSchema(schema, { schema }, schema);
 
     expect(newSchema.getType('Query')).toBeDefined();
     expect(newSchema.getType('User')).toBeUndefined();
@@ -120,46 +123,36 @@ describe('barePrefix', () => {
   });
 
   it('should allow to ignore types', () => {
-    const newSchema = wrapSchema({
-      schema,
-      transforms: [
-        new PrefixTransform({
-          config: {
-            mode: 'bare',
-            value: 'T_',
-            ignore: ['User'],
-          },
-          apiName: '',
-          baseDir,
-          cache,
-          pubsub,
-          importFn: m => import(m),
-        }),
-      ],
-    });
+    const newSchema = new PrefixTransform({
+      config: {
+        mode: 'bare',
+        value: 'T_',
+        ignore: ['User'],
+      },
+      apiName: '',
+      baseDir,
+      cache,
+      pubsub,
+      importFn: m => import(m),
+    }).transformSchema(schema, { schema }, schema);
 
     expect(newSchema.getType('Query')).toBeDefined();
     expect(newSchema.getType('User')).toBeDefined();
   });
 
   it('should modify fields', () => {
-    const newSchema = wrapSchema({
-      schema,
-      transforms: [
-        new PrefixTransform({
-          config: {
-            mode: 'bare',
-            value: 'T_',
-            includeRootOperations: true,
-          },
-          apiName: '',
-          baseDir,
-          cache,
-          pubsub,
-          importFn: m => import(m),
-        }),
-      ],
-    });
+    const newSchema = new PrefixTransform({
+      config: {
+        mode: 'bare',
+        value: 'T_',
+        includeRootOperations: true,
+      },
+      apiName: '',
+      baseDir,
+      cache,
+      pubsub,
+      importFn: m => import(m),
+    }).transformSchema(schema, { schema }, schema);
 
     expect(newSchema.getType('Query')).toBeDefined();
     expect(newSchema.getType('T_User')).toBeDefined();
@@ -167,24 +160,19 @@ describe('barePrefix', () => {
   });
 
   it('should allow to ignore all fields in Type', () => {
-    const newSchema = wrapSchema({
-      schema,
-      transforms: [
-        new PrefixTransform({
-          config: {
-            mode: 'bare',
-            value: 'T_',
-            includeRootOperations: true,
-            ignore: ['Query'],
-          },
-          apiName: '',
-          baseDir,
-          cache,
-          pubsub,
-          importFn: m => import(m),
-        }),
-      ],
-    });
+    const newSchema = new PrefixTransform({
+      config: {
+        mode: 'bare',
+        value: 'T_',
+        includeRootOperations: true,
+        ignore: ['Query'],
+      },
+      apiName: '',
+      baseDir,
+      cache,
+      pubsub,
+      importFn: m => import(m),
+    }).transformSchema(schema, { schema }, schema);
 
     const queryFields = (newSchema.getType('Query') as GraphQLObjectType).getFields();
     expect(newSchema.getType('Query')).toBeDefined();
@@ -197,24 +185,19 @@ describe('barePrefix', () => {
   });
 
   it('should allow to ignore specific fields', () => {
-    const newSchema = wrapSchema({
-      schema,
-      transforms: [
-        new PrefixTransform({
-          config: {
-            mode: 'bare',
-            value: 'T_',
-            includeRootOperations: true,
-            ignore: ['Query.user'],
-          },
-          apiName: '',
-          baseDir,
-          cache,
-          pubsub,
-          importFn: m => import(m),
-        }),
-      ],
-    });
+    const newSchema = new PrefixTransform({
+      config: {
+        mode: 'bare',
+        value: 'T_',
+        includeRootOperations: true,
+        ignore: ['Query.user'],
+      },
+      apiName: '',
+      baseDir,
+      cache,
+      pubsub,
+      importFn: m => import(m),
+    }).transformSchema(schema, { schema }, schema);
 
     const queryFields = (newSchema.getType('Query') as GraphQLObjectType).getFields();
     expect(newSchema.getType('Query')).toBeDefined();
@@ -224,5 +207,37 @@ describe('barePrefix', () => {
     expect(queryFields).toHaveProperty('user');
     expect(queryFields).toHaveProperty('T_posts');
     expect(queryFields).not.toHaveProperty('posts');
+  });
+  it('should handle union type resolution', async () => {
+    const newSchema = new PrefixTransform({
+      config: {
+        mode: 'bare',
+        value: 'T_',
+        includeRootOperations: true,
+      },
+      apiName: '',
+      baseDir,
+      cache,
+      pubsub,
+      importFn: m => import(m),
+    }).transformSchema(schema, { schema }, schema);
+
+    const result = await execute({
+      schema: newSchema,
+      document: parse(/* GraphQL */ `
+        query {
+          T_node(id: "1") {
+            __typename
+          }
+        }
+      `),
+    });
+    expect(result).toEqual({
+      data: {
+        T_node: {
+          __typename: 'T_User',
+        },
+      },
+    });
   });
 });

@@ -1,9 +1,10 @@
 import PrefixTransform from '../src';
-import { buildSchema, printSchema, GraphQLSchema, GraphQLObjectType } from 'graphql';
+import { buildSchema, printSchema, GraphQLSchema, GraphQLObjectType, execute, parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { MeshPubSub } from '@graphql-mesh/types';
 import { PubSub } from '@graphql-mesh/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 
 describe('wrapPrefix', () => {
   let schema: GraphQLSchema;
@@ -12,21 +13,43 @@ describe('wrapPrefix', () => {
   const baseDir: string = undefined;
 
   beforeEach(() => {
-    schema = buildSchema(/* GraphQL */ `
-      type Query {
-        user: User!
-        posts: [Post!]!
-      }
+    schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          user: User!
+          posts: [Post!]!
+          node(id: ID!): Node
+        }
 
-      type User {
-        id: ID!
-      }
+        union Node = User | Post
 
-      type Post {
-        id: ID!
-        title: String!
-      }
-    `);
+        type User {
+          id: ID!
+        }
+
+        type Post {
+          id: ID!
+          title: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          node(_, { id }) {
+            return {
+              id,
+            };
+          },
+        },
+        Node: {
+          __resolveType(obj: any) {
+            if (obj.title) {
+              return 'Post';
+            }
+            return 'User';
+          },
+        },
+      },
+    });
     cache = new InMemoryLRUCache();
     pubsub = new PubSub();
   });
@@ -241,5 +264,42 @@ describe('wrapPrefix', () => {
     expect(newSchema.getType('Query')).toBeDefined();
     expect(newSchema.getType('T_User')).toBeUndefined();
     expect(newSchema.getType('User')).toBeDefined();
+  });
+  it('should handle union type resolution', async () => {
+    const newSchema = wrapSchema({
+      schema,
+      transforms: [
+        new PrefixTransform({
+          config: {
+            mode: 'wrap',
+            value: 'T_',
+            includeRootOperations: true,
+          },
+          apiName: '',
+          baseDir,
+          cache,
+          pubsub,
+          importFn: m => import(m),
+        }),
+      ],
+    });
+
+    const result = await execute({
+      schema: newSchema,
+      document: parse(/* GraphQL */ `
+        query {
+          T_node(id: "1") {
+            __typename
+          }
+        }
+      `),
+    });
+    expect(result).toEqual({
+      data: {
+        T_node: {
+          __typename: 'T_User',
+        },
+      },
+    });
   });
 });
