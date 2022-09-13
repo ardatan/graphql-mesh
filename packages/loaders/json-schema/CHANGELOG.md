@@ -1,5 +1,18 @@
 # @omnigraph/json-schema
 
+## 0.34.0
+
+### Minor Changes
+
+- [#4484](https://github.com/Urigo/graphql-mesh/pull/4484) [`80013a3cd`](https://github.com/Urigo/graphql-mesh/commit/80013a3cd836bcc6239b83b4eb0c27a7f7ef2cd7) Thanks [@ardatan](https://github.com/ardatan)! - If a union type has a single element, do not create that union type but use the element directly
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.83.5
+  - json-machete@0.14.11
+  - @graphql-mesh/utils@0.41.10
+
 ## 0.33.7
 
 ### Patch Changes

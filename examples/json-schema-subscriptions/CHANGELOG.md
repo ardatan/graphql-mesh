@@ -1,5 +1,14 @@
 # json-schema-subscriptions
 
+## 0.1.229
+
+### Patch Changes
+
+- Updated dependencies [[`add1020c9`](https://github.com/Urigo/graphql-mesh/commit/add1020c903fc47850054165968ee602fe2b3cc5)]:
+  - @graphql-mesh/cli@0.78.11
+  - @graphql-mesh/json-schema@0.35.11
+  - @graphql-mesh/plugin-live-query@0.1.25
+
 ## 0.1.228
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # mongoose-example
 
+## 0.5.271
+
+### Patch Changes
+
+- Updated dependencies [[`add1020c9`](https://github.com/Urigo/graphql-mesh/commit/add1020c903fc47850054165968ee602fe2b3cc5)]:
+  - @graphql-mesh/cli@0.78.11
+  - @graphql-mesh/mongoose@0.11.10
+
 ## 0.5.270
 
 ### Patch Changes
