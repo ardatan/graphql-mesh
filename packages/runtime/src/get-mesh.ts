@@ -24,7 +24,7 @@ import {
   getHeadersObj,
 } from '@graphql-mesh/utils';
 
-import { CreateProxyingResolverFn, SubschemaConfig } from '@graphql-tools/delegate';
+import { CreateProxyingResolverFn, Subschema, SubschemaConfig } from '@graphql-tools/delegate';
 import { AggregateError, ExecutionResult, isAsyncIterable, mapAsyncIterator, memoize1 } from '@graphql-tools/utils';
 import { enableIf, envelop, PluginOrDisabledPlugin, useExtendContext } from '@envelop/core';
 import { OneOfInputObjectsRule, useExtendedValidation } from '@envelop/extended-validation';
@@ -223,28 +223,24 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
   let inContextSDK$: Promise<Record<string, any>>;
 
-  const inContextSDKPlugin = useExtendContext(() => {
-    if (!inContextSDK$) {
-      const onDelegateHooks: OnDelegateHook<any>[] = [];
-      for (const plugin of initialPluginList) {
-        if (plugin?.onDelegate != null) {
-          onDelegateHooks.push(plugin.onDelegate);
-        }
-      }
-      inContextSDK$ = getInContextSDK(finalSchema, rawSources, logger, onDelegateHooks);
-    }
-    return inContextSDK$;
-  });
-
-  const { plugin: subschemaPlugin, transformedSchema: finalSchema } = useSubschema(unifiedSubschema);
-
-  finalSchema.extensions = unifiedSubschema.schema.extensions;
+  const subschema = new Subschema(unifiedSubschema);
 
   const getEnveloped = envelop({
     plugins: [
-      subschemaPlugin,
-      inContextSDKPlugin,
-      enableIf(!!finalSchema.getDirective('oneOf'), () =>
+      useSubschema(subschema),
+      useExtendContext(() => {
+        if (!inContextSDK$) {
+          const onDelegateHooks: OnDelegateHook<any>[] = [];
+          for (const plugin of initialPluginList) {
+            if (plugin?.onDelegate != null) {
+              onDelegateHooks.push(plugin.onDelegate);
+            }
+          }
+          inContextSDK$ = getInContextSDK(subschema.transformedSchema, rawSources, logger, onDelegateHooks);
+        }
+        return inContextSDK$;
+      }),
+      enableIf(!!subschema.transformedSchema.getDirective('oneOf'), () =>
         useExtendedValidation({
           rules: [OneOfInputObjectsRule],
         })
@@ -312,7 +308,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   return {
     execute: meshExecute,
     subscribe: meshSubscribe,
-    schema: finalSchema,
+    schema: subschema.transformedSchema,
     rawSources,
     cache,
     pubsub,

@@ -4,10 +4,11 @@ import {
   DelegationContext,
   SubschemaConfig,
   applySchemaTransforms,
+  Subschema,
 } from '@graphql-tools/delegate';
 import { ExecutionRequest, getOperationASTFromRequest, isAsyncIterable } from '@graphql-tools/utils';
-import { mapAsyncIterator, Plugin, TypedExecutionArgs } from '@envelop/core';
-import { GraphQLSchema, introspectionFromSchema } from 'graphql';
+import { isIntrospectionOperation, mapAsyncIterator, Plugin, TypedExecutionArgs } from '@envelop/core';
+import { introspectionFromSchema } from 'graphql';
 import { createBatchingExecutor } from '@graphql-tools/batch-execute';
 
 function getExecuteFn(subschema: SubschemaConfig) {
@@ -22,7 +23,7 @@ function getExecuteFn(subschema: SubschemaConfig) {
     };
     const operationAST = getOperationASTFromRequest(originalRequest);
     // TODO: We need more elegant solution
-    if (operationAST.name?.value === 'IntrospectionQuery') {
+    if (isIntrospectionOperation(operationAST)) {
       return {
         data: introspectionFromSchema(args.schema),
       };
@@ -70,26 +71,28 @@ function getExecuteFn(subschema: SubschemaConfig) {
 }
 
 // Creates an envelop plugin to execute a subschema inside Envelop
-export function useSubschema(subschema: SubschemaConfig): {
-  transformedSchema: GraphQLSchema;
-  plugin: Plugin;
-} {
-  const transformedSchema = applySchemaTransforms(subschema.schema, subschema);
+export function useSubschema(subschema: Subschema): Plugin {
+  // To prevent unwanted warnings from stitching
+  if (!('_transformedSchema' in subschema)) {
+    subschema.transformedSchema = applySchemaTransforms(subschema.schema, subschema);
+  }
+
+  subschema.transformedSchema.extensions = subschema.transformedSchema.extensions || subschema.schema.extensions || {};
+  Object.assign(subschema.transformedSchema.extensions, subschema.schema.extensions);
+
+  const executeFn = getExecuteFn(subschema);
 
   const plugin: Plugin = {
     onPluginInit({ setSchema }) {
-      setSchema(transformedSchema);
+      setSchema(subschema.transformedSchema);
     },
     onExecute({ setExecuteFn }) {
-      setExecuteFn(getExecuteFn(subschema));
+      setExecuteFn(executeFn);
     },
     onSubscribe({ setSubscribeFn }) {
-      setSubscribeFn(getExecuteFn(subschema));
+      setSubscribeFn(executeFn);
     },
   };
 
-  return {
-    transformedSchema,
-    plugin,
-  };
+  return plugin;
 }
