@@ -1,5 +1,12 @@
 # openapi-stackexchange
 
+## 0.6.288
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.78.14
+
 ## 0.6.287
 
 ### Patch Changes

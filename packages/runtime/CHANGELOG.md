@@ -1,5 +1,11 @@
 # @graphql-mesh/runtime
 
+## 0.44.8
+
+### Patch Changes
+
+- [#4493](https://github.com/Urigo/graphql-mesh/pull/4493) [`cb6fa8c82`](https://github.com/Urigo/graphql-mesh/commit/cb6fa8c82640c72768290a7843a8b767a57e09d7) Thanks [@ardatan](https://github.com/ardatan)! - Refactor useSubschema
+
 ## 0.44.7
 
 ### Patch Changes
