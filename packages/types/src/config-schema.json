@@ -513,6 +513,9 @@
         "newrelic": {
           "$ref": "#/definitions/NewrelicConfig"
         },
+        "operationFieldPermissions": {
+          "$ref": "#/definitions/OperationFieldPermissionsConfig"
+        },
         "prometheus": {
           "$ref": "#/definitions/PrometheusConfig"
         },
@@ -2137,6 +2140,37 @@
         "extractOperationName": {
           "type": "string",
           "description": "Allows to set a custom operation name to be used as transaction name and attribute\n`extractOperationName: {context.headers['x-operation-name']}`"
+        }
+      }
+    },
+    "OperationFieldPermissionsConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "OperationFieldPermissionsConfig",
+      "properties": {
+        "permissions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OperationFieldPermission"
+          },
+          "additionalItems": false
+        }
+      }
+    },
+    "OperationFieldPermission": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "OperationFieldPermission",
+      "properties": {
+        "if": {
+          "type": "string"
+        },
+        "allow": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
         }
       }
     },
