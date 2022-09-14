@@ -12,7 +12,7 @@ Similarly, Mesh provides a `mesh start` CLI command for production environments.
 
 Setup Mesh on a Serverless environment requires some integration work, detailed below.
 
-## Deploy Mesh with `mesh start`
+## Deploy Mesh with `mesh start` on Node.js
 
 While `mesh dev` handles the generation of the SDK code, `mesh start` expects to load the Gateway schema and runtime from the `.mesh/` folder.
 
@@ -97,6 +97,8 @@ import { createBuiltMeshHTTPHandler } from './.mesh'
 // Pass Mesh's HTTP handler as an event listener
 self.addEventListener('fetch', createBuiltMeshHTTPHandler())
 ```
+
+## Deploy on Node.js
 
 ### Mesh as an Express route
 
