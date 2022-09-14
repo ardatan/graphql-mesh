@@ -921,9 +921,41 @@ input MovieSort {
 
 input MovieSubscriptionWhere {
   released: BigInt
+  released_GT: BigInt
+  released_GTE: BigInt
+  released_IN: [BigInt]
+  released_LT: BigInt
+  released_LTE: BigInt
+  released_NOT: BigInt
+  released_NOT_IN: [BigInt]
   tagline: String
+  tagline_CONTAINS: String
+  tagline_ENDS_WITH: String
+  tagline_IN: [String]
+  tagline_NOT: String
+  tagline_NOT_CONTAINS: String
+  tagline_NOT_ENDS_WITH: String
+  tagline_NOT_IN: [String]
+  tagline_NOT_STARTS_WITH: String
+  tagline_STARTS_WITH: String
   title: String
+  title_CONTAINS: String
+  title_ENDS_WITH: String
+  title_IN: [String]
+  title_NOT: String
+  title_NOT_CONTAINS: String
+  title_NOT_ENDS_WITH: String
+  title_NOT_IN: [String]
+  title_NOT_STARTS_WITH: String
+  title_STARTS_WITH: String
   votes: BigInt
+  votes_GT: BigInt
+  votes_GTE: BigInt
+  votes_IN: [BigInt]
+  votes_LT: BigInt
+  votes_LTE: BigInt
+  votes_NOT: BigInt
+  votes_NOT_IN: [BigInt]
 }
 
 input MovieUpdateInput {
@@ -2306,7 +2338,23 @@ input PersonSort {
 
 input PersonSubscriptionWhere {
   born: BigInt
+  born_GT: BigInt
+  born_GTE: BigInt
+  born_IN: [BigInt]
+  born_LT: BigInt
+  born_LTE: BigInt
+  born_NOT: BigInt
+  born_NOT_IN: [BigInt]
   name: String
+  name_CONTAINS: String
+  name_ENDS_WITH: String
+  name_IN: [String]
+  name_NOT: String
+  name_NOT_CONTAINS: String
+  name_NOT_ENDS_WITH: String
+  name_NOT_IN: [String]
+  name_NOT_STARTS_WITH: String
+  name_STARTS_WITH: String
 }
 
 input PersonUpdateInput {
