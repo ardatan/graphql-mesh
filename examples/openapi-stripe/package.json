@@ -1,13 +1,13 @@
 {
   "name": "openapi-stripe",
-  "version": "0.5.286",
+  "version": "0.5.287",
   "license": "MIT",
   "private": true,
   "scripts": {
     "start": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.78.12",
+    "@graphql-mesh/cli": "0.78.13",
     "@graphql-mesh/openapi": "0.33.12",
     "graphql": "16.6.0"
   }

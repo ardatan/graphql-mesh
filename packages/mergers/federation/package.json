@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/merger-federation",
-  "version": "0.12.23",
+  "version": "0.12.24",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",

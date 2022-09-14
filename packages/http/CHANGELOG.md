@@ -1,5 +1,12 @@
 # @graphql-mesh/http
 
+## 0.1.10
+
+### Patch Changes
+
+- Updated dependencies [[`15230bc53`](https://github.com/Urigo/graphql-mesh/commit/15230bc534e4f5e769b6f1210120472c98d842b5)]:
+  - @graphql-mesh/runtime@0.44.7
+
 ## 0.1.9
 
 ### Patch Changes
