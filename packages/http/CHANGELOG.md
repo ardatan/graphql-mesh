@@ -1,5 +1,15 @@
 # @graphql-mesh/http
 
+## 0.1.12
+
+### Patch Changes
+
+- [#4495](https://github.com/Urigo/graphql-mesh/pull/4495) [`5fcdc1791`](https://github.com/Urigo/graphql-mesh/commit/5fcdc1791fa7b5945ce76fd3653e99c63ad9b32b) Thanks [@ardatan](https://github.com/ardatan)! - Fix index.html handling
+
+- Updated dependencies []:
+  - @graphql-mesh/runtime@0.44.9
+  - @graphql-mesh/utils@0.41.11
+
 ## 0.1.11
 
 ### Patch Changes

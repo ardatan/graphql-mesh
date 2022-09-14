@@ -1,5 +1,14 @@
 # hello-world-esm
 
+## 0.0.60
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.78.15
+  - @graphql-mesh/json-schema@0.35.12
+  - @graphql-mesh/plugin-mock@0.0.18
+
 ## 0.0.59
 
 ### Patch Changes
