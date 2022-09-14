@@ -3024,6 +3024,11 @@
       "type": "object",
       "title": "NamingConventionTransformConfig",
       "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["bare", "wrap"],
+          "description": "Specify to apply naming-convention transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)"
+        },
         "typeNames": {
           "type": "string",
           "enum": [

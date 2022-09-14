@@ -1290,6 +1290,10 @@ export interface HoistFieldTransformFieldPathConfigObject {
  */
 export interface NamingConventionTransformConfig {
   /**
+   * Specify to apply naming-convention transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)
+   */
+  mode?: 'bare' | 'wrap';
+  /**
    * Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase
    */
   typeNames?:

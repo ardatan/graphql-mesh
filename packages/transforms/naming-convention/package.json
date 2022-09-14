@@ -27,17 +27,21 @@
   "peerDependencies": {
     "graphql": "*"
   },
+  "devDependencies": {
+    "@graphql-mesh/cache-localforage": "^0.6.35",
+    "@graphql-tools/schema": "9.0.3"
+  },
   "dependencies": {
     "@graphql-mesh/types": "0.83.5",
     "@graphql-mesh/utils": "0.41.10",
-    "@graphql-tools/wrap": "9.2.1",
     "@graphql-tools/delegate": "9.0.6",
     "@graphql-tools/utils": "8.12.0",
+    "@graphql-tools/wrap": "9.2.1",
     "change-case": "4.1.2",
-    "upper-case": "2.0.2",
-    "lower-case": "2.0.2",
     "graphql-scalars": "1.18.0",
-    "tslib": "^2.4.0"
+    "lower-case": "2.0.2",
+    "tslib": "2.4.0",
+    "upper-case": "2.0.2"
   },
   "publishConfig": {
     "access": "public",
