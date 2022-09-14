@@ -273,12 +273,17 @@
   },
   {
     "objectID": "mesh-docs-getting-started-deploy-mesh-gateway",
-    "headings": ["Deploy Mesh with `mesh start`", "Deploy Mesh on Serverless", "Mesh and Docker"],
+    "headings": [
+      "Deploy Mesh with `mesh start` on Node.js",
+      "Deploy Mesh on Serverless",
+      "Deploy on Node.js",
+      "Mesh and Docker"
+    ],
     "toc": [
       {
         "children": [],
-        "title": "Deploy Mesh with `mesh start`",
-        "anchor": "deploy-mesh-with-mesh-start"
+        "title": "Deploy Mesh with `mesh start` on Node.js",
+        "anchor": "deploy-mesh-with-mesh-start-on-nodejs"
       },
       {
         "children": [
@@ -293,12 +298,19 @@
                 "children": [],
                 "title": "Deploy Mesh on Cloudflare Workers",
                 "anchor": "deploy-mesh-on-cloudflare-workers"
-              },
-              {
-                "children": [],
-                "title": "Mesh as an Express route",
-                "anchor": "mesh-as-an-express-route"
-              },
+              }
+            ],
+            "title": "Deploy Mesh on Vercel with Next.js API Routes",
+            "anchor": "deploy-mesh-on-vercel-with-nextjs-api-routes"
+          }
+        ],
+        "title": "Deploy Mesh on Serverless",
+        "anchor": "deploy-mesh-on-serverless"
+      },
+      {
+        "children": [
+          {
+            "children": [
               {
                 "children": [],
                 "title": "Mesh as a Fastify route",
@@ -320,12 +332,12 @@
                 "anchor": "mesh-and-sveltekit"
               }
             ],
-            "title": "Deploy Mesh on Vercel with Next.js API Routes",
-            "anchor": "deploy-mesh-on-vercel-with-nextjs-api-routes"
+            "title": "Mesh as an Express route",
+            "anchor": "mesh-as-an-express-route"
           }
         ],
-        "title": "Deploy Mesh on Serverless",
-        "anchor": "deploy-mesh-on-serverless"
+        "title": "Deploy on Node.js",
+        "anchor": "deploy-on-nodejs"
       },
       {
         "children": [],
@@ -333,7 +345,7 @@
         "anchor": "mesh-and-docker"
       }
     ],
-    "content": "d3fd437f5bf2b2b717ec5eeff8ab0402",
+    "content": "051a170860efd8cb3d6dbc09b7c6d34f",
     "url": "https://www.graphql-mesh.com/docs/getting-started/deploy-mesh-gateway",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Getting Started"],
@@ -469,6 +481,62 @@
     "hierarchy": ["Docs", "Getting Started"],
     "source": "Mesh",
     "title": "Your first Gateway with Mesh",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-guides-auth0",
+    "headings": [
+      "Installing dependencies",
+      "Adding the Auth0 Plugin to the Mesh setup",
+      "Setting up the Auth0 API",
+      "Expose authentication information via GraphQL schema",
+      "Generating an Auth0 Access Token",
+      "Sending an Authenticated Request",
+      "Next Steps"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "Installing dependencies",
+        "anchor": "installing-dependencies"
+      },
+      {
+        "children": [],
+        "title": "Adding the Auth0 Plugin to the Mesh setup",
+        "anchor": "adding-the-auth0-plugin-to-the-mesh-setup"
+      },
+      {
+        "children": [],
+        "title": "Setting up the Auth0 API",
+        "anchor": "setting-up-the-auth0-api"
+      },
+      {
+        "children": [],
+        "title": "Expose authentication information via GraphQL schema",
+        "anchor": "expose-authentication-information-via-graphql-schema"
+      },
+      {
+        "children": [],
+        "title": "Generating an Auth0 Access Token",
+        "anchor": "generating-an-auth0-access-token"
+      },
+      {
+        "children": [],
+        "title": "Sending an Authenticated Request",
+        "anchor": "sending-an-authenticated-request"
+      },
+      {
+        "children": [],
+        "title": "Next Steps",
+        "anchor": "next-steps"
+      }
+    ],
+    "content": "35b301d9333989c1470ae4f85d1de500",
+    "url": "https://www.graphql-mesh.com/docs/guides/auth0",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Docs", "Guides"],
+    "source": "Mesh",
+    "title": "Authentication with Auth0",
     "type": "Documentation"
   },
   {
