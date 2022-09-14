@@ -1,5 +1,13 @@
 # @graphql-mesh/cache-file
 
+## 0.9.26
+
+### Patch Changes
+
+- Updated dependencies [[`077e65c18`](https://github.com/Urigo/graphql-mesh/commit/077e65c1857aaefa2689f33decc9e72ded281c94), [`ee1cb6f76`](https://github.com/Urigo/graphql-mesh/commit/ee1cb6f7620f71fd824e69f4171cfef6c5d51794)]:
+  - @graphql-mesh/types@0.84.0
+  - @graphql-mesh/utils@0.41.11
+
 ## 0.9.25
 
 ### Patch Changes
