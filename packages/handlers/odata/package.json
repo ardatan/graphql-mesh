@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/odata",
-  "version": "0.20.11",
+  "version": "0.20.12",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
