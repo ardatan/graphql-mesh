@@ -78,17 +78,13 @@ export function createMeshHTTPHandler<TServerContext>({
     router.get('*', async request => {
       const url = new URL(request.url);
       if (url.pathname === '/' && (await pathExists(indexPath))) {
-        const indexFile = await fs.promises.readFile(indexPath, 'utf-8');
-        router.get(
-          '/',
-          () =>
-            new Response(indexFile, {
-              status: 200,
-              headers: {
-                'Content-Type': 'text/html',
-              },
-            })
-        );
+        const indexFile = await fs.promises.readFile(indexPath);
+        return new Response(indexFile, {
+          status: 200,
+          headers: {
+            'Content-Type': 'text/html',
+          },
+        });
       }
       const filePath = path.join(baseDir, staticFiles, url.pathname);
       if (await pathExists(filePath)) {
