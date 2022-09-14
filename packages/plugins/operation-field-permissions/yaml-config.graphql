@@ -1,0 +1,12 @@
+extend type Plugin {
+  operationFieldPermissions: OperationFieldPermissionsConfig
+}
+
+type OperationFieldPermissionsConfig @md {
+  permissions: [OperationFieldPermission]
+}
+
+type OperationFieldPermission {
+  if: String
+  allow: [String]
+}

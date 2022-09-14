@@ -2072,7 +2072,7 @@
     "@envelop/types" "2.4.0"
     tslib "2.4.0"
 
-"@envelop/extended-validation@1.9.0":
+"@envelop/extended-validation@1.9.0", "@envelop/extended-validation@^1.9.0":
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/@envelop/extended-validation/-/extended-validation-1.9.0.tgz#a4634452797177e718302a8645a7c8d5381fe09b"
   integrity sha512-Kf0xkTKRuP1XEgHa5Pi8+zaCUGYnFyiGPkb24Z/X1zKd8+s2gtuBmaw6GoROgaBoK0XIE+ZYne7BZCheUqfp+A==
@@ -2096,6 +2096,14 @@
   resolved "https://registry.yarnpkg.com/@envelop/newrelic/-/newrelic-4.3.0.tgz#6a4f32b96d5cf96792a6e14853ade71be255a800"
   integrity sha512-2YcchVddkG6w49p7DHQNObzNgGx/kSlPwPtBmws41ELXhnl2wN/t7sBV+WL+Px4z14IB5g5SsuXTLaGHLgu+4w==
   dependencies:
+    tslib "^2.4.0"
+
+"@envelop/operation-field-permissions@3.6.0":
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/@envelop/operation-field-permissions/-/operation-field-permissions-3.6.0.tgz#fda6451893d1568baff4edec4bb7ee12a92b644c"
+  integrity sha512-zAh19EMJ3TLco5OsLW1On3M41zej4lkqKL//gfYGFRtGB2x/Hnuc5/9BIVEDb8l0zmCkD9bqgWHoS3NfEnwB7w==
+  dependencies:
+    "@envelop/extended-validation" "^1.9.0"
     tslib "^2.4.0"
 
 "@envelop/parser-cache@^4.4.0", "@envelop/parser-cache@^4.6.0":

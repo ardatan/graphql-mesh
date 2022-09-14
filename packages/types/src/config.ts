@@ -1724,6 +1724,7 @@ export interface Plugin {
   liveQuery?: LiveQueryConfig;
   mock?: MockingConfig;
   newrelic?: NewrelicConfig;
+  operationFieldPermissions?: OperationFieldPermissionsConfig;
   prometheus?: PrometheusConfig;
   rateLimit?: RateLimitPluginConfig;
   responseCache?: ResponseCacheConfig;
@@ -1858,6 +1859,13 @@ export interface NewrelicConfig {
    * `extractOperationName: {context.headers['x-operation-name']}`
    */
   extractOperationName?: string;
+}
+export interface OperationFieldPermissionsConfig {
+  permissions?: OperationFieldPermission[];
+}
+export interface OperationFieldPermission {
+  if?: string;
+  allow?: string[];
 }
 export interface PrometheusConfig {
   requestCount?: boolean;

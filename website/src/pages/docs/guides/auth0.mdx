@@ -230,11 +230,17 @@ In the GraphQL schema of this guide we only re-expose the auth0 authentication i
 You can use the context object inside your handlers or anywhere else in Mesh;
 
 ```yaml
-sources:
-  - name: Test
-    handler:
-      graphql:
-        endpoint: "http://some_graphql.com/graphql"
-        operationHeaders:
-          "x-user-sub": "{context._auth0.sub}"
+plugins:
+  - auth0:
+      domain: '{account_name}.{region}.auth0.com'
+      audience: 'http://localhost:3000/graphql'
+      extendContextField: '_auth0'
+      # No need to prevent unauthorized access
+      preventUnauthorizedAccess: false
+  # You can combine this with `@graphql-mesh/plugin-operation-field-permissions`
+  - operationFieldPermissions:
+      permissions:
+        - if: "context._auth0?.sub != null"
+          allow:
+            - "*"
 ```
