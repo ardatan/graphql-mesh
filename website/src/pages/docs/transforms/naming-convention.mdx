@@ -13,11 +13,17 @@ Add the following configuration to your Mesh config file:
 ```yaml
 transforms:
   - namingConvention:
+      mode: bare | wrap
       typeNames: pascalCase
       enumValues: upperCase
       fieldNames: camelCase
       fieldArgumentNames: camelCase
 ```
+
+<Callout>
+  For information about "bare" and "wrap" modes, please read the [dedicated
+  section](/docs/transforms/transforms-introduction#two-different-modes).
+</Callout>
 
 <Callout>
   You can see our gRPC example that uses this transform to see its application. [Click here to open the example on

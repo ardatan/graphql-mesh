@@ -6,7 +6,7 @@ import { PubSub } from '@graphql-mesh/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { addResolversToSchema } from '@graphql-tools/schema';
 
-describe('namingConvention', () => {
+describe('namingConvention wrap', () => {
   const schema = buildSchema(/* GraphQL */ `
     type Query {
       user: user!
@@ -40,6 +40,7 @@ describe('namingConvention', () => {
           apiName: '',
           importFn,
           config: {
+            mode: 'wrap',
             typeNames: 'pascalCase',
             enumValues: 'upperCase',
             fieldNames: 'camelCase',
@@ -69,34 +70,43 @@ describe('namingConvention', () => {
     // expect(adminValue.value).toBe('admin');
     expect(printSchema(newSchema)).toMatchSnapshot();
   });
+
   it('should execute the transformed schema properly', async () => {
     let schema = buildSchema(/* GraphQL */ `
       type Query {
         user(input: UserSearchInput): User
         userById(userId: ID!): User
+        userByType(type: UserType!): User
       }
       type User {
         id: ID
         first_name: String
         last_name: String
+        Type: UserType
       }
       input UserSearchInput {
         id: ID
         first_name: String
         last_name: String
       }
+      enum UserType {
+        admin
+        moderator
+        newbie
+      }
     `);
-    let userInput;
     schema = addResolversToSchema({
       schema,
       resolvers: {
         Query: {
-          user: (root, args, context, info) => {
-            userInput = args?.input;
-            return userInput;
+          user: (root, args) => {
+            return args?.input;
           },
-          userById: (root, args, context, info) => {
-            return { id: args.userId, first_name: 'John', last_name: 'Doe' };
+          userById: (root, args) => {
+            return { id: args.userId, first_name: 'John', last_name: 'Doe', Type: 'admin' };
+          },
+          userByType: () => {
+            return { first_name: 'John', last_name: 'Smith', Type: 'admin' };
           },
         },
       },
@@ -110,8 +120,10 @@ describe('namingConvention', () => {
           cache,
           pubsub,
           config: {
+            mode: 'wrap',
+            enumValues: 'upperCase',
             fieldNames: 'camelCase',
-            fieldArgumentNames: 'snakeCase',
+            fieldArgumentNames: 'pascalCase',
           },
           baseDir,
         }),
@@ -121,19 +133,13 @@ describe('namingConvention', () => {
       schema,
       document: parse(/* GraphQL */ `
         {
-          user(input: { id: "0", firstName: "John", lastName: "Doe" }) {
+          user(Input: { id: "0", firstName: "John", lastName: "Doe" }) {
             id
             firstName
             lastName
           }
         }
       `),
-    });
-    // Pass non-transformed input to the real schema
-    expect(userInput).toEqual({
-      id: '0',
-      first_name: 'John',
-      last_name: 'Doe',
     });
     // Pass transformed output to the client
     expect(result?.data?.user).toEqual({
@@ -146,7 +152,7 @@ describe('namingConvention', () => {
       schema,
       document: parse(/* GraphQL */ `
         {
-          userById(user_id: "1") {
+          userById(UserId: "1") {
             id
             firstName
             lastName
@@ -160,7 +166,27 @@ describe('namingConvention', () => {
       firstName: 'John',
       lastName: 'Doe',
     });
+
+    const result3 = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          userByType(Type: ADMIN) {
+            firstName
+            lastName
+            type
+          }
+        }
+      `),
+    });
+    // Pass transformed output to the client
+    expect(result3.data?.userByType).toEqual({
+      firstName: 'John',
+      lastName: 'Smith',
+      type: 'ADMIN',
+    });
   });
+
   it('should be skipped if the result gonna be empty string', async () => {
     let schema = buildSchema(/* GraphQL */ `
       type Query {
@@ -186,6 +212,7 @@ describe('namingConvention', () => {
           cache,
           pubsub,
           config: {
+            mode: 'wrap',
             fieldNames: 'camelCase',
           },
           baseDir,
@@ -202,6 +229,7 @@ describe('namingConvention', () => {
     });
     expect(data?._).toEqual('test');
   });
+
   it('should skip fields of Federation spec', async () => {
     const typeDefs = /* GraphQL */ `
 type Query {
@@ -217,6 +245,7 @@ type Query {
           cache,
           pubsub,
           config: {
+            mode: 'wrap',
             fieldNames: 'snakeCase',
           },
           baseDir,

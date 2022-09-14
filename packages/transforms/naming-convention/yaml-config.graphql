@@ -6,6 +6,10 @@ extend type Transform {
 }
 
 type NamingConventionTransformConfig @md {
+  """
+  Specify to apply naming-convention transforms to bare schema or by wrapping original schema
+  """
+  mode: NamingConventionTransformMode
   typeNames: NamingConventionType
   fieldNames: NamingConventionType
   enumValues: NamingConventionType
@@ -26,4 +30,9 @@ enum NamingConventionType {
   snakeCase
   upperCase
   lowerCase
+}
+
+enum NamingConventionTransformMode {
+  bare
+  wrap
 }
