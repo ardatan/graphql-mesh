@@ -1,19 +1,12 @@
 import { applyRequestTransforms, applyResultTransforms } from '@graphql-mesh/utils';
-import {
-  createDefaultExecutor,
-  DelegationContext,
-  SubschemaConfig,
-  applySchemaTransforms,
-  Subschema,
-} from '@graphql-tools/delegate';
+import { createDefaultExecutor, DelegationContext, applySchemaTransforms, Subschema } from '@graphql-tools/delegate';
 import { ExecutionRequest, getOperationASTFromRequest, isAsyncIterable } from '@graphql-tools/utils';
 import { isIntrospectionOperation, mapAsyncIterator, Plugin, TypedExecutionArgs } from '@envelop/core';
 import { introspectionFromSchema } from 'graphql';
 import { createBatchingExecutor } from '@graphql-tools/batch-execute';
 
-function getExecuteFn(subschema: SubschemaConfig) {
+function getExecuteFn(subschema: Subschema) {
   return async function subschemaExecute(args: TypedExecutionArgs<any>): Promise<any> {
-    const transformationContext: Record<string, any> = {};
     const originalRequest: ExecutionRequest = {
       document: args.document,
       variables: args.variableValues as any,
@@ -37,9 +30,9 @@ function getExecuteFn(subschema: SubschemaConfig) {
       context: args.contextValue,
       rootValue: args.rootValue,
       transforms: subschema.transforms,
-      transformedSchema: args.schema,
+      transformedSchema: subschema.transformedSchema,
       skipTypeMerging: true,
-      returnType: {} as any, // Might not work
+      returnType: args.schema.getRootType(operationAST.operation),
     };
     let executor = subschema.executor;
     if (executor == null) {
@@ -48,6 +41,7 @@ function getExecuteFn(subschema: SubschemaConfig) {
     if (subschema.batch) {
       executor = createBatchingExecutor(executor);
     }
+    const transformationContext: Record<string, any> = {};
     const transformedRequest = applyRequestTransforms(
       originalRequest,
       delegationContext,
