@@ -29,8 +29,7 @@ class CodegenHelpers extends tsBasePlugin.TsVisitor {
 
 function buildSignatureBasedOnRootFields(
   codegenHelpers: CodegenHelpers,
-  type: Maybe<GraphQLObjectType>,
-  namespace: string
+  type: Maybe<GraphQLObjectType>
 ): Record<string, string> {
   if (!type) {
     return {};
@@ -41,7 +40,7 @@ function buildSignatureBasedOnRootFields(
   for (const fieldName in fields) {
     const field = fields[fieldName];
     const argsExists = field.args && field.args.length > 0;
-    const argsName = argsExists ? `${namespace}.${type.name}${field.name}Args` : '{}';
+    const argsName = argsExists ? `${type.name}${field.name}Args` : '{}';
     const parentTypeNode: NamedTypeNode = {
       kind: Kind.NAMED_TYPE,
       name: {
@@ -52,7 +51,7 @@ function buildSignatureBasedOnRootFields(
 
     operationMap[fieldName] = `  /** ${field.description} **/\n  ${
       field.name
-    }: InContextSdkMethod<${namespace}.${codegenHelpers.getTypeToUse(
+    }: InContextSdkMethod<${codegenHelpers.getTypeToUse(
       parentTypeNode
     )}['${fieldName}'], ${argsName}, ${unifiedContextIdentifier}>`;
   }
@@ -88,60 +87,43 @@ async function generateTypesForApi(options: {
   });
   const codegenHelpers = new CodegenHelpers(options.schema, config, {});
   const namespace = pascalCase(`${options.name}Types`);
-  const sdkIdentifier = pascalCase(`${options.name}Sdk`);
-  const contextIdentifier = pascalCase(`${options.name}Context`);
-  const queryOperationMap = buildSignatureBasedOnRootFields(codegenHelpers, options.schema.getQueryType(), namespace);
-  const mutationOperationMap = buildSignatureBasedOnRootFields(
-    codegenHelpers,
-    options.schema.getMutationType(),
-    namespace
-  );
+  const queryOperationMap = buildSignatureBasedOnRootFields(codegenHelpers, options.schema.getQueryType());
+  const mutationOperationMap = buildSignatureBasedOnRootFields(codegenHelpers, options.schema.getMutationType());
   const subscriptionsOperationMap = buildSignatureBasedOnRootFields(
     codegenHelpers,
-    options.schema.getSubscriptionType(),
-    namespace
+    options.schema.getSubscriptionType()
   );
 
-  const sdk = {
-    identifier: sdkIdentifier,
-    codeAst: `
+  const codeAst = `
 import { InContextSdkMethod } from '@graphql-mesh/types';
 import { MeshContext } from '@graphql-mesh/runtime';
 
 export namespace ${namespace} {
   ${baseTypes}
-}
-export type Query${sdkIdentifier} = {
-${Object.values(queryOperationMap).join(',\n')}
-};
-
-export type Mutation${sdkIdentifier} = {
-${Object.values(mutationOperationMap).join(',\n')}
-};
-
-export type Subscription${sdkIdentifier} = {
-${Object.values(subscriptionsOperationMap).join(',\n')}
-};`,
+  export type QuerySdk = {
+    ${Object.values(queryOperationMap).join(',\n')}
   };
 
-  const context = {
-    identifier: contextIdentifier,
-    codeAst: `export type ${contextIdentifier} = {
-      [${JSON.stringify(
-        options.name
-      )}]: { Query: Query${sdkIdentifier}, Mutation: Mutation${sdkIdentifier}, Subscription: Subscription${sdkIdentifier} },
+  export type MutationSdk = {
+    ${Object.values(mutationOperationMap).join(',\n')}
+  };
+
+  export type SubscriptionSdk = {
+    ${Object.values(subscriptionsOperationMap).join(',\n')}
+  };
+
+  export type Context = {
+      [${JSON.stringify(options.name)}]: { Query: QuerySdk, Mutation: MutationSdk, Subscription: SubscriptionSdk },
       ${Object.keys(options.contextVariables)
         .map(key => `[${JSON.stringify(key)}]: ${options.contextVariables[key]}`)
         .join(',\n')}
-    };`,
-  };
-
-  const imports = [contextIdentifier];
+    };
+}
+`;
 
   return {
-    imports,
-    sdk,
-    context,
+    identifier: namespace,
+    codeAst,
   };
 }
 
@@ -254,38 +236,43 @@ export async function generateTsArtifacts(
                 `import { getMesh, ExecuteMeshFn, SubscribeMeshFn, MeshContext as BaseMeshContext, MeshInstance } from '@graphql-mesh/runtime';`,
                 `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
                 `import { path as pathModule } from '@graphql-mesh/cross-helpers';`,
+                `import { ImportFn } from '@graphql-mesh/types';`,
               ]);
               const results = await Promise.all(
                 rawSources.map(async source => {
                   const sourceMap = unifiedSchema.extensions.sourceMap as Map<RawSourceOutput, GraphQLSchema>;
                   const sourceSchema = sourceMap.get(source);
-                  const item = await generateTypesForApi({
+                  const { identifier, codeAst } = await generateTypesForApi({
                     schema: sourceSchema,
                     name: source.name,
                     contextVariables: source.contextVariables,
                   });
-                  if (item) {
-                    const content = item.sdk.codeAst + '\n' + item.context.codeAst;
+
+                  if (codeAst) {
+                    const content = '// @ts-nocheck\n' + codeAst;
                     await writeFile(pathModule.join(artifactsDir, `sources/${source.name}/types.ts`), content);
-                    if (item.imports) {
-                      importCodes.add(
-                        `import type { ${item.imports.join(', ')} } from './sources/${source.name}/types';`
-                      );
-                    }
                   }
-                  return item;
+
+                  if (identifier) {
+                    importCodes.add(`import type { ${identifier} } from './sources/${source.name}/types';`);
+                  }
+
+                  return {
+                    identifier,
+                    codeAst,
+                  };
                 })
               );
 
               const contextType = `export type ${unifiedContextIdentifier} = ${results
-                .map(r => r?.context?.identifier)
+                .map(r => `${r?.identifier}.Context`)
                 .filter(Boolean)
                 .join(' & ')} & BaseMeshContext;`;
 
               let meshMethods = `
 ${BASEDIR_ASSIGNMENT_COMMENT}
 
-const importFn = (moduleId: string) => {
+const importFn: ImportFn = <T>(moduleId: string) => {
   const relativeModuleId = (pathModule.isAbsolute(moduleId) ? pathModule.relative(baseDir, moduleId) : moduleId).split('\\\\').join('/').replace(baseDir + '/', '');
   switch(relativeModuleId) {${[...importedModulesSet]
     .map(importedModuleName => {
@@ -300,7 +287,7 @@ const importFn = (moduleId: string) => {
       }
       return `
     case ${JSON.stringify(moduleMapProp)}:
-      return import(${JSON.stringify(importPath)});
+      return import(${JSON.stringify(importPath)}) as T;
     `;
     })
     .join('')}
@@ -320,14 +307,14 @@ const rootStore = new MeshStore('${cliParams.artifactsDir}', new FsStoreStorageA
 
 ${[...meshConfigCodes].join('\n')}
 
-let meshInstance$: Promise<MeshInstance<MeshContext>>;
+let meshInstance$: Promise<MeshInstance> | undefined;
 
-export function ${cliParams.builtMeshFactoryName}(): Promise<MeshInstance<MeshContext>> {
+export function ${cliParams.builtMeshFactoryName}(): Promise<MeshInstance> {
   if (meshInstance$ == null) {
-    meshInstance$ = getMeshOptions().then(meshOptions => getMesh<MeshContext>(meshOptions)).then(mesh => {
-      const id$ = mesh.pubsub.subscribe('destroy', () => {
+    meshInstance$ = getMeshOptions().then(meshOptions => getMesh(meshOptions)).then(mesh => {
+      const id = mesh.pubsub.subscribe('destroy', () => {
         meshInstance$ = undefined;
-        id$.then(id => mesh.pubsub.unsubscribe(id)).catch(err => console.error(err));
+        mesh.pubsub.unsubscribe(id);
       });
       return mesh;
     });
@@ -347,7 +334,7 @@ export const subscribe: SubscribeMeshFn = (...args) => ${
                 meshMethods += `
 export function ${cliParams.builtMeshSDKFactoryName}<TGlobalContext = any, TOperationContext = any>(globalContext?: TGlobalContext) {
   const sdkRequester$ = ${cliParams.builtMeshFactoryName}().then(({ sdkRequesterFactory }) => sdkRequesterFactory(globalContext));
-  return getSdk<TOperationContext>((...args) => sdkRequester$.then(sdkRequester => sdkRequester(...args)));
+  return getSdk<TOperationContext, TGlobalContext>((...args) => sdkRequester$.then(sdkRequester => sdkRequester(...args)));
 }`;
               }
 

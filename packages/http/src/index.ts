@@ -1,6 +1,7 @@
 import { fs, path, process } from '@graphql-mesh/cross-helpers';
-import { ServeMeshOptions } from '@graphql-mesh/runtime';
-import { pathExists } from '@graphql-mesh/utils';
+import { MeshInstance } from '@graphql-mesh/runtime';
+import { Logger, YamlConfig } from '@graphql-mesh/types';
+import { DefaultLogger, pathExists } from '@graphql-mesh/utils';
 import { createServerAdapter, ServerAdapter } from '@whatwg-node/server';
 import { Router } from 'itty-router';
 import { withCookies } from 'itty-router-extras';
@@ -10,13 +11,19 @@ import { Response } from '@whatwg-node/fetch';
 export function createMeshHTTPHandler<TServerContext>({
   baseDir,
   getBuiltMesh,
-  logger,
   rawServeConfig = {},
   playgroundTitle,
-}: ServeMeshOptions): ServerAdapter<TServerContext, Router<Request>> {
+}: {
+  baseDir: string;
+  getBuiltMesh: () => Promise<MeshInstance>;
+  rawServeConfig?: YamlConfig.Config['serve'];
+  playgroundTitle?: string;
+}): ServerAdapter<TServerContext, Router<Request>> {
   let readyFlag = false;
+  let logger: Logger = new DefaultLogger('Mesh HTTP');
   const mesh$ = getBuiltMesh().then(mesh => {
     readyFlag = true;
+    logger = mesh.logger.child('HTTP');
     return mesh;
   });
 
