@@ -1,5 +1,15 @@
 # @graphql-mesh/http
 
+## 0.1.13
+
+### Patch Changes
+
+- [#4502](https://github.com/Urigo/graphql-mesh/pull/4502) [`82f4b24fb`](https://github.com/Urigo/graphql-mesh/commit/82f4b24fbd64fb9bf0deb8990c153666a71f42aa) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency [`@graphql-mesh/types@0.84.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.84.0) (to `dependencies`)
+
+- [#4502](https://github.com/Urigo/graphql-mesh/pull/4502) [`82f4b24fb`](https://github.com/Urigo/graphql-mesh/commit/82f4b24fbd64fb9bf0deb8990c153666a71f42aa) Thanks [@ardatan](https://github.com/ardatan)! - Fix TS issues on artifacts
+
 ## 0.1.12
 
 ### Patch Changes
