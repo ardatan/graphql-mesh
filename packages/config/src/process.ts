@@ -158,9 +158,11 @@ export async function processConfig(
   importCodes.add(fetchFnImportCode);
   codes.add(fetchFnCode);
 
-  codes.add(`const sources = [];`);
-  codes.add(`const transforms = [];`);
-  codes.add(`const additionalEnvelopPlugins = [];`);
+  importCodes.add(`import { MeshResolvedSource } from '@graphql-mesh/runtime';`);
+  codes.add(`const sources: MeshResolvedSource[] = [];`);
+  importCodes.add(`import { MeshTransform, MeshPlugin } from '@graphql-mesh/types';`);
+  codes.add(`const transforms: MeshTransform[] = [];`);
+  codes.add(`const additionalEnvelopPlugins: MeshPlugin<any>[] = [];`);
 
   const [sources, transforms, additionalEnvelopPlugins, additionalTypeDefs, additionalResolvers, documents] =
     await Promise.all([

@@ -2329,13 +2329,24 @@
     tslib "^2.4.0"
     value-or-promise "1.0.11"
 
-"@graphql-tools/code-file-loader@7.3.6", "@graphql-tools/code-file-loader@^7.3.0":
+"@graphql-tools/code-file-loader@7.3.6":
   version "7.3.6"
   resolved "https://registry.yarnpkg.com/@graphql-tools/code-file-loader/-/code-file-loader-7.3.6.tgz#3e6bdd4dc93c592be3d6fbcc2c2bad1228ca0f8d"
   integrity sha512-PNWWSwSuQAqANerDwS0zdQ5FPipirv75TjjzBHnY+6AF/WvKq5sQiUQheA2P7B+MZc/KdQ7h/JAGMQOhKNVA+Q==
   dependencies:
     "@graphql-tools/graphql-tag-pluck" "7.3.6"
     "@graphql-tools/utils" "8.12.0"
+    globby "^11.0.3"
+    tslib "^2.4.0"
+    unixify "^1.0.0"
+
+"@graphql-tools/code-file-loader@^7.3.0":
+  version "7.3.5"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/code-file-loader/-/code-file-loader-7.3.5.tgz#d4abd86ce884b932b16828057170471f91a3110c"
+  integrity sha512-pLvMraoDKo/bvkAajvrOwLzmV0rnTvKlk23fH3JBtgzTj55M3MwiS12d60ZPMkTV97hWTq/ZH5AxgoDaXZm0xg==
+  dependencies:
+    "@graphql-tools/graphql-tag-pluck" "7.3.5"
+    "@graphql-tools/utils" "8.11.0"
     globby "^11.0.3"
     tslib "^2.4.0"
     unixify "^1.0.0"
@@ -2473,13 +2484,23 @@
     "@graphql-tools/utils" "8.12.0"
     tslib "^2.4.0"
 
-"@graphql-tools/mock@8.7.6", "@graphql-tools/mock@^8.7.0":
+"@graphql-tools/mock@8.7.6":
   version "8.7.6"
   resolved "https://registry.yarnpkg.com/@graphql-tools/mock/-/mock-8.7.6.tgz#701d898f7fe6c22e40d6d80e25874e464359ce11"
   integrity sha512-cQGPyY6dF4x28552zjAg9En2WWVury62u1/xzipCNUSCdKRVOsAupTNBcAGdMjsKPLcGzzk1cPA8dP0DUfNqzg==
   dependencies:
     "@graphql-tools/schema" "9.0.4"
     "@graphql-tools/utils" "8.12.0"
+    fast-json-stable-stringify "^2.1.0"
+    tslib "^2.4.0"
+
+"@graphql-tools/mock@^8.7.0":
+  version "8.7.5"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/mock/-/mock-8.7.5.tgz#545bf825eba59d982d7c632705d06ca5c785a35d"
+  integrity sha512-bmXXRoQE/v+zXjLdcpW4zF5ufKZG9uLlDH0qsYpasEDbgGS35DIrhqgOx3T23AynlsWzrWyMgiAiTz3/s0GAKw==
+  dependencies:
+    "@graphql-tools/schema" "9.0.3"
+    "@graphql-tools/utils" "8.11.0"
     fast-json-stable-stringify "^2.1.0"
     tslib "^2.4.0"
 
