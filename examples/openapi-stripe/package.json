@@ -1,6 +1,6 @@
 {
   "name": "openapi-stripe",
-  "version": "0.5.290",
+  "version": "0.5.291",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.78.16",
-    "@graphql-mesh/openapi": "0.33.13",
+    "@graphql-mesh/openapi": "0.33.14",
     "graphql": "16.6.0"
   }
 }

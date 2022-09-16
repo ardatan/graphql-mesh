@@ -1,5 +1,12 @@
 # @graphql-mesh/openapi
 
+## 0.33.14
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @omnigraph/openapi@0.15.2
+
 ## 0.33.13
 
 ### Patch Changes
