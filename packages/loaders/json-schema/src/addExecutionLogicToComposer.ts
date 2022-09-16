@@ -157,16 +157,21 @@ ${operationConfig.description || ''}
           typeof operationHeaders === 'function'
             ? await operationHeaders(interpolationData, operationConfig)
             : operationHeaders;
-        const nonInterpolatedHeaders = {
-          ...operationHeadersObj,
-          ...operationConfig?.headers,
-        };
         const headers: Record<string, any> = {};
-        for (const headerName in nonInterpolatedHeaders) {
-          const nonInterpolatedValue = nonInterpolatedHeaders[headerName];
+        for (const headerName in operationHeadersObj) {
+          const nonInterpolatedValue = operationHeadersObj[headerName];
           const interpolatedValue = stringInterpolator.parse(nonInterpolatedValue, interpolationData);
           if (interpolatedValue) {
             headers[headerName.toLowerCase()] = interpolatedValue;
+          }
+        }
+        if (operationConfig?.headers) {
+          for (const headerName in operationConfig.headers) {
+            const nonInterpolatedValue = operationConfig.headers[headerName];
+            const interpolatedValue = stringInterpolator.parse(nonInterpolatedValue, interpolationData);
+            if (interpolatedValue) {
+              headers[headerName.toLowerCase()] = interpolatedValue;
+            }
           }
         }
         const requestInit: RequestInit = {
