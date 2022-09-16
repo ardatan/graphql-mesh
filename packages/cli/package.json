@@ -60,7 +60,7 @@
     "dotenv": "16.0.2",
     "dnscache": "1.0.2",
     "graphql-import-node": "0.0.5",
-    "graphql-ws": "5.10.2",
+    "graphql-ws": "5.11.1",
     "change-case": "4.1.2",
     "json-bigint-patch": "0.0.8",
     "json5": "2.2.1",

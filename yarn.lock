@@ -5517,10 +5517,10 @@
     undici "^5.8.0"
     web-streams-polyfill "^3.2.0"
 
-"@whatwg-node/server@0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.3.0.tgz#d5112d1a4b8b7990b6cc5b652b533869e811d29e"
-  integrity sha512-21mXZ/ExF5UESNFJMho39Psvfp6F0qVL2wXBq194kDqe/7nLFQ4NIM1BmzPZmNcnXyKs1kXUJLn+OpwyqRCSDQ==
+"@whatwg-node/server@0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.4.0.tgz#5b0b089326017da2c6922091b4b98c1fbe705097"
+  integrity sha512-FM2TJN/FvDs/Ggn0oVFSVqc8+vcH1IuUH4vg1XoQrgBtWAFzOAIacEhxPZaq+akhwo/IyRFVWLqFFHLJqibyAw==
   dependencies:
     "@whatwg-node/fetch" "^0.4.0"
     tslib "^2.3.1"
@@ -10941,10 +10941,10 @@ graphql-type-json@0.3.2:
   resolved "https://registry.yarnpkg.com/graphql-type-json/-/graphql-type-json-0.3.2.tgz#f53a851dbfe07bd1c8157d24150064baab41e115"
   integrity sha512-J+vjof74oMlCWXSvt0DOf2APEdZOCdubEvGDUAlqH//VBYcOYsGgRW7Xzorr44LvkjiuvecWc8fChxuZZbChtg==
 
-graphql-ws@5.10.2, graphql-ws@^5.4.1, graphql-ws@^5.6.2:
-  version "5.10.2"
-  resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.10.2.tgz#1aeb38eb31b7351113c9dc3dbab719a0967000c0"
-  integrity sha512-QnLz0hbpTkmp/ATKAA3Tsg9LFZjWtgrLMgxc3W9G+3+rxUtzcYLwQh4YbXELYcpCqo8zdQxmERAtIQSgq75LTw==
+graphql-ws@5.11.1, graphql-ws@^5.4.1, graphql-ws@^5.6.2:
+  version "5.11.1"
+  resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.11.1.tgz#f9c8b7c64986d1d921f2a820dc68a393853c94e8"
+  integrity sha512-AlOO/Gt0fXuSHXe/Weo6o3rIQVnH5MW7ophzeYzL+vYNlkf0NbWRJ6IIFgtSLcv9JpTlQdxSpB3t0SnM47/BHA==
 
 graphql-yoga@3.0.0-alpha-20220905163021-e923bb34:
   version "3.0.0-alpha-20220905163021-e923bb34"
@@ -15118,15 +15118,15 @@ node-releases@^2.0.6:
   resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-2.0.6.tgz#8a7088c63a55e493845683ebf3c828d8c51c5503"
   integrity sha512-PiVXnNuFm5+iYkLBNeq5211hvO38y63T0i2KKh2KnUs3RpzJ+JtODFjkD8yjLwnDkTYF1eKXheUwdssR+NRZdg==
 
-nodemon@2.0.19:
-  version "2.0.19"
-  resolved "https://registry.yarnpkg.com/nodemon/-/nodemon-2.0.19.tgz#cac175f74b9cb8b57e770d47841995eebe4488bd"
-  integrity sha512-4pv1f2bMDj0Eeg/MhGqxrtveeQ5/G/UVe9iO6uTZzjnRluSA4PVWf8CW99LUPwGB3eNIA7zUFoP77YuI7hOc0A==
+nodemon@2.0.20:
+  version "2.0.20"
+  resolved "https://registry.yarnpkg.com/nodemon/-/nodemon-2.0.20.tgz#e3537de768a492e8d74da5c5813cb0c7486fc701"
+  integrity sha512-Km2mWHKKY5GzRg6i1j5OxOHQtuvVsgskLfigG25yTtbyfRGn/GNvIbRyOf1PSCKJ2aT/58TiuUsuOU5UToVViw==
   dependencies:
     chokidar "^3.5.2"
     debug "^3.2.7"
     ignore-by-default "^1.0.1"
-    minimatch "^3.0.4"
+    minimatch "^3.1.2"
     pstree.remy "^1.1.8"
     semver "^5.7.1"
     simple-update-notifier "^1.0.7"
