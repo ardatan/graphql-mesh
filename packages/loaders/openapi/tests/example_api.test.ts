@@ -2144,7 +2144,7 @@ describe('example_api', () => {
         fetch,
         operationHeaders: {
           snack_type: 'chips',
-          snack_size: 'large',
+          snack_size: '{context.snack_size}',
         },
       };
 
@@ -2158,10 +2158,13 @@ describe('example_api', () => {
       const result = await execute({
         schema,
         document: parse(query),
+        contextValue: {
+          snack_size: 'small',
+        },
       });
       expect(result).toEqual({
         data: {
-          getSnack: 'Here is a large chips',
+          getSnack: 'Here is a small chips',
         },
       });
     });

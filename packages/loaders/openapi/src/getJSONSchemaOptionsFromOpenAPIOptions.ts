@@ -210,16 +210,36 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
           }
           case 'header': {
             operationConfig.headers = operationConfig.headers || {};
-            let defaultValue = '';
-            if (typeof operationHeaders === 'object' && !operationHeaders[paramObj.name]?.includes('{')) {
-              defaultValue = `:${operationHeaders[paramObj.name]}`;
-            } else if (paramObj.schema?.default) {
-              defaultValue = `:${paramObj.schema.default}`;
-            }
-            if (defaultValue) {
+
+            if (typeof operationHeaders === 'object' && operationHeaders[paramObj.name]) {
               paramObj.required = false;
+              const valueFromGlobal = operationHeaders[paramObj.name];
+              if (!valueFromGlobal.includes('{')) {
+                if (paramObj.schema) {
+                  paramObj.schema.default = valueFromGlobal;
+                }
+              } else {
+                if (paramObj.schema?.default) {
+                  delete paramObj.schema.default;
+                }
+              }
             }
-            operationConfig.headers[paramObj.name] = `{args.${argName}${defaultValue}}`;
+
+            if (typeof operationHeaders === 'function') {
+              paramObj.required = false;
+              if (paramObj.schema?.default) {
+                delete paramObj.schema.default;
+              }
+            }
+
+            let defaultValueSuffix = '';
+
+            if (paramObj.schema?.default) {
+              defaultValueSuffix = `:${paramObj.schema.default}`;
+            }
+
+            operationConfig.headers[paramObj.name] = `{args.${argName}${defaultValueSuffix}}`;
+
             break;
           }
           case 'cookie': {
