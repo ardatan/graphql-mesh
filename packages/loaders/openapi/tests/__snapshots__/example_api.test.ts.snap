@@ -1722,6 +1722,7 @@ exports[`example_api should generate the bundle correctly 1`] = `
           "type": "string",
         },
         "snack_size": {
+          "default": "small",
           "description": undefined,
           "enum": [
             "large",
@@ -1733,6 +1734,7 @@ exports[`example_api should generate the bundle correctly 1`] = `
           "type": "string",
         },
         "snack_type": {
+          "default": "soda",
           "description": undefined,
           "enum": [
             "chips",
@@ -1748,8 +1750,8 @@ exports[`example_api should generate the bundle correctly 1`] = `
       "field": "getSnack",
       "headers": {
         "accept": "text/plain",
-        "snack_size": "{args.snack_size}",
-        "snack_type": "{args.snack_type}",
+        "snack_size": "{args.snack_size:small}",
+        "snack_type": "{args.snack_type:soda}",
       },
       "method": "GET",
       "operationHeaders": undefined,
@@ -3343,6 +3345,7 @@ exports[`example_api should generate the bundle correctly 1`] = `
         "type": "object",
       },
       "queryInput_getSnack_snack_size": {
+        "default": "small",
         "description": undefined,
         "enum": [
           "large",
@@ -3354,6 +3357,7 @@ exports[`example_api should generate the bundle correctly 1`] = `
         "type": "string",
       },
       "queryInput_getSnack_snack_type": {
+        "default": "soda",
         "description": undefined,
         "enum": [
           "chips",
@@ -3897,7 +3901,7 @@ type Query {
   "Used to test link parameters with variables"
   getScanner(query: String): getScanner_200_response
   "Endpoint to test sending of headers."
-  getSnack(snack_type: queryInput_getSnack_snack_type!, snack_size: queryInput_getSnack_snack_size!): String
+  getSnack(snack_type: queryInput_getSnack_snack_type! = soda, snack_size: queryInput_getSnack_snack_size! = small): String
   "Endpoint to test sending of options."
   get_Status(globalquery: String!, limit: Int!): String
   "Used to test OAuth token being present in header."

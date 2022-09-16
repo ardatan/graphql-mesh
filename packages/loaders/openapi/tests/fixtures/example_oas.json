@@ -994,7 +994,8 @@
             "required": true,
             "schema": {
               "type": "string",
-              "enum": ["chips", "soda"]
+              "enum": ["chips", "soda"],
+              "default": "soda"
             }
           },
           {
@@ -1003,7 +1004,8 @@
             "required": true,
             "schema": {
               "type": "string",
-              "enum": ["large", "small"]
+              "enum": ["large", "small"],
+              "default": "small"
             }
           }
         ],
