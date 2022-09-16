@@ -85,7 +85,9 @@ export class Interpolator {
   getAlternativeText(str) {
     if (str.indexOf(':') > 0) {
       const altText = this.removeDelimiter(this.extractAfter(str, ':'));
-      if (altText.indexOf('|') > 0) {
+      if (altText === 'undefined') {
+        return '';
+      } else if (altText.indexOf('|') > 0) {
         return this.removeAfter(altText, '|');
       }
       return altText;

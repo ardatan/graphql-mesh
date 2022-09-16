@@ -158,8 +158,8 @@ ${operationConfig.description || ''}
             ? await operationHeaders(interpolationData, operationConfig)
             : operationHeaders;
         const nonInterpolatedHeaders = {
-          ...operationHeadersObj,
-          ...operationConfig?.headers,
+          ...operationConfig?.headers, // default headers defined in schema
+          ...operationHeadersObj, // headers defined in handler config, these must override default headers
         };
         const headers: Record<string, any> = {};
         for (const headerName in nonInterpolatedHeaders) {
