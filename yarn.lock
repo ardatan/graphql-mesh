@@ -5525,6 +5525,14 @@
     "@whatwg-node/fetch" "^0.4.0"
     tslib "^2.3.1"
 
+"@whatwg-node/server@^0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.4.1.tgz#04d3ac95eafbb8b6ab19f44fc7150a34176ef0c1"
+  integrity sha512-v8Xxo32AZPcw/NBdFjMULU/0LJpwiHSKtCu7mHjGYhAvTEmhJ/YPbRVvGUMaiu1GcS86c4E2BD3tey0hM2r/ww==
+  dependencies:
+    "@whatwg-node/fetch" "^0.4.0"
+    tslib "^2.3.1"
+
 "@wry/context@^0.6.0":
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/@wry/context/-/context-0.6.1.tgz#c3c29c0ad622adb00f6a53303c4f965ee06ebeb2"
