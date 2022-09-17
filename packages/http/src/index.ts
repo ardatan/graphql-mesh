@@ -36,21 +36,16 @@ export function createMeshHTTPHandler<TServerContext>({
     // trustProxy = 'loopback',
   } = rawServeConfig;
 
-  const router = Router();
+  const serverAdapter = createServerAdapter(Router());
 
-  const requestHandler = createServerAdapter({
-    handleRequest: router.handle,
-    baseObject: router,
-  });
-
-  router.all(
+  serverAdapter.all(
     '/healthcheck',
     () =>
       new Response(null, {
         status: readyFlag ? 204 : 503,
       })
   );
-  router.all(
+  serverAdapter.all(
     '/readiness',
     () =>
       new Response(null, {
@@ -58,7 +53,7 @@ export function createMeshHTTPHandler<TServerContext>({
       })
   );
 
-  router.post('*', async (request: Request) => {
+  serverAdapter.post('*', async (request: Request) => {
     if (readyFlag) {
       const { pubsub } = await mesh$;
       for (const eventName of pubsub.getEventNames()) {
@@ -82,7 +77,7 @@ export function createMeshHTTPHandler<TServerContext>({
 
   if (staticFiles) {
     const indexPath = path.join(baseDir, staticFiles, 'index.html');
-    router.get('*', async request => {
+    serverAdapter.get('*', async request => {
       const url = new URL(request.url);
       if (url.pathname === '/' && (await pathExists(indexPath))) {
         const indexFile = await fs.promises.readFile(indexPath);
@@ -103,7 +98,7 @@ export function createMeshHTTPHandler<TServerContext>({
       return undefined;
     });
   } else {
-    router.get(
+    serverAdapter.get(
       '/',
       () =>
         new Response(null, {
@@ -115,11 +110,11 @@ export function createMeshHTTPHandler<TServerContext>({
     );
   }
 
-  router.all(
+  serverAdapter.all(
     graphqlPath,
     withCookies,
     graphqlHandler(mesh$, playgroundTitle, playgroundEnabled, graphqlPath, corsConfig)
   );
 
-  return requestHandler;
+  return serverAdapter;
 }
