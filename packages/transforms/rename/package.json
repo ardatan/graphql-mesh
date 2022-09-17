@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-rename",
-  "version": "0.12.82",
+  "version": "0.12.83",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -28,12 +28,12 @@
     "graphql": "*"
   },
   "devDependencies": {
-    "@graphql-mesh/cache-localforage": "0.6.41",
+    "@graphql-mesh/cache-localforage": "0.6.42",
     "@graphql-tools/schema": "9.0.4"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.84.0",
-    "@graphql-mesh/utils": "0.41.11",
+    "@graphql-mesh/types": "0.84.1",
+    "@graphql-mesh/utils": "0.41.12",
     "@graphql-tools/delegate": "9.0.6",
     "@graphql-tools/wrap": "9.2.1",
     "@graphql-tools/utils": "8.12.0",

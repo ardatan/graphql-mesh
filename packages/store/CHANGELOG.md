@@ -1,5 +1,15 @@
 # @graphql-mesh/store
 
+## 0.8.45
+
+### Patch Changes
+
+- [`b444a9c1c`](https://github.com/Urigo/graphql-mesh/commit/b444a9c1c5a48962f76e111b9121124847ea9db6) Thanks [@ardatan](https://github.com/ardatan)! - Revert GraphQL inspector to fix ESM support regression
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.84.1
+  - @graphql-mesh/utils@0.41.12
+
 ## 0.8.44
 
 ### Patch Changes
