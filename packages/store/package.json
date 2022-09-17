@@ -31,7 +31,7 @@
     "definition": "dist/index.d.ts"
   },
   "dependencies": {
-    "@graphql-inspector/core": "3.4.0",
+    "@graphql-inspector/core": "3.3.0",
     "@graphql-mesh/cross-helpers": "0.2.6",
     "@graphql-mesh/utils": "0.41.11",
     "@graphql-tools/utils": "8.12.0",
