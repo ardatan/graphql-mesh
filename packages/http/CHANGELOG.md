@@ -1,5 +1,14 @@
 # @graphql-mesh/http
 
+## 0.1.14
+
+### Patch Changes
+
+- [#4509](https://github.com/Urigo/graphql-mesh/pull/4509) [`7254e96a5`](https://github.com/Urigo/graphql-mesh/commit/7254e96a51758353c450b0fbac2ebfd0455274be) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@whatwg-node/server@0.4.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/server/v/0.4.0) (from `0.3.0`, in `dependencies`)
+  - Updated dependency [`graphql-yoga@3.0.0-alpha-20220917000718-4285245d` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.0-alpha-20220917000718-4285245d) (from `3.0.0-alpha-20220905163021-e923bb34`, in `dependencies`)
+
 ## 0.1.13
 
 ### Patch Changes
