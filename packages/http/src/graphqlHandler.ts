@@ -34,6 +34,6 @@ export const graphqlHandler = (
   );
   return async (request: Request, ...args: any[]) => {
     const yoga = await yoga$;
-    return yoga.handleRequest(request, ...args);
+    return yoga.handle(request, ...args);
   };
 };
