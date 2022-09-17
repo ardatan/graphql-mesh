@@ -1,5 +1,13 @@
 # @graphql-mesh/plugin-newrelic
 
+## 0.2.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.84.1
+  - @graphql-mesh/utils@0.41.12
+
 ## 0.2.9
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @graphql-mesh/plugin-rate-limit
 
+## 0.0.28
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.84.1
+
 ## 0.0.27
 
 ### Patch Changes
