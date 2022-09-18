@@ -19077,10 +19077,10 @@ thenify-all@^1.0.0:
   dependencies:
     any-promise "^1.0.0"
 
-thrift@0.16.0:
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/thrift/-/thrift-0.16.0.tgz#6497711610aa32d2f94fc2546f88ee4ff6e4106c"
-  integrity sha512-W8DpGyTPlIaK3f+e1XOCLxefaUWXtrOXAaVIDbfYhmVyriYeAKgsBVFNJUV1F9SQ2SPt2sG44AZQxSGwGj/3VA==
+thrift@0.17.0:
+  version "0.17.0"
+  resolved "https://registry.yarnpkg.com/thrift/-/thrift-0.17.0.tgz#6d9c2d28437909cdb4aa21055d46d628aaa39a5b"
+  integrity sha512-F9kO3RIusa1iZw5waHfwmejJHqgcEqzE6d+ZHyhI5wQxk2zMFWSjP2rvYvCnolRiXGfW365+J8X1TF3rF6Ki+w==
   dependencies:
     browser-or-node "^1.2.1"
     isomorphic-ws "^4.0.1"
