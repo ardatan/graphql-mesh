@@ -1,5 +1,13 @@
 # @graphql-mesh/http
 
+## 0.1.18
+
+### Patch Changes
+
+- [#4527](https://github.com/Urigo/graphql-mesh/pull/4527) [`e038c27f2`](https://github.com/Urigo/graphql-mesh/commit/e038c27f28f7439e8f90edf7a53f6abc1ffc11e2) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`itty-router@2.6.3` ↗︎](https://www.npmjs.com/package/itty-router/v/2.6.3) (from `2.6.1`, in `dependencies`)
+
 ## 0.1.17
 
 ### Patch Changes

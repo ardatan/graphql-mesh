@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/thrift",
-  "version": "0.11.13",
+  "version": "0.11.14",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
