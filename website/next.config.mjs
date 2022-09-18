@@ -3,11 +3,6 @@ import { applyUnderscoreRedirects } from 'guild-docs/underscore-redirects';
 
 export default withGuildDocs({
   basePath: process.env.NEXT_BASE_PATH && process.env.NEXT_BASE_PATH !== '' ? process.env.NEXT_BASE_PATH : undefined,
-  experimental: {},
-  images: {
-    unoptimized: true, // doesn't work with `next export`
-    allowFutureImage: true,
-  },
   eslint: {
     ignoreDuringBuilds: true,
   },

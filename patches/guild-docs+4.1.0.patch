@@ -10,3 +10,19 @@ index 11b549d..57ed32c 100644
  /**
   * Assign a unique ID to each mermaid svg as per requirements of `mermaid.render`.
   */
+diff --git a/node_modules/guild-docs/esm/next.config.js b/node_modules/guild-docs/esm/next.config.js
+index 5cea08a..09fb916 100644
+--- a/node_modules/guild-docs/esm/next.config.js
++++ b/node_modules/guild-docs/esm/next.config.js
+@@ -20,11 +20,6 @@ export const withGuildDocs = ({ themeConfig = './theme.config.tsx', ...nextConfi
+         ...nextConfig,
+         experimental: {
+             newNextLinkBehavior: true,
+-            images: {
+-                allowFutureImage: true,
+-                ...(_a = nextConfig.experimental) === null || _a === void 0 ? void 0 : _a.images,
+-            },
+-            ...nextConfig.experimental,
+         },
+     }));
+ };

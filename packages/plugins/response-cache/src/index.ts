@@ -117,7 +117,8 @@ export default function useMeshResponseCache(options: MeshPluginOptions<YamlConf
     ignoredTypes: options.ignoredTypes,
     idFields: options.idFields,
     invalidateViaMutation: options.invalidateViaMutation,
-    includeExtensionMetadata: options.includeExtensionMetadata,
+    includeExtensionMetadata:
+      options.includeExtensionMetadata != null ? options.includeExtensionMetadata : process.env.DEBUG === '1',
     ttlPerType,
     ttlPerSchemaCoordinate,
     getDocumentString,

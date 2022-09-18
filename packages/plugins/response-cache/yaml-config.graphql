@@ -2,7 +2,7 @@ extend type Plugin {
   responseCache: ResponseCacheConfig
 }
 
-type ResponseCacheConfig {
+type ResponseCacheConfig @md {
   """
   Maximum age in ms. Defaults to `Infinity`. Set it to 0 for disabling the global TTL.
   """
