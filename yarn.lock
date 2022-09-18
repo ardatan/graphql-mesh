@@ -12069,10 +12069,10 @@ itty-router-extras@0.4.2:
   resolved "https://registry.yarnpkg.com/itty-router-extras/-/itty-router-extras-0.4.2.tgz#e46891ebea63f09ada74603649d8a6c4ce0c5df7"
   integrity sha512-ppHaBzcTXs7idFSDISehG+8kif2/4aqLCfyY/Y/uIZv79sfEfNmTq9G+rDeqblun/VZRBiXZD8ztYmMS8EOsKw==
 
-itty-router@2.6.1, itty-router@^2.3.10:
-  version "2.6.1"
-  resolved "https://registry.yarnpkg.com/itty-router/-/itty-router-2.6.1.tgz#eecb59fa25b5f6f519276cc5bcaaa1cb341d5fee"
-  integrity sha512-l9gxWe5TOLUESYnBn85Jxd6tIZLWdRX5YKkHIBfSgbNQ7UFPNUGuWihRV+LlEbfJJIzgLmhwAbaWRi5yWJm8kg==
+itty-router@2.6.3, itty-router@^2.3.10:
+  version "2.6.3"
+  resolved "https://registry.yarnpkg.com/itty-router/-/itty-router-2.6.3.tgz#d95a8b6873da0cdcc7e4955e2dbbac2982aba27e"
+  integrity sha512-w9aELaE7U/vH5ykJ2wacgNe0hOa1z4XdiSgYgAuEg1eZ+G8wZvURWIa3Vib2UhrFY2r+hZgVIjP1mFO+Vkhk5Q==
 
 jake@^10.8.5:
   version "10.8.5"
