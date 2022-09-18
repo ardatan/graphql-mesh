@@ -1,7 +1,7 @@
 {
   "extending-unified-schema": "Extending the Unified Schema",
   "batching": "Batching for N+1 problem",
-  "response-cache": "GraphQL Response Caching",
+  "response-caching": "GraphQL Response Caching",
   "error-handling": "Error Handling",
   "monitoring-and-tracing": "Monitoring and Tracing",
   "auth0": "Authentication with Auth0",
