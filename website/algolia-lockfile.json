@@ -17,7 +17,7 @@
     "content": "86a2eb726ae9765341b2c4b8ccd1a2ec",
     "url": "https://www.graphql-mesh.com/docs/cache/cfwKv",
     "domain": "https://www.graphql-mesh.com/",
-    "hierarchy": ["Docs", "Cache"],
+    "hierarchy": ["Docs", "cache"],
     "source": "Mesh",
     "title": "CF Workers KV",
     "type": "Documentation"
@@ -40,7 +40,7 @@
     "content": "ddebc229cea5a065e5233f2af76df6a3",
     "url": "https://www.graphql-mesh.com/docs/cache/file",
     "domain": "https://www.graphql-mesh.com/",
-    "hierarchy": ["Docs", "Cache"],
+    "hierarchy": ["Docs", "cache"],
     "source": "Mesh",
     "title": "File",
     "type": "Documentation"
@@ -63,7 +63,7 @@
     "content": "50bf0f45bd36e19ea2007662206365e5",
     "url": "https://www.graphql-mesh.com/docs/cache/localforage",
     "domain": "https://www.graphql-mesh.com/",
-    "hierarchy": ["Docs", "Cache"],
+    "hierarchy": ["Docs", "cache"],
     "source": "Mesh",
     "title": "LocalForage",
     "type": "Documentation"
@@ -86,7 +86,7 @@
     "content": "b4a31f7ae59daea451e77b7e4ba758d3",
     "url": "https://www.graphql-mesh.com/docs/cache/redis",
     "domain": "https://www.graphql-mesh.com/",
-    "hierarchy": ["Docs", "Cache"],
+    "hierarchy": ["Docs", "cache"],
     "source": "Mesh",
     "title": "Redis",
     "type": "Documentation"
@@ -583,7 +583,7 @@
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Guides"],
     "source": "Mesh",
-    "title": "Error handling",
+    "title": "Error Handling",
     "type": "Documentation"
   },
   {
@@ -635,7 +635,7 @@
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Guides"],
     "source": "Mesh",
-    "title": "File uploads",
+    "title": "File Uploads",
     "type": "Documentation"
   },
   {
@@ -713,7 +713,80 @@
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Guides"],
     "source": "Mesh",
-    "title": "Programmatic usage /  SDK",
+    "title": "Programmatic Usage / SDK",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-guides-mock",
+    "headings": [
+      "How to use?",
+      "Custom mock functions for fields",
+      "Custom mock functions for types",
+      "Mocking the lists",
+      "Stateful mocking",
+      "Codesandbox Example",
+      "Config API Reference"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "How to use?",
+        "anchor": "how-to-use"
+      },
+      {
+        "children": [],
+        "title": "Custom mock functions for fields",
+        "anchor": "custom-mock-functions-for-fields"
+      },
+      {
+        "children": [],
+        "title": "Custom mock functions for types",
+        "anchor": "custom-mock-functions-for-types"
+      },
+      {
+        "children": [],
+        "title": "Mocking the lists",
+        "anchor": "mocking-the-lists"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Get from the store",
+                "anchor": "get-from-the-store"
+              },
+              {
+                "children": [],
+                "title": "Mutate data in the store",
+                "anchor": "mutate-data-in-the-store"
+              }
+            ],
+            "title": "Initialize store",
+            "anchor": "initialize-store"
+          }
+        ],
+        "title": "Stateful mocking",
+        "anchor": "stateful-mocking"
+      },
+      {
+        "children": [],
+        "title": "Codesandbox Example",
+        "anchor": "codesandbox-example"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "8c875f062b5b3346f25f131ba99f1c64",
+    "url": "https://www.graphql-mesh.com/docs/guides/mock",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Docs", "Guides"],
+    "source": "Mesh",
+    "title": "Mocking your API",
     "type": "Documentation"
   },
   {
@@ -794,6 +867,29 @@
     "hierarchy": ["Docs", "Guides"],
     "source": "Mesh",
     "title": "Monitoring and Tracing",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-guides-response-caching",
+    "headings": ["Config API Reference", "Codesandbox Example"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      },
+      {
+        "children": [],
+        "title": "Codesandbox Example",
+        "anchor": "codesandbox-example"
+      }
+    ],
+    "content": "28fe5c627074e37e7e5876cad2a378e6",
+    "url": "https://www.graphql-mesh.com/docs/guides/response-caching",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Docs", "Guides"],
+    "source": "Mesh",
+    "title": "response-caching",
     "type": "Documentation"
   },
   {
@@ -1377,7 +1473,7 @@
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Transforms"],
     "source": "Mesh",
-    "title": "Cache",
+    "title": "cache",
     "type": "Documentation"
   },
   {
@@ -1511,79 +1607,6 @@
     "hierarchy": ["Docs", "Transforms"],
     "source": "Mesh",
     "title": "hoist",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "mesh-docs-transforms-mock",
-    "headings": [
-      "How to use?",
-      "Custom mock functions for fields",
-      "Custom mock functions for types",
-      "Mocking the lists",
-      "Stateful mocking",
-      "Codesandbox Example",
-      "Config API Reference"
-    ],
-    "toc": [
-      {
-        "children": [],
-        "title": "How to use?",
-        "anchor": "how-to-use"
-      },
-      {
-        "children": [],
-        "title": "Custom mock functions for fields",
-        "anchor": "custom-mock-functions-for-fields"
-      },
-      {
-        "children": [],
-        "title": "Custom mock functions for types",
-        "anchor": "custom-mock-functions-for-types"
-      },
-      {
-        "children": [],
-        "title": "Mocking the lists",
-        "anchor": "mocking-the-lists"
-      },
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "children": [],
-                "title": "Get from the store",
-                "anchor": "get-from-the-store"
-              },
-              {
-                "children": [],
-                "title": "Mutate data in the store",
-                "anchor": "mutate-data-in-the-store"
-              }
-            ],
-            "title": "Initialize store",
-            "anchor": "initialize-store"
-          }
-        ],
-        "title": "Stateful mocking",
-        "anchor": "stateful-mocking"
-      },
-      {
-        "children": [],
-        "title": "Codesandbox Example",
-        "anchor": "codesandbox-example"
-      },
-      {
-        "children": [],
-        "title": "Config API Reference",
-        "anchor": "config-api-reference"
-      }
-    ],
-    "content": "8c875f062b5b3346f25f131ba99f1c64",
-    "url": "https://www.graphql-mesh.com/docs/transforms/mock",
-    "domain": "https://www.graphql-mesh.com/",
-    "hierarchy": ["Docs", "Transforms"],
-    "source": "Mesh",
-    "title": "Mock",
     "type": "Documentation"
   },
   {
