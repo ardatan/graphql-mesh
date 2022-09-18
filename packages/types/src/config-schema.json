@@ -1947,13 +1947,25 @@
           "additionalItems": false,
           "description": "Invalidate a query or queries when a specific operation is done without an error"
         },
-        "polling": {
+        "resourceIdentifier": {
+          "type": "string",
+          "description": "Custom strategy for building resources identifiers\nBy default resource identifiers are built by concatenating the Typename with the id separated by a color (`User:1`).\n\nThis may be useful if you are using a relay compliant schema and the Typename information is not required for building a unique topic.\n\nDefault: \"{typename}:{id}\""
+        },
+        "includeIdentifierExtension": {
+          "type": "boolean",
+          "description": "Whether the extensions should include a list of all resource identifiers for the latest operation result.\nAny of those can be used for invalidating and re-scheduling the operation execution.\n\nThis is mainly useful for discovering and learning what kind of topics a given query will subscribe to.\nThe default value is `true` if `DEBUG` environment variable is set"
+        },
+        "idFieldName": {
+          "type": "string",
+          "description": "Identifier unique field\n\nDefault: \"id\""
+        },
+        "indexBy": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/LiveQueryPolling"
+            "$ref": "#/definitions/LiveQueryIndexBy"
           },
           "additionalItems": false,
-          "description": "Allow an operation can be used a live query with polling"
+          "description": "Specify which fields should be indexed for specific invalidations."
         }
       }
     },
@@ -1976,15 +1988,15 @@
       },
       "required": ["field", "invalidate"]
     },
-    "LiveQueryPolling": {
+    "LiveQueryIndexBy": {
       "additionalProperties": false,
       "type": "object",
-      "title": "LiveQueryPolling",
+      "title": "LiveQueryIndexBy",
       "properties": {
-        "interval": {
-          "type": "integer"
+        "field": {
+          "type": "string"
         },
-        "invalidate": {
+        "args": {
           "type": "array",
           "items": {
             "type": "string"
@@ -1992,7 +2004,7 @@
           "additionalItems": false
         }
       },
-      "required": ["interval", "invalidate"]
+      "required": ["field", "args"]
     },
     "MockingConfig": {
       "additionalProperties": false,

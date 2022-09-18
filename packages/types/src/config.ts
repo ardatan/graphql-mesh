@@ -1744,9 +1744,32 @@ export interface LiveQueryConfig {
    */
   invalidations?: LiveQueryInvalidation[];
   /**
-   * Allow an operation can be used a live query with polling
+   * Custom strategy for building resources identifiers
+   * By default resource identifiers are built by concatenating the Typename with the id separated by a color (`User:1`).
+   *
+   * This may be useful if you are using a relay compliant schema and the Typename information is not required for building a unique topic.
+   *
+   * Default: "{typename}:{id}"
    */
-  polling?: LiveQueryPolling[];
+  resourceIdentifier?: string;
+  /**
+   * Whether the extensions should include a list of all resource identifiers for the latest operation result.
+   * Any of those can be used for invalidating and re-scheduling the operation execution.
+   *
+   * This is mainly useful for discovering and learning what kind of topics a given query will subscribe to.
+   * The default value is `true` if `DEBUG` environment variable is set
+   */
+  includeIdentifierExtension?: boolean;
+  /**
+   * Identifier unique field
+   *
+   * Default: "id"
+   */
+  idFieldName?: string;
+  /**
+   * Specify which fields should be indexed for specific invalidations.
+   */
+  indexBy?: LiveQueryIndexBy[];
 }
 export interface LiveQueryInvalidation {
   /**
@@ -1755,9 +1778,9 @@ export interface LiveQueryInvalidation {
   field: string;
   invalidate: string[];
 }
-export interface LiveQueryPolling {
-  interval: number;
-  invalidate: string[];
+export interface LiveQueryIndexBy {
+  field: string;
+  args: string[];
 }
 /**
  * Mock configuration for your source
