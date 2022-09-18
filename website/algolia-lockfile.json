@@ -9,12 +9,18 @@
         "anchor": "how-to-use"
       },
       {
-        "children": [],
+        "children": [
+          {
+            "children": [],
+            "title": "Example",
+            "anchor": "example"
+          }
+        ],
         "title": "Config API Reference",
         "anchor": "config-api-reference"
       }
     ],
-    "content": "86a2eb726ae9765341b2c4b8ccd1a2ec",
+    "content": "0d574a7eff81a901b0a924b68984aaf6",
     "url": "https://www.graphql-mesh.com/docs/cache/cfwKv",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Cache Storages"],
@@ -345,7 +351,7 @@
         "anchor": "mesh-and-docker"
       }
     ],
-    "content": "051a170860efd8cb3d6dbc09b7c6d34f",
+    "content": "d8a0a911042645e12824a5e34b400a04",
     "url": "https://www.graphql-mesh.com/docs/getting-started/deploy-mesh-gateway",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Getting Started"],
@@ -802,19 +808,8 @@
   },
   {
     "objectID": "mesh-docs-guides-monitoring-and-tracing",
-    "headings": ["GraphQL Result Extensions", "DataDog, InfluxDB, Telegraf, StatsD", "Prometheus", "NewRelic"],
+    "headings": ["DataDog, InfluxDB, Telegraf, StatsD", "Prometheus", "NewRelic", "GraphQL Result Extensions"],
     "toc": [
-      {
-        "children": [
-          {
-            "children": [],
-            "title": "Getting Started",
-            "anchor": "getting-started"
-          }
-        ],
-        "title": "GraphQL Result Extensions",
-        "anchor": "graphql-result-extensions"
-      },
       {
         "children": [
           {
@@ -826,7 +821,7 @@
               }
             ],
             "title": "Getting Started",
-            "anchor": "getting-started-1"
+            "anchor": "getting-started"
           }
         ],
         "title": "DataDog, InfluxDB, Telegraf, StatsD",
@@ -848,7 +843,7 @@
               }
             ],
             "title": "Getting Started",
-            "anchor": "getting-started-2"
+            "anchor": "getting-started-1"
           }
         ],
         "title": "Prometheus",
@@ -865,14 +860,25 @@
               }
             ],
             "title": "Getting Started",
-            "anchor": "getting-started-3"
+            "anchor": "getting-started-2"
           }
         ],
         "title": "NewRelic",
         "anchor": "newrelic"
+      },
+      {
+        "children": [
+          {
+            "children": [],
+            "title": "Getting Started",
+            "anchor": "getting-started-3"
+          }
+        ],
+        "title": "GraphQL Result Extensions",
+        "anchor": "graphql-result-extensions"
       }
     ],
-    "content": "a77848c68e2708e8d9237976a2579010",
+    "content": "90f4908dd865c6b15f33937f31890ee1",
     "url": "https://www.graphql-mesh.com/docs/guides/monitoring-and-tracing",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Guides"],
