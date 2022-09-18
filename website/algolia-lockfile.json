@@ -666,9 +666,20 @@
   },
   {
     "objectID": "mesh-docs-guides-live-queries",
-    "headings": [],
-    "toc": [],
-    "content": "c904c63182b712313a3127e758aeed39",
+    "headings": ["Config API Reference", "Codesandbox Example"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      },
+      {
+        "children": [],
+        "title": "Codesandbox Example",
+        "anchor": "codesandbox-example"
+      }
+    ],
+    "content": "af79acceca8efe5a7354b5714d54cf6e",
     "url": "https://www.graphql-mesh.com/docs/guides/live-queries",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Guides"],
