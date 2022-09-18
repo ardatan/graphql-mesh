@@ -8,55 +8,6 @@ You can use GraphQL Mesh plugins to trace and monitor your gateway's execution f
 
 > GraphQL Mesh plugins are mostly the extended versions of [the existing Envelop plugins.](https://www.envelop.dev/docs/guides/monitoring-and-tracing)
 
-## GraphQL Result Extensions
-
-You can expose the details of outgoing HTTP requests done by GraphQL Mesh source handlers within `extensions` property of the GraphQL execution.
-
-### Getting Started
-
-```yaml
-# .meshrc.yml
-# You need to enable this flag to expose the details in the extensions.
-includeHttpDetailsInExtensions: true
-```
-
-Then you get the results like below;
-```json
-{
-  "data": {
-    "someData": "someResult"
-  },
-  "extensions": {
-    "httpDetails": [
-      {
-        "sourceName": "MySource",
-        "path": {
-          "key": "sourceFieldName"
-        },
-        "request": {
-          "timestamp": "2020-01-01T00:00:00.000Z",
-          "url": "http://localhost:8080/some-external-service/some-path",
-          "method": "GET",
-          "headers": {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-          },
-        },
-        "response": {
-          "timestamp": "2020-01-01T00:00:00.000Z",
-          "status": 200,
-          "statusText": "OK",
-          "headers": {
-            "Content-Type": "application/json",
-          },
-        },
-        "responseTime": 9999,
-      }
-    ]
-  }
-}
-```
-
 ## DataDog, InfluxDB, Telegraf, StatsD
 
 You can use `@graphql-mesh/plugin-statsd` plugin to collect and send metrics to Datadog's DogStatsD and InfluxDB's Telegraf StatsD services.
@@ -227,3 +178,52 @@ plugins:
 ```
 
 [See here for more advanced options](https://github.com/n1ru4l/envelop/blob/main/packages/plugins/newrelic/README.md#agent-configuration)
+
+## GraphQL Result Extensions
+
+You can expose the details of outgoing HTTP requests done by GraphQL Mesh source handlers within `extensions` property of the GraphQL execution.
+
+### Getting Started
+
+```yaml
+# .meshrc.yml
+# You need to enable this flag to expose the details in the extensions.
+includeHttpDetailsInExtensions: true
+```
+
+Then you get the results like below;
+```json
+{
+  "data": {
+    "someData": "someResult"
+  },
+  "extensions": {
+    "httpDetails": [
+      {
+        "sourceName": "MySource",
+        "path": {
+          "key": "sourceFieldName"
+        },
+        "request": {
+          "timestamp": "2020-01-01T00:00:00.000Z",
+          "url": "http://localhost:8080/some-external-service/some-path",
+          "method": "GET",
+          "headers": {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+          },
+        },
+        "response": {
+          "timestamp": "2020-01-01T00:00:00.000Z",
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "Content-Type": "application/json",
+          },
+        },
+        "responseTime": 9999,
+      }
+    ]
+  }
+}
+```
