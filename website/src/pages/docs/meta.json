@@ -4,7 +4,7 @@
   "guides": "Guides",
   "handlers": "Source Handlers",
   "transforms": "Transforms",
-  "cache-storages": "Cache Storages",
+  "cache": "Cache Storages",
   "cli-commands": "CLI commands",
   "migration": "Migration guides",
   "extend": {
