@@ -46,7 +46,7 @@ import { GraphQLError } from 'graphql'
 import { useMaskedErrors, PluginOrDisabledPlugin } from '@envelop/core'
 
 export const formatError: FormatErrorHandler = err => {
-  if (err.originalError && err.originalError instanceof EnvelopError === false) {
+  if (err.originalError && err.originalError instanceof GraphQLError === false) {
     return new GraphQLError('Sorry, something went wrong.')
   }
 

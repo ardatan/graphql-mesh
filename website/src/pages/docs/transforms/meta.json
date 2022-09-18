@@ -3,7 +3,6 @@
   "rename": "Rename",
   "prefix": "Prefix",
   "encapsulate": "Encapsulate",
-  "cache": "Cache",
   "snapshot": "Snapshot",
   "mock": "Mock",
   "resolvers-composition": "Resolvers Composition",

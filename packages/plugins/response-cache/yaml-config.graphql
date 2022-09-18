@@ -82,8 +82,3 @@ type ResponseCacheTTLConfig {
   coordinate: String!
   ttl: Float!
 }
-
-type LiveQueryInvalidation {
-  field: String!
-  invalidate: [String!]!
-}

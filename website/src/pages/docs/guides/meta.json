@@ -1,12 +1,13 @@
 {
   "extending-unified-schema": "Extending the Unified Schema",
-  "graphql-code-generator": "Configure GraphQL Code Generator",
-  "mesh-sdk": "Programmatic usage /  SDK",
   "batching": "Batching for N+1 problem",
-  "error-handling": "Error handling",
+  "response-cache": "GraphQL Response Caching",
+  "error-handling": "Error Handling",
   "monitoring-and-tracing": "Monitoring and Tracing",
   "auth0": "Authentication with Auth0",
   "subscriptions-webhooks": "Subscriptions & Webhooks",
-  "file-uploads": "File uploads",
-  "live-queries": "Live Queries"
+  "file-uploads": "File Uploads",
+  "live-queries": "Live Queries",
+  "graphql-code-generator": "Configure GraphQL Code Generator",
+  "mesh-sdk": "Programmatic Usage / SDK"
 }
