@@ -1,6 +1,6 @@
 [
   {
-    "objectID": "mesh-docs-cache-cfwkv",
+    "objectID": "mesh-docs-cache-storages-cfwkv",
     "headings": ["How to use?", "Config API Reference"],
     "toc": [
       {
@@ -17,13 +17,13 @@
     "content": "86a2eb726ae9765341b2c4b8ccd1a2ec",
     "url": "https://www.graphql-mesh.com/docs/cache/cfwKv",
     "domain": "https://www.graphql-mesh.com/",
-    "hierarchy": ["Docs", "cache"],
+    "hierarchy": ["Docs", "Cache Storages"],
     "source": "Mesh",
     "title": "CF Workers KV",
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-cache-file",
+    "objectID": "mesh-docs-cache-storages-file",
     "headings": ["How to use?", "Config API Reference"],
     "toc": [
       {
@@ -40,13 +40,13 @@
     "content": "ddebc229cea5a065e5233f2af76df6a3",
     "url": "https://www.graphql-mesh.com/docs/cache/file",
     "domain": "https://www.graphql-mesh.com/",
-    "hierarchy": ["Docs", "cache"],
+    "hierarchy": ["Docs", "Cache Storages"],
     "source": "Mesh",
     "title": "File",
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-cache-localforage",
+    "objectID": "mesh-docs-cache-storages-localforage",
     "headings": ["How to use?", "Config API Reference"],
     "toc": [
       {
@@ -63,13 +63,13 @@
     "content": "50bf0f45bd36e19ea2007662206365e5",
     "url": "https://www.graphql-mesh.com/docs/cache/localforage",
     "domain": "https://www.graphql-mesh.com/",
-    "hierarchy": ["Docs", "cache"],
+    "hierarchy": ["Docs", "Cache Storages"],
     "source": "Mesh",
     "title": "LocalForage",
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-cache-redis",
+    "objectID": "mesh-docs-cache-storages-redis",
     "headings": ["How to use?", "Config API Reference"],
     "toc": [
       {
@@ -86,7 +86,7 @@
     "content": "b4a31f7ae59daea451e77b7e4ba758d3",
     "url": "https://www.graphql-mesh.com/docs/cache/redis",
     "domain": "https://www.graphql-mesh.com/",
-    "hierarchy": ["Docs", "cache"],
+    "hierarchy": ["Docs", "Cache Storages"],
     "source": "Mesh",
     "title": "Redis",
     "type": "Documentation"
@@ -871,8 +871,13 @@
   },
   {
     "objectID": "mesh-docs-guides-response-caching",
-    "headings": ["Config API Reference", "Codesandbox Example"],
+    "headings": ["Getting Started", "Config API Reference", "Codesandbox Example"],
     "toc": [
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
       {
         "children": [],
         "title": "Config API Reference",
@@ -889,7 +894,7 @@
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Guides"],
     "source": "Mesh",
-    "title": "response-caching",
+    "title": "GraphQL Response Caching",
     "type": "Documentation"
   },
   {
