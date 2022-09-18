@@ -1,15 +1,15 @@
 {
   "name": "type-merging-batching-example",
-  "version": "0.0.179",
+  "version": "0.0.180",
   "private": true,
   "scripts": {
     "start": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.78.19",
-    "@graphql-mesh/graphql": "0.31.14",
-    "@graphql-mesh/transform-type-merging": "0.4.36",
-    "@graphql-mesh/transform-rename": "0.12.83",
+    "@graphql-mesh/cli": "0.78.20",
+    "@graphql-mesh/graphql": "0.31.15",
+    "@graphql-mesh/transform-type-merging": "0.4.37",
+    "@graphql-mesh/transform-rename": "0.12.84",
     "graphql": "16.6.0"
   }
 }
