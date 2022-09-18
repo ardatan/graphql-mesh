@@ -4,7 +4,6 @@
   "prefix": "Prefix",
   "encapsulate": "Encapsulate",
   "snapshot": "Snapshot",
-  "mock": "Mock",
   "resolvers-composition": "Resolvers Composition",
   "filter-schema": "Filter Schema",
   "replace-field": "Replace Field",

@@ -8,6 +8,7 @@
   "subscriptions-webhooks": "Subscriptions & Webhooks",
   "file-uploads": "File Uploads",
   "live-queries": "Live Queries",
+  "mock": "Mocking your API",
   "graphql-code-generator": "Configure GraphQL Code Generator",
   "mesh-sdk": "Programmatic Usage / SDK"
 }
