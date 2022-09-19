@@ -99,7 +99,7 @@ export default withGuildDocs({
         '/docs/handlers/json-schema',
       '/docs/api/modules/transforms_snapshot_src': '/docs/transforms/snapshot',
       '/docs/api/modules/string_interpolation_src': '/docs/transforms/transforms-introduction',
-      '/docs/api/interfaces/types_src.YamlConfig.HTTPSConfig': '/docs/handlers/json-schema',
+      '/docs/api/interfaces/types_src.YamlConfig.HTTPSConfig': '/docs/getting-started/customize-mesh-server',
       '/docs/recipes/live-queries': '/docs/guides/live-queries',
       '/docs/handlers/new-openapi': '/docs/handlers/openapi',
       '/docs/api/modules/handlers_mysql_src': '/docs/handlers/tuql',
