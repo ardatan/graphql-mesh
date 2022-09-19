@@ -89,7 +89,7 @@ export default withGuildDocs({
       '/docs/cache/inmemory-lru': '/docs',
       '/docs/cache': '/docs',
       '/docs/recipes/subscriptions-webhooks': '/docs/guides/subscriptions-webhooks',
-      '/docs/getting-started/mesh-transforms': '/docs/getting-started/installation',
+      '/docs/getting-started/mesh-transforms': '/docs/transforms/transforms-introduction',
       '/docs/getting-started/multiple-apis': '/docs/getting-started/combine-multiple-sources',
       '/docs/api/interfaces/types_src.MeshPubSub': '/docs/guides/subscriptions-webhooks',
       '/docs/api/interfaces/loaders_json_schema_src.JSONSchemaLoaderBundleToGraphQLSchemaOptions':
