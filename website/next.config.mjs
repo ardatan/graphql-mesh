@@ -96,7 +96,7 @@ export default withGuildDocs({
         '/docs/handlers/json-schema',
       '/docs/subscriptions-webhooks': '/docs/guides/subscriptions-webhooks',
       '/docs/api/interfaces/loaders_json_schema_src.BundleJSONSchemasOptions':
-        '/docs/getting-started/sources-with-no-definition',
+        '/docs/handlers/json-schema',
       '/docs/api/modules/transforms_snapshot_src': '/docs/transforms/snapshot',
       '/docs/api/modules/string_interpolation_src': '/docs/transforms/transforms-introduction',
       '/docs/api/interfaces/types_src.YamlConfig.HTTPSConfig': '/docs/handlers/json-schema',
