@@ -104,7 +104,7 @@ export default withGuildDocs({
       '/docs/handlers/new-openapi': '/docs/handlers/openapi',
       '/docs/api/modules/handlers_mysql_src': '/docs/handlers/mysql',
       '/docs/api/interfaces/loaders_json_schema_src.TypeComposers': '/docs/handlers/json-schema',
-      '/docs/api/interfaces/types_src.YamlConfig.GraphQLHandlerMultipleHTTPConfiguration': '/docs/handlers/json-schema',
+      '/docs/api/interfaces/types_src.YamlConfig.GraphQLHandlerMultipleHTTPConfiguration': '/docs/handlers/graphql',
       '/docs/api/interfaces/store_src.FsStoreStorageAdapterOptions': '/docs/guides/file-uploads',
       '/docs/api/interfaces/types_src.YamlConfig.LiveQueryPolling': '/docs/guides/live-queries',
       '/docs/api/classes/store_src.MeshStore': '/docs',
