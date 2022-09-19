@@ -122,6 +122,7 @@ export default withGuildDocs({
       '/graphql/mesh/docs/guides/extending-unified-schema': '/docs/guides/extending-unified-schema',
       '/graphql/mesh/docs/transforms/type-merging': '/docs/transforms/type-merging',
       '/graphql/mesh/docs/guides/batching': '/docs/guides/batching',
+      '/docs/handlers/openapi/endpoint.GQLschema': '/docs/handlers/graphql',
     }).map(([from, to]) => ({
       source: from,
       destination: to,
