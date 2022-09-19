@@ -102,7 +102,7 @@ export default withGuildDocs({
       '/docs/api/interfaces/types_src.YamlConfig.HTTPSConfig': '/docs/getting-started/customize-mesh-server',
       '/docs/recipes/live-queries': '/docs/guides/live-queries',
       '/docs/handlers/new-openapi': '/docs/handlers/openapi',
-      '/docs/api/modules/handlers_mysql_src': '/docs/handlers/tuql',
+      '/docs/api/modules/handlers_mysql_src': '/docs/handlers/mysql',
       '/docs/api/interfaces/loaders_json_schema_src.TypeComposers': '/docs/handlers/json-schema',
       '/docs/api/interfaces/types_src.YamlConfig.GraphQLHandlerMultipleHTTPConfiguration': '/docs/handlers/json-schema',
       '/docs/api/interfaces/store_src.FsStoreStorageAdapterOptions': '/docs/guides/file-uploads',
