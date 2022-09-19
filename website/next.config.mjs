@@ -19,8 +19,8 @@ export default withGuildDocs({
   redirects: () =>
     Object.entries({
       '/docs/introduction': '/docs',
-      '/docs/getting-started': '/docs',
-      '/docs/getting-started/introduction': '/docs',
+      '/docs/getting-started': '/docs/getting-started/overview',
+      '/docs/getting-started/introduction': '/docs/getting-started/overview',
       '/docs/getting-started/basic-example': '/docs',
       '/docs/handlers': '/docs/handlers/handlers-introduction',
       '/docs/handlers/available-handlers': '/docs/handlers/handlers-introduction',
@@ -95,8 +95,7 @@ export default withGuildDocs({
       '/docs/api/interfaces/loaders_json_schema_src.JSONSchemaLoaderBundleToGraphQLSchemaOptions':
         '/docs/handlers/json-schema',
       '/docs/subscriptions-webhooks': '/docs/guides/subscriptions-webhooks',
-      '/docs/api/interfaces/loaders_json_schema_src.BundleJSONSchemasOptions':
-        '/docs/handlers/json-schema',
+      '/docs/api/interfaces/loaders_json_schema_src.BundleJSONSchemasOptions': '/docs/handlers/json-schema',
       '/docs/api/modules/transforms_snapshot_src': '/docs/transforms/snapshot',
       '/docs/api/modules/string_interpolation_src': '/docs/transforms/transforms-introduction',
       '/docs/api/interfaces/types_src.YamlConfig.HTTPSConfig': '/docs/getting-started/customize-mesh-server',
@@ -113,6 +112,16 @@ export default withGuildDocs({
       '/docs/api/modules/handlers_openapi_src': '/docs/handlers/openapi',
       '/docs/api/cli': '/docs/cli-commands',
       '/docs/api/interfaces/types_src.YamlConfig.ComputedAnnotation': '/docs',
+      '/graphql/mesh/docs/getting-started/installation': '/docs/getting-started/installation',
+      '/docs/api/modules/mergers_bare_src': '/docs/getting-started/combine-multiple-sources',
+      '/graphql/mesh/docs/transforms/replace-field': '/docs/transforms/replace-field',
+      '/graphql/mesh/docs/migration/new-openapi-to-openapi': '/docs/handlers/openapi',
+      '/graphql/mesh/docs/handlers/neo4j': '/docs/handlers/neo4j',
+      '/graphql/mesh/docs/handlers/handlers-introduction': '/docs/handlers/handlers-introduction',
+      '/graphql/mesh/docs/guides/graphql-code-generator': '/docs/guides/graphql-code-generator',
+      '/graphql/mesh/docs/guides/extending-unified-schema': '/docs/guides/extending-unified-schema',
+      '/graphql/mesh/docs/transforms/type-merging': '/docs/transforms/type-merging',
+      '/graphql/mesh/docs/guides/batching': '/docs/guides/batching',
     }).map(([from, to]) => ({
       source: from,
       destination: to,
