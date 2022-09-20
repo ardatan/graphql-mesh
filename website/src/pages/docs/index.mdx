@@ -21,22 +21,6 @@ Building and serving a unified GraphQL schema as a Gateway has never been easier
 - **Caching** strategies
 - Add **mocks** for Schema development
 
-```mermaid
-graph TD;
-subgraph AA [" "]
-A[Mobile app];
-B[Web app];
-C[Node.js client];
-end
-subgraph BB [" "]
-E[REST API];
-F[GraphQL API];
-G[SOAP API];
-end
-Z[GraphQL Gateway API];
-A & B & C --> Z;
-Z --> E & F & G;
-```
 
 Already used in production by community members and [some of our clients](https://the-guild.dev/services), GraphQL Mesh is useful for:
 
