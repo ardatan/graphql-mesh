@@ -12,5 +12,12 @@
     "theme": {
       "toc": true
     }
+  },
+  "examples": {
+    "title": "Examples",
+    "type": "page",
+    "theme": {
+      "layout": "raw"
+    }
   }
 }

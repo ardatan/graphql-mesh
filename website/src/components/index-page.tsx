@@ -1,13 +1,8 @@
 import { ReactElement } from 'react';
-import dynamic from 'next/dynamic';
 import { HeroGradient, FeatureList, NPMBadge } from '@theguild/components';
 import GraphQLLogo from '../../public/assets/GraphQL_Logo.svg';
 import MeshExampleLogo from '../../public/assets/mesh-example.png';
 import OpenSourceLogo from '../../public/assets/open-source.svg';
-
-export const LiveDemo = dynamic(() => import('../components/live-demo').then(mod => mod.LiveDemo), {
-  ssr: false,
-});
 
 export function IndexPage(): ReactElement {
   return (
@@ -23,8 +18,6 @@ export function IndexPage(): ReactElement {
         version={<NPMBadge name="@graphql-mesh/cli" />}
         colors={['#000', '#1cc8ee']}
       />
-
-      <LiveDemo className="hidden lg:block mt-12" />
 
       <FeatureList
         items={[
