@@ -118,6 +118,7 @@ export default withGuildDocs({
       '/graphql/mesh/docs/transforms/type-merging': '/docs/transforms/type-merging',
       '/graphql/mesh/docs/guides/batching': '/docs/guides/batching',
       '/docs/handlers/openapi/endpoint.GQLschema': '/docs/handlers/graphql',
+      '/docs/api/*': '/docs',
     }).map(([from, to]) => ({
       source: from,
       destination: to,
