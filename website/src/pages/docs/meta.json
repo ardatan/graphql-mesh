@@ -4,6 +4,7 @@
   "guides": "Guides",
   "handlers": "Source Handlers",
   "transforms": "Transforms",
+  "plugins": "Plugins",
   "cache": "Cache Storages",
   "cli-commands": "CLI commands",
   "migration": "Migration guides",
