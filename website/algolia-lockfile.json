@@ -564,7 +564,7 @@
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-guides-error-handling",
+    "objectID": "mesh-docs-guides-error-masking",
     "headings": ["Enabling Errors masking", "Custom resolvers error handling"],
     "toc": [
       {
@@ -585,11 +585,11 @@
       }
     ],
     "content": "40caba745eeef7621707ef7e89f3f5f8",
-    "url": "https://www.graphql-mesh.com/docs/guides/error-handling",
+    "url": "https://www.graphql-mesh.com/docs/guides/error-masking",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Guides"],
     "source": "Mesh",
-    "title": "Error Handling",
+    "title": "Error Masking",
     "type": "Documentation"
   },
   {
