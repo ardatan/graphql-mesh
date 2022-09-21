@@ -4,13 +4,12 @@ const { join } = require('path');
 
 const { printSchemaWithDirectives } = require('@graphql-tools/utils');
 
-const config$ = findAndParseConfig({
-  dir: join(__dirname, '..'),
-});
-const mesh$ = config$.then(config => getMesh(config));
-jest.setTimeout(15000);
-
 describe('Orbit', () => {
+  const config$ = findAndParseConfig({
+    dir: join(__dirname, '..'),
+  });
+  const mesh$ = config$.then(config => getMesh(config));
+  jest.setTimeout(15000);
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
     expect(printSchemaWithDirectives(schema)).toMatchSnapshot();
