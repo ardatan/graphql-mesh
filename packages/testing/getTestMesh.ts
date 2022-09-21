@@ -16,7 +16,7 @@ export async function getTestMesh() {
     schema: createSchema({
       typeDefs: /* GraphQL */ `
         type Query {
-          hello: String
+          greetings: String
         }
         type Subscription {
           time: String
@@ -24,7 +24,7 @@ export async function getTestMesh() {
       `,
       resolvers: {
         Query: {
-          hello: () => 'Hello World!',
+          greetings: () => 'This is the `greetings` field of the root `Query` type',
         },
         Subscription: {
           time: {
