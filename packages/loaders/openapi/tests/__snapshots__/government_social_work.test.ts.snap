@@ -286,6 +286,7 @@ type Query {
     offset: String!
     "limit for pagination (e.g. 20 at a time)"
     limit: String!
+    "Assessment data"
     input: [CaseAssessment_Input]
   ): [getRecommendations_response]
   "Retrieves a list of available case note types"
@@ -1239,6 +1240,7 @@ type Mutation {
     User_Agent: String! = "iPad"
     "1.1.0"
     Api_Version: String! = "1.1.0"
+    "Physician data"
     input: [ClientPhysician_Input]
   ): [addClientPhysician_response]
   "Update/delete client physician for a client id"
@@ -1253,6 +1255,7 @@ type Mutation {
     Api_Version: String! = "1.1.0"
     "Client's physician's id"
     physicianId: String!
+    "Physician data"
     input: [ClientPhysician_Input]
   ): [updateClientPhysician_response]
   "Gets a specific file for a given file id or return all files if no specific file id is given"
@@ -1267,6 +1270,7 @@ type Mutation {
     Api_Version: String! = "1.1.0"
     "File Id"
     fileId: String!
+    "File content"
     input: [File_Input]
   ): [updateFile_response]
   "Gets a specific file for a given file id or return all files if no specific file id is given"
@@ -1279,6 +1283,7 @@ type Mutation {
     User_Agent: String! = "iPad"
     "1.1.0"
     Api_Version: String! = "1.1.0"
+    "File content"
     input: [File_Input]
   ): [putFile_response]
   "Adds a new Media file to a case [video, audio, picture, etc]"
@@ -1353,6 +1358,7 @@ type Mutation {
     Api_Version: String! = "1.1.0"
     "Case Id"
     caseId: String!
+    "Assessment data"
     input: [CaseAssessment_Input]
   ): [addCaseAssessment_response]
   "Sets a specific assessment for a case as \\"deleted\\""
@@ -1369,6 +1375,7 @@ type Mutation {
     caseId: String!
     "Case Assessment Id"
     caseAssessmentId: String!
+    "Assessment data"
     input: [CaseAssessment_Input]
   ): [deleteCaseAssessment_response]
 }

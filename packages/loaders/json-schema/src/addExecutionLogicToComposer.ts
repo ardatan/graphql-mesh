@@ -275,8 +275,12 @@ ${operationConfig.description || ''}
         if (operationConfig.queryParamArgMap) {
           for (const queryParamName in operationConfig.queryParamArgMap) {
             const argName = operationConfig.queryParamArgMap[queryParamName];
-            const argValue = args[argName];
+            let argValue = args[argName];
             if (argValue != null) {
+              // Somehow it doesn't serialize URLs so we need to do it manually.
+              if (argValue instanceof URL) {
+                argValue = argValue.toString();
+              }
               const opts = {
                 ...queryStringOptions,
                 ...operationConfig.queryStringOptionsByParam?.[queryParamName],

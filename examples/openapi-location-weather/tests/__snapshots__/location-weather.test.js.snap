@@ -915,7 +915,7 @@ type Query {
     "Your registered API key."
     key: String!
     lang: queryInput_current_by_cities_lang
-    marine: queryInput_current_by_cities_marine
+    marine: t_const
     units: queryInput_current_by_cities_units
   ): CurrentObsGroup
   "Returns a Current Observation - Given a city in the format of City,ST or City. The state, and country parameters can be provided to make the search more accurate."
@@ -926,11 +926,11 @@ type Query {
     city: String!
     "Country Code (2 letter)."
     country: String!
-    include: queryInput_current_by_city_by_country_include
+    include: minutely_const
     "Your registered API key."
     key: String!
     lang: queryInput_current_by_city_by_country_lang
-    marine: queryInput_current_by_city_by_country_marine
+    marine: t_const
     "Full name of state."
     state: String
     units: queryInput_current_by_city_by_country_units
@@ -941,18 +941,18 @@ type Query {
     callback: String
     "City ID. Example: 4487042"
     city_id: String!
-    include: queryInput_current_by_city_id_include
+    include: minutely_const
     "Your registered API key."
     key: String!
     lang: queryInput_current_by_city_id_lang
-    marine: queryInput_current_by_city_id_marine
+    marine: t_const
     units: queryInput_current_by_city_id_units
   ): CurrentObsGroup
   "Returns a Current Observation - given a lat, and a lon."
   current_by_lat_by_lon(
     "Wraps return in jsonp callback - Example - callback=func"
     callback: String
-    include: queryInput_current_by_lat_by_lon_include
+    include: minutely_const
     "Your registered API key."
     key: String!
     lang: queryInput_current_by_lat_by_lon_lang
@@ -960,7 +960,7 @@ type Query {
     lat: Float!
     "Longitude component of location."
     lon: Float!
-    marine: queryInput_current_by_lat_by_lon_marine
+    marine: t_const
     units: queryInput_current_by_lat_by_lon_units
   ): CurrentObsGroup
   "Returns current weather observation - Given a Postal Code. "
@@ -969,11 +969,11 @@ type Query {
     callback: String
     "Country Code (2 letter)."
     country: String
-    include: queryInput_current_by_postal_code_include
+    include: minutely_const
     "Your registered API key."
     key: String!
     lang: queryInput_current_by_postal_code_lang
-    marine: queryInput_current_by_postal_code_marine
+    marine: t_const
     "Postal Code. Example: 28546"
     postal_code: String!
     units: queryInput_current_by_postal_code_units
@@ -982,7 +982,7 @@ type Query {
   current_by_station(
     "Wraps return in jsonp callback. Example: callback=func"
     callback: String
-    include: queryInput_current_by_station_include
+    include: minutely_const
     "Your registered API key."
     key: String!
     lang: queryInput_current_by_station_lang
@@ -2025,6 +2025,10 @@ type WeatherAlertGroup {
   uri: URL
 }
 
+enum minutely_const {
+  minutely
+}
+
 "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
 enum queryInput_current_by_cities_lang {
   ar
@@ -2062,20 +2066,10 @@ enum queryInput_current_by_cities_lang {
   zh_tw
 }
 
-"Marine stations only (buoys, oil platforms, etc)"
-enum queryInput_current_by_cities_marine {
-  t
-}
-
 "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
 enum queryInput_current_by_cities_units {
   I
   S
-}
-
-"Include 1 hour - minutely forecast in the response"
-enum queryInput_current_by_city_by_country_include {
-  minutely
 }
 
 "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
@@ -2115,20 +2109,10 @@ enum queryInput_current_by_city_by_country_lang {
   zh_tw
 }
 
-"Marine stations only (buoys, oil platforms, etc)"
-enum queryInput_current_by_city_by_country_marine {
-  t
-}
-
 "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
 enum queryInput_current_by_city_by_country_units {
   I
   S
-}
-
-"Include 1 hour - minutely forecast in the response"
-enum queryInput_current_by_city_id_include {
-  minutely
 }
 
 "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
@@ -2168,20 +2152,10 @@ enum queryInput_current_by_city_id_lang {
   zh_tw
 }
 
-"Marine stations only (buoys, oil platforms, etc)"
-enum queryInput_current_by_city_id_marine {
-  t
-}
-
 "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
 enum queryInput_current_by_city_id_units {
   I
   S
-}
-
-"Include 1 hour - minutely forecast in the response"
-enum queryInput_current_by_lat_by_lon_include {
-  minutely
 }
 
 "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
@@ -2221,20 +2195,10 @@ enum queryInput_current_by_lat_by_lon_lang {
   zh_tw
 }
 
-"Marine stations only (buoys, oil platforms, etc)"
-enum queryInput_current_by_lat_by_lon_marine {
-  t
-}
-
 "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
 enum queryInput_current_by_lat_by_lon_units {
   I
   S
-}
-
-"Include 1 hour - minutely forecast in the response"
-enum queryInput_current_by_postal_code_include {
-  minutely
 }
 
 "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
@@ -2274,20 +2238,10 @@ enum queryInput_current_by_postal_code_lang {
   zh_tw
 }
 
-"Marine stations only (buoys, oil platforms, etc)"
-enum queryInput_current_by_postal_code_marine {
-  t
-}
-
 "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
 enum queryInput_current_by_postal_code_units {
   I
   S
-}
-
-"Include 1 hour - minutely forecast in the response"
-enum queryInput_current_by_station_include {
-  minutely
 }
 
 "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
@@ -3605,5 +3559,9 @@ type query_history_hourly_by_city_by_country_data_items_weather {
   description: String
   "Icon code for forecast image display"
   icon: String
+}
+
+enum t_const {
+  t
 }"
 `;

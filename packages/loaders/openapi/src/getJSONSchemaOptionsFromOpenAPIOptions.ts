@@ -1,5 +1,5 @@
 import { defaultImportFn, DefaultLogger, readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
-import { JSONSchemaObject, dereferenceObject, resolvePath } from 'json-machete';
+import { JSONSchemaObject, dereferenceObject, resolvePath, handleUntitledDefinitions } from 'json-machete';
 import { OpenAPIV3, OpenAPIV2 } from 'openapi-types';
 import {
   HTTPMethod,
@@ -62,36 +62,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
         })
       : source;
 
-  function handleDefinitions(definitions: Record<string, OpenAPIV2.SchemaObject | OpenAPIV3.SchemaObject>) {
-    const seen = new Map<
-      string,
-      {
-        definitionName: string;
-        definition: OpenAPIV3.SchemaObject | OpenAPIV2.SchemaObject;
-      }
-    >();
-    for (const definitionName in definitions) {
-      const definition = definitions[definitionName];
-      if (!('$ref' in definition)) {
-        if (!definition.title) {
-          definition.title = definitionName;
-        } else {
-          const seenDefinition = seen.get(definition.title);
-          if (seenDefinition) {
-            definition.title = definitionName;
-            seenDefinition.definition.title = seenDefinition.definitionName;
-          }
-          seen.set(definition.title, { definitionName, definition });
-        }
-      }
-    }
-  }
-  if ('definitions' in oasOrSwagger) {
-    handleDefinitions(oasOrSwagger.definitions);
-  }
-  if ('components' in oasOrSwagger && 'schemas' in oasOrSwagger.components) {
-    handleDefinitions(oasOrSwagger.components.schemas);
-  }
+  handleUntitledDefinitions(oasOrSwagger);
 
   oasOrSwagger = (await dereferenceObject(oasOrSwagger)) as any;
   const operations: JSONSchemaOperationConfig[] = [];

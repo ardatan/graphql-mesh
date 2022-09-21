@@ -4,3 +4,4 @@ export * from './healJSONSchema';
 export * from './referenceJSONSchema';
 export * from './visitJSONSchema';
 export * from './types';
+export * from './healUntitledDefinitions';
