@@ -24,7 +24,7 @@ import lodashSet from 'lodash.set';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { process } from '@graphql-mesh/cross-helpers';
 import { getHeadersObj } from '@graphql-mesh/utils';
-import { FormData } from '@whatwg-node/fetch';
+import { Blob, File, FormData } from '@whatwg-node/fetch';
 
 export interface AddExecutionLogicToComposerOptions {
   schemaComposer: SchemaComposer;
@@ -229,8 +229,17 @@ ${operationConfig.description || ''}
                 if (inputValue != null) {
                   let formDataValue: Blob | string;
                   if (typeof inputValue === 'object') {
-                    if (inputValue.arrayBuffer) {
+                    if (inputValue instanceof File) {
                       formDataValue = inputValue;
+                    } else if (inputValue.name && inputValue instanceof Blob) {
+                      formDataValue = new File([inputValue], (inputValue as File).name, { type: inputValue.type });
+                    } else if (inputValue.arrayBuffer) {
+                      const arrayBuffer = await inputValue.arrayBuffer();
+                      if (inputValue.name) {
+                        formDataValue = new File([arrayBuffer], inputValue.name, { type: inputValue.type });
+                      } else {
+                        formDataValue = new Blob([arrayBuffer], { type: inputValue.type });
+                      }
                     } else {
                       formDataValue = JSON.stringify(inputValue);
                     }
