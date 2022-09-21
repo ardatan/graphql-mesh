@@ -8,6 +8,8 @@ import { withCookies } from 'itty-router-extras';
 import { graphqlHandler } from './graphqlHandler';
 import { Response } from '@whatwg-node/fetch';
 
+export type MeshHTTPHandler<TServerContext> = ServerAdapter<TServerContext, Router<Request>>;
+
 export function createMeshHTTPHandler<TServerContext>({
   baseDir,
   getBuiltMesh,
@@ -18,7 +20,7 @@ export function createMeshHTTPHandler<TServerContext>({
   getBuiltMesh: () => Promise<MeshInstance>;
   rawServeConfig?: YamlConfig.Config['serve'];
   playgroundTitle?: string;
-}): ServerAdapter<TServerContext, Router<Request>> {
+}): MeshHTTPHandler<TServerContext> {
   let readyFlag = false;
   let logger: Logger = new DefaultLogger('Mesh HTTP');
   const mesh$ = getBuiltMesh().then(mesh => {

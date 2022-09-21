@@ -166,7 +166,7 @@ export async function graphqlMesh(
                 baseDir,
                 meshConfigImportCodes: new Set([
                   `import { findAndParseConfig } from '@graphql-mesh/cli';`,
-                  `import { createMeshHTTPHandler } from '@graphql-mesh/http';`,
+                  `import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';`,
                 ]),
                 meshConfigCodes: new Set([
                   `
@@ -183,8 +183,8 @@ export function getMeshOptions() {
   });
 }
 
-export function createBuiltMeshHTTPHandler() {
-  return createMeshHTTPHandler({
+export function createBuiltMeshHTTPHandler(): MeshHTTPHandler<MeshContext> {
+  return createMeshHTTPHandler<MeshContext>({
     baseDir,
     getBuiltMesh: ${cliParams.builtMeshFactoryName},
     rawServeConfig: ${JSON.stringify(meshConfig.config.serve)},
@@ -399,10 +399,10 @@ export function createBuiltMeshHTTPHandler() {
           await writeFile(pathModule.join(outputDir, 'schema.graphql'), printSchemaWithDirectives(schema));
 
           logger.info(`Generating artifacts`);
-          meshConfig.importCodes.add(`import { createMeshHTTPHandler } from '@graphql-mesh/http';`);
+          meshConfig.importCodes.add(`import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';`);
           meshConfig.codes.add(`
-export function createBuiltMeshHTTPHandler() {
-  return createMeshHTTPHandler({
+export function createBuiltMeshHTTPHandler(): MeshHTTPHandler<MeshContext> {
+  return createMeshHTTPHandler<MeshContext>({
     baseDir,
     getBuiltMesh: ${cliParams.builtMeshFactoryName},
     rawServeConfig: ${JSON.stringify(meshConfig.config.serve)},
