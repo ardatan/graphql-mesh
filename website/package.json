@@ -14,7 +14,7 @@
   "dependencies": {
     "@theguild/components": "3.0.3",
     "guild-docs": "4.1.0",
-    "next": "12.3.1",
+    "next": "12.3.0",
     "next-sitemap": "3.1.22",
     "react": "18.2.0",
     "react-dom": "18.2.0"
