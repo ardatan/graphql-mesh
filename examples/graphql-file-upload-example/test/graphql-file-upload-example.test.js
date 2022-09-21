@@ -1,5 +1,5 @@
-const uploadFilesServer = require('../upload-files/server');
-const resizeImageServer = require('../resize-image/server');
+const startUploadFilesServer = require('../upload-files/server');
+const startResizeImageServer = require('../resize-image/server');
 const { File } = require('@whatwg-node/fetch');
 const { findAndParseConfig } = require('@graphql-mesh/cli');
 const { join } = require('path');
@@ -10,8 +10,19 @@ const mesh$ = findAndParseConfig({
 }).then(config => getMesh(config));
 
 describe('Upload Example', () => {
-  beforeAll(() => Promise.all([uploadFilesServer.start(), resizeImageServer.start()]));
-  afterAll(() => Promise.all([uploadFilesServer.stop(), resizeImageServer.stop(), mesh$.then(mesh => mesh.destroy())]));
+  let stopUploadFilesServer;
+  let stopResizeImageServer;
+  beforeAll(() => {
+    return Promise.all([
+      startUploadFilesServer().then(stop => {
+        stopUploadFilesServer = stop;
+      }),
+      startResizeImageServer().then(stop => {
+        stopResizeImageServer = stop;
+      }),
+    ]);
+  });
+  afterAll(() => Promise.all([stopUploadFilesServer(), stopResizeImageServer(), mesh$.then(mesh => mesh.destroy())]));
   it('should give correct response', async () => {
     const { execute } = await mesh$;
     const file = new File(['CONTENT'], 'test.txt');

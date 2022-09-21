@@ -1,17 +1,43 @@
+/* eslint-disable import/no-nodejs-modules */
 /* eslint-disable import/no-extraneous-dependencies */
-import { createServer } from '@graphql-yoga/node';
+import { createServer } from 'http';
+import { createYoga, createSchema, Repeater } from 'graphql-yoga';
 import { getMesh } from '@graphql-mesh/runtime';
 import GraphQLHandler from '@graphql-mesh/graphql';
 import LocalforageCache from '@graphql-mesh/cache-localforage';
 import { PubSub, DefaultLogger, defaultImportFn } from '@graphql-mesh/utils';
 import StitchingMerger from '@graphql-mesh/merger-stitching';
 import { MeshStore, InMemoryStoreStorageAdapter } from '@graphql-mesh/store';
-import getPort from 'get-port';
+import { AddressInfo } from 'net';
 
 export async function getTestMesh() {
-  const yoga = createServer({
+  const yoga = createYoga({
     logging: false,
-    port: await getPort(),
+    schema: createSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          greetings: String
+        }
+        type Subscription {
+          time: String
+        }
+      `,
+      resolvers: {
+        Query: {
+          greetings: () => 'This is the `greetings` field of the root `Query` type',
+        },
+        Subscription: {
+          time: {
+            subscribe: () =>
+              new Repeater((push, stop) => {
+                const interval = setInterval(() => push(new Date().toISOString()));
+                return stop.then(() => clearInterval(interval));
+              }),
+            resolve: time => time,
+          },
+        },
+      },
+    }),
   });
   const cache = new LocalforageCache();
   const pubsub = new PubSub();
@@ -20,10 +46,12 @@ export async function getTestMesh() {
     readonly: false,
     validate: false,
   });
-  await yoga.start();
+  const server = createServer(yoga);
+  await new Promise<void>(resolve => server.listen(0, resolve));
+  const port = (server.address() as AddressInfo).port;
   const subId = pubsub.subscribe('destroy', async () => {
     pubsub.unsubscribe(subId);
-    await yoga.stop();
+    await new Promise(resolve => server.close(resolve));
   });
   const mesh = await getMesh({
     sources: [
@@ -33,7 +61,7 @@ export async function getTestMesh() {
           name: 'Yoga',
           baseDir: __dirname,
           config: {
-            endpoint: yoga.getServerUrl(),
+            endpoint: `http://localhost:${port}/graphql`,
             subscriptionsProtocol: 'SSE',
           },
           cache,

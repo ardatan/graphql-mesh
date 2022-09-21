@@ -1,3 +1,5 @@
+/* eslint-disable import/no-nodejs-modules */
+/* eslint-disable import/no-extraneous-dependencies */
 import express from 'express';
 import http from 'http';
 import multer from 'multer';
@@ -10,7 +12,7 @@ const upload = multer({ storage });
 /**
  * Starts the server at the given port
  */
-export function startServer(PORT: number | string) {
+export function startServer() {
   const app = express();
 
   app.post('/api/upload', upload.any(), (req, res) => {
@@ -20,9 +22,9 @@ export function startServer(PORT: number | string) {
     });
   });
 
-  return new Promise<void>(resolve => {
-    server = app.listen(PORT, () => {
-      resolve();
+  return new Promise<http.Server>(resolve => {
+    server = app.listen(0, () => {
+      resolve(server);
     });
   });
 }
@@ -36,10 +38,4 @@ export function stopServer() {
       resolve();
     });
   });
-}
-
-// If run from command line, start server:
-if (require.main === module) {
-  // eslint-disable-next-line no-void
-  void (async () => startServer(3002))();
 }
