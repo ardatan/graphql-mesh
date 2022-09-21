@@ -1,7 +1,7 @@
-import lru, { Lru } from 'tiny-lru';
+import { lru } from 'tiny-lru';
 
-export function createLruCache(max?: number, ttl?: number) {
+export type LRUCache = ReturnType<typeof lru>;
+
+export function createLruCache(max?: number, ttl?: number): LRUCache {
   return lru(max, ttl);
 }
-
-export type LRUCache = Lru;
