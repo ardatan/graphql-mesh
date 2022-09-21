@@ -225,18 +225,20 @@ ${operationConfig.description || ''}
               delete headers['Content-Type'];
               const formData = new FormData();
               for (const key in input) {
-                let formDataValue: Blob | string;
                 const inputValue = input[key];
-                if (typeof inputValue === 'object') {
-                  if (inputValue.toString() === '[object Blob]' || inputValue.toString() === '[object File]') {
-                    formDataValue = inputValue;
+                if (inputValue != null) {
+                  let formDataValue: Blob | string;
+                  if (typeof inputValue === 'object') {
+                    if (inputValue.arrayBuffer) {
+                      formDataValue = inputValue;
+                    } else {
+                      formDataValue = JSON.stringify(inputValue);
+                    }
                   } else {
-                    formDataValue = JSON.stringify(inputValue);
+                    formDataValue = inputValue.toString();
                   }
-                } else {
-                  formDataValue = inputValue.toString();
+                  formData.append(key, formDataValue);
                 }
-                formData.append(key, formDataValue);
               }
               requestInit.body = formData;
             } else {
