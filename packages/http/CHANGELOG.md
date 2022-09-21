@@ -1,5 +1,18 @@
 # @graphql-mesh/http
 
+## 0.1.20
+
+### Patch Changes
+
+- [#4560](https://github.com/Urigo/graphql-mesh/pull/4560) [`d08ed0e77`](https://github.com/Urigo/graphql-mesh/commit/d08ed0e77a274ceaccff6c7a2b2c80326ca5d035) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency [`graphql-yoga@3.0.0-next.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.0-next.0) (from `3.0.0-alpha-20220917000718-4285245d`, in `dependencies`)
+
+- Updated dependencies [[`93f4ed55d`](https://github.com/Urigo/graphql-mesh/commit/93f4ed55de7b9f2a55e11bf1df4ab7b4c59b3825)]:
+  - @graphql-mesh/utils@0.41.14
+  - @graphql-mesh/runtime@0.44.12
+  - @graphql-mesh/types@0.84.3
+
 ## 0.1.19
 
 ### Patch Changes

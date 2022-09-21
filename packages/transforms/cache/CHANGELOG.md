@@ -1,5 +1,13 @@
 # @graphql-mesh/transform-cache
 
+## 0.12.49
+
+### Patch Changes
+
+- Updated dependencies [[`93f4ed55d`](https://github.com/Urigo/graphql-mesh/commit/93f4ed55de7b9f2a55e11bf1df4ab7b4c59b3825)]:
+  - @graphql-mesh/utils@0.41.14
+  - @graphql-mesh/types@0.84.3
+
 ## 0.12.48
 
 ### Patch Changes
