@@ -26,15 +26,6 @@
 /docs/subscriptions-webhooks /docs/guides/subscriptions-webhooks 301
 /docs/recipes/live-queries /docs/guides/live-queries 301
 /docs/handlers/new-openapi /docs/handlers/openapi 301
-/graphql/mesh/docs/getting-started/installation /docs/getting-started/installation 301
-/graphql/mesh/docs/transforms/replace-field /docs/transforms/replace-field 301
-/graphql/mesh/docs/migration/new-openapi-to-openapi /docs/handlers/openapi 301
-/graphql/mesh/docs/handlers/neo4j /docs/handlers/neo4j 301
-/graphql/mesh/docs/handlers/handlers-introduction /docs/handlers/handlers-introduction 301
-/graphql/mesh/docs/guides/graphql-code-generator /docs/guides/graphql-code-generator 301
-/graphql/mesh/docs/guides/extending-unified-schema /docs/guides/extending-unified-schema 301
-/graphql/mesh/docs/transforms/type-merging /docs/transforms/type-merging 301
-/graphql/mesh/docs/guides/batching /docs/guides/batching 301
-/docs/handlers/openapi/endpoint.GQLschema /docs/handlers/graphql 301
-/docs/handlers/openapi/endpoint /docs 301
+/docs/handlers/openapi/* /docs/handlers/openapi 301
 /docs/api /docs 301
+/docs/api/* /docs 301
