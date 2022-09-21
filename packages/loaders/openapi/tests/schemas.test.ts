@@ -2,7 +2,6 @@ import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import loadGraphQLSchemaFromOpenAPI, { createBundle } from '../src';
 
 const schemas = {
-  Calendly: 'calendly.yml',
   DeepL: 'deepl.json',
   GitHub: 'github.json',
   Instagram: 'instagram.json',
