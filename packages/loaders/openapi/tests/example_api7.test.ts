@@ -1,47 +1,50 @@
+/* eslint-disable import/no-nodejs-modules */
 /* eslint-disable no-unreachable-loop */
-import { createServer, YogaNodeServerInstance } from '@graphql-yoga/node';
+import { createYoga } from 'graphql-yoga';
+import { createServer, Server } from 'http';
 import { AbortController, fetch } from '@whatwg-node/fetch';
 import { GraphQLSchema } from 'graphql';
 
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 import { startServer, stopServer, pubsub } from './example_api7_server';
-import getPort from 'get-port';
+import { AddressInfo } from 'net';
 
 let createdSchema: GraphQLSchema;
 
-let GRAPHQL_PORT: number;
-let API_PORT: number;
+let graphqlPort: number;
+let apiPort: number;
 
-let yogaServer: YogaNodeServerInstance<any, any, any>;
+let yogaServer: Server;
 
 describe('OpenAPI Loader: example_api7', () => {
   // Set up the schema first and run example API servers
   beforeAll(async () => {
-    GRAPHQL_PORT = await getPort();
-    API_PORT = await getPort();
+    const apiServer = await startServer();
+    apiPort = (apiServer.address() as AddressInfo).port;
 
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api7', {
       fetch,
-      baseUrl: `http://127.0.0.1:${API_PORT}/api`,
+      baseUrl: `http://127.0.0.1:${apiPort}/api`,
       source: './fixtures/example_oas7.json',
       cwd: __dirname,
       pubsub,
     });
 
-    yogaServer = createServer({
+    const yoga = createYoga({
       schema: createdSchema,
-      port: GRAPHQL_PORT,
       context: { pubsub },
       maskedErrors: false,
       logging: false,
     });
 
-    await Promise.all([yogaServer.start(), startServer(API_PORT)]);
+    yogaServer = createServer(yoga);
+
+    await new Promise<void>(resolve => yogaServer.listen(0, resolve));
+
+    graphqlPort = (yogaServer.address() as AddressInfo).port;
   });
 
-  afterAll(async () => {
-    await Promise.all([yogaServer.stop(), stopServer()]);
-  });
+  afterAll(() => Promise.all([new Promise(resolve => yogaServer.close(resolve)), stopServer()]));
 
   it('Receive data from the subscription after creating a new instance', async () => {
     const userName = 'Carlos';
@@ -67,7 +70,7 @@ describe('OpenAPI Loader: example_api7', () => {
         }
       }
     `;
-    const baseUrl = `http://127.0.0.1:${GRAPHQL_PORT}/graphql`;
+    const baseUrl = `http://127.0.0.1:${graphqlPort}/graphql`;
     const url = new URL(baseUrl);
 
     url.searchParams.append('query', subscriptionOperation);

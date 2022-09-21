@@ -29,7 +29,7 @@ const Devices = {
 /**
  * Starts the server at the given port
  */
-export function startServer(HTTP_PORT: number) {
+export function startServer() {
   app.use(express.json());
 
   app.get('/api/user', (req, res) => {
@@ -85,11 +85,11 @@ export function startServer(HTTP_PORT: number) {
     }
   });
 
-  return Promise.all([
-    new Promise(resolve => {
-      server = app.listen(HTTP_PORT, resolve as () => void);
-    }),
-  ]);
+  return new Promise<Server>(resolve => {
+    server = app.listen(0, () => {
+      resolve(server);
+    });
+  });
 }
 
 /**
