@@ -1,5 +1,34 @@
 # @omnigraph/openapi
 
+## 0.16.0
+
+### Minor Changes
+
+- [#4556](https://github.com/Urigo/graphql-mesh/pull/4556) [`10f469e10`](https://github.com/Urigo/graphql-mesh/commit/10f469e109105edaa2ba4d9111bc671ba58baae8) Thanks [@ardatan](https://github.com/ardatan)! - If a component(response, requestBody, header or parameter) defined in OpenAPI schema, and its schema doesn't have a title, use the component object's title for that schema
+
+  ```yml
+  components:
+    parameters:
+      Foo:
+        title: Foo
+        in: query
+        schema:
+          # OAS Loader adds the following title
+          # title: Foo_parameter
+          type: string
+          enum:
+            - a
+            - b
+  ```
+
+### Patch Changes
+
+- [#4556](https://github.com/Urigo/graphql-mesh/pull/4556) [`10f469e10`](https://github.com/Urigo/graphql-mesh/commit/10f469e109105edaa2ba4d9111bc671ba58baae8) Thanks [@ardatan](https://github.com/ardatan)! - For `const` definitions, force `{value}_const` pattern for the generated titles instead of path based names
+
+- Updated dependencies [[`10f469e10`](https://github.com/Urigo/graphql-mesh/commit/10f469e109105edaa2ba4d9111bc671ba58baae8), [`10f469e10`](https://github.com/Urigo/graphql-mesh/commit/10f469e109105edaa2ba4d9111bc671ba58baae8), [`10f469e10`](https://github.com/Urigo/graphql-mesh/commit/10f469e109105edaa2ba4d9111bc671ba58baae8)]:
+  - json-machete@0.15.0
+  - @omnigraph/json-schema@0.35.0
+
 ## 0.15.4
 
 ### Patch Changes
