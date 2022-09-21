@@ -1,5 +1,14 @@
 # @graphql-mesh/neo4j
 
+## 0.20.16
+
+### Patch Changes
+
+- Updated dependencies [[`93f4ed55d`](https://github.com/Urigo/graphql-mesh/commit/93f4ed55de7b9f2a55e11bf1df4ab7b4c59b3825)]:
+  - @graphql-mesh/utils@0.41.14
+  - @graphql-mesh/store@0.8.47
+  - @graphql-mesh/types@0.84.3
+
 ## 0.20.15
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @graphql-mesh/utils
 
+## 0.41.14
+
+### Patch Changes
+
+- [#4554](https://github.com/Urigo/graphql-mesh/pull/4554) [`93f4ed55d`](https://github.com/Urigo/graphql-mesh/commit/93f4ed55de7b9f2a55e11bf1df4ab7b4c59b3825) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`tiny-lru@9.0.0` ↗︎](https://www.npmjs.com/package/tiny-lru/v/9.0.0) (from `8.0.2`, in `dependencies`)
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.84.3
+
 ## 0.41.13
 
 ### Patch Changes

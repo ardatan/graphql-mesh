@@ -1,5 +1,16 @@
 # @omnigraph/json-schema
 
+## 0.35.1
+
+### Patch Changes
+
+- [#4560](https://github.com/Urigo/graphql-mesh/pull/4560) [`d08ed0e77`](https://github.com/Urigo/graphql-mesh/commit/d08ed0e77a274ceaccff6c7a2b2c80326ca5d035) Thanks [@ardatan](https://github.com/ardatan)! - Support non-native File or Blob instances
+
+- Updated dependencies [[`93f4ed55d`](https://github.com/Urigo/graphql-mesh/commit/93f4ed55de7b9f2a55e11bf1df4ab7b4c59b3825)]:
+  - @graphql-mesh/utils@0.41.14
+  - json-machete@0.15.1
+  - @graphql-mesh/types@0.84.3
+
 ## 0.35.0
 
 ### Minor Changes
