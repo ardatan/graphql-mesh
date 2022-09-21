@@ -2670,7 +2670,7 @@
     "@whatwg-node/fetch" "^0.3.0"
     tslib "^2.3.1"
 
-"@graphql-yoga/subscription@^2.2.2", "@graphql-yoga/subscription@^2.2.3":
+"@graphql-yoga/subscription@^2.2.3":
   version "2.2.3"
   resolved "https://registry.yarnpkg.com/@graphql-yoga/subscription/-/subscription-2.2.3.tgz#e378fa17a12675ae7b34b2f51e39bc02df312ba0"
   integrity sha512-It/Dfh+nW2ClTtmOylAa+o7fbKIRYRTH6jfKLj3YB75tkv/rFZ70bjlChDCrEMa46I+zDMg7+cdkrQOXov2fDg==
@@ -2679,10 +2679,28 @@
     "@repeaterjs/repeater" "^3.0.4"
     tslib "^2.3.1"
 
+"@graphql-yoga/subscription@^3.0.0-next.0":
+  version "3.0.0-next.0"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/subscription/-/subscription-3.0.0-next.0.tgz#fce94b540ec8837c7667e24b556b70553ccb558b"
+  integrity sha512-ne+0p7CUHK8XOZRymKzYCLtllKNLqHnL+DiAOMCsvTm7NwgRXBBWiVwN/Bkp/JUTS8+PTssuTSLG8cUTR55p7g==
+  dependencies:
+    "@graphql-yoga/typed-event-target" "^1.0.0-next.0"
+    "@repeaterjs/repeater" "^3.0.4"
+    "@whatwg-node/events" "0.0.2"
+    tslib "^2.3.1"
+
 "@graphql-yoga/typed-event-target@^0.1.1":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@graphql-yoga/typed-event-target/-/typed-event-target-0.1.1.tgz#248d56a76046d805af8c0da3ef590cdb95d2c192"
   integrity sha512-l23kLKHKhfD7jmv4OUlzxMTihSqgIjGWCSb0KdlLkeiaF2jjuo8pRhX200hFTrtjRHGSYS1fx2lltK/xWci+vw==
+  dependencies:
+    "@repeaterjs/repeater" "^3.0.4"
+    tslib "^2.3.1"
+
+"@graphql-yoga/typed-event-target@^1.0.0-next.0":
+  version "1.0.0-next.0"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/typed-event-target/-/typed-event-target-1.0.0-next.0.tgz#d0c8ad24eef46edff1a0e3618a745361d01a58f1"
+  integrity sha512-OP+6WpeP2eJBdQ4aVdP6m+dhVXPQX1xJ0T2GVmBMiRD3NQeaIMbAP0FPrB3gvh2VGVH0UaAPspQSKsxwEe8YtQ==
   dependencies:
     "@repeaterjs/repeater" "^3.0.4"
     tslib "^2.3.1"
@@ -5556,7 +5574,12 @@
     "@webassemblyjs/ast" "1.11.1"
     "@xtuc/long" "4.2.2"
 
-"@whatwg-node/fetch@0.4.4", "@whatwg-node/fetch@^0.4.0", "@whatwg-node/fetch@^0.4.2", "@whatwg-node/fetch@^0.4.3":
+"@whatwg-node/events@0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/events/-/events-0.0.2.tgz#7b7107268d2982fc7b7aff5ee6803c64018f84dd"
+  integrity sha512-WKj/lI4QjnLuPrim0cfO7i+HsDSXHxNv1y0CrJhdntuO3hxWZmnXCwNDnwOvry11OjRin6cgWNF+j/9Pn8TN4w==
+
+"@whatwg-node/fetch@0.4.4", "@whatwg-node/fetch@^0.4.0", "@whatwg-node/fetch@^0.4.3":
   version "0.4.4"
   resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.4.4.tgz#9f6502177453d48b76d31f33d32dcd60afb9eb54"
   integrity sha512-/c2u1blMAXHVXneZjVLyE0AwdRuuFpv2P3ghNz2QtpHed+25WdSkTi7XxICwuaRsl/mMgundCzSy1352rZgWPg==
@@ -5585,12 +5608,12 @@
     undici "^5.8.0"
     web-streams-polyfill "^3.2.0"
 
-"@whatwg-node/server@0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.4.0.tgz#5b0b089326017da2c6922091b4b98c1fbe705097"
-  integrity sha512-FM2TJN/FvDs/Ggn0oVFSVqc8+vcH1IuUH4vg1XoQrgBtWAFzOAIacEhxPZaq+akhwo/IyRFVWLqFFHLJqibyAw==
+"@whatwg-node/server@0.4.5":
+  version "0.4.5"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.4.5.tgz#adbd34134a3cfd7815aef7359c95b65270252eda"
+  integrity sha512-3wwIFZOuCXBKk08+S12xHtky3c8LLR6V6fKQMZqj6tKCawaUistuXzZtTAKyOg8NWglVGqAAng5vwcKa8j4hcQ==
   dependencies:
-    "@whatwg-node/fetch" "^0.4.0"
+    "@whatwg-node/fetch" "0.4.4"
     tslib "^2.3.1"
 
 "@whatwg-node/server@^0.4.1":
@@ -11014,10 +11037,10 @@ graphql-ws@5.11.1, graphql-ws@^5.4.1, graphql-ws@^5.6.2:
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.11.1.tgz#f9c8b7c64986d1d921f2a820dc68a393853c94e8"
   integrity sha512-AlOO/Gt0fXuSHXe/Weo6o3rIQVnH5MW7ophzeYzL+vYNlkf0NbWRJ6IIFgtSLcv9JpTlQdxSpB3t0SnM47/BHA==
 
-graphql-yoga@3.0.0-alpha-20220917000718-4285245d:
-  version "3.0.0-alpha-20220917000718-4285245d"
-  resolved "https://registry.yarnpkg.com/graphql-yoga/-/graphql-yoga-3.0.0-alpha-20220917000718-4285245d.tgz#1a6d6e89b1aa80840be39f51c6e9b0b93a30631f"
-  integrity sha512-vp1pyI8yT666WdCeDUFNZLKyK41bkcX+qcHdU6XuSlNezAbywPZQk1u9eQe2whe3jZh31oYY4C58B6PSQ+C/dA==
+graphql-yoga@3.0.0-next.0:
+  version "3.0.0-next.0"
+  resolved "https://registry.yarnpkg.com/graphql-yoga/-/graphql-yoga-3.0.0-next.0.tgz#76415f01e9c7827bf8495f4b70264f231f327bec"
+  integrity sha512-Oeb9cpahM/6lSO4emx4FA3F2k91xu0qFyDJr2IkwlU2EHnG5yLt1thHwob1XfTdsff4o0a825kQBRC1dFelf3Q==
   dependencies:
     "@envelop/core" "^2.5.0"
     "@envelop/parser-cache" "^4.6.0"
@@ -11025,11 +11048,10 @@ graphql-yoga@3.0.0-alpha-20220917000718-4285245d:
     "@graphql-tools/code-file-loader" "^7.3.0"
     "@graphql-tools/mock" "^8.7.0"
     "@graphql-tools/schema" "^9.0.0"
-    "@graphql-tools/utils" "^8.8.0"
     "@graphql-typed-document-node/core" "^3.1.1"
-    "@graphql-yoga/subscription" "^2.2.2"
-    "@whatwg-node/fetch" "^0.4.2"
-    "@whatwg-node/server" "0.4.0"
+    "@graphql-yoga/subscription" "^3.0.0-next.0"
+    "@whatwg-node/fetch" "0.4.4"
+    "@whatwg-node/server" "0.4.5"
     dset "^3.1.1"
     graphql-config "^4.1.0"
     tslib "^2.3.1"
