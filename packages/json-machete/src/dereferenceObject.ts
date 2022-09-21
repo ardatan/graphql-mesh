@@ -3,6 +3,7 @@ import { path as pathModule, process } from '@graphql-mesh/cross-helpers';
 import urlJoin from 'url-join';
 import { fetch as crossUndiciFetch } from '@whatwg-node/fetch';
 import { defaultImportFn, DefaultLogger, readFileOrUrl } from '@graphql-mesh/utils';
+import { handleUntitledDefinitions } from './healUntitledDefinitions';
 
 export const resolvePath = (path: string, root: any): any => {
   try {
@@ -113,23 +114,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
 
             // Title should not be overwritten by the title given from the reference
             // Usually Swagger and OpenAPI Schemas have this
-            if (externalFile.definitions) {
-              for (const definitionName in externalFile.definitions) {
-                const definition = externalFile.definitions[definitionName];
-                if (!definition.title) {
-                  definition.title = definitionName;
-                }
-              }
-            }
-
-            if (externalFile.components?.schemas) {
-              for (const definitionName in externalFile.components.schemas) {
-                const definition = externalFile.components.schemas[definitionName];
-                if (!definition.title) {
-                  definition.title = definitionName;
-                }
-              }
-            }
+            handleUntitledDefinitions(externalFile);
           }
           const result = await dereferenceObject(
             refPath

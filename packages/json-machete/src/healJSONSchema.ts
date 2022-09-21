@@ -298,6 +298,11 @@ export async function healJSONSchema(
             //   }
             // }
           }
+          if (subSchema.enum && subSchema.enum.length === 1 && subSchema.type !== 'boolean') {
+            subSchema.const = subSchema.enum[0];
+            logger.debug(`${path} has an enum but with a single value. Converting it to const.`);
+            delete subSchema.enum;
+          }
           if (!subSchema.title && !subSchema.$ref && subSchema.type !== 'array' && !subSchema.items) {
             const realPath = subSchema.$resolvedRef || path;
             // Try to get definition name if missing
@@ -355,6 +360,11 @@ export async function healJSONSchema(
             }
             if (subSchema.const) {
               subSchema.title = subSchema.const.toString() + '_const';
+              const existingSubSchema = schemaByTitle.get(subSchema.title);
+              if (existingSubSchema) {
+                return existingSubSchema;
+              }
+              schemaByTitle.set(subSchema.title, subSchema);
             }
           }
           if (subSchema.type === 'object' && subSchema.properties && Object.keys(subSchema.properties).length === 0) {

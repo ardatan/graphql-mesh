@@ -176,7 +176,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
         const typeComposer = schemaComposer.createEnumTC({
           name: scalarTypeName,
           values: {
-            [sanitizeNameForGraphQL(subSchema.const)]: {
+            [sanitizeNameForGraphQL(subSchema.const.toString())]: {
               value: subSchema.const,
             },
           },
