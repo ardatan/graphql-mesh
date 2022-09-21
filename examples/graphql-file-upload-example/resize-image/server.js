@@ -1,26 +1,38 @@
-const { createServer } = require('@graphql-yoga/node');
+const { createYoga, createSchema } = require('graphql-yoga');
+const { createServer } = require('http');
 const sharp = require('sharp');
 
-module.exports = createServer({
-  schema: {
-    typeDefs: /* GraphQL */ `
-      type Query {
-        resizeImage(image: String, width: Int, height: Int): String
-      }
-    `,
-    resolvers: {
-      Query: {
-        resizeImage: async (_, { image, width, height }) => {
-          const inputBuffer = Buffer.from(image, 'base64');
-          const buffer = await sharp(inputBuffer).resize(width, height).toBuffer();
-          const base64 = buffer.toString('base64');
-          return base64;
+module.exports = function startServer() {
+  const yoga = createYoga({
+    schema: createSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          resizeImage(image: String, width: Int, height: Int): String
+        }
+      `,
+      resolvers: {
+        Query: {
+          resizeImage: async (_, { image, width, height }) => {
+            const inputBuffer = Buffer.from(image, 'base64');
+            const buffer = await sharp(inputBuffer).resize(width, height).toBuffer();
+            const base64 = buffer.toString('base64');
+            return base64;
+          },
         },
       },
-    },
-  },
-  maskedErrors: false,
-  logging: false,
-  hostname: 'localhost',
-  port: 3002,
-});
+    }),
+    maskedErrors: false,
+    logging: false,
+  });
+  const server = createServer(yoga);
+  return new Promise(resolve => {
+    server.listen(3002, () => {
+      resolve(
+        () =>
+          new Promise(resolve => {
+            server.close(resolve);
+          })
+      );
+    });
+  });
+};
