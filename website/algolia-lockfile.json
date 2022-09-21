@@ -248,15 +248,15 @@
   {
     "objectID": "mesh-docs-getting-started-customize-mesh-server",
     "headings": [
-      "Configure and provide Envelop plugins",
+      "Configure and provide plugins",
       "Provide a standalone server implementation",
       "Configuration: `serve` reference"
     ],
     "toc": [
       {
         "children": [],
-        "title": "Configure and provide Envelop plugins",
-        "anchor": "configure-and-provide-envelop-plugins"
+        "title": "Configure and provide plugins",
+        "anchor": "configure-and-provide-plugins"
       },
       {
         "children": [],
@@ -269,7 +269,7 @@
         "anchor": "configuration-serve-reference"
       }
     ],
-    "content": "dfdb70e8c7b2b25ac79660ef3ca31c45",
+    "content": "796de632033efc4578c6cabcd0cb8e88",
     "url": "https://www.graphql-mesh.com/docs/getting-started/customize-mesh-server",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Getting Started"],
@@ -671,29 +671,6 @@
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-guides-live-queries",
-    "headings": ["Config API Reference", "Codesandbox Example"],
-    "toc": [
-      {
-        "children": [],
-        "title": "Config API Reference",
-        "anchor": "config-api-reference"
-      },
-      {
-        "children": [],
-        "title": "Codesandbox Example",
-        "anchor": "codesandbox-example"
-      }
-    ],
-    "content": "af79acceca8efe5a7354b5714d54cf6e",
-    "url": "https://www.graphql-mesh.com/docs/guides/live-queries",
-    "domain": "https://www.graphql-mesh.com/",
-    "hierarchy": ["Docs", "Guides"],
-    "source": "Mesh",
-    "title": "Live Queries",
-    "type": "Documentation"
-  },
-  {
     "objectID": "mesh-docs-guides-mesh-sdk",
     "headings": ["Executing queries programmatically", "Generating fully type safe SDK"],
     "toc": [
@@ -734,184 +711,32 @@
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-guides-mock",
-    "headings": [
-      "How to use?",
-      "Custom mock functions for fields",
-      "Custom mock functions for types",
-      "Mocking the lists",
-      "Stateful mocking",
-      "Codesandbox Example",
-      "Config API Reference"
-    ],
-    "toc": [
-      {
-        "children": [],
-        "title": "How to use?",
-        "anchor": "how-to-use"
-      },
-      {
-        "children": [],
-        "title": "Custom mock functions for fields",
-        "anchor": "custom-mock-functions-for-fields"
-      },
-      {
-        "children": [],
-        "title": "Custom mock functions for types",
-        "anchor": "custom-mock-functions-for-types"
-      },
-      {
-        "children": [],
-        "title": "Mocking the lists",
-        "anchor": "mocking-the-lists"
-      },
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "children": [],
-                "title": "Get from the store",
-                "anchor": "get-from-the-store"
-              },
-              {
-                "children": [],
-                "title": "Mutate data in the store",
-                "anchor": "mutate-data-in-the-store"
-              }
-            ],
-            "title": "Initialize store",
-            "anchor": "initialize-store"
-          }
-        ],
-        "title": "Stateful mocking",
-        "anchor": "stateful-mocking"
-      },
-      {
-        "children": [],
-        "title": "Codesandbox Example",
-        "anchor": "codesandbox-example"
-      },
-      {
-        "children": [],
-        "title": "Config API Reference",
-        "anchor": "config-api-reference"
-      }
-    ],
-    "content": "8c875f062b5b3346f25f131ba99f1c64",
-    "url": "https://www.graphql-mesh.com/docs/guides/mock",
-    "domain": "https://www.graphql-mesh.com/",
-    "hierarchy": ["Docs", "Guides"],
-    "source": "Mesh",
-    "title": "Mocking your API",
-    "type": "Documentation"
-  },
-  {
     "objectID": "mesh-docs-guides-monitoring-and-tracing",
-    "headings": ["DataDog, InfluxDB, Telegraf, StatsD", "Prometheus", "NewRelic", "GraphQL Result Extensions"],
+    "headings": ["Mesh plugins", "GraphQL Result Extensions"],
     "toc": [
       {
-        "children": [
-          {
-            "children": [
-              {
-                "children": [],
-                "title": "Example Configuration",
-                "anchor": "example-configuration"
-              }
-            ],
-            "title": "Getting Started",
-            "anchor": "getting-started"
-          }
-        ],
-        "title": "DataDog, InfluxDB, Telegraf, StatsD",
-        "anchor": "datadog-influxdb-telegraf-statsd"
-      },
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "children": [],
-                "title": "Example Configuration",
-                "anchor": "example-configuration-1"
-              },
-              {
-                "children": [],
-                "title": "Custom Registry",
-                "anchor": "custom-registry"
-              }
-            ],
-            "title": "Getting Started",
-            "anchor": "getting-started-1"
-          }
-        ],
-        "title": "Prometheus",
-        "anchor": "prometheus"
-      },
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "children": [],
-                "title": "Example Configuration",
-                "anchor": "example-configuration-2"
-              }
-            ],
-            "title": "Getting Started",
-            "anchor": "getting-started-2"
-          }
-        ],
-        "title": "NewRelic",
-        "anchor": "newrelic"
+        "children": [],
+        "title": "Mesh plugins",
+        "anchor": "mesh-plugins"
       },
       {
         "children": [
           {
             "children": [],
             "title": "Getting Started",
-            "anchor": "getting-started-3"
+            "anchor": "getting-started"
           }
         ],
         "title": "GraphQL Result Extensions",
         "anchor": "graphql-result-extensions"
       }
     ],
-    "content": "90f4908dd865c6b15f33937f31890ee1",
+    "content": "d08871d027fb8340acf74f84ab7e1f13",
     "url": "https://www.graphql-mesh.com/docs/guides/monitoring-and-tracing",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Guides"],
     "source": "Mesh",
     "title": "Monitoring and Tracing",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "mesh-docs-guides-response-caching",
-    "headings": ["Getting Started", "Config API Reference", "Codesandbox Example"],
-    "toc": [
-      {
-        "children": [],
-        "title": "Getting Started",
-        "anchor": "getting-started"
-      },
-      {
-        "children": [],
-        "title": "Config API Reference",
-        "anchor": "config-api-reference"
-      },
-      {
-        "children": [],
-        "title": "Codesandbox Example",
-        "anchor": "codesandbox-example"
-      }
-    ],
-    "content": "c82d7edbf5cceb13ad3a79b8bb4af6f9",
-    "url": "https://www.graphql-mesh.com/docs/guides/response-caching",
-    "domain": "https://www.graphql-mesh.com/",
-    "hierarchy": ["Docs", "Guides"],
-    "source": "Mesh",
-    "title": "GraphQL Response Caching",
     "type": "Documentation"
   },
   {
@@ -1004,6 +829,289 @@
     "hierarchy": ["Docs", "Migration guides"],
     "source": "Mesh",
     "title": "openAPI handler `<0.31` to `0.32`",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-live-queries",
+    "headings": ["Config API Reference", "Codesandbox Example"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      },
+      {
+        "children": [],
+        "title": "Codesandbox Example",
+        "anchor": "codesandbox-example"
+      }
+    ],
+    "content": "af79acceca8efe5a7354b5714d54cf6e",
+    "url": "https://www.graphql-mesh.com/docs/plugins/live-queries",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Docs", "Plugins"],
+    "source": "Mesh",
+    "title": "Live Queries",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-mock",
+    "headings": [
+      "How to use?",
+      "Custom mock functions for fields",
+      "Custom mock functions for types",
+      "Mocking the lists",
+      "Stateful mocking",
+      "Codesandbox Example",
+      "Config API Reference"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "How to use?",
+        "anchor": "how-to-use"
+      },
+      {
+        "children": [],
+        "title": "Custom mock functions for fields",
+        "anchor": "custom-mock-functions-for-fields"
+      },
+      {
+        "children": [],
+        "title": "Custom mock functions for types",
+        "anchor": "custom-mock-functions-for-types"
+      },
+      {
+        "children": [],
+        "title": "Mocking the lists",
+        "anchor": "mocking-the-lists"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Get from the store",
+                "anchor": "get-from-the-store"
+              },
+              {
+                "children": [],
+                "title": "Mutate data in the store",
+                "anchor": "mutate-data-in-the-store"
+              }
+            ],
+            "title": "Initialize store",
+            "anchor": "initialize-store"
+          }
+        ],
+        "title": "Stateful mocking",
+        "anchor": "stateful-mocking"
+      },
+      {
+        "children": [],
+        "title": "Codesandbox Example",
+        "anchor": "codesandbox-example"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "8c875f062b5b3346f25f131ba99f1c64",
+    "url": "https://www.graphql-mesh.com/docs/plugins/mock",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Docs", "Plugins"],
+    "source": "Mesh",
+    "title": "Mocking your API",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-new-relic",
+    "headings": ["Getting Started", "Example Configuration", "Config API Reference"],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [],
+            "title": "Enabling required NewRelic feature flags",
+            "anchor": "enabling-required-newrelic-feature-flags"
+          }
+        ],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [],
+        "title": "Example Configuration",
+        "anchor": "example-configuration"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "c1de34c6a3485e13098970226043e312",
+    "url": "https://www.graphql-mesh.com/docs/plugins/new-relic",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Docs", "Plugins"],
+    "source": "Mesh",
+    "title": "NewRelic",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-operation-field-permissions",
+    "headings": ["Example Configuration", "Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Example Configuration",
+        "anchor": "example-configuration"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "33c309c0d20ad5722fc4c8a7555601c6",
+    "url": "https://www.graphql-mesh.com/docs/plugins/operation-field-permissions",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Docs", "Plugins"],
+    "source": "Mesh",
+    "title": "Operation Field Permissions",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-plugins-introduction",
+    "headings": ["Additional Plugins", "Plugins Hooks"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Additional Plugins",
+        "anchor": "additional-plugins"
+      },
+      {
+        "children": [],
+        "title": "Plugins Hooks",
+        "anchor": "plugins-hooks"
+      }
+    ],
+    "content": "8beb512cf357995deee6abd1ada79402",
+    "url": "https://www.graphql-mesh.com/docs/plugins/plugins-introduction",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Docs", "Plugins"],
+    "source": "Mesh",
+    "title": "Introduction",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-prometheus",
+    "headings": ["Getting Started", "Example Configuration", "Custom Registry", "Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [],
+        "title": "Example Configuration",
+        "anchor": "example-configuration"
+      },
+      {
+        "children": [],
+        "title": "Custom Registry",
+        "anchor": "custom-registry"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "dd1e40e4c2e221a7dad8f3cc11b1e53a",
+    "url": "https://www.graphql-mesh.com/docs/plugins/prometheus",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Docs", "Plugins"],
+    "source": "Mesh",
+    "title": "Prometheus",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-rate-limit",
+    "headings": ["Example Configuration", "Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Example Configuration",
+        "anchor": "example-configuration"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "02318b4fb97200333177888215a06d45",
+    "url": "https://www.graphql-mesh.com/docs/plugins/rate-limit",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Docs", "Plugins"],
+    "source": "Mesh",
+    "title": "Rate Limit",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-response-caching",
+    "headings": ["Getting Started", "Config API Reference", "Codesandbox Example"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      },
+      {
+        "children": [],
+        "title": "Codesandbox Example",
+        "anchor": "codesandbox-example"
+      }
+    ],
+    "content": "c82d7edbf5cceb13ad3a79b8bb4af6f9",
+    "url": "https://www.graphql-mesh.com/docs/plugins/response-caching",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Docs", "Plugins"],
+    "source": "Mesh",
+    "title": "GraphQL Response Caching",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-statsd",
+    "headings": ["Example Configuration", "Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Example Configuration",
+        "anchor": "example-configuration"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "db656f34bd518b80a06ab9dfc95d1c03",
+    "url": "https://www.graphql-mesh.com/docs/plugins/statsd",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Docs", "Plugins"],
+    "source": "Mesh",
+    "title": "StatsD",
     "type": "Documentation"
   },
   {
@@ -1891,7 +1999,7 @@
         "anchor": "two-different-modes"
       }
     ],
-    "content": "506a323c640a7bf6488e42f0c020c06c",
+    "content": "0c9b94a9419f4981c8dd820841c2f95f",
     "url": "https://www.graphql-mesh.com/docs/transforms/transforms-introduction",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Transforms"],
