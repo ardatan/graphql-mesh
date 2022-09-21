@@ -42,13 +42,18 @@ export function handleUntitledDefinitions(schemaDocument: any) {
           for (const contentType in body.content) {
             const contentObj = body.content[contentType];
             const contentSchema = contentObj.schema;
-            if (contentSchema && !contentSchema.$ref && !contentSchema.title) {
-              contentSchema.title = bodyName;
-              if (contentType !== 'application/json') {
-                contentSchema.title += `_${contentType.split('/')[1]}`;
+            if (contentSchema && !contentSchema.$ref) {
+              if (!contentSchema.title) {
+                contentSchema.title = bodyName;
+                if (contentType !== 'application/json') {
+                  contentSchema.title += `_${contentType.split('/')[1]}`;
+                }
+                const suffix = bodyTypeMap[bodyType];
+                contentSchema.title += '_' + suffix;
               }
-              const suffix = bodyTypeMap[bodyType];
-              contentSchema.title += '_' + suffix;
+              if (body.description && !contentSchema.description) {
+                contentSchema.description = body.description;
+              }
             }
           }
         }
@@ -65,9 +70,14 @@ export function handleUntitledDefinitions(schemaDocument: any) {
       for (const inputName in inputs) {
         const input = inputs[inputName];
         const inputSchema = input.schema;
-        if (inputSchema && !inputSchema.$ref && !inputSchema.title) {
-          const suffix = inputTypeMap[inputType];
-          inputSchema.title = inputName + '_' + suffix;
+        if (inputSchema && !inputSchema.$ref) {
+          if (!inputSchema.title) {
+            const suffix = inputTypeMap[inputType];
+            inputSchema.title = inputName + '_' + suffix;
+          }
+          if (input.description && !inputSchema.description) {
+            inputSchema.description = input.description;
+          }
         }
       }
     }

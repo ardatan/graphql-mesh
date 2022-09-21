@@ -361,6 +361,7 @@ type Pagination {
   previous_page_token: String
 }
 
+"Request is not valid"
 type INVALID_ARGUMENT_response {
   title: Invalid_Argument_const
   message: The_supplied_parameters_are_invalid__const
@@ -380,6 +381,7 @@ type query_getInvitees_oneOf_1_allOf_0_details_items {
   message: String!
 }
 
+"Cannot authenticate caller"
 type UNAUTHENTICATED_response {
   title: Unauthenticated_const
   message: query_getInvitees_oneOf_2_allOf_1_message
@@ -396,6 +398,7 @@ enum query_getInvitees_oneOf_2_allOf_1_message {
   The_access_token_was_revoked
 }
 
+"Caller not authorized to perform this action"
 type PERMISSION_DENIED_response {
   title: Permission_Denied_const
   message: query_getInvitees_oneOf_3_allOf_1_message
@@ -418,6 +421,7 @@ enum query_getInvitees_oneOf_3_allOf_1_message {
   You_cannot_perform_this_action_for_an_organization_with_SCIM_enabled_
 }
 
+"Requested resource not found"
 type NOT_FOUND_response {
   title: Resource_Not_Found_const
   message: The_server_could_not_find_the_requested_resource__const
@@ -432,6 +436,7 @@ enum The_server_could_not_find_the_requested_resource__const {
   The_server_could_not_find_the_requested_resource_
 }
 
+"An error has occurred on the server"
 type UNKNOWN_response {
   title: Internal_Server_Error_const
   message: The_server_encountered_an_unexpected_condition_that_prevented_it_from_fulfilling_the_request__const

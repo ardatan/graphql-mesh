@@ -1776,8 +1776,8 @@ exports[`example_api should generate the bundle correctly 1`] = `
         },
         "globalquery": {
           "description": undefined,
-          "name": "globalquery",
           "nullable": false,
+          "title": "GlobalQuery_parameter",
           "type": "string",
         },
         "limit": {
@@ -1823,8 +1823,8 @@ exports[`example_api should generate the bundle correctly 1`] = `
         },
         "globalquery": {
           "description": undefined,
-          "name": "globalquery",
           "nullable": false,
+          "title": "GlobalQuery_parameter",
           "type": "string",
         },
         "port": {
@@ -2112,6 +2112,12 @@ exports[`example_api should generate the bundle correctly 1`] = `
   "referencedSchema": {
     "$ref": "#/definitions/_schema",
     "definitions": {
+      "GlobalQuery_parameter": {
+        "description": undefined,
+        "nullable": false,
+        "title": "GlobalQuery_parameter",
+        "type": "string",
+      },
       "Mutation": {
         "properties": {
           "postOfficeTrashCan": {
@@ -2868,10 +2874,7 @@ exports[`example_api should generate the bundle correctly 1`] = `
             "type": "string",
           },
           "globalquery": {
-            "description": undefined,
-            "name": "globalquery",
-            "nullable": false,
-            "type": "string",
+            "$ref": "#/definitions/GlobalQuery_parameter",
           },
           "input": {
             "$ref": "#/definitions/post_status_request",
@@ -3455,10 +3458,7 @@ exports[`example_api should generate the bundle correctly 1`] = `
             "type": "string",
           },
           "globalquery": {
-            "description": undefined,
-            "name": "globalquery",
-            "nullable": false,
-            "type": "string",
+            "$ref": "#/definitions/GlobalQuery_parameter",
           },
           "limit": {
             "description": undefined,
