@@ -1,5 +1,14 @@
 # @graphql-mesh/cli
 
+## 0.78.22
+
+### Patch Changes
+
+- [`37eae3e00`](https://github.com/Urigo/graphql-mesh/commit/37eae3e000c70cb8381529ff4068a634d29ac160) Thanks [@ardatan](https://github.com/ardatan)! - Fix implicit typings issue with `createBuiltMeshHTTPHandler`
+
+- Updated dependencies [[`37eae3e00`](https://github.com/Urigo/graphql-mesh/commit/37eae3e000c70cb8381529ff4068a634d29ac160)]:
+  - @graphql-mesh/http@0.1.19
+
 ## 0.78.21
 
 ### Patch Changes
