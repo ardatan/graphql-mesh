@@ -1,0 +1,66 @@
+import { PackageCmd } from '@theguild/components'
+
+# NewRelic
+
+If you wish to integrate NewRelic for tracing, monitoring and error reporting, you can use `@graphql-mesh/plugin-newrelic`.
+
+You can instrument your GraphQL application with New Relic reporting in order to take advantage of Distributed tracing to monitor performance and errors whilst ultimately getting to the root cause of issues.
+
+![image](https://user-images.githubusercontent.com/20847995/188124061-f824e446-634c-485c-9021-392ee52c3594.png)
+
+## Getting Started
+
+<PackageCmd packages={['@graphql-mesh/plugin-newrelic', 'newrelic']} />
+
+### Enabling required NewRelic feature flags
+Some additional configuration is needed to allow Mesh send the collected information correctly to NewRelic.
+
+You can add the following to your `.env` file;
+```
+NEW_RELIC_FEATURE_FLAG_UNDICI_INSTRUMENTATION=true
+NEW_RELIC_FEATURE_FLAG_UNDICI_ASYNC_TRACKING=true
+NEW_RELIC_FEATURE_FLAG_NEW_PROMISE_TRACKING=true
+```
+
+or you can add the following to your NewRelic configuration file `newrelic.js`;
+
+```js
+exports.config = {
+  // ...
+  feature_flag: {
+    undici_instrumentation: true,
+    undici_async_tracking: true,
+    new_promise_tracking: true,
+  },
+};
+```
+
+## Example Configuration
+
+```yaml
+# ...
+plugins:
+  - newrelic:
+      # default `false`. When set to `true`, includes the GraphQL document defining the operations and fragments
+      includeDocument: true
+      # default `false`. When set to `true`, includes all the operation variables with their values
+      includeExecuteVariables: false
+      # default: `false`. When set to `true`, includes the execution result
+      includeRawResult: false
+      # default `false`. When set to `true`, track resolvers as segments to monitor their performance
+      trackResolvers: true
+      # default `false`. When set to `true`, includes all the arguments passed to resolvers with their values
+      includeResolverArgs: false
+      # default `false`. When set to `true` append the names of operation root fields to the transaction name
+      rootFieldsNaming: true
+      # Allows to set a custom operation name to be used as transaction name and attribute
+      extractOperationName: "{context.headers['x-operation-name']}"
+```
+
+[See here for more advanced options](https://github.com/n1ru4l/envelop/blob/main/packages/plugins/newrelic/README.md#agent-configuration)
+
+## Config API Reference
+
+import API from '../../../generated-markdown/NewrelicConfig.generated.md'
+
+<API />

@@ -1,0 +1,76 @@
+import { PackageCmd } from '@theguild/components'
+
+# Prometheus
+
+Prometheus is a platform for scraping metrics from services and utilities.
+You can use `@graphql-mesh/plugin-prometheus` plugin to expose and collect metrics from all phases of your GraphQL execution including internal query planning and outgoing HTTP requests.
+
+This plugin tracks the complete gateway execution flow and exposes the following metrics:
+- Successful requests (`requestCount`)
+- Request summary (`requestSummary`)
+- errors (categorized by `phase`)
+- resolvers tracing and runtime
+- deprecated fields usage
+- count of graphql operations
+- `parse` execution time
+- `validate` execution time
+- `contextBuilding` execution time
+- `execute` execution time
+- Latency of outgoing HTTP request
+- Latency of the delegation to the individual sources
+
+## Getting Started
+
+<PackageCmd packages={['@graphql-mesh/plugin-prometheus', 'prom-client']} />
+
+## Example Configuration
+
+```yaml
+# ...
+plugins:
+  - prometheus:
+    # all optional, and by default, all set to false, please opt-in to the metrics you wish to get
+
+    # requires `execute` to be true
+    requestCount: true
+    # requires `execute` to be true
+    requestSummary: true
+    parse: true
+    validate: true
+    contextBuilding: true
+    execute: true
+    errors: true
+    resolvers: true
+    # reports metrics also for these resolvers, by default all fields are reported
+    resolversWhiteList:
+      - Mutation.*
+      - Query.user
+    deprecatedFields: true
+```
+
+> Note: Tracing resolvers using `resovlers: true` might have a performance impact on your GraphQL runtime. Please consider to test it locally first and then decide if it's needed.
+
+## Custom Registry
+
+You can customize the client's registry by passing a custom registry to the `registry` option.
+
+```ts
+// myRegistry.ts
+import { Registry } from 'prom-client';
+
+export default const myRegistry = new Registry();
+```
+
+```yaml
+# ...
+plugins:
+  - prometheus:
+      # ...
+      registry: ./myRegistry.ts
+```
+
+## Config API Reference
+
+import API from '../../../generated-markdown/PrometheusConfig.generated.md'
+
+<API />

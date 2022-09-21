@@ -41,63 +41,11 @@ Customizing your GraphQL Mesh Gateway server can be achieved in 2 ways:
 - **Configure and provide Envelop plugins**: to add behaviors such as caching, authentication, tracing to your Gateway
 - **Provide a standalone server implementation**: to completely replace the server used by the Gateway
 
-## Configure and provide Envelop plugins
+## Configure and provide plugins
 
-[Envelop](https://envelop.dev) is a library that helps build GraphQL API faster and flexibly with plugin-based architecture.
+Aided by the capabilities of [Envelop](https://envelop.dev), you can easily add plugins that helps with security and authentication, advanced caching, error handling, monitoring, logging and much more.
 
-Similar to Express middlewares allowing you to customize requests' behavior, Envelop applies the same idea to GraphQL requests.
-
-By exposing hooks in all the phases of a GraphQL Request execution, Envelop enables the creation of plugins that simplify the setup of standard API features such as:
-
-- Security: Depth limits, Rate limiting
-- Authentication
-- Advanced caching
-- Error handling: Sentry, error masking
-- Monitoring: Hive
-- Logging
-- Tracing: NewRelic, Datadog, StatsD, Apollo Tracing
-
-An Envelop plugin is a standalone `npm` package that provides a plugin function that can be used in an Envelop setup to customize a GraphQL API behavior.
-
-Examples of plugins are:
-
-- `useGenericAuth` (`@envelop/generic-auth`): Custom authentication flow by providing a custom user resolver.
-- `useDepthLimit` (`@envelop/depth-limit`): Limit the depth of executed selection sets.
-
-The GraphQL Mesh configuration accepts a `additionalEnvelopPlugins` parameter that should point to a file that exports a list of Envelop plugins, as shown below:
-
-```yaml filename=".meshrc.yaml"
-sources:
-  # …
-
-additionalEnvelopPlugins: './envelopPlugins'
-```
-
-```ts filename="envelopPlugins.ts"
-import { PluginOrDisabledPlugin } from '@envelop/core'
-import { useDepthLimit } from '@envelop/depth-limit'
-import { useSentry } from '@envelop/sentry'
-
-const plugins: PluginOrDisabledPlugin = [
-  useDepthLimit({
-    maxDepth: 10
-  }),
-  useSentry({
-    includeRawResult: false
-  })
-]
-
-export default plugins
-```
-
-<Callout>Note: The file can also export a factory function returning a `PluginOrDisabledPlugin` list</Callout>
-
-Mesh provides each plugin with unique hooks:
-
-- `onFetch`: triggered when `fetch` is called. Enables parameters manipulation, logging and even fetch function replacement.
-- `onDelegate`: triggered when a request is forwarded to the upstream (Either by context SDK or directly through the gateway).
-
-Those hooks has access to all remote execution parameters (root, args, context, info etc).
+For full list of available plugins, please refer to the [plugins section](/docs/plugins/plugins-introduction).
 
 
 ## Provide a standalone server implementation
