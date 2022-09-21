@@ -1,5 +1,17 @@
 # @graphql-mesh/mongoose
 
+## 0.11.15
+
+### Patch Changes
+
+- [#4563](https://github.com/Urigo/graphql-mesh/pull/4563) [`186e37bcd`](https://github.com/Urigo/graphql-mesh/commit/186e37bcd94c6eae16b30abd2f4c8b04d2ef422e) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`graphql-compose-mongoose@9.7.2` ↗︎](https://www.npmjs.com/package/graphql-compose-mongoose/v/9.7.2) (from `9.7.1`, in `dependencies`)
+
+- Updated dependencies [[`186e37bcd`](https://github.com/Urigo/graphql-mesh/commit/186e37bcd94c6eae16b30abd2f4c8b04d2ef422e)]:
+  - @graphql-mesh/utils@0.41.15
+  - @graphql-mesh/types@0.84.4
+
 ## 0.11.14
 
 ### Patch Changes
