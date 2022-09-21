@@ -1,5 +1,13 @@
 # soap-netsuite
 
+## 0.0.180
+
+### Patch Changes
+
+- Updated dependencies [[`186e37bcd`](https://github.com/Urigo/graphql-mesh/commit/186e37bcd94c6eae16b30abd2f4c8b04d2ef422e)]:
+  - @graphql-mesh/cli@0.78.24
+  - @graphql-mesh/soap@0.14.15
+
 ## 0.0.179
 
 ### Patch Changes

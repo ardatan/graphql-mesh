@@ -1,5 +1,12 @@
 # @graphql-mesh/plugin-operation-field-permissions
 
+## 0.0.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.84.4
+
 ## 0.0.4
 
 ### Patch Changes
