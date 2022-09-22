@@ -172,11 +172,11 @@ const datasources: Array<string> = [
   'gRPC',
   'MongoDB',
   'Postgres',
-  'Neo4j',
+  'SOAP',
   'MySQL',
   'JSON Schema',
   'Postgraphile',
-  'SOAP',
+  'Neo4j',
   'SQLite',
   '& More...',
 ];
