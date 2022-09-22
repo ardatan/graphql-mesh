@@ -33,8 +33,8 @@ function Hero() {
           The Graph of Everything - Federated architecture for any API service
         </p>
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <SecondaryLink href="/graphql/mesh/docs">Documentation</SecondaryLink>
-          <SecondaryLink className="hidden lg:block" href="/graphql/mesh/examples">
+          <SecondaryLink href="./docs">Documentation</SecondaryLink>
+          <SecondaryLink className="hidden lg:block" href="./examples">
             Examples
           </SecondaryLink>
           <SecondaryLink className="flex flex-row gap-2 items-center" href="https://github.com/urigo/graphql-mesh">
@@ -297,7 +297,7 @@ export function IndexPage(): ReactElement {
                   },
                   {
                     title: 'Mock, cache and transform',
-                    description: 'your entire s chema',
+                    description: 'your entire schema',
                   },
                 ]}
               />
@@ -329,7 +329,7 @@ export function IndexPage(): ReactElement {
                 },
                 {
                   title: 'Modify results',
-                  description: 'Fielter, sort, replace and more',
+                  description: 'Filter, sort, replace and more',
                 },
                 {
                   title: 'Alter resolvers',
@@ -356,7 +356,7 @@ export function IndexPage(): ReactElement {
                 highlights={[
                   {
                     title: 'Monitoring and tracing',
-                    description: 'Integrate with services such as StatsD, Prometeus, NewRelic',
+                    description: 'Integrate with services such as StatsD, Prometheus, NewRelic',
                   },
                   {
                     title: 'Enhanced security',
