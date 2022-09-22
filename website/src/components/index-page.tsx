@@ -33,8 +33,8 @@ function Hero() {
           The Graph of Everything - Federated architecture for any API service
         </p>
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <SecondaryLink href="./docs">Documentation</SecondaryLink>
-          <SecondaryLink className="hidden lg:block" href="./examples">
+          <SecondaryLink href="graphql/mesh/docs">Documentation</SecondaryLink>
+          <SecondaryLink className="hidden lg:block" href="graphql/mesh/examples">
             Examples
           </SecondaryLink>
           <SecondaryLink className="flex flex-row gap-2 items-center" href="https://github.com/urigo/graphql-mesh">
