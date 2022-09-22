@@ -33,8 +33,8 @@ function Hero() {
           The Graph of Everything - Federated architecture for any API service
         </p>
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <SecondaryLink href="/docs">Documentation</SecondaryLink>
-          <SecondaryLink className="hidden lg:block" href="/examples">
+          <SecondaryLink href="./docs">Documentation</SecondaryLink>
+          <SecondaryLink className="hidden lg:block" href="./examples">
             Examples
           </SecondaryLink>
           <SecondaryLink className="flex flex-row gap-2 items-center" href="https://github.com/urigo/graphql-mesh">
@@ -172,11 +172,11 @@ const datasources: Array<string> = [
   'gRPC',
   'MongoDB',
   'Postgres',
-  'Neo4j',
+  'SOAP',
   'MySQL',
   'JSON Schema',
   'Postgraphile',
-  'SOAP',
+  'Neo4j',
   'SQLite',
   '& More...',
 ];
@@ -192,7 +192,7 @@ export function IndexPage(): ReactElement {
         description={
           <div className="space-y-2">
             <p>
-              Mesh is a framework that helps shape and build an executable Graphql schema from multiple data sources.
+              Mesh is a framework that helps shape and build an executable GraphQL schema from multiple data sources.
             </p>
           </div>
         }
@@ -217,7 +217,7 @@ export function IndexPage(): ReactElement {
               },
               {
                 title: 'OmniGraph',
-                description: 'GraphQL Mesh compose sources as a single Graphql schema',
+                description: 'GraphQL Mesh compose sources as a single GraphQL schema',
                 icon: (
                   <Image
                     src={MeshExampleLogo}
@@ -282,7 +282,7 @@ export function IndexPage(): ReactElement {
         description={
           <div className="flex flex-col gap-y-12">
             <div>
-              <p>Work with servcices that aren't Graphql as if they were.</p>
+              <p>Work with services that aren't GraphQL as if they were.</p>
             </div>
             <div className="flex flex-col gap-y-12">
               <FeatureHighlights
@@ -297,7 +297,7 @@ export function IndexPage(): ReactElement {
                   },
                   {
                     title: 'Mock, cache and transform',
-                    description: 'your entire s chema',
+                    description: 'your entire schema',
                   },
                 ]}
               />
@@ -329,7 +329,7 @@ export function IndexPage(): ReactElement {
                 },
                 {
                   title: 'Modify results',
-                  description: 'Fielter, sort, replace and more',
+                  description: 'Filter, sort, replace and more',
                 },
                 {
                   title: 'Alter resolvers',
@@ -356,7 +356,7 @@ export function IndexPage(): ReactElement {
                 highlights={[
                   {
                     title: 'Monitoring and tracing',
-                    description: 'Integrate with services such as StatsD, Prometeus, NewRelic',
+                    description: 'Integrate with services such as StatsD, Prometheus, NewRelic',
                   },
                   {
                     title: 'Enhanced security',
