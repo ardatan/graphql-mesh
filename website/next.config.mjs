@@ -25,6 +25,7 @@ export default withGuildDocs({
       '/docs/handlers/available-handlers': '/docs/handlers/handlers-introduction',
       '/docs/guides/:path*': '/docs/guides/extending-unified-schema',
       '/docs/migration/:path*': '/docs/migration/openapi-0.31-0.32',
+      '/docs/plugins': '/docs/plugins/plugins-introduction',
     }).map(([from, to]) => ({
       source: from,
       destination: to,
