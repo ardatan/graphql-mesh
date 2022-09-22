@@ -97,10 +97,10 @@ export function wrapFetchWithPlugins(plugins: MeshPlugin<any>[]): MeshFetch {
 
 // Use in-context-sdk for tracing
 function createProxyingResolverFactory(apiName: string, apiSchema: GraphQLSchema): CreateProxyingResolverFn {
-  return function createProxyingResolver() {
+  return function createProxyingResolver({ operation, fieldName }) {
+    const rootType = apiSchema.getRootType(operation);
     return function proxyingResolver(root, args, context, info) {
-      const rootType = apiSchema.getRootType(info.operation.operation);
-      return context[apiName][rootType.name][info.fieldName]({ root, args, context, info });
+      return context[apiName][rootType.name][fieldName]({ root, args, context, info });
     };
   };
 }

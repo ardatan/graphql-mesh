@@ -6,6 +6,7 @@ import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { parse } from 'graphql';
 import { getMesh } from '../src/get-mesh';
 import { MeshResolvedSource } from '../src/types';
 
@@ -32,68 +33,109 @@ describe('getMesh', () => {
     });
   });
 
-  it('handle sources with different query type names', async () => {
-    function createServiceWithPrefix(prefix: string) {
-      return makeExecutableSchema({
-        typeDefs: `
-          type Query${prefix} {
-            hello${prefix}: String
+  interface CreateSchemaConfiguration {
+    suffix: string;
+    suffixRootTypeNames: boolean;
+    suffixFieldNames: boolean;
+    suffixResponses: boolean;
+  }
+
+  function createGraphQLSchema(config: CreateSchemaConfiguration) {
+    const queryTypeName = config.suffixRootTypeNames ? `Query${config.suffix}` : 'Query';
+    const mutationTypeName = config.suffixRootTypeNames ? `Mutation${config.suffix}` : 'Mutation';
+    const subscriptionTypeName = config.suffixRootTypeNames ? `Subscription${config.suffix}` : 'Subscription';
+
+    return makeExecutableSchema({
+      typeDefs: `
+          type ${queryTypeName} {
+            hello${config.suffixFieldNames ? config.suffix : ''}: String
+          }
+
+          type ${mutationTypeName} {
+            bye${config.suffixFieldNames ? config.suffix : ''}: String
+          }
+
+          type ${subscriptionTypeName} {
+            wave${config.suffixFieldNames ? config.suffix : ''}: String
           }
 
           schema {
-            query: Query${prefix}
+            query: ${queryTypeName}
+            mutation: ${mutationTypeName}
+            subscription: ${subscriptionTypeName}
           }
         `,
-        resolvers: {
-          [`Query${prefix}`]: {
-            [`hello${prefix}`]: () => `Hello from ${prefix}`,
-          },
+      resolvers: {
+        [queryTypeName]: {
+          [`hello${config.suffixFieldNames ? config.suffix : ''}`]: () =>
+            `Hello from service${config.suffixResponses ? config.suffix : ''}`,
         },
-      });
-    }
+        [mutationTypeName]: {
+          [`bye${config.suffixFieldNames ? config.suffix : ''}`]: () =>
+            `Bye from service${config.suffixResponses ? config.suffix : ''}schema`,
+        },
+      },
+    });
+  }
 
-    function createSourceWithPrefix(prefix: string): MeshResolvedSource {
-      const name = `service${prefix}`;
-      return {
+  function createGraphQLSource(config: CreateSchemaConfiguration): MeshResolvedSource {
+    const name = `service${config.suffix}`;
+    return {
+      name,
+      handler: new GraphQLHandler({
+        baseDir,
+        cache,
+        pubsub,
         name,
-        handler: new GraphQLHandler({
-          baseDir,
-          cache,
-          pubsub,
-          name,
-          config: {
-            schema: `./schema${prefix}.ts`,
-          },
-          store,
-          logger,
-          async importFn(moduleId) {
-            if (moduleId.endsWith(`schema${prefix}.ts`)) {
-              return createServiceWithPrefix(prefix);
-            }
-            return defaultImportFn(moduleId);
-          },
-        }),
-        transforms: [],
-      };
-    }
+        config: {
+          schema: `./schema${config.suffix}.ts`,
+        },
+        store,
+        logger,
+        async importFn(moduleId) {
+          if (moduleId.endsWith(`schema${config.suffix}.ts`)) {
+            return createGraphQLSchema(config);
+          }
+          return defaultImportFn(moduleId);
+        },
+      }),
+      transforms: [],
+    };
+  }
 
+  it('handle sources with different query type names', async () => {
     const mesh = await getMesh({
       cache,
       pubsub,
       logger,
-      sources: new Array(3).fill(0).map((_, i) => createSourceWithPrefix(i.toString())),
+      sources: new Array(3).fill(0).map((_, i) =>
+        createGraphQLSource({
+          suffix: i.toString(),
+          suffixRootTypeNames: true,
+          suffixFieldNames: false,
+          suffixResponses: false,
+        })
+      ),
       merger,
     });
 
     expect(printSchemaWithDirectives(mesh.schema)).toMatchInlineSnapshot(`
       "schema {
         query: Query
+        mutation: Mutation
+        subscription: Subscription
       }
 
       type Query {
-        hello0: String
-        hello1: String
-        hello2: String
+        hello: String
+      }
+
+      type Mutation {
+        bye: String
+      }
+
+      type Subscription {
+        wave: String
       }"
     `);
 
@@ -110,10 +152,58 @@ describe('getMesh', () => {
 
     expect(result).toMatchInlineSnapshot(`
       {
+        "data": {},
+      }
+    `);
+  });
+
+  it('can stitch a mutation field to a query field', async () => {
+    const mesh = await getMesh({
+      cache,
+      pubsub,
+      logger,
+      merger,
+      sources: [
+        createGraphQLSource({
+          suffix: 'Foo',
+          suffixRootTypeNames: false,
+          suffixFieldNames: true,
+          suffixResponses: true,
+        }),
+        createGraphQLSource({
+          suffix: 'Bar',
+          suffixRootTypeNames: false,
+          suffixFieldNames: true,
+          suffixResponses: true,
+        }),
+      ],
+      additionalTypeDefs: [
+        parse(/* GraphQL */ `
+          extend type Mutation {
+            strikeBack: String
+          }
+        `),
+      ],
+      additionalResolvers: {
+        Mutation: {
+          strikeBack: (root, args, context, info) => context.serviceFoo.Query.helloFoo({ root, args, context, info }),
+        },
+      },
+    });
+
+    const result = await mesh.execute(
+      /* GraphQL */ `
+        mutation {
+          strikeBack
+        }
+      `,
+      {}
+    );
+
+    expect(result).toMatchInlineSnapshot(`
+      {
         "data": {
-          "hello0": "Hello from 0",
-          "hello1": "Hello from 1",
-          "hello2": "Hello from 2",
+          "strikeBack": "Hello from serviceFoo",
         },
       }
     `);
