@@ -33,8 +33,8 @@ function Hero() {
           The Graph of Everything - Federated architecture for any API service
         </p>
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <SecondaryLink href="/docs">Documentation</SecondaryLink>
-          <SecondaryLink className="hidden lg:block" href="/examples">
+          <SecondaryLink href="/graphql/mesh/docs">Documentation</SecondaryLink>
+          <SecondaryLink className="hidden lg:block" href="/graphql/mesh/examples">
             Examples
           </SecondaryLink>
           <SecondaryLink className="flex flex-row gap-2 items-center" href="https://github.com/urigo/graphql-mesh">
@@ -192,7 +192,7 @@ export function IndexPage(): ReactElement {
         description={
           <div className="space-y-2">
             <p>
-              Mesh is a framework that helps shape and build an executable Graphql schema from multiple data sources.
+              Mesh is a framework that helps shape and build an executable GraphQL schema from multiple data sources.
             </p>
           </div>
         }
@@ -217,7 +217,7 @@ export function IndexPage(): ReactElement {
               },
               {
                 title: 'OmniGraph',
-                description: 'GraphQL Mesh compose sources as a single Graphql schema',
+                description: 'GraphQL Mesh compose sources as a single GraphQL schema',
                 icon: (
                   <Image
                     src={MeshExampleLogo}
@@ -282,7 +282,7 @@ export function IndexPage(): ReactElement {
         description={
           <div className="flex flex-col gap-y-12">
             <div>
-              <p>Work with servcices that aren't Graphql as if they were.</p>
+              <p>Work with services that aren't GraphQL as if they were.</p>
             </div>
             <div className="flex flex-col gap-y-12">
               <FeatureHighlights
