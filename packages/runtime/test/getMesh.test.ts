@@ -10,24 +10,32 @@ import { getMesh } from '../src/get-mesh';
 import { MeshResolvedSource } from '../src/types';
 
 describe('getMesh', () => {
-  const cache = new LocalforageCache();
-  const pubsub = new PubSub();
   const baseDir = __dirname;
-  const store = new MeshStore('test', new InMemoryStoreStorageAdapter(), {
-    readonly: false,
-    validate: false,
-  });
-  const logger = new DefaultLogger('Mesh Test');
-  const merger = new StitchingMerger({
-    store,
-    cache,
-    pubsub,
-    logger,
+  let cache: LocalforageCache;
+  let pubsub: PubSub;
+  let store: MeshStore;
+  let logger: DefaultLogger;
+  let merger: StitchingMerger;
+  beforeEach(() => {
+    cache = new LocalforageCache();
+    pubsub = new PubSub();
+    store = new MeshStore('test', new InMemoryStoreStorageAdapter(), {
+      readonly: false,
+      validate: false,
+    });
+    logger = new DefaultLogger('Mesh Test');
+    merger = new StitchingMerger({
+      store,
+      cache,
+      pubsub,
+      logger,
+    });
   });
 
-  function createServiceWithPrefix(prefix: string) {
-    return makeExecutableSchema({
-      typeDefs: `
+  it('handle sources with different query type names', async () => {
+    function createServiceWithPrefix(prefix: string) {
+      return makeExecutableSchema({
+        typeDefs: `
           type Query${prefix} {
             hello${prefix}: String
           }
@@ -36,39 +44,39 @@ describe('getMesh', () => {
             query: Query${prefix}
           }
         `,
-      resolvers: {
-        [`Query${prefix}`]: {
-          [`hello${prefix}`]: () => `Hello from ${prefix}`,
+        resolvers: {
+          [`Query${prefix}`]: {
+            [`hello${prefix}`]: () => `Hello from ${prefix}`,
+          },
         },
-      },
-    });
-  }
+      });
+    }
 
-  function createSourceWithPrefix(prefix: string): MeshResolvedSource {
-    const name = `service${prefix}`;
-    return {
-      name,
-      handler: new GraphQLHandler({
-        baseDir,
-        cache,
-        pubsub,
+    function createSourceWithPrefix(prefix: string): MeshResolvedSource {
+      const name = `service${prefix}`;
+      return {
         name,
-        config: {
-          schema: `./schema${prefix}.ts`,
-        },
-        store,
-        logger,
-        async importFn(moduleId) {
-          if (moduleId.endsWith(`schema${prefix}.ts`)) {
-            return createServiceWithPrefix(prefix);
-          }
-          return defaultImportFn(moduleId);
-        },
-      }),
-      transforms: [],
-    };
-  }
-  it('handle sources with different query type names', async () => {
+        handler: new GraphQLHandler({
+          baseDir,
+          cache,
+          pubsub,
+          name,
+          config: {
+            schema: `./schema${prefix}.ts`,
+          },
+          store,
+          logger,
+          async importFn(moduleId) {
+            if (moduleId.endsWith(`schema${prefix}.ts`)) {
+              return createServiceWithPrefix(prefix);
+            }
+            return defaultImportFn(moduleId);
+          },
+        }),
+        transforms: [],
+      };
+    }
+
     const mesh = await getMesh({
       cache,
       pubsub,
