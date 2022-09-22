@@ -130,29 +130,27 @@ export default class NamingConventionTransform implements MeshTransform {
               const useArgName = newArgName || argName;
               const argIsInputObjectType = isInputObjectType(argConfig.type);
 
-              if (argName === newArgName && !argIsInputObjectType) {
-                return args;
+              if (argName !== useArgName) {
+                // take advantage of the loop to map arg name from Old to New
+                argsMap[useArgName] = !argIsInputObjectType
+                  ? argName
+                  : {
+                      [argName]: Object.keys((argConfig.type as GraphQLInputObjectType).toConfig().fields).reduce(
+                        (inputFields, inputFieldName) => {
+                          if (Number.isFinite(inputFieldName)) return inputFields;
+
+                          const newInputFieldName = fieldNamingConventionFn(inputFieldName as string);
+                          return newInputFieldName === inputFieldName
+                            ? inputFields
+                            : {
+                                ...inputFields,
+                                [fieldNamingConventionFn(inputFieldName as string)]: inputFieldName,
+                              };
+                        },
+                        {}
+                      ),
+                    };
               }
-
-              // take advantage of the loop to map arg name from Old to New
-              argsMap[useArgName] = !argIsInputObjectType
-                ? argName
-                : {
-                    [argName]: Object.keys((argConfig.type as GraphQLInputObjectType).toConfig().fields).reduce(
-                      (inputFields, inputFieldName) => {
-                        if (Number.isFinite(inputFieldName)) return inputFields;
-
-                        const newInputFieldName = fieldNamingConventionFn(inputFieldName as string);
-                        return newInputFieldName === inputFieldName
-                          ? inputFields
-                          : {
-                              ...inputFields,
-                              [fieldNamingConventionFn(inputFieldName as string)]: inputFieldName,
-                            };
-                      },
-                      {}
-                    ),
-                  };
 
               return {
                 ...args,
