@@ -114,7 +114,7 @@ Similarly to regular and Vercel deployment, we will need to add the `mesh build`
 import { createBuiltMeshHTTPHandler } from './.mesh'
 
 const app = express()
-app.use('/my-api', createBuiltMeshHTTPHandler())
+app.use('/graphql', createBuiltMeshHTTPHandler())
 ```
 
 ### Mesh as a Fastify route
