@@ -1,5 +1,6 @@
+import { Anchor } from '@theguild/components';
 import Image, { StaticImageData } from 'next/image';
-import { AnchorHTMLAttributes, DetailedHTMLProps, PropsWithChildren, ReactElement } from 'react';
+import { PropsWithChildren, ReactElement } from 'react';
 import { FiGithub } from 'react-icons/fi';
 
 import GraphQLLogo from '../../public/assets/GraphQL_Logo.svg';
@@ -8,17 +9,16 @@ import OpenSourceLogo from '../../public/assets/open-source.svg';
 import ConnectDatasources from '../../public/assets/connect-datasources.png';
 import PluginLogo from '../../public/assets/plugin-logo.png';
 
-const SecondaryLink = ({
-  children,
-  ...props
-}: PropsWithChildren<DetailedHTMLProps<AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement>>) => {
+const ButtonLink = ({ children, ...props }: React.ComponentProps<typeof Anchor>) => {
   return (
-    <a
+    <Anchor
       {...props}
-      className={`inline-block bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 text-gray-600 px-6 py-3 rounded-lg font-medium shadow-sm ${props.className}`}
+      className={`inline-block bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 text-gray-600 px-6 py-3 rounded-lg font-medium shadow-sm ${
+        props.className || ''
+      }`}
     >
       {children}
-    </a>
+    </Anchor>
   );
 };
 
@@ -33,17 +33,17 @@ function Hero() {
           The Graph of Everything - Federated architecture for any API service
         </p>
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <SecondaryLink href="./docs">Documentation</SecondaryLink>
-          <SecondaryLink className="hidden lg:block" href="./examples">
+          <ButtonLink href="/docs">Documentation</ButtonLink>
+          <ButtonLink className="hidden lg:block" href="/examples">
             Examples
-          </SecondaryLink>
-          <SecondaryLink className="flex flex-row gap-2 items-center" href="https://github.com/urigo/graphql-mesh">
+          </ButtonLink>
+          <ButtonLink className="flex flex-row gap-2 items-center" href="https://github.com/urigo/graphql-mesh">
             <FiGithub /> GitHub
-          </SecondaryLink>
+          </ButtonLink>
           {/* TODO: this button causes hydration error */}
-          {/* <SecondaryLink href="https://www.npmjs.com/package/@graphql-mesh/cli">
+          {/* <ButtonLink href="https://www.npmjs.com/package/@graphql-mesh/cli">
             <NPMBadge name="@graphql-mesh/cli" />
-          </SecondaryLink> */}
+          </ButtonLink> */}
         </div>
       </div>
     </div>
