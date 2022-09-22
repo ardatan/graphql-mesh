@@ -97,10 +97,16 @@ export function wrapFetchWithPlugins(plugins: MeshPlugin<any>[]): MeshFetch {
 
 // Use in-context-sdk for tracing
 function createProxyingResolverFactory(apiName: string, apiSchema: GraphQLSchema): CreateProxyingResolverFn {
-  return function createProxyingResolver({ operation, fieldName }) {
+  return function createProxyingResolver({ operation, fieldName, subschemaConfig }) {
     const rootType = apiSchema.getRootType(operation);
+    if (!subschemaConfig.executor && !subschemaConfig.transforms.length) {
+      return rootType.getFields()[fieldName].resolve;
+    }
     return function proxyingResolver(root, args, context, info) {
-      return context[apiName][rootType.name][fieldName]({ root, args, context, info });
+      if (!context[apiName][rootType.name][info.fieldName]) {
+        throw new Error(`${info.fieldName} couldn't find in ${rootType.name} of ${apiName} as a ${operation}`);
+      }
+      return context[apiName][rootType.name][info.fieldName]({ root, args, context, info });
     };
   };
 }
