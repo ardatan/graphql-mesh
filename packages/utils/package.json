@@ -43,7 +43,7 @@
     "lodash.set": "4.3.2",
     "lodash.topath": "4.5.2",
     "js-yaml": "4.1.0",
-    "tiny-lru": "9.0.1",
+    "tiny-lru": "9.0.2",
     "tslib": "^2.4.0"
   },
   "publishConfig": {
