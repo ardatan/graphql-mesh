@@ -96,10 +96,14 @@ export function wrapFetchWithPlugins(plugins: MeshPlugin<any>[]): MeshFetch {
 }
 
 // Use in-context-sdk for tracing
-function createProxyingResolverFactory(apiName: string): CreateProxyingResolverFn {
-  return function createProxyingResolver() {
+function createProxyingResolverFactory(apiName: string, apiSchema: GraphQLSchema): CreateProxyingResolverFn {
+  return function createProxyingResolver({ operation, fieldName, subschemaConfig }) {
+    const rootType = apiSchema.getRootType(operation);
     return function proxyingResolver(root, args, context, info) {
-      return context[apiName][info.parentType.name][info.fieldName]({ root, args, context, info });
+      if (!context[apiName][rootType.name][info.fieldName]) {
+        throw new Error(`${info.fieldName} couldn't find in ${rootType.name} of ${apiName} as a ${operation}`);
+      }
+      return context[apiName][rootType.name][info.fieldName]({ root, args, context, info });
     };
   };
 }
@@ -197,7 +201,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
           handler: apiSource.handler,
           batch: 'batch' in source ? source.batch : true,
           merge: source.merge,
-          createProxyingResolver: createProxyingResolverFactory(apiName),
+          createProxyingResolver: createProxyingResolverFactory(apiName, apiSchema),
         });
       } catch (e: any) {
         sourceLogger.error(`Failed to generate the schema`, e);
