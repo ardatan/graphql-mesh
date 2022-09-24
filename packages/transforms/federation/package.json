@@ -28,7 +28,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@apollo/subgraph": "2.1.2",
+    "@apollo/subgraph": "2.1.3",
     "@graphql-mesh/types": "0.84.4",
     "@graphql-mesh/utils": "0.41.15",
     "graphql-transform-federation": "2.2.0",

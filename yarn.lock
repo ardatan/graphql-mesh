@@ -208,30 +208,30 @@
     tslib "^2.3.0"
     zen-observable-ts "^1.2.5"
 
-"@apollo/composition@^2.1.2":
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/@apollo/composition/-/composition-2.1.2.tgz#6bb52df4cb474d4e4526713d469e37fac734d1e0"
-  integrity sha512-EJfE6eC76ms25Vvp4FaGm5LCwMGsd+QrRyYGv8a6dkPb9NDXZL2GjWukNIcJjD7kyj6JS3H/9bwX8qc/Gzb6nQ==
+"@apollo/composition@^2.1.3":
+  version "2.1.3"
+  resolved "https://registry.yarnpkg.com/@apollo/composition/-/composition-2.1.3.tgz#0c0d9740ea3275303306c4cc2d6e7411a2075b1b"
+  integrity sha512-b+l6K8+bvfPpej4g7aJ86JfhMkppgM2Hv34sizQd5hC3ZCNRAt2dTVOVP3QvpduLC7ywwavXKLkMx/ZGQ/lTmg==
   dependencies:
-    "@apollo/federation-internals" "^2.1.2"
-    "@apollo/query-graphs" "^2.1.2"
+    "@apollo/federation-internals" "^2.1.3"
+    "@apollo/query-graphs" "^2.1.3"
 
-"@apollo/federation-internals@^2.1.2":
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/@apollo/federation-internals/-/federation-internals-2.1.2.tgz#37a808cc6e211a0b35fc965e3418a21d52b831dd"
-  integrity sha512-8iydIYOkUwMH2yhqqJb67/bWAeLL5wnl2VgrhvcS5frJje5I7WtK+7oaXvxXpGR0BHv5Dw9UjvaFL5e8Vhh5MA==
+"@apollo/federation-internals@^2.1.3":
+  version "2.1.3"
+  resolved "https://registry.yarnpkg.com/@apollo/federation-internals/-/federation-internals-2.1.3.tgz#da682c7832c6cd1192e4197f804eb346ae5df598"
+  integrity sha512-2Cw1nRenb/Bg1aTbrhcoFw+kWCuNa9jCKrQsZ7kRFbtZxy6qA8X4g6/Hh5Mk9pxFQgarnZiKvuoDQlAY8Y8HJw==
   dependencies:
     chalk "^4.1.0"
     js-levenshtein "^1.1.6"
 
-"@apollo/gateway@2.1.2":
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-2.1.2.tgz#5c64b2fdcce6a7e9388d2c11392643094a979053"
-  integrity sha512-fQm/6fkRlbQWveK97CtyZROwXomCKth0WMnJhqssasRToUnaI1tpIkuu1iYZlo/9I3VO4Q9hFu0BXl6NH9BiLQ==
+"@apollo/gateway@2.1.3":
+  version "2.1.3"
+  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-2.1.3.tgz#f64953a5c5eaff0bc64dd51f3c8a43815bb50325"
+  integrity sha512-AqYl99Vi2TPO4t1KghWTmYzFpXKYvdbEQZbPOa1/020L2hP4Jl+rA5QuweIhE3EIrP0TQFK959GJG8GhqoIHmA==
   dependencies:
-    "@apollo/composition" "^2.1.2"
-    "@apollo/federation-internals" "^2.1.2"
-    "@apollo/query-planner" "^2.1.2"
+    "@apollo/composition" "^2.1.3"
+    "@apollo/federation-internals" "^2.1.3"
+    "@apollo/query-planner" "^2.1.3"
     "@apollo/server-gateway-interface" "^1.0.2"
     "@apollo/utils.createhash" "^1.1.0"
     "@apollo/utils.fetcher" "^1.1.0"
@@ -286,22 +286,22 @@
     "@types/node" "^10.1.0"
     long "^4.0.0"
 
-"@apollo/query-graphs@^2.1.2":
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/@apollo/query-graphs/-/query-graphs-2.1.2.tgz#d267493982ce8a7b186d930398e96648d735034e"
-  integrity sha512-SsAZSFWjRRuoNIxA8HfCGXQOO7PfgbLXXZpDrnMn5ECeDPfU9ltTN+Y0FuIBDUJcDU2epkOb1eQwKTfUteQYnw==
+"@apollo/query-graphs@^2.1.3":
+  version "2.1.3"
+  resolved "https://registry.yarnpkg.com/@apollo/query-graphs/-/query-graphs-2.1.3.tgz#b0776300e2d47679034491727df3b7171912d9f8"
+  integrity sha512-lkFolKAGkebYUBGZIpfzL/cWKt1E756hWMxz1nOghUKSaivGQszdUMRT/Veac360oKInr+i/jD63ctP4Lo+eDg==
   dependencies:
-    "@apollo/federation-internals" "^2.1.2"
+    "@apollo/federation-internals" "^2.1.3"
     deep-equal "^2.0.5"
     ts-graphviz "^0.16.0"
 
-"@apollo/query-planner@^2.1.2":
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/@apollo/query-planner/-/query-planner-2.1.2.tgz#23b518589c43d659c0db2a77d1a6478ae6db42c4"
-  integrity sha512-tpW8TxPBgZJii9w5e4pBl0kD/g5KL3w+TJvvl2733GnKDaCoxbWMRfrh8xdiXGfHvcDY2hC+HPwKSshRFma/KQ==
+"@apollo/query-planner@^2.1.3":
+  version "2.1.3"
+  resolved "https://registry.yarnpkg.com/@apollo/query-planner/-/query-planner-2.1.3.tgz#2ca1071abac432073607ce636524b60d5d6ab15f"
+  integrity sha512-xg2bJhl8jXnaLPwP8aNAISLYeNVoGpM7x4v/vSxTpiujd8Q4Uk3ulVsh4z1fac4o9W65Lowxf+zzuetoys6tgQ==
   dependencies:
-    "@apollo/federation-internals" "^2.1.2"
-    "@apollo/query-graphs" "^2.1.2"
+    "@apollo/federation-internals" "^2.1.3"
+    "@apollo/query-graphs" "^2.1.3"
     chalk "^4.1.0"
     deep-equal "^2.0.5"
     pretty-format "^28.0.0"
@@ -316,13 +316,13 @@
     "@apollo/utils.keyvaluecache" "^1.0.1"
     "@apollo/utils.logger" "^1.0.0"
 
-"@apollo/subgraph@2.1.2":
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/@apollo/subgraph/-/subgraph-2.1.2.tgz#6eba93fe0c6dd059ba7aed4dbf606c537a995de2"
-  integrity sha512-NGeiaaOVkDBc5P3GgdpOFHncB9b21mDg2NobZ1a1WkakT99XoE/D3czTux7Dzkqj4FjYHS/oiy9ghdy5/oEdkg==
+"@apollo/subgraph@2.1.3":
+  version "2.1.3"
+  resolved "https://registry.yarnpkg.com/@apollo/subgraph/-/subgraph-2.1.3.tgz#e4e9de30ef37df9458c44d1a3b21041bc62316d8"
+  integrity sha512-PLAobTaoPEli0O/JCZTl6bCGHsbDoDYaoy08nTvaulaw1DuvOlUPicjuvjjGeO9xAhWK3jaRml1HGOCkK62eiw==
   dependencies:
     "@apollo/cache-control-types" "^1.0.2"
-    "@apollo/federation-internals" "^2.1.2"
+    "@apollo/federation-internals" "^2.1.3"
 
 "@apollo/usage-reporting-protobuf@^4.0.0-alpha.1":
   version "4.0.0-alpha.1"
@@ -4980,10 +4980,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.6.5.tgz#06caea822caf9e59d5034b695186ee74154d2802"
   integrity sha512-Xjt5ZGUa5WusGZJ4WJPbOT8QOqp6nDynVFRKcUt32bOgvXEoc6o085WNkYTMO7ifAj2isEfQQ2cseE+wT6jsRw==
 
-"@types/node@16.11.59":
-  version "16.11.59"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.59.tgz#823f238b9063ccc3b3b7f13186f143a57926c4f6"
-  integrity sha512-6u+36Dj3aDzhfBVUf/mfmc92OEdzQ2kx2jcXGdigfl70E/neV21ZHE6UCz4MDzTRcVqGAM27fk+DLXvyDsn3Jw==
+"@types/node@16.11.60":
+  version "16.11.60"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.60.tgz#a1fbca80c18dd80c8783557304cdb7d55ac3aff5"
+  integrity sha512-kYIYa1D1L+HDv5M5RXQeEu1o0FKA6yedZIoyugm/MBPROkLpX4L7HRxMrPVyo8bnvjpW/wDlqFNGzXNMb7AdRw==
 
 "@types/node@18.6.1":
   version "18.6.1"
@@ -12081,10 +12081,10 @@ itty-router-extras@0.4.2:
   resolved "https://registry.yarnpkg.com/itty-router-extras/-/itty-router-extras-0.4.2.tgz#e46891ebea63f09ada74603649d8a6c4ce0c5df7"
   integrity sha512-ppHaBzcTXs7idFSDISehG+8kif2/4aqLCfyY/Y/uIZv79sfEfNmTq9G+rDeqblun/VZRBiXZD8ztYmMS8EOsKw==
 
-itty-router@2.6.3, itty-router@^2.3.10:
-  version "2.6.3"
-  resolved "https://registry.yarnpkg.com/itty-router/-/itty-router-2.6.3.tgz#d95a8b6873da0cdcc7e4955e2dbbac2982aba27e"
-  integrity sha512-w9aELaE7U/vH5ykJ2wacgNe0hOa1z4XdiSgYgAuEg1eZ+G8wZvURWIa3Vib2UhrFY2r+hZgVIjP1mFO+Vkhk5Q==
+itty-router@2.6.5, itty-router@^2.3.10:
+  version "2.6.5"
+  resolved "https://registry.yarnpkg.com/itty-router/-/itty-router-2.6.5.tgz#9d186787db8c0084949d48b666077ecba41895e5"
+  integrity sha512-EzfbnYF/ksgpoKgsJuk8Sknk6QDC8hd2HeOCFmDOVT+9mmk5nOfgCTglpILBOj4zX3e1RB8r4+2js6i3Zx/KQw==
 
 jake@^10.8.5:
   version "10.8.5"
@@ -19167,10 +19167,10 @@ tiny-glob@^0.2.9:
     globalyzer "0.1.0"
     globrex "^0.1.2"
 
-tiny-lru@9.0.1:
-  version "9.0.1"
-  resolved "https://registry.yarnpkg.com/tiny-lru/-/tiny-lru-9.0.1.tgz#ea3a40118a235d00ece88035911db06e9ce132be"
-  integrity sha512-sLeLm8FO44R515H4ln0pXhlKUwWpjs1tOZDzKrmv2rwt6i+47miGq860uy0ztRtqQIsmj2HjUqY7dOWCt+Dxsw==
+tiny-lru@9.0.2:
+  version "9.0.2"
+  resolved "https://registry.yarnpkg.com/tiny-lru/-/tiny-lru-9.0.2.tgz#6714626d1961831da99472eb9f6d26b3ff999c39"
+  integrity sha512-SZwDlvflOPYiImKv2Rh/1uccO+r5JsEexLU1szFsVudzk17Sj250xl75/X3aY4vINS1ZulnCPqcndvW9R0y7Yg==
 
 tiny-lru@^8.0.2:
   version "8.0.2"
