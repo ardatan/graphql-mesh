@@ -71,7 +71,7 @@ describe('namingConvention - bare', () => {
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
         type Query {
-          user(input: UserSearchInput): User
+          user(Input: UserSearchInput): User
           userById(userId: ID!): User
           userByType(type: UserType!): User
         }
@@ -79,12 +79,13 @@ describe('namingConvention - bare', () => {
           id: ID
           first_name: String
           last_name: String
-          Type: UserType
+          Type: UserType!
         }
         input UserSearchInput {
           id: ID
           first_name: String
           last_name: String
+          type: UserType
         }
         enum UserType {
           admin
@@ -95,7 +96,12 @@ describe('namingConvention - bare', () => {
       resolvers: {
         Query: {
           user: (root, args) => {
-            return args.input;
+            return {
+              id: args.Input.id,
+              first_name: args.Input.first_name,
+              last_name: args.Input.last_name,
+              Type: args.Input.type,
+            };
           },
           userById: (root, args) => {
             return { id: args.userId, first_name: 'John', last_name: 'Doe', Type: 'admin' };
@@ -125,10 +131,11 @@ describe('namingConvention - bare', () => {
       schema: newSchema,
       document: parse(/* GraphQL */ `
         {
-          user(Input: { id: "0", firstName: "John", lastName: "Doe" }) {
+          user(Input: { id: "0", firstName: "John", lastName: "Doe", type: ADMIN }) {
             id
             firstName
             lastName
+            type
           }
         }
       `),
@@ -138,6 +145,7 @@ describe('namingConvention - bare', () => {
       id: '0',
       firstName: 'John',
       lastName: 'Doe',
+      type: 'ADMIN',
     });
 
     const result2 = await execute({
