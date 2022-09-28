@@ -1,5 +1,14 @@
 # @graphql-mesh/mysql
 
+## 0.17.16
+
+### Patch Changes
+
+- Updated dependencies [[`88ab8f9ae`](https://github.com/Urigo/graphql-mesh/commit/88ab8f9ae32a4d0f52c978d625082abe075bebe4)]:
+  - @graphql-mesh/utils@0.41.16
+  - @graphql-mesh/store@0.8.49
+  - @graphql-mesh/types@0.84.5
+
 ## 0.17.15
 
 ### Patch Changes

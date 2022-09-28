@@ -1,5 +1,28 @@
 # @graphql-mesh/http
 
+## 0.1.22
+
+### Patch Changes
+
+- [#4571](https://github.com/Urigo/graphql-mesh/pull/4571) [`1a8e80870`](https://github.com/Urigo/graphql-mesh/commit/1a8e8087039646b7ccf02d76cbed134854271516) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency [`graphql-yoga@3.0.0-next.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.0-next.1) (from `3.0.0-next.0`, in `dependencies`)
+
+- [#4573](https://github.com/Urigo/graphql-mesh/pull/4573) [`6df0993b7`](https://github.com/Urigo/graphql-mesh/commit/6df0993b777e1fe7ed0f4bb500e48aa2672ca0ea) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`graphql-yoga@3.0.0-next.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.0-next.1) (from `3.0.0-next.0`, in `dependencies`)
+
+- [#4575](https://github.com/Urigo/graphql-mesh/pull/4575) [`88ab8f9ae`](https://github.com/Urigo/graphql-mesh/commit/88ab8f9ae32a4d0f52c978d625082abe075bebe4) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`itty-router@2.6.5` ↗︎](https://www.npmjs.com/package/itty-router/v/2.6.5) (from `2.6.3`, in `dependencies`)
+
+- [`45d1a6ef3`](https://github.com/Urigo/graphql-mesh/commit/45d1a6ef3a9b492fec05e3a97ee1bdac47c96528) Thanks [@ardatan](https://github.com/ardatan)! - Bump GraphQL Yoga
+
+- Updated dependencies [[`88ab8f9ae`](https://github.com/Urigo/graphql-mesh/commit/88ab8f9ae32a4d0f52c978d625082abe075bebe4), [`1a8e80870`](https://github.com/Urigo/graphql-mesh/commit/1a8e8087039646b7ccf02d76cbed134854271516)]:
+  - @graphql-mesh/utils@0.41.16
+  - @graphql-mesh/runtime@0.44.14
+  - @graphql-mesh/types@0.84.5
+
 ## 0.1.21
 
 ### Patch Changes
