@@ -1,4 +1,11 @@
-import { defaultFieldResolver, GraphQLInputObjectType, GraphQLSchema, isInputObjectType, isEnumType } from 'graphql';
+import {
+  defaultFieldResolver,
+  GraphQLInputObjectType,
+  GraphQLSchema,
+  isInputObjectType,
+  isEnumType,
+  isNonNullType,
+} from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
 import { MapperKind, mapSchema, renameType } from '@graphql-tools/utils';
 
@@ -107,10 +114,13 @@ export default class NamingConventionTransform implements MeshTransform {
             this.config.fieldNames &&
             !IGNORED_ROOT_FIELD_NAMES.includes(fieldName) &&
             fieldNamingConventionFn(fieldName);
+          const fieldActualType = isNonNullType(fieldConfig.type)
+            ? schema.getType(fieldConfig.type.ofType.toString())
+            : fieldConfig.type;
           const resultMap =
             this.config.enumValues &&
-            isEnumType(fieldConfig.type) &&
-            Object.keys(fieldConfig.type.toConfig().values).reduce((map, value) => {
+            isEnumType(fieldActualType) &&
+            Object.keys(fieldActualType.toConfig().values).reduce((map, value) => {
               if (Number.isFinite(value)) {
                 return map;
               }
@@ -130,29 +140,27 @@ export default class NamingConventionTransform implements MeshTransform {
               const useArgName = newArgName || argName;
               const argIsInputObjectType = isInputObjectType(argConfig.type);
 
-              if (argName === newArgName && !argIsInputObjectType) {
-                return args;
+              if (argName !== useArgName || argIsInputObjectType) {
+                // take advantage of the loop to map arg name from Old to New
+                argsMap[useArgName] = !argIsInputObjectType
+                  ? argName
+                  : {
+                      [argName]: Object.keys((argConfig.type as GraphQLInputObjectType).toConfig().fields).reduce(
+                        (inputFields, inputFieldName) => {
+                          if (Number.isFinite(inputFieldName)) return inputFields;
+
+                          const newInputFieldName = fieldNamingConventionFn(inputFieldName as string);
+                          return newInputFieldName === inputFieldName
+                            ? inputFields
+                            : {
+                                ...inputFields,
+                                [fieldNamingConventionFn(inputFieldName as string)]: inputFieldName,
+                              };
+                        },
+                        {}
+                      ),
+                    };
               }
-
-              // take advantage of the loop to map arg name from Old to New
-              argsMap[useArgName] = !argIsInputObjectType
-                ? argName
-                : {
-                    [argName]: Object.keys((argConfig.type as GraphQLInputObjectType).toConfig().fields).reduce(
-                      (inputFields, inputFieldName) => {
-                        if (Number.isFinite(inputFieldName)) return inputFields;
-
-                        const newInputFieldName = fieldNamingConventionFn(inputFieldName as string);
-                        return newInputFieldName === inputFieldName
-                          ? inputFields
-                          : {
-                              ...inputFields,
-                              [fieldNamingConventionFn(inputFieldName as string)]: inputFieldName,
-                            };
-                      },
-                      {}
-                    ),
-                  };
 
               return {
                 ...args,
