@@ -1,5 +1,6 @@
 import { toGraphQLTypeDefs } from '@neo4j/introspector';
 import { Neo4jGraphQL } from '@neo4j/graphql';
+import { GraphQLBigInt } from 'graphql-scalars';
 import neo4j, { Driver } from 'neo4j-driver';
 import {
   YamlConfig,
@@ -83,7 +84,7 @@ export default class Neo4JHandler implements MeshHandler {
   async getMeshSource({ fetchFn }: GetMeshSourcePayload): Promise<MeshSource> {
     this.fetchFn = fetchFn;
     const driver = neo4j.driver(this.config.url, neo4j.auth.basic(this.config.username, this.config.password), {
-      useBigInt: true,
+      useBigInt: false,
       logging: {
         logger: (level, message) => this.logger[level](message),
       },
@@ -107,6 +108,9 @@ export default class Neo4JHandler implements MeshHandler {
         },
         enableDebug: !!process.env.DEBUG,
         skipValidateTypeDefs: true,
+      },
+      resolvers: {
+        BigInt: GraphQLBigInt,
       },
       plugins: {
         subscriptions: {
