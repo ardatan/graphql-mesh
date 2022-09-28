@@ -1,5 +1,16 @@
 # neo4j-example
 
+## 0.7.0
+
+### Minor Changes
+
+- [#4597](https://github.com/Urigo/graphql-mesh/pull/4597) [`1bc596acb`](https://github.com/Urigo/graphql-mesh/commit/1bc596acb6552f0a56a84418b03ee4babb098f7f) Thanks [@gilgardosh](https://github.com/gilgardosh)! - Fix `BigInt cannot represent X error` when a `BigInt` field is requested in a query by replacing Neo4J's `BigInt` scalar with GraphQL Scalars'.
+
+### Patch Changes
+
+- Updated dependencies [[`1bc596acb`](https://github.com/Urigo/graphql-mesh/commit/1bc596acb6552f0a56a84418b03ee4babb098f7f)]:
+  - @graphql-mesh/neo4j@0.20.19
+
 ## 0.6.271
 
 ### Patch Changes
