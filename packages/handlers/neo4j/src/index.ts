@@ -1,5 +1,6 @@
 import { toGraphQLTypeDefs } from '@neo4j/introspector';
 import { Neo4jGraphQL } from '@neo4j/graphql';
+import { GraphQLBigInt } from 'graphql-scalars';
 import neo4j, { Driver } from 'neo4j-driver';
 import {
   YamlConfig,
@@ -107,6 +108,9 @@ export default class Neo4JHandler implements MeshHandler {
         },
         enableDebug: !!process.env.DEBUG,
         skipValidateTypeDefs: true,
+      },
+      resolvers: {
+        BigInt: GraphQLBigInt,
       },
       plugins: {
         subscriptions: {

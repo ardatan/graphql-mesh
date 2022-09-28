@@ -29,7 +29,7 @@ input ActedInPropertiesWhere {
 }
 
 """
-A BigInt value up to 64 bits in size, which can be a number or a string if used inline, or a string only if used as a variable. Always returned as a string.
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
 """
 scalar BigInt
 
@@ -2826,7 +2826,10 @@ exports[`Neo4j should give correct response for example queries: example-query.g
             "name": "Hugo Weaving",
           },
         ],
+        "released": 1999n,
+        "tagline": "Welcome to the Real World",
         "title": "The Matrix",
+        "votes": 2494n,
       },
       {
         "peopleActedIn": [
@@ -2837,7 +2840,10 @@ exports[`Neo4j should give correct response for example queries: example-query.g
             "name": "Laurence Fishburne",
           },
         ],
+        "released": 2003n,
+        "tagline": "Free your mind",
         "title": "The Matrix Reloaded",
+        "votes": 436n,
       },
     ],
   },
