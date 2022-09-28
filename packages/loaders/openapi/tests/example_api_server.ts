@@ -300,7 +300,7 @@ export function startServer() {
     },
   };
 
-  const authMiddleware = (req: Request & IttyRequest) => {
+  const authMiddleware = (req: Request & IttyRequest): void | Response => {
     const authHeader = req.headers.get('authorization');
     const accessTokenHeader = req.headers.get('access_token');
     const cookieHeader = req.headers.get('cookie');
@@ -323,7 +323,7 @@ export function startServer() {
 
             for (const user in Auth) {
               if (Auth[user].username === credentials.username && Auth[user].password === credentials.password) {
-                return;
+                return undefined;
               }
             }
           } else {
@@ -348,7 +348,7 @@ export function startServer() {
     } else if (accessTokenHeader) {
       for (const user in Auth) {
         if (Auth[user].accessToken === accessTokenHeader) {
-          return;
+          return undefined;
         }
       }
       return new Response(
@@ -365,7 +365,7 @@ export function startServer() {
     } else if (cookieHeader) {
       for (const user in Auth) {
         if (Auth[user].accessToken === cookieHeader.split('=')[1]) {
-          return;
+          return undefined;
         }
       }
       return new Response(
@@ -382,7 +382,7 @@ export function startServer() {
     } else if ('access_token' in req.query) {
       for (const user in Auth) {
         if (Auth[user].accessToken === req.query.access_token) {
-          return;
+          return undefined;
         }
       }
       return new Response(
