@@ -1,29 +1,36 @@
+/* eslint-disable import/no-nodejs-modules */
 import { execute, graphql, GraphQLInputObjectType, GraphQLObjectType, GraphQLSchema, parse, validate } from 'graphql';
 import 'json-bigint-patch';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 
-import { startServer, stopServer } from './example_api_server';
+import { startServer } from './example_api_server';
 import { fetch } from '@whatwg-node/fetch';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { createBundle, OpenAPILoaderOptions } from '../src';
-import getPort from 'get-port';
-
-let createdSchema: GraphQLSchema;
-let baseUrl: string;
+import { Server } from 'http';
+import { AddressInfo } from 'net';
 
 describe('example_api', () => {
+  let createdSchema: GraphQLSchema;
+  let baseUrl: string;
+  let server: Server;
+
   beforeAll(async () => {
-    const PORT = await getPort();
-    baseUrl = `http://localhost:${PORT}/api`;
+    server = await startServer();
+    baseUrl = `http://localhost:${(server.address() as AddressInfo).port}/api`;
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api', {
       fetch,
       baseUrl,
       source: './fixtures/example_oas.json',
       cwd: __dirname,
     });
-    await startServer(PORT);
   });
-  afterAll(() => stopServer());
+
+  afterAll(done => {
+    server.close(() => {
+      done();
+    });
+  });
 
   it('should generate the schema correctly', () => {
     expect(printSchemaWithDirectives(createdSchema)).toMatchSnapshot();

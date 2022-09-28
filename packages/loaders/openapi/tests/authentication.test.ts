@@ -1,12 +1,10 @@
+/* eslint-disable import/no-nodejs-modules */
 import { execute, parse } from 'graphql';
-import { join } from 'path';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
-import { startServer, stopServer } from './example_api_server';
+import { startServer } from './example_api_server';
 import { fetch } from '@whatwg-node/fetch';
-
-const PORT = 3003;
-const source = join(__dirname, './fixtures/example_oas.json');
-const baseUrl = `http://localhost:${PORT}/api`;
+import { Server } from 'http';
+import { AddressInfo } from 'net';
 
 // We don't create viewers for each security scheme definition in OAS like openapi-to-graphql
 // But instead we let user to define them with string interpolation
@@ -16,15 +14,21 @@ describe('OpenAPI Loader: Authentication', () => {
   /**
    * Set up the schema first and run example API server
    */
+  let baseUrl: string;
+  let server: Server;
+
   beforeAll(async () => {
-    await startServer(PORT);
+    server = await startServer();
+    baseUrl = `http://localhost:${(server.address() as AddressInfo).port}/api`;
   });
 
   /**
    * Shut down API server
    */
-  afterAll(async () => {
-    await stopServer();
+  afterAll(done => {
+    server.close(() => {
+      done();
+    });
   });
 
   it('should get patent using basic auth', async () => {
@@ -37,7 +41,8 @@ describe('OpenAPI Loader: Authentication', () => {
     `;
 
     const createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      source,
+      source: './fixtures/example_oas.json',
+      cwd: __dirname,
       baseUrl,
       operationHeaders: {
         authorization: 'Basic {args.usernameAndPassword|base64}',
@@ -69,7 +74,8 @@ describe('OpenAPI Loader: Authentication', () => {
     `;
 
     const createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      source,
+      source: './fixtures/example_oas.json',
+      cwd: __dirname,
       baseUrl,
       operationHeaders: {
         access_token: '{args.apiKey}',
@@ -101,7 +107,8 @@ describe('OpenAPI Loader: Authentication', () => {
     `;
 
     const createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      source,
+      source: './fixtures/example_oas.json',
+      cwd: __dirname,
       baseUrl,
       operationHeaders: {
         cookie: 'access_token={args.apiKey}',
@@ -133,7 +140,8 @@ describe('OpenAPI Loader: Authentication', () => {
     `;
 
     const createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      source,
+      source: './fixtures/example_oas.json',
+      cwd: __dirname,
       baseUrl,
       queryParams: {
         access_token: '{args.apiKey}',
