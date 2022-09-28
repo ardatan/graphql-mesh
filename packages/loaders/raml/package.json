@@ -28,7 +28,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@whatwg-node/fetch": "^0.4.3",
+    "@whatwg-node/fetch": "^0.4.6",
     "@omnigraph/json-schema": "0.35.2",
     "@ardatan/raml-1-parser": "1.1.69",
     "json-machete": "0.15.2",
