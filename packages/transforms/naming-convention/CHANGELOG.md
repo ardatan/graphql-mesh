@@ -1,5 +1,15 @@
 # @graphql-mesh/transform-naming-convention
 
+## 0.11.5
+
+### Patch Changes
+
+- [#4572](https://github.com/Urigo/graphql-mesh/pull/4572) [`5b812fd04`](https://github.com/Urigo/graphql-mesh/commit/5b812fd04b84957f5754de604404b30c58e2a5f1) Thanks [@santino](https://github.com/santino)! - - Fix missing arguments when naming-convention resolves to same name as the original
+  - Fix Enum values mapping with NonNull enums
+- Updated dependencies [[`88ab8f9ae`](https://github.com/Urigo/graphql-mesh/commit/88ab8f9ae32a4d0f52c978d625082abe075bebe4)]:
+  - @graphql-mesh/utils@0.41.16
+  - @graphql-mesh/types@0.84.5
+
 ## 0.11.4
 
 ### Patch Changes

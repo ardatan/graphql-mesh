@@ -1,5 +1,13 @@
 # @graphql-mesh/transform-rate-limit
 
+## 0.1.64
+
+### Patch Changes
+
+- Updated dependencies [[`88ab8f9ae`](https://github.com/Urigo/graphql-mesh/commit/88ab8f9ae32a4d0f52c978d625082abe075bebe4)]:
+  - @graphql-mesh/utils@0.41.16
+  - @graphql-mesh/types@0.84.5
+
 ## 0.1.63
 
 ### Patch Changes

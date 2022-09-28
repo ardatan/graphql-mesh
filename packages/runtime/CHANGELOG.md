@@ -1,5 +1,15 @@
 # @graphql-mesh/runtime
 
+## 0.44.14
+
+### Patch Changes
+
+- [#4571](https://github.com/Urigo/graphql-mesh/pull/4571) [`1a8e80870`](https://github.com/Urigo/graphql-mesh/commit/1a8e8087039646b7ccf02d76cbed134854271516) Thanks [@ardatan](https://github.com/ardatan)! - Choose the root type name for a specific operation type from the source schema not from the gateway schema, because source schema might have a different like `QueryType` instead of `Query`.
+
+- Updated dependencies [[`88ab8f9ae`](https://github.com/Urigo/graphql-mesh/commit/88ab8f9ae32a4d0f52c978d625082abe075bebe4)]:
+  - @graphql-mesh/utils@0.41.16
+  - @graphql-mesh/types@0.84.5
+
 ## 0.44.13
 
 ### Patch Changes
