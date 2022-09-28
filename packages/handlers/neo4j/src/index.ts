@@ -84,7 +84,7 @@ export default class Neo4JHandler implements MeshHandler {
   async getMeshSource({ fetchFn }: GetMeshSourcePayload): Promise<MeshSource> {
     this.fetchFn = fetchFn;
     const driver = neo4j.driver(this.config.url, neo4j.auth.basic(this.config.username, this.config.password), {
-      useBigInt: false,
+      useBigInt: true,
       logging: {
         logger: (level, message) => this.logger[level](message),
       },

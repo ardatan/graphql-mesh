@@ -2,4 +2,4 @@
 'neo4j-example': minor
 ---
 
-Replace native BigInt scalar with GraphQL-Scalars'
+Fix `BigInt cannot represent X error` when a `BigInt` field is requested in a query by replacing Neo4J's `BigInt` scalar with GraphQL Scalars'.
