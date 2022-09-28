@@ -1,5 +1,12 @@
 # @graphql-mesh/neo4j
 
+## 0.20.19
+
+### Patch Changes
+
+- [#4597](https://github.com/Urigo/graphql-mesh/pull/4597) [`1bc596acb`](https://github.com/Urigo/graphql-mesh/commit/1bc596acb6552f0a56a84418b03ee4babb098f7f) Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
+  - Added dependency [`graphql-scalars@1.18.0` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.18.0) (to `dependencies`)
+
 ## 0.20.18
 
 ### Patch Changes
