@@ -1,16 +1,18 @@
+/* eslint-disable import/no-nodejs-modules */
 import { execute, GraphQLSchema, parse } from 'graphql';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch } from '@whatwg-node/fetch';
-import { startServer, stopServer } from './example_api_server';
-import getPort from 'get-port';
+import { startServer } from './example_api_server';
+import { Server } from 'http';
+import { AddressInfo } from 'net';
 
 describe('Example API Combined', () => {
   let createdSchema: GraphQLSchema;
+  let server: Server;
   beforeAll(async () => {
-    const PORT = await getPort();
-    const baseUrl = `http://localhost:${PORT}/api`;
-    await startServer(PORT);
+    server = await startServer();
+    const baseUrl = `http://localhost:${(server.address() as AddressInfo).port}/api`;
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api_combined', {
       source: './fixtures/example_oas_combined.json',
       cwd: __dirname,
@@ -19,8 +21,10 @@ describe('Example API Combined', () => {
     });
   });
 
-  afterAll(async () => {
-    await stopServer();
+  afterAll(done => {
+    server.close(() => {
+      done();
+    });
   });
 
   it('should generate correct schema', () => {

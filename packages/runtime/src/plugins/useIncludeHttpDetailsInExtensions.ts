@@ -20,18 +20,9 @@ export interface MeshFetchHTTPInformation {
   responseTime: number;
 }
 
-export const httpDetailsByContext = new WeakMap<any, MeshFetchHTTPInformation[]>();
-
-export function pushHttpDetails(httpDetails: MeshFetchHTTPInformation, context: any) {
-  let httpDetailsList = httpDetailsByContext.get(context);
-  if (!httpDetailsList) {
-    httpDetailsList = [];
-    httpDetailsByContext.set(context, httpDetailsList);
-  }
-  httpDetailsList.push(httpDetails);
-}
-
 export function useIncludeHttpDetailsInExtensions(): MeshPlugin<any> {
+  const httpDetailsByContext = new WeakMap<any, MeshFetchHTTPInformation[]>();
+
   return {
     onFetch({ url, context, info, options }) {
       if (context != null) {
@@ -39,26 +30,29 @@ export function useIncludeHttpDetailsInExtensions(): MeshPlugin<any> {
         return ({ response }) => {
           const responseTimestamp = Date.now();
           const responseTime = responseTimestamp - requestTimestamp;
-          pushHttpDetails(
-            {
-              sourceName: (info as any)?.sourceName,
-              path: info?.path,
-              request: {
-                timestamp: requestTimestamp,
-                url,
-                method: options.method || 'GET',
-                headers: getHeadersObj(options.headers as Headers),
-              },
-              response: {
-                timestamp: responseTimestamp,
-                status: response.status,
-                statusText: response.statusText,
-                headers: getHeadersObj(response.headers),
-              },
-              responseTime,
+          let httpDetailsList = httpDetailsByContext.get(context);
+          if (!httpDetailsList) {
+            httpDetailsList = [];
+            httpDetailsByContext.set(context, httpDetailsList);
+          }
+          const httpDetails: MeshFetchHTTPInformation = {
+            sourceName: (info as any)?.sourceName,
+            path: info?.path,
+            request: {
+              timestamp: requestTimestamp,
+              url,
+              method: options.method || 'GET',
+              headers: getHeadersObj(options.headers as Headers),
             },
-            context
-          );
+            response: {
+              timestamp: responseTimestamp,
+              status: response.status,
+              statusText: response.statusText,
+              headers: getHeadersObj(response.headers),
+            },
+            responseTime,
+          };
+          httpDetailsList.push(httpDetails);
         };
       }
       return undefined;
