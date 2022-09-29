@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Batching Example should generate correct schema 1`] = `
+"schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Mutation {
+  usersByIds(input: UsersByIdRequest_Input): UsersByIdResponse
+}
+
+type Query {
+  dummy: String
+  user(id: Float!): User
+}
+
+type User {
+  id: String
+  name: String
+}
+
+input UsersByIdRequest_Input {
+  ids: [Float]
+}
+
+type UsersByIdResponse {
+  results: [User]
+}"
+`;
+
+exports[`Batching Example should give correct response for the batched example query: example-query-result 1`] = `
+{
+  "data": {
+    "jane": {
+      "id": "2",
+      "name": "Jane Doe",
+    },
+    "john": {
+      "id": "1",
+      "name": "John Doe",
+    },
+  },
+}
+`;
