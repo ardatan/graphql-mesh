@@ -26,7 +26,7 @@ export const titleBold: MessageTransformer = msg => ANSI_CODES.bold + msg + ANSI
 export class DefaultLogger implements Logger {
   constructor(public name?: string) {}
 
-  private getLoggerMessage({ args = [], trim = this.isDebug }: { args: any[]; trim?: boolean }) {
+  private getLoggerMessage({ args = [], trim = !this.isDebug }: { args: any[]; trim?: boolean }) {
     return args
       .flat(Infinity)
       .map(arg => {
