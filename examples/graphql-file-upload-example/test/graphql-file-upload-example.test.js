@@ -5,28 +5,26 @@ const { findAndParseConfig } = require('@graphql-mesh/cli');
 const { join } = require('path');
 const { getMesh } = require('@graphql-mesh/runtime');
 
-const mesh$ = findAndParseConfig({
-  dir: join(__dirname, '..'),
-}).then(config => getMesh(config));
-
 describe('Upload Example', () => {
   let stopUploadFilesServer;
   let stopResizeImageServer;
-  beforeAll(() => {
-    return Promise.all([
-      startUploadFilesServer().then(stop => {
-        stopUploadFilesServer = stop;
-      }),
-      startResizeImageServer().then(stop => {
-        stopResizeImageServer = stop;
-      }),
-    ]);
+  let mesh;
+  beforeAll(async () => {
+    stopUploadFilesServer = await startUploadFilesServer();
+    stopResizeImageServer = await startResizeImageServer();
+    const config = await findAndParseConfig({
+      dir: join(__dirname, '..'),
+    });
+    mesh = await getMesh(config);
   });
-  afterAll(() => Promise.all([stopUploadFilesServer(), stopResizeImageServer(), mesh$.then(mesh => mesh.destroy())]));
+  afterAll(async () => {
+    await stopUploadFilesServer();
+    await stopResizeImageServer();
+    await mesh.destroy();
+  });
   it('should give correct response', async () => {
-    const { execute } = await mesh$;
     const file = new File(['CONTENT'], 'test.txt');
-    const result = await execute(
+    const result = await mesh.execute(
       /* GraphQL */ `
         mutation UploadFile($upload: File!) {
           uploadFile(upload: $upload) {
