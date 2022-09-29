@@ -1,5 +1,16 @@
 # @graphql-mesh/transform-federation
 
+## 0.9.41
+
+### Patch Changes
+
+- [#4605](https://github.com/Urigo/graphql-mesh/pull/4605) [`31a64714a`](https://github.com/Urigo/graphql-mesh/commit/31a64714a3e47dc41b950b3e1cfd1a49e7ff2d8a) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency [`@graphql-tools/stitching-directives@2.3.11` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/2.3.11) (from `2.3.9`, in `dependencies`)
+  - Updated dependency [`@graphql-tools/delegate@9.0.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.8) (from `9.0.6`, in `dependencies`)
+- Updated dependencies [[`31a64714a`](https://github.com/Urigo/graphql-mesh/commit/31a64714a3e47dc41b950b3e1cfd1a49e7ff2d8a), [`31a64714a`](https://github.com/Urigo/graphql-mesh/commit/31a64714a3e47dc41b950b3e1cfd1a49e7ff2d8a)]:
+  - @graphql-mesh/types@0.84.6
+  - @graphql-mesh/utils@0.41.17
+
 ## 0.9.40
 
 ### Patch Changes

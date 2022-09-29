@@ -1,12 +1,12 @@
 {
   "name": "cloudflare-workers",
   "private": true,
-  "version": "0.0.55",
+  "version": "0.0.56",
   "dependencies": {
-    "@graphql-mesh/cli": "0.78.25",
-    "@graphql-mesh/json-schema": "0.35.19",
-    "@graphql-mesh/cache-cfw-kv": "0.0.32",
-    "@graphql-mesh/plugin-response-cache": "0.1.33",
+    "@graphql-mesh/cli": "0.78.26",
+    "@graphql-mesh/json-schema": "0.35.20",
+    "@graphql-mesh/cache-cfw-kv": "0.0.33",
+    "@graphql-mesh/plugin-response-cache": "0.1.34",
     "graphql": "16.6.0"
   },
   "devDependencies": {
