@@ -1,4 +1,4 @@
-import { ApolloLink, FetchResult, Observable, Operation, RequestHandler } from '@apollo/client/core';
+import { ApolloLink, FetchResult, Observable, Operation, RequestHandler } from '@apollo/client';
 import { ExecuteMeshFn, SubscribeMeshFn } from '@graphql-mesh/runtime';
 import { isAsyncIterable } from '@graphql-tools/utils';
 import { getOperationAST } from 'graphql';
