@@ -6,6 +6,7 @@
   "transforms": "Transforms",
   "plugins": "Plugins",
   "cache": "Cache Storages",
+  "config-reference": "Config Reference",
   "cli-commands": "CLI commands",
   "migration": "Migration guides",
   "extend": {

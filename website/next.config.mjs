@@ -23,6 +23,9 @@ export default withGuildDocs({
       '/docs/getting-started/introduction': '/docs/getting-started/overview',
       '/docs/handlers': '/docs/handlers/handlers-introduction',
       '/docs/handlers/available-handlers': '/docs/handlers/handlers-introduction',
+      '/docs/migration': '/docs/migration/openapi-0.31-0.32',
+      '/docs/transforms': '/docs/transforms/transforms-introduction',
+      '/docs/guides': '/docs/guides/extending-unified-schema',
       '/docs/plugins': '/docs/plugins/plugins-introduction',
     }).map(([from, to]) => ({
       source: from,
