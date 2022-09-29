@@ -1,5 +1,17 @@
 [
   {
+    "objectID": "mesh-docs-cache-storages-cache-introduction",
+    "headings": [],
+    "toc": [],
+    "content": "73efed27f8b33745e61c1bb45118567c",
+    "url": "https://www.graphql-mesh.com/docs/cache/cache-introduction",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Docs", "Cache Storages"],
+    "source": "Mesh",
+    "title": "Introduction",
+    "type": "Documentation"
+  },
+  {
     "objectID": "mesh-docs-cache-storages-cfwkv",
     "headings": ["How to use?", "Config API Reference"],
     "toc": [
@@ -157,6 +169,140 @@
     "hierarchy": ["Docs"],
     "source": "Mesh",
     "title": "CLI commands",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-config-reference",
+    "headings": [
+      "`sources`",
+      "`transforms`",
+      "`additionalTypeDefs`",
+      "`additionalResolvers`",
+      "`plugins`",
+      "`additionalEnvelopPlugins`",
+      "`cache`",
+      "`serve`",
+      "`sdk`",
+      "`documents`",
+      "`customFetch`",
+      "`logger`",
+      "`merger`",
+      "`pubsub`",
+      "`skipSSLValidation`",
+      "`includeHttpDetailsInExtensions`",
+      "`codegen`",
+      "`require`"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "`sources`",
+        "anchor": "sources"
+      },
+      {
+        "children": [],
+        "title": "`transforms`",
+        "anchor": "transforms"
+      },
+      {
+        "children": [],
+        "title": "`additionalTypeDefs`",
+        "anchor": "additionaltypedefs"
+      },
+      {
+        "children": [],
+        "title": "`additionalResolvers`",
+        "anchor": "additionalresolvers"
+      },
+      {
+        "children": [],
+        "title": "`plugins`",
+        "anchor": "plugins"
+      },
+      {
+        "children": [],
+        "title": "`additionalEnvelopPlugins`",
+        "anchor": "additionalenvelopplugins"
+      },
+      {
+        "children": [],
+        "title": "`cache`",
+        "anchor": "cache"
+      },
+      {
+        "children": [
+          {
+            "children": [],
+            "title": "Serve config reference:",
+            "anchor": "serve-config-reference"
+          }
+        ],
+        "title": "`serve`",
+        "anchor": "serve"
+      },
+      {
+        "children": [
+          {
+            "children": [],
+            "title": "SDK config reference:",
+            "anchor": "sdk-config-reference"
+          }
+        ],
+        "title": "`sdk`",
+        "anchor": "sdk"
+      },
+      {
+        "children": [],
+        "title": "`documents`",
+        "anchor": "documents"
+      },
+      {
+        "children": [],
+        "title": "`customFetch`",
+        "anchor": "customfetch"
+      },
+      {
+        "children": [],
+        "title": "`logger`",
+        "anchor": "logger"
+      },
+      {
+        "children": [],
+        "title": "`merger`",
+        "anchor": "merger"
+      },
+      {
+        "children": [],
+        "title": "`pubsub`",
+        "anchor": "pubsub"
+      },
+      {
+        "children": [],
+        "title": "`skipSSLValidation`",
+        "anchor": "skipsslvalidation"
+      },
+      {
+        "children": [],
+        "title": "`includeHttpDetailsInExtensions`",
+        "anchor": "includehttpdetailsinextensions"
+      },
+      {
+        "children": [],
+        "title": "`codegen`",
+        "anchor": "codegen"
+      },
+      {
+        "children": [],
+        "title": "`require`",
+        "anchor": "require"
+      }
+    ],
+    "content": "a1b955ecfdbe2716ee2f95fb88b253ef",
+    "url": "https://www.graphql-mesh.com/docs/config-reference",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Docs"],
+    "source": "Mesh",
+    "title": "Config Reference",
     "type": "Documentation"
   },
   {
@@ -1432,7 +1578,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "0a95d26a886583a0909a889068f157c8",
+    "content": "af1e3b47dc4623bfdee9c87f3a07b3df",
     "url": "https://www.graphql-mesh.com/docs/handlers/openapi",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Source Handlers"],
