@@ -1,0 +1,116 @@
+import { Callout } from '@theguild/components'
+
+# Config Reference
+
+Commonly, configuration file is named `.meshrc.yaml` and placed in the root of your project.
+
+`yml`, `json`, `.ts`, `.js` and `.cjs` files are also supported.
+
+
+## `sources`
+
+Mandatory field. Defines the list of your external data sources for your API mesh.
+
+Acceptable external sources, with detailed specific configurations, available in the [Handlers](/docs/handlers) section.
+
+
+## `transforms`
+
+Defines the list of manipulations to apply to the unified mesh schema.
+
+Available transforms available in the [Transforms](/docs/transforms) section.
+
+
+## `additionalTypeDefs`
+
+Additional type definitions, or type definitions overrides you wish to add to the schema mesh. [Read more](/docs/getting-started/combine-multiple-sources#setup-hierarchy-with-nested-queries)
+
+
+## `additionalResolvers`
+
+Additional resolvers, or resolvers overrides you wish to add to the schema mesh. [Read more](/docs/guides/extending-unified-schema#programmatic-additionalresolvers)
+
+
+## `plugins`
+
+Extend the mesh schema's capabilities with additional [plugins](/docs/plugins/plugins-introduction).
+
+
+## `additionalEnvelopPlugins`
+
+Additional plugins from [Envelop Ecosystem](https://www.envelop.dev/plugins). [Read more](/docs/plugins/plugins-introduction#additional-plugins)
+
+
+## `cache`
+
+Configure the [caching strategy](/docs/cache) for your unified schema.
+
+
+## `serve`
+
+Mesh as a server configuration. [Read more](/docs/getting-started/customize-mesh-server#provide-a-standalone-server-implementation)
+
+### Serve config reference:
+
+import Serve from '../../generated-markdown/ServeConfig.generated.md'
+
+<Serve />
+
+
+## `sdk`
+
+SDK generation configurations. [Read more](/docs/guides/mesh-sdk#getting-started)
+
+### SDK config reference:
+
+import SDK from '../../generated-markdown/SdkConfig.generated.md'
+
+<SDK />
+
+
+## `documents`
+
+Provide a query or queries for GraphQL Playground, validation and SDK Generation.
+The value can be the file path, glob expression for the file paths or the SDL.
+`.js`, `.jsx`, `.graphql`, `.gql`, `.ts` and `.tsx` files are supported.
+[Read more](/docs/guides/mesh-sdk#getting-started)
+
+
+## `customFetch`
+
+Path to a custom W3 Compatible Fetch Implementation. [Example](/docs/handlers/openapi#accepting-one-of-the-cookies-header-or-context-value)
+
+
+## `logger`
+
+Logger instance that matches `Console` interface of NodeJS.
+
+
+## `merger`
+
+Merge method. Either 'stitching', 'bare' or 'federation' are acceptable.
+
+
+## `pubsub`
+
+PubSub Implementation.
+
+
+## `skipSSLValidation`
+
+Allow connections to an SSL endpoint without certificates (type: `Boolean`).
+
+
+## `includeHttpDetailsInExtensions`
+
+Include HTTP details to the extensions (type: `Boolean`).
+
+
+## `codegen`
+
+GraphQL Code Generator Configuration. [Read more](/docs/guides/graphql-code-generator#customizing-the-graphql-code-generator-configuration
+
+
+## `require`
+
+Loads specific require extensions before running the GraphQL Code Generator and reading the configuration.
