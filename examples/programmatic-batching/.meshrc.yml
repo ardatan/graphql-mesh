@@ -15,3 +15,6 @@ additionalResolvers:
 
 serve:
   browser: false
+
+documents:
+  - ./example-query.graphql
