@@ -6,10 +6,10 @@ import {
   SelectionSetParam,
   SelectionSetParamOrFactory,
 } from '@graphql-mesh/types';
-import { printWithCache } from '@graphql-mesh/utils';
+import { parseWithCache } from '@graphql-mesh/utils';
 import { BatchDelegateOptions, batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import { SubschemaConfig, StitchingInfo, IDelegateToSchemaOptions, delegateToSchema } from '@graphql-tools/delegate';
-import { parseSelectionSet, isDocumentNode } from '@graphql-tools/utils';
+import { isDocumentNode, memoize1 } from '@graphql-tools/utils';
 import { WrapQuery } from '@graphql-tools/wrap';
 import {
   GraphQLSchema,
@@ -20,6 +20,8 @@ import {
   Kind,
   GraphQLResolveInfo,
   SelectionSetNode,
+  OperationDefinitionNode,
+  DocumentNode,
 } from 'graphql';
 import { MESH_API_CONTEXT_SYMBOL } from './constants';
 
@@ -242,27 +244,44 @@ export async function getInContextSDK(
   return inContextSDK;
 }
 
-function normalizeSelectionSetParam(selectionSetParam: SelectionSetParam) {
+function getSelectionSetFromDocumentNode(documentNode: DocumentNode): SelectionSetNode {
+  const operationDefinition = documentNode.definitions.find(
+    definition => definition.kind === Kind.OPERATION_DEFINITION
+  ) as OperationDefinitionNode;
+  if (!operationDefinition) {
+    throw new Error('DocumentNode must contain an OperationDefinitionNode');
+  }
+  return operationDefinition.selectionSet;
+}
+
+function normalizeSelectionSetParam(selectionSetParam: SelectionSetParam): SelectionSetNode {
   if (typeof selectionSetParam === 'string') {
-    return parseSelectionSet(selectionSetParam);
+    const documentNode = parseWithCache(selectionSetParam);
+    return getSelectionSetFromDocumentNode(documentNode);
   }
   if (isDocumentNode(selectionSetParam)) {
-    return parseSelectionSet(printWithCache(selectionSetParam));
+    return getSelectionSetFromDocumentNode(selectionSetParam);
   }
   return selectionSetParam;
 }
 
+const normalizeSelectionSetParamFactory = memoize1(function normalizeSelectionSetParamFactory(
+  selectionSetParamFactory: (subtree: SelectionSetNode) => SelectionSetParam
+) {
+  const memoizedSelectionSetFactory = memoize1(selectionSetParamFactory);
+  return function selectionSetFactory(subtree: SelectionSetNode) {
+    const selectionSetParam = memoizedSelectionSetFactory(subtree);
+    return normalizeSelectionSetParam(selectionSetParam);
+  };
+});
+
 function normalizeSelectionSetParamOrFactory(
   selectionSetParamOrFactory: SelectionSetParamOrFactory
 ): (subtree: SelectionSetNode) => SelectionSetNode {
-  return function getSelectionSet(subtree: SelectionSetNode) {
-    if (typeof selectionSetParamOrFactory === 'function') {
-      const selectionSetParam = selectionSetParamOrFactory(subtree);
-      return normalizeSelectionSetParam(selectionSetParam);
-    } else {
-      return normalizeSelectionSetParam(selectionSetParamOrFactory);
-    }
-  };
+  if (typeof selectionSetParamOrFactory === 'function') {
+    return normalizeSelectionSetParamFactory(selectionSetParamOrFactory);
+  }
+  return () => normalizeSelectionSetParam(selectionSetParamOrFactory);
 }
 
 function identical<T>(val: T): T {
