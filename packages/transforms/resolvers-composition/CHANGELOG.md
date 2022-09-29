@@ -1,5 +1,13 @@
 # @graphql-mesh/transform-resolvers-composition
 
+## 0.12.96
+
+### Patch Changes
+
+- Updated dependencies [[`31a64714a`](https://github.com/Urigo/graphql-mesh/commit/31a64714a3e47dc41b950b3e1cfd1a49e7ff2d8a), [`31a64714a`](https://github.com/Urigo/graphql-mesh/commit/31a64714a3e47dc41b950b3e1cfd1a49e7ff2d8a)]:
+  - @graphql-mesh/types@0.84.6
+  - @graphql-mesh/utils@0.41.17
+
 ## 0.12.95
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # @omnigraph/raml
 
+## 0.7.26
+
+### Patch Changes
+
+- Updated dependencies [[`31a64714a`](https://github.com/Urigo/graphql-mesh/commit/31a64714a3e47dc41b950b3e1cfd1a49e7ff2d8a)]:
+  - @graphql-mesh/utils@0.41.17
+  - json-machete@0.15.4
+  - @omnigraph/json-schema@0.35.4
+
 ## 0.7.25
 
 ### Patch Changes
