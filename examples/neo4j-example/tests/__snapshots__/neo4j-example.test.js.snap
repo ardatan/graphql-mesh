@@ -2829,7 +2829,7 @@ exports[`Neo4j should give correct response for example queries: example-query.g
         "released": 1999n,
         "tagline": "Welcome to the Real World",
         "title": "The Matrix",
-        "votes": 2507n,
+        "votes": 2523n,
       },
       {
         "peopleActedIn": [
