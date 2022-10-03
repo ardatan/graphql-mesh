@@ -1,7 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["github>the-guild-org/shared-config:renovate"],
-  "ignoreDeps": ["@theguild/components", "guild-docs", "@graphql-inspector/core", "next"],
+  "ignoreDeps": ["@graphql-inspector/core", "next"],
   "packageRules": [
     {
       "matchPackageNames": ["graphql-yoga"],
