@@ -1,5 +1,11 @@
 # @graphql-mesh/runtime
 
+## 0.44.17
+
+### Patch Changes
+
+- [`70b3f55a5`](https://github.com/Urigo/graphql-mesh/commit/70b3f55a5e8a8b033397015fb82daebcb1c4af6d) Thanks [@ardatan](https://github.com/ardatan)! - Support older GraphQL-js versions
+
 ## 0.44.16
 
 ### Patch Changes
