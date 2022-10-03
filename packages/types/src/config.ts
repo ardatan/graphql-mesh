@@ -62,6 +62,10 @@ export interface Config {
    */
   includeHttpDetailsInExtensions?: boolean;
   /**
+   * Disable standard request caching
+   */
+  disableFetchCache?: boolean;
+  /**
    * Allow connections to an SSL endpoint without certificates
    */
   skipSSLValidation?: boolean;

@@ -190,6 +190,7 @@
       "`pubsub`",
       "`skipSSLValidation`",
       "`includeHttpDetailsInExtensions`",
+      "`disableFetchCache`",
       "`codegen`",
       "`require`"
     ],
@@ -285,6 +286,11 @@
         "children": [],
         "title": "`includeHttpDetailsInExtensions`",
         "anchor": "includehttpdetailsinextensions"
+      },
+      {
+        "children": [],
+        "title": "`disableFetchCache`",
+        "anchor": "disablefetchcache"
       },
       {
         "children": [],

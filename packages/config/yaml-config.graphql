@@ -47,6 +47,10 @@ type Query {
   """
   includeHttpDetailsInExtensions: Boolean
   """
+  Disable standard request caching
+  """
+  disableFetchCache: Boolean
+  """
   Allow connections to an SSL endpoint without certificates
   """
   skipSSLValidation: Boolean

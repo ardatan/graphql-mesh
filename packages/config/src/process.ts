@@ -602,6 +602,7 @@ export async function processConfig(
     store: rootStore,
     additionalEnvelopPlugins,
     includeHttpDetailsInExtensions: config.includeHttpDetailsInExtensions,
+    disableFetchCache: config.disableFetchCache,
     importCodes,
     codes,
     fetchFn,

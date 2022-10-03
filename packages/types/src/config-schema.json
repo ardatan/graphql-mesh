@@ -3785,6 +3785,10 @@
       "type": "boolean",
       "description": "Include HTTP details to the extensions"
     },
+    "disableFetchCache": {
+      "type": "boolean",
+      "description": "Disable standard request caching"
+    },
     "skipSSLValidation": {
       "type": "boolean",
       "description": "Allow connections to an SSL endpoint without certificates"

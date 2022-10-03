@@ -27,6 +27,7 @@ export type GetMeshOptions = {
   additionalEnvelopPlugins?: Parameters<typeof envelop>[0]['plugins'];
   documents?: Source[];
   includeHttpDetailsInExtensions?: boolean;
+  disableFetchCache?: boolean;
   fetchFn?: MeshFetch;
 };
 

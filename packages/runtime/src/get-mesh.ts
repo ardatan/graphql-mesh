@@ -131,6 +131,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     additionalTypeDefs = [],
     transforms = [],
     includeHttpDetailsInExtensions = process?.env?.DEBUG === '1' || process?.env?.DEBUG?.includes('http'),
+    disableFetchCache = false,
     fetchFn = defaultFetchFn,
   } = options;
 
@@ -165,7 +166,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
         setFetchFn(fetchFn);
       },
     },
-    useFetchache(cache),
+    disableFetchCache ? {} : useFetchache(cache),
     useDeduplicateRequest(),
     includeHttpDetailsInExtensions ? useIncludeHttpDetailsInExtensions() : {},
     {
