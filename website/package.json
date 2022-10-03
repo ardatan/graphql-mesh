@@ -12,9 +12,8 @@
     "analyze": "cross-env ANALYZE=true next build"
   },
   "dependencies": {
-    "@theguild/components": "3.0.3",
-    "guild-docs": "4.1.0",
-    "next": "12.3.0",
+    "@theguild/components": "4.1.6",
+    "next": "12.3.1",
     "next-sitemap": "3.1.23",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -33,7 +32,7 @@
     ]
   },
   "devDependencies": {
-    "@guild-docs/algolia": "0.2.2",
+    "@theguild/algolia": "0.1.0",
     "@theguild/tailwind-config": "0.1.1",
     "@types/node": "18.6.1",
     "@types/react": "18.0.21",

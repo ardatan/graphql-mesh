@@ -1,6 +1,6 @@
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { indexToAlgolia } from '@guild-docs/algolia';
+import { indexToAlgolia } from '@theguild/algolia';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
