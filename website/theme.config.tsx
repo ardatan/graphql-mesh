@@ -3,7 +3,7 @@ import { MeshLogo, defineConfig } from '@theguild/components';
 const SITE_NAME = 'GraphQL Mesh';
 
 export default defineConfig({
-  docsRepositoryBase: 'https://github.com/Urigo/graphql-mesh/tree/master/website/src/pages',
+  docsRepositoryBase: 'https://github.com/Urigo/graphql-mesh/tree/master/website',
   titleSuffix: ` – ${SITE_NAME}`,
   head: (
     <>
