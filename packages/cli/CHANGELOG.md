@@ -1,5 +1,23 @@
 # @graphql-mesh/cli
 
+## 0.78.27
+
+### Patch Changes
+
+- [#4602](https://github.com/Urigo/graphql-mesh/pull/4602) [`a2a60ac0c`](https://github.com/Urigo/graphql-mesh/commit/a2a60ac0ce4065a0e048417891c900c605b7184f) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`dotenv@16.0.3` ↗︎](https://www.npmjs.com/package/dotenv/v/16.0.3) (from `16.0.2`, in `dependencies`)
+
+- [#4612](https://github.com/Urigo/graphql-mesh/pull/4612) [`217739cb5`](https://github.com/Urigo/graphql-mesh/commit/217739cb5f7d9c0a451f8981d20aa2ccad5bb9f2) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`yargs@17.6.0` ↗︎](https://www.npmjs.com/package/yargs/v/17.6.0) (from `17.5.1`, in `dependencies`)
+- Updated dependencies [[`f7a811038`](https://github.com/Urigo/graphql-mesh/commit/f7a811038d4ca38d9518280a4402ab561bd96ec1), [`ffb301435`](https://github.com/Urigo/graphql-mesh/commit/ffb3014353c17d23a03cf8001eba606c85c2043f), [`ffb301435`](https://github.com/Urigo/graphql-mesh/commit/ffb3014353c17d23a03cf8001eba606c85c2043f), [`ffb301435`](https://github.com/Urigo/graphql-mesh/commit/ffb3014353c17d23a03cf8001eba606c85c2043f)]:
+  - @graphql-mesh/http@0.1.24
+  - @graphql-mesh/runtime@0.44.16
+  - @graphql-mesh/types@0.84.7
+  - @graphql-mesh/utils@0.41.18
+  - @graphql-mesh/config@8.0.16
+  - @graphql-mesh/store@0.8.51
+
 ## 0.78.26
 
 ### Patch Changes

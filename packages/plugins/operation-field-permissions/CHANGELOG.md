@@ -1,5 +1,12 @@
 # @graphql-mesh/plugin-operation-field-permissions
 
+## 0.0.8
+
+### Patch Changes
+
+- Updated dependencies [[`ffb301435`](https://github.com/Urigo/graphql-mesh/commit/ffb3014353c17d23a03cf8001eba606c85c2043f)]:
+  - @graphql-mesh/types@0.84.7
+
 ## 0.0.7
 
 ### Patch Changes

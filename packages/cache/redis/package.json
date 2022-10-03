@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cache-redis",
-  "version": "0.10.32",
+  "version": "0.10.33",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -28,8 +28,8 @@
     }
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.84.6",
-    "@graphql-mesh/utils": "0.41.17",
+    "@graphql-mesh/types": "0.84.7",
+    "@graphql-mesh/utils": "0.41.18",
     "@graphql-mesh/cross-helpers": "0.2.6",
     "@graphql-mesh/string-interpolation": "0.3.2",
     "ioredis-mock": "8.2.2",

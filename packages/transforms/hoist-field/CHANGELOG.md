@@ -1,5 +1,16 @@
 # @graphql-mesh/transform-hoist-field
 
+## 0.1.64
+
+### Patch Changes
+
+- [#4604](https://github.com/Urigo/graphql-mesh/pull/4604) [`ffb301435`](https://github.com/Urigo/graphql-mesh/commit/ffb3014353c17d23a03cf8001eba606c85c2043f) Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
+  - Updated dependency [`@graphql-tools/delegate@9.0.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.8) (from `9.0.6`, in `dependencies`)
+  - Updated dependency [`@graphql-tools/wrap@9.2.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.3) (from `9.2.1`, in `dependencies`)
+- Updated dependencies [[`ffb301435`](https://github.com/Urigo/graphql-mesh/commit/ffb3014353c17d23a03cf8001eba606c85c2043f), [`ffb301435`](https://github.com/Urigo/graphql-mesh/commit/ffb3014353c17d23a03cf8001eba606c85c2043f)]:
+  - @graphql-mesh/types@0.84.7
+  - @graphql-mesh/utils@0.41.18
+
 ## 0.1.63
 
 ### Patch Changes

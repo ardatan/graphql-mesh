@@ -1,5 +1,12 @@
 # @graphql-mesh/plugin-rate-limit
 
+## 0.0.34
+
+### Patch Changes
+
+- Updated dependencies [[`ffb301435`](https://github.com/Urigo/graphql-mesh/commit/ffb3014353c17d23a03cf8001eba606c85c2043f)]:
+  - @graphql-mesh/types@0.84.7
+
 ## 0.0.33
 
 ### Patch Changes
