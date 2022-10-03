@@ -1,4 +1,4 @@
-import { GraphQLSchema, getOperationAST, DocumentNode } from 'graphql';
+import { GraphQLSchema, getOperationAST, DocumentNode, GraphQLObjectType, OperationTypeNode } from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types';
 import {
   MeshPubSub,
@@ -25,7 +25,14 @@ import {
 } from '@graphql-mesh/utils';
 
 import { CreateProxyingResolverFn, Subschema, SubschemaConfig } from '@graphql-tools/delegate';
-import { AggregateError, ExecutionResult, isAsyncIterable, mapAsyncIterator, memoize1 } from '@graphql-tools/utils';
+import {
+  AggregateError,
+  ExecutionResult,
+  getRootTypeMap,
+  isAsyncIterable,
+  mapAsyncIterator,
+  memoize1,
+} from '@graphql-tools/utils';
 import { envelop, PluginOrDisabledPlugin, useExtendContext } from '@envelop/core';
 import { OneOfInputObjectsRule, useExtendedValidation } from '@envelop/extended-validation';
 import { getInContextSDK } from './in-context-sdk';
@@ -96,9 +103,12 @@ export function wrapFetchWithPlugins(plugins: MeshPlugin<any>[]): MeshFetch {
 }
 
 // Use in-context-sdk for tracing
-function createProxyingResolverFactory(apiName: string, apiSchema: GraphQLSchema): CreateProxyingResolverFn {
-  return function createProxyingResolver({ operation, fieldName, subschemaConfig }) {
-    const rootType = apiSchema.getRootType(operation);
+function createProxyingResolverFactory(
+  apiName: string,
+  rootTypeMap: Map<OperationTypeNode, GraphQLObjectType>
+): CreateProxyingResolverFn {
+  return function createProxyingResolver({ operation }) {
+    const rootType = rootTypeMap.get(operation);
     return function proxyingResolver(root, args, context, info) {
       if (!context[apiName][rootType.name][info.fieldName]) {
         throw new Error(`${info.fieldName} couldn't find in ${rootType.name} of ${apiName} as a ${operation}`);
@@ -192,6 +202,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
           transforms = apiSource.transforms;
         }
 
+        const rootTypeMap = getRootTypeMap(apiSchema);
         rawSources.push({
           name: apiName,
           schema: apiSchema,
@@ -201,7 +212,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
           handler: apiSource.handler,
           batch: 'batch' in source ? source.batch : true,
           merge: source.merge,
-          createProxyingResolver: createProxyingResolverFactory(apiName, apiSchema),
+          createProxyingResolver: createProxyingResolverFactory(apiName, rootTypeMap),
         });
       } catch (e: any) {
         sourceLogger.error(`Failed to generate the schema`, e);
