@@ -1,5 +1,13 @@
 # @graphql-mesh/transform-rename
 
+## 0.12.90
+
+### Patch Changes
+
+- Updated dependencies [[`5b44abcd2`](https://github.com/Urigo/graphql-mesh/commit/5b44abcd2aaa765ee329539112d9dface063efa6)]:
+  - @graphql-mesh/utils@0.41.19
+  - @graphql-mesh/types@0.84.8
+
 ## 0.12.89
 
 ### Patch Changes

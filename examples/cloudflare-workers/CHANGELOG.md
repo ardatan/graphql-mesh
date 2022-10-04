@@ -1,5 +1,15 @@
 # cloudflare-workers
 
+## 0.0.59
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cache-cfw-kv@0.0.35
+  - @graphql-mesh/cli@0.78.29
+  - @graphql-mesh/json-schema@0.35.22
+  - @graphql-mesh/plugin-response-cache@0.1.36
+
 ## 0.0.58
 
 ### Patch Changes
