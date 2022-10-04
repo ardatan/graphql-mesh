@@ -213,7 +213,10 @@ export async function serveMesh(
       .listen(port, hostname, () => {
         const shouldntOpenBrowser = process.env.NODE_ENV?.toLowerCase() === 'production' || browser === false;
         if (!shouldntOpenBrowser) {
-          open(serverUrl, typeof browser === 'string' ? { app: browser } : undefined).catch(() => {});
+          open(
+            serverUrl.replace('0.0.0.0', 'localhost'),
+            typeof browser === 'string' ? { app: browser } : undefined
+          ).catch(() => {});
         }
       })
       .on('error', handleFatalError);
