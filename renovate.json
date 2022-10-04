@@ -7,7 +7,7 @@
       "followTag": "three"
     },
     {
-      "excludePackagePatters": [
+      "excludePackagePatterns": [
         "@changesets/*",
         "typescript",
         "typedoc*", 
