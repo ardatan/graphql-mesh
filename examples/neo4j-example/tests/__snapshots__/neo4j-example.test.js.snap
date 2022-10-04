@@ -920,6 +920,8 @@ input MovieSort {
 }
 
 input MovieSubscriptionWhere {
+  AND: [MovieSubscriptionWhere!]
+  OR: [MovieSubscriptionWhere!]
   released: BigInt
   released_GT: BigInt
   released_GTE: BigInt
@@ -2337,6 +2339,8 @@ input PersonSort {
 }
 
 input PersonSubscriptionWhere {
+  AND: [PersonSubscriptionWhere!]
+  OR: [PersonSubscriptionWhere!]
   born: BigInt
   born_GT: BigInt
   born_GTE: BigInt
