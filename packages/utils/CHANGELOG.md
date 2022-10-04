@@ -1,5 +1,14 @@
 # @graphql-mesh/utils
 
+## 0.41.19
+
+### Patch Changes
+
+- [`5b44abcd2`](https://github.com/Urigo/graphql-mesh/commit/5b44abcd2aaa765ee329539112d9dface063efa6) Thanks [@ardatan](https://github.com/ardatan)! - Revert tiny-lru to fix browser bundle compatibility
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.84.8
+
 ## 0.41.18
 
 ### Patch Changes
