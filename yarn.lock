@@ -14633,10 +14633,10 @@ mongodb@4.9.1:
   optionalDependencies:
     saslprep "^1.0.3"
 
-mongoose@6.6.3:
-  version "6.6.3"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.6.3.tgz#9c6ab3bc12a00fa41213e54ba2c898254bdaefe3"
-  integrity sha512-2Ye018PNBBXJd717qhfjBGo7k8HQb/pKziO9d5wY14iZSUI7hxqL7bwNDg+poeBwnlhBYLncZkips15Blfgxbw==
+mongoose@6.6.4:
+  version "6.6.4"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.6.4.tgz#de65b470e66a5df222ea43b051f59230325a362a"
+  integrity sha512-gkH17ZFdwUHIadWXIjNfZ3y/Wa7WlWu54SeieHMnpDuk8QNaA9RezmFN+s4CvghfvdfVIgifsv/jviqUMFFdnw==
   dependencies:
     bson "^4.6.5"
     kareem "2.4.1"
