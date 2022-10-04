@@ -3427,10 +3427,10 @@
     "@napi-rs/simple-git-win32-arm64-msvc" "0.1.8"
     "@napi-rs/simple-git-win32-x64-msvc" "0.1.8"
 
-"@neo4j/graphql@3.8.0":
-  version "3.8.0"
-  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-3.8.0.tgz#db04c6f8686177375736dd6ab632e0b75d304af2"
-  integrity sha512-BExiJ7xoaTcXyNRDcccHWgVemb/TSMiX1iTD7wX6Tl5Zp4vnSR6N5FYqN1lRHQN4K+XuIZrqAF+q3vOC0vBPFA==
+"@neo4j/graphql@3.9.0":
+  version "3.9.0"
+  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-3.9.0.tgz#16148f06f370d26d7a67257ce764c24670b2ba5b"
+  integrity sha512-28CbcmsNMXz+CcU/lfAbuPu00yFOBjKF86gRoyeaRwYWZ29pZw2qpm8QGFHvG66MGM53fb8YAOb/45yaQq5cLQ==
   dependencies:
     "@graphql-tools/merge" "^8.3.3"
     "@graphql-tools/resolvers-composition" "^6.5.3"
