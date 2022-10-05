@@ -1,6 +1,7 @@
 {
   "name": "openwhisk-example",
   "version": "0.0.0",
+  "private": true,
   "description": "OpenWhisk Example for GraphQL Mesh",
   "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",
   "license": "MIT",
