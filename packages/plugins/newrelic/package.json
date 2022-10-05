@@ -38,7 +38,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@types/newrelic": "7.0.3",
+    "@types/newrelic": "7.0.4",
     "newrelic": "8.17.1"
   },
   "publishConfig": {

@@ -3111,10 +3111,10 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@json-schema-tools/meta-schema@1.6.19":
-  version "1.6.19"
-  resolved "https://registry.yarnpkg.com/@json-schema-tools/meta-schema/-/meta-schema-1.6.19.tgz#295301c2d4a0c01eb2eafbf605aca8ebc0dfbbb6"
-  integrity sha512-55zuWFW7tr4tf/G5AYmybcPdGOkVAreQbt2JdnogX4I2r/zkxZiimYPJESDf5je9BI2oRveak2p296HzDppeaA==
+"@json-schema-tools/meta-schema@1.7.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@json-schema-tools/meta-schema/-/meta-schema-1.7.0.tgz#ce3e3a490a6499c44251d6203a40ed96bde8ac4b"
+  integrity sha512-3pDzVUssW3hVnf8gvSu1sKaVIpLyvmpbxgGfkUoaBiErFKRS2CZOufHD0pUFoa5e6Cd5oa72s402nJbnDz76CA==
 
 "@leichtgewicht/ip-codec@^2.0.1":
   version "2.0.4"
@@ -4779,10 +4779,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/newrelic@7.0.3":
-  version "7.0.3"
-  resolved "https://registry.yarnpkg.com/@types/newrelic/-/newrelic-7.0.3.tgz#07ae3d0175f712e0fcaef69564dbe06b6039febb"
-  integrity sha512-MAaZYpJ9HEumg8MR4OFNDu8Cy4LnNc89aZ4pqXcBiQyo8SaQVv0sPj2JzzR1rQ/Rk86WL9vLjrDjuEg2vDMimg==
+"@types/newrelic@7.0.4":
+  version "7.0.4"
+  resolved "https://registry.yarnpkg.com/@types/newrelic/-/newrelic-7.0.4.tgz#ccb65ce1dd5cae9f6bbf9248630a9ed316fd257f"
+  integrity sha512-Y4jdcdi5h+mD6yRe9JIe8jSWMmnx0C451r62sWndkkM3ZRYQ44N+kvZfAlBUP2tIaVdZweX+T3n3+uDxMg7xfw==
 
 "@types/node-fetch@^2.6.2":
   version "2.6.2"
@@ -20070,10 +20070,10 @@ web-streams-polyfill@^3.2.0:
   resolved "https://registry.yarnpkg.com/web-streams-polyfill/-/web-streams-polyfill-3.2.0.tgz#a6b74026b38e4885869fb5c589e90b95ccfc7965"
   integrity sha512-EqPmREeOzttaLRm5HS7io98goBgZ7IVz79aDvqjD0kYXLtFZTc0T/U6wHTPKyIjb+MdN7DFIIX6hgdBEpWmfPA==
 
-web-vitals@3.0.2:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/web-vitals/-/web-vitals-3.0.2.tgz#a484109dc5d64bc4924f174267ce20e7cd4c7934"
-  integrity sha512-YygzeCdGpNrCHIjW14AI4SxMX2IcONhDvwhHc9KswCIixfSeVl08WdKDfzZaypq2ynRIG3lzGO3CO5dXYzc9+w==
+web-vitals@3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/web-vitals/-/web-vitals-3.0.3.tgz#e08cf4d30398baf91984f230a87872d6049e173f"
+  integrity sha512-8K6cl3alkVhwv7RQm3WAWFzvP9dBTH4CwOE7G3DfQDEnBJTdtNgX5XMqgE7aE79wac/kJ8fHWftUfH3AVxxbBw==
 
 webcrypto-core@^1.7.4:
   version "1.7.5"

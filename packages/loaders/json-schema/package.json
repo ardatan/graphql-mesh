@@ -50,7 +50,7 @@
     "lodash.set": "4.3.2",
     "tslib": "^2.4.0",
     "@graphql-mesh/cross-helpers": "0.2.6",
-    "@json-schema-tools/meta-schema": "1.6.19"
+    "@json-schema-tools/meta-schema": "1.7.0"
   },
   "publishConfig": {
     "access": "public",

@@ -38,7 +38,7 @@
     "graphql-compose": "9.0.9",
     "@omnigraph/json-schema": "0.35.6",
     "tslib": "^2.4.0",
-    "@json-schema-tools/meta-schema": "1.6.19"
+    "@json-schema-tools/meta-schema": "1.7.0"
   },
   "publishConfig": {
     "access": "public",
