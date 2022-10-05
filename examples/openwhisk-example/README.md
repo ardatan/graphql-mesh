@@ -26,7 +26,9 @@ You also need to update the paths inside `index.ts` and `package.json` to match 
 You can see an example script to bundle the project with `ESBuild` in `build.js`.
 `yarn build` will build the artifacts of GraphQL Mesh first then bundle all the code needed for the OpenWhisk action by taking `index.ts` as an endpoint.
 
-You can find the bundle in `dist/index.js` and deploy it either `yarn deploy` or manually with `wsk` like `wsk action update /guest/mesh/swapi --kind nodejs:16 dist/index.js`.
+You can find the bundle in `dist/index.js` and deploy it either `yarn deploy` or manually with `wsk` like `wsk action update /guest/mesh/swapi --kind nodejs:16 dist/index.js --web raw`.
+
+> `--web raw` needs to be added to configure the action as a _raw_ web action.
 
 ## Running the project locally
 
