@@ -450,6 +450,11 @@
                 "children": [],
                 "title": "Deploy Mesh on Cloudflare Workers",
                 "anchor": "deploy-mesh-on-cloudflare-workers"
+              },
+              {
+                "children": [],
+                "title": "Deploy Mesh on Apache OpenWhisk",
+                "anchor": "deploy-mesh-on-apache-openwhisk"
               }
             ],
             "title": "Deploy Mesh on Vercel with Next.js API Routes",
@@ -497,7 +502,7 @@
         "anchor": "mesh-and-docker"
       }
     ],
-    "content": "d8a0a911042645e12824a5e34b400a04",
+    "content": "5057d79b67d2174ed29e7fc5f8eff02a",
     "url": "https://www.graphql-mesh.com/docs/getting-started/deploy-mesh-gateway",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Getting Started"],
