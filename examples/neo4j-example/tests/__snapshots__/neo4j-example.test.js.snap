@@ -2833,7 +2833,6 @@ exports[`Neo4j should give correct response for example queries: example-query.g
         "released": 1999n,
         "tagline": "Welcome to the Real World",
         "title": "The Matrix",
-        "votes": 2528n,
       },
       {
         "peopleActedIn": [
@@ -2847,7 +2846,6 @@ exports[`Neo4j should give correct response for example queries: example-query.g
         "released": 2003n,
         "tagline": "Free your mind",
         "title": "The Matrix Reloaded",
-        "votes": 534n,
       },
     ],
   },

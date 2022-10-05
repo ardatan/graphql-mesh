@@ -3,7 +3,6 @@ query MovieWithActedIn {
     title
     released
     tagline
-    votes
     peopleActedIn(options: { limit: 2 }) {
       name
     }
