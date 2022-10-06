@@ -1,5 +1,13 @@
 # auth0-example
 
+## 0.0.17
+
+### Patch Changes
+
+- Updated dependencies [[`48171a006`](https://github.com/Urigo/graphql-mesh/commit/48171a0064c788d6e8ebed7a4f7aa67a5577cdc5)]:
+  - @graphql-mesh/json-schema@0.35.23
+  - @graphql-mesh/cli@0.78.30
+
 ## 0.0.16
 
 ### Patch Changes
