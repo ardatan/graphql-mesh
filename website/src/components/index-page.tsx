@@ -143,13 +143,14 @@ function Feature(
 }
 
 function FeatureHighlights(props: {
+  textColor?: string;
   highlights?: Array<{
     title: string;
     description: React.ReactNode;
     icon?: React.ReactNode;
   }>;
 }) {
-  const { highlights } = props;
+  const { highlights, textColor } = props;
 
   return Array.isArray(highlights) && highlights.length > 0 ? (
     <>
@@ -157,7 +158,9 @@ function FeatureHighlights(props: {
         <div className={Highlight.Root} key={i}>
           {icon && <div className={Highlight.Icon}>{icon}</div>}
           <div className={Highlight.Content}>
-            <h3 className={Highlight.Title + (icon ? '' : ' text-lg')}>{title}</h3>
+            <h3 className={Highlight.Title + (icon ? '' : ' text-lg')} style={textColor ? { color: textColor } : {}}>
+              {title}
+            </h3>
             <p className={Highlight.Description + (icon ? '' : ' text-sm')}>{description}</p>
           </div>
         </div>
@@ -182,7 +185,7 @@ const datasources: Array<string> = [
 ];
 
 const deployableEnvs: Array<string> = [
-'Node.js',
+  'Node.js',
   'Vercel',
   'AWS Lambda',
   'Cloudflare Workers',
@@ -326,6 +329,7 @@ export function IndexPage(): ReactElement {
           </div>
           <div className="max-w-screen-lg px-6 box-border mx-auto grid grid-cols-2 gap-12">
             <FeatureHighlights
+              textColor={gradients[3][0]}
               highlights={[
                 {
                   title: 'Naming conventions',
@@ -376,7 +380,7 @@ export function IndexPage(): ReactElement {
           </div>
         }
         image={PluginLogo}
-        gradient={3}
+        gradient={4}
         flipped
       />
       <Feature
@@ -386,13 +390,13 @@ export function IndexPage(): ReactElement {
             <p>Supported environments</p>
           </div>
         }
-        gradient={1}
+        gradient={0}
       >
         <div className="flex flex-wrap lg:w-4/5 sm:mx-auto sm:mb-2 -mx-2">
           {deployableEnvs.map((env, i) => (
             <div className="p-2 sm:w-1/2 md:w-1/3 w-full" key={i}>
               <div className="bg-gray-100 dark:bg-gray-800 rounded flex p-4 h-full items-center gap-2">
-                <FiFastForward className="stroke-indigo-500 w-6 h-6 flex-shrink-0 mr-4" />
+                <FiFastForward className="w-6 h-6 flex-shrink-0 mr-4" style={{ stroke: pickGradient(0)[0] }} />
                 <span className="title-font font-medium text-black dark:text-white">{env}</span>
               </div>
             </div>
