@@ -1,7 +1,7 @@
 import { Anchor } from '@theguild/components';
 import Image, { StaticImageData } from 'next/image';
 import { PropsWithChildren, ReactElement } from 'react';
-import { FiGithub } from 'react-icons/fi';
+import { FiCheckCircle, FiFastForward, FiGithub } from 'react-icons/fi';
 
 import GraphQLLogo from '../../public/assets/GraphQL_Logo.svg';
 import MeshExampleLogo from '../../public/assets/mesh-example.png';
@@ -181,6 +181,20 @@ const datasources: Array<string> = [
   '& More...',
 ];
 
+const deployableEnvs: Array<string> = [
+  'Vercel',
+  'AWS Lambda',
+  'CloudFlare workers',
+  'Apache OpenWhisk',
+  'Express',
+  'Fastify',
+  'Node.js request handler',
+  'Koa',
+  'Sveltekit',
+  'Docker',
+  '& More...',
+];
+
 export function IndexPage(): ReactElement {
   return (
     <div className="flex flex-col">
@@ -259,18 +273,7 @@ export function IndexPage(): ReactElement {
           {datasources.map((datasource, i) => (
             <div className="p-2 sm:w-1/2 md:w-1/3 w-full" key={i}>
               <div className="bg-gray-100 dark:bg-gray-800 rounded flex p-4 h-full items-center">
-                <svg
-                  fill="none"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="3"
-                  className="text-indigo-500 w-6 h-6 flex-shrink-0 mr-4"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
-                  <path d="M22 4L12 14.01l-3-3"></path>
-                </svg>
+                <FiCheckCircle className="text-indigo-500 w-6 h-6 flex-shrink-0 mr-4" />
                 <span className="title-font font-medium text-black dark:text-white">{datasource}</span>
               </div>
             </div>
@@ -278,7 +281,7 @@ export function IndexPage(): ReactElement {
         </div>
       </Feature>
       <Feature
-        title="Connecting datasources"
+        title="Connect datasources"
         description={
           <div className="flex flex-col gap-y-12">
             <div>
@@ -345,7 +348,7 @@ export function IndexPage(): ReactElement {
         </div>
       </div>
       <Feature
-        title="Plugins"
+        title="Extend with plugins"
         description={
           <div className="flex flex-col gap-y-12">
             <div>
@@ -375,7 +378,26 @@ export function IndexPage(): ReactElement {
         gradient={3}
         flipped
       />
-      {/* FEATURE: run everywhere */}
+      <Feature
+        title="Run everywhere"
+        description={
+          <div className="space-y-2">
+            <p>Supported environments</p>
+          </div>
+        }
+        gradient={1}
+      >
+        <div className="flex flex-wrap lg:w-4/5 sm:mx-auto sm:mb-2 -mx-2">
+          {deployableEnvs.map((env, i) => (
+            <div className="p-2 sm:w-1/2 md:w-1/3 w-full" key={i}>
+              <div className="bg-gray-100 dark:bg-gray-800 rounded flex p-4 h-full items-center gap-2">
+                <FiFastForward className="stroke-indigo-500 w-6 h-6 flex-shrink-0 mr-4" />
+                <span className="title-font font-medium text-black dark:text-white">{env}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Feature>
     </div>
   );
 }
