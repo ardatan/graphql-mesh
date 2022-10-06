@@ -1,5 +1,12 @@
 # grpc-reflection-example
 
+## 0.5.303
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.78.31
+
 ## 0.5.302
 
 ### Patch Changes
