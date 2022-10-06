@@ -189,7 +189,6 @@ const deployableEnvs: Array<string> = [
   'Apache OpenWhisk',
   'Express',
   'Fastify',
-  'Node.js request handler',
   'Koa',
   'Sveltekit',
   'Docker',
