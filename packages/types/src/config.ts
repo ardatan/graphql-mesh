@@ -1737,6 +1737,7 @@ export interface Plugin {
   prometheus?: PrometheusConfig;
   rateLimit?: RateLimitPluginConfig;
   responseCache?: ResponseCacheConfig;
+  snapshot?: SnapshotPluginConfig;
   statsd?: StatsdPlugin;
   [k: string]: any;
 }
@@ -1999,6 +2000,27 @@ export interface ResponseCacheConfig {
 export interface ResponseCacheTTLConfig {
   coordinate: string;
   ttl: number;
+}
+/**
+ * Configuration for Snapshot extension
+ */
+export interface SnapshotPluginConfig {
+  /**
+   * Expression for when to activate this extension.
+   * Value can be a valid JS expression string or a boolean (Any of: String, Boolean)
+   */
+  if?: string | boolean;
+  /**
+   * HTTP URL pattern to be applied
+   * For example;
+   *   apply:
+   *       - http://my-remote-api.com/* \<- * will apply this extension to all paths of remote API
+   */
+  apply: string[];
+  /**
+   * Path to the directory of the generated snapshot files
+   */
+  outputDir: string;
 }
 export interface StatsdPlugin {
   /**

@@ -1,0 +1,27 @@
+extend type Plugin {
+  """
+  Configuration for Snapshot extension
+  """
+  snapshot: SnapshotPluginConfig
+}
+
+type SnapshotPluginConfig @md {
+  """
+  Expression for when to activate this extension.
+  Value can be a valid JS expression string or a boolean
+  """
+  if: If
+  """
+  HTTP URL pattern to be applied
+  For example;
+    apply:
+        - http://my-remote-api.com/* \<- * will apply this extension to all paths of remote API
+  """
+  apply: [String!]!
+  """
+  Path to the directory of the generated snapshot files
+  """
+  outputDir: String!
+}
+
+union If = String | Boolean

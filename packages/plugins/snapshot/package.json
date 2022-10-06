@@ -1,6 +1,6 @@
 {
-  "name": "@graphql-mesh/transform-snapshot",
-  "version": "0.14.65",
+  "name": "@graphql-mesh/plugin-snapshot",
+  "version": "0.0.0",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -22,22 +22,18 @@
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
-    "directory": "packages/transforms/snapshot"
+    "directory": "packages/plugins/snapshot"
   },
   "peerDependencies": {
     "graphql": "*"
   },
-  "devDependencies": {
-    "graphql-fields": "2.0.3"
-  },
   "dependencies": {
+    "@graphql-mesh/string-interpolation": "0.3.2",
+    "@graphql-mesh/utils": "0.41.19",
     "@graphql-mesh/cross-helpers": "0.2.6",
     "@graphql-mesh/types": "0.84.8",
-    "@graphql-mesh/utils": "0.41.19",
-    "@graphql-tools/resolvers-composition": "6.5.6",
-    "@graphql-tools/schema": "9.0.4",
-    "@graphql-tools/utils": "8.12.0",
-    "object-hash": "3.0.0",
+    "@whatwg-node/fetch": "0.4.7",
+    "minimatch": "5.1.0",
     "tslib": "^2.4.0"
   },
   "publishConfig": {
