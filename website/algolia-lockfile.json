@@ -1243,6 +1243,34 @@
     "type": "Documentation"
   },
   {
+    "objectID": "mesh-docs-plugins-snapshot",
+    "headings": ["How to use?", "Codesandbox Example", "Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "How to use?",
+        "anchor": "how-to-use"
+      },
+      {
+        "children": [],
+        "title": "Codesandbox Example",
+        "anchor": "codesandbox-example"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "7e34a43abdd0446d0ea132d7d36be9f7",
+    "url": "https://www.graphql-mesh.com/docs/plugins/snapshot",
+    "domain": "https://www.graphql-mesh.com/",
+    "hierarchy": ["Docs", "Plugins"],
+    "source": "Mesh",
+    "title": "snapshot",
+    "type": "Documentation"
+  },
+  {
     "objectID": "mesh-docs-plugins-statsd",
     "headings": ["Example Configuration", "Config API Reference"],
     "toc": [
@@ -1696,68 +1724,6 @@
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-transforms-cache",
-    "headings": ["How to use?", "Cache Invalidation", "Codesandbox Example", "Config API Reference"],
-    "toc": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "children": [],
-                "title": "The Cache Key",
-                "anchor": "the-cache-key"
-              }
-            ],
-            "title": "Simple caching",
-            "anchor": "simple-caching"
-          }
-        ],
-        "title": "How to use?",
-        "anchor": "how-to-use"
-      },
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "children": [],
-                "title": "Operation-based",
-                "anchor": "operation-based"
-              },
-              {
-                "children": [],
-                "title": "Programmatic",
-                "anchor": "programmatic"
-              }
-            ],
-            "title": "TTL",
-            "anchor": "ttl"
-          }
-        ],
-        "title": "Cache Invalidation",
-        "anchor": "cache-invalidation"
-      },
-      {
-        "children": [],
-        "title": "Codesandbox Example",
-        "anchor": "codesandbox-example"
-      },
-      {
-        "children": [],
-        "title": "Config API Reference",
-        "anchor": "config-api-reference"
-      }
-    ],
-    "content": "11b2047fbe1beb2372d05ad8c52cd952",
-    "url": "https://www.graphql-mesh.com/docs/transforms/cache",
-    "domain": "https://www.graphql-mesh.com/",
-    "hierarchy": ["Docs", "Transforms"],
-    "source": "Mesh",
-    "title": "cache",
-    "type": "Documentation"
-  },
-  {
     "objectID": "mesh-docs-transforms-encapsulate",
     "headings": ["How to use?", "Config API Reference"],
     "toc": [
@@ -2074,34 +2040,6 @@
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-transforms-snapshot",
-    "headings": ["How to use?", "Codesandbox Example", "Config API Reference"],
-    "toc": [
-      {
-        "children": [],
-        "title": "How to use?",
-        "anchor": "how-to-use"
-      },
-      {
-        "children": [],
-        "title": "Codesandbox Example",
-        "anchor": "codesandbox-example"
-      },
-      {
-        "children": [],
-        "title": "Config API Reference",
-        "anchor": "config-api-reference"
-      }
-    ],
-    "content": "cba339d22f124c8039dbb7ad39aefbc8",
-    "url": "https://www.graphql-mesh.com/docs/transforms/snapshot",
-    "domain": "https://www.graphql-mesh.com/",
-    "hierarchy": ["Docs", "Transforms"],
-    "source": "Mesh",
-    "title": "Snapshot",
-    "type": "Documentation"
-  },
-  {
     "objectID": "mesh-docs-transforms-transforms-introduction",
     "headings": ["Introduction to Transforms", "Transforms location and order", "Two different modes"],
     "toc": [
@@ -2150,7 +2088,7 @@
         "anchor": "two-different-modes"
       }
     ],
-    "content": "0c9b94a9419f4981c8dd820841c2f95f",
+    "content": "dca4045e80c26b11f8138ed85c459149",
     "url": "https://www.graphql-mesh.com/docs/transforms/transforms-introduction",
     "domain": "https://www.graphql-mesh.com/",
     "hierarchy": ["Docs", "Transforms"],
