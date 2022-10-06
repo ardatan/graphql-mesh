@@ -44,7 +44,7 @@ export function createMeshHTTPHandler<TServerContext>({
     '/healthcheck',
     () =>
       new Response(null, {
-        status: readyFlag ? 204 : 503,
+        status: 200,
       })
   );
   serverAdapter.all(
