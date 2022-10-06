@@ -2,7 +2,7 @@ import { hashObject } from '@graphql-mesh/string-interpolation';
 import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
 import { getHeadersObj, pathExists, writeJSON } from '@graphql-mesh/utils';
 import minimatch from 'minimatch';
-import { fs, path } from '@graphql-mesh/cross-helpers';
+import { fs, path, process } from '@graphql-mesh/cross-helpers';
 import { Response } from '@whatwg-node/fetch';
 
 function calculateCacheKey(url: string, options: RequestInit) {
@@ -22,6 +22,17 @@ interface SnapshotEntry {
 export default function useSnapshot(
   pluginOptions: MeshPluginOptions<YamlConfig.SnapshotPluginConfig>
 ): MeshPlugin<any> {
+  if (typeof pluginOptions.if === 'boolean') {
+    if (!pluginOptions.if) {
+      return {};
+    }
+  }
+  if (typeof pluginOptions.if === 'string') {
+    // eslint-disable-next-line no-new-func
+    if (new Function('return ' + pluginOptions.if, 'env')(process.env)) {
+      return {};
+    }
+  }
   const matches = pluginOptions.apply.map(glob => new minimatch.Minimatch(glob));
   const snapshotsDir = pluginOptions.outputDir || '__snapshots__';
   return {
