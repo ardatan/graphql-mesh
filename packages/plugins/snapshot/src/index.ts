@@ -1,0 +1,75 @@
+import { hashObject } from '@graphql-mesh/string-interpolation';
+import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
+import { getHeadersObj, pathExists, writeJSON } from '@graphql-mesh/utils';
+import minimatch from 'minimatch';
+import { fs, path, process } from '@graphql-mesh/cross-helpers';
+import { Response } from '@whatwg-node/fetch';
+
+function calculateCacheKey(url: string, options: RequestInit) {
+  return hashObject({
+    url,
+    options,
+  });
+}
+
+interface SnapshotEntry {
+  text: string;
+  headersObj: Record<string, string>;
+  status: number;
+  statusText: string;
+}
+
+export default function useSnapshot(
+  pluginOptions: MeshPluginOptions<YamlConfig.SnapshotPluginConfig>
+): MeshPlugin<any> {
+  if (typeof pluginOptions.if === 'boolean') {
+    if (!pluginOptions.if) {
+      return {};
+    }
+  }
+  if (typeof pluginOptions.if === 'string') {
+    // eslint-disable-next-line no-new-func
+    if (new Function('return ' + pluginOptions.if, 'env')(process.env)) {
+      return {};
+    }
+  }
+  const matches = pluginOptions.apply.map(glob => new minimatch.Minimatch(glob));
+  const snapshotsDir = pluginOptions.outputDir || '__snapshots__';
+  return {
+    async onFetch({ url, options, setFetchFn }) {
+      if (matches.some(matcher => matcher.match(url))) {
+        const snapshotFileName = calculateCacheKey(url, options);
+        const snapshotPath = path.join(pluginOptions.baseDir, snapshotsDir, `${snapshotFileName}.json`);
+        if (await pathExists(snapshotPath)) {
+          setFetchFn(async () => {
+            const snapshotFile = await fs.promises.readFile(snapshotPath, 'utf-8');
+            const snapshot: SnapshotEntry = JSON.parse(snapshotFile);
+            return new Response(snapshot.text, {
+              headers: snapshot.headersObj,
+              status: snapshot.status,
+              statusText: snapshot.statusText,
+            });
+          });
+          return () => {};
+        }
+        return async ({ response, setResponse }) => {
+          const snapshot: SnapshotEntry = {
+            text: await response.text(),
+            headersObj: getHeadersObj(response.headers),
+            status: response.status,
+            statusText: response.statusText,
+          };
+          await writeJSON(snapshotPath, snapshot);
+          setResponse(
+            new Response(snapshot.text, {
+              headers: snapshot.headersObj,
+              status: snapshot.status,
+              statusText: snapshot.statusText,
+            })
+          );
+        };
+      }
+      return () => {};
+    },
+  };
+}

@@ -1,25 +1,25 @@
 import { PackageCmd } from '@theguild/components'
 
-# Snapshot Transform
+# Snapshot Plugin
 
-The `snapshot` transform allows applying snapshot for development usage.
+The `snapshot` plugin allows applying snapshot for development usage.
 
-The snapshot transform writes the responses of your remote data source to your file system and then uses it instead of re-fetching it every time. It's also helpful because you can easily manipulate your data manually and see how your API mesh responds.
+The snapshot plugin writes the responses of your remote data source to your file system and then uses it instead of re-fetching it every time. It's also helpful because you can easily manipulate your data manually and see how your API mesh responds.
 
-To get started with this transform, install it:
+To get started with this plugin, install it:
 
-<PackageCmd packages={['@graphql-mesh/transform-snapshot']} />
+<PackageCmd packages={['@graphql-mesh/plugin-snapshot']} />
 
 ## How to use?
 
 Add the following configuration to your Mesh config file:
 
 ```yaml
-transforms:
+plugins:
   - snapshot:
       if: "process.env.NODE_ENV != 'production'"
       apply:
-        - Query.*
+        - https://my-remote-api.com/*
       outputDir: __snapshots__
 ```
 
@@ -29,7 +29,7 @@ To modify your snapshots and change the responses, go to `__snapshots__` and mod
 
 ## Codesandbox Example
 
-You can check out our example that uses SOAP Handler with snapshot transform.
+You can check out our example that uses SOAP Handler with snapshot plugin.
 
 <iframe
   src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/soap-country-info?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
@@ -41,6 +41,6 @@ You can check out our example that uses SOAP Handler with snapshot transform.
 
 ## Config API Reference
 
-import API from '../../../generated-markdown/SnapshotTransformConfig.generated.md'
+import API from '../../../generated-markdown/SnapshotPluginConfig.generated.md'
 
 <API />
