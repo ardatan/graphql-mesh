@@ -192,6 +192,7 @@ const deployableEnvs: Array<string> = [
   'Koa',
   'Sveltekit',
   'Docker',
+  'Even as a frontend app',
   '& More...',
 ];
 
