@@ -1,5 +1,13 @@
 # mysql-employees
 
+## 0.5.292
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.78.30
+  - @graphql-mesh/mysql@0.17.20
+
 ## 0.5.291
 
 ### Patch Changes

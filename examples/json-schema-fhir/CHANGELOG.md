@@ -1,5 +1,13 @@
 # json-schema-fhir
 
+## 0.0.301
+
+### Patch Changes
+
+- Updated dependencies [[`48171a006`](https://github.com/Urigo/graphql-mesh/commit/48171a0064c788d6e8ebed7a4f7aa67a5577cdc5)]:
+  - @graphql-mesh/json-schema@0.35.23
+  - @graphql-mesh/cli@0.78.30
+
 ## 0.0.300
 
 ### Patch Changes
