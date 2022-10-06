@@ -317,7 +317,7 @@ export async function processConfig(
             type: 'plugin',
             importFn,
             cwd: dir,
-            additionalPrefixes: [...additionalPackagePrefixes, '@envelop/'],
+            additionalPrefixes: [...additionalPackagePrefixes, '@envelop/', '@graphql-yoga/plugin-'],
           });
           let pluginFactory: MeshPluginFactory<YamlConfig.Plugin[keyof YamlConfig.Plugin]>;
           if (typeof possiblePluginFactory === 'function') {
