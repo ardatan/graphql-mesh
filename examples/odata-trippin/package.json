@@ -1,13 +1,13 @@
 {
   "name": "odata-trippin-example",
-  "version": "0.7.287",
+  "version": "0.7.288",
   "license": "MIT",
   "private": true,
   "scripts": {
     "start": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.78.30",
+    "@graphql-mesh/cli": "0.78.31",
     "@graphql-mesh/odata": "0.20.21",
     "graphql": "16.6.0"
   }

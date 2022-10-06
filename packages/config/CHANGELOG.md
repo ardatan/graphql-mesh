@@ -1,5 +1,20 @@
 # @graphql-mesh/config
 
+## 8.0.19
+
+### Patch Changes
+
+- [#4641](https://github.com/Urigo/graphql-mesh/pull/4641) [`bb54ecc1a`](https://github.com/Urigo/graphql-mesh/commit/bb54ecc1a5e69584bd4c41bf26484afcd70e7bc5) Thanks [@ardatan](https://github.com/ardatan)! - Support GraphQL Yoga plugins in declarative API
+
+  Now you can use any GraphQL Yoga plugin in Mesh configuration.
+
+  For example `@graphql-yoga/plugin-apollo-inline-trace` can be used like below;
+
+  ```yml
+  plugins:
+    - apolloInlineTrace: {}
+  ```
+
 ## 8.0.18
 
 ### Patch Changes
