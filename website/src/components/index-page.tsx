@@ -1,7 +1,7 @@
 import { Anchor } from '@theguild/components';
 import Image, { StaticImageData } from 'next/image';
 import { PropsWithChildren, ReactElement } from 'react';
-import { FiGithub } from 'react-icons/fi';
+import { FiCheckCircle, FiFastForward, FiGithub } from 'react-icons/fi';
 
 import GraphQLLogo from '../../public/assets/GraphQL_Logo.svg';
 import MeshExampleLogo from '../../public/assets/mesh-example.png';
@@ -143,13 +143,14 @@ function Feature(
 }
 
 function FeatureHighlights(props: {
+  textColor?: string;
   highlights?: Array<{
     title: string;
     description: React.ReactNode;
     icon?: React.ReactNode;
   }>;
 }) {
-  const { highlights } = props;
+  const { highlights, textColor } = props;
 
   return Array.isArray(highlights) && highlights.length > 0 ? (
     <>
@@ -157,7 +158,9 @@ function FeatureHighlights(props: {
         <div className={Highlight.Root} key={i}>
           {icon && <div className={Highlight.Icon}>{icon}</div>}
           <div className={Highlight.Content}>
-            <h3 className={Highlight.Title + (icon ? '' : ' text-lg')}>{title}</h3>
+            <h3 className={Highlight.Title + (icon ? '' : ' text-lg')} style={textColor ? { color: textColor } : {}}>
+              {title}
+            </h3>
             <p className={Highlight.Description + (icon ? '' : ' text-sm')}>{description}</p>
           </div>
         </div>
@@ -178,6 +181,21 @@ const datasources: Array<string> = [
   'Postgraphile',
   'Neo4j',
   'SQLite',
+  '& More...',
+];
+
+const deployableEnvs: Array<string> = [
+  'Node.js',
+  'Vercel',
+  'AWS Lambda',
+  'Cloudflare Workers',
+  'Apache OpenWhisk',
+  'Express',
+  'Fastify',
+  'Koa',
+  'Sveltekit',
+  'Docker',
+  'Even as a frontend app',
   '& More...',
 ];
 
@@ -259,18 +277,7 @@ export function IndexPage(): ReactElement {
           {datasources.map((datasource, i) => (
             <div className="p-2 sm:w-1/2 md:w-1/3 w-full" key={i}>
               <div className="bg-gray-100 dark:bg-gray-800 rounded flex p-4 h-full items-center">
-                <svg
-                  fill="none"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="3"
-                  className="text-indigo-500 w-6 h-6 flex-shrink-0 mr-4"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
-                  <path d="M22 4L12 14.01l-3-3"></path>
-                </svg>
+                <FiCheckCircle className="text-indigo-500 w-6 h-6 flex-shrink-0 mr-4" />
                 <span className="title-font font-medium text-black dark:text-white">{datasource}</span>
               </div>
             </div>
@@ -278,7 +285,7 @@ export function IndexPage(): ReactElement {
         </div>
       </Feature>
       <Feature
-        title="Connecting datasources"
+        title="Connect datasources"
         description={
           <div className="flex flex-col gap-y-12">
             <div>
@@ -322,6 +329,7 @@ export function IndexPage(): ReactElement {
           </div>
           <div className="max-w-screen-lg px-6 box-border mx-auto grid grid-cols-2 gap-12">
             <FeatureHighlights
+              textColor={gradients[3][0]}
               highlights={[
                 {
                   title: 'Naming conventions',
@@ -345,7 +353,7 @@ export function IndexPage(): ReactElement {
         </div>
       </div>
       <Feature
-        title="Plugins"
+        title="Extend with plugins"
         description={
           <div className="flex flex-col gap-y-12">
             <div>
@@ -372,10 +380,29 @@ export function IndexPage(): ReactElement {
           </div>
         }
         image={PluginLogo}
-        gradient={3}
+        gradient={4}
         flipped
       />
-      {/* FEATURE: run everywhere */}
+      <Feature
+        title="Run everywhere"
+        description={
+          <div className="space-y-2">
+            <p>Supported environments</p>
+          </div>
+        }
+        gradient={0}
+      >
+        <div className="flex flex-wrap lg:w-4/5 sm:mx-auto sm:mb-2 -mx-2">
+          {deployableEnvs.map((env, i) => (
+            <div className="p-2 sm:w-1/2 md:w-1/3 w-full" key={i}>
+              <div className="bg-gray-100 dark:bg-gray-800 rounded flex p-4 h-full items-center gap-2">
+                <FiFastForward className="w-6 h-6 flex-shrink-0 mr-4" style={{ stroke: pickGradient(0)[0] }} />
+                <span className="title-font font-medium text-black dark:text-white">{env}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Feature>
     </div>
   );
 }
