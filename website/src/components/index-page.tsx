@@ -184,7 +184,7 @@ const datasources: Array<string> = [
 const deployableEnvs: Array<string> = [
   'Vercel',
   'AWS Lambda',
-  'CloudFlare workers',
+  'Cloudflare Workers',
   'Apache OpenWhisk',
   'Express',
   'Fastify',
