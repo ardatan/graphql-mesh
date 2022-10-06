@@ -2542,6 +2542,14 @@
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.1.1.tgz#076d78ce99822258cf813ecc1e7fa460fa74d052"
   integrity sha512-NQ17ii0rK1b34VZonlmT2QMJFI70m0TRwbknO/ihlbatXyaktDhN/98vBiUU6kNBPljqGqyIrl2T4nY2RpFANg==
 
+"@graphql-yoga/plugin-apollo-inline-trace@^1.0.0-next.3":
+  version "1.0.0-next.3"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-apollo-inline-trace/-/plugin-apollo-inline-trace-1.0.0-next.3.tgz#45dadf9564cc5249e84d2ada3956f0ae25dbeb45"
+  integrity sha512-+xRoVOYzq2rES9hGxYRIqWYuKbmcA0z+rP1s3zz/VPZFg/SFgJ9JXFf5iN+JriIaLToAYJgoxG3uZ5AILtn5gA==
+  dependencies:
+    "@whatwg-node/fetch" "0.4.6"
+    apollo-reporting-protobuf "^3.3.2"
+
 "@graphql-yoga/subscription@^3.0.0-next.0":
   version "3.0.0-next.0"
   resolved "https://registry.yarnpkg.com/@graphql-yoga/subscription/-/subscription-3.0.0-next.0.tgz#fce94b540ec8837c7667e24b556b70553ccb558b"
@@ -5750,6 +5758,13 @@ apollo-reporting-protobuf@^0.8.0, "apollo-reporting-protobuf@^0.8.0 || ^3.0.0":
   integrity sha512-B3XmnkH6Y458iV6OsA7AhfwvTgeZnFq9nPVjbxmLKnvfkEl8hYADtz724uPa0WeBiD7DSFcnLtqg9yGmCkBohg==
   dependencies:
     "@apollo/protobufjs" "1.2.2"
+
+apollo-reporting-protobuf@^3.3.2:
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/apollo-reporting-protobuf/-/apollo-reporting-protobuf-3.3.2.tgz#2078c53d3140bc6221c6040c5326623e0c21c8d4"
+  integrity sha512-j1tx9tmkVdsLt1UPzBrvz90PdjAeKW157WxGn+aXlnnGfVjZLIRXX3x5t1NWtXvB7rVaAsLLILLtDHW382TSoQ==
+  dependencies:
+    "@apollo/protobufjs" "1.2.4"
 
 apollo-server-caching@^0.7.0:
   version "0.7.0"
@@ -15166,7 +15181,7 @@ object-assign@^4, object-assign@^4.0.1, object-assign@^4.1.0, object-assign@^4.1
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
   integrity sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM=
 
-object-hash@3.0.0, object-hash@^3.0.0:
+object-hash@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/object-hash/-/object-hash-3.0.0.tgz#73f97f753e7baffc0e2cc9d6e079079744ac82e9"
   integrity sha512-RSn9F68PjH9HqtltsSnqYC1XXoWe9Bju5+213R98cNGttag9q9yAOTzdbsqvIa7aNm5WffBZFpWYr2aWrklWAw==

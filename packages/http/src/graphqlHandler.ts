@@ -1,5 +1,6 @@
 import { MeshInstance } from '@graphql-mesh/runtime';
 import { CORSOptions, createYoga, useLogger } from 'graphql-yoga';
+import { useApolloInlineTrace } from '@graphql-yoga/plugin-apollo-inline-trace';
 
 export const graphqlHandler = (
   mesh$: Promise<MeshInstance>,
@@ -14,6 +15,7 @@ export const graphqlHandler = (
       validationCache: false,
       plugins: [
         ...mesh.plugins,
+        useApolloInlineTrace(),
         useLogger({
           skipIntrospection: true,
           logFn: (eventName, { args }) => {
