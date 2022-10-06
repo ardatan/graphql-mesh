@@ -182,6 +182,7 @@ const datasources: Array<string> = [
 ];
 
 const deployableEnvs: Array<string> = [
+'Node.js',
   'Vercel',
   'AWS Lambda',
   'Cloudflare Workers',
