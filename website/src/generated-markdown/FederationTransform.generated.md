@@ -5,7 +5,7 @@
     * `key` (type: `Array of Object`): 
       * `fields` (type: `String`)
     * `shareable` (type: `Boolean`)
-    * `extend` (type: `Boolean`)
+    * `extends` (type: `Boolean`)
     * `fields` (type: `Array of Object`, required): 
       * `name` (type: `String`, required)
       * `config` (type: `Object`, required): 

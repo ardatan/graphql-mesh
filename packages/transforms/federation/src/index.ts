@@ -34,7 +34,10 @@ export default class FederationTransform implements MeshTransform {
           typeDirectivesObj.key = type.config.key;
         }
         if (type.config?.shareable) {
-          typeDirectivesObj.extends = type.config.shareable;
+          typeDirectivesObj.shareable = type.config.shareable;
+        }
+        if (type.config?.extends) {
+          typeDirectivesObj.extends = type.config.extends;
         }
         const typeFieldObjs = typeObj.getFields();
         if (type.config?.fields) {
@@ -110,8 +113,6 @@ export default class FederationTransform implements MeshTransform {
       }
     }
 
-    const sdlWithFederationDirectives = printSchemaWithDirectives(schema);
-
     const schemaWithFederationQueryType = mapSchema(schema, {
       [MapperKind.QUERY]: type => {
         const config = type.toConfig();
@@ -122,7 +123,7 @@ export default class FederationTransform implements MeshTransform {
             _entities: entitiesField,
             _service: {
               ...serviceField,
-              resolve: () => ({ sdl: sdlWithFederationDirectives }),
+              resolve: (root, args, context, info) => ({ sdl: printSchemaWithDirectives(info.schema) }),
             },
           },
         });

@@ -1220,7 +1220,7 @@ export interface FederationTransformType {
 export interface FederationObjectConfig {
   key?: FederationObjectKeyConfig[];
   shareable?: boolean;
-  extend?: boolean;
+  extends?: boolean;
   fields?: FederationField[];
   /**
    * Any of: String, ResolveReferenceObject

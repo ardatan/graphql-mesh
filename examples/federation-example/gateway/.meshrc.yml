@@ -6,9 +6,6 @@ sources:
     transforms:
       - federation:
           types:
-            - name: Query
-              config:
-                extend: true
             - name: User
               config:
                 key:

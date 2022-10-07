@@ -2921,7 +2921,7 @@
         "shareable": {
           "type": "boolean"
         },
-        "extend": {
+        "extends": {
           "type": "boolean"
         },
         "fields": {
