@@ -1,6 +1,6 @@
 {
   "name": "openwhisk-example",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "description": "OpenWhisk Example for GraphQL Mesh",
   "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",
@@ -14,8 +14,8 @@
   "dependencies": {
     "esbuild": "0.15.10",
     "graphql": "16.6.0",
-    "@graphql-mesh/cli": "0.78.31",
-    "@graphql-mesh/graphql": "0.31.22",
+    "@graphql-mesh/cli": "0.78.32",
+    "@graphql-mesh/graphql": "0.31.23",
     "typescript": "4.8.4"
   }
 }
