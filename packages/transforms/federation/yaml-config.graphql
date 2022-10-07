@@ -32,7 +32,7 @@ type ResolveReferenceObject {
   queryFieldName: String!
   """
   You need configure the arguments for that field;
-  ```yml
+  ```yaml
   args:
     someArg: "{root.someKeyValue}"
   ```

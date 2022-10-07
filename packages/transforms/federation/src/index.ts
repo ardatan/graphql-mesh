@@ -96,7 +96,9 @@ export default class FederationTransform implements MeshTransform {
                   info,
                   env: process.env,
                 });
-                set(args, argName, argVal);
+                if (argVal) {
+                  set(args, argName, argVal);
+                }
               }
               const result = await context[this.apiName].Query[queryField.name]({
                 root,
