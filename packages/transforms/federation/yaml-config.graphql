@@ -12,7 +12,7 @@ type FederationTransformType {
 }
 
 type FederationObjectConfig {
-  keyFields: [String!]
+  key: String
   extend: Boolean
   fields: [FederationField!]
   resolveReference: ResolveReference
@@ -26,9 +26,13 @@ type ResolveReferenceObject {
   """
   queryFieldName: String!
   """
-  If the root field name has multiple args, you need to define which argument should receive the key
+  You need configure the arguments for that field;
+  ```yml
+  args:
+    someArg: "{root.someKeyValue}"
+  ```
   """
-  keyArg: String
+  args: JSON
 }
 
 type FederationField {
@@ -40,4 +44,15 @@ type FederationFieldConfig {
   external: Boolean
   provides: String
   requires: String
+  tag: FederationFieldTagConfig
+  inaccessible: Boolean
+  override: FederationFieldOverrideConfig
+}
+
+type FederationFieldTagConfig {
+  name: String
+}
+
+type FederationFieldOverrideConfig {
+  from: String
 }

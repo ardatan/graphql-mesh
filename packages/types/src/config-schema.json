@@ -399,10 +399,6 @@
             }
           ]
         },
-        "snapshot": {
-          "$ref": "#/definitions/SnapshotTransformConfig",
-          "description": "Configuration for Snapshot extension"
-        },
         "typeMerging": {
           "$ref": "#/definitions/TypeMergingConfig",
           "description": "[Type Merging](https://www.graphql-tools.com/docs/stitch-type-merging) Configuration"
@@ -528,12 +524,12 @@
         "responseCache": {
           "$ref": "#/definitions/ResponseCacheConfig"
         },
+        "statsd": {
+          "$ref": "#/definitions/StatsdPlugin"
+        },
         "snapshot": {
           "$ref": "#/definitions/SnapshotPluginConfig",
           "description": "Configuration for Snapshot extension"
-        },
-        "statsd": {
-          "$ref": "#/definitions/StatsdPlugin"
         }
       }
     },
@@ -2336,37 +2332,6 @@
       },
       "required": ["coordinate", "ttl"]
     },
-    "SnapshotPluginConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "SnapshotPluginConfig",
-      "properties": {
-        "if": {
-          "description": "Expression for when to activate this extension.\nValue can be a valid JS expression string or a boolean (Any of: String, Boolean)",
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "boolean"
-            }
-          ]
-        },
-        "apply": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false,
-          "description": "HTTP URL pattern to be applied\nFor example;\n  apply:\n      - http://my-remote-api.com/* \\<- * will apply this extension to all paths of remote API"
-        },
-        "outputDir": {
-          "type": "string",
-          "description": "Path to the directory of the generated snapshot files"
-        }
-      },
-      "required": ["apply", "outputDir"]
-    },
     "StatsdPlugin": {
       "additionalProperties": false,
       "type": "object",
@@ -2946,12 +2911,8 @@
       "type": "object",
       "title": "FederationObjectConfig",
       "properties": {
-        "keyFields": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false
+        "key": {
+          "type": "string"
         },
         "extend": {
           "type": "boolean"
@@ -2985,9 +2946,10 @@
           "type": "string",
           "description": "Name of root field name that resolves the reference"
         },
-        "keyArg": {
-          "type": "string",
-          "description": "If the root field name has multiple args, you need to define which argument should receive the key"
+        "args": {
+          "type": "object",
+          "properties": {},
+          "description": "You need configure the arguments for that field;\n```yml\nargs:\n  someArg: \"{root.someKeyValue}\"\n```"
         }
       },
       "required": ["queryFieldName"]
@@ -3480,41 +3442,6 @@
       },
       "required": ["resolver", "composer"]
     },
-    "SnapshotTransformConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "SnapshotTransformConfig",
-      "properties": {
-        "if": {
-          "description": "Expression for when to activate this extension.\nValue can be a valid JS expression string or a boolean (Any of: String, Boolean)",
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "boolean"
-            }
-          ]
-        },
-        "apply": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false,
-          "description": "Resolver to be applied\nFor example;\n  apply:\n      - Query.* \\<- * will apply this extension to all fields of Query type\n      - Mutation.someMutationButProbablyYouWontNeedIt"
-        },
-        "outputDir": {
-          "type": "string",
-          "description": "Path to the directory of the generated snapshot files"
-        },
-        "respectSelectionSet": {
-          "type": "boolean",
-          "description": "Take snapshots by respecting the requested selection set.\nThis might be needed for the handlers like Postgraphile or OData that rely on the incoming GraphQL operation."
-        }
-      },
-      "required": ["apply", "outputDir"]
-    },
     "TypeMergingConfig": {
       "additionalProperties": false,
       "type": "object",
@@ -3665,6 +3592,37 @@
           "description": "Path to the SQL Dump file if you want to build a in-memory database"
         }
       }
+    },
+    "SnapshotPluginConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "SnapshotPluginConfig",
+      "properties": {
+        "if": {
+          "description": "Expression for when to activate this extension.\nValue can be a valid JS expression string or a boolean (Any of: String, Boolean)",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "boolean"
+            }
+          ]
+        },
+        "apply": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "HTTP URL pattern to be applied\nFor example;\n  apply:\n      - http://my-remote-api.com/* \\<- * will apply this extension to all paths of remote API"
+        },
+        "outputDir": {
+          "type": "string",
+          "description": "Path to the directory of the generated snapshot files"
+        }
+      },
+      "required": ["apply", "outputDir"]
     }
   },
   "title": "Config",

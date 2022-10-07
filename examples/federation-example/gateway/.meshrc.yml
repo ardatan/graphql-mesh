@@ -11,10 +11,11 @@ sources:
                 extend: true
             - name: User
               config:
-                keyFields:
-                  - id
+                key: id
                 resolveReference:
                   queryFieldName: user
+                  args:
+                    id: '{root.id}'
   - name: reviews
     handler:
       graphql:

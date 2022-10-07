@@ -1139,7 +1139,6 @@ export interface Transform {
    * Transformer to apply composition to resolvers (Any of: ResolversCompositionTransform, Any)
    */
   resolversComposition?: ResolversCompositionTransform | any;
-  snapshot?: SnapshotTransformConfig;
   typeMerging?: TypeMergingConfig;
   [k: string]: any;
 }
@@ -1219,7 +1218,7 @@ export interface FederationTransformType {
   config?: FederationObjectConfig;
 }
 export interface FederationObjectConfig {
-  keyFields?: string[];
+  key?: string;
   extend?: boolean;
   fields?: FederationField[];
   /**
@@ -1242,9 +1241,15 @@ export interface ResolveReferenceObject {
    */
   queryFieldName: string;
   /**
-   * If the root field name has multiple args, you need to define which argument should receive the key
+   * You need configure the arguments for that field;
+   * ```yml
+   * args:
+   *   someArg: "{root.someKeyValue}"
+   * ```
    */
-  keyArg?: string;
+  args?: {
+    [k: string]: any;
+  };
 }
 export interface FilterSchemaTransform {
   /**
@@ -1528,33 +1533,6 @@ export interface ResolversCompositionTransformObject {
   composer: any;
 }
 /**
- * Configuration for Snapshot extension
- */
-export interface SnapshotTransformConfig {
-  /**
-   * Expression for when to activate this extension.
-   * Value can be a valid JS expression string or a boolean (Any of: String, Boolean)
-   */
-  if?: string | boolean;
-  /**
-   * Resolver to be applied
-   * For example;
-   *   apply:
-   *       - Query.* \<- * will apply this extension to all fields of Query type
-   *       - Mutation.someMutationButProbablyYouWontNeedIt
-   */
-  apply: string[];
-  /**
-   * Path to the directory of the generated snapshot files
-   */
-  outputDir: string;
-  /**
-   * Take snapshots by respecting the requested selection set.
-   * This might be needed for the handlers like Postgraphile or OData that rely on the incoming GraphQL operation.
-   */
-  respectSelectionSet?: boolean;
-}
-/**
  * [Type Merging](https://www.graphql-tools.com/docs/stitch-type-merging) Configuration
  */
 export interface TypeMergingConfig {
@@ -1737,8 +1715,8 @@ export interface Plugin {
   prometheus?: PrometheusConfig;
   rateLimit?: RateLimitPluginConfig;
   responseCache?: ResponseCacheConfig;
-  snapshot?: SnapshotPluginConfig;
   statsd?: StatsdPlugin;
+  snapshot?: SnapshotPluginConfig;
   [k: string]: any;
 }
 export interface MaskedErrorsPluginConfig {
@@ -2001,27 +1979,6 @@ export interface ResponseCacheTTLConfig {
   coordinate: string;
   ttl: number;
 }
-/**
- * Configuration for Snapshot extension
- */
-export interface SnapshotPluginConfig {
-  /**
-   * Expression for when to activate this extension.
-   * Value can be a valid JS expression string or a boolean (Any of: String, Boolean)
-   */
-  if?: string | boolean;
-  /**
-   * HTTP URL pattern to be applied
-   * For example;
-   *   apply:
-   *       - http://my-remote-api.com/* \<- * will apply this extension to all paths of remote API
-   */
-  apply: string[];
-  /**
-   * Path to the directory of the generated snapshot files
-   */
-  outputDir: string;
-}
 export interface StatsdPlugin {
   /**
    * If you wish to disable introspection for logging (default: false)
@@ -2069,4 +2026,25 @@ export interface StatsdClientConfiguration {
 }
 export interface StatsdClientBufferHolder {
   buffer: string;
+}
+/**
+ * Configuration for Snapshot extension
+ */
+export interface SnapshotPluginConfig {
+  /**
+   * Expression for when to activate this extension.
+   * Value can be a valid JS expression string or a boolean (Any of: String, Boolean)
+   */
+  if?: string | boolean;
+  /**
+   * HTTP URL pattern to be applied
+   * For example;
+   *   apply:
+   *       - http://my-remote-api.com/* \<- * will apply this extension to all paths of remote API
+   */
+  apply: string[];
+  /**
+   * Path to the directory of the generated snapshot files
+   */
+  outputDir: string;
 }

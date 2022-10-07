@@ -81,7 +81,7 @@ export function createMeshHTTPHandler<TServerContext>({
     const indexPath = path.join(baseDir, staticFiles, 'index.html');
     serverAdapter.get('*', async request => {
       const url = new URL(request.url);
-      if (url.pathname === '/' && (await pathExists(indexPath))) {
+      if (graphqlPath !== '/' && url.pathname === '/' && (await pathExists(indexPath))) {
         const indexFile = await fs.promises.readFile(indexPath);
         return new Response(indexFile, {
           status: 200,
@@ -99,7 +99,7 @@ export function createMeshHTTPHandler<TServerContext>({
       }
       return undefined;
     });
-  } else {
+  } else if (graphqlPath !== '/') {
     serverAdapter.get(
       '/',
       () =>
