@@ -13,6 +13,7 @@ type FederationTransformType {
 
 type FederationObjectConfig {
   key: [FederationObjectKeyConfig]
+  shareable: Boolean
   extend: Boolean
   fields: [FederationField!]
   resolveReference: ResolveReference

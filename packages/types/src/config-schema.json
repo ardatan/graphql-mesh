@@ -2918,6 +2918,9 @@
           },
           "additionalItems": false
         },
+        "shareable": {
+          "type": "boolean"
+        },
         "extend": {
           "type": "boolean"
         },

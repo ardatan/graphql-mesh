@@ -31,6 +31,7 @@ export default class FederationTransform implements MeshTransform {
         typeObj.extensions = typeObj.extensions || {};
         const typeDirectivesObj: any = ((typeObj.extensions as any).directives = typeObj.extensions.directives || {});
         typeDirectivesObj.key = type.config?.key;
+        typeDirectivesObj.shareable = type.config?.shareable;
         const typeFieldObjs = typeObj.getFields();
         if (type.config?.fields) {
           for (const field of type.config.fields) {

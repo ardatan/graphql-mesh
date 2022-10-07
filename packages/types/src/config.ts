@@ -1219,6 +1219,7 @@ export interface FederationTransformType {
 }
 export interface FederationObjectConfig {
   key?: FederationObjectKeyConfig[];
+  shareable?: boolean;
   extend?: boolean;
   fields?: FederationField[];
   /**
