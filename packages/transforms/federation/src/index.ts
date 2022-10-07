@@ -30,8 +30,12 @@ export default class FederationTransform implements MeshTransform {
         const typeObj = schema.getType(type.name) as GraphQLObjectType;
         typeObj.extensions = typeObj.extensions || {};
         const typeDirectivesObj: any = ((typeObj.extensions as any).directives = typeObj.extensions.directives || {});
-        typeDirectivesObj.key = type.config?.key;
-        typeDirectivesObj.shareable = type.config?.shareable;
+        if (type.config?.key) {
+          typeDirectivesObj.key = type.config.key;
+        }
+        if (type.config?.shareable) {
+          typeDirectivesObj.extends = type.config.shareable;
+        }
         const typeFieldObjs = typeObj.getFields();
         if (type.config?.fields) {
           for (const field of type.config.fields) {
@@ -125,14 +129,21 @@ export default class FederationTransform implements MeshTransform {
       },
     });
 
-    const entityTypes = (this.config?.types.map(type => schema.getType(type.name)) as GraphQLObjectType[]) || [];
-
     const schemaWithUnionType = mapSchema(schemaWithFederationQueryType, {
       [MapperKind.UNION_TYPE]: type => {
         if (type.name === EntityType.name) {
           return new GraphQLUnionType({
             ...EntityType.toConfig(),
-            types: entityTypes,
+            types: () => {
+              const entityTypes: GraphQLObjectType[] = [];
+              for (const typeConfig of this.config?.types || []) {
+                if (typeConfig.config?.key?.length) {
+                  const type = schemaWithFederationQueryType.getType(typeConfig.name) as GraphQLObjectType;
+                  entityTypes.push(type);
+                }
+              }
+              return entityTypes;
+            },
           });
         }
         return type;
@@ -143,6 +154,24 @@ export default class FederationTransform implements MeshTransform {
       const type = schemaWithUnionType.getType(typeConfig.name) as GraphQLObjectType;
       (type as any).resolveObject = rawSource.merge[typeConfig.name].resolve;
     });
+
+    schemaWithUnionType.extensions = schemaWithUnionType.extensions || {};
+    const directivesObj: any = ((schemaWithUnionType.extensions as any).directives =
+      schemaWithUnionType.extensions.directives || {});
+    directivesObj.link = {
+      url: 'https://specs.apollo.dev/federation/v2.0',
+      import: [
+        '@extends',
+        '@external',
+        '@inaccessible',
+        '@key',
+        '@override',
+        '@provides',
+        '@requires',
+        '@shareable',
+        '@tag',
+      ],
+    };
 
     return schemaWithUnionType;
   }
