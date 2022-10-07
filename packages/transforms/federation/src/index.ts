@@ -155,7 +155,7 @@ export default class FederationTransform implements MeshTransform {
 
     this.config?.types.forEach(typeConfig => {
       const type = schemaWithUnionType.getType(typeConfig.name) as GraphQLObjectType;
-      (type as any).resolveObject = rawSource.merge[typeConfig.name].resolve;
+      set(type, 'extensions.apollo.subgraph.resolveReference', rawSource.merge[typeConfig.name].resolve);
     });
 
     schemaWithUnionType.extensions = schemaWithUnionType.extensions || {};
