@@ -12,10 +12,14 @@ type FederationTransformType {
 }
 
 type FederationObjectConfig {
-  key: String
+  key: [FederationObjectKeyConfig]
   extend: Boolean
   fields: [FederationField!]
   resolveReference: ResolveReference
+}
+
+type FederationObjectKeyConfig {
+  fields: String
 }
 
 union ResolveReference = String | ResolveReferenceObject

@@ -1218,13 +1218,16 @@ export interface FederationTransformType {
   config?: FederationObjectConfig;
 }
 export interface FederationObjectConfig {
-  key?: string;
+  key?: FederationObjectKeyConfig[];
   extend?: boolean;
   fields?: FederationField[];
   /**
    * Any of: String, ResolveReferenceObject
    */
   resolveReference?: string | ResolveReferenceObject;
+}
+export interface FederationObjectKeyConfig {
+  fields?: string;
 }
 export interface FederationField {
   name: string;
@@ -1234,6 +1237,15 @@ export interface FederationFieldConfig {
   external?: boolean;
   provides?: string;
   requires?: string;
+  tag?: FederationFieldTagConfig;
+  inaccessible?: boolean;
+  override?: FederationFieldOverrideConfig;
+}
+export interface FederationFieldTagConfig {
+  name?: string;
+}
+export interface FederationFieldOverrideConfig {
+  from?: string;
 }
 export interface ResolveReferenceObject {
   /**

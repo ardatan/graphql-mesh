@@ -2,7 +2,8 @@
 * `types` (type: `Array of Object`, required): 
   * `name` (type: `String`, required)
   * `config` (type: `Object`): 
-    * `key` (type: `String`)
+    * `key` (type: `Array of Object`): 
+      * `fields` (type: `String`)
     * `extend` (type: `Boolean`)
     * `fields` (type: `Array of Object`, required): 
       * `name` (type: `String`, required)
@@ -10,6 +11,11 @@
         * `external` (type: `Boolean`)
         * `provides` (type: `String`)
         * `requires` (type: `String`)
+        * `tag` (type: `Object`): 
+          * `name` (type: `String`)
+        * `inaccessible` (type: `Boolean`)
+        * `override` (type: `Object`): 
+          * `from` (type: `String`)
     * `resolveReference` -  One of: 
       * `String`
       * `object`: 

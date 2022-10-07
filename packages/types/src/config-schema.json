@@ -2912,7 +2912,11 @@
       "title": "FederationObjectConfig",
       "properties": {
         "key": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FederationObjectKeyConfig"
+          },
+          "additionalItems": false
         },
         "extend": {
           "type": "boolean"
@@ -2934,6 +2938,16 @@
               "$ref": "#/definitions/ResolveReferenceObject"
             }
           ]
+        }
+      }
+    },
+    "FederationObjectKeyConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FederationObjectKeyConfig",
+      "properties": {
+        "fields": {
+          "type": "string"
         }
       }
     },
@@ -2980,6 +2994,35 @@
           "type": "string"
         },
         "requires": {
+          "type": "string"
+        },
+        "tag": {
+          "$ref": "#/definitions/FederationFieldTagConfig"
+        },
+        "inaccessible": {
+          "type": "boolean"
+        },
+        "override": {
+          "$ref": "#/definitions/FederationFieldOverrideConfig"
+        }
+      }
+    },
+    "FederationFieldTagConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FederationFieldTagConfig",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "FederationFieldOverrideConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FederationFieldOverrideConfig",
+      "properties": {
+        "from": {
           "type": "string"
         }
       }

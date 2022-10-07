@@ -11,7 +11,8 @@ sources:
                 extend: true
             - name: User
               config:
-                key: id
+                key:
+                  - fields: id
                 resolveReference:
                   queryFieldName: user
                   args:

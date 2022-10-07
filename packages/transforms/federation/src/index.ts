@@ -52,7 +52,14 @@ export default class FederationTransform implements MeshTransform {
         // If a field is a key field, it should be GraphQLID
 
         if (type.config?.key) {
-          rawSource.merge[type.name].selectionSet = `{ ${type.config.key} }`;
+          let selectionSetContent = '';
+          for (const keyField of type.config.key) {
+            selectionSetContent += '\n';
+            selectionSetContent += keyField.fields || '';
+          }
+          if (selectionSetContent) {
+            rawSource.merge[type.name].selectionSet = `{ ${selectionSetContent} }`;
+          }
         }
 
         let resolveReference: MergedTypeResolver<any>;
