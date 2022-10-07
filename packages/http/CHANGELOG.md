@@ -1,5 +1,18 @@
 # @graphql-mesh/http
 
+## 0.1.28
+
+### Patch Changes
+
+- [`2be940966`](https://github.com/Urigo/graphql-mesh/commit/2be940966d820d8cee2ab50aec6283df95d7b607) Thanks [@ardatan](https://github.com/ardatan)! - Return 200 for healthcheck instead of waiting for Mesh
+
+- [#4646](https://github.com/Urigo/graphql-mesh/pull/4646) [`637e9e9d8`](https://github.com/Urigo/graphql-mesh/commit/637e9e9d8a702cf28cde48137a0f73bab7628f6d) Thanks [@ardatan](https://github.com/ardatan)! - Fixes for Federation 2 support
+
+- Updated dependencies [[`637e9e9d8`](https://github.com/Urigo/graphql-mesh/commit/637e9e9d8a702cf28cde48137a0f73bab7628f6d)]:
+  - @graphql-mesh/types@0.84.10
+  - @graphql-mesh/runtime@0.44.20
+  - @graphql-mesh/utils@0.41.21
+
 ## 0.1.27
 
 ### Patch Changes

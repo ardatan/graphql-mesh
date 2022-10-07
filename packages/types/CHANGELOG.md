@@ -1,5 +1,14 @@
 # @graphql-mesh/types
 
+## 0.84.10
+
+### Patch Changes
+
+- [#4646](https://github.com/Urigo/graphql-mesh/pull/4646) [`637e9e9d8`](https://github.com/Urigo/graphql-mesh/commit/637e9e9d8a702cf28cde48137a0f73bab7628f6d) Thanks [@ardatan](https://github.com/ardatan)! - Fixes for Federation 2 support
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.8.54
+
 ## 0.84.9
 
 ### Patch Changes

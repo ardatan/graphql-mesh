@@ -1,5 +1,20 @@
 # @graphql-mesh/transform-federation
 
+## 0.9.45
+
+### Patch Changes
+
+- [#4646](https://github.com/Urigo/graphql-mesh/pull/4646) [`637e9e9d8`](https://github.com/Urigo/graphql-mesh/commit/637e9e9d8a702cf28cde48137a0f73bab7628f6d) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency [`@graphql-mesh/string-interpolation@0.3.2` ↗︎](https://www.npmjs.com/package/@graphql-mesh/string-interpolation/v/0.3.2) (to `dependencies`)
+  - Added dependency [`lodash.set@4.3.2` ↗︎](https://www.npmjs.com/package/lodash.set/v/4.3.2) (to `dependencies`)
+
+- [#4646](https://github.com/Urigo/graphql-mesh/pull/4646) [`637e9e9d8`](https://github.com/Urigo/graphql-mesh/commit/637e9e9d8a702cf28cde48137a0f73bab7628f6d) Thanks [@ardatan](https://github.com/ardatan)! - Fixes for Federation 2 support
+
+- Updated dependencies [[`637e9e9d8`](https://github.com/Urigo/graphql-mesh/commit/637e9e9d8a702cf28cde48137a0f73bab7628f6d)]:
+  - @graphql-mesh/types@0.84.10
+  - @graphql-mesh/utils@0.41.21
+
 ## 0.9.44
 
 ### Patch Changes
