@@ -2994,10 +2994,10 @@
           "type": "boolean"
         },
         "provides": {
-          "type": "string"
+          "$ref": "#/definitions/FederationFieldProvidesConfig"
         },
         "requires": {
-          "type": "string"
+          "$ref": "#/definitions/FederationFieldRequiresConfig"
         },
         "tag": {
           "$ref": "#/definitions/FederationFieldTagConfig"
@@ -3007,6 +3007,26 @@
         },
         "override": {
           "$ref": "#/definitions/FederationFieldOverrideConfig"
+        }
+      }
+    },
+    "FederationFieldProvidesConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FederationFieldProvidesConfig",
+      "properties": {
+        "fields": {
+          "type": "string"
+        }
+      }
+    },
+    "FederationFieldRequiresConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FederationFieldRequiresConfig",
+      "properties": {
+        "fields": {
+          "type": "string"
         }
       }
     },

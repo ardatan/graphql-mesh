@@ -10,8 +10,10 @@
       * `name` (type: `String`, required)
       * `config` (type: `Object`, required): 
         * `external` (type: `Boolean`)
-        * `provides` (type: `String`)
-        * `requires` (type: `String`)
+        * `provides` (type: `Object`): 
+          * `fields` (type: `String`)
+        * `requires` (type: `Object`): 
+          * `fields` (type: `String`)
         * `tag` (type: `Object`): 
           * `name` (type: `String`)
         * `inaccessible` (type: `Boolean`)

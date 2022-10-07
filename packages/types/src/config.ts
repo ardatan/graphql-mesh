@@ -1236,11 +1236,17 @@ export interface FederationField {
 }
 export interface FederationFieldConfig {
   external?: boolean;
-  provides?: string;
-  requires?: string;
+  provides?: FederationFieldProvidesConfig;
+  requires?: FederationFieldRequiresConfig;
   tag?: FederationFieldTagConfig;
   inaccessible?: boolean;
   override?: FederationFieldOverrideConfig;
+}
+export interface FederationFieldProvidesConfig {
+  fields?: string;
+}
+export interface FederationFieldRequiresConfig {
+  fields?: string;
 }
 export interface FederationFieldTagConfig {
   name?: string;
