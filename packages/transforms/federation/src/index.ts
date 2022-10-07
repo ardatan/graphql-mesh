@@ -13,6 +13,8 @@ export default class FederationTransform implements MeshTransform {
   private baseDir: string;
   private importFn: ImportFn;
 
+  noWrap = true;
+
   constructor({ apiName, baseDir, config, importFn }: MeshTransformOptions<YamlConfig.Transform['federation']>) {
     this.apiName = apiName;
     this.config = config;

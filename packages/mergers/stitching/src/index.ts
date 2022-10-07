@@ -10,7 +10,7 @@ import {
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { buildSchema, ExecutionResult, GraphQLSchema, parse } from 'graphql';
 import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
-import { AggregateError, Executor } from '@graphql-tools/utils';
+import { AggregateError, Executor, printSchemaWithDirectives } from '@graphql-tools/utils';
 
 const APOLLO_GET_SERVICE_DEFINITION_QUERY = /* GraphQL */ `
   query __ApolloGetServiceDefinition__ {
@@ -53,13 +53,18 @@ export default class StitchingMerger implements MeshMerger {
       .proxy(`${name}_stitching`, PredefinedProxyOptions.GraphQLSchemaWithDiffing)
       .getWithSet(async () => {
         this.logger.debug(`Fetching Apollo Federated Service SDL for ${name}`);
-        const sdlQueryResult: any = (await executor({
-          document: parse(APOLLO_GET_SERVICE_DEFINITION_QUERY),
-        })) as ExecutionResult;
-        if (sdlQueryResult.errors?.length) {
-          throw new AggregateError(sdlQueryResult.errors, `Failed on fetching Federated SDL for ${name}`);
+        let federationSdl: string;
+        if ((oldSchema.extensions?.directives as any)?.link) {
+          federationSdl = printSchemaWithDirectives(oldSchema);
+        } else {
+          const sdlQueryResult: any = (await executor({
+            document: parse(APOLLO_GET_SERVICE_DEFINITION_QUERY),
+          })) as ExecutionResult;
+          if (sdlQueryResult.errors?.length) {
+            throw new AggregateError(sdlQueryResult.errors, `Failed on fetching Federated SDL for ${name}`);
+          }
+          federationSdl = sdlQueryResult.data._service.sdl;
         }
-        const federationSdl = sdlQueryResult.data._service.sdl;
         this.logger.debug(`Generating Stitching SDL for ${name}`);
         const stitchingSdl = federationToStitchingSDL(federationSdl, stitchingDirectives);
         return buildSchema(stitchingSdl, {
