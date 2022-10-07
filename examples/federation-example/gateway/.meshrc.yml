@@ -6,15 +6,14 @@ sources:
     transforms:
       - federation:
           types:
-            - name: Query
-              config:
-                extend: true
             - name: User
               config:
-                keyFields:
-                  - id
+                key:
+                  - fields: id
                 resolveReference:
                   queryFieldName: user
+                  args:
+                    id: '{root.id}'
   - name: reviews
     handler:
       graphql:

@@ -237,7 +237,16 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   });
 
   unifiedSubschema.transforms = unifiedSubschema.transforms || [];
-  unifiedSubschema.transforms.push(...transforms);
+
+  for (const rootLevelTransform of transforms) {
+    if (rootLevelTransform.noWrap) {
+      if (rootLevelTransform.transformSchema) {
+        unifiedSubschema.schema = rootLevelTransform.transformSchema(unifiedSubschema.schema, unifiedSubschema);
+      }
+    } else {
+      unifiedSubschema.transforms.push(rootLevelTransform);
+    }
+  }
 
   let inContextSDK$: Promise<Record<string, any>>;
 
