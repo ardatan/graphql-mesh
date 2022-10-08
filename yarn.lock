@@ -2064,10 +2064,10 @@
   resolved "https://registry.yarnpkg.com/@esbuild/linux-loong64/-/linux-loong64-0.15.10.tgz#78a42897c2cf8db9fd5f1811f7590393b77774c7"
   integrity sha512-w0Ou3Z83LOYEkwaui2M8VwIp+nLi/NA60lBLMvaJ+vXVMcsARYdEzLNE7RSm4+lSg4zq4d7fAVuzk7PNQ5JFgg==
 
-"@eslint/eslintrc@^1.3.2":
-  version "1.3.2"
-  resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-1.3.2.tgz#58b69582f3b7271d8fa67fe5251767a5b38ea356"
-  integrity sha512-AXYd23w1S/bv3fTs3Lz0vjiYemS08jWkI3hYyS9I1ry+0f+Yjs1wm+sU0BS8qDOPrBIkp4qHYC16I8uVtpLajQ==
+"@eslint/eslintrc@^1.3.3":
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-1.3.3.tgz#2b044ab39fdfa75b4688184f9e573ce3c5b0ff95"
+  integrity sha512-uj3pT6Mg+3t39fvLrj8iuCIJ38zKO9FpGtJ4BBJebJhEwjoT+KLVNCcHT5QC9NGRIEi7fZ0ZR8YRb884auB4Lg==
   dependencies:
     ajv "^6.12.4"
     debug "^4.3.2"
@@ -2603,11 +2603,6 @@
     "@humanwhocodes/object-schema" "^1.2.1"
     debug "^4.1.1"
     minimatch "^3.0.4"
-
-"@humanwhocodes/gitignore-to-minimatch@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@humanwhocodes/gitignore-to-minimatch/-/gitignore-to-minimatch-1.0.2.tgz#316b0a63b91c10e53f242efb4ace5c3b34e8728d"
-  integrity sha512-rSqmMJDdLFUsyxR6FMtD00nfQKKLFb1kv+qBbOVKqErvloEIJLo5bDTJTQNTYgeyp78JsA7u/NPi5jT1GR/MuA==
 
 "@humanwhocodes/module-importer@^1.0.1":
   version "1.0.1"
@@ -3432,10 +3427,10 @@
     "@napi-rs/simple-git-win32-arm64-msvc" "0.1.8"
     "@napi-rs/simple-git-win32-x64-msvc" "0.1.8"
 
-"@neo4j/graphql@3.9.0":
-  version "3.9.0"
-  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-3.9.0.tgz#16148f06f370d26d7a67257ce764c24670b2ba5b"
-  integrity sha512-28CbcmsNMXz+CcU/lfAbuPu00yFOBjKF86gRoyeaRwYWZ29pZw2qpm8QGFHvG66MGM53fb8YAOb/45yaQq5cLQ==
+"@neo4j/graphql@3.10.0":
+  version "3.10.0"
+  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-3.10.0.tgz#c168fbf7b81c2891732e215a91c63e37cbe1ece9"
+  integrity sha512-a3DKc5hPAht6Ix/M+2RLra7eoTWFUC2LMuPoWXXgVwizEdlp4SoXLtZitQjaj84sCRxSlrVyAY0pzeALQhq3VA==
   dependencies:
     "@graphql-tools/merge" "^8.3.3"
     "@graphql-tools/resolvers-composition" "^6.5.3"
@@ -4593,10 +4588,10 @@
   dependencies:
     itty-router "^2.3.10"
 
-"@types/jest@*", "@types/jest@29.1.1":
-  version "29.1.1"
-  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-29.1.1.tgz#cf21a0835a1ba9a30ea1966019f1261c6a114c92"
-  integrity sha512-U9Ey07dGWl6fUFaIaUQUKWG5NoKi/zizeVQCGV8s4nSU0jPgqphVZvS64+8BtWYvrc3ZGw6wo943NSYPxkrp/g==
+"@types/jest@*", "@types/jest@29.1.2":
+  version "29.1.2"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-29.1.2.tgz#7ad8077043ab5f6c108c8111bcc1d224e5600a87"
+  integrity sha512-y+nlX0h87U0R+wsGn6EBuoRWYyv3KFtwRNP3QWp9+k2tJ2/bqcGS3UxD7jgT+tiwJWWq3UsyV4Y+T6rsMT4XMg==
   dependencies:
     expect "^29.0.0"
     pretty-format "^29.0.0"
@@ -5353,20 +5348,6 @@
   resolved "https://registry.yarnpkg.com/@whatwg-node/events/-/events-0.0.2.tgz#7b7107268d2982fc7b7aff5ee6803c64018f84dd"
   integrity sha512-WKj/lI4QjnLuPrim0cfO7i+HsDSXHxNv1y0CrJhdntuO3hxWZmnXCwNDnwOvry11OjRin6cgWNF+j/9Pn8TN4w==
 
-"@whatwg-node/fetch@0.4.6":
-  version "0.4.6"
-  resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.4.6.tgz#d846026687db76565ce8c2a56641e0fc5eb470eb"
-  integrity sha512-DyeD0lN4Bk2Pdd/n4iT7g3rt4ZvvwSq+Yl2eF/Ku+odw1nVS7foww5JlAlwaJA4ZEGiZYT5oDagltX52UWKaXg==
-  dependencies:
-    "@peculiar/webcrypto" "^1.4.0"
-    abort-controller "^3.0.0"
-    busboy "^1.6.0"
-    form-data-encoder "^1.7.1"
-    formdata-node "^4.3.1"
-    node-fetch "^2.6.7"
-    undici "^5.10.0"
-    web-streams-polyfill "^3.2.0"
-
 "@whatwg-node/fetch@0.4.7", "@whatwg-node/fetch@^0.4.0", "@whatwg-node/fetch@^0.4.6":
   version "0.4.7"
   resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.4.7.tgz#4cbcda3ba93d5ae15ab823aae5869eae4a0cb14b"
@@ -5380,14 +5361,6 @@
     node-fetch "^2.6.7"
     undici "^5.10.0"
     web-streams-polyfill "^3.2.0"
-
-"@whatwg-node/server@0.4.10":
-  version "0.4.10"
-  resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.4.10.tgz#6ccd115bb97b188237bdd5dc616b64f41e3b1416"
-  integrity sha512-2CrBRD2HE5cAy1NrET2+MIywfHOG1LPHxBDI83xMq6jbztWUoxMJTNrTHtJXL+N1+y1oWt5C+LIPYy77N/8t7g==
-  dependencies:
-    "@whatwg-node/fetch" "0.4.6"
-    tslib "^2.3.1"
 
 "@whatwg-node/server@0.4.11", "@whatwg-node/server@^0.4.10":
   version "0.4.11"
@@ -6470,7 +6443,7 @@ bob-the-bundler@1.7.3:
     tsup "^5.11.6"
     yargs "15.3.1"
 
-body-parser@1.20.0, body-parser@^1.15.2, body-parser@^1.18.3:
+body-parser@1.20.0:
   version "1.20.0"
   resolved "https://registry.yarnpkg.com/body-parser/-/body-parser-1.20.0.tgz#3de69bd89011c11573d7bfee6a64f11b6bd27cc5"
   integrity sha512-DfJ+q6EPcGKZD1QWUjSpqp+Q7bDQTsQIF4zfUAtZ6qk+H/3/QRhg9CEp39ss+/T2vw0+HaidC0ecJj/DRLIaKg==
@@ -6484,6 +6457,24 @@ body-parser@1.20.0, body-parser@^1.15.2, body-parser@^1.18.3:
     iconv-lite "0.4.24"
     on-finished "2.4.1"
     qs "6.10.3"
+    raw-body "2.5.1"
+    type-is "~1.6.18"
+    unpipe "1.0.0"
+
+body-parser@1.20.1, body-parser@^1.15.2, body-parser@^1.18.3:
+  version "1.20.1"
+  resolved "https://registry.yarnpkg.com/body-parser/-/body-parser-1.20.1.tgz#b1812a8912c195cd371a3ee5e66faa2338a5c668"
+  integrity sha512-jWi7abTbYwajOytWCQc37VulmWiRae5RyTpaCyDcS5/lMdtwSz5lOpDE67srw/HYe35f1z3fDQw+3txg7gNtWw==
+  dependencies:
+    bytes "3.1.2"
+    content-type "~1.0.4"
+    debug "2.6.9"
+    depd "2.0.0"
+    destroy "1.2.0"
+    http-errors "2.0.0"
+    iconv-lite "0.4.24"
+    on-finished "2.4.1"
+    qs "6.11.0"
     raw-body "2.5.1"
     type-is "~1.6.18"
     unpipe "1.0.0"
@@ -9220,7 +9211,7 @@ esbuild@0.14.51, esbuild@^0.14.2:
     esbuild-windows-64 "0.14.51"
     esbuild-windows-arm64 "0.14.51"
 
-esbuild@0.15.10, esbuild@^0.15.6:
+esbuild@0.15.10, esbuild@^0.15.9:
   version "0.15.10"
   resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.15.10.tgz#85c2f8446e9b1fe04fae68daceacba033eedbd42"
   integrity sha512-N7wBhfJ/E5fzn/SpNgX+oW2RLRjwaL8Y0ezqNqhjD6w0H2p0rDuEz2FKZqpqLnO8DCaWumKe8dsC/ljvVSSxng==
@@ -9534,14 +9525,13 @@ eslint-webpack-plugin@^3.1.1:
     normalize-path "^3.0.0"
     schema-utils "^4.0.0"
 
-eslint@8.24.0, eslint@^8.3.0:
-  version "8.24.0"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-8.24.0.tgz#489516c927a5da11b3979dbfb2679394523383c8"
-  integrity sha512-dWFaPhGhTAiPcCgm3f6LI2MBWbogMnTJzFBbhXVRQDJPkr9pGZvVjlVfXd+vyDcWPA2Ic9L2AXPIQM0+vk/cSQ==
+eslint@8.25.0, eslint@^8.3.0:
+  version "8.25.0"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-8.25.0.tgz#00eb962f50962165d0c4ee3327708315eaa8058b"
+  integrity sha512-DVlJOZ4Pn50zcKW5bYH7GQK/9MsoQG2d5eDH0ebEkE8PbgzTTmtt/VTH9GGJ4BfeZCpBLqFfvsjX35UacUL83A==
   dependencies:
-    "@eslint/eslintrc" "^1.3.2"
+    "@eslint/eslintrc" "^1.3.3"
     "@humanwhocodes/config-array" "^0.10.5"
-    "@humanwhocodes/gitignore-to-minimatch" "^1.0.2"
     "@humanwhocodes/module-importer" "^1.0.1"
     ajv "^6.10.0"
     chalk "^4.0.0"
@@ -10585,10 +10575,10 @@ globrex@^0.1.2:
   resolved "https://registry.yarnpkg.com/globrex/-/globrex-0.1.2.tgz#dd5d9ec826232730cd6793a5e33a9302985e6098"
   integrity sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==
 
-google-protobuf@3.21.0, google-protobuf@^3.12.2, google-protobuf@^3.15.1:
-  version "3.21.0"
-  resolved "https://registry.yarnpkg.com/google-protobuf/-/google-protobuf-3.21.0.tgz#8dfa3fca16218618d373d414d3c1139e28034d6e"
-  integrity sha512-byR7MBTK4tZ5PZEb+u5ZTzpt4SfrTxv5682MjPlHN16XeqgZE2/8HOIWeiXe8JKnT9OVbtBGhbq8mtvkK8cd5g==
+google-protobuf@3.21.1, google-protobuf@^3.12.2, google-protobuf@^3.15.1:
+  version "3.21.1"
+  resolved "https://registry.yarnpkg.com/google-protobuf/-/google-protobuf-3.21.1.tgz#bb73c6e1471afdadc0a312da27ef0a68c875414f"
+  integrity sha512-iiQnqsR7nzdYfJjo2yOpJJ2bsAaOvV/85HjDx/sxcOJcNMgyj3iK00HsbZbhKS+EixWdu9fPn7quaBvb4IQHtw==
 
 got@^11.8.3:
   version "11.8.5"
@@ -10815,10 +10805,10 @@ graphql-ws@5.11.2, graphql-ws@^5.4.1, graphql-ws@^5.6.2:
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.11.2.tgz#d5e0acae8b4d4a4cf7be410a24135cfcefd7ddc0"
   integrity sha512-4EiZ3/UXYcjm+xFGP544/yW1+DVI8ZpKASFbzrV5EDTFWJp0ZvLl4Dy2fSZAzz9imKp5pZMIcjB0x/H69Pv/6w==
 
-graphql-yoga@3.0.0-next.3:
-  version "3.0.0-next.3"
-  resolved "https://registry.yarnpkg.com/graphql-yoga/-/graphql-yoga-3.0.0-next.3.tgz#3497513544da796341b14e0fb918d0ed3e707a42"
-  integrity sha512-VMeZrc0dhEW/2mwjlY64WE1rs8oqJwugFYlm9wjaL5voTLaFe3ybB3O5lsBDmxsAbsWtJSV/+wFHmmuVZjzFUQ==
+graphql-yoga@3.0.0-next.4:
+  version "3.0.0-next.4"
+  resolved "https://registry.yarnpkg.com/graphql-yoga/-/graphql-yoga-3.0.0-next.4.tgz#8a230a910d919d203459eab414a8b318dfd5cbc2"
+  integrity sha512-1ktG3SYC7kD1x6PqWqpvEtJrCroUHhSeuksb/KNXdYT5QfDeWa6BZf+huQYBxGFfXegH40w1E2axa6rSozQMrQ==
   dependencies:
     "@envelop/core" "^2.5.0"
     "@envelop/parser-cache" "^4.6.0"
@@ -10829,8 +10819,8 @@ graphql-yoga@3.0.0-next.3:
     "@graphql-tools/utils" "8.12.0"
     "@graphql-typed-document-node/core" "^3.1.1"
     "@graphql-yoga/subscription" "^3.0.0-next.0"
-    "@whatwg-node/fetch" "0.4.6"
-    "@whatwg-node/server" "0.4.10"
+    "@whatwg-node/fetch" "0.4.7"
+    "@whatwg-node/server" "0.4.11"
     dset "^3.1.1"
     graphql-config "^4.1.0"
     tslib "^2.3.1"
@@ -14780,28 +14770,28 @@ neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-neo4j-driver-bolt-connection@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/neo4j-driver-bolt-connection/-/neo4j-driver-bolt-connection-5.0.1.tgz#bcf0b7415f376fdf5ae88d34b93c510e471cadc6"
-  integrity sha512-je++gqcAAlsJ0IoiEh4yMdYPt9a71KtJpdm0OaukvxvnFWoJ0IfSHYRz+n15oJ9mP2Ikr8A/ZRU5KET59N0prg==
+neo4j-driver-bolt-connection@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/neo4j-driver-bolt-connection/-/neo4j-driver-bolt-connection-5.1.0.tgz#513772f864612f4d3e166a5b6d40d7a47f261668"
+  integrity sha512-WnEwAWxYcMmyHt643BLN+oYpo6iYRQP1CP5IPVX2LFg2jVm7ge7KwS+ofVl0IQe4w59kkAQV03r8B135Tv6lIQ==
   dependencies:
     buffer "^6.0.3"
-    neo4j-driver-core "^5.0.1"
+    neo4j-driver-core "^5.1.0"
     string_decoder "^1.3.0"
 
-neo4j-driver-core@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/neo4j-driver-core/-/neo4j-driver-core-5.0.1.tgz#a0d26cddeb75e6bb0f53b69183aefe6d85055da4"
-  integrity sha512-ZwwINcTAHB1pgtamHKAkazfxHOZgv1dCvGCNSYh4ap+8AOoExKIU3jh4N++fdHvaN/TV0zYB6EshNCizs4WkCw==
+neo4j-driver-core@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/neo4j-driver-core/-/neo4j-driver-core-5.1.0.tgz#f0b1490b43139a766b2e9febe99dc0305e950ee3"
+  integrity sha512-T9w2h3KCPrONq7SeIyTYeOxrHIqqtBWfb0IXnDA1/jP0LosMtq0y79SQssm3gl34jbE4yHdSVxVbGX64CqXbtg==
 
-neo4j-driver@5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/neo4j-driver/-/neo4j-driver-5.0.1.tgz#6d4c2a9e34d39d7271dad02ba4a978503f8f3813"
-  integrity sha512-JtZfM+Ba3oA6C93FeH+Oh8zPcVzDW8wGqncpYG5XTzawEwzUpqIKecpccuQ/AV77cYZuee+qG/G3PNKvHwGtnQ==
+neo4j-driver@5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/neo4j-driver/-/neo4j-driver-5.1.0.tgz#409af07f363ca79650e45127d694931165687a9f"
+  integrity sha512-0Nv23NdX+Z6dpg3kycio+7enJvuA0erhhBdRyH1woPWnZGuqnS94y3bAEUIt+ET5kohfnTPK9+qT2TQ+lylaSQ==
   dependencies:
     "@babel/runtime" "^7.17.8"
-    neo4j-driver-bolt-connection "^5.0.1"
-    neo4j-driver-core "^5.0.1"
+    neo4j-driver-bolt-connection "^5.1.0"
+    neo4j-driver-core "^5.1.0"
     rxjs "^7.5.5"
 
 newrelic@8.17.1:
@@ -15166,7 +15156,7 @@ object-assign@^4, object-assign@^4.0.1, object-assign@^4.1.0, object-assign@^4.1
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
   integrity sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM=
 
-object-hash@3.0.0, object-hash@^3.0.0:
+object-hash@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/object-hash/-/object-hash-3.0.0.tgz#73f97f753e7baffc0e2cc9d6e079079744ac82e9"
   integrity sha512-RSn9F68PjH9HqtltsSnqYC1XXoWe9Bju5+213R98cNGttag9q9yAOTzdbsqvIa7aNm5WffBZFpWYr2aWrklWAw==
@@ -19863,12 +19853,12 @@ vfile@^5.0.0:
     unist-util-stringify-position "^3.0.0"
     vfile-message "^3.0.0"
 
-vite@3.1.4:
-  version "3.1.4"
-  resolved "https://registry.yarnpkg.com/vite/-/vite-3.1.4.tgz#b75824b819d8354a6f36e4b988943c7e4947e155"
-  integrity sha512-JoQI08aBjY9lycL7jcEq4p9o1xUjq5aRvdH4KWaXtkSx7e7RpAh9D3IjzDWRD4Fg44LS3oDAIOG/Kq1L+82psA==
+vite@3.1.6:
+  version "3.1.6"
+  resolved "https://registry.yarnpkg.com/vite/-/vite-3.1.6.tgz#4c6db3000326342c918204a42a130fb3ffed2414"
+  integrity sha512-qMXIwnehvvcK5XfJiXQUiTxoYAEMKhM+jqCY6ZSTKFBKu1hJnAKEzP3AOcnTerI0cMZYAaJ4wpW1wiXLMDt4mA==
   dependencies:
-    esbuild "^0.15.6"
+    esbuild "^0.15.9"
     postcss "^8.4.16"
     resolve "^1.22.1"
     rollup "~2.78.0"
