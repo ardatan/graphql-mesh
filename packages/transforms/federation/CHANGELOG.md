@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-federation
 
+## 0.9.46
+
+### Patch Changes
+
+- [`72b4a1be9`](https://github.com/Urigo/graphql-mesh/commit/72b4a1be957d8d629e9251610574d5c9fd7e0772) Thanks [@ardatan](https://github.com/ardatan)! - Do not set argument value in `args` if interpolated value is falsy
+
 ## 0.9.45
 
 ### Patch Changes
