@@ -11,7 +11,7 @@
     "@graphql-mesh/openapi": "0.33.25",
     "graphql": "16.6.0",
     "body-parser": "1.20.1",
-    "express": "4.18.1",
+    "express": "4.18.2",
     "@whatwg-node/fetch": "0.4.7"
   }
 }
