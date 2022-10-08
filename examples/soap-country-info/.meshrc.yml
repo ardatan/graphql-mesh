@@ -9,7 +9,7 @@ plugins:
       if: "process.env.NODE_ENV != 'production'"
       apply:
         - http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso
-      outputDir: snapshots
+      outputDir: __snapshots__
 
 documents:
   - list-of-languages-by-name.graphql

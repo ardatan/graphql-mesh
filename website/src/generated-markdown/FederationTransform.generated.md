@@ -24,7 +24,7 @@
       * `object`: 
         * `queryFieldName` (type: `String`, required) - Name of root field name that resolves the reference
         * `args` (type: `JSON`) - You need configure the arguments for that field;
-```yml
+```yaml
 args:
   someArg: "{root.someKeyValue}"
 ```

@@ -29,7 +29,7 @@ export default function useSnapshot(
   }
   if (typeof pluginOptions.if === 'string') {
     // eslint-disable-next-line no-new-func
-    if (new Function('return ' + pluginOptions.if, 'env')(process.env)) {
+    if (!new Function('env', 'return ' + pluginOptions.if)(process.env)) {
       return {};
     }
   }
@@ -53,20 +53,23 @@ export default function useSnapshot(
           return () => {};
         }
         return async ({ response, setResponse }) => {
-          const snapshot: SnapshotEntry = {
-            text: await response.text(),
-            headersObj: getHeadersObj(response.headers),
-            status: response.status,
-            statusText: response.statusText,
-          };
-          await writeJSON(snapshotPath, snapshot);
-          setResponse(
-            new Response(snapshot.text, {
-              headers: snapshot.headersObj,
-              status: snapshot.status,
-              statusText: snapshot.statusText,
-            })
-          );
+          const contentType = response.headers.get('content-type');
+          if (contentType.includes('json') || contentType.includes('text')) {
+            const snapshot: SnapshotEntry = {
+              text: await response.text(),
+              headersObj: getHeadersObj(response.headers),
+              status: response.status,
+              statusText: response.statusText,
+            };
+            await writeJSON(snapshotPath, snapshot, null, 2);
+            setResponse(
+              new Response(snapshot.text, {
+                headers: snapshot.headersObj,
+                status: snapshot.status,
+                statusText: snapshot.statusText,
+              })
+            );
+          }
         };
       }
       return () => {};

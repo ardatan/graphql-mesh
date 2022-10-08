@@ -524,12 +524,12 @@
         "responseCache": {
           "$ref": "#/definitions/ResponseCacheConfig"
         },
-        "statsd": {
-          "$ref": "#/definitions/StatsdPlugin"
-        },
         "snapshot": {
           "$ref": "#/definitions/SnapshotPluginConfig",
           "description": "Configuration for Snapshot extension"
+        },
+        "statsd": {
+          "$ref": "#/definitions/StatsdPlugin"
         }
       }
     },
@@ -2332,6 +2332,37 @@
       },
       "required": ["coordinate", "ttl"]
     },
+    "SnapshotPluginConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "SnapshotPluginConfig",
+      "properties": {
+        "if": {
+          "description": "Expression for when to activate this extension.\nValue can be a valid JS expression string or a boolean (Any of: String, Boolean)",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "boolean"
+            }
+          ]
+        },
+        "apply": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "HTTP URL pattern to be applied\nFor example;\n  apply:\n      - http://my-remote-api.com/* \\<- * will apply this extension to all paths of remote API"
+        },
+        "outputDir": {
+          "type": "string",
+          "description": "Path to the directory of the generated snapshot files"
+        }
+      },
+      "required": ["apply", "outputDir"]
+    },
     "StatsdPlugin": {
       "additionalProperties": false,
       "type": "object",
@@ -2966,7 +2997,7 @@
         "args": {
           "type": "object",
           "properties": {},
-          "description": "You need configure the arguments for that field;\n```yml\nargs:\n  someArg: \"{root.someKeyValue}\"\n```"
+          "description": "You need configure the arguments for that field;\n```yaml\nargs:\n  someArg: \"{root.someKeyValue}\"\n```"
         }
       },
       "required": ["queryFieldName"]
@@ -3658,37 +3689,6 @@
           "description": "Path to the SQL Dump file if you want to build a in-memory database"
         }
       }
-    },
-    "SnapshotPluginConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "SnapshotPluginConfig",
-      "properties": {
-        "if": {
-          "description": "Expression for when to activate this extension.\nValue can be a valid JS expression string or a boolean (Any of: String, Boolean)",
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "boolean"
-            }
-          ]
-        },
-        "apply": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false,
-          "description": "HTTP URL pattern to be applied\nFor example;\n  apply:\n      - http://my-remote-api.com/* \\<- * will apply this extension to all paths of remote API"
-        },
-        "outputDir": {
-          "type": "string",
-          "description": "Path to the directory of the generated snapshot files"
-        }
-      },
-      "required": ["apply", "outputDir"]
     }
   },
   "title": "Config",
