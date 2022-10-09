@@ -46,9 +46,11 @@ plugins:
       - Mutation.*
       - Query.user
     deprecatedFields: true
+    # the path of the endpoint to expose the metrics, default is /metrics
+    endpoint: /metrics
 ```
 
-> Note: Tracing resolvers using `resovlers: true` might have a performance impact on your GraphQL runtime. Please consider to test it locally first and then decide if it's needed.
+> Note: Tracing resolvers using `resolvers: true` might have a performance impact on your GraphQL runtime. Please consider to test it locally first and then decide if it's needed.
 
 ## Custom Registry
 

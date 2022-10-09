@@ -14,3 +14,5 @@
 * `fetch` (type: `Boolean`)
 * `skipIntrospection` (type: `Boolean`)
 * `registry` (type: `String`)
+* `endpoint` (type: `String`) - The path to the metrics endpoint
+default: `/metrics`

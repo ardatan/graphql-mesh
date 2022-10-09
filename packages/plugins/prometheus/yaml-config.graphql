@@ -18,4 +18,9 @@ type PrometheusConfig @md {
   fetch: Boolean
   skipIntrospection: Boolean
   registry: String
+  """
+  The path to the metrics endpoint
+  default: `/metrics`
+  """
+  endpoint: String
 }

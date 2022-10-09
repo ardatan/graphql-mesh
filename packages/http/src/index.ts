@@ -113,7 +113,7 @@ export function createMeshHTTPHandler<TServerContext>({
   }
 
   serverAdapter.all(
-    graphqlPath,
+    '*',
     withCookies,
     graphqlHandler(mesh$, playgroundTitle, playgroundEnabled, graphqlPath, corsConfig)
   );

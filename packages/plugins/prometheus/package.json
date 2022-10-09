@@ -26,7 +26,8 @@
   },
   "peerDependencies": {
     "graphql": "*",
-    "prom-client": "^13 || ^14.0.0"
+    "prom-client": "^13 || ^14.0.0",
+    "graphql-yoga": "3.0.0-next.4"
   },
   "dependencies": {
     "@envelop/prometheus": "6.6.0",

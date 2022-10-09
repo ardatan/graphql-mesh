@@ -2,10 +2,12 @@ import { usePrometheus } from '@envelop/prometheus';
 import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
 import { getHeadersObj, loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { Histogram, register as defaultRegistry, Registry } from 'prom-client';
+import type { Plugin as YogaPlugin } from 'graphql-yoga';
 
 export default async function useMeshPrometheus(
   pluginOptions: MeshPluginOptions<YamlConfig.PrometheusConfig>
-): Promise<MeshPlugin<any>> {
+): Promise<MeshPlugin<any> & YogaPlugin> {
+  const endpoint = pluginOptions.endpoint || '/metrics';
   const registry = pluginOptions.registry
     ? await loadFromModuleExportExpression<Registry>(pluginOptions.registry, {
         cwd: pluginOptions.baseDir,
@@ -33,6 +35,17 @@ export default async function useMeshPrometheus(
           registry,
         })
       );
+    },
+    async onRequest({ url, fetchAPI, endResponse }) {
+      if (url.pathname === endpoint) {
+        const metrics = await registry.metrics();
+        const response = new fetchAPI.Response(metrics, {
+          headers: {
+            'Content-Type': registry.contentType,
+          },
+        });
+        endResponse(response);
+      }
     },
     onDelegate({ sourceName, typeName, fieldName, args, key }) {
       if (pluginOptions.delegation !== false) {

@@ -1913,6 +1913,11 @@ export interface PrometheusConfig {
   fetch?: boolean;
   skipIntrospection?: boolean;
   registry?: string;
+  /**
+   * The path to the metrics endpoint
+   * default: `/metrics`
+   */
+  endpoint?: string;
 }
 /**
  * RateLimit plugin

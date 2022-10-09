@@ -30,6 +30,7 @@ export const graphqlHandler = (
       },
       cors: corsConfig,
       graphqlEndpoint,
+      landingPage: false,
     })
   );
   return async (request: Request, ...args: any[]) => {
