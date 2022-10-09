@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-prometheus",
-  "version": "0.1.20",
+  "version": "0.2.0",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -31,8 +31,8 @@
   },
   "dependencies": {
     "@envelop/prometheus": "6.6.0",
-    "@graphql-mesh/utils": "0.41.21",
-    "@graphql-mesh/types": "0.84.10",
+    "@graphql-mesh/utils": "0.41.22",
+    "@graphql-mesh/types": "0.85.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

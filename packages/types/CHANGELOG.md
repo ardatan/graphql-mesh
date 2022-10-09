@@ -1,5 +1,18 @@
 # @graphql-mesh/types
 
+## 0.85.0
+
+### Minor Changes
+
+- [`814f2d516`](https://github.com/Urigo/graphql-mesh/commit/814f2d51692df593fcf368765e9c8a0ce99f46bd) Thanks [@ardatan](https://github.com/ardatan)! - Add `endpoint` option to expose it via HTTP server
+
+### Patch Changes
+
+- [`6fb57d3ba`](https://github.com/Urigo/graphql-mesh/commit/6fb57d3ba6ce68e47d9f5dbf54e57d178441fa18) Thanks [@ardatan](https://github.com/ardatan)! - Fixes
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.8.55
+
 ## 0.84.10
 
 ### Patch Changes
