@@ -1,5 +1,20 @@
 # @graphql-mesh/http
 
+## 0.2.0
+
+### Minor Changes
+
+- [`814f2d516`](https://github.com/Urigo/graphql-mesh/commit/814f2d51692df593fcf368765e9c8a0ce99f46bd) Thanks [@ardatan](https://github.com/ardatan)! - Add `endpoint` option to expose it via HTTP server
+
+### Patch Changes
+
+- [#4649](https://github.com/Urigo/graphql-mesh/pull/4649) [`80eefaaa8`](https://github.com/Urigo/graphql-mesh/commit/80eefaaa831cddf0e52519378ce3a2d36793f6a8) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`graphql-yoga@3.0.0-next.4` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.0) (from `3.0.0-next.3`, in `dependencies`)
+- Updated dependencies [[`6fb57d3ba`](https://github.com/Urigo/graphql-mesh/commit/6fb57d3ba6ce68e47d9f5dbf54e57d178441fa18), [`814f2d516`](https://github.com/Urigo/graphql-mesh/commit/814f2d51692df593fcf368765e9c8a0ce99f46bd)]:
+  - @graphql-mesh/types@0.85.0
+  - @graphql-mesh/runtime@0.44.21
+  - @graphql-mesh/utils@0.41.22
+
 ## 0.1.28
 
 ### Patch Changes
