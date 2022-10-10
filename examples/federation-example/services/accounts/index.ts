@@ -1,4 +1,4 @@
-const { ApolloServer, gql } = require('apollo-server');
+import { ApolloServer, gql } from 'apollo-server';
 
 const typeDefs = gql`
   type Query {
@@ -16,13 +16,13 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    me(root, args, context) {
+    me(_root, _args, context) {
       return context.users[0];
     },
-    users(root, args, context) {
+    users(_root, _args, context) {
       return context.users;
     },
-    user(root, args, context) {
+    user(_root, args, context) {
       return context.users.find(user => user.id === args.id);
     },
   },

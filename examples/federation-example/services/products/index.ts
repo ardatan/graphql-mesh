@@ -1,5 +1,5 @@
-const { ApolloServer, gql } = require('apollo-server');
-const { buildSubgraphSchema } = require('@apollo/subgraph');
+import { ApolloServer, gql } from 'apollo-server';
+import { buildSubgraphSchema } from '@apollo/subgraph';
 
 const typeDefs = gql`
   extend type Query {
