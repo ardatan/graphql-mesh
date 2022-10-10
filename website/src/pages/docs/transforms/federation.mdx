@@ -10,7 +10,7 @@ The `federation` transform allows the resolvers and directives to conform to the
 
 Add the following configuration to your Mesh config file:
 
-```yaml
+```yaml filename=".meshrc.yaml"
 transforms:
   - federation:
       types:
@@ -39,7 +39,7 @@ transforms:
 
 To add more complex business logic, you can point to a code file that exports a resolver function.
 
-```yaml
+```yaml filename=".meshrc.yaml"
 resolveReference: ./userResolveReference.ts
 ```
 

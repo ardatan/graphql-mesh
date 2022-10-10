@@ -72,7 +72,7 @@ yarn mesh build
 
 Now, instead of using `execute` manually, you can use the generated `getSdk` method with your GraphQL Mesh client, and use the functions that are generated based on your operations:
 
-```ts
+```ts filename="test.ts"
 import { getMeshSDK } from './.mesh'
 
 async function test() {

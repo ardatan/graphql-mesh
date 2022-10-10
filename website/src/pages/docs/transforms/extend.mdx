@@ -16,11 +16,11 @@ import { Callout } from '@theguild/components'
 
 Add the following configuration under the source configuration;
 
-```yaml
+```yaml filename=".meshrc.yaml"
 transforms:
   - extend:
       typeDefs: ./someTypeDefs.graphql
-      resolvers: ./someResolvers.js
+      resolvers: ./someResolvers.ts
 ```
 
 You can extend the existing types in:
@@ -33,7 +33,7 @@ extend type User {
 
 And define resolvers for those types;
 
-```js
+```ts filename="someResolvers.ts"
 module.exports = {
   User: {
     fullName: user => `${user.firstName} ${user.lastName}` // e.g. `user` is the raw result returned by your data source

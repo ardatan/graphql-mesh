@@ -12,7 +12,7 @@ This Handler allows you to load [gRPC](https://grpc.io) definition files (`.prot
 
 Now, you can use it directly in your Mesh config file:
 
-```yaml {6}
+```yaml filename=".meshrc.yaml" {6}
 sources:
   - name: MyGrpcApi
     handler:
@@ -30,7 +30,7 @@ sources:
 
 If you have configured reflection in your gRPC server, you can use `useReflection` flag to load the schema from reflection instead of loading proto files.
 
-```yaml {6}
+```yaml filename=".meshrc.yaml" {6}
 sources:
   - name: gRPC Example
     handler:
@@ -48,7 +48,7 @@ sources:
 
 Here you can use `metaData` field to pass some custom metadata from the context.
 
-```yaml {7-9}
+```yaml filename=".meshrc.yaml" {7-9}
 sources:
   - name: MyGrpcApi
     handler:

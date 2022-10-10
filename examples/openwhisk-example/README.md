@@ -12,7 +12,7 @@
 GraphQL Mesh needs to be aware of the path of the OpenWhisk action endpoint.
 So you need to configure `serve.endpoint` in `.meshrc.yml`;
 
-```yaml
+```yaml filename=".meshrc.yml"
 serve:
   # This is the full path to your endpoint
   # In the following endpoint, we assume you have created a package with `wsk package create mesh`

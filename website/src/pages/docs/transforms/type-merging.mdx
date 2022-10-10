@@ -44,7 +44,7 @@ type AuthorWithBooks {
 
 And you renamed `AuthorWithBooks` to `Author` using [`Rename`](/docs/transforms/rename) transform.
 
-```yaml
+```yaml filename=".meshrc.yaml"
 - sources:
     - name: BookService
       handler:
@@ -85,7 +85,7 @@ But it won't work because Mesh doesn't know which field belongs to where and how
 
 We have Type Merging transform to teach Mesh how to fetch entities from different sources:
 
-```yaml
+```yaml filename=".meshrc.yaml"
 sources:
   - name: AuthorService
     handler:
@@ -139,7 +139,7 @@ Then now, our query will work as expected!
 
 The example above works fine, but there is an N+1 problem. It sends `n` requests for `n` entities. But we have `authors` and `books`. Type Merging is smart enough to handle batching if you point it to a field that returns a list of entities. Let's update our configuration for this:
 
-```yaml
+```yaml filename=".meshrc.yaml"
 sources:
   - name: AuthorService
     handler:
@@ -190,12 +190,12 @@ And now it batches the requests to the inner sources.
 
 ## Using the Type Merging Transform
 
-```yaml
+```yaml filename=".meshrc.yaml"
 sources:
   - name: AuthorService
     handler:
       graphql:
-        endpoint: ./author-service-schema.js
+        endpoint: ./author-service-schema.ts
     transforms:
       - typeMerging:
           queryFields:
@@ -210,7 +210,7 @@ sources:
   - name: BookService
     handler:
       graphql:
-        endpoint: ./book-service-schema.js
+        endpoint: ./book-service-schema.ts
     transforms:
       # Rename type names and field names to let stitching merger merges them
       - rename:

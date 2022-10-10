@@ -20,7 +20,7 @@ You can [learn more on Envelop's docs](https://www.envelop.dev/docs/guides/addin
 
 Then add the plugin to your configuration;
 
-```yaml
+```yaml filename=".meshrc.yaml"
 # ...
 plugins:
   - responseCache: {}
@@ -28,7 +28,7 @@ plugins:
 
 The caching behavior can be fully customized. A TTL can be provided global or more granular per type or schema coordinate.
 
-```yaml
+```yaml filename=".meshrc.yaml"
 # ...
 plugins:
   - responseCache:
@@ -48,7 +48,7 @@ plugins:
 
 If you need to cache based on the user;
 
-```yaml
+```yaml filename=".meshrc.yaml"
 # ...
 plugins:
   - responseCache:
@@ -58,7 +58,7 @@ plugins:
 
 If you don't want to invalidate automatically based on mutations;
 
-```yaml
+```yaml filename=".meshrc.yaml"
 # ...
 plugins:
   - responseCache:

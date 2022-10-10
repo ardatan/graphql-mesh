@@ -12,7 +12,7 @@ To get started, install the handler library:
 
 Now, you can use it directly in your Mesh config file:
 
-```yaml
+```yaml filename=".meshrc.yaml"
 sources:
   - name: MyGraphQLApi
     handler:
@@ -34,7 +34,7 @@ The expression inside dynamic values should be as in JS.
 
 ### From Context (HTTP Header for `mesh dev` or `mesh start`)
 
-```yaml
+```yaml filename=".meshrc.yaml"
 sources:
   - name: MyGraphQLApi
     handler:
@@ -54,7 +54,7 @@ And for `mesh dev` or `mesh start`, you can pass the value using `x-my-graphql-a
 
 `MY_API_TOKEN` is the name of the environment variable you have the value.
 
-```yaml {7}
+```yaml filename=".meshrc.yaml" {7}
 sources:
   - name: MyGraphQLApi
     handler:
@@ -70,7 +70,7 @@ We recommend providing local schema by using the `additionalTypeDefs` and `addit
 
 However, it is also possible to use a local GraphQL Schema instance as a GraphQL Mesh source, as showcased below:
 
-```yaml
+```yaml filename=".meshrc.yaml"
 sources:
   - name: MyGraphQLApi
     handler:
@@ -110,7 +110,7 @@ The `retry` mechanism allow you to specify the retry attempts for a single Graph
 
 The retry flow will execute in both conditions: a network error, or due to a runtime error.
 
-```yaml {6}
+```yaml filename=".meshrc.yaml" {6}
 sources:
   - name: uniswapv2
     handler:
@@ -126,7 +126,7 @@ sources:
 
 The `timeout` mechanism allow you to specify the `timeout` for a given GraphQL endpoint.
 
-```yaml {6}
+```yaml filename=".meshrc.yaml" {6}
 sources:
   - name: uniswapv2
     handler:
@@ -144,7 +144,7 @@ The `fallback` mechanism allow you to specify use more than one GraphQL endpoint
 
 This is helpful if you have a fallback endpoint for the same GraphQL API.
 
-```yaml {5}
+```yaml filename=".meshrc.yaml" {5}
 sources:
   - name: uniswapv2
     handler:
@@ -166,7 +166,7 @@ The `race` mechanism allow you to specify use more than one GraphQL endpoint, fo
 
 If you have different places that service is deployed, this is useful to get the fastest response by racing them.
 
-```yaml {5}
+```yaml filename=".meshrc.yaml" {5}
 sources:
   - name: uniswapv2
     handler:

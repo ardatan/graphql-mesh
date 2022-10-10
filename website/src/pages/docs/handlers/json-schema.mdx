@@ -19,7 +19,7 @@ To get started, install the handler library:
 
 Now, you can use it directly in your Mesh config file:
 
-```yaml
+```yaml filename=".meshrc.yaml"
 sources:
   - name: MyApi
     handler:
@@ -41,7 +41,7 @@ The expression inside dynamic values should be as in JS.
 
 ### From Context (HTTP Header for `mesh dev` or `mesh start`)
 
-```yaml {8}
+```yaml filename=".meshrc.yaml" {8}
 sources:
   - name: MyGraphQLApi
     handler:
@@ -58,7 +58,7 @@ And for `mesh dev` or `mesh start`, you can pass the value using `x-my-graphql-a
 
 `MY_API_TOKEN` is the name of the environmental variable you have the value.
 
-```yaml {7}
+```yaml filename=".meshrc.yaml" {7}
 sources:
   - name: MyGraphQLApi
     handler:
@@ -74,7 +74,7 @@ sources:
 
 Mesh automatically generates arguments for operations if needed;
 
-```yaml {9}
+```yaml filename=".meshrc.yaml" {9}
 sources:
   - name: MyGraphQLApi
     handler:
@@ -117,7 +117,7 @@ sources:
 
 `Mesh Sample Example - ./jsons/MyField.response.json file`
 
-```yaml
+```json filename="MyField.response.json"
 Any JSON sample file can be used.
 ```
 

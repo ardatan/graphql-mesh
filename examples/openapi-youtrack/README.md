@@ -17,6 +17,6 @@ You need to pass two environmental variables to run this project with the comman
 
 Then run this project with the following command;
 
-```
+```bash
 YOUTRACK_SERVICE_URL={YOUR_API_URL_HERE} YOUTRACK_TOKEN={YOUR TOKEN IS HERE} yarn start
 ```

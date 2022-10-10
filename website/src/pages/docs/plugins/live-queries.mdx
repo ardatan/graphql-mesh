@@ -23,7 +23,7 @@ And you want to update this operation result automatically without manual refres
 
 You only need to add the following to your existing configuration.
 
-```yaml
+```yaml filename=".meshrc.yaml"
 additionalTypeDefs: |
   directive @live on QUERY
 plugins:
@@ -62,7 +62,7 @@ query getTodo($id: ID!) {
 
 If you update this entity with `editTodo` mutation field on your backend, then you want to invalidate this entity specifically instead of validating all `todo` queries;
 
-```yaml
+```yaml filename=".meshrc.yaml"
 invalidations:
   - field: Mutation.editTodo
     invalidate:
@@ -71,7 +71,7 @@ invalidations:
 
 In a case where the field resolver resolves null but might resolve to an object type later, e.g., because the visibility got update the field that uses a specific id argument can be invalidated in the following way:
 
-```yaml
+```yaml filename=".meshrc.yaml"
 invalidations:
   - field: Mutation.editTodo
     invalidate:
@@ -84,7 +84,7 @@ invalidations:
 
 See [Resolvers Composition](/docs/transforms/resolvers-composition)
 
-```yaml
+```yaml filename=".meshrc.yaml"
 transforms:
   - resolversComposition:
       - resolver: Mutation.editTodo
@@ -93,7 +93,7 @@ transforms:
 
 And in this code file;
 
-```js
+```ts filename="invalidate-todo.ts"
 module.exports = {
   invalidateTodo: next => async (root, args, context, info) => {
     const result = await next(root, args, context, info)

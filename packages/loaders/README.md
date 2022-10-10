@@ -8,14 +8,14 @@ You can consume this `GraphQLSchema` inside any tools in GraphQL Ecosystem such 
 
 GraphQL Config is a way of specifying your GraphQL Project in a standard way so the most of the tools around GraphQL Ecosystem can recognize your project such as VSCode GraphQL Extension, GraphQL ESLint and GraphQL Code Generator
 
-```yaml
+```yaml filename=".graphqlrc.yml"
 schema: ./packages/server/modules/**/*.graphql # Backend
 documents: ./packages/client/pages/**/*.graphql # Frontend
 ```
 
 Omnigraph acts like as a custom loader with GraphQL Config
 
-```yaml
+```yaml filename=".graphqlrc.yml"
 schema:
   MyOmnigraph:
     loader: '@omnigraph/openapi' # This provides GraphQLSchema to GraphQL Config
@@ -30,7 +30,7 @@ Let's say we want to create a type-safe SDK from the generated schema using Grap
 
 Like any other GraphQL project. We can use `extensions.codegen`
 
-```yaml
+```yaml filename=".graphqlrc.yml"
 schema:
   MyOmnigraph:
     loader: '@omnigraph/openapi' # This provides GraphQLSchema to GraphQL Config
@@ -49,7 +49,7 @@ extensions:
 
 #### Example: GraphQL JIT SDK Usage with Omnigraph Bundle
 
-```ts
+```ts filename="get-omnigraph-sdk.ts"
 // Get GraphQL JIT SDK Factory
 import { getSdk } from './sdk'
 // Load our schema from bundle
@@ -66,9 +66,9 @@ export async function getOmnigraphSDK() {
 
 As you can see above, Omnigraph is able to download sources via HTTP on runtime. But this has some downsides. The remote API might be down or we might have some bandwidth concerns to avoid. So Omnigraph has "Bundling" feature that helps to store the downloaded and resolved resources once ahead-of-time. But this needs some extra code files with programmatic usage by splitting buildtime and runtime configurations;
 
-We can create a script called `generate-bundle.js` and every time we run `npm run generate-bundle` it will download the sources and generate the bundle.
+We can create a script called `generate-bundle.ts` and every time we run `npm run generate-bundle` it will download the sources and generate the bundle.
 
-```js
+```ts filename="generate-bundle.js"
 import { createBundle } from '@omnigraph/openapi'
 import { writeFileSync } from 'fs'
 
@@ -92,9 +92,9 @@ main().catch(e => {
 })
 ```
 
-Then we can load the schema from another file called `load-schema-from-bundle.js`
+Then we can load the schema from another file called `load-schema-from-bundle.ts`
 
-```js
+```ts filename="load-schema-from-bundle.js"
 import { getGraphQLSchemaFromBundle } from '@omnigraph/openapi'
 // Load it as a module so bundlers can recognize and add it to the bundle
 import omnigraphBundle from './bundle.json'
@@ -112,7 +112,7 @@ export default function loadSchemaFromBundle() {
 
 And use our new loader in GraphQL Config by replacing `loader`
 
-```yaml
+```yaml filename=".graphqlrc.yml"
 schema:
   MyOmnigraph:
     loader: ./load-schema-from-bundle.js # This provides GraphQLSchema to GraphQL Config

@@ -46,7 +46,7 @@ First, let's ensure that `mesh build` will be run during deployment.
 Vercel - list most platforms, and run `yarn build` for deployment.
 For this reason, we will add a `prebuild` step:
 
-```jsonc filename="package.json"
+```json filename="package.json"
 {
   "scripts": {
     "start": "mesh start",
@@ -91,7 +91,7 @@ Similarly to regular and Vercel deployment, we will need to add the `mesh build`
 
 Then:
 
-```ts filename="listener.mjs"
+```ts filename="listener.ts"
 import { createBuiltMeshHTTPHandler } from './.mesh'
 
 // Pass Mesh's HTTP handler as an event listener

@@ -10,7 +10,7 @@ The `resolversComposition` transform allows adding middleware to your existing r
 
 Add the following configuration to your Mesh config file:
 
-```yaml
+```yaml filename=".meshrc.yml"
 transforms:
   - resolversComposition:
       mode: bare | wrap
@@ -21,7 +21,7 @@ transforms:
           composer: is-admin#isAdmin
 ```
 
-```ts
+```ts filename="is-auth.ts"
 module.exports = {
   isAuth: next => (root, args, context, info) => {
     // Check if Authorization header is present
