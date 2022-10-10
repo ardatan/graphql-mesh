@@ -1,8 +1,8 @@
-const { createYoga, createSchema } = require('graphql-yoga');
-const { createServer } = require('http');
-const sharp = require('sharp');
+import { createYoga, createSchema } from 'graphql-yoga';
+import { createServer } from 'http';
+import sharp from 'sharp';
 
-module.exports = function startServer() {
+export function startServer() {
   const yoga = createYoga({
     schema: createSchema({
       typeDefs: /* GraphQL */ `
@@ -35,4 +35,4 @@ module.exports = function startServer() {
       );
     });
   });
-};
+}

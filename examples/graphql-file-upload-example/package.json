@@ -4,7 +4,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start-apis": "concurrently \"node upload-files/index.js\" \"node resize-image/index.js\"",
+    "start-apis": "concurrently \"ts-node upload-files\" \"ts-node resize-image\"",
     "start-gateway": "mesh dev"
   },
   "dependencies": {
@@ -14,5 +14,9 @@
     "graphql": "16.6.0",
     "graphql-yoga": "3.3.0",
     "sharp": "0.31.3"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.4"
   }
 }
