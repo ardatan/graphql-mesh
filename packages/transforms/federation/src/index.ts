@@ -1,4 +1,4 @@
-import { GraphQLSchema, GraphQLObjectType, GraphQLUnionType } from 'graphql';
+import { GraphQLSchema, GraphQLObjectType, GraphQLUnionType, isObjectType } from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions, ImportFn } from '@graphql-mesh/types';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { entitiesField, EntityType, serviceField } from '@apollo/subgraph/dist/types.js';
@@ -117,6 +117,16 @@ export default class FederationTransform implements MeshTransform {
       }
     }
 
+    const entityTypes: GraphQLObjectType[] = [];
+
+    for (const typeName in rawSource.merge || {}) {
+      const type = schema.getType(typeName);
+      if (isObjectType(type)) {
+        entityTypes.push(type);
+      }
+      set(type, 'extensions.apollo.subgraph.resolveReference', rawSource.merge[typeName].resolve);
+    }
+
     const schemaWithFederationQueryType = mapSchema(schema, {
       [MapperKind.QUERY]: type => {
         const config = type.toConfig();
@@ -139,25 +149,11 @@ export default class FederationTransform implements MeshTransform {
         if (type.name === EntityType.name) {
           return new GraphQLUnionType({
             ...EntityType.toConfig(),
-            types: () => {
-              const entityTypes: GraphQLObjectType[] = [];
-              for (const typeConfig of this.config?.types || []) {
-                if (typeConfig.config?.key?.length) {
-                  const type = schemaWithFederationQueryType.getType(typeConfig.name) as GraphQLObjectType;
-                  entityTypes.push(type);
-                }
-              }
-              return entityTypes;
-            },
+            types: entityTypes,
           });
         }
         return type;
       },
-    });
-
-    this.config?.types.forEach(typeConfig => {
-      const type = schemaWithUnionType.getType(typeConfig.name) as GraphQLObjectType;
-      set(type, 'extensions.apollo.subgraph.resolveReference', rawSource.merge[typeConfig.name].resolve);
     });
 
     schemaWithUnionType.extensions = schemaWithUnionType.extensions || {};
