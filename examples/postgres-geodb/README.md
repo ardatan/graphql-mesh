@@ -39,7 +39,7 @@ Now, to have access to the GitHub GraphQL API, start by creating a personal acce
 
 Then you should be able to use the `mesh:serve` script to run it:
 
-```bash
+```sh
 GH_ACCESS_TOKEN="your token here" yarn mesh:serve
 ```
 
@@ -49,12 +49,12 @@ This example also generates SDK based on operations (located under `./src/test.q
 
 The following command will generate the fully type-safe SDK for you:
 
-```bash
+```sh
 GH_ACCESS_TOKEN="your token here" yarn mesh:sdk
 ```
 
 You can find the code that uses the generates SDK under `./src/test.ts`, it imports for the generated code and prints the result nicely to the console. You can run it with:
 
-```bash
+```sh
 GH_ACCESS_TOKEN="your token here" yarn test:sdk
 ```

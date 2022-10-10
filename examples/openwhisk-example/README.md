@@ -34,6 +34,6 @@ You can find the bundle in `dist/index.js` and deploy it either `yarn deploy` or
 
 `start` command will start Mesh server to mimic your API endpoint locally without deployment;
 
-```bash
+```sh
 yarn start
 ```

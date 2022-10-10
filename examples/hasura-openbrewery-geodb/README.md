@@ -21,7 +21,7 @@ To do that, run the following:
 
 We need to install Hasura using Docker but we will use a special version of Hasura to benefit from Remote Joins;
 
-```bash
+```sh
 docker run -d -p 8080:8080 \
   -e HASURA_GRAPHQL_DATABASE_URL=postgres://postgres:docker@host.docker.internal:5432/postgres \
   -e HASURA_GRAPHQL_ENABLE_CONSOLE=true \
@@ -33,13 +33,13 @@ docker run -d -p 8080:8080 \
 We need to have `yarn` and Node.js on our computer to run GraphQL Mesh locally.
 Run the following command to create a new project on an empty directory;
 
-```bash
+```sh
 yarn init
 ```
 
 Answer the questions of `yarn` about our new project, then install GraphQL Mesh dependencies;
 
-```bash
+```sh
 yarn add graphql @graphql-mesh/cli @graphql-mesh/json-schema
 ```
 
@@ -108,7 +108,7 @@ sources:
 
 Run our new GraphQL Mesh instance with the following command;
 
-```bash
+```sh
 yarn mesh dev
 ```
 
