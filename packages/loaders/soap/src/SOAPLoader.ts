@@ -34,8 +34,10 @@ import {
   GraphQLBigInt,
   GraphQLTime,
   GraphQLVoid,
+  GraphQLUnsignedInt,
+  RegularExpression,
 } from 'graphql-scalars';
-import { GraphQLBoolean, GraphQLFloat, GraphQLScalarType, GraphQLString } from 'graphql';
+import { GraphQLBoolean, GraphQLFloat, GraphQLInt, GraphQLScalarType, GraphQLString } from 'graphql';
 import { MeshFetch } from '@graphql-mesh/types';
 
 export interface SOAPLoaderOptions {
@@ -87,8 +89,10 @@ export class SOAPLoader {
   loadXMLSchemaNamespace() {
     const namespace = 'http://www.w3.org/2001/XMLSchema';
     const simpleTypeGraphQLScalarMap = new Map<string, GraphQLScalarType>([
+      ['anyType', GraphQLJSON],
       ['anyURI', GraphQLURL],
       ['base64Binary', GraphQLByte],
+      ['byte', GraphQLByte],
       ['boolean', GraphQLBoolean],
       ['date', GraphQLDate],
       ['dateTime', GraphQLDateTime],
@@ -96,6 +100,7 @@ export class SOAPLoader {
       ['double', GraphQLFloat],
       ['duration', GraphQLDuration],
       ['float', GraphQLFloat],
+      ['int', GraphQLInt],
       ['hexBinary', GraphQLHexadecimal],
       ['long', GraphQLBigInt],
       ['gDay', GraphQLString],
@@ -105,7 +110,12 @@ export class SOAPLoader {
       ['gYearMonth', GraphQLString],
       ['NOTATION', GraphQLString],
       ['QName', GraphQLString],
+      ['short', GraphQLInt],
       ['string', GraphQLString],
+      ['unsignedByte', GraphQLByte],
+      ['unsignedInt', GraphQLUnsignedInt],
+      ['unsignedLong', GraphQLBigInt],
+      ['unsignedShort', GraphQLUnsignedInt],
       ['time', GraphQLTime],
     ]);
     const namespaceSimpleTypesMap = this.getNamespaceSimpleTypeMap(namespace);
@@ -320,7 +330,7 @@ export class SOAPLoader {
           const [portTypeNamespaceAlias, portTypeName] = bindingObj.attributes.type.split(':');
           const portTypeNamespace = bindingAliasMap.get(portTypeNamespaceAlias);
           if (!portTypeNamespace) {
-            throw new Error(`Namespace alias: ${portTypeNamespace} is undefined!`);
+            throw new Error(`Namespace alias: ${portTypeNamespaceAlias} is undefined!`);
           }
           const portTypeObj = this.getNamespacePortTypeMap(portTypeNamespace).get(portTypeName);
           if (!portTypeObj) {
@@ -341,7 +351,7 @@ export class SOAPLoader {
             const [messageNamespaceAlias, messageName] = outputObj.attributes.message.split(':');
             const messageNamespace = portTypeAliasMap.get(messageNamespaceAlias);
             if (!messageNamespace) {
-              throw new Error(`Namespace alias: ${messageNamespace} is undefined!`);
+              throw new Error(`Namespace alias: ${messageNamespaceAlias} is undefined!`);
             }
             const { type, elementName } = this.getOutputTypeForMessage(
               this.getNamespaceMessageMap(messageNamespace).get(messageName)
@@ -358,7 +368,7 @@ export class SOAPLoader {
             const [inputMessageNamespaceAlias, inputMessageName] = inputObj.attributes.message.split(':');
             const inputMessageNamespace = portTypeAliasMap.get(inputMessageNamespaceAlias);
             if (!inputMessageNamespace) {
-              throw new Error(`Namespace alias: ${inputMessageNamespace} is undefined!`);
+              throw new Error(`Namespace alias: ${inputMessageNamespaceAlias} is undefined!`);
             }
             const inputMessageObj = this.getNamespaceMessageMap(inputMessageNamespace).get(inputMessageName);
             if (!inputMessageObj) {
@@ -393,7 +403,7 @@ export class SOAPLoader {
                       const [typeNamespaceAlias, typeName] = typeRef.split(':');
                       const typeNamespace = aliasMap.get(typeNamespaceAlias);
                       if (!typeNamespace) {
-                        throw new Error(`Namespace alias: ${typeNamespace} is undefined!`);
+                        throw new Error(`Namespace alias: ${typeNamespaceAlias} is undefined!`);
                       }
                       const inputTC = this.getInputTypeForTypeNameInNamespace({ typeName, typeNamespace });
                       if ('getFields' in inputTC && Object.keys(inputTC.getFields()).length === 0) {
@@ -502,8 +512,8 @@ export class SOAPLoader {
     if (!simpleTypeTC) {
       const simpleTypeName = simpleType.attributes.name;
       const restrictionObj = simpleType.restriction[0];
+      const prefix = this.namespaceTypePrefixMap.get(simpleTypeNamespace);
       if (restrictionObj.attributes.base === 'string' && restrictionObj.enumeration) {
-        const prefix = this.namespaceTypePrefixMap.get(simpleTypeNamespace);
         const enumTypeName = `${prefix}_${simpleTypeName}`;
         const values: Record<string, Readonly<EnumTypeComposerValueConfigDefinition>> = {};
         for (const enumerationObj of restrictionObj.enumeration) {
@@ -517,6 +527,11 @@ export class SOAPLoader {
           name: enumTypeName,
           values,
         });
+      } else if (restrictionObj.pattern) {
+        const patternObj = restrictionObj.pattern[0];
+        const pattern = patternObj.attributes.value;
+        const scalarTypeName = `${prefix}_${simpleTypeName}`;
+        simpleTypeTC = this.schemaComposer.createScalarTC(new RegularExpression(scalarTypeName, new RegExp(pattern)));
       } else {
         // TODO: Other restrictions are not supported yet
         const aliasMap = this.aliasMap.get(simpleType);
@@ -581,9 +596,14 @@ export class SOAPLoader {
                   }
                   if (elementObj.attributes?.type) {
                     const [typeNamespaceAlias, typeName] = elementObj.attributes.type.split(':');
-                    const typeNamespace = aliasMap.get(typeNamespaceAlias);
+                    let typeNamespace: string;
+                    if (elementObj.attributes[typeNamespaceAlias]) {
+                      typeNamespace = elementObj.attributes[typeNamespaceAlias];
+                    } else {
+                      typeNamespace = aliasMap.get(typeNamespaceAlias);
+                    }
                     if (!typeNamespace) {
-                      throw new Error(`Namespace alias: ${typeNamespace} is undefined!`);
+                      throw new Error(`Namespace alias: ${typeNamespaceAlias} is undefined!`);
                     }
                     let finalTC: AnyTypeComposer<any> = this.getInputTypeForTypeNameInNamespace({
                       typeName,
@@ -672,9 +692,14 @@ export class SOAPLoader {
         for (const complexContentObj of complexType.complexContent) {
           for (const extensionObj of complexContentObj.extension) {
             const [baseTypeNamespaceAlias, baseTypeName] = extensionObj.attributes.base.split(':');
-            const baseTypeNamespace = aliasMap.get(baseTypeNamespaceAlias);
+            let baseTypeNamespace: string;
+            if (extensionObj.attributes[baseTypeNamespaceAlias]) {
+              baseTypeNamespace = extensionObj.attributes[baseTypeNamespaceAlias];
+            } else {
+              baseTypeNamespace = aliasMap.get(baseTypeNamespaceAlias);
+            }
             if (!baseTypeNamespace) {
-              throw new Error(`Namespace alias: ${baseTypeNamespace} is undefined!`);
+              throw new Error(`Namespace alias: ${baseTypeNamespaceAlias} is undefined!`);
             }
             const baseType = this.getNamespaceComplexTypeMap(baseTypeNamespace)?.get(baseTypeName);
             if (!baseType) {
@@ -691,9 +716,14 @@ export class SOAPLoader {
                 fieldMap[elementObj.attributes.name] = {
                   type: () => {
                     const [typeNamespaceAlias, typeName] = elementObj.attributes.type.split(':');
-                    const typeNamespace = aliasMap.get(typeNamespaceAlias);
+                    let typeNamespace: string;
+                    if (elementObj.attributes[typeNamespaceAlias]) {
+                      typeNamespace = elementObj.attributes[typeNamespaceAlias];
+                    } else {
+                      typeNamespace = aliasMap.get(typeNamespaceAlias);
+                    }
                     if (!typeNamespace) {
-                      throw new Error(`Namespace alias: ${typeNamespace} is undefined!`);
+                      throw new Error(`Namespace alias: ${typeNamespaceAlias} is undefined!`);
                     }
                     return this.getInputTypeForTypeNameInNamespace({ typeName, typeNamespace });
                   },
@@ -719,9 +749,14 @@ export class SOAPLoader {
   getOutputFieldTypeFromElement(elementObj: XSElement, aliasMap: Map<string, string>, namespace: string) {
     if (elementObj.attributes?.type) {
       const [typeNamespaceAlias, typeName] = elementObj.attributes.type.split(':');
-      const typeNamespace = aliasMap.get(typeNamespaceAlias);
+      let typeNamespace: string;
+      if (elementObj.attributes[typeNamespaceAlias]) {
+        typeNamespace = elementObj.attributes[typeNamespaceAlias];
+      } else {
+        typeNamespace = aliasMap.get(typeNamespaceAlias);
+      }
       if (!typeNamespace) {
-        throw new Error(`Namespace alias: ${typeNamespace} is undefined!`);
+        throw new Error(`Namespace alias: ${typeNamespaceAlias} is undefined!`);
       }
       const outputTC = this.getOutputTypeForTypeNameInNamespace({ typeName, typeNamespace });
       return outputTC;
@@ -839,7 +874,7 @@ export class SOAPLoader {
             const [baseTypeNamespaceAlias, baseTypeName] = extensionObj.attributes.base.split(':');
             const baseTypeNamespace = aliasMap.get(baseTypeNamespaceAlias);
             if (!baseTypeNamespace) {
-              throw new Error(`Namespace alias: ${baseTypeNamespace} is undefined!`);
+              throw new Error(`Namespace alias: ${baseTypeNamespaceAlias} is undefined!`);
             }
             const baseType = this.getNamespaceComplexTypeMap(baseTypeNamespace)?.get(baseTypeName);
             if (!baseType) {
@@ -929,7 +964,7 @@ export class SOAPLoader {
           type: () => {
             const elementTypeNamespace = aliasMap.get(elementNamespaceAlias);
             if (!elementTypeNamespace) {
-              throw new Error(`Namespace alias: ${elementTypeNamespace} is undefined!`);
+              throw new Error(`Namespace alias: ${elementNamespaceAlias} is undefined!`);
             }
             return this.getOutputTypeForTypeNameInNamespace({
               typeName: elementName,
@@ -945,7 +980,7 @@ export class SOAPLoader {
             const [typeNamespaceAlias, typeName] = partObj.attributes.type.split(':');
             const typeNamespace = aliasMap.get(typeNamespaceAlias);
             if (!typeNamespace) {
-              throw new Error(`Namespace alias: ${typeNamespace} is undefined!`);
+              throw new Error(`Namespace alias: ${typeNamespaceAlias} is undefined!`);
             }
             return this.getOutputTypeForTypeNameInNamespace({ typeName, typeNamespace });
           },

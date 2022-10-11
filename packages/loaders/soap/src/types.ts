@@ -78,8 +78,17 @@ export interface XSRestrictionAttributes {
 }
 
 export interface XSRestriction {
+  pattern: XSPattern[];
   attributes: XSRestrictionAttributes;
   enumeration: XSEnumeration[];
+}
+
+export interface XSPattern {
+  attributes: XSPatternAttributes;
+}
+
+export interface XSPatternAttributes {
+  value: string;
 }
 
 export interface XSEnumerationAttributes {
