@@ -1,10 +1,10 @@
-const { Server, loadPackageDefinition, ServerCredentials } = require('@grpc/grpc-js');
-const { load } = require('@grpc/proto-loader');
-const { join } = require('path');
+import { Server, loadPackageDefinition, ServerCredentials, ServiceClientConstructor } from '@grpc/grpc-js';
+import { load } from '@grpc/proto-loader';
+import { join } from 'path';
 
 const wrapServerWithReflection = require('grpc-node-server-reflection').default;
 
-module.exports = async function startServer(subscriptionInterval = 1000) {
+export default async function startServer(subscriptionInterval = 1000) {
   const server = wrapServerWithReflection(new Server());
 
   const packageDefinition = await load('./service.proto', {
@@ -25,4 +25,4 @@ module.exports = async function startServer(subscriptionInterval = 1000) {
     console.log('gRPC Server started, listening: 0.0.0.0:' + port);
   });
   return server;
-};
+}
