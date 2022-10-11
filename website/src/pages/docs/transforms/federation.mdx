@@ -17,14 +17,15 @@ transforms:
         # Ensure the root queries of this schema show up the combined schema
         - name: Query
           config:
-            extend: true
+            extends: true
         - name: Product
           config:
             # extend Product {
             extend: true
             # Product @key(fields: "id") {
-            keyFields:
-              - id
+            key:
+              fields:
+                - id
             fields:
               # id: Int! @external
               - name: id
@@ -39,12 +40,12 @@ transforms:
 To add more complex business logic, you can point to a code file that exports a resolver function.
 
 ```yaml
-resolveReference: ./userResolveReference.js
+resolveReference: ./userResolveReference.ts
 ```
 
-```js filename="userResolveReference.js"
+```ts filename="userResolveReference.ts"
 // So we can point to an existing query field to resolve that entity
-module.exports = (root, context, info) => {
+export default function (root, context, info)  {
   return context.accounts.Query.user({ root, args: { id: root.id }, context, info })
 }
 ```
