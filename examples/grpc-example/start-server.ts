@@ -1,6 +1,6 @@
-const { Server, loadPackageDefinition, ServerCredentials } = require('@grpc/grpc-js');
-const { load } = require('@grpc/proto-loader');
-const { join } = require('path');
+import { Server, loadPackageDefinition, ServerCredentials, ServiceClientConstructor } from '@grpc/grpc-js';
+import { load } from '@grpc/proto-loader';
+import { join } from 'path';
 
 const seconds = new Date('2020-12-20').getTime();
 
@@ -15,7 +15,7 @@ const Movies = [
     cast: ['Tom Cruise', 'Simon Pegg', 'Jeremy Renner'],
     name: 'Mission: Impossible Rogue Nation',
     rating: 0.97,
-    year: 2015n,
+    year: BigInt(2015),
     time: {
       seconds,
     },
@@ -25,7 +25,7 @@ const Movies = [
     cast: ['Tom Cruise', 'Simon Pegg', 'Henry Cavill'],
     name: 'Mission: Impossible - Fallout',
     rating: 0.93,
-    year: 2018n,
+    year: BigInt(2018),
     time: {
       seconds,
     },
@@ -35,7 +35,7 @@ const Movies = [
     cast: ['Leonardo DiCaprio', 'Jonah Hill', 'Margot Robbie'],
     name: 'The Wolf of Wall Street',
     rating: 0.78,
-    year: 2013n,
+    year: BigInt(2013),
     time: {
       seconds,
     },
@@ -43,7 +43,7 @@ const Movies = [
   },
 ];
 
-module.exports = function startServer(subscriptionInterval = 1000, debug = false) {
+export function startServer(subscriptionInterval = 1000, debug = false): Promise<Server> {
   return new Promise(async (resolve, reject) => {
     try {
       const logger = debug ? (...args) => console.log(...args) : () => {};
@@ -53,7 +53,7 @@ module.exports = function startServer(subscriptionInterval = 1000, debug = false
         includeDirs: [join(__dirname, './proto')],
       });
       const grpcObject = loadPackageDefinition(packageDefinition);
-      server.addService(grpcObject.Example.service, {
+      server.addService((grpcObject.Example as ServiceClientConstructor).service, {
         getMovies(call, callback) {
           const result = Movies.filter(movie => {
             for (const [key, value] of Object.entries(call.request.movie)) {
@@ -101,4 +101,4 @@ module.exports = function startServer(subscriptionInterval = 1000, debug = false
       reject(e);
     }
   });
-};
+}

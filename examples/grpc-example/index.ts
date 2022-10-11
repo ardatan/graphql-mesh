@@ -1,4 +1,4 @@
-const startServer = require('./start-server');
+import { startServer } from './start-server';
 
 startServer(1000, true).catch(console.error);
 
