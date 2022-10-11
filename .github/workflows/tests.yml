@@ -75,7 +75,7 @@ jobs:
       - name: Download Postgres Dump
         run: 'curl https://raw.githubusercontent.com/morenoh149/postgresDBSamples/master/worldDB-1.0/world.sql -o /tmp/backup.sql'
       - name: Load Postgres Data
-        uses: tj-actions/pg-restore@v4.5
+        uses: tj-actions/pg-restore@v4.7
         with:
           database_url: 'postgres://postgres:docker@localhost:5432/postgres'
           backup_file: '/tmp/backup.sql'
