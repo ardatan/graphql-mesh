@@ -4,7 +4,6 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "algolia-sync": "node scripts/algolia-ci.mjs",
     "build": "next build && next-sitemap --config next-sitemap.config.cjs ",
     "dev": "next dev",
     "next": "next",
