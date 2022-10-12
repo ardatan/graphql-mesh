@@ -4220,17 +4220,17 @@
     unist-util-visit "^4.1.1"
     use-debounce "8.0.4"
 
-"@theguild/prettier-config@0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@theguild/prettier-config/-/prettier-config-0.1.0.tgz#eb3408e848461938c908ebdbbe1fe1af49e176ed"
-  integrity sha512-H6k6JfWvx021nkEh2CPnDvYydh1DXQq5QSZj1in4R/VSif0ci7RJFnJWsH/hcZBcssPZh7uSdkVJIncapgQo0g==
+"@theguild/prettier-config@0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@theguild/prettier-config/-/prettier-config-0.1.1.tgz#31935992aaacabe6bcc6578ba1b2c0166dab3410"
+  integrity sha512-vZ0DtusRtMWIM4Bmztq+FimDcKftncteEsKhfDeTj7Oos3+lv8bT4e2VR5HKVKVXZn/cLv6eRwR65/puUakOAQ==
   dependencies:
     prettier-plugin-sh "^0.12.8"
 
-"@theguild/tailwind-config@0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@theguild/tailwind-config/-/tailwind-config-0.1.1.tgz#ff77a44d97ca62bfb710a29024daee5f17b27cdc"
-  integrity sha512-eA3bclBuyMycNue9ngBnk92q9BzmZZSipfFXq3/DZrl87K5BDhrOuzQ/mEJ4oh+hDEX0MkbFidL4Cupz229i9w==
+"@theguild/tailwind-config@0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@theguild/tailwind-config/-/tailwind-config-0.1.2.tgz#015385163352581201be0f9188c77b0a3f175eba"
+  integrity sha512-cjun9SRRvEOEred330iJKkCLDzpBPCsNczxz+dNsKka5UAf6q1kRKSHV1AIlKSzu29egPr+Gwjdds+Vmm/ESjQ==
   dependencies:
     autoprefixer "^10.4.12"
     cssnano "^5.1.13"
