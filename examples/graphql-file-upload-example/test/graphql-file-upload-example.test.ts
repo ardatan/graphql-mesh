@@ -1,9 +1,9 @@
-const startUploadFilesServer = require('../upload-files/server');
-const startResizeImageServer = require('../resize-image/server');
-const { File } = require('@whatwg-node/fetch');
-const { findAndParseConfig } = require('@graphql-mesh/cli');
-const { join } = require('path');
-const { getMesh } = require('@graphql-mesh/runtime');
+import startUploadFilesServer from '../upload-files/server';
+import startResizeImageServer from '../resize-image/server';
+import { File } from '@whatwg-node/fetch';
+import { findAndParseConfig } from '@graphql-mesh/cli';
+import { join } from 'path';
+import { getMesh } from '@graphql-mesh/runtime';
 
 describe('Upload Example', () => {
   let stopUploadFilesServer;

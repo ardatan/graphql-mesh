@@ -10,7 +10,7 @@ if (!existsSync(FILES_DIR)) {
   mkdirSync(FILES_DIR);
 }
 
-export function startServer() {
+export default function startServer() {
   const yoga = createYoga({
     schema: createSchema({
       typeDefs: /* GraphQL */ `

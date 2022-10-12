@@ -1,13 +1,14 @@
 import { useRef, useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { GET_FILES, UPLOAD_FILE } from './queries';
+import { FileType, FilesType } from './Files';
 
 export default function UploadFile() {
   const [uploadFile] = useMutation(UPLOAD_FILE);
-  const [file, setFile] = useState();
-  const inputRef = useRef(null);
+  const [file, setFile] = useState<FileType>();
+  const inputRef = useRef<FilesType & HTMLInputElement>(null);
   const onSelectFile = () => {
-    setFile(inputRef.current.files[0]);
+    setFile(inputRef.current!.files[0]);
   };
   return (
     <form
@@ -18,7 +19,7 @@ export default function UploadFile() {
             upload: file,
           },
           update(cache, { data: newImage }) {
-            const data = cache.readQuery({
+            const data = cache.readQuery<FilesType>({
               query: GET_FILES,
             });
             const existingFiles = data?.files || [];
@@ -31,7 +32,7 @@ export default function UploadFile() {
             });
           },
         });
-        inputRef.current.value = null;
+        inputRef.current!.value = '';
       }}
     >
       <input type="file" onBlur={onSelectFile} ref={inputRef} />

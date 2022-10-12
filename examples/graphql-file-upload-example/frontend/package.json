@@ -20,6 +20,14 @@
     "react-scripts": "5.0.1",
     "web-vitals": "3.1.0"
   },
+  "devDependencies": {
+    "@types/apollo-upload-client": "17.0.1",
+    "@types/jest": "27.5.2",
+    "@types/node": "16.11.65",
+    "@types/react": "18.0.21",
+    "@types/react-dom": "18.0.6",
+    "typescript": "4.8.4"
+  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -30,6 +38,12 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
+    ]
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
     ]
   }
 }

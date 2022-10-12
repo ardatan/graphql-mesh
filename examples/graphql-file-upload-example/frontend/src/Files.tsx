@@ -1,16 +1,25 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { GET_FILES, DELETE_FILE } from './queries';
 
+export type FileType = {
+  filename: string;
+  thumbnailImage: any;
+};
+
+export type FilesType = {
+  files: FileType[];
+};
+
 export default function Files() {
-  const { loading, error, data } = useQuery(GET_FILES);
+  const { loading, error, data } = useQuery<FilesType>(GET_FILES);
   const [deleteFile] = useMutation(DELETE_FILE);
 
-  if (loading) return 'Loading...';
-  if (error) return `Error! ${error.message}`;
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{`Error! ${error.message}`}</p>;
 
   return (
     <ul>
-      {data?.files.map(({ filename, thumbnailImage }) => {
+      {data?.files.map(({ filename, thumbnailImage }: { filename: any; thumbnailImage: any }) => {
         const extension = filename.split('.').pop();
         const uri = `data:image/${extension};base64,${thumbnailImage}`;
         return (
@@ -23,14 +32,14 @@ export default function Files() {
                     filename,
                   },
                   update(cache) {
-                    const data = cache.readQuery({
+                    const data = cache.readQuery<FilesType>({
                       query: GET_FILES,
                     });
                     cache.writeQuery({
                       query: GET_FILES,
                       data: {
                         ...data,
-                        files: data.files.filter(image => image.filename !== filename),
+                        files: data?.files.filter(image => image.filename !== filename),
                       },
                     });
                   },

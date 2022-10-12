@@ -1,6 +1,6 @@
-const express = require('express');
-const { fetch } = require('@whatwg-node/fetch');
-const bodyParser = require('body-parser');
+import express from 'express';
+import { fetch } from '@whatwg-node/fetch';
+import bodyParser from 'body-parser';
 
 const app = express();
 app.use(bodyParser.json());
