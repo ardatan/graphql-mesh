@@ -46,7 +46,7 @@
     "@graphql-codegen/typescript": "2.7.3",
     "@graphql-codegen/typescript-generic-sdk": "3.0.1",
     "@graphql-codegen/typescript-operations": "2.5.3",
-    "@graphql-codegen/typed-document-node": "2.3.3",
+    "@graphql-codegen/typed-document-node": "2.3.4",
     "@graphql-mesh/config": "8.0.21",
     "@graphql-codegen/typescript-resolvers": "2.7.3",
     "@graphql-mesh/cross-helpers": "0.2.6",
