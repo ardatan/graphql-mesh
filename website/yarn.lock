@@ -645,10 +645,10 @@
     unist-util-visit "^4.1.1"
     use-debounce "8.0.4"
 
-"@theguild/tailwind-config@0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@theguild/tailwind-config/-/tailwind-config-0.1.1.tgz#ff77a44d97ca62bfb710a29024daee5f17b27cdc"
-  integrity sha512-eA3bclBuyMycNue9ngBnk92q9BzmZZSipfFXq3/DZrl87K5BDhrOuzQ/mEJ4oh+hDEX0MkbFidL4Cupz229i9w==
+"@theguild/tailwind-config@0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@theguild/tailwind-config/-/tailwind-config-0.1.2.tgz#015385163352581201be0f9188c77b0a3f175eba"
+  integrity sha512-cjun9SRRvEOEred330iJKkCLDzpBPCsNczxz+dNsKka5UAf6q1kRKSHV1AIlKSzu29egPr+Gwjdds+Vmm/ESjQ==
   dependencies:
     autoprefixer "^10.4.12"
     cssnano "^5.1.13"
