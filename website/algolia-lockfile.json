@@ -168,7 +168,7 @@
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs"],
     "source": "Mesh",
-    "title": "CLI commands",
+    "title": "CLI Commands",
     "type": "Documentation"
   },
   {
@@ -376,7 +376,7 @@
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Getting Started"],
     "source": "Mesh",
-    "title": "Combine multiple sources",
+    "title": "Combine Multiple Sources",
     "type": "Documentation"
   },
   {
@@ -420,7 +420,7 @@
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Getting Started"],
     "source": "Mesh",
-    "title": "Customize the Mesh server",
+    "title": "Customize the Mesh Server",
     "type": "Documentation"
   },
   {
@@ -592,7 +592,7 @@
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Getting Started"],
     "source": "Mesh",
-    "title": "Configure Sources with no definition",
+    "title": "Configure Sources with No Definition",
     "type": "Documentation"
   },
   {
@@ -637,7 +637,7 @@
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Getting Started"],
     "source": "Mesh",
-    "title": "Your first Gateway with Mesh",
+    "title": "Your First Gateway with Mesh",
     "type": "Documentation"
   },
   {
@@ -711,7 +711,7 @@
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Guides"],
     "source": "Mesh",
-    "title": "Batching for N+1 problem",
+    "title": "Batching for N+1 Problem",
     "type": "Documentation"
   },
   {
@@ -944,7 +944,7 @@
     "content": "cc76828a13aee81e78dabb0a2f7b6ead",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/migration/new-openapi-to-openapi",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
-    "hierarchy": ["Docs", "Migration guides"],
+    "hierarchy": ["Docs", "Migration Guides"],
     "source": "Mesh",
     "title": "new-openAPI to openAPI handler",
     "type": "Documentation"
@@ -977,7 +977,7 @@
     "content": "1dbf2daee12583645d1f0de8160c04c7",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/migration/openapi-0",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
-    "hierarchy": ["Docs", "Migration guides"],
+    "hierarchy": ["Docs", "Migration Guides"],
     "source": "Mesh",
     "title": "openAPI handler `<0.31` to `0.32`",
     "type": "Documentation"
@@ -1075,7 +1075,7 @@
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Plugins"],
     "source": "Mesh",
-    "title": "Mocking your API",
+    "title": "Mocking Your API",
     "type": "Documentation"
   },
   {
