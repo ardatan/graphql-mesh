@@ -1952,7 +1952,15 @@
     jwks-rsa "^2.0.1"
     tslib "^2.4.0"
 
-"@envelop/core@2.6.0", "@envelop/core@^2.3.2", "@envelop/core@^2.5.0":
+"@envelop/core@3.0.0", "@envelop/core@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@envelop/core/-/core-3.0.0.tgz#9a0f6815f99f5a83207f6584bbe2c6d3915dda84"
+  integrity sha512-KAKHLcXHaSZ02cbt8Ejpt4uHd2ZUMYRgaLRrL87s65E+PWgdvGj5EtPpLM/mY4twNbXrRzaMt7/t2K3rN6PDvA==
+  dependencies:
+    "@envelop/types" "2.4.0"
+    tslib "2.4.0"
+
+"@envelop/core@^2.5.0":
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/@envelop/core/-/core-2.6.0.tgz#1b7a346a37040c217f0f9b60c3358efc6c3b1b94"
   integrity sha512-yTptKinJN//i6m1kXUbnLBl/FobzddI4ehURAMS08eRUOQwAuXqJU9r8VdTav8nIZLb4t6cuDWFb3n331LiwLw==
