@@ -4,9 +4,6 @@ export default withGuildDocs({
   eslint: {
     ignoreDuringBuilds: true,
   },
-  images: {
-    unoptimized: true,
-  },
   redirects: () =>
     Object.entries({
       '/api/enums/store_src.PredefinedProxyOptionsName': '/docs/getting-started/customize-mesh-server',
