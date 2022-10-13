@@ -4227,10 +4227,10 @@
   dependencies:
     prettier-plugin-sh "^0.12.8"
 
-"@theguild/tailwind-config@0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@theguild/tailwind-config/-/tailwind-config-0.1.2.tgz#015385163352581201be0f9188c77b0a3f175eba"
-  integrity sha512-cjun9SRRvEOEred330iJKkCLDzpBPCsNczxz+dNsKka5UAf6q1kRKSHV1AIlKSzu29egPr+Gwjdds+Vmm/ESjQ==
+"@theguild/tailwind-config@0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@theguild/tailwind-config/-/tailwind-config-0.1.3.tgz#fbd3b438c89a36f6bae35023c79dc129a6263d7c"
+  integrity sha512-kUkxM5NJeBczrC+go4pGD2sKlFSV7B2KuMjqP3LvyZOJYiDTCUargL9X7j4C0EsIhf3ktD6FLuEyk4u82viL2w==
   dependencies:
     autoprefixer "^10.4.12"
     cssnano "^5.1.13"
@@ -9427,10 +9427,10 @@ eslint-plugin-n@15.3.0:
     resolve "^1.22.1"
     semver "^7.3.7"
 
-eslint-plugin-promise@6.0.1:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-promise/-/eslint-plugin-promise-6.0.1.tgz#a8cddf96a67c4059bdabf4d724a29572188ae423"
-  integrity sha512-uM4Tgo5u3UWQiroOyDEsYcVMOo7re3zmno0IZmB5auxoaQNIceAbXEkSt8RNrKtaYehARHG06pYK6K1JhtP0Zw==
+eslint-plugin-promise@6.1.0:
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-promise/-/eslint-plugin-promise-6.1.0.tgz#99e54d07272df5a6440209cb36d0d692be0610dd"
+  integrity sha512-NYCfDZF/KHt27p06nFAttgWuFyIDSUMnNaJBIY1FY9GpBFhdT2vMG64HlFguSgcJeyM5by6Yr5csSOuJm60eXQ==
 
 eslint-plugin-react-hooks@^4.3.0, eslint-plugin-react-hooks@^4.5.0:
   version "4.6.0"
