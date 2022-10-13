@@ -28,6 +28,9 @@
     "./package.json": "./package.json"
   },
   "typings": "dist/typings/index.d.ts",
+  "peerDependencies": {
+    "graphql": "*"
+  },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.3.0",
     "@graphql-mesh/types": "0.89.2",
