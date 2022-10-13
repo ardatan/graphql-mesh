@@ -17,7 +17,7 @@ export default defineConfig({
       <MeshLogo className="mr-1.5 h-9 w-9" />
       <div>
         <h1 className="md:text-md text-sm font-medium">{SITE_NAME}</h1>
-        <h2 className="hidden text-xs sm:!block">Query anything, run anywhere</h2>
+        <h2 className="hidden text-xs sm:block">Query anything, run anywhere</h2>
       </div>
     </>
   ),

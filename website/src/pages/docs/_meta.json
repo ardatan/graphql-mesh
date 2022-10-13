@@ -7,8 +7,8 @@
   "plugins": "Plugins",
   "cache": "Cache Storages",
   "config-reference": "Config Reference",
-  "cli-commands": "CLI commands",
-  "migration": "Migration guides",
+  "cli-commands": "CLI Commands",
+  "migration": "Migration Guides",
   "extend": {
     "hidden": true
   }
