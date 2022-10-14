@@ -1960,10 +1960,18 @@
     "@envelop/types" "2.4.0"
     tslib "2.4.0"
 
-"@envelop/extended-validation@1.9.0", "@envelop/extended-validation@^1.9.0":
+"@envelop/extended-validation@1.9.0":
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/@envelop/extended-validation/-/extended-validation-1.9.0.tgz#a4634452797177e718302a8645a7c8d5381fe09b"
   integrity sha512-Kf0xkTKRuP1XEgHa5Pi8+zaCUGYnFyiGPkb24Z/X1zKd8+s2gtuBmaw6GoROgaBoK0XIE+ZYne7BZCheUqfp+A==
+  dependencies:
+    "@graphql-tools/utils" "^8.8.0"
+    tslib "^2.4.0"
+
+"@envelop/extended-validation@^2.0.0":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@envelop/extended-validation/-/extended-validation-2.0.1.tgz#7bc69ab9384e1245d24eb1515e9405e7eca17842"
+  integrity sha512-59wB8AO07GF3cChhFElGgmIX+oHPR4PzyaBMD/K4xtJCFIEK+r6d8Q48eeXN+MGdnP/u4ZyoXQadxEUJWUPAsg==
   dependencies:
     "@graphql-tools/utils" "^8.8.0"
     tslib "^2.4.0"
@@ -1986,12 +1994,12 @@
   dependencies:
     tslib "^2.4.0"
 
-"@envelop/operation-field-permissions@3.6.0":
-  version "3.6.0"
-  resolved "https://registry.yarnpkg.com/@envelop/operation-field-permissions/-/operation-field-permissions-3.6.0.tgz#fda6451893d1568baff4edec4bb7ee12a92b644c"
-  integrity sha512-zAh19EMJ3TLco5OsLW1On3M41zej4lkqKL//gfYGFRtGB2x/Hnuc5/9BIVEDb8l0zmCkD9bqgWHoS3NfEnwB7w==
+"@envelop/operation-field-permissions@4.0.1":
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@envelop/operation-field-permissions/-/operation-field-permissions-4.0.1.tgz#f15b0860e9020f9526ab705736ede34fe3e022ea"
+  integrity sha512-Oo9dQZoP3qc7rdC7huL0BtSrvSK99Vmte1m5slsr0qjcnJ9vm6iZzQv8MsDxygRP3vR+pXcWZrsJD96RDNe7TA==
   dependencies:
-    "@envelop/extended-validation" "^1.9.0"
+    "@envelop/extended-validation" "^2.0.0"
     tslib "^2.4.0"
 
 "@envelop/parser-cache@^4.6.0":
@@ -14784,10 +14792,10 @@ newrelic@8.17.1:
   optionalDependencies:
     "@newrelic/native-metrics" "^8.0.0"
 
-next-sitemap@3.1.24:
-  version "3.1.24"
-  resolved "https://registry.yarnpkg.com/next-sitemap/-/next-sitemap-3.1.24.tgz#4520db61616390d4e5272e471d43218b2c361bc3"
-  integrity sha512-dEFOI6cnNffDcmxis/1IVNK2JI1wtxxGoj2ipP7L8xDVbxjyuuH2V8MEajHPPrIhybfGk6gyZ5HDpXgVcTv9QA==
+next-sitemap@3.1.25:
+  version "3.1.25"
+  resolved "https://registry.yarnpkg.com/next-sitemap/-/next-sitemap-3.1.25.tgz#6c34c5ded502495bce0e8f6ea7d761fb8673a54c"
+  integrity sha512-+unneurDQyhZZqwumlE9LmBDyk2BAzTE4tJeXq0qOWNvfjw+Mp1/ciDrQgaP/CG/JJvKvKUhUsg2CqTQEuAqQA==
   dependencies:
     "@corex/deepmerge" "^4.0.29"
     minimist "^1.2.6"
