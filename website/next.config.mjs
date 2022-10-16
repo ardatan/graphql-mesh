@@ -31,7 +31,7 @@ export default withGuildDocs({
       '/docs/guides/error-handling': '/docs/guides/error-masking',
       '/docs/guides/live-queries': '/docs/plugins/live-queries',
       '/docs/migration/openapi-0': '/docs/migration/openapi-0.31-0.32',
-      '/docs/cache': '/docs/transforms/cache',
+      '/docs/cache': '/docs/cache/cache-introduction',
       '/docs/guildes/extending-unified-schema': '/docs/guides/extending-unified-schema',
       '/docs/transforms/mock': '/docs/plugins/mock',
       '/docs/getting-started/mesh-transforms': '/docs/transforms/transforms-introduction',
