@@ -149,13 +149,6 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   getMeshLogger.debug(`Getting subschemas from source handlers`);
   let failed = false;
   const initialPluginList: MeshPlugin<any>[] = [
-    useEngine({
-      parse,
-      validate,
-      execute,
-      subscribe,
-      specifiedRules,
-    }),
     // TODO: Not a good practise to expect users to be a Yoga user
     useExtendContext(({ request, req }: { request: Request; req?: { headers?: Record<string, string> } }) => {
       // Maybe Node-like environment
@@ -272,6 +265,13 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
   const getEnveloped = envelop({
     plugins: [
+      useEngine({
+        parse,
+        validate,
+        execute,
+        subscribe,
+        specifiedRules,
+      }),
       useSubschema(subschema),
       useExtendContext(() => {
         if (!inContextSDK$) {
