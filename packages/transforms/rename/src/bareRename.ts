@@ -1,6 +1,7 @@
 import { GraphQLSchema, defaultFieldResolver, GraphQLFieldConfig } from 'graphql';
 import { MeshTransform, YamlConfig } from '@graphql-mesh/types';
 import { renameType, MapperKind, mapSchema } from '@graphql-tools/utils';
+import { ignoreList } from './shared';
 
 type RenameMapObject = Map<string | RegExp, string>;
 
@@ -79,7 +80,7 @@ export default class BareRename implements MeshTransform {
   }
 
   renameType(type: any) {
-    const newTypeName = this.matchInMap(this.typesMap, type.toString());
+    const newTypeName = ignoreList.includes(type.toString()) ? null : this.matchInMap(this.typesMap, type.toString());
     return newTypeName ? renameType(type, newTypeName) : undefined;
   }
 

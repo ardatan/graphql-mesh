@@ -1,5 +1,5 @@
 import RenameTransform from './../src/index';
-import { buildSchema, graphql, GraphQLObjectType } from 'graphql';
+import { buildSchema, graphql, GraphQLObjectType, GraphQLNonNull, GraphQLScalarType } from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
@@ -16,14 +16,17 @@ describe('rename', () => {
 
       type MyUser {
         id: ID!
+        name: String!
       }
 
       type Profile {
         id: ID!
+        isActive: Boolean!
       }
 
       type MyBook {
         id: ID!
+        hits: Int!
       }
     `,
     resolvers: {
@@ -168,6 +171,44 @@ describe('rename', () => {
     expect(newSchema.getType('User')).toBeDefined();
     expect(newSchema.getType('MyBook')).toBeUndefined();
     expect(newSchema.getType('Book')).toBeDefined();
+  });
+
+  it('should not rename default Scalar types', () => {
+    const transform = new RenameTransform({
+      config: {
+        mode: 'bare',
+        renames: [
+          {
+            from: {
+              type: '(.*)',
+            },
+            to: {
+              type: 'Prefixed_$1',
+            },
+            useRegExpForTypes: true,
+          },
+        ],
+      },
+      apiName: '',
+      cache,
+      pubsub,
+      baseDir,
+      importFn,
+    });
+
+    const newSchema = transform.transformSchema(schema, {} as any);
+    const userField = (newSchema.getType('Prefixed_MyUser') as GraphQLObjectType).getFields();
+    const profileField = (newSchema.getType('Prefixed_Profile') as GraphQLObjectType).getFields();
+    const bookField = (newSchema.getType('Prefixed_MyBook') as GraphQLObjectType).getFields();
+
+    expect((userField.id.type as GraphQLNonNull<GraphQLScalarType>).ofType.toString()).toBe('ID');
+    expect((userField.name.type as GraphQLNonNull<GraphQLScalarType>).ofType.toString()).toBe('String');
+
+    expect((profileField.id.type as GraphQLNonNull<GraphQLScalarType>).ofType.toString()).toBe('ID');
+    expect((profileField.isActive.type as GraphQLNonNull<GraphQLScalarType>).ofType.toString()).toBe('Boolean');
+
+    expect((bookField.id.type as GraphQLNonNull<GraphQLScalarType>).ofType.toString()).toBe('ID');
+    expect((bookField.hits.type as GraphQLNonNull<GraphQLScalarType>).ofType.toString()).toBe('Int');
   });
 
   it('should change the name of multiple fields', () => {
