@@ -1943,10 +1943,10 @@
   resolved "https://registry.yarnpkg.com/@csstools/selector-specificity/-/selector-specificity-2.0.2.tgz#1bfafe4b7ed0f3e4105837e056e0a89b108ebe36"
   integrity sha512-IkpVW/ehM1hWKln4fCA3NzJU8KwD+kIOvPZA4cqxoJHtE21CCzjyp+Kxbu0i5I4tBNOlXPL9mjwnWlL0VEG4Fg==
 
-"@envelop/auth0@3.6.0":
-  version "3.6.0"
-  resolved "https://registry.yarnpkg.com/@envelop/auth0/-/auth0-3.6.0.tgz#c344de4bf8016ca026d746a46e885e678b9e4ff5"
-  integrity sha512-SK08j363y3Wd+Wz1CQZcSNBxMuhRSX16Zs/3i74zzNcPGDRH/eOTxGKj87j4l2ot13CgzirAKt0+6NeunZY7Cg==
+"@envelop/auth0@4.0.1":
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@envelop/auth0/-/auth0-4.0.1.tgz#99929b312343946df3556eabb0cd42610f92e5db"
+  integrity sha512-tvguyfS17S2/ZB6xKqIUnqyy5C8GBojFv8xGZ62zpRDSM5Lw2xZ/LB3CdbY/VomvqqaREE2uKVtRjZTGsE5UtA==
   dependencies:
     jsonwebtoken "^8.5.1"
     jwks-rsa "^2.0.1"
