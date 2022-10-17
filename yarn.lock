@@ -2015,10 +2015,10 @@
   dependencies:
     tslib "^2.4.0"
 
-"@envelop/response-cache@3.2.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@envelop/response-cache/-/response-cache-3.2.0.tgz#b92496737a050ba251dba4d713d207e0ff999778"
-  integrity sha512-g/y3fHQYs23ZqyLVHpaZnWwT/wAb02tZP7GS2TlVxu8iaQZbkRdOVyuuiWzWy49+2Rjk1nDhOFAQUy650jqziw==
+"@envelop/response-cache@4.0.2":
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@envelop/response-cache/-/response-cache-4.0.2.tgz#272520da95250198fb99eecd38e27cb8f32a98db"
+  integrity sha512-rK7BmxAP+TQRbZZ/ykuU9mZVlQizpErlHqA+jdVUSA6AHK08E8ADqvQuUcQyJYCabSN6Hu2M4o/wPWw1XHaSJw==
   dependencies:
     "@graphql-tools/utils" "^8.8.0"
     fast-json-stable-stringify "^2.1.0"
