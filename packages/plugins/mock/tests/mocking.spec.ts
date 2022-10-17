@@ -12,6 +12,13 @@ describe('mocking', () => {
   let logger: Logger;
   const baseDir: string = __dirname;
   const importFn: ImportFn = m => import(m);
+  const enginePlugin = useEngine({
+    parse,
+    validate,
+    execute,
+    subscribe,
+    specifiedRules,
+  });
 
   beforeEach(() => {
     cache = new InMemoryLRUCache();
@@ -58,13 +65,7 @@ describe('mocking', () => {
     };
     const getEnveloped = envelop({
       plugins: [
-        useEngine({
-          parse,
-          validate,
-          execute,
-          subscribe,
-          specifiedRules,
-        }),
+        enginePlugin,
         useSchema(schema),
         useMock({
           ...mockingConfig,

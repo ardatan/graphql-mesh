@@ -12,6 +12,14 @@ describe('Rate Limit Plugin', () => {
   let cache: InMemoryLRUCache;
   let logger: Logger;
 
+  const graphQLEnginePlugin = useEngine({
+    parse,
+    validate,
+    execute,
+    subscribe,
+    specifiedRules,
+  });
+
   beforeEach(() => {
     pubsub = new PubSub();
     cache = new InMemoryLRUCache();
@@ -41,13 +49,7 @@ describe('Rate Limit Plugin', () => {
     });
     const getEnveloped = envelop({
       plugins: [
-        useEngine({
-          parse,
-          validate,
-          execute,
-          subscribe,
-          specifiedRules,
-        }),
+        graphQLEnginePlugin,
         useSchema(schema),
         useMeshRateLimit({
           config: [
@@ -115,6 +117,7 @@ describe('Rate Limit Plugin', () => {
     });
     const getEnveloped = envelop({
       plugins: [
+        graphQLEnginePlugin,
         useSchema(schema),
         useMeshRateLimit({
           config: [
@@ -179,6 +182,7 @@ describe('Rate Limit Plugin', () => {
     });
     const getEnveloped = envelop({
       plugins: [
+        graphQLEnginePlugin,
         useSchema(schema),
         useMeshRateLimit({
           config: [
