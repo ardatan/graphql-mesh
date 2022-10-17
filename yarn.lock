@@ -2008,11 +2008,12 @@
     lru-cache "^6.0.0"
     tslib "^2.4.0"
 
-"@envelop/prometheus@6.6.0":
-  version "6.6.0"
-  resolved "https://registry.yarnpkg.com/@envelop/prometheus/-/prometheus-6.6.0.tgz#f04914d38f12f8152dd216cf21e1f7a19fd62fbb"
-  integrity sha512-CRtzxBqFyb/bQBntO8TDzI425oNFyBpRtcckoomoRbAfIJSBA7tJ7Q5DguOU9IOKZYJyQgoQRdvJKTXo4W7KDg==
+"@envelop/prometheus@7.0.2":
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/@envelop/prometheus/-/prometheus-7.0.2.tgz#f13f81234fb6155d7fbff8beaedbe00317f87965"
+  integrity sha512-MR8ROSWUj/u4K2S1JfeiWzlmsR6KiwpEoHTUacPOFrN+94Wpgqn+tNknlb+ZUz5lGykV99+101uzrCOyt0dUXQ==
   dependencies:
+    "@envelop/on-resolve" "^2.0.2"
     tslib "^2.4.0"
 
 "@envelop/response-cache@3.2.0":
