@@ -28,7 +28,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@envelop/live-query": "4.2.0",
+    "@envelop/live-query": "5.0.1",
     "@n1ru4l/in-memory-live-query-store": "0.10.0",
     "@graphql-mesh/cross-helpers": "0.2.6",
     "@graphql-mesh/types": "0.85.0",
