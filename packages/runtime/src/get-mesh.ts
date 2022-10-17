@@ -4,10 +4,7 @@ import {
   DocumentNode,
   GraphQLObjectType,
   OperationTypeNode,
-  parse,
   validate,
-  execute,
-  subscribe,
   specifiedRules,
 } from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types';
@@ -266,10 +263,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   const getEnveloped = envelop({
     plugins: [
       useEngine({
-        parse,
         validate,
-        execute,
-        subscribe,
         specifiedRules,
       }),
       useSubschema(subschema),
