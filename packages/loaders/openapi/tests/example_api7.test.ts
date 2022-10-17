@@ -99,7 +99,7 @@ describe('OpenAPI Loader: example_api7', () => {
           },
         }),
       });
-      const result = await response.json();
+      const result: any = await response.json();
       expect(result.errors).toBeFalsy();
     }, 300);
 

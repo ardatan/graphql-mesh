@@ -1,5 +1,5 @@
 import { KeyValueCache, Logger } from '@graphql-mesh/types';
-import { KVNamespace } from '@cloudflare/workers-types';
+import '@cloudflare/workers-types';
 
 export default class CFWorkerKVCache implements KeyValueCache {
   private kvNamespace?: KVNamespace;

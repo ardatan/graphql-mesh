@@ -17,7 +17,7 @@
     "google-protobuf": "3.21.2",
     "graphql": "16.6.0",
     "grpc-node-server-reflection": "1.0.2",
-    "@grpc/grpc-js": "1.7.1"
+    "@grpc/grpc-js": "1.7.2"
   },
   "devDependencies": {
     "concurrently": "7.4.0"
