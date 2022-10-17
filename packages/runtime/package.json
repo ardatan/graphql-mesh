@@ -40,7 +40,7 @@
     "fetchache": "0.1.4",
     "@whatwg-node/fetch": "^0.4.6",
     "@envelop/core": "2.6.0",
-    "@envelop/extended-validation": "1.9.0",
+    "@envelop/extended-validation": "2.0.1",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
