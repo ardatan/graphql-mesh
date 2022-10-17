@@ -30,8 +30,6 @@
   "dependencies": {
     "@graphql-mesh/types": "0.85.0",
     "@graphql-mesh/utils": "0.41.22",
-    "@udacity/types-service-worker-mock": "1.2.0",
-    "cloudflare-worker-mock": "1.2.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
