@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@graphql-tools/utils": "8.12.0",
-    "graphql-yoga": "3.0.0-next.4",
+    "graphql-yoga": "3.0.0-next.5",
     "@types/cookie-parser": "1.4.3",
     "@types/multer": "1.4.7",
     "@whatwg-node/fetch": "0.4.7",
