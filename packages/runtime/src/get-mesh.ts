@@ -47,7 +47,6 @@ import { getInContextSDK } from './in-context-sdk';
 import { useSubschema } from './useSubschema';
 import { process } from '@graphql-mesh/cross-helpers';
 import { useIncludeHttpDetailsInExtensions } from './plugins/useIncludeHttpDetailsInExtensions';
-import { useFetchache } from './plugins/useFetchache';
 import { useDeduplicateRequest } from './plugins/useDeduplicateRequest';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 
@@ -173,7 +172,6 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
         setFetchFn(fetchFn);
       },
     },
-    useFetchache(cache),
     useDeduplicateRequest(),
     includeHttpDetailsInExtensions ? useIncludeHttpDetailsInExtensions() : {},
     {
