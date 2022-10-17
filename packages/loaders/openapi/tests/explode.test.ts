@@ -25,7 +25,11 @@ describe('Explode parameter', () => {
   it('should repeat the params if explode is false', async () => {
     const document = parse(/* GraphQL */ `
       query Test {
-        testExplodeParameterFalse(exploded: ["abc", "def"]) {
+        testExplodeParameterFalse(
+          explodedArray: ["abc", "def"]
+          explodedObject: { key1: "value1", key2: "value2" }
+          explodedString: "ghi"
+        ) {
           url
         }
       }
@@ -39,7 +43,7 @@ describe('Explode parameter', () => {
     expect(result).toEqual({
       data: {
         testExplodeParameterFalse: {
-          url: 'http://localhost:7777/test-false?exploded=abc%2Cdef',
+          url: 'http://localhost:7777/test-false?explodedArray=abc%2Cdef&explodedObject%5Bkey1%5D=value1&explodedObject%5Bkey2%5D=value2&explodedString=ghi',
         },
       },
     });
@@ -47,7 +51,11 @@ describe('Explode parameter', () => {
   it('should repeat the params if explode is true', async () => {
     const document = parse(/* GraphQL */ `
       query Test {
-        testExplodeParameterTrue(exploded: ["abc", "def"]) {
+        testExplodeParameterTrue(
+          explodedArray: ["abc", "def"]
+          explodedObject: { key1: "value1", key2: "value2" }
+          explodedString: "ghi"
+        ) {
           url
         }
       }
@@ -61,7 +69,7 @@ describe('Explode parameter', () => {
     expect(result).toEqual({
       data: {
         testExplodeParameterTrue: {
-          url: 'http://localhost:7777/test-true?exploded=abc&exploded=def',
+          url: 'http://localhost:7777/test-true?explodedArray=abc&explodedArray=def&key1=value1&key2=value2&explodedString=ghi',
         },
       },
     });

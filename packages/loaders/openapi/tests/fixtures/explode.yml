@@ -16,7 +16,7 @@ paths:
       description: Endpoint that required explode == false params
       operationId: testExplodeParameterFalse
       parameters:
-        - name: exploded
+        - name: explodedArray
           in: query
           required: true
           explode: false
@@ -25,6 +25,25 @@ paths:
             type: array
             items:
               type: string
+        - name: explodedObject
+          in: query
+          required: true
+          explode: false
+          style: form
+          schema:
+            type: object
+            properties:
+              key1:
+                type: string
+              key2:
+                type: string
+        - name: explodedString
+          in: query
+          required: true
+          explode: false
+          style: form
+          schema:
+            type: string
       responses:
         200:
           description: ''
@@ -38,7 +57,7 @@ paths:
       description: Endpoint that required explode == true params
       operationId: testExplodeParameterTrue
       parameters:
-        - name: exploded
+        - name: explodedArray
           in: query
           required: true
           explode: true
@@ -47,6 +66,25 @@ paths:
             type: array
             items:
               type: string
+        - name: explodedObject
+          in: query
+          required: true
+          explode: true
+          style: form
+          schema:
+            type: object
+            properties:
+              key1:
+                type: string
+              key2:
+                type: string
+        - name: explodedString
+          in: query
+          required: true
+          explode: true
+          style: form
+          schema:
+            type: string
       responses:
         200:
           description: ''

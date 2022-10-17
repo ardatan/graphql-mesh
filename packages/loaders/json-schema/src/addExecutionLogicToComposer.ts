@@ -297,7 +297,7 @@ ${operationConfig.description || ''}
                 ...operationConfig.queryStringOptionsByParam?.[queryParamName],
               };
               let queryParamObj = argValue;
-              if (Array.isArray(argValue) || !opts.destructObject) {
+              if (Array.isArray(argValue) || !(typeof argValue === 'object' && opts.destructObject)) {
                 queryParamObj = {
                   [queryParamName]: argValue,
                 };
