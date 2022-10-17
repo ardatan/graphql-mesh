@@ -3,8 +3,9 @@ import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import useMeshRateLimit from '../src';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { envelop, useSchema } from '@envelop/core';
+import { envelop, useSchema, useEngine } from '@envelop/core';
 import { Logger } from '@graphql-mesh/types';
+import { parse, validate, execute, subscribe, specifiedRules } from 'graphql';
 
 describe('Rate Limit Plugin', () => {
   let pubsub: PubSub;
@@ -40,6 +41,13 @@ describe('Rate Limit Plugin', () => {
     });
     const getEnveloped = envelop({
       plugins: [
+        useEngine({
+          parse,
+          validate,
+          execute,
+          subscribe,
+          specifiedRules,
+        }),
         useSchema(schema),
         useMeshRateLimit({
           config: [

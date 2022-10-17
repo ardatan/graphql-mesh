@@ -1,8 +1,19 @@
-import { envelop } from '@envelop/core';
+import { envelop, useEngine } from '@envelop/core';
 import { Subschema } from '@graphql-tools/delegate';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { RenameRootFields, TransformEnumValues } from '@graphql-tools/wrap';
-import { buildClientSchema, ExecutionResult, getIntrospectionQuery, IntrospectionQuery, printSchema } from 'graphql';
+import {
+  buildClientSchema,
+  ExecutionResult,
+  getIntrospectionQuery,
+  IntrospectionQuery,
+  printSchema,
+  parse,
+  validate,
+  execute,
+  subscribe,
+  specifiedRules,
+} from 'graphql';
 import { useSubschema } from '../src/useSubschema';
 
 describe('useSubschema', () => {
@@ -50,7 +61,16 @@ describe('useSubschema', () => {
     })
   );
   const getEnveloped = envelop({
-    plugins: [plugin],
+    plugins: [
+      useEngine({
+        parse,
+        validate,
+        execute,
+        subscribe,
+        specifiedRules,
+      }),
+      plugin,
+    ],
   });
   it('should return correct introspection', async () => {
     const { schema, parse, validate, execute, contextFactory } = getEnveloped();

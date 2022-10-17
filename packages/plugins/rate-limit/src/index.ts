@@ -1,6 +1,5 @@
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
-import { Plugin } from '@envelop/core';
+import { MeshPluginOptions, YamlConfig, MeshPlugin } from '@graphql-mesh/types';
 import { process } from '@graphql-mesh/cross-helpers';
 import { createGraphQLError } from '@graphql-tools/utils';
 import minimatch from 'minimatch';
@@ -19,7 +18,9 @@ function deleteNode<T extends Record<string | number, any>>(
   delete parent[currentKey];
 }
 
-export default function useMeshRateLimit(options: MeshPluginOptions<YamlConfig.RateLimitPluginConfig>): Plugin {
+export default function useMeshRateLimit(
+  options: MeshPluginOptions<YamlConfig.RateLimitPluginConfig>
+): MeshPlugin<any> {
   return {
     async onExecute(onExecuteArgs) {
       const typeInfo = new TypeInfo(onExecuteArgs.args.schema);
