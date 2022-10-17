@@ -137,6 +137,7 @@ describe('mocking', () => {
 
     const getEnveloped = envelop({
       plugins: [
+        enginePlugin,
         useSchema(schema),
         useMock({
           ...mockingConfig,
@@ -185,6 +186,7 @@ describe('mocking', () => {
 
     const getEnveloped = envelop({
       plugins: [
+        enginePlugin,
         useSchema(schema),
         useMock({
           mocks: [
@@ -263,6 +265,7 @@ describe('mocking', () => {
     `);
     const getEnveloped = envelop({
       plugins: [
+        enginePlugin,
         useSchema(schema),
         useMock({
           mocks: [

@@ -263,6 +263,7 @@ describe('Rate Limit Plugin', () => {
 
     const getEnveloped = envelop({
       plugins: [
+        graphQLEnginePlugin,
         useSchema(schema),
         useMeshRateLimit({
           config: [
