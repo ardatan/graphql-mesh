@@ -1,20 +1,11 @@
 import { KeyValueCache, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
 import { Plugin } from '@envelop/core';
-import {
-  BuildResponseCacheKeyFunction,
-  Cache,
-  defaultBuildResponseCacheKey,
-  ShouldCacheResultFunction,
-  useResponseCache,
-} from '@envelop/response-cache';
-import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import { useResponseCache, UseResponseCacheParameter } from '@graphql-yoga/plugin-response-cache';
+import { hashObject, stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { process } from '@graphql-mesh/cross-helpers';
-import { ExecutionArgs } from 'graphql';
-import { printWithCache } from '@graphql-mesh/utils';
 
-function getDocumentString(args: ExecutionArgs) {
-  return printWithCache(args.document);
-}
+const defaultBuildResponseCacheKey: UseResponseCacheParameter['buildResponseCacheKey'] = async params =>
+  hashObject(params);
 
 function generateSessionIdFactory(sessionIdDef: string) {
   if (sessionIdDef == null) {
@@ -37,7 +28,7 @@ function generateEnabledFactory(ifDef: string) {
   };
 }
 
-function getBuildResponseCacheKey(cacheKeyDef: string): BuildResponseCacheKeyFunction {
+function getBuildResponseCacheKey(cacheKeyDef: string): UseResponseCacheParameter['buildResponseCacheKey'] {
   return function buildResponseCacheKey(cacheKeyParameters) {
     let cacheKey = stringInterpolator.parse(cacheKeyDef, {
       ...cacheKeyParameters,
@@ -50,14 +41,14 @@ function getBuildResponseCacheKey(cacheKeyDef: string): BuildResponseCacheKeyFun
   };
 }
 
-function getShouldCacheResult(shouldCacheResultDef: string): ShouldCacheResultFunction {
+function getShouldCacheResult(shouldCacheResultDef: string): UseResponseCacheParameter['shouldCacheResult'] {
   return function shouldCacheResult({ result }) {
     // eslint-disable-next-line no-new-func
     return new Function(`return ${shouldCacheResultDef}`)();
   };
 }
 
-function getCacheForResponseCache(meshCache: KeyValueCache): Cache {
+function getCacheForResponseCache(meshCache: KeyValueCache): UseResponseCacheParameter['cache'] {
   return {
     get(responseId) {
       return meshCache.get(`response-cache:${responseId}`);
@@ -121,7 +112,6 @@ export default function useMeshResponseCache(options: MeshPluginOptions<YamlConf
       options.includeExtensionMetadata != null ? options.includeExtensionMetadata : process.env.DEBUG === '1',
     ttlPerType,
     ttlPerSchemaCoordinate,
-    getDocumentString,
     session: generateSessionIdFactory(options.sessionId),
     enabled: options.if ? generateEnabledFactory(options.if) : undefined,
     buildResponseCacheKey: options.cacheKey ? getBuildResponseCacheKey(options.cacheKey) : undefined,

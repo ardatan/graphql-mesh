@@ -2015,10 +2015,10 @@
   dependencies:
     tslib "^2.4.0"
 
-"@envelop/response-cache@3.2.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@envelop/response-cache/-/response-cache-3.2.0.tgz#b92496737a050ba251dba4d713d207e0ff999778"
-  integrity sha512-g/y3fHQYs23ZqyLVHpaZnWwT/wAb02tZP7GS2TlVxu8iaQZbkRdOVyuuiWzWy49+2Rjk1nDhOFAQUy650jqziw==
+"@envelop/response-cache@4.0.2":
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@envelop/response-cache/-/response-cache-4.0.2.tgz#272520da95250198fb99eecd38e27cb8f32a98db"
+  integrity sha512-rK7BmxAP+TQRbZZ/ykuU9mZVlQizpErlHqA+jdVUSA6AHK08E8ADqvQuUcQyJYCabSN6Hu2M4o/wPWw1XHaSJw==
   dependencies:
     "@graphql-tools/utils" "^8.8.0"
     fast-json-stable-stringify "^2.1.0"
@@ -2530,6 +2530,13 @@
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.1.1.tgz#076d78ce99822258cf813ecc1e7fa460fa74d052"
   integrity sha512-NQ17ii0rK1b34VZonlmT2QMJFI70m0TRwbknO/ihlbatXyaktDhN/98vBiUU6kNBPljqGqyIrl2T4nY2RpFANg==
+
+"@graphql-yoga/plugin-response-cache@1.0.0-next.5":
+  version "1.0.0-next.5"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-response-cache/-/plugin-response-cache-1.0.0-next.5.tgz#4aebb76bdb3b49d5d927f56c6e3e11d7ae2af4b1"
+  integrity sha512-W8kWXuiZ25nVJXtm5J5ac4gEfzKnhhY2/+k8lVL+ZOSB1F6cVzGG9C5ke5Uqmt83RSNSOB71U49+B0AkQH9iyQ==
+  dependencies:
+    "@envelop/response-cache" "4.0.2"
 
 "@graphql-yoga/subscription@^3.0.0-next.0":
   version "3.0.0-next.0"
