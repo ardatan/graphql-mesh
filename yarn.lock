@@ -1987,12 +1987,18 @@
     "@n1ru4l/in-memory-live-query-store" "^0.10.0"
     tslib "^2.4.0"
 
-"@envelop/newrelic@4.3.0":
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/@envelop/newrelic/-/newrelic-4.3.0.tgz#6a4f32b96d5cf96792a6e14853ade71be255a800"
-  integrity sha512-2YcchVddkG6w49p7DHQNObzNgGx/kSlPwPtBmws41ELXhnl2wN/t7sBV+WL+Px4z14IB5g5SsuXTLaGHLgu+4w==
+"@envelop/newrelic@5.0.1":
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/@envelop/newrelic/-/newrelic-5.0.1.tgz#2770cd0dc23aab83fb0ddc1238208af5ecf6a6a2"
+  integrity sha512-6dlLQ6ZxDpr7XpxpzxozvzKPogvnoz8XWdy933UQFdqvwTlOsYjMQ/s51Bmr2WUwUPw3FZD5h4TeJE+ybRTjAA==
   dependencies:
+    "@envelop/on-resolve" "^2.0.0"
     tslib "^2.4.0"
+
+"@envelop/on-resolve@^2.0.0":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@envelop/on-resolve/-/on-resolve-2.0.1.tgz#dc24eeee816dcb92730ad420d4f5648951048ea1"
+  integrity sha512-qRp5GgZuS9g60QZp6sL82GSZ0XfhcD9qMk998lZppruoodON9vxZsMIt6BQfprjEZZZYLUfMMGcGiiTLBLQjFg==
 
 "@envelop/operation-field-permissions@4.0.1":
   version "4.0.1"
