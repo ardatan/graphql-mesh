@@ -80,6 +80,7 @@ describe('namingConvention - bare', () => {
           first_name: String
           last_name: String
           Type: UserType!
+          interests: [UserInterests!]!
         }
         input UserSearchInput {
           id: ID
@@ -91,6 +92,11 @@ describe('namingConvention - bare', () => {
           admin
           moderator
           newbie
+        }
+        enum UserInterests {
+          books
+          comics
+          news
         }
       `,
       resolvers: {
@@ -104,10 +110,15 @@ describe('namingConvention - bare', () => {
             };
           },
           userById: (root, args) => {
-            return { id: args.userId, first_name: 'John', last_name: 'Doe', Type: 'admin' };
+            return {
+              id: args.userId,
+              first_name: 'John',
+              last_name: 'Doe',
+              Type: 'admin',
+            };
           },
           userByType: () => {
-            return { first_name: 'John', last_name: 'Smith', Type: 'admin' };
+            return { first_name: 'John', last_name: 'Smith', Type: 'admin', interests: ['books', 'comics'] };
           },
         },
       },
@@ -177,6 +188,7 @@ describe('namingConvention - bare', () => {
             firstName
             lastName
             type
+            interests
           }
         }
       `),
@@ -186,6 +198,7 @@ describe('namingConvention - bare', () => {
       firstName: 'John',
       lastName: 'Smith',
       type: 'ADMIN',
+      interests: ['BOOKS', 'COMICS'],
     });
   });
 
