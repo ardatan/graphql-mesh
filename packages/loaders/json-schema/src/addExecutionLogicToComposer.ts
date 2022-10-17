@@ -2,7 +2,7 @@ import { GraphQLJSON, ObjectTypeComposer, ObjectTypeComposerFieldConfig, SchemaC
 import { Logger, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
 import { JSONSchemaLinkConfig, JSONSchemaOperationConfig, OperationHeadersConfiguration } from './types';
 import { getOperationMetadata, isPubSubOperationConfig, isFileUpload } from './utils';
-import { memoize1 } from '@graphql-tools/utils';
+import { createGraphQLError, memoize1 } from '@graphql-tools/utils';
 import urlJoin from 'url-join';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType';
 import { stringify as qsStringify, parse as qsParse, IStringifyOptions } from 'qs';
@@ -48,10 +48,6 @@ const isListTypeOrNonNullListType = memoize1(function isListTypeOrNonNullListTyp
   }
   return isListType(type);
 });
-
-function createError(message: string, extensions?: any) {
-  return new GraphQLError(message, undefined, undefined, undefined, undefined, undefined, extensions);
-}
 
 function linkResolver(
   linkObjArgs: any,
@@ -312,9 +308,13 @@ ${operationConfig.description || ''}
         operationLogger.debug(`=> Fetching `, fullPath, `=>`, requestInit);
         const fetch: typeof globalFetch = context?.fetch || globalFetch;
         if (!fetch) {
-          return createError(`You should have fetch defined in either the config or the context!`, {
-            url: fullPath,
-            method: httpMethod,
+          return createGraphQLError(`You should have fetch defined in either the config or the context!`, {
+            extensions: {
+              request: {
+                url: fullPath,
+                method: httpMethod,
+              },
+            },
           });
         }
         // Trick to pass `sourceName` to the `fetch` function for tracing
@@ -344,11 +344,23 @@ ${operationConfig.description || ''}
             responseJson = {};
           } else {
             logger.debug(`Unexpected response in ${fieldName};\n\t${responseText}`);
-            return createError(`Unexpected response`, {
-              url: fullPath,
-              method: httpMethod,
-              responseText,
-              error,
+            return createGraphQLError(`Unexpected response in ${fieldName}`, {
+              extensions: {
+                http: {
+                  status: response.status,
+                  statusText: response.statusText,
+                  headers: getHeadersObj(response.headers),
+                },
+                request: {
+                  url: fullPath,
+                  method: httpMethod,
+                },
+                responseText,
+                originalError: {
+                  message: error.message,
+                  stack: error.stack,
+                },
+              },
             });
           }
         }
@@ -356,14 +368,21 @@ ${operationConfig.description || ''}
         if (!response.status.toString().startsWith('2')) {
           const returnNamedGraphQLType = getNamedType(field.type.getType());
           if (!isUnionType(returnNamedGraphQLType)) {
-            return createError(
+            return createGraphQLError(
               `HTTP Error: ${response.status}, Could not invoke operation ${operationConfig.method} ${operationConfig.path}`,
               {
-                method: httpMethod,
-                url: fullPath,
-                statusCode: response.status,
-                statusText: response.statusText,
-                responseBody: responseJson,
+                extensions: {
+                  http: {
+                    status: response.status,
+                    statusText: response.statusText,
+                    headers: getHeadersObj(response.headers),
+                  },
+                  request: {
+                    url: fullPath,
+                    method: httpMethod,
+                  },
+                  responseJson,
+                },
               }
             );
           }

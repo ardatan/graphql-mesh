@@ -1,4 +1,15 @@
-import { GraphQLSchema, getOperationAST, DocumentNode, GraphQLObjectType, OperationTypeNode } from 'graphql';
+import {
+  GraphQLSchema,
+  getOperationAST,
+  DocumentNode,
+  GraphQLObjectType,
+  OperationTypeNode,
+  parse,
+  validate,
+  execute,
+  subscribe,
+  specifiedRules,
+} from 'graphql';
 import { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types';
 import {
   MeshPubSub,
@@ -33,7 +44,7 @@ import {
   mapAsyncIterator,
   memoize1,
 } from '@graphql-tools/utils';
-import { envelop, PluginOrDisabledPlugin, useExtendContext } from '@envelop/core';
+import { envelop, Plugin, useEngine, useExtendContext } from '@envelop/core';
 import { OneOfInputObjectsRule, useExtendedValidation } from '@envelop/extended-validation';
 import { getInContextSDK } from './in-context-sdk';
 import { useSubschema } from './useSubschema';
@@ -55,7 +66,7 @@ export interface MeshInstance {
   pubsub: MeshPubSub;
   cache: KeyValueCache;
   logger: Logger;
-  plugins: PluginOrDisabledPlugin[];
+  plugins: Plugin[];
   getEnveloped: ReturnType<typeof envelop>;
   sdkRequesterFactory(globalContext: any): SdkRequester;
 }
@@ -138,6 +149,13 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   getMeshLogger.debug(`Getting subschemas from source handlers`);
   let failed = false;
   const initialPluginList: MeshPlugin<any>[] = [
+    useEngine({
+      parse,
+      validate,
+      execute,
+      subscribe,
+      specifiedRules,
+    }),
     // TODO: Not a good practise to expect users to be a Yoga user
     useExtendContext(({ request, req }: { request: Request; req?: { headers?: Record<string, string> } }) => {
       // Maybe Node-like environment
