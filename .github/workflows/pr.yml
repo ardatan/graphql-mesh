@@ -20,10 +20,10 @@ jobs:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
       npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
 
-  algolia:
-    uses: the-guild-org/shared-config/.github/workflows/algolia-integrity.yml@main
-    with:
-      domain: https://www.the-guild.dev/graphql/mesh/
-      source: 'Mesh'
-    secrets:
-      githubToken: ${{ secrets.GITHUB_TOKEN }}
+  # algolia:
+  #   uses: the-guild-org/shared-config/.github/workflows/algolia-integrity.yml@main
+  #   with:
+  #     domain: https://www.the-guild.dev/graphql/mesh/
+  #     source: 'Mesh'
+  #   secrets:
+  #     githubToken: ${{ secrets.GITHUB_TOKEN }}
