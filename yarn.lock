@@ -2026,10 +2026,10 @@
     lru-cache "^6.0.0"
     tslib "^2.4.0"
 
-"@envelop/statsd@2.6.0":
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/@envelop/statsd/-/statsd-2.6.0.tgz#1a0fea95185d24e62863368680676ac9074ed67d"
-  integrity sha512-jxJr80eItonRxNh1+3/4yA7baYtRGCGL0oPIm5FuyhjOZH2NuuDmBwHsdRFi2FTgPysoyOPk1+xjNnvFp6cOCA==
+"@envelop/statsd@3.0.2":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@envelop/statsd/-/statsd-3.0.2.tgz#62453f76eff5910218f6dd51855416304687b499"
+  integrity sha512-A9Gqxq3tIIDFHFfbvAC47jqIJkDhROTyqM9zysVCtiErgsQoikNVs/xERTPoTFf4/UZfbOirDU9o3uim76BVEg==
   dependencies:
     tslib "^2.4.0"
 
