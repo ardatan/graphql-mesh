@@ -1559,14 +1559,16 @@ describe('example_api', () => {
     const extensions = result.errors[0].extensions;
     expect(extensions).toBeDefined();
 
-    // Remove headers because it contains fields that may change from run to run
-    delete extensions.responseHeaders;
-    expect(extensions).toEqual({
-      method: 'GET',
-      url: `${baseUrl}/users/abcdef`,
-      statusCode: 404,
-      statusText: 'Not Found',
-      responseBody: {
+    expect(extensions).toMatchObject({
+      request: {
+        method: 'GET',
+        url: `${baseUrl}/users/abcdef`,
+      },
+      http: {
+        status: 404,
+        statusText: 'Not Found',
+      },
+      responseJson: {
         message: 'Wrong username',
       },
     });
@@ -2251,9 +2253,10 @@ describe('example_api', () => {
     expect(result.errors).toBeDefined();
 
     result.errors.forEach(error => {
-      expect(error.extensions?.url).toBeDefined();
+      const requestDetails: any = error.extensions.request;
+      expect(requestDetails.url).toBeDefined();
 
-      const url = new URL(error.extensions.url as string);
+      const url = new URL(requestDetails.url);
 
       expect(url.searchParams.has('limit')).toBe(true);
       expect(url.searchParams.get('limit')).toBe(String(LIMIT));

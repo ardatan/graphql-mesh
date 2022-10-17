@@ -1,7 +1,7 @@
 import { ApolloServer } from 'apollo-server';
 import type { ServeMeshOptions } from '@graphql-mesh/runtime';
 
-export default async function ({ getBuiltMesh, logger, argsPort }: ServeMeshOptions): Promise<void> {
+export default async function ({ getBuiltMesh, logger, argsPort = 4000 }: ServeMeshOptions): Promise<void> {
   const { schema, cache, getEnveloped } = await getBuiltMesh();
   const apolloServer = new ApolloServer({
     schema,

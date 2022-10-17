@@ -1,9 +1,22 @@
 import { applyRequestTransforms, applyResultTransforms } from '@graphql-mesh/utils';
 import { createDefaultExecutor, DelegationContext, applySchemaTransforms, Subschema } from '@graphql-tools/delegate';
 import { ExecutionRequest, getOperationASTFromRequest, isAsyncIterable } from '@graphql-tools/utils';
-import { isIntrospectionOperation, mapAsyncIterator, Plugin, TypedExecutionArgs } from '@envelop/core';
-import { introspectionFromSchema } from 'graphql';
+import { mapAsyncIterator, Plugin, TypedExecutionArgs } from '@envelop/core';
+import { BREAK, execute, OperationDefinitionNode, visit } from 'graphql';
 import { createBatchingExecutor } from '@graphql-tools/batch-execute';
+
+function isIntrospectionOperation(operationAST: OperationDefinitionNode) {
+  let isIntrospectionOperation = false;
+  visit(operationAST, {
+    Field: node => {
+      if (node.name.value === '__schema' || node.name.value === '__type') {
+        isIntrospectionOperation = true;
+        return BREAK;
+      }
+    },
+  });
+  return isIntrospectionOperation;
+}
 
 function getExecuteFn(subschema: Subschema) {
   return async function subschemaExecute(args: TypedExecutionArgs<any>): Promise<any> {
@@ -17,9 +30,7 @@ function getExecuteFn(subschema: Subschema) {
     const operationAST = getOperationASTFromRequest(originalRequest);
     // TODO: We need more elegant solution
     if (isIntrospectionOperation(operationAST)) {
-      return {
-        data: introspectionFromSchema(args.schema),
-      };
+      return execute(args);
     }
     const delegationContext: DelegationContext = {
       subschema,

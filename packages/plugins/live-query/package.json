@@ -33,7 +33,7 @@
     "@graphql-mesh/cross-helpers": "0.2.6",
     "@graphql-mesh/types": "0.85.0",
     "@graphql-mesh/string-interpolation": "0.3.2",
-    "@envelop/core": "^2.3.2",
+    "@envelop/core": "^3.0.0",
     "tslib": "^2.4.0"
   },
   "publishConfig": {

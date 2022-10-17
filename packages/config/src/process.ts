@@ -23,7 +23,7 @@ import { FsStoreStorageAdapter, MeshStore, InMemoryStoreStorageAdapter } from '@
 import { pascalCase } from 'pascal-case';
 import { camelCase } from 'camel-case';
 import { defaultImportFn, parseWithCache, resolveAdditionalResolvers } from '@graphql-mesh/utils';
-import { useMaskedErrors, useImmediateIntrospection } from '@envelop/core';
+import { useMaskedErrors } from '@envelop/core';
 import { getAdditionalResolversFromTypeDefs } from './getAdditionalResolversFromTypeDefs';
 
 const ENVELOP_CORE_PLUGINS_MAP = {
@@ -31,11 +31,6 @@ const ENVELOP_CORE_PLUGINS_MAP = {
     moduleName: '@envelop/core',
     importName: 'useMaskedErrors',
     pluginFactory: useMaskedErrors,
-  },
-  immediateIntrospection: {
-    moduleName: '@envelop/core',
-    importName: 'useImmediateIntrospection',
-    pluginFactory: useImmediateIntrospection,
   },
 };
 
