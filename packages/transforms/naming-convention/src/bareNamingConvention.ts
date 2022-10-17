@@ -1,17 +1,38 @@
 import {
   defaultFieldResolver,
   GraphQLInputObjectType,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLOutputType,
+  GraphQLScalarType,
+  GraphQLObjectType,
+  GraphQLInterfaceType,
+  GraphQLUnionType,
+  GraphQLEnumType,
   GraphQLSchema,
   isInputObjectType,
   isEnumType,
-  isNonNullType,
 } from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
 import { MapperKind, mapSchema, renameType } from '@graphql-tools/utils';
 
 import { NAMING_CONVENTIONS, IGNORED_ROOT_FIELD_NAMES, IGNORED_TYPE_NAMES } from './shared';
 
+export declare type GraphQLTypePointer =
+  | GraphQLList<GraphQLOutputType>
+  | GraphQLNonNull<
+      | GraphQLScalarType
+      | GraphQLObjectType
+      | GraphQLInterfaceType
+      | GraphQLUnionType
+      | GraphQLEnumType
+      | GraphQLList<GraphQLOutputType>
+    >;
+
 const isObject = (input: any) => typeof input === 'object' && input !== null && !Array.isArray(input) && true;
+
+const getUnderlyingType = (type: GraphQLOutputType): GraphQLOutputType =>
+  (type as GraphQLTypePointer).ofType ? getUnderlyingType((type as GraphQLTypePointer).ofType) : type;
 
 // Resolver composer mapping renamed field and arguments
 const defaultResolverComposer =
@@ -52,7 +73,11 @@ const defaultResolverComposer =
     );
 
     // map result values from original value to new renamed value
-    return (resultMap && resultMap[originalResult as string]) || originalResult;
+    return resultMap
+      ? Array.isArray(originalResult)
+        ? originalResult.map(result => resultMap[result as string] || originalResult)
+        : resultMap[originalResult as string] || originalResult
+      : originalResult;
   };
 
 export default class NamingConventionTransform implements MeshTransform {
@@ -114,9 +139,7 @@ export default class NamingConventionTransform implements MeshTransform {
             this.config.fieldNames &&
             !IGNORED_ROOT_FIELD_NAMES.includes(fieldName) &&
             fieldNamingConventionFn(fieldName);
-          const fieldActualType = isNonNullType(fieldConfig.type)
-            ? schema.getType(fieldConfig.type.ofType.toString())
-            : fieldConfig.type;
+          const fieldActualType = getUnderlyingType(fieldConfig.type);
           const resultMap =
             this.config.enumValues &&
             isEnumType(fieldActualType) &&
