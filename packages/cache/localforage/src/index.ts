@@ -14,6 +14,9 @@ export default class LocalforageCache<V = any> implements KeyValueCache<V> {
       name: config?.name || 'graphql-mesh-cache',
       storeName: config?.storeName || 'graphql-mesh-cache-store',
       driver: driverNames.map(driverName => LocalForage[driverName] ?? driverName),
+      size: config?.size,
+      version: config?.version,
+      description: config?.description,
     });
   }
 
