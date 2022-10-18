@@ -975,7 +975,7 @@
         "anchor": "getting-started"
       }
     ],
-    "content": "d8a1a624aedfedf12cecadb80e7378df",
+    "content": "95a410346640dde99e39c8448b65ab48",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/deduplicate-request",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Plugins"],
@@ -1011,7 +1011,7 @@
         "anchor": "getting-started"
       }
     ],
-    "content": "2b814636223ccbfeda29ead5ce333b99",
+    "content": "5d1e74b463f15d466b500b6c94bafcbc",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/http-details-extensions",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Plugins"],
