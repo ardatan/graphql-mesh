@@ -6,6 +6,8 @@
   "statsd": "StatsD",
   "prometheus": "Prometheus",
   "new-relic": "NewRelic",
+  "auth0": "Authentication with Auth0",
+  "generic-auth": "Generic Authentication",
   "operation-field-permissions": "Operation Field Permissions",
   "rate-limit": "Rate Limit"
 }
