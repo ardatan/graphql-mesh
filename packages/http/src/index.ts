@@ -65,7 +65,7 @@ export function createMeshHTTPHandler<TServerContext>({
           logger.debug(`Received webhook request for ${pathname}`, body);
           pubsub.publish(
             eventName,
-            request.headers.get('application/json') === 'application/json' ? JSON.parse(body) : body
+            request.headers.get('content-type') === 'application/json' ? JSON.parse(body) : body
           );
           return new Response(null, {
             status: 204,
