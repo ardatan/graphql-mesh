@@ -1,10 +1,11 @@
-import { useLiveQuery } from '@envelop/live-query';
+import { GraphQLLiveDirectiveAST, useLiveQuery } from '@envelop/live-query';
 import { MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
 import { defaultResourceIdentifierNormalizer, InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
 import { Plugin } from '@envelop/core';
 import { useInvalidateByResult } from './useInvalidateByResult';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import { extendSchema, GraphQLSchema, Kind } from 'graphql';
 
 export default function useMeshLiveQuery(options: MeshPluginOptions<YamlConfig.LiveQueryConfig>): Plugin {
   options.logger.debug(`Creating Live Query Store`);
@@ -27,8 +28,13 @@ export default function useMeshLiveQuery(options: MeshPluginOptions<YamlConfig.L
   options.pubsub.subscribe('live-query:invalidate', (identifiers: string | string[]) =>
     liveQueryStore.invalidate(identifiers)
   );
+  const replacedSchema = new WeakSet<GraphQLSchema>();
   return {
     onPluginInit({ addPlugin }) {
+      options.logger.debug(`Creating Live Query Store`);
+      const liveQueryStore = new InMemoryLiveQueryStore({
+        includeIdentifierExtension: true,
+      });
       addPlugin(useLiveQuery({ liveQueryStore }));
       if (options.invalidations?.length) {
         addPlugin(
@@ -39,6 +45,17 @@ export default function useMeshLiveQuery(options: MeshPluginOptions<YamlConfig.L
           })
         );
       }
+    },
+    onSchemaChange({ schema, replaceSchema }) {
+      if (replacedSchema.has(schema)) {
+        return;
+      }
+      const newSchema = extendSchema(schema, {
+        kind: Kind.DOCUMENT,
+        definitions: [GraphQLLiveDirectiveAST],
+      });
+      replacedSchema.add(newSchema);
+      replaceSchema(newSchema);
     },
   };
 }

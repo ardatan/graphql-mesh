@@ -25,9 +25,6 @@ sources:
 documents:
   - ./example-queries/**/*.graphql
 
-additionalTypeDefs: |
-  directive @live on QUERY
-
 plugins:
   - liveQuery:
       invalidations:

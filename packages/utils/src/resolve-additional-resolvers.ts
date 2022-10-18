@@ -143,6 +143,91 @@ function generateValuesFromResults(resultExpression: string): (result: any) => a
   };
 }
 
+export function getAdditionalResolver(
+  additionalResolver: YamlConfig.AdditionalStitchingResolverObject | YamlConfig.AdditionalStitchingBatchResolverObject
+) {
+  const baseOptions: any = {};
+  if (additionalResolver.result) {
+    baseOptions.valuesFromResults = generateValuesFromResults(additionalResolver.result);
+  }
+  if ('keysArg' in additionalResolver) {
+    return async (root: any, args: any, context: any, info: any) => {
+      if (!baseOptions.selectionSet) {
+        baseOptions.selectionSet = generateSelectionSetFactory(info.schema, additionalResolver);
+      }
+      const resolverData = { root, args, context, info, env: process.env };
+      const targetArgs: any = {};
+      for (const argPath in additionalResolver.additionalArgs || {}) {
+        lodashSet(
+          targetArgs,
+          argPath,
+          stringInterpolator.parse(additionalResolver.additionalArgs[argPath], resolverData)
+        );
+      }
+      const options: any = {
+        ...baseOptions,
+        root,
+        context,
+        info,
+        argsFromKeys: (keys: string[]) => {
+          const args: any = {};
+          lodashSet(args, additionalResolver.keysArg, keys);
+          Object.assign(args, targetArgs);
+          return args;
+        },
+        key: lodashGet(root, additionalResolver.keyField),
+      };
+      return context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
+        additionalResolver.sourceFieldName
+      ](options);
+    };
+  } else if ('targetTypeName' in additionalResolver) {
+    return (root: any, args: any, context: any, info: GraphQLResolveInfo) => {
+      // Assert source exists
+      if (!context[additionalResolver.sourceName]) {
+        throw new Error(`No source found named "${additionalResolver.sourceName}"`);
+      }
+      if (!context[additionalResolver.sourceName][additionalResolver.sourceTypeName]) {
+        throw new Error(
+          `No root type found named "${additionalResolver.sourceTypeName}" exists in the source ${additionalResolver.sourceName}\n` +
+            `It should be one of the following; ${Object.keys(context[additionalResolver.sourceName]).join(',')})}}`
+        );
+      }
+      if (
+        !context[additionalResolver.sourceName][additionalResolver.sourceTypeName][additionalResolver.sourceFieldName]
+      ) {
+        throw new Error(
+          `No field named "${additionalResolver.sourceFieldName}" exists in the type ${additionalResolver.sourceTypeName} from the source ${additionalResolver.sourceName}`
+        );
+      }
+
+      if (!baseOptions.selectionSet) {
+        baseOptions.selectionSet = generateSelectionSetFactory(info.schema, additionalResolver);
+      }
+      const resolverData = { root, args, context, info, env: process.env };
+      const targetArgs: any = {};
+      for (const argPath in additionalResolver.sourceArgs) {
+        lodashSet(
+          targetArgs,
+          argPath,
+          stringInterpolator.parse(additionalResolver.sourceArgs[argPath].toString(), resolverData)
+        );
+      }
+      const options: any = {
+        ...baseOptions,
+        root,
+        args: targetArgs,
+        context,
+        info,
+      };
+      return context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
+        additionalResolver.sourceFieldName
+      ](options);
+    };
+  }
+  throw new Error('Invalid additional resolver');
+}
+
 export function resolveAdditionalResolversWithoutImport(
   additionalResolver:
     | YamlConfig.AdditionalStitchingResolverObject
@@ -150,11 +235,11 @@ export function resolveAdditionalResolversWithoutImport(
     | YamlConfig.AdditionalStitchingBatchResolverObject,
   pubsub: MeshPubSub
 ): IResolvers {
-  const baseOptions: any = {};
-  if (additionalResolver.result) {
-    baseOptions.valuesFromResults = generateValuesFromResults(additionalResolver.result);
-  }
   if ('pubsubTopic' in additionalResolver) {
+    const baseOptions: any = {};
+    if (additionalResolver.result) {
+      baseOptions.valuesFromResults = generateValuesFromResults(additionalResolver.result);
+    }
     return {
       [additionalResolver.targetTypeName]: {
         [additionalResolver.targetFieldName]: {
@@ -183,36 +268,7 @@ export function resolveAdditionalResolversWithoutImport(
       [additionalResolver.targetTypeName]: {
         [additionalResolver.targetFieldName]: {
           selectionSet: additionalResolver.requiredSelectionSet || `{ ${additionalResolver.keyField} }`,
-          resolve: async (root: any, args: any, context: any, info: any) => {
-            if (!baseOptions.selectionSet) {
-              baseOptions.selectionSet = generateSelectionSetFactory(info.schema, additionalResolver);
-            }
-            const resolverData = { root, args, context, info, env: process.env };
-            const targetArgs: any = {};
-            for (const argPath in additionalResolver.additionalArgs || {}) {
-              lodashSet(
-                targetArgs,
-                argPath,
-                stringInterpolator.parse(additionalResolver.additionalArgs[argPath], resolverData)
-              );
-            }
-            const options: any = {
-              ...baseOptions,
-              root,
-              context,
-              info,
-              argsFromKeys: (keys: string[]) => {
-                const args: any = {};
-                lodashSet(args, additionalResolver.keysArg, keys);
-                Object.assign(args, targetArgs);
-                return args;
-              },
-              key: lodashGet(root, additionalResolver.keyField),
-            };
-            return context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
-              additionalResolver.sourceFieldName
-            ](options);
-          },
+          resolve: getAdditionalResolver(additionalResolver),
         },
       },
     };
@@ -221,52 +277,7 @@ export function resolveAdditionalResolversWithoutImport(
       [additionalResolver.targetTypeName]: {
         [additionalResolver.targetFieldName]: {
           selectionSet: additionalResolver.requiredSelectionSet,
-          resolve: (root: any, args: any, context: any, info: GraphQLResolveInfo) => {
-            // Assert source exists
-            if (!context[additionalResolver.sourceName]) {
-              throw new Error(`No source found named "${additionalResolver.sourceName}"`);
-            }
-            if (!context[additionalResolver.sourceName][additionalResolver.sourceTypeName]) {
-              throw new Error(
-                `No root type found named "${additionalResolver.sourceTypeName}" exists in the source ${additionalResolver.sourceName}\n` +
-                  `It should be one of the following; ${Object.keys(context[additionalResolver.sourceName]).join(
-                    ','
-                  )})}}`
-              );
-            }
-            if (
-              !context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
-                additionalResolver.sourceFieldName
-              ]
-            ) {
-              throw new Error(
-                `No field named "${additionalResolver.sourceFieldName}" exists in the type ${additionalResolver.sourceTypeName} from the source ${additionalResolver.sourceName}`
-              );
-            }
-
-            if (!baseOptions.selectionSet) {
-              baseOptions.selectionSet = generateSelectionSetFactory(info.schema, additionalResolver);
-            }
-            const resolverData = { root, args, context, info, env: process.env };
-            const targetArgs: any = {};
-            for (const argPath in additionalResolver.sourceArgs) {
-              lodashSet(
-                targetArgs,
-                argPath,
-                stringInterpolator.parse(additionalResolver.sourceArgs[argPath].toString(), resolverData)
-              );
-            }
-            const options: any = {
-              ...baseOptions,
-              root,
-              args: targetArgs,
-              context,
-              info,
-            };
-            return context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
-              additionalResolver.sourceFieldName
-            ](options);
-          },
+          resolve: getAdditionalResolver(additionalResolver),
         },
       },
     };
@@ -303,129 +314,7 @@ export function resolveAdditionalResolvers(
 
         return resolvers;
       } else {
-        const baseOptions: any = {};
-        if (additionalResolver.result) {
-          baseOptions.valuesFromResults = generateValuesFromResults(additionalResolver.result);
-        }
-        if ('pubsubTopic' in additionalResolver) {
-          return {
-            [additionalResolver.targetTypeName]: {
-              [additionalResolver.targetFieldName]: {
-                subscribe: withFilter(
-                  (root, args, context, info) => {
-                    const resolverData = { root, args, context, info, env: process.env };
-                    const topic = stringInterpolator.parse(additionalResolver.pubsubTopic, resolverData);
-                    return pubsub.asyncIterator(topic) as AsyncIterableIterator<any>;
-                  },
-                  (root, args, context, info) => {
-                    // eslint-disable-next-line no-new-func
-                    return additionalResolver.filterBy ? new Function(`return ${additionalResolver.filterBy}`)() : true;
-                  }
-                ),
-                resolve: (payload: any) => {
-                  if (baseOptions.valuesFromResults) {
-                    return baseOptions.valuesFromResults(payload);
-                  }
-                  return payload;
-                },
-              },
-            },
-          };
-        } else if ('keysArg' in additionalResolver) {
-          return {
-            [additionalResolver.targetTypeName]: {
-              [additionalResolver.targetFieldName]: {
-                selectionSet: additionalResolver.requiredSelectionSet || `{ ${additionalResolver.keyField} }`,
-                resolve: async (root: any, args: any, context: any, info: any) => {
-                  if (!baseOptions.selectionSet) {
-                    baseOptions.selectionSet = generateSelectionSetFactory(info.schema, additionalResolver);
-                  }
-                  const resolverData = { root, args, context, info, env: process.env };
-                  const targetArgs: any = {};
-                  for (const argPath in additionalResolver.additionalArgs || {}) {
-                    lodashSet(
-                      targetArgs,
-                      argPath,
-                      stringInterpolator.parse(additionalResolver.additionalArgs[argPath], resolverData)
-                    );
-                  }
-                  const options: any = {
-                    ...baseOptions,
-                    root,
-                    context,
-                    info,
-                    argsFromKeys: (keys: string[]) => {
-                      const args: any = {};
-                      lodashSet(args, additionalResolver.keysArg, keys);
-                      Object.assign(args, targetArgs);
-                      return args;
-                    },
-                    key: lodashGet(root, additionalResolver.keyField),
-                  };
-                  return context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
-                    additionalResolver.sourceFieldName
-                  ](options);
-                },
-              },
-            },
-          };
-        } else if ('targetTypeName' in additionalResolver) {
-          return {
-            [additionalResolver.targetTypeName]: {
-              [additionalResolver.targetFieldName]: {
-                selectionSet: additionalResolver.requiredSelectionSet,
-                resolve: (root: any, args: any, context: any, info: GraphQLResolveInfo) => {
-                  // Assert source exists
-                  if (!context[additionalResolver.sourceName]) {
-                    throw new Error(`No source found named "${additionalResolver.sourceName}"`);
-                  }
-                  if (!context[additionalResolver.sourceName][additionalResolver.sourceTypeName]) {
-                    throw new Error(
-                      `No root type found named "${additionalResolver.sourceTypeName}" exists in the source ${additionalResolver.sourceName}\n` +
-                        `It should be one of the following; ${Object.keys(context[additionalResolver.sourceName]).join(
-                          ','
-                        )})}}`
-                    );
-                  }
-                  if (
-                    !context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
-                      additionalResolver.sourceFieldName
-                    ]
-                  ) {
-                    throw new Error(
-                      `No field named "${additionalResolver.sourceFieldName}" exists in the type ${additionalResolver.sourceTypeName} from the source ${additionalResolver.sourceName}`
-                    );
-                  }
-
-                  if (!baseOptions.selectionSet) {
-                    baseOptions.selectionSet = generateSelectionSetFactory(info.schema, additionalResolver);
-                  }
-                  const resolverData = { root, args, context, info, env: process.env };
-                  const targetArgs: any = {};
-                  for (const argPath in additionalResolver.sourceArgs) {
-                    lodashSet(
-                      targetArgs,
-                      argPath,
-                      stringInterpolator.parse(additionalResolver.sourceArgs[argPath].toString(), resolverData)
-                    );
-                  }
-                  const options: any = {
-                    ...baseOptions,
-                    root,
-                    args: targetArgs,
-                    context,
-                    info,
-                  };
-                  return context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
-                    additionalResolver.sourceFieldName
-                  ](options);
-                },
-              },
-            },
-          };
-        } else {
-          return additionalResolver;
-        }
+        return resolveAdditionalResolversWithoutImport(additionalResolver, pubsub);
       }
     })
   );

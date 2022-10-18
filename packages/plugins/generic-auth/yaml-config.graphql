@@ -1,0 +1,18 @@
+extend type Plugin {
+  genericAuth: GenericAuthConfig
+}
+
+union UserResolver = String | AdditionalStitchingResolverObject | AdditionalStitchingBatchResolverObject
+
+type GenericAuthConfig @md {
+  resolveUser: UserResolver!
+  contextFieldName: String
+  mode: GenericAuthMode
+  directiveOrExtensionFieldName: String
+}
+
+enum GenericAuthMode {
+  protectAll
+  protectGranular
+  resolveOnly
+}

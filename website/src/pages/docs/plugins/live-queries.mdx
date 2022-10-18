@@ -24,8 +24,6 @@ And you want to update this operation result automatically without manual refres
 You only need to add the following to your existing configuration.
 
 ```yaml
-additionalTypeDefs: |
-  directive @live on QUERY
 plugins:
   - liveQuery:
       invalidations:

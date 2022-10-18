@@ -501,6 +501,9 @@
             }
           ]
         },
+        "genericAuth": {
+          "$ref": "#/definitions/GenericAuthConfig"
+        },
         "liveQuery": {
           "$ref": "#/definitions/LiveQueryConfig"
         },
@@ -1935,6 +1938,39 @@
         }
       },
       "required": ["type", "fieldName"]
+    },
+    "GenericAuthConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "GenericAuthConfig",
+      "properties": {
+        "resolveUser": {
+          "description": "Any of: String, AdditionalStitchingResolverObject, AdditionalStitchingBatchResolverObject",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions/AdditionalStitchingResolverObject"
+            },
+            {
+              "$ref": "#/definitions/AdditionalStitchingBatchResolverObject"
+            }
+          ]
+        },
+        "contextFieldName": {
+          "type": "string"
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["protectAll", "protectGranular", "resolveOnly"],
+          "description": "Allowed values: protectAll, protectGranular, resolveOnly"
+        },
+        "directiveOrExtensionFieldName": {
+          "type": "string"
+        }
+      },
+      "required": ["resolveUser"]
     },
     "LiveQueryConfig": {
       "additionalProperties": false,
