@@ -318,7 +318,7 @@ export function IndexPage(): ReactElement {
         title="Query anything"
         description={
           <div className="space-y-2">
-            <p>GraphQL Mesh Source Handlers</p>
+            <p>Using source handlers, you can consume any API in GraphQL Mesh</p>
           </div>
         }
         gradient={1}
