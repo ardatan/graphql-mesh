@@ -10,6 +10,10 @@ import { createServer, Server } from 'http';
 import { fetch } from '@whatwg-node/fetch';
 
 describe('OpenAPI Subscriptions', () => {
+  if (process.versions.node.startsWith('14')) {
+    it('dummy', () => {});
+    return;
+  }
   let config: ProcessedConfig;
   let appServer: Server;
   let meshServer: Server;
