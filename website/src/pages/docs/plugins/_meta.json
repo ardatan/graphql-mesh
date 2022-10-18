@@ -7,5 +7,6 @@
   "prometheus": "Prometheus",
   "new-relic": "NewRelic",
   "operation-field-permissions": "Operation Field Permissions",
-  "rate-limit": "Rate Limit"
+  "rate-limit": "Rate Limit",
+  "http-cache": "Caching in HTTP"
 }

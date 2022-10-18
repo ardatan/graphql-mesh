@@ -2,6 +2,6 @@
   "cache-introduction": "Introduction",
   "file": "File",
   "localforage": "LocalForage",
-  "cfwKv": "CF Workers KV",
+  "cfwkv": "CF Workers KV",
   "redis": "Redis"
 }

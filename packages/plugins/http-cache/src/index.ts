@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { MeshPlugin, MeshPluginOptions } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
 import CachePolicy from 'http-cache-semantics';
@@ -15,6 +16,9 @@ interface CacheEntry {
 export default function useHTTPCache({ cache }: MeshPluginOptions<{}>): MeshPlugin<{}> {
   return {
     async onFetch({ url, options, fetchFn, setFetchFn }) {
+      if (options.cache === 'no-cache') {
+        return () => {};
+      }
       const reqHeaders: Record<string, string> = getHeadersObj(options.headers as any);
       const policyRequest: CachePolicy.Request = {
         url,
@@ -26,7 +30,7 @@ export default function useHTTPCache({ cache }: MeshPluginOptions<{}>): MeshPlug
       if (cacheEntry) {
         const policy = CachePolicy.fromObject(cacheEntry.policy);
         setFetchFn(async (url, options, context, info) => {
-          if (policy?.satisfiesWithoutRevalidation(policyRequest)) {
+          if (options.cache !== 'reload' && policy?.satisfiesWithoutRevalidation(policyRequest)) {
             const resHeaders: Record<string, string> = {};
             const policyHeaders = policy.responseHeaders();
             for (const key in policyHeaders) {
@@ -96,6 +100,9 @@ export default function useHTTPCache({ cache }: MeshPluginOptions<{}>): MeshPlug
             headers: resHeaders,
           });
         });
+      }
+      if (options.cache === 'no-store') {
+        return () => {};
       }
       return async ({ response, setResponse }) => {
         const resHeaders = getHeadersObj(response.headers);
