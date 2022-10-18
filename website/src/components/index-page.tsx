@@ -1,5 +1,5 @@
 import { Anchor } from '@theguild/components';
-import Image, { StaticImageData } from 'next/image';
+import Image from 'next/image';
 import { PropsWithChildren, ReactElement } from 'react';
 import {
   FiAlertTriangle,
@@ -109,7 +109,7 @@ function Feature(
       description: React.ReactNode;
       icon?: React.ReactNode;
     }>;
-    image?: string | StaticImageData;
+    image?: string | React.ReactNode;
     gradient: number;
     flipped?: boolean;
   }>
@@ -145,7 +145,11 @@ function Feature(
                 backgroundImage: `linear-gradient(70deg, ${start}, ${end})`,
               }}
             >
-              <Image src={image} className="rounded-xl" layout="responsive" alt={title} />
+              {typeof image === 'string' ? (
+                <Image src={image} className="rounded-xl" layout="responsive" alt={title} />
+              ) : (
+                image
+              )}
             </div>
           )}
         </div>
