@@ -38,7 +38,7 @@ export default defineConfig({
           key={route}
           repo="Urigo/graphql-mesh"
           repoId="MDEwOlJlcG9zaXRvcnkyMzM1OTc1MTc="
-          category="Docs Discussion"
+          category="Docs Discussions"
           categoryId="DIC_kwDODexqTc4CSDDQ"
           mapping="pathname"
           theme={resolvedTheme}
