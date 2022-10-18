@@ -24,13 +24,21 @@ const ButtonLink = ({ children, ...props }: React.ComponentProps<typeof Anchor>)
 
 function Hero() {
   return (
-    <div className="w-full">
+    <div
+      className="w-full"
+      style={{
+        backgroundColor: '#111827b8',
+      }}
+    >
       <div className="py-20 sm:py-24 lg:py-32 my-6">
         <h1 className="max-w-screen-md mx-auto font-extrabold text-5xl sm:text-5xl lg:text-6xl text-center bg-gradient-to-r from-cyan-400 to-sky-500 dark:from-cyan-400 dark:to-sky-600 bg-clip-text text-transparent">
           GraphQL Mesh
         </h1>
         <p className="max-w-screen-sm mx-auto mt-6 text-2xl text-gray-600 text-center dark:text-gray-400">
-          The Graph of Everything - Federated architecture for any API service
+          The Graph of Everything
+        </p>
+        <p className="max-w-screen-sm mx-auto text-2xl text-gray-600 text-center dark:text-gray-400">
+          Federated architecture for any API service
         </p>
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
           <ButtonLink href="/docs">Documentation</ButtonLink>
@@ -184,27 +192,68 @@ const datasources: Array<string> = [
   '& More...',
 ];
 
-const deployableEnvs: Array<string> = [
-  'Node.js',
-  'Vercel',
-  'AWS Lambda',
-  'Cloudflare Workers',
-  'Apache OpenWhisk',
-  'Express',
-  'Fastify',
-  'Koa',
-  'Sveltekit',
-  'Docker',
-  'Even as a frontend app',
-  '& More...',
+const deployableEnvs = [
+  {
+    name: 'Node.js',
+    href: '/docs/getting-started/deploy-mesh-gateway#deploy-mesh-with-mesh-start-on-nodejs',
+  },
+  {
+    name: 'Vercel',
+    href: '/docs/getting-started/deploy-mesh-gateway#deploy-mesh-on-vercel-with-nextjs-api-routes',
+  },
+  {
+    name: 'Cloudflare Workers',
+    href: '/docs/getting-started/deploy-mesh-gateway#deploy-mesh-on-cloudflare-workers',
+  },
+  {
+    name: 'Apache OpenWhisk',
+    href: '/docs/getting-started/deploy-mesh-gateway#deploy-mesh-on-apache-openwhisk',
+  },
+  {
+    name: 'Express',
+    href: '/docs/getting-started/deploy-mesh-gateway#mesh-as-an-express-route',
+  },
+  {
+    name: 'Even as a frontend app',
+    href: '/docs/guides/mesh-sdk',
+  },
+  {
+    name: 'Koa',
+    href: '/docs/getting-started/deploy-mesh-gateway#mesh-as-an-koa-route',
+  },
+  {
+    name: 'Sveltekit',
+    href: '/docs/getting-started/deploy-mesh-gateway#mesh-and-sveltekit',
+  },
+  {
+    name: 'And more...',
+    href: '/docs/getting-started/deploy-mesh-gateway',
+  },
+  {
+    name: 'Fastify',
+    href: '/docs/getting-started/deploy-mesh-gateway#mesh-as-an-fastify-route',
+  },
+  {
+    name: 'Docker',
+    href: '/docs/getting-started/deploy-mesh-gateway#mesh-and-docker',
+  },
 ];
 
 export function IndexPage(): ReactElement {
   return (
     <div className="flex flex-col">
-      <FeatureWrapper>
+      <div
+        className={FeatureWrapperClass}
+        style={{
+          backgroundColor: `rgb(17 24 39/var(--tw-bg-opacity))`,
+          backgroundImage: `url(${MeshExampleLogo.src})`,
+          backgroundSize: 'contain',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }}
+      >
         <Hero />
-      </FeatureWrapper>
+      </div>
       <Feature
         title="Query anything, run anywhere."
         description={
@@ -234,7 +283,7 @@ export function IndexPage(): ReactElement {
                 ),
               },
               {
-                title: 'OmniGraph',
+                title: 'Omnigraph',
                 description: 'GraphQL Mesh compose sources as a single GraphQL schema',
                 icon: (
                   <Image
@@ -384,7 +433,7 @@ export function IndexPage(): ReactElement {
         flipped
       />
       <Feature
-        title="Run everywhere"
+        title="Run anywhere"
         description={
           <div className="space-y-2">
             <p>Supported environments</p>
@@ -395,10 +444,12 @@ export function IndexPage(): ReactElement {
         <div className="flex flex-wrap lg:w-4/5 sm:mx-auto sm:mb-2 -mx-2">
           {deployableEnvs.map((env, i) => (
             <div className="p-2 sm:w-1/2 md:w-1/3 w-full" key={i}>
-              <div className="bg-gray-100 dark:bg-gray-800 rounded flex p-4 h-full items-center gap-2">
-                <FiFastForward className="w-6 h-6 flex-shrink-0 mr-4" style={{ stroke: pickGradient(0)[0] }} />
-                <span className="title-font font-medium text-black dark:text-white">{env}</span>
-              </div>
+              <Anchor href={env.href}>
+                <div className="bg-gray-100 dark:bg-gray-800 rounded flex p-4 h-full items-center gap-2">
+                  <FiFastForward className="w-6 h-6 flex-shrink-0 mr-4" style={{ stroke: pickGradient(0)[0] }} />
+                  <span className="title-font font-medium text-black dark:text-white">{env.name}</span>
+                </div>
+              </Anchor>
             </div>
           ))}
         </div>
