@@ -1,13 +1,22 @@
-import { Anchor } from '@theguild/components';
-import Image, { StaticImageData } from 'next/image';
+import { Anchor, Mermaid } from '@theguild/components';
+import Image from 'next/image';
 import { PropsWithChildren, ReactElement } from 'react';
-import { FiCheckCircle, FiFastForward, FiGithub } from 'react-icons/fi';
+import {
+  FiAlertTriangle,
+  FiArrowRightCircle,
+  FiCheckCircle,
+  FiCloudLightning,
+  FiFastForward,
+  FiGithub,
+  FiLink,
+  FiMoreHorizontal,
+  FiTarget,
+  FiUserCheck,
+} from 'react-icons/fi';
 
 import GraphQLLogo from '../../public/assets/GraphQL_Logo.svg';
 import MeshExampleLogo from '../../public/assets/mesh-example.png';
 import OpenSourceLogo from '../../public/assets/open-source.svg';
-import ConnectDatasources from '../../public/assets/connect-datasources.png';
-import PluginLogo from '../../public/assets/plugin-logo.png';
 
 const ButtonLink = ({ children, ...props }: React.ComponentProps<typeof Anchor>) => {
   return (
@@ -30,7 +39,10 @@ function Hero() {
           GraphQL Mesh
         </h1>
         <p className="max-w-screen-sm mx-auto mt-6 text-2xl text-gray-600 text-center dark:text-gray-400">
-          The Graph of Everything - Federated architecture for any API service
+          The Graph of Everything
+        </p>
+        <p className="max-w-screen-sm mx-auto text-2xl text-gray-600 text-center dark:text-gray-400">
+          Federated architecture for any API service
         </p>
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
           <ButtonLink href="/docs">Documentation</ButtonLink>
@@ -68,7 +80,7 @@ const gradients: [string, string][] = [
 
 const Highlight = {
   Root: 'flex flex-row md:flex-col lg:flex-row flex-1 gap-6',
-  Icon: 'w-16 h-16 text-yellow-500 flex-shrink-0',
+  Icon: 'w-16 h-16 text-teal-700 flex-shrink-0 flex items-center',
   Content: 'flex flex-col text-black dark:text-white',
   Title: 'text-xl font-semibold',
   Description: 'text-gray-600 dark:text-gray-400',
@@ -96,7 +108,7 @@ function Feature(
       description: React.ReactNode;
       icon?: React.ReactNode;
     }>;
-    image?: string | StaticImageData;
+    image?: string | React.ReactNode;
     gradient: number;
     flipped?: boolean;
   }>
@@ -132,7 +144,11 @@ function Feature(
                 backgroundImage: `linear-gradient(70deg, ${start}, ${end})`,
               }}
             >
-              <Image src={image} className="rounded-xl" layout="responsive" width="100%" height="100%" alt={title} />
+              {typeof image === 'string' ? (
+                <Image src={image} className="rounded-xl" layout="responsive" alt={title} />
+              ) : (
+                image
+              )}
             </div>
           )}
         </div>
@@ -148,22 +164,25 @@ function FeatureHighlights(props: {
     title: string;
     description: React.ReactNode;
     icon?: React.ReactNode;
+    link?: string;
   }>;
 }) {
   const { highlights, textColor } = props;
 
   return Array.isArray(highlights) && highlights.length > 0 ? (
     <>
-      {highlights.map(({ title, description, icon }, i) => (
-        <div className={Highlight.Root} key={i}>
-          {icon && <div className={Highlight.Icon}>{icon}</div>}
-          <div className={Highlight.Content}>
-            <h3 className={Highlight.Title + (icon ? '' : ' text-lg')} style={textColor ? { color: textColor } : {}}>
-              {title}
-            </h3>
-            <p className={Highlight.Description + (icon ? '' : ' text-sm')}>{description}</p>
+      {highlights.map(({ title, description, icon, link }, i) => (
+        <Anchor href={link || '#'} key={i}>
+          <div className={Highlight.Root}>
+            {icon && <div className={Highlight.Icon}>{icon}</div>}
+            <div className={Highlight.Content}>
+              <h3 className={Highlight.Title + (icon ? '' : ' text-lg')} style={textColor ? { color: textColor } : {}}>
+                {title}
+              </h3>
+              <p className={Highlight.Description + (icon ? '' : ' text-sm')}>{description}</p>
+            </div>
           </div>
-        </div>
+        </Anchor>
       ))}
     </>
   ) : null;
@@ -184,27 +203,59 @@ const datasources: Array<string> = [
   '& More...',
 ];
 
-const deployableEnvs: Array<string> = [
-  'Node.js',
-  'Vercel',
-  'AWS Lambda',
-  'Cloudflare Workers',
-  'Apache OpenWhisk',
-  'Express',
-  'Fastify',
-  'Koa',
-  'Sveltekit',
-  'Docker',
-  'Even as a frontend app',
-  '& More...',
+const deployableEnvs = [
+  {
+    name: 'Node.js',
+    href: '/docs/getting-started/deploy-mesh-gateway#deploy-mesh-with-mesh-start-on-nodejs',
+  },
+  {
+    name: 'Vercel',
+    href: '/docs/getting-started/deploy-mesh-gateway#deploy-mesh-on-vercel-with-nextjs-api-routes',
+  },
+  {
+    name: 'Cloudflare Workers',
+    href: '/docs/getting-started/deploy-mesh-gateway#deploy-mesh-on-cloudflare-workers',
+  },
+  {
+    name: 'Apache OpenWhisk',
+    href: '/docs/getting-started/deploy-mesh-gateway#deploy-mesh-on-apache-openwhisk',
+  },
+  {
+    name: 'Express',
+    href: '/docs/getting-started/deploy-mesh-gateway#mesh-as-an-express-route',
+  },
+  {
+    name: 'Even as a frontend app',
+    href: '/docs/guides/mesh-sdk',
+  },
+  {
+    name: 'Koa',
+    href: '/docs/getting-started/deploy-mesh-gateway#mesh-as-an-koa-route',
+  },
+  {
+    name: 'Sveltekit',
+    href: '/docs/getting-started/deploy-mesh-gateway#mesh-and-sveltekit',
+  },
+  {
+    name: 'And more...',
+    href: '/docs/getting-started/deploy-mesh-gateway',
+  },
+  {
+    name: 'Fastify',
+    href: '/docs/getting-started/deploy-mesh-gateway#mesh-as-an-fastify-route',
+  },
+  {
+    name: 'Docker',
+    href: '/docs/getting-started/deploy-mesh-gateway#mesh-and-docker',
+  },
 ];
 
 export function IndexPage(): ReactElement {
   return (
     <div className="flex flex-col">
-      <FeatureWrapper>
+      <div className={FeatureWrapperClass}>
         <Hero />
-      </FeatureWrapper>
+      </div>
       <Feature
         title="Query anything, run anywhere."
         description={
@@ -234,7 +285,7 @@ export function IndexPage(): ReactElement {
                 ),
               },
               {
-                title: 'OmniGraph',
+                title: 'Omnigraph',
                 description: 'GraphQL Mesh compose sources as a single GraphQL schema',
                 icon: (
                   <Image
@@ -257,6 +308,7 @@ export function IndexPage(): ReactElement {
                     placeholder="empty"
                     alt="Open Source Logo"
                     className="w-full h-full"
+                    style={{ background: '#fff' }}
                   />
                 ),
               },
@@ -268,7 +320,7 @@ export function IndexPage(): ReactElement {
         title="Query anything"
         description={
           <div className="space-y-2">
-            <p>GraphQL Mesh Datasources</p>
+            <p>Using source handlers, you can consume any API in GraphQL Mesh</p>
           </div>
         }
         gradient={1}
@@ -297,21 +349,51 @@ export function IndexPage(): ReactElement {
                   {
                     title: 'Automatically create',
                     description: 'type-safe GraphQL APIs from any datasource',
+                    icon: <FiArrowRightCircle size={36} />,
                   },
                   {
                     title: 'Extend datasource',
                     description: 'with the data from another - fully type safe',
+                    icon: <FiLink size={36} />,
                   },
                   {
                     title: 'Mock, cache and transform',
                     description: 'your entire schema',
+                    icon: <FiTarget size={36} />,
                   },
                 ]}
               />
             </div>
           </div>
         }
-        image={ConnectDatasources}
+        image={
+          <Mermaid
+            chart={`
+              graph TD;
+                subgraph client [" "]
+                  mobile(Mobile App)
+                  web(Web App)
+                  node(Node.js Client)
+                end
+
+                mobile(Mobile App)--->mesh
+                web(Web App)--->mesh
+                node(Node.js Client)--->mesh
+
+                mesh(Mesh Gateway GraphQL API)
+
+                mesh--->rest(Books REST API)
+                mesh--->grpc(Authors gRPC API)
+                mesh--->stores(Stores GraphQL API)
+
+                subgraph api [" "]
+                  rest(Books REST API)
+                  grpc(Authors gRPC API)
+                  stores(Stores GraphQL API)
+                end
+            `}
+          />
+        }
         gradient={2}
       />
       <div className={FeatureWrapperClass}>
@@ -357,37 +439,50 @@ export function IndexPage(): ReactElement {
         description={
           <div className="flex flex-col gap-y-12">
             <div>
-              <p>Extend capabilities by applying plugins.</p>
+              <p>Extend your gateway's capabilities with the plugins</p>
             </div>
             <div className="flex flex-col gap-y-12">
               <FeatureHighlights
                 highlights={[
                   {
-                    title: 'Monitoring and tracing',
-                    description: 'Integrate with services such as StatsD, Prometheus, NewRelic',
+                    title: 'Response Caching',
+                    description: 'Add caching to your GraphQL service easily',
+                    link: '/docs/plugins/response-caching',
+                    icon: <FiCloudLightning size={36} />,
                   },
                   {
-                    title: 'Enhanced security',
-                    description: 'Rate limit, permissions to specific fields',
+                    title: 'Monitoring & Tracing',
+                    description:
+                      'Monitor your service with built-in support for Prometheus, NewRelic, Sentry, StatD and OpenTelemetry',
+                    link: '/docs/guides/monitoring-and-tracing',
+                    icon: <FiAlertTriangle size={36} />,
+                  },
+                  {
+                    title: 'Enhanced Security',
+                    description: 'Authentication (Basic/JWT/Auth0/...), authorization, rate-limit and more.',
+                    link: '/docs/guides/auth0',
+                    icon: <FiUserCheck size={36} />,
                   },
                   {
                     title: 'And much more!',
+                    link: '/docs/plugins/plugins-introduction',
                     description: 'Mocking, caching, live queries...',
+                    icon: <FiMoreHorizontal size={36} />,
                   },
                 ]}
               />
             </div>
           </div>
         }
-        image={PluginLogo}
         gradient={4}
-        flipped
       />
       <Feature
-        title="Run everywhere"
+        title="Run anywhere"
         description={
           <div className="space-y-2">
-            <p>Supported environments</p>
+            <p>
+              Thanks to <a href="Fetch API"></a> so it can run on any <i>JavaScript</i> runtime.
+            </p>
           </div>
         }
         gradient={0}
@@ -395,10 +490,12 @@ export function IndexPage(): ReactElement {
         <div className="flex flex-wrap lg:w-4/5 sm:mx-auto sm:mb-2 -mx-2">
           {deployableEnvs.map((env, i) => (
             <div className="p-2 sm:w-1/2 md:w-1/3 w-full" key={i}>
-              <div className="bg-gray-100 dark:bg-gray-800 rounded flex p-4 h-full items-center gap-2">
-                <FiFastForward className="w-6 h-6 flex-shrink-0 mr-4" style={{ stroke: pickGradient(0)[0] }} />
-                <span className="title-font font-medium text-black dark:text-white">{env}</span>
-              </div>
+              <Anchor href={env.href}>
+                <div className="bg-gray-100 dark:bg-gray-800 rounded flex p-4 h-full items-center gap-2">
+                  <FiFastForward className="w-6 h-6 flex-shrink-0 mr-4" style={{ stroke: pickGradient(0)[0] }} />
+                  <span className="title-font font-medium text-black dark:text-white">{env.name}</span>
+                </div>
+              </Anchor>
             </div>
           ))}
         </div>
