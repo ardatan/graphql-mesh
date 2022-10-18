@@ -1112,7 +1112,7 @@
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Plugins"],
     "source": "Mesh",
-    "title": "Mocking Your API",
+    "title": "Mocking",
     "type": "Documentation"
   },
   {
@@ -1174,7 +1174,7 @@
   },
   {
     "objectID": "mesh-docs-plugins-plugins-introduction",
-    "headings": ["Additional Plugins", "Plugins Hooks"],
+    "headings": ["Additional Plugins", "Mesh-specific Plugin Hooks"],
     "toc": [
       {
         "children": [],
@@ -1183,11 +1183,11 @@
       },
       {
         "children": [],
-        "title": "Plugins Hooks",
-        "anchor": "plugins-hooks"
+        "title": "Mesh-specific Plugin Hooks",
+        "anchor": "mesh-specific-plugin-hooks"
       }
     ],
-    "content": "2994c54e4354a133160e5e040b04d22d",
+    "content": "405bf6e8125050d9b4127de18a379acb",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/plugins-introduction",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Plugins"],
@@ -1276,7 +1276,7 @@
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Plugins"],
     "source": "Mesh",
-    "title": "GraphQL Response Caching",
+    "title": "Response Caching",
     "type": "Documentation"
   },
   {
