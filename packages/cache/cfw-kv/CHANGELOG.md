@@ -1,5 +1,13 @@
 # @graphql-mesh/cache-cfw-kv
 
+## 0.0.39
+
+### Patch Changes
+
+- [#4689](https://github.com/Urigo/graphql-mesh/pull/4689) [`2b619b732`](https://github.com/Urigo/graphql-mesh/commit/2b619b732d35355855b4a4175a0c3050f14d9fda) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Removed dependency [`@udacity/types-service-worker-mock@1.2.0` ↗︎](https://www.npmjs.com/package/@udacity/types-service-worker-mock/v/1.2.0) (from `dependencies`)
+  - Removed dependency [`cloudflare-worker-mock@1.2.0` ↗︎](https://www.npmjs.com/package/cloudflare-worker-mock/v/1.2.0) (from `dependencies`)
+
 ## 0.0.38
 
 ### Patch Changes

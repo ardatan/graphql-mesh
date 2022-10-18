@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-rename
 
+## 0.12.94
+
+### Patch Changes
+
+- [#4693](https://github.com/Urigo/graphql-mesh/pull/4693) [`981549760`](https://github.com/Urigo/graphql-mesh/commit/9815497601aaf45f642e1d1ace6687f32c8b3d14) Thanks [@santino](https://github.com/santino)! - Share list of types to be ignored, making sure to not change name for GraphQL default Scalar types
+
 ## 0.12.93
 
 ### Patch Changes

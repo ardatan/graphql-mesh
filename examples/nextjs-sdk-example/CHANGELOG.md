@@ -1,5 +1,15 @@
 # nextjs-sdk-example
 
+## 0.0.100
+
+### Patch Changes
+
+- Updated dependencies [[`46da24706`](https://github.com/Urigo/graphql-mesh/commit/46da24706aaf720695ce5099232537e1e44bab09), [`3fc049d40`](https://github.com/Urigo/graphql-mesh/commit/3fc049d40adb80c27dab73e9eb92cf03abbabed1), [`299770a78`](https://github.com/Urigo/graphql-mesh/commit/299770a781211badd594e2f3c88bf1e66736b170), [`2b619b732`](https://github.com/Urigo/graphql-mesh/commit/2b619b732d35355855b4a4175a0c3050f14d9fda), [`299770a78`](https://github.com/Urigo/graphql-mesh/commit/299770a781211badd594e2f3c88bf1e66736b170), [`db9005a50`](https://github.com/Urigo/graphql-mesh/commit/db9005a50d9e2f4b60fc5345e387646f4feb1bf2), [`2b619b732`](https://github.com/Urigo/graphql-mesh/commit/2b619b732d35355855b4a4175a0c3050f14d9fda), [`858135646`](https://github.com/Urigo/graphql-mesh/commit/8581356462ae06b2acff96330aabf458f21e7a63), [`52c7b0949`](https://github.com/Urigo/graphql-mesh/commit/52c7b09493316e9b3843e93ee6cdea41b94dd9de), [`858135646`](https://github.com/Urigo/graphql-mesh/commit/8581356462ae06b2acff96330aabf458f21e7a63)]:
+  - @graphql-mesh/cli@0.78.34
+  - @graphql-mesh/config@8.0.22
+  - @graphql-mesh/runtime@0.44.22
+  - @graphql-mesh/openapi@0.33.27
+
 ## 0.0.99
 
 ### Patch Changes

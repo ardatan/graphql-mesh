@@ -1,5 +1,15 @@
 # @omnigraph/json-schema
 
+## 0.35.10
+
+### Patch Changes
+
+- [#4660](https://github.com/Urigo/graphql-mesh/pull/4660) [`9d3b3cdf1`](https://github.com/Urigo/graphql-mesh/commit/9d3b3cdf1f921e1906b4b9be8c837ff0504d4d5d) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`graphql-scalars@1.19.0` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.19.0) (from `1.18.0`, in `dependencies`)
+
+- [#4678](https://github.com/Urigo/graphql-mesh/pull/4678) [`56f852b39`](https://github.com/Urigo/graphql-mesh/commit/56f852b393e15e384ed055bc6037a055feaa57e8) Thanks [@mhassan1](https://github.com/mhassan1)! - fix(json-schema): restore support for `explode: true` with strings
+
 ## 0.35.9
 
 ### Patch Changes

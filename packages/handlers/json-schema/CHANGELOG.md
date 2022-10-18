@@ -1,5 +1,12 @@
 # @graphql-mesh/json-schema
 
+## 0.35.26
+
+### Patch Changes
+
+- Updated dependencies [[`9d3b3cdf1`](https://github.com/Urigo/graphql-mesh/commit/9d3b3cdf1f921e1906b4b9be8c837ff0504d4d5d), [`56f852b39`](https://github.com/Urigo/graphql-mesh/commit/56f852b393e15e384ed055bc6037a055feaa57e8)]:
+  - @omnigraph/json-schema@0.35.10
+
 ## 0.35.25
 
 ### Patch Changes

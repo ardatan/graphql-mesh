@@ -1,5 +1,12 @@
 # @graphql-mesh/plugin-rate-limit
 
+## 0.0.39
+
+### Patch Changes
+
+- [#4673](https://github.com/Urigo/graphql-mesh/pull/4673) [`299770a78`](https://github.com/Urigo/graphql-mesh/commit/299770a781211badd594e2f3c88bf1e66736b170) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Removed dependency [`@envelop/core@^2.3.2` ↗︎](https://www.npmjs.com/package/@envelop/core/v/2.3.2) (from `dependencies`)
+
 ## 0.0.38
 
 ### Patch Changes

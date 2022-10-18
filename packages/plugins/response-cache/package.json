@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-response-cache",
-  "version": "0.1.39",
+  "version": "0.1.40",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",

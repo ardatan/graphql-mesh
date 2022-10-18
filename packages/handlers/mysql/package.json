@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/mysql",
-  "version": "0.17.22",
+  "version": "0.17.23",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
