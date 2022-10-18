@@ -16,7 +16,7 @@ plugins:
 | Live Queries                | `@graphql-mesh/plugin-live-query`                  | [docs](/docs/plugins/live-queries)                |
 | Response Caching            | `@graphql-mesh/plugin-response-cache`              | [docs](/docs/plugins/response-caching)            |
 | StatsD                      | `@graphql-mesh/plugin-statsd`                      | [docs](/docs/plugins/statsd)                      |
-| prometheus                  | `@graphql-mesh/plugin-prometheus`                  | [docs](/docs/plugins/prometheus)                  |
+| Prometheus                  | `@graphql-mesh/plugin-prometheus`                  | [docs](/docs/plugins/prometheus)                  |
 | NewRelic                    | `@graphql-mesh/plugin-newrelic`                    | [docs](/docs/plugins/new-relic)                   |
 | Operation Field Permissions | `@graphql-mesh/plugin-operation-field-permissions` | [docs](/docs/plugins/operation-field-permissions) |
 | Rate Limit                  | `@graphql-mesh/plugin-rate-limit`                  | [docs](/docs/plugins/rate-limit)                  |
@@ -75,7 +75,7 @@ export default plugins
 
 <Callout>Note: The file can also export a factory function returning a `PluginOrDisabledPlugin` list</Callout>
 
-## Plugins Hooks
+## Mesh-specific Plugin Hooks
 
 Mesh provides each plugin with unique hooks:
 

@@ -1,8 +1,8 @@
 {
   "plugins-introduction": "Introduction",
-  "mock": "Mocking Your API",
+  "mock": "Mocking",
   "live-queries": "Live Queries",
-  "response-caching": "GraphQL Response Caching",
+  "response-caching": "Response Caching",
   "statsd": "StatsD",
   "prometheus": "Prometheus",
   "new-relic": "NewRelic",

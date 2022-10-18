@@ -1,13 +1,24 @@
 import { Anchor } from '@theguild/components';
 import Image, { StaticImageData } from 'next/image';
 import { PropsWithChildren, ReactElement } from 'react';
-import { FiCheckCircle, FiFastForward, FiGithub } from 'react-icons/fi';
+import {
+  FiAlertTriangle,
+  FiArrowRightCircle,
+  FiCheckCircle,
+  FiCloudLightning,
+  FiFastForward,
+  FiGithub,
+  FiLink,
+  FiMoreHorizontal,
+  FiShuffle,
+  FiTarget,
+  FiUserCheck,
+} from 'react-icons/fi';
 
 import GraphQLLogo from '../../public/assets/GraphQL_Logo.svg';
 import MeshExampleLogo from '../../public/assets/mesh-example.png';
 import OpenSourceLogo from '../../public/assets/open-source.svg';
 import ConnectDatasources from '../../public/assets/connect-datasources.png';
-import PluginLogo from '../../public/assets/plugin-logo.png';
 
 const ButtonLink = ({ children, ...props }: React.ComponentProps<typeof Anchor>) => {
   return (
@@ -24,12 +35,7 @@ const ButtonLink = ({ children, ...props }: React.ComponentProps<typeof Anchor>)
 
 function Hero() {
   return (
-    <div
-      className="w-full"
-      style={{
-        backgroundColor: '#111827b8',
-      }}
-    >
+    <div className="w-full">
       <div className="py-20 sm:py-24 lg:py-32 my-6">
         <h1 className="max-w-screen-md mx-auto font-extrabold text-5xl sm:text-5xl lg:text-6xl text-center bg-gradient-to-r from-cyan-400 to-sky-500 dark:from-cyan-400 dark:to-sky-600 bg-clip-text text-transparent">
           GraphQL Mesh
@@ -76,7 +82,7 @@ const gradients: [string, string][] = [
 
 const Highlight = {
   Root: 'flex flex-row md:flex-col lg:flex-row flex-1 gap-6',
-  Icon: 'w-16 h-16 text-yellow-500 flex-shrink-0',
+  Icon: 'w-16 h-16 text-teal-700 flex-shrink-0 flex items-center',
   Content: 'flex flex-col text-black dark:text-white',
   Title: 'text-xl font-semibold',
   Description: 'text-gray-600 dark:text-gray-400',
@@ -156,22 +162,25 @@ function FeatureHighlights(props: {
     title: string;
     description: React.ReactNode;
     icon?: React.ReactNode;
+    link?: string;
   }>;
 }) {
   const { highlights, textColor } = props;
 
   return Array.isArray(highlights) && highlights.length > 0 ? (
     <>
-      {highlights.map(({ title, description, icon }, i) => (
-        <div className={Highlight.Root} key={i}>
-          {icon && <div className={Highlight.Icon}>{icon}</div>}
-          <div className={Highlight.Content}>
-            <h3 className={Highlight.Title + (icon ? '' : ' text-lg')} style={textColor ? { color: textColor } : {}}>
-              {title}
-            </h3>
-            <p className={Highlight.Description + (icon ? '' : ' text-sm')}>{description}</p>
+      {highlights.map(({ title, description, icon, link }, i) => (
+        <Anchor href={link || '#'} key={i}>
+          <div className={Highlight.Root}>
+            {icon && <div className={Highlight.Icon}>{icon}</div>}
+            <div className={Highlight.Content}>
+              <h3 className={Highlight.Title + (icon ? '' : ' text-lg')} style={textColor ? { color: textColor } : {}}>
+                {title}
+              </h3>
+              <p className={Highlight.Description + (icon ? '' : ' text-sm')}>{description}</p>
+            </div>
           </div>
-        </div>
+        </Anchor>
       ))}
     </>
   ) : null;
@@ -242,16 +251,7 @@ const deployableEnvs = [
 export function IndexPage(): ReactElement {
   return (
     <div className="flex flex-col">
-      <div
-        className={FeatureWrapperClass}
-        style={{
-          backgroundColor: `rgb(17 24 39/var(--tw-bg-opacity))`,
-          backgroundImage: `url(${MeshExampleLogo.src})`,
-          backgroundSize: 'contain',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-        }}
-      >
+      <div className={FeatureWrapperClass}>
         <Hero />
       </div>
       <Feature
@@ -306,6 +306,7 @@ export function IndexPage(): ReactElement {
                     placeholder="empty"
                     alt="Open Source Logo"
                     className="w-full h-full"
+                    style={{ background: '#fff' }}
                   />
                 ),
               },
@@ -317,7 +318,7 @@ export function IndexPage(): ReactElement {
         title="Query anything"
         description={
           <div className="space-y-2">
-            <p>GraphQL Mesh Datasources</p>
+            <p>GraphQL Mesh Source Handlers</p>
           </div>
         }
         gradient={1}
@@ -346,14 +347,17 @@ export function IndexPage(): ReactElement {
                   {
                     title: 'Automatically create',
                     description: 'type-safe GraphQL APIs from any datasource',
+                    icon: <FiArrowRightCircle size={36} />,
                   },
                   {
                     title: 'Extend datasource',
                     description: 'with the data from another - fully type safe',
+                    icon: <FiLink size={36} />,
                   },
                   {
                     title: 'Mock, cache and transform',
                     description: 'your entire schema',
+                    icon: <FiTarget size={36} />,
                   },
                 ]}
               />
@@ -406,37 +410,50 @@ export function IndexPage(): ReactElement {
         description={
           <div className="flex flex-col gap-y-12">
             <div>
-              <p>Extend capabilities by applying plugins.</p>
+              <p>Extend your gateway's capabilities with the plugins</p>
             </div>
             <div className="flex flex-col gap-y-12">
               <FeatureHighlights
                 highlights={[
                   {
-                    title: 'Monitoring and tracing',
-                    description: 'Integrate with services such as StatsD, Prometheus, NewRelic',
+                    title: 'Response Caching',
+                    description: 'Add caching to your GraphQL service easily',
+                    link: '/docs/plugins/response-caching',
+                    icon: <FiCloudLightning size={36} />,
                   },
                   {
-                    title: 'Enhanced security',
-                    description: 'Rate limit, permissions to specific fields',
+                    title: 'Monitoring & Tracing',
+                    description:
+                      'Monitor your service with built-in support for Prometheus, NewRelic, Sentry, StatD and OpenTelemetry',
+                    link: '/docs/guides/monitoring-and-tracing',
+                    icon: <FiAlertTriangle size={36} />,
+                  },
+                  {
+                    title: 'Enhanced Security',
+                    description: 'Authentication (Basic/JWT/Auth0/...), authorization, rate-limit and more.',
+                    link: '/docs/guides/auth0',
+                    icon: <FiUserCheck size={36} />,
                   },
                   {
                     title: 'And much more!',
+                    link: '/docs/plugins/plugins-introduction',
                     description: 'Mocking, caching, live queries...',
+                    icon: <FiMoreHorizontal size={36} />,
                   },
                 ]}
               />
             </div>
           </div>
         }
-        image={PluginLogo}
         gradient={4}
-        flipped
       />
       <Feature
         title="Run anywhere"
         description={
           <div className="space-y-2">
-            <p>Supported environments</p>
+            <p>
+              Thanks to <a href="Fetch API"></a> so it can run on any <i>JavaScript</i> runtime.
+            </p>
           </div>
         }
         gradient={0}
