@@ -1,5 +1,13 @@
 # @graphql-mesh/config
 
+## 8.0.23
+
+### Patch Changes
+
+- Updated dependencies [[`c751c3345`](https://github.com/Urigo/graphql-mesh/commit/c751c334573bee8d2321e95f4a3f5fccb84380f8), [`c82a1c158`](https://github.com/Urigo/graphql-mesh/commit/c82a1c15873f59837a670186590d0723e5574d11)]:
+  - @graphql-mesh/cache-localforage@0.6.53
+  - @graphql-mesh/runtime@0.44.23
+
 ## 8.0.22
 
 ### Patch Changes

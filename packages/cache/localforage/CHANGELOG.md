@@ -1,5 +1,11 @@
 # @graphql-mesh/cache-localforage
 
+## 0.6.53
+
+### Patch Changes
+
+- [`c751c3345`](https://github.com/Urigo/graphql-mesh/commit/c751c334573bee8d2321e95f4a3f5fccb84380f8) Thanks [@ardatan](https://github.com/ardatan)! - Respect size, version and description for cache storage
+
 ## 0.6.52
 
 ### Patch Changes

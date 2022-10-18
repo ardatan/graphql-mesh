@@ -1,5 +1,11 @@
 # @graphql-mesh/runtime
 
+## 0.44.23
+
+### Patch Changes
+
+- [`c82a1c158`](https://github.com/Urigo/graphql-mesh/commit/c82a1c15873f59837a670186590d0723e5574d11) Thanks [@ardatan](https://github.com/ardatan)! - Clone Response for deduplication instead of reading it first, it no longer needs accept header to be json
+
 ## 0.44.22
 
 ### Patch Changes
