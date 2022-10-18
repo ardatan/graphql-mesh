@@ -37,6 +37,7 @@ import {
   AggregateError,
   ExecutionResult,
   getRootTypeMap,
+  inspect,
   isAsyncIterable,
   mapAsyncIterator,
   memoize1,
@@ -74,6 +75,18 @@ const memoizedGetOperationType = memoize1((document: DocumentNode) => {
 
 export function wrapFetchWithPlugins(plugins: MeshPlugin<any>[]): MeshFetch {
   return async function wrappedFetchFn(url, options, context, info) {
+    if (url != null && typeof url !== 'string') {
+      throw new TypeError(`First parameter(url) of 'fetch' must be a string, got ${inspect(url)}`);
+    }
+    if (options != null && typeof options !== 'object') {
+      throw new TypeError(`Second parameter(options) of 'fetch' must be an object, got ${inspect(options)}`);
+    }
+    if (context != null && typeof context !== 'object') {
+      throw new TypeError(`Third parameter(context) of 'fetch' must be an object, got ${inspect(context)}`);
+    }
+    if (info != null && typeof info !== 'object') {
+      throw new TypeError(`Fourth parameter(info) of 'fetch' must be an object, got ${inspect(info)}`);
+    }
     let fetchFn: MeshFetch;
     const doneHooks: OnFetchHookDone[] = [];
     for (const plugin of plugins as MeshPlugin<any>[]) {
