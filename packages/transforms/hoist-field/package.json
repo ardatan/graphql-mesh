@@ -35,7 +35,7 @@
     "@graphql-tools/utils": "8.12.0"
   },
   "devDependencies": {
-    "@graphql-mesh/cache-localforage": "0.6.52"
+    "@graphql-mesh/cache-localforage": "0.6.53"
   },
   "publishConfig": {
     "access": "public",

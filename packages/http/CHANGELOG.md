@@ -1,5 +1,14 @@
 # @graphql-mesh/http
 
+## 0.2.2
+
+### Patch Changes
+
+- [`2365f8986`](https://github.com/Urigo/graphql-mesh/commit/2365f8986b69754482d71a5b414b697a9ff86b98) Thanks [@ardatan](https://github.com/ardatan)! - Fix Webhook handling
+
+- Updated dependencies [[`c82a1c158`](https://github.com/Urigo/graphql-mesh/commit/c82a1c15873f59837a670186590d0723e5574d11)]:
+  - @graphql-mesh/runtime@0.44.23
+
 ## 0.2.1
 
 ### Patch Changes
