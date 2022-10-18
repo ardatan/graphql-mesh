@@ -26,7 +26,6 @@ export type GetMeshOptions = {
   logger?: Logger;
   additionalEnvelopPlugins?: Parameters<typeof envelop>[0]['plugins'];
   documents?: Source[];
-  includeHttpDetailsInExtensions?: boolean;
   fetchFn?: MeshFetch;
 };
 

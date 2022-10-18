@@ -1,5 +1,5 @@
 import { isAsyncIterable, Path } from '@envelop/core';
-import { MeshPlugin } from '@graphql-mesh/types';
+import { MeshPlugin, MeshPluginOptions } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
 
 export interface MeshFetchHTTPInformation {
@@ -20,8 +20,20 @@ export interface MeshFetchHTTPInformation {
   responseTime: number;
 }
 
-export function useIncludeHttpDetailsInExtensions(): MeshPlugin<any> {
+export default function useIncludeHttpDetailsInExtensions(opts: MeshPluginOptions<{ if: any }>): MeshPlugin<any> {
+  if ('if' in opts && !opts.if) {
+    return {};
+  }
   const httpDetailsByContext = new WeakMap<any, MeshFetchHTTPInformation[]>();
+
+  function getHttpDetailsByContext(context: any) {
+    let httpDetails = httpDetailsByContext.get(context);
+    if (!httpDetails) {
+      httpDetails = [];
+      httpDetailsByContext.set(context, httpDetails);
+    }
+    return httpDetails;
+  }
 
   return {
     onFetch({ url, context, info, options }) {
@@ -30,11 +42,7 @@ export function useIncludeHttpDetailsInExtensions(): MeshPlugin<any> {
         return ({ response }) => {
           const responseTimestamp = Date.now();
           const responseTime = responseTimestamp - requestTimestamp;
-          let httpDetailsList = httpDetailsByContext.get(context);
-          if (!httpDetailsList) {
-            httpDetailsList = [];
-            httpDetailsByContext.set(context, httpDetailsList);
-          }
+          const httpDetailsList = getHttpDetailsByContext(context);
           const httpDetails: MeshFetchHTTPInformation = {
             sourceName: (info as any)?.sourceName,
             path: info?.path,

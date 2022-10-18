@@ -1736,6 +1736,7 @@ export interface Plugin {
   responseCache?: ResponseCacheConfig;
   snapshot?: SnapshotPluginConfig;
   statsd?: StatsdPlugin;
+  httpCache?: any;
   [k: string]: any;
 }
 export interface MaskedErrorsPluginConfig {

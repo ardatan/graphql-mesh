@@ -596,7 +596,6 @@ export async function processConfig(
     logger,
     store: rootStore,
     additionalEnvelopPlugins,
-    includeHttpDetailsInExtensions: config.includeHttpDetailsInExtensions,
     importCodes,
     codes,
     fetchFn,

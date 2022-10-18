@@ -1,0 +1,7 @@
+extend type Plugin {
+  httpDetailsExtensions: HTTPDetailsExtensionsConfig
+}
+
+type HTTPDetailsExtensionsConfig {
+  if: Any
+}

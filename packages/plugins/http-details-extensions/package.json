@@ -1,0 +1,41 @@
+{
+  "name": "@graphql-mesh/plugin-http-details-extensions",
+  "version": "0.0.0",
+  "sideEffects": false,
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "typings": "dist/index.d.ts",
+  "typescript": {
+    "definition": "dist/index.d.ts"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./*": {
+      "require": "./dist/*.js",
+      "import": "./dist/*.mjs"
+    }
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/plugins/http-details-extensions"
+  },
+  "peerDependencies": {
+    "graphql": "*"
+  },
+  "dependencies": {
+    "@envelop/core": "3.0.2",
+    "@graphql-mesh/types": "0.85.0",
+    "@graphql-mesh/utils": "0.41.22",
+    "@whatwg-node/fetch": "0.4.7",
+    "tslib": "^2.4.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  }
+}
