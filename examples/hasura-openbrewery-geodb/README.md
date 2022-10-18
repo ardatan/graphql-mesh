@@ -89,7 +89,7 @@ In OpenBrewery's documentation, they have examples for both request and response
 
 What we need to do is create a new Mesh configuration file on the project root `.meshrc.yml`;
 
-```yaml filename=".meshrc.yml"
+```yaml filename=".meshrc.yaml"
 sources:
   - name: OpenBrewery
     handler:
