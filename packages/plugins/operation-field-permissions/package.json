@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-operation-field-permissions",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",

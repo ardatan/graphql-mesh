@@ -1,5 +1,16 @@
 # @graphql-mesh/plugin-mock
 
+## 0.0.30
+
+### Patch Changes
+
+- [#4660](https://github.com/Urigo/graphql-mesh/pull/4660) [`9d3b3cdf1`](https://github.com/Urigo/graphql-mesh/commit/9d3b3cdf1f921e1906b4b9be8c837ff0504d4d5d) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`graphql-scalars@1.19.0` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.19.0) (from `1.18.0`, in `dependencies`)
+
+- [#4673](https://github.com/Urigo/graphql-mesh/pull/4673) [`299770a78`](https://github.com/Urigo/graphql-mesh/commit/299770a781211badd594e2f3c88bf1e66736b170) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Removed dependency [`@envelop/core@^2.3.2` ↗︎](https://www.npmjs.com/package/@envelop/core/v/2.3.2) (from `dependencies`)
+
 ## 0.0.29
 
 ### Patch Changes

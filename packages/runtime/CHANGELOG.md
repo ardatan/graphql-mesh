@@ -1,5 +1,40 @@
 # @graphql-mesh/runtime
 
+## 0.44.22
+
+### Patch Changes
+
+- [#4673](https://github.com/Urigo/graphql-mesh/pull/4673) [`299770a78`](https://github.com/Urigo/graphql-mesh/commit/299770a781211badd594e2f3c88bf1e66736b170) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@envelop/core@3.0.1` ↗︎](https://www.npmjs.com/package/@envelop/core/v/3.0.1) (from `2.6.0`, in `dependencies`)
+
+- [#4675](https://github.com/Urigo/graphql-mesh/pull/4675) [`db9005a50`](https://github.com/Urigo/graphql-mesh/commit/db9005a50d9e2f4b60fc5345e387646f4feb1bf2) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@envelop/extended-validation@2.0.1` ↗︎](https://www.npmjs.com/package/@envelop/extended-validation/v/2.0.1) (from `1.9.0`, in `dependencies`)
+
+- [#4689](https://github.com/Urigo/graphql-mesh/pull/4689) [`2b619b732`](https://github.com/Urigo/graphql-mesh/commit/2b619b732d35355855b4a4175a0c3050f14d9fda) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@envelop/core@3.0.2` ↗︎](https://www.npmjs.com/package/@envelop/core/v/3.0.2) (from `3.0.1`, in `dependencies`)
+  - Updated dependency [`@envelop/extended-validation@2.0.2` ↗︎](https://www.npmjs.com/package/@envelop/extended-validation/v/2.0.2) (from `2.0.1`, in `dependencies`)
+
+- [#4698](https://github.com/Urigo/graphql-mesh/pull/4698) [`858135646`](https://github.com/Urigo/graphql-mesh/commit/8581356462ae06b2acff96330aabf458f21e7a63) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Removed dependency [`fetchache@0.1.4` ↗︎](https://www.npmjs.com/package/fetchache/v/0.1.4) (from `dependencies`)
+
+- [#4698](https://github.com/Urigo/graphql-mesh/pull/4698) [`858135646`](https://github.com/Urigo/graphql-mesh/commit/8581356462ae06b2acff96330aabf458f21e7a63) Thanks [@ardatan](https://github.com/ardatan)! - **BREAKING**
+
+  Previously HTTP Caching was respected by GraphQL Mesh by default. Now this has been seperated into a different plugin. Please check our docs if you want to bring this functionality back in your gateway.
+
+  [HTTP Caching Plugin](/docs/plugins/http-cache)
+
+  Previously some details about underlying HTTP requests were exposed via `includeHttpDetailsInExtensions: true` flag or `DEBUG=1` env var. Now you need to install this plugin to get the same functionality;
+
+  [HTTP Details in Extensions Plugin](/docs/plugins/http-details-extensions)
+
+  Previously Mesh automatically deduplicate the similar HTTP requests per GraphQL Context by default, now you need to install the following plugin;
+
+  [Deduplicate HTTP Requests Plugin](/docs/plugins/deduplicate-request)
+
 ## 0.44.21
 
 ### Patch Changes

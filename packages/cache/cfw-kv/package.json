@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cache-cfw-kv",
-  "version": "0.0.38",
+  "version": "0.0.39",
   "license": "MIT",
   "repository": {
     "type": "git",

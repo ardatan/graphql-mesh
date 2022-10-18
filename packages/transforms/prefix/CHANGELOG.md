@@ -1,5 +1,15 @@
 # @graphql-mesh/transform-prefix
 
+## 0.11.93
+
+### Patch Changes
+
+- [#4660](https://github.com/Urigo/graphql-mesh/pull/4660) [`9d3b3cdf1`](https://github.com/Urigo/graphql-mesh/commit/9d3b3cdf1f921e1906b4b9be8c837ff0504d4d5d) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`graphql-scalars@1.19.0` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.19.0) (from `1.18.0`, in `dependencies`)
+
+- [#4693](https://github.com/Urigo/graphql-mesh/pull/4693) [`981549760`](https://github.com/Urigo/graphql-mesh/commit/9815497601aaf45f642e1d1ace6687f32c8b3d14) Thanks [@santino](https://github.com/santino)! - Share list of types to be ignored, making sure to not change name for GraphQL default Scalar types
+
 ## 0.11.92
 
 ### Patch Changes

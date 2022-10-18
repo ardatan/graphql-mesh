@@ -1,5 +1,12 @@
 # @graphql-mesh/plugin-response-cache
 
+## 0.1.40
+
+### Patch Changes
+
+- [#4673](https://github.com/Urigo/graphql-mesh/pull/4673) [`299770a78`](https://github.com/Urigo/graphql-mesh/commit/299770a781211badd594e2f3c88bf1e66736b170) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`@envelop/core@^3.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/3.0.0) (from `^2.3.2`, in `dependencies`)
+
 ## 0.1.39
 
 ### Patch Changes

@@ -1,5 +1,20 @@
 # @graphql-mesh/plugin-prometheus
 
+## 0.2.1
+
+### Patch Changes
+
+- [#4296](https://github.com/Urigo/graphql-mesh/pull/4296) [`a863ea13f`](https://github.com/Urigo/graphql-mesh/commit/a863ea13f0ce679c511a3646b158690cf35d6714) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@envelop/prometheus@7.0.2` ↗︎](https://www.npmjs.com/package/@envelop/prometheus/v/7.0.2) (from `6.6.0`, in `dependencies`)
+
+- [#4689](https://github.com/Urigo/graphql-mesh/pull/4689) [`2b619b732`](https://github.com/Urigo/graphql-mesh/commit/2b619b732d35355855b4a4175a0c3050f14d9fda) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`graphql-yoga@3.0.0-next.5` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.0) (from `3.0.0-next.4`, in `peerDependencies`)
+
+- [#4690](https://github.com/Urigo/graphql-mesh/pull/4690) [`a05b1a96a`](https://github.com/Urigo/graphql-mesh/commit/a05b1a96a5fbe1d47d41205e6003e2f30c1bb61c) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`@envelop/prometheus@7.0.2` ↗︎](https://www.npmjs.com/package/@envelop/prometheus/v/7.0.2) (from `6.6.0`, in `dependencies`)
+
 ## 0.2.0
 
 ### Minor Changes

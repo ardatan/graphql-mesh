@@ -1,5 +1,20 @@
 # @graphql-mesh/plugin-live-query
 
+## 0.1.38
+
+### Patch Changes
+
+- [#4673](https://github.com/Urigo/graphql-mesh/pull/4673) [`299770a78`](https://github.com/Urigo/graphql-mesh/commit/299770a781211badd594e2f3c88bf1e66736b170) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@envelop/core@^3.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/3.0.0) (from `^2.3.2`, in `dependencies`)
+
+- [#4680](https://github.com/Urigo/graphql-mesh/pull/4680) [`5d4a8eaff`](https://github.com/Urigo/graphql-mesh/commit/5d4a8eaffd49441f83fb311f14c3853ba9572539) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@envelop/live-query@5.0.1` ↗︎](https://www.npmjs.com/package/@envelop/live-query/v/5.0.1) (from `4.2.0`, in `dependencies`)
+
+- [#4689](https://github.com/Urigo/graphql-mesh/pull/4689) [`2b619b732`](https://github.com/Urigo/graphql-mesh/commit/2b619b732d35355855b4a4175a0c3050f14d9fda) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`@envelop/live-query@5.0.2` ↗︎](https://www.npmjs.com/package/@envelop/live-query/v/5.0.2) (from `5.0.1`, in `dependencies`)
+
 ## 0.1.37
 
 ### Patch Changes

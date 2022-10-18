@@ -1,5 +1,13 @@
 # mysql-employees
 
+## 0.5.296
+
+### Patch Changes
+
+- Updated dependencies [[`46da24706`](https://github.com/Urigo/graphql-mesh/commit/46da24706aaf720695ce5099232537e1e44bab09), [`3fc049d40`](https://github.com/Urigo/graphql-mesh/commit/3fc049d40adb80c27dab73e9eb92cf03abbabed1), [`9d3b3cdf1`](https://github.com/Urigo/graphql-mesh/commit/9d3b3cdf1f921e1906b4b9be8c837ff0504d4d5d), [`52c7b0949`](https://github.com/Urigo/graphql-mesh/commit/52c7b09493316e9b3843e93ee6cdea41b94dd9de)]:
+  - @graphql-mesh/cli@0.78.34
+  - @graphql-mesh/mysql@0.17.23
+
 ## 0.5.295
 
 ### Patch Changes

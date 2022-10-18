@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-prometheus",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",

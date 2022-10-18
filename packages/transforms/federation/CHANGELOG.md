@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-federation
 
+## 0.9.48
+
+### Patch Changes
+
+- [`480a20b8b`](https://github.com/Urigo/graphql-mesh/commit/480a20b8bc3c8c2938350412097e8fd142880b5c) Thanks [@ardatan](https://github.com/ardatan)! - Improve Type Merging intercompatibility
+
 ## 0.9.47
 
 ### Patch Changes

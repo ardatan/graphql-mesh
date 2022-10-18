@@ -1,5 +1,16 @@
 # @graphql-mesh/plugin-operation-field-permissions
 
+## 0.0.13
+
+### Patch Changes
+
+- [#4686](https://github.com/Urigo/graphql-mesh/pull/4686) [`de8c7de91`](https://github.com/Urigo/graphql-mesh/commit/de8c7de913f8975a4e07ab652ab346b2a8ae6017) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@envelop/operation-field-permissions@4.0.1` ↗︎](https://www.npmjs.com/package/@envelop/operation-field-permissions/v/4.0.1) (from `3.6.0`, in `dependencies`)
+
+- [#4689](https://github.com/Urigo/graphql-mesh/pull/4689) [`2b619b732`](https://github.com/Urigo/graphql-mesh/commit/2b619b732d35355855b4a4175a0c3050f14d9fda) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`@envelop/operation-field-permissions@4.0.2` ↗︎](https://www.npmjs.com/package/@envelop/operation-field-permissions/v/4.0.2) (from `4.0.1`, in `dependencies`)
+
 ## 0.0.12
 
 ### Patch Changes

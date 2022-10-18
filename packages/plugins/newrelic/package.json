@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-newrelic",
-  "version": "0.2.20",
+  "version": "0.2.21",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
