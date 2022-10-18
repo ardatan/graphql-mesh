@@ -1,4 +1,4 @@
-import { Anchor } from '@theguild/components';
+import { Anchor, Mermaid } from '@theguild/components';
 import Image from 'next/image';
 import { PropsWithChildren, ReactElement } from 'react';
 import {
@@ -17,7 +17,6 @@ import {
 import GraphQLLogo from '../../public/assets/GraphQL_Logo.svg';
 import MeshExampleLogo from '../../public/assets/mesh-example.png';
 import OpenSourceLogo from '../../public/assets/open-source.svg';
-import ConnectDatasources from '../../public/assets/connect-datasources.png';
 
 const ButtonLink = ({ children, ...props }: React.ComponentProps<typeof Anchor>) => {
   return (
@@ -367,7 +366,34 @@ export function IndexPage(): ReactElement {
             </div>
           </div>
         }
-        image={ConnectDatasources}
+        image={
+          <Mermaid
+            chart={`
+              graph TD;
+                subgraph client [" "]
+                  mobile(Mobile App)
+                  web(Web App)
+                  node(Node.js Client)
+                end
+
+                mobile(Mobile App)--->mesh
+                web(Web App)--->mesh
+                node(Node.js Client)--->mesh
+
+                mesh(Mesh Gateway GraphQL API)
+
+                mesh--->rest(Books REST API)
+                mesh--->grpc(Authors gRPC API)
+                mesh--->stores(Stores GraphQL API)
+
+                subgraph api [" "]
+                  rest(Books REST API)
+                  grpc(Authors gRPC API)
+                  stores(Stores GraphQL API)
+                end
+            `}
+          />
+        }
         gradient={2}
       />
       <div className={FeatureWrapperClass}>
