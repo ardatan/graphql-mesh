@@ -37,7 +37,7 @@
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Cache Storages"],
     "source": "Mesh",
-    "title": "CF Workers KV",
+    "title": "cfwKv",
     "type": "Documentation"
   },
   {
@@ -189,7 +189,6 @@
       "`merger`",
       "`pubsub`",
       "`skipSSLValidation`",
-      "`includeHttpDetailsInExtensions`",
       "`codegen`",
       "`require`"
     ],
@@ -283,11 +282,6 @@
       },
       {
         "children": [],
-        "title": "`includeHttpDetailsInExtensions`",
-        "anchor": "includehttpdetailsinextensions"
-      },
-      {
-        "children": [],
         "title": "`codegen`",
         "anchor": "codegen"
       },
@@ -297,7 +291,7 @@
         "anchor": "require"
       }
     ],
-    "content": "a1b955ecfdbe2716ee2f95fb88b253ef",
+    "content": "12f0c4573138dcd83b90333a583d43ef",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/config-reference",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs"],
@@ -863,26 +857,15 @@
   },
   {
     "objectID": "mesh-docs-guides-monitoring-and-tracing",
-    "headings": ["Mesh plugins", "GraphQL Result Extensions"],
+    "headings": ["Mesh plugins"],
     "toc": [
       {
         "children": [],
         "title": "Mesh plugins",
         "anchor": "mesh-plugins"
-      },
-      {
-        "children": [
-          {
-            "children": [],
-            "title": "Getting Started",
-            "anchor": "getting-started"
-          }
-        ],
-        "title": "GraphQL Result Extensions",
-        "anchor": "graphql-result-extensions"
       }
     ],
-    "content": "d08871d027fb8340acf74f84ab7e1f13",
+    "content": "fcec42e8a21abc2ae10af0ba2584d261",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/monitoring-and-tracing",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Guides"],
@@ -980,6 +963,60 @@
     "hierarchy": ["Docs", "Migration Guides"],
     "source": "Mesh",
     "title": "openAPI handler `<0.31` to `0.32`",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-deduplicate-request",
+    "headings": ["Getting Started"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      }
+    ],
+    "content": "d8a1a624aedfedf12cecadb80e7378df",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/deduplicate-request",
+    "domain": "https://www.the-guild.dev/graphql/mesh/",
+    "hierarchy": ["Docs", "Plugins"],
+    "source": "Mesh",
+    "title": "Deduplicate HTTP Requests",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-http-cache",
+    "headings": ["Getting Started"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      }
+    ],
+    "content": "8e15eff68ab56e49876f3b2a111f7b80",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/http-cache",
+    "domain": "https://www.the-guild.dev/graphql/mesh/",
+    "hierarchy": ["Docs", "Plugins"],
+    "source": "Mesh",
+    "title": "Caching in HTTP",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-http-details-extensions",
+    "headings": ["Getting Started"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      }
+    ],
+    "content": "2b814636223ccbfeda29ead5ce333b99",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/http-details-extensions",
+    "domain": "https://www.the-guild.dev/graphql/mesh/",
+    "hierarchy": ["Docs", "Plugins"],
+    "source": "Mesh",
+    "title": "HTTP Details in extensions",
     "type": "Documentation"
   },
   {
@@ -1150,7 +1187,7 @@
         "anchor": "plugins-hooks"
       }
     ],
-    "content": "8beb512cf357995deee6abd1ada79402",
+    "content": "2994c54e4354a133160e5e040b04d22d",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/plugins-introduction",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Plugins"],
@@ -1234,7 +1271,7 @@
         "anchor": "codesandbox-example"
       }
     ],
-    "content": "c82d7edbf5cceb13ad3a79b8bb4af6f9",
+    "content": "37f20f04865881be616db1e2ffe01818",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/response-caching",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Plugins"],
