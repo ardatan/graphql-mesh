@@ -7,6 +7,7 @@ import {
 } from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
 import { MapperKind, mapSchema, renameType } from '@graphql-tools/utils';
+import { ignoreList as defaultIgnoreList } from './shared';
 
 const rootOperations = new Set(['Query', 'Mutation', 'Subscription']);
 
@@ -19,7 +20,7 @@ export default class BarePrefix implements MeshTransform {
 
   constructor(options: MeshTransformOptions<YamlConfig.PrefixTransformConfig>) {
     const { apiName, config } = options;
-    this.ignoreList = config.ignore || [];
+    this.ignoreList = [...(config.ignore || []), ...defaultIgnoreList];
     this.includeRootOperations = config.includeRootOperations === true;
     this.includeTypes = config.includeTypes !== false;
     this.prefix = null;

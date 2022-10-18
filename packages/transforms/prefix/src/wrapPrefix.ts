@@ -4,7 +4,7 @@ import { RenameTypes, RenameRootFields } from '@graphql-tools/wrap';
 import { ExecutionResult, ExecutionRequest } from '@graphql-tools/utils';
 import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
 import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
-import { resolvers as scalarsResolversMap } from 'graphql-scalars';
+import { ignoreList as defaultIgnoreList } from './shared';
 
 export default class WrapPrefix implements MeshTransform {
   private transforms: Transform[] = [];
@@ -23,17 +23,7 @@ export default class WrapPrefix implements MeshTransform {
       throw new Error(`Transform 'prefix' has missing config: prefix`);
     }
 
-    const ignoreList = [
-      ...(config.ignore || []),
-      'date',
-      'hostname',
-      'regex',
-      'json-pointer',
-      'relative-json-pointer',
-      'uri-reference',
-      'uri-template',
-      ...Object.keys(scalarsResolversMap),
-    ];
+    const ignoreList = [...(config.ignore || []), ...defaultIgnoreList];
 
     const includeTypes = config.includeTypes !== false;
 

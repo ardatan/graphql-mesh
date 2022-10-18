@@ -1,5 +1,5 @@
 import RenameTransform from './../src/index';
-import { buildSchema, graphql, GraphQLObjectType, printSchema } from 'graphql';
+import { buildSchema, graphql, GraphQLObjectType, printSchema, GraphQLNonNull, GraphQLScalarType } from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { MeshPubSub } from '@graphql-mesh/types';
@@ -17,14 +17,17 @@ describe('rename', () => {
 
       type MyUser {
         id: ID!
+        name: String!
       }
 
       type Profile {
         id: ID!
+        isActive: Boolean!
       }
 
       type MyBook {
         id: ID!
+        hits: Int!
       }
     `,
     resolvers: {
@@ -183,6 +186,48 @@ describe('rename', () => {
     expect(newSchema.getType('User')).toBeDefined();
     expect(newSchema.getType('MyBook')).toBeUndefined();
     expect(newSchema.getType('Book')).toBeDefined();
+    expect(printSchema(newSchema)).toMatchSnapshot();
+  });
+
+  it('should not rename default Scalar types', () => {
+    const newSchema = wrapSchema({
+      schema,
+      transforms: [
+        new RenameTransform({
+          apiName: '',
+          importFn: m => import(m),
+          config: {
+            mode: 'wrap',
+            renames: [
+              {
+                from: {
+                  type: '(.*)',
+                },
+                to: {
+                  type: 'Prefixed_$1',
+                },
+                useRegExpForTypes: true,
+              },
+            ],
+          },
+          cache,
+          pubsub,
+          baseDir,
+        }),
+      ],
+    });
+    const userField = (newSchema.getType('Prefixed_MyUser') as GraphQLObjectType).getFields();
+    const profileField = (newSchema.getType('Prefixed_Profile') as GraphQLObjectType).getFields();
+    const bookField = (newSchema.getType('Prefixed_MyBook') as GraphQLObjectType).getFields();
+
+    expect((userField.id.type as GraphQLNonNull<GraphQLScalarType>).ofType.toString()).toBe('ID');
+    expect((userField.name.type as GraphQLNonNull<GraphQLScalarType>).ofType.toString()).toBe('String');
+
+    expect((profileField.id.type as GraphQLNonNull<GraphQLScalarType>).ofType.toString()).toBe('ID');
+    expect((profileField.isActive.type as GraphQLNonNull<GraphQLScalarType>).ofType.toString()).toBe('Boolean');
+
+    expect((bookField.id.type as GraphQLNonNull<GraphQLScalarType>).ofType.toString()).toBe('ID');
+    expect((bookField.hits.type as GraphQLNonNull<GraphQLScalarType>).ofType.toString()).toBe('Int');
     expect(printSchema(newSchema)).toMatchSnapshot();
   });
 

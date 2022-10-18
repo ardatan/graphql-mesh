@@ -39,6 +39,11 @@ export const NAMING_CONVENTIONS: Record<NamingConventionType, NamingConventionFn
 export const IGNORED_ROOT_FIELD_NAMES = ['_service', '_entities'];
 
 export const IGNORED_TYPE_NAMES = [
+  'Int',
+  'Float',
+  'String',
+  'Boolean',
+  'ID',
   'date',
   'hostname',
   'regex',
