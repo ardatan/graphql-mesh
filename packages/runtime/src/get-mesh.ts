@@ -45,9 +45,6 @@ import { envelop, Plugin, useEngine, useExtendContext } from '@envelop/core';
 import { OneOfInputObjectsRule, useExtendedValidation } from '@envelop/extended-validation';
 import { getInContextSDK } from './in-context-sdk';
 import { useSubschema } from './useSubschema';
-import { process } from '@graphql-mesh/cross-helpers';
-import { useIncludeHttpDetailsInExtensions } from './plugins/useIncludeHttpDetailsInExtensions';
-import { useDeduplicateRequest } from './plugins/useDeduplicateRequest';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 
 type SdkRequester = (document: DocumentNode, variables?: any, operationContext?: any) => any;
@@ -137,7 +134,6 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     additionalResolvers = [],
     additionalTypeDefs = [],
     transforms = [],
-    includeHttpDetailsInExtensions = process?.env?.DEBUG === '1' || process?.env?.DEBUG?.includes('http'),
     fetchFn = defaultFetchFn,
   } = options;
 
@@ -172,8 +168,6 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
         setFetchFn(fetchFn);
       },
     },
-    useDeduplicateRequest(),
-    includeHttpDetailsInExtensions ? useIncludeHttpDetailsInExtensions() : {},
     {
       onParse({ setParseFn }) {
         setParseFn(parseWithCache);

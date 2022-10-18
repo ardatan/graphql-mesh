@@ -9814,14 +9814,6 @@ fengari@^0.1.4:
     sprintf-js "^1.1.1"
     tmp "^0.0.33"
 
-fetchache@0.1.4:
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/fetchache/-/fetchache-0.1.4.tgz#5cc6fe41fdbdfb3fcb9e783a3a2b605e38ceda13"
-  integrity sha512-tW0LOKAmVpTUShwW8BGOsB2pc+45EurpDPrGrnAa23lOSjnVtAV3ZFzvs/CMXYEF0/YbUtY4lQGeq5btTd8iJA==
-  dependencies:
-    http-cache-semantics "^4.1.0"
-    tslib "^2.3.1"
-
 file-entry-cache@^6.0.1:
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/file-entry-cache/-/file-entry-cache-6.0.1.tgz#211b2dd9659cb0394b073e7323ac3c933d522027"

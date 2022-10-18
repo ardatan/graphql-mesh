@@ -1,5 +1,5 @@
 {
-  "name": "@graphql-mesh/plugin-http-cache",
+  "name": "@graphql-mesh/plugin-deduplicate-request",
   "version": "0.0.0",
   "sideEffects": false,
   "main": "dist/index.js",
@@ -22,7 +22,7 @@
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
-    "directory": "packages/plugins/http-cache"
+    "directory": "packages/plugins/deduplicate-request"
   },
   "peerDependencies": {
     "graphql": "*"
@@ -30,12 +30,8 @@
   "dependencies": {
     "@graphql-mesh/types": "0.85.0",
     "@graphql-mesh/utils": "0.41.22",
-    "http-cache-semantics": "4.1.0",
     "@whatwg-node/fetch": "0.4.7",
     "tslib": "^2.4.0"
-  },
-  "devDependencies": {
-    "@types/http-cache-semantics": "4.0.1"
   },
   "publishConfig": {
     "access": "public",

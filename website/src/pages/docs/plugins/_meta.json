@@ -8,5 +8,7 @@
   "new-relic": "NewRelic",
   "operation-field-permissions": "Operation Field Permissions",
   "rate-limit": "Rate Limit",
-  "http-cache": "Caching in HTTP"
+  "http-cache": "Caching in HTTP",
+  "http-details-extensions": "HTTP Details in extensions",
+  "deduplicate-request": "Deduplicate HTTP Requests"
 }

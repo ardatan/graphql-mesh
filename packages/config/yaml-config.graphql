@@ -43,10 +43,6 @@ type Query {
   """
   customFetch: Any
   """
-  Include HTTP details to the extensions
-  """
-  includeHttpDetailsInExtensions: Boolean
-  """
   Allow connections to an SSL endpoint without certificates
   """
   skipSSLValidation: Boolean
