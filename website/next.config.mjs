@@ -39,8 +39,8 @@ export default withGuildDocs({
       '/docs/transforms/mock': '/docs/plugins/mock',
       '/openapi': '/docs/handlers/openapi',
     }).map(([from, to]) => ({
-      source: from,
       destination: to,
       permanent: true,
+      source: from,
     })),
 });
