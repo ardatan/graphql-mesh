@@ -10,7 +10,6 @@ import {
   FiGithub,
   FiLink,
   FiMoreHorizontal,
-  FiShuffle,
   FiTarget,
   FiUserCheck,
 } from 'react-icons/fi';
@@ -146,7 +145,7 @@ function Feature(
                 backgroundImage: `linear-gradient(70deg, ${start}, ${end})`,
               }}
             >
-              <Image src={image} className="rounded-xl" layout="responsive" width="100%" height="100%" alt={title} />
+              <Image src={image} className="rounded-xl" layout="responsive" alt={title} />
             </div>
           )}
         </div>
