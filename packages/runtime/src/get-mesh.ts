@@ -65,6 +65,12 @@ export interface MeshInstance {
   sdkRequesterFactory(globalContext: any): SdkRequester;
 }
 
+const memoizedGetEnvelopedFactory = memoize1(function getEnvelopedFactory(plugins: MeshPlugin<any>[]) {
+  return envelop({
+    plugins,
+  });
+});
+
 const memoizedGetOperationType = memoize1((document: DocumentNode) => {
   const operationAST = getOperationAST(document, undefined);
   if (!operationAST) {
@@ -265,37 +271,36 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
   const subschema = new Subschema(unifiedSubschema);
 
-  const getEnveloped = envelop({
-    plugins: [
-      useEngine({
-        validate,
-        specifiedRules,
-      }),
-      useSubschema(subschema),
-      useExtendContext(() => {
-        if (!inContextSDK$) {
-          const onDelegateHooks: OnDelegateHook<any>[] = [];
-          for (const plugin of initialPluginList) {
-            if (plugin?.onDelegate != null) {
-              onDelegateHooks.push(plugin.onDelegate);
-            }
+  const plugins = [
+    useEngine({
+      validate,
+      specifiedRules,
+    }),
+    useSubschema(subschema),
+    useExtendContext(() => {
+      if (!inContextSDK$) {
+        const onDelegateHooks: OnDelegateHook<any>[] = [];
+        for (const plugin of initialPluginList) {
+          if (plugin?.onDelegate != null) {
+            onDelegateHooks.push(plugin.onDelegate);
           }
-          inContextSDK$ = getInContextSDK(subschema.transformedSchema, rawSources, logger, onDelegateHooks);
         }
-        return inContextSDK$;
-      }),
-      useExtendedValidation({
-        rules: [OneOfInputObjectsRule],
-      }),
-      ...initialPluginList,
-    ],
-  });
+        inContextSDK$ = getInContextSDK(subschema.transformedSchema, rawSources, logger, onDelegateHooks);
+      }
+      return inContextSDK$;
+    }),
+    useExtendedValidation({
+      rules: [OneOfInputObjectsRule],
+    }),
+    ...initialPluginList,
+  ];
 
   const EMPTY_ROOT_VALUE: any = {};
   const EMPTY_CONTEXT_VALUE: any = {};
   const EMPTY_VARIABLES_VALUE: any = {};
 
   function createExecutor(globalContext: any = EMPTY_CONTEXT_VALUE): MeshExecutor {
+    const getEnveloped = memoizedGetEnvelopedFactory(plugins);
     const { schema, parse, execute, subscribe, contextFactory } = getEnveloped(globalContext);
     return async function meshExecutor<TVariables = any, TContext = any, TRootValue = any, TData = any>(
       documentOrSDL: GraphQLOperation<TData, TVariables>,
@@ -341,10 +346,10 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     pubsub,
     destroy: meshDestroy,
     logger,
-    get plugins() {
-      return getEnveloped._plugins;
+    plugins,
+    get getEnveloped() {
+      return memoizedGetEnvelopedFactory(plugins);
     },
-    getEnveloped,
     createExecutor,
     get execute() {
       return createExecutor();

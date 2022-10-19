@@ -501,6 +501,39 @@
             }
           ]
         },
+        "deduplicateRequest": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
+        },
+        "httpCache": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
+        },
+        "httpDetailsExtensions": {
+          "$ref": "#/definitions/HTTPDetailsExtensionsConfig"
+        },
         "liveQuery": {
           "$ref": "#/definitions/LiveQueryConfig"
         },
@@ -530,21 +563,6 @@
         },
         "statsd": {
           "$ref": "#/definitions/StatsdPlugin"
-        },
-        "httpCache": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ]
         }
       }
     },
@@ -1950,6 +1968,28 @@
         }
       },
       "required": ["type", "fieldName"]
+    },
+    "HTTPDetailsExtensionsConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "HTTPDetailsExtensionsConfig",
+      "properties": {
+        "if": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
+        }
+      }
     },
     "LiveQueryConfig": {
       "additionalProperties": false,
@@ -3858,10 +3898,6 @@
         }
       ],
       "description": "Path to a custom W3 Compatible Fetch Implementation"
-    },
-    "includeHttpDetailsInExtensions": {
-      "type": "boolean",
-      "description": "Include HTTP details to the extensions"
     },
     "skipSSLValidation": {
       "type": "boolean",

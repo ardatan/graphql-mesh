@@ -58,10 +58,6 @@ export interface Config {
    */
   customFetch?: any;
   /**
-   * Include HTTP details to the extensions
-   */
-  includeHttpDetailsInExtensions?: boolean;
-  /**
    * Allow connections to an SSL endpoint without certificates
    */
   skipSSLValidation?: boolean;
@@ -1727,6 +1723,9 @@ export interface PubSubConfig {
 export interface Plugin {
   maskedErrors?: MaskedErrorsPluginConfig;
   immediateIntrospection?: any;
+  deduplicateRequest?: any;
+  httpCache?: any;
+  httpDetailsExtensions?: HTTPDetailsExtensionsConfig;
   liveQuery?: LiveQueryConfig;
   mock?: MockingConfig;
   newrelic?: NewrelicConfig;
@@ -1736,11 +1735,13 @@ export interface Plugin {
   responseCache?: ResponseCacheConfig;
   snapshot?: SnapshotPluginConfig;
   statsd?: StatsdPlugin;
-  httpCache?: any;
   [k: string]: any;
 }
 export interface MaskedErrorsPluginConfig {
   errorMessage?: string;
+}
+export interface HTTPDetailsExtensionsConfig {
+  if?: any;
 }
 export interface LiveQueryConfig {
   /**
