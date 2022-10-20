@@ -1,5 +1,11 @@
 # @graphql-mesh/plugin-deduplicate-request
 
+## 0.0.4
+
+### Patch Changes
+
+- [`3268f94f7`](https://github.com/Urigo/graphql-mesh/commit/3268f94f7794fc3fbf049e3aa5d78bee48873b8d) Thanks [@ardatan](https://github.com/ardatan)! - Fix context null check
+
 ## 0.0.3
 
 ### Patch Changes
