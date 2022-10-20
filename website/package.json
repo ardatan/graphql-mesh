@@ -13,7 +13,7 @@
   "dependencies": {
     "@theguild/components": "4.2.6-alpha-20221019193235-ef8c09e",
     "next": "12.3.1",
-    "next-sitemap": "3.1.28",
+    "next-sitemap": "3.1.29",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "4.6.0"
