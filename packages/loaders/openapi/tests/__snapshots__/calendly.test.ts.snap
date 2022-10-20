@@ -179,7 +179,7 @@ type Query {
     "Return entries from the user(s) associated with the provided URIs"
     actor: [URL]
     "Order results by the specified field and direction. List of {field}:{direction} values."
-    sort: [queryInput_activityLog_sort_items] = [occurred_at_COLON_desc]
+    sort: [queryInput_activityLog_sort_items] = [occurred_at_desc]
     "Include entries that occurred after this time (sample time format: \\"2020-01-02T03:04:05.678Z\\"). This time should use the UTC timezone."
     min_occurred_at: DateTime
     "Include entries that occurred prior to this time (sample time format: \\"2020-01-02T03:04:05.678Z\\"). This time should use the UTC timezone."
@@ -1377,16 +1377,16 @@ scalar NonNegativeInt
 scalar queryInput_activityLog_search_term
 
 enum queryInput_activityLog_sort_items {
-  action_COLON_asc
-  action_COLON_desc
-  actor_display_name_COLON_asc
-  actor_display_name_COLON_desc
-  actor_uri_COLON_asc
-  actor_uri_COLON_desc
-  namespace_COLON_asc
-  namespace_COLON_desc
-  occurred_at_COLON_asc
-  occurred_at_COLON_desc
+  action_asc
+  action_desc
+  actor_display_name_asc
+  actor_display_name_desc
+  actor_uri_asc
+  actor_uri_desc
+  namespace_asc
+  namespace_desc
+  occurred_at_asc
+  occurred_at_desc
 }
 
 "Integers that will have a value greater than 0."
