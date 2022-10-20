@@ -342,7 +342,7 @@ ${operationConfig.description || ''}
             return responseText;
           } else if (response.status === 204) {
             responseJson = {};
-          } else {
+          } else if (response.status.toString().startsWith('2')) {
             logger.debug(`Unexpected response in ${fieldName};\n\t${responseText}`);
             return createGraphQLError(`Unexpected response in ${fieldName}`, {
               extensions: {
@@ -362,6 +362,24 @@ ${operationConfig.description || ''}
                 },
               },
             });
+          } else {
+            return createGraphQLError(
+              `HTTP Error: ${response.status}, Could not invoke operation ${operationConfig.method} ${operationConfig.path}`,
+              {
+                extensions: {
+                  http: {
+                    status: response.status,
+                    statusText: response.statusText,
+                    headers: getHeadersObj(response.headers),
+                  },
+                  request: {
+                    url: fullPath,
+                    method: httpMethod,
+                  },
+                  responseText,
+                },
+              }
+            );
           }
         }
 

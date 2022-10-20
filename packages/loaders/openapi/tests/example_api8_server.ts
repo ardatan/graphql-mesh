@@ -1,41 +1,29 @@
-// Copyright IBM Corp. 2017,2018. All Rights Reserved.
-// Node module: openapi-to-graphql
-// This file is licensed under the MIT License.
-// License text available at https://opensource.org/licenses/MIT
+/* eslint-disable import/no-nodejs-modules */
+/* eslint-disable import/no-extraneous-dependencies */
 
-import express from 'express';
-import * as bodyParser from 'body-parser';
-import { Server } from 'http';
+import { createServer, Server } from 'http';
+import { createServerAdapter } from '@whatwg-node/server';
+import { Router } from 'itty-router';
+import { Response } from '@whatwg-node/fetch';
 
-let server: Server; // holds server object for shutdown
+export function startServer(): Promise<Server> {
+  const app = createServerAdapter(
+    Router({
+      base: '/api',
+    })
+  );
+  app.get(
+    '/user',
+    () =>
+      new Response(null, {
+        status: 404,
+      })
+  );
 
-/**
- * Starts the server at the given port
- */
-export function startServer(PORT: number) {
-  const app = express();
-
-  app.use(bodyParser.json());
-
-  app.get('/api/user', (req, res) => {
-    res.sendStatus(404);
+  const server = createServer(app);
+  return new Promise((resolve, reject) => {
+    server.listen(0, () => {
+      resolve(server);
+    });
   });
-
-  return new Promise(resolve => {
-    server = app.listen(PORT, resolve as () => void);
-  });
-}
-
-/**
- * Stops server.
- */
-export function stopServer() {
-  return new Promise(resolve => {
-    server.close(resolve);
-  });
-}
-
-// if run from command line, start server:
-if (require.main === module) {
-  startServer(3002);
 }
