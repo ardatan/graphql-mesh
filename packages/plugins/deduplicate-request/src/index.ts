@@ -13,7 +13,7 @@ export default function useDeduplicateRequest(): MeshPlugin<any> {
   }
   return {
     onFetch({ url, options, context, info, fetchFn, setFetchFn }) {
-      if (context !== null) {
+      if (context != null) {
         let method = 'GET';
         if (options.method) {
           method = options.method;
