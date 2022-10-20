@@ -1,5 +1,18 @@
 # @graphql-mesh/utils
 
+## 0.42.0
+
+### Minor Changes
+
+- [#4708](https://github.com/Urigo/graphql-mesh/pull/4708) [`1d61fbcec`](https://github.com/Urigo/graphql-mesh/commit/1d61fbcecb8d5b286bb1c2e727bdf7d233c566da) Thanks [@ardatan](https://github.com/ardatan)! - BREAKING:
+  - ":" character is now sanitized as "_" instead of "\_COLON_"
+  - If a path starts with a variable like "{" in an OAS operation, "by\_" prefix is no longer added.
+
+### Patch Changes
+
+- Updated dependencies [[`398af2bf6`](https://github.com/Urigo/graphql-mesh/commit/398af2bf602182ca315bc8d99d2237ad1a16ee48)]:
+  - @graphql-mesh/types@0.85.1
+
 ## 0.41.22
 
 ### Patch Changes

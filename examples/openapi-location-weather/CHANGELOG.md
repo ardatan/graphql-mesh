@@ -1,5 +1,17 @@
 # typescript-location-weather-example
 
+## 0.5.314
+
+### Patch Changes
+
+- Updated dependencies [[`398af2bf6`](https://github.com/Urigo/graphql-mesh/commit/398af2bf602182ca315bc8d99d2237ad1a16ee48)]:
+  - @graphql-mesh/runtime@0.44.24
+  - @graphql-mesh/cli@0.78.36
+  - @graphql-mesh/openapi@0.33.28
+  - @graphql-mesh/plugin-response-cache@0.1.41
+  - @graphql-mesh/transform-cache@0.12.58
+  - @graphql-mesh/transform-rename@0.12.95
+
 ## 0.5.313
 
 ### Patch Changes
