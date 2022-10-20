@@ -2583,6 +2583,13 @@
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.1.1.tgz#076d78ce99822258cf813ecc1e7fa460fa74d052"
   integrity sha512-NQ17ii0rK1b34VZonlmT2QMJFI70m0TRwbknO/ihlbatXyaktDhN/98vBiUU6kNBPljqGqyIrl2T4nY2RpFANg==
 
+"@graphql-yoga/plugin-prometheus@1.0.0-next.0":
+  version "1.0.0-next.0"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-prometheus/-/plugin-prometheus-1.0.0-next.0.tgz#b0195b320e3e0f8ce7bd1d26e059c3244e9f43be"
+  integrity sha512-EoFsvO67hzxFHMgFp71cpAgg00ZuhNvZoWWqh+Q4WGwmlTd7YNIs+xeIZwHocl2Z0iZNX6NxY/j779eOIGooHQ==
+  dependencies:
+    "@envelop/prometheus" "7.0.2"
+
 "@graphql-yoga/plugin-response-cache@1.0.0-next.5":
   version "1.0.0-next.5"
   resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-response-cache/-/plugin-response-cache-1.0.0-next.5.tgz#4aebb76bdb3b49d5d927f56c6e3e11d7ae2af4b1"
@@ -10592,16 +10599,15 @@ graphql-ws@5.11.2, graphql-ws@^5.4.1, graphql-ws@^5.6.2:
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.11.2.tgz#d5e0acae8b4d4a4cf7be410a24135cfcefd7ddc0"
   integrity sha512-4EiZ3/UXYcjm+xFGP544/yW1+DVI8ZpKASFbzrV5EDTFWJp0ZvLl4Dy2fSZAzz9imKp5pZMIcjB0x/H69Pv/6w==
 
-graphql-yoga@3.0.0-next.5:
-  version "3.0.0-next.5"
-  resolved "https://registry.yarnpkg.com/graphql-yoga/-/graphql-yoga-3.0.0-next.5.tgz#10fa360adb4d26e76f0b23a73c02ad0009677c84"
-  integrity sha512-3h4m5lkPJWud3eUYBEMih2S/YbDK7PiThxyjbNHoZKF/n3fLpMk6ROjfS046n3MDnSuT66qHQO0l0hPGwCjULA==
+graphql-yoga@3.0.0-next.6:
+  version "3.0.0-next.6"
+  resolved "https://registry.yarnpkg.com/graphql-yoga/-/graphql-yoga-3.0.0-next.6.tgz#ab6aa697a1a669891b88e6aea52a8d11428e25ad"
+  integrity sha512-gOPV87uQREIB52cNK48+576NQvGjXPJ246yuWDyCltDXGdzCEdiBPQsJTA5mWw2cQHIxuKug9RodzkhByKsG4A==
   dependencies:
     "@envelop/core" "3.0.2"
     "@envelop/parser-cache" "5.0.1"
     "@envelop/validation-cache" "5.0.1"
     "@graphql-tools/schema" "^9.0.0"
-    "@graphql-tools/utils" "8.12.0"
     "@graphql-typed-document-node/core" "^3.1.1"
     "@graphql-yoga/subscription" "^3.0.0-next.0"
     "@whatwg-node/fetch" "0.4.7"
