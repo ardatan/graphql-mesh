@@ -1,5 +1,14 @@
 # @graphql-mesh/types
 
+## 0.85.1
+
+### Patch Changes
+
+- [`398af2bf6`](https://github.com/Urigo/graphql-mesh/commit/398af2bf602182ca315bc8d99d2237ad1a16ee48) Thanks [@ardatan](https://github.com/ardatan)! - Fix a bug causing the plugin is registered twice with onPluginInit's addPlugin
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.8.56
+
 ## 0.85.0
 
 ### Minor Changes

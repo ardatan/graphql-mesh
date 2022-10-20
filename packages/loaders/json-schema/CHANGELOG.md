@@ -1,5 +1,18 @@
 # @omnigraph/json-schema
 
+## 0.36.0
+
+### Minor Changes
+
+- [#4711](https://github.com/Urigo/graphql-mesh/pull/4711) [`a8d681274`](https://github.com/Urigo/graphql-mesh/commit/a8d6812742bbbdac53f8ecd76780459fc1950208) Thanks [@dr3](https://github.com/dr3)! - Give better error messages in case of untyped HTTP error
+
+### Patch Changes
+
+- Updated dependencies [[`398af2bf6`](https://github.com/Urigo/graphql-mesh/commit/398af2bf602182ca315bc8d99d2237ad1a16ee48), [`1d61fbcec`](https://github.com/Urigo/graphql-mesh/commit/1d61fbcecb8d5b286bb1c2e727bdf7d233c566da)]:
+  - @graphql-mesh/types@0.85.1
+  - @graphql-mesh/utils@0.42.0
+  - json-machete@0.15.10
+
 ## 0.35.10
 
 ### Patch Changes
