@@ -22,6 +22,10 @@ export function getFieldNameFromPath(path: string, method: string, responseTypeS
     }
   }
 
+  if (fieldNameWithoutMethod.startsWith('by_')) {
+    fieldNameWithoutMethod = fieldNameWithoutMethod.replace('by_', '');
+  }
+
   if (allQueryPartsStr) {
     const queryParts = allQueryPartsStr.split('&');
     for (const queryPart of queryParts) {
