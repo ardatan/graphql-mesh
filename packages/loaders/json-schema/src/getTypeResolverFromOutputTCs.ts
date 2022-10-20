@@ -3,6 +3,7 @@ import { ObjectTypeComposer, UnionTypeComposer } from 'graphql-compose';
 import Ajv, { ValidateFunction, ErrorObject } from 'ajv';
 import { JSONSchemaObject } from 'json-machete';
 import { TypeComposers } from './getComposerFromJSONSchema';
+import { createGraphQLError } from '@graphql-tools/utils';
 
 export function getTypeResolverFromOutputTCs(
   ajv: Ajv,
@@ -63,27 +64,19 @@ export function getTypeResolverFromOutputTCs(
       }
     }
     if (data.$response) {
-      const error = new GraphQLError(
-        `HTTP Error: ${data.$statusCode}`,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        {
-          $url: data.$url,
-          $method: data.$method,
-          $statusCode: data.$statusCode,
-          $request: {
-            query: data.$request.query,
-            header: data.$request.header,
+      const error = createGraphQLError(`HTTP Error: ${data.$statusCode}`, {
+        extensions: {
+          http: {
+            status: data.$statusCode,
+            headers: data.$response.header,
           },
-          $response: {
-            header: data.$response.header,
-            body: data.$response.body,
+          request: {
+            url: data.$url,
+            method: data.$method,
           },
-        }
-      );
+          responseJson: data.$response,
+        },
+      });
       return error;
     }
     const error = new GraphQLError(`Received data doesn't met the union`, null, null, null, null, null, {
