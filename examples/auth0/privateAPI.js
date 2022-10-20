@@ -11,5 +11,5 @@ http
     );
   })
   .listen(3001, 'localhost', () => {
-    console.info(`Private API listening; http://localost:4001`);
+    console.info(`Private API listening; http://localost:3001`);
   });
