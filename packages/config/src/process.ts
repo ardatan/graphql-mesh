@@ -301,7 +301,7 @@ export async function processConfig(
                   pluginConfig,
                   null,
                   2
-                )}))`
+                )});`
               );
             }
             return pluginFactory(pluginConfig);
