@@ -2162,13 +2162,13 @@
     "@graphql-tools/utils" "^8.8.0"
     tslib "~2.4.0"
 
-"@graphql-codegen/typed-document-node@2.3.4":
-  version "2.3.4"
-  resolved "https://registry.yarnpkg.com/@graphql-codegen/typed-document-node/-/typed-document-node-2.3.4.tgz#33d06c60f7e4e08ded8e9064f6871a42c3383af7"
-  integrity sha512-dIuyr//qNpaPbC1y8KGRMorhqzQ4Xmiry4OexOc/zDmUxpeQOnk+cmXNtBVk6bk2J6vTEZmhKdsfvXD8JoO7fA==
+"@graphql-codegen/typed-document-node@2.3.5":
+  version "2.3.5"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/typed-document-node/-/typed-document-node-2.3.5.tgz#33e25ae27af2d6fcee8990701c52943ceb260993"
+  integrity sha512-d+CDFQhbqYhgQGPxcchKRVVbMgYX6/xN+nUB53R53v0NxtgmtMGzbcE49ozLzjAoKuu4LVn8Mvi2bfJZ7/YOGQ==
   dependencies:
     "@graphql-codegen/plugin-helpers" "^2.6.2"
-    "@graphql-codegen/visitor-plugin-common" "2.12.2"
+    "@graphql-codegen/visitor-plugin-common" "2.13.0"
     auto-bind "~4.0.0"
     change-case-all "1.0.14"
     tslib "~2.4.0"
@@ -2221,6 +2221,22 @@
   version "2.12.2"
   resolved "https://registry.yarnpkg.com/@graphql-codegen/visitor-plugin-common/-/visitor-plugin-common-2.12.2.tgz#70eefed5567dbec6d289b05047b04bc9faae428e"
   integrity sha512-UZJxY3mWwaM7yii7mSbl6Rxb6sJlpwGZc3QAs2Yd8MnYjXFPTBR0OO6aBTr9xuftl0pYwHu/pVK7vTPNnVmPww==
+  dependencies:
+    "@graphql-codegen/plugin-helpers" "^2.6.2"
+    "@graphql-tools/optimize" "^1.3.0"
+    "@graphql-tools/relay-operation-optimizer" "^6.5.0"
+    "@graphql-tools/utils" "^8.8.0"
+    auto-bind "~4.0.0"
+    change-case-all "1.0.14"
+    dependency-graph "^0.11.0"
+    graphql-tag "^2.11.0"
+    parse-filepath "^1.0.2"
+    tslib "~2.4.0"
+
+"@graphql-codegen/visitor-plugin-common@2.13.0":
+  version "2.13.0"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/visitor-plugin-common/-/visitor-plugin-common-2.13.0.tgz#206d91d90a3cc3b1fc0c3a04e8015c22584e461f"
+  integrity sha512-8lKw4l8W6yKaqrxx025eB6+lRMWaBKedbKjC9UyLhXAnqTi3tgaRKOBo4zvl1+KzE6R41Ruov9UcGD7OjgmBrw==
   dependencies:
     "@graphql-codegen/plugin-helpers" "^2.6.2"
     "@graphql-tools/optimize" "^1.3.0"
@@ -2590,10 +2606,10 @@
   dependencies:
     "@envelop/prometheus" "7.0.2"
 
-"@graphql-yoga/plugin-response-cache@1.0.0-next.5":
-  version "1.0.0-next.5"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-response-cache/-/plugin-response-cache-1.0.0-next.5.tgz#4aebb76bdb3b49d5d927f56c6e3e11d7ae2af4b1"
-  integrity sha512-W8kWXuiZ25nVJXtm5J5ac4gEfzKnhhY2/+k8lVL+ZOSB1F6cVzGG9C5ke5Uqmt83RSNSOB71U49+B0AkQH9iyQ==
+"@graphql-yoga/plugin-response-cache@1.0.0-next.6":
+  version "1.0.0-next.6"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-response-cache/-/plugin-response-cache-1.0.0-next.6.tgz#57cd3e39868f47d601dd0fd37287b1b013a930eb"
+  integrity sha512-smaBW0vh7fRXOGZHWqctaNgpj5U+Job64HDFAShz3zKbyQpQ1+JJBG6ausPxw6EVggyTVxDj6xe8quV8QR09rw==
   dependencies:
     "@envelop/response-cache" "4.0.2"
 
@@ -5376,10 +5392,18 @@
     undici "^5.10.0"
     web-streams-polyfill "^3.2.0"
 
-"@whatwg-node/server@0.4.11", "@whatwg-node/server@^0.4.10":
+"@whatwg-node/server@0.4.11":
   version "0.4.11"
   resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.4.11.tgz#a36d78e8c75ae383b21821aaad37ece8d6e2afad"
   integrity sha512-hEPbl0o91uXv8JGcHgYBwPoyYoKIsclpF56RwKq54GibT22i1ld4W+yUVjObriuY5h/0o07WAzNJ8T8aUhQGYQ==
+  dependencies:
+    "@whatwg-node/fetch" "0.4.7"
+    tslib "^2.3.1"
+
+"@whatwg-node/server@0.4.12", "@whatwg-node/server@^0.4.10":
+  version "0.4.12"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.4.12.tgz#4d6d1597d41d7c70538e04294c0f493da949bfb5"
+  integrity sha512-NMnR4vaLZQZeBGebzKFE+BXELQ8QdqoLfJc10m0rgXFIJpcn/iqNtw+GXXx8zLTrEqHOuYTzn6+UpmKsG4bpgQ==
   dependencies:
     "@whatwg-node/fetch" "0.4.7"
     tslib "^2.3.1"
@@ -14364,10 +14388,10 @@ mongodb@4.9.1:
   optionalDependencies:
     saslprep "^1.0.3"
 
-mongoose@6.6.5:
-  version "6.6.5"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.6.5.tgz#fcc7ba9594db711b3d4d7a1b3522c5dbc8f0bf52"
-  integrity sha512-iA/oDpWOc+K2QYzA4Eq7Z1oUBQOz9FGDmUwPLgw872Bfs/qizA5Db+gJorAn+TnnGu3VoCK8iP4Y+TECUelwjA==
+mongoose@6.6.6:
+  version "6.6.6"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.6.6.tgz#2c78149ce97e966df20bf494f8b60859b6cd06e3"
+  integrity sha512-BziwYX15NVdA3DdlBaeiY1jCQtCxzpeDAJEL0BXADEvNQLWg4DiWH0FlQBdcJ58r36gWLglMP0ifvHgeyMpfhQ==
   dependencies:
     bson "^4.6.5"
     kareem "2.4.1"
@@ -14550,10 +14574,10 @@ newrelic@8.17.1:
   optionalDependencies:
     "@newrelic/native-metrics" "^8.0.0"
 
-next-sitemap@3.1.28:
-  version "3.1.28"
-  resolved "https://registry.yarnpkg.com/next-sitemap/-/next-sitemap-3.1.28.tgz#b151224f50979a0cfef2551eefa53c00f165e7ca"
-  integrity sha512-4G1lhbvhBTfZbZcvPoIETlI9gcOIEUZCpHINjKbr7oO/Eg6zBc8QOs8XAg4/6GM1Xy64ieCHuVRvzN8uHXZ10A==
+next-sitemap@3.1.29:
+  version "3.1.29"
+  resolved "https://registry.yarnpkg.com/next-sitemap/-/next-sitemap-3.1.29.tgz#8fc84b8669809ecfbad99a0b05c5d75bc05079ff"
+  integrity sha512-7UQyfpI7obOdB11aCswWYfqRn5CR0YSmWHo1r/uarrFfZD5PyyAWtQlgP6jNqDW0eX1ZJWERBwmJ2dLjl4nT8Q==
   dependencies:
     "@corex/deepmerge" "^4.0.29"
     minimist "^1.2.6"
