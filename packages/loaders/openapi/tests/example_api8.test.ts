@@ -1,5 +1,5 @@
 /* eslint-disable import/no-nodejs-modules */
-import { execute, graphql, GraphQLSchema, parse } from 'graphql';
+import { execute, GraphQLSchema, parse } from 'graphql';
 
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 import { startServer } from './example_api8_server';
