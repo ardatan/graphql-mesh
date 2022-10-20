@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cli",
-  "version": "0.78.36",
+  "version": "0.78.37",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -54,7 +54,7 @@
     "@graphql-mesh/utils": "0.42.0",
     "@graphql-mesh/store": "0.8.56",
     "@graphql-mesh/types": "0.85.1",
-    "@graphql-mesh/http": "0.2.3",
+    "@graphql-mesh/http": "0.2.4",
     "@graphql-tools/utils": "8.12.0",
     "dotenv": "16.0.3",
     "dnscache": "1.0.2",
