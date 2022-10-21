@@ -1,4 +1,4 @@
-import { fs, path, process } from '@graphql-mesh/cross-helpers';
+import { fs, path } from '@graphql-mesh/cross-helpers';
 import { MeshInstance } from '@graphql-mesh/runtime';
 import { Logger, YamlConfig } from '@graphql-mesh/types';
 import { DefaultLogger, pathExists } from '@graphql-mesh/utils';
