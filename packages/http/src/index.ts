@@ -32,7 +32,7 @@ export function createMeshHTTPHandler<TServerContext>({
   const {
     cors: corsConfig,
     staticFiles,
-    playground: playgroundEnabled = process.env.NODE_ENV !== 'production',
+    playground: playgroundEnabled,
     endpoint: graphqlPath = '/graphql',
     // TODO
     // trustProxy = 'loopback',
