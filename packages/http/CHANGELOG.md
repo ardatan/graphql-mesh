@@ -1,5 +1,11 @@
 # @graphql-mesh/http
 
+## 0.2.5
+
+### Patch Changes
+
+- [`e4eb7a71d`](https://github.com/Urigo/graphql-mesh/commit/e4eb7a71db5b7ef350d8ac101a1125424d4a26cb) Thanks [@ardatan](https://github.com/ardatan)! - Enable Playground for Node even in production, you should disable it explicitly in the configuration
+
 ## 0.2.4
 
 ### Patch Changes

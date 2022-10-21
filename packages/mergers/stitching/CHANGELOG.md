@@ -1,5 +1,11 @@
 # @graphql-mesh/merger-stitching
 
+## 0.17.0
+
+### Minor Changes
+
+- [`e35f4701f`](https://github.com/Urigo/graphql-mesh/commit/e35f4701f6a385cacd03ec313f1fc0e4bc4c7ccf) Thanks [@ardatan](https://github.com/ardatan)! - Carry over schema extensions in replaceFederationSDLWithStitchingSDL
+
 ## 0.16.37
 
 ### Patch Changes

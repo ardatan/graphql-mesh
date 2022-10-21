@@ -1,6 +1,6 @@
 {
   "name": "openapi-subscriptions",
-  "version": "0.0.301",
+  "version": "0.0.302",
   "private": true,
   "scripts": {
     "start:api": "ts-node api.ts",
@@ -8,7 +8,7 @@
     "start": "concurrently \"yarn start:api\" \"yarn start:mesh\""
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.78.37",
+    "@graphql-mesh/cli": "0.78.38",
     "@graphql-mesh/openapi": "0.33.28",
     "concurrently": "7.4.0",
     "graphql": "16.6.0",

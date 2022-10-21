@@ -1,5 +1,12 @@
 # @graphql-mesh/plugin-response-cache
 
+## 0.1.42
+
+### Patch Changes
+
+- [#4714](https://github.com/Urigo/graphql-mesh/pull/4714) [`b0cf29072`](https://github.com/Urigo/graphql-mesh/commit/b0cf290721e83a47f127d6c64f669bc7668532c7) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`@graphql-yoga/plugin-response-cache@1.0.0-next.6` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-response-cache/v/1.0.0) (from `1.0.0-next.5`, in `dependencies`)
+
 ## 0.1.41
 
 ### Patch Changes
