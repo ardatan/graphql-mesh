@@ -1,6 +1,11 @@
 import { applyRequestTransforms, applyResultTransforms } from '@graphql-mesh/utils';
 import { createDefaultExecutor, DelegationContext, applySchemaTransforms, Subschema } from '@graphql-tools/delegate';
-import { ExecutionRequest, getOperationASTFromRequest, isAsyncIterable } from '@graphql-tools/utils';
+import {
+  ExecutionRequest,
+  getDefinedRootType,
+  getOperationASTFromRequest,
+  isAsyncIterable,
+} from '@graphql-tools/utils';
 import { mapAsyncIterator, Plugin, TypedExecutionArgs } from '@envelop/core';
 import { BREAK, execute, OperationDefinitionNode, visit } from 'graphql';
 import { createBatchingExecutor } from '@graphql-tools/batch-execute';
@@ -43,7 +48,7 @@ function getExecuteFn(subschema: Subschema) {
       transforms: subschema.transforms,
       transformedSchema: subschema.transformedSchema,
       skipTypeMerging: true,
-      returnType: args.schema.getRootType(operationAST.operation),
+      returnType: getDefinedRootType(args.schema, operationAST.operation),
     };
     let executor = subschema.executor;
     if (executor == null) {
