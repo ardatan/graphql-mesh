@@ -1,5 +1,11 @@
 # @graphql-mesh/runtime
 
+## 0.44.25
+
+### Patch Changes
+
+- [`52b9c79d4`](https://github.com/Urigo/graphql-mesh/commit/52b9c79d4d1e665c81623a3fbe48706afe82e645) Thanks [@ardatan](https://github.com/ardatan)! - Fix GraphQL v15 support by replacing schema.getRootType with getDefinedRootType from GraphQL Tools
+
 ## 0.44.24
 
 ### Patch Changes
