@@ -1,5 +1,26 @@
 # @graphql-mesh/cli
 
+## 0.78.38
+
+### Patch Changes
+
+- [#4714](https://github.com/Urigo/graphql-mesh/pull/4714) [`b0cf29072`](https://github.com/Urigo/graphql-mesh/commit/b0cf290721e83a47f127d6c64f669bc7668532c7) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@graphql-codegen/typed-document-node@2.3.5` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typed-document-node/v/2.3.5) (from `2.3.4`, in `dependencies`)
+
+- [#4715](https://github.com/Urigo/graphql-mesh/pull/4715) [`112e89638`](https://github.com/Urigo/graphql-mesh/commit/112e89638b91771275822449e96d318867ceecfc) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@graphql-codegen/typescript@2.7.5` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typescript/v/2.7.5) (from `2.7.4`, in `dependencies`)
+  - Updated dependency [`@graphql-codegen/typescript-generic-sdk@3.0.3` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typescript-generic-sdk/v/3.0.3) (from `3.0.2`, in `dependencies`)
+  - Updated dependency [`@graphql-codegen/typescript-operations@2.5.5` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typescript-operations/v/2.5.5) (from `2.5.4`, in `dependencies`)
+  - Updated dependency [`@graphql-codegen/typescript-resolvers@2.7.5` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typescript-resolvers/v/2.7.5) (from `2.7.4`, in `dependencies`)
+
+- [`41ac14ca5`](https://github.com/Urigo/graphql-mesh/commit/41ac14ca5e2d9e9e44c21b40978f29764f7c1c95) Thanks [@ardatan](https://github.com/ardatan)! - fix(cli): prevent duplicate schema generation on mesh start
+
+- Updated dependencies [[`e4eb7a71d`](https://github.com/Urigo/graphql-mesh/commit/e4eb7a71db5b7ef350d8ac101a1125424d4a26cb)]:
+  - @graphql-mesh/http@0.2.5
+  - @graphql-mesh/config@8.0.25
+
 ## 0.78.37
 
 ### Patch Changes
