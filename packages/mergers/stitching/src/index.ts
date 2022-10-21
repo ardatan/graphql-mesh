@@ -83,6 +83,8 @@ export default class StitchingMerger implements MeshMerger {
       },
     });
 
+    newSchema.extensions = oldSchema.extensions;
+
     return newSchema;
   }
 
