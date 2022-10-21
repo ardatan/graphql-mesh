@@ -11,7 +11,6 @@ export default async function createApolloServer() {
   apolloServer = new ApolloServer({
     schema,
     introspection: !isProd,
-    playground: !isProd,
     cache,
     executor: async requestContext => {
       const { schema, execute, contextFactory } = getEnveloped({ req: requestContext.request.http });

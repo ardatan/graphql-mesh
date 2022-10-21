@@ -113,7 +113,7 @@ export async function serveMesh(
 
     const requestHandler = createMeshHTTPHandler({
       baseDir,
-      getBuiltMesh,
+      getBuiltMesh: () => mesh$,
       rawServeConfig,
       playgroundTitle,
     });
