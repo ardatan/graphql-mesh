@@ -11,7 +11,7 @@
     "analyze": "cross-env ANALYZE=true next build"
   },
   "dependencies": {
-    "@theguild/components": "4.2.6-alpha-20221022000150-664cf85",
+    "@theguild/components": "4.2.6-alpha-20221022202912-a22df8e",
     "next": "12.3.1",
     "next-sitemap": "3.1.29",
     "react": "18.2.0",
