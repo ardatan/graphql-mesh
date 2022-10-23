@@ -23,6 +23,7 @@ export default withGuildDocs({
       '/docs/guides/combine-many-sources': '/docs/getting-started/combine-multiple-sources',
       '/docs/guides/error-handling': '/docs/guides/error-masking',
       '/docs/guides/live-queries': '/docs/plugins/live-queries',
+      '/docs/guildes/extending-unified-schema': '/docs/guides/extending-unified-schema',
       '/docs/handlers': '/docs/handlers/handlers-introduction',
       '/docs/handlers/available-handlers': '/docs/handlers/handlers-introduction',
       '/docs/introduction': '/docs',
