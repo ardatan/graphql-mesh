@@ -350,7 +350,7 @@
 
 - 19ac24889: fix(redis): add missing string interpolation for URL parameter
 
-  ```
+  ```yaml
   cache:
     redis:
       url: '{env.REDIS_DSN}'

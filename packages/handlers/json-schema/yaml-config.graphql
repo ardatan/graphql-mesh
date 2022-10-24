@@ -156,7 +156,7 @@ type JsonSchemaHTTPOperation implements JsonSchemaBaseOperation {
   responseTypeName: String
   """
   You can define your response schemas by status codes;
-  ```yaml
+  ```yaml filename=".meshrc.yaml"
   responseByStatusCode:
     200:
       responseSchema: ./someschema.json#/somepath

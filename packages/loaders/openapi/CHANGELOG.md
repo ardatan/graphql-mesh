@@ -119,7 +119,7 @@
 
 - [#4556](https://github.com/Urigo/graphql-mesh/pull/4556) [`10f469e10`](https://github.com/Urigo/graphql-mesh/commit/10f469e109105edaa2ba4d9111bc671ba58baae8) Thanks [@ardatan](https://github.com/ardatan)! - If a component(response, requestBody, header or parameter) defined in OpenAPI schema, and its schema doesn't have a title, use the component object's title for that schema
 
-  ```yml
+  ```yaml
   components:
     parameters:
       Foo:
@@ -563,13 +563,13 @@
 
   Now you can generate headers dynamically from the resolver data dynamically like below;
 
-  ```yml
+  ```yaml
   operationHeaders: ./myOperationHeaders.ts
   ```
 
   And in `myOperationHeaders.ts`
 
-  ```ts
+  ```ts filename="myOperationHeaders.ts"
   export default function myOperationHeaders({ context }: ResolverData) {
     const someToken = context.request.headers.get('some-token')
     const anotherToken = await someLogicThatReturnsAnotherToken(someToken)
@@ -615,7 +615,7 @@
 - [#4221](https://github.com/Urigo/graphql-mesh/pull/4221) [`12430d907`](https://github.com/Urigo/graphql-mesh/commit/12430d907ead31fdd5eda532f8087f392a155834) Thanks [@ardatan](https://github.com/ardatan)! - Respect "\$ref" in parameters
 
 * [#4221](https://github.com/Urigo/graphql-mesh/pull/4221) [`12430d907`](https://github.com/Urigo/graphql-mesh/commit/12430d907ead31fdd5eda532f8087f392a155834) Thanks [@ardatan](https://github.com/ardatan)! - Respect global parameters object on top of method objects like;
-  ```yml
+  ```yaml
   parameters: # Take this as well
     - name: foo
       ...

@@ -8,8 +8,7 @@ You can expose the details of outgoing HTTP requests done by GraphQL Mesh source
 
 <PackageCmd packages={['@graphql-mesh/plugin-http-details-extensions']} />
 
-```yaml
-# .meshrc.yml
+```yaml filename=".meshrc.yaml"
 plugins:
   - httpDetailsExtensions:
       if: "env.NODE_ENV === 'development'"

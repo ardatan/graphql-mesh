@@ -88,7 +88,7 @@
 
 - [#4556](https://github.com/Urigo/graphql-mesh/pull/4556) [`10f469e10`](https://github.com/Urigo/graphql-mesh/commit/10f469e109105edaa2ba4d9111bc671ba58baae8) Thanks [@ardatan](https://github.com/ardatan)! - If a component(response, requestBody, header or parameter) defined in OpenAPI schema, and its schema doesn't have a title, use the component object's title for that schema
 
-  ```yml
+  ```yaml
   components:
     parameters:
       Foo:

@@ -10,7 +10,7 @@ You can use `additionalTypeDefs` and `resolveTo` directive to add subscription r
 
 If you subscribe a pubSub topic with `webhook:EXPECTED_METHOD:EXPECTED_PATH`, the server will automatically bind that path to that topic.
 
-```yaml
+```yaml filename=".meshrc.yaml"
 additionalTypeDefs: |
   # If you don't have Subscription type defined anywhere
   # You have to extend subscription definition
@@ -34,7 +34,7 @@ You can also use the JSON Schema handler if you don't want to write an extra Gra
 
 Just add the following to your existing JSON schema handler configuration in `.meshrc.yml` file;
 
-```yaml filename=".meshrc.yml"
+```yaml filename=".meshrc.yaml"
 - type: Subscription
   field: todoAdded
   pubsubTopic: webhook:post:todo-added

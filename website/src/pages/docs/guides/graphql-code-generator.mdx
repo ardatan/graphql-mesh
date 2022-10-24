@@ -9,7 +9,7 @@ Mesh relies on [GraphQL Code Generator](https://graphql-code-generator.com) to g
 
 The generated typed Mesh SDK can also be accessed directly, as shown below:
 
-```ts
+```ts filename="test.ts"
 import { getMeshSDK } from './.mesh'
 
 async function test() {
@@ -50,7 +50,7 @@ Mesh provides a default GraphQL Code Generator configuration, shown below:
 
 The above default configuration can be overridden with the `codegen` root parameter, as shown below:
 
-```yaml
+```yaml filename=".meshrc.yaml"
 codegen:
   skipTypename: false
   contextType: './context#MyContextType'

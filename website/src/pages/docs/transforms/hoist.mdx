@@ -29,7 +29,7 @@ type User {
 
 ### Simple hoisting
 
-```yaml
+```yaml filename=".meshrc.yaml"
 transforms:
   - hoist-field:
       - typeName: Query
@@ -53,7 +53,7 @@ type User {
 
 ### Filtering args via a default for the entire path
 
-```yaml
+```yaml filename=".meshrc.yaml"
 transforms:
   - hoist-field:
       - typeName: Query
@@ -78,7 +78,7 @@ type User {
 
 ### Filtering args via on specific levels of the path
 
-```yaml
+```yaml filename=".meshrc.yaml"
 transforms:
   - hoist-field:
       - typeName: Query

@@ -16,7 +16,7 @@ To get started, install the handler library:
 
 Now, you can use it directly in your Mesh config file / URL:
 
-```yaml
+```yaml filename=".meshrc.yaml"
 sources:
   - name: MyOpenapiApi
     handler:
@@ -32,7 +32,7 @@ By default, all GET operations will be placed into Query fields and all other op
 To switch between Query and Mutation operations, and vice versa, you need to define a rule per override, consisting of the OAS title, the path of the operation, the method of the operation and finally, the destination type (e.g., Query or Mutation).
 See the example below:
 
-```yaml
+```yaml filename=".meshrc.yaml"
 sources:
   - name: MyOpenapiApi
     handler:
@@ -68,7 +68,7 @@ The expression inside dynamic values should be as in JS.
 
 ### From Context (HTTP Header for `mesh dev` or `mesh start`)
 
-```yaml
+```yaml filename=".meshrc.yaml"
 sources:
   - name: MyGraphQLApi
     handler:
@@ -87,7 +87,7 @@ And for `mesh dev` or `mesh start`, you can pass the value using `x-my-graphql-a
 
 `MY_API_TOKEN` is the name of the environmental variable you have the value.
 
-```yaml {7}
+```yaml filename=".meshrc.yaml" {7}
 sources:
   - name: MyGraphQLApi
     handler:
@@ -113,7 +113,7 @@ We want to accept one of the following:
 
 And transmit it to the Rest API as an `Authorization` header. GraphQL Mesh does not allow dynamic selection in the `meshrc.yaml` file, but that's fine! We can use a bit of trickery.
 
-```yaml
+```yaml filename=".meshrc.yaml"
 sources:
   - name: Rest
     handler:
@@ -125,12 +125,12 @@ sources:
           Authorization-Cookie: Bearer {context.cookies.accessToken}
 
 # You can provide a custom fetch function to override the default fetch function
-customFetch: ./src/custom-fetch.js
+customFetch: ./src/custom-fetch.ts
 ```
 
 Here in the `meshrc.yaml` configuration we store the cookie in `Authorization-Cookie`, and the header in `Authorization-Header`. To introduce the logic needed to generate the proper `Authorization` header for the Rest API, we need to implement a `customFetch`. It will replace the `fetch` used by GraphQL Mesh to call the Rest API.
 
-```js
+```ts filename="custom-fetch.ts"
 import { MeshContext } from '@graphql-mesh/types';
 import { fetch } from '@whatwg-node/fetch';
 
@@ -168,7 +168,7 @@ additionalResolvers:
 
 Then manage the cookie in the new resolvers:
 
-```js
+```ts filename="resolvers.ts"
 // lifespan of our cookie
 const oneYear = 365 * 24 * 3600
 

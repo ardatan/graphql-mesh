@@ -114,7 +114,7 @@
 
 - [#4556](https://github.com/Urigo/graphql-mesh/pull/4556) [`10f469e10`](https://github.com/Urigo/graphql-mesh/commit/10f469e109105edaa2ba4d9111bc671ba58baae8) Thanks [@ardatan](https://github.com/ardatan)! - If a component(response, requestBody, header or parameter) defined in OpenAPI schema, and its schema doesn't have a title, use the component object's title for that schema
 
-  ```yml
+  ```yaml
   components:
     parameters:
       Foo:
@@ -565,13 +565,13 @@
 
   Now you can generate headers dynamically from the resolver data dynamically like below;
 
-  ```yml
+  ```yaml
   operationHeaders: ./myOperationHeaders.ts
   ```
 
   And in `myOperationHeaders.ts`
 
-  ```ts
+  ```ts filename="myOperationHeaders.ts"
   export default function myOperationHeaders({ context }: ResolverData) {
     const someToken = context.request.headers.get('some-token')
     const anotherToken = await someLogicThatReturnsAnotherToken(someToken)
@@ -660,7 +660,7 @@
 
 - c88a34d82: Now you can configure JSON Schema handler how to stringify query parameters;
 
-  ```yml
+  ```yaml
   queryStringOptions:
     indices: false
     arrayFormat: brackets
@@ -697,7 +697,7 @@
 
 ### Patch Changes
 
-- bad0f40ab: ```yml
+- bad0f40ab: ```yaml
   operationHeaders:
   Some-Header: "{context.headers.SOME_HEADER}"
 

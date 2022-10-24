@@ -21,7 +21,7 @@ To do that, run the following:
 
 We need to install Hasura using Docker but we will use a special version of Hasura to benefit from Remote Joins;
 
-```
+```sh
 docker run -d -p 8080:8080 \
   -e HASURA_GRAPHQL_DATABASE_URL=postgres://postgres:docker@host.docker.internal:5432/postgres \
   -e HASURA_GRAPHQL_ENABLE_CONSOLE=true \
@@ -33,13 +33,13 @@ docker run -d -p 8080:8080 \
 We need to have `yarn` and Node.js on our computer to run GraphQL Mesh locally.
 Run the following command to create a new project on an empty directory;
 
-```bash
+```sh
 yarn init
 ```
 
 Answer the questions of `yarn` about our new project, then install GraphQL Mesh dependencies;
 
-```bash
+```sh
 yarn add graphql @graphql-mesh/cli @graphql-mesh/json-schema
 ```
 
@@ -49,45 +49,47 @@ OpenBrewery doesn't have any kind of recognized schema metadata, so we need to c
 
 In OpenBrewery's documentation, they have examples for both request and response objects. Let's create files for each inside `/json-schemas` directory;
 
-```json
+```json filename="breweries.json"
 // breweries.json
 [
-    {
-        "id": 299,
-        "name": "Almanac Beer Company",
-        "brewery_type": "micro",
-        "street": "651B W Tower Ave",
-        "city": "Alameda",
-        "state": "California",
-        "postal_code": "94501-5047",
-        "country": "United States",
-        "longitude": "-122.306283180899",
-        "latitude": "37.7834497667258",
-        "phone": "4159326531",
-        "website_url": "http://almanacbeer.com",
-        "updated_at": "2018-08-23T23:24:11.758Z",
-        "tag_list": ["tag"]
-      }
+  {
+    "id": 299,
+    "name": "Almanac Beer Company",
+    "brewery_type": "micro",
+    "street": "651B W Tower Ave",
+    "city": "Alameda",
+    "state": "California",
+    "postal_code": "94501-5047",
+    "country": "United States",
+    "longitude": "-122.306283180899",
+    "latitude": "37.7834497667258",
+    "phone": "4159326531",
+    "website_url": "http://almanacbeer.com",
+    "updated_at": "2018-08-23T23:24:11.758Z",
+    "tag_list": ["tag"]
+  }
 ]
+```
 
+```json filename="breweriesInput.json"
 //breweriesInput.json
 {
-    "by_city": "san diego",
-    "by_name": "cooper",
-    "by_state": "ohio",
-    "by_postal": "44107",
-    "by_type": "micro",
-    "by_tag": "patio",
-    "by_tags": ["patio", "dog-friendly"],
-    "page": 15,
-    "per_page": 25,
-    "sort": "-"
+  "by_city": "san diego",
+  "by_name": "cooper",
+  "by_state": "ohio",
+  "by_postal": "44107",
+  "by_type": "micro",
+  "by_tag": "patio",
+  "by_tags": ["patio", "dog-friendly"],
+  "page": 15,
+  "per_page": 25,
+  "sort": "-"
 }
 ```
 
 What we need to do is create a new Mesh configuration file on the project root `.meshrc.yml`;
 
-```yaml
+```yaml filename=".meshrc.yaml"
 sources:
   - name: OpenBrewery
     handler:
@@ -106,7 +108,7 @@ sources:
 
 Run our new GraphQL Mesh instance with the following command;
 
-```bash
+```sh
 yarn mesh dev
 ```
 

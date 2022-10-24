@@ -562,13 +562,13 @@
 
   Now you can generate headers dynamically from the resolver data dynamically like below;
 
-  ```yml
+  ```yaml
   operationHeaders: ./myOperationHeaders.ts
   ```
 
   And in `myOperationHeaders.ts`
 
-  ```ts
+  ```ts filename="myOperationHeaders.ts"
   export default function myOperationHeaders({ context }: ResolverData) {
     const someToken = context.request.headers.get('some-token')
     const anotherToken = await someLogicThatReturnsAnotherToken(someToken)
@@ -608,7 +608,7 @@
 
 - c88a34d82: Now you can configure JSON Schema handler how to stringify query parameters;
 
-  ```yml
+  ```yaml
   queryStringOptions:
     indices: false
     arrayFormat: brackets

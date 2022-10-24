@@ -12,7 +12,7 @@ To get started with this plugin, install it:
 
 Add the following configuration to your Mesh config file:
 
-```yaml
+```yaml filename=".meshrc.yaml"
 plugins:
   - mock:
       mocks:
@@ -26,7 +26,7 @@ The example above will replace the resolver of `User.firstName` with a mock that
 
 You can mock a specific field of a type;
 
-```yaml
+```yaml filename=".meshrc.yaml"
 plugins:
   - mock:
       mocks:
@@ -38,7 +38,7 @@ plugins:
 
 You can mock types with custom mock functions like below;
 
-```yaml
+```yaml filename=".meshrc.yaml"
 plugins:
   - mock:
       mocks:
@@ -47,7 +47,7 @@ plugins:
           # This will import `DateTimeMock` from `graphql-scalars` for example. Local paths are also supported
 ```
 
-```js filename="user-mocks.js"
+```ts filename="user-mocks.ts"
 module.exports = {
   fullName: () => 'My Static Name'
 }
@@ -56,7 +56,7 @@ module.exports = {
 When defined manually, properties can return values either directly or through a method. This is useful when defining static mocks because a mock property will be called as many times as there are items in an array.
 Here's an example on how this could be achieved:
 
-```js filename="user-mocks.js"
+```ts filename="user-mocks.ts"
 function* generateNames() {
   while (true) {
     yield 'John Doe'
@@ -100,7 +100,7 @@ type User {
 }
 ```
 
-```yaml
+```yaml filename=".meshrc.yaml"
 plugins:
   - mock:
       mocks:
@@ -144,13 +144,13 @@ Initially, populating the list of users can be done by utilizing the `initialize
 
 There is no need to provide a particular array mocking definition, like `length`. It will automatically be taken based on the mock data.
 
-```yaml
+```yaml filename=".meshrc.yaml"
 plugins:
   - mock:
       initializeStore: ./myMock#initializeStore
 ```
 
-```ts filename="./myMock.js"
+```ts filename="./myMock.ts"
 const users = [{ id: 'uuid', name: 'John Snow' }]
 
 export default {
@@ -176,7 +176,7 @@ type Query {
 }
 ```
 
-```yaml
+```yaml filename=".meshrc.yaml"
 plugins:
   - mock:
       initializeStore: absolute-path-to-file/myMock#initializeStore
@@ -203,7 +203,7 @@ type Mutation {
 }
 ```
 
-```yaml
+```yaml filename=".meshrc.yaml"
 plugins:
   - mock:
       mocks:
@@ -239,7 +239,7 @@ plugins:
 
 In the code:
 
-```js
+```ts filename="./myMocks.ts"
 module.exports = {
   changeMyName(_, { newName }, { mockStore }) {
     mockStore.set('Query', 'ROOT', 'me', { name: newName })

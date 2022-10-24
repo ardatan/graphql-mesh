@@ -25,7 +25,7 @@ This plugin tracks the complete gateway execution flow and exposes the following
 
 ## Example Configuration
 
-```yaml
+```yaml filename=".meshrc.yaml"
 # ...
 plugins:
   - prometheus:
@@ -56,14 +56,14 @@ plugins:
 
 You can customize the client's registry by passing a custom registry to the `registry` option.
 
-```ts
+```ts filename="myRegistry.ts"
 // myRegistry.ts
 import { Registry } from 'prom-client';
 
 export default const myRegistry = new Registry();
 ```
 
-```yaml
+```yaml filename=".meshrc.yaml"
 # ...
 plugins:
   - prometheus:

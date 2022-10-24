@@ -15,7 +15,7 @@ We start by installing the package into our Mesh setup with your favorite Packag
 
 ## Adding the Auth0 Plugin to the Mesh setup
 
-```yaml
+```yaml filename=".meshrc.yaml"
 plugins:
   auth0:
     # The domain of the Auth0 server we need to communicate with for authenticating a user. We will fill this out in the next step.
@@ -61,7 +61,7 @@ This is our `domain` configuration value.
 
 Let's quickly add this information to our Mesh configuration.
 
-```yaml
+```yaml filename=".meshrc.yaml"
 plugins:
   - auth0:
       domain: '{account_name}.{region}.auth0.com'
@@ -78,7 +78,7 @@ But before doing so, let's verify that the plugin is doing what it should do.
 Before we start our server we should add some types and fields to our schema in order to query for the authentication information.
 The complete code should look like this:
 
-```yaml
+```yaml filename=".meshrc.yaml"
 additionalTypeDefs: |
     """
     Describes the authentication object as provided by Auth0.
@@ -102,7 +102,7 @@ additionalResolvers:
 ```
 
 In `additionalResolvers.ts`:
-```ts
+```ts filename="additionalResolvers.ts"
 export const resolvers = {
   Query: {
     authInfo(_source, _args, context) {
@@ -114,7 +114,7 @@ export const resolvers = {
 
 Then we can start our server. The Mesh server can be started via `yarn start`.
 
-```
+```sh
 > yarn start
 yarn run v1.22.10
 $ mesh dev
@@ -156,14 +156,14 @@ Don't forget to save the changes with the **Save Changes** button at the end of 
 
 Next we add the new route in our Mesh configuration:
 
-```yaml
+```yaml filename=".meshrc.yaml"
 serve:
   staticFiles: public
 ```
 
 Then add `public/index.html`;
 
-```html
+```html filename="index.html"
 <!DOCTYPE html />
 <html>
   <head>
@@ -229,7 +229,7 @@ In the GraphQL schema of this guide we only re-expose the auth0 authentication i
 
 You can use the context object inside your handlers or anywhere else in Mesh;
 
-```yaml
+```yaml filename=".meshrc.yaml"
 plugins:
   - auth0:
       domain: '{account_name}.{region}.auth0.com'

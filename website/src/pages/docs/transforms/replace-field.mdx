@@ -55,7 +55,7 @@ This is not ideal because you have to request `books` as a child of `books`, so 
 
 To achieve this, you can add the following configuration to your Mesh config file:
 
-```yaml
+```yaml filename=".meshrc.yaml"
 transforms:
   - replace-field:
       replacements:
@@ -183,7 +183,7 @@ In this case, the transform allows you to pass additional type definitions that 
 
 Let's have a look at a Mesh config to be applied to the GraphQL schema shared above:
 
-```yaml
+```yaml filename=".meshrc.yaml"
 transforms:
   - replace-field:
       typeDefs: |
@@ -223,7 +223,7 @@ Let's look at an example.
 Currently, our `Book` type has a `code` field; we want to replace this field and turn it into a boolean. Our logic assumes that if we have a book code, it means this book is available in our store.
 Eventually, we want to completely replace `code` with `isAvailable`; as you can see, this requires implementing custom logic.
 
-```yaml
+```yaml filename=".meshrc.yaml"
 transforms:
   - replace-field:
       typeDefs: |
@@ -237,10 +237,10 @@ transforms:
           to:
             type: NewBook
             field: isAvailable
-          composer: ./customComposers.js#isAvailable
+          composer: ./customComposers.ts#isAvailable
 ```
 
-```js filename="customResolvers.js"
+```ts filename="customResolvers.ts"
 module.exports = {
   isAvailable: next => async (root, args, context, info) => {
     // 'next' is the field resolve function
@@ -260,7 +260,7 @@ Replace-field transform allows you to do that directly as part of the replacemen
 
 Let's wrap this up by adding a finishing touch to our schema:
 
-```yaml
+```yaml filename=".meshrc.yaml"
 transforms:
   - replace-field:
       typeDefs: |

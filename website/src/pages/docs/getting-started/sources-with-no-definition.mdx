@@ -194,7 +194,7 @@ The same parameter exists for request: `requestTypeName` (see "_Mutations_").
 
 We saw that `operations[].path` can take arguments using syntax similar to string interpolation [`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source-no-source-definition/.meshrc.yaml):
 
-```yaml
+```yaml filename=".meshrc.yaml"
 sources:
   - name: Books
     handler:
@@ -418,7 +418,7 @@ type AddBookOutputDuplicate {
 
 Note that you can also leverage the `responseByStatusCode` parameter to provide a schema per HTTP Status Code, as follows:
 
-```yaml
+```yaml filename=".meshrc.yaml"
 operations:
   # …
   responseByStatusCode:

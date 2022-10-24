@@ -1,6 +1,6 @@
 Run this docker container;
 
-```bash
+```sh
 docker run -d \
   --name mysql-employees \
   -p 33306:3306 \
