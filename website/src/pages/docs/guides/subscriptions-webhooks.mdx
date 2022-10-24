@@ -10,7 +10,7 @@ You can use `additionalTypeDefs` and `resolveTo` directive to add subscription r
 
 If you subscribe a pubSub topic with `webhook:EXPECTED_METHOD:EXPECTED_PATH`, the server will automatically bind that path to that topic.
 
-``` filename=".meshrc.yaml"
+```yaml filename=".meshrc.yaml"
 additionalTypeDefs: |
   # If you don't have Subscription type defined anywhere
   # You have to extend subscription definition

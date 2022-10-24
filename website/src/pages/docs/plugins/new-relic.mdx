@@ -16,7 +16,7 @@ You can instrument your GraphQL application with New Relic reporting in order to
 Some additional configuration is needed to allow Mesh send the collected information correctly to NewRelic.
 
 You can add the following to your `.env` file;
-```env filename=".env"
+``` filename=".env"
 NEW_RELIC_FEATURE_FLAG_UNDICI_INSTRUMENTATION=true
 NEW_RELIC_FEATURE_FLAG_UNDICI_ASYNC_TRACKING=true
 NEW_RELIC_FEATURE_FLAG_NEW_PROMISE_TRACKING=true
