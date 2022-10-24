@@ -249,6 +249,15 @@ export interface GraphQLHandlerHTTPConfiguration {
    * Enable/Disable automatic query batching
    */
   batch?: boolean;
+  /**
+   * JSON object representing the `connectionParams` from a WebSocket connection to add to the runtime of the API calls only for operation during runtime.
+   * More information about the WebSocket `connectionParams`:
+   *   - When using `subscriptionsProtocol=WS` (graphql-ws): https://github.com/enisdenjo/graphql-ws/blob/master/docs/interfaces/client.ClientOptions.md#connectionparams
+   *   - When using `subscriptionsProtocol=LEGACY_WS` (subscriptions-transport-ws): https://github.com/apollographql/subscriptions-transport-ws/blob/51270cc7dbaf09c7b9aa67368f1de58148c7d334/README.md#subscriptionclient
+   */
+  connectionParams?: {
+    [k: string]: any;
+  };
 }
 export interface GraphQLHandlerCodeFirstConfiguration {
   /**

@@ -53,7 +53,18 @@ sources:
         # You can provide your SDL or introspection seperately
         source: https://docs.github.com/public/schema.docs.graphql
         operationHeaders:
-          Authorization: Bearer {env.GITHUB_TOKEN}
+          # Please do not use capital letters while getting the headers
+          # Use "{context.headers['x-my-api-token']}" if you want just the value of the header
+          Authorization: Bearer {context.headers['x-my-api-token']}
+          # You can also access to the cookies like below;
+          # Authorization: Bearer {context.cookies.myApiToken}
+        connectionParams:
+          # Use the token from the HTTP header and pass it down to the WebSocket connection params
+          token: Bearer {context.headers['x-my-api-token']}
+          # You can also alter the existing incoming WebSocket connection params
+          # token: Bearer {context.connectionParams.token}
+          # Or use a static value from environment variables
+          # token: Bearer {env.MY_API_TOKEN}
 ```
 
 > In this case, CLI's `build` command won't save the introspection in the artifacts, so your Mesh

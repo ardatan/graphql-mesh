@@ -170,17 +170,19 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   const initialPluginList: MeshPlugin<any>[] = [
     // TODO: Not a good practise to expect users to be a Yoga user
     useExtendContext(
-      ({ request, req }: { request: Request; req?: { headers?: Record<string, string> } }) => {
+      ({ request, req, connectionParams }: { request: Request; req?: { headers?: Record<string, string> }; connectionParams?: Record<string, string> }) => {
         // Maybe Node-like environment
         if (req?.headers) {
           return {
             headers: getHeadersObj(req.headers),
+            connectionParams,
           };
         }
         // Fetch environment
         if (request?.headers) {
           return {
             headers: getHeadersObj(request.headers),
+            connectionParams,
           };
         }
         return {};
