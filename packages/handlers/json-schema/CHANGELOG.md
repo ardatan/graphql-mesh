@@ -562,7 +562,7 @@
 
   Now you can generate headers dynamically from the resolver data dynamically like below;
 
-  ```yml
+  ```yaml
   operationHeaders: ./myOperationHeaders.ts
   ```
 
@@ -608,7 +608,7 @@
 
 - c88a34d82: Now you can configure JSON Schema handler how to stringify query parameters;
 
-  ```yml
+  ```yaml
   queryStringOptions:
     indices: false
     arrayFormat: brackets

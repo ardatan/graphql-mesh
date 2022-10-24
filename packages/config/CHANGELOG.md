@@ -78,7 +78,7 @@
 
   For example `@graphql-yoga/plugin-apollo-inline-trace` can be used like below;
 
-  ```yml
+  ```yaml
   plugins:
     - apolloInlineTrace: {}
   ```

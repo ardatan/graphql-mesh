@@ -434,7 +434,7 @@
 
 - c88a34d82: Now you can configure JSON Schema handler how to stringify query parameters;
 
-  ```yml
+  ```yaml
   queryStringOptions:
     indices: false
     arrayFormat: brackets
