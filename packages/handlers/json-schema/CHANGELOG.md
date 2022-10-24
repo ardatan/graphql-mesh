@@ -568,7 +568,7 @@
 
   And in `myOperationHeaders.ts`
 
-  ```ts
+  ```ts filename="myOperationHeaders.ts"
   export default function myOperationHeaders({ context }: ResolverData) {
     const someToken = context.request.headers.get('some-token')
     const anotherToken = await someLogicThatReturnsAnotherToken(someToken)
