@@ -14,7 +14,7 @@ import {
   FiUserCheck,
 } from 'react-icons/fi';
 
-import GraphQLLogo from '../../public/assets/GraphQL_Logo.svg';
+import GraphQLLogo from '../../public/assets/graphql-logo.svg';
 import MeshExampleLogo from '../../public/assets/mesh-example.png';
 import OpenSourceLogo from '../../public/assets/open-source.svg';
 
