@@ -1,7 +1,7 @@
 import { Plugin } from '@envelop/core';
 import { getInterpolatedStringFactory, ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import { Logger, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
-import { getOperationAST, TypeInfo, visit, visitWithTypeInfo } from 'graphql';
+import { getArgumentValues, getOperationAST, TypeInfo, visit, visitWithTypeInfo } from 'graphql';
 
 interface InvalidateByResultParams {
   pubsub: MeshPubSub;
@@ -22,7 +22,7 @@ export function useInvalidateByResult(params: InvalidateByResultParams): Plugin 
     onExecute() {
       return {
         onExecuteDone({ args: executionArgs, result }) {
-          const { schema, document, operationName, rootValue, contextValue } = executionArgs;
+          const { schema, document, operationName, variableValues, rootValue, contextValue } = executionArgs;
           const operationAST = getOperationAST(document, operationName);
           if (!operationAST) {
             throw new Error(`Operation couldn't be found`);
@@ -31,15 +31,17 @@ export function useInvalidateByResult(params: InvalidateByResultParams): Plugin 
           visit(
             operationAST,
             visitWithTypeInfo(typeInfo, {
-              Field: () => {
+              Field: fieldNode => {
                 const parentType = typeInfo.getParentType();
                 const fieldDef = typeInfo.getFieldDef();
                 const path = `${parentType.name}.${fieldDef.name}`;
                 if (liveQueryInvalidationFactoryMap.has(path)) {
                   const invalidationPathFactories = liveQueryInvalidationFactoryMap.get(path);
+                  const args = getArgumentValues(fieldDef, fieldNode, variableValues);
                   const invalidationPaths = invalidationPathFactories.map(invalidationPathFactory =>
                     invalidationPathFactory({
                       root: rootValue,
+                      args,
                       context: contextValue,
                       env: process.env,
                       result,
