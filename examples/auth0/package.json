@@ -1,6 +1,6 @@
 {
   "name": "auth0-example",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -10,9 +10,9 @@
     "test": "jest"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.78.39",
-    "@graphql-mesh/json-schema": "0.35.27",
-    "@graphql-mesh/plugin-operation-field-permissions": "0.0.14",
+    "@graphql-mesh/cli": "0.78.40",
+    "@graphql-mesh/json-schema": "0.35.28",
+    "@graphql-mesh/plugin-operation-field-permissions": "0.0.15",
     "@envelop/auth0": "4.0.2",
     "graphql": "16.6.0"
   },

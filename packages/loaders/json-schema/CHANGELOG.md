@@ -1,5 +1,18 @@
 # @omnigraph/json-schema
 
+## 0.36.1
+
+### Patch Changes
+
+- [#4728](https://github.com/Urigo/graphql-mesh/pull/4728) [`c72d904dc`](https://github.com/Urigo/graphql-mesh/commit/c72d904dc11adfd3b6ee1695b1aaeae6ab64e1e9) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`@whatwg-node/fetch@^0.5.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.5.0) (from `^0.4.6`, in `dependencies`)
+  - Updated dependency [`graphql-scalars@1.20.0` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.20.0) (from `1.19.0`, in `dependencies`)
+- Updated dependencies [[`5c87cfc60`](https://github.com/Urigo/graphql-mesh/commit/5c87cfc60501213e8701482b093490ec1a5fce23), [`09c286994`](https://github.com/Urigo/graphql-mesh/commit/09c28699441cda92f79e4e9b8464e7be5f46a786), [`c72d904dc`](https://github.com/Urigo/graphql-mesh/commit/c72d904dc11adfd3b6ee1695b1aaeae6ab64e1e9)]:
+  - @graphql-mesh/string-interpolation@0.3.3
+  - @graphql-mesh/types@0.85.2
+  - json-machete@0.15.11
+  - @graphql-mesh/utils@0.42.1
+
 ## 0.36.0
 
 ### Minor Changes

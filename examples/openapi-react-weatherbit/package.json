@@ -8,7 +8,7 @@
     "react-dom": "18.2.0"
   },
   "devDependencies": {
-    "@graphql-mesh/cli": "0.78.39",
+    "@graphql-mesh/cli": "0.78.40",
     "@types/react": "18.0.22",
     "@types/react-dom": "18.0.7",
     "@vitejs/plugin-react": "2.1.0",

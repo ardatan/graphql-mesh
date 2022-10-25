@@ -1,5 +1,14 @@
 # @graphql-mesh/cache-redis
 
+## 0.10.39
+
+### Patch Changes
+
+- Updated dependencies [[`5c87cfc60`](https://github.com/Urigo/graphql-mesh/commit/5c87cfc60501213e8701482b093490ec1a5fce23), [`09c286994`](https://github.com/Urigo/graphql-mesh/commit/09c28699441cda92f79e4e9b8464e7be5f46a786)]:
+  - @graphql-mesh/string-interpolation@0.3.3
+  - @graphql-mesh/types@0.85.2
+  - @graphql-mesh/utils@0.42.1
+
 ## 0.10.38
 
 ### Patch Changes

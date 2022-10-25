@@ -1,5 +1,14 @@
 # @graphql-mesh/types
 
+## 0.85.2
+
+### Patch Changes
+
+- [`09c286994`](https://github.com/Urigo/graphql-mesh/commit/09c28699441cda92f79e4e9b8464e7be5f46a786) Thanks [@ardatan](https://github.com/ardatan)! - Fix on handling envelop plugins
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.8.57
+
 ## 0.85.1
 
 ### Patch Changes

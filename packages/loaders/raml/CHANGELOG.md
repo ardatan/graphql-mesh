@@ -1,5 +1,17 @@
 # @omnigraph/raml
 
+## 0.7.34
+
+### Patch Changes
+
+- [#4728](https://github.com/Urigo/graphql-mesh/pull/4728) [`c72d904dc`](https://github.com/Urigo/graphql-mesh/commit/c72d904dc11adfd3b6ee1695b1aaeae6ab64e1e9) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`@whatwg-node/fetch@^0.5.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.5.0) (from `^0.4.6`, in `dependencies`)
+- Updated dependencies [[`5c87cfc60`](https://github.com/Urigo/graphql-mesh/commit/5c87cfc60501213e8701482b093490ec1a5fce23), [`c72d904dc`](https://github.com/Urigo/graphql-mesh/commit/c72d904dc11adfd3b6ee1695b1aaeae6ab64e1e9), [`c72d904dc`](https://github.com/Urigo/graphql-mesh/commit/c72d904dc11adfd3b6ee1695b1aaeae6ab64e1e9)]:
+  - @graphql-mesh/string-interpolation@0.3.3
+  - @omnigraph/json-schema@0.36.1
+  - json-machete@0.15.11
+  - @graphql-mesh/utils@0.42.1
+
 ## 0.7.33
 
 ### Patch Changes

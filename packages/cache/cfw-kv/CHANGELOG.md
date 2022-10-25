@@ -1,5 +1,15 @@
 # @graphql-mesh/cache-cfw-kv
 
+## 0.0.41
+
+### Patch Changes
+
+- [`09c286994`](https://github.com/Urigo/graphql-mesh/commit/09c28699441cda92f79e4e9b8464e7be5f46a786) Thanks [@ardatan](https://github.com/ardatan)! - Fix on handling envelop plugins
+
+- Updated dependencies [[`09c286994`](https://github.com/Urigo/graphql-mesh/commit/09c28699441cda92f79e4e9b8464e7be5f46a786)]:
+  - @graphql-mesh/types@0.85.2
+  - @graphql-mesh/utils@0.42.1
+
 ## 0.0.40
 
 ### Patch Changes
