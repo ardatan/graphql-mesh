@@ -13,8 +13,8 @@
     "graphql": "16.6.0"
   },
   "devDependencies": {
-    "jest": "29.2.1",
-    "concurrently": "7.4.0",
+    "jest": "29.2.2",
+    "concurrently": "7.5.0",
     "ts-node": "10.9.1"
   }
 }

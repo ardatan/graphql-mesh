@@ -14,9 +14,9 @@
     "graphql": "16.6.0",
     "body-parser": "1.20.1",
     "express": "4.18.2",
-    "@whatwg-node/fetch": "0.4.7"
+    "@whatwg-node/fetch": "0.5.0"
   },
   "devDependencies": {
-    "concurrently": "7.4.0"
+    "concurrently": "7.5.0"
   }
 }
