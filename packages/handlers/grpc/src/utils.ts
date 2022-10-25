@@ -99,7 +99,8 @@ export function addMetaDataToCall(
       });
       resolve(responseStreamWithCancel);
       if (isBlob(input)) {
-        input.stream().pipe(call);
+        const blobStream = input.stream();
+        (blobStream as any).pipe(call);
       }
     }
   });
