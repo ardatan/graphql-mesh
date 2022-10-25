@@ -99,7 +99,6 @@ export async function getInContextSDK(
               key,
               argsFromKeys,
               valuesFromResults = identical,
-              selectionSet,
             }: any) => {
               if (key) {
                 let identifier = context;
