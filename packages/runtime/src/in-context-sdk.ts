@@ -22,6 +22,7 @@ import {
   SelectionSetNode,
   OperationDefinitionNode,
   DocumentNode,
+  defaultFieldResolver,
 } from 'graphql';
 import { MESH_API_CONTEXT_SYMBOL } from './constants';
 
@@ -29,7 +30,8 @@ export async function getInContextSDK(
   unifiedSchema: GraphQLSchema,
   rawSources: RawSourceOutput[],
   logger: Logger,
-  onDelegateHooks: OnDelegateHook<any>[]
+  onDelegateHooks: OnDelegateHook<any>[],
+  isBare = false
 ) {
   const inContextSDK: Record<string, any> = {};
   const sourceMap = unifiedSchema.extensions.sourceMap as Map<RawSourceOutput, GraphQLSchema>;
@@ -70,172 +72,177 @@ export async function getInContextSDK(
         for (const fieldName in rootTypeFieldMap) {
           const rootTypeField = rootTypeFieldMap[fieldName];
           const inContextSdkLogger = rawSourceLogger.child(`InContextSDK.${rootType.name}.${fieldName}`);
-          const namedReturnType = getNamedType(rootTypeField.type);
-          const shouldHaveSelectionSet = !isLeafType(namedReturnType);
-          rawSourceContext[rootType.name][fieldName] = async ({
-            root,
-            args,
-            context,
-            info = {
-              fieldName,
-              fieldNodes: [],
-              returnType: namedReturnType,
-              parentType: rootType,
-              path: {
-                typename: rootType.name,
-                key: fieldName,
-                prev: undefined,
-              },
-              schema: transformedSchema,
-              fragments: {},
-              rootValue: root,
-              operation: {
-                kind: Kind.OPERATION_DEFINITION,
-                operation: operationType as OperationTypeNode,
-                selectionSet: {
-                  kind: Kind.SELECTION_SET,
-                  selections: [],
-                },
-              },
-              variableValues: {},
-            },
-            selectionSet,
-            key,
-            argsFromKeys,
-            valuesFromResults,
-          }: {
-            root: any;
-            args: any;
-            context: any;
-            info: GraphQLResolveInfo;
-            selectionSet: SelectionSetParamOrFactory;
-            key?: string;
-            argsFromKeys?: (keys: string[]) => any;
-            valuesFromResults?: (result: any, keys?: string[]) => any;
-          }) => {
-            inContextSdkLogger.debug(`Called with`, {
+          if (isBare) {
+            rawSourceContext[rootType.name][fieldName] = ({ root, args, context, info }: any) =>
+              (rootTypeField.resolve || defaultFieldResolver)(root, args, context, info);
+          } else {
+            const namedReturnType = getNamedType(rootTypeField.type);
+            const shouldHaveSelectionSet = !isLeafType(namedReturnType);
+            rawSourceContext[rootType.name][fieldName] = async ({
+              root,
               args,
-              key,
-            });
-            const commonDelegateOptions: IDelegateToSchemaOptions = {
-              schema: rawSourceSubSchemaConfig,
-              rootValue: root,
-              operation: operationType as OperationTypeNode,
-              fieldName,
               context,
-              transformedSchema,
-              info,
-            };
-            // If there isn't an extraction of a value
-            if (typeof selectionSet !== 'function') {
-              commonDelegateOptions.returnType = rootTypeField.type;
-            }
-            if (shouldHaveSelectionSet) {
-              let selectionCount = 0;
-              for (const fieldNode of info.fieldNodes) {
-                if (fieldNode.selectionSet != null) {
-                  selectionCount += fieldNode.selectionSet.selections.length;
-                }
-              }
-              if (selectionCount === 0) {
-                if (!selectionSet) {
-                  throw new Error(
-                    `You have to provide 'selectionSet' for context.${rawSource.name}.${rootType.name}.${fieldName}`
-                  );
-                }
-                commonDelegateOptions.info = {
-                  ...info,
-                  fieldNodes: [
-                    {
-                      ...info.fieldNodes[0],
-                      selectionSet: {
-                        kind: Kind.SELECTION_SET,
-                        selections: [
-                          {
-                            kind: Kind.FIELD,
-                            name: {
-                              kind: Kind.NAME,
-                              value: '__typename',
-                            },
-                          },
-                        ],
-                      },
-                    },
-                    ...info.fieldNodes.slice(1),
-                  ],
-                };
-              }
-            }
-            if (key && argsFromKeys) {
-              const batchDelegationOptions = {
-                ...commonDelegateOptions,
-                key,
-                argsFromKeys,
-                valuesFromResults,
-              } as unknown as BatchDelegateOptions;
-              if (selectionSet) {
-                const selectionSetFactory = normalizeSelectionSetParamOrFactory(selectionSet);
-                const path = [fieldName];
-                const wrapQueryTransform = new WrapQuery(path, selectionSetFactory, identical);
-                batchDelegationOptions.transforms = [wrapQueryTransform as any];
-              }
-              const onDelegateHookDones: OnDelegateHookDone[] = [];
-              for (const onDelegateHook of onDelegateHooks) {
-                const onDelegateDone = await onDelegateHook({
-                  ...batchDelegationOptions,
-                  sourceName: rawSource.name,
-                  typeName: rootType.name,
-                  fieldName,
-                });
-                if (onDelegateDone) {
-                  onDelegateHookDones.push(onDelegateDone);
-                }
-              }
-              let result = await batchDelegateToSchema(batchDelegationOptions);
-              for (const onDelegateHookDone of onDelegateHookDones) {
-                await onDelegateHookDone({
-                  result,
-                  setResult(newResult) {
-                    result = newResult;
+              info = {
+                fieldName,
+                fieldNodes: [],
+                returnType: namedReturnType,
+                parentType: rootType,
+                path: {
+                  typename: rootType.name,
+                  key: fieldName,
+                  prev: undefined,
+                },
+                schema: transformedSchema,
+                fragments: {},
+                rootValue: root,
+                operation: {
+                  kind: Kind.OPERATION_DEFINITION,
+                  operation: operationType as OperationTypeNode,
+                  selectionSet: {
+                    kind: Kind.SELECTION_SET,
+                    selections: [],
                   },
-                });
-              }
-              return result;
-            } else {
-              const regularDelegateOptions: IDelegateToSchemaOptions = {
-                ...commonDelegateOptions,
+                },
+                variableValues: {},
+              },
+              selectionSet,
+              key,
+              argsFromKeys,
+              valuesFromResults,
+            }: {
+              root: any;
+              args: any;
+              context: any;
+              info: GraphQLResolveInfo;
+              selectionSet: SelectionSetParamOrFactory;
+              key?: string;
+              argsFromKeys?: (keys: string[]) => any;
+              valuesFromResults?: (result: any, keys?: string[]) => any;
+            }) => {
+              inContextSdkLogger.debug(`Called with`, {
                 args,
+                key,
+              });
+              const commonDelegateOptions: IDelegateToSchemaOptions = {
+                schema: rawSourceSubSchemaConfig,
+                rootValue: root,
+                operation: operationType as OperationTypeNode,
+                fieldName,
+                context,
+                transformedSchema,
+                info,
               };
-              if (selectionSet) {
-                const selectionSetFactory = normalizeSelectionSetParamOrFactory(selectionSet);
-                const path = [fieldName];
-                const wrapQueryTransform = new WrapQuery(path, selectionSetFactory, valuesFromResults || identical);
-                regularDelegateOptions.transforms = [wrapQueryTransform as any];
+              // If there isn't an extraction of a value
+              if (typeof selectionSet !== 'function') {
+                commonDelegateOptions.returnType = rootTypeField.type;
               }
-              const onDelegateHookDones: OnDelegateHookDone[] = [];
-              for (const onDelegateHook of onDelegateHooks) {
-                const onDelegateDone = await onDelegateHook({
-                  ...regularDelegateOptions,
-                  sourceName: rawSource.name,
-                  typeName: rootType.name,
-                  fieldName,
-                });
-                if (onDelegateDone) {
-                  onDelegateHookDones.push(onDelegateDone);
+              if (shouldHaveSelectionSet) {
+                let selectionCount = 0;
+                for (const fieldNode of info.fieldNodes) {
+                  if (fieldNode.selectionSet != null) {
+                    selectionCount += fieldNode.selectionSet.selections.length;
+                  }
+                }
+                if (selectionCount === 0) {
+                  if (!selectionSet) {
+                    throw new Error(
+                      `You have to provide 'selectionSet' for context.${rawSource.name}.${rootType.name}.${fieldName}`
+                    );
+                  }
+                  commonDelegateOptions.info = {
+                    ...info,
+                    fieldNodes: [
+                      {
+                        ...info.fieldNodes[0],
+                        selectionSet: {
+                          kind: Kind.SELECTION_SET,
+                          selections: [
+                            {
+                              kind: Kind.FIELD,
+                              name: {
+                                kind: Kind.NAME,
+                                value: '__typename',
+                              },
+                            },
+                          ],
+                        },
+                      },
+                      ...info.fieldNodes.slice(1),
+                    ],
+                  };
                 }
               }
-              let result = await delegateToSchema(regularDelegateOptions);
-              for (const onDelegateHookDone of onDelegateHookDones) {
-                await onDelegateHookDone({
-                  result,
-                  setResult(newResult) {
-                    result = newResult;
-                  },
-                });
+              if (key && argsFromKeys) {
+                const batchDelegationOptions = {
+                  ...commonDelegateOptions,
+                  key,
+                  argsFromKeys,
+                  valuesFromResults,
+                } as unknown as BatchDelegateOptions;
+                if (selectionSet) {
+                  const selectionSetFactory = normalizeSelectionSetParamOrFactory(selectionSet);
+                  const path = [fieldName];
+                  const wrapQueryTransform = new WrapQuery(path, selectionSetFactory, identical);
+                  batchDelegationOptions.transforms = [wrapQueryTransform as any];
+                }
+                const onDelegateHookDones: OnDelegateHookDone[] = [];
+                for (const onDelegateHook of onDelegateHooks) {
+                  const onDelegateDone = await onDelegateHook({
+                    ...batchDelegationOptions,
+                    sourceName: rawSource.name,
+                    typeName: rootType.name,
+                    fieldName,
+                  });
+                  if (onDelegateDone) {
+                    onDelegateHookDones.push(onDelegateDone);
+                  }
+                }
+                let result = await batchDelegateToSchema(batchDelegationOptions);
+                for (const onDelegateHookDone of onDelegateHookDones) {
+                  await onDelegateHookDone({
+                    result,
+                    setResult(newResult) {
+                      result = newResult;
+                    },
+                  });
+                }
+                return result;
+              } else {
+                const regularDelegateOptions: IDelegateToSchemaOptions = {
+                  ...commonDelegateOptions,
+                  args,
+                };
+                if (selectionSet) {
+                  const selectionSetFactory = normalizeSelectionSetParamOrFactory(selectionSet);
+                  const path = [fieldName];
+                  const wrapQueryTransform = new WrapQuery(path, selectionSetFactory, valuesFromResults || identical);
+                  regularDelegateOptions.transforms = [wrapQueryTransform as any];
+                }
+                const onDelegateHookDones: OnDelegateHookDone[] = [];
+                for (const onDelegateHook of onDelegateHooks) {
+                  const onDelegateDone = await onDelegateHook({
+                    ...regularDelegateOptions,
+                    sourceName: rawSource.name,
+                    typeName: rootType.name,
+                    fieldName,
+                  });
+                  if (onDelegateDone) {
+                    onDelegateHookDones.push(onDelegateDone);
+                  }
+                }
+                let result = await delegateToSchema(regularDelegateOptions);
+                for (const onDelegateHookDone of onDelegateHookDones) {
+                  await onDelegateHookDone({
+                    result,
+                    setResult(newResult) {
+                      result = newResult;
+                    },
+                  });
+                }
+                return result;
               }
-              return result;
-            }
-          };
+            };
+          }
         }
       }
     }

@@ -285,7 +285,13 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
             onDelegateHooks.push(plugin.onDelegate);
           }
         }
-        inContextSDK$ = getInContextSDK(subschema.transformedSchema, rawSources, logger, onDelegateHooks);
+        inContextSDK$ = getInContextSDK(
+          subschema.transformedSchema,
+          rawSources,
+          logger,
+          onDelegateHooks,
+          merger.name === 'bare'
+        );
       }
       return inContextSDK$;
     }),
