@@ -9,7 +9,7 @@ import {
 import { parseWithCache } from '@graphql-mesh/utils';
 import { BatchDelegateOptions, batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import { SubschemaConfig, StitchingInfo, IDelegateToSchemaOptions, delegateToSchema } from '@graphql-tools/delegate';
-import { isDocumentNode, memoize1 } from '@graphql-tools/utils';
+import { isDocumentNode, memoize1, memoize2of4 } from '@graphql-tools/utils';
 import { WrapQuery } from '@graphql-tools/wrap';
 import {
   GraphQLSchema,
@@ -24,6 +24,7 @@ import {
   DocumentNode,
   defaultFieldResolver,
 } from 'graphql';
+import DataLoader from 'dataloader';
 import { MESH_API_CONTEXT_SYMBOL } from './constants';
 
 export async function getInContextSDK(
@@ -73,8 +74,45 @@ export async function getInContextSDK(
           const rootTypeField = rootTypeFieldMap[fieldName];
           const inContextSdkLogger = rawSourceLogger.child(`InContextSDK.${rootType.name}.${fieldName}`);
           if (isBare) {
-            rawSourceContext[rootType.name][fieldName] = ({ root, args, context, info }: any) =>
-              (rootTypeField.resolve || defaultFieldResolver)(root, args, context, info);
+            const getLoader = memoize2of4(
+              (_identifier: any, context: any, argsFromKeys: any, valuesFromResults: any) => {
+                return new DataLoader(
+                  async (keys: any[]) => {
+                    const args = argsFromKeys(keys);
+                    const resolver = rootTypeField.resolve || defaultFieldResolver;
+                    const result = await resolver({}, args, context, {
+                      schema: transformedSchema,
+                    } as any);
+                    return valuesFromResults(result);
+                  },
+                  {
+                    cacheKeyFn: key => JSON.stringify(key),
+                  }
+                );
+              }
+            );
+            rawSourceContext[rootType.name][fieldName] = async ({
+              root,
+              args,
+              context,
+              info,
+              key,
+              argsFromKeys,
+              valuesFromResults = identical,
+              selectionSet,
+            }: any) => {
+              if (key) {
+                let identifier = context;
+                if (info) {
+                  identifier = info.parentType.getFields()[info.fieldName];
+                }
+                return getLoader(identifier || context, context, argsFromKeys, valuesFromResults).load(key);
+              }
+              const resolver = rootTypeField.resolve || defaultFieldResolver;
+
+              const result = await resolver(root, args, context, info);
+              return valuesFromResults(result);
+            };
           } else {
             const namedReturnType = getNamedType(rootTypeField.type);
             const shouldHaveSelectionSet = !isLeafType(namedReturnType);
