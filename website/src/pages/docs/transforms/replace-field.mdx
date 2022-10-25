@@ -123,7 +123,7 @@ to:
   field: books
 ```
 
-To summarise, with the configuration above, we want the field `books` in type `Query` to be replaced from being of type `BooksApiResponse` to become type `[Book]`.
+To summarize, with the configuration above, we want the field `books` in type `Query` to be replaced from being of type `BooksApiResponse` to become type `[Book]`.
 
 Finally, since we no longer reference `BooksApiResponse` this becomes a loose type. So the transform will purge it from the GraphQL schema.
 
@@ -134,7 +134,8 @@ The transform always replaces the type of the source field with the one of the t
 
 However, the transform also allows you to pass a scope property, which values can be `config` or `hoistValue`.
 
-We could say that the scope property could also take a `type` value. Still, since it's the minimum requirement to replace the Type, this is considered the default scope and so it wouldn't make sense to pass it when you desire just this behaviour.
+We could say that the scope property could also take a `type` value.
+Still, since it's the minimum requirement to replace the Type, this is considered the default scope and so it wouldn't make sense to pass it when you desire just this behavior.
 
 ### `scope: config`
 

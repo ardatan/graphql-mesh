@@ -16,7 +16,7 @@ To get started with this transform, install it:
 <PackageCmd packages={['@graphql-mesh/transform-cache']} />
 
 <Callout>
-  GraphQL Mesh uses a default localforage cache (it is fallback to LRU cache in NodeJS), but you can replace it with any other key=>value cache mechanism. See [cache section](/docs/cache/localforage) for more info.
+  GraphQL Mesh uses a default localForage cache (it is fallback to LRU cache in NodeJS), but you can replace it with any other key=>value cache mechanism. See [cache section](/docs/cache/localforage) for more info.
   We'd recommend this transform be used on the root level, not the handler level. It might not work as expected if you use it on a handler level.
 
 </Callout>
@@ -136,7 +136,7 @@ const { schema, execute, cache } = getBuiltMesh()
 cache.delete(SOME_KEY)
 ```
 
-## Codesandbox Example
+## CodeSandBox Example
 
 You can check the ["Location Weather" example](https://github.com/Urigo/graphql-mesh/tree/master/examples/openapi-location-weather/) that uses OpenAPI handler with cache transform;
 
