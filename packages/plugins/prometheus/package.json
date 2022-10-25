@@ -27,10 +27,10 @@
   "peerDependencies": {
     "graphql": "*",
     "prom-client": "^13 || ^14.0.0",
-    "graphql-yoga": "3.0.0-next.6"
+    "graphql-yoga": "3.0.0-next.7"
   },
   "dependencies": {
-    "@graphql-yoga/plugin-prometheus": "1.0.0-next.0",
+    "@graphql-yoga/plugin-prometheus": "1.0.0-next.1",
     "@graphql-mesh/utils": "0.42.0",
     "@graphql-mesh/types": "0.85.1",
     "tslib": "^2.4.0"

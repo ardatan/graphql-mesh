@@ -14,7 +14,7 @@
     "start-services": "concurrently \"npm:start-service-*\""
   },
   "devDependencies": {
-    "concurrently": "7.4.0",
+    "concurrently": "7.5.0",
     "delay-cli": "2.0.0",
     "nodemon": "2.0.20"
   },

@@ -35,7 +35,7 @@
     "@graphql-mesh/string-interpolation": "0.3.2",
     "@grpc/grpc-js": "^1.1.7",
     "@grpc/proto-loader": "0.7.3",
-    "graphql-scalars": "1.19.0",
+    "graphql-scalars": "1.20.0",
     "graphql-compose": "9.0.9",
     "@ardatan/grpc-reflection-js": "0.0.2",
     "globby": "11.1.0",
