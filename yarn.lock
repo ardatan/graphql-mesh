@@ -2206,10 +2206,10 @@
     auto-bind "~4.0.0"
     tslib "~2.4.0"
 
-"@graphql-codegen/typescript@2.7.5", "@graphql-codegen/typescript@^2.7.5":
-  version "2.7.5"
-  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript/-/typescript-2.7.5.tgz#00da3b7dd51cce49d95531556988818568c5d87e"
-  integrity sha512-NZMViINr0KEH+DgtOE3BDWkdrisX7cz3/+m6M73Sa2cMM1udTTCpLbNqFIHRmGl1UyfwjdZB32YoF/fxshjV/Q==
+"@graphql-codegen/typescript@2.8.0", "@graphql-codegen/typescript@^2.7.5":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript/-/typescript-2.8.0.tgz#c4a20cd88f301bed094b53c982cf85bceda1b78c"
+  integrity sha512-atQ6NFfMmoknJi0QdVSozPugKcgeJB6t1/cVskbhVtX8tAEFFLjl6H23mpz3t35AH6aGWtvx2LCjUSxHI6P6xA==
   dependencies:
     "@graphql-codegen/plugin-helpers" "^2.6.2"
     "@graphql-codegen/schema-ast" "^2.5.1"
@@ -4248,10 +4248,10 @@
     lodash "^4.17.21"
     remove-markdown "0.5.0"
 
-"@theguild/components@4.2.6-alpha-20221019193235-ef8c09e":
-  version "4.2.6-alpha-20221019193235-ef8c09e"
-  resolved "https://registry.yarnpkg.com/@theguild/components/-/components-4.2.6-alpha-20221019193235-ef8c09e.tgz#7c2448969ce889817a210a39669ad214378d11dc"
-  integrity sha512-y+DmKPukQEi83gIq947Idh/YKYIRe+cA/4skhBCeNJdwpMRV3wmNj4DlyJ+A5LnAn46VDZUE+G5klFDKsc/wRA==
+"@theguild/components@4.2.6-alpha-20221022202912-a22df8e":
+  version "4.2.6-alpha-20221022202912-a22df8e"
+  resolved "https://registry.yarnpkg.com/@theguild/components/-/components-4.2.6-alpha-20221022202912-a22df8e.tgz#69c117cc75da97c2f3ca23926430cf9a61a77a5e"
+  integrity sha512-8MHPau6l3s+qC+z5UJlk43TMqpRJbiaXa0ksgP0B5jLryCwLdYEOOaTyba0lSXA1XpJp7Ibi1smuERUJy/NC2A==
   dependencies:
     "@algolia/autocomplete-js" "1.7.1"
     "@algolia/autocomplete-plugin-algolia-insights" "1.7.1"
@@ -4282,10 +4282,10 @@
   dependencies:
     prettier-plugin-sh "^0.12.8"
 
-"@theguild/tailwind-config@0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@theguild/tailwind-config/-/tailwind-config-0.1.3.tgz#fbd3b438c89a36f6bae35023c79dc129a6263d7c"
-  integrity sha512-kUkxM5NJeBczrC+go4pGD2sKlFSV7B2KuMjqP3LvyZOJYiDTCUargL9X7j4C0EsIhf3ktD6FLuEyk4u82viL2w==
+"@theguild/tailwind-config@0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@theguild/tailwind-config/-/tailwind-config-0.2.0.tgz#bd89d57fe520b9d139025ce809edfff3a14764ad"
+  integrity sha512-W6IO9nt5XMFf9vcT1pXhzd0g5hJ55Pknvoh3TSL29MoXjCBKYSxVbYGRbBRy78yZ8mrAvG9yTGiePAGUlW+7lw==
   dependencies:
     autoprefixer "^10.4.12"
     cssnano "^5.1.13"
