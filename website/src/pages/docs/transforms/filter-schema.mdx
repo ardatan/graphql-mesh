@@ -2,7 +2,12 @@ import { PackageCmd, Callout } from '@theguild/components'
 
 # Filter Schema Transform
 
-The `filterSchema` transform allows you to filter fields in specific types.
+The `filterSchema` transform allows you to specify which schema elements to include or exclude in your mesh.
+You can include or exclude entire queries and mutations, place restrictions on which types can appear in your calls or which fields can appear in specific types.
+
+For example, you might want to exclude deprecated queries, mutations, and types from your schema so that your integration is not affected when these entities are removed.
+
+## Installation
 
 <PackageCmd packages={['@graphql-mesh/transform-filter-schema']} />
 
@@ -32,6 +37,8 @@ transforms:
         - Query.*.{id, name} # <-- This will remove all args from all fields in Query type, except `id` and `name`
         - Query.*.!{id, name} # <-- This will remove args `id` and `name` from all fields in Query type
 ```
+
+## Example
 
 Let's assume you have the following schema:
 

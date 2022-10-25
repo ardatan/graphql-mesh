@@ -2,9 +2,13 @@ import { PackageCmd, Callout } from '@theguild/components'
 
 # Replace Field
 
-The `replace-field` transform allows you to replace configuration properties of a GraphQL field (source) with the ones of another field (target).
+The `replace-field` transforms allow you to replace the configuration properties of one field with another.
+This allows you to hoist field values from a subfield to its parent.
 
-This is extremely useful when hoisting field values from one subfield to its parent. Still, it can be customized to completely replace and/or compose resolve functions with a great degree of customization.
+Use this transform to clean up redundant looking queries or replace field types.
+It can be customized to completely replace and/or compose resolve functions with a great degree of customization.
+
+## Installation
 
 <PackageCmd packages={['@graphql-mesh/transform-replace-field']} />
 

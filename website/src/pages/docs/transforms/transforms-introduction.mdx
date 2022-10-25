@@ -4,7 +4,8 @@ import { Callout } from '@theguild/components'
 
 ## Introduction to Transforms
 
-GraphQL Mesh allows you to do schema transformations easily; you can use one of the built-in transforms or write your own.
+GraphQL Mesh allows you to modify the schema easily, in order to control the contents of your GraphQL requests and responses;
+you can use one of the built-in transforms or write your own.
 
 Each transformer can manipulate the schema the way it needs and return the modified schema.
 
@@ -314,11 +315,11 @@ If you have use cases for which you would require to introduce either "bare" or 
 | Extend                |  ✅  |  ❌  |        [docs](/docs/transforms/extend)         |
 | Federation            |  ❌  |  ✅  |      [docs](/docs/transforms/federation)       |
 | Filter Schema         |  ✅  |  ✅  |     [docs](/docs/transforms/filter-schema)     |
-hoist
+| hoist                 |      |      |        [docs](/docs/transforms/hoist)          |
 | Naming Convention     |  ✅  |  ✅  |   [docs](/docs/transforms/naming-convention)   |
 | Prefix                |  ✅  |  ✅  |        [docs](/docs/transforms/prefix)         |
-prune
+| prune                 |      |      |         [docs](/docs/transforms/prune)         |
 | Rename                |  ✅  |  ✅  |        [docs](/docs/transforms/rename)         |
 | Replace Field         |  ✅  |  ❌  |     [docs](/docs/transforms/replace-field)     |
 | Resolvers Composition |  ✅  |  ✅  | [docs](/docs/transforms/resolvers-composition) |
-type-merging
+| type-merging          |      |      |      [docs](/docs/transforms/type-merging)     |
