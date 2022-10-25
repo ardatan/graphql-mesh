@@ -4169,10 +4169,10 @@
     "@napi-rs/simple-git-win32-arm64-msvc" "0.1.8"
     "@napi-rs/simple-git-win32-x64-msvc" "0.1.8"
 
-"@neo4j/graphql@3.10.1":
-  version "3.10.1"
-  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-3.10.1.tgz#bfd098511db9aa5c2f650ca3de453a03d88bbe02"
-  integrity sha512-OlssU827MU28Hz3lpvQC/6xBBuW0b+b7AL59zDtIb8PNDdiVCoAZSXzTkYIcuVu5YDQyJr1HHkSiaNY/ZufnMA==
+"@neo4j/graphql@3.11.0":
+  version "3.11.0"
+  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-3.11.0.tgz#aaa3ee661559f4f77abe613a7a31327a9115223f"
+  integrity sha512-6kBqZ5u+IGE1dkHcVePlW5XHKLxlc5k/D9/0PMtt8Ar8vnZupM1lkRLpnEGsvcOqcZERDlo5XlpYOn1Yc3VhyA==
   dependencies:
     "@graphql-tools/merge" "^8.3.3"
     "@graphql-tools/resolvers-composition" "^6.5.3"
@@ -5552,10 +5552,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@18.0.22", "@types/react@>=16":
-  version "18.0.22"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.0.22.tgz#97782d995d999617de116cf61f437f1351036fc7"
-  integrity sha512-4yWc5PyCkZN8ke8K9rQHkTXxHIWHxLzzW6RI1kXVoepkD3vULpKzC2sDtAMKn78h92BRYuzf+7b/ms7ajE6hFw==
+"@types/react@*", "@types/react@18.0.23", "@types/react@>=16":
+  version "18.0.23"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.0.23.tgz#4190ecd58b99fa79fe2e67832bdcb287e5f893e4"
+  integrity sha512-R1wTULtCiJkudAN2DJGoYYySbGtOdzZyUWAACYinKdiQC8auxso4kLDUhQ7AJ2kh3F6A6z4v69U6tNY39hihVQ==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -15998,24 +15998,25 @@ pascal-case@3.1.2, pascal-case@^3.1.1, pascal-case@^3.1.2:
     no-case "^3.0.4"
     tslib "^2.0.3"
 
-patch-package@6.4.7:
-  version "6.4.7"
-  resolved "https://registry.yarnpkg.com/patch-package/-/patch-package-6.4.7.tgz#2282d53c397909a0d9ef92dae3fdeb558382b148"
-  integrity sha512-S0vh/ZEafZ17hbhgqdnpunKDfzHQibQizx9g8yEf5dcVk3KOflOfdufRXQX8CSEkyOQwuM/bNz1GwKvFj54kaQ==
+patch-package@6.5.0:
+  version "6.5.0"
+  resolved "https://registry.yarnpkg.com/patch-package/-/patch-package-6.5.0.tgz#feb058db56f0005da59cfa316488321de585e88a"
+  integrity sha512-tC3EqJmo74yKqfsMzELaFwxOAu6FH6t+FzFOsnWAuARm7/n2xB5AOeOueE221eM9gtMuIKMKpF9tBy/X2mNP0Q==
   dependencies:
     "@yarnpkg/lockfile" "^1.1.0"
-    chalk "^2.4.2"
+    chalk "^4.1.2"
     cross-spawn "^6.0.5"
     find-yarn-workspace-root "^2.0.0"
     fs-extra "^7.0.1"
     is-ci "^2.0.0"
     klaw-sync "^6.0.0"
-    minimist "^1.2.0"
+    minimist "^1.2.6"
     open "^7.4.2"
     rimraf "^2.6.3"
     semver "^5.6.0"
     slash "^2.0.0"
     tmp "^0.0.33"
+    yaml "^1.10.2"
 
 path-browserify@1.0.1:
   version "1.0.1"
