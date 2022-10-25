@@ -2646,6 +2646,14 @@
     "@envelop/types" "3.0.0"
     tslib "2.4.0"
 
+"@envelop/depth-limit@2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@envelop/depth-limit/-/depth-limit-2.0.2.tgz#ac8d517449a26acde1f6018e896f46dcd1ad4575"
+  integrity sha512-eesoBpInk4K4NqinDarcJ1mgFiZqT9xC7h+7bCWCs4ihB8t1McKSZODlauvCqQauUBptKD7FevpZfUX0WnJeng==
+  dependencies:
+    graphql-depth-limit "^1.1.0"
+    tslib "^2.4.0"
+
 "@envelop/extended-validation@2.0.2", "@envelop/extended-validation@^2.0.2":
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/@envelop/extended-validation/-/extended-validation-2.0.2.tgz#b34ef83d92cb07f37b44471901b8147ee57439dd"
@@ -11205,6 +11213,13 @@ graphql-compose@9.0.9, graphql-compose@^9.0.8:
   integrity sha512-kEXdwuBk7GKaThWY7eKDP+GLF9pGrGuMpYLu3O5w+lwDsgsfdiUCEC8jTsuPjm1qz9AxsspZHqc3jA4vKwyiNg==
   dependencies:
     graphql-type-json "0.3.2"
+
+graphql-depth-limit@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/graphql-depth-limit/-/graphql-depth-limit-1.1.0.tgz#59fe6b2acea0ab30ee7344f4c75df39cc18244e8"
+  integrity sha512-+3B2BaG8qQ8E18kzk9yiSdAa75i/hnnOwgSeAxVJctGQPvmeiLtqKOYF6HETCyRjiF7Xfsyal0HbLlxCQkgkrw==
+  dependencies:
+    arrify "^1.0.1"
 
 graphql-fields@2.0.3:
   version "2.0.3"

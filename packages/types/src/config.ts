@@ -403,7 +403,7 @@ export interface JsonSchemaHTTPOperation {
   responseTypeName?: string;
   /**
    * You can define your response schemas by status codes;
-   * ```yaml
+   * ```yaml filename=".meshrc.yaml"
    * responseByStatusCode:
    *   200:
    *     responseSchema: ./someschema.json#/somepath

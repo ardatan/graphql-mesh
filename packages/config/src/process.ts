@@ -306,7 +306,6 @@ export async function processConfig(
             }
             return pluginFactory(pluginConfig);
           }
-          let importName: string;
           const { resolved: possiblePluginFactory, moduleName } = await getPackage<any>({
             name: pluginName,
             type: 'plugin',
@@ -318,7 +317,7 @@ export async function processConfig(
           if (typeof possiblePluginFactory === 'function') {
             pluginFactory = possiblePluginFactory;
             if (options.generateCode) {
-              importName = pascalCase('use_' + pluginName);
+              const importName = pascalCase('use_' + pluginName);
               importCodes.add(`import ${importName} from ${JSON.stringify(moduleName)};`);
               codes.add(`additionalEnvelopPlugins[${pluginIndex}] = await ${importName}({
           ...(${JSON.stringify(pluginConfig, null, 2)}),
@@ -330,9 +329,10 @@ export async function processConfig(
         })`);
             }
           } else {
-            Object.keys(possiblePluginFactory).forEach(key => {
-              if (key.toString().startsWith('use') && typeof possiblePluginFactory[key] === 'function') {
-                pluginFactory = possiblePluginFactory[key];
+            Object.keys(possiblePluginFactory).forEach(importName => {
+              if (importName.toString().startsWith('use') && typeof possiblePluginFactory[importName] === 'function') {
+                pluginFactory = possiblePluginFactory[importName];
+                importName = importName.toString();
                 if (options.generateCode) {
                   importCodes.add(`import { ${importName} } from ${JSON.stringify(moduleName)};`);
                   codes.add(
@@ -340,7 +340,7 @@ export async function processConfig(
                       pluginConfig,
                       null,
                       2
-                    )}]`
+                    )});`
                   );
                 }
               }

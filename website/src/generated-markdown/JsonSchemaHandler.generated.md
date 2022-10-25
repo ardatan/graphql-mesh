@@ -22,7 +22,7 @@ the underlying HTTP request
     * `responseSample` (type: `Any`) - Did you use Sample? Provide the response sample path.
     * `responseTypeName` (type: `String`) - Inset any name for the type of the response body.
     * `responseByStatusCode` (type: `Any`) - You can define your response schemas by status codes;
-```yaml
+```yaml filename=".meshrc.yaml"
 responseByStatusCode:
   200:
     responseSchema: ./someschema.json#/somepath

@@ -1217,7 +1217,7 @@
               "additionalItems": true
             }
           ],
-          "description": "You can define your response schemas by status codes;\n```yaml\nresponseByStatusCode:\n  200:\n    responseSchema: ./someschema.json#/somepath\n  404:\n    responseSample: ./error-sample.json\n    responseTypeName: MyError\n```"
+          "description": "You can define your response schemas by status codes;\n```yaml filename=\".meshrc.yaml\"\nresponseByStatusCode:\n  200:\n    responseSchema: ./someschema.json#/somepath\n  404:\n    responseSample: ./error-sample.json\n    responseTypeName: MyError\n```"
         },
         "exposeResponseMetadata": {
           "type": "boolean",

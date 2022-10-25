@@ -8,6 +8,15 @@ sources:
         retry: 2
 
 plugins:
+  - rateLimit:
+      config:
+        - type: Query
+          field: '*'
+          max: 3
+          ttl: 10000
+          identifier: 'context.headers.host'
+  - depthLimit:
+      maxDepth: 5
   - responseCache:
       ttlPerCoordinate:
         - coordinate: Query.*
