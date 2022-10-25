@@ -54,6 +54,12 @@ const PARSE_XML_OPTIONS: Partial<X2jOptions> = {
   allowBooleanAttributes: true,
 };
 
+const QUERY_PREFIXES = ['get', 'find', 'list', 'search', 'count', 'exists', 'fetch', 'load', 'query', 'select'];
+
+function isQueryOperationName(operationName: string) {
+  return QUERY_PREFIXES.some(prefix => operationName.toLowerCase().startsWith(prefix));
+}
+
 export class SOAPLoader {
   private schemaComposer = new SchemaComposer();
   private namespaceDefinitionsMap = new Map<string, WSDLDefinition[]>();
@@ -341,7 +347,7 @@ export class SOAPLoader {
           const portTypeAliasMap = this.aliasMap.get(portTypeObj);
           for (const operationObj of portTypeObj.operation) {
             const operationName = operationObj.attributes.name;
-            const rootTC = operationName.toLowerCase().startsWith('get')
+            const rootTC = isQueryOperationName(operationName)
               ? this.schemaComposer.Query
               : this.schemaComposer.Mutation;
             const operationFieldName = sanitizeNameForGraphQL(
@@ -392,6 +398,7 @@ export class SOAPLoader {
                         typeNamespace: elementNamespace,
                       });
                     },
+                    defaultValue: '',
                   },
                 });
               } else if (part.attributes.name) {
@@ -411,6 +418,7 @@ export class SOAPLoader {
                       }
                       return inputTC;
                     },
+                    defaultValue: '',
                   },
                 });
               }
@@ -418,14 +426,9 @@ export class SOAPLoader {
           }
           for (const operationObj of bindingObj.operation) {
             const operationName = operationObj.attributes.name;
-            let operationType: 'Query' | 'Mutation' = 'Mutation';
-            if (operationName.toLowerCase().startsWith('get')) {
-              operationType = 'Query';
-            }
-            if (operationName.toLowerCase().startsWith('list')) {
-              operationType = 'Query';
-            }
-            const rootTC = this.schemaComposer[operationType];
+            const rootTC = isQueryOperationName(operationName)
+              ? this.schemaComposer.Query
+              : this.schemaComposer.Mutation;
             const operationFieldName = sanitizeNameForGraphQL(
               `${typePrefix}_${serviceName}_${portName}_${operationName}`
             );
@@ -446,18 +449,23 @@ export class SOAPLoader {
                 },
               };
               const requestXML = this.jsonToXMLConverter.parse(requestJson);
-              const response = await this.options.fetch(
-                portObj.address[0].attributes.location.replace('http:', 'https:'),
-                {
-                  method: 'POST',
-                  body: requestXML,
-                  headers: {
-                    'Content-Type': 'application/soap+xml; charset=utf-8',
+              const response = await this.options
+                .fetch(
+                  portObj.address[0].attributes.location,
+                  {
+                    method: 'POST',
+                    body: requestXML,
+                    headers: {
+                      'Content-Type': 'application/soap+xml; charset=utf-8',
+                    },
                   },
-                },
-                context,
-                info
-              );
+                  context,
+                  info
+                )
+                .catch(e => {
+                  console.log(e);
+                  throw e;
+                });
               const responseXML = await response.text();
               const responseJSON = parseXML(responseXML, PARSE_XML_OPTIONS);
               return normalizeResult(responseJSON.Envelope[0].Body[0][elementName]);

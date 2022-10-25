@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`SOAP Country Info should generate correct schema: soap-demo-schema 1`] = `
+exports[`SOAP Demo should generate correct schema: soap-demo-schema 1`] = `
 "schema {
   query: Query
   mutation: Mutation
@@ -25,16 +25,16 @@ scalar JSON
 type Mutation {
   s0_SOAPDemo_SOAPDemoSoap_AddInteger(AddInteger: s0_AddInteger_Input): s0_AddIntegerResponse
   s0_SOAPDemo_SOAPDemoSoap_DivideInteger(DivideInteger: s0_DivideInteger_Input): s0_DivideIntegerResponse
-  s0_SOAPDemo_SOAPDemoSoap_FindPerson(FindPerson: s0_FindPerson_Input): s0_FindPersonResponse
   s0_SOAPDemo_SOAPDemoSoap_LookupCity(LookupCity: s0_LookupCity_Input): s0_LookupCityResponse
-  s0_SOAPDemo_SOAPDemoSoap_Mission(Mission: JSON): s0_MissionResponse
-  s0_SOAPDemo_SOAPDemoSoap_QueryByName(QueryByName: s0_QueryByName_Input): s0_QueryByNameResponse
+  s0_SOAPDemo_SOAPDemoSoap_Mission(Mission: JSON = ""): s0_MissionResponse
 }
 
 type Query {
+  s0_SOAPDemo_SOAPDemoSoap_FindPerson(FindPerson: s0_FindPerson_Input): s0_FindPersonResponse
   s0_SOAPDemo_SOAPDemoSoap_GetByName(GetByName: s0_GetByName_Input): s0_GetByNameResponse
   s0_SOAPDemo_SOAPDemoSoap_GetDataSetByName(GetDataSetByName: s0_GetDataSetByName_Input): s0_GetDataSetByNameResponse
   s0_SOAPDemo_SOAPDemoSoap_GetListByName(GetListByName: s0_GetListByName_Input): s0_GetListByNameResponse
+  s0_SOAPDemo_SOAPDemoSoap_QueryByName(QueryByName: s0_QueryByName_Input): s0_QueryByNameResponse
 }
 
 type QueryByName_DataSet_QueryByName {
@@ -156,7 +156,7 @@ input s0_QueryByName_Input {
 }"
 `;
 
-exports[`SOAP Country Info should give correct response for example queries: AddInteger.graphql-soap-demo-result 1`] = `
+exports[`SOAP Demo should give correct response for example queries: AddInteger.graphql-soap-demo-result 1`] = `
 {
   "data": {
     "s0_SOAPDemo_SOAPDemoSoap_AddInteger": {
@@ -166,7 +166,7 @@ exports[`SOAP Country Info should give correct response for example queries: Add
 }
 `;
 
-exports[`SOAP Country Info should give correct response for example queries: DivideInteger.graphql-soap-demo-result 1`] = `
+exports[`SOAP Demo should give correct response for example queries: DivideInteger.graphql-soap-demo-result 1`] = `
 {
   "data": {
     "s0_SOAPDemo_SOAPDemoSoap_DivideInteger": {
@@ -176,7 +176,7 @@ exports[`SOAP Country Info should give correct response for example queries: Div
 }
 `;
 
-exports[`SOAP Country Info should give correct response for example queries: FindPerson.graphql-soap-demo-result 1`] = `
+exports[`SOAP Demo should give correct response for example queries: FindPerson.graphql-soap-demo-result 1`] = `
 {
   "data": {
     "s0_SOAPDemo_SOAPDemoSoap_FindPerson": {
@@ -208,7 +208,7 @@ exports[`SOAP Country Info should give correct response for example queries: Fin
 }
 `;
 
-exports[`SOAP Country Info should give correct response for example queries: GetListByName.graphql-soap-demo-result 1`] = `
+exports[`SOAP Demo should give correct response for example queries: GetListByName.graphql-soap-demo-result 1`] = `
 {
   "data": {
     "s0_SOAPDemo_SOAPDemoSoap_GetListByName": {
