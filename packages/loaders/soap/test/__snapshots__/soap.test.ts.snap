@@ -13,8 +13,8 @@ type Mutation {
   tns_TempConvert_TempConvertSoap_CelsiusToFahrenheit(CelsiusToFahrenheit: tns_CelsiusToFahrenheit_Input): tns_CelsiusToFahrenheitResponse
   tns_TempConvert_TempConvertSoap12_FahrenheitToCelsius(FahrenheitToCelsius: tns_FahrenheitToCelsius_Input): tns_FahrenheitToCelsiusResponse
   tns_TempConvert_TempConvertSoap12_CelsiusToFahrenheit(CelsiusToFahrenheit: tns_CelsiusToFahrenheit_Input): tns_CelsiusToFahrenheitResponse
-  tns_TempConvert_TempConvertHttpPost_FahrenheitToCelsius(Fahrenheit: String): String
-  tns_TempConvert_TempConvertHttpPost_CelsiusToFahrenheit(Celsius: String): String
+  tns_TempConvert_TempConvertHttpPost_FahrenheitToCelsius(Fahrenheit: String = ""): String
+  tns_TempConvert_TempConvertHttpPost_CelsiusToFahrenheit(Celsius: String = ""): String
 }
 
 type tns_FahrenheitToCelsiusResponse {

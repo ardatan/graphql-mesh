@@ -2,7 +2,7 @@
 
 exports[`Example 1 should generate the schema correctly 1`] = `
 "type Query {
-  TodoService_TodoService_BasicHttpBinding_ITodoService_GetTodos(GetTodos: JSON): TodoService_GetTodosResponse
+  TodoService_TodoService_BasicHttpBinding_ITodoService_GetTodos(GetTodos: JSON = ""): TodoService_GetTodosResponse
 }
 
 type TodoService_GetTodosResponse {
@@ -34,7 +34,7 @@ type Mutation {
   TodoService_TodoService_BasicHttpBinding_ITodoService_AddUpdateClass(AddUpdateClass: TodoService_AddUpdateClass_Input): TodoService_AddUpdateClassResponse
   TodoService_TodoService_BasicHttpBinding_ITodoService_AddTodo(AddTodo: TodoService_AddTodo_Input): TodoService_AddTodoResponse
   TodoService_TodoService_BasicHttpBinding_ITodoService_FaultAddTodo(FaultAddTodo: TodoService_FaultAddTodo_Input): TodoService_FaultAddTodoResponse
-  TodoService_TodoService_BasicHttpBinding_ITodoService_FailGetTodo(FailGetTodo: JSON): TodoService_FailGetTodoResponse
+  TodoService_TodoService_BasicHttpBinding_ITodoService_FailGetTodo(FailGetTodo: JSON = ""): TodoService_FailGetTodoResponse
 }
 
 input TodoService_UpdateFileClass_Input {
