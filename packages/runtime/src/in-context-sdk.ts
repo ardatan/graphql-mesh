@@ -75,14 +75,12 @@ export async function getInContextSDK(
           const inContextSdkLogger = rawSourceLogger.child(`InContextSDK.${rootType.name}.${fieldName}`);
           if (isBare) {
             const getLoader = memoize2of4(
-              (_identifier: any, context: any, argsFromKeys: any, valuesFromResults: any) => {
+              (_identifier: any, context: any, argsFromKeys: any, { info, valuesFromResults }: any) => {
                 return new DataLoader(
                   async (keys: any[]) => {
                     const args = argsFromKeys(keys);
                     const resolver = rootTypeField.resolve || defaultFieldResolver;
-                    const result = await resolver({}, args, context, {
-                      schema: transformedSchema,
-                    } as any);
+                    const result = await resolver({}, args, context, info);
                     return valuesFromResults(result);
                   },
                   {
@@ -91,21 +89,14 @@ export async function getInContextSDK(
                 );
               }
             );
-            rawSourceContext[rootType.name][fieldName] = async ({
-              root,
-              args,
-              context,
-              info,
-              key,
-              argsFromKeys,
-              valuesFromResults = identical,
-            }: any) => {
+            rawSourceContext[rootType.name][fieldName] = async (opts: any) => {
+              const { root, args, context, info, key, argsFromKeys, valuesFromResults = identical } = opts;
               if (key) {
                 let identifier = context;
                 if (info) {
                   identifier = info.parentType.getFields()[info.fieldName];
                 }
-                return getLoader(identifier || context, context, argsFromKeys, valuesFromResults).load(key);
+                return getLoader(identifier || context, context, argsFromKeys, opts).load(key);
               }
               const resolver = rootTypeField.resolve || defaultFieldResolver;
 
