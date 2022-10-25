@@ -1,5 +1,15 @@
 # @graphql-mesh/plugin-live-query
 
+## 0.1.40
+
+### Patch Changes
+
+- [`68eee7808`](https://github.com/Urigo/graphql-mesh/commit/68eee780816e2fcdf0328681c32c3af2c7c69b59) Thanks [@ardatan](https://github.com/ardatan)! - Add args back to interpolation data
+
+- Updated dependencies [[`5c87cfc60`](https://github.com/Urigo/graphql-mesh/commit/5c87cfc60501213e8701482b093490ec1a5fce23), [`09c286994`](https://github.com/Urigo/graphql-mesh/commit/09c28699441cda92f79e4e9b8464e7be5f46a786)]:
+  - @graphql-mesh/string-interpolation@0.3.3
+  - @graphql-mesh/types@0.85.2
+
 ## 0.1.39
 
 ### Patch Changes

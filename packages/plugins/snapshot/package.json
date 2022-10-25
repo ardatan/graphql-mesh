@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-snapshot",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -28,10 +28,10 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/string-interpolation": "0.3.2",
-    "@graphql-mesh/utils": "0.42.0",
+    "@graphql-mesh/string-interpolation": "0.3.3",
+    "@graphql-mesh/utils": "0.42.1",
     "@graphql-mesh/cross-helpers": "0.2.6",
-    "@graphql-mesh/types": "0.85.1",
+    "@graphql-mesh/types": "0.85.2",
     "@whatwg-node/fetch": "0.5.0",
     "minimatch": "5.1.0",
     "tslib": "^2.4.0"

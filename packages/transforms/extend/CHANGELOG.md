@@ -1,5 +1,15 @@
 # @graphql-mesh/transform-extend
 
+## 0.10.69
+
+### Patch Changes
+
+- [#4728](https://github.com/Urigo/graphql-mesh/pull/4728) [`c72d904dc`](https://github.com/Urigo/graphql-mesh/commit/c72d904dc11adfd3b6ee1695b1aaeae6ab64e1e9) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`@graphql-tools/load@7.8.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.8.0) (from `7.7.7`, in `dependencies`)
+- Updated dependencies [[`09c286994`](https://github.com/Urigo/graphql-mesh/commit/09c28699441cda92f79e4e9b8464e7be5f46a786)]:
+  - @graphql-mesh/types@0.85.2
+  - @graphql-mesh/utils@0.42.1
+
 ## 0.10.68
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @graphql-mesh/merger-federation
 
+## 0.12.38
+
+### Patch Changes
+
+- [#4728](https://github.com/Urigo/graphql-mesh/pull/4728) [`c72d904dc`](https://github.com/Urigo/graphql-mesh/commit/c72d904dc11adfd3b6ee1695b1aaeae6ab64e1e9) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`@apollo/gateway@2.1.4` ↗︎](https://www.npmjs.com/package/@apollo/gateway/v/2.1.4) (from `2.1.3`, in `dependencies`)
+- Updated dependencies [[`09c286994`](https://github.com/Urigo/graphql-mesh/commit/09c28699441cda92f79e4e9b8464e7be5f46a786)]:
+  - @graphql-mesh/types@0.85.2
+  - @graphql-mesh/utils@0.42.1
+  - @graphql-mesh/store@0.8.57
+
 ## 0.12.37
 
 ### Patch Changes
