@@ -479,7 +479,7 @@
               },
               {
                 "children": [],
-                "title": "Mesh and Sveltekit",
+                "title": "Mesh and SvelteKit",
                 "anchor": "mesh-and-sveltekit"
               }
             ],
@@ -496,7 +496,7 @@
         "anchor": "mesh-and-docker"
       }
     ],
-    "content": "5057d79b67d2174ed29e7fc5f8eff02a",
+    "content": "126dda5f2fe9ec07e3cc7ee86ea700af",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/getting-started/deploy-mesh-gateway",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Getting Started"],
@@ -581,7 +581,7 @@
         "anchor": "going-further"
       }
     ],
-    "content": "5f105fd382300ad2a75a451bfe3aa375",
+    "content": "8b299ec140e6fc4752e812bbe9372ffa",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/getting-started/sources-with-no-definition",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Getting Started"],
@@ -758,7 +758,7 @@
         "anchor": "going-further"
       }
     ],
-    "content": "5d27b040c025359d58a19a9661b80d2c",
+    "content": "ce94a8f86e6243a37babf424a7c879a1",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/extending-unified-schema",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Guides"],
@@ -993,7 +993,7 @@
         "anchor": "getting-started"
       }
     ],
-    "content": "8e15eff68ab56e49876f3b2a111f7b80",
+    "content": "6e04f3d221099b9e0f223dd63ad3a8db",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/http-cache",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Plugins"],
@@ -1021,7 +1021,7 @@
   },
   {
     "objectID": "mesh-docs-plugins-live-queries",
-    "headings": ["Config API Reference", "Codesandbox Example"],
+    "headings": ["Config API Reference", "CodeSandBox Example"],
     "toc": [
       {
         "children": [],
@@ -1030,7 +1030,7 @@
       },
       {
         "children": [],
-        "title": "Codesandbox Example",
+        "title": "CodeSandBox Example",
         "anchor": "codesandbox-example"
       }
     ],
@@ -1050,7 +1050,7 @@
       "Custom mock functions for types",
       "Mocking the lists",
       "Stateful mocking",
-      "Codesandbox Example",
+      "CodeSandBox Example",
       "Config API Reference"
     ],
     "toc": [
@@ -1098,7 +1098,7 @@
       },
       {
         "children": [],
-        "title": "Codesandbox Example",
+        "title": "CodeSandBox Example",
         "anchor": "codesandbox-example"
       },
       {
@@ -1253,7 +1253,7 @@
   },
   {
     "objectID": "mesh-docs-plugins-response-caching",
-    "headings": ["Getting Started", "Config API Reference", "Codesandbox Example"],
+    "headings": ["Getting Started", "Config API Reference", "CodeSandBox Example"],
     "toc": [
       {
         "children": [],
@@ -1267,7 +1267,7 @@
       },
       {
         "children": [],
-        "title": "Codesandbox Example",
+        "title": "CodeSandBox Example",
         "anchor": "codesandbox-example"
       }
     ],
@@ -1281,7 +1281,7 @@
   },
   {
     "objectID": "mesh-docs-plugins-snapshot",
-    "headings": ["How to use?", "Codesandbox Example", "Config API Reference"],
+    "headings": ["How to use?", "CodeSandBox Example", "Config API Reference"],
     "toc": [
       {
         "children": [],
@@ -1290,7 +1290,7 @@
       },
       {
         "children": [],
-        "title": "Codesandbox Example",
+        "title": "CodeSandBox Example",
         "anchor": "codesandbox-example"
       },
       {
@@ -1422,7 +1422,7 @@
   },
   {
     "objectID": "mesh-docs-source-handlers-json-schema",
-    "headings": ["Dynamic Values", "Codesandbox Example", "Config API Reference"],
+    "headings": ["Dynamic Values", "CodeSandBox Example", "Config API Reference"],
     "toc": [
       {
         "children": [
@@ -1453,7 +1453,7 @@
       },
       {
         "children": [],
-        "title": "Codesandbox Example",
+        "title": "CodeSandBox Example",
         "anchor": "codesandbox-example"
       },
       {
@@ -1526,7 +1526,7 @@
   },
   {
     "objectID": "mesh-docs-source-handlers-odata",
-    "headings": ["Dynamic Header Values", "Codesandbox Example", "Config API Reference"],
+    "headings": ["Dynamic Header Values", "CodeSandBox Example", "Config API Reference"],
     "toc": [
       {
         "children": [
@@ -1547,7 +1547,7 @@
       },
       {
         "children": [],
-        "title": "Codesandbox Example",
+        "title": "CodeSandBox Example",
         "anchor": "codesandbox-example"
       },
       {
@@ -1648,7 +1648,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "c83e564e1cbe8f2ec0fa4c1d4fcea91c",
+    "content": "1a1cefdfe3a234317919e642ae9de05b",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/openapi",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Source Handlers"],
@@ -1658,7 +1658,7 @@
   },
   {
     "objectID": "mesh-docs-source-handlers-postgraphile",
-    "headings": ["External Plugins (e.g. FederationPlugin, PgManyToManyPlugin, PostgisPlugin)", "Config API Reference"],
+    "headings": ["External Plugins (e.g. FederationPlugin, PgManyToManyPlugin, PostGISPlugin)", "Config API Reference"],
     "toc": [
       {
         "children": [
@@ -1679,7 +1679,7 @@
             "anchor": "federation-and-automatic-type-merging-support"
           }
         ],
-        "title": "External Plugins (e.g. FederationPlugin, PgManyToManyPlugin, PostgisPlugin)",
+        "title": "External Plugins (e.g. FederationPlugin, PgManyToManyPlugin, PostGISPlugin)",
         "anchor": "external-plugins-eg-federationplugin-pgmanytomanyplugin-postgisplugin"
       },
       {
@@ -1698,11 +1698,11 @@
   },
   {
     "objectID": "mesh-docs-source-handlers-soap",
-    "headings": ["Codesandbox Example", "Config API Reference"],
+    "headings": ["CodeSandBox Example", "Config API Reference"],
     "toc": [
       {
         "children": [],
-        "title": "Codesandbox Example",
+        "title": "CodeSandBox Example",
         "anchor": "codesandbox-example"
       },
       {
@@ -1739,11 +1739,11 @@
   },
   {
     "objectID": "mesh-docs-source-handlers-tuql",
-    "headings": ["Codesandbox Example", "Config API Reference"],
+    "headings": ["CodeSandBox Example", "Config API Reference"],
     "toc": [
       {
         "children": [],
-        "title": "Codesandbox Example",
+        "title": "CodeSandBox Example",
         "anchor": "codesandbox-example"
       },
       {
@@ -1798,7 +1798,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "4595c9796e27f144475eb96847ba87f3",
+    "content": "5da7d150ddb320134e6718d9573a8bc7",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/extend",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Transforms"],
@@ -1832,8 +1832,13 @@
   },
   {
     "objectID": "mesh-docs-transforms-filter-schema",
-    "headings": ["How to use?", "Config API Reference"],
+    "headings": ["Installation", "How to use?", "Example", "Config API Reference"],
     "toc": [
+      {
+        "children": [],
+        "title": "Installation",
+        "anchor": "installation"
+      },
       {
         "children": [],
         "title": "How to use?",
@@ -1841,11 +1846,16 @@
       },
       {
         "children": [],
+        "title": "Example",
+        "anchor": "example"
+      },
+      {
+        "children": [],
         "title": "Config API Reference",
         "anchor": "config-api-reference"
       }
     ],
-    "content": "e96badee09f9c5b3ec6ae95060e36920",
+    "content": "c6ee14202a223266d03754133d935a74",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/filter-schema",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Transforms"],
@@ -1895,8 +1905,13 @@
   },
   {
     "objectID": "mesh-docs-transforms-naming-convention",
-    "headings": ["How to use?", "Config API Reference"],
+    "headings": ["Installation", "How to use?", "Config API Reference"],
     "toc": [
+      {
+        "children": [],
+        "title": "Installation",
+        "anchor": "installation"
+      },
       {
         "children": [],
         "title": "How to use?",
@@ -1908,7 +1923,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "c71ba0938b00793f170f2fbac2ec619e",
+    "content": "9133b624aedf19b179f063337a60e5a3",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/naming-convention",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Transforms"],
@@ -1918,8 +1933,13 @@
   },
   {
     "objectID": "mesh-docs-transforms-prefix",
-    "headings": ["How to use?", "Config API Reference"],
+    "headings": ["Installation", "How to use?", "Config API Reference"],
     "toc": [
+      {
+        "children": [],
+        "title": "Installation",
+        "anchor": "installation"
+      },
       {
         "children": [],
         "title": "How to use?",
@@ -1931,7 +1951,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "1ea804cdd3fe9efe07ab64b214a6fd05",
+    "content": "933b64e04e934e0fe6964f740dcb259e",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/prefix",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Transforms"],
@@ -1964,10 +1984,21 @@
   },
   {
     "objectID": "mesh-docs-transforms-rename",
-    "headings": ["How to use?", "Config API Reference"],
+    "headings": ["Installation", "How to use?", "Config API Reference"],
     "toc": [
       {
         "children": [],
+        "title": "Installation",
+        "anchor": "installation"
+      },
+      {
+        "children": [
+          {
+            "children": [],
+            "title": "RegEx example",
+            "anchor": "regex-example"
+          }
+        ],
         "title": "How to use?",
         "anchor": "how-to-use"
       },
@@ -1977,7 +2008,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "843ca5012be5d30ca92c8172fb63d764",
+    "content": "7dcd9eafece3cb16b947b2c247b37f40",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/rename",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Transforms"],
@@ -1988,6 +2019,7 @@
   {
     "objectID": "mesh-docs-transforms-replace-field",
     "headings": [
+      "Installation",
       "How to use?",
       "How the transform works",
       "Transform scopes",
@@ -1997,6 +2029,11 @@
       "Config API Reference"
     ],
     "toc": [
+      {
+        "children": [],
+        "title": "Installation",
+        "anchor": "installation"
+      },
       {
         "children": [],
         "title": "How to use?",
@@ -2045,7 +2082,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "7c681834cdf32b948f377d4fabae5a43",
+    "content": "63c10ce8e3d53fb071985503920059a0",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/replace-field",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Transforms"],
@@ -2125,7 +2162,7 @@
         "anchor": "two-different-modes"
       }
     ],
-    "content": "dca4045e80c26b11f8138ed85c459149",
+    "content": "9f6bccb4d443a2e2a60b81ab568ea9dc",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/transforms-introduction",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Transforms"],
@@ -2135,8 +2172,13 @@
   },
   {
     "objectID": "mesh-docs-transforms-type-merging",
-    "headings": ["What is Type Merging?", "Using the Type Merging Transform", "Config API Reference"],
+    "headings": ["Installation", "What is Type Merging?", "Using the Type Merging Transform", "Config API Reference"],
     "toc": [
+      {
+        "children": [],
+        "title": "Installation",
+        "anchor": "installation"
+      },
       {
         "children": [
           {
@@ -2159,7 +2201,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "3aba1800acdb59b19e8ab1f0b89ec65c",
+    "content": "cf46a6ce2bf254d2840e741b12e971b1",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/type-merging",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Transforms"],
