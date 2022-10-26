@@ -48,7 +48,16 @@ type ResponseMetadata {
 }
 ```
     * `argTypeMap` (type: `JSON`) - Mapping the JSON Schema and define the arguments of the operation.
-Example: 'argTypeMap: ID: String'
+
+# Example:
+argTypeMap:
+  user_id:
+    type: string
+    * `queryParamsArgMap` (type: `JSON`) - JSON object representing the mapping of query search parameters (added to the route path) and the matching argument.
+
+# Example:
+queryParamsArgMap:
+  id: user_id
     * `path` (type: `String`, required)
     * `method` (type: `String (GET | HEAD | POST | PUT | DELETE | CONNECT | OPTIONS | TRACE | PATCH)`)
     * `headers` (type: `JSON`)

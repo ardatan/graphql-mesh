@@ -231,7 +231,9 @@ sources:
             method: GET
             responseSample: ./samples/book-search.json
             argTypeMap:
-              query: String!
+              query:
+                type: string
+                nullable: false
 ```
 
 Now, GraphQL Mesh knows that the type definition of our search query is:
