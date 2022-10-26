@@ -1,8 +1,14 @@
-import { Callout } from '@theguild/components'
+import { Callout, PackageCmd } from '@theguild/components'
 
 # Type Merging Transform
 
-This transform helps you to use [Type Merging](https://graphql-tools.com/docs/stitch-type-merging) approach of Schema Stitching in your GraphQL Mesh sources.
+Type Merge transforms allow you to combine multiple sources by merging a type from each source, by using the [Type Merging](https://graphql-tools.com/docs/stitch-type-merging) approach of Schema Stitching.
+
+For example, you could combine responses from two different APIs on a single field, provided you rename the fields you want to stitch to the same name.
+
+## Installation
+
+<PackageCmd packages={['@graphql-mesh/transform-type-merging']} />
 
 ## What is Type Merging?
 

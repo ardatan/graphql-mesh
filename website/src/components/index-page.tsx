@@ -233,7 +233,7 @@ const deployableEnvs = [
     href: '/docs/getting-started/deploy-mesh-gateway#mesh-as-an-koa-route',
   },
   {
-    name: 'Sveltekit',
+    name: 'SvelteKit',
     href: '/docs/getting-started/deploy-mesh-gateway#mesh-and-sveltekit',
   },
   {
@@ -285,7 +285,7 @@ export function IndexPage(): ReactElement {
                 ),
               },
               {
-                title: 'Omnigraph',
+                title: 'OmniGraph',
                 description: 'GraphQL Mesh compose sources as a single GraphQL schema',
                 icon: (
                   <Image

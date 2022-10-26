@@ -2,7 +2,13 @@ import { Callout } from '@theguild/components'
 
 # Extend Transform (experimental)
 
-`extend` transform allows you to extend the source's schema directly on the source level. But this might cause inconsistency if the schema heavily relies on that schema's existing structure. This transform can be used for the data sources that return fixed results. For example, OpenAPI and JSON Schema handlers are good examples of this kind of source. In contrast, Postgraphile and GraphQL handlers don't because they rely on their existing structure. The resolvers added by this transform access directly to `root`, `args`, and `context` of that schema, so you cannot use `selectionSet` (actually, you shouldn't, because this is not a root level transform).
+`extend` transform allows you to extend the source's schema directly on the source level.
+But this might cause inconsistency if the schema heavily relies on that schema's existing structure.
+This transform can be used for the data sources that return fixed results.
+
+For example, OpenAPI and JSON Schema handlers are good examples of this kind of source.
+In contrast, PostGraphile and GraphQL handlers don't because they rely on their existing structure.
+The resolvers added by this transform access directly to `root`, `args`, and `context` of that schema, so you cannot use `selectionSet` (actually, you shouldn't, because this is not a root level transform).
 
 <Callout>Note: This transform cannot access other sources; it can only be used at the source level.</Callout>
 

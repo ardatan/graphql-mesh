@@ -2,11 +2,17 @@ import { PackageCmd, Callout } from '@theguild/components'
 
 # Naming Convention Transform
 
-The `naming-convention` transform allows applying naming convention to GraphQL types and GraphQL fields easily.
+The `naming-convention` transforms allow you to apply casing and other conventions to your response.
+
+## Installation
 
 <PackageCmd packages={['@graphql-mesh/transform-naming-convention']} />
 
 ## How to use?
+
+<Callout>
+  In this example, enumValues fields are converted to uppercase, while fieldNames are converted to camel case to enforce consistency.
+</Callout>
 
 Add the following configuration to your Mesh config file:
 

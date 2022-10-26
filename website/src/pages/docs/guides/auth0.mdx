@@ -136,7 +136,10 @@ As expected the value of the `authInfo` field is `null`, as we are not passing a
 
 ## Generating an Auth0 Access Token
 
-In order to retrieve an access token, we first need to set up an Auth0 application and an authentication route. For the sake of this guide and in order to reduce complexity we will simply add an route to our Mesh http server that renders some HTML with a `<script>` tag that invokes the Auth0 JavaScript SDK (referenced via a CDN) and then appends the authentication token to the document body. It should still give you a feeling how you can integrate the Auth0 SDK with your favorite Frontend Framework. If you are using Next.js you should check out [nextjs-auth0](https://github.com/auth0/nextjs-auth0).
+In order to retrieve an access token, we first need to set up an Auth0 application and an authentication route.
+For the sake of this guide and in order to reduce complexity we will simply add an route to our Mesh http server that renders some HTML with a `<script>` tag that invokes the Auth0 JavaScript SDK (referenced via a CDN) and then appends the authentication token to the document body.
+It should still give you a feeling how you can integrate the Auth0 SDK with your favorite Frontend Framework.
+If you are using Next.js you should check out [nextjs-auth0](https://github.com/auth0/nextjs-auth0).
 
 Let's go back into the Auth0 interface on the Applications page.
 

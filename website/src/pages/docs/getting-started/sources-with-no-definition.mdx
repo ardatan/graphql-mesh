@@ -23,7 +23,7 @@ Z[Mesh Gateway GraphQL API]
 Z --> G;
 ```
 
-Once again, GraphQL Mesh gots you covered with the `@graphql-mesh/json-schema` handler that will help provide a definition of the API.
+Once again, GraphQL Mesh gets you covered with the `@graphql-mesh/json-schema` handler that will help provide a definition of the API.
 
 ## An overview of the `jsonSchema` handler
 
@@ -89,7 +89,7 @@ curl --location --request GET 'http://localhost:3002/books/1' > packages/single-
 Which will create the following [`packages/single-source-no-source-definition/samples/book-1.json`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source-no-source-definition/samples/book-1.json) file:
 
 ```json filename="book-1.json"
-{ "id": "1", "title": "Dune", "authorId": "0", "categorieId": "0" }
+{ "id": "1", "title": "Dune", "authorId": "0", "categoryId": "0" }
 ```
 
 We can now provide use this sample file to configure our `Query.book` operation as follows [`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source-no-source-definition/.meshrc.yaml):
@@ -127,7 +127,7 @@ type query_book {
   id: String
   title: String
   authorId: String
-  categorieId: String
+  categoryId: String
 }
 ```
 
@@ -184,7 +184,7 @@ type Book {
   id: String
   title: String
   authorId: String
-  categorieId: String
+  categoryId: String
 }
 ```
 
@@ -274,7 +274,7 @@ For example, our previous `POST /books` endpoint could return a totally differen
   "id": "1",
   "title": "Dune",
   "authorId": "0",
-  "categorieId": "0"
+  "categoryId": "0"
 }
 ```
 
@@ -293,7 +293,7 @@ For example, our previous `POST /books` endpoint could return a totally differen
     "id": "1",
     "title": "Dune",
     "authorId": "0",
-    "categorieId": "0"
+    "categoryId": "0"
   }
 }
 ```
@@ -425,5 +425,5 @@ operations:
     404:
       responseSchema: ...
     200:
-      responseSchmea: ...
+      responseSchema: ...
 ```
