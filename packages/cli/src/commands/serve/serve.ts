@@ -49,7 +49,7 @@ export async function serveMesh(
   cliParams: GraphQLMeshCLIParams
 ) {
   const {
-    fork,
+    fork: configFork,
     port: configPort,
     hostname = platform() === 'win32' ||
     // is WSL?
@@ -65,13 +65,32 @@ export async function serveMesh(
 
   const port = portSelectorFn([argsPort, parseInt(configPort?.toString()), parseInt(process.env.PORT)], logger);
 
+  let forkNum: number;
+
+  const envFork = process.env.FORK;
+
+  if (envFork != null) {
+    if (envFork === 'false' || envFork === '0') {
+      forkNum = 0;
+    } else if (envFork === 'true') {
+      forkNum = cpus().length;
+    } else {
+      forkNum = parseInt(envFork);
+    }
+  } else if (configFork != null) {
+    if (typeof configFork === 'boolean') {
+      forkNum = configFork ? cpus().length : 0;
+    } else {
+      forkNum = configFork;
+    }
+  }
+
   const protocol = sslCredentials ? 'https' : 'http';
   const serverUrl = `${protocol}://${hostname}:${port}`;
   if (!playgroundTitle) {
     playgroundTitle = rawServeConfig?.playgroundTitle || cliParams.playgroundTitle;
   }
-  if (!cluster.isWorker && Boolean(fork)) {
-    const forkNum = fork > 0 && typeof fork === 'number' ? fork : cpus().length;
+  if (!cluster.isWorker && forkNum > 0) {
     for (let i = 0; i < forkNum; i++) {
       const worker = cluster.fork();
       registerTerminateHandler(eventName => worker.kill(eventName));
