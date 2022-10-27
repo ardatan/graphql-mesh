@@ -4,7 +4,7 @@ const { basename, join } = require('path');
 
 const { introspectionFromSchema, lexicographicSortSchema, printSchema } = require('graphql');
 
-describe('MySQL Rfam', () => {
+describe.skip('MySQL Rfam', () => {
   jest.setTimeout(30000);
   let config$, mesh$;
   beforeAll(() => {
