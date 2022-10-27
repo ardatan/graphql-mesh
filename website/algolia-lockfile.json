@@ -1422,7 +1422,7 @@
   },
   {
     "objectID": "mesh-docs-source-handlers-json-schema",
-    "headings": ["Dynamic Values", "CodeSandBox Example", "Config API Reference"],
+    "headings": ["Dynamic Values", "Query Parameters", "CodeSandBox Example", "Config API Reference"],
     "toc": [
       {
         "children": [
@@ -1452,6 +1452,28 @@
         "anchor": "dynamic-values"
       },
       {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Manual declare:",
+                "anchor": "manual-declare"
+              },
+              {
+                "children": [],
+                "title": "Global arguments",
+                "anchor": "global-arguments"
+              }
+            ],
+            "title": "Auto declare:",
+            "anchor": "auto-declare"
+          }
+        ],
+        "title": "Query Parameters",
+        "anchor": "query-parameters"
+      },
+      {
         "children": [],
         "title": "CodeSandBox Example",
         "anchor": "codesandbox-example"
@@ -1462,7 +1484,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "f1120680b9355c9caf202b8a75a481c0",
+    "content": "af6ab526fbbe89b4baef8e3fbb0cc4d6",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/json-schema",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Source Handlers"],
