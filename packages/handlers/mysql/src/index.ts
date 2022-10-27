@@ -176,7 +176,6 @@ export default class MySQLHandler implements MeshHandler {
       : createPool({
           supportBigNumbers: true,
           bigNumberStrings: true,
-          dateStrings: true,
           trace: !!process.env.DEBUG,
           debug: !!process.env.DEBUG,
           host: this.config.host && stringInterpolator.parse(this.config.host, { env: process.env }),
