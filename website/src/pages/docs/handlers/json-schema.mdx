@@ -124,13 +124,9 @@ Any JSON sample file can be used.
 
 ## Query Parameters
 
-You can add query parameters to the request by two methods:
+There are a few methods to define the query parameters, select the one that fits your needs (Or combine them):
 
-### Declaring the parameters
-
-There are two methods to define the query parameters:
-
-#### Auto declare:
+### Auto declare:
 
 Mesh automatically generates arguments for operations if needed. Note that the arguments are generated as nullable strings by default.
 
@@ -148,7 +144,7 @@ sources:
             responseSchema: ./json-schemas/user.json
 ```
 
-#### Manual declare:
+### Manual declare:
 
 You can define the arguments of the operation using the `argTypeMap` config field, according to the JSON Schema spec.
 
@@ -201,9 +197,9 @@ sources:
               page: page
 ```
 
-#### Global arguments
+### Global arguments
 
-Query arguments could be defined globally, so they are added to all operations.
+Query arguments could be defined globally, on handler level, so they are added to all operations.
 
 In this example we declare `limit` parameter with the default value of `10`, and `api_key` with dynamic value taken from the environment:
 
@@ -213,12 +209,15 @@ sources:
     handler:
       jsonSchema:
         baseUrl: https://some-service-url/endpoint-path/
-      queryParams:
-        limit: 10
-        api_key: { env.MY_API_KEY }
+        queryParams:
+          limit: 10
+          api_key: { env.MY_API_KEY }
 ```
 
-<Callout>Note that this example only declares the argument, but doesn't add it as query parameter</Callout>
+<Callout>
+  Note that `queryParams` are automatically added to the query.
+  If argument is defined both on handler AND operation level, the operation level argument will be used.
+</Callout>
 
 ## CodeSandBox Example
 
