@@ -1,5 +1,26 @@
 # @graphql-mesh/config
 
+## 8.0.27
+
+### Patch Changes
+
+- [#4732](https://github.com/Urigo/graphql-mesh/pull/4732) [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56) Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
+  - Updated dependency [`@graphql-mesh/cache-localforage@0.6.55` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cache-localforage/v/0.6.55) (from `0.6.54`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/merger-bare@0.15.41` ↗︎](https://www.npmjs.com/package/@graphql-mesh/merger-bare/v/0.15.41) (from `0.15.40`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/merger-stitching@0.17.1` ↗︎](https://www.npmjs.com/package/@graphql-mesh/merger-stitching/v/0.17.1) (from `0.17.0`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/types@0.85.2` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.85.2) (from `0.85.1`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/store@0.8.57` ↗︎](https://www.npmjs.com/package/@graphql-mesh/store/v/0.8.57) (from `0.8.56`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/utils@0.42.1` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.42.1) (from `0.42.0`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/runtime@^0.44.26` ↗︎](https://www.npmjs.com/package/@graphql-mesh/runtime/v/0.44.26) (from `^0.44.24`, in `peerDependencies`)
+- Updated dependencies [[`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56)]:
+  - @graphql-mesh/cache-localforage@0.6.56
+  - @graphql-mesh/merger-bare@0.15.42
+  - @graphql-mesh/merger-stitching@0.17.2
+  - @graphql-mesh/runtime@0.44.27
+  - @graphql-mesh/store@0.8.58
+  - @graphql-mesh/types@0.85.3
+  - @graphql-mesh/utils@0.42.2
+
 ## 8.0.26
 
 ### Patch Changes

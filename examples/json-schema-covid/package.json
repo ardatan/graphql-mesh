@@ -1,6 +1,6 @@
 {
   "name": "covid-mesh",
-  "version": "0.5.337",
+  "version": "0.5.338",
   "license": "MIT",
   "private": true,
   "author": {
@@ -12,9 +12,9 @@
     "test": "jest"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.78.40",
-    "@graphql-mesh/graphql": "0.31.26",
-    "@graphql-mesh/json-schema": "0.35.28",
+    "@graphql-mesh/cli": "0.78.41",
+    "@graphql-mesh/graphql": "0.31.27",
+    "@graphql-mesh/json-schema": "0.35.29",
     "graphql": "16.6.0"
   },
   "devDependencies": {

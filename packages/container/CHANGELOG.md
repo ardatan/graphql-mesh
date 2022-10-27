@@ -1,5 +1,48 @@
 # @graphql-mesh/container
 
+## 0.1.191
+
+### Patch Changes
+
+- [#4732](https://github.com/Urigo/graphql-mesh/pull/4732) [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56) Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
+  - Updated dependency [`@graphql-mesh/cli@0.78.40` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cli/v/0.78.40) (from `0.78.39`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/config@8.0.26` ↗︎](https://www.npmjs.com/package/@graphql-mesh/config/v/8.0.26) (from `8.0.25`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/runtime@0.44.26` ↗︎](https://www.npmjs.com/package/@graphql-mesh/runtime/v/0.44.26) (from `0.44.25`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/openapi@0.33.29` ↗︎](https://www.npmjs.com/package/@graphql-mesh/openapi/v/0.33.29) (from `0.33.28`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/graphql@0.31.26` ↗︎](https://www.npmjs.com/package/@graphql-mesh/graphql/v/0.31.26) (from `0.31.25`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/grpc@0.25.27` ↗︎](https://www.npmjs.com/package/@graphql-mesh/grpc/v/0.25.27) (from `0.25.26`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/json-schema@0.35.28` ↗︎](https://www.npmjs.com/package/@graphql-mesh/json-schema/v/0.35.28) (from `0.35.27`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/odata@0.20.26` ↗︎](https://www.npmjs.com/package/@graphql-mesh/odata/v/0.20.26) (from `0.20.25`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/soap@0.14.25` ↗︎](https://www.npmjs.com/package/@graphql-mesh/soap/v/0.14.25) (from `0.14.24`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/postgraphile@0.21.24` ↗︎](https://www.npmjs.com/package/@graphql-mesh/postgraphile/v/0.21.24) (from `0.21.23`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/plugin-mock@0.0.32` ↗︎](https://www.npmjs.com/package/@graphql-mesh/plugin-mock/v/0.0.32) (from `0.0.31`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/transform-prefix@0.11.95` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transform-prefix/v/0.11.95) (from `0.11.94`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/transform-encapsulate@0.3.106` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transform-encapsulate/v/0.3.106) (from `0.3.105`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/transform-cache@0.12.59` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transform-cache/v/0.12.59) (from `0.12.58`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/transform-filter-schema@0.14.105` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transform-filter-schema/v/0.14.105) (from `0.14.104`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/transform-extend@0.10.69` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transform-extend/v/0.10.69) (from `0.10.68`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/transform-rename@0.12.96` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transform-rename/v/0.12.96) (from `0.12.95`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/transform-resolvers-composition@0.12.103` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transform-resolvers-composition/v/0.12.103) (from `0.12.102`, in `dependencies`)
+- Updated dependencies [[`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`7245981d7`](https://github.com/Urigo/graphql-mesh/commit/7245981d7ffce1cfb5883564825518b0af4e5b4a), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`7245981d7`](https://github.com/Urigo/graphql-mesh/commit/7245981d7ffce1cfb5883564825518b0af4e5b4a), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`7245981d7`](https://github.com/Urigo/graphql-mesh/commit/7245981d7ffce1cfb5883564825518b0af4e5b4a), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56)]:
+  - @graphql-mesh/cli@0.78.41
+  - @graphql-mesh/config@8.0.27
+  - @graphql-mesh/graphql@0.31.27
+  - @graphql-mesh/grpc@0.25.28
+  - @graphql-mesh/json-schema@0.35.29
+  - @graphql-mesh/odata@0.20.27
+  - @graphql-mesh/openapi@0.33.30
+  - @graphql-mesh/plugin-mock@0.0.33
+  - @graphql-mesh/postgraphile@0.21.25
+  - @graphql-mesh/runtime@0.44.27
+  - @graphql-mesh/soap@0.14.26
+  - @graphql-mesh/transform-cache@0.12.60
+  - @graphql-mesh/transform-encapsulate@0.3.107
+  - @graphql-mesh/transform-extend@0.10.70
+  - @graphql-mesh/transform-filter-schema@0.14.106
+  - @graphql-mesh/transform-prefix@0.11.96
+  - @graphql-mesh/transform-rename@0.12.97
+  - @graphql-mesh/transform-resolvers-composition@0.12.104
+
 ## 0.1.190
 
 ### Patch Changes

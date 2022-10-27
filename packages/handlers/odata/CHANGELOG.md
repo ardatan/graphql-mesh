@@ -1,5 +1,23 @@
 # @graphql-mesh/odata
 
+## 0.20.27
+
+### Patch Changes
+
+- [#4732](https://github.com/Urigo/graphql-mesh/pull/4732) [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56) Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
+
+  - Updated dependency [`@graphql-mesh/types@0.85.2` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.85.2) (from `0.85.1`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/store@0.8.57` ↗︎](https://www.npmjs.com/package/@graphql-mesh/store/v/0.8.57) (from `0.8.56`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/string-interpolation@0.3.3` ↗︎](https://www.npmjs.com/package/@graphql-mesh/string-interpolation/v/0.3.3) (from `0.3.2`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/utils@0.42.1` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.42.1) (from `0.42.0`, in `dependencies`)
+
+- [#4743](https://github.com/Urigo/graphql-mesh/pull/4743) [`7245981d7`](https://github.com/Urigo/graphql-mesh/commit/7245981d7ffce1cfb5883564825518b0af4e5b4a) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`graphql-compose@9.0.10` ↗︎](https://www.npmjs.com/package/graphql-compose/v/9.0.10) (from `9.0.9`, in `dependencies`)
+- Updated dependencies [[`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56)]:
+  - @graphql-mesh/store@0.8.58
+  - @graphql-mesh/types@0.85.3
+  - @graphql-mesh/utils@0.42.2
+
 ## 0.20.26
 
 ### Patch Changes
