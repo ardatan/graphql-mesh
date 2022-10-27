@@ -55,7 +55,7 @@
     "@graphql-mesh/store": "0.8.58",
     "@graphql-mesh/types": "0.85.3",
     "@graphql-mesh/http": "0.2.8",
-    "@graphql-tools/utils": "8.12.0",
+    "@graphql-tools/utils": "8.13.0",
     "dotenv": "16.0.3",
     "dnscache": "1.0.2",
     "graphql-import-node": "0.0.5",
