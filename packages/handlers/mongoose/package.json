@@ -34,7 +34,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.85.2",
     "@graphql-mesh/utils": "0.42.1",
-    "graphql-compose": "9.0.9",
+    "graphql-compose": "9.0.10",
     "graphql-compose-mongoose": "9.7.2",
     "graphql-compose-connection": "8.2.1",
     "graphql-compose-pagination": "8.3.0",
