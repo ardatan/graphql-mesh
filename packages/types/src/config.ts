@@ -435,9 +435,23 @@ export interface JsonSchemaHTTPOperation {
   exposeResponseMetadata?: boolean;
   /**
    * Mapping the JSON Schema and define the arguments of the operation.
-   * Example: 'argTypeMap: ID: String'
+   *
+   * # Example:
+   * argTypeMap:
+   *   user_id:
+   *     type: string
    */
   argTypeMap?: {
+    [k: string]: any;
+  };
+  /**
+   * JSON object representing the mapping of query search parameters (added to the route path) and the matching argument.
+   *
+   * # Example:
+   * queryParamArgMap:
+   *   id: user_id
+   */
+  queryParamArgMap?: {
     [k: string]: any;
   };
   path: string;

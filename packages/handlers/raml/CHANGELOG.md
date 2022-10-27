@@ -412,13 +412,13 @@
   }
   ```
 
-  - `requestSchema` and `requestSample` are no longer used for query parameters in GET operations, but instead we introduced new `argTypeMap` and `queryParamsArgMap` to define schemas for query parameters.
+  - `requestSchema` and `requestSample` are no longer used for query parameters in GET operations, but instead we introduced new `argTypeMap` and `queryParamArgMap` to define schemas for query parameters.
 
   For JSON Schema Handler configuration, the following changes are **NEEDED**;
 
   ```diff
   - requestSample: { some_flag: true }
-  + queryParamsArgMap:
+  + queryParamArgMap:
   +   some_flag: some_flag
   + argTypeMap:
   +   some_flag:

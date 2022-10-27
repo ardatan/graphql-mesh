@@ -11,4 +11,5 @@ sources:
             responseSample: https://www.reddit.com/r/AskReddit.json
             responseTypeName: Subreddit
             argTypeMap:
-              subreddit: String
+              subreddit:
+                type: string
