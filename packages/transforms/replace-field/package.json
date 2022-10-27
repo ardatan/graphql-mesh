@@ -30,10 +30,10 @@
   "dependencies": {
     "@graphql-mesh/types": "0.85.3",
     "@graphql-mesh/utils": "0.42.2",
-    "@graphql-tools/code-file-loader": "7.3.6",
-    "@graphql-tools/graphql-file-loader": "7.5.5",
-    "@graphql-tools/load": "7.8.0",
-    "@graphql-tools/utils": "8.12.0",
+    "@graphql-tools/code-file-loader": "7.3.7",
+    "@graphql-tools/graphql-file-loader": "7.5.6",
+    "@graphql-tools/load": "7.8.1",
+    "@graphql-tools/utils": "8.13.0",
     "tslib": "^2.4.0"
   },
   "publishConfig": {
@@ -42,6 +42,6 @@
   },
   "devDependencies": {
     "@graphql-mesh/cache-localforage": "0.6.56",
-    "@graphql-tools/schema": "9.0.4"
+    "@graphql-tools/schema": "9.0.5"
   }
 }
