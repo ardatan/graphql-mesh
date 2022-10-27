@@ -1,5 +1,14 @@
 # @graphql-mesh/types
 
+## 0.85.3
+
+### Patch Changes
+
+- [#4732](https://github.com/Urigo/graphql-mesh/pull/4732) [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56) Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
+  - Updated dependency [`@graphql-mesh/store@0.8.57` ↗︎](https://www.npmjs.com/package/@graphql-mesh/store/v/0.8.57) (from `0.8.56`, in `dependencies`)
+- Updated dependencies [[`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56)]:
+  - @graphql-mesh/store@0.8.58
+
 ## 0.85.2
 
 ### Patch Changes
