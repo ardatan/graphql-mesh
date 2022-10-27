@@ -177,8 +177,8 @@ export async function getReferencedJSONSchemaFromOperations({
 
     const interpolationKeys: string[] = getInterpolationKeys(...interpolationStrings);
 
-    if ('queryParamArgMap' in operationConfig) {
-      interpolationKeys.push(...Object.values(operationConfig.queryParamArgMap).map(key => `args.${key}`));
+    if ('queryParamsArgMap' in operationConfig) {
+      interpolationKeys.push(...Object.values(operationConfig.queryParamsArgMap).map(key => `args.${key}`));
     }
 
     for (const interpolationKey of interpolationKeys) {

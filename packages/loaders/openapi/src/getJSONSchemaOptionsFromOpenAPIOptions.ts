@@ -147,8 +147,8 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
 
         switch (paramObj.in) {
           case 'query':
-            operationConfig.queryParamArgMap = operationConfig.queryParamArgMap || {};
-            operationConfig.queryParamArgMap[paramObj.name] = argName;
+            operationConfig.queryParamsArgMap = operationConfig.queryParamsArgMap || {};
+            operationConfig.queryParamsArgMap[paramObj.name] = argName;
             if (paramObj.name in queryParams) {
               paramObj.required = false;
               if (!paramObj.schema?.default) {

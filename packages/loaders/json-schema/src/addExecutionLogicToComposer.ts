@@ -255,9 +255,9 @@ ${operationConfig.description || ''}
           for (const queryParamName in queryParams) {
             if (
               args != null &&
-              operationConfig.queryParamArgMap != null &&
-              queryParamName in operationConfig.queryParamArgMap &&
-              operationConfig.queryParamArgMap[queryParamName] in args
+              operationConfig.queryParamsArgMap != null &&
+              queryParamName in operationConfig.queryParamsArgMap &&
+              operationConfig.queryParamsArgMap[queryParamName] in args
             ) {
               continue;
             }
@@ -279,9 +279,9 @@ ${operationConfig.description || ''}
           }
         }
 
-        if (operationConfig.queryParamArgMap) {
-          for (const queryParamName in operationConfig.queryParamArgMap) {
-            const argName = operationConfig.queryParamArgMap[queryParamName];
+        if (operationConfig.queryParamsArgMap) {
+          for (const queryParamName in operationConfig.queryParamsArgMap) {
+            const argName = operationConfig.queryParamsArgMap[queryParamName];
             let argValue = args[argName];
             if (argValue != null) {
               // Somehow it doesn't serialize URLs so we need to do it manually.

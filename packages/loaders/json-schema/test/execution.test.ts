@@ -108,7 +108,7 @@ describe('Execution', () => {
             field: 'test',
             method: 'GET',
             path: '/test',
-            queryParamArgMap: {
+            queryParamsArgMap: {
               foo: 'foo',
             },
             argTypeMap: {
@@ -174,7 +174,7 @@ describe('Execution', () => {
             field: 'test',
             method: 'GET',
             path: '/test',
-            queryParamArgMap: {
+            queryParamsArgMap: {
               foo: 'foo',
             },
             argTypeMap: {
@@ -240,7 +240,7 @@ describe('Execution', () => {
             field: 'test',
             method: 'GET',
             path: '/test',
-            queryParamArgMap: {
+            queryParamsArgMap: {
               foo: 'foo',
             },
             argTypeMap: {
@@ -306,7 +306,7 @@ describe('Execution', () => {
             field: 'test',
             method: 'GET',
             path: '/test',
-            queryParamArgMap: {
+            queryParamsArgMap: {
               foo: 'foo',
             },
             argTypeMap: {

@@ -136,7 +136,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
       const originalFullRelativeUrl = resourceNode.completeRelativeUri();
       let fullRelativeUrl = originalFullRelativeUrl;
       const argTypeMap: Record<string, JSONSchemaObject> = {};
-      const queryParamArgMap: Record<string, string> = {};
+      const queryParamsArgMap: Record<string, string> = {};
       for (const uriParameterNode of resourceNode.uriParameters()) {
         const paramName = uriParameterNode.name();
         const argName = sanitizeNameForGraphQL(paramName);
@@ -154,7 +154,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
         if (queryParameterNodeJson.displayName) {
           queryParameterNodeJson.title = queryParameterNodeJson.displayName;
         }
-        queryParamArgMap[parameterName] = argName;
+        queryParamsArgMap[parameterName] = argName;
         argTypeMap[argName] = queryParameterNodeJson;
       }
 
