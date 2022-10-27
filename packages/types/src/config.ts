@@ -448,10 +448,10 @@ export interface JsonSchemaHTTPOperation {
    * JSON object representing the mapping of query search parameters (added to the route path) and the matching argument.
    *
    * # Example:
-   * queryParamsArgMap:
+   * queryParamArgMap:
    *   id: user_id
    */
-  queryParamsArgMap?: {
+  queryParamArgMap?: {
     [k: string]: any;
   };
   path: string;

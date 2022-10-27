@@ -1228,10 +1228,10 @@
           "properties": {},
           "description": "Mapping the JSON Schema and define the arguments of the operation.\n\n# Example:\nargTypeMap:\n  user_id:\n    type: string"
         },
-        "queryParamsArgMap": {
+        "queryParamArgMap": {
           "type": "object",
           "properties": {},
-          "description": "JSON object representing the mapping of query search parameters (added to the route path) and the matching argument.\n\n# Example:\nqueryParamsArgMap:\n  id: user_id"
+          "description": "JSON object representing the mapping of query search parameters (added to the route path) and the matching argument.\n\n# Example:\nqueryParamArgMap:\n  id: user_id"
         },
         "path": {
           "type": "string"

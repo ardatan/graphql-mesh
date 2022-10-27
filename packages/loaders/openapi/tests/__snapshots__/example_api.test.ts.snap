@@ -31,7 +31,7 @@ exports[`example_api should generate the bundle correctly 1`] = `
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/users",
-      "queryParamsArgMap": {
+      "queryParamArgMap": {
         "limit": "limit",
       },
       "responseByStatusCode": {
@@ -708,7 +708,7 @@ exports[`example_api should generate the bundle correctly 1`] = `
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/coffeeLocation",
-      "queryParamsArgMap": {
+      "queryParamArgMap": {
         "lat": "lat",
         "long": "long",
       },
@@ -760,7 +760,7 @@ exports[`example_api should generate the bundle correctly 1`] = `
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/copier",
-      "queryParamsArgMap": {
+      "queryParamArgMap": {
         "query": "query",
       },
       "responseByStatusCode": {
@@ -929,7 +929,7 @@ exports[`example_api should generate the bundle correctly 1`] = `
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/offices",
-      "queryParamsArgMap": {
+      "queryParamArgMap": {
         "parameters": "parameters",
       },
       "queryStringOptionsByParam": {
@@ -1224,7 +1224,7 @@ exports[`example_api should generate the bundle correctly 1`] = `
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/products/{args.product_id}",
-      "queryParamsArgMap": {
+      "queryParamArgMap": {
         "product-tag": "product_tag",
       },
       "responseByStatusCode": {
@@ -1304,7 +1304,7 @@ exports[`example_api should generate the bundle correctly 1`] = `
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/products/{args.id}/reviews",
-      "queryParamsArgMap": {
+      "queryParamArgMap": {
         "product-tag": "product_tag",
       },
       "responseByStatusCode": {
@@ -1572,7 +1572,7 @@ exports[`example_api should generate the bundle correctly 1`] = `
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/scanner",
-      "queryParamsArgMap": {
+      "queryParamArgMap": {
         "query": "query",
       },
       "responseByStatusCode": {
@@ -1652,7 +1652,7 @@ exports[`example_api should generate the bundle correctly 1`] = `
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/scanner/{args.path}",
-      "queryParamsArgMap": {
+      "queryParamArgMap": {
         "query": "query",
       },
       "requestSchema": {
@@ -1799,7 +1799,7 @@ exports[`example_api should generate the bundle correctly 1`] = `
       "method": "GET",
       "operationHeaders": undefined,
       "path": "/status",
-      "queryParamsArgMap": {
+      "queryParamArgMap": {
         "globalquery": "globalquery",
         "limit": "limit",
       },
@@ -1841,7 +1841,7 @@ exports[`example_api should generate the bundle correctly 1`] = `
       "method": "POST",
       "operationHeaders": undefined,
       "path": "/status",
-      "queryParamsArgMap": {
+      "queryParamArgMap": {
         "globalquery": "globalquery",
       },
       "requestSchema": {
