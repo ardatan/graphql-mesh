@@ -1,5 +1,25 @@
 # @graphql-mesh/runtime
 
+## 0.44.28
+
+### Patch Changes
+
+- [#4745](https://github.com/Urigo/graphql-mesh/pull/4745) [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@graphql-tools/delegate@9.0.9` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.9) (from `9.0.8`, in `dependencies`)
+  - Updated dependency [`@graphql-tools/batch-delegate@8.4.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/8.4.2) (from `8.4.1`, in `dependencies`)
+  - Updated dependency [`@graphql-tools/batch-execute@8.5.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-execute/v/8.5.7) (from `8.5.6`, in `dependencies`)
+  - Updated dependency [`@graphql-tools/wrap@9.2.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.4) (from `9.2.3`, in `dependencies`)
+  - Updated dependency [`@graphql-tools/utils@8.13.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.13.0) (from `8.12.0`, in `dependencies`)
+
+- [#4748](https://github.com/Urigo/graphql-mesh/pull/4748) [`305dd2262`](https://github.com/Urigo/graphql-mesh/commit/305dd2262054f4173384c0af8f90e8879411bbe0) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`@envelop/core@3.0.3` ↗︎](https://www.npmjs.com/package/@envelop/core/v/3.0.3) (from `3.0.2`, in `dependencies`)
+  - Updated dependency [`@envelop/extended-validation@2.0.3` ↗︎](https://www.npmjs.com/package/@envelop/extended-validation/v/2.0.3) (from `2.0.2`, in `dependencies`)
+- Updated dependencies [[`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd), [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd), [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd)]:
+  - @graphql-mesh/cross-helpers@0.2.7
+  - @graphql-mesh/types@0.85.4
+  - @graphql-mesh/utils@0.42.3
+
 ## 0.44.27
 
 ### Patch Changes

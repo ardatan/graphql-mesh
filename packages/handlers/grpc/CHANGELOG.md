@@ -1,5 +1,15 @@
 # @graphql-mesh/grpc
 
+## 0.25.29
+
+### Patch Changes
+
+- Updated dependencies [[`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd), [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd), [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd), [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd)]:
+  - @graphql-mesh/cross-helpers@0.2.7
+  - @graphql-mesh/store@0.8.59
+  - @graphql-mesh/types@0.85.4
+  - @graphql-mesh/utils@0.42.3
+
 ## 0.25.28
 
 ### Patch Changes

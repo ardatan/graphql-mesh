@@ -1,5 +1,17 @@
 # @graphql-mesh/http
 
+## 0.2.9
+
+### Patch Changes
+
+- [#4748](https://github.com/Urigo/graphql-mesh/pull/4748) [`305dd2262`](https://github.com/Urigo/graphql-mesh/commit/305dd2262054f4173384c0af8f90e8879411bbe0) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`graphql-yoga@3.0.0-next.8` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.0) (from `3.0.0-next.7`, in `dependencies`)
+- Updated dependencies [[`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd), [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd), [`305dd2262`](https://github.com/Urigo/graphql-mesh/commit/305dd2262054f4173384c0af8f90e8879411bbe0), [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd), [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd)]:
+  - @graphql-mesh/cross-helpers@0.2.7
+  - @graphql-mesh/runtime@0.44.28
+  - @graphql-mesh/types@0.85.4
+  - @graphql-mesh/utils@0.42.3
+
 ## 0.2.8
 
 ### Patch Changes

@@ -1,5 +1,24 @@
 # @graphql-mesh/cli
 
+## 0.79.0
+
+### Minor Changes
+
+- [`9690163ff`](https://github.com/Urigo/graphql-mesh/commit/9690163ff2ee0ef52fe0887c507846bb70b6bfc9) Thanks [@ardatan](https://github.com/ardatan)! - Now you can enable Node clusters with FORK env var
+
+### Patch Changes
+
+- [#4745](https://github.com/Urigo/graphql-mesh/pull/4745) [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`@graphql-tools/utils@8.13.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.13.0) (from `8.12.0`, in `dependencies`)
+- Updated dependencies [[`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd), [`305dd2262`](https://github.com/Urigo/graphql-mesh/commit/305dd2262054f4173384c0af8f90e8879411bbe0), [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd), [`305dd2262`](https://github.com/Urigo/graphql-mesh/commit/305dd2262054f4173384c0af8f90e8879411bbe0), [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd), [`305dd2262`](https://github.com/Urigo/graphql-mesh/commit/305dd2262054f4173384c0af8f90e8879411bbe0), [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd), [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd), [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd)]:
+  - @graphql-mesh/config@8.0.28
+  - @graphql-mesh/cross-helpers@0.2.7
+  - @graphql-mesh/http@0.2.9
+  - @graphql-mesh/runtime@0.44.28
+  - @graphql-mesh/store@0.8.59
+  - @graphql-mesh/types@0.85.4
+  - @graphql-mesh/utils@0.42.3
+
 ## 0.78.41
 
 ### Patch Changes

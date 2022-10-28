@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-statsd",
-  "version": "0.0.25",
+  "version": "0.0.26",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -30,8 +30,8 @@
   },
   "dependencies": {
     "@envelop/statsd": "3.0.3",
-    "@graphql-mesh/utils": "0.42.2",
-    "@graphql-mesh/types": "0.85.3",
+    "@graphql-mesh/utils": "0.42.3",
+    "@graphql-mesh/types": "0.85.4",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

@@ -1,5 +1,16 @@
 # @graphql-mesh/transform-resolvers-composition
 
+## 0.12.105
+
+### Patch Changes
+
+- [#4745](https://github.com/Urigo/graphql-mesh/pull/4745) [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`@graphql-tools/resolvers-composition@6.5.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/resolvers-composition/v/6.5.7) (from `6.5.6`, in `dependencies`)
+  - Updated dependency [`@graphql-tools/schema@9.0.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/9.0.5) (from `9.0.4`, in `dependencies`)
+- Updated dependencies [[`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd), [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd)]:
+  - @graphql-mesh/types@0.85.4
+  - @graphql-mesh/utils@0.42.3
+
 ## 0.12.104
 
 ### Patch Changes
