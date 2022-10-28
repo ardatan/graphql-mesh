@@ -1,5 +1,14 @@
 # auth0-example
 
+## 0.0.29
+
+### Patch Changes
+
+- Updated dependencies [[`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd), [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd), [`305dd2262`](https://github.com/Urigo/graphql-mesh/commit/305dd2262054f4173384c0af8f90e8879411bbe0), [`9690163ff`](https://github.com/Urigo/graphql-mesh/commit/9690163ff2ee0ef52fe0887c507846bb70b6bfc9), [`f1ae41058`](https://github.com/Urigo/graphql-mesh/commit/f1ae410587770c3dd016f8ec9ea3c4fe5134a997)]:
+  - @graphql-mesh/cli@0.79.0
+  - @graphql-mesh/json-schema@0.35.30
+  - @graphql-mesh/plugin-operation-field-permissions@0.0.17
+
 ## 0.0.28
 
 ### Patch Changes

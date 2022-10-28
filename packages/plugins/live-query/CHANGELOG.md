@@ -1,5 +1,15 @@
 # @graphql-mesh/plugin-live-query
 
+## 0.1.42
+
+### Patch Changes
+
+- [#4748](https://github.com/Urigo/graphql-mesh/pull/4748) [`305dd2262`](https://github.com/Urigo/graphql-mesh/commit/305dd2262054f4173384c0af8f90e8879411bbe0) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`@envelop/live-query@5.0.3` ↗︎](https://www.npmjs.com/package/@envelop/live-query/v/5.0.3) (from `5.0.2`, in `dependencies`)
+- Updated dependencies [[`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd), [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd)]:
+  - @graphql-mesh/cross-helpers@0.2.7
+  - @graphql-mesh/types@0.85.4
+
 ## 0.1.41
 
 ### Patch Changes

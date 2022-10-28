@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-extend",
-  "version": "0.10.70",
+  "version": "0.10.71",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -28,14 +28,14 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.85.3",
-    "@graphql-mesh/utils": "0.42.2",
+    "@graphql-mesh/types": "0.85.4",
+    "@graphql-mesh/utils": "0.42.3",
     "@graphql-tools/load": "7.8.1",
     "@graphql-tools/code-file-loader": "7.3.7",
     "@graphql-tools/graphql-file-loader": "7.5.6",
     "@graphql-tools/schema": "9.0.5",
     "@graphql-tools/utils": "8.13.0",
-    "@graphql-mesh/cross-helpers": "0.2.6",
+    "@graphql-mesh/cross-helpers": "0.2.7",
     "tslib": "^2.4.0"
   },
   "publishConfig": {
