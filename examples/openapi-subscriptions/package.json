@@ -13,7 +13,7 @@
     "concurrently": "7.5.0",
     "graphql": "16.6.0",
     "express": "4.18.2",
-    "@whatwg-node/fetch": "0.5.0",
+    "@whatwg-node/fetch": "0.5.1",
     "ts-node": "10.9.1",
     "typescript": "4.8.4"
   }
