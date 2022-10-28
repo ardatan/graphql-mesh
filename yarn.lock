@@ -4998,10 +4998,10 @@
   dependencies:
     prettier-plugin-sh "^0.12.8"
 
-"@theguild/tailwind-config@0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@theguild/tailwind-config/-/tailwind-config-0.2.0.tgz#bd89d57fe520b9d139025ce809edfff3a14764ad"
-  integrity sha512-W6IO9nt5XMFf9vcT1pXhzd0g5hJ55Pknvoh3TSL29MoXjCBKYSxVbYGRbBRy78yZ8mrAvG9yTGiePAGUlW+7lw==
+"@theguild/tailwind-config@0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@theguild/tailwind-config/-/tailwind-config-0.2.1.tgz#efb57366f42603e8eb462b050498f1bef8e449a2"
+  integrity sha512-oYuiFhsqWX8r3dFZHGS9retccEajVrbP9640x/umWsZtlbpR0TKpob05aisAZCEolGls1XQ10NqBPtIkB28ujA==
   dependencies:
     autoprefixer "^10.4.12"
     cssnano "^5.1.13"
@@ -15258,28 +15258,28 @@ neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-neo4j-driver-bolt-connection@^5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/neo4j-driver-bolt-connection/-/neo4j-driver-bolt-connection-5.1.0.tgz#513772f864612f4d3e166a5b6d40d7a47f261668"
-  integrity sha512-WnEwAWxYcMmyHt643BLN+oYpo6iYRQP1CP5IPVX2LFg2jVm7ge7KwS+ofVl0IQe4w59kkAQV03r8B135Tv6lIQ==
+neo4j-driver-bolt-connection@^5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/neo4j-driver-bolt-connection/-/neo4j-driver-bolt-connection-5.2.0.tgz#322f2f9773d4e0c093b0049176b13a2f64a1f6fb"
+  integrity sha512-BKVs1fd54UrJGWWpxpzPclaHo46xUUwMRK5fHR8t6KSi5C0WgE0iCOh1tk3cReFQgqwS6D5OVKu2ihU2kzNLiA==
   dependencies:
     buffer "^6.0.3"
-    neo4j-driver-core "^5.1.0"
+    neo4j-driver-core "^5.2.0"
     string_decoder "^1.3.0"
 
-neo4j-driver-core@^5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/neo4j-driver-core/-/neo4j-driver-core-5.1.0.tgz#f0b1490b43139a766b2e9febe99dc0305e950ee3"
-  integrity sha512-T9w2h3KCPrONq7SeIyTYeOxrHIqqtBWfb0IXnDA1/jP0LosMtq0y79SQssm3gl34jbE4yHdSVxVbGX64CqXbtg==
+neo4j-driver-core@^5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/neo4j-driver-core/-/neo4j-driver-core-5.2.0.tgz#b465bea6580196f43945265b75961978de17e39e"
+  integrity sha512-USdA9u+V0VM7y4UwH4nrofBaROwp73iKx1hC6TNWQRKF5o7biDUt6Wc1x3+oO4YN4lCSC5JzB/tHlG4f1cYxsg==
 
-neo4j-driver@5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/neo4j-driver/-/neo4j-driver-5.1.0.tgz#409af07f363ca79650e45127d694931165687a9f"
-  integrity sha512-0Nv23NdX+Z6dpg3kycio+7enJvuA0erhhBdRyH1woPWnZGuqnS94y3bAEUIt+ET5kohfnTPK9+qT2TQ+lylaSQ==
+neo4j-driver@5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/neo4j-driver/-/neo4j-driver-5.2.0.tgz#954645aac5cd3975f2ca160417dbb2a513bb108f"
+  integrity sha512-jCKKSC6pumhjgn16X3tpSkQBvnwVdYHrudI1gU8RhKIOnKQjVEnj3OzcHAN2c8+BaFDx++qIln9FsssPLVOrXg==
   dependencies:
     "@babel/runtime" "^7.17.8"
-    neo4j-driver-bolt-connection "^5.1.0"
-    neo4j-driver-core "^5.1.0"
+    neo4j-driver-bolt-connection "^5.2.0"
+    neo4j-driver-core "^5.2.0"
     rxjs "^7.5.5"
 
 newrelic@8.17.1:
@@ -20236,10 +20236,10 @@ vfile@^5.0.0:
     unist-util-stringify-position "^3.0.0"
     vfile-message "^3.0.0"
 
-vite@3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/vite/-/vite-3.2.0.tgz#a4015914620ff0122ea57fddfecc0e250eb6582c"
-  integrity sha512-Ovj7+cqIdM1I0LPCk2CWxzgADXMix3NLXpUT6g7P7zg/a9grk/TaC3qn9YMg7w7M0POIVCBOp1aBANJW+RH7oA==
+vite@3.2.1:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/vite/-/vite-3.2.1.tgz#dc1f54568300a7acdd89c8611e2719c21f1334f4"
+  integrity sha512-ADtMkfHuWq4tskJsri2n2FZkORO8ZyhI+zIz7zTrDAgDEtct1jdxOg3YsZBfHhKjmMoWLOSCr+64qrEDGo/DbQ==
   dependencies:
     esbuild "^0.15.9"
     postcss "^8.4.18"
