@@ -13,7 +13,7 @@
     "@graphql-mesh/cli": "0.78.41",
     "@graphql-mesh/json-schema": "0.35.29",
     "@graphql-mesh/plugin-operation-field-permissions": "0.0.16",
-    "@envelop/auth0": "4.0.2",
+    "@envelop/auth0": "4.0.3",
     "graphql": "16.6.0"
   },
   "devDependencies": {

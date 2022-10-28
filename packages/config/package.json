@@ -42,7 +42,7 @@
     "@graphql-tools/graphql-file-loader": "7.5.6",
     "@whatwg-node/fetch": "^0.5.0",
     "param-case": "3.0.4",
-    "@envelop/core": "3.0.2",
+    "@envelop/core": "3.0.3",
     "tslib": "^2.4.0",
     "pascal-case": "3.1.2",
     "camel-case": "4.1.2"

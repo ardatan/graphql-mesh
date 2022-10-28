@@ -32,7 +32,7 @@
     "@graphql-mesh/utils": "0.42.2",
     "@graphql-mesh/cross-helpers": "0.2.6",
     "@graphql-mesh/types": "0.85.3",
-    "@whatwg-node/fetch": "0.5.0",
+    "@whatwg-node/fetch": "0.5.1",
     "minimatch": "5.1.0",
     "tslib": "^2.4.0"
   },
