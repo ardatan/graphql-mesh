@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Example 1 should generate the schema correctly 1`] = `
-"type Query {
+"directive @soap(elementName: String, bindingNamespace: String, baseUrl: String) on FIELD_DEFINITION
+
+type Query {
   TodoService_TodoService_BasicHttpBinding_ITodoService_GetTodos(GetTodos: JSON = ""): TodoService_GetTodosResponse
 }
 

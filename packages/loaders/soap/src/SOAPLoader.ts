@@ -1,5 +1,5 @@
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
-import { parse as parseXML, X2jOptions, j2xParser as JSONToXMLConverter } from 'fast-xml-parser';
+import { parse as parseXML } from 'fast-xml-parser';
 import {
   AnyTypeComposer,
   EnumTypeComposer,
@@ -37,22 +37,37 @@ import {
   GraphQLUnsignedInt,
   RegularExpression,
 } from 'graphql-scalars';
-import { GraphQLBoolean, GraphQLFloat, GraphQLInt, GraphQLScalarType, GraphQLString } from 'graphql';
+import {
+  DirectiveLocation,
+  GraphQLBoolean,
+  GraphQLDirective,
+  GraphQLFloat,
+  GraphQLInt,
+  GraphQLScalarType,
+  GraphQLString,
+} from 'graphql';
 import { MeshFetch } from '@graphql-mesh/types';
+import { PARSE_XML_OPTIONS, SoapAnnotations } from './utils';
 
 export interface SOAPLoaderOptions {
   fetch: MeshFetch;
 }
 
-const PARSE_XML_OPTIONS: Partial<X2jOptions> = {
-  attributeNamePrefix: '',
-  attrNodeName: 'attributes',
-  textNodeName: 'innerText',
-  ignoreAttributes: false,
-  ignoreNameSpace: true,
-  arrayMode: true,
-  allowBooleanAttributes: true,
-};
+const soapDirective = new GraphQLDirective({
+  name: 'soap',
+  locations: [DirectiveLocation.FIELD_DEFINITION],
+  args: {
+    elementName: {
+      type: GraphQLString,
+    },
+    bindingNamespace: {
+      type: GraphQLString,
+    },
+    baseUrl: {
+      type: GraphQLString,
+    },
+  },
+});
 
 const QUERY_PREFIXES = ['get', 'find', 'list', 'search', 'count', 'exists', 'fetch', 'load', 'query', 'select'];
 
@@ -82,14 +97,10 @@ export class SOAPLoader {
   private simpleTypeTCMap = new WeakMap<XSSimpleType, EnumTypeComposer | ScalarTypeComposer>();
   private namespaceTypePrefixMap = new Map<string, string>();
   public loadedLocations = new Map<string, WSDLObject | XSDObject>();
-  private jsonToXMLConverter = new JSONToXMLConverter({
-    attributeNamePrefix: '',
-    attrNodeName: 'attributes',
-    textNodeName: 'innerText',
-  });
 
   constructor(private options: SOAPLoaderOptions) {
     this.loadXMLSchemaNamespace();
+    this.schemaComposer.addDirective(soapDirective);
   }
 
   loadXMLSchemaNamespace() {
@@ -362,12 +373,20 @@ export class SOAPLoader {
             const { type, elementName } = this.getOutputTypeForMessage(
               this.getNamespaceMessageMap(messageNamespace).get(messageName)
             );
+            const soapAnnotations: SoapAnnotations = {
+              elementName,
+              bindingNamespace,
+              baseUrl: portObj.address[0].attributes.location,
+            };
             rootTC.addFields({
               [operationFieldName]: {
                 type,
-                extensions: {
-                  elementName,
-                },
+                directives: [
+                  {
+                    name: 'soap',
+                    args: soapAnnotations,
+                  },
+                ],
               },
             });
             const inputObj = operationObj.input[0];
@@ -423,53 +442,6 @@ export class SOAPLoader {
                 });
               }
             }
-          }
-          for (const operationObj of bindingObj.operation) {
-            const operationName = operationObj.attributes.name;
-            const rootTC = isQueryOperationName(operationName)
-              ? this.schemaComposer.Query
-              : this.schemaComposer.Mutation;
-            const operationFieldName = sanitizeNameForGraphQL(
-              `${typePrefix}_${serviceName}_${portName}_${operationName}`
-            );
-            const rootOperationField = rootTC.getField(operationFieldName);
-            const elementName = rootOperationField.extensions.elementName;
-            rootOperationField.resolve = async (root, args, context, info) => {
-              const requestJson = {
-                'soap:Envelope': {
-                  attributes: {
-                    'xmlns:soap': 'http://www.w3.org/2003/05/soap-envelope',
-                  },
-                  'soap:Body': {
-                    attributes: {
-                      xmlns: bindingNamespace,
-                    },
-                    ...normalizeArgsForConverter(args),
-                  },
-                },
-              };
-              const requestXML = this.jsonToXMLConverter.parse(requestJson);
-              const response = await this.options
-                .fetch(
-                  portObj.address[0].attributes.location,
-                  {
-                    method: 'POST',
-                    body: requestXML,
-                    headers: {
-                      'Content-Type': 'application/soap+xml; charset=utf-8',
-                    },
-                  },
-                  context,
-                  info
-                )
-                .catch(e => {
-                  console.log(e);
-                  throw e;
-                });
-              const responseXML = await response.text();
-              const responseJSON = parseXML(responseXML, PARSE_XML_OPTIONS);
-              return normalizeResult(responseJSON.Envelope[0].Body[0][elementName]);
-            };
           }
         }
       }
@@ -838,17 +810,6 @@ export class SOAPLoader {
                   }
                   return outputTC;
                 },
-                resolve: root => {
-                  const fieldValue = root[fieldName];
-                  const isArray = Array.isArray(fieldValue);
-                  if (isPlural && !isArray) {
-                    return [fieldValue];
-                  }
-                  if (!isPlural && isArray) {
-                    return fieldValue[0];
-                  }
-                  return fieldValue;
-                },
               };
             } else {
               if (elementObj.attributes?.ref) {
@@ -1010,34 +971,4 @@ export class SOAPLoader {
     }
     return this.schemaComposer.buildSchema();
   }
-}
-
-function normalizeArgsForConverter(args: any): any {
-  if (args != null) {
-    if (typeof args === 'object') {
-      for (const key in args) {
-        args[key] = normalizeArgsForConverter(args[key]);
-      }
-    } else {
-      return {
-        innerText: args,
-      };
-    }
-  }
-  return args;
-}
-
-function normalizeResult(result: any) {
-  if (result != null && typeof result === 'object') {
-    for (const key in result) {
-      if (key === 'innerText') {
-        return result.innerText;
-      }
-      result[key] = normalizeResult(result[key]);
-    }
-    if (Array.isArray(result) && result.length === 1) {
-      return result[0];
-    }
-  }
-  return result;
 }
