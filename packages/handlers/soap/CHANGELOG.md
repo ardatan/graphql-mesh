@@ -1,5 +1,28 @@
 # @graphql-mesh/soap
 
+## 0.15.0
+
+### Minor Changes
+
+- [#3137](https://github.com/Urigo/graphql-mesh/pull/3137) [`672c62d50`](https://github.com/Urigo/graphql-mesh/commit/672c62d50526d0a076d18305be5b61dbb3018f62) Thanks [@ardatan](https://github.com/ardatan)! - **BREAKING**
+  Rewrite SOAP Handler
+
+  The generated API is completely different now because of the new handler. The new handler is based on the new `@omnigraph/soap` package.
+  The fields in the generated schema now follows the XML structure.
+
+### Patch Changes
+
+- [#3137](https://github.com/Urigo/graphql-mesh/pull/3137) [`672c62d50`](https://github.com/Urigo/graphql-mesh/commit/672c62d50526d0a076d18305be5b61dbb3018f62) Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency [`@omnigraph/soap@0.0.0` ↗︎](https://www.npmjs.com/package/@omnigraph/soap/v/0.0.0) (to `dependencies`)
+  - Removed dependency [`@graphql-mesh/cross-helpers@0.2.7` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cross-helpers/v/0.2.7) (from `dependencies`)
+  - Removed dependency [`graphql-scalars@1.20.0` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.20.0) (from `dependencies`)
+  - Removed dependency [`soap@0.45.0` ↗︎](https://www.npmjs.com/package/soap/v/0.45.0) (from `dependencies`)
+- Updated dependencies [[`d5f2d950e`](https://github.com/Urigo/graphql-mesh/commit/d5f2d950e6318a74c062c9dbc436d5e9c0e8d59d), [`672c62d50`](https://github.com/Urigo/graphql-mesh/commit/672c62d50526d0a076d18305be5b61dbb3018f62)]:
+  - @graphql-mesh/utils@0.42.4
+  - @omnigraph/soap@0.1.0
+  - @graphql-mesh/store@0.8.60
+  - @graphql-mesh/types@0.85.5
+
 ## 0.14.27
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # @graphql-mesh/utils
 
+## 0.42.4
+
+### Patch Changes
+
+- [`d5f2d950e`](https://github.com/Urigo/graphql-mesh/commit/d5f2d950e6318a74c062c9dbc436d5e9c0e8d59d) Thanks [@ardatan](https://github.com/ardatan)! - Fix Windows path issues
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.85.5
+
 ## 0.42.3
 
 ### Patch Changes
