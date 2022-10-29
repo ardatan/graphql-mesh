@@ -13,13 +13,7 @@ export interface ReadFileOrUrlOptions extends RequestInit {
 }
 
 export function isUrl(str: string): boolean {
-  try {
-    // eslint-disable-next-line no-new
-    new URL(str);
-    return true;
-  } catch {
-    return false;
-  }
+  return /^https?:\/\//.test(str);
 }
 
 export async function readFileOrUrl<T>(filePathOrUrl: string, config: ReadFileOrUrlOptions): Promise<T> {

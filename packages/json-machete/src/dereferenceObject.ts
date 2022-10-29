@@ -2,7 +2,7 @@ import JsonPointer from 'json-pointer';
 import { path as pathModule, process } from '@graphql-mesh/cross-helpers';
 import urlJoin from 'url-join';
 import { fetch as crossUndiciFetch } from '@whatwg-node/fetch';
-import { defaultImportFn, DefaultLogger, readFileOrUrl } from '@graphql-mesh/utils';
+import { defaultImportFn, DefaultLogger, isUrl, readFileOrUrl } from '@graphql-mesh/utils';
 import { handleUntitledDefinitions } from './healUntitledDefinitions';
 
 export const resolvePath = (path: string, root: any): any => {
@@ -19,14 +19,10 @@ function isRefObject(obj: any): obj is { $ref: string } {
   return typeof obj === 'object' && typeof obj.$ref === 'string';
 }
 
-function isURL(str: string) {
-  return /^https?:\/\//.test(str);
-}
-
 const getAbsolute$Ref = (given$ref: string, baseFilePath: string) => {
   const [givenExternalFileRelativePath, givenRefPath] = given$ref.split('#');
   if (givenExternalFileRelativePath) {
-    const cwd = isURL(baseFilePath) ? getCwdForUrl(baseFilePath) : pathModule.dirname(baseFilePath);
+    const cwd = isUrl(baseFilePath) ? getCwdForUrl(baseFilePath) : pathModule.dirname(baseFilePath);
     const givenExternalFilePath = getAbsolutePath(givenExternalFileRelativePath, cwd);
     if (givenRefPath) {
       return `${givenExternalFilePath}#${givenRefPath}`;
@@ -47,10 +43,10 @@ function normalizeUrl(url: string) {
 }
 
 export function getAbsolutePath(path: string, cwd: string) {
-  if (isURL(path)) {
+  if (isUrl(path)) {
     return path;
   }
-  if (isURL(cwd)) {
+  if (isUrl(cwd)) {
     return normalizeUrl(urlJoin(cwd, path));
   }
   if (pathModule.isAbsolute(path)) {
@@ -60,7 +56,7 @@ export function getAbsolutePath(path: string, cwd: string) {
 }
 
 export function getCwd(path: string) {
-  return isURL(path) ? getCwdForUrl(path) : pathModule.dirname(path);
+  return isUrl(path) ? getCwdForUrl(path) : pathModule.dirname(path);
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types
