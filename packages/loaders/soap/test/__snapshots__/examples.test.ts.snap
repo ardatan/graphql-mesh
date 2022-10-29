@@ -1,0 +1,311 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Examples should generate schema for example1: example1 1`] = `
+"directive @soap(elementName: String, bindingNamespace: String, baseUrl: String) on FIELD_DEFINITION
+
+type Query {
+  TodoService_TodoService_BasicHttpBinding_ITodoService_GetTodos(GetTodos: JSON = ""): TodoService_GetTodosResponse
+}
+
+type TodoService_GetTodosResponse {
+  GetTodosResult: tns_ArrayOfTodoMessage!
+}
+
+type tns_ArrayOfTodoMessage {
+  TodoMessage: [tns_TodoMessage]!
+}
+
+type tns_TodoMessage {
+  Author: tns_Name!
+  Description: String!
+}
+
+type tns_Name {
+  First: String!
+  Last: String!
+  Middle: String!
+}
+
+"""
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+type Mutation {
+  TodoService_TodoService_BasicHttpBinding_ITodoService_UpdateFileClass(UpdateFileClass: TodoService_UpdateFileClass_Input): JSON
+  TodoService_TodoService_BasicHttpBinding_ITodoService_AddUpdateClass(AddUpdateClass: TodoService_AddUpdateClass_Input): TodoService_AddUpdateClassResponse
+  TodoService_TodoService_BasicHttpBinding_ITodoService_AddTodo(AddTodo: TodoService_AddTodo_Input): TodoService_AddTodoResponse
+  TodoService_TodoService_BasicHttpBinding_ITodoService_FaultAddTodo(FaultAddTodo: TodoService_FaultAddTodo_Input): TodoService_FaultAddTodoResponse
+  TodoService_TodoService_BasicHttpBinding_ITodoService_FailGetTodo(FailGetTodo: JSON = ""): TodoService_FailGetTodoResponse
+}
+
+input TodoService_UpdateFileClass_Input {
+  cls: tns_FileClass_Input
+}
+
+input tns_FileClass_Input {
+  Mode: String
+  ClassIntID: BigInt
+  CreatedBy: String
+  CreatedDtTm: DateTime
+  FirmIntID: String
+  LastUpdatedBy: String
+  LastUpdatedDtTm: DateTime
+  Name: String
+  PeriodType: String
+  Retention: Int
+  Timestamp: Byte
+}
+
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar DateTime
+
+"""The \`Byte\` scalar type represents byte value as a Buffer"""
+scalar Byte
+
+type TodoService_AddUpdateClassResponse {
+  AddUpdateClassResult: Boolean!
+}
+
+input TodoService_AddUpdateClass_Input {
+  updateClass: tns_UpdateClass_Input
+}
+
+input tns_UpdateClass_Input {
+  ClassIndId: String
+}
+
+type TodoService_AddTodoResponse {
+  AddTodoResult: Boolean!
+}
+
+input TodoService_AddTodo_Input {
+  todo: tns_TodoMessage_Input
+}
+
+input tns_TodoMessage_Input {
+  Author: tns_Name_Input
+  Description: String
+}
+
+input tns_Name_Input {
+  First: String
+  Last: String
+  Middle: String
+}
+
+type TodoService_FaultAddTodoResponse {
+  FaultAddTodoResult: String!
+}
+
+input TodoService_FaultAddTodo_Input {
+  text: String
+}
+
+type TodoService_FailGetTodoResponse {
+  FailGetTodoResult: String!
+}"
+`;
+
+exports[`Examples should generate schema for example2: example2 1`] = `
+"directive @soap(elementName: String, bindingNamespace: String, baseUrl: String) on FIELD_DEFINITION
+
+type Query {
+  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_GetServiceHealth(GetServiceHealth: JSON = ""): tns_GetServiceHealthResponse
+  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_GetFileClassByClassID(GetFileClassByClassID: AdminServiceType_GetFileClassByClassID_Input): AdminServiceType_GetFileClassByClassIDResponse
+  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_GetFileClassByClassIntIDCaasToMonolith(GetFileClassByClassIntIDCaasToMonolith: AdminServiceType_GetFileClassByClassIntIDCaasToMonolith_Input): AdminServiceType_GetFileClassByClassIntIDCaasToMonolithResponse
+}
+
+type tns_GetServiceHealthResponse {
+  GetServiceHealthResult: tns_ServiceHealth!
+}
+
+type tns_ServiceHealth {
+  IsHealthy: Boolean!
+  UniqueValue: BigInt!
+}
+
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
+"""
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+type AdminServiceType_GetFileClassByClassIDResponse {
+  GetFileClassByClassIDResult: tns_FileClass!
+}
+
+type tns_FileClass {
+  Mode: String!
+  ClassIntID: BigInt!
+  CreatedBy: String!
+  CreatedDtTm: DateTime!
+  Entityclasses: tns_EntityClassList!
+  FirmGuid: tns_guid!
+  FirmIntID: BigInt!
+  LastUpdatedBy: String!
+  LastUpdatedDtTm: DateTime!
+  Name: String!
+  NeedANotification: Boolean!
+  PeriodType: String!
+  PreventPublishFlg: Boolean!
+  Retention: Int!
+  RetentionChanged: String!
+  Subclasses: tns_FileSubclassList!
+  Timestamp: Byte!
+}
+
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar DateTime
+
+type tns_EntityClassList {
+  EntityClass: [tns_EntityClass]!
+}
+
+type tns_EntityClass {
+  Mode: String!
+  ClassIntID: BigInt!
+  EntityClassIntID: BigInt!
+  EntityIntID: BigInt!
+  EntityType: String!
+  FirmIntID: BigInt!
+}
+
+"""
+A field whose value matches /[\\da-fA-F]{8}-[\\da-fA-F]{4}-[\\da-fA-F]{4}-[\\da-fA-F]{4}-[\\da-fA-F]{12}/.
+"""
+scalar tns_guid
+
+type tns_FileSubclassList {
+  FileSubclass: [tns_FileSubclass]!
+}
+
+type tns_FileSubclass {
+  Mode: String!
+  ClassIntID: BigInt!
+  CreatedBy: String!
+  CreatedDtTm: DateTime!
+  EffectivePeriodType: String!
+  EffectiveRetention: Int!
+  LastUpdatedBy: String!
+  LastUpdatedDtTm: DateTime!
+  Name: String!
+  PeriodType: String!
+  Permanent: Boolean!
+  Retention: Int!
+  RetentionChanged: String!
+  SubClassIntID: BigInt!
+  Timestamp: Byte!
+}
+
+"""The \`Byte\` scalar type represents byte value as a Buffer"""
+scalar Byte
+
+input AdminServiceType_GetFileClassByClassID_Input {
+  classIntID: BigInt
+}
+
+type AdminServiceType_GetFileClassByClassIntIDCaasToMonolithResponse {
+  GetFileClassByClassIntIDCaasToMonolithResult: tns_FileClass!
+}
+
+input AdminServiceType_GetFileClassByClassIntIDCaasToMonolith_Input {
+  classIntID: BigInt
+}
+
+type Mutation {
+  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_CreateFileClass(CreateFileClass: AdminServiceType_CreateFileClass_Input): AdminServiceType_CreateFileClassResponse
+  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_UpdateFileClass(UpdateFileClass: AdminServiceType_UpdateFileClass_Input): JSON
+  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_DeleteFileClass(DeleteFileClass: AdminServiceType_DeleteFileClass_Input): JSON
+  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_DeleteEntityClass(DeleteEntityClass: AdminServiceType_DeleteEntityClass_Input): JSON
+}
+
+type AdminServiceType_CreateFileClassResponse {
+  CreateFileClassResult: BigInt!
+}
+
+input AdminServiceType_CreateFileClass_Input {
+  classData: tns_FileClass_Input
+}
+
+input tns_FileClass_Input {
+  Mode: String
+  ClassIntID: BigInt
+  CreatedBy: String
+  CreatedDtTm: DateTime
+  Entityclasses: tns_EntityClassList_Input
+  FirmGuid: tns_guid
+  FirmIntID: BigInt
+  LastUpdatedBy: String
+  LastUpdatedDtTm: DateTime
+  Name: String
+  NeedANotification: Boolean
+  PeriodType: String
+  PreventPublishFlg: Boolean
+  Retention: Int
+  RetentionChanged: String
+  Subclasses: tns_FileSubclassList_Input
+  Timestamp: Byte
+}
+
+input tns_EntityClassList_Input {
+  EntityClass: [tns_EntityClass_Input]
+}
+
+input tns_EntityClass_Input {
+  Mode: String
+  ClassIntID: BigInt
+  EntityClassIntID: BigInt
+  EntityIntID: BigInt
+  EntityType: String
+  FirmIntID: BigInt
+}
+
+input tns_FileSubclassList_Input {
+  FileSubclass: [tns_FileSubclass_Input]
+}
+
+input tns_FileSubclass_Input {
+  Mode: String
+  ClassIntID: BigInt
+  CreatedBy: String
+  CreatedDtTm: DateTime
+  EffectivePeriodType: String
+  EffectiveRetention: Int
+  LastUpdatedBy: String
+  LastUpdatedDtTm: DateTime
+  Name: String
+  PeriodType: String
+  Permanent: Boolean
+  Retention: Int
+  RetentionChanged: String
+  SubClassIntID: BigInt
+  Timestamp: Byte
+}
+
+input AdminServiceType_UpdateFileClass_Input {
+  classData: tns_FileClass_Input
+}
+
+input AdminServiceType_DeleteFileClass_Input {
+  classIntID: BigInt
+  timestamp: Byte
+}
+
+input AdminServiceType_DeleteEntityClass_Input {
+  entityclassIntID: BigInt
+}"
+`;

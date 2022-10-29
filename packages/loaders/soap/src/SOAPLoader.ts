@@ -408,9 +408,10 @@ export class SOAPLoader {
                 rootTC.addFieldArgs(operationFieldName, {
                   [elementName]: {
                     type: () => {
-                      const elementNamespace = aliasMap.get(elementNamespaceAlias);
+                      const elementNamespace =
+                        aliasMap.get(elementNamespaceAlias) || part.attributes[elementNamespaceAlias];
                       if (!elementNamespace) {
-                        throw new Error(`Namespace alias: ${elementNamespace} is not defined.`);
+                        throw new Error(`Namespace alias: ${elementNamespaceAlias} is not defined.`);
                       }
                       return this.getInputTypeForTypeNameInNamespace({
                         typeName: elementName,
@@ -841,7 +842,8 @@ export class SOAPLoader {
         for (const complexContentObj of complexType.complexContent) {
           for (const extensionObj of complexContentObj.extension) {
             const [baseTypeNamespaceAlias, baseTypeName] = extensionObj.attributes.base.split(':');
-            const baseTypeNamespace = aliasMap.get(baseTypeNamespaceAlias);
+            const baseTypeNamespace =
+              aliasMap.get(baseTypeNamespaceAlias) || extensionObj.attributes[baseTypeNamespaceAlias];
             if (!baseTypeNamespace) {
               throw new Error(`Namespace alias: ${baseTypeNamespaceAlias} is undefined!`);
             }
@@ -931,7 +933,8 @@ export class SOAPLoader {
         const [elementNamespaceAlias, elementName] = partObj.attributes.element.split(':');
         outputTCAndName = {
           type: () => {
-            const elementTypeNamespace = aliasMap.get(elementNamespaceAlias);
+            const elementTypeNamespace =
+              aliasMap.get(elementNamespaceAlias) || partObj.attributes[elementNamespaceAlias];
             if (!elementTypeNamespace) {
               throw new Error(`Namespace alias: ${elementNamespaceAlias} is undefined!`);
             }
