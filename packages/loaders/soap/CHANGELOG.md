@@ -1,5 +1,14 @@
 # @omnigraph/soap
 
+## 0.1.1
+
+### Patch Changes
+
+- [#4758](https://github.com/Urigo/graphql-mesh/pull/4758) [`6b4b83fdc`](https://github.com/Urigo/graphql-mesh/commit/6b4b83fdc3b6360de5f6fc2e26eefbff4c4173a8) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`@graphql-tools/utils@8.13.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.13.0) (from `8.12.0`, in `dependencies`)
+  - Updated dependency [`graphql-compose@9.0.10` ↗︎](https://www.npmjs.com/package/graphql-compose/v/9.0.10) (from `9.0.9`, in `dependencies`)
+  - Updated dependency [`graphql-scalars@1.20.0` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.20.0) (from `1.19.0`, in `dependencies`)
+
 ## 0.1.0
 
 ### Minor Changes
