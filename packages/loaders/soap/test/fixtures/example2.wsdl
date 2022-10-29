@@ -1,0 +1,601 @@
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://Pfx.Net/Document/IAdminService" name="AdminServiceType" targetNamespace="http://Pfx.Net/Document/IAdminService" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+	<wsdl:types>
+		<xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:import namespace="http://schemas.datacontract.org/2004/07/CCH.Infrastructure.Services"/>
+			<xs:element name="GetServiceHealth">
+				<xs:complexType>
+					<xs:sequence/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetServiceHealthResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/CCH.Infrastructure.Services" minOccurs="0" name="GetServiceHealthResult" nillable="true" type="q1:ServiceHealth"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+		<xs:schema xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:element name="anyType" nillable="true" type="xs:anyType"/>
+			<xs:element name="anyURI" nillable="true" type="xs:anyURI"/>
+			<xs:element name="base64Binary" nillable="true" type="xs:base64Binary"/>
+			<xs:element name="boolean" nillable="true" type="xs:boolean"/>
+			<xs:element name="byte" nillable="true" type="xs:byte"/>
+			<xs:element name="dateTime" nillable="true" type="xs:dateTime"/>
+			<xs:element name="decimal" nillable="true" type="xs:decimal"/>
+			<xs:element name="double" nillable="true" type="xs:double"/>
+			<xs:element name="float" nillable="true" type="xs:float"/>
+			<xs:element name="int" nillable="true" type="xs:int"/>
+			<xs:element name="long" nillable="true" type="xs:long"/>
+			<xs:element name="QName" nillable="true" type="xs:QName"/>
+			<xs:element name="short" nillable="true" type="xs:short"/>
+			<xs:element name="string" nillable="true" type="xs:string"/>
+			<xs:element name="unsignedByte" nillable="true" type="xs:unsignedByte"/>
+			<xs:element name="unsignedInt" nillable="true" type="xs:unsignedInt"/>
+			<xs:element name="unsignedLong" nillable="true" type="xs:unsignedLong"/>
+			<xs:element name="unsignedShort" nillable="true" type="xs:unsignedShort"/>
+			<xs:element name="char" nillable="true" type="tns:char"/>
+			<xs:simpleType name="char">
+				<xs:restriction base="xs:int"/>
+			</xs:simpleType>
+			<xs:element name="duration" nillable="true" type="tns:duration"/>
+			<xs:simpleType name="duration">
+				<xs:restriction base="xs:duration">
+					<xs:pattern value="\-?P(\d*D)?(T(\d*H)?(\d*M)?(\d*(\.\d*)?S)?)?"/>
+					<xs:minInclusive value="-P10675199DT2H48M5.4775808S"/>
+					<xs:maxInclusive value="P10675199DT2H48M5.4775807S"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:element name="guid" nillable="true" type="tns:guid"/>
+			<xs:simpleType name="guid">
+				<xs:restriction base="xs:string">
+					<xs:pattern value="[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:attribute name="FactoryType" type="xs:QName"/>
+			<xs:attribute name="Id" type="xs:ID"/>
+			<xs:attribute name="Ref" type="xs:IDREF"/>
+		</xs:schema>
+		<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/CCH.Infrastructure.Services" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/CCH.Infrastructure.Services" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:complexType name="ServiceHealth">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="IsHealthy" type="xs:boolean"/>
+					<xs:element minOccurs="0" name="UniqueValue" type="xs:long"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="ServiceHealth" nillable="true" type="tns:ServiceHealth"/>
+		</xs:schema>
+		<xs:schema elementFormDefault="qualified" targetNamespace="http://Pfx.Net/Document/IAdminService" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:import namespace="http://Pfx.Net/Document/FileClass"/>
+			<xs:element name="CreateFileClass">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element xmlns:q1="http://Pfx.Net/Document/FileClass" minOccurs="0" name="classData" nillable="true" type="q1:FileClass"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CreateFileClassResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" name="CreateFileClassResult" type="xs:long"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="UpdateFileClass">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element xmlns:q2="http://Pfx.Net/Document/FileClass" minOccurs="0" name="classData" nillable="true" type="q2:FileClass"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="UpdateFileClassResponse">
+				<xs:complexType>
+					<xs:sequence/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DeleteFileClass">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" name="classIntID" type="xs:long"/>
+						<xs:element minOccurs="0" name="timestamp" nillable="true" type="xs:base64Binary"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DeleteFileClassResponse">
+				<xs:complexType>
+					<xs:sequence/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DeleteEntityClass">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" name="entityclassIntID" type="xs:long"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DeleteEntityClassResponse">
+				<xs:complexType>
+					<xs:sequence/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetFileClassByClassID">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" name="classIntID" type="xs:long"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetFileClassByClassIDResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element xmlns:q3="http://Pfx.Net/Document/FileClass" minOccurs="0" name="GetFileClassByClassIDResult" nillable="true" type="q3:FileClass"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetFileClassByClassIntIDCaasToMonolith">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" name="classIntID" type="xs:long"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetFileClassByClassIntIDCaasToMonolithResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element xmlns:q4="http://Pfx.Net/Document/FileClass" minOccurs="0" name="GetFileClassByClassIntIDCaasToMonolithResult" nillable="true" type="q4:FileClass"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+		<xs:schema xmlns:tns="http://Pfx.Net/Document/FileClass" xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" elementFormDefault="qualified" targetNamespace="http://Pfx.Net/Document/FileClass" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:import namespace="http://Pfx.Net/Document/BaseList"/>
+			<xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/"/>
+			<xs:import namespace="http://Pfx.Net/Document/PeriodType"/>
+			<xs:import namespace="http://schemas.cch.com/ProSystemfx/FAM/EntityObject"/>
+			<xs:complexType name="FileClass">
+				<xs:complexContent mixed="false">
+					<xs:extension xmlns:q1="http://schemas.cch.com/ProSystemfx/FAM/EntityObject" base="q1:EntityObject">
+						<xs:sequence>
+							<xs:element minOccurs="0" name="ClassIntID" type="xs:long"/>
+							<xs:element minOccurs="0" name="CreatedBy" nillable="true" type="xs:string"/>
+							<xs:element minOccurs="0" name="CreatedDtTm" type="xs:dateTime"/>
+							<xs:element xmlns:q2="http://Pfx.Net/Document/BaseList" minOccurs="0" name="Entityclasses" nillable="true" type="q2:EntityClassList"/>
+							<xs:element minOccurs="0" name="FirmGuid" type="ser:guid"/>
+							<xs:element minOccurs="0" name="FirmIntID" type="xs:long"/>
+							<xs:element minOccurs="0" name="LastUpdatedBy" nillable="true" type="xs:string"/>
+							<xs:element minOccurs="0" name="LastUpdatedDtTm" type="xs:dateTime"/>
+							<xs:element minOccurs="0" name="Name" nillable="true" type="xs:string"/>
+							<xs:element minOccurs="0" name="NeedANotification" type="xs:boolean"/>
+							<xs:element xmlns:q3="http://Pfx.Net/Document/PeriodType" minOccurs="0" name="PeriodType" type="q3:PeriodType"/>
+							<xs:element minOccurs="0" name="PreventPublishFlg" type="xs:boolean"/>
+							<xs:element minOccurs="0" name="Retention" type="xs:short"/>
+							<xs:element minOccurs="0" name="RetentionChanged" nillable="true" type="xs:string"/>
+							<xs:element xmlns:q4="http://Pfx.Net/Document/BaseList" minOccurs="0" name="Subclasses" nillable="true" type="q4:FileSubclassList"/>
+							<xs:element minOccurs="0" name="Timestamp" nillable="true" type="xs:base64Binary"/>
+						</xs:sequence>
+					</xs:extension>
+				</xs:complexContent>
+			</xs:complexType>
+			<xs:element name="FileClass" nillable="true" type="tns:FileClass"/>
+		</xs:schema>
+		<xs:schema xmlns:tns="http://schemas.cch.com/ProSystemfx/FAM/EntityObject" elementFormDefault="qualified" targetNamespace="http://schemas.cch.com/ProSystemfx/FAM/EntityObject" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:import namespace="http://Pfx.Net/Document/EntityMode"/>
+			<xs:complexType name="EntityObject">
+				<xs:sequence>
+					<xs:element xmlns:q1="http://Pfx.Net/Document/EntityMode" minOccurs="0" name="Mode" type="q1:EntityMode"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="EntityObject" nillable="true" type="tns:EntityObject"/>
+		</xs:schema>
+		<xs:schema xmlns:tns="http://Pfx.Net/Document/EntityMode" elementFormDefault="qualified" targetNamespace="http://Pfx.Net/Document/EntityMode" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/"/>
+			<xs:simpleType name="EntityMode">
+				<xs:annotation>
+					<xs:appinfo>
+						<ActualType Name="short" Namespace="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+					</xs:appinfo>
+				</xs:annotation>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="New">
+						<xs:annotation>
+							<xs:appinfo>
+								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">1</EnumerationValue>
+							</xs:appinfo>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="Deleted">
+						<xs:annotation>
+							<xs:appinfo>
+								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">3</EnumerationValue>
+							</xs:appinfo>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="Changed"/>
+					<xs:enumeration value="Unchanged">
+						<xs:annotation>
+							<xs:appinfo>
+								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">0</EnumerationValue>
+							</xs:appinfo>
+						</xs:annotation>
+					</xs:enumeration>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:element name="EntityMode" nillable="true" type="tns:EntityMode"/>
+		</xs:schema>
+		<xs:schema xmlns:tns="http://Pfx.Net/Document/BaseList" elementFormDefault="qualified" targetNamespace="http://Pfx.Net/Document/BaseList" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:import namespace="http://Pfx.Net/Document/EntityClass"/>
+			<xs:import namespace="http://Pfx.Net/Document/FileSubclass"/>
+			<xs:complexType name="EntityClassList">
+				<xs:annotation>
+					<xs:appinfo>
+						<GenericType Name="{0}List" Namespace="http://Pfx.Net/Document/BaseList" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+							<GenericParameter Name="EntityClass" Namespace="http://Pfx.Net/Document/EntityClass"/>
+						</GenericType>
+					</xs:appinfo>
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element xmlns:q1="http://Pfx.Net/Document/EntityClass" minOccurs="0" maxOccurs="unbounded" name="EntityClass" nillable="true" type="q1:EntityClass"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="EntityClassList" nillable="true" type="tns:EntityClassList"/>
+			<xs:complexType name="FileSubclassList">
+				<xs:annotation>
+					<xs:appinfo>
+						<GenericType Name="{0}List" Namespace="http://Pfx.Net/Document/BaseList" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+							<GenericParameter Name="FileSubclass" Namespace="http://Pfx.Net/Document/FileSubclass"/>
+						</GenericType>
+					</xs:appinfo>
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element xmlns:q2="http://Pfx.Net/Document/FileSubclass" minOccurs="0" maxOccurs="unbounded" name="FileSubclass" nillable="true" type="q2:FileSubclass"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="FileSubclassList" nillable="true" type="tns:FileSubclassList"/>
+		</xs:schema>
+		<xs:schema xmlns:tns="http://Pfx.Net/Document/EntityClass" elementFormDefault="qualified" targetNamespace="http://Pfx.Net/Document/EntityClass" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:import namespace="http://Pfx.Net/Document/EntityType"/>
+			<xs:import namespace="http://schemas.cch.com/ProSystemfx/FAM/EntityObject"/>
+			<xs:complexType name="EntityClass">
+				<xs:complexContent mixed="false">
+					<xs:extension xmlns:q1="http://schemas.cch.com/ProSystemfx/FAM/EntityObject" base="q1:EntityObject">
+						<xs:sequence>
+							<xs:element minOccurs="0" name="ClassIntID" type="xs:long"/>
+							<xs:element minOccurs="0" name="EntityClassIntID" type="xs:long"/>
+							<xs:element minOccurs="0" name="EntityIntID" type="xs:long"/>
+							<xs:element xmlns:q2="http://Pfx.Net/Document/EntityType" minOccurs="0" name="EntityType" type="q2:EntityType"/>
+							<xs:element minOccurs="0" name="FirmIntID" type="xs:long"/>
+						</xs:sequence>
+					</xs:extension>
+				</xs:complexContent>
+			</xs:complexType>
+			<xs:element name="EntityClass" nillable="true" type="tns:EntityClass"/>
+		</xs:schema>
+		<xs:schema xmlns:tns="http://Pfx.Net/Document/EntityType" elementFormDefault="qualified" targetNamespace="http://Pfx.Net/Document/EntityType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:simpleType name="EntityType">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="Firm"/>
+					<xs:enumeration value="Office"/>
+					<xs:enumeration value="Staff"/>
+					<xs:enumeration value="StaffList"/>
+					<xs:enumeration value="BusinessUnit"/>
+					<xs:enumeration value="Client"/>
+					<xs:enumeration value="ClientList"/>
+					<xs:enumeration value="DocumentEntityType"/>
+					<xs:enumeration value="OtherClient"/>
+					<xs:enumeration value="ClientOtherEntity"/>
+					<xs:enumeration value="OfficeBusinessUnit"/>
+					<xs:enumeration value="NonClient"/>
+					<xs:enumeration value="NonClientList"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:element name="EntityType" nillable="true" type="tns:EntityType"/>
+		</xs:schema>
+		<xs:schema xmlns:tns="http://Pfx.Net/Document/PeriodType" elementFormDefault="qualified" targetNamespace="http://Pfx.Net/Document/PeriodType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:simpleType name="PeriodType">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="Days"/>
+					<xs:enumeration value="Weeks"/>
+					<xs:enumeration value="Months"/>
+					<xs:enumeration value="Years"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:element name="PeriodType" nillable="true" type="tns:PeriodType"/>
+		</xs:schema>
+		<xs:schema xmlns:tns="http://Pfx.Net/Document/FileSubclass" elementFormDefault="qualified" targetNamespace="http://Pfx.Net/Document/FileSubclass" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:import namespace="http://Pfx.Net/Document/PeriodType"/>
+			<xs:import namespace="http://schemas.cch.com/ProSystemfx/FAM/EntityObject"/>
+			<xs:complexType name="FileSubclass">
+				<xs:complexContent mixed="false">
+					<xs:extension xmlns:q1="http://schemas.cch.com/ProSystemfx/FAM/EntityObject" base="q1:EntityObject">
+						<xs:sequence>
+							<xs:element minOccurs="0" name="ClassIntID" type="xs:long"/>
+							<xs:element minOccurs="0" name="CreatedBy" nillable="true" type="xs:string"/>
+							<xs:element minOccurs="0" name="CreatedDtTm" type="xs:dateTime"/>
+							<xs:element xmlns:q2="http://Pfx.Net/Document/PeriodType" minOccurs="0" name="EffectivePeriodType" nillable="true" type="q2:PeriodType"/>
+							<xs:element minOccurs="0" name="EffectiveRetention" nillable="true" type="xs:short"/>
+							<xs:element minOccurs="0" name="LastUpdatedBy" nillable="true" type="xs:string"/>
+							<xs:element minOccurs="0" name="LastUpdatedDtTm" type="xs:dateTime"/>
+							<xs:element minOccurs="0" name="Name" nillable="true" type="xs:string"/>
+							<xs:element xmlns:q3="http://Pfx.Net/Document/PeriodType" minOccurs="0" name="PeriodType" nillable="true" type="q3:PeriodType"/>
+							<xs:element minOccurs="0" name="Permanent" type="xs:boolean"/>
+							<xs:element minOccurs="0" name="Retention" nillable="true" type="xs:short"/>
+							<xs:element minOccurs="0" name="RetentionChanged" nillable="true" type="xs:string"/>
+							<xs:element minOccurs="0" name="SubClassIntID" type="xs:long"/>
+							<xs:element minOccurs="0" name="Timestamp" nillable="true" type="xs:base64Binary"/>
+						</xs:sequence>
+					</xs:extension>
+				</xs:complexContent>
+			</xs:complexType>
+			<xs:element name="FileSubclass" nillable="true" type="tns:FileSubclass"/>
+		</xs:schema>
+		<xs:schema xmlns:tns="http://Pfx.Net/Document/SystemFault" xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" elementFormDefault="qualified" targetNamespace="http://Pfx.Net/Document/SystemFault" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/"/>
+			<xs:complexType name="SystemFaultContract">
+				<xs:sequence>
+					<xs:element name="ErrorCode" nillable="true" type="xs:string"/>
+					<xs:element name="ErrorMessage" nillable="true" type="xs:string"/>
+					<xs:element name="CorrelationId" type="ser:guid"/>
+					<xs:element name="SupportUrl" nillable="true" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="SystemFaultContract" nillable="true" type="tns:SystemFaultContract"/>
+		</xs:schema>
+		<xs:schema xmlns:tns="http://Pfx.Net/Document/ValidationFault" xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" elementFormDefault="qualified" targetNamespace="http://Pfx.Net/Document/ValidationFault" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF"/>
+			<xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/"/>
+			<xs:complexType name="ValidationFault">
+				<xs:sequence>
+					<xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF" name="Details" nillable="true" type="q1:ArrayOfValidationDetail"/>
+					<xs:element name="ErrorCode" nillable="true" type="xs:string"/>
+					<xs:element name="ErrorMessage" nillable="true" type="xs:string"/>
+					<xs:element name="CorrelationId" type="ser:guid"/>
+					<xs:element name="SupportUrl" nillable="true" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="ValidationFault" nillable="true" type="tns:ValidationFault"/>
+		</xs:schema>
+		<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:complexType name="ArrayOfValidationDetail">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="ValidationDetail" nillable="true" type="tns:ValidationDetail"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="ArrayOfValidationDetail" nillable="true" type="tns:ArrayOfValidationDetail"/>
+			<xs:complexType name="ValidationDetail">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="Key" nillable="true" type="xs:string"/>
+					<xs:element minOccurs="0" name="Message" nillable="true" type="xs:string"/>
+					<xs:element minOccurs="0" name="Tag" nillable="true" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="ValidationDetail" nillable="true" type="tns:ValidationDetail"/>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="IAdminService_GetServiceHealth_InputMessage">
+		<wsdl:part xmlns:q1="http://tempuri.org/" name="parameters" element="q1:GetServiceHealth"/>
+	</wsdl:message>
+	<wsdl:message name="IAdminService_GetServiceHealth_OutputMessage">
+		<wsdl:part xmlns:q2="http://tempuri.org/" name="parameters" element="q2:GetServiceHealthResponse"/>
+	</wsdl:message>
+	<wsdl:message name="IAdminService_CreateFileClass_InputMessage">
+		<wsdl:part name="parameters" element="tns:CreateFileClass"/>
+	</wsdl:message>
+	<wsdl:message name="IAdminService_CreateFileClass_OutputMessage">
+		<wsdl:part name="parameters" element="tns:CreateFileClassResponse"/>
+	</wsdl:message>
+	<wsdl:message name="IAdminService_CreateFileClass_SystemFaultContractFault_FaultMessage">
+		<wsdl:part xmlns:q3="http://Pfx.Net/Document/SystemFault" name="detail" element="q3:SystemFaultContract"/>
+	</wsdl:message>
+	<wsdl:message name="IAdminService_CreateFileClass_ValidationFaultFault_FaultMessage">
+		<wsdl:part xmlns:q4="http://Pfx.Net/Document/ValidationFault" name="detail" element="q4:ValidationFault"/>
+	</wsdl:message>
+	<wsdl:message name="IAdminService_UpdateFileClass_InputMessage">
+		<wsdl:part name="parameters" element="tns:UpdateFileClass"/>
+	</wsdl:message>
+	<wsdl:message name="IAdminService_UpdateFileClass_OutputMessage">
+		<wsdl:part name="parameters" element="tns:UpdateFileClassResponse"/>
+	</wsdl:message>
+	<wsdl:message name="IAdminService_UpdateFileClass_SystemFaultContractFault_FaultMessage">
+		<wsdl:part xmlns:q5="http://Pfx.Net/Document/SystemFault" name="detail" element="q5:SystemFaultContract"/>
+	</wsdl:message>
+	<wsdl:message name="IAdminService_UpdateFileClass_ValidationFaultFault_FaultMessage">
+		<wsdl:part xmlns:q6="http://Pfx.Net/Document/ValidationFault" name="detail" element="q6:ValidationFault"/>
+	</wsdl:message>
+	<wsdl:message name="IAdminService_DeleteFileClass_InputMessage">
+		<wsdl:part name="parameters" element="tns:DeleteFileClass"/>
+	</wsdl:message>
+	<wsdl:message name="IAdminService_DeleteFileClass_OutputMessage">
+		<wsdl:part name="parameters" element="tns:DeleteFileClassResponse"/>
+	</wsdl:message>
+	<wsdl:message name="IAdminService_DeleteFileClass_SystemFaultContractFault_FaultMessage">
+		<wsdl:part xmlns:q7="http://Pfx.Net/Document/SystemFault" name="detail" element="q7:SystemFaultContract"/>
+	</wsdl:message>
+	<wsdl:message name="IAdminService_DeleteFileClass_ValidationFaultFault_FaultMessage">
+		<wsdl:part xmlns:q8="http://Pfx.Net/Document/ValidationFault" name="detail" element="q8:ValidationFault"/>
+	</wsdl:message>
+	<wsdl:message name="IAdminService_DeleteEntityClass_InputMessage">
+		<wsdl:part name="parameters" element="tns:DeleteEntityClass"/>
+	</wsdl:message>
+	<wsdl:message name="IAdminService_DeleteEntityClass_OutputMessage">
+		<wsdl:part name="parameters" element="tns:DeleteEntityClassResponse"/>
+	</wsdl:message>
+	<wsdl:message name="IAdminService_DeleteEntityClass_SystemFaultContractFault_FaultMessage">
+		<wsdl:part xmlns:q9="http://Pfx.Net/Document/SystemFault" name="detail" element="q9:SystemFaultContract"/>
+	</wsdl:message>
+	<wsdl:message name="IAdminService_DeleteEntityClass_ValidationFaultFault_FaultMessage">
+		<wsdl:part xmlns:q10="http://Pfx.Net/Document/ValidationFault" name="detail" element="q10:ValidationFault"/>
+	</wsdl:message>
+	<wsdl:message name="IAdminService_GetFileClassByClassID_InputMessage">
+		<wsdl:part name="parameters" element="tns:GetFileClassByClassID"/>
+	</wsdl:message>
+	<wsdl:message name="IAdminService_GetFileClassByClassID_OutputMessage">
+		<wsdl:part name="parameters" element="tns:GetFileClassByClassIDResponse"/>
+	</wsdl:message>
+	<wsdl:message name="IAdminService_GetFileClassByClassID_SystemFaultContractFault_FaultMessage">
+		<wsdl:part xmlns:q11="http://Pfx.Net/Document/SystemFault" name="detail" element="q11:SystemFaultContract"/>
+	</wsdl:message>
+	<wsdl:message name="IAdminService_GetFileClassByClassID_ValidationFaultFault_FaultMessage">
+		<wsdl:part xmlns:q12="http://Pfx.Net/Document/ValidationFault" name="detail" element="q12:ValidationFault"/>
+	</wsdl:message>
+	<wsdl:message name="IAdminService_GetFileClassByClassIntIDCaasToMonolith_InputMessage">
+		<wsdl:part name="parameters" element="tns:GetFileClassByClassIntIDCaasToMonolith"/>
+	</wsdl:message>
+	<wsdl:message name="IAdminService_GetFileClassByClassIntIDCaasToMonolith_OutputMessage">
+		<wsdl:part name="parameters" element="tns:GetFileClassByClassIntIDCaasToMonolithResponse"/>
+	</wsdl:message>
+	<wsdl:message name="IAdminService_GetFileClassByClassIntIDCaasToMonolith_SystemFaultContractFault_FaultMessage">
+		<wsdl:part xmlns:q13="http://Pfx.Net/Document/SystemFault" name="detail" element="q13:SystemFaultContract"/>
+	</wsdl:message>
+	<wsdl:message name="IAdminService_GetFileClassByClassIntIDCaasToMonolith_ValidationFaultFault_FaultMessage">
+		<wsdl:part xmlns:q14="http://Pfx.Net/Document/ValidationFault" name="detail" element="q14:ValidationFault"/>
+	</wsdl:message>
+	<wsdl:portType name="IAdminService">
+		<wsdl:operation name="GetServiceHealth">
+			<wsdl:input wsaw:Action="http://tempuri.org/IPfxServiceHealth/GetServiceHealth" message="tns:IAdminService_GetServiceHealth_InputMessage"/>
+			<wsdl:output wsaw:Action="http://tempuri.org/IPfxServiceHealth/GetServiceHealthResponse" message="tns:IAdminService_GetServiceHealth_OutputMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="CreateFileClass">
+			<wsdl:input wsaw:Action="http://Pfx.Net/Document/IAdminService/IAdminService/CreateFileClass" message="tns:IAdminService_CreateFileClass_InputMessage"/>
+			<wsdl:output wsaw:Action="http://Pfx.Net/Document/IAdminService/IAdminService/CreateFileClassResponse" message="tns:IAdminService_CreateFileClass_OutputMessage"/>
+			<wsdl:fault wsaw:Action="http://Pfx.Net/Document/IAdminService/IAdminService/CreateFileClassSystemFaultContractFault" name="SystemFaultContractFault" message="tns:IAdminService_CreateFileClass_SystemFaultContractFault_FaultMessage"/>
+			<wsdl:fault wsaw:Action="http://Pfx.Net/Document/IAdminService/IAdminService/CreateFileClassValidationFaultFault" name="ValidationFaultFault" message="tns:IAdminService_CreateFileClass_ValidationFaultFault_FaultMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="UpdateFileClass">
+			<wsdl:input wsaw:Action="http://Pfx.Net/Document/IAdminService/IAdminService/UpdateFileClass" message="tns:IAdminService_UpdateFileClass_InputMessage"/>
+			<wsdl:output wsaw:Action="http://Pfx.Net/Document/IAdminService/IAdminService/UpdateFileClassResponse" message="tns:IAdminService_UpdateFileClass_OutputMessage"/>
+			<wsdl:fault wsaw:Action="http://Pfx.Net/Document/IAdminService/IAdminService/UpdateFileClassSystemFaultContractFault" name="SystemFaultContractFault" message="tns:IAdminService_UpdateFileClass_SystemFaultContractFault_FaultMessage"/>
+			<wsdl:fault wsaw:Action="http://Pfx.Net/Document/IAdminService/IAdminService/UpdateFileClassValidationFaultFault" name="ValidationFaultFault" message="tns:IAdminService_UpdateFileClass_ValidationFaultFault_FaultMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="DeleteFileClass">
+			<wsdl:input wsaw:Action="http://Pfx.Net/Document/IAdminService/IAdminService/DeleteFileClass" message="tns:IAdminService_DeleteFileClass_InputMessage"/>
+			<wsdl:output wsaw:Action="http://Pfx.Net/Document/IAdminService/IAdminService/DeleteFileClassResponse" message="tns:IAdminService_DeleteFileClass_OutputMessage"/>
+			<wsdl:fault wsaw:Action="http://Pfx.Net/Document/IAdminService/IAdminService/DeleteFileClassSystemFaultContractFault" name="SystemFaultContractFault" message="tns:IAdminService_DeleteFileClass_SystemFaultContractFault_FaultMessage"/>
+			<wsdl:fault wsaw:Action="http://Pfx.Net/Document/IAdminService/IAdminService/DeleteFileClassValidationFaultFault" name="ValidationFaultFault" message="tns:IAdminService_DeleteFileClass_ValidationFaultFault_FaultMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="DeleteEntityClass">
+			<wsdl:input wsaw:Action="http://Pfx.Net/Document/IAdminService/IAdminService/DeleteEntityClass" message="tns:IAdminService_DeleteEntityClass_InputMessage"/>
+			<wsdl:output wsaw:Action="http://Pfx.Net/Document/IAdminService/IAdminService/DeleteEntityClassResponse" message="tns:IAdminService_DeleteEntityClass_OutputMessage"/>
+			<wsdl:fault wsaw:Action="http://Pfx.Net/Document/IAdminService/IAdminService/DeleteEntityClassSystemFaultContractFault" name="SystemFaultContractFault" message="tns:IAdminService_DeleteEntityClass_SystemFaultContractFault_FaultMessage"/>
+			<wsdl:fault wsaw:Action="http://Pfx.Net/Document/IAdminService/IAdminService/DeleteEntityClassValidationFaultFault" name="ValidationFaultFault" message="tns:IAdminService_DeleteEntityClass_ValidationFaultFault_FaultMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetFileClassByClassID">
+			<wsdl:input wsaw:Action="http://Pfx.Net/Document/IAdminService/IAdminService/GetFileClassByClassID" message="tns:IAdminService_GetFileClassByClassID_InputMessage"/>
+			<wsdl:output wsaw:Action="http://Pfx.Net/Document/IAdminService/IAdminService/GetFileClassByClassIDResponse" message="tns:IAdminService_GetFileClassByClassID_OutputMessage"/>
+			<wsdl:fault wsaw:Action="http://Pfx.Net/Document/IAdminService/IAdminService/GetFileClassByClassIDSystemFaultContractFault" name="SystemFaultContractFault" message="tns:IAdminService_GetFileClassByClassID_SystemFaultContractFault_FaultMessage"/>
+			<wsdl:fault wsaw:Action="http://Pfx.Net/Document/IAdminService/IAdminService/GetFileClassByClassIDValidationFaultFault" name="ValidationFaultFault" message="tns:IAdminService_GetFileClassByClassID_ValidationFaultFault_FaultMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetFileClassByClassIntIDCaasToMonolith">
+			<wsdl:input wsaw:Action="http://Pfx.Net/Document/IAdminService/IAdminService/GetFileClassByClassIntIDCaasToMonolith" message="tns:IAdminService_GetFileClassByClassIntIDCaasToMonolith_InputMessage"/>
+			<wsdl:output wsaw:Action="http://Pfx.Net/Document/IAdminService/IAdminService/GetFileClassByClassIntIDCaasToMonolithResponse" message="tns:IAdminService_GetFileClassByClassIntIDCaasToMonolith_OutputMessage"/>
+			<wsdl:fault wsaw:Action="http://Pfx.Net/Document/IAdminService/IAdminService/GetFileClassByClassIntIDCaasToMonolithSystemFaultContractFault" name="SystemFaultContractFault" message="tns:IAdminService_GetFileClassByClassIntIDCaasToMonolith_SystemFaultContractFault_FaultMessage"/>
+			<wsdl:fault wsaw:Action="http://Pfx.Net/Document/IAdminService/IAdminService/GetFileClassByClassIntIDCaasToMonolithValidationFaultFault" name="ValidationFaultFault" message="tns:IAdminService_GetFileClassByClassIntIDCaasToMonolith_ValidationFaultFault_FaultMessage"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="BasicHttpBinding_IAdminService" type="tns:IAdminService">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="GetServiceHealth">
+			<soap:operation soapAction="http://tempuri.org/IPfxServiceHealth/GetServiceHealth" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="CreateFileClass">
+			<soap:operation soapAction="http://Pfx.Net/Document/IAdminService/IAdminService/CreateFileClass" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="SystemFaultContractFault">
+				<soap:fault use="literal" name="SystemFaultContractFault" namespace=""/>
+			</wsdl:fault>
+			<wsdl:fault name="ValidationFaultFault">
+				<soap:fault use="literal" name="ValidationFaultFault" namespace=""/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="UpdateFileClass">
+			<soap:operation soapAction="http://Pfx.Net/Document/IAdminService/IAdminService/UpdateFileClass" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="SystemFaultContractFault">
+				<soap:fault use="literal" name="SystemFaultContractFault" namespace=""/>
+			</wsdl:fault>
+			<wsdl:fault name="ValidationFaultFault">
+				<soap:fault use="literal" name="ValidationFaultFault" namespace=""/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="DeleteFileClass">
+			<soap:operation soapAction="http://Pfx.Net/Document/IAdminService/IAdminService/DeleteFileClass" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="SystemFaultContractFault">
+				<soap:fault use="literal" name="SystemFaultContractFault" namespace=""/>
+			</wsdl:fault>
+			<wsdl:fault name="ValidationFaultFault">
+				<soap:fault use="literal" name="ValidationFaultFault" namespace=""/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="DeleteEntityClass">
+			<soap:operation soapAction="http://Pfx.Net/Document/IAdminService/IAdminService/DeleteEntityClass" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="SystemFaultContractFault">
+				<soap:fault use="literal" name="SystemFaultContractFault" namespace=""/>
+			</wsdl:fault>
+			<wsdl:fault name="ValidationFaultFault">
+				<soap:fault use="literal" name="ValidationFaultFault" namespace=""/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="GetFileClassByClassID">
+			<soap:operation soapAction="http://Pfx.Net/Document/IAdminService/IAdminService/GetFileClassByClassID" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="SystemFaultContractFault">
+				<soap:fault use="literal" name="SystemFaultContractFault" namespace=""/>
+			</wsdl:fault>
+			<wsdl:fault name="ValidationFaultFault">
+				<soap:fault use="literal" name="ValidationFaultFault" namespace=""/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="GetFileClassByClassIntIDCaasToMonolith">
+			<soap:operation soapAction="http://Pfx.Net/Document/IAdminService/IAdminService/GetFileClassByClassIntIDCaasToMonolith" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="SystemFaultContractFault">
+				<soap:fault use="literal" name="SystemFaultContractFault" namespace=""/>
+			</wsdl:fault>
+			<wsdl:fault name="ValidationFaultFault">
+				<soap:fault use="literal" name="ValidationFaultFault" namespace=""/>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="AdminServiceType">
+		<wsdl:port name="BasicHttpBinding_IAdminService" binding="tns:BasicHttpBinding_IAdminService">
+			<soap:address location="http://[::]/AdminServiceType"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

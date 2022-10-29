@@ -2,133 +2,56 @@ import {
   MeshHandlerOptions,
   MeshHandler,
   YamlConfig,
+  GetMeshSourcePayload,
   ImportFn,
   Logger,
-  GetMeshSourcePayload,
   MeshSource,
-  MeshFetch,
 } from '@graphql-mesh/types';
-import { soapGraphqlSchema, createSoapClient } from './soap-graphql';
-import soap from 'soap';
-import { getHeadersObj, loadFromModuleExportExpression, readFileOrUrl } from '@graphql-mesh/utils';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
-import type { AxiosRequestConfig, AxiosResponse, AxiosInstance } from 'axios';
-import { process } from '@graphql-mesh/cross-helpers';
+import { createExecutorFromSchemaAST, SOAPLoader } from '@omnigraph/soap';
+import { readFileOrUrl } from '@graphql-mesh/utils';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { buildASTSchema, parse } from 'graphql';
 
 export default class SoapHandler implements MeshHandler {
   private config: YamlConfig.SoapHandler;
+  private soapSDLProxy: StoreProxy<string>;
   private baseDir: string;
-  private fetchFn: MeshFetch;
-  private wsdlResponse: StoreProxy<AxiosResponse>;
   private importFn: ImportFn;
   private logger: Logger;
 
-  constructor({ config, baseDir, store, importFn, logger }: MeshHandlerOptions<YamlConfig.SoapHandler>) {
+  constructor({ config, store, baseDir, importFn, logger }: MeshHandlerOptions<YamlConfig.SoapHandler>) {
     this.config = config;
+    this.soapSDLProxy = store.proxy('schemaWithAnnotations.graphql', PredefinedProxyOptions.StringWithoutValidation);
     this.baseDir = baseDir;
-    this.wsdlResponse = store.proxy('wsdlResponse.json', PredefinedProxyOptions.JsonWithoutValidation);
     this.importFn = importFn;
     this.logger = logger;
   }
 
   async getMeshSource({ fetchFn }: GetMeshSourcePayload): Promise<MeshSource> {
-    this.fetchFn = fetchFn;
-    let schemaHeaders =
-      typeof this.config.schemaHeaders === 'string'
-        ? await loadFromModuleExportExpression(this.config.schemaHeaders, {
-            cwd: this.baseDir,
-            defaultExportName: 'default',
-            importFn: this.importFn,
-          })
-        : this.config.schemaHeaders;
-    if (typeof schemaHeaders === 'function') {
-      schemaHeaders = schemaHeaders();
-    }
-    if (schemaHeaders && 'then' in schemaHeaders) {
-      schemaHeaders = await schemaHeaders;
-    }
-    const soapClient = await createSoapClient(this.config.wsdl, {
-      basicAuth: this.config.basicAuth,
-      options: {
-        request: (async (requestObj: AxiosRequestConfig): Promise<AxiosResponse<any>> => {
-          const isWsdlRequest = requestObj.url === this.config.wsdl;
-          const sendRequest = async () => {
-            const headers = {
-              ...requestObj.headers,
-              ...(isWsdlRequest ? schemaHeaders : this.config.operationHeaders),
-            };
-            delete headers.Connection;
-            const res = await this.fetchFn(requestObj.url, {
-              headers,
-              method: requestObj.method,
-              body: requestObj.data,
-            });
-            const data = await res.text();
-            return {
-              data,
-              status: res.status,
-              statusText: res.statusText,
-              headers: getHeadersObj(res.headers),
-              config: requestObj,
-            };
-          };
-          if (isWsdlRequest) {
-            return this.wsdlResponse.getWithSet(() => sendRequest());
-          }
-          return sendRequest();
-        }) as AxiosInstance,
-      },
+    const soapSDL = await this.soapSDLProxy.getWithSet(async () => {
+      const soapLoader = new SOAPLoader({
+        fetch: fetchFn,
+      });
+      const location = this.config.wsdl;
+      const wsdl = await readFileOrUrl<string>(location, {
+        allowUnknownExtensions: true,
+        cwd: this.baseDir,
+        fetch: fetchFn,
+        importFn: this.importFn,
+        logger: this.logger,
+      });
+      const object = await soapLoader.loadWSDL(wsdl);
+      soapLoader.loadedLocations.set(location, object);
+      const schema = soapLoader.buildSchema();
+      return printSchemaWithDirectives(schema);
     });
-
-    if (this.config.securityCert) {
-      const securityCertConfig = this.config.securityCert;
-      const [privateKey, publicKey, password] = await Promise.all([
-        securityCertConfig.privateKey ||
-          (securityCertConfig.privateKeyPath &&
-            readFileOrUrl<string>(securityCertConfig.privateKeyPath, {
-              allowUnknownExtensions: true,
-              cwd: this.baseDir,
-              importFn: this.importFn,
-              fetch: this.fetchFn,
-              logger: this.logger,
-            })),
-        securityCertConfig.publicKey ||
-          (securityCertConfig.publicKeyPath &&
-            readFileOrUrl<string>(securityCertConfig.publicKeyPath, {
-              allowUnknownExtensions: true,
-              cwd: this.baseDir,
-              importFn: this.importFn,
-              fetch: this.fetchFn,
-              logger: this.logger,
-            })),
-        securityCertConfig.password ||
-          (securityCertConfig.passwordPath &&
-            readFileOrUrl<string>(securityCertConfig.passwordPath, {
-              allowUnknownExtensions: true,
-              cwd: this.baseDir,
-              importFn: this.importFn,
-              fetch: this.fetchFn,
-              logger: this.logger,
-            })),
-      ]);
-      soapClient.setSecurity(new soap.WSSecurityCert(privateKey, publicKey, password));
-    }
-
-    const schema = await soapGraphqlSchema({
-      soapClient,
-      logger: this.logger,
-      debug: !!process.env.DEBUG,
-      warnings: !!process.env.DEBUG,
-      schemaOptions: {
-        includePorts: this.config.includePorts,
-        includeServices: this.config.includeServices,
-        selectQueryOrMutationField: this.config.selectQueryOrMutationField,
-        selectQueryOperationsAuto: this.config.selectQueryOperationsAuto,
-      },
-    });
-
+    const schemaAST = parse(soapSDL);
+    const executor = createExecutorFromSchemaAST(schemaAST, fetchFn);
+    const schema = buildASTSchema(schemaAST);
     return {
       schema,
+      executor,
     };
   }
 }

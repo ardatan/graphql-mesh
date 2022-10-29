@@ -18,7 +18,7 @@ const config$ = findAndParseConfig({
 const mesh$ = config$.then(config => getMesh(config));
 jest.setTimeout(30000);
 
-describe('SOAP Country Info', () => {
+describe('SOAP Demo', () => {
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
     expect(printSchemaWithDirectives(lexicographicSortSchema(schema))).toMatchSnapshot('soap-demo-schema');

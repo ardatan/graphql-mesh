@@ -54,7 +54,7 @@ export default function useSnapshot(
         }
         return async ({ response, setResponse }) => {
           const contentType = response.headers.get('content-type');
-          if (contentType.includes('json') || contentType.includes('text')) {
+          if (contentType.includes('json') || contentType.includes('text') || contentType.includes('xml')) {
             const snapshot: SnapshotEntry = {
               text: await response.text(),
               headersObj: getHeadersObj(response.headers),

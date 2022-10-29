@@ -1,8 +1,10 @@
-mutation ListOfLanguagesByName {
-  ListOfLanguagesByName {
-    tLanguage {
-      sISOCode
-      sName
+query ListOfLanguagesByName {
+  CountryInfoService_CountryInfoService_CountryInfoServiceSoap_ListOfLanguagesByName {
+    ListOfLanguagesByNameResult {
+      tLanguage {
+        sISOCode
+        sName
+      }
     }
   }
 }
