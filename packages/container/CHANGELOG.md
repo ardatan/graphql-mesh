@@ -1,5 +1,12 @@
 # @graphql-mesh/container
 
+## 0.1.194
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/soap@0.15.1
+
 ## 0.1.193
 
 ### Patch Changes
