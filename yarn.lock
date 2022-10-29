@@ -6068,20 +6068,6 @@
   resolved "https://registry.yarnpkg.com/@whatwg-node/events/-/events-0.0.2.tgz#7b7107268d2982fc7b7aff5ee6803c64018f84dd"
   integrity sha512-WKj/lI4QjnLuPrim0cfO7i+HsDSXHxNv1y0CrJhdntuO3hxWZmnXCwNDnwOvry11OjRin6cgWNF+j/9Pn8TN4w==
 
-"@whatwg-node/fetch@0.4.7":
-  version "0.4.7"
-  resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.4.7.tgz#4cbcda3ba93d5ae15ab823aae5869eae4a0cb14b"
-  integrity sha512-+oKDMGtmUJ7H37VDL5U2Vdk+ZxsIypZxO2q6y42ytu6W3PL6OIIUYZGliNqQgWtCdtxOZ9WPQvbIAuiLpnLlUw==
-  dependencies:
-    "@peculiar/webcrypto" "^1.4.0"
-    abort-controller "^3.0.0"
-    busboy "^1.6.0"
-    form-data-encoder "^1.7.1"
-    formdata-node "^4.3.1"
-    node-fetch "^2.6.7"
-    undici "^5.10.0"
-    web-streams-polyfill "^3.2.0"
-
 "@whatwg-node/fetch@0.5.0":
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.5.0.tgz#7e7fd706ec667c951a5664aa6a3623ec0b8e39c1"
@@ -11234,17 +11220,10 @@ graphql-compose-pagination@8.3.0:
   resolved "https://registry.yarnpkg.com/graphql-compose-pagination/-/graphql-compose-pagination-8.3.0.tgz#a58c786256b4dba1843d495ae81cb0fc67ac1369"
   integrity sha512-zZoBhlWD9KnAJ9AUOeFNeoE4Q/zMxZaxg0tR+HFMVNFnw7ENUnIChMWnD2uvmvik+k8Yv304hMF4n81okGVsJw==
 
-graphql-compose@9.0.10:
+graphql-compose@9.0.10, graphql-compose@^9.0.8:
   version "9.0.10"
   resolved "https://registry.yarnpkg.com/graphql-compose/-/graphql-compose-9.0.10.tgz#1e870166deb1785761865fe742dea0601d2c77f2"
   integrity sha512-UsVoxfi2+c8WbHl2pEB+teoRRZoY4mbWBoijeLDGpAZBSPChnqtSRjp+T9UcouLCwGr5ooNyOQLoI3OVzU1bPQ==
-  dependencies:
-    graphql-type-json "0.3.2"
-
-graphql-compose@9.0.9, graphql-compose@^9.0.8:
-  version "9.0.9"
-  resolved "https://registry.yarnpkg.com/graphql-compose/-/graphql-compose-9.0.9.tgz#ca919ce61cf5ec0545e5ce123bda2051c7c78a1e"
-  integrity sha512-kEXdwuBk7GKaThWY7eKDP+GLF9pGrGuMpYLu3O5w+lwDsgsfdiUCEC8jTsuPjm1qz9AxsspZHqc3jA4vKwyiNg==
   dependencies:
     graphql-type-json "0.3.2"
 
@@ -11297,13 +11276,6 @@ graphql-relay@^0.6.0:
   integrity sha512-OVDi6C9/qOT542Q3KxZdXja3NrDvqzbihn1B44PH8P/c5s0Q90RyQwT6guhGqXqbYEH6zbeLJWjQqiYvcg2vVw==
   dependencies:
     prettier "^1.16.0"
-
-graphql-scalars@1.19.0:
-  version "1.19.0"
-  resolved "https://registry.yarnpkg.com/graphql-scalars/-/graphql-scalars-1.19.0.tgz#e23907dd137f7851185199c25b3d756e145c2bf9"
-  integrity sha512-Kg1ecLMMYdCCfKTsi5rJ6Och3KRLEzWdze1lVbCoP+Grjp2a33rogVvECCKAgeOSWCYM7ctaJ5fVdVgzCSN6fA==
-  dependencies:
-    tslib "~2.4.0"
 
 graphql-scalars@1.20.0:
   version "1.20.0"
