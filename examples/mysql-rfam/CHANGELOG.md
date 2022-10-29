@@ -1,5 +1,13 @@
 # mysql-rfam
 
+## 0.5.305
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.79.1
+  - @graphql-mesh/mysql@0.17.28
+
 ## 0.5.304
 
 ### Patch Changes
