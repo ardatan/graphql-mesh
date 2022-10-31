@@ -383,6 +383,21 @@ export async function healJSONSchema(
               subSchema.readOnly = true;
             }
           }
+          if (subSchema.pattern) {
+            // Fix non JS patterns
+            const javaToJsPattern = {
+              '\\p{Digit}': '[0-9]',
+              '\\p{Alpha}': '[a-zA-Z]',
+              '\\p{Alnum}': '[a-zA-Z0-9]',
+              '\\p{ASCII}': '[\\x00-\\x7F]',
+            };
+            for (const javaPattern in javaToJsPattern) {
+              if (subSchema.pattern.includes(javaPattern)) {
+                const jsPattern = javaToJsPattern[javaPattern];
+                subSchema.pattern = subSchema.pattern.split(javaPattern).join(jsPattern);
+              }
+            }
+          }
         }
         return subSchema;
       },
