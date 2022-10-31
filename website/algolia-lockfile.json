@@ -496,7 +496,7 @@
         "anchor": "mesh-and-docker"
       }
     ],
-    "content": "126dda5f2fe9ec07e3cc7ee86ea700af",
+    "content": "85a9925c024903e93ea9b4a18c5b3b64",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/getting-started/deploy-mesh-gateway",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Getting Started"],
