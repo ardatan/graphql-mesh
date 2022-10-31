@@ -1,5 +1,14 @@
 # @graphql-mesh/plugin-response-cache
 
+## 0.1.47
+
+### Patch Changes
+
+- Updated dependencies [[`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a), [`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a), [`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a)]:
+  - @graphql-mesh/cross-helpers@0.2.8
+  - @graphql-mesh/types@0.85.6
+  - @graphql-mesh/utils@0.42.5
+
 ## 0.1.46
 
 ### Patch Changes

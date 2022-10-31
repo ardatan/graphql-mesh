@@ -1,5 +1,17 @@
 # @graphql-mesh/transform-rename
 
+## 0.12.100
+
+### Patch Changes
+
+- [#4765](https://github.com/Urigo/graphql-mesh/pull/4765) [`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`@graphql-tools/wrap@9.2.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.5) (from `9.2.4`, in `dependencies`)
+  - Updated dependency [`@graphql-tools/delegate@9.0.10` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.10) (from `9.0.9`, in `dependencies`)
+  - Updated dependency [`@graphql-tools/utils@8.13.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.13.1) (from `8.13.0`, in `dependencies`)
+- Updated dependencies [[`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a), [`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a)]:
+  - @graphql-mesh/types@0.85.6
+  - @graphql-mesh/utils@0.42.5
+
 ## 0.12.99
 
 ### Patch Changes
