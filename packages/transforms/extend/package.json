@@ -30,11 +30,11 @@
   "dependencies": {
     "@graphql-mesh/types": "0.85.5",
     "@graphql-mesh/utils": "0.42.4",
-    "@graphql-tools/load": "7.8.1",
-    "@graphql-tools/code-file-loader": "7.3.7",
-    "@graphql-tools/graphql-file-loader": "7.5.6",
-    "@graphql-tools/schema": "9.0.5",
-    "@graphql-tools/utils": "8.13.0",
+    "@graphql-tools/load": "7.8.2",
+    "@graphql-tools/code-file-loader": "7.3.8",
+    "@graphql-tools/graphql-file-loader": "7.5.7",
+    "@graphql-tools/schema": "9.0.6",
+    "@graphql-tools/utils": "8.13.1",
     "@graphql-mesh/cross-helpers": "0.2.7",
     "tslib": "^2.4.0"
   },
