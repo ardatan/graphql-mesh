@@ -1,5 +1,14 @@
 # @graphql-mesh/apollo-link
 
+## 8.0.5
+
+### Patch Changes
+
+- [#4765](https://github.com/Urigo/graphql-mesh/pull/4765) [`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`@graphql-tools/utils@8.13.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.13.1) (from `8.13.0`, in `dependencies`)
+- Updated dependencies [[`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a)]:
+  - @graphql-mesh/runtime@0.44.30
+
 ## 8.0.4
 
 ### Patch Changes

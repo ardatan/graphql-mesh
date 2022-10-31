@@ -1,5 +1,20 @@
 # json-machete
 
+## 0.16.0
+
+### Minor Changes
+
+- [`ee19b91c1`](https://github.com/Urigo/graphql-mesh/commit/ee19b91c1621d6ab95f503be85d1adff8d43bece) Thanks [@ardatan](https://github.com/ardatan)! - If any non JS pattern is given in the JSON Schema, automatically convert it to a JS regexp pattern
+
+### Patch Changes
+
+- [#4765](https://github.com/Urigo/graphql-mesh/pull/4765) [`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`@graphql-tools/utils@8.13.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.13.1) (from `8.13.0`, in `dependencies`)
+- Updated dependencies [[`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a), [`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a), [`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a)]:
+  - @graphql-mesh/cross-helpers@0.2.8
+  - @graphql-mesh/types@0.85.6
+  - @graphql-mesh/utils@0.42.5
+
 ## 0.15.14
 
 ### Patch Changes

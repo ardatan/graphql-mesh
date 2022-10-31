@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/apollo-link",
-  "version": "8.0.4",
+  "version": "8.0.5",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -32,7 +32,7 @@
     "@apollo/client": "3.7.1"
   },
   "peerDependencies": {
-    "@graphql-mesh/runtime": "^0.44.28",
+    "@graphql-mesh/runtime": "^0.44.30",
     "graphql": "^15.2.0 || ^16.0.0",
     "@apollo/client": "^3.5.9"
   },

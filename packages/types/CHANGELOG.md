@@ -1,5 +1,16 @@
 # @graphql-mesh/types
 
+## 0.85.6
+
+### Patch Changes
+
+- [#4765](https://github.com/Urigo/graphql-mesh/pull/4765) [`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`@graphql-tools/batch-delegate@8.4.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/8.4.3) (from `8.4.2`, in `dependencies`)
+  - Updated dependency [`@graphql-tools/delegate@9.0.10` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.10) (from `9.0.9`, in `dependencies`)
+  - Updated dependency [`@graphql-tools/utils@8.13.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.13.1) (from `8.13.0`, in `dependencies`)
+- Updated dependencies [[`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a)]:
+  - @graphql-mesh/store@0.8.61
+
 ## 0.85.5
 
 ### Patch Changes
