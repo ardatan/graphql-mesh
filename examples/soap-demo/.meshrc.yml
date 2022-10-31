@@ -2,7 +2,7 @@ sources:
   - name: SOAPDemo
     handler:
       soap:
-        wsdl: https://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL
+        source: https://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL
         selectQueryOperationsAuto: true
 
 documents:

@@ -2,4 +2,4 @@ sources:
   - name: Netsuite
     handler:
       soap:
-        wsdl: https://webservices.netsuite.com/wsdl/v2021_1_0/netsuite.wsdl
+        source: https://webservices.netsuite.com/wsdl/v2021_1_0/netsuite.wsdl

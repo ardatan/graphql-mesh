@@ -1,18 +1,16 @@
 import {
-  buildASTSchema,
-  DocumentNode,
   execute,
   GraphQLFieldResolver,
   GraphQLOutputType,
   GraphQLResolveInfo,
+  GraphQLSchema,
   isListType,
   isNonNullType,
-  visit,
 } from 'graphql';
 import { parse as parseXML, j2xParser as JSONToXMLConverter } from 'fast-xml-parser';
 import { MeshFetch } from '@graphql-mesh/types';
 import { PARSE_XML_OPTIONS, SoapAnnotations } from './utils';
-import { Executor } from '@graphql-tools/utils';
+import { Executor, getDirective, getRootTypes } from '@graphql-tools/utils';
 
 function isOriginallyListType(type: GraphQLOutputType): boolean {
   if (isNonNullType(type)) {
@@ -110,33 +108,26 @@ function createRootValueMethod(soapAnnotations: SoapAnnotations, fetchFn: MeshFe
   };
 }
 
-function createRootValue(schemaAST: DocumentNode, fetchFn: MeshFetch) {
+function createRootValue(schema: GraphQLSchema, fetchFn: MeshFetch) {
   const rootValue: Record<string, RootValueMethod> = {};
-  visit(schemaAST, {
-    FieldDefinition(node) {
-      const soapAnnotationsDirective = node.directives.find(directive => directive.name.value === 'soap');
-      if (soapAnnotationsDirective) {
-        const soapAnnotations: SoapAnnotations = {
-          elementName: '',
-          bindingNamespace: '',
-          baseUrl: '',
-        };
-        for (const arg of soapAnnotationsDirective.arguments) {
-          if ('value' in arg.value) {
-            soapAnnotations[arg.name.value] = arg.value.value;
-          }
-        }
-        rootValue[node.name.value] = createRootValueMethod(soapAnnotations, fetchFn);
-      }
-    },
-  });
+  const rootTypes = getRootTypes(schema);
+  for (const rootType of rootTypes) {
+    const rootFieldMap = rootType.getFields();
+    for (const fieldName in rootFieldMap) {
+      const annotations = getDirective(schema, rootFieldMap[fieldName], 'soap');
+      const soapAnnotations: SoapAnnotations = Object.assign({}, ...annotations);
+      rootValue[fieldName] = createRootValueMethod(soapAnnotations, fetchFn);
+    }
+  }
   return rootValue;
 }
 
-export function createExecutorFromSchemaAST(schemaAST: DocumentNode, fetchFn: MeshFetch) {
-  const rootValue = createRootValue(schemaAST, fetchFn);
-  const schema = buildASTSchema(schemaAST);
+export function createExecutorFromSchemaAST(schema: GraphQLSchema, fetchFn: MeshFetch) {
+  let rootValue: Record<string, RootValueMethod>;
   return function soapExecutor({ document, variables, context }) {
+    if (!rootValue) {
+      rootValue = createRootValue(schema, fetchFn);
+    }
     return execute({
       schema,
       document,
