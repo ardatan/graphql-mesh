@@ -13,7 +13,7 @@
     "@graphql-mesh/runtime": "0.44.30",
     "@graphql-mesh/transform-cache": "0.12.63",
     "@graphql-mesh/transform-rename": "0.12.100",
-    "apollo-server": "3.10.3",
+    "apollo-server": "3.10.4",
     "graphql": "16.6.0"
   }
 }
