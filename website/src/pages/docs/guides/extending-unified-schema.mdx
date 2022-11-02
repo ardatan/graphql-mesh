@@ -136,13 +136,13 @@ await context.Authors.Query.authors_v1_AuthorsService_GetAuthor({
 
 Any SDK method take the following arguments:
 
-- `root`, `context` and `info` are mandatory parameters that we forward from the resolvers calling the method
+- `root`, `context` and `info` are mandatory parameters that we forward from the resolvers calling the method. If the current field's return type doesn't match, you should provide a `selectionSet`.
 - `args`: arguments to pass to the Mutation or Query
-- `selectionSet`: allows to specify a selection on the Query/Mutation to fetch nested data
+- `selectionSet`: allows to specify a selection on the Query/Mutation to fetch nested data like `{ id name }`
 - `valuesFromResults`: allows to provide a function to transform the results (if the result is an array, the function will be mapped to each element)
 
 <Callout>Note: `valuesFromResults`, compared to `selectionSet` helps to "flatten"/"un-nest" data from results</Callout>
 
 ## Going further
 
-Transforms such as ["Resolvers composition"](/docs/transforms/resolvers-composition), [Extend"](/docs/transforms/extend) and ["Hoist Field"](/docs/transforms/hoist) also helps in shaping and extending the Unified Schema.
+Transforms like ["Hoist Field"](/docs/transforms/hoist) also helps in shaping and extending the Unified Schema.
