@@ -44,7 +44,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     logger = new DefaultLogger('getJSONSchemaOptionsFromOpenAPIOptions'),
   }: GetJSONSchemaOptionsFromOpenAPIOptionsParams
 ) {
-  const fieldTypeMap: Record<string, 'query' | 'mutation'> = {};
+  const fieldTypeMap: Record<string, OpenAPILoaderSelectQueryOrMutationFieldConfig['fieldName']> = {};
   for (const { fieldName, type } of selectQueryOrMutationField) {
     fieldTypeMap[fieldName] = type;
   }

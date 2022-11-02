@@ -11,6 +11,6 @@ Overrides the server object in the OAS.
 Applying this will ignore all responses with status code other than 2xx, resulting in simpler response types, usualy regular object type instead of union.
 Default: false
 * `selectQueryOrMutationField` (type: `Array of Object`) - Allows to explicitly override the default operation (Query or Mutation) for any OAS operation: 
-  * `type` (type: `String (query | mutation)`, required)
+  * `type` (type: `String (query | mutation | Query | Mutation)`, required)
   * `fieldName` (type: `String`, required)
 * `queryParams` (type: `JSON`) - JSON object representing the query search parameters to add to the API calls

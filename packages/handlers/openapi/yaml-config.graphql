@@ -53,6 +53,8 @@ enum FallbackFormat {
 enum QueryOrMutation {
   query
   mutation
+  Query
+  Mutation
 }
 
 type OASSelectQueryOrMutationFieldConfig {

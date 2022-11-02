@@ -8,6 +8,6 @@ export interface OpenAPILoaderOptions extends Partial<JSONSchemaLoaderOptions> {
 }
 
 export interface OpenAPILoaderSelectQueryOrMutationFieldConfig {
-  type: 'query' | 'mutation';
+  type: 'query' | 'mutation' | 'Query' | 'Mutation';
   fieldName: string;
 }
