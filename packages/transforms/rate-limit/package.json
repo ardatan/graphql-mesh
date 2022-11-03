@@ -30,7 +30,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.85.6",
     "@graphql-mesh/utils": "0.42.5",
-    "@graphql-tools/utils": "8.13.1",
+    "@graphql-tools/utils": "9.0.1",
     "@graphql-mesh/cross-helpers": "0.2.8",
     "@graphql-mesh/string-interpolation": "0.3.3",
     "tslib": "^2.4.0"
