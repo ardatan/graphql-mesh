@@ -33,7 +33,7 @@
     "@graphql-tools/code-file-loader": "7.3.10",
     "@graphql-tools/graphql-file-loader": "7.5.9",
     "@graphql-tools/load": "7.8.4",
-    "@graphql-tools/utils": "8.13.1",
+    "@graphql-tools/utils": "9.0.1",
     "tslib": "^2.4.0"
   },
   "publishConfig": {

@@ -32,7 +32,7 @@
     "@graphql-mesh/utils": "0.42.5",
     "@graphql-tools/wrap": "9.2.9",
     "@graphql-tools/delegate": "9.0.14",
-    "@graphql-tools/utils": "8.13.1",
+    "@graphql-tools/utils": "9.0.1",
     "graphql-scalars": "1.20.0",
     "tslib": "^2.4.0"
   },

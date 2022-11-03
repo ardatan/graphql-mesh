@@ -32,7 +32,7 @@
     "@graphql-mesh/types": "0.85.6",
     "@graphql-mesh/utils": "0.42.5",
     "@graphql-mesh/string-interpolation": "0.3.3",
-    "@graphql-tools/utils": "8.13.1",
+    "@graphql-tools/utils": "9.0.1",
     "@graphql-tools/mock": "8.7.10",
     "@graphql-tools/schema": "9.0.8",
     "faker": "5.5.3",
