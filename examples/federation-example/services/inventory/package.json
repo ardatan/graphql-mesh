@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@apollo/subgraph": "2.1.4",
-    "apollo-server": "3.11.0",
+    "apollo-server": "3.11.1",
     "graphql": "16.6.0"
   }
 }
