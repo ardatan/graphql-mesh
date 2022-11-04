@@ -7,9 +7,7 @@ describe('Headers', () => {
   let createdSchema: GraphQLSchema;
   beforeAll(async () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      source: join(__dirname, './fixtures/headers.json'),
-      ignoreErrorResponses: true,
-      // It is not possible to provide a union type with File scalar
+      source: join(__dirname, './fixtures/headers.json')
     });
   });
 
