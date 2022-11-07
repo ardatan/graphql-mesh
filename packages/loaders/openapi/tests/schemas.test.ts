@@ -14,6 +14,7 @@ const schemas = {
   Jira: 'jira.json',
   WeatherUnderground: 'weather_underground.json',
   Dictionary: 'dictionary.json',
+  Headers: 'headers.json',
 };
 
 describe('Schemas', () => {
