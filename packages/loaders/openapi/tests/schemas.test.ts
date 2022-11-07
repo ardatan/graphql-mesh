@@ -15,6 +15,7 @@ const schemas = {
   WeatherUnderground: 'weather_underground.json',
   Dictionary: 'dictionary.json',
   Headers: 'headers.json',
+  SubscriptionType: 'subscriptionType.yml',
 };
 
 describe('Schemas', () => {

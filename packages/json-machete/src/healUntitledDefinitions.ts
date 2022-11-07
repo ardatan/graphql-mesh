@@ -12,6 +12,9 @@ export function handleUntitledDefinitions(schemaDocument: any) {
       if (!definition.$ref) {
         if (!definition.title) {
           definition.title = definitionName;
+          if (definition.title === 'Subscription') {
+            definition.title += '_';
+          }
         } else {
           const seenDefinition = seen.get(definition.title);
           if (seenDefinition) {
