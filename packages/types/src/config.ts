@@ -229,9 +229,9 @@ export interface GraphQLHandlerHTTPConfiguration {
   webSocketImpl?: string;
   /**
    * Path to the introspection
-   * You can separately give schema introspection
+   * You can separately give schema introspection or SDL
    */
-  introspection?: string;
+  source?: string;
   /**
    * SSE - Server Sent Events
    * WS - New graphql-ws
@@ -257,7 +257,7 @@ export interface GraphQLHandlerCodeFirstConfiguration {
    * If you provide a path to a code file(js or ts),
    * other options will be ignored and the schema exported from the file will be used directly.
    */
-  schema: any;
+  source: any;
 }
 export interface GraphQLHandlerMultipleHTTPConfiguration {
   /**
