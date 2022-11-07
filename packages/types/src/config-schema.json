@@ -765,7 +765,7 @@
       "type": "object",
       "title": "GraphQLHandlerCodeFirstConfiguration",
       "properties": {
-        "schema": {
+        "source": {
           "anyOf": [
             {
               "type": "object",
@@ -782,7 +782,7 @@
           "description": "A file path to your GraphQL Schema\nIf you provide a path to a code file(js or ts),\nother options will be ignored and the schema exported from the file will be used directly."
         }
       },
-      "required": ["schema"]
+      "required": ["source"]
     },
     "GraphQLHandlerHTTPConfiguration": {
       "additionalProperties": false,
@@ -832,9 +832,9 @@
           "type": "string",
           "description": "Path to a custom W3 Compatible WebSocket Implementation"
         },
-        "introspection": {
+        "source": {
           "type": "string",
-          "description": "Path to the introspection\nYou can separately give schema introspection"
+          "description": "Path to the introspection\nYou can separately give schema introspection or SDL"
         },
         "subscriptionsProtocol": {
           "type": "string",

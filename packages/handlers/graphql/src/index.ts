@@ -124,12 +124,12 @@ export default class GraphQLHandler implements MeshHandler {
     });
 
     const schemaHeadersFactory = getInterpolatedHeadersFactory(httpSourceConfig.schemaHeaders || {});
-    if (httpSourceConfig.introspection) {
+    if (httpSourceConfig.source) {
       const headers = schemaHeadersFactory({
         env: process.env,
       });
       const sdlOrIntrospection = await readFileOrUrl<string | IntrospectionQuery | DocumentNode>(
-        httpSourceConfig.introspection,
+        httpSourceConfig.source,
         {
           cwd: this.baseDir,
           allowUnknownExtensions: true,
@@ -170,7 +170,7 @@ export default class GraphQLHandler implements MeshHandler {
   }
 
   async getCodeFirstSource({
-    schema: schemaConfig,
+    source: schemaConfig,
   }: YamlConfig.GraphQLHandlerCodeFirstConfiguration): Promise<MeshSource> {
     if (schemaConfig.endsWith('.graphql')) {
       const rawSDL = await readFileOrUrl<string>(schemaConfig, {
@@ -383,7 +383,7 @@ export default class GraphQLHandler implements MeshHandler {
         batch: this.config.batch != null ? this.config.batch : true,
         contextVariables,
       };
-    } else if ('schema' in this.config) {
+    } else if ('source' in this.config) {
       return this.getCodeFirstSource(this.config);
     }
 

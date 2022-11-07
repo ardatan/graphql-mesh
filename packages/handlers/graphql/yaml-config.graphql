@@ -42,7 +42,7 @@ type GraphQLHandlerCodeFirstConfiguration @md {
   If you provide a path to a code file(js or ts),
   other options will be ignored and the schema exported from the file will be used directly.
   """
-  schema: Any!
+  source: Any!
 }
 
 type GraphQLHandlerHTTPConfiguration @md {
@@ -81,9 +81,9 @@ type GraphQLHandlerHTTPConfiguration @md {
   webSocketImpl: String
   """
   Path to the introspection
-  You can separately give schema introspection
+  You can separately give schema introspection or SDL
   """
-  introspection: String
+  source: String
   """
   SSE - Server Sent Events
   WS - New graphql-ws
