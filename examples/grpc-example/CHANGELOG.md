@@ -1,5 +1,14 @@
 # grpc-example
 
+## 0.5.317
+
+### Patch Changes
+
+- Updated dependencies [[`d9c5c1195`](https://github.com/Urigo/graphql-mesh/commit/d9c5c119522a1c4cad455d62818e07a2b8f41005), [`2e3d12328`](https://github.com/Urigo/graphql-mesh/commit/2e3d12328302f2412cff2ce1df492dbaa590c78c), [`a764fe0d3`](https://github.com/Urigo/graphql-mesh/commit/a764fe0d36928cd830e79942f8ab57cd70d2602a), [`85e5071d0`](https://github.com/Urigo/graphql-mesh/commit/85e5071d084d5372830213511f55f4a30a17bb33), [`13cc0f98a`](https://github.com/Urigo/graphql-mesh/commit/13cc0f98a96d162feca005eabf847027c08377fc), [`e3e68ec9b`](https://github.com/Urigo/graphql-mesh/commit/e3e68ec9b2af2dc8e94c5a5e8b067112a6cdde64), [`5f1a5f520`](https://github.com/Urigo/graphql-mesh/commit/5f1a5f520946c9fcd2cd31e6656b53964f67a952), [`d9c5c1195`](https://github.com/Urigo/graphql-mesh/commit/d9c5c119522a1c4cad455d62818e07a2b8f41005), [`a764fe0d3`](https://github.com/Urigo/graphql-mesh/commit/a764fe0d36928cd830e79942f8ab57cd70d2602a), [`85e5071d0`](https://github.com/Urigo/graphql-mesh/commit/85e5071d084d5372830213511f55f4a30a17bb33), [`9a56eb45b`](https://github.com/Urigo/graphql-mesh/commit/9a56eb45bcbaa1eb58d9d7537b5d08ca4fef658f)]:
+  - @graphql-mesh/cli@0.79.3
+  - @graphql-mesh/transform-naming-convention@0.11.19
+  - @graphql-mesh/grpc@0.25.32
+
 ## 0.5.316
 
 ### Patch Changes

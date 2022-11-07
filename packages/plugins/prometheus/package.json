@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-prometheus",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -31,8 +31,8 @@
   },
   "dependencies": {
     "@graphql-yoga/plugin-prometheus": "1.0.0-next.4",
-    "@graphql-mesh/utils": "0.42.5",
-    "@graphql-mesh/types": "0.85.6",
+    "@graphql-mesh/utils": "0.42.6",
+    "@graphql-mesh/types": "0.85.7",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

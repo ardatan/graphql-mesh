@@ -1,5 +1,12 @@
 # @graphql-mesh/cross-helpers
 
+## 0.2.9
+
+### Patch Changes
+
+- [#4775](https://github.com/Urigo/graphql-mesh/pull/4775) [`a764fe0d3`](https://github.com/Urigo/graphql-mesh/commit/a764fe0d36928cd830e79942f8ab57cd70d2602a) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`@graphql-tools/utils@9.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.0.1) (from `8.13.1`, in `dependencies`)
+
 ## 0.2.8
 
 ### Patch Changes
