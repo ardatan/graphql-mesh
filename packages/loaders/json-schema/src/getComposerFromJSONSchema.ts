@@ -1053,7 +1053,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           }
 
           if (subSchemaAndTypeComposers.additionalProperties) {
-            if (
+            // Take a look later
+            /*             if (
               typeof subSchemaAndTypeComposers.additionalProperties === 'object' &&
               subSchemaAndTypeComposers.additionalProperties.output instanceof ObjectTypeComposer
             ) {
@@ -1071,7 +1072,8 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
                   inputFieldMap[fieldName] = inputTCFieldMap[fieldName];
                 }
               }
-            } else if (Object.keys(fieldMap).length > 0) {
+            } else */
+            if (Object.keys(fieldMap).length > 0) {
               fieldMap.additionalProperties = {
                 type: GraphQLJSON,
                 resolve: (root: any) => root,
