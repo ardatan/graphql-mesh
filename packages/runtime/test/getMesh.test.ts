@@ -88,7 +88,7 @@ describe('getMesh', () => {
         pubsub,
         name,
         config: {
-          schema: `./schema${config.suffix}.ts`,
+          source: `./schema${config.suffix}.ts`,
         },
         store,
         logger,
