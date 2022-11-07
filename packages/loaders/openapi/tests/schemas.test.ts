@@ -13,6 +13,7 @@ const schemas = {
   Toto: 'toto.yml',
   Jira: 'jira.json',
   WeatherUnderground: 'weather_underground.json',
+  Dictionary: 'dictionary.json',
 };
 
 describe('Schemas', () => {
