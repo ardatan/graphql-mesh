@@ -1,5 +1,21 @@
 # @graphql-mesh/plugin-prometheus
 
+## 0.2.9
+
+### Patch Changes
+
+- [#4773](https://github.com/Urigo/graphql-mesh/pull/4773) [`d9c5c1195`](https://github.com/Urigo/graphql-mesh/commit/d9c5c119522a1c4cad455d62818e07a2b8f41005) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@graphql-yoga/plugin-prometheus@1.0.0-next.3` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-prometheus/v/1.0.0) (from `1.0.0-next.2`, in `dependencies`)
+  - Updated dependency [`graphql-yoga@3.0.0-next.9` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.0) (from `3.0.0-next.8`, in `peerDependencies`)
+
+- [#4780](https://github.com/Urigo/graphql-mesh/pull/4780) [`8e94f36a7`](https://github.com/Urigo/graphql-mesh/commit/8e94f36a77a1e666144c6a8797e0049ab64062d9) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`@graphql-yoga/plugin-prometheus@1.0.0-next.4` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-prometheus/v/1.0.0) (from `1.0.0-next.3`, in `dependencies`)
+  - Updated dependency [`graphql-yoga@3.0.0-next.10` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.0) (from `3.0.0-next.9`, in `peerDependencies`)
+- Updated dependencies [[`d9c5c1195`](https://github.com/Urigo/graphql-mesh/commit/d9c5c119522a1c4cad455d62818e07a2b8f41005), [`a764fe0d3`](https://github.com/Urigo/graphql-mesh/commit/a764fe0d36928cd830e79942f8ab57cd70d2602a), [`85e5071d0`](https://github.com/Urigo/graphql-mesh/commit/85e5071d084d5372830213511f55f4a30a17bb33), [`d9c5c1195`](https://github.com/Urigo/graphql-mesh/commit/d9c5c119522a1c4cad455d62818e07a2b8f41005), [`a764fe0d3`](https://github.com/Urigo/graphql-mesh/commit/a764fe0d36928cd830e79942f8ab57cd70d2602a), [`85e5071d0`](https://github.com/Urigo/graphql-mesh/commit/85e5071d084d5372830213511f55f4a30a17bb33), [`c55e68381`](https://github.com/Urigo/graphql-mesh/commit/c55e683816bd5668fa9e520e6e434363a2a78425)]:
+  - @graphql-mesh/types@0.85.7
+  - @graphql-mesh/utils@0.42.6
+
 ## 0.2.8
 
 ### Patch Changes
