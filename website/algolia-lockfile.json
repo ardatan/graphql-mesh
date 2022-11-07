@@ -1334,6 +1334,7 @@
     "objectID": "mesh-docs-source-handlers-graphql",
     "headings": [
       "Dynamic Header Values (e.g., for Authorization)",
+      "Fetching SDL or introspection from CDN or somewhere",
       "Local Schemas",
       "Fetch Strategies and Multiple HTTP endpoints for the same source",
       "Config API Reference"
@@ -1358,6 +1359,11 @@
       },
       {
         "children": [],
+        "title": "Fetching SDL or introspection from CDN or somewhere",
+        "anchor": "fetching-sdl-or-introspection-from-cdn-or-somewhere"
+      },
+      {
+        "children": [],
         "title": "Local Schemas",
         "anchor": "local-schemas"
       },
@@ -1372,7 +1378,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "c89e39a41c4861f43895b6995cc28005",
+    "content": "363b20c95f399aa372160cfaab328981",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/graphql",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Source Handlers"],
