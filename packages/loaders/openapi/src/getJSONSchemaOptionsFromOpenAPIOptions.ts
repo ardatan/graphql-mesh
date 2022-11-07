@@ -244,7 +244,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
         if (paramObj.required) {
           operationArgTypeMap[argName].nullable = false;
         }
-        if (!('type' in paramObj) && !paramObj.schema) {
+        if (!('type' in paramObj) && !paramObj.schema && !paramObj.content && !paramObj.example && !paramObj.examples) {
           operationArgTypeMap[argName].type = 'string';
         }
       }
