@@ -31,7 +31,7 @@
     "@graphql-mesh/types": "0.85.7",
     "@graphql-mesh/store": "0.8.62",
     "@graphql-mesh/utils": "0.42.6",
-    "@graphql-tools/utils": "9.0.1",
+    "@graphql-tools/utils": "9.1.0",
     "@omnigraph/soap": "0.2.0",
     "tslib": "^2.4.0"
   },
