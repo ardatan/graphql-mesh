@@ -27,7 +27,7 @@ Some options where replaced/dropped:
 - `provideErrorExtensions`: Dropped. Using debug mode for that matter is recommend
 - `qs`: Use `queryParams` instead. Note that using this option in the previous handler resulted in removing query input arguments, where now the behavior is making them all nullable, and preferring the input arg over the config params if both exist.
 - `requestOptions`: Dropped
-- `selectQueryOrMutationField`: Previous structure was simplified. Now this option expects an array of object, each containing `fieldName` (for relevant field name) and `type` for the expected type (`”query”`/`”mutation”`)
+- `selectQueryOrMutationField`: Previous structure was simplified. Now this option expects an array of object, each containing `fieldName` (for relevant field name) and `type` for the expected type (`”Query”`/`”Mutation”`)
 - `simpleNames`: The current convention is equivalent to `simpleNames: true`. For other setups see the [naming convention transform](https://www.graphql-mesh.com/docs/transforms/naming-convention)
 - `strict`: Use `ignoreErrorResponses` (input value should be inverted)
 

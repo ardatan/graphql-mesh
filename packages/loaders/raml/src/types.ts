@@ -6,6 +6,6 @@ export interface RAMLLoaderOptions extends Partial<JSONSchemaLoaderOptions> {
 }
 
 export interface RAMLLoaderSelectQueryOrMutationFieldConfig {
-  type: 'query' | 'mutation';
+  type: 'query' | 'mutation' | 'Query' | 'Mutation';
   fieldName: string;
 }

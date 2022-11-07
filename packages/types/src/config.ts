@@ -892,9 +892,9 @@ export interface OpenapiHandler {
 }
 export interface OASSelectQueryOrMutationFieldConfig {
   /**
-   * Allowed values: query, mutation
+   * Allowed values: query, mutation, Query, Mutation
    */
-  type: 'query' | 'mutation';
+  type: 'query' | 'mutation' | 'Query' | 'Mutation';
   fieldName: string;
 }
 /**
@@ -953,9 +953,9 @@ export interface RAMLHandler {
 }
 export interface RAMLSelectQueryOrMutationFieldConfig {
   /**
-   * Allowed values: query, mutation
+   * Allowed values: query, mutation, Query, Mutation
    */
-  type: 'query' | 'mutation';
+  type: 'query' | 'mutation' | 'Query' | 'Mutation';
   fieldName: string;
 }
 /**

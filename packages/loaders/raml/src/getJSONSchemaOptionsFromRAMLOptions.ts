@@ -4,7 +4,7 @@ import { getAbsolutePath, getCwd, JSONSchemaObject } from 'json-machete';
 import { api10, loadApi } from '@ardatan/raml-1-parser';
 import { fetch as crossUndiciFetch } from '@whatwg-node/fetch';
 import toJsonSchema from 'to-json-schema';
-import { RAMLLoaderOptions } from './types';
+import { RAMLLoaderOptions, RAMLLoaderSelectQueryOrMutationFieldConfig } from './types';
 import { asArray } from '@graphql-tools/utils';
 import { getFieldNameFromPath } from './utils';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
@@ -41,7 +41,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
   baseUrl: string;
   fetch?: WindowOrWorkerGlobalScope['fetch'];
 }> {
-  const fieldTypeMap: Record<string, 'query' | 'mutation'> = {};
+  const fieldTypeMap: Record<string, RAMLLoaderSelectQueryOrMutationFieldConfig['fieldName']> = {};
   for (const { fieldName, type } of selectQueryOrMutationField) {
     fieldTypeMap[fieldName] = type;
   }
