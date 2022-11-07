@@ -664,7 +664,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
                 ...subSchema,
               };
             case 'Subscription':
-              if (path.startsWith('/properties/subscription')) {
+              if (path === '/properties/subscription') {
                 return {
                   output: schemaComposer.Subscription,
                   ...subSchema,
