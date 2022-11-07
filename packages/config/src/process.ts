@@ -437,7 +437,7 @@ export async function processConfig(
           importFn,
           pubsub
         );`);
-        codes.add(`additionalResolvers.push(additionalResolversFromTypeDefs)`);
+        codes.add(`additionalResolvers.push(...additionalResolversFromTypeDefs)`);
       }
     }
   }
