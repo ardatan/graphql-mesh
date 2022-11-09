@@ -2962,6 +2962,44 @@
     tslib "~2.4.0"
     value-or-promise "1.0.11"
 
+"@graphql-tools/executor-graphql-ws@0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/executor-graphql-ws/-/executor-graphql-ws-0.0.2.tgz#d5410efaffa71f699f4869cb351a8a413520e50f"
+  integrity sha512-VydPeunrAihvAHAnIFQynSVwtmciMUmkMgW/CMqZODjeOPqCkWuu1CXATnqU/i3tjf9Z3iLiYheCDKfJpOcEFw==
+  dependencies:
+    "@graphql-tools/utils" "9.1.0"
+    "@repeaterjs/repeater" "3.0.4"
+    "@types/ws" "^8.0.0"
+    graphql-ws "5.11.2"
+    isomorphic-ws "5.0.0"
+    tslib "^2.4.0"
+    ws "8.11.0"
+
+"@graphql-tools/executor-http@0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/executor-http/-/executor-http-0.0.2.tgz#364fe16cc3a2f7b5c45cc8e7e719b30cf9a9b5b4"
+  integrity sha512-++ezIUeCcDc03jQpGnmVzw32P1aJSKH0FFXY/4zWnwdgCr2WdBBQCnYjptV1rjd5mohW2iIwRYc+HRw+TZzfXg==
+  dependencies:
+    "@graphql-tools/utils" "9.1.0"
+    "@repeaterjs/repeater" "3.0.4"
+    "@whatwg-node/fetch" "0.5.1"
+    dset "3.1.2"
+    extract-files "^11.0.0"
+    meros "1.2.1"
+    tslib "^2.4.0"
+    value-or-promise "1.0.11"
+
+"@graphql-tools/executor-legacy-ws@0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/executor-legacy-ws/-/executor-legacy-ws-0.0.2.tgz#5a145d644ea40f347ede34689844527e0d3f5b06"
+  integrity sha512-ntIhYyK+keFk0LjQfH3/DHJRQufe1hH0ei9PXgds94Zg2GEjk49zxytxPfFC+hkqLXTAz8mGVj8MsuhDdEBtzw==
+  dependencies:
+    "@graphql-tools/utils" "9.1.0"
+    "@types/ws" "^8.0.0"
+    isomorphic-ws "5.0.0"
+    tslib "^2.4.0"
+    ws "8.11.0"
+
 "@graphql-tools/executor@0.0.6":
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/@graphql-tools/executor/-/executor-0.0.6.tgz#e980e3b148b3093091648113bfd14efac5d90c8f"
@@ -3212,25 +3250,24 @@
     valid-url "1.0.9"
     websocket "1.0.31"
 
-"@graphql-tools/url-loader@7.16.12":
-  version "7.16.12"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.16.12.tgz#7ef43e97f896647ac553068c991ea58ce8788ff9"
-  integrity sha512-A+T10Co1+6zHoBrmpbJte9o/x6YgIEiiMbyByFAfRU9kDCQdz0c/YJI9NNWsvKLBHh8zaTRp/ZYk/HpJ0hVOxw==
+"@graphql-tools/url-loader@7.16.14":
+  version "7.16.14"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.16.14.tgz#3b8110fa19300ed4035899134f2684d1883987d1"
+  integrity sha512-nrjOz1ya1Qu6oETBPJSF0kKxo3UGT+qyi9TqMCnSQ/2R67ADicK7McSWfLdEUneADWhCx26b3XsOrQTKiG1KFg==
   dependencies:
     "@ardatan/sync-fetch" "0.0.1"
     "@graphql-tools/delegate" "9.0.15"
+    "@graphql-tools/executor-graphql-ws" "0.0.2"
+    "@graphql-tools/executor-http" "0.0.2"
+    "@graphql-tools/executor-legacy-ws" "0.0.2"
     "@graphql-tools/utils" "9.1.0"
     "@graphql-tools/wrap" "9.2.11"
     "@types/ws" "^8.0.0"
     "@whatwg-node/fetch" "^0.5.0"
-    dset "^3.1.2"
-    extract-files "^11.0.0"
-    graphql-ws "^5.4.1"
-    isomorphic-ws "^5.0.0"
-    meros "^1.1.4"
+    isomorphic-ws "5.0.0"
     tslib "^2.4.0"
     value-or-promise "^1.0.11"
-    ws "^8.3.0"
+    ws "8.11.0"
 
 "@graphql-tools/utils@6.1.0":
   version "6.1.0"
@@ -9317,7 +9354,7 @@ dottie@^2.0.0:
   resolved "https://registry.yarnpkg.com/dottie/-/dottie-2.0.2.tgz#cc91c0726ce3a054ebf11c55fbc92a7f266dd154"
   integrity sha512-fmrwR04lsniq/uSr8yikThDTrM7epXHBAAjH9TbeH3rEA8tdCO7mRzB9hdmdGyJCxF8KERo9CITcm3kGuoyMhg==
 
-dset@^3.1.1, dset@^3.1.2:
+dset@3.1.2, dset@^3.1.1:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/dset/-/dset-3.1.2.tgz#89c436ca6450398396dc6538ea00abc0c54cd45a"
   integrity sha512-g/M9sqy3oHe477Ar4voQxWtaPIFw1jTdKZuomOjhCcBx9nHUNn0pu6NopuFFrTh/TRZIKEj+76vLWFu9BNKk+Q==
@@ -9972,19 +10009,19 @@ eslint-plugin-jsx-a11y@^6.5.1:
     language-tags "^1.0.5"
     minimatch "^3.0.4"
 
-eslint-plugin-n@15.5.0:
-  version "15.5.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-n/-/eslint-plugin-n-15.5.0.tgz#8eb0773b019b88b145dd1eba687ccc9c50e71655"
-  integrity sha512-VCqQiZDpdm1Q9grnvy+XsENZoXDgTLqPHRQwgl9qFNNgTKR4YEnQOMN0pFB/9TbmrQ88jdeTnqTcNwRvjqMOtg==
+eslint-plugin-n@15.5.1:
+  version "15.5.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-n/-/eslint-plugin-n-15.5.1.tgz#b3991857d1edaa47e0108ead825470ce63f391c1"
+  integrity sha512-kAd+xhZm7brHoFLzKLB7/FGRFJNg/srmv67mqb7tto22rpr4wv/LV6RuXzAfv3jbab7+k1wi42PsIhGviywaaw==
   dependencies:
     builtins "^5.0.1"
     eslint-plugin-es "^4.1.0"
     eslint-utils "^3.0.0"
     ignore "^5.1.1"
-    is-core-module "^2.10.0"
+    is-core-module "^2.11.0"
     minimatch "^3.1.2"
     resolve "^1.22.1"
-    semver "^7.3.7"
+    semver "^7.3.8"
 
 eslint-plugin-promise@6.1.1:
   version "6.1.1"
@@ -11305,7 +11342,7 @@ graphql-type-json@0.3.2:
   resolved "https://registry.yarnpkg.com/graphql-type-json/-/graphql-type-json-0.3.2.tgz#f53a851dbfe07bd1c8157d24150064baab41e115"
   integrity sha512-J+vjof74oMlCWXSvt0DOf2APEdZOCdubEvGDUAlqH//VBYcOYsGgRW7Xzorr44LvkjiuvecWc8fChxuZZbChtg==
 
-graphql-ws@5.11.2, graphql-ws@^5.4.1, graphql-ws@^5.6.2:
+graphql-ws@5.11.2, graphql-ws@^5.6.2:
   version "5.11.2"
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.11.2.tgz#d5e0acae8b4d4a4cf7be410a24135cfcefd7ddc0"
   integrity sha512-4EiZ3/UXYcjm+xFGP544/yW1+DVI8ZpKASFbzrV5EDTFWJp0ZvLl4Dy2fSZAzz9imKp5pZMIcjB0x/H69Pv/6w==
@@ -12018,10 +12055,10 @@ is-ci@^3.0.1:
   dependencies:
     ci-info "^3.2.0"
 
-is-core-module@^2.10.0, is-core-module@^2.2.0, is-core-module@^2.5.0, is-core-module@^2.8.1, is-core-module@^2.9.0:
-  version "2.10.0"
-  resolved "https://registry.yarnpkg.com/is-core-module/-/is-core-module-2.10.0.tgz#9012ede0a91c69587e647514e1d5277019e728ed"
-  integrity sha512-Erxj2n/LDAZ7H8WNJXd9tw38GYM3dv8rk8Zcs+jJuxYTW7sozH+SS8NtrSjVL1/vpLvWi1hxy96IzjJ3EHTJJg==
+is-core-module@^2.11.0, is-core-module@^2.2.0, is-core-module@^2.5.0, is-core-module@^2.8.1, is-core-module@^2.9.0:
+  version "2.11.0"
+  resolved "https://registry.yarnpkg.com/is-core-module/-/is-core-module-2.11.0.tgz#ad4cb3e3863e814523c96f3f58d26cc570ff0144"
+  integrity sha512-RRjxlvLDkD1YJwDbroBHMb+cukurkDWNyHx7D3oNB5x9rb5ogcksMC5wHCadcXoo67gVr/+3GFySh3134zi6rw==
   dependencies:
     has "^1.0.3"
 
@@ -12332,15 +12369,15 @@ isexe@^2.0.0:
   resolved "https://registry.yarnpkg.com/isexe/-/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"
   integrity sha1-6PvzdNxVb/iUehDcsFctYz8s+hA=
 
+isomorphic-ws@5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/isomorphic-ws/-/isomorphic-ws-5.0.0.tgz#e5529148912ecb9b451b46ed44d53dae1ce04bbf"
+  integrity sha512-muId7Zzn9ywDsyXgTIafTry2sV3nySZeUDe6YedVd1Hvuuep5AsIlqK+XefWpYTyJG5e503F2xIuT2lcU6rCSw==
+
 isomorphic-ws@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/isomorphic-ws/-/isomorphic-ws-4.0.1.tgz#55fd4cd6c5e6491e76dc125938dd863f5cd4f2dc"
   integrity sha512-BhBvN2MBpWTaSHdWRb/bwdZJ1WaehQ2L1KngkCkfLUGF0mAWAT1sQUQacEmQ0jXkFw/czDXPNQSL5u2/Krsz1w==
-
-isomorphic-ws@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/isomorphic-ws/-/isomorphic-ws-5.0.0.tgz#e5529148912ecb9b451b46ed44d53dae1ce04bbf"
-  integrity sha512-muId7Zzn9ywDsyXgTIafTry2sV3nySZeUDe6YedVd1Hvuuep5AsIlqK+XefWpYTyJG5e503F2xIuT2lcU6rCSw==
 
 istanbul-lib-coverage@^3.0.0, istanbul-lib-coverage@^3.2.0:
   version "3.2.0"
@@ -14436,10 +14473,10 @@ mermaid@9.1.7:
     moment-mini "2.24.0"
     stylis "^4.0.10"
 
-meros@^1.1.4:
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/meros/-/meros-1.1.4.tgz#c17994d3133db8b23807f62bec7f0cb276cfd948"
-  integrity sha512-E9ZXfK9iQfG9s73ars9qvvvbSIkJZF5yOo9j4tcwM5tN8mUKfj/EKN5PzOr3ZH0y5wL7dLAHw3RVEfpQV9Q7VQ==
+meros@1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/meros/-/meros-1.2.1.tgz#056f7a76e8571d0aaf3c7afcbe7eb6407ff7329e"
+  integrity sha512-R2f/jxYqCAGI19KhAvaxSOxALBMkaXWH2a7rOyqQw+ZmizX5bKkEYWLzdhC+U82ZVVPVp6MCXe3EkVligh+12g==
 
 methods@~1.1.2:
   version "1.1.2"
@@ -20868,7 +20905,7 @@ write-pkg@^4.0.0:
     type-fest "^0.4.1"
     write-json-file "^3.2.0"
 
-ws@8.11.0, ws@^8.2.2, ws@^8.3.0, ws@^8.4.2:
+ws@8.11.0, ws@^8.2.2, ws@^8.4.2:
   version "8.11.0"
   resolved "https://registry.yarnpkg.com/ws/-/ws-8.11.0.tgz#6a0d36b8edfd9f96d8b25683db2f8d7de6e8e143"
   integrity sha512-HPG3wQd9sNQoT9xHyNCXoDUa+Xw/VevmY9FoHyQ+g+rrMn4j6FB4np7Z0OhdTgjx6MgQLK7jwSy1YecU1+4Asg==
