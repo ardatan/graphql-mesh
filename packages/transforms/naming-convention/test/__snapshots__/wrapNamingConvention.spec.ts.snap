@@ -4,11 +4,18 @@ exports[`namingConvention wrap should change the name of a types, enums, fields 
 "type Query {
   user: User!
   userById(user_id: ID!): User!
+  node(id: ID!): Node
 }
+
+union Node = User | Post
 
 type User {
   id: ID!
   type: UserType
+}
+
+type Post {
+  id: ID!
 }
 
 enum UserType {

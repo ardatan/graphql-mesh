@@ -1,5 +1,13 @@
 import NamingConventionTransform from '../src/index';
-import { buildSchema, printSchema, GraphQLObjectType, GraphQLEnumType, execute, parse } from 'graphql';
+import {
+  buildSchema,
+  printSchema,
+  GraphQLObjectType,
+  GraphQLEnumType,
+  execute,
+  parse,
+  GraphQLUnionType,
+} from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { PubSub } from '@graphql-mesh/utils';
@@ -10,10 +18,17 @@ describe('namingConvention - bare', () => {
     type Query {
       user: user!
       userById(userId: ID!): user!
+      node(id: ID!): node
     }
+
+    union node = user | Post
+
     type user {
       Id: ID!
       Type: userType
+    }
+    type Post {
+      id: ID!
     }
     enum userType {
       admin
@@ -32,7 +47,7 @@ describe('namingConvention - bare', () => {
     pubsub = new PubSub();
   });
 
-  it('should change the name of a types, enums, fields and fieldArguments', () => {
+  it('should change the name of types, abstractTypes, enums, fields and fieldArguments', () => {
     const transform = new NamingConventionTransform({
       config: {
         mode: 'bare',
@@ -53,9 +68,18 @@ describe('namingConvention - bare', () => {
     const userObjectType = newSchema.getType('User') as GraphQLObjectType;
     expect(userObjectType).toBeDefined();
 
+    expect(newSchema.getType('node')).toBeUndefined();
+    const nodeUnionType = newSchema.getType('Node') as GraphQLUnionType;
+    expect(nodeUnionType).toBeDefined();
+
     const userObjectTypeFields = userObjectType.getFields();
     expect(userObjectTypeFields.Id).toBeUndefined();
     expect(userObjectTypeFields.id).toBeDefined();
+
+    const nodeUnionTypeTypes = nodeUnionType.getTypes();
+    expect(nodeUnionTypeTypes).toHaveLength(2);
+    expect(nodeUnionTypeTypes[0].name).toBe('User');
+    expect(nodeUnionTypeTypes[1].name).toBe('Post');
 
     expect(newSchema.getType('userType')).toBeUndefined();
     const userTypeEnumType = newSchema.getType('UserType') as GraphQLEnumType;
@@ -74,13 +98,18 @@ describe('namingConvention - bare', () => {
           user(Input: UserSearchInput): User
           userById(userId: ID!): User
           userByType(type: UserType!): User
+          node(id: ID!): Node
         }
+        union Node = User | Post
         type User {
           id: ID
           first_name: String
           last_name: String
           Type: UserType!
           interests: [UserInterests!]!
+        }
+        type Post {
+          id: ID!
         }
         input UserSearchInput {
           id: ID
@@ -101,7 +130,7 @@ describe('namingConvention - bare', () => {
       `,
       resolvers: {
         Query: {
-          user: (root, args) => {
+          user: (_, args) => {
             return {
               id: args.Input.id,
               first_name: args.Input.first_name,
@@ -109,7 +138,7 @@ describe('namingConvention - bare', () => {
               Type: args.Input.type,
             };
           },
-          userById: (root, args) => {
+          userById: (_, args) => {
             return {
               id: args.userId,
               first_name: 'John',
@@ -120,12 +149,26 @@ describe('namingConvention - bare', () => {
           userByType: () => {
             return { first_name: 'John', last_name: 'Smith', Type: 'admin', interests: ['books', 'comics'] };
           },
+          node: (_, { id }) => {
+            return {
+              id,
+            };
+          },
+        },
+        Node: {
+          __resolveType(obj: any) {
+            if (obj.title) {
+              return 'Post';
+            }
+            return 'User';
+          },
         },
       },
     });
     const transform = new NamingConventionTransform({
       config: {
         mode: 'bare',
+        typeNames: 'lowerCase',
         enumValues: 'upperCase',
         fieldNames: 'camelCase',
         fieldArgumentNames: 'pascalCase',
@@ -200,9 +243,24 @@ describe('namingConvention - bare', () => {
       type: 'ADMIN',
       interests: ['BOOKS', 'COMICS'],
     });
+
+    const result4 = await execute({
+      schema: newSchema,
+      document: parse(/* GraphQL */ `
+        {
+          node(Id: "1") {
+            __typename
+          }
+        }
+      `),
+    });
+    // Pass transformed output to the client
+    expect(result4.data?.node).toEqual({
+      __typename: 'user',
+    });
   });
 
-  it('should be skipped if the result gonna be empty string', async () => {
+  it('should be skipped if result is gonna be empty string', async () => {
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
         type Query {

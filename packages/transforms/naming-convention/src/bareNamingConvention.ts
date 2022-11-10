@@ -1,5 +1,6 @@
 import {
   defaultFieldResolver,
+  GraphQLAbstractType,
   GraphQLInputObjectType,
   GraphQLList,
   GraphQLNonNull,
@@ -98,6 +99,25 @@ export default class NamingConventionTransform implements MeshTransform {
 
           if (newName !== undefined && newName !== oldName) {
             return renameType(type, newName);
+          }
+
+          return undefined;
+        },
+        [MapperKind.ABSTRACT_TYPE]: type => {
+          const currentName = type.name;
+          const existingResolver = type.resolveType;
+          const namingConventionFn = NAMING_CONVENTIONS[this.config.typeNames];
+          const newName = IGNORED_TYPE_NAMES.includes(currentName) ? currentName : namingConventionFn(currentName);
+
+          type.resolveType = async (data, context, info, abstractType) => {
+            const originalResolvedTypename = await existingResolver(data, context, info, abstractType);
+            return IGNORED_TYPE_NAMES.includes(originalResolvedTypename)
+              ? originalResolvedTypename
+              : namingConventionFn(originalResolvedTypename);
+          };
+
+          if (newName !== undefined && newName !== currentName) {
+            return renameType(type, newName) as GraphQLAbstractType;
           }
 
           return undefined;
