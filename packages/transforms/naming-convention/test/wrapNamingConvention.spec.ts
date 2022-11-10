@@ -1,5 +1,13 @@
 import NamingConventionTransform from '../src/index';
-import { buildSchema, printSchema, GraphQLObjectType, GraphQLEnumType, execute, parse } from 'graphql';
+import {
+  buildSchema,
+  printSchema,
+  GraphQLObjectType,
+  GraphQLEnumType,
+  execute,
+  parse,
+  GraphQLUnionType,
+} from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { PubSub } from '@graphql-mesh/utils';
@@ -11,10 +19,17 @@ describe('namingConvention wrap', () => {
     type Query {
       user: user!
       userById(userId: ID!): user!
+      node(id: ID!): node
     }
+
+    union node = user | Post
+
     type user {
       Id: ID!
       Type: userType
+    }
+    type Post {
+      id: ID!
     }
     enum userType {
       admin
@@ -57,9 +72,18 @@ describe('namingConvention wrap', () => {
     const userObjectType = newSchema.getType('User') as GraphQLObjectType;
     expect(userObjectType).toBeDefined();
 
+    expect(newSchema.getType('node')).toBeUndefined();
+    const nodeUnionType = newSchema.getType('Node') as GraphQLUnionType;
+    expect(nodeUnionType).toBeDefined();
+
     const userObjectTypeFields = userObjectType.getFields();
     expect(userObjectTypeFields.Id).toBeUndefined();
     expect(userObjectTypeFields.id).toBeDefined();
+
+    const nodeUnionTypeTypes = nodeUnionType.getTypes();
+    expect(nodeUnionTypeTypes).toHaveLength(2);
+    expect(nodeUnionTypeTypes[0].name).toBe('User');
+    expect(nodeUnionTypeTypes[1].name).toBe('Post');
 
     expect(newSchema.getType('userType')).toBeUndefined();
     const userTypeEnumType = newSchema.getType('UserType') as GraphQLEnumType;
@@ -77,13 +101,18 @@ describe('namingConvention wrap', () => {
         user(Input: UserSearchInput): User
         userById(userId: ID!): User
         userByType(type: UserType!): User
+        node(id: ID!): Node
       }
+      union Node = User | Post
       type User {
         id: ID
         first_name: String
         last_name: String
         Type: UserType!
         interests: [UserInterests!]!
+      }
+      type Post {
+        id: ID!
       }
       input UserSearchInput {
         id: ID
@@ -125,6 +154,19 @@ describe('namingConvention wrap', () => {
           userByType: () => {
             return { first_name: 'John', last_name: 'Smith', Type: 'admin', interests: ['books', 'comics'] };
           },
+          node: (_, { id }) => {
+            return {
+              id,
+            };
+          },
+        },
+        Node: {
+          __resolveType(obj: any) {
+            if (obj.title) {
+              return 'Post';
+            }
+            return 'User';
+          },
         },
       },
     });
@@ -138,6 +180,7 @@ describe('namingConvention wrap', () => {
           pubsub,
           config: {
             mode: 'wrap',
+            typeNames: 'lowerCase',
             enumValues: 'upperCase',
             fieldNames: 'camelCase',
             fieldArgumentNames: 'pascalCase',
@@ -207,6 +250,21 @@ describe('namingConvention wrap', () => {
       lastName: 'Smith',
       type: 'ADMIN',
       interests: ['BOOKS', 'COMICS'],
+    });
+
+    const result4 = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          node(Id: "1") {
+            __typename
+          }
+        }
+      `),
+    });
+    // Pass transformed output to the client
+    expect(result4.data?.node).toEqual({
+      __typename: 'user',
     });
   });
 

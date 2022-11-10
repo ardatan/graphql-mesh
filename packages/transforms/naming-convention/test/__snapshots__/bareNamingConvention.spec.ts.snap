@@ -1,14 +1,21 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`namingConvention - bare should change the name of a types, enums, fields and fieldArguments 1`] = `
+exports[`namingConvention - bare should change the name of types, abstractTypes, enums, fields and fieldArguments 1`] = `
 "type Query {
   user: User!
   userById(user_id: ID!): User!
+  node(id: ID!): Node
 }
+
+union Node = User | Post
 
 type User {
   id: ID!
   type: UserType
+}
+
+type Post {
+  id: ID!
 }
 
 enum UserType {
