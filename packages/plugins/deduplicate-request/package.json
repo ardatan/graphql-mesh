@@ -30,7 +30,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.85.7",
     "@graphql-mesh/utils": "0.42.6",
-    "@whatwg-node/fetch": "0.5.1",
+    "@whatwg-node/fetch": "0.5.3",
     "tslib": "^2.4.0"
   },
   "publishConfig": {
