@@ -44,11 +44,11 @@
     "fast-xml-parser": "4.0.11",
     "graphql-compose": "9.0.10",
     "graphql-parse-resolve-info": "4.12.3",
-    "graphql-scalars": "1.20.0",
+    "graphql-scalars": "1.20.1",
     "pascal-case": "3.1.2",
     "url-join": "4.0.1",
     "tslib": "^2.4.0",
-    "@graphql-tools/delegate": "9.0.15"
+    "@graphql-tools/delegate": "9.0.16"
   },
   "publishConfig": {
     "access": "public",

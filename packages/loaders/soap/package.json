@@ -28,10 +28,10 @@
     "@graphql-tools/utils": "9.1.0",
     "fast-xml-parser": "3.21.1",
     "graphql-compose": "9.0.10",
-    "graphql-scalars": "1.20.0"
+    "graphql-scalars": "1.20.1"
   },
   "devDependencies": {
-    "@whatwg-node/fetch": "0.5.1"
+    "@whatwg-node/fetch": "0.5.3"
   },
   "publishConfig": {
     "access": "public",

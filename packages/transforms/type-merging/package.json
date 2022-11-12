@@ -29,8 +29,8 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.85.7",
-    "@graphql-tools/stitching-directives": "2.3.18",
-    "@graphql-tools/delegate": "9.0.15",
+    "@graphql-tools/stitching-directives": "2.3.19",
+    "@graphql-tools/delegate": "9.0.16",
     "@graphql-mesh/utils": "0.42.6",
     "tslib": "^2.4.0"
   },

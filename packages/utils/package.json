@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "0.3.3",
-    "@graphql-tools/delegate": "9.0.15",
+    "@graphql-tools/delegate": "9.0.16",
     "@graphql-tools/utils": "9.1.0",
     "@graphql-mesh/cross-helpers": "0.2.9",
     "@graphql-mesh/types": "0.85.7",
