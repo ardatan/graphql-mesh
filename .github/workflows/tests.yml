@@ -81,8 +81,6 @@ jobs:
           backup_file: '/tmp/backup.sql'
       - name: Build
         run: yarn build
-      - name: Build Test Artifacts
-        run: yarn build-test-artifacts
       - name: Test
         run: yarn test
         env:
