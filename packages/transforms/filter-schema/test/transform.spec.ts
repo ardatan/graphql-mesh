@@ -1,17 +1,9 @@
 import { buildSchema, printSchema } from 'graphql';
 import FilterSchemaTransform from '../src';
-import { PubSub } from '@graphql-mesh/utils';
-import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
-import { ImportFn } from '@graphql-mesh/types';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { pruneSchema } from '@graphql-tools/utils';
 
 describe('filter', () => {
-  const cache = new InMemoryLRUCache();
-  const pubsub = new PubSub();
-  const baseDir: string = undefined;
-  const importFn: ImportFn = m => import(m);
-
   it('filters correctly with array of rules', async () => {
     let schema = buildSchema(/* GraphQL */ `
       type User {
@@ -40,13 +32,8 @@ describe('filter', () => {
     schema = wrapSchema({
       schema,
       transforms: [
-        FilterSchemaTransform({
-          config: ['!Comment', 'User.posts.{message, author}', 'Query.user.!pk'],
-          apiName: '',
-          cache,
-          pubsub,
-          baseDir,
-          importFn,
+        new FilterSchemaTransform({
+          config: { filters: ['!Comment', 'User.posts.{message, author}', 'Query.user.!pk'] },
         }),
       ],
     });
@@ -101,13 +88,8 @@ type Query {
     schema = wrapSchema({
       schema,
       transforms: [
-        FilterSchemaTransform({
+        new FilterSchemaTransform({
           config: { filters: ['!Comment', 'User.posts.{message, author}', 'Query.user.!pk'] },
-          apiName: '',
-          cache,
-          pubsub,
-          baseDir,
-          importFn,
         }),
       ],
     });
@@ -179,7 +161,7 @@ type Query {
     schema = wrapSchema({
       schema,
       transforms: [
-        FilterSchemaTransform({
+        new FilterSchemaTransform({
           config: {
             mode: 'bare',
             filters: [
@@ -191,11 +173,6 @@ type Query {
               'Query.user.!pk',
             ],
           },
-          apiName: '',
-          cache,
-          pubsub,
-          baseDir,
-          importFn,
         }),
       ],
     });
@@ -238,16 +215,11 @@ type Query {
     schema = wrapSchema({
       schema,
       transforms: [
-        FilterSchemaTransform({
+        new FilterSchemaTransform({
           config: {
             mode: 'bare',
             filters: ['Query.*.!pk'],
           },
-          apiName: '',
-          cache,
-          pubsub,
-          baseDir,
-          importFn,
         }),
       ],
     });
@@ -284,16 +256,11 @@ type Query {
     schema = wrapSchema({
       schema,
       transforms: [
-        FilterSchemaTransform({
+        new FilterSchemaTransform({
           config: {
             mode: 'bare',
             filters: ['Query.*.!pk', 'Query.userOne.!age'],
           },
-          apiName: '',
-          cache,
-          pubsub,
-          baseDir,
-          importFn,
         }),
       ],
     });
@@ -330,16 +297,11 @@ type Query {
     schema = wrapSchema({
       schema,
       transforms: [
-        FilterSchemaTransform({
+        new FilterSchemaTransform({
           config: {
             mode: 'wrap',
             filters: ['Query.*.!pk'],
           },
-          apiName: '',
-          cache,
-          pubsub,
-          baseDir,
-          importFn,
         }),
       ],
     });
@@ -376,16 +338,11 @@ type Query {
     schema = wrapSchema({
       schema,
       transforms: [
-        FilterSchemaTransform({
+        new FilterSchemaTransform({
           config: {
             mode: 'wrap',
             filters: ['Query.*.!pk', 'Query.userOne.!age'],
           },
-          apiName: '',
-          cache,
-          pubsub,
-          baseDir,
-          importFn,
         }),
       ],
     });
@@ -434,13 +391,8 @@ type Query {
     schema = wrapSchema({
       schema,
       transforms: [
-        FilterSchemaTransform({
-          config: ['User.!{a,b,c,d,e}', 'Query.!admin', 'Book.{id,name,author}'],
-          apiName: '',
-          cache,
-          pubsub,
-          baseDir,
-          importFn,
+        new FilterSchemaTransform({
+          config: { filters: ['User.!{a,b,c,d,e}', 'Query.!admin', 'Book.{id,name,author}'] },
         }),
       ],
     });
@@ -481,13 +433,8 @@ type Query {
     schema = wrapSchema({
       schema,
       transforms: [
-        FilterSchemaTransform({
-          config: ['Mutation.!*'],
-          apiName: '',
-          cache,
-          pubsub,
-          baseDir,
-          importFn,
+        new FilterSchemaTransform({
+          config: { filters: ['Mutation.!*'] },
         }),
       ],
     });
@@ -528,13 +475,8 @@ type Query {
     schema = wrapSchema({
       schema,
       transforms: [
-        FilterSchemaTransform({
-          config: ['User.{id, username}', 'Query.!{admin}', 'Book.{id}'],
-          apiName: '',
-          cache,
-          pubsub,
-          baseDir,
-          importFn,
+        new FilterSchemaTransform({
+          config: { filters: ['User.{id, username}', 'Query.!{admin}', 'Book.{id}'] },
         }),
       ],
     });
@@ -585,13 +527,8 @@ type Query {
     schema = wrapSchema({
       schema,
       transforms: [
-        FilterSchemaTransform({
-          config: ['!Book'],
-          apiName: '',
-          cache,
-          pubsub,
-          baseDir,
-          importFn,
+        new FilterSchemaTransform({
+          config: { filters: ['!Book'] },
         }),
       ],
     });
@@ -654,13 +591,8 @@ type Query {
     schema = wrapSchema({
       schema,
       transforms: [
-        FilterSchemaTransform({
+        new FilterSchemaTransform({
           config: { mode: 'bare', filters: ['Type.!Comment', 'Type.!{Notification, Mention}'] },
-          apiName: '',
-          cache,
-          pubsub,
-          baseDir,
-          importFn,
         }),
       ],
     });
@@ -724,14 +656,9 @@ type Query {
     schema = wrapSchema({
       schema,
       transforms: [
-        FilterSchemaTransform({
+        new FilterSchemaTransform({
           // bizarre case, but logic should still work
           config: { mode: 'bare', filters: ['Type.{Query, User, Post, String, ID}'] },
-          apiName: '',
-          cache,
-          pubsub,
-          baseDir,
-          importFn,
         }),
       ],
     });
@@ -787,13 +714,8 @@ type Query {
     schema = wrapSchema({
       schema,
       transforms: [
-        FilterSchemaTransform({
-          config: ['!User'],
-          apiName: '',
-          cache,
-          pubsub,
-          baseDir,
-          importFn,
+        new FilterSchemaTransform({
+          config: { filters: ['!User'] },
         }),
       ],
     });
@@ -851,13 +773,8 @@ type Query {
     schema = wrapSchema({
       schema,
       transforms: [
-        FilterSchemaTransform({
-          config: ['!AuthRule'],
-          apiName: '',
-          cache,
-          pubsub,
-          baseDir,
-          importFn,
+        new FilterSchemaTransform({
+          config: { filters: ['!AuthRule'] },
         }),
       ],
     });
@@ -914,13 +831,8 @@ type Query {
     schema = wrapSchema({
       schema,
       transforms: [
-        FilterSchemaTransform({
-          config: ['Query.user.!{pk, age}', 'Query.book.title'],
-          apiName: '',
-          cache,
-          pubsub,
-          baseDir,
-          importFn,
+        new FilterSchemaTransform({
+          config: { filters: ['Query.user.!{pk, age}', 'Query.book.title'] },
         }),
       ],
     });

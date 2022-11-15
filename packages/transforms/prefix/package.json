@@ -36,6 +36,10 @@
     "graphql-scalars": "1.20.1",
     "tslib": "^2.4.0"
   },
+  "devDependencies": {
+    "@graphql-mesh/cache-localforage": "0.6.60",
+    "@graphql-tools/schema": "9.0.10"
+  },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
