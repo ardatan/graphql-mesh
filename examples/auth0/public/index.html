@@ -8,12 +8,12 @@
       createAuth0Client({
         domain: '{account_name}.{region}.auth0.com',
         client_id: '<client_id>',
-        audience: 'http://localhost:3000/graphql'
+        audience: 'http://localhost:3000/graphql',
       }).then(async auth0 => {
-        await auth0.loginWithPopup()
-        const accessToken = await auth0.getTokenSilently()
-        window.document.body.innerText = accessToken
-      })
+        await auth0.loginWithPopup();
+        const accessToken = await auth0.getTokenSilently();
+        window.document.body.innerText = accessToken;
+      });
     </script>
   </body>
 </html>

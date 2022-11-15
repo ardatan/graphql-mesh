@@ -79,7 +79,7 @@ const app = createBuiltMeshHTTPHandler()
 
 export const handler: Handler = configure({
   // Pass Mesh HTTP handler as app
-  app,
+  app
 })
 ```
 
@@ -97,10 +97,11 @@ self.addEventListener('fetch', createBuiltMeshHTTPHandler())
 ```
 
 You can see the following examples for more details:
+
 - [Response Caching on a REST API](https://github.com/Urigo/graphql-mesh/tree/master/examples/cloudflare-workers)
 - [Response Caching on a GraphQL API](https://github.com/Urigo/graphql-mesh/tree/master/examples/spacex-cfw)
 
-Also you can see how to setup *KV* as a cache storage in GraphQL Mesh [here](/docs/cache/cfwkv).
+Also you can see how to setup _KV_ as a cache storage in GraphQL Mesh [here](/docs/cache/cfwkv).
 
 ### Deploy Mesh on Apache OpenWhisk
 
@@ -138,7 +139,7 @@ app.route({
     // Second parameter adds Fastify's `req` and `reply` to the GraphQL Context
     const response = await meshHttp.handleNodeRequest(req, {
       req,
-      reply,
+      reply
     })
     response.headers.forEach((value, key) => {
       reply.header(key, value)
@@ -149,7 +150,7 @@ app.route({
     reply.send(response.body)
 
     return reply
-  },
+  }
 })
 ```
 
@@ -175,7 +176,7 @@ import { createBuiltMeshHTTPHandler } from './.mesh'
 const app = new Koa()
 
 const meshHttp = createBuiltMeshHTTPHandler()
-app.use(async (ctx) => {
+app.use(async ctx => {
   // Second parameter adds Koa's context into GraphQL Context
   const response = await meshHttp.handleNodeRequest(ctx.req, ctx)
 
@@ -201,10 +202,7 @@ import { createBuiltMeshHTTPHandler } from './.mesh'
 
 const meshHttp = createBuiltMeshHTTPHandler()
 
-export {
-  meshHttp as get,
-  meshHttp as post,
-}
+export { meshHttp as get, meshHttp as post }
 ```
 
 ## Mesh and Docker
