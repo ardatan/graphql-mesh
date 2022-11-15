@@ -1,5 +1,5 @@
 import { execute, parse } from 'graphql';
-import loadGraphQLSchemaFromOpenAPI from '../src';
+import loadGraphQLSchemaFromOpenAPI from '../src/index.js';
 import { Request, Response } from '@whatwg-node/fetch';
 
 describe('Query Params with POST', () => {

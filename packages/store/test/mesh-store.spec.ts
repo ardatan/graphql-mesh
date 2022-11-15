@@ -4,7 +4,7 @@ import {
   MeshStore,
   PredefinedProxyOptions,
   ReadonlyStoreError,
-} from '../src';
+} from '../src/index.js';
 
 describe('MeshStore and storage', () => {
   describe('MeshStore', () => {

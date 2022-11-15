@@ -1,6 +1,6 @@
 import { YamlConfig } from '@graphql-mesh/types';
-import WrapRename from './wrapRename';
-import BareRename from './bareRename';
+import WrapRename from './wrapRename.js';
+import BareRename from './bareRename.js';
 
 interface RenameTransformConstructor {
   new (options: { config: YamlConfig.RenameTransform }): BareRename | WrapRename;

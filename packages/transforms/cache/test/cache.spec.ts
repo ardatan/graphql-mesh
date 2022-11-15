@@ -11,8 +11,8 @@ import {
   OperationDefinitionNode,
   FieldNode,
 } from 'graphql';
-import CacheTransform from '../src';
-import { computeCacheKey } from '../src/compute-cache-key';
+import CacheTransform from '../src/index.js';
+import { computeCacheKey } from '../src/compute-cache-key.js';
 import { PubSub } from '@graphql-mesh/utils';
 import dayjs from 'dayjs';
 import { hashObject } from '@graphql-mesh/string-interpolation';

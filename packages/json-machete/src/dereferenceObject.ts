@@ -3,7 +3,7 @@ import { path as pathModule, process } from '@graphql-mesh/cross-helpers';
 import urlJoin from 'url-join';
 import { fetch as crossUndiciFetch } from '@whatwg-node/fetch';
 import { defaultImportFn, DefaultLogger, isUrl, readFileOrUrl } from '@graphql-mesh/utils';
-import { handleUntitledDefinitions } from './healUntitledDefinitions';
+import { handleUntitledDefinitions } from './healUntitledDefinitions.js';
 
 export const resolvePath = (path: string, root: any): any => {
   try {

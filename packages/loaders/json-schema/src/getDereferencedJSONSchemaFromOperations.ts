@@ -1,5 +1,5 @@
-import { JSONSchemaOperationConfig } from './types';
-import { getReferencedJSONSchemaFromOperations } from './getReferencedJSONSchemaFromOperations';
+import { JSONSchemaOperationConfig } from './types.js';
+import { getReferencedJSONSchemaFromOperations } from './getReferencedJSONSchemaFromOperations.js';
 import { dereferenceObject, healJSONSchema, JSONSchemaObject } from 'json-machete';
 import { Logger } from '@graphql-mesh/types';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';

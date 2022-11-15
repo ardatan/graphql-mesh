@@ -1,5 +1,5 @@
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import loadGraphQLSchemaFromOpenAPI from '../src';
+import loadGraphQLSchemaFromOpenAPI from '../src/index.js';
 
 describe('Links on non-object fields', () => {
   it('should generate the correct schema', async () => {

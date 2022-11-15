@@ -23,7 +23,7 @@ import {
   OperationDefinitionNode,
   DocumentNode,
 } from 'graphql';
-import { MESH_API_CONTEXT_SYMBOL } from './constants';
+import { MESH_API_CONTEXT_SYMBOL } from './constants.js';
 
 export async function getInContextSDK(
   unifiedSchema: GraphQLSchema,

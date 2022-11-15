@@ -5,7 +5,7 @@ import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { PubSub } from '@graphql-mesh/utils';
 
-import ReplaceFieldTransform from '../src';
+import ReplaceFieldTransform from '../src/index.js';
 import { pruneSchema } from '@graphql-tools/utils';
 
 const importFn: ImportFn = m =>

@@ -1,7 +1,7 @@
-import { JSONSchema } from './types';
-import { visitJSONSchema } from './visitJSONSchema';
+import { JSONSchema } from './types.js';
+import { visitJSONSchema } from './visitJSONSchema.js';
 import { AggregateError } from '@graphql-tools/utils';
-import { resolvePath } from './dereferenceObject';
+import { resolvePath } from './dereferenceObject.js';
 
 export async function compareJSONSchemas(oldSchema: JSONSchema, newSchema: JSONSchema) {
   const breakingChanges: string[] = [];

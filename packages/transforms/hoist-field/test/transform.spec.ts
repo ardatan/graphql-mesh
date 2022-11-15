@@ -4,7 +4,7 @@ import { wrapSchema } from '@graphql-tools/wrap';
 import { buildSchema, GraphQLField, GraphQLObjectType, printSchema } from 'graphql';
 import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
 
-import HoistFieldTransform from '../src';
+import HoistFieldTransform from '../src/index.js';
 
 describe('hoist', () => {
   const importFn = defaultImportFn;

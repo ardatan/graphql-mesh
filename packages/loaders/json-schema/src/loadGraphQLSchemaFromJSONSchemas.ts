@@ -1,7 +1,7 @@
 import { DefaultLogger } from '@graphql-mesh/utils';
-import { getDereferencedJSONSchemaFromOperations } from './getDereferencedJSONSchemaFromOperations';
-import { getGraphQLSchemaFromDereferencedJSONSchema } from './getGraphQLSchemaFromDereferencedJSONSchema';
-import { JSONSchemaLoaderOptions } from './types';
+import { getDereferencedJSONSchemaFromOperations } from './getDereferencedJSONSchemaFromOperations.js';
+import { getGraphQLSchemaFromDereferencedJSONSchema } from './getGraphQLSchemaFromDereferencedJSONSchema.js';
+import { JSONSchemaLoaderOptions } from './types.js';
 
 export async function loadGraphQLSchemaFromJSONSchemas(name: string, options: JSONSchemaLoaderOptions) {
   const logger = options.logger || new DefaultLogger(name);

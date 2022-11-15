@@ -1,5 +1,5 @@
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import loadGraphQLSchemaFromOpenAPI, { createBundle } from '../src';
+import loadGraphQLSchemaFromOpenAPI, { createBundle } from '../src/index.js';
 
 const schemas = {
   DeepL: 'deepl.json',

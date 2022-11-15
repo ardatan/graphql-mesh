@@ -1,6 +1,6 @@
 import { loadGraphQLSchemaFromJSONSchemas } from '@omnigraph/json-schema';
 import { OpenAPILoaderOptions } from '.';
-import { getJSONSchemaOptionsFromOpenAPIOptions } from './getJSONSchemaOptionsFromOpenAPIOptions';
+import { getJSONSchemaOptionsFromOpenAPIOptions } from './getJSONSchemaOptionsFromOpenAPIOptions.js';
 
 /**
  * Creates a local GraphQLSchema instance from a OpenAPI Document.

@@ -10,8 +10,8 @@ import {
   SchemaComposer,
   UnionTypeComposer,
 } from 'graphql-compose';
-import { TypeComposers } from './getComposerFromJSONSchema';
-import { getTypeResolverFromOutputTCs } from './getTypeResolverFromOutputTCs';
+import { TypeComposers } from './getComposerFromJSONSchema.js';
+import { getTypeResolverFromOutputTCs } from './getTypeResolverFromOutputTCs.js';
 
 const ONE_OF_DEFINITION = /* GraphQL */ `
   directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION

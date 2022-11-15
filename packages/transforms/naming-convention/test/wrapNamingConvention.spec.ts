@@ -1,4 +1,4 @@
-import NamingConventionTransform from '../src/index';
+import NamingConventionTransform from '../src/index.js';
 import {
   buildSchema,
   printSchema,

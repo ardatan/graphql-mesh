@@ -4,8 +4,8 @@ import { defaultImportFn, DefaultLogger, readFileOrUrl } from '@graphql-mesh/uti
 import { AnySchema, JSONSchema, JSONSchemaObject } from 'json-machete';
 import toJsonSchema from 'to-json-schema';
 import { JSONSchemaOperationResponseConfig } from '.';
-import { JSONSchemaOperationConfig } from './types';
-import { getOperationMetadata } from './utils';
+import { JSONSchemaOperationConfig } from './types.js';
+import { getOperationMetadata } from './utils.js';
 
 async function handleOperationResponseConfig(
   operationResponseConfig: JSONSchemaOperationResponseConfig,

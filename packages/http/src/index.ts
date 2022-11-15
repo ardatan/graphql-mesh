@@ -5,7 +5,7 @@ import { DefaultLogger, pathExists } from '@graphql-mesh/utils';
 import { createServerAdapter, ServerAdapter } from '@whatwg-node/server';
 import { Router } from 'itty-router';
 import { withCookies } from 'itty-router-extras';
-import { graphqlHandler } from './graphqlHandler';
+import { graphqlHandler } from './graphqlHandler.js';
 import { Response } from '@whatwg-node/fetch';
 
 export type MeshHTTPHandler<TServerContext> = ServerAdapter<TServerContext, Router<Request>>;

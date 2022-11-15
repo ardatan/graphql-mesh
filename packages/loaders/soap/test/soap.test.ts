@@ -1,7 +1,7 @@
-import { SOAPLoader } from '../src/SOAPLoader';
+import { SOAPLoader } from '../src/SOAPLoader.js';
 import { fetch } from '@whatwg-node/fetch';
 import { parse } from 'graphql';
-import { createExecutorFromSchemaAST } from '../src/executor';
+import { createExecutorFromSchemaAST } from '../src/executor.js';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 describe('SOAP Loader', () => {

@@ -1,5 +1,5 @@
 import { buildSchema, printSchema } from 'graphql';
-import FilterSchemaTransform from '../src';
+import FilterSchemaTransform from '../src/index.js';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { pruneSchema } from '@graphql-tools/utils';
 

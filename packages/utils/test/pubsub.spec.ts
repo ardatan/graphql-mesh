@@ -1,4 +1,4 @@
-import { PubSub } from '../src/pubsub';
+import { PubSub } from '../src/pubsub.js';
 
 describe('Mesh PubSub', () => {
   it('should handle topics properly', async () => {

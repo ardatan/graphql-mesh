@@ -18,13 +18,13 @@ import {
   resolveDocuments,
   resolveLogger,
   resolveCustomFetch,
-} from './utils';
+} from './utils.js';
 import { FsStoreStorageAdapter, MeshStore, InMemoryStoreStorageAdapter } from '@graphql-mesh/store';
 import { pascalCase } from 'pascal-case';
 import { camelCase } from 'camel-case';
 import { defaultImportFn, parseWithCache, resolveAdditionalResolvers } from '@graphql-mesh/utils';
 import { useMaskedErrors } from '@envelop/core';
-import { getAdditionalResolversFromTypeDefs } from './getAdditionalResolversFromTypeDefs';
+import { getAdditionalResolversFromTypeDefs } from './getAdditionalResolversFromTypeDefs.js';
 
 const ENVELOP_CORE_PLUGINS_MAP = {
   maskedErrors: {

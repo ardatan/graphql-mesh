@@ -1,7 +1,7 @@
-import { findAndParseConfig } from './config';
+import { findAndParseConfig } from './config.js';
 import { getMesh, GetMeshOptions, ServeMeshOptions } from '@graphql-mesh/runtime';
-import { generateTsArtifacts } from './commands/ts-artifacts';
-import { serveMesh } from './commands/serve/serve';
+import { generateTsArtifacts } from './commands/ts-artifacts.js';
+import { serveMesh } from './commands/serve/serve.js';
 import { fs, path as pathModule, process } from '@graphql-mesh/cross-helpers';
 import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import {
@@ -12,7 +12,7 @@ import {
   loadFromModuleExportExpression,
   defaultImportFn,
 } from '@graphql-mesh/utils';
-import { handleFatalError } from './handleFatalError';
+import { handleFatalError } from './handleFatalError.js';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { Logger, YamlConfig } from '@graphql-mesh/types';

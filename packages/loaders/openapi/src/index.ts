@@ -1,4 +1,4 @@
-export { loadGraphQLSchemaFromOpenAPI as default } from './loadGraphQLSchemaFromOpenAPI';
-export { getJSONSchemaOptionsFromOpenAPIOptions } from './getJSONSchemaOptionsFromOpenAPIOptions';
-export { OpenAPILoaderOptions } from './types';
-export * from './bundle';
+export { loadGraphQLSchemaFromOpenAPI as default } from './loadGraphQLSchemaFromOpenAPI.js';
+export { getJSONSchemaOptionsFromOpenAPIOptions } from './getJSONSchemaOptionsFromOpenAPIOptions.js';
+export { OpenAPILoaderOptions } from './types.js';
+export * from './bundle.js';

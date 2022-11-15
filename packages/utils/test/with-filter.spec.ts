@@ -1,4 +1,4 @@
-import { withFilter } from '../src/with-filter';
+import { withFilter } from '../src/with-filter.js';
 
 function isEven(x: number) {
   if (x === undefined) {

@@ -2,7 +2,7 @@ import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { PubSub } from '@graphql-mesh/utils';
 import { join } from 'path';
-import ResolversCompositionTransform, { ResolversComposition } from '../src';
+import ResolversCompositionTransform, { ResolversComposition } from '../src/index.js';
 import { execute, parse } from 'graphql';
 
 describe('transform', () => {

@@ -9,7 +9,7 @@ import {
 } from 'graphql';
 import { parse as parseXML, j2xParser as JSONToXMLConverter } from 'fast-xml-parser';
 import { MeshFetch } from '@graphql-mesh/types';
-import { PARSE_XML_OPTIONS, SoapAnnotations } from './utils';
+import { PARSE_XML_OPTIONS, SoapAnnotations } from './utils.js';
 import { Executor, getDirective, getRootTypes } from '@graphql-tools/utils';
 
 function isOriginallyListType(type: GraphQLOutputType): boolean {

@@ -3,7 +3,7 @@ import { GraphQLSchema, printSchema, validateSchema } from 'graphql';
 
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { PubSub } from '@graphql-mesh/utils';
-import GrpcHandler from '../src';
+import GrpcHandler from '../src/index.js';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { DefaultLogger } from '@graphql-mesh/utils';
 import type { YamlConfig } from '@graphql-mesh/types';

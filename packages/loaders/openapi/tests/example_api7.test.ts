@@ -5,8 +5,8 @@ import { createServer, Server } from 'http';
 import { AbortController, fetch } from '@whatwg-node/fetch';
 import { GraphQLSchema } from 'graphql';
 
-import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
-import { startServer, stopServer, pubsub } from './example_api7_server';
+import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
+import { startServer, stopServer, pubsub } from './example_api7_server.js';
 import { AddressInfo } from 'net';
 
 let createdSchema: GraphQLSchema;

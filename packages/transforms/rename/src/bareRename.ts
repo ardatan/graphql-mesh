@@ -1,7 +1,7 @@
 import { GraphQLSchema, defaultFieldResolver, GraphQLFieldConfig } from 'graphql';
 import { MeshTransform, YamlConfig } from '@graphql-mesh/types';
 import { renameType, MapperKind, mapSchema } from '@graphql-tools/utils';
-import { ignoreList } from './shared';
+import { ignoreList } from './shared.js';
 
 type RenameMapObject = Map<string | RegExp, string>;
 

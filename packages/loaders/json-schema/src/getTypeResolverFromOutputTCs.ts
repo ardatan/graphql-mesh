@@ -2,7 +2,7 @@ import { GraphQLError, GraphQLResolveInfo, GraphQLTypeResolver } from 'graphql';
 import { ObjectTypeComposer, UnionTypeComposer } from 'graphql-compose';
 import Ajv, { ValidateFunction, ErrorObject } from 'ajv';
 import { JSONSchemaObject } from 'json-machete';
-import { TypeComposers } from './getComposerFromJSONSchema';
+import { TypeComposers } from './getComposerFromJSONSchema.js';
 import { createGraphQLError } from '@graphql-tools/utils';
 
 export function getTypeResolverFromOutputTCs(

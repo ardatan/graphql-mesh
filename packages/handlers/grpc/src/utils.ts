@@ -6,7 +6,7 @@ import { SchemaComposer } from 'graphql-compose';
 import lodashGet from 'lodash.get';
 import { Root } from 'protobufjs';
 
-import { getGraphQLScalar, isScalarType } from './scalars';
+import { getGraphQLScalar, isScalarType } from './scalars.js';
 
 export function getTypeName(schemaComposer: SchemaComposer, pathWithName: string[] | undefined, isInput: boolean) {
   if (pathWithName?.length) {

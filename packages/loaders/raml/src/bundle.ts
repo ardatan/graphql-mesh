@@ -3,8 +3,8 @@ import {
   createBundle as createJSONSchemaLoaderBundle,
   JSONSchemaLoaderBundle as RAMLLoaderBundle,
 } from '@omnigraph/json-schema';
-import { getJSONSchemaOptionsFromRAMLOptions } from './getJSONSchemaOptionsFromRAMLOptions';
-import { RAMLLoaderOptions } from './types';
+import { getJSONSchemaOptionsFromRAMLOptions } from './getJSONSchemaOptionsFromRAMLOptions.js';
+import { RAMLLoaderOptions } from './types.js';
 
 /**
  * Creates a bundle by downloading and resolving the internal references once

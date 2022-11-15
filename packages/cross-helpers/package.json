@@ -10,7 +10,7 @@
   },
   "license": "MIT",
   "sideEffects": false,
-  "main": "node.js",
+  "main": "dist/cjs/index.js",
   "browser": "browser.js",
   "react-native": "react-native.js",
   "types": "index.d.ts",
@@ -21,6 +21,30 @@
     "path-browserify": "1.0.1"
   },
   "publishConfig": {
+    "directory": "dist",
     "access": "public"
+  },
+  "type": "module",
+  "module": "dist/esm/index.js",
+  "typings": "dist/typings/index.d.ts",
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
+  },
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    },
+    "./package.json": "./package.json"
   }
 }

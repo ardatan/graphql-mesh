@@ -14,7 +14,7 @@ import {
   subscribe,
   specifiedRules,
 } from 'graphql';
-import { useSubschema } from '../src/useSubschema';
+import { useSubschema } from '../src/useSubschema.js';
 
 describe('useSubschema', () => {
   const sdl = /* GraphQL */ `

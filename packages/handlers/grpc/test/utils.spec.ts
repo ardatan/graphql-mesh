@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import { Metadata } from '@grpc/grpc-js';
 
-import { addMetaDataToCall } from '../src/utils';
+import { addMetaDataToCall } from '../src/utils.js';
 
 describe('grpc utils', () => {
   describe('addMetaDataToCall', () => {
