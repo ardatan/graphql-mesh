@@ -11,9 +11,9 @@
     "graphql": "*"
   },
   "bin": {
-    "mesh": "dist/cjs/bin.js",
-    "gql-mesh": "dist/cjs/bin.js",
-    "graphql-mesh": "dist/cjs/bin.js"
+    "mesh": "./dist/cjs/bin.js",
+    "gql-mesh": "./dist/cjs/bin.js",
+    "graphql-mesh": "./dist/cjs/bin.js"
   },
   "sideEffects": false,
   "main": "dist/cjs/index.js",
