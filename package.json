@@ -11,6 +11,8 @@
     "generate-config-schema": "yarn graphql-to-config-schema --schema ./**/yaml-config.graphql --json ./packages/types/src/config-schema.json --typings ./packages/types/src/config.ts --markdown ./website/src/generated-markdown && yarn prettier --write ./packages/types/src",
     "prebuild": "yarn clean && yarn generate-config-schema",
     "build": "bob build",
+    "fix-bin": "node scripts/fix-bin.js",
+    "postbuild": "yarn fix-bin",
     "lint": "eslint --ext .ts \"./packages/**/src/**/*.ts\"",
     "ci:lint": "eslint --output-file eslint_report.json --ext .ts --format json \"./packages/**/src/**/*.ts\"",
     "prettier": "prettier --write --list-different .",
