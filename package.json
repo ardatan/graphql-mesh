@@ -15,7 +15,7 @@
     "ci:lint": "eslint --output-file eslint_report.json --ext .ts --format json \"./packages/**/src/**/*.ts\"",
     "prettier": "prettier --write --list-different .",
     "prettier:check": "prettier --check .",
-    "build-test-artifacts": "cd examples/json-schema-example && yarn build",
+    "build-test-artifacts": "cd examples/json-schema-example && yarn install && yarn build",
     "test": "cross-env \"JEST=1\" jest --forceExit --no-watchman",
     "test-and-build": "yarn build && yarn test",
     "prerelease": "yarn build",
