@@ -3,7 +3,13 @@
   "parserOptions": {
     "project": "./tsconfig.json"
   },
-  "extends": ["eslint:recommended", "standard", "prettier", "plugin:@typescript-eslint/recommended"],
+  "extends": [
+    "eslint:recommended",
+    "standard",
+    "prettier",
+    "plugin:@typescript-eslint/recommended",
+    "jest.config.json"
+  ],
   "plugins": ["@typescript-eslint"],
   "rules": {
     "no-empty": "off",
