@@ -32,4 +32,5 @@ module.exports = {
     '^.+\\.js$': 'babel-jest',
   },
   transformIgnorePatterns: [`node_modules/(?!(${ESM_PACKAGES.join('|')})/)`],
+  resolver: 'bob-the-bundler/jest-resolver.js',
 };
