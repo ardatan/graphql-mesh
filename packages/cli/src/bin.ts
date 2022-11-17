@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { DefaultLogger } from '@graphql-mesh/utils';
 import { graphqlMesh, DEFAULT_CLI_PARAMS } from '.';
 import { handleFatalError } from './handleFatalError.js';

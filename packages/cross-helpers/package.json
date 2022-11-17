@@ -1,5 +1,6 @@
 {
   "name": "@graphql-mesh/cross-helpers",
+  "bob": false,
   "version": "0.2.9",
   "description": "Cross Platform Helpers for GraphQL Mesh",
   "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",
@@ -10,7 +11,7 @@
   },
   "license": "MIT",
   "sideEffects": false,
-  "main": "dist/cjs/index.js",
+  "main": "node.js",
   "browser": "browser.js",
   "react-native": "react-native.js",
   "types": "index.d.ts",
@@ -24,27 +25,8 @@
     "directory": "dist",
     "access": "public"
   },
-  "type": "module",
-  "module": "dist/esm/index.js",
-  "typings": "dist/typings/index.d.ts",
+  "typings": "./index.d.ts",
   "typescript": {
-    "definition": "dist/typings/index.d.ts"
-  },
-  "exports": {
-    ".": {
-      "require": {
-        "types": "./dist/typings/index.d.cts",
-        "default": "./dist/cjs/index.js"
-      },
-      "import": {
-        "types": "./dist/typings/index.d.ts",
-        "default": "./dist/esm/index.js"
-      },
-      "default": {
-        "types": "./dist/typings/index.d.ts",
-        "default": "./dist/esm/index.js"
-      }
-    },
-    "./package.json": "./package.json"
+    "definition": "./index.d.ts"
   }
 }

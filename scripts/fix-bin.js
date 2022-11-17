@@ -19,9 +19,6 @@ for (const path of dir) {
     const execNames = ['mesh', 'gql-mesh', 'graphql-mesh'];
     for (const execName of execNames) {
       const targetPath = join(absolutePath, 'node_modules', '.bin', execName);
-      if (existsSync(targetPath)) {
-        unlinkSync(targetPath);
-      }
       ensureSymlinkSync(absoluteGraphqlMeshBinPath, targetPath);
       chmodSync(targetPath, '755');
       const targetCmdPath = targetPath + '.cmd';
