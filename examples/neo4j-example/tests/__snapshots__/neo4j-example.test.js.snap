@@ -70,8 +70,10 @@ type DeleteInfo {
 }
 
 enum EventType {
+  CONNECT
   CREATE
   DELETE
+  DISCONNECT
   UPDATE
 }
 
