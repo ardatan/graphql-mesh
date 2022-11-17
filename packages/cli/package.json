@@ -13,7 +13,8 @@
   "bin": {
     "mesh": "dist/cjs/bin.js",
     "gql-mesh": "dist/cjs/bin.js",
-    "graphql-mesh": "dist/cjs/bin.js"
+    "graphql-mesh": "dist/cjs/bin.js",
+    "graphql-mesh-esm": "dist/esm/bin.js"
   },
   "sideEffects": false,
   "main": "dist/cjs/index.js",
