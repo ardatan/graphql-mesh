@@ -10,10 +10,10 @@
   "devDependencies": {
     "@graphql-mesh/cli": "0.79.3",
     "@types/react": "18.0.25",
-    "@types/react-dom": "18.0.8",
+    "@types/react-dom": "18.0.9",
     "@vitejs/plugin-react": "2.2.0",
     "typescript": "4.9.3",
-    "vite": "3.2.3"
+    "vite": "3.2.4"
   },
   "scripts": {
     "build:mesh": "yarn mesh build",
