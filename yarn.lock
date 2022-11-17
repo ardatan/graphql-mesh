@@ -3138,14 +3138,6 @@
     "@graphql-tools/utils" "8.9.0"
     tslib "^2.4.0"
 
-"@graphql-tools/merge@8.3.11":
-  version "8.3.11"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/merge/-/merge-8.3.11.tgz#f5eab764e8d7032c1b7e32d5dc6dea5b2f5bb21e"
-  integrity sha512-IpZh8r8e8FycXaUv04xe5HQH9siD1tkS8MvaO8Wb2FaPXv15XSYP+Wsb2MUStpIqGfQxa6xY/+eEuxv+VqwXyg==
-  dependencies:
-    "@graphql-tools/utils" "9.1.0"
-    tslib "^2.4.0"
-
 "@graphql-tools/merge@8.3.12", "@graphql-tools/merge@^8.3.3":
   version "8.3.12"
   resolved "https://registry.yarnpkg.com/@graphql-tools/merge/-/merge-8.3.12.tgz#e3f2e5d8a7b34fb689cda66799d845cbc919e464"
@@ -3205,16 +3197,6 @@
   dependencies:
     "@graphql-tools/merge" "8.3.12"
     "@graphql-tools/utils" "9.1.1"
-    tslib "^2.4.0"
-    value-or-promise "1.0.11"
-
-"@graphql-tools/schema@9.0.9":
-  version "9.0.9"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/schema/-/schema-9.0.9.tgz#aa24869a2231039dcd9b6b882a5c5cb186d1116e"
-  integrity sha512-hwg8trUytO5ayQ8bzL3+sAyXcu2rhKt5pLXpLO0/TMTN2nXd3DBO4mqx+Ra4Er2mE/msInGQ5EmZbxVBPv+hSg==
-  dependencies:
-    "@graphql-tools/merge" "8.3.11"
-    "@graphql-tools/utils" "9.1.0"
     tslib "^2.4.0"
     value-or-promise "1.0.11"
 
@@ -4274,21 +4256,21 @@
     "@napi-rs/simple-git-win32-arm64-msvc" "0.1.8"
     "@napi-rs/simple-git-win32-x64-msvc" "0.1.8"
 
-"@neo4j/cypher-builder@~0.1.4":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@neo4j/cypher-builder/-/cypher-builder-0.1.4.tgz#93800f76953fc040768734673b5e3aba61233a49"
-  integrity sha512-hX+pjUsgZCRJIw4zmIZO2f2H68H8hRLTbvtx39LfaNQQMyb0XUqJhng10zf3ZZmocveGbOWx3iuVUvHnnywBPg==
+"@neo4j/cypher-builder@~0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@neo4j/cypher-builder/-/cypher-builder-0.1.5.tgz#925ce217dba65d9e2563b8618257bc1be67656ef"
+  integrity sha512-8yT8u5ePX1em9n/bT0O84UsOx1SDKZU9SnyqYtj9TwkWo/YsPLETEz1uc/vxtULRcNOblO3TCqYWPyK4gocWAw==
 
-"@neo4j/graphql@3.12.1":
-  version "3.12.1"
-  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-3.12.1.tgz#fb64b9d4cf176bcf5f5b628adcff0788e63c773b"
-  integrity sha512-cMdXwlNJq8zP2+Y1ifq7a+oE4Sc3mRykKfxXuVYJu70mamlDzljcD2bLdQg56Mh0NbihnF+TQEAfYMo1vfbvXg==
+"@neo4j/graphql@3.12.2":
+  version "3.12.2"
+  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-3.12.2.tgz#31465a9d17936b57ac3b233a682487469e98e2df"
+  integrity sha512-EBlTu26Q9X0u7b/HWKCQxoxoJZWOseMiNfJpZRK+a56PtJc4QChBdWQiCjGzKGl1oYunjJlOtP6iNbw1qy3IsA==
   dependencies:
     "@graphql-tools/merge" "^8.3.3"
     "@graphql-tools/resolvers-composition" "^6.5.3"
-    "@graphql-tools/schema" "9.0.9"
+    "@graphql-tools/schema" "9.0.10"
     "@graphql-tools/utils" "^8.10.0"
-    "@neo4j/cypher-builder" "~0.1.4"
+    "@neo4j/cypher-builder" "~0.1.5"
     camelcase "^6.3.0"
     debug "^4.3.4"
     deep-equal "^2.0.5"
@@ -4298,6 +4280,7 @@
     graphql-relay "^0.10.0"
     pluralize "^8.0.0"
     semver "^7.3.7"
+    uuid "^9.0.0"
 
 "@neo4j/introspector@^1.0.1":
   version "1.0.1"
@@ -15328,10 +15311,10 @@ newrelic@8.17.1:
   optionalDependencies:
     "@newrelic/native-metrics" "^8.0.0"
 
-next-sitemap@3.1.31:
-  version "3.1.31"
-  resolved "https://registry.yarnpkg.com/next-sitemap/-/next-sitemap-3.1.31.tgz#c41a57418985e34a32f47594ee57986f04e01ead"
-  integrity sha512-GGp+EKSNYy3nlfuZtyI2DAsUrTSA6u35glVQVxpiPRnPHINDozsxSbFzHgFNqZ95hBBdkw5anDJYVnRYGIWvNw==
+next-sitemap@3.1.32:
+  version "3.1.32"
+  resolved "https://registry.yarnpkg.com/next-sitemap/-/next-sitemap-3.1.32.tgz#e4a7227cab23b5e5c68bc54d335b86d3ff1e05f8"
+  integrity sha512-jkIKpwLXpWWTPfmDO46+6nu4+qpar4CjvUwCR9rYZHWtzE/wFfaCVFKpGtFMl6MFjpu8GjiE6kWFEa7uF3bzzg==
   dependencies:
     "@corex/deepmerge" "^4.0.29"
     minimist "^1.2.6"
@@ -20833,10 +20816,10 @@ workbox-window@6.5.3:
     "@types/trusted-types" "^2.0.2"
     workbox-core "6.5.3"
 
-wrangler@2.3.2:
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/wrangler/-/wrangler-2.3.2.tgz#884bcf7dd6a21427a769d666921935b7eda2fb8a"
-  integrity sha512-PWqNJclB7SGIRpuJSrF9zuTfLAqrS1VPembhf6HPGJC6zL96hx3XcHC01VjChC0lsadUqGRa7/iEvWtwdUy6kw==
+wrangler@2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/wrangler/-/wrangler-2.4.0.tgz#c793bee03f641a456176c04a2d201b2de8d8c1d4"
+  integrity sha512-iIz1dDLWuIIv79YnvdhY97FMie/cOBfX6WblMFzus/sdgBcnkhf7t0szxn7SYQWaeb+4Bszs+ReI4JZOnkxkqg==
   dependencies:
     "@cloudflare/kv-asset-handler" "^0.2.0"
     "@esbuild-plugins/node-globals-polyfill" "^0.1.1"
