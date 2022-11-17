@@ -22,7 +22,6 @@
     "path-browserify": "1.0.1"
   },
   "publishConfig": {
-    "directory": "dist",
     "access": "public"
   },
   "typings": "./index.d.ts",
