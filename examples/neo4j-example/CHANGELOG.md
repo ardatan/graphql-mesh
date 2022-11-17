@@ -1,5 +1,14 @@
 # neo4j-example
 
+## 0.7.22
+
+### Patch Changes
+
+- Updated dependencies [[`8c7d96cff`](https://github.com/Urigo/graphql-mesh/commit/8c7d96cff868095216520bafebe989ec94a9df65), [`65c2a85b7`](https://github.com/Urigo/graphql-mesh/commit/65c2a85b7a564840f455ac2afe39505706e46e62), [`db95881b5`](https://github.com/Urigo/graphql-mesh/commit/db95881b530053064425f476ccac7d552d44af33), [`9cbcd1baa`](https://github.com/Urigo/graphql-mesh/commit/9cbcd1baa3725a78b0c82b5d12df7afb7ddd9631), [`7390ca341`](https://github.com/Urigo/graphql-mesh/commit/7390ca341c9135625f89f1e03a9d15938880154e), [`8c7d96cff`](https://github.com/Urigo/graphql-mesh/commit/8c7d96cff868095216520bafebe989ec94a9df65), [`990f649ef`](https://github.com/Urigo/graphql-mesh/commit/990f649ef8832bc786b89b0c15744d49a422bb03), [`db95881b5`](https://github.com/Urigo/graphql-mesh/commit/db95881b530053064425f476ccac7d552d44af33)]:
+  - @graphql-mesh/cli@0.79.4
+  - @graphql-mesh/neo4j@0.20.35
+  - @graphql-mesh/cache-file@0.9.45
+
 ## 0.7.21
 
 ### Patch Changes

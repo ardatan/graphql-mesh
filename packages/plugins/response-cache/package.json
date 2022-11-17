@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-response-cache",
-  "version": "0.1.48",
+  "version": "0.1.49",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -29,10 +29,10 @@
   },
   "dependencies": {
     "@graphql-yoga/plugin-response-cache": "1.0.0",
-    "@graphql-mesh/types": "0.85.7",
-    "@graphql-mesh/cross-helpers": "0.2.9",
+    "@graphql-mesh/types": "0.86.0",
+    "@graphql-mesh/cross-helpers": "0.2.10",
     "@graphql-mesh/string-interpolation": "0.3.3",
-    "@graphql-mesh/utils": "0.42.6",
+    "@graphql-mesh/utils": "0.42.7",
     "@envelop/core": "^3.0.0",
     "tslib": "^2.4.0"
   },

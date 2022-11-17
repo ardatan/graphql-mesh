@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/soap",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -23,8 +23,8 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.85.7",
-    "@graphql-mesh/utils": "0.42.6",
+    "@graphql-mesh/types": "0.86.0",
+    "@graphql-mesh/utils": "0.42.7",
     "@graphql-tools/utils": "9.1.1",
     "fast-xml-parser": "3.21.1",
     "graphql-compose": "9.0.10",
