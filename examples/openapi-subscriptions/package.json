@@ -15,6 +15,6 @@
     "express": "4.18.2",
     "@whatwg-node/fetch": "0.5.3",
     "ts-node": "10.9.1",
-    "typescript": "4.8.4"
+    "typescript": "4.9.3"
   }
 }

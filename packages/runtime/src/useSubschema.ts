@@ -87,7 +87,7 @@ export function useSubschema(subschema: Subschema): Plugin {
   const plugin: Plugin = {
     onPluginInit({ setSchema }) {
       // To prevent unwanted warnings from stitching
-      if (!('_transformedSchema' in subschema)) {
+      if (!('_transformedSchema' in (subschema as any))) {
         subschema.transformedSchema = applySchemaTransforms(subschema.schema, subschema);
       }
 
