@@ -28,7 +28,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-yoga/plugin-response-cache": "1.0.0-next.12",
+    "@graphql-yoga/plugin-response-cache": "1.0.0",
     "@graphql-mesh/types": "0.85.7",
     "@graphql-mesh/cross-helpers": "0.2.9",
     "@graphql-mesh/string-interpolation": "0.3.3",
