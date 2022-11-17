@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/runtime",
-  "version": "0.44.31",
+  "version": "0.44.32",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -28,9 +28,9 @@
     }
   },
   "dependencies": {
-    "@graphql-mesh/cross-helpers": "0.2.9",
-    "@graphql-mesh/types": "0.85.7",
-    "@graphql-mesh/utils": "0.42.6",
+    "@graphql-mesh/cross-helpers": "0.2.10",
+    "@graphql-mesh/types": "0.86.0",
+    "@graphql-mesh/utils": "0.42.7",
     "@graphql-mesh/string-interpolation": "0.3.3",
     "@graphql-tools/delegate": "9.0.17",
     "@graphql-tools/batch-delegate": "8.4.10",
