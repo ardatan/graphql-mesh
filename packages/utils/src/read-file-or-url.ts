@@ -1,7 +1,7 @@
 import { DEFAULT_SCHEMA, load as loadYamlFromJsYaml, Schema, Type } from 'js-yaml';
 import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import { ImportFn, Logger, MeshFetch } from '@graphql-mesh/types';
-import { loadFromModuleExportExpression } from './load-from-module-export-expression';
+import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
 
 export interface ReadFileOrUrlOptions extends RequestInit {
   allowUnknownExtensions?: boolean;

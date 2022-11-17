@@ -4,7 +4,7 @@ import { buildSchema, execute, parse, specifiedRules, subscribe, validate } from
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { envelop, useSchema, useEngine } from '@envelop/core';
-import useMock from '../src';
+import useMock from '../src/index.js';
 
 describe('mocking', () => {
   let cache: InMemoryLRUCache;

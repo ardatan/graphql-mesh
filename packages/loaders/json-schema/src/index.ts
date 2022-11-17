@@ -1,9 +1,9 @@
-import { loadGraphQLSchemaFromJSONSchemas } from './loadGraphQLSchemaFromJSONSchemas';
+import { loadGraphQLSchemaFromJSONSchemas } from './loadGraphQLSchemaFromJSONSchemas.js';
 export default loadGraphQLSchemaFromJSONSchemas;
 export { loadGraphQLSchemaFromJSONSchemas };
-export * from './getComposerFromJSONSchema';
-export * from './getDereferencedJSONSchemaFromOperations';
-export * from './getReferencedJSONSchemaFromOperations';
-export * from './getGraphQLSchemaFromDereferencedJSONSchema';
-export * from './types';
-export * from './bundle';
+export * from './getComposerFromJSONSchema.js';
+export * from './getDereferencedJSONSchemaFromOperations.js';
+export * from './getReferencedJSONSchemaFromOperations.js';
+export * from './getGraphQLSchemaFromDereferencedJSONSchema.js';
+export * from './types.js';
+export * from './bundle.js';

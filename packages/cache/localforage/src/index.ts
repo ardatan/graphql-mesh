@@ -1,5 +1,5 @@
 import { KeyValueCache, KeyValueCacheSetOptions, YamlConfig } from '@graphql-mesh/types';
-import { createInMemoryLRUDriver } from './InMemoryLRUDriver';
+import { createInMemoryLRUDriver } from './InMemoryLRUDriver.js';
 import LocalForage from 'localforage';
 
 LocalForage.defineDriver(createInMemoryLRUDriver()).catch(err =>

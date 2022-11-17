@@ -11,19 +11,19 @@ Mesh's execute function could be used to directly carry out a query:
 ```ts
 import { execute } from './.mesh'
 
-const exampleDocument = /* GraphQL */`
+const exampleDocument = /* GraphQL */ `
   query myQuery($someVar: String!) {
-      foo(someArg: $someVar) {
-        bar
-      }
+    foo(someArg: $someVar) {
+      bar
+    }
   }
-`;
+`
 
 const exampleVariables = {
   someArg: 'SOME_VALUE'
-};
+}
 
-const result = await execute(document, variables);
+const result = await execute(document, variables)
 ```
 
 ## Generating fully type safe SDK

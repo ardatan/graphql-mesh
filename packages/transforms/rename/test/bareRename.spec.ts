@@ -1,9 +1,6 @@
-import RenameTransform from './../src/index';
+import RenameTransform from './../src/index.js';
 import { buildSchema, graphql, GraphQLObjectType, GraphQLNonNull, GraphQLScalarType } from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
-import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
-import { PubSub } from '@graphql-mesh/utils';
 
 describe('rename', () => {
   const schema = makeExecutableSchema({
@@ -51,15 +48,6 @@ describe('rename', () => {
       },
     },
   });
-  let cache: InMemoryLRUCache;
-  let pubsub: MeshPubSub;
-  const baseDir: string = undefined;
-  const importFn: ImportFn = m => import(m);
-
-  beforeEach(() => {
-    cache = new InMemoryLRUCache();
-    pubsub = new PubSub();
-  });
 
   it('should change the name of a type', () => {
     const transform = new RenameTransform({
@@ -76,11 +64,6 @@ describe('rename', () => {
           },
         ],
       },
-      apiName: '',
-      cache,
-      pubsub,
-      baseDir,
-      importFn,
     });
 
     const newSchema = transform.transformSchema(schema, {} as any);
@@ -106,11 +89,6 @@ describe('rename', () => {
           },
         ],
       },
-      apiName: '',
-      cache,
-      pubsub,
-      baseDir,
-      importFn,
     });
 
     const newSchema = transform.transformSchema(schema, {} as any);
@@ -138,11 +116,6 @@ describe('rename', () => {
           },
         ],
       },
-      apiName: '',
-      cache,
-      pubsub,
-      baseDir,
-      importFn,
     });
 
     const transformedSchema = transform.transformSchema(schema, {} as any);
@@ -238,11 +211,6 @@ describe('rename', () => {
           },
         ],
       },
-      apiName: '',
-      cache,
-      pubsub,
-      baseDir,
-      importFn,
     });
 
     const newSchema = transform.transformSchema(schema, {} as any);
@@ -272,11 +240,6 @@ describe('rename', () => {
           },
         ],
       },
-      apiName: '',
-      cache,
-      pubsub,
-      baseDir,
-      importFn,
     });
 
     const newSchema = transform.transformSchema(schema, {} as any);
@@ -312,11 +275,6 @@ describe('rename', () => {
           },
         ],
       },
-      apiName: '',
-      cache,
-      pubsub,
-      baseDir,
-      importFn,
     });
 
     const newSchema = transform.transformSchema(schema, {} as any);
@@ -349,11 +307,6 @@ describe('rename', () => {
           },
         ],
       },
-      apiName: '',
-      cache,
-      pubsub,
-      baseDir,
-      importFn,
     });
 
     const newSchema = transform.transformSchema(schema, {} as any);
@@ -393,11 +346,6 @@ describe('rename', () => {
           },
         ],
       },
-      apiName: '',
-      cache,
-      pubsub,
-      baseDir,
-      importFn,
     });
 
     const newSchema = transform.transformSchema(schema, {} as any);
@@ -432,11 +380,6 @@ describe('rename', () => {
           },
         ],
       },
-      apiName: '',
-      cache,
-      pubsub,
-      baseDir,
-      importFn,
     });
 
     const newSchema = transform.transformSchema(schema, {} as any);
@@ -473,11 +416,6 @@ describe('rename', () => {
           },
         ],
       },
-      apiName: '',
-      cache,
-      pubsub,
-      baseDir,
-      importFn,
     });
 
     const newSchema = transform.transformSchema(schema, {} as any);
@@ -517,11 +455,6 @@ describe('rename', () => {
           },
         ],
       },
-      apiName: '',
-      cache,
-      pubsub,
-      baseDir,
-      importFn,
     });
 
     const newSchema = transform.transformSchema(schema, {} as any);
@@ -550,11 +483,6 @@ describe('rename', () => {
           },
         ],
       },
-      apiName: '',
-      cache,
-      pubsub,
-      baseDir,
-      importFn,
     });
 
     const newSchema = transform.transformSchema(schema, {} as any);
@@ -596,11 +524,6 @@ describe('rename', () => {
           },
         ],
       },
-      apiName: '',
-      cache,
-      pubsub,
-      baseDir,
-      importFn,
     });
 
     const newSchema = transform.transformSchema(schema, {} as any);
@@ -631,11 +554,6 @@ describe('rename', () => {
           },
         ],
       },
-      apiName: '',
-      cache,
-      pubsub,
-      baseDir,
-      importFn,
     });
 
     const transformedSchema = transform.transformSchema(schema, {} as any);
@@ -668,11 +586,6 @@ describe('rename', () => {
           },
         ],
       },
-      apiName: '',
-      cache,
-      pubsub,
-      baseDir,
-      importFn: m => import(m),
     });
 
     const newSchema = transform.transformSchema(schema, {} as any);

@@ -1,7 +1,7 @@
 import { util } from '@graphql-mesh/cross-helpers';
 import { JSONSchemaObject } from 'json-machete';
 import { GraphQLJSON, SchemaComposer } from 'graphql-compose';
-import { getValidTypeName } from './getValidTypeName';
+import { getValidTypeName } from './getValidTypeName.js';
 
 export function getGenericJSONScalar({
   isInput,

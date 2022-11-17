@@ -45,7 +45,7 @@ resolveReference: ./userResolveReference.ts
 
 ```ts filename="userResolveReference.ts"
 // So we can point to an existing query field to resolve that entity
-export default function (root, context, info)  {
+export default function (root, context, info) {
   return context.accounts.Query.user({ root, args: { id: root.id }, context, info })
 }
 ```

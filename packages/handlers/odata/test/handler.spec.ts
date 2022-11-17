@@ -2,10 +2,10 @@ import { MeshPubSub, KeyValueCache, Logger } from '@graphql-mesh/types';
 import { printSchema, GraphQLInterfaceType, parse, ExecutionResult } from 'graphql';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
-import { addMock, resetMocks, MockResponse, mockFetch } from './custom-fetch';
+import { addMock, resetMocks, MockResponse, mockFetch } from './custom-fetch.js';
 import { path, fs } from '@graphql-mesh/cross-helpers';
 import { PubSub, DefaultLogger } from '@graphql-mesh/utils';
-import ODataHandler from '../src';
+import ODataHandler from '../src/index.js';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 
 const TripPinMetadata = fs.readFileSync(path.resolve(__dirname, './fixtures/trippin-metadata.xml'), 'utf8');

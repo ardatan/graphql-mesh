@@ -1,3 +1,3 @@
-export * from './get-mesh';
-export * from './types';
-export * from './useSubschema';
+export * from './get-mesh.js';
+export * from './types.js';
+export * from './useSubschema.js';

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { ResolversComposerMapping, composeResolvers } from '@graphql-tools/resolvers-composition';
-import { computeCacheKey } from './compute-cache-key';
+import { computeCacheKey } from './compute-cache-key.js';
 import { extractResolvers } from '@graphql-mesh/utils';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { GraphQLSchema } from 'graphql';

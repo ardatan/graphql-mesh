@@ -11,7 +11,7 @@ import * as typedDocumentNodePlugin from '@graphql-codegen/typed-document-node';
 import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import ts from 'typescript';
 import { pathExists, writeFile, writeJSON } from '@graphql-mesh/utils';
-import { generateOperations } from './generate-operations';
+import { generateOperations } from './generate-operations.js';
 import { GraphQLMeshCLIParams } from '..';
 import JSON5 from 'json5';
 

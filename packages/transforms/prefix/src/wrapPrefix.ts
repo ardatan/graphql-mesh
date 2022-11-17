@@ -4,7 +4,7 @@ import { RenameTypes, RenameRootFields } from '@graphql-tools/wrap';
 import { ExecutionResult, ExecutionRequest } from '@graphql-tools/utils';
 import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
 import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
-import { ignoreList as defaultIgnoreList } from './shared';
+import { ignoreList as defaultIgnoreList } from './shared.js';
 
 export default class WrapPrefix implements MeshTransform {
   private transforms: Transform[] = [];

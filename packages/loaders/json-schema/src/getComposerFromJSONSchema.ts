@@ -55,12 +55,12 @@ import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import { memoize1 } from '@graphql-tools/utils';
 import { visitJSONSchema, JSONSchema, JSONSchemaObject } from 'json-machete';
-import { getStringScalarWithMinMaxLength } from './getStringScalarWithMinMaxLength';
-import { getJSONSchemaStringFormatScalarMap } from './getJSONSchemaStringFormatScalarMap';
-import { getUnionTypeComposers } from './getUnionTypeComposers';
-import { getValidTypeName } from './getValidTypeName';
-import { getGenericJSONScalar } from './getGenericJSONScalar';
-import { getValidateFnForSchemaPath } from './getValidateFnForSchemaPath';
+import { getStringScalarWithMinMaxLength } from './getStringScalarWithMinMaxLength.js';
+import { getJSONSchemaStringFormatScalarMap } from './getJSONSchemaStringFormatScalarMap.js';
+import { getUnionTypeComposers } from './getUnionTypeComposers.js';
+import { getValidTypeName } from './getValidTypeName.js';
+import { getGenericJSONScalar } from './getGenericJSONScalar.js';
+import { getValidateFnForSchemaPath } from './getValidateFnForSchemaPath.js';
 
 const isListTC = memoize1(function isListTC(type: any): type is ListComposer {
   return type instanceof ListComposer;

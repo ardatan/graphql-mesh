@@ -1,6 +1,6 @@
 import { loadGraphQLSchemaFromJSONSchemas } from '@omnigraph/json-schema';
-import { getJSONSchemaOptionsFromRAMLOptions } from './getJSONSchemaOptionsFromRAMLOptions';
-import { RAMLLoaderOptions } from './types';
+import { getJSONSchemaOptionsFromRAMLOptions } from './getJSONSchemaOptionsFromRAMLOptions.js';
+import { RAMLLoaderOptions } from './types.js';
 
 /**
  * Creates a local GraphQLSchema instance from a RAML API Document.

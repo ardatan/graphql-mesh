@@ -11,8 +11,8 @@ import {
 } from '@graphql-mesh/types';
 import { DocumentNode, ExecutionResult } from 'graphql';
 import { IResolvers, Source } from '@graphql-tools/utils';
-import { MESH_CONTEXT_SYMBOL } from './constants';
-import { MeshInstance } from './get-mesh';
+import { MESH_CONTEXT_SYMBOL } from './constants.js';
+import { MeshInstance } from './get-mesh.js';
 import { envelop } from '@envelop/core';
 
 export type GetMeshOptions = {

@@ -1,8 +1,16 @@
-const { readdirSync, lstatSync, ensureSymlinkSync, chmodSync, writeFileSync } = require('fs-extra');
+const {
+  readdirSync,
+  lstatSync,
+  ensureSymlinkSync,
+  chmodSync,
+  writeFileSync,
+  unlinkSync,
+  existsSync,
+} = require('fs-extra');
 const { resolve, join } = require('path');
 
 const absoluteExamplesDirPath = resolve(__dirname, '../examples');
-const absoluteGraphqlMeshBinPath = resolve(__dirname, '../packages/cli/dist/bin.js');
+const absoluteGraphqlMeshBinPath = resolve(__dirname, '../packages/cli/dist/cjs/bin.js');
 const dir = readdirSync(absoluteExamplesDirPath);
 dir.push('../website');
 for (const path of dir) {

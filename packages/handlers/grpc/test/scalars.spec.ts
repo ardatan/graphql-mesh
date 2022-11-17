@@ -1,4 +1,4 @@
-import { getGraphQLScalar, isScalarType } from '../src/scalars';
+import { getGraphQLScalar, isScalarType } from '../src/scalars.js';
 
 describe.each<[string, string]>([
   ['bool', 'Boolean'],

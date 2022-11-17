@@ -1,6 +1,7 @@
 {
   "name": "@graphql-mesh/cross-helpers",
   "version": "0.2.10",
+  "bob": false,
   "description": "Cross Platform Helpers for GraphQL Mesh",
   "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",
   "repository": {
@@ -22,5 +23,9 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "typings": "./index.d.ts",
+  "typescript": {
+    "definition": "./index.d.ts"
   }
 }

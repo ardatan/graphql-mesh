@@ -1,4 +1,4 @@
-import PrefixTransform from '../src';
+import PrefixTransform from '../src/index.js';
 import { printSchema, GraphQLSchema, GraphQLObjectType, execute, parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { MeshPubSub } from '@graphql-mesh/types';

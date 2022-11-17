@@ -1,4 +1,4 @@
-import Transform from '../src/index';
+import Transform from '../src/index.js';
 import { execute, parse, getIntrospectionQuery } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { ImportFn, MeshPubSub } from '@graphql-mesh/types';

@@ -3,8 +3,8 @@ import {
   createBundle as createJSONSchemaLoaderBundle,
   JSONSchemaLoaderBundle as OpenAPILoaderBundle,
 } from '@omnigraph/json-schema';
-import { getJSONSchemaOptionsFromOpenAPIOptions } from './getJSONSchemaOptionsFromOpenAPIOptions';
-import { OpenAPILoaderOptions } from './types';
+import { getJSONSchemaOptionsFromOpenAPIOptions } from './getJSONSchemaOptionsFromOpenAPIOptions.js';
+import { OpenAPILoaderOptions } from './types.js';
 
 /**
  * Creates a bundle by downloading and resolving the internal references once

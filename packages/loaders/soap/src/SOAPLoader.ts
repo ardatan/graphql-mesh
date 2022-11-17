@@ -23,7 +23,7 @@ import {
   XSSimpleType,
   XSElement,
   XSDObject,
-} from './types';
+} from './types.js';
 import {
   GraphQLURL,
   GraphQLByte,
@@ -47,7 +47,7 @@ import {
   GraphQLString,
 } from 'graphql';
 import { MeshFetch } from '@graphql-mesh/types';
-import { PARSE_XML_OPTIONS, SoapAnnotations } from './utils';
+import { PARSE_XML_OPTIONS, SoapAnnotations } from './utils.js';
 
 export interface SOAPLoaderOptions {
   fetch: MeshFetch;

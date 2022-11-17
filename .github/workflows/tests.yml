@@ -15,12 +15,6 @@ jobs:
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
 
-  typecheck:
-    uses: the-guild-org/shared-config/.github/workflows/ci.yml@main
-    with:
-      script: yarn transpile-ts --noEmit
-      name: ts
-
   test:
     name: ${{matrix.os}} / node ${{matrix.node-version}}
     timeout-minutes: 60

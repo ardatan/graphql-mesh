@@ -1,6 +1,6 @@
 import { memoize1 } from '@graphql-tools/utils';
 import { DocumentNode, parse, print } from 'graphql';
-import { createLruCache } from './global-lru-cache';
+import { createLruCache } from './global-lru-cache.js';
 
 const parseCache = createLruCache(1000, 3600);
 const printCache = createLruCache(1000, 3600);

@@ -1,9 +1,6 @@
-import RenameTransform from './../src/index';
+import RenameTransform from './../src/index.js';
 import { buildSchema, graphql, GraphQLObjectType, printSchema, GraphQLNonNull, GraphQLScalarType } from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
-import { MeshPubSub } from '@graphql-mesh/types';
-import { PubSub } from '@graphql-mesh/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
 
 describe('rename', () => {
@@ -52,22 +49,12 @@ describe('rename', () => {
       },
     },
   });
-  let cache: InMemoryLRUCache;
-  let pubsub: MeshPubSub;
-  const baseDir: string = undefined;
-
-  beforeEach(() => {
-    cache = new InMemoryLRUCache();
-    pubsub = new PubSub();
-  });
 
   it('should change the name of a type', () => {
     const newSchema = wrapSchema({
       schema,
       transforms: [
         new RenameTransform({
-          apiName: '',
-          importFn: m => import(m),
           config: {
             renames: [
               {
@@ -80,9 +67,6 @@ describe('rename', () => {
               },
             ],
           },
-          cache,
-          pubsub,
-          baseDir,
         }),
       ],
     });
@@ -97,8 +81,6 @@ describe('rename', () => {
       schema,
       transforms: [
         new RenameTransform({
-          apiName: '',
-          importFn: m => import(m),
           config: {
             mode: 'wrap',
             renames: [
@@ -114,9 +96,6 @@ describe('rename', () => {
               },
             ],
           },
-          cache,
-          pubsub,
-          baseDir,
         }),
       ],
     });
@@ -149,11 +128,6 @@ describe('rename', () => {
               },
             ],
           },
-          apiName: '',
-          cache,
-          pubsub,
-          baseDir,
-          importFn: m => import(m),
         }),
       ],
     });
@@ -242,8 +216,6 @@ describe('rename', () => {
       schema,
       transforms: [
         new RenameTransform({
-          apiName: '',
-          importFn: m => import(m),
           config: {
             mode: 'wrap',
             renames: [
@@ -258,9 +230,6 @@ describe('rename', () => {
               },
             ],
           },
-          cache,
-          pubsub,
-          baseDir,
         }),
       ],
     });
@@ -280,8 +249,6 @@ describe('rename', () => {
       schema,
       transforms: [
         new RenameTransform({
-          apiName: '',
-          importFn: m => import(m),
           config: {
             mode: 'wrap',
             renames: [
@@ -296,9 +263,6 @@ describe('rename', () => {
               },
             ],
           },
-          cache,
-          pubsub,
-          baseDir,
         }),
       ],
     });
@@ -322,8 +286,6 @@ describe('rename', () => {
       schema,
       transforms: [
         new RenameTransform({
-          apiName: '',
-          importFn: m => import(m),
           config: {
             renames: [
               {
@@ -339,9 +301,6 @@ describe('rename', () => {
               },
             ],
           },
-          cache,
-          pubsub,
-          baseDir,
         }),
       ],
     });
@@ -363,8 +322,6 @@ describe('rename', () => {
       schema,
       transforms: [
         new RenameTransform({
-          apiName: '',
-          importFn: m => import(m),
           config: {
             mode: 'wrap',
             renames: [
@@ -381,9 +338,6 @@ describe('rename', () => {
               },
             ],
           },
-          cache,
-          pubsub,
-          baseDir,
         }),
       ],
     });
@@ -413,8 +367,6 @@ describe('rename', () => {
       schema,
       transforms: [
         new RenameTransform({
-          apiName: '',
-          importFn: m => import(m),
           config: {
             renames: [
               {
@@ -429,9 +381,6 @@ describe('rename', () => {
               },
             ],
           },
-          cache,
-          pubsub,
-          baseDir,
         }),
       ],
     });
@@ -456,8 +405,6 @@ describe('rename', () => {
       schema,
       transforms: [
         new RenameTransform({
-          apiName: '',
-          importFn: m => import(m),
           config: {
             renames: [
               {
@@ -472,9 +419,6 @@ describe('rename', () => {
               },
             ],
           },
-          cache,
-          pubsub,
-          baseDir,
         }),
       ],
     });
@@ -499,8 +443,6 @@ describe('rename', () => {
       schema,
       transforms: [
         new RenameTransform({
-          apiName: '',
-          importFn: m => import(m),
           config: {
             renames: [
               {
@@ -517,9 +459,6 @@ describe('rename', () => {
               },
             ],
           },
-          cache,
-          pubsub,
-          baseDir,
         }),
       ],
     });
@@ -547,8 +486,6 @@ describe('rename', () => {
       schema,
       transforms: [
         new RenameTransform({
-          apiName: '',
-          importFn: m => import(m),
           config: {
             renames: [
               {
@@ -565,9 +502,6 @@ describe('rename', () => {
               },
             ],
           },
-          cache,
-          pubsub,
-          baseDir,
         }),
       ],
     });
@@ -585,8 +519,6 @@ describe('rename', () => {
       schema,
       transforms: [
         new RenameTransform({
-          apiName: '',
-          importFn: m => import(m),
           config: {
             mode: 'wrap',
             renames: [
@@ -603,9 +535,6 @@ describe('rename', () => {
               },
             ],
           },
-          cache,
-          pubsub,
-          baseDir,
         }),
       ],
     });
@@ -636,8 +565,6 @@ describe('rename', () => {
       schema,
       transforms: [
         new RenameTransform({
-          apiName: '',
-          importFn: m => import(m),
           config: {
             mode: 'wrap',
             renames: [
@@ -655,9 +582,6 @@ describe('rename', () => {
               },
             ],
           },
-          cache,
-          pubsub,
-          baseDir,
         }),
       ],
     });
@@ -681,8 +605,6 @@ describe('rename', () => {
       schema,
       transforms: [
         new RenameTransform({
-          apiName: '',
-          importFn: m => import(m),
           config: {
             mode: 'wrap',
             renames: [
@@ -701,9 +623,6 @@ describe('rename', () => {
               },
             ],
           },
-          cache,
-          pubsub,
-          baseDir,
         }),
       ],
     });
@@ -727,8 +646,6 @@ describe('rename', () => {
       schema,
       transforms: [
         new RenameTransform({
-          apiName: '',
-          importFn: m => import(m),
           config: {
             mode: 'wrap',
             renames: [
@@ -748,9 +665,6 @@ describe('rename', () => {
               },
             ],
           },
-          cache,
-          pubsub,
-          baseDir,
         }),
       ],
     });
@@ -791,11 +705,6 @@ describe('rename', () => {
               },
             ],
           },
-          apiName: '',
-          cache,
-          pubsub,
-          baseDir,
-          importFn: m => import(m),
         }),
       ],
     });
@@ -819,8 +728,6 @@ describe('rename', () => {
       schema,
       transforms: [
         new RenameTransform({
-          apiName: '',
-          importFn: m => import(m),
           config: {
             mode: 'wrap',
             renames: [
@@ -834,9 +741,6 @@ describe('rename', () => {
               },
             ],
           },
-          cache,
-          pubsub,
-          baseDir,
         }),
       ],
     });
@@ -864,8 +768,6 @@ describe('rename', () => {
     `);
 
     const transform = new RenameTransform({
-      apiName: '',
-      importFn: m => import(m),
       config: {
         mode: 'bare',
         renames: [
@@ -881,9 +783,6 @@ describe('rename', () => {
           },
         ],
       },
-      cache,
-      pubsub,
-      baseDir,
     });
 
     const newSchema = transform.transformSchema(schema, {} as any);

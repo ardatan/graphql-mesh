@@ -1,7 +1,7 @@
 import { ApolloClient, FetchResult, InMemoryCache } from '@apollo/client/core';
 import { MeshInstance } from '@graphql-mesh/runtime';
-import { MeshApolloLink } from '../src';
-import { getTestMesh } from '../../testing/getTestMesh';
+import { MeshApolloLink } from '../src/index.js';
+import { getTestMesh } from '../../testing/getTestMesh.js';
 import { parse } from 'graphql';
 import { observableToAsyncIterable } from '@graphql-tools/utils';
 

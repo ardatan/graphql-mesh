@@ -4,9 +4,9 @@ import { getAbsolutePath, getCwd, JSONSchemaObject } from 'json-machete';
 import { api10, loadApi } from '@ardatan/raml-1-parser';
 import { fetch as crossUndiciFetch } from '@whatwg-node/fetch';
 import toJsonSchema from 'to-json-schema';
-import { RAMLLoaderOptions, RAMLLoaderSelectQueryOrMutationFieldConfig } from './types';
+import { RAMLLoaderOptions, RAMLLoaderSelectQueryOrMutationFieldConfig } from './types.js';
 import { asArray } from '@graphql-tools/utils';
-import { getFieldNameFromPath } from './utils';
+import { getFieldNameFromPath } from './utils.js';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import { process } from '@graphql-mesh/cross-helpers';
 

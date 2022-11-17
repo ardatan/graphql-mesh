@@ -1,6 +1,6 @@
 /* eslint-disable import/no-nodejs-modules */
 /* eslint-disable import/no-extraneous-dependencies */
-import ThriftHandler from '../src';
+import ThriftHandler from '../src/index.js';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { join } from 'path';
 import { printSchema } from 'graphql';

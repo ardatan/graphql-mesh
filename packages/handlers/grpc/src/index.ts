@@ -21,7 +21,7 @@ import { IFileDescriptorSet } from 'protobufjs/ext/descriptor';
 import { FileDescriptorSet } from 'protobufjs/ext/descriptor/index.js';
 import descriptor from 'protobufjs/ext/descriptor/index.js';
 
-import { addIncludePathResolver, addMetaDataToCall, getTypeName } from './utils';
+import { addIncludePathResolver, addMetaDataToCall, getTypeName } from './utils.js';
 import { GraphQLEnumTypeConfig, GraphQLResolveInfo, specifiedDirectives } from 'graphql';
 import { path, process } from '@graphql-mesh/cross-helpers';
 import { StoreProxy } from '@graphql-mesh/store';

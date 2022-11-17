@@ -13,4 +13,3 @@ additionalResolvers:
 
 documents:
   - example-queries/*.graphql
-

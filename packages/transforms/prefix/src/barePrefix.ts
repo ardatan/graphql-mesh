@@ -7,7 +7,7 @@ import {
 } from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
 import { MapperKind, mapSchema, renameType } from '@graphql-tools/utils';
-import { ignoreList as defaultIgnoreList } from './shared';
+import { ignoreList as defaultIgnoreList } from './shared.js';
 
 const rootOperations = new Set(['Query', 'Mutation', 'Subscription']);
 
