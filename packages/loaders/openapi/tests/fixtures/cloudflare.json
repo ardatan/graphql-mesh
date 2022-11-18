@@ -20538,7 +20538,6 @@
           {
             "properties": {
               "result": {
-                "anyOf": [{ "items": {}, "type": "array" }, { "type": "object" }],
                 "items": { "$ref": "#/components/schemas/setting" }
               }
             }

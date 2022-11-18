@@ -37,8 +37,31 @@ function getKnownCharacterOrCharCode(ch: string): string {
   return KNOWN_CHARACTERS[ch] || ch.charCodeAt(0).toString();
 }
 
+export function removeClosedBrackets(val: string) {
+  let out = val;
+
+  for (;;) {
+    // finds the first and shortest closed bracket match, starting from the left
+    const match = out.match(/\(.+?\)/);
+    const yesbrack = match?.[0];
+    if (!yesbrack) {
+      break;
+    }
+
+    // remove the brackets
+    const nobrack = yesbrack.substring(1, yesbrack.length - 1);
+
+    // replace the match removing bracks, just once starting from the left
+    out = out.replace(yesbrack, nobrack);
+  }
+
+  return out;
+}
+
 export function sanitizeNameForGraphQL(unsafeName: string): string {
   let sanitizedName = unsafeName.trim();
+
+  sanitizedName = removeClosedBrackets(sanitizedName);
 
   if (!isNaN(parseInt(sanitizedName))) {
     if (sanitizedName.startsWith('-')) {

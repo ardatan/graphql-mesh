@@ -29,10 +29,6 @@ interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
   logger?: Logger;
 }
 
-function removeBracketsAndParentheses(str: string) {
-  return str.replace(/[\\[\]]/g, '').replace(/\(\)/g, '');
-}
-
 export async function getJSONSchemaOptionsFromOpenAPIOptions(
   name: string,
   {
@@ -117,7 +113,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
         method: method.toUpperCase() as HTTPMethod,
         path: relativePath,
         type: method.toUpperCase() === 'GET' ? 'query' : 'mutation',
-        field: methodObj.operationId && sanitizeNameForGraphQL(removeBracketsAndParentheses(methodObj.operationId)),
+        field: methodObj.operationId && sanitizeNameForGraphQL(methodObj.operationId),
         description: methodObj.description || methodObj.summary,
         schemaHeaders,
         operationHeaders,
