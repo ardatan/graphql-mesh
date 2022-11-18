@@ -242,7 +242,9 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
   if (failed) {
     throw new Error(
-      `Schemas couldn't be generated successfully. Check for the logs by running Mesh with DEBUG=1 environmental variable to get more verbose output.`
+      `Schemas couldn't be generated successfully. Check for the logs by running Mesh${
+        process.env.DEBUG == null ? ' with DEBUG=1 environmental variable to get more verbose output' : ''
+      }.`
     );
   }
 

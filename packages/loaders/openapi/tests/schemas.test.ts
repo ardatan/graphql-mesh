@@ -16,6 +16,7 @@ const schemas = {
   Dictionary: 'dictionary.json',
   Headers: 'headers.json',
   SubscriptionType: 'subscriptionType.yml',
+  CloudFlare: 'cloudflare.json',
 };
 
 describe('Schemas', () => {
