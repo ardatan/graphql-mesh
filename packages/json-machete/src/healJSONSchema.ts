@@ -75,10 +75,6 @@ export async function healJSONSchema(
           } else if (Object.keys(subSchema).length === 1 && subSchema.type && !Array.isArray(subSchema.type)) {
             return subSchema;
           }
-          if ((subSchema.type && subSchema.anyOf) || subSchema.oneOf || subSchema.allOf) {
-            logger.debug(`${path} is a union type but it has a type. Removing the type.`);
-            delete subSchema.type;
-          }
           const keys = Object.keys(subSchema).filter(key => key !== 'readOnly' && key !== 'writeOnly');
           if (keys.length === 0) {
             logger.debug(`${path} has an empty definition. Adding an object definition.`);

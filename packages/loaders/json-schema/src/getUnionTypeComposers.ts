@@ -44,7 +44,7 @@ export function getUnionTypeComposers({
   subSchemaAndTypeComposers,
   logger,
 }: GetUnionTypeComposersOpts) {
-  if (typeComposersList.length === 1) {
+  if (new Set(typeComposersList).size === 1) {
     return typeComposersList[0];
   }
   const unionInputFields: Record<string, any> = {};
