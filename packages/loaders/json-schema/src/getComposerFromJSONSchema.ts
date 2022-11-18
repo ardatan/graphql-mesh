@@ -828,6 +828,11 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             inputTypeComposer = inputTypeComposer.ofType;
           }
 
+          if (outputTypeComposer instanceof ListComposer) {
+            isList = true;
+            outputTypeComposer = outputTypeComposer.ofType;
+          }
+
           if (inputTypeComposer instanceof ScalarTypeComposer || inputTypeComposer instanceof EnumTypeComposer) {
             ableToUseGraphQLInputObjectType = false;
           } else {
@@ -856,6 +861,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             if (outputTypeComposer instanceof InterfaceTypeComposer) {
               (subSchemaAndTypeComposers.output as ObjectTypeComposer).addInterface(outputTypeComposer);
             }
+
             const typeElemFieldMap = outputTypeComposer.getFields();
             for (const fieldName in typeElemFieldMap) {
               const field = typeElemFieldMap[fieldName];
@@ -955,16 +961,28 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           }
         }
 
-        (subSchemaAndTypeComposers.output as ObjectTypeComposer).addFields(fieldMap);
-        (subSchemaAndTypeComposers.output as ObjectTypeComposer).setExtensions({
+        let outputTypeComposer = subSchemaAndTypeComposers.output;
+
+        if ('ofType' in outputTypeComposer) {
+          outputTypeComposer = outputTypeComposer.ofType;
+        }
+
+        (outputTypeComposer as ObjectTypeComposer).addFields(fieldMap);
+        (outputTypeComposer as ObjectTypeComposer).setExtensions({
           validateWithJSONSchema,
           examples: subSchemaAndTypeComposers.examples,
           default: subSchemaAndTypeComposers.default,
         });
 
+        let inputTypeComposer = subSchemaAndTypeComposers.input;
+
+        if ('ofType' in inputTypeComposer) {
+          inputTypeComposer = inputTypeComposer.ofType;
+        }
+
         if (ableToUseGraphQLInputObjectType) {
-          (subSchemaAndTypeComposers.input as InputTypeComposer).addFields(inputFieldMap);
-          (subSchemaAndTypeComposers.input as InputTypeComposer).setExtensions({
+          (inputTypeComposer as InputTypeComposer).addFields(inputFieldMap);
+          (inputTypeComposer as InputTypeComposer).setExtensions({
             examples: subSchemaAndTypeComposers.examples,
             default: subSchemaAndTypeComposers.default,
           });
@@ -1102,7 +1120,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
                 inputTC = inputTC.ofType;
               }
               if (!inputTC.getFields) {
-                console.log(fieldName);
+                continue;
               }
               typeComposer.addFieldArgs(fieldName, inputTC.getFields());
             }

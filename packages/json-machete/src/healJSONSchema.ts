@@ -269,7 +269,13 @@ export async function healJSONSchema(
               !subSchema.type) &&
             (subSchema.example || subSchema.examples)
           ) {
-            const examples = asArray(subSchema.examples || subSchema.example || []);
+            const examples = [];
+            if (subSchema.example) {
+              examples.push(subSchema.example);
+            }
+            if (subSchema.examples) {
+              examples.push(...subSchema.examples);
+            }
             const generatedSchema = toJsonSchema(examples[0], {
               required: false,
               objects: {
@@ -302,6 +308,11 @@ export async function healJSONSchema(
             subSchema.const = subSchema.enum[0];
             logger.debug(`${path} has an enum but with a single value. Converting it to const.`);
             delete subSchema.enum;
+          }
+          if (subSchema.const === null) {
+            logger.debug(`${path} has a const definition of null. Setting type to "null".`);
+            subSchema.type = 'null';
+            delete subSchema.const;
           }
           if (!subSchema.title && !subSchema.$ref && subSchema.type !== 'array' && !subSchema.items) {
             const realPath = subSchema.$resolvedRef || path;
@@ -398,6 +409,9 @@ export async function healJSONSchema(
               }
             }
           }
+        }
+        if (subSchema.type === 'array' && subSchema.anyOf) {
+          delete subSchema.anyOf;
         }
         return subSchema;
       },
