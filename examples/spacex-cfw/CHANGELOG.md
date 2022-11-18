@@ -1,5 +1,12 @@
 # spacex-cfw
 
+## 0.0.71
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.79.5
+
 ## 0.0.70
 
 ### Patch Changes

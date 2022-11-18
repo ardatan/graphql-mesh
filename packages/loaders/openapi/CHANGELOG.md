@@ -1,5 +1,15 @@
 # @omnigraph/openapi
 
+## 0.17.8
+
+### Patch Changes
+
+- [#4825](https://github.com/Urigo/graphql-mesh/pull/4825) [`3d8f23adb`](https://github.com/Urigo/graphql-mesh/commit/3d8f23adb28ca102b19433eca5baf8d341ac7305) Thanks [@ardatan](https://github.com/ardatan)! - Fixes on handling plural anyOf types
+
+- Updated dependencies [[`3d8f23adb`](https://github.com/Urigo/graphql-mesh/commit/3d8f23adb28ca102b19433eca5baf8d341ac7305)]:
+  - json-machete@0.16.3
+  - @omnigraph/json-schema@0.36.8
+
 ## 0.17.7
 
 ### Patch Changes
