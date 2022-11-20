@@ -23,6 +23,6 @@
     "typescript": "4.9.3"
   },
   "devDependencies": {
-    "concurrently": "7.5.0"
+    "concurrently": "7.6.0"
   }
 }
