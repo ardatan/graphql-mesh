@@ -17,6 +17,7 @@ const schemas = {
   Headers: 'headers.json',
   SubscriptionType: 'subscriptionType.yml',
   CloudFlare: 'cloudflare.json',
+  TeachersTraining: 'uk_teachers_training_courses.json',
 };
 
 describe('Schemas', () => {

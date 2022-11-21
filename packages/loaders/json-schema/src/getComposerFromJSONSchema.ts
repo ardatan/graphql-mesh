@@ -122,6 +122,58 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
       if (!subSchema) {
         throw new Error(`Something is wrong with ${path}`);
       }
+      if (subSchema.type === 'array') {
+        if (typeof subSchema.items === 'object' && Object.keys(subSchema.items).length > 0) {
+          return {
+            // These are filled after enter
+            get input() {
+              const typeComposers = visitedSubschemaResultMap.get(subSchema.items as any);
+              return typeComposers.input.getTypePlural();
+            },
+            get output() {
+              const typeComposers = visitedSubschemaResultMap.get(subSchema.items as any);
+              return typeComposers.output.getTypePlural();
+            },
+            ...subSchema,
+          };
+        }
+        if (subSchema.contains) {
+          // Scalars cannot be in union type
+          const typeComposer = getGenericJSONScalar({
+            schemaComposer,
+            isInput: false,
+            subSchema,
+            validateWithJSONSchema,
+          }).getTypePlural();
+          return {
+            input: typeComposer,
+            output: typeComposer,
+            nullable: subSchema.nullable,
+            readOnly: subSchema.readOnly,
+            writeOnly: subSchema.writeOnly,
+            default: subSchema.default,
+          };
+        }
+        // If it doesn't have any clue
+        {
+          // const typeComposer = getGenericJSONScalar({
+          //   schemaComposer,
+          //   isInput: false,
+          //   subSchema,
+          //   validateWithJSONSchema,
+          // }).getTypePlural();
+          const typeComposer = schemaComposer.getAnyTC(GraphQLJSON).getTypePlural();
+          return {
+            input: typeComposer,
+            output: typeComposer,
+            description: subSchema.description,
+            nullable: subSchema.nullable,
+            readOnly: subSchema.readOnly,
+            writeOnly: subSchema.writeOnly,
+            default: subSchema.default,
+          };
+        }
+      }
       if (subSchema.pattern) {
         let regexp: RegExp;
         try {
@@ -595,57 +647,6 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             default: subSchema.default,
           };
         }
-        case 'array':
-          if (typeof subSchema.items === 'object' && Object.keys(subSchema.items).length > 0) {
-            return {
-              // These are filled after enter
-              get input() {
-                const typeComposers = visitedSubschemaResultMap.get(subSchema.items as any);
-                return typeComposers.input.getTypePlural();
-              },
-              get output() {
-                const typeComposers = visitedSubschemaResultMap.get(subSchema.items as any);
-                return typeComposers.output.getTypePlural();
-              },
-              ...subSchema,
-            };
-          }
-          if (subSchema.contains) {
-            // Scalars cannot be in union type
-            const typeComposer = getGenericJSONScalar({
-              schemaComposer,
-              isInput: false,
-              subSchema,
-              validateWithJSONSchema,
-            }).getTypePlural();
-            return {
-              input: typeComposer,
-              output: typeComposer,
-              nullable: subSchema.nullable,
-              readOnly: subSchema.readOnly,
-              writeOnly: subSchema.writeOnly,
-              default: subSchema.default,
-            };
-          }
-          // If it doesn't have any clue
-          {
-            // const typeComposer = getGenericJSONScalar({
-            //   schemaComposer,
-            //   isInput: false,
-            //   subSchema,
-            //   validateWithJSONSchema,
-            // }).getTypePlural();
-            const typeComposer = schemaComposer.getAnyTC(GraphQLJSON).getTypePlural();
-            return {
-              input: typeComposer,
-              output: typeComposer,
-              description: subSchema.description,
-              nullable: subSchema.nullable,
-              readOnly: subSchema.readOnly,
-              writeOnly: subSchema.writeOnly,
-              default: subSchema.default,
-            };
-          }
         case 'object': {
           switch (subSchema.title) {
             case '_schema':
