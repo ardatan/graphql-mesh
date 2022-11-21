@@ -1,5 +1,11 @@
 # @graphql-mesh/transform-naming-convention
 
+## 0.12.1
+
+### Patch Changes
+
+- [#4832](https://github.com/Urigo/graphql-mesh/pull/4832) [`4959cdb62`](https://github.com/Urigo/graphql-mesh/commit/4959cdb62bb4b427f08bacd1bc67d93f3825667d) Thanks [@ardatan](https://github.com/ardatan)! - Fix default value transformation for enum values
+
 ## 0.12.0
 
 ### Minor Changes
