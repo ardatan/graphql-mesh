@@ -17,6 +17,6 @@
     "@whatwg-node/fetch": "0.5.3"
   },
   "devDependencies": {
-    "concurrently": "7.5.0"
+    "concurrently": "7.6.0"
   }
 }
