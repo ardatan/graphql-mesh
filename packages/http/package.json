@@ -34,7 +34,7 @@
     "@graphql-mesh/runtime": "0.44.33",
     "@graphql-mesh/utils": "0.42.7",
     "@graphql-mesh/types": "0.86.0",
-    "graphql-yoga": "3.0.0-next.12",
+    "graphql-yoga": "3.0.0",
     "itty-router": "2.6.6",
     "itty-router-extras": "0.4.2",
     "tslib": "^2.4.0"
