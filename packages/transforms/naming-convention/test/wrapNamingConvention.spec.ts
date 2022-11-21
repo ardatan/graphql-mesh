@@ -1,24 +1,18 @@
 import NamingConventionTransform from '../src/index';
-import {
-  buildSchema,
-  printSchema,
-  GraphQLObjectType,
-  GraphQLEnumType,
-  execute,
-  parse,
-  GraphQLUnionType,
-} from 'graphql';
+import { buildSchema, GraphQLObjectType, GraphQLEnumType, execute, parse, GraphQLUnionType } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { PubSub } from '@graphql-mesh/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { addResolversToSchema } from '@graphql-tools/schema';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 describe('namingConvention wrap', () => {
   const schema = buildSchema(/* GraphQL */ `
     type Query {
       user: user!
       userById(userId: ID!): user!
+      usersByType(type: userType! = newbie): [user!]!
       node(id: ID!): node
     }
 
@@ -92,7 +86,7 @@ describe('namingConvention wrap', () => {
     const adminValue = userTypeEnumType.getValue('ADMIN');
     expect(adminValue).toBeDefined();
     // expect(adminValue.value).toBe('admin');
-    expect(printSchema(newSchema)).toMatchSnapshot();
+    expect(printSchemaWithDirectives(newSchema)).toMatchSnapshot();
   });
 
   it('should execute the transformed schema properly', async () => {
@@ -313,6 +307,10 @@ describe('namingConvention wrap', () => {
 
   it('should skip fields of Federation spec', async () => {
     const typeDefs = /* GraphQL */ `
+schema {
+  query: Query
+}
+
 type Query {
   _service: String!
   _entities: [String!]!
@@ -333,6 +331,6 @@ type Query {
         }),
       ],
     });
-    expect(printSchema(schema)).toBe(typeDefs);
+    expect(printSchemaWithDirectives(schema)).toBe(typeDefs);
   });
 });
