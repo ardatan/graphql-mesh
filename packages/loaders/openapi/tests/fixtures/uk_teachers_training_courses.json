@@ -1,0 +1,2018 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Teacher Training Courses API",
+    "contact": {
+      "name": "DfE",
+      "email": "becomingateacher@digital.education.gov.uk"
+    },
+    "description": "API for DfE's postgraduate teacher training course service."
+  },
+  "servers": [
+    {
+      "url": "https://api.publish-teacher-training-courses.service.gov.uk/api/public/{version}",
+      "description": "Production url.",
+      "variables": { "version": { "enum": ["v1"], "default": "v1" } }
+    }
+  ],
+  "components": {
+    "schemas": {
+      "400ErrorResponse": {
+        "description": "This schema is used to return a 400 application error",
+        "type": "object",
+        "required": ["errors"],
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "integer",
+                  "description": "Returns the http status code associated with the error.",
+                  "example": 400
+                },
+                "title": {
+                  "type": "string",
+                  "description": "A generic title for the type of error.",
+                  "example": "BAD REQUEST"
+                },
+                "detail": {
+                  "type": "string",
+                  "description": "A more detailed description of what could have caused the error.",
+                  "example": "The request could not be fulfilled due to some incorrect syntax of the request."
+                }
+              }
+            }
+          }
+        }
+      },
+      "404ErrorResponse": {
+        "description": "This schema is used to return a 404 application error",
+        "type": "object",
+        "required": ["errors"],
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "integer",
+                  "description": "Returns the http status code associated with the error.",
+                  "example": 404
+                },
+                "title": {
+                  "type": "string",
+                  "description": "A generic title for the type of error.",
+                  "example": "NOT_FOUND"
+                },
+                "detail": {
+                  "type": "string",
+                  "description": "A more detailed description of what could have caused the error.",
+                  "example": "The requested resource could not be found."
+                }
+              }
+            }
+          }
+        }
+      },
+      "AccreditedBodyRelationship": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": ["type", "id"],
+            "properties": {
+              "type": { "type": "string", "example": "providers" },
+              "id": { "type": "string", "example": "16346" }
+            }
+          }
+        }
+      },
+      "CourseAttributes": {
+        "description": "This schema presents the information about a course.",
+        "type": "object",
+        "required": ["code", "age_maximum", "age_minimum"],
+        "properties": {
+          "about_accredited_body": {
+            "type": "string",
+            "nullable": true,
+            "format": "markdown",
+            "description": "Description of the accredited body for this course.",
+            "example": "UCL Institute of Education is the world’s leading centre for research and teaching in education and related social sciences."
+          },
+          "about_course": {
+            "type": "string",
+            "nullable": true,
+            "format": "markdown",
+            "description": "Short factual summary of the course.",
+            "example": "The Secondary PGCE consists of three core modules: two Master's-level modules, which are assessed through written assignments, and the Professional Practice module, which is assessed by the observation of practical teaching in placement schools."
+          },
+          "accredited_body_code": {
+            "type": "string",
+            "description": "Unique provider-code for the accredited body of this course. Only present if the provider delivering the course is not the accredited body.",
+            "maxLength": 3,
+            "minLength": 3,
+            "nullable": true,
+            "example": "2FR"
+          },
+          "age_minimum": {
+            "type": "integer",
+            "description": "The minimum age of pupils this course is specified for.",
+            "example": 11
+          },
+          "age_maximum": {
+            "type": "integer",
+            "description": "The maximum age of pupils this course is specified for.",
+            "example": 14
+          },
+          "applications_open_from": {
+            "type": "string",
+            "format": "date",
+            "description": "Date from which applications can be submitted.",
+            "example": "2019-10-08"
+          },
+          "bursary_amount": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Bursary amount in GBP for this course.",
+            "example": 9000
+          },
+          "bursary_requirements": {
+            "type": "array",
+            "description": "Description of requirements to be eligible for a bursary.",
+            "items": {
+              "type": "string",
+              "example": "a degree of 2:2 or above in any subject"
+            }
+          },
+          "changed_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date-time timestamp of when this course or any of its related data changed.",
+            "example": "2019-06-13T10:44:31Z"
+          },
+          "code": {
+            "type": "string",
+            "description": "Code that uniquely identifies this course within its training provider's list of courses.",
+            "maxLength": 4,
+            "minLength": 4,
+            "example": "3GTY"
+          },
+          "course_length": {
+            "type": "string",
+            "nullable": true,
+            "description": "Text describing how long the course runs.",
+            "example": "OneYear"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of when this course was created.",
+            "example": "2019-06-13T10:44:31Z"
+          },
+          "fee_details": {
+            "type": "string",
+            "nullable": true,
+            "format": "markdown",
+            "description": "Further details about the fees for this course, if applicable.",
+            "example": "For those wishing to top up their qualification to the full PGCE, a further £1800 will be payable."
+          },
+          "fee_international": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Fee in GBP for international students (optional).",
+            "example": 13000
+          },
+          "fee_domestic": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Fee in GBP for UK students.",
+            "example": 9200
+          },
+          "financial_support": {
+            "type": "string",
+            "nullable": true,
+            "format": "markdown",
+            "description": "Details about financial support offered, if any.",
+            "example": "You'll get a bursary of £9,000 if you have a degree of 2:2 or above in any subject. You may also be eligible for a loan while you study."
+          },
+          "findable": {
+            "type": "boolean",
+            "description": "Is this course currently visible on the Find Postgraduate Teacher Training service.",
+            "example": true
+          },
+          "funding_type": {
+            "type": "string",
+            "description": "The type of funding that may be provided to candidates, if any.",
+            "example": "apprenticeship",
+            "enum": ["salary", "apprenticeship", "fee"]
+          },
+          "gcse_subjects_required": {
+            "type": "array",
+            "example": ["maths", "english"],
+            "enum": [[], ["maths", "english"], ["maths", "english", "science"]],
+            "description": "GSCEs, or equivalent, required for this level of course.",
+            "items": { "type": "string", "example": "maths" }
+          },
+          "has_bursary": {
+            "type": "boolean",
+            "description": "Are any bursaries available for this course?",
+            "example": true
+          },
+          "has_early_career_payments": {
+            "type": "boolean",
+            "description": "Are early career payments available for this course?",
+            "example": true
+          },
+          "has_scholarship": {
+            "type": "boolean",
+            "description": "Are scholarships available for this course?",
+            "example": true
+          },
+          "has_vacancies": {
+            "type": "boolean",
+            "description": "Do any of the locations for this course have vacancies?",
+            "example": true
+          },
+          "how_school_placements_work": {
+            "type": "string",
+            "nullable": true,
+            "format": "markdown",
+            "description": "Additional information about the schools applicants will be teaching in.",
+            "example": "You will spend two-thirds of your time (120 days) in schools, working with art and design mentors who support you through your two school placements."
+          },
+          "interview_process": {
+            "type": "string",
+            "nullable": true,
+            "format": "markdown",
+            "description": "Additional information about how the interview process will work for applicants.",
+            "example": "At your interview day you will take part in a combination of group and individual interviews with members of the programme team, and you may also be asked to undertake written or presentation tasks, depending on your subject."
+          },
+          "is_send": {
+            "type": "boolean",
+            "description": "Does this course have a SEND specialism?",
+            "example": true
+          },
+          "last_published_at": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time",
+            "description": "Timestamp of when changes to this course's additional information sections were last published.",
+            "example": "2019-06-13T10:44:31Z"
+          },
+          "level": {
+            "type": "string",
+            "description": "The educational level this course is designed for.",
+            "example": "secondary",
+            "enum": ["further_education", "primary", "secondary"]
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the course.",
+            "example": "Art and Design"
+          },
+          "open_for_applications": {
+            "type": "boolean",
+            "description": "Is the course currently open for applications?",
+            "example": true
+          },
+          "other_requirements": {
+            "type": "string",
+            "nullable": true,
+            "format": "markdown",
+            "description": "Any non-academic qualifications or documents the applicant may need.",
+            "example": "You'll need to provide confirmation you have the health and physical capacity to commence training, and a Disclosure and Barring Service (DBS) certificate."
+          },
+          "personal_qualities": {
+            "type": "string",
+            "nullable": true,
+            "format": "markdown",
+            "description": "Any skills, motivation and experience the provider is looking for in applicants.",
+            "example": "We are looking for applicants who have the potential to become outstanding teachers, and who are able to work independently on their studies while training in a school context."
+          },
+          "program_type": {
+            "type": "string",
+            "description": "The teacher training route that this course follows.",
+            "example": "scitt_programme",
+            "enum": [
+              "higher_education_programme",
+              "scitt_programme",
+              "school_direct_training_programme",
+              "school_direct_salaried_training_programme",
+              "pg_teaching_apprenticeship"
+            ]
+          },
+          "qualifications": {
+            "type": "array",
+            "description": "The qualifications as an outcome of the course.",
+            "example": ["qts"],
+            "enum": [["qts"], ["pgce"], ["pgde"], ["qts", "pgce"], ["qts", "pgde"]],
+            "items": { "type": "string", "example": "qts" }
+          },
+          "required_qualifications": {
+            "type": "string",
+            "nullable": true,
+            "format": "markdown",
+            "description": "The minimum academic qualifications needed for this course.",
+            "example": "A first or second-class UK Bachelor's degree in an appropriate subject, or an overseas qualification of an equivalent standard from a recognised higher education institution."
+          },
+          "required_qualifications_english": {
+            "type": "string",
+            "description": "English GCSE requirements for applicants.",
+            "example": "equivalence_test",
+            "enum": [
+              "",
+              "must_have_qualification_at_application_time",
+              "expect_to_achieve_before_training_begins",
+              "equivalence_test",
+              "not_required"
+            ]
+          },
+          "required_qualifications_maths": {
+            "type": "string",
+            "description": "Maths GCSE requirements for applicants.",
+            "example": "equivalence_test",
+            "enum": [
+              "",
+              "must_have_qualification_at_application_time",
+              "expect_to_achieve_before_training_begins",
+              "equivalence_test",
+              "not_required"
+            ]
+          },
+          "required_qualifications_science": {
+            "type": "string",
+            "description": "Science GCSE requirements for applicants.",
+            "example": "equivalence_test",
+            "enum": [
+              "",
+              "must_have_qualification_at_application_time",
+              "expect_to_achieve_before_training_begins",
+              "equivalence_test",
+              "not_required"
+            ]
+          },
+          "running": {
+            "type": "boolean",
+            "description": "Is the course currently running.",
+            "example": true
+          },
+          "salary_details": {
+            "type": "string",
+            "nullable": true,
+            "description": "Salary details about this course.",
+            "example": "Successful applicants will be employed as unqualified teachers on at least Point 1 of the Unqualified Teachers' Pay Scale for the duration of the programme."
+          },
+          "scholarship_amount": {
+            "type": "integer",
+            "nullable": true,
+            "description": "The scholarship amount a candidate may be eligible for for this course.",
+            "example": 17000
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date that the course starts.",
+            "example": "2020-09-01"
+          },
+          "state": {
+            "type": "string",
+            "description": "The state of the course in the Publish teacher training courses system.",
+            "example": "published",
+            "enum": ["rolled_over", "draft", "published", "withdrawn"]
+          },
+          "study_mode": {
+            "type": "string",
+            "description": "Whether the course is full-time, part-time or both.",
+            "example": "both",
+            "enum": ["both", "full_time", "part_time"]
+          },
+          "summary": {
+            "type": "string",
+            "description": "Generated summary of the course.",
+            "example": "PGCE with QTS full time"
+          },
+          "subject_codes": {
+            "type": "array",
+            "description": "The course’s subject codes, corresponding to subjects available on the `/subjects` endpoint",
+            "items": { "type": "string", "example": "00" }
+          },
+          "degree_grade": {
+            "type": "string",
+            "nullable": true,
+            "description": "Minimum degree grade required for this course",
+            "example": "two_one",
+            "enum": ["two_one", "two_two", "third_class", "not_required"]
+          },
+          "degree_subject_requirements": {
+            "type": "string",
+            "nullable": true,
+            "description": "Degree subject requirements",
+            "example": "Completed at least one programming module."
+          },
+          "accept_pending_gcse": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Does the provider consider candidates with pending GCSEs for this course?",
+            "example": "true"
+          },
+          "accept_gcse_equivalency": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Does the provider consider candidates who need to take an equivalency test in English, maths or science?",
+            "example": "true"
+          },
+          "accept_english_gcse_equivalency": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Does the provider consider candidates who need to take an equivalency test in English?",
+            "example": "true"
+          },
+          "accept_maths_gcse_equivalency": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Does the provider consider candidates who need to take an equivalency test in maths?",
+            "example": "true"
+          },
+          "accept_science_gcse_equivalency": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Does the provider consider candidates who need to take an equivalency test in science?",
+            "example": "true"
+          },
+          "additional_gcse_equivalencies": {
+            "type": "string",
+            "nullable": true,
+            "description": "Details about equivalency tests the provider offers or accepts",
+            "example": "We offer our own equivalency tests."
+          },
+          "can_sponsor_skilled_worker_visa": {
+            "type": "boolean",
+            "description": "Does this course provide sponsorship for a skilled worker visa?",
+            "example": true
+          },
+          "can_sponsor_student_visa": {
+            "type": "boolean",
+            "description": "Does this course provide sponsorship for a student visa?",
+            "example": false
+          },
+          "campaign_name": {
+            "type": "string",
+            "nullable": true,
+            "description": "The course’s campaign code, corresponding to campaigns to help improve recruitment.",
+            "example": "engineers_teach_physics"
+          }
+        }
+      },
+      "CourseFilter": {
+        "type": "object",
+        "example": "",
+        "description": "This schema is used to search within collections to return more specific results.",
+        "properties": {
+          "has_vacancies": {
+            "description": "Return courses that only have vacancies?",
+            "type": "boolean",
+            "example": true
+          },
+          "findable": {
+            "description": "Return courses that are currently available on the Find Postgraduate Teacher Training service",
+            "type": "boolean",
+            "example": true
+          },
+          "funding_type": {
+            "description": "Return courses depending on how it is funded. This is a comma delimited string. If multiple funding options are provided then any course matching any one of the options provided will be retuned, i.e. the OR operator is used.",
+            "type": "string",
+            "example": "salary,fee",
+            "enum": ["salary", "apprenticeship", "fee"]
+          },
+          "qualification": {
+            "description": "Search courses based on the award given on course completion. This is a comma delimited string. If multiple qualifications are given then any course matching any one of the qualifications provided will be returned, i.e. the OR operator is used.",
+            "type": "string",
+            "example": "qts,pgce,pgde",
+            "enum": ["qts", "pgce_with_qts", "pgde", "pgce", "pgde_with_qts"]
+          },
+          "study_type": {
+            "description": "Search full time or part time courses or both. This is a comma delimited string. If both full_time and part_time is specified we return courses that are either full time or part time.",
+            "type": "string",
+            "example": "full_time,part_time",
+            "enum": ["full_time", "part_time", "full_time_or_part_time"]
+          },
+          "subjects": {
+            "description": "Returns courses that include at least one of the given subjects. This is a comma delimied string. If multiple subjects are given a course that has any one of the subjects specified will be returned, i.e. the OR operator is used.",
+            "type": "string",
+            "example": "00,01,W1",
+            "enum": [
+              "00",
+              "01",
+              "02",
+              "03",
+              "04",
+              "06",
+              "07",
+              "W1",
+              "F0",
+              "C1",
+              "08",
+              "F1",
+              "09",
+              "Q8",
+              "P3",
+              "11",
+              "12",
+              "DT",
+              "13",
+              "L1",
+              "Q3",
+              "F8",
+              "L5",
+              "V1",
+              "G1",
+              "W3",
+              "P1",
+              "C6",
+              "F3",
+              "C8",
+              "V6",
+              "14",
+              "15",
+              "16",
+              "17",
+              "18",
+              "19",
+              "20",
+              "21",
+              "22",
+              "41",
+              "24"
+            ]
+          },
+          "send_courses": {
+            "description": "Only return courses that have a SEND specialism.",
+            "type": "boolean",
+            "example": true
+          },
+          "latitude": {
+            "description": "Latitude of origin when performing a search by radius.",
+            "type": "number",
+            "example": 54.9753348
+          },
+          "longitude": {
+            "description": "Longitude of origin when performing a search by radius.",
+            "type": "number",
+            "example": -1.6100477
+          },
+          "radius": {
+            "description": "Search radius in miles from given latitude and longitude.",
+            "type": "number",
+            "example": 20
+          },
+          "updated_since": {
+            "description": "Return courses have been updated since the date (ISO 8601 date format)",
+            "type": "string",
+            "example": "2020-11-13T11:21:55Z"
+          },
+          "degree_grade": {
+            "description": "Return courses based on their degree grade. This is a comma delimited string. If multiple degree grade types are provided then any course matching any one of the options provided will be returned, i.e. the OR operator is used.",
+            "type": "string",
+            "example": "two_two,third_class",
+            "enum": ["two_one", "two_two", "third_class", "not_required"]
+          },
+          "can_sponsor_visa": {
+            "description": "Only return courses where a skilled worker or student visa can be sponsored.",
+            "type": "boolean",
+            "example": true
+          },
+          "engineers_teach_physics": {
+            "description": "Only return courses that are part of the engineers teach physics campaign.",
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "CourseListResponse": {
+        "description": "This schema is used to return a collection of courses.",
+        "type": "object",
+        "required": ["data"],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CourseResource" }
+          },
+          "included": {
+            "description": "This returns the requested associated data.",
+            "type": "array",
+            "items": {
+              "anyOf": [
+                { "$ref": "#/components/schemas/RecruitmentCycleResource" },
+                { "$ref": "#/components/schemas/ProviderResource" }
+              ]
+            }
+          },
+          "jsonapi": { "$ref": "#/components/schemas/JSONAPI" }
+        }
+      },
+      "CourseLocationListResponse": {
+        "description": "This schema is used to return a collection of locations for a specified course.",
+        "type": "object",
+        "required": ["data"],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/LocationResource" }
+          },
+          "included": {
+            "description": "This returns the requested associated data.",
+            "type": "array",
+            "items": {
+              "anyOf": [
+                { "$ref": "#/components/schemas/RecruitmentCycleResource" },
+                { "$ref": "#/components/schemas/ProviderResource" },
+                { "$ref": "#/components/schemas/LocationStatusResource" },
+                { "$ref": "#/components/schemas/CourseResource" }
+              ]
+            }
+          },
+          "jsonapi": { "$ref": "#/components/schemas/JSONAPI" }
+        }
+      },
+      "CourseRelationship": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": ["type", "id"],
+            "properties": {
+              "type": { "type": "string", "example": "courses" },
+              "id": { "type": "string", "example": "12924236" }
+            }
+          }
+        }
+      },
+      "CourseRelationshipList": {
+        "description": "This schema is used to describe associations that can be returned with a course.",
+        "type": "object",
+        "properties": {
+          "recruitment_cycle": {
+            "$ref": "#/components/schemas/RecruitmentCycleRelationship"
+          },
+          "accredited_body": {
+            "$ref": "#/components/schemas/AccreditedBodyRelationship"
+          },
+          "provider": { "$ref": "#/components/schemas/ProviderRelationship" }
+        }
+      },
+      "CourseResource": {
+        "description": "This schema provides metadata about a course.",
+        "type": "object",
+        "required": ["id", "type", "attributes"],
+        "properties": {
+          "id": { "type": "string", "example": "12944685" },
+          "type": { "type": "string", "example": "courses" },
+          "attributes": { "$ref": "#/components/schemas/CourseAttributes" },
+          "relationships": {
+            "$ref": "#/components/schemas/CourseRelationshipList"
+          }
+        }
+      },
+      "CourseSingleResponse": {
+        "description": "This schema is used to return a single course.",
+        "type": "object",
+        "required": ["data", "jsonapi"],
+        "properties": {
+          "data": { "$ref": "#/components/schemas/CourseResource" },
+          "included": {
+            "description": "This returns the requested associated data.",
+            "type": "array",
+            "items": {
+              "anyOf": [
+                { "$ref": "#/components/schemas/RecruitmentCycleResource" },
+                { "$ref": "#/components/schemas/ProviderResource" }
+              ]
+            }
+          },
+          "jsonapi": { "$ref": "#/components/schemas/JSONAPI" }
+        }
+      },
+      "Included": {
+        "description": "This schema is used to return requested associated objects if there are any.",
+        "type": "array",
+        "items": { "$ref": "#/components/schemas/Resource" }
+      },
+      "JSONAPI": {
+        "description": "This returns the version of JSON API in use.",
+        "type": "object",
+        "required": ["version"],
+        "properties": { "version": { "type": "string", "example": "1.0" } }
+      },
+      "LocationAttributes": {
+        "description": "This schema is used to describe a location.",
+        "type": "object",
+        "properties": {
+          "code": { "type": "string", "example": "-" },
+          "name": {
+            "type": "string",
+            "description": "The name of the location.",
+            "example": "Main Site"
+          },
+          "street_address_1": {
+            "type": "string",
+            "description": "Building or street address line one.",
+            "example": "Barnsley Road"
+          },
+          "street_address_2": {
+            "type": "string",
+            "description": "Building or street address line two.",
+            "example": "Wath-upon-Dearne"
+          },
+          "city": {
+            "type": "string",
+            "description": "Town or city.",
+            "example": "Rotherham"
+          },
+          "county": {
+            "type": "string",
+            "description": "County.",
+            "example": "South Yorkshire"
+          },
+          "postcode": {
+            "type": "string",
+            "description": "The postcode of the location.",
+            "example": "S63 6PY"
+          },
+          "region_code": {
+            "type": "string",
+            "example": "yorkshire_and_the_humber"
+          },
+          "latitude": {
+            "type": "number",
+            "description": "The latitude of the location.",
+            "example": 53.5082828
+          },
+          "longitude": {
+            "type": "number",
+            "description": "The longitude of the location.",
+            "example": -1.3603394
+          },
+          "uuid": {
+            "type": "string",
+            "description": "The unique identifier of the location.",
+            "example": "a74106f6-dd85-45c4-8d56-048e6222734h"
+          }
+        }
+      },
+      "LocationRelationshipList": {
+        "description": "This schema is used to describe associations that can be returned with locations.",
+        "type": "object",
+        "properties": {
+          "recruitment_cycle": {
+            "$ref": "#/components/schemas/RecruitmentCycleRelationship"
+          },
+          "provider": { "$ref": "#/components/schemas/ProviderRelationship" },
+          "course": { "$ref": "#/components/schemas/CourseRelationship" },
+          "location_status": {
+            "$ref": "#/components/schemas/LocationStatusRelationship"
+          }
+        }
+      },
+      "LocationResource": {
+        "description": "This schema provides metadata about a location.",
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "11214485" },
+          "type": { "type": "string", "example": "locations" },
+          "attributes": { "$ref": "#/components/schemas/LocationAttributes" },
+          "relationships": {
+            "$ref": "#/components/schemas/LocationRelationshipList"
+          }
+        }
+      },
+      "LocationStatusAttributes": {
+        "description": "This schema is used to describe the state of a location. For example a course running a particular location may have no vacancies remaining.",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["discontinued", "running", "new_status", "suspended"],
+            "example": "running"
+          },
+          "publish": {
+            "type": "string",
+            "enum": ["published", "unpublished"],
+            "example": "published"
+          },
+          "has_vacancies": {
+            "type": "boolean",
+            "description": "Are there any vacancies for this course.",
+            "example": true
+          },
+          "vacancy_status": {
+            "type": "string",
+            "description": "What type of vacancies are available.",
+            "enum": ["full_time_vacancies", "part_time_vacancies", "both_full_time_and_part_time_vacancies"],
+            "example": "full_time_vacancies"
+          }
+        }
+      },
+      "LocationStatusRelationship": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": ["type", "id"],
+            "properties": {
+              "type": { "type": "string", "example": "location_statuses" },
+              "id": { "type": "string", "example": "22322679" }
+            }
+          }
+        }
+      },
+      "LocationStatusResource": {
+        "description": "This schema provides metadata about a location status.",
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "22329867" },
+          "type": { "type": "string", "example": "site_statuses" },
+          "attributes": {
+            "$ref": "#/components/schemas/LocationStatusAttributes"
+          },
+          "relationships": { "$ref": "#/components/schemas/SiteRelationship" }
+        }
+      },
+      "Pagination": {
+        "description": "This schema used to paginate through a collection.",
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "The page number to paginate to in the collection. If no value is specified it defaults to the first page.",
+            "example": 3
+          },
+          "per_page": {
+            "type": "integer",
+            "description": "The number items to display on a page. Defaults to 100. Maximum is 500, if the value is greater that the maximum allowed it will fallback to 500.",
+            "example": 10
+          }
+        }
+      },
+      "ProviderAttributes": {
+        "description": "This schema is used to describe a provider.",
+        "type": "object",
+        "required": ["code", "name"],
+        "properties": {
+          "accredited_body": {
+            "type": "boolean",
+            "description": "Is this provider an accredited body for other provider's courses.",
+            "example": "true"
+          },
+          "city": {
+            "type": "string",
+            "description": "Town or city",
+            "example": "London"
+          },
+          "county": {
+            "type": "string",
+            "description": "County",
+            "example": "London"
+          },
+          "changed_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date-time timestamp of when this provider or any of its related data changed.",
+            "example": "2019-06-13T10:44:31Z"
+          },
+          "code": {
+            "type": "string",
+            "description": "Code that uniquely identifies this provider within a recruitment cycle.",
+            "maxLength": 3,
+            "minLength": 3,
+            "example": "X99"
+          },
+          "ukprn": {
+            "type": "string",
+            "description": "UK Provider Reference Number. A unique number allocated to teacher training providers.",
+            "maxLength": 8,
+            "minLength": 8,
+            "example": "10071005"
+          },
+          "urn": {
+            "type": "string",
+            "description": "Unique Reference Number. A unique number allocated to educational establishments.",
+            "maxLength": 6,
+            "minLength": 5,
+            "example": "115074"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of when this provider was created.",
+            "example": "2019-06-13T10:44:31Z"
+          },
+          "postcode": {
+            "type": "string",
+            "format": "uk-postcode",
+            "description": "The provider's postcode",
+            "maxLength": 8,
+            "example": "SK2 6AA"
+          },
+          "latitude": {
+            "type": "float",
+            "description": "The latitude of the provider's address",
+            "example": "51.498161"
+          },
+          "longitude": {
+            "type": "float",
+            "description": "The longitude of the provider's address",
+            "example": "-0.129900"
+          },
+          "telephone": {
+            "type": "string",
+            "description": "The provider's telephone number.",
+            "example": "01834 80657"
+          },
+          "email": {
+            "type": "string",
+            "description": "The provider's email address.",
+            "example": "school@example.com"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the training provider.",
+            "example": "Long School"
+          },
+          "provider_type": {
+            "type": "string",
+            "description": "The type of provider.",
+            "example": "scitt",
+            "enum": ["scitt", "lead_school", "university"]
+          },
+          "region_code": {
+            "type": "string",
+            "description": "The NUTS 1 region code for the provider's address.",
+            "example": "south_west",
+            "enum": [
+              "no_region",
+              "london",
+              "south_east",
+              "south_west",
+              "wales",
+              "west_midlands",
+              "east_midlands",
+              "eastern",
+              "north_west",
+              "yorkshire_and_the_humber",
+              "north_east",
+              "scotland"
+            ]
+          },
+          "street_address_1": {
+            "type": "string",
+            "description": "Building or street line one.",
+            "example": "Long College"
+          },
+          "street_address_2": {
+            "type": "string",
+            "description": "Building or street line two.",
+            "example": "1st floor, 86 Long Rd"
+          },
+          "train_with_disability": {
+            "type": "string",
+            "format": "markdown",
+            "description": "How candidates with disabilities and other needs will be supported.",
+            "example": "We are committed to supporting trainees with disabilities and other needs, so please let us and the accrediting provider know if you would like us to make any adjustments to support you."
+          },
+          "train_with_us": {
+            "type": "string",
+            "format": "markdown",
+            "description": "Information about the training provider.",
+            "example": "We offer both primary and secondary training in a wide range of subjects and work with a collection of schools in the local area. We offer diverse teaching placements, ensuring trainees have experience in different types of school environments."
+          },
+          "website": {
+            "type": "string",
+            "format": "url",
+            "description": "A link to the initial teacher training or course pages of your website.",
+            "example": "http://www.teamworkstsa.org/home-page-s-c-i-t-t-teacher-training/"
+          },
+          "can_sponsor_skilled_worker_visa": {
+            "type": "boolean",
+            "description": "Can this provider sponsor Skilled Worker visas?",
+            "example": "true"
+          },
+          "can_sponsor_student_visa": {
+            "type": "boolean",
+            "description": "Can this provider sponsor Student visas?",
+            "example": "true"
+          }
+        }
+      },
+      "ProviderFilter": {
+        "type": "object",
+        "example": "",
+        "description": "This schema is used to search within collections to return more specific results.",
+        "properties": {
+          "updated_since": {
+            "description": "Return providers that have been updated since the date (ISO 8601 date format)",
+            "type": "string",
+            "example": "2020-11-13T11:21:55Z"
+          }
+        }
+      },
+      "ProviderListResponse": {
+        "description": "This schema is used to return a collection of providers.",
+        "type": "object",
+        "required": ["data", "jsonapi"],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ProviderResource" }
+          },
+          "included": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/RecruitmentCycleResource" }
+          },
+          "jsonapi": { "$ref": "#/components/schemas/JSONAPI" }
+        }
+      },
+      "ProviderLocationListResponse": {
+        "description": "This schema is used to return a collection of locations for a specified provider.",
+        "type": "object",
+        "required": ["data"],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/LocationResource" }
+          },
+          "included": {
+            "description": "This returns the requested associated data.",
+            "type": "array",
+            "items": {
+              "anyOf": [
+                { "$ref": "#/components/schemas/RecruitmentCycleResource" },
+                { "$ref": "#/components/schemas/ProviderResource" },
+                { "$ref": "#/components/schemas/LocationStatusResource" },
+                { "$ref": "#/components/schemas/CourseResource" }
+              ]
+            }
+          },
+          "jsonapi": { "$ref": "#/components/schemas/JSONAPI" }
+        }
+      },
+      "ProviderRelationship": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": ["type", "id"],
+            "properties": {
+              "type": { "type": "string", "example": "providers" },
+              "id": { "type": "string", "example": "16288" }
+            }
+          }
+        }
+      },
+      "ProviderRelationshipList": {
+        "description": "This schema is used to describe associations that can be returned with a provider.",
+        "type": "object",
+        "properties": {
+          "recruitment_cycle": {
+            "$ref": "#/components/schemas/RecruitmentCycleRelationship"
+          }
+        }
+      },
+      "ProviderResource": {
+        "description": "This schema provides metadata about a provider.",
+        "type": "object",
+        "required": ["id", "type", "attributes"],
+        "properties": {
+          "id": { "type": "string", "example": "14554" },
+          "type": { "type": "string", "example": "providers" },
+          "attributes": { "$ref": "#/components/schemas/ProviderAttributes" },
+          "relationships": {
+            "$ref": "#/components/schemas/ProviderRelationshipList"
+          }
+        }
+      },
+      "ProviderSingleResponse": {
+        "description": "This schema is used to return a single provider.",
+        "type": "object",
+        "required": ["data", "jsonapi"],
+        "properties": {
+          "data": { "$ref": "#/components/schemas/ProviderResource" },
+          "included": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/RecruitmentCycleResource" }
+          },
+          "jsonapi": { "$ref": "#/components/schemas/JSONAPI" }
+        }
+      },
+      "ProviderSuggestion": {
+        "description": "This schema provides metadata about a provider.",
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "15947" },
+          "type": { "type": "string", "example": "provider_suggestions" },
+          "attributes": {
+            "$ref": "#/components/schemas/ProviderSuggestionAttributes"
+          }
+        }
+      },
+      "ProviderSuggestionAttributes": {
+        "description": "This schema is used to describe a provider's lookup information.",
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "example": "Oxford Brookes University" },
+          "code": { "type": "string", "example": "O66" }
+        }
+      },
+      "ProviderSuggestionListResponse": {
+        "description": "This schema is used to return a collection of provider suggestions.",
+        "type": "object",
+        "required": ["data"],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ProviderSuggestion" }
+          },
+          "jsonapi": { "$ref": "#/components/schemas/JSONAPI" }
+        }
+      },
+      "RecruitmentCycleAttributes": {
+        "description": "This schema is used to describe a recruitment cycle.",
+        "type": "object",
+        "required": ["code"],
+        "properties": {
+          "year": {
+            "type": "integer",
+            "description": "The year that this recruitment cycle applies to.",
+            "example": 2021
+          },
+          "application_start_date": {
+            "type": "string",
+            "format": "date",
+            "description": "The default date applications start being taken for this recruitment cycle.",
+            "example": "2020-10-13"
+          },
+          "application_end_date": {
+            "type": "string",
+            "format": "date",
+            "description": "The default date applications stop being taken for this recruitment cycle.",
+            "example": "2021-10-03"
+          }
+        }
+      },
+      "RecruitmentCycleRelationship": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": ["type", "id"],
+            "properties": {
+              "type": { "type": "string", "example": "recruitment_cycles" },
+              "id": { "type": "string", "example": "3" }
+            }
+          }
+        }
+      },
+      "RecruitmentCycleResource": {
+        "description": "This schema provides metadata about a recruitment cycle.",
+        "type": "object",
+        "required": ["id", "type", "attributes"],
+        "properties": {
+          "id": { "type": "string", "example": "3" },
+          "type": { "type": "string", "example": "recruitment_cycles" },
+          "attributes": {
+            "$ref": "#/components/schemas/RecruitmentCycleAttributes"
+          }
+        }
+      },
+      "Relationship": {
+        "description": "This schema describes a single associated object.",
+        "type": "object",
+        "properties": {
+          "data": { "$ref": "#/components/schemas/ResourceIdentifier" },
+          "meta": { "type": "object" }
+        }
+      },
+      "RelationshipList": {
+        "description": "This schema describes a collection of associated objects.",
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ResourceIdentifier" }
+          }
+        }
+      },
+      "Resource": {
+        "anyOf": [
+          { "$ref": "#/components/schemas/CourseResource" },
+          { "$ref": "#/components/schemas/LocationResource" },
+          { "$ref": "#/components/schemas/LocationStatusResource" },
+          { "$ref": "#/components/schemas/ProviderResource" },
+          { "$ref": "#/components/schemas/RecruitmentCycleResource" },
+          { "$ref": "#/components/schemas/SubjectResource" }
+        ],
+        "discriminator": { "propertyName": "type" }
+      },
+      "ResourceIdentifier": {
+        "description": "As included associated data can be polymorphic, this schema is used to describe what type of resource is being presented.",
+        "type": "object",
+        "required": ["type", "id"],
+        "properties": {
+          "type": { "type": "string", "example": "recruitment_cycles" },
+          "id": { "type": "string", "example": "3" }
+        }
+      },
+      "SiteRelationship": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["type", "id"],
+              "properties": {
+                "type": { "type": "string", "example": "sites" },
+                "id": { "type": "string", "example": "11214483" }
+              }
+            }
+          }
+        }
+      },
+      "Sort": {
+        "type": "array",
+        "example": "provider.provider_name,name",
+        "description": "This schema is used to sort a collection.",
+        "items": {
+          "type": "string",
+          "example": "name",
+          "description": "A comma delimited string of fields to sort the collection by."
+        }
+      },
+      "StandardErrorAttributes": {
+        "description": "This schema is used to describe a generic application error.",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "Returns the http status code associated with the error.",
+            "example": 400
+          },
+          "title": {
+            "type": "string",
+            "description": "A generic title for the type of error.",
+            "example": "BAD REQUEST"
+          },
+          "detail": {
+            "type": "string",
+            "description": "A more detailed description of what could have caused the error.",
+            "example": "The request could not be fulfilled due to some incorrect syntax of the request."
+          }
+        }
+      },
+      "StandardErrorResponse": {
+        "description": "This schema is used to return a collection of generic application errors",
+        "type": "object",
+        "required": ["errors"],
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/StandardErrorAttributes" }
+          }
+        }
+      },
+      "SubjectAreaAttributes": {
+        "description": "This schema is used to describe a subject area.",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the subject area.",
+            "example": "Primary"
+          },
+          "typename": {
+            "type": "string",
+            "description": "A type name for the subject area.",
+            "example": "PrimarySubject"
+          }
+        }
+      },
+      "SubjectAreaListResponse": {
+        "description": "This schema is used to return a collection of subject areas.",
+        "type": "object",
+        "required": ["data", "jsonapi"],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/SubjectAreaResource" }
+          },
+          "included": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/SubjectResource" }
+          },
+          "jsonapi": { "$ref": "#/components/schemas/JSONAPI" }
+        }
+      },
+      "SubjectAreaRelationshipList": {
+        "description": "This schema is used to describe associations that can be returned with a subject area.",
+        "type": "object",
+        "properties": {
+          "subjects": { "$ref": "#/components/schemas/SubjectRelationship" }
+        }
+      },
+      "SubjectAreaResource": {
+        "description": "This schema provides metadata about a subject area.",
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "PrimarySubject" },
+          "type": { "type": "string", "example": "subject_areas" },
+          "attributes": {
+            "$ref": "#/components/schemas/SubjectAreaAttributes"
+          },
+          "relationships": {
+            "$ref": "#/components/schemas/SubjectAreaRelationshipList"
+          }
+        }
+      },
+      "SubjectAttributes": {
+        "description": "This schema is used to describe a subject.",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Subject name.",
+            "example": "Primary with science"
+          },
+          "code": {
+            "type": "string",
+            "description": "Unique subject code.",
+            "example": "07",
+            "nullable": true
+          },
+          "bursary_amount": {
+            "type": "string",
+            "description": "Non-repayable sum of money that universities can award to students to incentivise and support their studies",
+            "example": "9000",
+            "nullable": true
+          },
+          "early_career_payments": {
+            "type": "string",
+            "description": "Eligible subjects teachers can apply for early-career payments of up to £9,000 after tax.",
+            "example": "8388",
+            "nullable": true
+          },
+          "scholarship": {
+            "type": "string",
+            "description": "A grant or payment made to support a student’s education, awarded on the basis of academic or other achievement.",
+            "example": "3500",
+            "nullable": true
+          },
+          "subject_knowledge_enhancement_course_available": {
+            "type": "boolean",
+            "description": "SKE courses are available in various subjects. Schools or universities will identify your need for an SKE as part of their selection process, usually at interview. If they feel you need to enhance your knowledge, but have potential to be a great teacher, they’ll offer you a teacher training place on the condition that you complete an SKE course.",
+            "example": true,
+            "nullable": true
+          }
+        }
+      },
+      "SubjectListResponse": {
+        "description": "This schema is used to return a collection of subjects.",
+        "type": "object",
+        "required": ["data", "jsonapi"],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/SubjectResource" }
+          },
+          "jsonapi": { "$ref": "#/components/schemas/JSONAPI" }
+        }
+      },
+      "SubjectRelationship": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["type", "id"],
+              "properties": {
+                "type": { "type": "string", "example": "subjects" },
+                "id": { "type": "string", "example": "1" }
+              }
+            }
+          }
+        }
+      },
+      "SubjectResource": {
+        "description": "This schema provides metadata about a subject.",
+        "type": "object",
+        "required": ["id", "type", "attributes"],
+        "properties": {
+          "id": { "type": "string", "example": "3" },
+          "type": { "type": "string", "example": "subjects" },
+          "attributes": { "$ref": "#/components/schemas/SubjectAttributes" }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/recruitment_cycles/{year}/courses": {
+      "get": {
+        "summary": "Returns the courses for the specified recruitment cycle.",
+        "operationId": "public_api_v1_courses",
+        "tags": ["courses"],
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "description": "The starting year of the recruitment cycle.",
+            "example": "2020",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "schema": { "$ref": "#/components/schemas/CourseFilter" },
+            "style": "deepObject",
+            "explode": true,
+            "required": false,
+            "description": "Refine courses to return.",
+            "example": {
+              "has_vacancies": true,
+              "subjects": "00,01",
+              "updated_since": "2020-11-13T11:21:55Z",
+              "degree_grade": "two_two",
+              "can_sponsor_visa": true
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": { "$ref": "#/components/schemas/Sort" },
+            "style": "form",
+            "explode": false,
+            "required": false,
+            "example": "provider.provider_name,name",
+            "description": "Field(s) to sort the courses by."
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": { "$ref": "#/components/schemas/Pagination" },
+            "style": "deepObject",
+            "explode": true,
+            "required": false,
+            "example": { "page": 2, "per_page": 10 },
+            "description": "Pagination options to navigate through the collection."
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "required": false,
+            "description": "The associated data for this resource.",
+            "schema": {
+              "enum": ["accredited_body", "provider", "recruitment_cycle"]
+            },
+            "example": "recruitment_cycle,provider"
+          }
+        ],
+        "x-curl-examples": [
+          {
+            "description": "Get all courses",
+            "command": "curl -X GET https://api.publish-teacher-training-courses.service.gov.uk/api/public/v1/recruitment_cycles/2020/courses"
+          },
+          {
+            "description": "Get the second page of courses",
+            "command": "curl -X GET https://api.publish-teacher-training-courses.service.gov.uk/api/public/v1/recruitment_cycles/2020/courses?page[page]=2"
+          },
+          {
+            "description": "Sort courses by distance from given latitude and longitude",
+            "command": "curl -X GET \"https://api.publish-teacher-training-courses.service.gov.uk/api/public/v1/recruitment_cycles/2020/courses?page\\[per_page\\]=10&filter\\[latitude\\]=51.8975918&filter\\[longitude\\]=-0.4910925&filter\\[radius\\]=10&sort=distance\""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The collection of courses.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CourseListResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/provider_suggestions": {
+      "get": {
+        "summary": "Returns a list of providers suggestions matching the query term.",
+        "operationId": "public_api_v1_provider_suggestions",
+        "tags": ["provider_suggestions"],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "description": "The provider's marketing name or code",
+            "example": "oxf",
+            "schema": { "type": "string" }
+          }
+        ],
+        "x-curl-examples": [
+          {
+            "description": "Suggest providers with the specified query",
+            "command": "curl -X GET https://api.publish-teacher-training-courses.service.gov.uk/api/public/v1/provider_suggestions?query=oxf"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of provider suggestions matching the query term",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderSuggestionListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A bad request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/400ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recruitment_cycles/{year}/providers/{provider_code}/courses/{course_code}/locations": {
+      "get": {
+        "summary": "Returns the locations for the specified course.",
+        "operationId": "public_api_v1_provider_course_locations",
+        "tags": ["locations"],
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "description": "The starting year of the recruitment cycle.",
+            "example": 2022,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "provider_code",
+            "in": "path",
+            "required": true,
+            "description": "The unique code of the provider.",
+            "example": "T92",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "course_code",
+            "in": "path",
+            "description": "The code of the course.",
+            "example": "X130",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "required": false,
+            "description": "The associated data for this resource.",
+            "schema": {
+              "enum": ["recruitment_cycle", "provider", "course", "location_status"]
+            },
+            "example": "recruitment_cycle,provider,course,location_status"
+          }
+        ],
+        "x-curl-examples": [
+          {
+            "description": "Get the locations of a course",
+            "command": "curl -X GET https://api.publish-teacher-training-courses.service.gov.uk/api/public/v1/recruitment_cycles/2020/providers/B20/courses/2N22/locations"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The collection of locations for the specified course.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseLocationListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recruitment_cycles/{year}/providers/{provider_code}/courses": {
+      "get": {
+        "summary": "Returns the courses for the specified provider.",
+        "operationId": "public_api_v1_provider_courses",
+        "tags": ["course"],
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "description": "The starting year of the recruitment cycle.",
+            "example": "2020",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "provider_code",
+            "in": "path",
+            "required": true,
+            "description": "The unique code of the provider.",
+            "example": "T92",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "schema": { "$ref": "#/components/schemas/CourseFilter" },
+            "style": "deepObject",
+            "explode": true,
+            "required": false,
+            "description": "Refine courses to return.",
+            "example": {
+              "has_vacancies": true,
+              "subjects": "00,01",
+              "updated_since": "2020-11-13T11:21:55Z",
+              "degree_grade": "two_two",
+              "can_sponsor_visa": true
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": { "$ref": "#/components/schemas/Sort" },
+            "style": "form",
+            "explode": false,
+            "required": false,
+            "example": "provider.provider_name,name",
+            "description": "Field(s) to sort the courses by."
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": { "$ref": "#/components/schemas/Pagination" },
+            "style": "deepObject",
+            "explode": true,
+            "required": false,
+            "example": { "page": 2, "per_page": 10 },
+            "description": "Pagination options to navigate through the collection."
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "required": false,
+            "description": "The associated data for this resource.",
+            "schema": {
+              "enum": ["accredited_body", "provider", "recruitment_cycle"]
+            },
+            "example": "recruitment_cycle,provider"
+          }
+        ],
+        "x-curl-examples": [
+          {
+            "description": "Get all courses for a provider",
+            "command": "curl -X GET https://api.publish-teacher-training-courses.service.gov.uk/api/public/v1/recruitment_cycles/2020/providers/B20/courses"
+          },
+          {
+            "description": "Get the second page of courses for a provider",
+            "command": "curl -X GET https://api.publish-teacher-training-courses.service.gov.uk/api/public/v1/recruitment_cycles/2020/provideers/B20/courses?page[page]=2"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The collection of courses.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CourseListResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recruitment_cycles/{year}/providers/{provider_code}/courses/{course_code}": {
+      "get": {
+        "summary": "Returns the specified course for the specified provider.",
+        "operationId": "public_api_v1_provider_course",
+        "tags": ["course"],
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "description": "The starting year of the recruitment cycle.",
+            "example": "2020",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "provider_code",
+            "in": "path",
+            "required": true,
+            "description": "The unique code of the provider.",
+            "example": "T92",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "course_code",
+            "in": "path",
+            "required": true,
+            "description": "The code of the course.",
+            "example": "X130",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "required": false,
+            "description": "The associated data for this resource.",
+            "schema": {
+              "enum": ["accredited_body", "provider", "recruitment_cycle"]
+            },
+            "example": "recruitment_cycle,provider"
+          }
+        ],
+        "x-curl-examples": [
+          {
+            "description": "Get a course for a provider",
+            "command": "curl -X GET https://api.publish-teacher-training-courses.service.gov.uk/api/public/v1/recruitment_cycles/2020/providers/B20/courses/2N22"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The collection of courses offered by the specified provider.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseSingleResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recruitment_cycles/{year}/providers/{provider_code}/locations": {
+      "get": {
+        "summary": "Returns the locations for the specified provider.",
+        "operationId": "public_api_v1_provider_locations",
+        "tags": ["locations"],
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "description": "The starting year of the recruitment cycle.",
+            "example": 2022,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "provider_code",
+            "in": "path",
+            "required": true,
+            "description": "The unique code of the provider.",
+            "example": "T92",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "required": false,
+            "description": "The associated data for this resource.",
+            "schema": {
+              "enum": ["recruitment_cycle", "provider", "course", "location_status"]
+            },
+            "example": "recruitment_cycle,provider,course,location_status"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The collection of locations for the specified provider.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderLocationListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recruitment_cycles/{year}/providers": {
+      "get": {
+        "summary": "Returns providers for the specified recruitment cycle.",
+        "operationId": "public_api_v1_provider_index",
+        "tags": ["provider"],
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "description": "The starting year of the recruitment cycle.",
+            "example": "2020",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": { "$ref": "#/components/schemas/Sort" },
+            "style": "form",
+            "explode": false,
+            "required": false,
+            "example": "name",
+            "description": "Field(s) to sort the providers by."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "schema": { "$ref": "#/components/schemas/ProviderFilter" },
+            "style": "deepObject",
+            "explode": true,
+            "required": false,
+            "description": "Refine providers to return.",
+            "example": { "updated_since": "2020-11-13T11:21:55Z" }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": { "$ref": "#/components/schemas/Pagination" },
+            "style": "deepObject",
+            "explode": true,
+            "required": false,
+            "example": { "page": 2, "per_page": 10 },
+            "description": "Pagination options to navigate through the collection."
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "required": false,
+            "description": "The associated data for this resource.",
+            "schema": { "enum": ["recruitment_cycle"] },
+            "example": "recruitment_cycle"
+          }
+        ],
+        "x-curl-examples": [
+          {
+            "description": "Get all providers",
+            "command": "curl -X GET https://api.publish-teacher-training-courses.service.gov.uk/api/public/v1/recruitment_cycles/2020/providers"
+          },
+          {
+            "description": "Get second page of providers",
+            "command": "curl -X GET https://api.publish-teacher-training-courses.service.gov.uk/api/public/v1/recruitment_cycles/2020/providers?page[page]=2"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Collection of providers.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recruitment_cycles/{year}/providers/{provider_code}": {
+      "get": {
+        "summary": "Returns the specified provider.",
+        "operationId": "public_api_v1_provider_show",
+        "tags": ["provider"],
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "description": "The starting year of the recruitment cycle.",
+            "example": "2020",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "provider_code",
+            "in": "path",
+            "required": true,
+            "description": "The unique code of the provider.",
+            "example": "T92",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "required": false,
+            "description": "The associated data for this resource.",
+            "schema": { "enum": ["recruitment_cycle"] },
+            "example": "recruitment_cycle"
+          }
+        ],
+        "x-curl-examples": [
+          {
+            "description": "Get a specific provider",
+            "command": "curl -X GET https://api.publish-teacher-training-courses.service.gov.uk/api/public/v1/recruitment_cycles/2020/providers/B20"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The provider.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderSingleResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The non existant provider.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/404ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subject_areas": {
+      "get": {
+        "summary": "Returns a list of subject areas used to organise subjects.",
+        "operationId": "public_api_v1_subject_areas",
+        "tags": ["subject_areas"],
+        "parameters": [
+          {
+            "name": "include",
+            "in": "query",
+            "required": false,
+            "description": "The associated data for this resource.",
+            "schema": { "enum": ["subjects"] },
+            "example": "subjects"
+          }
+        ],
+        "x-curl-examples": [
+          {
+            "description": "Get all subject areas",
+            "command": "curl -X GET https://api.publish-teacher-training-courses.service.gov.uk/api/public/v1/subject_areas"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The collection of subject areas.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubjectAreaListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subjects": {
+      "get": {
+        "summary": "Returns a list of subjects",
+        "operationId": "public_api_v1_subjects",
+        "tags": ["Subjects"],
+        "parameters": [
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": { "type": "string" },
+            "style": "form",
+            "explode": false,
+            "required": false,
+            "example": "name",
+            "description": "Sort subjects by name"
+          }
+        ],
+        "x-curl-examples": [
+          {
+            "description": "Get all subjects",
+            "command": "curl -X GET https://api.publish-teacher-training-courses.service.gov.uk/api/public/v1/subjects"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The list of subjects",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SubjectListResponse" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
