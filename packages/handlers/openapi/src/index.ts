@@ -55,7 +55,6 @@ export default class OpenAPIHandler implements MeshHandler {
         })),
         fallbackFormat: this.config.fallbackFormat,
         operationHeaders: typeof this.config.operationHeaders === 'string' ? {} : this.config.operationHeaders,
-        queryStringOptions: this.config.queryStringOptions,
       });
     });
   }
@@ -80,7 +79,6 @@ export default class OpenAPIHandler implements MeshHandler {
       logger: this.logger,
       baseUrl: this.config.baseUrl,
       operationHeaders: operationHeadersConfig,
-      queryStringOptions: this.config.queryStringOptions,
     });
     return {
       schema,

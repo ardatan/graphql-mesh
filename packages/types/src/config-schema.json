@@ -1954,9 +1954,6 @@
           "type": "object",
           "properties": {},
           "description": "JSON object representing the query search parameters to add to the API calls"
-        },
-        "queryStringOptions": {
-          "$ref": "#/definitions/QueryStringOptions"
         }
       },
       "required": ["source"]
