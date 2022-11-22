@@ -1,13 +1,5 @@
 import NamingConventionTransform from '../src/index.js';
-import {
-  buildSchema,
-  printSchema,
-  GraphQLObjectType,
-  GraphQLEnumType,
-  execute,
-  parse,
-  GraphQLUnionType,
-} from 'graphql';
+import { buildSchema, GraphQLObjectType, GraphQLEnumType, execute, parse, GraphQLUnionType } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { PubSub } from '@graphql-mesh/utils';
