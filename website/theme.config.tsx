@@ -24,28 +24,29 @@ export default defineConfig({
       </div>
     </>
   ),
-  main: {
-    extraContent() {
-      const { resolvedTheme } = useTheme();
-      const { route } = useRouter();
+  main({ children }) {
+    const { resolvedTheme } = useTheme();
+    const { route } = useRouter();
 
-      if (route === '/') {
-        return null;
-      }
-      return (
-        <Giscus
-          // ensure giscus is reloaded when client side route is changed
-          key={route}
-          repo="Urigo/graphql-mesh"
-          repoId="MDEwOlJlcG9zaXRvcnkyMzM1OTc1MTc="
-          category="Docs Discussions"
-          categoryId="DIC_kwDODexqTc4CSDDQ"
-          mapping="pathname"
-          theme={resolvedTheme}
-        />
-      );
-    },
+    const comments = route !== '/' && (
+      <Giscus
+        // ensure giscus is reloaded when client side route is changed
+        key={route}
+        repo="Urigo/graphql-mesh"
+        repoId="MDEwOlJlcG9zaXRvcnkyMzM1OTc1MTc="
+        category="Docs Discussions"
+        categoryId="DIC_kwDODexqTc4CSDDQ"
+        mapping="pathname"
+        theme={resolvedTheme}
+      />
+    );
+
+    return (
+      <>
+        {children}
+        {comments}
+      </>
+    );
   },
   siteName: SITE_NAME,
-  titleSuffix: ` – ${SITE_NAME}`,
 });
