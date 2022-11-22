@@ -24,7 +24,7 @@
             "description": "filter by collection of ids",
             "in": "query",
             "style": "form",
-            "explode": true,
+            "explode": false,
             "schema": {
               "type": "array",
               "items": {

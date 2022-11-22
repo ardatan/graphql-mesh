@@ -22,11 +22,6 @@ describe('OpenAPI loader: Query Arguments', () => {
       baseUrl,
       source: './fixtures/query_arguments.json',
       cwd: __dirname,
-      queryStringOptions: {
-        // indices: true,
-        // allowDots: true,
-        arrayFormat: 'brackets',
-      },
     });
   });
 

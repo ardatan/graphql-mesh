@@ -22,7 +22,7 @@ export function getServer() {
   const data = [{ id: 1 }, { id: 2 }, { id: 3 }];
 
   app.get('/todos', (req: Request & IttyRequest, res: Response) => {
-    const ids = req.query.id__in as unknown as Array<number>;
+    const ids = (req.query?.id__in ?? []) as unknown as Array<number>;
 
     return new Response(JSON.stringify(data.filter(x => ids.includes(x.id))), {
       headers: {
