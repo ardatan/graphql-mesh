@@ -46,5 +46,6 @@ export default defineConfig({
       );
     },
   },
+  siteName: SITE_NAME,
   titleSuffix: ` – ${SITE_NAME}`,
 });
