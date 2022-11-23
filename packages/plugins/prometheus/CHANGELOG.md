@@ -1,5 +1,17 @@
 # @graphql-mesh/plugin-prometheus
 
+## 0.2.11
+
+### Patch Changes
+
+- [#4835](https://github.com/Urigo/graphql-mesh/pull/4835) [`ef6cc3b25`](https://github.com/Urigo/graphql-mesh/commit/ef6cc3b2565b8efd0c6c0dfbc8040747b8d80573) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`graphql-yoga@3.0.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.0) (from `3.0.0-next.12`, in `peerDependencies`)
+
+- [#4837](https://github.com/Urigo/graphql-mesh/pull/4837) [`b0adaa48c`](https://github.com/Urigo/graphql-mesh/commit/b0adaa48cf9f389ead587a23decd4750a74d8f55) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`@graphql-yoga/plugin-prometheus@1.0.1` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-prometheus/v/1.0.1) (from `1.0.0`, in `dependencies`)
+  - Updated dependency [`graphql-yoga@3.0.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.1) (from `3.0.0`, in `peerDependencies`)
+
 ## 0.2.10
 
 ### Patch Changes

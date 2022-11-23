@@ -1,5 +1,12 @@
 # @graphql-mesh/transform-federation
 
+## 0.9.58
+
+### Patch Changes
+
+- [#4842](https://github.com/Urigo/graphql-mesh/pull/4842) [`4768f24ad`](https://github.com/Urigo/graphql-mesh/commit/4768f24ad44df4af7412efa395e15ae8880601c6) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`@apollo/subgraph@2.2.1` ↗︎](https://www.npmjs.com/package/@apollo/subgraph/v/2.2.1) (from `2.2.0`, in `dependencies`)
+
 ## 0.9.57
 
 ### Patch Changes
