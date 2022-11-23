@@ -76,7 +76,7 @@
   },
   "devDependencies": {
     "@types/mkdirp": "1.0.2",
-    "@types/yargs": "17.0.13",
+    "@types/yargs": "17.0.14",
     "@types/ws": "8.5.3",
     "@types/rimraf": "3.0.2",
     "@types/lodash.get": "4.4.7"
