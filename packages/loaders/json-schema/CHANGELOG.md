@@ -1,5 +1,11 @@
 # @omnigraph/json-schema
 
+## 0.36.9
+
+### Patch Changes
+
+- [#4833](https://github.com/Urigo/graphql-mesh/pull/4833) [`b390ecd1d`](https://github.com/Urigo/graphql-mesh/commit/b390ecd1dacd11fe74b81d6ee9b4678d9759c2e8) Thanks [@gilgardosh](https://github.com/gilgardosh)! - Prioritize type:array check over enum
+
 ## 0.36.8
 
 ### Patch Changes
