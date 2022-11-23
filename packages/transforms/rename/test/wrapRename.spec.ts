@@ -13,7 +13,10 @@ describe('rename', () => {
         my_user: MyUser!
         my_book: MyBook!
         profile(profile_id: ID!, role: String, some_argument: String, another_argument: Int): Profile
+        my_node(id: ID!): MyNode
       }
+
+      union MyNode = MyUser | MyBook | Profile
 
       type MyUser {
         id: ID!
@@ -31,7 +34,22 @@ describe('rename', () => {
       }
     `,
     resolvers: {
-      Query: { my_user: () => ({ id: 'userId' }), profile: (_, args) => ({ id: `profile_${args.profile_id}` }) },
+      Query: {
+        my_user: () => ({ id: 'userId' }),
+        profile: (_, args) => ({ id: `profile_${args.profile_id}` }),
+        my_node: (_, { id }) => ({ id }),
+      },
+      MyNode: {
+        __resolveType({ id }: any) {
+          if (id === '1') {
+            return 'MyUser';
+          } else if (id === '2') {
+            return 'Profile';
+          } else {
+            return 'MyBook';
+          }
+        },
+      },
     },
   });
   let cache: InMemoryLRUCache;
@@ -154,6 +172,71 @@ describe('rename', () => {
     expect(result.data).toMatchObject({ my_user: { userId: 'userId' } });
   });
 
+  it('should resolve correctly Abstract type', async () => {
+    const newSchema = wrapSchema({
+      schema,
+      transforms: [
+        new RenameTransform({
+          config: {
+            mode: 'wrap',
+            renames: [
+              {
+                from: {
+                  type: 'My(.*)',
+                },
+                to: {
+                  type: '$1',
+                },
+                useRegExpForTypes: true,
+              },
+            ],
+          },
+          apiName: '',
+          cache,
+          pubsub,
+          baseDir,
+          importFn: m => import(m),
+        }),
+      ],
+    });
+
+    const result1 = await graphql({
+      schema: newSchema,
+      source: /* GraphQL */ `
+        {
+          my_node(id: "1") {
+            __typename
+          }
+        }
+      `,
+    });
+    expect(result1.data).toMatchObject({ my_node: { __typename: 'User' } });
+
+    const result2 = await graphql({
+      schema: newSchema,
+      source: /* GraphQL */ `
+        {
+          my_node(id: "2") {
+            __typename
+          }
+        }
+      `,
+    });
+    expect(result2.data).toMatchObject({ my_node: { __typename: 'Profile' } });
+
+    const result3 = await graphql({
+      schema: newSchema,
+      source: /* GraphQL */ `
+        {
+          my_node(id: "3") {
+            __typename
+          }
+        }
+      `,
+    });
+    expect(result3.data).toMatchObject({ my_node: { __typename: 'Book' } });
+  });
+
   it('should change the name of multiple type names', () => {
     const newSchema = wrapSchema({
       schema,
@@ -182,8 +265,11 @@ describe('rename', () => {
       ],
     });
 
+    expect(newSchema.getType('MyNode')).toBeUndefined();
+    expect(newSchema.getType('Node')).toBeDefined();
     expect(newSchema.getType('MyUser')).toBeUndefined();
     expect(newSchema.getType('User')).toBeDefined();
+    expect(newSchema.getType('Profile')).toBeDefined();
     expect(newSchema.getType('MyBook')).toBeUndefined();
     expect(newSchema.getType('Book')).toBeDefined();
     expect(printSchema(newSchema)).toMatchSnapshot();
@@ -263,6 +349,8 @@ describe('rename', () => {
     const queryType = newSchema.getType('Query') as GraphQLObjectType;
     const fieldMap = queryType.getFields();
 
+    expect(fieldMap.my_node).toBeUndefined();
+    expect(fieldMap.node).toBeDefined();
     expect(fieldMap.my_user).toBeUndefined();
     expect(fieldMap.user).toBeDefined();
     expect(fieldMap.my_book).toBeUndefined();
@@ -303,6 +391,8 @@ describe('rename', () => {
     const queryType = newSchema.getType('Query') as GraphQLObjectType;
     const fieldMap = queryType.getFields();
 
+    expect(fieldMap.my_node).toBeUndefined();
+    expect(fieldMap.my_nde).toBeDefined();
     expect(fieldMap.my_book).toBeUndefined();
     expect(fieldMap.my_bok).toBeDefined();
     expect(printSchema(newSchema)).toMatchSnapshot();
@@ -523,6 +613,8 @@ describe('rename', () => {
     const queryType = newSchema.getType('Query') as GraphQLObjectType;
     const fieldMap = queryType.getFields();
 
+    expect(fieldMap.my_node).toBeUndefined();
+    expect(fieldMap.my_nde).toBeDefined();
     expect(fieldMap.my_book).toBeUndefined();
     expect(fieldMap.my_bok).toBeDefined();
 

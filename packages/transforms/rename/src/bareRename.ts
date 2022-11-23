@@ -1,4 +1,4 @@
-import { GraphQLSchema, defaultFieldResolver, GraphQLFieldConfig } from 'graphql';
+import { GraphQLSchema, defaultFieldResolver, GraphQLFieldConfig, GraphQLAbstractType } from 'graphql';
 import { MeshTransform, YamlConfig } from '@graphql-mesh/types';
 import { renameType, MapperKind, mapSchema } from '@graphql-tools/utils';
 import { ignoreList } from './shared';
@@ -86,8 +86,30 @@ export default class BareRename implements MeshTransform {
 
   transformSchema(schema: GraphQLSchema) {
     return mapSchema(schema, {
-      ...(this.typesMap.size && { [MapperKind.TYPE]: type => this.renameType(type) }),
-      ...(this.typesMap.size && { [MapperKind.ROOT_OBJECT]: type => this.renameType(type) }),
+      ...(this.typesMap.size && {
+        [MapperKind.TYPE]: type => this.renameType(type),
+        [MapperKind.ABSTRACT_TYPE]: type => {
+          const currentName = type.toString();
+          const newName = ignoreList.includes(currentName) ? null : this.matchInMap(this.typesMap, currentName);
+          const existingResolver = type.resolveType;
+
+          type.resolveType = async (data, context, info, abstractType) => {
+            const originalResolvedTypename = await existingResolver(data, context, info, abstractType);
+            const newTypename = ignoreList.includes(originalResolvedTypename)
+              ? null
+              : this.matchInMap(this.typesMap, originalResolvedTypename);
+
+            return newTypename || originalResolvedTypename;
+          };
+
+          if (newName && newName !== currentName) {
+            return renameType(type, newName) as GraphQLAbstractType;
+          }
+
+          return undefined;
+        },
+        [MapperKind.ROOT_OBJECT]: type => this.renameType(type),
+      }),
       ...((this.fieldsMap.size || this.argsMap.size) && {
         [MapperKind.COMPOSITE_FIELD]: (
           fieldConfig: GraphQLFieldConfig<any, any>,
