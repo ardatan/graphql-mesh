@@ -27,6 +27,10 @@
   "peerDependencies": {
     "graphql": "*"
   },
+  "devDependencies": {
+    "@graphql-mesh/cache-localforage": "0.6.61",
+    "@graphql-tools/schema": "9.0.10"
+  },
   "dependencies": {
     "@graphql-mesh/types": "0.86.0",
     "@graphql-mesh/utils": "0.42.7",
