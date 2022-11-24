@@ -79,7 +79,7 @@ function getDefaultMeshStore(dir: string, importFn: ImportFn, artifactsDir: stri
 
 export async function processConfig(
   config: YamlConfig.Config,
-  options?: ConfigProcessOptions
+  options?: ConfigProcessOptions,
 ): Promise<ProcessedConfig> {
   if (config.skipSSLValidation) {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -90,7 +90,9 @@ export async function processConfig(
     `import type { YamlConfig } from '@graphql-mesh/types';`,
   ]);
   const codes = new Set([
-    `export const rawServeConfig: YamlConfig.Config['serve'] = ${JSON.stringify(config.serve)} as any`,
+    `export const rawServeConfig: YamlConfig.Config['serve'] = ${JSON.stringify(
+      config.serve,
+    )} as any`,
     `export async function getMeshOptions(): Promise<GetMeshOptions> {`,
   ]);
 
@@ -126,7 +128,13 @@ export async function processConfig(
     logger,
     importCode: loggerImportCode,
     code: loggerCode,
-  } = await resolveLogger(config.logger, importFn, dir, additionalPackagePrefixes, options?.initialLoggerPrefix);
+  } = await resolveLogger(
+    config.logger,
+    importFn,
+    dir,
+    additionalPackagePrefixes,
+    options?.initialLoggerPrefix,
+  );
   importCodes.add(loggerImportCode);
   codes.add(loggerCode);
 
@@ -134,7 +142,15 @@ export async function processConfig(
     cache,
     importCode: cacheImportCode,
     code: cacheCode,
-  } = await resolveCache(config.cache, importFn, rootStore, dir, pubsub, logger, additionalPackagePrefixes);
+  } = await resolveCache(
+    config.cache,
+    importFn,
+    rootStore,
+    dir,
+    pubsub,
+    logger,
+    additionalPackagePrefixes,
+  );
   importCodes.add(cacheImportCode);
   codes.add(cacheCode);
 
@@ -159,27 +175,33 @@ export async function processConfig(
   codes.add(`const transforms: MeshTransform[] = [];`);
   codes.add(`const additionalEnvelopPlugins: MeshPlugin<any>[] = [];`);
 
-  const [sources, transforms, additionalEnvelopPlugins, additionalTypeDefs, additionalResolvers, documents] =
-    await Promise.all([
-      Promise.all(
-        config.sources.map<Promise<MeshResolvedSource>>(async (source, sourceIndex) => {
-          const handlerName = Object.keys(source.handler)[0].toString();
-          const handlerConfig = source.handler[handlerName];
-          const handlerVariableName = camelCase(`${source.name}_Handler`);
-          const transformsVariableName = camelCase(`${source.name}_Transforms`);
-          codes.add(`const ${transformsVariableName} = [];`);
-          const [handler, transforms] = await Promise.all([
-            await getPackage<MeshHandlerLibrary>({
-              name: handlerName,
-              type: 'handler',
-              importFn,
-              cwd: dir,
-              additionalPrefixes: additionalPackagePrefixes,
-            }).then(({ resolved: HandlerCtor, moduleName }) => {
-              if (options.generateCode) {
-                const handlerImportName = pascalCase(handlerName + '_Handler');
-                importCodes.add(`import ${handlerImportName} from ${JSON.stringify(moduleName)}`);
-                codes.add(`const ${handlerVariableName} = new ${handlerImportName}({
+  const [
+    sources,
+    transforms,
+    additionalEnvelopPlugins,
+    additionalTypeDefs,
+    additionalResolvers,
+    documents,
+  ] = await Promise.all([
+    Promise.all(
+      config.sources.map<Promise<MeshResolvedSource>>(async (source, sourceIndex) => {
+        const handlerName = Object.keys(source.handler)[0].toString();
+        const handlerConfig = source.handler[handlerName];
+        const handlerVariableName = camelCase(`${source.name}_Handler`);
+        const transformsVariableName = camelCase(`${source.name}_Transforms`);
+        codes.add(`const ${transformsVariableName} = [];`);
+        const [handler, transforms] = await Promise.all([
+          await getPackage<MeshHandlerLibrary>({
+            name: handlerName,
+            type: 'handler',
+            importFn,
+            cwd: dir,
+            additionalPrefixes: additionalPackagePrefixes,
+          }).then(({ resolved: HandlerCtor, moduleName }) => {
+            if (options.generateCode) {
+              const handlerImportName = pascalCase(handlerName + '_Handler');
+              importCodes.add(`import ${handlerImportName} from ${JSON.stringify(moduleName)}`);
+              codes.add(`const ${handlerVariableName} = new ${handlerImportName}({
               name: ${JSON.stringify(source.name)},
               config: ${JSON.stringify(handlerConfig)},
               baseDir,
@@ -189,23 +211,24 @@ export async function processConfig(
               logger: logger.child(${JSON.stringify(source.name)}),
               importFn,
             });`);
-              }
-              return new HandlerCtor({
-                name: source.name,
-                config: handlerConfig,
-                baseDir: dir,
-                cache,
-                pubsub,
-                store: sourcesStore.child(source.name),
-                logger: logger.child(source.name),
-                importFn,
-              });
-            }),
-            Promise.all(
-              (source.transforms || []).map(async (t, transformIndex) => {
-                const transformName = Object.keys(t)[0].toString();
-                const transformConfig = t[transformName];
-                const { resolved: TransformCtor, moduleName } = await getPackage<MeshTransformLibrary>({
+            }
+            return new HandlerCtor({
+              name: source.name,
+              config: handlerConfig,
+              baseDir: dir,
+              cache,
+              pubsub,
+              store: sourcesStore.child(source.name),
+              logger: logger.child(source.name),
+              importFn,
+            });
+          }),
+          Promise.all(
+            (source.transforms || []).map(async (t, transformIndex) => {
+              const transformName = Object.keys(t)[0].toString();
+              const transformConfig = t[transformName];
+              const { resolved: TransformCtor, moduleName } =
+                await getPackage<MeshTransformLibrary>({
                   name: transformName,
                   type: 'transform',
                   importFn,
@@ -213,10 +236,12 @@ export async function processConfig(
                   additionalPrefixes: additionalPackagePrefixes,
                 });
 
-                if (options.generateCode) {
-                  const transformImportName = pascalCase(transformName + '_Transform');
-                  importCodes.add(`import ${transformImportName} from ${JSON.stringify(moduleName)};`);
-                  codes.add(`${transformsVariableName}[${transformIndex}] = new ${transformImportName}({
+              if (options.generateCode) {
+                const transformImportName = pascalCase(transformName + '_Transform');
+                importCodes.add(
+                  `import ${transformImportName} from ${JSON.stringify(moduleName)};`,
+                );
+                codes.add(`${transformsVariableName}[${transformIndex}] = new ${transformImportName}({
                   apiName: ${JSON.stringify(source.name)},
                   config: ${JSON.stringify(transformConfig)},
                   baseDir,
@@ -225,7 +250,7 @@ export async function processConfig(
                   importFn,
                   logger,
                 });`);
-                }
+              }
 
                 return new TransformCtor({
                   apiName: source.name,
@@ -240,38 +265,38 @@ export async function processConfig(
             ),
           ]);
 
-          if (options.generateCode) {
-            codes.add(`sources[${sourceIndex}] = {
+        if (options.generateCode) {
+          codes.add(`sources[${sourceIndex}] = {
           name: '${source.name}',
           handler: ${handlerVariableName},
           transforms: ${transformsVariableName}
         }`);
-          }
+        }
 
-          return {
-            name: source.name,
-            handler,
-            transforms,
-          };
-        })
-      ),
-      Promise.all(
-        config.transforms?.map(async (t, transformIndex) => {
-          const transformName = Object.keys(t)[0].toString();
-          const transformConfig = t[transformName];
-          const { resolved: TransformLibrary, moduleName } = await getPackage<MeshTransformLibrary>({
-            name: transformName,
-            type: 'transform',
-            importFn,
-            cwd: dir,
-            additionalPrefixes: additionalPackagePrefixes,
-          });
+        return {
+          name: source.name,
+          handler,
+          transforms,
+        };
+      }),
+    ),
+    Promise.all(
+      config.transforms?.map(async (t, transformIndex) => {
+        const transformName = Object.keys(t)[0].toString();
+        const transformConfig = t[transformName];
+        const { resolved: TransformLibrary, moduleName } = await getPackage<MeshTransformLibrary>({
+          name: transformName,
+          type: 'transform',
+          importFn,
+          cwd: dir,
+          additionalPrefixes: additionalPackagePrefixes,
+        });
 
-          if (options.generateCode) {
-            const transformImportName = pascalCase(transformName + '_Transform');
-            importCodes.add(`import ${transformImportName} from ${JSON.stringify(moduleName)};`);
+        if (options.generateCode) {
+          const transformImportName = pascalCase(transformName + '_Transform');
+          importCodes.add(`import ${transformImportName} from ${JSON.stringify(moduleName)};`);
 
-            codes.add(`transforms[${transformIndex}] = new (${transformImportName} as any)({
+          codes.add(`transforms[${transformIndex}] = new (${transformImportName} as any)({
             apiName: '',
             config: ${JSON.stringify(transformConfig)},
             baseDir,
@@ -280,50 +305,50 @@ export async function processConfig(
             importFn,
             logger,
           })`);
+        }
+        return new TransformLibrary({
+          apiName: '',
+          config: transformConfig,
+          baseDir: dir,
+          cache,
+          pubsub,
+          importFn,
+          logger,
+        });
+      }) || [],
+    ),
+    Promise.all(
+      config.plugins?.map(async (p, pluginIndex) => {
+        const pluginName = Object.keys(p)[0].toString();
+        const pluginConfig: any = p[pluginName];
+        if (ENVELOP_CORE_PLUGINS_MAP[pluginName] != null) {
+          const { importName, moduleName, pluginFactory } = ENVELOP_CORE_PLUGINS_MAP[pluginName];
+          if (options.generateCode) {
+            importCodes.add(`import { ${importName} } from ${JSON.stringify(moduleName)};`);
+            codes.add(
+              `additionalEnvelopPlugins[${pluginIndex}] = await ${importName}(${JSON.stringify(
+                pluginConfig,
+                null,
+                2,
+              )});`,
+            );
           }
-          return new TransformLibrary({
-            apiName: '',
-            config: transformConfig,
-            baseDir: dir,
-            cache,
-            pubsub,
-            importFn,
-            logger,
-          });
-        }) || []
-      ),
-      Promise.all(
-        config.plugins?.map(async (p, pluginIndex) => {
-          const pluginName = Object.keys(p)[0].toString();
-          const pluginConfig: any = p[pluginName];
-          if (ENVELOP_CORE_PLUGINS_MAP[pluginName] != null) {
-            const { importName, moduleName, pluginFactory } = ENVELOP_CORE_PLUGINS_MAP[pluginName];
-            if (options.generateCode) {
-              importCodes.add(`import { ${importName} } from ${JSON.stringify(moduleName)};`);
-              codes.add(
-                `additionalEnvelopPlugins[${pluginIndex}] = await ${importName}(${JSON.stringify(
-                  pluginConfig,
-                  null,
-                  2
-                )});`
-              );
-            }
-            return pluginFactory(pluginConfig);
-          }
-          const { resolved: possiblePluginFactory, moduleName } = await getPackage<any>({
-            name: pluginName,
-            type: 'plugin',
-            importFn,
-            cwd: dir,
-            additionalPrefixes: [...additionalPackagePrefixes, '@envelop/', '@graphql-yoga/plugin-'],
-          });
-          let pluginFactory: MeshPluginFactory<YamlConfig.Plugin[keyof YamlConfig.Plugin]>;
-          if (typeof possiblePluginFactory === 'function') {
-            pluginFactory = possiblePluginFactory;
-            if (options.generateCode) {
-              const importName = pascalCase('use_' + pluginName);
-              importCodes.add(`import ${importName} from ${JSON.stringify(moduleName)};`);
-              codes.add(`additionalEnvelopPlugins[${pluginIndex}] = await ${importName}({
+          return pluginFactory(pluginConfig);
+        }
+        const { resolved: possiblePluginFactory, moduleName } = await getPackage<any>({
+          name: pluginName,
+          type: 'plugin',
+          importFn,
+          cwd: dir,
+          additionalPrefixes: [...additionalPackagePrefixes, '@envelop/', '@graphql-yoga/plugin-'],
+        });
+        let pluginFactory: MeshPluginFactory<YamlConfig.Plugin[keyof YamlConfig.Plugin]>;
+        if (typeof possiblePluginFactory === 'function') {
+          pluginFactory = possiblePluginFactory;
+          if (options.generateCode) {
+            const importName = pascalCase('use_' + pluginName);
+            importCodes.add(`import ${importName} from ${JSON.stringify(moduleName)};`);
+            codes.add(`additionalEnvelopPlugins[${pluginIndex}] = await ${importName}({
           ...(${JSON.stringify(pluginConfig, null, 2)}),
           logger: logger.child(${JSON.stringify(pluginName)}),
           cache,
@@ -331,53 +356,56 @@ export async function processConfig(
           baseDir,
           importFn,
         })`);
-            }
-          } else {
-            Object.keys(possiblePluginFactory).forEach(importName => {
-              if (importName.toString().startsWith('use') && typeof possiblePluginFactory[importName] === 'function') {
-                pluginFactory = possiblePluginFactory[importName];
-                importName = importName.toString();
-                if (options.generateCode) {
-                  importCodes.add(`import { ${importName} } from ${JSON.stringify(moduleName)};`);
-                  codes.add(
-                    `additionalEnvelopPlugins[${pluginIndex}] = await ${importName}(${JSON.stringify(
-                      pluginConfig,
-                      null,
-                      2
-                    )});`
-                  );
-                }
+          }
+        } else {
+          Object.keys(possiblePluginFactory).forEach(importName => {
+            if (
+              importName.toString().startsWith('use') &&
+              typeof possiblePluginFactory[importName] === 'function'
+            ) {
+              pluginFactory = possiblePluginFactory[importName];
+              importName = importName.toString();
+              if (options.generateCode) {
+                importCodes.add(`import { ${importName} } from ${JSON.stringify(moduleName)};`);
+                codes.add(
+                  `additionalEnvelopPlugins[${pluginIndex}] = await ${importName}(${JSON.stringify(
+                    pluginConfig,
+                    null,
+                    2,
+                  )});`,
+                );
               }
-            });
-          }
-          return pluginFactory({
-            ...pluginConfig,
-            logger: logger.child(pluginName),
-            cache,
-            pubsub,
-            baseDir: dir,
-            importFn,
+            }
           });
-        }) || []
-      ),
-      resolveAdditionalTypeDefs(dir, config.additionalTypeDefs).then(additionalTypeDefs => {
-        if (options.generateCode) {
-          codes.add(
-            `const additionalTypeDefs = [${(additionalTypeDefs || []).map(
-              parsedTypeDefs => `parse(${JSON.stringify(print(parsedTypeDefs))}),`
-            )}] as any[];`
-          );
-          if (additionalTypeDefs?.length) {
-            importCodes.add(`import { parse } from 'graphql';`);
-          }
         }
-        return additionalTypeDefs;
-      }),
-      options?.ignoreAdditionalResolvers
-        ? []
-        : resolveAdditionalResolvers(dir, config.additionalResolvers, importFn, pubsub),
-      resolveDocuments(config.documents, dir),
-    ]);
+        return pluginFactory({
+          ...pluginConfig,
+          logger: logger.child(pluginName),
+          cache,
+          pubsub,
+          baseDir: dir,
+          importFn,
+        });
+      }) || [],
+    ),
+    resolveAdditionalTypeDefs(dir, config.additionalTypeDefs).then(additionalTypeDefs => {
+      if (options.generateCode) {
+        codes.add(
+          `const additionalTypeDefs = [${(additionalTypeDefs || []).map(
+            parsedTypeDefs => `parse(${JSON.stringify(print(parsedTypeDefs))}),`,
+          )}] as any[];`,
+        );
+        if (additionalTypeDefs?.length) {
+          importCodes.add(`import { parse } from 'graphql';`);
+        }
+      }
+      return additionalTypeDefs;
+    }),
+    options?.ignoreAdditionalResolvers
+      ? []
+      : resolveAdditionalResolvers(dir, config.additionalResolvers, importFn, pubsub),
+    resolveDocuments(config.documents, dir),
+  ]);
 
   if (options.generateCode) {
     if (config.additionalResolvers?.length) {
@@ -386,11 +414,13 @@ export async function processConfig(
           .map(additionalResolverDefinition => {
             if (typeof additionalResolverDefinition === 'string') {
               return `import(${JSON.stringify(
-                pathModule.join('..', additionalResolverDefinition).split('\\').join('/')
+                pathModule.join('..', additionalResolverDefinition).split('\\').join('/'),
               )})
             .then(m => m.resolvers || m.default || m)`;
             } else {
-              importCodes.add(`import { resolveAdditionalResolversWithoutImport } from '@graphql-mesh/utils';`);
+              importCodes.add(
+                `import { resolveAdditionalResolversWithoutImport } from '@graphql-mesh/utils';`,
+              );
               return `resolveAdditionalResolversWithoutImport(
             ${JSON.stringify(additionalResolverDefinition, null, 2)}
           )`;
@@ -404,7 +434,8 @@ export async function processConfig(
   }
 
   if (additionalTypeDefs?.length) {
-    const additionalResolversConfigFromTypeDefs = getAdditionalResolversFromTypeDefs(additionalTypeDefs);
+    const additionalResolversConfigFromTypeDefs =
+      getAdditionalResolversFromTypeDefs(additionalTypeDefs);
     if (additionalResolversConfigFromTypeDefs?.length) {
       const resolveToDirectiveDefinition = /* GraphQL */ `
         scalar ResolveToSourceArgs
@@ -428,13 +459,15 @@ export async function processConfig(
         dir,
         additionalResolversConfigFromTypeDefs,
         importFn,
-        pubsub
+        pubsub,
       );
       additionalTypeDefs.unshift(parse(resolveToDirectiveDefinition));
       additionalResolvers.push(...resolvedAdditionalResolvers);
       if (options.generateCode && resolvedAdditionalResolvers.length) {
         importCodes.add(`import { resolveAdditionalResolvers } from '@graphql-mesh/utils';`);
-        codes.add(`additionalTypeDefs.unshift(parse(/* GraphQL */\`${resolveToDirectiveDefinition}\`))`);
+        codes.add(
+          `additionalTypeDefs.unshift(parse(/* GraphQL */\`${resolveToDirectiveDefinition}\`))`,
+        );
         codes.add(`const additionalResolversFromTypeDefs = await resolveAdditionalResolvers(
           baseDir,
           ${JSON.stringify(additionalResolversConfigFromTypeDefs)},
@@ -507,19 +540,21 @@ export async function processConfig(
   if (config.additionalEnvelopPlugins) {
     codes.add(
       `const importedAdditionalEnvelopPlugins = await import(${JSON.stringify(
-        pathModule.join('..', config.additionalEnvelopPlugins).split('\\').join('/')
-      )}).then(m => m.default || m);`
+        pathModule.join('..', config.additionalEnvelopPlugins).split('\\').join('/'),
+      )}).then(m => m.default || m);`,
     );
     const importedAdditionalEnvelopPlugins = await importFn(
       pathModule.isAbsolute(config.additionalEnvelopPlugins)
         ? config.additionalEnvelopPlugins
-        : pathModule.join(dir, config.additionalEnvelopPlugins)
+        : pathModule.join(dir, config.additionalEnvelopPlugins),
     );
     if (typeof importedAdditionalEnvelopPlugins === 'function') {
       const factoryResult = await importedAdditionalEnvelopPlugins(config);
       if (Array.isArray(factoryResult)) {
         if (options.generateCode) {
-          codes.add(`additionalEnvelopPlugins.push(...(await importedAdditionalEnvelopPlugins()));`);
+          codes.add(
+            `additionalEnvelopPlugins.push(...(await importedAdditionalEnvelopPlugins()));`,
+          );
         }
         additionalEnvelopPlugins.push(...factoryResult);
       } else {
@@ -548,7 +583,7 @@ export async function processConfig(
     if (documents?.length) {
       importCodes.add(`import { printWithCache } from '@graphql-mesh/utils';`);
       const allDocumentNodes: DocumentNode = concatAST(
-        documents.map(document => document.document || parseWithCache(document.rawSDL))
+        documents.map(document => document.document || parseWithCache(document.rawSDL)),
       );
       visit(allDocumentNodes, {
         OperationDefinition(node) {
@@ -578,7 +613,7 @@ export async function processConfig(
           return printWithCache(${documentVarName});
         },
         location: '${documentVarName}.graphql'
-      }`
+      }`,
         )
         .join(',')}
     ];

@@ -6,13 +6,17 @@ exports[`OpenAPI Loader: Cloudfunction should generate correct schema: cloudfunc
   mutation: Mutation
 }
 
-type Query {
+directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+
+directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+
+type Query @globalOptions(sourceName: "test", endpoint: "https://openwhisk.ng.bluemix.net/api/v1/namespaces/_/actions", operationHeaders: "{\\"Authorization\\":\\"Basic {args.usernamePassword|base64}\\"}") {
   dummy: String
 }
 
 type Mutation {
   "Description of the action"
-  post_test_action_2(usernamePassword: String, blocking: Boolean = true, result: Boolean = true, input: Payload_Input): Response
+  post_test_action_2(usernamePassword: String, blocking: Boolean = true, result: Boolean = true, input: Payload_Input): Response @httpOperation(path: "/test-action-2", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST, queryParamArgMap: "{\\"blocking\\":\\"blocking\\",\\"result\\":\\"result\\"}")
 }
 
 type Response {
@@ -23,5 +27,19 @@ type Response {
 
 input Payload_Input {
   age: Float!
+}
+
+scalar ObjMap
+
+enum HTTPMethod {
+  GET
+  HEAD
+  POST
+  PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
+  PATCH
 }"
 `;

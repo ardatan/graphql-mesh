@@ -3,7 +3,7 @@ sources:
     handler:
       openapi:
         source: https://raw.githubusercontent.com/stripe/openapi/master/openapi/spec3.json
-        baseUrl: https://api.stripe.com
+        endpoint: https://api.stripe.com
         operationHeaders:
           Authorization: 'Bearer {env.STRIPE_TOKEN}'
 

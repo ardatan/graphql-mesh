@@ -30,7 +30,7 @@ sources:
 
 [Read about configuration and examples](/docs/guides/headers)
 
-## Fetching SDL or introspection from CDN or somewhere
+## Fetching SDL or introspection from CDN or any other schema registry tool
 
 Let's say the introspection disabled in your production environment of your GraphQL source, and you want to provide your SDL or introspection seperately;
 
@@ -47,6 +47,21 @@ sources:
 ```
 
 > In this case, CLI's `build` command won't save the introspection in the artifacts, so your Mesh won't start if `source` URL is down.
+
+### Hive Integration
+
+If you use [GraphQL Hive](https://graphql-hive.com/) to manage your GraphQL APIs as a schema registry, you can use the following configuration to fetch your schema from Hive:
+
+```yaml filename=".meshrc.yaml"
+sources:
+  - name: MyGraphQLApi
+    handler:
+      graphql:
+        endpoint: https://my-api.com/graphql
+        source: https://cdn.graphql-hive.com/asce7c12-753d-hive-bee-d7f2c803e232/sdl?ext=.graphql
+        schemaHeaders:
+          X-Hive-CDN-Key: "aabTxbEyC78NvSPQNO+qLrrRnBvODJJ8k4sL/2EtIwc="
+```
 
 ## Local Schemas
 

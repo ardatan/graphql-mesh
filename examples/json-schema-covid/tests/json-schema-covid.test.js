@@ -18,16 +18,22 @@ describe('JSON Schema Covid', () => {
     expect(
       printSchema(lexicographicSortSchema(schema), {
         descriptions: false,
-      })
+      }),
     ).toMatchSnapshot('json-schema-covid-schema');
   });
   it('should give correct response for STEP 1: 2 sources side by side', async () => {
-    const getDataStep1Query = await readFile(join(__dirname, '../example-queries/getData_step1.graphql'), 'utf8');
+    const getDataStep1Query = await readFile(
+      join(__dirname, '../example-queries/getData_step1.graphql'),
+      'utf8',
+    );
     const { execute } = await mesh$;
     const result = await execute(getDataStep1Query);
     expect(result.errors).toBeFalsy();
     // Check exposed response metadata
-    expect(result.data?.population?._response).toMatchSnapshot('json-schema-covid-response-metadata');
+    expect(result.data?.population?._response).toBeTruthy();
+    expect(result.data?.population?._response).toMatchSnapshot(
+      'json-schema-covid-response-metadata',
+    );
 
     expect(typeof result?.data?.case?.confirmed).toBe('number');
     expect(result?.data?.case?.countryRegion).toBe('France');
@@ -38,7 +44,10 @@ describe('JSON Schema Covid', () => {
     expect(typeof result?.data?.population?.records[0]?.fields?.value).toBe('number');
   });
   it.skip('should give correct response for STEP1: 2 sources side by side', async () => {
-    const getDataStep1Query = await readFile(join(__dirname, '../example-queries/getData_step1.graphql'), 'utf8');
+    const getDataStep1Query = await readFile(
+      join(__dirname, '../example-queries/getData_step1.graphql'),
+      'utf8',
+    );
     const { execute } = await mesh$;
     const result = await execute(getDataStep1Query);
     expect(result.errors?.length).toBeFalsy();
@@ -51,7 +60,10 @@ describe('JSON Schema Covid', () => {
     expect(typeof result?.data?.population?.records[0]?.fields?.value).toBe('number');
   });
   it.skip('should give correct response for STEP2: 2 sources combined', async () => {
-    const getDataStep2Query = await readFile(join(__dirname, '../example-queries/getData_step2.graphql'), 'utf8');
+    const getDataStep2Query = await readFile(
+      join(__dirname, '../example-queries/getData_step2.graphql'),
+      'utf8',
+    );
     const { execute } = await mesh$;
     const result = await execute(getDataStep2Query);
     expect(result.errors).toBeFalsy();
@@ -62,7 +74,10 @@ describe('JSON Schema Covid', () => {
     expect(typeof result?.data?.case?.population?.records[0]?.fields?.value).toBe('number');
   });
   it.skip('should give correct response for STEP3_1: 2 sources combined to get ratios', async () => {
-    const getDataStep3_1Query = await readFile(join(__dirname, '../example-queries/getData_step3_1.graphql'), 'utf8');
+    const getDataStep3_1Query = await readFile(
+      join(__dirname, '../example-queries/getData_step3_1.graphql'),
+      'utf8',
+    );
     const { execute } = await mesh$;
     const result = await execute(getDataStep3_1Query);
     expect(result.errors).toBeFalsy();
@@ -71,7 +86,10 @@ describe('JSON Schema Covid', () => {
     expect(typeof result?.data?.at?.deathRatio).toBe('number');
   });
   it.skip('should give correct response for STEP3_2: 2 sources combined to get ratios & case & population', async () => {
-    const getDataStep3_2Query = await readFile(join(__dirname, '../example-queries/getData_step3_2.graphql'), 'utf8');
+    const getDataStep3_2Query = await readFile(
+      join(__dirname, '../example-queries/getData_step3_2.graphql'),
+      'utf8',
+    );
     const { execute } = await mesh$;
     const result = await execute(getDataStep3_2Query);
     expect(result.errors).toBeFalsy();

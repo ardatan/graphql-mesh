@@ -133,6 +133,7 @@ export async function getInContextSDK(
               context,
               transformedSchema,
               info,
+              transforms: [],
             };
             // If there isn't an extraction of a value
             if (typeof selectionSet !== 'function') {

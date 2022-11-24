@@ -1,5 +1,5 @@
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import loadGraphQLSchemaFromOpenAPI, { createBundle } from '../src/index.js';
+import loadGraphQLSchemaFromOpenAPI from '../src/index.js';
 
 const schemas = {
   DeepL: 'deepl.json',
@@ -24,13 +24,6 @@ describe('Schemas', () => {
   for (const schemaName in schemas) {
     describe(schemaName, () => {
       const schemaPath = schemas[schemaName];
-      it('should generate the correct bundle', async () => {
-        const bundle = await createBundle(schemaName, {
-          source: `./fixtures/${schemaPath}`,
-          cwd: __dirname,
-        });
-        expect(bundle).toMatchSnapshot(schemaName);
-      });
       it('should generate the correct schema', async () => {
         const schema = await loadGraphQLSchemaFromOpenAPI(schemaName, {
           source: `./fixtures/${schemaPath}`,

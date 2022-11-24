@@ -18,16 +18,16 @@ describe('OpenAPI loader: Naming convention', () => {
   /**
    * Set up the schema first and run example API server
    */
+  let port: number;
   beforeAll(async () => {
-    const PORT = await getPort();
-    const baseUrl = `http://localhost:${PORT}/api`;
+    port = await getPort();
     createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
       fetch,
-      baseUrl,
+      endpoint: 'http://localhost:{context.port}/api',
       source: './fixtures/example_oas2.json',
       cwd: __dirname,
     });
-    await startServer(PORT);
+    await startServer(port);
   });
 
   /**
@@ -64,7 +64,13 @@ describe('OpenAPI loader: Naming convention', () => {
         }
       }
     `;
-    return graphql({ schema: createdSchema, source: query }).then((result: any) => {
+    return graphql({
+      schema: createdSchema,
+      source: query,
+      contextValue: {
+        port,
+      },
+    }).then((result: any) => {
       expect(result).toEqual({
         data: {
           user: {

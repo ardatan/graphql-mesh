@@ -2,8 +2,7 @@ const { findAndParseConfig } = require('@graphql-mesh/cli');
 const { getMesh } = require('@graphql-mesh/runtime');
 const { join } = require('path');
 
-const { lexicographicSortSchema } = require('graphql');
-const { printSchemaWithDirectives } = require('@graphql-tools/utils');
+const { lexicographicSortSchema, printSchema } = require('graphql');
 const { readFile } = require('fs-extra');
 
 const config$ = findAndParseConfig({
@@ -16,9 +15,9 @@ describe('Location Weather', () => {
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
     expect(
-      printSchemaWithDirectives(lexicographicSortSchema(schema), {
+      printSchema(lexicographicSortSchema(schema), {
         descriptions: false,
-      })
+      }),
     ).toMatchSnapshot('location-weather-schema');
   });
   it('should give correct response for todayForecast', async () => {

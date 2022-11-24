@@ -3,7 +3,7 @@ sources:
     handler:
       openapi:
         source: ./openapi.yml
-        baseUrl: http://localhost:4001
+        endpoint: http://localhost:4001
 
 documents:
   - ./example-queries/**/*.graphql

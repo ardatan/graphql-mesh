@@ -1,7 +1,7 @@
 import { referenceJSONSchema, JSONSchemaObject, dereferenceObject } from 'json-machete';
 import { DefaultLogger } from '@graphql-mesh/utils';
 import { getDereferencedJSONSchemaFromOperations } from './getDereferencedJSONSchemaFromOperations.js';
-import { Logger, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
+import { Logger, MeshFetch } from '@graphql-mesh/types';
 import { JSONSchemaOperationConfig, OperationHeadersConfiguration } from './types.js';
 import { fetch as crossUndiciFetch } from '@whatwg-node/fetch';
 import { GraphQLSchema } from 'graphql';
@@ -11,7 +11,7 @@ import { ResolverData } from '@graphql-mesh/string-interpolation';
 
 export interface JSONSchemaLoaderBundle {
   name?: string;
-  baseUrl?: string;
+  endpoint?: string;
   operations: JSONSchemaOperationConfig[];
   operationHeaders?: Record<string, string>;
 
@@ -19,7 +19,7 @@ export interface JSONSchemaLoaderBundle {
 }
 
 export interface JSONSchemaLoaderBundleOptions {
-  baseUrl?: string;
+  endpoint?: string;
   operations: JSONSchemaOperationConfig[];
   schemaHeaders?: Record<string, string>;
   operationHeaders?: Record<string, string>;
@@ -34,7 +34,7 @@ export interface JSONSchemaLoaderBundleOptions {
 export async function createBundle(
   name: string,
   {
-    baseUrl,
+    endpoint,
     operations,
     schemaHeaders,
     operationHeaders,
@@ -43,7 +43,7 @@ export async function createBundle(
     fetch = crossUndiciFetch,
     logger = new DefaultLogger(name),
     ignoreErrorResponses = false,
-  }: JSONSchemaLoaderBundleOptions
+  }: JSONSchemaLoaderBundleOptions,
 ): Promise<JSONSchemaLoaderBundle> {
   logger.debug(`Creating the dereferenced schema from operations config`);
   const dereferencedSchema = await getDereferencedJSONSchemaFromOperations({
@@ -53,7 +53,7 @@ export async function createBundle(
     fetchFn: fetch,
     schemaHeaders,
     ignoreErrorResponses,
-    baseUrl,
+    endpoint,
     operationHeaders,
     queryParams,
   });
@@ -63,7 +63,7 @@ export async function createBundle(
   logger.debug(`Bundle generation finished`);
   return {
     name,
-    baseUrl,
+    endpoint,
     operations,
     operationHeaders: typeof operationHeaders === 'object' ? operationHeaders : {},
     referencedSchema,
@@ -72,10 +72,9 @@ export async function createBundle(
 
 export interface JSONSchemaLoaderBundleToGraphQLSchemaOptions {
   cwd?: string;
-  fetch?: MeshFetch;
-  pubsub?: MeshPubSub;
   logger?: Logger;
-  baseUrl?: string;
+  fetch?: MeshFetch;
+  endpoint?: string;
   operationHeaders?: OperationHeadersConfiguration;
   queryParams?: Record<string, string>;
   queryStringOptions?: IStringifyOptions;
@@ -88,21 +87,20 @@ export interface JSONSchemaLoaderBundleToGraphQLSchemaOptions {
 export async function getGraphQLSchemaFromBundle(
   {
     name,
-    baseUrl: bundledBaseUrl,
+    endpoint: bundledBaseUrl,
     operations,
     operationHeaders: bundledOperationHeaders = {},
     referencedSchema,
   }: JSONSchemaLoaderBundle,
   {
     cwd = process.cwd(),
-    fetch = crossUndiciFetch,
-    pubsub,
     logger = new DefaultLogger(name),
-    baseUrl: overwrittenBaseUrl,
+    fetch = crossUndiciFetch,
+    endpoint: overwrittenBaseUrl,
     operationHeaders: additionalOperationHeaders = {},
     queryParams,
     queryStringOptions,
-  }: JSONSchemaLoaderBundleToGraphQLSchemaOptions = {}
+  }: JSONSchemaLoaderBundleToGraphQLSchemaOptions = {},
 ): Promise<GraphQLSchema> {
   logger.info(`Dereferencing the bundle`);
   const fullyDeferencedSchema = await dereferenceObject(referencedSchema, {
@@ -111,10 +109,20 @@ export async function getGraphQLSchemaFromBundle(
     logger,
   });
 
+  const endpoint = overwrittenBaseUrl || bundledBaseUrl;
+
   let operationHeaders = {};
   if (typeof additionalOperationHeaders === 'function') {
-    operationHeaders = async (resolverData: ResolverData, operationConfig: JSONSchemaOperationConfig) => {
-      const result = await additionalOperationHeaders(resolverData, operationConfig);
+    operationHeaders = async (
+      resolverData: ResolverData,
+      operationConfig: JSONSchemaOperationConfig,
+    ) => {
+      const result = await additionalOperationHeaders(resolverData, {
+        endpoint,
+        field: operationConfig.field,
+        method: 'method' in operationConfig ? operationConfig.method : 'POST',
+        path: 'path' in operationConfig ? operationConfig.path : operationConfig.pubsubTopic,
+      });
       return {
         ...bundledOperationHeaders,
         ...result,
@@ -129,10 +137,8 @@ export async function getGraphQLSchemaFromBundle(
   logger.info(`Creating the GraphQL Schema from dereferenced schema`);
   return getGraphQLSchemaFromDereferencedJSONSchema(name, {
     fullyDeferencedSchema,
-    fetch,
-    pubsub,
     logger,
-    baseUrl: overwrittenBaseUrl || bundledBaseUrl,
+    endpoint,
     operations,
     operationHeaders,
     queryParams,

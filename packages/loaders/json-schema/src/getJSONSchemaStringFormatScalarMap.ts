@@ -1,4 +1,5 @@
 import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
 import { GraphQLScalarType, Kind } from 'graphql';
 import { pascalCase } from 'pascal-case';
 
@@ -12,7 +13,11 @@ const JSONSchemaStringFormats = [
   'uri-template',
 ];
 
-export function getJSONSchemaStringFormatScalarMap(ajv: Ajv): Map<string, GraphQLScalarType> {
+export function getJSONSchemaStringFormatScalarMap(): Map<string, GraphQLScalarType> {
+  const ajv = new Ajv({
+    strict: false,
+  });
+  addFormats(ajv);
   const map = new Map<string, GraphQLScalarType>();
   for (const format of JSONSchemaStringFormats) {
     const schema = {

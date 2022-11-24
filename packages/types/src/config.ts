@@ -169,11 +169,7 @@ export interface Handler {
     | GraphQLHandlerCodeFirstConfiguration
     | GraphQLHandlerMultipleHTTPConfiguration;
   grpc?: GrpcHandler;
-  /**
-   * Handler for JSON Schema specification.
-   * Source could be a local json file, or a url to it. (Any of: JsonSchemaHandler, JsonSchemaHandlerBundle)
-   */
-  jsonSchema?: JsonSchemaHandler | JsonSchemaHandlerBundle;
+  jsonSchema?: JsonSchemaHandler;
   mongoose?: MongooseHandler;
   mysql?: MySQLHandler;
   neo4j?: Neo4JHandler;
@@ -323,26 +319,39 @@ export interface GrpcCredentialsSsl {
   certChain?: string;
   privateKey?: string;
 }
+/**
+ * Handler for JSON Schema specification.
+ * Source could be a local json file, or a url to it.
+ */
 export interface JsonSchemaHandler {
-  baseUrl?: string;
   /**
-   * Any of: JSON, String
+   * Path to the bundle file
    */
-  operationHeaders?:
-    | {
-        [k: string]: any;
-      }
-    | string;
+  source?: string;
+  endpoint?: string;
+  operationHeaders?: {
+    [k: string]: any;
+  };
   schemaHeaders?: {
     [k: string]: any;
   };
   /**
    * Any of: JsonSchemaHTTPOperation, JsonSchemaPubSubOperation
    */
-  operations: (JsonSchemaHTTPOperation | JsonSchemaPubSubOperation)[];
+  operations?: (JsonSchemaHTTPOperation | JsonSchemaPubSubOperation)[];
   ignoreErrorResponses?: boolean;
   queryParams?: any;
   queryStringOptions?: QueryStringOptions;
+  /**
+   * Will be removed later
+   */
+  bundlePath?: string;
+  /**
+   * Will be removed later
+   */
+  bundleHeaders?: {
+    [k: string]: any;
+  };
 }
 export interface JsonSchemaHTTPOperation {
   /**
@@ -482,48 +491,6 @@ export interface JsonSchemaPubSubOperation {
   pubsubTopic: string;
 }
 export interface QueryStringOptions {
-  /**
-   * When arrays are stringified, by default they are not given explicit indices:
-   * `a=b&a=c&a=d`
-   * You may override this by setting the indices option to true:
-   * `a[0]=b&a[1]=c&a[2]=d`
-   */
-  indices?: boolean;
-  /**
-   * You can configure how to format arrays in the query strings.
-   *
-   * Note: when using arrayFormat set to 'comma', you can also pass the commaRoundTrip option set to true or false, to append [] on single-item arrays, so that they can round trip through a parse. (Allowed values: indices, brackets, repeat, comma)
-   */
-  arrayFormat?: 'indices' | 'brackets' | 'repeat' | 'comma';
-  /**
-   * Even if there is a single item in an array, this option treats them as arrays
-   * (default: false)
-   */
-  commaRoundTrip?: boolean;
-}
-export interface JsonSchemaHandlerBundle {
-  /**
-   * Path to the bundle file
-   */
-  bundlePath: any;
-  /**
-   * HTTP Headers to receive the bundle
-   */
-  bundleHeaders?: {
-    [k: string]: any;
-  };
-  baseUrl?: string;
-  /**
-   * Any of: JSON, String
-   */
-  operationHeaders?:
-    | {
-        [k: string]: any;
-      }
-    | string;
-  queryStringOptions?: QueryStringOptions1;
-}
-export interface QueryStringOptions1 {
   /**
    * When arrays are stringified, by default they are not given explicit indices:
    * `a=b&a=c&a=d`
@@ -776,7 +743,11 @@ export interface Neo4JHandler {
   /**
    * URL for the Neo4j Instance e.g. neo4j://localhost
    */
-  url: string;
+  endpoint: string;
+  /**
+   * Provide GraphQL Type Definitions instead of inferring
+   */
+  source?: string;
   /**
    * Username for basic authentication
    */
@@ -793,10 +764,6 @@ export interface Neo4JHandler {
    * Specifies database name
    */
   database?: string;
-  /**
-   * Provide GraphQL Type Definitions instead of inferring
-   */
-  typeDefs?: string;
 }
 /**
  * Handler for OData
@@ -805,21 +772,21 @@ export interface ODataHandler {
   /**
    * Base URL for OData API
    */
-  baseUrl: string;
+  endpoint: string;
   /**
    * Custom $metadata File or URL
    */
-  metadata?: string;
-  /**
-   * Headers to be used with the operation requests
-   */
-  operationHeaders?: {
-    [k: string]: any;
-  };
+  source?: string;
   /**
    * Headers to be used with the $metadata requests
    */
   schemaHeaders?: {
+    [k: string]: any;
+  };
+  /**
+   * Headers to be used with the operation requests
+   */
+  operationHeaders?: {
     [k: string]: any;
   };
   /**
@@ -847,7 +814,7 @@ export interface OpenapiHandler {
    * Specifies the URL on which all paths will be based on.
    * Overrides the server object in the OAS.
    */
-  baseUrl?: string;
+  endpoint?: string;
   /**
    * If you are using a remote URL endpoint to fetch your schema, you can set headers for the HTTP request to fetch your schema.
    */
@@ -855,13 +822,11 @@ export interface OpenapiHandler {
     [k: string]: any;
   };
   /**
-   * JSON object representing the Headers to add to the runtime of the API calls (Any of: JSON, String)
+   * JSON object representing the Headers to add to the runtime of the API calls
    */
-  operationHeaders?:
-    | {
-        [k: string]: any;
-      }
-    | string;
+  operationHeaders?: {
+    [k: string]: any;
+  };
   /**
    * Responses are converted to a Union type grouping all possible responses.
    * Applying this will ignore all responses with status code other than 2xx, resulting in simpler response types, usualy regular object type instead of union.
@@ -928,8 +893,8 @@ export interface PostGraphileHandler {
   live?: boolean;
 }
 export interface RAMLHandler {
-  ramlFilePath: string;
-  baseUrl?: string;
+  source: string;
+  endpoint?: string;
   schemaHeaders?: {
     [k: string]: any;
   };

@@ -1,26 +1,24 @@
 import { Logger } from '@graphql-mesh/types';
 import { JSONSchemaObject } from '@json-schema-tools/meta-schema';
-import Ajv from 'ajv';
 import {
   AnyTypeComposer,
   ComposeInputType,
+  Directive,
   InputTypeComposer,
   isSomeInputTypeComposer,
   ObjectTypeComposer,
   SchemaComposer,
   UnionTypeComposer,
 } from 'graphql-compose';
+import { StatusCodeTypeNameDirective } from './directives.js';
 import { TypeComposers } from './getComposerFromJSONSchema.js';
-import { getTypeResolverFromOutputTCs } from './getTypeResolverFromOutputTCs.js';
-
-const ONE_OF_DEFINITION = /* GraphQL */ `
-  directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
-`;
 
 export interface GetUnionTypeComposersOpts {
   schemaComposer: SchemaComposer;
-  ajv: Ajv;
-  typeComposersList: { input?: AnyTypeComposer<any>; output?: ObjectTypeComposer | UnionTypeComposer }[];
+  typeComposersList: {
+    input?: AnyTypeComposer<any>;
+    output?: ObjectTypeComposer | UnionTypeComposer;
+  }[];
   subSchemaAndTypeComposers: JSONSchemaObject & TypeComposers;
   logger: Logger;
 }
@@ -33,13 +31,12 @@ export function getContainerTC(schemaComposer: SchemaComposer, output: ComposeIn
         type: output as any,
         resolve: root => root,
       },
-    })
+    }),
   );
 }
 
 export function getUnionTypeComposers({
   schemaComposer,
-  ajv,
   typeComposersList,
   subSchemaAndTypeComposers,
   logger,
@@ -70,27 +67,33 @@ export function getUnionTypeComposers({
     subSchemaAndTypeComposers.input = Object.values(unionInputFields)[0].type;
   } else {
     (subSchemaAndTypeComposers.input as InputTypeComposer).addFields(unionInputFields);
-    if (!schemaComposer.hasDirective('oneOf')) {
-      schemaComposer.addTypeDefs(ONE_OF_DEFINITION);
-    }
   }
 
-  const dedupSet = new Set(outputTypeComposers);
-
-  if (dedupSet.size === 1) {
+  if (new Set(outputTypeComposers).size === 1) {
     subSchemaAndTypeComposers.output = outputTypeComposers[0];
   } else {
-    const resolveType = getTypeResolverFromOutputTCs(
-      ajv,
-      outputTypeComposers,
-      subSchemaAndTypeComposers,
-      (subSchemaAndTypeComposers.output as UnionTypeComposer).getExtension('statusCodeOneOfIndexMap') as any
-    );
-
-    (subSchemaAndTypeComposers.output as UnionTypeComposer).setResolveType(resolveType);
-
-    for (const outputTypeComposer of outputTypeComposers) {
+    const directives: Directive[] =
+      (subSchemaAndTypeComposers.output as UnionTypeComposer).getDirectives() || [];
+    const statusCodeOneOfIndexMap = (
+      subSchemaAndTypeComposers.output as UnionTypeComposer
+    ).getExtension('statusCodeOneOfIndexMap');
+    const statusCodeOneOfIndexMapEntries = Object.entries(statusCodeOneOfIndexMap || {});
+    for (const outputTypeComposerIndex in outputTypeComposers) {
+      const outputTypeComposer = outputTypeComposers[outputTypeComposerIndex];
+      const statusCode = statusCodeOneOfIndexMapEntries.find(
+        ([statusCode, index]) => index.toString() === outputTypeComposerIndex.toString(),
+      )?.[0];
       if ('getFields' in outputTypeComposer) {
+        if (statusCode != null) {
+          schemaComposer.addDirective(StatusCodeTypeNameDirective);
+          directives.push({
+            name: 'statusCodeTypeName',
+            args: {
+              statusCode,
+              typeName: outputTypeComposer.getTypeName(),
+            },
+          });
+        }
         (subSchemaAndTypeComposers.output as UnionTypeComposer).addType(outputTypeComposer);
       } else {
         for (const possibleType of outputTypeComposer.getTypes()) {
@@ -98,6 +101,7 @@ export function getUnionTypeComposers({
         }
       }
     }
+    (subSchemaAndTypeComposers.output as UnionTypeComposer).setDirectives(directives);
   }
 
   return {

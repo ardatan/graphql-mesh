@@ -83,7 +83,7 @@ sources:
     handler:
       openapi:
         source: ./openapi.yaml
-        baseUrl: '{env.REST_URL}/api/'
+        endpoint: '{env.REST_URL}/api/'
         operationHeaders:
           Authorization-Header: '{context.headers.authorization}'
           Authorization-Cookie: Bearer {context.cookies.accessToken}
@@ -171,6 +171,20 @@ OpenAPI handler is able to process OAS Callbacks as GraphQL Subscriptions. It us
 See [Subscriptions & Webhooks](../subscriptions-webhooks.md) to create an endpoint to consume a webhook. You should use the callback url as `pubSubTopic` in the webhook configuration.
 
 Also see our example; [Subscriptions Example with Webhooks](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/openapi-subscriptions).
+
+## Loading the sources from a CDN like GraphQL Hive or schema registry
+
+GraphQL Mesh supports loading the sources from a CDN or schema registry. You can use the `source` property to load the schema from a CDN or schema registry.
+
+```yaml filename=".meshrc.yaml"
+sources:
+  - name: MyApi
+    handler:
+      openapi:
+        source: https://cdn.graphql-hive.com/asce7c12-753d-hive-bee-d7f2c803e232/sdl?ext=.graphql
+        schemaHeaders:
+          X-Hive-CDN-Key: "aabTxbEyC78NvSPQNO+qLrrRnBvODJJ8k4sL/2EtIwc="
+```
 
 ## Examples
 

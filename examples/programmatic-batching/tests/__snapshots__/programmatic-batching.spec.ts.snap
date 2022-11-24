@@ -6,11 +6,25 @@ exports[`Batching Example should generate correct schema 1`] = `
   mutation: Mutation
 }
 
-type Mutation {
-  usersByIds(input: UsersByIdRequest_Input): UsersByIdResponse
+enum HTTPMethod {
+  CONNECT
+  DELETE
+  GET
+  HEAD
+  OPTIONS
+  PATCH
+  POST
+  PUT
+  TRACE
 }
 
-type Query {
+type Mutation {
+  usersByIds(input: UsersByIdRequest_Input): UsersByIdResponse @httpOperation(path: "/users_by_ids", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+}
+
+scalar ObjMap
+
+type Query @globalOptions(sourceName: "ExampleAPI", endpoint: "http://localhost:4001") {
   dummy: String
   user(id: Float!): User
 }

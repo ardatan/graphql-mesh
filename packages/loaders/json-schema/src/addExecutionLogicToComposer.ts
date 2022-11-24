@@ -1,77 +1,37 @@
-import { GraphQLJSON, ObjectTypeComposer, ObjectTypeComposerFieldConfig, SchemaComposer } from 'graphql-compose';
-import { Logger, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
-import { JSONSchemaLinkConfig, JSONSchemaOperationConfig, OperationHeadersConfiguration } from './types.js';
-import { getOperationMetadata, isPubSubOperationConfig, isFileUpload } from './utils.js';
-import { createGraphQLError, memoize1 } from '@graphql-tools/utils';
-import urlJoin from 'url-join';
-import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
-import { stringify as qsStringify, parse as qsParse, IStringifyOptions } from 'qs';
 import {
-  getNamedType,
-  GraphQLError,
-  GraphQLFieldResolver,
-  GraphQLInt,
-  GraphQLObjectType,
-  GraphQLOutputType,
-  GraphQLResolveInfo,
-  GraphQLString,
-  isListType,
-  isNonNullType,
-  isScalarType,
-  isUnionType,
-} from 'graphql';
-import lodashSet from 'lodash.set';
-import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+  GraphQLJSON,
+  ObjectTypeComposer,
+  ObjectTypeComposerFieldConfig,
+  SchemaComposer,
+} from 'graphql-compose';
+import { Logger } from '@graphql-mesh/types';
+import {
+  JSONSchemaLinkConfig,
+  JSONSchemaOperationConfig,
+  OperationHeadersConfiguration,
+} from './types';
+import { getOperationMetadata, isPubSubOperationConfig } from './utils';
+import { IStringifyOptions } from 'qs';
+import { getNamedType, GraphQLInt, GraphQLObjectType, GraphQLString } from 'graphql';
 import { process } from '@graphql-mesh/cross-helpers';
-import { getHeadersObj } from '@graphql-mesh/utils';
-import { Blob, File, FormData } from '@whatwg-node/fetch';
+import {
+  GlobalOptionsDirective,
+  HTTPOperationDirective,
+  LinkDirective,
+  LinkResolverDirective,
+  PubSubOperationDirective,
+  ResolveRootDirective,
+  ResponseMetadataDirective,
+} from './directives.js';
 
 export interface AddExecutionLogicToComposerOptions {
   schemaComposer: SchemaComposer;
-  baseUrl: string;
+  endpoint: string;
   operations: JSONSchemaOperationConfig[];
   operationHeaders?: OperationHeadersConfiguration;
-  fetch: MeshFetch;
   logger: Logger;
-  pubsub?: MeshPubSub;
   queryParams?: Record<string, string | number | boolean>;
   queryStringOptions?: IStringifyOptions;
-}
-
-const defaultQsOptions: IStringifyOptions = {
-  indices: false,
-};
-
-const isListTypeOrNonNullListType = memoize1(function isListTypeOrNonNullListType(type: GraphQLOutputType) {
-  if (isNonNullType(type)) {
-    return isListType(type.ofType);
-  }
-  return isListType(type);
-});
-
-function linkResolver(
-  linkObjArgs: any,
-  actualResolver: GraphQLFieldResolver<any, any>,
-  root: any,
-  args: any,
-  context: any,
-  info: GraphQLResolveInfo
-) {
-  for (const argKey in linkObjArgs) {
-    const argInterpolation = linkObjArgs[argKey];
-    const actualValue =
-      typeof argInterpolation === 'string'
-        ? stringInterpolator.parse(argInterpolation, {
-            root,
-            args,
-            context,
-            info,
-            env: process.env,
-          })
-        : argInterpolation;
-    lodashSet(args, argKey, actualValue);
-  }
-  return actualResolver(root, args, context, info);
 }
 
 const responseMetadataType = new GraphQLObjectType({
@@ -86,472 +46,136 @@ const responseMetadataType = new GraphQLObjectType({
   },
 });
 
-export async function addExecutionLogicToComposer(
+export async function addExecutionDirectivesToComposer(
   name: string,
   {
     schemaComposer,
-    fetch: globalFetch,
     logger,
     operations,
     operationHeaders,
-    baseUrl,
-    pubsub: globalPubsub,
+    endpoint,
     queryParams,
-    queryStringOptions = {},
-  }: AddExecutionLogicToComposerOptions
+    queryStringOptions,
+  }: AddExecutionLogicToComposerOptions,
 ) {
-  logger.debug(`Attaching execution logic to the schema`);
-  queryStringOptions = { ...defaultQsOptions, ...queryStringOptions };
-  const linkResolverMapByField = new Map<string, Record<string, GraphQLFieldResolver<any, any>>>();
+  schemaComposer.addDirective(GlobalOptionsDirective);
+  schemaComposer.Query.setDirectiveByName(
+    'globalOptions',
+    JSON.parse(
+      JSON.stringify({
+        sourceName: name,
+        endpoint,
+        operationHeaders,
+        queryStringOptions,
+        queryParams,
+      }),
+    ),
+  );
+  logger.debug(`Attaching execution directives to the schema`);
   for (const operationConfig of operations) {
     const { httpMethod, rootTypeName, fieldName } = getOperationMetadata(operationConfig);
-    const operationLogger = logger.child(`${rootTypeName}.${fieldName}`);
 
     const rootTypeComposer = schemaComposer[rootTypeName];
 
     const field = rootTypeComposer.getField(fieldName);
 
     if (isPubSubOperationConfig(operationConfig)) {
-      field.description = operationConfig.description || `PubSub Topic: ${operationConfig.pubsubTopic}`;
-      field.subscribe = (root, args, context, info) => {
-        const pubsub = context?.pubsub || globalPubsub;
-        if (!pubsub) {
-          return new GraphQLError(`You should have PubSub defined in either the config or the context!`);
-        }
-        const interpolationData = { root, args, context, info, env: process.env };
-        let pubsubTopic: string = stringInterpolator.parse(operationConfig.pubsubTopic, interpolationData);
-        if (pubsubTopic.startsWith('webhook:')) {
-          const [, expectedMethod, expectedUrl] = pubsubTopic.split(':');
-          const expectedPath = new URL(expectedUrl, 'http://localhost').pathname;
-          pubsubTopic = `webhook:${expectedMethod}:${expectedPath}`;
-        }
-        operationLogger.debug(`=> Subscribing to pubSubTopic: ${pubsubTopic}`);
-        return pubsub.asyncIterator(pubsubTopic);
-      };
-      field.resolve = root => {
-        operationLogger.debug('Received ', root, ' from ', operationConfig.pubsubTopic);
-        return root;
-      };
+      field.description =
+        operationConfig.description || `PubSub Topic: ${operationConfig.pubsubTopic}`;
+      field.directives = field.directives || [];
+      schemaComposer.addDirective(PubSubOperationDirective);
+      field.directives.push({
+        name: 'pubsubOperation',
+        args: {
+          pubsubTopic: operationConfig.pubsubTopic,
+        },
+      });
     } else if (operationConfig.path) {
       if (process.env.DEBUG === '1' || process.env.DEBUG === 'fieldDetails') {
         field.description = `
 >**Method**: \`${operationConfig.method}\`
->**Base URL**: \`${baseUrl}\`
+>**Base URL**: \`${endpoint}\`
 >**Path**: \`${operationConfig.path}\`
 ${operationConfig.description || ''}
 `;
       } else {
         field.description = operationConfig.description;
       }
-      field.resolve = async (root, args, context, info) => {
-        operationLogger.debug(`=> Resolving`);
-        const interpolationData = { root, args, context, env: process.env };
-        const interpolatedBaseUrl = stringInterpolator.parse(baseUrl, interpolationData);
-        const interpolatedPath = stringInterpolator.parse(operationConfig.path, interpolationData);
-        let fullPath = urlJoin(interpolatedBaseUrl, interpolatedPath);
-        const operationHeadersObj =
-          typeof operationHeaders === 'function'
-            ? await operationHeaders(interpolationData, operationConfig)
-            : operationHeaders;
-        const headers: Record<string, any> = {};
-        for (const headerName in operationHeadersObj) {
-          const nonInterpolatedValue = operationHeadersObj[headerName];
-          const interpolatedValue = stringInterpolator.parse(nonInterpolatedValue, interpolationData);
-          if (interpolatedValue) {
-            headers[headerName.toLowerCase()] = interpolatedValue;
-          }
-        }
-        if (operationConfig?.headers) {
-          for (const headerName in operationConfig.headers) {
-            const nonInterpolatedValue = operationConfig.headers[headerName];
-            const interpolatedValue = stringInterpolator.parse(nonInterpolatedValue, interpolationData);
-            if (interpolatedValue) {
-              headers[headerName.toLowerCase()] = interpolatedValue;
-            }
-          }
-        }
-        const requestInit: RequestInit = {
-          method: httpMethod,
-          headers,
-        };
-        // Handle binary data
-        if ('binary' in operationConfig) {
-          const binaryUpload = await args.input;
-          if (isFileUpload(binaryUpload)) {
-            const readable = binaryUpload.createReadStream();
-            const chunks: number[] = [];
-            for await (const chunk of readable) {
-              for (const byte of chunk) {
-                chunks.push(byte);
-              }
-            }
-            requestInit.body = new Uint8Array(chunks);
 
-            const [, contentType] = Object.entries(headers).find(([key]) => key.toLowerCase() === 'content-type') || [];
-            if (!contentType) {
-              headers['content-type'] = binaryUpload.mimetype;
-            }
-          }
-          requestInit.body = binaryUpload;
-        } else {
-          if (operationConfig.requestBaseBody != null) {
-            args.input = args.input || {};
-            for (const key in operationConfig.requestBaseBody) {
-              const configValue = operationConfig.requestBaseBody[key];
-              if (typeof configValue === 'string') {
-                const value = stringInterpolator.parse(configValue, interpolationData);
-                lodashSet(args.input, key, value);
-              } else {
-                args.input[key] = configValue;
-              }
-            }
-          }
-          // Resolve union input
-          const input = (args.input = resolveDataByUnionInputType(
-            args.input,
-            field.args?.input?.type?.getType(),
-            schemaComposer
-          ));
-          if (input != null) {
-            const [, contentType] = Object.entries(headers).find(([key]) => key.toLowerCase() === 'content-type') || [];
-            if (contentType?.startsWith('application/x-www-form-urlencoded')) {
-              requestInit.body = qsStringify(input, queryStringOptions);
-            } else if (contentType?.startsWith('multipart/form-data')) {
-              delete headers['content-type'];
-              delete headers['Content-Type'];
-              const formData = new FormData();
-              for (const key in input) {
-                const inputValue = input[key];
-                if (inputValue != null) {
-                  let formDataValue: Blob | string;
-                  if (typeof inputValue === 'object') {
-                    if (inputValue instanceof File) {
-                      formDataValue = inputValue;
-                    } else if (inputValue.name && inputValue instanceof Blob) {
-                      formDataValue = new File([inputValue], (inputValue as File).name, { type: inputValue.type });
-                    } else if (inputValue.arrayBuffer) {
-                      const arrayBuffer = await inputValue.arrayBuffer();
-                      if (inputValue.name) {
-                        formDataValue = new File([arrayBuffer], inputValue.name, { type: inputValue.type });
-                      } else {
-                        formDataValue = new Blob([arrayBuffer], { type: inputValue.type });
-                      }
-                    } else {
-                      formDataValue = JSON.stringify(inputValue);
-                    }
-                  } else {
-                    formDataValue = inputValue.toString();
-                  }
-                  formData.append(key, formDataValue);
-                }
-              }
-              requestInit.body = formData;
-            } else {
-              requestInit.body = typeof input === 'object' ? JSON.stringify(input) : input;
-            }
-          }
-        }
-        if (queryParams) {
-          for (const queryParamName in queryParams) {
-            if (
-              args != null &&
-              operationConfig.queryParamArgMap != null &&
-              queryParamName in operationConfig.queryParamArgMap &&
-              operationConfig.queryParamArgMap[queryParamName] in args
-            ) {
-              continue;
-            }
-            const interpolatedQueryParam = stringInterpolator.parse(
-              queryParams[queryParamName].toString(),
-              interpolationData
-            );
-            const queryParamsString = qsStringify(
-              {
-                [queryParamName]: interpolatedQueryParam,
-              },
-              {
-                ...queryStringOptions,
-                ...operationConfig.queryStringOptionsByParam?.[queryParamName],
-              }
-            );
-            fullPath += fullPath.includes('?') ? '&' : '?';
-            fullPath += queryParamsString;
-          }
-        }
+      field.directives = field.directives || [];
+      schemaComposer.addDirective(HTTPOperationDirective);
+      field.directives.push({
+        name: 'httpOperation',
+        args: JSON.parse(
+          JSON.stringify({
+            path: operationConfig.path,
+            operationSpecificHeaders: operationConfig.headers,
+            httpMethod,
+            isBinary: 'binary' in operationConfig ? operationConfig.binary : undefined,
+            requestBaseBody:
+              'requestBaseBody' in operationConfig ? operationConfig.requestBaseBody : undefined,
+            queryParamArgMap: operationConfig.queryParamArgMap,
+            queryStringOptionsByParam: operationConfig.queryStringOptionsByParam,
+          }),
+        ),
+      });
 
-        if (operationConfig.queryParamArgMap) {
-          for (const queryParamName in operationConfig.queryParamArgMap) {
-            const argName = operationConfig.queryParamArgMap[queryParamName];
-            let argValue = args[argName];
-            if (argValue != null) {
-              // Somehow it doesn't serialize URLs so we need to do it manually.
-              if (argValue instanceof URL) {
-                argValue = argValue.toString();
-              }
-              const opts = {
-                ...queryStringOptions,
-                ...operationConfig.queryStringOptionsByParam?.[queryParamName],
-              };
-              let queryParamObj = argValue;
-              if (Array.isArray(argValue) || !(typeof argValue === 'object' && opts.destructObject)) {
-                queryParamObj = {
-                  [queryParamName]: argValue,
-                };
-              }
-              const queryParamsString = qsStringify(queryParamObj, opts);
-              fullPath += fullPath.includes('?') ? '&' : '?';
-              fullPath += queryParamsString;
-            }
-          }
-        }
-
-        operationLogger.debug(`=> Fetching `, fullPath, `=>`, requestInit);
-        const fetch: typeof globalFetch = context?.fetch || globalFetch;
-        if (!fetch) {
-          return createGraphQLError(`You should have fetch defined in either the config or the context!`, {
-            extensions: {
-              request: {
-                url: fullPath,
-                method: httpMethod,
-              },
-            },
-          });
-        }
-        // Trick to pass `sourceName` to the `fetch` function for tracing
-        const response = await fetch(fullPath, requestInit, context, {
-          ...info,
-          sourceName: name,
-        } as GraphQLResolveInfo);
-        // If return type is a file
-        if (field.type.getTypeName() === 'File') {
-          return response.blob();
-        }
-        const responseText = await response.text();
-        operationLogger.debug(`=> Received`, {
-          headers: response.headers,
-          text: responseText,
-        });
-        let responseJson: any;
-        try {
-          responseJson = JSON.parse(responseText);
-        } catch (error) {
-          const returnNamedGraphQLType = getNamedType(field.type.getType());
-          // The result might be defined as scalar
-          if (isScalarType(returnNamedGraphQLType)) {
-            operationLogger.debug(` => Return type is not a JSON so returning ${responseText}`);
-            return responseText;
-          } else if (response.status === 204) {
-            responseJson = {};
-          } else if (response.status.toString().startsWith('2')) {
-            logger.debug(`Unexpected response in ${fieldName};\n\t${responseText}`);
-            return createGraphQLError(`Unexpected response in ${fieldName}`, {
-              extensions: {
-                http: {
-                  status: response.status,
-                  statusText: response.statusText,
-                  headers: getHeadersObj(response.headers),
-                },
-                request: {
-                  url: fullPath,
-                  method: httpMethod,
-                },
-                responseText,
-                originalError: {
-                  message: error.message,
-                  stack: error.stack,
-                },
-              },
-            });
-          } else {
-            return createGraphQLError(
-              `HTTP Error: ${response.status}, Could not invoke operation ${operationConfig.method} ${operationConfig.path}`,
-              {
-                extensions: {
-                  http: {
-                    status: response.status,
-                    statusText: response.statusText,
-                    headers: getHeadersObj(response.headers),
-                  },
-                  request: {
-                    url: fullPath,
-                    method: httpMethod,
-                  },
-                  responseText,
-                },
-              }
-            );
-          }
-        }
-
-        if (!response.status.toString().startsWith('2')) {
-          const returnNamedGraphQLType = getNamedType(field.type.getType());
-          if (!isUnionType(returnNamedGraphQLType)) {
-            return createGraphQLError(
-              `HTTP Error: ${response.status}, Could not invoke operation ${operationConfig.method} ${operationConfig.path}`,
-              {
-                extensions: {
-                  http: {
-                    status: response.status,
-                    statusText: response.statusText,
-                    headers: getHeadersObj(response.headers),
-                  },
-                  request: {
-                    url: fullPath,
-                    method: httpMethod,
-                  },
-                  responseJson,
-                },
-              }
-            );
-          }
-        }
-
-        operationLogger.debug(`Returning `, responseJson);
-        // Sometimes API returns an array but the return type is not an array
-        const isListReturnType = isListTypeOrNonNullListType(field.type.getType());
-        const isArrayResponse = Array.isArray(responseJson);
-        if (isListReturnType && !isArrayResponse) {
-          operationLogger.debug(`Response is not array but return type is list. Normalizing the response`);
-          responseJson = [responseJson];
-        }
-        if (!isListReturnType && isArrayResponse) {
-          operationLogger.debug(`Response is array but return type is not list. Normalizing the response`);
-          responseJson = responseJson[0];
-        }
-
-        const addResponseMetadata = (obj: any) => {
-          if (typeof obj !== 'object') {
-            return obj;
-          }
-          Object.defineProperties(obj, {
-            $field: {
-              get() {
-                return operationConfig.field;
-              },
-            },
-            $url: {
-              get() {
-                return fullPath.split('?')[0];
-              },
-            },
-            $method: {
-              get() {
-                return httpMethod;
-              },
-            },
-            $statusCode: {
-              get() {
-                return response.status;
-              },
-            },
-            $statusText: {
-              get() {
-                return response.statusText;
-              },
-            },
-            $headers: {
-              get() {
-                return requestInit.headers;
-              },
-            },
-            $request: {
-              get() {
-                return new Proxy(
-                  {},
-                  {
-                    get(_, requestProp) {
-                      switch (requestProp) {
-                        case 'query':
-                          return qsParse(fullPath.split('?')[1]);
-                        case 'path':
-                          return new Proxy(args, {
-                            get(_, prop) {
-                              return args[prop] || args.input?.[prop] || obj?.[prop];
-                            },
-                            has(_, prop) {
-                              return prop in args || (args.input && prop in args.input) || obj?.[prop];
-                            },
-                          });
-                        case 'header':
-                          return getHeadersObj(requestInit.headers as Headers);
-                        case 'body':
-                          return requestInit.body;
-                      }
-                    },
-                  }
-                );
-              },
-            },
-            $response: {
-              get() {
-                return new Proxy(
-                  {},
-                  {
-                    get(_, responseProp) {
-                      switch (responseProp) {
-                        case 'header':
-                          return getHeadersObj(response.headers);
-                        case 'body':
-                          return obj;
-                        case 'query':
-                          return qsParse(fullPath.split('?')[1]);
-                        case 'path':
-                          return new Proxy(args, {
-                            get(_, prop) {
-                              return args[prop] || args.input?.[prop] || obj?.[prop];
-                            },
-                            has(_, prop) {
-                              return prop in args || (args.input && prop in args.input) || obj?.[prop];
-                            },
-                          });
-                      }
-                    },
-                  }
-                );
-              },
-            },
-          });
-          return obj;
-        };
-        operationLogger.debug(`Adding response metadata to the response object`);
-        return Array.isArray(responseJson)
-          ? responseJson.map(obj => addResponseMetadata(obj))
-          : addResponseMetadata(responseJson);
-      };
-
-      const handleLinkMap = (linkMap: Record<string, JSONSchemaLinkConfig>, typeTC: ObjectTypeComposer) => {
+      const handleLinkMap = (
+        linkMap: Record<string, JSONSchemaLinkConfig>,
+        typeTC: ObjectTypeComposer,
+      ) => {
         for (const linkName in linkMap) {
           typeTC.addFields({
             [linkName]: () => {
               const linkObj = linkMap[linkName];
-              let linkResolverFieldMap = linkResolverMapByField.get(operationConfig.field);
-              if (!linkResolverFieldMap) {
-                linkResolverFieldMap = {};
-                linkResolverMapByField.set(operationConfig.field, linkResolverFieldMap);
+              field.directives = field.directives || [];
+              let linkResolverMapDirective = field.directives.find(d => d.name === 'linkResolver');
+              if (!linkResolverMapDirective) {
+                schemaComposer.addDirective(LinkResolverDirective);
+                linkResolverMapDirective = {
+                  name: 'linkResolver',
+                  args: {
+                    linkResolverMap: {},
+                  },
+                };
+                field.directives.push(linkResolverMapDirective);
               }
+              const linkResolverFieldMap = linkResolverMapDirective.args.linkResolverMap;
               let targetField: ObjectTypeComposerFieldConfig<any, any> | undefined;
+              let fieldTypeName: string;
               try {
                 targetField = schemaComposer.Query.getField(linkObj.fieldName);
+                fieldTypeName = 'Query';
               } catch {
                 try {
                   targetField = schemaComposer.Mutation.getField(linkObj.fieldName);
+                  fieldTypeName = 'Mutation';
                 } catch {}
               }
               if (!targetField) {
-                logger.debug(`Field ${linkObj.fieldName} not found in ${name} for link ${linkName}`);
+                logger.debug(
+                  `Field ${linkObj.fieldName} not found in ${name} for link ${linkName}`,
+                );
               }
-              linkResolverFieldMap[linkName] = (root, args, context, info) =>
-                linkResolver(linkObj.args, targetField.resolve, root, args, context, info);
+              linkResolverFieldMap[linkName] = {
+                linkObjArgs: linkObj.args,
+                targetTypeName: fieldTypeName,
+                targetFieldName: linkObj.fieldName,
+              };
+              schemaComposer.addDirective(LinkDirective);
               return {
                 ...targetField,
+                directives: [
+                  {
+                    name: 'link',
+                    args: {
+                      defaultRootType: rootTypeName,
+                      defaultField: operationConfig.field,
+                    },
+                  },
+                ],
                 args: linkObj.args ? {} : targetField.args,
                 description: linkObj.description || targetField.description,
-                // Pick the correct link resolver if there are many link for the same return type used by different operations
-                resolve: (root, args, context, info) => {
-                  const linkResolverFieldMapForCurrentField =
-                    linkResolverMapByField.get(root.$field) ?? linkResolverFieldMap;
-                  return linkResolverFieldMapForCurrentField[linkName](root, args, context, info);
-                },
               };
             },
           });
@@ -565,26 +189,31 @@ ${operationConfig.description || ''}
 
       if ('exposeResponseMetadata' in operationConfig && operationConfig.exposeResponseMetadata) {
         const typeTC = schemaComposer.getOTC(field.type.getTypeName());
+        schemaComposer.addDirective(ResponseMetadataDirective);
         typeTC.addFields({
           _response: {
             type: responseMetadataType,
-            resolve: root => ({
-              url: root.$url,
-              headers: root.$response.header,
-              method: root.$method,
-              status: root.$statusCode,
-              statusText: root.$statusText,
-              body: root.$response.body,
-            }),
+            directives: [
+              {
+                name: 'responseMetadata',
+              },
+            ],
           },
         });
       }
 
       if ('responseByStatusCode' in operationConfig) {
         const unionOrSingleTC = schemaComposer.getAnyTC(getNamedType(field.type.getType()));
-        const types = 'getTypes' in unionOrSingleTC ? unionOrSingleTC.getTypes() : [unionOrSingleTC];
-        const statusCodeOneOfIndexMap =
-          (unionOrSingleTC.getExtension('statusCodeOneOfIndexMap') as Record<string, number>) || {};
+        const types =
+          'getTypes' in unionOrSingleTC ? unionOrSingleTC.getTypes() : [unionOrSingleTC];
+        const statusCodeOneOfIndexMap: Record<string, number> = {};
+        const directives = unionOrSingleTC.getDirectives();
+        for (const directive of directives) {
+          if (directive.name === 'statusCodeOneOfIndex') {
+            statusCodeOneOfIndexMap[directive.args?.statusCode as string] = directive.args
+              ?.oneOfIndex as number;
+          }
+        }
         for (const statusCode in operationConfig.responseByStatusCode) {
           const responseConfig = operationConfig.responseByStatusCode[statusCode];
           if (responseConfig.links || responseConfig.exposeResponseMetadata) {
@@ -592,12 +221,17 @@ ${operationConfig.description || ''}
             const originalName = typeTCThunked.getTypeName();
             let typeTC = schemaComposer.getAnyTC(originalName);
             if (!('addFieldArgs' in typeTC)) {
+              schemaComposer.addDirective(ResolveRootDirective);
               typeTC = schemaComposer.createObjectTC({
                 name: `${operationConfig.field}_${statusCode}_response`,
                 fields: {
                   [originalName]: {
                     type: typeTC as any,
-                    resolve: root => root,
+                    directives: [
+                      {
+                        name: 'resolveRoot',
+                      },
+                    ],
                   },
                 },
               });
@@ -606,10 +240,15 @@ ${operationConfig.description || ''}
               field.type = typeTC;
             }
             if (responseConfig.exposeResponseMetadata) {
+              schemaComposer.addDirective(ResponseMetadataDirective);
               typeTC.addFields({
                 _response: {
                   type: responseMetadataType,
-                  resolve: root => root.$response,
+                  directives: [
+                    {
+                      name: 'responseMetadata',
+                    },
+                  ],
                 },
               });
             }

@@ -425,15 +425,8 @@
           "description": "Handler for gRPC and Protobuf schemas"
         },
         "jsonSchema": {
-          "description": "Handler for JSON Schema specification.\nSource could be a local json file, or a url to it. (Any of: JsonSchemaHandler, JsonSchemaHandlerBundle)",
-          "anyOf": [
-            {
-              "$ref": "#/definitions/JsonSchemaHandler"
-            },
-            {
-              "$ref": "#/definitions/JsonSchemaHandlerBundle"
-            }
-          ]
+          "$ref": "#/definitions/JsonSchemaHandler",
+          "description": "Handler for JSON Schema specification.\nSource could be a local json file, or a url to it."
         },
         "mongoose": {
           "$ref": "#/definitions/MongooseHandler"
@@ -956,53 +949,6 @@
         }
       }
     },
-    "JsonSchemaHandlerBundle": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "JsonSchemaHandlerBundle",
-      "properties": {
-        "bundlePath": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ],
-          "description": "Path to the bundle file"
-        },
-        "bundleHeaders": {
-          "type": "object",
-          "properties": {},
-          "description": "HTTP Headers to receive the bundle"
-        },
-        "baseUrl": {
-          "type": "string"
-        },
-        "operationHeaders": {
-          "description": "Any of: JSON, String",
-          "anyOf": [
-            {
-              "type": "object",
-              "properties": {}
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "queryStringOptions": {
-          "$ref": "#/definitions/QueryStringOptions"
-        }
-      },
-      "required": ["bundlePath"]
-    },
     "QueryStringOptions": {
       "additionalProperties": false,
       "type": "object",
@@ -1028,20 +974,16 @@
       "type": "object",
       "title": "JsonSchemaHandler",
       "properties": {
-        "baseUrl": {
+        "source": {
+          "type": "string",
+          "description": "Path to the bundle file"
+        },
+        "endpoint": {
           "type": "string"
         },
         "operationHeaders": {
-          "description": "Any of: JSON, String",
-          "anyOf": [
-            {
-              "type": "object",
-              "properties": {}
-            },
-            {
-              "type": "string"
-            }
-          ]
+          "type": "object",
+          "properties": {}
         },
         "schemaHeaders": {
           "type": "object",
@@ -1083,9 +1025,17 @@
         },
         "queryStringOptions": {
           "$ref": "#/definitions/QueryStringOptions"
+        },
+        "bundlePath": {
+          "type": "string",
+          "description": "Will be removed later"
+        },
+        "bundleHeaders": {
+          "type": "object",
+          "properties": {},
+          "description": "Will be removed later"
         }
-      },
-      "required": ["operations"]
+      }
     },
     "JsonSchemaHTTPOperation": {
       "additionalProperties": false,
@@ -1831,9 +1781,13 @@
       "type": "object",
       "title": "Neo4jHandler",
       "properties": {
-        "url": {
+        "endpoint": {
           "type": "string",
           "description": "URL for the Neo4j Instance e.g. neo4j://localhost"
+        },
+        "source": {
+          "type": "string",
+          "description": "Provide GraphQL Type Definitions instead of inferring"
         },
         "username": {
           "type": "string",
@@ -1850,36 +1804,32 @@
         "database": {
           "type": "string",
           "description": "Specifies database name"
-        },
-        "typeDefs": {
-          "type": "string",
-          "description": "Provide GraphQL Type Definitions instead of inferring"
         }
       },
-      "required": ["url", "username", "password"]
+      "required": ["endpoint", "username", "password"]
     },
     "ODataHandler": {
       "additionalProperties": false,
       "type": "object",
       "title": "ODataHandler",
       "properties": {
-        "baseUrl": {
+        "endpoint": {
           "type": "string",
           "description": "Base URL for OData API"
         },
-        "metadata": {
+        "source": {
           "type": "string",
           "description": "Custom $metadata File or URL"
-        },
-        "operationHeaders": {
-          "type": "object",
-          "properties": {},
-          "description": "Headers to be used with the operation requests"
         },
         "schemaHeaders": {
           "type": "object",
           "properties": {},
           "description": "Headers to be used with the $metadata requests"
+        },
+        "operationHeaders": {
+          "type": "object",
+          "properties": {},
+          "description": "Headers to be used with the operation requests"
         },
         "batch": {
           "type": "string",
@@ -1891,7 +1841,7 @@
           "description": "Use $expand for navigation props instead of seperate HTTP requests (Default: false)"
         }
       },
-      "required": ["baseUrl"]
+      "required": ["endpoint"]
     },
     "OpenapiHandler": {
       "additionalProperties": false,
@@ -1907,7 +1857,7 @@
           "enum": ["json", "yaml", "js", "ts"],
           "description": "Format of the files referenced from the source file, for cases content type isn't detected automatically (Allowed values: json, yaml, js, ts)"
         },
-        "baseUrl": {
+        "endpoint": {
           "type": "string",
           "description": "Specifies the URL on which all paths will be based on.\nOverrides the server object in the OAS."
         },
@@ -1917,16 +1867,9 @@
           "description": "If you are using a remote URL endpoint to fetch your schema, you can set headers for the HTTP request to fetch your schema."
         },
         "operationHeaders": {
-          "description": "JSON object representing the Headers to add to the runtime of the API calls (Any of: JSON, String)",
-          "anyOf": [
-            {
-              "type": "object",
-              "properties": {}
-            },
-            {
-              "type": "string"
-            }
-          ]
+          "type": "object",
+          "properties": {},
+          "description": "JSON object representing the Headers to add to the runtime of the API calls"
         },
         "ignoreErrorResponses": {
           "type": "boolean",
@@ -2728,10 +2671,10 @@
       "type": "object",
       "title": "RAMLHandler",
       "properties": {
-        "ramlFilePath": {
+        "source": {
           "type": "string"
         },
-        "baseUrl": {
+        "endpoint": {
           "type": "string"
         },
         "schemaHeaders": {
@@ -2768,7 +2711,7 @@
           ]
         }
       },
-      "required": ["ramlFilePath"]
+      "required": ["source"]
     },
     "RAMLSelectQueryOrMutationFieldConfig": {
       "additionalProperties": false,

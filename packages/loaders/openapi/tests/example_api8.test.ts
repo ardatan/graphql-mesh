@@ -18,12 +18,13 @@ describe('OpenAPI loader: Empty upstream 404 response', () => {
   /**
    * Set up the schema first and run example API server
    */
+  let port: number;
   beforeAll(async () => {
     server = await startServer();
-    const baseUrl = `http://localhost:${(server.address() as AddressInfo).port}/api`;
+    port = (server.address() as AddressInfo).port;
     createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
       fetch,
-      baseUrl,
+      endpoint: 'http://localhost:{context.port}/api',
       source: './fixtures/example_oas8.json',
       cwd: __dirname,
     });
@@ -51,6 +52,9 @@ describe('OpenAPI loader: Empty upstream 404 response', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
     expect(result).toMatchInlineSnapshot(`
       {

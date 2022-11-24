@@ -2,7 +2,7 @@ sources:
   - name: Example
     handler:
       jsonSchema:
-        baseUrl: http://localhost:4002
+        endpoint: http://localhost:4002
         operationHeaders:
           Content-Type: application/json
         operations:

@@ -13,7 +13,7 @@ describe('SOAP Loader', () => {
     const schema = soapLoader.buildSchema();
     expect(printSchemaWithDirectives(schema)).toMatchSnapshot();
   });
-  it.skip('should execute SOAP calls correctly', async () => {
+  it('should execute SOAP calls correctly', async () => {
     const soapLoader = new SOAPLoader({
       fetch,
     });

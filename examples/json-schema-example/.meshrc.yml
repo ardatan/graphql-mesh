@@ -2,7 +2,7 @@ sources:
   - name: FakeAPI
     handler:
       jsonSchema:
-        baseUrl: https://not-existing-api.com/API
+        endpoint: https://not-existing-api.com/API
         operations:
           - type: Query
             field: me

@@ -2219,7 +2219,7 @@
 
 ### Minor Changes
 
-- baf004f78: feat(json-schema): respect baseUrl given on loading bundle
+- baf004f78: feat(json-schema): respect endpoint given on loading bundle
 
 ### Patch Changes
 

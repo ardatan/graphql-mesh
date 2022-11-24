@@ -2,7 +2,7 @@ sources:
   - name: PrivateAPI
     handler:
       jsonSchema:
-        baseUrl: http://localhost:3001
+        endpoint: http://localhost:3001
         operations:
           - type: Query
             field: secret

@@ -22,7 +22,7 @@ sources:
   - name: Books
     handler:
       openapi:
-        baseUrl: http://localhost:3002/
+        endpoint: http://localhost:3002/
         source: ../books-service/openapi3-definition.json
     transforms:
   - rename:
@@ -37,7 +37,7 @@ sources:
     handler:
       grpc:
         endpoint: localhost:3003
-        protoFilePath: ../authors-service/proto/authors/v1/authors_service.proto
+        source: ../authors-service/proto/authors/v1/authors_service.proto
   - name: Stores
     handler:
       graphql:

@@ -5,9 +5,15 @@ exports[`Example API Combined should generate correct schema: example_oas_combin
   query: Query
 }
 
-type Query {
+directive @enum(value: String) on ENUM_VALUE
+
+directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+
+directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+
+type Query @globalOptions(sourceName: "example_api_combined", endpoint: "http://localhost:{context.port}/api") {
   "Returns information about all employee cars"
-  getAllCars: [query_getAllCars_items]
+  getAllCars: [query_getAllCars_items] @httpOperation(path: "/cars", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
 }
 
 type query_getAllCars_items {
@@ -35,9 +41,23 @@ enum query_getAllCars_items_allOf_0_kind {
 
 "The rating of the car."
 enum query_getAllCars_items_allOf_0_rating {
-  _100
-  _101
-  _200
+  _100 @enum(value: "100")
+  _101 @enum(value: "101")
+  _200 @enum(value: "200")
+}
+
+scalar ObjMap
+
+enum HTTPMethod {
+  GET
+  HEAD
+  POST
+  PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
+  PATCH
 }"
 `;
 

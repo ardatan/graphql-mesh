@@ -15,7 +15,9 @@
       "examples/*",
       "examples/federation-example/*",
       "examples/graphql-file-upload-example/frontend",
-      "packages/loaders/*"
+      "packages/loaders/*",
+      "examples/hive-example/gateway",
+      "examples/hive-example/sources/*"
     ]
   },
   "scripts": {
