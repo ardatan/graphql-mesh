@@ -29,7 +29,7 @@
     "newrelic": "^7 || ^8.0.0"
   },
   "dependencies": {
-    "@envelop/newrelic": "5.0.3",
+    "@envelop/newrelic": "5.0.4",
     "@graphql-mesh/types": "0.86.0",
     "@graphql-mesh/utils": "0.42.7",
     "@graphql-mesh/cross-helpers": "0.2.10",
