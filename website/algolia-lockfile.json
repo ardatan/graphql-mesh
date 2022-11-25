@@ -387,11 +387,7 @@
   },
   {
     "objectID": "mesh-docs-getting-started-customize-mesh-server",
-    "headings": [
-      "Configure and provide plugins",
-      "Provide a standalone server implementation",
-      "Configuration: `serve` reference"
-    ],
+    "headings": ["Configure and provide plugins", "Configuration: `serve` reference"],
     "toc": [
       {
         "children": [],
@@ -400,16 +396,11 @@
       },
       {
         "children": [],
-        "title": "Provide a standalone server implementation",
-        "anchor": "provide-a-standalone-server-implementation"
-      },
-      {
-        "children": [],
         "title": "Configuration: `serve` reference",
         "anchor": "configuration-serve-reference"
       }
     ],
-    "content": "796de632033efc4578c6cabcd0cb8e88",
+    "content": "e3beecdabf86c522ae59cd5edd94d59a",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/getting-started/customize-mesh-server",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Getting Started"],
