@@ -22,13 +22,13 @@
   "typings": "dist/index.d.ts",
   "peerDependencies": {
     "graphql": "*",
-    "graphql-yoga": "3.0.3",
+    "graphql-yoga": "3.1.0",
     "prom-client": "^13 || ^14.0.0"
   },
   "dependencies": {
     "@graphql-mesh/types": "0.87.0",
     "@graphql-mesh/utils": "0.42.8",
-    "@graphql-yoga/plugin-prometheus": "1.0.3",
+    "@graphql-yoga/plugin-prometheus": "1.1.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

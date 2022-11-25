@@ -2911,18 +2911,18 @@
     parse-filepath "^1.0.2"
     tslib "~2.4.0"
 
-"@graphql-hive/client@0.21.1":
-  version "0.21.1"
-  resolved "https://registry.yarnpkg.com/@graphql-hive/client/-/client-0.21.1.tgz#46f43d1b05b472a83a99d31a78515659306697ef"
-  integrity sha512-iKhlLB2XiNj8MWG7eykw9zm3C6KT/mY9pGctys1mqf+qt6Vg7dQYXY3aOm2r56TCnBCPK07/j9rTs5PG6JizxQ==
+"@graphql-hive/client@0.21.3":
+  version "0.21.3"
+  resolved "https://registry.yarnpkg.com/@graphql-hive/client/-/client-0.21.3.tgz#319b85e7da11901d5e6f15f653930a8b88e0d573"
+  integrity sha512-Lud3/40gpoU0sU9LlCDkSP0fU86Xs2Ff6bXWLYXTxUZqnX+DCSe4UJf4MmvZT/rgzwffR1KBZzI3/fWOVieXCQ==
   dependencies:
-    "@graphql-hive/core" "^0.2.2"
+    "@graphql-hive/core" "^0.2.3"
     "@graphql-tools/utils" "^8.12.0"
     async-retry "1.3.3"
     axios "^0.27.0"
     tiny-lru "8.0.2"
 
-"@graphql-hive/core@^0.2.2":
+"@graphql-hive/core@^0.2.3":
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/@graphql-hive/core/-/core-0.2.3.tgz#5218c87061b9075bc467f264ac6c959e7e44060b"
   integrity sha512-dX5N7G4EPg0dN1VgE+WZWo4kHtUyZR+UURKwBdldEphD7RsUNA+7lQM9vBr++FdUuMQe4gtxgE3TGd5DvkAz8w==
@@ -3006,14 +3006,14 @@
     tslib "^2.4.0"
     ws "8.11.0"
 
-"@graphql-tools/executor-http@0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/executor-http/-/executor-http-0.0.3.tgz#adfec46a7814c7f7082005a374d944900ea18018"
-  integrity sha512-dtZzdcoc7tnctSGCQhcbOQPnVidn4DakgkyrBAWf0O3GTP9NFKlA+T9+I1N4gPHupQOZdJ1gmNXfnJZyswzCkA==
+"@graphql-tools/executor-http@0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/executor-http/-/executor-http-0.0.4.tgz#b0ba436bd37a538ee31f30c9ee6266143a956062"
+  integrity sha512-m7UwOhzIXLXXisxOD8x+niN3ae38A8bte47eBBfzr8eTrjsSEEQRbwsc6ciUmoys/5iQabnbtJN10rNIaZaU8w==
   dependencies:
     "@graphql-tools/utils" "9.1.1"
     "@repeaterjs/repeater" "3.0.4"
-    "@whatwg-node/fetch" "0.5.1"
+    "@whatwg-node/fetch" "0.5.3"
     dset "3.1.2"
     extract-files "^11.0.0"
     meros "1.2.1"
@@ -3253,15 +3253,15 @@
     valid-url "1.0.9"
     websocket "1.0.31"
 
-"@graphql-tools/url-loader@7.16.19":
-  version "7.16.19"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.16.19.tgz#4e95443bcaf8ec66e72118caa48252180bedf37d"
-  integrity sha512-vFHstaANoojDCXUb/a25mTubteTUV8b7XVLHbbSvAQvwGUne6d+Upg5MeGrKBeHl2Wpn240cJnaa4A1mrwivWA==
+"@graphql-tools/url-loader@7.16.20":
+  version "7.16.20"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.16.20.tgz#ba9f013f53e7d0627486f0c3aa4bd9561b27caa9"
+  integrity sha512-IoD4WR1aGURPisGxJw98b59RIYtWEa4YILFMezBTpG/Xq+BOOF7aYYGySFE1ocl86DeXU3yY9D04/cU8F7sAjw==
   dependencies:
     "@ardatan/sync-fetch" "0.0.1"
     "@graphql-tools/delegate" "9.0.17"
     "@graphql-tools/executor-graphql-ws" "0.0.3"
-    "@graphql-tools/executor-http" "0.0.3"
+    "@graphql-tools/executor-http" "0.0.4"
     "@graphql-tools/executor-legacy-ws" "0.0.3"
     "@graphql-tools/utils" "9.1.1"
     "@graphql-tools/wrap" "9.2.16"
@@ -3336,17 +3336,17 @@
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.1.1.tgz#076d78ce99822258cf813ecc1e7fa460fa74d052"
   integrity sha512-NQ17ii0rK1b34VZonlmT2QMJFI70m0TRwbknO/ihlbatXyaktDhN/98vBiUU6kNBPljqGqyIrl2T4nY2RpFANg==
 
-"@graphql-yoga/plugin-prometheus@1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-prometheus/-/plugin-prometheus-1.0.3.tgz#bb36fa81fddcbef0d14963fbea9dfd4a39a44f76"
-  integrity sha512-/nQMyjLtoyzQ93hv01lGLjADossxswVD/DJS1z/3mPqgNQh5CHVAzmEazA2r4G0lrLrH64pfEsCmUKxZGV1yXQ==
+"@graphql-yoga/plugin-prometheus@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-prometheus/-/plugin-prometheus-1.1.0.tgz#75e713b91a8efdf97739b600c3ee7e86ebe7b0a3"
+  integrity sha512-u3/o6U96KDUc+XxdBKF5n2y1stGdtQ3Z9TBvXLy6TvF3JoDvYcj22BmBYxI9IlJJzd10QyMyY/NXYoAizDgMIg==
   dependencies:
     "@envelop/prometheus" "7.0.4"
 
-"@graphql-yoga/plugin-response-cache@1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-response-cache/-/plugin-response-cache-1.0.3.tgz#4ba737e8692b96aa9ed624318785cb3dd8ac2398"
-  integrity sha512-kGG2Q35OWEzOhDdC90+9K0IWLvv3ppAU0f/BtT/rOk2WquIPBAHiAONRjJPvCqFuWcYqnCK7t4jFZ93RHxfACA==
+"@graphql-yoga/plugin-response-cache@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-response-cache/-/plugin-response-cache-1.1.0.tgz#2b193d0d2047b5d095f315ceb23d2284f949f1db"
+  integrity sha512-xz+rpEyxIlzwZGEj3p6WY0szuCPMUpnIXyKKc0wTmP617e4emQE7qlOQoJUfIdS5IgvPid+HHw77ost+uE1bOg==
   dependencies:
     "@envelop/response-cache" "4.0.4"
 
@@ -6113,20 +6113,6 @@
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/@whatwg-node/events/-/events-0.0.2.tgz#7b7107268d2982fc7b7aff5ee6803c64018f84dd"
   integrity sha512-WKj/lI4QjnLuPrim0cfO7i+HsDSXHxNv1y0CrJhdntuO3hxWZmnXCwNDnwOvry11OjRin6cgWNF+j/9Pn8TN4w==
-
-"@whatwg-node/fetch@0.5.1":
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.5.1.tgz#62c7e902ddfb7d16b0b31599d81628bbd22350a9"
-  integrity sha512-RBZS60EU6CbRJ370BVVKW4F9csZuGh0OQNrUDhJ0IaIFLsXsJorFCM2iwaDWZTAPMqxW1TmuVcVKJ3d/H1dV1g==
-  dependencies:
-    "@peculiar/webcrypto" "^1.4.0"
-    abort-controller "^3.0.0"
-    busboy "^1.6.0"
-    form-data-encoder "^1.7.1"
-    formdata-node "^4.3.1"
-    node-fetch "^2.6.7"
-    undici "^5.12.0"
-    web-streams-polyfill "^3.2.0"
 
 "@whatwg-node/fetch@0.5.3", "@whatwg-node/fetch@^0.5.0":
   version "0.5.3"
@@ -10757,12 +10743,7 @@ focus-visible@^5.2.0:
   resolved "https://registry.yarnpkg.com/focus-visible/-/focus-visible-5.2.0.tgz#3a9e41fccf587bd25dcc2ef045508284f0a4d6b3"
   integrity sha512-Rwix9pBtC1Nuy5wysTmKy+UjbDJpIfg8eHjw0rjZ1mX4GNLz1Bmd16uDpI3Gk1i70Fgcs8Csg2lPm8HULFg9DQ==
 
-follow-redirects@^1.0.0:
-  version "1.15.1"
-  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.1.tgz#0ca6a452306c9b276e4d3127483e29575e207ad5"
-  integrity sha512-yLAMQs+k0b2m7cVxpS1VKJVvoz7SS9Td1zss3XRwXj+ZDH00RJgnuLx7E44wx02kQLrdM3aOOy+FpzS7+8OizA==
-
-follow-redirects@^1.14.9:
+follow-redirects@^1.0.0, follow-redirects@^1.14.9:
   version "1.15.2"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.2.tgz#b460864144ba63f2681096f274c4e57026da2c13"
   integrity sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==
@@ -11396,10 +11377,10 @@ graphql-ws@5.11.2, graphql-ws@^5.6.2:
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.11.2.tgz#d5e0acae8b4d4a4cf7be410a24135cfcefd7ddc0"
   integrity sha512-4EiZ3/UXYcjm+xFGP544/yW1+DVI8ZpKASFbzrV5EDTFWJp0ZvLl4Dy2fSZAzz9imKp5pZMIcjB0x/H69Pv/6w==
 
-graphql-yoga@3.0.3:
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/graphql-yoga/-/graphql-yoga-3.0.3.tgz#ce9d207635df33ec0236e3539ae1aeadef671f95"
-  integrity sha512-TPDxedEGNzkq7rztCVTSPDeCsK/zWo5SDjVdz7ECiZVW/68622nJW1ZvgZH4WUhw59PhNS4p56mVmtGvTDZAiA==
+graphql-yoga@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/graphql-yoga/-/graphql-yoga-3.1.0.tgz#7e31ef20e8c9644a50cf208cac229499a0737ca3"
+  integrity sha512-rZpg1rvS8qUm5eqSS/0rDncjRmpD5ZUFediOLSuMY38rVAmlcVjpChdQ0aUVlPAgImBd/AOeVYNNRFBayjp6/Q==
   dependencies:
     "@envelop/core" "3.0.4"
     "@envelop/parser-cache" "5.0.4"
@@ -15306,28 +15287,28 @@ neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-neo4j-driver-bolt-connection@^5.2.0:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/neo4j-driver-bolt-connection/-/neo4j-driver-bolt-connection-5.2.0.tgz#322f2f9773d4e0c093b0049176b13a2f64a1f6fb"
-  integrity sha512-BKVs1fd54UrJGWWpxpzPclaHo46xUUwMRK5fHR8t6KSi5C0WgE0iCOh1tk3cReFQgqwS6D5OVKu2ihU2kzNLiA==
+neo4j-driver-bolt-connection@^5.3.0:
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/neo4j-driver-bolt-connection/-/neo4j-driver-bolt-connection-5.3.0.tgz#ce8e2bfbb00b421d6c989e3586470d7095d2d627"
+  integrity sha512-/JMlyf2nBjyqNBBHmXh0eHkkUu+PHok5A0wUh+lcwcXKAzR95tHvDYPthlPp1zXVfK2XbaiV4iO2rVQuzpbCVA==
   dependencies:
     buffer "^6.0.3"
-    neo4j-driver-core "^5.2.0"
+    neo4j-driver-core "^5.3.0"
     string_decoder "^1.3.0"
 
-neo4j-driver-core@^5.2.0:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/neo4j-driver-core/-/neo4j-driver-core-5.2.0.tgz#b465bea6580196f43945265b75961978de17e39e"
-  integrity sha512-USdA9u+V0VM7y4UwH4nrofBaROwp73iKx1hC6TNWQRKF5o7biDUt6Wc1x3+oO4YN4lCSC5JzB/tHlG4f1cYxsg==
+neo4j-driver-core@^5.3.0:
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/neo4j-driver-core/-/neo4j-driver-core-5.3.0.tgz#c3bf55a5d36565ea76bab7673e0c579af4387011"
+  integrity sha512-MGxHCU0Pt13ElxYZkObWoxZ8O5y0Guf/R3rcogDUktG6cp69rc+lWxZAR7HbsL+gc8NrdJlIxR7dIud7B3bhAA==
 
-neo4j-driver@5.2.0:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/neo4j-driver/-/neo4j-driver-5.2.0.tgz#954645aac5cd3975f2ca160417dbb2a513bb108f"
-  integrity sha512-jCKKSC6pumhjgn16X3tpSkQBvnwVdYHrudI1gU8RhKIOnKQjVEnj3OzcHAN2c8+BaFDx++qIln9FsssPLVOrXg==
+neo4j-driver@5.3.0:
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/neo4j-driver/-/neo4j-driver-5.3.0.tgz#7bbf0697809706eb3f82d3c177cdb7cd5d58e973"
+  integrity sha512-u3+idq50BZj4zN9kVBbWA7u5H5/v837PP+iWbHElWgUbCCD1LX7E4V5Yq3g25XHm/CJu8Qfq9gfWCBbYCxgWBw==
   dependencies:
     "@babel/runtime" "^7.17.8"
-    neo4j-driver-bolt-connection "^5.2.0"
-    neo4j-driver-core "^5.2.0"
+    neo4j-driver-bolt-connection "^5.3.0"
+    neo4j-driver-core "^5.3.0"
     rxjs "^7.5.5"
 
 newrelic@8.17.1:
