@@ -1,13 +1,14 @@
 {
   "name": "@graphql-mesh/plugin-response-cache",
-  "version": "0.1.50",
-  "sideEffects": false,
+  "version": "0.1.51",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/plugins/response-cache"
+  },
+  "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
   "exports": {
     ".": {
       "require": "./dist/index.js",
@@ -18,26 +19,25 @@
       "import": "./dist/*.mjs"
     }
   },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "Urigo/graphql-mesh",
-    "directory": "packages/plugins/response-cache"
-  },
+  "typings": "dist/index.d.ts",
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-yoga/plugin-response-cache": "1.0.3",
-    "@graphql-mesh/types": "0.86.0",
+    "@envelop/core": "^3.0.0",
     "@graphql-mesh/cross-helpers": "0.2.10",
     "@graphql-mesh/string-interpolation": "0.3.3",
+    "@graphql-mesh/types": "0.86.0",
     "@graphql-mesh/utils": "0.42.7",
-    "@envelop/core": "^3.0.0",
+    "@graphql-yoga/plugin-response-cache": "1.0.3",
     "tslib": "^2.4.0"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/index.d.ts"
   }
 }

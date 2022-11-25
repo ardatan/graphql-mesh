@@ -1,13 +1,14 @@
 {
   "name": "@graphql-mesh/merger-bare",
-  "version": "0.15.47",
-  "sideEffects": false,
+  "version": "0.15.48",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/mergers/bare"
+  },
+  "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
   "exports": {
     ".": {
       "require": "./dist/index.js",
@@ -18,25 +19,24 @@
       "import": "./dist/*.mjs"
     }
   },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "Urigo/graphql-mesh",
-    "directory": "packages/mergers/bare"
-  },
+  "typings": "dist/index.d.ts",
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
+    "@graphql-mesh/merger-stitching": "0.17.8",
     "@graphql-mesh/types": "0.86.0",
     "@graphql-mesh/utils": "0.42.7",
     "@graphql-tools/schema": "9.0.10",
     "@graphql-tools/utils": "9.1.1",
-    "@graphql-mesh/merger-stitching": "0.17.7",
     "tslib": "^2.4.0"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/index.d.ts"
   }
 }

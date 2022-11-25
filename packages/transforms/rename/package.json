@@ -1,13 +1,14 @@
 {
   "name": "@graphql-mesh/transform-rename",
-  "version": "0.12.102",
-  "sideEffects": false,
+  "version": "0.13.0",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/transforms/rename"
+  },
+  "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
   "exports": {
     ".": {
       "require": "./dist/index.js",
@@ -18,30 +19,29 @@
       "import": "./dist/*.mjs"
     }
   },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "Urigo/graphql-mesh",
-    "directory": "packages/transforms/rename"
-  },
+  "typings": "dist/index.d.ts",
   "peerDependencies": {
     "graphql": "*"
+  },
+  "dependencies": {
+    "@graphql-mesh/types": "0.86.0",
+    "@graphql-mesh/utils": "0.42.7",
+    "@graphql-tools/delegate": "9.0.17",
+    "@graphql-tools/utils": "9.1.1",
+    "@graphql-tools/wrap": "9.2.16",
+    "graphql-scalars": "1.20.1",
+    "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@graphql-mesh/cache-localforage": "0.6.61",
     "@graphql-tools/schema": "9.0.10"
   },
-  "dependencies": {
-    "@graphql-mesh/types": "0.86.0",
-    "@graphql-mesh/utils": "0.42.7",
-    "@graphql-tools/wrap": "9.2.16",
-    "@graphql-tools/delegate": "9.0.17",
-    "@graphql-tools/utils": "9.1.1",
-    "graphql-scalars": "1.20.1",
-    "tslib": "^2.4.0"
-  },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/index.d.ts"
   }
 }

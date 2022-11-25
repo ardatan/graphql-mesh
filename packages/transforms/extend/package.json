@@ -1,13 +1,14 @@
 {
   "name": "@graphql-mesh/transform-extend",
-  "version": "0.10.75",
-  "sideEffects": false,
+  "version": "0.10.76",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/transforms/extend"
+  },
+  "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
   "exports": {
     ".": {
       "require": "./dist/index.js",
@@ -18,28 +19,27 @@
       "import": "./dist/*.mjs"
     }
   },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "Urigo/graphql-mesh",
-    "directory": "packages/transforms/extend"
-  },
+  "typings": "dist/index.d.ts",
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
+    "@graphql-mesh/cross-helpers": "0.2.10",
     "@graphql-mesh/types": "0.86.0",
     "@graphql-mesh/utils": "0.42.7",
-    "@graphql-tools/load": "7.8.6",
     "@graphql-tools/code-file-loader": "7.3.13",
     "@graphql-tools/graphql-file-loader": "7.5.11",
+    "@graphql-tools/load": "7.8.6",
     "@graphql-tools/schema": "9.0.10",
     "@graphql-tools/utils": "9.1.1",
-    "@graphql-mesh/cross-helpers": "0.2.10",
     "tslib": "^2.4.0"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/index.d.ts"
   }
 }
