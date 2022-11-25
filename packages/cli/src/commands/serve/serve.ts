@@ -45,8 +45,15 @@ function portSelectorFn(sources: [number, number, number], logger: Logger) {
 }
 
 export async function serveMesh(
-  { baseDir, argsPort, getBuiltMesh, logger, rawServeConfig = {}, playgroundTitle }: ServeMeshOptions,
-  cliParams: GraphQLMeshCLIParams
+  {
+    baseDir,
+    argsPort,
+    getBuiltMesh,
+    logger,
+    rawServeConfig = {},
+    playgroundTitle,
+  }: ServeMeshOptions,
+  cliParams: GraphQLMeshCLIParams,
 ) {
   const {
     fork: configFork,
@@ -63,7 +70,10 @@ export async function serveMesh(
     // trustProxy = 'loopback',
   } = rawServeConfig;
 
-  const port = portSelectorFn([argsPort, parseInt(configPort?.toString()), parseInt(process.env.PORT)], logger);
+  const port = portSelectorFn(
+    [argsPort, parseInt(configPort?.toString()), parseInt(process.env.PORT)],
+    logger,
+  );
 
   let forkNum: number;
 
@@ -147,18 +157,6 @@ export async function serveMesh(
       httpServer = createHTTPServer(requestHandler);
     }
 
-    registerTerminateHandler(eventName => {
-      const eventLogger = logger.child(`${eventName}💀`);
-      eventLogger.debug(`Stopping HTTP Server`);
-      httpServer.close(error => {
-        if (error) {
-          eventLogger.debug(`HTTP Server couldn't be stopped: `, error);
-        } else {
-          eventLogger.debug(`HTTP Server has been stopped`);
-        }
-      });
-    });
-
     const wsServer = new ws.Server({
       path: graphqlPath,
       server: httpServer,
@@ -212,7 +210,7 @@ export async function serveMesh(
         execute: (args: any) => args.execute(args),
         subscribe: (args: any) => args.subscribe(args),
       },
-      wsServer
+      wsServer,
     );
 
     registerTerminateHandler(eventName => {
@@ -230,15 +228,28 @@ export async function serveMesh(
 
     httpServer
       .listen(port, hostname, () => {
-        const shouldntOpenBrowser = process.env.NODE_ENV?.toLowerCase() === 'production' || browser === false;
+        const shouldntOpenBrowser =
+          process.env.NODE_ENV?.toLowerCase() === 'production' || browser === false;
         if (!shouldntOpenBrowser) {
           open(
             serverUrl.replace('0.0.0.0', 'localhost'),
-            typeof browser === 'string' ? { app: browser } : undefined
+            typeof browser === 'string' ? { app: browser } : undefined,
           ).catch(() => {});
         }
       })
       .on('error', handleFatalError);
+
+    registerTerminateHandler(eventName => {
+      const eventLogger = logger.child(`${eventName}💀`);
+      eventLogger.debug(`Stopping HTTP Server`);
+      httpServer.close(error => {
+        if (error) {
+          eventLogger.debug(`HTTP Server couldn't be stopped: `, error);
+        } else {
+          eventLogger.debug(`HTTP Server has been stopped`);
+        }
+      });
+    });
 
     return mesh$.then(mesh => ({
       mesh,
