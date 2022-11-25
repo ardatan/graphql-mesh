@@ -1,0 +1,43 @@
+{
+  "name": "@graphql-mesh/transform-hive",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/transforms/hive"
+  },
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./*": {
+      "require": "./dist/*.js",
+      "import": "./dist/*.mjs"
+    }
+  },
+  "typings": "dist/index.d.ts",
+  "peerDependencies": {
+    "graphql": "*"
+  },
+  "dependencies": {
+    "@graphql-hive/client": "0.21.1",
+    "@graphql-mesh/cross-helpers": "0.2.10",
+    "@graphql-mesh/string-interpolation": "0.3.3",
+    "@graphql-mesh/types": "0.86.0",
+    "@graphql-tools/delegate": "9.0.17",
+    "@graphql-tools/utils": "9.1.1",
+    "tslib": "^2.4.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/index.d.ts"
+  }
+}

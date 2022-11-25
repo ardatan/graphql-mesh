@@ -1657,6 +1657,7 @@ export interface Plugin {
   maskedErrors?: MaskedErrorsPluginConfig;
   immediateIntrospection?: any;
   deduplicateRequest?: any;
+  hive?: HivePlugin;
   httpCache?: any;
   httpDetailsExtensions?: HTTPDetailsExtensionsConfig;
   liveQuery?: LiveQueryConfig;
@@ -1672,6 +1673,104 @@ export interface Plugin {
 }
 export interface MaskedErrorsPluginConfig {
   errorMessage?: string;
+}
+export interface HivePlugin {
+  /**
+   * Access Token
+   */
+  token: string;
+  agent?: HiveAgentOptions;
+  usage?: HiveUsageOptions;
+  reporting?: HiveReportingOptions;
+}
+/**
+ * Agent Options
+ */
+export interface HiveAgentOptions {
+  /**
+   * 30s by default
+   */
+  timeout?: number;
+  /**
+   * 5 by default
+   */
+  maxRetries?: number;
+  /**
+   * 200 by default
+   */
+  minTimeout?: number;
+  /**
+   * Send reports in interval (defaults to 10_000ms)
+   */
+  sendInterval?: number;
+  /**
+   * Max number of traces to send at once (defaults to 25)
+   */
+  maxSize?: number;
+}
+/**
+ * Collects schema usage based on operations
+ */
+export interface HiveUsageOptions {
+  clientInfo?: HiveClientInfo;
+  /**
+   * Hive uses LRU cache to store info about operations.
+   * This option represents the maximum size of the cache.
+   * Default: 1000
+   */
+  max?: number;
+  /**
+   * Hive uses LRU cache to store info about operations.
+   * This option represents the maximum age of an unused operation in the cache.
+   * Default: no ttl
+   */
+  ttl?: number;
+  /**
+   * A list of operations (by name) to be ignored by Hive.
+   */
+  exclude?: string[];
+  /**
+   * Sample rate to determine sampling.
+   * 0.0 = 0% chance of being sent
+   * 1.0 = 100% chance of being sent
+   * Default: 1.0
+   */
+  sampleRate?: number;
+  /**
+   * (Experimental) Enables collecting Input fields usage based on the variables passed to the operation.
+   * Default: false
+   */
+  processVariables?: boolean;
+}
+/**
+ * Extract client info from GraphQL Context
+ */
+export interface HiveClientInfo {
+  /**
+   * Extract client name
+   * Example: "{context.headers['x-client-name']}"
+   */
+  name?: string;
+  /**
+   * Extract client version
+   * Example: "{context.headers['x-client-version']}"
+   */
+  version?: string;
+}
+/**
+ * Schema reporting
+ */
+export interface HiveReportingOptions {
+  /**
+   * Author of current version of the schema
+   */
+  author: string;
+  /**
+   * Commit SHA hash (or any identifier) related to the schema version
+   */
+  commit: string;
+  serviceName?: string;
+  serviceUrl?: string;
 }
 export interface HTTPDetailsExtensionsConfig {
   if?: any;
