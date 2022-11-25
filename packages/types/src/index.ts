@@ -78,7 +78,7 @@ export interface MeshPubSub {
   subscribe<THook extends HookName>(
     triggerName: THook,
     onMessage: (data: AllHooks[THook]) => void,
-    options?: any
+    options?: any,
   ): number;
   unsubscribe(subId: number): void;
   getEventNames(): Iterable<string>;
@@ -145,7 +145,7 @@ export type OnDelegateHookPayload<TContext> = Partial<BatchDelegateOptions<TCont
   };
 
 export type OnDelegateHook<TContext> = (
-  payload: OnDelegateHookPayload<TContext>
+  payload: OnDelegateHookPayload<TContext>,
 ) => PromiseOrValue<OnDelegateHookDone | void>;
 
 export type OnDelegateHookDonePayload = {
@@ -164,7 +164,7 @@ export type MeshFetch = (
   url: string,
   options?: RequestInit,
   context?: any,
-  info?: GraphQLResolveInfo
+  info?: GraphQLResolveInfo,
 ) => Promise<Response>;
 
 export interface OnFetchHookPayload<TContext> {
@@ -183,7 +183,9 @@ export interface OnFetchHookDonePayload {
 
 export type OnFetchHookDone = (payload: OnFetchHookDonePayload) => PromiseOrValue<void>;
 
-export type OnFetchHook<TContext> = (payload: OnFetchHookPayload<TContext>) => PromiseOrValue<void | OnFetchHookDone>;
+export type OnFetchHook<TContext> = (
+  payload: OnFetchHookPayload<TContext>,
+) => PromiseOrValue<void | OnFetchHookDone>;
 
 export type RawSourceOutput = {
   name: string;
@@ -214,7 +216,9 @@ export type Logger = {
 };
 
 export type SelectionSetParam = SelectionSetNode | DocumentNode | string | SelectionSetNode;
-export type SelectionSetParamOrFactory = ((subtree: SelectionSetNode) => SelectionSetParam) | SelectionSetParam;
+export type SelectionSetParamOrFactory =
+  | ((subtree: SelectionSetNode) => SelectionSetParam)
+  | SelectionSetParam;
 
 export type InContextSdkMethodBatchingParams<TDefaultReturn, TArgs, TKey, TReturn> = {
   key: TKey;
@@ -246,6 +250,9 @@ export type InContextSdkMethodParams<TDefaultReturn, TArgs, TContext, TKey, TRet
     | InContextSdkMethodRegularParams<TDefaultReturn, TArgs, TReturn>
   );
 
-export type InContextSdkMethod<TDefaultReturn = any, TArgs = any, TContext = any> = <TKey, TReturn = TDefaultReturn>(
-  params: InContextSdkMethodParams<TDefaultReturn, TArgs, TContext, TKey, TReturn>
+export type InContextSdkMethod<TDefaultReturn = any, TArgs = any, TContext = any> = <
+  TKey,
+  TReturn = TDefaultReturn,
+>(
+  params: InContextSdkMethodParams<TDefaultReturn, TArgs, TContext, TKey, TReturn>,
 ) => Promise<TReturn>;

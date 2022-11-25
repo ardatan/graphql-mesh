@@ -516,6 +516,9 @@
             }
           ]
         },
+        "hive": {
+          "$ref": "#/definitions/HivePlugin"
+        },
         "httpCache": {
           "anyOf": [
             {
@@ -615,7 +618,13 @@
           "description": "If return types don't match,\nyou can specify a result type to apply inline fragment"
         }
       },
-      "required": ["sourceName", "sourceTypeName", "sourceFieldName", "targetTypeName", "targetFieldName"]
+      "required": [
+        "sourceName",
+        "sourceTypeName",
+        "sourceFieldName",
+        "targetTypeName",
+        "targetFieldName"
+      ]
     },
     "AdditionalStitchingBatchResolverObject": {
       "additionalProperties": false,
@@ -1973,6 +1982,129 @@
         }
       },
       "required": ["type", "fieldName"]
+    },
+    "HivePlugin": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "HivePlugin",
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "Access Token"
+        },
+        "agent": {
+          "$ref": "#/definitions/HiveAgentOptions",
+          "description": "Agent Options"
+        },
+        "usage": {
+          "$ref": "#/definitions/HiveUsageOptions",
+          "description": "Collects schema usage based on operations"
+        },
+        "reporting": {
+          "$ref": "#/definitions/HiveReportingOptions",
+          "description": "Schema reporting"
+        }
+      },
+      "required": ["token"]
+    },
+    "HiveAgentOptions": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "HiveAgentOptions",
+      "properties": {
+        "timeout": {
+          "type": "integer",
+          "description": "30s by default"
+        },
+        "maxRetries": {
+          "type": "integer",
+          "description": "5 by default"
+        },
+        "minTimeout": {
+          "type": "integer",
+          "description": "200 by default"
+        },
+        "sendInterval": {
+          "type": "integer",
+          "description": "Send reports in interval (defaults to 10_000ms)"
+        },
+        "maxSize": {
+          "type": "integer",
+          "description": "Max number of traces to send at once (defaults to 25)"
+        }
+      }
+    },
+    "HiveUsageOptions": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "HiveUsageOptions",
+      "properties": {
+        "clientInfo": {
+          "$ref": "#/definitions/HiveClientInfo",
+          "description": "Extract client info from GraphQL Context"
+        },
+        "max": {
+          "type": "integer",
+          "description": "Hive uses LRU cache to store info about operations.\nThis option represents the maximum size of the cache.\nDefault: 1000"
+        },
+        "ttl": {
+          "type": "integer",
+          "description": "Hive uses LRU cache to store info about operations.\nThis option represents the maximum age of an unused operation in the cache.\nDefault: no ttl"
+        },
+        "exclude": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "A list of operations (by name) to be ignored by Hive."
+        },
+        "sampleRate": {
+          "type": "number",
+          "description": "Sample rate to determine sampling.\n0.0 = 0% chance of being sent\n1.0 = 100% chance of being sent\nDefault: 1.0"
+        },
+        "processVariables": {
+          "type": "boolean",
+          "description": "(Experimental) Enables collecting Input fields usage based on the variables passed to the operation.\nDefault: false"
+        }
+      }
+    },
+    "HiveClientInfo": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "HiveClientInfo",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Extract client name\nExample: \"{context.headers['x-client-name']}\""
+        },
+        "version": {
+          "type": "string",
+          "description": "Extract client version\nExample: \"{context.headers['x-client-version']}\""
+        }
+      }
+    },
+    "HiveReportingOptions": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "HiveReportingOptions",
+      "properties": {
+        "author": {
+          "type": "string",
+          "description": "Author of current version of the schema"
+        },
+        "commit": {
+          "type": "string",
+          "description": "Commit SHA hash (or any identifier) related to the schema version"
+        },
+        "serviceName": {
+          "type": "string"
+        },
+        "serviceUrl": {
+          "type": "string"
+        }
+      },
+      "required": ["author", "commit"]
     },
     "HTTPDetailsExtensionsConfig": {
       "additionalProperties": false,
