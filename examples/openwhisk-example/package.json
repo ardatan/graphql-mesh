@@ -1,21 +1,21 @@
 {
   "name": "openwhisk-example",
-  "version": "0.0.19",
-  "private": true,
+  "version": "0.0.20",
   "description": "OpenWhisk Example for GraphQL Mesh",
   "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",
   "license": "MIT",
+  "private": true,
   "main": "dist/index.js",
   "scripts": {
-    "start": "mesh dev",
     "build": "mesh build && node build.js",
-    "deploy": "wsk action update /guest/mesh/swapi dist/index.js  --docker openwhisk/action-nodejs-v16 --web raw"
+    "deploy": "wsk action update /guest/mesh/swapi dist/index.js  --docker openwhisk/action-nodejs-v16 --web raw",
+    "start": "mesh dev"
   },
   "dependencies": {
+    "@graphql-mesh/cli": "0.79.7",
+    "@graphql-mesh/graphql": "0.32.0",
     "esbuild": "0.15.15",
     "graphql": "16.6.0",
-    "@graphql-mesh/cli": "0.79.6",
-    "@graphql-mesh/graphql": "0.32.0",
     "typescript": "4.9.3"
   }
 }

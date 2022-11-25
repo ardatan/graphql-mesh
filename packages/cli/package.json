@@ -1,27 +1,19 @@
 {
   "name": "@graphql-mesh/cli",
-  "version": "0.79.6",
-  "license": "MIT",
+  "version": "0.79.7",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
     "directory": "packages/cli"
   },
-  "peerDependencies": {
-    "graphql": "*"
-  },
+  "license": "MIT",
   "bin": {
     "mesh": "dist/bin.js",
     "gql-mesh": "dist/bin.js",
     "graphql-mesh": "dist/bin.js"
   },
-  "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
   "exports": {
     ".": {
       "require": "./dist/index.js",
@@ -32,6 +24,57 @@
       "import": "./dist/*.mjs"
     }
   },
+  "typings": "dist/index.d.ts",
+  "peerDependencies": {
+    "graphql": "*"
+  },
+  "dependencies": {
+    "@graphql-codegen/core": "2.6.6",
+    "@graphql-codegen/typed-document-node": "2.3.7",
+    "@graphql-codegen/typescript": "2.8.2",
+    "@graphql-codegen/typescript-generic-sdk": "3.0.4",
+    "@graphql-codegen/typescript-operations": "2.5.7",
+    "@graphql-codegen/typescript-resolvers": "2.7.7",
+    "@graphql-mesh/config": "8.0.33",
+    "@graphql-mesh/cross-helpers": "0.2.10",
+    "@graphql-mesh/http": "0.2.16",
+    "@graphql-mesh/runtime": "0.44.34",
+    "@graphql-mesh/store": "0.8.63",
+    "@graphql-mesh/types": "0.86.0",
+    "@graphql-mesh/utils": "0.42.7",
+    "@graphql-tools/utils": "9.1.1",
+    "ajv": "8.11.2",
+    "change-case": "4.1.2",
+    "cosmiconfig": "7.1.0",
+    "dnscache": "1.0.2",
+    "dotenv": "16.0.3",
+    "graphql-import-node": "0.0.5",
+    "graphql-ws": "5.11.2",
+    "json-bigint-patch": "0.0.8",
+    "json5": "2.2.1",
+    "mkdirp": "1.0.4",
+    "open": "7.4.2",
+    "pascal-case": "3.1.2",
+    "rimraf": "3.0.2",
+    "ts-node": "10.9.1",
+    "tsconfig-paths": "4.1.0",
+    "tslib": "^2.4.0",
+    "typescript": "4.9.3",
+    "ws": "8.11.0",
+    "yargs": "17.6.2"
+  },
+  "devDependencies": {
+    "@types/lodash.get": "4.4.7",
+    "@types/mkdirp": "1.0.2",
+    "@types/rimraf": "3.0.2",
+    "@types/ws": "8.5.3",
+    "@types/yargs": "17.0.14"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  },
+  "sideEffects": false,
   "buildOptions": {
     "bin": {
       "graphql-mesh": {
@@ -39,50 +82,7 @@
       }
     }
   },
-  "dependencies": {
-    "ajv": "8.11.2",
-    "cosmiconfig": "7.1.0",
-    "@graphql-codegen/core": "2.6.6",
-    "@graphql-codegen/typescript": "2.8.2",
-    "@graphql-codegen/typescript-generic-sdk": "3.0.4",
-    "@graphql-codegen/typescript-operations": "2.5.7",
-    "@graphql-codegen/typed-document-node": "2.3.7",
-    "@graphql-mesh/config": "8.0.32",
-    "@graphql-codegen/typescript-resolvers": "2.7.7",
-    "@graphql-mesh/cross-helpers": "0.2.10",
-    "@graphql-mesh/runtime": "0.44.33",
-    "@graphql-mesh/utils": "0.42.7",
-    "@graphql-mesh/store": "0.8.63",
-    "@graphql-mesh/types": "0.86.0",
-    "@graphql-mesh/http": "0.2.15",
-    "@graphql-tools/utils": "9.1.1",
-    "dotenv": "16.0.3",
-    "dnscache": "1.0.2",
-    "graphql-import-node": "0.0.5",
-    "graphql-ws": "5.11.2",
-    "change-case": "4.1.2",
-    "json-bigint-patch": "0.0.8",
-    "json5": "2.2.1",
-    "mkdirp": "1.0.4",
-    "open": "7.4.2",
-    "pascal-case": "3.1.2",
-    "rimraf": "3.0.2",
-    "yargs": "17.6.2",
-    "typescript": "4.9.3",
-    "ts-node": "10.9.1",
-    "tsconfig-paths": "4.1.0",
-    "ws": "8.11.0",
-    "tslib": "^2.4.0"
-  },
-  "devDependencies": {
-    "@types/mkdirp": "1.0.2",
-    "@types/yargs": "17.0.14",
-    "@types/ws": "8.5.3",
-    "@types/rimraf": "3.0.2",
-    "@types/lodash.get": "4.4.7"
-  },
-  "publishConfig": {
-    "access": "public",
-    "directory": "dist"
+  "typescript": {
+    "definition": "dist/index.d.ts"
   }
 }

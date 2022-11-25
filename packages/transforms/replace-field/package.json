@@ -1,13 +1,14 @@
 {
   "name": "@graphql-mesh/transform-replace-field",
-  "version": "0.3.109",
-  "sideEffects": false,
+  "version": "0.3.110",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/transforms/replace-field"
+  },
+  "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
   "exports": {
     ".": {
       "require": "./dist/index.js",
@@ -18,12 +19,7 @@
       "import": "./dist/*.mjs"
     }
   },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "Urigo/graphql-mesh",
-    "directory": "packages/transforms/replace-field"
-  },
+  "typings": "dist/index.d.ts",
   "peerDependencies": {
     "graphql": "*"
   },
@@ -36,12 +32,16 @@
     "@graphql-tools/utils": "9.1.1",
     "tslib": "^2.4.0"
   },
+  "devDependencies": {
+    "@graphql-mesh/cache-localforage": "0.6.61",
+    "@graphql-tools/schema": "9.0.10"
+  },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
   },
-  "devDependencies": {
-    "@graphql-mesh/cache-localforage": "0.6.61",
-    "@graphql-tools/schema": "9.0.10"
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/index.d.ts"
   }
 }

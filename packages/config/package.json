@@ -1,23 +1,14 @@
 {
   "name": "@graphql-mesh/config",
-  "version": "8.0.32",
-  "license": "MIT",
+  "version": "8.0.33",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
     "directory": "packages/config"
   },
-  "peerDependencies": {
-    "@graphql-mesh/runtime": "^0.44.32",
-    "graphql": "*"
-  },
-  "sideEffects": false,
+  "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
   "exports": {
     ".": {
       "require": "./dist/index.js",
@@ -28,27 +19,36 @@
       "import": "./dist/*.mjs"
     }
   },
+  "typings": "dist/index.d.ts",
+  "peerDependencies": {
+    "@graphql-mesh/runtime": "^0.44.34",
+    "graphql": "*"
+  },
   "dependencies": {
-    "@graphql-mesh/cross-helpers": "0.2.10",
+    "@envelop/core": "3.0.4",
     "@graphql-mesh/cache-localforage": "0.6.61",
-    "@graphql-mesh/merger-bare": "0.15.47",
-    "@graphql-mesh/merger-stitching": "0.17.7",
-    "@graphql-mesh/types": "0.86.0",
+    "@graphql-mesh/cross-helpers": "0.2.10",
+    "@graphql-mesh/merger-bare": "0.15.48",
+    "@graphql-mesh/merger-stitching": "0.17.8",
     "@graphql-mesh/store": "0.8.63",
+    "@graphql-mesh/types": "0.86.0",
     "@graphql-mesh/utils": "0.42.7",
-    "@graphql-tools/utils": "9.1.1",
-    "@graphql-tools/load": "7.8.6",
     "@graphql-tools/code-file-loader": "7.3.13",
     "@graphql-tools/graphql-file-loader": "7.5.11",
+    "@graphql-tools/load": "7.8.6",
+    "@graphql-tools/utils": "9.1.1",
     "@whatwg-node/fetch": "^0.5.0",
+    "camel-case": "4.1.2",
     "param-case": "3.0.4",
-    "@envelop/core": "3.0.4",
-    "tslib": "^2.4.0",
     "pascal-case": "3.1.2",
-    "camel-case": "4.1.2"
+    "tslib": "^2.4.0"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/index.d.ts"
   }
 }
