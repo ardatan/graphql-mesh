@@ -8,7 +8,12 @@ import {
 } from '@graphql-mesh/types';
 import { parseWithCache } from '@graphql-mesh/utils';
 import { BatchDelegateOptions, batchDelegateToSchema } from '@graphql-tools/batch-delegate';
-import { SubschemaConfig, StitchingInfo, IDelegateToSchemaOptions, delegateToSchema } from '@graphql-tools/delegate';
+import {
+  SubschemaConfig,
+  StitchingInfo,
+  IDelegateToSchemaOptions,
+  delegateToSchema,
+} from '@graphql-tools/delegate';
 import { isDocumentNode, memoize1 } from '@graphql-tools/utils';
 import { WrapQuery } from '@graphql-tools/wrap';
 import {
@@ -29,7 +34,7 @@ export async function getInContextSDK(
   unifiedSchema: GraphQLSchema,
   rawSources: RawSourceOutput[],
   logger: Logger,
-  onDelegateHooks: OnDelegateHook<any>[]
+  onDelegateHooks: OnDelegateHook<any>[],
 ) {
   const inContextSDK: Record<string, any> = {};
   const sourceMap = unifiedSchema.extensions.sourceMap as Map<RawSourceOutput, GraphQLSchema>;
@@ -69,7 +74,9 @@ export async function getInContextSDK(
         const rootTypeFieldMap = rootType.getFields();
         for (const fieldName in rootTypeFieldMap) {
           const rootTypeField = rootTypeFieldMap[fieldName];
-          const inContextSdkLogger = rawSourceLogger.child(`InContextSDK.${rootType.name}.${fieldName}`);
+          const inContextSdkLogger = rawSourceLogger.child(
+            `InContextSDK.${rootType.name}.${fieldName}`,
+          );
           const namedReturnType = getNamedType(rootTypeField.type);
           const shouldHaveSelectionSet = !isLeafType(namedReturnType);
           rawSourceContext[rootType.name][fieldName] = async ({
@@ -98,6 +105,7 @@ export async function getInContextSDK(
                 },
               },
               variableValues: {},
+              cacheControl: {} as any,
             },
             selectionSet,
             key,
@@ -140,7 +148,7 @@ export async function getInContextSDK(
               if (selectionCount === 0) {
                 if (!selectionSet) {
                   throw new Error(
-                    `You have to provide 'selectionSet' for context.${rawSource.name}.${rootType.name}.${fieldName}`
+                    `You have to provide 'selectionSet' for context.${rawSource.name}.${rootType.name}.${fieldName}`,
                   );
                 }
                 commonDelegateOptions.info = {
@@ -209,7 +217,11 @@ export async function getInContextSDK(
               if (selectionSet) {
                 const selectionSetFactory = normalizeSelectionSetParamOrFactory(selectionSet);
                 const path = [fieldName];
-                const wrapQueryTransform = new WrapQuery(path, selectionSetFactory, valuesFromResults || identical);
+                const wrapQueryTransform = new WrapQuery(
+                  path,
+                  selectionSetFactory,
+                  valuesFromResults || identical,
+                );
                 regularDelegateOptions.transforms = [wrapQueryTransform as any];
               }
               const onDelegateHookDones: OnDelegateHookDone[] = [];
@@ -246,7 +258,7 @@ export async function getInContextSDK(
 
 function getSelectionSetFromDocumentNode(documentNode: DocumentNode): SelectionSetNode {
   const operationDefinition = documentNode.definitions.find(
-    definition => definition.kind === Kind.OPERATION_DEFINITION
+    definition => definition.kind === Kind.OPERATION_DEFINITION,
   ) as OperationDefinitionNode;
   if (!operationDefinition) {
     throw new Error('DocumentNode must contain an OperationDefinitionNode');
@@ -266,7 +278,7 @@ function normalizeSelectionSetParam(selectionSetParam: SelectionSetParam): Selec
 }
 
 const normalizeSelectionSetParamFactory = memoize1(function normalizeSelectionSetParamFactory(
-  selectionSetParamFactory: (subtree: SelectionSetNode) => SelectionSetParam
+  selectionSetParamFactory: (subtree: SelectionSetNode) => SelectionSetParam,
 ) {
   const memoizedSelectionSetFactory = memoize1(selectionSetParamFactory);
   return function selectionSetFactory(subtree: SelectionSetNode) {
@@ -276,7 +288,7 @@ const normalizeSelectionSetParamFactory = memoize1(function normalizeSelectionSe
 });
 
 function normalizeSelectionSetParamOrFactory(
-  selectionSetParamOrFactory: SelectionSetParamOrFactory
+  selectionSetParamOrFactory: SelectionSetParamOrFactory,
 ): (subtree: SelectionSetNode) => SelectionSetNode {
   if (typeof selectionSetParamOrFactory === 'function') {
     return normalizeSelectionSetParamFactory(selectionSetParamOrFactory);

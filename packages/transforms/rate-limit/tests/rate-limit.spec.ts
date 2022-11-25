@@ -1,4 +1,4 @@
-import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
+import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import RateLimitTransform from '../src';
 import { makeExecutableSchema } from '@graphql-tools/schema';
@@ -8,6 +8,7 @@ import { execute, parse } from 'graphql';
 describe('Rate Limit Transform', () => {
   let pubsub: PubSub;
   let cache: InMemoryLRUCache;
+  const logger = new DefaultLogger('test');
 
   beforeEach(() => {
     pubsub = new PubSub();
@@ -53,6 +54,7 @@ describe('Rate Limit Transform', () => {
       cache,
       pubsub,
       importFn,
+      logger,
     });
     const wrappedSchema = wrapSchema({
       schema,
@@ -117,6 +119,7 @@ describe('Rate Limit Transform', () => {
       cache,
       pubsub,
       importFn,
+      logger,
     });
     const wrappedSchema = wrapSchema({
       schema,
@@ -178,6 +181,7 @@ describe('Rate Limit Transform', () => {
       cache,
       pubsub,
       importFn,
+      logger,
     });
     const wrappedSchema = wrapSchema({
       schema,
@@ -253,6 +257,7 @@ describe('Rate Limit Transform', () => {
       cache,
       pubsub,
       importFn,
+      logger,
     });
 
     const wrappedSchema = wrapSchema({
