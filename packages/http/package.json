@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/http",
-  "version": "0.2.16",
+  "version": "0.2.17",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -25,9 +25,9 @@
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.2.10",
-    "@graphql-mesh/runtime": "0.44.34",
-    "@graphql-mesh/types": "0.86.0",
-    "@graphql-mesh/utils": "0.42.7",
+    "@graphql-mesh/runtime": "0.44.35",
+    "@graphql-mesh/types": "0.87.0",
+    "@graphql-mesh/utils": "0.42.8",
     "@whatwg-node/fetch": "^0.5.0",
     "@whatwg-node/server": "^0.4.10",
     "graphql-yoga": "3.0.3",

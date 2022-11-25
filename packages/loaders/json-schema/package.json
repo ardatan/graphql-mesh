@@ -1,13 +1,14 @@
 {
   "name": "@omnigraph/json-schema",
-  "version": "0.36.9",
-  "sideEffects": false,
+  "version": "0.36.10",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/loaders/json-schema"
+  },
+  "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
   "exports": {
     ".": {
       "require": "./dist/index.js",
@@ -18,42 +19,41 @@
       "import": "./dist/*.mjs"
     }
   },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "Urigo/graphql-mesh",
-    "directory": "packages/loaders/json-schema"
-  },
+  "typings": "dist/index.d.ts",
   "peerDependencies": {
     "graphql": "*"
   },
-  "devDependencies": {
-    "@types/to-json-schema": "0.2.1",
-    "@types/url-join": "4.0.1",
-    "@types/qs": "6.9.7"
-  },
   "dependencies": {
-    "@whatwg-node/fetch": "^0.5.0",
-    "json-machete": "0.16.3",
-    "@graphql-mesh/types": "0.86.0",
+    "@graphql-mesh/cross-helpers": "0.2.10",
     "@graphql-mesh/string-interpolation": "0.3.3",
-    "@graphql-mesh/utils": "0.42.7",
+    "@graphql-mesh/types": "0.87.0",
+    "@graphql-mesh/utils": "0.42.8",
     "@graphql-tools/utils": "9.1.1",
-    "to-json-schema": "0.2.5",
-    "graphql-compose": "9.0.10",
-    "graphql-scalars": "1.20.1",
+    "@json-schema-tools/meta-schema": "1.7.0",
+    "@whatwg-node/fetch": "^0.5.0",
     "ajv": "8.11.2",
     "ajv-formats": "2.1.1",
-    "url-join": "4.0.1",
-    "qs": "6.11.0",
-    "pascal-case": "3.1.2",
+    "graphql-compose": "9.0.10",
+    "graphql-scalars": "1.20.1",
+    "json-machete": "0.16.4",
     "lodash.set": "4.3.2",
+    "pascal-case": "3.1.2",
+    "qs": "6.11.0",
+    "to-json-schema": "0.2.5",
     "tslib": "^2.4.0",
-    "@graphql-mesh/cross-helpers": "0.2.10",
-    "@json-schema-tools/meta-schema": "1.7.0"
+    "url-join": "4.0.1"
+  },
+  "devDependencies": {
+    "@types/qs": "6.9.7",
+    "@types/to-json-schema": "0.2.1",
+    "@types/url-join": "4.0.1"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/index.d.ts"
   }
 }

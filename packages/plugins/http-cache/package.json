@@ -1,13 +1,14 @@
 {
   "name": "@graphql-mesh/plugin-http-cache",
-  "version": "0.0.9",
-  "sideEffects": false,
+  "version": "0.0.10",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/plugins/http-cache"
+  },
+  "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
   "exports": {
     ".": {
       "require": "./dist/index.js",
@@ -18,20 +19,15 @@
       "import": "./dist/*.mjs"
     }
   },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "Urigo/graphql-mesh",
-    "directory": "packages/plugins/http-cache"
-  },
+  "typings": "dist/index.d.ts",
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.86.0",
-    "@graphql-mesh/utils": "0.42.7",
-    "http-cache-semantics": "4.1.0",
+    "@graphql-mesh/types": "0.87.0",
+    "@graphql-mesh/utils": "0.42.8",
     "@whatwg-node/fetch": "0.5.3",
+    "http-cache-semantics": "4.1.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
@@ -40,5 +36,9 @@
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/index.d.ts"
   }
 }

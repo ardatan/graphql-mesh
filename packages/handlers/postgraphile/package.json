@@ -1,13 +1,14 @@
 {
   "name": "@graphql-mesh/postgraphile",
-  "version": "0.21.30",
-  "sideEffects": false,
+  "version": "0.21.31",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/handlers/postgraphile"
+  },
+  "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
   "exports": {
     ".": {
       "require": "./dist/index.js",
@@ -18,29 +19,28 @@
       "import": "./dist/*.mjs"
     }
   },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "Urigo/graphql-mesh",
-    "directory": "packages/handlers/postgraphile"
-  },
+  "typings": "dist/index.d.ts",
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.2.10",
-    "@graphql-mesh/types": "0.86.0",
-    "@graphql-mesh/store": "0.8.63",
+    "@graphql-mesh/store": "0.8.64",
     "@graphql-mesh/string-interpolation": "0.3.3",
-    "@graphql-mesh/utils": "0.42.7",
-    "postgraphile-core": "4.12.3",
-    "postgraphile": "4.12.11",
+    "@graphql-mesh/types": "0.87.0",
+    "@graphql-mesh/utils": "0.42.8",
+    "@graphql-tools/delegate": "9.0.17",
     "pg": "^8.6.0",
-    "tslib": "^2.4.0",
-    "@graphql-tools/delegate": "9.0.17"
+    "postgraphile": "4.12.11",
+    "postgraphile-core": "4.12.3",
+    "tslib": "^2.4.0"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/index.d.ts"
   }
 }

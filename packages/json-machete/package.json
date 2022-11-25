@@ -1,19 +1,14 @@
 {
   "name": "json-machete",
-  "version": "0.16.3",
-  "license": "MIT",
+  "version": "0.16.4",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
     "directory": "packages/json-machete"
   },
-  "sideEffects": false,
+  "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
   "exports": {
     ".": {
       "require": "./dist/index.js",
@@ -24,17 +19,18 @@
       "import": "./dist/*.mjs"
     }
   },
+  "typings": "dist/index.d.ts",
   "dependencies": {
+    "@graphql-mesh/cross-helpers": "0.2.10",
+    "@graphql-mesh/types": "0.87.0",
+    "@graphql-mesh/utils": "0.42.8",
+    "@graphql-tools/utils": "9.1.1",
     "@json-schema-tools/meta-schema": "1.7.0",
     "@whatwg-node/fetch": "^0.5.0",
     "json-pointer": "0.6.2",
-    "@graphql-mesh/types": "0.86.0",
-    "@graphql-mesh/utils": "0.42.7",
-    "@graphql-mesh/cross-helpers": "0.2.10",
-    "@graphql-tools/utils": "9.1.1",
-    "url-join": "4.0.1",
     "to-json-schema": "0.2.5",
-    "tslib": "^2.4.0"
+    "tslib": "^2.4.0",
+    "url-join": "4.0.1"
   },
   "devDependencies": {
     "@types/json-pointer": "1.0.31"
@@ -42,5 +38,9 @@
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/index.d.ts"
   }
 }

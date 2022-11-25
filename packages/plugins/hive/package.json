@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-hive",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -27,7 +27,7 @@
     "@graphql-hive/client": "0.21.1",
     "@graphql-mesh/cross-helpers": "0.2.10",
     "@graphql-mesh/string-interpolation": "0.3.3",
-    "@graphql-mesh/types": "0.86.0",
+    "@graphql-mesh/types": "0.87.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

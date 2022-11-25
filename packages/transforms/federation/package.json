@@ -1,13 +1,14 @@
 {
   "name": "@graphql-mesh/transform-federation",
-  "version": "0.9.58",
-  "sideEffects": false,
+  "version": "0.9.59",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/transforms/federation"
+  },
+  "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
   "exports": {
     ".": {
       "require": "./dist/index.js",
@@ -18,29 +19,28 @@
       "import": "./dist/*.mjs"
     }
   },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "Urigo/graphql-mesh",
-    "directory": "packages/transforms/federation"
-  },
+  "typings": "dist/index.d.ts",
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
     "@apollo/subgraph": "2.2.1",
-    "@graphql-mesh/types": "0.86.0",
     "@graphql-mesh/string-interpolation": "0.3.3",
-    "@graphql-mesh/utils": "0.42.7",
-    "graphql-transform-federation": "2.2.0",
-    "@graphql-tools/utils": "9.1.1",
-    "@graphql-tools/stitching-directives": "2.3.20",
+    "@graphql-mesh/types": "0.87.0",
+    "@graphql-mesh/utils": "0.42.8",
     "@graphql-tools/delegate": "9.0.17",
-    "tslib": "^2.4.0",
-    "lodash.set": "4.3.2"
+    "@graphql-tools/stitching-directives": "2.3.20",
+    "@graphql-tools/utils": "9.1.1",
+    "graphql-transform-federation": "2.2.0",
+    "lodash.set": "4.3.2",
+    "tslib": "^2.4.0"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/index.d.ts"
   }
 }

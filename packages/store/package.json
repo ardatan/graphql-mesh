@@ -1,19 +1,12 @@
 {
   "name": "@graphql-mesh/store",
-  "version": "0.8.63",
-  "license": "MIT",
+  "version": "0.8.64",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
     "directory": "packages/store"
   },
-  "peerDependencies": {
-    "graphql": "*"
-  },
-  "devDependencies": {
-    "graphql": "16.6.0"
-  },
-  "sideEffects": false,
+  "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "exports": {
@@ -27,19 +20,26 @@
     }
   },
   "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
+  "peerDependencies": {
+    "graphql": "*"
   },
   "dependencies": {
     "@graphql-inspector/core": "3.3.0",
     "@graphql-mesh/cross-helpers": "0.2.10",
-    "@graphql-mesh/utils": "0.42.7",
+    "@graphql-mesh/types": "0.87.0",
+    "@graphql-mesh/utils": "0.42.8",
     "@graphql-tools/utils": "9.1.1",
-    "@graphql-mesh/types": "0.86.0",
     "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "graphql": "16.6.0"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/index.d.ts"
   }
 }

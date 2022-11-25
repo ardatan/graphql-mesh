@@ -1,13 +1,14 @@
 {
   "name": "@omnigraph/raml",
-  "version": "0.7.42",
-  "sideEffects": false,
+  "version": "0.7.43",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/loaders/raml"
+  },
+  "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
   "exports": {
     ".": {
       "require": "./dist/index.js",
@@ -18,30 +19,29 @@
       "import": "./dist/*.mjs"
     }
   },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "Urigo/graphql-mesh",
-    "directory": "packages/loaders/raml"
-  },
+  "typings": "dist/index.d.ts",
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
-    "@whatwg-node/fetch": "^0.5.0",
-    "@omnigraph/json-schema": "0.36.9",
     "@ardatan/raml-1-parser": "1.1.69",
-    "json-machete": "0.16.3",
-    "to-json-schema": "0.2.5",
     "@graphql-mesh/cross-helpers": "0.2.10",
-    "@graphql-mesh/utils": "0.42.7",
     "@graphql-mesh/string-interpolation": "0.3.3",
+    "@graphql-mesh/utils": "0.42.8",
     "@graphql-tools/utils": "9.1.1",
-    "tslib": "^2.4.0",
-    "change-case": "4.1.2"
+    "@omnigraph/json-schema": "0.36.10",
+    "@whatwg-node/fetch": "^0.5.0",
+    "change-case": "4.1.2",
+    "json-machete": "0.16.4",
+    "to-json-schema": "0.2.5",
+    "tslib": "^2.4.0"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/index.d.ts"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-live-query",
-  "version": "0.1.47",
+  "version": "0.1.48",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -28,7 +28,7 @@
     "@envelop/live-query": "5.0.4",
     "@graphql-mesh/cross-helpers": "0.2.10",
     "@graphql-mesh/string-interpolation": "0.3.3",
-    "@graphql-mesh/types": "0.86.0",
+    "@graphql-mesh/types": "0.87.0",
     "@n1ru4l/in-memory-live-query-store": "0.10.0",
     "tslib": "^2.4.0"
   },

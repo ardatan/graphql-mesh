@@ -1,13 +1,14 @@
 {
   "name": "@graphql-mesh/raml",
-  "version": "0.8.36",
-  "sideEffects": false,
+  "version": "0.8.37",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/handlers/raml"
+  },
+  "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
   "exports": {
     ".": {
       "require": "./dist/index.js",
@@ -18,29 +19,28 @@
       "import": "./dist/*.mjs"
     }
   },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "Urigo/graphql-mesh",
-    "directory": "packages/handlers/raml"
-  },
+  "typings": "dist/index.d.ts",
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/store": "0.8.63",
-    "@graphql-mesh/types": "0.86.0",
-    "@omnigraph/raml": "0.7.42",
-    "@graphql-mesh/utils": "0.42.7",
+    "@graphql-mesh/store": "0.8.64",
+    "@graphql-mesh/types": "0.87.0",
+    "@graphql-mesh/utils": "0.42.8",
+    "@omnigraph/raml": "0.7.43",
     "tslib": "^2.4.0"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
   },
+  "sideEffects": false,
   "buildOptions": {
     "external": [
       "cross-fetch"
     ]
+  },
+  "typescript": {
+    "definition": "dist/index.d.ts"
   }
 }

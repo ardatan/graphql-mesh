@@ -1,5 +1,24 @@
 # @graphql-mesh/config
 
+## 8.0.34
+
+### Patch Changes
+
+- [#4854](https://github.com/Urigo/graphql-mesh/pull/4854)
+  [`0d9771428`](https://github.com/Urigo/graphql-mesh/commit/0d97714284a6eea31c2c9420addd4a1518584924)
+  Thanks [@ardatan](https://github.com/ardatan)! - New GraphQL Hive plugin
+
+- Updated dependencies
+  [[`0d9771428`](https://github.com/Urigo/graphql-mesh/commit/0d97714284a6eea31c2c9420addd4a1518584924),
+  [`686b3301b`](https://github.com/Urigo/graphql-mesh/commit/686b3301b2441bc095a379d95e77686b4f5ceb70)]:
+  - @graphql-mesh/types@0.87.0
+  - @graphql-mesh/cache-localforage@0.6.62
+  - @graphql-mesh/merger-bare@0.15.49
+  - @graphql-mesh/merger-stitching@0.17.9
+  - @graphql-mesh/runtime@0.44.35
+  - @graphql-mesh/store@0.8.64
+  - @graphql-mesh/utils@0.42.8
+
 ## 8.0.33
 
 ### Patch Changes

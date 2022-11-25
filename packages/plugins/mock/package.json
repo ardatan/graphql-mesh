@@ -1,13 +1,14 @@
 {
   "name": "@graphql-mesh/plugin-mock",
-  "version": "0.0.38",
-  "sideEffects": false,
+  "version": "0.0.39",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/plugins/mock"
+  },
+  "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
   "exports": {
     ".": {
       "require": "./dist/index.js",
@@ -18,34 +19,33 @@
       "import": "./dist/*.mjs"
     }
   },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "Urigo/graphql-mesh",
-    "directory": "packages/plugins/mock"
-  },
+  "typings": "dist/index.d.ts",
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.2.10",
-    "@graphql-mesh/types": "0.86.0",
-    "@graphql-mesh/utils": "0.42.7",
     "@graphql-mesh/string-interpolation": "0.3.3",
-    "@graphql-tools/utils": "9.1.1",
+    "@graphql-mesh/types": "0.87.0",
+    "@graphql-mesh/utils": "0.42.8",
     "@graphql-tools/mock": "8.7.12",
     "@graphql-tools/schema": "9.0.10",
+    "@graphql-tools/utils": "9.1.1",
     "faker": "5.5.3",
     "graphql-scalars": "1.20.1",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@types/faker": "5.5.9",
     "@envelop/core": "3.0.4",
-    "@graphql-mesh/cache-localforage": "0.6.61"
+    "@graphql-mesh/cache-localforage": "0.6.62",
+    "@types/faker": "5.5.9"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/index.d.ts"
   }
 }

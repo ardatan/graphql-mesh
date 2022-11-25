@@ -1,13 +1,9 @@
 {
   "name": "@omnigraph/soap",
-  "version": "0.2.1",
-  "sideEffects": false,
+  "version": "0.2.2",
+  "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
   "exports": {
     ".": {
       "require": "./dist/index.js",
@@ -18,13 +14,13 @@
       "import": "./dist/*.mjs"
     }
   },
-  "license": "MIT",
+  "typings": "dist/index.d.ts",
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.86.0",
-    "@graphql-mesh/utils": "0.42.7",
+    "@graphql-mesh/types": "0.87.0",
+    "@graphql-mesh/utils": "0.42.8",
     "@graphql-tools/utils": "9.1.1",
     "fast-xml-parser": "3.21.1",
     "graphql-compose": "9.0.10",
@@ -36,5 +32,9 @@
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/index.d.ts"
   }
 }
