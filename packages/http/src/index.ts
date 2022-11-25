@@ -23,11 +23,7 @@ export function createMeshHTTPHandler<TServerContext>({
 }): MeshHTTPHandler<TServerContext> {
   let readyFlag = false;
   let logger: Logger = new DefaultLogger('Mesh HTTP');
-  const mesh$ = getBuiltMesh().then(mesh => {
-    readyFlag = true;
-    logger = mesh.logger.child('HTTP');
-    return mesh;
-  });
+  let mesh$: Promise<MeshInstance>;
 
   const {
     cors: corsConfig,
@@ -40,19 +36,29 @@ export function createMeshHTTPHandler<TServerContext>({
 
   const serverAdapter = createServerAdapter(Router());
 
+  serverAdapter.all('*', () => {
+    if (!mesh$) {
+      mesh$ = getBuiltMesh().then(mesh => {
+        readyFlag = true;
+        logger = mesh.logger.child('HTTP');
+        return mesh;
+      });
+    }
+  });
+
   serverAdapter.all(
     '/healthcheck',
     () =>
       new Response(null, {
         status: 200,
-      })
+      }),
   );
   serverAdapter.all(
     '/readiness',
     () =>
       new Response(null, {
         status: readyFlag ? 204 : 503,
-      })
+      }),
   );
 
   serverAdapter.post('*', async (request: Request) => {
@@ -65,7 +71,7 @@ export function createMeshHTTPHandler<TServerContext>({
           logger.debug(`Received webhook request for ${pathname}`, body);
           pubsub.publish(
             eventName,
-            request.headers.get('content-type') === 'application/json' ? JSON.parse(body) : body
+            request.headers.get('content-type') === 'application/json' ? JSON.parse(body) : body,
           );
           return new Response(null, {
             status: 204,
@@ -108,14 +114,14 @@ export function createMeshHTTPHandler<TServerContext>({
           headers: {
             Location: graphqlPath,
           },
-        })
+        }),
     );
   }
 
   serverAdapter.all(
     '*',
     withCookies,
-    graphqlHandler(mesh$, playgroundTitle, playgroundEnabled, graphqlPath, corsConfig)
+    graphqlHandler(() => mesh$, playgroundTitle, playgroundEnabled, graphqlPath, corsConfig),
   );
 
   return serverAdapter;
