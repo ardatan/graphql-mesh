@@ -1,5 +1,12 @@
 # programmatic-batching-example
 
+## 0.0.26
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.80.1
+
 ## 0.0.25
 
 ### Patch Changes

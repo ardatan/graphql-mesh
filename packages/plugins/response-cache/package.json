@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-response-cache",
-  "version": "0.1.52",
+  "version": "0.1.53",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
