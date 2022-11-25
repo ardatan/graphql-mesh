@@ -37,7 +37,7 @@
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Cache Storages"],
     "source": "Mesh",
-    "title": "cfwKv",
+    "title": "CF Workers KV",
     "type": "Documentation"
   },
   {
@@ -541,7 +541,11 @@
   },
   {
     "objectID": "mesh-docs-getting-started-sources-with-no-definition",
-    "headings": ["An overview of the `jsonSchema` handler", "Configuring our \"Books\" REST API", "Going further"],
+    "headings": [
+      "An overview of the `jsonSchema` handler",
+      "Configuring our \"Books\" REST API",
+      "Going further"
+    ],
     "toc": [
       {
         "children": [],
@@ -1197,7 +1201,12 @@
   },
   {
     "objectID": "mesh-docs-plugins-prometheus",
-    "headings": ["Getting Started", "Example Configuration", "Custom Registry", "Config API Reference"],
+    "headings": [
+      "Getting Started",
+      "Example Configuration",
+      "Custom Registry",
+      "Config API Reference"
+    ],
     "toc": [
       {
         "children": [],
@@ -1388,7 +1397,11 @@
   },
   {
     "objectID": "mesh-docs-source-handlers-grpc",
-    "headings": ["Use Reflection instead of proto files", "Custom Metadata for Authorization", "Config API Reference"],
+    "headings": [
+      "Use Reflection instead of proto files",
+      "Custom Metadata for Authorization",
+      "Config API Reference"
+    ],
     "toc": [
       {
         "children": [],
@@ -1428,7 +1441,12 @@
   },
   {
     "objectID": "mesh-docs-source-handlers-json-schema",
-    "headings": ["Dynamic Values", "Query Parameters", "CodeSandBox Example", "Config API Reference"],
+    "headings": [
+      "Dynamic Values",
+      "Query Parameters",
+      "CodeSandBox Example",
+      "Config API Reference"
+    ],
     "toc": [
       {
         "children": [
@@ -1686,7 +1704,10 @@
   },
   {
     "objectID": "mesh-docs-source-handlers-postgraphile",
-    "headings": ["External Plugins (e.g. FederationPlugin, PgManyToManyPlugin, PostGISPlugin)", "Config API Reference"],
+    "headings": [
+      "External Plugins (e.g. FederationPlugin, PgManyToManyPlugin, PostGISPlugin)",
+      "Config API Reference"
+    ],
     "toc": [
       {
         "children": [
@@ -2143,7 +2164,11 @@
   },
   {
     "objectID": "mesh-docs-transforms-transforms-introduction",
-    "headings": ["Introduction to Transforms", "Transforms location and order", "Two different modes"],
+    "headings": [
+      "Introduction to Transforms",
+      "Transforms location and order",
+      "Two different modes"
+    ],
     "toc": [
       {
         "children": [],
@@ -2200,7 +2225,12 @@
   },
   {
     "objectID": "mesh-docs-transforms-type-merging",
-    "headings": ["Installation", "What is Type Merging?", "Using the Type Merging Transform", "Config API Reference"],
+    "headings": [
+      "Installation",
+      "What is Type Merging?",
+      "Using the Type Merging Transform",
+      "Config API Reference"
+    ],
     "toc": [
       {
         "children": [],
