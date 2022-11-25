@@ -3197,10 +3197,10 @@
     tslib "^2.4.0"
     value-or-promise "1.0.11"
 
-"@graphql-tools/stitch@8.7.26":
-  version "8.7.26"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/stitch/-/stitch-8.7.26.tgz#36ce7410392e16abd7df577ef07bd88e4ce3347c"
-  integrity sha512-J72xOK5HbbG6A6WXUZijwEQPYVJbirnOfgJywy+3yUqBWLWefBOWF6dlARwJ3B8+pSpPMtjZwHCU9yHcf78uYg==
+"@graphql-tools/stitch@8.7.27":
+  version "8.7.27"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/stitch/-/stitch-8.7.27.tgz#96b86dc482a86a63cf87cbd85378d59600a7c6e2"
+  integrity sha512-GHablr95XsMvVgm3FRTM09ggfrqKpUUCgkWSZ+isxwipgWLyNbDAQmNBK/m9Sk7aArX0yJFIHxI+DyXKqfX2IA==
   dependencies:
     "@graphql-tools/batch-delegate" "8.4.10"
     "@graphql-tools/delegate" "9.0.17"
@@ -7781,7 +7781,7 @@ colord@^2.9.1:
   resolved "https://registry.yarnpkg.com/colord/-/colord-2.9.2.tgz#25e2bacbbaa65991422c07ea209e2089428effb1"
   integrity sha512-Uqbg+J445nc1TKn4FoDPS6ZZqAvEDnwrH42yo8B40JSOgSLxMZ/gt3h4nmCtPLQeXhjJJkqBx7SCY35WnIixaQ==
 
-colorette@^2.0.10, colorette@^2.0.16, colorette@^2.0.17:
+colorette@^2.0.10, colorette@^2.0.19:
   version "2.0.19"
   resolved "https://registry.yarnpkg.com/colorette/-/colorette-2.0.19.tgz#cdf044f47ad41a0f4b56b3a0d5b4e6e1a2d5a798"
   integrity sha512-3tlv/dIP7FWvj3BsbHrGLJ6l/oKh1O3TcgBqMn+yyCagOxc23fyzDS6HypQbgxWbkpDnf52p1LuR4eWDQ/K9WQ==
@@ -7843,7 +7843,7 @@ commander@^8.3.0:
   resolved "https://registry.yarnpkg.com/commander/-/commander-8.3.0.tgz#4837ea1b2da67b9c616a67afbb0fafee567bca66"
   integrity sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==
 
-commander@^9.3.0, commander@^9.4.1:
+commander@^9.4.1:
   version "9.4.1"
   resolved "https://registry.yarnpkg.com/commander/-/commander-9.4.1.tgz#d1dd8f2ce6faf93147295c0df13c7c21141cfbdd"
   integrity sha512-5EEkTNyHNGFPD2H+c/dXXfQZYa/scCKasxWcXJaWnNJ99pnQN9Vnmqow+p+PlFPE63Q6mThaZws1T+HxfpgtPw==
@@ -13666,12 +13666,7 @@ lie@3.1.1:
   dependencies:
     immediate "~3.0.5"
 
-lilconfig@2.0.5:
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/lilconfig/-/lilconfig-2.0.5.tgz#19e57fd06ccc3848fd1891655b5a447092225b25"
-  integrity sha512-xaYmXZtTHPAw5m+xLN8ab9C+3a8YmV3asNSPOATITbtwrfbwaLJj8h66H1WMIpALCkqsIzK3h7oQ+PdX+LQ9Eg==
-
-lilconfig@^2.0.3, lilconfig@^2.0.5, lilconfig@^2.0.6:
+lilconfig@2.0.6, lilconfig@^2.0.3, lilconfig@^2.0.5, lilconfig@^2.0.6:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/lilconfig/-/lilconfig-2.0.6.tgz#32a384558bd58af3d4c6e077dd1ad1d397bc69d4"
   integrity sha512-9JROoBW7pobfsx+Sq2JsASvCo6Pfo6WWoUW79HuB1BCoBXD4PLWJPqDF6fNj67pqBYTbAHkE57M1kS/+L1neOg==
@@ -13686,36 +13681,36 @@ lines-and-columns@^1.1.6:
   resolved "https://registry.yarnpkg.com/lines-and-columns/-/lines-and-columns-1.1.6.tgz#1c00c743b433cd0a4e80758f7b64a57440d9ff00"
   integrity sha1-HADHQ7QzzQpOgHWPe2SldEDZ/wA=
 
-lint-staged@13.0.3:
-  version "13.0.3"
-  resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-13.0.3.tgz#d7cdf03a3830b327a2b63c6aec953d71d9dc48c6"
-  integrity sha512-9hmrwSCFroTSYLjflGI8Uk+GWAwMB4OlpU4bMJEAT5d/llQwtYKoim4bLOyLCuWFAhWEupE0vkIFqtw/WIsPug==
+lint-staged@13.0.4:
+  version "13.0.4"
+  resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-13.0.4.tgz#c4b4391280c35165b805ad43304ba01f733067a0"
+  integrity sha512-HxlHCXoYRsq9QCby5wFozmZW00hMs/9e3l+/dz6Qr8Kle4UH0kJTdABAbqhzG+3pcG6QjL9kz7NgGBfph+a5dw==
   dependencies:
     cli-truncate "^3.1.0"
-    colorette "^2.0.17"
-    commander "^9.3.0"
+    colorette "^2.0.19"
+    commander "^9.4.1"
     debug "^4.3.4"
     execa "^6.1.0"
-    lilconfig "2.0.5"
-    listr2 "^4.0.5"
+    lilconfig "2.0.6"
+    listr2 "^5.0.5"
     micromatch "^4.0.5"
     normalize-path "^3.0.0"
     object-inspect "^1.12.2"
     pidtree "^0.6.0"
     string-argv "^0.3.1"
-    yaml "^2.1.1"
+    yaml "^2.1.3"
 
-listr2@^4.0.5:
-  version "4.0.5"
-  resolved "https://registry.yarnpkg.com/listr2/-/listr2-4.0.5.tgz#9dcc50221583e8b4c71c43f9c7dfd0ef546b75d5"
-  integrity sha512-juGHV1doQdpNT3GSTs9IUN43QJb7KHdF9uqg7Vufs/tG9VTzpFphqF4pm/ICdAABGQxsyNn9CiYA3StkI6jpwA==
+listr2@^5.0.5:
+  version "5.0.5"
+  resolved "https://registry.yarnpkg.com/listr2/-/listr2-5.0.5.tgz#4651a940d12b984abecfae4450e40edd5695f808"
+  integrity sha512-DpBel6fczu7oQKTXMekeprc0o3XDgGMkD7JNYyX+X0xbwK+xgrx9dcyKoXKqpLSUvAWfmoePS7kavniOcq3r4w==
   dependencies:
     cli-truncate "^2.1.0"
-    colorette "^2.0.16"
+    colorette "^2.0.19"
     log-update "^4.0.0"
     p-map "^4.0.0"
     rfdc "^1.3.0"
-    rxjs "^7.5.5"
+    rxjs "^7.5.6"
     through "^2.3.8"
     wrap-ansi "^7.0.0"
 
@@ -18046,7 +18041,7 @@ rw@1:
   resolved "https://registry.yarnpkg.com/rw/-/rw-1.3.3.tgz#3f862dfa91ab766b14885ef4d01124bfda074fb4"
   integrity sha1-P4Yt+pGrdmsUiF700BEkv9oHT7Q=
 
-rxjs@^7.0.0, rxjs@^7.5.5:
+rxjs@^7.0.0, rxjs@^7.5.5, rxjs@^7.5.6:
   version "7.5.7"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.5.7.tgz#2ec0d57fdc89ece220d2e702730ae8f1e49def39"
   integrity sha512-z9MzKh/UcOqB3i20H6rtrlaE/CgjLOvheWK/9ILrbhROGTweAi1BaFsTT9FbwZi5Trr1qNRs+MXkhmR06awzQA==
@@ -19861,10 +19856,10 @@ underscore@^1.10.2, underscore@^1.13.1, underscore@^1.9.2:
   resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.13.1.tgz#0c1c6bd2df54b6b69f2314066d65b6cde6fcf9d1"
   integrity sha512-hzSoAVtJF+3ZtiFX0VgfFPHEDRm7Y/QPjGyNo4TVdnDTdft3tr8hEkD25a1jC+TjTuE7tkHGKkhwCgs9dgBB2g==
 
-undici@5.12.0, undici@5.9.1, undici@^5.12.0:
-  version "5.12.0"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-5.12.0.tgz#c758ffa704fbcd40d506e4948860ccaf4099f531"
-  integrity sha512-zMLamCG62PGjd9HHMpo05bSLvvwWOZgGeiWlN/vlqu3+lRo3elxktVGEyLMX+IO7c2eflLjcW74AlkhEZm15mg==
+undici@5.13.0, undici@5.9.1, undici@^5.12.0:
+  version "5.13.0"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-5.13.0.tgz#56772fba89d8b25e39bddc8c26a438bd73ea69bb"
+  integrity sha512-UDZKtwb2k7KRsK4SdXWG7ErXiL7yTGgLWvk2AXO1JMjgjh404nFo6tWSCM2xMpJwMPx3J8i/vfqEh1zOqvj82Q==
   dependencies:
     busboy "^1.6.0"
 
@@ -21058,10 +21053,10 @@ yaml@^1.10.0, yaml@^1.10.2, yaml@^1.7.2:
   resolved "https://registry.yarnpkg.com/yaml/-/yaml-1.10.2.tgz#2301c5ffbf12b467de8da2333a459e29e7920e4b"
   integrity sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==
 
-yaml@^2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/yaml/-/yaml-2.1.1.tgz#1e06fb4ca46e60d9da07e4f786ea370ed3c3cfec"
-  integrity sha512-o96x3OPo8GjWeSLF+wOAbrPfhFOGY0W00GNaxCDv+9hkcDJEnev1yh8S7pgHF0ik6zc8sQLuL8hjHjJULZp8bw==
+yaml@^2.1.3:
+  version "2.1.3"
+  resolved "https://registry.yarnpkg.com/yaml/-/yaml-2.1.3.tgz#9b3a4c8aff9821b696275c79a8bee8399d945207"
+  integrity sha512-AacA8nRULjKMX2DvWvOAdBZMOfQlypSFkjcOcu9FalllIDJ1kvlREzcdIZmidQUqqeMv7jorHjq2HlLv/+c2lg==
 
 yargs-parser@^18.1.1, yargs-parser@^18.1.3:
   version "18.1.3"
