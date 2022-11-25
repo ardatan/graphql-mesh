@@ -92,6 +92,7 @@ export interface MeshTransformOptions<Config = any> {
   cache: KeyValueCache;
   pubsub: MeshPubSub;
   importFn: ImportFn;
+  logger: Logger;
 }
 
 export interface MeshTransformLibrary<Config = any> {

@@ -222,7 +222,8 @@ export async function processConfig(
                   baseDir,
                   cache,
                   pubsub,
-                  importFn
+                  importFn,
+                  logger,
                 });`);
                 }
 
@@ -233,6 +234,7 @@ export async function processConfig(
                   cache,
                   pubsub,
                   importFn,
+                  logger,
                 });
               })
             ),
@@ -275,7 +277,8 @@ export async function processConfig(
             baseDir,
             cache,
             pubsub,
-            importFn
+            importFn,
+            logger,
           })`);
           }
           return new TransformLibrary({
@@ -285,6 +288,7 @@ export async function processConfig(
             cache,
             pubsub,
             importFn,
+            logger,
           });
         }) || []
       ),
