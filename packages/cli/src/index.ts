@@ -4,14 +4,7 @@ import { generateTsArtifacts } from './commands/ts-artifacts';
 import { serveMesh } from './commands/serve/serve';
 import { fs, path as pathModule, process } from '@graphql-mesh/cross-helpers';
 import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import {
-  writeFile,
-  pathExists,
-  rmdirs,
-  DefaultLogger,
-  loadFromModuleExportExpression,
-  defaultImportFn,
-} from '@graphql-mesh/utils';
+import { writeFile, pathExists, rmdirs, DefaultLogger, defaultImportFn } from '@graphql-mesh/utils';
 import { handleFatalError } from './handleFatalError';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
@@ -61,7 +54,7 @@ export const DEFAULT_CLI_PARAMS: GraphQLMeshCLIParams = {
 export async function graphqlMesh(
   cliParams = DEFAULT_CLI_PARAMS,
   args = hideBin(process.argv),
-  cwdPath = process.cwd()
+  cwdPath = process.cwd(),
 ) {
   let baseDir = cwdPath;
   let logger: Logger = new DefaultLogger(cliParams.initialLoggerPrefix);
@@ -69,7 +62,8 @@ export async function graphqlMesh(
     .help()
     .option('r', {
       alias: 'require',
-      describe: 'Loads specific require.extensions before running the codegen and reading the configuration',
+      describe:
+        'Loads specific require.extensions before running the codegen and reading the configuration',
       type: 'array' as const,
       default: [],
       coerce: (externalModules: string[]) =>
@@ -78,11 +72,14 @@ export async function graphqlMesh(
             const localModulePath = pathModule.resolve(baseDir, module);
             const islocalModule = fs.existsSync(localModulePath);
             return defaultImportFn(islocalModule ? localModulePath : module);
-          })
+          }),
         ),
     })
     .option('dir', {
-      describe: 'Modified the base directory to use for looking for ' + cliParams.configName + ' config file',
+      describe:
+        'Modified the base directory to use for looking for ' +
+        cliParams.configName +
+        ' config file',
       type: 'string',
       default: baseDir,
       coerce: dir => {
@@ -148,9 +145,10 @@ export async function graphqlMesh(
           // We already handle Mesh instance errors inside `serveMesh`
           // eslint-disable-next-line @typescript-eslint/no-floating-promises
           meshInstance$.then(({ schema }) =>
-            writeFile(pathModule.join(outputDir, 'schema.graphql'), printSchemaWithDirectives(schema)).catch(e =>
-              logger.error(`An error occured while writing the schema file: `, e)
-            )
+            writeFile(
+              pathModule.join(outputDir, 'schema.graphql'),
+              printSchemaWithDirectives(schema),
+            ).catch(e => logger.error(`An error occured while writing the schema file: `, e)),
           );
 
           // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -197,10 +195,12 @@ export function createBuiltMeshHTTPHandler(): MeshHTTPHandler<MeshContext> {
                 fileType: 'ts',
                 codegenConfig: meshConfig.config.codegen,
               },
-              cliParams
+              cliParams,
             ).catch(e => {
-              logger.error(`An error occurred while building the artifacts: ${e.stack || e.message}`);
-            })
+              logger.error(
+                `An error occurred while building the artifacts: ${e.stack || e.message}`,
+              );
+            }),
           );
           const serveMeshOptions: ServeMeshOptions = {
             baseDir,
@@ -209,23 +209,11 @@ export function createBuiltMeshHTTPHandler(): MeshHTTPHandler<MeshContext> {
             logger: meshConfig.logger.child('Server'),
             rawServeConfig: meshConfig.config.serve,
           };
-          if (meshConfig.config.serve?.customServerHandler) {
-            const customServerHandler = await loadFromModuleExportExpression<any>(
-              meshConfig.config.serve.customServerHandler,
-              {
-                defaultExportName: 'default',
-                cwd: baseDir,
-                importFn: defaultImportFn,
-              }
-            );
-            await customServerHandler(serveMeshOptions);
-          } else {
-            await serveMesh(serveMeshOptions, cliParams);
-          }
+          await serveMesh(serveMeshOptions, cliParams);
         } catch (e) {
           handleFatalError(e, logger);
         }
-      }
+      },
     )
     .command<{ port: number; prod: boolean; validate: boolean }>(
       cliParams.prodServerCommand,
@@ -240,7 +228,7 @@ export function createBuiltMeshHTTPHandler(): MeshHTTPHandler<MeshContext> {
           const builtMeshArtifactsPath = pathModule.join(baseDir, cliParams.artifactsDir);
           if (!(await pathExists(builtMeshArtifactsPath))) {
             throw new Error(
-              `Seems like you haven't build the artifacts yet to start production server! You need to build artifacts first with "${cliParams.commandName} build" command!`
+              `Seems like you haven't build the artifacts yet to start production server! You need to build artifacts first with "${cliParams.commandName} build" command!`,
             );
           }
           process.env.NODE_ENV = 'production';
@@ -256,20 +244,11 @@ export function createBuiltMeshHTTPHandler(): MeshHTTPHandler<MeshContext> {
             logger: getMeshOptions.logger.child('Server'),
             rawServeConfig,
           };
-          if (rawServeConfig?.customServerHandler) {
-            const customServerHandler = await loadFromModuleExportExpression<any>(rawServeConfig.customServerHandler, {
-              defaultExportName: 'default',
-              cwd: baseDir,
-              importFn: defaultImportFn,
-            });
-            await customServerHandler(serveMeshOptions);
-          } else {
-            await serveMesh(serveMeshOptions, cliParams);
-          }
+          await serveMesh(serveMeshOptions, cliParams);
         } catch (e) {
           handleFatalError(e, logger);
         }
-      }
+      },
     )
     .command(
       cliParams.validateCommand,
@@ -280,7 +259,7 @@ export function createBuiltMeshHTTPHandler(): MeshHTTPHandler<MeshContext> {
         try {
           if (!(await pathExists(pathModule.join(baseDir, cliParams.artifactsDir)))) {
             throw new Error(
-              `You cannot validate artifacts now because you don't have built artifacts yet! You need to build artifacts first with "${cliParams.commandName} build" command!`
+              `You cannot validate artifacts now because you don't have built artifacts yet! You need to build artifacts first with "${cliParams.commandName} build" command!`,
             );
           }
 
@@ -294,7 +273,7 @@ export function createBuiltMeshHTTPHandler(): MeshHTTPHandler<MeshContext> {
             {
               readonly: false,
               validate: true,
-            }
+            },
           );
 
           logger.info(`Reading the configuration`);
@@ -320,7 +299,7 @@ export function createBuiltMeshHTTPHandler(): MeshHTTPHandler<MeshContext> {
         if (destroy) {
           destroy();
         }
-      }
+      },
     )
     .command<{ fileType: 'json' | 'ts' | 'js'; throwOnInvalidConfig: boolean }>(
       cliParams.buildArtifactsCommand,
@@ -376,7 +355,7 @@ export function createBuiltMeshHTTPHandler(): MeshHTTPHandler<MeshContext> {
             {
               readonly: false,
               validate: false,
-            }
+            },
           );
 
           logger.info(`Reading the configuration`);
@@ -396,10 +375,15 @@ export function createBuiltMeshHTTPHandler(): MeshHTTPHandler<MeshContext> {
 
           logger.info(`Generating the unified schema`);
           const { schema, destroy, rawSources } = await getMesh(meshConfig);
-          await writeFile(pathModule.join(outputDir, 'schema.graphql'), printSchemaWithDirectives(schema));
+          await writeFile(
+            pathModule.join(outputDir, 'schema.graphql'),
+            printSchemaWithDirectives(schema),
+          );
 
           logger.info(`Generating artifacts`);
-          meshConfig.importCodes.add(`import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';`);
+          meshConfig.importCodes.add(
+            `import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';`,
+          );
           meshConfig.codes.add(`
 export function createBuiltMeshHTTPHandler(): MeshHTTPHandler<MeshContext> {
   return createMeshHTTPHandler<MeshContext>({
@@ -425,7 +409,7 @@ export function createBuiltMeshHTTPHandler(): MeshHTTPHandler<MeshContext> {
               fileType: args.fileType,
               codegenConfig: meshConfig.config.codegen,
             },
-            cliParams
+            cliParams,
           );
 
           logger.info(`Cleanup`);
@@ -434,7 +418,7 @@ export function createBuiltMeshHTTPHandler(): MeshHTTPHandler<MeshContext> {
         } catch (e) {
           handleFatalError(e, logger);
         }
-      }
+      },
     )
     .command<{ source: string }>(
       cliParams.sourceServerCommand + ' <source>',
@@ -455,7 +439,9 @@ export function createBuiltMeshHTTPHandler(): MeshHTTPHandler<MeshContext> {
           initialLoggerPrefix: cliParams.initialLoggerPrefix,
         });
         logger = meshConfig.logger;
-        const sourceIndex = meshConfig.sources.findIndex(rawSource => rawSource.name === args.source);
+        const sourceIndex = meshConfig.sources.findIndex(
+          rawSource => rawSource.name === args.source,
+        );
         if (sourceIndex === -1) {
           throw new Error(`Source ${args.source} not found`);
         }
@@ -474,19 +460,7 @@ export function createBuiltMeshHTTPHandler(): MeshHTTPHandler<MeshContext> {
           rawServeConfig: meshConfig.config.serve,
           playgroundTitle: `${args.source} GraphiQL`,
         };
-        if (meshConfig.config.serve?.customServerHandler) {
-          const customServerHandler = await loadFromModuleExportExpression<any>(
-            meshConfig.config.serve.customServerHandler,
-            {
-              defaultExportName: 'default',
-              cwd: baseDir,
-              importFn: defaultImportFn,
-            }
-          );
-          await customServerHandler(serveMeshOptions);
-        } else {
-          await serveMesh(serveMeshOptions, cliParams);
-        }
-      }
+        await serveMesh(serveMeshOptions, cliParams);
+      },
     ).argv;
 }
