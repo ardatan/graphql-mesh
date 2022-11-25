@@ -1,5 +1,15 @@
 # openapi-stackexchange
 
+## 0.6.325
+
+### Patch Changes
+
+- Updated dependencies
+  [[`686b3301b`](https://github.com/Urigo/graphql-mesh/commit/686b3301b2441bc095a379d95e77686b4f5ceb70),
+  [`686b3301b`](https://github.com/Urigo/graphql-mesh/commit/686b3301b2441bc095a379d95e77686b4f5ceb70)]:
+  - @graphql-mesh/cli@0.80.0
+  - @graphql-mesh/openapi@0.33.38
+
 ## 0.6.324
 
 ### Patch Changes

@@ -1,13 +1,14 @@
 {
   "name": "@graphql-mesh/transform-type-merging",
-  "version": "0.4.54",
-  "sideEffects": false,
+  "version": "0.4.55",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/transforms/type-merging"
+  },
+  "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
   "exports": {
     ".": {
       "require": "./dist/index.js",
@@ -18,24 +19,23 @@
       "import": "./dist/*.mjs"
     }
   },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "Urigo/graphql-mesh",
-    "directory": "packages/transforms/type-merging"
-  },
+  "typings": "dist/index.d.ts",
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.86.0",
-    "@graphql-tools/stitching-directives": "2.3.20",
+    "@graphql-mesh/types": "0.87.0",
+    "@graphql-mesh/utils": "0.42.8",
     "@graphql-tools/delegate": "9.0.17",
-    "@graphql-mesh/utils": "0.42.7",
+    "@graphql-tools/stitching-directives": "2.3.20",
     "tslib": "^2.4.0"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/index.d.ts"
   }
 }

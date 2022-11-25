@@ -1,13 +1,14 @@
 {
   "name": "@graphql-mesh/transform-filter-schema",
-  "version": "0.14.111",
-  "sideEffects": false,
+  "version": "0.14.112",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/transforms/filter-schema"
+  },
+  "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
   "exports": {
     ".": {
       "require": "./dist/index.js",
@@ -18,29 +19,28 @@
       "import": "./dist/*.mjs"
     }
   },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "Urigo/graphql-mesh",
-    "directory": "packages/transforms/filter-schema"
-  },
+  "typings": "dist/index.d.ts",
   "peerDependencies": {
     "graphql": "*"
+  },
+  "dependencies": {
+    "@graphql-mesh/types": "0.87.0",
+    "@graphql-mesh/utils": "0.42.8",
+    "@graphql-tools/delegate": "9.0.17",
+    "@graphql-tools/utils": "9.1.1",
+    "@graphql-tools/wrap": "9.2.16",
+    "minimatch": "5.1.0",
+    "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@types/minimatch": "5.1.2"
   },
-  "dependencies": {
-    "@graphql-mesh/types": "0.86.0",
-    "@graphql-mesh/utils": "0.42.7",
-    "minimatch": "5.1.0",
-    "@graphql-tools/wrap": "9.2.16",
-    "@graphql-tools/delegate": "9.0.17",
-    "@graphql-tools/utils": "9.1.1",
-    "tslib": "^2.4.0"
-  },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/index.d.ts"
   }
 }

@@ -1,13 +1,14 @@
 {
   "name": "@graphql-mesh/transform-cache",
-  "version": "0.12.65",
-  "sideEffects": false,
+  "version": "0.12.66",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/transforms/cache"
+  },
+  "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
   "exports": {
     ".": {
       "require": "./dist/index.js",
@@ -18,31 +19,30 @@
       "import": "./dist/*.mjs"
     }
   },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "Urigo/graphql-mesh",
-    "directory": "packages/transforms/cache"
-  },
+  "typings": "dist/index.d.ts",
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.86.0",
-    "@graphql-mesh/utils": "0.42.7",
-    "@graphql-mesh/string-interpolation": "0.3.3",
-    "dayjs": "1.11.6",
     "@graphql-mesh/cross-helpers": "0.2.10",
+    "@graphql-mesh/string-interpolation": "0.3.3",
+    "@graphql-mesh/types": "0.87.0",
+    "@graphql-mesh/utils": "0.42.8",
     "@graphql-tools/resolvers-composition": "6.5.12",
     "@graphql-tools/schema": "9.0.10",
     "@graphql-tools/utils": "9.1.1",
+    "dayjs": "1.11.6",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-mesh/cache-localforage": "0.6.61"
+    "@graphql-mesh/cache-localforage": "0.6.62"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/index.d.ts"
   }
 }
