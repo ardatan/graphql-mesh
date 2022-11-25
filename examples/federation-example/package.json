@@ -3,23 +3,24 @@
   "version": "0.5.145",
   "license": "MIT",
   "private": true,
+  "workspaces": [
+    "gateway",
+    "services/*"
+  ],
   "scripts": {
     "start": "concurrently \"npm:start-services npm:start-gateway-delayed\"",
     "start-gateway": "mesh dev --dir gateway",
     "start-gateway-delayed": "delay 1 && npm run start-gateway",
     "start-service-accounts": "nodemon services/accounts/index.js",
-    "start-service-reviews": "nodemon services/reviews/index.js",
-    "start-service-products": "nodemon services/products/index.js",
     "start-service-inventory": "nodemon services/inventory/index.js",
+    "start-service-products": "nodemon services/products/index.js",
+    "start-service-reviews": "nodemon services/reviews/index.js",
     "start-services": "concurrently \"npm:start-service-*\""
   },
   "devDependencies": {
+    "apollo-server": "3.11.1",
     "concurrently": "7.6.0",
     "delay-cli": "2.0.0",
     "nodemon": "2.0.20"
-  },
-  "workspaces": [
-    "gateway",
-    "services/*"
-  ]
+  }
 }
