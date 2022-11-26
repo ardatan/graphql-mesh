@@ -6,7 +6,7 @@ sources:
         metaData:
           someKey: 'someValue'
           connection_type: '{req.headers.connection}'
-        protoFilePath:
+        source:
           file: ./proto/service.proto
           load:
             includeDirs:

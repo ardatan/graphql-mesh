@@ -5,7 +5,13 @@ import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { ChannelCredentials, credentials, loadPackageDefinition } from '@grpc/grpc-js';
 import { loadFileDescriptorSetFromObject } from '@grpc/proto-loader';
 import { ObjectTypeComposerFieldConfigAsObjectDefinition, SchemaComposer } from 'graphql-compose';
-import { GraphQLBigInt, GraphQLByte, GraphQLUnsignedInt, GraphQLVoid, GraphQLJSON } from 'graphql-scalars';
+import {
+  GraphQLBigInt,
+  GraphQLByte,
+  GraphQLUnsignedInt,
+  GraphQLVoid,
+  GraphQLJSON,
+} from 'graphql-scalars';
 import lodashGet from 'lodash.get';
 import lodashHas from 'lodash.has';
 import { AnyNestedObject, IParseOptions, Message, RootConstructor } from 'protobufjs';
@@ -36,7 +42,7 @@ type RootJsonAndDecodedDescriptorSet = {
   decodedDescriptorSet: DecodedDescriptorSet;
 };
 
-const QUERY_METHOD_PREFIXES = ['get', 'list'];
+const QUERY_METHOD_PREFIXES = ['get', 'list', 'search'];
 
 export default class GrpcHandler implements MeshHandler {
   private config: YamlConfig.GrpcHandler;
@@ -59,10 +65,14 @@ ${rootJsonAndDecodedDescriptorSets
     ({ name, rootJson, decodedDescriptorSet }) => `
   {
     name: ${JSON.stringify(name)},
-    decodedDescriptorSet: FileDescriptorSet.fromObject(${JSON.stringify(decodedDescriptorSet.toJSON(), null, 2)}),
+    decodedDescriptorSet: FileDescriptorSet.fromObject(${JSON.stringify(
+      decodedDescriptorSet.toJSON(),
+      null,
+      2,
+    )}),
     rootJson: ${JSON.stringify(rootJson, null, 2)},
   },
-`
+`,
   )
   .join('\n')}
 ];
@@ -87,13 +97,15 @@ ${rootJsonAndDecodedDescriptorSets
     });
   }
 
-  async getRootPromisesFromReflection(creds: ChannelCredentials): Promise<Promise<protobufjs.Root>[]> {
+  async processReflection(creds: ChannelCredentials): Promise<Promise<protobufjs.Root>[]> {
     this.logger.debug(`Using the reflection`);
     const grpcReflectionServer = this.config.endpoint;
     this.logger.debug(`Creating gRPC Reflection Client`);
     const reflectionClient = new grpcReflection.Client(grpcReflectionServer, creds);
     const services: (string | void)[] = await reflectionClient.listServices();
-    const userServices = services.filter(service => service && !service?.startsWith('grpc.')) as string[];
+    const userServices = services.filter(
+      service => service && !service?.startsWith('grpc.'),
+    ) as string[];
     return userServices.map(async service => {
       this.logger.debug(`Resolving root of Service: ${service} from the reflection response`);
       const serviceRoot = await reflectionClient.fileContainingSymbol(service);
@@ -101,21 +113,23 @@ ${rootJsonAndDecodedDescriptorSets
     });
   }
 
-  async getRootPromiseFromDescriptorFilePath() {
+  async processDescriptorFile() {
     let fileName: string;
     let options: LoadOptions;
-    if (typeof this.config.descriptorSetFilePath === 'object') {
-      fileName = this.config.descriptorSetFilePath.file;
+    if (typeof this.config.source === 'object') {
+      fileName = this.config.source.file;
       options = {
-        ...this.config.descriptorSetFilePath.load,
-        includeDirs: this.config.descriptorSetFilePath.load.includeDirs?.map(includeDir =>
-          path.isAbsolute(includeDir) ? includeDir : path.join(this.baseDir, includeDir)
+        ...this.config.source.load,
+        includeDirs: this.config.source.load.includeDirs?.map(includeDir =>
+          path.isAbsolute(includeDir) ? includeDir : path.join(this.baseDir, includeDir),
         ),
       };
     } else {
-      fileName = this.config.descriptorSetFilePath;
+      fileName = this.config.source;
     }
-    const absoluteFilePath = path.isAbsolute(fileName) ? fileName : path.join(this.baseDir, fileName);
+    const absoluteFilePath = path.isAbsolute(fileName)
+      ? fileName
+      : path.join(this.baseDir, fileName);
     this.logger.debug(`Using the descriptor set from ${absoluteFilePath} `);
     const descriptorSetBuffer = await fs.promises.readFile(absoluteFilePath);
     this.logger.debug(`Reading ${absoluteFilePath} `);
@@ -123,9 +137,13 @@ ${rootJsonAndDecodedDescriptorSets
     if (absoluteFilePath.endsWith('json')) {
       this.logger.debug(`Parsing ${absoluteFilePath} as json`);
       const descriptorSetJSON = JSON.parse(descriptorSetBuffer.toString());
-      decodedDescriptorSet = descriptor.FileDescriptorSet.fromObject(descriptorSetJSON) as DecodedDescriptorSet;
+      decodedDescriptorSet = descriptor.FileDescriptorSet.fromObject(
+        descriptorSetJSON,
+      ) as DecodedDescriptorSet;
     } else {
-      decodedDescriptorSet = descriptor.FileDescriptorSet.decode(descriptorSetBuffer) as DecodedDescriptorSet;
+      decodedDescriptorSet = descriptor.FileDescriptorSet.decode(
+        descriptorSetBuffer,
+      ) as DecodedDescriptorSet;
     }
     this.logger.debug(`Creating root from descriptor set`);
     const rootFromDescriptor = (Root as RootConstructor).fromDescriptor(decodedDescriptorSet);
@@ -138,7 +156,7 @@ ${rootJsonAndDecodedDescriptorSets
     return rootFromDescriptor;
   }
 
-  async getRootPromiseFromProtoFilePath() {
+  async processProtoFile() {
     this.logger.debug(`Using proto file(s)`);
     let protoRoot = new Root();
     let fileGlob: string;
@@ -146,13 +164,13 @@ ${rootJsonAndDecodedDescriptorSets
       keepCase: true,
       alternateCommentMode: true,
     };
-    if (typeof this.config.protoFilePath === 'object') {
-      fileGlob = this.config.protoFilePath.file;
+    if (typeof this.config.source === 'object') {
+      fileGlob = this.config.source.file;
       options = {
         ...options,
-        ...this.config.protoFilePath.load,
-        includeDirs: this.config.protoFilePath.load?.includeDirs?.map(includeDir =>
-          path.isAbsolute(includeDir) ? includeDir : path.join(this.baseDir, includeDir)
+        ...this.config.source.load,
+        includeDirs: this.config.source.load?.includeDirs?.map(includeDir =>
+          path.isAbsolute(includeDir) ? includeDir : path.join(this.baseDir, includeDir),
         ),
       };
       if (options.includeDirs) {
@@ -162,7 +180,7 @@ ${rootJsonAndDecodedDescriptorSets
         addIncludePathResolver(protoRoot, options.includeDirs);
       }
     } else {
-      fileGlob = this.config.protoFilePath;
+      fileGlob = this.config.source;
     }
 
     const fileNames = await globby(fileGlob, {
@@ -170,8 +188,10 @@ ${rootJsonAndDecodedDescriptorSets
     });
     this.logger.debug(`Loading proto files(${fileGlob}); \n ${fileNames.join('\n')} `);
     protoRoot = await protoRoot.load(
-      fileNames.map(filePath => (path.isAbsolute(filePath) ? filePath : path.join(this.baseDir, filePath))),
-      options
+      fileNames.map(filePath =>
+        path.isAbsolute(filePath) ? filePath : path.join(this.baseDir, filePath),
+      ),
+      options,
     );
     this.logger.debug(`Adding proto content to the root`);
     return protoRoot;
@@ -181,18 +201,15 @@ ${rootJsonAndDecodedDescriptorSets
     return this.rootJsonAndDecodedDescriptorSets.getWithSet(async () => {
       const rootPromises: Promise<protobufjs.Root>[] = [];
       this.logger.debug(`Building Roots`);
-      if (this.config.useReflection) {
-        const reflectionPromises = await this.getRootPromisesFromReflection(creds);
+      const filePath =
+        typeof this.config.source === 'string' ? this.config.source : this.config.source.file;
+      if (filePath.endsWith('json')) {
+        rootPromises.push(this.processDescriptorFile());
+      } else if (filePath.endsWith('proto')) {
+        rootPromises.push(this.processProtoFile());
+      } else {
+        const reflectionPromises = await this.processReflection(creds);
         rootPromises.push(...reflectionPromises);
-      }
-      if (this.config.descriptorSetFilePath) {
-        const rootPromise = this.getRootPromiseFromDescriptorFilePath();
-        rootPromises.push(rootPromise);
-      }
-
-      if (this.config.protoFilePath) {
-        const rootPromise = this.getRootPromiseFromProtoFilePath();
-        rootPromises.push(rootPromise);
       }
 
       return Promise.all(
@@ -210,7 +227,7 @@ ${rootJsonAndDecodedDescriptorSets
             }),
             decodedDescriptorSet: root.toDescriptor('proto3'),
           };
-        })
+        }),
       );
     });
   }
@@ -219,7 +236,7 @@ ${rootJsonAndDecodedDescriptorSets
     if (this.config.credentialsSsl) {
       this.logger.debug(
         () =>
-          `Using SSL Connection with credentials at ${this.config.credentialsSsl.privateKey} & ${this.config.credentialsSsl.certChain}`
+          `Using SSL Connection with credentials at ${this.config.credentialsSsl.privateKey} & ${this.config.credentialsSsl.certChain}`,
       );
       const absolutePrivateKeyPath = path.isAbsolute(this.config.credentialsSsl.privateKey)
         ? this.config.credentialsSsl.privateKey
@@ -228,7 +245,10 @@ ${rootJsonAndDecodedDescriptorSets
         ? this.config.credentialsSsl.certChain
         : path.join(this.baseDir, this.config.credentialsSsl.certChain);
 
-      const sslFiles = [fs.promises.readFile(absolutePrivateKeyPath), fs.promises.readFile(absoluteCertChainPath)];
+      const sslFiles = [
+        fs.promises.readFile(absolutePrivateKeyPath),
+        fs.promises.readFile(absoluteCertChainPath),
+      ];
       if (this.config.credentialsSsl.rootCA !== 'rootCA') {
         const absoluteRootCAPath = path.isAbsolute(this.config.credentialsSsl.rootCA)
           ? this.config.credentialsSsl.rootCA
@@ -245,7 +265,11 @@ ${rootJsonAndDecodedDescriptorSets
     return credentials.createInsecure();
   }
 
-  walkToFindTypePath(rootJson: protobufjs.INamespace, pathWithName: string[], baseTypePath: string[]) {
+  walkToFindTypePath(
+    rootJson: protobufjs.INamespace,
+    pathWithName: string[],
+    baseTypePath: string[],
+  ) {
     const currentWalkingPath = [...pathWithName];
     while (!lodashHas(rootJson.nested, currentWalkingPath.concat(baseTypePath).join('.nested.'))) {
       if (!currentWalkingPath.length) {
@@ -311,7 +335,7 @@ ${rootJsonAndDecodedDescriptorSets
       const description = (nested as any).comment;
       const fieldEntries = Object.entries(nested.fields) as [
         string,
-        protobufjs.IField & { comment: string; keyType?: string }
+        protobufjs.IField & { comment: string; keyType?: string },
       ][];
       if (fieldEntries.length) {
         const inputTC = this.schemaComposer.createInputTC({
@@ -334,7 +358,11 @@ ${rootJsonAndDecodedDescriptorSets
                 if (keyType) {
                   fieldInputTypeName = 'JSON';
                 } else {
-                  const fieldTypePath = this.walkToFindTypePath(rootJson, pathWithName, baseFieldTypePath);
+                  const fieldTypePath = this.walkToFindTypePath(
+                    rootJson,
+                    pathWithName,
+                    baseFieldTypePath,
+                  );
                   fieldInputTypeName = getTypeName(this.schemaComposer, fieldTypePath, true);
                 }
                 return rule === 'repeated' ? `[${fieldInputTypeName}]` : fieldInputTypeName;
@@ -349,7 +377,11 @@ ${rootJsonAndDecodedDescriptorSets
                 if (keyType) {
                   fieldTypeName = 'JSON';
                 } else {
-                  const fieldTypePath = this.walkToFindTypePath(rootJson, pathWithName, baseFieldTypePath);
+                  const fieldTypePath = this.walkToFindTypePath(
+                    rootJson,
+                    pathWithName,
+                    baseFieldTypePath,
+                  );
                   fieldTypeName = getTypeName(this.schemaComposer, fieldTypePath, false);
                 }
                 return rule === 'repeated' ? `[${fieldTypeName}]` : fieldTypeName;
@@ -377,8 +409,9 @@ ${rootJsonAndDecodedDescriptorSets
         throw new Error(`Object at path ${objPath} is not a Service constructor`);
       }
       const client = new ServiceClient(
-        stringInterpolator.parse(this.config.endpoint, { env: process.env }) ?? this.config.endpoint,
-        creds
+        stringInterpolator.parse(this.config.endpoint, { env: process.env }) ??
+          this.config.endpoint,
+        creds,
       );
       for (const methodName in nested.methods) {
         const method = nested.methods[methodName];
@@ -387,8 +420,16 @@ ${rootJsonAndDecodedDescriptorSets
           type: () => {
             const baseResponseTypePath = method.responseType?.split('.');
             if (baseResponseTypePath) {
-              const responseTypePath = this.walkToFindTypePath(rootJson, pathWithName, baseResponseTypePath);
-              return getTypeName(this.schemaComposer, responseTypePath, false);
+              const responseTypePath = this.walkToFindTypePath(
+                rootJson,
+                pathWithName,
+                baseResponseTypePath,
+              );
+              let typeName = getTypeName(this.schemaComposer, responseTypePath, false);
+              if (method.responseStream) {
+                typeName = `[${typeName}]`;
+              }
+              return typeName;
             }
             return 'Void';
           },
@@ -401,36 +442,37 @@ ${rootJsonAndDecodedDescriptorSets
             }
             const baseRequestTypePath = method.requestType?.split('.');
             if (baseRequestTypePath) {
-              const requestTypePath = this.walkToFindTypePath(rootJson, pathWithName, baseRequestTypePath);
+              const requestTypePath = this.walkToFindTypePath(
+                rootJson,
+                pathWithName,
+                baseRequestTypePath,
+              );
               const requestTypeName = getTypeName(this.schemaComposer, requestTypePath, true);
               return requestTypeName;
             }
             return undefined;
           },
         };
-        if (method.responseStream) {
-          this.schemaComposer.Subscription.addFields({
-            [rootFieldName]: {
-              ...fieldConfig,
-              subscribe: (__, args: Record<string, unknown>, context: Record<string, unknown>) =>
-                addMetaDataToCall(client[methodName].bind(client), args.input, context, this.config.metaData, true),
-              resolve: (payload: unknown) => payload,
-            },
-          });
-        } else {
-          const methodNameLowerCased = methodName.toLowerCase();
-          const prefixQueryMethod = this.config.prefixQueryMethod || QUERY_METHOD_PREFIXES;
-          const rootTypeComposer = prefixQueryMethod.some(prefix => methodNameLowerCased.startsWith(prefix))
-            ? this.schemaComposer.Query
-            : this.schemaComposer.Mutation;
-          rootTypeComposer.addFields({
-            [rootFieldName]: {
-              ...fieldConfig,
-              resolve: (_, args: Record<string, unknown>, context: Record<string, unknown>) =>
-                addMetaDataToCall(client[methodName].bind(client), args.input, context, this.config.metaData),
-            },
-          });
-        }
+        const methodNameLowerCased = methodName.toLowerCase();
+        const prefixQueryMethod = this.config.prefixQueryMethod || QUERY_METHOD_PREFIXES;
+        const rootTypeComposer = prefixQueryMethod.some(prefix =>
+          methodNameLowerCased.startsWith(prefix),
+        )
+          ? this.schemaComposer.Query
+          : this.schemaComposer.Mutation;
+        rootTypeComposer.addFields({
+          [rootFieldName]: {
+            ...fieldConfig,
+            resolve: (_, args: Record<string, unknown>, context: Record<string, unknown>) =>
+              addMetaDataToCall(
+                client[methodName].bind(client),
+                args.input,
+                context,
+                this.config.metaData,
+                !!method.responseStream,
+              ),
+          },
+        });
       }
       const connectivityStateFieldName = pathWithName.join('_') + '_connectivityState';
       this.schemaComposer.Query.addFields({
@@ -488,7 +530,15 @@ ${rootJsonAndDecodedDescriptorSets
       const grpcObject = loadPackageDefinition(packageDefinition);
 
       this.logger.debug(`Building the schema structure based on the root object`);
-      this.visit({ nested: rootJson, name: '', currentPath: [], rootJson, creds, grpcObject, rootLogger });
+      this.visit({
+        nested: rootJson,
+        name: '',
+        currentPath: [],
+        rootJson,
+        creds,
+        grpcObject,
+        rootLogger,
+      });
     }
 
     // graphql-compose doesn't add @defer and @stream to the schema

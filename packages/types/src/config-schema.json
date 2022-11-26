@@ -870,19 +870,8 @@
           "type": "string",
           "description": "gRPC Endpoint"
         },
-        "protoFilePath": {
-          "description": "gRPC Proto file that contains your protobuf schema (Any of: ProtoFilePath, String)",
-          "anyOf": [
-            {
-              "$ref": "#/definitions/ProtoFilePath"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "descriptorSetFilePath": {
-          "description": "Use a binary-encoded or JSON file descriptor set file (Any of: ProtoFilePath, String)",
+        "source": {
+          "description": "gRPC Proto file that contains your protobuf schema\nOR\nUse a binary-encoded or JSON file descriptor set file (Any of: ProtoFilePath, String)",
           "anyOf": [
             {
               "$ref": "#/definitions/ProtoFilePath"
@@ -908,10 +897,6 @@
           "type": "object",
           "properties": {},
           "description": "MetaData"
-        },
-        "useReflection": {
-          "type": "boolean",
-          "description": "Use gRPC reflection to automatically gather the connection"
         },
         "prefixQueryMethod": {
           "type": "array",

@@ -27,7 +27,7 @@ describe.each<[string, string]>([
     const pubsub = new PubSub();
     const config: YamlConfig.GrpcHandler = {
       endpoint: 'localhost',
-      protoFilePath: {
+      source: {
         file: join(__dirname, './fixtures/proto-tests', file),
         load: { includeDirs: [join(__dirname, './fixtures/proto-tests')] },
       },
@@ -65,7 +65,7 @@ describe('Load proto with prefixQueryMethod', () => {
     const pubsub = new PubSub();
     const config: YamlConfig.GrpcHandler = {
       endpoint: 'localhost',
-      protoFilePath: {
+      source: {
         file: join(__dirname, './fixtures/proto-tests', file),
         load: { includeDirs: [join(__dirname, './fixtures/proto-tests')] },
       },

@@ -1,11 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`gRPC Example should fetch movies by cast as a subscription correctly: movies-by-cast-grpc-example-result-1 1`] = `
+exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-by-cast-grpc-example-result 1`] = `
 {
-  "done": false,
-  "value": {
-    "data": {
-      "exampleSearchMoviesByCast": {
+  "data": {
+    "exampleSearchMoviesByCast": [
+      {
         "cast": [
           "Tom Cruise",
           "Simon Pegg",
@@ -15,17 +14,7 @@ exports[`gRPC Example should fetch movies by cast as a subscription correctly: m
         "rating": 0.9700000286102295,
         "year": 2015n,
       },
-    },
-  },
-}
-`;
-
-exports[`gRPC Example should fetch movies by cast as a subscription correctly: movies-by-cast-grpc-example-result-2 1`] = `
-{
-  "done": false,
-  "value": {
-    "data": {
-      "exampleSearchMoviesByCast": {
+      {
         "cast": [
           "Tom Cruise",
           "Simon Pegg",
@@ -35,7 +24,7 @@ exports[`gRPC Example should fetch movies by cast as a subscription correctly: m
         "rating": 0.9300000071525574,
         "year": 2018n,
       },
-    },
+    ],
   },
 }
 `;
@@ -97,22 +86,20 @@ type Query {
 
   """get all movies"""
   anotherExampleGetMovies(input: MovieRequest_Input): MoviesResult
+
+  """search movies by the name of the cast"""
+  anotherExampleSearchMoviesByCast(input: SearchByCastRequest_Input): [Movie]
   exampleConnectivityState(tryToConnect: Boolean): ConnectivityState
 
   """get all movies"""
   exampleGetMovies(input: MovieRequest_Input): MoviesResult
+
+  """search movies by the name of the cast"""
+  exampleSearchMoviesByCast(input: SearchByCastRequest_Input): [Movie]
 }
 
 input SearchByCastRequest_Input {
   castName: String
-}
-
-type Subscription {
-  """search movies by the name of the cast"""
-  anotherExampleSearchMoviesByCast(input: SearchByCastRequest_Input): Movie
-
-  """search movies by the name of the cast"""
-  exampleSearchMoviesByCast(input: SearchByCastRequest_Input): Movie
 }
 
 type google_protobuf_Timestamp {

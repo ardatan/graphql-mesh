@@ -1,4 +1,4 @@
-subscription SearchMoviesByCast {
+query SearchMoviesByCast {
   exampleSearchMoviesByCast(input: { castName: "Tom Cruise" }) {
     name
     year

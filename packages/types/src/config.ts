@@ -281,13 +281,11 @@ export interface GrpcHandler {
    */
   endpoint: string;
   /**
-   * gRPC Proto file that contains your protobuf schema (Any of: ProtoFilePath, String)
-   */
-  protoFilePath?: ProtoFilePath | string;
-  /**
+   * gRPC Proto file that contains your protobuf schema
+   * OR
    * Use a binary-encoded or JSON file descriptor set file (Any of: ProtoFilePath, String)
    */
-  descriptorSetFilePath?: ProtoFilePath | string;
+  source?: ProtoFilePath | string;
   /**
    * Request timeout in milliseconds
    * Default: 200000
@@ -304,10 +302,6 @@ export interface GrpcHandler {
   metaData?: {
     [k: string]: any;
   };
-  /**
-   * Use gRPC reflection to automatically gather the connection
-   */
-  useReflection?: boolean;
   /**
    * prefix to collect Query method default: list, get
    */
