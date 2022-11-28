@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/grpc",
-  "version": "0.25.34",
+  "version": "0.26.0",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",

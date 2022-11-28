@@ -1,5 +1,15 @@
 # @graphql-mesh/grpc
 
+## 0.26.0
+
+### Minor Changes
+
+- [`f5421c1f7`](https://github.com/Urigo/graphql-mesh/commit/f5421c1f7b7f30b6e00c08036d9bfedc4977b10b)
+  Thanks [@ardatan](https://github.com/ardatan)! - **BREAKING**;
+  - Now stream responses are regular queries not subscriptions
+  - `protoFilePath`, `descriptorSetFilePath` and `useReflection` have been removed. Use `source`
+    instead and if `source` is not provided, reflection will be used instead.
+
 ## 0.25.34
 
 ### Patch Changes
