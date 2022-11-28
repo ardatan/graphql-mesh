@@ -1,5 +1,13 @@
 # @graphql-mesh/container
 
+## 0.1.204
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f5421c1f7`](https://github.com/Urigo/graphql-mesh/commit/f5421c1f7b7f30b6e00c08036d9bfedc4977b10b)]:
+  - @graphql-mesh/grpc@0.26.0
+
 ## 0.1.203
 
 ### Patch Changes

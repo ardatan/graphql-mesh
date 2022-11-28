@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/container",
-  "version": "0.1.203",
+  "version": "0.1.204",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -14,7 +14,7 @@
     "@graphql-mesh/cli": "0.80.1",
     "@graphql-mesh/config": "8.0.34",
     "@graphql-mesh/graphql": "0.32.2",
-    "@graphql-mesh/grpc": "0.25.34",
+    "@graphql-mesh/grpc": "0.26.0",
     "@graphql-mesh/json-schema": "0.35.37",
     "@graphql-mesh/odata": "0.20.34",
     "@graphql-mesh/openapi": "0.33.38",
