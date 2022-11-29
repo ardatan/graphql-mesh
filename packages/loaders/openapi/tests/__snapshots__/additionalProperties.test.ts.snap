@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`additionalProperties should generate the schema correctly: schema 1`] = `
+"schema {
+  query: Query
+}
+
+type Query {
+  test: test_200_response
+}
+
+type test_200_response {
+  id: String
+  foo: query_test_foo
+  qux: query_test_qux
+}
+
+type query_test_foo {
+  bar: String
+}
+
+type query_test_qux {
+  quux: String
+  additionalProperties: [query_test_qux_additionalProperties_entry]
+}
+
+type query_test_qux_additionalProperties_entry {
+  key: ID!
+  value: query_test_qux_additionalProperties
+}
+
+type query_test_qux_additionalProperties {
+  corge: String
+}"
+`;
