@@ -53,7 +53,7 @@ sources:
     handler:
       grpc:
         endpoint: localhost:50051
-        protoFilePath: grpc/proto/Example.proto
+        source: grpc/proto/Example.proto
         metaData:
           authorization: '{req.headers.authorization}'
           someStaticValue: 'MyStaticValue'
