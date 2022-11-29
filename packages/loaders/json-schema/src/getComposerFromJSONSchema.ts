@@ -94,7 +94,10 @@ const GraphQLFile = new GraphQLScalarType({
   },
 });
 
-export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): Promise<TypeComposers> {
+export function getComposerFromJSONSchema(
+  schema: JSONSchema,
+  logger: Logger,
+): Promise<TypeComposers> {
   const schemaComposer = new SchemaComposer();
   const ajv = new Ajv({
     strict: false,
@@ -203,7 +206,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             regexp,
             {
               description: subSchema.description,
-            }
+            },
           );
           scalarType.extensions = scalarType.extensions || {};
           (scalarType.extensions as any).codegenScalarType = codegenScalarType;
@@ -493,7 +496,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
 
       if (subSchema.minimum === 0) {
         const typeComposer = schemaComposer.getAnyTC(
-          subSchema.type === 'integer' ? GraphQLNonNegativeInt : GraphQLNonNegativeFloat
+          subSchema.type === 'integer' ? GraphQLNonNegativeInt : GraphQLNonNegativeFloat,
         );
         return {
           input: typeComposer,
@@ -506,7 +509,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
         };
       } else if (subSchema.minimum > 0) {
         const typeComposer = schemaComposer.getAnyTC(
-          subSchema.type === 'integer' ? GraphQLPositiveInt : GraphQLPositiveFloat
+          subSchema.type === 'integer' ? GraphQLPositiveInt : GraphQLPositiveFloat,
         );
         return {
           input: typeComposer,
@@ -520,7 +523,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
       }
       if (subSchema.maximum === 0) {
         const typeComposer = schemaComposer.getAnyTC(
-          subSchema.type === 'integer' ? GraphQLNonPositiveInt : GraphQLNonPositiveFloat
+          subSchema.type === 'integer' ? GraphQLNonPositiveInt : GraphQLNonPositiveFloat,
         );
         return {
           input: typeComposer,
@@ -533,7 +536,7 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
         };
       } else if (subSchema.maximum < 0) {
         const typeComposer = schemaComposer.getAnyTC(
-          subSchema.type === 'integer' ? GraphQLNegativeInt : GraphQLNegativeFloat
+          subSchema.type === 'integer' ? GraphQLNegativeInt : GraphQLNegativeFloat,
         );
         return {
           input: typeComposer,
@@ -545,7 +548,10 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           default: subSchema.default,
         };
       }
-      if (subSchema.maximum > Number.MAX_SAFE_INTEGER || subSchema.minimum < Number.MIN_SAFE_INTEGER) {
+      if (
+        subSchema.maximum > Number.MAX_SAFE_INTEGER ||
+        subSchema.minimum < Number.MIN_SAFE_INTEGER
+      ) {
         const typeComposer = schemaComposer.getAnyTC(GraphQLBigInt);
         return {
           input: typeComposer,
@@ -679,7 +685,10 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
       if (subSchema.oneOf && !subSchema.properties) {
         let statusCodeOneOfIndexMap: Record<string, number> | undefined;
         if (subSchema.$comment?.startsWith('statusCodeOneOfIndexMap:')) {
-          const statusCodeOneOfIndexMapStr = subSchema.$comment.replace('statusCodeOneOfIndexMap:', '');
+          const statusCodeOneOfIndexMapStr = subSchema.$comment.replace(
+            'statusCodeOneOfIndexMap:',
+            '',
+          );
           statusCodeOneOfIndexMap = JSON.parse(statusCodeOneOfIndexMapStr);
         }
         const input = schemaComposer.createInputTC({
@@ -714,7 +723,12 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
         };
       }
 
-      if (subSchema.properties || subSchema.allOf || subSchema.anyOf || subSchema.additionalProperties) {
+      if (
+        subSchema.properties ||
+        subSchema.allOf ||
+        subSchema.anyOf ||
+        subSchema.additionalProperties
+      ) {
         if (subSchema.title === 'Any') {
           const typeComposer = schemaComposer.getAnyTC(GraphQLJSON);
           return {
@@ -769,7 +783,9 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
           ...(subSchema.additionalProperties
             ? {
                 additionalProperties:
-                  subSchema.additionalProperties === true ? true : { ...subSchema.additionalProperties },
+                  subSchema.additionalProperties === true
+                    ? true
+                    : { ...subSchema.additionalProperties },
               }
             : {}),
         };
@@ -785,15 +801,19 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
         output: undefined,
       };
       if (subSchemaAndTypeComposers.oneOf && !subSchemaAndTypeComposers.properties) {
-        const isPlural = (subSchemaAndTypeComposers.oneOf as TypeComposers[]).some(({ output }) => 'ofType' in output);
+        const isPlural = (subSchemaAndTypeComposers.oneOf as TypeComposers[]).some(
+          ({ output }) => 'ofType' in output,
+        );
         if (isPlural) {
           const { input, output } = getUnionTypeComposers({
             schemaComposer,
             ajv,
-            typeComposersList: (subSchemaAndTypeComposers.oneOf as any).map(({ input, output }: any) => ({
-              input: input.ofType || input,
-              output: output.ofType || output,
-            })) as any[],
+            typeComposersList: (subSchemaAndTypeComposers.oneOf as any).map(
+              ({ input, output }: any) => ({
+                input: input.ofType || input,
+                output: output.ofType || output,
+              }),
+            ) as any[],
             subSchemaAndTypeComposers,
             logger,
           });
@@ -816,7 +836,10 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
       }
 
       const fieldMap: ObjectTypeComposerFieldConfigMapDefinition<any, any> = {};
-      const inputFieldMap: Record<string, InputTypeComposerFieldConfigAsObjectDefinition & { type: any }> = {};
+      const inputFieldMap: Record<
+        string,
+        InputTypeComposerFieldConfigAsObjectDefinition & { type: any }
+      > = {};
       let isList = false;
 
       if (subSchemaAndTypeComposers.allOf) {
@@ -834,7 +857,10 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             outputTypeComposer = outputTypeComposer.ofType;
           }
 
-          if (inputTypeComposer instanceof ScalarTypeComposer || inputTypeComposer instanceof EnumTypeComposer) {
+          if (
+            inputTypeComposer instanceof ScalarTypeComposer ||
+            inputTypeComposer instanceof EnumTypeComposer
+          ) {
             ableToUseGraphQLInputObjectType = false;
           } else {
             const inputTypeElemFieldMap = inputTypeComposer.getFields();
@@ -860,7 +886,9 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
             }
           } else {
             if (outputTypeComposer instanceof InterfaceTypeComposer) {
-              (subSchemaAndTypeComposers.output as ObjectTypeComposer).addInterface(outputTypeComposer);
+              (subSchemaAndTypeComposers.output as ObjectTypeComposer).addInterface(
+                outputTypeComposer,
+              );
             }
 
             const typeElemFieldMap = outputTypeComposer.getFields();
@@ -894,12 +922,18 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
         let ableToUseGraphQLInputObjectType = true;
         for (const typeComposers of subSchemaAndTypeComposers.anyOf as any) {
           let { input: inputTypeComposer, output: outputTypeComposer } = typeComposers;
-          if (inputTypeComposer instanceof ListComposer || outputTypeComposer instanceof ListComposer) {
+          if (
+            inputTypeComposer instanceof ListComposer ||
+            outputTypeComposer instanceof ListComposer
+          ) {
             isList = true;
             inputTypeComposer = inputTypeComposer.ofType;
             outputTypeComposer = outputTypeComposer.ofType;
           }
-          if (inputTypeComposer instanceof ScalarTypeComposer || inputTypeComposer instanceof EnumTypeComposer) {
+          if (
+            inputTypeComposer instanceof ScalarTypeComposer ||
+            inputTypeComposer instanceof EnumTypeComposer
+          ) {
             ableToUseGraphQLInputObjectType = false;
           } else {
             const inputTypeElemFieldMap = inputTypeComposer.getFields();
@@ -1073,34 +1107,51 @@ export function getComposerFromJSONSchema(schema: JSONSchema, logger: Logger): P
 
           if (subSchemaAndTypeComposers.additionalProperties) {
             // Take a look later
-            /*             if (
+            if (
               typeof subSchemaAndTypeComposers.additionalProperties === 'object' &&
               subSchemaAndTypeComposers.additionalProperties.output instanceof ObjectTypeComposer
             ) {
-              if (Object.keys(fieldMap).length === 0) {
-                return subSchemaAndTypeComposers.additionalProperties;
-              } else {
-                const outputTC: ObjectTypeComposer = (subSchemaAndTypeComposers.additionalProperties as any).output;
-                const outputTCFieldMap = outputTC.getFields();
-                for (const fieldName in outputTCFieldMap) {
-                  fieldMap[fieldName] = outputTCFieldMap[fieldName];
-                }
-                const inputTC: InputTypeComposer = (subSchemaAndTypeComposers.additionalProperties as any).input;
-                const inputTCFieldMap = inputTC.getFields();
-                for (const fieldName in inputTCFieldMap) {
-                  inputFieldMap[fieldName] = inputTCFieldMap[fieldName];
-                }
-              }
-            } else */
-            if (Object.keys(fieldMap).length > 0) {
+              const containerOutputTC = schemaComposer.createObjectTC({
+                name: `${subSchemaAndTypeComposers.additionalProperties.output.getTypeName()}_entry`,
+                fields: {
+                  key: {
+                    type: 'ID!',
+                  },
+                  value: {
+                    type: subSchemaAndTypeComposers.additionalProperties.output,
+                  },
+                },
+              });
+
+              fieldMap.additionalProperties = {
+                type: containerOutputTC.List,
+                resolve: root => {
+                  const result = [];
+                  for (const key in root) {
+                    if (key in fieldMap) {
+                      continue;
+                    }
+                    result.push({
+                      key,
+                      value: root[key],
+                    });
+                  }
+                  return result;
+                },
+              };
+            } else if (Object.keys(fieldMap).length > 0) {
               fieldMap.additionalProperties = {
                 type: GraphQLJSON,
                 resolve: (root: any) => root,
               };
             } else {
               const typeComposer = schemaComposer.getAnyTC(GraphQLJSON);
-              schemaComposer.delete((subSchemaAndTypeComposers.input as ObjectTypeComposer)?.getTypeName?.());
-              schemaComposer.delete((subSchemaAndTypeComposers.output as ObjectTypeComposer)?.getTypeName?.());
+              schemaComposer.delete(
+                (subSchemaAndTypeComposers.input as ObjectTypeComposer)?.getTypeName?.(),
+              );
+              schemaComposer.delete(
+                (subSchemaAndTypeComposers.output as ObjectTypeComposer)?.getTypeName?.(),
+              );
               return {
                 input: typeComposer,
                 output: typeComposer,
