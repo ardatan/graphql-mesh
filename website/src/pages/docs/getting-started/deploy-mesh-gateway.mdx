@@ -56,6 +56,12 @@ For this reason, we will add a `prebuild` step:
 }
 ```
 
+Then, we have to update Mesh configuration to let Mesh know the actual endpoint;
+```yaml filename=".meshrc.yml"
+serve:
+  endpoint: /api/graphql # This is the actual endpoint to the API route
+```
+
 Now, let's integrate our Mesh Gateway in a Next.js API Routes:
 
 ```ts filename="website/src/pages/api/graphql/index.ts"
