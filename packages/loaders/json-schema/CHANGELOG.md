@@ -1,5 +1,19 @@
 # @omnigraph/json-schema
 
+## 0.36.11
+
+### Patch Changes
+
+- [#4866](https://github.com/Urigo/graphql-mesh/pull/4866)
+  [`979e8dcc6`](https://github.com/Urigo/graphql-mesh/commit/979e8dcc6c59f5a2f04588f8c0b6dd3e6eea3332)
+  Thanks [@ardatan](https://github.com/ardatan)! - Type `additionalProperties` correctly
+
+- Updated dependencies
+  [[`eba73c626`](https://github.com/Urigo/graphql-mesh/commit/eba73c6261a2fdde8ece31915202203b70ff0e5f)]:
+  - @graphql-mesh/utils@0.42.9
+  - json-machete@0.16.5
+  - @graphql-mesh/types@0.87.1
+
 ## 0.36.10
 
 ### Patch Changes

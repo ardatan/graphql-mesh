@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/store",
-  "version": "0.8.64",
+  "version": "0.8.65",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -26,8 +26,8 @@
   "dependencies": {
     "@graphql-inspector/core": "3.3.0",
     "@graphql-mesh/cross-helpers": "0.2.10",
-    "@graphql-mesh/types": "0.87.0",
-    "@graphql-mesh/utils": "0.42.8",
+    "@graphql-mesh/types": "0.87.1",
+    "@graphql-mesh/utils": "0.42.9",
     "@graphql-tools/utils": "9.1.1",
     "tslib": "^2.4.0"
   },
