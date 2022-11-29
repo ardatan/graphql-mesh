@@ -24,6 +24,7 @@ const serverAdapter = createServerAdapter(request => {
       }),
     );
   }
+  return new Response('Not Found', { status: 404 });
 });
 
 describe('additionalProperties', () => {
