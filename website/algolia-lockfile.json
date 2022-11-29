@@ -1410,7 +1410,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "0f35bd62266b79565d8743c446c1c6eb",
+    "content": "862a5b36ffb9ed1b52ec5615f22c21ca",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/grpc",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Source Handlers"],
