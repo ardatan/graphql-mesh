@@ -18,7 +18,7 @@ sources:
     handler:
       grpc:
         endpoint: localhost:50051
-        protoFilePath: grpc/proto/Example.proto
+        source: grpc/proto/Example.proto
 ```
 
 <Callout>
@@ -28,7 +28,7 @@ sources:
 
 ## Use Reflection instead of proto files
 
-If you have configured reflection in your gRPC server, you can use `useReflection` flag to load the schema from reflection instead of loading proto files.
+If you have configured reflection in your gRPC server, you don't need to provide `source`.
 
 ```yaml filename=".meshrc.yaml" {6}
 sources:
@@ -36,7 +36,6 @@ sources:
     handler:
       grpc:
         endpoint: localhost:50051
-        useReflection: true
 ```
 
 <Callout>
