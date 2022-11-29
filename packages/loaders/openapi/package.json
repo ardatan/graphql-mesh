@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/openapi",
-  "version": "0.17.10",
+  "version": "0.17.11",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -26,11 +26,11 @@
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.2.10",
     "@graphql-mesh/string-interpolation": "0.3.3",
-    "@graphql-mesh/types": "0.87.0",
-    "@graphql-mesh/utils": "0.42.8",
-    "@omnigraph/json-schema": "0.36.10",
+    "@graphql-mesh/types": "0.87.1",
+    "@graphql-mesh/utils": "0.42.9",
+    "@omnigraph/json-schema": "0.36.11",
     "change-case": "4.1.2",
-    "json-machete": "0.16.4",
+    "json-machete": "0.16.5",
     "openapi-types": "12.0.2",
     "tslib": "^2.4.0"
   },

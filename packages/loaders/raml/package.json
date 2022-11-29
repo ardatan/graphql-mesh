@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/raml",
-  "version": "0.7.43",
+  "version": "0.7.44",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -27,12 +27,12 @@
     "@ardatan/raml-1-parser": "1.1.69",
     "@graphql-mesh/cross-helpers": "0.2.10",
     "@graphql-mesh/string-interpolation": "0.3.3",
-    "@graphql-mesh/utils": "0.42.8",
+    "@graphql-mesh/utils": "0.42.9",
     "@graphql-tools/utils": "9.1.1",
-    "@omnigraph/json-schema": "0.36.10",
+    "@omnigraph/json-schema": "0.36.11",
     "@whatwg-node/fetch": "^0.5.0",
     "change-case": "4.1.2",
-    "json-machete": "0.16.4",
+    "json-machete": "0.16.5",
     "to-json-schema": "0.2.5",
     "tslib": "^2.4.0"
   },

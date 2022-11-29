@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-rate-limit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -26,7 +26,7 @@
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.2.10",
     "@graphql-mesh/string-interpolation": "0.3.3",
-    "@graphql-mesh/types": "0.87.0",
+    "@graphql-mesh/types": "0.87.1",
     "@graphql-tools/utils": "9.1.1",
     "minimatch": "5.1.0",
     "tslib": "^2.4.0"

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-http-details-extensions",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -25,8 +25,8 @@
   },
   "dependencies": {
     "@envelop/core": "3.0.4",
-    "@graphql-mesh/types": "0.87.0",
-    "@graphql-mesh/utils": "0.42.8",
+    "@graphql-mesh/types": "0.87.1",
+    "@graphql-mesh/utils": "0.42.9",
     "@whatwg-node/fetch": "0.5.3",
     "tslib": "^2.4.0"
   },

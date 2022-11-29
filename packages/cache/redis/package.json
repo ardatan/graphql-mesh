@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cache-redis",
-  "version": "0.10.46",
+  "version": "0.10.47",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -26,8 +26,8 @@
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.2.10",
     "@graphql-mesh/string-interpolation": "0.3.3",
-    "@graphql-mesh/types": "0.87.0",
-    "@graphql-mesh/utils": "0.42.8",
+    "@graphql-mesh/types": "0.87.1",
+    "@graphql-mesh/utils": "0.42.9",
     "ioredis": "5.2.4",
     "ioredis-mock": "8.2.2",
     "tslib": "^2.4.0"

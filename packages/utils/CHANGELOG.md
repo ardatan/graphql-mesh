@@ -1,5 +1,15 @@
 # @graphql-mesh/utils
 
+## 0.42.9
+
+### Patch Changes
+
+- [`eba73c626`](https://github.com/Urigo/graphql-mesh/commit/eba73c6261a2fdde8ece31915202203b70ff0e5f)
+  Thanks [@ardatan](https://github.com/ardatan)! - Better ESM support
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.87.1
+
 ## 0.42.8
 
 ### Patch Changes

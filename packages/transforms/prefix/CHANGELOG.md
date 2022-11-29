@@ -1,5 +1,14 @@
 # @graphql-mesh/transform-prefix
 
+## 0.11.104
+
+### Patch Changes
+
+- Updated dependencies
+  [[`eba73c626`](https://github.com/Urigo/graphql-mesh/commit/eba73c6261a2fdde8ece31915202203b70ff0e5f)]:
+  - @graphql-mesh/utils@0.42.9
+  - @graphql-mesh/types@0.87.1
+
 ## 0.11.103
 
 ### Patch Changes

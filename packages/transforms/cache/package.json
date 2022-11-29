@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-cache",
-  "version": "0.12.66",
+  "version": "0.12.67",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -26,8 +26,8 @@
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.2.10",
     "@graphql-mesh/string-interpolation": "0.3.3",
-    "@graphql-mesh/types": "0.87.0",
-    "@graphql-mesh/utils": "0.42.8",
+    "@graphql-mesh/types": "0.87.1",
+    "@graphql-mesh/utils": "0.42.9",
     "@graphql-tools/resolvers-composition": "6.5.12",
     "@graphql-tools/schema": "9.0.10",
     "@graphql-tools/utils": "9.1.1",
@@ -35,7 +35,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-mesh/cache-localforage": "0.6.62"
+    "@graphql-mesh/cache-localforage": "0.6.63"
   },
   "publishConfig": {
     "access": "public",

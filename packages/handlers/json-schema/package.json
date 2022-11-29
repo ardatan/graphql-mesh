@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/json-schema",
-  "version": "0.35.37",
+  "version": "0.35.38",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -25,15 +25,15 @@
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.2.10",
-    "@graphql-mesh/store": "0.8.64",
+    "@graphql-mesh/store": "0.8.65",
     "@graphql-mesh/string-interpolation": "0.3.3",
-    "@graphql-mesh/types": "0.87.0",
-    "@graphql-mesh/utils": "0.42.8",
+    "@graphql-mesh/types": "0.87.1",
+    "@graphql-mesh/utils": "0.42.9",
     "@graphql-tools/utils": "9.1.1",
     "@json-schema-tools/meta-schema": "1.7.0",
-    "@omnigraph/json-schema": "0.36.10",
+    "@omnigraph/json-schema": "0.36.11",
     "graphql-compose": "9.0.10",
-    "json-machete": "0.16.4",
+    "json-machete": "0.16.5",
     "tslib": "^2.4.0"
   },
   "publishConfig": {

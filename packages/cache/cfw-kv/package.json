@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cache-cfw-kv",
-  "version": "0.0.48",
+  "version": "0.0.49",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -24,8 +24,8 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.87.0",
-    "@graphql-mesh/utils": "0.42.8",
+    "@graphql-mesh/types": "0.87.1",
+    "@graphql-mesh/utils": "0.42.9",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

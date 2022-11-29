@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-prune",
-  "version": "0.0.87",
+  "version": "0.0.88",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -24,7 +24,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.87.0",
+    "@graphql-mesh/types": "0.87.1",
     "@graphql-tools/utils": "9.1.1",
     "tslib": "^2.4.0"
   },
