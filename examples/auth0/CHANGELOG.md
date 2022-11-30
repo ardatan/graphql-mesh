@@ -1,5 +1,12 @@
 # auth0-example
 
+## 0.0.41
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.80.4
+
 ## 0.0.40
 
 ### Patch Changes

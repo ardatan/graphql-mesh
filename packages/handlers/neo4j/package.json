@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/neo4j",
-  "version": "0.20.39",
+  "version": "0.20.40",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",

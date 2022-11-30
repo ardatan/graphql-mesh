@@ -1,5 +1,16 @@
 # @graphql-mesh/runtime
 
+## 0.44.37
+
+### Patch Changes
+
+- [#4872](https://github.com/Urigo/graphql-mesh/pull/4872)
+  [`3ced82c45`](https://github.com/Urigo/graphql-mesh/commit/3ced82c45ed50eefe238c569a1eefdac164dff77)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/wrap@9.2.18` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.18)
+    (from `9.2.16`, in `dependencies`)
+
 ## 0.44.36
 
 ### Patch Changes
