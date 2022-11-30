@@ -3229,17 +3229,17 @@
     tslib "^2.4.0"
     value-or-promise "1.0.11"
 
-"@graphql-tools/stitch@8.7.27":
-  version "8.7.27"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/stitch/-/stitch-8.7.27.tgz#96b86dc482a86a63cf87cbd85378d59600a7c6e2"
-  integrity sha512-GHablr95XsMvVgm3FRTM09ggfrqKpUUCgkWSZ+isxwipgWLyNbDAQmNBK/m9Sk7aArX0yJFIHxI+DyXKqfX2IA==
+"@graphql-tools/stitch@8.7.29":
+  version "8.7.29"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/stitch/-/stitch-8.7.29.tgz#96049503384507f138bad12d9702f0c285210f79"
+  integrity sha512-SW+1J3YXpFnvHkPb7XknH2rtcTIarM/Wsmt3SxbA+eP9D/tCwH/aOVfZlW4dW2VNxG0IlMRR0A9p4WI3Y/QgDA==
   dependencies:
     "@graphql-tools/batch-delegate" "8.4.10"
     "@graphql-tools/delegate" "9.0.17"
     "@graphql-tools/merge" "8.3.12"
     "@graphql-tools/schema" "9.0.10"
     "@graphql-tools/utils" "9.1.1"
-    "@graphql-tools/wrap" "9.2.16"
+    "@graphql-tools/wrap" "9.2.18"
     tslib "^2.4.0"
     value-or-promise "^1.0.11"
 
@@ -3267,10 +3267,10 @@
     valid-url "1.0.9"
     websocket "1.0.31"
 
-"@graphql-tools/url-loader@7.16.20":
-  version "7.16.20"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.16.20.tgz#ba9f013f53e7d0627486f0c3aa4bd9561b27caa9"
-  integrity sha512-IoD4WR1aGURPisGxJw98b59RIYtWEa4YILFMezBTpG/Xq+BOOF7aYYGySFE1ocl86DeXU3yY9D04/cU8F7sAjw==
+"@graphql-tools/url-loader@7.16.22":
+  version "7.16.22"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.16.22.tgz#3c210d8755082f2686cbdb1024fa5f7fb0e49a5f"
+  integrity sha512-JA0+7w2eidPmsVFRFgzZQ+RQKiS9WE0T5R/wKudxLdC8NnCKdEw0hdA7wKmhhIXNhOs5UtWGfwQ1O2CrvStxWw==
   dependencies:
     "@ardatan/sync-fetch" "0.0.1"
     "@graphql-tools/delegate" "9.0.17"
@@ -3278,7 +3278,7 @@
     "@graphql-tools/executor-http" "0.0.4"
     "@graphql-tools/executor-legacy-ws" "0.0.3"
     "@graphql-tools/utils" "9.1.1"
-    "@graphql-tools/wrap" "9.2.16"
+    "@graphql-tools/wrap" "9.2.18"
     "@types/ws" "^8.0.0"
     "@whatwg-node/fetch" "^0.5.0"
     isomorphic-ws "5.0.0"
@@ -3334,10 +3334,10 @@
     is-promise "4.0.0"
     tslib "~2.0.1"
 
-"@graphql-tools/wrap@9.2.16":
-  version "9.2.16"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/wrap/-/wrap-9.2.16.tgz#ec7696101a34cacd1bfefb86ccb631f55651c8fa"
-  integrity sha512-fWTvGytllPq0IVrRcEAc6VuVUInfCEpOUhSAo1ocsSe0HZMoyrQkS1ST0jmCpEWeGWuUd/S2zBLS2yjH8fYfhA==
+"@graphql-tools/wrap@9.2.18":
+  version "9.2.18"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/wrap/-/wrap-9.2.18.tgz#be19f164dad8c855081b190db9953e6e15b0343c"
+  integrity sha512-ocdwRM2lDjqXiu/1tpvegmxumYuwHZVLLnzLFuch5i5S10y+EmTqcfgalG/2CbMrPV6BS9t4R7/w6p6+ZbppVg==
   dependencies:
     "@graphql-tools/delegate" "9.0.17"
     "@graphql-tools/schema" "9.0.10"
@@ -4270,21 +4270,21 @@
     "@napi-rs/simple-git-win32-arm64-msvc" "0.1.8"
     "@napi-rs/simple-git-win32-x64-msvc" "0.1.8"
 
-"@neo4j/cypher-builder@~0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@neo4j/cypher-builder/-/cypher-builder-0.1.5.tgz#925ce217dba65d9e2563b8618257bc1be67656ef"
-  integrity sha512-8yT8u5ePX1em9n/bT0O84UsOx1SDKZU9SnyqYtj9TwkWo/YsPLETEz1uc/vxtULRcNOblO3TCqYWPyK4gocWAw==
+"@neo4j/cypher-builder@~0.1.6":
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@neo4j/cypher-builder/-/cypher-builder-0.1.6.tgz#b6c58e2e43d18b334444cf0ccee96ccf94e596ac"
+  integrity sha512-c82zClycv3itsP3kSV0pVqkGoaU9H3jnN3OhoHBItBRwYM7zuqtovQZk8HUeY44WRDXVOGg3j3aWi+p0teNN8A==
 
-"@neo4j/graphql@3.12.2":
-  version "3.12.2"
-  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-3.12.2.tgz#31465a9d17936b57ac3b233a682487469e98e2df"
-  integrity sha512-EBlTu26Q9X0u7b/HWKCQxoxoJZWOseMiNfJpZRK+a56PtJc4QChBdWQiCjGzKGl1oYunjJlOtP6iNbw1qy3IsA==
+"@neo4j/graphql@3.13.0":
+  version "3.13.0"
+  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-3.13.0.tgz#15876585e251856a78b76ecc94400674718416f4"
+  integrity sha512-gTXYE5ozbjW230KMYBLcdPZZsyESXEnmv/PeNpm4KaxoN9ZEbZxdOAaESqSzutg2gu56gHCWwkaKpUhYW8RA9w==
   dependencies:
     "@graphql-tools/merge" "^8.3.3"
     "@graphql-tools/resolvers-composition" "^6.5.3"
     "@graphql-tools/schema" "9.0.10"
     "@graphql-tools/utils" "^8.10.0"
-    "@neo4j/cypher-builder" "~0.1.5"
+    "@neo4j/cypher-builder" "~0.1.6"
     camelcase "^6.3.0"
     debug "^4.3.4"
     deep-equal "^2.0.5"
@@ -5015,10 +5015,10 @@
     lodash "^4.17.21"
     remove-markdown "0.5.0"
 
-"@theguild/components@4.3.6":
-  version "4.3.6"
-  resolved "https://registry.yarnpkg.com/@theguild/components/-/components-4.3.6.tgz#0a56ca87e04ecb281dfec4a9d42036939999e243"
-  integrity sha512-d31sH22IqolPMzjuOOnbEw6DRp6j+6Pkf3u4fZZlG9fh87lKma/VyH2TL5SvGxQipyy3tF1oojUMW3i4GMioXA==
+"@theguild/components@4.3.7":
+  version "4.3.7"
+  resolved "https://registry.yarnpkg.com/@theguild/components/-/components-4.3.7.tgz#f3baed9911745fb3d05d7b7cd08afeebd38d4ace"
+  integrity sha512-3SgIOfl7rJZC49nVNQIiLSITzAEhV95bFFZbDWPrXwyhUXDtCTLRdYUyN+qj41ZeX3e7gbkJgGkWr2uDBcx65A==
   dependencies:
     "@algolia/autocomplete-js" "1.7.3"
     "@algolia/autocomplete-plugin-algolia-insights" "1.7.3"
@@ -5030,7 +5030,7 @@
     "@radix-ui/react-navigation-menu" "1.1.1"
     algoliasearch "4.14.2"
     clsx "1.2.1"
-    focus-trap-react "10.0.0"
+    focus-trap-react "10.0.1"
     mermaid "9.1.7"
     next-videos "1.5.0"
     nextra "2.0.0-beta.41"
@@ -5039,7 +5039,7 @@
     react-paginate "8.1.4"
     react-player "2.11.0"
     remark-mdx-disable-explicit-jsx "0.1.0"
-    search-insights "2.2.1"
+    search-insights "2.2.3"
     semver "^7.3.8"
     unist-util-visit "4.1.1"
     use-debounce "8.0.4"
@@ -10767,20 +10767,20 @@ flexsearch@^0.7.21:
   resolved "https://registry.yarnpkg.com/flexsearch/-/flexsearch-0.7.21.tgz#0f5ede3f2aae67ddc351efbe3b24b69d29e9d48b"
   integrity sha512-W7cHV7Hrwjid6lWmy0IhsWDFQboWSng25U3VVywpHOTJnnAZNPScog67G+cVpeX9f7yDD21ih0WDrMMT+JoaYg==
 
-focus-trap-react@10.0.0:
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/focus-trap-react/-/focus-trap-react-10.0.0.tgz#9e41ddd0b869db577dfe670611648d97736b9188"
-  integrity sha512-I0tReLdpmCwWuVb6YAmOD+S9KHj0GrlIWmnVJf61j2NHxiIg7DbrsabPmtPC+1yzGJrsy+/iTZiqXtStjlBQcA==
+focus-trap-react@10.0.1:
+  version "10.0.1"
+  resolved "https://registry.yarnpkg.com/focus-trap-react/-/focus-trap-react-10.0.1.tgz#5a50333f9753355765fcd7b83c6d2a59c5716c65"
+  integrity sha512-Av+O4JCT4/WnY25jnaOu1rysqhaD9aAhqAxxcrJbgKciZToIFmPng/WOrLJ1yHe6ntNmx1g0WhdeDfNCL1dmfA==
   dependencies:
-    focus-trap "^7.0.0"
-    tabbable "^6.0.0"
+    focus-trap "^7.1.0"
+    tabbable "^6.0.1"
 
-focus-trap@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/focus-trap/-/focus-trap-7.0.0.tgz#4e2cd9aab5b673e2cbad945c52bd232f6160c2cb"
-  integrity sha512-uT4Bl8TwU+5vVAx/DHil/1eVS54k9unqhK/vGy2KSh7esPmqgC0koAB9J2sJ+vtj8+vmiFyGk2unLkhNLQaxoA==
+focus-trap@^7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/focus-trap/-/focus-trap-7.1.0.tgz#3226e977d76b1fd555c2e4f7ff91f10371f0f2cc"
+  integrity sha512-CuJvwUBfJCWcU6fc4xr3UwMF5vWnox4isXAixCwrPzCsPKOQjP9T+nTlYT2t+vOmQL8MOQ16eim99XhjQHAuiQ==
   dependencies:
-    tabbable "^6.0.0"
+    tabbable "^6.0.1"
 
 focus-visible@^5.2.0:
   version "5.2.0"
@@ -15192,10 +15192,10 @@ mongodb@4.11.0:
     "@aws-sdk/credential-providers" "^3.186.0"
     saslprep "^1.0.3"
 
-mongoose@6.7.4:
-  version "6.7.4"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.7.4.tgz#08d8e073945126cb702028c3ff4b02d80f9f0193"
-  integrity sha512-0LWMrOa5U43cR3I/iRPnmyedoa6T8+QPxmFYdPgx4WAS0CdbSbOzAFSKeU6bndUY6cs4VkxKZGcuDM0twystCg==
+mongoose@6.7.5:
+  version "6.7.5"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.7.5.tgz#3e97faabf71952020e6a528513ab63ead936cc18"
+  integrity sha512-3ppxBxDUIoQKYISVpAg7hjmV1lkGBN3tN9AkQr1Vqc68L5k+Bo+uyfOhpbCFpCf5JZLcEO4cmuB5YX+d9h3plw==
   dependencies:
     bson "^4.7.0"
     kareem "2.4.1"
@@ -18221,10 +18221,10 @@ scroll-into-view-if-needed@^2.2.29:
   dependencies:
     compute-scroll-into-view "^1.0.17"
 
-search-insights@2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/search-insights/-/search-insights-2.2.1.tgz#9c93344fbae5fbf2f88c1a81b46b4b5d888c11f7"
-  integrity sha512-JDfVGZbKqTtiKVZjAVbkNw9C9f0ib80yx6Ea17M3z4RvPmuD0GYWXuFwA9++dpbreBEMH4TC3lQ29Zq7O4b5oA==
+search-insights@2.2.3:
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/search-insights/-/search-insights-2.2.3.tgz#3ef11cc622261887d0a95d91d84eebb5e63fe6b3"
+  integrity sha512-fXwC0QzkBGZuGTb6FoQG+iLS81wljYuBU4Sco4TGTgp5boVkiKZeFqPV0e5h5++5QncTU2FQrQ+G3ILnqEa3yA==
 
 section-matter@^1.0.0:
   version "1.0.0"
@@ -19227,10 +19227,10 @@ synckit@^0.8.1:
     "@pkgr/utils" "^2.3.0"
     tslib "^2.4.0"
 
-tabbable@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/tabbable/-/tabbable-6.0.0.tgz#7f95ea69134e9335979092ba63866fe67b521b01"
-  integrity sha512-SxhZErfHc3Yozz/HLAl/iPOxuIj8AtUw13NRewVOjFW7vbsqT1f3PuiHrPQbUkRcLNEgAedAv2DnjLtzynJXiw==
+tabbable@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/tabbable/-/tabbable-6.0.1.tgz#427a09b13c83ae41eed3e88abb76a4af28bde1a6"
+  integrity sha512-SYJSIgeyXW7EuX1ytdneO5e8jip42oHWg9xl/o3oTYhmXusZVgiA+VlPvjIN+kHii9v90AmzTZEBcsEvuAY+TA==
 
 table-layout@^1.0.1:
   version "1.0.2"

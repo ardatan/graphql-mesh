@@ -34,7 +34,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "mongoose": "6.7.4"
+    "mongoose": "6.7.5"
   },
   "publishConfig": {
     "access": "public",

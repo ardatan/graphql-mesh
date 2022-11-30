@@ -13,6 +13,15 @@ input ActedInPropertiesSort {
   roles: SortDirection
 }
 
+input ActedInPropertiesSubscriptionWhere {
+  AND: [ActedInPropertiesSubscriptionWhere!]
+  OR: [ActedInPropertiesSubscriptionWhere!]
+  roles: [String]
+  roles_INCLUDES: String
+  roles_NOT: [String]
+  roles_NOT_INCLUDES: String
+}
+
 input ActedInPropertiesUpdateInput {
   roles: [String]
   roles_POP: Int
@@ -70,10 +79,10 @@ type DeleteInfo {
 }
 
 enum EventType {
-  CONNECT
   CREATE
+  CREATE_RELATIONSHIP
   DELETE
-  DISCONNECT
+  DELETE_RELATIONSHIP
   UPDATE
 }
 
@@ -117,6 +126,14 @@ input MovieConnectInput {
 
 input MovieConnectWhere {
   node: MovieWhere!
+}
+
+type MovieConnectedRelationships {
+  peopleActedIn: MoviePeopleActedInConnectedRelationship
+  peopleDirected: MoviePeopleDirectedConnectedRelationship
+  peopleProduced: MoviePeopleProducedConnectedRelationship
+  peopleReviewed: MoviePeopleReviewedConnectedRelationship
+  peopleWrote: MoviePeopleWroteConnectedRelationship
 }
 
 input MovieCreateInput {
@@ -196,6 +213,11 @@ input MoviePeopleActedInConnectFieldInput {
   connect: [PersonConnectInput!]
   edge: ActedInPropertiesCreateInput!
   where: PersonConnectWhere
+}
+
+type MoviePeopleActedInConnectedRelationship {
+  node: PersonEventPayload!
+  roles: [String]!
 }
 
 type MoviePeopleActedInConnection {
@@ -294,6 +316,11 @@ type MoviePeopleActedInRelationship implements ActedInProperties {
   roles: [String]!
 }
 
+input MoviePeopleActedInRelationshipSubscriptionWhere {
+  edge: ActedInPropertiesSubscriptionWhere
+  node: PersonSubscriptionWhere
+}
+
 input MoviePeopleActedInUpdateConnectionInput {
   edge: ActedInPropertiesUpdateInput
   node: PersonUpdateInput
@@ -322,6 +349,10 @@ input MoviePeopleDirectedAggregateInput {
 input MoviePeopleDirectedConnectFieldInput {
   connect: [PersonConnectInput!]
   where: PersonConnectWhere
+}
+
+type MoviePeopleDirectedConnectedRelationship {
+  node: PersonEventPayload!
 }
 
 type MoviePeopleDirectedConnection {
@@ -415,6 +446,10 @@ type MoviePeopleDirectedRelationship {
   node: Person!
 }
 
+input MoviePeopleDirectedRelationshipSubscriptionWhere {
+  node: PersonSubscriptionWhere
+}
+
 input MoviePeopleDirectedUpdateConnectionInput {
   node: PersonUpdateInput
 }
@@ -442,6 +477,10 @@ input MoviePeopleProducedAggregateInput {
 input MoviePeopleProducedConnectFieldInput {
   connect: [PersonConnectInput!]
   where: PersonConnectWhere
+}
+
+type MoviePeopleProducedConnectedRelationship {
+  node: PersonEventPayload!
 }
 
 type MoviePeopleProducedConnection {
@@ -535,6 +574,10 @@ type MoviePeopleProducedRelationship {
   node: Person!
 }
 
+input MoviePeopleProducedRelationshipSubscriptionWhere {
+  node: PersonSubscriptionWhere
+}
+
 input MoviePeopleProducedUpdateConnectionInput {
   node: PersonUpdateInput
 }
@@ -564,6 +607,12 @@ input MoviePeopleReviewedConnectFieldInput {
   connect: [PersonConnectInput!]
   edge: ReviewedPropertiesCreateInput!
   where: PersonConnectWhere
+}
+
+type MoviePeopleReviewedConnectedRelationship {
+  node: PersonEventPayload!
+  rating: BigInt!
+  summary: String!
 }
 
 type MoviePeopleReviewedConnection {
@@ -713,6 +762,11 @@ type MoviePeopleReviewedRelationship implements ReviewedProperties {
   summary: String!
 }
 
+input MoviePeopleReviewedRelationshipSubscriptionWhere {
+  edge: ReviewedPropertiesSubscriptionWhere
+  node: PersonSubscriptionWhere
+}
+
 input MoviePeopleReviewedUpdateConnectionInput {
   edge: ReviewedPropertiesUpdateInput
   node: PersonUpdateInput
@@ -741,6 +795,10 @@ input MoviePeopleWroteAggregateInput {
 input MoviePeopleWroteConnectFieldInput {
   connect: [PersonConnectInput!]
   where: PersonConnectWhere
+}
+
+type MoviePeopleWroteConnectedRelationship {
+  node: PersonEventPayload!
 }
 
 type MoviePeopleWroteConnection {
@@ -834,6 +892,10 @@ type MoviePeopleWroteRelationship {
   node: Person!
 }
 
+input MoviePeopleWroteRelationshipSubscriptionWhere {
+  node: PersonSubscriptionWhere
+}
+
 input MoviePeopleWroteUpdateConnectionInput {
   node: PersonUpdateInput
 }
@@ -909,6 +971,40 @@ input MovieRelationInput {
   peopleProduced: [MoviePeopleProducedCreateFieldInput!]
   peopleReviewed: [MoviePeopleReviewedCreateFieldInput!]
   peopleWrote: [MoviePeopleWroteCreateFieldInput!]
+}
+
+type MovieRelationshipCreatedEvent {
+  createdRelationship: MovieConnectedRelationships!
+  event: EventType!
+  movie: MovieEventPayload!
+  relationshipFieldName: String!
+  timestamp: Float!
+}
+
+input MovieRelationshipCreatedSubscriptionWhere {
+  createdRelationship: MovieRelationshipsSubscriptionWhere
+  movie: MovieSubscriptionWhere
+}
+
+type MovieRelationshipDeletedEvent {
+  deletedRelationship: MovieConnectedRelationships!
+  event: EventType!
+  movie: MovieEventPayload!
+  relationshipFieldName: String!
+  timestamp: Float!
+}
+
+input MovieRelationshipDeletedSubscriptionWhere {
+  deletedRelationship: MovieRelationshipsSubscriptionWhere
+  movie: MovieSubscriptionWhere
+}
+
+input MovieRelationshipsSubscriptionWhere {
+  peopleActedIn: MoviePeopleActedInRelationshipSubscriptionWhere
+  peopleDirected: MoviePeopleDirectedRelationshipSubscriptionWhere
+  peopleProduced: MoviePeopleProducedRelationshipSubscriptionWhere
+  peopleReviewed: MoviePeopleReviewedRelationshipSubscriptionWhere
+  peopleWrote: MoviePeopleWroteRelationshipSubscriptionWhere
 }
 
 """
@@ -1203,6 +1299,11 @@ input PersonActedInMoviesConnectFieldInput {
   where: MovieConnectWhere
 }
 
+type PersonActedInMoviesConnectedRelationship {
+  node: MovieEventPayload!
+  roles: [String]!
+}
+
 type PersonActedInMoviesConnection {
   edges: [PersonActedInMoviesRelationship!]!
   pageInfo: PageInfo!
@@ -1344,6 +1445,11 @@ type PersonActedInMoviesRelationship implements ActedInProperties {
   roles: [String]!
 }
 
+input PersonActedInMoviesRelationshipSubscriptionWhere {
+  edge: ActedInPropertiesSubscriptionWhere
+  node: MovieSubscriptionWhere
+}
+
 input PersonActedInMoviesUpdateConnectionInput {
   edge: ActedInPropertiesUpdateInput
   node: MovieUpdateInput
@@ -1376,6 +1482,16 @@ input PersonConnectInput {
 
 input PersonConnectWhere {
   node: PersonWhere!
+}
+
+type PersonConnectedRelationships {
+  actedInMovies: PersonActedInMoviesConnectedRelationship
+  directedMovies: PersonDirectedMoviesConnectedRelationship
+  followsPeople: PersonFollowsPeopleConnectedRelationship
+  peopleFollows: PersonPeopleFollowsConnectedRelationship
+  producedMovies: PersonProducedMoviesConnectedRelationship
+  reviewedMovies: PersonReviewedMoviesConnectedRelationship
+  wroteMovies: PersonWroteMoviesConnectedRelationship
 }
 
 input PersonCreateInput {
@@ -1426,6 +1542,10 @@ input PersonDirectedMoviesAggregateInput {
 input PersonDirectedMoviesConnectFieldInput {
   connect: [MovieConnectInput!]
   where: MovieConnectWhere
+}
+
+type PersonDirectedMoviesConnectedRelationship {
+  node: MovieEventPayload!
 }
 
 type PersonDirectedMoviesConnection {
@@ -1564,6 +1684,10 @@ type PersonDirectedMoviesRelationship {
   node: Movie!
 }
 
+input PersonDirectedMoviesRelationshipSubscriptionWhere {
+  node: MovieSubscriptionWhere
+}
+
 input PersonDirectedMoviesUpdateConnectionInput {
   node: MovieUpdateInput
 }
@@ -1611,6 +1735,10 @@ input PersonFollowsPeopleAggregateInput {
 input PersonFollowsPeopleConnectFieldInput {
   connect: [PersonConnectInput!]
   where: PersonConnectWhere
+}
+
+type PersonFollowsPeopleConnectedRelationship {
+  node: PersonEventPayload!
 }
 
 type PersonFollowsPeopleConnection {
@@ -1702,6 +1830,10 @@ input PersonFollowsPeopleNodeAggregationWhereInput {
 type PersonFollowsPeopleRelationship {
   cursor: String!
   node: Person!
+}
+
+input PersonFollowsPeopleRelationshipSubscriptionWhere {
+  node: PersonSubscriptionWhere
 }
 
 input PersonFollowsPeopleUpdateConnectionInput {
@@ -1809,6 +1941,10 @@ input PersonPeopleFollowsConnectFieldInput {
   where: PersonConnectWhere
 }
 
+type PersonPeopleFollowsConnectedRelationship {
+  node: PersonEventPayload!
+}
+
 type PersonPeopleFollowsConnection {
   edges: [PersonPeopleFollowsRelationship!]!
   pageInfo: PageInfo!
@@ -1900,6 +2036,10 @@ type PersonPeopleFollowsRelationship {
   node: Person!
 }
 
+input PersonPeopleFollowsRelationshipSubscriptionWhere {
+  node: PersonSubscriptionWhere
+}
+
 input PersonPeopleFollowsUpdateConnectionInput {
   node: PersonUpdateInput
 }
@@ -1947,6 +2087,10 @@ input PersonProducedMoviesAggregateInput {
 input PersonProducedMoviesConnectFieldInput {
   connect: [MovieConnectInput!]
   where: MovieConnectWhere
+}
+
+type PersonProducedMoviesConnectedRelationship {
+  node: MovieEventPayload!
 }
 
 type PersonProducedMoviesConnection {
@@ -2085,6 +2229,10 @@ type PersonProducedMoviesRelationship {
   node: Movie!
 }
 
+input PersonProducedMoviesRelationshipSubscriptionWhere {
+  node: MovieSubscriptionWhere
+}
+
 input PersonProducedMoviesUpdateConnectionInput {
   node: MovieUpdateInput
 }
@@ -2108,6 +2256,42 @@ input PersonRelationInput {
   wroteMovies: [PersonWroteMoviesCreateFieldInput!]
 }
 
+type PersonRelationshipCreatedEvent {
+  createdRelationship: PersonConnectedRelationships!
+  event: EventType!
+  person: PersonEventPayload!
+  relationshipFieldName: String!
+  timestamp: Float!
+}
+
+input PersonRelationshipCreatedSubscriptionWhere {
+  createdRelationship: PersonRelationshipsSubscriptionWhere
+  person: PersonSubscriptionWhere
+}
+
+type PersonRelationshipDeletedEvent {
+  deletedRelationship: PersonConnectedRelationships!
+  event: EventType!
+  person: PersonEventPayload!
+  relationshipFieldName: String!
+  timestamp: Float!
+}
+
+input PersonRelationshipDeletedSubscriptionWhere {
+  deletedRelationship: PersonRelationshipsSubscriptionWhere
+  person: PersonSubscriptionWhere
+}
+
+input PersonRelationshipsSubscriptionWhere {
+  actedInMovies: PersonActedInMoviesRelationshipSubscriptionWhere
+  directedMovies: PersonDirectedMoviesRelationshipSubscriptionWhere
+  followsPeople: PersonFollowsPeopleRelationshipSubscriptionWhere
+  peopleFollows: PersonPeopleFollowsRelationshipSubscriptionWhere
+  producedMovies: PersonProducedMoviesRelationshipSubscriptionWhere
+  reviewedMovies: PersonReviewedMoviesRelationshipSubscriptionWhere
+  wroteMovies: PersonWroteMoviesRelationshipSubscriptionWhere
+}
+
 input PersonReviewedMoviesAggregateInput {
   AND: [PersonReviewedMoviesAggregateInput!]
   OR: [PersonReviewedMoviesAggregateInput!]
@@ -2124,6 +2308,12 @@ input PersonReviewedMoviesConnectFieldInput {
   connect: [MovieConnectInput!]
   edge: ReviewedPropertiesCreateInput!
   where: MovieConnectWhere
+}
+
+type PersonReviewedMoviesConnectedRelationship {
+  node: MovieEventPayload!
+  rating: BigInt!
+  summary: String!
 }
 
 type PersonReviewedMoviesConnection {
@@ -2316,6 +2506,11 @@ type PersonReviewedMoviesRelationship implements ReviewedProperties {
   node: Movie!
   rating: BigInt!
   summary: String!
+}
+
+input PersonReviewedMoviesRelationshipSubscriptionWhere {
+  edge: ReviewedPropertiesSubscriptionWhere
+  node: MovieSubscriptionWhere
 }
 
 input PersonReviewedMoviesUpdateConnectionInput {
@@ -2570,6 +2765,10 @@ input PersonWroteMoviesConnectFieldInput {
   where: MovieConnectWhere
 }
 
+type PersonWroteMoviesConnectedRelationship {
+  node: MovieEventPayload!
+}
+
 type PersonWroteMoviesConnection {
   edges: [PersonWroteMoviesRelationship!]!
   pageInfo: PageInfo!
@@ -2706,6 +2905,10 @@ type PersonWroteMoviesRelationship {
   node: Movie!
 }
 
+input PersonWroteMoviesRelationshipSubscriptionWhere {
+  node: MovieSubscriptionWhere
+}
+
 input PersonWroteMoviesUpdateConnectionInput {
   node: MovieUpdateInput
 }
@@ -2741,6 +2944,29 @@ input ReviewedPropertiesCreateInput {
 input ReviewedPropertiesSort {
   rating: SortDirection
   summary: SortDirection
+}
+
+input ReviewedPropertiesSubscriptionWhere {
+  AND: [ReviewedPropertiesSubscriptionWhere!]
+  OR: [ReviewedPropertiesSubscriptionWhere!]
+  rating: BigInt
+  rating_GT: BigInt
+  rating_GTE: BigInt
+  rating_IN: [BigInt]
+  rating_LT: BigInt
+  rating_LTE: BigInt
+  rating_NOT: BigInt
+  rating_NOT_IN: [BigInt]
+  summary: String
+  summary_CONTAINS: String
+  summary_ENDS_WITH: String
+  summary_IN: [String]
+  summary_NOT: String
+  summary_NOT_CONTAINS: String
+  summary_NOT_ENDS_WITH: String
+  summary_NOT_IN: [String]
+  summary_NOT_STARTS_WITH: String
+  summary_STARTS_WITH: String
 }
 
 input ReviewedPropertiesUpdateInput {
@@ -2794,9 +3020,13 @@ type StringAggregateSelectionNullable {
 type Subscription {
   movieCreated(where: MovieSubscriptionWhere): MovieCreatedEvent!
   movieDeleted(where: MovieSubscriptionWhere): MovieDeletedEvent!
+  movieRelationshipCreated(where: MovieRelationshipCreatedSubscriptionWhere): MovieRelationshipCreatedEvent!
+  movieRelationshipDeleted(where: MovieRelationshipDeletedSubscriptionWhere): MovieRelationshipDeletedEvent!
   movieUpdated(where: MovieSubscriptionWhere): MovieUpdatedEvent!
   personCreated(where: PersonSubscriptionWhere): PersonCreatedEvent!
   personDeleted(where: PersonSubscriptionWhere): PersonDeletedEvent!
+  personRelationshipCreated(where: PersonRelationshipCreatedSubscriptionWhere): PersonRelationshipCreatedEvent!
+  personRelationshipDeleted(where: PersonRelationshipDeletedSubscriptionWhere): PersonRelationshipDeletedEvent!
   personUpdated(where: PersonSubscriptionWhere): PersonUpdatedEvent!
 }
 
