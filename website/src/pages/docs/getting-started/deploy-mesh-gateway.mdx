@@ -113,6 +113,33 @@ Also you can see how to setup *KV* as a cache storage in GraphQL Mesh [here](/do
 You can see our example that shows how to setup an OpenWhisk action for GraphQL Mesh.
 [OpenWhisk Example](https://github.com/Urigo/graphql-mesh/tree/master/examples/openwhisk-example)
 
+### Deploy Mesh on GCP Cloud Functions
+Similarly to regular and Vercel deployment, we will need to add the `mesh build` command in the build step.
+
+Then assuming that your function's name is `mesh`;
+```ts filename="index.ts"
+import type { IncomingMessage, ServerResponse } from 'node:http';
+import { createBuiltMeshHTTPHandler } from './.mesh';
+
+const meshHTTP = createBuiltMeshHTTPHandler();
+
+export function mesh(req: IncomingMessage, res: ServerResponse) {
+  // GCP doesn't expose the full path so we need to patch it
+  req.url = '/mesh' + req.url;
+  return meshHTTP(req, res);
+}
+```
+
+We need to configure Mesh CLI to generate artifacts for the function's path;
+
+```yaml filename=".meshrc.yml"
+serve:
+  endpoint: /mesh # This is the actual endpoint to the GCP function
+```
+
+You can see our example that shows how to setup a Cloud Function for GraphQL Mesh.
+[Cloud Functions Example](https://github.com/Urigo/graphql-mesh/tree/master/examples/gcp-functions)
+
 ## Deploy on Node.js
 
 ### Mesh as an Express route
