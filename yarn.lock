@@ -2911,10 +2911,10 @@
     parse-filepath "^1.0.2"
     tslib "~2.4.0"
 
-"@graphql-hive/client@0.21.3":
-  version "0.21.3"
-  resolved "https://registry.yarnpkg.com/@graphql-hive/client/-/client-0.21.3.tgz#319b85e7da11901d5e6f15f653930a8b88e0d573"
-  integrity sha512-Lud3/40gpoU0sU9LlCDkSP0fU86Xs2Ff6bXWLYXTxUZqnX+DCSe4UJf4MmvZT/rgzwffR1KBZzI3/fWOVieXCQ==
+"@graphql-hive/client@0.21.4":
+  version "0.21.4"
+  resolved "https://registry.yarnpkg.com/@graphql-hive/client/-/client-0.21.4.tgz#639a0a17e27b099698d64764287ed045d7fc3236"
+  integrity sha512-sT3b7LnACPVMg5azMgWKz1bC5BXTIt2UoHWPWak1pwvk3mbIU6M0jIt3iw1Y7OvGmBxV8m4R4ohDMwZb2HC+2A==
   dependencies:
     "@graphql-hive/core" "^0.2.3"
     "@graphql-tools/utils" "^8.12.0"
@@ -14979,10 +14979,10 @@ minimatch@3.0.4:
   dependencies:
     brace-expansion "^1.1.7"
 
-minimatch@5.1.0, minimatch@^5.0.1:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-5.1.0.tgz#1717b464f4971b144f6aabe8f2d0b8e4511e09c7"
-  integrity sha512-9TPBGGak4nHfGZsPBohm9AWg6NoT7QTCehS3BIJABslyZbzxfV78QM2Y6+i741OPZIafFAaiiEMh5OyIrJPgtg==
+minimatch@5.1.1, minimatch@^5.0.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-5.1.1.tgz#6c9dffcf9927ff2a31e74b5af11adf8b9604b022"
+  integrity sha512-362NP+zlprccbEt/SkxKfRMHnNY85V74mVnpUpNyr3F35covl09Kec7/sEFLt3RA4oXmewtoaanoIf67SE5Y5g==
   dependencies:
     brace-expansion "^2.0.1"
 
@@ -20862,10 +20862,10 @@ workbox-window@6.5.3:
     "@types/trusted-types" "^2.0.2"
     workbox-core "6.5.3"
 
-wrangler@2.4.4:
-  version "2.4.4"
-  resolved "https://registry.yarnpkg.com/wrangler/-/wrangler-2.4.4.tgz#712f93ad869bd4b7328665e60deec7b602c96bdc"
-  integrity sha512-Of3O/7RzIcGWGmt7dd5JevvP419De55smr4Hi07REKt9oXYhMNeaFy4wX35fHlv5e0pVCyGB3Fna8mI4Ib2pew==
+wrangler@2.5.0:
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/wrangler/-/wrangler-2.5.0.tgz#e9b0bc5365d6aca7127505607cd5a63b6cea4c3d"
+  integrity sha512-7Y7Vh4yi1Vpa/o2o48VgWMv6G/3u8SPR3CJEWgntL4zPZog7iIxl0R2QjthWpsPHI7+PK6cFtnpSaSrcdEk+vw==
   dependencies:
     "@cloudflare/kv-asset-handler" "^0.2.0"
     "@esbuild-plugins/node-globals-polyfill" "^0.1.1"
