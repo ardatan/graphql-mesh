@@ -55,7 +55,7 @@ sources:
         endpoint: localhost:50051
         source: grpc/proto/Example.proto
         metaData:
-          authorization: '{req.headers.authorization}'
+          authorization: 'Bearer {context.headers['x-my-token']}'
           someStaticValue: 'MyStaticValue'
 ```
 

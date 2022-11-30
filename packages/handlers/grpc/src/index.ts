@@ -22,7 +22,7 @@ import { FileDescriptorSet } from 'protobufjs/ext/descriptor/index.js';
 import descriptor from 'protobufjs/ext/descriptor/index.js';
 
 import { addIncludePathResolver, addMetaDataToCall, getTypeName } from './utils';
-import { GraphQLEnumTypeConfig, specifiedDirectives } from 'graphql';
+import { GraphQLEnumTypeConfig, GraphQLResolveInfo, specifiedDirectives } from 'graphql';
 import { path, process } from '@graphql-mesh/cross-helpers';
 import { StoreProxy } from '@graphql-mesh/store';
 import { fs } from '@graphql-mesh/cross-helpers';
@@ -463,11 +463,21 @@ ${rootJsonAndDecodedDescriptorSets
         rootTypeComposer.addFields({
           [rootFieldName]: {
             ...fieldConfig,
-            resolve: (_, args: Record<string, unknown>, context: Record<string, unknown>) =>
+            resolve: (
+              root,
+              args: Record<string, unknown>,
+              context: Record<string, unknown>,
+              info: GraphQLResolveInfo,
+            ) =>
               addMetaDataToCall(
                 client[methodName].bind(client),
                 args.input,
-                context,
+                {
+                  root,
+                  args,
+                  context,
+                  env: process.env,
+                },
                 this.config.metaData,
                 !!method.responseStream,
               ),
