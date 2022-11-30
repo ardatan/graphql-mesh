@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-prefix",
-  "version": "0.11.104",
+  "version": "0.11.105",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",

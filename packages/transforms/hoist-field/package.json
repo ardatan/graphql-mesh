@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-hoist-field",
-  "version": "0.1.78",
+  "version": "0.1.79",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",

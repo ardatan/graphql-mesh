@@ -1,5 +1,16 @@
 # @graphql-mesh/config
 
+## 8.0.36
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3ced82c45`](https://github.com/Urigo/graphql-mesh/commit/3ced82c45ed50eefe238c569a1eefdac164dff77),
+  [`3ced82c45`](https://github.com/Urigo/graphql-mesh/commit/3ced82c45ed50eefe238c569a1eefdac164dff77)]:
+  - @graphql-mesh/merger-stitching@0.17.11
+  - @graphql-mesh/runtime@0.44.37
+  - @graphql-mesh/merger-bare@0.15.51
+
 ## 8.0.35
 
 ### Patch Changes

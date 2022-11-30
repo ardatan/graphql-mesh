@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-rename",
-  "version": "0.13.2",
+  "version": "0.13.3",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
