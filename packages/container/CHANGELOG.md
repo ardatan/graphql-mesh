@@ -1,5 +1,17 @@
 # @graphql-mesh/container
 
+## 0.1.206
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0f77d4da9`](https://github.com/Urigo/graphql-mesh/commit/0f77d4da986ef7228079afdf4afa1c6838f7cd83),
+  [`58b6f76bb`](https://github.com/Urigo/graphql-mesh/commit/58b6f76bbf01c3fe61ce8373337847fa88656263),
+  [`d123eaefe`](https://github.com/Urigo/graphql-mesh/commit/d123eaefe13a0c94512c9ff991a848722e753cce)]:
+  - @graphql-mesh/cli@0.80.3
+  - @graphql-mesh/transform-filter-schema@0.14.114
+  - @graphql-mesh/grpc@0.27.0
+
 ## 0.1.205
 
 ### Patch Changes

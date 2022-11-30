@@ -1,5 +1,15 @@
 # @graphql-mesh/cli
 
+## 0.80.3
+
+### Patch Changes
+
+- [#4836](https://github.com/Urigo/graphql-mesh/pull/4836)
+  [`0f77d4da9`](https://github.com/Urigo/graphql-mesh/commit/0f77d4da986ef7228079afdf4afa1c6838f7cd83)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`cosmiconfig@8.0.0` ↗︎](https://www.npmjs.com/package/cosmiconfig/v/8.0.0)
+    (from `7.1.0`, in `dependencies`)
+
 ## 0.80.2
 
 ### Patch Changes

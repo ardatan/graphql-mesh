@@ -1,5 +1,14 @@
 # @graphql-mesh/grpc
 
+## 0.27.0
+
+### Minor Changes
+
+- [`d123eaefe`](https://github.com/Urigo/graphql-mesh/commit/d123eaefe13a0c94512c9ff991a848722e753cce)
+  Thanks [@ardatan](https://github.com/ardatan)! - **BREAKING**: now `metaData` accepts
+  interpolation strings not from `context` directly so if you have `{headers.connection}`, you have
+  to change it to `{context.headers.connection}`
+
 ## 0.26.1
 
 ### Patch Changes

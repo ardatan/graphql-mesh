@@ -1,5 +1,15 @@
 # grpc-example
 
+## 0.5.327
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0f77d4da9`](https://github.com/Urigo/graphql-mesh/commit/0f77d4da986ef7228079afdf4afa1c6838f7cd83),
+  [`d123eaefe`](https://github.com/Urigo/graphql-mesh/commit/d123eaefe13a0c94512c9ff991a848722e753cce)]:
+  - @graphql-mesh/cli@0.80.3
+  - @graphql-mesh/grpc@0.27.0
+
 ## 0.5.326
 
 ### Patch Changes

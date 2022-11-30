@@ -1,5 +1,16 @@
 # @graphql-mesh/transform-hive
 
+## 0.0.4
+
+### Patch Changes
+
+- [#4869](https://github.com/Urigo/graphql-mesh/pull/4869)
+  [`58b6f76bb`](https://github.com/Urigo/graphql-mesh/commit/58b6f76bbf01c3fe61ce8373337847fa88656263)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/client@0.21.4` ↗︎](https://www.npmjs.com/package/@graphql-hive/client/v/0.21.4)
+    (from `0.21.3`, in `dependencies`)
+
 ## 0.0.3
 
 ### Patch Changes
