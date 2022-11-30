@@ -440,6 +440,11 @@
                 "children": [],
                 "title": "Deploy Mesh on Apache OpenWhisk",
                 "anchor": "deploy-mesh-on-apache-openwhisk"
+              },
+              {
+                "children": [],
+                "title": "Deploy Mesh on GCP Cloud Functions",
+                "anchor": "deploy-mesh-on-gcp-cloud-functions"
               }
             ],
             "title": "Deploy Mesh on Vercel with Next.js API Routes",
@@ -487,7 +492,7 @@
         "anchor": "mesh-and-docker"
       }
     ],
-    "content": "55b55670be6378b5dca708dea7fd20c2",
+    "content": "0764d8ac52975ecde35354a630057a2d",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/getting-started/deploy-mesh-gateway",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Getting Started"],
