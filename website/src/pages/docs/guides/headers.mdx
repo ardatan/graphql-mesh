@@ -1,14 +1,16 @@
+import { Callout } from '@theguild/components'
+
 # Setting Headers
 
 <Callout emoji="⚠️" type="warning">
-  This method is only relevant to some of the handlers.
-  Please make sure the handler you are using supports this method.
-  You can do it by checking if handler's config reference (appearing on it's designated doc) includes the header fields mentioned in this doc.
+  This method is not relevant to all handlers!
+
+  Please make sure the handler you are using supports this method: You can do it by checking if handler's config reference (appearing on it's designated doc) includes the header fields mentioned in this doc.
 </Callout>
 
 ## Setting configurations
 
-There are two headers-designated fields under each handler in the configuration file - `schemaHeaders` and `operationHeaders`:
+There are two headers-designated configuration fields under each handler - `schemaHeaders` and `operationHeaders`:
 
 ### `operationHeaders`
 
@@ -16,7 +18,7 @@ Optional field. Used to set the Headers for *operation execution*. Expects JSON 
 
 In this example `operationHeaders` is used to defined the content of the request as Json:
 
-```ymal filename=".meshrc.yaml" {5-6}
+```yaml filename=".meshrc.yaml" {5-6}
 sources:
   - name: Example
     handler:
