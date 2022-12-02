@@ -11,7 +11,7 @@
     "analyze": "cross-env ANALYZE=true next build"
   },
   "dependencies": {
-    "@theguild/components": "4.3.7",
+    "@theguild/components": "4.4.0",
     "next": "12.3.4",
     "next-sitemap": "3.1.32",
     "react": "18.2.0",
