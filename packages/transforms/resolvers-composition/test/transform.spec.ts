@@ -1,6 +1,6 @@
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { PubSub } from '@graphql-mesh/utils';
+import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { join } from 'path';
 import ResolversCompositionTransform, { ResolversComposition } from '../src/index.js';
 import { execute, parse } from 'graphql';
@@ -21,6 +21,7 @@ describe('transform', () => {
       baseDir,
       apiName: '',
       importFn: m => import(m),
+      logger: new DefaultLogger(),
     });
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
@@ -59,6 +60,7 @@ describe('transform', () => {
       baseDir,
       apiName: '',
       importFn: m => import(m),
+      logger: new DefaultLogger(),
     });
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `

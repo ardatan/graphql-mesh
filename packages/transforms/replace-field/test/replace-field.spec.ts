@@ -3,7 +3,7 @@ import { execute, parse, printSchema, GraphQLObjectType } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { PubSub } from '@graphql-mesh/utils';
+import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 
 import ReplaceFieldTransform from '../src/index.js';
 import { pruneSchema } from '@graphql-tools/utils';
@@ -15,8 +15,12 @@ const importFn: ImportFn = m =>
   });
 
 describe('replace-field', () => {
-  const mockQueryBooks = jest.fn().mockImplementation(() => ({ books: [{ title: 'abc' }, { title: 'def' }] }));
-  const mockBooksApiResponseBooks = jest.fn().mockImplementation(() => [{ title: 'ghi' }, { title: 'lmn' }]);
+  const mockQueryBooks = jest
+    .fn()
+    .mockImplementation(() => ({ books: [{ title: 'abc' }, { title: 'def' }] }));
+  const mockBooksApiResponseBooks = jest
+    .fn()
+    .mockImplementation(() => [{ title: 'ghi' }, { title: 'lmn' }]);
 
   const schemaDefs = /* GraphQL */ `
     type Query {
@@ -75,6 +79,7 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
+      logger: new DefaultLogger(),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -82,7 +87,9 @@ describe('replace-field', () => {
     const transformedSchema = pruneSchema(transform.transformSchema(schema));
 
     expect(transformedSchema.getType('BooksApiResponse')).toBeUndefined();
-    expect((transformedSchema.getType('Query') as GraphQLObjectType).getFields().books.type.toString()).toBe('[Book]');
+    expect(
+      (transformedSchema.getType('Query') as GraphQLObjectType).getFields().books.type.toString(),
+    ).toBe('[Book]');
     expect(printSchema(transformedSchema)).toMatchSnapshot();
   });
 
@@ -130,6 +137,7 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
+      logger: new DefaultLogger(),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -144,7 +152,9 @@ describe('replace-field', () => {
     });
     const transformedSchema = pruneSchema(transform.transformSchema(schema));
 
-    expect((transformedSchema.getType('Author') as GraphQLObjectType).getFields().age.type.toString()).toBe('String');
+    expect(
+      (transformedSchema.getType('Author') as GraphQLObjectType).getFields().age.type.toString(),
+    ).toBe('String');
     expect(printSchema(transformedSchema)).toMatchSnapshot();
 
     const result = await execute({
@@ -190,6 +200,7 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
+      logger: new DefaultLogger(),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -205,7 +216,9 @@ describe('replace-field', () => {
     const transformedSchema = pruneSchema(transform.transformSchema(schema));
 
     expect(transformedSchema.getType('BooksApiResponse')).toBeUndefined();
-    expect((transformedSchema.getType('Query') as GraphQLObjectType).getFields().books.type.toString()).toBe('[Book]');
+    expect(
+      (transformedSchema.getType('Query') as GraphQLObjectType).getFields().books.type.toString(),
+    ).toBe('[Book]');
 
     const result = await execute({
       schema: transformedSchema,
@@ -251,6 +264,7 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
+      logger: new DefaultLogger(),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -263,7 +277,9 @@ describe('replace-field', () => {
     const transformedSchema = pruneSchema(transform.transformSchema(schema));
 
     expect(transformedSchema.getType('Author')).toBeUndefined();
-    expect((transformedSchema.getType('Book') as GraphQLObjectType).getFields().author.type.toString()).toBe('String!');
+    expect(
+      (transformedSchema.getType('Book') as GraphQLObjectType).getFields().author.type.toString(),
+    ).toBe('String!');
 
     const result: any = await execute({
       schema: transformedSchema,
@@ -324,6 +340,7 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
+      logger: new DefaultLogger(),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -340,8 +357,12 @@ describe('replace-field', () => {
 
     expect(transformedSchema.getType('BooksApiResponse')).toBeUndefined();
     expect(transformedSchema.getType('Author')).toBeUndefined();
-    expect((transformedSchema.getType('Query') as GraphQLObjectType).getFields().books.type.toString()).toBe('[Book]');
-    expect((transformedSchema.getType('Book') as GraphQLObjectType).getFields().author.type.toString()).toBe('String!');
+    expect(
+      (transformedSchema.getType('Query') as GraphQLObjectType).getFields().books.type.toString(),
+    ).toBe('[Book]');
+    expect(
+      (transformedSchema.getType('Book') as GraphQLObjectType).getFields().author.type.toString(),
+    ).toBe('String!');
     expect(printSchema(transformedSchema)).toMatchSnapshot();
 
     const result = await execute({
@@ -389,6 +410,7 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
+      logger: new DefaultLogger(),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -453,6 +475,7 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
+      logger: new DefaultLogger(),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -464,7 +487,9 @@ describe('replace-field', () => {
     });
     const transformedSchema = pruneSchema(transform.transformSchema(schema));
 
-    expect((transformedSchema.getType('Book') as GraphQLObjectType).getFields().code.type.toString()).toBe('String!');
+    expect(
+      (transformedSchema.getType('Book') as GraphQLObjectType).getFields().code.type.toString(),
+    ).toBe('String!');
 
     const result: any = await execute({
       schema: transformedSchema,
@@ -519,6 +544,7 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
+      logger: new DefaultLogger(),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -530,10 +556,14 @@ describe('replace-field', () => {
     });
     const transformedSchema = pruneSchema(transform.transformSchema(schema));
 
-    expect((transformedSchema.getType('Author') as GraphQLObjectType).getFields().name).toBeUndefined();
-    expect((transformedSchema.getType('Author') as GraphQLObjectType).getFields().fullName.type.toString()).toBe(
-      'String'
-    );
+    expect(
+      (transformedSchema.getType('Author') as GraphQLObjectType).getFields().name,
+    ).toBeUndefined();
+    expect(
+      (transformedSchema.getType('Author') as GraphQLObjectType)
+        .getFields()
+        .fullName.type.toString(),
+    ).toBe('String');
 
     const result: any = await execute({
       schema: transformedSchema,
@@ -579,6 +609,7 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
+      logger: new DefaultLogger(),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -594,10 +625,14 @@ describe('replace-field', () => {
     const transformedSchema = pruneSchema(transform.transformSchema(schema));
 
     expect(transformedSchema.getType('BooksApiResponse')).toBeUndefined();
-    expect((transformedSchema.getType('Query') as GraphQLObjectType).getFields().books).toBeUndefined();
-    expect((transformedSchema.getType('Query') as GraphQLObjectType).getFields().ourBooks.type.toString()).toBe(
-      '[Book]'
-    );
+    expect(
+      (transformedSchema.getType('Query') as GraphQLObjectType).getFields().books,
+    ).toBeUndefined();
+    expect(
+      (transformedSchema.getType('Query') as GraphQLObjectType)
+        .getFields()
+        .ourBooks.type.toString(),
+    ).toBe('[Book]');
 
     const result = await execute({
       schema: transformedSchema,
@@ -644,6 +679,7 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
+      logger: new DefaultLogger(),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -656,10 +692,14 @@ describe('replace-field', () => {
     const transformedSchema = pruneSchema(transform.transformSchema(schema));
 
     expect(transformedSchema.getType('Author')).toBeUndefined();
-    expect((transformedSchema.getType('Book') as GraphQLObjectType).getFields().author).toBeUndefined();
-    expect((transformedSchema.getType('Book') as GraphQLObjectType).getFields().authorName.type.toString()).toBe(
-      'String!'
-    );
+    expect(
+      (transformedSchema.getType('Book') as GraphQLObjectType).getFields().author,
+    ).toBeUndefined();
+    expect(
+      (transformedSchema.getType('Book') as GraphQLObjectType)
+        .getFields()
+        .authorName.type.toString(),
+    ).toBe('String!');
 
     const result: any = await execute({
       schema: transformedSchema,
@@ -707,6 +747,7 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
+      logger: new DefaultLogger(),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -721,10 +762,14 @@ describe('replace-field', () => {
     });
     const transformedSchema = pruneSchema(transform.transformSchema(schema));
 
-    expect((transformedSchema.getType('Query') as GraphQLObjectType).getFields().books).toBeUndefined();
-    expect((transformedSchema.getType('Query') as GraphQLObjectType).getFields().ourBooks.type.toString()).toBe(
-      '[Book]'
-    );
+    expect(
+      (transformedSchema.getType('Query') as GraphQLObjectType).getFields().books,
+    ).toBeUndefined();
+    expect(
+      (transformedSchema.getType('Query') as GraphQLObjectType)
+        .getFields()
+        .ourBooks.type.toString(),
+    ).toBe('[Book]');
 
     const result = await execute({
       schema: transformedSchema,
@@ -777,6 +822,7 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
+      logger: new DefaultLogger(),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -788,10 +834,14 @@ describe('replace-field', () => {
     });
     const transformedSchema = pruneSchema(transform.transformSchema(schema));
 
-    expect((transformedSchema.getType('Book') as GraphQLObjectType).getFields().code).toBeUndefined();
-    expect((transformedSchema.getType('Book') as GraphQLObjectType).getFields().isAvailable.type.toString()).toBe(
-      'Boolean'
-    );
+    expect(
+      (transformedSchema.getType('Book') as GraphQLObjectType).getFields().code,
+    ).toBeUndefined();
+    expect(
+      (transformedSchema.getType('Book') as GraphQLObjectType)
+        .getFields()
+        .isAvailable.type.toString(),
+    ).toBe('Boolean');
 
     const result: any = await execute({
       schema: transformedSchema,
@@ -834,6 +884,7 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
+      logger: new DefaultLogger(),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -856,7 +907,7 @@ describe('replace-field', () => {
       expect.arrayContaining([
         expect.objectContaining({ name: 'maxResults' }),
         expect.objectContaining({ name: 'orderBy' }),
-      ])
+      ]),
     );
 
     expect(mockBooksApiResponseBooks).not.toHaveBeenCalled();
@@ -929,6 +980,7 @@ describe('replace-field', () => {
       baseDir,
       apiName: '',
       importFn,
+      logger: new DefaultLogger(),
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -936,12 +988,18 @@ describe('replace-field', () => {
     const transformedSchema = pruneSchema(transform.transformSchema(schema));
 
     expect(transformedSchema.getType('BooksApiResponse')).toBeUndefined();
-    expect((transformedSchema.getType('Book') as GraphQLObjectType).getFields().code).toBeUndefined();
-    expect((transformedSchema.getType('Book') as GraphQLObjectType).getFields().isAvailable.type.toString()).toBe(
-      'Boolean'
-    );
+    expect(
+      (transformedSchema.getType('Book') as GraphQLObjectType).getFields().code,
+    ).toBeUndefined();
+    expect(
+      (transformedSchema.getType('Book') as GraphQLObjectType)
+        .getFields()
+        .isAvailable.type.toString(),
+    ).toBe('Boolean');
     expect(transformedSchema.getType('Author')).toBeUndefined();
-    expect((transformedSchema.getType('Book') as GraphQLObjectType).getFields().author.type.toString()).toBe('String!');
+    expect(
+      (transformedSchema.getType('Book') as GraphQLObjectType).getFields().author.type.toString(),
+    ).toBe('String!');
 
     expect(printSchema(transformedSchema)).toMatchSnapshot();
   });

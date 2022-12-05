@@ -1,5 +1,12 @@
 import RenameTransform from './../src/index.js';
-import { buildSchema, graphql, GraphQLObjectType, printSchema, GraphQLNonNull, GraphQLScalarType } from 'graphql';
+import {
+  buildSchema,
+  graphql,
+  GraphQLObjectType,
+  printSchema,
+  GraphQLNonNull,
+  GraphQLScalarType,
+} from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { wrapSchema } from '@graphql-tools/wrap';
 
@@ -9,7 +16,12 @@ describe('rename', () => {
       type Query {
         my_user: MyUser!
         my_book: MyBook!
-        profile(profile_id: ID!, role: String, some_argument: String, another_argument: Int): Profile
+        profile(
+          profile_id: ID!
+          role: String
+          some_argument: String
+          another_argument: Int
+        ): Profile
         my_node(id: ID!): MyNode
       }
 
@@ -165,11 +177,6 @@ describe('rename', () => {
               },
             ],
           },
-          apiName: '',
-          cache,
-          pubsub,
-          baseDir,
-          importFn: m => import(m),
         }),
       ],
     });
@@ -271,13 +278,21 @@ describe('rename', () => {
     const bookField = (newSchema.getType('Prefixed_MyBook') as GraphQLObjectType).getFields();
 
     expect((userField.id.type as GraphQLNonNull<GraphQLScalarType>).ofType.toString()).toBe('ID');
-    expect((userField.name.type as GraphQLNonNull<GraphQLScalarType>).ofType.toString()).toBe('String');
+    expect((userField.name.type as GraphQLNonNull<GraphQLScalarType>).ofType.toString()).toBe(
+      'String',
+    );
 
-    expect((profileField.id.type as GraphQLNonNull<GraphQLScalarType>).ofType.toString()).toBe('ID');
-    expect((profileField.isActive.type as GraphQLNonNull<GraphQLScalarType>).ofType.toString()).toBe('Boolean');
+    expect((profileField.id.type as GraphQLNonNull<GraphQLScalarType>).ofType.toString()).toBe(
+      'ID',
+    );
+    expect(
+      (profileField.isActive.type as GraphQLNonNull<GraphQLScalarType>).ofType.toString(),
+    ).toBe('Boolean');
 
     expect((bookField.id.type as GraphQLNonNull<GraphQLScalarType>).ofType.toString()).toBe('ID');
-    expect((bookField.hits.type as GraphQLNonNull<GraphQLScalarType>).ofType.toString()).toBe('Int');
+    expect((bookField.hits.type as GraphQLNonNull<GraphQLScalarType>).ofType.toString()).toBe(
+      'Int',
+    );
     expect(printSchema(newSchema)).toMatchSnapshot();
   });
 

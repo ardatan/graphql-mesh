@@ -1,4 +1,10 @@
-import { YamlConfig, MeshPubSub, KeyValueCache, MeshTransformOptions, ImportFn } from '@graphql-mesh/types';
+import {
+  YamlConfig,
+  MeshPubSub,
+  KeyValueCache,
+  MeshTransformOptions,
+  ImportFn,
+} from '@graphql-mesh/types';
 import LocalforageCache from '@graphql-mesh/cache-localforage';
 import { addResolversToSchema, makeExecutableSchema } from '@graphql-tools/schema';
 import {
@@ -13,7 +19,7 @@ import {
 } from 'graphql';
 import CacheTransform from '../src/index.js';
 import { computeCacheKey } from '../src/compute-cache-key.js';
-import { PubSub } from '@graphql-mesh/utils';
+import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import dayjs from 'dayjs';
 import { hashObject } from '@graphql-mesh/string-interpolation';
 
@@ -160,7 +166,9 @@ describe('cache', () => {
 
   describe('Resolvers Composition', () => {
     it('should replace resolvers correctly with a specific type and field', async () => {
-      expect(schema.getQueryType()?.getFields().user.resolve.name).toBe(spies.Query.user.bind(null).name);
+      expect(schema.getQueryType()?.getFields().user.resolve.name).toBe(
+        spies.Query.user.bind(null).name,
+      );
 
       const transform = new CacheTransform({
         apiName: 'test',
@@ -173,16 +181,25 @@ describe('cache', () => {
         ],
         pubsub,
         baseDir,
+        logger: new DefaultLogger(),
       });
       const modifiedSchema = transform.transformSchema(schema);
 
-      expect(modifiedSchema!.getQueryType()?.getFields().user.resolve.name).not.toBe(spies.Query.user.bind(null).name);
-      expect(modifiedSchema!.getQueryType()?.getFields().users.resolve.name).toBe(spies.Query.users.bind(null).name);
+      expect(modifiedSchema!.getQueryType()?.getFields().user.resolve.name).not.toBe(
+        spies.Query.user.bind(null).name,
+      );
+      expect(modifiedSchema!.getQueryType()?.getFields().users.resolve.name).toBe(
+        spies.Query.users.bind(null).name,
+      );
     });
 
     it('should replace resolvers correctly with a wildcard', async () => {
-      expect(schema.getQueryType()?.getFields().user.resolve.name).toBe(spies.Query.user.bind(null).name);
-      expect(schema.getQueryType()?.getFields().users.resolve.name).toBe(spies.Query.users.bind(null).name);
+      expect(schema.getQueryType()?.getFields().user.resolve.name).toBe(
+        spies.Query.user.bind(null).name,
+      );
+      expect(schema.getQueryType()?.getFields().users.resolve.name).toBe(
+        spies.Query.users.bind(null).name,
+      );
 
       const transform = new CacheTransform({
         apiName: 'test',
@@ -195,19 +212,25 @@ describe('cache', () => {
         ],
         pubsub,
         baseDir,
+        logger: new DefaultLogger(),
       });
 
       const modifiedSchema = transform.transformSchema(schema);
 
-      expect(modifiedSchema!.getQueryType()?.getFields().user.resolve.name).not.toBe(spies.Query.user.bind(null).name);
+      expect(modifiedSchema!.getQueryType()?.getFields().user.resolve.name).not.toBe(
+        spies.Query.user.bind(null).name,
+      );
       expect(modifiedSchema!.getQueryType()?.getFields().users.resolve.name).not.toBe(
-        spies.Query.users.bind(null).name
+        spies.Query.users.bind(null).name,
       );
     });
   });
 
   describe('Cache Wrapper', () => {
-    const checkCache = async (config: YamlConfig.CacheTransformConfig[], cacheKeyToCheck?: string) => {
+    const checkCache = async (
+      config: YamlConfig.CacheTransformConfig[],
+      cacheKeyToCheck?: string,
+    ) => {
       const transform = new CacheTransform({
         apiName: 'test',
         importFn,
@@ -215,6 +238,7 @@ describe('cache', () => {
         config,
         pubsub,
         baseDir,
+        logger: new DefaultLogger(),
       });
 
       const modifiedSchema = transform.transformSchema(schema);
@@ -303,7 +327,7 @@ describe('cache', () => {
             cacheKey,
           },
         ],
-        cacheKey
+        cacheKey,
       );
     });
 
@@ -317,7 +341,7 @@ describe('cache', () => {
             cacheKey,
           },
         ],
-        cacheKey
+        cacheKey,
       );
     });
 
@@ -333,7 +357,7 @@ describe('cache', () => {
             },
           },
         ],
-        key
+        key,
       );
 
       expect(await cache.get(key)).toBeDefined();
@@ -351,7 +375,7 @@ describe('cache', () => {
             cacheKey: `query-user-{args.id}`,
           },
         ],
-        'query-user-1'
+        'query-user-1',
       );
 
       const otherIdQuery = parse(/* GraphQL */ `
@@ -382,7 +406,7 @@ describe('cache', () => {
             cacheKey: `query-user-{argsHash}`,
           },
         ],
-        expectedHash
+        expectedHash,
       );
     });
 
@@ -396,7 +420,7 @@ describe('cache', () => {
             cacheKey: `{args.id|hash}`,
           },
         ],
-        expectedHash
+        expectedHash,
       );
     });
 
@@ -410,7 +434,7 @@ describe('cache', () => {
             cacheKey: `{args.id}-{yyyy-MM-dd|date}`,
           },
         ],
-        expectedHash
+        expectedHash,
       );
     });
   });
@@ -441,6 +465,7 @@ describe('cache', () => {
         cache,
         pubsub,
         baseDir,
+        logger: new DefaultLogger(),
       });
 
       const schemaWithCache = transform.transformSchema(schema);
@@ -500,6 +525,7 @@ describe('cache', () => {
           cache,
           pubsub,
           baseDir,
+          logger: new DefaultLogger(),
         });
         const schemaWithCache = transform.transformSchema(schema);
 
@@ -560,6 +586,7 @@ describe('cache', () => {
           cache,
           pubsub,
           baseDir,
+          logger: new DefaultLogger(),
         };
 
         let callCount = 0;
@@ -571,7 +598,8 @@ describe('cache', () => {
           `,
           resolvers: {
             Query: {
-              foo: () => new Promise(resolve => setTimeout(() => resolve((callCount++).toString()), 300)),
+              foo: () =>
+                new Promise(resolve => setTimeout(() => resolve((callCount++).toString()), 300)),
             },
           },
         });
@@ -605,6 +633,7 @@ describe('cache', () => {
           cache,
           pubsub,
           baseDir,
+          logger: new DefaultLogger(),
         };
         function getNewSchema() {
           return makeExecutableSchema({
@@ -661,6 +690,7 @@ describe('cache', () => {
           cache,
           pubsub,
           baseDir,
+          logger: new DefaultLogger(),
         };
         function getNewSchema() {
           return makeExecutableSchema({

@@ -2,7 +2,7 @@ import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { MeshPubSub } from '@graphql-mesh/types';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { buildSchema, GraphQLField, GraphQLObjectType, printSchema } from 'graphql';
-import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
+import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 
 import HoistFieldTransform from '../src/index.js';
 
@@ -49,6 +49,7 @@ describe('hoist', () => {
           pubsub,
           baseDir,
           importFn,
+          logger: new DefaultLogger(),
         }),
       ],
     });
@@ -85,6 +86,7 @@ describe('hoist', () => {
           pubsub,
           baseDir,
           importFn,
+          logger: new DefaultLogger(),
         }),
       ],
     });
@@ -116,6 +118,7 @@ describe('hoist', () => {
           pubsub,
           baseDir,
           importFn,
+          logger: new DefaultLogger(),
         }),
       ],
     });
@@ -155,6 +158,7 @@ describe('hoist', () => {
           pubsub,
           baseDir,
           importFn,
+          logger: new DefaultLogger(),
         }),
       ],
     });
@@ -196,6 +200,7 @@ describe('hoist', () => {
           pubsub,
           baseDir,
           importFn,
+          logger: new DefaultLogger(),
         }),
       ],
     });

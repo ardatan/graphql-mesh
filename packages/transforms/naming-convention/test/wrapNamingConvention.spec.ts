@@ -1,8 +1,15 @@
 import NamingConventionTransform from '../src/index.js';
-import { buildSchema, GraphQLObjectType, GraphQLEnumType, execute, parse, GraphQLUnionType } from 'graphql';
+import {
+  buildSchema,
+  GraphQLObjectType,
+  GraphQLEnumType,
+  execute,
+  parse,
+  GraphQLUnionType,
+} from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
-import { PubSub } from '@graphql-mesh/utils';
+import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
@@ -58,6 +65,7 @@ describe('namingConvention wrap', () => {
           cache,
           pubsub,
           baseDir,
+          logger: new DefaultLogger(),
         }),
       ],
     });
@@ -146,7 +154,12 @@ describe('namingConvention wrap', () => {
             };
           },
           userByType: () => {
-            return { first_name: 'John', last_name: 'Smith', Type: 'admin', interests: ['books', 'comics'] };
+            return {
+              first_name: 'John',
+              last_name: 'Smith',
+              Type: 'admin',
+              interests: ['books', 'comics'],
+            };
           },
           node: (_, { id }) => {
             return {
@@ -180,6 +193,7 @@ describe('namingConvention wrap', () => {
             fieldArgumentNames: 'pascalCase',
           },
           baseDir,
+          logger: new DefaultLogger(),
         }),
       ],
     });
@@ -291,6 +305,7 @@ describe('namingConvention wrap', () => {
             fieldNames: 'camelCase',
           },
           baseDir,
+          logger: new DefaultLogger(),
         }),
       ],
     });
@@ -328,6 +343,7 @@ type Query {
             fieldNames: 'snakeCase',
           },
           baseDir,
+          logger: new DefaultLogger(),
         }),
       ],
     });

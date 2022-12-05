@@ -1,6 +1,7 @@
 {
   "name": "@graphql-mesh/transform-encapsulate",
   "version": "0.3.115",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -38,6 +39,9 @@
     "@graphql-tools/wrap": "9.2.18",
     "tslib": "^2.4.0"
   },
+  "devDependencies": {
+    "@graphql-tools/schema": "9.0.10"
+  },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
@@ -45,6 +49,5 @@
   "sideEffects": false,
   "typescript": {
     "definition": "dist/typings/index.d.ts"
-  },
-  "type": "module"
+  }
 }
