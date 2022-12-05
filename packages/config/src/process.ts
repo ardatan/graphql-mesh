@@ -544,9 +544,9 @@ export async function processConfig(
   }
 
   if (options.generateCode) {
-    importCodes.add(`import { printWithCache } from '@graphql-mesh/utils';`);
     const documentVariableNames: string[] = [];
     if (documents?.length) {
+      importCodes.add(`import { printWithCache } from '@graphql-mesh/utils';`);
       const allDocumentNodes: DocumentNode = concatAST(
         documents.map(document => document.document || parseWithCache(document.rawSDL))
       );
