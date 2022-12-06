@@ -1,6 +1,7 @@
 {
   "name": "@graphql-mesh/neo4j",
   "version": "0.20.40",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -26,7 +27,7 @@
     },
     "./package.json": "./package.json"
   },
-"typings": "dist/typings/index.d.ts",
+  "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "graphql": "*"
   },
@@ -52,6 +53,5 @@
   },
   "typescript": {
     "definition": "dist/typings/index.d.ts"
-  },
-  "type": "module"
+  }
 }

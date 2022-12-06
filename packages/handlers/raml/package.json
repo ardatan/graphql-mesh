@@ -1,6 +1,7 @@
 {
   "name": "@graphql-mesh/raml",
   "version": "0.8.38",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -47,8 +48,7 @@
       "cross-fetch"
     ]
   },
-"typescript": {
-  "definition": "dist/typings/index.d.ts"
-},
-  "type": "module"
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
+  }
 }

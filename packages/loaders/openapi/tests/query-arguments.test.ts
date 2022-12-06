@@ -4,8 +4,8 @@ import { graphql, GraphQLSchema } from 'graphql';
 import { Server } from 'http';
 import { AddressInfo } from 'net';
 
-import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
-import { getServer } from './query_arguments_server';
+import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
+import { getServer } from './query_arguments_server.js';
 
 let server: Server;
 let createdSchema: GraphQLSchema;

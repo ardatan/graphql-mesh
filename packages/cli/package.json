@@ -1,6 +1,7 @@
 {
   "name": "@graphql-mesh/cli",
   "version": "0.80.4",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -29,7 +30,8 @@
         "types": "./dist/typings/index.d.ts",
         "default": "./dist/esm/index.js"
       }
-    }
+    },
+    "./package.json": "./package.json"
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
@@ -92,6 +94,5 @@
   },
   "typescript": {
     "definition": "dist/typings/index.d.ts"
-  },
-  "type": "module"
+  }
 }
