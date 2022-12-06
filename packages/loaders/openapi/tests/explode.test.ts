@@ -1,6 +1,6 @@
 import { Response } from '@whatwg-node/fetch';
 import { execute, GraphQLSchema, parse } from 'graphql';
-import loadGraphQLSchemaFromOpenAPI from '../src';
+import loadGraphQLSchemaFromOpenAPI from '../src/index.js';
 
 describe('Explode parameter', () => {
   let schema: GraphQLSchema;

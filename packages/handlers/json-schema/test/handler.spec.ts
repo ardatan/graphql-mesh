@@ -3,7 +3,7 @@ import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { defaultImportFn, DefaultLogger, getHeadersObj, PubSub } from '@graphql-mesh/utils';
 import { execute, parse } from 'graphql';
 import LocalforageCache from '@graphql-mesh/cache-localforage';
-import JsonSchemaHandler from '../src';
+import JsonSchemaHandler from '../src/index.js';
 import { Headers, Response } from '@whatwg-node/fetch';
 
 describe('JSON Schema Handler', () => {

@@ -1,7 +1,7 @@
 import { getHeadersObj } from '@graphql-mesh/utils';
 import { Request, Response } from '@whatwg-node/fetch';
 import { execute, OperationTypeNode, parse } from 'graphql';
-import loadGraphQLSchemaFromJSONSchemas from '../src';
+import loadGraphQLSchemaFromJSONSchemas from '../src/index.js';
 
 describe('Execution', () => {
   it('should not send headers with empty value', async () => {

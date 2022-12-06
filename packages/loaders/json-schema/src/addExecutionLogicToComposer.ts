@@ -1,10 +1,10 @@
 import { GraphQLJSON, ObjectTypeComposer, ObjectTypeComposerFieldConfig, SchemaComposer } from 'graphql-compose';
 import { Logger, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
-import { JSONSchemaLinkConfig, JSONSchemaOperationConfig, OperationHeadersConfiguration } from './types';
-import { getOperationMetadata, isPubSubOperationConfig, isFileUpload } from './utils';
+import { JSONSchemaLinkConfig, JSONSchemaOperationConfig, OperationHeadersConfiguration } from './types.js';
+import { getOperationMetadata, isPubSubOperationConfig, isFileUpload } from './utils.js';
 import { createGraphQLError, memoize1 } from '@graphql-tools/utils';
 import urlJoin from 'url-join';
-import { resolveDataByUnionInputType } from './resolveDataByUnionInputType';
+import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
 import { stringify as qsStringify, parse as qsParse, IStringifyOptions } from 'qs';
 import {
   getNamedType,

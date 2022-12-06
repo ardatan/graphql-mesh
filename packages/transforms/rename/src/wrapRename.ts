@@ -9,7 +9,7 @@ import {
 import { ExecutionResult, ExecutionRequest } from '@graphql-tools/utils';
 import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
 import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
-import { ignoreList } from './shared';
+import { ignoreList } from './shared.js';
 
 export default class WrapRename implements Transform {
   private transforms: Transform[] = [];

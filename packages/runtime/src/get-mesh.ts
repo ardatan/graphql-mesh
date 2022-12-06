@@ -7,7 +7,7 @@ import {
   validate,
   specifiedRules,
 } from 'graphql';
-import { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types';
+import { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types.js';
 import {
   MeshPubSub,
   KeyValueCache,
@@ -22,7 +22,7 @@ import {
   OnDelegateHook,
 } from '@graphql-mesh/types';
 
-import { MESH_CONTEXT_SYMBOL } from './constants';
+import { MESH_CONTEXT_SYMBOL } from './constants.js';
 import {
   applySchemaTransforms,
   groupTransforms,
@@ -44,8 +44,8 @@ import {
 } from '@graphql-tools/utils';
 import { envelop, Plugin, useEngine, useExtendContext } from '@envelop/core';
 import { OneOfInputObjectsRule, useExtendedValidation } from '@envelop/extended-validation';
-import { getInContextSDK } from './in-context-sdk';
-import { useSubschema } from './useSubschema';
+import { getInContextSDK } from './in-context-sdk.js';
+import { useSubschema } from './useSubschema.js';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 
 type SdkRequester = (document: DocumentNode, variables?: any, operationContext?: any) => any;

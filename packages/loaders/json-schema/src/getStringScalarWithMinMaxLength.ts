@@ -1,6 +1,6 @@
 import { JSONSchemaObject } from '@json-schema-tools/meta-schema';
 import { SchemaComposer } from 'graphql-compose';
-import { getValidTypeName } from './getValidTypeName';
+import { getValidTypeName } from './getValidTypeName.js';
 
 export function getStringScalarWithMinMaxLength({
   schemaComposer,

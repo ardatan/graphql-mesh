@@ -1,12 +1,33 @@
 {
   "name": "@graphql-mesh/container",
   "version": "0.1.207",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
     "directory": "packages/container"
   },
   "license": "MIT",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typings": "dist/typings/index.d.ts",
   "scripts": {
     "start": "graphql-mesh dev"
   },
@@ -33,6 +54,10 @@
     "tslib": "2.4.1"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "directory": "dist"
+  },
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
   }
 }

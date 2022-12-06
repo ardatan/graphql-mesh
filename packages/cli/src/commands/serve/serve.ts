@@ -9,11 +9,11 @@ import { fs, process } from '@graphql-mesh/cross-helpers';
 
 import { createServer as createHTTPSServer } from 'https';
 import { MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
-import { handleFatalError } from '../../handleFatalError';
+import { handleFatalError } from '../../handleFatalError.js';
 import open from 'open';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import dnscache from 'dnscache';
-import { GraphQLMeshCLIParams } from '../..';
+import { GraphQLMeshCLIParams } from '../../index.js';
 import type { Logger } from '@graphql-mesh/types';
 import { createMeshHTTPHandler } from '@graphql-mesh/http';
 

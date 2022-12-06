@@ -1,9 +1,9 @@
 /* eslint-disable import/no-nodejs-modules */
 import { execute, GraphQLSchema, parse } from 'graphql';
-import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
+import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch } from '@whatwg-node/fetch';
-import { startServer } from './example_api_server';
+import { startServer } from './example_api_server.js';
 import { Server } from 'http';
 import { AddressInfo } from 'net';
 

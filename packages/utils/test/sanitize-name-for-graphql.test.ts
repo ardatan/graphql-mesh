@@ -1,4 +1,4 @@
-import { removeClosedBrackets } from '../src/sanitize-name-for-graphql';
+import { removeClosedBrackets } from '../src/sanitize-name-for-graphql.js';
 
 it.each([
   { input: 'foo(bar)q', output: 'foobarq' },

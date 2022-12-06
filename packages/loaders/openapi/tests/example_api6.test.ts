@@ -2,9 +2,9 @@ import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch } from '@whatwg-node/fetch';
 import { parse, validate, GraphQLSchema, execute } from 'graphql';
 
-import { startServer, stopServer } from './example_api6_server';
-import { OpenAPILoaderOptions } from '../src';
-import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
+import { startServer, stopServer } from './example_api6_server.js';
+import { OpenAPILoaderOptions } from '../src/index.js';
+import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 import getPort from 'get-port';
 
 let createdSchema: GraphQLSchema;

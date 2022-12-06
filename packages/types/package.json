@@ -1,25 +1,33 @@
 {
   "name": "@graphql-mesh/types",
   "version": "0.87.1",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
     "directory": "packages/types"
   },
   "license": "MIT",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
   "exports": {
     ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
     },
-    "./*": {
-      "require": "./dist/*.js",
-      "import": "./dist/*.mjs"
-    }
+    "./package.json": "./package.json"
   },
-  "typings": "dist/index.d.ts",
+  "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "graphql": "*"
   },
@@ -37,6 +45,6 @@
   },
   "sideEffects": false,
   "typescript": {
-    "definition": "dist/index.d.ts"
+    "definition": "dist/typings/index.d.ts"
   }
 }

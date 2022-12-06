@@ -9,9 +9,9 @@ import {
   JSONSchemaPubSubOperationConfig,
   OperationHeadersConfiguration,
 } from '@omnigraph/json-schema';
-import { getFieldNameFromPath } from './utils';
+import { getFieldNameFromPath } from './utils.js';
 import { OperationTypeNode } from 'graphql';
-import { OpenAPILoaderSelectQueryOrMutationFieldConfig } from './types';
+import { OpenAPILoaderSelectQueryOrMutationFieldConfig } from './types.js';
 import { Logger } from '@graphql-mesh/types';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import { process } from '@graphql-mesh/cross-helpers';

@@ -13,9 +13,11 @@ You can instrument your GraphQL application with New Relic reporting in order to
 <PackageCmd packages={['@graphql-mesh/plugin-newrelic', 'newrelic']} />
 
 ### Enabling required NewRelic feature flags
+
 Some additional configuration is needed to allow Mesh send the collected information correctly to NewRelic.
 
 You can add the following to your `.env` file;
+
 ```shell filename=".env"
 NEW_RELIC_FEATURE_FLAG_UNDICI_INSTRUMENTATION=true
 NEW_RELIC_FEATURE_FLAG_UNDICI_ASYNC_TRACKING=true
@@ -30,9 +32,9 @@ exports.config = {
   feature_flag: {
     undici_instrumentation: true,
     undici_async_tracking: true,
-    new_promise_tracking: true,
-  },
-};
+    new_promise_tracking: true
+  }
+}
 ```
 
 ## Example Configuration

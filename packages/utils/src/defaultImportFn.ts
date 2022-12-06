@@ -1,6 +1,6 @@
 import { path as pathModule } from '@graphql-mesh/cross-helpers';
 
-export async function defaultImportFn(path: string): Promise<any> {
+async function defaultImportFn(path: string): Promise<any> {
   let module = await import(/* @vite-ignore */ path)
     .catch(e => {
       if (e.code === 'ERR_REQUIRE_ESM') {
@@ -30,3 +30,5 @@ export async function defaultImportFn(path: string): Promise<any> {
   }
   return module;
 }
+
+export { defaultImportFn };

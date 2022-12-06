@@ -2,9 +2,9 @@ import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch } from '@whatwg-node/fetch';
 import getPort from 'get-port';
 import { GraphQLSchema, parse, validate, execute } from 'graphql';
-import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
+import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 
-import { startServer, stopServer } from './nested_objects_server';
+import { startServer, stopServer } from './nested_objects_server.js';
 
 let createdSchema: GraphQLSchema;
 

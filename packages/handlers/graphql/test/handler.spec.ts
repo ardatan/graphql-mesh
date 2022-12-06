@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable import/no-nodejs-modules */
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
-import GraphQLHandler from '../src';
+import GraphQLHandler from '../src/index.js';
 import { PubSub, defaultImportFn, DefaultLogger } from '@graphql-mesh/utils';
 import { promises as fsPromises } from 'fs';
 import { join } from 'path';

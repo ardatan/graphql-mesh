@@ -1,5 +1,5 @@
 import { printSchema } from 'graphql';
-import loadGraphQLSchemaFromOpenAPI from '../src';
+import loadGraphQLSchemaFromOpenAPI from '../src/index.js';
 
 describe('Multiple Responses Swagger', () => {
   it('should create correct response types with 204 empty response', async () => {

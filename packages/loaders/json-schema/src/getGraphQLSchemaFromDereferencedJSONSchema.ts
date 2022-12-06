@@ -1,8 +1,8 @@
 import { specifiedDirectives } from 'graphql';
 import { SchemaComposer } from 'graphql-compose';
 import { JSONSchemaObject } from 'json-machete';
-import { addExecutionLogicToComposer, AddExecutionLogicToComposerOptions } from './addExecutionLogicToComposer';
-import { getComposerFromJSONSchema } from './getComposerFromJSONSchema';
+import { addExecutionLogicToComposer, AddExecutionLogicToComposerOptions } from './addExecutionLogicToComposer.js';
+import { getComposerFromJSONSchema } from './getComposerFromJSONSchema.js';
 
 export async function getGraphQLSchemaFromDereferencedJSONSchema(
   name: string,

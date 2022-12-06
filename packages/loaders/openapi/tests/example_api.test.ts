@@ -1,12 +1,12 @@
 /* eslint-disable import/no-nodejs-modules */
 import { execute, graphql, GraphQLInputObjectType, GraphQLObjectType, GraphQLSchema, parse, validate } from 'graphql';
 import 'json-bigint-patch';
-import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
+import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 
-import { startServer } from './example_api_server';
+import { startServer } from './example_api_server.js';
 import { fetch } from '@whatwg-node/fetch';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { createBundle, OpenAPILoaderOptions } from '../src';
+import { createBundle, OpenAPILoaderOptions } from '../src/index.js';
 import { Server } from 'http';
 import { AddressInfo } from 'net';
 

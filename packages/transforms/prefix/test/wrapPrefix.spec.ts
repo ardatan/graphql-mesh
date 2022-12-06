@@ -1,8 +1,8 @@
-import PrefixTransform from '../src';
+import PrefixTransform from '../src/index.js';
 import { printSchema, GraphQLSchema, GraphQLObjectType, execute, parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { MeshPubSub } from '@graphql-mesh/types';
-import { PubSub } from '@graphql-mesh/utils';
+import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
@@ -67,13 +67,16 @@ describe('wrapPrefix', () => {
           cache,
           pubsub,
           importFn: m => import(m),
+          logger: new DefaultLogger(),
         }),
       ],
     });
 
     expect(newSchema.getType('User')).toBeUndefined();
     expect(newSchema.getType('T_User')).toBeDefined();
-    expect((newSchema.getType('Query') as GraphQLObjectType).getFields()).not.toHaveProperty('T_user');
+    expect((newSchema.getType('Query') as GraphQLObjectType).getFields()).not.toHaveProperty(
+      'T_user',
+    );
     expect(printSchema(newSchema)).toMatchSnapshot();
   });
 
@@ -90,6 +93,7 @@ describe('wrapPrefix', () => {
           cache,
           pubsub,
           importFn: m => import(m),
+          logger: new DefaultLogger(),
         }),
       ],
     });
@@ -111,6 +115,7 @@ describe('wrapPrefix', () => {
           cache,
           pubsub,
           importFn: m => import(m),
+          logger: new DefaultLogger(),
         }),
       ],
     });
@@ -131,6 +136,7 @@ describe('wrapPrefix', () => {
           cache,
           pubsub,
           importFn: m => import(m),
+          logger: new DefaultLogger(),
         }),
       ],
     });
@@ -154,6 +160,7 @@ describe('wrapPrefix', () => {
           cache,
           pubsub,
           importFn: m => import(m),
+          logger: new DefaultLogger(),
         }),
       ],
     });
@@ -176,6 +183,7 @@ describe('wrapPrefix', () => {
           cache,
           pubsub,
           importFn: m => import(m),
+          logger: new DefaultLogger(),
         }),
       ],
     });
@@ -200,6 +208,7 @@ describe('wrapPrefix', () => {
           cache,
           pubsub,
           importFn: m => import(m),
+          logger: new DefaultLogger(),
         }),
       ],
     });
@@ -229,6 +238,7 @@ describe('wrapPrefix', () => {
           cache,
           pubsub,
           importFn: m => import(m),
+          logger: new DefaultLogger(),
         }),
       ],
     });
@@ -258,6 +268,7 @@ describe('wrapPrefix', () => {
           cache,
           pubsub,
           importFn: m => import(m),
+          logger: new DefaultLogger(),
         }),
       ],
     });
@@ -280,6 +291,7 @@ describe('wrapPrefix', () => {
           cache,
           pubsub,
           importFn: m => import(m),
+          logger: new DefaultLogger(),
         }),
       ],
     });

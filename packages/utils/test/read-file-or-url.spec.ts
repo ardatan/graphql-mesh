@@ -1,8 +1,8 @@
 import { writeFileSync } from 'fs';
 import { tmpdir } from 'os';
 import { join, relative } from 'path';
-import { DefaultLogger } from '../src/logger';
-import { readFile } from '../src/read-file-or-url';
+import { DefaultLogger } from '../src/logger.js';
+import { readFile } from '../src/read-file-or-url.js';
 import { fetch } from '@whatwg-node/fetch';
 
 describe('readFile', () => {

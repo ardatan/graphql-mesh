@@ -1,6 +1,6 @@
 import { YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
-import WrapPrefix from './wrapPrefix';
-import BarePrefix from './barePrefix';
+import WrapPrefix from './wrapPrefix.js';
+import BarePrefix from './barePrefix.js';
 
 interface PrefixTransformConstructor {
   new (options: MeshTransformOptions<YamlConfig.Transform['prefix']>): BarePrefix | WrapPrefix;

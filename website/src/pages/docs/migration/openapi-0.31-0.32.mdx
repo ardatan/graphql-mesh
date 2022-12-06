@@ -39,25 +39,25 @@ Here is an example with batch of usages combined:
 
 ```tsx
 const handlerOptions = {
-	operationHeaders: {
-		// Basic auth. Add to the query input: {usernameAndPassword: "user123:pass123"}
-	  authorization: 'Basic {args.usernameAndPassword|base64}',
-		// In the header. Add to the query input: {apiKey: "abcdef"}
-		access_token: '{args.apiKey}',
-		// In the cookie. Add to the query input: {apiKey: "abcdef"}
-		cookie: 'access_token={args.apiKey}',
-	},
-	queryParams: {
-	// In the query string. Add to the query input: {apiKey: "abcdef"}
-		access_token: '{args.apiKey}',
-	},
+  operationHeaders: {
+    // Basic auth. Add to the query input: {usernameAndPassword: "user123:pass123"}
+    authorization: 'Basic {args.usernameAndPassword|base64}',
+    // In the header. Add to the query input: {apiKey: "abcdef"}
+    access_token: '{args.apiKey}',
+    // In the cookie. Add to the query input: {apiKey: "abcdef"}
+    cookie: 'access_token={args.apiKey}'
+  },
+  queryParams: {
+    // In the query string. Add to the query input: {apiKey: "abcdef"}
+    access_token: '{args.apiKey}'
+  }
 }
 ```
 
 ## Miscellaneous
 
 - Input arguments: Now, users can input parameters both through config options (`operationHeaders` and/or `queryParams`) AND through request query input arguments. In case both exists for the same argument, request query value will override the config value.
-For reference, former behavior was config-defined arguments resulted in complete removal of those arguments from GraphQL type.
+  For reference, former behavior was config-defined arguments resulted in complete removal of those arguments from GraphQL type.
 - Error object: used to include `path` (e.g `'/users/{username}'`) now includes `url` instead (e.g `'[http://localhost:3000/api/users/abcdef](http://localhost:3002/api/users/abcdef)'`)
 - string as JSON objects: while old handler accepted simple strings as responses for `type: “object”` fields, the new handler will throw error
 - Request Body: where requestBody exists, it’s input argument will be named `input` and accept both json objects and other types of inputs (where former handler used different field named based on content type or input type name)
@@ -66,7 +66,7 @@ For reference, former behavior was config-defined arguments resulted in complete
 - AnyOf and OneOf handle:
 
 | Case                                                       | Previous                                                                      | Currently                                                                              |
-| ---------------------------------------------------------- | ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------|
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
 | anyOf contains mixture of object type and scalar           | resolve this case to generic JSON                                             | result will be object containing the object type and a field for the scalar            |
 | anyOf contains mixture of object type and a untyped object | pick out the object type schema without defaulting to the arbitrary JSON type | result will be object containing the object type and a JSON scalar                     |
 | anyOf contains mixture of untyped object and a scalar      | defaults to the arbitrary JSON type                                           | result will be object containing a JSON scalar and a field for the scalar              |

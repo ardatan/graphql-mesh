@@ -1,4 +1,4 @@
-import NamingConventionTransform from '../src/index';
+import NamingConventionTransform from '../src/index.js';
 import {
   buildSchema,
   printSchema,
@@ -10,7 +10,7 @@ import {
 } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
-import { PubSub } from '@graphql-mesh/utils';
+import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
 describe('namingConvention - bare', () => {
@@ -61,6 +61,7 @@ describe('namingConvention - bare', () => {
       pubsub,
       baseDir,
       importFn,
+      logger: new DefaultLogger(),
     });
     const newSchema = transform.transformSchema(schema, {} as any);
 
@@ -147,7 +148,12 @@ describe('namingConvention - bare', () => {
             };
           },
           userByType: () => {
-            return { first_name: 'John', last_name: 'Smith', Type: 'admin', interests: ['books', 'comics'] };
+            return {
+              first_name: 'John',
+              last_name: 'Smith',
+              Type: 'admin',
+              interests: ['books', 'comics'],
+            };
           },
           node: (_, { id }) => {
             return {
@@ -178,6 +184,7 @@ describe('namingConvention - bare', () => {
       pubsub,
       baseDir,
       importFn,
+      logger: new DefaultLogger(),
     });
     const newSchema = transform.transformSchema(schema, {} as any);
 
@@ -285,6 +292,7 @@ describe('namingConvention - bare', () => {
       pubsub,
       baseDir,
       importFn,
+      logger: new DefaultLogger(),
     });
     const newSchema = transform.transformSchema(schema, {} as any);
 
@@ -316,6 +324,7 @@ type Query {
       pubsub,
       baseDir,
       importFn,
+      logger: new DefaultLogger(),
     });
     const newSchema = transform.transformSchema(schema, {} as any);
 

@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
-import useMeshRateLimit from '../src';
+import useMeshRateLimit from '../src/index.js';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { envelop, useSchema, useEngine } from '@envelop/core';
 import { Logger } from '@graphql-mesh/types';

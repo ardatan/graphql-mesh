@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-misused-new */
 import { IResolvers, Executor } from '@graphql-tools/utils';
 import { GraphQLSchema, GraphQLResolveInfo, DocumentNode, SelectionSetNode } from 'graphql';
-import * as YamlConfig from './config';
+import * as YamlConfig from './config.js';
 import {
   Transform,
   MergedTypeConfig,

@@ -1,8 +1,8 @@
-import PrefixTransform from '../src';
+import PrefixTransform from '../src/index.js';
 import { printSchema, GraphQLSchema, GraphQLObjectType, execute, parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { MeshPubSub } from '@graphql-mesh/types';
-import { PubSub } from '@graphql-mesh/utils';
+import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
 describe('barePrefix', () => {
@@ -64,6 +64,7 @@ describe('barePrefix', () => {
       cache,
       pubsub,
       importFn: m => import(m),
+      logger: new DefaultLogger(),
     }).transformSchema(schema, { schema }, schema);
 
     expect(newSchema.getType('User')).toBeUndefined();
@@ -82,6 +83,7 @@ describe('barePrefix', () => {
       cache,
       pubsub,
       importFn: m => import(m),
+      logger: new DefaultLogger(),
     }).transformSchema(schema, { schema }, schema);
 
     expect(newSchema.getType('Query')).toBeDefined();
@@ -99,6 +101,7 @@ describe('barePrefix', () => {
       cache,
       pubsub,
       importFn: m => import(m),
+      logger: new DefaultLogger(),
     }).transformSchema(schema, { schema }, schema);
 
     const postFields = (newSchema.getType('T_Post') as GraphQLObjectType).getFields();
@@ -114,6 +117,7 @@ describe('barePrefix', () => {
       cache,
       pubsub,
       importFn: m => import(m),
+      logger: new DefaultLogger(),
     }).transformSchema(schema, { schema }, schema);
 
     expect(newSchema.getType('Query')).toBeDefined();
@@ -133,6 +137,7 @@ describe('barePrefix', () => {
       cache,
       pubsub,
       importFn: m => import(m),
+      logger: new DefaultLogger(),
     }).transformSchema(schema, { schema }, schema);
 
     expect(newSchema.getType('Query')).toBeDefined();
@@ -151,6 +156,7 @@ describe('barePrefix', () => {
       cache,
       pubsub,
       importFn: m => import(m),
+      logger: new DefaultLogger(),
     }).transformSchema(schema, { schema }, schema);
 
     expect(newSchema.getType('Query')).toBeDefined();
@@ -171,6 +177,7 @@ describe('barePrefix', () => {
       cache,
       pubsub,
       importFn: m => import(m),
+      logger: new DefaultLogger(),
     }).transformSchema(schema, { schema }, schema);
 
     const queryFields = (newSchema.getType('Query') as GraphQLObjectType).getFields();
@@ -196,6 +203,7 @@ describe('barePrefix', () => {
       cache,
       pubsub,
       importFn: m => import(m),
+      logger: new DefaultLogger(),
     }).transformSchema(schema, { schema }, schema);
 
     const queryFields = (newSchema.getType('Query') as GraphQLObjectType).getFields();
@@ -219,6 +227,7 @@ describe('barePrefix', () => {
       cache,
       pubsub,
       importFn: m => import(m),
+      logger: new DefaultLogger(),
     }).transformSchema(schema, { schema }, schema);
 
     const result = await execute({

@@ -1,7 +1,7 @@
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Headers } from '@whatwg-node/fetch';
 import { execute, parse } from 'graphql';
-import loadGraphQLSchemaFromOpenAPI, { createBundle } from '../src';
+import loadGraphQLSchemaFromOpenAPI, { createBundle } from '../src/index.js';
 
 describe('Basket', () => {
   it('should generate the correct bundle', async () => {

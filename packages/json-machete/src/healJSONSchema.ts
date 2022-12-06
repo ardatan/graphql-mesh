@@ -1,5 +1,5 @@
-import { JSONSchema, JSONSchemaObject } from './types';
-import { visitJSONSchema } from './visitJSONSchema';
+import { JSONSchema, JSONSchemaObject } from './types.js';
+import { visitJSONSchema } from './visitJSONSchema.js';
 import toJsonSchema from 'to-json-schema';
 import { DefaultLogger } from '@graphql-mesh/utils';
 import { Logger } from '@graphql-mesh/types';
