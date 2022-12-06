@@ -31,6 +31,15 @@ export declare type GraphQLTypePointer =
       | GraphQLList<GraphQLOutputType>
     >;
 
+interface ArgsMap {
+  [newArgName: string]:
+    | string
+    | {
+        originalName: string;
+        fields: ArgsMap;
+      };
+}
+
 const isObject = (input: any) =>
   typeof input === 'object' && input !== null && !Array.isArray(input) && true;
 
@@ -44,7 +53,7 @@ const defaultResolverComposer =
   (
     resolveFn = defaultFieldResolver,
     originalFieldName: string,
-    argsMap: { [key: string]: string },
+    argsMap: ArgsMap,
     resultMap: { [key: string]: string },
   ) =>
   (root: any, args: any, context: any, info: any) => {
@@ -148,7 +157,7 @@ export default class NamingConventionTransform implements MeshTransform {
             this.config.fieldNames && NAMING_CONVENTIONS[this.config.fieldNames];
           const argNamingConventionFn =
             this.config.fieldArgumentNames && NAMING_CONVENTIONS[this.config.fieldArgumentNames];
-          const argsMap = fieldConfig.args && {};
+          const argsMap: ArgsMap = fieldConfig.args && {};
           const newFieldName =
             this.config.fieldNames &&
             !IGNORED_ROOT_FIELD_NAMES.includes(fieldName) &&
@@ -180,7 +189,7 @@ export default class NamingConventionTransform implements MeshTransform {
 
                 if (argIsInputObjectType) {
                   argsMap[useArgName] = {
-                    name: argName,
+                    originalName: argName,
                     fields: generateArgsMapForInput(
                       argConfig.type as GraphQLInputObjectType,
                       fieldNamingConventionFn,
@@ -227,22 +236,13 @@ export default class NamingConventionTransform implements MeshTransform {
   }
 }
 
-interface ArgsMap {
-  [argName: string]:
-    | string
-    | {
-        name: string;
-        fields: ArgsMap;
-      };
-}
-
 function generateArgsMapForInput(
   input: GraphQLInputObjectType,
   fieldNamingConventionFn?: null | ((input: string) => string),
 ): ArgsMap {
   const inputConfig = input.toConfig();
   const inputFields = inputConfig.fields;
-  const argsMap = {};
+  const argsMap: ArgsMap = {};
 
   Object.keys(inputFields).forEach(argName => {
     if (typeof argName === 'number') return;
@@ -250,14 +250,14 @@ function generateArgsMapForInput(
     const newArgName = fieldNamingConventionFn ? fieldNamingConventionFn(argName) : argName;
     const argConfig = inputFields[argName];
 
-    // Unwind any list
+    // Unwind any list / nulls etc
     const type = getNamedType(argConfig.type);
 
     const argIsInputObjectType = isInputObjectType(type);
 
     if (argIsInputObjectType) {
       argsMap[newArgName] = {
-        name: argName,
+        originalName: argName,
         fields: generateArgsMapForInput(type as GraphQLInputObjectType, fieldNamingConventionFn),
       };
     } else {
@@ -275,7 +275,7 @@ function argsFromArgMap(argMap: ArgsMap, args: any) {
     if (typeof newArgName !== 'string') return;
 
     const argMapVal = argMap[newArgName];
-    const originalArgName = typeof argMapVal === 'string' ? argMapVal : argMapVal.name;
+    const originalArgName = typeof argMapVal === 'string' ? argMapVal : argMapVal.originalName;
     const val = args[newArgName];
     if (Array.isArray(val) && typeof argMapVal !== 'string') {
       originalArgs[originalArgName] = val.map(v =>
