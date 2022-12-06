@@ -291,7 +291,7 @@
         "anchor": "require"
       }
     ],
-    "content": "12f0c4573138dcd83b90333a583d43ef",
+    "content": "e9df4f1c5dcbc028908fb0c1f9d0f0c3",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/config-reference",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs"],
@@ -492,7 +492,7 @@
         "anchor": "mesh-and-docker"
       }
     ],
-    "content": "0764d8ac52975ecde35354a630057a2d",
+    "content": "bfb8def7d42c4443c44cbf2a6b9d8d61",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/getting-started/deploy-mesh-gateway",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Getting Started"],
@@ -682,7 +682,7 @@
         "anchor": "next-steps"
       }
     ],
-    "content": "35b301d9333989c1470ae4f85d1de500",
+    "content": "21fc71c0fb1e49e2375c5e84c620533a",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/auth0",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Guides"],
@@ -971,7 +971,7 @@
         "anchor": "config-update"
       }
     ],
-    "content": "cc76828a13aee81e78dabb0a2f7b6ead",
+    "content": "13ff3e0195c0b9aa5464dba0036a4b5a",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/migration/new-openapi-to-openapi",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Migration Guides"],
@@ -1004,7 +1004,7 @@
         "anchor": "miscellaneous"
       }
     ],
-    "content": "5910881f0e245edf0b1b569c31ae6d96",
+    "content": "e8b50ec0df6f120f96a7ffbd3ba56f0b",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/migration/openapi-0",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Migration Guides"],
@@ -1040,7 +1040,7 @@
         "anchor": "getting-started"
       }
     ],
-    "content": "6e04f3d221099b9e0f223dd63ad3a8db",
+    "content": "9bc8d7657d345252440dbd93647a422b",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/http-cache",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Plugins"],
@@ -1188,7 +1188,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "9609f973f915cafc58a37825d767ebb8",
+    "content": "36438fedc0c4add93e4bd47adcd47564",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/new-relic",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Plugins"],
@@ -1272,7 +1272,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "e5f24859ce4170dde48b679a3dae9734",
+    "content": "75b2b7aaf515f7a9a720107c307c5a2d",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/prometheus",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Plugins"],
@@ -1323,7 +1323,7 @@
         "anchor": "codesandbox-example"
       }
     ],
-    "content": "37f20f04865881be616db1e2ffe01818",
+    "content": "02ee642c714bce5a0434dfad158253e1",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/response-caching",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Plugins"],
@@ -1524,7 +1524,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "c41c74a9fdc77ea5ffc0b32238ae9c16",
+    "content": "3bb401985905496c2c3443e91fb1a3fe",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/json-schema",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Source Handlers"],
@@ -1686,7 +1686,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "4a5d8872b5ef0c4d3cfc232ac7737190",
+    "content": "90a4eef515af47d1bfd66d99cb09bdac",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/openapi",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Source Handlers"],
@@ -1969,7 +1969,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "9133b624aedf19b179f063337a60e5a3",
+    "content": "d7de33dd668f9a1f01c357e8151089b1",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/naming-convention",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Transforms"],
@@ -2054,7 +2054,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "7dcd9eafece3cb16b947b2c247b37f40",
+    "content": "f08736f4c00efc29a0fde5748e5f6932",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/rename",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Transforms"],
@@ -2212,7 +2212,7 @@
         "anchor": "two-different-modes"
       }
     ],
-    "content": "9f6bccb4d443a2e2a60b81ab568ea9dc",
+    "content": "d81e378e177ed9608372d203b1bb3a2e",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/transforms-introduction",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Transforms"],
