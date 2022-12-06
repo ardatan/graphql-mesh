@@ -234,7 +234,10 @@ describe('mocking', () => {
         }
       }
     `);
-    const getUserResult: any = await enveloped.execute({ schema: enveloped.schema, document: GET_USER });
+    const getUserResult: any = await enveloped.execute({
+      schema: enveloped.schema,
+      document: GET_USER,
+    });
     expect(getUserResult?.data?.user?.id).toBe(addedUserId);
     expect(getUserResult?.data?.user?.name).toBe('John Doe');
     const UPDATE_USER = enveloped.parse(/* GraphQL */ `
@@ -245,7 +248,10 @@ describe('mocking', () => {
         }
       }
     `);
-    const updateUserResult: any = await enveloped.execute({ schema: enveloped.schema, document: UPDATE_USER });
+    const updateUserResult: any = await enveloped.execute({
+      schema: enveloped.schema,
+      document: UPDATE_USER,
+    });
     expect(updateUserResult?.data?.updateUser?.id).toBe(addedUserId);
     expect(updateUserResult?.data?.updateUser?.name).toBe('Jane Doe');
   });
@@ -324,7 +330,10 @@ describe('mocking', () => {
         }
       }
     `);
-    const addUserResult: any = await enveloped.execute({ schema: enveloped.schema, document: ADD_USER });
+    const addUserResult: any = await enveloped.execute({
+      schema: enveloped.schema,
+      document: ADD_USER,
+    });
     expect(addUserResult?.data?.addUser?.name).toBe('John Doe');
     const addedUserId = addUserResult.data.addUser.id;
     const GET_USER = enveloped.parse(/* GraphQL */ `
@@ -335,7 +344,10 @@ describe('mocking', () => {
         }
       }
     `);
-    const getUserResult: any = await enveloped.execute({ schema: enveloped.schema, document: GET_USER });
+    const getUserResult: any = await enveloped.execute({
+      schema: enveloped.schema,
+      document: GET_USER,
+    });
     expect(getUserResult?.data?.user?.id).toBe(addedUserId);
     expect(getUserResult?.data?.user?.name).toBe('John Doe');
     const UPDATE_USER = parse(/* GraphQL */ `
@@ -346,7 +358,10 @@ describe('mocking', () => {
         }
       }
     `);
-    const updateUserResult: any = await enveloped.execute({ schema: enveloped.schema, document: UPDATE_USER });
+    const updateUserResult: any = await enveloped.execute({
+      schema: enveloped.schema,
+      document: UPDATE_USER,
+    });
     expect(updateUserResult?.data?.updateUser?.id).toBe(addedUserId);
     expect(updateUserResult?.data?.updateUser?.name).toBe('Jane Doe');
   });

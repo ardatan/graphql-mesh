@@ -20,7 +20,8 @@ plugins:
           faker: '{{name.firstName}}'
 ```
 
-The example above will replace the resolver of `User.firstName` with a mock that uses `faker.js` to generate a random name.
+The example above will replace the resolver of `User.firstName` with a mock that uses `faker.js` to
+generate a random name.
 
 ## Custom mock functions for fields
 
@@ -53,8 +54,9 @@ module.exports = {
 }
 ```
 
-When defined manually, properties can return values either directly or through a method. This is useful when defining static mocks because a mock property will be called as many times as there are items in an array.
-Here's an example on how this could be achieved:
+When defined manually, properties can return values either directly or through a method. This is
+useful when defining static mocks because a mock property will be called as many times as there are
+items in an array. Here's an example on how this could be achieved:
 
 ```ts filename="user-mocks.ts"
 function* generateNames() {
@@ -88,7 +90,8 @@ export const fullName: () => User.fullName = () => fullNames.next().value
 
 ## Mocking the lists
 
-Mesh generates two mocked items by default if the return type is a list. But this can be configured, as shown below:
+Mesh generates two mocked items by default if the return type is a list. But this can be configured,
+as shown below:
 
 ```graphql
 type Query {
@@ -124,7 +127,8 @@ Now `query { users { id fullName } }{:graphql}` query will return 3 of `User` it
 
 ## Stateful mocking
 
-GraphQL Mesh supports GraphQL Tools' Stateful Mocking feature. So you can have stateful mocking by using the store provided in the context `context.mockStore`;
+GraphQL Mesh supports GraphQL Tools' Stateful Mocking feature. So you can have stateful mocking by
+using the store provided in the context `context.mockStore`;
 
 ### Initialize store
 
@@ -140,9 +144,11 @@ type Query {
 }
 ```
 
-Initially, populating the list of users can be done by utilizing the `initializeStore` property. The store initialization will happen before the store is attached to the schema.
+Initially, populating the list of users can be done by utilizing the `initializeStore` property. The
+store initialization will happen before the store is attached to the schema.
 
-There is no need to provide a particular array mocking definition, like `length`. It will automatically be taken based on the mock data.
+There is no need to provide a particular array mocking definition, like `length`. It will
+automatically be taken based on the mock data.
 
 ```yaml filename=".meshrc.yaml"
 plugins:

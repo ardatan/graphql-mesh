@@ -2,9 +2,12 @@ import { Callout, PackageCmd } from '@theguild/components'
 
 # Type Merging Transform
 
-Type Merge transforms allow you to combine multiple sources by merging a type from each source, by using the [Type Merging](https://graphql-tools.com/docs/stitch-type-merging) approach of Schema Stitching.
+Type Merge transforms allow you to combine multiple sources by merging a type from each source, by
+using the [Type Merging](https://graphql-tools.com/docs/stitch-type-merging) approach of Schema
+Stitching.
 
-For example, you could combine responses from two different APIs on a single field, provided you rename the fields you want to stitch to the same name.
+For example, you could combine responses from two different APIs on a single field, provided you
+rename the fields you want to stitch to the same name.
 
 ## Installation
 
@@ -12,7 +15,8 @@ For example, you could combine responses from two different APIs on a single fie
 
 ## What is Type Merging?
 
-Take an example Mesh Gateway with two different GraphQL sources `Books` and `Authors`, defined as follows:
+Take an example Mesh Gateway with two different GraphQL sources `Books` and `Authors`, defined as
+follows:
 
 ```graphql
 # Authors
@@ -87,7 +91,9 @@ then you expect the following query works fine;
 }
 ```
 
-But it won't work because Mesh doesn't know which field belongs to where and how to combine those. You could add `additionalResolvers` then extract `books` from `AuthorWithBooks` then return it as `books` field of `Author` type, but this sounds a little overhead. So let's try Type Merging here.
+But it won't work because Mesh doesn't know which field belongs to where and how to combine those.
+You could add `additionalResolvers` then extract `books` from `AuthorWithBooks` then return it as
+`books` field of `Author` type, but this sounds a little overhead. So let's try Type Merging here.
 
 We have Type Merging transform to teach Mesh how to fetch entities from different sources:
 
@@ -143,7 +149,9 @@ Then now, our query will work as expected!
 
 ### Prevent N+1 problem with Type Merging
 
-The example above works fine, but there is an N+1 problem. It sends `n` requests for `n` entities. But we have `authors` and `books`. Type Merging is smart enough to handle batching if you point it to a field that returns a list of entities. Let's update our configuration for this:
+The example above works fine, but there is an N+1 problem. It sends `n` requests for `n` entities.
+But we have `authors` and `books`. Type Merging is smart enough to handle batching if you point it
+to a field that returns a list of entities. Let's update our configuration for this:
 
 ```yaml filename=".meshrc.yaml"
 sources:

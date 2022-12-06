@@ -25,7 +25,10 @@ export default class RateLimitTransform implements MeshTransform {
 
   private errors = new WeakMap<DelegationContext, GraphQLError[]>();
 
-  transformRequest(executionRequest: ExecutionRequest, delegationContext: DelegationContext): ExecutionRequest {
+  transformRequest(
+    executionRequest: ExecutionRequest,
+    delegationContext: DelegationContext,
+  ): ExecutionRequest {
     const { transformedSchema, rootValue, args, context, info } = delegationContext;
     if (transformedSchema) {
       const errors: GraphQLError[] = [];
@@ -61,7 +64,9 @@ export default class RateLimitTransform implements MeshTransform {
               }
 
               if (remainingTokens === 0) {
-                errors.push(new GraphQLError(`Rate limit of "${path}" exceeded for "${identifier}"`));
+                errors.push(
+                  new GraphQLError(`Rate limit of "${path}" exceeded for "${identifier}"`),
+                );
                 // Remove this field from the selection set
                 return null;
               } else {
@@ -71,7 +76,7 @@ export default class RateLimitTransform implements MeshTransform {
             remainingFields++;
             return false;
           },
-        })
+        }),
       );
       if (remainingFields === 0) {
         if (errors.length === 1) {

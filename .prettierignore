@@ -5,3 +5,4 @@
 dist/
 .mesh/
 /.husky/_/
+.bob/

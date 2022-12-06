@@ -20,9 +20,18 @@ export default class SoapHandler implements MeshHandler {
   private importFn: ImportFn;
   private logger: Logger;
 
-  constructor({ config, store, baseDir, importFn, logger }: MeshHandlerOptions<YamlConfig.SoapHandler>) {
+  constructor({
+    config,
+    store,
+    baseDir,
+    importFn,
+    logger,
+  }: MeshHandlerOptions<YamlConfig.SoapHandler>) {
     this.config = config;
-    this.soapSDLProxy = store.proxy('schemaWithAnnotations.graphql', PredefinedProxyOptions.GraphQLSchemaWithDiffing);
+    this.soapSDLProxy = store.proxy(
+      'schemaWithAnnotations.graphql',
+      PredefinedProxyOptions.GraphQLSchemaWithDiffing,
+    );
     this.baseDir = baseDir;
     this.importFn = importFn;
     this.logger = logger;

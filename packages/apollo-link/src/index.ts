@@ -15,7 +15,8 @@ function createMeshApolloRequestHandler(options: MeshApolloRequestHandlerOptions
     if (!operationAst) {
       throw new Error('GraphQL operation not found');
     }
-    const operationFn = operationAst.operation === 'subscription' ? options.subscribe : options.execute;
+    const operationFn =
+      operationAst.operation === 'subscription' ? options.subscribe : options.execute;
     return new Observable(observer => {
       Promise.resolve()
         .then(async () => {
@@ -24,7 +25,7 @@ function createMeshApolloRequestHandler(options: MeshApolloRequestHandlerOptions
             operation.variables,
             operation.getContext(),
             ROOT_VALUE,
-            operation.operationName
+            operation.operationName,
           );
           if (isAsyncIterable(results)) {
             for await (const result of results) {

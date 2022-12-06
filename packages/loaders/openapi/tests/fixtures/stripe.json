@@ -697,7 +697,16 @@
             "type": "string"
           }
         },
-        "required": ["created", "fingerprint", "id", "livemode", "object", "reusable", "used", "username"],
+        "required": [
+          "created",
+          "fingerprint",
+          "id",
+          "livemode",
+          "object",
+          "reusable",
+          "used",
+          "username"
+        ],
         "title": "AlipayAccount",
         "type": "object",
         "x-expandableFields": ["customer"],
@@ -1937,7 +1946,16 @@
             "type": "string"
           }
         },
-        "required": ["brand", "exp_month", "exp_year", "funding", "id", "last4", "metadata", "object"],
+        "required": [
+          "brand",
+          "exp_month",
+          "exp_year",
+          "funding",
+          "id",
+          "last4",
+          "metadata",
+          "object"
+        ],
         "title": "Card",
         "type": "object",
         "x-expandableFields": ["account", "customer", "recipient"],
@@ -2598,7 +2616,24 @@
           },
           "locale": {
             "description": "The IETF language tag of the locale Checkout is displayed in. If blank or `auto`, the browser's locale is used.",
-            "enum": ["auto", "da", "de", "en", "es", "fi", "fr", "it", "ja", "ms", "nb", "nl", "pl", "pt", "sv", "zh"],
+            "enum": [
+              "auto",
+              "da",
+              "de",
+              "en",
+              "es",
+              "fi",
+              "fr",
+              "it",
+              "ja",
+              "ms",
+              "nb",
+              "nl",
+              "pl",
+              "pt",
+              "sv",
+              "zh"
+            ],
             "nullable": true,
             "type": "string",
             "x-stripeBypassValidation": true
@@ -2694,10 +2729,23 @@
             "type": "string"
           }
         },
-        "required": ["cancel_url", "id", "livemode", "object", "payment_method_types", "success_url"],
+        "required": [
+          "cancel_url",
+          "id",
+          "livemode",
+          "object",
+          "payment_method_types",
+          "success_url"
+        ],
         "title": "Session",
         "type": "object",
-        "x-expandableFields": ["customer", "display_items", "payment_intent", "setup_intent", "subscription"],
+        "x-expandableFields": [
+          "customer",
+          "display_items",
+          "payment_intent",
+          "setup_intent",
+          "subscription"
+        ],
         "x-resourceId": "checkout.session"
       },
       "checkout_session_custom_display_item_description": {
@@ -2999,7 +3047,16 @@
             "type": "boolean"
           }
         },
-        "required": ["created", "duration", "id", "livemode", "metadata", "object", "times_redeemed", "valid"],
+        "required": [
+          "created",
+          "duration",
+          "id",
+          "livemode",
+          "metadata",
+          "object",
+          "times_redeemed",
+          "valid"
+        ],
         "title": "Coupon",
         "type": "object",
         "x-expandableFields": [],
@@ -3611,7 +3668,17 @@
             "type": "string"
           }
         },
-        "required": ["amount", "created", "currency", "customer", "ending_balance", "id", "livemode", "object", "type"],
+        "required": [
+          "amount",
+          "created",
+          "currency",
+          "customer",
+          "ending_balance",
+          "id",
+          "livemode",
+          "object",
+          "type"
+        ],
         "title": "CustomerBalanceTransaction",
         "type": "object",
         "x-expandableFields": ["credit_note", "customer", "invoice"],
@@ -4420,7 +4487,13 @@
         ],
         "title": "Dispute",
         "type": "object",
-        "x-expandableFields": ["balance_transactions", "charge", "evidence", "evidence_details", "payment_intent"],
+        "x-expandableFields": [
+          "balance_transactions",
+          "charge",
+          "evidence",
+          "evidence_details",
+          "payment_intent"
+        ],
         "x-resourceId": "dispute"
       },
       "dispute_evidence": {
@@ -6096,14 +6169,31 @@
         ],
         "title": "InvoiceItem",
         "type": "object",
-        "x-expandableFields": ["customer", "invoice", "period", "plan", "subscription", "tax_rates"],
+        "x-expandableFields": [
+          "customer",
+          "invoice",
+          "period",
+          "plan",
+          "subscription",
+          "tax_rates"
+        ],
         "x-resourceId": "invoiceitem"
       },
       "invoices_resource_invoice_tax_id": {
         "properties": {
           "type": {
             "description": "The type of the tax ID, one of `au_abn`, `ch_vat`, `eu_vat`, `in_gst`, `mx_rfc`, `no_vat`, `nz_gst`, `unknown`, or `za_vat`",
-            "enum": ["au_abn", "ch_vat", "eu_vat", "in_gst", "mx_rfc", "no_vat", "nz_gst", "unknown", "za_vat"],
+            "enum": [
+              "au_abn",
+              "ch_vat",
+              "eu_vat",
+              "in_gst",
+              "mx_rfc",
+              "no_vat",
+              "nz_gst",
+              "unknown",
+              "za_vat"
+            ],
             "type": "string"
           },
           "value": {
@@ -6524,7 +6614,13 @@
         ],
         "title": "IssuingCard",
         "type": "object",
-        "x-expandableFields": ["authorization_controls", "cardholder", "pin", "replacement_for", "shipping"],
+        "x-expandableFields": [
+          "authorization_controls",
+          "cardholder",
+          "pin",
+          "replacement_for",
+          "shipping"
+        ],
         "x-resourceId": "issuing.card"
       },
       "issuing.card_details": {
@@ -6695,7 +6791,13 @@
         ],
         "title": "IssuingCardholder",
         "type": "object",
-        "x-expandableFields": ["authorization_controls", "billing", "company", "individual", "requirements"],
+        "x-expandableFields": [
+          "authorization_controls",
+          "billing",
+          "company",
+          "individual",
+          "requirements"
+        ],
         "x-resourceId": "issuing.cardholder"
       },
       "issuing.dispute": {
@@ -7034,7 +7136,14 @@
           },
           "type": {
             "description": "The nature of the transaction.",
-            "enum": ["capture", "cash_withdrawal", "dispute", "dispute_loss", "refund", "refund_reversal"],
+            "enum": [
+              "capture",
+              "cash_withdrawal",
+              "dispute",
+              "dispute_loss",
+              "refund",
+              "refund_reversal"
+            ],
             "type": "string"
           }
         },
@@ -7102,7 +7211,15 @@
             "type": "string"
           }
         },
-        "required": ["card", "created", "expires_at", "id", "object", "scope", "verification_method"],
+        "required": [
+          "card",
+          "created",
+          "expires_at",
+          "id",
+          "object",
+          "scope",
+          "verification_method"
+        ],
         "title": "IssuingVerification",
         "type": "object",
         "x-expandableFields": [],
@@ -7270,7 +7387,13 @@
           },
           "name": {
             "description": "Name of the authorization control. One of `allowed_categories`, `blocked_categories`, `max_amount`, `max_approvals`, or `spending_limits`.",
-            "enum": ["allowed_categories", "blocked_categories", "max_amount", "max_approvals", "spending_limits"],
+            "enum": [
+              "allowed_categories",
+              "blocked_categories",
+              "max_amount",
+              "max_approvals",
+              "spending_limits"
+            ],
             "type": "string"
           }
         },
@@ -10344,7 +10467,17 @@
             "type": "string"
           }
         },
-        "required": ["amount", "created", "currency", "id", "items", "livemode", "metadata", "object", "status"],
+        "required": [
+          "amount",
+          "created",
+          "currency",
+          "id",
+          "items",
+          "livemode",
+          "metadata",
+          "object",
+          "status"
+        ],
         "title": "Order",
         "type": "object",
         "x-expandableFields": [
@@ -11040,7 +11173,14 @@
         "required": ["billing_details", "created", "id", "livemode", "metadata", "object", "type"],
         "title": "PaymentMethod",
         "type": "object",
-        "x-expandableFields": ["billing_details", "card", "card_present", "customer", "ideal", "sepa_debit"],
+        "x-expandableFields": [
+          "billing_details",
+          "card",
+          "card_present",
+          "customer",
+          "ideal",
+          "sepa_debit"
+        ],
         "x-resourceId": "payment_method"
       },
       "payment_method_card": {
@@ -11200,7 +11340,14 @@
           },
           "type": {
             "description": "The type of the card wallet, one of `amex_express_checkout`, `apple_pay`, `google_pay`, `masterpass`, `samsung_pay`, or `visa_checkout`. An additional hash is included on the Wallet subhash with a name matching this value. It contains additional information specific to the card wallet type.",
-            "enum": ["amex_express_checkout", "apple_pay", "google_pay", "masterpass", "samsung_pay", "visa_checkout"],
+            "enum": [
+              "amex_express_checkout",
+              "apple_pay",
+              "google_pay",
+              "masterpass",
+              "samsung_pay",
+              "visa_checkout"
+            ],
             "type": "string"
           },
           "visa_checkout": {
@@ -11832,7 +11979,14 @@
           },
           "type": {
             "description": "The type of the card wallet, one of `amex_express_checkout`, `apple_pay`, `google_pay`, `masterpass`, `samsung_pay`, or `visa_checkout`. An additional hash is included on the Wallet subhash with a name matching this value. It contains additional information specific to the card wallet type.",
-            "enum": ["amex_express_checkout", "apple_pay", "google_pay", "masterpass", "samsung_pay", "visa_checkout"],
+            "enum": [
+              "amex_express_checkout",
+              "apple_pay",
+              "google_pay",
+              "masterpass",
+              "samsung_pay",
+              "visa_checkout"
+            ],
             "type": "string"
           },
           "visa_checkout": {
@@ -13086,7 +13240,17 @@
             "type": "string"
           }
         },
-        "required": ["created", "id", "images", "livemode", "metadata", "name", "object", "type", "updated"],
+        "required": [
+          "created",
+          "id",
+          "images",
+          "livemode",
+          "metadata",
+          "name",
+          "object",
+          "type",
+          "updated"
+        ],
         "title": "Product",
         "type": "object",
         "x-expandableFields": ["package_dimensions"],
@@ -13512,7 +13676,13 @@
         "required": ["created", "id", "livemode", "metadata", "object", "type"],
         "title": "TransferRecipient",
         "type": "object",
-        "x-expandableFields": ["active_account", "cards", "default_card", "migrated_to", "rolled_back_from"],
+        "x-expandableFields": [
+          "active_account",
+          "cards",
+          "default_card",
+          "migrated_to",
+          "rolled_back_from"
+        ],
         "x-resourceId": "recipient"
       },
       "refund": {
@@ -13817,7 +13987,15 @@
             "type": "integer"
           }
         },
-        "required": ["data_available_end", "data_available_start", "id", "name", "object", "updated", "version"],
+        "required": [
+          "data_available_end",
+          "data_available_start",
+          "id",
+          "name",
+          "object",
+          "updated",
+          "version"
+        ],
         "title": "reporting_report_type",
         "type": "object",
         "x-expandableFields": [],
@@ -14295,7 +14473,15 @@
             "type": "string"
           }
         },
-        "required": ["created", "id", "livemode", "object", "payment_method_types", "status", "usage"],
+        "required": [
+          "created",
+          "id",
+          "livemode",
+          "object",
+          "payment_method_types",
+          "status",
+          "usage"
+        ],
         "title": "SetupIntent",
         "type": "object",
         "x-expandableFields": [
@@ -14730,10 +14916,25 @@
             "$ref": "#/components/schemas/source_type_wechat"
           }
         },
-        "required": ["client_secret", "created", "flow", "id", "livemode", "object", "status", "type"],
+        "required": [
+          "client_secret",
+          "created",
+          "flow",
+          "id",
+          "livemode",
+          "object",
+          "status",
+          "type"
+        ],
         "title": "Source",
         "type": "object",
-        "x-expandableFields": ["code_verification", "owner", "receiver", "redirect", "source_order"],
+        "x-expandableFields": [
+          "code_verification",
+          "owner",
+          "receiver",
+          "redirect",
+          "source_order"
+        ],
         "x-resourceId": "source"
       },
       "source_code_verification_flow": {
@@ -15119,7 +15320,17 @@
             "type": "string"
           }
         },
-        "required": ["amount", "created", "currency", "id", "livemode", "object", "source", "status", "type"],
+        "required": [
+          "amount",
+          "created",
+          "currency",
+          "id",
+          "livemode",
+          "object",
+          "source",
+          "status",
+          "type"
+        ],
         "title": "SourceTransaction",
         "type": "object",
         "x-expandableFields": [
@@ -16215,7 +16426,15 @@
           },
           "status": {
             "description": "Possible values are `incomplete`, `incomplete_expired`, `trialing`, `active`, `past_due`, `canceled`, or `unpaid`. \n\nFor `collection_method=charge_automatically` a subscription moves into `incomplete` if the initial payment attempt fails. A subscription in this state can only have metadata and default_source updated. Once the first invoice is paid, the subscription moves into an `active` state. If the first invoice is not paid within 23 hours, the subscription transitions to `incomplete_expired`. This is a terminal state, the open invoice will be voided and no further invoices will be generated. \n\nA subscription that is currently in a trial period is `trialing` and moves to `active` when the trial period is over. \n\nIf subscription `collection_method=charge_automatically` it becomes `past_due` when payment to renew it fails and `canceled` or `unpaid` (depending on your subscriptions settings) when Stripe has exhausted all payment retry attempts. \n\nIf subscription `collection_method=send_invoice` it becomes `past_due` when its invoice is not paid by the due date, and `canceled` or `unpaid` if it is still not paid by an additional deadline after that. Note that when a subscription has a status of `unpaid`, no subsequent invoices will be attempted (invoices will be created, but then immediately automatically closed). After receiving updated payment information from a customer, you may choose to reopen and pay their closed invoices.",
-            "enum": ["active", "canceled", "incomplete", "incomplete_expired", "past_due", "trialing", "unpaid"],
+            "enum": [
+              "active",
+              "canceled",
+              "incomplete",
+              "incomplete_expired",
+              "past_due",
+              "trialing",
+              "unpaid"
+            ],
             "type": "string"
           },
           "tax_percent": {
@@ -16517,7 +16736,13 @@
         ],
         "title": "SubscriptionSchedule",
         "type": "object",
-        "x-expandableFields": ["current_phase", "customer", "default_settings", "phases", "subscription"],
+        "x-expandableFields": [
+          "current_phase",
+          "customer",
+          "default_settings",
+          "phases",
+          "subscription"
+        ],
         "x-resourceId": "subscription_schedule"
       },
       "subscription_schedule_configuration_item": {
@@ -16842,7 +17067,17 @@
           },
           "type": {
             "description": "Type of the tax ID, one of `au_abn`, `ch_vat`, `eu_vat`, `in_gst`, `mx_rfc`, `no_vat`, `nz_gst`, `za_vat`, or `unknown`",
-            "enum": ["au_abn", "ch_vat", "eu_vat", "in_gst", "mx_rfc", "no_vat", "nz_gst", "unknown", "za_vat"],
+            "enum": [
+              "au_abn",
+              "ch_vat",
+              "eu_vat",
+              "in_gst",
+              "mx_rfc",
+              "no_vat",
+              "nz_gst",
+              "unknown",
+              "za_vat"
+            ],
             "type": "string"
           },
           "value": {
@@ -16854,7 +17089,16 @@
             "$ref": "#/components/schemas/tax_id_verification"
           }
         },
-        "required": ["created", "customer", "id", "livemode", "object", "type", "value", "verification"],
+        "required": [
+          "created",
+          "customer",
+          "id",
+          "livemode",
+          "object",
+          "type",
+          "value",
+          "verification"
+        ],
         "title": "tax_id",
         "type": "object",
         "x-expandableFields": ["customer", "verification"],
@@ -17087,7 +17331,15 @@
             "type": "string"
           }
         },
-        "required": ["device_type", "id", "label", "livemode", "metadata", "object", "serial_number"],
+        "required": [
+          "device_type",
+          "id",
+          "label",
+          "livemode",
+          "metadata",
+          "object",
+          "serial_number"
+        ],
         "title": "TerminalReaderReader",
         "type": "object",
         "x-expandableFields": [],
@@ -17141,7 +17393,17 @@
             "type": "string"
           }
         },
-        "required": ["amount", "authenticated", "card", "created", "currency", "id", "livemode", "object", "status"],
+        "required": [
+          "amount",
+          "authenticated",
+          "card",
+          "created",
+          "currency",
+          "id",
+          "livemode",
+          "object",
+          "status"
+        ],
         "title": "ThreeDSecure",
         "type": "object",
         "x-expandableFields": ["card"],
@@ -17331,7 +17593,17 @@
             "type": "string"
           }
         },
-        "required": ["amount", "created", "currency", "id", "livemode", "metadata", "object", "source", "status"],
+        "required": [
+          "amount",
+          "created",
+          "currency",
+          "id",
+          "livemode",
+          "metadata",
+          "object",
+          "source",
+          "status"
+        ],
         "title": "Topup",
         "type": "object",
         "x-expandableFields": ["balance_transaction", "source"],
@@ -17679,7 +17951,12 @@
         "required": ["amount", "created", "currency", "id", "metadata", "object", "transfer"],
         "title": "TransferReversal",
         "type": "object",
-        "x-expandableFields": ["balance_transaction", "destination_payment_refund", "source_refund", "transfer"],
+        "x-expandableFields": [
+          "balance_transaction",
+          "destination_payment_refund",
+          "source_refund",
+          "transfer"
+        ],
         "x-resourceId": "transfer_reversal"
       },
       "transfer_schedule": {
@@ -18784,7 +19061,15 @@
                                 "type": "integer"
                               },
                               "weekly_anchor": {
-                                "enum": ["friday", "monday", "saturday", "sunday", "thursday", "tuesday", "wednesday"],
+                                "enum": [
+                                  "friday",
+                                  "monday",
+                                  "saturday",
+                                  "sunday",
+                                  "thursday",
+                                  "tuesday",
+                                  "wednesday"
+                                ],
                                 "maxLength": 5000,
                                 "type": "string"
                               }
@@ -22892,7 +23177,15 @@
                                 "type": "integer"
                               },
                               "weekly_anchor": {
-                                "enum": ["friday", "monday", "saturday", "sunday", "thursday", "tuesday", "wednesday"],
+                                "enum": [
+                                  "friday",
+                                  "monday",
+                                  "saturday",
+                                  "sunday",
+                                  "thursday",
+                                  "tuesday",
+                                  "wednesday"
+                                ],
                                 "maxLength": 5000,
                                 "type": "string"
                               }
@@ -23739,7 +24032,15 @@
                                 "type": "integer"
                               },
                               "weekly_anchor": {
-                                "enum": ["friday", "monday", "saturday", "sunday", "thursday", "tuesday", "wednesday"],
+                                "enum": [
+                                  "friday",
+                                  "monday",
+                                  "saturday",
+                                  "sunday",
+                                  "thursday",
+                                  "tuesday",
+                                  "wednesday"
+                                ],
                                 "maxLength": 5000,
                                 "type": "string"
                               }
@@ -33087,7 +33388,16 @@
                     "items": {
                       "properties": {
                         "type": {
-                          "enum": ["au_abn", "ch_vat", "eu_vat", "in_gst", "mx_rfc", "no_vat", "nz_gst", "za_vat"],
+                          "enum": [
+                            "au_abn",
+                            "ch_vat",
+                            "eu_vat",
+                            "in_gst",
+                            "mx_rfc",
+                            "no_vat",
+                            "nz_gst",
+                            "za_vat"
+                          ],
                           "maxLength": 5000,
                           "type": "string",
                           "x-stripeBypassValidation": true
@@ -37705,7 +38015,16 @@
                   },
                   "type": {
                     "description": "Type of the tax ID, one of `au_abn`, `ch_vat`, `eu_vat`, `in_gst`, `mx_rfc`, `no_vat`, `nz_gst`, or `za_vat`",
-                    "enum": ["au_abn", "ch_vat", "eu_vat", "in_gst", "mx_rfc", "no_vat", "nz_gst", "za_vat"],
+                    "enum": [
+                      "au_abn",
+                      "ch_vat",
+                      "eu_vat",
+                      "in_gst",
+                      "mx_rfc",
+                      "no_vat",
+                      "nz_gst",
+                      "za_vat"
+                    ],
                     "maxLength": 5000,
                     "type": "string",
                     "x-stripeBypassValidation": true
@@ -44194,7 +44513,14 @@
                               "type": "array"
                             },
                             "interval": {
-                              "enum": ["all_time", "daily", "monthly", "per_authorization", "weekly", "yearly"],
+                              "enum": [
+                                "all_time",
+                                "daily",
+                                "monthly",
+                                "per_authorization",
+                                "weekly",
+                                "yearly"
+                              ],
                               "type": "string"
                             }
                           },
@@ -45402,7 +45728,14 @@
                               "type": "array"
                             },
                             "interval": {
-                              "enum": ["all_time", "daily", "monthly", "per_authorization", "weekly", "yearly"],
+                              "enum": [
+                                "all_time",
+                                "daily",
+                                "monthly",
+                                "per_authorization",
+                                "weekly",
+                                "yearly"
+                              ],
                               "type": "string"
                             }
                           },
@@ -46754,7 +47087,14 @@
                               "type": "array"
                             },
                             "interval": {
-                              "enum": ["all_time", "daily", "monthly", "per_authorization", "weekly", "yearly"],
+                              "enum": [
+                                "all_time",
+                                "daily",
+                                "monthly",
+                                "per_authorization",
+                                "weekly",
+                                "yearly"
+                              ],
                               "type": "string"
                             }
                           },
@@ -47914,7 +48254,14 @@
                               "type": "array"
                             },
                             "interval": {
-                              "enum": ["all_time", "daily", "monthly", "per_authorization", "weekly", "yearly"],
+                              "enum": [
+                                "all_time",
+                                "daily",
+                                "monthly",
+                                "per_authorization",
+                                "weekly",
+                                "yearly"
+                              ],
                               "type": "string"
                             }
                           },

@@ -11,7 +11,7 @@ type LoadFromModuleExportExpressionOptions = {
 
 export async function loadFromModuleExportExpression<T>(
   expression: T | string,
-  options: LoadFromModuleExportExpressionOptions
+  options: LoadFromModuleExportExpressionOptions,
 ): Promise<T> {
   if (typeof expression !== 'string') {
     return Promise.resolve(expression);
@@ -28,7 +28,9 @@ async function tryImport(modulePath: string, cwd: string, importFn: ImportFn) {
     return await importFn(modulePath);
   } catch {
     if (!path.isAbsolute(modulePath)) {
-      const absoluteModulePath = path.isAbsolute(modulePath) ? modulePath : path.join(cwd, modulePath);
+      const absoluteModulePath = path.isAbsolute(modulePath)
+        ? modulePath
+        : path.join(cwd, modulePath);
       return importFn(absoluteModulePath);
     }
   }

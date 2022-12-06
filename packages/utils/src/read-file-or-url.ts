@@ -16,7 +16,10 @@ export function isUrl(str: string): boolean {
   return /^https?:\/\//.test(str);
 }
 
-export async function readFileOrUrl<T>(filePathOrUrl: string, config: ReadFileOrUrlOptions): Promise<T> {
+export async function readFileOrUrl<T>(
+  filePathOrUrl: string,
+  config: ReadFileOrUrlOptions,
+): Promise<T> {
   if (isUrl(filePathOrUrl)) {
     config.logger.debug(`Fetching ${filePathOrUrl} via HTTP`);
     return readUrl(filePathOrUrl, config);
@@ -37,7 +40,9 @@ function getSchema(filepath: string, logger: Logger): Schema {
       },
       construct(path: string) {
         const newCwd = pathModule.dirname(filepath);
-        const absoluteFilePath = pathModule.isAbsolute(path) ? path : pathModule.resolve(newCwd, path);
+        const absoluteFilePath = pathModule.isAbsolute(path)
+          ? path
+          : pathModule.resolve(newCwd, path);
         const content = fs.readFileSync(absoluteFilePath, 'utf8');
         return loadYaml(absoluteFilePath, content, logger);
       },
@@ -49,7 +54,9 @@ function getSchema(filepath: string, logger: Logger): Schema {
       },
       construct(path: string) {
         const newCwd = pathModule.dirname(filepath);
-        const absoluteDirPath = pathModule.isAbsolute(path) ? path : pathModule.resolve(newCwd, path);
+        const absoluteDirPath = pathModule.isAbsolute(path)
+          ? path
+          : pathModule.resolve(newCwd, path);
         const files = fs.readdirSync(absoluteDirPath);
         return files.map(filePath => {
           const absoluteFilePath = pathModule.resolve(absoluteDirPath, filePath);
@@ -73,7 +80,7 @@ export function loadYaml(filepath: string, content: string, logger: Logger): any
 
 export async function readFile<T>(
   fileExpression: string,
-  { allowUnknownExtensions, cwd, fallbackFormat, importFn, logger }: ReadFileOrUrlOptions
+  { allowUnknownExtensions, cwd, fallbackFormat, importFn, logger }: ReadFileOrUrlOptions,
 ): Promise<T> {
   const [filePath] = fileExpression.split('#');
   if (/js$/.test(filePath) || /ts$/.test(filePath)) {
@@ -103,7 +110,7 @@ export async function readFile<T>(
   } else if (!allowUnknownExtensions) {
     throw new Error(
       `Failed to parse JSON/YAML. Ensure file '${filePath}' has ` +
-        `the correct extension (i.e. '.json', '.yaml', or '.yml).`
+        `the correct extension (i.e. '.json', '.yaml', or '.yml).`,
     );
   }
   return rawResult as unknown as T;
@@ -116,7 +123,11 @@ export async function readUrl<T>(path: string, config: ReadFileOrUrlOptions): Pr
   const contentType = response.headers?.get('content-type') || '';
   const responseText = await response.text();
   config?.logger?.debug(`${path} returned `, responseText);
-  if (/json$/.test(path) || contentType.startsWith('application/json') || fallbackFormat === 'json') {
+  if (
+    /json$/.test(path) ||
+    contentType.startsWith('application/json') ||
+    fallbackFormat === 'json'
+  ) {
     return JSON.parse(responseText);
   } else if (
     /yaml$/.test(path) ||
@@ -129,7 +140,7 @@ export async function readUrl<T>(path: string, config: ReadFileOrUrlOptions): Pr
   } else if (!allowUnknownExtensions) {
     throw new Error(
       `Failed to parse JSON/YAML. Ensure URL '${path}' has ` +
-        `the correct extension (i.e. '.json', '.yaml', or '.yml) or mime type in the response headers.`
+        `the correct extension (i.e. '.json', '.yaml', or '.yml) or mime type in the response headers.`,
     );
   }
   return responseText as any;

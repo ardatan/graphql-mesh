@@ -4,7 +4,7 @@ import { process } from '@graphql-mesh/cross-helpers';
 import { useOperationFieldPermissions } from '@envelop/operation-field-permissions';
 
 export default function useMeshOperationFieldPermissions(
-  options: MeshPluginOptions<YamlConfig.OperationFieldPermissionsConfig>
+  options: MeshPluginOptions<YamlConfig.OperationFieldPermissionsConfig>,
 ): MeshPlugin<any> {
   return {
     onPluginInit({ addPlugin }) {
@@ -22,7 +22,7 @@ export default function useMeshOperationFieldPermissions(
             }
             return allowedFields;
           },
-        })
+        }),
       );
     },
   };

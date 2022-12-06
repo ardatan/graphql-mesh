@@ -43,7 +43,9 @@ describe('getMesh', () => {
   function createGraphQLSchema(config: CreateSchemaConfiguration) {
     const queryTypeName = config.suffixRootTypeNames ? `Query${config.suffix}` : 'Query';
     const mutationTypeName = config.suffixRootTypeNames ? `Mutation${config.suffix}` : 'Mutation';
-    const subscriptionTypeName = config.suffixRootTypeNames ? `Subscription${config.suffix}` : 'Subscription';
+    const subscriptionTypeName = config.suffixRootTypeNames
+      ? `Subscription${config.suffix}`
+      : 'Subscription';
 
     return makeExecutableSchema({
       typeDefs: `
@@ -114,7 +116,7 @@ describe('getMesh', () => {
           suffixRootTypeNames: true,
           suffixFieldNames: false,
           suffixResponses: false,
-        })
+        }),
       ),
       merger,
     });
@@ -147,7 +149,7 @@ describe('getMesh', () => {
         hello2
       }
     `,
-      {}
+      {},
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -186,7 +188,8 @@ describe('getMesh', () => {
       ],
       additionalResolvers: {
         Mutation: {
-          strikeBack: (root, args, context, info) => context.serviceFoo.Query.helloFoo({ root, args, context, info }),
+          strikeBack: (root, args, context, info) =>
+            context.serviceFoo.Query.helloFoo({ root, args, context, info }),
         },
       },
     });
@@ -197,7 +200,7 @@ describe('getMesh', () => {
           strikeBack
         }
       `,
-      {}
+      {},
     );
 
     expect(result).toMatchInlineSnapshot(`

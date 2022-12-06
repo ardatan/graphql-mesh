@@ -26,7 +26,7 @@ const processObj =
                   }
                   return globalThis[key];
                 },
-              }
+              },
             );
           }
         },

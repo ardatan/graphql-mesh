@@ -1,5 +1,12 @@
 import { resolveAdditionalResolvers } from '@graphql-mesh/utils';
-import { ConstValueNode, DocumentNode, Kind, ConstObjectValueNode, visit, FieldDefinitionNode } from 'graphql';
+import {
+  ConstValueNode,
+  DocumentNode,
+  Kind,
+  ConstObjectValueNode,
+  visit,
+  FieldDefinitionNode,
+} from 'graphql';
 
 function parseObject(ast: ConstObjectValueNode): any {
   const value = Object.create(null);
@@ -56,10 +63,14 @@ export function getAdditionalResolversFromTypeDefs(additionalTypeDefs: DocumentN
         objectNode.fields?.forEach(fieldNode => handleFieldNode(objectNode.name.value, fieldNode));
       },
       InterfaceTypeDefinition(interfaceNode) {
-        interfaceNode.fields?.forEach(fieldNode => handleFieldNode(interfaceNode.name.value, fieldNode));
+        interfaceNode.fields?.forEach(fieldNode =>
+          handleFieldNode(interfaceNode.name.value, fieldNode),
+        );
       },
       InterfaceTypeExtension(interfaceNode) {
-        interfaceNode.fields?.forEach(fieldNode => handleFieldNode(interfaceNode.name.value, fieldNode));
+        interfaceNode.fields?.forEach(fieldNode =>
+          handleFieldNode(interfaceNode.name.value, fieldNode),
+        );
       },
     });
   });

@@ -252,18 +252,18 @@ export async function processConfig(
                 });`);
               }
 
-                return new TransformCtor({
-                  apiName: source.name,
-                  config: transformConfig,
-                  baseDir: dir,
-                  cache,
-                  pubsub,
-                  importFn,
-                  logger,
-                });
-              })
-            ),
-          ]);
+              return new TransformCtor({
+                apiName: source.name,
+                config: transformConfig,
+                baseDir: dir,
+                cache,
+                pubsub,
+                importFn,
+                logger,
+              });
+            }),
+          ),
+        ]);
 
         if (options.generateCode) {
           codes.add(`sources[${sourceIndex}] = {

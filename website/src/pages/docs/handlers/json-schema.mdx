@@ -9,7 +9,8 @@ import { PackageCmd, Callout } from '@theguild/components'
   definition"](/docs/getting-started/sources-with-no-definition)
 </Callout>
 
-This handler allows you to load any remote REST service and describe its request/response using the YAML config.
+This handler allows you to load any remote REST service and describe its request/response using the
+YAML config.
 
 You can easily customize and control the built GraphQL schema with this handler.
 
@@ -55,13 +56,15 @@ sources:
             responseSchema: ./json-schemas/user.json
 ```
 
-This example operation definition will generate a root field with `id: ID` argument. Mesh will interpolate the expression in `path` to get `id` value from `args`.
+This example operation definition will generate a root field with `id: ID` argument. Mesh will
+interpolate the expression in `path` to get `id` value from `args`.
 
 ### From JSON Samples
 
-Mesh can also load JSON samples from a remote service.
-Add a `json-samples` directory in your project root, and put the JSON samples there (`responseSample: ./jsons/MyField.response.json{:yaml}` - Create a new folder like `Jsons`).
-By declaring the `responseSample`, you can use the JSON sample in the GraphQL schema.
+Mesh can also load JSON samples from a remote service. Add a `json-samples` directory in your
+project root, and put the JSON samples there
+(`responseSample: ./jsons/MyField.response.json{:yaml}` - Create a new folder like `Jsons`). By
+declaring the `responseSample`, you can use the JSON sample in the GraphQL schema.
 
 `Mesh Sample Example - .meshrc.yml file`
 
@@ -91,11 +94,13 @@ Any JSON sample file can be used.
 
 ## Query Parameters
 
-There are a few methods to define the query parameters, select the one that fits your needs (Or combine them):
+There are a few methods to define the query parameters, select the one that fits your needs (Or
+combine them):
 
 ### Auto declare:
 
-Mesh automatically generates arguments for operations if needed. Note that the arguments are generated as nullable strings by default.
+Mesh automatically generates arguments for operations if needed. Note that the arguments are
+generated as nullable strings by default.
 
 ```yaml filename=".meshrc.yaml" {9}
 sources:
@@ -113,7 +118,8 @@ sources:
 
 ### Manual declare:
 
-You can define the arguments of the operation using the `argTypeMap` config field, according to the JSON Schema spec.
+You can define the arguments of the operation using the `argTypeMap` config field, according to the
+JSON Schema spec.
 
 In this example we declare `page` argument as an object with `limit` and `offset` properties:
 
@@ -128,7 +134,8 @@ argTypeMap:
         type: number
 ```
 
-In addition, especially for non-primitive types, the arguments should be added to the path using the `queryParamArgMap` config field.
+In addition, especially for non-primitive types, the arguments should be added to the path using the
+`queryParamArgMap` config field.
 
 Here we add the `page` argument to the query parameters:
 
@@ -168,7 +175,8 @@ sources:
 
 Query arguments could be defined globally, on handler level, so they are added to all operations.
 
-In this example we declare `limit` parameter with the default value of `10`, and `api_key` with dynamic value taken from the environment:
+In this example we declare `limit` parameter with the default value of `10`, and `api_key` with
+dynamic value taken from the environment:
 
 ```yaml filename=".meshrc.yaml" {10}
 sources:
@@ -182,8 +190,8 @@ sources:
 ```
 
 <Callout>
-  Note that `queryParams` are automatically added to the query. If argument is defined both on handler AND operation
-  level, the operation level argument will be used.
+  Note that `queryParams` are automatically added to the query. If argument is defined both on
+  handler AND operation level, the operation level argument will be used.
 </Callout>
 
 ## CodeSandBox Example

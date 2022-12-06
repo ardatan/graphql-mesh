@@ -44,16 +44,23 @@ export interface FsStoreStorageAdapterOptions {
 export class FsStoreStorageAdapter implements StoreStorageAdapter {
   constructor(private options: FsStoreStorageAdapterOptions) {}
   private getAbsolutePath(jsFileName: string) {
-    return pathModule.isAbsolute(jsFileName) ? jsFileName : pathModule.join(this.options.cwd, jsFileName);
+    return pathModule.isAbsolute(jsFileName)
+      ? jsFileName
+      : pathModule.join(this.options.cwd, jsFileName);
   }
 
-  async read<TData, TJSONData = any>(key: string, options: ProxyOptions<TData, TJSONData>): Promise<TData> {
+  async read<TData, TJSONData = any>(
+    key: string,
+    options: ProxyOptions<TData, TJSONData>,
+  ): Promise<TData> {
     let absoluteModulePath = this.getAbsolutePath(key);
     if (this.options.fileType !== 'ts') {
       absoluteModulePath += '.' + this.options.fileType;
     }
     try {
-      const importedData = await this.options.importFn(absoluteModulePath).then(m => m.default || m);
+      const importedData = await this.options
+        .importFn(absoluteModulePath)
+        .then(m => m.default || m);
       if (this.options.fileType === 'json') {
         return await options.fromJSON(importedData, key);
       }
@@ -69,7 +76,7 @@ export class FsStoreStorageAdapter implements StoreStorageAdapter {
   async write<TData, TJSONData = any>(
     key: string,
     data: TData,
-    options: ProxyOptions<TData, TJSONData>
+    options: ProxyOptions<TData, TJSONData>,
   ): Promise<void> {
     const asString =
       this.options.fileType === 'json'
@@ -162,7 +169,11 @@ export default buildASTSchema(schemaAST, {
 };
 
 export class MeshStore {
-  constructor(public identifier: string, protected storage: StoreStorageAdapter, public flags: StoreFlags) {}
+  constructor(
+    public identifier: string,
+    protected storage: StoreStorageAdapter,
+    public flags: StoreFlags,
+  ) {}
 
   child(childIdentifier: string, flags?: Partial<StoreFlags>): MeshStore {
     return new MeshStore(pathModule.join(this.identifier, childIdentifier), this.storage, {
@@ -189,7 +200,9 @@ export class MeshStore {
         try {
           await options.validate(value, newValue, id);
         } catch (e) {
-          throw new ValidationError(`Validation failed for "${id}" under "${this.identifier}": ${e.message}`);
+          throw new ValidationError(
+            `Validation failed for "${id}" under "${this.identifier}": ${e.message}`,
+          );
         }
       }
     };
@@ -216,7 +229,7 @@ export class MeshStore {
       set: async newValue => {
         if (this.flags.readonly) {
           throw new ReadonlyStoreError(
-            `Unable to set value for "${id}" under "${this.identifier}" because the store is in read-only mode.`
+            `Unable to set value for "${id}" under "${this.identifier}" because the store is in read-only mode.`,
           );
         }
 

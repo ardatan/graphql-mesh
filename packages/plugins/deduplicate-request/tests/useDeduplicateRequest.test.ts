@@ -21,7 +21,7 @@ describe('useDeduplicateRequest', () => {
           data: {
             hello: 'world',
           },
-        })
+        }),
       );
     });
     server.listen(9856, done);
@@ -53,7 +53,7 @@ describe('useDeduplicateRequest', () => {
           Accept: 'application/json',
         },
       },
-      context
+      context,
     );
     await response.text();
     const response2 = await fetchFn(
@@ -63,7 +63,7 @@ describe('useDeduplicateRequest', () => {
           Accept: 'application/json',
         },
       },
-      context
+      context,
     );
     await response2.text();
     expect(reqCount).toBe(1);
@@ -87,7 +87,7 @@ describe('useDeduplicateRequest', () => {
             Accept: 'application/json',
           },
         },
-        context
+        context,
       ),
       fetchFn(
         url,
@@ -96,7 +96,7 @@ describe('useDeduplicateRequest', () => {
             Accept: 'application/json',
           },
         },
-        context
+        context,
       ),
     ]);
     await Promise.all([response.text(), response2.text()]);
@@ -120,7 +120,7 @@ describe('useDeduplicateRequest', () => {
           Accept: 'application/json',
         },
       },
-      context
+      context,
     );
     await response.text();
     const response2 = await fetchFn(
@@ -130,7 +130,7 @@ describe('useDeduplicateRequest', () => {
           Accept: 'application/json',
         },
       },
-      context
+      context,
     );
     await response2.text();
     expect(reqCount).toBe(2);
@@ -154,7 +154,7 @@ describe('useDeduplicateRequest', () => {
             Accept: 'application/json',
           },
         },
-        context
+        context,
       ),
       fetchFn(
         url + '2',
@@ -163,7 +163,7 @@ describe('useDeduplicateRequest', () => {
             Accept: 'application/json',
           },
         },
-        context
+        context,
       ),
     ]);
     await Promise.all([response.text(), response2.text()]);
@@ -188,7 +188,7 @@ describe('useDeduplicateRequest', () => {
           Accept: 'application/json',
         },
       },
-      context
+      context,
     );
     await response.text();
     const response2 = await fetchFn(
@@ -198,7 +198,7 @@ describe('useDeduplicateRequest', () => {
           Accept: 'application/json',
         },
       },
-      context2
+      context2,
     );
     await response2.text();
     expect(reqCount).toBe(2);
@@ -223,7 +223,7 @@ describe('useDeduplicateRequest', () => {
             Accept: 'application/json',
           },
         },
-        context
+        context,
       ),
       fetchFn(
         url,
@@ -232,7 +232,7 @@ describe('useDeduplicateRequest', () => {
             Accept: 'application/json',
           },
         },
-        context2
+        context2,
       ),
     ]);
     await Promise.all([response.text(), response2.text()]);

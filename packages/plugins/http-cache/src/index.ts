@@ -73,13 +73,16 @@ export default function useHTTPCache({ cache }: MeshPluginOptions<{}>): MeshPlug
               },
             },
             context,
-            info
+            info,
           );
 
-          const { policy: revalidatedPolicy, modified } = policy.revalidatedPolicy(revalidationRequest, {
-            status: revalidationResponse.status,
-            headers: getHeadersObj(revalidationResponse.headers as any),
-          });
+          const { policy: revalidatedPolicy, modified } = policy.revalidatedPolicy(
+            revalidationRequest,
+            {
+              status: revalidationResponse.status,
+              headers: getHeadersObj(revalidationResponse.headers as any),
+            },
+          );
 
           const newBody = await revalidationResponse.text();
 
@@ -134,7 +137,7 @@ export default function useHTTPCache({ cache }: MeshPluginOptions<{}>): MeshPlug
               new Response(resText, {
                 status: response.status,
                 headers: resHeaders,
-              })
+              }),
             );
           }
         }

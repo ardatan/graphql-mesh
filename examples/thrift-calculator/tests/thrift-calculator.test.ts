@@ -26,7 +26,7 @@ describe('Thrift Calculator', () => {
     expect(
       introspectionFromSchema(lexicographicSortSchema(schema), {
         descriptions: false,
-      })
+      }),
     ).toMatchSnapshot('thrift-calculator-schema');
   });
   it('should give correct response for example queries', async () => {

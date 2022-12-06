@@ -1,4 +1,10 @@
-import { extendSchema, defaultFieldResolver, GraphQLFieldConfig, GraphQLFieldResolver, GraphQLSchema } from 'graphql';
+import {
+  extendSchema,
+  defaultFieldResolver,
+  GraphQLFieldConfig,
+  GraphQLFieldResolver,
+  GraphQLSchema,
+} from 'graphql';
 import { ImportFn, MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
@@ -53,7 +59,9 @@ export default class ReplaceFieldTransform implements MeshTransform {
         composer:
           (fn: any) =>
           (...args: any[]) =>
-            composerFn$.then(composerFn => (composerFn ? composerFn(fn) : fn)).then(fn => fn(...args)),
+            composerFn$
+              .then(composerFn => (composerFn ? composerFn(fn) : fn))
+              .then(fn => fn(...args)),
         name,
       });
     }
@@ -66,13 +74,15 @@ export default class ReplaceFieldTransform implements MeshTransform {
         cwd: this.baseDir,
         loaders: [new CodeFileLoader(), new GraphQLFileLoader()],
       });
-    const baseSchema = additionalTypeDefs ? extendSchema(schema, additionalTypeDefs[0].document) : schema;
+    const baseSchema = additionalTypeDefs
+      ? extendSchema(schema, additionalTypeDefs[0].document)
+      : schema;
 
     const transformedSchema = mapSchema(baseSchema, {
       [MapperKind.COMPOSITE_FIELD]: (
         fieldConfig: GraphQLFieldConfig<any, any>,
         currentFieldName: string,
-        typeName: string
+        typeName: string,
       ) => {
         const fieldKey = `${typeName}.${currentFieldName}`;
         const newFieldConfig = this.replacementsMap.get(fieldKey);
@@ -85,7 +95,7 @@ export default class ReplaceFieldTransform implements MeshTransform {
         const targetFieldConfig = selectObjectFields(
           baseSchema,
           newFieldConfig.type,
-          fieldName => fieldName === targetFieldName
+          fieldName => fieldName === targetFieldName,
         )[targetFieldName];
 
         if (newFieldConfig.scope === 'config') {
@@ -100,11 +110,15 @@ export default class ReplaceFieldTransform implements MeshTransform {
         fieldConfig.type = targetFieldConfig.type;
 
         // If renaming fields that don't have a custom resolver, we need to map response to original field name
-        if (newFieldConfig.name && !fieldConfig.resolve) fieldConfig.resolve = source => source[currentFieldName];
+        if (newFieldConfig.name && !fieldConfig.resolve)
+          fieldConfig.resolve = source => source[currentFieldName];
 
         if (newFieldConfig.scope === 'hoistValue') {
           // implement value hoisting by wrapping a default composer that hoists the value from resolver result
-          fieldConfig.resolve = defaultHoistFieldComposer(fieldConfig.resolve || defaultFieldResolver, targetFieldName);
+          fieldConfig.resolve = defaultHoistFieldComposer(
+            fieldConfig.resolve || defaultFieldResolver,
+            targetFieldName,
+          );
         }
 
         // wrap user-defined composer to current field resolver or, if not preset, defaultFieldResolver

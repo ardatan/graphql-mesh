@@ -49,7 +49,9 @@ export function startServer(PORT: number | string) {
   });
 
   app.get('/api/eateries/:eatery/breads/:breadName/dishes/:dishKey', (req, res) => {
-    res.send(`Parameters combined: ${req.params.eatery} ${req.params.breadName} ${req.params.dishKey}`);
+    res.send(
+      `Parameters combined: ${req.params.eatery} ${req.params.breadName} ${req.params.dishKey}`,
+    );
   });
 
   // TODO: better types for this
@@ -71,7 +73,10 @@ export function startServer(PORT: number | string) {
 
   app.get('/api/strictGetOperation', (req, res) => {
     if (req.headers['content-type']) {
-      res.status(400).set('Content-Type', 'text/plain').send('Get request should not have Content-Type');
+      res
+        .status(400)
+        .set('Content-Type', 'text/plain')
+        .send('Get request should not have Content-Type');
     } else {
       res.set('Content-Type', 'text/plain').send('Perfect!');
     }

@@ -19,7 +19,10 @@ describe('Stack Exchange', () => {
     expect(printSchemaWithDirectives(mesh.schema)).toMatchSnapshot();
   });
   it('should return the correct data', async () => {
-    const listQuestionsQuery = await readFile(join(__dirname, '..', 'list-questions.query.graphql'), 'utf-8');
+    const listQuestionsQuery = await readFile(
+      join(__dirname, '..', 'list-questions.query.graphql'),
+      'utf-8',
+    );
     const result = await mesh.execute(listQuestionsQuery, {});
     expect(result).toMatchObject({
       data: {

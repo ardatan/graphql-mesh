@@ -46,7 +46,10 @@ export function startServer() {
     if (req.body.userName && req.body.name) {
       const device = req.body;
       Devices[device.name] = device;
-      pubsub.publish(`webhook:post:/api/${device.userName}/devices/${req.method.toUpperCase()}`, device);
+      pubsub.publish(
+        `webhook:post:/api/${device.userName}/devices/${req.method.toUpperCase()}`,
+        device,
+      );
       res.status(200).send(device);
     } else {
       res.status(404).send({
@@ -71,7 +74,10 @@ export function startServer() {
         const device = req.body;
         delete Devices[req.params.deviceName];
         Devices[device.deviceName] = device;
-        pubsub.publish(`webhook:post:/api/${device.userName}/devices/${req.method.toUpperCase()}`, device);
+        pubsub.publish(
+          `webhook:post:/api/${device.userName}/devices/${req.method.toUpperCase()}`,
+          device,
+        );
         res.status(200).send(device);
       } else {
         res.status(404).send({

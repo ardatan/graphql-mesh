@@ -4,7 +4,8 @@ import { PackageCmd, Callout } from '@theguild/components'
 
 ![image](https://user-images.githubusercontent.com/20847995/79219047-333ccb00-7e5a-11ea-9fce-57ff137ba924.png)
 
-This handler allows you to load remote GraphQL schemas and use them with schema-stitching based on `graphql-tools`.
+This handler allows you to load remote GraphQL schemas and use them with schema-stitching based on
+`graphql-tools`.
 
 To get started, install the handler library:
 
@@ -32,7 +33,8 @@ sources:
 
 ## Fetching SDL or introspection from CDN or any other schema registry tool
 
-Let's say the introspection disabled in your production environment of your GraphQL source, and you want to provide your SDL or introspection seperately;
+Let's say the introspection disabled in your production environment of your GraphQL source, and you
+want to provide your SDL or introspection seperately;
 
 ```yaml filename=".meshrc.yaml"
 sources:
@@ -46,7 +48,8 @@ sources:
           Authorization: Bearer {env.GITHUB_TOKEN}
 ```
 
-> In this case, CLI's `build` command won't save the introspection in the artifacts, so your Mesh won't start if `source` URL is down.
+> In this case, CLI's `build` command won't save the introspection in the artifacts, so your Mesh
+> won't start if `source` URL is down.
 
 ### Hive Integration
 
@@ -65,9 +68,11 @@ sources:
 
 ## Local Schemas
 
-We recommend providing local schema by using the `additionalTypeDefs` and `additionalResolvers` configuration options.
+We recommend providing local schema by using the `additionalTypeDefs` and `additionalResolvers`
+configuration options.
 
-However, it is also possible to use a local GraphQL Schema instance as a GraphQL Mesh source, as showcased below:
+However, it is also possible to use a local GraphQL Schema instance as a GraphQL Mesh source, as
+showcased below:
 
 ```yaml filename=".meshrc.yaml"
 sources:
@@ -95,10 +100,12 @@ export default makeExecutableSchema({
 
 ## Fetch Strategies and Multiple HTTP endpoints for the same source
 
-If you want to have an advanced fetch strategy for the GraphQL source such as retrying twice or timeout in 30 seconds etc.
-Also, you can have different HTTP endpoints for a single source, and you can configure Mesh to get a better execution flow.
+If you want to have an advanced fetch strategy for the GraphQL source such as retrying twice or
+timeout in 30 seconds etc. Also, you can have different HTTP endpoints for a single source, and you
+can configure Mesh to get a better execution flow.
 
-For example, you can make a request to both endpoints and return the fastest response with `race` strategy.
+For example, you can make a request to both endpoints and return the fastest response with `race`
+strategy.
 
 All `fetch` strategies can be combined to create the ultimate execution flow:
 
@@ -139,7 +146,8 @@ sources:
 <details>
  <summary>`fallback`</summary>
 
-The `fallback` mechanism allow you to specify use more than one GraphQL endpoint, for the same source.
+The `fallback` mechanism allow you to specify use more than one GraphQL endpoint, for the same
+source.
 
 This is helpful if you have a fallback endpoint for the same GraphQL API.
 
@@ -161,9 +169,11 @@ sources:
 <details>
  <summary>`race`</summary>
 
-The `race` mechanism allow you to specify use more than one GraphQL endpoint, for the same source, and race on every execution.
+The `race` mechanism allow you to specify use more than one GraphQL endpoint, for the same source,
+and race on every execution.
 
-If you have different places that service is deployed, this is useful to get the fastest response by racing them.
+If you have different places that service is deployed, this is useful to get the fastest response by
+racing them.
 
 ```yaml filename=".meshrc.yaml" {5}
 sources:
