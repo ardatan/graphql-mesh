@@ -13,6 +13,7 @@ import {
   GraphQLSchema,
   isInputObjectType,
   isEnumType,
+  getNamedType,
 } from 'graphql';
 import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
 import { MapperKind, mapSchema, renameType } from '@graphql-tools/utils';
@@ -50,27 +51,7 @@ const defaultResolverComposer =
     const originalResult = resolveFn(
       root,
       // map renamed arguments to their original value
-      argsMap
-        ? Object.keys(args).reduce((acc, key: string) => {
-            if (!argsMap[key]) {
-              return { ...acc, [key]: args[key] };
-            }
-
-            const argKey = argsMap[key];
-            const mappedArgKeyIsObject = isObject(argKey);
-            const newArgName = Object.keys(argKey)[0];
-
-            return {
-              ...acc,
-              [mappedArgKeyIsObject ? newArgName : argKey]: mappedArgKeyIsObject
-                ? Object.entries(args[key]).reduce((acc, [key, value]) => {
-                    const oldInputFieldName = argKey[newArgName][key];
-                    return { ...acc, [oldInputFieldName || key]: value };
-                  }, {})
-                : args[key],
-            };
-          }, {})
-        : args,
+      argsMap ? argsFromArgMap(argsMap, args) : args,
       context,
       // map renamed field name to its original value
       originalFieldName ? { ...info, fieldName: originalFieldName } : info,
@@ -197,27 +178,16 @@ export default class NamingConventionTransform implements MeshTransform {
                 const useArgName = newArgName || argName;
                 const argIsInputObjectType = isInputObjectType(argConfig.type);
 
-                if (argName !== useArgName || argIsInputObjectType) {
-                  // take advantage of the loop to map arg name from Old to New
-                  argsMap[useArgName] = !argIsInputObjectType
-                    ? argName
-                    : {
-                        [argName]: Object.keys(
-                          (argConfig.type as GraphQLInputObjectType).toConfig().fields,
-                        ).reduce((inputFields, inputFieldName) => {
-                          if (Number.isFinite(inputFieldName)) return inputFields;
-
-                          const newInputFieldName = fieldNamingConventionFn(
-                            inputFieldName as string,
-                          );
-                          return newInputFieldName === inputFieldName
-                            ? inputFields
-                            : {
-                                ...inputFields,
-                                [fieldNamingConventionFn(inputFieldName as string)]: inputFieldName,
-                              };
-                        }, {}),
-                      };
+                if (argIsInputObjectType) {
+                  argsMap[useArgName] = {
+                    name: argName,
+                    fields: generateArgsMapForInput(
+                      argConfig.type as GraphQLInputObjectType,
+                      fieldNamingConventionFn,
+                    ),
+                  };
+                } else if (argName !== useArgName) {
+                  argsMap[useArgName] = argName;
                 }
 
                 return {
@@ -255,4 +225,68 @@ export default class NamingConventionTransform implements MeshTransform {
       }),
     });
   }
+}
+
+interface ArgsMap {
+  [argName: string]:
+    | string
+    | {
+        name: string;
+        fields: ArgsMap;
+      };
+}
+
+function generateArgsMapForInput(
+  input: GraphQLInputObjectType,
+  fieldNamingConventionFn?: null | ((input: string) => string),
+): ArgsMap {
+  const inputConfig = input.toConfig();
+  const inputFields = inputConfig.fields;
+  const argsMap = {};
+
+  Object.keys(inputFields).forEach(argName => {
+    if (typeof argName === 'number') return;
+
+    const newArgName = fieldNamingConventionFn ? fieldNamingConventionFn(argName) : argName;
+    const argConfig = inputFields[argName];
+
+    // Unwind any list
+    const type = getNamedType(argConfig.type);
+
+    const argIsInputObjectType = isInputObjectType(type);
+
+    if (argIsInputObjectType) {
+      argsMap[newArgName] = {
+        name: argName,
+        fields: generateArgsMapForInput(type as GraphQLInputObjectType, fieldNamingConventionFn),
+      };
+    } else {
+      argsMap[newArgName] = argName;
+    }
+  });
+
+  return argsMap;
+}
+
+// Map back from new arg name to the original one
+function argsFromArgMap(argMap: ArgsMap, args: any) {
+  const originalArgs = {};
+  Object.keys(args).forEach(newArgName => {
+    if (typeof newArgName !== 'string') return;
+
+    const argMapVal = argMap[newArgName];
+    const originalArgName = typeof argMapVal === 'string' ? argMapVal : argMapVal.name;
+    const val = args[newArgName];
+    if (Array.isArray(val) && typeof argMapVal !== 'string') {
+      originalArgs[originalArgName] = val.map(v =>
+        isObject(v) ? argsFromArgMap(argMapVal.fields, v) : v,
+      );
+    } else if (isObject(val) && typeof argMapVal !== 'string') {
+      originalArgs[originalArgName] = argsFromArgMap(argMapVal.fields, val);
+    } else {
+      originalArgs[originalArgName] = val;
+    }
+  });
+
+  return originalArgs;
 }
