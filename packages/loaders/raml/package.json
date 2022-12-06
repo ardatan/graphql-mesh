@@ -1,6 +1,7 @@
 {
   "name": "@omnigraph/raml",
   "version": "0.7.44",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -50,6 +51,5 @@
   "sideEffects": false,
   "typescript": {
     "definition": "dist/typings/index.d.ts"
-  },
-  "type": "module"
+  }
 }

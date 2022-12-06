@@ -1,6 +1,7 @@
 {
   "name": "@omnigraph/soap",
   "version": "0.2.3",
+  "type": "module",
   "license": "MIT",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -43,6 +44,5 @@
   "sideEffects": false,
   "typescript": {
     "definition": "dist/typings/index.d.ts"
-  },
-  "type": "module"
+  }
 }

@@ -39,8 +39,8 @@
     "tslib": "^2.4.0"
   },
   "publishConfig": {
-    "directory": "dist",
-    "access": "public"
+    "access": "public",
+    "directory": "dist"
   },
   "sideEffects": false,
   "buildOptions": {

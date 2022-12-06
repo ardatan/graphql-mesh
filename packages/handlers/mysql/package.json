@@ -1,6 +1,7 @@
 {
   "name": "@graphql-mesh/mysql",
   "version": "0.17.33",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -59,6 +60,5 @@
   },
   "typescript": {
     "definition": "dist/typings/index.d.ts"
-  },
-  "type": "module"
+  }
 }

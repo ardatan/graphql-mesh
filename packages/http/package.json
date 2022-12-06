@@ -1,6 +1,7 @@
 {
   "name": "@graphql-mesh/http",
   "version": "0.2.20",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -57,6 +58,5 @@
   "sideEffects": false,
   "typescript": {
     "definition": "dist/typings/index.d.ts"
-  },
-  "type": "module"
+  }
 }

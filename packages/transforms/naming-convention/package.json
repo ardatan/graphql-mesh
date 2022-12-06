@@ -1,6 +1,7 @@
 {
   "name": "@graphql-mesh/transform-naming-convention",
   "version": "0.12.4",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -53,6 +54,5 @@
   "sideEffects": false,
   "typescript": {
     "definition": "dist/typings/index.d.ts"
-  },
-  "type": "module"
+  }
 }

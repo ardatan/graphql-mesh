@@ -1,6 +1,7 @@
 {
   "name": "@graphql-mesh/transform-cache",
   "version": "0.12.67",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -51,6 +52,5 @@
   "sideEffects": false,
   "typescript": {
     "definition": "dist/typings/index.d.ts"
-  },
-  "type": "module"
+  }
 }

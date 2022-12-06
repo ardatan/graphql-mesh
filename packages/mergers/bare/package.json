@@ -1,6 +1,7 @@
 {
   "name": "@graphql-mesh/merger-bare",
   "version": "0.15.51",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -45,6 +46,5 @@
   "sideEffects": false,
   "typescript": {
     "definition": "dist/typings/index.d.ts"
-  },
-  "type": "module"
+  }
 }

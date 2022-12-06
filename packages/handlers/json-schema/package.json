@@ -1,6 +1,7 @@
 {
   "name": "@graphql-mesh/json-schema",
   "version": "0.35.38",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -50,6 +51,5 @@
   "sideEffects": false,
   "typescript": {
     "definition": "dist/typings/index.d.ts"
-  },
-  "type": "module"
+  }
 }

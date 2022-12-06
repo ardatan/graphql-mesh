@@ -1,19 +1,15 @@
 {
   "name": "@graphql-mesh/urql-exchange",
   "version": "8.0.6",
-  "license": "MIT",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
     "directory": "packages/urql"
   },
-  "sideEffects": false,
+  "license": "MIT",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
-  "typings": "dist/typings/index.d.ts",
-  "typescript": {
-    "definition": "dist/typings/index.d.ts"
-  },
   "exports": {
     ".": {
       "require": {
@@ -31,6 +27,13 @@
     },
     "./package.json": "./package.json"
   },
+  "typings": "dist/typings/index.d.ts",
+  "peerDependencies": {
+    "@graphql-mesh/runtime": "^0.44.32",
+    "@urql/core": "^2.4.3",
+    "graphql": "^15.2.0 || ^16.0.0",
+    "wonka": "^4.0.15"
+  },
   "dependencies": {
     "@graphql-tools/utils": "9.1.1",
     "tslib": "^2.4.0"
@@ -39,15 +42,12 @@
     "@urql/core": "2.6.1",
     "wonka": "4.0.15"
   },
-  "peerDependencies": {
-    "@graphql-mesh/runtime": "^0.44.32",
-    "graphql": "^15.2.0 || ^16.0.0",
-    "@urql/core": "^2.4.3",
-    "wonka": "^4.0.15"
-  },
   "publishConfig": {
-    "directory": "dist",
-    "access": "public"
+    "access": "public",
+    "directory": "dist"
   },
-  "type": "module"
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
+  }
 }

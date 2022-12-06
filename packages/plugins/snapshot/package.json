@@ -1,6 +1,7 @@
 {
   "name": "@graphql-mesh/plugin-snapshot",
   "version": "0.0.14",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -46,6 +47,5 @@
   "sideEffects": false,
   "typescript": {
     "definition": "dist/typings/index.d.ts"
-  },
-  "type": "module"
+  }
 }

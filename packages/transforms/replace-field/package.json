@@ -1,6 +1,7 @@
 {
   "name": "@graphql-mesh/transform-replace-field",
   "version": "0.3.112",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -44,12 +45,11 @@
     "@graphql-tools/schema": "9.0.10"
   },
   "publishConfig": {
-    "directory": "dist",
-    "access": "public"
+    "access": "public",
+    "directory": "dist"
   },
   "sideEffects": false,
   "typescript": {
     "definition": "dist/typings/index.d.ts"
-  },
-  "type": "module"
+  }
 }

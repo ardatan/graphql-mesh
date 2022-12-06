@@ -1,6 +1,7 @@
 {
   "name": "@graphql-mesh/tuql",
   "version": "0.6.32",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
@@ -46,6 +47,5 @@
   },
   "typescript": {
     "definition": "dist/typings/index.d.ts"
-  },
-  "type": "module"
+  }
 }
