@@ -5,6 +5,7 @@ import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 
 export default function useMeshHive(
   pluginOptions: MeshPluginOptions<YamlConfig.HivePlugin>,
+  // eslint-disable-next-line @typescript-eslint/ban-types
 ): MeshPlugin<{}> {
   const token = stringInterpolator.parse(pluginOptions.token, {
     env: process.env,

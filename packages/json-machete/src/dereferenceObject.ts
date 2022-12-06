@@ -59,7 +59,6 @@ export function getCwd(path: string) {
   return isUrl(path) ? getCwdForUrl(path) : pathModule.dirname(path);
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 export async function dereferenceObject<T extends object, TRoot = T>(
   obj: T,
   {
