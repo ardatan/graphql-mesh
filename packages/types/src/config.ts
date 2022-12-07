@@ -843,6 +843,7 @@ export interface OpenapiHandler {
   queryParams?: {
     [k: string]: any;
   };
+  bundle?: boolean;
 }
 export interface OASSelectQueryOrMutationFieldConfig {
   /**
@@ -904,6 +905,7 @@ export interface RAMLHandler {
   ignoreErrorResponses?: boolean;
   selectQueryOrMutationField?: RAMLSelectQueryOrMutationFieldConfig[];
   queryParams?: any;
+  bundle?: boolean;
 }
 export interface RAMLSelectQueryOrMutationFieldConfig {
   /**

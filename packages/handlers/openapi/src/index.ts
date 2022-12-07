@@ -86,9 +86,11 @@ export default class OpenAPIHandler implements MeshHandler {
           }),
         ),
         pubsub: this.pubsub,
-        bundle: true,
+        bundle: this.config.bundle,
       });
-      await this.bundleProxy.set(schema.extensions!.bundle);
+      if (this.config.bundle) {
+        await this.bundleProxy.set(schema.extensions!.bundle);
+      }
       return schema;
     });
   }
