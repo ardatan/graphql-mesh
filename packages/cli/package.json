@@ -51,7 +51,7 @@
     "@graphql-mesh/store": "0.8.65",
     "@graphql-mesh/types": "0.87.1",
     "@graphql-mesh/utils": "0.42.9",
-    "@graphql-tools/utils": "9.1.1",
+    "@graphql-tools/utils": "9.1.3",
     "ajv": "8.11.2",
     "change-case": "4.1.2",
     "cosmiconfig": "8.0.0",
