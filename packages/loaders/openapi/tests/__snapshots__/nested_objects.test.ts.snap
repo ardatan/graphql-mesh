@@ -5,18 +5,24 @@ exports[`OpanAPI: nested objects should generate the schema correctly 1`] = `
   query: Query
 }
 
-directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
+directive @oneOf on OBJECT | INTERFACE
 
-type Query {
+directive @statusCodeTypeName(typeName: String, statusCode: ID) repeatable on UNION
+
+directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+
+directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+
+type Query @globalOptions(sourceName: "example_api", endpoint: "http://localhost:{context.port}", queryStringOptions: "{\\"allowDots\\":true}") {
   "Search for documents in a collection that match the search criteria."
   searchCollection(
     "The name of the collection to search for the document under"
     collectionName: String!
     searchParameters: SearchParameters_Input!
-  ): searchCollection_response
+  ): searchCollection_response @httpOperation(path: "/collections/{args.collectionName}/documents/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"searchParameters\\":\\"searchParameters\\"}")
 }
 
-union searchCollection_response = SearchResult | ApiResponse
+union searchCollection_response @statusCodeTypeName(statusCode: 200, typeName: "SearchResult") @statusCodeTypeName(statusCode: 400, typeName: "ApiResponse") @statusCodeTypeName(statusCode: 404, typeName: "ApiResponse") = SearchResult | ApiResponse
 
 type SearchResult {
   facet_counts: [FacetCounts]
@@ -170,5 +176,19 @@ input SearchParameters_Input {
   min_len_1typo: Int
   "Minimum word length for 2-typo correction to be applied. The value of num_typos is still treated as the maximum allowed typos."
   min_len_2typo: Int
+}
+
+scalar ObjMap
+
+enum HTTPMethod {
+  GET
+  HEAD
+  POST
+  PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
+  PATCH
 }"
 `;

@@ -2,5 +2,5 @@ sources:
   - name: PetStore
     handler:
       openapi:
-        baseUrl: https://petstore.swagger.io/v2/
+        endpoint: https://petstore.swagger.io/v2/
         source: https://petstore.swagger.io/v2/swagger.json

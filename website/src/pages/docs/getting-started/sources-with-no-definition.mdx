@@ -36,7 +36,7 @@ sources:
   - name: MyApi
     handler:
       jsonSchema:
-        baseUrl: https://some-service-url/endpoint-path/
+        endpoint: https://some-service-url/endpoint-path/
         operations:
           - type: Query
             field: users
@@ -66,7 +66,7 @@ sources:
   - name: Books
     handler:
       jsonSchema:
-        baseUrl: http://localhost:3002
+        endpoint: http://localhost:3002
 ```
 
 We need to provide some `operations` for the `GET /book/:id` along with some sample data.
@@ -99,7 +99,7 @@ sources:
   - name: Books
     handler:
       jsonSchema:
-        baseUrl: http://localhost:3002
+        endpoint: http://localhost:3002
         operations:
           - type: Query
             field: book
@@ -163,7 +163,7 @@ sources:
   - name: Books
     handler:
       jsonSchema:
-        baseUrl: http://localhost:3002
+        endpoint: http://localhost:3002
         operations:
           - type: Query
             field: book
@@ -199,7 +199,7 @@ sources:
   - name: Books
     handler:
       jsonSchema:
-        baseUrl: http://localhost:3002
+        endpoint: http://localhost:3002
         operations:
           - type: Query
             field: book
@@ -223,7 +223,7 @@ sources:
   - name: Books
     handler:
       jsonSchema:
-        baseUrl: http://localhost:3002
+        endpoint: http://localhost:3002
         operations:
           - type: Query
             field: search
@@ -251,7 +251,7 @@ sources:
   - name: Books
     handler:
       jsonSchema:
-        baseUrl: http://localhost:3002
+        endpoint: http://localhost:3002
         operations:
           - type: Mutation
             field: addBook
@@ -309,7 +309,7 @@ sources:
   - name: Books
     handler:
       jsonSchema:
-        baseUrl: http://localhost:3002
+        endpoint: http://localhost:3002
         operations:
           - type: Mutation
             field: addBook

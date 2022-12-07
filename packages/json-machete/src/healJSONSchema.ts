@@ -45,7 +45,7 @@ export const AnySchema = {
 
 export async function healJSONSchema(
   schema: JSONSchema,
-  { logger = new DefaultLogger('healJSONSchema') }: { logger?: Logger } = {}
+  { logger = new DefaultLogger('healJSONSchema') }: { logger?: Logger } = {},
 ): Promise<JSONSchema> {
   const schemaByTitle = new Map<string, JSONSchemaObject>();
   const anySchemaOneOfInspect = inspect(AnySchema.oneOf);
@@ -54,7 +54,10 @@ export async function healJSONSchema(
     {
       enter: async function healSubschema(subSchema, { path }) {
         if (typeof subSchema === 'object') {
-          if (subSchema.title === 'Any' || (subSchema.oneOf && inspect(subSchema.oneOf) === anySchemaOneOfInspect)) {
+          if (
+            subSchema.title === 'Any' ||
+            (subSchema.oneOf && inspect(subSchema.oneOf) === anySchemaOneOfInspect)
+          ) {
             return AnySchema;
           }
           if (subSchema.title) {
@@ -72,10 +75,16 @@ export async function healJSONSchema(
                 schemaByTitle.set(subSchema.title, subSchema);
               }
             }
-          } else if (Object.keys(subSchema).length === 1 && subSchema.type && !Array.isArray(subSchema.type)) {
+          } else if (
+            Object.keys(subSchema).length === 1 &&
+            subSchema.type &&
+            !Array.isArray(subSchema.type)
+          ) {
             return subSchema;
           }
-          const keys = Object.keys(subSchema).filter(key => key !== 'readOnly' && key !== 'writeOnly');
+          const keys = Object.keys(subSchema).filter(
+            key => key !== 'readOnly' && key !== 'writeOnly',
+          );
           if (keys.length === 0) {
             logger.debug(`${path} has an empty definition. Adding an object definition.`);
             subSchema.type = 'object';
@@ -83,20 +92,26 @@ export async function healJSONSchema(
           }
           if (typeof subSchema.additionalProperties === 'object') {
             const additionalPropertiesKeys = Object.keys(subSchema.additionalProperties).filter(
-              key => key !== 'readOnly' && key !== 'writeOnly'
+              key => key !== 'readOnly' && key !== 'writeOnly',
             );
             if (
               additionalPropertiesKeys.length === 0 ||
-              (additionalPropertiesKeys.length === 1 && subSchema.additionalProperties.type === 'string')
+              (additionalPropertiesKeys.length === 1 &&
+                subSchema.additionalProperties.type === 'string')
             ) {
               logger.debug(
-                `${path} has an empty additionalProperties object. So this is invalid. Replacing it with 'true'`
+                `${path} has an empty additionalProperties object. So this is invalid. Replacing it with 'true'`,
               );
               subSchema.additionalProperties = true;
             }
           }
           // Really edge case, but we need to support it
-          if (subSchema.allOf != null && subSchema.allOf.length === 1 && subSchema.allOf[0].oneOf && subSchema.oneOf) {
+          if (
+            subSchema.allOf != null &&
+            subSchema.allOf.length === 1 &&
+            subSchema.allOf[0].oneOf &&
+            subSchema.oneOf
+          ) {
             subSchema.oneOf.push(...subSchema.allOf[0].oneOf);
             delete subSchema.allOf;
           }
@@ -142,7 +157,9 @@ export async function healJSONSchema(
           if (subSchema.description != null) {
             subSchema.description = subSchema.description.trim();
             if (keys.length === 1) {
-              logger.debug(`${path} has a description definition but has nothing else. Adding an object definition.`);
+              logger.debug(
+                `${path} has a description definition but has nothing else. Adding an object definition.`,
+              );
               subSchema.type = 'object';
               subSchema.additionalProperties = true;
             }
@@ -150,23 +167,29 @@ export async function healJSONSchema(
           // Some JSON Schemas use this broken pattern and refer the type using `items`
           if (subSchema.type === 'object' && subSchema.items) {
             logger.debug(
-              `${path} has an object definition but with "items" which is not valid. So setting "items" to the actual definition.`
+              `${path} has an object definition but with "items" which is not valid. So setting "items" to the actual definition.`,
             );
             const realSubschema = subSchema.items;
             delete subSchema.items;
             subSchema = realSubschema;
           }
           if (subSchema.properties && subSchema.type !== 'object') {
-            logger.debug(`${path} has "properties" with no type defined. Adding a type property with "object" value.`);
+            logger.debug(
+              `${path} has "properties" with no type defined. Adding a type property with "object" value.`,
+            );
             subSchema.type = 'object';
           }
           if (typeof subSchema.example === 'object' && !subSchema.type) {
-            logger.debug(`${path} has an example object but no type defined. Setting type to "object".`);
+            logger.debug(
+              `${path} has an example object but no type defined. Setting type to "object".`,
+            );
             subSchema.type = 'object';
           }
           // Items only exist in arrays
           if (subSchema.items) {
-            logger.debug(`${path} has an items definition but no type defined. Setting type to "array".`);
+            logger.debug(
+              `${path} has an items definition but no type defined. Setting type to "array".`,
+            );
             subSchema.type = 'array';
             if (subSchema.properties) {
               delete subSchema.properties;
@@ -174,11 +197,13 @@ export async function healJSONSchema(
             // Items should be an object
             if (Array.isArray(subSchema.items)) {
               if (subSchema.items.length === 0) {
-                logger.debug(`${path} has an items array with a single value. Setting items to an object.`);
+                logger.debug(
+                  `${path} has an items array with a single value. Setting items to an object.`,
+                );
                 subSchema.items = subSchema.items[0];
               } else {
                 logger.debug(
-                  `${path} has an items array with multiple values. Setting items to an object with oneOf definition.`
+                  `${path} has an items array with multiple values. Setting items to an object with oneOf definition.`,
                 );
                 subSchema.items = {
                   oneOf: subSchema.items,
@@ -190,9 +215,14 @@ export async function healJSONSchema(
           if (!subSchema.type) {
             logger.debug(`${path} has no type defined. Trying to find it.`);
             // If required exists without properties
-            if (subSchema.required && !subSchema.properties && !subSchema.anyOf && !subSchema.allOf) {
+            if (
+              subSchema.required &&
+              !subSchema.properties &&
+              !subSchema.anyOf &&
+              !subSchema.allOf
+            ) {
               logger.debug(
-                `${path} has a required definition but no properties or oneOf/allOf. Setting missing properties with Any schema.`
+                `${path} has a required definition but no properties or oneOf/allOf. Setting missing properties with Any schema.`,
               );
               // Add properties
               subSchema.properties = {};
@@ -201,26 +231,36 @@ export async function healJSONSchema(
               }
             }
             // Properties only exist in objects
-            if (subSchema.properties || subSchema.patternProperties || 'additionalProperties' in subSchema) {
+            if (
+              subSchema.properties ||
+              subSchema.patternProperties ||
+              'additionalProperties' in subSchema
+            ) {
               logger.debug(
-                `${path} has properties or patternProperties or additionalProperties. Setting type to "object".`
+                `${path} has properties or patternProperties or additionalProperties. Setting type to "object".`,
               );
               subSchema.type = 'object';
             }
             switch (subSchema.format) {
               case 'int64':
               case 'int32':
-                logger.debug(`${path} has a format of ${subSchema.format}. Setting type to "integer".`);
+                logger.debug(
+                  `${path} has a format of ${subSchema.format}. Setting type to "integer".`,
+                );
                 subSchema.type = 'integer';
                 break;
               case 'float':
               case 'double':
-                logger.debug(`${path} has a format of ${subSchema.format}. Setting type to "number".`);
+                logger.debug(
+                  `${path} has a format of ${subSchema.format}. Setting type to "number".`,
+                );
                 subSchema.type = 'number';
                 break;
               default:
                 if (subSchema.format != null) {
-                  logger.debug(`${path} has a format of ${subSchema.format}. Setting type to "string".`);
+                  logger.debug(
+                    `${path} has a format of ${subSchema.format}. Setting type to "string".`,
+                  );
                   subSchema.type = 'string';
                 }
             }
@@ -229,12 +269,18 @@ export async function healJSONSchema(
               subSchema.type = 'number';
             }
           }
-          if (subSchema.type === 'string' && !subSchema.format && (subSchema.examples || subSchema.example)) {
+          if (
+            subSchema.type === 'string' &&
+            !subSchema.format &&
+            (subSchema.examples || subSchema.example)
+          ) {
             const examples = asArray(subSchema.examples || subSchema.example || []);
             if (examples?.length) {
               const { format } = toJsonSchema(examples[0]);
               if (format && format !== 'utc-millisec' && format !== 'style') {
-                logger.debug(`${path} has a format of ${format} according to the example. Setting type to "string".`);
+                logger.debug(
+                  `${path} has a format of ${format} according to the example. Setting type to "string".`,
+                );
                 subSchema.format = format;
               }
             }
@@ -246,16 +292,18 @@ export async function healJSONSchema(
           if (subSchema.format) {
             if (!JSONSchemaStringFormats.includes(subSchema.format)) {
               logger.debug(
-                `${path} has a format of ${subSchema.format}. It should be one of ${JSONSchemaStringFormats.join(
-                  ', '
-                )}.`
+                `${path} has a format of ${
+                  subSchema.format
+                }. It should be one of ${JSONSchemaStringFormats.join(', ')}.`,
               );
               delete subSchema.format;
             }
           }
           if (subSchema.required) {
             if (!Array.isArray(subSchema.required)) {
-              logger.debug(`${path} has a required definition but it is not an array. Removing it.`);
+              logger.debug(
+                `${path} has a required definition but it is not an array. Removing it.`,
+              );
               delete subSchema.required;
             }
           }
@@ -288,16 +336,27 @@ export async function healJSONSchema(
                 mode: 'first',
               },
               postProcessFnc(type, schema, value, defaultFunc) {
-                if (schema.type === 'object' && !schema.properties && Object.keys(value).length === 0) {
+                if (
+                  schema.type === 'object' &&
+                  !schema.properties &&
+                  Object.keys(value).length === 0
+                ) {
                   return AnySchema as any;
                 }
                 return defaultFunc(type, schema, value);
               },
             });
             subSchema.type = asArray(generatedSchema.type)[0] as any;
-            subSchema.properties = generatedSchema.properties;
+            if (generatedSchema.properties) {
+              subSchema.properties = generatedSchema.properties;
+            }
+            if (generatedSchema.items) {
+              subSchema.items = generatedSchema.items;
+            }
             // If type for properties is already given, use it
-            logger.debug(`${path} has an example but no type defined. Setting type to ${subSchema.type}.`);
+            logger.debug(
+              `${path} has an example but no type defined. Setting type to ${subSchema.type}.`,
+            );
             // if (typeof subSchema.additionalProperties === 'object') {
             //   for (const propertyName in subSchema.properties) {
             //     subSchema.properties[propertyName] = subSchema.additionalProperties;
@@ -314,14 +373,21 @@ export async function healJSONSchema(
             subSchema.type = 'null';
             delete subSchema.const;
           }
-          if (!subSchema.title && !subSchema.$ref && subSchema.type !== 'array' && !subSchema.items) {
+          if (
+            !subSchema.title &&
+            !subSchema.$ref &&
+            subSchema.type !== 'array' &&
+            !subSchema.items
+          ) {
             const realPath = subSchema.$resolvedRef || path;
             // Try to get definition name if missing
             const splitByDefinitions = realPath.includes('/components/schemas/')
               ? realPath.split('/components/schemas/')
               : realPath.split('/definitions/');
             const maybeDefinitionBasedPath =
-              splitByDefinitions.length > 1 ? splitByDefinitions[splitByDefinitions.length - 1] : realPath;
+              splitByDefinitions.length > 1
+                ? splitByDefinitions[splitByDefinitions.length - 1]
+                : realPath;
             const pathBasedName = maybeDefinitionBasedPath
               .split('~1')
               .join('/')
@@ -335,9 +401,14 @@ export async function healJSONSchema(
             switch (subSchema.type) {
               case 'string':
                 // If it has special pattern, use path based name because it is specific
-                if (subSchema.pattern || subSchema.maxLength || subSchema.minLength || subSchema.enum) {
+                if (
+                  subSchema.pattern ||
+                  subSchema.maxLength ||
+                  subSchema.minLength ||
+                  subSchema.enum
+                ) {
                   logger.debug(
-                    `${path} has a pattern or maxLength or minLength or enum but no title. Setting it to ${pathBasedName}`
+                    `${path} has a pattern or maxLength or minLength or enum but no title. Setting it to ${pathBasedName}`,
                   );
                   subSchema.title = pathBasedName;
                   // Otherwise use the format name
@@ -346,7 +417,9 @@ export async function healJSONSchema(
               case 'number':
               case 'integer':
                 if (subSchema.enum || subSchema.pattern) {
-                  logger.debug(`${path} has an enum or pattern but no title. Setting it to ${pathBasedName}`);
+                  logger.debug(
+                    `${path} has an enum or pattern but no title. Setting it to ${pathBasedName}`,
+                  );
                   subSchema.title = pathBasedName;
                   // Otherwise use the format name
                 }
@@ -378,9 +451,13 @@ export async function healJSONSchema(
               schemaByTitle.set(subSchema.title, subSchema);
             }
           }
-          if (subSchema.type === 'object' && subSchema.properties && Object.keys(subSchema.properties).length === 0) {
+          if (
+            subSchema.type === 'object' &&
+            subSchema.properties &&
+            Object.keys(subSchema.properties).length === 0
+          ) {
             logger.debug(
-              `${path} has an empty properties object. Removing it and adding "additionalProperties": true.`
+              `${path} has an empty properties object. Removing it and adding "additionalProperties": true.`,
             );
             delete subSchema.properties;
             subSchema.additionalProperties = true;
@@ -416,6 +493,6 @@ export async function healJSONSchema(
     {
       visitedSubschemaResultMap: new WeakMap(),
       path: '',
-    }
+    },
   );
 }

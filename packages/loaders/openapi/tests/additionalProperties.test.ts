@@ -1,47 +1,47 @@
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Response } from '@whatwg-node/fetch';
 import { createServerAdapter } from '@whatwg-node/server';
-import { execute, parse } from 'graphql';
+import { execute, GraphQLSchema, parse } from 'graphql';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 
-const serverAdapter = createServerAdapter(request => {
-  if (request.url.endsWith('/test')) {
-    return new Response(
-      JSON.stringify({
-        id: 1,
-        foo: {
-          bar: 'baz',
-        },
-        qux: {
-          quux: 'randomvalue',
-          quuz: {
-            corge: 'grault',
-          },
-          garply: {
-            corge: 'fred',
-          },
-        },
-      }),
-    );
-  }
-  return new Response('Not Found', { status: 404 });
-});
-
 describe('additionalProperties', () => {
-  it('should generate the schema correctly', async () => {
-    const schema = await loadGraphQLSchemaFromOpenAPI('additionalPropertiesTest', {
-      source: './fixtures/additionalProperties.json',
-      cwd: __dirname,
-    });
-    expect(printSchemaWithDirectives(schema)).toMatchSnapshot('schema');
+  let schema: GraphQLSchema;
+
+  const serverAdapter = createServerAdapter(async request => {
+    if (request.url.endsWith('/test')) {
+      return new Response(
+        JSON.stringify({
+          id: 1,
+          foo: {
+            bar: 'baz',
+          },
+          qux: {
+            quux: 'randomvalue',
+            quuz: {
+              corge: 'grault',
+            },
+            garply: {
+              corge: 'fred',
+            },
+          },
+        }),
+      );
+    }
+    return new Response('Not Found', { status: 404 });
   });
-  it('should return values correctly', async () => {
-    const schema = await loadGraphQLSchemaFromOpenAPI('additionalPropertiesTest', {
+
+  beforeAll(async () => {
+    schema = await loadGraphQLSchemaFromOpenAPI('additionalPropertiesTest', {
       source: './fixtures/additionalProperties.json',
-      baseUrl: 'http://localhost:3000',
+      endpoint: 'http://localhost:3000',
       cwd: __dirname,
       fetch: serverAdapter.fetch as any,
     });
+  });
+  it('should generate the schema correctly', async () => {
+    expect(printSchemaWithDirectives(schema)).toMatchSnapshot('schema');
+  });
+  it('should return values correctly', async () => {
     const result = await execute({
       schema,
       document: parse(/* GraphQL */ `
@@ -64,34 +64,32 @@ describe('additionalProperties', () => {
         }
       `),
     });
-    expect(result).toMatchInlineSnapshot(`
-      {
-        "data": {
-          "test": {
-            "foo": {
-              "bar": "baz",
-            },
-            "id": "1",
-            "qux": {
-              "additionalProperties": [
-                {
-                  "key": "quuz",
-                  "value": {
-                    "corge": "grault",
-                  },
+    expect(result).toMatchObject({
+      data: {
+        test: {
+          foo: {
+            bar: 'baz',
+          },
+          id: '1',
+          qux: {
+            additionalProperties: [
+              {
+                key: 'quuz',
+                value: {
+                  corge: 'grault',
                 },
-                {
-                  "key": "garply",
-                  "value": {
-                    "corge": "fred",
-                  },
+              },
+              {
+                key: 'garply',
+                value: {
+                  corge: 'fred',
                 },
-              ],
-              "quux": "randomvalue",
-            },
+              },
+            ],
+            quux: 'randomvalue',
           },
         },
-      }
-    `);
+      },
+    });
   });
 });

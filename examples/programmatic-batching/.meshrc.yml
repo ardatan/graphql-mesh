@@ -2,7 +2,7 @@ sources:
   - name: ExampleAPI
     handler:
       openapi:
-        baseUrl: http://localhost:4001
+        endpoint: http://localhost:4001
         source: ./example-api/openapi.json
 
 additionalTypeDefs: |

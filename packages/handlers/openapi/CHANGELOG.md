@@ -1929,7 +1929,7 @@
 
 ### Patch Changes
 
-- b45cb155d: fix(openapi): interpolate baseUrl string
+- b45cb155d: fix(openapi): interpolate endpoint string
 
 ## 0.18.5
 
@@ -2226,13 +2226,13 @@
 
 ### Patch Changes
 
-- 9354aeba: fix(openapi): remove misleading baseUrl warning
+- 9354aeba: fix(openapi): remove misleading endpoint warning
 
 ## 0.12.9
 
 ### Patch Changes
 
-- 938cca26: fix(openapi): fix handling default success code and no more get baseUrl from context
+- 938cca26: fix(openapi): fix handling default success code and no more get endpoint from context
 - Updated dependencies [938cca26]
   - @graphql-mesh/types@0.30.0
 
@@ -2720,7 +2720,7 @@
 
 ### Patch Changes
 
-- df61cfa5: fix(openapi): handle missing baseUrl properly
+- df61cfa5: fix(openapi): handle missing endpoint properly
 - ccede377: Remove heavy dependencies from OpenAPI handler
 - Updated dependencies [ccede377]
   - @graphql-mesh/types@0.3.0

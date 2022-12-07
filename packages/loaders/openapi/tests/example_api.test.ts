@@ -1,26 +1,35 @@
 /* eslint-disable import/no-nodejs-modules */
-import { execute, graphql, GraphQLInputObjectType, GraphQLObjectType, GraphQLSchema, parse, validate } from 'graphql';
+import {
+  execute,
+  graphql,
+  GraphQLInputObjectType,
+  GraphQLObjectType,
+  GraphQLSchema,
+  parse,
+  validate,
+} from 'graphql';
 import 'json-bigint-patch';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 
 import { startServer } from './example_api_server.js';
 import { fetch } from '@whatwg-node/fetch';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { createBundle, OpenAPILoaderOptions } from '../src/index.js';
+import { OpenAPILoaderOptions } from '../src/index.js';
 import { Server } from 'http';
 import { AddressInfo } from 'net';
 
 describe('example_api', () => {
   let createdSchema: GraphQLSchema;
-  let baseUrl: string;
+  let port: number;
   let server: Server;
+  const endpoint = 'http://localhost:{context.port}/api';
 
   beforeAll(async () => {
     server = await startServer();
-    baseUrl = `http://localhost:${(server.address() as AddressInfo).port}/api`;
+    port = (server.address() as AddressInfo).port;
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api', {
       fetch,
-      baseUrl,
+      endpoint,
       source: './fixtures/example_oas.json',
       cwd: __dirname,
     });
@@ -34,16 +43,6 @@ describe('example_api', () => {
 
   it('should generate the schema correctly', () => {
     expect(printSchemaWithDirectives(createdSchema)).toMatchSnapshot();
-  });
-
-  it('should generate the bundle correctly', async () => {
-    expect(
-      await createBundle('example_api', {
-        fetch,
-        source: './fixtures/example_oas.json',
-        cwd: __dirname,
-      })
-    ).toMatchSnapshot();
   });
 
   it('should get descriptions', async () => {
@@ -70,6 +69,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -89,6 +91,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -110,6 +115,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
     expect(result).toEqual({
       data: {
@@ -138,6 +146,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
     expect(result).toEqual({
       data: {
@@ -161,6 +172,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
     expect(result).toEqual({
       data: {
@@ -188,6 +202,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
     expect(result).toEqual({
       data: {
@@ -214,6 +231,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
     expect(result).toEqual({
       data: {
@@ -245,6 +265,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
     expect(result).toEqual({
       data: {
@@ -418,6 +441,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -599,6 +625,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -615,7 +644,7 @@ describe('example_api', () => {
             body: '123',
           },
           everythingLink: {
-            body: baseUrl + '/scanner_GET_200_hello_application/json_keep-alive',
+            body: `http://localhost:${port}/api/scanner_GET_200_hello_application/json_keep-alive`,
           },
         },
       },
@@ -661,6 +690,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -681,13 +713,9 @@ describe('example_api', () => {
             constantLink: {
               body: '123',
               everythingLink: {
-                body: baseUrl + '/copier_GET_200_123_application/json_keep-alive',
+                body: `http://localhost:${port}/api/copier_GET_200_123_application/json_keep-alive`,
                 everythingLink: {
-                  body:
-                    baseUrl +
-                    '/copier_GET_200_' +
-                    baseUrl +
-                    '/copier_GET_200_123_application/json_keep-alive_application/json_keep-alive',
+                  body: `http://localhost:${port}/api/copier_GET_200_http://localhost:${port}/api/copier_GET_200_123_application/json_keep-alive_application/json_keep-alive`,
                 },
               },
             },
@@ -696,7 +724,7 @@ describe('example_api', () => {
             body: '123',
           },
           everythingLink: {
-            body: baseUrl + '/scanner_GET_200_val_application/json_keep-alive',
+            body: `http://localhost:${port}/api/scanner_GET_200_val_application/json_keep-alive`,
           },
         },
       },
@@ -718,6 +746,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -725,9 +756,7 @@ describe('example_api', () => {
         postScanner: {
           body: 'req.body: body, req.query.query: query, req.path.path: path',
           everythingLink2: {
-            body:
-              baseUrl +
-              '/scanner/path_POST_200_body_query_path_application/json_req.body: body, req.query.query: query, req.path.path: path_query_path_keep-alive',
+            body: `http://localhost:${port}/api/scanner/path_POST_200_body_query_path_application/json_req.body: body, req.query.query: query, req.path.path: path_query_path_keep-alive`,
           },
         },
       },
@@ -746,6 +775,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -767,6 +799,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -788,6 +823,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -807,6 +845,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -833,6 +874,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -855,6 +899,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -879,6 +926,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -905,11 +955,17 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
       data: {
-        getProductReviews: [{ timestamp: BigInt(1502787600000000) }, { timestamp: BigInt(1502787400000000) }],
+        getProductReviews: [
+          { timestamp: BigInt(1502787600000000) },
+          { timestamp: BigInt(1502787400000000) },
+        ],
       },
     });
   });
@@ -926,6 +982,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -951,6 +1010,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -987,6 +1049,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -1023,6 +1088,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -1058,6 +1126,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -1084,6 +1155,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -1110,6 +1184,9 @@ describe('example_api', () => {
       const result = await execute({
         schema: createdSchema,
         document: parse(query),
+        contextValue: {
+          port,
+        },
       });
 
       expect(result).toEqual({
@@ -1120,13 +1197,15 @@ describe('example_api', () => {
           },
         },
       });
-    }
+    },
   );
 
   it('Request data is correctly de-sanitized to be sent', async () => {
     const query = /* GraphQL */ `
       mutation {
-        post_product_with_id(input: { product_name: "Soccer ball", product_id: "ball123", product_tag: "sports" }) {
+        post_product_with_id(
+          input: { product_name: "Soccer ball", product_id: "ball123", product_tag: "sports" }
+        ) {
           product_name
           product_id
           product_tag
@@ -1137,6 +1216,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -1174,8 +1256,11 @@ describe('example_api', () => {
         execute({
           schema: createdSchema,
           document: parse(query),
-        })
-      )
+          contextValue: {
+            port,
+          },
+        }),
+      ),
     );
 
     expect(result1).toEqual({
@@ -1238,6 +1323,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -1251,7 +1339,7 @@ describe('example_api', () => {
 
   it('Define header and query options', async () => {
     const options: OpenAPILoaderOptions = {
-      baseUrl,
+      endpoint,
       source: './fixtures/example_oas.json',
       cwd: __dirname,
       fetch,
@@ -1276,7 +1364,13 @@ describe('example_api', () => {
     const errors = validate(schema, ast);
     expect(errors).toEqual([]);
 
-    const result = await graphql({ schema, source: query });
+    const result = await graphql({
+      schema,
+      source: query,
+      contextValue: {
+        port,
+      },
+    });
     expect(result).toEqual({
       data: {
         get_Status: 'Ok',
@@ -1300,6 +1394,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -1333,6 +1430,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -1367,6 +1467,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -1401,12 +1504,15 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(
       (result.data.__type as any).fields.find((field: { name: string }) => {
         return field.name === 'familyCircular';
-      })
+      }),
     ).toEqual({
       name: 'familyCircular',
       type: {
@@ -1431,6 +1537,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     type carType = {
@@ -1487,6 +1596,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -1554,6 +1666,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     const extensions = result.errors[0].extensions;
@@ -1562,7 +1677,7 @@ describe('example_api', () => {
     expect(extensions).toMatchObject({
       request: {
         method: 'GET',
-        url: `${baseUrl}/users/abcdef`,
+        url: `http://localhost:${port}/api/users/abcdef`,
       },
       http: {
         status: 404,
@@ -1587,6 +1702,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -1614,6 +1732,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -1670,7 +1791,10 @@ describe('example_api', () => {
   it('Handle input objects without defined properties with arbitrary GraphQL JSON type', async () => {
     const query = /* GraphQL */ `
       mutation {
-        postOfficeTrashCan(input: { type: "sandwich", message: "moldy", tasteRating: 0 }, username: "arlene") {
+        postOfficeTrashCan(
+          input: { type: "sandwich", message: "moldy", tasteRating: 0 }
+          username: "arlene"
+        ) {
           contents
         }
       }
@@ -1679,6 +1803,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({
@@ -1714,6 +1841,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     /**
@@ -1747,12 +1877,15 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(
       (result.data.__type as any).fields.find((field: { name: string }) => {
         return field.name === 'id';
-      })
+      }),
     ).toEqual({
       name: 'id',
       type: {
@@ -1836,11 +1969,14 @@ describe('example_api', () => {
     const promise1 = execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     // The users (now named getUserByUsername) field should exist as a Mutation field
     const options: OpenAPILoaderOptions = {
-      baseUrl,
+      endpoint,
       source: './fixtures/example_oas.json',
       cwd: __dirname,
       fetch,
@@ -1867,7 +2003,7 @@ describe('example_api', () => {
     expect(
       (result1.data.__schema as any).queryType.fields.find((field: { name: string }) => {
         return field.name === 'getUserByUsername';
-      })
+      }),
     ).toEqual({
       name: 'getUserByUsername',
       description: 'Returns a user from the system.',
@@ -1876,19 +2012,19 @@ describe('example_api', () => {
     expect(
       (result1.data.__schema as any).mutationType.fields.find((field: { name: string }) => {
         return field.name === 'getUserByUsername';
-      })
+      }),
     ).toEqual(undefined);
 
     expect(
       (result2.data.__schema as any).queryType.fields.find((field: { name: string }) => {
         return field.name === 'getUserByUsername';
-      })
+      }),
     ).toEqual(undefined);
 
     expect(
       (result2.data.__schema as any).mutationType.fields.find((field: { name: string }) => {
         return field.name === 'getUserByUsername';
-      })
+      }),
     ).toEqual({
       name: 'getUserByUsername',
       description: 'Returns a user from the system.',
@@ -1907,11 +2043,14 @@ describe('example_api', () => {
     const promise1 = execute({
       schema: createdSchema,
       document: parse(query1),
+      contextValue: {
+        port,
+      },
     });
 
     // The GET status operation has a limit query string parameter
     const options: OpenAPILoaderOptions = {
-      baseUrl,
+      endpoint,
       source: './fixtures/example_oas.json',
       cwd: __dirname,
       fetch,
@@ -1935,6 +2074,9 @@ describe('example_api', () => {
       return execute({
         schema,
         document: ast,
+        contextValue: {
+          port,
+        },
       });
     });
 
@@ -1979,48 +2121,6 @@ describe('example_api', () => {
     });
   });
 
-  it('Use headers option as function', async () => {
-    const options: OpenAPILoaderOptions = {
-      baseUrl,
-      source: './fixtures/example_oas.json',
-      cwd: __dirname,
-      fetch,
-      operationHeaders: (_, operationConfig) => {
-        if ('method' in operationConfig) {
-          if (operationConfig.method.toLowerCase() === 'get' && operationConfig.path === '/status') {
-            return {
-              exampleHeader: 'some-value',
-            };
-          }
-        }
-        return {};
-      },
-    };
-
-    const query = /* GraphQL */ `
-      {
-        get_Status(globalquery: "test", limit: 30)
-      }
-    `;
-
-    const schema = await loadGraphQLSchemaFromOpenAPI('example_api', options);
-
-    const ast = parse(query);
-    const errors = validate(schema, ast);
-    expect(errors).toEqual([]);
-
-    const result = await execute({
-      schema,
-      document: parse(query),
-    });
-
-    expect(result).toEqual({
-      data: {
-        get_Status: 'Ok',
-      },
-    });
-  });
-
   it('Non-nullable properties for object types', async () => {
     const coordinates = createdSchema.getType('coordinates') as GraphQLObjectType;
 
@@ -2051,12 +2151,15 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(
       (result.data.__type as any).fields.find((field: { name: string }) => {
         return field.name === 'family';
-      })
+      }),
     ).toEqual({
       name: 'family',
       type: {
@@ -2072,7 +2175,7 @@ describe('example_api', () => {
   describe('Mixing input arguments and options variables', () => {
     it('Query string arguments become nullable when provided through queryParams option', async () => {
       const options: OpenAPILoaderOptions = {
-        baseUrl,
+        endpoint,
         source: './fixtures/example_oas.json',
         cwd: __dirname,
         fetch,
@@ -2094,6 +2197,9 @@ describe('example_api', () => {
       const result = await execute({
         schema,
         document,
+        contextValue: {
+          port,
+        },
       });
       expect(result).toEqual({
         data: {
@@ -2108,7 +2214,7 @@ describe('example_api', () => {
 
     it('Query string arguments override the values provided through queryParams option', async () => {
       const options: OpenAPILoaderOptions = {
-        baseUrl,
+        endpoint,
         source: './fixtures/example_oas.json',
         cwd: __dirname,
         fetch,
@@ -2130,6 +2236,9 @@ describe('example_api', () => {
       const result = await execute({
         schema,
         document,
+        contextValue: {
+          port,
+        },
       });
       expect(result).toEqual({
         data: {
@@ -2147,7 +2256,7 @@ describe('example_api', () => {
 
     it('Header arguments become nullable when provided through headers option', async () => {
       const options: OpenAPILoaderOptions = {
-        baseUrl,
+        endpoint,
         source: './fixtures/example_oas.json',
         cwd: __dirname,
         fetch,
@@ -2169,6 +2278,7 @@ describe('example_api', () => {
         document: parse(query),
         contextValue: {
           snack_size: 'small',
+          port,
         },
       });
       expect(result).toEqual({
@@ -2180,7 +2290,7 @@ describe('example_api', () => {
 
     it('Header arguments override the values provided through operationHeaders option', async () => {
       const options: OpenAPILoaderOptions = {
-        baseUrl,
+        endpoint,
         source: './fixtures/example_oas.json',
         cwd: __dirname,
         fetch,
@@ -2200,6 +2310,9 @@ describe('example_api', () => {
       const result = await execute({
         schema,
         document: parse(query),
+        contextValue: {
+          port,
+        },
       });
       expect(result).toEqual({
         data: {
@@ -2211,7 +2324,7 @@ describe('example_api', () => {
 
   it('Should error for enum arguments if input value is inappropriate', async () => {
     const options: OpenAPILoaderOptions = {
-      baseUrl,
+      endpoint,
       source: './fixtures/example_oas.json',
       cwd: __dirname,
       fetch,
@@ -2228,7 +2341,9 @@ describe('example_api', () => {
     const ast = parse(query);
     const errors = validate(schema, ast);
     expect(errors.length).toBe(1);
-    expect(errors[0].message).toEqual('Value "medium" does not exist in "queryInput_getSnack_snack_size" enum.');
+    expect(errors[0].message).toEqual(
+      'Value "medium" does not exist in "queryInput_getSnack_snack_size" enum.',
+    );
   });
 
   it('Format the query params appropriately when style and explode are set to true', async () => {
@@ -2248,6 +2363,9 @@ describe('example_api', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result.errors).toBeDefined();

@@ -24,7 +24,7 @@ sources:
   - name: MyApi
     handler:
       jsonSchema:
-        baseUrl: https://some-service-url/endpoint-path/
+        endpoint: https://some-service-url/endpoint-path/
         operations:
           - type: Query
             field: users
@@ -46,7 +46,7 @@ sources:
   - name: MyGraphQLApi
     handler:
       jsonSchema:
-        baseUrl: https://some-service-url/endpoint-path/
+        endpoint: https://some-service-url/endpoint-path/
         operations:
           - type: Query
             field: user
@@ -70,7 +70,7 @@ sources:
   - name: MyGraphQLApi
     handler:
       jsonSchema:
-        baseUrl: https://some-service-url/endpoint-path/
+        endpoint: https://some-service-url/endpoint-path/
         operations:
           - type: Query
             field: MyField
@@ -102,7 +102,7 @@ sources:
   - name: MyGraphQLApi
     handler:
       jsonSchema:
-        baseUrl: https://some-service-url/endpoint-path/
+        endpoint: https://some-service-url/endpoint-path/
         operations:
           - type: Query
             field: user
@@ -144,7 +144,7 @@ sources:
   - name: MyGraphQLApi
     handler:
       jsonSchema:
-        baseUrl: https://some-service-url/endpoint-path/
+        endpoint: https://some-service-url/endpoint-path/
         operations:
           - type: Query
             field: users
@@ -175,7 +175,7 @@ sources:
   - name: MyGraphQLApi
     handler:
       jsonSchema:
-        baseUrl: https://some-service-url/endpoint-path/
+        endpoint: https://some-service-url/endpoint-path/
         queryParams:
           limit: 10
           api_key: { env.MY_API_KEY }

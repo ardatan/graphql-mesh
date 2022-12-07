@@ -1,7 +1,6 @@
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import {
   MeshHandlerOptions,
-  ImportFn,
   Logger,
   MeshHandler,
   MeshPubSub,
@@ -9,21 +8,34 @@ import {
   GetMeshSourcePayload,
   MeshSource,
   MeshFetch,
+  ImportFn,
 } from '@graphql-mesh/types';
-import { JSONSchemaLoaderBundle, createBundle, getGraphQLSchemaFromBundle } from '@omnigraph/json-schema';
-import { loadFromModuleExportExpression, readFileOrUrl } from '@graphql-mesh/utils';
-import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
-import { process } from '@graphql-mesh/cross-helpers';
+import { readFileOrUrl } from '@graphql-mesh/utils';
+import { getOperationASTFromRequest } from '@graphql-tools/utils';
+import {
+  getGraphQLSchemaFromBundle,
+  JSONSchemaLoaderBundle,
+  loadNonExecutableGraphQLSchemaFromJSONSchemas,
+  processDirectives,
+} from '@omnigraph/json-schema';
+import {
+  buildSchema,
+  execute,
+  ExecutionArgs,
+  GraphQLSchema,
+  OperationTypeNode,
+  subscribe,
+} from 'graphql';
 
 export default class JsonSchemaHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.Handler['jsonSchema'];
-  private bundleStoreProxy: StoreProxy<JSONSchemaLoaderBundle>;
+  private schemaWithAnnotationsProxy: StoreProxy<GraphQLSchema>;
   private baseDir: string;
   private logger: Logger;
   private fetchFn: MeshFetch;
-  private importFn: ImportFn;
   private pubsub: MeshPubSub;
+  private importFn: ImportFn;
 
   constructor({
     name,
@@ -37,64 +49,92 @@ export default class JsonSchemaHandler implements MeshHandler {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
-    this.importFn = importFn;
-    this.bundleStoreProxy = store.proxy('jsonSchemaBundle', PredefinedProxyOptions.JsonWithoutValidation);
+    this.schemaWithAnnotationsProxy = store.proxy(
+      'schemaWithAnnotations.graphql',
+      PredefinedProxyOptions.GraphQLSchemaWithDiffing,
+    );
     this.pubsub = pubsub;
     this.logger = logger;
+    this.importFn = importFn;
   }
 
-  async getDereferencedBundle() {
-    const config = this.config;
-    if ('bundlePath' in config) {
-      const headersFactory = getInterpolatedHeadersFactory(config.bundleHeaders);
-      const bundle = await readFileOrUrl<JSONSchemaLoaderBundle>(config.bundlePath, {
+  async getNonExecutableSchema() {
+    if (this.config.source) {
+      const sdl = await readFileOrUrl<string>(this.config.source, {
+        allowUnknownExtensions: true,
+        cwd: this.baseDir,
+        fetch: this.fetchFn,
+        importFn: this.importFn,
+        logger: this.logger,
+        headers: this.config.schemaHeaders,
+      });
+      return buildSchema(sdl, {
+        assumeValidSDL: true,
+        assumeValid: true,
+      });
+    }
+    return this.schemaWithAnnotationsProxy.getWithSet(async () => {
+      if (this.config.bundlePath) {
+        const bundle = await readFileOrUrl<JSONSchemaLoaderBundle>(this.config.bundlePath, {
+          allowUnknownExtensions: true,
+          cwd: this.baseDir,
+          fetch: this.fetchFn,
+          importFn: this.importFn,
+          logger: this.logger,
+          headers: this.config.bundleHeaders,
+        });
+        return getGraphQLSchemaFromBundle(bundle, {
+          cwd: this.baseDir,
+          logger: this.logger,
+          fetch: this.fetchFn,
+          endpoint: this.config.endpoint,
+          operationHeaders: this.config.operationHeaders,
+          queryParams: this.config.queryParams,
+          queryStringOptions: this.config.queryStringOptions,
+        });
+      }
+      return loadNonExecutableGraphQLSchemaFromJSONSchemas(this.name, {
+        ...this.config,
+        operations: this.config.operations as any,
         cwd: this.baseDir,
         fetch: this.fetchFn,
         logger: this.logger,
-        headers: headersFactory({
-          env: process.env,
-        }),
-        fallbackFormat: 'json',
-        importFn: this.importFn,
+        pubsub: this.pubsub,
       });
-      return bundle;
-    } else {
-      return this.bundleStoreProxy.getWithSet(() => {
-        return createBundle(this.name, {
-          ...config,
-          operations: config.operations as any,
-          cwd: this.baseDir,
-          fetch: this.fetchFn,
-          logger: this.logger,
-          operationHeaders: typeof config.operationHeaders === 'string' ? {} : config.operationHeaders,
-        });
-      });
-    }
+    });
   }
 
   async getMeshSource({ fetchFn }: GetMeshSourcePayload): Promise<MeshSource> {
     this.fetchFn = fetchFn;
-    const bundle = await this.getDereferencedBundle();
-    const operationHeadersConfig =
-      typeof this.config.operationHeaders === 'string'
-        ? await loadFromModuleExportExpression<Record<string, string>>(this.config.operationHeaders, {
-            cwd: this.baseDir,
-            importFn: this.importFn,
-            defaultExportName: 'default',
-          })
-        : this.config.operationHeaders;
-    const schema = await getGraphQLSchemaFromBundle(bundle, {
-      cwd: this.baseDir,
-      fetch: this.fetchFn,
-      pubsub: this.pubsub,
-      logger: this.logger,
-      baseUrl: this.config.baseUrl,
-      operationHeaders: operationHeadersConfig,
-      queryStringOptions: this.config.queryStringOptions,
-      queryParams: 'queryParams' in this.config ? this.config.queryParams! : undefined,
+    this.logger.debug('Getting the schema with annotations');
+    const nonExecutableSchema = await this.getNonExecutableSchema();
+    const schemaWithDirectives$ = Promise.resolve().then(() => {
+      this.logger.info(`Processing directives.`);
+      return processDirectives({
+        ...this.config,
+        schema: nonExecutableSchema,
+        pubsub: this.pubsub,
+        logger: this.logger,
+        globalFetch: fetchFn,
+      });
     });
     return {
-      schema,
+      schema: nonExecutableSchema,
+      executor: async executionRequest => {
+        const args: ExecutionArgs = {
+          schema: await schemaWithDirectives$,
+          document: executionRequest.document,
+          variableValues: executionRequest.variables,
+          operationName: executionRequest.operationName,
+          contextValue: executionRequest.context,
+          rootValue: executionRequest.rootValue,
+        };
+        const operationAST = getOperationASTFromRequest(executionRequest);
+        if (operationAST.operation === OperationTypeNode.SUBSCRIPTION) {
+          return subscribe(args) as any;
+        }
+        return execute(args) as any;
+      },
     };
   }
 }

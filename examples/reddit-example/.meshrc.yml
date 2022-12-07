@@ -2,7 +2,7 @@ sources:
   - name: reddit
     handler:
       jsonSchema:
-        baseUrl: https://www.reddit.com/
+        endpoint: https://www.reddit.com/
         operations:
           - type: Query
             field: subreddit

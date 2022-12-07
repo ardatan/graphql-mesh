@@ -1,5 +1,5 @@
 import { ResolverData } from '@graphql-mesh/string-interpolation';
-import { MeshPubSub, Logger } from '@graphql-mesh/types';
+import { MeshPubSub, Logger, MeshFetch } from '@graphql-mesh/types';
 import { BaseLoaderOptions } from '@graphql-tools/utils';
 import { OperationTypeNode } from 'graphql';
 import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
@@ -7,17 +7,18 @@ import { JSONSchema, JSONSchemaObject } from 'json-machete';
 import { IStringifyOptions } from 'qs';
 
 export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
-  baseUrl?: string;
+  endpoint?: string;
   operationHeaders?: OperationHeadersConfiguration;
   schemaHeaders?: Record<string, string>;
   operations: JSONSchemaOperationConfig[];
   errorMessage?: string;
   logger?: Logger;
   pubsub?: MeshPubSub;
-  fetch?: WindowOrWorkerGlobalScope['fetch'];
+  fetch?: MeshFetch;
   ignoreErrorResponses?: boolean;
   queryParams?: Record<string, string | number | boolean>;
   queryStringOptions?: IStringifyOptions;
+  bundle?: boolean;
 }
 
 export interface JSONSchemaOperationResponseConfig {
@@ -52,7 +53,16 @@ export type JSONSchemaBaseOperationConfigWithJSONRequest = JSONSchemaBaseOperati
   requestBaseBody?: any;
 };
 
-export type HTTPMethod = 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'CONNECT' | 'OPTIONS' | 'TRACE' | 'PATCH';
+export type HTTPMethod =
+  | 'GET'
+  | 'HEAD'
+  | 'POST'
+  | 'PUT'
+  | 'DELETE'
+  | 'CONNECT'
+  | 'OPTIONS'
+  | 'TRACE'
+  | 'PATCH';
 
 export type JSONSchemaHTTPBaseOperationConfig = JSONSchemaBaseOperationConfig & {
   path: string;
@@ -82,6 +92,14 @@ export type JSONSchemaOperationConfig =
   | JSONSchemaHTTPBinaryConfig
   | JSONSchemaPubSubOperationConfig;
 
-export type OperationHeadersConfiguration =
-  | Record<string, string>
-  | ((data: ResolverData, operationConfig: JSONSchemaOperationConfig) => PromiseOrValue<Record<string, string>>);
+export type OperationHeadersConfiguration = Record<string, string> | OperationHeadersFactory;
+
+export type OperationHeadersFactory = (
+  data: ResolverData,
+  operationConfig: {
+    endpoint: string;
+    field: string;
+    path: string;
+    method: HTTPMethod;
+  },
+) => PromiseOrValue<Record<string, string>>;

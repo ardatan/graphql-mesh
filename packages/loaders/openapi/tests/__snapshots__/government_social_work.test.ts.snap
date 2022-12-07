@@ -6,9 +6,17 @@ exports[`openAPI loader: government_social_work should generate the schema corre
   mutation: Mutation
 }
 
-directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
+directive @oneOf on OBJECT | INTERFACE
 
-type Query {
+directive @enum(value: String) on ENUM_VALUE
+
+directive @statusCodeTypeName(typeName: String, statusCode: ID) repeatable on UNION
+
+directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+
+directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+
+type Query @globalOptions(sourceName: "example_api", endpoint: "/government/socialwork") {
   "Gets all \`Assessment\` types"
   getAssessmentTypes(
     "to support API localization"
@@ -23,7 +31,7 @@ type Query {
     offset: String!
     "limit for pagination (e.g. 20 at a time)"
     limit: String!
-  ): [getAssessmentTypes_response]
+  ): [getAssessmentTypes_response] @httpOperation(path: "/assessment_types", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   "Gets case details for a given case id"
   getCase(
     "to support API localization"
@@ -36,7 +44,7 @@ type Query {
     Api_Version: String! = "1.1.0"
     "Case Id"
     caseId: String!
-  ): [getCase_response]
+  ): [getCase_response] @httpOperation(path: "/case/{args.caseId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   "Gets profile date for the case worker"
   getWorkersProfile(
     "to support API localization"
@@ -53,7 +61,7 @@ type Query {
     offset: String!
     "limit for pagination (e.g. 20 at a time)"
     limit: String!
-  ): [getWorkersProfile_response]
+  ): [getWorkersProfile_response] @httpOperation(path: "/social_worker/{args.userName}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   "Gets All \`Case\` objects for a social worker"
   getWorkersCases(
     "to support API localization"
@@ -70,7 +78,7 @@ type Query {
     offset: String!
     "limit for pagination (e.g. 20 at a time)"
     limit: String!
-  ): [getWorkersCases_response]
+  ): [getWorkersCases_response] @httpOperation(path: "/social_worker/{args.userName}/cases", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   "Gets the assigned \`Family\` objects for a social worker"
   getWorkersFamilies(
     "to support API localization"
@@ -87,7 +95,7 @@ type Query {
     offset: String!
     "limit for pagination (e.g. 20 at a time)"
     limit: String!
-  ): [getWorkersFamilies_response]
+  ): [getWorkersFamilies_response] @httpOperation(path: "/social_worker/{args.userName}/families", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   "Gets a specific case visit data for a given case id/case visit id combination"
   getCaseVisit(
     "to support API localization"
@@ -102,7 +110,7 @@ type Query {
     caseId: String!
     "Visit Id"
     visitId: String!
-  ): [getCaseVisit_response]
+  ): [getCaseVisit_response] @httpOperation(path: "/case/{args.caseId}/case_visit/{args.visitId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   "Gets a specific family's data"
   getFamily(
     "to support API localization"
@@ -115,7 +123,7 @@ type Query {
     Api_Version: String! = "1.1.0"
     "FamilyId to find family data"
     familyId: String!
-  ): [getFamily_response]
+  ): [getFamily_response] @httpOperation(path: "/family/{args.familyId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   "Gets a specific client data"
   getClient(
     "to support API localization"
@@ -128,7 +136,7 @@ type Query {
     Api_Version: String! = "1.1.0"
     "ClientId to find Client"
     clientId: String!
-  ): [getClient_response]
+  ): [getClient_response] @httpOperation(path: "/client/{args.clientId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   "Gets all persons"
   getPersons(
     "to support API localization"
@@ -143,7 +151,7 @@ type Query {
     offset: String!
     "limit for pagination (e.g. 20 at a time)"
     limit: String!
-  ): [getPersons_response]
+  ): [getPersons_response] @httpOperation(path: "/persons", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   "Gets client's contacts  - not marked as \\"Deleted\\" - with their email/phone information"
   getClientContacts(
     "to support API localization"
@@ -160,7 +168,7 @@ type Query {
     offset: String!
     "limit for pagination (e.g. 20 at a time)"
     limit: String!
-  ): [getClientContacts_response]
+  ): [getClientContacts_response] @httpOperation(path: "/client/{args.clientId}/client_contacts", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   "Gets client's schools information"
   getClientSchools(
     "to support API localization"
@@ -177,7 +185,7 @@ type Query {
     offset: String!
     "limit for pagination (e.g. 20 at a time)"
     limit: String!
-  ): [getClientSchools_response]
+  ): [getClientSchools_response] @httpOperation(path: "/client/{args.clientId}/client_schools", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   "Gets client's physicians information  - not marked as \\"Deleted\\""
   getClientPhysicians(
     "to support API localization"
@@ -194,7 +202,7 @@ type Query {
     offset: String!
     "limit for pagination (e.g. 20 at a time)"
     limit: String!
-  ): [getClientPhysicians_response]
+  ): [getClientPhysicians_response] @httpOperation(path: "/client/{args.clientId}/client_physicians", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   "Gets all experts"
   getExperts(
     "to support API localization"
@@ -209,7 +217,7 @@ type Query {
     offset: String!
     "limit for pagination (e.g. 20 at a time)"
     limit: String!
-  ): [getExperts_response]
+  ): [getExperts_response] @httpOperation(path: "/experts", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   "Gets a specific file for a given file id or return all files if no specific file id is given"
   getFile(
     "to support API localization"
@@ -222,7 +230,7 @@ type Query {
     Api_Version: String! = "1.1.0"
     "File Id"
     fileId: String!
-  ): [getFile_response]
+  ): [getFile_response] @httpOperation(path: "/file/{args.fileId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   "Gets a specific file for a given manual id"
   getManual(
     "to support API localization"
@@ -235,7 +243,7 @@ type Query {
     Api_Version: String! = "1.1.0"
     "Manual Id"
     manualId: String!
-  ): [getManual_response]
+  ): [getManual_response] @httpOperation(path: "/manual/{args.manualId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   "Gets all media files of the mediaType  - not marked as \\"Deleted\\""
   getMedia(
     "to support API localization"
@@ -248,7 +256,7 @@ type Query {
     Api_Version: String! = "1.1.0"
     "Case Id"
     caseId: String!
-  ): [getMedia_response]
+  ): [getMedia_response] @httpOperation(path: "/case/{args.caseId}/media_files", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   "Retrieves past assessments - not marked as \\"Deleted\\" - for a case; if a worker id is specified in the query then retrieves only those assessments  - not marked as \\"Deleted\\" - for this case and for this worked id"
   getCaseAssessments(
     "to support API localization"
@@ -265,7 +273,7 @@ type Query {
     offset: String!
     "limit for pagination (e.g. 20 at a time)"
     limit: String!
-  ): [getCaseAssessments_response]
+  ): [getCaseAssessments_response] @httpOperation(path: "/case/{args.caseId}/case_assessments", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   "This api sends along the case assessment data to the backend analytics engine which sends back recommendations to the app"
   getRecommendations(
     "to support API localization"
@@ -288,7 +296,7 @@ type Query {
     limit: String!
     "Assessment data"
     input: [CaseAssessment_Input]
-  ): [getRecommendations_response]
+  ): [getRecommendations_response] @httpOperation(path: "/case/{args.caseId}/caseAssessment/{args.caseAssessmentId}/assessmentType/{args.assessmentTypeId}/recommendations", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   "Retrieves a list of available case note types"
   getCaseNoteTypes(
     "to support API localization"
@@ -305,7 +313,7 @@ type Query {
     offset: String!
     "limit for pagination (e.g. 20 at a time)"
     limit: String!
-  ): [getCaseNoteTypes_response]
+  ): [getCaseNoteTypes_response] @httpOperation(path: "/case/{args.caseId}/case_note_types", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   "Retrieves past notes  - not marked as \\"Deleted\\" - for a case"
   getCaseNotes(
     "to support API localization"
@@ -322,7 +330,7 @@ type Query {
     offset: String!
     "limit for pagination (e.g. 20 at a time)"
     limit: String!
-  ): [getCaseNotes_response]
+  ): [getCaseNotes_response] @httpOperation(path: "/case/{args.caseId}/case_notes", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   "Gets all the client relationships  - not marked as \\"Deleted\\" - for the given client"
   getRelationships(
     "to support API localization"
@@ -339,7 +347,7 @@ type Query {
     offset: String!
     "limit for pagination (e.g. 20 at a time)"
     limit: String!
-  ): [getRelationships_response]
+  ): [getRelationships_response] @httpOperation(path: "/client/{args.clientId}/client_relationships", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   "Gets all the client relationship types"
   getRelationshipTypes(
     "to support API localization"
@@ -354,7 +362,7 @@ type Query {
     offset: String!
     "limit for pagination (e.g. 20 at a time)"
     limit: String!
-  ): [getRelationshipTypes_response]
+  ): [getRelationshipTypes_response] @httpOperation(path: "/client_relationship_types", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
   "Gets all score categories"
   getScoreCategories(
     "to support API localization"
@@ -369,10 +377,10 @@ type Query {
     offset: String!
     "limit for pagination (e.g. 20 at a time)"
     limit: String!
-  ): [getScoreCategories_response]
+  ): [getScoreCategories_response] @httpOperation(path: "/score_categories", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"offset\\":\\"offset\\",\\"limit\\":\\"limit\\"}")
 }
 
-union getAssessmentTypes_response = getAssessmentTypes_200_response | Error
+union getAssessmentTypes_response @statusCodeTypeName(statusCode: 200, typeName: "getAssessmentTypes_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = getAssessmentTypes_200_response | Error
 
 type getAssessmentTypes_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -435,7 +443,7 @@ type AssessmentFactorQuestionTemplate {
 enum query_getAssessmentTypes_oneOf_0_data_items_factorsTemplate_items_factorQuestionsTemplate_items_answerType {
   Yes
   No
-  N_A
+  N_A @enum(value: "\\"N/A\\"")
 }
 
 "Used to limit number of results returned at one time so the app or server do not get overloaded, and to keep payloads small."
@@ -449,7 +457,7 @@ type Pagination {
   previous: String
 }
 
-union getCase_response = getCase_200_response | Error
+union getCase_response @statusCodeTypeName(statusCode: 200, typeName: "getCase_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = getCase_200_response | Error
 
 type getCase_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -502,7 +510,7 @@ type CaseVisit {
   case: String
 }
 
-union getWorkersProfile_response = getWorkersProfile_200_response | Error
+union getWorkersProfile_response @statusCodeTypeName(statusCode: 200, typeName: "getWorkersProfile_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = getWorkersProfile_200_response | Error
 
 type getWorkersProfile_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -650,10 +658,10 @@ type ClientRelationshipType {
 "Household/Non-household grouping"
 enum query_getWorkersProfile_oneOf_0_data_items_family_items_client_items_participants_items_relationshipType_category {
   Household
-  Non_household
+  Non_household @enum(value: "\\"Non-household\\"")
 }
 
-union getWorkersCases_response = getWorkersCases_200_response | Error
+union getWorkersCases_response @statusCodeTypeName(statusCode: 200, typeName: "getWorkersCases_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = getWorkersCases_200_response | Error
 
 type getWorkersCases_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -662,7 +670,7 @@ type getWorkersCases_200_response {
   pagination: Pagination
 }
 
-union getWorkersFamilies_response = getWorkersFamilies_200_response | Error
+union getWorkersFamilies_response @statusCodeTypeName(statusCode: 200, typeName: "getWorkersFamilies_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = getWorkersFamilies_200_response | Error
 
 type getWorkersFamilies_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -671,7 +679,7 @@ type getWorkersFamilies_200_response {
   pagination: Pagination
 }
 
-union getCaseVisit_response = getCaseVisit_200_response | Error
+union getCaseVisit_response @statusCodeTypeName(statusCode: 200, typeName: "getCaseVisit_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = getCaseVisit_200_response | Error
 
 type getCaseVisit_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -679,7 +687,7 @@ type getCaseVisit_200_response {
   data: [CaseVisit]
 }
 
-union getFamily_response = getFamily_200_response | Error
+union getFamily_response @statusCodeTypeName(statusCode: 200, typeName: "getFamily_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = getFamily_200_response | Error
 
 type getFamily_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -687,7 +695,7 @@ type getFamily_200_response {
   data: [Family]
 }
 
-union getClient_response = getClient_200_response | Error
+union getClient_response @statusCodeTypeName(statusCode: 200, typeName: "getClient_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = getClient_200_response | Error
 
 type getClient_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -695,7 +703,7 @@ type getClient_200_response {
   data: [Client]
 }
 
-union getPersons_response = getPersons_200_response | Error
+union getPersons_response @statusCodeTypeName(statusCode: 200, typeName: "getPersons_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = getPersons_200_response | Error
 
 type getPersons_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -704,7 +712,7 @@ type getPersons_200_response {
   pagination: Pagination
 }
 
-union getClientContacts_response = getClientContacts_200_response | Error
+union getClientContacts_response @statusCodeTypeName(statusCode: 200, typeName: "getClientContacts_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = getClientContacts_200_response | Error
 
 type getClientContacts_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -735,7 +743,7 @@ enum query_getClientContacts_oneOf_0_data_items_status {
   Deleted
 }
 
-union getClientSchools_response = getClientSchools_200_response | Error
+union getClientSchools_response @statusCodeTypeName(statusCode: 200, typeName: "getClientSchools_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = getClientSchools_200_response | Error
 
 type getClientSchools_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -762,7 +770,7 @@ enum query_getClientSchools_oneOf_0_data_items_status {
   Deleted
 }
 
-union getClientPhysicians_response = getClientPhysicians_200_response | Error
+union getClientPhysicians_response @statusCodeTypeName(statusCode: 200, typeName: "getClientPhysicians_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = getClientPhysicians_200_response | Error
 
 type getClientPhysicians_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -792,7 +800,7 @@ enum query_getClientPhysicians_oneOf_0_data_items_status {
   Deleted
 }
 
-union getExperts_response = getExperts_200_response | Error
+union getExperts_response @statusCodeTypeName(statusCode: 200, typeName: "getExperts_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = getExperts_200_response | Error
 
 type getExperts_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -821,7 +829,7 @@ type Expert {
   role: Roles
 }
 
-union getFile_response = getFile_200_response | Error
+union getFile_response @statusCodeTypeName(statusCode: 200, typeName: "getFile_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = getFile_200_response | Error
 
 type getFile_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -829,7 +837,7 @@ type getFile_200_response {
   data: [File_]
 }
 
-union getManual_response = getManual_200_response | Error
+union getManual_response @statusCodeTypeName(statusCode: 200, typeName: "getManual_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = getManual_200_response | Error
 
 type getManual_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -847,7 +855,7 @@ type Manual {
   file: String
 }
 
-union getMedia_response = getMedia_200_response | Error
+union getMedia_response @statusCodeTypeName(statusCode: 200, typeName: "getMedia_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = getMedia_200_response | Error
 
 type getMedia_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -881,7 +889,7 @@ type MediaTypeName {
   mediaTypeId: String
 }
 
-union getCaseAssessments_response = getCaseAssessments_200_response | Error
+union getCaseAssessments_response @statusCodeTypeName(statusCode: 200, typeName: "getCaseAssessments_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = getCaseAssessments_200_response | Error
 
 type getCaseAssessments_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -957,7 +965,7 @@ enum query_getCaseAssessments_oneOf_0_data_items_assessmentType_items_recommenda
   No
 }
 
-union getRecommendations_response = getRecommendations_200_response | Error
+union getRecommendations_response @statusCodeTypeName(statusCode: 200, typeName: "getRecommendations_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = getRecommendations_200_response | Error
 
 type getRecommendations_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -1021,7 +1029,7 @@ input Recommendation_Input {
   recommendationSelection: query_getCaseAssessments_oneOf_0_data_items_assessmentType_items_recommendation_items_recommendationSelection
 }
 
-union getCaseNoteTypes_response = getCaseNoteTypes_200_response | Error
+union getCaseNoteTypes_response @statusCodeTypeName(statusCode: 200, typeName: "getCaseNoteTypes_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = getCaseNoteTypes_200_response | Error
 
 type getCaseNoteTypes_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -1035,7 +1043,7 @@ type NotesType {
   notestTypeDescription: String
 }
 
-union getCaseNotes_response = getCaseNotes_200_response | Error
+union getCaseNotes_response @statusCodeTypeName(statusCode: 200, typeName: "getCaseNotes_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = getCaseNotes_200_response | Error
 
 type getCaseNotes_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -1062,7 +1070,7 @@ enum query_getCaseNotes_oneOf_0_data_items_status {
   Deleted
 }
 
-union getRelationships_response = getRelationships_200_response | Error
+union getRelationships_response @statusCodeTypeName(statusCode: 200, typeName: "getRelationships_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = getRelationships_200_response | Error
 
 type getRelationships_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -1071,7 +1079,7 @@ type getRelationships_200_response {
   pagination: Pagination
 }
 
-union getRelationshipTypes_response = getRelationshipTypes_200_response | Error
+union getRelationshipTypes_response @statusCodeTypeName(statusCode: 200, typeName: "getRelationshipTypes_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = getRelationshipTypes_200_response | Error
 
 type getRelationshipTypes_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -1080,7 +1088,7 @@ type getRelationshipTypes_200_response {
   pagination: Pagination
 }
 
-union getScoreCategories_response = getScoreCategories_200_response | Error
+union getScoreCategories_response @statusCodeTypeName(statusCode: 200, typeName: "getScoreCategories_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = getScoreCategories_200_response | Error
 
 type getScoreCategories_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -1113,7 +1121,7 @@ type Mutation {
     "Case Id"
     caseId: String!
     input: [CaseVisit_Input]
-  ): [addVisit_response]
+  ): [addVisit_response] @httpOperation(path: "/case/{args.caseId}/case_visit", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   "Add a new client record to store the person details of a client participant"
   addPerson(
     "to support API localization"
@@ -1125,7 +1133,7 @@ type Mutation {
     "1.1.0"
     Api_Version: String! = "1.1.0"
     input: [Person_Input]
-  ): [addPerson_response]
+  ): [addPerson_response] @httpOperation(path: "/person", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   "Update person data"
   updatePerson(
     "to support API localization"
@@ -1139,7 +1147,7 @@ type Mutation {
     "personId to find Person"
     personId: String!
     input: [Person_Input]
-  ): [updatePerson_response]
+  ): [updatePerson_response] @httpOperation(path: "/person/{args.personId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
   "Updates a specific client data"
   updateClient(
     "to support API localization"
@@ -1151,7 +1159,7 @@ type Mutation {
     "1.1.0"
     Api_Version: String! = "1.1.0"
     input: [Client_Input]
-  ): [updateClient_response]
+  ): [updateClient_response] @httpOperation(path: "/client", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
   "Add a new client relationship with relationshipId=clientId"
   addClientRelationship(
     "to support API localization"
@@ -1165,7 +1173,7 @@ type Mutation {
     "ClientId to find Client"
     clientId: String!
     input: [ClientRelationship_Input]
-  ): [addClientRelationship_response]
+  ): [addClientRelationship_response] @httpOperation(path: "/client_relationship/{args.clientId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   "Sets a specific client relationship as \\"deleted\\"  or do other updates"
   deleteClientRelationship(
     "to support API localization"
@@ -1177,7 +1185,7 @@ type Mutation {
     "1.1.0"
     Api_Version: String! = "1.1.0"
     input: [ClientRelationship_Input]
-  ): [deleteClientRelationship_response]
+  ): [deleteClientRelationship_response] @httpOperation(path: "/client_relationship", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
   "Add a new client contact with phone/email for a client id"
   addClientContact(
     "to support API localization"
@@ -1189,7 +1197,7 @@ type Mutation {
     "1.1.0"
     Api_Version: String! = "1.1.0"
     input: [ClientContact_Input]
-  ): [addClientContact_response]
+  ): [addClientContact_response] @httpOperation(path: "/client_contact", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   "Update/delete client contact for a client id"
   updateClientContact(
     "to support API localization"
@@ -1203,7 +1211,7 @@ type Mutation {
     "Client's contact's id"
     contactId: String!
     input: [ClientContact_Input]
-  ): [updateClientContact_response]
+  ): [updateClientContact_response] @httpOperation(path: "/client_contact/{args.contactId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
   "Add a new client school detail for a client id"
   addClientSchool(
     "to support API localization"
@@ -1215,7 +1223,7 @@ type Mutation {
     "1.1.0"
     Api_Version: String! = "1.1.0"
     input: [ClientSchool_Input]
-  ): [addClientSchool_response]
+  ): [addClientSchool_response] @httpOperation(path: "/client_school", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   "Update/delete client school"
   updateClientSchool(
     "to support API localization"
@@ -1229,7 +1237,7 @@ type Mutation {
     "Client's school's id"
     schoolId: String!
     input: [ClientSchool_Input]
-  ): [updateClientSchool_response]
+  ): [updateClientSchool_response] @httpOperation(path: "/client_school/{args.schoolId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
   "Add a new client physician for a client id"
   addClientPhysician(
     "to support API localization"
@@ -1242,7 +1250,7 @@ type Mutation {
     Api_Version: String! = "1.1.0"
     "Physician data"
     input: [ClientPhysician_Input]
-  ): [addClientPhysician_response]
+  ): [addClientPhysician_response] @httpOperation(path: "/client_physician", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   "Update/delete client physician for a client id"
   updateClientPhysician(
     "to support API localization"
@@ -1257,7 +1265,7 @@ type Mutation {
     physicianId: String!
     "Physician data"
     input: [ClientPhysician_Input]
-  ): [updateClientPhysician_response]
+  ): [updateClientPhysician_response] @httpOperation(path: "/client_physician/{args.physicianId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
   "Gets a specific file for a given file id or return all files if no specific file id is given"
   updateFile(
     "to support API localization"
@@ -1272,7 +1280,7 @@ type Mutation {
     fileId: String!
     "File content"
     input: [File_Input]
-  ): [updateFile_response]
+  ): [updateFile_response] @httpOperation(path: "/file/{args.fileId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
   "Gets a specific file for a given file id or return all files if no specific file id is given"
   putFile(
     "to support API localization"
@@ -1285,7 +1293,7 @@ type Mutation {
     Api_Version: String! = "1.1.0"
     "File content"
     input: [File_Input]
-  ): [putFile_response]
+  ): [putFile_response] @httpOperation(path: "/file", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   "Adds a new Media file to a case [video, audio, picture, etc]"
   addMedia(
     "to support API localization"
@@ -1299,7 +1307,7 @@ type Mutation {
     "Case Id"
     caseId: String!
     input: [Media_Input]
-  ): [addMedia_response]
+  ): [addMedia_response] @httpOperation(path: "/case/{args.caseId}/media_file", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   "Sets a specific assessment for a case as \\"deleted\\" or update tagged participants"
   deleteMedia(
     "to support API localization"
@@ -1315,7 +1323,7 @@ type Mutation {
     "Media Id"
     mediaId: String!
     input: [Media_Input]
-  ): [deleteMedia_response]
+  ): [deleteMedia_response] @httpOperation(path: "/case/{args.caseId}/media/{args.mediaId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
   "Adds a case notes record for a case"
   addCaseNotes(
     "to support API localization"
@@ -1329,7 +1337,7 @@ type Mutation {
     "Case Id"
     caseId: String!
     input: [Notes_Input]
-  ): [addCaseNotes_response]
+  ): [addCaseNotes_response] @httpOperation(path: "/case/{args.caseId}/case_note", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   "Sets a specific case note as \\"deleted\\" or update tagged participants"
   deleteCaseNote(
     "to support API localization"
@@ -1345,7 +1353,7 @@ type Mutation {
     "Case Note Id"
     noteId: String!
     input: [Notes_Input]
-  ): [deleteCaseNote_response]
+  ): [deleteCaseNote_response] @httpOperation(path: "/case/{args.caseId}/case_note/{args.noteId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
   "Adds a new assessment record for a case - along with recommedndations elected by the user"
   addCaseAssessment(
     "to support API localization"
@@ -1360,7 +1368,7 @@ type Mutation {
     caseId: String!
     "Assessment data"
     input: [CaseAssessment_Input]
-  ): [addCaseAssessment_response]
+  ): [addCaseAssessment_response] @httpOperation(path: "/case/{args.caseId}/case_assessment", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   "Sets a specific assessment for a case as \\"deleted\\""
   deleteCaseAssessment(
     "to support API localization"
@@ -1377,10 +1385,10 @@ type Mutation {
     caseAssessmentId: String!
     "Assessment data"
     input: [CaseAssessment_Input]
-  ): [deleteCaseAssessment_response]
+  ): [deleteCaseAssessment_response] @httpOperation(path: "/case/{args.caseId}/case_assessment/{args.caseAssessmentId}", operationSpecificHeaders: "{\\"Content-Type\\":\\"{args.Content_Type}\\",\\"Accept-Language\\":\\"{args.Accept_Language}\\",\\"User-Agent\\":\\"{args.User_Agent:iPad}\\",\\"Api-Version\\":\\"{args.Api_Version:1.1.0}\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH)
 }
 
-union addVisit_response = addVisit_200_response | Error
+union addVisit_response @statusCodeTypeName(statusCode: 200, typeName: "addVisit_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = addVisit_200_response | Error
 
 type addVisit_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -1406,7 +1414,7 @@ input CaseVisit_Input {
   case: String
 }
 
-union addPerson_response = addPerson_200_response | Error
+union addPerson_response @statusCodeTypeName(statusCode: 200, typeName: "addPerson_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = addPerson_200_response | Error
 
 type addPerson_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -1478,7 +1486,7 @@ input File_Input {
   fileType: String
 }
 
-union updatePerson_response = updatePerson_200_response | Error
+union updatePerson_response @statusCodeTypeName(statusCode: 200, typeName: "updatePerson_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = updatePerson_200_response | Error
 
 type updatePerson_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -1487,7 +1495,7 @@ type updatePerson_200_response {
   data: Boolean
 }
 
-union updateClient_response = updateClient_200_response | Error
+union updateClient_response @statusCodeTypeName(statusCode: 200, typeName: "updateClient_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = updateClient_200_response | Error
 
 type updateClient_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -1567,7 +1575,7 @@ input ClientRelationshipType_Input {
   category: query_getWorkersProfile_oneOf_0_data_items_family_items_client_items_participants_items_relationshipType_category
 }
 
-union addClientRelationship_response = addClientRelationship_200_response | Error
+union addClientRelationship_response @statusCodeTypeName(statusCode: 200, typeName: "addClientRelationship_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = addClientRelationship_200_response | Error
 
 type addClientRelationship_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -1575,7 +1583,7 @@ type addClientRelationship_200_response {
   data: ClientRelationship
 }
 
-union deleteClientRelationship_response = deleteClientRelationship_200_response | Error
+union deleteClientRelationship_response @statusCodeTypeName(statusCode: 200, typeName: "deleteClientRelationship_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = deleteClientRelationship_200_response | Error
 
 type deleteClientRelationship_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -1584,7 +1592,7 @@ type deleteClientRelationship_200_response {
   data: Boolean
 }
 
-union addClientContact_response = addClientContact_200_response | Error
+union addClientContact_response @statusCodeTypeName(statusCode: 200, typeName: "addClientContact_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = addClientContact_200_response | Error
 
 type addClientContact_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -1602,7 +1610,7 @@ input ClientContact_Input {
   status: query_getClientContacts_oneOf_0_data_items_status
 }
 
-union updateClientContact_response = updateClientContact_200_response | Error
+union updateClientContact_response @statusCodeTypeName(statusCode: 200, typeName: "updateClientContact_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = updateClientContact_200_response | Error
 
 type updateClientContact_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -1611,7 +1619,7 @@ type updateClientContact_200_response {
   data: Boolean
 }
 
-union addClientSchool_response = addClientSchool_200_response | Error
+union addClientSchool_response @statusCodeTypeName(statusCode: 200, typeName: "addClientSchool_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = addClientSchool_200_response | Error
 
 type addClientSchool_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -1631,7 +1639,7 @@ input ClientSchool_Input {
   status: query_getClientSchools_oneOf_0_data_items_status
 }
 
-union updateClientSchool_response = updateClientSchool_200_response | Error
+union updateClientSchool_response @statusCodeTypeName(statusCode: 200, typeName: "updateClientSchool_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = updateClientSchool_200_response | Error
 
 type updateClientSchool_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -1640,7 +1648,7 @@ type updateClientSchool_200_response {
   data: Boolean
 }
 
-union addClientPhysician_response = addClientPhysician_200_response | Error
+union addClientPhysician_response @statusCodeTypeName(statusCode: 200, typeName: "addClientPhysician_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = addClientPhysician_200_response | Error
 
 type addClientPhysician_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -1663,7 +1671,7 @@ input ClientPhysician_Input {
   status: query_getClientPhysicians_oneOf_0_data_items_status
 }
 
-union updateClientPhysician_response = updateClientPhysician_200_response | Error
+union updateClientPhysician_response @statusCodeTypeName(statusCode: 200, typeName: "updateClientPhysician_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = updateClientPhysician_200_response | Error
 
 type updateClientPhysician_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -1672,7 +1680,7 @@ type updateClientPhysician_200_response {
   data: Boolean
 }
 
-union updateFile_response = updateFile_200_response | Error
+union updateFile_response @statusCodeTypeName(statusCode: 200, typeName: "updateFile_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = updateFile_200_response | Error
 
 type updateFile_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -1680,7 +1688,7 @@ type updateFile_200_response {
   data: File_
 }
 
-union putFile_response = putFile_200_response | Error
+union putFile_response @statusCodeTypeName(statusCode: 200, typeName: "putFile_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = putFile_200_response | Error
 
 type putFile_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -1688,7 +1696,7 @@ type putFile_200_response {
   data: File_
 }
 
-union addMedia_response = addMedia_200_response | Error
+union addMedia_response @statusCodeTypeName(statusCode: 200, typeName: "addMedia_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = addMedia_200_response | Error
 
 type addMedia_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -1716,7 +1724,7 @@ input MediaTypeName_Input {
   mediaTypeId: String
 }
 
-union deleteMedia_response = deleteMedia_200_response | Error
+union deleteMedia_response @statusCodeTypeName(statusCode: 200, typeName: "deleteMedia_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = deleteMedia_200_response | Error
 
 type deleteMedia_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -1725,7 +1733,7 @@ type deleteMedia_200_response {
   data: Boolean
 }
 
-union addCaseNotes_response = addCaseNotes_200_response | Error
+union addCaseNotes_response @statusCodeTypeName(statusCode: 200, typeName: "addCaseNotes_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = addCaseNotes_200_response | Error
 
 type addCaseNotes_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -1750,7 +1758,7 @@ input NotesType_Input {
   notestTypeDescription: String
 }
 
-union deleteCaseNote_response = deleteCaseNote_200_response | Error
+union deleteCaseNote_response @statusCodeTypeName(statusCode: 200, typeName: "deleteCaseNote_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = deleteCaseNote_200_response | Error
 
 type deleteCaseNote_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -1759,7 +1767,7 @@ type deleteCaseNote_200_response {
   data: Boolean
 }
 
-union addCaseAssessment_response = addCaseAssessment_200_response | Error
+union addCaseAssessment_response @statusCodeTypeName(statusCode: 200, typeName: "addCaseAssessment_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = addCaseAssessment_200_response | Error
 
 type addCaseAssessment_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
@@ -1767,12 +1775,26 @@ type addCaseAssessment_200_response {
   data: CaseAssessment
 }
 
-union deleteCaseAssessment_response = deleteCaseAssessment_200_response | Error
+union deleteCaseAssessment_response @statusCodeTypeName(statusCode: 200, typeName: "deleteCaseAssessment_200_response") @statusCodeTypeName(statusCode: "default", typeName: "Error") = deleteCaseAssessment_200_response | Error
 
 type deleteCaseAssessment_200_response {
   "may return NO_RESULTS_FOUND for this user and search query"
   errors: [Error]
   "Delete Success"
   data: Boolean
+}
+
+scalar ObjMap
+
+enum HTTPMethod {
+  GET
+  HEAD
+  POST
+  PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
+  PATCH
 }"
 `;

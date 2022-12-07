@@ -2,7 +2,7 @@ const { findAndParseConfig } = require('@graphql-mesh/cli');
 const { getMesh } = require('@graphql-mesh/runtime');
 const { join } = require('path');
 
-const { lexicographicSortSchema, printSchema } = require('graphql');
+const { printSchemaWithDirectives } = require('@graphql-tools/utils');
 const { readFile } = require('fs-extra');
 
 const config$ = findAndParseConfig({
@@ -14,16 +14,12 @@ jest.setTimeout(15000);
 describe('JavaScript Wiki', () => {
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
-    expect(
-      printSchema(lexicographicSortSchema(schema), {
-        descriptions: false,
-      })
-    ).toMatchSnapshot('javascript-wiki-schema');
+    expect(printSchemaWithDirectives(schema)).toMatchSnapshot('javascript-wiki-schema');
   });
   it('should give correct response for viewsInPastMonth', async () => {
     const viewsInPastMonthQuery = await readFile(
       join(__dirname, '../example-queries/views-in-past-month.graphql'),
-      'utf8'
+      'utf8',
     );
     const { execute } = await mesh$;
     const result = await execute(viewsInPastMonthQuery);
@@ -33,7 +29,7 @@ describe('JavaScript Wiki', () => {
   it('should give correct response for wikipediaMetrics within specific range', async () => {
     const wikipediaMetricsQuery = await readFile(
       join(__dirname, '../example-queries/wikipedia-metrics.graphql'),
-      'utf8'
+      'utf8',
     );
     const { execute } = await mesh$;
     const result = await execute(wikipediaMetricsQuery);

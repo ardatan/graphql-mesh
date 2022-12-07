@@ -1603,7 +1603,7 @@
 
 ### Patch Changes
 
-- 191a663a: fix(types): baseUrl doesn't need to be required
+- 191a663a: fix(types): endpoint doesn't need to be required
 
 ## 0.35.0
 

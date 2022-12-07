@@ -19,7 +19,12 @@ function isOriginallyListType(type: GraphQLOutputType): boolean {
   return isListType(type);
 }
 
-const defaultFieldResolver: GraphQLFieldResolver<any, any> = function soapDefaultResolver(root, args, context, info) {
+const defaultFieldResolver: GraphQLFieldResolver<any, any> = function soapDefaultResolver(
+  root,
+  args,
+  context,
+  info,
+) {
   const rootField = root[info.fieldName];
   if (typeof rootField === 'function') {
     return rootField(args, context, info);
@@ -68,7 +73,10 @@ function normalizeResult(result: any) {
 
 type RootValueMethod = (args: any, context: any, info: GraphQLResolveInfo) => Promise<any>;
 
-function createRootValueMethod(soapAnnotations: SoapAnnotations, fetchFn: MeshFetch): RootValueMethod {
+function createRootValueMethod(
+  soapAnnotations: SoapAnnotations,
+  fetchFn: MeshFetch,
+): RootValueMethod {
   const jsonToXMLConverter = new JSONToXMLConverter({
     attributeNamePrefix: '',
     attrNodeName: 'attributes',
@@ -91,7 +99,7 @@ function createRootValueMethod(soapAnnotations: SoapAnnotations, fetchFn: MeshFe
     };
     const requestXML = jsonToXMLConverter.parse(requestJson);
     const response = await fetchFn(
-      soapAnnotations.baseUrl,
+      soapAnnotations.endpoint,
       {
         method: 'POST',
         body: requestXML,
@@ -100,7 +108,7 @@ function createRootValueMethod(soapAnnotations: SoapAnnotations, fetchFn: MeshFe
         },
       },
       context,
-      info
+      info,
     );
     const responseXML = await response.text();
     const responseJSON = parseXML(responseXML, PARSE_XML_OPTIONS);

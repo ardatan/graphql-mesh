@@ -9,9 +9,9 @@
 * `usage` (type: `Object`) - Collects schema usage based on operations: 
   * `clientInfo` (type: `Object`) - Extract client info from GraphQL Context: 
     * `name` (type: `String`) - Extract client name
-Example: "{context.headers['x-client-name']}"
+Example: `{context.headers['x-client-name']}`
     * `version` (type: `String`) - Extract client version
-Example: "{context.headers['x-client-version']}"
+Example: `{context.headers['x-client-version']}`
   * `max` (type: `Int`) - Hive uses LRU cache to store info about operations.
 This option represents the maximum size of the cache.
 Default: 1000

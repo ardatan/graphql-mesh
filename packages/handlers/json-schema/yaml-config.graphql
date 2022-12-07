@@ -3,24 +3,7 @@ extend type Handler {
   Handler for JSON Schema specification.
   Source could be a local json file, or a url to it.
   """
-  jsonSchema: JsonSchemaHandlerConfig
-}
-
-union JsonSchemaHandlerConfig = JsonSchemaHandler | JsonSchemaHandlerBundle
-
-type JsonSchemaHandlerBundle @md {
-  """
-  Path to the bundle file
-  """
-  bundlePath: Any!
-  """
-  HTTP Headers to receive the bundle
-  """
-  bundleHeaders: JSON
-
-  baseUrl: String
-  operationHeaders: OperationHeadersDefinition
-  queryStringOptions: QueryStringOptions
+  jsonSchema: JsonSchemaHandler
 }
 
 type QueryStringOptions @md {
@@ -63,16 +46,27 @@ enum QueryStringArrayFormat {
   comma
 }
 
-union OperationHeadersDefinition = JSON | String
-
 type JsonSchemaHandler @md {
-  baseUrl: String
-  operationHeaders: OperationHeadersDefinition
+  """
+  Path to the bundle file
+  """
+  source: String
+  endpoint: String
+  operationHeaders: JSON
   schemaHeaders: JSON
-  operations: [JsonSchemaOperation!]!
+  operations: [JsonSchemaOperation!]
   ignoreErrorResponses: Boolean
   queryParams: Any
   queryStringOptions: QueryStringOptions
+
+  """
+  Will be removed later
+  """
+  bundlePath: String
+  """
+  Will be removed later
+  """
+  bundleHeaders: JSON
 }
 
 enum JsonSchemaOperationType {

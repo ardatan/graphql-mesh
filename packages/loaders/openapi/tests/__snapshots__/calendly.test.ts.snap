@@ -6,9 +6,25 @@ exports[`Calendly should generate the correct schema 1`] = `
   mutation: Mutation
 }
 
-directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
+directive @oneOf on OBJECT | INTERFACE
 
-type Query {
+directive @enum(value: String) on ENUM_VALUE
+
+directive @typescript(type: String) on SCALAR | ENUM
+
+directive @example(value: ObjMap) repeatable on FIELD_DEFINITION
+
+directive @statusCodeTypeName(typeName: String, statusCode: ID) repeatable on UNION
+
+directive @regexp(pattern: String) on SCALAR
+
+directive @length(min: Int, max: Int) on SCALAR
+
+directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+
+directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+
+type Query @globalOptions(sourceName: "calendly", endpoint: "https://api.calendly.com") {
   "Returns a list of Invitees for an event."
   getInvitees(
     uuid: String!
@@ -21,7 +37,7 @@ type Query {
     page_token: String
     "The number of rows to return"
     count: PositiveFloat = 20
-  ): getInvitees_response
+  ): getInvitees_response @httpOperation(path: "/scheduled_events/{args.uuid}/invitees", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"status\\":\\"status\\",\\"sort\\":\\"sort\\",\\"email\\":\\"email\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\"}")
   "Returns a list of  Events.\\n\\n* Pass \`organization\` parameter to return events for that organization (requires admin/owner privilege)\\n* Pass \`user\` parameter to return events for a specific User\\n\\n**NOTES:**\\n* If you are the admin/owner of the organization, you can use both \`organization\` and \`user\` to get a list of events for a specific user within your organization.\\n\\n* \`user\` can only be used alone when requesting your own personal events. This will return your events within any organization that you are currently in or were a part of in the past."
   getScheduledEvents(
     "Return events that are scheduled with the user associated with this URI"
@@ -41,7 +57,7 @@ type Query {
     page_token: String
     "The number of rows to return"
     count: PositiveFloat = 20
-  ): getScheduledEvents_response
+  ): getScheduledEvents_response @httpOperation(path: "/scheduled_events", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"user\\":\\"user\\",\\"organization\\":\\"organization\\",\\"invitee_email\\":\\"invitee_email\\",\\"status\\":\\"status\\",\\"sort\\":\\"sort\\",\\"min_start_time\\":\\"min_start_time\\",\\"max_start_time\\":\\"max_start_time\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\"}")
   "Returns all Event Types associated with a specified User. Use:\\n\\n* \`organization\` to look up all Event Types that belong to the organization\\n\\n* \`user\` to look up a user's Event Types in an organization\\n\\nEither \`organization\` or \`user\` are required query params when using this endpoint."
   getEventTypes(
     "Return only active event types if true, only inactive if false, or all event types if this parameter is omitted."
@@ -56,28 +72,28 @@ type Query {
     page_token: String
     "The number of rows to return"
     count: PositiveFloat = 20
-  ): getEventTypes_response
+  ): getEventTypes_response @httpOperation(path: "/event_types", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"active\\":\\"active\\",\\"organization\\":\\"organization\\",\\"user\\":\\"user\\",\\"sort\\":\\"sort\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\"}")
   "Returns information about a specified User."
   getUser(
     "User unique identifier, or the constant \\"me\\" to reference the caller"
     uuid: String!
-  ): getUser_response
+  ): getUser_response @httpOperation(path: "/users/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   "Returns basic information about your user account."
-  getMyUserAccount: getMyUserAccount_response
+  getMyUserAccount: getMyUserAccount_response @httpOperation(path: "/users/me", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   "Returns information about a specified Invitee (person invited to an event)."
   get_scheduled_events_event_uuid_invitees_invitee_uuid(
     "The event's unique identifier"
     event_uuid: String!
     "The invitee's unique identifier"
     invitee_uuid: String!
-  ): get_scheduled_events_event_uuid_invitees_invitee_uuid_response
+  ): get_scheduled_events_event_uuid_invitees_invitee_uuid_response @httpOperation(path: "/scheduled_events/{args.event_uuid}/invitees/{args.invitee_uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   "Returns information about a specified Event."
   get_scheduled_events_uuid(
     "The event's unique identifier"
     uuid: String!
-  ): get_scheduled_events_uuid_response
+  ): get_scheduled_events_uuid_response @httpOperation(path: "/scheduled_events/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   "Returns information about a specified Event Type."
-  get_event_types_uuid(uuid: String!): get_event_types_uuid_response
+  get_event_types_uuid(uuid: String!): get_event_types_uuid_response @httpOperation(path: "/event_types/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   "Returns a list of Organization Invitations that were sent to the organization's members."
   get_organizations_uuid_invitations(
     "The organization's unique identifier"
@@ -91,19 +107,19 @@ type Query {
     "Indicates if the results should be filtered by email address"
     email: EmailAddress
     status: queryInput_get_organizations_uuid_invitations_status
-  ): get_organizations_uuid_invitations_response
+  ): get_organizations_uuid_invitations_response @httpOperation(path: "/organizations/{args.uuid}/invitations", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"count\\":\\"count\\",\\"page_token\\":\\"page_token\\",\\"sort\\":\\"sort\\",\\"email\\":\\"email\\",\\"status\\":\\"status\\"}")
   "Returns an Organization Invitation that was sent to the organization's members."
   get_organizations_org_uuid_invitations_uuid(
     "The organization’s unique identifier"
     org_uuid: String!
     "The organization invitation's unique identifier"
     uuid: String!
-  ): get_organizations_org_uuid_invitations_uuid_response
+  ): get_organizations_org_uuid_invitations_uuid_response @httpOperation(path: "/organizations/{args.org_uuid}/invitations/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   "Returns information about a user's Organization Membership"
   get_organizations_uuid_memberships(
     "The organization membership's unique identifier"
     uuid: String!
-  ): get_organizations_uuid_memberships_response
+  ): get_organizations_uuid_memberships_response @httpOperation(path: "/organization_memberships/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   "Use this to list the Organization Memberships for all users belonging to an organization, use:\\n\\n* \`user\` to look up a user's membership in an organization\\n\\n* \`organization\` to look up all users that belong to the organization\\n\\nThis endpoint can also be used to retrieve your organization URI."
   get_organization_memberships(
     "The token to pass to get the next or previous portion of the collection"
@@ -116,7 +132,7 @@ type Query {
     organization: URL
     "Indicates if the results should be filtered by user"
     user: URL
-  ): get_organization_memberships_response
+  ): get_organization_memberships_response @httpOperation(path: "/organization_memberships", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\",\\"email\\":\\"email\\",\\"organization\\":\\"organization\\",\\"user\\":\\"user\\"}")
   "Get a list of Webhook Subscriptions for a specified Organization or User."
   get_webhooks(
     "Indicates if the results should be filtered by organization"
@@ -130,11 +146,11 @@ type Query {
     "Order results by the specified field and direction. Accepts comma-separated list of {field}:{direction} values.\\nSupported fields are: created_at.\\nSort direction is specified as: asc, desc."
     sort: String
     scope: queryInput_get_webhooks_scope!
-  ): get_webhooks_response
+  ): get_webhooks_response @httpOperation(path: "/webhook_subscriptions", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"organization\\":\\"organization\\",\\"user\\":\\"user\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\",\\"sort\\":\\"sort\\",\\"scope\\":\\"scope\\"}")
   "Get a specified Webhook Subscription."
-  get_users_user_uuid_webhooks_webhook_uuid(webhook_uuid: String!): get_users_user_uuid_webhooks_webhook_uuid_response
+  get_users_user_uuid_webhooks_webhook_uuid(webhook_uuid: String!): get_users_user_uuid_webhooks_webhook_uuid_response @httpOperation(path: "/webhook_subscriptions/{args.webhook_uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   "Returns information about a specified Invitee No Show."
-  getInviteeNoShow(uuid: String!): getInviteeNoShow_response
+  getInviteeNoShow(uuid: String!): getInviteeNoShow_response @httpOperation(path: "/invitee_no_shows/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   "Get a list of Routing Forms for a specified Organization."
   get_routing_forms(
     "View organization routing forms associated with the organization's URI."
@@ -145,9 +161,9 @@ type Query {
     page_token: String
     "Order results by the specified field and direction. Accepts comma-separated list of {field}:{direction} values. Supported fields are: created_at. Sort direction is specified as: asc, desc."
     sort: String
-  ): get_routing_forms_response
+  ): get_routing_forms_response @httpOperation(path: "/routing_forms", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"organization\\":\\"organization\\",\\"count\\":\\"count\\",\\"page_token\\":\\"page_token\\",\\"sort\\":\\"sort\\"}")
   "Get a specified Routing Form."
-  get_routing_forms_uuid(uuid: String!): get_routing_forms_uuid_response
+  get_routing_forms_uuid(uuid: String!): get_routing_forms_uuid_response @httpOperation(path: "/routing_forms/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   "Get a list of Routing Form Submissions for a specified Routing Form."
   get_routing_form_submissions(
     "View routing form submissions associated with the routing form's URI."
@@ -158,9 +174,9 @@ type Query {
     page_token: String
     "Order results by the specified field and direction. Accepts comma-separated list of {field}:{direction} values. Supported fields are: created_at. Sort direction is specified as: asc, desc."
     sort: String
-  ): get_routing_form_submissions_response
+  ): get_routing_form_submissions_response @httpOperation(path: "/routing_form_submissions", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"form\\":\\"form\\",\\"count\\":\\"count\\",\\"page_token\\":\\"page_token\\",\\"sort\\":\\"sort\\"}")
   "Get a specified Routing Form Submission."
-  get_routing_form_submissions_uuid(uuid: String!): get_routing_form_submissions_uuid_response
+  get_routing_form_submissions_uuid(uuid: String!): get_routing_form_submissions_uuid_response @httpOperation(path: "/routing_form_submissions/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   "Returns a list of available times for an event type within a specified date range.\\n\\nDate range can be no greater than 1 week (7 days).\\n\\n**NOTE:**\\n* This endpoint does not support traditional keyset pagination."
   getEventTypeAvailableTimes(
     "The uri associated with the event type"
@@ -169,7 +185,7 @@ type Query {
     start_time: String
     "End time of the requested availability range."
     end_time: String
-  ): getEventTypeAvailableTimes_response
+  ): getEventTypeAvailableTimes_response @httpOperation(path: "/event_type_available_times", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"event_type\\":\\"event_type\\",\\"start_time\\":\\"start_time\\",\\"end_time\\":\\"end_time\\"}")
   "<!-- theme: info -->\\n  > This endpoint requires an <strong>Enterprise</strong> subscription.\\n\\nReturns a list of activity log entries"
   activityLog(
     "Return activity log entries from the organization associated with this URI"
@@ -192,10 +208,10 @@ type Query {
     namespace: [String]
     "The action(s) associated with the entries"
     action: [String]
-  ): activityLog_response
+  ): activityLog_response @httpOperation(path: "/activity_log_entries", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"organization\\":\\"organization\\",\\"search_term\\":\\"search_term\\",\\"actor\\":\\"actor\\",\\"sort\\":\\"sort\\",\\"min_occurred_at\\":\\"min_occurred_at\\",\\"max_occurred_at\\":\\"max_occurred_at\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\",\\"namespace\\":\\"namespace\\",\\"action\\":\\"action\\"}", queryStringOptionsByParam: "{\\"actor\\":{\\"arrayFormat\\":\\"comma\\"},\\"sort\\":{\\"arrayFormat\\":\\"comma\\"},\\"namespace\\":{\\"arrayFormat\\":\\"comma\\"},\\"action\\":{\\"arrayFormat\\":\\"comma\\"}}")
 }
 
-union getInvitees_response = getInvitees_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
+union getInvitees_response @statusCodeTypeName(statusCode: 200, typeName: "getInvitees_200_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = getInvitees_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
 "Service response"
 type getInvitees_200_response {
@@ -368,12 +384,12 @@ type INVALID_ARGUMENT_response {
   details: [query_getInvitees_oneOf_1_allOf_0_details_items]
 }
 
-enum Invalid_Argument_const {
-  Invalid_Argument
+enum Invalid_Argument_const @typescript(type: "\\"Invalid Argument\\"") @example(value: "\\"Invalid Argument\\"") {
+  Invalid_Argument @enum(value: "\\"Invalid Argument\\"")
 }
 
-enum The_supplied_parameters_are_invalid__const {
-  The_supplied_parameters_are_invalid_
+enum The_supplied_parameters_are_invalid__const @typescript(type: "\\"The supplied parameters are invalid.\\"") @example(value: "\\"The supplied parameters are invalid.\\"") {
+  The_supplied_parameters_are_invalid_ @enum(value: "\\"The supplied parameters are invalid.\\"")
 }
 
 type query_getInvitees_oneOf_1_allOf_0_details_items {
@@ -388,14 +404,14 @@ type UNAUTHENTICATED_response {
   details: [query_getInvitees_oneOf_1_allOf_0_details_items]
 }
 
-enum Unauthenticated_const {
-  Unauthenticated
+enum Unauthenticated_const @typescript(type: "\\"Unauthenticated\\"") @example(value: "\\"Unauthenticated\\"") {
+  Unauthenticated @enum(value: "\\"Unauthenticated\\"")
 }
 
 enum query_getInvitees_oneOf_2_allOf_1_message {
-  The_access_token_is_invalid
-  The_access_token_expired
-  The_access_token_was_revoked
+  The_access_token_is_invalid @enum(value: "\\"The access token is invalid\\"")
+  The_access_token_expired @enum(value: "\\"The access token expired\\"")
+  The_access_token_was_revoked @enum(value: "\\"The access token was revoked\\"")
 }
 
 "Caller not authorized to perform this action"
@@ -405,20 +421,20 @@ type PERMISSION_DENIED_response {
   details: [query_getInvitees_oneOf_1_allOf_0_details_items]
 }
 
-enum Permission_Denied_const {
-  Permission_Denied
+enum Permission_Denied_const @typescript(type: "\\"Permission Denied\\"") @example(value: "\\"Permission Denied\\"") {
+  Permission_Denied @enum(value: "\\"Permission Denied\\"")
 }
 
 enum query_getInvitees_oneOf_3_allOf_1_message {
-  This_user_is_not_in_your_organization
-  You_do_not_have_permission
-  You_do_not_have_permission_to_access_this_resource_
-  You_are_not_allowed_to_view_this_event
-  Please_upgrade_your_Calendly_account_to_Professional
-  Please_upgrade_your_Calendly_account_to_Enterprise_
-  Please_also_specify_organization_when_requesting_events_for_a_user_within_your_organization_
+  This_user_is_not_in_your_organization @enum(value: "\\"This user is not in your organization\\"")
+  You_do_not_have_permission @enum(value: "\\"You do not have permission\\"")
+  You_do_not_have_permission_to_access_this_resource_ @enum(value: "\\"You do not have permission to access this resource.\\"")
+  You_are_not_allowed_to_view_this_event @enum(value: "\\"You are not allowed to view this event\\"")
+  Please_upgrade_your_Calendly_account_to_Professional @enum(value: "\\"Please upgrade your Calendly account to Professional\\"")
+  Please_upgrade_your_Calendly_account_to_Enterprise_ @enum(value: "\\"Please upgrade your Calendly account to Enterprise.\\"")
+  Please_also_specify_organization_when_requesting_events_for_a_user_within_your_organization_ @enum(value: "\\"Please also specify organization when requesting events for a user within your organization.\\"")
   Unauthorized
-  You_cannot_perform_this_action_for_an_organization_with_SCIM_enabled_
+  You_cannot_perform_this_action_for_an_organization_with_SCIM_enabled_ @enum(value: "\\"You cannot perform this action for an organization with SCIM enabled.\\"")
 }
 
 "Requested resource not found"
@@ -428,12 +444,12 @@ type NOT_FOUND_response {
   details: [query_getInvitees_oneOf_1_allOf_0_details_items]
 }
 
-enum Resource_Not_Found_const {
-  Resource_Not_Found
+enum Resource_Not_Found_const @typescript(type: "\\"Resource Not Found\\"") @example(value: "\\"Resource Not Found\\"") {
+  Resource_Not_Found @enum(value: "\\"Resource Not Found\\"")
 }
 
-enum The_server_could_not_find_the_requested_resource__const {
-  The_server_could_not_find_the_requested_resource_
+enum The_server_could_not_find_the_requested_resource__const @typescript(type: "\\"The server could not find the requested resource.\\"") @example(value: "\\"The server could not find the requested resource.\\"") {
+  The_server_could_not_find_the_requested_resource_ @enum(value: "\\"The server could not find the requested resource.\\"")
 }
 
 "An error has occurred on the server"
@@ -443,12 +459,12 @@ type UNKNOWN_response {
   details: [query_getInvitees_oneOf_1_allOf_0_details_items]
 }
 
-enum Internal_Server_Error_const {
-  Internal_Server_Error
+enum Internal_Server_Error_const @typescript(type: "\\"Internal Server Error\\"") @example(value: "\\"Internal Server Error\\"") {
+  Internal_Server_Error @enum(value: "\\"Internal Server Error\\"")
 }
 
-enum The_server_encountered_an_unexpected_condition_that_prevented_it_from_fulfilling_the_request__const {
-  The_server_encountered_an_unexpected_condition_that_prevented_it_from_fulfilling_the_request_
+enum The_server_encountered_an_unexpected_condition_that_prevented_it_from_fulfilling_the_request__const @typescript(type: "\\"The server encountered an unexpected condition that prevented it from fulfilling the request.\\"") @example(value: "\\"The server encountered an unexpected condition that prevented it from fulfilling the request.\\"") {
+  The_server_encountered_an_unexpected_condition_that_prevented_it_from_fulfilling_the_request_ @enum(value: "\\"The server encountered an unexpected condition that prevented it from fulfilling the request.\\"")
 }
 
 "Indicates if the invitee \\"canceled\\" or still \\"active\\""
@@ -460,7 +476,7 @@ enum queryInput_getInvitees_status {
 "Floats that will have a value greater than 0."
 scalar PositiveFloat
 
-union getScheduledEvents_response = getScheduledEvents_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
+union getScheduledEvents_response @statusCodeTypeName(statusCode: 200, typeName: "getScheduledEvents_200_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = getScheduledEvents_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
 "Service response"
 type getScheduledEvents_200_response {
@@ -511,8 +527,8 @@ type In_Person_Meeting {
   location: String!
 }
 
-enum physical_const {
-  physical
+enum physical_const @typescript(type: "\\"physical\\"") @example(value: "\\"physical\\"") {
+  physical @enum(value: "\\"physical\\"")
 }
 
 "Meeting publisher will call the Invitee"
@@ -522,8 +538,8 @@ type Outbound_Call {
   location: String
 }
 
-enum outbound_call_const {
-  outbound_call
+enum outbound_call_const @typescript(type: "\\"outbound_call\\"") @example(value: "\\"outbound_call\\"") {
+  outbound_call @enum(value: "\\"outbound_call\\"")
 }
 
 "Invitee will call meeting publisher at the specified phone number"
@@ -533,8 +549,8 @@ type Inbound_Call {
   location: String!
 }
 
-enum inbound_call_const {
-  inbound_call
+enum inbound_call_const @typescript(type: "\\"inbound_call\\"") @example(value: "\\"inbound_call\\"") {
+  inbound_call @enum(value: "\\"inbound_call\\"")
 }
 
 "Details about an Event that will take place using a Google Meet / Hangout conference"
@@ -545,8 +561,8 @@ type Google_Conference {
   join_url: URL
 }
 
-enum google_conference_const {
-  google_conference
+enum google_conference_const @typescript(type: "\\"google_conference\\"") @example(value: "\\"google_conference\\"") {
+  google_conference @enum(value: "\\"google_conference\\"")
 }
 
 "Indicates the current status of the Google conference"
@@ -566,8 +582,8 @@ type Zoom_Conference {
   data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_data
 }
 
-enum zoom_conference_const {
-  zoom_conference
+enum zoom_conference_const @typescript(type: "\\"zoom_conference\\"") @example(value: "\\"zoom_conference\\"") {
+  zoom_conference @enum(value: "\\"zoom_conference\\"")
 }
 
 "Indicates the current status of the Zoom conference"
@@ -616,8 +632,8 @@ type GoToMeeting_Conference {
   data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_5_data
 }
 
-enum gotomeeting_const {
-  gotomeeting
+enum gotomeeting_const @typescript(type: "\\"gotomeeting\\"") @example(value: "\\"gotomeeting\\"") {
+  gotomeeting @enum(value: "\\"gotomeeting\\"")
 }
 
 "Indicates the current status of the GoToMeeting conference"
@@ -644,8 +660,8 @@ type Microsoft_Teams_Conference {
   data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_6_data
 }
 
-enum microsoft_teams_conference_const {
-  microsoft_teams_conference
+enum microsoft_teams_conference_const @typescript(type: "\\"microsoft_teams_conference\\"") @example(value: "\\"microsoft_teams_conference\\"") {
+  microsoft_teams_conference @enum(value: "\\"microsoft_teams_conference\\"")
 }
 
 "Indicates the current status of the Microsoft Teams conference"
@@ -676,8 +692,8 @@ type Custom_Location {
   location: String
 }
 
-enum custom_const {
-  custom
+enum custom_const @typescript(type: "\\"custom\\"") @example(value: "\\"custom\\"") {
+  custom @enum(value: "\\"custom\\"")
 }
 
 "Information about an event location that’s specified by the invitee."
@@ -687,8 +703,8 @@ type Invitee_Specified_Location {
   location: String!
 }
 
-enum ask_invitee_const {
-  ask_invitee
+enum ask_invitee_const @typescript(type: "\\"ask_invitee\\"") @example(value: "\\"ask_invitee\\"") {
+  ask_invitee @enum(value: "\\"ask_invitee\\"")
 }
 
 "Details about an Event that will take place using a WebEx conference"
@@ -700,8 +716,8 @@ type WebEx_Conference {
   data: query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_9_data
 }
 
-enum webex_conference_const {
-  webex_conference
+enum webex_conference_const @typescript(type: "\\"webex_conference\\"") @example(value: "\\"webex_conference\\"") {
+  webex_conference @enum(value: "\\"webex_conference\\"")
 }
 
 "Indicates the current status of the WebEx conference"
@@ -757,7 +773,7 @@ enum queryInput_getScheduledEvents_status {
   canceled
 }
 
-union getEventTypes_response = getEventTypes_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
+union getEventTypes_response @statusCodeTypeName(statusCode: 200, typeName: "getEventTypes_200_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = getEventTypes_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
 "Service response"
 type getEventTypes_200_response {
@@ -820,8 +836,7 @@ enum query_getEventTypes_oneOf_0_collection_items_type {
   AdhocEventType
 }
 
-"The hexadecimal color value of the event type's scheduling page"
-scalar query_getEventTypes_oneOf_0_collection_items_color
+scalar query_getEventTypes_oneOf_0_collection_items_color @regexp(pattern: "^#[a-f\\\\d]{6}$") @typescript(type: "string")
 
 "The publicly visible profile of a User or a Team that's associated with the Event Type (note: some Event Types don't have profiles)"
 type Profile {
@@ -869,7 +884,7 @@ enum query_getEventTypes_oneOf_0_collection_items_custom_questions_items_type {
   multi_select
 }
 
-union getUser_response = getUser_200_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
+union getUser_response @statusCodeTypeName(statusCode: 200, typeName: "getUser_200_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = getUser_200_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
 "Service response"
 type getUser_200_response {
@@ -900,14 +915,14 @@ type User {
   current_organization: URL!
 }
 
-union getMyUserAccount_response = getMyUserAccount_200_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
+union getMyUserAccount_response @statusCodeTypeName(statusCode: 200, typeName: "getMyUserAccount_200_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = getMyUserAccount_200_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
 "Service response"
 type getMyUserAccount_200_response {
   resource: User!
 }
 
-union get_scheduled_events_event_uuid_invitees_invitee_uuid_response = get_scheduled_events_event_uuid_invitees_invitee_uuid_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | Error_Response | NOT_FOUND_response | UNKNOWN_response
+union get_scheduled_events_event_uuid_invitees_invitee_uuid_response @statusCodeTypeName(statusCode: 200, typeName: "get_scheduled_events_event_uuid_invitees_invitee_uuid_200_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "Error_Response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = get_scheduled_events_event_uuid_invitees_invitee_uuid_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | Error_Response | NOT_FOUND_response | UNKNOWN_response
 
 type get_scheduled_events_event_uuid_invitees_invitee_uuid_200_response {
   resource: Invitee!
@@ -920,19 +935,19 @@ type Error_Response {
   details: [query_getInvitees_oneOf_1_allOf_0_details_items]
 }
 
-union get_scheduled_events_uuid_response = get_scheduled_events_uuid_200_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
+union get_scheduled_events_uuid_response @statusCodeTypeName(statusCode: 200, typeName: "get_scheduled_events_uuid_200_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = get_scheduled_events_uuid_200_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
 type get_scheduled_events_uuid_200_response {
   resource: Event!
 }
 
-union get_event_types_uuid_response = get_event_types_uuid_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
+union get_event_types_uuid_response @statusCodeTypeName(statusCode: 200, typeName: "get_event_types_uuid_200_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = get_event_types_uuid_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
 type get_event_types_uuid_200_response {
   resource: Event_Type!
 }
 
-union get_organizations_uuid_invitations_response = get_organizations_uuid_invitations_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
+union get_organizations_uuid_invitations_response @statusCodeTypeName(statusCode: 200, typeName: "get_organizations_uuid_invitations_200_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = get_organizations_uuid_invitations_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
 type get_organizations_uuid_invitations_200_response {
   collection: [Organization_Invitation]!
@@ -972,13 +987,13 @@ enum queryInput_get_organizations_uuid_invitations_status {
   declined
 }
 
-union get_organizations_org_uuid_invitations_uuid_response = get_organizations_org_uuid_invitations_uuid_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
+union get_organizations_org_uuid_invitations_uuid_response @statusCodeTypeName(statusCode: 200, typeName: "get_organizations_org_uuid_invitations_uuid_200_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = get_organizations_org_uuid_invitations_uuid_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
 type get_organizations_org_uuid_invitations_uuid_200_response {
   resource: Organization_Invitation!
 }
 
-union get_organizations_uuid_memberships_response = get_organizations_uuid_memberships_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | Error_Response | NOT_FOUND_response | UNKNOWN_response
+union get_organizations_uuid_memberships_response @statusCodeTypeName(statusCode: 200, typeName: "get_organizations_uuid_memberships_200_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "Error_Response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = get_organizations_uuid_memberships_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | Error_Response | NOT_FOUND_response | UNKNOWN_response
 
 type get_organizations_uuid_memberships_200_response {
   resource: Organization_Membership!
@@ -1026,7 +1041,7 @@ type query_get_organizations_uuid_memberships_oneOf_0_resource_user {
   updated_at: DateTime!
 }
 
-union get_organization_memberships_response = get_organization_memberships_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | Error_Response | NOT_FOUND_response | UNKNOWN_response
+union get_organization_memberships_response @statusCodeTypeName(statusCode: 200, typeName: "get_organization_memberships_200_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "Error_Response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = get_organization_memberships_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | Error_Response | NOT_FOUND_response | UNKNOWN_response
 
 "Service response"
 type get_organization_memberships_200_response {
@@ -1034,7 +1049,7 @@ type get_organization_memberships_200_response {
   pagination: Pagination!
 }
 
-union get_webhooks_response = get_webhooks_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response
+union get_webhooks_response @statusCodeTypeName(statusCode: 200, typeName: "get_webhooks_200_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") = get_webhooks_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response
 
 type get_webhooks_200_response {
   collection: [Webhook_Subscription]!
@@ -1072,9 +1087,9 @@ enum query_get_webhooks_oneOf_0_collection_items_state {
 }
 
 enum query_get_webhooks_oneOf_0_collection_items_events_items {
-  invitee_created
-  invitee_canceled
-  routing_form_submission_created
+  invitee_created @enum(value: "\\"invitee.created\\"")
+  invitee_canceled @enum(value: "\\"invitee.canceled\\"")
+  routing_form_submission_created @enum(value: "\\"routing_form_submission.created\\"")
 }
 
 "The scope of the webhook subscription"
@@ -1089,13 +1104,13 @@ enum queryInput_get_webhooks_scope {
   user
 }
 
-union get_users_user_uuid_webhooks_webhook_uuid_response = get_users_user_uuid_webhooks_webhook_uuid_200_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response
+union get_users_user_uuid_webhooks_webhook_uuid_response @statusCodeTypeName(statusCode: 200, typeName: "get_users_user_uuid_webhooks_webhook_uuid_200_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") = get_users_user_uuid_webhooks_webhook_uuid_200_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response
 
 type get_users_user_uuid_webhooks_webhook_uuid_200_response {
   resource: Webhook_Subscription!
 }
 
-union getInviteeNoShow_response = getInviteeNoShow_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response
+union getInviteeNoShow_response @statusCodeTypeName(statusCode: 200, typeName: "getInviteeNoShow_200_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") = getInviteeNoShow_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response
 
 type getInviteeNoShow_200_response {
   resource: InviteeNoShow!
@@ -1111,7 +1126,7 @@ type InviteeNoShow {
   created_at: DateTime!
 }
 
-union get_routing_forms_response = get_routing_forms_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
+union get_routing_forms_response @statusCodeTypeName(statusCode: 200, typeName: "get_routing_forms_200_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = get_routing_forms_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
 type get_routing_forms_200_response {
   collection: [Routing_Form]!
@@ -1168,13 +1183,13 @@ enum query_get_routing_forms_oneOf_0_collection_items_questions_items_type {
   radios
 }
 
-union get_routing_forms_uuid_response = get_routing_forms_uuid_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
+union get_routing_forms_uuid_response @statusCodeTypeName(statusCode: 200, typeName: "get_routing_forms_uuid_200_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = get_routing_forms_uuid_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
 type get_routing_forms_uuid_200_response {
   resource: Routing_Form!
 }
 
-union get_routing_form_submissions_response = get_routing_form_submissions_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
+union get_routing_form_submissions_response @statusCodeTypeName(statusCode: 200, typeName: "get_routing_form_submissions_200_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = get_routing_form_submissions_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
 type get_routing_form_submissions_200_response {
   collection: [Routing_Form_Submission]!
@@ -1236,8 +1251,8 @@ type Routing_Form_Submission_Event_Type_Result {
   value: URL!
 }
 
-enum event_type_const {
-  event_type
+enum event_type_const @typescript(type: "\\"event_type\\"") @example(value: "\\"event_type\\"") {
+  event_type @enum(value: "\\"event_type\\"")
 }
 
 "Information about the external URL Routing Form Submission result."
@@ -1247,8 +1262,8 @@ type Routing_Form_Submission_External_URL_Result {
   value: URL!
 }
 
-enum external_url_const {
-  external_url
+enum external_url_const @typescript(type: "\\"external_url\\"") @example(value: "\\"external_url\\"") {
+  external_url @enum(value: "\\"external_url\\"")
 }
 
 "Information about the custom message Routing Form Submission result."
@@ -1257,8 +1272,8 @@ type Routing_Form_Submission_Custom_Message_Result {
   value: query_get_routing_form_submissions_oneOf_0_collection_items_result_oneOf_2_value!
 }
 
-enum custom_message_const {
-  custom_message
+enum custom_message_const @typescript(type: "\\"custom_message\\"") @example(value: "\\"custom_message\\"") {
+  custom_message @enum(value: "\\"custom_message\\"")
 }
 
 "Contains an object with custom message headline and body."
@@ -1269,17 +1284,17 @@ type query_get_routing_form_submissions_oneOf_0_collection_items_result_oneOf_2_
   body: String!
 }
 
-enum Invitee_const {
-  Invitee
+enum Invitee_const @typescript(type: "\\"Invitee\\"") @example(value: "\\"Invitee\\"") {
+  Invitee @enum(value: "\\"Invitee\\"")
 }
 
-union get_routing_form_submissions_uuid_response = get_routing_form_submissions_uuid_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
+union get_routing_form_submissions_uuid_response @statusCodeTypeName(statusCode: 200, typeName: "get_routing_form_submissions_uuid_200_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = get_routing_form_submissions_uuid_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
 type get_routing_form_submissions_uuid_200_response {
   resource: Routing_Form_Submission!
 }
 
-union getEventTypeAvailableTimes_response = getEventTypeAvailableTimes_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
+union getEventTypeAvailableTimes_response @statusCodeTypeName(statusCode: 200, typeName: "getEventTypeAvailableTimes_200_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = getEventTypeAvailableTimes_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
 "Service Response"
 type getEventTypeAvailableTimes_200_response {
@@ -1299,7 +1314,7 @@ type Event_Type_Available_Time {
   scheduling_url: URL!
 }
 
-union activityLog_response = activityLog_200_response | INVALID_ARGUMENT_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
+union activityLog_response @statusCodeTypeName(statusCode: 200, typeName: "activityLog_200_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = activityLog_200_response | INVALID_ARGUMENT_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
 "Activity log response"
 type activityLog_200_response {
@@ -1361,32 +1376,29 @@ type query_activityLog_oneOf_0_collection_items_actor_group {
 "The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf)."
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
-"A field whose value matches /^[A-Za-z0-9\\\\-_]+\\\\.[A-Za-z0-9\\\\-_]+$/."
-scalar query_activityLog_oneOf_0_collection_items_fully_qualified_name
+scalar query_activityLog_oneOf_0_collection_items_fully_qualified_name @regexp(pattern: "^[A-Za-z0-9\\\\-_]+\\\\.[A-Za-z0-9\\\\-_]+$") @typescript(type: "string")
 
-"A field whose value matches /^[A-Za-z0-9\\\\-_]+$/."
-scalar query_activityLog_oneOf_0_collection_items_namespace
+scalar query_activityLog_oneOf_0_collection_items_namespace @regexp(pattern: "^[A-Za-z0-9\\\\-_]+$") @typescript(type: "string")
 
-"A field whose value matches /^[A-Za-z0-9\\\\-_]+$/."
-scalar query_activityLog_oneOf_0_collection_items_action
+scalar query_activityLog_oneOf_0_collection_items_action @regexp(pattern: "^[A-Za-z0-9\\\\-_]+$") @typescript(type: "string")
 
 "Integers that will have a value of 0 or more."
 scalar NonNegativeInt
 
 "Filters entries based on the search term.\\n\\nSupported operators:\\n  - \`|\` - to allow filtering by one term or another. Example: \`this | that\`\\n  - \`+\` - to allow filtering by one term and another. Example: \`this + that\`\\n  - \`\\"\` - to allow filtering by an exact search term. Example: \`\\"email@website.com\\"\`\\n  - \`-\` - to omit specific terms from results. Example: \`Added -User\`\\n  - \`()\` - to allow specifying precedence during a search. Example: \`(this + that) OR (person + place)\`\\n  - \`*\` - to allow prefix searching. Example \`*@other-website.com\`"
-scalar queryInput_activityLog_search_term
+scalar queryInput_activityLog_search_term @length(min: null, max: 300)
 
 enum queryInput_activityLog_sort_items {
-  action_asc
-  action_desc
-  actor_display_name_asc
-  actor_display_name_desc
-  actor_uri_asc
-  actor_uri_desc
-  namespace_asc
-  namespace_desc
-  occurred_at_asc
-  occurred_at_desc
+  action_asc @enum(value: "\\"action:asc\\"")
+  action_desc @enum(value: "\\"action:desc\\"")
+  actor_display_name_asc @enum(value: "\\"actor.display_name:asc\\"")
+  actor_display_name_desc @enum(value: "\\"actor.display_name:desc\\"")
+  actor_uri_asc @enum(value: "\\"actor.uri:asc\\"")
+  actor_uri_desc @enum(value: "\\"actor.uri:desc\\"")
+  namespace_asc @enum(value: "\\"namespace:asc\\"")
+  namespace_desc @enum(value: "\\"namespace:desc\\"")
+  occurred_at_asc @enum(value: "\\"occurred_at:asc\\"")
+  occurred_at_desc @enum(value: "\\"occurred_at:desc\\"")
 }
 
 "Integers that will have a value greater than 0."
@@ -1398,40 +1410,40 @@ type Mutation {
     "The organization's unique identifier"
     uuid: String!
     input: post_organizations_uuid_invitations_request_Input
-  ): post_organizations_uuid_invitations_response
+  ): post_organizations_uuid_invitations_response @httpOperation(path: "/organizations/{args.uuid}/invitations", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   "Use this to revoke an Organization Invitation to an organization. Once revoked, the invitation link that was sent to the invitee is no longer valid."
   revoke_users_organization_invitation(
     "The organization’s unique identifier"
     org_uuid: String!
     "The organization invitation's unique identifier"
     uuid: String!
-  ): revoke_users_organization_invitation_response
+  ): revoke_users_organization_invitation_response @httpOperation(path: "/organizations/{args.org_uuid}/invitations/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: DELETE)
   "Removes a user from an organization.\\n\\nNotes:\\n\\n* To remove users, the caller must have admin rights for the organization\\n\\n* An organization owner can’t be removed"
   delete_organizations_uuid_memberships(
     "The organization membership's unique identifier"
     uuid: String!
-  ): delete_organizations_uuid_memberships_response
+  ): delete_organizations_uuid_memberships_response @httpOperation(path: "/organization_memberships/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: DELETE)
   "Create a Webhook Subscription for an Organization or User.\\n\\n* The \`organization\` subscription scope triggers the webhook for all subscribed events within the organization.\\n* The \`user\` subscription scope only triggers the webhook for subscribed events that belong to the specific user.\\n\\n| Event | Allowed Subscription Scopes |\\n| ----- | --------------------------- |\\n| <pre>invitee.created</pre> | \`organization\` \`user\` |\\n| <pre>invitee.canceled</pre> | \`organization\` \`user\` |\\n| <pre>routing_form_submission.created</pre> | \`organization\` <br /> <small>Create separate Webhook Subscriptions for events with different subscription scopes.</small> |"
-  post_users_uuid_webhooks(input: post_users_uuid_webhooks_request_Input): post_users_uuid_webhooks_response
+  post_users_uuid_webhooks(input: post_users_uuid_webhooks_request_Input): post_users_uuid_webhooks_response @httpOperation(path: "/webhook_subscriptions", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   "Delete a Webhook Subscription."
-  delete_users_user_uuid_webhooks_webhook_uuid(webhook_uuid: String!): delete_users_user_uuid_webhooks_webhook_uuid_response
+  delete_users_user_uuid_webhooks_webhook_uuid(webhook_uuid: String!): delete_users_user_uuid_webhooks_webhook_uuid_response @httpOperation(path: "/webhook_subscriptions/{args.webhook_uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: DELETE)
   "Creates a single-use scheduling link."
-  post_scheduling_links(input: post_scheduling_links_request_Input): post_scheduling_links_response
+  post_scheduling_links(input: post_scheduling_links_request_Input): post_scheduling_links_response @httpOperation(path: "/scheduling_links", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   "<!-- theme: info -->\\n  > This endpoint requires an <strong>Enterprise</strong> subscription.\\n\\nTo submit a request to remove invitee data from all previously booked events in your organization, use this endpoint. Requests for data deletion can take up to 7 days to complete."
-  post_data_compliance_deletion_invitees(input: post_data_compliance_deletion_invitees_request_Input): post_data_compliance_deletion_invitees_response
+  post_data_compliance_deletion_invitees(input: post_data_compliance_deletion_invitees_request_Input): post_data_compliance_deletion_invitees_response @httpOperation(path: "/data_compliance/deletion/invitees", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   "Undoes marking an Invitee as a No Show."
-  deleteInviteeNoShow(uuid: String!): deleteInviteeNoShow_response
+  deleteInviteeNoShow(uuid: String!): deleteInviteeNoShow_response @httpOperation(path: "/invitee_no_shows/{args.uuid}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: DELETE)
   "Marks an Invitee as a No Show."
-  postInviteeNoShow(input: postInviteeNoShow_request_Input): postInviteeNoShow_response
+  postInviteeNoShow(input: postInviteeNoShow_request_Input): postInviteeNoShow_response @httpOperation(path: "/invitee_no_shows", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   "Cancels specified event."
   post_scheduled_events_uuid_cancellation(
     "The event's unique indentifier"
     uuid: String!
     input: post_scheduled_events_uuid_cancellation_request_Input
-  ): post_scheduled_events_uuid_cancellation_response
+  ): post_scheduled_events_uuid_cancellation_response @httpOperation(path: "/scheduled_events/{args.uuid}/cancellation", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
 }
 
-union post_organizations_uuid_invitations_response = post_organizations_uuid_invitations_201_response | Error_Response | UNAUTHENTICATED_response | post_organizations_uuid_invitations_403_response | NOT_FOUND_response | UNKNOWN_response
+union post_organizations_uuid_invitations_response @statusCodeTypeName(statusCode: 201, typeName: "post_organizations_uuid_invitations_201_response") @statusCodeTypeName(statusCode: 400, typeName: "Error_Response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "post_organizations_uuid_invitations_403_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = post_organizations_uuid_invitations_201_response | Error_Response | UNAUTHENTICATED_response | post_organizations_uuid_invitations_403_response | NOT_FOUND_response | UNKNOWN_response
 
 type post_organizations_uuid_invitations_201_response {
   resource: Organization_Invitation!
@@ -1443,18 +1455,18 @@ type post_organizations_uuid_invitations_403_response {
 }
 
 enum mutation_post_organizations_uuid_invitations_oneOf_3_message {
-  You_already_sent_all_the_invitations_you_SINGLE_QUOTE_re_allotted_based_upon_the_number_of_seats_purchased_with_your_account__Please_purchase_more_seats_to_send_more_invitations_
-  You_already_sent_all_the_invitations_allotted_to_you_with_a_trial_account_
-  You_do_not_have_permission
-  You_cannot_perform_this_action_for_an_organization_with_SCIM_enabled_
+  You_already_sent_all_the_invitations_you_SINGLE_QUOTE_re_allotted_based_upon_the_number_of_seats_purchased_with_your_account__Please_purchase_more_seats_to_send_more_invitations_ @enum(value: "\\"You already sent all the invitations you're allotted based upon the number of seats purchased with your account. Please purchase more seats to send more invitations.\\"")
+  You_already_sent_all_the_invitations_allotted_to_you_with_a_trial_account_ @enum(value: "\\"You already sent all the invitations allotted to you with a trial account.\\"")
+  You_do_not_have_permission @enum(value: "\\"You do not have permission\\"")
+  You_cannot_perform_this_action_for_an_organization_with_SCIM_enabled_ @enum(value: "\\"You cannot perform this action for an organization with SCIM enabled.\\"")
 }
 
-input post_organizations_uuid_invitations_request_Input {
+input post_organizations_uuid_invitations_request_Input @example(value: "{\\"value\\":{\\"email\\":\\"alice@example.com\\"}}") {
   "The email of the user being invited"
   email: EmailAddress!
 }
 
-union revoke_users_organization_invitation_response = Void_container | Error_Response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
+union revoke_users_organization_invitation_response @statusCodeTypeName(statusCode: 204, typeName: "Void_container") @statusCodeTypeName(statusCode: 400, typeName: "Error_Response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = Void_container | Error_Response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
 type Void_container {
   Void: Void
@@ -1463,9 +1475,9 @@ type Void_container {
 "Represents empty values"
 scalar Void
 
-union delete_organizations_uuid_memberships_response = Void_container | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | Error_Response | NOT_FOUND_response | UNKNOWN_response
+union delete_organizations_uuid_memberships_response @statusCodeTypeName(statusCode: 204, typeName: "Void_container") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "Error_Response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = Void_container | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | Error_Response | NOT_FOUND_response | UNKNOWN_response
 
-union post_users_uuid_webhooks_response = post_users_uuid_webhooks_201_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | post_users_uuid_webhooks_409_response
+union post_users_uuid_webhooks_response @statusCodeTypeName(statusCode: 201, typeName: "post_users_uuid_webhooks_201_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 409, typeName: "post_users_uuid_webhooks_409_response") = post_users_uuid_webhooks_201_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | post_users_uuid_webhooks_409_response
 
 type post_users_uuid_webhooks_201_response {
   resource: Webhook_Subscription!
@@ -1477,15 +1489,15 @@ type post_users_uuid_webhooks_409_response {
   details: [query_getInvitees_oneOf_1_allOf_0_details_items]
 }
 
-enum Already_Exists_const {
-  Already_Exists
+enum Already_Exists_const @typescript(type: "\\"Already Exists\\"") @example(value: "\\"Already Exists\\"") {
+  Already_Exists @enum(value: "\\"Already Exists\\"")
 }
 
-enum Hook_with_this_url_already_exists_const {
-  Hook_with_this_url_already_exists
+enum Hook_with_this_url_already_exists_const @typescript(type: "\\"Hook with this url already exists\\"") @example(value: "\\"Hook with this url already exists\\"") {
+  Hook_with_this_url_already_exists @enum(value: "\\"Hook with this url already exists\\"")
 }
 
-input post_users_uuid_webhooks_request_Input {
+input post_users_uuid_webhooks_request_Input @example(value: "{\\"value\\":{\\"url\\":\\"https://blah.foo/bar\\",\\"events\\":[\\"invitee.created\\",\\"invitee.canceled\\"],\\"organization\\":\\"https://api.calendly.com/organizations/AAAAAAAAAAAAAAAA\\",\\"user\\":\\"https://api.calendly.com/users/BBBBBBBBBBBBBBBB\\",\\"scope\\":\\"user\\",\\"signing_key\\":\\"5mEzn9C-I28UtwOjZJtFoob0sAAFZ95GbZkqj4y3i0I\\"}}") {
   "The URL where you want to receive POST requests for events you are subscribed to."
   url: URL!
   "List of user events to subscribe to."
@@ -1500,9 +1512,9 @@ input post_users_uuid_webhooks_request_Input {
 }
 
 enum mutationInput_post_users_uuid_webhooks_input_events_items {
-  invitee_canceled
-  invitee_created
-  routing_form_submission_created
+  invitee_canceled @enum(value: "\\"invitee.canceled\\"")
+  invitee_created @enum(value: "\\"invitee.created\\"")
+  routing_form_submission_created @enum(value: "\\"routing_form_submission.created\\"")
 }
 
 "Indicates if the webhook subscription scope will be \\"organization\\" or \\"user\\""
@@ -1511,9 +1523,9 @@ enum mutationInput_post_users_uuid_webhooks_input_scope {
   user
 }
 
-union delete_users_user_uuid_webhooks_webhook_uuid_response = Void_container | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
+union delete_users_user_uuid_webhooks_webhook_uuid_response @statusCodeTypeName(statusCode: 204, typeName: "Void_container") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = Void_container | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
-union post_scheduling_links_response = post_scheduling_links_201_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
+union post_scheduling_links_response @statusCodeTypeName(statusCode: 201, typeName: "post_scheduling_links_201_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = post_scheduling_links_201_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
 type post_scheduling_links_201_response {
   resource: mutation_post_scheduling_links_oneOf_0_resource!
@@ -1527,44 +1539,44 @@ type mutation_post_scheduling_links_oneOf_0_resource {
   owner_type: EventType_const
 }
 
-enum EventType_const {
-  EventType
+enum EventType_const @typescript(type: "\\"EventType\\"") @example(value: "\\"EventType\\"") {
+  EventType @enum(value: "\\"EventType\\"")
 }
 
-input post_scheduling_links_request_Input {
+input post_scheduling_links_request_Input @example(value: "{\\"value\\":{\\"max_event_count\\":1,\\"owner\\":\\"https://api.calendly.com/event_types/012345678901234567890\\",\\"owner_type\\":\\"EventType\\"}}") {
   max_event_count: _1_const!
   "A link to the resource that owns this Scheduling Link (currently, this is always an Event Type)"
   owner: URL!
   owner_type: EventType_const!
 }
 
-enum _1_const {
-  _1
+enum _1_const @typescript(type: "1") @example(value: "1") {
+  _1 @enum(value: "1")
 }
 
-union post_data_compliance_deletion_invitees_response = JSON_container | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | Error_Response | NOT_FOUND_response | UNKNOWN_response
+union post_data_compliance_deletion_invitees_response @statusCodeTypeName(statusCode: 202, typeName: "JSON_container") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "Error_Response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = JSON_container | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | Error_Response | NOT_FOUND_response | UNKNOWN_response
 
 type JSON_container {
   JSON: JSON
 }
 
-input post_data_compliance_deletion_invitees_request_Input {
+input post_data_compliance_deletion_invitees_request_Input @example(value: "{\\"value\\":{\\"emails\\":[\\"test@example.com\\"]}}") {
   emails: [EmailAddress]!
 }
 
-union deleteInviteeNoShow_response = Void_container | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
+union deleteInviteeNoShow_response @statusCodeTypeName(statusCode: 204, typeName: "Void_container") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = Void_container | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
-union postInviteeNoShow_response = postInviteeNoShow_201_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
+union postInviteeNoShow_response @statusCodeTypeName(statusCode: 201, typeName: "postInviteeNoShow_201_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = postInviteeNoShow_201_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
 type postInviteeNoShow_201_response {
   resource: InviteeNoShow!
 }
 
-input postInviteeNoShow_request_Input {
+input postInviteeNoShow_request_Input @example(value: "{\\"value\\":{\\"invitee\\":\\"https://api.calendly.com/scheduled_events/GBGBDCAADAEDCRZ2/invitees/7c1dbe46-bd84-42e2-9b97-05e2fb379bfe\\"}}") {
   invitee: URL
 }
 
-union post_scheduled_events_uuid_cancellation_response = post_scheduled_events_uuid_cancellation_201_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | post_scheduled_events_uuid_cancellation_403_response | NOT_FOUND_response | UNKNOWN_response
+union post_scheduled_events_uuid_cancellation_response @statusCodeTypeName(statusCode: 201, typeName: "post_scheduled_events_uuid_cancellation_201_response") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "post_scheduled_events_uuid_cancellation_403_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = post_scheduled_events_uuid_cancellation_201_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | post_scheduled_events_uuid_cancellation_403_response | NOT_FOUND_response | UNKNOWN_response
 
 type post_scheduled_events_uuid_cancellation_201_response {
   resource: Cancellation!
@@ -1576,9 +1588,9 @@ type post_scheduled_events_uuid_cancellation_403_response {
 }
 
 enum mutation_post_scheduled_events_uuid_cancellation_oneOf_3_message {
-  You_are_not_allowed_to_cancel_this_event
-  Event_in_the_past
-  Event_is_already_canceled
+  You_are_not_allowed_to_cancel_this_event @enum(value: "\\"You are not allowed to cancel this event\\"")
+  Event_in_the_past @enum(value: "\\"Event in the past\\"")
+  Event_is_already_canceled @enum(value: "\\"Event is already canceled\\"")
 }
 
 input post_scheduled_events_uuid_cancellation_request_Input {
@@ -1587,5 +1599,19 @@ input post_scheduled_events_uuid_cancellation_request_Input {
 }
 
 "Reason for cancellation"
-scalar mutationInput_post_scheduled_events_uuid_cancellation_input_reason"
+scalar mutationInput_post_scheduled_events_uuid_cancellation_input_reason @length(min: null, max: 10000)
+
+scalar ObjMap
+
+enum HTTPMethod {
+  GET
+  HEAD
+  POST
+  PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
+  PATCH
+}"
 `;

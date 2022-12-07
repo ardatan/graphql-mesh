@@ -19,7 +19,7 @@ async function handleOperationResponseConfig(
     cwd: string;
     fetchFn: WindowOrWorkerGlobalScope['fetch'];
     logger?: Logger;
-  }
+  },
 ): Promise<JSONSchemaObject> {
   if (operationResponseConfig.responseSchema) {
     const schema =
@@ -73,7 +73,7 @@ export async function getReferencedJSONSchemaFromOperations({
   ignoreErrorResponses,
   logger = new DefaultLogger('getReferencedJSONSchemaFromOperations'),
   fetchFn,
-  baseUrl,
+  endpoint,
   operationHeaders,
   queryParams,
 }: {
@@ -83,7 +83,7 @@ export async function getReferencedJSONSchemaFromOperations({
   ignoreErrorResponses?: boolean;
   logger?: Logger;
   fetchFn: WindowOrWorkerGlobalScope['fetch'];
-  baseUrl: string;
+  endpoint: string;
   operationHeaders: Record<string, string>;
   queryParams: Record<string, string | number | boolean>;
 }) {
@@ -95,9 +95,8 @@ export async function getReferencedJSONSchemaFromOperations({
   };
   for (const operationConfig of operations) {
     const { operationType, rootTypeName, fieldName } = getOperationMetadata(operationConfig);
-    const rootTypeDefinition = (finalJsonSchema.properties[operationType] = finalJsonSchema.properties[
-      operationType
-    ] || {
+    const rootTypeDefinition = (finalJsonSchema.properties[operationType] = finalJsonSchema
+      .properties[operationType] || {
       type: 'object',
       title: rootTypeName,
       properties: {},
@@ -108,7 +107,7 @@ export async function getReferencedJSONSchemaFromOperations({
     const interpolationStrings: string[] = [
       ...Object.values(operationHeaders || {}),
       ...Object.values(queryParams || {}).map(val => val.toString()),
-      baseUrl,
+      endpoint,
     ];
 
     if ('pubsubTopic' in operationConfig) {
@@ -132,14 +131,18 @@ export async function getReferencedJSONSchemaFromOperations({
           continue;
         }
         const responseOperationConfig = operationConfig.responseByStatusCode[statusCode];
-        const responseOperationSchema = await handleOperationResponseConfig(responseOperationConfig, {
-          cwd,
-          schemaHeaders,
-          fetchFn,
-          logger,
-        });
+        const responseOperationSchema = await handleOperationResponseConfig(
+          responseOperationConfig,
+          {
+            cwd,
+            schemaHeaders,
+            fetchFn,
+            logger,
+          },
+        );
         statusCodeOneOfIndexMap[statusCode] = responseSchemas.length;
-        responseOperationSchema.title = responseOperationSchema.title || `${fieldName}_${statusCode}_response`;
+        responseOperationSchema.title =
+          responseOperationSchema.title || `${fieldName}_${statusCode}_response`;
         responseSchemas.push(responseOperationSchema);
       }
       if (responseSchemas.length === 1) {
@@ -161,36 +164,39 @@ export async function getReferencedJSONSchemaFromOperations({
           schemaHeaders,
           fetchFn,
           logger,
-        }
+        },
       );
     }
 
     const rootTypeInputPropertyName = operationType + 'Input';
     const rootInputTypeName = rootTypeName + 'Input';
-    const rootTypeInputTypeDefinition = (finalJsonSchema.properties[rootTypeInputPropertyName] = finalJsonSchema
-      .properties[rootTypeInputPropertyName] || {
-      type: 'object',
-      title: rootInputTypeName,
-      properties: {},
-      writeOnly: true,
-    });
+    const rootTypeInputTypeDefinition = (finalJsonSchema.properties[rootTypeInputPropertyName] =
+      finalJsonSchema.properties[rootTypeInputPropertyName] || {
+        type: 'object',
+        title: rootInputTypeName,
+        properties: {},
+        writeOnly: true,
+      });
 
     const interpolationKeys: string[] = getInterpolationKeys(...interpolationStrings);
 
     if ('queryParamArgMap' in operationConfig) {
-      interpolationKeys.push(...Object.values(operationConfig.queryParamArgMap).map(key => `args.${key}`));
+      interpolationKeys.push(
+        ...Object.values(operationConfig.queryParamArgMap).map(key => `args.${key}`),
+      );
     }
 
     for (const interpolationKey of interpolationKeys) {
-      const interpolationKeyParts = interpolationKey.split('.');
-      const initialObjectName = interpolationKeyParts.shift();
+      const [initialObjectName, varName] = interpolationKey.split('.');
+
       if (initialObjectName === 'args') {
-        rootTypeInputTypeDefinition.properties[fieldName] = rootTypeInputTypeDefinition.properties[fieldName] || {
+        rootTypeInputTypeDefinition.properties[fieldName] = rootTypeInputTypeDefinition.properties[
+          fieldName
+        ] || {
           title: `${rootTypeInputPropertyName}_${fieldName}`,
           type: 'object',
           properties: {},
         };
-        const varName = interpolationKeyParts.shift();
         if (operationConfig.argTypeMap != null && varName in operationConfig.argTypeMap) {
           const argTypeDef = operationConfig.argTypeMap[varName];
           if (typeof argTypeDef === 'object') {
@@ -213,14 +219,18 @@ export async function getReferencedJSONSchemaFromOperations({
         type: 'string',
         format: 'binary',
       };
-      rootTypeInputTypeDefinition.properties[fieldName] = rootTypeInputTypeDefinition.properties[fieldName] || {
+      rootTypeInputTypeDefinition.properties[fieldName] = rootTypeInputTypeDefinition.properties[
+        fieldName
+      ] || {
         title: `${rootTypeInputPropertyName}_${fieldName}`,
         type: 'object',
         properties: {},
       };
       rootTypeInputTypeDefinition.properties[fieldName].properties.input = generatedSchema;
     } else if ('requestSchema' in operationConfig && operationConfig.requestSchema) {
-      rootTypeInputTypeDefinition.properties[fieldName] = rootTypeInputTypeDefinition.properties[fieldName] || {
+      rootTypeInputTypeDefinition.properties[fieldName] = rootTypeInputTypeDefinition.properties[
+        fieldName
+      ] || {
         title: `${rootTypeInputPropertyName}_${fieldName}`,
         type: 'object',
         properties: {},
@@ -233,8 +243,10 @@ export async function getReferencedJSONSchemaFromOperations({
             }
           : operationConfig.requestSchema;
       if (operationConfig.requestSample) {
-        rootTypeInputTypeDefinition.properties[fieldName].properties.input.examples = rootTypeInputTypeDefinition
-          .properties[fieldName].properties.input.examples || [operationConfig.requestSample];
+        rootTypeInputTypeDefinition.properties[fieldName].properties.input.examples =
+          rootTypeInputTypeDefinition.properties[fieldName].properties.input.examples || [
+            operationConfig.requestSample,
+          ];
       }
     } else if ('requestSample' in operationConfig) {
       const sample =
@@ -247,7 +259,9 @@ export async function getReferencedJSONSchemaFromOperations({
               logger,
               importFn: defaultImportFn,
             }).catch((e: any) => {
-              throw new Error(`${operationConfig.field}.requestSample: ${operationConfig.requestSample}; ${e.message}`);
+              throw new Error(
+                `${operationConfig.field}.requestSample: ${operationConfig.requestSample}; ${e.message}`,
+              );
             });
       const generatedSchema = toJsonSchema(sample, {
         required: false,
@@ -263,7 +277,9 @@ export async function getReferencedJSONSchemaFromOperations({
       });
       generatedSchema.title = operationConfig.requestTypeName;
       generatedSchema.examples = [sample];
-      rootTypeInputTypeDefinition.properties[fieldName] = rootTypeInputTypeDefinition.properties[fieldName] || {
+      rootTypeInputTypeDefinition.properties[fieldName] = rootTypeInputTypeDefinition.properties[
+        fieldName
+      ] || {
         title: `${rootTypeInputPropertyName}_${fieldName}`,
         type: 'object',
         properties: {},

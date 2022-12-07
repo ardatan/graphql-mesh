@@ -12,7 +12,7 @@ describe('OpenAPI loader: Handle anyOf and oneOf', () => {
    */
   beforeAll(async () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      baseUrl: 'http://localhost:8080/api',
+      endpoint: 'http://localhost:8080/api',
       fetch,
       source: './fixtures/example_oas4.json',
       cwd: __dirname,
@@ -91,7 +91,7 @@ describe('OpenAPI loader: Handle anyOf and oneOf', () => {
       expect(
         (result.data.__schema as any).queryType.fields.find((field: { name: string }) => {
           return field.name === 'anyOf';
-        })
+        }),
       ).toEqual({
         name: 'anyOf',
         description: 'Basic anyOf test using the same member schemas',
@@ -128,7 +128,7 @@ describe('OpenAPI loader: Handle anyOf and oneOf', () => {
       expect(
         (result.data.__schema as any).queryType.fields.find((field: { name: string }) => {
           return field.name === 'anyOf2';
-        })
+        }),
       ).toEqual({
         name: 'anyOf2',
         description: 'Basic anyOf test with different member schemas',
@@ -170,7 +170,7 @@ describe('OpenAPI loader: Handle anyOf and oneOf', () => {
       expect(
         (result.data.__schema as any).queryType.fields.find((field: { name: string }) => {
           return field.name === 'anyOf3';
-        })
+        }),
       ).toEqual({
         name: 'anyOf3',
         description: 'anyOf test with the same nested member schemas',
@@ -207,7 +207,7 @@ describe('OpenAPI loader: Handle anyOf and oneOf', () => {
       expect(
         (result.data.__schema as any).queryType.fields.find((field: { name: string }) => {
           return field.name === 'anyOf4';
-        })
+        }),
       ).toEqual({
         name: 'anyOf4',
         description: 'anyOf test with different nested member schemas',
@@ -250,7 +250,7 @@ describe('OpenAPI loader: Handle anyOf and oneOf', () => {
       expect(
         (result.data.__schema as any).queryType.fields.find((field: { name: string }) => {
           return field.name === 'anyOf5';
-        })
+        }),
       ).toEqual({
         name: 'anyOf5',
         description: 'anyOf test with different nested member schemas, leading to conflict',
@@ -286,7 +286,7 @@ describe('OpenAPI loader: Handle anyOf and oneOf', () => {
       expect(
         (result.data.__schema as any).queryType.fields.find((field: { name: string }) => {
           return field.name === 'anyOf6';
-        })
+        }),
       ).toEqual({
         name: 'anyOf6',
         description: 'anyOf test with incompatible member schema types',
@@ -327,7 +327,7 @@ describe('OpenAPI loader: Handle anyOf and oneOf', () => {
       expect(
         (result.data.__schema as any).queryType.fields.find((field: { name: string }) => {
           return field.name === 'anyOf7';
-        })
+        }),
       ).toEqual({
         name: 'anyOf7',
         description: 'anyOf test with some extraneous member schemas',
@@ -366,7 +366,7 @@ describe('OpenAPI loader: Handle anyOf and oneOf', () => {
       expect(
         (result.data.__schema as any).queryType.fields.find((field: { name: string }) => {
           return field.name === 'anyOf8';
-        })
+        }),
       ).toEqual({
         name: 'anyOf8',
         description: 'anyOf test with no object type member schemas',
@@ -406,7 +406,7 @@ describe('OpenAPI loader: Handle anyOf and oneOf', () => {
       expect(
         (result.data.__schema as any).queryType.fields.find((field: { name: string }) => {
           return field.name === 'anyOf9';
-        })
+        }),
       ).toEqual({
         name: 'anyOf9',
         description: 'anyOf test with extraneous member schemas with external type',
@@ -432,7 +432,7 @@ describe('OpenAPI loader: Handle anyOf and oneOf', () => {
       expect(
         (result.data.__schema as any).queryType.fields.find((field: { name: string }) => {
           return field.name === 'anyOf10';
-        })
+        }),
       ).toEqual({
         name: 'anyOf10',
         description: 'Basic anyOf test with allOf',
@@ -479,7 +479,7 @@ describe('OpenAPI loader: Handle anyOf and oneOf', () => {
       expect(
         (result.data.__schema as any).queryType.fields.find((field: { name: string }) => {
           return field.name === 'anyOf11';
-        })
+        }),
       ).toEqual({
         name: 'anyOf11',
         description: 'anyOf test with allOf, requiring anyOf collapse',
@@ -529,7 +529,7 @@ describe('OpenAPI loader: Handle anyOf and oneOf', () => {
       expect(
         (result.data.__schema as any).queryType.fields.find((field: { name: string }) => {
           return field.name === 'oneOf';
-        })
+        }),
       ).toEqual({
         name: 'oneOf',
         description: 'Basic oneOf test',
@@ -576,7 +576,7 @@ describe('OpenAPI loader: Handle anyOf and oneOf', () => {
       expect(
         (result.data.__schema as any).queryType.fields.find((field: { name: string }) => {
           return field.name === 'oneOf2';
-        })
+        }),
       ).toEqual({
         name: 'oneOf2',
         description: 'oneOf test with non-object type member schema',
@@ -623,7 +623,7 @@ describe('OpenAPI loader: Handle anyOf and oneOf', () => {
       expect(
         (result.data.__schema as any).queryType.fields.find((field: { name: string }) => {
           return field.name === 'oneOf3';
-        })
+        }),
       ).toEqual({
         name: 'oneOf3',
         description: 'oneOf test with no object type member schemas',
@@ -671,7 +671,7 @@ describe('OpenAPI loader: Handle anyOf and oneOf', () => {
       expect(
         (result.data.__schema as any).queryType.fields.find((field: { name: string }) => {
           return field.name === 'oneOf4';
-        })
+        }),
       ).toEqual({
         name: 'oneOf4',
         description: 'oneOf test with extraneous member schemas',
@@ -699,7 +699,7 @@ describe('OpenAPI loader: Handle anyOf and oneOf', () => {
       expect(
         (result.data.__schema as any).queryType.fields.find((field: { name: string }) => {
           return field.name === 'oneOf5';
-        })
+        }),
       ).toEqual({
         name: 'oneOf5',
         description: 'Basic oneOf test with allOf',
@@ -748,7 +748,7 @@ describe('OpenAPI loader: Handle anyOf and oneOf', () => {
       expect(
         (result.data.__schema as any).queryType.fields.find((field: { name: string }) => {
           return field.name === 'oneOf6';
-        })
+        }),
       ).toEqual({
         name: 'oneOf6',
         description: 'oneOf test with allOf, requiring oneOf collapse',
@@ -808,7 +808,7 @@ describe('OpenAPI loader: Handle anyOf and oneOf', () => {
       expect(
         (result.data.__schema as any).queryType.fields.find((field: { name: string }) => {
           return field.name === 'oneOfWithAllOfsAndLink';
-        })
+        }),
       ).toEqual({
         name: 'oneOfWithAllOfsAndLink',
         description: null, // originaly returned "Equivalent to GET /oneOfWithAllOfsAndLink"

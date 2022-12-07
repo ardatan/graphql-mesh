@@ -2,7 +2,7 @@ sources:
   - name: FHIR
     handler:
       jsonSchema:
-        baseUrl: http://hapi.fhir.org/baseR4
+        endpoint: http://hapi.fhir.org/baseR4
         operations:
           - type: Query
             field: resourceById

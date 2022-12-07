@@ -16,10 +16,10 @@ describe('OpenAPI loader: Query Arguments', () => {
    */
   beforeAll(async () => {
     server = await getServer();
-    const baseUrl = `http://localhost:${(server.address() as AddressInfo).port}/`;
+    const endpoint = `http://localhost:${(server.address() as AddressInfo).port}/`;
     createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
       fetch,
-      baseUrl,
+      endpoint,
       source: './fixtures/query_arguments.json',
       cwd: __dirname,
     });

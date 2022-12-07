@@ -1,13 +1,14 @@
 ## JSON Schema (@omnigraph/json-schema)
 
-This package generates GraphQL Schema from JSON Schema and sample JSON request and responses. You can define your root field endpoints like below in your GraphQL Config for example;
+This package generates GraphQL Schema from JSON Schema and sample JSON request and responses. You
+can define your root field endpoints like below in your GraphQL Config for example;
 
 ```yaml filename=".graphqlrc.yml"
 schema:
   myOmnigraph:
     loader: '@omnigraph/json-schema'
     # The base URL of your following endpoints
-    baseUrl: http://www.my-api.com
+    endpoint: http://www.my-api.com
     # The headers will be used while downloading JSON Schemas and Samples
     schemaHeaders:
       Content-Type: application/json
@@ -24,7 +25,7 @@ schema:
         field: me
         # Description
         description: My Profile
-        # The relative URL to the defined `baseUrl`
+        # The relative URL to the defined `endpoint`
         path: /user/{args.id} # args will generate an argument for the field and put it here automatically
         # The HTTP method
         method: GET
