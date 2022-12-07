@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/container",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "type": "module",
   "repository": {
     "type": "git",
@@ -32,8 +32,8 @@
     "start": "graphql-mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.82.0",
-    "@graphql-mesh/config": "10.0.0",
+    "@graphql-mesh/cli": "0.82.1",
+    "@graphql-mesh/config": "10.0.1",
     "@graphql-mesh/graphql": "0.33.1",
     "@graphql-mesh/grpc": "0.28.1",
     "@graphql-mesh/json-schema": "0.37.0",

@@ -1,5 +1,12 @@
 # openapi-youtrack
 
+## 0.5.332
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.1
+
 ## 0.5.331
 
 ### Patch Changes
