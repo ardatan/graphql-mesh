@@ -1702,12 +1702,12 @@ export interface HiveUsageOptions {
 export interface HiveClientInfo {
   /**
    * Extract client name
-   * Example: "{context.headers['x-client-name']}"
+   * Example: `{context.headers['x-client-name']}`
    */
   name?: string;
   /**
    * Extract client version
-   * Example: "{context.headers['x-client-version']}"
+   * Example: `{context.headers['x-client-version']}`
    */
   version?: string;
 }

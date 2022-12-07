@@ -32,7 +32,7 @@ You can configure your CI to publish and check your schema automatically by usin
 GraphQL Mesh creates GraphQL APIs from non GraphQL APIs, and it is still possible to register these to GraphQL Hive as a regular GraphQL API.
 GraphQL Hive transform hooks into the delegation phase to track operations done to the upstream APIs.
 
-<PackageCmd packages={['@graphql-mesh/plugin-hive']} />
+<PackageCmd packages={['@graphql-mesh/transform-hive']} />
 
 ```yaml filename=".meshrc.yaml"
 sources:
@@ -40,8 +40,9 @@ sources:
     handler:
       openapi:
         source: ./openapi.json
-    - hive:
-        token: "{env.MYOAS_HIVE_TOKEN}"
+    transforms:
+        - hive:
+            token: "{env.MYOAS_HIVE_TOKEN}"
 ```
 
 ## Publish the source schema seperately then consume it in the gateway

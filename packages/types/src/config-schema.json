@@ -2000,11 +2000,11 @@
       "properties": {
         "name": {
           "type": "string",
-          "description": "Extract client name\nExample: \"{context.headers['x-client-name']}\""
+          "description": "Extract client name\nExample: `{context.headers['x-client-name']}`"
         },
         "version": {
           "type": "string",
-          "description": "Extract client version\nExample: \"{context.headers['x-client-version']}\""
+          "description": "Extract client version\nExample: `{context.headers['x-client-version']}`"
         }
       }
     },

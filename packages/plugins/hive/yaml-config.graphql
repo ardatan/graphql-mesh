@@ -82,12 +82,12 @@ type HiveUsageOptions {
 type HiveClientInfo {
   """
   Extract client name
-  Example: "{context.headers['x-client-name']}"
+  Example: `{context.headers['x-client-name']}`
   """
   name: String
   """
   Extract client version
-  Example: "{context.headers['x-client-version']}"
+  Example: `{context.headers['x-client-version']}`
   """
   version: String
 }
