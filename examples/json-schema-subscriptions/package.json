@@ -1,6 +1,6 @@
 {
   "name": "json-schema-subscriptions",
-  "version": "0.1.273",
+  "version": "0.1.274",
   "private": true,
   "scripts": {
     "start": "concurrently \"yarn start:api\" \"yarn start:mesh\"",
@@ -8,9 +8,9 @@
     "start:mesh": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.80.4",
-    "@graphql-mesh/json-schema": "0.35.38",
-    "@graphql-mesh/plugin-live-query": "0.1.49",
+    "@graphql-mesh/cli": "0.81.0",
+    "@graphql-mesh/json-schema": "0.36.0",
+    "@graphql-mesh/plugin-live-query": "0.2.0",
     "@whatwg-node/fetch": "0.5.3",
     "body-parser": "1.20.1",
     "express": "4.18.2",

@@ -1,5 +1,28 @@
 # typescript-location-weather-example
 
+## 0.5.333
+
+### Patch Changes
+
+- Updated dependencies
+  [[`1a28c92c2`](https://github.com/Urigo/graphql-mesh/commit/1a28c92c2d67b89b48581b7bb1414d1404428cdb),
+  [`ad07d13c9`](https://github.com/Urigo/graphql-mesh/commit/ad07d13c974f090b59339ed9710b1f1b2b336084),
+  [`c047b3088`](https://github.com/Urigo/graphql-mesh/commit/c047b3088e91fec2265dc84ce82d5d45d3429609),
+  [`87ce9338d`](https://github.com/Urigo/graphql-mesh/commit/87ce9338de46314db3840b93bd56388de3c72b54),
+  [`500a4504c`](https://github.com/Urigo/graphql-mesh/commit/500a4504c734ee1eaf55daa2296789096034513f),
+  [`c047b3088`](https://github.com/Urigo/graphql-mesh/commit/c047b3088e91fec2265dc84ce82d5d45d3429609),
+  [`500a4504c`](https://github.com/Urigo/graphql-mesh/commit/500a4504c734ee1eaf55daa2296789096034513f),
+  [`5ed3435b8`](https://github.com/Urigo/graphql-mesh/commit/5ed3435b8fdfd115566ef548f044884628d39211),
+  [`500a4504c`](https://github.com/Urigo/graphql-mesh/commit/500a4504c734ee1eaf55daa2296789096034513f),
+  [`500a4504c`](https://github.com/Urigo/graphql-mesh/commit/500a4504c734ee1eaf55daa2296789096034513f),
+  [`1a28c92c2`](https://github.com/Urigo/graphql-mesh/commit/1a28c92c2d67b89b48581b7bb1414d1404428cdb)]:
+  - @graphql-mesh/cli@0.81.0
+  - @graphql-mesh/plugin-response-cache@0.2.0
+  - @graphql-mesh/runtime@0.45.0
+  - @graphql-mesh/transform-cache@0.13.0
+  - @graphql-mesh/transform-rename@0.14.0
+  - @graphql-mesh/openapi@0.34.0
+
 ## 0.5.332
 
 ### Patch Changes

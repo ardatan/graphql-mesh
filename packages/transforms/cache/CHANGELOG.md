@@ -1,5 +1,46 @@
 # @graphql-mesh/transform-cache
 
+## 0.13.0
+
+### Minor Changes
+
+- [#4821](https://github.com/Urigo/graphql-mesh/pull/4821)
+  [`1a28c92c2`](https://github.com/Urigo/graphql-mesh/commit/1a28c92c2d67b89b48581b7bb1414d1404428cdb)
+  Thanks [@ardatan](https://github.com/ardatan)! - Update build flow to fully support both CommonJS
+  and ESM
+
+### Patch Changes
+
+- [#4898](https://github.com/Urigo/graphql-mesh/pull/4898)
+  [`5ed3435b8`](https://github.com/Urigo/graphql-mesh/commit/5ed3435b8fdfd115566ef548f044884628d39211)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`dayjs@1.11.7` ↗︎](https://www.npmjs.com/package/dayjs/v/1.11.7) (from
+    `1.11.6`, in `dependencies`)
+
+- [#4901](https://github.com/Urigo/graphql-mesh/pull/4901)
+  [`500a4504c`](https://github.com/Urigo/graphql-mesh/commit/500a4504c734ee1eaf55daa2296789096034513f)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/resolvers-composition@6.5.14` ↗︎](https://www.npmjs.com/package/@graphql-tools/resolvers-composition/v/6.5.14)
+    (from `6.5.12`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/schema@9.0.12` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/9.0.12)
+    (from `9.0.10`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@9.1.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.1.3)
+    (from `9.1.1`, in `dependencies`)
+- Updated dependencies
+  [[`500a4504c`](https://github.com/Urigo/graphql-mesh/commit/500a4504c734ee1eaf55daa2296789096034513f),
+  [`5ed3435b8`](https://github.com/Urigo/graphql-mesh/commit/5ed3435b8fdfd115566ef548f044884628d39211),
+  [`500a4504c`](https://github.com/Urigo/graphql-mesh/commit/500a4504c734ee1eaf55daa2296789096034513f),
+  [`500a4504c`](https://github.com/Urigo/graphql-mesh/commit/500a4504c734ee1eaf55daa2296789096034513f),
+  [`1a28c92c2`](https://github.com/Urigo/graphql-mesh/commit/1a28c92c2d67b89b48581b7bb1414d1404428cdb)]:
+  - @graphql-mesh/cross-helpers@0.3.0
+  - @graphql-mesh/string-interpolation@0.4.0
+  - @graphql-mesh/types@0.88.0
+  - @graphql-mesh/utils@0.43.0
+
 ## 0.12.67
 
 ### Patch Changes

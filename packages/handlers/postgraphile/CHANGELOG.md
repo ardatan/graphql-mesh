@@ -1,5 +1,43 @@
 # @graphql-mesh/postgraphile
 
+## 0.22.0
+
+### Minor Changes
+
+- [#4821](https://github.com/Urigo/graphql-mesh/pull/4821)
+  [`1a28c92c2`](https://github.com/Urigo/graphql-mesh/commit/1a28c92c2d67b89b48581b7bb1414d1404428cdb)
+  Thanks [@ardatan](https://github.com/ardatan)! - Update build flow to fully support both CommonJS
+  and ESM
+
+### Patch Changes
+
+- [#4878](https://github.com/Urigo/graphql-mesh/pull/4878)
+  [`c047b3088`](https://github.com/Urigo/graphql-mesh/commit/c047b3088e91fec2265dc84ce82d5d45d3429609)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`postgraphile@4.12.12` ↗︎](https://www.npmjs.com/package/postgraphile/v/4.12.12) (from
+    `4.12.11`, in `dependencies`)
+
+- [#4901](https://github.com/Urigo/graphql-mesh/pull/4901)
+  [`500a4504c`](https://github.com/Urigo/graphql-mesh/commit/500a4504c734ee1eaf55daa2296789096034513f)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@9.0.19` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.19)
+    (from `9.0.17`, in `dependencies`)
+- Updated dependencies
+  [[`500a4504c`](https://github.com/Urigo/graphql-mesh/commit/500a4504c734ee1eaf55daa2296789096034513f),
+  [`500a4504c`](https://github.com/Urigo/graphql-mesh/commit/500a4504c734ee1eaf55daa2296789096034513f),
+  [`5ed3435b8`](https://github.com/Urigo/graphql-mesh/commit/5ed3435b8fdfd115566ef548f044884628d39211),
+  [`500a4504c`](https://github.com/Urigo/graphql-mesh/commit/500a4504c734ee1eaf55daa2296789096034513f),
+  [`500a4504c`](https://github.com/Urigo/graphql-mesh/commit/500a4504c734ee1eaf55daa2296789096034513f),
+  [`1a28c92c2`](https://github.com/Urigo/graphql-mesh/commit/1a28c92c2d67b89b48581b7bb1414d1404428cdb)]:
+  - @graphql-mesh/cross-helpers@0.3.0
+  - @graphql-mesh/store@0.9.0
+  - @graphql-mesh/string-interpolation@0.4.0
+  - @graphql-mesh/types@0.88.0
+  - @graphql-mesh/utils@0.43.0
+
 ## 0.21.32
 
 ### Patch Changes

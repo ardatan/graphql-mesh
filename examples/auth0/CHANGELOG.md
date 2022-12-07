@@ -1,5 +1,28 @@
 # auth0-example
 
+## 0.1.0
+
+### Minor Changes
+
+- [#4821](https://github.com/Urigo/graphql-mesh/pull/4821)
+  [`1a28c92c2`](https://github.com/Urigo/graphql-mesh/commit/1a28c92c2d67b89b48581b7bb1414d1404428cdb)
+  Thanks [@ardatan](https://github.com/ardatan)! - Update build flow to fully support both CommonJS
+  and ESM
+
+### Patch Changes
+
+- Updated dependencies
+  [[`1a28c92c2`](https://github.com/Urigo/graphql-mesh/commit/1a28c92c2d67b89b48581b7bb1414d1404428cdb),
+  [`ad07d13c9`](https://github.com/Urigo/graphql-mesh/commit/ad07d13c974f090b59339ed9710b1f1b2b336084),
+  [`c047b3088`](https://github.com/Urigo/graphql-mesh/commit/c047b3088e91fec2265dc84ce82d5d45d3429609),
+  [`87ce9338d`](https://github.com/Urigo/graphql-mesh/commit/87ce9338de46314db3840b93bd56388de3c72b54),
+  [`500a4504c`](https://github.com/Urigo/graphql-mesh/commit/500a4504c734ee1eaf55daa2296789096034513f),
+  [`500a4504c`](https://github.com/Urigo/graphql-mesh/commit/500a4504c734ee1eaf55daa2296789096034513f),
+  [`1a28c92c2`](https://github.com/Urigo/graphql-mesh/commit/1a28c92c2d67b89b48581b7bb1414d1404428cdb)]:
+  - @graphql-mesh/cli@0.81.0
+  - @graphql-mesh/json-schema@0.36.0
+  - @graphql-mesh/plugin-operation-field-permissions@0.1.0
+
 ## 0.0.41
 
 ### Patch Changes
