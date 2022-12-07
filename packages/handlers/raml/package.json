@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/raml",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -32,11 +32,11 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/store": "0.9.0",
-    "@graphql-mesh/types": "0.88.0",
-    "@graphql-mesh/utils": "0.43.0",
-    "@omnigraph/raml": "0.8.0",
+    "@graphql-mesh/store": "0.9.1",
+    "@graphql-mesh/types": "0.89.0",
+    "@graphql-mesh/utils": "0.43.1",
     "@graphql-tools/utils": "9.1.3",
+    "@omnigraph/raml": "0.9.0",
     "tslib": "^2.4.0"
   },
   "publishConfig": {

@@ -1,5 +1,13 @@
 # @graphql-mesh/urql-exchange
 
+## 10.0.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3edaa00ac`](https://github.com/Urigo/graphql-mesh/commit/3edaa00ac772d519e351e620bfa670514db886e5)]:
+  - @graphql-mesh/runtime@0.46.0
+
 ## 9.0.0
 
 ### Minor Changes

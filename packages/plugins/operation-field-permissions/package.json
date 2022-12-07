@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-operation-field-permissions",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "repository": {
     "type": "git",
@@ -34,7 +34,7 @@
   "dependencies": {
     "@envelop/operation-field-permissions": "4.0.4",
     "@graphql-mesh/cross-helpers": "0.3.0",
-    "@graphql-mesh/types": "0.88.0",
+    "@graphql-mesh/types": "0.89.0",
     "tslib": "^2.4.0"
   },
   "publishConfig": {

@@ -1,5 +1,29 @@
 # @omnigraph/openapi
 
+## 0.19.0
+
+### Minor Changes
+
+- [#4767](https://github.com/Urigo/graphql-mesh/pull/4767)
+  [`3edaa00ac`](https://github.com/Urigo/graphql-mesh/commit/3edaa00ac772d519e351e620bfa670514db886e5)
+  Thanks [@ardatan](https://github.com/ardatan)! - _BREAKING_ - Neo4J handler's `url` changed to
+  `endpoint` to be consistent with other handlers _BREAKING_ - Neo4J handler's `typeDefs` changed to
+  `source` to be consistent with other handlers _BREAKING_ - OData handler's `url` changed to
+  `endpoint` to be consistent with other handlers _BREAKING_ - OData handler's `metadata` changed to
+  `source` to be consistent with other handlers _BREAKING_ - OpenAPI handler's `baseUrl` changed to
+  `endpoint` to be consistent with other handlers _BREAKING_ - RAML handler's `baseUrl` changed to
+  `endpoint` to be consistent with other handlers _BREAKING_ - RAML handler's `ramlFilePath` changed
+  to `source` to be consistent with other handlers
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3edaa00ac`](https://github.com/Urigo/graphql-mesh/commit/3edaa00ac772d519e351e620bfa670514db886e5)]:
+  - json-machete@0.18.0
+  - @omnigraph/json-schema@0.38.0
+  - @graphql-mesh/types@0.89.0
+  - @graphql-mesh/utils@0.43.1
+
 ## 0.18.0
 
 ### Minor Changes
