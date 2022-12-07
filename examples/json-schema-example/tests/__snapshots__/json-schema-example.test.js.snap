@@ -6,6 +6,14 @@ exports[`JSON Schema Example should generate correct schema 1`] = `
   mutation: Mutation
 }
 
+directive @enum(value: String) on ENUM_VALUE
+
+directive @example(value: ObjMap) repeatable on FIELD_DEFINITION
+
+directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+
+directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HttpMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+
 type Query @globalOptions(sourceName: "FakeAPI", endpoint: "https://not-existing-api.com/API") {
   me: User @httpOperation(path: "/me", httpMethod: GET)
   company(id: String!): Company @httpOperation(path: "/company/{args.id}", httpMethod: GET)

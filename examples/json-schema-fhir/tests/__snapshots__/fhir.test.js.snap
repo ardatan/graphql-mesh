@@ -5,6 +5,20 @@ exports[`FHIR should generate correct schema 1`] = `
   query: Query
 }
 
+directive @oneOf on OBJECT | INTERFACE
+
+directive @enum(value: String) on ENUM_VALUE
+
+directive @typescript(type: String) on SCALAR | ENUM
+
+directive @example(value: ObjMap) repeatable on FIELD_DEFINITION
+
+directive @regexp(pattern: String) on SCALAR
+
+directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+
+directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+
 directive @resolveTo(requiredSelectionSet: String, sourceName: String!, sourceTypeName: String!, sourceFieldName: String!, sourceSelectionSet: String, sourceArgs: ResolveToSourceArgs, keyField: String, keysArg: String, pubsubTopic: String, filterBy: String, additionalArgs: ResolveToSourceArgs, result: String, resultType: String) on FIELD_DEFINITION
 
 type Query @globalOptions(sourceName: "FHIR", endpoint: "http://hapi.fhir.org/baseR4") {

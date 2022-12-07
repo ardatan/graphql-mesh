@@ -6,6 +6,10 @@ exports[`Batching Example should generate correct schema 1`] = `
   mutation: Mutation
 }
 
+directive @globalOptions(endpoint: String, operationHeaders: ObjMap, queryParams: ObjMap, queryStringOptions: ObjMap, sourceName: String) on OBJECT
+
+directive @httpOperation(httpMethod: HTTPMethod, isBinary: Boolean, operationSpecificHeaders: ObjMap, path: String, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap) on FIELD_DEFINITION
+
 enum HTTPMethod {
   CONNECT
   DELETE

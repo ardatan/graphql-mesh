@@ -1,4 +1,10 @@
-import { Logger, MeshMerger, MeshMergerContext, MeshMergerOptions, RawSourceOutput } from '@graphql-mesh/types';
+import {
+  Logger,
+  MeshMerger,
+  MeshMergerContext,
+  MeshMergerOptions,
+  RawSourceOutput,
+} from '@graphql-mesh/types';
 import { stitchSchemas, ValidationLevel } from '@graphql-tools/stitch';
 import { extractResolvers } from '@graphql-mesh/utils';
 import { StitchingInfo } from '@graphql-tools/delegate';
@@ -42,7 +48,7 @@ export default class StitchingMerger implements MeshMerger {
     name: string,
     oldSchema: GraphQLSchema,
     executor: Executor,
-    stitchingDirectives: StitchingDirectivesResult
+    stitchingDirectives: StitchingDirectivesResult,
   ) {
     const rawSourceLogger = this.logger.child(name);
 
@@ -61,7 +67,10 @@ export default class StitchingMerger implements MeshMerger {
             document: parse(APOLLO_GET_SERVICE_DEFINITION_QUERY),
           })) as ExecutionResult;
           if (sdlQueryResult.errors?.length) {
-            throw new AggregateError(sdlQueryResult.errors, `Failed on fetching Federated SDL for ${name}`);
+            throw new AggregateError(
+              sdlQueryResult.errors,
+              `Failed on fetching Federated SDL for ${name}`,
+            );
           }
           federationSdl = sdlQueryResult.data._service.sdl;
         }
@@ -106,12 +115,13 @@ export default class StitchingMerger implements MeshMerger {
             rawSource.name,
             rawSource.schema,
             rawSource.executor,
-            defaultStitchingDirectives
+            defaultStitchingDirectives,
           );
         }
-        rawSource.merge = defaultStitchingDirectives.stitchingDirectivesTransformer(rawSource).merge;
+        rawSource.merge =
+          defaultStitchingDirectives.stitchingDirectivesTransformer(rawSource).merge;
         return rawSource;
-      })
+      }),
     );
     this.logger.debug(`Stitching the source schemas`);
     const unifiedSchema = stitchSchemas({
@@ -123,6 +133,7 @@ export default class StitchingMerger implements MeshMerger {
           validationLevel: ValidationLevel.Off,
         },
       },
+      mergeDirectives: true,
     });
     this.logger.debug(`sourceMap is being generated and attached to the unified schema`);
     unifiedSchema.extensions = unifiedSchema.extensions || {};

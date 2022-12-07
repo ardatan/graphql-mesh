@@ -6,6 +6,18 @@ exports[`JavaScript Wiki should generate correct schema: javascript-wiki-schema 
   mutation: Mutation
 }
 
+directive @oneOf on OBJECT | INTERFACE
+
+directive @statusCodeTypeName(typeName: String, statusCode: ID) repeatable on UNION
+
+directive @resolveRootField(field: String) on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @enum(value: String) on ENUM_VALUE
+
+directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+
+directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+
 type Query @globalOptions(sourceName: "Wiki", endpoint: "https://wikimedia.org/api/rest_v1") {
   "Gets availability of featured feed content for the apps by wiki domain.\\n\\nStability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)\\n"
   feed_availability: feed_availability_response @httpOperation(path: "/feed/availability", operationSpecificHeaders: "{\\"Accept\\":\\"application/json; charset=utf-8; profile=\\\\\\"https://www.mediawiki.org/wiki/Specs/Availability/1.0.1\\\\\\", application/problem+json\\"}", httpMethod: GET)
