@@ -1,5 +1,31 @@
 # @graphql-mesh/container
 
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3edaa00ac`](https://github.com/Urigo/graphql-mesh/commit/3edaa00ac772d519e351e620bfa670514db886e5),
+  [`3edaa00ac`](https://github.com/Urigo/graphql-mesh/commit/3edaa00ac772d519e351e620bfa670514db886e5)]:
+  - @graphql-mesh/openapi@0.35.0
+  - @graphql-mesh/cli@0.82.0
+  - @graphql-mesh/config@10.0.0
+  - @graphql-mesh/json-schema@0.37.0
+  - @graphql-mesh/odata@0.22.0
+  - @graphql-mesh/runtime@0.46.0
+  - @graphql-mesh/soap@0.17.1
+  - @graphql-mesh/graphql@0.33.1
+  - @graphql-mesh/grpc@0.28.1
+  - @graphql-mesh/postgraphile@0.22.1
+  - @graphql-mesh/plugin-mock@0.1.1
+  - @graphql-mesh/transform-cache@0.13.1
+  - @graphql-mesh/transform-encapsulate@0.4.1
+  - @graphql-mesh/transform-extend@0.11.1
+  - @graphql-mesh/transform-filter-schema@0.15.1
+  - @graphql-mesh/transform-prefix@0.12.1
+  - @graphql-mesh/transform-rename@0.14.1
+  - @graphql-mesh/transform-resolvers-composition@0.13.1
+
 ## 0.2.0
 
 ### Minor Changes
