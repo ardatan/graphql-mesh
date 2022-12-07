@@ -695,7 +695,13 @@ export const OneOfDirective = new GraphQLDirective({
 
 export const ExampleDirective = new GraphQLDirective({
   name: 'example',
-  locations: [DirectiveLocation.FIELD_DEFINITION],
+  locations: [
+    DirectiveLocation.FIELD_DEFINITION,
+    DirectiveLocation.OBJECT,
+    DirectiveLocation.INPUT_OBJECT,
+    DirectiveLocation.ENUM,
+    DirectiveLocation.SCALAR,
+  ],
   args: {
     value: {
       type: ObjMapScalar,
