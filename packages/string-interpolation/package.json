@@ -34,7 +34,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "dayjs": "1.11.6",
+    "dayjs": "1.11.7",
     "json-pointer": "0.6.2",
     "lodash.get": "4.4.2"
   },
