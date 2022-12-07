@@ -18,6 +18,7 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   ignoreErrorResponses?: boolean;
   queryParams?: Record<string, string | number | boolean>;
   queryStringOptions?: IStringifyOptions;
+  bundle?: boolean;
 }
 
 export interface JSONSchemaOperationResponseConfig {

@@ -1,6 +1,5 @@
 import { referenceJSONSchema, JSONSchemaObject, dereferenceObject } from 'json-machete';
 import { DefaultLogger } from '@graphql-mesh/utils';
-import { getDereferencedJSONSchemaFromOperations } from './getDereferencedJSONSchemaFromOperations.js';
 import { Logger, MeshFetch } from '@graphql-mesh/types';
 import { JSONSchemaOperationConfig, OperationHeadersConfiguration } from './types.js';
 import { fetch as crossUndiciFetch } from '@whatwg-node/fetch';
@@ -19,44 +18,23 @@ export interface JSONSchemaLoaderBundle {
 }
 
 export interface JSONSchemaLoaderBundleOptions {
+  dereferencedSchema: JSONSchemaObject;
   endpoint?: string;
   operations: JSONSchemaOperationConfig[];
-  schemaHeaders?: Record<string, string>;
   operationHeaders?: Record<string, string>;
-  queryParams?: Record<string, string | number | boolean>;
-  cwd: string;
-  ignoreErrorResponses?: boolean;
-
-  fetch?: WindowOrWorkerGlobalScope['fetch'];
   logger?: Logger;
 }
 
-export async function createBundle(
+export async function createBundleFromDereferencedSchema(
   name: string,
   {
+    dereferencedSchema,
     endpoint,
     operations,
-    schemaHeaders,
     operationHeaders,
-    queryParams,
-    cwd = process.cwd(),
-    fetch = crossUndiciFetch,
     logger = new DefaultLogger(name),
-    ignoreErrorResponses = false,
   }: JSONSchemaLoaderBundleOptions,
 ): Promise<JSONSchemaLoaderBundle> {
-  logger.debug(`Creating the dereferenced schema from operations config`);
-  const dereferencedSchema = await getDereferencedJSONSchemaFromOperations({
-    operations,
-    cwd,
-    logger,
-    fetchFn: fetch,
-    schemaHeaders,
-    ignoreErrorResponses,
-    endpoint,
-    operationHeaders,
-    queryParams,
-  });
   logger.debug(`Creating references from dereferenced schema`);
   const referencedSchema = await referenceJSONSchema(dereferencedSchema);
 

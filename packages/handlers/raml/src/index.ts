@@ -26,6 +26,7 @@ export default class RAMLHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.RAMLHandler;
   private schemaWithAnnotationsProxy: StoreProxy<GraphQLSchema>;
+  private bundleProxy: StoreProxy<any>;
   private baseDir: string;
   private logger: Logger;
   private fetchFn: MeshFetch;
@@ -47,6 +48,10 @@ export default class RAMLHandler implements MeshHandler {
       'schemaWithAnnotations.graphql',
       PredefinedProxyOptions.GraphQLSchemaWithDiffing,
     );
+    this.bundleProxy = store.proxy(
+      'jsonSchemaBundle',
+      PredefinedProxyOptions.JsonWithoutValidation,
+    );
     this.pubsub = pubsub;
     this.importFn = importFn;
     this.logger = logger;
@@ -67,8 +72,8 @@ export default class RAMLHandler implements MeshHandler {
         assumeValid: true,
       });
     }
-    return this.schemaWithAnnotationsProxy.getWithSet(() => {
-      return loadNonExecutableGraphQLSchemaFromRAML(this.name, {
+    return this.schemaWithAnnotationsProxy.getWithSet(async () => {
+      const schema = await loadNonExecutableGraphQLSchemaFromRAML(this.name, {
         ...this.config,
         cwd: this.baseDir,
         fetch: this.fetchFn,
@@ -81,7 +86,10 @@ export default class RAMLHandler implements MeshHandler {
           }),
         ),
         pubsub: this.pubsub,
+        bundle: true,
       });
+      await this.bundleProxy.set(schema.extensions!.bundle);
+      return schema;
     });
   }
 

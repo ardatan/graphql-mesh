@@ -26,6 +26,7 @@ export default class OpenAPIHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.OpenapiHandler;
   private schemaWithAnnotationsProxy: StoreProxy<GraphQLSchema>;
+  private bundleProxy: StoreProxy<any>;
   private baseDir: string;
   private logger: Logger;
   private fetchFn: MeshFetch;
@@ -47,6 +48,10 @@ export default class OpenAPIHandler implements MeshHandler {
       'schemaWithAnnotations.graphql',
       PredefinedProxyOptions.GraphQLSchemaWithDiffing,
     );
+    this.bundleProxy = store.proxy(
+      'jsonSchemaBundle',
+      PredefinedProxyOptions.JsonWithoutValidation,
+    );
     this.pubsub = pubsub;
     this.importFn = importFn;
     this.logger = logger;
@@ -67,9 +72,9 @@ export default class OpenAPIHandler implements MeshHandler {
         assumeValid: true,
       });
     }
-    return this.schemaWithAnnotationsProxy.getWithSet(() => {
+    return this.schemaWithAnnotationsProxy.getWithSet(async () => {
       this.logger?.debug('Creating the schema');
-      return loadNonExecutableGraphQLSchemaFromOpenAPI(this.name, {
+      const schema = await loadNonExecutableGraphQLSchemaFromOpenAPI(this.name, {
         ...this.config,
         cwd: this.baseDir,
         fetch: this.fetchFn,
@@ -81,7 +86,10 @@ export default class OpenAPIHandler implements MeshHandler {
           }),
         ),
         pubsub: this.pubsub,
+        bundle: true,
       });
+      await this.bundleProxy.set(schema.extensions!.bundle);
+      return schema;
     });
   }
 
