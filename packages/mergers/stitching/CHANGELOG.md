@@ -1,5 +1,12 @@
 # @graphql-mesh/merger-stitching
 
+## 0.18.2
+
+### Patch Changes
+
+- [`18be4e9f9`](https://github.com/Urigo/graphql-mesh/commit/18be4e9f96974b9f1d7d5c6d183db9aef8dbe077)
+  Thanks [@ardatan](https://github.com/ardatan)! - Keep directive definitions in the unified schema
+
 ## 0.18.1
 
 ### Patch Changes
