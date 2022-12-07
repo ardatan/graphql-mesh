@@ -10,6 +10,7 @@ type RAMLHandler {
   ignoreErrorResponses: Boolean
   selectQueryOrMutationField: [RAMLSelectQueryOrMutationFieldConfig]
   queryParams: Any
+  bundle: Boolean
 }
 
 enum QueryOrMutation {

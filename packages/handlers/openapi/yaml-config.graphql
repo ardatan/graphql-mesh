@@ -41,6 +41,8 @@ type OpenapiHandler @md {
   JSON object representing the query search parameters to add to the API calls
   """
   queryParams: JSON
+
+  bundle: Boolean
 }
 
 enum FallbackFormat {
