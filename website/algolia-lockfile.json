@@ -863,6 +863,72 @@
     "type": "Documentation"
   },
   {
+    "objectID": "mesh-docs-guides-hive",
+    "headings": [
+      "Track your Gateway",
+      "Publish and check the gateway schema",
+      "Track your sources",
+      "Publish the source schema seperately then consume it in the gateway",
+      "Config API Reference"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "Track your Gateway",
+        "anchor": "track-your-gateway"
+      },
+      {
+        "children": [],
+        "title": "Publish and check the gateway schema",
+        "anchor": "publish-and-check-the-gateway-schema"
+      },
+      {
+        "children": [],
+        "title": "Track your sources",
+        "anchor": "track-your-sources"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Step 2: Setup Mesh CLI on the service repo",
+                "anchor": "step-2-setup-mesh-cli-on-the-service-repo"
+              },
+              {
+                "children": [],
+                "title": "Step 3: Publish the service schema",
+                "anchor": "step-3-publish-the-service-schema"
+              },
+              {
+                "children": [],
+                "title": "Step 4: Create Hive CDN URL and token for the service",
+                "anchor": "step-4-create-hive-cdn-url-and-token-for-the-service"
+              }
+            ],
+            "title": "Step 1: Create a project for the service",
+            "anchor": "step-1-create-a-project-for-the-service"
+          }
+        ],
+        "title": "Publish the source schema seperately then consume it in the gateway",
+        "anchor": "publish-the-source-schema-seperately-then-consume-it-in-the-gateway"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "29197a4d78b82e7bb7f35cb5ef2ec321",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/hive",
+    "domain": "https://www.the-guild.dev/graphql/mesh/",
+    "hierarchy": ["Docs", "Guides"],
+    "source": "Mesh",
+    "title": "Integration with Hive",
+    "type": "Documentation"
+  },
+  {
     "objectID": "mesh-docs-guides-mesh-sdk",
     "headings": ["Executing queries programmatically", "Generating fully type safe SDK"],
     "toc": [
@@ -1386,7 +1452,7 @@
     "objectID": "mesh-docs-source-handlers-graphql",
     "headings": [
       "Headers",
-      "Fetching SDL or introspection from CDN or somewhere",
+      "Fetching SDL or introspection from CDN or any other schema registry tool",
       "Local Schemas",
       "Fetch Strategies and Multiple HTTP endpoints for the same source",
       "Config API Reference"
@@ -1398,9 +1464,15 @@
         "anchor": "headers"
       },
       {
-        "children": [],
-        "title": "Fetching SDL or introspection from CDN or somewhere",
-        "anchor": "fetching-sdl-or-introspection-from-cdn-or-somewhere"
+        "children": [
+          {
+            "children": [],
+            "title": "Hive Integration",
+            "anchor": "hive-integration"
+          }
+        ],
+        "title": "Fetching SDL or introspection from CDN or any other schema registry tool",
+        "anchor": "fetching-sdl-or-introspection-from-cdn-or-any-other-schema-registry-tool"
       },
       {
         "children": [],
@@ -1418,7 +1490,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "2194c7d3f840350853d742ea34e8e11a",
+    "content": "5a4662355a951af452901fc31e3a2c56",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/graphql",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Source Handlers"],
@@ -1622,6 +1694,7 @@
       "Headers",
       "Advanced cookies handling",
       "Callbacks as Subscriptions",
+      "Loading the sources from a CDN like GraphQL Hive or schema registry",
       "Examples",
       "Config API Reference"
     ],
@@ -1677,6 +1750,11 @@
       },
       {
         "children": [],
+        "title": "Loading the sources from a CDN like GraphQL Hive or schema registry",
+        "anchor": "loading-the-sources-from-a-cdn-like-graphql-hive-or-schema-registry"
+      },
+      {
+        "children": [],
         "title": "Examples",
         "anchor": "examples"
       },
@@ -1686,7 +1764,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "90a4eef515af47d1bfd66d99cb09bdac",
+    "content": "492c711712c4238860b6391eea9a5f42",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/openapi",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Source Handlers"],
