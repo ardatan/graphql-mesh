@@ -29,9 +29,9 @@ import {
   addHTTPRootFieldResolver,
   GlobalOptions,
   HTTPRootFieldResolverOpts,
-} from './addRootFieldResolver';
-import { getTypeResolverFromOutputTCs } from './getTypeResolverFromOutputTCs';
-import { ObjMapScalar } from './scalars';
+} from './addRootFieldResolver.js';
+import { getTypeResolverFromOutputTCs } from './getTypeResolverFromOutputTCs.js';
+import { ObjMapScalar } from './scalars.js';
 import { resolvers as scalarResolvers } from 'graphql-scalars';
 
 export const LengthDirective = new GraphQLDirective({

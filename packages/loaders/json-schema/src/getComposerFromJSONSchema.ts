@@ -65,7 +65,7 @@ import {
   ResolveRootDirective,
   ResolveRootFieldDirective,
   TypeScriptDirective,
-} from './directives';
+} from './directives.js';
 import { GraphQLFile, GraphQLVoid } from './scalars.js';
 
 export interface TypeComposers {

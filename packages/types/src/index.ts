@@ -11,12 +11,11 @@ import {
 } from '@graphql-tools/delegate';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { MeshStore } from '@graphql-mesh/store';
-import configSchema from './config-schema.json';
 import type { Plugin } from '@envelop/core';
 import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 import { BatchDelegateOptions } from '@graphql-tools/batch-delegate';
 
-export const jsonSchema: any = configSchema;
+export { jsonSchema } from './config-schema.js';
 
 export { YamlConfig };
 

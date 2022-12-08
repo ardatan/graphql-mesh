@@ -9,8 +9,8 @@ import {
   JSONSchemaLinkConfig,
   JSONSchemaOperationConfig,
   OperationHeadersConfiguration,
-} from './types';
-import { getOperationMetadata, isPubSubOperationConfig } from './utils';
+} from './types.js';
+import { getOperationMetadata, isPubSubOperationConfig } from './utils.js';
 import { IStringifyOptions } from 'qs';
 import { getNamedType, GraphQLInt, GraphQLObjectType, GraphQLString } from 'graphql';
 import { process } from '@graphql-mesh/cross-helpers';
