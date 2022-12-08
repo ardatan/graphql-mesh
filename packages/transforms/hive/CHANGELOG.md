@@ -1,5 +1,14 @@
 # @graphql-mesh/transform-hive
 
+## 0.0.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`deb9912e0`](https://github.com/Urigo/graphql-mesh/commit/deb9912e0bc2ae782c9570b60a7224b47af341eb)]:
+  - @graphql-mesh/string-interpolation@0.4.1
+  - @graphql-mesh/types@0.89.2
+
 ## 0.0.7
 
 ### Patch Changes

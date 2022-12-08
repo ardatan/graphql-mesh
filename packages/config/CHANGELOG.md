@@ -1,5 +1,19 @@
 # @graphql-mesh/config
 
+## 10.0.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`deb9912e0`](https://github.com/Urigo/graphql-mesh/commit/deb9912e0bc2ae782c9570b60a7224b47af341eb)]:
+  - @graphql-mesh/types@0.89.2
+  - @graphql-mesh/runtime@0.46.2
+  - @graphql-mesh/utils@0.43.3
+  - @graphql-mesh/cache-localforage@0.7.3
+  - @graphql-mesh/merger-bare@0.16.4
+  - @graphql-mesh/merger-stitching@0.18.4
+  - @graphql-mesh/store@0.9.3
+
 ## 10.0.2
 
 ### Patch Changes
