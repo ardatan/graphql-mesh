@@ -1,5 +1,5 @@
 /* eslint-disable import/no-duplicates */
-import './patchLongJs';
+import './patchLongJs.js';
 import { MeshHandlerOptions, Logger, MeshHandler, YamlConfig } from '@graphql-mesh/types';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { ChannelCredentials, credentials, loadPackageDefinition } from '@grpc/grpc-js';
@@ -18,7 +18,6 @@ import { AnyNestedObject, IParseOptions, Message, RootConstructor } from 'protob
 import protobufjs from 'protobufjs';
 import grpcReflection from '@ardatan/grpc-reflection-js';
 import { IFileDescriptorSet } from 'protobufjs/ext/descriptor';
-import { FileDescriptorSet } from 'protobufjs/ext/descriptor/index.js';
 import descriptor from 'protobufjs/ext/descriptor/index.js';
 
 import { addIncludePathResolver, addMetaDataToCall, getTypeName } from './utils.js';
@@ -57,7 +56,7 @@ export default class GrpcHandler implements MeshHandler {
     this.rootJsonAndDecodedDescriptorSets = store.proxy('descriptorSet.proto', {
       codify: rootJsonAndDecodedDescriptorSets =>
         `
-import { FileDescriptorSet } from 'protobufjs/ext/descriptor/index.js';
+import descriptor from 'protobufjs/ext/descriptor/index.js';
 
 export default [
 ${rootJsonAndDecodedDescriptorSets
@@ -65,7 +64,7 @@ ${rootJsonAndDecodedDescriptorSets
     ({ name, rootJson, decodedDescriptorSet }) => `
   {
     name: ${JSON.stringify(name)},
-    decodedDescriptorSet: FileDescriptorSet.fromObject(${JSON.stringify(
+    decodedDescriptorSet: descriptor.FileDescriptorSet.fromObject(${JSON.stringify(
       decodedDescriptorSet.toJSON(),
       null,
       2,
@@ -81,7 +80,7 @@ ${rootJsonAndDecodedDescriptorSets
         return jsonData.map(({ name, rootJson, decodedDescriptorSet }: any) => ({
           name,
           rootJson,
-          decodedDescriptorSet: FileDescriptorSet.fromObject(decodedDescriptorSet),
+          decodedDescriptorSet: descriptor.FileDescriptorSet.fromObject(decodedDescriptorSet),
         }));
       },
       toJSON: rootJsonAndDecodedDescriptorSets => {

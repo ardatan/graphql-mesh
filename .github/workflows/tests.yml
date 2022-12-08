@@ -34,10 +34,7 @@ jobs:
           POSTGRES_PASSWORD: docker
         # Set health checks to wait until postgres has started
         options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
         ports:
           # Maps tcp port 5432 on service container to the host
           - 5432:5432
@@ -47,7 +44,9 @@ jobs:
           MYSQL_ROOT_PASSWORD: passwd
         ports:
           - 33306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options:
+          --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s
+          --health-retries=3
 
     steps:
       - name: Checkout
@@ -67,7 +66,10 @@ jobs:
             ${{runner.os}}-${{matrix.node-version}}-jest-
 
       - name: Download Postgres Dump
-        run: 'curl https://raw.githubusercontent.com/morenoh149/postgresDBSamples/master/worldDB-1.0/world.sql -o /tmp/backup.sql'
+        run:
+          'curl
+          https://raw.githubusercontent.com/morenoh149/postgresDBSamples/master/worldDB-1.0/world.sql
+          -o /tmp/backup.sql'
       - name: Load Postgres Data
         uses: tj-actions/pg-restore@v4.7
         with:
@@ -84,3 +86,5 @@ jobs:
           NODE_TLS_REJECT_UNAUTHORIZED: 0
           GH_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LC_ALL: en-US
+      - name: Node.js integrity check
+        run: yarn bob check

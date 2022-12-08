@@ -1,6 +1,6 @@
-import { uppercase } from './uppercase';
-import { lowercase } from './lowercase';
-import { titlecase } from './title';
+import { uppercase } from './uppercase.js';
+import { lowercase } from './lowercase.js';
+import { titlecase } from './title.js';
 
 export const defaultModifiers = [
   {

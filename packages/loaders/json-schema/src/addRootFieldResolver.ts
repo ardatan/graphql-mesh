@@ -13,9 +13,9 @@ import {
 } from 'graphql';
 import lodashSet from 'lodash.set';
 import urlJoin from 'url-join';
-import { resolveDataByUnionInputType } from './resolveDataByUnionInputType';
-import { HTTPMethod } from './types';
-import { isFileUpload } from './utils';
+import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
+import { HTTPMethod } from './types.js';
+import { isFileUpload } from './utils.js';
 import { stringify as qsStringify, parse as qsParse, IStringifyOptions } from 'qs';
 import { createGraphQLError, memoize1 } from '@graphql-tools/utils';
 import { getHeadersObj } from '@graphql-mesh/utils';

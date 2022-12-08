@@ -18,3 +18,4 @@ package-lock.json
 /.husky/_/
 newrelic-agent.log
 website/public/_redirects
+packages/types/src/config-schema.ts

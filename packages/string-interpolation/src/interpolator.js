@@ -1,6 +1,6 @@
-import { defaultOptions } from './statics/DefaultOptions';
+import { defaultOptions } from './statics/DefaultOptions.js';
 import lodashGet from 'lodash.get';
-import { defaultModifiers } from './modifiers';
+import { defaultModifiers } from './modifiers/index.js';
 import JsonPointer from 'json-pointer';
 
 export class Interpolator {
@@ -34,7 +34,9 @@ export class Interpolator {
     }
 
     if (typeof transform !== 'function') {
-      return new Error('Modifiers must have a transformer. Transformers must be a function that returns a value.');
+      return new Error(
+        'Modifiers must have a transformer. Transformers must be a function that returns a value.',
+      );
     }
 
     this.modifiers.push({ key: key.toLowerCase(), transform });
@@ -66,12 +68,17 @@ export class Interpolator {
   getKeyFromMatch(match) {
     const removeReservedSymbols = [':', '|'];
     return this.removeDelimiter(
-      removeReservedSymbols.reduce((val, sym) => (val.indexOf(sym) > 0 ? this.removeAfter(val, sym) : val), match)
+      removeReservedSymbols.reduce(
+        (val, sym) => (val.indexOf(sym) > 0 ? this.removeAfter(val, sym) : val),
+        match,
+      ),
     );
   }
 
   removeDelimiter(val) {
-    return val.replace(new RegExp(this.delimiterStart(), 'g'), '').replace(new RegExp(this.delimiterEnd(), 'g'), '');
+    return val
+      .replace(new RegExp(this.delimiterStart(), 'g'), '')
+      .replace(new RegExp(this.delimiterEnd(), 'g'), '');
   }
 
   removeAfter(str, val) {
@@ -121,7 +128,10 @@ export class Interpolator {
     if (dataToReplace) {
       return str.replace(rule.replace, this.applyModifiers(rule.modifiers, dataToReplace, data));
     } else if (rule.alternativeText) {
-      return str.replace(rule.replace, this.applyModifiers(rule.modifiers, rule.alternativeText, data));
+      return str.replace(
+        rule.replace,
+        this.applyModifiers(rule.modifiers, rule.alternativeText, data),
+      );
     }
 
     const defaultModifier = this.applyModifiers(rule.modifiers, rule.key, data);
@@ -158,7 +168,10 @@ export class Interpolator {
   applyModifiers(modifiers, str, rawData) {
     try {
       const transformers = modifiers.map(modifier => modifier && modifier.transform);
-      return transformers.reduce((str, transform) => (transform ? transform(str, rawData) : str), str);
+      return transformers.reduce(
+        (str, transform) => (transform ? transform(str, rawData) : str),
+        str,
+      );
     } catch (e) {
       console.error(`An error occurred while applying modifiers to ${str}`, modifiers, e);
       return str;
