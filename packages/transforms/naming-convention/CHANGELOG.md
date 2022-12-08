@@ -1,5 +1,24 @@
 # @graphql-mesh/transform-naming-convention
 
+## 0.13.2
+
+### Patch Changes
+
+- [#4906](https://github.com/Urigo/graphql-mesh/pull/4906)
+  [`f1c2e20e5`](https://github.com/Urigo/graphql-mesh/commit/f1c2e20e5228425dc220986d85653fc7f3811e43)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@9.0.20` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.20)
+    (from `9.0.19`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/wrap@9.2.21` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.21)
+    (from `9.2.20`, in `dependencies`)
+- Updated dependencies
+  [[`f1c2e20e5`](https://github.com/Urigo/graphql-mesh/commit/f1c2e20e5228425dc220986d85653fc7f3811e43),
+  [`f1c2e20e5`](https://github.com/Urigo/graphql-mesh/commit/f1c2e20e5228425dc220986d85653fc7f3811e43)]:
+  - @graphql-mesh/types@0.89.1
+  - @graphql-mesh/utils@0.43.2
+
 ## 0.13.1
 
 ### Patch Changes

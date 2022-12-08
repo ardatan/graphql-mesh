@@ -1,5 +1,13 @@
 # @graphql-mesh/plugin-hive
 
+## 0.0.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f1c2e20e5`](https://github.com/Urigo/graphql-mesh/commit/f1c2e20e5228425dc220986d85653fc7f3811e43)]:
+  - @graphql-mesh/types@0.89.1
+
 ## 0.0.6
 
 ### Patch Changes

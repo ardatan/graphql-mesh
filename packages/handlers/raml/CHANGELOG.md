@@ -1,5 +1,17 @@
 # @graphql-mesh/raml
 
+## 0.10.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f1c2e20e5`](https://github.com/Urigo/graphql-mesh/commit/f1c2e20e5228425dc220986d85653fc7f3811e43),
+  [`f1c2e20e5`](https://github.com/Urigo/graphql-mesh/commit/f1c2e20e5228425dc220986d85653fc7f3811e43)]:
+  - @graphql-mesh/types@0.89.1
+  - @graphql-mesh/utils@0.43.2
+  - @graphql-mesh/store@0.9.2
+  - @omnigraph/raml@0.9.2
+
 ## 0.10.1
 
 ### Patch Changes
