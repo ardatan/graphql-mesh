@@ -3,7 +3,7 @@
 exports[`Location Weather should generate correct schema: location-weather-schema 1`] = `
 "directive @enum(value: String) on ENUM_VALUE
 
-directive @example(value: ObjMap) repeatable on FIELD_DEFINITION
+directive @example(value: ObjMap) repeatable on ENUM | FIELD_DEFINITION | INPUT_OBJECT | OBJECT | SCALAR
 
 directive @globalOptions(endpoint: String, operationHeaders: ObjMap, queryParams: ObjMap, queryStringOptions: ObjMap, sourceName: String) on OBJECT
 

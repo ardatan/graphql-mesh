@@ -11,7 +11,7 @@ directive @enum(value: String) on ENUM_VALUE
 
 directive @typescript(type: String) on SCALAR | ENUM
 
-directive @example(value: ObjMap) repeatable on FIELD_DEFINITION
+directive @example(value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
 directive @regexp(pattern: String) on SCALAR
 

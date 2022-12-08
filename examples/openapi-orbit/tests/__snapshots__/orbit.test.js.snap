@@ -6,7 +6,7 @@ exports[`Orbit should generate correct schema 1`] = `
   mutation: Mutation
 }
 
-directive @example(value: ObjMap) repeatable on FIELD_DEFINITION
+directive @example(value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
 directive @oneOf on OBJECT | INTERFACE
 
