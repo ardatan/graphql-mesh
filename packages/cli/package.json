@@ -40,10 +40,10 @@
   "dependencies": {
     "@graphql-codegen/core": "2.6.6",
     "@graphql-codegen/typed-document-node": "2.3.8",
-    "@graphql-codegen/typescript": "2.8.3",
+    "@graphql-codegen/typescript": "2.8.5",
     "@graphql-codegen/typescript-generic-sdk": "3.0.4",
-    "@graphql-codegen/typescript-operations": "2.5.8",
-    "@graphql-codegen/typescript-resolvers": "2.7.8",
+    "@graphql-codegen/typescript-operations": "2.5.10",
+    "@graphql-codegen/typescript-resolvers": "2.7.10",
     "@graphql-mesh/config": "10.0.1",
     "@graphql-mesh/cross-helpers": "0.3.0",
     "@graphql-mesh/http": "0.3.1",
