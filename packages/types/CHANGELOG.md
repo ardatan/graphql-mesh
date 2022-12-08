@@ -1,5 +1,16 @@
 # @graphql-mesh/types
 
+## 0.89.2
+
+### Patch Changes
+
+- [#4910](https://github.com/Urigo/graphql-mesh/pull/4910)
+  [`deb9912e0`](https://github.com/Urigo/graphql-mesh/commit/deb9912e0bc2ae782c9570b60a7224b47af341eb)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fixes for ESM
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.9.3
+
 ## 0.89.1
 
 ### Patch Changes

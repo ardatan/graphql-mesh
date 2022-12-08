@@ -1,5 +1,14 @@
 # auth0-example
 
+## 0.1.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.37.3
+  - @graphql-mesh/cli@0.82.3
+  - @graphql-mesh/plugin-operation-field-permissions@0.1.3
+
 ## 0.1.4
 
 ### Patch Changes
