@@ -1,5 +1,41 @@
 # @graphql-mesh/container
 
+## 0.2.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f1c2e20e5`](https://github.com/Urigo/graphql-mesh/commit/f1c2e20e5228425dc220986d85653fc7f3811e43),
+  [`ec191126f`](https://github.com/Urigo/graphql-mesh/commit/ec191126f24e041c14a371f17bd37ba1aedec495),
+  [`c51908ecc`](https://github.com/Urigo/graphql-mesh/commit/c51908ecc6420e6d7f5fc2948666fbc35d0e7f4f),
+  [`f1c2e20e5`](https://github.com/Urigo/graphql-mesh/commit/f1c2e20e5228425dc220986d85653fc7f3811e43),
+  [`f1c2e20e5`](https://github.com/Urigo/graphql-mesh/commit/f1c2e20e5228425dc220986d85653fc7f3811e43),
+  [`f1c2e20e5`](https://github.com/Urigo/graphql-mesh/commit/f1c2e20e5228425dc220986d85653fc7f3811e43),
+  [`f1c2e20e5`](https://github.com/Urigo/graphql-mesh/commit/f1c2e20e5228425dc220986d85653fc7f3811e43),
+  [`f1c2e20e5`](https://github.com/Urigo/graphql-mesh/commit/f1c2e20e5228425dc220986d85653fc7f3811e43),
+  [`f1c2e20e5`](https://github.com/Urigo/graphql-mesh/commit/f1c2e20e5228425dc220986d85653fc7f3811e43),
+  [`f1c2e20e5`](https://github.com/Urigo/graphql-mesh/commit/f1c2e20e5228425dc220986d85653fc7f3811e43),
+  [`f1c2e20e5`](https://github.com/Urigo/graphql-mesh/commit/f1c2e20e5228425dc220986d85653fc7f3811e43),
+  [`f1c2e20e5`](https://github.com/Urigo/graphql-mesh/commit/f1c2e20e5228425dc220986d85653fc7f3811e43)]:
+  - @graphql-mesh/cli@0.82.2
+  - @graphql-mesh/graphql@0.33.2
+  - @graphql-mesh/grpc@0.28.2
+  - @graphql-mesh/odata@0.22.1
+  - @graphql-mesh/postgraphile@0.22.2
+  - @graphql-mesh/runtime@0.46.1
+  - @graphql-mesh/transform-encapsulate@0.4.2
+  - @graphql-mesh/transform-filter-schema@0.15.2
+  - @graphql-mesh/transform-prefix@0.12.2
+  - @graphql-mesh/transform-rename@0.14.2
+  - @graphql-mesh/config@10.0.2
+  - @graphql-mesh/json-schema@0.37.2
+  - @graphql-mesh/openapi@0.35.2
+  - @graphql-mesh/soap@0.17.2
+  - @graphql-mesh/plugin-mock@0.1.2
+  - @graphql-mesh/transform-cache@0.13.2
+  - @graphql-mesh/transform-extend@0.11.2
+  - @graphql-mesh/transform-resolvers-composition@0.13.2
+
 ## 0.2.3
 
 ### Patch Changes

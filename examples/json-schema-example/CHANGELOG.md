@@ -1,5 +1,19 @@
 # json-schema-example
 
+## 0.5.351
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f1c2e20e5`](https://github.com/Urigo/graphql-mesh/commit/f1c2e20e5228425dc220986d85653fc7f3811e43),
+  [`ec191126f`](https://github.com/Urigo/graphql-mesh/commit/ec191126f24e041c14a371f17bd37ba1aedec495),
+  [`c51908ecc`](https://github.com/Urigo/graphql-mesh/commit/c51908ecc6420e6d7f5fc2948666fbc35d0e7f4f),
+  [`f1c2e20e5`](https://github.com/Urigo/graphql-mesh/commit/f1c2e20e5228425dc220986d85653fc7f3811e43)]:
+  - @graphql-mesh/cli@0.82.2
+  - @graphql-mesh/transform-naming-convention@0.13.2
+  - @graphql-mesh/json-schema@0.37.2
+  - @graphql-mesh/plugin-mock@0.1.2
+
 ## 0.5.350
 
 ### Patch Changes
