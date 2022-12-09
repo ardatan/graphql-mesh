@@ -1,5 +1,16 @@
 # @omnigraph/openapi
 
+## 0.19.5
+
+### Patch Changes
+
+- [#4922](https://github.com/Urigo/graphql-mesh/pull/4922)
+  [`766be703f`](https://github.com/Urigo/graphql-mesh/commit/766be703f88bbac7a5d1a15cc506cb186791fcf2)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`openapi-types@12.1.0` ↗︎](https://www.npmjs.com/package/openapi-types/v/12.1.0) (from
+    `12.0.2`, in `dependencies`)
+
 ## 0.19.4
 
 ### Patch Changes
