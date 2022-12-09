@@ -15,7 +15,7 @@ import { config as dotEnvRegister } from 'dotenv';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import JSON5 from 'json5';
 
-export { generateTsArtifacts, serveMesh, findAndParseConfig };
+export { generateTsArtifacts, serveMesh, findAndParseConfig, handleFatalError };
 
 export interface GraphQLMeshCLIParams {
   commandName: string;
