@@ -52,7 +52,7 @@
     "@changesets/cli": "2.25.2",
     "@theguild/prettier-config": "1.0.0",
     "@types/jest": "29.2.4",
-    "@types/node": "18.11.11",
+    "@types/node": "18.11.12",
     "@typescript-eslint/eslint-plugin": "5.45.1",
     "@typescript-eslint/parser": "5.45.1",
     "babel-jest": "29.3.1",
@@ -76,7 +76,7 @@
   },
   "resolutions": {
     "graphql": "16.6.0",
-    "undici": "5.13.0",
+    "undici": "5.14.0",
     "uuid": "7.0.3"
   },
   "husky": {
