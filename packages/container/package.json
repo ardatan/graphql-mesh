@@ -12,7 +12,7 @@
     "start": "graphql-mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.82.4",
+    "@graphql-mesh/cli": "0.82.5",
     "@graphql-mesh/config": "10.0.3",
     "@graphql-mesh/graphql": "0.33.4",
     "@graphql-mesh/grpc": "0.28.3",
