@@ -3,8 +3,7 @@ import { Logger } from '@graphql-mesh/types';
 import { defaultImportFn, DefaultLogger, readFileOrUrl } from '@graphql-mesh/utils';
 import { AnySchema, JSONSchema, JSONSchemaObject } from 'json-machete';
 import toJsonSchema from 'to-json-schema';
-import { JSONSchemaOperationResponseConfig } from '.';
-import { JSONSchemaOperationConfig } from './types.js';
+import { JSONSchemaOperationResponseConfig, JSONSchemaOperationConfig } from './types.js';
 import { getOperationMetadata } from './utils.js';
 
 async function handleOperationResponseConfig(
