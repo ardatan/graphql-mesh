@@ -32,7 +32,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@apollo/subgraph": "2.2.1",
+    "@apollo/subgraph": "2.2.2",
     "@graphql-mesh/string-interpolation": "0.4.1",
     "@graphql-mesh/types": "0.89.2",
     "@graphql-mesh/utils": "0.43.3",
