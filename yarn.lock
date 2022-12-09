@@ -209,30 +209,30 @@
     tslib "^2.3.0"
     zen-observable-ts "^1.2.5"
 
-"@apollo/composition@^2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@apollo/composition/-/composition-2.2.1.tgz#9078088abcdab166f0fa4271b2af2d3d342a0b2a"
-  integrity sha512-xmd4NiCU+rW6elTZuIflR+GzZf626fJX7NVraTHXgDL8pZ7eluPal/T6vsQEg+Cb9tlAUjDhCB4RqVYPgV69RQ==
+"@apollo/composition@^2.2.2":
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/@apollo/composition/-/composition-2.2.2.tgz#d53e0afec26e7df1addc0597362a02510e20affa"
+  integrity sha512-5wj9FqDu4E4xfOOLz4SKib8eJQgamHCgOdxwmrGj9N3B8o6P2A+zMfKEVHvEnSpRMKRm9HVcdSGdYV6QcjDIdQ==
   dependencies:
-    "@apollo/federation-internals" "^2.2.1"
-    "@apollo/query-graphs" "^2.2.1"
+    "@apollo/federation-internals" "^2.2.2"
+    "@apollo/query-graphs" "^2.2.2"
 
-"@apollo/federation-internals@^2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@apollo/federation-internals/-/federation-internals-2.2.1.tgz#348e842c328e5dbf8138f4542ab968367d2d44ec"
-  integrity sha512-T+nxIhppu/5jNFIhfzYERIhgDvp2QqbSqnQpViDNEmK/iPKsXLFtOedZZgsAUpMIQoUedNNNuceTE9+lDUn+bA==
+"@apollo/federation-internals@^2.2.2":
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/@apollo/federation-internals/-/federation-internals-2.2.2.tgz#ca8e0a3838600d95274d875df07d62ba72414ff1"
+  integrity sha512-Q16I75qZ6jA8lCoZedM5938oZONrJyL7Pk6TOqw44fndea0As0pb2Ug8dV3pAWq4HhJ+/vBu2WoP14CFcxA9Yw==
   dependencies:
     chalk "^4.1.0"
     js-levenshtein "^1.1.6"
 
-"@apollo/gateway@2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-2.2.1.tgz#dda88e9fb35790e21d5d51a6411bbae3e86e253c"
-  integrity sha512-dCUs6KJq5FU8ZYQj2KLeR++cPmKZ1al3AC00fufHLuFKR7XjsXsPZsHPY+Tt39QZI56tNrUdiiR2rjQ17c4Zew==
+"@apollo/gateway@2.2.2":
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-2.2.2.tgz#8add24f0287838c0d6992e002da02b36218cc622"
+  integrity sha512-oSsrbf7svgbmhAe8tSpPh3hDblWcRM/Elx8hCfGEmnDR+nZy2/kfsknk0SFKWdPSq/agtdAXFwdKfWN2DF2rYg==
   dependencies:
-    "@apollo/composition" "^2.2.1"
-    "@apollo/federation-internals" "^2.2.1"
-    "@apollo/query-planner" "^2.2.1"
+    "@apollo/composition" "^2.2.2"
+    "@apollo/federation-internals" "^2.2.2"
+    "@apollo/query-planner" "^2.2.2"
     "@apollo/server-gateway-interface" "^1.0.2"
     "@apollo/usage-reporting-protobuf" "^4.0.0"
     "@apollo/utils.createhash" "^1.1.0"
@@ -268,24 +268,24 @@
     "@types/node" "^10.1.0"
     long "^4.0.0"
 
-"@apollo/query-graphs@^2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@apollo/query-graphs/-/query-graphs-2.2.1.tgz#d8cec6eb026deb53bcbe62fb68f9fc309b33bd17"
-  integrity sha512-lDK1HfsJlM4P2AcdhNYxXnq5zWohyLiWVyhC0SEnhR/BRfoP2UOC31MHK0waRLAQP5SBMBVolRn6AhtSFNmEyA==
+"@apollo/query-graphs@^2.2.2":
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/@apollo/query-graphs/-/query-graphs-2.2.2.tgz#0fe0c333e26aa8d7198081feed2db2314112dca2"
+  integrity sha512-NHxqfDEsMNFqwxSQ8lqj9APP0jGQAvxt0LOEb4WZgVdw303g1qxu2BapUS4YjxKVRqHDap/EAzBHgwg4J2zfjA==
   dependencies:
-    "@apollo/federation-internals" "^2.2.1"
+    "@apollo/federation-internals" "^2.2.2"
     "@types/uuid" "^8.3.4"
     deep-equal "^2.0.5"
     ts-graphviz "^0.16.0"
     uuid "^9.0.0"
 
-"@apollo/query-planner@^2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@apollo/query-planner/-/query-planner-2.2.1.tgz#77534c7429c47e210d7a39174b0682c305b4554b"
-  integrity sha512-U1OmN2Zvq/xs9OL4iK6Wauw9mIYLsTug4YEfnK/MdaWhkKtRyYsDxgUlPqzUYEZMS9LESqhODJ/IobbsbTJjJQ==
+"@apollo/query-planner@^2.2.2":
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/@apollo/query-planner/-/query-planner-2.2.2.tgz#fc712719f8f1eb07d6cd80e5705e5366d217aaf6"
+  integrity sha512-jKEZU2DzEmL0X0gewlknVVdah8jXpoKhtqOmg8RSAD2fFQtk3gpiceprBDEdmigQwLl97SDXGNjiWlkIRdz9Sg==
   dependencies:
-    "@apollo/federation-internals" "^2.2.1"
-    "@apollo/query-graphs" "^2.2.1"
+    "@apollo/federation-internals" "^2.2.2"
+    "@apollo/query-graphs" "^2.2.2"
     chalk "^4.1.0"
     deep-equal "^2.0.5"
     pretty-format "^29.0.0"
@@ -300,13 +300,13 @@
     "@apollo/utils.keyvaluecache" "^1.0.1"
     "@apollo/utils.logger" "^1.0.0"
 
-"@apollo/subgraph@2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@apollo/subgraph/-/subgraph-2.2.1.tgz#56d9a87a36e546354c433a4121d31615dd934289"
-  integrity sha512-fAm7KXr54/5mDA2mhR36AI8rwiaPGHpT9s51t8mOpnKNpX8vc9KrdlPqCAF88LKVxKRZBDTNjlD5sRgx0tQl5w==
+"@apollo/subgraph@2.2.2":
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/@apollo/subgraph/-/subgraph-2.2.2.tgz#5cfb9d580cc1f84b46c4ee29238d1d16bdb1507a"
+  integrity sha512-CUJPN1v9JZgkMBWkmufJMGduUwTD4fFyjOk2oLRWUDB41r9+eeyI3/CvuuGaZH+xMxMOSf5HN9tbbAO/sPnuTQ==
   dependencies:
     "@apollo/cache-control-types" "^1.0.2"
-    "@apollo/federation-internals" "^2.2.1"
+    "@apollo/federation-internals" "^2.2.2"
 
 "@apollo/usage-reporting-protobuf@^4.0.0", "@apollo/usage-reporting-protobuf@^4.0.0-alpha.1":
   version "4.0.0"
@@ -3347,14 +3347,6 @@
     "@graphql-tools/utils" "8.9.0"
     tslib "^2.4.0"
 
-"@graphql-tools/merge@8.3.12":
-  version "8.3.12"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/merge/-/merge-8.3.12.tgz#e3f2e5d8a7b34fb689cda66799d845cbc919e464"
-  integrity sha512-BFL8r4+FrqecPnIW0H8UJCBRQ4Y8Ep60aujw9c/sQuFmQTiqgWgpphswMGfaosP2zUinDE3ojU5wwcS2IJnumA==
-  dependencies:
-    "@graphql-tools/utils" "9.1.1"
-    tslib "^2.4.0"
-
 "@graphql-tools/merge@8.3.14", "@graphql-tools/merge@^8.3.3":
   version "8.3.14"
   resolved "https://registry.yarnpkg.com/@graphql-tools/merge/-/merge-8.3.14.tgz#d4d0a645656691d35e90e0686a6fa3d4091a34da"
@@ -3414,16 +3406,6 @@
   dependencies:
     "@graphql-tools/utils" "6.1.0"
     tslib "~2.0.1"
-
-"@graphql-tools/schema@9.0.10":
-  version "9.0.10"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/schema/-/schema-9.0.10.tgz#77ba3dfab241f0232dc0d3ba03201663b63714e2"
-  integrity sha512-lV0o4df9SpPiaeeDAzgdCJ2o2N9Wvsp0SMHlF2qDbh9aFCFQRsXuksgiDm2yTgT3TG5OtUes/t0D6uPjPZFUbQ==
-  dependencies:
-    "@graphql-tools/merge" "8.3.12"
-    "@graphql-tools/utils" "9.1.1"
-    tslib "^2.4.0"
-    value-or-promise "1.0.11"
 
 "@graphql-tools/schema@9.0.12", "@graphql-tools/schema@^9.0.0":
   version "9.0.12"
@@ -3520,7 +3502,7 @@
     "@ardatan/aggregate-error" "0.0.1"
     camel-case "4.1.1"
 
-"@graphql-tools/utils@8.12.0", "@graphql-tools/utils@^8.10.0", "@graphql-tools/utils@^8.12.0", "@graphql-tools/utils@^8.5.2", "@graphql-tools/utils@^8.8.0":
+"@graphql-tools/utils@8.12.0", "@graphql-tools/utils@^8.12.0", "@graphql-tools/utils@^8.5.2", "@graphql-tools/utils@^8.8.0":
   version "8.12.0"
   resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-8.12.0.tgz#243bc4f5fc2edbc9e8fd1038189e57d837cbe31f"
   integrity sha512-TeO+MJWGXjUTS52qfK4R8HiPoF/R7X+qmgtOYd8DTH0l6b+5Y/tlg5aGeUJefqImRq7nvi93Ms40k/Uz4D5CWw==
@@ -3548,7 +3530,7 @@
   dependencies:
     tslib "^2.4.0"
 
-"@graphql-tools/utils@9.1.3", "@graphql-tools/utils@^9.0.1", "@graphql-tools/utils@^9.1.1":
+"@graphql-tools/utils@9.1.3", "@graphql-tools/utils@^9.0.0", "@graphql-tools/utils@^9.0.1", "@graphql-tools/utils@^9.1.1":
   version "9.1.3"
   resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-9.1.3.tgz#861f87057b313726136fa6ddfbd2380eae906599"
   integrity sha512-bbJyKhs6awp1/OmP+WKA1GOyu9UbgZGkhIj5srmiMGLHohEOKMjW784Sk0BZil1w2x95UPu0WHw6/d/HVCACCg==
@@ -4503,21 +4485,21 @@
     "@napi-rs/simple-git-win32-arm64-msvc" "0.1.8"
     "@napi-rs/simple-git-win32-x64-msvc" "0.1.8"
 
-"@neo4j/cypher-builder@~0.1.6":
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/@neo4j/cypher-builder/-/cypher-builder-0.1.6.tgz#b6c58e2e43d18b334444cf0ccee96ccf94e596ac"
-  integrity sha512-c82zClycv3itsP3kSV0pVqkGoaU9H3jnN3OhoHBItBRwYM7zuqtovQZk8HUeY44WRDXVOGg3j3aWi+p0teNN8A==
+"@neo4j/cypher-builder@~0.1.7":
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/@neo4j/cypher-builder/-/cypher-builder-0.1.7.tgz#0b2b21a4fa16065e030eeecd61b97775b76cfc0e"
+  integrity sha512-N7slfGflsBmbmIGKGnMM7d7ak+xjE6+Xh6QY5aXL2zs4LFGShCb5NlbnFdz/A8NizOvyakg8Iwtc0uQCFc0keA==
 
-"@neo4j/graphql@3.13.0":
-  version "3.13.0"
-  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-3.13.0.tgz#15876585e251856a78b76ecc94400674718416f4"
-  integrity sha512-gTXYE5ozbjW230KMYBLcdPZZsyESXEnmv/PeNpm4KaxoN9ZEbZxdOAaESqSzutg2gu56gHCWwkaKpUhYW8RA9w==
+"@neo4j/graphql@3.13.1":
+  version "3.13.1"
+  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-3.13.1.tgz#8e83ebf940767a6a2dd08628f0e008df48fafe6c"
+  integrity sha512-jaMCoXAcIWlbRO/iMGYUNKNzvJFJukdm3MNh2aqWBfsvrq5lN4IjEnYrViVLB70ruL6r0epkMvIgSXhQZDdUyw==
   dependencies:
     "@graphql-tools/merge" "^8.3.3"
     "@graphql-tools/resolvers-composition" "^6.5.3"
-    "@graphql-tools/schema" "9.0.10"
-    "@graphql-tools/utils" "^8.10.0"
-    "@neo4j/cypher-builder" "~0.1.6"
+    "@graphql-tools/schema" "9.0.12"
+    "@graphql-tools/utils" "^9.0.0"
+    "@neo4j/cypher-builder" "~0.1.7"
     camelcase "^6.3.0"
     debug "^4.3.4"
     deep-equal "^2.0.5"
@@ -16477,10 +16459,10 @@ open@^8.0.9, open@^8.4.0:
     is-docker "^2.1.1"
     is-wsl "^2.2.0"
 
-openapi-types@12.0.2:
-  version "12.0.2"
-  resolved "https://registry.yarnpkg.com/openapi-types/-/openapi-types-12.0.2.tgz#b752ab0a463c594fd7e3142e0e5983a9645503f6"
-  integrity sha512-GuTo7FyZjOIWVhIhQSWJVaws6A82sWIGyQogxxYBYKZ0NBdyP2CYSIgOwFfSB+UVoPExk/YzFpyYitHS8KVZtA==
+openapi-types@12.1.0:
+  version "12.1.0"
+  resolved "https://registry.yarnpkg.com/openapi-types/-/openapi-types-12.1.0.tgz#bd01acc937b73c9f6db2ac2031bf0231e21ebff0"
+  integrity sha512-XpeCy01X6L5EpP+6Hc3jWN7rMZJ+/k1lwki/kTmWzbVhdPie3jd5O2ZtedEx8Yp58icJ0osVldLMrTB/zslQXA==
 
 opener@^1.5.2:
   version "1.5.2"
@@ -21579,10 +21561,10 @@ workbox-window@6.5.3:
     "@types/trusted-types" "^2.0.2"
     workbox-core "6.5.3"
 
-wrangler@2.6.1:
-  version "2.6.1"
-  resolved "https://registry.yarnpkg.com/wrangler/-/wrangler-2.6.1.tgz#e80d667044501165cad760058a67af67a932d54f"
-  integrity sha512-v0Kh8KQC33xP82pGXZ+67pJMQIx0CHI+gF2nLIcdZbrB0wAQLQ6lsQYS9UpuTupQg4+RetHToDwk+lzRM0J0cQ==
+wrangler@2.6.2:
+  version "2.6.2"
+  resolved "https://registry.yarnpkg.com/wrangler/-/wrangler-2.6.2.tgz#70882b4008f8bd7bf9e0a66519df50bfe061be3c"
+  integrity sha512-+in4oEQXDs6+vE+1c6niBd3IrW1DMRTbauR6G0u3TpD6UaXOLwLdBxRLEbN3m82dN+WNm7l1MbFZrKc/TnWjhw==
   dependencies:
     "@cloudflare/kv-asset-handler" "^0.2.0"
     "@esbuild-plugins/node-globals-polyfill" "^0.1.1"
