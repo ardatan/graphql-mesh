@@ -2,7 +2,7 @@ import {
   loadGraphQLSchemaFromJSONSchemas,
   loadNonExecutableGraphQLSchemaFromJSONSchemas,
 } from '@omnigraph/json-schema';
-import { OpenAPILoaderOptions } from '.';
+import { OpenAPILoaderOptions } from './types.js';
 import { getJSONSchemaOptionsFromOpenAPIOptions } from './getJSONSchemaOptionsFromOpenAPIOptions.js';
 
 /**
