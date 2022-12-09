@@ -1,5 +1,13 @@
 # @graphql-mesh/plugin-newrelic
 
+## 0.3.4
+
+### Patch Changes
+
+- [#4916](https://github.com/Urigo/graphql-mesh/pull/4916)
+  [`13e1c1382`](https://github.com/Urigo/graphql-mesh/commit/13e1c1382bcfb31192d903afd8b09421c82a6186)
+  Thanks [@ardatan](https://github.com/ardatan)! - Show unavailable message as debug message
+
 ## 0.3.3
 
 ### Patch Changes
