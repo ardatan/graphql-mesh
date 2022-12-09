@@ -1,5 +1,13 @@
 # @omnigraph/json-schema
 
+## 0.38.4
+
+### Patch Changes
+
+- [#4914](https://github.com/Urigo/graphql-mesh/pull/4914)
+  [`839e2458f`](https://github.com/Urigo/graphql-mesh/commit/839e2458f57fb57105a6b35c9b9a777c53c834f0)
+  Thanks [@ardatan](https://github.com/ardatan)! - Avoid '.' imports for ESM support
+
 ## 0.38.3
 
 ### Patch Changes
