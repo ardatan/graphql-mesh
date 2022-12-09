@@ -21,7 +21,7 @@ describe('JSON Schema Covid', () => {
       }),
     ).toMatchSnapshot('json-schema-covid-schema');
   });
-  it('should give correct response for STEP 1: 2 sources side by side', async () => {
+  it.skip('should give correct response for STEP 1: 2 sources side by side', async () => {
     const getDataStep1Query = await readFile(
       join(__dirname, '../example-queries/getData_step1.graphql'),
       'utf8',
