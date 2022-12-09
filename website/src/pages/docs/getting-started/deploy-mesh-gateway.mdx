@@ -77,17 +77,22 @@ Similarly to regular and Vercel deployment, we will need to add the `mesh build`
 Then, we can create a Lambda as it follows:
 
 ```ts filename="graphql.ts"
-import type { Handler } from '@aws-cdk/aws-lambda'
-import { configure } from '@vendia/serverless-express'
-import { createBuiltMeshHTTPHandler } from './.mesh'
+import type { Handler } from "@aws-cdk/aws-lambda";
+import { configure } from "@vendia/serverless-express";
+import express from "@vendia/serverless-express/src/frameworks/express";
+import { createBuiltMeshHTTPHandler } from "./.mesh";
 
-const app = createBuiltMeshHTTPHandler()
+const app = createBuiltMeshHTTPHandler();
 
 export const handler: Handler = configure({
   // Pass Mesh HTTP handler as app
   app,
-})
+  // Specify the framework (default is KoaJS)
+  framework: express,
+});
+
 ```
+If the lambda is behind an API Gateway, ensure the routing fits with the one specified in the `endpoint` setting from `.meshrc.yml`
 
 ### Deploy Mesh on Cloudflare Workers
 
