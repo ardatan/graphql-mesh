@@ -15,7 +15,7 @@ export default function useMeshNewrelic(
 ): MeshPlugin<any> {
   const instrumentationApi = newRelic?.shim;
   if (!instrumentationApi?.agent) {
-    options.logger.error(
+    options.logger.debug(
       'Agent unavailable. Please check your New Relic Agent configuration and ensure New Relic is enabled.',
     );
     return {};
