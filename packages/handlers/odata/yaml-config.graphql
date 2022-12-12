@@ -9,19 +9,19 @@ type ODataHandler @md {
   """
   Base URL for OData API
   """
-  baseUrl: String!
+  endpoint: String!
   """
   Custom $metadata File or URL
   """
-  metadata: String
-  """
-  Headers to be used with the operation requests
-  """
-  operationHeaders: JSON
+  source: String
   """
   Headers to be used with the $metadata requests
   """
   schemaHeaders: JSON
+  """
+  Headers to be used with the operation requests
+  """
+  operationHeaders: JSON
   """
   Enable batching
   """

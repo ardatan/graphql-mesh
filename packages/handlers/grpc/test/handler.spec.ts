@@ -3,7 +3,7 @@ import { GraphQLSchema, printSchema, validateSchema } from 'graphql';
 
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { PubSub } from '@graphql-mesh/utils';
-import GrpcHandler from '../src';
+import GrpcHandler from '../src/index.js';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { DefaultLogger } from '@graphql-mesh/utils';
 import type { YamlConfig } from '@graphql-mesh/types';
@@ -27,7 +27,7 @@ describe.each<[string, string]>([
     const pubsub = new PubSub();
     const config: YamlConfig.GrpcHandler = {
       endpoint: 'localhost',
-      protoFilePath: {
+      source: {
         file: join(__dirname, './fixtures/proto-tests', file),
         load: { includeDirs: [join(__dirname, './fixtures/proto-tests')] },
       },
@@ -65,7 +65,7 @@ describe('Load proto with prefixQueryMethod', () => {
     const pubsub = new PubSub();
     const config: YamlConfig.GrpcHandler = {
       endpoint: 'localhost',
-      protoFilePath: {
+      source: {
         file: join(__dirname, './fixtures/proto-tests', file),
         load: { includeDirs: [join(__dirname, './fixtures/proto-tests')] },
       },

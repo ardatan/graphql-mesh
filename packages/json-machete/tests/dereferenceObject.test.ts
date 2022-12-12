@@ -1,5 +1,5 @@
 import { JSONSchemaObject } from '@json-schema-tools/meta-schema';
-import { dereferenceObject } from '../src/dereferenceObject';
+import { dereferenceObject } from '../src/dereferenceObject.js';
 
 describe('dereferenceObject', () => {
   it('should resolve all $ref', async () => {

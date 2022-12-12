@@ -11,7 +11,7 @@ import * as typedDocumentNodePlugin from '@graphql-codegen/typed-document-node';
 import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import ts from 'typescript';
 import { pathExists, writeFile, writeJSON } from '@graphql-mesh/utils';
-import { generateOperations } from './generate-operations';
+import { generateOperations } from './generate-operations.js';
 import { GraphQLMeshCLIParams } from '..';
 import JSON5 from 'json5';
 
@@ -29,7 +29,7 @@ class CodegenHelpers extends tsBasePlugin.TsVisitor {
 
 function buildSignatureBasedOnRootFields(
   codegenHelpers: CodegenHelpers,
-  type: Maybe<GraphQLObjectType>
+  type: Maybe<GraphQLObjectType>,
 ): Record<string, string> {
   if (!type) {
     return {};
@@ -52,7 +52,7 @@ function buildSignatureBasedOnRootFields(
     operationMap[fieldName] = `  /** ${field.description} **/\n  ${
       field.name
     }: InContextSdkMethod<${codegenHelpers.getTypeToUse(
-      parentTypeNode
+      parentTypeNode,
     )}['${fieldName}'], ${argsName}, ${unifiedContextIdentifier}>`;
   }
   return operationMap;
@@ -87,11 +87,17 @@ async function generateTypesForApi(options: {
   });
   const codegenHelpers = new CodegenHelpers(options.schema, config, {});
   const namespace = pascalCase(`${options.name}Types`);
-  const queryOperationMap = buildSignatureBasedOnRootFields(codegenHelpers, options.schema.getQueryType());
-  const mutationOperationMap = buildSignatureBasedOnRootFields(codegenHelpers, options.schema.getMutationType());
+  const queryOperationMap = buildSignatureBasedOnRootFields(
+    codegenHelpers,
+    options.schema.getQueryType(),
+  );
+  const mutationOperationMap = buildSignatureBasedOnRootFields(
+    codegenHelpers,
+    options.schema.getMutationType(),
+  );
   const subscriptionsOperationMap = buildSignatureBasedOnRootFields(
     codegenHelpers,
-    options.schema.getSubscriptionType()
+    options.schema.getSubscriptionType(),
   );
 
   const codeAst = `
@@ -113,7 +119,9 @@ export namespace ${namespace} {
   };
 
   export type Context = {
-      [${JSON.stringify(options.name)}]: { Query: QuerySdk, Mutation: MutationSdk, Subscription: SubscriptionSdk },
+      [${JSON.stringify(
+        options.name,
+      )}]: { Query: QuerySdk, Mutation: MutationSdk, Subscription: SubscriptionSdk },
       ${Object.keys(options.contextVariables)
         .map(key => `[${JSON.stringify(key)}]: ${options.contextVariables[key]}`)
         .join(',\n')}
@@ -159,7 +167,7 @@ export async function generateTsArtifacts(
     fileType: 'ts' | 'json' | 'js';
     codegenConfig: any;
   },
-  cliParams: GraphQLMeshCLIParams
+  cliParams: GraphQLMeshCLIParams,
 ) {
   const artifactsDir = pathModule.join(baseDir, cliParams.artifactsDir);
   logger.info('Generating index file in TypeScript');
@@ -195,7 +203,7 @@ export async function generateTsArtifacts(
           documentMode: 'external',
           importDocumentNodeExternallyFrom: 'NOWHERE',
         },
-      }
+      },
     );
   }
   const codegenOutput =
@@ -240,7 +248,10 @@ export async function generateTsArtifacts(
               ]);
               const results = await Promise.all(
                 rawSources.map(async source => {
-                  const sourceMap = unifiedSchema.extensions.sourceMap as Map<RawSourceOutput, GraphQLSchema>;
+                  const sourceMap = unifiedSchema.extensions.sourceMap as Map<
+                    RawSourceOutput,
+                    GraphQLSchema
+                  >;
                   const sourceSchema = sourceMap.get(source);
                   const { identifier, codeAst } = await generateTypesForApi({
                     schema: sourceSchema,
@@ -250,18 +261,23 @@ export async function generateTsArtifacts(
 
                   if (codeAst) {
                     const content = '// @ts-nocheck\n' + codeAst;
-                    await writeFile(pathModule.join(artifactsDir, `sources/${source.name}/types.ts`), content);
+                    await writeFile(
+                      pathModule.join(artifactsDir, `sources/${source.name}/types.ts`),
+                      content,
+                    );
                   }
 
                   if (identifier) {
-                    importCodes.add(`import type { ${identifier} } from './sources/${source.name}/types';`);
+                    importCodes.add(
+                      `import type { ${identifier} } from './sources/${source.name}/types';`,
+                    );
                   }
 
                   return {
                     identifier,
                     codeAst,
                   };
-                })
+                }),
               );
 
               const contextType = `export type ${unifiedContextIdentifier} = ${results
@@ -283,7 +299,10 @@ const importFn: ImportFn = <T>(moduleId: string) => {
       }
       if (pathModule.isAbsolute(importPath)) {
         moduleMapProp = pathModule.relative(baseDir, importedModuleName).split('\\').join('/');
-        importPath = `./${pathModule.relative(artifactsDir, importedModuleName).split('\\').join('/')}`;
+        importPath = `./${pathModule
+          .relative(artifactsDir, importedModuleName)
+          .split('\\')
+          .join('/')}`;
       }
       return `
     case ${JSON.stringify(moduleMapProp)}:
@@ -351,14 +370,14 @@ export function ${cliParams.builtMeshSDKFactoryName}<TGlobalContext = any, TOper
       .replace(`import * as Operations from 'NOWHERE';\n`, '')
       .replace(`import { DocumentNode } from 'graphql';`, '');
 
-  const baseUrlAssignmentESM = `import { fileURLToPath } from '@graphql-mesh/utils';
+  const endpointAssignmentESM = `import { fileURLToPath } from '@graphql-mesh/utils';
 const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url)), '${pathModule.relative(
     artifactsDir,
-    baseDir
+    baseDir,
   )}');`;
-  const baseUrlAssignmentCJS = `const baseDir = pathModule.join(typeof __dirname === 'string' ? __dirname : '/', '${pathModule.relative(
+  const endpointAssignmentCJS = `const baseDir = pathModule.join(typeof __dirname === 'string' ? __dirname : '/', '${pathModule.relative(
     artifactsDir,
-    baseDir
+    baseDir,
   )}');`;
 
   const tsFilePath = pathModule.join(artifactsDir, 'index.ts');
@@ -369,7 +388,10 @@ const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url
 
   const esmJob = (ext: 'mjs' | 'js') => async () => {
     logger.info('Writing index.ts for ESM to the disk.');
-    await writeFile(tsFilePath, codegenOutput.replace(BASEDIR_ASSIGNMENT_COMMENT, baseUrlAssignmentESM));
+    await writeFile(
+      tsFilePath,
+      codegenOutput.replace(BASEDIR_ASSIGNMENT_COMMENT, endpointAssignmentESM),
+    );
 
     const esmJsFilePath = pathModule.join(artifactsDir, `index.${ext}`);
     if (await pathExists(esmJsFilePath)) {
@@ -392,7 +414,10 @@ const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url
 
   const cjsJob = async () => {
     logger.info('Writing index.ts for CJS to the disk.');
-    await writeFile(tsFilePath, codegenOutput.replace(BASEDIR_ASSIGNMENT_COMMENT, baseUrlAssignmentCJS));
+    await writeFile(
+      tsFilePath,
+      codegenOutput.replace(BASEDIR_ASSIGNMENT_COMMENT, endpointAssignmentCJS),
+    );
 
     if (await pathExists(jsFilePath)) {
       await fs.promises.unlink(jsFilePath);

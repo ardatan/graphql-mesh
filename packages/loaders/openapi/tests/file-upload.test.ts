@@ -2,8 +2,11 @@
 import { createYoga } from 'graphql-yoga';
 import { fetch, File, FormData } from '@whatwg-node/fetch';
 import { graphql, GraphQLSchema } from 'graphql';
-import { startServer as startAPIServer, stopServer as stopAPIServer } from './file_upload_api_server';
-import loadGraphQLSchemaFromOpenAPI from '../src';
+import {
+  startServer as startAPIServer,
+  stopServer as stopAPIServer,
+} from './file_upload_api_server.js';
+import loadGraphQLSchemaFromOpenAPI from '../src/index.js';
 import { createServer, Server } from 'http';
 import { AddressInfo } from 'net';
 
@@ -17,7 +20,7 @@ beforeAll(async () => {
   createdSchema = await loadGraphQLSchemaFromOpenAPI('file_upload', {
     source: './fixtures/file_upload.json',
     cwd: __dirname,
-    baseUrl: `http://127.0.0.1:${apiPort}/api`,
+    endpoint: `http://127.0.0.1:${apiPort}/api`,
     fetch,
   });
   const yoga = createYoga({

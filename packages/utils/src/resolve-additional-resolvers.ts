@@ -13,12 +13,12 @@ import {
   isObjectType,
   GraphQLNamedType,
 } from 'graphql';
-import { withFilter } from './with-filter';
+import { withFilter } from './with-filter.js';
 import lodashGet from 'lodash.get';
 import lodashSet from 'lodash.set';
 import toPath from 'lodash.topath';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { loadFromModuleExportExpression } from './load-from-module-export-expression';
+import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
 import { process } from '@graphql-mesh/cross-helpers';
 
 function getTypeByPath(type: GraphQLType, path: string[]): GraphQLNamedType {

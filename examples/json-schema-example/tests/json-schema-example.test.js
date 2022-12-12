@@ -3,7 +3,7 @@ const { getMesh } = require('@graphql-mesh/runtime');
 const { readFile } = require('fs-extra');
 const { join } = require('path');
 
-const { printSchema, lexicographicSortSchema } = require('graphql');
+const { printSchemaWithDirectives } = require('@graphql-tools/utils');
 
 const mesh$ = findAndParseConfig({
   dir: join(__dirname, '..'),
@@ -12,11 +12,7 @@ const mesh$ = findAndParseConfig({
 describe('JSON Schema Example', () => {
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
-    expect(
-      printSchema(lexicographicSortSchema(schema), {
-        descriptions: false,
-      })
-    ).toMatchSnapshot();
+    expect(printSchemaWithDirectives(schema)).toMatchSnapshot();
   });
   it('should give correct response', async () => {
     const { execute } = await mesh$;

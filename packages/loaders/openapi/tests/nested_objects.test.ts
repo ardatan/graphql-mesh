@@ -2,30 +2,29 @@ import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch } from '@whatwg-node/fetch';
 import getPort from 'get-port';
 import { GraphQLSchema, parse, validate, execute } from 'graphql';
-import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
+import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 
-import { startServer, stopServer } from './nested_objects_server';
-
-let createdSchema: GraphQLSchema;
+import { startServer, stopServer } from './nested_objects_server.js';
 
 describe('OpanAPI: nested objects', () => {
   /**
    * Set up the schema first and run example API server
    */
+  let createdSchema: GraphQLSchema;
+  let port: number;
   beforeAll(async () => {
-    const PORT = await getPort();
+    port = await getPort();
     // Update PORT for this test case:
-    const baseUrl = `http://localhost:${PORT}`;
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api', {
       fetch,
-      baseUrl,
+      endpoint: `http://localhost:{context.port}`,
       source: './fixtures/nested_object.json',
       cwd: __dirname,
       queryStringOptions: {
         allowDots: true,
       },
     });
-    await startServer(PORT);
+    await startServer(port);
   });
 
   /**
@@ -40,7 +39,10 @@ describe('OpanAPI: nested objects', () => {
   it('Get response', async () => {
     const query = /* GraphQL */ `
       {
-        searchCollection(collectionName: "CHECKOUT_SUPER_PRODUCT", searchParameters: { q: "water", query_by: "name" }) {
+        searchCollection(
+          collectionName: "CHECKOUT_SUPER_PRODUCT"
+          searchParameters: { q: "water", query_by: "name" }
+        ) {
           ... on SearchResult {
             hits {
               document
@@ -57,6 +59,9 @@ describe('OpanAPI: nested objects', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
+      contextValue: {
+        port,
+      },
     });
 
     expect(result).toEqual({

@@ -1,4 +1,4 @@
-import { Interpolator } from './interpolator';
+import { Interpolator } from './interpolator.js';
 import dayjs from 'dayjs';
 
 const hashCode = (s: string) => s.split('').reduce((a, b) => ((a << 5) - a + b.charCodeAt(0)) | 0, 0);
@@ -27,4 +27,4 @@ stringInterpolator.registerModifier('base64', (value: any) => {
   }
 });
 
-export * from './resolver-data-factory';
+export * from './resolver-data-factory.js';

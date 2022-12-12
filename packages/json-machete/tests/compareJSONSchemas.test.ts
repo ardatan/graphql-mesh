@@ -1,4 +1,4 @@
-import { compareJSONSchemas } from '../src/compareJSONSchemas';
+import { compareJSONSchemas } from '../src/compareJSONSchemas.js';
 
 describe('compareJSONSchemas', () => {
   it('should throw on removed field', async () => {

@@ -1,38 +1,37 @@
 {
   "name": "@graphql-mesh/container",
-  "license": "MIT",
-  "version": "0.1.199",
+  "version": "0.2.4",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
     "directory": "packages/container"
   },
+  "license": "MIT",
   "scripts": {
     "start": "graphql-mesh dev"
   },
   "dependencies": {
+    "@graphql-mesh/cli": "0.82.5",
+    "@graphql-mesh/config": "10.0.3",
+    "@graphql-mesh/graphql": "0.33.4",
+    "@graphql-mesh/grpc": "0.28.3",
+    "@graphql-mesh/json-schema": "0.37.4",
+    "@graphql-mesh/odata": "0.22.2",
+    "@graphql-mesh/openapi": "0.35.5",
+    "@graphql-mesh/plugin-mock": "0.1.3",
+    "@graphql-mesh/postgraphile": "0.22.3",
+    "@graphql-mesh/runtime": "0.46.2",
+    "@graphql-mesh/soap": "0.17.3",
+    "@graphql-mesh/transform-cache": "0.13.3",
+    "@graphql-mesh/transform-encapsulate": "0.4.3",
+    "@graphql-mesh/transform-extend": "0.11.3",
+    "@graphql-mesh/transform-filter-schema": "0.15.3",
+    "@graphql-mesh/transform-prefix": "0.12.3",
+    "@graphql-mesh/transform-rename": "0.14.3",
+    "@graphql-mesh/transform-resolvers-composition": "0.13.3",
     "graphql": "16.6.0",
-    "@graphql-mesh/cli": "0.79.5",
-    "@graphql-mesh/config": "8.0.32",
-    "@graphql-mesh/runtime": "0.44.33",
-    "@graphql-mesh/openapi": "0.33.36",
-    "@graphql-mesh/graphql": "0.32.0",
-    "@graphql-mesh/grpc": "0.25.33",
-    "@graphql-mesh/json-schema": "0.35.35",
-    "@graphql-mesh/odata": "0.20.33",
-    "@graphql-mesh/soap": "0.16.1",
-    "@graphql-mesh/postgraphile": "0.21.30",
-    "@graphql-mesh/plugin-mock": "0.0.38",
-    "@graphql-mesh/transform-prefix": "0.11.101",
-    "@graphql-mesh/transform-encapsulate": "0.3.112",
-    "@graphql-mesh/transform-cache": "0.12.65",
-    "@graphql-mesh/transform-filter-schema": "0.14.111",
-    "@graphql-mesh/transform-extend": "0.10.75",
-    "@graphql-mesh/transform-rename": "0.12.102",
-    "@graphql-mesh/transform-resolvers-composition": "0.12.109",
     "tslib": "2.4.1"
   },
-  "publishConfig": {
-    "access": "public"
-  }
+  "bob": false
 }

@@ -17037,7 +17037,7 @@
       "get": {
         "consumes": [],
         "deprecated": false,
-        "description": "Retrieves account information for the authenticated user. Since the API is sessionless, this method does not actually log you in. \nInstead, the method returns information about the account or accounts that the authenticated user has access to.\n\n\nEach account has a `baseUrl` property, returned in the response.\nUse this `baseUrl` in all future API calls as the base of the request URL.\n\nFor each account, the `baseUrl` property includes the DocuSign server, the API version, and the `accountId` property.\n\nIt is not uncommon for an authenticated user to have access to more than one account (and more than one `baseUrl`). Depending on your integration's use case, your integration may choose to:\n\n* Use the account whose `isDefault` field is `true`.\n* List the available accounts and ask the user to choose one.\n* Enable the system administrator to set the account that should be used by your integration.\n\nIf this method returns successfully, then you also know that the user has successfully authenticated with the DocuSign Signature platform.\n\n\n[legacyheader]: ../../../../guide/authentication/legacy_auth.html\n[userinfo]: ../../../../guide/authentication/userinfo.html\n[authcode]: ../../../../guide/authentication/oa2_auth_code.md\n[implicit]: ../../../../guide/authentication/oa2_implicit.md\n",
+        "description": "Retrieves account information for the authenticated user. Since the API is sessionless, this method does not actually log you in. \nInstead, the method returns information about the account or accounts that the authenticated user has access to.\n\n\nEach account has a `endpoint` property, returned in the response.\nUse this `endpoint` in all future API calls as the base of the request URL.\n\nFor each account, the `endpoint` property includes the DocuSign server, the API version, and the `accountId` property.\n\nIt is not uncommon for an authenticated user to have access to more than one account (and more than one `endpoint`). Depending on your integration's use case, your integration may choose to:\n\n* Use the account whose `isDefault` field is `true`.\n* List the available accounts and ask the user to choose one.\n* Enable the system administrator to set the account that should be used by your integration.\n\nIf this method returns successfully, then you also know that the user has successfully authenticated with the DocuSign Signature platform.\n\n\n[legacyheader]: ../../../../guide/authentication/legacy_auth.html\n[userinfo]: ../../../../guide/authentication/userinfo.html\n[authcode]: ../../../../guide/authentication/oa2_auth_code.md\n[implicit]: ../../../../guide/authentication/oa2_implicit.md\n",
         "operationId": "LoginInformation_GetLoginInformation",
         "parameters": [
           {
@@ -17094,7 +17094,7 @@
               "loginAccounts": [
                 {
                   "accountId": "1703061",
-                  "baseUrl": "https://demo.docusign.net/restapi/v2/accounts/1703061",
+                  "endpoint": "https://demo.docusign.net/restapi/v2/accounts/1703061",
                   "email": "nirving@example.com",
                   "isDefault": "true",
                   "name": "LoanCo",
@@ -29760,8 +29760,8 @@
           "description": "The GUID associated with the account ID.",
           "type": "string"
         },
-        "baseUrl": {
-          "description": "The URL that should be used for successive calls to this account. It includes the protocal (https), the DocuSign server where the account is located, and the account number. Use this Url to make API calls against this account. Many of the API calls provide Uri's that are relative to this baseUrl.",
+        "endpoint": {
+          "description": "The URL that should be used for successive calls to this account. It includes the protocal (https), the DocuSign server where the account is located, and the account number. Use this Url to make API calls against this account. Many of the API calls provide Uri's that are relative to this endpoint.",
           "type": "string"
         },
         "email": {
@@ -30051,8 +30051,8 @@
           "description": "Contains a token that can be used for authentication in API calls instead of using the user name and password.",
           "type": "string"
         },
-        "baseUrl": {
-          "description": "The URL that should be used for successive calls to this account. It includes the protocal (https), the DocuSign server where the account is located, and the account number. Use this Url to make API calls against this account. Many of the API calls provide Uri's that are relative to this baseUrl.",
+        "endpoint": {
+          "description": "The URL that should be used for successive calls to this account. It includes the protocal (https), the DocuSign server where the account is located, and the account number. Use this Url to make API calls against this account. Many of the API calls provide Uri's that are relative to this endpoint.",
           "type": "string"
         },
         "billingPlanPreview": {

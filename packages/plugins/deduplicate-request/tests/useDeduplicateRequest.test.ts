@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { wrapFetchWithPlugins } from '../../../runtime/src/get-mesh';
-import useDeduplicateRequest from '../src/index';
+import { wrapFetchWithPlugins } from '../../../runtime/src/get-mesh.js';
+import useDeduplicateRequest from '../src/index.js';
 // eslint-disable-next-line import/no-nodejs-modules
 import http from 'http';
 import { fetch as originalFetch } from '@whatwg-node/fetch';

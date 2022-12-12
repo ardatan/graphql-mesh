@@ -10,9 +10,9 @@
       "excludePackagePatterns": [
         "@changesets/*",
         "typescript",
-        "typedoc*", 
+        "typedoc*",
         "^@theguild/",
-        "@graphql-inspector/core", 
+        "@graphql-inspector/core",
         "next"
       ],
       "matchPackagePatterns": ["*"],

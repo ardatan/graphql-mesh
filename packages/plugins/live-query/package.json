@@ -1,43 +1,51 @@
 {
   "name": "@graphql-mesh/plugin-live-query",
-  "version": "0.1.46",
-  "sideEffects": false,
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
-  "exports": {
-    ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
-    },
-    "./*": {
-      "require": "./dist/*.js",
-      "import": "./dist/*.mjs"
-    }
-  },
-  "license": "MIT",
+  "version": "0.2.3",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
     "directory": "packages/plugins/live-query"
   },
+  "license": "MIT",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
-    "@envelop/live-query": "5.0.3",
-    "@n1ru4l/in-memory-live-query-store": "0.10.0",
-    "@graphql-mesh/cross-helpers": "0.2.10",
-    "@graphql-mesh/types": "0.86.0",
-    "@graphql-mesh/string-interpolation": "0.3.3",
     "@envelop/core": "^3.0.0",
+    "@envelop/live-query": "5.0.4",
+    "@graphql-mesh/cross-helpers": "0.3.0",
+    "@graphql-mesh/string-interpolation": "0.4.1",
+    "@graphql-mesh/types": "0.89.2",
+    "@n1ru4l/in-memory-live-query-store": "0.10.0",
     "tslib": "^2.4.0"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
   }
 }

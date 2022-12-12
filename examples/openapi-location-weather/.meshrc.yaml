@@ -79,5 +79,3 @@ additionalTypeDefs: |
 documents:
   - ./example-query.graphql
 
-serve:
-  customServerHandler: ./customServerHandler.ts

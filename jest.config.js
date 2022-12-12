@@ -15,7 +15,7 @@ module.exports = {
   rootDir: ROOT_DIR,
   restoreMocks: true,
   reporters: ['default'],
-  modulePathIgnorePatterns: ['dist', '.bob'],
+  modulePathIgnorePatterns: ['dist', 'fixtures', '.bob'],
   moduleNameMapper: {
     '@graphql-mesh/cross-helpers': '<rootDir>/packages/cross-helpers/node.js',
     ...pathsToModuleNameMapper(tsconfig.compilerOptions.paths, {
@@ -32,4 +32,5 @@ module.exports = {
     '^.+\\.js$': 'babel-jest',
   },
   transformIgnorePatterns: [`node_modules/(?!(${ESM_PACKAGES.join('|')})/)`],
+  resolver: 'bob-the-bundler/jest-resolver.js',
 };

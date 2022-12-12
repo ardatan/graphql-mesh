@@ -66,7 +66,7 @@ module.exports = function startServer(subscriptionInterval = 1000, debug = false
           logger('called with MetaData:', JSON.stringify(call.metadata.getMap()));
           callback(null, moviesResult);
         },
-        searchMoviesByCast(call) {
+        async searchMoviesByCast(call) {
           logger('call started');
           logger('called with MetaData:', JSON.stringify(call.metadata.getMap()));
           const input = call.request;
@@ -74,21 +74,18 @@ module.exports = function startServer(subscriptionInterval = 1000, debug = false
             console.error(error);
             call.end();
           });
-          const interval = setInterval(() => {
-            Movies.forEach((movie, i) => {
-              if (movie.cast.indexOf(input.castName) > -1) {
-                setTimeout(() => {
-                  if (call.cancelled || call.destroyed) {
-                    logger('call ended');
-                    clearInterval(interval);
-                    return;
-                  }
-                  logger('call received', movie);
-                  call.write(movie);
-                }, i * subscriptionInterval);
-              }
-            });
-          }, subscriptionInterval * (Movies.length + 1));
+          for (const movie of Movies) {
+            await new Promise(resolve => setTimeout(resolve, subscriptionInterval));
+            if (call.cancelled || call.destroyed) {
+              logger('call ended');
+              return;
+            }
+            if (movie.cast.includes(input.castName)) {
+              logger('call received', movie);
+              call.write(movie);
+            }
+          }
+          call.end();
         },
       });
       server.bindAsync('0.0.0.0:50051', ServerCredentials.createInsecure(), (error, port) => {

@@ -8,7 +8,7 @@ import { GraphQLError, TypeInfo, visit, visitInParallel, visitWithTypeInfo } fro
 function deleteNode<T extends Record<string | number, any>>(
   parent: T,
   remaining: (string | number)[],
-  currentKey?: keyof T
+  currentKey?: keyof T,
 ): void {
   const nextKey = remaining.shift();
   if (nextKey) {
@@ -19,7 +19,7 @@ function deleteNode<T extends Record<string | number, any>>(
 }
 
 export default function useMeshRateLimit(
-  options: MeshPluginOptions<YamlConfig.RateLimitPluginConfig>
+  options: MeshPluginOptions<YamlConfig.RateLimitPluginConfig>,
 ): MeshPlugin<any> {
   return {
     async onExecute(onExecuteArgs) {
@@ -58,8 +58,16 @@ export default function useMeshRateLimit(
                               `Rate limit of "${parentType.name}.${fieldDef.name}" exceeded for "${identifier}"`,
                               {
                                 path: [fieldNode.alias?.value || fieldDef.name],
-                              }
-                            )
+                                extensions: {
+                                  http: {
+                                    status: 429,
+                                    headers: {
+                                      'Retry-After': config.ttl,
+                                    },
+                                  },
+                                },
+                              },
+                            ),
                           );
                           deleteNode(parent, [...path]);
                           remainingFields--;
@@ -69,7 +77,7 @@ export default function useMeshRateLimit(
                         return options.cache.set(cacheKey, remainingTokens - 1, {
                           ttl: config.ttl / 1000,
                         });
-                      })
+                      }),
                     );
                   }
                 }
@@ -77,8 +85,8 @@ export default function useMeshRateLimit(
                 return false;
               },
             });
-          })
-        )
+          }),
+        ),
       );
       await Promise.all(jobs);
       if (errors.length > 0) {

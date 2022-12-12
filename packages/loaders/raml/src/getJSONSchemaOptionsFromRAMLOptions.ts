@@ -1,12 +1,16 @@
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
-import { HTTPMethod, JSONSchemaOperationConfig, JSONSchemaOperationResponseConfig } from '@omnigraph/json-schema';
+import {
+  HTTPMethod,
+  JSONSchemaOperationConfig,
+  JSONSchemaOperationResponseConfig,
+} from '@omnigraph/json-schema';
 import { getAbsolutePath, getCwd, JSONSchemaObject } from 'json-machete';
 import { api10, loadApi } from '@ardatan/raml-1-parser';
 import { fetch as crossUndiciFetch } from '@whatwg-node/fetch';
 import toJsonSchema from 'to-json-schema';
-import { RAMLLoaderOptions, RAMLLoaderSelectQueryOrMutationFieldConfig } from './types';
+import { RAMLLoaderOptions, RAMLLoaderSelectQueryOrMutationFieldConfig } from './types.js';
 import { asArray } from '@graphql-tools/utils';
-import { getFieldNameFromPath } from './utils';
+import { getFieldNameFromPath } from './utils.js';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import { process } from '@graphql-mesh/cross-helpers';
 
@@ -28,17 +32,17 @@ function resolveTraitsByIs(base: { is: () => api10.TraitRef[] }) {
  * from RAML API Document
  */
 export async function getJSONSchemaOptionsFromRAMLOptions({
-  ramlFilePath,
+  source,
   cwd: ramlFileCwd = process.cwd(),
   operations: extraOperations,
-  baseUrl: forcedBaseUrl,
+  endpoint: forcedBaseUrl,
   fetch = crossUndiciFetch,
   schemaHeaders = {},
   selectQueryOrMutationField = [],
 }: RAMLLoaderOptions): Promise<{
   operations: JSONSchemaOperationConfig[];
   cwd: string;
-  baseUrl: string;
+  endpoint: string;
   fetch?: WindowOrWorkerGlobalScope['fetch'];
 }> {
   const fieldTypeMap: Record<string, RAMLLoaderSelectQueryOrMutationFieldConfig['fieldName']> = {};
@@ -46,7 +50,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
     fieldTypeMap[fieldName] = type;
   }
   const operations = extraOperations || [];
-  const ramlAbsolutePath = getAbsolutePath(ramlFilePath, ramlFileCwd);
+  const ramlAbsolutePath = getAbsolutePath(source, ramlFileCwd);
   const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders);
   const ramlAPI = (await loadApi(ramlAbsolutePath, [], {
     httpResolver: {
@@ -69,12 +73,12 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
       },
     },
   })) as api10.Api;
-  let baseUrl = forcedBaseUrl;
-  if (!baseUrl) {
-    baseUrl = ramlAPI.baseUri().value();
-    for (const baseUrlParamNode of ramlAPI.baseUriParameters()) {
-      const paramName = baseUrlParamNode.name();
-      baseUrl = baseUrl.split(`{${paramName}}`).join(`{context.${paramName}}`);
+  let endpoint = forcedBaseUrl;
+  if (!endpoint) {
+    endpoint = ramlAPI.baseUri().value();
+    for (const endpointParamNode of ramlAPI.baseUriParameters()) {
+      const paramName = endpointParamNode.name();
+      endpoint = endpoint.split(`{${paramName}}`).join(`{context.${paramName}}`);
     }
   }
   const pathTypeMap = new Map<string, string>();
@@ -212,10 +216,15 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
       }
       fieldName =
         fieldName ||
-        getFieldNameFromPath(originalFullRelativeUrl, method, responseByStatusCode['200']?.responseTypeName);
+        getFieldNameFromPath(
+          originalFullRelativeUrl,
+          method,
+          responseByStatusCode['200']?.responseTypeName,
+        );
       if (fieldName) {
         const graphQLFieldName = sanitizeNameForGraphQL(fieldName);
-        const operationType: any = fieldTypeMap[graphQLFieldName] ?? method === 'GET' ? 'query' : 'mutation';
+        const operationType: any =
+          fieldTypeMap[graphQLFieldName] ?? method === 'GET' ? 'query' : 'mutation';
         operations.push({
           type: operationType,
           field: graphQLFieldName,
@@ -232,7 +241,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
   }
   return {
     operations,
-    baseUrl,
+    endpoint,
     cwd,
     fetch,
   };

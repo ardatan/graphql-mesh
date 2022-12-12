@@ -1,3 +1,3 @@
-export * from './SOAPLoader';
-export * from './types';
-export * from './executor';
+export * from './SOAPLoader.js';
+export * from './types.js';
+export * from './executor.js';

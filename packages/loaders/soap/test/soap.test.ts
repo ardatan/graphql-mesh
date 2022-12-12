@@ -1,8 +1,8 @@
-import { SOAPLoader } from '../src/SOAPLoader';
+import { SOAPLoader } from '../src/SOAPLoader.js';
 import { fetch } from '@whatwg-node/fetch';
 import { parse } from 'graphql';
-import { createExecutorFromSchemaAST } from '../src/executor';
-import { getDocumentNodeFromSchema, printSchemaWithDirectives } from '@graphql-tools/utils';
+import { createExecutorFromSchemaAST } from '../src/executor.js';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 describe('SOAP Loader', () => {
   it('should generate the schema correctly', async () => {
@@ -13,13 +13,13 @@ describe('SOAP Loader', () => {
     const schema = soapLoader.buildSchema();
     expect(printSchemaWithDirectives(schema)).toMatchSnapshot();
   });
-  it.skip('should execute SOAP calls correctly', async () => {
+  it('should execute SOAP calls correctly', async () => {
     const soapLoader = new SOAPLoader({
       fetch,
     });
     await soapLoader.fetchWSDL('https://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL');
     const schema = soapLoader.buildSchema();
-    const executor = createExecutorFromSchemaAST(getDocumentNodeFromSchema(schema), fetch);
+    const executor = createExecutorFromSchemaAST(schema, fetch);
     const result: any = await executor({
       document: parse(/* GraphQL */ `
         mutation AddInteger {

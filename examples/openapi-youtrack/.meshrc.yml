@@ -3,7 +3,7 @@ sources:
     handler:
       openapi:
         source: '{env.YOUTRACK_SERVICE_URL}/api/openapi.json'
-        baseUrl: '{env.YOUTRACK_SERVICE_URL}/api/'
+        endpoint: '{env.YOUTRACK_SERVICE_URL}/api/'
         operationHeaders:
           Authorization: Bearer {env.YOUTRACK_TOKEN}
     transforms:

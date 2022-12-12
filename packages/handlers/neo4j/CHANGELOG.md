@@ -1,28 +1,184 @@
 # @graphql-mesh/neo4j
 
+## 0.22.3
+
+### Patch Changes
+
+- [#4922](https://github.com/Urigo/graphql-mesh/pull/4922)
+  [`766be703f`](https://github.com/Urigo/graphql-mesh/commit/766be703f88bbac7a5d1a15cc506cb186791fcf2)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@neo4j/graphql@3.13.1` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.13.1) (from
+    `3.13.0`, in `dependencies`)
+
+## 0.22.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`deb9912e0`](https://github.com/Urigo/graphql-mesh/commit/deb9912e0bc2ae782c9570b60a7224b47af341eb)]:
+  - @graphql-mesh/types@0.89.2
+  - @graphql-mesh/utils@0.43.3
+  - @graphql-mesh/store@0.9.3
+
+## 0.22.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f1c2e20e5`](https://github.com/Urigo/graphql-mesh/commit/f1c2e20e5228425dc220986d85653fc7f3811e43),
+  [`f1c2e20e5`](https://github.com/Urigo/graphql-mesh/commit/f1c2e20e5228425dc220986d85653fc7f3811e43)]:
+  - @graphql-mesh/types@0.89.1
+  - @graphql-mesh/utils@0.43.2
+  - @graphql-mesh/store@0.9.2
+
+## 0.22.0
+
+### Minor Changes
+
+- [#4767](https://github.com/Urigo/graphql-mesh/pull/4767)
+  [`3edaa00ac`](https://github.com/Urigo/graphql-mesh/commit/3edaa00ac772d519e351e620bfa670514db886e5)
+  Thanks [@ardatan](https://github.com/ardatan)! - _BREAKING_ - Neo4J handler's `url` changed to
+  `endpoint` to be consistent with other handlers _BREAKING_ - Neo4J handler's `typeDefs` changed to
+  `source` to be consistent with other handlers _BREAKING_ - OData handler's `url` changed to
+  `endpoint` to be consistent with other handlers _BREAKING_ - OData handler's `metadata` changed to
+  `source` to be consistent with other handlers _BREAKING_ - OpenAPI handler's `baseUrl` changed to
+  `endpoint` to be consistent with other handlers _BREAKING_ - RAML handler's `baseUrl` changed to
+  `endpoint` to be consistent with other handlers _BREAKING_ - RAML handler's `ramlFilePath` changed
+  to `source` to be consistent with other handlers
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3edaa00ac`](https://github.com/Urigo/graphql-mesh/commit/3edaa00ac772d519e351e620bfa670514db886e5)]:
+  - @graphql-mesh/types@0.89.0
+  - @graphql-mesh/store@0.9.1
+  - @graphql-mesh/utils@0.43.1
+
+## 0.21.0
+
+### Minor Changes
+
+- [#4821](https://github.com/Urigo/graphql-mesh/pull/4821)
+  [`1a28c92c2`](https://github.com/Urigo/graphql-mesh/commit/1a28c92c2d67b89b48581b7bb1414d1404428cdb)
+  Thanks [@ardatan](https://github.com/ardatan)! - Update build flow to fully support both CommonJS
+  and ESM
+
+### Patch Changes
+
+- [#4901](https://github.com/Urigo/graphql-mesh/pull/4901)
+  [`500a4504c`](https://github.com/Urigo/graphql-mesh/commit/500a4504c734ee1eaf55daa2296789096034513f)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@9.1.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.1.3)
+    (from `9.1.1`, in `dependencies`)
+- Updated dependencies
+  [[`500a4504c`](https://github.com/Urigo/graphql-mesh/commit/500a4504c734ee1eaf55daa2296789096034513f),
+  [`500a4504c`](https://github.com/Urigo/graphql-mesh/commit/500a4504c734ee1eaf55daa2296789096034513f),
+  [`500a4504c`](https://github.com/Urigo/graphql-mesh/commit/500a4504c734ee1eaf55daa2296789096034513f),
+  [`500a4504c`](https://github.com/Urigo/graphql-mesh/commit/500a4504c734ee1eaf55daa2296789096034513f),
+  [`1a28c92c2`](https://github.com/Urigo/graphql-mesh/commit/1a28c92c2d67b89b48581b7bb1414d1404428cdb)]:
+  - @graphql-mesh/cross-helpers@0.3.0
+  - @graphql-mesh/store@0.9.0
+  - @graphql-mesh/types@0.88.0
+  - @graphql-mesh/utils@0.43.0
+
+## 0.20.40
+
+### Patch Changes
+
+- [#4872](https://github.com/Urigo/graphql-mesh/pull/4872)
+  [`3ced82c45`](https://github.com/Urigo/graphql-mesh/commit/3ced82c45ed50eefe238c569a1eefdac164dff77)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@neo4j/graphql@3.13.0` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.13.0) (from
+    `3.12.2`, in `dependencies`)
+
+## 0.20.39
+
+### Patch Changes
+
+- Updated dependencies
+  [[`eba73c626`](https://github.com/Urigo/graphql-mesh/commit/eba73c6261a2fdde8ece31915202203b70ff0e5f)]:
+  - @graphql-mesh/utils@0.42.9
+  - @graphql-mesh/store@0.8.65
+  - @graphql-mesh/types@0.87.1
+
+## 0.20.38
+
+### Patch Changes
+
+- [#4856](https://github.com/Urigo/graphql-mesh/pull/4856)
+  [`8b25eb578`](https://github.com/Urigo/graphql-mesh/commit/8b25eb578c293ef72de70301f2e24dc0c22ba75b)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`neo4j-driver@5.3.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.3.0)
+    (from `5.2.0`, in `dependencies`)
+
+## 0.20.37
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0d9771428`](https://github.com/Urigo/graphql-mesh/commit/0d97714284a6eea31c2c9420addd4a1518584924),
+  [`686b3301b`](https://github.com/Urigo/graphql-mesh/commit/686b3301b2441bc095a379d95e77686b4f5ceb70)]:
+  - @graphql-mesh/types@0.87.0
+  - @graphql-mesh/store@0.8.64
+  - @graphql-mesh/utils@0.42.8
+
 ## 0.20.36
 
 ### Patch Changes
 
-- [#4823](https://github.com/Urigo/graphql-mesh/pull/4823) [`03f277d2c`](https://github.com/Urigo/graphql-mesh/commit/03f277d2c277c761f960a4128e576833f79af823) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`@neo4j/graphql@3.12.2` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.12.2) (from `3.12.1`, in `dependencies`)
+- [#4823](https://github.com/Urigo/graphql-mesh/pull/4823)
+  [`03f277d2c`](https://github.com/Urigo/graphql-mesh/commit/03f277d2c277c761f960a4128e576833f79af823)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@neo4j/graphql@3.12.2` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.12.2) (from
+    `3.12.1`, in `dependencies`)
 
 ## 0.20.35
 
 ### Patch Changes
 
-- [#4790](https://github.com/Urigo/graphql-mesh/pull/4790) [`8c7d96cff`](https://github.com/Urigo/graphql-mesh/commit/8c7d96cff868095216520bafebe989ec94a9df65) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+- [#4790](https://github.com/Urigo/graphql-mesh/pull/4790)
+  [`8c7d96cff`](https://github.com/Urigo/graphql-mesh/commit/8c7d96cff868095216520bafebe989ec94a9df65)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
-  - Updated dependency [`@graphql-tools/utils@9.1.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.1.0) (from `9.0.1`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@9.1.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.1.0)
+    (from `9.0.1`, in `dependencies`)
 
-- [#4806](https://github.com/Urigo/graphql-mesh/pull/4806) [`990f649ef`](https://github.com/Urigo/graphql-mesh/commit/990f649ef8832bc786b89b0c15744d49a422bb03) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+- [#4806](https://github.com/Urigo/graphql-mesh/pull/4806)
+  [`990f649ef`](https://github.com/Urigo/graphql-mesh/commit/990f649ef8832bc786b89b0c15744d49a422bb03)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
-  - Updated dependency [`graphql-scalars@1.20.1` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.20.1) (from `1.20.0`, in `dependencies`)
+  - Updated dependency
+    [`graphql-scalars@1.20.1` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.20.1) (from
+    `1.20.0`, in `dependencies`)
 
-- [#4809](https://github.com/Urigo/graphql-mesh/pull/4809) [`db95881b5`](https://github.com/Urigo/graphql-mesh/commit/db95881b530053064425f476ccac7d552d44af33) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`@neo4j/graphql@3.12.1` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.12.1) (from `3.12.0`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/utils@9.1.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.1.1) (from `9.1.0`, in `dependencies`)
-- Updated dependencies [[`8c7d96cff`](https://github.com/Urigo/graphql-mesh/commit/8c7d96cff868095216520bafebe989ec94a9df65), [`db95881b5`](https://github.com/Urigo/graphql-mesh/commit/db95881b530053064425f476ccac7d552d44af33), [`8c7d96cff`](https://github.com/Urigo/graphql-mesh/commit/8c7d96cff868095216520bafebe989ec94a9df65), [`db95881b5`](https://github.com/Urigo/graphql-mesh/commit/db95881b530053064425f476ccac7d552d44af33), [`8c7d96cff`](https://github.com/Urigo/graphql-mesh/commit/8c7d96cff868095216520bafebe989ec94a9df65), [`990f649ef`](https://github.com/Urigo/graphql-mesh/commit/990f649ef8832bc786b89b0c15744d49a422bb03), [`db95881b5`](https://github.com/Urigo/graphql-mesh/commit/db95881b530053064425f476ccac7d552d44af33), [`8c7d96cff`](https://github.com/Urigo/graphql-mesh/commit/8c7d96cff868095216520bafebe989ec94a9df65), [`990f649ef`](https://github.com/Urigo/graphql-mesh/commit/990f649ef8832bc786b89b0c15744d49a422bb03), [`db95881b5`](https://github.com/Urigo/graphql-mesh/commit/db95881b530053064425f476ccac7d552d44af33), [`76deb32d1`](https://github.com/Urigo/graphql-mesh/commit/76deb32d1c036bc8da171be55582ec3f7b9c5015), [`baa4fbf82`](https://github.com/Urigo/graphql-mesh/commit/baa4fbf82af4a8787b9cab8c99e9177e3491ecf8), [`cf9c6d5e0`](https://github.com/Urigo/graphql-mesh/commit/cf9c6d5e00e41f2403bcb9ad1a6e403390ff3ec6)]:
+- [#4809](https://github.com/Urigo/graphql-mesh/pull/4809)
+  [`db95881b5`](https://github.com/Urigo/graphql-mesh/commit/db95881b530053064425f476ccac7d552d44af33)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@neo4j/graphql@3.12.1` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.12.1) (from
+    `3.12.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@9.1.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.1.1)
+    (from `9.1.0`, in `dependencies`)
+- Updated dependencies
+  [[`8c7d96cff`](https://github.com/Urigo/graphql-mesh/commit/8c7d96cff868095216520bafebe989ec94a9df65),
+  [`db95881b5`](https://github.com/Urigo/graphql-mesh/commit/db95881b530053064425f476ccac7d552d44af33),
+  [`8c7d96cff`](https://github.com/Urigo/graphql-mesh/commit/8c7d96cff868095216520bafebe989ec94a9df65),
+  [`db95881b5`](https://github.com/Urigo/graphql-mesh/commit/db95881b530053064425f476ccac7d552d44af33),
+  [`8c7d96cff`](https://github.com/Urigo/graphql-mesh/commit/8c7d96cff868095216520bafebe989ec94a9df65),
+  [`990f649ef`](https://github.com/Urigo/graphql-mesh/commit/990f649ef8832bc786b89b0c15744d49a422bb03),
+  [`db95881b5`](https://github.com/Urigo/graphql-mesh/commit/db95881b530053064425f476ccac7d552d44af33),
+  [`8c7d96cff`](https://github.com/Urigo/graphql-mesh/commit/8c7d96cff868095216520bafebe989ec94a9df65),
+  [`990f649ef`](https://github.com/Urigo/graphql-mesh/commit/990f649ef8832bc786b89b0c15744d49a422bb03),
+  [`db95881b5`](https://github.com/Urigo/graphql-mesh/commit/db95881b530053064425f476ccac7d552d44af33),
+  [`76deb32d1`](https://github.com/Urigo/graphql-mesh/commit/76deb32d1c036bc8da171be55582ec3f7b9c5015),
+  [`baa4fbf82`](https://github.com/Urigo/graphql-mesh/commit/baa4fbf82af4a8787b9cab8c99e9177e3491ecf8),
+  [`cf9c6d5e0`](https://github.com/Urigo/graphql-mesh/commit/cf9c6d5e00e41f2403bcb9ad1a6e403390ff3ec6)]:
   - @graphql-mesh/cross-helpers@0.2.10
   - @graphql-mesh/store@0.8.63
   - @graphql-mesh/types@0.86.0
@@ -32,13 +188,30 @@
 
 ### Patch Changes
 
-- [#4773](https://github.com/Urigo/graphql-mesh/pull/4773) [`d9c5c1195`](https://github.com/Urigo/graphql-mesh/commit/d9c5c119522a1c4cad455d62818e07a2b8f41005) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+- [#4773](https://github.com/Urigo/graphql-mesh/pull/4773)
+  [`d9c5c1195`](https://github.com/Urigo/graphql-mesh/commit/d9c5c119522a1c4cad455d62818e07a2b8f41005)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
-  - Updated dependency [`@neo4j/graphql@3.12.0` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.12.0) (from `3.11.1`, in `dependencies`)
+  - Updated dependency
+    [`@neo4j/graphql@3.12.0` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.12.0) (from
+    `3.11.1`, in `dependencies`)
 
-- [#4775](https://github.com/Urigo/graphql-mesh/pull/4775) [`a764fe0d3`](https://github.com/Urigo/graphql-mesh/commit/a764fe0d36928cd830e79942f8ab57cd70d2602a) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`@graphql-tools/utils@9.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.0.1) (from `8.13.1`, in `dependencies`)
-- Updated dependencies [[`a764fe0d3`](https://github.com/Urigo/graphql-mesh/commit/a764fe0d36928cd830e79942f8ab57cd70d2602a), [`a764fe0d3`](https://github.com/Urigo/graphql-mesh/commit/a764fe0d36928cd830e79942f8ab57cd70d2602a), [`d9c5c1195`](https://github.com/Urigo/graphql-mesh/commit/d9c5c119522a1c4cad455d62818e07a2b8f41005), [`a764fe0d3`](https://github.com/Urigo/graphql-mesh/commit/a764fe0d36928cd830e79942f8ab57cd70d2602a), [`85e5071d0`](https://github.com/Urigo/graphql-mesh/commit/85e5071d084d5372830213511f55f4a30a17bb33), [`d9c5c1195`](https://github.com/Urigo/graphql-mesh/commit/d9c5c119522a1c4cad455d62818e07a2b8f41005), [`a764fe0d3`](https://github.com/Urigo/graphql-mesh/commit/a764fe0d36928cd830e79942f8ab57cd70d2602a), [`85e5071d0`](https://github.com/Urigo/graphql-mesh/commit/85e5071d084d5372830213511f55f4a30a17bb33), [`c55e68381`](https://github.com/Urigo/graphql-mesh/commit/c55e683816bd5668fa9e520e6e434363a2a78425)]:
+- [#4775](https://github.com/Urigo/graphql-mesh/pull/4775)
+  [`a764fe0d3`](https://github.com/Urigo/graphql-mesh/commit/a764fe0d36928cd830e79942f8ab57cd70d2602a)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@9.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.0.1)
+    (from `8.13.1`, in `dependencies`)
+- Updated dependencies
+  [[`a764fe0d3`](https://github.com/Urigo/graphql-mesh/commit/a764fe0d36928cd830e79942f8ab57cd70d2602a),
+  [`a764fe0d3`](https://github.com/Urigo/graphql-mesh/commit/a764fe0d36928cd830e79942f8ab57cd70d2602a),
+  [`d9c5c1195`](https://github.com/Urigo/graphql-mesh/commit/d9c5c119522a1c4cad455d62818e07a2b8f41005),
+  [`a764fe0d3`](https://github.com/Urigo/graphql-mesh/commit/a764fe0d36928cd830e79942f8ab57cd70d2602a),
+  [`85e5071d0`](https://github.com/Urigo/graphql-mesh/commit/85e5071d084d5372830213511f55f4a30a17bb33),
+  [`d9c5c1195`](https://github.com/Urigo/graphql-mesh/commit/d9c5c119522a1c4cad455d62818e07a2b8f41005),
+  [`a764fe0d3`](https://github.com/Urigo/graphql-mesh/commit/a764fe0d36928cd830e79942f8ab57cd70d2602a),
+  [`85e5071d0`](https://github.com/Urigo/graphql-mesh/commit/85e5071d084d5372830213511f55f4a30a17bb33),
+  [`c55e68381`](https://github.com/Urigo/graphql-mesh/commit/c55e683816bd5668fa9e520e6e434363a2a78425)]:
   - @graphql-mesh/cross-helpers@0.2.9
   - @graphql-mesh/store@0.8.62
   - @graphql-mesh/types@0.85.7
@@ -48,9 +221,17 @@
 
 ### Patch Changes
 
-- [#4765](https://github.com/Urigo/graphql-mesh/pull/4765) [`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`@graphql-tools/utils@8.13.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.13.1) (from `8.13.0`, in `dependencies`)
-- Updated dependencies [[`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a), [`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a), [`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a), [`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a)]:
+- [#4765](https://github.com/Urigo/graphql-mesh/pull/4765)
+  [`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@8.13.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.13.1)
+    (from `8.13.0`, in `dependencies`)
+- Updated dependencies
+  [[`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a),
+  [`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a),
+  [`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a),
+  [`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a)]:
   - @graphql-mesh/cross-helpers@0.2.8
   - @graphql-mesh/store@0.8.61
   - @graphql-mesh/types@0.85.6
@@ -60,9 +241,13 @@
 
 ### Patch Changes
 
-- [#4756](https://github.com/Urigo/graphql-mesh/pull/4756) [`d0c6d29c7`](https://github.com/Urigo/graphql-mesh/commit/d0c6d29c7e44a3b1a57bd7e1153d325834b7a018) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`neo4j-driver@5.2.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.2.0) (from `5.1.0`, in `dependencies`)
-- Updated dependencies [[`d5f2d950e`](https://github.com/Urigo/graphql-mesh/commit/d5f2d950e6318a74c062c9dbc436d5e9c0e8d59d)]:
+- [#4756](https://github.com/Urigo/graphql-mesh/pull/4756)
+  [`d0c6d29c7`](https://github.com/Urigo/graphql-mesh/commit/d0c6d29c7e44a3b1a57bd7e1153d325834b7a018)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`neo4j-driver@5.2.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.2.0)
+    (from `5.1.0`, in `dependencies`)
+- Updated dependencies
+  [[`d5f2d950e`](https://github.com/Urigo/graphql-mesh/commit/d5f2d950e6318a74c062c9dbc436d5e9c0e8d59d)]:
   - @graphql-mesh/utils@0.42.4
   - @graphql-mesh/store@0.8.60
   - @graphql-mesh/types@0.85.5
@@ -71,10 +256,20 @@
 
 ### Patch Changes
 
-- [#4745](https://github.com/Urigo/graphql-mesh/pull/4745) [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`@neo4j/graphql@3.11.1` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.11.1) (from `3.11.0`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/utils@8.13.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.13.0) (from `8.12.0`, in `dependencies`)
-- Updated dependencies [[`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd), [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd), [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd), [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd)]:
+- [#4745](https://github.com/Urigo/graphql-mesh/pull/4745)
+  [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@neo4j/graphql@3.11.1` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.11.1) (from
+    `3.11.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@8.13.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.13.0)
+    (from `8.12.0`, in `dependencies`)
+- Updated dependencies
+  [[`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd),
+  [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd),
+  [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd),
+  [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd)]:
   - @graphql-mesh/cross-helpers@0.2.7
   - @graphql-mesh/store@0.8.59
   - @graphql-mesh/types@0.85.4
@@ -84,16 +279,33 @@
 
 ### Patch Changes
 
-- [#4732](https://github.com/Urigo/graphql-mesh/pull/4732) [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56) Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
+- [#4732](https://github.com/Urigo/graphql-mesh/pull/4732)
+  [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56)
+  Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
 
-  - Updated dependency [`@neo4j/graphql@3.11.0` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.11.0) (from `3.10.1`, in `dependencies`)
-  - Updated dependency [`@graphql-mesh/store@0.8.57` ↗︎](https://www.npmjs.com/package/@graphql-mesh/store/v/0.8.57) (from `0.8.56`, in `dependencies`)
-  - Updated dependency [`@graphql-mesh/utils@0.42.1` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.42.1) (from `0.42.0`, in `dependencies`)
-  - Updated dependency [`@graphql-mesh/types@0.85.2` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.85.2) (from `0.85.1`, in `dependencies`)
+  - Updated dependency
+    [`@neo4j/graphql@3.11.0` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.11.0) (from
+    `3.10.1`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/store@0.8.57` ↗︎](https://www.npmjs.com/package/@graphql-mesh/store/v/0.8.57)
+    (from `0.8.56`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/utils@0.42.1` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.42.1)
+    (from `0.42.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/types@0.85.2` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.85.2)
+    (from `0.85.1`, in `dependencies`)
 
-- [#4733](https://github.com/Urigo/graphql-mesh/pull/4733) [`b58604b8d`](https://github.com/Urigo/graphql-mesh/commit/b58604b8d474a0360775474f7752ffb40d26c079) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`@neo4j/graphql@3.11.0` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.11.0) (from `3.10.1`, in `dependencies`)
-- Updated dependencies [[`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56), [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56)]:
+- [#4733](https://github.com/Urigo/graphql-mesh/pull/4733)
+  [`b58604b8d`](https://github.com/Urigo/graphql-mesh/commit/b58604b8d474a0360775474f7752ffb40d26c079)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@neo4j/graphql@3.11.0` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.11.0) (from
+    `3.10.1`, in `dependencies`)
+- Updated dependencies
+  [[`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56),
+  [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56),
+  [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56)]:
   - @graphql-mesh/store@0.8.58
   - @graphql-mesh/types@0.85.3
   - @graphql-mesh/utils@0.42.2
@@ -102,9 +314,14 @@
 
 ### Patch Changes
 
-- [#4728](https://github.com/Urigo/graphql-mesh/pull/4728) [`c72d904dc`](https://github.com/Urigo/graphql-mesh/commit/c72d904dc11adfd3b6ee1695b1aaeae6ab64e1e9) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`graphql-scalars@1.20.0` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.20.0) (from `1.19.0`, in `dependencies`)
-- Updated dependencies [[`09c286994`](https://github.com/Urigo/graphql-mesh/commit/09c28699441cda92f79e4e9b8464e7be5f46a786)]:
+- [#4728](https://github.com/Urigo/graphql-mesh/pull/4728)
+  [`c72d904dc`](https://github.com/Urigo/graphql-mesh/commit/c72d904dc11adfd3b6ee1695b1aaeae6ab64e1e9)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`graphql-scalars@1.20.0` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.20.0) (from
+    `1.19.0`, in `dependencies`)
+- Updated dependencies
+  [[`09c286994`](https://github.com/Urigo/graphql-mesh/commit/09c28699441cda92f79e4e9b8464e7be5f46a786)]:
   - @graphql-mesh/types@0.85.2
   - @graphql-mesh/utils@0.42.1
   - @graphql-mesh/store@0.8.57
@@ -113,7 +330,9 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`398af2bf6`](https://github.com/Urigo/graphql-mesh/commit/398af2bf602182ca315bc8d99d2237ad1a16ee48), [`1d61fbcec`](https://github.com/Urigo/graphql-mesh/commit/1d61fbcecb8d5b286bb1c2e727bdf7d233c566da)]:
+- Updated dependencies
+  [[`398af2bf6`](https://github.com/Urigo/graphql-mesh/commit/398af2bf602182ca315bc8d99d2237ad1a16ee48),
+  [`1d61fbcec`](https://github.com/Urigo/graphql-mesh/commit/1d61fbcecb8d5b286bb1c2e727bdf7d233c566da)]:
   - @graphql-mesh/types@0.85.1
   - @graphql-mesh/utils@0.42.0
   - @graphql-mesh/store@0.8.56
@@ -122,18 +341,31 @@
 
 ### Patch Changes
 
-- [#4660](https://github.com/Urigo/graphql-mesh/pull/4660) [`9d3b3cdf1`](https://github.com/Urigo/graphql-mesh/commit/9d3b3cdf1f921e1906b4b9be8c837ff0504d4d5d) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`@neo4j/graphql@3.10.1` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.10.1) (from `3.10.0`, in `dependencies`)
-  - Updated dependency [`graphql-scalars@1.19.0` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.19.0) (from `1.18.0`, in `dependencies`)
+- [#4660](https://github.com/Urigo/graphql-mesh/pull/4660)
+  [`9d3b3cdf1`](https://github.com/Urigo/graphql-mesh/commit/9d3b3cdf1f921e1906b4b9be8c837ff0504d4d5d)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@neo4j/graphql@3.10.1` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.10.1) (from
+    `3.10.0`, in `dependencies`)
+  - Updated dependency
+    [`graphql-scalars@1.19.0` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.19.0) (from
+    `1.18.0`, in `dependencies`)
 
 ## 0.20.26
 
 ### Patch Changes
 
-- [#4649](https://github.com/Urigo/graphql-mesh/pull/4649) [`80eefaaa8`](https://github.com/Urigo/graphql-mesh/commit/80eefaaa831cddf0e52519378ce3a2d36793f6a8) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`@neo4j/graphql@3.10.0` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.10.0) (from `3.9.0`, in `dependencies`)
-  - Updated dependency [`neo4j-driver@5.1.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.1.0) (from `5.0.1`, in `dependencies`)
-- Updated dependencies [[`6fb57d3ba`](https://github.com/Urigo/graphql-mesh/commit/6fb57d3ba6ce68e47d9f5dbf54e57d178441fa18), [`814f2d516`](https://github.com/Urigo/graphql-mesh/commit/814f2d51692df593fcf368765e9c8a0ce99f46bd)]:
+- [#4649](https://github.com/Urigo/graphql-mesh/pull/4649)
+  [`80eefaaa8`](https://github.com/Urigo/graphql-mesh/commit/80eefaaa831cddf0e52519378ce3a2d36793f6a8)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@neo4j/graphql@3.10.0` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.10.0) (from
+    `3.9.0`, in `dependencies`)
+  - Updated dependency [`neo4j-driver@5.1.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.1.0)
+    (from `5.0.1`, in `dependencies`)
+- Updated dependencies
+  [[`6fb57d3ba`](https://github.com/Urigo/graphql-mesh/commit/6fb57d3ba6ce68e47d9f5dbf54e57d178441fa18),
+  [`814f2d516`](https://github.com/Urigo/graphql-mesh/commit/814f2d51692df593fcf368765e9c8a0ce99f46bd)]:
   - @graphql-mesh/types@0.85.0
   - @graphql-mesh/store@0.8.55
   - @graphql-mesh/utils@0.41.22
@@ -142,7 +374,8 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`637e9e9d8`](https://github.com/Urigo/graphql-mesh/commit/637e9e9d8a702cf28cde48137a0f73bab7628f6d)]:
+- Updated dependencies
+  [[`637e9e9d8`](https://github.com/Urigo/graphql-mesh/commit/637e9e9d8a702cf28cde48137a0f73bab7628f6d)]:
   - @graphql-mesh/types@0.84.10
   - @graphql-mesh/store@0.8.54
   - @graphql-mesh/utils@0.41.21
@@ -151,7 +384,8 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`dd831a7d1`](https://github.com/Urigo/graphql-mesh/commit/dd831a7d1256400d1b7441cfb99b517cf856ce5b)]:
+- Updated dependencies
+  [[`dd831a7d1`](https://github.com/Urigo/graphql-mesh/commit/dd831a7d1256400d1b7441cfb99b517cf856ce5b)]:
   - @graphql-mesh/types@0.84.9
   - @graphql-mesh/store@0.8.53
   - @graphql-mesh/utils@0.41.20
@@ -160,7 +394,8 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`5b44abcd2`](https://github.com/Urigo/graphql-mesh/commit/5b44abcd2aaa765ee329539112d9dface063efa6)]:
+- Updated dependencies
+  [[`5b44abcd2`](https://github.com/Urigo/graphql-mesh/commit/5b44abcd2aaa765ee329539112d9dface063efa6)]:
   - @graphql-mesh/utils@0.41.19
   - @graphql-mesh/store@0.8.52
   - @graphql-mesh/types@0.84.8
@@ -169,14 +404,20 @@
 
 ### Patch Changes
 
-- [#4623](https://github.com/Urigo/graphql-mesh/pull/4623) [`8cbf918a8`](https://github.com/Urigo/graphql-mesh/commit/8cbf918a84b451843b591f866fa21956d0089d0c) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`@neo4j/graphql@3.9.0` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.9.0) (from `3.8.0`, in `dependencies`)
+- [#4623](https://github.com/Urigo/graphql-mesh/pull/4623)
+  [`8cbf918a8`](https://github.com/Urigo/graphql-mesh/commit/8cbf918a84b451843b591f866fa21956d0089d0c)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@neo4j/graphql@3.9.0` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.9.0) (from `3.8.0`,
+    in `dependencies`)
 
 ## 0.20.21
 
 ### Patch Changes
 
-- Updated dependencies [[`ffb301435`](https://github.com/Urigo/graphql-mesh/commit/ffb3014353c17d23a03cf8001eba606c85c2043f), [`ffb301435`](https://github.com/Urigo/graphql-mesh/commit/ffb3014353c17d23a03cf8001eba606c85c2043f)]:
+- Updated dependencies
+  [[`ffb301435`](https://github.com/Urigo/graphql-mesh/commit/ffb3014353c17d23a03cf8001eba606c85c2043f),
+  [`ffb301435`](https://github.com/Urigo/graphql-mesh/commit/ffb3014353c17d23a03cf8001eba606c85c2043f)]:
   - @graphql-mesh/types@0.84.7
   - @graphql-mesh/utils@0.41.18
   - @graphql-mesh/store@0.8.51
@@ -185,7 +426,9 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`31a64714a`](https://github.com/Urigo/graphql-mesh/commit/31a64714a3e47dc41b950b3e1cfd1a49e7ff2d8a), [`31a64714a`](https://github.com/Urigo/graphql-mesh/commit/31a64714a3e47dc41b950b3e1cfd1a49e7ff2d8a)]:
+- Updated dependencies
+  [[`31a64714a`](https://github.com/Urigo/graphql-mesh/commit/31a64714a3e47dc41b950b3e1cfd1a49e7ff2d8a),
+  [`31a64714a`](https://github.com/Urigo/graphql-mesh/commit/31a64714a3e47dc41b950b3e1cfd1a49e7ff2d8a)]:
   - @graphql-mesh/types@0.84.6
   - @graphql-mesh/utils@0.41.17
   - @graphql-mesh/store@0.8.50
@@ -194,14 +437,19 @@
 
 ### Patch Changes
 
-- [#4597](https://github.com/Urigo/graphql-mesh/pull/4597) [`1bc596acb`](https://github.com/Urigo/graphql-mesh/commit/1bc596acb6552f0a56a84418b03ee4babb098f7f) Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
-  - Added dependency [`graphql-scalars@1.18.0` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.18.0) (to `dependencies`)
+- [#4597](https://github.com/Urigo/graphql-mesh/pull/4597)
+  [`1bc596acb`](https://github.com/Urigo/graphql-mesh/commit/1bc596acb6552f0a56a84418b03ee4babb098f7f)
+  Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
+  - Added dependency
+    [`graphql-scalars@1.18.0` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.18.0) (to
+    `dependencies`)
 
 ## 0.20.18
 
 ### Patch Changes
 
-- Updated dependencies [[`88ab8f9ae`](https://github.com/Urigo/graphql-mesh/commit/88ab8f9ae32a4d0f52c978d625082abe075bebe4)]:
+- Updated dependencies
+  [[`88ab8f9ae`](https://github.com/Urigo/graphql-mesh/commit/88ab8f9ae32a4d0f52c978d625082abe075bebe4)]:
   - @graphql-mesh/utils@0.41.16
   - @graphql-mesh/store@0.8.49
   - @graphql-mesh/types@0.84.5
@@ -210,7 +458,8 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`186e37bcd`](https://github.com/Urigo/graphql-mesh/commit/186e37bcd94c6eae16b30abd2f4c8b04d2ef422e)]:
+- Updated dependencies
+  [[`186e37bcd`](https://github.com/Urigo/graphql-mesh/commit/186e37bcd94c6eae16b30abd2f4c8b04d2ef422e)]:
   - @graphql-mesh/utils@0.41.15
   - @graphql-mesh/store@0.8.48
   - @graphql-mesh/types@0.84.4
@@ -219,7 +468,8 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`93f4ed55d`](https://github.com/Urigo/graphql-mesh/commit/93f4ed55de7b9f2a55e11bf1df4ab7b4c59b3825)]:
+- Updated dependencies
+  [[`93f4ed55d`](https://github.com/Urigo/graphql-mesh/commit/93f4ed55de7b9f2a55e11bf1df4ab7b4c59b3825)]:
   - @graphql-mesh/utils@0.41.14
   - @graphql-mesh/store@0.8.47
   - @graphql-mesh/types@0.84.3
@@ -228,7 +478,8 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`ff251e4c7`](https://github.com/Urigo/graphql-mesh/commit/ff251e4c7654306d3030774447c991788768e148)]:
+- Updated dependencies
+  [[`ff251e4c7`](https://github.com/Urigo/graphql-mesh/commit/ff251e4c7654306d3030774447c991788768e148)]:
   - @graphql-mesh/types@0.84.2
   - @graphql-mesh/store@0.8.46
   - @graphql-mesh/utils@0.41.13
@@ -237,7 +488,8 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`b444a9c1c`](https://github.com/Urigo/graphql-mesh/commit/b444a9c1c5a48962f76e111b9121124847ea9db6)]:
+- Updated dependencies
+  [[`b444a9c1c`](https://github.com/Urigo/graphql-mesh/commit/b444a9c1c5a48962f76e111b9121124847ea9db6)]:
   - @graphql-mesh/store@0.8.45
   - @graphql-mesh/types@0.84.1
   - @graphql-mesh/utils@0.41.12
@@ -246,15 +498,21 @@
 
 ### Patch Changes
 
-- [#4500](https://github.com/Urigo/graphql-mesh/pull/4500) [`6b197c856`](https://github.com/Urigo/graphql-mesh/commit/6b197c8566697db5b8cad366dc560a99fa1f7063) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+- [#4500](https://github.com/Urigo/graphql-mesh/pull/4500)
+  [`6b197c856`](https://github.com/Urigo/graphql-mesh/commit/6b197c8566697db5b8cad366dc560a99fa1f7063)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
-  - Updated dependency [`@neo4j/graphql@3.8.0` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.8.0) (from `3.7.0`, in `dependencies`)
+  - Updated dependency
+    [`@neo4j/graphql@3.8.0` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.8.0) (from `3.7.0`,
+    in `dependencies`)
 
 ## 0.20.12
 
 ### Patch Changes
 
-- Updated dependencies [[`077e65c18`](https://github.com/Urigo/graphql-mesh/commit/077e65c1857aaefa2689f33decc9e72ded281c94), [`ee1cb6f76`](https://github.com/Urigo/graphql-mesh/commit/ee1cb6f7620f71fd824e69f4171cfef6c5d51794)]:
+- Updated dependencies
+  [[`077e65c18`](https://github.com/Urigo/graphql-mesh/commit/077e65c1857aaefa2689f33decc9e72ded281c94),
+  [`ee1cb6f76`](https://github.com/Urigo/graphql-mesh/commit/ee1cb6f7620f71fd824e69f4171cfef6c5d51794)]:
   - @graphql-mesh/types@0.84.0
   - @graphql-mesh/store@0.8.44
   - @graphql-mesh/utils@0.41.11
@@ -263,11 +521,15 @@
 
 ### Patch Changes
 
-- [#4481](https://github.com/Urigo/graphql-mesh/pull/4481) [`add1020c9`](https://github.com/Urigo/graphql-mesh/commit/add1020c903fc47850054165968ee602fe2b3cc5) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+- [#4481](https://github.com/Urigo/graphql-mesh/pull/4481)
+  [`add1020c9`](https://github.com/Urigo/graphql-mesh/commit/add1020c903fc47850054165968ee602fe2b3cc5)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
-  - Updated dependency [`neo4j-driver@5.0.1` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.0.1) (from `5.0.0`, in `dependencies`)
+  - Updated dependency [`neo4j-driver@5.0.1` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.0.1)
+    (from `5.0.0`, in `dependencies`)
 
-- Updated dependencies [[`add1020c9`](https://github.com/Urigo/graphql-mesh/commit/add1020c903fc47850054165968ee602fe2b3cc5)]:
+- Updated dependencies
+  [[`add1020c9`](https://github.com/Urigo/graphql-mesh/commit/add1020c903fc47850054165968ee602fe2b3cc5)]:
   - @graphql-mesh/store@0.8.43
   - @graphql-mesh/types@0.83.5
   - @graphql-mesh/utils@0.41.10
@@ -276,16 +538,33 @@
 
 ### Patch Changes
 
-- [#4439](https://github.com/Urigo/graphql-mesh/pull/4439) [`78599180d`](https://github.com/Urigo/graphql-mesh/commit/78599180d76f71e6d23114a0115e6338785a44d2) Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
+- [#4439](https://github.com/Urigo/graphql-mesh/pull/4439)
+  [`78599180d`](https://github.com/Urigo/graphql-mesh/commit/78599180d76f71e6d23114a0115e6338785a44d2)
+  Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
 
-  - Updated dependency [`@graphql-mesh/cross-helpers@0.2.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cross-helpers/v/0.2.5) (from `0.2.3`, in `dependencies`)
-  - Updated dependency [`@graphql-mesh/store@0.8.41` ↗︎](https://www.npmjs.com/package/@graphql-mesh/store/v/0.8.41) (from `0.8.35`, in `dependencies`)
-  - Updated dependency [`@graphql-mesh/utils@0.41.8` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.41.8) (from `0.41.2`, in `dependencies`)
-  - Updated dependency [`@graphql-mesh/types@0.83.3` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.83.3) (from `0.82.1`, in `dependencies`)
-  - Updated dependency [`neo4j-driver@5.0.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.0.0) (from `4.4.7`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/utils@8.12.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.12.0) (from `8.10.1`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/cross-helpers@0.2.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cross-helpers/v/0.2.5)
+    (from `0.2.3`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/store@0.8.41` ↗︎](https://www.npmjs.com/package/@graphql-mesh/store/v/0.8.41)
+    (from `0.8.35`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/utils@0.41.8` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.41.8)
+    (from `0.41.2`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/types@0.83.3` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.83.3)
+    (from `0.82.1`, in `dependencies`)
+  - Updated dependency [`neo4j-driver@5.0.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.0.0)
+    (from `4.4.7`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@8.12.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.12.0)
+    (from `8.10.1`, in `dependencies`)
 
-- Updated dependencies [[`78599180d`](https://github.com/Urigo/graphql-mesh/commit/78599180d76f71e6d23114a0115e6338785a44d2), [`78599180d`](https://github.com/Urigo/graphql-mesh/commit/78599180d76f71e6d23114a0115e6338785a44d2), [`78599180d`](https://github.com/Urigo/graphql-mesh/commit/78599180d76f71e6d23114a0115e6338785a44d2), [`78599180d`](https://github.com/Urigo/graphql-mesh/commit/78599180d76f71e6d23114a0115e6338785a44d2)]:
+- Updated dependencies
+  [[`78599180d`](https://github.com/Urigo/graphql-mesh/commit/78599180d76f71e6d23114a0115e6338785a44d2),
+  [`78599180d`](https://github.com/Urigo/graphql-mesh/commit/78599180d76f71e6d23114a0115e6338785a44d2),
+  [`78599180d`](https://github.com/Urigo/graphql-mesh/commit/78599180d76f71e6d23114a0115e6338785a44d2),
+  [`78599180d`](https://github.com/Urigo/graphql-mesh/commit/78599180d76f71e6d23114a0115e6338785a44d2)]:
   - @graphql-mesh/cross-helpers@0.2.6
   - @graphql-mesh/store@0.8.42
   - @graphql-mesh/types@0.83.4
@@ -295,11 +574,19 @@
 
 ### Patch Changes
 
-- [#4466](https://github.com/Urigo/graphql-mesh/pull/4466) [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+- [#4466](https://github.com/Urigo/graphql-mesh/pull/4466)
+  [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
-  - Updated dependency [`@graphql-tools/utils@8.12.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.12.0) (from `8.11.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@8.12.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.12.0)
+    (from `8.11.0`, in `dependencies`)
 
-- Updated dependencies [[`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f), [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f), [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f), [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f)]:
+- Updated dependencies
+  [[`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f),
+  [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f),
+  [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f),
+  [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f)]:
   - @graphql-mesh/cross-helpers@0.2.5
   - @graphql-mesh/store@0.8.41
   - @graphql-mesh/types@0.83.3
@@ -309,7 +596,8 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`d84f81d94`](https://github.com/Urigo/graphql-mesh/commit/d84f81d9487ce228125863b8b283adab75daff19)]:
+- Updated dependencies
+  [[`d84f81d94`](https://github.com/Urigo/graphql-mesh/commit/d84f81d9487ce228125863b8b283adab75daff19)]:
   - @graphql-mesh/utils@0.41.7
   - @graphql-mesh/store@0.8.40
   - @graphql-mesh/types@0.83.2
@@ -318,15 +606,22 @@
 
 ### Patch Changes
 
-- [#4453](https://github.com/Urigo/graphql-mesh/pull/4453) [`2a3753b5a`](https://github.com/Urigo/graphql-mesh/commit/2a3753b5a4bd23c7c89f4f08a3e55093e24902a8) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+- [#4453](https://github.com/Urigo/graphql-mesh/pull/4453)
+  [`2a3753b5a`](https://github.com/Urigo/graphql-mesh/commit/2a3753b5a4bd23c7c89f4f08a3e55093e24902a8)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
-  - Updated dependency [`neo4j-driver@4.4.8` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/4.4.8) (from `4.4.7`, in `dependencies`)
+  - Updated dependency [`neo4j-driver@4.4.8` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/4.4.8)
+    (from `4.4.7`, in `dependencies`)
 
-- [#4458](https://github.com/Urigo/graphql-mesh/pull/4458) [`b8a34623c`](https://github.com/Urigo/graphql-mesh/commit/b8a34623c56d6395ae08b3eaa810fdcdfc03a83c) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+- [#4458](https://github.com/Urigo/graphql-mesh/pull/4458)
+  [`b8a34623c`](https://github.com/Urigo/graphql-mesh/commit/b8a34623c56d6395ae08b3eaa810fdcdfc03a83c)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
-  - Updated dependency [`neo4j-driver@5.0.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.0.0) (from `4.4.8`, in `dependencies`)
+  - Updated dependency [`neo4j-driver@5.0.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.0.0)
+    (from `4.4.8`, in `dependencies`)
 
-- Updated dependencies [[`2a3753b5a`](https://github.com/Urigo/graphql-mesh/commit/2a3753b5a4bd23c7c89f4f08a3e55093e24902a8)]:
+- Updated dependencies
+  [[`2a3753b5a`](https://github.com/Urigo/graphql-mesh/commit/2a3753b5a4bd23c7c89f4f08a3e55093e24902a8)]:
   - @graphql-mesh/utils@0.41.6
   - @graphql-mesh/store@0.8.39
   - @graphql-mesh/types@0.83.1
@@ -335,7 +630,10 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`a56ebcec5`](https://github.com/Urigo/graphql-mesh/commit/a56ebcec503402fbdb3d4e3561fd2e38e4dd5c43), [`24afabece`](https://github.com/Urigo/graphql-mesh/commit/24afabece51aee171f902776d3f59b4a17026c49), [`44b868196`](https://github.com/Urigo/graphql-mesh/commit/44b86819695a298e60b1d7b6c54ae2772e8f1588)]:
+- Updated dependencies
+  [[`a56ebcec5`](https://github.com/Urigo/graphql-mesh/commit/a56ebcec503402fbdb3d4e3561fd2e38e4dd5c43),
+  [`24afabece`](https://github.com/Urigo/graphql-mesh/commit/24afabece51aee171f902776d3f59b4a17026c49),
+  [`44b868196`](https://github.com/Urigo/graphql-mesh/commit/44b86819695a298e60b1d7b6c54ae2772e8f1588)]:
   - @graphql-mesh/types@0.83.0
   - @graphql-mesh/store@0.8.38
   - @graphql-mesh/utils@0.41.5
@@ -344,17 +642,26 @@
 
 ### Patch Changes
 
-- [`1df64e84e`](https://github.com/Urigo/graphql-mesh/commit/1df64e84e7c2e04146ed8dc753eca08d218b73f0) Thanks [@ardatan](https://github.com/ardatan)! - fix(neo4j): add setMaxListeners to events object
+- [`1df64e84e`](https://github.com/Urigo/graphql-mesh/commit/1df64e84e7c2e04146ed8dc753eca08d218b73f0)
+  Thanks [@ardatan](https://github.com/ardatan)! - fix(neo4j): add setMaxListeners to events object
 
 ## 0.20.4
 
 ### Patch Changes
 
-- [#4443](https://github.com/Urigo/graphql-mesh/pull/4443) [`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+- [#4443](https://github.com/Urigo/graphql-mesh/pull/4443)
+  [`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
-  - Updated dependency [`@graphql-tools/utils@8.11.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.11.0) (from `8.10.1`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@8.11.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.11.0)
+    (from `8.10.1`, in `dependencies`)
 
-- Updated dependencies [[`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53), [`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53), [`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53), [`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53)]:
+- Updated dependencies
+  [[`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53),
+  [`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53),
+  [`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53),
+  [`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53)]:
   - @graphql-mesh/cross-helpers@0.2.4
   - @graphql-mesh/store@0.8.37
   - @graphql-mesh/types@0.82.3
@@ -364,7 +671,8 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`b9bb80094`](https://github.com/Urigo/graphql-mesh/commit/b9bb8009407d27440267a5e9a7ec5dbfecc9bf8f)]:
+- Updated dependencies
+  [[`b9bb80094`](https://github.com/Urigo/graphql-mesh/commit/b9bb8009407d27440267a5e9a7ec5dbfecc9bf8f)]:
   - @graphql-mesh/types@0.82.2
   - @graphql-mesh/store@0.8.36
   - @graphql-mesh/utils@0.41.3
@@ -373,7 +681,8 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`3165827f7`](https://github.com/Urigo/graphql-mesh/commit/3165827f74b48a914b9604b024cd1318c211aa14)]:
+- Updated dependencies
+  [[`3165827f7`](https://github.com/Urigo/graphql-mesh/commit/3165827f74b48a914b9604b024cd1318c211aa14)]:
   - @graphql-mesh/types@0.82.1
   - @graphql-mesh/store@0.8.35
   - @graphql-mesh/utils@0.41.2
@@ -382,7 +691,9 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`ca7994fad`](https://github.com/Urigo/graphql-mesh/commit/ca7994fad35d8d88e66117cb166e329ccda09bf9), [`ca7994fad`](https://github.com/Urigo/graphql-mesh/commit/ca7994fad35d8d88e66117cb166e329ccda09bf9)]:
+- Updated dependencies
+  [[`ca7994fad`](https://github.com/Urigo/graphql-mesh/commit/ca7994fad35d8d88e66117cb166e329ccda09bf9),
+  [`ca7994fad`](https://github.com/Urigo/graphql-mesh/commit/ca7994fad35d8d88e66117cb166e329ccda09bf9)]:
   - @graphql-mesh/types@0.82.0
   - @graphql-mesh/store@0.8.34
   - @graphql-mesh/utils@0.41.1
@@ -391,23 +702,50 @@
 
 ### Minor Changes
 
-- [#4404](https://github.com/Urigo/graphql-mesh/pull/4404) [`d87907736`](https://github.com/Urigo/graphql-mesh/commit/d87907736588520628acb32d9a83e3d39dba7b2f) Thanks [@ardatan](https://github.com/ardatan)! - New `onFetch` hook!
+- [#4404](https://github.com/Urigo/graphql-mesh/pull/4404)
+  [`d87907736`](https://github.com/Urigo/graphql-mesh/commit/d87907736588520628acb32d9a83e3d39dba7b2f)
+  Thanks [@ardatan](https://github.com/ardatan)! - New `onFetch` hook!
 
 ### Patch Changes
 
-- [#4380](https://github.com/Urigo/graphql-mesh/pull/4380) [`e69462cac`](https://github.com/Urigo/graphql-mesh/commit/e69462cac667c4ffb2d9ba35adeef15264d263fd) Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
+- [#4380](https://github.com/Urigo/graphql-mesh/pull/4380)
+  [`e69462cac`](https://github.com/Urigo/graphql-mesh/commit/e69462cac667c4ffb2d9ba35adeef15264d263fd)
+  Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
 
-  - Updated dependency [`@graphql-tools/utils@8.10.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.10.1) (from `8.10.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@8.10.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.10.1)
+    (from `8.10.0`, in `dependencies`)
 
-- [#4382](https://github.com/Urigo/graphql-mesh/pull/4382) [`3e8ac0ffc`](https://github.com/Urigo/graphql-mesh/commit/3e8ac0ffcaaf64a5ca36b64f53cde4314b99e800) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+- [#4382](https://github.com/Urigo/graphql-mesh/pull/4382)
+  [`3e8ac0ffc`](https://github.com/Urigo/graphql-mesh/commit/3e8ac0ffcaaf64a5ca36b64f53cde4314b99e800)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
-  - Updated dependency [`@neo4j/graphql@3.7.0` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.7.0) (from `3.6.3`, in `dependencies`)
+  - Updated dependency
+    [`@neo4j/graphql@3.7.0` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.7.0) (from `3.6.3`,
+    in `dependencies`)
 
-- [#4389](https://github.com/Urigo/graphql-mesh/pull/4389) [`12ae4469a`](https://github.com/Urigo/graphql-mesh/commit/12ae4469aa89d613bfd36a87579adc1ae62c4a1f) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+- [#4389](https://github.com/Urigo/graphql-mesh/pull/4389)
+  [`12ae4469a`](https://github.com/Urigo/graphql-mesh/commit/12ae4469aa89d613bfd36a87579adc1ae62c4a1f)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
-  - Updated dependency [`@graphql-tools/utils@8.10.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.10.1) (from `8.10.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@8.10.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.10.1)
+    (from `8.10.0`, in `dependencies`)
 
-- Updated dependencies [[`e69462cac`](https://github.com/Urigo/graphql-mesh/commit/e69462cac667c4ffb2d9ba35adeef15264d263fd), [`12ae4469a`](https://github.com/Urigo/graphql-mesh/commit/12ae4469aa89d613bfd36a87579adc1ae62c4a1f), [`e69462cac`](https://github.com/Urigo/graphql-mesh/commit/e69462cac667c4ffb2d9ba35adeef15264d263fd), [`12ae4469a`](https://github.com/Urigo/graphql-mesh/commit/12ae4469aa89d613bfd36a87579adc1ae62c4a1f), [`e69462cac`](https://github.com/Urigo/graphql-mesh/commit/e69462cac667c4ffb2d9ba35adeef15264d263fd), [`12ae4469a`](https://github.com/Urigo/graphql-mesh/commit/12ae4469aa89d613bfd36a87579adc1ae62c4a1f), [`15f315959`](https://github.com/Urigo/graphql-mesh/commit/15f315959f4eb70327e3df4c97fa081b75021f5f), [`e69462cac`](https://github.com/Urigo/graphql-mesh/commit/e69462cac667c4ffb2d9ba35adeef15264d263fd), [`12ae4469a`](https://github.com/Urigo/graphql-mesh/commit/12ae4469aa89d613bfd36a87579adc1ae62c4a1f), [`df37c40f4`](https://github.com/Urigo/graphql-mesh/commit/df37c40f47c6c53949f5d5f71e062c09fe5e1bd0), [`d87907736`](https://github.com/Urigo/graphql-mesh/commit/d87907736588520628acb32d9a83e3d39dba7b2f), [`7a4023a2c`](https://github.com/Urigo/graphql-mesh/commit/7a4023a2cac2dacc8e78e10dabee65427b9a5e54), [`15f315959`](https://github.com/Urigo/graphql-mesh/commit/15f315959f4eb70327e3df4c97fa081b75021f5f)]:
+- Updated dependencies
+  [[`e69462cac`](https://github.com/Urigo/graphql-mesh/commit/e69462cac667c4ffb2d9ba35adeef15264d263fd),
+  [`12ae4469a`](https://github.com/Urigo/graphql-mesh/commit/12ae4469aa89d613bfd36a87579adc1ae62c4a1f),
+  [`e69462cac`](https://github.com/Urigo/graphql-mesh/commit/e69462cac667c4ffb2d9ba35adeef15264d263fd),
+  [`12ae4469a`](https://github.com/Urigo/graphql-mesh/commit/12ae4469aa89d613bfd36a87579adc1ae62c4a1f),
+  [`e69462cac`](https://github.com/Urigo/graphql-mesh/commit/e69462cac667c4ffb2d9ba35adeef15264d263fd),
+  [`12ae4469a`](https://github.com/Urigo/graphql-mesh/commit/12ae4469aa89d613bfd36a87579adc1ae62c4a1f),
+  [`15f315959`](https://github.com/Urigo/graphql-mesh/commit/15f315959f4eb70327e3df4c97fa081b75021f5f),
+  [`e69462cac`](https://github.com/Urigo/graphql-mesh/commit/e69462cac667c4ffb2d9ba35adeef15264d263fd),
+  [`12ae4469a`](https://github.com/Urigo/graphql-mesh/commit/12ae4469aa89d613bfd36a87579adc1ae62c4a1f),
+  [`df37c40f4`](https://github.com/Urigo/graphql-mesh/commit/df37c40f47c6c53949f5d5f71e062c09fe5e1bd0),
+  [`d87907736`](https://github.com/Urigo/graphql-mesh/commit/d87907736588520628acb32d9a83e3d39dba7b2f),
+  [`7a4023a2c`](https://github.com/Urigo/graphql-mesh/commit/7a4023a2cac2dacc8e78e10dabee65427b9a5e54),
+  [`15f315959`](https://github.com/Urigo/graphql-mesh/commit/15f315959f4eb70327e3df4c97fa081b75021f5f)]:
   - @graphql-mesh/cross-helpers@0.2.3
   - @graphql-mesh/store@0.8.33
   - @graphql-mesh/types@0.81.0
@@ -417,21 +755,31 @@
 
 ### Minor Changes
 
-- [#4356](https://github.com/Urigo/graphql-mesh/pull/4356) [`b5c59ffce`](https://github.com/Urigo/graphql-mesh/commit/b5c59ffceae7091f8d2b98ee548890acdbd57824) Thanks [@ardatan](https://github.com/ardatan)! - ## Improvements on outgoing HTTP calls
+- [#4356](https://github.com/Urigo/graphql-mesh/pull/4356)
+  [`b5c59ffce`](https://github.com/Urigo/graphql-mesh/commit/b5c59ffceae7091f8d2b98ee548890acdbd57824)
+  Thanks [@ardatan](https://github.com/ardatan)! - ## Improvements on outgoing HTTP calls
 
-  - Now Mesh's default fetch implementation deduplicates the same GET JSON requests in the same execution context
+  - Now Mesh's default fetch implementation deduplicates the same GET JSON requests in the same
+    execution context
   - You should pass `Accept: application/json` to make this work.
-  - JSON Schema, new OpenAPI and RAML handlers now take GraphQL context as 3rd parameter. If you use `customFetch`, you can use that value to access Mesh internals such as the incoming `Request` object.
+  - JSON Schema, new OpenAPI and RAML handlers now take GraphQL context as 3rd parameter. If you use
+    `customFetch`, you can use that value to access Mesh internals such as the incoming `Request`
+    object.
 
   ## HTTP Details in extensions for tracking HTTP calls
 
-  You can add `includeHttpDetailsInExtensions: true` to your configuration file to get more information about HTTP calls done by Mesh during the execution in `extensions` field of the response.
+  You can add `includeHttpDetailsInExtensions: true` to your configuration file to get more
+  information about HTTP calls done by Mesh during the execution in `extensions` field of the
+  response.
 
   ![image](https://user-images.githubusercontent.com/20847995/186371035-6a327a2e-c74d-4bf4-a78f-6814b1001501.png)
 
 ### Patch Changes
 
-- Updated dependencies [[`b5c59ffce`](https://github.com/Urigo/graphql-mesh/commit/b5c59ffceae7091f8d2b98ee548890acdbd57824), [`be79b20a5`](https://github.com/Urigo/graphql-mesh/commit/be79b20a59b14d5d79bfeb260e4ecabc58c26efb), [`b5c59ffce`](https://github.com/Urigo/graphql-mesh/commit/b5c59ffceae7091f8d2b98ee548890acdbd57824)]:
+- Updated dependencies
+  [[`b5c59ffce`](https://github.com/Urigo/graphql-mesh/commit/b5c59ffceae7091f8d2b98ee548890acdbd57824),
+  [`be79b20a5`](https://github.com/Urigo/graphql-mesh/commit/be79b20a59b14d5d79bfeb260e4ecabc58c26efb),
+  [`b5c59ffce`](https://github.com/Urigo/graphql-mesh/commit/b5c59ffceae7091f8d2b98ee548890acdbd57824)]:
   - @graphql-mesh/utils@0.40.0
   - @graphql-mesh/types@0.80.2
   - @graphql-mesh/store@0.8.32
@@ -440,7 +788,8 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`f23e14eba`](https://github.com/Urigo/graphql-mesh/commit/f23e14ebaf7c6a869207edc43b0e2a8114d0d21f)]:
+- Updated dependencies
+  [[`f23e14eba`](https://github.com/Urigo/graphql-mesh/commit/f23e14ebaf7c6a869207edc43b0e2a8114d0d21f)]:
   - @graphql-mesh/utils@0.39.0
   - @graphql-mesh/store@0.8.31
   - @graphql-mesh/types@0.80.1
@@ -449,7 +798,8 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`f882aca38`](https://github.com/Urigo/graphql-mesh/commit/f882aca388380ad9dff1d618424e8a36b8607319)]:
+- Updated dependencies
+  [[`f882aca38`](https://github.com/Urigo/graphql-mesh/commit/f882aca388380ad9dff1d618424e8a36b8607319)]:
   - @graphql-mesh/types@0.80.0
   - @graphql-mesh/store@0.8.30
   - @graphql-mesh/utils@0.38.1
@@ -458,15 +808,20 @@
 
 ### Patch Changes
 
-- [#4330](https://github.com/Urigo/graphql-mesh/pull/4330) [`9f3aa2ee5`](https://github.com/Urigo/graphql-mesh/commit/9f3aa2ee5c5862019adb96e87323a3cd145cf3b9) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+- [#4330](https://github.com/Urigo/graphql-mesh/pull/4330)
+  [`9f3aa2ee5`](https://github.com/Urigo/graphql-mesh/commit/9f3aa2ee5c5862019adb96e87323a3cd145cf3b9)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
-  - Updated dependency [`@neo4j/graphql@3.6.3` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.6.3) (from `3.6.2`, in `dependencies`)
+  - Updated dependency
+    [`@neo4j/graphql@3.6.3` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.6.3) (from `3.6.2`,
+    in `dependencies`)
 
 ## 0.18.12
 
 ### Patch Changes
 
-- Updated dependencies [[`b162269f7`](https://github.com/Urigo/graphql-mesh/commit/b162269f70a90594962792ffaaa40d3a7ee9f4e4)]:
+- Updated dependencies
+  [[`b162269f7`](https://github.com/Urigo/graphql-mesh/commit/b162269f70a90594962792ffaaa40d3a7ee9f4e4)]:
   - @graphql-mesh/types@0.79.0
   - @graphql-mesh/utils@0.38.0
   - @graphql-mesh/store@0.8.29
@@ -475,11 +830,21 @@
 
 ### Patch Changes
 
-- [#4275](https://github.com/Urigo/graphql-mesh/pull/4275) [`a2e59dfdd`](https://github.com/Urigo/graphql-mesh/commit/a2e59dfdd70b8a7bc0e9d658ff1a53029757eaa2) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+- [#4275](https://github.com/Urigo/graphql-mesh/pull/4275)
+  [`a2e59dfdd`](https://github.com/Urigo/graphql-mesh/commit/a2e59dfdd70b8a7bc0e9d658ff1a53029757eaa2)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
-  - Updated dependency [`@graphql-tools/utils@8.10.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.10.0) (was `8.9.1`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@8.10.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.10.0)
+    (was `8.9.1`, in `dependencies`)
 
-- Updated dependencies [[`a2e59dfdd`](https://github.com/Urigo/graphql-mesh/commit/a2e59dfdd70b8a7bc0e9d658ff1a53029757eaa2), [`a2e59dfdd`](https://github.com/Urigo/graphql-mesh/commit/a2e59dfdd70b8a7bc0e9d658ff1a53029757eaa2), [`a2e59dfdd`](https://github.com/Urigo/graphql-mesh/commit/a2e59dfdd70b8a7bc0e9d658ff1a53029757eaa2), [`991373717`](https://github.com/Urigo/graphql-mesh/commit/99137371708b7fe12b32dfcfe93d535507a7f968), [`a2e59dfdd`](https://github.com/Urigo/graphql-mesh/commit/a2e59dfdd70b8a7bc0e9d658ff1a53029757eaa2), [`991373717`](https://github.com/Urigo/graphql-mesh/commit/99137371708b7fe12b32dfcfe93d535507a7f968)]:
+- Updated dependencies
+  [[`a2e59dfdd`](https://github.com/Urigo/graphql-mesh/commit/a2e59dfdd70b8a7bc0e9d658ff1a53029757eaa2),
+  [`a2e59dfdd`](https://github.com/Urigo/graphql-mesh/commit/a2e59dfdd70b8a7bc0e9d658ff1a53029757eaa2),
+  [`a2e59dfdd`](https://github.com/Urigo/graphql-mesh/commit/a2e59dfdd70b8a7bc0e9d658ff1a53029757eaa2),
+  [`991373717`](https://github.com/Urigo/graphql-mesh/commit/99137371708b7fe12b32dfcfe93d535507a7f968),
+  [`a2e59dfdd`](https://github.com/Urigo/graphql-mesh/commit/a2e59dfdd70b8a7bc0e9d658ff1a53029757eaa2),
+  [`991373717`](https://github.com/Urigo/graphql-mesh/commit/99137371708b7fe12b32dfcfe93d535507a7f968)]:
   - @graphql-mesh/cross-helpers@0.2.2
   - @graphql-mesh/store@0.8.28
   - @graphql-mesh/types@0.78.8
@@ -489,11 +854,20 @@
 
 ### Patch Changes
 
-- [#4263](https://github.com/Urigo/graphql-mesh/pull/4263) [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+- [#4263](https://github.com/Urigo/graphql-mesh/pull/4263)
+  [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
-  - Updated dependency [`@graphql-tools/utils@8.9.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.9.1) (was `8.9.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@8.9.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.9.1)
+    (was `8.9.0`, in `dependencies`)
 
-- Updated dependencies [[`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73), [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73)]:
+- Updated dependencies
+  [[`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73),
+  [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73),
+  [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73),
+  [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73),
+  [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73)]:
   - @graphql-mesh/cross-helpers@0.2.1
   - @graphql-mesh/store@0.8.27
   - @graphql-mesh/types@0.78.7
@@ -503,7 +877,9 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`02c018249`](https://github.com/Urigo/graphql-mesh/commit/02c0182498e60c78bee5c44c42dc897a739e8f18), [`f95036a33`](https://github.com/Urigo/graphql-mesh/commit/f95036a3360bd76d9f4b9e2725f4d344343fe41b)]:
+- Updated dependencies
+  [[`02c018249`](https://github.com/Urigo/graphql-mesh/commit/02c0182498e60c78bee5c44c42dc897a739e8f18),
+  [`f95036a33`](https://github.com/Urigo/graphql-mesh/commit/f95036a3360bd76d9f4b9e2725f4d344343fe41b)]:
   - @graphql-mesh/utils@0.37.7
   - @graphql-mesh/types@0.78.6
   - @graphql-mesh/store@0.8.26
@@ -592,9 +968,13 @@
 
 - a0950ac6f: Breaking Change:
 
-  - Now you can set a global `customFetch` instead of setting `customFetch` individually for each handler. `customFetch` configuration field for each handler will no longer work. And also `customFetch` needs to be the path of the code file that exports the function as `default`. `moduleName#exportName` is not supported for now.
+  - Now you can set a global `customFetch` instead of setting `customFetch` individually for each
+    handler. `customFetch` configuration field for each handler will no longer work. And also
+    `customFetch` needs to be the path of the code file that exports the function as `default`.
+    `moduleName#exportName` is not supported for now.
 
-  - While programmatically creating the handlers, now you also need `fetchFn` to be passed to the constructor;
+  - While programmatically creating the handlers, now you also need `fetchFn` to be passed to the
+    constructor;
 
   ```ts
   new GraphQLHandler({
@@ -603,7 +983,9 @@
   })
   ```
 
-  - `readFileOrUrl`'s second `config` parameter is now required. Also this second parameter should take an object with `cwd`, `importFn`, `fetch` and `logger`. You can see the diff of handler's codes as an example.
+  - `readFileOrUrl`'s second `config` parameter is now required. Also this second parameter should
+    take an object with `cwd`, `importFn`, `fetch` and `logger`. You can see the diff of handler's
+    codes as an example.
 
 ### Patch Changes
 

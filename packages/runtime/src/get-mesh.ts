@@ -7,7 +7,7 @@ import {
   validate,
   specifiedRules,
 } from 'graphql';
-import { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types';
+import { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types.js';
 import {
   MeshPubSub,
   KeyValueCache,
@@ -22,7 +22,7 @@ import {
   OnDelegateHook,
 } from '@graphql-mesh/types';
 
-import { MESH_CONTEXT_SYMBOL } from './constants';
+import { MESH_CONTEXT_SYMBOL } from './constants.js';
 import {
   applySchemaTransforms,
   groupTransforms,
@@ -44,9 +44,10 @@ import {
 } from '@graphql-tools/utils';
 import { envelop, Plugin, useEngine, useExtendContext } from '@envelop/core';
 import { OneOfInputObjectsRule, useExtendedValidation } from '@envelop/extended-validation';
-import { getInContextSDK } from './in-context-sdk';
-import { useSubschema } from './useSubschema';
+import { getInContextSDK } from './in-context-sdk.js';
+import { useSubschema } from './useSubschema.js';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
+import { process } from '@graphql-mesh/cross-helpers';
 
 type SdkRequester = (document: DocumentNode, variables?: any, operationContext?: any) => any;
 
@@ -65,7 +66,9 @@ export interface MeshInstance {
   sdkRequesterFactory(globalContext: any): SdkRequester;
 }
 
-const memoizedGetEnvelopedFactory = memoize1(function getEnvelopedFactory(plugins: MeshPlugin<any>[]) {
+const memoizedGetEnvelopedFactory = memoize1(function getEnvelopedFactory(
+  plugins: MeshPlugin<any>[],
+) {
   return envelop({
     plugins,
   });
@@ -85,13 +88,19 @@ export function wrapFetchWithPlugins(plugins: MeshPlugin<any>[]): MeshFetch {
       throw new TypeError(`First parameter(url) of 'fetch' must be a string, got ${inspect(url)}`);
     }
     if (options != null && typeof options !== 'object') {
-      throw new TypeError(`Second parameter(options) of 'fetch' must be an object, got ${inspect(options)}`);
+      throw new TypeError(
+        `Second parameter(options) of 'fetch' must be an object, got ${inspect(options)}`,
+      );
     }
     if (context != null && typeof context !== 'object') {
-      throw new TypeError(`Third parameter(context) of 'fetch' must be an object, got ${inspect(context)}`);
+      throw new TypeError(
+        `Third parameter(context) of 'fetch' must be an object, got ${inspect(context)}`,
+      );
     }
     if (info != null && typeof info !== 'object') {
-      throw new TypeError(`Fourth parameter(info) of 'fetch' must be an object, got ${inspect(info)}`);
+      throw new TypeError(
+        `Fourth parameter(info) of 'fetch' must be an object, got ${inspect(info)}`,
+      );
     }
     let fetchFn: MeshFetch;
     const doneHooks: OnFetchHookDone[] = [];
@@ -128,13 +137,15 @@ export function wrapFetchWithPlugins(plugins: MeshPlugin<any>[]): MeshFetch {
 // Use in-context-sdk for tracing
 function createProxyingResolverFactory(
   apiName: string,
-  rootTypeMap: Map<OperationTypeNode, GraphQLObjectType>
+  rootTypeMap: Map<OperationTypeNode, GraphQLObjectType>,
 ): CreateProxyingResolverFn {
   return function createProxyingResolver({ operation }) {
     const rootType = rootTypeMap.get(operation);
     return function proxyingResolver(root, args, context, info) {
       if (!context[apiName][rootType.name][info.fieldName]) {
-        throw new Error(`${info.fieldName} couldn't find in ${rootType.name} of ${apiName} as a ${operation}`);
+        throw new Error(
+          `${info.fieldName} couldn't find in ${rootType.name} of ${apiName} as a ${operation}`,
+        );
       }
       return context[apiName][rootType.name][info.fieldName]({ root, args, context, info });
     };
@@ -161,21 +172,23 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   let failed = false;
   const initialPluginList: MeshPlugin<any>[] = [
     // TODO: Not a good practise to expect users to be a Yoga user
-    useExtendContext(({ request, req }: { request: Request; req?: { headers?: Record<string, string> } }) => {
-      // Maybe Node-like environment
-      if (req?.headers) {
-        return {
-          headers: req.headers,
-        };
-      }
-      // Fetch environment
-      if (request?.headers) {
-        return {
-          headers: getHeadersObj(request.headers),
-        };
-      }
-      return {};
-    }),
+    useExtendContext(
+      ({ request, req }: { request: Request; req?: { headers?: Record<string, string> } }) => {
+        // Maybe Node-like environment
+        if (req?.headers) {
+          return {
+            headers: req.headers,
+          };
+        }
+        // Fetch environment
+        if (request?.headers) {
+          return {
+            headers: getHeadersObj(request.headers),
+          };
+        }
+        return {};
+      },
+    ),
     useExtendContext(() => ({
       pubsub,
       cache,
@@ -216,7 +229,12 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
         if (!wrapTransforms?.length && noWrapTransforms?.length) {
           sourceLogger.debug(`${noWrapTransforms.length} bare transforms found and applying`);
-          apiSchema = applySchemaTransforms(apiSchema, source as SubschemaConfig, null, noWrapTransforms);
+          apiSchema = applySchemaTransforms(
+            apiSchema,
+            source as SubschemaConfig,
+            null,
+            noWrapTransforms,
+          );
         } else {
           transforms = apiSource.transforms;
         }
@@ -237,14 +255,16 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
         sourceLogger.error(`Failed to generate the schema`, e);
         failed = true;
       }
-    })
+    }),
   );
 
   if (failed) {
     throw new Error(
       `Schemas couldn't be generated successfully. Check for the logs by running Mesh${
-        process.env.DEBUG == null ? ' with DEBUG=1 environmental variable to get more verbose output' : ''
-      }.`
+        process.env.DEBUG == null
+          ? ' with DEBUG=1 environmental variable to get more verbose output'
+          : ''
+      }.`,
     );
   }
 
@@ -262,7 +282,10 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   for (const rootLevelTransform of transforms) {
     if (rootLevelTransform.noWrap) {
       if (rootLevelTransform.transformSchema) {
-        unifiedSubschema.schema = rootLevelTransform.transformSchema(unifiedSubschema.schema, unifiedSubschema);
+        unifiedSubschema.schema = rootLevelTransform.transformSchema(
+          unifiedSubschema.schema,
+          unifiedSubschema,
+        );
       }
     } else {
       unifiedSubschema.transforms.push(rootLevelTransform);
@@ -287,7 +310,12 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
             onDelegateHooks.push(plugin.onDelegate);
           }
         }
-        inContextSDK$ = getInContextSDK(subschema.transformedSchema, rawSources, logger, onDelegateHooks);
+        inContextSDK$ = getInContextSDK(
+          subschema.transformedSchema,
+          rawSources,
+          logger,
+          onDelegateHooks,
+        );
       }
       return inContextSDK$;
     }),
@@ -304,12 +332,17 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   function createExecutor(globalContext: any = EMPTY_CONTEXT_VALUE): MeshExecutor {
     const getEnveloped = memoizedGetEnvelopedFactory(plugins);
     const { schema, parse, execute, subscribe, contextFactory } = getEnveloped(globalContext);
-    return async function meshExecutor<TVariables = any, TContext = any, TRootValue = any, TData = any>(
+    return async function meshExecutor<
+      TVariables = any,
+      TContext = any,
+      TRootValue = any,
+      TData = any,
+    >(
       documentOrSDL: GraphQLOperation<TData, TVariables>,
       variableValues: TVariables = EMPTY_VARIABLES_VALUE,
       contextValue: TContext = EMPTY_CONTEXT_VALUE,
       rootValue: TRootValue = EMPTY_ROOT_VALUE,
-      operationName?: string
+      operationName?: string,
     ) {
       const document = typeof documentOrSDL === 'string' ? parse(documentOrSDL) : documentOrSDL;
       const executeFn = memoizedGetOperationType(document) === 'subscription' ? subscribe : execute;

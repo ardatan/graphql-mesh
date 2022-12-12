@@ -2,16 +2,16 @@ import { Callout, PackageCmd } from '@theguild/components'
 
 # GraphQL Response Caching
 
-*GraphQL Response Caching* is a feature that allows you to cache the response of a GraphQL query. This is useful when you want to reduce the number of requests to your sources. For example, if you have a GraphQL query that fetches a list of products, you can cache the response of this query so that the next time the same query is made, the response is fetched from the cache instead of making a request to the underlying sources.
+_GraphQL Response Caching_ is a feature that allows you to cache the response of a GraphQL query. This is useful when you want to reduce the number of requests to your sources. For example, if you have a GraphQL query that fetches a list of products, you can cache the response of this query so that the next time the same query is made, the response is fetched from the cache instead of making a request to the underlying sources.
 
 GraphQL Mesh's Response Cache Plugin uses [Envelop's Response Caching](https://www.envelop.dev/docs/guides/adding-a-graphql-response-cache) under the hood.
 
 You can [learn more on Envelop's docs](https://www.envelop.dev/docs/guides/adding-a-graphql-response-cache).
 
 <Callout>
-  The defined cache storage will be used for this plugin. By default, GraphQL Mesh uses [Localforage](/docs/cache/localforage) as a cache storage.
-  For example, you need to follow this section to configure [Redis](/docs/cache/redis) as your cache storage.
-  You can find other options under the same category.
+  The defined cache storage will be used for this plugin. By default, GraphQL Mesh uses
+  [Localforage](/docs/cache/localforage) as a cache storage. For example, you need to follow this section to configure
+  [Redis](/docs/cache/redis) as your cache storage. You can find other options under the same category.
 </Callout>
 
 ## Getting Started
@@ -52,8 +52,8 @@ If you need to cache based on the user;
 # ...
 plugins:
   - responseCache:
-      if: "context.headers.authorization != null"
-      session: "{context.headers.authorization}"
+      if: 'context.headers.authorization != null'
+      session: '{context.headers.authorization}'
 ```
 
 If you don't want to invalidate automatically based on mutations;

@@ -1,5 +1,15 @@
-import { defaultImportFn, DefaultLogger, readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
-import { JSONSchemaObject, dereferenceObject, resolvePath, handleUntitledDefinitions } from 'json-machete';
+import {
+  defaultImportFn,
+  DefaultLogger,
+  readFileOrUrl,
+  sanitizeNameForGraphQL,
+} from '@graphql-mesh/utils';
+import {
+  JSONSchemaObject,
+  dereferenceObject,
+  resolvePath,
+  handleUntitledDefinitions,
+} from 'json-machete';
 import { OpenAPIV3, OpenAPIV2 } from 'openapi-types';
 import {
   HTTPMethod,
@@ -9,9 +19,9 @@ import {
   JSONSchemaPubSubOperationConfig,
   OperationHeadersConfiguration,
 } from '@omnigraph/json-schema';
-import { getFieldNameFromPath } from './utils';
+import { getFieldNameFromPath } from './utils.js';
 import { OperationTypeNode } from 'graphql';
-import { OpenAPILoaderSelectQueryOrMutationFieldConfig } from './types';
+import { OpenAPILoaderSelectQueryOrMutationFieldConfig } from './types.js';
 import { Logger } from '@graphql-mesh/types';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import { process } from '@graphql-mesh/cross-helpers';
@@ -21,7 +31,7 @@ interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
   fallbackFormat?: 'json' | 'yaml' | 'js' | 'ts';
   cwd?: string;
   fetch?: WindowOrWorkerGlobalScope['fetch'];
-  baseUrl?: string;
+  endpoint?: string;
   schemaHeaders?: Record<string, string>;
   operationHeaders?: OperationHeadersConfiguration;
   queryParams?: Record<string, any>;
@@ -36,15 +46,16 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     fallbackFormat,
     cwd,
     fetch: fetchFn,
-    baseUrl,
+    endpoint,
     schemaHeaders,
     operationHeaders,
     queryParams = {},
     selectQueryOrMutationField = [],
     logger = new DefaultLogger('getJSONSchemaOptionsFromOpenAPIOptions'),
-  }: GetJSONSchemaOptionsFromOpenAPIOptionsParams
+  }: GetJSONSchemaOptionsFromOpenAPIOptionsParams,
 ) {
-  const fieldTypeMap: Record<string, OpenAPILoaderSelectQueryOrMutationFieldConfig['fieldName']> = {};
+  const fieldTypeMap: Record<string, OpenAPILoaderSelectQueryOrMutationFieldConfig['fieldName']> =
+    {};
   for (const { fieldName, type } of selectQueryOrMutationField) {
     fieldTypeMap[fieldName] = type;
   }
@@ -68,10 +79,10 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
   const operations: JSONSchemaOperationConfig[] = [];
   let baseOperationArgTypeMap: Record<string, JSONSchemaObject>;
 
-  if (!baseUrl) {
+  if (!endpoint) {
     if ('servers' in oasOrSwagger) {
       const serverObj = oasOrSwagger.servers[0];
-      baseUrl = serverObj.url.split('{').join('{args.');
+      endpoint = serverObj.url.split('{').join('{args.');
       if (serverObj.variables) {
         for (const variableName in serverObj.variables) {
           const variable = serverObj.variables[variableName];
@@ -81,16 +92,19 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
           baseOperationArgTypeMap = baseOperationArgTypeMap || {};
           baseOperationArgTypeMap[variableName] = variable as JSONSchemaObject;
           if (variable.default) {
-            baseUrl = baseUrl.replace(`{args.${variableName}}`, `{args.${variableName}:${variable.default}}`);
+            endpoint = endpoint.replace(
+              `{args.${variableName}}`,
+              `{args.${variableName}:${variable.default}}`,
+            );
           }
         }
       }
     }
 
     if ('schemes' in oasOrSwagger && oasOrSwagger.schemes.length > 0 && oasOrSwagger.host) {
-      baseUrl = oasOrSwagger.schemes[0] + '://' + oasOrSwagger.host;
+      endpoint = oasOrSwagger.schemes[0] + '://' + oasOrSwagger.host;
       if ('basePath' in oasOrSwagger) {
-        baseUrl += oasOrSwagger.basePath;
+        endpoint += oasOrSwagger.basePath;
       }
     }
   }
@@ -99,7 +113,10 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     responseByStatusCode: Record<string, JSONSchemaOperationResponseConfig>;
   };
 
-  const methodObjFieldMap = new WeakMap<OpenAPIV2.OperationObject | OpenAPIV3.OperationObject, OperationConfig>();
+  const methodObjFieldMap = new WeakMap<
+    OpenAPIV2.OperationObject | OpenAPIV3.OperationObject,
+    OperationConfig
+  >();
 
   for (const relativePath in oasOrSwagger.paths) {
     const pathObj = oasOrSwagger.paths[relativePath];
@@ -138,12 +155,12 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
         };
       }
       for (const paramObjIndex in allParams) {
-        const paramObj = allParams[paramObjIndex] as OpenAPIV2.ParameterObject | OpenAPIV3.ParameterObject;
+        const paramObj = allParams[paramObjIndex] as
+          | OpenAPIV2.ParameterObject
+          | OpenAPIV3.ParameterObject;
         const argName = sanitizeNameForGraphQL(paramObj.name);
-        const operationArgTypeMap = (operationConfig.argTypeMap = operationConfig.argTypeMap || {}) as Record<
-          string,
-          JSONSchemaObject
-        >;
+        const operationArgTypeMap = (operationConfig.argTypeMap =
+          operationConfig.argTypeMap || {}) as Record<string, JSONSchemaObject>;
 
         switch (paramObj.in) {
           case 'query':
@@ -159,7 +176,8 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
               }
             }
             if ('explode' in paramObj) {
-              operationConfig.queryStringOptionsByParam = operationConfig.queryStringOptionsByParam || {};
+              operationConfig.queryStringOptionsByParam =
+                operationConfig.queryStringOptionsByParam || {};
               operationConfig.queryStringOptionsByParam[paramObj.name] =
                 operationConfig.queryStringOptionsByParam[paramObj.name] || {};
               if (paramObj.explode) {
@@ -169,14 +187,19 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                 if (paramObj.style === 'form') {
                   operationConfig.queryStringOptionsByParam[paramObj.name].arrayFormat = 'comma';
                 } else {
-                  logger.warn(`Other styles including ${paramObj.style} of query parameters are not supported yet.`);
+                  logger.warn(
+                    `Other styles including ${paramObj.style} of query parameters are not supported yet.`,
+                  );
                 }
               }
             }
             break;
           case 'path': {
             // If it is in the path, let JSON Schema handler put it
-            operationConfig.path = operationConfig.path.replace(`{${paramObj.name}}`, `{args.${argName}}`);
+            operationConfig.path = operationConfig.path.replace(
+              `{${paramObj.name}}`,
+              `{args.${argName}}`,
+            );
             break;
           }
           case 'header': {
@@ -234,7 +257,8 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
             break;
         }
 
-        operationArgTypeMap[argName] = paramObj.schema || paramObj.content?.['application/json']?.schema || paramObj;
+        operationArgTypeMap[argName] =
+          paramObj.schema || paramObj.content?.['application/json']?.schema || paramObj;
         if (!operationArgTypeMap[argName].title) {
           operationArgTypeMap[argName].name = paramObj.name;
         }
@@ -244,7 +268,13 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
         if (paramObj.required) {
           operationArgTypeMap[argName].nullable = false;
         }
-        if (!('type' in paramObj) && !paramObj.schema && !paramObj.content && !paramObj.example && !paramObj.examples) {
+        if (
+          !('type' in paramObj) &&
+          !paramObj.schema &&
+          !paramObj.content &&
+          !paramObj.example &&
+          !paramObj.examples
+        ) {
           operationArgTypeMap[argName].type = 'string';
         }
       }
@@ -272,7 +302,9 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
 
       // Handling multiple response types
       for (const responseKey in methodObj.responses) {
-        const responseObj = methodObj.responses[responseKey] as OpenAPIV3.ResponseObject | OpenAPIV2.ResponseObject;
+        const responseObj = methodObj.responses[responseKey] as
+          | OpenAPIV3.ResponseObject
+          | OpenAPIV2.ResponseObject;
 
         let schemaObj: JSONSchemaObject;
 
@@ -303,17 +335,24 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
           if (allMimeTypes.length === 0) {
             allMimeTypes = Object.keys(responseObj.content) as string[];
           }
-          const jsonLikeMimeTypes = allMimeTypes.filter(c => c !== '*/*' && c.toString().includes('json'));
+          const jsonLikeMimeTypes = allMimeTypes.filter(
+            c => c !== '*/*' && c.toString().includes('json'),
+          );
           const mimeTypes = jsonLikeMimeTypes.length > 0 ? jsonLikeMimeTypes : allMimeTypes;
 
           // If we have a better accept header, overwrite User's choice
-          if ((!operationConfig.headers?.accept && !operationConfig.headers?.Accept) || mimeTypes.length === 1) {
+          if (
+            (!operationConfig.headers?.accept && !operationConfig.headers?.Accept) ||
+            mimeTypes.length === 1
+          ) {
             operationConfig.headers = operationConfig.headers || {};
             if (operationConfig.headers.Accept) {
               delete operationConfig.headers.Accept;
             }
             operationConfig.headers.accept =
-              jsonLikeMimeTypes.length > 0 ? jsonLikeMimeTypes.join(',') : allMimeTypes[0].toString();
+              jsonLikeMimeTypes.length > 0
+                ? jsonLikeMimeTypes.join(',')
+                : allMimeTypes[0].toString();
           }
 
           for (const contentKey in responseObj.content) {
@@ -398,7 +437,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
               fetchFn,
               logger,
               headers: schemaHeaders,
-            }
+            },
           );
           responseByStatusCode[responseKey].links = responseByStatusCode[responseKey].links || {};
           for (const linkName in dereferencedLinkObj.links) {
@@ -423,7 +462,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
               const [externalPath, ref] = linkObj.operationRef.split('#');
               if (externalPath) {
                 logger.debug(
-                  `Skipping external operation reference ${linkObj.operationRef}\n Use additionalTypeDefs and additionalResolvers instead.`
+                  `Skipping external operation reference ${linkObj.operationRef}\n Use additionalTypeDefs and additionalResolvers instead.`,
                 );
               } else {
                 const actualOperation = resolvePath(ref, oasOrSwagger);
@@ -447,13 +486,20 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
         }
 
         if (!operationConfig.field) {
-          methodObj.operationId = getFieldNameFromPath(relativePath, method, schemaObj?.$resolvedRef);
+          methodObj.operationId = getFieldNameFromPath(
+            relativePath,
+            method,
+            schemaObj?.$resolvedRef,
+          );
           // Operation ID might not be avaiable so let's generate field name from path and response type schema
           operationConfig.field = sanitizeNameForGraphQL(methodObj.operationId);
         }
 
         // Give a better name to the request input object
-        if (typeof operationConfig.requestSchema === 'object' && !operationConfig.requestSchema.title) {
+        if (
+          typeof operationConfig.requestSchema === 'object' &&
+          !operationConfig.requestSchema.title
+        ) {
           operationConfig.requestSchema.title = operationConfig.field + '_request';
         }
       }
@@ -482,11 +528,15 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
               const callbackOperation: OpenAPIV3.OperationObject = callbackUrlObj[method];
               callbackOperationConfig.pubsubTopic = `webhook:${method}:${pubsubTopicSuffix}`;
               callbackOperationConfig.field = callbackOperation.operationId;
-              callbackOperationConfig.description = callbackOperation.description || callbackOperation.summary;
-              const requestBodyContents = (callbackOperation.requestBody as OpenAPIV3.RequestBodyObject)?.content;
+              callbackOperationConfig.description =
+                callbackOperation.description || callbackOperation.summary;
+              const requestBodyContents = (
+                callbackOperation.requestBody as OpenAPIV3.RequestBodyObject
+              )?.content;
               if (requestBodyContents) {
-                callbackOperationConfig.responseSchema = requestBodyContents[Object.keys(requestBodyContents)[0]]
-                  .schema as any;
+                callbackOperationConfig.responseSchema = requestBodyContents[
+                  Object.keys(requestBodyContents)[0]
+                ].schema as any;
               }
               const responses = callbackOperation.responses;
               if (responses) {
@@ -494,13 +544,15 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                 if (response) {
                   const responseContents = (response as OpenAPIV3.ResponseObject).content;
                   if (responseContents) {
-                    callbackOperationConfig.requestSchema = responseContents[Object.keys(responseContents)[0]]
-                      .schema as any;
+                    callbackOperationConfig.requestSchema = responseContents[
+                      Object.keys(responseContents)[0]
+                    ].schema as any;
                   }
                 }
               }
             }
-            callbackOperationConfig.field = callbackOperationConfig.field || sanitizeNameForGraphQL(callbackKey);
+            callbackOperationConfig.field =
+              callbackOperationConfig.field || sanitizeNameForGraphQL(callbackKey);
             operations.push(callbackOperationConfig);
           }
         }
@@ -514,7 +566,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
 
   return {
     operations,
-    baseUrl,
+    endpoint,
     cwd,
     fetch: fetchFn,
     schemaHeaders,

@@ -3,23 +3,29 @@
 This example takes two API sources and merges them together:
 
 1. Postgres GeoDB - a seed database of geo locations and their metadata (uses Hasura GraphQL Engine)
-2. OpenBrewery API - a free API for public information on breweries, cideries, brewpubs, and bottleshops.
+2. OpenBrewery API - a free API for public information on breweries, cideries, brewpubs, and
+   bottleshops.
 
-The two schemas are connected and let you search for locations, and then fetch breweries that are located in that location.
+The two schemas are connected and let you search for locations, and then fetch breweries that are
+located in that location.
 
 ### Create GeoDB Database
 
-Because a running Postgres DB is required, you need to setup local Postgres running, and load the schema and data seed.
+Because a running Postgres DB is required, you need to setup local Postgres running, and load the
+schema and data seed.
 
 To do that, run the following:
 
-1. Install and run Postgres using Docker - `docker run --name pg-docker -e POSTGRES_PASSWORD=docker -d -p 5432:5432 postgres`
+1. Install and run Postgres using Docker -
+   `docker run --name pg-docker -e POSTGRES_PASSWORD=docker -d -p 5432:5432 postgres`
 2. Install Postgres CLI: `brew upgrade postgresql` (or, you can use any of your favorite tool)
-3. Seed the DB with data: `curl https://raw.githubusercontent.com/morenoh149/postgresDBSamples/master/worldDB-1.0/world.sql | psql -h localhost -d postgres -U postgres`
+3. Seed the DB with data:
+   `curl https://raw.githubusercontent.com/morenoh149/postgresDBSamples/master/worldDB-1.0/world.sql | psql -h localhost -d postgres -U postgres`
 
 ### Create Hasura Instance
 
-We need to install Hasura using Docker but we will use a special version of Hasura to benefit from Remote Joins;
+We need to install Hasura using Docker but we will use a special version of Hasura to benefit from
+Remote Joins;
 
 ```sh
 docker run -d -p 8080:8080 \
@@ -30,8 +36,8 @@ docker run -d -p 8080:8080 \
 
 ### Create GraphQL Mesh Project
 
-We need to have `yarn` and Node.js on our computer to run GraphQL Mesh locally.
-Run the following command to create a new project on an empty directory;
+We need to have `yarn` and Node.js on our computer to run GraphQL Mesh locally. Run the following
+command to create a new project on an empty directory;
 
 ```sh
 yarn init
@@ -45,9 +51,11 @@ yarn add graphql @graphql-mesh/cli @graphql-mesh/json-schema
 
 ### Create Proxy GraphQL API to OpenBrewery
 
-OpenBrewery doesn't have any kind of recognized schema metadata, so we need to create our own using JSON Schema Handler;
+OpenBrewery doesn't have any kind of recognized schema metadata, so we need to create our own using
+JSON Schema Handler;
 
-In OpenBrewery's documentation, they have examples for both request and response objects. Let's create files for each inside `/json-schemas` directory;
+In OpenBrewery's documentation, they have examples for both request and response objects. Let's
+create files for each inside `/json-schemas` directory;
 
 ```json filename="breweries.json"
 // breweries.json
@@ -94,7 +102,7 @@ sources:
   - name: OpenBrewery
     handler:
       jsonSchema:
-        baseUrl: https://api.openbrewerydb.org
+        endpoint: https://api.openbrewerydb.org
         operations:
           - type: Query
             field: breweries
@@ -114,23 +122,30 @@ yarn mesh dev
 
 ### Connect new OpenBrewery API to Hasura
 
-Go to [Remote Schemas](http://localhost:8080/console/remote-schemas/manage/schemas) tab in Hasura and add our OpenBrewery GraphQL API which has `http://host.docker.internal:4000/graphql`.
+Go to [Remote Schemas](http://localhost:8080/console/remote-schemas/manage/schemas) tab in Hasura
+and add our OpenBrewery GraphQL API which has `http://host.docker.internal:4000/graphql`.
 
-> `host.docker.internal` is used because Docker accesses your host machine `localhost` under this alias.
+> `host.docker.internal` is used because Docker accesses your host machine `localhost` under this
+> alias.
 
 ### Create GraphQL fields for GeoDB
 
-Go to [Data](http://localhost:8080/console/data/schema/public) tab in Hasura and track all the tables to see how complex relationships work with Mesh.
+Go to [Data](http://localhost:8080/console/data/schema/public) tab in Hasura and track all the
+tables to see how complex relationships work with Mesh.
 
 ### Create Remote Join between GeoDB and OpenBrewery
 
-Let's say we would like to see breweries in a specific city. Go to [Data](http://localhost:8080/console/data/schema/public) tab in Hasura and scroll down to **Remote Relationships** section. Add `breweries` field to `City` by connecting `breweries.by_city` argument and `City.name` parent field like below;
+Let's say we would like to see breweries in a specific city. Go to
+[Data](http://localhost:8080/console/data/schema/public) tab in Hasura and scroll down to **Remote
+Relationships** section. Add `breweries` field to `City` by connecting `breweries.by_city` argument
+and `City.name` parent field like below;
 
 ![image](https://user-images.githubusercontent.com/20847995/83945179-a71fa200-a811-11ea-81fc-e641e68bc9ce.png)
 
 ### Make a query to see how it works
 
-Go to [GraphiQL](http://localhost:8080/console/api-explorer) and make a query like below to see how the integration works;
+Go to [GraphiQL](http://localhost:8080/console/api-explorer) and make a query like below to see how
+the integration works;
 
 ```graphql
 {

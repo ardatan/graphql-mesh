@@ -7,8 +7,8 @@ import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { parse } from 'graphql';
-import { getMesh } from '../src/get-mesh';
-import { MeshResolvedSource } from '../src/types';
+import { getMesh } from '../src/get-mesh.js';
+import { MeshResolvedSource } from '../src/types.js';
 
 describe('getMesh', () => {
   const baseDir = __dirname;

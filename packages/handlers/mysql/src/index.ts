@@ -1,4 +1,11 @@
-import { MeshHandlerOptions, MeshPubSub, MeshHandler, MeshSource, YamlConfig, ImportFn } from '@graphql-mesh/types';
+import {
+  MeshHandlerOptions,
+  MeshPubSub,
+  MeshHandler,
+  MeshSource,
+  YamlConfig,
+  ImportFn,
+} from '@graphql-mesh/types';
 import { SchemaComposer, EnumTypeComposerValueConfigDefinition } from 'graphql-compose';
 import { TableForeign, createPool, Pool } from 'mysql';
 import { upgrade, introspection } from 'mysql-utilities';
@@ -122,7 +129,7 @@ async function getPromisifiedConnection(pool: Pool) {
 function getFieldsFromResolveInfo(info: GraphQLResolveInfo) {
   const fieldMap: Record<string, any> = graphqlFields(info);
   return Object.keys(fieldMap).filter(
-    fieldName => Object.keys(fieldMap[fieldName]).length === 0 && fieldName !== '__typename'
+    fieldName => Object.keys(fieldMap[fieldName]).length === 0 && fieldName !== '__typename',
   );
 }
 
@@ -133,7 +140,15 @@ export default class MySQLHandler implements MeshHandler {
   private store: MeshStore;
   private importFn: ImportFn;
 
-  constructor({ name, config, baseDir, pubsub, store, importFn, logger }: MeshHandlerOptions<YamlConfig.MySQLHandler>) {
+  constructor({
+    name,
+    config,
+    baseDir,
+    pubsub,
+    store,
+    importFn,
+    logger,
+  }: MeshHandlerOptions<YamlConfig.MySQLHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
@@ -147,11 +162,16 @@ export default class MySQLHandler implements MeshHandler {
       get: (_, methodName) => {
         if (methodName === 'release') {
           return () =>
-            promisifiedConnection$?.then(promisifiedConnection => promisifiedConnection?.connection.release());
+            promisifiedConnection$?.then(promisifiedConnection =>
+              promisifiedConnection?.connection.release(),
+            );
         }
         return async (...args: any[]) => {
           const cacheKey = [methodName, ...args].join('_');
-          const cacheProxy = this.store.proxy(cacheKey, PredefinedProxyOptions.JsonWithoutValidation);
+          const cacheProxy = this.store.proxy(
+            cacheKey,
+            PredefinedProxyOptions.JsonWithoutValidation,
+          );
           return cacheProxy.getWithSet(async () => {
             promisifiedConnection$ = promisifiedConnection$ || getPromisifiedConnection(pool);
             const promisifiedConnection = await promisifiedConnection$;
@@ -178,12 +198,19 @@ export default class MySQLHandler implements MeshHandler {
           bigNumberStrings: true,
           trace: !!process.env.DEBUG,
           debug: !!process.env.DEBUG,
-          host: this.config.host && stringInterpolator.parse(this.config.host, { env: process.env }),
+          host:
+            this.config.host && stringInterpolator.parse(this.config.host, { env: process.env }),
           port:
-            this.config.port && parseInt(stringInterpolator.parse(this.config.port.toString(), { env: process.env })),
-          user: this.config.user && stringInterpolator.parse(this.config.user, { env: process.env }),
-          password: this.config.password && stringInterpolator.parse(this.config.password, { env: process.env }),
-          database: this.config.database && stringInterpolator.parse(this.config.database, { env: process.env }),
+            this.config.port &&
+            parseInt(stringInterpolator.parse(this.config.port.toString(), { env: process.env })),
+          user:
+            this.config.user && stringInterpolator.parse(this.config.user, { env: process.env }),
+          password:
+            this.config.password &&
+            stringInterpolator.parse(this.config.password, { env: process.env }),
+          database:
+            this.config.database &&
+            stringInterpolator.parse(this.config.database, { env: process.env }),
           ...this.config,
         });
 
@@ -213,7 +240,9 @@ export default class MySQLHandler implements MeshHandler {
         },
       },
     });
-    const tables = await introspectionConnection.getDatabaseTables(pool.config.connectionConfig.database);
+    const tables = await introspectionConnection.getDatabaseTables(
+      pool.config.connectionConfig.database,
+    );
     const tableNames = this.config.tables || Object.keys(tables);
     const typeMergingOptions: MeshSource['merge'] = {};
     await Promise.all(
@@ -260,7 +289,8 @@ export default class MySQLHandler implements MeshHandler {
         const primaryKeys = new Set<string>();
         const fields = await introspectionConnection.getTableFields(tableName);
         const fieldNames =
-          this.config.tableFields?.find(({ table }) => table === tableName)?.fields || Object.keys(fields);
+          this.config.tableFields?.find(({ table }) => table === tableName)?.fields ||
+          Object.keys(fields);
         await Promise.all(
           fieldNames.map(async fieldName => {
             const tableField = fields[fieldName];
@@ -290,7 +320,9 @@ export default class MySQLHandler implements MeshHandler {
               type = enumTypeName;
             }
             if (!type) {
-              console.warn(`${realTypeName} couldn't be mapped to a type. It will be mapped to JSON as a fallback.`);
+              console.warn(
+                `${realTypeName} couldn't be mapped to a type. It will be mapped to JSON as a fallback.`,
+              );
               type = 'JSON';
             }
             if (tableField.Null.toLowerCase() === 'no') {
@@ -326,7 +358,7 @@ export default class MySQLHandler implements MeshHandler {
                 description: tableField.Comment || undefined,
               },
             });
-          })
+          }),
         );
         const tableForeigns = await introspectionConnection.getTableForeigns(tableName);
         const tableForeignNames = Object.keys(tableForeigns);
@@ -342,7 +374,9 @@ export default class MySQLHandler implements MeshHandler {
 
             const foreignObjectTypeName = sanitizeNameForGraphQL(foreignTableName);
             const foreignWhereInputName = sanitizeNameForGraphQL(foreignTableName + '_WhereInput');
-            const foreignOrderByInputName = sanitizeNameForGraphQL(foreignTableName + '_OrderByInput');
+            const foreignOrderByInputName = sanitizeNameForGraphQL(
+              foreignTableName + '_OrderByInput',
+            );
             tableTC.addFields({
               [foreignTableName]: {
                 type: '[' + foreignObjectTypeName + ']',
@@ -370,7 +404,13 @@ export default class MySQLHandler implements MeshHandler {
                   const limit: number[] = [args.limit, args.offset].filter(Boolean);
                   const fields = getFieldsFromResolveInfo(info);
                   if (limit.length) {
-                    return mysqlConnection.selectLimit(foreignTableName, fields, limit, where, args?.orderBy);
+                    return mysqlConnection.selectLimit(
+                      foreignTableName,
+                      fields,
+                      limit,
+                      where,
+                      args?.orderBy,
+                    );
                   } else {
                     return mysqlConnection.select(foreignTableName, fields, where, args?.orderBy);
                   }
@@ -411,8 +451,9 @@ export default class MySQLHandler implements MeshHandler {
                       if (Object.keys(subFieldMap).length === 0) {
                         fields.push(fieldName);
                       } else {
-                        const tableForeign = schemaComposer.getOTC(objectTypeName).getField(fieldName)
-                          .extensions as TableForeign;
+                        const tableForeign = schemaComposer
+                          .getOTC(objectTypeName)
+                          .getField(fieldName).extensions as TableForeign;
                         fields.push(tableForeign.COLUMN_NAME);
                       }
                     }
@@ -420,14 +461,20 @@ export default class MySQLHandler implements MeshHandler {
                   // Generate limit statement
                   const limit = [args.limit, args.offset].filter(Boolean);
                   if (limit.length) {
-                    return mysqlConnection.selectLimit(tableName, fields, limit, where, args?.orderBy);
+                    return mysqlConnection.selectLimit(
+                      tableName,
+                      fields,
+                      limit,
+                      where,
+                      args?.orderBy,
+                    );
                   } else {
                     return mysqlConnection.select(tableName, fields, where, args?.orderBy);
                   }
                 },
               },
             });
-          })
+          }),
         );
         typeMergingOptions[objectTypeName] = {
           selectionSet: `{ ${[...primaryKeys].join(' ')} }`,
@@ -477,7 +524,13 @@ export default class MySQLHandler implements MeshHandler {
               // Generate limit statement
               const limit = [args.limit, args.offset].filter(Boolean);
               if (limit.length) {
-                return mysqlConnection.selectLimit(tableName, fields, limit, args.where, args?.orderBy);
+                return mysqlConnection.selectLimit(
+                  tableName,
+                  fields,
+                  limit,
+                  args.where,
+                  args?.orderBy,
+                );
               } else {
                 return mysqlConnection.select(tableName, fields, args.where, args?.orderBy);
               }
@@ -492,7 +545,8 @@ export default class MySQLHandler implements MeshHandler {
                 type: whereInputName,
               },
             },
-            resolve: (root, args, { mysqlConnection }, info) => mysqlConnection.count(tableName, args.where),
+            resolve: (root, args, { mysqlConnection }, info) =>
+              mysqlConnection.count(tableName, args.where),
           },
         });
         schemaComposer.Mutation.addFields({
@@ -540,16 +594,22 @@ export default class MySQLHandler implements MeshHandler {
               },
             },
             resolve: (root, args, { mysqlConnection }) =>
-              mysqlConnection.deleteRow(tableName, args.where).then(result => !!result?.affectedRows),
+              mysqlConnection
+                .deleteRow(tableName, args.where)
+                .then(result => !!result?.affectedRows),
           },
         });
-      })
+      }),
     );
     introspectionConnection.release();
 
     const id = this.pubsub.subscribe('destroy', () => {
-      pool.end();
-      this.pubsub.unsubscribe(id);
+      pool.end(err => {
+        if (err) {
+          console.error(err);
+        }
+        this.pubsub.unsubscribe(id);
+      });
     });
 
     // graphql-compose doesn't add @defer and @stream to the schema

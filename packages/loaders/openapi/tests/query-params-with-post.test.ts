@@ -1,12 +1,12 @@
 import { execute, parse } from 'graphql';
-import loadGraphQLSchemaFromOpenAPI from '../src';
+import loadGraphQLSchemaFromOpenAPI from '../src/index.js';
 import { Request, Response } from '@whatwg-node/fetch';
 
 describe('Query Params with POST', () => {
   it('should create URLs with correctly concatenated query params for POST requests', async () => {
     const schema = await loadGraphQLSchemaFromOpenAPI('test', {
       source: './fixtures/query-params-with-post.yml',
-      baseUrl: 'http://localhost:3000',
+      endpoint: 'http://localhost:3000',
       async fetch(info: RequestInfo, init?: RequestInit) {
         let request: Request;
         if (typeof info !== 'object') {
@@ -22,7 +22,7 @@ describe('Query Params with POST', () => {
             headers: {
               'Content-Type': 'application/json',
             },
-          }
+          },
         );
       },
       cwd: __dirname,

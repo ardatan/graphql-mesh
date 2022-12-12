@@ -1,484 +1,27 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Basket should generate the correct bundle 1`] = `
-{
-  "baseUrl": undefined,
-  "name": "basket",
-  "operationHeaders": {},
-  "operations": [
-    {
-      "description": undefined,
-      "field": "post_basket",
-      "headers": {
-        "Content-Type": "application/json",
-        "accept": "application/json",
-      },
-      "method": "POST",
-      "operationHeaders": undefined,
-      "path": "/basket",
-      "requestSchema": {
-        "type": "string",
-      },
-      "responseByStatusCode": {
-        "200": {
-          "responseSchema": {
-            "$resolvedRef": "/components/schemas/BasketResponse",
-            "additionalProperties": false,
-            "properties": {
-              "products": {
-                "items": {
-                  "$ref": "#/definitions/mutation_post_basket_oneOf_0_products_items",
-                },
-                "nullable": true,
-                "type": "array",
-              },
-            },
-            "title": "BasketResponse",
-            "type": "object",
-          },
-        },
-        "400": {
-          "responseSchema": {
-            "items": {
-              "$resolvedRef": "/components/schemas/ApiError",
-              "additionalProperties": false,
-              "properties": {
-                "code": {
-                  "type": "string",
-                },
-              },
-              "required": [
-                "code",
-                "description",
-              ],
-              "title": "ApiError",
-              "type": "object",
-            },
-            "title": "post_basket_400_response",
-            "type": "array",
-          },
-        },
-      },
-      "schemaHeaders": undefined,
-      "type": "mutation",
-    },
-    {
-      "description": undefined,
-      "field": "customers_by_customerId",
-      "headers": {
-        "accept": "application/json",
-      },
-      "method": "GET",
-      "operationHeaders": undefined,
-      "path": "/customers/{customerId}",
-      "responseByStatusCode": {
-        "200": {
-          "responseSchema": {
-            "$resolvedRef": "/components/schemas/CustomerAttributes",
-            "properties": {
-              "attributes": {
-                "items": {
-                  "$ref": "#/definitions/Attribute",
-                },
-                "type": "array",
-              },
-            },
-            "required": [
-              "attributes",
-            ],
-            "title": "CustomerAttributes",
-            "type": "object",
-          },
-        },
-      },
-      "schemaHeaders": undefined,
-      "type": "query",
-    },
-    {
-      "description": undefined,
-      "field": "Locations",
-      "headers": {
-        "accept": "application/json,application/custom-thingy.v3+json",
-      },
-      "method": "GET",
-      "operationHeaders": undefined,
-      "path": "/Locations",
-      "responseByStatusCode": {
-        "200": {
-          "responseSchema": {
-            "oneOf": [
-              {
-                "items": {
-                  "$ref": "#/definitions/LocationModel",
-                },
-                "type": "array",
-              },
-              {
-                "items": {
-                  "$ref": "#/definitions/LocationModel",
-                },
-                "type": "array",
-              },
-            ],
-            "title": "Locations_200_response",
-          },
-        },
-      },
-      "schemaHeaders": undefined,
-      "type": "query",
-    },
-    {
-      "description": undefined,
-      "field": "Cards",
-      "headers": {
-        "accept": "application/json,application/custom.v3+json",
-      },
-      "method": "GET",
-      "operationHeaders": undefined,
-      "path": "/Cards",
-      "responseByStatusCode": {
-        "200": {
-          "responseSchema": {
-            "oneOf": [
-              {
-                "items": {
-                  "$ref": "#/definitions/CardModel",
-                },
-                "type": "array",
-              },
-              {
-                "items": {
-                  "$ref": "#/definitions/CardModel",
-                },
-                "type": "array",
-              },
-            ],
-            "title": "Cards_200_response",
-          },
-        },
-      },
-      "schemaHeaders": undefined,
-      "type": "query",
-    },
-  ],
-  "referencedSchema": {
-    "$ref": "#/definitions/_schema",
-    "definitions": {
-      "ApiBaseProduct": {
-        "$resolvedRef": "/components/schemas/ApiBaseProduct",
-        "additionalProperties": false,
-        "properties": {
-          "co2EmissionInGramsPerPassenger": {
-            "format": "int32",
-            "nullable": true,
-            "type": "integer",
-          },
-        },
-        "title": "ApiBaseProduct",
-        "type": "object",
-      },
-      "ApiError": {
-        "$resolvedRef": "/components/schemas/ApiError",
-        "additionalProperties": false,
-        "properties": {
-          "code": {
-            "type": "string",
-          },
-        },
-        "required": [
-          "code",
-          "description",
-        ],
-        "title": "ApiError",
-        "type": "object",
-      },
-      "ApiProduct": {
-        "$resolvedRef": "/components/schemas/ApiProduct",
-        "additionalProperties": false,
-        "allOf": [
-          {
-            "$ref": "#/definitions/ApiBaseProduct",
-          },
-        ],
-        "properties": {
-          "eligibleForVouchers": {
-            "type": "boolean",
-          },
-        },
-        "title": "ApiProduct",
-        "type": "object",
-      },
-      "ApiReservedProduct": {
-        "$resolvedRef": "/components/schemas/ApiReservedProduct",
-        "additionalProperties": false,
-        "allOf": [
-          {
-            "$ref": "#/definitions/ApiBaseProduct",
-          },
-        ],
-        "properties": {
-          "reservationExpiresAt": {
-            "nullable": true,
-            "type": "string",
-          },
-        },
-        "title": "ApiReservedProduct",
-        "type": "object",
-      },
-      "Attribute": {
-        "$resolvedRef": "/components/schemas/Attribute",
-        "properties": {
-          "more": {
-            "$ref": "#/definitions/query_customers_by_customerId_attributes_items_more",
-          },
-          "name": {
-            "type": "string",
-          },
-        },
-        "required": [
-          "name",
-        ],
-        "title": "Attribute",
-        "type": "object",
-      },
-      "BasketResponse": {
-        "$resolvedRef": "/components/schemas/BasketResponse",
-        "additionalProperties": false,
-        "properties": {
-          "products": {
-            "items": {
-              "$ref": "#/definitions/mutation_post_basket_oneOf_0_products_items",
-            },
-            "nullable": true,
-            "type": "array",
-          },
-        },
-        "title": "BasketResponse",
-        "type": "object",
-      },
-      "CardModel": {
-        "$resolvedRef": "/components/schemas/CardModel",
-        "additionalProperties": false,
-        "properties": {
-          "id": {
-            "type": "string",
-          },
-        },
-        "title": "CardModel",
-        "type": "object",
-      },
-      "Cards_200_response": {
-        "oneOf": [
-          {
-            "items": {
-              "$ref": "#/definitions/CardModel",
-            },
-            "type": "array",
-          },
-          {
-            "items": {
-              "$ref": "#/definitions/CardModel",
-            },
-            "type": "array",
-          },
-        ],
-        "title": "Cards_200_response",
-      },
-      "CustomerAttributes": {
-        "$resolvedRef": "/components/schemas/CustomerAttributes",
-        "properties": {
-          "attributes": {
-            "items": {
-              "$ref": "#/definitions/Attribute",
-            },
-            "type": "array",
-          },
-        },
-        "required": [
-          "attributes",
-        ],
-        "title": "CustomerAttributes",
-        "type": "object",
-      },
-      "LocationModel": {
-        "$resolvedRef": "/components/schemas/LocationModel",
-        "properties": {
-          "email": {
-            "$ref": "#/definitions/query_Locations_oneOf_0_items_email",
-          },
-          "parents": {
-            "items": {
-              "$ref": "#/definitions/LocationModel",
-            },
-            "type": "array",
-          },
-        },
-        "title": "LocationModel",
-        "type": "object",
-      },
-      "Locations_200_response": {
-        "oneOf": [
-          {
-            "items": {
-              "$ref": "#/definitions/LocationModel",
-            },
-            "type": "array",
-          },
-          {
-            "items": {
-              "$ref": "#/definitions/LocationModel",
-            },
-            "type": "array",
-          },
-        ],
-        "title": "Locations_200_response",
-      },
-      "Mutation": {
-        "properties": {
-          "post_basket": {
-            "$ref": "#/definitions/post_basket_response",
-          },
-        },
-        "readOnly": true,
-        "title": "Mutation",
-        "type": "object",
-      },
-      "MutationInput": {
-        "properties": {
-          "post_basket": {
-            "$ref": "#/definitions/mutationInput_post_basket",
-          },
-        },
-        "title": "MutationInput",
-        "type": "object",
-        "writeOnly": true,
-      },
-      "Query": {
-        "properties": {
-          "Cards": {
-            "$ref": "#/definitions/Cards_200_response",
-          },
-          "Locations": {
-            "$ref": "#/definitions/Locations_200_response",
-          },
-          "customers_by_customerId": {
-            "$ref": "#/definitions/CustomerAttributes",
-          },
-        },
-        "readOnly": true,
-        "title": "Query",
-        "type": "object",
-      },
-      "QueryInput": {
-        "additionalProperties": true,
-        "title": "QueryInput",
-        "type": "object",
-        "writeOnly": true,
-      },
-      "_schema": {
-        "properties": {
-          "mutation": {
-            "$ref": "#/definitions/Mutation",
-          },
-          "mutationInput": {
-            "$ref": "#/definitions/MutationInput",
-          },
-          "query": {
-            "$ref": "#/definitions/Query",
-          },
-          "queryInput": {
-            "$ref": "#/definitions/QueryInput",
-          },
-        },
-        "required": [
-          "query",
-        ],
-        "title": "_schema",
-        "type": "object",
-      },
-      "mutationInput_post_basket": {
-        "properties": {
-          "input": {
-            "type": "string",
-          },
-        },
-        "title": "mutationInput_post_basket",
-        "type": "object",
-      },
-      "mutation_post_basket_oneOf_0_products_items": {
-        "oneOf": [
-          {
-            "$ref": "#/definitions/ApiProduct",
-          },
-          {
-            "$ref": "#/definitions/ApiReservedProduct",
-          },
-        ],
-        "title": "mutation_post_basket_oneOf_0_products_items",
-      },
-      "post_basket_400_response": {
-        "items": {
-          "$resolvedRef": "/components/schemas/ApiError",
-          "additionalProperties": false,
-          "properties": {
-            "code": {
-              "type": "string",
-            },
-          },
-          "required": [
-            "code",
-            "description",
-          ],
-          "title": "ApiError",
-          "type": "object",
-        },
-        "title": "post_basket_400_response",
-        "type": "array",
-      },
-      "post_basket_response": {
-        "$comment": "statusCodeOneOfIndexMap:{"200":0,"400":1}",
-        "oneOf": [
-          {
-            "$ref": "#/definitions/BasketResponse",
-          },
-          {
-            "$ref": "#/definitions/post_basket_400_response",
-          },
-        ],
-        "title": "post_basket_response",
-      },
-      "query_Locations_oneOf_0_items_email": {
-        "pattern": "^(?(")(".+?(?<!\\\\)"@)|(([0-9a-zA-Z]((\\.(?!\\.))|[-!#\\$%&'\\*\\+/=\\?\\^\`\\{\\}\\|~\\w])*)(?<=[0-9a-zA-Z\\-_])@))(?(\\[)(\\[(\\d{1,3}\\.){3}\\d{1,3}\\])|(([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]*\\.)+[a-zA-Z0-9][\\-a-zA-Z0-9]{0,22}[a-zA-Z0-9]))$",
-        "title": "query_Locations_oneOf_0_items_email",
-        "type": "string",
-      },
-      "query_customers_by_customerId_attributes_items_more": {
-        "title": "query_customers_by_customerId_attributes_items_more",
-        "type": [
-          "string",
-          "number",
-          "boolean",
-          "integer",
-          "array",
-        ],
-      },
-    },
-  },
-}
-`;
-
 exports[`Basket should generate the correct schema 1`] = `
 "schema {
   query: Query
   mutation: Mutation
 }
 
-directive @oneOf on INPUT_OBJECT | FIELD_DEFINITION
+directive @oneOf on OBJECT | INTERFACE
 
-type Query {
-  customers_by_customerId: CustomerAttributes
-  Locations: [LocationModel]
-  Cards: [CardModel]
+directive @statusCodeTypeName(typeName: String, statusCode: ID) repeatable on UNION
+
+directive @regexp(pattern: String) on SCALAR
+
+directive @typescript(type: String) on SCALAR | ENUM
+
+directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+
+directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+
+type Query @globalOptions(sourceName: "basket") {
+  customers_by_customerId: CustomerAttributes @httpOperation(path: "/customers/{customerId}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  Locations: [LocationModel] @httpOperation(path: "/Locations", operationSpecificHeaders: "{\\"accept\\":\\"application/json,application/custom-thingy.v3+json\\"}", httpMethod: GET)
+  Cards: [CardModel] @httpOperation(path: "/Cards", operationSpecificHeaders: "{\\"accept\\":\\"application/json,application/custom.v3+json\\"}", httpMethod: GET)
 }
 
 type CustomerAttributes {
@@ -487,25 +30,28 @@ type CustomerAttributes {
 
 type Attribute {
   name: String!
-  more: query_customers_by_customerId_attributes_items_more_Input
+  more: JSON
 }
 
-scalar query_customers_by_customerId_attributes_items_more_Input
+"The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf)."
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 type LocationModel {
-  email: String
+  email: query_Locations_oneOf_0_items_email
   parents: [LocationModel]
 }
+
+scalar query_Locations_oneOf_0_items_email @regexp(pattern: "^(?(\\")(\\".+?(?<!\\\\\\\\)\\"@)|(([0-9a-zA-Z]((\\\\.(?!\\\\.))|[-!#\\\\$%&'\\\\*\\\\+/=\\\\?\\\\^\`\\\\{\\\\}\\\\|~\\\\w])*)(?<=[0-9a-zA-Z\\\\-_])@))(?(\\\\[)(\\\\[(\\\\d{1,3}\\\\.){3}\\\\d{1,3}\\\\])|(([0-9a-zA-Z][-\\\\w]*[0-9a-zA-Z]*\\\\.)+[a-zA-Z0-9][\\\\-a-zA-Z0-9]{0,22}[a-zA-Z0-9]))$") @typescript(type: "string")
 
 type CardModel {
   id: String
 }
 
 type Mutation {
-  post_basket(input: String): [post_basket_response]
+  post_basket(input: String): [post_basket_response] @httpOperation(path: "/basket", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
 }
 
-union post_basket_response = BasketResponse | ApiError
+union post_basket_response @statusCodeTypeName(statusCode: 200, typeName: "BasketResponse") @statusCodeTypeName(statusCode: 400, typeName: "ApiError") = BasketResponse | ApiError
 
 type BasketResponse {
   products: [mutation_post_basket_oneOf_0_products_items]
@@ -525,5 +71,19 @@ type ApiReservedProduct {
 
 type ApiError {
   code: String!
+}
+
+scalar ObjMap
+
+enum HTTPMethod {
+  GET
+  HEAD
+  POST
+  PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
+  PATCH
 }"
 `;

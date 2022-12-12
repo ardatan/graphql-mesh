@@ -22,7 +22,7 @@ sources:
   - name: Books
     handler:
       openapi:
-        baseUrl: http://localhost:3002/
+        endpoint: http://localhost:3002/
         source: ../books-service/openapi3-definition.json
     transforms:
   - rename:
@@ -37,7 +37,7 @@ sources:
     handler:
       grpc:
         endpoint: localhost:3003
-        protoFilePath: ../authors-service/proto/authors/v1/authors_service.proto
+        source: ../authors-service/proto/authors/v1/authors_service.proto
   - name: Stores
     handler:
       graphql:
@@ -315,11 +315,11 @@ If you have use cases for which you would require to introduce either "bare" or 
 | Extend                |  ✅  |  ❌  |        [docs](/docs/transforms/extend)         |
 | Federation            |  ❌  |  ✅  |      [docs](/docs/transforms/federation)       |
 | Filter Schema         |  ✅  |  ✅  |     [docs](/docs/transforms/filter-schema)     |
-| hoist                 |      |      |        [docs](/docs/transforms/hoist)          |
+| hoist                 |      |      |         [docs](/docs/transforms/hoist)         |
 | Naming Convention     |  ✅  |  ✅  |   [docs](/docs/transforms/naming-convention)   |
 | Prefix                |  ✅  |  ✅  |        [docs](/docs/transforms/prefix)         |
 | prune                 |      |      |         [docs](/docs/transforms/prune)         |
 | Rename                |  ✅  |  ✅  |        [docs](/docs/transforms/rename)         |
 | Replace Field         |  ✅  |  ❌  |     [docs](/docs/transforms/replace-field)     |
 | Resolvers Composition |  ✅  |  ✅  | [docs](/docs/transforms/resolvers-composition) |
-| type-merging          |      |      |      [docs](/docs/transforms/type-merging)     |
+| type-merging          |      |      |     [docs](/docs/transforms/type-merging)      |

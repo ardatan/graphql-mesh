@@ -37,7 +37,7 @@
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Cache Storages"],
     "source": "Mesh",
-    "title": "cfwKv",
+    "title": "CF Workers KV",
     "type": "Documentation"
   },
   {
@@ -291,7 +291,7 @@
         "anchor": "require"
       }
     ],
-    "content": "12f0c4573138dcd83b90333a583d43ef",
+    "content": "e9df4f1c5dcbc028908fb0c1f9d0f0c3",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/config-reference",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs"],
@@ -387,11 +387,7 @@
   },
   {
     "objectID": "mesh-docs-getting-started-customize-mesh-server",
-    "headings": [
-      "Configure and provide plugins",
-      "Provide a standalone server implementation",
-      "Configuration: `serve` reference"
-    ],
+    "headings": ["Configure and provide plugins", "Configuration: `serve` reference"],
     "toc": [
       {
         "children": [],
@@ -400,16 +396,11 @@
       },
       {
         "children": [],
-        "title": "Provide a standalone server implementation",
-        "anchor": "provide-a-standalone-server-implementation"
-      },
-      {
-        "children": [],
         "title": "Configuration: `serve` reference",
         "anchor": "configuration-serve-reference"
       }
     ],
-    "content": "796de632033efc4578c6cabcd0cb8e88",
+    "content": "e3beecdabf86c522ae59cd5edd94d59a",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/getting-started/customize-mesh-server",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Getting Started"],
@@ -449,6 +440,11 @@
                 "children": [],
                 "title": "Deploy Mesh on Apache OpenWhisk",
                 "anchor": "deploy-mesh-on-apache-openwhisk"
+              },
+              {
+                "children": [],
+                "title": "Deploy Mesh on GCP Cloud Functions",
+                "anchor": "deploy-mesh-on-gcp-cloud-functions"
               }
             ],
             "title": "Deploy Mesh on Vercel with Next.js API Routes",
@@ -496,7 +492,7 @@
         "anchor": "mesh-and-docker"
       }
     ],
-    "content": "85a9925c024903e93ea9b4a18c5b3b64",
+    "content": "bfb8def7d42c4443c44cbf2a6b9d8d61",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/getting-started/deploy-mesh-gateway",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Getting Started"],
@@ -541,7 +537,11 @@
   },
   {
     "objectID": "mesh-docs-getting-started-sources-with-no-definition",
-    "headings": ["An overview of the `jsonSchema` handler", "Configuring our \"Books\" REST API", "Going further"],
+    "headings": [
+      "An overview of the `jsonSchema` handler",
+      "Configuring our \"Books\" REST API",
+      "Going further"
+    ],
     "toc": [
       {
         "children": [],
@@ -682,7 +682,7 @@
         "anchor": "next-steps"
       }
     ],
-    "content": "35b301d9333989c1470ae4f85d1de500",
+    "content": "21fc71c0fb1e49e2375c5e84c620533a",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/auth0",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Guides"],
@@ -816,6 +816,119 @@
     "type": "Documentation"
   },
   {
+    "objectID": "mesh-docs-guides-headers",
+    "headings": ["Setting configurations", "Dynamic Header Values (e.g., for Authorization)"],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "`schemaHeaders`",
+                "anchor": "schemaheaders"
+              }
+            ],
+            "title": "`operationHeaders`",
+            "anchor": "operationheaders"
+          }
+        ],
+        "title": "Setting configurations",
+        "anchor": "setting-configurations"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "From Environment Variables",
+                "anchor": "from-environment-variables"
+              }
+            ],
+            "title": "From Context (HTTP Header for `mesh dev` or `mesh start`)",
+            "anchor": "from-context-http-header-for-mesh-dev-or-mesh-start"
+          }
+        ],
+        "title": "Dynamic Header Values (e.g., for Authorization)",
+        "anchor": "dynamic-header-values-eg-for-authorization"
+      }
+    ],
+    "content": "85380b422e74a467b932dd7d52cd3cb0",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/headers",
+    "domain": "https://www.the-guild.dev/graphql/mesh/",
+    "hierarchy": ["Docs", "Guides"],
+    "source": "Mesh",
+    "title": "headers",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-guides-hive",
+    "headings": [
+      "Track your Gateway",
+      "Publish and check the gateway schema",
+      "Track your sources",
+      "Publish the source schema seperately then consume it in the gateway",
+      "Config API Reference"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "Track your Gateway",
+        "anchor": "track-your-gateway"
+      },
+      {
+        "children": [],
+        "title": "Publish and check the gateway schema",
+        "anchor": "publish-and-check-the-gateway-schema"
+      },
+      {
+        "children": [],
+        "title": "Track your sources",
+        "anchor": "track-your-sources"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Step 2: Setup Mesh CLI on the service repo",
+                "anchor": "step-2-setup-mesh-cli-on-the-service-repo"
+              },
+              {
+                "children": [],
+                "title": "Step 3: Publish the service schema",
+                "anchor": "step-3-publish-the-service-schema"
+              },
+              {
+                "children": [],
+                "title": "Step 4: Create Hive CDN URL and token for the service",
+                "anchor": "step-4-create-hive-cdn-url-and-token-for-the-service"
+              }
+            ],
+            "title": "Step 1: Create a project for the service",
+            "anchor": "step-1-create-a-project-for-the-service"
+          }
+        ],
+        "title": "Publish the source schema seperately then consume it in the gateway",
+        "anchor": "publish-the-source-schema-seperately-then-consume-it-in-the-gateway"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "29197a4d78b82e7bb7f35cb5ef2ec321",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/hive",
+    "domain": "https://www.the-guild.dev/graphql/mesh/",
+    "hierarchy": ["Docs", "Guides"],
+    "source": "Mesh",
+    "title": "Integration with Hive",
+    "type": "Documentation"
+  },
+  {
     "objectID": "mesh-docs-guides-mesh-sdk",
     "headings": ["Executing queries programmatically", "Generating fully type safe SDK"],
     "toc": [
@@ -924,7 +1037,7 @@
         "anchor": "config-update"
       }
     ],
-    "content": "cc76828a13aee81e78dabb0a2f7b6ead",
+    "content": "13ff3e0195c0b9aa5464dba0036a4b5a",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/migration/new-openapi-to-openapi",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Migration Guides"],
@@ -957,7 +1070,7 @@
         "anchor": "miscellaneous"
       }
     ],
-    "content": "5910881f0e245edf0b1b569c31ae6d96",
+    "content": "e8b50ec0df6f120f96a7ffbd3ba56f0b",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/migration/openapi-0",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Migration Guides"],
@@ -993,7 +1106,7 @@
         "anchor": "getting-started"
       }
     ],
-    "content": "6e04f3d221099b9e0f223dd63ad3a8db",
+    "content": "9bc8d7657d345252440dbd93647a422b",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/http-cache",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Plugins"],
@@ -1141,7 +1254,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "9609f973f915cafc58a37825d767ebb8",
+    "content": "36438fedc0c4add93e4bd47adcd47564",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/new-relic",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Plugins"],
@@ -1197,7 +1310,12 @@
   },
   {
     "objectID": "mesh-docs-plugins-prometheus",
-    "headings": ["Getting Started", "Example Configuration", "Custom Registry", "Config API Reference"],
+    "headings": [
+      "Getting Started",
+      "Example Configuration",
+      "Custom Registry",
+      "Config API Reference"
+    ],
     "toc": [
       {
         "children": [],
@@ -1220,7 +1338,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "e5f24859ce4170dde48b679a3dae9734",
+    "content": "75b2b7aaf515f7a9a720107c307c5a2d",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/prometheus",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Plugins"],
@@ -1271,7 +1389,7 @@
         "anchor": "codesandbox-example"
       }
     ],
-    "content": "37f20f04865881be616db1e2ffe01818",
+    "content": "02ee642c714bce5a0434dfad158253e1",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/response-caching",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Plugins"],
@@ -1333,34 +1451,28 @@
   {
     "objectID": "mesh-docs-source-handlers-graphql",
     "headings": [
-      "Dynamic Header Values (e.g., for Authorization)",
-      "Fetching SDL or introspection from CDN or somewhere",
+      "Headers",
+      "Fetching SDL or introspection from CDN or any other schema registry tool",
       "Local Schemas",
       "Fetch Strategies and Multiple HTTP endpoints for the same source",
       "Config API Reference"
     ],
     "toc": [
       {
-        "children": [
-          {
-            "children": [
-              {
-                "children": [],
-                "title": "From Environment Variables",
-                "anchor": "from-environment-variables"
-              }
-            ],
-            "title": "From Context (HTTP Header for `mesh dev` or `mesh start`)",
-            "anchor": "from-context-http-header-for-mesh-dev-or-mesh-start"
-          }
-        ],
-        "title": "Dynamic Header Values (e.g., for Authorization)",
-        "anchor": "dynamic-header-values-eg-for-authorization"
+        "children": [],
+        "title": "Headers",
+        "anchor": "headers"
       },
       {
-        "children": [],
-        "title": "Fetching SDL or introspection from CDN or somewhere",
-        "anchor": "fetching-sdl-or-introspection-from-cdn-or-somewhere"
+        "children": [
+          {
+            "children": [],
+            "title": "Hive Integration",
+            "anchor": "hive-integration"
+          }
+        ],
+        "title": "Fetching SDL or introspection from CDN or any other schema registry tool",
+        "anchor": "fetching-sdl-or-introspection-from-cdn-or-any-other-schema-registry-tool"
       },
       {
         "children": [],
@@ -1378,7 +1490,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "363b20c95f399aa372160cfaab328981",
+    "content": "5a4662355a951af452901fc31e3a2c56",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/graphql",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Source Handlers"],
@@ -1388,7 +1500,11 @@
   },
   {
     "objectID": "mesh-docs-source-handlers-grpc",
-    "headings": ["Use Reflection instead of proto files", "Custom Metadata for Authorization", "Config API Reference"],
+    "headings": [
+      "Use Reflection instead of proto files",
+      "Custom Metadata for Authorization",
+      "Config API Reference"
+    ],
     "toc": [
       {
         "children": [],
@@ -1406,7 +1522,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "0f35bd62266b79565d8743c446c1c6eb",
+    "content": "862a5b36ffb9ed1b52ec5615f22c21ca",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/grpc",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Source Handlers"],
@@ -1428,7 +1544,7 @@
   },
   {
     "objectID": "mesh-docs-source-handlers-json-schema",
-    "headings": ["Dynamic Values", "Query Parameters", "CodeSandBox Example", "Config API Reference"],
+    "headings": ["Headers", "Query Parameters", "CodeSandBox Example", "Config API Reference"],
     "toc": [
       {
         "children": [
@@ -1436,26 +1552,16 @@
             "children": [
               {
                 "children": [],
-                "title": "From Environmental Variable",
-                "anchor": "from-environmental-variable"
-              },
-              {
-                "children": [],
-                "title": "From Arguments",
-                "anchor": "from-arguments"
-              },
-              {
-                "children": [],
                 "title": "From JSON Samples",
                 "anchor": "from-json-samples"
               }
             ],
-            "title": "From Context (HTTP Header for `mesh dev` or `mesh start`)",
-            "anchor": "from-context-http-header-for-mesh-dev-or-mesh-start"
+            "title": "From Arguments",
+            "anchor": "from-arguments"
           }
         ],
-        "title": "Dynamic Values",
-        "anchor": "dynamic-values"
+        "title": "Headers",
+        "anchor": "headers"
       },
       {
         "children": [
@@ -1490,7 +1596,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "af6ab526fbbe89b4baef8e3fbb0cc4d6",
+    "content": "3bb401985905496c2c3443e91fb1a3fe",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/json-schema",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Source Handlers"],
@@ -1554,24 +1660,12 @@
   },
   {
     "objectID": "mesh-docs-source-handlers-odata",
-    "headings": ["Dynamic Header Values", "CodeSandBox Example", "Config API Reference"],
+    "headings": ["Headers", "CodeSandBox Example", "Config API Reference"],
     "toc": [
       {
-        "children": [
-          {
-            "children": [
-              {
-                "children": [],
-                "title": "From Environmental Variable",
-                "anchor": "from-environmental-variable"
-              }
-            ],
-            "title": "From Context (HTTP Header for `mesh dev` or `mesh start`)",
-            "anchor": "from-context-http-header-for-mesh-dev-or-mesh-start"
-          }
-        ],
-        "title": "Dynamic Header Values",
-        "anchor": "dynamic-header-values"
+        "children": [],
+        "title": "Headers",
+        "anchor": "headers"
       },
       {
         "children": [],
@@ -1584,7 +1678,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "7b0c1d8d448184a0ef5fed6e927ffaf2",
+    "content": "b72913f8c7fb55c25fd9f6bf15b2c341",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/odata",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Source Handlers"],
@@ -1597,9 +1691,10 @@
     "headings": [
       "Overriding default Query/Mutation operations classification",
       "Naming convention",
-      "Dynamic Header Values",
+      "Headers",
       "Advanced cookies handling",
       "Callbacks as Subscriptions",
+      "Loading the sources from a CDN like GraphQL Hive or schema registry",
       "Examples",
       "Config API Reference"
     ],
@@ -1627,21 +1722,9 @@
         "anchor": "naming-convention"
       },
       {
-        "children": [
-          {
-            "children": [
-              {
-                "children": [],
-                "title": "From Environmental Variable",
-                "anchor": "from-environmental-variable"
-              }
-            ],
-            "title": "From Context (HTTP Header for `mesh dev` or `mesh start`)",
-            "anchor": "from-context-http-header-for-mesh-dev-or-mesh-start"
-          }
-        ],
-        "title": "Dynamic Header Values",
-        "anchor": "dynamic-header-values"
+        "children": [],
+        "title": "Headers",
+        "anchor": "headers"
       },
       {
         "children": [
@@ -1667,6 +1750,11 @@
       },
       {
         "children": [],
+        "title": "Loading the sources from a CDN like GraphQL Hive or schema registry",
+        "anchor": "loading-the-sources-from-a-cdn-like-graphql-hive-or-schema-registry"
+      },
+      {
+        "children": [],
         "title": "Examples",
         "anchor": "examples"
       },
@@ -1676,7 +1764,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "1a1cefdfe3a234317919e642ae9de05b",
+    "content": "492c711712c4238860b6391eea9a5f42",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/openapi",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Source Handlers"],
@@ -1686,7 +1774,10 @@
   },
   {
     "objectID": "mesh-docs-source-handlers-postgraphile",
-    "headings": ["External Plugins (e.g. FederationPlugin, PgManyToManyPlugin, PostGISPlugin)", "Config API Reference"],
+    "headings": [
+      "External Plugins (e.g. FederationPlugin, PgManyToManyPlugin, PostGISPlugin)",
+      "Config API Reference"
+    ],
     "toc": [
       {
         "children": [
@@ -1749,15 +1840,20 @@
   },
   {
     "objectID": "mesh-docs-source-handlers-thrift",
-    "headings": ["Config API Reference"],
+    "headings": ["Headers", "Config API Reference"],
     "toc": [
+      {
+        "children": [],
+        "title": "Headers",
+        "anchor": "headers"
+      },
       {
         "children": [],
         "title": "Config API Reference",
         "anchor": "config-api-reference"
       }
     ],
-    "content": "f2c5789b4515b0e8d06eb4076ecdda93",
+    "content": "8f26a5e639b8d7f274404822f3a67e9a",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/thrift",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Source Handlers"],
@@ -1951,7 +2047,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "9133b624aedf19b179f063337a60e5a3",
+    "content": "d7de33dd668f9a1f01c357e8151089b1",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/naming-convention",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Transforms"],
@@ -2036,7 +2132,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "7dcd9eafece3cb16b947b2c247b37f40",
+    "content": "f08736f4c00efc29a0fde5748e5f6932",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/rename",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Transforms"],
@@ -2143,7 +2239,11 @@
   },
   {
     "objectID": "mesh-docs-transforms-transforms-introduction",
-    "headings": ["Introduction to Transforms", "Transforms location and order", "Two different modes"],
+    "headings": [
+      "Introduction to Transforms",
+      "Transforms location and order",
+      "Two different modes"
+    ],
     "toc": [
       {
         "children": [],
@@ -2190,7 +2290,7 @@
         "anchor": "two-different-modes"
       }
     ],
-    "content": "9f6bccb4d443a2e2a60b81ab568ea9dc",
+    "content": "d81e378e177ed9608372d203b1bb3a2e",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/transforms-introduction",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Transforms"],
@@ -2200,7 +2300,12 @@
   },
   {
     "objectID": "mesh-docs-transforms-type-merging",
-    "headings": ["Installation", "What is Type Merging?", "Using the Type Merging Transform", "Config API Reference"],
+    "headings": [
+      "Installation",
+      "What is Type Merging?",
+      "Using the Type Merging Transform",
+      "Config API Reference"
+    ],
     "toc": [
       {
         "children": [],

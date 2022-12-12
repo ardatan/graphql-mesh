@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-misused-new */
 import { IResolvers, Executor } from '@graphql-tools/utils';
 import { GraphQLSchema, GraphQLResolveInfo, DocumentNode, SelectionSetNode } from 'graphql';
-import * as YamlConfig from './config';
+import * as YamlConfig from './config.js';
 import {
   Transform,
   MergedTypeConfig,
@@ -11,12 +11,11 @@ import {
 } from '@graphql-tools/delegate';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { MeshStore } from '@graphql-mesh/store';
-import configSchema from './config-schema.json';
 import type { Plugin } from '@envelop/core';
 import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 import { BatchDelegateOptions } from '@graphql-tools/batch-delegate';
 
-export const jsonSchema: any = configSchema;
+export { jsonSchema } from './config-schema.js';
 
 export { YamlConfig };
 
@@ -78,7 +77,7 @@ export interface MeshPubSub {
   subscribe<THook extends HookName>(
     triggerName: THook,
     onMessage: (data: AllHooks[THook]) => void,
-    options?: any
+    options?: any,
   ): number;
   unsubscribe(subId: number): void;
   getEventNames(): Iterable<string>;
@@ -92,6 +91,7 @@ export interface MeshTransformOptions<Config = any> {
   cache: KeyValueCache;
   pubsub: MeshPubSub;
   importFn: ImportFn;
+  logger: Logger;
 }
 
 export interface MeshTransformLibrary<Config = any> {
@@ -144,7 +144,7 @@ export type OnDelegateHookPayload<TContext> = Partial<BatchDelegateOptions<TCont
   };
 
 export type OnDelegateHook<TContext> = (
-  payload: OnDelegateHookPayload<TContext>
+  payload: OnDelegateHookPayload<TContext>,
 ) => PromiseOrValue<OnDelegateHookDone | void>;
 
 export type OnDelegateHookDonePayload = {
@@ -163,7 +163,7 @@ export type MeshFetch = (
   url: string,
   options?: RequestInit,
   context?: any,
-  info?: GraphQLResolveInfo
+  info?: GraphQLResolveInfo,
 ) => Promise<Response>;
 
 export interface OnFetchHookPayload<TContext> {
@@ -182,7 +182,9 @@ export interface OnFetchHookDonePayload {
 
 export type OnFetchHookDone = (payload: OnFetchHookDonePayload) => PromiseOrValue<void>;
 
-export type OnFetchHook<TContext> = (payload: OnFetchHookPayload<TContext>) => PromiseOrValue<void | OnFetchHookDone>;
+export type OnFetchHook<TContext> = (
+  payload: OnFetchHookPayload<TContext>,
+) => PromiseOrValue<void | OnFetchHookDone>;
 
 export type RawSourceOutput = {
   name: string;
@@ -213,7 +215,9 @@ export type Logger = {
 };
 
 export type SelectionSetParam = SelectionSetNode | DocumentNode | string | SelectionSetNode;
-export type SelectionSetParamOrFactory = ((subtree: SelectionSetNode) => SelectionSetParam) | SelectionSetParam;
+export type SelectionSetParamOrFactory =
+  | ((subtree: SelectionSetNode) => SelectionSetParam)
+  | SelectionSetParam;
 
 export type InContextSdkMethodBatchingParams<TDefaultReturn, TArgs, TKey, TReturn> = {
   key: TKey;
@@ -245,6 +249,9 @@ export type InContextSdkMethodParams<TDefaultReturn, TArgs, TContext, TKey, TRet
     | InContextSdkMethodRegularParams<TDefaultReturn, TArgs, TReturn>
   );
 
-export type InContextSdkMethod<TDefaultReturn = any, TArgs = any, TContext = any> = <TKey, TReturn = TDefaultReturn>(
-  params: InContextSdkMethodParams<TDefaultReturn, TArgs, TContext, TKey, TReturn>
+export type InContextSdkMethod<TDefaultReturn = any, TArgs = any, TContext = any> = <
+  TKey,
+  TReturn = TDefaultReturn,
+>(
+  params: InContextSdkMethodParams<TDefaultReturn, TArgs, TContext, TKey, TReturn>,
 ) => Promise<TReturn>;

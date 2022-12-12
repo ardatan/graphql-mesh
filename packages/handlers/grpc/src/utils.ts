@@ -1,14 +1,24 @@
 import { withCancel } from '@graphql-mesh/utils';
-import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { ClientDuplexStream, ClientReadableStream, ClientUnaryCall, Metadata, MetadataValue } from '@grpc/grpc-js';
+import { ResolverData, stringInterpolator } from '@graphql-mesh/string-interpolation';
+import {
+  ClientDuplexStream,
+  ClientReadableStream,
+  ClientUnaryCall,
+  Metadata,
+  MetadataValue,
+} from '@grpc/grpc-js';
 import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import { SchemaComposer } from 'graphql-compose';
 import lodashGet from 'lodash.get';
 import { Root } from 'protobufjs';
 
-import { getGraphQLScalar, isScalarType } from './scalars';
+import { getGraphQLScalar, isScalarType } from './scalars.js';
 
-export function getTypeName(schemaComposer: SchemaComposer, pathWithName: string[] | undefined, isInput: boolean) {
+export function getTypeName(
+  schemaComposer: SchemaComposer,
+  pathWithName: string[] | undefined,
+  isInput: boolean,
+) {
   if (pathWithName?.length) {
     const baseTypeName = pathWithName.filter(Boolean).join('_');
     if (isScalarType(baseTypeName)) {
@@ -49,9 +59,9 @@ function isBlob(input: any): input is Blob {
 export function addMetaDataToCall(
   callFn: any,
   input: any,
-  context: Record<string, unknown>,
+  resolverData: ResolverData,
   metaData: Record<string, string | string[] | Buffer>,
-  isResponseStream = false
+  isResponseStream = false,
 ) {
   const callFnArguments: any[] = [];
   if (!isBlob(input)) {
@@ -63,7 +73,7 @@ export function addMetaDataToCall(
       let metaValue: unknown = value;
       if (Array.isArray(value)) {
         // Extract data from context
-        metaValue = lodashGet(context, value);
+        metaValue = lodashGet(resolverData.context, value);
       }
 
       // Ensure that the metadata is compatible with what node-grpc expects
@@ -72,7 +82,7 @@ export function addMetaDataToCall(
       }
 
       if (typeof metaValue === 'string') {
-        metaValue = stringInterpolator.parse(metaValue, context);
+        metaValue = stringInterpolator.parse(metaValue, resolverData);
       }
 
       meta.add(key, metaValue as MetadataValue);
@@ -87,7 +97,7 @@ export function addMetaDataToCall(
           reject(error);
         }
         resolve(response);
-      }
+      },
     );
     if (isResponseStream) {
       let isCancelled = false;

@@ -1,9 +1,8 @@
 const { findAndParseConfig } = require('@graphql-mesh/cli');
 const { getMesh } = require('@graphql-mesh/runtime');
-const { readFile } = require('fs-extra');
-const { basename, join } = require('path');
+const { join } = require('path');
 
-const { introspectionFromSchema, lexicographicSortSchema } = require('graphql');
+const { printSchemaWithDirectives } = require('@graphql-tools/utils');
 
 const mesh$ = findAndParseConfig({
   dir: join(__dirname, '..'),
@@ -12,11 +11,7 @@ const mesh$ = findAndParseConfig({
 describe('Hello World', () => {
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
-    expect(
-      introspectionFromSchema(lexicographicSortSchema(schema), {
-        descriptions: false,
-      })
-    ).toMatchSnapshot();
+    expect(printSchemaWithDirectives(schema)).toMatchSnapshot();
   });
   it('should give correct response', async () => {
     const { execute } = await mesh$;

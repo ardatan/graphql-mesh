@@ -1,54 +1,62 @@
 {
   "name": "@graphql-mesh/http",
-  "version": "0.2.14",
-  "license": "MIT",
+  "version": "0.3.3",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
     "directory": "packages/http"
   },
+  "license": "MIT",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "graphql": "*"
   },
-  "sideEffects": false,
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
-  "exports": {
-    ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
-    },
-    "./*": {
-      "require": "./dist/*.js",
-      "import": "./dist/*.mjs"
-    }
-  },
   "dependencies": {
-    "@whatwg-node/server": "^0.4.10",
+    "@graphql-mesh/cross-helpers": "0.3.0",
+    "@graphql-mesh/runtime": "0.46.2",
+    "@graphql-mesh/types": "0.89.2",
+    "@graphql-mesh/utils": "0.43.3",
     "@whatwg-node/fetch": "^0.5.0",
-    "@graphql-mesh/cross-helpers": "0.2.10",
-    "@graphql-mesh/runtime": "0.44.33",
-    "@graphql-mesh/utils": "0.42.7",
-    "@graphql-mesh/types": "0.86.0",
-    "graphql-yoga": "3.0.1",
+    "@whatwg-node/server": "^0.4.10",
+    "graphql-yoga": "3.1.1",
     "itty-router": "2.6.6",
     "itty-router-extras": "0.4.2",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@types/itty-router-extras": "0.4.0",
+    "@types/lodash.get": "4.4.7",
     "@types/mkdirp": "1.0.2",
-    "@types/yargs": "17.0.13",
-    "@types/ws": "8.5.3",
     "@types/rimraf": "3.0.2",
-    "@types/lodash.get": "4.4.7"
+    "@types/ws": "8.5.3",
+    "@types/yargs": "17.0.17"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
   }
 }

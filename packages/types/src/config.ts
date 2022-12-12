@@ -104,11 +104,6 @@ export interface ServeConfig {
    */
   browser?: string | boolean;
   /**
-   * If you want to use a custom GraphQL server, you can pass the path of the code file that exports a custom Mesh Server Handler
-   * With a custom server handler, you won't be able to use the features of GraphQL Mesh HTTP Server
-   */
-  customServerHandler?: string;
-  /**
    * Title of GraphiQL Playground
    */
   playgroundTitle?: string;
@@ -174,11 +169,7 @@ export interface Handler {
     | GraphQLHandlerCodeFirstConfiguration
     | GraphQLHandlerMultipleHTTPConfiguration;
   grpc?: GrpcHandler;
-  /**
-   * Handler for JSON Schema specification.
-   * Source could be a local json file, or a url to it. (Any of: JsonSchemaHandler, JsonSchemaHandlerBundle)
-   */
-  jsonSchema?: JsonSchemaHandler | JsonSchemaHandlerBundle;
+  jsonSchema?: JsonSchemaHandler;
   mongoose?: MongooseHandler;
   mysql?: MySQLHandler;
   neo4j?: Neo4JHandler;
@@ -286,13 +277,11 @@ export interface GrpcHandler {
    */
   endpoint: string;
   /**
-   * gRPC Proto file that contains your protobuf schema (Any of: ProtoFilePath, String)
-   */
-  protoFilePath?: ProtoFilePath | string;
-  /**
+   * gRPC Proto file that contains your protobuf schema
+   * OR
    * Use a binary-encoded or JSON file descriptor set file (Any of: ProtoFilePath, String)
    */
-  descriptorSetFilePath?: ProtoFilePath | string;
+  source?: ProtoFilePath | string;
   /**
    * Request timeout in milliseconds
    * Default: 200000
@@ -309,10 +298,6 @@ export interface GrpcHandler {
   metaData?: {
     [k: string]: any;
   };
-  /**
-   * Use gRPC reflection to automatically gather the connection
-   */
-  useReflection?: boolean;
   /**
    * prefix to collect Query method default: list, get
    */
@@ -334,26 +319,39 @@ export interface GrpcCredentialsSsl {
   certChain?: string;
   privateKey?: string;
 }
+/**
+ * Handler for JSON Schema specification.
+ * Source could be a local json file, or a url to it.
+ */
 export interface JsonSchemaHandler {
-  baseUrl?: string;
   /**
-   * Any of: JSON, String
+   * Path to the bundle file
    */
-  operationHeaders?:
-    | {
-        [k: string]: any;
-      }
-    | string;
+  source?: string;
+  endpoint?: string;
+  operationHeaders?: {
+    [k: string]: any;
+  };
   schemaHeaders?: {
     [k: string]: any;
   };
   /**
    * Any of: JsonSchemaHTTPOperation, JsonSchemaPubSubOperation
    */
-  operations: (JsonSchemaHTTPOperation | JsonSchemaPubSubOperation)[];
+  operations?: (JsonSchemaHTTPOperation | JsonSchemaPubSubOperation)[];
   ignoreErrorResponses?: boolean;
   queryParams?: any;
   queryStringOptions?: QueryStringOptions;
+  /**
+   * Will be removed later
+   */
+  bundlePath?: string;
+  /**
+   * Will be removed later
+   */
+  bundleHeaders?: {
+    [k: string]: any;
+  };
 }
 export interface JsonSchemaHTTPOperation {
   /**
@@ -493,48 +491,6 @@ export interface JsonSchemaPubSubOperation {
   pubsubTopic: string;
 }
 export interface QueryStringOptions {
-  /**
-   * When arrays are stringified, by default they are not given explicit indices:
-   * `a=b&a=c&a=d`
-   * You may override this by setting the indices option to true:
-   * `a[0]=b&a[1]=c&a[2]=d`
-   */
-  indices?: boolean;
-  /**
-   * You can configure how to format arrays in the query strings.
-   *
-   * Note: when using arrayFormat set to 'comma', you can also pass the commaRoundTrip option set to true or false, to append [] on single-item arrays, so that they can round trip through a parse. (Allowed values: indices, brackets, repeat, comma)
-   */
-  arrayFormat?: 'indices' | 'brackets' | 'repeat' | 'comma';
-  /**
-   * Even if there is a single item in an array, this option treats them as arrays
-   * (default: false)
-   */
-  commaRoundTrip?: boolean;
-}
-export interface JsonSchemaHandlerBundle {
-  /**
-   * Path to the bundle file
-   */
-  bundlePath: any;
-  /**
-   * HTTP Headers to receive the bundle
-   */
-  bundleHeaders?: {
-    [k: string]: any;
-  };
-  baseUrl?: string;
-  /**
-   * Any of: JSON, String
-   */
-  operationHeaders?:
-    | {
-        [k: string]: any;
-      }
-    | string;
-  queryStringOptions?: QueryStringOptions1;
-}
-export interface QueryStringOptions1 {
   /**
    * When arrays are stringified, by default they are not given explicit indices:
    * `a=b&a=c&a=d`
@@ -787,7 +743,11 @@ export interface Neo4JHandler {
   /**
    * URL for the Neo4j Instance e.g. neo4j://localhost
    */
-  url: string;
+  endpoint: string;
+  /**
+   * Provide GraphQL Type Definitions instead of inferring
+   */
+  source?: string;
   /**
    * Username for basic authentication
    */
@@ -804,10 +764,6 @@ export interface Neo4JHandler {
    * Specifies database name
    */
   database?: string;
-  /**
-   * Provide GraphQL Type Definitions instead of inferring
-   */
-  typeDefs?: string;
 }
 /**
  * Handler for OData
@@ -816,21 +772,21 @@ export interface ODataHandler {
   /**
    * Base URL for OData API
    */
-  baseUrl: string;
+  endpoint: string;
   /**
    * Custom $metadata File or URL
    */
-  metadata?: string;
-  /**
-   * Headers to be used with the operation requests
-   */
-  operationHeaders?: {
-    [k: string]: any;
-  };
+  source?: string;
   /**
    * Headers to be used with the $metadata requests
    */
   schemaHeaders?: {
+    [k: string]: any;
+  };
+  /**
+   * Headers to be used with the operation requests
+   */
+  operationHeaders?: {
     [k: string]: any;
   };
   /**
@@ -858,7 +814,7 @@ export interface OpenapiHandler {
    * Specifies the URL on which all paths will be based on.
    * Overrides the server object in the OAS.
    */
-  baseUrl?: string;
+  endpoint?: string;
   /**
    * If you are using a remote URL endpoint to fetch your schema, you can set headers for the HTTP request to fetch your schema.
    */
@@ -866,13 +822,11 @@ export interface OpenapiHandler {
     [k: string]: any;
   };
   /**
-   * JSON object representing the Headers to add to the runtime of the API calls (Any of: JSON, String)
+   * JSON object representing the Headers to add to the runtime of the API calls
    */
-  operationHeaders?:
-    | {
-        [k: string]: any;
-      }
-    | string;
+  operationHeaders?: {
+    [k: string]: any;
+  };
   /**
    * Responses are converted to a Union type grouping all possible responses.
    * Applying this will ignore all responses with status code other than 2xx, resulting in simpler response types, usualy regular object type instead of union.
@@ -889,6 +843,7 @@ export interface OpenapiHandler {
   queryParams?: {
     [k: string]: any;
   };
+  bundle?: boolean;
 }
 export interface OASSelectQueryOrMutationFieldConfig {
   /**
@@ -939,8 +894,8 @@ export interface PostGraphileHandler {
   live?: boolean;
 }
 export interface RAMLHandler {
-  ramlFilePath: string;
-  baseUrl?: string;
+  source: string;
+  endpoint?: string;
   schemaHeaders?: {
     [k: string]: any;
   };
@@ -950,6 +905,7 @@ export interface RAMLHandler {
   ignoreErrorResponses?: boolean;
   selectQueryOrMutationField?: RAMLSelectQueryOrMutationFieldConfig[];
   queryParams?: any;
+  bundle?: boolean;
 }
 export interface RAMLSelectQueryOrMutationFieldConfig {
   /**
@@ -1657,6 +1613,7 @@ export interface Plugin {
   maskedErrors?: MaskedErrorsPluginConfig;
   immediateIntrospection?: any;
   deduplicateRequest?: any;
+  hive?: HivePlugin;
   httpCache?: any;
   httpDetailsExtensions?: HTTPDetailsExtensionsConfig;
   liveQuery?: LiveQueryConfig;
@@ -1672,6 +1629,104 @@ export interface Plugin {
 }
 export interface MaskedErrorsPluginConfig {
   errorMessage?: string;
+}
+export interface HivePlugin {
+  /**
+   * Access Token
+   */
+  token: string;
+  agent?: HiveAgentOptions;
+  usage?: HiveUsageOptions;
+  reporting?: HiveReportingOptions;
+}
+/**
+ * Agent Options
+ */
+export interface HiveAgentOptions {
+  /**
+   * 30s by default
+   */
+  timeout?: number;
+  /**
+   * 5 by default
+   */
+  maxRetries?: number;
+  /**
+   * 200 by default
+   */
+  minTimeout?: number;
+  /**
+   * Send reports in interval (defaults to 10_000ms)
+   */
+  sendInterval?: number;
+  /**
+   * Max number of traces to send at once (defaults to 25)
+   */
+  maxSize?: number;
+}
+/**
+ * Collects schema usage based on operations
+ */
+export interface HiveUsageOptions {
+  clientInfo?: HiveClientInfo;
+  /**
+   * Hive uses LRU cache to store info about operations.
+   * This option represents the maximum size of the cache.
+   * Default: 1000
+   */
+  max?: number;
+  /**
+   * Hive uses LRU cache to store info about operations.
+   * This option represents the maximum age of an unused operation in the cache.
+   * Default: no ttl
+   */
+  ttl?: number;
+  /**
+   * A list of operations (by name) to be ignored by Hive.
+   */
+  exclude?: string[];
+  /**
+   * Sample rate to determine sampling.
+   * 0.0 = 0% chance of being sent
+   * 1.0 = 100% chance of being sent
+   * Default: 1.0
+   */
+  sampleRate?: number;
+  /**
+   * (Experimental) Enables collecting Input fields usage based on the variables passed to the operation.
+   * Default: false
+   */
+  processVariables?: boolean;
+}
+/**
+ * Extract client info from GraphQL Context
+ */
+export interface HiveClientInfo {
+  /**
+   * Extract client name
+   * Example: `{context.headers['x-client-name']}`
+   */
+  name?: string;
+  /**
+   * Extract client version
+   * Example: `{context.headers['x-client-version']}`
+   */
+  version?: string;
+}
+/**
+ * Schema reporting
+ */
+export interface HiveReportingOptions {
+  /**
+   * Author of current version of the schema
+   */
+  author: string;
+  /**
+   * Commit SHA hash (or any identifier) related to the schema version
+   */
+  commit: string;
+  serviceName?: string;
+  serviceUrl?: string;
 }
 export interface HTTPDetailsExtensionsConfig {
   if?: any;

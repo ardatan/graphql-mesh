@@ -1,4 +1,3 @@
-
 import { PackageCmd } from '@theguild/components'
 
 # Adding Authentication with Auth0
@@ -80,28 +79,29 @@ The complete code should look like this:
 
 ```yaml filename=".meshrc.yaml"
 additionalTypeDefs: |
+  """
+  Describes the authentication object as provided by Auth0.
+  """
+  type AuthenticationInfo {
     """
-    Describes the authentication object as provided by Auth0.
+    String that uniquely identifies an authenticated user.
     """
-    type AuthenticationInfo {
-      """
-      String that uniquely identifies an authenticated user.
-      """
-      sub: String!
-    }
+    sub: String!
+  }
 
-    extend type Query {
-      """
-      The authentication information of the request.
-      """
-      authInfo: AuthenticationInfo
-    }
+  extend type Query {
+    """
+    The authentication information of the request.
+    """
+    authInfo: AuthenticationInfo
+  }
 
 additionalResolvers:
   - ./additionalResolvers.ts
 ```
 
 In `additionalResolvers.ts`:
+
 ```ts filename="additionalResolvers.ts"
 export const resolvers = {
   Query: {
@@ -109,13 +109,13 @@ export const resolvers = {
       return context._auth0
     }
   }
-};
+}
 ```
 
 Then we can start our server. The Mesh server can be started via `yarn start`.
 
 ```sh
-> yarn start
+start > yarn
 yarn run v1.22.10
 $ mesh dev
 ```
@@ -243,7 +243,7 @@ plugins:
   # You can combine this with `@graphql-mesh/plugin-operation-field-permissions`
   - operationFieldPermissions:
       permissions:
-        - if: "context._auth0?.sub != null"
+        - if: 'context._auth0?.sub != null'
           allow:
-            - "*"
+            - '*'
 ```

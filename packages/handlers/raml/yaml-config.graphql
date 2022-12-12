@@ -3,13 +3,14 @@ extend type Handler {
 }
 
 type RAMLHandler {
-  ramlFilePath: String!
-  baseUrl: String
+  source: String!
+  endpoint: String
   schemaHeaders: JSON
   operationHeaders: JSON
   ignoreErrorResponses: Boolean
   selectQueryOrMutationField: [RAMLSelectQueryOrMutationFieldConfig]
   queryParams: Any
+  bundle: Boolean
 }
 
 enum QueryOrMutation {

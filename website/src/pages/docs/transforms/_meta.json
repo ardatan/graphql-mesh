@@ -3,7 +3,6 @@
   "rename": "Rename",
   "prefix": "Prefix",
   "encapsulate": "Encapsulate",
-  "snapshot": "Snapshot",
   "resolvers-composition": "Resolvers Composition",
   "filter-schema": "Filter Schema",
   "replace-field": "Replace Field",

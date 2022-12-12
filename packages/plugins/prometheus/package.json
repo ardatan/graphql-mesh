@@ -1,38 +1,42 @@
 {
   "name": "@graphql-mesh/plugin-prometheus",
-  "version": "0.2.10",
-  "sideEffects": false,
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
-  "exports": {
-    ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
-    },
-    "./*": {
-      "require": "./dist/*.js",
-      "import": "./dist/*.mjs"
-    }
-  },
-  "license": "MIT",
+  "version": "0.3.3",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
     "directory": "packages/plugins/prometheus"
   },
+  "license": "MIT",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "graphql": "*",
-    "prom-client": "^13 || ^14.0.0",
-    "graphql-yoga": "3.0.1"
+    "graphql-yoga": "3.1.1",
+    "prom-client": "^13 || ^14.0.0"
   },
   "dependencies": {
-    "@graphql-yoga/plugin-prometheus": "1.0.1",
-    "@graphql-mesh/utils": "0.42.7",
-    "@graphql-mesh/types": "0.86.0",
+    "@graphql-mesh/types": "0.89.2",
+    "@graphql-mesh/utils": "0.43.3",
+    "@graphql-yoga/plugin-prometheus": "1.1.1",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
@@ -41,5 +45,9 @@
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
   }
 }

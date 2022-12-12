@@ -23,7 +23,7 @@ import {
   XSSimpleType,
   XSElement,
   XSDObject,
-} from './types';
+} from './types.js';
 import {
   GraphQLURL,
   GraphQLByte,
@@ -47,7 +47,7 @@ import {
   GraphQLString,
 } from 'graphql';
 import { MeshFetch } from '@graphql-mesh/types';
-import { PARSE_XML_OPTIONS, SoapAnnotations } from './utils';
+import { PARSE_XML_OPTIONS, SoapAnnotations } from './utils.js';
 
 export interface SOAPLoaderOptions {
   fetch: MeshFetch;
@@ -63,13 +63,24 @@ const soapDirective = new GraphQLDirective({
     bindingNamespace: {
       type: GraphQLString,
     },
-    baseUrl: {
+    endpoint: {
       type: GraphQLString,
     },
   },
 });
 
-const QUERY_PREFIXES = ['get', 'find', 'list', 'search', 'count', 'exists', 'fetch', 'load', 'query', 'select'];
+const QUERY_PREFIXES = [
+  'get',
+  'find',
+  'list',
+  'search',
+  'count',
+  'exists',
+  'fetch',
+  'load',
+  'query',
+  'select',
+];
 
 function isQueryOperationName(operationName: string) {
   return QUERY_PREFIXES.some(prefix => operationName.toLowerCase().startsWith(prefix));
@@ -93,7 +104,11 @@ export class SOAPLoader {
   >();
 
   private complexTypeInputTCMap = new WeakMap<XSComplexType, InputTypeComposer>();
-  private complexTypeOutputTCMap = new WeakMap<XSComplexType, ObjectTypeComposer | ScalarTypeComposer>();
+  private complexTypeOutputTCMap = new WeakMap<
+    XSComplexType,
+    ObjectTypeComposer | ScalarTypeComposer
+  >();
+
   private simpleTypeTCMap = new WeakMap<XSSimpleType, EnumTypeComposer | ScalarTypeComposer>();
   private namespaceTypePrefixMap = new Map<string, string>();
   public loadedLocations = new Map<string, WSDLObject | XSDObject>();
@@ -208,7 +223,8 @@ export class SOAPLoader {
     let typePrefix = this.namespaceTypePrefixMap.get(schemaNamespace);
     if (!typePrefix) {
       typePrefix =
-        schemaObj.attributes.id || [...aliasMap.entries()].find(([, namespace]) => namespace === schemaNamespace)?.[0];
+        schemaObj.attributes.id ||
+        [...aliasMap.entries()].find(([, namespace]) => namespace === schemaNamespace)?.[0];
       this.namespaceTypePrefixMap.set(schemaNamespace, typePrefix);
     }
     for (const [alias, namespace] of parentAliasMap) {
@@ -268,11 +284,17 @@ export class SOAPLoader {
           }
           const refComplexType = this.getNamespaceComplexTypeMap(refTypeNamespace).get(refTypeName);
           if (refComplexType) {
-            this.getNamespaceComplexTypeMap(schemaNamespace).set(elementObj.attributes.name, refComplexType);
+            this.getNamespaceComplexTypeMap(schemaNamespace).set(
+              elementObj.attributes.name,
+              refComplexType,
+            );
           }
           const refSimpleType = this.getNamespaceSimpleTypeMap(refTypeNamespace).get(refTypeName);
           if (refSimpleType) {
-            this.getNamespaceSimpleTypeMap(schemaNamespace).set(elementObj.attributes.name, refSimpleType);
+            this.getNamespaceSimpleTypeMap(schemaNamespace).set(
+              elementObj.attributes.name,
+              refSimpleType,
+            );
           }
         }
       }
@@ -285,7 +307,9 @@ export class SOAPLoader {
     const definitionNamespace = definition.attributes.targetNamespace;
     const typePrefix =
       definition.attributes.name ||
-      [...definitionAliasMap.entries()].find(([, namespace]) => namespace === definitionNamespace)[0];
+      [...definitionAliasMap.entries()].find(
+        ([, namespace]) => namespace === definitionNamespace,
+      )[0];
     this.namespaceTypePrefixMap.set(definition.attributes.targetNamespace, typePrefix);
     if (definition.import) {
       for (const importObj of definition.import) {
@@ -303,21 +327,27 @@ export class SOAPLoader {
       }
     }
     if (definition.portType) {
-      const namespacePortTypes = this.getNamespacePortTypeMap(definition.attributes.targetNamespace);
+      const namespacePortTypes = this.getNamespacePortTypeMap(
+        definition.attributes.targetNamespace,
+      );
       for (const portTypeObj of definition.portType) {
         namespacePortTypes.set(portTypeObj.attributes.name, portTypeObj);
         this.aliasMap.set(portTypeObj, definitionAliasMap);
       }
     }
     if (definition.binding) {
-      const namespaceBindingMap = this.getNamespaceBindingMap(definition.attributes.targetNamespace);
+      const namespaceBindingMap = this.getNamespaceBindingMap(
+        definition.attributes.targetNamespace,
+      );
       for (const bindingObj of definition.binding) {
         namespaceBindingMap.set(bindingObj.attributes.name, bindingObj);
         this.aliasMap.set(bindingObj, definitionAliasMap);
       }
     }
     if (definition.message) {
-      const namespaceMessageMap = this.getNamespaceMessageMap(definition.attributes.targetNamespace);
+      const namespaceMessageMap = this.getNamespaceMessageMap(
+        definition.attributes.targetNamespace,
+      );
       for (const messageObj of definition.message) {
         namespaceMessageMap.set(messageObj.attributes.name, messageObj);
         this.aliasMap.set(messageObj, definitionAliasMap);
@@ -337,7 +367,7 @@ export class SOAPLoader {
           const bindingObj = this.getNamespaceBindingMap(bindingNamespace).get(bindingName);
           if (!bindingObj) {
             throw new Error(
-              `Binding: ${bindingName} is not defined in ${bindingNamespace} needed for ${serviceName}->${portName}`
+              `Binding: ${bindingName} is not defined in ${bindingNamespace} needed for ${serviceName}->${portName}`,
             );
           }
           const bindingAliasMap = this.aliasMap.get(bindingObj);
@@ -352,7 +382,7 @@ export class SOAPLoader {
           const portTypeObj = this.getNamespacePortTypeMap(portTypeNamespace).get(portTypeName);
           if (!portTypeObj) {
             throw new Error(
-              `Port Type: ${portTypeName} is not defined in ${portTypeNamespace} needed for ${bindingNamespaceAlias}->${bindingName}`
+              `Port Type: ${portTypeName} is not defined in ${portTypeNamespace} needed for ${bindingNamespaceAlias}->${bindingName}`,
             );
           }
           const portTypeAliasMap = this.aliasMap.get(portTypeObj);
@@ -362,7 +392,7 @@ export class SOAPLoader {
               ? this.schemaComposer.Query
               : this.schemaComposer.Mutation;
             const operationFieldName = sanitizeNameForGraphQL(
-              `${typePrefix}_${serviceName}_${portName}_${operationName}`
+              `${typePrefix}_${serviceName}_${portName}_${operationName}`,
             );
             const outputObj = operationObj.output[0];
             const [messageNamespaceAlias, messageName] = outputObj.attributes.message.split(':');
@@ -371,12 +401,12 @@ export class SOAPLoader {
               throw new Error(`Namespace alias: ${messageNamespaceAlias} is undefined!`);
             }
             const { type, elementName } = this.getOutputTypeForMessage(
-              this.getNamespaceMessageMap(messageNamespace).get(messageName)
+              this.getNamespaceMessageMap(messageNamespace).get(messageName),
             );
             const soapAnnotations: SoapAnnotations = {
               elementName,
               bindingNamespace,
-              baseUrl: portObj.address[0].attributes.location,
+              endpoint: portObj.address[0].attributes.location,
             };
             rootTC.addFields({
               [operationFieldName]: {
@@ -390,15 +420,17 @@ export class SOAPLoader {
               },
             });
             const inputObj = operationObj.input[0];
-            const [inputMessageNamespaceAlias, inputMessageName] = inputObj.attributes.message.split(':');
+            const [inputMessageNamespaceAlias, inputMessageName] =
+              inputObj.attributes.message.split(':');
             const inputMessageNamespace = portTypeAliasMap.get(inputMessageNamespaceAlias);
             if (!inputMessageNamespace) {
               throw new Error(`Namespace alias: ${inputMessageNamespaceAlias} is undefined!`);
             }
-            const inputMessageObj = this.getNamespaceMessageMap(inputMessageNamespace).get(inputMessageName);
+            const inputMessageObj =
+              this.getNamespaceMessageMap(inputMessageNamespace).get(inputMessageName);
             if (!inputMessageObj) {
               throw new Error(
-                `Message: ${inputMessageName} is not defined in ${inputMessageNamespace} needed for ${portTypeName}->${operationName}`
+                `Message: ${inputMessageName} is not defined in ${inputMessageNamespace} needed for ${portTypeName}->${operationName}`,
               );
             }
             const aliasMap = this.aliasMap.get(inputMessageObj);
@@ -409,9 +441,12 @@ export class SOAPLoader {
                   [elementName]: {
                     type: () => {
                       const elementNamespace =
-                        aliasMap.get(elementNamespaceAlias) || part.attributes[elementNamespaceAlias];
+                        aliasMap.get(elementNamespaceAlias) ||
+                        part.attributes[elementNamespaceAlias];
                       if (!elementNamespace) {
-                        throw new Error(`Namespace alias: ${elementNamespaceAlias} is not defined.`);
+                        throw new Error(
+                          `Namespace alias: ${elementNamespaceAlias} is not defined.`,
+                        );
                       }
                       return this.getInputTypeForTypeNameInNamespace({
                         typeName: elementName,
@@ -432,7 +467,10 @@ export class SOAPLoader {
                       if (!typeNamespace) {
                         throw new Error(`Namespace alias: ${typeNamespaceAlias} is undefined!`);
                       }
-                      const inputTC = this.getInputTypeForTypeNameInNamespace({ typeName, typeNamespace });
+                      const inputTC = this.getInputTypeForTypeNameInNamespace({
+                        typeName,
+                        typeNamespace,
+                      });
                       if ('getFields' in inputTC && Object.keys(inputTC.getFields()).length === 0) {
                         return GraphQLJSON;
                       }
@@ -488,7 +526,10 @@ export class SOAPLoader {
     return aliasMap;
   }
 
-  getTypeForSimpleType(simpleType: XSSimpleType, simpleTypeNamespace: string): EnumTypeComposer | ScalarTypeComposer {
+  getTypeForSimpleType(
+    simpleType: XSSimpleType,
+    simpleTypeNamespace: string,
+  ): EnumTypeComposer | ScalarTypeComposer {
     let simpleTypeTC = this.simpleTypeTCMap.get(simpleType);
     if (!simpleTypeTC) {
       const simpleTypeName = simpleType.attributes.name;
@@ -512,7 +553,9 @@ export class SOAPLoader {
         const patternObj = restrictionObj.pattern[0];
         const pattern = patternObj.attributes.value;
         const scalarTypeName = `${prefix}_${simpleTypeName}`;
-        simpleTypeTC = this.schemaComposer.createScalarTC(new RegularExpression(scalarTypeName, new RegExp(pattern)));
+        simpleTypeTC = this.schemaComposer.createScalarTC(
+          new RegularExpression(scalarTypeName, new RegExp(pattern)),
+        );
       } else {
         // TODO: Other restrictions are not supported yet
         const aliasMap = this.aliasMap.get(simpleType);
@@ -524,7 +567,7 @@ export class SOAPLoader {
         const baseType = this.getNamespaceSimpleTypeMap(baseTypeNamespace)?.get(baseTypeName);
         if (!baseType) {
           throw new Error(
-            `Simple Type: ${baseTypeName} couldn't be found in ${baseTypeNamespace} needed for ${simpleTypeName}`
+            `Simple Type: ${baseTypeName} couldn't be found in ${baseTypeNamespace} needed for ${simpleTypeName}`,
           );
         }
         simpleTypeTC = this.getTypeForSimpleType(baseType, baseTypeNamespace);
@@ -534,7 +577,13 @@ export class SOAPLoader {
     return simpleTypeTC;
   }
 
-  getInputTypeForTypeNameInNamespace({ typeName, typeNamespace }: { typeName: string; typeNamespace: string }) {
+  getInputTypeForTypeNameInNamespace({
+    typeName,
+    typeNamespace,
+  }: {
+    typeName: string;
+    typeNamespace: string;
+  }) {
     const complexType = this.getNamespaceComplexTypeMap(typeNamespace)?.get(typeName);
     if (complexType) {
       return this.getInputTypeForComplexType(complexType, typeNamespace);
@@ -553,7 +602,10 @@ export class SOAPLoader {
       const prefix = this.namespaceTypePrefixMap.get(complexTypeNamespace);
       const aliasMap = this.aliasMap.get(complexType);
       const fieldMap: InputTypeComposerFieldConfigMapDefinition = {};
-      const choiceOrSequenceObjects = [...(complexType.sequence || []), ...(complexType.choice || [])];
+      const choiceOrSequenceObjects = [
+        ...(complexType.sequence || []),
+        ...(complexType.choice || []),
+      ];
       for (const sequenceOrChoiceObj of choiceOrSequenceObjects) {
         if (sequenceOrChoiceObj.element) {
           for (const elementObj of sequenceOrChoiceObj.element) {
@@ -561,9 +613,12 @@ export class SOAPLoader {
             if (fieldName) {
               fieldMap[fieldName] = {
                 type: () => {
-                  const maxOccurs = sequenceOrChoiceObj.attributes?.maxOccurs || elementObj.attributes?.maxOccurs;
-                  const minOccurs = sequenceOrChoiceObj.attributes?.minOccurs || elementObj.attributes?.minOccurs;
-                  const nillable = sequenceOrChoiceObj.attributes?.nillable || elementObj.attributes?.nillable;
+                  const maxOccurs =
+                    sequenceOrChoiceObj.attributes?.maxOccurs || elementObj.attributes?.maxOccurs;
+                  const minOccurs =
+                    sequenceOrChoiceObj.attributes?.minOccurs || elementObj.attributes?.minOccurs;
+                  const nillable =
+                    sequenceOrChoiceObj.attributes?.nillable || elementObj.attributes?.nillable;
                   const isPlural = maxOccurs != null && maxOccurs !== '1';
                   let isNullable = false;
                   if (minOccurs == null || minOccurs === '0') {
@@ -605,10 +660,11 @@ export class SOAPLoader {
                       this.aliasMap.set(simpleTypeObj, aliasMap);
                       // Inherit the name from elementObj
                       simpleTypeObj.attributes = simpleTypeObj.attributes || ({} as any);
-                      simpleTypeObj.attributes.name = simpleTypeObj.attributes.name || elementObj.attributes.name;
+                      simpleTypeObj.attributes.name =
+                        simpleTypeObj.attributes.name || elementObj.attributes.name;
                       let finalTC: AnyTypeComposer<any> = this.getTypeForSimpleType(
                         simpleTypeObj,
-                        complexTypeNamespace
+                        complexTypeNamespace,
                       );
                       if (isPlural) {
                         finalTC = finalTC.getTypePlural();
@@ -626,10 +682,11 @@ export class SOAPLoader {
                       this.aliasMap.set(complexTypeObj, aliasMap);
                       // Inherit the name from elementObj
                       complexTypeObj.attributes = complexTypeObj.attributes || ({} as any);
-                      complexTypeObj.attributes.name = complexTypeObj.attributes.name || elementObj.attributes.name;
+                      complexTypeObj.attributes.name =
+                        complexTypeObj.attributes.name || elementObj.attributes.name;
                       let finalTC: AnyTypeComposer<any> = this.getInputTypeForComplexType(
                         complexTypeObj,
-                        complexTypeNamespace
+                        complexTypeNamespace,
                       );
                       if (isPlural) {
                         finalTC = finalTC.getTypePlural();
@@ -640,7 +697,9 @@ export class SOAPLoader {
                       return finalTC;
                     }
                   }
-                  throw new Error(`Invalid element type definition: ${complexTypeName}->${fieldName}`);
+                  throw new Error(
+                    `Invalid element type definition: ${complexTypeName}->${fieldName}`,
+                  );
                 },
               };
             } else {
@@ -685,7 +744,7 @@ export class SOAPLoader {
             const baseType = this.getNamespaceComplexTypeMap(baseTypeNamespace)?.get(baseTypeName);
             if (!baseType) {
               throw new Error(
-                `Complex Type: ${baseTypeName} couldn't be found in ${baseTypeNamespace} needed for ${complexTypeName}`
+                `Complex Type: ${baseTypeName} couldn't be found in ${baseTypeNamespace} needed for ${complexTypeName}`,
               );
             }
             const baseTypeTC = this.getInputTypeForComplexType(baseType, baseTypeNamespace);
@@ -727,7 +786,11 @@ export class SOAPLoader {
     return complexTypeTC;
   }
 
-  getOutputFieldTypeFromElement(elementObj: XSElement, aliasMap: Map<string, string>, namespace: string) {
+  getOutputFieldTypeFromElement(
+    elementObj: XSElement,
+    aliasMap: Map<string, string>,
+    namespace: string,
+  ) {
     if (elementObj.attributes?.type) {
       const [typeNamespaceAlias, typeName] = elementObj.attributes.type.split(':');
       let typeNamespace: string;
@@ -761,7 +824,8 @@ export class SOAPLoader {
         this.aliasMap.set(complexTypeObj, aliasMap);
         // Inherit the name from elementObj
         complexTypeObj.attributes = complexTypeObj.attributes || ({} as any);
-        complexTypeObj.attributes.name = complexTypeObj.attributes.name || elementObj.attributes.name;
+        complexTypeObj.attributes.name =
+          complexTypeObj.attributes.name || elementObj.attributes.name;
         const outputTC = this.getOutputTypeForComplexType(complexTypeObj, namespace);
         return outputTC;
       }
@@ -776,15 +840,21 @@ export class SOAPLoader {
       const prefix = this.namespaceTypePrefixMap.get(complexTypeNamespace);
       const aliasMap = this.aliasMap.get(complexType);
       const fieldMap: Record<string, ObjectTypeComposerFieldConfigDefinition<any, any>> = {};
-      const choiceOrSequenceObjects = [...(complexType.sequence || []), ...(complexType.choice || [])];
+      const choiceOrSequenceObjects = [
+        ...(complexType.sequence || []),
+        ...(complexType.choice || []),
+      ];
       for (const choiceOrSequenceObj of choiceOrSequenceObjects) {
         if (choiceOrSequenceObj.element) {
           for (const elementObj of choiceOrSequenceObj.element) {
             const fieldName = elementObj.attributes.name;
             if (fieldName) {
-              const maxOccurs = choiceOrSequenceObj.attributes?.maxOccurs || elementObj.attributes?.maxOccurs;
-              const minOccurs = choiceOrSequenceObj.attributes?.minOccurs || elementObj.attributes?.minOccurs;
-              const nillable = choiceOrSequenceObj.attributes?.nillable || elementObj.attributes?.nillable;
+              const maxOccurs =
+                choiceOrSequenceObj.attributes?.maxOccurs || elementObj.attributes?.maxOccurs;
+              const minOccurs =
+                choiceOrSequenceObj.attributes?.minOccurs || elementObj.attributes?.minOccurs;
+              const nillable =
+                choiceOrSequenceObj.attributes?.nillable || elementObj.attributes?.nillable;
               const isPlural = maxOccurs != null && maxOccurs !== '1';
               let isNullable = false;
               if (minOccurs == null || minOccurs === '0') {
@@ -801,7 +871,7 @@ export class SOAPLoader {
                   let outputTC: AnyTypeComposer<any> = this.getOutputFieldTypeFromElement(
                     elementObj,
                     aliasMap,
-                    complexTypeNamespace
+                    complexTypeNamespace,
                   );
                   if (isPlural) {
                     outputTC = outputTC.getTypePlural();
@@ -843,14 +913,15 @@ export class SOAPLoader {
           for (const extensionObj of complexContentObj.extension) {
             const [baseTypeNamespaceAlias, baseTypeName] = extensionObj.attributes.base.split(':');
             const baseTypeNamespace =
-              aliasMap.get(baseTypeNamespaceAlias) || extensionObj.attributes[baseTypeNamespaceAlias];
+              aliasMap.get(baseTypeNamespaceAlias) ||
+              extensionObj.attributes[baseTypeNamespaceAlias];
             if (!baseTypeNamespace) {
               throw new Error(`Namespace alias: ${baseTypeNamespaceAlias} is undefined!`);
             }
             const baseType = this.getNamespaceComplexTypeMap(baseTypeNamespace)?.get(baseTypeName);
             if (!baseType) {
               throw new Error(
-                `Complex Type: ${baseTypeName} couldn't be found in ${baseTypeNamespace} needed for ${complexTypeName}`
+                `Complex Type: ${baseTypeName} couldn't be found in ${baseTypeNamespace} needed for ${complexTypeName}`,
               );
             }
             const baseTypeTC = this.getOutputTypeForComplexType(baseType, baseTypeNamespace);
@@ -859,13 +930,19 @@ export class SOAPLoader {
                 fieldMap[fieldName] = baseTypeTC.getField(fieldName);
               }
             }
-            const choiceOrSequenceObjects = [...(extensionObj.sequence || []), ...(extensionObj.choice || [])];
+            const choiceOrSequenceObjects = [
+              ...(extensionObj.sequence || []),
+              ...(extensionObj.choice || []),
+            ];
             for (const choiceOrSequenceObj of choiceOrSequenceObjects) {
               for (const elementObj of choiceOrSequenceObj.element) {
                 const fieldName = elementObj.attributes.name;
-                const maxOccurs = choiceOrSequenceObj.attributes?.maxOccurs || elementObj.attributes?.maxOccurs;
-                const minOccurs = choiceOrSequenceObj.attributes?.minOccurs || elementObj.attributes?.minOccurs;
-                const nillable = choiceOrSequenceObj.attributes?.nillable || elementObj.attributes?.nillable;
+                const maxOccurs =
+                  choiceOrSequenceObj.attributes?.maxOccurs || elementObj.attributes?.maxOccurs;
+                const minOccurs =
+                  choiceOrSequenceObj.attributes?.minOccurs || elementObj.attributes?.minOccurs;
+                const nillable =
+                  choiceOrSequenceObj.attributes?.nillable || elementObj.attributes?.nillable;
                 const isPlural = maxOccurs != null && maxOccurs !== '1';
                 let isNullable = false;
                 if (minOccurs == null || minOccurs === '0') {
@@ -882,7 +959,7 @@ export class SOAPLoader {
                     let outputTC: AnyTypeComposer<any> = this.getOutputFieldTypeFromElement(
                       elementObj,
                       aliasMap,
-                      complexTypeNamespace
+                      complexTypeNamespace,
                     );
                     if (isPlural) {
                       outputTC = outputTC.getTypePlural();
@@ -911,7 +988,13 @@ export class SOAPLoader {
     return complexTypeTC;
   }
 
-  getOutputTypeForTypeNameInNamespace({ typeName, typeNamespace }: { typeName: string; typeNamespace: string }) {
+  getOutputTypeForTypeNameInNamespace({
+    typeName,
+    typeNamespace,
+  }: {
+    typeName: string;
+    typeNamespace: string;
+  }) {
     const complexType = this.getNamespaceComplexTypeMap(typeNamespace)?.get(typeName);
     if (complexType) {
       return this.getOutputTypeForComplexType(complexType, typeNamespace);

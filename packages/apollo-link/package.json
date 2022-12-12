@@ -1,43 +1,54 @@
 {
   "name": "@graphql-mesh/apollo-link",
-  "version": "8.0.7",
-  "license": "MIT",
+  "version": "10.0.1",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
     "directory": "packages/apollo-link"
   },
-  "sideEffects": false,
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
+  "license": "MIT",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
   "exports": {
     ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
     },
-    "./*": {
-      "require": "./dist/*.js",
-      "import": "./dist/*.mjs"
-    }
+    "./package.json": "./package.json"
+  },
+  "typings": "dist/typings/index.d.ts",
+  "peerDependencies": {
+    "@apollo/client": "^3.5.9",
+    "@graphql-mesh/runtime": "^0.46.2",
+    "graphql": "^15.2.0 || ^16.0.0"
   },
   "dependencies": {
-    "@graphql-tools/utils": "9.1.1",
+    "@graphql-tools/utils": "9.1.3",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@apollo/client": "3.7.1"
-  },
-  "peerDependencies": {
-    "@graphql-mesh/runtime": "^0.44.32",
-    "graphql": "^15.2.0 || ^16.0.0",
-    "@apollo/client": "^3.5.9"
+    "@apollo/client": "3.7.2"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "bob": {
+    "check": false
+  },
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
   }
 }

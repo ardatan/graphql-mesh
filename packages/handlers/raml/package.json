@@ -1,46 +1,55 @@
 {
   "name": "@graphql-mesh/raml",
-  "version": "0.8.35",
-  "sideEffects": false,
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
-  "exports": {
-    ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
-    },
-    "./*": {
-      "require": "./dist/*.js",
-      "import": "./dist/*.mjs"
-    }
-  },
-  "license": "MIT",
+  "version": "0.10.4",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
     "directory": "packages/handlers/raml"
   },
+  "license": "MIT",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/store": "0.8.63",
-    "@graphql-mesh/types": "0.86.0",
-    "@omnigraph/raml": "0.7.41",
-    "@graphql-mesh/utils": "0.42.7",
+    "@graphql-mesh/store": "0.9.3",
+    "@graphql-mesh/types": "0.89.2",
+    "@graphql-mesh/utils": "0.43.3",
+    "@graphql-tools/utils": "9.1.3",
+    "@omnigraph/raml": "0.9.4",
     "tslib": "^2.4.0"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
   },
+  "sideEffects": false,
   "buildOptions": {
     "external": [
       "cross-fetch"
     ]
+  },
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
   }
 }

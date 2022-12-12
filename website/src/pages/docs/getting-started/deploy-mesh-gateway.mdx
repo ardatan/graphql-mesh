@@ -56,6 +56,12 @@ For this reason, we will add a `prebuild` step:
 }
 ```
 
+Then, we have to update Mesh configuration to let Mesh know the actual endpoint;
+```yaml filename=".meshrc.yml"
+serve:
+  endpoint: /api/graphql # This is the actual endpoint to the API route
+```
+
 Now, let's integrate our Mesh Gateway in a Next.js API Routes:
 
 ```ts filename="website/src/pages/api/graphql/index.ts"
@@ -79,7 +85,7 @@ const app = createBuiltMeshHTTPHandler()
 
 export const handler: Handler = configure({
   // Pass Mesh HTTP handler as app
-  app,
+  app
 })
 ```
 
@@ -97,15 +103,43 @@ self.addEventListener('fetch', createBuiltMeshHTTPHandler())
 ```
 
 You can see the following examples for more details:
+
 - [Response Caching on a REST API](https://github.com/Urigo/graphql-mesh/tree/master/examples/cloudflare-workers)
 - [Response Caching on a GraphQL API](https://github.com/Urigo/graphql-mesh/tree/master/examples/spacex-cfw)
 
-Also you can see how to setup *KV* as a cache storage in GraphQL Mesh [here](/docs/cache/cfwkv).
+Also you can see how to setup *KV* as a cache storage in GraphQL Mesh [here](/docs/cache/cfwKv).
 
 ### Deploy Mesh on Apache OpenWhisk
 
 You can see our example that shows how to setup an OpenWhisk action for GraphQL Mesh.
 [OpenWhisk Example](https://github.com/Urigo/graphql-mesh/tree/master/examples/openwhisk-example)
+
+### Deploy Mesh on GCP Cloud Functions
+Similarly to regular and Vercel deployment, we will need to add the `mesh build` command in the build step.
+
+Then assuming that your function's name is `mesh`;
+```ts filename="index.ts"
+import type { IncomingMessage, ServerResponse } from 'node:http';
+import { createBuiltMeshHTTPHandler } from './.mesh';
+
+const meshHTTP = createBuiltMeshHTTPHandler();
+
+export function mesh(req: IncomingMessage, res: ServerResponse) {
+  // GCP doesn't expose the full path so we need to patch it
+  req.url = '/mesh' + req.url;
+  return meshHTTP(req, res);
+}
+```
+
+We need to configure Mesh CLI to generate artifacts for the function's path;
+
+```yaml filename=".meshrc.yml"
+serve:
+  endpoint: /mesh # This is the actual endpoint to the GCP function
+```
+
+You can see our example that shows how to setup a Cloud Function for GraphQL Mesh.
+[Cloud Functions Example](https://github.com/Urigo/graphql-mesh/tree/master/examples/gcp-functions)
 
 ## Deploy on Node.js
 
@@ -138,7 +172,7 @@ app.route({
     // Second parameter adds Fastify's `req` and `reply` to the GraphQL Context
     const response = await meshHttp.handleNodeRequest(req, {
       req,
-      reply,
+      reply
     })
     response.headers.forEach((value, key) => {
       reply.header(key, value)
@@ -149,7 +183,7 @@ app.route({
     reply.send(response.body)
 
     return reply
-  },
+  }
 })
 ```
 
@@ -175,7 +209,7 @@ import { createBuiltMeshHTTPHandler } from './.mesh'
 const app = new Koa()
 
 const meshHttp = createBuiltMeshHTTPHandler()
-app.use(async (ctx) => {
+app.use(async ctx => {
   // Second parameter adds Koa's context into GraphQL Context
   const response = await meshHttp.handleNodeRequest(ctx.req, ctx)
 
@@ -201,10 +235,7 @@ import { createBuiltMeshHTTPHandler } from './.mesh'
 
 const meshHttp = createBuiltMeshHTTPHandler()
 
-export {
-  meshHttp as get,
-  meshHttp as post,
-}
+export { meshHttp as get, meshHttp as post }
 ```
 
 ## Mesh and Docker

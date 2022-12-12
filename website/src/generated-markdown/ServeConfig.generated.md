@@ -25,8 +25,6 @@ If this is provided, Mesh will be served via HTTPS:
 This feature can be disabled by passing `false` One of: 
   * `String`
   * `Boolean`
-* `customServerHandler` (type: `String`) - If you want to use a custom GraphQL server, you can pass the path of the code file that exports a custom Mesh Server Handler
-With a custom server handler, you won't be able to use the features of GraphQL Mesh HTTP Server
 * `playgroundTitle` (type: `String`) - Title of GraphiQL Playground
 * `trustProxy` (type: `String`) - Configure Express Proxy Handling
 [Learn more](https://expressjs.com/en/guide/behind-proxies.html)

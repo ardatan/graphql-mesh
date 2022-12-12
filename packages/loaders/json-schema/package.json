@@ -1,59 +1,67 @@
 {
   "name": "@omnigraph/json-schema",
-  "version": "0.36.8",
-  "sideEffects": false,
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
-  "exports": {
-    ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
-    },
-    "./*": {
-      "require": "./dist/*.js",
-      "import": "./dist/*.mjs"
-    }
-  },
-  "license": "MIT",
+  "version": "0.38.4",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
     "directory": "packages/loaders/json-schema"
   },
+  "license": "MIT",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "graphql": "*"
   },
-  "devDependencies": {
-    "@types/to-json-schema": "0.2.1",
-    "@types/url-join": "4.0.1",
-    "@types/qs": "6.9.7"
-  },
   "dependencies": {
+    "@graphql-mesh/cross-helpers": "0.3.0",
+    "@graphql-mesh/string-interpolation": "0.4.1",
+    "@graphql-mesh/types": "0.89.2",
+    "@graphql-mesh/utils": "0.43.3",
+    "@graphql-tools/utils": "9.1.3",
+    "@json-schema-tools/meta-schema": "1.7.0",
     "@whatwg-node/fetch": "^0.5.0",
-    "json-machete": "0.16.3",
-    "@graphql-mesh/types": "0.86.0",
-    "@graphql-mesh/string-interpolation": "0.3.3",
-    "@graphql-mesh/utils": "0.42.7",
-    "@graphql-tools/utils": "9.1.1",
-    "to-json-schema": "0.2.5",
-    "graphql-compose": "9.0.10",
-    "graphql-scalars": "1.20.1",
     "ajv": "8.11.2",
     "ajv-formats": "2.1.1",
-    "url-join": "4.0.1",
-    "qs": "6.11.0",
-    "pascal-case": "3.1.2",
+    "graphql-compose": "9.0.10",
+    "graphql-scalars": "1.20.1",
+    "json-machete": "0.18.2",
     "lodash.set": "4.3.2",
+    "pascal-case": "3.1.2",
+    "qs": "6.11.0",
+    "to-json-schema": "0.2.5",
     "tslib": "^2.4.0",
-    "@graphql-mesh/cross-helpers": "0.2.10",
-    "@json-schema-tools/meta-schema": "1.7.0"
+    "url-join": "4.0.1"
+  },
+  "devDependencies": {
+    "@types/qs": "6.9.7",
+    "@types/to-json-schema": "0.2.1",
+    "@types/url-join": "4.0.1"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
   }
 }

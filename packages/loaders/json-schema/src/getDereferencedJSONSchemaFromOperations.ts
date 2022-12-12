@@ -1,5 +1,5 @@
-import { JSONSchemaOperationConfig } from './types';
-import { getReferencedJSONSchemaFromOperations } from './getReferencedJSONSchemaFromOperations';
+import { JSONSchemaOperationConfig } from './types.js';
+import { getReferencedJSONSchemaFromOperations } from './getReferencedJSONSchemaFromOperations.js';
 import { dereferenceObject, healJSONSchema, JSONSchemaObject } from 'json-machete';
 import { Logger } from '@graphql-mesh/types';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
@@ -12,7 +12,7 @@ export async function getDereferencedJSONSchemaFromOperations({
   fetchFn,
   schemaHeaders,
   ignoreErrorResponses,
-  baseUrl,
+  endpoint,
   operationHeaders,
   queryParams,
 }: {
@@ -22,7 +22,7 @@ export async function getDereferencedJSONSchemaFromOperations({
   fetchFn: WindowOrWorkerGlobalScope['fetch'];
   schemaHeaders?: Record<string, string>;
   ignoreErrorResponses?: boolean;
-  baseUrl: string;
+  endpoint: string;
   operationHeaders: Record<string, string>;
   queryParams: Record<string, string | number | boolean>;
 }): Promise<JSONSchemaObject> {
@@ -32,7 +32,7 @@ export async function getDereferencedJSONSchemaFromOperations({
     schemaHeaders,
     ignoreErrorResponses,
     fetchFn,
-    baseUrl,
+    endpoint,
     operationHeaders,
     queryParams,
   });

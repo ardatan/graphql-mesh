@@ -1,16 +1,9 @@
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Headers } from '@whatwg-node/fetch';
 import { execute, parse } from 'graphql';
-import loadGraphQLSchemaFromOpenAPI, { createBundle } from '../src';
+import loadGraphQLSchemaFromOpenAPI from '../src/index.js';
 
 describe('Basket', () => {
-  it('should generate the correct bundle', async () => {
-    const bundle = await createBundle('basket', {
-      source: './fixtures/basket.json',
-      cwd: __dirname,
-    });
-    expect(bundle).toMatchSnapshot();
-  });
   it('should generate the correct schema', async () => {
     const schema = await loadGraphQLSchemaFromOpenAPI('basket', {
       source: './fixtures/basket.json',
@@ -33,7 +26,7 @@ describe('Basket', () => {
         return new Response(
           JSON.stringify({
             random: 2,
-          })
+          }),
         );
       },
     });

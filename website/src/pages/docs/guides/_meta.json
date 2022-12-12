@@ -6,6 +6,7 @@
   "auth0": "Authentication with Auth0",
   "subscriptions-webhooks": "Subscriptions & Webhooks",
   "file-uploads": "File Uploads",
+  "hive": "Integration with Hive",
   "graphql-code-generator": "Configure GraphQL Code Generator",
   "mesh-sdk": "Programmatic Usage / SDK"
 }

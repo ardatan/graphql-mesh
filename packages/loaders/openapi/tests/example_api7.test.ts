@@ -5,8 +5,8 @@ import { createServer, Server } from 'http';
 import { AbortController, fetch } from '@whatwg-node/fetch';
 import { GraphQLSchema } from 'graphql';
 
-import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
-import { startServer, stopServer, pubsub } from './example_api7_server';
+import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
+import { startServer, stopServer, pubsub } from './example_api7_server.js';
 import { AddressInfo } from 'net';
 
 let createdSchema: GraphQLSchema;
@@ -24,7 +24,7 @@ describe('OpenAPI Loader: example_api7', () => {
 
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api7', {
       fetch,
-      baseUrl: `http://127.0.0.1:${apiPort}/api`,
+      endpoint: `http://127.0.0.1:${apiPort}/api`,
       source: './fixtures/example_oas7.json',
       cwd: __dirname,
       pubsub,
@@ -70,8 +70,8 @@ describe('OpenAPI Loader: example_api7', () => {
         }
       }
     `;
-    const baseUrl = `http://127.0.0.1:${graphqlPort}/graphql`;
-    const url = new URL(baseUrl);
+    const endpoint = `http://127.0.0.1:${graphqlPort}/graphql`;
+    const url = new URL(endpoint);
 
     url.searchParams.append('query', subscriptionOperation);
     url.searchParams.append(
@@ -79,11 +79,11 @@ describe('OpenAPI Loader: example_api7', () => {
       JSON.stringify({
         method: 'POST',
         userName,
-      })
+      }),
     );
 
     setTimeout(async () => {
-      const response = await fetch(baseUrl, {
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -123,7 +123,7 @@ describe('OpenAPI Loader: example_api7', () => {
               status: false,
             },
           },
-        })}`
+        })}`,
       );
       break;
     }

@@ -1,5 +1,5 @@
 import { JSONSchema, JSONSchemaObject } from '@json-schema-tools/meta-schema';
-import { healJSONSchema } from '../src/healJSONSchema';
+import { healJSONSchema } from '../src/healJSONSchema.js';
 
 describe('healJSONSchema', () => {
   it('should add titles for non-primitive definitions if missing', async () => {

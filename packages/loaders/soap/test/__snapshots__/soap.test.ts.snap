@@ -6,7 +6,7 @@ exports[`SOAP Loader should generate the schema correctly 1`] = `
   mutation: Mutation
 }
 
-directive @soap(elementName: String, bindingNamespace: String, baseUrl: String) on FIELD_DEFINITION
+directive @soap(elementName: String, bindingNamespace: String, endpoint: String) on FIELD_DEFINITION
 
 type Query {
   placeholder: Void
@@ -16,12 +16,12 @@ type Query {
 scalar Void
 
 type Mutation {
-  tns_TempConvert_TempConvertSoap_FahrenheitToCelsius(FahrenheitToCelsius: tns_FahrenheitToCelsius_Input): tns_FahrenheitToCelsiusResponse @soap(elementName: "FahrenheitToCelsiusResponse", bindingNamespace: "https://www.w3schools.com/xml/", baseUrl: "http://www.w3schools.com/xml/tempconvert.asmx")
-  tns_TempConvert_TempConvertSoap_CelsiusToFahrenheit(CelsiusToFahrenheit: tns_CelsiusToFahrenheit_Input): tns_CelsiusToFahrenheitResponse @soap(elementName: "CelsiusToFahrenheitResponse", bindingNamespace: "https://www.w3schools.com/xml/", baseUrl: "http://www.w3schools.com/xml/tempconvert.asmx")
-  tns_TempConvert_TempConvertSoap12_FahrenheitToCelsius(FahrenheitToCelsius: tns_FahrenheitToCelsius_Input): tns_FahrenheitToCelsiusResponse @soap(elementName: "FahrenheitToCelsiusResponse", bindingNamespace: "https://www.w3schools.com/xml/", baseUrl: "http://www.w3schools.com/xml/tempconvert.asmx")
-  tns_TempConvert_TempConvertSoap12_CelsiusToFahrenheit(CelsiusToFahrenheit: tns_CelsiusToFahrenheit_Input): tns_CelsiusToFahrenheitResponse @soap(elementName: "CelsiusToFahrenheitResponse", bindingNamespace: "https://www.w3schools.com/xml/", baseUrl: "http://www.w3schools.com/xml/tempconvert.asmx")
-  tns_TempConvert_TempConvertHttpPost_FahrenheitToCelsius(Fahrenheit: String = ""): String @soap(elementName: "string", bindingNamespace: "https://www.w3schools.com/xml/", baseUrl: "http://www.w3schools.com/xml/tempconvert.asmx")
-  tns_TempConvert_TempConvertHttpPost_CelsiusToFahrenheit(Celsius: String = ""): String @soap(elementName: "string", bindingNamespace: "https://www.w3schools.com/xml/", baseUrl: "http://www.w3schools.com/xml/tempconvert.asmx")
+  tns_TempConvert_TempConvertSoap_FahrenheitToCelsius(FahrenheitToCelsius: tns_FahrenheitToCelsius_Input): tns_FahrenheitToCelsiusResponse @soap(elementName: "FahrenheitToCelsiusResponse", bindingNamespace: "https://www.w3schools.com/xml/", endpoint: "http://www.w3schools.com/xml/tempconvert.asmx")
+  tns_TempConvert_TempConvertSoap_CelsiusToFahrenheit(CelsiusToFahrenheit: tns_CelsiusToFahrenheit_Input): tns_CelsiusToFahrenheitResponse @soap(elementName: "CelsiusToFahrenheitResponse", bindingNamespace: "https://www.w3schools.com/xml/", endpoint: "http://www.w3schools.com/xml/tempconvert.asmx")
+  tns_TempConvert_TempConvertSoap12_FahrenheitToCelsius(FahrenheitToCelsius: tns_FahrenheitToCelsius_Input): tns_FahrenheitToCelsiusResponse @soap(elementName: "FahrenheitToCelsiusResponse", bindingNamespace: "https://www.w3schools.com/xml/", endpoint: "http://www.w3schools.com/xml/tempconvert.asmx")
+  tns_TempConvert_TempConvertSoap12_CelsiusToFahrenheit(CelsiusToFahrenheit: tns_CelsiusToFahrenheit_Input): tns_CelsiusToFahrenheitResponse @soap(elementName: "CelsiusToFahrenheitResponse", bindingNamespace: "https://www.w3schools.com/xml/", endpoint: "http://www.w3schools.com/xml/tempconvert.asmx")
+  tns_TempConvert_TempConvertHttpPost_FahrenheitToCelsius(Fahrenheit: String = ""): String @soap(elementName: "string", bindingNamespace: "https://www.w3schools.com/xml/", endpoint: "http://www.w3schools.com/xml/tempconvert.asmx")
+  tns_TempConvert_TempConvertHttpPost_CelsiusToFahrenheit(Celsius: String = ""): String @soap(elementName: "string", bindingNamespace: "https://www.w3schools.com/xml/", endpoint: "http://www.w3schools.com/xml/tempconvert.asmx")
 }
 
 type tns_FahrenheitToCelsiusResponse {

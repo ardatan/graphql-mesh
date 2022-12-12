@@ -67,10 +67,10 @@
         "description": "A user represents a natural person",
         "properties": {
           "traits": {
-              "type": "object",
-              "additionalProperties": {
-                  "$ref": "#/components/schemas/trait"
-              }
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/trait"
+            }
           }
         }
       },

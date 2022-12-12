@@ -1,0 +1,5 @@
+sources:
+  - name: Authors
+    handler:
+      openapi:
+        source: ./openapi.yaml

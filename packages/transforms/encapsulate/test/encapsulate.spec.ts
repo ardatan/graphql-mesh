@@ -1,8 +1,8 @@
-import Transform from '../src/index';
+import Transform from '../src/index.js';
 import { execute, parse, getIntrospectionQuery } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
-import { PubSub } from '@graphql-mesh/utils';
+import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
@@ -53,6 +53,7 @@ describe('encapsulate', () => {
           baseDir,
           apiName: 'test',
           importFn,
+          logger: new DefaultLogger(),
         }),
       ],
     });
@@ -73,13 +74,16 @@ describe('encapsulate', () => {
           baseDir,
           apiName: 'test',
           importFn,
+          logger: new DefaultLogger(),
         }),
       ],
     });
 
     expect(newSchema.getSubscriptionType().getFields().test).toBeDefined();
     expect(newSchema.getSubscriptionType().getFields().getSomething).not.toBeDefined();
-    expect(newSchema.getSubscriptionType().getFields().test.type.toString()).toBe('testSubscription!');
+    expect(newSchema.getSubscriptionType().getFields().test.type.toString()).toBe(
+      'testSubscription!',
+    );
   });
 
   it('should wrap the schema and group Query correctly', async () => {
@@ -93,6 +97,7 @@ describe('encapsulate', () => {
           baseDir,
           apiName: 'test',
           importFn,
+          logger: new DefaultLogger(),
         }),
       ],
     });
@@ -119,6 +124,7 @@ describe('encapsulate', () => {
           baseDir,
           apiName: 'test',
           importFn,
+          logger: new DefaultLogger(),
         }),
       ],
     });
@@ -148,6 +154,7 @@ describe('encapsulate', () => {
           baseDir,
           apiName: 'test',
           importFn,
+          logger: new DefaultLogger(),
         }),
       ],
     });
@@ -185,6 +192,7 @@ describe('encapsulate', () => {
           baseDir,
           apiName: 'test',
           importFn,
+          logger: new DefaultLogger(),
         }),
       ],
     });

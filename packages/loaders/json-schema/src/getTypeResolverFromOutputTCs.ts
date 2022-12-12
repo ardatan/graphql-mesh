@@ -1,59 +1,43 @@
-import { GraphQLError, GraphQLResolveInfo, GraphQLTypeResolver } from 'graphql';
-import { ObjectTypeComposer, UnionTypeComposer } from 'graphql-compose';
-import Ajv, { ValidateFunction, ErrorObject } from 'ajv';
-import { JSONSchemaObject } from 'json-machete';
-import { TypeComposers } from './getComposerFromJSONSchema';
+import { GraphQLObjectType, GraphQLTypeResolver } from 'graphql';
 import { createGraphQLError } from '@graphql-tools/utils';
 
 export function getTypeResolverFromOutputTCs(
-  ajv: Ajv,
-  outputTypeComposers: (ObjectTypeComposer | UnionTypeComposer)[],
-  subSchemaAndTypeComposers: JSONSchemaObject & TypeComposers,
-  statusCodeOneOfIndexMap?: Record<string, number>
+  possibleTypes: readonly GraphQLObjectType[],
+  discriminatorField?: string,
+  statusCodeTypeNameMap?: Record<string, string>,
 ): GraphQLTypeResolver<any, any> {
-  const statusCodeTypeMap = new Map<string, ObjectTypeComposer | UnionTypeComposer>();
-  for (const statusCode in statusCodeOneOfIndexMap) {
-    statusCodeTypeMap.set(statusCode.toString(), outputTypeComposers[statusCodeOneOfIndexMap[statusCode]]);
-  }
-  const discriminatorField = subSchemaAndTypeComposers.discriminator?.propertyName;
-  return function resolveType(data: any, context: any, info: GraphQLResolveInfo) {
+  return function resolveType(data: any) {
     if (data.__typename) {
       return data.__typename;
     } else if (discriminatorField != null && data[discriminatorField]) {
       return data[discriminatorField];
     }
-    if (data.$statusCode && statusCodeOneOfIndexMap) {
-      const type = statusCodeTypeMap.get(data.$statusCode.toString()) || statusCodeTypeMap.get('default');
-      if (type) {
-        if ('getFields' in type) {
-          return type.getTypeName();
-        } else {
-          return type.getResolveType()(data, context, info, type.getType());
-        }
+    if (data.$statusCode && statusCodeTypeNameMap) {
+      const typeName =
+        statusCodeTypeNameMap[data.$statusCode.toString()] || statusCodeTypeNameMap.default;
+      if (typeName) {
+        return typeName;
       }
     }
-    const validationErrors: Record<string, ErrorObject[]> = {};
+    // const validationErrors: Record<string, ErrorObject[]> = {};
     const dataKeys =
       typeof data === 'object'
         ? Object.keys(data)
             // Remove metadata fields used to pass data
             .filter(property => !property.toString().startsWith('$'))
         : null;
-    const allOutputTypeComposers = outputTypeComposers.flatMap(typeComposer =>
-      'getFields' in typeComposer ? typeComposer : typeComposer.getTypeComposers()
-    );
-    for (const outputTypeComposer of allOutputTypeComposers) {
-      const typeName = outputTypeComposer.getTypeName();
+    for (const possibleType of possibleTypes) {
+      const typeName = possibleType.name;
       if (dataKeys != null) {
-        const typeFields = outputTypeComposer.getFieldNames();
+        const typeFields = Object.keys(possibleType.getFields());
         if (
           dataKeys.length <= typeFields.length &&
           dataKeys.every(property => typeFields.includes(property.toString()))
         ) {
           return typeName;
         }
-      } else {
-        const validateFn = outputTypeComposer.getExtension('validateWithJSONSchema') as ValidateFunction;
+      } /* else {
+        const validateFn = possibleType.extensions.validateWithJSONSchema as ValidateFunction;
         if (validateFn) {
           const isValid = validateFn(data);
           if (isValid) {
@@ -61,7 +45,7 @@ export function getTypeResolverFromOutputTCs(
           }
           validationErrors[typeName] = ajv.errors || validateFn.errors;
         }
-      }
+      } */
     }
     if (data.$response) {
       const error = createGraphQLError(`HTTP Error: ${data.$statusCode}`, {
@@ -79,9 +63,11 @@ export function getTypeResolverFromOutputTCs(
       });
       return error;
     }
+    /*
     const error = new GraphQLError(`Received data doesn't met the union`, null, null, null, null, null, {
       validationErrors,
     });
     return error;
+    */
   };
 }

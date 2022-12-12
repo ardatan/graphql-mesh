@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`additionalProperties should generate the schema correctly: schema 1`] = `
+"schema {
+  query: Query
+}
+
+directive @dictionary on FIELD_DEFINITION
+
+directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+
+directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+
+type Query @globalOptions(sourceName: "additionalPropertiesTest", endpoint: "http://localhost:3000") {
+  test: test_200_response @httpOperation(path: "/test", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+}
+
+type test_200_response {
+  id: String
+  foo: query_test_foo
+  qux: query_test_qux
+}
+
+type query_test_foo {
+  bar: String
+}
+
+type query_test_qux {
+  quux: String
+  additionalProperties: [query_test_qux_additionalProperties_entry] @dictionary
+}
+
+type query_test_qux_additionalProperties_entry {
+  key: ID!
+  value: query_test_qux_additionalProperties
+}
+
+type query_test_qux_additionalProperties {
+  corge: String
+}
+
+scalar ObjMap
+
+enum HTTPMethod {
+  GET
+  HEAD
+  POST
+  PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
+  PATCH
+}"
+`;

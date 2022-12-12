@@ -1,88 +1,98 @@
 {
   "name": "@graphql-mesh/cli",
-  "version": "0.79.5",
-  "license": "MIT",
+  "version": "0.82.5",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
     "directory": "packages/cli"
   },
+  "license": "MIT",
+  "bin": {
+    "mesh": "dist/cjs/bin.js",
+    "gql-mesh": "dist/cjs/bin.js",
+    "graphql-mesh": "dist/cjs/bin.js",
+    "graphql-mesh-esm": "dist/esm/bin.js"
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "graphql": "*"
   },
-  "bin": {
-    "mesh": "dist/bin.js",
-    "gql-mesh": "dist/bin.js",
-    "graphql-mesh": "dist/bin.js"
-  },
-  "sideEffects": false,
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
-  "exports": {
-    ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
-    },
-    "./*": {
-      "require": "./dist/*.js",
-      "import": "./dist/*.mjs"
-    }
-  },
-  "buildOptions": {
-    "bin": {
-      "graphql-mesh": {
-        "input": "src/bin.ts"
-      }
-    }
-  },
   "dependencies": {
-    "ajv": "8.11.2",
-    "cosmiconfig": "7.1.0",
-    "@graphql-codegen/core": "2.6.6",
-    "@graphql-codegen/typescript": "2.8.2",
+    "@graphql-codegen/core": "2.6.8",
+    "@graphql-codegen/typed-document-node": "2.3.10",
+    "@graphql-codegen/typescript": "2.8.5",
     "@graphql-codegen/typescript-generic-sdk": "3.0.4",
-    "@graphql-codegen/typescript-operations": "2.5.7",
-    "@graphql-codegen/typed-document-node": "2.3.7",
-    "@graphql-mesh/config": "8.0.32",
-    "@graphql-codegen/typescript-resolvers": "2.7.7",
-    "@graphql-mesh/cross-helpers": "0.2.10",
-    "@graphql-mesh/runtime": "0.44.33",
-    "@graphql-mesh/utils": "0.42.7",
-    "@graphql-mesh/store": "0.8.63",
-    "@graphql-mesh/types": "0.86.0",
-    "@graphql-mesh/http": "0.2.14",
-    "@graphql-tools/utils": "9.1.1",
-    "dotenv": "16.0.3",
+    "@graphql-codegen/typescript-operations": "2.5.10",
+    "@graphql-codegen/typescript-resolvers": "2.7.10",
+    "@graphql-mesh/config": "10.0.3",
+    "@graphql-mesh/cross-helpers": "0.3.0",
+    "@graphql-mesh/http": "0.3.3",
+    "@graphql-mesh/runtime": "0.46.2",
+    "@graphql-mesh/store": "0.9.3",
+    "@graphql-mesh/types": "0.89.2",
+    "@graphql-mesh/utils": "0.43.3",
+    "@graphql-tools/utils": "9.1.3",
+    "ajv": "8.11.2",
+    "change-case": "4.1.2",
+    "cosmiconfig": "8.0.0",
     "dnscache": "1.0.2",
+    "dotenv": "16.0.3",
     "graphql-import-node": "0.0.5",
     "graphql-ws": "5.11.2",
-    "change-case": "4.1.2",
     "json-bigint-patch": "0.0.8",
     "json5": "2.2.1",
     "mkdirp": "1.0.4",
     "open": "7.4.2",
     "pascal-case": "3.1.2",
     "rimraf": "3.0.2",
-    "yargs": "17.6.2",
-    "typescript": "4.9.3",
     "ts-node": "10.9.1",
-    "tsconfig-paths": "4.1.0",
+    "tsconfig-paths": "4.1.1",
+    "tslib": "^2.4.0",
+    "typescript": "4.9.4",
     "ws": "8.11.0",
-    "tslib": "^2.4.0"
+    "yargs": "17.6.2"
   },
   "devDependencies": {
+    "@types/lodash.get": "4.4.7",
     "@types/mkdirp": "1.0.2",
-    "@types/yargs": "17.0.13",
-    "@types/ws": "8.5.3",
     "@types/rimraf": "3.0.2",
-    "@types/lodash.get": "4.4.7"
+    "@types/ws": "8.5.3",
+    "@types/yargs": "17.0.17"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "buildOptions": {
+    "bin": {
+      "graphql-mesh": {
+        "input": "src/bin.ts"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
   }
 }

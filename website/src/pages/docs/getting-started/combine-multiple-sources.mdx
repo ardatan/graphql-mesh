@@ -73,13 +73,13 @@ sources:
   - name: Books
     handler:
       openapi:
-        baseUrl: http://localhost:3002/
+        endpoint: http://localhost:3002/
         source: ../books-service/openapi3-definition.json
   - name: Authors
     handler:
       grpc:
         endpoint: localhost:3003
-        protoFilePath: ../authors-service/proto/authors/v1/authors_service.proto
+        source: ../authors-service/proto/authors/v1/authors_service.proto
 ```
 
 Similar to the "Books" API configuration, we just need to provide the path to the service definition file (here, a Proto file) and the base URL.
@@ -97,13 +97,13 @@ sources:
   - name: Books
     handler:
       openapi:
-        baseUrl: http://localhost:3002/
+        endpoint: http://localhost:3002/
         source: ../books-service/openapi3-definition.json
   - name: Authors
     handler:
       grpc:
         endpoint: localhost:3003
-        protoFilePath: ../authors-service/proto/authors/v1/authors_service.proto
+        source: ../authors-service/proto/authors/v1/authors_service.proto
   - name: Stores
     handler:
       graphql:
@@ -121,13 +121,13 @@ sources:
   - name: Books
     handler:
       openapi:
-        baseUrl: http://localhost:3002/
+        endpoint: http://localhost:3002/
         source: ../books-service/openapi3-definition.json
   - name: Authors
     handler:
       grpc:
         endpoint: localhost:3003
-        protoFilePath: ../authors-service/proto/authors/v1/authors_service.proto
+        source: ../authors-service/proto/authors/v1/authors_service.proto
   - name: Stores
     handler:
       graphql:
@@ -203,13 +203,13 @@ sources:
   - name: Books
     handler:
       openapi:
-        baseUrl: http://localhost:3002/
+        endpoint: http://localhost:3002/
         source: ../books-service/openapi3-definition.json
   - name: Authors
     handler:
       grpc:
         endpoint: localhost:3003
-        protoFilePath: ../authors-service/proto/authors/v1/authors_service.proto
+        source: ../authors-service/proto/authors/v1/authors_service.proto
   - name: Stores
     handler:
       graphql:

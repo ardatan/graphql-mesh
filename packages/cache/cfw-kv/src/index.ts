@@ -11,7 +11,7 @@ export default class CFWorkerKVCache implements KeyValueCache {
     }
   }
 
-  get<T>(key: string): Promise<T | undefined> {
+  async get<T>(key: string): Promise<T | undefined> {
     return this.kvNamespace?.get(key, 'json');
   }
 
@@ -27,13 +27,13 @@ export default class CFWorkerKVCache implements KeyValueCache {
     return result.keys.map(keyEntry => keyEntry.name);
   }
 
-  set(key: string, value: any, options?: { ttl?: number }): Promise<void> {
+  async set(key: string, value: any, options?: { ttl?: number }): Promise<void> {
     return this.kvNamespace?.put(key, JSON.stringify(value), {
       expirationTtl: options?.ttl,
     });
   }
 
-  delete(key: string): Promise<void> {
+  async delete(key: string): Promise<void> {
     return this.kvNamespace?.delete(key);
   }
 }

@@ -3,7 +3,6 @@ sources:
     handler:
       grpc:
         endpoint: localhost:50051
-        useReflection: true
 
 documents:
   - example-queries/*.graphql

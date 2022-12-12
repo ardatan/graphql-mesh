@@ -5,14 +5,32 @@ exports[`OpenAPI loader: Empty upstream 404 response should generate the schema 
   query: Query
 }
 
-type Query {
+directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+
+directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+
+type Query @globalOptions(sourceName: "test", endpoint: "http://localhost:{context.port}/api") {
   "Return a user."
-  user: user
+  user: user @httpOperation(path: "/user", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
 }
 
 "A user represents a natural person"
 type user {
   "The legal name of a user"
   name: String
+}
+
+scalar ObjMap
+
+enum HTTPMethod {
+  GET
+  HEAD
+  POST
+  PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
+  PATCH
 }"
 `;

@@ -2,18 +2,21 @@ import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
 import { useNewRelic } from '@envelop/newrelic';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { process } from '@graphql-mesh/cross-helpers';
-import recordExternal from 'newrelic/lib/metrics/recorders/http_external';
-import NAMES from 'newrelic/lib/metrics/names';
-import cat from 'newrelic/lib/util/cat';
+import recordExternal from 'newrelic/lib/metrics/recorders/http_external.js';
+import NAMES from 'newrelic/lib/metrics/names.js';
+import cat from 'newrelic/lib/util/cat.js';
 import { getHeadersObj } from '@graphql-mesh/utils';
-import { shim as instrumentationApi } from 'newrelic';
+import newRelic from 'newrelic';
 
 const EnvelopAttributeName = 'Envelop_NewRelic_Plugin';
 
-export default function useMeshNewrelic(options: MeshPluginOptions<YamlConfig.NewrelicConfig>): MeshPlugin<any> {
+export default function useMeshNewrelic(
+  options: MeshPluginOptions<YamlConfig.NewrelicConfig>,
+): MeshPlugin<any> {
+  const instrumentationApi = newRelic?.shim;
   if (!instrumentationApi?.agent) {
-    options.logger.error(
-      'Agent unavailable. Please check your New Relic Agent configuration and ensure New Relic is enabled.'
+    options.logger.debug(
+      'Agent unavailable. Please check your New Relic Agent configuration and ensure New Relic is enabled.',
     );
     return {};
   }
@@ -38,11 +41,12 @@ export default function useMeshNewrelic(options: MeshPluginOptions<YamlConfig.Ne
                   env: process.env,
                 })
             : undefined,
-        })
+        }),
       );
     },
     onExecute({ args: { contextValue } }) {
-      const operationSegment = instrumentationApi.getActiveSegment() || instrumentationApi.getSegment();
+      const operationSegment =
+        instrumentationApi.getActiveSegment() || instrumentationApi.getSegment();
       segmentByRequestContext.set(contextValue.request || contextValue, operationSegment);
     },
     onDelegate({ sourceName, fieldName, args, context, key }) {
@@ -54,7 +58,7 @@ export default function useMeshNewrelic(options: MeshPluginOptions<YamlConfig.Ne
       const sourceSegment = instrumentationApi.createSegment(
         `source${delimiter}${sourceName || 'unknown'}${delimiter}${fieldName}`,
         null,
-        parentSegment
+        parentSegment,
       );
       if (options.includeResolverArgs) {
         if (args) {
@@ -83,7 +87,7 @@ export default function useMeshNewrelic(options: MeshPluginOptions<YamlConfig.Ne
       const httpDetailSegment = instrumentationApi.createSegment(
         name,
         recordExternal(parsedUrl.host, 'graphql-mesh'),
-        parentSegment
+        parentSegment,
       );
       if (!httpDetailSegment) {
         logger.error(`Unable to create segment for external request: ${name}`);
@@ -122,7 +126,10 @@ export default function useMeshNewrelic(options: MeshPluginOptions<YamlConfig.Ne
         for (const key in responseHeadersObj) {
           httpDetailSegment.addAttribute(`response.headers.${key}`, responseHeadersObj[key]);
         }
-        if (agent.config.cross_application_tracer.enabled && !agent.config.distributed_tracing.enabled) {
+        if (
+          agent.config.cross_application_tracer.enabled &&
+          !agent.config.distributed_tracing.enabled
+        ) {
           try {
             const { appData } = cat.extractCatHeaders(responseHeadersObj);
             const decodedAppData = cat.parseAppData(agent.config, appData);

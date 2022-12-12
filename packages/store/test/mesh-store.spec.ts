@@ -4,7 +4,7 @@ import {
   MeshStore,
   PredefinedProxyOptions,
   ReadonlyStoreError,
-} from '../src';
+} from '../src/index.js';
 
 describe('MeshStore and storage', () => {
   describe('MeshStore', () => {
@@ -54,6 +54,8 @@ describe('MeshStore and storage', () => {
             throw new Error('Validation failed! you changed 1 to 2!');
           }
         },
+        fromJSON: value => value,
+        toJSON: value => value,
       });
 
       try {

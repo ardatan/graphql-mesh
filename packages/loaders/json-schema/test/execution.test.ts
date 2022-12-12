@@ -1,7 +1,7 @@
 import { getHeadersObj } from '@graphql-mesh/utils';
 import { Request, Response } from '@whatwg-node/fetch';
 import { execute, OperationTypeNode, parse } from 'graphql';
-import loadGraphQLSchemaFromJSONSchemas from '../src';
+import loadGraphQLSchemaFromJSONSchemas from '../src/index.js';
 
 describe('Execution', () => {
   it('should not send headers with empty value', async () => {
@@ -19,7 +19,7 @@ describe('Execution', () => {
           },
         });
       },
-      baseUrl: 'http://localhost:3000',
+      endpoint: 'http://localhost:3000',
       operations: [
         {
           type: OperationTypeNode.QUERY,
@@ -98,10 +98,10 @@ describe('Execution', () => {
               headers: {
                 'Content-Type': 'application/json',
               },
-            }
+            },
           );
         },
-        baseUrl: 'http://localhost:3000',
+        endpoint: 'http://localhost:3000',
         operations: [
           {
             type: OperationTypeNode.QUERY,
@@ -161,10 +161,10 @@ describe('Execution', () => {
               headers: {
                 'Content-Type': 'application/json',
               },
-            }
+            },
           );
         },
-        baseUrl: 'http://localhost:3000',
+        endpoint: 'http://localhost:3000',
         queryStringOptions: {
           indices: true,
         },
@@ -205,7 +205,9 @@ describe('Execution', () => {
       expect(result).toEqual({
         data: {
           test: {
-            url: `http://localhost:3000/test?foo${encodeURIComponent('[0]')}=bar&foo${encodeURIComponent('[1]')}=baz`,
+            url: `http://localhost:3000/test?foo${encodeURIComponent(
+              '[0]',
+            )}=bar&foo${encodeURIComponent('[1]')}=baz`,
           },
         },
       });
@@ -227,10 +229,10 @@ describe('Execution', () => {
               headers: {
                 'Content-Type': 'application/json',
               },
-            }
+            },
           );
         },
-        baseUrl: 'http://localhost:3000',
+        endpoint: 'http://localhost:3000',
         queryStringOptions: {
           arrayFormat: 'brackets',
         },
@@ -271,7 +273,9 @@ describe('Execution', () => {
       expect(result).toEqual({
         data: {
           test: {
-            url: `http://localhost:3000/test?foo${encodeURIComponent('[]')}=bar&foo${encodeURIComponent('[]')}=baz`,
+            url: `http://localhost:3000/test?foo${encodeURIComponent(
+              '[]',
+            )}=bar&foo${encodeURIComponent('[]')}=baz`,
           },
         },
       });
@@ -293,10 +297,10 @@ describe('Execution', () => {
               headers: {
                 'Content-Type': 'application/json',
               },
-            }
+            },
           );
         },
-        baseUrl: 'http://localhost:3000',
+        endpoint: 'http://localhost:3000',
         queryStringOptions: {
           arrayFormat: 'brackets',
         },
@@ -361,10 +365,10 @@ describe('Execution', () => {
               headers: {
                 'Content-Type': 'application/json',
               },
-            }
+            },
           );
         },
-        baseUrl: 'http://localhost:3000',
+        endpoint: 'http://localhost:3000',
         operations: [
           {
             type: OperationTypeNode.QUERY,
@@ -419,7 +423,7 @@ describe('Execution', () => {
             },
           });
         },
-        baseUrl: 'http://localhost:3000',
+        endpoint: 'http://localhost:3000',
         operations: [
           {
             type: OperationTypeNode.QUERY,

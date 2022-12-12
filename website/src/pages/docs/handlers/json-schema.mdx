@@ -24,7 +24,7 @@ sources:
   - name: MyApi
     handler:
       jsonSchema:
-        baseUrl: https://some-service-url/endpoint-path/
+        endpoint: https://some-service-url/endpoint-path/
         operations:
           - type: Query
             field: users
@@ -33,42 +33,9 @@ sources:
             responseSchema: ./json-schemas/users.json
 ```
 
-## Dynamic Values
+## Headers
 
-Mesh can take dynamic values from the GraphQL Context or the environmental variables. For example, if you use `mesh dev` or `mesh start`, GraphQL Context will be the incoming HTTP request.
-
-The expression inside dynamic values should be as in JS.
-
-### From Context (HTTP Header for `mesh dev` or `mesh start`)
-
-```yaml filename=".meshrc.yaml" {8}
-sources:
-  - name: MyGraphQLApi
-    handler:
-      jsonSchema:
-        baseUrl: https://some-service-url/endpoint-path/
-        operationHeaders:
-          # Please do not use capital letters while getting the headers
-          Authorization: Bearer {context.headers['x-my-api-token']}
-```
-
-And for `mesh dev` or `mesh start`, you can pass the value using `x-my-graphql-api-token` HTTP header.
-
-### From Environmental Variable
-
-`MY_API_TOKEN` is the name of the environmental variable you have the value.
-
-```yaml filename=".meshrc.yaml" {7}
-sources:
-  - name: MyGraphQLApi
-    handler:
-      jsonSchema:
-        baseUrl: https://some-service-url/endpoint-path/
-        operationHeaders:
-          Authorization: Bearer {env.MY_API_TOKEN}
-          # You can also access to the cookies like below;
-          # Authorization: Bearer {context.cookies.myApiToken}
-```
+[Read about configuration and examples](/docs/guides/headers)
 
 ### From Arguments
 
@@ -79,7 +46,7 @@ sources:
   - name: MyGraphQLApi
     handler:
       jsonSchema:
-        baseUrl: https://some-service-url/endpoint-path/
+        endpoint: https://some-service-url/endpoint-path/
         operations:
           - type: Query
             field: user
@@ -103,7 +70,7 @@ sources:
   - name: MyGraphQLApi
     handler:
       jsonSchema:
-        baseUrl: https://some-service-url/endpoint-path/
+        endpoint: https://some-service-url/endpoint-path/
         operations:
           - type: Query
             field: MyField
@@ -135,7 +102,7 @@ sources:
   - name: MyGraphQLApi
     handler:
       jsonSchema:
-        baseUrl: https://some-service-url/endpoint-path/
+        endpoint: https://some-service-url/endpoint-path/
         operations:
           - type: Query
             field: user
@@ -177,7 +144,7 @@ sources:
   - name: MyGraphQLApi
     handler:
       jsonSchema:
-        baseUrl: https://some-service-url/endpoint-path/
+        endpoint: https://some-service-url/endpoint-path/
         operations:
           - type: Query
             field: users
@@ -208,15 +175,15 @@ sources:
   - name: MyGraphQLApi
     handler:
       jsonSchema:
-        baseUrl: https://some-service-url/endpoint-path/
+        endpoint: https://some-service-url/endpoint-path/
         queryParams:
           limit: 10
           api_key: { env.MY_API_KEY }
 ```
 
 <Callout>
-  Note that `queryParams` are automatically added to the query.
-  If argument is defined both on handler AND operation level, the operation level argument will be used.
+  Note that `queryParams` are automatically added to the query. If argument is defined both on handler AND operation
+  level, the operation level argument will be used.
 </Callout>
 
 ## CodeSandBox Example

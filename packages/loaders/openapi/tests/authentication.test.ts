@@ -1,7 +1,7 @@
 /* eslint-disable import/no-nodejs-modules */
 import { execute, parse } from 'graphql';
-import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
-import { startServer } from './example_api_server';
+import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
+import { startServer } from './example_api_server.js';
 import { fetch } from '@whatwg-node/fetch';
 import { Server } from 'http';
 import { AddressInfo } from 'net';
@@ -14,12 +14,12 @@ describe('OpenAPI Loader: Authentication', () => {
   /**
    * Set up the schema first and run example API server
    */
-  let baseUrl: string;
+  let endpoint: string;
   let server: Server;
 
   beforeAll(async () => {
     server = await startServer();
-    baseUrl = `http://localhost:${(server.address() as AddressInfo).port}/api`;
+    endpoint = `http://localhost:${(server.address() as AddressInfo).port}/api`;
   });
 
   /**
@@ -43,7 +43,7 @@ describe('OpenAPI Loader: Authentication', () => {
     const createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
       source: './fixtures/example_oas.json',
       cwd: __dirname,
-      baseUrl,
+      endpoint,
       operationHeaders: {
         authorization: 'Basic {args.usernameAndPassword|base64}',
       },
@@ -76,7 +76,7 @@ describe('OpenAPI Loader: Authentication', () => {
     const createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
       source: './fixtures/example_oas.json',
       cwd: __dirname,
-      baseUrl,
+      endpoint,
       operationHeaders: {
         access_token: '{args.apiKey}',
       },
@@ -109,7 +109,7 @@ describe('OpenAPI Loader: Authentication', () => {
     const createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
       source: './fixtures/example_oas.json',
       cwd: __dirname,
-      baseUrl,
+      endpoint,
       operationHeaders: {
         cookie: 'access_token={args.apiKey}',
       },
@@ -142,7 +142,7 @@ describe('OpenAPI Loader: Authentication', () => {
     const createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
       source: './fixtures/example_oas.json',
       cwd: __dirname,
-      baseUrl,
+      endpoint,
       queryParams: {
         access_token: '{args.apiKey}',
       },
