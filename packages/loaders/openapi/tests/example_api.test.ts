@@ -79,6 +79,30 @@ describe('example_api', () => {
     });
   });
 
+  it('should get resource (incl. enum) when input query parameter provided', async () => {
+    // Status is an enum
+    const query = /* GraphQL */ `
+      {
+        getUserByUsername(username: "arlene", input: "abc") {
+          name
+          status
+        }
+      }
+    `;
+
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+      contextValue: {
+        port,
+      },
+    });
+
+    expect(result).toEqual({
+      data: { getUserByUsername: { name: 'Arlene L McMahon', status: 'staff' } },
+    });
+  });
+
   it('Get resource 2', async () => {
     const query = /* GraphQL */ `
       {
