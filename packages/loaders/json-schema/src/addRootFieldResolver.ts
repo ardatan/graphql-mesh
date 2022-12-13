@@ -188,7 +188,7 @@ export function addHTTPRootFieldResolver(
             }
           }
           requestInit.body = formData;
-        } else {
+        } else if (!queryParamArgMap?.input && !globalQueryParams?.input) {
           requestInit.body = typeof input === 'object' ? JSON.stringify(input) : input;
         }
       }
