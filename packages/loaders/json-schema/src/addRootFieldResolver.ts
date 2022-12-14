@@ -190,7 +190,7 @@ export function addHTTPRootFieldResolver(
           requestInit.body = formData;
         } else if (!queryParamArgMap?.input && !globalQueryParams?.input) {
           requestInit.body = typeof input === 'object' ? JSON.stringify(input) : input;
-        }
+        } // else - input is provided but is a query parameter so is not added to the body
       }
     }
     if (globalQueryParams) {
