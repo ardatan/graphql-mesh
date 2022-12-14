@@ -5309,10 +5309,10 @@
     lodash "^4.17.21"
     remove-markdown "0.5.0"
 
-"@theguild/components@4.4.2":
-  version "4.4.2"
-  resolved "https://registry.yarnpkg.com/@theguild/components/-/components-4.4.2.tgz#fb1cf19b028e8a6598663fe832dfc6377d27dd1e"
-  integrity sha512-UQXkJ63CBIRvxz8XDj39wpy7JU3ztxfof9KXoUGelFOV520GT+h9b//dM5+fawbHAL5ucm6KMsz+hoGOwvV8PQ==
+"@theguild/components@4.4.3":
+  version "4.4.3"
+  resolved "https://registry.yarnpkg.com/@theguild/components/-/components-4.4.3.tgz#f8edbbb7d1874a228881ddf5dc5b8bc26eb13b3c"
+  integrity sha512-qamPepdT898Y0qHYpn/su7Q7PEUIqKh0SDEyN3fBDora6JKIqB2MWt/T//9xKx53Lp9dEzcoYgnXAsmjYViHZg==
   dependencies:
     "@algolia/autocomplete-js" "1.7.3"
     "@algolia/autocomplete-plugin-algolia-insights" "1.7.3"
