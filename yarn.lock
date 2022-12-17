@@ -12913,7 +12913,12 @@ itty-router-extras@0.4.2:
   resolved "https://registry.yarnpkg.com/itty-router-extras/-/itty-router-extras-0.4.2.tgz#e46891ebea63f09ada74603649d8a6c4ce0c5df7"
   integrity sha512-ppHaBzcTXs7idFSDISehG+8kif2/4aqLCfyY/Y/uIZv79sfEfNmTq9G+rDeqblun/VZRBiXZD8ztYmMS8EOsKw==
 
-itty-router@2.6.6, itty-router@^2.3.10:
+itty-router@3.0.8:
+  version "3.0.8"
+  resolved "https://registry.yarnpkg.com/itty-router/-/itty-router-3.0.8.tgz#0357d2366af4102704b8229751677bcd8333ef82"
+  integrity sha512-M9eRIGYljT6yAlCggF+CfTCFwtb02bFUjB8uaYYTiViAKB+SLhuWaYKabFA+IEvhkXqmslP6uZLCyWnJ2GIy1Q==
+
+itty-router@^2.3.10:
   version "2.6.6"
   resolved "https://registry.yarnpkg.com/itty-router/-/itty-router-2.6.6.tgz#78a08c3b7dc1bd90ce832cae8eff7e4cbfbf67ef"
   integrity sha512-hIPHtXGymCX7Lzb2I4G6JgZFE4QEEQwst9GORK7sMYUpJvLfy4yZJr95r04e8DzoAnj6HcxM2m4TbK+juu+18g==
