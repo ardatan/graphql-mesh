@@ -1,5 +1,13 @@
 # json-schema-hello-world
 
+## 0.0.284
+
+### Patch Changes
+
+- Updated dependencies
+  [[`df511ade0`](https://github.com/Urigo/graphql-mesh/commit/df511ade01315bcfe07fd7e482a28128f9df2845)]:
+  - @graphql-mesh/cli@0.82.6
+
 ## 0.0.283
 
 ### Patch Changes

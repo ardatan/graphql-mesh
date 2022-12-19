@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-naming-convention",
-  "version": "0.13.3",
+  "version": "0.13.4",
   "type": "module",
   "repository": {
     "type": "git",
