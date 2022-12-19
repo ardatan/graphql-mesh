@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/neo4j",
-  "version": "0.22.3",
+  "version": "0.22.4",
   "type": "module",
   "repository": {
     "type": "git",

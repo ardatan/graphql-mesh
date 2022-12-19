@@ -1,5 +1,13 @@
 # hello-world-esm
 
+## 0.0.109
+
+### Patch Changes
+
+- Updated dependencies
+  [[`df511ade0`](https://github.com/Urigo/graphql-mesh/commit/df511ade01315bcfe07fd7e482a28128f9df2845)]:
+  - @graphql-mesh/cli@0.82.6
+
 ## 0.0.108
 
 ### Patch Changes

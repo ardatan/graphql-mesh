@@ -1,5 +1,13 @@
 # @graphql-mesh/transform-filter-schema
 
+## 0.15.4
+
+### Patch Changes
+
+- [`0a4a77135`](https://github.com/Urigo/graphql-mesh/commit/0a4a771353c2fa1700afaeb54561c078df5229ec)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump GraphQL Tools packages for transfomation
+  issues
+
 ## 0.15.3
 
 ### Patch Changes

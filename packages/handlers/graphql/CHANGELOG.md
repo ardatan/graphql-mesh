@@ -1,5 +1,21 @@
 # @graphql-mesh/graphql
 
+## 0.33.5
+
+### Patch Changes
+
+- [#4952](https://github.com/Urigo/graphql-mesh/pull/4952)
+  [`df511ade0`](https://github.com/Urigo/graphql-mesh/commit/df511ade01315bcfe07fd7e482a28128f9df2845)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/url-loader@7.16.27` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/7.16.27)
+    (from `7.16.26`, in `dependencies`)
+
+- [`0a4a77135`](https://github.com/Urigo/graphql-mesh/commit/0a4a771353c2fa1700afaeb54561c078df5229ec)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump GraphQL Tools packages for transfomation
+  issues
+
 ## 0.33.4
 
 ### Patch Changes
