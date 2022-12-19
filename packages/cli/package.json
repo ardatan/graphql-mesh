@@ -60,7 +60,7 @@
     "graphql-import-node": "0.0.5",
     "graphql-ws": "5.11.2",
     "json-bigint-patch": "0.0.8",
-    "json5": "2.2.1",
+    "json5": "2.2.2",
     "mkdirp": "1.0.4",
     "open": "7.4.2",
     "pascal-case": "3.1.2",
