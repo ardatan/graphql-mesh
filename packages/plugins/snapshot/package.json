@@ -37,7 +37,7 @@
     "@graphql-mesh/types": "0.89.2",
     "@graphql-mesh/utils": "0.43.3",
     "@whatwg-node/fetch": "0.5.3",
-    "minimatch": "5.1.1",
+    "minimatch": "5.1.2",
     "tslib": "^2.4.0"
   },
   "publishConfig": {
