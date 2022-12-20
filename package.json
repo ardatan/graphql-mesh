@@ -56,7 +56,7 @@
     "@typescript-eslint/eslint-plugin": "5.46.1",
     "@typescript-eslint/parser": "5.46.1",
     "babel-jest": "29.3.1",
-    "bob-the-bundler": "4.1.0",
+    "bob-the-bundler": "4.1.1",
     "eslint": "8.30.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-config-standard": "17.0.0",
