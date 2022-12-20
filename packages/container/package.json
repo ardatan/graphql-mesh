@@ -26,7 +26,7 @@
     "@graphql-mesh/transform-cache": "0.13.3",
     "@graphql-mesh/transform-encapsulate": "0.4.4",
     "@graphql-mesh/transform-extend": "0.11.3",
-    "@graphql-mesh/transform-filter-schema": "0.15.4",
+    "@graphql-mesh/transform-filter-schema": "0.15.5",
     "@graphql-mesh/transform-prefix": "0.12.4",
     "@graphql-mesh/transform-rename": "0.14.4",
     "@graphql-mesh/transform-resolvers-composition": "0.13.3",
