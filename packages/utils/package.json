@@ -48,7 +48,7 @@
     "@types/js-yaml": "4.0.5",
     "@types/lodash.set": "4.3.7",
     "@types/lodash.topath": "4.5.7",
-    "@types/object-hash": "3.0.1"
+    "@types/object-hash": "3.0.2"
   },
   "publishConfig": {
     "access": "public",
