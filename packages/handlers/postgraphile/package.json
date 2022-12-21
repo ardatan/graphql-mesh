@@ -37,7 +37,7 @@
     "@graphql-mesh/string-interpolation": "0.4.1",
     "@graphql-mesh/types": "0.89.2",
     "@graphql-mesh/utils": "0.43.3",
-    "@graphql-tools/delegate": "9.0.20",
+    "@graphql-tools/delegate": "9.0.21",
     "pg": "^8.6.0",
     "postgraphile": "4.12.12",
     "postgraphile-core": "4.12.3",
