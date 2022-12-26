@@ -5,23 +5,21 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-import { Request as IttyRequest, Router } from 'itty-router';
-import { createServerAdapter } from '@whatwg-node/server';
+import { createRouter, Response } from '@whatwg-node/router';
 import { createServer, Server } from 'http';
-import { withCookies, withParams } from 'itty-router-extras';
-import { Request, Response } from '@whatwg-node/fetch';
+import { withCookies } from 'itty-router-extras';
 
 /**
  * Starts the server at the given port
  */
 export function getServer() {
-  const app = createServerAdapter(Router(), Request);
+  const app = createRouter();
 
-  app.all('*', withCookies, withParams);
+  app.all('*', withCookies);
 
   const data = [{ id: 1 }, { id: 2 }, { id: 3 }];
 
-  app.get('/todos', (req: Request & IttyRequest, res: Response) => {
+  app.get('/todos', req => {
     const ids = (req.query?.id__in ?? []) as unknown as Array<number>;
 
     return new Response(JSON.stringify(data.filter(x => ids.includes(x.id))), {

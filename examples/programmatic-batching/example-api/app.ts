@@ -1,9 +1,7 @@
-import { Router } from 'itty-router';
-import { createServerAdapter } from '@whatwg-node/server';
-import { Response } from '@whatwg-node/fetch';
+import { createRouter, Response } from '@whatwg-node/router';
 
 export function createApp() {
-  const app = createServerAdapter(Router());
+  const app = createRouter();
 
   const users = [
     { id: 1, name: 'John Doe' },
@@ -24,7 +22,7 @@ export function createApp() {
         headers: {
           'Content-Type': 'application/json',
         },
-      }
+      },
     );
   });
 

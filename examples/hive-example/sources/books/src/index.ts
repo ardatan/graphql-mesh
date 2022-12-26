@@ -1,6 +1,4 @@
-import { createServerAdapter } from '@whatwg-node/server';
-import { Router } from 'itty-router';
-import { Response } from '@whatwg-node/fetch';
+import { createRouter, Response } from '@whatwg-node/router';
 import { createServer } from 'http';
 
 interface Book {
@@ -28,7 +26,7 @@ const books: Book[] = [
 ];
 
 async function main() {
-  const app = createServerAdapter(Router());
+  const app = createRouter();
 
   app.get(
     '/books',

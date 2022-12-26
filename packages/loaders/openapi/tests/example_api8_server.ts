@@ -1,23 +1,19 @@
 /* eslint-disable import/no-nodejs-modules */
 /* eslint-disable import/no-extraneous-dependencies */
 
+import { createRouter, Response } from '@whatwg-node/router';
 import { createServer, Server } from 'http';
-import { createServerAdapter } from '@whatwg-node/server';
-import { Router } from 'itty-router';
-import { Response } from '@whatwg-node/fetch';
 
 export function startServer(): Promise<Server> {
-  const app = createServerAdapter(
-    Router({
-      base: '/api',
-    })
-  );
+  const app = createRouter({
+    base: '/api',
+  });
   app.get(
     '/user',
     () =>
       new Response(null, {
         status: 404,
-      })
+      }),
   );
 
   const server = createServer(app);
