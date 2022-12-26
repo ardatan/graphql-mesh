@@ -6458,10 +6458,28 @@
     undici "^5.12.0"
     web-streams-polyfill "^3.2.0"
 
-"@whatwg-node/server@0.4.17", "@whatwg-node/server@^0.4.10":
+"@whatwg-node/router@0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/router/-/router-0.0.2.tgz#35dd17d6ff2eaf4cb6a257748c70facacd2aee84"
+  integrity sha512-JzL9olhli6mC47Mp4KC+ePhuDvazKZuOYFnvIQZPBocbJYWfzjUHpLzTdAVyGevqgV2n/3zIalKcUMKxVy4pAA==
+  dependencies:
+    "@whatwg-node/fetch" "0.5.3"
+    "@whatwg-node/server" "0.5.0"
+    itty-router "3.0.10"
+    tslib "^2.3.1"
+
+"@whatwg-node/server@0.4.17":
   version "0.4.17"
   resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.4.17.tgz#c40bd644f569e40e4813e7dd6154d7bd77bf1a77"
   integrity sha512-kq1AHyi87VWfiDqiSTAOY+py83HMJg42+fI8JAe1wjmMkJ8v/E5mKq5NpLNRM9Cnf7NHsQR0AwQgvX/RFuptaA==
+  dependencies:
+    "@whatwg-node/fetch" "0.5.3"
+    tslib "^2.3.1"
+
+"@whatwg-node/server@0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.5.0.tgz#2208a35a764438c3129671bc5683a9025a26b3a7"
+  integrity sha512-zvtgGJhuwCtXM0nU/nqDPHjD4QxAl5HK708vJmGdYjETsmB9/JGJaCWjrUuojC14uN4ExoqGaJh34wNopr/jew==
   dependencies:
     "@whatwg-node/fetch" "0.5.3"
     tslib "^2.3.1"
@@ -13058,6 +13076,11 @@ itty-router@2.6.6, itty-router@^2.3.10:
   version "2.6.6"
   resolved "https://registry.yarnpkg.com/itty-router/-/itty-router-2.6.6.tgz#78a08c3b7dc1bd90ce832cae8eff7e4cbfbf67ef"
   integrity sha512-hIPHtXGymCX7Lzb2I4G6JgZFE4QEEQwst9GORK7sMYUpJvLfy4yZJr95r04e8DzoAnj6HcxM2m4TbK+juu+18g==
+
+itty-router@3.0.10:
+  version "3.0.10"
+  resolved "https://registry.yarnpkg.com/itty-router/-/itty-router-3.0.10.tgz#8d3ea7a1a1f2297ca3cf11dca57130ac23944351"
+  integrity sha512-HUrB/IlL9FKMaO4ySE9GI8l3KRFiJl520nWi6y0aI6kTn35hSmgNFhNNWEsv2I0EXwk5qMp1g5DB5GujA1/Y3A==
 
 jake@^10.8.5:
   version "10.8.5"

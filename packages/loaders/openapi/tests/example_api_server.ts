@@ -5,19 +5,17 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-import { Request as IttyRequest, Router } from 'itty-router';
-import { createServerAdapter } from '@whatwg-node/server';
+import { createRouter, RouterRequest, Response } from '@whatwg-node/router';
 import { createServer, Server } from 'http';
-import { withCookies, withParams } from 'itty-router-extras';
-import { Request, Response } from '@whatwg-node/fetch';
+import { withCookies } from 'itty-router-extras';
 
 /**
  * Starts the server at the given port
  */
 export function startServer() {
-  const app = createServerAdapter(Router(), Request);
+  const app = createRouter();
 
-  app.all('*', withCookies, withParams);
+  app.all('*', withCookies);
 
   const Users = {
     arlene: {
@@ -300,7 +298,7 @@ export function startServer() {
     },
   };
 
-  const authMiddleware = (req: Request & IttyRequest): void | Response => {
+  const authMiddleware = (req: RouterRequest): void | Response => {
     const authHeader = req.headers.get('authorization');
     const accessTokenHeader = req.headers.get('access_token');
     const cookieHeader = req.headers.get('cookie');
@@ -322,7 +320,10 @@ export function startServer() {
             };
 
             for (const user in Auth) {
-              if (Auth[user].username === credentials.username && Auth[user].password === credentials.password) {
+              if (
+                Auth[user].username === credentials.username &&
+                Auth[user].password === credentials.password
+              ) {
                 return undefined;
               }
             }
@@ -336,7 +337,7 @@ export function startServer() {
                 headers: {
                   'Content-Type': 'application/json',
                 },
-              }
+              },
             );
           }
         } else if (authType === 'Bearer') {
@@ -360,7 +361,7 @@ export function startServer() {
           headers: {
             'Content-Type': 'application/json',
           },
-        }
+        },
       );
     } else if (cookieHeader) {
       for (const user in Auth) {
@@ -377,7 +378,7 @@ export function startServer() {
           headers: {
             'Content-Type': 'application/json',
           },
-        }
+        },
       );
     } else if ('access_token' in req.query) {
       for (const user in Auth) {
@@ -394,7 +395,7 @@ export function startServer() {
           headers: {
             'Content-Type': 'application/json',
           },
-        }
+        },
       );
     } else {
       return new Response(
@@ -406,7 +407,7 @@ export function startServer() {
           headers: {
             'Content-Type': 'application/json',
           },
-        }
+        },
       );
     }
   };
@@ -445,7 +446,7 @@ export function startServer() {
           headers: {
             'Content-Type': 'application/json',
           },
-        }
+        },
       );
     }
   });
@@ -468,7 +469,7 @@ export function startServer() {
           headers: {
             'Content-Type': 'application/json',
           },
-        }
+        },
       );
     }
   });
@@ -494,13 +495,13 @@ export function startServer() {
           headers: {
             'Content-Type': 'application/json',
           },
-        }
+        },
       );
     }
   });
 
   app.post('/api/users', async req => {
-    const user = await req.json();
+    const user: any = await req.json();
     if ('name' in user && 'address' in user && 'employerId' in user && 'hobbies' in user) {
       return new Response(JSON.stringify(user), {
         status: 201,
@@ -518,7 +519,7 @@ export function startServer() {
           headers: {
             'Content-Type': 'application/json',
           },
-        }
+        },
       );
     }
   });
@@ -579,7 +580,7 @@ export function startServer() {
           headers: {
             'Content-Type': 'application/json',
           },
-        }
+        },
       );
     }
   });
@@ -594,17 +595,20 @@ export function startServer() {
         headers: {
           'Content-Type': 'application/json',
         },
-      }
+      },
     );
   });
 
-  app.get('/api/cookie', (req: IttyRequest & { cookies: Record<string, string> }) => {
+  app.get('/api/cookie', (req: RouterRequest & { cookies: Record<string, string> }) => {
     if (req.cookies && req.cookies.cookie_type && req.cookies.cookie_size) {
-      return new Response(`You ordered a ${req.cookies.cookie_size} ${req.cookies.cookie_type} cookie!`, {
-        headers: {
-          'Content-Type': 'text/plain',
+      return new Response(
+        `You ordered a ${req.cookies.cookie_size} ${req.cookies.cookie_type} cookie!`,
+        {
+          headers: {
+            'Content-Type': 'text/plain',
+          },
         },
-      });
+      );
     } else {
       return new Response('Need cookie header parameter', {
         status: 400,
@@ -624,7 +628,7 @@ export function startServer() {
         headers: {
           'Content-Type': 'application/json',
         },
-      }
+      },
     );
   });
 
@@ -650,7 +654,7 @@ export function startServer() {
     });
   });
 
-  app.get('/api/offices/:id', (req: Request & IttyRequest) => {
+  app.get('/api/offices/:id', req => {
     const accept = req.headers.get('Accept');
     if (accept.includes('text/plain')) {
       return new Response('You asked for text!', {
@@ -676,7 +680,7 @@ export function startServer() {
             headers: {
               'Content-Type': 'application/json',
             },
-          }
+          },
         );
       }
     } else {
@@ -690,7 +694,7 @@ export function startServer() {
   });
 
   app.post('/api/products', async req => {
-    const product = await req.json();
+    const product: any = await req.json();
 
     if ('product-name' in product && 'product-id' in product && 'product-tag' in product) {
       return new Response(JSON.stringify(product), {
@@ -706,7 +710,7 @@ export function startServer() {
         }),
         {
           status: 400,
-        }
+        },
       );
     }
   });
@@ -731,7 +735,7 @@ export function startServer() {
         }),
         {
           status: 400,
-        }
+        },
       );
     }
   });
@@ -754,7 +758,7 @@ export function startServer() {
         }),
         {
           status: 400,
-        }
+        },
       );
     }
   });
@@ -784,7 +788,7 @@ export function startServer() {
         }),
         {
           status: 400,
-        }
+        },
       );
     }
   });
@@ -811,7 +815,7 @@ export function startServer() {
           headers: {
             'Content-Type': 'application/json',
           },
-        }
+        },
       );
     }
   });
@@ -833,7 +837,7 @@ export function startServer() {
         }),
         {
           status: 400,
-        }
+        },
       );
     }
   });
@@ -860,7 +864,7 @@ export function startServer() {
           headers: {
             'Content-Type': 'application/json',
           },
-        }
+        },
       );
     }
   });
@@ -884,7 +888,7 @@ export function startServer() {
         headers: {
           'Content-Type': 'application/json',
         },
-      }
+      },
     );
   });
 
@@ -908,8 +912,11 @@ export function startServer() {
     }
   });
 
-  app.get('/api/status', (req: Request & IttyRequest) => {
-    if (typeof req.query.limit !== 'undefined' && typeof req.headers.get('exampleHeader') !== 'undefined') {
+  app.get('/api/status', req => {
+    if (
+      typeof req.query.limit !== 'undefined' &&
+      typeof req.headers.get('exampleHeader') !== 'undefined'
+    ) {
       return new Response('Ok', {
         status: 200,
         headers: {
@@ -926,13 +933,13 @@ export function startServer() {
           headers: {
             'Content-Type': 'application/json',
           },
-        }
+        },
       );
     }
   });
 
   app.post('/api/status', async req => {
-    const reqBody = await req.json();
+    const reqBody: any = await req.json();
     if ('hello' in reqBody && reqBody.hello === 'world') {
       return new Response('success', {
         status: 200,
@@ -950,7 +957,7 @@ export function startServer() {
           headers: {
             'Content-Type': 'application/json',
           },
-        }
+        },
       );
     }
   });
@@ -973,7 +980,7 @@ export function startServer() {
           headers: {
             'Content-Type': 'application/json',
           },
-        }
+        },
       );
     }
   });
@@ -1004,7 +1011,7 @@ export function startServer() {
           headers: {
             'Content-Type': 'application/json',
           },
-        }
+        },
       );
     }
   });
@@ -1031,7 +1038,7 @@ export function startServer() {
           headers: {
             'Content-Type': 'application/json',
           },
-        }
+        },
       );
     }
   });
@@ -1046,7 +1053,7 @@ export function startServer() {
         headers: {
           'Content-Type': 'application/json',
         },
-      }
+      },
     );
   });
 

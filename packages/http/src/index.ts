@@ -2,13 +2,11 @@ import { fs, path } from '@graphql-mesh/cross-helpers';
 import { MeshInstance } from '@graphql-mesh/runtime';
 import { Logger, YamlConfig } from '@graphql-mesh/types';
 import { DefaultLogger, pathExists } from '@graphql-mesh/utils';
-import { createServerAdapter, ServerAdapter } from '@whatwg-node/server';
-import { Router } from 'itty-router';
+import { createRouter, Response, Router } from '@whatwg-node/router';
 import { withCookies } from 'itty-router-extras';
 import { graphqlHandler } from './graphqlHandler.js';
-import { Response } from '@whatwg-node/fetch';
 
-export type MeshHTTPHandler<TServerContext> = ServerAdapter<TServerContext, Router<Request>>;
+export type MeshHTTPHandler<TServerContext> = Router<TServerContext>;
 
 export function createMeshHTTPHandler<TServerContext>({
   baseDir,
@@ -34,9 +32,9 @@ export function createMeshHTTPHandler<TServerContext>({
     // trustProxy = 'loopback',
   } = rawServeConfig;
 
-  const serverAdapter = createServerAdapter(Router());
+  const router = createRouter<TServerContext>();
 
-  serverAdapter.all('*', () => {
+  router.all('*', () => {
     if (!mesh$) {
       mesh$ = getBuiltMesh().then(mesh => {
         readyFlag = true;
@@ -46,14 +44,14 @@ export function createMeshHTTPHandler<TServerContext>({
     }
   });
 
-  serverAdapter.all(
+  router.all(
     '/healthcheck',
     () =>
       new Response(null, {
         status: 200,
       }),
   );
-  serverAdapter.all(
+  router.all(
     '/readiness',
     () =>
       new Response(null, {
@@ -61,7 +59,7 @@ export function createMeshHTTPHandler<TServerContext>({
       }),
   );
 
-  serverAdapter.post('*', async (request: Request) => {
+  router.post('*', async (request: Request) => {
     if (readyFlag) {
       const { pubsub } = await mesh$;
       for (const eventName of pubsub.getEventNames()) {
@@ -85,7 +83,7 @@ export function createMeshHTTPHandler<TServerContext>({
 
   if (staticFiles) {
     const indexPath = path.join(baseDir, staticFiles, 'index.html');
-    serverAdapter.get('*', async request => {
+    router.get('*', async request => {
       const url = new URL(request.url);
       if (graphqlPath !== '/' && url.pathname === '/' && (await pathExists(indexPath))) {
         const indexFile = await fs.promises.readFile(indexPath);
@@ -106,7 +104,7 @@ export function createMeshHTTPHandler<TServerContext>({
       return undefined;
     });
   } else if (graphqlPath !== '/') {
-    serverAdapter.get(
+    router.get(
       '/',
       () =>
         new Response(null, {
@@ -118,11 +116,12 @@ export function createMeshHTTPHandler<TServerContext>({
     );
   }
 
-  serverAdapter.all(
+  router.all('*', withCookies);
+
+  router.all(
     '*',
-    withCookies,
     graphqlHandler(() => mesh$, playgroundTitle, playgroundEnabled, graphqlPath, corsConfig),
   );
 
-  return serverAdapter;
+  return router;
 }
