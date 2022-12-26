@@ -455,7 +455,8 @@ const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url
       },
     });
 
-  const tsConfigPath = pathModule.join(baseDir, 'tsconfig.json');
+  const rootDir = pathModule.resolve('./');
+  const tsConfigPath = pathModule.join(rootDir, 'tsconfig.json');
   if (await pathExists(tsConfigPath)) {
     const tsConfigStr = await fs.promises.readFile(tsConfigPath, 'utf-8');
     const tsConfig = JSON5.parse(tsConfigStr);
