@@ -60,6 +60,7 @@ export default class JsonSchemaHandler implements MeshHandler {
 
   async getNonExecutableSchema() {
     if (this.config.source) {
+      this.logger.info(`Fetching GraphQL Schema with annotations`);
       const sdl = await readFileOrUrl<string>(this.config.source, {
         allowUnknownExtensions: true,
         cwd: this.baseDir,
@@ -75,6 +76,7 @@ export default class JsonSchemaHandler implements MeshHandler {
     }
     return this.schemaWithAnnotationsProxy.getWithSet(async () => {
       if (this.config.bundlePath) {
+        this.logger.info(`Fetching JSON Schema bundle`);
         const bundle = await readFileOrUrl<JSONSchemaLoaderBundle>(this.config.bundlePath, {
           allowUnknownExtensions: true,
           cwd: this.baseDir,
@@ -93,6 +95,7 @@ export default class JsonSchemaHandler implements MeshHandler {
           queryStringOptions: this.config.queryStringOptions,
         });
       }
+      this.logger.info(`Generating GraphQL schema from JSON Schemas`);
       return loadNonExecutableGraphQLSchemaFromJSONSchemas(this.name, {
         ...this.config,
         operations: this.config.operations as any,
@@ -109,7 +112,7 @@ export default class JsonSchemaHandler implements MeshHandler {
     this.logger.debug('Getting the schema with annotations');
     const nonExecutableSchema = await this.getNonExecutableSchema();
     const schemaWithDirectives$ = Promise.resolve().then(() => {
-      this.logger.info(`Processing directives.`);
+      this.logger.info(`Processing annotations for the execution layer`);
       return processDirectives({
         ...this.config,
         schema: nonExecutableSchema,

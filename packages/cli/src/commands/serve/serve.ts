@@ -16,12 +16,13 @@ import dnscache from 'dnscache';
 import { GraphQLMeshCLIParams } from '../../index.js';
 import type { Logger } from '@graphql-mesh/types';
 import { createMeshHTTPHandler } from '@graphql-mesh/http';
+import { Socket } from 'net';
 
 const terminateEvents = ['SIGINT', 'SIGTERM'];
 
 function registerTerminateHandler(callback: (eventName: string) => void) {
   for (const eventName of terminateEvents) {
-    process.on(eventName, () => callback(eventName));
+    process.once(eventName, () => callback(eventName));
   }
 }
 
@@ -107,7 +108,7 @@ export async function serveMesh(
     }
     logger.info(`${cliParams.serveMessage}: ${serverUrl} in ${forkNum} forks`);
   } else {
-    logger.info(`Generating the unified schema...`);
+    logger.info(`Starting GraphQL Mesh...`);
 
     const mesh$: Promise<MeshInstance> = getBuiltMesh()
       .then(mesh => {
@@ -131,7 +132,7 @@ export async function serveMesh(
         logger.info(`${cliParams.serveMessage}: ${serverUrl}`);
         registerTerminateHandler(eventName => {
           const eventLogger = logger.child(`${eventName}  💀`);
-          eventLogger.info(`Destroying the server`);
+          eventLogger.info(`Destroying GraphQL Mesh...`);
           mesh.destroy();
         });
         return mesh;
@@ -157,24 +158,7 @@ export async function serveMesh(
       httpServer = createHTTPServer(requestHandler);
     }
 
-    const wsServer = new ws.Server({
-      path: graphqlPath,
-      server: httpServer,
-    });
-
-    registerTerminateHandler(eventName => {
-      const eventLogger = logger.child(`${eventName}💀`);
-      eventLogger.debug(`Stopping WebSocket Server`);
-      wsServer.close(error => {
-        if (error) {
-          eventLogger.debug(`WebSocket Server couldn't be stopped: `, error);
-        } else {
-          eventLogger.debug(`WebSocket Server has been stopped`);
-        }
-      });
-    });
-
-    const { dispose: stopGraphQLWSServer } = useServer(
+    useServer(
       {
         onSubscribe: async ({ connectionParams, extra: { request } }, msg) => {
           // spread connectionParams.headers to upgrade request headers.
@@ -210,21 +194,13 @@ export async function serveMesh(
         execute: (args: any) => args.execute(args),
         subscribe: (args: any) => args.subscribe(args),
       },
-      wsServer,
+      new ws.Server({
+        path: graphqlPath,
+        server: httpServer,
+      }),
     );
 
-    registerTerminateHandler(eventName => {
-      const eventLogger = logger.child(`${eventName}💀`);
-      eventLogger.debug(`Stopping GraphQL WS`);
-      Promise.resolve()
-        .then(() => stopGraphQLWSServer())
-        .then(() => {
-          eventLogger.debug(`GraphQL WS has been stopped`);
-        })
-        .catch(error => {
-          eventLogger.debug(`GraphQL WS couldn't be stopped: `, error);
-        });
-    });
+    const sockets = new Set<Socket>();
 
     httpServer
       .listen(port, hostname, () => {
@@ -237,14 +213,28 @@ export async function serveMesh(
           ).catch(() => {});
         }
       })
-      .on('error', handleFatalError);
+      .on('error', handleFatalError)
+      .on('connection', socket => {
+        sockets.add(socket);
+        socket.once('close', () => {
+          sockets.delete(socket);
+        });
+      });
 
     registerTerminateHandler(eventName => {
-      const eventLogger = logger.child(`${eventName}💀`);
+      const eventLogger = logger.child(`${eventName}  💀`);
+      if (sockets.size > 0) {
+        eventLogger.debug(`Open sockets found: ${sockets.size}`);
+        for (const socket of sockets) {
+          eventLogger.debug(`Destroying socket: ${socket.remoteAddress}`);
+          socket.destroy();
+          sockets.delete(socket);
+        }
+      }
       eventLogger.debug(`Stopping HTTP Server`);
       httpServer.close(error => {
         if (error) {
-          eventLogger.debug(`HTTP Server couldn't be stopped: `, error);
+          eventLogger.error(`HTTP Server couldn't be stopped: `, error);
         } else {
           eventLogger.debug(`HTTP Server has been stopped`);
         }
