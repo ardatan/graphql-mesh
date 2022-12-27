@@ -1,5 +1,23 @@
 # @graphql-mesh/json-schema
 
+## 0.37.5
+
+### Patch Changes
+
+- [#4975](https://github.com/Urigo/graphql-mesh/pull/4975)
+  [`c6aef2bc8`](https://github.com/Urigo/graphql-mesh/commit/c6aef2bc8f69c857d8b71f9afcbb37b110c9fb6d)
+  Thanks [@ardatan](https://github.com/ardatan)! - Better process cleanup strategy to prevent
+  unexpected errors from WS instance
+
+- Updated dependencies
+  [[`99f4c84e6`](https://github.com/Urigo/graphql-mesh/commit/99f4c84e619996bc4f392bc81c33022b8678e0d9),
+  [`99f4c84e6`](https://github.com/Urigo/graphql-mesh/commit/99f4c84e619996bc4f392bc81c33022b8678e0d9)]:
+  - @graphql-mesh/types@0.89.3
+  - @graphql-mesh/utils@0.43.4
+  - json-machete@0.18.3
+  - @omnigraph/json-schema@0.38.5
+  - @graphql-mesh/store@0.9.4
+
 ## 0.37.4
 
 ### Patch Changes

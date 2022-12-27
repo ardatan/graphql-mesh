@@ -1,5 +1,19 @@
 # @graphql-mesh/transform-hive
 
+## 0.0.9
+
+### Patch Changes
+
+- [#4963](https://github.com/Urigo/graphql-mesh/pull/4963)
+  [`99f4c84e6`](https://github.com/Urigo/graphql-mesh/commit/99f4c84e619996bc4f392bc81c33022b8678e0d9)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@9.0.21` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.21)
+    (from `9.0.20`, in `dependencies`)
+- Updated dependencies
+  [[`99f4c84e6`](https://github.com/Urigo/graphql-mesh/commit/99f4c84e619996bc4f392bc81c33022b8678e0d9)]:
+  - @graphql-mesh/types@0.89.3
+
 ## 0.0.8
 
 ### Patch Changes

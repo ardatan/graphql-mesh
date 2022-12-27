@@ -1,5 +1,37 @@
 # @graphql-mesh/http
 
+## 0.3.5
+
+### Patch Changes
+
+- [#4970](https://github.com/Urigo/graphql-mesh/pull/4970)
+  [`292c4fa45`](https://github.com/Urigo/graphql-mesh/commit/292c4fa4520457d4b206872f24d1254173856ecb)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency
+    [`@whatwg-node/router@0.0.2` ↗︎](https://www.npmjs.com/package/@whatwg-node/router/v/0.0.2) (to
+    `dependencies`)
+  - Removed dependency
+    [`@whatwg-node/fetch@^0.5.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.5.0) (from
+    `dependencies`)
+  - Removed dependency
+    [`@whatwg-node/server@^0.4.10` ↗︎](https://www.npmjs.com/package/@whatwg-node/server/v/0.4.10)
+    (from `dependencies`)
+  - Removed dependency [`itty-router@2.6.6` ↗︎](https://www.npmjs.com/package/itty-router/v/2.6.6)
+    (from `dependencies`)
+
+- [#4970](https://github.com/Urigo/graphql-mesh/pull/4970)
+  [`292c4fa45`](https://github.com/Urigo/graphql-mesh/commit/292c4fa4520457d4b206872f24d1254173856ecb)
+  Thanks [@ardatan](https://github.com/ardatan)! - Use @whatwg-node/router
+
+- Updated dependencies
+  [[`99f4c84e6`](https://github.com/Urigo/graphql-mesh/commit/99f4c84e619996bc4f392bc81c33022b8678e0d9),
+  [`99f4c84e6`](https://github.com/Urigo/graphql-mesh/commit/99f4c84e619996bc4f392bc81c33022b8678e0d9),
+  [`99f4c84e6`](https://github.com/Urigo/graphql-mesh/commit/99f4c84e619996bc4f392bc81c33022b8678e0d9)]:
+  - @graphql-mesh/runtime@0.46.4
+  - @graphql-mesh/types@0.89.3
+  - @graphql-mesh/utils@0.43.4
+
 ## 0.3.4
 
 ### Patch Changes
