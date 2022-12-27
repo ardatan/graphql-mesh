@@ -59,6 +59,7 @@ export default class OpenAPIHandler implements MeshHandler {
 
   async getNonExecutableSchema() {
     if (this.config.source.endsWith('.graphql')) {
+      this.logger.info(`Fetching GraphQL Schema with annotations`);
       const sdl = await readFileOrUrl<string>(this.config.source, {
         allowUnknownExtensions: true,
         cwd: this.baseDir,
@@ -73,7 +74,7 @@ export default class OpenAPIHandler implements MeshHandler {
       });
     }
     return this.schemaWithAnnotationsProxy.getWithSet(async () => {
-      this.logger?.debug('Creating the schema');
+      this.logger.info(`Generating GraphQL schema from OpenAPI schema`);
       const schema = await loadNonExecutableGraphQLSchemaFromOpenAPI(this.name, {
         ...this.config,
         cwd: this.baseDir,
@@ -100,7 +101,7 @@ export default class OpenAPIHandler implements MeshHandler {
     this.logger.debug('Getting the schema with annotations');
     const nonExecutableSchema = await this.getNonExecutableSchema();
     const schemaWithDirectives$ = Promise.resolve().then(() => {
-      this.logger.info(`Processing directives.`);
+      this.logger.info(`Processing annotations for the execution layer`);
       return processDirectives({
         ...this.config,
         schema: nonExecutableSchema,
