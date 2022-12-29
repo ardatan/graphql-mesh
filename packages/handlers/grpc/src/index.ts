@@ -3,7 +3,7 @@ import './patchLongJs.js';
 import { MeshHandlerOptions, Logger, MeshHandler, YamlConfig } from '@graphql-mesh/types';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { ChannelCredentials, credentials, loadPackageDefinition } from '@grpc/grpc-js';
-import { loadFileDescriptorSetFromObject } from '@grpc/proto-loader';
+import { fromJSON } from '@grpc/proto-loader';
 import { ObjectTypeComposerFieldConfigAsObjectDefinition, SchemaComposer } from 'graphql-compose';
 import {
   GraphQLBigInt,
@@ -35,10 +35,9 @@ interface LoadOptions extends IParseOptions {
 
 type DecodedDescriptorSet = Message<IFileDescriptorSet> & IFileDescriptorSet;
 
-type RootJsonAndDecodedDescriptorSet = {
+type RootJsonEntry = {
   name: string;
   rootJson: protobufjs.INamespace;
-  decodedDescriptorSet: DecodedDescriptorSet;
 };
 
 const QUERY_METHOD_PREFIXES = ['get', 'list', 'search'];
@@ -46,29 +45,22 @@ const QUERY_METHOD_PREFIXES = ['get', 'list', 'search'];
 export default class GrpcHandler implements MeshHandler {
   private config: YamlConfig.GrpcHandler;
   private baseDir: string;
-  private rootJsonAndDecodedDescriptorSets: StoreProxy<RootJsonAndDecodedDescriptorSet[]>;
+  private rootJsonEntries: StoreProxy<RootJsonEntry[]>;
   private logger: Logger;
 
   constructor({ config, baseDir, store, logger }: MeshHandlerOptions<YamlConfig.GrpcHandler>) {
     this.logger = logger;
     this.config = config;
     this.baseDir = baseDir;
-    this.rootJsonAndDecodedDescriptorSets = store.proxy('descriptorSet.proto', {
-      codify: rootJsonAndDecodedDescriptorSets =>
+    this.rootJsonEntries = store.proxy('rootJsonEntries', {
+      codify: rootJsonEntries =>
         `
-import descriptor from 'protobufjs/ext/descriptor/index.js';
-
 export default [
-${rootJsonAndDecodedDescriptorSets
+${rootJsonEntries
   .map(
-    ({ name, rootJson, decodedDescriptorSet }) => `
+    ({ name, rootJson }) => `
   {
     name: ${JSON.stringify(name)},
-    decodedDescriptorSet: descriptor.FileDescriptorSet.fromObject(${JSON.stringify(
-      decodedDescriptorSet.toJSON(),
-      null,
-      2,
-    )}),
     rootJson: ${JSON.stringify(rootJson, null, 2)},
   },
 `,
@@ -77,18 +69,16 @@ ${rootJsonAndDecodedDescriptorSets
 ];
 `.trim(),
       fromJSON: jsonData => {
-        return jsonData.map(({ name, rootJson, decodedDescriptorSet }: any) => ({
+        return jsonData.map(({ name, rootJson }: any) => ({
           name,
           rootJson,
-          decodedDescriptorSet: descriptor.FileDescriptorSet.fromObject(decodedDescriptorSet),
         }));
       },
-      toJSON: rootJsonAndDecodedDescriptorSets => {
-        return rootJsonAndDecodedDescriptorSets.map(({ name, rootJson, decodedDescriptorSet }) => {
+      toJSON: rootJsonEntries => {
+        return rootJsonEntries.map(({ name, rootJson }) => {
           return {
             name,
             rootJson,
-            decodedDescriptorSet: decodedDescriptorSet.toJSON(),
           };
         });
       },
@@ -174,7 +164,7 @@ ${rootJsonAndDecodedDescriptorSets
       };
       if (options.includeDirs) {
         if (!Array.isArray(options.includeDirs)) {
-          return Promise.reject(new Error('The includeDirs option must be an array'));
+          throw new Error('The includeDirs option must be an array');
         }
         addIncludePathResolver(protoRoot, options.includeDirs);
       }
@@ -197,7 +187,7 @@ ${rootJsonAndDecodedDescriptorSets
   }
 
   getCachedDescriptorSets(creds: ChannelCredentials) {
-    return this.rootJsonAndDecodedDescriptorSets.getWithSet(async () => {
+    return this.rootJsonEntries.getWithSet(async () => {
       const rootPromises: Promise<protobufjs.Root>[] = [];
       this.logger.debug(`Building Roots`);
       if (this.config.source) {
@@ -226,7 +216,6 @@ ${rootJsonAndDecodedDescriptorSets
             rootJson: root.toJSON({
               keepComments: true,
             }),
-            decodedDescriptorSet: root.toDescriptor('proto3'),
           };
         }),
       );
@@ -531,11 +520,11 @@ ${rootJsonAndDecodedDescriptorSets
     this.logger.debug(`Getting stored root and decoded descriptor set objects`);
     const artifacts = await this.getCachedDescriptorSets(creds);
 
-    for (const { name, rootJson, decodedDescriptorSet } of artifacts) {
+    for (const { name, rootJson } of artifacts) {
       const rootLogger = this.logger.child(name);
 
       rootLogger.debug(`Creating package definition from file descriptor set object`);
-      const packageDefinition = loadFileDescriptorSetFromObject(decodedDescriptorSet);
+      const packageDefinition = fromJSON(rootJson);
 
       rootLogger.debug(`Creating service client for package definition`);
       const grpcObject = loadPackageDefinition(packageDefinition);
