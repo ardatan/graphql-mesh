@@ -1,37 +1,25 @@
 syntax = "proto3";
 
-import "movie.proto";
-
-message EmptyRequest {}
-
-message MovieRequest {
-    Movie movie = 1;
-}
-
-message SearchByCastRequest {
-    string castName = 1;
+message GreetingRequest {
+    /**
+     * name
+     */
+    string name = 1;
 }
 
 /**
- * movie result message, contains list of movies
+ * greeting result message
  */
-message MoviesResult {
+message GreetingResult {
     /**
-     * list of movies
+     * greeting message
      */
-    repeated Movie result = 1;
+    string greeting = 1;
 }
 
-service MovieSearchService {
+service GreetingService {
   /**
-  * search movies by the name of the cast
+  * get greeting message
   */
-  rpc SearchMoviesByCast (SearchByCastRequest) returns (stream Movie) {}
-}
-
-service MoviesService {
-  /**
-  * get all movies
-  */
-  rpc GetMovies (MovieRequest) returns (MoviesResult) {}
+  rpc GetGreeting (GreetingRequest) returns (GreetingResult) {}
 }

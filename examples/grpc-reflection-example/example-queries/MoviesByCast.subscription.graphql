@@ -1,8 +1,0 @@
-subscription SearchMoviesByCast {
-  MovieSearchService_SearchMoviesByCast(input: { castName: "Tom Cruise" }) {
-    name
-    year
-    rating
-    cast
-  }
-}

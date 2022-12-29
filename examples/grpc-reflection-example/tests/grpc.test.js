@@ -23,25 +23,15 @@ describe('gRPC Example', () => {
       }),
     ).toMatchSnapshot('grpc-schema');
   });
-  it('should get movies correctly', async () => {
-    const GetMoviesQuery = await readFile(
-      join(__dirname, '../example-queries/GetMovies.query.graphql'),
+  it('should get greeting correctly', async () => {
+    const GreetingQuery = await readFile(
+      join(__dirname, '../example-queries/GetGreeting.query.graphql'),
       'utf8',
     );
     const { execute } = await mesh$;
     await grpc$;
-    const result = await execute(GetMoviesQuery);
-    expect(result).toMatchSnapshot('get-movies-grpc-example-result');
-  });
-  it('should fetch movies by cast as a stream correctly', async () => {
-    const MoviesByCastStream = await readFile(
-      join(__dirname, '../example-queries/MoviesByCast.stream.graphql'),
-      'utf8',
-    );
-    const { execute } = await mesh$;
-    await grpc$;
-    const result = await execute(MoviesByCastStream);
-    expect(result).toMatchSnapshot('movies-by-cast-grpc-example-result');
+    const result = await execute(GreetingQuery);
+    expect(result).toMatchSnapshot('greeting-result');
   });
   afterAll(() => {
     mesh$.then(mesh => mesh.destroy());

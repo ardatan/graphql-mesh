@@ -16,7 +16,7 @@ import lodashGet from 'lodash.get';
 import lodashHas from 'lodash.has';
 import { AnyNestedObject, IParseOptions, Message, RootConstructor } from 'protobufjs';
 import protobufjs from 'protobufjs';
-import grpcReflection from '@ardatan/grpc-reflection-js';
+import { Client } from '@ardatan/grpc-reflection-js';
 import { IFileDescriptorSet } from 'protobufjs/ext/descriptor';
 import descriptor from 'protobufjs/ext/descriptor/index.js';
 
@@ -100,7 +100,7 @@ ${rootJsonAndDecodedDescriptorSets
     this.logger.debug(`Using the reflection`);
     const grpcReflectionServer = this.config.endpoint;
     this.logger.debug(`Creating gRPC Reflection Client`);
-    const reflectionClient = new grpcReflection.Client(grpcReflectionServer, creds);
+    const reflectionClient = new Client(grpcReflectionServer, creds);
     const services: (string | void)[] = await reflectionClient.listServices();
     const userServices = services.filter(
       service => service && !service?.startsWith('grpc.'),
@@ -200,12 +200,14 @@ ${rootJsonAndDecodedDescriptorSets
     return this.rootJsonAndDecodedDescriptorSets.getWithSet(async () => {
       const rootPromises: Promise<protobufjs.Root>[] = [];
       this.logger.debug(`Building Roots`);
-      const filePath =
-        typeof this.config.source === 'string' ? this.config.source : this.config.source.file;
-      if (filePath.endsWith('json')) {
-        rootPromises.push(this.processDescriptorFile());
-      } else if (filePath.endsWith('proto')) {
-        rootPromises.push(this.processProtoFile());
+      if (this.config.source) {
+        const filePath =
+          typeof this.config.source === 'string' ? this.config.source : this.config.source.file;
+        if (filePath.endsWith('json')) {
+          rootPromises.push(this.processDescriptorFile());
+        } else if (filePath.endsWith('proto')) {
+          rootPromises.push(this.processProtoFile());
+        }
       } else {
         const reflectionPromises = await this.processReflection(creds);
         rootPromises.push(...reflectionPromises);
