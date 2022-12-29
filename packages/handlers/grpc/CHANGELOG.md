@@ -1,5 +1,12 @@
 # @graphql-mesh/grpc
 
+## 0.28.5
+
+### Patch Changes
+
+- [`81c668cdd`](https://github.com/Urigo/graphql-mesh/commit/81c668cdd03489bf0c990eacf8b4fd9856281fb0)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix Reflection handling
+
 ## 0.28.4
 
 ### Patch Changes
