@@ -1,5 +1,13 @@
 # @graphql-mesh/grpc
 
+## 0.29.0
+
+### Minor Changes
+
+- [`38e091738`](https://github.com/Urigo/graphql-mesh/commit/38e0917387b326907b7f00d3dfb38786cbbd15dd)
+  Thanks [@ardatan](https://github.com/ardatan)! - Do not include decoded descriptor sets in the
+  artifacts
+
 ## 0.28.5
 
 ### Patch Changes
