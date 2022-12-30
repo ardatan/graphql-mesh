@@ -1,5 +1,33 @@
 # @graphql-mesh/cli
 
+## 0.82.8
+
+### Patch Changes
+
+- [#4965](https://github.com/Urigo/graphql-mesh/pull/4965)
+  [`06db3cd64`](https://github.com/Urigo/graphql-mesh/commit/06db3cd6479853e536e36cc2619c94dea9c7e5ed)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-codegen/typed-document-node@2.3.11` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typed-document-node/v/2.3.11)
+    (from `2.3.10`, in `dependencies`)
+
+- [#4976](https://github.com/Urigo/graphql-mesh/pull/4976)
+  [`f5f5dbb33`](https://github.com/Urigo/graphql-mesh/commit/f5f5dbb33e2b5249b9dff53ca80d12758e7f8ff8)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-codegen/typescript@2.8.6` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typescript/v/2.8.6)
+    (from `2.8.5`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-codegen/typescript-operations@2.5.11` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typescript-operations/v/2.5.11)
+    (from `2.5.10`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-codegen/typescript-resolvers@2.7.11` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typescript-resolvers/v/2.7.11)
+    (from `2.7.10`, in `dependencies`)
+- Updated dependencies
+  [[`06db3cd64`](https://github.com/Urigo/graphql-mesh/commit/06db3cd6479853e536e36cc2619c94dea9c7e5ed)]:
+  - @graphql-mesh/http@0.3.6
+
 ## 0.82.7
 
 ### Patch Changes
