@@ -11916,10 +11916,10 @@ graphql-ws@5.11.2, graphql-ws@^5.6.2:
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.11.2.tgz#d5e0acae8b4d4a4cf7be410a24135cfcefd7ddc0"
   integrity sha512-4EiZ3/UXYcjm+xFGP544/yW1+DVI8ZpKASFbzrV5EDTFWJp0ZvLl4Dy2fSZAzz9imKp5pZMIcjB0x/H69Pv/6w==
 
-graphql-yoga@3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/graphql-yoga/-/graphql-yoga-3.2.0.tgz#b9ec0aa55fee2454e6c8957bf2254d5f70a65fb4"
-  integrity sha512-H2cxyCLLDu5S9+HPWzaBaqPAiHFWpUEbLR/jwlO274d0Moq8gi5OPMK5GUNNBuZhG6SuV9tGYRnAHs8N+hSbZA==
+graphql-yoga@3.2.1:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/graphql-yoga/-/graphql-yoga-3.2.1.tgz#be1cdafccc587353b8fcbf95df28ada944cabb61"
+  integrity sha512-s2Df2Rr6EqYKqG0FhFscX81wbDqHpA1O9RYsAixOGKj9Ylzd31lf7Y+kEPdPiSj+p3frlwCdB7/gNRKe7GSrMw==
   dependencies:
     "@envelop/core" "3.0.4"
     "@envelop/parser-cache" "^5.0.4"

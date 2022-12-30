@@ -30,7 +30,7 @@
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "graphql": "*",
-    "graphql-yoga": "3.2.0",
+    "graphql-yoga": "3.2.1",
     "prom-client": "^13 || ^14.0.0"
   },
   "dependencies": {
