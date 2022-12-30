@@ -1,6 +1,6 @@
 {
   "name": "graphql-file-upload-example",
-  "version": "0.6.295",
+  "version": "0.6.296",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -8,7 +8,7 @@
     "start-gateway": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.82.7",
+    "@graphql-mesh/cli": "0.82.8",
     "@graphql-mesh/graphql": "0.33.6",
     "concurrently": "7.6.0",
     "graphql": "16.6.0",

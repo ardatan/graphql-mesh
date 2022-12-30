@@ -1,9 +1,9 @@
 {
   "name": "reddit-example",
-  "version": "0.0.127",
+  "version": "0.0.128",
   "private": true,
   "dependencies": {
-    "@graphql-mesh/cli": "0.82.7",
+    "@graphql-mesh/cli": "0.82.8",
     "@graphql-mesh/json-schema": "0.37.5"
   }
 }
