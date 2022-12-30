@@ -36,8 +36,8 @@
     "@graphql-mesh/runtime": "0.46.4",
     "@graphql-mesh/types": "0.89.3",
     "@graphql-mesh/utils": "0.43.4",
-    "@whatwg-node/router": "0.0.2",
-    "graphql-yoga": "3.1.1",
+    "@whatwg-node/router": "0.0.3",
+    "graphql-yoga": "3.2.0",
     "itty-router-extras": "0.4.2",
     "tslib": "^2.4.0"
   },
@@ -46,8 +46,8 @@
     "@types/lodash.get": "4.4.7",
     "@types/mkdirp": "1.0.2",
     "@types/rimraf": "3.0.2",
-    "@types/ws": "8.5.3",
-    "@types/yargs": "17.0.17"
+    "@types/ws": "8.5.4",
+    "@types/yargs": "17.0.18"
   },
   "publishConfig": {
     "access": "public",

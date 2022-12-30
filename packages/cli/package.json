@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@graphql-codegen/core": "2.6.8",
-    "@graphql-codegen/typed-document-node": "2.3.10",
+    "@graphql-codegen/typed-document-node": "2.3.11",
     "@graphql-codegen/typescript": "2.8.6",
     "@graphql-codegen/typescript-generic-sdk": "3.0.4",
     "@graphql-codegen/typescript-operations": "2.5.11",
@@ -76,8 +76,8 @@
     "@types/lodash.get": "4.4.7",
     "@types/mkdirp": "1.0.2",
     "@types/rimraf": "3.0.2",
-    "@types/ws": "8.5.3",
-    "@types/yargs": "17.0.17"
+    "@types/ws": "8.5.4",
+    "@types/yargs": "17.0.18"
   },
   "publishConfig": {
     "access": "public",
