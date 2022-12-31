@@ -2876,10 +2876,10 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.16.12.tgz#31197bb509049b63c059c4808ac58e66fdff7479"
   integrity sha512-iPYKN78t3op2+erv2frW568j1q0RpqX6JOLZ7oPPaAV1VaF7dDstOrNw37PVOYoTWE11pV4A1XUitpdEFNIsPg==
 
-"@eslint/eslintrc@^1.4.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-1.4.0.tgz#8ec64e0df3e7a1971ee1ff5158da87389f167a63"
-  integrity sha512-7yfvXy6MWLgWSFsLhz5yH3iQ52St8cdUY6FoGieKkRDVxuxmrNuUetIuu6cmjNWwniUHiWXjxCr5tTXDrbYS5A==
+"@eslint/eslintrc@^1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-1.4.1.tgz#af58772019a2d271b7e2d4c23ff4ddcba3ccfb3e"
+  integrity sha512-XXrH9Uarn0stsyldqDYq8r++mROmWRI1xKMXa640Bb//SY1+ECYX6VzT6Lcx5frD0V30XieqJ0oX9I2Xj5aoMA==
   dependencies:
     ajv "^6.12.4"
     debug "^4.3.2"
@@ -3181,14 +3181,14 @@
     tslib "^2.4.0"
     ws "8.11.0"
 
-"@graphql-tools/executor-http@0.0.7":
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/executor-http/-/executor-http-0.0.7.tgz#0fcbd8905e23c690e38a28ad87d7262d2e712a2c"
-  integrity sha512-g0NV4HVZVABsylk6SIA/gfjQbMIsy3NjZYW0k0JZmTcp9698J37uG50GZC2mKe0F8pIlDvPLvrPloqdKGX3ZAA==
+"@graphql-tools/executor-http@0.0.8":
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/executor-http/-/executor-http-0.0.8.tgz#ede3f3104f27f2ed8f8a6f8c49eb704785823c99"
+  integrity sha512-Y0WzbBW2dDm68EqjRO7eaCC38H6mNFUCcy8ivwnv0hon/N4GjQJhrR0cApJh/xqn/YqCY0Sn2ScmdGVuSdaCcA==
   dependencies:
     "@graphql-tools/utils" "9.1.3"
     "@repeaterjs/repeater" "3.0.4"
-    "@whatwg-node/fetch" "0.5.3"
+    "@whatwg-node/fetch" "0.5.4"
     dset "3.1.2"
     extract-files "^11.0.0"
     meros "1.2.1"
@@ -3466,15 +3466,15 @@
     valid-url "1.0.9"
     websocket "1.0.31"
 
-"@graphql-tools/url-loader@7.16.28", "@graphql-tools/url-loader@~7.16.4":
-  version "7.16.28"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.16.28.tgz#c4e3c991e1174cc1d81b28d403083eb4b59c495e"
-  integrity sha512-C3Qmpr5g3aNf7yKbfqSEmNEoPNkY4kpm+K1FyuGQw8N6ZKdq/70VPL8beSfqE1e2CTJua95pLQCpSD9ZsWfUEg==
+"@graphql-tools/url-loader@7.16.29", "@graphql-tools/url-loader@~7.16.4":
+  version "7.16.29"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.16.29.tgz#86ea852870a3a1b66bcb06143422f2512cecd0ab"
+  integrity sha512-e7c0rLH4BIaYxOgglHhWbupTn3JZFXYIHXpY+T1CcTF3nQQCaKy8o59+R2AjtEgx3Az1WNahGn4xgkKUxUwCBw==
   dependencies:
     "@ardatan/sync-fetch" "0.0.1"
     "@graphql-tools/delegate" "9.0.21"
     "@graphql-tools/executor-graphql-ws" "0.0.5"
-    "@graphql-tools/executor-http" "0.0.7"
+    "@graphql-tools/executor-http" "0.0.8"
     "@graphql-tools/executor-legacy-ws" "0.0.5"
     "@graphql-tools/utils" "9.1.3"
     "@graphql-tools/wrap" "9.2.23"
@@ -5711,10 +5711,10 @@
   dependencies:
     itty-router "^2.3.10"
 
-"@types/jest@*", "@types/jest@29.2.4":
-  version "29.2.4"
-  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-29.2.4.tgz#9c155c4b81c9570dbd183eb8604aa0ae80ba5a5b"
-  integrity sha512-PipFB04k2qTRPePduVLTRiPzQfvMeLwUN3Z21hsAKaB/W9IIzgB2pizCL466ftJlcyZqnHoC9ZHpxLGl3fS86A==
+"@types/jest@*", "@types/jest@29.2.5":
+  version "29.2.5"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-29.2.5.tgz#c27f41a9d6253f288d1910d3c5f09484a56b73c0"
+  integrity sha512-H2cSxkKgVmqNHXP7TC2L/WUorrZu8ZigyRywfVzv6EyBlxj39n4C00hjXYQWsbwqgElaj/CiAeSRmk5GoaKTgw==
   dependencies:
     expect "^29.0.0"
     pretty-format "^29.0.0"
@@ -6052,10 +6052,10 @@
   dependencies:
     "@types/jest" "*"
 
-"@types/thrift@0.10.11":
-  version "0.10.11"
-  resolved "https://registry.yarnpkg.com/@types/thrift/-/thrift-0.10.11.tgz#4d53e176b8c0d299f7cd4f67f78d7beb02ee7b6a"
-  integrity sha512-skAJTzEcz0RSKX/oooCz4nrLW+lgAq3Wy0imNRqwVpw2ODYKaQHg6iRA5Ig5tzvbFAWPUb9BcQWCf0Ul+IYyCw==
+"@types/thrift@0.10.12":
+  version "0.10.12"
+  resolved "https://registry.yarnpkg.com/@types/thrift/-/thrift-0.10.12.tgz#523426dcc1eef8ff229eac9fa5175f90b879e700"
+  integrity sha512-5BIQz+lJDwFCsShtLVm2o/1oXrAps9aDd1czeMP0JvYzDQqZ3cRees8ahBkMR0AGIxZR+OFvcRe7GI/v+Udc4Q==
   dependencies:
     "@types/node" "*"
     "@types/node-int64" "*"
@@ -6433,20 +6433,6 @@
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/@whatwg-node/events/-/events-0.0.2.tgz#7b7107268d2982fc7b7aff5ee6803c64018f84dd"
   integrity sha512-WKj/lI4QjnLuPrim0cfO7i+HsDSXHxNv1y0CrJhdntuO3hxWZmnXCwNDnwOvry11OjRin6cgWNF+j/9Pn8TN4w==
-
-"@whatwg-node/fetch@0.5.3":
-  version "0.5.3"
-  resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.5.3.tgz#afbd38a2e5392d91318845b967529076ca654b9e"
-  integrity sha512-cuAKL3Z7lrJJuUrfF1wxkQTb24Qd1QO/lsjJpM5ZSZZzUMms5TPnbGeGUKWA3hVKNHh30lVfr2MyRCT5Jfkucw==
-  dependencies:
-    "@peculiar/webcrypto" "^1.4.0"
-    abort-controller "^3.0.0"
-    busboy "^1.6.0"
-    form-data-encoder "^1.7.1"
-    formdata-node "^4.3.1"
-    node-fetch "^2.6.7"
-    undici "^5.12.0"
-    web-streams-polyfill "^3.2.0"
 
 "@whatwg-node/fetch@0.5.4", "@whatwg-node/fetch@^0.5.0":
   version "0.5.4"
@@ -10597,12 +10583,12 @@ eslint-webpack-plugin@^3.1.1:
     normalize-path "^3.0.0"
     schema-utils "^4.0.0"
 
-eslint@8.30.0, eslint@^8.3.0:
-  version "8.30.0"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-8.30.0.tgz#83a506125d089eef7c5b5910eeea824273a33f50"
-  integrity sha512-MGADB39QqYuzEGov+F/qb18r4i7DohCDOfatHaxI2iGlPuC65bwG2gxgO+7DkyL38dRFaRH7RaRAgU6JKL9rMQ==
+eslint@8.31.0, eslint@^8.3.0:
+  version "8.31.0"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-8.31.0.tgz#75028e77cbcff102a9feae1d718135931532d524"
+  integrity sha512-0tQQEVdmPZ1UtUKXjX7EMm9BlgJ08G90IhWh0PKDCb3ZLsgAOHI8fYSIzYVZej92zsgq+ft0FGsxhJ3xo2tbuA==
   dependencies:
-    "@eslint/eslintrc" "^1.4.0"
+    "@eslint/eslintrc" "^1.4.1"
     "@humanwhocodes/config-array" "^0.11.8"
     "@humanwhocodes/module-importer" "^1.0.1"
     "@nodelib/fs.walk" "^1.2.8"
