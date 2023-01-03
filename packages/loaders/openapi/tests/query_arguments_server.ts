@@ -7,15 +7,12 @@
 
 import { createRouter, Response } from '@whatwg-node/router';
 import { createServer, Server } from 'http';
-import { withCookies } from 'itty-router-extras';
 
 /**
  * Starts the server at the given port
  */
 export function getServer() {
   const app = createRouter();
-
-  app.all('*', withCookies);
 
   const data = [{ id: 1 }, { id: 2 }, { id: 3 }];
 
