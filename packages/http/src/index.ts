@@ -82,22 +82,15 @@ export function createMeshHTTPHandler<TServerContext>({
   });
 
   if (staticFiles) {
-    const indexPath = path.join(baseDir, staticFiles, 'index.html');
-    router.get('*', async request => {
-      const url = new URL(request.url);
-      if (graphqlPath !== '/' && url.pathname === '/' && (await pathExists(indexPath))) {
-        const indexFile = await fs.promises.readFile(indexPath);
-        return new Response(indexFile, {
-          status: 200,
-          headers: {
-            'Content-Type': 'text/html',
-          },
-        });
+    router.get('/:relativePath+', async request => {
+      let { relativePath } = request.params;
+      if (!relativePath) {
+        relativePath = 'index.html';
       }
-      const filePath = path.join(baseDir, staticFiles, url.pathname);
-      if (await pathExists(filePath)) {
-        const body = await fs.promises.readFile(filePath);
-        return new Response(body, {
+      const absolutePath = path.join(baseDir, staticFiles, relativePath);
+      if (await pathExists(absolutePath)) {
+        const readStream = fs.createReadStream(absolutePath);
+        return new Response(readStream as any, {
           status: 200,
         });
       }
@@ -116,7 +109,7 @@ export function createMeshHTTPHandler<TServerContext>({
     );
   }
 
-  router.all('*', withCookies);
+  router.all('*', withCookies as any);
 
   router.all(
     '*',

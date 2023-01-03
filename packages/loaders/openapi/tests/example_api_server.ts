@@ -15,7 +15,7 @@ import { withCookies } from 'itty-router-extras';
 export function startServer() {
   const app = createRouter();
 
-  app.all('*', withCookies);
+  app.all('*', withCookies as any);
 
   const Users = {
     arlene: {
@@ -588,8 +588,8 @@ export function startServer() {
   app.get('/api/coffeeLocation', req => {
     return new Response(
       JSON.stringify({
-        lat: parseFloat(req.query.lat) + 5,
-        long: parseFloat(req.query.long) + 5,
+        lat: parseFloat(req.query.lat.toString()) + 5,
+        long: parseFloat(req.query.long.toString()) + 5,
       }),
       {
         headers: {

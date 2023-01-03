@@ -34,7 +34,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.89.3",
     "@graphql-mesh/utils": "0.43.4",
-    "@whatwg-node/fetch": "0.5.4",
+    "@whatwg-node/fetch": "0.6.1",
     "http-cache-semantics": "4.1.0",
     "tslib": "^2.4.0"
   },

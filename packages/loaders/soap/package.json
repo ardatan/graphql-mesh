@@ -35,7 +35,7 @@
     "graphql-scalars": "1.20.1"
   },
   "devDependencies": {
-    "@whatwg-node/fetch": "0.5.4"
+    "@whatwg-node/fetch": "0.6.1"
   },
   "publishConfig": {
     "access": "public",
