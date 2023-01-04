@@ -70,6 +70,9 @@ import { createBuiltMeshHTTPHandler } from './.mesh'
 export default createBuiltMeshHTTPHandler()
 ```
 
+Path `./.mesh` refers to built Mesh folder that should be available in your project root
+(together with your project `package.json`)
+
 ### Deploy Mesh on AWS Lambda
 
 Similarly to regular and Vercel deployment, we will need to add the `mesh build` command in the build step.

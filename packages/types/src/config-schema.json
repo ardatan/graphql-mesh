@@ -839,6 +839,10 @@
           "enum": ["SSE", "WS", "LEGACY_WS"],
           "description": "SSE - Server Sent Events\nWS - New graphql-ws\nLEGACY_WS - Legacy subscriptions-transport-ws (Allowed values: SSE, WS, LEGACY_WS)"
         },
+        "subscriptionsEndpoint": {
+          "type": "string",
+          "description": "URL of custom endpoint for websocket connection for subscriptions"
+        },
         "retry": {
           "type": "integer",
           "description": "Retry attempts if fails"

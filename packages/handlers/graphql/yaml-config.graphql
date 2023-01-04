@@ -91,6 +91,10 @@ type GraphQLHandlerHTTPConfiguration @md {
   """
   subscriptionsProtocol: SubscriptionProtocol
   """
+  URL to your endpoint serving all subscription queries for this source
+  """
+  subscriptionsEndpoint: String
+  """
   Retry attempts if fails
   """
   retry: Int
