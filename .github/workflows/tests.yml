@@ -15,6 +15,13 @@ jobs:
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
 
+  prettier:
+    uses: the-guild-org/shared-config/.github/workflows/prettier.yml@main
+    with:
+      script: yarn ci:prettier
+    secrets:
+      githubToken: ${{ secrets.GITHUB_TOKEN }}
+
   test:
     name: ${{matrix.os}} / node ${{matrix.node-version}}
     timeout-minutes: 60
