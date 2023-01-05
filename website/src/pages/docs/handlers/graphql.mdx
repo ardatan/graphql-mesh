@@ -53,7 +53,8 @@ sources:
 
 ### Hive Integration
 
-If you use [GraphQL Hive](https://graphql-hive.com/) to manage your GraphQL APIs as a schema registry, you can use the following configuration to fetch your schema from Hive:
+If you use [GraphQL Hive](https://graphql-hive.com/) to manage your GraphQL APIs as a schema
+registry, you can use the following configuration to fetch your schema from Hive:
 
 ```yaml filename=".meshrc.yaml"
 sources:
@@ -63,7 +64,7 @@ sources:
         endpoint: https://my-api.com/graphql
         source: https://cdn.graphql-hive.com/asce7c12-753d-hive-bee-d7f2c803e232/sdl?ext=.graphql
         schemaHeaders:
-          X-Hive-CDN-Key: "aabTxbEyC78NvSPQNO+qLrrRnBvODJJ8k4sL/2EtIwc="
+          X-Hive-CDN-Key: 'aabTxbEyC78NvSPQNO+qLrrRnBvODJJ8k4sL/2EtIwc='
 ```
 
 ## Local Schemas

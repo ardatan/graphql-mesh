@@ -79,8 +79,8 @@ import { createBuiltMeshHTTPHandler } from './.mesh'
 export default createBuiltMeshHTTPHandler()
 ```
 
-Path `./.mesh` refers to built Mesh folder that should be available in your project root
-(together with your project `package.json`)
+Path `./.mesh` refers to built Mesh folder that should be available in your project root (together
+with your project `package.json`)
 
 ### Deploy Mesh on AWS Lambda
 
@@ -98,7 +98,7 @@ const meshHTTP = createBuiltMeshHTTPHandler()
 
 export async function handler(
   event: APIGatewayEvent,
-  lambdaContext: Context,
+  lambdaContext: Context
 ): Promise<APIGatewayProxyResult> {
   const url = new URL(event.path, 'http://localhost')
   if (event.queryStringParameters != null) {
@@ -117,12 +117,12 @@ export async function handler(
       headers: event.headers as HeadersInit,
       body: event.body
         ? Buffer.from(event.body, event.isBase64Encoded ? 'base64' : 'utf8')
-        : undefined,
+        : undefined
     },
     {
       event,
-      lambdaContext,
-    },
+      lambdaContext
+    }
   )
 
   const responseHeaders: Record<string, string> = {}
@@ -135,7 +135,7 @@ export async function handler(
     statusCode: response.status,
     headers: responseHeaders,
     body: await response.text(),
-    isBase64Encoded: false,
+    isBase64Encoded: false
   }
 }
 ```
