@@ -26,7 +26,7 @@
     "@types/node": "16.11.65",
     "@types/react": "18.0.21",
     "@types/react-dom": "18.0.6",
-    "typescript": "4.8.4"
+    "typescript": "4.9.4"
   },
   "browserslist": {
     "production": [
