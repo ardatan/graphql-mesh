@@ -387,7 +387,11 @@
   },
   {
     "objectID": "mesh-docs-getting-started-customize-mesh-server",
-    "headings": ["Configure and provide plugins", "Configuration: `serve` reference"],
+    "headings": [
+      "Configure and provide plugins",
+      "Configuration: `serve` reference",
+      "Provide a standalone server implementation"
+    ],
     "toc": [
       {
         "children": [],
@@ -398,9 +402,14 @@
         "children": [],
         "title": "Configuration: `serve` reference",
         "anchor": "configuration-serve-reference"
+      },
+      {
+        "children": [],
+        "title": "Provide a standalone server implementation",
+        "anchor": "provide-a-standalone-server-implementation"
       }
     ],
-    "content": "e3beecdabf86c522ae59cd5edd94d59a",
+    "content": "29fa86d6623b64cf99d52bb911a1429c",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/getting-started/customize-mesh-server",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Getting Started"],
@@ -492,7 +501,7 @@
         "anchor": "mesh-and-docker"
       }
     ],
-    "content": "bfb8def7d42c4443c44cbf2a6b9d8d61",
+    "content": "866c268ea912d8b8cc0c48a8c8f44b5a",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/getting-started/deploy-mesh-gateway",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Getting Started"],
