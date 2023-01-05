@@ -252,7 +252,7 @@ export function getComposerFromJSONSchema(
       if (subSchema.enum && subSchema.type !== 'boolean') {
         const values: Record<string, EnumTypeComposerValueConfigDefinition> = {};
         for (const value of subSchema.enum) {
-          let enumKey = sanitizeNameForGraphQL(value.toString());
+          let enumKey = sanitizeNameForGraphQL(value?.toString() ?? 'NULL');
           if (enumKey === 'false' || enumKey === 'true' || enumKey === 'null') {
             enumKey = enumKey.toUpperCase();
           }
