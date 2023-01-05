@@ -230,6 +230,10 @@ export interface GraphQLHandlerHTTPConfiguration {
    */
   subscriptionsProtocol?: 'SSE' | 'WS' | 'LEGACY_WS';
   /**
+   * URL to your endpoint serving all subscription queries for this source
+   */
+  subscriptionsEndpoint: string
+  /**
    * Retry attempts if fails
    */
   retry?: number;
