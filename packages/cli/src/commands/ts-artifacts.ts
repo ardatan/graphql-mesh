@@ -455,22 +455,68 @@ const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url
       },
     });
 
-  const tsConfigPath = pathModule.join(baseDir, 'tsconfig.json');
+  function setTsConfigDefault() {
+    jobs.push(cjsJob);
+    if (fileType !== 'ts') {
+      jobs.push(packageJsonJob('commonjs'));
+    }
+  }
+  const rootDir = pathModule.resolve('./');
+  const tsConfigPath = pathModule.join(rootDir, 'tsconfig.json');
+  const packageJsonPath = pathModule.join(rootDir, 'package.json');
   if (await pathExists(tsConfigPath)) {
+    // case tsconfig exists
     const tsConfigStr = await fs.promises.readFile(tsConfigPath, 'utf-8');
     const tsConfig = JSON5.parse(tsConfigStr);
     if (tsConfig?.compilerOptions?.module?.toLowerCase()?.startsWith('es')) {
+      // case tsconfig set to esm
+      jobs.push(esmJob('js'));
+      if (fileType !== 'ts') {
+        jobs.push(packageJsonJob('module'));
+      }
+    } else if (
+      tsConfig?.compilerOptions?.module?.toLowerCase()?.startsWith('node') &&
+      (await pathExists(packageJsonPath))
+    ) {
+      // case tsconfig set to node* and package.json exists
+      const packageJsonStr = await fs.promises.readFile(packageJsonPath, 'utf-8');
+      const packageJson = JSON5.parse(packageJsonStr);
+      if (packageJson?.type === 'module') {
+        // case package.json set to esm
+        jobs.push(esmJob('js'));
+        if (fileType !== 'ts') {
+          jobs.push(packageJsonJob('module'));
+        }
+      } else {
+        // case package.json set to cjs or not set
+        setTsConfigDefault();
+      }
+    } else {
+      // case tsconfig set to cjs or set to node* with no package.json
+      setTsConfigDefault();
+    }
+  } else if (await pathExists(packageJsonPath)) {
+    // case package.json exists
+    const packageJsonStr = await fs.promises.readFile(packageJsonPath, 'utf-8');
+    const packageJson = JSON5.parse(packageJsonStr);
+    if (packageJson?.type === 'module') {
+      // case package.json set to esm
       jobs.push(esmJob('js'));
       if (fileType !== 'ts') {
         jobs.push(packageJsonJob('module'));
       }
     } else {
-      jobs.push(cjsJob);
-      if (fileType !== 'ts') {
+      // case package.json set to cjs or not set
+      jobs.push(esmJob('mjs'));
+      if (fileType === 'js') {
+        jobs.push(packageJsonJob('module'));
+      } else {
+        jobs.push(cjsJob);
         jobs.push(packageJsonJob('commonjs'));
       }
     }
   } else {
+    // case no tsconfig and no package.json
     jobs.push(esmJob('mjs'));
     if (fileType === 'js') {
       jobs.push(packageJsonJob('module'));
