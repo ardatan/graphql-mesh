@@ -4476,21 +4476,21 @@
     "@napi-rs/simple-git-win32-arm64-msvc" "0.1.8"
     "@napi-rs/simple-git-win32-x64-msvc" "0.1.8"
 
-"@neo4j/cypher-builder@~0.1.8":
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/@neo4j/cypher-builder/-/cypher-builder-0.1.8.tgz#055ab5f35358248ee00cef182e357db4c3a2341c"
-  integrity sha512-0qV0yEPf5Xz2bzWUL3qYV4LKrw07TSXuc+42ucqyw36/p/Mq+D3S2sGsgjL30WXRdjQ3v+dFv28GtVZTLKa2Eg==
+"@neo4j/cypher-builder@~0.1.9":
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/@neo4j/cypher-builder/-/cypher-builder-0.1.9.tgz#e06b0ee3515e327d36b2db24fdb39846af556ece"
+  integrity sha512-hDpa5rfI2QlaWmSBPphEDPNSg9oZ/QOVD2flCbnCiQzUTnwMG8LWa+4LS4xg/nIspZudRGvuk4rDWudmsWrZIw==
 
-"@neo4j/graphql@3.14.1":
-  version "3.14.1"
-  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-3.14.1.tgz#94fb4269de518d93130ae20fda418fa399dd13f4"
-  integrity sha512-Wp8g0VCRYamu4a5nRsj+yPnbuMWxN0ZdWIPwc267lTH5kczrgHWr17WXf/GLmOTP23FsAtNBWoruPkecfT+ZLQ==
+"@neo4j/graphql@3.14.2":
+  version "3.14.2"
+  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-3.14.2.tgz#d49433c4164973d8240bf086b6f05105bc436596"
+  integrity sha512-Eo2sGEl8dnmHjP0ghEnOVE/jh5lsFusa3oHvSQ0LsIaRzq50Sfrtbw1v4LAfDmGAbeE+Q5gQJHoO1/5K4qyIwQ==
   dependencies:
     "@graphql-tools/merge" "^8.3.3"
     "@graphql-tools/resolvers-composition" "^6.5.3"
     "@graphql-tools/schema" "9.0.12"
     "@graphql-tools/utils" "^9.0.0"
-    "@neo4j/cypher-builder" "~0.1.8"
+    "@neo4j/cypher-builder" "~0.1.9"
     camelcase "^6.3.0"
     debug "^4.3.4"
     deep-equal "^2.0.5"
@@ -14217,10 +14217,10 @@ jws@^3.2.2:
     jwa "^1.4.1"
     safe-buffer "^5.0.1"
 
-kareem@2.5.0:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/kareem/-/kareem-2.5.0.tgz#9d2b2272609b0d5b981757fa5794d7ad0ac041b2"
-  integrity sha512-rVBUGGwvqg130iwYu8k7lutHuDBFj1yGRdnlE44wEhxAmFBad1zcL66PdWC1raw3tIObY6XWhtv3VL04xQb/cg==
+kareem@2.5.1:
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/kareem/-/kareem-2.5.1.tgz#7b8203e11819a8e77a34b3517d3ead206764d15d"
+  integrity sha512-7jFxRVm+jD+rkq3kY0iZDJfsO2/t4BBPeEb2qKn2lR/9KhuksYk5hxzfRYWMPV8P/x2d0kHD306YyWLzjjH+uA==
 
 keyv@^4.0.0:
   version "4.3.2"
@@ -15791,13 +15791,13 @@ mongodb@4.12.1:
     "@aws-sdk/credential-providers" "^3.186.0"
     saslprep "^1.0.3"
 
-mongoose@6.8.2:
-  version "6.8.2"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.8.2.tgz#5b11a3ca0f6955e65f8f1e2255dad213e122b4ea"
-  integrity sha512-cIato5N2w/QuJkkh0w4nyf7ty7DqmmP/W8/6PFSM0DrzbxIMlr6VN15LBIceTSJIxbznNl2Mlbh9Rm4sokMw+A==
+mongoose@6.8.3:
+  version "6.8.3"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.8.3.tgz#6580b9846a9defbb0f0cff317443d4f87e9cce8e"
+  integrity sha512-qrVWefJK+wFNBH0ALV+oiyJ+FN42O/BqvHFmlFJJ2LKuNmQEOE0JV8FCxnZqtanwbHs4i+k/SkjhtC+C01haaw==
   dependencies:
     bson "^4.7.0"
-    kareem "2.5.0"
+    kareem "2.5.1"
     mongodb "4.12.1"
     mpath "0.9.0"
     mquery "4.0.3"
