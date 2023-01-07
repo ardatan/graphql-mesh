@@ -41,7 +41,7 @@
     "@graphql-tools/utils": "9.1.3",
     "@whatwg-node/fetch": "^0.6.0",
     "dataloader": "2.1.0",
-    "fast-xml-parser": "4.0.12",
+    "fast-xml-parser": "4.0.13",
     "graphql-compose": "9.0.10",
     "graphql-parse-resolve-info": "4.12.3",
     "graphql-scalars": "1.20.1",
