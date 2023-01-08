@@ -1,27 +1,23 @@
-require('json-bigint-patch');
-const { findAndParseConfig } = require('@graphql-mesh/cli');
-const { getMesh } = require('@graphql-mesh/runtime');
-const { join } = require('path');
+import 'json-bigint-patch';
+import { findAndParseConfig } from '@graphql-mesh/cli';
+import { getMesh } from '@graphql-mesh/runtime';
+import { join } from 'path';
 
-const { printSchema, lexicographicSortSchema } = require('graphql');
-const { readFile } = require('fs-extra');
+import { printSchema, lexicographicSortSchema } from 'graphql';
+import { readFile } from 'fs-extra';
 
 const config$ = findAndParseConfig({
   dir: join(__dirname, '..'),
 });
 const mesh$ = config$.then(config => getMesh(config));
-const startGrpcServer = require('../start-server');
+import startGrpcServer from '../start-server.js';
 const grpc$ = startGrpcServer(300);
 jest.setTimeout(15000);
 
 describe('gRPC Example', () => {
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
-    expect(
-      printSchema(lexicographicSortSchema(schema), {
-        descriptions: false,
-      }),
-    ).toMatchSnapshot('grpc-schema');
+    expect(printSchema(lexicographicSortSchema(schema))).toMatchSnapshot('grpc-schema');
   });
   it('should get greeting correctly', async () => {
     const GreetingQuery = await readFile(
@@ -30,7 +26,7 @@ describe('gRPC Example', () => {
     );
     const { execute } = await mesh$;
     await grpc$;
-    const result = await execute(GreetingQuery);
+    const result = await execute(GreetingQuery, undefined);
     expect(result).toMatchSnapshot('greeting-result');
   });
   afterAll(() => {

@@ -1,8 +1,8 @@
-const { findAndParseConfig } = require('@graphql-mesh/cli');
-const { getMesh } = require('@graphql-mesh/runtime');
-const { basename, join } = require('path');
+import { findAndParseConfig } from '@graphql-mesh/cli';
+import { getMesh } from '@graphql-mesh/runtime';
+import { basename, join } from 'path';
 
-const { introspectionFromSchema, lexicographicSortSchema } = require('graphql');
+import { introspectionFromSchema, lexicographicSortSchema } from 'graphql';
 
 const config$ = findAndParseConfig({
   dir: join(__dirname, '..'),
@@ -16,14 +16,17 @@ describe('OData TripPin', () => {
     expect(
       introspectionFromSchema(lexicographicSortSchema(schema), {
         descriptions: false,
-      })
+      }),
     ).toMatchSnapshot('odata-trippin-schema');
   });
   it('should give correct response for example queries', async () => {
     const { documents } = await config$;
     const { execute } = await mesh$;
     for (const source of documents) {
-      const result = await execute(source.document);
+      if (!source.document || !source.location) {
+        continue;
+      }
+      const result = await execute(source.document, {});
       expect(result).toMatchSnapshot(basename(source.location) + '-query-result');
     }
   });
