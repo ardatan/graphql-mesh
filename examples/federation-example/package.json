@@ -11,17 +11,16 @@
     "start": "concurrently \"npm:start-services npm:start-gateway-delayed\"",
     "start-gateway": "mesh dev --dir gateway",
     "start-gateway-delayed": "delay 1 && npm run start-gateway",
-    "start-service-accounts": "nodemon services/accounts/index.ts",
-    "start-service-inventory": "nodemon services/inventory/index.ts",
-    "start-service-products": "nodemon services/products/index.ts",
-    "start-service-reviews": "ts-node services/reviews",
+    "start-service-accounts": "ts-node services/accounts/index.ts",
+    "start-service-inventory": "ts-node services/inventory/index.ts",
+    "start-service-products": "ts-node services/products/index.ts",
+    "start-service-reviews": "ts-node services/reviews/index.ts",
     "start-services": "concurrently \"npm:start-service-*\""
   },
   "devDependencies": {
     "apollo-server": "3.11.1",
     "concurrently": "7.6.0",
     "delay-cli": "2.0.0",
-    "nodemon": "2.0.20",
     "ts-node": "10.9.1",
     "typescript": "4.9.4"
   }
