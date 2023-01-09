@@ -39,12 +39,13 @@ const server = new ApolloServer({
   ]),
 });
 
-module.exports = server.listen({ port: 9873 }).then(({ url }) => {
-  if (!process.env.CI) {
-    console.log(`🚀 Server ready at ${url}`);
-  }
-  return server;
-});
+export const productsServer = () =>
+  server.listen({ port: 9873 }).then(({ url }) => {
+    if (!process.env.CI) {
+      console.log(`🚀 Server ready at ${url}`);
+    }
+    return server;
+  });
 
 const products = [
   {

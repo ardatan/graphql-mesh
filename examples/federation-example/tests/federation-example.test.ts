@@ -1,8 +1,13 @@
-const { findAndParseConfig } = require('@graphql-mesh/cli');
-const { getMesh } = require('@graphql-mesh/runtime');
-const { join } = require('path');
+import { findAndParseConfig } from '@graphql-mesh/cli';
+import { MeshInstance, getMesh } from '@graphql-mesh/runtime';
+import { join } from 'path';
+import { accountsServer } from '../services/accounts';
+import { inventoryServer } from '../services/inventory';
+import { productsServer } from '../services/products';
+import { reviewsServer } from '../services/reviews';
+import { ApolloServer } from 'apollo-server';
 
-const { mkdirSync, readFileSync, writeFileSync } = require('fs');
+import { mkdirSync, readFileSync, writeFileSync } from 'fs';
 
 const problematicModulePath = join(__dirname, '../../../node_modules/core-js/features/array');
 const emptyModuleContent = 'module.exports = {};';
@@ -16,18 +21,18 @@ writeFileSync(join(problematicModulePath, './flat-map.js'), emptyModuleContent);
 
 describe('Federation Example', () => {
   let mesh;
-  let servicesToStop;
+  let servicesToStop: Array<ApolloServer> = [];
   beforeAll(async () => {
     const [config, ...services] = await Promise.all([
       findAndParseConfig({
         dir: join(__dirname, '../gateway'),
       }),
-      require('../services/accounts'),
-      require('../services/inventory'),
-      require('../services/products'),
-      require('../services/reviews'),
+      accountsServer(),
+      inventoryServer(),
+      productsServer(),
+      reviewsServer(),
     ]);
-    servicesToStop = services;
+    servicesToStop = [...services];
     mesh = await getMesh(config);
   });
   afterAll(async () => {
@@ -35,7 +40,7 @@ describe('Federation Example', () => {
     mesh.destroy();
   });
   it('should give correct response for example queries', async () => {
-    const result = await mesh.execute(exampleQuery);
+    const result = await mesh.execute(exampleQuery, undefined);
     expect(result?.errors).toBeFalsy();
     expect(result?.data).toMatchSnapshot();
   });

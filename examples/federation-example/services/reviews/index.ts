@@ -55,12 +55,13 @@ const server = new ApolloServer({
   ]),
 });
 
-module.exports = server.listen({ port: 9874 }).then(({ url }) => {
-  if (!process.env.CI) {
-    console.log(`🚀 Server ready at ${url}`);
-  }
-  return server;
-});
+export const reviewsServer = () =>
+  server.listen({ port: 9874 }).then(({ url }) => {
+    if (!process.env.CI) {
+      console.log(`🚀 Server ready at ${url}`);
+    }
+    return server;
+  });
 
 const usernames = [
   { id: '1', username: '@ada' },

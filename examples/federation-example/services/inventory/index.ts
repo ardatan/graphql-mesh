@@ -37,12 +37,13 @@ const server = new ApolloServer({
   ]),
 });
 
-module.exports = server.listen({ port: 9872 }).then(({ url }) => {
-  if (!process.env.CI) {
-    console.log(`🚀 Server ready at ${url}`);
-  }
-  return server;
-});
+export const inventoryServer = () =>
+  server.listen({ port: 9872 }).then(({ url }) => {
+    if (!process.env.CI) {
+      console.log(`🚀 Server ready at ${url}`);
+    }
+    return server;
+  });
 
 const inventory = [
   { upc: '1', inStock: true },
