@@ -1,8 +1,8 @@
-const { findAndParseConfig } = require('@graphql-mesh/cli');
-const { getMesh } = require('@graphql-mesh/runtime');
-const { join } = require('path');
+import { findAndParseConfig } from '@graphql-mesh/cli';
+import { getMesh } from '@graphql-mesh/runtime';
+import { join } from 'path';
 
-const { printSchemaWithDirectives } = require('@graphql-tools/utils');
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 const mesh$ = findAndParseConfig({
   dir: join(__dirname, '..'),
@@ -15,11 +15,14 @@ describe('Hello World', () => {
   });
   it('should give correct response', async () => {
     const { execute } = await mesh$;
-    const result = await execute(/* GraphQL */ `
-      query HelloWorld {
-        greeting
-      }
-    `);
+    const result = await execute(
+      /* GraphQL */ `
+        query HelloWorld {
+          greeting
+        }
+      `,
+      undefined,
+    );
     expect(result?.errors).toBeFalsy();
     expect(result).toMatchSnapshot();
   });

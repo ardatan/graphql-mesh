@@ -2,7 +2,7 @@ import { createYoga, createSchema } from 'graphql-yoga';
 import { createServer } from 'http';
 import sharp from 'sharp';
 
-export default function startServer() {
+export function startServer() {
   const yoga = createYoga({
     schema: createSchema({
       typeDefs: /* GraphQL */ `
@@ -31,7 +31,7 @@ export default function startServer() {
         () =>
           new Promise(resolve => {
             server.close(resolve);
-          })
+          }),
       );
     });
   });

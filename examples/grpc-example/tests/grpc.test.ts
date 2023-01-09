@@ -18,11 +18,7 @@ jest.setTimeout(15000);
 describe('gRPC Example', () => {
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
-    expect(
-      printSchema(lexicographicSortSchema(schema), {
-        descriptions: false,
-      }),
-    ).toMatchSnapshot('grpc-schema');
+    expect(printSchema(lexicographicSortSchema(schema))).toMatchSnapshot('grpc-schema');
   });
   it('should get movies correctly', async () => {
     const GetMoviesQuery = await readFile(
@@ -41,7 +37,7 @@ describe('gRPC Example', () => {
     );
     const { execute } = await mesh$;
     await grpc$;
-    const result = await execute(MoviesByCastStream);
+    const result = await execute(MoviesByCastStream, undefined);
     expect(result).toMatchSnapshot('movies-by-cast-grpc-example-result');
   });
   afterAll(() => {

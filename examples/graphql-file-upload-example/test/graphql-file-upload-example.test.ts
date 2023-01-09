@@ -1,5 +1,5 @@
-import startUploadFilesServer from '../upload-files/server';
-import startResizeImageServer from '../resize-image/server';
+import { startServer as startUploadFilesServer } from '../upload-files/server';
+import { startServer as startResizeImageServer } from '../resize-image/server';
 import { File } from '@whatwg-node/fetch';
 import { findAndParseConfig } from '@graphql-mesh/cli';
 import { join } from 'path';
@@ -34,7 +34,7 @@ describe('Upload Example', () => {
       `,
       {
         upload: file,
-      }
+      },
     );
     expect(result?.data?.uploadFile?.filename).toBe('test.txt');
   });
