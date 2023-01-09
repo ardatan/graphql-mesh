@@ -368,6 +368,11 @@ export async function healJSONSchema(
             logger.debug(`${path} has an enum but with a single value. Converting it to const.`);
             delete subSchema.enum;
           }
+          if (subSchema.enum && subSchema.enum.includes(null)) {
+            logger.debug(`${path} has "null" value. Converting it to nullable.`);
+            subSchema.enum = subSchema.enum.filter((e: unknown) => typeof e === 'string');
+            subSchema.nullable = true;
+          }
           if (subSchema.const === null && subSchema.type !== 'null') {
             logger.debug(`${path} has a const definition of null. Setting type to "null".`);
             subSchema.type = 'null';
