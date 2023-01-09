@@ -49,6 +49,15 @@
     },
     "/customers/{customerId}": {
       "get": {
+        "parameters": [
+          {
+            "name": "x-auth-token",
+            "in": "header",
+            "description": "Authentication Token",
+            "required": true,
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Data found, returned attributes",
