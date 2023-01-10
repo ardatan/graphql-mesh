@@ -1,8 +1,16 @@
 import type { YamlConfig } from '@graphql-mesh/types';
-import { buildOperationNodeForField, getRootTypeMap, parseGraphQLSDL, Source } from '@graphql-tools/utils';
+import {
+  buildOperationNodeForField,
+  getRootTypeMap,
+  parseGraphQLSDL,
+  Source,
+} from '@graphql-tools/utils';
 import { GraphQLSchema, print } from 'graphql';
 
-export function generateOperations(schema: GraphQLSchema, options: YamlConfig.GenerateOperationsConfig): Source[] {
+export function generateOperations(
+  schema: GraphQLSchema,
+  options: YamlConfig.GenerateOperationsConfig,
+): Source[] {
   const sources: Source[] = [];
   const rootTypeMap = getRootTypeMap(schema);
   for (const [operationType, rootType] of rootTypeMap) {

@@ -13,10 +13,14 @@ export default class TuqlHandler implements MeshHandler {
   async getMeshSource(): Promise<MeshSource> {
     const schema = await (this.config.infile
       ? buildSchemaFromInfile(
-          path.isAbsolute(this.config.infile) ? this.config.db : path.join(this.baseDir, this.config.infile)
+          path.isAbsolute(this.config.infile)
+            ? this.config.db
+            : path.join(this.baseDir, this.config.infile),
         )
       : buildSchemaFromDatabase(
-          path.isAbsolute(this.config.db) ? this.config.infile : path.join(this.baseDir, this.config.db)
+          path.isAbsolute(this.config.db)
+            ? this.config.infile
+            : path.join(this.baseDir, this.config.db),
         ));
 
     return {

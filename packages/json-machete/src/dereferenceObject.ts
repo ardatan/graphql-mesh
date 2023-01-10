@@ -59,7 +59,6 @@ export function getCwd(path: string) {
   return isUrl(path) ? getCwdForUrl(path) : pathModule.dirname(path);
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 export async function dereferenceObject<T extends object, TRoot = T>(
   obj: T,
   {
@@ -82,7 +81,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
     logger?: any;
     resolvedObjects?: WeakSet<any>;
     headers?: Record<string, string>;
-  } = {}
+  } = {},
 ): Promise<T> {
   if (obj != null && typeof obj === 'object') {
     if (isRefObject(obj)) {
@@ -149,7 +148,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
               headers,
               root: externalFile,
               resolvedObjects,
-            }
+            },
           );
           refMap.set($ref, result);
           resolvedObjects.add(result);

@@ -60,11 +60,21 @@ export default class GraphQLHandler implements MeshHandler {
   private logger: Logger;
   private urlLoader = new UrlLoader();
 
-  constructor({ name, config, baseDir, store, importFn, logger }: MeshHandlerOptions<YamlConfig.Handler['graphql']>) {
+  constructor({
+    name,
+    config,
+    baseDir,
+    store,
+    importFn,
+    logger,
+  }: MeshHandlerOptions<YamlConfig.Handler['graphql']>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
-    this.nonExecutableSchema = store.proxy('introspectionSchema', PredefinedProxyOptions.GraphQLSchemaWithDiffing);
+    this.nonExecutableSchema = store.proxy(
+      'introspectionSchema',
+      PredefinedProxyOptions.GraphQLSchemaWithDiffing,
+    );
     this.importFn = importFn;
     this.logger = logger;
   }
@@ -85,7 +95,7 @@ export default class GraphQLHandler implements MeshHandler {
   }
 
   async getExecutorForHTTPSourceConfig(
-    httpSourceConfig: YamlConfig.GraphQLHandlerHTTPConfiguration
+    httpSourceConfig: YamlConfig.GraphQLHandlerHTTPConfiguration,
   ): Promise<MeshSource['executor']> {
     const { endpoint, operationHeaders = {} } = httpSourceConfig;
 
@@ -116,14 +126,16 @@ export default class GraphQLHandler implements MeshHandler {
   }
 
   async getNonExecutableSchemaForHTTPSource(
-    httpSourceConfig: YamlConfig.GraphQLHandlerHTTPConfiguration
+    httpSourceConfig: YamlConfig.GraphQLHandlerHTTPConfiguration,
   ): Promise<GraphQLSchema> {
     this.interpolationStringSet.add(httpSourceConfig.endpoint);
     Object.keys(httpSourceConfig.schemaHeaders || {}).forEach(headerName => {
       this.interpolationStringSet.add(headerName.toString());
     });
 
-    const schemaHeadersFactory = getInterpolatedHeadersFactory(httpSourceConfig.schemaHeaders || {});
+    const schemaHeadersFactory = getInterpolatedHeadersFactory(
+      httpSourceConfig.schemaHeaders || {},
+    );
     if (httpSourceConfig.source) {
       const headers = schemaHeadersFactory({
         env: process.env,
@@ -137,7 +149,7 @@ export default class GraphQLHandler implements MeshHandler {
           fetch: this.fetchFn,
           logger: this.logger,
           headers,
-        }
+        },
       );
       if (typeof sdlOrIntrospection === 'string') {
         return buildSchema(sdlOrIntrospection);
@@ -188,10 +200,9 @@ export default class GraphQLHandler implements MeshHandler {
       };
     } else {
       // Loaders logic should be here somehow
-      const schemaOrStringOrDocumentNode = await loadFromModuleExportExpression<GraphQLSchema | string | DocumentNode>(
-        schemaConfig,
-        { cwd: this.baseDir, defaultExportName: 'schema', importFn: this.importFn }
-      );
+      const schemaOrStringOrDocumentNode = await loadFromModuleExportExpression<
+        GraphQLSchema | string | DocumentNode
+      >(schemaConfig, { cwd: this.baseDir, defaultExportName: 'schema', importFn: this.importFn });
       let schema: GraphQLSchema;
       if (schemaOrStringOrDocumentNode instanceof GraphQLSchema) {
         schema = schemaOrStringOrDocumentNode;
@@ -205,8 +216,8 @@ export default class GraphQLHandler implements MeshHandler {
       } else {
         throw new Error(
           `Provided file '${schemaConfig} exports an unknown type: ${util.inspect(
-            schemaOrStringOrDocumentNode
-          )}': expected GraphQLSchema, SDL or DocumentNode.`
+            schemaOrStringOrDocumentNode,
+          )}': expected GraphQLSchema, SDL or DocumentNode.`,
         );
       }
       const { contextVariables } = this.getArgsAndContextVariables();
@@ -263,7 +274,10 @@ export default class GraphQLHandler implements MeshHandler {
           executorPromises.push(this.getExecutorForHTTPSourceConfig(httpSourceConfig));
         }
 
-        const [schema, ...executors] = await Promise.all([Promise.race(schemaPromises), ...executorPromises]);
+        const [schema, ...executors] = await Promise.all([
+          Promise.race(schemaPromises),
+          ...executorPromises,
+        ]);
 
         const executor = this.getRaceExecutor(executors);
 
@@ -299,9 +313,13 @@ export default class GraphQLHandler implements MeshHandler {
         const executors = await Promise.all(executorPromises);
         const parsedSelectionSet = parseSelectionSet(this.config.strategyConfig.selectionSet);
         const valuePath = this.config.strategyConfig.value;
-        const highestValueExecutor = async function highestValueExecutor(executionRequest: ExecutionRequest) {
+        const highestValueExecutor = async function highestValueExecutor(
+          executionRequest: ExecutionRequest,
+        ) {
           const operationAST = getOperationASTFromRequest(executionRequest);
-          (operationAST.selectionSet.selections as SelectionNode[]).push(...parsedSelectionSet.selections);
+          (operationAST.selectionSet.selections as SelectionNode[]).push(
+            ...parsedSelectionSet.selections,
+          );
           const results = await Promise.all(executors.map(executor => executor(executionRequest)));
           let highestValue = -Infinity;
           let resultWithHighestResult = results[0];
@@ -367,12 +385,16 @@ export default class GraphQLHandler implements MeshHandler {
       ]);
       if (schemaResult.status === 'rejected') {
         throw new Error(
-          `Failed to fetch introspection from ${this.config.endpoint}: ${util.inspect(schemaResult.reason)}`
+          `Failed to fetch introspection from ${this.config.endpoint}: ${util.inspect(
+            schemaResult.reason,
+          )}`,
         );
       }
       if (executorResult.status === 'rejected') {
         throw new Error(
-          `Failed to create executor for ${this.config.endpoint}: ${util.inspect(executorResult.reason)}`
+          `Failed to create executor for ${this.config.endpoint}: ${util.inspect(
+            executorResult.reason,
+          )}`,
         );
       }
       const { contextVariables } = this.getArgsAndContextVariables();

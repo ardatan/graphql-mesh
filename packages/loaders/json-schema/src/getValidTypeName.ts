@@ -15,7 +15,9 @@ export function getValidTypeName({
   if (!subSchema.title) {
     throw new Error('Missing title for schema; ' + inspect(subSchema));
   }
-  const sanitizedName = sanitizeNameForGraphQL(isInput ? subSchema.title + '_Input' : subSchema.title);
+  const sanitizedName = sanitizeNameForGraphQL(
+    isInput ? subSchema.title + '_Input' : subSchema.title,
+  );
   if (schemaComposer.has(sanitizedName)) {
     let i = 2;
     while (schemaComposer.has(sanitizedName + i)) {

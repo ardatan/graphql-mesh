@@ -8,7 +8,11 @@ import {
 } from '@graphql-tools/wrap';
 import { ExecutionResult, ExecutionRequest } from '@graphql-tools/utils';
 import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
-import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
+import {
+  applyRequestTransforms,
+  applyResultTransforms,
+  applySchemaTransforms,
+} from '@graphql-mesh/utils';
 import { ignoreList } from './shared.js';
 
 export default class WrapRename implements Transform {
@@ -40,7 +44,7 @@ export default class WrapRename implements Transform {
               return typeName;
             }
             return replaceTypeNameFn(typeName);
-          }) as any
+          }) as any,
         );
       }
 
@@ -71,11 +75,15 @@ export default class WrapRename implements Transform {
 
         const fieldNameMatch = (fieldName: string) =>
           fieldName ===
-          (useRegExpForFields ? fieldName.replace(new RegExp(fromFieldName, regExpFlags), toFieldName) : toFieldName);
+          (useRegExpForFields
+            ? fieldName.replace(new RegExp(fromFieldName, regExpFlags), toFieldName)
+            : toFieldName);
 
         const typeNameMatch = (typeName: string) =>
           typeName ===
-          (useRegExpForTypes ? typeName.replace(new RegExp(fromTypeName, regExpFlags), toTypeName) : toTypeName);
+          (useRegExpForTypes
+            ? typeName.replace(new RegExp(fromTypeName, regExpFlags), toTypeName)
+            : toTypeName);
 
         if (useRegExpForArguments) {
           const argNameRegExp = new RegExp(fromArgumentName, regExpFlags);
@@ -98,20 +106,39 @@ export default class WrapRename implements Transform {
   transformSchema(
     originalWrappingSchema: GraphQLSchema,
     subschemaConfig: SubschemaConfig,
-    transformedSchema?: GraphQLSchema
+    transformedSchema?: GraphQLSchema,
   ) {
-    return applySchemaTransforms(originalWrappingSchema, subschemaConfig, transformedSchema, this.transforms);
+    return applySchemaTransforms(
+      originalWrappingSchema,
+      subschemaConfig,
+      transformedSchema,
+      this.transforms,
+    );
   }
 
   transformRequest(
     originalRequest: ExecutionRequest,
     delegationContext: DelegationContext,
-    transformationContext: Record<string, any>
+    transformationContext: Record<string, any>,
   ) {
-    return applyRequestTransforms(originalRequest, delegationContext, transformationContext, this.transforms);
+    return applyRequestTransforms(
+      originalRequest,
+      delegationContext,
+      transformationContext,
+      this.transforms,
+    );
   }
 
-  transformResult(originalResult: ExecutionResult, delegationContext: DelegationContext, transformationContext: any) {
-    return applyResultTransforms(originalResult, delegationContext, transformationContext, this.transforms);
+  transformResult(
+    originalResult: ExecutionResult,
+    delegationContext: DelegationContext,
+    transformationContext: any,
+  ) {
+    return applyResultTransforms(
+      originalResult,
+      delegationContext,
+      transformationContext,
+      this.transforms,
+    );
   }
 }

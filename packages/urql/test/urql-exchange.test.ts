@@ -25,7 +25,7 @@ describe('graphExchange', () => {
           query Greetings {
             greetings
           }
-        `
+        `,
       )
       .toPromise();
     expect(result.error).toBeUndefined();
@@ -40,7 +40,7 @@ describe('graphExchange', () => {
           time
         }
       `),
-      toObservable
+      toObservable,
     );
 
     const asyncIterable = observableToAsyncIterable<OperationResult<any>>(observable);

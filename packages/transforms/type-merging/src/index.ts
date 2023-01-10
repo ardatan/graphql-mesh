@@ -36,7 +36,8 @@ export default class TypeMerging implements MeshTransform {
       for (const mergedTypeConfig of this.config.types) {
         const type = schema.getType(mergedTypeConfig.typeName);
         type.extensions = type.extensions || {};
-        const typeDirectiveExtensions: any = ((type.extensions.directives as any) = type.extensions.directives || {});
+        const typeDirectiveExtensions: any = ((type.extensions.directives as any) =
+          type.extensions.directives || {});
         if (mergedTypeConfig.key) {
           typeDirectiveExtensions.key = mergedTypeConfig.key;
         }
@@ -45,7 +46,9 @@ export default class TypeMerging implements MeshTransform {
         }
         if (mergedTypeConfig.fields) {
           if (!('getFields' in type)) {
-            throw new Error('You cannot add field annotations to this type ' + mergedTypeConfig.typeName);
+            throw new Error(
+              'You cannot add field annotations to this type ' + mergedTypeConfig.typeName,
+            );
           }
           const fieldMap = type.getFields();
           for (const fieldConfig of mergedTypeConfig.fields) {

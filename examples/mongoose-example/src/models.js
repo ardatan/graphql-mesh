@@ -10,7 +10,7 @@ const LanguagesSchema = new Schema(
   },
   {
     _id: false, // disable `_id` field for `Language` schema
-  }
+  },
 );
 
 const AddressSchema = new Schema({
@@ -59,7 +59,7 @@ const UserSchema = new Schema(
   },
   {
     collection: 'user_users',
-  }
+  },
 );
 
 UserSchema.index({ gender: 1, age: -1 });

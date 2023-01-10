@@ -36,7 +36,11 @@
   </head>
 
   <body>
-    <script type="text/javascript" src="https://alcdn.msftauth.net/lib/1.3.0/js/msal.js" class="pre"></script>
+    <script
+      type="text/javascript"
+      src="https://alcdn.msftauth.net/lib/1.3.0/js/msal.js"
+      class="pre"
+    ></script>
 
     <div>
       <h2>Microsoft Graph GraphQL Demo</h2>
@@ -108,7 +112,9 @@
         authButton.innerHTML = 'logout';
         authButton.setAttribute('onclick', 'logout();');
         const label = document.getElementById('label');
-        document.cookie = `accessToken=${tokenResponse.accessToken};expires=${tokenResponse.expiresOn.toUTCString()}`;
+        document.cookie = `accessToken=${
+          tokenResponse.accessToken
+        };expires=${tokenResponse.expiresOn.toUTCString()}`;
         window.location.href = 'graphql/';
       }
       function logout() {

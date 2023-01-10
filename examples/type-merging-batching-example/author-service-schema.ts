@@ -43,7 +43,8 @@ export default new GraphQLSchema({
             type: new GraphQLList(GraphQLID),
           },
         },
-        resolve: (_, { ids }) => (ids ? ids.map(id => authors.find(author => author.id === id)) : authors),
+        resolve: (_, { ids }) =>
+          ids ? ids.map(id => authors.find(author => author.id === id)) : authors,
       },
     },
   }),

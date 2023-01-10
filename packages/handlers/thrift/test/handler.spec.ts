@@ -21,7 +21,10 @@ describe('thrift', () => {
       },
       cache: new InMemoryLRUCache(),
       pubsub: new PubSub(),
-      store: new MeshStore('.mesh', new InMemoryStoreStorageAdapter(), { readonly: false, validate: false }),
+      store: new MeshStore('.mesh', new InMemoryStoreStorageAdapter(), {
+        readonly: false,
+        validate: false,
+      }),
       baseDir: __dirname,
       logger: new DefaultLogger('TEST'),
       importFn: m => import(m),

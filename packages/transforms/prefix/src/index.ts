@@ -6,6 +6,8 @@ interface PrefixTransformConstructor {
   new (options: MeshTransformOptions<YamlConfig.Transform['prefix']>): BarePrefix | WrapPrefix;
 }
 
-export default (function PrefixTransform(options: MeshTransformOptions<YamlConfig.Transform['prefix']>) {
+export default (function PrefixTransform(
+  options: MeshTransformOptions<YamlConfig.Transform['prefix']>,
+) {
   return options.config.mode === 'bare' ? new BarePrefix(options) : new WrapPrefix(options);
 } as unknown as PrefixTransformConstructor);

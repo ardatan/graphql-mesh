@@ -23,7 +23,10 @@ describe('SOAP Country Info', () => {
     expect(printSchemaWithDirectives(lexicographicSortSchema(mesh.schema))).toMatchSnapshot();
   });
   it('should give correct response for the batched example query', async () => {
-    const queryStr = await readFile(join(__dirname, '..', 'list-of-languages-by-name.graphql'), 'utf-8');
+    const queryStr = await readFile(
+      join(__dirname, '..', 'list-of-languages-by-name.graphql'),
+      'utf-8',
+    );
     const result = await mesh.execute(queryStr, {});
     expect(result?.errors?.[0]?.stack).toBeUndefined();
     expect(result).toMatchSnapshot('list-of-languages-by-name-result');

@@ -2,7 +2,7 @@ import { OperationTypeNode } from 'graphql';
 import { JSONSchemaOperationConfig, JSONSchemaPubSubOperationConfig, HTTPMethod } from './types.js';
 
 export function isPubSubOperationConfig(
-  operationConfig: JSONSchemaOperationConfig
+  operationConfig: JSONSchemaOperationConfig,
 ): operationConfig is JSONSchemaPubSubOperationConfig {
   return 'pubsubTopic' in operationConfig;
 }
@@ -55,7 +55,9 @@ export function cleanObject(obj: any) {
   return obj;
 }
 
-export function isFileUpload(obj: any): obj is { createReadStream: () => AsyncIterable<Uint8Array>; mimetype: string } {
+export function isFileUpload(
+  obj: any,
+): obj is { createReadStream: () => AsyncIterable<Uint8Array>; mimetype: string } {
   return typeof obj.createReadStream === 'function';
 }
 

@@ -85,7 +85,7 @@ export default class HiveTransform implements MeshTransform {
   transformRequest(
     request: ExecutionRequest,
     delegationContext: DelegationContext,
-    transformationContext: TransformationContext
+    transformationContext: TransformationContext,
   ) {
     transformationContext.collectUsageCallback = this.hiveClient.collectUsage({
       schema: delegationContext.transformedSchema,
@@ -101,7 +101,7 @@ export default class HiveTransform implements MeshTransform {
   transformResult(
     result: ExecutionResult,
     _delegationContext: DelegationContext,
-    transformationContext: TransformationContext
+    transformationContext: TransformationContext,
   ) {
     transformationContext.collectUsageCallback(result);
     return result;

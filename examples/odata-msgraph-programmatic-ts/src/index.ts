@@ -6,7 +6,7 @@ async function main() {
     {},
     {
       accessToken: 'someAccessToken',
-    }
+    },
   );
   console.log({
     result,

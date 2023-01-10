@@ -16,7 +16,7 @@ describe('SQLite Chinook', () => {
     expect(
       introspectionFromSchema(lexicographicSortSchema(schema), {
         descriptions: false,
-      })
+      }),
     ).toMatchSnapshot('sqlite-chinook-schema');
   });
   it('should give correct response for example queries', async () => {

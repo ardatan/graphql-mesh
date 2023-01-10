@@ -56,7 +56,7 @@ type Post {
 type Query {
   user(name: String, age: Int): User
 }
-`.trim()
+`.trim(),
     );
   });
 
@@ -112,7 +112,7 @@ type Post {
 type Query {
   user(name: String, age: Int): User
 }
-`.trim()
+`.trim(),
     );
   });
 
@@ -195,7 +195,7 @@ type Post {
 type Query {
   user(name: String, age: Int): User
 }
-`.trim()
+`.trim(),
     );
   });
 
@@ -236,7 +236,7 @@ type Query {
   userOne(name: String, age: Int): User
   userTwo(name: String, age: Int): User
 }
-`.trim()
+`.trim(),
     );
   });
 
@@ -277,7 +277,7 @@ type Query {
   userOne(name: String): User
   userTwo(name: String, age: Int): User
 }
-`.trim()
+`.trim(),
     );
   });
 
@@ -318,7 +318,7 @@ type Query {
   userOne(name: String, age: Int): User
   userTwo(name: String, age: Int): User
 }
-`.trim()
+`.trim(),
     );
   });
 
@@ -359,7 +359,7 @@ type Query {
   userOne(name: String): User
   userTwo(name: String, age: Int): User
 }
-`.trim()
+`.trim(),
     );
   });
 
@@ -414,7 +414,7 @@ type Book {
 type Query {
   user: User
 }
-`.trim()
+`.trim(),
     );
   });
 
@@ -444,7 +444,7 @@ type Query {
   foo: String
   bar: String
 }
-`.trim()
+`.trim(),
     );
   });
   it('should filter out fields if array syntax is used only with one element', async () => {
@@ -495,7 +495,7 @@ type Book {
 type Query {
   user: User
 }
-`.trim()
+`.trim(),
     );
   });
 
@@ -550,7 +550,7 @@ type Query {
   user: User
   admin: User
 }
-`.trim()
+`.trim(),
     );
   });
 
@@ -615,7 +615,7 @@ type Post {
 type Query {
   user(id: ID!): User
 }
-`.trim()
+`.trim(),
     );
   });
 
@@ -681,7 +681,7 @@ type Post {
 type Query {
   user(id: ID!): User
 }
-`.trim()
+`.trim(),
     );
   });
 
@@ -732,7 +732,7 @@ type Book {
 type Query {
   book: Book
 }
-`.trim()
+`.trim(),
     );
   });
 
@@ -745,7 +745,13 @@ type Query {
         rule: String
       }
 
-      directive @auth(query: AuthRule, add: AuthRule, update: AuthRule, delete: AuthRule, role: String!) on OBJECT
+      directive @auth(
+        query: AuthRule
+        add: AuthRule
+        update: AuthRule
+        delete: AuthRule
+        role: String!
+      ) on OBJECT
 
       type User {
         id: ID
@@ -805,7 +811,7 @@ type Query {
   user: User
   admin: User
 }
-`.trim()
+`.trim(),
     );
   });
 
@@ -855,7 +861,7 @@ type Query {
   user(name: String): User
   book(title: String): Book
 }
-`.trim()
+`.trim(),
     );
   });
 });

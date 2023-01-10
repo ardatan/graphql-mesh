@@ -13,14 +13,17 @@ export type ResolverDataBasedFactory<T> = (data: ResolverData) => T;
 
 export function getInterpolationKeys(...interpolationStrings: string[]) {
   return interpolationStrings.reduce(
-    (keys, str) => [...keys, ...(str ? stringInterpolator.parseRules(str).map((match: any) => match.key) : [])],
-    [] as string[]
+    (keys, str) => [
+      ...keys,
+      ...(str ? stringInterpolator.parseRules(str).map((match: any) => match.key) : []),
+    ],
+    [] as string[],
   );
 }
 
 export function parseInterpolationStrings(
   interpolationStrings: Iterable<string>,
-  argTypeMap?: Record<string, string | GraphQLInputType>
+  argTypeMap?: Record<string, string | GraphQLInputType>,
 ) {
   const interpolationKeys = getInterpolationKeys(...interpolationStrings);
 
@@ -32,7 +35,11 @@ export function parseInterpolationStrings(
     const varName = interpolationKeyParts[interpolationKeyParts.length - 1];
     const initialObject = interpolationKeyParts[0];
     const argType =
-      argTypeMap && varName in argTypeMap ? argTypeMap[varName] : interpolationKeyParts.length > 2 ? 'JSON' : 'ID';
+      argTypeMap && varName in argTypeMap
+        ? argTypeMap[varName]
+        : interpolationKeyParts.length > 2
+        ? 'JSON'
+        : 'ID';
     switch (initialObject) {
       case 'args':
         args[varName] = {
@@ -51,12 +58,14 @@ export function parseInterpolationStrings(
   };
 }
 
-export function getInterpolatedStringFactory(nonInterpolatedString: string): ResolverDataBasedFactory<string> {
+export function getInterpolatedStringFactory(
+  nonInterpolatedString: string,
+): ResolverDataBasedFactory<string> {
   return resolverData => stringInterpolator.parse(nonInterpolatedString, resolverData);
 }
 
 export function getInterpolatedHeadersFactory(
-  nonInterpolatedHeaders: Record<string, string> = {}
+  nonInterpolatedHeaders: Record<string, string> = {},
 ): ResolverDataBasedFactory<Record<string, string>> {
   return resolverData => {
     const headers: Record<string, string> = {};

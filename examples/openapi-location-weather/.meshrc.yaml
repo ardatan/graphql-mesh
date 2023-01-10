@@ -78,4 +78,3 @@ additionalTypeDefs: |
 
 documents:
   - ./example-query.graphql
-

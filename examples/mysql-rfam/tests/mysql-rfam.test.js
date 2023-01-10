@@ -18,7 +18,7 @@ describe.skip('MySQL Rfam', () => {
     expect(
       printSchema(lexicographicSortSchema(schema), {
         descriptions: false,
-      })
+      }),
     ).toMatchSnapshot('mysql-rfam-schema');
   });
   it('should give correct response for example queries', async () => {

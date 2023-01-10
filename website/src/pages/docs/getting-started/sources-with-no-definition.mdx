@@ -2,10 +2,11 @@ import { Callout } from '@theguild/components'
 
 # How to: Configure Sources with no definition
 
-GraphQL Mesh provides an extensive range of _Handlers_ (OpenAPI, gRPC, SOAP, GraphQL, and even Databases!), however,
-you might try to configure a _Source_ that does not provide an API definition.
+GraphQL Mesh provides an extensive range of _Handlers_ (OpenAPI, gRPC, SOAP, GraphQL, and even
+Databases!), however, you might try to configure a _Source_ that does not provide an API definition.
 
-We will again use the ["Books" example REST API](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/books-service):
+We will again use the
+["Books" example REST API](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/books-service):
 
 - Books API (REST API)
   - `GET /books`
@@ -23,11 +24,13 @@ Z[Mesh Gateway GraphQL API]
 Z --> G;
 ```
 
-Once again, GraphQL Mesh gets you covered with the `@graphql-mesh/json-schema` handler that will help provide a definition of the API.
+Once again, GraphQL Mesh gets you covered with the `@graphql-mesh/json-schema` handler that will
+help provide a definition of the API.
 
 ## An overview of the `jsonSchema` handler
 
-A `jsonSchema` handler configuration must provide a set of `operations` that define the Query and Mutation to expose.
+A `jsonSchema` handler configuration must provide a set of `operations` that define the Query and
+Mutation to expose.
 
 A standard `jsonSchema` handler configuration will look at the following:
 
@@ -45,21 +48,26 @@ sources:
             responseSample: ./samples/users.json
 ```
 
-`operations` defines a set of GraphQL queries or mutations mapped to some API endpoints (`path`, `method`)
+`operations` defines a set of GraphQL queries or mutations mapped to some API endpoints (`path`,
+`method`)
 
 Above, the `users` Query targets the `GET /users` endpoint.
 
 Finally, we provide `responseSample` that points to a sample file of the Query response.
 
-By using the `responseSample` file, GraphQL Mesh will be able to generate a GraphQL definition of the `users` Query.
+By using the `responseSample` file, GraphQL Mesh will be able to generate a GraphQL definition of
+the `users` Query.
 
 Let's put it in practice with our "Books" REST API `GET /book/:id` endpoint.
 
 ## Configuring our "Books" REST API
 
-You will find all the source code of the below example in the dedicated repository: [`graphql-mesh-docs-first-gateway`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source-no-source-definition).
+You will find all the source code of the below example in the dedicated repository:
+[`graphql-mesh-docs-first-gateway`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source-no-source-definition).
 
-After installing the `@graphql-mesh/json-schema` package, a good starting point for our "Books" REST API `jsonSchema` handler configuration would be the following [`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source-no-source-definition/.meshrc.yaml):
+After installing the `@graphql-mesh/json-schema` package, a good starting point for our "Books" REST
+API `jsonSchema` handler configuration would be the following
+[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source-no-source-definition/.meshrc.yaml):
 
 ```yaml filename=".meshrc.yaml"
 sources:
@@ -71,7 +79,8 @@ sources:
 
 We need to provide some `operations` for the `GET /book/:id` along with some sample data.
 
-We can get some sample data by running the following commands ([at the root of the project](https://github.com/charlypoly/graphql-mesh-docs-first-gateway)):
+We can get some sample data by running the following commands
+([at the root of the project](https://github.com/charlypoly/graphql-mesh-docs-first-gateway)):
 
 1. Build and start the Books REST API
 
@@ -86,13 +95,16 @@ yarn workspace books-service run start
 curl --location --request GET 'http://localhost:3002/books/1' > packages/single-source-no-source-definition/samples/book-1.json
 ```
 
-Which will create the following [`packages/single-source-no-source-definition/samples/book-1.json`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source-no-source-definition/samples/book-1.json) file:
+Which will create the following
+[`packages/single-source-no-source-definition/samples/book-1.json`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source-no-source-definition/samples/book-1.json)
+file:
 
 ```json filename="book-1.json"
 { "id": "1", "title": "Dune", "authorId": "0", "categoryId": "0" }
 ```
 
-We can now provide use this sample file to configure our `Query.book` operation as follows [`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source-no-source-definition/.meshrc.yaml):
+We can now provide use this sample file to configure our `Query.book` operation as follows
+[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source-no-source-definition/.meshrc.yaml):
 
 ```yaml filename=".meshrc.yaml"
 sources:
@@ -116,7 +128,8 @@ Let's build and start our Gateway by running:
 yarn run single-source-no-source-definition
 ```
 
-Once built, you will find the Unified Schema definition at [`packages/single-source-no-source-definition/.mesh/schema.graphql`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source-no-source-definition/.mesh/schema.graphql):
+Once built, you will find the Unified Schema definition at
+[`packages/single-source-no-source-definition/.mesh/schema.graphql`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source-no-source-definition/.mesh/schema.graphql):
 
 ```graphql filename="schema.graphql"
 type Query {
@@ -154,9 +167,12 @@ We successfully added a Source without definition! 🎉
 
 ### Rename generated types
 
-Our `Query.book` `jsonSchema` configuration generates a `query_book` type which is poorly named and using _snake_case_.
+Our `Query.book` `jsonSchema` configuration generates a `query_book` type which is poorly named and
+using _snake_case_.
 
-The `responseTypeName` allows us to provide a type name that we will be used for the generated type, as follows [`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source-no-source-definition/.meshrc.yaml):
+The `responseTypeName` allows us to provide a type name that we will be used for the generated type,
+as follows
+[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source-no-source-definition/.meshrc.yaml):
 
 ```yaml filename=".meshrc.yaml"
 sources:
@@ -192,7 +208,8 @@ The same parameter exists for request: `requestTypeName` (see "_Mutations_").
 
 ### Queries/Mutations arguments
 
-We saw that `operations[].path` can take arguments using syntax similar to string interpolation [`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source-no-source-definition/.meshrc.yaml):
+We saw that `operations[].path` can take arguments using syntax similar to string interpolation
+[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source-no-source-definition/.meshrc.yaml):
 
 ```yaml filename=".meshrc.yaml"
 sources:
@@ -242,9 +259,11 @@ Now, GraphQL Mesh knows that the type definition of our search query is:
 
 ### Mutations
 
-Since Mutations are most likely to rely on `POST` requests, we need to provide both a `requestSample` and a `responseSample` parameters.
+Since Mutations are most likely to rely on `POST` requests, we need to provide both a
+`requestSample` and a `responseSample` parameters.
 
-For example, if our "Books" API exposed a `POST /books`, we could define the following `Mutation.addBook(…)` mutation:
+For example, if our "Books" API exposed a `POST /books`, we could define the following
+`Mutation.addBook(…)` mutation:
 
 ```yaml filename=".meshrc.yaml"
 sources:
@@ -263,11 +282,13 @@ sources:
 
 ### `Query`/`Mutation` with multiple response shapes
 
-Providing `responseSample/requestSample` is an efficient way to configure a Source without API definition.
+Providing `responseSample/requestSample` is an efficient way to configure a Source without API
+definition.
 
 However, the sample files might not always represent all the variants of a given endpoint.
 
-For example, our previous `POST /books` endpoint could return a totally different response shape depending on the scenario:
+For example, our previous `POST /books` endpoint could return a totally different response shape
+depending on the scenario:
 
 **Successfully book creation response**
 
@@ -321,7 +342,8 @@ sources:
 
 This guide doesn't provide any materials to learn JSON Schema (this would require multiple guides).
 
-However, you can get started on the official [JSON Schema tutorial](https://json-schema.org/learn/getting-started-step-by-step.html).
+However, you can get started on the official
+[JSON Schema tutorial](https://json-schema.org/learn/getting-started-step-by-step.html).
 
 Our `./schema/add-book-response.json` would look as follows:
 
@@ -418,7 +440,8 @@ type AddBookOutputDuplicate {
 }
 ```
 
-Note that you can also leverage the `responseByStatusCode` parameter to provide a schema per HTTP Status Code, as follows:
+Note that you can also leverage the `responseByStatusCode` parameter to provide a schema per HTTP
+Status Code, as follows:
 
 ```yaml filename=".meshrc.yaml"
 operations:

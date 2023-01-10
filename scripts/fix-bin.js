@@ -32,7 +32,7 @@ for (const path of dir) {
   @SET PATHEXT=%PATHEXT:;.JS;=;%
   node  "${absoluteGraphqlMeshBinPath}" %*
 )
-            `
+            `,
       );
       chmodSync(targetCmdPath, '755');
     }

@@ -5,16 +5,21 @@ import { Callout } from '@theguild/components'
 <Callout emoji="⚠️" type="warning">
   This method is not relevant to all handlers!
 
-  Please make sure the handler you are using supports this method: You can do it by checking if handler's config reference (appearing on it's designated doc) includes the header fields mentioned in this doc.
+Please make sure the handler you are using supports this method: You can do it by checking if
+handler's config reference (appearing on it's designated doc) includes the header fields mentioned
+in this doc.
+
 </Callout>
 
 ## Setting configurations
 
-There are two headers-designated configuration fields under each handler - `schemaHeaders` and `operationHeaders`:
+There are two headers-designated configuration fields under each handler - `schemaHeaders` and
+`operationHeaders`:
 
 ### `operationHeaders`
 
-Optional field. Used to set the Headers for *operation execution*. Expects JSON object representing the Headers.
+Optional field. Used to set the Headers for _operation execution_. Expects JSON object representing
+the Headers.
 
 In this example `operationHeaders` is used to defined the content of the request as Json:
 
@@ -29,11 +34,13 @@ sources:
 
 ### `schemaHeaders`
 
-Optional field. Used to set the Headers for *schema introspection*. Expects JSON object representing the Headers.
+Optional field. Used to set the Headers for _schema introspection_. Expects JSON object representing
+the Headers.
 
 ## Dynamic Header Values (e.g., for Authorization)
 
-Mesh can take dynamic values from the GraphQL Context or the environmental variables. For example, if you use `mesh dev` or `mesh start`, GraphQL Context will be the incoming HTTP request.
+Mesh can take dynamic values from the GraphQL Context or the environmental variables. For example,
+if you use `mesh dev` or `mesh start`, GraphQL Context will be the incoming HTTP request.
 
 The expression inside dynamic values should be as in JS.
 
@@ -54,7 +61,8 @@ sources:
 
 ### From Environment Variables
 
-Set up the variable on your environment, e.g `VERY_SECRET_TOKEN=12345`. Then you can use it using `{env.VERY_SECRET_TOKEN}`.
+Set up the variable on your environment, e.g `VERY_SECRET_TOKEN=12345`. Then you can use it using
+`{env.VERY_SECRET_TOKEN}`.
 
 The config wil look something like:
 

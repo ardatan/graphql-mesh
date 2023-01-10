@@ -1,4 +1,11 @@
-import { KeyValueCache, YamlConfig, ImportFn, MeshPubSub, Logger, MeshFetch } from '@graphql-mesh/types';
+import {
+  KeyValueCache,
+  YamlConfig,
+  ImportFn,
+  MeshPubSub,
+  Logger,
+  MeshFetch,
+} from '@graphql-mesh/types';
 import { path } from '@graphql-mesh/cross-helpers';
 import { printSchemaWithDirectives, Source } from '@graphql-tools/utils';
 import { paramCase } from 'param-case';
@@ -32,7 +39,12 @@ export async function getPackage<T>({
   const casedName = paramCase(name);
   const casedType = paramCase(type);
   const prefixes = ['@graphql-mesh/', ...additionalPrefixes];
-  const initialPossibleNames = [casedName, `${casedName}-${casedType}`, `${casedType}-${casedName}`, casedType];
+  const initialPossibleNames = [
+    casedName,
+    `${casedName}-${casedType}`,
+    `${casedType}-${casedName}`,
+    casedType,
+  ];
   const possibleNames: string[] = [];
   for (const prefix of prefixes) {
     for (const possibleName of initialPossibleNames) {
@@ -62,7 +74,9 @@ export async function getPackage<T>({
         !error.message.includes(`Cannot find package '${moduleName}'`) &&
         !error.message.includes(`Could not locate module`)
       ) {
-        throw new Error(`Unable to load ${type} matching ${name} while resolving ${moduleName}: ${error.stack}`);
+        throw new Error(
+          `Unable to load ${type} matching ${name} while resolving ${moduleName}: ${error.stack}`,
+        );
       }
     }
   }
@@ -77,7 +91,9 @@ export async function resolveAdditionalTypeDefs(baseDir: string, additionalTypeD
       loaders: [new CodeFileLoader(), new GraphQLFileLoader()],
     });
     return sources.map(
-      source => source.document || parseWithCache(source.rawSDL || printSchemaWithDirectives(source.schema))
+      source =>
+        source.document ||
+        parseWithCache(source.rawSDL || printSchemaWithDirectives(source.schema)),
     );
   }
   return undefined;
@@ -135,7 +151,7 @@ export async function resolveCache(
   cwd: string,
   pubsub: MeshPubSub,
   logger: Logger,
-  additionalPackagePrefixes: string[]
+  additionalPackagePrefixes: string[],
 ): Promise<{
   cache: KeyValueCache;
   importCode: string;
@@ -180,7 +196,7 @@ export async function resolvePubSub(
   pubsubYamlConfig: YamlConfig.Config['pubsub'],
   importFn: ImportFn,
   cwd: string,
-  additionalPackagePrefixes: string[]
+  additionalPackagePrefixes: string[],
 ): Promise<{
   importCode: string;
   code: string;
@@ -230,7 +246,7 @@ export async function resolvePubSub(
 
 export async function resolveDocuments(
   documentsConfig: YamlConfig.Config['documents'],
-  cwd: string
+  cwd: string,
 ): Promise<Source[]> {
   if (!documentsConfig) {
     return [];
@@ -247,7 +263,7 @@ export async function resolveLogger(
   importFn: ImportFn,
   cwd: string,
   additionalPackagePrefixes: string[],
-  initialLoggerPrefix = '🕸️  Mesh'
+  initialLoggerPrefix = '🕸️  Mesh',
 ): Promise<{
   importCode: string;
   code: string;

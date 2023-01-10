@@ -17,7 +17,7 @@ describe('Explode parameter', () => {
             headers: {
               'Content-Type': 'application/json',
             },
-          }
+          },
         );
       },
     });

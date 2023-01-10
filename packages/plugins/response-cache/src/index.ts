@@ -4,8 +4,8 @@ import { useResponseCache, UseResponseCacheParameter } from '@graphql-yoga/plugi
 import { hashObject, stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { process } from '@graphql-mesh/cross-helpers';
 
-const defaultBuildResponseCacheKey: UseResponseCacheParameter['buildResponseCacheKey'] = async params =>
-  hashObject(params);
+const defaultBuildResponseCacheKey: UseResponseCacheParameter['buildResponseCacheKey'] =
+  async params => hashObject(params);
 
 function generateSessionIdFactory(sessionIdDef: string) {
   if (sessionIdDef == null) {
@@ -28,7 +28,9 @@ function generateEnabledFactory(ifDef: string) {
   };
 }
 
-function getBuildResponseCacheKey(cacheKeyDef: string): UseResponseCacheParameter['buildResponseCacheKey'] {
+function getBuildResponseCacheKey(
+  cacheKeyDef: string,
+): UseResponseCacheParameter['buildResponseCacheKey'] {
   return function buildResponseCacheKey(cacheKeyParameters) {
     let cacheKey = stringInterpolator.parse(cacheKeyDef, {
       ...cacheKeyParameters,
@@ -41,7 +43,9 @@ function getBuildResponseCacheKey(cacheKeyDef: string): UseResponseCacheParamete
   };
 }
 
-function getShouldCacheResult(shouldCacheResultDef: string): UseResponseCacheParameter['shouldCacheResult'] {
+function getShouldCacheResult(
+  shouldCacheResultDef: string,
+): UseResponseCacheParameter['shouldCacheResult'] {
   return function shouldCacheResult({ result }) {
     // eslint-disable-next-line no-new-func
     return new Function(`return ${shouldCacheResultDef}`)();
@@ -60,7 +64,7 @@ function getCacheForResponseCache(meshCache: KeyValueCache): UseResponseCachePar
           const entryId = `${typename}.${id}`;
           await meshCache.set(`response-cache:${entryId}:${responseId}`, {}, ttlConfig);
           await meshCache.set(`response-cache:${responseId}:${entryId}`, {}, ttlConfig);
-        })
+        }),
       );
       return meshCache.set(`response-cache:${responseId}`, data, ttlConfig);
     },
@@ -69,15 +73,17 @@ function getCacheForResponseCache(meshCache: KeyValueCache): UseResponseCachePar
       await Promise.all(
         [...entitiesToRemove].map(async ({ typename, id }) => {
           const entryId = `${typename}.${id}`;
-          const cacheEntriesToDelete = await meshCache.getKeysByPrefix(`response-cache:${entryId}:`);
+          const cacheEntriesToDelete = await meshCache.getKeysByPrefix(
+            `response-cache:${entryId}:`,
+          );
           await Promise.all(
             cacheEntriesToDelete.map(cacheEntryName => {
               const [, , responseId] = cacheEntryName.split(':');
               responseIdsToCheck.add(responseId);
               return meshCache.delete(entryId);
-            })
+            }),
           );
-        })
+        }),
       );
       await Promise.all(
         [...responseIdsToCheck].map(async responseId => {
@@ -85,13 +91,15 @@ function getCacheForResponseCache(meshCache: KeyValueCache): UseResponseCachePar
           if (cacheEntries.length === 0) {
             await meshCache.delete(`response-cache:${responseId}`);
           }
-        })
+        }),
       );
     },
   };
 }
 
-export default function useMeshResponseCache(options: MeshPluginOptions<YamlConfig.ResponseCacheConfig>): Plugin {
+export default function useMeshResponseCache(
+  options: MeshPluginOptions<YamlConfig.ResponseCacheConfig>,
+): Plugin {
   const ttlPerType: Record<string, number> = {};
   const ttlPerSchemaCoordinate: Record<string, number> = {};
   if (options.ttlPerCoordinate) {
@@ -109,13 +117,19 @@ export default function useMeshResponseCache(options: MeshPluginOptions<YamlConf
     idFields: options.idFields,
     invalidateViaMutation: options.invalidateViaMutation,
     includeExtensionMetadata:
-      options.includeExtensionMetadata != null ? options.includeExtensionMetadata : process.env.DEBUG === '1',
+      options.includeExtensionMetadata != null
+        ? options.includeExtensionMetadata
+        : process.env.DEBUG === '1',
     ttlPerType,
     ttlPerSchemaCoordinate,
     session: generateSessionIdFactory(options.sessionId),
     enabled: options.if ? generateEnabledFactory(options.if) : undefined,
-    buildResponseCacheKey: options.cacheKey ? getBuildResponseCacheKey(options.cacheKey) : undefined,
-    shouldCacheResult: options.shouldCacheResult ? getShouldCacheResult(options.shouldCacheResult) : undefined,
+    buildResponseCacheKey: options.cacheKey
+      ? getBuildResponseCacheKey(options.cacheKey)
+      : undefined,
+    shouldCacheResult: options.shouldCacheResult
+      ? getShouldCacheResult(options.shouldCacheResult)
+      : undefined,
     cache: getCacheForResponseCache(options.cache),
   });
 }

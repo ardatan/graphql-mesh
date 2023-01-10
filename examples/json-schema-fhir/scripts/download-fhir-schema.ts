@@ -8,7 +8,9 @@ async function downloadFhirSchema() {
   await new Promise((resolve, reject) => {
     res.body
       .pipe(unzip.Parse())
-      .on('entry', (entry: Entry) => entry.pipe(createWriteStream(join(__dirname, `../${entry.path}`))))
+      .on('entry', (entry: Entry) =>
+        entry.pipe(createWriteStream(join(__dirname, `../${entry.path}`))),
+      )
       .on('finish', resolve);
     res.body.on('error', reject);
   });

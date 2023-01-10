@@ -10,7 +10,7 @@ export const main = async function (params) {
       headers: params.__ow_headers,
       body: params.__ow_body ? Buffer.from(params.__ow_body, 'base64') : undefined,
     },
-    params
+    params,
   );
 
   const headers = {};

@@ -3,7 +3,7 @@ import { createInMemoryLRUDriver } from './InMemoryLRUDriver.js';
 import LocalForage from 'localforage';
 
 LocalForage.defineDriver(createInMemoryLRUDriver()).catch(err =>
-  console.error('Failed at defining InMemoryLRU driver', err)
+  console.error('Failed at defining InMemoryLRU driver', err),
 );
 
 export default class LocalforageCache<V = any> implements KeyValueCache<V> {

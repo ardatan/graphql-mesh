@@ -2,15 +2,21 @@ import { PackageCmd } from '@theguild/components'
 
 # Monitoring and Tracing
 
-If something is not working as it should within your GraphQL gateway, you would not want it to go unnoticed.
+If something is not working as it should within your GraphQL gateway, you would not want it to go
+unnoticed.
 
-You can use GraphQL Mesh plugins to trace and monitor your gateway's execution flow together with all outgoing HTTP calls and internal query planning.
+You can use GraphQL Mesh plugins to trace and monitor your gateway's execution flow together with
+all outgoing HTTP calls and internal query planning.
 
-> GraphQL Mesh plugins are mostly the extended versions of [the existing Envelop plugins.](https://www.envelop.dev/docs/guides/monitoring-and-tracing)
+> GraphQL Mesh plugins are mostly the extended versions of
+> [the existing Envelop plugins.](https://www.envelop.dev/docs/guides/monitoring-and-tracing)
 
 ## Mesh plugins
 
-- **StatsD**: collect and send metrics to Datadog's DogStatsD and InfluxDB's Telegraf StatsD services. [Read more](/docs/plugins/statsd)
+- **StatsD**: collect and send metrics to Datadog's DogStatsD and InfluxDB's Telegraf StatsD
+  services. [Read more](/docs/plugins/statsd)
 - **Prometheus**: expose and collect metrics to Prometheus. [Read more](/docs/plugins/prometheus)
-- **NewRelic**: tracing, monitoring and error reporting with NewRelic. [Read more](/docs/plugins/new-relic)
-- **HTTP Details Extensions**: expose the details of outgoing HTTP requests in the `extensions` property of the GraphQL Response object.
+- **NewRelic**: tracing, monitoring and error reporting with NewRelic.
+  [Read more](/docs/plugins/new-relic)
+- **HTTP Details Extensions**: expose the details of outgoing HTTP requests in the `extensions`
+  property of the GraphQL Response object.
