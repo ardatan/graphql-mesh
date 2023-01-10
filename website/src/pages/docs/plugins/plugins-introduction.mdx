@@ -92,4 +92,28 @@ Mesh provides each plugin with unique hooks:
 - `onDelegate`: triggered when a request is forwarded to the upstream (Either by context SDK or
   directly through the gateway).
 
-Those hooks has access to all remote execution parameters (root, args, context, info etc).
+These hooks have access to all remote execution parameters (root, args, context, info etc).
+
+Example Mesh Envelop plugin therefore can look like this:
+
+```JS
+import { MeshPlugin, MeshPluginOptions } from '@graphql-mesh/types'
+
+export function customMeshPlugin(
+  options: MeshPluginOptions<YourConfig>
+): MeshPlugin<any> {
+  // Some other logic or config handling
+
+  return {
+    onFetch(payload) {
+      // your logic with payload
+    },
+    onDelegate(payload) {
+      // your logic with payload
+    },
+  };
+}
+```
+
+Usage of plugin and Native Envelop hooks are described in
+[Envelop page Building Plugins](https://the-guild.dev/graphql/envelop/v3/plugins/custom-plugin#the-plugin-interface)
