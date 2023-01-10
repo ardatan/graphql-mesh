@@ -1309,7 +1309,7 @@
         "anchor": "mesh-specific-plugin-hooks"
       }
     ],
-    "content": "bc3a34f8d9a0c2f0c1ebcb12701153c5",
+    "content": "724d49b0cd5437c595157ad4587d51b9",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/plugins-introduction",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Plugins"],
