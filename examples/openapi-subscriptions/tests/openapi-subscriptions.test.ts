@@ -44,13 +44,17 @@ describe('OpenAPI Subscriptions', () => {
   });
   afterAll(async () => {
     app.emit('destroy');
-    await new Promise<void>((resolve, reject) => meshServer.close(err => (err ? reject(err) : resolve())));
-    await new Promise<void>((resolve, reject) => appServer.close(err => (err ? reject(err) : resolve())));
+    await new Promise<void>((resolve, reject) =>
+      meshServer.close(err => (err ? reject(err) : resolve())),
+    );
+    await new Promise<void>((resolve, reject) =>
+      appServer.close(err => (err ? reject(err) : resolve())),
+    );
   });
   it('should work', async () => {
     const startWebhookMutation = await readFile(
       join(__dirname, '..', 'example-queries', 'startWebhook.mutation.graphql'),
-      'utf8'
+      'utf8',
     );
 
     const startWebhookResponse = await fetch('http://localhost:4000/graphql', {
@@ -75,7 +79,7 @@ describe('OpenAPI Subscriptions', () => {
 
     const listenWebhookSubscription = await readFile(
       join(__dirname, '..', 'example-queries', 'listenWebhook.subscription.graphql'),
-      'utf8'
+      'utf8',
     );
 
     const listenWebhookResponse = await fetch('http://localhost:4000/graphql', {
@@ -105,7 +109,7 @@ describe('OpenAPI Subscriptions', () => {
             userData: 'RANDOM_DATA',
           },
         },
-      })}`
+      })}`,
     );
 
     reader.releaseLock();

@@ -56,7 +56,9 @@ paths:
           schema:
             type: string
             default: 'created_at:asc'
-          description: 'Order results by the **created_at** field and direction specified: ascending ("asc") or descending ("desc")'
+          description:
+            'Order results by the **created_at** field and direction specified: ascending ("asc") or
+            descending ("desc")'
         - name: email
           in: query
           schema:
@@ -190,14 +192,16 @@ paths:
             example: 'https://api.calendly.com/organizations/EBHAAFHDCAEQTSEZ'
           in: query
           name: organization
-          description: Return events that are scheduled with the organization associated with this URI
+          description:
+            Return events that are scheduled with the organization associated with this URI
         - name: invitee_email
           in: query
           schema:
             type: string
             format: email
             example: alice@example.com
-          description: Return events that are scheduled with the invitee associated with this email address
+          description:
+            Return events that are scheduled with the invitee associated with this email address
         - name: status
           in: query
           schema:
@@ -219,13 +223,17 @@ paths:
           in: query
           schema:
             type: string
-          description: 'Include events with start times after this time (sample time format: "2020-01-02T03:04:05.678123Z"). This time should use the UTC timezone.'
+          description:
+            'Include events with start times after this time (sample time format:
+            "2020-01-02T03:04:05.678123Z"). This time should use the UTC timezone.'
           example: '2020-01-02T12:30:00.000000Z'
         - name: max_start_time
           in: query
           schema:
             type: string
-          description: 'Include events with start times prior to this time (sample time format: "2020-01-02T03:04:05.678123Z"). This time should use the UTC timezone.'
+          description:
+            'Include events with start times prior to this time (sample time format:
+            "2020-01-02T03:04:05.678123Z"). This time should use the UTC timezone.'
           example: '2020-01-02T12:30:00.000000Z'
         - $ref: '#/components/parameters/PageToken'
         - $ref: '#/components/parameters/Count'
@@ -309,19 +317,25 @@ paths:
         - personal_access_token: []
       parameters:
         - name: active
-          description: 'Return only active event types if true, only inactive if false, or all event types if this parameter is omitted.'
+          description:
+            'Return only active event types if true, only inactive if false, or all event types if
+            this parameter is omitted.'
           in: query
           schema:
             type: boolean
         - name: organization
-          description: "View available personal, team, and organization event types associated with the organization's URI."
+          description:
+            "View available personal, team, and organization event types associated with the
+            organization's URI."
           in: query
           schema:
             type: string
             format: uri
           required: false
         - name: user
-          description: "View available personal, team, and organization event types associated with the user's URI."
+          description:
+            "View available personal, team, and organization event types associated with the user's
+            URI."
           in: query
           schema:
             type: string
@@ -923,7 +937,8 @@ paths:
         '500':
           $ref: '#/components/responses/UNKNOWN'
       operationId: get-organizations-uuid-invitations
-      description: Returns a list of Organization Invitations that were sent to the organization's members.
+      description:
+        Returns a list of Organization Invitations that were sent to the organization's members.
       security:
         - oauth2: []
         - personal_access_token: []
@@ -935,7 +950,9 @@ paths:
             default: 'created_at:asc'
           in: query
           name: sort
-          description: Order results by the field name and direction specified (ascending or descending). Returns multiple sets of results in a comma-separated list.
+          description:
+            Order results by the field name and direction specified (ascending or descending).
+            Returns multiple sets of results in a comma-separated list.
         - schema:
             type: string
             format: email
@@ -951,7 +968,9 @@ paths:
               - declined
           in: query
           name: status
-          description: 'Indicates if the results should be filtered by status  ("pending", "accepted", or "declined")'
+          description:
+            'Indicates if the results should be filtered by status  ("pending", "accepted", or
+            "declined")'
       tags:
         - Organizations
     post:
@@ -1008,7 +1027,9 @@ paths:
                 Race Condition:
                   value:
                     title: Race Condition
-                    message: A race condition occurred when processing the request.  Please try the request again.
+                    message:
+                      A race condition occurred when processing the request.  Please try the request
+                      again.
         '401':
           $ref: '#/components/responses/UNAUTHENTICATED'
         '403':
@@ -1025,7 +1046,9 @@ paths:
                   message:
                     type: string
                     enum:
-                      - You already sent all the invitations you're allotted based upon the number of seats purchased with your account. Please purchase more seats to send more invitations.
+                      - You already sent all the invitations you're allotted based upon the number
+                        of seats purchased with your account. Please purchase more seats to send
+                        more invitations.
                       - You already sent all the invitations allotted to you with a trial account.
                       - You do not have permission
                       - You cannot perform this action for an organization with SCIM enabled.
@@ -1033,11 +1056,15 @@ paths:
                 Quantity Overflow:
                   value:
                     title: Permission Denied
-                    message: You already sent all the invitations you're allotted based upon the number of seats purchased with your account. Please purchase more seats to send more invitations.
+                    message:
+                      You already sent all the invitations you're allotted based upon the number of
+                      seats purchased with your account. Please purchase more seats to send more
+                      invitations.
                 Trial Quantity Overflow:
                   value:
                     title: Permission Denied
-                    message: You already sent all the invitations allotted to you with a trial account.
+                    message:
+                      You already sent all the invitations allotted to you with a trial account.
         '404':
           $ref: '#/components/responses/NOT_FOUND'
         '500':
@@ -1108,7 +1135,9 @@ paths:
         '500':
           $ref: '#/components/responses/UNKNOWN'
       operationId: revoke-users-organization-invitation
-      description: 'Use this to revoke an Organization Invitation to an organization. Once revoked, the invitation link that was sent to the invitee is no longer valid.'
+      description:
+        'Use this to revoke an Organization Invitation to an organization. Once revoked, the
+        invitation link that was sent to the invitee is no longer valid.'
       security:
         - oauth2: []
         - personal_access_token: []
@@ -1463,7 +1492,9 @@ paths:
               properties:
                 url:
                   type: string
-                  description: The URL where you want to receive POST requests for events you are subscribed to.
+                  description:
+                    The URL where you want to receive POST requests for events you are subscribed
+                    to.
                   format: uri
                 events:
                   type: array
@@ -1477,7 +1508,8 @@ paths:
                       - routing_form_submission.created
                 organization:
                   type: string
-                  description: The unique reference to the organization that the webhook will be tied to.
+                  description:
+                    The unique reference to the organization that the webhook will be tied to.
                   format: uri
                 user:
                   type: string
@@ -1488,10 +1520,14 @@ paths:
                   enum:
                     - organization
                     - user
-                  description: Indicates if the webhook subscription scope will be "organization" or "user"
+                  description:
+                    Indicates if the webhook subscription scope will be "organization" or "user"
                 signing_key:
                   type: string
-                  description: 'Optional secret key shared between your application and Calendly. See https://developer.calendly.com/api-docs/ZG9jOjM2MzE2MDM4-webhook-signatures for additional information.'
+                  description:
+                    'Optional secret key shared between your application and Calendly. See
+                    https://developer.calendly.com/api-docs/ZG9jOjM2MzE2MDM4-webhook-signatures for
+                    additional information.'
               required:
                 - url
                 - events
@@ -1588,7 +1624,9 @@ paths:
             format: uri
           in: query
           name: user
-          description: Indicates if the results should be filtered by user. This parameter is only required if the `scope` parameter is set to `user`.
+          description:
+            Indicates if the results should be filtered by user. This parameter is only required if
+            the `scope` parameter is set to `user`.
         - $ref: '#/components/parameters/PageToken'
         - $ref: '#/components/parameters/Count'
         - schema:
@@ -1704,7 +1742,9 @@ paths:
                         example: 'https://calendly.com/d/abcd-brv8/15-minute-meeting'
                       owner:
                         type: string
-                        description: 'A link to the resource that owns this Scheduling Link (currently, this is always an Event Type)'
+                        description:
+                          'A link to the resource that owns this Scheduling Link (currently, this is
+                          always an Event Type)'
                         format: uri
                         example: 'https://api.calendly.com/event_types/GBGBDCAADAEDCRZ2'
                       owner_type:
@@ -1745,13 +1785,16 @@ paths:
               properties:
                 max_event_count:
                   type: number
-                  description: The max number of events that can be scheduled using this scheduling link.
+                  description:
+                    The max number of events that can be scheduled using this scheduling link.
                   enum:
                     - 1
                   example: 1
                 owner:
                   type: string
-                  description: 'A link to the resource that owns this Scheduling Link (currently, this is always an Event Type)'
+                  description:
+                    'A link to the resource that owns this Scheduling Link (currently, this is
+                    always an Event Type)'
                   format: uri
                   example: 'https://api.calendly.com/event_types/012345678901234567890'
                 owner_type:
@@ -1830,7 +1873,10 @@ paths:
                 Invalid Data Request Permission:
                   value:
                     title: Permission Denied
-                    message: You must be an admin/owner with the data requests permission enabled to use this resource. Contact Calendly support and ask them to grant you data requests permission.
+                    message:
+                      You must be an admin/owner with the data requests permission enabled to use
+                      this resource. Contact Calendly support and ask them to grant you data
+                      requests permission.
         '404':
           $ref: '#/components/responses/NOT_FOUND'
         '500':
@@ -2117,7 +2163,10 @@ paths:
             example: 'created_at:asc'
           in: query
           name: sort
-          description: 'Order results by the specified field and direction. Accepts comma-separated list of {field}:{direction} values. Supported fields are: created_at. Sort direction is specified as: asc, desc.'
+          description:
+            'Order results by the specified field and direction. Accepts comma-separated list of
+            {field}:{direction} values. Supported fields are: created_at. Sort direction is
+            specified as: asc, desc.'
   '/routing_forms/{uuid}':
     parameters:
       - schema:
@@ -2263,7 +2312,10 @@ paths:
             example: 'created_at:asc'
           in: query
           name: sort
-          description: 'Order results by the specified field and direction. Accepts comma-separated list of {field}:{direction} values. Supported fields are: created_at. Sort direction is specified as: asc, desc.'
+          description:
+            'Order results by the specified field and direction. Accepts comma-separated list of
+            {field}:{direction} values. Supported fields are: created_at. Sort direction is
+            specified as: asc, desc.'
       x-internal: false
   '/routing_form_submissions/{uuid}':
     parameters:
@@ -2478,7 +2530,8 @@ paths:
                 - 'occurred_at:desc'
             default:
               - 'occurred_at:desc'
-          description: 'Order results by the specified field and direction. List of {field}:{direction} values.'
+          description:
+            'Order results by the specified field and direction. List of {field}:{direction} values.'
           example:
             - 'occurred_at:asc'
         - name: min_occurred_at
@@ -2486,14 +2539,18 @@ paths:
           schema:
             type: string
             format: date-time
-          description: 'Include entries that occurred after this time (sample time format: "2020-01-02T03:04:05.678Z"). This time should use the UTC timezone.'
+          description:
+            'Include entries that occurred after this time (sample time format:
+            "2020-01-02T03:04:05.678Z"). This time should use the UTC timezone.'
           example: '2020-01-02T12:30:00Z'
         - name: max_occurred_at
           in: query
           schema:
             type: string
             format: date-time
-          description: 'Include entries that occurred prior to this time (sample time format: "2020-01-02T03:04:05.678Z"). This time should use the UTC timezone.'
+          description:
+            'Include entries that occurred prior to this time (sample time format:
+            "2020-01-02T03:04:05.678Z"). This time should use the UTC timezone.'
           example: '2020-01-02T12:30:00Z'
         - name: page_token
           description: The token to pass to get the next portion of the collection
@@ -2547,14 +2604,18 @@ paths:
                     type: string
                     format: date-time
                     nullable: true
-                    description: 'The date and time of the newest entry (format: "2020-01-02T03:04:05.678Z") in the collection array.'
+                    description:
+                      'The date and time of the newest entry (format: "2020-01-02T03:04:05.678Z") in
+                      the collection array.'
                   total_count:
                     type: integer
                     description: Total number of records based on search criteria
                     minimum: 0
                   exceeds_max_total_count:
                     type: boolean
-                    description: 'If there are more search results than the total_count field indicates, pagination will continue to return results past the total_count field value.'
+                    description:
+                      'If there are more search results than the total_count field indicates,
+                      pagination will continue to return results past the total_count field value.'
                 required:
                   - collection
                   - pagination
@@ -2647,7 +2708,9 @@ components:
           example: John Doe
         slug:
           type: string
-          description: "The portion of URL for the user's scheduling page (where invitees book sessions), rendered in a human-readable format"
+          description:
+            "The portion of URL for the user's scheduling page (where invitees book sessions),
+            rendered in a human-readable format"
           example: acmesales
         email:
           type: string
@@ -2657,7 +2720,8 @@ components:
         scheduling_url:
           type: string
           format: uri
-          description: The URL of the user's Calendly landing page (that lists all the user's event types)
+          description:
+            The URL of the user's Calendly landing page (that lists all the user's event types)
           example: 'https://calendly.com/acmesales'
         timezone:
           type: string
@@ -2673,12 +2737,15 @@ components:
           type: string
           format: date-time
           example: '2019-01-02T03:04:05.678123Z'
-          description: 'The moment when the user''s record was created (e.g. "2020-01-02T03:04:05.678123Z")'
+          description:
+            'The moment when the user''s record was created (e.g. "2020-01-02T03:04:05.678123Z")'
         updated_at:
           type: string
           format: date-time
           example: '2019-08-07T06:05:04.321123Z'
-          description: 'The moment when the user''s record was last updated (e.g. "2020-01-02T03:04:05.678123Z")'
+          description:
+            'The moment when the user''s record was last updated (e.g.
+            "2020-01-02T03:04:05.678123Z")'
         current_organization:
           type: string
           description: A unique reference to the user's current organization
@@ -2785,7 +2852,9 @@ components:
           type: boolean
         slug:
           type: string
-          description: The portion of the event type's URL that identifies a specific web page (in a human-readable format)
+          description:
+            The portion of the event type's URL that identifies a specific web page (in a
+            human-readable format)
           example: acmesales
           nullable: true
         scheduling_url:
@@ -2798,20 +2867,26 @@ components:
           type: number
           example: 30
         kind:
-          description: Indicates if the event type is "solo" (belongs to an individual user) or "group"
+          description:
+            Indicates if the event type is "solo" (belongs to an individual user) or "group"
           type: string
           enum:
             - solo
             - group
         pooling_type:
-          description: Indicates if the event type is "round robin" (alternates between hosts) or "collective" (invitees pick a time when all participants are available) or "null" (the event type doesn’t consider the availability of a group participants)
+          description:
+            Indicates if the event type is "round robin" (alternates between hosts) or "collective"
+            (invitees pick a time when all participants are available) or "null" (the event type
+            doesn’t consider the availability of a group participants)
           type: string
           enum:
             - round_robin
             - collective
           nullable: true
         type:
-          description: Indicates if the event type is "AdhocEventType" (ad hoc event) or "StandardEventType" (standard event type)
+          description:
+            Indicates if the event type is "AdhocEventType" (ad hoc event) or "StandardEventType"
+            (standard event type)
           type: string
           enum:
             - StandardEventType
@@ -2827,7 +2902,8 @@ components:
           format: date-time
           example: '2019-01-02T03:04:05.678123Z'
         updated_at:
-          description: 'The moment the event type was last updated (e.g. "2020-01-02T03:04:05.678123Z")'
+          description:
+            'The moment the event type was last updated (e.g. "2020-01-02T03:04:05.678123Z")'
           type: string
           format: date-time
           example: '2019-08-07T06:05:04.321123Z'
@@ -2864,7 +2940,10 @@ components:
             $ref: '#/components/schemas/EventTypeCustomQuestion'
         deleted_at:
           type: string
-          description: 'The moment the event type was deleted (e.g. "2020-01-02T03:04:05.678123Z"). Since event types can be deleted but their scheduled events remain it''s useful to fetch a deleted event type when you still require event type data for a scheduled event.'
+          description:
+            'The moment the event type was deleted (e.g. "2020-01-02T03:04:05.678123Z"). Since event
+            types can be deleted but their scheduled events remain it''s useful to fetch a deleted
+            event type when you still require event type data for a scheduled event.'
           format: date-time
           example: '2019-01-02T03:04:05.678123Z'
           nullable: true
@@ -2894,7 +2973,9 @@ components:
         - Event Types
       type: object
       nullable: true
-      description: "The publicly visible profile of a User or a Team that's associated with the Event Type (note: some Event Types don't have profiles)"
+      description:
+        "The publicly visible profile of a User or a Team that's associated with the Event Type
+        (note: some Event Types don't have profiles)"
       title: Profile
       properties:
         type:
@@ -2906,7 +2987,8 @@ components:
           example: User
         name:
           type: string
-          description: Human-readable name for the profile of the user that's associated with the event type
+          description:
+            Human-readable name for the profile of the user that's associated with the event type
           example: Tamara Jones
         owner:
           type: string
@@ -2971,11 +3053,15 @@ components:
         start_time:
           type: string
           format: date-time
-          description: 'The moment the event was scheduled to start in UTC time (e.g. "2020-01-02T03:04:05.678123Z").'
+          description:
+            'The moment the event was scheduled to start in UTC time (e.g.
+            "2020-01-02T03:04:05.678123Z").'
         end_time:
           type: string
           format: date-time
-          description: 'The moment the event was scheduled to end in UTC time (e.g. "2020-01-02T03:04:05.678123Z")'
+          description:
+            'The moment the event was scheduled to end in UTC time (e.g.
+            "2020-01-02T03:04:05.678123Z")'
         event_type:
           type: string
           description: The event type associated with this event
@@ -3007,7 +3093,8 @@ components:
         updated_at:
           type: string
           format: date-time
-          description: 'The moment when the event was last updated (e.g. "2020-01-02T03:04:05.678123Z")'
+          description:
+            'The moment when the event was last updated (e.g. "2020-01-02T03:04:05.678123Z")'
           example: '2019-01-02T03:04:05.678123Z'
         event_memberships:
           type: array
@@ -3160,12 +3247,18 @@ components:
           example: test@example.com
         first_name:
           type: string
-          description: The first name of the invitee who booked the event when the event type is configured to use separate fields for first name and last name. Null when event type is configured to use a single field for name.
+          description:
+            The first name of the invitee who booked the event when the event type is configured to
+            use separate fields for first name and last name. Null when event type is configured to
+            use a single field for name.
           example: John
           nullable: true
         last_name:
           type: string
-          description: The last name of the invitee who booked the event when the event type is configured to use separate fields for first name and last name. Null when event type is configured to use a single field for name.
+          description:
+            The last name of the invitee who booked the event when the event type is configured to
+            use separate fields for first name and last name. Null when event type is configured to
+            use a single field for name.
           example: Doe
           nullable: true
         name:
@@ -3180,7 +3273,9 @@ components:
           description: Indicates if the invitee is "active" or "canceled"
         questions_and_answers:
           type: array
-          description: A collection of the invitee's responses to questions on the event booking confirmation form
+          description:
+            A collection of the invitee's responses to questions on the event booking confirmation
+            form
           minItems: 0
           uniqueItems: true
           items:
@@ -3203,7 +3298,8 @@ components:
           type: string
           format: date-time
           example: '2019-08-07T06:05:04.321123Z'
-          description: 'The moment when the event was last updated (e.g. "2020-01-02T03:04:05.678123Z")'
+          description:
+            'The moment when the event was last updated (e.g. "2020-01-02T03:04:05.678123Z")'
         tracking:
           $ref: '#/components/schemas/InviteeTracking'
         text_reminder_number:
@@ -3213,7 +3309,9 @@ components:
           nullable: true
         rescheduled:
           type: boolean
-          description: 'Indicates if this invitee has rescheduled. If `true`, a reference to the new Invitee instance is provided in the `new_invitee` field.'
+          description:
+            'Indicates if this invitee has rescheduled. If `true`, a reference to the new Invitee
+            instance is provided in the `new_invitee` field.'
         old_invitee:
           type: string
           format: uri
@@ -3236,7 +3334,8 @@ components:
           type: string
           format: uri
           example: 'https://api.calendly.com/routing_form_submissions/AAAAAAAAAAAAAAAA'
-          description: Reference to a routing form submission that redirected the invitee to a booking page.
+          description:
+            Reference to a routing form submission that redirected the invitee to a booking page.
           nullable: true
         cancellation:
           $ref: '#/components/schemas/Cancellation'
@@ -3301,7 +3400,11 @@ components:
               description: The moment when the no show was created
         reconfirmation:
           type: object
-          description: 'Assuming reconfirmation is enabled for the event type, when reconfirmation is requested this object is present with a `created_at` that reflects when the reconfirmation notification was sent. Once the invitee has reconfirmed the `confirmed_at` attribute will change from `null` to a timestamp that reflects when they took action.'
+          description:
+            'Assuming reconfirmation is enabled for the event type, when reconfirmation is requested
+            this object is present with a `created_at` that reflects when the reconfirmation
+            notification was sent. Once the invitee has reconfirmed the `confirmed_at` attribute
+            will change from `null` to a timestamp that reflects when they took action.'
           required:
             - created_at
             - confirmed_at
@@ -3456,7 +3559,9 @@ components:
               example: John Doe
             slug:
               type: string
-              description: "The portion of URL for the user's scheduling page (where invitees book sessions), rendered in a human-readable format"
+              description:
+                "The portion of URL for the user's scheduling page (where invitees book sessions),
+                rendered in a human-readable format"
               example: acmesales
             email:
               type: string
@@ -3466,7 +3571,8 @@ components:
             scheduling_url:
               type: string
               format: uri
-              description: The URL of the user's Calendly landing page (that lists all the user's event types)
+              description:
+                The URL of the user's Calendly landing page (that lists all the user's event types)
               example: 'https://calendly.com/acmesales'
             timezone:
               type: string
@@ -3482,12 +3588,15 @@ components:
               type: string
               format: date-time
               example: '2019-01-02T03:04:05.678123Z'
-              description: 'The moment when the user''s record was created (e.g. "2020-01-02T03:04:05.678123Z")'
+              description:
+                'The moment when the user''s record was created (e.g. "2020-01-02T03:04:05.678123Z")'
             updated_at:
               type: string
               format: date-time
               example: '2019-08-07T06:05:04.321123Z'
-              description: 'The moment when the user''s record was last updated (e.g. "2020-01-02T03:04:05.678123Z")'
+              description:
+                'The moment when the user''s record was last updated (e.g.
+                "2020-01-02T03:04:05.678123Z")'
         organization:
           type: string
           format: uri
@@ -3497,12 +3606,15 @@ components:
           type: string
           format: date-time
           example: '2019-08-07T06:05:04.321123Z'
-          description: 'The moment when the membership record was last updated (e.g. "2020-01-02T03:04:05.678123Z")'
+          description:
+            'The moment when the membership record was last updated (e.g.
+            "2020-01-02T03:04:05.678123Z")'
         created_at:
           type: string
           format: date-time
           example: '2019-01-02T03:04:05.678123Z'
-          description: 'The moment when the membership record was created (e.g. "2020-01-02T03:04:05.678123Z")'
+          description:
+            'The moment when the membership record was created (e.g. "2020-01-02T03:04:05.678123Z")'
       required:
         - uri
         - role
@@ -3565,17 +3677,20 @@ components:
           type: string
           format: date-time
           example: '2019-01-02T03:04:05.678123Z'
-          description: 'The moment the invitation was last updated (e.g. "2020-01-02T03:04:05.678123Z")'
+          description:
+            'The moment the invitation was last updated (e.g. "2020-01-02T03:04:05.678123Z")'
         last_sent_at:
           type: string
           nullable: true
-          description: 'The moment the invitation was last sent (e.g. "2020-01-02T03:04:05.678123Z")'
+          description:
+            'The moment the invitation was last sent (e.g. "2020-01-02T03:04:05.678123Z")'
           format: date-time
           example: '2019-01-02T03:04:05.678123Z'
         user:
           type: string
           format: uri
-          description: 'When the invitation is accepted, a reference to the user who accepted the invitation'
+          description:
+            'When the invitation is accepted, a reference to the user who accepted the invitation'
           example: 'https://api.calendly.com/users/AAAAAAAAAAAAAAAA'
       required:
         - uri
@@ -3749,11 +3864,15 @@ components:
           example: 'https://blah.foo/bar'
         created_at:
           type: string
-          description: 'The moment when the webhook subscription was created (e.g. "2020-01-02T03:04:05.678123Z")'
+          description:
+            'The moment when the webhook subscription was created (e.g.
+            "2020-01-02T03:04:05.678123Z")'
           format: date-time
         updated_at:
           type: string
-          description: 'The moment when the webhook subscription was last updated (e.g. "2020-01-02T03:04:05.678123Z")'
+          description:
+            'The moment when the webhook subscription was last updated (e.g.
+            "2020-01-02T03:04:05.678123Z")'
           format: date-time
         retry_started_at:
           type: string
@@ -3973,14 +4092,17 @@ components:
         submitter:
           type: string
           example: 'https://calendly.com/scheduled_events/AAAAAAAAAAAAAAAA/invitees/AAAAAAAAAAAAAAAA'
-          description: The reference to the Invitee resource when routing form submission results in a scheduled meeting.
+          description:
+            The reference to the Invitee resource when routing form submission results in a
+            scheduled meeting.
           format: uri
           nullable: true
         submitter_type:
           type: string
           enum:
             - Invitee
-          description: Type of the respondent resource that submitted the form and scheduled a meeting.
+          description:
+            Type of the respondent resource that submitted the form and scheduled a meeting.
           nullable: true
         created_at:
           type: string
@@ -4020,7 +4142,10 @@ components:
           example: available
         invitees_remaining:
           type: number
-          description: 'Total remaining invitees for this available time. For Group Event Type, more than one invitee can book in this available time. For all other Event Types, only one invitee can book in this available time.'
+          description:
+            'Total remaining invitees for this available time. For Group Event Type, more than one
+            invitee can book in this available time. For all other Event Types, only one invitee can
+            book in this available time.'
           example: 2
         start_time:
           type: string
@@ -4125,16 +4250,24 @@ components:
             - phone_number
             - single_select
             - multi_select
-          description: 'The type of response that the invitee provides to the custom question; can be one or multiple lines of text, a phone number, or single- or multiple-select.'
+          description:
+            'The type of response that the invitee provides to the custom question; can be one or
+            multiple lines of text, a phone number, or single- or multiple-select.'
         position:
           type: number
-          description: The numerical position of the question on the event booking page after the name and email address fields.
+          description:
+            The numerical position of the question on the event booking page after the name and
+            email address fields.
         enabled:
           type: boolean
-          description: true if the question created by the host is turned ON and visible on the event booking page; false if turned OFF and invisible on the event booking page.
+          description:
+            true if the question created by the host is turned ON and visible on the event booking
+            page; false if turned OFF and invisible on the event booking page.
         required:
           type: boolean
-          description: true if a response to the question created by the host is required for invitees to book the event type; false if not required.
+          description:
+            true if a response to the question created by the host is required for invitees to book
+            the event type; false if not required.
         answer_choices:
           type: array
           description: The invitee’s option(s) for single_select or multi_select type of responses.
@@ -4142,7 +4275,9 @@ components:
             type: string
         include_other:
           type: boolean
-          description: true if the custom question lets invitees record a written response in addition to single-select or multiple-select type of responses; false if it doesn’t.
+          description:
+            true if the custom question lets invitees record a written response in addition to
+            single-select or multiple-select type of responses; false if it doesn’t.
       required:
         - name
         - type
@@ -4209,11 +4344,14 @@ components:
         utm_source:
           type: string
           nullable: true
-          description: The UTM parameter that identifies the source (platform where the traffic originates)
+          description:
+            The UTM parameter that identifies the source (platform where the traffic originates)
         utm_medium:
           type: string
           nullable: true
-          description: 'The UTM parameter that identifies the type of input (e.g. Cost Per Click (CPC), social media, affiliate or QR code)'
+          description:
+            'The UTM parameter that identifies the type of input (e.g. Cost Per Click (CPC), social
+            media, affiliate or QR code)'
         utm_content:
           type: string
           nullable: true
@@ -4269,23 +4407,31 @@ components:
           type: string
           nullable: true
           format: uri
-          description: URI to return the next page of an ordered list ("null" indicates no additional results are available)
+          description:
+            URI to return the next page of an ordered list ("null" indicates no additional results
+            are available)
           example: 'https://api.calendly.com/event_types?count=1&page_token=sNjq4TvMDfUHEl7zHRR0k0E1PCEJWvdi'
         previous_page:
           type: string
           nullable: true
           format: uri
-          description: URI to return the previous page of an ordered list ("null" indicates no additional results are available)
+          description:
+            URI to return the previous page of an ordered list ("null" indicates no additional
+            results are available)
           example: 'https://api.calendly.com/event_types?count=1&page_token=VJs2rfDYeY8ahZpq0QI1O114LJkNjd7H'
         next_page_token:
           type: string
           nullable: true
-          description: Token to return the next page of an ordered list ("null" indicates no additional results are available)
+          description:
+            Token to return the next page of an ordered list ("null" indicates no additional results
+            are available)
           example: sNjq4TvMDfUHEl7zHRR0k0E1PCEJWvdi
         previous_page_token:
           type: string
           nullable: true
-          description: Token to return the previous page of an ordered list ("null" indicates no additional results are available)
+          description:
+            Token to return the previous page of an ordered list ("null" indicates no additional
+            results are available)
           example: VJs2rfDYeY8ahZpq0QI1O114LJkNjd7H
       required:
         - count
@@ -4464,7 +4610,9 @@ components:
           type: string
           enum:
             - custom
-          description: The event location doesn't fall into a standard category defined by the event host (publisher)
+          description:
+            The event location doesn't fall into a standard category defined by the event host
+            (publisher)
         location:
           nullable: true
           description: The location description provided by the event host (publisher)
@@ -4473,7 +4621,8 @@ components:
         - type
         - location
     GoogleConference:
-      description: Details about an Event that will take place using a Google Meet / Hangout conference
+      description:
+        Details about an Event that will take place using a Google Meet / Hangout conference
       type: object
       title: Google Conference
       x-examples:
@@ -4966,7 +5115,9 @@ components:
             - textarea
             - select
             - radios
-          description: 'Question type: name, text input, email, phone, textarea input, dropdown list or radio button list.'
+          description:
+            'Question type: name, text input, email, phone, textarea input, dropdown list or radio
+            button list.'
         required:
           type: boolean
           description: |
@@ -5002,7 +5153,8 @@ components:
           type: string
           enum:
             - custom_message
-          description: Indicates if the routing form submission resulted in a custom "thank you" message.
+          description:
+            Indicates if the routing form submission resulted in a custom "thank you" message.
         value:
           type: object
           required:
@@ -5038,7 +5190,9 @@ components:
           type: string
           enum:
             - event_type
-          description: Indicates that the routing form submission resulted in a redirect to an event type booking page.
+          description:
+            Indicates that the routing form submission resulted in a redirect to an event type
+            booking page.
         value:
           type: string
           example: 'https://api.calendly.com/event_types/GBGBDCAADAEDCRZ2'
@@ -5064,7 +5218,8 @@ components:
           type: string
           enum:
             - external_url
-          description: Indicates that the routing form submission resulted in a redirect to an external URL.
+          description:
+            Indicates that the routing form submission resulted in a redirect to an external URL.
         value:
           type: string
           format: uri
@@ -5140,7 +5295,8 @@ components:
           utm_content: UTM Content
           utm_term: UTM Term
           salesforce_uuid: 5003000000D8cuIQAA
-      description: The UTM and Salesforce tracking parameters associated with a Routing Form Submission.
+      description:
+        The UTM and Salesforce tracking parameters associated with a Routing Form Submission.
       x-tags:
         - Routing Forms
       properties:
@@ -5150,11 +5306,14 @@ components:
           nullable: true
         utm_source:
           type: string
-          description: The UTM parameter that identifies the source (platform where the traffic originates).
+          description:
+            The UTM parameter that identifies the source (platform where the traffic originates).
           nullable: true
         utm_medium:
           type: string
-          description: 'The UTM parameter that identifies the type of input (e.g. Cost Per Click (CPC), social media, affiliate or QR code).'
+          description:
+            'The UTM parameter that identifies the type of input (e.g. Cost Per Click (CPC), social
+            media, affiliate or QR code).'
           nullable: true
         utm_content:
           type: string
@@ -5234,7 +5393,8 @@ components:
                       - You are not allowed to view this event
                       - Please upgrade your Calendly account to Professional
                       - Please upgrade your Calendly account to Enterprise.
-                      - Please also specify organization when requesting events for a user within your organization.
+                      - Please also specify organization when requesting events for a user within
+                        your organization.
                       - Unauthorized
                       - You cannot perform this action for an organization with SCIM enabled.
     NOT_FOUND:
@@ -5278,7 +5438,8 @@ components:
                   message:
                     type: string
                     enum:
-                      - The server encountered an unexpected condition that prevented it from fulfilling the request.
+                      - The server encountered an unexpected condition that prevented it from
+                        fulfilling the request.
     ALREADY_EXISTS:
       description: Attempt to create a resource that already exists
       content:

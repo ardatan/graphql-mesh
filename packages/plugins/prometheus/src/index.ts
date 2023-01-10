@@ -5,7 +5,7 @@ import { Histogram, register as defaultRegistry, Registry } from 'prom-client';
 import type { Plugin as YogaPlugin } from 'graphql-yoga';
 
 export default async function useMeshPrometheus(
-  pluginOptions: MeshPluginOptions<YamlConfig.PrometheusConfig>
+  pluginOptions: MeshPluginOptions<YamlConfig.PrometheusConfig>,
 ): Promise<MeshPlugin<any> & YogaPlugin> {
   const registry = pluginOptions.registry
     ? await loadFromModuleExportExpression<Registry>(pluginOptions.registry, {
@@ -32,7 +32,7 @@ export default async function useMeshPrometheus(
         usePrometheus({
           ...pluginOptions,
           registry,
-        })
+        }),
       );
     },
     onDelegate({ sourceName, typeName, fieldName, args, key }) {
@@ -49,7 +49,7 @@ export default async function useMeshPrometheus(
               args: JSON.stringify(args),
               key: JSON.stringify(key),
             },
-            duration
+            duration,
           );
         };
       }
@@ -70,7 +70,7 @@ export default async function useMeshPrometheus(
               statusText: response.statusText,
               responseHeaders: JSON.stringify(getHeadersObj(response.headers)),
             },
-            duration
+            duration,
           );
         };
       }

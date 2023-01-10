@@ -5,7 +5,10 @@ export interface JSONSchemaVisitorContext {
   path: string;
 }
 
-export type JSONSchemaVisitor = (subSchema: any, context: JSONSchemaVisitorContext) => Promise<any> | any;
+export type JSONSchemaVisitor = (
+  subSchema: any,
+  context: JSONSchemaVisitorContext,
+) => Promise<any> | any;
 
 const identicalFn = <T>(a: T) => a;
 
@@ -20,7 +23,14 @@ const objectFields = [
   'then',
 ] as const;
 
-const dictFields = ['anyOf', 'allOf', 'oneOf', 'definitions', 'properties', 'patternProperties'] as const;
+const dictFields = [
+  'anyOf',
+  'allOf',
+  'oneOf',
+  'definitions',
+  'properties',
+  'patternProperties',
+] as const;
 
 export async function visitJSONSchema(
   schema: JSONSchema,
@@ -34,7 +44,7 @@ export async function visitJSONSchema(
   { visitedSubschemaResultMap, path }: JSONSchemaVisitorContext = {
     visitedSubschemaResultMap: new WeakMap(),
     path: '',
-  }
+  },
 ): Promise<any> {
   if (typeof schema === 'object') {
     if (!visitedSubschemaResultMap.has(schema)) {
@@ -51,7 +61,7 @@ export async function visitJSONSchema(
             {
               visitedSubschemaResultMap,
               path: `${path}/${key}`,
-            }
+            },
           );
         }
       }
@@ -62,7 +72,7 @@ export async function visitJSONSchema(
             enterResult[key][itemKey] = await visitJSONSchema(
               itemValue,
               { enter, leave },
-              { visitedSubschemaResultMap, path: `${path}/${key}/${itemKey}` }
+              { visitedSubschemaResultMap, path: `${path}/${key}/${itemKey}` },
             );
           }
         }
@@ -74,7 +84,7 @@ export async function visitJSONSchema(
           enterResult.components.schemas[schemaName] = await visitJSONSchema(
             subSchema,
             { enter, leave },
-            { visitedSubschemaResultMap, path: `${path}/components/schemas/${schemaName}` }
+            { visitedSubschemaResultMap, path: `${path}/components/schemas/${schemaName}` },
           );
         }
       }

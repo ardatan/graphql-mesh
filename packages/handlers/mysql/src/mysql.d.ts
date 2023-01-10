@@ -73,10 +73,20 @@ declare module 'mysql' {
       limit: number[],
       where: any,
       orderBy: any,
-      callback: Callback<any[]>
+      callback: Callback<any[]>,
     );
-    select(tableName: string, fields: string[], where: any, orderBy: any, callback: Callback<any[]>);
-    insert(tableName: string, record: Record<string, any>, callback: Callback<{ recordId: string | number }>);
+    select(
+      tableName: string,
+      fields: string[],
+      where: any,
+      orderBy: any,
+      callback: Callback<any[]>,
+    );
+    insert(
+      tableName: string,
+      record: Record<string, any>,
+      callback: Callback<{ recordId: string | number }>,
+    );
     update(tableName: string, input: any, where: any, callback: Callback<{ affectedRows: any }>);
     delete(tableName: string, where: any, callback: Callback<{ affectedRows: any }>);
     count(tableName: string, where: any, callback: Callback<number>);

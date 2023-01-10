@@ -43,6 +43,6 @@ export function getHeadersObj(headers: Headers): Record<string, string> {
       preventExtensions() {
         return true;
       },
-    }
+    },
   );
 }

@@ -15,7 +15,12 @@ export default class FederationTransform implements MeshTransform {
 
   noWrap = true;
 
-  constructor({ apiName, baseDir, config, importFn }: MeshTransformOptions<YamlConfig.Transform['federation']>) {
+  constructor({
+    apiName,
+    baseDir,
+    config,
+    importFn,
+  }: MeshTransformOptions<YamlConfig.Transform['federation']>) {
     this.apiName = apiName;
     this.config = config;
     this.baseDir = baseDir;
@@ -31,7 +36,8 @@ export default class FederationTransform implements MeshTransform {
         rawSource.merge[type.name] = {};
         const typeObj = schema.getType(type.name) as GraphQLObjectType;
         typeObj.extensions = typeObj.extensions || {};
-        const typeDirectivesObj: any = ((typeObj.extensions as any).directives = typeObj.extensions.directives || {});
+        const typeDirectivesObj: any = ((typeObj.extensions as any).directives =
+          typeObj.extensions.directives || {});
         if (type.config?.key) {
           typeDirectivesObj.key = type.config.key;
         }
@@ -52,10 +58,13 @@ export default class FederationTransform implements MeshTransform {
               Object.assign(directivesObj, field.config);
             }
             rawSource.merge[type.name].fields = rawSource.merge[type.name].fields || {};
-            rawSource.merge[type.name].fields[field.name] = rawSource.merge[type.name].fields[field.name] || {};
+            rawSource.merge[type.name].fields[field.name] =
+              rawSource.merge[type.name].fields[field.name] || {};
             if (field.config.requires) {
               rawSource.merge[type.name].fields[field.name].computed = true;
-              rawSource.merge[type.name].fields[field.name].selectionSet = `{ ${field.config.requires} }`;
+              rawSource.merge[type.name].fields[
+                field.name
+              ].selectionSet = `{ ${field.config.requires} }`;
             }
           }
         }
@@ -137,7 +146,9 @@ export default class FederationTransform implements MeshTransform {
             _entities: entitiesField,
             _service: {
               ...serviceField,
-              resolve: (root, args, context, info) => ({ sdl: printSchemaWithDirectives(info.schema) }),
+              resolve: (root, args, context, info) => ({
+                sdl: printSchemaWithDirectives(info.schema),
+              }),
             },
           },
         });

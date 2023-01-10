@@ -41,7 +41,9 @@ describe('GraphApolloLink', () => {
       `),
     });
     const asyncIterable =
-      observableToAsyncIterable<FetchResult<any, Record<string, any>, Record<string, any>>>(observable);
+      observableToAsyncIterable<FetchResult<any, Record<string, any>, Record<string, any>>>(
+        observable,
+      );
     let i = 0;
     for await (const result of asyncIterable) {
       i++;

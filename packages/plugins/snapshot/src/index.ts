@@ -20,7 +20,7 @@ interface SnapshotEntry {
 }
 
 export default function useSnapshot(
-  pluginOptions: MeshPluginOptions<YamlConfig.SnapshotPluginConfig>
+  pluginOptions: MeshPluginOptions<YamlConfig.SnapshotPluginConfig>,
 ): MeshPlugin<any> {
   if (typeof pluginOptions.if === 'boolean') {
     if (!pluginOptions.if) {
@@ -39,7 +39,11 @@ export default function useSnapshot(
     async onFetch({ url, options, setFetchFn }) {
       if (matches.some(matcher => matcher.match(url))) {
         const snapshotFileName = calculateCacheKey(url, options);
-        const snapshotPath = path.join(pluginOptions.baseDir, snapshotsDir, `${snapshotFileName}.json`);
+        const snapshotPath = path.join(
+          pluginOptions.baseDir,
+          snapshotsDir,
+          `${snapshotFileName}.json`,
+        );
         if (await pathExists(snapshotPath)) {
           setFetchFn(async () => {
             const snapshotFile = await fs.promises.readFile(snapshotPath, 'utf-8');
@@ -54,7 +58,11 @@ export default function useSnapshot(
         }
         return async ({ response, setResponse }) => {
           const contentType = response.headers.get('content-type');
-          if (contentType.includes('json') || contentType.includes('text') || contentType.includes('xml')) {
+          if (
+            contentType.includes('json') ||
+            contentType.includes('text') ||
+            contentType.includes('xml')
+          ) {
             const snapshot: SnapshotEntry = {
               text: await response.text(),
               headersObj: getHeadersObj(response.headers),
@@ -67,7 +75,7 @@ export default function useSnapshot(
                 headers: snapshot.headersObj,
                 status: snapshot.status,
                 statusText: snapshot.statusText,
-              })
+              }),
             );
           }
         };

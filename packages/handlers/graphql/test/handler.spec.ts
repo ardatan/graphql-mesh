@@ -38,7 +38,9 @@ describe('graphql', () => {
     const { schema: schemaFromHandler } = await handler.getMeshSource({
       fetchFn,
     });
-    expect(introspectionFromSchema(schemaFromHandler)).toStrictEqual(introspectionFromSchema(schemaFromFile));
+    expect(introspectionFromSchema(schemaFromHandler)).toStrictEqual(
+      introspectionFromSchema(schemaFromFile),
+    );
   });
   it('handle code files exports GraphQLSchema correctly', async () => {
     const schemaFilePath = './fixtures/schema.js';
@@ -63,7 +65,9 @@ describe('graphql', () => {
     const { schema: schemaFromHandler } = await handler.getMeshSource({
       fetchFn,
     });
-    expect(introspectionFromSchema(schemaFromHandler)).toStrictEqual(introspectionFromSchema(schemaFromFile));
+    expect(introspectionFromSchema(schemaFromHandler)).toStrictEqual(
+      introspectionFromSchema(schemaFromFile),
+    );
   });
   it('handle code files exports DocumentNode correctly', async () => {
     const schemaFilePath = './fixtures/schema-document.js';
@@ -89,7 +93,9 @@ describe('graphql', () => {
     const { schema: schemaFromHandler } = await handler.getMeshSource({
       fetchFn,
     });
-    expect(introspectionFromSchema(schemaFromHandler)).toStrictEqual(introspectionFromSchema(schemaFromFile));
+    expect(introspectionFromSchema(schemaFromHandler)).toStrictEqual(
+      introspectionFromSchema(schemaFromFile),
+    );
   });
   it('handle code files exports string correctly', async () => {
     const schemaFilePath = './fixtures/schema-str.js';
@@ -115,6 +121,8 @@ describe('graphql', () => {
     const { schema: schemaFromHandler } = await handler.getMeshSource({
       fetchFn,
     });
-    expect(introspectionFromSchema(schemaFromHandler)).toStrictEqual(introspectionFromSchema(schemaFromFile));
+    expect(introspectionFromSchema(schemaFromHandler)).toStrictEqual(
+      introspectionFromSchema(schemaFromFile),
+    );
   });
 });

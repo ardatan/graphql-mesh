@@ -1,4 +1,7 @@
-export function withCancel<T>(asyncIterable: AsyncIterable<T>, onCancel: () => void): AsyncIterable<T | undefined> {
+export function withCancel<T>(
+  asyncIterable: AsyncIterable<T>,
+  onCancel: () => void,
+): AsyncIterable<T | undefined> {
   return new Proxy(asyncIterable, {
     get(asyncIterable, prop) {
       if (prop === Symbol.asyncIterator) {

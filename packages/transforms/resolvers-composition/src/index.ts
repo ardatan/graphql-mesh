@@ -10,7 +10,11 @@ export default class ResolversCompositionTransform implements MeshTransform {
   private baseDir: string;
   private importFn: ImportFn;
 
-  constructor({ baseDir, config, importFn }: MeshTransformOptions<YamlConfig.Transform['resolversComposition']>) {
+  constructor({
+    baseDir,
+    config,
+    importFn,
+  }: MeshTransformOptions<YamlConfig.Transform['resolversComposition']>) {
     this.noWrap = config.mode ? config.mode !== 'wrap' : false; // use config.mode value or default to false
     this.compositions = Array.isArray(config) ? config : config.compositions;
     this.baseDir = baseDir;
@@ -29,7 +33,9 @@ export default class ResolversCompositionTransform implements MeshTransform {
       resolversComposition[resolver] =
         next =>
         (...args) =>
-          composerFn$.then(composerFn => (composerFn ? composerFn(next) : next)).then(next => next(...args));
+          composerFn$
+            .then(composerFn => (composerFn ? composerFn(next) : next))
+            .then(next => next(...args));
     }
 
     const resolvers = extractResolvers(schema);

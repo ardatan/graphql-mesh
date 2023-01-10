@@ -30,7 +30,9 @@ function tryRequire(modulePath: string, cwd: string) {
     return require(modulePath);
   } catch {
     if (!pathModule.isAbsolute(modulePath)) {
-      const absoluteModulePath = pathModule.isAbsolute(modulePath) ? modulePath : pathModule.join(cwd, modulePath);
+      const absoluteModulePath = pathModule.isAbsolute(modulePath)
+        ? modulePath
+        : pathModule.join(cwd, modulePath);
       return require(absoluteModulePath);
     }
   }

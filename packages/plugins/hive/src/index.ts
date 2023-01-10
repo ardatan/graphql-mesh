@@ -3,7 +3,9 @@ import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 
-export default function useMeshHive(pluginOptions: MeshPluginOptions<YamlConfig.HivePlugin>): MeshPlugin<{}> {
+export default function useMeshHive(
+  pluginOptions: MeshPluginOptions<YamlConfig.HivePlugin>,
+): MeshPlugin<{}> {
   const token = stringInterpolator.parse(pluginOptions.token, {
     env: process.env,
   });

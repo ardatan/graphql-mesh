@@ -7,7 +7,7 @@ http
       JSON.stringify({
         code: 'I am a secret code',
         timestamp: Date.now(),
-      })
+      }),
     );
   })
   .listen(3001, 'localhost', () => {

@@ -607,7 +607,9 @@ components:
           pattern: '^(FILE_TYPE|NAME|LAST_UPDATE_DATE)(,(ASC|DESC))?$'
     targetAudience:
       name: targetAudience
-      description: Target of the resource (the resource need to have all of the target audience passed in the list)
+      description:
+        Target of the resource (the resource need to have all of the target audience passed in the
+        list)
       in: query
       required: false
       schema:

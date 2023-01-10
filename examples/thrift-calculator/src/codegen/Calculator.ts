@@ -42,7 +42,10 @@ export const Add__ArgsCodec: thrift.IStructCodec<IAdd__ArgsArgs, IAdd__Args> = {
       AddRequest.AddRequestCodec.encode(obj.request, output);
       output.writeFieldEnd();
     } else {
-      throw new thrift.TProtocolException(thrift.TProtocolExceptionType.UNKNOWN, 'Required field[request] is unset!');
+      throw new thrift.TProtocolException(
+        thrift.TProtocolExceptionType.UNKNOWN,
+        'Required field[request] is unset!',
+      );
     }
     output.writeFieldStop();
     output.writeStructEnd();
@@ -79,7 +82,10 @@ export const Add__ArgsCodec: thrift.IStructCodec<IAdd__ArgsArgs, IAdd__Args> = {
         request: _args.request,
       };
     } else {
-      throw new thrift.TProtocolException(thrift.TProtocolExceptionType.UNKNOWN, 'Unable to read Add__Args from input');
+      throw new thrift.TProtocolException(
+        thrift.TProtocolExceptionType.UNKNOWN,
+        'Unable to read Add__Args from input',
+      );
     }
   },
 };
@@ -93,7 +99,10 @@ export class Add__Args extends thrift.StructLike implements IAdd__Args {
       const value_2: AddRequest.IAddRequest = new AddRequest.AddRequest(args.request);
       this.request = value_2;
     } else {
-      throw new thrift.TProtocolException(thrift.TProtocolExceptionType.UNKNOWN, 'Required field[request] is unset!');
+      throw new thrift.TProtocolException(
+        thrift.TProtocolExceptionType.UNKNOWN,
+        'Required field[request] is unset!',
+      );
     }
   }
   public static read(input: thrift.TProtocol): Add__Args {
@@ -126,14 +135,20 @@ export const Subtract__ArgsCodec: thrift.IStructCodec<ISubtract__ArgsArgs, ISubt
       output.writeI32(obj.left);
       output.writeFieldEnd();
     } else {
-      throw new thrift.TProtocolException(thrift.TProtocolExceptionType.UNKNOWN, 'Required field[left] is unset!');
+      throw new thrift.TProtocolException(
+        thrift.TProtocolExceptionType.UNKNOWN,
+        'Required field[left] is unset!',
+      );
     }
     if (obj.right != null) {
       output.writeFieldBegin('right', thrift.TType.I32, 2);
       output.writeI32(obj.right);
       output.writeFieldEnd();
     } else {
-      throw new thrift.TProtocolException(thrift.TProtocolExceptionType.UNKNOWN, 'Required field[right] is unset!');
+      throw new thrift.TProtocolException(
+        thrift.TProtocolExceptionType.UNKNOWN,
+        'Required field[right] is unset!',
+      );
     }
     output.writeFieldStop();
     output.writeStructEnd();
@@ -181,7 +196,7 @@ export const Subtract__ArgsCodec: thrift.IStructCodec<ISubtract__ArgsArgs, ISubt
     } else {
       throw new thrift.TProtocolException(
         thrift.TProtocolExceptionType.UNKNOWN,
-        'Unable to read Subtract__Args from input'
+        'Unable to read Subtract__Args from input',
       );
     }
   },
@@ -197,13 +212,19 @@ export class Subtract__Args extends thrift.StructLike implements ISubtract__Args
       const value_5: number = args.left;
       this.left = value_5;
     } else {
-      throw new thrift.TProtocolException(thrift.TProtocolExceptionType.UNKNOWN, 'Required field[left] is unset!');
+      throw new thrift.TProtocolException(
+        thrift.TProtocolExceptionType.UNKNOWN,
+        'Required field[left] is unset!',
+      );
     }
     if (args.right != null) {
       const value_6: number = args.right;
       this.right = value_6;
     } else {
-      throw new thrift.TProtocolException(thrift.TProtocolExceptionType.UNKNOWN, 'Required field[right] is unset!');
+      throw new thrift.TProtocolException(
+        thrift.TProtocolExceptionType.UNKNOWN,
+        'Required field[right] is unset!',
+      );
     }
   }
   public static read(input: thrift.TProtocol): Subtract__Args {
@@ -295,52 +316,53 @@ export interface ISubtract__Result {
 export interface ISubtract__ResultArgs {
   success?: number;
 }
-export const Subtract__ResultCodec: thrift.IStructCodec<ISubtract__ResultArgs, ISubtract__Result> = {
-  encode(args: ISubtract__ResultArgs, output: thrift.TProtocol): void {
-    const obj: any = {
-      success: args.success,
-    };
-    output.writeStructBegin('Subtract__Result');
-    if (obj.success != null) {
-      output.writeFieldBegin('success', thrift.TType.I32, 0);
-      output.writeI32(obj.success);
-      output.writeFieldEnd();
-    }
-    output.writeFieldStop();
-    output.writeStructEnd();
-    return;
-  },
-  decode(input: thrift.TProtocol): ISubtract__Result {
-    let _args: any = {};
-    input.readStructBegin();
-    while (true) {
-      const ret: thrift.IThriftField = input.readFieldBegin();
-      const fieldType: thrift.TType = ret.fieldType;
-      const fieldId: number = ret.fieldId;
-      if (fieldType === thrift.TType.STOP) {
-        break;
+export const Subtract__ResultCodec: thrift.IStructCodec<ISubtract__ResultArgs, ISubtract__Result> =
+  {
+    encode(args: ISubtract__ResultArgs, output: thrift.TProtocol): void {
+      const obj: any = {
+        success: args.success,
+      };
+      output.writeStructBegin('Subtract__Result');
+      if (obj.success != null) {
+        output.writeFieldBegin('success', thrift.TType.I32, 0);
+        output.writeI32(obj.success);
+        output.writeFieldEnd();
       }
-      switch (fieldId) {
-        case 0:
-          if (fieldType === thrift.TType.I32) {
-            const value_9: number = input.readI32();
-            _args.success = value_9;
-          } else {
+      output.writeFieldStop();
+      output.writeStructEnd();
+      return;
+    },
+    decode(input: thrift.TProtocol): ISubtract__Result {
+      let _args: any = {};
+      input.readStructBegin();
+      while (true) {
+        const ret: thrift.IThriftField = input.readFieldBegin();
+        const fieldType: thrift.TType = ret.fieldType;
+        const fieldId: number = ret.fieldId;
+        if (fieldType === thrift.TType.STOP) {
+          break;
+        }
+        switch (fieldId) {
+          case 0:
+            if (fieldType === thrift.TType.I32) {
+              const value_9: number = input.readI32();
+              _args.success = value_9;
+            } else {
+              input.skip(fieldType);
+            }
+            break;
+          default: {
             input.skip(fieldType);
           }
-          break;
-        default: {
-          input.skip(fieldType);
         }
+        input.readFieldEnd();
       }
-      input.readFieldEnd();
-    }
-    input.readStructEnd();
-    return {
-      success: _args.success,
-    };
-  },
-};
+      input.readStructEnd();
+      return {
+        success: _args.success,
+      };
+    },
+  };
 export class Subtract__Result extends thrift.StructLike implements ISubtract__Result {
   public success?: number;
   public readonly _annotations: thrift.IThriftAnnotations = {};
@@ -385,10 +407,12 @@ export class Client<Context = any> extends thrift.ThriftClient<Context> {
       const reader: thrift.TTransport = this.transport.receiver(data);
       const input: thrift.TProtocol = new this.protocol(reader);
       try {
-        const { fieldName: fieldName, messageType: messageType }: thrift.IThriftMessage = input.readMessageBegin();
+        const { fieldName: fieldName, messageType: messageType }: thrift.IThriftMessage =
+          input.readMessageBegin();
         if (fieldName === 'add') {
           if (messageType === thrift.MessageType.EXCEPTION) {
-            const err: thrift.TApplicationException = thrift.TApplicationExceptionCodec.decode(input);
+            const err: thrift.TApplicationException =
+              thrift.TApplicationExceptionCodec.decode(input);
             input.readMessageEnd();
             return Promise.reject(err);
           } else {
@@ -398,7 +422,10 @@ export class Client<Context = any> extends thrift.ThriftClient<Context> {
               return Promise.resolve(result.success);
             } else {
               return Promise.reject(
-                new thrift.TApplicationException(thrift.TApplicationExceptionType.UNKNOWN, 'add failed: unknown result')
+                new thrift.TApplicationException(
+                  thrift.TApplicationExceptionType.UNKNOWN,
+                  'add failed: unknown result',
+                ),
               );
             }
           }
@@ -406,8 +433,8 @@ export class Client<Context = any> extends thrift.ThriftClient<Context> {
           return Promise.reject(
             new thrift.TApplicationException(
               thrift.TApplicationExceptionType.WRONG_METHOD_NAME,
-              'Received a response to an unknown RPC function: ' + fieldName
-            )
+              'Received a response to an unknown RPC function: ' + fieldName,
+            ),
           );
         }
       } catch (err) {
@@ -426,10 +453,12 @@ export class Client<Context = any> extends thrift.ThriftClient<Context> {
       const reader: thrift.TTransport = this.transport.receiver(data);
       const input: thrift.TProtocol = new this.protocol(reader);
       try {
-        const { fieldName: fieldName, messageType: messageType }: thrift.IThriftMessage = input.readMessageBegin();
+        const { fieldName: fieldName, messageType: messageType }: thrift.IThriftMessage =
+          input.readMessageBegin();
         if (fieldName === 'subtract') {
           if (messageType === thrift.MessageType.EXCEPTION) {
-            const err: thrift.TApplicationException = thrift.TApplicationExceptionCodec.decode(input);
+            const err: thrift.TApplicationException =
+              thrift.TApplicationExceptionCodec.decode(input);
             input.readMessageEnd();
             return Promise.reject(err);
           } else {
@@ -441,8 +470,8 @@ export class Client<Context = any> extends thrift.ThriftClient<Context> {
               return Promise.reject(
                 new thrift.TApplicationException(
                   thrift.TApplicationExceptionType.UNKNOWN,
-                  'subtract failed: unknown result'
-                )
+                  'subtract failed: unknown result',
+                ),
               );
             }
           }
@@ -450,8 +479,8 @@ export class Client<Context = any> extends thrift.ThriftClient<Context> {
           return Promise.reject(
             new thrift.TApplicationException(
               thrift.TApplicationExceptionType.WRONG_METHOD_NAME,
-              'Received a response to an unknown RPC function: ' + fieldName
-            )
+              'Received a response to an unknown RPC function: ' + fieldName,
+            ),
           );
         }
       } catch (err) {
@@ -478,7 +507,11 @@ export class Processor<Context = any> extends thrift.ThriftProcessor<Context, IH
     super();
     this._handler = handler;
   }
-  public process(input: thrift.TProtocol, output: thrift.TProtocol, context: Context): Promise<Buffer> {
+  public process(
+    input: thrift.TProtocol,
+    output: thrift.TProtocol,
+    context: Context,
+  ): Promise<Buffer> {
     return new Promise<Buffer>((resolve, reject): void => {
       const metadata: thrift.IThriftMessage = input.readMessageBegin();
       const fieldName: string = metadata.fieldName;
@@ -497,7 +530,10 @@ export class Processor<Context = any> extends thrift.ThriftProcessor<Context, IH
           input.skip(thrift.TType.STRUCT);
           input.readMessageEnd();
           const errMessage = 'Unknown function ' + fieldName;
-          const err = new thrift.TApplicationException(thrift.TApplicationExceptionType.UNKNOWN_METHOD, errMessage);
+          const err = new thrift.TApplicationException(
+            thrift.TApplicationExceptionType.UNKNOWN_METHOD,
+            errMessage,
+          );
           output.writeMessageBegin(fieldName, thrift.MessageType.EXCEPTION, requestId);
           thrift.TApplicationExceptionCodec.encode(err, output);
           output.writeMessageEnd();
@@ -511,7 +547,7 @@ export class Processor<Context = any> extends thrift.ThriftProcessor<Context, IH
     requestId: number,
     input: thrift.TProtocol,
     output: thrift.TProtocol,
-    context: Context
+    context: Context,
   ): Promise<Buffer> {
     return new Promise<number>((resolve, reject): void => {
       try {
@@ -532,7 +568,7 @@ export class Processor<Context = any> extends thrift.ThriftProcessor<Context, IH
       .catch((err: Error): Buffer => {
         const result: thrift.TApplicationException = new thrift.TApplicationException(
           thrift.TApplicationExceptionType.UNKNOWN,
-          err.message
+          err.message,
         );
         output.writeMessageBegin('add', thrift.MessageType.EXCEPTION, requestId);
         thrift.TApplicationExceptionCodec.encode(result, output);
@@ -544,7 +580,7 @@ export class Processor<Context = any> extends thrift.ThriftProcessor<Context, IH
     requestId: number,
     input: thrift.TProtocol,
     output: thrift.TProtocol,
-    context: Context
+    context: Context,
   ): Promise<Buffer> {
     return new Promise<number>((resolve, reject): void => {
       try {
@@ -565,7 +601,7 @@ export class Processor<Context = any> extends thrift.ThriftProcessor<Context, IH
       .catch((err: Error): Buffer => {
         const result: thrift.TApplicationException = new thrift.TApplicationException(
           thrift.TApplicationExceptionType.UNKNOWN,
-          err.message
+          err.message,
         );
         output.writeMessageBegin('subtract', thrift.MessageType.EXCEPTION, requestId);
         thrift.TApplicationExceptionCodec.encode(result, output);

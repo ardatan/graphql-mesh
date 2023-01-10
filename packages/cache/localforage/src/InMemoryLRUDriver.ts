@@ -31,7 +31,11 @@ export function createInMemoryLRUDriver(ttl?: number): LocalForageDriver {
       }
     },
 
-    async setItem<T>(key: string, value: T, callback?: (err?: any, value?: any) => void): Promise<T> {
+    async setItem<T>(
+      key: string,
+      value: T,
+      callback?: (err?: any, value?: any) => void,
+    ): Promise<T> {
       try {
         await nextTick();
         lru.set(key, value);
@@ -125,7 +129,7 @@ export function createInMemoryLRUDriver(ttl?: number): LocalForageDriver {
 
     async iterate<T>(
       iteratee: (value: T, key: string, iterationNumber: number) => any,
-      callback?: (err?: any, result?: any) => void
+      callback?: (err?: any, result?: any) => void,
     ): Promise<any> {
       try {
         await nextTick();

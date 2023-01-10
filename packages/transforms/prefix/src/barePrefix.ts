@@ -66,7 +66,7 @@ export default class BarePrefix implements MeshTransform {
         [MapperKind.COMPOSITE_FIELD]: (
           fieldConfig: GraphQLFieldConfig<any, any>,
           fieldName: string,
-          typeName: string
+          typeName: string,
         ) => {
           return !rootOperations.has(typeName) || // check we're in a root Type
             this.ignoreList.includes(typeName) || // check if type is to be ignored

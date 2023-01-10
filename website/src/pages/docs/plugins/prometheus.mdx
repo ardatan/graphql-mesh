@@ -2,8 +2,9 @@ import { PackageCmd } from '@theguild/components'
 
 # Prometheus
 
-Prometheus is a platform for scraping metrics from services and utilities.
-You can use `@graphql-mesh/plugin-prometheus` plugin to expose and collect metrics from all phases of your GraphQL execution including internal query planning and outgoing HTTP requests.
+Prometheus is a platform for scraping metrics from services and utilities. You can use
+`@graphql-mesh/plugin-prometheus` plugin to expose and collect metrics from all phases of your
+GraphQL execution including internal query planning and outgoing HTTP requests.
 
 This plugin tracks the complete gateway execution flow and exposes the following metrics:
 
@@ -51,7 +52,8 @@ plugins:
     endpoint: /metrics
 ```
 
-> Note: Tracing resolvers using `resolvers: true` might have a performance impact on your GraphQL runtime. Please consider to test it locally first and then decide if it's needed.
+> Note: Tracing resolvers using `resolvers: true` might have a performance impact on your GraphQL
+> runtime. Please consider to test it locally first and then decide if it's needed.
 
 ## Custom Registry
 

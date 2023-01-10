@@ -10,7 +10,7 @@ export function validateConfig(
   config: any,
   filepath: string,
   initialLoggerPrefix: string,
-  throwOnInvalidConfig = false
+  throwOnInvalidConfig = false,
 ): asserts config is YamlConfig.Config {
   const ajv = new Ajv({
     strict: false,
@@ -25,7 +25,7 @@ export function validateConfig(
           error.stack += `\n    at ${filepath}:0:0`;
           return error;
         }),
-        'Configuration file is not valid'
+        'Configuration file is not valid',
       );
       throw aggregateError;
     }
@@ -80,7 +80,11 @@ export async function findAndParseConfig(options?: ConfigProcessOptions) {
   return processConfig(config, { dir, initialLoggerPrefix, importFn, ...restOptions });
 }
 
-function customLoader(ext: 'json' | 'yaml' | 'js', importFn = defaultImportFn, initialLoggerPrefix = '🕸️  Mesh') {
+function customLoader(
+  ext: 'json' | 'yaml' | 'js',
+  importFn = defaultImportFn,
+  initialLoggerPrefix = '🕸️  Mesh',
+) {
   const logger = new DefaultLogger(initialLoggerPrefix).child('config');
   function loader(filepath: string, content: string) {
     if (process.env) {

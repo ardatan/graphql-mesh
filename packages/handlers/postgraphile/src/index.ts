@@ -60,7 +60,9 @@ export default class PostGraphileHandler implements MeshHandler {
     if (!pgPool || !('connect' in pgPool)) {
       const pgLogger = this.logger.child('PostgreSQL');
       pgPool = new pg.Pool({
-        connectionString: stringInterpolator.parse(this.config.connectionString, { env: process.env }),
+        connectionString: stringInterpolator.parse(this.config.connectionString, {
+          env: process.env,
+        }),
         log: messages => pgLogger.debug(messages),
         ...this.config?.pool,
       });
@@ -85,8 +87,8 @@ export default class PostGraphileHandler implements MeshHandler {
           cwd: this.baseDir,
           importFn: this.importFn,
           defaultExportName: 'default',
-        })
-      )
+        }),
+      ),
     );
     const skipPlugins = await Promise.all<Plugin>(
       (this.config.skipPlugins || []).map(pluginName =>
@@ -94,8 +96,8 @@ export default class PostGraphileHandler implements MeshHandler {
           cwd: this.baseDir,
           importFn: this.importFn,
           defaultExportName: 'default',
-        })
-      )
+        }),
+      ),
     );
     const options = await loadFromModuleExportExpression<any>(this.config.options, {
       cwd: this.baseDir,
@@ -129,7 +131,14 @@ export default class PostGraphileHandler implements MeshHandler {
 
     return {
       schema,
-      executor({ document, variables, context: meshContext, rootValue, operationName, extensions }) {
+      executor({
+        document,
+        variables,
+        context: meshContext,
+        rootValue,
+        operationName,
+        extensions,
+      }) {
         return withPostGraphileContext(
           {
             pgPool,
@@ -149,7 +158,7 @@ export default class PostGraphileHandler implements MeshHandler {
               operationName,
               extensions,
             }) as any;
-          }
+          },
         ) as any;
       },
     };

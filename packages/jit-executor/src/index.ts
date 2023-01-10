@@ -1,4 +1,9 @@
-import { ExecutionRequest, Executor, getOperationASTFromRequest, memoize1 } from '@graphql-tools/utils';
+import {
+  ExecutionRequest,
+  Executor,
+  getOperationASTFromRequest,
+  memoize1,
+} from '@graphql-tools/utils';
 import { CompiledQuery, compileQuery, isCompiledQuery } from 'graphql-jit';
 import { createLruCache, printWithCache } from '@graphql-mesh/utils';
 import { ExecutionResult, GraphQLSchema } from 'graphql';
@@ -15,7 +20,8 @@ export function createJITExecutor(schema: GraphQLSchema, prefix: string, logger:
     const documentStr = printWithCache(document);
     logger.debug(`Executing ${documentStr}`);
     const cacheKey = [prefix, documentStr, operationName].join('_');
-    let compiledQueryFn: CompiledQuery['query'] | CompiledQuery['subscribe'] = lruCache.get(cacheKey);
+    let compiledQueryFn: CompiledQuery['query'] | CompiledQuery['subscribe'] =
+      lruCache.get(cacheKey);
     if (!compiledQueryFn) {
       logger.debug(`Compiling ${documentStr}`);
       const compiledQuery = compileQuery(schema, document, operationName);

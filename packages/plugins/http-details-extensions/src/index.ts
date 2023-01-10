@@ -20,7 +20,9 @@ export interface MeshFetchHTTPInformation {
   responseTime: number;
 }
 
-export default function useIncludeHttpDetailsInExtensions(opts: MeshPluginOptions<{ if: any }>): MeshPlugin<any> {
+export default function useIncludeHttpDetailsInExtensions(
+  opts: MeshPluginOptions<{ if: any }>,
+): MeshPlugin<any> {
   if ('if' in opts && !opts.if) {
     return {};
   }

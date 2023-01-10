@@ -15,7 +15,10 @@ describe('Examples', () => {
       const soapLoader = new SOAPLoader({
         fetch,
       });
-      const example1Wsdl = await readFile(join(__dirname, './fixtures/' + example + '.wsdl'), 'utf8');
+      const example1Wsdl = await readFile(
+        join(__dirname, './fixtures/' + example + '.wsdl'),
+        'utf8',
+      );
       await soapLoader.loadWSDL(example1Wsdl);
       const schema = soapLoader.buildSchema();
       expect(printSchema(schema)).toMatchSnapshot(example);

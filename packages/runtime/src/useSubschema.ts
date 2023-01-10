@@ -1,5 +1,10 @@
 import { applyRequestTransforms, applyResultTransforms } from '@graphql-mesh/utils';
-import { createDefaultExecutor, DelegationContext, applySchemaTransforms, Subschema } from '@graphql-tools/delegate';
+import {
+  createDefaultExecutor,
+  DelegationContext,
+  applySchemaTransforms,
+  Subschema,
+} from '@graphql-tools/delegate';
 import {
   ExecutionRequest,
   getDefinedRootType,
@@ -62,19 +67,24 @@ function getExecuteFn(subschema: Subschema) {
       originalRequest,
       delegationContext,
       transformationContext,
-      subschema.transforms
+      subschema.transforms,
     );
     const originalResult = await executor(transformedRequest);
     if (isAsyncIterable(originalResult)) {
       return mapAsyncIterator(originalResult, singleResult =>
-        applyResultTransforms(singleResult, delegationContext, transformationContext, subschema.transforms)
+        applyResultTransforms(
+          singleResult,
+          delegationContext,
+          transformationContext,
+          subschema.transforms,
+        ),
       );
     }
     const transformedResult = applyResultTransforms(
       originalResult,
       delegationContext,
       transformationContext,
-      subschema.transforms
+      subschema.transforms,
     );
     return transformedResult;
   };
