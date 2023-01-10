@@ -841,7 +841,7 @@
         },
         "subscriptionsEndpoint": {
           "type": "string",
-          "description": "URL of custom endpoint for websocket connection for subscriptions"
+          "description": "URL to your endpoint serving all subscription queries for this source"
         },
         "retry": {
           "type": "integer",

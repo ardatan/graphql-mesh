@@ -232,7 +232,7 @@ export interface GraphQLHandlerHTTPConfiguration {
   /**
    * URL to your endpoint serving all subscription queries for this source
    */
-  subscriptionsEndpoint: string
+  subscriptionsEndpoint?: string;
   /**
    * Retry attempts if fails
    */

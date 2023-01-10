@@ -4,8 +4,9 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start-apis": "concurrently \"node upload-files/index.js\" \"node resize-image/index.js\"",
-    "start-gateway": "mesh dev"
+    "start-apis": "concurrently \"ts-node upload-files\" \"ts-node resize-image\"",
+    "start-gateway": "mesh dev",
+    "test": "jest"
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.82.9",
@@ -14,5 +15,11 @@
     "graphql": "16.6.0",
     "graphql-yoga": "3.3.0",
     "sharp": "0.31.3"
+  },
+  "devDependencies": {
+    "jest": "29.3.1",
+    "ts-jest": "29.0.3",
+    "ts-node": "10.9.1",
+    "typescript": "4.9.4"
   }
 }
