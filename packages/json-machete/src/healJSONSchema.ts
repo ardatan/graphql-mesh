@@ -216,7 +216,7 @@ export async function healJSONSchema(
             logger.debug(`${path} has no type defined. Trying to find it.`);
             // If required exists without properties
             if (
-              subSchema.required &&
+              Array.isArray(subSchema.required) &&
               !subSchema.properties &&
               !subSchema.anyOf &&
               !subSchema.allOf
