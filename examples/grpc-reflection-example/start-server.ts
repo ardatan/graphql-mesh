@@ -1,4 +1,9 @@
-import { Server, loadPackageDefinition, ServerCredentials, ServiceClientConstructor } from '@grpc/grpc-js';
+import {
+  Server,
+  loadPackageDefinition,
+  ServerCredentials,
+  ServiceClientConstructor,
+} from '@grpc/grpc-js';
 import { load } from '@grpc/proto-loader';
 import { join } from 'path';
 
