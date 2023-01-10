@@ -370,7 +370,7 @@ export async function healJSONSchema(
           }
           if (subSchema.enum && subSchema.enum.includes(null)) {
             logger.debug(`${path} has "null" value. Converting it to nullable.`);
-            subSchema.enum = subSchema.enum.filter((e: unknown) => typeof e === 'string');
+            subSchema.enum = subSchema.enum.filter((e: unknown) => e != null);
             subSchema.nullable = true;
           }
           if (subSchema.const === null && subSchema.type !== 'null') {
