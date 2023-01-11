@@ -1,9 +1,9 @@
-const { findAndParseConfig } = require('@graphql-mesh/cli');
-const { getMesh } = require('@graphql-mesh/runtime');
-const { join } = require('path');
+import { findAndParseConfig } from '@graphql-mesh/cli';
+import { getMesh } from '@graphql-mesh/runtime';
+import { join } from 'path';
 
-const { printSchema, lexicographicSortSchema } = require('graphql');
-const { readFile } = require('fs-extra');
+import { printSchema, lexicographicSortSchema } from 'graphql';
+import { readFile } from 'fs-extra';
 
 const config$ = findAndParseConfig({
   dir: join(__dirname, '..'),
@@ -15,11 +15,9 @@ jest.setTimeout(30000);
 describe('JSON Schema Covid', () => {
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
-    expect(
-      printSchema(lexicographicSortSchema(schema), {
-        descriptions: false,
-      }),
-    ).toMatchSnapshot('json-schema-covid-schema');
+    expect(printSchema(lexicographicSortSchema(schema))).toMatchSnapshot(
+      'json-schema-covid-schema',
+    );
   });
   it.skip('should give correct response for STEP 1: 2 sources side by side', async () => {
     const getDataStep1Query = await readFile(
@@ -27,7 +25,7 @@ describe('JSON Schema Covid', () => {
       'utf8',
     );
     const { execute } = await mesh$;
-    const result = await execute(getDataStep1Query);
+    const result = await execute(getDataStep1Query, undefined);
     expect(result.errors).toBeFalsy();
     // Check exposed response metadata
     expect(result.data?.population?._response).toBeTruthy();
@@ -49,7 +47,7 @@ describe('JSON Schema Covid', () => {
       'utf8',
     );
     const { execute } = await mesh$;
-    const result = await execute(getDataStep1Query);
+    const result = await execute(getDataStep1Query, undefined);
     expect(result.errors?.length).toBeFalsy();
     expect(typeof result?.data?.case?.confirmed).toBe('number');
     expect(result?.data?.case?.countryRegion).toBe('France');
@@ -65,7 +63,7 @@ describe('JSON Schema Covid', () => {
       'utf8',
     );
     const { execute } = await mesh$;
-    const result = await execute(getDataStep2Query);
+    const result = await execute(getDataStep2Query, undefined);
     expect(result.errors).toBeFalsy();
     expect(typeof result?.data?.case?.confirmed).toBe('number');
     expect(typeof result?.data?.case?.deaths).toBe('number');
@@ -79,7 +77,7 @@ describe('JSON Schema Covid', () => {
       'utf8',
     );
     const { execute } = await mesh$;
-    const result = await execute(getDataStep3_1Query);
+    const result = await execute(getDataStep3_1Query, undefined);
     expect(result.errors).toBeFalsy();
     expect(typeof result?.data?.fr?.deathRatio).toBe('number');
 
@@ -91,7 +89,7 @@ describe('JSON Schema Covid', () => {
       'utf8',
     );
     const { execute } = await mesh$;
-    const result = await execute(getDataStep3_2Query);
+    const result = await execute(getDataStep3_2Query, undefined);
     expect(result.errors).toBeFalsy();
     expect(typeof result?.data?.fr?.deathRatio).toBe('number');
     expect(typeof result?.data?.fr?.case?.deaths).toBe('number');
