@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test should generate the correct schema 1`] = `
+"schema {
+  query: Query
+}
+
+directive @oneOf on OBJECT | INTERFACE
+
+directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+
+directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+
+type Query @globalOptions(sourceName: "test") {
+  some_path: [query_some_path_items] @httpOperation(path: "/some/path", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+}
+
+union query_some_path_items = components_FirstOption | components_SecondOption
+
+type components_FirstOption {
+  commonProperty: components_CommonProperty
+}
+
+type components_CommonProperty {
+  fieldName: String
+}
+
+type components_SecondOption {
+  commonProperty: [components_CommonProperty]
+}
+
+scalar ObjMap
+
+enum HTTPMethod {
+  GET
+  HEAD
+  POST
+  PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
+  PATCH
+}"
+`;

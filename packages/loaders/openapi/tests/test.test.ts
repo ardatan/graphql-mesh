@@ -4,11 +4,14 @@ import { generateOperations } from '../../../cli/src/commands/generate-operation
 
 describe('Test', () => {
   it('should generate the correct schema', async () => {
+    // Generate the schema
     const schema = await loadGraphQLSchemaFromOpenAPI('test', {
       source: './fixtures/test.json',
       cwd: __dirname,
     });
-    generateOperations(schema, { selectionSetDepth: 3 });
     expect(printSchemaWithDirectives(schema)).toMatchSnapshot();
+
+    // Generate the operations
+    expect(generateOperations(schema, { selectionSetDepth: 3 })).toBeValid();
   });
 });
