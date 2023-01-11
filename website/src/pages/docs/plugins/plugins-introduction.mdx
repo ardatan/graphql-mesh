@@ -96,12 +96,10 @@ These hooks have access to all remote execution parameters (root, args, context,
 
 Example Mesh Envelop plugin therefore can look like this:
 
-```JS
+```ts
 import { MeshPlugin, MeshPluginOptions } from '@graphql-mesh/types'
 
-export function customMeshPlugin(
-  options: MeshPluginOptions<YourConfig>
-): MeshPlugin<any> {
+export default function customMeshPlugin(options: MeshPluginOptions<YourConfig>): MeshPlugin<any> {
   // Some other logic or config handling
 
   return {
@@ -110,8 +108,8 @@ export function customMeshPlugin(
     },
     onDelegate(payload) {
       // your logic with payload
-    },
-  };
+    }
+  }
 }
 ```
 
