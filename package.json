@@ -80,11 +80,6 @@
     "undici": "5.14.0",
     "uuid": "7.0.3"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "lint-staged": {
     "packages/**/src/**/*.{ts,tsx}": [
       "eslint --fix"
