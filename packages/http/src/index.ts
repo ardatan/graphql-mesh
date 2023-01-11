@@ -1,9 +1,8 @@
 import { fs, path } from '@graphql-mesh/cross-helpers';
 import { MeshInstance } from '@graphql-mesh/runtime';
 import { Logger, YamlConfig } from '@graphql-mesh/types';
-import { DefaultLogger, pathExists } from '@graphql-mesh/utils';
+import { DefaultLogger, pathExists, withCookies } from '@graphql-mesh/utils';
 import { createRouter, Response, Router } from '@whatwg-node/router';
-import { withCookies } from 'itty-router-extras';
 import { graphqlHandler } from './graphqlHandler.js';
 
 export type MeshHTTPHandler<TServerContext> = Router<TServerContext>;
@@ -109,7 +108,7 @@ export function createMeshHTTPHandler<TServerContext>({
     );
   }
 
-  router.all('*', withCookies as any);
+  router.all('*', withCookies);
 
   router.all(
     '*',

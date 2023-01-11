@@ -5,9 +5,9 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+import { withCookies } from '@graphql-mesh/utils';
 import { createRouter, RouterRequest, Response } from '@whatwg-node/router';
 import { createServer, Server } from 'http';
-import { withCookies } from 'itty-router-extras';
 
 /**
  * Starts the server at the given port
@@ -15,7 +15,7 @@ import { withCookies } from 'itty-router-extras';
 export function startServer() {
   const app = createRouter();
 
-  app.all('*', withCookies as any);
+  app.all('*', withCookies);
 
   const Users = {
     arlene: {
