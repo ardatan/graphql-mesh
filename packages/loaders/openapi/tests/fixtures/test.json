@@ -17,12 +17,9 @@
   },
   "components": {
     "CommonProperty": {
-      "type": "object",
-      "properties": {
-        "fieldName": { "type": "string" }
-      }
+      "type": "string"
     },
-    "FirstOption": {
+    "BasicPropertyOption": {
       "type": "object",
       "properties": {
         "commonProperty": {
@@ -30,7 +27,7 @@
         }
       }
     },
-    "SecondOption": {
+    "ArrayPropertyOption": {
       "type": "object",
       "properties": {
         "commonProperty": {
@@ -40,10 +37,10 @@
       }
     },
     "Response": {
-      "type": "array",
-      "items": {
-        "oneOf": [{ "$ref": "#/components/FirstOption" }, { "$ref": "#/components/SecondOption" }]
-      }
+      "oneOf": [
+        { "$ref": "#/components/BasicPropertyOption" },
+        { "$ref": "#/components/ArrayPropertyOption" }
+      ]
     }
   }
 }
