@@ -1,0 +1,49 @@
+{
+  "openapi": "3.0.1",
+  "paths": {
+    "/some/path": {
+      "get": {
+        "operationId": "some-path",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/Response" } }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "CommonProperty": {
+      "type": "object",
+      "properties": {
+        "fieldName": { "type": "string" }
+      }
+    },
+    "FirstOption": {
+      "type": "object",
+      "properties": {
+        "commonProperty": {
+          "$ref": "#/components/CommonProperty"
+        }
+      }
+    },
+    "SecondOption": {
+      "type": "object",
+      "properties": {
+        "commonProperty": {
+          "type": "array",
+          "items": { "$ref": "#/components/CommonProperty" }
+        }
+      }
+    },
+    "Response": {
+      "type": "array",
+      "items": {
+        "oneOf": [{ "$ref": "#/components/FirstOption" }, { "$ref": "#/components/SecondOption" }]
+      }
+    }
+  }
+}
