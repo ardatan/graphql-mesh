@@ -1,6 +1,7 @@
 import { isAsyncIterable, Path } from '@envelop/core';
 import { MeshPlugin, MeshPluginOptions } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
+import { GraphQLResolveInfo } from 'graphql';
 
 export interface MeshFetchHTTPInformation {
   sourceName: string;
@@ -20,11 +21,34 @@ export interface MeshFetchHTTPInformation {
   responseTime: number;
 }
 
+interface IfFnContext {
+  url: string;
+  context: any;
+  info: GraphQLResolveInfo;
+  options: RequestInit;
+  env: Record<string, string>;
+}
+
 export default function useIncludeHttpDetailsInExtensions(
   opts: MeshPluginOptions<{ if: any }>,
 ): MeshPlugin<any> {
-  if ('if' in opts && !opts.if) {
-    return {};
+  if (typeof opts.if === 'boolean') {
+    if (!opts.if) {
+      return {};
+    }
+  }
+  let ifFn: (interpolationObj: IfFnContext) => boolean = () => true;
+  if (typeof opts.if === 'string') {
+    ifFn = ({ url, context, info, options, env }) => {
+      // eslint-disable-next-line no-new-func
+      return new Function('url', 'context', 'info', 'options', 'env', 'return ' + opts.if)(
+        url,
+        context,
+        info,
+        options,
+        env,
+      );
+    };
   }
   const httpDetailsByContext = new WeakMap<any, MeshFetchHTTPInformation[]>();
 
@@ -39,7 +63,7 @@ export default function useIncludeHttpDetailsInExtensions(
 
   return {
     onFetch({ url, context, info, options }) {
-      if (context != null) {
+      if (context != null && ifFn({ url, context, info, options, env: process.env })) {
         const requestTimestamp = Date.now();
         return ({ response }) => {
           const responseTimestamp = Date.now();
