@@ -1,7 +1,5 @@
-import type { RouterRequest } from '@whatwg-node/router';
-
 // withCookies - embeds cookies object into the request
-export const withCookies = (request: RouterRequest & { cookies?: Record<string, string> }) => {
+export const withCookies = (request: Request & { cookies?: Record<string, string> }) => {
   request.cookies = {};
   try {
     request.cookies = (request.headers.get('Cookie') || '')
