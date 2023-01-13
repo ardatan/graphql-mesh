@@ -39,8 +39,8 @@
     "@graphql-mesh/utils": "0.43.4",
     "@graphql-tools/delegate": "9.0.22",
     "pg": "^8.6.0",
-    "postgraphile": "4.12.12",
-    "postgraphile-core": "4.12.3",
+    "postgraphile": "4.13.0",
+    "postgraphile-core": "4.13.0",
     "tslib": "^2.4.0"
   },
   "publishConfig": {

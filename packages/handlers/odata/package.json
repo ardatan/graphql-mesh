@@ -43,7 +43,7 @@
     "dataloader": "2.1.0",
     "fast-xml-parser": "4.0.13",
     "graphql-compose": "9.0.10",
-    "graphql-parse-resolve-info": "4.12.3",
+    "graphql-parse-resolve-info": "4.13.0",
     "graphql-scalars": "1.20.1",
     "http-string-parser": "0.0.6",
     "pascal-case": "3.1.2",

@@ -5874,10 +5874,17 @@
   resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.30.tgz#44cb52f32a809734ca562e685c6473b5754a7818"
   integrity sha512-sqm9g7mHlPY/43fcSNrCYfOeX9zkTTK+euO5E6+CVijSMm5tTjkVdwdqRkY3ljjIAf8679vps5jKUoJBCLsMDA==
 
-"@types/jsonwebtoken@^8.3.2", "@types/jsonwebtoken@^8.5.8":
+"@types/jsonwebtoken@^8.5.8":
   version "8.5.9"
   resolved "https://registry.yarnpkg.com/@types/jsonwebtoken/-/jsonwebtoken-8.5.9.tgz#2c064ecb0b3128d837d2764aa0b117b0ff6e4586"
   integrity sha512-272FMnFGzAVMGtu9tkr29hRL6bZj4Zs1KZNeHLnKqAvp06tAIcarTMwOh8/8bz4FmKRcMxZhZNeUAQsNLoiPhg==
+  dependencies:
+    "@types/node" "*"
+
+"@types/jsonwebtoken@^9.0.1":
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/@types/jsonwebtoken/-/jsonwebtoken-9.0.1.tgz#29b1369c4774200d6d6f63135bf3d1ba3ef997a4"
+  integrity sha512-c5ltxazpWabia/4UzhIoaDcIza4KViOQhdbjRlfcIGVnsE3c3brkz9Z+F/EeJIECOQP7W7US2hNE930cWWkPiw==
   dependencies:
     "@types/node" "*"
 
@@ -11658,39 +11665,39 @@ grapheme-splitter@^1.0.4:
   resolved "https://registry.yarnpkg.com/grapheme-splitter/-/grapheme-splitter-1.0.4.tgz#9cf3a665c6247479896834af35cf1dbb4400767e"
   integrity sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ==
 
-graphile-build-pg@4.12.3:
-  version "4.12.3"
-  resolved "https://registry.yarnpkg.com/graphile-build-pg/-/graphile-build-pg-4.12.3.tgz#d1f86ec539f5683792298c674310c3bd6c9a8cae"
-  integrity sha512-Gnwwxm2NRuyxOx5xchU+Po9a6XagRJpEgoezzHmfBRHwFBY2zprCMYdLvllqRrPJBBWdYAjx7H1NxctBiYiIoQ==
+graphile-build-pg@4.13.0:
+  version "4.13.0"
+  resolved "https://registry.yarnpkg.com/graphile-build-pg/-/graphile-build-pg-4.13.0.tgz#1f466916009493f4998c13d02de28bf75faa2add"
+  integrity sha512-1FD+3wjCdK1lbICY1QVO26A7s8efSjR522LarL9Bx1M1iBJHNIpCEW2PK+LkulQjY1l5LGQ1A93GQFqi6cZ6bg==
   dependencies:
     "@graphile/lru" "4.11.0"
     chalk "^2.4.2"
     debug "^4.1.1"
-    graphile-build "4.12.3"
-    jsonwebtoken "^8.5.1"
+    graphile-build "4.13.0"
+    jsonwebtoken "^9.0.0"
     lodash ">=4 <5"
     lru-cache ">=4 <5"
-    pg-sql2 "4.12.3"
+    pg-sql2 "4.13.0"
 
-graphile-build@4.12.3:
-  version "4.12.3"
-  resolved "https://registry.yarnpkg.com/graphile-build/-/graphile-build-4.12.3.tgz#7185beb20a06d7774a6fd19e70bf912fdfa17b05"
-  integrity sha512-xwNNNrieWm78DVkB29epKLBAMEd5U9nXY1tQQn2n5pMisbqYMtIQOnfZzLhwM6AsNEyAfaQYyV0fD6wCkyYQpA==
+graphile-build@4.13.0:
+  version "4.13.0"
+  resolved "https://registry.yarnpkg.com/graphile-build/-/graphile-build-4.13.0.tgz#9f6bfb67df4c1fc845cea0e4f35426c8d669f623"
+  integrity sha512-KPBrHgRw5fury6l9WEQH6ys1UtnxrRrG+Ehnr68NvfNELp4T+QsekTSVFi5LWoJOaXvdYMqP2L8MFBRQP2vKsw==
   dependencies:
     "@graphile/lru" "4.11.0"
     chalk "^2.4.2"
     debug "^4.1.1"
-    graphql-parse-resolve-info "4.12.3"
+    graphql-parse-resolve-info "4.13.0"
     iterall "^1.2.2"
     lodash ">=4 <5"
     lru-cache "^5.0.0"
     pluralize "^7.0.0"
     semver "^6.0.0"
 
-graphile-utils@^4.12.3:
-  version "4.12.3"
-  resolved "https://registry.yarnpkg.com/graphile-utils/-/graphile-utils-4.12.3.tgz#993f921804073fa68fa61fee7ac2b8274b7b721f"
-  integrity sha512-Kls1TNZnPAZ3iLphTTagB+xM+EP+ry33o+4s1vEkl0JE1c0B8ztVTfs3fUl04vyQ2q1K24QTwLYrJ4LN8+Xbuw==
+graphile-utils@^4.13.0:
+  version "4.13.0"
+  resolved "https://registry.yarnpkg.com/graphile-utils/-/graphile-utils-4.13.0.tgz#f1181a83fd1db610881b9b632f4e2fd03283275e"
+  integrity sha512-6nzlCNeJB1qV9AaPyJ/iHU+CDfs8jxpcmQ47Fmrgmp8r5VwKdL/uDt0LW8IuXu2VZrbM1GGyZ8rQtcdVmQYZ+g==
   dependencies:
     debug "^4.1.1"
     graphql ">=0.9 <0.14 || ^14.0.2 || ^15.4.0"
@@ -11752,10 +11759,10 @@ graphql-jit@0.7.4:
     lodash.merge "4.6.2"
     lodash.mergewith "4.6.2"
 
-graphql-parse-resolve-info@4.12.3, graphql-parse-resolve-info@^4.12.3:
-  version "4.12.3"
-  resolved "https://registry.yarnpkg.com/graphql-parse-resolve-info/-/graphql-parse-resolve-info-4.12.3.tgz#89df645f72c068760eed9176806009107b6c6ed5"
-  integrity sha512-Lxb+v+SCxzBZHKohK4xje3CBQ1iZ968DiKuFtmwzSaI45oP8FgPJjJv35TOzgv73QLijEdgH4NDZGwIvwJM7Kw==
+graphql-parse-resolve-info@4.13.0, graphql-parse-resolve-info@^4.12.3:
+  version "4.13.0"
+  resolved "https://registry.yarnpkg.com/graphql-parse-resolve-info/-/graphql-parse-resolve-info-4.13.0.tgz#03627032e25917bd6f9ed89e768568c61200e6ff"
+  integrity sha512-VVJ1DdHYcR7hwOGQKNH+QTzuNgsLA8l/y436HtP9YHoX6nmwXRWq3xWthU3autMysXdm0fQUbhTZCx0W9ICozw==
   dependencies:
     debug "^4.1.1"
     tslib "^2.0.1"
@@ -14116,7 +14123,7 @@ jsonpointer@^5.0.0:
   resolved "https://registry.yarnpkg.com/jsonpointer/-/jsonpointer-5.0.1.tgz#2110e0af0900fd37467b5907ecd13a7884a1b559"
   integrity sha512-p/nXbhSEcu3pZRdkW1OfJhpsVtW1gd4Wa1fnQc9YLiTfAjn0312eMKimbdIQzuZl9aa9xUGaRlP9T/CJE/ditQ==
 
-jsonwebtoken@^8.0.0, jsonwebtoken@^8.5.1:
+jsonwebtoken@^8.5.1:
   version "8.5.1"
   resolved "https://registry.yarnpkg.com/jsonwebtoken/-/jsonwebtoken-8.5.1.tgz#00e71e0b8df54c2121a1f26137df2280673bcc0d"
   integrity sha512-XjwVfRS6jTMsqYs0EsuJ4LGxXV14zQybNd4L2r0UvbVnSF9Af8x7p5MzbJ90Ioz/9TI41/hTCvznF/loiSzn8w==
@@ -14131,6 +14138,16 @@ jsonwebtoken@^8.0.0, jsonwebtoken@^8.5.1:
     lodash.once "^4.0.0"
     ms "^2.1.1"
     semver "^5.6.0"
+
+jsonwebtoken@^9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/jsonwebtoken/-/jsonwebtoken-9.0.0.tgz#d0faf9ba1cc3a56255fe49c0961a67e520c1926d"
+  integrity sha512-tuGfYXxkQGDPnLJ7SibiQgVgeDgfbPq2k2ICcbgqW8WxWLBAxKQM/ZCu/IT8SOSwmaYl4dpTFCW5xZv7YbbWUw==
+  dependencies:
+    jws "^3.2.2"
+    lodash "^4.17.21"
+    ms "^2.1.1"
+    semver "^7.3.8"
 
 "jsx-ast-utils@^2.4.1 || ^3.0.0", jsx-ast-utils@^3.2.1:
   version "3.2.1"
@@ -16885,10 +16902,10 @@ pg-protocol@^1.2.0, pg-protocol@^1.5.0:
   resolved "https://registry.yarnpkg.com/pg-protocol/-/pg-protocol-1.5.0.tgz#b5dd452257314565e2d54ab3c132adc46565a6a0"
   integrity sha512-muRttij7H8TqRNu/DxrAJQITO4Ac7RmX3Klyr/9mJEOBeIpgnF8f9jAfRz5d3XwQZl5qBjF9gLsUtMPJE0vezQ==
 
-pg-sql2@4.12.3:
-  version "4.12.3"
-  resolved "https://registry.yarnpkg.com/pg-sql2/-/pg-sql2-4.12.3.tgz#8e9aa87099244c081cf4883c301b1b5c46b1eefb"
-  integrity sha512-xPVNoN7O5fT9ssq+j/IRbq0OOtD7Sagz0Xbzb5Z6M3T5cU1pi43QdBv6nvZ7wIuvi/iSq2/02wYridSp7B69EQ==
+pg-sql2@4.13.0:
+  version "4.13.0"
+  resolved "https://registry.yarnpkg.com/pg-sql2/-/pg-sql2-4.13.0.tgz#4515694a8bc445412b8cb9d1ff0f49c077bce253"
+  integrity sha512-9sUlAR+FCuOPezS+2cQCSRUEmnyYrT929DiceZIsINk4R54hCGSh1OTWIP4gbAZeUMTYeEXnwTfnnEOupLYTRQ==
   dependencies:
     "@graphile/lru" "4.11.0"
     "@types/pg" ">=6 <9"
@@ -17553,23 +17570,23 @@ postcss@^8.3.5, postcss@^8.4.16, postcss@^8.4.18, postcss@^8.4.20, postcss@^8.4.
     picocolors "^1.0.0"
     source-map-js "^1.0.2"
 
-postgraphile-core@4.12.3:
-  version "4.12.3"
-  resolved "https://registry.yarnpkg.com/postgraphile-core/-/postgraphile-core-4.12.3.tgz#ded419e0126b45d4d35c9e9e81d097e167c31155"
-  integrity sha512-rr/UCIWQ0o0qXwynTPZbMhEzexdSUtcgmnktfAhr4V8StlexKIaYzg8oiW2ihI/DVWS9NkzD+eNF2EpcyqXAPA==
+postgraphile-core@4.13.0:
+  version "4.13.0"
+  resolved "https://registry.yarnpkg.com/postgraphile-core/-/postgraphile-core-4.13.0.tgz#32b9fecd2e4e710832cb9ca5ca576fa0927fb1a8"
+  integrity sha512-8O7xVKZ20K1dTw4KO0jNAfZPNrxNsGG2VrG3Q0IO70ki/OswE6kz/WBZnWFeGxX0sHSEOGWQa4NSrj9EYsSNuw==
   dependencies:
-    graphile-build "4.12.3"
-    graphile-build-pg "4.12.3"
+    graphile-build "4.13.0"
+    graphile-build-pg "4.13.0"
     tslib "^2.0.1"
 
-postgraphile@4.12.12:
-  version "4.12.12"
-  resolved "https://registry.yarnpkg.com/postgraphile/-/postgraphile-4.12.12.tgz#c62c2ca3cbc0d4d3ec90bad87ca4003eb3a992f4"
-  integrity sha512-bHXmr7hvA82TaU0gfO/W/5hYdAsRsQMf3QtmIdPRb51LxYanlYwzJm/c0Ca8/amzt9jTKk62q/lv0TqYoCr7Bg==
+postgraphile@4.13.0:
+  version "4.13.0"
+  resolved "https://registry.yarnpkg.com/postgraphile/-/postgraphile-4.13.0.tgz#ed8cb05e6919e09d4a90bd8d9db6941eb3ce7690"
+  integrity sha512-p2VqUnsECd1XrucylK1iosvKEn96J8CWeMVWzxF7b6G21jmaETvFe2CO2q4+dKY5DFCVEF2O9pEfmUfYCKl5+A==
   dependencies:
     "@graphile/lru" "4.11.0"
     "@types/json5" "^0.0.30"
-    "@types/jsonwebtoken" "^8.3.2"
+    "@types/jsonwebtoken" "^9.0.1"
     "@types/pg" ">=6 <9"
     "@types/ws" "^7.4.0"
     body-parser "^1.15.2"
@@ -17577,20 +17594,20 @@ postgraphile@4.12.12:
     commander "^2.19.0"
     debug "^4.1.1"
     finalhandler "^1.0.6"
-    graphile-build "4.12.3"
-    graphile-build-pg "4.12.3"
-    graphile-utils "^4.12.3"
+    graphile-build "4.13.0"
+    graphile-build-pg "4.13.0"
+    graphile-utils "^4.13.0"
     graphql "^0.6.0 || ^0.7.0 || ^0.8.0-b || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.2 || ^15.0.0"
     graphql-ws "^5.6.2"
     http-errors "^1.5.1"
     iterall "^1.0.2"
     json5 "^2.1.1"
-    jsonwebtoken "^8.0.0"
+    jsonwebtoken "^9.0.0"
     parseurl "^1.3.2"
     pg ">=6.1.0 <9"
     pg-connection-string "^2.0.0"
-    pg-sql2 "4.12.3"
-    postgraphile-core "4.12.3"
+    pg-sql2 "4.13.0"
+    postgraphile-core "4.13.0"
     subscriptions-transport-ws "^0.9.18"
     tslib "^2.1.0"
     ws "^7.4.2"
@@ -20298,10 +20315,10 @@ ts-invariant@^0.10.3:
   dependencies:
     tslib "^2.1.0"
 
-ts-jest@29.0.4:
-  version "29.0.4"
-  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-29.0.4.tgz#9bc1fd0ec4d863f001af6c5c630e3a807df90f6d"
-  integrity sha512-YdNofkoyzeinwjIqLSYQeAM+GTmFQ7xFNtWcR5OyitY5VLzzNINrNmfhP5H3daA/V+RGQR7O3g1K6ysRgu5xIQ==
+ts-jest@29.0.5:
+  version "29.0.5"
+  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-29.0.5.tgz#c5557dcec8fe434fcb8b70c3e21c6b143bfce066"
+  integrity sha512-PL3UciSgIpQ7f6XjVOmbi96vmDHUqAyqDr8YxzopDqX3kfgYtX1cuNeBjP+L9sFXi6nzsGGA6R3fP3DDDJyrxA==
   dependencies:
     bs-logger "0.x"
     fast-json-stable-stringify "2.x"
