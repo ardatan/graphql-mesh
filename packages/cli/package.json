@@ -64,7 +64,7 @@
     "mkdirp": "1.0.4",
     "open": "7.4.2",
     "pascal-case": "3.1.2",
-    "rimraf": "3.0.2",
+    "rimraf": "4.0.7",
     "ts-node": "10.9.1",
     "tsconfig-paths": "4.1.2",
     "tslib": "^2.4.0",
