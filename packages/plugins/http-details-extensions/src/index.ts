@@ -1,5 +1,5 @@
 import { isAsyncIterable, Path } from '@envelop/core';
-import { MeshPlugin, MeshPluginOptions } from '@graphql-mesh/types';
+import { MeshPlugin } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
 import { GraphQLResolveInfo } from 'graphql';
 
@@ -29,9 +29,9 @@ interface IfFnContext {
   env: Record<string, string>;
 }
 
-export default function useIncludeHttpDetailsInExtensions(
-  opts: MeshPluginOptions<{ if: any }>,
-): MeshPlugin<any> {
+export default function useIncludeHttpDetailsInExtensions(opts: {
+  if: boolean | string | number;
+}): MeshPlugin<any> {
   if (typeof opts.if === 'boolean') {
     if (!opts.if) {
       return {};
