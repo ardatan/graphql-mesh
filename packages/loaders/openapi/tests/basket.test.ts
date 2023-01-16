@@ -19,10 +19,13 @@ describe('Basket', () => {
       cwd: __dirname,
       operationHeaders: {
         accept: providedAccept,
+        'undefined-header': '{context.headers.missing}',
       },
       async fetch(input, init) {
         const headers = new Headers(init?.headers);
         givenHeader = headers.get('accept');
+        const noValue = headers.get('undefined-header');
+        expect(noValue).toBeNull();
         return new Response(
           JSON.stringify({
             random: 2,

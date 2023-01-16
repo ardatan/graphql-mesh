@@ -46,6 +46,7 @@
     "@graphql-tools/utils": "9.1.4",
     "@types/cookie-parser": "1.4.3",
     "@types/multer": "1.4.7",
+    "@whatwg-node/fetch": "0.6.2",
     "@whatwg-node/router": "0.1.4",
     "body-parser": "1.20.1",
     "cookie-parser": "1.4.6",
