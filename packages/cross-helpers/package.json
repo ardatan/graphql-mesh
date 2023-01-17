@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cross-helpers",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Cross Platform Helpers for GraphQL Mesh",
   "repository": {
     "type": "git",

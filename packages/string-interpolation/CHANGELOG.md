@@ -1,5 +1,17 @@
 # @graphql-mesh/string-interpolation
 
+## 0.4.2
+
+### Patch Changes
+
+- [#4930](https://github.com/Urigo/graphql-mesh/pull/4930)
+  [`c015b02a1`](https://github.com/Urigo/graphql-mesh/commit/c015b02a1aa50e4d760c3fd59f76dc5dfe587664)
+  Thanks [@gilgardosh](https://github.com/gilgardosh)! - Prettier fixes
+
+- [#4999](https://github.com/Urigo/graphql-mesh/pull/4999)
+  [`fb9113d5b`](https://github.com/Urigo/graphql-mesh/commit/fb9113d5bfc4865d51f9cb1bd3236c7c0c27b170)
+  Thanks [@mhassan1](https://github.com/mhassan1)! - Added missing `tslib` dependency
+
 ## 0.4.1
 
 ### Patch Changes

@@ -1,5 +1,21 @@
 # @graphql-mesh/plugin-newrelic
 
+## 0.3.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`994813331`](https://github.com/Urigo/graphql-mesh/commit/99481333186e8471207e21ad14c7883f7215ce1c),
+  [`994813331`](https://github.com/Urigo/graphql-mesh/commit/99481333186e8471207e21ad14c7883f7215ce1c),
+  [`994813331`](https://github.com/Urigo/graphql-mesh/commit/99481333186e8471207e21ad14c7883f7215ce1c),
+  [`c015b02a1`](https://github.com/Urigo/graphql-mesh/commit/c015b02a1aa50e4d760c3fd59f76dc5dfe587664),
+  [`fb9113d5b`](https://github.com/Urigo/graphql-mesh/commit/fb9113d5bfc4865d51f9cb1bd3236c7c0c27b170),
+  [`d573d203f`](https://github.com/Urigo/graphql-mesh/commit/d573d203f8bb04ff75cb4d83ba0deaa2bf9818a7)]:
+  - @graphql-mesh/cross-helpers@0.3.1
+  - @graphql-mesh/types@0.89.4
+  - @graphql-mesh/utils@0.43.5
+  - @graphql-mesh/string-interpolation@0.4.2
+
 ## 0.3.5
 
 ### Patch Changes

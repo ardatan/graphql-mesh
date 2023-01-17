@@ -1,5 +1,42 @@
 # @graphql-mesh/transform-prefix
 
+## 0.12.6
+
+### Patch Changes
+
+- [#5028](https://github.com/Urigo/graphql-mesh/pull/5028)
+  [`994813331`](https://github.com/Urigo/graphql-mesh/commit/99481333186e8471207e21ad14c7883f7215ce1c)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/delegate@9.0.22` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.22)
+    (from `9.0.21`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@9.1.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.1.4)
+    (from `9.1.3`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/wrap@9.3.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.3.0)
+    (from `9.2.23`, in `dependencies`)
+
+- [#4930](https://github.com/Urigo/graphql-mesh/pull/4930)
+  [`c015b02a1`](https://github.com/Urigo/graphql-mesh/commit/c015b02a1aa50e4d760c3fd59f76dc5dfe587664)
+  Thanks [@gilgardosh](https://github.com/gilgardosh)! - Prettier fixes
+
+- [`4f0b102dd`](https://github.com/Urigo/graphql-mesh/commit/4f0b102ddb093a14c8dec613c3b59db88ba1069e)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump GraphQL Tools
+
+- [`90936b2a0`](https://github.com/Urigo/graphql-mesh/commit/90936b2a0ef8ab93917e3e2671775d8375e97cdb)
+  Thanks [@ardatan](https://github.com/ardatan)! - Ignore \`ObjMap\` and \`HttpMethod\` which is
+  used by JSON Schema loader
+
+- Updated dependencies
+  [[`994813331`](https://github.com/Urigo/graphql-mesh/commit/99481333186e8471207e21ad14c7883f7215ce1c),
+  [`994813331`](https://github.com/Urigo/graphql-mesh/commit/99481333186e8471207e21ad14c7883f7215ce1c),
+  [`c015b02a1`](https://github.com/Urigo/graphql-mesh/commit/c015b02a1aa50e4d760c3fd59f76dc5dfe587664),
+  [`d573d203f`](https://github.com/Urigo/graphql-mesh/commit/d573d203f8bb04ff75cb4d83ba0deaa2bf9818a7)]:
+  - @graphql-mesh/types@0.89.4
+  - @graphql-mesh/utils@0.43.5
+
 ## 0.12.5
 
 ### Patch Changes
