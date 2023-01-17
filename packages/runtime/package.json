@@ -42,7 +42,7 @@
     "@graphql-tools/batch-execute": "8.5.15",
     "@graphql-tools/delegate": "9.0.22",
     "@graphql-tools/utils": "9.1.4",
-    "@graphql-tools/wrap": "9.3.0",
+    "@graphql-tools/wrap": "9.3.1",
     "@whatwg-node/fetch": "^0.6.0",
     "tslib": "^2.4.0"
   },

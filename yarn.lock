@@ -3341,14 +3341,14 @@
     tslib "^2.4.0"
     value-or-promise "1.0.11"
 
-"@graphql-tools/executor-http@0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/executor-http/-/executor-http-0.1.0.tgz#8071343f4d893d9ffc91c0c675230317282f310f"
-  integrity sha512-HUas+3EIqbw/reNH3NaO8/5Cc61ZxsoIArES55kR6Nq8lS8VWiEpnuXLXBq2THYemmthVdK3eDCKTJLmUFuKdA==
+"@graphql-tools/executor-http@0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/executor-http/-/executor-http-0.1.1.tgz#9c4a43811d36d1be2319fd241d5538e2fac45bce"
+  integrity sha512-bFE6StI7CJEIYGRkAnTYxutSV4OtC1c4MQU3nStOYZZO7KmzIgEQZ4ygPSPrRb+jtRsMCBEqPqlYOD4Rq02aMw==
   dependencies:
     "@graphql-tools/utils" "9.1.4"
     "@repeaterjs/repeater" "3.0.4"
-    "@whatwg-node/fetch" "0.6.1"
+    "@whatwg-node/fetch" "0.6.2"
     dset "3.1.2"
     extract-files "^11.0.0"
     meros "1.2.1"
@@ -3628,17 +3628,17 @@
     tslib "^2.4.0"
     value-or-promise "1.0.11"
 
-"@graphql-tools/stitch@8.7.35":
-  version "8.7.35"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/stitch/-/stitch-8.7.35.tgz#5b0ee7a5d82918be766e0500bf2418f64b87c25d"
-  integrity sha512-djuBs0CukCok/h9OYUP5P4voziusCd6RaZ72rxSJjeRbX72JT48CkPxRkAI7VjrxnfOwZSylA3V2xd4G8SgAew==
+"@graphql-tools/stitch@8.7.36":
+  version "8.7.36"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/stitch/-/stitch-8.7.36.tgz#2a4771cadd72c24aab3e2c76f0e49ceb71d35604"
+  integrity sha512-XRukKVOyf7z9hT1034SR2XN7XsyHVvDjl6OBxt4fo7L+3EtKQl2iUCbKPTSzPCIK+CCERDQ2/J8Kp+RYIJYT/g==
   dependencies:
     "@graphql-tools/batch-delegate" "8.4.15"
     "@graphql-tools/delegate" "9.0.22"
     "@graphql-tools/merge" "8.3.15"
     "@graphql-tools/schema" "9.0.13"
     "@graphql-tools/utils" "9.1.4"
-    "@graphql-tools/wrap" "9.3.0"
+    "@graphql-tools/wrap" "9.3.1"
     tslib "^2.4.0"
     value-or-promise "^1.0.11"
 
@@ -3666,18 +3666,18 @@
     valid-url "1.0.9"
     websocket "1.0.31"
 
-"@graphql-tools/url-loader@7.17.1":
-  version "7.17.1"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.17.1.tgz#df32e6b84e13603e096e5a9e8fb3b4bd2c2442b9"
-  integrity sha512-+WZXkg1ZG4fjAB+SkCHLSr7VFZqZAkA/PILcpoPqwAL/wSsrhCHYwbzuWuKn1SGToxJRt7cc+4P0lfR7fq+xhQ==
+"@graphql-tools/url-loader@7.17.2":
+  version "7.17.2"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.17.2.tgz#34ca59dd7f1c0e2f3b987308718d1068beb95799"
+  integrity sha512-VgCXa5vQzcM13+loJvVHLXltp3qN8PHUTeth50cImUhCm3qtRwOeuSYjpph38vllPb8DKxsZkNFxzYgzscWIow==
   dependencies:
     "@ardatan/sync-fetch" "0.0.1"
     "@graphql-tools/delegate" "9.0.22"
     "@graphql-tools/executor-graphql-ws" "0.0.6"
-    "@graphql-tools/executor-http" "0.1.0"
+    "@graphql-tools/executor-http" "0.1.1"
     "@graphql-tools/executor-legacy-ws" "0.0.6"
     "@graphql-tools/utils" "9.1.4"
-    "@graphql-tools/wrap" "9.3.0"
+    "@graphql-tools/wrap" "9.3.1"
     "@types/ws" "^8.0.0"
     "@whatwg-node/fetch" "^0.6.0"
     isomorphic-ws "5.0.0"
@@ -3777,10 +3777,10 @@
     tslib "^2.4.0"
     value-or-promise "1.0.11"
 
-"@graphql-tools/wrap@9.3.0":
-  version "9.3.0"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/wrap/-/wrap-9.3.0.tgz#6dbafdef0b7eb34e0efa9698159a425106cae04e"
-  integrity sha512-QOEg04kzFJ1WrlA2t/qjw85C20qPDJwIU/d+bDgDd1+cjTQcVrEt9bq9NilZZg9m9AAgZbeyDwut0oQvNMCGhw==
+"@graphql-tools/wrap@9.3.1":
+  version "9.3.1"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/wrap/-/wrap-9.3.1.tgz#d0718d87080e7a54655d629a78b08c9d39f314ea"
+  integrity sha512-uzY1HKc7qMErWL3ybv8bFG3hI1rTJPVYQ8WeJkCF/r/+aHEkUj0Bo2PYZrZTX1UIr3Tb4P5GyhqYBgZOXraZjw==
   dependencies:
     "@graphql-tools/delegate" "9.0.22"
     "@graphql-tools/schema" "9.0.13"
