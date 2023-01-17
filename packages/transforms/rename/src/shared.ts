@@ -13,5 +13,7 @@ export const ignoreList = [
   'relative-json-pointer',
   'uri-reference',
   'uri-template',
+  'ObjMap',
+  'HttpMethod',
   ...Object.keys(scalarsResolversMap),
 ];

@@ -152,11 +152,19 @@ export default class GraphQLHandler implements MeshHandler {
         },
       );
       if (typeof sdlOrIntrospection === 'string') {
-        return buildSchema(sdlOrIntrospection);
+        return buildSchema(sdlOrIntrospection, {
+          assumeValid: true,
+          assumeValidSDL: true,
+        });
       } else if (isDocumentNode(sdlOrIntrospection)) {
-        return buildASTSchema(sdlOrIntrospection);
+        return buildASTSchema(sdlOrIntrospection, {
+          assumeValid: true,
+          assumeValidSDL: true,
+        });
       } else if (sdlOrIntrospection.__schema) {
-        return buildClientSchema(sdlOrIntrospection);
+        return buildClientSchema(sdlOrIntrospection, {
+          assumeValid: true,
+        });
       }
       throw new Error(`Invalid introspection data: ${util.inspect(sdlOrIntrospection)}`);
     }
@@ -192,7 +200,10 @@ export default class GraphQLHandler implements MeshHandler {
         fetch: this.fetchFn,
         logger: this.logger,
       });
-      const schema = buildSchema(rawSDL);
+      const schema = buildSchema(rawSDL, {
+        assumeValid: true,
+        assumeValidSDL: true,
+      });
       const { contextVariables } = this.getArgsAndContextVariables();
       return {
         schema,
@@ -207,12 +218,18 @@ export default class GraphQLHandler implements MeshHandler {
       if (schemaOrStringOrDocumentNode instanceof GraphQLSchema) {
         schema = schemaOrStringOrDocumentNode;
       } else if (typeof schemaOrStringOrDocumentNode === 'string') {
-        schema = buildSchema(schemaOrStringOrDocumentNode);
+        schema = buildSchema(schemaOrStringOrDocumentNode, {
+          assumeValid: true,
+          assumeValidSDL: true,
+        });
       } else if (
         typeof schemaOrStringOrDocumentNode === 'object' &&
         schemaOrStringOrDocumentNode?.kind === Kind.DOCUMENT
       ) {
-        schema = buildASTSchema(schemaOrStringOrDocumentNode);
+        schema = buildASTSchema(schemaOrStringOrDocumentNode, {
+          assumeValid: true,
+          assumeValidSDL: true,
+        });
       } else {
         throw new Error(
           `Provided file '${schemaConfig} exports an unknown type: ${util.inspect(

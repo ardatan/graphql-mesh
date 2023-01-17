@@ -51,5 +51,7 @@ export const IGNORED_TYPE_NAMES = [
   'relative-json-pointer',
   'uri-reference',
   'uri-template',
+  'ObjMap',
+  'HttpMethod',
   ...Object.keys(scalarsResolversMap),
 ];
