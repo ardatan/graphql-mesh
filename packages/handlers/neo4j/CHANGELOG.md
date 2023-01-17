@@ -1,5 +1,42 @@
 # @graphql-mesh/neo4j
 
+## 0.22.6
+
+### Patch Changes
+
+- [#5003](https://github.com/Urigo/graphql-mesh/pull/5003)
+  [`391b1cef9`](https://github.com/Urigo/graphql-mesh/commit/391b1cef981532e79d72998f1e96fb15a5a72a98)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@neo4j/graphql@3.14.2` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.14.2) (from
+    `3.14.1`, in `dependencies`)
+
+- [#5007](https://github.com/Urigo/graphql-mesh/pull/5007)
+  [`43783fc8a`](https://github.com/Urigo/graphql-mesh/commit/43783fc8a45f8e7e919f4bb3c47ec6b0fda6017d)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`neo4j-driver@5.4.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.4.0)
+    (from `5.3.0`, in `dependencies`)
+
+- [#5028](https://github.com/Urigo/graphql-mesh/pull/5028)
+  [`994813331`](https://github.com/Urigo/graphql-mesh/commit/99481333186e8471207e21ad14c7883f7215ce1c)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@9.1.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.1.4)
+    (from `9.1.3`, in `dependencies`)
+- Updated dependencies
+  [[`994813331`](https://github.com/Urigo/graphql-mesh/commit/99481333186e8471207e21ad14c7883f7215ce1c),
+  [`994813331`](https://github.com/Urigo/graphql-mesh/commit/99481333186e8471207e21ad14c7883f7215ce1c),
+  [`994813331`](https://github.com/Urigo/graphql-mesh/commit/99481333186e8471207e21ad14c7883f7215ce1c),
+  [`994813331`](https://github.com/Urigo/graphql-mesh/commit/99481333186e8471207e21ad14c7883f7215ce1c),
+  [`c015b02a1`](https://github.com/Urigo/graphql-mesh/commit/c015b02a1aa50e4d760c3fd59f76dc5dfe587664),
+  [`d573d203f`](https://github.com/Urigo/graphql-mesh/commit/d573d203f8bb04ff75cb4d83ba0deaa2bf9818a7)]:
+  - @graphql-mesh/cross-helpers@0.3.1
+  - @graphql-mesh/store@0.9.5
+  - @graphql-mesh/types@0.89.4
+  - @graphql-mesh/utils@0.43.5
+
 ## 0.22.5
 
 ### Patch Changes
