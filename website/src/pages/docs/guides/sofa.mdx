@@ -1,0 +1,20 @@
+# Generate REST API using SOFA
+
+Sofa takes your GraphQL Schema, looks for available queries, mutations and subscriptions and turns
+all of that into REST API.
+
+## Installation
+
+<PackageCmd packages={['@graphql-yoga/plugin-sofa']} />
+
+## Usage
+
+```yaml
+plugins:
+  - sofa#useSofaWithSwaggerUI:
+      basePath: /rest
+      swaggerUIEndpoint: /swagger
+      info:
+        title: 'My REST API'
+        version: '1.0.0'
+```

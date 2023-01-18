@@ -8,5 +8,6 @@
   "file-uploads": "File Uploads",
   "hive": "Integration with Hive",
   "graphql-code-generator": "Configure GraphQL Code Generator",
-  "mesh-sdk": "Programmatic Usage / SDK"
+  "mesh-sdk": "Programmatic Usage / SDK",
+  "sofa": "Generate REST API with SOFA"
 }

@@ -7,6 +7,7 @@
   "prometheus": "Prometheus",
   "new-relic": "NewRelic",
   "operation-field-permissions": "Operation Field Permissions",
+  "csrf": "CSRF Prevention",
   "rate-limit": "Rate Limit",
   "http-cache": "Caching in HTTP",
   "http-details-extensions": "HTTP Details in extensions",
