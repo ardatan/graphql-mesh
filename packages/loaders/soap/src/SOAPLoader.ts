@@ -1,5 +1,5 @@
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
-import { parse as parseXML } from 'fast-xml-parser';
+import { XMLParser } from 'fast-xml-parser';
 import {
   AnyTypeComposer,
   EnumTypeComposer,
@@ -487,12 +487,14 @@ export class SOAPLoader {
     }
   }
 
+  private xmlParser = new XMLParser(PARSE_XML_OPTIONS);
+
   async fetchXSD(location: string, parentAliasMap = new Map<string, string>()) {
     const response = await this.options.fetch(location);
     let xsdText = await response.text();
     xsdText = xsdText.split('xmlns:').join('namespace:');
     // WSDL Import is different than XS Import
-    const xsdObj: XSDObject = parseXML(xsdText, PARSE_XML_OPTIONS);
+    const xsdObj: XSDObject = this.xmlParser.parse(xsdText, PARSE_XML_OPTIONS);
     for (const schemaObj of xsdObj.schema) {
       await this.loadSchema(schemaObj, parentAliasMap);
     }
@@ -501,7 +503,7 @@ export class SOAPLoader {
 
   async loadWSDL(wsdlText: string) {
     wsdlText = wsdlText.split('xmlns:').join('namespace:');
-    const wsdlObject: WSDLObject = parseXML(wsdlText, PARSE_XML_OPTIONS);
+    const wsdlObject: WSDLObject = this.xmlParser.parse(wsdlText, PARSE_XML_OPTIONS);
     for (const definition of wsdlObject.definitions) {
       await this.loadDefinition(definition);
     }

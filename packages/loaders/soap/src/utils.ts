@@ -8,10 +8,10 @@ export interface SoapAnnotations {
 
 export const PARSE_XML_OPTIONS: Partial<X2jOptions> = {
   attributeNamePrefix: '',
-  attrNodeName: 'attributes',
+  attributesGroupName: 'attributes',
   textNodeName: 'innerText',
   ignoreAttributes: false,
-  ignoreNameSpace: true,
-  arrayMode: true,
+  removeNSPrefix: true,
+  isArray: (_, __, ___, isAttribute) => !isAttribute,
   allowBooleanAttributes: true,
 };
