@@ -1,6 +1,6 @@
 {
   "name": "json-schema-fhir",
-  "version": "0.0.338",
+  "version": "0.0.339",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -10,7 +10,7 @@
     "start:prod": "mesh start"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.82.10",
+    "@graphql-mesh/cli": "0.82.11",
     "@graphql-mesh/json-schema": "0.37.6",
     "graphql": "16.6.0",
     "unzip-stream": "0.3.1"
