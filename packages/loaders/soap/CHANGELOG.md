@@ -1,5 +1,16 @@
 # @omnigraph/soap
 
+## 0.4.5
+
+### Patch Changes
+
+- [#5048](https://github.com/Urigo/graphql-mesh/pull/5048)
+  [`abe88f1a2`](https://github.com/Urigo/graphql-mesh/commit/abe88f1a2d3f08760f3460d520b88873357f9789)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@4.0.13` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/4.0.13) (from
+    `3.21.1`, in `dependencies`)
+
 ## 0.4.4
 
 ### Patch Changes

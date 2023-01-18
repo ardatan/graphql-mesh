@@ -1,5 +1,17 @@
 # @graphql-mesh/cli
 
+## 0.82.11
+
+### Patch Changes
+
+- [#5049](https://github.com/Urigo/graphql-mesh/pull/5049)
+  [`cb7e2c568`](https://github.com/Urigo/graphql-mesh/commit/cb7e2c568dbf027c0023b4a933f5b8f748ac90be)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`mkdirp@2.1.3` ↗︎](https://www.npmjs.com/package/mkdirp/v/2.1.3) (from
+    `2.1.1`, in `dependencies`)
+  - Updated dependency [`rimraf@4.1.1` ↗︎](https://www.npmjs.com/package/rimraf/v/4.1.1) (from
+    `4.1.0`, in `dependencies`)
+
 ## 0.82.10
 
 ### Patch Changes
