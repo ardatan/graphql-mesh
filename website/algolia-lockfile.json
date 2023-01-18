@@ -972,6 +972,29 @@
     "type": "Documentation"
   },
   {
+    "objectID": "mesh-docs-guides-sofa",
+    "headings": ["Installation", "Usage"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Installation",
+        "anchor": "installation"
+      },
+      {
+        "children": [],
+        "title": "Usage",
+        "anchor": "usage"
+      }
+    ],
+    "content": "e1f63736587072ea9c16ae0659695c7f",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/sofa",
+    "domain": "https://www.the-guild.dev/graphql/mesh/",
+    "hierarchy": ["Docs", "Guides"],
+    "source": "Mesh",
+    "title": "Generate REST API with SOFA",
+    "type": "Documentation"
+  },
+  {
     "objectID": "mesh-docs-guides-subscriptions-webhooks",
     "headings": ["Add a new Subscription field"],
     "toc": [
@@ -1061,6 +1084,29 @@
     "hierarchy": ["Docs", "Migration Guides"],
     "source": "Mesh",
     "title": "openAPI handler `<0.31` to `0.32`",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-csrf",
+    "headings": ["Installation", "Quick Start"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Installation",
+        "anchor": "installation"
+      },
+      {
+        "children": [],
+        "title": "Quick Start",
+        "anchor": "quick-start"
+      }
+    ],
+    "content": "df59ec4c439b4d5c176c98cc294313be",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/csrf",
+    "domain": "https://www.the-guild.dev/graphql/mesh/",
+    "hierarchy": ["Docs", "Plugins"],
+    "source": "Mesh",
+    "title": "CSRF Prevention",
     "type": "Documentation"
   },
   {
