@@ -300,30 +300,6 @@
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-extend-custom-handler",
-    "headings": [],
-    "toc": [],
-    "content": "aab79544ce97b1b976abee3f0f4225c7",
-    "url": "https://www.the-guild.dev/graphql/mesh/docs/extend/custom-handler",
-    "domain": "https://www.the-guild.dev/graphql/mesh/",
-    "hierarchy": ["Docs", "extend"],
-    "source": "Mesh",
-    "title": "Custom Handler",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "mesh-docs-extend-custom-transform",
-    "headings": [],
-    "toc": [],
-    "content": "aab79544ce97b1b976abee3f0f4225c7",
-    "url": "https://www.the-guild.dev/graphql/mesh/docs/extend/custom-transform",
-    "domain": "https://www.the-guild.dev/graphql/mesh/",
-    "hierarchy": ["Docs", "extend"],
-    "source": "Mesh",
-    "title": "Custom Transform",
-    "type": "Documentation"
-  },
-  {
     "objectID": "mesh-docs-getting-started-combine-multiple-sources",
     "headings": [
       "1. Add the \"Authors\" Source",
