@@ -38,7 +38,7 @@
     "@graphql-mesh/types": "0.89.4",
     "@graphql-mesh/utils": "0.43.5",
     "@graphql-tools/delegate": "9.0.22",
-    "@graphql-tools/url-loader": "7.17.2",
+    "@graphql-tools/url-loader": "7.17.3",
     "@graphql-tools/utils": "9.1.4",
     "@graphql-tools/wrap": "9.3.1",
     "lodash.get": "4.4.2",

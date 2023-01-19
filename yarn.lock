@@ -3278,10 +3278,10 @@
     tslib "~2.4.0"
     value-or-promise "1.0.12"
 
-"@graphql-tools/executor-graphql-ws@0.0.6":
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/executor-graphql-ws/-/executor-graphql-ws-0.0.6.tgz#34c1e5bc6ac1ff292fd6c4b5490b7906c6dd25c2"
-  integrity sha512-n6JvIviYO8iiasV/baclimQqNkYGP7JRlkNSnphNG5LULmVpQ2WsyvbgJHV7wtlTZ8ZQ3+dILgQF83PFyLsfdA==
+"@graphql-tools/executor-graphql-ws@0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/executor-graphql-ws/-/executor-graphql-ws-0.0.7.tgz#5e7b0e6d02d3b64727bfb37c0f2c1e13badcb829"
+  integrity sha512-C6EExKoukn4vu3BbvlqsqtC91F4pTLPDZvRceYjpFzTCQSGFSjfrxQGP/haGlemXVRpIDxBy7wpXoQlsF8UmFA==
   dependencies:
     "@graphql-tools/utils" "9.1.4"
     "@repeaterjs/repeater" "3.0.4"
@@ -3577,14 +3577,14 @@
     valid-url "1.0.9"
     websocket "1.0.31"
 
-"@graphql-tools/url-loader@7.17.2", "@graphql-tools/url-loader@~7.17.0":
-  version "7.17.2"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.17.2.tgz#34ca59dd7f1c0e2f3b987308718d1068beb95799"
-  integrity sha512-VgCXa5vQzcM13+loJvVHLXltp3qN8PHUTeth50cImUhCm3qtRwOeuSYjpph38vllPb8DKxsZkNFxzYgzscWIow==
+"@graphql-tools/url-loader@7.17.3", "@graphql-tools/url-loader@~7.17.0":
+  version "7.17.3"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.17.3.tgz#5c3270208e5cb039f65d7ef390af93bbc5c76408"
+  integrity sha512-NY/NQpuf29gjt19XExjRyTj3z44Ohc2OwQZIR/RqHYn+cbdMeXIgJqV5vbPOCN8Umjmm5yVb7kP6oKNGjyeBvw==
   dependencies:
     "@ardatan/sync-fetch" "0.0.1"
     "@graphql-tools/delegate" "9.0.22"
-    "@graphql-tools/executor-graphql-ws" "0.0.6"
+    "@graphql-tools/executor-graphql-ws" "0.0.7"
     "@graphql-tools/executor-http" "0.1.1"
     "@graphql-tools/executor-legacy-ws" "0.0.6"
     "@graphql-tools/utils" "9.1.4"
@@ -20609,10 +20609,10 @@ underscore@^1.10.2, underscore@^1.13.1, underscore@^1.9.2:
   resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.13.1.tgz#0c1c6bd2df54b6b69f2314066d65b6cde6fcf9d1"
   integrity sha512-hzSoAVtJF+3ZtiFX0VgfFPHEDRm7Y/QPjGyNo4TVdnDTdft3tr8hEkD25a1jC+TjTuE7tkHGKkhwCgs9dgBB2g==
 
-undici@5.15.0, undici@5.9.1, undici@^5.12.0:
-  version "5.15.0"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-5.15.0.tgz#cb8437c43718673a8be59df0fdd4856ff6689283"
-  integrity sha512-wCAZJDyjw9Myv+Ay62LAoB+hZLPW9SmKbQkbHIhMw/acKSlpn7WohdMUc/Vd4j1iSMBO0hWwU8mjB7a5p5bl8g==
+undici@5.15.1, undici@5.9.1, undici@^5.12.0:
+  version "5.15.1"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-5.15.1.tgz#5292454b1441da486a80c0f3ada1e88f1765ff8d"
+  integrity sha512-XLk8g0WAngdvFqTI+VKfBtM4YWXgdxkf1WezC771Es0Dd+Pm1KmNx8t93WTC+Hh9tnghmVxkclU1HN+j+CvIUA==
   dependencies:
     busboy "^1.6.0"
 
