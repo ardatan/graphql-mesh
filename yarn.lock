@@ -4669,82 +4669,82 @@
   dependencies:
     webpack-bundle-analyzer "4.7.0"
 
-"@next/env@13.1.3":
-  version "13.1.3"
-  resolved "https://registry.yarnpkg.com/@next/env/-/env-13.1.3.tgz#1c29b0dab10ed02b741cb0bb07636eeb41ad5a69"
-  integrity sha512-ye0yvGmlzQQJnzNC7tC/ZhgRMd0s54msgrDOft1SjEG1Fbb+RBxGsalPqG3tUGuchA25z3npAtkFoAP8d2wPnw==
+"@next/env@13.1.4":
+  version "13.1.4"
+  resolved "https://registry.yarnpkg.com/@next/env/-/env-13.1.4.tgz#ed91156ee48791ad85992d95d8e1f46a740c0d5e"
+  integrity sha512-x7ydhMpi9/xX7yVK+Fw33OuwwQWVZUFRxenK3z89fmPzQZyUk35Ynb+b7JkrhfRhDIFFvvqpzVSXeseSlBAw7A==
 
-"@next/eslint-plugin-next@13.1.3":
-  version "13.1.3"
-  resolved "https://registry.yarnpkg.com/@next/eslint-plugin-next/-/eslint-plugin-next-13.1.3.tgz#7b360fb2aa59da2420a3b371c55e028e9c4250ee"
-  integrity sha512-9IF2euUtOdXoQMHB9x1Afsw19si71oIj8Oqp40I7vcoG758LMZJZePG8sjhGh1dMJv+JtkIjiLu+ENVMGKAMJQ==
+"@next/eslint-plugin-next@13.1.4":
+  version "13.1.4"
+  resolved "https://registry.yarnpkg.com/@next/eslint-plugin-next/-/eslint-plugin-next-13.1.4.tgz#7dd5025d40b9564fc2cc1ea4aa9661a9552ec875"
+  integrity sha512-a/T30+7Q1scom5t3L+wEBkYzCa+bhT/3DTxzxlNy4Xckw2InzcckQGeIi/larDgh5r2fSSJswhYAZEcKtuJiig==
   dependencies:
     glob "7.1.7"
 
-"@next/swc-android-arm-eabi@13.1.3":
-  version "13.1.3"
-  resolved "https://registry.yarnpkg.com/@next/swc-android-arm-eabi/-/swc-android-arm-eabi-13.1.3.tgz#f038b4e76af750b56b884997e902a6096ee367f3"
-  integrity sha512-kXL0z7uVUHdUkXY997oZcoz4PXWXRJq3R9x2UYz0uW8OHsZinxTW/BgyzH8nfTB/4/a0nox4fgzQRurjem3nGQ==
+"@next/swc-android-arm-eabi@13.1.4":
+  version "13.1.4"
+  resolved "https://registry.yarnpkg.com/@next/swc-android-arm-eabi/-/swc-android-arm-eabi-13.1.4.tgz#7d258554b0812f693e91d1bfc940d0e386b394f7"
+  integrity sha512-5PAchzFst3In6Ml+9APvBj89H29lcPXcUqEYBVv09fWK/V4IuViKc2qOqM9pyPyw7KsqaZPmuqaG595E6jdZLA==
 
-"@next/swc-android-arm64@13.1.3":
-  version "13.1.3"
-  resolved "https://registry.yarnpkg.com/@next/swc-android-arm64/-/swc-android-arm64-13.1.3.tgz#e5622575187aaecea3dd34e27b6089f3a4a004d8"
-  integrity sha512-ZHYC5Ze+syk9mex/T5XILHox5xjJotQ5GmPqHrJpXh9AOuIZnfhNP/zeLYaOXWaJmrE55Ni56VxHgckJfpGeBw==
+"@next/swc-android-arm64@13.1.4":
+  version "13.1.4"
+  resolved "https://registry.yarnpkg.com/@next/swc-android-arm64/-/swc-android-arm64-13.1.4.tgz#03572661993ba554c4ac6a2b99c35b5062727489"
+  integrity sha512-LCLjjRhsQ5fR9ExzR2fqxuyJe/D4Ct/YkdonVfJfqOfkEpFwUTQDOVo5GrQec4LZDk3zY+o6vZYjXbB0nD9VLA==
 
-"@next/swc-darwin-arm64@13.1.3":
-  version "13.1.3"
-  resolved "https://registry.yarnpkg.com/@next/swc-darwin-arm64/-/swc-darwin-arm64-13.1.3.tgz#9acb0770782d9fced9a57a8dcbc8a227ebe212e2"
-  integrity sha512-B8Gyx/XhoxiiD4kHjnNVPCdgvLvIeQQGE2Nq6P7gsG0t17mMcPS4Y8fh/kVJSZAu5B5bAACwYIsI5bKMFzM+Ug==
+"@next/swc-darwin-arm64@13.1.4":
+  version "13.1.4"
+  resolved "https://registry.yarnpkg.com/@next/swc-darwin-arm64/-/swc-darwin-arm64-13.1.4.tgz#10189b4753b43941ffb0f396ee878176c8b4b662"
+  integrity sha512-LSc/tF1FQ1y1SwKiCdGg8IIl7+Csk6nuLcLIyQXs24UNYjXg5+7vUQXqE8y66v/Dq8qFDC9rM61QhpM9ZDftbg==
 
-"@next/swc-darwin-x64@13.1.3":
-  version "13.1.3"
-  resolved "https://registry.yarnpkg.com/@next/swc-darwin-x64/-/swc-darwin-x64-13.1.3.tgz#a060253ec0dfab008c296eec6654b63de2e9d4f2"
-  integrity sha512-SCXf0JA3tR9FcsFA53a3LWDaxoIWFoLSbN3m88cYQYQMluObxwo6SBeUD9E3F4pM0bXEeIGOh8Y6u8w0GmmGoQ==
+"@next/swc-darwin-x64@13.1.4":
+  version "13.1.4"
+  resolved "https://registry.yarnpkg.com/@next/swc-darwin-x64/-/swc-darwin-x64-13.1.4.tgz#e6574b43699bfe74e38dd620fdaecd7a1676aa0a"
+  integrity sha512-WoApDo8xfafrNc9+Mz5MwGFKUwbDHsGqLleTGZ8upegwVqDyHsYzqJQudf+loqhV58oGTOqP1eWaHn2J7dijXA==
 
-"@next/swc-freebsd-x64@13.1.3":
-  version "13.1.3"
-  resolved "https://registry.yarnpkg.com/@next/swc-freebsd-x64/-/swc-freebsd-x64-13.1.3.tgz#f93f351202ed18aca3a7ea8c5e241f3a4601110e"
-  integrity sha512-bUf1HYF3znES0Kd75fRnVp7LXlwF3MiuTk/qh32t1VH8CHSGsJmPPtHw4ag5GgwCbIn3AwWJQgqS+jyVYj40CA==
+"@next/swc-freebsd-x64@13.1.4":
+  version "13.1.4"
+  resolved "https://registry.yarnpkg.com/@next/swc-freebsd-x64/-/swc-freebsd-x64-13.1.4.tgz#96e77d986bd22b08ce12d3a5fc884494328b94b2"
+  integrity sha512-fqNyeT8G4guN8AHPIoBRhGY2GJg89FyWpuwX4o0Y3vUy/84IGZpNst3paCzaYkQSqQE/AuCpkB7hKxkN7ittXw==
 
-"@next/swc-linux-arm-gnueabihf@13.1.3":
-  version "13.1.3"
-  resolved "https://registry.yarnpkg.com/@next/swc-linux-arm-gnueabihf/-/swc-linux-arm-gnueabihf-13.1.3.tgz#a8939e0d825c4063c8141879935c2f3210959d77"
-  integrity sha512-ibl6YbAoOVH5whhHcC3s4auSKLIzWyhRdv9M8373m8xaTWkAGtFNgbJysaTBm4M9RlePPX0G81oul9wmpkP48w==
+"@next/swc-linux-arm-gnueabihf@13.1.4":
+  version "13.1.4"
+  resolved "https://registry.yarnpkg.com/@next/swc-linux-arm-gnueabihf/-/swc-linux-arm-gnueabihf-13.1.4.tgz#91b035a6c88e8d583f8b9aef465b64d05ecd1f95"
+  integrity sha512-MEfm8OC1YR9/tYHUzlQsxcSmiuf8XdO7bqh5VtG4pilScjc5I5t+tQgIDgoDGePfh5W99W23hb3s6oCFrt99rw==
 
-"@next/swc-linux-arm64-gnu@13.1.3":
-  version "13.1.3"
-  resolved "https://registry.yarnpkg.com/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-13.1.3.tgz#97725ec5723d8d012116124ec9c3f1f60d7e0eed"
-  integrity sha512-ChsZxyNgAu1JHLQWZq4L6lJ4VQ4Rj30qA8VCGkr1AFiqwWabri9dc5y32zJSmqa6Ex6NVDyYCNBKUGlcUOmDtw==
+"@next/swc-linux-arm64-gnu@13.1.4":
+  version "13.1.4"
+  resolved "https://registry.yarnpkg.com/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-13.1.4.tgz#15726af0ce29450ffde593e993b0ec1beba75154"
+  integrity sha512-2wgth/KsuODzW/E7jsRoWdhKmE5oZzXcBPvf9RW+ZpBNvYQkEDlzfLA7n8DtxTU8I4oMas0mdEPdCWXrSNnVZw==
 
-"@next/swc-linux-arm64-musl@13.1.3":
-  version "13.1.3"
-  resolved "https://registry.yarnpkg.com/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-13.1.3.tgz#110f328eba0a04a6786726ec71357234e462962e"
-  integrity sha512-WoYE9I/1iEW9wldxFxhu+OZmU4IbwQQl/w5nFrgbSIyGz3g3JeaQxJOdyMggX3WOjWF9khdJ4r4ANa0TsF28DA==
+"@next/swc-linux-arm64-musl@13.1.4":
+  version "13.1.4"
+  resolved "https://registry.yarnpkg.com/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-13.1.4.tgz#74f449a2bb7b6f6fdaa67df0fa3665ee99a826b8"
+  integrity sha512-GdWhCRljsT7rNEElEsdu4RRppd+XaQOX1IJslsh/+HU6LsJGUE8tXpa68yJjCsHZHifkbdZNeCr5SYdsN6CbAA==
 
-"@next/swc-linux-x64-gnu@13.1.3":
-  version "13.1.3"
-  resolved "https://registry.yarnpkg.com/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-13.1.3.tgz#6c4704433929a981b2a97a490159e6d9d507db10"
-  integrity sha512-fz5j+p1MsD0Kb+vMUkHzKxzFDteqzAqtdC41NyRvyKYhAffyDsfjGB542nmtt+EdxtlpDWfH204gN6nNXDDI7w==
+"@next/swc-linux-x64-gnu@13.1.4":
+  version "13.1.4"
+  resolved "https://registry.yarnpkg.com/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-13.1.4.tgz#dfaed86d84f11ce6c14c267ead267eab7cbea66d"
+  integrity sha512-Rsk/ojwYqMskN2eo5hUSVe7UuMV/aSjmrmJ0BCFGFPfBY9sPgmYj/oXlDDN0y5lJD9acPuiBjknLWgnOnx5JIA==
 
-"@next/swc-linux-x64-musl@13.1.3":
-  version "13.1.3"
-  resolved "https://registry.yarnpkg.com/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-13.1.3.tgz#dd3735f672dbaa3153fb590b1320cf1e621ca853"
-  integrity sha512-kw98zZnIAGyElE8GqsY5oH/n/vLYWqhEHlhHlY9ZzPIhsKwybWqLTq6ZPA60fEgRm9+UoU6u7lGD9pjZhTBRvA==
+"@next/swc-linux-x64-musl@13.1.4":
+  version "13.1.4"
+  resolved "https://registry.yarnpkg.com/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-13.1.4.tgz#6f5f184967ba00379ac179546a9575bb7aff9c21"
+  integrity sha512-gKSVPozedA2gpA+vggYnAqpDuzWFed2oxFeXxHw0aW2ALdAZswAinn1ZwXEQ5fHnVguxjZhH0+2nBxpMdF8p5Q==
 
-"@next/swc-win32-arm64-msvc@13.1.3":
-  version "13.1.3"
-  resolved "https://registry.yarnpkg.com/@next/swc-win32-arm64-msvc/-/swc-win32-arm64-msvc-13.1.3.tgz#b888dd4449310b8ec8f6470afef556de99d4d0fd"
-  integrity sha512-bfulLL1SkaECHnv1Oz1nLdwpMu/B/TQEzA3+XoJYoiZaKHuTrufDIr+fTUasK5l7KQmB1y8LXSMKEKVeZomeGg==
+"@next/swc-win32-arm64-msvc@13.1.4":
+  version "13.1.4"
+  resolved "https://registry.yarnpkg.com/@next/swc-win32-arm64-msvc/-/swc-win32-arm64-msvc-13.1.4.tgz#ccfa61a8ea56b55d7251f32b6c518ed0962d2923"
+  integrity sha512-+kAXIIVb7Q4LCKmi7dn9qVlG1XUf3Chgj5Rwl0rAP4WBV2TnJIgsOEC24G1Mm3jjif+qXm7SJS9YZ9Yg3Y8sSQ==
 
-"@next/swc-win32-ia32-msvc@13.1.3":
-  version "13.1.3"
-  resolved "https://registry.yarnpkg.com/@next/swc-win32-ia32-msvc/-/swc-win32-ia32-msvc-13.1.3.tgz#a24772611f02b026f4be71edffcf63740510bffa"
-  integrity sha512-5UwjzQWgUdKAinZgLSYB8BG5jtTUuUGBh//7EwDXf+nqfTEZ7VOaDuHWeO6MQLkuSgQOIpwL5uMJQFJY1rX69A==
+"@next/swc-win32-ia32-msvc@13.1.4":
+  version "13.1.4"
+  resolved "https://registry.yarnpkg.com/@next/swc-win32-ia32-msvc/-/swc-win32-ia32-msvc-13.1.4.tgz#8d164ce4de9eeaf3400ad4becdd653f68f0d9527"
+  integrity sha512-EsfzAFBVaw1zg1FzlLMgRaTX/DKY+EnAvJ6mCIJMGeSOPIj4Oy6xF2yEQ3VaRkwFpAafHJH6JNB/CGrdKFCMXw==
 
-"@next/swc-win32-x64-msvc@13.1.3":
-  version "13.1.3"
-  resolved "https://registry.yarnpkg.com/@next/swc-win32-x64-msvc/-/swc-win32-x64-msvc-13.1.3.tgz#f6cb40f36a9a917e9bc5025e3ad747309180ff6a"
-  integrity sha512-P9fSi+/FZKGQXV4kCJg2td2jkIvDryDFZr/mn+0xfWiC/rcSov9CHK0W3qh+ZXyItLEe6dOtAdGxlTYOijHthw==
+"@next/swc-win32-x64-msvc@13.1.4":
+  version "13.1.4"
+  resolved "https://registry.yarnpkg.com/@next/swc-win32-x64-msvc/-/swc-win32-x64-msvc-13.1.4.tgz#0eab48201b90e862c76add99c4feff00bfb0fb67"
+  integrity sha512-bygNjmnq+F9NqJXh7OfhJgqu6LGU29GNKQYVyZkxY/h5K0WWUvAE/VL+TdyMwbvQr9KByx5XLwORwetLxXCo4g==
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -10279,12 +10279,12 @@ escodegen@^2.0.0:
   optionalDependencies:
     source-map "~0.6.1"
 
-eslint-config-next@13.1.3:
-  version "13.1.3"
-  resolved "https://registry.yarnpkg.com/eslint-config-next/-/eslint-config-next-13.1.3.tgz#12b0cb6b4f40dd9d4d3a4865e5052351584c1ce8"
-  integrity sha512-KaQA3D/rHBlGg3wGMSLl7lg3O0RNibeaS6SY85zLmQFIgk1OLXs6JOSRV8Y2euVvb90oLyR87+kP151gNTvKNw==
+eslint-config-next@13.1.4:
+  version "13.1.4"
+  resolved "https://registry.yarnpkg.com/eslint-config-next/-/eslint-config-next-13.1.4.tgz#f77d3f62e1b62564bd5c88c27bb5a00eb786c565"
+  integrity sha512-r7n9V4/kkiDDVFfBwI3tviGUV/jUzGI0lY3JefxceYaU18gdk2kMgNPyhHobowu1+yHZpZi8iEzRtzeTrtGRLg==
   dependencies:
-    "@next/eslint-plugin-next" "13.1.3"
+    "@next/eslint-plugin-next" "13.1.4"
     "@rushstack/eslint-patch" "^1.1.3"
     "@typescript-eslint/parser" "^5.42.0"
     eslint-import-resolver-node "^0.3.6"
@@ -16030,10 +16030,10 @@ next-seo@^5.5.0:
   resolved "https://registry.yarnpkg.com/next-seo/-/next-seo-5.14.1.tgz#d07322edc37634fbd9beca51fb04177910d8031c"
   integrity sha512-NiJeQbxYP3z+EMp52q8k3Q+OfX2+Yv2WehERDj98r2wjXxL+woKpRBdsSVYolTD0Hm8IWs42SzaISE93RoQdOw==
 
-next-sitemap@3.1.45:
-  version "3.1.45"
-  resolved "https://registry.yarnpkg.com/next-sitemap/-/next-sitemap-3.1.45.tgz#3ac9a18d2f9c13da27267ea9c257da8eac237a59"
-  integrity sha512-8vyvWC8KT8RIEUL9Vfiae9yGuIIiJ1IpepzbFtwZx43BaKsoi/Zk9OlmPKuQouVY726xwN7uLZPtgl2l2U+9Ug==
+next-sitemap@3.1.47:
+  version "3.1.47"
+  resolved "https://registry.yarnpkg.com/next-sitemap/-/next-sitemap-3.1.47.tgz#3000bc9f3179ec834e3962367e7aee5ee922bf38"
+  integrity sha512-LZxCWZ6lhQBfv1cuGob3tnsaHWffQM7VDmkXXp8u3n4LD7EJAR/SamlMj3mpHa8bFeuR6TjjRqrq/7e4WSOcLQ==
   dependencies:
     "@corex/deepmerge" "^4.0.29"
     minimist "^1.2.7"
@@ -16060,30 +16060,30 @@ next-videos@1.5.0:
   dependencies:
     file-loader "^4.2.0"
 
-next@13.1.3:
-  version "13.1.3"
-  resolved "https://registry.yarnpkg.com/next/-/next-13.1.3.tgz#2ba15a441fb9ef38467259fb0894623c79e938aa"
-  integrity sha512-ig7m7Po/F+Wp0xl+9RKYZq+PYfgVmONH6hBPVT2+jrdUmZkrqsN5ioSe4oQbCAb9tMtVr07agVdK2HFjD15Yug==
+next@13.1.4:
+  version "13.1.4"
+  resolved "https://registry.yarnpkg.com/next/-/next-13.1.4.tgz#fe13ff4a656153b6249c101d79a54569c0cd05e5"
+  integrity sha512-g0oBUU+tcOPKbXTVdsDO2adc6wd/ggqauHHysPQJxuIKqZ+fwICGJht0C5D5V0A/77eQDF5EFwNdAHkFvBDsog==
   dependencies:
-    "@next/env" "13.1.3"
+    "@next/env" "13.1.4"
     "@swc/helpers" "0.4.14"
     caniuse-lite "^1.0.30001406"
     postcss "8.4.14"
     styled-jsx "5.1.1"
   optionalDependencies:
-    "@next/swc-android-arm-eabi" "13.1.3"
-    "@next/swc-android-arm64" "13.1.3"
-    "@next/swc-darwin-arm64" "13.1.3"
-    "@next/swc-darwin-x64" "13.1.3"
-    "@next/swc-freebsd-x64" "13.1.3"
-    "@next/swc-linux-arm-gnueabihf" "13.1.3"
-    "@next/swc-linux-arm64-gnu" "13.1.3"
-    "@next/swc-linux-arm64-musl" "13.1.3"
-    "@next/swc-linux-x64-gnu" "13.1.3"
-    "@next/swc-linux-x64-musl" "13.1.3"
-    "@next/swc-win32-arm64-msvc" "13.1.3"
-    "@next/swc-win32-ia32-msvc" "13.1.3"
-    "@next/swc-win32-x64-msvc" "13.1.3"
+    "@next/swc-android-arm-eabi" "13.1.4"
+    "@next/swc-android-arm64" "13.1.4"
+    "@next/swc-darwin-arm64" "13.1.4"
+    "@next/swc-darwin-x64" "13.1.4"
+    "@next/swc-freebsd-x64" "13.1.4"
+    "@next/swc-linux-arm-gnueabihf" "13.1.4"
+    "@next/swc-linux-arm64-gnu" "13.1.4"
+    "@next/swc-linux-arm64-musl" "13.1.4"
+    "@next/swc-linux-x64-gnu" "13.1.4"
+    "@next/swc-linux-x64-musl" "13.1.4"
+    "@next/swc-win32-arm64-msvc" "13.1.4"
+    "@next/swc-win32-ia32-msvc" "13.1.4"
+    "@next/swc-win32-x64-msvc" "13.1.4"
 
 nextra-theme-docs@2.2.4:
   version "2.2.4"
