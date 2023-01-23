@@ -48,7 +48,7 @@ exampleApi6.post('/formUrlEncoded', async req => {
 });
 
 exampleApi6.get('/cars/:id', req => {
-  return new Response(JSON.stringify(`Car ID: ${decodeURIComponent(req.params.id)}`), {
+  return new Response(JSON.stringify(`Car ID: ${req.params.id}`), {
     headers: {
       'Content-Type': 'application/json',
     },
@@ -66,9 +66,7 @@ exampleApi6.get('/cacti/:cactusId', req => {
 exampleApi6.get('/eateries/:eatery/breads/:breadName/dishes/:dishKey', req => {
   return new Response(
     JSON.stringify(
-      `Parameters combined: ${req.params.eatery} ${req.params.breadName} ${decodeURIComponent(
-        req.params.dishKey,
-      )}`,
+      `Parameters combined: ${req.params.eatery} ${req.params.breadName} ${req.params.dishKey}`,
     ),
     {
       headers: {
