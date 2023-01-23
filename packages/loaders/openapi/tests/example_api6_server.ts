@@ -1,9 +1,8 @@
+/* eslint-disable import/no-extraneous-dependencies */
 // Copyright IBM Corp. 2017,2018. All Rights Reserved.
 // Node module: openapi-to-graphql
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
-// eslint-disable-next-line import/no-extraneous-dependencies
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { parse as qsParse } from 'qs';
 import { createRouter, Response } from '@whatwg-node/router';
 
