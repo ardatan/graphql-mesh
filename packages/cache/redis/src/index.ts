@@ -28,11 +28,11 @@ export default class RedisCache<V = string> implements KeyValueCache<V> {
         throw new Error('Redis URL must use either redis:// or rediss://');
       }
 
-      this.client = new Redis(redisUrl.toString());
+      this.client = new Redis(redisUrl?.toString());
     } else {
-      const parsedHost = interpolateStrWithEnv(options.host);
-      const parsedPort = interpolateStrWithEnv(options.port);
-      const parsedPassword = interpolateStrWithEnv(options.password);
+      const parsedHost = interpolateStrWithEnv(options.host?.toString());
+      const parsedPort = interpolateStrWithEnv(options.port?.toString());
+      const parsedPassword = interpolateStrWithEnv(options.password?.toString());
       if (parsedHost) {
         this.client = new Redis({
           host: parsedHost,

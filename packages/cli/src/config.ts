@@ -33,7 +33,15 @@ export function validateConfig(
     logger.warn('Configuration file is not valid!');
     logger.warn("This is just a warning! It doesn't have any effects on runtime.");
     ajv.errors.forEach(error => {
-      logger.warn(error.message);
+      let errorMessage = '';
+      if (error.propertyName) {
+        errorMessage += `Property: ${error.propertyName} \n`;
+      }
+      if (error.data) {
+        errorMessage += `Given: ${error.data} \n`;
+      }
+      errorMessage += `Error: ${error.message}`;
+      logger.warn(errorMessage);
     });
   }
 }
