@@ -3264,10 +3264,10 @@
   dependencies:
     lodash.sortby "4.7.0"
 
-"@graphql-inspector/core@3.3.0":
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/@graphql-inspector/core/-/core-3.3.0.tgz#3982909cec46a5b3050a8265569503f20a3b5742"
-  integrity sha512-LRtk9sHgj9qqVPIkkThAVq3iZ7QxgHCx6elEwd0eesZBCmaIYQxD/BFu+VT8jr10YfOURBZuAnVdyGu64vYpBg==
+"@graphql-inspector/core@3.5.0":
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/@graphql-inspector/core/-/core-3.5.0.tgz#195ef4557158f48c71236df77bb5c27b16f3e5f1"
+  integrity sha512-96guRRzfss8Jn7AqANh9HETq0m72a97ieC6fOGd+bGLHvdmxvqVWNCer+3VpQknGeQD7RsKe7Qommgo/PAqKbg==
   dependencies:
     dependency-graph "0.11.0"
     object-inspect "1.10.3"
@@ -6675,7 +6675,7 @@
     urlpattern-polyfill "^6.0.2"
     web-streams-polyfill "^3.2.0"
 
-"@whatwg-node/router@0.1.7":
+"@whatwg-node/router@0.1.7", "@whatwg-node/router@^0.1.7":
   version "0.1.7"
   resolved "https://registry.yarnpkg.com/@whatwg-node/router/-/router-0.1.7.tgz#89dc0dda4fb0e73307ee783464fd505d8ddd41d2"
   integrity sha512-feBvOqGMNnX4oC1HMbIOO/buxIuDyHIpQY2E0AhrGdewZrlQk4AfKVlaey/1vJRhx5RLPwEFjlzGA5jjdQID+Q==
