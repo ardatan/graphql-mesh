@@ -1,13 +1,11 @@
 import { readFile } from 'fs/promises';
-import { createServer, Server } from 'http';
 import { join } from 'path';
 import { ExecutionResult } from 'graphql';
 import { findAndParseConfig } from '@graphql-mesh/cli';
 import { ProcessedConfig } from '@graphql-mesh/config';
 import { createMeshHTTPHandler } from '@graphql-mesh/http';
-import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
-import { fetch } from '@whatwg-node/fetch';
-import { app } from '../api/app';
+import { getMesh } from '@graphql-mesh/runtime';
+import { createApp } from '../api/app';
 
 describe('OpenAPI Subscriptions', () => {
   if (process.versions.node.startsWith('14')) {
@@ -15,7 +13,7 @@ describe('OpenAPI Subscriptions', () => {
     return;
   }
   let config: ProcessedConfig;
-  let appServer: Server;
+  let appWrapper: ReturnType<typeof createApp>;
   let meshHandler: ReturnType<typeof createMeshHTTPHandler>;
   beforeAll(async () => {
     config = await findAndParseConfig({
@@ -33,18 +31,17 @@ describe('OpenAPI Subscriptions', () => {
     };
     meshHandler = createMeshHTTPHandler({
       baseDir: join(__dirname, '..'),
-      getBuiltMesh: () => getMesh(config),
+      getBuiltMesh: () =>
+        getMesh({
+          ...config,
+          fetchFn: appWrapper.app.fetch as any,
+        }),
       rawServeConfig: config.config.serve,
     });
-    appServer = await new Promise<Server>(resolve => {
-      const server = app.listen(4001, () => resolve(server));
-    });
+    appWrapper = createApp(meshHandler.fetch as any);
   });
-  afterAll(async () => {
-    app.emit('destroy');
-    await new Promise<void>((resolve, reject) =>
-      appServer.close(err => (err ? reject(err) : resolve())),
-    );
+  afterAll(() => {
+    appWrapper.dispose();
   });
   it('should work', async () => {
     const startWebhookMutation = await readFile(
@@ -77,7 +74,7 @@ describe('OpenAPI Subscriptions', () => {
       'utf8',
     );
 
-    const listenWebhookResponse = await fetch('http://localhost:4000/graphql', {
+    const listenWebhookResponse = await meshHandler.fetch('http://localhost:4000/graphql', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -93,9 +90,9 @@ describe('OpenAPI Subscriptions', () => {
 
     const listenWebhookResult = listenWebhookResponse.body!;
 
-    const reader = listenWebhookResult.getReader();
+    const iterator: AsyncIterator<Uint8Array> = listenWebhookResult[Symbol.asyncIterator]();
 
-    const readerResult = await reader.read();
+    const readerResult = await iterator.next();
     const chunkStr = Buffer.from(readerResult.value!).toString('utf8');
     expect(chunkStr.trim()).toBe(
       `data: ${JSON.stringify({
@@ -107,7 +104,6 @@ describe('OpenAPI Subscriptions', () => {
       })}`,
     );
 
-    reader.releaseLock();
-    await listenWebhookResult.cancel();
+    await iterator.return?.();
   });
 });
