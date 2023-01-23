@@ -11,7 +11,7 @@ directive @globalOptions(sourceName: String, endpoint: String, operationHeaders:
 
 directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
 
-type Query @globalOptions(sourceName: "example_api_combined", endpoint: "http://localhost:{context.port}/api") {
+type Query @globalOptions(sourceName: "example_api_combined", endpoint: "http://localhost:3000/api") {
   "Returns information about all employee cars"
   getAllCars: [query_getAllCars_items] @httpOperation(path: "/cars", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
 }

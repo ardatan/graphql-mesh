@@ -13,7 +13,7 @@ directive @globalOptions(sourceName: String, endpoint: String, operationHeaders:
 
 directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
 
-type Query @globalOptions(sourceName: "example_api", endpoint: "http://localhost:{context.port}", queryStringOptions: "{\\"allowDots\\":true}") {
+type Query @globalOptions(sourceName: "example_api", endpoint: "http://localhost:3000", queryStringOptions: "{\\"allowDots\\":true}") {
   "Search for documents in a collection that match the search criteria."
   searchCollection(
     "The name of the collection to search for the document under"

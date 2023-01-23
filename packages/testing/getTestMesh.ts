@@ -1,16 +1,15 @@
 /* eslint-disable import/no-nodejs-modules */
-/* eslint-disable import/no-extraneous-dependencies */
-import { createServer } from 'http';
-import { createYoga, createSchema, Repeater } from 'graphql-yoga';
-import { getMesh } from '@graphql-mesh/runtime';
-import GraphQLHandler from '@graphql-mesh/graphql';
-import LocalforageCache from '@graphql-mesh/cache-localforage';
-import { PubSub, DefaultLogger, defaultImportFn } from '@graphql-mesh/utils';
-import StitchingMerger from '@graphql-mesh/merger-stitching';
-import { MeshStore, InMemoryStoreStorageAdapter } from '@graphql-mesh/store';
-import { AddressInfo } from 'net';
 
-export async function getTestMesh() {
+/* eslint-disable import/no-extraneous-dependencies */
+import { createSchema, createYoga, Repeater } from 'graphql-yoga';
+import LocalforageCache from '@graphql-mesh/cache-localforage';
+import GraphQLHandler from '@graphql-mesh/graphql';
+import StitchingMerger from '@graphql-mesh/merger-stitching';
+import { getMesh } from '@graphql-mesh/runtime';
+import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
+import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
+
+export function getTestMesh() {
   const yoga = createYoga({
     logging: false,
     schema: createSchema({
@@ -46,14 +45,8 @@ export async function getTestMesh() {
     readonly: false,
     validate: false,
   });
-  const server = createServer(yoga);
-  await new Promise<void>(resolve => server.listen(0, resolve));
-  const port = (server.address() as AddressInfo).port;
-  const subId = pubsub.subscribe('destroy', async () => {
-    pubsub.unsubscribe(subId);
-    await new Promise(resolve => server.close(resolve));
-  });
-  const mesh = await getMesh({
+  return getMesh({
+    fetchFn: yoga.fetch as any,
     sources: [
       {
         name: 'Yoga',
@@ -61,7 +54,7 @@ export async function getTestMesh() {
           name: 'Yoga',
           baseDir: __dirname,
           config: {
-            endpoint: `http://localhost:${port}/graphql`,
+            endpoint: `http://localhost:3000/graphql`,
             subscriptionsProtocol: 'SSE',
           },
           cache,
@@ -81,5 +74,4 @@ export async function getTestMesh() {
       store: store.child('Stitching'),
     }),
   });
-  return mesh;
 }

@@ -20,7 +20,7 @@ directive @linkResolver(linkResolverMap: ObjMap) on FIELD_DEFINITION
 
 directive @link(defaultRootType: String, defaultField: String) on FIELD_DEFINITION
 
-type Query @globalOptions(sourceName: "example_api", endpoint: "http://localhost:{context.port}/api") {
+type Query @globalOptions(sourceName: "example_api", endpoint: "http://localhost:3000/api") {
   "Return a list of users."
   getUsers(
     "Limit of the number of users to return."

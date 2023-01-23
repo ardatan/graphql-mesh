@@ -1,35 +1,22 @@
+import { execute, GraphQLSchema, parse, validate } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { fetch } from '@whatwg-node/fetch';
-import { parse, validate, GraphQLSchema, execute } from 'graphql';
-
-import { startServer, stopServer } from './example_api6_server.js';
 import { OpenAPILoaderOptions } from '../src/index.js';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
-import getPort from 'get-port';
+import { exampleApi6 } from './example_api6_server.js';
 
 describe('example_api6', () => {
   /**
    * Set up the schema first and run example API server
    */
   let createdSchema: GraphQLSchema;
-  let port: number;
-  const endpoint = 'http://localhost:{context.port}/api';
+  const endpoint = 'http://localhost:3000/api';
   beforeAll(async () => {
-    port = await getPort();
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api6', {
-      fetch,
+      fetch: exampleApi6.fetch as any,
       endpoint,
       source: './fixtures/example_oas6.json',
       cwd: __dirname,
     });
-    await startServer(port);
-  });
-
-  /**
-   * Shut down API server
-   */
-  afterAll(() => {
-    return stopServer();
   });
 
   it('should generate the schema correctly', () => {
@@ -54,9 +41,6 @@ describe('example_api6', () => {
     const promise1 = execute({
       schema: createdSchema,
       document: parse(query1),
-      contextValue: {
-        port,
-      },
     });
 
     const query2 = /* GraphQL */ `
@@ -73,7 +57,7 @@ describe('example_api6', () => {
       endpoint,
       source: './fixtures/example_oas6.json',
       cwd: __dirname,
-      fetch,
+      fetch: exampleApi6.fetch as any,
       operationHeaders: {
         specialheader: 'requestOptions',
       },
@@ -86,9 +70,6 @@ describe('example_api6', () => {
       return execute({
         schema,
         document: ast,
-        contextValue: {
-          port,
-        },
       });
     });
 
@@ -135,9 +116,6 @@ describe('example_api6', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
-      contextValue: {
-        port,
-      },
     });
 
     expect(result.errors).toBeFalsy();
@@ -168,9 +146,6 @@ describe('example_api6', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
-      contextValue: {
-        port,
-      },
     });
 
     expect(result.errors).toBeFalsy();
@@ -201,9 +176,6 @@ describe('example_api6', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
-      contextValue: {
-        port,
-      },
     });
 
     expect(result.errors).toBeFalsy();
@@ -229,9 +201,6 @@ describe('example_api6', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
-      contextValue: {
-        port,
-      },
     });
 
     expect(result.errors).toBeFalsy();
@@ -260,9 +229,6 @@ describe('example_api6', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
-      contextValue: {
-        port,
-      },
     });
 
     expect(result.errors).toBeFalsy();
@@ -288,9 +254,6 @@ describe('example_api6', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
-      contextValue: {
-        port,
-      },
     });
 
     expect(result.errors).toBeFalsy();
@@ -321,9 +284,6 @@ describe('example_api6', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
-      contextValue: {
-        port,
-      },
     });
 
     expect(result.errors).toBeFalsy();
@@ -353,9 +313,6 @@ describe('example_api6', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
-      contextValue: {
-        port,
-      },
     });
 
     expect(result.errors).toBeFalsy();
@@ -392,9 +349,6 @@ describe('example_api6', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
-      contextValue: {
-        port,
-      },
     });
 
     expect(result.errors).toBeFalsy();
@@ -429,9 +383,6 @@ describe('example_api6', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
-      contextValue: {
-        port,
-      },
     });
 
     expect(result.errors).toBeFalsy();
@@ -454,9 +405,6 @@ describe('example_api6', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
-      contextValue: {
-        port,
-      },
     });
 
     expect(result.errors).toBeFalsy();
@@ -483,9 +431,6 @@ describe('example_api6', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
-      contextValue: {
-        port,
-      },
     });
 
     expect(result.errors).toBeFalsy();
@@ -517,9 +462,6 @@ describe('example_api6', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
-      contextValue: {
-        port,
-      },
     });
 
     expect(result.errors).toBeFalsy();

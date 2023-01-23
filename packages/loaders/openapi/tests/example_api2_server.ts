@@ -2,48 +2,22 @@
 // Node module: openapi-to-graphql
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { createRouter, Response } from '@whatwg-node/router';
 
-import express from 'express';
-import * as bodyParser from 'body-parser';
-import { Server } from 'http';
-
-let server: Server; // holds server object for shutdown
-
-/**
- * Starts the server at the given port
- */
-export function startServer(PORT: number) {
-  const app = express();
-
-  app.use(bodyParser.json());
-
-  app.get('/api/user', (req, res) => {
-    res.send({
-      name: 'Arlene L McMahon',
-    });
+export const exampleApi2 = createRouter();
+exampleApi2.get('/api/user', () => {
+  return new Response(JSON.stringify({ name: 'Arlene L McMahon' }), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
   });
+});
 
-  app.get('/api/user2', (req, res) => {
-    res.send({
-      name: 'William B Ropp',
-    });
+exampleApi2.get('/api/user2', () => {
+  return new Response(JSON.stringify({ name: 'William B Ropp' }), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
   });
-
-  return new Promise(resolve => {
-    server = app.listen(PORT, resolve as () => void);
-  });
-}
-
-/**
- * Stops server.
- */
-export function stopServer() {
-  return new Promise(resolve => {
-    server.close(resolve);
-  });
-}
-
-// if run from command line, start server:
-if (require.main === module) {
-  startServer(3002);
-}
+});

@@ -2,89 +2,78 @@
 // Node module: openapi-to-graphql
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { createRouter, Response } from '@whatwg-node/router';
 
-import express from 'express';
-import * as bodyParser from 'body-parser';
-import { Server } from 'http';
+export const exampleApi5 = createRouter();
 
-let server: Server; // holds server object for shutdown
+exampleApi5.get('/api/o_d_d___n_a_m_e', req => {
+  return new Response(JSON.stringify({ data: 'odd name' }), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+});
+
+exampleApi5.get('/api/w-e-i-r-d___n-a-m-e', req => {
+  return new Response(JSON.stringify({ data: 'weird name' }), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+});
 
 /**
- * Starts the server at the given port
+ * Cannot use f-u-n-k-y___p-a-r-a-m-e-t-e-r (like in the OAS) as it is not
+ * allowed by Express.js routing
+ *
+ * "The name of route parameters must be made up of "word characters"
+ * ([A-Za-z0-9_])."
  */
-export function startServer(PORT: number) {
-  const app = express();
-
-  app.use(bodyParser.json());
-
-  app.get('/api/o_d_d___n_a_m_e', (req, res) => {
-    res.send({
-      data: 'odd name',
-    });
-  });
-
-  app.get('/api/w-e-i-r-d___n-a-m-e', (req, res) => {
-    res.send({
-      data: 'weird name',
-    });
-  });
-
-  /**
-   * Cannot use f-u-n-k-y___p-a-r-a-m-e-t-e-r (like in the OAS) as it is not
-   * allowed by Express.js routing
-   *
-   * "The name of route parameters must be made up of "word characters"
-   * ([A-Za-z0-9_])."
-   */
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  app.get('/api/w-e-i-r-d___n-a-m-e2/:funky___parameter', (req, res) => {
-    res.send({
-      data: `weird name 2 param: ${req.params.funky___parameter}`,
-    });
-  });
-
-  app.get('/api/w-e-i-r-d___n-a-m-e3/:funky___parameter', (req, res) => {
-    res.send({
-      data: `weird name 3 param: ${req.params.funky___parameter}`,
-    });
-  });
-
-  app.get('/api/getEnum', (req, res) => {
-    res.send({
-      data: 'a-m-b-e-r',
-    });
-  });
-
-  app.get('/api/getNumericalEnum', (req, res) => {
-    res.send({
-      data: 3,
-    });
-  });
-
-  app.get('/api/getObjectEnum', (req, res) => {
-    res.send({
-      data: {
-        hello: 'world',
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+exampleApi5.get('/api/w-e-i-r-d___n-a-m-e2/:funky___parameter', req => {
+  return new Response(
+    JSON.stringify({ data: `weird name 2 param: ${req.params.funky___parameter}` }),
+    {
+      headers: {
+        'Content-Type': 'application/json',
       },
-    });
-  });
+    },
+  );
+});
 
-  return new Promise(resolve => {
-    server = app.listen(PORT, resolve as () => void);
-  });
-}
+exampleApi5.get('/api/w-e-i-r-d___n-a-m-e3/:funky___parameter', req => {
+  return new Response(
+    JSON.stringify({ data: `weird name 3 param: ${req.params.funky___parameter}` }),
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    },
+  );
+});
 
-/**
- * Stops server.
- */
-export function stopServer() {
-  return new Promise(resolve => {
-    server.close(resolve);
+exampleApi5.get('/api/getEnum', req => {
+  return new Response(JSON.stringify({ data: 'a-m-b-e-r' }), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
   });
-}
+});
 
-// if run from command line, start server:
-if (require.main === module) {
-  startServer(3005).catch(console.error);
-}
+exampleApi5.get('/api/getNumericalEnum', req => {
+  return new Response(JSON.stringify({ data: 3 }), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+});
+
+exampleApi5.get('/api/getObjectEnum', req => {
+  return new Response(JSON.stringify({ data: { value: 'a-m-b-e-r' } }), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+});
