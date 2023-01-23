@@ -1,45 +1,45 @@
 import {
-  MeshHandlerOptions,
-  MeshHandler,
-  MeshSource,
-  YamlConfig,
-  ImportFn,
-  Logger,
-  MeshFetch,
-  GetMeshSourcePayload,
-} from '@graphql-mesh/types';
-import { UrlLoader, SubscriptionProtocol } from '@graphql-tools/url-loader';
-import {
-  GraphQLSchema,
+  buildASTSchema,
+  buildClientSchema,
   buildSchema,
   DocumentNode,
-  Kind,
-  buildASTSchema,
-  IntrospectionQuery,
-  buildClientSchema,
   ExecutionResult,
-  SelectionNode,
   GraphQLResolveInfo,
+  GraphQLSchema,
+  IntrospectionQuery,
+  Kind,
+  SelectionNode,
 } from 'graphql';
-import { introspectSchema } from '@graphql-tools/wrap';
-import { loadFromModuleExportExpression, readFileOrUrl } from '@graphql-mesh/utils';
-import {
-  ExecutionRequest,
-  isDocumentNode,
-  memoize1,
-  getOperationASTFromRequest,
-  parseSelectionSet,
-  isAsyncIterable,
-  Executor,
-} from '@graphql-tools/utils';
-import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import lodashGet from 'lodash.get';
+import { process, util } from '@graphql-mesh/cross-helpers';
+import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import {
   getInterpolatedHeadersFactory,
   getInterpolatedStringFactory,
   parseInterpolationStrings,
 } from '@graphql-mesh/string-interpolation';
-import { process, util } from '@graphql-mesh/cross-helpers';
+import {
+  GetMeshSourcePayload,
+  ImportFn,
+  Logger,
+  MeshFetch,
+  MeshHandler,
+  MeshHandlerOptions,
+  MeshSource,
+  YamlConfig,
+} from '@graphql-mesh/types';
+import { loadFromModuleExportExpression, readFileOrUrl } from '@graphql-mesh/utils';
+import { SubscriptionProtocol, UrlLoader } from '@graphql-tools/url-loader';
+import {
+  ExecutionRequest,
+  Executor,
+  getOperationASTFromRequest,
+  isAsyncIterable,
+  isDocumentNode,
+  memoize1,
+  parseSelectionSet,
+} from '@graphql-tools/utils';
+import { schemaFromExecutor } from '@graphql-tools/wrap';
 
 const getResolverData = memoize1(function getResolverData(params: ExecutionRequest) {
   return {
@@ -175,7 +175,7 @@ export default class GraphQLHandler implements MeshHandler {
         customFetch: this.fetchFn,
         subscriptionsProtocol: httpSourceConfig.subscriptionsProtocol as SubscriptionProtocol,
       });
-      return introspectSchema(function meshIntrospectionExecutor(params: ExecutionRequest) {
+      return schemaFromExecutor(function meshIntrospectionExecutor(params: ExecutionRequest) {
         const resolverData = getResolverData(params);
         return executor({
           ...params,

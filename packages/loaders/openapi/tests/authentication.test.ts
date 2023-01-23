@@ -1,10 +1,7 @@
 /* eslint-disable import/no-nodejs-modules */
 import { execute, parse } from 'graphql';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
-import { startServer } from './example_api_server.js';
-import { fetch } from '@whatwg-node/fetch';
-import { Server } from 'http';
-import { AddressInfo } from 'net';
+import { exampleApi } from './example_api_server.js';
 
 // We don't create viewers for each security scheme definition in OAS like openapi-to-graphql
 // But instead we let user to define them with string interpolation
@@ -14,22 +11,7 @@ describe('OpenAPI Loader: Authentication', () => {
   /**
    * Set up the schema first and run example API server
    */
-  let endpoint: string;
-  let server: Server;
-
-  beforeAll(async () => {
-    server = await startServer();
-    endpoint = `http://localhost:${(server.address() as AddressInfo).port}/api`;
-  });
-
-  /**
-   * Shut down API server
-   */
-  afterAll(done => {
-    server.close(() => {
-      done();
-    });
-  });
+  const endpoint = 'http://localhost:3000/api';
 
   it('should get patent using basic auth', async () => {
     const query = /* GraphQL */ `
@@ -47,7 +29,7 @@ describe('OpenAPI Loader: Authentication', () => {
       operationHeaders: {
         authorization: 'Basic {args.usernameAndPassword|base64}',
       },
-      fetch,
+      fetch: exampleApi.fetch as any,
     });
 
     const result = await execute({
@@ -80,7 +62,7 @@ describe('OpenAPI Loader: Authentication', () => {
       operationHeaders: {
         access_token: '{args.apiKey}',
       },
-      fetch,
+      fetch: exampleApi.fetch as any,
     });
 
     const result = await execute({
@@ -113,7 +95,7 @@ describe('OpenAPI Loader: Authentication', () => {
       operationHeaders: {
         cookie: 'access_token={args.apiKey}',
       },
-      fetch,
+      fetch: exampleApi.fetch as any,
     });
 
     const result = await execute({
@@ -146,7 +128,7 @@ describe('OpenAPI Loader: Authentication', () => {
       queryParams: {
         access_token: '{args.apiKey}',
       },
-      fetch,
+      fetch: exampleApi.fetch as any,
     });
 
     const result = await execute({

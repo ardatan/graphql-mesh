@@ -1,10 +1,7 @@
 import { execute, GraphQLSchema, parse } from 'graphql';
-
-import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
-import { startServer, stopServer } from './example_api5_server.js';
-import { fetch } from '@whatwg-node/fetch';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import getPort from 'get-port';
+import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
+import { exampleApi5 } from './example_api5_server.js';
 
 let createdSchema: GraphQLSchema;
 
@@ -12,24 +9,14 @@ describe('OpenAPI Loader: Testing the naming convention', () => {
   /**
    * Set up the schema first and run example API server
    */
-  let port: number;
   beforeAll(async () => {
-    port = await getPort();
     // Update PORT for this test case:
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api', {
-      fetch,
-      endpoint: 'http://localhost:{context.port}/api',
+      fetch: exampleApi5.fetch as any,
+      endpoint: 'http://localhost:3000/api',
       source: './fixtures/example_oas5.json',
       cwd: __dirname,
     });
-    await startServer(port);
-  });
-
-  /**
-   * Shut down API server
-   */
-  afterAll(() => {
-    return stopServer();
   });
 
   it('should generate the schema correctly', () => {
@@ -51,9 +38,6 @@ describe('OpenAPI Loader: Testing the naming convention', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
-      contextValue: {
-        port,
-      },
     });
 
     expect(result.errors).toBeFalsy();
@@ -85,9 +69,6 @@ describe('OpenAPI Loader: Testing the naming convention', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
-      contextValue: {
-        port,
-      },
     });
 
     expect(result.errors).toBeFalsy();
@@ -121,9 +102,6 @@ describe('OpenAPI Loader: Testing the naming convention', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
-      contextValue: {
-        port,
-      },
     });
 
     expect(result.errors).toBeFalsy();
@@ -155,9 +133,6 @@ describe('OpenAPI Loader: Testing the naming convention', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
-      contextValue: {
-        port,
-      },
     });
 
     expect(result.errors).toBeFalsy();
@@ -191,9 +166,6 @@ describe('OpenAPI Loader: Testing the naming convention', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
-      contextValue: {
-        port,
-      },
     });
 
     expect(result.errors).toBeFalsy();
@@ -227,9 +199,6 @@ describe('OpenAPI Loader: Testing the naming convention', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
-      contextValue: {
-        port,
-      },
     });
 
     expect(result.errors).toBeFalsy();
@@ -261,9 +230,6 @@ describe('OpenAPI Loader: Testing the naming convention', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
-      contextValue: {
-        port,
-      },
     });
 
     expect(result.errors).toBeFalsy();
@@ -293,9 +259,6 @@ describe('OpenAPI Loader: Testing the naming convention', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
-      contextValue: {
-        port,
-      },
     });
 
     expect(result.errors).toBeFalsy();
@@ -325,9 +288,6 @@ describe('OpenAPI Loader: Testing the naming convention', () => {
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
-      contextValue: {
-        port,
-      },
     });
 
     expect(result.errors).toBeFalsy();

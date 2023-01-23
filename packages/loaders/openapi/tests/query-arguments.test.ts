@@ -1,13 +1,8 @@
 /* eslint-disable import/no-nodejs-modules */
-import { fetch } from '@whatwg-node/fetch';
 import { graphql, GraphQLSchema } from 'graphql';
-import { Server } from 'http';
-import { AddressInfo } from 'net';
-
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
-import { getServer } from './query_arguments_server.js';
+import { queryArgumentsApi } from './query_arguments_server.js';
 
-let server: Server;
 let createdSchema: GraphQLSchema;
 
 describe('OpenAPI loader: Query Arguments', () => {
@@ -15,22 +10,12 @@ describe('OpenAPI loader: Query Arguments', () => {
    * Set up the schema first and run example API server
    */
   beforeAll(async () => {
-    server = await getServer();
-    const endpoint = `http://localhost:${(server.address() as AddressInfo).port}/`;
+    const endpoint = `http://localhost:3000/`;
     createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      fetch,
+      fetch: queryArgumentsApi.fetch as any,
       endpoint,
       source: './fixtures/query_arguments.json',
       cwd: __dirname,
-    });
-  });
-
-  /**
-   * Shut down API server
-   */
-  afterAll(done => {
-    server.close(() => {
-      done();
     });
   });
 
@@ -43,19 +28,19 @@ describe('OpenAPI loader: Query Arguments', () => {
       }
     `;
 
-    return graphql({ schema: createdSchema, source: query }).then(result => {
-      expect(result).toEqual({
-        data: {
-          todos: [
-            {
-              id: 1,
-            },
-            {
-              id: 2,
-            },
-          ],
-        },
-      });
+    const result = await graphql({ schema: createdSchema, source: query });
+
+    expect(result).toEqual({
+      data: {
+        todos: [
+          {
+            id: 1,
+          },
+          {
+            id: 2,
+          },
+        ],
+      },
     });
   });
 });

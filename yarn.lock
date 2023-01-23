@@ -6675,13 +6675,13 @@
     urlpattern-polyfill "^6.0.2"
     web-streams-polyfill "^3.2.0"
 
-"@whatwg-node/router@0.1.4":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@whatwg-node/router/-/router-0.1.4.tgz#bf31ec43173da4cc6d5dc292b6f9313152264a55"
-  integrity sha512-4mDwkyhId5Gg7+iKiJkcFV+o6xrqwx8WIc1YGpP0aPi9Fa8dBtxuISk2i1ExEKyQilgqTYwnWUumG5Ego8eQ7w==
+"@whatwg-node/router@0.1.6":
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/router/-/router-0.1.6.tgz#d5d31a85e5cf8763096b3a4256b452c4ed3afbee"
+  integrity sha512-dFi/QA+fHDaVXRe2I+rH3MRlN8EU43RT+LLky/P7SwsIbSdJ0JvyiOzoLZxuuKLiNL652c6B2Q/OSrxkXRLDTw==
   dependencies:
     "@whatwg-node/fetch" "0.6.2"
-    "@whatwg-node/server" "0.5.6"
+    "@whatwg-node/server" "0.5.8"
     tslib "^2.3.1"
 
 "@whatwg-node/server@0.5.4":
@@ -6692,10 +6692,10 @@
     "@whatwg-node/fetch" "0.6.1"
     tslib "^2.3.1"
 
-"@whatwg-node/server@0.5.6":
-  version "0.5.6"
-  resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.5.6.tgz#fd13b16290f5a95d2d8e837ed8f7b1c3751cf08c"
-  integrity sha512-C4sUhRaHjRljqsZ37xWzqPcrIcfi7Kp+T++8zhl6KVube6D8quqJPFYMHxFzGBaEMx10ghEkzsA1qkcskxmUYA==
+"@whatwg-node/server@0.5.8":
+  version "0.5.8"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.5.8.tgz#e47aa4535431b6703652809dc4f7e5ebac6bffdb"
+  integrity sha512-29f2Ijk663Hr6hF5GU5a8ELGQVbNMMDBWF1lTdpIKGyLrLJTKixarp6COEyEN5H9tGzIRUQar9Z76A+Jb9DyzQ==
   dependencies:
     "@whatwg-node/fetch" "0.6.2"
     tslib "^2.3.1"
