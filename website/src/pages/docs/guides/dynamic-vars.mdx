@@ -1,0 +1,80 @@
+# Using Dynamic Variables for Configuration
+
+Mesh enables usage of dynamic values in the configuration setup. Usage is done with curly braces,
+e.g. `{context.headers['x-my-api-token']}`.
+
+## `env` variables
+
+All variables available on your env could be used as configuration variables. For example, setting a
+base URL could be done as follows:
+
+```yaml filename=".meshrc.yaml"
+sources:
+  - name: MyGraphQLApi
+    handler:
+      graphql:
+        endpoint: {env.BASE_URL}/graphql
+```
+
+## Runtime variables
+
+In addition to environment variables, Mesh also supports runtime variables. These variables can be
+devided into two groups:
+
+### Operation Specific
+
+Those are variables that are available only for a specific operation:
+
+#### 'args' Variables
+
+Enables usage of operation arguments as variables. In the following example we define an argument
+for the `subreddit` field and use it in the `path` of the operation:
+
+```yaml filename=".meshrc.yaml"
+  ...
+      jsonSchema:
+        baseUrl: https://www.reddit.com/
+        operations:
+          - type: Query
+            field: subreddit
+            path: /r/{args.subreddit}.json
+            method: GET
+            responseSample: https://www.reddit.com/r/AskReddit.json
+            responseTypeName: Subreddit
+            argTypeMap:
+              subreddit:
+                type: string
+```
+
+#### 'root' variables
+
+Enables usage of the root entity as a variable. For a reference, you can see the
+[federation example](https://github.com/Urigo/graphql-mesh/blob/master/examples/federation-example/gateway/.meshrc.yml#L16),
+using the `user.id` as a variable.
+
+### Runtime Globally
+
+This variables are available for all operations:
+
+#### 'context' variable
+
+Enables usage of the Mesh runtime context as a variable. If Mesh runs as a gateway, the `context`
+variable will contain the `headers` and `cookies` of the request. If Mesh runs as a standalone
+server, the `context` variable will contain the `headers` and `cookies` of the request, as well as
+the `req` and `res` objects.
+
+In the following example we use the `accessToken` cookie as an auth token:
+
+```yaml filename=".meshrc.yaml"
+sources:
+  - name: Microsoft Graph
+    handler:
+      odata:
+        endpoint: https://graph.microsoft.com/v1.0/
+        batch: json
+        operationHeaders:
+          Authorization: Bearer {context.cookies.accessToken}
+```
+
+If Mesh is initialized with a `context` object, it will be available as a variable as well. Other
+than that, some handler-dependent `context` properties might be available.
