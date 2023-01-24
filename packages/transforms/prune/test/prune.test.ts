@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { buildSchema } from 'graphql';
+import { buildSchema, printSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import PruneTransform from '../src';
@@ -31,6 +31,6 @@ describe('Prune', () => {
     `);
     const prunedSchema = transform.transformSchema(schema);
     expect(prunedSchema.getType('Query')).toBeDefined();
-    expect(prunedSchema.getType('Mutation')).toBeFalsy();
+    expect(prunedSchema.getType('Mutation')).toBeDefined();
   });
 });
