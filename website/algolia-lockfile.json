@@ -694,6 +694,41 @@
     "type": "Documentation"
   },
   {
+    "objectID": "mesh-docs-guides-dynamic-vars",
+    "headings": ["`env` variables", "Runtime variables"],
+    "toc": [
+      {
+        "children": [],
+        "title": "`env` variables",
+        "anchor": "env-variables"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Runtime Globally",
+                "anchor": "runtime-globally"
+              }
+            ],
+            "title": "Operation Specific",
+            "anchor": "operation-specific"
+          }
+        ],
+        "title": "Runtime variables",
+        "anchor": "runtime-variables"
+      }
+    ],
+    "content": "dd7265ce4b8daf9d886a7473272c7b51",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/dynamic-vars",
+    "domain": "https://www.the-guild.dev/graphql/mesh/",
+    "hierarchy": ["Docs", "Guides"],
+    "source": "Mesh",
+    "title": "Dynamic Variables",
+    "type": "Documentation"
+  },
+  {
     "objectID": "mesh-docs-guides-error-masking",
     "headings": ["Enabling Errors masking", "Custom resolvers error handling"],
     "toc": [
@@ -844,7 +879,7 @@
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Guides"],
     "source": "Mesh",
-    "title": "headers",
+    "title": "Headers",
     "type": "Documentation"
   },
   {
