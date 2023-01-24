@@ -1,5 +1,16 @@
 # @graphql-mesh/odata
 
+## 0.22.5
+
+### Patch Changes
+
+- [#5056](https://github.com/Urigo/graphql-mesh/pull/5056)
+  [`b001113f0`](https://github.com/Urigo/graphql-mesh/commit/b001113f0f99a070bc0a840b3c2472eafe8be0c9)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@4.0.14` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/4.0.14) (from
+    `4.0.13`, in `dependencies`)
+
 ## 0.22.4
 
 ### Patch Changes

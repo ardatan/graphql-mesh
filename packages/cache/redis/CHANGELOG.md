@@ -1,5 +1,14 @@
 # @graphql-mesh/cache-redis
 
+## 0.11.6
+
+### Patch Changes
+
+- [#5061](https://github.com/Urigo/graphql-mesh/pull/5061)
+  [`cd389e465`](https://github.com/Urigo/graphql-mesh/commit/cd389e465c12e24cfb443ffb843a03843c4028ec)
+  Thanks [@ardatan](https://github.com/ardatan)! - Convert `port` to `string` just in case the user
+  gives a number
+
 ## 0.11.5
 
 ### Patch Changes
