@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/soap",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "type": "module",
   "license": "MIT",
   "main": "dist/cjs/index.js",

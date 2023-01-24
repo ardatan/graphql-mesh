@@ -1,5 +1,16 @@
 # @graphql-mesh/http
 
+## 0.3.9
+
+### Patch Changes
+
+- [#5062](https://github.com/Urigo/graphql-mesh/pull/5062)
+  [`a4ccf07fc`](https://github.com/Urigo/graphql-mesh/commit/a4ccf07fca48813878284d335d7ef8a37a89dacb)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@whatwg-node/router@0.1.7` ↗︎](https://www.npmjs.com/package/@whatwg-node/router/v/0.1.7)
+    (from `0.1.4`, in `dependencies`)
+
 ## 0.3.8
 
 ### Patch Changes

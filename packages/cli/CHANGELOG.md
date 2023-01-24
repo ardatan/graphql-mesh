@@ -1,5 +1,25 @@
 # @graphql-mesh/cli
 
+## 0.82.12
+
+### Patch Changes
+
+- [#5067](https://github.com/Urigo/graphql-mesh/pull/5067)
+  [`9d5c92245`](https://github.com/Urigo/graphql-mesh/commit/9d5c92245f6d7ff937ddb950dca38b20f5fabe4c)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`rimraf@4.1.2` ↗︎](https://www.npmjs.com/package/rimraf/v/4.1.2) (from
+    `4.1.1`, in `dependencies`)
+
+- [#5061](https://github.com/Urigo/graphql-mesh/pull/5061)
+  [`cd389e465`](https://github.com/Urigo/graphql-mesh/commit/cd389e465c12e24cfb443ffb843a03843c4028ec)
+  Thanks [@ardatan](https://github.com/ardatan)! - Clarify the error message in case of an invalid
+  configuration
+
+- Updated dependencies
+  [[`a4ccf07fc`](https://github.com/Urigo/graphql-mesh/commit/a4ccf07fca48813878284d335d7ef8a37a89dacb)]:
+  - @graphql-mesh/http@0.3.9
+
 ## 0.82.11
 
 ### Patch Changes
