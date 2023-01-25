@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { buildSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import FederationTransform from '@graphql-mesh/transform-federation';
