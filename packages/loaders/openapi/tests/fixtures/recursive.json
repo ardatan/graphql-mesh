@@ -25,12 +25,12 @@
       "properties": {
         "text": {
           "type": "string"
-        }
-      },
-      "child": {
-        "type": "array",
-        "items": {
-          "$ref": "#/definitions/RecursiveStructure"
+        },
+        "child": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RecursiveStructure"
+          }
         }
       }
     }
