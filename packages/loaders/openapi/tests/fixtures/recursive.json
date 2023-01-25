@@ -1,0 +1,38 @@
+{
+  "swagger": "2.0",
+  "host": "api.marksandspencer.com",
+  "basePath": "/",
+  "paths": {
+    "/hello-world": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/RecursiveStructure"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "RecursiveStructure": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        }
+      },
+      "child": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/RecursiveStructure"
+        }
+      }
+    }
+  }
+}
