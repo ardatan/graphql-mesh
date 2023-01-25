@@ -1,11 +1,29 @@
-import { GraphQLSchema, GraphQLObjectType, GraphQLUnionType, isObjectType } from 'graphql';
-import { MeshTransform, YamlConfig, MeshTransformOptions, ImportFn } from '@graphql-mesh/types';
-import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
-import { entitiesField, EntityType, serviceField } from '@apollo/subgraph/dist/types.js';
-import { mapSchema, MapperKind, printSchemaWithDirectives } from '@graphql-tools/utils';
-import { MergedTypeResolver, SubschemaConfig } from '@graphql-tools/delegate';
+import {
+  GraphQLInterfaceType,
+  GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLUnionType,
+  isObjectType,
+} from 'graphql';
 import set from 'lodash.set';
+import { entitiesField, EntityType, serviceField } from '@apollo/subgraph/dist/types.js';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import { ImportFn, MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { MergedTypeResolver, SubschemaConfig } from '@graphql-tools/delegate';
+import { MapperKind, mapSchema, printSchemaWithDirectives } from '@graphql-tools/utils';
+
+const federationDirectives = [
+  'extends',
+  'external',
+  'inaccessible',
+  'key',
+  'override',
+  'provides',
+  'requires',
+  'shareable',
+  'tag',
+];
 
 export default class FederationTransform implements MeshTransform {
   private apiName: string;
@@ -172,19 +190,80 @@ export default class FederationTransform implements MeshTransform {
       schemaWithUnionType.extensions.directives || {});
     directivesObj.link = {
       url: 'https://specs.apollo.dev/federation/v2.0',
-      import: [
-        '@extends',
-        '@external',
-        '@inaccessible',
-        '@key',
-        '@override',
-        '@provides',
-        '@requires',
-        '@shareable',
-        '@tag',
-      ],
+      import: federationDirectives.map(dirName => `@${dirName}`),
     };
 
-    return schemaWithUnionType;
+    const existingDirectives = schemaWithUnionType.getDirectives();
+    const filteredDirectives = existingDirectives.filter(directive =>
+      federationDirectives.includes(directive.name),
+    );
+
+    if (existingDirectives.length === filteredDirectives.length) {
+      return schemaWithUnionType;
+    }
+
+    const filteredSchema = mapSchema(schemaWithUnionType, {
+      [MapperKind.OBJECT_TYPE]: type => {
+        return new GraphQLObjectType({
+          ...type.toConfig(),
+          astNode: type.astNode && {
+            ...type.astNode,
+            directives: type.astNode.directives?.filter(directive =>
+              federationDirectives.includes(directive.name.value),
+            ),
+          },
+          extensions: {
+            ...type.extensions,
+            directives: Object.fromEntries(
+              Object.entries(type.extensions?.directives || {}).filter(([key]) =>
+                federationDirectives.includes(key),
+              ),
+            ),
+          },
+        });
+      },
+      [MapperKind.INTERFACE_TYPE]: type => {
+        return new GraphQLInterfaceType({
+          ...type.toConfig(),
+          astNode: type.astNode && {
+            ...type.astNode,
+            directives: type.astNode.directives?.filter(directive =>
+              federationDirectives.includes(directive.name.value),
+            ),
+          },
+          extensions: {
+            ...type.extensions,
+            directives: Object.fromEntries(
+              Object.entries(type.extensions?.directives || {}).filter(([key]) =>
+                federationDirectives.includes(key),
+              ),
+            ),
+          },
+        });
+      },
+      [MapperKind.COMPOSITE_FIELD]: fieldConfig => {
+        return {
+          ...fieldConfig,
+          astNode: fieldConfig.astNode && {
+            ...fieldConfig.astNode,
+            directives: fieldConfig.astNode.directives?.filter(directive =>
+              federationDirectives.includes(directive.name.value),
+            ),
+          },
+          extensions: {
+            ...fieldConfig.extensions,
+            directives: Object.fromEntries(
+              Object.entries(fieldConfig.extensions?.directives || {}).filter(([key]) =>
+                federationDirectives.includes(key),
+              ),
+            ),
+          },
+        };
+      },
+    });
+    return new GraphQLSchema({
+      ...filteredSchema.toConfig(),
+      directives: filteredDirectives,
+    });
   }
 }
