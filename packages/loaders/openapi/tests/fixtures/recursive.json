@@ -1,6 +1,6 @@
 {
   "swagger": "2.0",
-  "host": "api.marksandspencer.com",
+  "host": "api.myapi.com",
   "basePath": "/",
   "paths": {
     "/hello-world": {
