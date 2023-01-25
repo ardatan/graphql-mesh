@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "concurrently \"yarn start:api\" \"yarn start:mesh\"",
-    "start:api": "ts-node api.ts",
+    "start:api": "ts-node api/server.ts",
     "start:mesh": "mesh dev"
   },
   "dependencies": {

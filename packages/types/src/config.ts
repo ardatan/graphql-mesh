@@ -1620,6 +1620,7 @@ export interface Plugin {
   hive?: HivePlugin;
   httpCache?: any;
   httpDetailsExtensions?: HTTPDetailsExtensionsConfig;
+  http2?: Http2Plugin;
   liveQuery?: LiveQueryConfig;
   mock?: MockingConfig;
   newrelic?: NewrelicConfig;
@@ -1734,6 +1735,9 @@ export interface HiveReportingOptions {
 }
 export interface HTTPDetailsExtensionsConfig {
   if?: any;
+}
+export interface Http2Plugin {
+  origins?: string[];
 }
 export interface LiveQueryConfig {
   /**
