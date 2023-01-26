@@ -37,7 +37,7 @@
     "@graphql-mesh/types": "0.89.5",
     "@graphql-mesh/utils": "0.43.6",
     "@whatwg-node/router": "0.1.7",
-    "graphql-yoga": "3.3.0",
+    "graphql-yoga": "3.4.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

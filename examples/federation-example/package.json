@@ -22,7 +22,7 @@
     "apollo-server": "3.11.1",
     "concurrently": "7.6.0",
     "delay-cli": "2.0.0",
-    "jest": "29.4.0",
+    "jest": "29.4.1",
     "ts-node": "10.9.1",
     "typescript": "4.9.4"
   }
