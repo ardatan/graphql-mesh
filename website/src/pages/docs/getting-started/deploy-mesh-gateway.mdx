@@ -90,11 +90,16 @@ build step.
 Then, we can create a Lambda as it follows:
 
 ```ts filename="graphql.ts"
-import type { Handler } from '@aws-cdk/aws-lambda'
 import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda'
+import type { Handler } from '@aws-cdk/aws-lambda'
 import { createBuiltMeshHTTPHandler } from './.mesh'
 
-const meshHTTP = createBuiltMeshHTTPHandler()
+interface ServerContext {
+  event: APIGatewayEvent
+  lambdaContext: Context
+}
+
+const meshHTTP = createBuiltMeshHTTPHandler<ServerContext>()
 
 export async function handler(
   event: APIGatewayEvent,
@@ -113,7 +118,8 @@ export async function handler(
   const response = await meshHTTP.fetch(
     url,
     {
-      method: event.httpMethod,
+      // For v1.0 you should use event.httpMethod
+      method: event.requestContext.http.method,
       headers: event.headers as HeadersInit,
       body: event.body
         ? Buffer.from(event.body, event.isBase64Encoded ? 'base64' : 'utf8')
@@ -250,8 +256,8 @@ Similarly to regular and Vercel deployment, we will need to add the `mesh build`
 build step.
 
 ```ts filename="index.ts"
-import { createBuiltMeshHTTPHandler } from './.mesh'
 import { createServer } from 'node:http'
+import { createBuiltMeshHTTPHandler } from './.mesh'
 
 const server = createServer(createBuiltMeshHTTPHandler())
 server.listen(4000)
