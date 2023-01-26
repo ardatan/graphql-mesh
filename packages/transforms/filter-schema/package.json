@@ -34,9 +34,9 @@
   "dependencies": {
     "@graphql-mesh/types": "0.89.4",
     "@graphql-mesh/utils": "0.43.5",
-    "@graphql-tools/delegate": "9.0.22",
+    "@graphql-tools/delegate": "9.0.23",
     "@graphql-tools/utils": "9.1.4",
-    "@graphql-tools/wrap": "9.3.1",
+    "@graphql-tools/wrap": "9.3.2",
     "minimatch": "5.1.6",
     "tslib": "^2.4.0"
   },

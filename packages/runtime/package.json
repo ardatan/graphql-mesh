@@ -38,16 +38,16 @@
     "@graphql-mesh/string-interpolation": "0.4.2",
     "@graphql-mesh/types": "0.89.4",
     "@graphql-mesh/utils": "0.43.5",
-    "@graphql-tools/batch-delegate": "8.4.15",
+    "@graphql-tools/batch-delegate": "8.4.16",
     "@graphql-tools/batch-execute": "8.5.15",
-    "@graphql-tools/delegate": "9.0.22",
+    "@graphql-tools/delegate": "9.0.23",
     "@graphql-tools/utils": "9.1.4",
-    "@graphql-tools/wrap": "9.3.1",
+    "@graphql-tools/wrap": "9.3.2",
     "@whatwg-node/fetch": "^0.6.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-tools/schema": "9.0.13"
+    "@graphql-tools/schema": "9.0.14"
   },
   "publishConfig": {
     "access": "public",
