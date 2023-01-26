@@ -1,5 +1,17 @@
 # nextjs-sdk-example
 
+## 0.0.137
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ed5843d8a`](https://github.com/Urigo/graphql-mesh/commit/ed5843d8a771045eed61cdad33b72734666577d5),
+  [`ed5843d8a`](https://github.com/Urigo/graphql-mesh/commit/ed5843d8a771045eed61cdad33b72734666577d5)]:
+  - @graphql-mesh/config@10.0.7
+  - @graphql-mesh/runtime@0.46.6
+  - @graphql-mesh/cli@0.82.13
+  - @graphql-mesh/openapi@0.35.8
+
 ## 0.0.136
 
 ### Patch Changes
