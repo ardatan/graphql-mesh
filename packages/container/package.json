@@ -31,7 +31,7 @@
     "@graphql-mesh/transform-rename": "0.14.7",
     "@graphql-mesh/transform-resolvers-composition": "0.13.6",
     "graphql": "16.6.0",
-    "tslib": "2.4.1"
+    "tslib": "2.5.0"
   },
   "bob": false
 }
