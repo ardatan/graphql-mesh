@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "concurrently \"yarn start:api\" \"yarn start:mesh\"",
-    "start:api": "ts-node api.ts",
+    "start:api": "ts-node-dev api/index.ts",
     "start:mesh": "mesh dev"
   },
   "dependencies": {
@@ -12,13 +12,13 @@
     "@graphql-mesh/json-schema": "0.37.6",
     "@graphql-mesh/plugin-live-query": "0.2.5",
     "@whatwg-node/fetch": "0.6.2",
-    "body-parser": "1.20.1",
-    "express": "4.18.2",
+    "@whatwg-node/router": "0.1.7",
     "graphql": "16.6.0"
   },
   "devDependencies": {
     "concurrently": "7.6.0",
     "ts-node": "10.9.1",
+    "ts-node-dev": "2.0.0",
     "typescript": "4.9.4"
   }
 }

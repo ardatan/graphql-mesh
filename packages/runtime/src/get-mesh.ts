@@ -1,37 +1,36 @@
 import {
-  GraphQLSchema,
-  getOperationAST,
   DocumentNode,
+  getOperationAST,
   GraphQLObjectType,
+  GraphQLSchema,
   OperationTypeNode,
-  validate,
   specifiedRules,
+  validate,
 } from 'graphql';
-import { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types.js';
+import { envelop, Plugin, useEngine, useExtendContext } from '@envelop/core';
+import { OneOfInputObjectsRule, useExtendedValidation } from '@envelop/extended-validation';
+import { process } from '@graphql-mesh/cross-helpers';
 import {
-  MeshPubSub,
-  KeyValueCache,
-  RawSourceOutput,
   GraphQLOperation,
+  KeyValueCache,
   Logger,
-  MeshTransform,
-  OnFetchHookPayload,
   MeshFetch,
   MeshPlugin,
-  OnFetchHookDone,
+  MeshPubSub,
+  MeshTransform,
   OnDelegateHook,
+  OnFetchHookDone,
+  OnFetchHookPayload,
+  RawSourceOutput,
 } from '@graphql-mesh/types';
-
-import { MESH_CONTEXT_SYMBOL } from './constants.js';
 import {
   applySchemaTransforms,
-  groupTransforms,
   DefaultLogger,
+  getHeadersObj,
+  groupTransforms,
   parseWithCache,
   PubSub,
-  getHeadersObj,
 } from '@graphql-mesh/utils';
-
 import { CreateProxyingResolverFn, Subschema, SubschemaConfig } from '@graphql-tools/delegate';
 import {
   AggregateError,
@@ -42,12 +41,11 @@ import {
   mapAsyncIterator,
   memoize1,
 } from '@graphql-tools/utils';
-import { envelop, Plugin, useEngine, useExtendContext } from '@envelop/core';
-import { OneOfInputObjectsRule, useExtendedValidation } from '@envelop/extended-validation';
-import { getInContextSDK } from './in-context-sdk.js';
-import { useSubschema } from './useSubschema.js';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
-import { process } from '@graphql-mesh/cross-helpers';
+import { MESH_CONTEXT_SYMBOL } from './constants.js';
+import { getInContextSDK } from './in-context-sdk.js';
+import { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types.js';
+import { useSubschema } from './useSubschema.js';
 
 type SdkRequester = (document: DocumentNode, variables?: any, operationContext?: any) => any;
 
@@ -142,7 +140,7 @@ function createProxyingResolverFactory(
   return function createProxyingResolver({ operation }) {
     const rootType = rootTypeMap.get(operation);
     return function proxyingResolver(root, args, context, info) {
-      if (!context[apiName][rootType.name][info.fieldName]) {
+      if (!context?.[apiName]?.[rootType.name]?.[info.fieldName]) {
         throw new Error(
           `${info.fieldName} couldn't find in ${rootType.name} of ${apiName} as a ${operation}`,
         );

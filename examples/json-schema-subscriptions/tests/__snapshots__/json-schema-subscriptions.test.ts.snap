@@ -1,0 +1,69 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`JSON Schema Subscriptions should generate correct schema 1`] = `
+"schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+directive @example(value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
+
+directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+
+directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+
+directive @pubsubOperation(pubsubTopic: String) on FIELD_DEFINITION
+
+directive @live on QUERY
+
+type Query @globalOptions(sourceName: "Example", endpoint: "http://localhost:4002", operationHeaders: "{\\"Content-Type\\":\\"application/json\\"}") {
+  todos: [query_todos_items] @httpOperation(path: "/todos", httpMethod: GET)
+}
+
+type Mutation {
+  addTodo(input: mutationInput_addTodo_input_Input): mutation_addTodo @httpOperation(path: "/todo", httpMethod: POST)
+}
+
+type Subscription {
+  "PubSub Topic: webhook:post:/webhooks/todo_added"
+  todoAdded: subscription_todoAdded @pubsubOperation(pubsubTopic: "webhook:post:/webhooks/todo_added")
+}
+
+type query_todos_items {
+  id: Int
+  name: String
+  content: String
+}
+
+type mutation_addTodo @example(value: "{\\"id\\":0,\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") {
+  id: Int
+  name: String
+  content: String
+}
+
+input mutationInput_addTodo_input_Input @example(value: "{\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") {
+  name: String
+  content: String
+}
+
+type subscription_todoAdded @example(value: "{\\"id\\":0,\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") {
+  id: Int
+  name: String
+  content: String
+}
+
+scalar ObjMap
+
+enum HTTPMethod {
+  GET
+  HEAD
+  POST
+  PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
+  PATCH
+}"
+`;
