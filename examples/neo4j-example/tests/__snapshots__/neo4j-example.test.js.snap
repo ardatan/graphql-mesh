@@ -212,6 +212,11 @@ input MoviePeopleActedInAggregateInput {
 input MoviePeopleActedInConnectFieldInput {
   connect: [PersonConnectInput!]
   edge: ActedInPropertiesCreateInput!
+
+  """
+  Whether or not to overwrite any matching relationship with the new properties. Will default to \`false\` in 4.0.0.
+  """
+  overwrite: Boolean! = true
   where: PersonConnectWhere
 }
 
@@ -348,6 +353,11 @@ input MoviePeopleDirectedAggregateInput {
 
 input MoviePeopleDirectedConnectFieldInput {
   connect: [PersonConnectInput!]
+
+  """
+  Whether or not to overwrite any matching relationship with the new properties. Will default to \`false\` in 4.0.0.
+  """
+  overwrite: Boolean! = true
   where: PersonConnectWhere
 }
 
@@ -476,6 +486,11 @@ input MoviePeopleProducedAggregateInput {
 
 input MoviePeopleProducedConnectFieldInput {
   connect: [PersonConnectInput!]
+
+  """
+  Whether or not to overwrite any matching relationship with the new properties. Will default to \`false\` in 4.0.0.
+  """
+  overwrite: Boolean! = true
   where: PersonConnectWhere
 }
 
@@ -606,6 +621,11 @@ input MoviePeopleReviewedAggregateInput {
 input MoviePeopleReviewedConnectFieldInput {
   connect: [PersonConnectInput!]
   edge: ReviewedPropertiesCreateInput!
+
+  """
+  Whether or not to overwrite any matching relationship with the new properties. Will default to \`false\` in 4.0.0.
+  """
+  overwrite: Boolean! = true
   where: PersonConnectWhere
 }
 
@@ -794,6 +814,11 @@ input MoviePeopleWroteAggregateInput {
 
 input MoviePeopleWroteConnectFieldInput {
   connect: [PersonConnectInput!]
+
+  """
+  Whether or not to overwrite any matching relationship with the new properties. Will default to \`false\` in 4.0.0.
+  """
+  overwrite: Boolean! = true
   where: PersonConnectWhere
 }
 
@@ -1296,6 +1321,11 @@ input PersonActedInMoviesAggregateInput {
 input PersonActedInMoviesConnectFieldInput {
   connect: [MovieConnectInput!]
   edge: ActedInPropertiesCreateInput!
+
+  """
+  Whether or not to overwrite any matching relationship with the new properties. Will default to \`false\` in 4.0.0.
+  """
+  overwrite: Boolean! = true
   where: MovieConnectWhere
 }
 
@@ -1541,6 +1571,11 @@ input PersonDirectedMoviesAggregateInput {
 
 input PersonDirectedMoviesConnectFieldInput {
   connect: [MovieConnectInput!]
+
+  """
+  Whether or not to overwrite any matching relationship with the new properties. Will default to \`false\` in 4.0.0.
+  """
+  overwrite: Boolean! = true
   where: MovieConnectWhere
 }
 
@@ -1734,6 +1769,11 @@ input PersonFollowsPeopleAggregateInput {
 
 input PersonFollowsPeopleConnectFieldInput {
   connect: [PersonConnectInput!]
+
+  """
+  Whether or not to overwrite any matching relationship with the new properties. Will default to \`false\` in 4.0.0.
+  """
+  overwrite: Boolean! = true
   where: PersonConnectWhere
 }
 
@@ -1938,6 +1978,11 @@ input PersonPeopleFollowsAggregateInput {
 
 input PersonPeopleFollowsConnectFieldInput {
   connect: [PersonConnectInput!]
+
+  """
+  Whether or not to overwrite any matching relationship with the new properties. Will default to \`false\` in 4.0.0.
+  """
+  overwrite: Boolean! = true
   where: PersonConnectWhere
 }
 
@@ -2086,6 +2131,11 @@ input PersonProducedMoviesAggregateInput {
 
 input PersonProducedMoviesConnectFieldInput {
   connect: [MovieConnectInput!]
+
+  """
+  Whether or not to overwrite any matching relationship with the new properties. Will default to \`false\` in 4.0.0.
+  """
+  overwrite: Boolean! = true
   where: MovieConnectWhere
 }
 
@@ -2307,6 +2357,11 @@ input PersonReviewedMoviesAggregateInput {
 input PersonReviewedMoviesConnectFieldInput {
   connect: [MovieConnectInput!]
   edge: ReviewedPropertiesCreateInput!
+
+  """
+  Whether or not to overwrite any matching relationship with the new properties. Will default to \`false\` in 4.0.0.
+  """
+  overwrite: Boolean! = true
   where: MovieConnectWhere
 }
 
@@ -2762,6 +2817,11 @@ input PersonWroteMoviesAggregateInput {
 
 input PersonWroteMoviesConnectFieldInput {
   connect: [MovieConnectInput!]
+
+  """
+  Whether or not to overwrite any matching relationship with the new properties. Will default to \`false\` in 4.0.0.
+  """
+  overwrite: Boolean! = true
   where: MovieConnectWhere
 }
 
