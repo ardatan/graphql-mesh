@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-newrelic",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "type": "module",
   "repository": {
     "type": "git",
@@ -37,8 +37,8 @@
     "@envelop/newrelic": "5.0.4",
     "@graphql-mesh/cross-helpers": "0.3.1",
     "@graphql-mesh/string-interpolation": "0.4.2",
-    "@graphql-mesh/types": "0.89.4",
-    "@graphql-mesh/utils": "0.43.5",
+    "@graphql-mesh/types": "0.89.5",
+    "@graphql-mesh/utils": "0.43.6",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

@@ -1,5 +1,15 @@
 # hello-world-esm
 
+## 0.0.116
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ed5843d8a`](https://github.com/Urigo/graphql-mesh/commit/ed5843d8a771045eed61cdad33b72734666577d5)]:
+  - @graphql-mesh/plugin-mock@0.1.6
+  - @graphql-mesh/cli@0.82.13
+  - @graphql-mesh/json-schema@0.37.7
+
 ## 0.0.115
 
 ### Patch Changes
