@@ -1,5 +1,10 @@
+import { camelCase } from 'camel-case';
+import { concatAST, DocumentNode, parse, print, visit } from 'graphql';
+import { pascalCase } from 'pascal-case';
+import { useMaskedErrors } from '@envelop/core';
 import { path as pathModule, process } from '@graphql-mesh/cross-helpers';
 import type { GetMeshOptions, MeshResolvedSource } from '@graphql-mesh/runtime';
+import { FsStoreStorageAdapter, InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import {
   ImportFn,
   MeshHandlerLibrary,
@@ -8,23 +13,18 @@ import {
   MeshTransformLibrary,
   YamlConfig,
 } from '@graphql-mesh/types';
+import { defaultImportFn, parseWithCache, resolveAdditionalResolvers } from '@graphql-mesh/utils';
 import { Source } from '@graphql-tools/utils';
-import { concatAST, DocumentNode, parse, print, visit } from 'graphql';
+import { getAdditionalResolversFromTypeDefs } from './getAdditionalResolversFromTypeDefs.js';
 import {
   getPackage,
   resolveAdditionalTypeDefs,
   resolveCache,
-  resolvePubSub,
+  resolveCustomFetch,
   resolveDocuments,
   resolveLogger,
-  resolveCustomFetch,
+  resolvePubSub,
 } from './utils.js';
-import { FsStoreStorageAdapter, MeshStore, InMemoryStoreStorageAdapter } from '@graphql-mesh/store';
-import { pascalCase } from 'pascal-case';
-import { camelCase } from 'camel-case';
-import { defaultImportFn, parseWithCache, resolveAdditionalResolvers } from '@graphql-mesh/utils';
-import { useMaskedErrors } from '@envelop/core';
-import { getAdditionalResolversFromTypeDefs } from './getAdditionalResolversFromTypeDefs.js';
 
 const ENVELOP_CORE_PLUGINS_MAP = {
   maskedErrors: {
@@ -340,7 +340,12 @@ export async function processConfig(
           type: 'plugin',
           importFn,
           cwd: dir,
-          additionalPrefixes: [...additionalPackagePrefixes, '@envelop/', '@graphql-yoga/plugin-'],
+          additionalPrefixes: [
+            ...additionalPackagePrefixes,
+            '@envelop/',
+            '@graphql-yoga/plugin-',
+            '@escape.tech/graphql-armor-',
+          ],
         });
         let pluginFactory: MeshPluginFactory<YamlConfig.Plugin[keyof YamlConfig.Plugin]>;
         if (typeof possiblePluginFactory === 'function') {
@@ -360,7 +365,8 @@ export async function processConfig(
         } else {
           Object.keys(possiblePluginFactory).forEach(importName => {
             if (
-              importName.toString().startsWith('use') &&
+              (importName.toString().startsWith('use') ||
+                importName.toString().endsWith('Plugin')) &&
               typeof possiblePluginFactory[importName] === 'function'
             ) {
               pluginFactory = possiblePluginFactory[importName];
