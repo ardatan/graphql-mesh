@@ -1122,6 +1122,24 @@
     "type": "Documentation"
   },
   {
+    "objectID": "mesh-docs-plugins-block-field-suggestions",
+    "headings": ["Getting Started"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      }
+    ],
+    "content": "b5397e599a975ad107e0500d4636a6c0",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/block-field-suggestions",
+    "domain": "https://www.the-guild.dev/graphql/mesh/",
+    "hierarchy": ["Docs", "Plugins"],
+    "source": "Mesh",
+    "title": "Block Field Suggestions",
+    "type": "Documentation"
+  },
+  {
     "objectID": "mesh-docs-plugins-csrf",
     "headings": ["Installation", "Quick Start"],
     "toc": [
@@ -1219,6 +1237,42 @@
     "hierarchy": ["Docs", "Plugins"],
     "source": "Mesh",
     "title": "Live Queries",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-max-depth",
+    "headings": ["Getting Started"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      }
+    ],
+    "content": "a1a2f4505e208c1ddff530092049c897",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/max-depth",
+    "domain": "https://www.the-guild.dev/graphql/mesh/",
+    "hierarchy": ["Docs", "Plugins"],
+    "source": "Mesh",
+    "title": "Query Depth Limiting",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-max-tokens",
+    "headings": ["Getting Started"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      }
+    ],
+    "content": "703055cc7efa84919bc1291e0377e213",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/max-tokens",
+    "domain": "https://www.the-guild.dev/graphql/mesh/",
+    "hierarchy": ["Docs", "Plugins"],
+    "source": "Mesh",
+    "title": "Reject Malicious Operation Documents",
     "type": "Documentation"
   },
   {
