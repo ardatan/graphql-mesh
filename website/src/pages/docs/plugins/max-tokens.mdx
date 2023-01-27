@@ -1,0 +1,52 @@
+import { PackageCmd } from '@theguild/components'
+
+# Reject Malicious Operation Documents
+
+Parsing a GraphQL operation document is a very expensive and compute intensitive operation that
+blocks the JavaScript event loop. If an attacker sends a very complex operation document with slight
+variations over and over again he can easily degrade the performance of the GraphQL server. Because
+of the variations simply having an LRU cache for parsed operation documents is not enough.
+
+A potential solution is to limit the maximal allowed count of tokens within a GraphQL document.
+
+In computer science, lexical analysis, lexing or tokenization is the process of converting a
+sequence of characters into a sequence of lexical tokens.
+
+E.g. given the following GraphQL operation.
+
+```graphql
+graphql {
+  me {
+    id
+    user
+  }
+}
+```
+
+The tokens are `query`, `{`, `me`, `{`, `id`, `user`, `}` and `}`. Having a total count of 8 tokens.
+
+The optimal maximum token count for your application depends on the complexity of the GrapHQL
+operations and documents. Usually 800-2000 tokens seems like a sane default.
+
+A handy tool for analyzing your existing GraphQL operations and finding the best defaults for your
+use case is [`graphql-inspector`](https://www.the-guild.dev/graphql/inspector).
+
+Learn more about `graphql-inspector audit`
+[here](https://the-guild.dev/graphql/inspector/docs/essentials/audit).
+
+You can limit the amount of allowed tokens per operation and automatically abort any further
+processing of a GraphQL operation document that exceeds the limit with the `maxTokensPlugin`.
+
+## Getting Started
+
+Install the plugin first;
+
+<PackageCmd packages={['@escape.tech/graphql-armor-max-tokens']} />
+
+Then configure it in your `.meshrc.yml` file.
+
+```yaml
+plugins:
+  - maxTokens:
+      maxTokenCount: 1000 # Number of tokens allowed in a document
+```

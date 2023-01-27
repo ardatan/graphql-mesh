@@ -1,0 +1,32 @@
+import { PackageCmd } from '@theguild/components'
+
+# Query Depth Limiting
+
+Sometimes persisted operations cannot be used. E.g. if you are building an API that is used by third
+party users. However, we can still apply some protection.
+
+The `maxDepth` plugin allows a maximum nesting level an operation is allowed to have.
+
+## Getting Started
+
+Install the plugin first;
+
+<PackageCmd packages={['@escape.tech/graphql-armor-max-depth']} />
+
+Then configure it in your `.meshrc.yml` file.
+
+```yaml
+plugins:
+  - maxDepthPlugin:
+      n: 10 # Number of depth allowed
+```
+
+This can prevent malicious API users executing GraphQL operations with deeply nested selection sets.
+You need to tweak the maximum depth an operation selection set is allowed to have based on your
+schema and needs, as it could vary between users.
+
+A handy tool for analyzing your existing GraphQL operations and finding the best defaults is
+[`graphql-inspector`](https://the-guild.dev/graphql/inspector).
+
+Learn more about `graphql-inspector audit`
+[here](https://the-guild.dev/graphql/inspector/docs/essentials/audit).
