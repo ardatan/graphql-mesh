@@ -39,7 +39,7 @@
     "@graphql-mesh/utils": "0.43.6",
     "@graphql-tools/schema": "9.0.14",
     "@graphql-tools/utils": "9.1.4",
-    "@graphql-tools/wrap": "9.3.2",
+    "@graphql-tools/wrap": "9.3.3",
     "tslib": "^2.4.0"
   },
   "publishConfig": {
