@@ -5518,10 +5518,10 @@
     unist-util-visit "4.1.2"
     use-debounce "9.0.3"
 
-"@theguild/prettier-config@1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@theguild/prettier-config/-/prettier-config-1.1.0.tgz#e965e8b5c70b0be3c17ef7fe38ad5f99529f4261"
-  integrity sha512-+8Cmd85O3Ourz4YBurN9TKuokCrlW/1ogNwA6EqAAFKHN7FSCJPErofhhNiwF6wMxC0BLkbIac0FowCAiVxdQA==
+"@theguild/prettier-config@1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@theguild/prettier-config/-/prettier-config-1.1.1.tgz#c0961df348a333e0c41fc99da16d32a179f157ff"
+  integrity sha512-tcMAzhyWLORFKCoG97uYGyRW2HIzroba2ie+V5tsOGRlgAesv+86cPVf6DSfb6J/KHqDLsu8jU0iaBgkjgCERw==
   dependencies:
     "@trivago/prettier-plugin-sort-imports" "^4.0.0"
     prettier-plugin-pkg "^0.17.1"
