@@ -1,0 +1,24 @@
+extend type Handler {
+  planetscale: PlanetScaleHandler
+}
+
+type PlanetScaleHandler @md {
+  host: String
+  port: Int
+  user: String
+  password: String
+  database: String
+  """
+  Use specific tables for your schema
+  """
+  tables: [String!]
+  """
+  Use specific fields of specific tables
+  """
+  tableFields: [TableField!]
+}
+
+type TableField {
+  table: String!
+  fields: [String!]!
+}
