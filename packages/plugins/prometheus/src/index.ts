@@ -10,7 +10,7 @@ import {
   commonFillLabelsFnForEnvelop,
   commonLabelsForEnvelop,
   createHistogramForEnvelop,
-} from './createHistogramForEnvelop';
+} from './createHistogramForEnvelop.js';
 
 type HistogramContainer = Exclude<YogaPromPluginConfig['http'], boolean>;
 type CounterContainer = Exclude<YogaPromPluginConfig['requestCount'], boolean>;
