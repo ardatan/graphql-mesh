@@ -1,0 +1,19 @@
+{
+  "name": "additional-plugins-ts-file",
+  "version": "0.0.291",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "mesh dev",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@graphql-mesh/cli": "0.82.13",
+    "@graphql-mesh/json-schema": "0.37.7",
+    "@graphql-mesh/plugin-mock": "0.1.6",
+    "graphql": "16.6.0"
+  },
+  "devDependencies": {
+    "jest": "29.4.1"
+  }
+}
