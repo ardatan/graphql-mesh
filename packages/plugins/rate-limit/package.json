@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-rate-limit",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "type": "module",
   "repository": {
     "type": "git",
@@ -34,7 +34,7 @@
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.3.1",
     "@graphql-mesh/string-interpolation": "0.4.2",
-    "@graphql-mesh/types": "0.89.5",
+    "@graphql-mesh/types": "0.90.0",
     "@graphql-tools/utils": "9.1.4",
     "minimatch": "5.1.6",
     "tslib": "^2.4.0"

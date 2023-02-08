@@ -1,5 +1,26 @@
 # @graphql-mesh/types
 
+## 0.90.0
+
+### Minor Changes
+
+- [`bcf29dfd0`](https://github.com/Urigo/graphql-mesh/commit/bcf29dfd02d19cf5c770b83fc627f059569a0fac)
+  Thanks [@ardatan](https://github.com/ardatan)! - Now you can customize the names of the metrics
+
+### Patch Changes
+
+- [#5087](https://github.com/Urigo/graphql-mesh/pull/5087)
+  [`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/batch-delegate@8.4.17` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/8.4.17)
+    (from `8.4.16`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/delegate@9.0.24` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.24)
+    (from `9.0.23`, in `dependencies`)
+- Updated dependencies []:
+  - @graphql-mesh/store@0.9.7
+
 ## 0.89.5
 
 ### Patch Changes

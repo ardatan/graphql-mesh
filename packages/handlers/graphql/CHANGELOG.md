@@ -1,5 +1,34 @@
 # @graphql-mesh/graphql
 
+## 0.34.0
+
+### Minor Changes
+
+- [`38eb804b9`](https://github.com/Urigo/graphql-mesh/commit/38eb804b99f9b3629713c44a59ff052d7378d2cb)
+  Thanks [@ardatan](https://github.com/ardatan)! - Print sent GraphQL operation in debug mode
+
+### Patch Changes
+
+- [#5087](https://github.com/Urigo/graphql-mesh/pull/5087)
+  [`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@9.0.24` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.24)
+    (from `9.0.23`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/url-loader@7.17.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/7.17.5)
+    (from `7.17.4`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/wrap@9.3.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.3.3)
+    (from `9.3.2`, in `dependencies`)
+- Updated dependencies
+  [[`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72),
+  [`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72),
+  [`bcf29dfd0`](https://github.com/Urigo/graphql-mesh/commit/bcf29dfd02d19cf5c770b83fc627f059569a0fac)]:
+  - @graphql-mesh/types@0.90.0
+  - @graphql-mesh/utils@0.43.7
+  - @graphql-mesh/store@0.9.7
+
 ## 0.33.10
 
 ### Patch Changes

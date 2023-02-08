@@ -1,5 +1,29 @@
 # @graphql-mesh/config
 
+## 10.1.0
+
+### Minor Changes
+
+- [#5078](https://github.com/Urigo/graphql-mesh/pull/5078)
+  [`74124248e`](https://github.com/Urigo/graphql-mesh/commit/74124248ea73e8e75abdd9f02d471eb45e481013)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support GraphQL Armor plugins
+
+### Patch Changes
+
+- Updated dependencies
+  [[`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72),
+  [`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72),
+  [`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72),
+  [`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72),
+  [`bcf29dfd0`](https://github.com/Urigo/graphql-mesh/commit/bcf29dfd02d19cf5c770b83fc627f059569a0fac)]:
+  - @graphql-mesh/merger-stitching@0.18.9
+  - @graphql-mesh/runtime@0.46.7
+  - @graphql-mesh/types@0.90.0
+  - @graphql-mesh/utils@0.43.7
+  - @graphql-mesh/merger-bare@0.16.9
+  - @graphql-mesh/cache-localforage@0.7.7
+  - @graphql-mesh/store@0.9.7
+
 ## 10.0.7
 
 ### Patch Changes
