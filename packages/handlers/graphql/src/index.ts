@@ -8,6 +8,7 @@ import {
   GraphQLSchema,
   IntrospectionQuery,
   Kind,
+  print,
   SelectionNode,
 } from 'graphql';
 import lodashGet from 'lodash.get';
@@ -85,9 +86,11 @@ export default class GraphQLHandler implements MeshHandler {
     return parseInterpolationStrings(this.interpolationStringSet);
   }
 
-  private wrapExecutorToPassSourceName(executor: Executor) {
+  private wrapExecutorToPassSourceNameAndDebug(executor: Executor) {
     const sourceName = this.name;
+    const logger = this.logger;
     return function executorWithSourceName(executionRequest: ExecutionRequest) {
+      logger.debug(() => `Sending GraphQL Request: `, print(executionRequest.document));
       executionRequest.info = executionRequest.info || ({} as GraphQLResolveInfo);
       (executionRequest.info as any).sourceName = sourceName;
       return executor(executionRequest);
@@ -359,7 +362,7 @@ export default class GraphQLHandler implements MeshHandler {
 
         return {
           schema,
-          executor: this.wrapExecutorToPassSourceName(highestValueExecutor),
+          executor: this.wrapExecutorToPassSourceNameAndDebug(highestValueExecutor),
           // Batching doesn't make sense with fallback strategy
           batch: false,
           contextVariables,
@@ -418,7 +421,7 @@ export default class GraphQLHandler implements MeshHandler {
 
       return {
         schema: schemaResult.value,
-        executor: this.wrapExecutorToPassSourceName(executorResult.value),
+        executor: this.wrapExecutorToPassSourceNameAndDebug(executorResult.value),
         batch: this.config.batch != null ? this.config.batch : true,
         contextVariables,
       };
