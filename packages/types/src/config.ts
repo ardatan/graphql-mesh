@@ -1892,21 +1892,58 @@ export interface OperationFieldPermission {
   allow?: string[];
 }
 export interface PrometheusConfig {
-  requestCount?: boolean;
-  requestTotalDuration?: boolean;
-  requestSummary?: boolean;
-  parse?: boolean;
-  validate?: boolean;
-  contextBuilding?: boolean;
-  execute?: boolean;
-  errors?: boolean;
-  resolvers?: boolean;
-  resolversWhiteList?: string[];
-  deprecatedFields?: boolean;
-  delegation?: boolean;
-  fetch?: boolean;
+  /**
+   * Any of: Boolean, String
+   */
+  requestCount?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  requestTotalDuration?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  requestSummary?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  parse?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  validate?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  contextBuilding?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  execute?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  errors?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  deprecatedFields?: boolean | string;
   skipIntrospection?: boolean;
   registry?: string;
+  /**
+   * Any of: Boolean, String
+   */
+  delegation?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  fetch?: boolean | string;
+  fetchRequestHeaders?: boolean;
+  /**
+   * Any of: Boolean, String
+   */
+  http?: boolean | string;
+  httpRequestHeaders?: boolean;
   /**
    * The path to the metrics endpoint
    * default: `/metrics`

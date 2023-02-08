@@ -43,6 +43,25 @@ plugins:
     execute: true
     errors: true
     resolvers: true
+
+    # reports metrics for the delegation to the individual sources
+    delegation: true
+
+    # reports metrics for the outgoing HTTP requests
+    fetch: true
+    # Adds the request headers to the metrics
+    fetchRequestHeaders: true
+    # Adds the response headers to the metrics
+    fetchResponseHeaders: true
+
+    # reports metrics for the incoming HTTP requests (this sets a custom name for http)
+    # If you pass a string instead of boolean, it will be used as the name of the metric
+    http: my-http-duration-metric
+    # Adds the request headers to the metrics
+    httpRequestHeaders: true
+    # Adds the response headers to the metrics
+    httpResponseHeaders: true
+
     # reports metrics also for these resolvers, by default all fields are reported
     resolversWhiteList:
       - Mutation.*
