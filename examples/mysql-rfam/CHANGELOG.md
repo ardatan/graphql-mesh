@@ -1,5 +1,16 @@
 # mysql-rfam
 
+## 0.5.332
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a5fbc9562`](https://github.com/Urigo/graphql-mesh/commit/a5fbc95627c156208e7f3891ea871d6c9d4ecfe6),
+  [`a249250a7`](https://github.com/Urigo/graphql-mesh/commit/a249250a77eacb93751d2f17f2f19e3f6f176ee1),
+  [`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72)]:
+  - @graphql-mesh/cli@0.82.14
+  - @graphql-mesh/mysql@0.19.6
+
 ## 0.5.331
 
 ### Patch Changes

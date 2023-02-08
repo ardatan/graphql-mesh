@@ -1,5 +1,22 @@
 # @graphql-mesh/plugin-http-cache
 
+## 0.1.8
+
+### Patch Changes
+
+- [#5083](https://github.com/Urigo/graphql-mesh/pull/5083)
+  [`ecf480e02`](https://github.com/Urigo/graphql-mesh/commit/ecf480e021390cbc0168dd665f3b91fa92cb0656)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`http-cache-semantics@4.1.1` ↗︎](https://www.npmjs.com/package/http-cache-semantics/v/4.1.1)
+    (from `4.1.0`, in `dependencies`)
+- Updated dependencies
+  [[`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72),
+  [`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72),
+  [`bcf29dfd0`](https://github.com/Urigo/graphql-mesh/commit/bcf29dfd02d19cf5c770b83fc627f059569a0fac)]:
+  - @graphql-mesh/types@0.90.0
+  - @graphql-mesh/utils@0.43.7
+
 ## 0.1.7
 
 ### Patch Changes

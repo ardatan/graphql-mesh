@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/merger-federation",
-  "version": "0.13.8",
+  "version": "0.13.9",
   "type": "module",
   "repository": {
     "type": "git",
@@ -34,9 +34,9 @@
   "dependencies": {
     "@apollo/gateway": "2.3.0",
     "@graphql-mesh/cross-helpers": "0.3.1",
-    "@graphql-mesh/store": "0.9.6",
-    "@graphql-mesh/types": "0.89.5",
-    "@graphql-mesh/utils": "0.43.6",
+    "@graphql-mesh/store": "0.9.7",
+    "@graphql-mesh/types": "0.90.0",
+    "@graphql-mesh/utils": "0.43.7",
     "@graphql-tools/schema": "9.0.14",
     "@graphql-tools/utils": "9.1.4",
     "@graphql-tools/wrap": "9.3.3",
