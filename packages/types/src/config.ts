@@ -1101,6 +1101,11 @@ export interface ExtendTransform {
 }
 export interface FederationTransform {
   types?: FederationTransformType[];
+  /**
+   * Version of the federation spec
+   * Default: v2.0
+   */
+  version?: string;
 }
 export interface FederationTransformType {
   name: string;
