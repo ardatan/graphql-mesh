@@ -5518,10 +5518,10 @@
     unist-util-visit "4.1.2"
     use-debounce "9.0.3"
 
-"@theguild/prettier-config@1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@theguild/prettier-config/-/prettier-config-1.1.1.tgz#c0961df348a333e0c41fc99da16d32a179f157ff"
-  integrity sha512-tcMAzhyWLORFKCoG97uYGyRW2HIzroba2ie+V5tsOGRlgAesv+86cPVf6DSfb6J/KHqDLsu8jU0iaBgkjgCERw==
+"@theguild/prettier-config@1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@theguild/prettier-config/-/prettier-config-1.1.2.tgz#c092f8edde35014d9aea3371d28517c6f837a249"
+  integrity sha512-G4zChCRSSv6B9usDnJNkJOL6as/TmfP6LMLbmpnbATVARzArY4nGTRFD5NQBH64SbVLrmfvtbOGJJIBUtDOU+w==
   dependencies:
     "@trivago/prettier-plugin-sort-imports" "^4.0.0"
     prettier-plugin-pkg "^0.17.1"
@@ -16064,10 +16064,10 @@ next-seo@^5.5.0:
   resolved "https://registry.yarnpkg.com/next-seo/-/next-seo-5.14.1.tgz#d07322edc37634fbd9beca51fb04177910d8031c"
   integrity sha512-NiJeQbxYP3z+EMp52q8k3Q+OfX2+Yv2WehERDj98r2wjXxL+woKpRBdsSVYolTD0Hm8IWs42SzaISE93RoQdOw==
 
-next-sitemap@3.1.49:
-  version "3.1.49"
-  resolved "https://registry.yarnpkg.com/next-sitemap/-/next-sitemap-3.1.49.tgz#ed661fc800ead8a32728783c710ca28ef1a2d76d"
-  integrity sha512-bxBq+MQdi580PKn/8ert4X0RL8Kp9scvyiq6TmIpkCQC3bd4DResTyxHY2AuCGKz83ut2udHwKMZu3ztj3aq3w==
+next-sitemap@3.1.52:
+  version "3.1.52"
+  resolved "https://registry.yarnpkg.com/next-sitemap/-/next-sitemap-3.1.52.tgz#4053bd0261c31d6081687c9d02656fba0fe39aa5"
+  integrity sha512-tY469i4QRV1PwM9BoL+HdKYBCJ83IQl3PmUNapG/Hxp0MIYIw1hINU8E+Edf5Kr8vHXfVzPqDoul/Abu2P0vkw==
   dependencies:
     "@corex/deepmerge" "^4.0.29"
     minimist "^1.2.7"
