@@ -38,12 +38,12 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-codegen/core": "2.6.8",
-    "@graphql-codegen/typed-document-node": "2.3.12",
-    "@graphql-codegen/typescript": "2.8.8",
+    "@graphql-codegen/core": "3.0.0",
+    "@graphql-codegen/typed-document-node": "3.0.0",
+    "@graphql-codegen/typescript": "3.0.0",
     "@graphql-codegen/typescript-generic-sdk": "3.0.4",
-    "@graphql-codegen/typescript-operations": "2.5.13",
-    "@graphql-codegen/typescript-resolvers": "2.7.13",
+    "@graphql-codegen/typescript-operations": "3.0.0",
+    "@graphql-codegen/typescript-resolvers": "3.0.0",
     "@graphql-mesh/config": "10.1.0",
     "@graphql-mesh/cross-helpers": "0.3.1",
     "@graphql-mesh/http": "0.3.11",
