@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "0.90.0",
-    "@graphql-tools/utils": "9.1.4",
+    "@graphql-tools/utils": "9.2.1",
     "tslib": "^2.4.0"
   },
   "publishConfig": {

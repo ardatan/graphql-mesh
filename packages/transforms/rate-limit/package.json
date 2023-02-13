@@ -36,13 +36,13 @@
     "@graphql-mesh/string-interpolation": "0.4.2",
     "@graphql-mesh/types": "0.90.0",
     "@graphql-mesh/utils": "0.43.7",
-    "@graphql-tools/utils": "9.1.4",
+    "@graphql-tools/utils": "9.2.1",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@graphql-mesh/cache-localforage": "0.7.7",
-    "@graphql-tools/schema": "9.0.14",
-    "@graphql-tools/wrap": "9.3.3"
+    "@graphql-tools/schema": "9.0.16",
+    "@graphql-tools/wrap": "9.3.5"
   },
   "publishConfig": {
     "access": "public",

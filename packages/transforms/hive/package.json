@@ -32,12 +32,12 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-hive/client": "0.22.0",
+    "@graphql-hive/client": "0.23.0",
     "@graphql-mesh/cross-helpers": "0.3.1",
     "@graphql-mesh/string-interpolation": "0.4.2",
     "@graphql-mesh/types": "0.90.0",
-    "@graphql-tools/delegate": "9.0.24",
-    "@graphql-tools/utils": "9.1.4",
+    "@graphql-tools/delegate": "9.0.26",
+    "@graphql-tools/utils": "9.2.1",
     "tslib": "^2.4.0"
   },
   "publishConfig": {

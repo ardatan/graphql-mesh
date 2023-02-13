@@ -43,9 +43,9 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-tools/utils": "9.1.4",
-    "@whatwg-node/router": "0.1.7",
-    "graphql-yoga": "3.4.0",
+    "@graphql-tools/utils": "9.2.1",
+    "@whatwg-node/router": "0.2.7",
+    "graphql-yoga": "3.5.1",
     "json-bigint-patch": "0.0.8"
   },
   "publishConfig": {

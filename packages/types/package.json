@@ -33,9 +33,9 @@
   },
   "dependencies": {
     "@graphql-mesh/store": "0.9.7",
-    "@graphql-tools/batch-delegate": "8.4.17",
-    "@graphql-tools/delegate": "9.0.24",
-    "@graphql-tools/utils": "9.1.4",
+    "@graphql-tools/batch-delegate": "8.4.19",
+    "@graphql-tools/delegate": "9.0.26",
+    "@graphql-tools/utils": "9.2.1",
     "@graphql-typed-document-node/core": "3.1.1",
     "tslib": "^2.4.0"
   },

@@ -39,7 +39,7 @@ export default function useDeduplicateRequest(): MeshPlugin<any> {
               reqResMap.set(dedupCacheKey, dedupRes$);
             }
 
-            return dedupRes$.then(res => res.clone());
+            return dedupRes$;
           });
         }
       }

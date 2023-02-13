@@ -10,10 +10,11 @@ sources:
     handler:
       graphql:
         endpoint: https://api.github.com/graphql
-        schemaHeaders:
-          Authorization: bearer {env.GH_ACCESS_TOKEN}
+        source: https://docs.github.com/public/schema.docs.graphql
         operationHeaders:
           Authorization: bearer {env.GH_ACCESS_TOKEN}
+          User-Agent: GraphQL Mesh
+        batch: false
     transforms:
       - prefix:
           value: Github

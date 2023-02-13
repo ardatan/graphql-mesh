@@ -15,11 +15,12 @@ input ActedInPropertiesSort {
 
 input ActedInPropertiesSubscriptionWhere {
   AND: [ActedInPropertiesSubscriptionWhere!]
+  NOT: ActedInPropertiesSubscriptionWhere
   OR: [ActedInPropertiesSubscriptionWhere!]
   roles: [String]
   roles_INCLUDES: String
-  roles_NOT: [String]
-  roles_NOT_INCLUDES: String
+  roles_NOT: [String] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  roles_NOT_INCLUDES: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
 }
 
 input ActedInPropertiesUpdateInput {
@@ -30,11 +31,12 @@ input ActedInPropertiesUpdateInput {
 
 input ActedInPropertiesWhere {
   AND: [ActedInPropertiesWhere!]
+  NOT: ActedInPropertiesWhere
   OR: [ActedInPropertiesWhere!]
   roles: [String]
   roles_INCLUDES: String
-  roles_NOT: [String]
-  roles_NOT_INCLUDES: String
+  roles_NOT: [String] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  roles_NOT_INCLUDES: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
 }
 
 """
@@ -200,6 +202,7 @@ input MovieOptions {
 
 input MoviePeopleActedInAggregateInput {
   AND: [MoviePeopleActedInAggregateInput!]
+  NOT: MoviePeopleActedInAggregateInput
   OR: [MoviePeopleActedInAggregateInput!]
   count: Int
   count_GT: Int
@@ -238,11 +241,12 @@ input MoviePeopleActedInConnectionSort {
 
 input MoviePeopleActedInConnectionWhere {
   AND: [MoviePeopleActedInConnectionWhere!]
+  NOT: MoviePeopleActedInConnectionWhere
   OR: [MoviePeopleActedInConnectionWhere!]
   edge: ActedInPropertiesWhere
-  edge_NOT: ActedInPropertiesWhere
+  edge_NOT: ActedInPropertiesWhere @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   node: PersonWhere
-  node_NOT: PersonWhere
+  node_NOT: PersonWhere @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
 }
 
 input MoviePeopleActedInCreateFieldInput {
@@ -267,17 +271,18 @@ input MoviePeopleActedInFieldInput {
 
 input MoviePeopleActedInNodeAggregationWhereInput {
   AND: [MoviePeopleActedInNodeAggregationWhereInput!]
+  NOT: MoviePeopleActedInNodeAggregationWhereInput
   OR: [MoviePeopleActedInNodeAggregationWhereInput!]
   born_AVERAGE_EQUAL: BigInt
   born_AVERAGE_GT: BigInt
   born_AVERAGE_GTE: BigInt
   born_AVERAGE_LT: BigInt
   born_AVERAGE_LTE: BigInt
-  born_EQUAL: BigInt
-  born_GT: BigInt
-  born_GTE: BigInt
-  born_LT: BigInt
-  born_LTE: BigInt
+  born_EQUAL: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_GT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_GTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_LT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_LTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
   born_MAX_EQUAL: BigInt
   born_MAX_GT: BigInt
   born_MAX_GTE: BigInt
@@ -293,26 +298,41 @@ input MoviePeopleActedInNodeAggregationWhereInput {
   born_SUM_GTE: BigInt
   born_SUM_LT: BigInt
   born_SUM_LTE: BigInt
-  name_AVERAGE_EQUAL: Float
-  name_AVERAGE_GT: Float
-  name_AVERAGE_GTE: Float
-  name_AVERAGE_LT: Float
-  name_AVERAGE_LTE: Float
-  name_EQUAL: String
-  name_GT: Int
-  name_GTE: Int
-  name_LONGEST_EQUAL: Int
-  name_LONGEST_GT: Int
-  name_LONGEST_GTE: Int
-  name_LONGEST_LT: Int
-  name_LONGEST_LTE: Int
-  name_LT: Int
-  name_LTE: Int
-  name_SHORTEST_EQUAL: Int
-  name_SHORTEST_GT: Int
-  name_SHORTEST_GTE: Int
-  name_SHORTEST_LT: Int
-  name_SHORTEST_LTE: Int
+  name_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_LENGTH_EQUAL: Float
+  name_AVERAGE_LENGTH_GT: Float
+  name_AVERAGE_LENGTH_GTE: Float
+  name_AVERAGE_LENGTH_LT: Float
+  name_AVERAGE_LENGTH_LTE: Float
+  name_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_EQUAL: String @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_GT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_GTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_LENGTH_EQUAL: Int
+  name_LONGEST_LENGTH_GT: Int
+  name_LONGEST_LENGTH_GTE: Int
+  name_LONGEST_LENGTH_LT: Int
+  name_LONGEST_LENGTH_LTE: Int
+  name_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_LTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_LENGTH_EQUAL: Int
+  name_SHORTEST_LENGTH_GT: Int
+  name_SHORTEST_LENGTH_GTE: Int
+  name_SHORTEST_LENGTH_LT: Int
+  name_SHORTEST_LENGTH_LTE: Int
+  name_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
 }
 
 type MoviePeopleActedInRelationship implements ActedInProperties {
@@ -342,6 +362,7 @@ input MoviePeopleActedInUpdateFieldInput {
 
 input MoviePeopleDirectedAggregateInput {
   AND: [MoviePeopleDirectedAggregateInput!]
+  NOT: MoviePeopleDirectedAggregateInput
   OR: [MoviePeopleDirectedAggregateInput!]
   count: Int
   count_GT: Int
@@ -377,9 +398,10 @@ input MoviePeopleDirectedConnectionSort {
 
 input MoviePeopleDirectedConnectionWhere {
   AND: [MoviePeopleDirectedConnectionWhere!]
+  NOT: MoviePeopleDirectedConnectionWhere
   OR: [MoviePeopleDirectedConnectionWhere!]
   node: PersonWhere
-  node_NOT: PersonWhere
+  node_NOT: PersonWhere @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
 }
 
 input MoviePeopleDirectedCreateFieldInput {
@@ -403,17 +425,18 @@ input MoviePeopleDirectedFieldInput {
 
 input MoviePeopleDirectedNodeAggregationWhereInput {
   AND: [MoviePeopleDirectedNodeAggregationWhereInput!]
+  NOT: MoviePeopleDirectedNodeAggregationWhereInput
   OR: [MoviePeopleDirectedNodeAggregationWhereInput!]
   born_AVERAGE_EQUAL: BigInt
   born_AVERAGE_GT: BigInt
   born_AVERAGE_GTE: BigInt
   born_AVERAGE_LT: BigInt
   born_AVERAGE_LTE: BigInt
-  born_EQUAL: BigInt
-  born_GT: BigInt
-  born_GTE: BigInt
-  born_LT: BigInt
-  born_LTE: BigInt
+  born_EQUAL: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_GT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_GTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_LT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_LTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
   born_MAX_EQUAL: BigInt
   born_MAX_GT: BigInt
   born_MAX_GTE: BigInt
@@ -429,26 +452,41 @@ input MoviePeopleDirectedNodeAggregationWhereInput {
   born_SUM_GTE: BigInt
   born_SUM_LT: BigInt
   born_SUM_LTE: BigInt
-  name_AVERAGE_EQUAL: Float
-  name_AVERAGE_GT: Float
-  name_AVERAGE_GTE: Float
-  name_AVERAGE_LT: Float
-  name_AVERAGE_LTE: Float
-  name_EQUAL: String
-  name_GT: Int
-  name_GTE: Int
-  name_LONGEST_EQUAL: Int
-  name_LONGEST_GT: Int
-  name_LONGEST_GTE: Int
-  name_LONGEST_LT: Int
-  name_LONGEST_LTE: Int
-  name_LT: Int
-  name_LTE: Int
-  name_SHORTEST_EQUAL: Int
-  name_SHORTEST_GT: Int
-  name_SHORTEST_GTE: Int
-  name_SHORTEST_LT: Int
-  name_SHORTEST_LTE: Int
+  name_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_LENGTH_EQUAL: Float
+  name_AVERAGE_LENGTH_GT: Float
+  name_AVERAGE_LENGTH_GTE: Float
+  name_AVERAGE_LENGTH_LT: Float
+  name_AVERAGE_LENGTH_LTE: Float
+  name_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_EQUAL: String @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_GT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_GTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_LENGTH_EQUAL: Int
+  name_LONGEST_LENGTH_GT: Int
+  name_LONGEST_LENGTH_GTE: Int
+  name_LONGEST_LENGTH_LT: Int
+  name_LONGEST_LENGTH_LTE: Int
+  name_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_LTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_LENGTH_EQUAL: Int
+  name_SHORTEST_LENGTH_GT: Int
+  name_SHORTEST_LENGTH_GTE: Int
+  name_SHORTEST_LENGTH_LT: Int
+  name_SHORTEST_LENGTH_LTE: Int
+  name_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
 }
 
 type MoviePeopleDirectedRelationship {
@@ -475,6 +513,7 @@ input MoviePeopleDirectedUpdateFieldInput {
 
 input MoviePeopleProducedAggregateInput {
   AND: [MoviePeopleProducedAggregateInput!]
+  NOT: MoviePeopleProducedAggregateInput
   OR: [MoviePeopleProducedAggregateInput!]
   count: Int
   count_GT: Int
@@ -510,9 +549,10 @@ input MoviePeopleProducedConnectionSort {
 
 input MoviePeopleProducedConnectionWhere {
   AND: [MoviePeopleProducedConnectionWhere!]
+  NOT: MoviePeopleProducedConnectionWhere
   OR: [MoviePeopleProducedConnectionWhere!]
   node: PersonWhere
-  node_NOT: PersonWhere
+  node_NOT: PersonWhere @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
 }
 
 input MoviePeopleProducedCreateFieldInput {
@@ -536,17 +576,18 @@ input MoviePeopleProducedFieldInput {
 
 input MoviePeopleProducedNodeAggregationWhereInput {
   AND: [MoviePeopleProducedNodeAggregationWhereInput!]
+  NOT: MoviePeopleProducedNodeAggregationWhereInput
   OR: [MoviePeopleProducedNodeAggregationWhereInput!]
   born_AVERAGE_EQUAL: BigInt
   born_AVERAGE_GT: BigInt
   born_AVERAGE_GTE: BigInt
   born_AVERAGE_LT: BigInt
   born_AVERAGE_LTE: BigInt
-  born_EQUAL: BigInt
-  born_GT: BigInt
-  born_GTE: BigInt
-  born_LT: BigInt
-  born_LTE: BigInt
+  born_EQUAL: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_GT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_GTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_LT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_LTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
   born_MAX_EQUAL: BigInt
   born_MAX_GT: BigInt
   born_MAX_GTE: BigInt
@@ -562,26 +603,41 @@ input MoviePeopleProducedNodeAggregationWhereInput {
   born_SUM_GTE: BigInt
   born_SUM_LT: BigInt
   born_SUM_LTE: BigInt
-  name_AVERAGE_EQUAL: Float
-  name_AVERAGE_GT: Float
-  name_AVERAGE_GTE: Float
-  name_AVERAGE_LT: Float
-  name_AVERAGE_LTE: Float
-  name_EQUAL: String
-  name_GT: Int
-  name_GTE: Int
-  name_LONGEST_EQUAL: Int
-  name_LONGEST_GT: Int
-  name_LONGEST_GTE: Int
-  name_LONGEST_LT: Int
-  name_LONGEST_LTE: Int
-  name_LT: Int
-  name_LTE: Int
-  name_SHORTEST_EQUAL: Int
-  name_SHORTEST_GT: Int
-  name_SHORTEST_GTE: Int
-  name_SHORTEST_LT: Int
-  name_SHORTEST_LTE: Int
+  name_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_LENGTH_EQUAL: Float
+  name_AVERAGE_LENGTH_GT: Float
+  name_AVERAGE_LENGTH_GTE: Float
+  name_AVERAGE_LENGTH_LT: Float
+  name_AVERAGE_LENGTH_LTE: Float
+  name_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_EQUAL: String @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_GT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_GTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_LENGTH_EQUAL: Int
+  name_LONGEST_LENGTH_GT: Int
+  name_LONGEST_LENGTH_GTE: Int
+  name_LONGEST_LENGTH_LT: Int
+  name_LONGEST_LENGTH_LTE: Int
+  name_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_LTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_LENGTH_EQUAL: Int
+  name_SHORTEST_LENGTH_GT: Int
+  name_SHORTEST_LENGTH_GTE: Int
+  name_SHORTEST_LENGTH_LT: Int
+  name_SHORTEST_LENGTH_LTE: Int
+  name_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
 }
 
 type MoviePeopleProducedRelationship {
@@ -608,6 +664,7 @@ input MoviePeopleProducedUpdateFieldInput {
 
 input MoviePeopleReviewedAggregateInput {
   AND: [MoviePeopleReviewedAggregateInput!]
+  NOT: MoviePeopleReviewedAggregateInput
   OR: [MoviePeopleReviewedAggregateInput!]
   count: Int
   count_GT: Int
@@ -648,11 +705,12 @@ input MoviePeopleReviewedConnectionSort {
 
 input MoviePeopleReviewedConnectionWhere {
   AND: [MoviePeopleReviewedConnectionWhere!]
+  NOT: MoviePeopleReviewedConnectionWhere
   OR: [MoviePeopleReviewedConnectionWhere!]
   edge: ReviewedPropertiesWhere
-  edge_NOT: ReviewedPropertiesWhere
+  edge_NOT: ReviewedPropertiesWhere @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   node: PersonWhere
-  node_NOT: PersonWhere
+  node_NOT: PersonWhere @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
 }
 
 input MoviePeopleReviewedCreateFieldInput {
@@ -672,17 +730,18 @@ input MoviePeopleReviewedDisconnectFieldInput {
 
 input MoviePeopleReviewedEdgeAggregationWhereInput {
   AND: [MoviePeopleReviewedEdgeAggregationWhereInput!]
+  NOT: MoviePeopleReviewedEdgeAggregationWhereInput
   OR: [MoviePeopleReviewedEdgeAggregationWhereInput!]
   rating_AVERAGE_EQUAL: BigInt
   rating_AVERAGE_GT: BigInt
   rating_AVERAGE_GTE: BigInt
   rating_AVERAGE_LT: BigInt
   rating_AVERAGE_LTE: BigInt
-  rating_EQUAL: BigInt
-  rating_GT: BigInt
-  rating_GTE: BigInt
-  rating_LT: BigInt
-  rating_LTE: BigInt
+  rating_EQUAL: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  rating_GT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  rating_GTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  rating_LT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  rating_LTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
   rating_MAX_EQUAL: BigInt
   rating_MAX_GT: BigInt
   rating_MAX_GTE: BigInt
@@ -698,26 +757,41 @@ input MoviePeopleReviewedEdgeAggregationWhereInput {
   rating_SUM_GTE: BigInt
   rating_SUM_LT: BigInt
   rating_SUM_LTE: BigInt
-  summary_AVERAGE_EQUAL: Float
-  summary_AVERAGE_GT: Float
-  summary_AVERAGE_GTE: Float
-  summary_AVERAGE_LT: Float
-  summary_AVERAGE_LTE: Float
-  summary_EQUAL: String
-  summary_GT: Int
-  summary_GTE: Int
-  summary_LONGEST_EQUAL: Int
-  summary_LONGEST_GT: Int
-  summary_LONGEST_GTE: Int
-  summary_LONGEST_LT: Int
-  summary_LONGEST_LTE: Int
-  summary_LT: Int
-  summary_LTE: Int
-  summary_SHORTEST_EQUAL: Int
-  summary_SHORTEST_GT: Int
-  summary_SHORTEST_GTE: Int
-  summary_SHORTEST_LT: Int
-  summary_SHORTEST_LTE: Int
+  summary_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_AVERAGE_LENGTH_EQUAL: Float
+  summary_AVERAGE_LENGTH_GT: Float
+  summary_AVERAGE_LENGTH_GTE: Float
+  summary_AVERAGE_LENGTH_LT: Float
+  summary_AVERAGE_LENGTH_LTE: Float
+  summary_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_EQUAL: String @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  summary_GT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  summary_GTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  summary_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_LONGEST_LENGTH_EQUAL: Int
+  summary_LONGEST_LENGTH_GT: Int
+  summary_LONGEST_LENGTH_GTE: Int
+  summary_LONGEST_LENGTH_LT: Int
+  summary_LONGEST_LENGTH_LTE: Int
+  summary_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_LT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  summary_LTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  summary_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_SHORTEST_LENGTH_EQUAL: Int
+  summary_SHORTEST_LENGTH_GT: Int
+  summary_SHORTEST_LENGTH_GTE: Int
+  summary_SHORTEST_LENGTH_LT: Int
+  summary_SHORTEST_LENGTH_LTE: Int
+  summary_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
 }
 
 input MoviePeopleReviewedFieldInput {
@@ -727,17 +801,18 @@ input MoviePeopleReviewedFieldInput {
 
 input MoviePeopleReviewedNodeAggregationWhereInput {
   AND: [MoviePeopleReviewedNodeAggregationWhereInput!]
+  NOT: MoviePeopleReviewedNodeAggregationWhereInput
   OR: [MoviePeopleReviewedNodeAggregationWhereInput!]
   born_AVERAGE_EQUAL: BigInt
   born_AVERAGE_GT: BigInt
   born_AVERAGE_GTE: BigInt
   born_AVERAGE_LT: BigInt
   born_AVERAGE_LTE: BigInt
-  born_EQUAL: BigInt
-  born_GT: BigInt
-  born_GTE: BigInt
-  born_LT: BigInt
-  born_LTE: BigInt
+  born_EQUAL: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_GT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_GTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_LT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_LTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
   born_MAX_EQUAL: BigInt
   born_MAX_GT: BigInt
   born_MAX_GTE: BigInt
@@ -753,26 +828,41 @@ input MoviePeopleReviewedNodeAggregationWhereInput {
   born_SUM_GTE: BigInt
   born_SUM_LT: BigInt
   born_SUM_LTE: BigInt
-  name_AVERAGE_EQUAL: Float
-  name_AVERAGE_GT: Float
-  name_AVERAGE_GTE: Float
-  name_AVERAGE_LT: Float
-  name_AVERAGE_LTE: Float
-  name_EQUAL: String
-  name_GT: Int
-  name_GTE: Int
-  name_LONGEST_EQUAL: Int
-  name_LONGEST_GT: Int
-  name_LONGEST_GTE: Int
-  name_LONGEST_LT: Int
-  name_LONGEST_LTE: Int
-  name_LT: Int
-  name_LTE: Int
-  name_SHORTEST_EQUAL: Int
-  name_SHORTEST_GT: Int
-  name_SHORTEST_GTE: Int
-  name_SHORTEST_LT: Int
-  name_SHORTEST_LTE: Int
+  name_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_LENGTH_EQUAL: Float
+  name_AVERAGE_LENGTH_GT: Float
+  name_AVERAGE_LENGTH_GTE: Float
+  name_AVERAGE_LENGTH_LT: Float
+  name_AVERAGE_LENGTH_LTE: Float
+  name_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_EQUAL: String @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_GT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_GTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_LENGTH_EQUAL: Int
+  name_LONGEST_LENGTH_GT: Int
+  name_LONGEST_LENGTH_GTE: Int
+  name_LONGEST_LENGTH_LT: Int
+  name_LONGEST_LENGTH_LTE: Int
+  name_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_LTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_LENGTH_EQUAL: Int
+  name_SHORTEST_LENGTH_GT: Int
+  name_SHORTEST_LENGTH_GTE: Int
+  name_SHORTEST_LENGTH_LT: Int
+  name_SHORTEST_LENGTH_LTE: Int
+  name_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
 }
 
 type MoviePeopleReviewedRelationship implements ReviewedProperties {
@@ -803,6 +893,7 @@ input MoviePeopleReviewedUpdateFieldInput {
 
 input MoviePeopleWroteAggregateInput {
   AND: [MoviePeopleWroteAggregateInput!]
+  NOT: MoviePeopleWroteAggregateInput
   OR: [MoviePeopleWroteAggregateInput!]
   count: Int
   count_GT: Int
@@ -838,9 +929,10 @@ input MoviePeopleWroteConnectionSort {
 
 input MoviePeopleWroteConnectionWhere {
   AND: [MoviePeopleWroteConnectionWhere!]
+  NOT: MoviePeopleWroteConnectionWhere
   OR: [MoviePeopleWroteConnectionWhere!]
   node: PersonWhere
-  node_NOT: PersonWhere
+  node_NOT: PersonWhere @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
 }
 
 input MoviePeopleWroteCreateFieldInput {
@@ -864,17 +956,18 @@ input MoviePeopleWroteFieldInput {
 
 input MoviePeopleWroteNodeAggregationWhereInput {
   AND: [MoviePeopleWroteNodeAggregationWhereInput!]
+  NOT: MoviePeopleWroteNodeAggregationWhereInput
   OR: [MoviePeopleWroteNodeAggregationWhereInput!]
   born_AVERAGE_EQUAL: BigInt
   born_AVERAGE_GT: BigInt
   born_AVERAGE_GTE: BigInt
   born_AVERAGE_LT: BigInt
   born_AVERAGE_LTE: BigInt
-  born_EQUAL: BigInt
-  born_GT: BigInt
-  born_GTE: BigInt
-  born_LT: BigInt
-  born_LTE: BigInt
+  born_EQUAL: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_GT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_GTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_LT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_LTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
   born_MAX_EQUAL: BigInt
   born_MAX_GT: BigInt
   born_MAX_GTE: BigInt
@@ -890,26 +983,41 @@ input MoviePeopleWroteNodeAggregationWhereInput {
   born_SUM_GTE: BigInt
   born_SUM_LT: BigInt
   born_SUM_LTE: BigInt
-  name_AVERAGE_EQUAL: Float
-  name_AVERAGE_GT: Float
-  name_AVERAGE_GTE: Float
-  name_AVERAGE_LT: Float
-  name_AVERAGE_LTE: Float
-  name_EQUAL: String
-  name_GT: Int
-  name_GTE: Int
-  name_LONGEST_EQUAL: Int
-  name_LONGEST_GT: Int
-  name_LONGEST_GTE: Int
-  name_LONGEST_LT: Int
-  name_LONGEST_LTE: Int
-  name_LT: Int
-  name_LTE: Int
-  name_SHORTEST_EQUAL: Int
-  name_SHORTEST_GT: Int
-  name_SHORTEST_GTE: Int
-  name_SHORTEST_LT: Int
-  name_SHORTEST_LTE: Int
+  name_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_LENGTH_EQUAL: Float
+  name_AVERAGE_LENGTH_GT: Float
+  name_AVERAGE_LENGTH_GTE: Float
+  name_AVERAGE_LENGTH_LT: Float
+  name_AVERAGE_LENGTH_LTE: Float
+  name_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_EQUAL: String @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_GT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_GTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_LENGTH_EQUAL: Int
+  name_LONGEST_LENGTH_GT: Int
+  name_LONGEST_LENGTH_GTE: Int
+  name_LONGEST_LENGTH_LT: Int
+  name_LONGEST_LENGTH_LTE: Int
+  name_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_LTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_LENGTH_EQUAL: Int
+  name_SHORTEST_LENGTH_GT: Int
+  name_SHORTEST_LENGTH_GTE: Int
+  name_SHORTEST_LENGTH_LT: Int
+  name_SHORTEST_LENGTH_LTE: Int
+  name_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
 }
 
 type MoviePeopleWroteRelationship {
@@ -1044,6 +1152,7 @@ input MovieSort {
 
 input MovieSubscriptionWhere {
   AND: [MovieSubscriptionWhere!]
+  NOT: MovieSubscriptionWhere
   OR: [MovieSubscriptionWhere!]
   released: BigInt
   released_GT: BigInt
@@ -1051,27 +1160,27 @@ input MovieSubscriptionWhere {
   released_IN: [BigInt]
   released_LT: BigInt
   released_LTE: BigInt
-  released_NOT: BigInt
-  released_NOT_IN: [BigInt]
+  released_NOT: BigInt @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  released_NOT_IN: [BigInt] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   tagline: String
   tagline_CONTAINS: String
   tagline_ENDS_WITH: String
   tagline_IN: [String]
-  tagline_NOT: String
-  tagline_NOT_CONTAINS: String
-  tagline_NOT_ENDS_WITH: String
-  tagline_NOT_IN: [String]
-  tagline_NOT_STARTS_WITH: String
+  tagline_NOT: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  tagline_NOT_CONTAINS: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  tagline_NOT_ENDS_WITH: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  tagline_NOT_IN: [String] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  tagline_NOT_STARTS_WITH: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   tagline_STARTS_WITH: String
   title: String
   title_CONTAINS: String
   title_ENDS_WITH: String
   title_IN: [String]
-  title_NOT: String
-  title_NOT_CONTAINS: String
-  title_NOT_ENDS_WITH: String
-  title_NOT_IN: [String]
-  title_NOT_STARTS_WITH: String
+  title_NOT: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  title_NOT_CONTAINS: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  title_NOT_ENDS_WITH: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  title_NOT_IN: [String] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  title_NOT_STARTS_WITH: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   title_STARTS_WITH: String
   votes: BigInt
   votes_GT: BigInt
@@ -1079,8 +1188,8 @@ input MovieSubscriptionWhere {
   votes_IN: [BigInt]
   votes_LT: BigInt
   votes_LTE: BigInt
-  votes_NOT: BigInt
-  votes_NOT_IN: [BigInt]
+  votes_NOT: BigInt @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  votes_NOT_IN: [BigInt] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
 }
 
 input MovieUpdateInput {
@@ -1108,6 +1217,7 @@ type MovieUpdatedEvent {
 
 input MovieWhere {
   AND: [MovieWhere!]
+  NOT: MovieWhere
   OR: [MovieWhere!]
   peopleActedIn: PersonWhere @deprecated(reason: "Use \`peopleActedIn_SOME\` instead.")
   peopleActedInAggregate: MoviePeopleActedInAggregateInput
@@ -1220,27 +1330,27 @@ input MovieWhere {
   released_IN: [BigInt!]
   released_LT: BigInt
   released_LTE: BigInt
-  released_NOT: BigInt
-  released_NOT_IN: [BigInt!]
+  released_NOT: BigInt @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  released_NOT_IN: [BigInt!] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   tagline: String
   tagline_CONTAINS: String
   tagline_ENDS_WITH: String
   tagline_IN: [String]
-  tagline_NOT: String
-  tagline_NOT_CONTAINS: String
-  tagline_NOT_ENDS_WITH: String
-  tagline_NOT_IN: [String]
-  tagline_NOT_STARTS_WITH: String
+  tagline_NOT: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  tagline_NOT_CONTAINS: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  tagline_NOT_ENDS_WITH: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  tagline_NOT_IN: [String] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  tagline_NOT_STARTS_WITH: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   tagline_STARTS_WITH: String
   title: String
   title_CONTAINS: String
   title_ENDS_WITH: String
   title_IN: [String!]
-  title_NOT: String
-  title_NOT_CONTAINS: String
-  title_NOT_ENDS_WITH: String
-  title_NOT_IN: [String!]
-  title_NOT_STARTS_WITH: String
+  title_NOT: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  title_NOT_CONTAINS: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  title_NOT_ENDS_WITH: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  title_NOT_IN: [String!] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  title_NOT_STARTS_WITH: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   title_STARTS_WITH: String
   votes: BigInt
   votes_GT: BigInt
@@ -1248,8 +1358,8 @@ input MovieWhere {
   votes_IN: [BigInt!]
   votes_LT: BigInt
   votes_LTE: BigInt
-  votes_NOT: BigInt
-  votes_NOT_IN: [BigInt!]
+  votes_NOT: BigInt @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  votes_NOT_IN: [BigInt!] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
 }
 
 type MoviesConnection {
@@ -1309,6 +1419,7 @@ type Person {
 
 input PersonActedInMoviesAggregateInput {
   AND: [PersonActedInMoviesAggregateInput!]
+  NOT: PersonActedInMoviesAggregateInput
   OR: [PersonActedInMoviesAggregateInput!]
   count: Int
   count_GT: Int
@@ -1347,11 +1458,12 @@ input PersonActedInMoviesConnectionSort {
 
 input PersonActedInMoviesConnectionWhere {
   AND: [PersonActedInMoviesConnectionWhere!]
+  NOT: PersonActedInMoviesConnectionWhere
   OR: [PersonActedInMoviesConnectionWhere!]
   edge: ActedInPropertiesWhere
-  edge_NOT: ActedInPropertiesWhere
+  edge_NOT: ActedInPropertiesWhere @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   node: MovieWhere
-  node_NOT: MovieWhere
+  node_NOT: MovieWhere @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
 }
 
 input PersonActedInMoviesCreateFieldInput {
@@ -1376,17 +1488,18 @@ input PersonActedInMoviesFieldInput {
 
 input PersonActedInMoviesNodeAggregationWhereInput {
   AND: [PersonActedInMoviesNodeAggregationWhereInput!]
+  NOT: PersonActedInMoviesNodeAggregationWhereInput
   OR: [PersonActedInMoviesNodeAggregationWhereInput!]
   released_AVERAGE_EQUAL: BigInt
   released_AVERAGE_GT: BigInt
   released_AVERAGE_GTE: BigInt
   released_AVERAGE_LT: BigInt
   released_AVERAGE_LTE: BigInt
-  released_EQUAL: BigInt
-  released_GT: BigInt
-  released_GTE: BigInt
-  released_LT: BigInt
-  released_LTE: BigInt
+  released_EQUAL: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  released_GT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  released_GTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  released_LT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  released_LTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
   released_MAX_EQUAL: BigInt
   released_MAX_GT: BigInt
   released_MAX_GTE: BigInt
@@ -1402,56 +1515,86 @@ input PersonActedInMoviesNodeAggregationWhereInput {
   released_SUM_GTE: BigInt
   released_SUM_LT: BigInt
   released_SUM_LTE: BigInt
-  tagline_AVERAGE_EQUAL: Float
-  tagline_AVERAGE_GT: Float
-  tagline_AVERAGE_GTE: Float
-  tagline_AVERAGE_LT: Float
-  tagline_AVERAGE_LTE: Float
-  tagline_EQUAL: String
-  tagline_GT: Int
-  tagline_GTE: Int
-  tagline_LONGEST_EQUAL: Int
-  tagline_LONGEST_GT: Int
-  tagline_LONGEST_GTE: Int
-  tagline_LONGEST_LT: Int
-  tagline_LONGEST_LTE: Int
-  tagline_LT: Int
-  tagline_LTE: Int
-  tagline_SHORTEST_EQUAL: Int
-  tagline_SHORTEST_GT: Int
-  tagline_SHORTEST_GTE: Int
-  tagline_SHORTEST_LT: Int
-  tagline_SHORTEST_LTE: Int
-  title_AVERAGE_EQUAL: Float
-  title_AVERAGE_GT: Float
-  title_AVERAGE_GTE: Float
-  title_AVERAGE_LT: Float
-  title_AVERAGE_LTE: Float
-  title_EQUAL: String
-  title_GT: Int
-  title_GTE: Int
-  title_LONGEST_EQUAL: Int
-  title_LONGEST_GT: Int
-  title_LONGEST_GTE: Int
-  title_LONGEST_LT: Int
-  title_LONGEST_LTE: Int
-  title_LT: Int
-  title_LTE: Int
-  title_SHORTEST_EQUAL: Int
-  title_SHORTEST_GT: Int
-  title_SHORTEST_GTE: Int
-  title_SHORTEST_LT: Int
-  title_SHORTEST_LTE: Int
+  tagline_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_AVERAGE_LENGTH_EQUAL: Float
+  tagline_AVERAGE_LENGTH_GT: Float
+  tagline_AVERAGE_LENGTH_GTE: Float
+  tagline_AVERAGE_LENGTH_LT: Float
+  tagline_AVERAGE_LENGTH_LTE: Float
+  tagline_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_EQUAL: String @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  tagline_GT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  tagline_GTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  tagline_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_LONGEST_LENGTH_EQUAL: Int
+  tagline_LONGEST_LENGTH_GT: Int
+  tagline_LONGEST_LENGTH_GTE: Int
+  tagline_LONGEST_LENGTH_LT: Int
+  tagline_LONGEST_LENGTH_LTE: Int
+  tagline_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_LT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  tagline_LTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  tagline_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_SHORTEST_LENGTH_EQUAL: Int
+  tagline_SHORTEST_LENGTH_GT: Int
+  tagline_SHORTEST_LENGTH_GTE: Int
+  tagline_SHORTEST_LENGTH_LT: Int
+  tagline_SHORTEST_LENGTH_LTE: Int
+  tagline_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_AVERAGE_LENGTH_EQUAL: Float
+  title_AVERAGE_LENGTH_GT: Float
+  title_AVERAGE_LENGTH_GTE: Float
+  title_AVERAGE_LENGTH_LT: Float
+  title_AVERAGE_LENGTH_LTE: Float
+  title_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_EQUAL: String @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  title_GT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  title_GTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  title_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_LONGEST_LENGTH_EQUAL: Int
+  title_LONGEST_LENGTH_GT: Int
+  title_LONGEST_LENGTH_GTE: Int
+  title_LONGEST_LENGTH_LT: Int
+  title_LONGEST_LENGTH_LTE: Int
+  title_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_LT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  title_LTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  title_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_SHORTEST_LENGTH_EQUAL: Int
+  title_SHORTEST_LENGTH_GT: Int
+  title_SHORTEST_LENGTH_GTE: Int
+  title_SHORTEST_LENGTH_LT: Int
+  title_SHORTEST_LENGTH_LTE: Int
+  title_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
   votes_AVERAGE_EQUAL: BigInt
   votes_AVERAGE_GT: BigInt
   votes_AVERAGE_GTE: BigInt
   votes_AVERAGE_LT: BigInt
   votes_AVERAGE_LTE: BigInt
-  votes_EQUAL: BigInt
-  votes_GT: BigInt
-  votes_GTE: BigInt
-  votes_LT: BigInt
-  votes_LTE: BigInt
+  votes_EQUAL: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  votes_GT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  votes_GTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  votes_LT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  votes_LTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
   votes_MAX_EQUAL: BigInt
   votes_MAX_GT: BigInt
   votes_MAX_GTE: BigInt
@@ -1560,6 +1703,7 @@ type PersonDeletedEvent {
 
 input PersonDirectedMoviesAggregateInput {
   AND: [PersonDirectedMoviesAggregateInput!]
+  NOT: PersonDirectedMoviesAggregateInput
   OR: [PersonDirectedMoviesAggregateInput!]
   count: Int
   count_GT: Int
@@ -1595,9 +1739,10 @@ input PersonDirectedMoviesConnectionSort {
 
 input PersonDirectedMoviesConnectionWhere {
   AND: [PersonDirectedMoviesConnectionWhere!]
+  NOT: PersonDirectedMoviesConnectionWhere
   OR: [PersonDirectedMoviesConnectionWhere!]
   node: MovieWhere
-  node_NOT: MovieWhere
+  node_NOT: MovieWhere @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
 }
 
 input PersonDirectedMoviesCreateFieldInput {
@@ -1621,17 +1766,18 @@ input PersonDirectedMoviesFieldInput {
 
 input PersonDirectedMoviesNodeAggregationWhereInput {
   AND: [PersonDirectedMoviesNodeAggregationWhereInput!]
+  NOT: PersonDirectedMoviesNodeAggregationWhereInput
   OR: [PersonDirectedMoviesNodeAggregationWhereInput!]
   released_AVERAGE_EQUAL: BigInt
   released_AVERAGE_GT: BigInt
   released_AVERAGE_GTE: BigInt
   released_AVERAGE_LT: BigInt
   released_AVERAGE_LTE: BigInt
-  released_EQUAL: BigInt
-  released_GT: BigInt
-  released_GTE: BigInt
-  released_LT: BigInt
-  released_LTE: BigInt
+  released_EQUAL: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  released_GT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  released_GTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  released_LT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  released_LTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
   released_MAX_EQUAL: BigInt
   released_MAX_GT: BigInt
   released_MAX_GTE: BigInt
@@ -1647,56 +1793,86 @@ input PersonDirectedMoviesNodeAggregationWhereInput {
   released_SUM_GTE: BigInt
   released_SUM_LT: BigInt
   released_SUM_LTE: BigInt
-  tagline_AVERAGE_EQUAL: Float
-  tagline_AVERAGE_GT: Float
-  tagline_AVERAGE_GTE: Float
-  tagline_AVERAGE_LT: Float
-  tagline_AVERAGE_LTE: Float
-  tagline_EQUAL: String
-  tagline_GT: Int
-  tagline_GTE: Int
-  tagline_LONGEST_EQUAL: Int
-  tagline_LONGEST_GT: Int
-  tagline_LONGEST_GTE: Int
-  tagline_LONGEST_LT: Int
-  tagline_LONGEST_LTE: Int
-  tagline_LT: Int
-  tagline_LTE: Int
-  tagline_SHORTEST_EQUAL: Int
-  tagline_SHORTEST_GT: Int
-  tagline_SHORTEST_GTE: Int
-  tagline_SHORTEST_LT: Int
-  tagline_SHORTEST_LTE: Int
-  title_AVERAGE_EQUAL: Float
-  title_AVERAGE_GT: Float
-  title_AVERAGE_GTE: Float
-  title_AVERAGE_LT: Float
-  title_AVERAGE_LTE: Float
-  title_EQUAL: String
-  title_GT: Int
-  title_GTE: Int
-  title_LONGEST_EQUAL: Int
-  title_LONGEST_GT: Int
-  title_LONGEST_GTE: Int
-  title_LONGEST_LT: Int
-  title_LONGEST_LTE: Int
-  title_LT: Int
-  title_LTE: Int
-  title_SHORTEST_EQUAL: Int
-  title_SHORTEST_GT: Int
-  title_SHORTEST_GTE: Int
-  title_SHORTEST_LT: Int
-  title_SHORTEST_LTE: Int
+  tagline_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_AVERAGE_LENGTH_EQUAL: Float
+  tagline_AVERAGE_LENGTH_GT: Float
+  tagline_AVERAGE_LENGTH_GTE: Float
+  tagline_AVERAGE_LENGTH_LT: Float
+  tagline_AVERAGE_LENGTH_LTE: Float
+  tagline_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_EQUAL: String @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  tagline_GT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  tagline_GTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  tagline_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_LONGEST_LENGTH_EQUAL: Int
+  tagline_LONGEST_LENGTH_GT: Int
+  tagline_LONGEST_LENGTH_GTE: Int
+  tagline_LONGEST_LENGTH_LT: Int
+  tagline_LONGEST_LENGTH_LTE: Int
+  tagline_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_LT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  tagline_LTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  tagline_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_SHORTEST_LENGTH_EQUAL: Int
+  tagline_SHORTEST_LENGTH_GT: Int
+  tagline_SHORTEST_LENGTH_GTE: Int
+  tagline_SHORTEST_LENGTH_LT: Int
+  tagline_SHORTEST_LENGTH_LTE: Int
+  tagline_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_AVERAGE_LENGTH_EQUAL: Float
+  title_AVERAGE_LENGTH_GT: Float
+  title_AVERAGE_LENGTH_GTE: Float
+  title_AVERAGE_LENGTH_LT: Float
+  title_AVERAGE_LENGTH_LTE: Float
+  title_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_EQUAL: String @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  title_GT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  title_GTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  title_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_LONGEST_LENGTH_EQUAL: Int
+  title_LONGEST_LENGTH_GT: Int
+  title_LONGEST_LENGTH_GTE: Int
+  title_LONGEST_LENGTH_LT: Int
+  title_LONGEST_LENGTH_LTE: Int
+  title_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_LT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  title_LTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  title_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_SHORTEST_LENGTH_EQUAL: Int
+  title_SHORTEST_LENGTH_GT: Int
+  title_SHORTEST_LENGTH_GTE: Int
+  title_SHORTEST_LENGTH_LT: Int
+  title_SHORTEST_LENGTH_LTE: Int
+  title_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
   votes_AVERAGE_EQUAL: BigInt
   votes_AVERAGE_GT: BigInt
   votes_AVERAGE_GTE: BigInt
   votes_AVERAGE_LT: BigInt
   votes_AVERAGE_LTE: BigInt
-  votes_EQUAL: BigInt
-  votes_GT: BigInt
-  votes_GTE: BigInt
-  votes_LT: BigInt
-  votes_LTE: BigInt
+  votes_EQUAL: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  votes_GT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  votes_GTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  votes_LT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  votes_LTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
   votes_MAX_EQUAL: BigInt
   votes_MAX_GT: BigInt
   votes_MAX_GTE: BigInt
@@ -1758,6 +1934,7 @@ type PersonEventPayload {
 
 input PersonFollowsPeopleAggregateInput {
   AND: [PersonFollowsPeopleAggregateInput!]
+  NOT: PersonFollowsPeopleAggregateInput
   OR: [PersonFollowsPeopleAggregateInput!]
   count: Int
   count_GT: Int
@@ -1793,9 +1970,10 @@ input PersonFollowsPeopleConnectionSort {
 
 input PersonFollowsPeopleConnectionWhere {
   AND: [PersonFollowsPeopleConnectionWhere!]
+  NOT: PersonFollowsPeopleConnectionWhere
   OR: [PersonFollowsPeopleConnectionWhere!]
   node: PersonWhere
-  node_NOT: PersonWhere
+  node_NOT: PersonWhere @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
 }
 
 input PersonFollowsPeopleCreateFieldInput {
@@ -1819,17 +1997,18 @@ input PersonFollowsPeopleFieldInput {
 
 input PersonFollowsPeopleNodeAggregationWhereInput {
   AND: [PersonFollowsPeopleNodeAggregationWhereInput!]
+  NOT: PersonFollowsPeopleNodeAggregationWhereInput
   OR: [PersonFollowsPeopleNodeAggregationWhereInput!]
   born_AVERAGE_EQUAL: BigInt
   born_AVERAGE_GT: BigInt
   born_AVERAGE_GTE: BigInt
   born_AVERAGE_LT: BigInt
   born_AVERAGE_LTE: BigInt
-  born_EQUAL: BigInt
-  born_GT: BigInt
-  born_GTE: BigInt
-  born_LT: BigInt
-  born_LTE: BigInt
+  born_EQUAL: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_GT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_GTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_LT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_LTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
   born_MAX_EQUAL: BigInt
   born_MAX_GT: BigInt
   born_MAX_GTE: BigInt
@@ -1845,26 +2024,41 @@ input PersonFollowsPeopleNodeAggregationWhereInput {
   born_SUM_GTE: BigInt
   born_SUM_LT: BigInt
   born_SUM_LTE: BigInt
-  name_AVERAGE_EQUAL: Float
-  name_AVERAGE_GT: Float
-  name_AVERAGE_GTE: Float
-  name_AVERAGE_LT: Float
-  name_AVERAGE_LTE: Float
-  name_EQUAL: String
-  name_GT: Int
-  name_GTE: Int
-  name_LONGEST_EQUAL: Int
-  name_LONGEST_GT: Int
-  name_LONGEST_GTE: Int
-  name_LONGEST_LT: Int
-  name_LONGEST_LTE: Int
-  name_LT: Int
-  name_LTE: Int
-  name_SHORTEST_EQUAL: Int
-  name_SHORTEST_GT: Int
-  name_SHORTEST_GTE: Int
-  name_SHORTEST_LT: Int
-  name_SHORTEST_LTE: Int
+  name_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_LENGTH_EQUAL: Float
+  name_AVERAGE_LENGTH_GT: Float
+  name_AVERAGE_LENGTH_GTE: Float
+  name_AVERAGE_LENGTH_LT: Float
+  name_AVERAGE_LENGTH_LTE: Float
+  name_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_EQUAL: String @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_GT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_GTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_LENGTH_EQUAL: Int
+  name_LONGEST_LENGTH_GT: Int
+  name_LONGEST_LENGTH_GTE: Int
+  name_LONGEST_LENGTH_LT: Int
+  name_LONGEST_LENGTH_LTE: Int
+  name_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_LTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_LENGTH_EQUAL: Int
+  name_SHORTEST_LENGTH_GT: Int
+  name_SHORTEST_LENGTH_GTE: Int
+  name_SHORTEST_LENGTH_LT: Int
+  name_SHORTEST_LENGTH_LTE: Int
+  name_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
 }
 
 type PersonFollowsPeopleRelationship {
@@ -1967,6 +2161,7 @@ input PersonOptions {
 
 input PersonPeopleFollowsAggregateInput {
   AND: [PersonPeopleFollowsAggregateInput!]
+  NOT: PersonPeopleFollowsAggregateInput
   OR: [PersonPeopleFollowsAggregateInput!]
   count: Int
   count_GT: Int
@@ -2002,9 +2197,10 @@ input PersonPeopleFollowsConnectionSort {
 
 input PersonPeopleFollowsConnectionWhere {
   AND: [PersonPeopleFollowsConnectionWhere!]
+  NOT: PersonPeopleFollowsConnectionWhere
   OR: [PersonPeopleFollowsConnectionWhere!]
   node: PersonWhere
-  node_NOT: PersonWhere
+  node_NOT: PersonWhere @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
 }
 
 input PersonPeopleFollowsCreateFieldInput {
@@ -2028,17 +2224,18 @@ input PersonPeopleFollowsFieldInput {
 
 input PersonPeopleFollowsNodeAggregationWhereInput {
   AND: [PersonPeopleFollowsNodeAggregationWhereInput!]
+  NOT: PersonPeopleFollowsNodeAggregationWhereInput
   OR: [PersonPeopleFollowsNodeAggregationWhereInput!]
   born_AVERAGE_EQUAL: BigInt
   born_AVERAGE_GT: BigInt
   born_AVERAGE_GTE: BigInt
   born_AVERAGE_LT: BigInt
   born_AVERAGE_LTE: BigInt
-  born_EQUAL: BigInt
-  born_GT: BigInt
-  born_GTE: BigInt
-  born_LT: BigInt
-  born_LTE: BigInt
+  born_EQUAL: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_GT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_GTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_LT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  born_LTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
   born_MAX_EQUAL: BigInt
   born_MAX_GT: BigInt
   born_MAX_GTE: BigInt
@@ -2054,26 +2251,41 @@ input PersonPeopleFollowsNodeAggregationWhereInput {
   born_SUM_GTE: BigInt
   born_SUM_LT: BigInt
   born_SUM_LTE: BigInt
-  name_AVERAGE_EQUAL: Float
-  name_AVERAGE_GT: Float
-  name_AVERAGE_GTE: Float
-  name_AVERAGE_LT: Float
-  name_AVERAGE_LTE: Float
-  name_EQUAL: String
-  name_GT: Int
-  name_GTE: Int
-  name_LONGEST_EQUAL: Int
-  name_LONGEST_GT: Int
-  name_LONGEST_GTE: Int
-  name_LONGEST_LT: Int
-  name_LONGEST_LTE: Int
-  name_LT: Int
-  name_LTE: Int
-  name_SHORTEST_EQUAL: Int
-  name_SHORTEST_GT: Int
-  name_SHORTEST_GTE: Int
-  name_SHORTEST_LT: Int
-  name_SHORTEST_LTE: Int
+  name_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_LENGTH_EQUAL: Float
+  name_AVERAGE_LENGTH_GT: Float
+  name_AVERAGE_LENGTH_GTE: Float
+  name_AVERAGE_LENGTH_LT: Float
+  name_AVERAGE_LENGTH_LTE: Float
+  name_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_EQUAL: String @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_GT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_GTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_LENGTH_EQUAL: Int
+  name_LONGEST_LENGTH_GT: Int
+  name_LONGEST_LENGTH_GTE: Int
+  name_LONGEST_LENGTH_LT: Int
+  name_LONGEST_LENGTH_LTE: Int
+  name_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_LT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_LTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  name_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_LENGTH_EQUAL: Int
+  name_SHORTEST_LENGTH_GT: Int
+  name_SHORTEST_LENGTH_GTE: Int
+  name_SHORTEST_LENGTH_LT: Int
+  name_SHORTEST_LENGTH_LTE: Int
+  name_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  name_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
 }
 
 type PersonPeopleFollowsRelationship {
@@ -2120,6 +2332,7 @@ type PersonPersonPeopleFollowsNodeAggregateSelection {
 
 input PersonProducedMoviesAggregateInput {
   AND: [PersonProducedMoviesAggregateInput!]
+  NOT: PersonProducedMoviesAggregateInput
   OR: [PersonProducedMoviesAggregateInput!]
   count: Int
   count_GT: Int
@@ -2155,9 +2368,10 @@ input PersonProducedMoviesConnectionSort {
 
 input PersonProducedMoviesConnectionWhere {
   AND: [PersonProducedMoviesConnectionWhere!]
+  NOT: PersonProducedMoviesConnectionWhere
   OR: [PersonProducedMoviesConnectionWhere!]
   node: MovieWhere
-  node_NOT: MovieWhere
+  node_NOT: MovieWhere @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
 }
 
 input PersonProducedMoviesCreateFieldInput {
@@ -2181,17 +2395,18 @@ input PersonProducedMoviesFieldInput {
 
 input PersonProducedMoviesNodeAggregationWhereInput {
   AND: [PersonProducedMoviesNodeAggregationWhereInput!]
+  NOT: PersonProducedMoviesNodeAggregationWhereInput
   OR: [PersonProducedMoviesNodeAggregationWhereInput!]
   released_AVERAGE_EQUAL: BigInt
   released_AVERAGE_GT: BigInt
   released_AVERAGE_GTE: BigInt
   released_AVERAGE_LT: BigInt
   released_AVERAGE_LTE: BigInt
-  released_EQUAL: BigInt
-  released_GT: BigInt
-  released_GTE: BigInt
-  released_LT: BigInt
-  released_LTE: BigInt
+  released_EQUAL: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  released_GT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  released_GTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  released_LT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  released_LTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
   released_MAX_EQUAL: BigInt
   released_MAX_GT: BigInt
   released_MAX_GTE: BigInt
@@ -2207,56 +2422,86 @@ input PersonProducedMoviesNodeAggregationWhereInput {
   released_SUM_GTE: BigInt
   released_SUM_LT: BigInt
   released_SUM_LTE: BigInt
-  tagline_AVERAGE_EQUAL: Float
-  tagline_AVERAGE_GT: Float
-  tagline_AVERAGE_GTE: Float
-  tagline_AVERAGE_LT: Float
-  tagline_AVERAGE_LTE: Float
-  tagline_EQUAL: String
-  tagline_GT: Int
-  tagline_GTE: Int
-  tagline_LONGEST_EQUAL: Int
-  tagline_LONGEST_GT: Int
-  tagline_LONGEST_GTE: Int
-  tagline_LONGEST_LT: Int
-  tagline_LONGEST_LTE: Int
-  tagline_LT: Int
-  tagline_LTE: Int
-  tagline_SHORTEST_EQUAL: Int
-  tagline_SHORTEST_GT: Int
-  tagline_SHORTEST_GTE: Int
-  tagline_SHORTEST_LT: Int
-  tagline_SHORTEST_LTE: Int
-  title_AVERAGE_EQUAL: Float
-  title_AVERAGE_GT: Float
-  title_AVERAGE_GTE: Float
-  title_AVERAGE_LT: Float
-  title_AVERAGE_LTE: Float
-  title_EQUAL: String
-  title_GT: Int
-  title_GTE: Int
-  title_LONGEST_EQUAL: Int
-  title_LONGEST_GT: Int
-  title_LONGEST_GTE: Int
-  title_LONGEST_LT: Int
-  title_LONGEST_LTE: Int
-  title_LT: Int
-  title_LTE: Int
-  title_SHORTEST_EQUAL: Int
-  title_SHORTEST_GT: Int
-  title_SHORTEST_GTE: Int
-  title_SHORTEST_LT: Int
-  title_SHORTEST_LTE: Int
+  tagline_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_AVERAGE_LENGTH_EQUAL: Float
+  tagline_AVERAGE_LENGTH_GT: Float
+  tagline_AVERAGE_LENGTH_GTE: Float
+  tagline_AVERAGE_LENGTH_LT: Float
+  tagline_AVERAGE_LENGTH_LTE: Float
+  tagline_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_EQUAL: String @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  tagline_GT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  tagline_GTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  tagline_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_LONGEST_LENGTH_EQUAL: Int
+  tagline_LONGEST_LENGTH_GT: Int
+  tagline_LONGEST_LENGTH_GTE: Int
+  tagline_LONGEST_LENGTH_LT: Int
+  tagline_LONGEST_LENGTH_LTE: Int
+  tagline_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_LT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  tagline_LTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  tagline_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_SHORTEST_LENGTH_EQUAL: Int
+  tagline_SHORTEST_LENGTH_GT: Int
+  tagline_SHORTEST_LENGTH_GTE: Int
+  tagline_SHORTEST_LENGTH_LT: Int
+  tagline_SHORTEST_LENGTH_LTE: Int
+  tagline_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_AVERAGE_LENGTH_EQUAL: Float
+  title_AVERAGE_LENGTH_GT: Float
+  title_AVERAGE_LENGTH_GTE: Float
+  title_AVERAGE_LENGTH_LT: Float
+  title_AVERAGE_LENGTH_LTE: Float
+  title_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_EQUAL: String @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  title_GT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  title_GTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  title_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_LONGEST_LENGTH_EQUAL: Int
+  title_LONGEST_LENGTH_GT: Int
+  title_LONGEST_LENGTH_GTE: Int
+  title_LONGEST_LENGTH_LT: Int
+  title_LONGEST_LENGTH_LTE: Int
+  title_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_LT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  title_LTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  title_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_SHORTEST_LENGTH_EQUAL: Int
+  title_SHORTEST_LENGTH_GT: Int
+  title_SHORTEST_LENGTH_GTE: Int
+  title_SHORTEST_LENGTH_LT: Int
+  title_SHORTEST_LENGTH_LTE: Int
+  title_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
   votes_AVERAGE_EQUAL: BigInt
   votes_AVERAGE_GT: BigInt
   votes_AVERAGE_GTE: BigInt
   votes_AVERAGE_LT: BigInt
   votes_AVERAGE_LTE: BigInt
-  votes_EQUAL: BigInt
-  votes_GT: BigInt
-  votes_GTE: BigInt
-  votes_LT: BigInt
-  votes_LTE: BigInt
+  votes_EQUAL: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  votes_GT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  votes_GTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  votes_LT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  votes_LTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
   votes_MAX_EQUAL: BigInt
   votes_MAX_GT: BigInt
   votes_MAX_GTE: BigInt
@@ -2344,6 +2589,7 @@ input PersonRelationshipsSubscriptionWhere {
 
 input PersonReviewedMoviesAggregateInput {
   AND: [PersonReviewedMoviesAggregateInput!]
+  NOT: PersonReviewedMoviesAggregateInput
   OR: [PersonReviewedMoviesAggregateInput!]
   count: Int
   count_GT: Int
@@ -2384,11 +2630,12 @@ input PersonReviewedMoviesConnectionSort {
 
 input PersonReviewedMoviesConnectionWhere {
   AND: [PersonReviewedMoviesConnectionWhere!]
+  NOT: PersonReviewedMoviesConnectionWhere
   OR: [PersonReviewedMoviesConnectionWhere!]
   edge: ReviewedPropertiesWhere
-  edge_NOT: ReviewedPropertiesWhere
+  edge_NOT: ReviewedPropertiesWhere @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   node: MovieWhere
-  node_NOT: MovieWhere
+  node_NOT: MovieWhere @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
 }
 
 input PersonReviewedMoviesCreateFieldInput {
@@ -2408,17 +2655,18 @@ input PersonReviewedMoviesDisconnectFieldInput {
 
 input PersonReviewedMoviesEdgeAggregationWhereInput {
   AND: [PersonReviewedMoviesEdgeAggregationWhereInput!]
+  NOT: PersonReviewedMoviesEdgeAggregationWhereInput
   OR: [PersonReviewedMoviesEdgeAggregationWhereInput!]
   rating_AVERAGE_EQUAL: BigInt
   rating_AVERAGE_GT: BigInt
   rating_AVERAGE_GTE: BigInt
   rating_AVERAGE_LT: BigInt
   rating_AVERAGE_LTE: BigInt
-  rating_EQUAL: BigInt
-  rating_GT: BigInt
-  rating_GTE: BigInt
-  rating_LT: BigInt
-  rating_LTE: BigInt
+  rating_EQUAL: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  rating_GT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  rating_GTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  rating_LT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  rating_LTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
   rating_MAX_EQUAL: BigInt
   rating_MAX_GT: BigInt
   rating_MAX_GTE: BigInt
@@ -2434,26 +2682,41 @@ input PersonReviewedMoviesEdgeAggregationWhereInput {
   rating_SUM_GTE: BigInt
   rating_SUM_LT: BigInt
   rating_SUM_LTE: BigInt
-  summary_AVERAGE_EQUAL: Float
-  summary_AVERAGE_GT: Float
-  summary_AVERAGE_GTE: Float
-  summary_AVERAGE_LT: Float
-  summary_AVERAGE_LTE: Float
-  summary_EQUAL: String
-  summary_GT: Int
-  summary_GTE: Int
-  summary_LONGEST_EQUAL: Int
-  summary_LONGEST_GT: Int
-  summary_LONGEST_GTE: Int
-  summary_LONGEST_LT: Int
-  summary_LONGEST_LTE: Int
-  summary_LT: Int
-  summary_LTE: Int
-  summary_SHORTEST_EQUAL: Int
-  summary_SHORTEST_GT: Int
-  summary_SHORTEST_GTE: Int
-  summary_SHORTEST_LT: Int
-  summary_SHORTEST_LTE: Int
+  summary_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_AVERAGE_LENGTH_EQUAL: Float
+  summary_AVERAGE_LENGTH_GT: Float
+  summary_AVERAGE_LENGTH_GTE: Float
+  summary_AVERAGE_LENGTH_LT: Float
+  summary_AVERAGE_LENGTH_LTE: Float
+  summary_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_EQUAL: String @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  summary_GT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  summary_GTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  summary_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_LONGEST_LENGTH_EQUAL: Int
+  summary_LONGEST_LENGTH_GT: Int
+  summary_LONGEST_LENGTH_GTE: Int
+  summary_LONGEST_LENGTH_LT: Int
+  summary_LONGEST_LENGTH_LTE: Int
+  summary_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_LT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  summary_LTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  summary_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_SHORTEST_LENGTH_EQUAL: Int
+  summary_SHORTEST_LENGTH_GT: Int
+  summary_SHORTEST_LENGTH_GTE: Int
+  summary_SHORTEST_LENGTH_LT: Int
+  summary_SHORTEST_LENGTH_LTE: Int
+  summary_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  summary_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
 }
 
 input PersonReviewedMoviesFieldInput {
@@ -2463,17 +2726,18 @@ input PersonReviewedMoviesFieldInput {
 
 input PersonReviewedMoviesNodeAggregationWhereInput {
   AND: [PersonReviewedMoviesNodeAggregationWhereInput!]
+  NOT: PersonReviewedMoviesNodeAggregationWhereInput
   OR: [PersonReviewedMoviesNodeAggregationWhereInput!]
   released_AVERAGE_EQUAL: BigInt
   released_AVERAGE_GT: BigInt
   released_AVERAGE_GTE: BigInt
   released_AVERAGE_LT: BigInt
   released_AVERAGE_LTE: BigInt
-  released_EQUAL: BigInt
-  released_GT: BigInt
-  released_GTE: BigInt
-  released_LT: BigInt
-  released_LTE: BigInt
+  released_EQUAL: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  released_GT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  released_GTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  released_LT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  released_LTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
   released_MAX_EQUAL: BigInt
   released_MAX_GT: BigInt
   released_MAX_GTE: BigInt
@@ -2489,56 +2753,86 @@ input PersonReviewedMoviesNodeAggregationWhereInput {
   released_SUM_GTE: BigInt
   released_SUM_LT: BigInt
   released_SUM_LTE: BigInt
-  tagline_AVERAGE_EQUAL: Float
-  tagline_AVERAGE_GT: Float
-  tagline_AVERAGE_GTE: Float
-  tagline_AVERAGE_LT: Float
-  tagline_AVERAGE_LTE: Float
-  tagline_EQUAL: String
-  tagline_GT: Int
-  tagline_GTE: Int
-  tagline_LONGEST_EQUAL: Int
-  tagline_LONGEST_GT: Int
-  tagline_LONGEST_GTE: Int
-  tagline_LONGEST_LT: Int
-  tagline_LONGEST_LTE: Int
-  tagline_LT: Int
-  tagline_LTE: Int
-  tagline_SHORTEST_EQUAL: Int
-  tagline_SHORTEST_GT: Int
-  tagline_SHORTEST_GTE: Int
-  tagline_SHORTEST_LT: Int
-  tagline_SHORTEST_LTE: Int
-  title_AVERAGE_EQUAL: Float
-  title_AVERAGE_GT: Float
-  title_AVERAGE_GTE: Float
-  title_AVERAGE_LT: Float
-  title_AVERAGE_LTE: Float
-  title_EQUAL: String
-  title_GT: Int
-  title_GTE: Int
-  title_LONGEST_EQUAL: Int
-  title_LONGEST_GT: Int
-  title_LONGEST_GTE: Int
-  title_LONGEST_LT: Int
-  title_LONGEST_LTE: Int
-  title_LT: Int
-  title_LTE: Int
-  title_SHORTEST_EQUAL: Int
-  title_SHORTEST_GT: Int
-  title_SHORTEST_GTE: Int
-  title_SHORTEST_LT: Int
-  title_SHORTEST_LTE: Int
+  tagline_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_AVERAGE_LENGTH_EQUAL: Float
+  tagline_AVERAGE_LENGTH_GT: Float
+  tagline_AVERAGE_LENGTH_GTE: Float
+  tagline_AVERAGE_LENGTH_LT: Float
+  tagline_AVERAGE_LENGTH_LTE: Float
+  tagline_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_EQUAL: String @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  tagline_GT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  tagline_GTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  tagline_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_LONGEST_LENGTH_EQUAL: Int
+  tagline_LONGEST_LENGTH_GT: Int
+  tagline_LONGEST_LENGTH_GTE: Int
+  tagline_LONGEST_LENGTH_LT: Int
+  tagline_LONGEST_LENGTH_LTE: Int
+  tagline_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_LT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  tagline_LTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  tagline_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_SHORTEST_LENGTH_EQUAL: Int
+  tagline_SHORTEST_LENGTH_GT: Int
+  tagline_SHORTEST_LENGTH_GTE: Int
+  tagline_SHORTEST_LENGTH_LT: Int
+  tagline_SHORTEST_LENGTH_LTE: Int
+  tagline_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_AVERAGE_LENGTH_EQUAL: Float
+  title_AVERAGE_LENGTH_GT: Float
+  title_AVERAGE_LENGTH_GTE: Float
+  title_AVERAGE_LENGTH_LT: Float
+  title_AVERAGE_LENGTH_LTE: Float
+  title_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_EQUAL: String @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  title_GT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  title_GTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  title_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_LONGEST_LENGTH_EQUAL: Int
+  title_LONGEST_LENGTH_GT: Int
+  title_LONGEST_LENGTH_GTE: Int
+  title_LONGEST_LENGTH_LT: Int
+  title_LONGEST_LENGTH_LTE: Int
+  title_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_LT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  title_LTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  title_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_SHORTEST_LENGTH_EQUAL: Int
+  title_SHORTEST_LENGTH_GT: Int
+  title_SHORTEST_LENGTH_GTE: Int
+  title_SHORTEST_LENGTH_LT: Int
+  title_SHORTEST_LENGTH_LTE: Int
+  title_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
   votes_AVERAGE_EQUAL: BigInt
   votes_AVERAGE_GT: BigInt
   votes_AVERAGE_GTE: BigInt
   votes_AVERAGE_LT: BigInt
   votes_AVERAGE_LTE: BigInt
-  votes_EQUAL: BigInt
-  votes_GT: BigInt
-  votes_GTE: BigInt
-  votes_LT: BigInt
-  votes_LTE: BigInt
+  votes_EQUAL: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  votes_GT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  votes_GTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  votes_LT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  votes_LTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
   votes_MAX_EQUAL: BigInt
   votes_MAX_GT: BigInt
   votes_MAX_GTE: BigInt
@@ -2592,6 +2886,7 @@ input PersonSort {
 
 input PersonSubscriptionWhere {
   AND: [PersonSubscriptionWhere!]
+  NOT: PersonSubscriptionWhere
   OR: [PersonSubscriptionWhere!]
   born: BigInt
   born_GT: BigInt
@@ -2599,17 +2894,17 @@ input PersonSubscriptionWhere {
   born_IN: [BigInt]
   born_LT: BigInt
   born_LTE: BigInt
-  born_NOT: BigInt
-  born_NOT_IN: [BigInt]
+  born_NOT: BigInt @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  born_NOT_IN: [BigInt] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   name: String
   name_CONTAINS: String
   name_ENDS_WITH: String
   name_IN: [String]
-  name_NOT: String
-  name_NOT_CONTAINS: String
-  name_NOT_ENDS_WITH: String
-  name_NOT_IN: [String]
-  name_NOT_STARTS_WITH: String
+  name_NOT: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  name_NOT_CONTAINS: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  name_NOT_ENDS_WITH: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  name_NOT_IN: [String] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  name_NOT_STARTS_WITH: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   name_STARTS_WITH: String
 }
 
@@ -2636,6 +2931,7 @@ type PersonUpdatedEvent {
 
 input PersonWhere {
   AND: [PersonWhere!]
+  NOT: PersonWhere
   OR: [PersonWhere!]
   actedInMovies: MovieWhere @deprecated(reason: "Use \`actedInMovies_SOME\` instead.")
   actedInMoviesAggregate: PersonActedInMoviesAggregateInput
@@ -2664,8 +2960,8 @@ input PersonWhere {
   born_IN: [BigInt]
   born_LT: BigInt
   born_LTE: BigInt
-  born_NOT: BigInt
-  born_NOT_IN: [BigInt]
+  born_NOT: BigInt @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  born_NOT_IN: [BigInt] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   directedMovies: MovieWhere @deprecated(reason: "Use \`directedMovies_SOME\` instead.")
   directedMoviesAggregate: PersonDirectedMoviesAggregateInput
   directedMoviesConnection: PersonDirectedMoviesConnectionWhere @deprecated(reason: "Use \`directedMoviesConnection_SOME\` instead.")
@@ -2712,11 +3008,11 @@ input PersonWhere {
   name_CONTAINS: String
   name_ENDS_WITH: String
   name_IN: [String!]
-  name_NOT: String
-  name_NOT_CONTAINS: String
-  name_NOT_ENDS_WITH: String
-  name_NOT_IN: [String!]
-  name_NOT_STARTS_WITH: String
+  name_NOT: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  name_NOT_CONTAINS: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  name_NOT_ENDS_WITH: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  name_NOT_IN: [String!] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  name_NOT_STARTS_WITH: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   name_STARTS_WITH: String
   peopleFollows: PersonWhere @deprecated(reason: "Use \`peopleFollows_SOME\` instead.")
   peopleFollowsAggregate: PersonPeopleFollowsAggregateInput
@@ -2806,6 +3102,7 @@ input PersonWhere {
 
 input PersonWroteMoviesAggregateInput {
   AND: [PersonWroteMoviesAggregateInput!]
+  NOT: PersonWroteMoviesAggregateInput
   OR: [PersonWroteMoviesAggregateInput!]
   count: Int
   count_GT: Int
@@ -2841,9 +3138,10 @@ input PersonWroteMoviesConnectionSort {
 
 input PersonWroteMoviesConnectionWhere {
   AND: [PersonWroteMoviesConnectionWhere!]
+  NOT: PersonWroteMoviesConnectionWhere
   OR: [PersonWroteMoviesConnectionWhere!]
   node: MovieWhere
-  node_NOT: MovieWhere
+  node_NOT: MovieWhere @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
 }
 
 input PersonWroteMoviesCreateFieldInput {
@@ -2867,17 +3165,18 @@ input PersonWroteMoviesFieldInput {
 
 input PersonWroteMoviesNodeAggregationWhereInput {
   AND: [PersonWroteMoviesNodeAggregationWhereInput!]
+  NOT: PersonWroteMoviesNodeAggregationWhereInput
   OR: [PersonWroteMoviesNodeAggregationWhereInput!]
   released_AVERAGE_EQUAL: BigInt
   released_AVERAGE_GT: BigInt
   released_AVERAGE_GTE: BigInt
   released_AVERAGE_LT: BigInt
   released_AVERAGE_LTE: BigInt
-  released_EQUAL: BigInt
-  released_GT: BigInt
-  released_GTE: BigInt
-  released_LT: BigInt
-  released_LTE: BigInt
+  released_EQUAL: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  released_GT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  released_GTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  released_LT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  released_LTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
   released_MAX_EQUAL: BigInt
   released_MAX_GT: BigInt
   released_MAX_GTE: BigInt
@@ -2893,56 +3192,86 @@ input PersonWroteMoviesNodeAggregationWhereInput {
   released_SUM_GTE: BigInt
   released_SUM_LT: BigInt
   released_SUM_LTE: BigInt
-  tagline_AVERAGE_EQUAL: Float
-  tagline_AVERAGE_GT: Float
-  tagline_AVERAGE_GTE: Float
-  tagline_AVERAGE_LT: Float
-  tagline_AVERAGE_LTE: Float
-  tagline_EQUAL: String
-  tagline_GT: Int
-  tagline_GTE: Int
-  tagline_LONGEST_EQUAL: Int
-  tagline_LONGEST_GT: Int
-  tagline_LONGEST_GTE: Int
-  tagline_LONGEST_LT: Int
-  tagline_LONGEST_LTE: Int
-  tagline_LT: Int
-  tagline_LTE: Int
-  tagline_SHORTEST_EQUAL: Int
-  tagline_SHORTEST_GT: Int
-  tagline_SHORTEST_GTE: Int
-  tagline_SHORTEST_LT: Int
-  tagline_SHORTEST_LTE: Int
-  title_AVERAGE_EQUAL: Float
-  title_AVERAGE_GT: Float
-  title_AVERAGE_GTE: Float
-  title_AVERAGE_LT: Float
-  title_AVERAGE_LTE: Float
-  title_EQUAL: String
-  title_GT: Int
-  title_GTE: Int
-  title_LONGEST_EQUAL: Int
-  title_LONGEST_GT: Int
-  title_LONGEST_GTE: Int
-  title_LONGEST_LT: Int
-  title_LONGEST_LTE: Int
-  title_LT: Int
-  title_LTE: Int
-  title_SHORTEST_EQUAL: Int
-  title_SHORTEST_GT: Int
-  title_SHORTEST_GTE: Int
-  title_SHORTEST_LT: Int
-  title_SHORTEST_LTE: Int
+  tagline_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_AVERAGE_LENGTH_EQUAL: Float
+  tagline_AVERAGE_LENGTH_GT: Float
+  tagline_AVERAGE_LENGTH_GTE: Float
+  tagline_AVERAGE_LENGTH_LT: Float
+  tagline_AVERAGE_LENGTH_LTE: Float
+  tagline_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_EQUAL: String @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  tagline_GT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  tagline_GTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  tagline_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_LONGEST_LENGTH_EQUAL: Int
+  tagline_LONGEST_LENGTH_GT: Int
+  tagline_LONGEST_LENGTH_GTE: Int
+  tagline_LONGEST_LENGTH_LT: Int
+  tagline_LONGEST_LENGTH_LTE: Int
+  tagline_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_LT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  tagline_LTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  tagline_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_SHORTEST_LENGTH_EQUAL: Int
+  tagline_SHORTEST_LENGTH_GT: Int
+  tagline_SHORTEST_LENGTH_GTE: Int
+  tagline_SHORTEST_LENGTH_LT: Int
+  tagline_SHORTEST_LENGTH_LTE: Int
+  tagline_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  tagline_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_AVERAGE_EQUAL: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_AVERAGE_GT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_AVERAGE_GTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_AVERAGE_LENGTH_EQUAL: Float
+  title_AVERAGE_LENGTH_GT: Float
+  title_AVERAGE_LENGTH_GTE: Float
+  title_AVERAGE_LENGTH_LT: Float
+  title_AVERAGE_LENGTH_LTE: Float
+  title_AVERAGE_LT: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_AVERAGE_LTE: Float @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_EQUAL: String @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  title_GT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  title_GTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  title_LONGEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_LONGEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_LONGEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_LONGEST_LENGTH_EQUAL: Int
+  title_LONGEST_LENGTH_GT: Int
+  title_LONGEST_LENGTH_GTE: Int
+  title_LONGEST_LENGTH_LT: Int
+  title_LONGEST_LENGTH_LTE: Int
+  title_LONGEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_LONGEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_LT: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  title_LTE: Int @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  title_SHORTEST_EQUAL: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_SHORTEST_GT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_SHORTEST_GTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_SHORTEST_LENGTH_EQUAL: Int
+  title_SHORTEST_LENGTH_GT: Int
+  title_SHORTEST_LENGTH_GTE: Int
+  title_SHORTEST_LENGTH_LT: Int
+  title_SHORTEST_LENGTH_LTE: Int
+  title_SHORTEST_LT: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
+  title_SHORTEST_LTE: Int @deprecated(reason: "Please use the explicit _LENGTH version for string aggregation.")
   votes_AVERAGE_EQUAL: BigInt
   votes_AVERAGE_GT: BigInt
   votes_AVERAGE_GTE: BigInt
   votes_AVERAGE_LT: BigInt
   votes_AVERAGE_LTE: BigInt
-  votes_EQUAL: BigInt
-  votes_GT: BigInt
-  votes_GTE: BigInt
-  votes_LT: BigInt
-  votes_LTE: BigInt
+  votes_EQUAL: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  votes_GT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  votes_GTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  votes_LT: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
+  votes_LTE: BigInt @deprecated(reason: "Aggregation filters that are not relying on an aggregating function will be deprecated.")
   votes_MAX_EQUAL: BigInt
   votes_MAX_GT: BigInt
   votes_MAX_GTE: BigInt
@@ -3008,6 +3337,7 @@ input ReviewedPropertiesSort {
 
 input ReviewedPropertiesSubscriptionWhere {
   AND: [ReviewedPropertiesSubscriptionWhere!]
+  NOT: ReviewedPropertiesSubscriptionWhere
   OR: [ReviewedPropertiesSubscriptionWhere!]
   rating: BigInt
   rating_GT: BigInt
@@ -3015,17 +3345,17 @@ input ReviewedPropertiesSubscriptionWhere {
   rating_IN: [BigInt]
   rating_LT: BigInt
   rating_LTE: BigInt
-  rating_NOT: BigInt
-  rating_NOT_IN: [BigInt]
+  rating_NOT: BigInt @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  rating_NOT_IN: [BigInt] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   summary: String
   summary_CONTAINS: String
   summary_ENDS_WITH: String
   summary_IN: [String]
-  summary_NOT: String
-  summary_NOT_CONTAINS: String
-  summary_NOT_ENDS_WITH: String
-  summary_NOT_IN: [String]
-  summary_NOT_STARTS_WITH: String
+  summary_NOT: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  summary_NOT_CONTAINS: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  summary_NOT_ENDS_WITH: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  summary_NOT_IN: [String] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  summary_NOT_STARTS_WITH: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   summary_STARTS_WITH: String
 }
 
@@ -3038,6 +3368,7 @@ input ReviewedPropertiesUpdateInput {
 
 input ReviewedPropertiesWhere {
   AND: [ReviewedPropertiesWhere!]
+  NOT: ReviewedPropertiesWhere
   OR: [ReviewedPropertiesWhere!]
   rating: BigInt
   rating_GT: BigInt
@@ -3045,17 +3376,17 @@ input ReviewedPropertiesWhere {
   rating_IN: [BigInt!]
   rating_LT: BigInt
   rating_LTE: BigInt
-  rating_NOT: BigInt
-  rating_NOT_IN: [BigInt!]
+  rating_NOT: BigInt @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  rating_NOT_IN: [BigInt!] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   summary: String
   summary_CONTAINS: String
   summary_ENDS_WITH: String
   summary_IN: [String!]
-  summary_NOT: String
-  summary_NOT_CONTAINS: String
-  summary_NOT_ENDS_WITH: String
-  summary_NOT_IN: [String!]
-  summary_NOT_STARTS_WITH: String
+  summary_NOT: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  summary_NOT_CONTAINS: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  summary_NOT_ENDS_WITH: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  summary_NOT_IN: [String!] @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
+  summary_NOT_STARTS_WITH: String @deprecated(reason: "Negation filters will be deprecated, use the NOT operator to achieve the same behavior")
   summary_STARTS_WITH: String
 }
 
