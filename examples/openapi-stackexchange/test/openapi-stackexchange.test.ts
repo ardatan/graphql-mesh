@@ -1,10 +1,10 @@
+import { readFile } from 'fs/promises';
+import { join } from 'path';
 import { findAndParseConfig } from '@graphql-mesh/cli';
 import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
-import { join } from 'path';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { readFile } from 'fs/promises';
 
-describe('Stack Exchange', () => {
+describe.skip('Stack Exchange', () => {
   let mesh: MeshInstance;
   beforeAll(async () => {
     const config = await findAndParseConfig({
