@@ -1,5 +1,22 @@
 # @graphql-mesh/odata
 
+## 0.22.10
+
+### Patch Changes
+
+- [#5130](https://github.com/Urigo/graphql-mesh/pull/5130)
+  [`743caf3c8`](https://github.com/Urigo/graphql-mesh/commit/743caf3c8a0f3ebcaae1e4525b2c10b281cdc3aa)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`dataloader@2.2.2` ↗︎](https://www.npmjs.com/package/dataloader/v/2.2.2)
+    (from `2.2.1`, in `dependencies`)
+- Updated dependencies
+  [[`975715275`](https://github.com/Urigo/graphql-mesh/commit/9757152751e37062bca4ba114bee65a0c79a3d4d),
+  [`989a47802`](https://github.com/Urigo/graphql-mesh/commit/989a478027b703ab969d529f09bc83071fe4f96f)]:
+  - @graphql-mesh/cross-helpers@0.3.3
+  - @graphql-mesh/types@0.91.2
+  - @graphql-mesh/store@0.9.10
+  - @graphql-mesh/utils@0.43.10
+
 ## 0.22.9
 
 ### Patch Changes

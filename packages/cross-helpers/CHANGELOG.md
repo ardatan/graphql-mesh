@@ -1,5 +1,13 @@
 # @graphql-mesh/cross-helpers
 
+## 0.3.3
+
+### Patch Changes
+
+- [#4674](https://github.com/Urigo/graphql-mesh/pull/4674)
+  [`975715275`](https://github.com/Urigo/graphql-mesh/commit/9757152751e37062bca4ba114bee65a0c79a3d4d)
+  Thanks [@mhassan1](https://github.com/mhassan1)! - fix(deps): add missing graphql peer deps
+
 ## 0.3.2
 
 ### Patch Changes

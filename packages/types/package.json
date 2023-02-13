@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/types",
-  "version": "0.91.1",
+  "version": "0.91.2",
   "type": "module",
   "repository": {
     "type": "git",
@@ -32,7 +32,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/store": "0.9.9",
+    "@graphql-mesh/store": "0.9.10",
     "@graphql-tools/batch-delegate": "8.4.19",
     "@graphql-tools/delegate": "9.0.26",
     "@graphql-tools/utils": "9.2.1",
