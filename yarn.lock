@@ -20181,6 +20181,11 @@ tiny-glob@^0.2.9:
     globalyzer "0.1.0"
     globrex "^0.1.2"
 
+tiny-lru@10.0.1:
+  version "10.0.1"
+  resolved "https://registry.yarnpkg.com/tiny-lru/-/tiny-lru-10.0.1.tgz#aaf5d22207e641ed1b176ac2e616d6cc2fc9ef66"
+  integrity sha512-Vst+6kEsWvb17Zpz14sRJV/f8bUWKhqm6Dc+v08iShmIJ/WxqWytHzCTd6m88pS33rE2zpX34TRmOpAJPloNCA==
+
 tiny-lru@8.0.2:
   version "8.0.2"
   resolved "https://registry.yarnpkg.com/tiny-lru/-/tiny-lru-8.0.2.tgz#812fccbe6e622ded552e3ff8a4c3b5ff34a85e4c"
