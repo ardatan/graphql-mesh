@@ -1,4 +1,16 @@
 import {
+  DocumentNode,
+  getNamedType,
+  GraphQLObjectType,
+  GraphQLResolveInfo,
+  GraphQLSchema,
+  isLeafType,
+  Kind,
+  OperationDefinitionNode,
+  OperationTypeNode,
+  SelectionSetNode,
+} from 'graphql';
+import {
   Logger,
   OnDelegateHook,
   OnDelegateHookDone,
@@ -9,25 +21,13 @@ import {
 import { parseWithCache } from '@graphql-mesh/utils';
 import { BatchDelegateOptions, batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import {
-  SubschemaConfig,
-  StitchingInfo,
-  IDelegateToSchemaOptions,
   delegateToSchema,
+  IDelegateToSchemaOptions,
+  StitchingInfo,
+  SubschemaConfig,
 } from '@graphql-tools/delegate';
 import { isDocumentNode, memoize1 } from '@graphql-tools/utils';
 import { WrapQuery } from '@graphql-tools/wrap';
-import {
-  GraphQLSchema,
-  OperationTypeNode,
-  GraphQLObjectType,
-  getNamedType,
-  isLeafType,
-  Kind,
-  GraphQLResolveInfo,
-  SelectionSetNode,
-  OperationDefinitionNode,
-  DocumentNode,
-} from 'graphql';
 import { MESH_API_CONTEXT_SYMBOL } from './constants.js';
 
 export async function getInContextSDK(
@@ -105,7 +105,6 @@ export async function getInContextSDK(
                 },
               },
               variableValues: {},
-              cacheControl: {} as any,
             },
             selectionSet,
             key,
