@@ -20883,10 +20883,10 @@ underscore@^1.10.2, underscore@^1.13.1, underscore@^1.9.2:
   resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.13.1.tgz#0c1c6bd2df54b6b69f2314066d65b6cde6fcf9d1"
   integrity sha512-hzSoAVtJF+3ZtiFX0VgfFPHEDRm7Y/QPjGyNo4TVdnDTdft3tr8hEkD25a1jC+TjTuE7tkHGKkhwCgs9dgBB2g==
 
-undici@5.18.0, undici@5.9.1:
-  version "5.18.0"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-5.18.0.tgz#e88a77a74d991a30701e9a6751e4193a26fabda9"
-  integrity sha512-1iVwbhonhFytNdg0P4PqyIAXbdlVZVebtPDvuM36m66mRw4OGrCm2MYynJv/UENFLdP13J1nPVQzVE2zTs1OeA==
+undici@5.19.0, undici@5.9.1:
+  version "5.19.0"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-5.19.0.tgz#b80b3627c95e20e9ce02925ec64c4fc39fd93320"
+  integrity sha512-7XnhXXW0/AMTx17x1T3OOYY14FGiXbkyE/itv4jY1v8CnSQBMXW3yZ/Ppt7YlOv1D63tm9N4g5Au1Abe+gwpkw==
   dependencies:
     busboy "^1.6.0"
 
