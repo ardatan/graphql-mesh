@@ -1,8 +1,11 @@
+import { BREAK, execute, OperationDefinitionNode, visit } from 'graphql';
+import { mapAsyncIterator, Plugin, TypedExecutionArgs } from '@envelop/core';
 import { applyRequestTransforms, applyResultTransforms } from '@graphql-mesh/utils';
+import { createBatchingExecutor } from '@graphql-tools/batch-execute';
 import {
+  applySchemaTransforms,
   createDefaultExecutor,
   DelegationContext,
-  applySchemaTransforms,
   Subschema,
 } from '@graphql-tools/delegate';
 import {
@@ -10,22 +13,31 @@ import {
   getDefinedRootType,
   getOperationASTFromRequest,
   isAsyncIterable,
+  printSchemaWithDirectives,
 } from '@graphql-tools/utils';
-import { mapAsyncIterator, Plugin, TypedExecutionArgs } from '@envelop/core';
-import { BREAK, execute, OperationDefinitionNode, visit } from 'graphql';
-import { createBatchingExecutor } from '@graphql-tools/batch-execute';
 
-function isIntrospectionOperation(operationAST: OperationDefinitionNode) {
-  let isIntrospectionOperation = false;
+enum IntrospectionQueryType {
+  FEDERATION = 'FEDERATION',
+  REGULAR = 'REGULAR',
+}
+
+function getIntrospectionOperationType(
+  operationAST: OperationDefinitionNode,
+): IntrospectionQueryType | null {
+  let introspectionQueryType = null;
   visit(operationAST, {
     Field: node => {
       if (node.name.value === '__schema' || node.name.value === '__type') {
-        isIntrospectionOperation = true;
+        introspectionQueryType = true;
+        return BREAK;
+      }
+      if (node.name.value === '_service') {
+        introspectionQueryType = IntrospectionQueryType.FEDERATION;
         return BREAK;
       }
     },
   });
-  return isIntrospectionOperation;
+  return introspectionQueryType;
 }
 
 function getExecuteFn(subschema: Subschema) {
@@ -39,7 +51,14 @@ function getExecuteFn(subschema: Subschema) {
     };
     const operationAST = getOperationASTFromRequest(originalRequest);
     // TODO: We need more elegant solution
-    if (isIntrospectionOperation(operationAST)) {
+    const introspectionQueryType = getIntrospectionOperationType(operationAST);
+    if (introspectionQueryType === IntrospectionQueryType.FEDERATION) {
+      return {
+        _service: {
+          sdl: printSchemaWithDirectives(args.schema),
+        },
+      };
+    } else if (introspectionQueryType === IntrospectionQueryType.REGULAR) {
       return execute(args);
     }
     const delegationContext: DelegationContext = {
