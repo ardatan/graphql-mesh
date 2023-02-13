@@ -37,7 +37,7 @@
     "@graphql-mesh/string-interpolation": "0.4.2",
     "@graphql-mesh/types": "0.90.0",
     "@graphql-mesh/utils": "0.43.7",
-    "@graphql-tools/utils": "9.1.4",
+    "@graphql-tools/utils": "9.2.1",
     "@json-schema-tools/meta-schema": "1.7.0",
     "@omnigraph/json-schema": "0.38.8",
     "graphql-compose": "9.0.10",

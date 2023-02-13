@@ -32,13 +32,13 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@apollo/subgraph": "2.3.0",
+    "@apollo/subgraph": "2.3.2",
     "@graphql-mesh/string-interpolation": "0.4.2",
     "@graphql-mesh/types": "0.90.0",
     "@graphql-mesh/utils": "0.43.7",
-    "@graphql-tools/delegate": "9.0.24",
-    "@graphql-tools/stitching-directives": "2.3.27",
-    "@graphql-tools/utils": "9.1.4",
+    "@graphql-tools/delegate": "9.0.26",
+    "@graphql-tools/stitching-directives": "2.3.29",
+    "@graphql-tools/utils": "9.2.1",
     "graphql-transform-federation": "2.2.0",
     "lodash.set": "4.3.2",
     "tslib": "^2.4.0"

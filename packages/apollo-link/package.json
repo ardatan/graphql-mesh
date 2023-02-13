@@ -34,11 +34,11 @@
     "graphql": "^15.2.0 || ^16.0.0"
   },
   "dependencies": {
-    "@graphql-tools/utils": "9.1.4",
+    "@graphql-tools/utils": "9.2.1",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@apollo/client": "3.7.5"
+    "@apollo/client": "3.7.7"
   },
   "publishConfig": {
     "access": "public",

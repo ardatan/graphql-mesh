@@ -35,7 +35,7 @@
     "@envelop/core": "3.0.4",
     "@graphql-mesh/types": "0.90.0",
     "@graphql-mesh/utils": "0.43.7",
-    "@whatwg-node/fetch": "0.6.2",
+    "@whatwg-node/fetch": "0.8.1",
     "tslib": "^2.4.0"
   },
   "publishConfig": {

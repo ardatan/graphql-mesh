@@ -36,8 +36,8 @@
     "@graphql-mesh/runtime": "0.46.7",
     "@graphql-mesh/types": "0.90.0",
     "@graphql-mesh/utils": "0.43.7",
-    "@whatwg-node/router": "0.1.7",
-    "graphql-yoga": "3.4.0",
+    "@whatwg-node/router": "0.2.7",
+    "graphql-yoga": "3.5.1",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
@@ -45,7 +45,7 @@
     "@types/mkdirp": "1.0.2",
     "@types/rimraf": "3.0.2",
     "@types/ws": "8.5.4",
-    "@types/yargs": "17.0.20"
+    "@types/yargs": "17.0.22"
   },
   "publishConfig": {
     "access": "public",
