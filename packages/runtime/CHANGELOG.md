@@ -1,5 +1,39 @@
 # @graphql-mesh/runtime
 
+## 0.46.8
+
+### Patch Changes
+
+- [#5091](https://github.com/Urigo/graphql-mesh/pull/5091)
+  [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/batch-delegate@8.4.19` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/8.4.19)
+    (from `8.4.17`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/batch-execute@8.5.17` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-execute/v/8.5.17)
+    (from `8.5.15`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/delegate@9.0.26` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.26)
+    (from `9.0.24`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@9.2.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.2.1)
+    (from `9.1.4`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/wrap@9.3.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.3.5)
+    (from `9.3.3`, in `dependencies`)
+  - Updated dependency
+    [`@whatwg-node/fetch@^0.8.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.8.0) (from
+    `^0.6.0`, in `dependencies`)
+- Updated dependencies
+  [[`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
+  [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
+  [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
+  [`7e8bb87dd`](https://github.com/Urigo/graphql-mesh/commit/7e8bb87ddf4cb1210db6873334bdd18007cc0552)]:
+  - @graphql-mesh/cross-helpers@0.3.2
+  - @graphql-mesh/types@0.91.0
+  - @graphql-mesh/utils@0.43.8
+
 ## 0.46.7
 
 ### Patch Changes

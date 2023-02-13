@@ -1,5 +1,22 @@
 # gateway-example
 
+## 0.0.18
+
+### Patch Changes
+
+- Updated dependencies
+  [[`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
+  [`de470cf42`](https://github.com/Urigo/graphql-mesh/commit/de470cf42c466d0ca3ca4ef911c4956e9a0d366a),
+  [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
+  [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
+  [`bbd8f10ce`](https://github.com/Urigo/graphql-mesh/commit/bbd8f10cea58ebf281d0b8caef2f994ad1047ced),
+  [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
+  [`bbd8f10ce`](https://github.com/Urigo/graphql-mesh/commit/bbd8f10cea58ebf281d0b8caef2f994ad1047ced)]:
+  - @graphql-mesh/cli@0.82.15
+  - @graphql-mesh/openapi@0.35.10
+  - @graphql-mesh/plugin-hive@0.0.14
+  - @graphql-mesh/transform-hive@0.0.14
+
 ## 0.0.17
 
 ### Patch Changes

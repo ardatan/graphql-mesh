@@ -1,5 +1,16 @@
 # @graphql-mesh/cache-localforage
 
+## 0.7.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
+  [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
+  [`7e8bb87dd`](https://github.com/Urigo/graphql-mesh/commit/7e8bb87ddf4cb1210db6873334bdd18007cc0552)]:
+  - @graphql-mesh/types@0.91.0
+  - @graphql-mesh/utils@0.43.8
+
 ## 0.7.7
 
 ### Patch Changes

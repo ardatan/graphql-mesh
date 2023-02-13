@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/runtime",
-  "version": "0.46.7",
+  "version": "0.46.8",
   "type": "module",
   "repository": {
     "type": "git",
@@ -34,10 +34,10 @@
   "dependencies": {
     "@envelop/core": "3.0.4",
     "@envelop/extended-validation": "2.0.4",
-    "@graphql-mesh/cross-helpers": "0.3.1",
+    "@graphql-mesh/cross-helpers": "0.3.2",
     "@graphql-mesh/string-interpolation": "0.4.2",
-    "@graphql-mesh/types": "0.90.0",
-    "@graphql-mesh/utils": "0.43.7",
+    "@graphql-mesh/types": "0.91.0",
+    "@graphql-mesh/utils": "0.43.8",
     "@graphql-tools/batch-delegate": "8.4.19",
     "@graphql-tools/batch-execute": "8.5.17",
     "@graphql-tools/delegate": "9.0.26",
