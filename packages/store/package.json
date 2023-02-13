@@ -32,7 +32,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-inspector/core": "3.3.0",
+    "@graphql-inspector/core": "3.5.0",
     "@graphql-mesh/cross-helpers": "0.3.1",
     "@graphql-mesh/types": "0.90.0",
     "@graphql-mesh/utils": "0.43.7",

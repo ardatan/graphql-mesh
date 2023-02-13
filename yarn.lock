@@ -3264,10 +3264,10 @@
   dependencies:
     lodash.sortby "4.7.0"
 
-"@graphql-inspector/core@3.3.0":
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/@graphql-inspector/core/-/core-3.3.0.tgz#3982909cec46a5b3050a8265569503f20a3b5742"
-  integrity sha512-LRtk9sHgj9qqVPIkkThAVq3iZ7QxgHCx6elEwd0eesZBCmaIYQxD/BFu+VT8jr10YfOURBZuAnVdyGu64vYpBg==
+"@graphql-inspector/core@3.5.0":
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/@graphql-inspector/core/-/core-3.5.0.tgz#195ef4557158f48c71236df77bb5c27b16f3e5f1"
+  integrity sha512-96guRRzfss8Jn7AqANh9HETq0m72a97ieC6fOGd+bGLHvdmxvqVWNCer+3VpQknGeQD7RsKe7Qommgo/PAqKbg==
   dependencies:
     dependency-graph "0.11.0"
     object-inspect "1.10.3"
