@@ -1,5 +1,14 @@
 # @graphql-mesh/plugin-snapshot
 
+## 0.1.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`d694ccc1f`](https://github.com/Urigo/graphql-mesh/commit/d694ccc1f5a2cbc3ed97778a3210594005f2830b)]:
+  - @graphql-mesh/utils@0.43.9
+  - @graphql-mesh/types@0.91.1
+
 ## 0.1.11
 
 ### Patch Changes
