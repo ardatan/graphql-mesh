@@ -94,5 +94,9 @@ export function sanitizeNameForGraphQL(unsafeName: string): string {
     sanitizedName += '_';
   }
 
+  if (sanitizedName.length === 0) {
+    return '_';
+  }
+
   return sanitizedName;
 }
