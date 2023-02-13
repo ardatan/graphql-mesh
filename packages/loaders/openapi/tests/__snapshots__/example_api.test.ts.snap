@@ -30,7 +30,9 @@ type Query @globalOptions(sourceName: "example_api", endpoint: "http://localhost
   getUserByUsername(
     "Identifier of a user."
     username: String!
-  ): user @httpOperation(path: "/users/{args.username}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET) @linkResolver(linkResolverMap: "{\\"employerCompany\\":{\\"linkObjArgs\\":{\\"id\\":\\"{root.$response.body#/employerId}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCompanyById\\"},\\"friends\\":{\\"linkObjArgs\\":{\\"username\\":\\"{root.$request.path.username}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getUserFriends\\"}}")
+    "any user input"
+    input: String
+  ): user @httpOperation(path: "/users/{args.username}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"input\\":\\"input\\"}") @linkResolver(linkResolverMap: "{\\"employerCompany\\":{\\"linkObjArgs\\":{\\"id\\":\\"{root.$response.body#/employerId}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getCompanyById\\"},\\"friends\\":{\\"linkObjArgs\\":{\\"username\\":\\"{root.$request.path.username}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getUserFriends\\"}}")
   "Returns a car to test nesting of sub operations"
   getUserCar(
     "Identifier of a user."

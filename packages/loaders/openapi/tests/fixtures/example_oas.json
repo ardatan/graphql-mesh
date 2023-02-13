@@ -110,6 +110,15 @@
               "type": "string"
             },
             "description": "Identifier of a user."
+          },
+          {
+            "name": "input",
+            "in": "query",
+            "description": "any user input",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
