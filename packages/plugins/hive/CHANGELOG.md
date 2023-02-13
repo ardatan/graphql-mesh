@@ -1,5 +1,20 @@
 # @graphql-mesh/plugin-hive
 
+## 0.1.0
+
+### Minor Changes
+
+- [`989a47802`](https://github.com/Urigo/graphql-mesh/commit/989a478027b703ab969d529f09bc83071fe4f96f)
+  Thanks [@ardatan](https://github.com/ardatan)! - Options for self hosting
+
+### Patch Changes
+
+- Updated dependencies
+  [[`975715275`](https://github.com/Urigo/graphql-mesh/commit/9757152751e37062bca4ba114bee65a0c79a3d4d),
+  [`989a47802`](https://github.com/Urigo/graphql-mesh/commit/989a478027b703ab969d529f09bc83071fe4f96f)]:
+  - @graphql-mesh/cross-helpers@0.3.3
+  - @graphql-mesh/types@0.91.2
+
 ## 0.0.15
 
 ### Patch Changes

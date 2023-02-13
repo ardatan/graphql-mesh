@@ -1,5 +1,15 @@
 # @graphql-mesh/plugin-live-query
 
+## 0.2.10
+
+### Patch Changes
+
+- Updated dependencies
+  [[`975715275`](https://github.com/Urigo/graphql-mesh/commit/9757152751e37062bca4ba114bee65a0c79a3d4d),
+  [`989a47802`](https://github.com/Urigo/graphql-mesh/commit/989a478027b703ab969d529f09bc83071fe4f96f)]:
+  - @graphql-mesh/cross-helpers@0.3.3
+  - @graphql-mesh/types@0.91.2
+
 ## 0.2.9
 
 ### Patch Changes

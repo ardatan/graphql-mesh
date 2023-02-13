@@ -1,5 +1,15 @@
 # @graphql-mesh/types
 
+## 0.91.2
+
+### Patch Changes
+
+- [`989a47802`](https://github.com/Urigo/graphql-mesh/commit/989a478027b703ab969d529f09bc83071fe4f96f)
+  Thanks [@ardatan](https://github.com/ardatan)! - Options for self hosting
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.9.10
+
 ## 0.91.1
 
 ### Patch Changes

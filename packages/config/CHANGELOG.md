@@ -1,5 +1,22 @@
 # @graphql-mesh/config
 
+## 10.1.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`975715275`](https://github.com/Urigo/graphql-mesh/commit/9757152751e37062bca4ba114bee65a0c79a3d4d),
+  [`989a47802`](https://github.com/Urigo/graphql-mesh/commit/989a478027b703ab969d529f09bc83071fe4f96f),
+  [`3f4ca5b6b`](https://github.com/Urigo/graphql-mesh/commit/3f4ca5b6b39b1946fa7bd10f0de2a69b8b414376)]:
+  - @graphql-mesh/cross-helpers@0.3.3
+  - @graphql-mesh/types@0.91.2
+  - @graphql-mesh/runtime@0.46.10
+  - @graphql-mesh/store@0.9.10
+  - @graphql-mesh/utils@0.43.10
+  - @graphql-mesh/cache-localforage@0.7.10
+  - @graphql-mesh/merger-bare@0.16.12
+  - @graphql-mesh/merger-stitching@0.18.12
+
 ## 10.1.2
 
 ### Patch Changes
