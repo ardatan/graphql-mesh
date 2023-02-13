@@ -18,6 +18,7 @@ const schemas = {
   SubscriptionType: 'subscriptionType.yml',
   CloudFlare: 'cloudflare.json',
   TeachersTraining: 'uk_teachers_training_courses.json',
+  MeiliSearch: 'meilisearch.yml',
 };
 
 describe('Schemas', () => {
