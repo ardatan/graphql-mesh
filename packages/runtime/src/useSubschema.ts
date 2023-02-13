@@ -28,7 +28,7 @@ function getIntrospectionOperationType(
   visit(operationAST, {
     Field: node => {
       if (node.name.value === '__schema' || node.name.value === '__type') {
-        introspectionQueryType = true;
+        introspectionQueryType = IntrospectionQueryType.REGULAR;
         return BREAK;
       }
       if (node.name.value === '_service') {
