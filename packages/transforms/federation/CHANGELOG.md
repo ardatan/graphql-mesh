@@ -1,5 +1,37 @@
 # @graphql-mesh/transform-federation
 
+## 0.11.0
+
+### Minor Changes
+
+- [`7e8bb87dd`](https://github.com/Urigo/graphql-mesh/commit/7e8bb87ddf4cb1210db6873334bdd18007cc0552)
+  Thanks [@ardatan](https://github.com/ardatan)! - Allow users to change the version of the
+  federation spec
+
+### Patch Changes
+
+- [#5091](https://github.com/Urigo/graphql-mesh/pull/5091)
+  [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@apollo/subgraph@2.3.2` ↗︎](https://www.npmjs.com/package/@apollo/subgraph/v/2.3.2) (from
+    `2.3.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/delegate@9.0.26` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.26)
+    (from `9.0.24`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/stitching-directives@2.3.29` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/2.3.29)
+    (from `2.3.27`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@9.2.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.2.1)
+    (from `9.1.4`, in `dependencies`)
+- Updated dependencies
+  [[`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
+  [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
+  [`7e8bb87dd`](https://github.com/Urigo/graphql-mesh/commit/7e8bb87ddf4cb1210db6873334bdd18007cc0552)]:
+  - @graphql-mesh/types@0.91.0
+  - @graphql-mesh/utils@0.43.8
+
 ## 0.10.8
 
 ### Patch Changes

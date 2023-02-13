@@ -1,5 +1,22 @@
 # @graphql-mesh/plugin-statsd
 
+## 0.1.8
+
+### Patch Changes
+
+- [#5104](https://github.com/Urigo/graphql-mesh/pull/5104)
+  [`3d733e484`](https://github.com/Urigo/graphql-mesh/commit/3d733e4840cc16d5de063fb3f4dafa17ea8cbb04)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`hot-shots@^8.0.0 || ^9.0.0 || ^10.0.0` ↗︎](https://www.npmjs.com/package/hot-shots/v/8.0.0)
+    (from `^8.0.0 || ^9.0.0`, in `peerDependencies`)
+- Updated dependencies
+  [[`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
+  [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
+  [`7e8bb87dd`](https://github.com/Urigo/graphql-mesh/commit/7e8bb87ddf4cb1210db6873334bdd18007cc0552)]:
+  - @graphql-mesh/types@0.91.0
+  - @graphql-mesh/utils@0.43.8
+
 ## 0.1.7
 
 ### Patch Changes

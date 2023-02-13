@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-hoist-field",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "type": "module",
   "repository": {
     "type": "git",
@@ -32,14 +32,14 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.90.0",
-    "@graphql-mesh/utils": "0.43.7",
+    "@graphql-mesh/types": "0.91.0",
+    "@graphql-mesh/utils": "0.43.8",
     "@graphql-tools/delegate": "9.0.26",
     "@graphql-tools/utils": "9.2.1",
     "@graphql-tools/wrap": "9.3.5"
   },
   "devDependencies": {
-    "@graphql-mesh/cache-localforage": "0.7.7"
+    "@graphql-mesh/cache-localforage": "0.7.8"
   },
   "publishConfig": {
     "access": "public",

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/thrift",
-  "version": "0.12.7",
+  "version": "0.12.8",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,11 +35,11 @@
     "@creditkarma/thrift-client": "1.0.4",
     "@creditkarma/thrift-parser": "2.0.0",
     "@creditkarma/thrift-server-core": "1.0.4",
-    "@graphql-mesh/cross-helpers": "0.3.1",
-    "@graphql-mesh/store": "0.9.7",
+    "@graphql-mesh/cross-helpers": "0.3.2",
+    "@graphql-mesh/store": "0.9.8",
     "@graphql-mesh/string-interpolation": "0.4.2",
-    "@graphql-mesh/types": "0.90.0",
-    "@graphql-mesh/utils": "0.43.7",
+    "@graphql-mesh/types": "0.91.0",
+    "@graphql-mesh/utils": "0.43.8",
     "@graphql-tools/utils": "9.2.1",
     "graphql-scalars": "1.20.1",
     "pascal-case": "3.1.2",
