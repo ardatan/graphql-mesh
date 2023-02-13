@@ -2877,12 +2877,13 @@
     "@envelop/on-resolve" "^2.0.4"
     tslib "^2.4.0"
 
-"@envelop/response-cache@4.0.4":
-  version "4.0.4"
-  resolved "https://registry.yarnpkg.com/@envelop/response-cache/-/response-cache-4.0.4.tgz#c965de19e19e09b868e6b4089c04a888975662a4"
-  integrity sha512-m8fVw4Yif0Y8TlANDZlA4sXfrEubxV9hHRxJpVqYrqX0YcJZfHS1usF7Z7I2X8LW0x5tyZ9jlbnuf4a26JmHFQ==
+"@envelop/response-cache@4.0.5":
+  version "4.0.5"
+  resolved "https://registry.yarnpkg.com/@envelop/response-cache/-/response-cache-4.0.5.tgz#aa5f7bbe8478563b8aeceb32d0954d25d85fb4d5"
+  integrity sha512-zwLQc792xvzATSW66khSVNGzsNjuj1B6iL0Sxym2ooH72p88DrNi4v3Nii7ecDNgp6z+/0LPBE/Pml6/VchWaw==
   dependencies:
     "@graphql-tools/utils" "^8.8.0"
+    "@whatwg-node/fetch" "^0.6.5"
     fast-json-stable-stringify "^2.1.0"
     lru-cache "^6.0.0"
     tslib "^2.4.0"
@@ -3955,19 +3956,19 @@
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.1.1.tgz#076d78ce99822258cf813ecc1e7fa460fa74d052"
   integrity sha512-NQ17ii0rK1b34VZonlmT2QMJFI70m0TRwbknO/ihlbatXyaktDhN/98vBiUU6kNBPljqGqyIrl2T4nY2RpFANg==
 
-"@graphql-yoga/plugin-prometheus@1.5.1":
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-prometheus/-/plugin-prometheus-1.5.1.tgz#6bbf23e990ea68cee9fc8388149d6c2a15c8f3a6"
-  integrity sha512-dtyxKepfLwurnX655Kua1D5FYFaTF/U0lMF+6yz0V28u8HM+fsRhZZR1g724cb1JJ+1T/2gl873ZCMjWiLQEVg==
+"@graphql-yoga/plugin-prometheus@1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-prometheus/-/plugin-prometheus-1.6.0.tgz#4e813a9ea9baa30cb0aa4e61eb0a8ff1de6997d9"
+  integrity sha512-1XwVD8DiQK2MFKNVw181TIMF8If1PtDXYsMNF4jSzLtKFkUBIJVCFFEzmIURtD+VSrzIVd9wHDpD56ONQPwIVg==
   dependencies:
     "@envelop/prometheus" "7.0.4"
 
-"@graphql-yoga/plugin-response-cache@1.5.1":
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-response-cache/-/plugin-response-cache-1.5.1.tgz#a628b0a02b373739e6d75bf32c969337e522a13f"
-  integrity sha512-4VAxusjHAlh9KGesOSJgkhEjSjsPvo3r1gtO0drkjtyxKZ4q6al65GcY2nVjrxbqNYx0C3USCLHNZwAH6bLh4Q==
+"@graphql-yoga/plugin-response-cache@1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-response-cache/-/plugin-response-cache-1.6.0.tgz#b47a25b1bfdce97732d5f5ea9cc4834fe8b6ed91"
+  integrity sha512-83/XBzp6XLEqUjvKyazwhpRt9ps5w5dAoB7DD2GAXphAsrfFMRKxC2OMsZwzlgusVNC6xbDUMCa37Pk6NbxfQw==
   dependencies:
-    "@envelop/response-cache" "4.0.4"
+    "@envelop/response-cache" "4.0.5"
 
 "@graphql-yoga/subscription@^3.1.0":
   version "3.1.0"
@@ -6917,7 +6918,7 @@
   resolved "https://registry.yarnpkg.com/@whatwg-node/events/-/events-0.0.2.tgz#7b7107268d2982fc7b7aff5ee6803c64018f84dd"
   integrity sha512-WKj/lI4QjnLuPrim0cfO7i+HsDSXHxNv1y0CrJhdntuO3hxWZmnXCwNDnwOvry11OjRin6cgWNF+j/9Pn8TN4w==
 
-"@whatwg-node/fetch@0.6.5":
+"@whatwg-node/fetch@0.6.5", "@whatwg-node/fetch@^0.6.5":
   version "0.6.5"
   resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.6.5.tgz#ff96288e9a6295faafac79f13e3b3fd831cad11f"
   integrity sha512-3XQ78RAMX8Az0LlUqMoGM3jbT+FE0S+IKr4yiTiqzQ5S/pNxD52K/kFLcLQiEbL+3rkk/glCHqjxF1QI5155Ig==
@@ -20883,10 +20884,10 @@ underscore@^1.10.2, underscore@^1.13.1, underscore@^1.9.2:
   resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.13.1.tgz#0c1c6bd2df54b6b69f2314066d65b6cde6fcf9d1"
   integrity sha512-hzSoAVtJF+3ZtiFX0VgfFPHEDRm7Y/QPjGyNo4TVdnDTdft3tr8hEkD25a1jC+TjTuE7tkHGKkhwCgs9dgBB2g==
 
-undici@5.19.0, undici@5.9.1:
-  version "5.19.0"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-5.19.0.tgz#b80b3627c95e20e9ce02925ec64c4fc39fd93320"
-  integrity sha512-7XnhXXW0/AMTx17x1T3OOYY14FGiXbkyE/itv4jY1v8CnSQBMXW3yZ/Ppt7YlOv1D63tm9N4g5Au1Abe+gwpkw==
+undici@5.19.1, undici@5.9.1:
+  version "5.19.1"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-5.19.1.tgz#92b1fd3ab2c089b5a6bd3e579dcda8f1934ebf6d"
+  integrity sha512-YiZ61LPIgY73E7syxCDxxa3LV2yl3sN8spnIuTct60boiiRaE1J8mNWHO8Im2Zi/sFrPusjLlmRPrsyraSqX6A==
   dependencies:
     busboy "^1.6.0"
 

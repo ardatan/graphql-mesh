@@ -37,7 +37,7 @@
     "@graphql-mesh/string-interpolation": "0.4.2",
     "@graphql-mesh/types": "0.91.1",
     "@graphql-mesh/utils": "0.43.9",
-    "@graphql-yoga/plugin-response-cache": "1.5.1",
+    "@graphql-yoga/plugin-response-cache": "1.6.0",
     "tslib": "^2.4.0"
   },
   "publishConfig": {
