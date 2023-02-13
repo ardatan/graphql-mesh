@@ -32,7 +32,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-hive/client": "0.23.0",
+    "@graphql-hive/client": "0.23.1",
     "@graphql-mesh/cross-helpers": "0.3.1",
     "@graphql-mesh/string-interpolation": "0.4.2",
     "@graphql-mesh/types": "0.90.0",

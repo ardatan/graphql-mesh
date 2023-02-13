@@ -3463,10 +3463,10 @@
     ts-node "10.9.1"
     tslib "2.5.0"
 
-"@graphql-hive/client@0.23.0":
-  version "0.23.0"
-  resolved "https://registry.yarnpkg.com/@graphql-hive/client/-/client-0.23.0.tgz#85a09bea344adbb9725018e8e795c92bd1bcdf10"
-  integrity sha512-D2H/t+vA3Jvg1cDKMIt6z3ZeXhGSP8r7zca5luIj6ENRBwVoI5eRDRkTsmnsI6UqA4Z9RO5VccrYiJw2VVvXZw==
+"@graphql-hive/client@0.23.1":
+  version "0.23.1"
+  resolved "https://registry.yarnpkg.com/@graphql-hive/client/-/client-0.23.1.tgz#11f114540545fbe5f466e1f872e7a064e0817c3b"
+  integrity sha512-Nb4b4AIaEf0+w2VaOitgPCwoerzc62rAX/T7+UiR6DFL42xR78wX8HNNufBC4SAUTvLgYJLFjvXDQ+LoTthqMg==
   dependencies:
     "@graphql-hive/core" "^0.2.3"
     "@graphql-tools/utils" "^9.0.0"
