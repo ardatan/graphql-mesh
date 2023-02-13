@@ -35,7 +35,7 @@
     "@graphql-mesh/cross-helpers": "0.3.2",
     "@graphql-mesh/types": "0.91.1",
     "@graphql-mesh/utils": "0.43.9",
-    "dataloader": "2.2.1",
+    "dataloader": "2.2.2",
     "tslib": "^2.4.0"
   },
   "publishConfig": {

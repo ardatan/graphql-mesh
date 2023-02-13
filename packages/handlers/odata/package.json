@@ -40,7 +40,7 @@
     "@graphql-tools/delegate": "9.0.26",
     "@graphql-tools/utils": "9.2.1",
     "@whatwg-node/fetch": "^0.8.0",
-    "dataloader": "2.2.1",
+    "dataloader": "2.2.2",
     "fast-xml-parser": "4.1.2",
     "graphql-compose": "9.0.10",
     "graphql-parse-resolve-info": "4.13.0",
