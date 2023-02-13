@@ -1,5 +1,13 @@
 # cloudflare-workers
 
+## 0.0.104
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f5fb8e392`](https://github.com/Urigo/graphql-mesh/commit/f5fb8e392971e99ab52a06c249235ada265f96e0)]:
+  - @graphql-mesh/plugin-response-cache@0.2.11
+
 ## 0.0.103
 
 ### Patch Changes
