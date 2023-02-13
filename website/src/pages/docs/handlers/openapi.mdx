@@ -109,7 +109,7 @@ header in `Authorization-Header`. To introduce the logic needed to generate the 
 `fetch` used by GraphQL Mesh to call the Rest API.
 
 ```ts filename="custom-fetch.ts"
-import { MeshContext } from '@graphql-mesh/types';
+import { MeshContext } from '@graphql-mesh/runtime';
 import { fetch } from '@whatwg-node/fetch';
 
 export default(url: string, init: RequestInit, context: MeshContext) {
