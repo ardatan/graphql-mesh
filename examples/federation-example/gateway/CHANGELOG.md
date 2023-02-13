@@ -1,5 +1,15 @@
 # federation-gateway
 
+## 0.0.199
+
+### Patch Changes
+
+- Updated dependencies
+  [[`743caf3c8`](https://github.com/Urigo/graphql-mesh/commit/743caf3c8a0f3ebcaae1e4525b2c10b281cdc3aa)]:
+  - @graphql-mesh/cli@0.82.17
+  - @graphql-mesh/graphql@0.34.3
+  - @graphql-mesh/transform-federation@0.11.2
+
 ## 0.0.198
 
 ### Patch Changes
