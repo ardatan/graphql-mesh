@@ -1,5 +1,15 @@
 # @graphql-mesh/utils
 
+## 0.43.9
+
+### Patch Changes
+
+- [`d694ccc1f`](https://github.com/Urigo/graphql-mesh/commit/d694ccc1f5a2cbc3ed97778a3210594005f2830b)
+  Thanks [@ardatan](https://github.com/ardatan)! - If the field name is empty, put `_` as the name
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.91.1
+
 ## 0.43.8
 
 ### Patch Changes
