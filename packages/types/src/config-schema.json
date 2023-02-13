@@ -1934,6 +1934,10 @@
         "reporting": {
           "$ref": "#/definitions/HiveReportingOptions",
           "description": "Schema reporting"
+        },
+        "selfHosting": {
+          "$ref": "#/definitions/HiveSelfHostingOptions",
+          "description": "Options for self-hosting\n[See more](https://github.com/kamilkisiela/graphql-hive/tree/main/packages/libraries/client#self-hosting)"
         }
       },
       "required": ["token"]
@@ -2036,6 +2040,26 @@
         }
       },
       "required": ["author", "commit"]
+    },
+    "HiveSelfHostingOptions": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "HiveSelfHostingOptions",
+      "properties": {
+        "graphqlEndpoint": {
+          "type": "string",
+          "description": "Point to your own instance of GraphQL Hive API\n\nUsed by schema reporting and token info."
+        },
+        "applicationUrl": {
+          "type": "string",
+          "description": "Address of your own GraphQL Hive application\n\nUsed by token info to generate a link to the organization, project and target."
+        },
+        "usageEndpoint": {
+          "type": "string",
+          "description": "Point to your own instance of GraphQL Hive Usage API\n\nUsed by usage reporting."
+        }
+      },
+      "required": ["graphqlEndpoint", "applicationUrl"]
     },
     "HTTPDetailsExtensionsConfig": {
       "additionalProperties": false,

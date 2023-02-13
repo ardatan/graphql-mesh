@@ -1647,6 +1647,7 @@ export interface HivePlugin {
   agent?: HiveAgentOptions;
   usage?: HiveUsageOptions;
   reporting?: HiveReportingOptions;
+  selfHosting?: HiveSelfHostingOptions;
 }
 /**
  * Agent Options
@@ -1736,6 +1737,30 @@ export interface HiveReportingOptions {
   commit: string;
   serviceName?: string;
   serviceUrl?: string;
+}
+/**
+ * Options for self-hosting
+ * [See more](https://github.com/kamilkisiela/graphql-hive/tree/main/packages/libraries/client#self-hosting)
+ */
+export interface HiveSelfHostingOptions {
+  /**
+   * Point to your own instance of GraphQL Hive API
+   *
+   * Used by schema reporting and token info.
+   */
+  graphqlEndpoint: string;
+  /**
+   * Address of your own GraphQL Hive application
+   *
+   * Used by token info to generate a link to the organization, project and target.
+   */
+  applicationUrl: string;
+  /**
+   * Point to your own instance of GraphQL Hive Usage API
+   *
+   * Used by usage reporting.
+   */
+  usageEndpoint?: string;
 }
 export interface HTTPDetailsExtensionsConfig {
   if?: any;
