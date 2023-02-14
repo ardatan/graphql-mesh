@@ -1,6 +1,5 @@
 import { basename, join } from 'path';
-import { introspectionFromSchema, lexicographicSortSchema, printSchema } from 'graphql';
-import Sequelize from 'sequelize';
+import { introspectionFromSchema, lexicographicSortSchema } from 'graphql';
 import { findAndParseConfig } from '@graphql-mesh/cli';
 import { ProcessedConfig } from '@graphql-mesh/config';
 import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
@@ -31,10 +30,5 @@ describe('SQLite Chinook', () => {
   });
   afterAll(async () => {
     mesh.destroy();
-    await Promise.all(
-      (Sequelize as any as typeof Sequelize.Sequelize).instances.map(instance =>
-        instance.connectionManager.close().then(() => instance.close()),
-      ),
-    );
   });
 });
