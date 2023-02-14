@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-snapshot",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "type": "module",
   "repository": {
     "type": "git",
@@ -34,8 +34,8 @@
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.3.3",
     "@graphql-mesh/string-interpolation": "0.4.2",
-    "@graphql-mesh/types": "0.91.2",
-    "@graphql-mesh/utils": "0.43.10",
+    "@graphql-mesh/types": "0.91.3",
+    "@graphql-mesh/utils": "0.43.11",
     "@whatwg-node/fetch": "0.8.1",
     "minimatch": "5.1.6",
     "tslib": "^2.4.0"
