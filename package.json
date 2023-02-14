@@ -39,8 +39,7 @@
     "prettier": "prettier --write --list-different .",
     "prettier:check": "prettier --check .",
     "release": "changeset publish",
-    "test": "cross-env \"JEST=1\" jest --forceExit --no-watchman",
-    "test-and-build": "yarn build && yarn test"
+    "test": "cross-env \"JEST=1\" jest --detectOpenHandles --detectLeaks --no-watchman"
   },
   "devDependencies": {
     "@ardatan/graphql-to-config-schema": "0.1.25",

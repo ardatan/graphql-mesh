@@ -1,31 +1,36 @@
 /* eslint-disable import/no-duplicates */
-import './patchLongJs.js';
-import { MeshHandlerOptions, Logger, MeshHandler, YamlConfig } from '@graphql-mesh/types';
-import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { ChannelCredentials, credentials, loadPackageDefinition } from '@grpc/grpc-js';
-import { fromJSON } from '@grpc/proto-loader';
+import globby from 'globby';
+import { GraphQLEnumTypeConfig, GraphQLResolveInfo, specifiedDirectives } from 'graphql';
 import { ObjectTypeComposerFieldConfigAsObjectDefinition, SchemaComposer } from 'graphql-compose';
 import {
   GraphQLBigInt,
   GraphQLByte,
+  GraphQLJSON,
   GraphQLUnsignedInt,
   GraphQLVoid,
-  GraphQLJSON,
 } from 'graphql-scalars';
 import lodashGet from 'lodash.get';
 import lodashHas from 'lodash.has';
 import { AnyNestedObject, IParseOptions, Message, RootConstructor } from 'protobufjs';
 import protobufjs from 'protobufjs';
-import { Client } from '@ardatan/grpc-reflection-js';
 import { IFileDescriptorSet } from 'protobufjs/ext/descriptor';
 import descriptor from 'protobufjs/ext/descriptor/index.js';
-
-import { addIncludePathResolver, addMetaDataToCall, getTypeName } from './utils.js';
-import { GraphQLEnumTypeConfig, GraphQLResolveInfo, specifiedDirectives } from 'graphql';
+import { Client } from '@ardatan/grpc-reflection-js';
 import { path, process } from '@graphql-mesh/cross-helpers';
-import { StoreProxy } from '@graphql-mesh/store';
 import { fs } from '@graphql-mesh/cross-helpers';
-import globby from 'globby';
+import { StoreProxy } from '@graphql-mesh/store';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import {
+  Logger,
+  MeshHandler,
+  MeshHandlerOptions,
+  MeshPubSub,
+  YamlConfig,
+} from '@graphql-mesh/types';
+import { ChannelCredentials, credentials, loadPackageDefinition } from '@grpc/grpc-js';
+import { fromJSON } from '@grpc/proto-loader';
+import './patchLongJs.js';
+import { addIncludePathResolver, addMetaDataToCall, getTypeName } from './utils.js';
 
 const { Root } = protobufjs;
 
@@ -47,8 +52,15 @@ export default class GrpcHandler implements MeshHandler {
   private baseDir: string;
   private rootJsonEntries: StoreProxy<RootJsonEntry[]>;
   private logger: Logger;
+  private pubsub: MeshPubSub;
 
-  constructor({ config, baseDir, store, logger }: MeshHandlerOptions<YamlConfig.GrpcHandler>) {
+  constructor({
+    config,
+    baseDir,
+    store,
+    logger,
+    pubsub,
+  }: MeshHandlerOptions<YamlConfig.GrpcHandler>) {
     this.logger = logger;
     this.config = config;
     this.baseDir = baseDir;
@@ -84,6 +96,7 @@ ${rootJsonEntries
       },
       validate: () => {},
     });
+    this.pubsub = pubsub;
   }
 
   async processReflection(creds: ChannelCredentials): Promise<Promise<protobufjs.Root>[]> {
@@ -403,6 +416,10 @@ ${rootJsonEntries
           this.config.endpoint,
         creds,
       );
+      const subId = this.pubsub.subscribe('destroy', () => {
+        client.close();
+        this.pubsub.unsubscribe(subId);
+      });
       for (const methodName in nested.methods) {
         const method = nested.methods[methodName];
         const rootFieldName = [...pathWithName, methodName].join('_');
