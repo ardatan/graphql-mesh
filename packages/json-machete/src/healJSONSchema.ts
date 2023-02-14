@@ -497,7 +497,7 @@ export async function healJSONSchema(
             subSchema.type !== 'string' &&
             typeof subSchema.default === 'string'
           ) {
-            logger.info(
+            logger.debug(
               `${path} has a default value as a JSON string for the type ${subSchema.type}. Converting it to JSON.`,
             );
             try {

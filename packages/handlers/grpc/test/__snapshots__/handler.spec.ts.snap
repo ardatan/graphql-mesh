@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Interpreting Protos should load the Comments proto 1`] = `
+exports[`gRPC Handler Interpreting Protos should load the Comments proto 1`] = `
 "type Query {
   """
   Comment 2: This is a comment with initial slash star and final star slash (all on one line)
@@ -73,7 +73,7 @@ input foo_DeleteSampleRequest_Input {
 }"
 `;
 
-exports[`Interpreting Protos should load the Custom Message proto 1`] = `
+exports[`gRPC Handler Interpreting Protos should load the Custom Message proto 1`] = `
 "type Query {
   foos_BamService_GetW(input: foos_GetBamRequest_Input): foos_GetFoosResponse
   foos_BamService_connectivityState(tryToConnect: Boolean): ConnectivityState
@@ -110,7 +110,7 @@ enum ConnectivityState {
 }"
 `;
 
-exports[`Interpreting Protos should load the Custom Message2 proto 1`] = `
+exports[`gRPC Handler Interpreting Protos should load the Custom Message2 proto 1`] = `
 "type Query {
   foo_BamService_GetFOOs(input: foo_GetFOOsRequest_Input): foo_GetFOOsResponse
   foo_BamService_connectivityState(tryToConnect: Boolean): ConnectivityState
@@ -142,7 +142,7 @@ enum ConnectivityState {
 }"
 `;
 
-exports[`Interpreting Protos should load the Empty proto 1`] = `
+exports[`gRPC Handler Interpreting Protos should load the Empty proto 1`] = `
 "type Query {
   """get all movies"""
   io_xtech_Example_GetMovies(input: io_xtech_MovieRequest_Input): io_xtech_MoviesResult
@@ -230,7 +230,7 @@ enum ConnectivityState {
 }"
 `;
 
-exports[`Interpreting Protos should load the Import Nested proto 1`] = `
+exports[`gRPC Handler Interpreting Protos should load the Import Nested proto 1`] = `
 "type Query {
   io_xtech_outer_Example_Get(input: io_xtech_TopLevel_Nested_Input): io_xtech_Result
   io_xtech_outer_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
@@ -263,7 +263,7 @@ enum ConnectivityState {
 }"
 `;
 
-exports[`Interpreting Protos should load the Map proto 1`] = `
+exports[`gRPC Handler Interpreting Protos should load the Map proto 1`] = `
 "type Query {
   io_xtech_MapService_GetMap(input: io_xtech_MapRequest_Input): io_xtech_MapResponse
   io_xtech_MapService_connectivityState(tryToConnect: Boolean): ConnectivityState
@@ -291,7 +291,7 @@ enum ConnectivityState {
 }"
 `;
 
-exports[`Interpreting Protos should load the Movie proto 1`] = `
+exports[`gRPC Handler Interpreting Protos should load the Movie proto 1`] = `
 "type Query {
   """get all movies"""
   io_xtech_Example_GetMovies(input: io_xtech_MovieRequest_Input): io_xtech_MoviesResult
@@ -376,7 +376,7 @@ enum ConnectivityState {
 }"
 `;
 
-exports[`Interpreting Protos should load the Nested proto 1`] = `
+exports[`gRPC Handler Interpreting Protos should load the Nested proto 1`] = `
 "type Query {
   io_xtech_Example_Get(input: io_xtech_TopLevel_Nested_Input): io_xtech_Result
   io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
@@ -407,7 +407,7 @@ enum ConnectivityState {
 }"
 `;
 
-exports[`Interpreting Protos should load the No Package Nested proto 1`] = `
+exports[`gRPC Handler Interpreting Protos should load the No Package Nested proto 1`] = `
 "type Query {
   Example_Get(input: TopLevel_Nested_Input): Result
   Example_connectivityState(tryToConnect: Boolean): ConnectivityState
@@ -438,7 +438,7 @@ enum ConnectivityState {
 }"
 `;
 
-exports[`Interpreting Protos should load the Outside proto 1`] = `
+exports[`gRPC Handler Interpreting Protos should load the Outside proto 1`] = `
 "type Query {
   io_outside_Example_GetMovies(input: io_outside_MovieRequest_Input): io_outside_MoviesResult
   io_outside_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
@@ -534,7 +534,7 @@ input io_xtech_SearchByCastRequest_Input {
 }"
 `;
 
-exports[`Interpreting Protos should load the With All Values proto 1`] = `
+exports[`gRPC Handler Interpreting Protos should load the With All Values proto 1`] = `
 "type Query {
   Example_Get(input: Item_Input): Result
   Example_connectivityState(tryToConnect: Boolean): ConnectivityState
@@ -600,7 +600,7 @@ enum ConnectivityState {
 }"
 `;
 
-exports[`Interpreting Protos should load the With Underscores proto 1`] = `
+exports[`gRPC Handler Interpreting Protos should load the With Underscores proto 1`] = `
 "type Query {
   """get all movies"""
   io_xtech_Example_GetMovies(input: io_xtech_movie_request_Input): io_xtech_MoviesResult
@@ -685,7 +685,7 @@ enum ConnectivityState {
 }"
 `;
 
-exports[`Load proto with prefixQueryMethod should load the retrieve-movie.proto 1`] = `
+exports[`gRPC Handler Load proto with prefixQueryMethod should load the retrieve-movie.proto 1`] = `
 "type Query {
   """get all movies"""
   io_xtech_Example_GetMovies(input: io_xtech_movie_request_Input): io_xtech_MoviesResult
