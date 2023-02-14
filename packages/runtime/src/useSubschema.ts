@@ -10,6 +10,7 @@ import {
 } from '@graphql-tools/delegate';
 import {
   ExecutionRequest,
+  ExecutionResult,
   getDefinedRootType,
   getOperationASTFromRequest,
   isAsyncIterable,
@@ -53,11 +54,14 @@ function getExecuteFn(subschema: Subschema) {
     // TODO: We need more elegant solution
     const introspectionQueryType = getIntrospectionOperationType(operationAST);
     if (introspectionQueryType === IntrospectionQueryType.FEDERATION) {
-      return {
-        _service: {
-          sdl: printSchemaWithDirectives(args.schema),
+      const executionResult: ExecutionResult = {
+        data: {
+          _service: {
+            sdl: printSchemaWithDirectives(args.schema),
+          },
         },
       };
+      return executionResult;
     } else if (introspectionQueryType === IntrospectionQueryType.REGULAR) {
       return execute(args);
     }

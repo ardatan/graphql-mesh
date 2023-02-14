@@ -14,15 +14,21 @@ import { MergedTypeResolver, SubschemaConfig } from '@graphql-tools/delegate';
 import { MapperKind, mapSchema, printSchemaWithDirectives } from '@graphql-tools/utils';
 
 const federationDirectives = [
-  'extends',
-  'external',
-  'inaccessible',
+  'link',
+
   'key',
+  'interfaceObject',
+  'extends',
+
+  'shareable',
+  'inaccessible',
   'override',
+
+  'external',
   'provides',
   'requires',
-  'shareable',
   'tag',
+  'composeDirective',
 ];
 
 export default class FederationTransform implements MeshTransform {
@@ -202,7 +208,13 @@ export default class FederationTransform implements MeshTransform {
       return schemaWithUnionType;
     }
 
-    const filteredSchema = mapSchema(schemaWithUnionType, {
+    return mapSchema(schemaWithUnionType, {
+      [MapperKind.DIRECTIVE]: directive => {
+        if (federationDirectives.includes(directive.name)) {
+          return directive;
+        }
+        return null;
+      },
       [MapperKind.OBJECT_TYPE]: type => {
         return new GraphQLObjectType({
           ...type.toConfig(),
@@ -260,10 +272,6 @@ export default class FederationTransform implements MeshTransform {
           },
         };
       },
-    });
-    return new GraphQLSchema({
-      ...filteredSchema.toConfig(),
-      directives: filteredDirectives,
     });
   }
 }
