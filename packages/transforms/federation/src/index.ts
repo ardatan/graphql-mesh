@@ -196,7 +196,7 @@ export default class FederationTransform implements MeshTransform {
       schemaWithUnionType.extensions.directives || {});
     directivesObj.link = {
       url: 'https://specs.apollo.dev/federation/' + (this.config.version || 'v2.0'),
-      import: federationDirectives.map(dirName => `@${dirName}`),
+      import: federationDirectives.filter(name => name !== 'link').map(dirName => `@${dirName}`),
     };
 
     const existingDirectives = schemaWithUnionType.getDirectives();
