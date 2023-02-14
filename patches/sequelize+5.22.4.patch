@@ -1,0 +1,33 @@
+diff --git a/node_modules/sequelize/lib/sequelize.js b/node_modules/sequelize/lib/sequelize.js
+index b43fd66..3eee85a 100755
+--- a/node_modules/sequelize/lib/sequelize.js
++++ b/node_modules/sequelize/lib/sequelize.js
+@@ -28,6 +28,7 @@ const deprecations = require('./utils/deprecations');
+  * This is the main class, the entry point to sequelize.
+  */
+ class Sequelize {
++  static instances = [];
+   /**
+    * Instantiate sequelize with name of database, username and password.
+    *
+@@ -353,6 +354,7 @@ class Sequelize {
+     this.importCache = {};
+ 
+     Sequelize.runHooks('afterInit', this);
++    Sequelize.instances.push(this);
+   }
+ 
+   /**
+diff --git a/node_modules/sequelize/types/lib/sequelize.d.ts b/node_modules/sequelize/types/lib/sequelize.d.ts
+index d610add..ec72a1a 100644
+--- a/node_modules/sequelize/types/lib/sequelize.d.ts
++++ b/node_modules/sequelize/types/lib/sequelize.d.ts
+@@ -792,6 +792,8 @@ export class Sequelize extends Hooks {
+     [key: string]: ModelCtor<Model>;
+   };
+ 
++  public static instances: Sequelize[];
++
+   /**
+    * Instantiate sequelize with name of database, username and password
+    *

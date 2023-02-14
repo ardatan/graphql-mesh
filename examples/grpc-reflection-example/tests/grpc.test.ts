@@ -1,7 +1,6 @@
 import { join } from 'path';
 import { readFile } from 'fs-extra';
 import { lexicographicSortSchema, printSchema } from 'graphql';
-import 'json-bigint-patch';
 import { findAndParseConfig } from '@graphql-mesh/cli';
 import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
 import { Server } from '@grpc/grpc-js';

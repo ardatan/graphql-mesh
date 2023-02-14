@@ -1,7 +1,6 @@
 import { join } from 'path';
 import { readFile } from 'fs-extra';
 import { lexicographicSortSchema, printSchema } from 'graphql';
-import 'json-bigint-patch';
 import { findAndParseConfig } from '@graphql-mesh/cli';
 import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
 import { Server } from '@grpc/grpc-js';
@@ -36,8 +35,16 @@ describe('gRPC Example', () => {
     const result = await mesh.execute(MoviesByCastStream, undefined);
     expect(result).toMatchSnapshot('movies-by-cast-grpc-example-result');
   });
-  afterAll(done => {
+  afterAll(async () => {
     mesh.destroy();
-    grpc.tryShutdown(done);
+    await new Promise<void>((resolve, reject) => {
+      grpc.tryShutdown(err => {
+        if (err) {
+          reject(err);
+        } else {
+          setTimeout(resolve, 1000);
+        }
+      });
+    });
   });
 });
