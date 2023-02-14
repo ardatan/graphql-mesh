@@ -1,5 +1,17 @@
 # @graphql-mesh/http
 
+## 0.3.15
+
+### Patch Changes
+
+- Updated dependencies
+  [[`8c9c39cf5`](https://github.com/Urigo/graphql-mesh/commit/8c9c39cf56c0cd0e3e3908b5c54cb4c1bca4151e),
+  [`8c9c39cf5`](https://github.com/Urigo/graphql-mesh/commit/8c9c39cf56c0cd0e3e3908b5c54cb4c1bca4151e),
+  [`8c9c39cf5`](https://github.com/Urigo/graphql-mesh/commit/8c9c39cf56c0cd0e3e3908b5c54cb4c1bca4151e)]:
+  - @graphql-mesh/runtime@0.46.11
+  - @graphql-mesh/types@0.91.3
+  - @graphql-mesh/utils@0.43.11
+
 ## 0.3.14
 
 ### Patch Changes
