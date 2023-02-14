@@ -104,6 +104,10 @@ ${rootJsonEntries
     const grpcReflectionServer = this.config.endpoint;
     this.logger.debug(`Creating gRPC Reflection Client`);
     const reflectionClient = new Client(grpcReflectionServer, creds);
+    const subId = this.pubsub.subscribe('destroy', () => {
+      reflectionClient.grpcClient.close();
+      this.pubsub.unsubscribe(subId);
+    });
     const services: (string | void)[] = await reflectionClient.listServices();
     const userServices = services.filter(
       service => service && !service?.startsWith('grpc.'),

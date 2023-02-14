@@ -1,16 +1,17 @@
-import { composeWithMongoose, composeWithMongooseDiscriminators } from 'graphql-compose-mongoose';
+import { specifiedDirectives } from 'graphql';
 import { SchemaComposer } from 'graphql-compose';
+import { composeWithMongoose, composeWithMongooseDiscriminators } from 'graphql-compose-mongoose';
+import { connect, ConnectOptions, disconnect, Document, Model } from 'mongoose';
 import {
+  ImportFn,
+  Logger,
+  MeshHandler,
   MeshHandlerOptions,
   MeshPubSub,
-  MeshHandler,
   MeshSource,
   YamlConfig,
-  ImportFn,
 } from '@graphql-mesh/types';
-import { connect, disconnect, ConnectOptions, Document, Model } from 'mongoose';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
-import { specifiedDirectives } from 'graphql';
 
 const modelQueryOperations = [
   'findById',
@@ -40,17 +41,23 @@ export default class MongooseHandler implements MeshHandler {
   private baseDir: string;
   private pubsub: MeshPubSub;
   private importFn: ImportFn;
+  private logger: Logger;
+  private name: string;
 
   constructor({
+    name,
     config,
     baseDir,
     pubsub,
     importFn,
+    logger,
   }: MeshHandlerOptions<YamlConfig.MongooseHandler>) {
+    this.name = name;
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
     this.importFn = importFn;
+    this.logger = logger;
   }
 
   async getMeshSource(): Promise<MeshSource> {
@@ -58,11 +65,31 @@ export default class MongooseHandler implements MeshHandler {
       connect(this.config.connectionString, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
-      } as ConnectOptions).catch(e => console.error(e));
+        logger: {
+          className: this.name,
+          debug: this.logger.debug.bind(this.logger),
+          info: this.logger.info.bind(this.logger),
+          warn: this.logger.warn.bind(this.logger),
+          error: this.logger.error.bind(this.logger),
+          isDebug() {
+            return true;
+          },
+          isError() {
+            return true;
+          },
+          isInfo() {
+            return true;
+          },
+          isWarn() {
+            return true;
+          },
+        },
+        loggerLevel: 'debug',
+      } as ConnectOptions).catch(e => this.logger.error(e));
 
       const id = this.pubsub.subscribe('destroy', () => {
         disconnect()
-          .catch(e => console.error(e))
+          .catch(e => this.logger.error(e))
           .finally(() => this.pubsub.unsubscribe(id));
       });
     }
