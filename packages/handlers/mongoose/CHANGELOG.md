@@ -1,5 +1,14 @@
 # @graphql-mesh/mongoose
 
+## 0.13.11
+
+### Patch Changes
+
+- [#5139](https://github.com/Urigo/graphql-mesh/pull/5139)
+  [`bb58a5d9e`](https://github.com/Urigo/graphql-mesh/commit/bb58a5d9e41fd359180da97d8c1b5d628fa31ad3)
+  Thanks [@ardatan](https://github.com/ardatan)! - Better logging and better cleanup after Mesh
+  destroyed
+
 ## 0.13.10
 
 ### Patch Changes

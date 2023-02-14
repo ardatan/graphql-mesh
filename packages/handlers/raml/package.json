@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/raml",
-  "version": "0.10.12",
+  "version": "0.10.13",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,7 +36,7 @@
     "@graphql-mesh/types": "0.91.3",
     "@graphql-mesh/utils": "0.43.11",
     "@graphql-tools/utils": "9.2.1",
-    "@omnigraph/raml": "0.9.12",
+    "@omnigraph/raml": "0.9.13",
     "tslib": "^2.4.0"
   },
   "publishConfig": {
