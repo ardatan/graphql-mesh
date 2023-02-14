@@ -117,9 +117,8 @@ jobs:
       - name: Build Test Artifacts
         run: yarn build-test-artifacts
       - name: Test
-        run: yarn test
+        run: yarn test:integration
         env:
-          INTEGRATION_TEST: true
           CI: true
           NODE_TLS_REJECT_UNAUTHORIZED: 0
           GH_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -194,8 +193,6 @@ jobs:
       - name: Test
         run: yarn test:integration:leak
         env:
-          LEAK_TEST: true
-          INTEGRATION_TEST: true
           CI: true
           NODE_TLS_REJECT_UNAUTHORIZED: 0
           GH_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
