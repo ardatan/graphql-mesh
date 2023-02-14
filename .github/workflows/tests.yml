@@ -37,11 +37,10 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .cache/jest
-          key: ${{ runner.os }}-${{matrix.node-version}}-jest-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-${{matrix.node-version}}-jest-unit-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{runner.os}}-${{matrix.node-version}}-jest-
-      - name: Build
-        run: yarn build
+            ${{runner.os}}-${{matrix.node-version}}-jest-unit-
+
       - name: Test
         run: yarn test
         env:
@@ -49,8 +48,6 @@ jobs:
           NODE_TLS_REJECT_UNAUTHORIZED: 0
           GH_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LC_ALL: en-US
-      - name: Node.js integrity check
-        run: yarn bob check
 
   integration:
     name: integration / ${{matrix.os}} / node ${{matrix.node-version}}
@@ -98,9 +95,10 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .cache/jest
-          key: ${{ runner.os }}-${{matrix.node-version}}-jest-${{ hashFiles('yarn.lock') }}
+          key:
+            ${{ runner.os }}-${{matrix.node-version}}-jest-integration-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{runner.os}}-${{matrix.node-version}}-jest-
+            ${{runner.os}}-${{matrix.node-version}}-jest-integration-
 
       - name: Download Postgres Dump
         run:
@@ -114,6 +112,8 @@ jobs:
           backup_file: '/tmp/backup.sql'
       - name: Build
         run: yarn build
+      - name: Node.js integrity check
+        run: yarn bob check
       - name: Build Test Artifacts
         run: yarn build-test-artifacts
       - name: Test
@@ -124,8 +124,6 @@ jobs:
           NODE_TLS_REJECT_UNAUTHORIZED: 0
           GH_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LC_ALL: en-US
-      - name: Node.js integrity check
-        run: yarn bob check
 
   integration-leak:
     name: integration / leak / ${{matrix.os}} / node ${{matrix.node-version}}
@@ -173,9 +171,11 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .cache/jest
-          key: ${{ runner.os }}-${{matrix.node-version}}-jest-${{ hashFiles('yarn.lock') }}
+          key:
+            ${{ runner.os }}-${{matrix.node-version}}-jest-integration-leak-${{
+            hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{runner.os}}-${{matrix.node-version}}-jest-
+            ${{runner.os}}-${{matrix.node-version}}-jest-integration-leak-
 
       - name: Download Postgres Dump
         run:
@@ -200,5 +200,3 @@ jobs:
           NODE_TLS_REJECT_UNAUTHORIZED: 0
           GH_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LC_ALL: en-US
-      - name: Node.js integrity check
-        run: yarn bob check
