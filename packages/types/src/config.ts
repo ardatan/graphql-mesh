@@ -1969,11 +1969,14 @@ export interface PrometheusConfig {
    */
   fetch?: boolean | string;
   fetchRequestHeaders?: boolean;
+  fetchResponseHeaders?: boolean;
+
   /**
    * Any of: Boolean, String
    */
   http?: boolean | string;
   httpRequestHeaders?: boolean;
+  httpResponseHeaders?: boolean;
   /**
    * The path to the metrics endpoint
    * default: `/metrics`

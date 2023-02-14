@@ -2470,6 +2470,9 @@
         "fetchRequestHeaders": {
           "type": "boolean"
         },
+        "fetchResponseHeaders": {
+          "type": "boolean"
+        },
         "http": {
           "description": "Any of: Boolean, String",
           "anyOf": [
@@ -2482,6 +2485,9 @@
           ]
         },
         "httpRequestHeaders": {
+          "type": "boolean"
+        },
+        "httpResponseHeaders": {
           "type": "boolean"
         },
         "endpoint": {
