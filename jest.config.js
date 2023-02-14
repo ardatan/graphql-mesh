@@ -6,9 +6,17 @@ const ROOT_DIR = __dirname;
 const TSCONFIG = resolve(ROOT_DIR, 'tsconfig.json');
 const tsconfig = require(TSCONFIG);
 
-const ESM_PACKAGES = [];
-
 process.env.LC_ALL = 'en_US';
+
+const testMatch = ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'];
+
+if (process.env.LEAK_TEST) {
+  testMatch.push('!**/examples/grpc-*/**');
+  testMatch.push('!**/examples/sqlite-*/**');
+  testMatch.push('!**/examples/mysql-*/**');
+}
+
+testMatch.push(process.env.INTEGRATION_TEST ? '!**/packages/**' : '!**/examples/**');
 
 module.exports = {
   testEnvironment: 'node',
@@ -31,6 +39,6 @@ module.exports = {
     '^.+\\.ts?$': 'babel-jest',
     '^.+\\.js$': 'babel-jest',
   },
-  transformIgnorePatterns: [`node_modules/(?!(${ESM_PACKAGES.join('|')})/)`],
   resolver: 'bob-the-bundler/jest-resolver.js',
+  testMatch,
 };
