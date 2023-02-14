@@ -2632,10 +2632,10 @@
   dependencies:
     mime "^3.0.0"
 
-"@cloudflare/workers-types@4.20230115.0":
-  version "4.20230115.0"
-  resolved "https://registry.yarnpkg.com/@cloudflare/workers-types/-/workers-types-4.20230115.0.tgz#84e6c7b1a753098dbc7cd718fdcf191c215225af"
-  integrity sha512-GPJEiO8AFN+jUpA+DHJ1qdVmk4s/hq8JYKjOV/+U7avGquQbVnj905+Kg6uAEfrq16muwmRKl+XJGqsvlBlDNg==
+"@cloudflare/workers-types@4.20230214.0":
+  version "4.20230214.0"
+  resolved "https://registry.yarnpkg.com/@cloudflare/workers-types/-/workers-types-4.20230214.0.tgz#2407541225de1bb9f98308c6619c8ef78b9eeeed"
+  integrity sha512-PfpzIKjMA1P0HLtzZVKp/V4/rAiSkgIVwGKbQleTmj7y5O62NbWP9gAxzOeQ4LpUc8UL17KRF2rXTgNKP2HNFw==
 
 "@colors/colors@1.5.0":
   version "1.5.0"
