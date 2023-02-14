@@ -16,7 +16,7 @@ jobs:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
 
   unit:
-    name: ${{matrix.os}} / node ${{matrix.node-version}}
+    name: unit / ${{matrix.os}} / node ${{matrix.node-version}}
     timeout-minutes: 60
     runs-on: ${{matrix.os}}
     strategy:
@@ -53,7 +53,7 @@ jobs:
         run: yarn bob check
 
   integration:
-    name: ${{matrix.os}} / node ${{matrix.node-version}}
+    name: integration / ${{matrix.os}} / node ${{matrix.node-version}}
     timeout-minutes: 60
     runs-on: ${{matrix.os}}
     strategy:
@@ -127,8 +127,8 @@ jobs:
       - name: Node.js integrity check
         run: yarn bob check
 
-  leak:
-    name: ${{matrix.os}} / node ${{matrix.node-version}}
+  integration-leak:
+    name: integration / leak/ ${{matrix.os}} / node ${{matrix.node-version}}
     timeout-minutes: 60
     runs-on: ${{matrix.os}}
     strategy:
@@ -192,7 +192,7 @@ jobs:
       - name: Build Test Artifacts
         run: yarn build-test-artifacts
       - name: Test
-        run: yarn test:leak
+        run: yarn test:integration:leak
         env:
           LEAK_TEST: true
           INTEGRATION_TEST: true
