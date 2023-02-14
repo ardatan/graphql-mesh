@@ -35,7 +35,7 @@
     "@graphql-mesh/cross-helpers": "0.3.3",
     "@graphql-mesh/types": "0.91.2",
     "@graphql-mesh/utils": "0.43.10",
-    "@graphql-tools/code-file-loader": "7.3.20",
+    "@graphql-tools/code-file-loader": "7.3.21",
     "@graphql-tools/graphql-file-loader": "7.5.16",
     "@graphql-tools/load": "7.8.12",
     "@graphql-tools/schema": "9.0.16",
