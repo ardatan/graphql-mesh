@@ -1,5 +1,12 @@
 # example-gcp
 
+## 0.0.25
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.20
+
 ## 0.0.24
 
 ### Patch Changes

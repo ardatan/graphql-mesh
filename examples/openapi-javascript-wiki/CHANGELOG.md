@@ -1,5 +1,12 @@
 # javascript-wiki
 
+## 0.6.23
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.20
+
 ## 0.6.22
 
 ### Patch Changes
