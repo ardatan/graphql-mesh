@@ -1,5 +1,12 @@
 # covid-mesh
 
+## 0.5.376
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.37.13
+
 ## 0.5.375
 
 ### Patch Changes

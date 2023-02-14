@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/mongoose",
-  "version": "0.13.10",
+  "version": "0.13.11",
   "type": "module",
   "repository": {
     "type": "git",
