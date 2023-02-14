@@ -1,5 +1,12 @@
 # hasura-openbrewery-geodb
 
+## 0.5.365
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.19
+
 ## 0.5.364
 
 ### Patch Changes

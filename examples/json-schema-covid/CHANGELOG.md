@@ -1,5 +1,12 @@
 # covid-mesh
 
+## 0.5.374
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.19
+
 ## 0.5.373
 
 ### Patch Changes

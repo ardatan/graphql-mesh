@@ -1,5 +1,15 @@
 # @graphql-mesh/transform-federation
 
+## 0.11.4
+
+### Patch Changes
+
+- [`1129efbb4`](https://github.com/Urigo/graphql-mesh/commit/1129efbb4cb17ec088d48ebfcc9610823085d025)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fixes for better introspection
+
+- [`696f9c772`](https://github.com/Urigo/graphql-mesh/commit/696f9c772ea323f77b6d87c62f6fdf4627d82eb7)
+  Thanks [@ardatan](https://github.com/ardatan)! - Do not import @link from the spec
+
 ## 0.11.3
 
 ### Patch Changes
