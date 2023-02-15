@@ -250,7 +250,7 @@ export default async function useMeshPrometheus(
           const end = Date.now();
           const duration = end - start;
 
-          let labels: Partial<Record<string, string | number>> = {
+          const labels: Partial<Record<string, string | number>> = {
             url,
             method: options.method,
             statusCode: response.status,
@@ -258,16 +258,10 @@ export default async function useMeshPrometheus(
           };
 
           if (pluginOptions.fetchRequestHeaders) {
-            labels = {
-              ...labels,
-              requestHeaders: JSON.stringify(options.headers),
-            };
+            labels.requestHeaders = JSON.stringify(options.headers);
           }
           if (pluginOptions.fetchResponseHeaders) {
-            labels = {
-              ...labels,
-              responseHeaders: JSON.stringify(response.headers),
-            };
+            labels.responseHeaders = JSON.stringify(getHeadersObj(response.headers));
           }
 
           fetchHistogram.observe(labels, duration);
