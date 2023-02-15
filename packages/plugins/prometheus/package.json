@@ -36,7 +36,7 @@
   "dependencies": {
     "@graphql-mesh/types": "0.91.3",
     "@graphql-mesh/utils": "0.43.11",
-    "@graphql-yoga/plugin-prometheus": "1.6.0",
+    "@graphql-yoga/plugin-prometheus": "1.6.1",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

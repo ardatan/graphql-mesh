@@ -3904,17 +3904,17 @@
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.1.1.tgz#076d78ce99822258cf813ecc1e7fa460fa74d052"
   integrity sha512-NQ17ii0rK1b34VZonlmT2QMJFI70m0TRwbknO/ihlbatXyaktDhN/98vBiUU6kNBPljqGqyIrl2T4nY2RpFANg==
 
-"@graphql-yoga/plugin-prometheus@1.6.0":
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-prometheus/-/plugin-prometheus-1.6.0.tgz#4e813a9ea9baa30cb0aa4e61eb0a8ff1de6997d9"
-  integrity sha512-1XwVD8DiQK2MFKNVw181TIMF8If1PtDXYsMNF4jSzLtKFkUBIJVCFFEzmIURtD+VSrzIVd9wHDpD56ONQPwIVg==
+"@graphql-yoga/plugin-prometheus@1.6.1":
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-prometheus/-/plugin-prometheus-1.6.1.tgz#a89c3bb4b4beb1beb7508d5b13cee457f6272ea5"
+  integrity sha512-DtYoikoT+Bnadwqd05yNnood5fOuiaP0B1fvFr6PUh6knl+AcxN5wBg8pukogEX+HmzworpWQmF4rD5ZjSE7Cg==
   dependencies:
     "@envelop/prometheus" "7.0.4"
 
-"@graphql-yoga/plugin-response-cache@1.6.0":
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-response-cache/-/plugin-response-cache-1.6.0.tgz#b47a25b1bfdce97732d5f5ea9cc4834fe8b6ed91"
-  integrity sha512-83/XBzp6XLEqUjvKyazwhpRt9ps5w5dAoB7DD2GAXphAsrfFMRKxC2OMsZwzlgusVNC6xbDUMCa37Pk6NbxfQw==
+"@graphql-yoga/plugin-response-cache@1.6.1":
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-response-cache/-/plugin-response-cache-1.6.1.tgz#8ac5131501293f5f020f4174de0bd75dd7b445f9"
+  integrity sha512-QKi+ERaS6IuwB79dGGb9M0+le06r+/EBuRiiAZa5wIUdli8/G7zml7qqCAPhDJ2EDQ56r/Bo6n1vAaZp5VFUgQ==
   dependencies:
     "@envelop/response-cache" "4.0.5"
 
