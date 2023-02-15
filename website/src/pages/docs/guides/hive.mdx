@@ -48,6 +48,8 @@ sources:
       graphql:
         # URL needs to have `.graphql` extension to tell the handler it is a GraphQL Schema
         source: https://cdn.graphql-hive.com/SOME_UUID?ext=.graphql
+        schemaHeaders:
+          X-Hive-CDN-Key: SOME_BASE64
         # The actual endpoint of the service
         endpoint: https://foo-service.com/graphql
 ```
