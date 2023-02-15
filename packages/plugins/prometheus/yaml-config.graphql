@@ -17,13 +17,17 @@ type PrometheusConfig @md {
   registry: String
 
   # Mesh specific flags
+
   delegation: BooleanOrString
   fetch: BooleanOrString
   fetchRequestHeaders: Boolean
+  fetchResponseHeaders: Boolean
 
   # Yoga specific flags
+
   http: BooleanOrString
   httpRequestHeaders: Boolean
+  httpResponseHeaders: Boolean
   """
   The path to the metrics endpoint
   default: `/metrics`

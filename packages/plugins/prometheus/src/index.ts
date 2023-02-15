@@ -32,17 +32,17 @@ export default async function useMeshPrometheus(
   if (pluginOptions.fetch) {
     const name =
       typeof pluginOptions.fetch === 'string' ? pluginOptions.fetch : 'graphql_mesh_fetch_duration';
+    const labelNames = ['url', 'method', 'statusCode', 'statusText'];
+    if (pluginOptions.fetchRequestHeaders) {
+      labelNames.push('requestHeaders');
+    }
+    if (pluginOptions.fetchResponseHeaders) {
+      labelNames.push('responseHeaders');
+    }
     fetchHistogram = new Histogram({
       name,
       help: 'Time spent on outgoing HTTP calls',
-      labelNames: [
-        'url',
-        'method',
-        'requestHeaders',
-        'statusCode',
-        'statusText',
-        'responseHeaders',
-      ],
+      labelNames,
       registers: [registry],
     });
   }
@@ -65,9 +65,12 @@ export default async function useMeshPrometheus(
   let httpHistogram: HistogramContainer | undefined;
 
   if (pluginOptions.http) {
-    const labelNames = ['url', 'method', 'statusCode', 'statusText', 'responseHeaders'];
+    const labelNames = ['url', 'method', 'statusCode', 'statusText'];
     if (pluginOptions.httpRequestHeaders) {
       labelNames.push('requestHeaders');
+    }
+    if (pluginOptions.httpResponseHeaders) {
+      labelNames.push('responseHeaders');
     }
     const name =
       typeof pluginOptions.http === 'string' ? pluginOptions.http : 'graphql_mesh_http_duration';
@@ -84,10 +87,12 @@ export default async function useMeshPrometheus(
           method: request.method,
           statusCode: response.status,
           statusText: response.statusText,
-          responseHeaders: JSON.stringify(getHeadersObj(response.headers)),
         };
         if (pluginOptions.httpRequestHeaders) {
           labels.requestHeaders = JSON.stringify(getHeadersObj(request.headers));
+        }
+        if (pluginOptions.httpResponseHeaders) {
+          labels.responseHeaders = JSON.stringify(getHeadersObj(response.headers));
         }
         return labels;
       },
@@ -244,17 +249,22 @@ export default async function useMeshPrometheus(
         return ({ response }) => {
           const end = Date.now();
           const duration = end - start;
-          fetchHistogram.observe(
-            {
-              url,
-              method: options.method,
-              requestHeaders: JSON.stringify(options.headers),
-              statusCode: response.status,
-              statusText: response.statusText,
-              responseHeaders: JSON.stringify(getHeadersObj(response.headers)),
-            },
-            duration,
-          );
+
+          const labels: Partial<Record<string, string | number>> = {
+            url,
+            method: options.method,
+            statusCode: response.status,
+            statusText: response.statusText,
+          };
+
+          if (pluginOptions.fetchRequestHeaders) {
+            labels.requestHeaders = JSON.stringify(options.headers);
+          }
+          if (pluginOptions.fetchResponseHeaders) {
+            labels.responseHeaders = JSON.stringify(getHeadersObj(response.headers));
+          }
+
+          fetchHistogram.observe(labels, duration);
         };
       }
       return undefined;
