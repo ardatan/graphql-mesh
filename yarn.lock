@@ -6371,10 +6371,10 @@
   resolved "https://registry.yarnpkg.com/@types/range-parser/-/range-parser-1.2.3.tgz#7ee330ba7caafb98090bece86a5ee44115904c2c"
   integrity sha512-ewFXqrQHlFsgc09MK5jP5iR7vumV/BYayNC6PgJO2LPe8vrnNFyjQjSppfEngITi0qvfKtzFvgKymGheFM9UOA==
 
-"@types/react-dom@18.0.10", "@types/react-dom@^18.0.0":
-  version "18.0.10"
-  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-18.0.10.tgz#3b66dec56aa0f16a6cc26da9e9ca96c35c0b4352"
-  integrity sha512-E42GW/JA4Qv15wQdqJq8DL4JhNpB3prJgjgapN3qJT9K2zO5IIAQh4VXvCEDupoqAwnz0cY4RlXeC/ajX5SFHg==
+"@types/react-dom@18.0.11", "@types/react-dom@^18.0.0":
+  version "18.0.11"
+  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-18.0.11.tgz#321351c1459bc9ca3d216aefc8a167beec334e33"
+  integrity sha512-O38bPbI2CWtgw/OoQoY+BRelw7uysmXbWvw3nLWO21H1HSh+GOlqPuXshJfjmpNlKiiSDG9cc1JZAaMmVdcTlw==
   dependencies:
     "@types/react" "*"
 
@@ -20300,10 +20300,10 @@ thenify-all@^1.0.0:
   dependencies:
     any-promise "^1.0.0"
 
-thrift@0.17.0:
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/thrift/-/thrift-0.17.0.tgz#6d9c2d28437909cdb4aa21055d46d628aaa39a5b"
-  integrity sha512-F9kO3RIusa1iZw5waHfwmejJHqgcEqzE6d+ZHyhI5wQxk2zMFWSjP2rvYvCnolRiXGfW365+J8X1TF3rF6Ki+w==
+thrift@0.18.0:
+  version "0.18.0"
+  resolved "https://registry.yarnpkg.com/thrift/-/thrift-0.18.0.tgz#d98896bb341f4691fd3bf1015e96c9156b1b7b69"
+  integrity sha512-NAnPc45kLQznUxI0gmgU7BNbuB551zdEH1+oVElZJLyZSuaEPbCplbITEDV1XdcSlRAUl79nCAFnJ4fzvCDrhQ==
   dependencies:
     browser-or-node "^1.2.1"
     isomorphic-ws "^4.0.1"
