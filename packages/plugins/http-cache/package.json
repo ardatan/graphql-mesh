@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-http-cache",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "type": "module",
   "repository": {
     "type": "git",
@@ -32,8 +32,8 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.91.3",
-    "@graphql-mesh/utils": "0.43.11",
+    "@graphql-mesh/types": "0.91.4",
+    "@graphql-mesh/utils": "0.43.12",
     "@whatwg-node/fetch": "0.8.1",
     "http-cache-semantics": "4.1.1",
     "tslib": "^2.4.0"

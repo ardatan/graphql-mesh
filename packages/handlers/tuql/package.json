@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/tuql",
-  "version": "0.8.10",
+  "version": "0.8.11",
   "type": "module",
   "repository": {
     "type": "git",
@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.3.3",
-    "@graphql-mesh/types": "0.91.3",
+    "@graphql-mesh/types": "0.91.4",
     "tslib": "^2.4.0",
     "tuql": "1.7.0"
   },

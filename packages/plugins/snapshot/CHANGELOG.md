@@ -1,5 +1,19 @@
 # @graphql-mesh/plugin-snapshot
 
+## 0.1.15
+
+### Patch Changes
+
+- [#5036](https://github.com/Urigo/graphql-mesh/pull/5036)
+  [`47734f78b`](https://github.com/Urigo/graphql-mesh/commit/47734f78bd9b3e934844aa431a5d1465af107b0d)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`minimatch@6.2.0` ↗︎](https://www.npmjs.com/package/minimatch/v/6.2.0) (from
+    `5.1.6`, in `dependencies`)
+- Updated dependencies
+  [[`63ab17f0b`](https://github.com/Urigo/graphql-mesh/commit/63ab17f0bd402b5a3923d752ba715f556f3beadd)]:
+  - @graphql-mesh/types@0.91.4
+  - @graphql-mesh/utils@0.43.12
+
 ## 0.1.14
 
 ### Patch Changes
