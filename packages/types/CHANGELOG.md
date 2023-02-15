@@ -1,5 +1,17 @@
 # @graphql-mesh/types
 
+## 0.91.4
+
+### Patch Changes
+
+- [#5145](https://github.com/Urigo/graphql-mesh/pull/5145)
+  [`63ab17f0b`](https://github.com/Urigo/graphql-mesh/commit/63ab17f0bd402b5a3923d752ba715f556f3beadd)
+  Thanks [@madorb](https://github.com/madorb)! - `fetchRequestHeaders`, `fetchResponseHeaders`,
+  `httpRequestHeaders` and `httpResponseHeaders`
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.9.12
+
 ## 0.91.3
 
 ### Patch Changes
