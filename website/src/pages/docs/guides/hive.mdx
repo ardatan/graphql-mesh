@@ -29,38 +29,42 @@ automatically by using Hive CLI.
 
 [Learn more about managing the schema using GraphQL Hive CLI](https://docs.graphql-hive.com/features/publish-schema#using-hive-cli)
 
-## Track your sources
+## Publish & Consume Service Schemas
 
-GraphQL Mesh creates GraphQL APIs from non GraphQL APIs, and it is still possible to register these
-to GraphQL Hive as a regular GraphQL API. GraphQL Hive transform hooks into the delegation phase to
-track operations done to the upstream APIs.
+GraphQL Mesh can consume GraphQL schemas from Hive CDN, and it is also possible to publish the non
+GraphQL sources to Hive CDN and consume them in the gateway.
 
-<PackageCmd packages={['@graphql-mesh/transform-hive']} />
+We have recipes for each case below.
+
+### Consume the GraphQL source schema (Federation Subgraph or a standalone GraphQL API) from Hive CDN
+
+If your service is originally GraphQL and published to GraphQL Hive registry, you can consume it in
+your GraphQL Mesh gateway through Hive CDN;
 
 ```yaml filename=".meshrc.yaml"
 sources:
   - name: FooService
     handler:
-      openapi:
-        source: ./openapi.json
-    transforms:
-      - hive:
-          token: '{env.MYOAS_HIVE_TOKEN}'
+      graphql:
+        # URL needs to have `.graphql` extension to tell the handler it is a GraphQL Schema
+        source: https://cdn.graphql-hive.com/SOME_UUID?ext=.graphql
+        # The actual endpoint of the service
+        endpoint: https://foo-service.com/graphql
 ```
 
-## Publish the source schema seperately then consume it in the gateway
+### Publish the non-GraphQL source schema (OpenAPI, SOAP etc) seperately then consume it in the gateway
 
 Let's say you have different repos on each service and you want to publish the schema on these
 repos, and keep the configuration for these services there. And the gateway will consume these
 schemas and merge them together.
 
-### Step 1: Create a project for the service
+#### Step 1: Create a project for the service
 
 Create a project for the service, and get an active token for this gateway.
 
 [Learn more about getting tokens from Hive](https://docs.graphql-hive.com/features/tokens)
 
-### Step 2: Setup Mesh CLI on the service repo
+#### Step 2: Setup Mesh CLI on the non-GraphQL service repo
 
 Let's say you have an OpenAPI service on that repo then install the following packages in this case;
 
@@ -78,7 +82,7 @@ sources:
         source: ./openapi.yml
 ```
 
-### Step 3: Publish the service schema
+#### Step 3: Publish the non-GraphQL service schema
 
 You need to install GraphQL Hive CLI and configure it with the token you already created before.
 
@@ -89,7 +93,7 @@ CLI can publish it.
 
 Finally, you can publish the schema `hive schema:publish .mesh/sources/FooService/schema.graphql`
 
-### Step 4: Create Hive CDN URL and token for the service
+#### Step 4: Create Hive CDN URL and token for the non-GraphQL service
 
 Go to the service project and click `Connect` on the right top of the page. Copy the URL and header
 then paste it to the `.meshrc.yml` file.
@@ -109,6 +113,25 @@ sources:
   If `source` gets a GraphQL Schema for non GraphQL handlers, it doesn't generate the schema again.
   It just reuses it, and adds execution logic only.
 </Callout>
+
+### Track your non-GraphQL sources
+
+GraphQL Mesh creates GraphQL APIs from non GraphQL APIs, and it is still possible to register these
+to GraphQL Hive as a regular GraphQL API. GraphQL Hive transform hooks into the delegation phase to
+track operations done to the upstream APIs.
+
+<PackageCmd packages={['@graphql-mesh/transform-hive']} />
+
+```yaml filename=".meshrc.yaml"
+sources:
+  - name: FooService
+    handler:
+      openapi:
+        source: ./openapi.json
+    transforms:
+      - hive:
+          token: '{env.MYOAS_HIVE_TOKEN}'
+```
 
 ## Config API Reference
 
