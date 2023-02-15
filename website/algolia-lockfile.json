@@ -887,8 +887,7 @@
     "headings": [
       "Track your Gateway",
       "Publish and check the gateway schema",
-      "Track your sources",
-      "Publish the source schema seperately then consume it in the gateway",
+      "Publish & Consume Service Schemas",
       "Config API Reference"
     ],
     "toc": [
@@ -903,36 +902,26 @@
         "anchor": "publish-and-check-the-gateway-schema"
       },
       {
-        "children": [],
-        "title": "Track your sources",
-        "anchor": "track-your-sources"
-      },
-      {
         "children": [
           {
             "children": [
               {
                 "children": [],
-                "title": "Step 2: Setup Mesh CLI on the service repo",
-                "anchor": "step-2-setup-mesh-cli-on-the-service-repo"
+                "title": "Publish the non-GraphQL source schema (OpenAPI, SOAP etc) seperately then consume it in the gateway",
+                "anchor": "publish-the-non-graphql-source-schema-openapi-soap-etc-seperately-then-consume-it-in-the-gateway"
               },
               {
                 "children": [],
-                "title": "Step 3: Publish the service schema",
-                "anchor": "step-3-publish-the-service-schema"
-              },
-              {
-                "children": [],
-                "title": "Step 4: Create Hive CDN URL and token for the service",
-                "anchor": "step-4-create-hive-cdn-url-and-token-for-the-service"
+                "title": "Track your non-GraphQL sources",
+                "anchor": "track-your-non-graphql-sources"
               }
             ],
-            "title": "Step 1: Create a project for the service",
-            "anchor": "step-1-create-a-project-for-the-service"
+            "title": "Consume the GraphQL source schema (Federation Subgraph or a standalone GraphQL API) from Hive CDN",
+            "anchor": "consume-the-graphql-source-schema-federation-subgraph-or-a-standalone-graphql-api-from-hive-cdn"
           }
         ],
-        "title": "Publish the source schema seperately then consume it in the gateway",
-        "anchor": "publish-the-source-schema-seperately-then-consume-it-in-the-gateway"
+        "title": "Publish & Consume Service Schemas",
+        "anchor": "publish--consume-service-schemas"
       },
       {
         "children": [],
@@ -940,7 +929,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "21d030ed561c15386dd24bfeec759e3b",
+    "content": "cf2dc7c5b2b3d30a0f3ec847e6ada60c",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/hive",
     "domain": "https://www.the-guild.dev/graphql/mesh/",
     "hierarchy": ["Docs", "Guides"],
