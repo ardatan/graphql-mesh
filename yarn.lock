@@ -3477,13 +3477,13 @@
   dependencies:
     lodash.sortby "4.7.0"
 
-"@graphql-inspector/core@3.3.0":
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/@graphql-inspector/core/-/core-3.3.0.tgz#3982909cec46a5b3050a8265569503f20a3b5742"
-  integrity sha512-LRtk9sHgj9qqVPIkkThAVq3iZ7QxgHCx6elEwd0eesZBCmaIYQxD/BFu+VT8jr10YfOURBZuAnVdyGu64vYpBg==
+"@graphql-inspector/core@4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@graphql-inspector/core/-/core-4.0.0.tgz#302bcdafb1f759c47dcb0555831644e9b42317e5"
+  integrity sha512-lgyc6ozmU5WbdlFx7Uftb96cS9ahYmu6hL41ZswK3KQcS6s7AM7zGu8gNDSdXtAGw8eARm8+Ql4+8J1+/72/+A==
   dependencies:
     dependency-graph "0.11.0"
-    object-inspect "1.10.3"
+    object-inspect "1.12.3"
     tslib "^2.0.0"
 
 "@graphql-inspector/core@~3.5.0":
@@ -16548,10 +16548,10 @@ object-inspect@1.10.3:
   resolved "https://registry.yarnpkg.com/object-inspect/-/object-inspect-1.10.3.tgz#c2aa7d2d09f50c99375704f7a0adf24c5782d369"
   integrity sha512-e5mCJlSH7poANfC8z8S9s9S2IN5/4Zb3aZ33f5s8YqoazCFzNLloLU8r5VCG+G7WoqLvAAZoVMcy3tp/3X0Plw==
 
-object-inspect@^1.12.2, object-inspect@^1.9.0:
-  version "1.12.2"
-  resolved "https://registry.yarnpkg.com/object-inspect/-/object-inspect-1.12.2.tgz#c0641f26394532f28ab8d796ab954e43c009a8ea"
-  integrity sha512-z+cPxW0QGUp0mcqcsgQyLVRDoXFQbXOwBaqyF7VIgI4TWNQsDHrBpUQslRmIfAoYWdYzs6UlKJtB2XJpTaNSpQ==
+object-inspect@1.12.3, object-inspect@^1.12.2, object-inspect@^1.9.0:
+  version "1.12.3"
+  resolved "https://registry.yarnpkg.com/object-inspect/-/object-inspect-1.12.3.tgz#ba62dffd67ee256c8c086dfae69e016cd1f198b9"
+  integrity sha512-geUvdk7c+eizMNUDkRpW1wJwgfOiOeHbxBR/hLXK1aT6zmVSO0jsQcs7fj6MGw89jC/cjGfLcNOrtMYtGqm81g==
 
 object-is@^1.1.4:
   version "1.1.5"
