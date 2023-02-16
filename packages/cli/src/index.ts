@@ -1,19 +1,19 @@
-import { findAndParseConfig } from './config.js';
-import { getMesh, GetMeshOptions, ServeMeshOptions } from '@graphql-mesh/runtime';
-import { generateTsArtifacts } from './commands/ts-artifacts.js';
-import { serveMesh } from './commands/serve/serve.js';
-import { fs, path as pathModule, process } from '@graphql-mesh/cross-helpers';
-import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import { writeFile, pathExists, rmdirs, DefaultLogger, defaultImportFn } from '@graphql-mesh/utils';
-import { handleFatalError } from './handleFatalError.js';
-import yargs from 'yargs';
-import { hideBin } from 'yargs/helpers';
-import { Logger, YamlConfig } from '@graphql-mesh/types';
+import { config as dotEnvRegister } from 'dotenv';
+import JSON5 from 'json5';
 import { register as tsNodeRegister } from 'ts-node';
 import { register as tsConfigPathsRegister } from 'tsconfig-paths';
-import { config as dotEnvRegister } from 'dotenv';
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
+import { fs, path as pathModule, process } from '@graphql-mesh/cross-helpers';
+import { getMesh, GetMeshOptions, ServeMeshOptions } from '@graphql-mesh/runtime';
+import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
+import { Logger, YamlConfig } from '@graphql-mesh/types';
+import { defaultImportFn, DefaultLogger, pathExists, rmdirs, writeFile } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import JSON5 from 'json5';
+import { serveMesh } from './commands/serve/serve.js';
+import { generateTsArtifacts } from './commands/ts-artifacts.js';
+import { findAndParseConfig } from './config.js';
+import { handleFatalError } from './handleFatalError.js';
 
 export { generateTsArtifacts, serveMesh, findAndParseConfig, handleFatalError };
 
@@ -181,8 +181,8 @@ export function getMeshOptions() {
   });
 }
 
-export function createBuiltMeshHTTPHandler(): MeshHTTPHandler<MeshContext> {
-  return createMeshHTTPHandler<MeshContext>({
+export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandler<TServerContext> {
+  return createMeshHTTPHandler<TServerContext>({
     baseDir,
     getBuiltMesh: ${cliParams.builtMeshFactoryName},
     rawServeConfig: ${JSON.stringify(meshConfig.config.serve)},
@@ -385,8 +385,8 @@ export function createBuiltMeshHTTPHandler(): MeshHTTPHandler<MeshContext> {
             `import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';`,
           );
           meshConfig.codes.add(`
-export function createBuiltMeshHTTPHandler(): MeshHTTPHandler<MeshContext> {
-  return createMeshHTTPHandler<MeshContext>({
+export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandler<TServerContext> {
+  return createMeshHTTPHandler<TServerContext>({
     baseDir,
     getBuiltMesh: ${cliParams.builtMeshFactoryName},
     rawServeConfig: ${JSON.stringify(meshConfig.config.serve)},

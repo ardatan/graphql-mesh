@@ -1970,7 +1970,6 @@ export interface PrometheusConfig {
   fetch?: boolean | string;
   fetchRequestHeaders?: boolean;
   fetchResponseHeaders?: boolean;
-
   /**
    * Any of: Boolean, String
    */
