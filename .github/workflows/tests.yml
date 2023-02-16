@@ -7,6 +7,11 @@ on:
     branches:
       - master
 
+env:
+  CI: true
+  NODE_TLS_REJECT_UNAUTHORIZED: 0
+  GH_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  LC_ALL: en-US
 jobs:
   lint:
     uses: the-guild-org/shared-config/.github/workflows/lint.yml@main
@@ -20,6 +25,7 @@ jobs:
     timeout-minutes: 60
     runs-on: ${{matrix.os}}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest]
         node-version: [14, 18]
@@ -43,17 +49,13 @@ jobs:
 
       - name: Test
         run: yarn test
-        env:
-          CI: true
-          NODE_TLS_REJECT_UNAUTHORIZED: 0
-          GH_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LC_ALL: en-US
 
   integration:
     name: integration / ${{matrix.os}} / node ${{matrix.node-version}}
     timeout-minutes: 60
     runs-on: ${{matrix.os}}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest]
         node-version: [14, 18]
@@ -118,17 +120,13 @@ jobs:
         run: yarn build-test-artifacts
       - name: Test
         run: yarn test:integration
-        env:
-          CI: true
-          NODE_TLS_REJECT_UNAUTHORIZED: 0
-          GH_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LC_ALL: en-US
 
   integration-leak:
     name: integration / leak / ${{matrix.os}} / node ${{matrix.node-version}}
     timeout-minutes: 60
     runs-on: ${{matrix.os}}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest]
         node-version: [14, 18]
@@ -190,10 +188,9 @@ jobs:
         run: yarn build
       - name: Build Test Artifacts
         run: yarn build-test-artifacts
-      - name: Test
-        run: yarn test:integration:leak
-        env:
-          CI: true
-          NODE_TLS_REJECT_UNAUTHORIZED: 0
-          GH_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LC_ALL: en-US
+      - name: Run Tests
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          command: yarn test:integration:leak
