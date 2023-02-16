@@ -1,5 +1,17 @@
 # @graphql-mesh/types
 
+## 0.91.5
+
+### Patch Changes
+
+- [#5153](https://github.com/Urigo/graphql-mesh/pull/5153)
+  [`5c19f8d6f`](https://github.com/Urigo/graphql-mesh/commit/5c19f8d6f79f2d9bfbeb6458c8dc7a1729c37db9)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix `createBuiltMeshHTTPHandler`'s context
+  generic
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.9.13
+
 ## 0.91.4
 
 ### Patch Changes
