@@ -1,5 +1,19 @@
 # @graphql-mesh/http
 
+## 0.3.19
+
+### Patch Changes
+
+- [`95d93e7c1`](https://github.com/Urigo/graphql-mesh/commit/95d93e7c140c2995b37e9d822aa3fe4e24ed2e78)
+  Thanks [@ardatan](https://github.com/ardatan)! - When `staticFiles` is set, do not allow to access
+  upper directories
+
+- Updated dependencies
+  [[`5c19f8d6f`](https://github.com/Urigo/graphql-mesh/commit/5c19f8d6f79f2d9bfbeb6458c8dc7a1729c37db9)]:
+  - @graphql-mesh/types@0.91.5
+  - @graphql-mesh/runtime@0.46.14
+  - @graphql-mesh/utils@0.43.13
+
 ## 0.3.18
 
 ### Patch Changes

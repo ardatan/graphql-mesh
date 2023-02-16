@@ -1,5 +1,14 @@
 # @graphql-mesh/plugin-response-cache
 
+## 0.2.15
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5c19f8d6f`](https://github.com/Urigo/graphql-mesh/commit/5c19f8d6f79f2d9bfbeb6458c8dc7a1729c37db9)]:
+  - @graphql-mesh/types@0.91.5
+  - @graphql-mesh/utils@0.43.13
+
 ## 0.2.14
 
 ### Patch Changes
