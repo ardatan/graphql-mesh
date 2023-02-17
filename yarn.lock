@@ -2796,43 +2796,43 @@
   resolved "https://registry.yarnpkg.com/@csstools/selector-specificity/-/selector-specificity-2.0.2.tgz#1bfafe4b7ed0f3e4105837e056e0a89b108ebe36"
   integrity sha512-IkpVW/ehM1hWKln4fCA3NzJU8KwD+kIOvPZA4cqxoJHtE21CCzjyp+Kxbu0i5I4tBNOlXPL9mjwnWlL0VEG4Fg==
 
-"@envelop/auth0@4.0.4":
-  version "4.0.4"
-  resolved "https://registry.yarnpkg.com/@envelop/auth0/-/auth0-4.0.4.tgz#f4c791a8ac1b6013febc4632ce809473f11f53bf"
-  integrity sha512-sMRpXfgBcS0KuDQxx8EEdZ4E3Os5qeK0hM8z759npm2rxiNUQ0/tibED1fXlM9RuBfVqWYX/9fklh+bmOHw36A==
+"@envelop/auth0@4.0.5":
+  version "4.0.5"
+  resolved "https://registry.yarnpkg.com/@envelop/auth0/-/auth0-4.0.5.tgz#4f2bd3ddddacd3b4f081884820d6aa09770b2bbe"
+  integrity sha512-XKJmgecGRHodo4535u3F9hVIcU3O6OgD6rNGlsv2gvRnj0xa0CdzOA23dzhRYgU6OLhu5Kh3+g2RI+4CKksXVw==
   dependencies:
     jsonwebtoken "^8.5.1"
     jwks-rsa "^2.0.1"
     tslib "^2.4.0"
 
-"@envelop/core@3.0.4", "@envelop/core@^3.0.0", "@envelop/core@^3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@envelop/core/-/core-3.0.4.tgz#6801049bed24487599b4ffa0f836f70cb62714fc"
-  integrity sha512-AybIZxQsDlFQTWHy6YtX/MSQPVuw+eOFtTW90JsHn6EbmcQnD6N3edQfSiTGjggPRHLoC0+0cuYXp2Ly2r3vrQ==
+"@envelop/core@3.0.5", "@envelop/core@^3.0.0", "@envelop/core@^3.0.4":
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/@envelop/core/-/core-3.0.5.tgz#bccbc6d267c0955211080688a8cba932763ace1b"
+  integrity sha512-qMnjdZwlvGxlhXZS8SIEJ6F4eCYbGp/gwVyF2DoMCmKriy4NS+gSDbpl/9t13c/fql5x3/zhnzaL39OAhX532A==
   dependencies:
     "@envelop/types" "3.0.1"
-    tslib "2.4.0"
+    tslib "2.5.0"
 
-"@envelop/depth-limit@2.0.4":
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/@envelop/depth-limit/-/depth-limit-2.0.4.tgz#91d0f8436c917324e825e7cfa6efc7b7c9d615e0"
-  integrity sha512-C723KKsjUjoujQOevsEyl75oPBAXLMob1IMLyB1yO6MQNhZILbuHCgTTf/8w+U2R78gSS7QEHXFb2t4ZYD7e2w==
+"@envelop/depth-limit@2.0.5":
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@envelop/depth-limit/-/depth-limit-2.0.5.tgz#630cce9ade320dc18a77db0dd298688f27f3e0a5"
+  integrity sha512-gwyHJkrz/GS2WhO3zWZNt+mjFCIz46ZMTfreB1HFhdqsY9F46OSdAG0ZoSq6l0qXboav75AR/ozNhGPoXFjgEQ==
   dependencies:
     graphql-depth-limit "^1.1.0"
     tslib "^2.4.0"
 
-"@envelop/extended-validation@2.0.4", "@envelop/extended-validation@^2.0.4":
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/@envelop/extended-validation/-/extended-validation-2.0.4.tgz#afdf639f6ce6aa14a94f79c788d5ce3645586f0d"
-  integrity sha512-23B6VgizjItYehAGB4ZDT9VVmYCHxYVnbJ4XPvlT5R0KSEmTAzoCHTJ5Y+hnQ/lP3wk5OgZZI5HTDSi8CcSNug==
+"@envelop/extended-validation@2.0.5", "@envelop/extended-validation@^2.0.5":
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@envelop/extended-validation/-/extended-validation-2.0.5.tgz#95cb44647676404599bbfca887238ec87ec6bd9f"
+  integrity sha512-3exQGS9mofw9lr7xzTd8lHhnLZq0o7TVgzIthWRCLK7Ays+wHOQies3vP/wSq5v/OkhiWaSayndABE8C2kH/eQ==
   dependencies:
     "@graphql-tools/utils" "^8.8.0"
     tslib "^2.4.0"
 
-"@envelop/live-query@5.0.4":
-  version "5.0.4"
-  resolved "https://registry.yarnpkg.com/@envelop/live-query/-/live-query-5.0.4.tgz#b24d40daadf84f6081ce2e2737c0c2d8448a66b3"
-  integrity sha512-wqw5PY91LZ3dpamIpYgqNSL5n5zyUivfjOH2SPOvi7gwa4YHASEA9XE2aCNQ9l69EaaDDPLySpyBIfZQ8TIKwg==
+"@envelop/live-query@5.0.5":
+  version "5.0.5"
+  resolved "https://registry.yarnpkg.com/@envelop/live-query/-/live-query-5.0.5.tgz#92cbbef2e2bc19042e03f5fdd58eac5be8795507"
+  integrity sha512-JKG0hk4tokHDuD7MyoLPPZPLrd5L8dhuIoKP4L7R5dWUXddS/oUMfiHdBKfb0cxK0oxk6t8p3fMZsmwAKJVtOw==
   dependencies:
     "@graphql-tools/utils" "^8.8.0"
     "@n1ru4l/graphql-live-query" "^0.10.0"
@@ -2840,25 +2840,25 @@
     "@n1ru4l/in-memory-live-query-store" "^0.10.0"
     tslib "^2.4.0"
 
-"@envelop/newrelic@5.0.4":
-  version "5.0.4"
-  resolved "https://registry.yarnpkg.com/@envelop/newrelic/-/newrelic-5.0.4.tgz#9aaf22b058cab9a722174a5603f72ed8dd1def4d"
-  integrity sha512-gHZ12L25ohsL86geO5Lmq5Io70OZpG/8aF6iT5YToWC0n+iEW+sdie43Tl9iWYNLmQm7NmDYJtuEw/sMEdn7Zw==
+"@envelop/newrelic@5.0.5":
+  version "5.0.5"
+  resolved "https://registry.yarnpkg.com/@envelop/newrelic/-/newrelic-5.0.5.tgz#cebd91b191ca2a68936497b1b269e556facda9fb"
+  integrity sha512-21lyZuEWj8I4NT40xcSMg5+a2Og4Fv8EN4GZYkgFTgUxuqaC67vBV7Io+7XXUDG/GkOI1Pi083zhBB4kx12R6A==
   dependencies:
-    "@envelop/on-resolve" "^2.0.4"
+    "@envelop/on-resolve" "^2.0.5"
     tslib "^2.4.0"
 
-"@envelop/on-resolve@^2.0.4":
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/@envelop/on-resolve/-/on-resolve-2.0.4.tgz#466e432c08b3e844d7334807a5c9bebb2be20589"
-  integrity sha512-1Yi+AkB8K0VmS6qh6jyTWdJbcRofTCtEY0esdF/y2Q1rVe+1z6CxBHj+f2dRhJVixSxmjemBZR9iqfEpg9oRIQ==
+"@envelop/on-resolve@^2.0.4", "@envelop/on-resolve@^2.0.5":
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@envelop/on-resolve/-/on-resolve-2.0.5.tgz#8c521d09a818b5b5977f66609b67a18320a897d1"
+  integrity sha512-kwKBBYf9p7UaHW4QACH/28C4Os0arIRMIgq0J14ItrggNcbCnXE9laDn+IABqK5n9fvzPuZ5GonAbfgpE36XUA==
 
-"@envelop/operation-field-permissions@4.0.4":
-  version "4.0.4"
-  resolved "https://registry.yarnpkg.com/@envelop/operation-field-permissions/-/operation-field-permissions-4.0.4.tgz#906cf1a62349ee263f8b41c1dac896348660ac6e"
-  integrity sha512-isvQclYaOzyJ8CaxDzk4IeVmI5Di9PpL4euiT8Q73bUTK6XOyH0SDi8NZK/NSKhrw2Y80NTSPH4HEUgc2+i7Qw==
+"@envelop/operation-field-permissions@4.0.5":
+  version "4.0.5"
+  resolved "https://registry.yarnpkg.com/@envelop/operation-field-permissions/-/operation-field-permissions-4.0.5.tgz#0d25ac288a178d21c4d0ac1ba3e9d95005961e09"
+  integrity sha512-I5dA5vB9gzWiFPDJsbAqy5Q23CsFfH2pyQe18qTooZPDafGp/AW6avWVu9IyO/+ky5wtnSFEz/TJjjAVwRF9bA==
   dependencies:
-    "@envelop/extended-validation" "^2.0.4"
+    "@envelop/extended-validation" "^2.0.5"
     tslib "^2.4.0"
 
 "@envelop/prometheus@7.0.4":
@@ -2880,10 +2880,10 @@
     lru-cache "^6.0.0"
     tslib "^2.4.0"
 
-"@envelop/statsd@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@envelop/statsd/-/statsd-3.0.4.tgz#45f471dc1a8cb78be6e0ae96b143692b5e6f312d"
-  integrity sha512-N81EslthRkz7MgqlPcRww6BfYCaXPJQ9rOZbGAzorD3L+gDCbYyQx8oW6cs2qV1et6mRV4rZLugaQ80Dj8S9kg==
+"@envelop/statsd@3.0.5":
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/@envelop/statsd/-/statsd-3.0.5.tgz#12494a1b2c9ac234e7201bda783249575b4046e0"
+  integrity sha512-mKqhbpOhiwXPi3VdaVVi3s9/RRXutwyFOlPuLQ+ySfIXBOuhDUu9rRF8EjckMVZjw3XJgAbWQv18Jbh/gsqh4A==
   dependencies:
     tslib "^2.4.0"
 
@@ -15997,10 +15997,10 @@ mongodb@4.13.0:
     "@aws-sdk/credential-providers" "^3.186.0"
     saslprep "^1.0.3"
 
-mongoose@6.9.1:
-  version "6.9.1"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.9.1.tgz#4c6648806fb89b8d8aa4fc60ddc490442c971057"
-  integrity sha512-hOz1ZWV0w6WEVLrj89Wpk7PXDYtDDF6k7/NX79lY5iKqeFtZsceBXW8xW59YFNcW5O3cH32hQ8IbDlhgyBsDMA==
+mongoose@6.9.2:
+  version "6.9.2"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.9.2.tgz#4077d96c1e1d0769eb55ac77eb30d0e8fb1777c2"
+  integrity sha512-Yb9rWJhYm+7Yf839QuKx2dXcclbA0GAMxtdDiaedHsOQU+y28cD/8gKYp1wTwwyAjKesqaGfLG4ez7D9lKpwBw==
   dependencies:
     bson "^4.7.0"
     kareem "2.5.1"
@@ -20137,10 +20137,10 @@ table-layout@^1.0.1:
     typical "^5.2.0"
     wordwrapjs "^4.0.0"
 
-tailwindcss@3.2.6, tailwindcss@^3.0.2, tailwindcss@^3.1.8:
-  version "3.2.6"
-  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.2.6.tgz#9bedbc744a4a85d6120ce0cc3db024c551a5c733"
-  integrity sha512-BfgQWZrtqowOQMC2bwaSNe7xcIjdDEgixWGYOd6AL0CbKHJlvhfdbINeAW76l1sO+1ov/MJ93ODJ9yluRituIw==
+tailwindcss@3.2.7, tailwindcss@^3.0.2, tailwindcss@^3.1.8:
+  version "3.2.7"
+  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.2.7.tgz#5936dd08c250b05180f0944500c01dce19188c07"
+  integrity sha512-B6DLqJzc21x7wntlH/GsZwEXTBttVSl1FtCzC8WP4oBc/NKef7kaax5jeihkkCEWc831/5NDJ9gRNDK6NEioQQ==
   dependencies:
     arg "^5.0.2"
     chokidar "^3.5.3"
@@ -20607,11 +20607,6 @@ tsconfig@^7.0.0:
     "@types/strip-json-comments" "0.0.30"
     strip-bom "^3.0.0"
     strip-json-comments "^2.0.0"
-
-tslib@2.4.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.4.0.tgz#7cecaa7f073ce680a05847aa77be941098f36dc3"
-  integrity sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==
 
 tslib@2.5.0, tslib@^2, tslib@^2.0.0, tslib@^2.0.1, tslib@^2.0.3, tslib@^2.1.0, tslib@^2.3.0, tslib@^2.3.1, tslib@^2.4.0, tslib@^2.4.1, tslib@^2.5.0, tslib@~2.5.0:
   version "2.5.0"
@@ -21275,10 +21270,10 @@ vfile@^5.0.0, vfile@^5.3.0:
     unist-util-stringify-position "^3.0.0"
     vfile-message "^3.0.0"
 
-vite@4.1.1:
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/vite/-/vite-4.1.1.tgz#3b18b81a4e85ce3df5cbdbf4c687d93ebf402e6b"
-  integrity sha512-LM9WWea8vsxhr782r9ntg+bhSFS06FJgCvvB0+8hf8UWtvaiDagKYWXndjfX6kGl74keHJUcpzrQliDXZlF5yg==
+vite@4.1.2:
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/vite/-/vite-4.1.2.tgz#6908882984e490c44c28e784a2c52de556f04b41"
+  integrity sha512-MWDb9Rfy3DI8omDQySbMK93nQqStwbsQWejXRY2EBzEWKmLAXWb1mkI9Yw2IJrc+oCvPCI1Os5xSSIBYY6DEAw==
   dependencies:
     esbuild "^0.16.14"
     postcss "^8.4.21"
