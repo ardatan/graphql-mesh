@@ -1,5 +1,13 @@
 # @omnigraph/openapi
 
+## 0.19.17
+
+### Patch Changes
+
+- [`6b4b0e16d`](https://github.com/Urigo/graphql-mesh/commit/6b4b0e16d35907e69990daededd9d400b00a365b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Do not count \`servers\` under operation as an
+  HTTP method
+
 ## 0.19.16
 
 ### Patch Changes
