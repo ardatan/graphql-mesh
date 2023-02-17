@@ -19,6 +19,7 @@ const schemas = {
   CloudFlare: 'cloudflare.json',
   TeachersTraining: 'uk_teachers_training_courses.json',
   MeiliSearch: 'meilisearch.yml',
+  BlockFrost: 'blockfrost.json',
 };
 
 describe('Schemas', () => {
