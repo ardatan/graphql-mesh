@@ -1,5 +1,15 @@
 # @graphql-mesh/cli
 
+## 0.82.23
+
+### Patch Changes
+
+- [#5156](https://github.com/Urigo/graphql-mesh/pull/5156)
+  [`f268e0c50`](https://github.com/Urigo/graphql-mesh/commit/f268e0c50e2cff9344070bad6541162f425e8600)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`yargs@17.7.0` ↗︎](https://www.npmjs.com/package/yargs/v/17.7.0) (from
+    `17.6.2`, in `dependencies`)
+
 ## 0.82.22
 
 ### Patch Changes
