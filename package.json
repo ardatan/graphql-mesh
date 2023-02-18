@@ -78,7 +78,7 @@
   },
   "resolutions": {
     "graphql": "16.6.0",
-    "undici": "5.19.1",
+    "undici": "5.20.0",
     "uuid": "7.0.3"
   },
   "lint-staged": {
