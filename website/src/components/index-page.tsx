@@ -497,8 +497,8 @@ export function IndexPage(): ReactElement {
           <div className="space-y-2">
             <p>
               Thanks to{' '}
-              <a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API">Fetch</a>, it can
-              run on any <i>JavaScript</i> runtime.
+              <a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API">Fetch API</a>, it
+              can run on any <i>JavaScript</i> runtime.
             </p>
           </div>
         }
