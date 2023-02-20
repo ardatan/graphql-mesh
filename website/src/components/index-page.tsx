@@ -1,6 +1,5 @@
-import { Anchor, Mermaid } from '@theguild/components';
-import Image from 'next/image';
 import { PropsWithChildren, ReactElement } from 'react';
+import Image from 'next/image';
 import {
   FiAlertTriangle,
   FiArrowRightCircle,
@@ -13,7 +12,7 @@ import {
   FiTarget,
   FiUserCheck,
 } from 'react-icons/fi';
-
+import { Anchor, Mermaid } from '@theguild/components';
 import GraphQLLogo from '../../public/assets/graphql-logo.svg';
 import MeshExampleLogo from '../../public/assets/mesh-example.png';
 import OpenSourceLogo from '../../public/assets/open-source.svg';
@@ -497,8 +496,9 @@ export function IndexPage(): ReactElement {
         description={
           <div className="space-y-2">
             <p>
-              Thanks to <a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API"></a> so
-              it can run on any <i>JavaScript</i> runtime.
+              Thanks to{' '}
+              <a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API">Fetch</a>, it can
+              run on any <i>JavaScript</i> runtime.
             </p>
           </div>
         }
