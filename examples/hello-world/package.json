@@ -1,7 +1,6 @@
 {
   "name": "json-schema-hello-world",
   "version": "0.0.302",
-  "type": "module",
   "license": "MIT",
   "private": true,
   "scripts": {
