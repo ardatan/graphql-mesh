@@ -1,0 +1,19 @@
+sources:
+  - name: ExampleFileUplaod
+    handler:
+      jsonSchema:
+        endpoint: http://localhost:3000
+        operations:
+          - type: Mutation
+            field: uploadFile
+            path: /upload-file
+            method: POST
+            requestSchema: ./json-schemas/upload-file.request.json
+            responseSchema: ./json-schemas/message.response.json
+            headers:
+              Content-Type: multipart/form-data
+          - type: Query
+            field: readFileAsText
+            path: /read-file-as-text/{args.fileName}
+            method: GET
+            responseSchema: ./json-schemas/read-file-as-text.response.json
