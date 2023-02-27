@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/odata",
-  "version": "0.22.13",
+  "version": "0.22.14",
   "type": "module",
   "repository": {
     "type": "git",
@@ -33,10 +33,10 @@
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.3.3",
-    "@graphql-mesh/store": "0.9.13",
+    "@graphql-mesh/store": "0.9.14",
     "@graphql-mesh/string-interpolation": "0.4.2",
-    "@graphql-mesh/types": "0.91.5",
-    "@graphql-mesh/utils": "0.43.13",
+    "@graphql-mesh/types": "0.91.6",
+    "@graphql-mesh/utils": "0.43.14",
     "@graphql-tools/delegate": "9.0.28",
     "@graphql-tools/utils": "9.2.1",
     "@whatwg-node/fetch": "^0.8.0",

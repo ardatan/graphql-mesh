@@ -1,5 +1,25 @@
 # @graphql-mesh/plugin-rate-limit
 
+## 0.2.16
+
+### Patch Changes
+
+- [#5165](https://github.com/Urigo/graphql-mesh/pull/5165)
+  [`a0ffbbe26`](https://github.com/Urigo/graphql-mesh/commit/a0ffbbe26569a2a5188827fa841f194609d63d64)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`minimatch@7.0.0` ↗︎](https://www.npmjs.com/package/minimatch/v/7.0.0) (from
+    `6.2.0`, in `dependencies`)
+
+- [#5183](https://github.com/Urigo/graphql-mesh/pull/5183)
+  [`0b438c329`](https://github.com/Urigo/graphql-mesh/commit/0b438c32950f524db65163d67f6a64f451214391)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`minimatch@7.2.0` ↗︎](https://www.npmjs.com/package/minimatch/v/7.2.0) (from
+    `7.0.0`, in `dependencies`)
+- Updated dependencies
+  [[`0b438c329`](https://github.com/Urigo/graphql-mesh/commit/0b438c32950f524db65163d67f6a64f451214391)]:
+  - @graphql-mesh/types@0.91.6
+
 ## 0.2.15
 
 ### Patch Changes
