@@ -38,8 +38,8 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-codegen/core": "3.0.0",
-    "@graphql-codegen/typed-document-node": "3.0.0",
+    "@graphql-codegen/core": "3.1.0",
+    "@graphql-codegen/typed-document-node": "3.0.1",
     "@graphql-codegen/typescript": "3.0.0",
     "@graphql-codegen/typescript-generic-sdk": "3.0.4",
     "@graphql-codegen/typescript-operations": "3.0.0",
@@ -54,7 +54,7 @@
     "@graphql-tools/utils": "9.2.1",
     "ajv": "8.12.0",
     "change-case": "4.1.2",
-    "cosmiconfig": "8.0.0",
+    "cosmiconfig": "8.1.0",
     "dnscache": "1.0.2",
     "dotenv": "16.0.3",
     "graphql-import-node": "0.0.5",
@@ -70,7 +70,7 @@
     "tslib": "^2.4.0",
     "typescript": "4.9.5",
     "ws": "8.12.1",
-    "yargs": "17.7.0"
+    "yargs": "17.7.1"
   },
   "devDependencies": {
     "@types/lodash.get": "4.4.7",

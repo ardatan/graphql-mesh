@@ -1222,10 +1222,26 @@ input MovieWhere {
   peopleActedIn: PersonWhere @deprecated(reason: "Use \`peopleActedIn_SOME\` instead.")
   peopleActedInAggregate: MoviePeopleActedInAggregateInput
   peopleActedInConnection: MoviePeopleActedInConnectionWhere @deprecated(reason: "Use \`peopleActedInConnection_SOME\` instead.")
+
+  """
+  Return Movies where all of the related MoviePeopleActedInConnections match this filter
+  """
   peopleActedInConnection_ALL: MoviePeopleActedInConnectionWhere
+
+  """
+  Return Movies where none of the related MoviePeopleActedInConnections match this filter
+  """
   peopleActedInConnection_NONE: MoviePeopleActedInConnectionWhere
   peopleActedInConnection_NOT: MoviePeopleActedInConnectionWhere @deprecated(reason: "Use \`peopleActedInConnection_NONE\` instead.")
+
+  """
+  Return Movies where one of the related MoviePeopleActedInConnections match this filter
+  """
   peopleActedInConnection_SINGLE: MoviePeopleActedInConnectionWhere
+
+  """
+  Return Movies where some of the related MoviePeopleActedInConnections match this filter
+  """
   peopleActedInConnection_SOME: MoviePeopleActedInConnectionWhere
 
   """Return Movies where all of the related People match this filter"""
@@ -1243,10 +1259,26 @@ input MovieWhere {
   peopleDirected: PersonWhere @deprecated(reason: "Use \`peopleDirected_SOME\` instead.")
   peopleDirectedAggregate: MoviePeopleDirectedAggregateInput
   peopleDirectedConnection: MoviePeopleDirectedConnectionWhere @deprecated(reason: "Use \`peopleDirectedConnection_SOME\` instead.")
+
+  """
+  Return Movies where all of the related MoviePeopleDirectedConnections match this filter
+  """
   peopleDirectedConnection_ALL: MoviePeopleDirectedConnectionWhere
+
+  """
+  Return Movies where none of the related MoviePeopleDirectedConnections match this filter
+  """
   peopleDirectedConnection_NONE: MoviePeopleDirectedConnectionWhere
   peopleDirectedConnection_NOT: MoviePeopleDirectedConnectionWhere @deprecated(reason: "Use \`peopleDirectedConnection_NONE\` instead.")
+
+  """
+  Return Movies where one of the related MoviePeopleDirectedConnections match this filter
+  """
   peopleDirectedConnection_SINGLE: MoviePeopleDirectedConnectionWhere
+
+  """
+  Return Movies where some of the related MoviePeopleDirectedConnections match this filter
+  """
   peopleDirectedConnection_SOME: MoviePeopleDirectedConnectionWhere
 
   """Return Movies where all of the related People match this filter"""
@@ -1264,10 +1296,26 @@ input MovieWhere {
   peopleProduced: PersonWhere @deprecated(reason: "Use \`peopleProduced_SOME\` instead.")
   peopleProducedAggregate: MoviePeopleProducedAggregateInput
   peopleProducedConnection: MoviePeopleProducedConnectionWhere @deprecated(reason: "Use \`peopleProducedConnection_SOME\` instead.")
+
+  """
+  Return Movies where all of the related MoviePeopleProducedConnections match this filter
+  """
   peopleProducedConnection_ALL: MoviePeopleProducedConnectionWhere
+
+  """
+  Return Movies where none of the related MoviePeopleProducedConnections match this filter
+  """
   peopleProducedConnection_NONE: MoviePeopleProducedConnectionWhere
   peopleProducedConnection_NOT: MoviePeopleProducedConnectionWhere @deprecated(reason: "Use \`peopleProducedConnection_NONE\` instead.")
+
+  """
+  Return Movies where one of the related MoviePeopleProducedConnections match this filter
+  """
   peopleProducedConnection_SINGLE: MoviePeopleProducedConnectionWhere
+
+  """
+  Return Movies where some of the related MoviePeopleProducedConnections match this filter
+  """
   peopleProducedConnection_SOME: MoviePeopleProducedConnectionWhere
 
   """Return Movies where all of the related People match this filter"""
@@ -1285,10 +1333,26 @@ input MovieWhere {
   peopleReviewed: PersonWhere @deprecated(reason: "Use \`peopleReviewed_SOME\` instead.")
   peopleReviewedAggregate: MoviePeopleReviewedAggregateInput
   peopleReviewedConnection: MoviePeopleReviewedConnectionWhere @deprecated(reason: "Use \`peopleReviewedConnection_SOME\` instead.")
+
+  """
+  Return Movies where all of the related MoviePeopleReviewedConnections match this filter
+  """
   peopleReviewedConnection_ALL: MoviePeopleReviewedConnectionWhere
+
+  """
+  Return Movies where none of the related MoviePeopleReviewedConnections match this filter
+  """
   peopleReviewedConnection_NONE: MoviePeopleReviewedConnectionWhere
   peopleReviewedConnection_NOT: MoviePeopleReviewedConnectionWhere @deprecated(reason: "Use \`peopleReviewedConnection_NONE\` instead.")
+
+  """
+  Return Movies where one of the related MoviePeopleReviewedConnections match this filter
+  """
   peopleReviewedConnection_SINGLE: MoviePeopleReviewedConnectionWhere
+
+  """
+  Return Movies where some of the related MoviePeopleReviewedConnections match this filter
+  """
   peopleReviewedConnection_SOME: MoviePeopleReviewedConnectionWhere
 
   """Return Movies where all of the related People match this filter"""
@@ -1306,10 +1370,26 @@ input MovieWhere {
   peopleWrote: PersonWhere @deprecated(reason: "Use \`peopleWrote_SOME\` instead.")
   peopleWroteAggregate: MoviePeopleWroteAggregateInput
   peopleWroteConnection: MoviePeopleWroteConnectionWhere @deprecated(reason: "Use \`peopleWroteConnection_SOME\` instead.")
+
+  """
+  Return Movies where all of the related MoviePeopleWroteConnections match this filter
+  """
   peopleWroteConnection_ALL: MoviePeopleWroteConnectionWhere
+
+  """
+  Return Movies where none of the related MoviePeopleWroteConnections match this filter
+  """
   peopleWroteConnection_NONE: MoviePeopleWroteConnectionWhere
   peopleWroteConnection_NOT: MoviePeopleWroteConnectionWhere @deprecated(reason: "Use \`peopleWroteConnection_NONE\` instead.")
+
+  """
+  Return Movies where one of the related MoviePeopleWroteConnections match this filter
+  """
   peopleWroteConnection_SINGLE: MoviePeopleWroteConnectionWhere
+
+  """
+  Return Movies where some of the related MoviePeopleWroteConnections match this filter
+  """
   peopleWroteConnection_SOME: MoviePeopleWroteConnectionWhere
 
   """Return Movies where all of the related People match this filter"""
@@ -2936,10 +3016,26 @@ input PersonWhere {
   actedInMovies: MovieWhere @deprecated(reason: "Use \`actedInMovies_SOME\` instead.")
   actedInMoviesAggregate: PersonActedInMoviesAggregateInput
   actedInMoviesConnection: PersonActedInMoviesConnectionWhere @deprecated(reason: "Use \`actedInMoviesConnection_SOME\` instead.")
+
+  """
+  Return People where all of the related PersonActedInMoviesConnections match this filter
+  """
   actedInMoviesConnection_ALL: PersonActedInMoviesConnectionWhere
+
+  """
+  Return People where none of the related PersonActedInMoviesConnections match this filter
+  """
   actedInMoviesConnection_NONE: PersonActedInMoviesConnectionWhere
   actedInMoviesConnection_NOT: PersonActedInMoviesConnectionWhere @deprecated(reason: "Use \`actedInMoviesConnection_NONE\` instead.")
+
+  """
+  Return People where one of the related PersonActedInMoviesConnections match this filter
+  """
   actedInMoviesConnection_SINGLE: PersonActedInMoviesConnectionWhere
+
+  """
+  Return People where some of the related PersonActedInMoviesConnections match this filter
+  """
   actedInMoviesConnection_SOME: PersonActedInMoviesConnectionWhere
 
   """Return People where all of the related Movies match this filter"""
@@ -2965,10 +3061,26 @@ input PersonWhere {
   directedMovies: MovieWhere @deprecated(reason: "Use \`directedMovies_SOME\` instead.")
   directedMoviesAggregate: PersonDirectedMoviesAggregateInput
   directedMoviesConnection: PersonDirectedMoviesConnectionWhere @deprecated(reason: "Use \`directedMoviesConnection_SOME\` instead.")
+
+  """
+  Return People where all of the related PersonDirectedMoviesConnections match this filter
+  """
   directedMoviesConnection_ALL: PersonDirectedMoviesConnectionWhere
+
+  """
+  Return People where none of the related PersonDirectedMoviesConnections match this filter
+  """
   directedMoviesConnection_NONE: PersonDirectedMoviesConnectionWhere
   directedMoviesConnection_NOT: PersonDirectedMoviesConnectionWhere @deprecated(reason: "Use \`directedMoviesConnection_NONE\` instead.")
+
+  """
+  Return People where one of the related PersonDirectedMoviesConnections match this filter
+  """
   directedMoviesConnection_SINGLE: PersonDirectedMoviesConnectionWhere
+
+  """
+  Return People where some of the related PersonDirectedMoviesConnections match this filter
+  """
   directedMoviesConnection_SOME: PersonDirectedMoviesConnectionWhere
 
   """Return People where all of the related Movies match this filter"""
@@ -2986,10 +3098,26 @@ input PersonWhere {
   followsPeople: PersonWhere @deprecated(reason: "Use \`followsPeople_SOME\` instead.")
   followsPeopleAggregate: PersonFollowsPeopleAggregateInput
   followsPeopleConnection: PersonFollowsPeopleConnectionWhere @deprecated(reason: "Use \`followsPeopleConnection_SOME\` instead.")
+
+  """
+  Return People where all of the related PersonFollowsPeopleConnections match this filter
+  """
   followsPeopleConnection_ALL: PersonFollowsPeopleConnectionWhere
+
+  """
+  Return People where none of the related PersonFollowsPeopleConnections match this filter
+  """
   followsPeopleConnection_NONE: PersonFollowsPeopleConnectionWhere
   followsPeopleConnection_NOT: PersonFollowsPeopleConnectionWhere @deprecated(reason: "Use \`followsPeopleConnection_NONE\` instead.")
+
+  """
+  Return People where one of the related PersonFollowsPeopleConnections match this filter
+  """
   followsPeopleConnection_SINGLE: PersonFollowsPeopleConnectionWhere
+
+  """
+  Return People where some of the related PersonFollowsPeopleConnections match this filter
+  """
   followsPeopleConnection_SOME: PersonFollowsPeopleConnectionWhere
 
   """Return People where all of the related People match this filter"""
@@ -3017,10 +3145,26 @@ input PersonWhere {
   peopleFollows: PersonWhere @deprecated(reason: "Use \`peopleFollows_SOME\` instead.")
   peopleFollowsAggregate: PersonPeopleFollowsAggregateInput
   peopleFollowsConnection: PersonPeopleFollowsConnectionWhere @deprecated(reason: "Use \`peopleFollowsConnection_SOME\` instead.")
+
+  """
+  Return People where all of the related PersonPeopleFollowsConnections match this filter
+  """
   peopleFollowsConnection_ALL: PersonPeopleFollowsConnectionWhere
+
+  """
+  Return People where none of the related PersonPeopleFollowsConnections match this filter
+  """
   peopleFollowsConnection_NONE: PersonPeopleFollowsConnectionWhere
   peopleFollowsConnection_NOT: PersonPeopleFollowsConnectionWhere @deprecated(reason: "Use \`peopleFollowsConnection_NONE\` instead.")
+
+  """
+  Return People where one of the related PersonPeopleFollowsConnections match this filter
+  """
   peopleFollowsConnection_SINGLE: PersonPeopleFollowsConnectionWhere
+
+  """
+  Return People where some of the related PersonPeopleFollowsConnections match this filter
+  """
   peopleFollowsConnection_SOME: PersonPeopleFollowsConnectionWhere
 
   """Return People where all of the related People match this filter"""
@@ -3038,10 +3182,26 @@ input PersonWhere {
   producedMovies: MovieWhere @deprecated(reason: "Use \`producedMovies_SOME\` instead.")
   producedMoviesAggregate: PersonProducedMoviesAggregateInput
   producedMoviesConnection: PersonProducedMoviesConnectionWhere @deprecated(reason: "Use \`producedMoviesConnection_SOME\` instead.")
+
+  """
+  Return People where all of the related PersonProducedMoviesConnections match this filter
+  """
   producedMoviesConnection_ALL: PersonProducedMoviesConnectionWhere
+
+  """
+  Return People where none of the related PersonProducedMoviesConnections match this filter
+  """
   producedMoviesConnection_NONE: PersonProducedMoviesConnectionWhere
   producedMoviesConnection_NOT: PersonProducedMoviesConnectionWhere @deprecated(reason: "Use \`producedMoviesConnection_NONE\` instead.")
+
+  """
+  Return People where one of the related PersonProducedMoviesConnections match this filter
+  """
   producedMoviesConnection_SINGLE: PersonProducedMoviesConnectionWhere
+
+  """
+  Return People where some of the related PersonProducedMoviesConnections match this filter
+  """
   producedMoviesConnection_SOME: PersonProducedMoviesConnectionWhere
 
   """Return People where all of the related Movies match this filter"""
@@ -3059,10 +3219,26 @@ input PersonWhere {
   reviewedMovies: MovieWhere @deprecated(reason: "Use \`reviewedMovies_SOME\` instead.")
   reviewedMoviesAggregate: PersonReviewedMoviesAggregateInput
   reviewedMoviesConnection: PersonReviewedMoviesConnectionWhere @deprecated(reason: "Use \`reviewedMoviesConnection_SOME\` instead.")
+
+  """
+  Return People where all of the related PersonReviewedMoviesConnections match this filter
+  """
   reviewedMoviesConnection_ALL: PersonReviewedMoviesConnectionWhere
+
+  """
+  Return People where none of the related PersonReviewedMoviesConnections match this filter
+  """
   reviewedMoviesConnection_NONE: PersonReviewedMoviesConnectionWhere
   reviewedMoviesConnection_NOT: PersonReviewedMoviesConnectionWhere @deprecated(reason: "Use \`reviewedMoviesConnection_NONE\` instead.")
+
+  """
+  Return People where one of the related PersonReviewedMoviesConnections match this filter
+  """
   reviewedMoviesConnection_SINGLE: PersonReviewedMoviesConnectionWhere
+
+  """
+  Return People where some of the related PersonReviewedMoviesConnections match this filter
+  """
   reviewedMoviesConnection_SOME: PersonReviewedMoviesConnectionWhere
 
   """Return People where all of the related Movies match this filter"""
@@ -3080,10 +3256,26 @@ input PersonWhere {
   wroteMovies: MovieWhere @deprecated(reason: "Use \`wroteMovies_SOME\` instead.")
   wroteMoviesAggregate: PersonWroteMoviesAggregateInput
   wroteMoviesConnection: PersonWroteMoviesConnectionWhere @deprecated(reason: "Use \`wroteMoviesConnection_SOME\` instead.")
+
+  """
+  Return People where all of the related PersonWroteMoviesConnections match this filter
+  """
   wroteMoviesConnection_ALL: PersonWroteMoviesConnectionWhere
+
+  """
+  Return People where none of the related PersonWroteMoviesConnections match this filter
+  """
   wroteMoviesConnection_NONE: PersonWroteMoviesConnectionWhere
   wroteMoviesConnection_NOT: PersonWroteMoviesConnectionWhere @deprecated(reason: "Use \`wroteMoviesConnection_NONE\` instead.")
+
+  """
+  Return People where one of the related PersonWroteMoviesConnections match this filter
+  """
   wroteMoviesConnection_SINGLE: PersonWroteMoviesConnectionWhere
+
+  """
+  Return People where some of the related PersonWroteMoviesConnections match this filter
+  """
   wroteMoviesConnection_SOME: PersonWroteMoviesConnectionWhere
 
   """Return People where all of the related Movies match this filter"""

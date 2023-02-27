@@ -37,10 +37,10 @@
     "@graphql-mesh/types": "0.91.5",
     "@graphql-mesh/utils": "0.43.13",
     "@graphql-tools/utils": "9.2.1",
-    "@neo4j/graphql": "3.16.1",
+    "@neo4j/graphql": "3.17.0",
     "@neo4j/introspector": "^1.0.1",
     "graphql-scalars": "1.20.1",
-    "neo4j-driver": "5.5.0",
+    "neo4j-driver": "5.6.0",
     "tslib": "^2.4.0"
   },
   "publishConfig": {
