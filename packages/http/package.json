@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/http",
-  "version": "0.3.19",
+  "version": "0.3.20",
   "type": "module",
   "repository": {
     "type": "git",
@@ -33,9 +33,9 @@
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.3.3",
-    "@graphql-mesh/runtime": "0.46.14",
-    "@graphql-mesh/types": "0.91.5",
-    "@graphql-mesh/utils": "0.43.13",
+    "@graphql-mesh/runtime": "0.46.15",
+    "@graphql-mesh/types": "0.91.6",
+    "@graphql-mesh/utils": "0.43.14",
     "@whatwg-node/router": "0.3.0",
     "graphql-yoga": "3.7.0",
     "tslib": "^2.4.0"

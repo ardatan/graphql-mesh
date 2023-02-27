@@ -1,5 +1,39 @@
 # @graphql-mesh/cli
 
+## 0.82.24
+
+### Patch Changes
+
+- [#5183](https://github.com/Urigo/graphql-mesh/pull/5183)
+  [`0b438c329`](https://github.com/Urigo/graphql-mesh/commit/0b438c32950f524db65163d67f6a64f451214391)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-codegen/core@3.1.0` ↗︎](https://www.npmjs.com/package/@graphql-codegen/core/v/3.1.0)
+    (from `3.0.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-codegen/typed-document-node@3.0.1` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typed-document-node/v/3.0.1)
+    (from `3.0.0`, in `dependencies`)
+  - Updated dependency [`cosmiconfig@8.1.0` ↗︎](https://www.npmjs.com/package/cosmiconfig/v/8.1.0)
+    (from `8.0.0`, in `dependencies`)
+  - Updated dependency [`yargs@17.7.1` ↗︎](https://www.npmjs.com/package/yargs/v/17.7.1) (from
+    `17.7.0`, in `dependencies`)
+- Updated dependencies
+  [[`7def5adae`](https://github.com/Urigo/graphql-mesh/commit/7def5adae9e1cab3597320731ca6767bde5c04a1),
+  [`ab08c2af5`](https://github.com/Urigo/graphql-mesh/commit/ab08c2af559aee4ee009c1bafceab7f5d1e87321),
+  [`ab08c2af5`](https://github.com/Urigo/graphql-mesh/commit/ab08c2af559aee4ee009c1bafceab7f5d1e87321),
+  [`0b438c329`](https://github.com/Urigo/graphql-mesh/commit/0b438c32950f524db65163d67f6a64f451214391),
+  [`7def5adae`](https://github.com/Urigo/graphql-mesh/commit/7def5adae9e1cab3597320731ca6767bde5c04a1),
+  [`ab08c2af5`](https://github.com/Urigo/graphql-mesh/commit/ab08c2af559aee4ee009c1bafceab7f5d1e87321),
+  [`0b438c329`](https://github.com/Urigo/graphql-mesh/commit/0b438c32950f524db65163d67f6a64f451214391),
+  [`0b438c329`](https://github.com/Urigo/graphql-mesh/commit/0b438c32950f524db65163d67f6a64f451214391),
+  [`0b438c329`](https://github.com/Urigo/graphql-mesh/commit/0b438c32950f524db65163d67f6a64f451214391)]:
+  - @graphql-mesh/config@10.1.7
+  - @graphql-mesh/http@0.3.20
+  - @graphql-mesh/runtime@0.46.15
+  - @graphql-mesh/types@0.91.6
+  - @graphql-mesh/utils@0.43.14
+  - @graphql-mesh/store@0.9.14
+
 ## 0.82.23
 
 ### Patch Changes
