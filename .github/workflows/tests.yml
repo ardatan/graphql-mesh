@@ -21,13 +21,12 @@ jobs:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
 
   unit:
-    name: unit / ${{matrix.os}} / node ${{matrix.node-version}}
+    name: unit / node ${{matrix.node-version}}
     timeout-minutes: 60
-    runs-on: ${{matrix.os}}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
         node-version: [14, 18]
 
     steps:
@@ -51,13 +50,12 @@ jobs:
         run: yarn test
 
   integration:
-    name: integration / ${{matrix.os}} / node ${{matrix.node-version}}
+    name: integration / node ${{matrix.node-version}}
     timeout-minutes: 60
-    runs-on: ${{matrix.os}}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
         node-version: [14, 18]
     # Service containers to run with `runner-job`
     services:
@@ -120,13 +118,12 @@ jobs:
         run: yarn test:integration
 
   integration-leak:
-    name: integration / leak / ${{matrix.os}} / node ${{matrix.node-version}}
+    name: integration / leak / node ${{matrix.node-version}}
     timeout-minutes: 60
-    runs-on: ${{matrix.os}}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
         node-version: [14, 18]
     # Service containers to run with `runner-job`
     services:
@@ -194,13 +191,12 @@ jobs:
           command: yarn test:integration:leak
 
   integrity-check:
-    name: integrity-check / ${{matrix.os}} / node ${{matrix.node-version}}
+    name: integrity-check / node ${{matrix.node-version}}
     timeout-minutes: 60
-    runs-on: ${{matrix.os}}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
         node-version: [14, 18]
     steps:
       - name: Checkout
