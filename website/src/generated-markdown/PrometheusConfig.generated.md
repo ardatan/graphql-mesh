@@ -35,9 +35,11 @@
   * `Boolean`
   * `String`
 * `fetchRequestHeaders` (type: `Boolean`)
+* `fetchResponseHeaders` (type: `Boolean`)
 * `http` -  One of: 
   * `Boolean`
   * `String`
 * `httpRequestHeaders` (type: `Boolean`)
+* `httpResponseHeaders` (type: `Boolean`)
 * `endpoint` (type: `String`) - The path to the metrics endpoint
 default: `/metrics`

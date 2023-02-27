@@ -1,3 +1,5 @@
+import { GraphQLSchema } from 'graphql';
+import minimatch from 'minimatch';
 import { YamlConfig } from '@graphql-mesh/types';
 import {
   applyRequestTransforms,
@@ -5,16 +7,15 @@ import {
   applySchemaTransforms,
 } from '@graphql-mesh/utils';
 import { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
-import { ExecutionResult, ExecutionRequest } from '@graphql-tools/utils';
+import { ExecutionRequest, ExecutionResult } from '@graphql-tools/utils';
 import {
-  FilterRootFields,
-  FilterObjectFields,
   FilterInputObjectFields,
+  FilterInterfaceFields,
+  FilterObjectFields,
+  FilterRootFields,
   FilterTypes,
   TransformCompositeFields,
 } from '@graphql-tools/wrap';
-import { GraphQLSchema } from 'graphql';
-import minimatch from 'minimatch';
 
 export default class WrapFilter implements Transform {
   private transforms: Transform[] = [];
@@ -93,6 +94,15 @@ export default class WrapFilter implements Transform {
         new FilterInputObjectFields((inputObjectTypeName, inputObjectFieldName) => {
           if (typeMatcher.match(inputObjectTypeName)) {
             return globalTypeMatcher.match(inputObjectFieldName);
+          }
+          return true;
+        }),
+      );
+
+      this.transforms.push(
+        new FilterInterfaceFields((interfaceTypeName, interfaceFieldName) => {
+          if (typeMatcher.match(interfaceTypeName)) {
+            return globalTypeMatcher.match(interfaceFieldName);
           }
           return true;
         }),
