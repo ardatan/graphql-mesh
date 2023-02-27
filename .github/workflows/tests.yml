@@ -21,13 +21,12 @@ jobs:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
 
   unit:
-    name: unit / ${{matrix.os}} / node ${{matrix.node-version}}
+    name: unit / node ${{matrix.node-version}}
     timeout-minutes: 60
-    runs-on: ${{matrix.os}}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
         node-version: [14, 18]
 
     steps:
@@ -51,13 +50,12 @@ jobs:
         run: yarn test
 
   integration:
-    name: integration / ${{matrix.os}} / node ${{matrix.node-version}}
+    name: integration / node ${{matrix.node-version}}
     timeout-minutes: 60
-    runs-on: ${{matrix.os}}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
         node-version: [14, 18]
     # Service containers to run with `runner-job`
     services:
@@ -114,21 +112,18 @@ jobs:
           backup_file: '/tmp/backup.sql'
       - name: Build
         run: yarn build
-      - name: Node.js integrity check
-        run: yarn bob check
       - name: Build Test Artifacts
         run: yarn build-test-artifacts
       - name: Test
         run: yarn test:integration
 
   integration-leak:
-    name: integration / leak / ${{matrix.os}} / node ${{matrix.node-version}}
+    name: integration / leak / node ${{matrix.node-version}}
     timeout-minutes: 60
-    runs-on: ${{matrix.os}}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
         node-version: [14, 18]
     # Service containers to run with `runner-job`
     services:
@@ -194,3 +189,24 @@ jobs:
           timeout_minutes: 10
           max_attempts: 3
           command: yarn test:integration:leak
+
+  integrity-check:
+    name: integrity-check / node ${{matrix.node-version}}
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [14, 18]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: the-guild-org/shared-config/setup@main
+        name: setup env
+        with:
+          nodeVersion: ${{matrix.node-version}}
+      - name: Build
+        run: yarn build
+      - name: Node.js integrity check
+        run: yarn bob check

@@ -44,6 +44,7 @@ describe('OpenAPI Subscriptions', () => {
     appWrapper.dispose();
   });
   it('should work', async () => {
+    expect.assertions(2);
     const startWebhookMutation = await readFile(
       join(__dirname, '..', 'example-queries', 'startWebhook.mutation.graphql'),
       'utf8',
@@ -88,22 +89,20 @@ describe('OpenAPI Subscriptions', () => {
       }),
     });
 
-    const listenWebhookResult = listenWebhookResponse.body!;
-
-    const iterator: AsyncIterator<Uint8Array> = listenWebhookResult[Symbol.asyncIterator]();
-
-    const readerResult = await iterator.next();
-    const chunkStr = Buffer.from(readerResult.value!).toString('utf8');
-    expect(chunkStr.trim()).toBe(
-      `data: ${JSON.stringify({
-        data: {
-          onData: {
-            userData: 'RANDOM_DATA',
-          },
-        },
-      })}`,
-    );
-
-    await iterator.return?.();
+    for await (const chunk of listenWebhookResponse.body!) {
+      const chunkStr = Buffer.from(chunk).toString('utf8').trim();
+      if (chunkStr.includes('data: ')) {
+        expect(chunkStr).toContain(
+          `data: ${JSON.stringify({
+            data: {
+              onData: {
+                userData: 'RANDOM_DATA',
+              },
+            },
+          })}`,
+        );
+        break;
+      }
+    }
   });
 });

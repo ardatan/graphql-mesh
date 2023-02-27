@@ -40,7 +40,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@envelop/core": "3.0.5"
+    "@envelop/core": "3.0.6"
   },
   "publishConfig": {
     "access": "public",
