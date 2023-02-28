@@ -1,0 +1,8 @@
+sources:
+  - name: Example
+    handler:
+      openapi:
+        source: ./schema.json
+
+serve:
+  browser: false

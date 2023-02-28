@@ -1,0 +1,36 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "example API"
+  },
+  "servers": [
+    {
+      "url": "https://www.test.com",
+      "description": "Server url"
+    }
+  ],
+  "paths": {
+    "/path1": {
+      "get": {
+        "summary": "Path 1",
+        "description": "An example path",
+        "operationId": "path_1",
+        "parameters": [
+          {
+            "name": "parameter1",
+            "in": "query",
+            "description": "Parameter #1",
+            "required": false,
+            "schema": { "type": "boolean" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved from path 1"
+          },
+          "400": { "description": "Bad Request" }
+        }
+      }
+    }
+  }
+}
