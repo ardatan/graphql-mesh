@@ -1,16 +1,37 @@
-import { GraphQLObjectType, GraphQLTypeResolver } from 'graphql';
+import { GraphQLFieldMap, GraphQLObjectType, GraphQLTypeResolver, isNonNullType } from 'graphql';
 import { createGraphQLError } from '@graphql-tools/utils';
 
-function calculateScore(dataKeys: (string | number | symbol)[], typeFields: (string | number)[]) {
-  let score = 0;
-  for (const dataKey of dataKeys) {
-    if (typeFields.includes(dataKey.toString())) {
-      score++;
+function calculateScore(
+  dataKeys: (string | number | symbol)[],
+  typeFields: GraphQLFieldMap<any, any>,
+) {
+  const requiredFields: string[] = [];
+  const optionalFields: string[] = [];
+  Object.entries(typeFields).forEach(([name, type]) => {
+    if (isNonNullType(type.type)) {
+      requiredFields.push(name);
     } else {
-      score--;
+      optionalFields.push(name);
+    }
+  });
+
+  let requiredCount = 0;
+  let optionalCount = 0;
+  for (const dataKey of dataKeys) {
+    if (requiredFields.includes(dataKey.toString())) {
+      requiredCount++;
+    } else if (optionalFields.includes(dataKey.toString())) {
+      optionalCount++;
+    } else {
+      optionalCount--;
     }
   }
-  return score;
+
+  const requiredScore =
+    requiredFields.length > 0 ? Math.round((requiredCount / requiredFields.length) * 100) : 0;
+  const optionalScore =
+    optionalFields.length > 0 ? Math.round((optionalCount / optionalFields.length) * 100) : 0;
+  return { requiredScore, optionalScore };
 }
 
 export function getTypeResolverFromOutputTCs(
@@ -39,17 +60,24 @@ export function getTypeResolverFromOutputTCs(
             .filter(property => !property.toString().startsWith('$'))
         : null;
     let typeNameWithHighestScore: string;
-    let highestScore = -Infinity;
+    let highestRequiredScore = -Infinity;
+    let highestOptionalScore = -Infinity;
     for (const possibleType of possibleTypes) {
       const typeName = possibleType.name;
       if (dataKeys != null) {
-        const typeFields = Object.keys(possibleType.getFields());
-        const score = calculateScore(dataKeys, typeFields);
-        if (score === dataKeys.length) {
+        const score = calculateScore(dataKeys, possibleType.getFields());
+        if (score.requiredScore === 100 && score.optionalScore === 100) {
           return typeName;
         }
-        if (score > highestScore) {
-          highestScore = score;
+        if (score.requiredScore > highestRequiredScore) {
+          highestRequiredScore = score.requiredScore;
+          highestOptionalScore = score.optionalScore;
+          typeNameWithHighestScore = typeName;
+        } else if (
+          score.requiredScore === highestRequiredScore &&
+          score.optionalScore > highestOptionalScore
+        ) {
+          highestOptionalScore = score.optionalScore;
           typeNameWithHighestScore = typeName;
         }
       } /* else {
