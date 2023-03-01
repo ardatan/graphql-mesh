@@ -7,8 +7,8 @@ function calculateScore(
 ) {
   const requiredFields: string[] = [];
   const optionalFields: string[] = [];
-  Object.entries(typeFields).forEach(([name, type]) => {
-    if (isNonNullType(type.type)) {
+  Object.entries(typeFields).forEach(([name, field]) => {
+    if (isNonNullType(field.type)) {
       requiredFields.push(name);
     } else {
       optionalFields.push(name);
