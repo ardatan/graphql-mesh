@@ -1,6 +1,18 @@
 import { GraphQLObjectType, GraphQLTypeResolver } from 'graphql';
 import { createGraphQLError } from '@graphql-tools/utils';
 
+function calculateScore(dataKeys: (string | number | symbol)[], typeFields: (string | number)[]) {
+  let score = 0;
+  for (const dataKey of dataKeys) {
+    if (typeFields.includes(dataKey.toString())) {
+      score++;
+    } else {
+      score--;
+    }
+  }
+  return score;
+}
+
 export function getTypeResolverFromOutputTCs(
   possibleTypes: readonly GraphQLObjectType[],
   discriminatorField?: string,
@@ -26,15 +38,19 @@ export function getTypeResolverFromOutputTCs(
             // Remove metadata fields used to pass data
             .filter(property => !property.toString().startsWith('$'))
         : null;
+    let typeNameWithHighestScore: string;
+    let highestScore = -Infinity;
     for (const possibleType of possibleTypes) {
       const typeName = possibleType.name;
       if (dataKeys != null) {
         const typeFields = Object.keys(possibleType.getFields());
-        if (
-          dataKeys.length <= typeFields.length &&
-          dataKeys.every(property => typeFields.includes(property.toString()))
-        ) {
+        const score = calculateScore(dataKeys, typeFields);
+        if (score === dataKeys.length) {
           return typeName;
+        }
+        if (score > highestScore) {
+          highestScore = score;
+          typeNameWithHighestScore = typeName;
         }
       } /* else {
         const validateFn = possibleType.extensions.validateWithJSONSchema as ValidateFunction;
@@ -46,6 +62,9 @@ export function getTypeResolverFromOutputTCs(
           validationErrors[typeName] = ajv.errors || validateFn.errors;
         }
       } */
+    }
+    if (typeNameWithHighestScore) {
+      return typeNameWithHighestScore;
     }
     if (data.$response) {
       const error = createGraphQLError(`HTTP Error: ${data.$statusCode}`, {
