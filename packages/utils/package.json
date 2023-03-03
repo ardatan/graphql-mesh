@@ -39,16 +39,16 @@
     "@graphql-tools/utils": "9.2.1",
     "js-yaml": "4.1.0",
     "lodash.get": "4.4.2",
-    "lodash.set": "4.3.2",
     "lodash.topath": "4.5.2",
+    "set-value": "4.1.0",
     "tiny-lru": "8.0.2",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@types/js-yaml": "4.0.5",
-    "@types/lodash.set": "4.3.7",
     "@types/lodash.topath": "4.5.7",
-    "@types/object-hash": "3.0.2"
+    "@types/object-hash": "3.0.2",
+    "@types/set-value": "4.0.1"
   },
   "publishConfig": {
     "access": "public",

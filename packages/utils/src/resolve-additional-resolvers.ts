@@ -15,8 +15,8 @@ import {
 } from 'graphql';
 import { withFilter } from './with-filter.js';
 import lodashGet from 'lodash.get';
-import lodashSet from 'lodash.set';
 import toPath from 'lodash.topath';
+import setValue from 'set-value';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
 import { process } from '@graphql-mesh/cross-helpers';
@@ -202,7 +202,7 @@ export function resolveAdditionalResolversWithoutImport(
             const resolverData = { root, args, context, info, env: process.env };
             const targetArgs: any = {};
             for (const argPath in additionalResolver.additionalArgs || {}) {
-              lodashSet(
+              setValue(
                 targetArgs,
                 argPath,
                 stringInterpolator.parse(additionalResolver.additionalArgs[argPath], resolverData),
@@ -215,7 +215,7 @@ export function resolveAdditionalResolversWithoutImport(
               info,
               argsFromKeys: (keys: string[]) => {
                 const args: any = {};
-                lodashSet(args, additionalResolver.keysArg, keys);
+                setValue(args, additionalResolver.keysArg, keys);
                 Object.assign(args, targetArgs);
                 return args;
               },
@@ -265,7 +265,7 @@ export function resolveAdditionalResolversWithoutImport(
             const resolverData = { root, args, context, info, env: process.env };
             const targetArgs: any = {};
             for (const argPath in additionalResolver.sourceArgs) {
-              lodashSet(
+              setValue(
                 targetArgs,
                 argPath,
                 stringInterpolator.parse(
@@ -370,7 +370,7 @@ export function resolveAdditionalResolvers(
                   const resolverData = { root, args, context, info, env: process.env };
                   const targetArgs: any = {};
                   for (const argPath in additionalResolver.additionalArgs || {}) {
-                    lodashSet(
+                    setValue(
                       targetArgs,
                       argPath,
                       stringInterpolator.parse(
@@ -386,7 +386,7 @@ export function resolveAdditionalResolvers(
                     info,
                     argsFromKeys: (keys: string[]) => {
                       const args: any = {};
-                      lodashSet(args, additionalResolver.keysArg, keys);
+                      setValue(args, additionalResolver.keysArg, keys);
                       Object.assign(args, targetArgs);
                       return args;
                     },
@@ -436,7 +436,7 @@ export function resolveAdditionalResolvers(
                   const resolverData = { root, args, context, info, env: process.env };
                   const targetArgs: any = {};
                   for (const argPath in additionalResolver.sourceArgs) {
-                    lodashSet(
+                    setValue(
                       targetArgs,
                       argPath,
                       stringInterpolator.parse(
