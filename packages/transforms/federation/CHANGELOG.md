@@ -1,5 +1,13 @@
 # @graphql-mesh/transform-federation
 
+## 0.11.9
+
+### Patch changes
+
+Updated dependencies
+- removed lodash.set 4.3.0
+- added dset 3.1.2
+
 ## 0.11.8
 
 ### Patch Changes

@@ -24,7 +24,7 @@ import {
   isUnionType,
   OperationTypeNode,
 } from 'graphql';
-import lodashSet from 'lodash.set';
+import { dset} from "dset";
 import {
   addHTTPRootFieldResolver,
   GlobalOptions,
@@ -416,7 +416,7 @@ function linkResolver(
             env,
           })
         : argInterpolation;
-    lodashSet(args, argKey, actualValue);
+    dset(args, argKey, actualValue);
   }
   const type = info.schema.getType(targetTypeName) as GraphQLObjectType;
   const field = type.getFields()[targetFieldName];

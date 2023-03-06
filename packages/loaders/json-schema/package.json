@@ -44,7 +44,7 @@
     "graphql-compose": "9.0.10",
     "graphql-scalars": "1.20.1",
     "json-machete": "0.18.15",
-    "lodash.set": "4.3.2",
+    "dset": "3.1.2",
     "pascal-case": "3.1.2",
     "qs": "6.11.0",
     "to-json-schema": "0.2.5",

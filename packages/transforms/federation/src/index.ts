@@ -5,7 +5,7 @@ import {
   GraphQLUnionType,
   isObjectType,
 } from 'graphql';
-import set from 'lodash.set';
+import set from 'dset';
 import { entitiesField, EntityType, serviceField } from '@apollo/subgraph/dist/types.js';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { ImportFn, MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
