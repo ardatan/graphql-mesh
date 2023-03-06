@@ -125,6 +125,9 @@ type Countries_Response {
 
 """Full country details"""
 type Country_Details {
+  """The country dialing prefix"""
+  callingCode: String
+
   """The ISO-3166 country code"""
   code: String
 
@@ -276,6 +279,9 @@ type CurrentObs {
   """Global horizontal irradiance (W/m^2)"""
   ghi: Float
 
+  """Wind gust speed - Default (m/s)"""
+  gust: Float
+
   """Current solar hour angle (Degrees)"""
   hour_angle: Float
 
@@ -308,6 +314,9 @@ type CurrentObs {
 
   """Estimated solar radiation (W/m^2)"""
   solar_rad: Float
+
+  """List of data sources used in response"""
+  sources: [String]
 
   """State abbreviation"""
   state_code: String
@@ -414,10 +423,13 @@ type EnergyObs {
   """Total snowfall in period - Default (mm)"""
   snow: Float
 
+  """List of data sources used in response"""
+  sources: [String]
+
   """State abbreviation"""
   state_code: String
 
-  """Source Station ID"""
+  """Nearest Station ID [DEPRECATED]"""
   station_id: String
 
   """
@@ -444,7 +456,7 @@ type EnergyObs {
   wind_dir: Int
 
   """Average wind speed - Default (m/s)"""
-  wind_speed: Float
+  wind_spd: Float
 }
 
 type EnergyObsGroup {
@@ -532,7 +544,7 @@ type EnergyObsSeries {
   wind_dir: Int
 
   """Average wind speed - Default (m/s)"""
-  wind_speed: Float
+  wind_spd: Float
 }
 
 """
@@ -708,9 +720,6 @@ type ForecastHour {
   """Accumulated snowfall since last forecast point - Default (mm)"""
   snow: Float
 
-  """6 hour accumulated snowfall. Default (mm)"""
-  snow6h: Float
-
   """Snow depth - Default (mm)"""
   snow_depth: Float
 
@@ -734,7 +743,7 @@ type ForecastHour {
 
   """Visibility - Default (KM)"""
   vis: Float
-  weather: query_forecast_3hourly_by_city_by_country_data_items_weather
+  weather: query_forecast_hourly_by_city_by_country_data_items_weather
 
   """Cardinal wind direction"""
   wind_cdir: String
@@ -744,6 +753,9 @@ type ForecastHour {
 
   """Wind direction"""
   wind_dir: Int
+
+  """Wind Gust Speed - Default (m/s)"""
+  wind_gust_spd: Float
 
   """Wind Speed - Default (m/s)"""
   wind_spd: Float
@@ -796,7 +808,7 @@ type History {
   """Longitude"""
   lon: String
 
-  """Weather stations used in response"""
+  """List of data sources used in response"""
   sources: [String]
 
   """State abbreviation"""
@@ -820,7 +832,7 @@ type HistoryDay {
   """Longitude"""
   lon: String
 
-  """Weather stations used in response"""
+  """List of data sources used in response"""
   sources: [String]
 
   """State abbreviation"""
@@ -879,6 +891,9 @@ type HistoryDayObj {
   """Average pressure (mb)"""
   pres: Float
 
+  """Data revision status (interim or final)"""
+  revision_status: String
+
   """Average relative humidity as a percentage (%)"""
   rh: Int
 
@@ -917,6 +932,15 @@ type HistoryDayObj {
 }
 
 type HistoryObj {
+  """Apparent Temperature or Wind Chill/Heat Index (Default Celcius)"""
+  app_temp: Float
+
+  """Azimuth angle (Degrees)"""
+  azimuth: Float
+
+  """Cloud Cover 0-100 (%)"""
+  clouds: Int
+
   """Date in format "YYYY-MM-DD:HH". All datetime is in (UTC)"""
   datetime: String
 
@@ -947,6 +971,9 @@ type HistoryObj {
   """Pressure (mb)"""
   pres: Float
 
+  """Data revision status (interim or final)"""
+  revision_status: String
+
   """Relative Humidity as a percentage (%)"""
   rh: Int
 
@@ -955,9 +982,6 @@ type HistoryObj {
 
   """Snowfall - Default (mm)"""
   snow: Float
-
-  """Snowfall in last 6 hours - Default (mm)"""
-  snow6h: Float
 
   """Estimated solar radiation (W/m^2)"""
   solar_rad: Float
@@ -976,13 +1000,43 @@ type HistoryObj {
 
   """UV Index (1-11+)"""
   uv: Float
+
+  """Visibility (KM)"""
+  vis: Float
   weather: query_history_hourly_by_city_by_country_data_items_weather
 
   """Wind direction (Degrees)"""
   wind_dir: Int
 
+  """Wind Gust Speed - Default (m/s)"""
+  wind_gust_spd: Float
+
   """Wind Speed (Default m/s)"""
   wind_spd: Float
+}
+
+type HistorySubhourly {
+  """City name (Closest)"""
+  city_name: String
+
+  """Country abbreviation"""
+  country_code: String
+  data: [HistoryObj]
+
+  """Latitude"""
+  lat: String
+
+  """Longitude"""
+  lon: String
+
+  """List of data sources used in response"""
+  sources: [String]
+
+  """State abbreviation"""
+  state_code: String
+
+  """Local IANA time zone"""
+  timezone: String
 }
 
 """
@@ -1159,10 +1213,10 @@ type Query {
   ): WeatherAlert
 
   """
-  **(Advanceed/Enterprise plans only)** Downloads bulk data files - OPTIONS: ( current.json.gz - Current observations for cities > 1000 population). Units are Metric (Celcius, m/s, etc).
+  Downloads bulk data files - OPTIONS: ( current.csv.gz, forecast_hourly.csv.gz, forecast_daily.csv.gz). Units are Metric (Celcius, m/s, etc).
   """
   bulk_files_by_file(
-    """Filename (ie. current.json.gz)"""
+    """Filename (ie. current.csv.gz)"""
     file: String!
 
     """Your registered API key."""
@@ -1307,6 +1361,24 @@ type Query {
     units: queryInput_current_by_lat_by_lon_units
   ): CurrentObsGroup
 
+  """
+  Returns a group of Current Observations - Given a list of points (lat1, lon1), (lat2, lon2), (latN, lonN), ...
+  """
+  current_by_points(
+    """Wraps return in jsonp callback. Example: callback=func"""
+    callback: String
+
+    """Your registered API key."""
+    key: String!
+    lang: queryInput_current_by_points_lang
+
+    """
+    Comma separated list of points. Example: (35.5, -75.5),(45, 65),(45.12, -130.5)
+    """
+    points: String!
+    units: queryInput_current_by_points_units
+  ): CurrentObsGroup
+
   """Returns current weather observation - Given a Postal Code. """
   current_by_postal_code(
     """Wraps return in jsonp callback - Example - callback=func"""
@@ -1406,6 +1478,11 @@ type Query {
     """
     namePrefix: String
 
+    """
+    When name-prefix matching, whether or not to match on names in the default language if a non-default languageCode is set.
+    """
+    namePrefixDefaultLangResults: Boolean = true
+
     """The zero-ary offset index into the results"""
     offset: Int
 
@@ -1413,8 +1490,8 @@ type Query {
     radius: Int
 
     """
-    How to sort place results. 
-    'Format: ±SORT_FIELD,±SORT_FIELD' 
+    How to sort places. 
+    Format: ±SORT_FIELD,±SORT_FIELD 
     where SORT_FIELD = countryCode | elevation | name | population
     """
     sort: String
@@ -1470,6 +1547,11 @@ type Query {
     """
     namePrefix: String
 
+    """
+    When name-prefix matching, whether or not to match on names in the default language if a non-default languageCode is set.
+    """
+    namePrefixDefaultLangResults: Boolean = true
+
     """The zero-ary offset index into the results"""
     offset: Int
 
@@ -1477,8 +1559,8 @@ type Query {
     radius: Int
 
     """
-    How to sort place results. 
-    'Format: ±SORT_FIELD,±SORT_FIELD' 
+    How to sort places. 
+    Format: ±SORT_FIELD,±SORT_FIELD 
     where SORT_FIELD = countryCode | elevation | name | population
     """
     sort: String
@@ -1537,6 +1619,11 @@ type Query {
     """
     namePrefix: String
 
+    """
+    When name-prefix matching, whether or not to match on names in the default language if a non-default languageCode is set.
+    """
+    namePrefixDefaultLangResults: Boolean = true
+
     """The zero-ary offset index into the results"""
     offset: Int
 
@@ -1544,8 +1631,8 @@ type Query {
     radius: Int
 
     """
-    How to sort place results. 
-    'Format: ±SORT_FIELD,±SORT_FIELD' 
+    How to sort places. 
+    Format: ±SORT_FIELD,±SORT_FIELD 
     where SORT_FIELD = countryCode | elevation | name | population
     """
     sort: String
@@ -1604,6 +1691,11 @@ type Query {
     """
     namePrefix: String
 
+    """
+    When name-prefix matching, whether or not to match on names in the default language if a non-default languageCode is set.
+    """
+    namePrefixDefaultLangResults: Boolean = true
+
     """The zero-ary offset index into the results"""
     offset: Int
 
@@ -1611,8 +1703,8 @@ type Query {
     radius: Int
 
     """
-    How to sort place results. 
-    'Format: ±SORT_FIELD,±SORT_FIELD' 
+    How to sort places. 
+    Format: ±SORT_FIELD,±SORT_FIELD 
     where SORT_FIELD = countryCode | elevation | name | population
     """
     sort: String
@@ -1673,6 +1765,11 @@ type Query {
     """
     namePrefix: String
 
+    """
+    When name-prefix matching, whether or not to match on names in the default language if a non-default languageCode is set.
+    """
+    namePrefixDefaultLangResults: Boolean = true
+
     """The zero-ary offset index into the results"""
     offset: Int
 
@@ -1680,8 +1777,8 @@ type Query {
     radius: Int
 
     """
-    How to sort place results. 
-    'Format: ±SORT_FIELD,±SORT_FIELD' 
+    How to sort places. 
+    Format: ±SORT_FIELD,±SORT_FIELD 
     where SORT_FIELD = countryCode | elevation | name | population
     """
     sort: String
@@ -1740,6 +1837,11 @@ type Query {
     """
     namePrefix: String
 
+    """
+    When name-prefix matching, whether or not to match on names in the default language if a non-default languageCode is set.
+    """
+    namePrefixDefaultLangResults: Boolean = true
+
     """The zero-ary offset index into the results"""
     offset: Int
 
@@ -1747,8 +1849,8 @@ type Query {
     radius: Int
 
     """
-    How to sort place results. 
-    'Format: ±SORT_FIELD,±SORT_FIELD' 
+    How to sort places. 
+    Format: ±SORT_FIELD,±SORT_FIELD 
     where SORT_FIELD = countryCode | elevation | name | population
     """
     sort: String
@@ -1804,6 +1906,11 @@ type Query {
     """
     namePrefix: String
 
+    """
+    When name-prefix matching, whether or not to match on names in the default language if a non-default languageCode is set.
+    """
+    namePrefixDefaultLangResults: Boolean = true
+
     """The zero-ary offset index into the results"""
     offset: Int
 
@@ -1811,8 +1918,8 @@ type Query {
     radius: Int
 
     """
-    How to sort place results. 
-    'Format: ±SORT_FIELD,±SORT_FIELD' 
+    How to sort places. 
+    Format: ±SORT_FIELD,±SORT_FIELD 
     where SORT_FIELD = countryCode | elevation | name | population
     """
     sort: String
@@ -1854,6 +1961,11 @@ type Query {
     as it appears in that language.
     """
     namePrefix: String
+
+    """
+    When name-prefix matching, whether or not to match on names in the default language if a non-default languageCode is set.
+    """
+    namePrefixDefaultLangResults: Boolean = true
 
     """The zero-ary offset index into the results"""
     offset: Int
@@ -1909,6 +2021,11 @@ type Query {
     """
     namePrefix: String
 
+    """
+    When name-prefix matching, whether or not to match on names in the default language if a non-default languageCode is set.
+    """
+    namePrefixDefaultLangResults: Boolean = true
+
     """The zero-ary offset index into the results"""
     offset: Int
 
@@ -1925,88 +2042,6 @@ type Query {
     """Only places in these time-zones (comma-delimited)"""
     timeZoneIds: String
   ): Populated_Places_Response
-
-  "Returns a 3-hourly forecast, where each point represents a three hour   period. Every point has a datetime string in the format \\"YYYY-MM-DD:HH\\". Time is UTC.\\n"
-  forecast_3hourly_by_city_by_country(
-    """Wraps return in jsonp callback. Example - callback=func"""
-    callback: String
-
-    """
-    City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR
-    """
-    city: String!
-
-    """Country Code (2 letter)."""
-    country: String!
-
-    """Number of days to return. Default 5."""
-    days: Float
-
-    """Your registered API key."""
-    key: String!
-    lang: queryInput_forecast_3hourly_by_city_by_country_lang
-
-    """Full name of state."""
-    state: String
-    units: queryInput_forecast_3hourly_by_city_by_country_units
-  ): ForecastHourly
-
-  "Returns a 3-hourly forecast, where each point represents a three hour   period. Every point has a datetime string in the format \\"YYYY-MM-DD:HH\\". Time is UTC.\\n"
-  forecast_3hourly_by_city_id(
-    """Wraps return in jsonp callback. Example: callback=func"""
-    callback: String
-
-    """City ID. Example: 4487042"""
-    city_id: Int!
-
-    """Number of days to return. Default 5."""
-    days: Float
-
-    """Your registered API key."""
-    key: String!
-    lang: queryInput_forecast_3hourly_by_city_id_lang
-    units: queryInput_forecast_3hourly_by_city_id_units
-  ): ForecastHourly
-
-  "Returns a 3-hourly forecast, where each point represents a three hour   period. Every point has a datetime string in the format \\"YYYY-MM-DD:HH\\". Time is UTC.\\n"
-  forecast_3hourly_by_lat_by_lon(
-    """Wraps return in jsonp callback. Example - callback=func"""
-    callback: String
-
-    """Number of days to return. Default 5."""
-    days: Float
-
-    """Your registered API key."""
-    key: String!
-    lang: queryInput_forecast_3hourly_by_lat_by_lon_lang
-
-    """Latitude component of location."""
-    lat: Float!
-
-    """Longitude component of location."""
-    lon: Float!
-    units: queryInput_forecast_3hourly_by_lat_by_lon_units
-  ): ForecastHourly
-
-  "Returns a 3-hourly forecast, where each point represents a three hour period. Every point has a datetime string in the format \\"YYYY-MM-DD:HH\\". Time is UTC.\\n"
-  forecast_3hourly_by_postal_code(
-    """Wraps return in jsonp callback. Example: callback=func"""
-    callback: String
-
-    """Country Code (2 letter)."""
-    country: String
-
-    """Number of days to return. Default 5."""
-    days: Float
-
-    """Your registered API key."""
-    key: String!
-    lang: queryInput_forecast_3hourly_by_postal_code_lang
-
-    """Postal Code. Example: 28546"""
-    postal_code: Int!
-    units: queryInput_forecast_3hourly_by_postal_code_units
-  ): ForecastHourly
 
   """
   Returns 72 hour (hourly) Air Quality forecast, where each point represents a one hour period.
@@ -2359,8 +2394,20 @@ type Query {
     """
     namePrefix: String
 
+    """
+    When name-prefix matching, whether or not to match on names in the default language if a non-default languageCode is set.
+    """
+    namePrefixDefaultLangResults: Boolean = true
+
     """The zero-ary offset index into the results"""
     offset: Int
+
+    """
+    How to sort countries. 
+    Format: ±SORT_FIELD 
+    where SORT_FIELD = code | name
+    """
+    sort: String
   ): Countries_Response
 
   """Get the details for a specific country, including number of regions."""
@@ -2456,8 +2503,20 @@ type Query {
     """
     namePrefix: String
 
+    """
+    When name-prefix matching, whether or not to match on names in the default language if a non-default languageCode is set.
+    """
+    namePrefixDefaultLangResults: Boolean = true
+
     """The zero-ary offset index into the results"""
     offset: Int
+
+    """
+    How to sort regions. 
+    Format: ±SORT_FIELD 
+    where SORT_FIELD = fipsCode | isoCode | name
+    """
+    sort: String
   ): Country_Regions_Response
 
   """Get time-zone date-time"""
@@ -2471,6 +2530,12 @@ type Query {
     """A time-zone id"""
     zoneId: String!
   ): Time_Response
+
+  """Get time-zone"""
+  getTimeZoneUsingGET(
+    """A time-zone id"""
+    zoneId: String!
+  ): Time_Zone_Response
 
   """Get all known time-zones"""
   getTimezonesUsingGET(
@@ -2547,7 +2612,7 @@ type Query {
   ): AQCurrentGroup
 
   """
-  Returns Historical Observations - Given a city in the format of City,ST or City. The state, and country parameters can be provided to make the search more accurate. **(LIMIT 1 day for Free plan. LIMIT 7 days for Developer. LIMIT 30 days for Advanced/Advanced+/Enterprise)**
+  Returns Historical Observations - Given a city in the format of City,ST or City. The state, and country parameters can be provided to make the search more accurate. **(LIMIT 1 year per request)**
   """
   history_daily_by_city_by_country(
     """Wraps return in jsonp callback. Example: callback=func"""
@@ -2577,7 +2642,7 @@ type Query {
   ): HistoryDay
 
   """
-  Returns Historical Observations - Given a City ID. **(LIMIT 1 day for Free plan. LIMIT 7 days for Developer. LIMIT 30 days for Advanced/Advanced+/Enterprise)**
+  Returns Historical Observations - Given a City ID. **(LIMIT 1 year per request)**
   """
   history_daily_by_city_id(
     """Wraps return in jsonp callback. Example: callback=func"""
@@ -2599,7 +2664,7 @@ type Query {
   ): HistoryDay
 
   """
-  Returns Historical Observations - Given a lat, and lon. **(LIMIT 1 day for Free plan. LIMIT 7 days for Developer. LIMIT 30 days for Advanced/Advanced+/Enterprise)**
+  Returns Historical Observations - Given a lat, and lon. **(LIMIT 1 year per request)**
   """
   history_daily_by_lat_by_lon(
     """Wraps return in jsonp callback. Example: callback=func"""
@@ -2624,7 +2689,7 @@ type Query {
   ): HistoryDay
 
   """
-  Returns Historical Observations - Given a Postal Code. **(LIMIT 1 day for Free plan. LIMIT 7 days for Developer. LIMIT 30 days for Advanced/Advanced+/Enterprise)**
+  Returns Historical Observations - Given a Postal Code. **(LIMIT 1 year per request)**
   """
   history_daily_by_postal_code(
     """Wraps return in jsonp callback. Example: callback=func"""
@@ -2649,7 +2714,7 @@ type Query {
   ): HistoryDay
 
   """
-  Returns Historical Observations - Given a station ID. **(LIMIT 1 day for Free plan. LIMIT 7 days for Developer. LIMIT 30 days for Advanced/Advanced+/Enterprise)**
+  Returns Historical Observations - Given a station ID. **(LIMIT 1 year per request)**
   """
   history_daily_by_station(
     """Wraps return in jsonp callback. Example: callback=func"""
@@ -2669,39 +2734,6 @@ type Query {
     station: String!
     units: queryInput_history_daily_by_station_units
   ): HistoryDay
-
-  """
-  Returns aggregate energy specific historical weather fields, over a specified time period. Supply a bounding box ex: lat1=40&lon1=-78&lat2=38&lon2=-80. This API will return UP TO 150 stations, aggregated by the specified time period start_date to end_date. 
-  """
-  history_energy_bbox_by_lat1_by_lon1_by_lat2_by_lon2(
-    """Wraps return in jsonp callback. Example: callback=func"""
-    callback: String
-
-    """End Date (YYYY-MM-DD or YYYY-MM-DD:HH)."""
-    end_date: String!
-
-    """Your registered API key."""
-    key: String!
-
-    """Latitude of upper left corner."""
-    lat1: Float!
-
-    """Latitude of lower right corner."""
-    lat2: Float!
-
-    """Longitude of upper left corner."""
-    lon1: Float!
-
-    """Longitude of lower right corner."""
-    lon2: Float!
-
-    """Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)."""
-    start_date: String!
-
-    """Temperature threshold to use to calculate degree days (default 18 C)"""
-    threshold: Float
-    units: queryInput_history_energy_bbox_by_lat1_by_lon1_by_lat2_by_lon2_units
-  ): EnergyObsGroup
 
   """
   Returns aggregate energy specific historical weather fields, over a specified time period.
@@ -2732,7 +2764,7 @@ type Query {
   ): EnergyObsGroup
 
   """
-  Returns Historical Observations - Given a city in the format of City,ST or City. The state, and country parameters can be provided to make the search more accurate. **(LIMIT 1 day for Free plan. LIMIT 7 days for Developer. LIMIT 30 days for Advanced/Advanced+/Enterprise)**
+  Returns Historical Observations - Given a city in the format of City,ST or City. The state, and country parameters can be provided to make the search more accurate. **(LIMIT 31 days per request)**
   """
   history_hourly_by_city_by_country(
     """Wraps return in jsonp callback. Example: callback=func"""
@@ -2763,7 +2795,7 @@ type Query {
   ): History
 
   """
-  Returns Historical Observations - Given a City ID. **(LIMIT 1 day for Free plan. LIMIT 7 days for Developer. LIMIT 30 days for Advanced/Advanced+/Enterprise)**
+  Returns Historical Observations - Given a City ID. **(LIMIT 31 days per request)**
   """
   history_hourly_by_city_id(
     """Wraps return in jsonp callback. Example: callback=func"""
@@ -2786,7 +2818,7 @@ type Query {
   ): History
 
   """
-  Returns Historical Observations - Given a lat, and lon. **(LIMIT 1 day for Free plan. LIMIT 7 days for Developer. LIMIT 30 days for Advanced/Advanced+/Enterprise)**
+  Returns Historical Observations - Given a lat, and lon. **(LIMIT 31 days per request)**
   """
   history_hourly_by_lat_by_lon(
     """Wraps return in jsonp callback. Example: callback=func"""
@@ -2812,7 +2844,7 @@ type Query {
   ): History
 
   """
-  Returns Historical Observations - Given a Postal Code. **(LIMIT 1 day for Free plan. LIMIT 7 days for Developer. LIMIT 30 days for Advanced/Advanced+/Enterprise)**
+  Returns Historical Observations - Given a Postal Code. **(LIMIT 31 days per request)**
   """
   history_hourly_by_postal_code(
     """Wraps return in jsonp callback. Example: callback=func"""
@@ -2838,7 +2870,7 @@ type Query {
   ): History
 
   """
-  Returns Historical Observations - Given a station ID. **(LIMIT 1 day for Free plan. LIMIT 7 days for Developer. LIMIT 30 days for Advanced/Advanced+/Enterprise)**
+  Returns Historical Observations - Given a station ID. **(LIMIT 31 days per request)**
   """
   history_hourly_by_station(
     """Wraps return in jsonp callback. Example: callback=func"""
@@ -2859,6 +2891,127 @@ type Query {
     tz: queryInput_history_hourly_by_station_tz
     units: queryInput_history_hourly_by_station_units
   ): History
+
+  """
+  Returns Historical Observations - Given a city in the format of City,ST or City. The state, and country parameters can be provided to make the search more accurate.
+  """
+  history_subhourly_by_city_by_country(
+    """Wraps return in jsonp callback. Example: callback=func"""
+    callback: String
+
+    """
+    City search. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR
+    """
+    city: String!
+
+    """Country Code (2 letter)."""
+    country: String!
+
+    """End Date (YYYY-MM-DD or YYYY-MM-DD:HH)."""
+    end_date: String!
+
+    """Your registered API key."""
+    key: String!
+    lang: queryInput_history_subhourly_by_city_by_country_lang
+
+    """Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)."""
+    start_date: String!
+
+    """Full name of state."""
+    state: String
+    tz: queryInput_history_subhourly_by_city_by_country_tz
+    units: queryInput_history_subhourly_by_city_by_country_units
+  ): History
+
+  """Returns Historical Observations - Given a City ID."""
+  history_subhourly_by_city_id(
+    """Wraps return in jsonp callback. Example: callback=func"""
+    callback: String
+
+    """City ID. Example: 4487042"""
+    city_id: String!
+
+    """End Date (YYYY-MM-DD or YYYY-MM-DD:HH)"""
+    end_date: String!
+
+    """Your registered API key."""
+    key: String!
+    lang: queryInput_history_subhourly_by_city_id_lang
+
+    """Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)"""
+    start_date: String!
+    tz: queryInput_history_subhourly_by_city_id_tz
+    units: queryInput_history_subhourly_by_city_id_units
+  ): HistorySubhourly
+
+  """Returns Historical Observations - Given a lat, and lon."""
+  history_subhourly_by_lat_by_lon(
+    """Wraps return in jsonp callback. Example: callback=func"""
+    callback: String
+
+    """End Date (YYYY-MM-DD or YYYY-MM-DD:HH)."""
+    end_date: String!
+
+    """Your registered API key."""
+    key: String!
+    lang: queryInput_history_subhourly_by_lat_by_lon_lang
+
+    """Latitude component of location."""
+    lat: Float!
+
+    """Longitude component of location."""
+    lon: Float!
+
+    """Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)."""
+    start_date: String!
+    tz: queryInput_history_subhourly_by_lat_by_lon_tz
+    units: queryInput_history_subhourly_by_lat_by_lon_units
+  ): HistorySubhourly
+
+  """Returns Historical Observations - Given a Postal Code."""
+  history_subhourly_by_postal_code(
+    """Wraps return in jsonp callback. Example: callback=func"""
+    callback: String
+
+    """Country Code (2 letter)."""
+    country: String
+
+    """End Date (YYYY-MM-DD or YYYY-MM-DD:HH)"""
+    end_date: String!
+
+    """Your registered API key."""
+    key: String!
+    lang: queryInput_history_subhourly_by_postal_code_lang
+
+    """Postal Code. Example: 28546"""
+    postal_code: String!
+
+    """Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)"""
+    start_date: String!
+    tz: queryInput_history_subhourly_by_postal_code_tz
+    units: queryInput_history_subhourly_by_postal_code_units
+  ): HistorySubhourly
+
+  """Returns Historical Observations - Given a station ID."""
+  history_subhourly_by_station(
+    """Wraps return in jsonp callback. Example: callback=func"""
+    callback: String
+
+    """End Date (YYYY-MM-DD or YYYY-MM-DD:HH)."""
+    end_date: String!
+
+    """Your registered API key."""
+    key: String!
+    lang: queryInput_history_subhourly_by_station_lang
+
+    """Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)."""
+    start_date: String!
+
+    """Station ID."""
+    station: String!
+    tz: queryInput_history_subhourly_by_station_tz
+    units: queryInput_history_subhourly_by_station_units
+  ): HistorySubhourly
 }
 
 scalar ResolveToSourceArgs
@@ -2872,6 +3025,20 @@ type Time_Response {
 
 """A time-zone"""
 type Time_Zone {
+  """The time-zone id"""
+  id: String
+
+  """The time-zone name"""
+  name: String
+
+  """The number of hours this time-zone is offset from UTC"""
+  rawUtcOffsetHours: Int
+}
+
+"""A time-zone"""
+type Time_Zone_Response {
+  errors: [CitiesError]
+
   """The time-zone id"""
   id: String
 
@@ -3128,6 +3295,53 @@ enum queryInput_current_by_lat_by_lon_units {
 """
 Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>
 """
+enum queryInput_current_by_points_lang {
+  ar
+  az
+  be
+  bg
+  bs
+  ca
+  cs
+  de
+  el
+  es
+  et
+  fi
+  fr
+  hr
+  hu
+  id
+  is
+  it
+  kw
+  nb
+  nl
+  pl
+  pt
+  ro
+  ru
+  sk
+  sl
+  sr
+  sv
+  tr
+  uk
+  zh
+  zh_tw
+}
+
+"""
+Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>
+"""
+enum queryInput_current_by_points_units {
+  I
+  S
+}
+
+"""
+Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>
+"""
 enum queryInput_current_by_postal_code_lang {
   ar
   az
@@ -3262,194 +3476,6 @@ enum queryInput_current_by_stations_lang {
 Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>
 """
 enum queryInput_current_by_stations_units {
-  I
-  S
-}
-
-"""
-Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>
-"""
-enum queryInput_forecast_3hourly_by_city_by_country_lang {
-  ar
-  az
-  be
-  bg
-  bs
-  ca
-  cs
-  de
-  el
-  es
-  et
-  fi
-  fr
-  hr
-  hu
-  id
-  is
-  it
-  kw
-  nb
-  nl
-  pl
-  pt
-  ro
-  ru
-  sk
-  sl
-  sr
-  sv
-  tr
-  uk
-  zh
-  zh_tw
-}
-
-"""
-Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>
-"""
-enum queryInput_forecast_3hourly_by_city_by_country_units {
-  I
-  S
-}
-
-"""
-Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>
-"""
-enum queryInput_forecast_3hourly_by_city_id_lang {
-  ar
-  az
-  be
-  bg
-  bs
-  ca
-  cs
-  de
-  el
-  es
-  et
-  fi
-  fr
-  hr
-  hu
-  id
-  is
-  it
-  kw
-  nb
-  nl
-  pl
-  pt
-  ro
-  ru
-  sk
-  sl
-  sr
-  sv
-  tr
-  uk
-  zh
-  zh_tw
-}
-
-"""
-Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>
-"""
-enum queryInput_forecast_3hourly_by_city_id_units {
-  I
-  S
-}
-
-"""
-Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>
-"""
-enum queryInput_forecast_3hourly_by_lat_by_lon_lang {
-  ar
-  az
-  be
-  bg
-  bs
-  ca
-  cs
-  de
-  el
-  es
-  et
-  fi
-  fr
-  hr
-  hu
-  id
-  is
-  it
-  kw
-  nb
-  nl
-  pl
-  pt
-  ro
-  ru
-  sk
-  sl
-  sr
-  sv
-  tr
-  uk
-  zh
-  zh_tw
-}
-
-"""
-Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>
-"""
-enum queryInput_forecast_3hourly_by_lat_by_lon_units {
-  I
-  S
-}
-
-"""
-Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>
-"""
-enum queryInput_forecast_3hourly_by_postal_code_lang {
-  ar
-  az
-  be
-  bg
-  bs
-  ca
-  cs
-  de
-  el
-  es
-  et
-  fi
-  fr
-  hr
-  hu
-  id
-  is
-  it
-  kw
-  nb
-  nl
-  pl
-  pt
-  ro
-  ru
-  sk
-  sl
-  sr
-  sv
-  tr
-  uk
-  zh
-  zh_tw
-}
-
-"""
-Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>
-"""
-enum queryInput_forecast_3hourly_by_postal_code_units {
   I
   S
 }
@@ -4079,14 +4105,6 @@ enum queryInput_history_daily_by_station_units {
   S
 }
 
-"""
-Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>
-"""
-enum queryInput_history_energy_bbox_by_lat1_by_lon1_by_lat2_by_lon2_units {
-  I
-  S
-}
-
 """Time period to aggregate by (daily, monthly)"""
 enum queryInput_history_energy_by_lat_by_lon_tp {
   daily
@@ -4367,6 +4385,271 @@ enum queryInput_history_hourly_by_station_units {
   S
 }
 
+"""
+Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>
+"""
+enum queryInput_history_subhourly_by_city_by_country_lang {
+  ar
+  az
+  be
+  bg
+  bs
+  ca
+  cs
+  de
+  el
+  es
+  et
+  fi
+  fr
+  hr
+  hu
+  id
+  is
+  it
+  kw
+  nb
+  nl
+  pl
+  pt
+  ro
+  ru
+  sk
+  sl
+  sr
+  sv
+  tr
+  uk
+  zh
+  zh_tw
+}
+
+"""Assume utc (default) or local time for start_date, end_date"""
+enum queryInput_history_subhourly_by_city_by_country_tz {
+  local
+  utc
+}
+
+"""
+Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>
+"""
+enum queryInput_history_subhourly_by_city_by_country_units {
+  I
+  S
+}
+
+"""
+Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>
+"""
+enum queryInput_history_subhourly_by_city_id_lang {
+  ar
+  az
+  be
+  bg
+  bs
+  ca
+  cs
+  de
+  el
+  es
+  et
+  fi
+  fr
+  hr
+  hu
+  id
+  is
+  it
+  kw
+  nb
+  nl
+  pl
+  pt
+  ro
+  ru
+  sk
+  sl
+  sr
+  sv
+  tr
+  uk
+  zh
+  zh_tw
+}
+
+"""Assume utc (default) or local time for start_date, end_date"""
+enum queryInput_history_subhourly_by_city_id_tz {
+  local
+  utc
+}
+
+"""
+Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>
+"""
+enum queryInput_history_subhourly_by_city_id_units {
+  I
+  S
+}
+
+"""
+Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>
+"""
+enum queryInput_history_subhourly_by_lat_by_lon_lang {
+  ar
+  az
+  be
+  bg
+  bs
+  ca
+  cs
+  de
+  el
+  es
+  et
+  fi
+  fr
+  hr
+  hu
+  id
+  is
+  it
+  kw
+  nb
+  nl
+  pl
+  pt
+  ro
+  ru
+  sk
+  sl
+  sr
+  sv
+  tr
+  uk
+  zh
+  zh_tw
+}
+
+"""Assume utc (default) or local time for start_date, end_date"""
+enum queryInput_history_subhourly_by_lat_by_lon_tz {
+  local
+  utc
+}
+
+"""
+Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>
+"""
+enum queryInput_history_subhourly_by_lat_by_lon_units {
+  I
+  S
+}
+
+"""
+Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>
+"""
+enum queryInput_history_subhourly_by_postal_code_lang {
+  ar
+  az
+  be
+  bg
+  bs
+  ca
+  cs
+  de
+  el
+  es
+  et
+  fi
+  fr
+  hr
+  hu
+  id
+  is
+  it
+  kw
+  nb
+  nl
+  pl
+  pt
+  ro
+  ru
+  sk
+  sl
+  sr
+  sv
+  tr
+  uk
+  zh
+  zh_tw
+}
+
+"""Assume utc (default) or local time for start_date, end_date"""
+enum queryInput_history_subhourly_by_postal_code_tz {
+  local
+  utc
+}
+
+"""
+Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>
+"""
+enum queryInput_history_subhourly_by_postal_code_units {
+  I
+  S
+}
+
+"""
+Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>
+"""
+enum queryInput_history_subhourly_by_station_lang {
+  ar
+  az
+  be
+  bg
+  bs
+  ca
+  cs
+  de
+  el
+  es
+  et
+  fi
+  fr
+  hr
+  hu
+  id
+  is
+  it
+  kw
+  nb
+  nl
+  pl
+  pt
+  ro
+  ru
+  sk
+  sl
+  sr
+  sv
+  tr
+  uk
+  zh
+  zh_tw
+}
+
+"""Assume utc (default) or local time for start_date, end_date"""
+enum queryInput_history_subhourly_by_station_tz {
+  local
+  utc
+}
+
+"""
+Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>
+"""
+enum queryInput_history_subhourly_by_station_units {
+  I
+  S
+}
+
 type query_current_by_cities_data_items_weather {
   """Weather Condition code"""
   code: String
@@ -4378,7 +4661,7 @@ type query_current_by_cities_data_items_weather {
   icon: String
 }
 
-type query_forecast_3hourly_by_city_by_country_data_items_weather {
+type query_forecast_daily_by_city_by_country_data_items_weather {
   """Weather Condition code"""
   code: String
 
@@ -4389,7 +4672,7 @@ type query_forecast_3hourly_by_city_by_country_data_items_weather {
   icon: String
 }
 
-type query_forecast_daily_by_city_by_country_data_items_weather {
+type query_forecast_hourly_by_city_by_country_data_items_weather {
   """Weather Condition code"""
   code: String
 
