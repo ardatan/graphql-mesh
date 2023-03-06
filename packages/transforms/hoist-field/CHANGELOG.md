@@ -1,5 +1,14 @@
 # @graphql-mesh/transform-hoist-field
 
+## 0.2.16
+
+### Patch Changes
+
+- Updated dependencies
+  [[`fa2c010c1`](https://github.com/Urigo/graphql-mesh/commit/fa2c010c13f95ce401c345a1330d8fddabeebc17)]:
+  - @graphql-mesh/utils@0.43.15
+  - @graphql-mesh/types@0.91.7
+
 ## 0.2.15
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # json-schema-example
 
+## 0.5.375
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.25
+  - @graphql-mesh/json-schema@0.37.17
+  - @graphql-mesh/plugin-mock@0.1.15
+  - @graphql-mesh/transform-naming-convention@0.13.16
+
 ## 0.5.374
 
 ### Patch Changes

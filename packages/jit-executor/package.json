@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/jit-executor",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "type": "module",
   "repository": {
     "type": "git",
@@ -32,8 +32,8 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.91.6",
-    "@graphql-mesh/utils": "0.43.14",
+    "@graphql-mesh/types": "0.91.7",
+    "@graphql-mesh/utils": "0.43.15",
     "@graphql-tools/utils": "9.2.1",
     "graphql-jit": "0.8.0",
     "tslib": "^2.4.0"
