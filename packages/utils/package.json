@@ -37,18 +37,17 @@
     "@graphql-mesh/types": "0.91.6",
     "@graphql-tools/delegate": "9.0.28",
     "@graphql-tools/utils": "9.2.1",
+    "dset": "3.1.2",
     "js-yaml": "4.1.0",
     "lodash.get": "4.4.2",
     "lodash.topath": "4.5.2",
-    "set-value": "4.1.0",
     "tiny-lru": "8.0.2",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@types/js-yaml": "4.0.5",
     "@types/lodash.topath": "4.5.7",
-    "@types/object-hash": "3.0.2",
-    "@types/set-value": "4.0.1"
+    "@types/object-hash": "3.0.2"
   },
   "publishConfig": {
     "access": "public",
