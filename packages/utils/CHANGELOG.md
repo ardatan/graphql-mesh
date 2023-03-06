@@ -1,5 +1,16 @@
 # @graphql-mesh/utils
 
+## 0.43.15
+
+### Patch Changes
+
+- [#5200](https://github.com/Urigo/graphql-mesh/pull/5200)
+  [`fa2c010c1`](https://github.com/Urigo/graphql-mesh/commit/fa2c010c13f95ce401c345a1330d8fddabeebc17)
+  Thanks [@jtmthf](https://github.com/jtmthf)! - Replace lodsash.set with dset
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.91.7
+
 ## 0.43.14
 
 ### Patch Changes

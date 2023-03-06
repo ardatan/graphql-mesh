@@ -1,5 +1,17 @@
 # spacex-cfw
 
+## 0.0.108
+
+### Patch Changes
+
+- Updated dependencies
+  [[`06e5fe744`](https://github.com/Urigo/graphql-mesh/commit/06e5fe744c8a730664cc97b4bfad1809a431b7aa)]:
+  - @graphql-mesh/plugin-rate-limit@0.2.17
+  - @graphql-mesh/cache-cfw-kv@0.1.15
+  - @graphql-mesh/cli@0.82.25
+  - @graphql-mesh/graphql@0.34.8
+  - @graphql-mesh/plugin-response-cache@0.2.17
+
 ## 0.0.107
 
 ### Patch Changes
