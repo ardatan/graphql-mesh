@@ -1,6 +1,6 @@
 ---
-'@graphql-mesh/transform-federation': major
-'@omnigraph/json-schema': major
+'@graphql-mesh/transform-federation': patch
+'@omnigraph/json-schema': patch
 ---
 
 changed lodash with dset
