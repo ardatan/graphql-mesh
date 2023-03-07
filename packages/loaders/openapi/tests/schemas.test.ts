@@ -22,6 +22,7 @@ const schemas: Record<string, string> = {
   BlockFrost: 'blockfrost.json',
   'Int64 with Defaults': 'int64-with-defaults.yml',
   'Different fields with the same type': 'different-prop-same-type.yaml',
+  DiscriminatorMapping: 'discriminator-mapping.yml',
 };
 
 describe('Schemas', () => {
