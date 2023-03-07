@@ -1,3 +1,4 @@
+import { dset } from 'dset';
 import {
   GraphQLInterfaceType,
   GraphQLObjectType,
@@ -5,7 +6,6 @@ import {
   GraphQLUnionType,
   isObjectType,
 } from 'graphql';
-import set from 'lodash.set';
 import { entitiesField, EntityType, serviceField } from '@apollo/subgraph/dist/types.js';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { ImportFn, MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
@@ -130,7 +130,7 @@ export default class FederationTransform implements MeshTransform {
                   env: process.env,
                 });
                 if (argVal) {
-                  set(args, argName, argVal);
+                  dset(args, argName, argVal);
                 }
               }
               const result = await context[this.apiName].Query[queryField.name]({
@@ -157,7 +157,7 @@ export default class FederationTransform implements MeshTransform {
       if (isObjectType(type)) {
         entityTypes.push(type);
       }
-      set(type, 'extensions.apollo.subgraph.resolveReference', rawSource.merge[typeName].resolve);
+      dset(type, 'extensions.apollo.subgraph.resolveReference', rawSource.merge[typeName].resolve);
     }
 
     const schemaWithFederationQueryType = mapSchema(schema, {

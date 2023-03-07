@@ -11,7 +11,7 @@ import {
   isScalarType,
   isUnionType,
 } from 'graphql';
-import lodashSet from 'lodash.set';
+import { dset } from 'dset';
 import urlJoin from 'url-join';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
 import { HTTPMethod } from './types.js';
@@ -137,7 +137,7 @@ export function addHTTPRootFieldResolver(
           const configValue = requestBaseBody[key];
           if (typeof configValue === 'string') {
             const value = stringInterpolator.parse(configValue, interpolationData);
-            lodashSet(args.input, key, value);
+            dset(args.input, key, value);
           } else {
             args.input[key] = configValue;
           }
