@@ -4,13 +4,14 @@ import { createGraphQLError } from '@graphql-tools/utils';
 export function getTypeResolverFromOutputTCs(
   possibleTypes: readonly GraphQLObjectType[],
   discriminatorField?: string,
+  discriminatorMapping?: Record<string, string>,
   statusCodeTypeNameMap?: Record<string, string>,
 ): GraphQLTypeResolver<any, any> {
   return function resolveType(data: any) {
     if (data.__typename) {
       return data.__typename;
     } else if (discriminatorField != null && data[discriminatorField]) {
-      return data[discriminatorField];
+      return discriminatorMapping[data[discriminatorField]] || data[discriminatorField];
     }
     if (data.$statusCode && statusCodeTypeNameMap) {
       const typeName =
@@ -19,6 +20,7 @@ export function getTypeResolverFromOutputTCs(
         return typeName;
       }
     }
+
     // const validationErrors: Record<string, ErrorObject[]> = {};
     const dataKeys =
       typeof data === 'object'

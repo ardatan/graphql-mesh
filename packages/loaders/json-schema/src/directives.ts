@@ -90,6 +90,19 @@ export const DiscriminatorDirective = new GraphQLDirective({
   },
 });
 
+export const DiscriminatorMappingDirective = new GraphQLDirective({
+  name: 'discriminatorMapping',
+  locations: [DirectiveLocation.INTERFACE, DirectiveLocation.UNION],
+  args: {
+    value: {
+      type: GraphQLString,
+    },
+    schema: {
+      type: GraphQLString,
+    },
+  },
+});
+
 export function processDiscriminatorAnnotations(
   interfaceType: GraphQLInterfaceType,
   fieldName: string,

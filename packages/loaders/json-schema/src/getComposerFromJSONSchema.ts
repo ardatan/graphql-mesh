@@ -54,6 +54,7 @@ import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import {
   DictionaryDirective,
   DiscriminatorDirective,
+  DiscriminatorMappingDirective,
   EnumDirective,
   ExampleDirective,
   LengthDirective,
@@ -743,6 +744,20 @@ export function getComposerFromJSONSchema(
               field: subSchema.discriminator.propertyName,
             },
           });
+
+          if (subSchema.discriminator.mapping) {
+            schemaComposer.addDirective(DiscriminatorMappingDirective);
+            Object.keys(subSchema.discriminator.mapping).forEach(value => {
+              const mappedSchema = subSchema.discriminator.mapping[value].split('schemas/')[1];
+              directives.push({
+                name: 'discriminatorMapping',
+                args: {
+                  value,
+                  schema: mappedSchema,
+                },
+              });
+            });
+          }
         }
         const output = schemaComposer.createUnionTC({
           name: getValidTypeName({
