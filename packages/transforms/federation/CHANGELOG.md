@@ -1,5 +1,13 @@
 # @graphql-mesh/transform-federation
 
+## 0.11.9
+
+### Patch Changes
+
+- [#5205](https://github.com/Urigo/graphql-mesh/pull/5205)
+  [`accc99a6e`](https://github.com/Urigo/graphql-mesh/commit/accc99a6e54bbd62fd99057813c692b7149a6c4a)
+  Thanks [@vsricodes](https://github.com/vsricodes)! - changed lodash with dset
+
 ## 0.11.8
 
 ### Patch Changes

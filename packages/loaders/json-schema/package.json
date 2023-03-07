@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/json-schema",
-  "version": "0.38.17",
+  "version": "0.38.18",
   "type": "module",
   "repository": {
     "type": "git",
@@ -41,10 +41,10 @@
     "@whatwg-node/fetch": "^0.8.0",
     "ajv": "8.12.0",
     "ajv-formats": "2.1.1",
+    "dset": "3.1.2",
     "graphql-compose": "9.0.10",
     "graphql-scalars": "1.20.1",
     "json-machete": "0.18.15",
-    "dset": "3.1.2",
     "pascal-case": "3.1.2",
     "qs": "6.11.0",
     "to-json-schema": "0.2.5",
