@@ -65,9 +65,12 @@ export function getInterpolatedStringFactory(
 }
 
 export function getInterpolatedHeadersFactory(
-  nonInterpolatedHeaders: Record<string, string> = {},
+  nonInterpolatedHeaders: Record<string, string> | ResolverDataBasedFactory<Record<string, string>> = {},
 ): ResolverDataBasedFactory<Record<string, string>> {
   return resolverData => {
+    if (typeof nonInterpolatedHeaders === 'function') {
+      return nonInterpolatedHeaders(resolverData);
+    }
     const headers: Record<string, string> = {};
     for (const headerName in nonInterpolatedHeaders) {
       const headerValue = nonInterpolatedHeaders[headerName];
