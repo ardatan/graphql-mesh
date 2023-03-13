@@ -907,12 +907,9 @@ describe('example_api', () => {
       document: parse(query),
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       data: {
-        getProductReviews: [
-          { timestamp: BigInt(1502787600000000) },
-          { timestamp: BigInt(1502787400000000) },
-        ],
+        getProductReviews: [{ timestamp: 1502787600000000 }, { timestamp: 1502787400000000 }],
       },
     });
   });

@@ -40,7 +40,7 @@
     "@graphql-tools/schema": "9.0.16",
     "@graphql-tools/utils": "9.2.1",
     "faker": "5.5.3",
-    "graphql-scalars": "1.20.1",
+    "graphql-scalars": "^1.20.4",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

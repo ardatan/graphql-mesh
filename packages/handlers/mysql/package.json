@@ -41,7 +41,7 @@
     "@graphql-tools/utils": "9.2.1",
     "graphql-compose": "9.0.10",
     "graphql-fields": "2.0.3",
-    "graphql-scalars": "1.20.1",
+    "graphql-scalars": "^1.20.4",
     "mysql": "2.18.1",
     "mysql-utilities": "1.1.4",
     "tslib": "^2.4.0"

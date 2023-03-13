@@ -20,6 +20,7 @@ const schemas = {
   TeachersTraining: 'uk_teachers_training_courses.json',
   MeiliSearch: 'meilisearch.yml',
   BlockFrost: 'blockfrost.json',
+  'Int64 with Defaults': 'int64-with-defaults.yml',
 };
 
 describe('Schemas', () => {
