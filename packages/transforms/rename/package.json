@@ -37,7 +37,7 @@
     "@graphql-tools/delegate": "9.0.28",
     "@graphql-tools/utils": "9.2.1",
     "@graphql-tools/wrap": "9.3.7",
-    "graphql-scalars": "1.20.1",
+    "graphql-scalars": "^1.20.4",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

@@ -12079,12 +12079,12 @@ graphql-request@5.1.0:
     extract-files "^9.0.0"
     form-data "^3.0.0"
 
-graphql-scalars@1.20.1:
-  version "1.20.1"
-  resolved "https://registry.yarnpkg.com/graphql-scalars/-/graphql-scalars-1.20.1.tgz#295817deff224ac0562545858e370447b97e7457"
-  integrity sha512-HCSosMh8l/DVYL3/wCesnZOb+gbiaO/XlZQEIKOkWDJUGBrc15xWAs5TCQVmrycT0tbEInii+J8eoOyMwxx8zg==
+graphql-scalars@^1.20.4:
+  version "1.20.4"
+  resolved "https://registry.yarnpkg.com/graphql-scalars/-/graphql-scalars-1.20.4.tgz#733177919fb0d4f490b4fdba34577038a0155fd3"
+  integrity sha512-/hDzWcphV/aV4MEx2pqVMMekBLi9VXYD/HrJSclpOCLkSB/dE3Rb5VVZBXsQhgBxqeCsE7K0PEO2/cWAUzQsrQ==
   dependencies:
-    tslib "~2.4.0"
+    tslib "~2.5.0"
 
 graphql-sequelize@^9.3.6:
   version "9.4.3"
