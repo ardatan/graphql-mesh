@@ -1,6 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`thrift should create a GraphQL Schema from Thrift IDL 1`] = `
+exports[`thrift Calc 1`] = `
+"type Query {
+  """"""
+  add(request: AddRequestInput): Int
+
+  """"""
+  subtract(left: Int, right: Int): Int
+}
+
+""""""
+input AddRequestInput {
+  """"""
+  left: Int!
+
+  """"""
+  right: Int!
+}"
+`;
+
+exports[`thrift Twitter 1`] = `
 "type Query {
   """"""
   ping: Void
