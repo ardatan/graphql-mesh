@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/mysql",
-  "version": "0.19.14",
+  "version": "0.19.15",
   "type": "module",
   "repository": {
     "type": "git",

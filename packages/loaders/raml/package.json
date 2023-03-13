@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/raml",
-  "version": "0.9.18",
+  "version": "0.9.19",
   "type": "module",
   "repository": {
     "type": "git",
@@ -37,7 +37,7 @@
     "@graphql-mesh/string-interpolation": "0.4.2",
     "@graphql-mesh/utils": "0.43.15",
     "@graphql-tools/utils": "9.2.1",
-    "@omnigraph/json-schema": "0.38.18",
+    "@omnigraph/json-schema": "0.38.19",
     "@whatwg-node/fetch": "^0.8.0",
     "change-case": "4.1.2",
     "json-machete": "0.18.15",

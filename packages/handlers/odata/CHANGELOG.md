@@ -1,5 +1,16 @@
 # @graphql-mesh/odata
 
+## 0.22.16
+
+### Patch Changes
+
+- [#5215](https://github.com/Urigo/graphql-mesh/pull/5215)
+  [`30d4c7cac`](https://github.com/Urigo/graphql-mesh/commit/30d4c7cacfd904076863808e7f82316dd791f08b)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`graphql-scalars@^1.20.4` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.20.4) (from
+    `1.20.1`, in `dependencies`)
+
 ## 0.22.15
 
 ### Patch Changes
