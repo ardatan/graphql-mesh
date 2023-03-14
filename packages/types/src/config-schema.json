@@ -509,19 +509,7 @@
           "$ref": "#/definitions/HivePlugin"
         },
         "httpCache": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ]
+          "$ref": "#/definitions/HTTPCachePlugin"
         },
         "httpDetailsExtensions": {
           "$ref": "#/definitions/HTTPDetailsExtensionsConfig"
@@ -2060,6 +2048,79 @@
         }
       },
       "required": ["graphqlEndpoint", "applicationUrl"]
+    },
+    "HTTPCachePlugin": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "HTTPCachePlugin",
+      "properties": {
+        "matches": {
+          "type": "array",
+          "items": {
+            "description": "Any of: String, URLPatternObj",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/definitions/URLPatternObj"
+              }
+            ]
+          },
+          "additionalItems": false,
+          "description": "If the following patterns match the request URL, the response will be cached. (Any of: String, URLPatternObj)"
+        },
+        "ignores": {
+          "type": "array",
+          "items": {
+            "description": "Any of: String, URLPatternObj",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/definitions/URLPatternObj"
+              }
+            ]
+          },
+          "additionalItems": false,
+          "description": "If the following patterns match the request URL, the response will not be cached. (Any of: String, URLPatternObj)"
+        }
+      }
+    },
+    "URLPatternObj": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "URLPatternObj",
+      "properties": {
+        "protocol": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "hostname": {
+          "type": "string"
+        },
+        "port": {
+          "type": "string"
+        },
+        "pathname": {
+          "type": "string"
+        },
+        "search": {
+          "type": "string"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "baseURL": {
+          "type": "string"
+        }
+      }
     },
     "HTTPDetailsExtensionsConfig": {
       "additionalProperties": false,
