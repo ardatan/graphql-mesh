@@ -33,8 +33,8 @@ jobs:
           SITE_URL:
             ${{ github.ref == 'refs/heads/master' && 'https://the-guild.dev/graphql/mesh' || '' }}
         with:
-          cloudflareApiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cloudflareAccountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          cloudflareApiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           projectName: graphql-mesh
           prId: ${{ github.event.pull_request.number }}
