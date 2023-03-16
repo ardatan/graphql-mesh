@@ -1,6 +1,3 @@
----
-description: "Learn how to easily apply caching over your data sources with GraphQL Mesh's cache transform. Configure custom invalidation rules and selective caching according to your needs."
----
 import { PackageCmd, Callout } from '@theguild/components'
 
 # Cache Transform
