@@ -13,7 +13,7 @@ import {
 } from 'graphql';
 import lodashGet from 'lodash.get';
 import { process, util } from '@graphql-mesh/cross-helpers';
-import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
+import { PredefinedProxyOptions, StoreProxy, ValidationError } from '@graphql-mesh/store';
 import {
   getInterpolatedHeadersFactory,
   getInterpolatedStringFactory,
@@ -426,6 +426,9 @@ export default class GraphQLHandler implements MeshHandler {
         this.getExecutorForHTTPSourceConfig(this.config),
       ]);
       if (schemaResult.status === 'rejected') {
+        if (schemaResult.reason instanceof ValidationError) {
+          throw schemaResult.reason;
+        }
         throw new Error(
           `Failed to fetch introspection from ${this.config.endpoint}: ${util.inspect(
             schemaResult.reason,

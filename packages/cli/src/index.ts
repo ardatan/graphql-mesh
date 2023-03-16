@@ -291,7 +291,7 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
 
           logger.info(`Generating the unified schema`);
           const mesh = await getMesh(meshConfig);
-          logger.info(`Artifacts have been validated successfully`);
+          logger.info(`Artifacts are valid!`);
           destroy = mesh?.destroy;
         } catch (e) {
           handleFatalError(e, logger);
