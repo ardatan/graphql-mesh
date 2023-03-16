@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-filter-schema",
-  "version": "0.15.19",
+  "version": "0.15.20",
   "type": "module",
   "repository": {
     "type": "git",
@@ -32,8 +32,8 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.91.8",
-    "@graphql-mesh/utils": "0.43.16",
+    "@graphql-mesh/types": "0.91.9",
+    "@graphql-mesh/utils": "0.43.17",
     "@graphql-tools/delegate": "9.0.28",
     "@graphql-tools/utils": "9.2.1",
     "@graphql-tools/wrap": "9.3.7",
