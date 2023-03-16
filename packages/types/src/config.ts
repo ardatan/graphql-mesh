@@ -1623,7 +1623,7 @@ export interface Plugin {
   immediateIntrospection?: any;
   deduplicateRequest?: any;
   hive?: HivePlugin;
-  httpCache?: any;
+  httpCache?: HTTPCachePlugin;
   httpDetailsExtensions?: HTTPDetailsExtensionsConfig;
   liveQuery?: LiveQueryConfig;
   mock?: MockingConfig;
@@ -1761,6 +1761,27 @@ export interface HiveSelfHostingOptions {
    * Used by usage reporting.
    */
   usageEndpoint?: string;
+}
+export interface HTTPCachePlugin {
+  /**
+   * If the following patterns match the request URL, the response will be cached. (Any of: String, URLPatternObj)
+   */
+  matches?: (string | URLPatternObj)[];
+  /**
+   * If the following patterns match the request URL, the response will not be cached. (Any of: String, URLPatternObj)
+   */
+  ignores?: (string | URLPatternObj)[];
+}
+export interface URLPatternObj {
+  protocol?: string;
+  username?: string;
+  password?: string;
+  hostname?: string;
+  port?: string;
+  pathname?: string;
+  search?: string;
+  hash?: string;
+  baseURL?: string;
 }
 export interface HTTPDetailsExtensionsConfig {
   if?: any;
