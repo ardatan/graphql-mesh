@@ -1,5 +1,14 @@
 # @graphql-mesh/merger-bare
 
+## 0.16.18
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/merger-stitching@0.18.18
+  - @graphql-mesh/types@0.91.8
+  - @graphql-mesh/utils@0.43.16
+
 ## 0.16.17
 
 ### Patch Changes
