@@ -1,5 +1,16 @@
 # @graphql-mesh/types
 
+## 0.91.9
+
+### Patch Changes
+
+- [#5220](https://github.com/Urigo/graphql-mesh/pull/5220)
+  [`a272fdbca`](https://github.com/Urigo/graphql-mesh/commit/a272fdbca655b17119fb1dcb1c44498f387b1edc)
+  Thanks [@ardatan](https://github.com/ardatan)! - Conditional pattern based caching
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.9.17
+
 ## 0.91.8
 
 ### Patch Changes

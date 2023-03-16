@@ -1,5 +1,18 @@
 # @graphql-mesh/plugin-http-cache
 
+## 0.1.18
+
+### Patch Changes
+
+- [#5220](https://github.com/Urigo/graphql-mesh/pull/5220)
+  [`a272fdbca`](https://github.com/Urigo/graphql-mesh/commit/a272fdbca655b17119fb1dcb1c44498f387b1edc)
+  Thanks [@ardatan](https://github.com/ardatan)! - Conditional pattern based caching
+
+- Updated dependencies
+  [[`a272fdbca`](https://github.com/Urigo/graphql-mesh/commit/a272fdbca655b17119fb1dcb1c44498f387b1edc)]:
+  - @graphql-mesh/types@0.91.9
+  - @graphql-mesh/utils@0.43.17
+
 ## 0.1.17
 
 ### Patch Changes
