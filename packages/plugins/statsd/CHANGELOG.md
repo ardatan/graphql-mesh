@@ -1,5 +1,13 @@
 # @graphql-mesh/plugin-statsd
 
+## 0.1.16
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.91.8
+  - @graphql-mesh/utils@0.43.16
+
 ## 0.1.15
 
 ### Patch Changes

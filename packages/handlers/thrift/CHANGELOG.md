@@ -1,5 +1,19 @@
 # @graphql-mesh/thrift
 
+## 0.12.17
+
+### Patch Changes
+
+- [#5217](https://github.com/Urigo/graphql-mesh/pull/5217)
+  [`5a088d756`](https://github.com/Urigo/graphql-mesh/commit/5a088d756fdc6dcbfa53016f77d11b731315f29d)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support imports
+
+- Updated dependencies
+  [[`b86d420d4`](https://github.com/Urigo/graphql-mesh/commit/b86d420d4fdf1132f3485c35087aaecbce45a728)]:
+  - @graphql-mesh/store@0.9.16
+  - @graphql-mesh/types@0.91.8
+  - @graphql-mesh/utils@0.43.16
+
 ## 0.12.16
 
 ### Patch Changes
