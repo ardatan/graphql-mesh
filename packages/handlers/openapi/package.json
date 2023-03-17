@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@graphql-mesh/store": "0.9.15",
+    "@graphql-mesh/string-interpolation": "0.4.2",
     "@graphql-mesh/types": "0.91.7",
     "@graphql-mesh/utils": "0.43.15",
     "@graphql-tools/utils": "9.2.1",
