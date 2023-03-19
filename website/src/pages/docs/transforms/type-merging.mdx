@@ -1,10 +1,17 @@
+---
+description:
+  'GraphQL Mesh enables the combination of multiple APIs with its type-merging transform. Merge
+  types from various sources using Schema Stitching, preventing N+1 problems for requests. #GraphQL
+  #Mesh'
+---
+
 import { Callout, PackageCmd } from '@theguild/components'
 
 # Type Merging Transform
 
 Type Merge transforms allow you to combine multiple sources by merging a type from each source, by
-using the [Type Merging](https://the-guild.dev/graphql/stitching/docs/approaches/type-merging) approach of Schema
-Stitching.
+using the [Type Merging](https://the-guild.dev/graphql/stitching/docs/approaches/type-merging)
+approach of Schema Stitching.
 
 For example, you could combine responses from two different APIs on a single field, provided you
 rename the fields you want to stitch to the same name.

@@ -1,4 +1,10 @@
-import { PackageCmd, Callout } from '@theguild/components'
+---
+description:
+  'GraphQL Mesh is a schema-stitching tool that enables loading remote GraphQL schemas, fetched from
+  a CDN or registry, and using them with schema-stitching based on graphql-tools. #GraphQL #Mesh'
+---
+
+import { Callout, PackageCmd } from '@theguild/components'
 
 # GraphQL
 
@@ -85,6 +91,7 @@ sources:
 
 ```ts filename="my-local-schema.ts"
 import { makeExecutableSchema } from '@graphql-tools/schema'
+
 export default makeExecutableSchema({
   typeDefs: /* GraphQL */ `
     type Query {
@@ -191,8 +198,8 @@ sources:
 
 ## Config API Reference
 
-import API1 from '../../../generated-markdown/GraphQLHandlerHTTPConfiguration.generated.md'
 import API2 from '../../../generated-markdown/GraphQLHandlerCodeFirstConfiguration.generated.md'
+import API1 from '../../../generated-markdown/GraphQLHandlerHTTPConfiguration.generated.md'
 
 <API1 />
 or

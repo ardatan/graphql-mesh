@@ -1,3 +1,9 @@
+---
+description:
+  'Learn how to mask GraphQL errors and improve error handling practices with GraphQL Mesh. Enable
+  error masking, provide custom error formatting, and handle custom resolvers error. #GraphQL #Mesh'
+---
+
 import { Callout } from '@theguild/components'
 
 # Error Masking
@@ -45,7 +51,7 @@ Envelop allows you to provide your error formatting function as follows:
 
 ```ts filename="envelopPlugins.ts"
 import { GraphQLError } from 'graphql'
-import { useMaskedErrors, PluginOrDisabledPlugin } from '@envelop/core'
+import { PluginOrDisabledPlugin, useMaskedErrors } from '@envelop/core'
 
 export const formatError: FormatErrorHandler = err => {
   if (err.originalError && err.originalError instanceof GraphQLError === false) {
