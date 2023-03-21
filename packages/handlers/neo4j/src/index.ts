@@ -84,9 +84,25 @@ export default class Neo4JHandler implements MeshHandler {
           'Inferring the schema from the database: ',
           `"${this.config.database || 'neo4j'}"`,
         );
-        return toGraphQLTypeDefs(() =>
+        let replaceAllPolyfilled = false;
+        if (!String.prototype.replaceAll) {
+          replaceAllPolyfilled = true;
+          // eslint-disable-next-line no-extend-native
+          String.prototype.replaceAll = function (str, newStr) {
+            if (Object.prototype.toString.call(str).toLowerCase() === '[object regexp]') {
+              return this.replace(str, newStr);
+            }
+            return this.replace(new RegExp(str, 'g'), newStr);
+          };
+        }
+        const typeDefs = await toGraphQLTypeDefs(() =>
           driver.session({ database: this.config.database, defaultAccessMode: neo4j.session.READ }),
         );
+        if (replaceAllPolyfilled) {
+          // eslint-disable-next-line no-extend-native
+          delete String.prototype.replaceAll;
+        }
+        return typeDefs;
       }
     });
   }
