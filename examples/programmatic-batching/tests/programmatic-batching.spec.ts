@@ -1,12 +1,11 @@
-import { findAndParseConfig } from '@graphql-mesh/cli';
-import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
-import { ProcessedConfig } from '@graphql-mesh/config';
+import { readFile } from 'fs/promises';
 import { join } from 'path';
-
 import { lexicographicSortSchema } from 'graphql';
+import { findAndParseConfig } from '@graphql-mesh/cli';
+import { ProcessedConfig } from '@graphql-mesh/config';
+import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { createApp } from '../example-api/app';
-import { readFile } from 'fs/promises';
 
 describe('Batching Example', () => {
   let config: ProcessedConfig;

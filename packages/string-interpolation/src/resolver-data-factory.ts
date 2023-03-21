@@ -1,5 +1,5 @@
-import { stringInterpolator } from './index.js';
 import { GraphQLInputType, GraphQLResolveInfo } from 'graphql';
+import { stringInterpolator } from './index.js';
 
 export type ResolverData<TParent = any, TArgs = any, TContext = any, TResult = any> = {
   root?: TParent;

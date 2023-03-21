@@ -1,4 +1,4 @@
-import { useState, ReactElement } from 'react';
+import { ReactElement, useState } from 'react';
 
 const EXAMPLES = {
   OpenAPI: {

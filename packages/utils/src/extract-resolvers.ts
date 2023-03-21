@@ -1,5 +1,5 @@
-import { getResolversFromSchema } from '@graphql-tools/utils';
 import { GraphQLSchema } from 'graphql';
+import { getResolversFromSchema } from '@graphql-tools/utils';
 
 export function extractResolvers(schema: GraphQLSchema) {
   const allResolvers = getResolversFromSchema(schema);

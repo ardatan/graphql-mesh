@@ -59,9 +59,9 @@ extensions:
 
 ```ts filename="get-omnigraph-sdk.ts"
 // Get GraphQL JIT SDK Factory
-import { getSdk } from './sdk'
 // Load our schema from bundle
 import loadSchemaFromBundle from './load-schema-from-bundle'
+import { getSdk } from './sdk'
 
 export async function getOmnigraphSDK() {
   const schema = await loadSchemaFromBundle()
@@ -82,8 +82,8 @@ We can create a script called `generate-bundle.ts` and every time we run `npm ru
 it will download the sources and generate the bundle.
 
 ```ts filename="generate-bundle.js"
-import { createBundle } from '@omnigraph/openapi'
 import { writeFileSync } from 'fs'
+import { createBundle } from '@omnigraph/openapi'
 
 async function main() {
   const createdBundle = await createBundle('my-omnigraph', {

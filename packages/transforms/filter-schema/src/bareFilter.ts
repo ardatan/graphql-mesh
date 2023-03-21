@@ -1,7 +1,7 @@
 import { GraphQLSchema } from 'graphql';
+import minimatch from 'minimatch';
 import { MeshTransform, YamlConfig } from '@graphql-mesh/types';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
-import minimatch from 'minimatch';
 
 export default class BareFilter implements MeshTransform {
   noWrap = true;

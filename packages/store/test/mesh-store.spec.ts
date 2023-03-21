@@ -1,9 +1,9 @@
 import {
-  ValidationError,
   InMemoryStoreStorageAdapter,
   MeshStore,
   PredefinedProxyOptions,
   ReadonlyStoreError,
+  ValidationError,
 } from '../src/index.js';
 
 describe('MeshStore and storage', () => {

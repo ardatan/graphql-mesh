@@ -1,11 +1,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { execute, parse, specifiedRules, subscribe, validate } from 'graphql';
+import { envelop, useEngine, useSchema } from '@envelop/core';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
-import useMeshRateLimit from '../src/index.js';
-import { makeExecutableSchema } from '@graphql-tools/schema';
-import { envelop, useSchema, useEngine } from '@envelop/core';
 import { Logger } from '@graphql-mesh/types';
-import { parse, validate, execute, subscribe, specifiedRules } from 'graphql';
+import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import useMeshRateLimit from '../src/index.js';
 
 describe('Rate Limit Plugin', () => {
   let pubsub: PubSub;

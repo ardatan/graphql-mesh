@@ -1,11 +1,11 @@
+import { join } from 'path';
 import {
-  Server,
   loadPackageDefinition,
+  Server,
   ServerCredentials,
   ServiceClientConstructor,
 } from '@grpc/grpc-js';
 import { load } from '@grpc/proto-loader';
-import { join } from 'path';
 
 const seconds = new Date('2020-12-20').getTime();
 

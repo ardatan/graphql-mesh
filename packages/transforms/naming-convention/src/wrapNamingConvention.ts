@@ -1,22 +1,21 @@
 import { GraphQLSchema } from 'graphql';
-import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
-import {
-  RenameTypes,
-  TransformEnumValues,
-  RenameInterfaceFields,
-  TransformObjectFields,
-  RenameInputObjectFields,
-  RenameObjectFieldArguments,
-} from '@graphql-tools/wrap';
-import { ExecutionResult, ExecutionRequest } from '@graphql-tools/utils';
-import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
+import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import {
   applyRequestTransforms,
   applyResultTransforms,
   applySchemaTransforms,
 } from '@graphql-mesh/utils';
-
-import { NAMING_CONVENTIONS, IGNORED_ROOT_FIELD_NAMES, IGNORED_TYPE_NAMES } from './shared.js';
+import { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
+import { ExecutionRequest, ExecutionResult } from '@graphql-tools/utils';
+import {
+  RenameInputObjectFields,
+  RenameInterfaceFields,
+  RenameObjectFieldArguments,
+  RenameTypes,
+  TransformEnumValues,
+  TransformObjectFields,
+} from '@graphql-tools/wrap';
+import { IGNORED_ROOT_FIELD_NAMES, IGNORED_TYPE_NAMES, NAMING_CONVENTIONS } from './shared.js';
 
 export default class NamingConventionTransform implements MeshTransform {
   private transforms: Transform[] = [];

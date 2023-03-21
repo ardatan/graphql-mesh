@@ -1,6 +1,4 @@
-import { ResolverData, stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { Logger, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
-import { createGraphQLError, getDirective, getDirectives } from '@graphql-tools/utils';
+import { dset } from 'dset';
 import {
   DirectiveLocation,
   GraphQLBoolean,
@@ -24,7 +22,10 @@ import {
   isUnionType,
   OperationTypeNode,
 } from 'graphql';
-import { dset} from "dset";
+import { resolvers as scalarResolvers } from 'graphql-scalars';
+import { ResolverData, stringInterpolator } from '@graphql-mesh/string-interpolation';
+import { Logger, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
+import { createGraphQLError, getDirective, getDirectives } from '@graphql-tools/utils';
 import {
   addHTTPRootFieldResolver,
   GlobalOptions,
@@ -32,7 +33,6 @@ import {
 } from './addRootFieldResolver.js';
 import { getTypeResolverFromOutputTCs } from './getTypeResolverFromOutputTCs.js';
 import { ObjMapScalar } from './scalars.js';
-import { resolvers as scalarResolvers } from 'graphql-scalars';
 
 export const LengthDirective = new GraphQLDirective({
   name: 'length',

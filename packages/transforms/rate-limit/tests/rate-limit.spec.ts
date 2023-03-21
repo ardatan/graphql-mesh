@@ -1,9 +1,9 @@
-import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { execute, parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
-import RateLimitTransform from '../src/index.js';
+import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { wrapSchema } from '@graphql-tools/wrap';
-import { execute, parse } from 'graphql';
+import RateLimitTransform from '../src/index.js';
 
 describe('Rate Limit Transform', () => {
   let pubsub: PubSub;

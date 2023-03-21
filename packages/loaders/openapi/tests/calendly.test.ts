@@ -1,5 +1,4 @@
 import { graphql } from 'graphql';
-
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import loadGraphQLSchemaFromOpenAPI from '../src/index.js';
 

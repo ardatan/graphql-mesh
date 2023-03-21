@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import { process } from '@graphql-mesh/cross-helpers';
 import { Metadata } from '@grpc/grpc-js';
-
 import { addMetaDataToCall } from '../src/utils.js';
 
 describe('grpc utils', () => {

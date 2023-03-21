@@ -1,12 +1,12 @@
-import { resolveAdditionalResolvers } from '@graphql-mesh/utils';
 import {
+  ConstObjectValueNode,
   ConstValueNode,
   DocumentNode,
-  Kind,
-  ConstObjectValueNode,
-  visit,
   FieldDefinitionNode,
+  Kind,
+  visit,
 } from 'graphql';
+import { resolveAdditionalResolvers } from '@graphql-mesh/utils';
 
 function parseObject(ast: ConstObjectValueNode): any {
   const value = Object.create(null);
