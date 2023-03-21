@@ -175,7 +175,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
         // Maybe Node-like environment
         if (req?.headers) {
           return {
-            headers: req.headers,
+            headers: getHeadersObj(req.headers),
           };
         }
         // Fetch environment

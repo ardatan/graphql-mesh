@@ -45,7 +45,7 @@
     "@graphql-tools/graphql-file-loader": "7.5.16",
     "@graphql-tools/load": "7.8.12",
     "@graphql-tools/utils": "9.2.1",
-    "@whatwg-node/fetch": "^0.8.0",
+    "@whatwg-node/fetch": "^0.8.3",
     "camel-case": "4.1.2",
     "param-case": "3.0.4",
     "pascal-case": "3.1.2",
