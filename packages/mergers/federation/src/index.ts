@@ -1,4 +1,15 @@
 import {
+  DocumentNode,
+  execute,
+  ExecutionResult,
+  extendSchema,
+  GraphQLSchema,
+  parse,
+} from 'graphql';
+import { ApolloGateway, LocalGraphQLDataSource, SERVICE_DEFINITION_QUERY } from '@apollo/gateway';
+import { process } from '@graphql-mesh/cross-helpers';
+import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
+import {
   KeyValueCache,
   Logger,
   MeshMerger,
@@ -7,26 +18,15 @@ import {
   MeshPubSub,
   RawSourceOutput,
 } from '@graphql-mesh/types';
-import {
-  GraphQLSchema,
-  extendSchema,
-  DocumentNode,
-  parse,
-  execute,
-  ExecutionResult,
-} from 'graphql';
-import { wrapSchema } from '@graphql-tools/wrap';
-import { ApolloGateway, LocalGraphQLDataSource, SERVICE_DEFINITION_QUERY } from '@apollo/gateway';
-import { addResolversToSchema } from '@graphql-tools/schema';
 import { printWithCache } from '@graphql-mesh/utils';
+import { addResolversToSchema } from '@graphql-tools/schema';
 import {
   AggregateError,
   asArray,
   ExecutionRequest,
   printSchemaWithDirectives,
 } from '@graphql-tools/utils';
-import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
-import { process } from '@graphql-mesh/cross-helpers';
+import { wrapSchema } from '@graphql-tools/wrap';
 
 export default class FederationMerger implements MeshMerger {
   name = 'federation';

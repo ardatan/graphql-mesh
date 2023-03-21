@@ -1,9 +1,9 @@
-import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
-import { makeExecutableSchema } from '@graphql-tools/schema';
-import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { join } from 'path';
-import ResolversCompositionTransform, { ResolversComposition } from '../src/index.js';
 import { execute, parse } from 'graphql';
+import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
+import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import ResolversCompositionTransform, { ResolversComposition } from '../src/index.js';
 
 describe('transform', () => {
   const baseDir: string = undefined;

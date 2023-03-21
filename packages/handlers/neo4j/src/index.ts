@@ -1,21 +1,21 @@
-import { toGraphQLTypeDefs } from '@neo4j/introspector';
-import { Neo4jGraphQL } from '@neo4j/graphql';
 import { GraphQLBigInt } from 'graphql-scalars';
 import neo4j, { Driver } from 'neo4j-driver';
+import { process } from '@graphql-mesh/cross-helpers';
+import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import {
-  YamlConfig,
+  GetMeshSourcePayload,
+  ImportFn,
+  Logger,
+  MeshFetch,
   MeshHandler,
   MeshHandlerOptions,
   MeshPubSub,
-  Logger,
-  ImportFn,
-  MeshFetch,
-  GetMeshSourcePayload,
   MeshSource,
+  YamlConfig,
 } from '@graphql-mesh/types';
-import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import { readFileOrUrl } from '@graphql-mesh/utils';
-import { process } from '@graphql-mesh/cross-helpers';
+import { Neo4jGraphQL } from '@neo4j/graphql';
+import { toGraphQLTypeDefs } from '@neo4j/introspector';
 
 function getEventEmitterFromPubSub(pubsub: MeshPubSub): any {
   return {

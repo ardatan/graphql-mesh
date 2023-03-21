@@ -1,13 +1,13 @@
+import { Plugin } from '@envelop/core';
 import { useLiveQuery } from '@envelop/live-query';
+import { process } from '@graphql-mesh/cross-helpers';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
 import {
   defaultResourceIdentifierNormalizer,
   InMemoryLiveQueryStore,
 } from '@n1ru4l/in-memory-live-query-store';
-import { Plugin } from '@envelop/core';
 import { useInvalidateByResult } from './useInvalidateByResult.js';
-import { process } from '@graphql-mesh/cross-helpers';
-import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 
 export default function useMeshLiveQuery(
   options: MeshPluginOptions<YamlConfig.LiveQueryConfig>,

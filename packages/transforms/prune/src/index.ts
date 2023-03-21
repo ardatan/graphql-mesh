@@ -1,6 +1,6 @@
+import { GraphQLSchema } from 'graphql';
 import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { pruneSchema } from '@graphql-tools/utils';
-import { GraphQLSchema } from 'graphql';
 
 export default class PruneTransform implements MeshTransform {
   noWrap = true;

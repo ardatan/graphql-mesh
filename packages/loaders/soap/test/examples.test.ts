@@ -1,9 +1,9 @@
 /* eslint-disable import/no-nodejs-modules */
-import { SOAPLoader } from '../src/index.js';
 import { promises } from 'fs';
-import { printSchema } from 'graphql';
 import { join } from 'path';
+import { printSchema } from 'graphql';
 import { fetch } from '@whatwg-node/fetch';
+import { SOAPLoader } from '../src/index.js';
 
 const { readFile } = promises;
 

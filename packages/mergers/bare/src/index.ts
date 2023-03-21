@@ -1,3 +1,5 @@
+import { extendSchema, GraphQLSchema } from 'graphql';
+import StitchingMerger from '@graphql-mesh/merger-stitching';
 import {
   MeshMerger,
   MeshMergerContext,
@@ -7,8 +9,6 @@ import {
 import { applySchemaTransforms } from '@graphql-mesh/utils';
 import { addResolversToSchema, mergeSchemas } from '@graphql-tools/schema';
 import { asArray, mapSchema } from '@graphql-tools/utils';
-import { extendSchema, GraphQLSchema } from 'graphql';
-import StitchingMerger from '@graphql-mesh/merger-stitching';
 
 export default class BareMerger implements MeshMerger {
   name = 'bare';

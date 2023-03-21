@@ -1,6 +1,6 @@
+import { DefaultLogger } from '@graphql-mesh/utils';
 import { JSONSchemaObject } from './types.js';
 import { visitJSONSchema } from './visitJSONSchema.js';
-import { DefaultLogger } from '@graphql-mesh/utils';
 
 export async function referenceJSONSchema(
   schema: JSONSchemaObject,

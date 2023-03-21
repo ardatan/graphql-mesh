@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-/* eslint sort-keys: error */
 
-import { defineConfig, Giscus, useTheme } from '@theguild/components';
+/* eslint sort-keys: error */
 import { useRouter } from 'next/router';
+import { defineConfig, Giscus, useTheme } from '@theguild/components';
 
 export default defineConfig({
   docsRepositoryBase: 'https://github.com/Urigo/graphql-mesh/tree/master/website',

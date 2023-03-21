@@ -1,3 +1,5 @@
+import { buildSchema, ExecutionResult, GraphQLSchema, parse } from 'graphql';
+import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
 import {
   Logger,
   MeshMerger,
@@ -5,17 +7,15 @@ import {
   MeshMergerOptions,
   RawSourceOutput,
 } from '@graphql-mesh/types';
-import { stitchSchemas, ValidationLevel } from '@graphql-tools/stitch';
 import { extractResolvers } from '@graphql-mesh/utils';
 import { StitchingInfo } from '@graphql-tools/delegate';
+import { addResolversToSchema } from '@graphql-tools/schema';
+import { stitchSchemas, ValidationLevel } from '@graphql-tools/stitch';
 import {
-  stitchingDirectives,
   federationToStitchingSDL,
+  stitchingDirectives,
   StitchingDirectivesResult,
 } from '@graphql-tools/stitching-directives';
-import { addResolversToSchema } from '@graphql-tools/schema';
-import { buildSchema, ExecutionResult, GraphQLSchema, parse } from 'graphql';
-import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
 import { AggregateError, Executor, printSchemaWithDirectives } from '@graphql-tools/utils';
 
 const APOLLO_GET_SERVICE_DEFINITION_QUERY = /* GraphQL */ `

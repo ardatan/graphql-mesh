@@ -1,12 +1,11 @@
 import { join } from 'path';
-import { execute, parse, printSchema, GraphQLObjectType } from 'graphql';
+import { execute, GraphQLObjectType, parse, printSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
-import { makeExecutableSchema } from '@graphql-tools/schema';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
-
-import ReplaceFieldTransform from '../src/index.js';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 import { pruneSchema } from '@graphql-tools/utils';
+import ReplaceFieldTransform from '../src/index.js';
 
 const importFn: ImportFn = m =>
   import(m).catch(e => {

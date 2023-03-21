@@ -1,6 +1,6 @@
-import fetch from 'node-fetch';
 import { createWriteStream } from 'fs';
 import { join } from 'path';
+import fetch from 'node-fetch';
 import unzip, { Entry } from 'unzip-stream';
 
 async function downloadFhirSchema() {

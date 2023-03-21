@@ -1,7 +1,7 @@
-import { createYoga, createSchema } from 'graphql-yoga';
-import { createServer } from 'http';
 import { existsSync, mkdirSync, promises } from 'fs';
+import { createServer } from 'http';
 import { join } from 'path';
+import { createSchema, createYoga } from 'graphql-yoga';
 
 const { readdir, readFile, writeFile, unlink } = promises;
 

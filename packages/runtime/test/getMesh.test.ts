@@ -1,4 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import { parse } from 'graphql';
 import LocalforageCache from '@graphql-mesh/cache-localforage';
 import GraphQLHandler from '@graphql-mesh/graphql';
 import StitchingMerger from '@graphql-mesh/merger-stitching';
@@ -6,7 +7,6 @@ import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { parse } from 'graphql';
 import { getMesh } from '../src/get-mesh.js';
 import { MeshResolvedSource } from '../src/types.js';
 

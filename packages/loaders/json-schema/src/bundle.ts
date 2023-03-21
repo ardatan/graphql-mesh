@@ -1,12 +1,12 @@
-import { referenceJSONSchema, JSONSchemaObject, dereferenceObject } from 'json-machete';
-import { DefaultLogger } from '@graphql-mesh/utils';
-import { Logger, MeshFetch } from '@graphql-mesh/types';
-import { JSONSchemaOperationConfig, OperationHeadersConfiguration } from './types.js';
-import { fetch as crossUndiciFetch } from '@whatwg-node/fetch';
 import { GraphQLSchema } from 'graphql';
-import { getGraphQLSchemaFromDereferencedJSONSchema } from './getGraphQLSchemaFromDereferencedJSONSchema.js';
+import { dereferenceObject, JSONSchemaObject, referenceJSONSchema } from 'json-machete';
 import type { IStringifyOptions } from 'qs';
 import { ResolverData } from '@graphql-mesh/string-interpolation';
+import { Logger, MeshFetch } from '@graphql-mesh/types';
+import { DefaultLogger } from '@graphql-mesh/utils';
+import { fetch as crossUndiciFetch } from '@whatwg-node/fetch';
+import { getGraphQLSchemaFromDereferencedJSONSchema } from './getGraphQLSchemaFromDereferencedJSONSchema.js';
+import { JSONSchemaOperationConfig, OperationHeadersConfiguration } from './types.js';
 
 export interface JSONSchemaLoaderBundle {
   name?: string;

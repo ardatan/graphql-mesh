@@ -1,9 +1,9 @@
-import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { MeshPluginOptions, YamlConfig, MeshPlugin } from '@graphql-mesh/types';
-import { process } from '@graphql-mesh/cross-helpers';
-import { createGraphQLError } from '@graphql-tools/utils';
-import minimatch from 'minimatch';
 import { GraphQLError, TypeInfo, visit, visitInParallel, visitWithTypeInfo } from 'graphql';
+import minimatch from 'minimatch';
+import { process } from '@graphql-mesh/cross-helpers';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
+import { createGraphQLError } from '@graphql-tools/utils';
 
 function deleteNode<T extends Record<string | number, any>>(
   parent: T,

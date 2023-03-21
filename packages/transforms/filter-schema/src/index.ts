@@ -1,6 +1,6 @@
 import { YamlConfig } from '@graphql-mesh/types';
-import WrapFilter from './wrapFilter.js';
 import BareFilter from './bareFilter.js';
+import WrapFilter from './wrapFilter.js';
 
 interface FilterTransformConstructor {
   new (options: { config: YamlConfig.FilterSchemaTransform }): BareFilter | WrapFilter;

@@ -1,7 +1,6 @@
+import { join } from 'path';
 import { findAndParseConfig } from '@graphql-mesh/cli';
 import { getMesh } from '@graphql-mesh/runtime';
-import { join } from 'path';
-
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 const mesh$ = findAndParseConfig({

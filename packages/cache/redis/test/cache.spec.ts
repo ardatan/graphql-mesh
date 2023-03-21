@@ -1,7 +1,7 @@
 /* eslint-disable no-new */
-import RedisCache from '../src/index.js';
 import Redis from 'ioredis';
 import { PubSub } from '@graphql-mesh/utils';
+import RedisCache from '../src/index.js';
 
 jest.mock('ioredis');
 

@@ -11,9 +11,9 @@ import {
   sentenceCase,
   snakeCase,
 } from 'change-case';
-import { upperCase } from 'upper-case';
-import { lowerCase } from 'lower-case';
 import { resolvers as scalarsResolversMap } from 'graphql-scalars';
+import { lowerCase } from 'lower-case';
+import { upperCase } from 'upper-case';
 import { YamlConfig } from '@graphql-mesh/types';
 
 type NamingConventionFn = (input: string) => string;

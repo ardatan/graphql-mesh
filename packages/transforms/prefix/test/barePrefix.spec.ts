@@ -1,9 +1,9 @@
-import PrefixTransform from '../src/index.js';
-import { printSchema, GraphQLSchema, GraphQLObjectType, execute, parse } from 'graphql';
+import { execute, GraphQLObjectType, GraphQLSchema, parse, printSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import PrefixTransform from '../src/index.js';
 
 describe('barePrefix', () => {
   let schema: GraphQLSchema;

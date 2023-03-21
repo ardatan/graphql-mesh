@@ -1,9 +1,9 @@
-import logo from './logo.svg';
-import './App.css';
-import Files from './Files';
-import UploadFile from './UploadFile';
 import { ApolloProvider } from '@apollo/client';
 import apolloClient from './apolloClient';
+import Files from './Files';
+import UploadFile from './UploadFile';
+import './App.css';
+import logo from './logo.svg';
 
 function App() {
   return (

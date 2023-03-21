@@ -1,6 +1,6 @@
 import { OnExecuteHookResult } from '@envelop/core';
-import { wrapFetchWithPlugins } from '../../../runtime/src/get-mesh.js';
 import { Response } from '@whatwg-node/fetch';
+import { wrapFetchWithPlugins } from '../../../runtime/src/get-mesh.js';
 import useIncludeHttpDetailsInExtensions from '../src/index';
 
 describe('HTTP Details Extensions', () => {

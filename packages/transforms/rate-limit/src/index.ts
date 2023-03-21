@@ -1,9 +1,9 @@
-import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
-import { AggregateError, ExecutionRequest } from '@graphql-tools/utils';
-import type { DelegationContext } from '@graphql-tools/delegate';
 import { ExecutionResult, GraphQLError, TypeInfo, visit, visitWithTypeInfo } from 'graphql';
-import { ResolverData, stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { process } from '@graphql-mesh/cross-helpers';
+import { ResolverData, stringInterpolator } from '@graphql-mesh/string-interpolation';
+import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import type { DelegationContext } from '@graphql-tools/delegate';
+import { AggregateError, ExecutionRequest } from '@graphql-tools/utils';
 
 export default class RateLimitTransform implements MeshTransform {
   private pathRateLimitDef = new Map<string, YamlConfig.RateLimitTransformConfig>();

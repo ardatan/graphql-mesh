@@ -1,3 +1,4 @@
+import { XMLBuilder as JSONToXMLConverter, XMLParser } from 'fast-xml-parser';
 import {
   execute,
   GraphQLFieldResolver,
@@ -7,10 +8,9 @@ import {
   isListType,
   isNonNullType,
 } from 'graphql';
-import { XMLParser, XMLBuilder as JSONToXMLConverter } from 'fast-xml-parser';
 import { MeshFetch } from '@graphql-mesh/types';
-import { PARSE_XML_OPTIONS, SoapAnnotations } from './utils.js';
 import { Executor, getDirective, getRootTypes } from '@graphql-tools/utils';
+import { PARSE_XML_OPTIONS, SoapAnnotations } from './utils.js';
 
 function isOriginallyListType(type: GraphQLOutputType): boolean {
   if (isNonNullType(type)) {

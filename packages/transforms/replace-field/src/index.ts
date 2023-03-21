@@ -1,6 +1,6 @@
 import {
-  extendSchema,
   defaultFieldResolver,
+  extendSchema,
   GraphQLFieldConfig,
   GraphQLFieldResolver,
   GraphQLSchema,

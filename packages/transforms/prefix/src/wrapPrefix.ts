@@ -1,13 +1,13 @@
 import { GraphQLSchema } from 'graphql';
-import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
-import { RenameTypes, RenameRootFields } from '@graphql-tools/wrap';
-import { ExecutionResult, ExecutionRequest } from '@graphql-tools/utils';
-import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
+import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import {
   applyRequestTransforms,
   applyResultTransforms,
   applySchemaTransforms,
 } from '@graphql-mesh/utils';
+import { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
+import { ExecutionRequest, ExecutionResult } from '@graphql-tools/utils';
+import { RenameRootFields, RenameTypes } from '@graphql-tools/wrap';
 import { ignoreList as defaultIgnoreList } from './shared.js';
 
 export default class WrapPrefix implements MeshTransform {
