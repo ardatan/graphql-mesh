@@ -1,13 +1,9 @@
 function headersToJSON(headers: Headers): Record<string, string> {
-  const obj: Record<string, string> = {};
-  headers.forEach((value, key) => {
-    obj[key] = value;
-  });
-  return obj;
+  return Object.fromEntries(headers.entries());
 }
 
 export function getHeadersObj(headers: Headers): Record<string, string> {
-  if (headers == null || !('forEach' in headers)) {
+  if (headers == null || !('get' in headers)) {
     return headers as any;
   }
   return new Proxy(
@@ -26,11 +22,7 @@ export function getHeadersObj(headers: Headers): Record<string, string> {
         return headers.has(name.toString());
       },
       ownKeys(_target) {
-        const keys: string[] = [];
-        headers.forEach((_value, name) => {
-          keys.push(name);
-        });
-        return keys;
+        return [...headers.keys()];
       },
       set(_target, name, value) {
         headers.set(name.toString(), value);
