@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/merger-bare",
-  "version": "0.16.19",
+  "version": "0.16.20",
   "type": "module",
   "repository": {
     "type": "git",
@@ -32,9 +32,9 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/merger-stitching": "0.18.19",
-    "@graphql-mesh/types": "0.91.9",
-    "@graphql-mesh/utils": "0.43.17",
+    "@graphql-mesh/merger-stitching": "0.18.20",
+    "@graphql-mesh/types": "0.91.10",
+    "@graphql-mesh/utils": "0.43.18",
     "@graphql-tools/schema": "9.0.16",
     "@graphql-tools/utils": "9.2.1",
     "tslib": "^2.4.0"

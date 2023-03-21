@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/neo4j",
-  "version": "0.22.19",
+  "version": "0.22.20",
   "type": "module",
   "repository": {
     "type": "git",
@@ -33,9 +33,9 @@
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.3.3",
-    "@graphql-mesh/store": "0.9.17",
-    "@graphql-mesh/types": "0.91.9",
-    "@graphql-mesh/utils": "0.43.17",
+    "@graphql-mesh/store": "0.9.18",
+    "@graphql-mesh/types": "0.91.10",
+    "@graphql-mesh/utils": "0.43.18",
     "@graphql-tools/utils": "9.2.1",
     "@neo4j/graphql": "3.17.0",
     "@neo4j/introspector": "^1.0.1",
