@@ -2,8 +2,12 @@ function headersToJSON(headers: Headers): Record<string, string> {
   return Object.fromEntries(headers.entries());
 }
 
-export function getHeadersObj(headers: Headers): Record<string, string> {
-  if (headers == null || !('get' in headers)) {
+function isHeaders(headers: any): headers is Headers {
+  return headers != null && 'get' in headers && typeof headers.get === 'function';
+}
+
+export function getHeadersObj(headers: Headers | Record<string, string>): Record<string, string> {
+  if (headers == null || !isHeaders(headers)) {
     return headers as any;
   }
   return new Proxy(
