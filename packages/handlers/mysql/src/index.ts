@@ -1,32 +1,32 @@
-import {
-  MeshHandlerOptions,
-  MeshPubSub,
-  MeshHandler,
-  MeshSource,
-  YamlConfig,
-  ImportFn,
-} from '@graphql-mesh/types';
-import { SchemaComposer, EnumTypeComposerValueConfigDefinition } from 'graphql-compose';
-import { TableForeign, createPool, Pool } from 'mysql';
-import { upgrade, introspection } from 'mysql-utilities';
+import { GraphQLResolveInfo, specifiedDirectives } from 'graphql';
+import { EnumTypeComposerValueConfigDefinition, SchemaComposer } from 'graphql-compose';
 import graphqlFields from 'graphql-fields';
 import {
   GraphQLBigInt,
+  GraphQLDate,
   GraphQLDateTime,
   GraphQLJSON,
-  GraphQLDate,
-  GraphQLTimestamp,
   GraphQLTime,
-  GraphQLUnsignedInt,
+  GraphQLTimestamp,
   GraphQLUnsignedFloat,
+  GraphQLUnsignedInt,
 } from 'graphql-scalars';
-import { GraphQLResolveInfo, specifiedDirectives } from 'graphql';
-import { loadFromModuleExportExpression, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
-import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
-import { ExecutionRequest } from '@graphql-tools/utils';
-import { createDefaultExecutor } from '@graphql-tools/delegate';
+import { createPool, Pool, TableForeign } from 'mysql';
+import { introspection, upgrade } from 'mysql-utilities';
 import { process, util } from '@graphql-mesh/cross-helpers';
+import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import {
+  ImportFn,
+  MeshHandler,
+  MeshHandlerOptions,
+  MeshPubSub,
+  MeshSource,
+  YamlConfig,
+} from '@graphql-mesh/types';
+import { loadFromModuleExportExpression, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import { createDefaultExecutor } from '@graphql-tools/delegate';
+import { ExecutionRequest } from '@graphql-tools/utils';
 
 const SCALARS = {
   bigint: 'BigInt',

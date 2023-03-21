@@ -1,5 +1,3 @@
-import { Logger } from '@graphql-mesh/types';
-import { JSONSchemaObject } from '@json-schema-tools/meta-schema';
 import {
   AnyTypeComposer,
   ComposeInputType,
@@ -10,6 +8,8 @@ import {
   SchemaComposer,
   UnionTypeComposer,
 } from 'graphql-compose';
+import { Logger } from '@graphql-mesh/types';
+import { JSONSchemaObject } from '@json-schema-tools/meta-schema';
 import { StatusCodeTypeNameDirective } from './directives.js';
 import { TypeComposers } from './getComposerFromJSONSchema.js';
 

@@ -1,4 +1,3 @@
-import { getComposerFromJSONSchema } from '../src/getComposerFromJSONSchema.js';
 import {
   execute,
   GraphQLBoolean,
@@ -21,7 +20,6 @@ import {
   SchemaComposer,
   UnionTypeComposer,
 } from 'graphql-compose';
-import { JSONSchema } from '@json-schema-tools/meta-schema';
 import {
   GraphQLBigInt,
   GraphQLDateTime,
@@ -32,12 +30,14 @@ import {
   GraphQLTime,
   GraphQLURL,
 } from 'graphql-scalars';
+import { JSONSchemaObject } from 'json-machete';
+import { MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { JSONSchemaObject } from 'json-machete';
-import { processDirectives } from '../src/directives';
-import { MeshPubSub } from '@graphql-mesh/types';
+import { JSONSchema } from '@json-schema-tools/meta-schema';
 import { fetch } from '@whatwg-node/fetch';
+import { processDirectives } from '../src/directives';
+import { getComposerFromJSONSchema } from '../src/getComposerFromJSONSchema.js';
 
 describe('getComposerFromJSONSchema', () => {
   const logger = new DefaultLogger('getComposerFromJSONSchema - test');

@@ -1,5 +1,30 @@
 # soap-demo
 
+## 0.0.219
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.28
+  - @graphql-mesh/soap@0.17.21
+
+## 0.0.218
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.27
+  - @graphql-mesh/soap@0.17.20
+
+## 0.0.217
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b86d420d4`](https://github.com/Urigo/graphql-mesh/commit/b86d420d4fdf1132f3485c35087aaecbce45a728)]:
+  - @graphql-mesh/cli@0.82.26
+  - @graphql-mesh/soap@0.17.19
+
 ## 0.0.216
 
 ### Patch Changes

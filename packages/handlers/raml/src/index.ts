@@ -1,17 +1,3 @@
-import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
-import {
-  MeshHandlerOptions,
-  Logger,
-  MeshHandler,
-  MeshPubSub,
-  MeshSource,
-  YamlConfig,
-  GetMeshSourcePayload,
-  MeshFetch,
-  ImportFn,
-} from '@graphql-mesh/types';
-import { readFileOrUrl } from '@graphql-mesh/utils';
-import { loadNonExecutableGraphQLSchemaFromRAML, processDirectives } from '@omnigraph/raml';
 import {
   buildSchema,
   execute,
@@ -20,7 +6,21 @@ import {
   OperationTypeNode,
   subscribe,
 } from 'graphql';
+import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
+import {
+  GetMeshSourcePayload,
+  ImportFn,
+  Logger,
+  MeshFetch,
+  MeshHandler,
+  MeshHandlerOptions,
+  MeshPubSub,
+  MeshSource,
+  YamlConfig,
+} from '@graphql-mesh/types';
+import { readFileOrUrl } from '@graphql-mesh/utils';
 import { getOperationASTFromRequest } from '@graphql-tools/utils';
+import { loadNonExecutableGraphQLSchemaFromRAML, processDirectives } from '@omnigraph/raml';
 
 export default class RAMLHandler implements MeshHandler {
   private name: string;

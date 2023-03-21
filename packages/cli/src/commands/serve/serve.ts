@@ -1,22 +1,22 @@
 /* eslint-disable import/no-nodejs-modules */
+
 /* eslint-disable dot-notation */
 import cluster from 'cluster';
-import { cpus, platform, release } from 'os';
-import 'json-bigint-patch';
 import { createServer as createHTTPServer, Server } from 'http';
+import { createServer as createHTTPSServer } from 'https';
+import { Socket } from 'net';
+import { cpus, platform, release } from 'os';
+import dnscache from 'dnscache';
+import { useServer } from 'graphql-ws/lib/use/ws';
+import 'json-bigint-patch';
+import open from 'open';
 import ws from 'ws';
 import { fs, process } from '@graphql-mesh/cross-helpers';
-
-import { createServer as createHTTPSServer } from 'https';
-import { MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
-import { handleFatalError } from '../../handleFatalError.js';
-import open from 'open';
-import { useServer } from 'graphql-ws/lib/use/ws';
-import dnscache from 'dnscache';
-import { GraphQLMeshCLIParams } from '../../index.js';
-import type { Logger } from '@graphql-mesh/types';
 import { createMeshHTTPHandler } from '@graphql-mesh/http';
-import { Socket } from 'net';
+import { MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
+import type { Logger } from '@graphql-mesh/types';
+import { handleFatalError } from '../../handleFatalError.js';
+import { GraphQLMeshCLIParams } from '../../index.js';
 
 const terminateEvents = ['SIGINT', 'SIGTERM'];
 

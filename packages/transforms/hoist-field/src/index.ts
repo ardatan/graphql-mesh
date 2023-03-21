@@ -1,3 +1,4 @@
+import { GraphQLSchema } from 'graphql';
 import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import {
   applyRequestTransforms,
@@ -7,7 +8,6 @@ import {
 import { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
 import { ExecutionRequest, ExecutionResult } from '@graphql-tools/utils';
 import { HoistField } from '@graphql-tools/wrap';
-import { GraphQLSchema } from 'graphql';
 
 type HoistFieldCtorPathConfigItem = ConstructorParameters<typeof HoistField>[1][0];
 type HoistFieldTransformFieldPathConfig = YamlConfig.HoistFieldTransformConfig['pathConfig'][0];

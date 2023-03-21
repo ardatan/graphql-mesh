@@ -1,3 +1,9 @@
+---
+description:
+  Learn how to deploy GraphQL Mesh anywhere. Use mesh dev for local development and mesh start for
+  production. Deploy Mesh with ease on Vercel, AWS Lambda, Cloudflare Workers and more!
+---
+
 import { Callout } from '@theguild/components'
 
 # How to: Deploy a GraphQL Mesh Gateway
@@ -131,11 +137,7 @@ export async function handler(
     }
   )
 
-  const responseHeaders: Record<string, string> = {}
-
-  response.headers.forEach((value, name) => {
-    responseHeaders[name] = value
-  })
+  const responseHeaders: Record<string, string> = Object.fromEntries(response.headers.entries())
 
   return {
     statusCode: response.status,

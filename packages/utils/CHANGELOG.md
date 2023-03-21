@@ -1,5 +1,32 @@
 # @graphql-mesh/utils
 
+## 0.43.18
+
+### Patch Changes
+
+- [#5239](https://github.com/Urigo/graphql-mesh/pull/5239)
+  [`3f658a771`](https://github.com/Urigo/graphql-mesh/commit/3f658a7711cd68bc7451c1494699c5ffb8e919ce)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support other Map-like interfaces even if they
+  don't implement WHATWG Headers fully
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.91.10
+
+## 0.43.17
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a272fdbca`](https://github.com/Urigo/graphql-mesh/commit/a272fdbca655b17119fb1dcb1c44498f387b1edc)]:
+  - @graphql-mesh/types@0.91.9
+
+## 0.43.16
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.91.8
+
 ## 0.43.15
 
 ### Patch Changes

@@ -1,7 +1,7 @@
-import { GraphQLSchema } from 'graphql';
 import { join } from 'path';
-import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
+import { GraphQLSchema } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 
 describe('Docusign', () => {
   let createdSchema: GraphQLSchema;

@@ -1,10 +1,10 @@
+import { getArgumentValues, getOperationAST, TypeInfo, visit, visitWithTypeInfo } from 'graphql';
 import { Plugin } from '@envelop/core';
 import {
   getInterpolatedStringFactory,
   ResolverDataBasedFactory,
 } from '@graphql-mesh/string-interpolation';
 import { Logger, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
-import { getArgumentValues, getOperationAST, TypeInfo, visit, visitWithTypeInfo } from 'graphql';
 
 interface InvalidateByResultParams {
   pubsub: MeshPubSub;

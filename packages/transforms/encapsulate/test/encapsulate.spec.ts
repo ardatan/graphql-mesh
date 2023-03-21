@@ -1,10 +1,10 @@
-import Transform from '../src/index.js';
-import { execute, parse, getIntrospectionQuery } from 'graphql';
+import { execute, getIntrospectionQuery, parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
-import { wrapSchema } from '@graphql-tools/wrap';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import { wrapSchema } from '@graphql-tools/wrap';
+import Transform from '../src/index.js';
 
 describe('encapsulate', () => {
   const baseDir: string = undefined;

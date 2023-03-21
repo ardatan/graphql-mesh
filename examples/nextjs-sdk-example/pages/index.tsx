@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { ListPetsQuery, getMeshSDK } from '../.mesh';
+import { getMeshSDK, ListPetsQuery } from '../.mesh';
 import styles from '../styles/Home.module.css';
 
 export default function Home(props: { petsData: ListPetsQuery }) {

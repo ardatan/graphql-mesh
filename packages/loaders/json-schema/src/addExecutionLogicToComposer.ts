@@ -1,19 +1,13 @@
+import { getNamedType, GraphQLInt, GraphQLObjectType, GraphQLString } from 'graphql';
 import {
   GraphQLJSON,
   ObjectTypeComposer,
   ObjectTypeComposerFieldConfig,
   SchemaComposer,
 } from 'graphql-compose';
-import { Logger } from '@graphql-mesh/types';
-import {
-  JSONSchemaLinkConfig,
-  JSONSchemaOperationConfig,
-  OperationHeadersConfiguration,
-} from './types.js';
-import { getOperationMetadata, isPubSubOperationConfig } from './utils.js';
 import { IStringifyOptions } from 'qs';
-import { getNamedType, GraphQLInt, GraphQLObjectType, GraphQLString } from 'graphql';
 import { process } from '@graphql-mesh/cross-helpers';
+import { Logger } from '@graphql-mesh/types';
 import {
   GlobalOptionsDirective,
   HTTPOperationDirective,
@@ -23,6 +17,12 @@ import {
   ResolveRootDirective,
   ResponseMetadataDirective,
 } from './directives.js';
+import {
+  JSONSchemaLinkConfig,
+  JSONSchemaOperationConfig,
+  OperationHeadersConfiguration,
+} from './types.js';
+import { getOperationMetadata, isPubSubOperationConfig } from './utils.js';
 
 export interface AddExecutionLogicToComposerOptions {
   schemaComposer: SchemaComposer;

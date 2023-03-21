@@ -14,7 +14,7 @@ export default async function createApolloServer() {
     cache,
     executor: async requestContext => {
       const { schema, execute, contextFactory } = getEnveloped({
-        req: requestContext.request.http,
+        request: requestContext.request.http,
       });
 
       return execute({

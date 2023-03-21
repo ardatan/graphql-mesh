@@ -1,7 +1,7 @@
-import { GraphQLSchema, parse, validate } from 'graphql';
 import { join } from 'path';
-import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
+import { GraphQLSchema, parse, validate } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 
 describe('OpenAPI Loader: Cloudfunction', () => {
   let createdSchema: GraphQLSchema;

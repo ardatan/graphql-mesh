@@ -1,6 +1,6 @@
 {
   "name": "json-machete",
-  "version": "0.18.15",
+  "version": "0.18.18",
   "type": "module",
   "repository": {
     "type": "git",
@@ -33,11 +33,11 @@
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.3.3",
-    "@graphql-mesh/types": "0.91.7",
-    "@graphql-mesh/utils": "0.43.15",
+    "@graphql-mesh/types": "0.91.10",
+    "@graphql-mesh/utils": "0.43.18",
     "@graphql-tools/utils": "9.2.1",
     "@json-schema-tools/meta-schema": "1.7.0",
-    "@whatwg-node/fetch": "^0.8.0",
+    "@whatwg-node/fetch": "^0.8.3",
     "json-pointer": "0.6.2",
     "to-json-schema": "0.2.5",
     "tslib": "^2.4.0",

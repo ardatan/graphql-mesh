@@ -1,13 +1,13 @@
+import Redis from 'ioredis';
+import RedisMock from 'ioredis-mock';
+import { process } from '@graphql-mesh/cross-helpers';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import {
   KeyValueCache,
   KeyValueCacheSetOptions,
   MeshPubSub,
   YamlConfig,
 } from '@graphql-mesh/types';
-import Redis from 'ioredis';
-import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { process } from '@graphql-mesh/cross-helpers';
-import RedisMock from 'ioredis-mock';
 
 function interpolateStrWithEnv(str: string): string {
   return stringInterpolator.parse(str, { env: process.env });

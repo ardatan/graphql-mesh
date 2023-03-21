@@ -1,11 +1,10 @@
-import { findAndParseConfig } from '@graphql-mesh/cli';
-import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
-import { ProcessedConfig } from '@graphql-mesh/config';
-import { join } from 'path';
-
-import { lexicographicSortSchema } from 'graphql';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { readFile } from 'fs/promises';
+import { join } from 'path';
+import { lexicographicSortSchema } from 'graphql';
+import { findAndParseConfig } from '@graphql-mesh/cli';
+import { ProcessedConfig } from '@graphql-mesh/config';
+import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 describe('SOAP Country Info', () => {
   let config: ProcessedConfig;

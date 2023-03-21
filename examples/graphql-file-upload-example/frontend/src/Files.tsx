@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client';
-import { GET_FILES, DELETE_FILE } from './queries';
+import { DELETE_FILE, GET_FILES } from './queries';
 
 export type FileType = {
   filename: string;

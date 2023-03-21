@@ -1,19 +1,19 @@
-import { Logger, Maybe, RawSourceOutput, YamlConfig } from '@graphql-mesh/types';
-import * as tsBasePlugin from '@graphql-codegen/typescript';
-import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
-import { GraphQLSchema, GraphQLObjectType, NamedTypeNode, Kind } from 'graphql';
-import { codegen } from '@graphql-codegen/core';
-import { pascalCase } from 'pascal-case';
-import { printSchemaWithDirectives, Source } from '@graphql-tools/utils';
-import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
-import * as typescriptGenericSdk from '@graphql-codegen/typescript-generic-sdk';
-import * as typedDocumentNodePlugin from '@graphql-codegen/typed-document-node';
-import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
-import ts from 'typescript';
-import { pathExists, writeFile, writeJSON } from '@graphql-mesh/utils';
-import { generateOperations } from './generate-operations.js';
-import { GraphQLMeshCLIParams } from '..';
+import { GraphQLObjectType, GraphQLSchema, Kind, NamedTypeNode } from 'graphql';
 import JSON5 from 'json5';
+import { pascalCase } from 'pascal-case';
+import ts from 'typescript';
+import { codegen } from '@graphql-codegen/core';
+import * as typedDocumentNodePlugin from '@graphql-codegen/typed-document-node';
+import * as tsBasePlugin from '@graphql-codegen/typescript';
+import * as typescriptGenericSdk from '@graphql-codegen/typescript-generic-sdk';
+import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
+import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
+import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
+import { Logger, Maybe, RawSourceOutput, YamlConfig } from '@graphql-mesh/types';
+import { pathExists, writeFile, writeJSON } from '@graphql-mesh/utils';
+import { printSchemaWithDirectives, Source } from '@graphql-tools/utils';
+import { GraphQLMeshCLIParams } from '..';
+import { generateOperations } from './generate-operations.js';
 
 const unifiedContextIdentifier = 'MeshContext';
 

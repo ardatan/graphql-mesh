@@ -1,5 +1,38 @@
 # nextjs-apollo-example
 
+## 0.1.241
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3f658a771`](https://github.com/Urigo/graphql-mesh/commit/3f658a7711cd68bc7451c1494699c5ffb8e919ce),
+  [`3f658a771`](https://github.com/Urigo/graphql-mesh/commit/3f658a7711cd68bc7451c1494699c5ffb8e919ce)]:
+  - @graphql-mesh/config@10.1.11
+  - @graphql-mesh/runtime@0.46.19
+  - @graphql-mesh/cli@0.82.28
+  - @graphql-mesh/openapi@0.35.24
+
+## 0.1.240
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.27
+  - @graphql-mesh/config@10.1.10
+  - @graphql-mesh/openapi@0.35.23
+  - @graphql-mesh/runtime@0.46.18
+
+## 0.1.239
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b86d420d4`](https://github.com/Urigo/graphql-mesh/commit/b86d420d4fdf1132f3485c35087aaecbce45a728)]:
+  - @graphql-mesh/cli@0.82.26
+  - @graphql-mesh/config@10.1.9
+  - @graphql-mesh/openapi@0.35.22
+  - @graphql-mesh/runtime@0.46.17
+
 ## 0.1.238
 
 ### Patch Changes

@@ -1,10 +1,10 @@
-import { ResolverData } from '@graphql-mesh/string-interpolation';
-import { MeshPubSub, Logger, MeshFetch } from '@graphql-mesh/types';
-import { BaseLoaderOptions } from '@graphql-tools/utils';
 import { OperationTypeNode } from 'graphql';
 import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 import { JSONSchema, JSONSchemaObject } from 'json-machete';
 import { IStringifyOptions } from 'qs';
+import { ResolverData } from '@graphql-mesh/string-interpolation';
+import { Logger, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
+import { BaseLoaderOptions } from '@graphql-tools/utils';
 
 export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   endpoint?: string;

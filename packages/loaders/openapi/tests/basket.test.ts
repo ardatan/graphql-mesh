@@ -1,6 +1,6 @@
+import { execute, parse } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Headers } from '@whatwg-node/fetch';
-import { execute, parse } from 'graphql';
 import loadGraphQLSchemaFromOpenAPI from '../src/index.js';
 
 describe('Basket', () => {

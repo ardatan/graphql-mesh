@@ -1,5 +1,54 @@
 # @graphql-mesh/config
 
+## 10.1.11
+
+### Patch Changes
+
+- [#5239](https://github.com/Urigo/graphql-mesh/pull/5239)
+  [`3f658a771`](https://github.com/Urigo/graphql-mesh/commit/3f658a7711cd68bc7451c1494699c5ffb8e919ce)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@whatwg-node/fetch@^0.8.3` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.8.3) (from
+    `^0.8.0`, in `dependencies`)
+- Updated dependencies
+  [[`3f658a771`](https://github.com/Urigo/graphql-mesh/commit/3f658a7711cd68bc7451c1494699c5ffb8e919ce),
+  [`3f658a771`](https://github.com/Urigo/graphql-mesh/commit/3f658a7711cd68bc7451c1494699c5ffb8e919ce)]:
+  - @graphql-mesh/runtime@0.46.19
+  - @graphql-mesh/utils@0.43.18
+  - @graphql-mesh/cache-localforage@0.7.18
+  - @graphql-mesh/merger-bare@0.16.20
+  - @graphql-mesh/merger-stitching@0.18.20
+  - @graphql-mesh/store@0.9.18
+  - @graphql-mesh/types@0.91.10
+
+## 10.1.10
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a272fdbca`](https://github.com/Urigo/graphql-mesh/commit/a272fdbca655b17119fb1dcb1c44498f387b1edc)]:
+  - @graphql-mesh/types@0.91.9
+  - @graphql-mesh/cache-localforage@0.7.17
+  - @graphql-mesh/merger-bare@0.16.19
+  - @graphql-mesh/merger-stitching@0.18.19
+  - @graphql-mesh/runtime@0.46.18
+  - @graphql-mesh/store@0.9.17
+  - @graphql-mesh/utils@0.43.17
+
+## 10.1.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b86d420d4`](https://github.com/Urigo/graphql-mesh/commit/b86d420d4fdf1132f3485c35087aaecbce45a728)]:
+  - @graphql-mesh/store@0.9.16
+  - @graphql-mesh/merger-stitching@0.18.18
+  - @graphql-mesh/types@0.91.8
+  - @graphql-mesh/merger-bare@0.16.18
+  - @graphql-mesh/cache-localforage@0.7.16
+  - @graphql-mesh/runtime@0.46.17
+  - @graphql-mesh/utils@0.43.16
+
 ## 10.1.8
 
 ### Patch Changes

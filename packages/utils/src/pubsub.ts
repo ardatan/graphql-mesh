@@ -1,4 +1,4 @@
-import { HookName, AllHooks, MeshPubSub } from '@graphql-mesh/types';
+import { AllHooks, HookName, MeshPubSub } from '@graphql-mesh/types';
 import { observableToAsyncIterable } from '@graphql-tools/utils';
 
 type Listener<THookName extends HookName = HookName> = (data: AllHooks[THookName]) => void;

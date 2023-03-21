@@ -1,17 +1,17 @@
-import NamingConventionTransform from '../src/index.js';
 import {
   buildSchema,
-  printSchema,
-  GraphQLObjectType,
-  GraphQLEnumType,
   execute,
-  parse,
+  GraphQLEnumType,
+  GraphQLObjectType,
   GraphQLUnionType,
+  parse,
+  printSchema,
 } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import NamingConventionTransform from '../src/index.js';
 
 describe('namingConvention - bare', () => {
   const schema = buildSchema(/* GraphQL */ `

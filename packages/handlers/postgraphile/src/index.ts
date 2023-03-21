@@ -1,22 +1,22 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {
-  MeshHandlerOptions,
-  MeshHandler,
-  MeshSource,
-  YamlConfig,
-  MeshPubSub,
-  Logger,
-  ImportFn,
-} from '@graphql-mesh/types';
-import { Plugin, withPostGraphileContext } from 'postgraphile';
-import { getPostGraphileBuilder } from 'postgraphile-core';
-import pg from 'pg';
-import { path, process } from '@graphql-mesh/cross-helpers';
 // eslint-disable-next-line import/no-nodejs-modules
 import { tmpdir } from 'os';
-import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import pg from 'pg';
+import { Plugin, withPostGraphileContext } from 'postgraphile';
+import { getPostGraphileBuilder } from 'postgraphile-core';
+import { path, process } from '@graphql-mesh/cross-helpers';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import {
+  ImportFn,
+  Logger,
+  MeshHandler,
+  MeshHandlerOptions,
+  MeshPubSub,
+  MeshSource,
+  YamlConfig,
+} from '@graphql-mesh/types';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 
 export default class PostGraphileHandler implements MeshHandler {

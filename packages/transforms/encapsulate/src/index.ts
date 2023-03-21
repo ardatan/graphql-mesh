@@ -1,13 +1,13 @@
 import { GraphQLSchema } from 'graphql';
-import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
-import { WrapType } from '@graphql-tools/wrap';
-import { ExecutionResult, ExecutionRequest, selectObjectFields } from '@graphql-tools/utils';
-import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
+import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import {
   applyRequestTransforms,
   applyResultTransforms,
   applySchemaTransforms,
 } from '@graphql-mesh/utils';
+import { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
+import { ExecutionRequest, ExecutionResult, selectObjectFields } from '@graphql-tools/utils';
+import { WrapType } from '@graphql-tools/wrap';
 
 const DEFUALT_APPLY_TO = {
   query: true,

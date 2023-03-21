@@ -1,5 +1,5 @@
-import { createRouter, Response } from '@whatwg-node/router';
 import { createServer } from 'http';
+import { createRouter, Response } from '@whatwg-node/router';
 
 interface Author {
   id: string;

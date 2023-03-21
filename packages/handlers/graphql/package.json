@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/graphql",
-  "version": "0.34.8",
+  "version": "0.34.11",
   "type": "module",
   "repository": {
     "type": "git",
@@ -33,10 +33,10 @@
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "0.3.3",
-    "@graphql-mesh/store": "0.9.15",
+    "@graphql-mesh/store": "0.9.18",
     "@graphql-mesh/string-interpolation": "0.4.2",
-    "@graphql-mesh/types": "0.91.7",
-    "@graphql-mesh/utils": "0.43.15",
+    "@graphql-mesh/types": "0.91.10",
+    "@graphql-mesh/utils": "0.43.18",
     "@graphql-tools/delegate": "9.0.28",
     "@graphql-tools/url-loader": "7.17.13",
     "@graphql-tools/utils": "9.2.1",

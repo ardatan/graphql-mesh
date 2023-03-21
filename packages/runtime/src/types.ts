@@ -1,19 +1,19 @@
+import { DocumentNode, ExecutionResult } from 'graphql';
+import { envelop } from '@envelop/core';
 import {
-  KeyValueCache,
-  MeshPubSub,
   GraphQLOperation,
+  KeyValueCache,
+  Logger,
+  MeshFetch,
   MeshHandler,
+  MeshMerger,
+  MeshPubSub,
   MeshTransform,
   YamlConfig,
-  Logger,
-  MeshMerger,
-  MeshFetch,
 } from '@graphql-mesh/types';
-import { DocumentNode, ExecutionResult } from 'graphql';
 import { IResolvers, Source } from '@graphql-tools/utils';
 import { MESH_CONTEXT_SYMBOL } from './constants.js';
 import { MeshInstance } from './get-mesh.js';
-import { envelop } from '@envelop/core';
 
 export type GetMeshOptions = {
   sources: MeshResolvedSource[];

@@ -1,5 +1,5 @@
-import { MeshInstance } from '@graphql-mesh/runtime';
 import { CORSOptions, createYoga, useLogger } from 'graphql-yoga';
+import { MeshInstance } from '@graphql-mesh/runtime';
 
 export const graphqlHandler = (
   getBuiltMesh: () => Promise<MeshInstance>,

@@ -1,5 +1,13 @@
-import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { XMLParser } from 'fast-xml-parser';
+import {
+  DirectiveLocation,
+  GraphQLBoolean,
+  GraphQLDirective,
+  GraphQLFloat,
+  GraphQLInt,
+  GraphQLScalarType,
+  GraphQLString,
+} from 'graphql';
 import {
   AnyTypeComposer,
   EnumTypeComposer,
@@ -13,40 +21,32 @@ import {
   SchemaComposer,
 } from 'graphql-compose';
 import {
-  XSComplexType,
-  WSDLDefinition,
-  WSDLObject,
-  WSDLPortType,
-  WSDLBinding,
-  WSDLMessage,
-  XSSchema,
-  XSSimpleType,
-  XSElement,
-  XSDObject,
-} from './types.js';
-import {
-  GraphQLURL,
+  GraphQLBigInt,
   GraphQLByte,
   GraphQLDate,
   GraphQLDateTime,
   GraphQLDuration,
   GraphQLHexadecimal,
-  GraphQLBigInt,
   GraphQLTime,
-  GraphQLVoid,
   GraphQLUnsignedInt,
+  GraphQLURL,
+  GraphQLVoid,
   RegularExpression,
 } from 'graphql-scalars';
-import {
-  DirectiveLocation,
-  GraphQLBoolean,
-  GraphQLDirective,
-  GraphQLFloat,
-  GraphQLInt,
-  GraphQLScalarType,
-  GraphQLString,
-} from 'graphql';
 import { MeshFetch } from '@graphql-mesh/types';
+import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import {
+  WSDLBinding,
+  WSDLDefinition,
+  WSDLMessage,
+  WSDLObject,
+  WSDLPortType,
+  XSComplexType,
+  XSDObject,
+  XSElement,
+  XSSchema,
+  XSSimpleType,
+} from './types.js';
 import { PARSE_XML_OPTIONS, SoapAnnotations } from './utils.js';
 
 export interface SOAPLoaderOptions {

@@ -1,9 +1,9 @@
-import { startServer as startUploadFilesServer } from '../upload-files/server';
-import { startServer as startResizeImageServer } from '../resize-image/server';
-import { File } from '@whatwg-node/fetch';
-import { findAndParseConfig } from '@graphql-mesh/cli';
 import { join } from 'path';
+import { findAndParseConfig } from '@graphql-mesh/cli';
 import { getMesh } from '@graphql-mesh/runtime';
+import { File } from '@whatwg-node/fetch';
+import { startServer as startResizeImageServer } from '../resize-image/server';
+import { startServer as startUploadFilesServer } from '../upload-files/server';
 
 describe('Upload Example', () => {
   let stopUploadFilesServer;

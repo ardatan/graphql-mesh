@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { useMutation } from '@apollo/client';
+import { FilesType, FileType } from './Files';
 import { GET_FILES, UPLOAD_FILE } from './queries';
-import { FileType, FilesType } from './Files';
 
 export default function UploadFile() {
   const [uploadFile] = useMutation(UPLOAD_FILE);

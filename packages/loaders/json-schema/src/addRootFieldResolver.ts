@@ -1,5 +1,4 @@
-import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { Logger, MeshFetch } from '@graphql-mesh/types';
+import { dset } from 'dset';
 import {
   getNamedType,
   GraphQLField,
@@ -11,16 +10,17 @@ import {
   isScalarType,
   isUnionType,
 } from 'graphql';
-import { dset } from 'dset';
+import { IStringifyOptions, parse as qsParse, stringify as qsStringify } from 'qs';
 import urlJoin from 'url-join';
+import { process } from '@graphql-mesh/cross-helpers';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import { Logger, MeshFetch } from '@graphql-mesh/types';
+import { getHeadersObj } from '@graphql-mesh/utils';
+import { createGraphQLError, memoize1 } from '@graphql-tools/utils';
+import { Blob, File, FormData } from '@whatwg-node/fetch';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
 import { HTTPMethod } from './types.js';
 import { isFileUpload } from './utils.js';
-import { stringify as qsStringify, parse as qsParse, IStringifyOptions } from 'qs';
-import { createGraphQLError, memoize1 } from '@graphql-tools/utils';
-import { getHeadersObj } from '@graphql-mesh/utils';
-import { process } from '@graphql-mesh/cross-helpers';
-import { FormData, File, Blob } from '@whatwg-node/fetch';
 
 const isListTypeOrNonNullListType = memoize1(function isListTypeOrNonNullListType(
   type: GraphQLOutputType,

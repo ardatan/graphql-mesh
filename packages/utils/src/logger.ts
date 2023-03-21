@@ -1,5 +1,5 @@
-import { LazyLoggerMessage, Logger } from '@graphql-mesh/types';
 import { process, util } from '@graphql-mesh/cross-helpers';
+import { LazyLoggerMessage, Logger } from '@graphql-mesh/types';
 
 type MessageTransformer = (msg: string) => string;
 

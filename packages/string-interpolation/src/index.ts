@@ -1,5 +1,5 @@
-import { Interpolator } from './interpolator.js';
 import dayjs from 'dayjs';
+import { Interpolator } from './interpolator.js';
 
 const hashCode = (s: string) =>
   s.split('').reduce((a, b) => ((a << 5) - a + b.charCodeAt(0)) | 0, 0);

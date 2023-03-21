@@ -1,18 +1,18 @@
+import { getAbsolutePath, getCwd, JSONSchemaObject } from 'json-machete';
+import toJsonSchema from 'to-json-schema';
+import { api10, loadApi } from '@ardatan/raml-1-parser';
+import { process } from '@graphql-mesh/cross-helpers';
+import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import { asArray } from '@graphql-tools/utils';
 import {
   HTTPMethod,
   JSONSchemaOperationConfig,
   JSONSchemaOperationResponseConfig,
 } from '@omnigraph/json-schema';
-import { getAbsolutePath, getCwd, JSONSchemaObject } from 'json-machete';
-import { api10, loadApi } from '@ardatan/raml-1-parser';
 import { fetch as crossUndiciFetch } from '@whatwg-node/fetch';
-import toJsonSchema from 'to-json-schema';
 import { RAMLLoaderOptions, RAMLLoaderSelectQueryOrMutationFieldConfig } from './types.js';
-import { asArray } from '@graphql-tools/utils';
 import { getFieldNameFromPath } from './utils.js';
-import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
-import { process } from '@graphql-mesh/cross-helpers';
 
 function resolveTraitsByIs(base: { is: () => api10.TraitRef[] }) {
   const allTraits: api10.Trait[] = [];
