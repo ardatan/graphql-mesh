@@ -16,7 +16,7 @@ jobs:
   lint:
     uses: the-guild-org/shared-config/.github/workflows/lint.yml@main
     with:
-      script: yarn ci:lint
+      script: yarn prettier:check && yarn ci:lint
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
 
