@@ -88,7 +88,7 @@ export default class Neo4JHandler implements MeshHandler {
         if (!String.prototype.replaceAll) {
           replaceAllPolyfilled = true;
           // eslint-disable-next-line no-extend-native
-          String.prototype.replaceAll = function (str, newStr) {
+          String.prototype.replaceAll = function (str, newStr: any) {
             if (Object.prototype.toString.call(str).toLowerCase() === '[object regexp]') {
               return this.replace(str, newStr);
             }
