@@ -77,7 +77,7 @@
     "typescript": "4.9.5"
   },
   "resolutions": {
-    "esbuild": "0.17.0",
+    "esbuild": "0.17.12",
     "graphql": "16.6.0",
     "undici": "5.21.0",
     "uuid": "7.0.3"
