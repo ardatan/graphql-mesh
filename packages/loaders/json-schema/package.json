@@ -46,7 +46,7 @@
     "graphql-scalars": "^1.20.4",
     "json-machete": "0.18.18",
     "pascal-case": "3.1.2",
-    "qs": "6.11.0",
+    "qs": "6.11.1",
     "to-json-schema": "0.2.5",
     "tslib": "^2.4.0",
     "url-join": "4.0.1"

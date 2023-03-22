@@ -37,12 +37,12 @@
     "@graphql-mesh/utils": "0.43.18",
     "graphql-compose": "9.0.10",
     "graphql-compose-connection": "8.2.1",
-    "graphql-compose-mongoose": "9.7.2",
+    "graphql-compose-mongoose": "9.8.0",
     "graphql-compose-pagination": "8.3.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "mongoose": "6.10.0"
+    "mongoose": "6.10.4"
   },
   "publishConfig": {
     "access": "public",
