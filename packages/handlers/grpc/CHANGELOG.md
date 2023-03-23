@@ -1,5 +1,21 @@
 # @graphql-mesh/grpc
 
+## 0.29.18
+
+### Patch Changes
+
+- [#5252](https://github.com/Urigo/graphql-mesh/pull/5252)
+  [`c90eb5ac6`](https://github.com/Urigo/graphql-mesh/commit/c90eb5ac631507de1f49db68ca681193cc5a20b5)
+  Thanks [@ardatan](https://github.com/ardatan)! - Make shared packages peer dependency
+
+- Updated dependencies
+  [[`c90eb5ac6`](https://github.com/Urigo/graphql-mesh/commit/c90eb5ac631507de1f49db68ca681193cc5a20b5)]:
+  - @graphql-mesh/string-interpolation@0.4.3
+  - @graphql-mesh/cross-helpers@0.3.4
+  - @graphql-mesh/store@0.9.20
+  - @graphql-mesh/types@0.91.12
+  - @graphql-mesh/utils@0.43.20
+
 ## 0.29.17
 
 ### Patch Changes

@@ -1,5 +1,20 @@
 # @graphql-mesh/raml
 
+## 0.10.24
+
+### Patch Changes
+
+- [#5252](https://github.com/Urigo/graphql-mesh/pull/5252)
+  [`c90eb5ac6`](https://github.com/Urigo/graphql-mesh/commit/c90eb5ac631507de1f49db68ca681193cc5a20b5)
+  Thanks [@ardatan](https://github.com/ardatan)! - Make shared packages peer dependency
+
+- Updated dependencies
+  [[`c90eb5ac6`](https://github.com/Urigo/graphql-mesh/commit/c90eb5ac631507de1f49db68ca681193cc5a20b5)]:
+  - @omnigraph/raml@0.9.24
+  - @graphql-mesh/store@0.9.20
+  - @graphql-mesh/types@0.91.12
+  - @graphql-mesh/utils@0.43.20
+
 ## 0.10.23
 
 ### Patch Changes

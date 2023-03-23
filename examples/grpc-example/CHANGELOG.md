@@ -1,5 +1,15 @@
 # grpc-example
 
+## 0.5.364
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c90eb5ac6`](https://github.com/Urigo/graphql-mesh/commit/c90eb5ac631507de1f49db68ca681193cc5a20b5)]:
+  - @graphql-mesh/transform-naming-convention@0.13.22
+  - @graphql-mesh/grpc@0.29.18
+  - @graphql-mesh/cli@0.82.30
+
 ## 0.5.363
 
 ### Patch Changes
