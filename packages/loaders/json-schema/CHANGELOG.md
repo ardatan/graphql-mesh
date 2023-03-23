@@ -1,5 +1,20 @@
 # @omnigraph/json-schema
 
+## 0.38.23
+
+### Patch Changes
+
+- [#5192](https://github.com/Urigo/graphql-mesh/pull/5192)
+  [`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`qs@6.11.1` ↗︎](https://www.npmjs.com/package/qs/v/6.11.1) (from `6.11.0`,
+    in `dependencies`)
+- Updated dependencies
+  [[`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54)]:
+  - @graphql-mesh/types@0.91.11
+  - json-machete@0.18.19
+  - @graphql-mesh/utils@0.43.19
+
 ## 0.38.22
 
 ### Patch Changes

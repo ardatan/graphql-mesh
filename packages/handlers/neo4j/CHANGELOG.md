@@ -1,5 +1,39 @@
 # @graphql-mesh/neo4j
 
+## 0.22.21
+
+### Patch Changes
+
+- [#5192](https://github.com/Urigo/graphql-mesh/pull/5192)
+  [`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@neo4j/graphql@3.17.1` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.17.1) (from
+    `3.17.0`, in `dependencies`)
+
+- [#5245](https://github.com/Urigo/graphql-mesh/pull/5245)
+  [`f8919269d`](https://github.com/Urigo/graphql-mesh/commit/f8919269d9a53794a9ed33fc5b45785660abc7f0)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@neo4j/graphql@3.17.2` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.17.2) (from
+    `3.17.1`, in `dependencies`)
+
+- [#5249](https://github.com/Urigo/graphql-mesh/pull/5249)
+  [`9854f62b1`](https://github.com/Urigo/graphql-mesh/commit/9854f62b16981308247c0aeacd1724498e9e9963)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix module import issues
+
+- [#5243](https://github.com/Urigo/graphql-mesh/pull/5243)
+  [`95e8b0921`](https://github.com/Urigo/graphql-mesh/commit/95e8b0921369572ac4f435c1eb4bd34837ddb42f)
+  Thanks [@ardatan](https://github.com/ardatan)! - Underlying library stopped supporting Node 14 so
+  a dynamic polyfill is added to keep supporting Node 14 until EOL
+- Updated dependencies
+  [[`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54)]:
+  - @graphql-mesh/types@0.91.11
+  - @graphql-mesh/store@0.9.19
+  - @graphql-mesh/utils@0.43.19
+
 ## 0.22.20
 
 ### Patch Changes
