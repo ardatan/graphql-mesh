@@ -38,7 +38,7 @@ export const DEFAULT_CLI_PARAMS: GraphQLMeshCLIParams = {
   commandName: 'mesh',
   initialLoggerPrefix: '🕸️  Mesh',
   configName: 'mesh',
-  artifactsDir: '.mesh',
+  artifactsDir: process.env.MESH_ARTIFACTS_DIRNAME || '.mesh',
   serveMessage: 'Serving GraphQL Mesh',
   playgroundTitle: 'GraphiQL Mesh',
   builtMeshFactoryName: 'getBuiltMesh',
