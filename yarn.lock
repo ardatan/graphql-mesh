@@ -5935,10 +5935,10 @@
   resolved "https://registry.yarnpkg.com/@whatwg-node/events/-/events-0.0.2.tgz#7b7107268d2982fc7b7aff5ee6803c64018f84dd"
   integrity sha512-WKj/lI4QjnLuPrim0cfO7i+HsDSXHxNv1y0CrJhdntuO3hxWZmnXCwNDnwOvry11OjRin6cgWNF+j/9Pn8TN4w==
 
-"@whatwg-node/fetch@0.8.3", "@whatwg-node/fetch@^0.8.0", "@whatwg-node/fetch@^0.8.1", "@whatwg-node/fetch@^0.8.2", "@whatwg-node/fetch@^0.8.3":
-  version "0.8.3"
-  resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.8.3.tgz#41968bd9450f04e9eb60af636430bb1763882031"
-  integrity sha512-qpacTdzO8z36pa3HpEXEE2PoCXS7sn3LNqr7IjDETEPWJWS0RTJMD49fL1ZKdjQrfHZNBQCRwVNOcT1RZv/xVg==
+"@whatwg-node/fetch@0.8.4", "@whatwg-node/fetch@^0.8.0", "@whatwg-node/fetch@^0.8.1", "@whatwg-node/fetch@^0.8.2", "@whatwg-node/fetch@^0.8.3":
+  version "0.8.4"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.8.4.tgz#ae1c306d1e4f5ba5cf9badf070de259f04c2cda8"
+  integrity sha512-xK0NGWt49P+JmsdfN+8zmHzZoscENrV0KL1SyyncvWkc6vbFmSqGSpvItEBuhj1PAfTGFEUpyiRMCsut2hLy/Q==
   dependencies:
     "@peculiar/webcrypto" "^1.4.0"
     "@whatwg-node/node-fetch" "^0.3.3"
