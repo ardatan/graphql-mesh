@@ -11661,15 +11661,16 @@ invariant@2.2.4, invariant@^2.2.4:
   dependencies:
     loose-envify "^1.0.0"
 
-ioredis-mock@8.2.6:
-  version "8.2.6"
-  resolved "https://registry.yarnpkg.com/ioredis-mock/-/ioredis-mock-8.2.6.tgz#66af2165e39dd957dedfbc44118fc3d323a59610"
-  integrity sha512-Dc4fWVicryn1O6ZLT77TgKTATVBnk4XpUAYMQetKTLlKs4j7+/+6SUTYy0xnsQHVJedR0RBP3nCeqePobU/kog==
+ioredis-mock@8.2.7:
+  version "8.2.7"
+  resolved "https://registry.yarnpkg.com/ioredis-mock/-/ioredis-mock-8.2.7.tgz#f4f92b458dfad71d2f683d25beb91e1cd7a7d819"
+  integrity sha512-Oj0mN+w39CTTg5UyBoSMPwYDfx96AUHB0iXYdmxn87atHfDLktNCZ66NuSfiM4fnQ2FNjnzrEL53a0By2sFD5Q==
   dependencies:
     "@ioredis/as-callback" "^3.0.0"
     "@ioredis/commands" "^1.2.0"
     fengari "^0.1.4"
     fengari-interop "^0.1.3"
+    semver "^7.3.8"
 
 ioredis@5.3.1, ioredis@>=5:
   version "5.3.1"
