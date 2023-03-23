@@ -1,5 +1,19 @@
 # @graphql-mesh/cache-redis
 
+## 0.11.20
+
+### Patch Changes
+
+- [#5250](https://github.com/Urigo/graphql-mesh/pull/5250)
+  [`1105e4399`](https://github.com/Urigo/graphql-mesh/commit/1105e439934c319d87267832e0edcc4a8dd423f4)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`ioredis-mock@8.2.7` ↗︎](https://www.npmjs.com/package/ioredis-mock/v/8.2.7)
+    (from `8.2.6`, in `dependencies`)
+- Updated dependencies
+  [[`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54)]:
+  - @graphql-mesh/types@0.91.11
+  - @graphql-mesh/utils@0.43.19
+
 ## 0.11.19
 
 ### Patch Changes

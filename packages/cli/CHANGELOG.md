@@ -1,5 +1,58 @@
 # @graphql-mesh/cli
 
+## 0.82.29
+
+### Patch Changes
+
+- [#5192](https://github.com/Urigo/graphql-mesh/pull/5192)
+  [`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-codegen/typed-document-node@3.0.2` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typed-document-node/v/3.0.2)
+    (from `3.0.1`, in `dependencies`)
+  - Updated dependency [`cosmiconfig@8.1.3` ↗︎](https://www.npmjs.com/package/cosmiconfig/v/8.1.3)
+    (from `8.1.0`, in `dependencies`)
+  - Updated dependency [`graphql-ws@5.12.0` ↗︎](https://www.npmjs.com/package/graphql-ws/v/5.12.0)
+    (from `5.11.3`, in `dependencies`)
+  - Updated dependency [`mkdirp@2.1.5` ↗︎](https://www.npmjs.com/package/mkdirp/v/2.1.5) (from
+    `2.1.3`, in `dependencies`)
+  - Updated dependency [`rimraf@4.4.0` ↗︎](https://www.npmjs.com/package/rimraf/v/4.4.0) (from
+    `4.1.2`, in `dependencies`)
+  - Updated dependency [`ws@8.13.0` ↗︎](https://www.npmjs.com/package/ws/v/8.13.0) (from `8.12.1`,
+    in `dependencies`)
+
+- [#5248](https://github.com/Urigo/graphql-mesh/pull/5248)
+  [`52e6693e6`](https://github.com/Urigo/graphql-mesh/commit/52e6693e672a2975d0f4fdc27f0796453bb50cda)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`mkdirp@2.1.6` ↗︎](https://www.npmjs.com/package/mkdirp/v/2.1.6) (from
+    `2.1.5`, in `dependencies`)
+  - Updated dependency [`rimraf@4.4.1` ↗︎](https://www.npmjs.com/package/rimraf/v/4.4.1) (from
+    `4.4.0`, in `dependencies`)
+
+- [#5235](https://github.com/Urigo/graphql-mesh/pull/5235)
+  [`2987413b0`](https://github.com/Urigo/graphql-mesh/commit/2987413b0150835859480d07cf386c32beb35bec)
+  Thanks [@ardatan](https://github.com/ardatan)! - Allow users to change the artifacts directory
+  name instead of `.mesh`
+
+- [#5249](https://github.com/Urigo/graphql-mesh/pull/5249)
+  [`9854f62b1`](https://github.com/Urigo/graphql-mesh/commit/9854f62b16981308247c0aeacd1724498e9e9963)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix module import issues
+
+- Updated dependencies
+  [[`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54),
+  [`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54),
+  [`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54),
+  [`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54),
+  [`9854f62b1`](https://github.com/Urigo/graphql-mesh/commit/9854f62b16981308247c0aeacd1724498e9e9963)]:
+  - @graphql-mesh/config@10.1.12
+  - @graphql-mesh/http@0.3.25
+  - @graphql-mesh/runtime@0.46.20
+  - @graphql-mesh/types@0.91.11
+  - @graphql-mesh/store@0.9.19
+  - @graphql-mesh/utils@0.43.19
+
 ## 0.82.28
 
 ### Patch Changes

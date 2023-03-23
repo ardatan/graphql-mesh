@@ -1,5 +1,32 @@
 # @graphql-mesh/openapi
 
+## 0.35.25
+
+### Patch Changes
+
+- [#5230](https://github.com/Urigo/graphql-mesh/pull/5230)
+  [`fdad1d12a`](https://github.com/Urigo/graphql-mesh/commit/fdad1d12a3aef03d7a65ff2ee6f1db777ef7694b)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency
+    [`@graphql-mesh/string-interpolation@0.4.2` ↗︎](https://www.npmjs.com/package/@graphql-mesh/string-interpolation/v/0.4.2)
+    (to `dependencies`)
+
+- [#5230](https://github.com/Urigo/graphql-mesh/pull/5230)
+  [`fdad1d12a`](https://github.com/Urigo/graphql-mesh/commit/fdad1d12a3aef03d7a65ff2ee6f1db777ef7694b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support interpolated strings for \`source\`
+
+- [#5249](https://github.com/Urigo/graphql-mesh/pull/5249)
+  [`9854f62b1`](https://github.com/Urigo/graphql-mesh/commit/9854f62b16981308247c0aeacd1724498e9e9963)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix module import issues
+
+- Updated dependencies
+  [[`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54)]:
+  - @graphql-mesh/types@0.91.11
+  - @omnigraph/openapi@0.19.25
+  - @graphql-mesh/store@0.9.19
+  - @graphql-mesh/utils@0.43.19
+
 ## 0.35.24
 
 ### Patch Changes

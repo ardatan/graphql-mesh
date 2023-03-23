@@ -1,5 +1,13 @@
 # @graphql-mesh/transform-hive
 
+## 0.0.25
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54)]:
+  - @graphql-mesh/types@0.91.11
+
 ## 0.0.24
 
 ### Patch Changes

@@ -1,5 +1,21 @@
 # @graphql-mesh/grpc
 
+## 0.29.17
+
+### Patch Changes
+
+- [#5248](https://github.com/Urigo/graphql-mesh/pull/5248)
+  [`52e6693e6`](https://github.com/Urigo/graphql-mesh/commit/52e6693e672a2975d0f4fdc27f0796453bb50cda)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@grpc/proto-loader@0.7.6` ↗︎](https://www.npmjs.com/package/@grpc/proto-loader/v/0.7.6) (from
+    `0.7.5`, in `dependencies`)
+- Updated dependencies
+  [[`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54)]:
+  - @graphql-mesh/types@0.91.11
+  - @graphql-mesh/store@0.9.19
+  - @graphql-mesh/utils@0.43.19
+
 ## 0.29.16
 
 ### Patch Changes

@@ -1,5 +1,18 @@
 # @graphql-mesh/types
 
+## 0.91.11
+
+### Patch Changes
+
+- [#5192](https://github.com/Urigo/graphql-mesh/pull/5192)
+  [`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-typed-document-node/core@3.2.0` ↗︎](https://www.npmjs.com/package/@graphql-typed-document-node/core/v/3.2.0)
+    (from `3.1.2`, in `dependencies`)
+- Updated dependencies []:
+  - @graphql-mesh/store@0.9.19
+
 ## 0.91.10
 
 ### Patch Changes
