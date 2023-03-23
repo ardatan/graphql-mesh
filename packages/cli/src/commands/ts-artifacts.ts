@@ -291,7 +291,7 @@ ${BASEDIR_ASSIGNMENT_COMMENT}
 const importFn: ImportFn = <T>(moduleId: string) => {
   const relativeModuleId = (pathModule.isAbsolute(moduleId) ? pathModule.relative(baseDir, moduleId) : moduleId).split('\\\\').join('/').replace(baseDir + '/', '');
   switch(relativeModuleId) {${[...importedModulesSet]
-    .map(importedModuleName => {
+    .map((importedModuleName, importedModuleIndex) => {
       let moduleMapProp = importedModuleName;
       let importPath = importedModuleName;
       if (importPath.startsWith('.')) {
@@ -304,9 +304,11 @@ const importFn: ImportFn = <T>(moduleId: string) => {
           .split('\\')
           .join('/')}`;
       }
+      const importIdentifier = `importedModule$${importedModuleIndex}`;
+      importCodes.add(`import * as ${importIdentifier} from ${JSON.stringify(importPath)};`);
       return `
     case ${JSON.stringify(moduleMapProp)}:
-      return import(${JSON.stringify(importPath)}) as T;
+      return Promise.resolve(${importIdentifier}) as T;
     `;
     })
     .join('')}

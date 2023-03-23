@@ -45,7 +45,7 @@ export default class RAMLHandler implements MeshHandler {
     this.config = config;
     this.baseDir = baseDir;
     this.schemaWithAnnotationsProxy = store.proxy(
-      'schemaWithAnnotations.graphql',
+      'schemaWithAnnotations',
       PredefinedProxyOptions.GraphQLSchemaWithDiffing,
     );
     this.bundleProxy = store.proxy(

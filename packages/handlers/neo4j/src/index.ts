@@ -64,7 +64,7 @@ export default class Neo4JHandler implements MeshHandler {
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
-    this.typeDefs = store.proxy('typeDefs.graphql', PredefinedProxyOptions.StringWithoutValidation);
+    this.typeDefs = store.proxy('typeDefs', PredefinedProxyOptions.StringWithoutValidation);
     this.logger = logger;
     this.importFn = importFn;
   }
