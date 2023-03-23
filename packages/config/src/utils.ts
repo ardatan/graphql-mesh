@@ -63,8 +63,9 @@ export async function getPackage<T>({
     try {
       const exported = await importFn(moduleName, true);
       const resolved = exported.default || (exported as T);
+      const relativeModuleName = path.isAbsolute(moduleName) ? name : moduleName;
       return {
-        moduleName,
+        moduleName: relativeModuleName,
         resolved,
       };
     } catch (err) {

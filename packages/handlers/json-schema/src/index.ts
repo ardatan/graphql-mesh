@@ -50,7 +50,7 @@ export default class JsonSchemaHandler implements MeshHandler {
     this.config = config;
     this.baseDir = baseDir;
     this.schemaWithAnnotationsProxy = store.proxy(
-      'schemaWithAnnotations.graphql',
+      'schemaWithAnnotations',
       PredefinedProxyOptions.GraphQLSchemaWithDiffing,
     );
     this.pubsub = pubsub;

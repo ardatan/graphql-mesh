@@ -29,7 +29,7 @@ export default class SoapHandler implements MeshHandler {
   }: MeshHandlerOptions<YamlConfig.SoapHandler>) {
     this.config = config;
     this.soapSDLProxy = store.proxy(
-      'schemaWithAnnotations.graphql',
+      'schemaWithAnnotations',
       PredefinedProxyOptions.GraphQLSchemaWithDiffing,
     );
     this.baseDir = baseDir;

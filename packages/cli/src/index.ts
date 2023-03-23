@@ -51,6 +51,12 @@ export const DEFAULT_CLI_PARAMS: GraphQLMeshCLIParams = {
   additionalPackagePrefixes: [],
 };
 
+function getTsConfigBaseDir(baseDir: string) {
+  const tsConfigPath = pathModule.join(baseDir, 'tsconfig.json');
+  const tsConfigExists = fs.existsSync(tsConfigPath);
+  return tsConfigExists ? baseDir : process.cwd();
+}
+
 export async function graphqlMesh(
   cliParams = DEFAULT_CLI_PARAMS,
   args = hideBin(process.argv),
@@ -68,10 +74,10 @@ export async function graphqlMesh(
       default: [],
       coerce: (externalModules: string[]) =>
         Promise.all(
-          externalModules.map(module => {
-            const localModulePath = pathModule.resolve(baseDir, module);
+          externalModules.map(moduleName => {
+            const localModulePath = pathModule.resolve(baseDir, moduleName);
             const islocalModule = fs.existsSync(localModulePath);
-            return defaultImportFn(islocalModule ? localModulePath : module);
+            return defaultImportFn(islocalModule ? localModulePath : moduleName);
           }),
         ),
     })
@@ -88,12 +94,13 @@ export async function graphqlMesh(
         } else {
           baseDir = pathModule.resolve(cwdPath, dir);
         }
-        const tsConfigPath = pathModule.join(baseDir, 'tsconfig.json');
+        const tsConfigBaseDir = getTsConfigBaseDir(baseDir);
+        const tsConfigPath = pathModule.join(tsConfigBaseDir, 'tsconfig.json');
         const tsConfigExists = fs.existsSync(tsConfigPath);
         tsNodeRegister({
           transpileOnly: true,
           typeCheck: false,
-          dir: baseDir,
+          dir: tsConfigBaseDir,
           require: ['graphql-import-node/register'],
           compilerOptions: {
             module: 'commonjs',
@@ -105,7 +112,7 @@ export async function graphqlMesh(
             const tsConfig = JSON5.parse(tsConfigStr);
             if (tsConfig.compilerOptions?.paths) {
               tsConfigPathsRegister({
-                baseUrl: baseDir,
+                baseUrl: tsConfigBaseDir,
                 paths: tsConfig.compilerOptions.paths,
               });
             }
