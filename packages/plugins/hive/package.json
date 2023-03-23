@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-hive",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "type": "module",
   "repository": {
     "type": "git",
@@ -29,14 +29,14 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/cross-helpers": "^0.3.3",
-    "@graphql-mesh/types": "^0.91.11",
+    "@graphql-mesh/cross-helpers": "^0.3.4",
+    "@graphql-mesh/types": "^0.91.12",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
     "@graphql-hive/client": "0.23.1",
-    "@graphql-mesh/string-interpolation": "0.4.2"
+    "@graphql-mesh/string-interpolation": "0.4.3"
   },
   "devDependencies": {
     "@types/http-cache-semantics": "4.0.1"

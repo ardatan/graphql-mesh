@@ -1,5 +1,21 @@
 # @omnigraph/raml
 
+## 0.9.24
+
+### Patch Changes
+
+- [#5252](https://github.com/Urigo/graphql-mesh/pull/5252)
+  [`c90eb5ac6`](https://github.com/Urigo/graphql-mesh/commit/c90eb5ac631507de1f49db68ca681193cc5a20b5)
+  Thanks [@ardatan](https://github.com/ardatan)! - Make shared packages peer dependency
+
+- Updated dependencies
+  [[`c90eb5ac6`](https://github.com/Urigo/graphql-mesh/commit/c90eb5ac631507de1f49db68ca681193cc5a20b5)]:
+  - @graphql-mesh/string-interpolation@0.4.3
+  - @omnigraph/json-schema@0.38.24
+  - @graphql-mesh/cross-helpers@0.3.4
+  - json-machete@0.18.20
+  - @graphql-mesh/utils@0.43.20
+
 ## 0.9.23
 
 ### Patch Changes

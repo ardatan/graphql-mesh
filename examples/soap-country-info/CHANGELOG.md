@@ -1,5 +1,15 @@
 # country-info-example
 
+## 0.5.346
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c90eb5ac6`](https://github.com/Urigo/graphql-mesh/commit/c90eb5ac631507de1f49db68ca681193cc5a20b5)]:
+  - @graphql-mesh/plugin-snapshot@0.1.23
+  - @graphql-mesh/soap@0.17.23
+  - @graphql-mesh/cli@0.82.30
+
 ## 0.5.345
 
 ### Patch Changes
