@@ -29,17 +29,17 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
+    "@graphql-mesh/cross-helpers": "^0.3.3",
+    "@graphql-mesh/types": "^0.91.11",
+    "@graphql-mesh/utils": "^0.43.19",
     "graphql": "*",
-    "newrelic": "^7 || ^8.0.0"
+    "newrelic": "^7 || ^8.0.0",
+    "tslib": "^2.4.0"
   },
   "dependencies": {
     "@envelop/core": "^3.0.0",
     "@envelop/newrelic": "5.0.6",
-    "@graphql-mesh/cross-helpers": "0.3.3",
-    "@graphql-mesh/string-interpolation": "0.4.2",
-    "@graphql-mesh/types": "0.91.11",
-    "@graphql-mesh/utils": "0.43.19",
-    "tslib": "^2.4.0"
+    "@graphql-mesh/string-interpolation": "0.4.2"
   },
   "devDependencies": {
     "@types/newrelic": "7.0.4",

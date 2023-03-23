@@ -29,15 +29,16 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "graphql": "*"
+    "@graphql-mesh/cross-helpers": "^0.3.3",
+    "@graphql-mesh/store": "^0.9.19",
+    "@graphql-mesh/types": "^0.91.11",
+    "@graphql-mesh/utils": "^0.43.19",
+    "graphql": "*",
+    "tslib": "^2.4.0"
   },
   "dependencies": {
     "@ardatan/grpc-reflection-js": "0.0.2",
-    "@graphql-mesh/cross-helpers": "0.3.3",
-    "@graphql-mesh/store": "0.9.19",
     "@graphql-mesh/string-interpolation": "0.4.2",
-    "@graphql-mesh/types": "0.91.11",
-    "@graphql-mesh/utils": "0.43.19",
     "@grpc/grpc-js": "^1.1.7",
     "@grpc/proto-loader": "0.7.6",
     "globby": "11.1.0",
@@ -46,8 +47,7 @@
     "lodash.get": "4.4.2",
     "lodash.has": "4.5.2",
     "long": "4.0.0",
-    "protobufjs": "7.2.2",
-    "tslib": "^2.4.0"
+    "protobufjs": "7.2.2"
   },
   "devDependencies": {
     "@types/lodash.has": "4.5.7"

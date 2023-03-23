@@ -29,16 +29,16 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "graphql": "*"
+    "@graphql-mesh/types": "^0.91.11",
+    "@graphql-mesh/utils": "^0.43.19",
+    "@graphql-tools/utils": "^9.2.1",
+    "graphql": "*",
+    "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.91.11",
-    "@graphql-mesh/utils": "0.43.19",
     "@graphql-tools/delegate": "9.0.28",
-    "@graphql-tools/utils": "9.2.1",
     "@graphql-tools/wrap": "9.3.8",
-    "minimatch": "7.4.3",
-    "tslib": "^2.4.0"
+    "minimatch": "7.4.3"
   },
   "devDependencies": {
     "@types/minimatch": "5.1.2"

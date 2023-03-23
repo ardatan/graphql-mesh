@@ -29,14 +29,15 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "graphql": "*"
+    "@graphql-mesh/cross-helpers": "^0.3.3",
+    "@graphql-mesh/types": "^0.91.11",
+    "@graphql-mesh/utils": "^0.43.19",
+    "@graphql-tools/utils": "^9.2.1",
+    "graphql": "*",
+    "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/cross-helpers": "0.3.3",
     "@graphql-mesh/string-interpolation": "0.4.2",
-    "@graphql-mesh/types": "0.91.11",
-    "@graphql-mesh/utils": "0.43.19",
-    "@graphql-tools/utils": "9.2.1",
     "@json-schema-tools/meta-schema": "1.7.0",
     "@whatwg-node/fetch": "^0.8.3",
     "ajv": "8.12.0",
@@ -48,7 +49,6 @@
     "pascal-case": "3.1.2",
     "qs": "6.11.1",
     "to-json-schema": "0.2.5",
-    "tslib": "^2.4.0",
     "url-join": "4.0.1"
   },
   "devDependencies": {

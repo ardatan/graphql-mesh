@@ -11,6 +11,10 @@
   "scripts": {
     "start": "graphql-mesh dev"
   },
+  "peerDependencies": {
+    "graphql": "^16.6.0",
+    "tslib": "^2.5.0"
+  },
   "dependencies": {
     "@graphql-mesh/cli": "0.82.29",
     "@graphql-mesh/config": "10.1.12",
@@ -29,9 +33,7 @@
     "@graphql-mesh/transform-filter-schema": "0.15.22",
     "@graphql-mesh/transform-prefix": "0.12.21",
     "@graphql-mesh/transform-rename": "0.14.21",
-    "@graphql-mesh/transform-resolvers-composition": "0.13.19",
-    "graphql": "16.6.0",
-    "tslib": "2.5.0"
+    "@graphql-mesh/transform-resolvers-composition": "0.13.19"
   },
   "bob": false
 }

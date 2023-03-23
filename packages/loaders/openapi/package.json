@@ -29,18 +29,18 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "graphql": "*"
+    "@graphql-mesh/cross-helpers": "^0.3.3",
+    "@graphql-mesh/types": "^0.91.11",
+    "@graphql-mesh/utils": "^0.43.19",
+    "graphql": "*",
+    "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/cross-helpers": "0.3.3",
     "@graphql-mesh/string-interpolation": "0.4.2",
-    "@graphql-mesh/types": "0.91.11",
-    "@graphql-mesh/utils": "0.43.19",
     "@omnigraph/json-schema": "0.38.23",
     "change-case": "4.1.2",
     "json-machete": "0.18.19",
-    "openapi-types": "12.1.0",
-    "tslib": "^2.4.0"
+    "openapi-types": "12.1.0"
   },
   "devDependencies": {
     "@graphql-tools/utils": "9.2.1",

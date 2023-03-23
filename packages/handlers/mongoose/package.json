@@ -29,17 +29,17 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
+    "@graphql-mesh/types": "^0.91.11",
+    "@graphql-mesh/utils": "^0.43.19",
     "graphql": "*",
-    "mongoose": "*"
+    "mongoose": "*",
+    "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.91.11",
-    "@graphql-mesh/utils": "0.43.19",
     "graphql-compose": "9.0.10",
     "graphql-compose-connection": "8.2.1",
     "graphql-compose-mongoose": "9.8.0",
-    "graphql-compose-pagination": "8.3.0",
-    "tslib": "^2.4.0"
+    "graphql-compose-pagination": "8.3.0"
   },
   "devDependencies": {
     "mongoose": "7.0.2"

@@ -29,14 +29,14 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "graphql": "*"
+    "@graphql-mesh/types": "^0.91.11",
+    "@graphql-mesh/utils": "^0.43.19",
+    "graphql": "*",
+    "tslib": "^2.4.0"
   },
   "dependencies": {
     "@envelop/core": "3.0.6",
-    "@graphql-mesh/types": "0.91.11",
-    "@graphql-mesh/utils": "0.43.19",
-    "@whatwg-node/fetch": "^0.8.3",
-    "tslib": "^2.4.0"
+    "@whatwg-node/fetch": "^0.8.3"
   },
   "publishConfig": {
     "access": "public",
