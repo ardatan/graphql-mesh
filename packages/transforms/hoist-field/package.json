@@ -29,13 +29,13 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
+    "@graphql-mesh/types": "^0.91.11",
+    "@graphql-mesh/utils": "^0.43.19",
+    "@graphql-tools/utils": "^9.2.1",
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.91.11",
-    "@graphql-mesh/utils": "0.43.19",
     "@graphql-tools/delegate": "9.0.28",
-    "@graphql-tools/utils": "9.2.1",
     "@graphql-tools/wrap": "9.3.8"
   },
   "devDependencies": {

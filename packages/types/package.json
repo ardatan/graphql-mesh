@@ -29,15 +29,15 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "graphql": "*"
+    "@graphql-mesh/store": "^0.9.19",
+    "@graphql-tools/utils": "^9.2.1",
+    "graphql": "*",
+    "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/store": "0.9.19",
     "@graphql-tools/batch-delegate": "8.4.21",
     "@graphql-tools/delegate": "9.0.28",
-    "@graphql-tools/utils": "9.2.1",
-    "@graphql-typed-document-node/core": "3.2.0",
-    "tslib": "^2.4.0"
+    "@graphql-typed-document-node/core": "3.2.0"
   },
   "publishConfig": {
     "access": "public",

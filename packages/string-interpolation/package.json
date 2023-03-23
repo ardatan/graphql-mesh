@@ -31,13 +31,13 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "graphql": "*"
+    "graphql": "*",
+    "tslib": "^2.4.0"
   },
   "dependencies": {
     "dayjs": "1.11.7",
     "json-pointer": "0.6.2",
-    "lodash.get": "4.4.2",
-    "tslib": "^2.4.0"
+    "lodash.get": "4.4.2"
   },
   "publishConfig": {
     "access": "public",

@@ -29,16 +29,16 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "graphql": "*"
+    "@graphql-mesh/store": "^0.9.19",
+    "@graphql-mesh/types": "^0.91.11",
+    "@graphql-mesh/utils": "^0.43.19",
+    "@graphql-tools/utils": "^9.2.1",
+    "graphql": "*",
+    "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/store": "0.9.19",
     "@graphql-mesh/string-interpolation": "0.4.2",
-    "@graphql-mesh/types": "0.91.11",
-    "@graphql-mesh/utils": "0.43.19",
-    "@graphql-tools/utils": "9.2.1",
-    "@omnigraph/openapi": "0.19.25",
-    "tslib": "^2.4.0"
+    "@omnigraph/openapi": "0.19.25"
   },
   "publishConfig": {
     "access": "public",

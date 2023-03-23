@@ -29,18 +29,18 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "graphql": "*"
+    "@graphql-mesh/store": "^0.9.19",
+    "@graphql-mesh/types": "^0.91.11",
+    "@graphql-mesh/utils": "^0.43.19",
+    "@graphql-tools/utils": "^9.2.1",
+    "graphql": "*",
+    "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/store": "0.9.19",
-    "@graphql-mesh/types": "0.91.11",
-    "@graphql-mesh/utils": "0.43.19",
     "@graphql-tools/delegate": "9.0.28",
     "@graphql-tools/schema": "9.0.17",
     "@graphql-tools/stitch": "8.7.43",
-    "@graphql-tools/stitching-directives": "2.3.31",
-    "@graphql-tools/utils": "9.2.1",
-    "tslib": "^2.4.0"
+    "@graphql-tools/stitching-directives": "2.3.31"
   },
   "publishConfig": {
     "access": "public",

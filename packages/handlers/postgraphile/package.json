@@ -29,19 +29,19 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "graphql": "*"
+    "@graphql-mesh/cross-helpers": "^0.3.3",
+    "@graphql-mesh/store": "^0.9.19",
+    "@graphql-mesh/types": "^0.91.11",
+    "@graphql-mesh/utils": "^0.43.19",
+    "graphql": "*",
+    "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/cross-helpers": "0.3.3",
-    "@graphql-mesh/store": "0.9.19",
     "@graphql-mesh/string-interpolation": "0.4.2",
-    "@graphql-mesh/types": "0.91.11",
-    "@graphql-mesh/utils": "0.43.19",
     "@graphql-tools/delegate": "9.0.28",
     "pg": "^8.6.0",
     "postgraphile": "4.13.0",
-    "postgraphile-core": "4.13.0",
-    "tslib": "^2.4.0"
+    "postgraphile-core": "4.13.0"
   },
   "publishConfig": {
     "access": "public",

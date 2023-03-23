@@ -14,10 +14,10 @@
   "types": "index.d.ts",
   "typings": "./index.d.ts",
   "peerDependencies": {
+    "@graphql-tools/utils": "^9.2.1",
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-tools/utils": "9.2.1",
     "path-browserify": "1.0.1",
     "react-native-fs": "2.20.0",
     "react-native-path": "0.0.5"

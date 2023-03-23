@@ -29,20 +29,20 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "graphql": "*"
+    "@graphql-mesh/cross-helpers": "^0.3.3",
+    "@graphql-mesh/types": "^0.91.11",
+    "@graphql-tools/utils": "^9.2.1",
+    "graphql": "*",
+    "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/cross-helpers": "0.3.3",
     "@graphql-mesh/string-interpolation": "0.4.2",
-    "@graphql-mesh/types": "0.91.11",
     "@graphql-tools/delegate": "9.0.28",
-    "@graphql-tools/utils": "9.2.1",
     "dset": "3.1.2",
     "js-yaml": "4.1.0",
     "lodash.get": "4.4.2",
     "lodash.topath": "4.5.2",
-    "tiny-lru": "8.0.2",
-    "tslib": "^2.4.0"
+    "tiny-lru": "8.0.2"
   },
   "devDependencies": {
     "@apollo/server": "4.5.0",
