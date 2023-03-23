@@ -3053,10 +3053,10 @@
     "@repeaterjs/repeater" "^3.0.4"
     tslib "^2.3.1"
 
-"@grpc/grpc-js@1.8.12", "@grpc/grpc-js@^1.1.7", "@grpc/grpc-js@^1.2.8", "@grpc/grpc-js@^1.5.5":
-  version "1.8.12"
-  resolved "https://registry.yarnpkg.com/@grpc/grpc-js/-/grpc-js-1.8.12.tgz#bc0120859e8b153db764b473cc019ddf6bb2b414"
-  integrity sha512-MbUMvpVvakeKhdYux6gbSIPJaFMLNSY8jw4PqLI+FFztGrQRrYYAnHlR94+ncBQQewkpXQaW449m3tpH/B/ZnQ==
+"@grpc/grpc-js@1.8.13", "@grpc/grpc-js@^1.1.7", "@grpc/grpc-js@^1.2.8", "@grpc/grpc-js@^1.5.5":
+  version "1.8.13"
+  resolved "https://registry.yarnpkg.com/@grpc/grpc-js/-/grpc-js-1.8.13.tgz#e775685962909b76f8d4b813833c3d123867165b"
+  integrity sha512-iY3jsdfbc0ARoCLFvbvUB8optgyb0r1XLPb142u+QtgBcKJYkCIFt3Fd/881KqjLYWjsBJF57N3b8Eop9NDfUA==
   dependencies:
     "@grpc/proto-loader" "^0.7.0"
     "@types/node" ">=12.12.47"
@@ -15033,10 +15033,10 @@ mongodb@5.1.0:
   optionalDependencies:
     saslprep "^1.0.3"
 
-mongoose@7.0.2:
-  version "7.0.2"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-7.0.2.tgz#679df6bae18abb7a27f412c4e9e7285363cd07eb"
-  integrity sha512-whX+5lAOLOs6VXRr9w+6m5qb8m/IXWLLb9+0/HRUh2TiIYtTt7UvajK92zW6wllCjBkrrnz/MDIOTCWMbs8K4g==
+mongoose@7.0.3:
+  version "7.0.3"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-7.0.3.tgz#576375acb436f96cd3350fb63fddbac7ae51ff9c"
+  integrity sha512-3n8vc1/mssuxKa6vfghSocp3MeiCFYzhX36Ok+PsDNNYzHC9tw3rNkAMLemIwZ2jgXqkZ7CfKOxkzjp/d/SWfg==
   dependencies:
     bson "^5.0.1"
     kareem "2.5.1"
