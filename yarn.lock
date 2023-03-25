@@ -10940,9 +10940,7 @@ graphql-request@5.1.0:
     form-data "^3.0.0"
 
 graphql-scalars@^1.20.4:
-  version "1.20.4"
-  resolved "https://registry.yarnpkg.com/graphql-scalars/-/graphql-scalars-1.20.4.tgz#733177919fb0d4f490b4fdba34577038a0155fd3"
-  integrity sha512-/hDzWcphV/aV4MEx2pqVMMekBLi9VXYD/HrJSclpOCLkSB/dE3Rb5VVZBXsQhgBxqeCsE7K0PEO2/cWAUzQsrQ==
+  version "1.21.2"
   dependencies:
     tslib "~2.5.0"
 
