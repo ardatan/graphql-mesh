@@ -909,7 +909,10 @@ describe('example_api', () => {
 
     expect(result).toMatchObject({
       data: {
-        getProductReviews: [{ timestamp: 1502787600000000n }, { timestamp: 1502787400000000n }],
+        getProductReviews: [
+          { timestamp: BigInt('1502787600000000') },
+          { timestamp: BigInt('1502787400000000') },
+        ],
       },
     });
   });
