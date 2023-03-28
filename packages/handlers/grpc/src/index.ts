@@ -545,7 +545,11 @@ ${rootJsonEntries
       const rootLogger = this.logger.child(name);
 
       rootLogger.debug(`Creating package definition from file descriptor set object`);
-      const packageDefinition = fromJSON(rootJson);
+      let options: LoadOptions;
+      if (typeof this.config.source === 'object') {
+        options = this.config.source.load;
+      }
+      const packageDefinition = fromJSON(rootJson, options);
 
       rootLogger.debug(`Creating service client for package definition`);
       const grpcObject = loadPackageDefinition(packageDefinition);
