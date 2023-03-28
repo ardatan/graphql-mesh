@@ -1026,6 +1026,10 @@
           "type": "object",
           "properties": {},
           "description": "Will be removed later"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Timeout for the HTTP request in milliseconds"
         }
       }
     },
@@ -1879,6 +1883,10 @@
           "type": "object",
           "properties": {},
           "description": "JSON object representing the query search parameters to add to the API calls"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Timeout for the HTTP request in milliseconds"
         },
         "bundle": {
           "type": "boolean"
@@ -2905,6 +2913,10 @@
         },
         "bundle": {
           "type": "boolean"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Timeout for the HTTP request in milliseconds"
         }
       },
       "required": ["source"]

@@ -17,7 +17,7 @@ import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { Logger, MeshFetch } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
 import { createGraphQLError, memoize1 } from '@graphql-tools/utils';
-import { Blob, File, FormData } from '@whatwg-node/fetch';
+import { AbortSignal, Blob, File, FormData } from '@whatwg-node/fetch';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
 import { HTTPMethod } from './types.js';
 import { isFileUpload } from './utils.js';
@@ -50,6 +50,7 @@ export interface HTTPRootFieldResolverOpts {
 export interface GlobalOptions {
   sourceName: string;
   endpoint: string;
+  timeout: number;
   operationHeaders: Record<string, string>;
   queryStringOptions: IStringifyOptions;
   queryParams: Record<string, string | number | boolean>;
@@ -72,6 +73,7 @@ export function addHTTPRootFieldResolver(
   {
     sourceName,
     endpoint,
+    timeout,
     operationHeaders: globalOperationHeaders,
     queryStringOptions: globalQueryStringOptions = {},
     queryParams: globalQueryParams,
@@ -110,6 +112,9 @@ export function addHTTPRootFieldResolver(
       method: httpMethod,
       headers,
     };
+    if (timeout) {
+      requestInit.signal = AbortSignal.timeout(timeout);
+    }
     // Handle binary data
     if (isBinary) {
       const binaryUpload = await args.input;
