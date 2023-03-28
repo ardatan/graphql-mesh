@@ -7,9 +7,10 @@ import { loadGraphQLSchemaFromJSONSchemas } from '../src/loadGraphQLSchemaFromJS
 
 describe('Timeout', () => {
   let server: Server;
+  let timeout: NodeJS.Timeout;
   beforeAll(async () => {
     server = createServer((req, res) => {
-      setTimeout(() => {
+      timeout = setTimeout(() => {
         res.writeHead(200, { 'Content-Type': 'text/plain' });
         res.end('test');
       }, 500);
@@ -17,6 +18,7 @@ describe('Timeout', () => {
     await new Promise<void>(resolve => server.listen(0, resolve));
   });
   afterAll(async () => {
+    clearTimeout(timeout);
     await new Promise(resolve => server.close(resolve));
   });
   it('should timeout correctly', async () => {
