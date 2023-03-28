@@ -356,6 +356,10 @@ export interface JsonSchemaHandler {
   bundleHeaders?: {
     [k: string]: any;
   };
+  /**
+   * Timeout for the HTTP request in milliseconds
+   */
+  timeout?: number;
 }
 export interface JsonSchemaHTTPOperation {
   /**
@@ -847,6 +851,10 @@ export interface OpenapiHandler {
   queryParams?: {
     [k: string]: any;
   };
+  /**
+   * Timeout for the HTTP request in milliseconds
+   */
+  timeout?: number;
   bundle?: boolean;
 }
 export interface OASSelectQueryOrMutationFieldConfig {
@@ -910,6 +918,10 @@ export interface RAMLHandler {
   selectQueryOrMutationField?: RAMLSelectQueryOrMutationFieldConfig[];
   queryParams?: any;
   bundle?: boolean;
+  /**
+   * Timeout for the HTTP request in milliseconds
+   */
+  timeout?: number;
 }
 export interface RAMLSelectQueryOrMutationFieldConfig {
   /**

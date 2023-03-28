@@ -513,6 +513,7 @@ interface ProcessDirectiveArgs {
   logger: Logger;
   globalFetch: MeshFetch;
   endpoint?: string;
+  timeout?: number;
   operationHeaders?: Record<string, string>;
   queryParams?: Record<string, any>;
 }

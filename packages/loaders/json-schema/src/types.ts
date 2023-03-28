@@ -9,6 +9,7 @@ import { BaseLoaderOptions } from '@graphql-tools/utils';
 export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   endpoint?: string;
   operationHeaders?: OperationHeadersConfiguration;
+  timeout?: number;
   schemaHeaders?: Record<string, string>;
   operations: JSONSchemaOperationConfig[];
   errorMessage?: string;

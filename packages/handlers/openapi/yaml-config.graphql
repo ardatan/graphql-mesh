@@ -42,6 +42,11 @@ type OpenapiHandler @md {
   """
   queryParams: JSON
 
+  """
+  Timeout for the HTTP request in milliseconds
+  """
+  timeout: Int
+
   bundle: Boolean
 }
 
