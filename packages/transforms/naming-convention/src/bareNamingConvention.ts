@@ -42,7 +42,7 @@ const defaultResolverComposer =
   (
     resolveFn = defaultFieldResolver,
     originalFieldName: string,
-    argsMap: { [key: string]: string },
+    argsMap: { [key: string]: any },
     resultMap: { [key: string]: string },
   ) =>
   (root: any, args: any, context: any, info: any) => {
@@ -166,7 +166,7 @@ export default class NamingConventionTransform implements MeshTransform {
             this.config.fieldNames && NAMING_CONVENTIONS[this.config.fieldNames];
           const argNamingConventionFn =
             this.config.fieldArgumentNames && NAMING_CONVENTIONS[this.config.fieldArgumentNames];
-          const argsMap = fieldConfig.args && {};
+          const argsMap: Record<string, any> = fieldConfig.args && {};
           const newFieldName =
             this.config.fieldNames &&
             !IGNORED_ROOT_FIELD_NAMES.includes(fieldName) &&

@@ -125,7 +125,9 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
       if (method === 'parameters' || method === 'servers') {
         continue;
       }
-      const methodObj = pathObj[method] as OpenAPIV2.OperationObject | OpenAPIV3.OperationObject;
+      const methodObj = pathObj[method as OpenAPIV2.HttpMethods] as
+        | OpenAPIV2.OperationObject
+        | OpenAPIV3.OperationObject;
       const operationConfig: OperationConfig = {
         method: method.toUpperCase() as HTTPMethod,
         path: relativePath,
@@ -525,7 +527,8 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
             };
             const callbackUrlObj = callbackObj[callbackUrlRefKey];
             for (const method in callbackUrlObj) {
-              const callbackOperation: OpenAPIV3.OperationObject = callbackUrlObj[method];
+              const callbackOperation: OpenAPIV3.OperationObject =
+                callbackUrlObj[method as OpenAPIV2.HttpMethods];
               callbackOperationConfig.pubsubTopic = `webhook:${method}:${pubsubTopicSuffix}`;
               callbackOperationConfig.field = callbackOperation.operationId;
               callbackOperationConfig.description =

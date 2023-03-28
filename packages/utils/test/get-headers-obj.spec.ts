@@ -3,7 +3,7 @@ import { Headers } from '@whatwg-node/fetch';
 import { getHeadersObj } from '../src/getHeadersObj';
 
 describe('getHeadersObj', () => {
-  const headersTypes = {
+  const headersTypes: Record<string, () => HeaderMap | Headers | Map<string, string>> = {
     [`WHATWG Headers`]: () => new Headers(),
     [`Apollo's HeaderMap`]: () => new HeaderMap(),
     [`Standard Map`]: () => new Map(),

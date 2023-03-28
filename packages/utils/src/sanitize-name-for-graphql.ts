@@ -1,5 +1,5 @@
 const reservedNames = ['Query', 'Mutation', 'Subscription', 'File'];
-const KNOWN_CHARACTERS = {
+const KNOWN_CHARACTERS: Record<string, string> = {
   '+': 'PLUS',
   '-': 'MINUS',
   '>': 'GREATER_THAN',

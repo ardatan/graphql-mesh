@@ -10,7 +10,14 @@ import { fetch as fetchFn } from '@whatwg-node/fetch';
 import ThriftHandler from '../src/index.js';
 
 describe('thrift', () => {
-  const schemas = {
+  const schemas: Record<
+    string,
+    {
+      idl: string;
+      path: string;
+      serviceName: string;
+    }
+  > = {
     Twitter: {
       idl: 'twitter.thrift',
       path: '/twitter',

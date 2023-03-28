@@ -125,6 +125,8 @@ const queryOptionsFields = {
   },
 };
 
+type DataLoaderMap = Record<symbol, DataLoader<Request, Response, Request>>;
+
 export default class ODataHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.ODataHandler;
@@ -747,7 +749,7 @@ export default class ODataHandler implements MeshHandler {
                 },
               },
               extensions: { navigationPropertyObj },
-              resolve: async (root, args, context, info) => {
+              resolve: async (root, args, context: DataLoaderMap, info) => {
                 if (navigationPropertyName in root) {
                   return root[navigationPropertyName];
                 }
@@ -797,7 +799,7 @@ export default class ODataHandler implements MeshHandler {
                 queryOptions: { type: 'QueryOptions' },
               },
               extensions: { navigationPropertyObj },
-              resolve: async (root, args, context, info) => {
+              resolve: async (root, args, context: DataLoaderMap, info) => {
                 if (navigationPropertyName in root) {
                   return root[navigationPropertyName];
                 }
@@ -847,7 +849,7 @@ export default class ODataHandler implements MeshHandler {
                 ...commonArgs,
               },
               extensions: { navigationPropertyObj },
-              resolve: async (root, args, context, info) => {
+              resolve: async (root, args, context: DataLoaderMap, info) => {
                 if (navigationPropertyName in root) {
                   return root[navigationPropertyName];
                 }
@@ -1555,7 +1557,7 @@ export default class ODataHandler implements MeshHandler {
     return {
       schema,
       executor: <TResult>(executionRequest: ExecutionRequest) => {
-        const odataContext = {
+        const odataContext: DataLoaderMap = {
           [contextDataloaderName]: dataLoaderFactory(executionRequest.context),
         };
         return executor({
@@ -1574,7 +1576,10 @@ export default class ODataHandler implements MeshHandler {
   private prepareSearchParams(fragment: ResolveTree, schema: GraphQLSchema) {
     const fragmentTypeNames = Object.keys(fragment.fieldsByTypeName) as string[];
     const returnType = schema.getType(fragmentTypeNames[0]);
-    const { args, fields } = simplifyParsedResolveInfoFragmentWithType(fragment, returnType);
+    const { args, fields } = simplifyParsedResolveInfoFragmentWithType(fragment, returnType) as {
+      args: Record<string, any>;
+      fields: Record<string, any>;
+    };
     const searchParams = new URLSearchParams();
     if ('queryOptions' in args) {
       const { queryOptions } = args as any;

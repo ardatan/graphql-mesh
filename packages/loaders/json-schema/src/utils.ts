@@ -43,7 +43,7 @@ export function getOperationMetadata(operationConfig: JSONSchemaOperationConfig)
 
 export function cleanObject(obj: any) {
   if (typeof obj === 'object' && obj != null) {
-    const newObj = Array.isArray(obj) ? [] : {};
+    const newObj: any = Array.isArray(obj) ? [] : {};
     for (const key in obj) {
       const newObjForKey = cleanObject(obj[key]);
       if (newObjForKey != null) {

@@ -11,7 +11,8 @@ export function extractResolvers(schema: GraphQLSchema) {
     if (typeof filteredResolvers === 'object') {
       for (const fieldName in filteredResolvers[prop]) {
         if (!prop.startsWith('_resolveType')) {
-          filteredResolvers[prop][fieldName] = allResolvers[prop][fieldName];
+          filteredResolvers[prop][fieldName] =
+            allResolvers[prop][fieldName as keyof (typeof allResolvers)[typeof prop]];
         }
       }
     }

@@ -113,11 +113,11 @@ export default function useMeshNewrelic(
           logger.trace('Both DT and CAT are disabled, not adding headers!');
         }
         for (const key in outboundHeaders) {
-          options.headers[key] = outboundHeaders[key];
+          (options.headers as any)[key] = outboundHeaders[key];
         }
       }
       for (const key in options.headers) {
-        httpDetailSegment.addAttribute(`request.headers.${key}`, options.headers[key]);
+        httpDetailSegment.addAttribute(`request.headers.${key}`, (options.headers as any)[key]);
       }
       return ({ response }) => {
         httpDetailSegment.addAttribute('http.statusCode', response.status);

@@ -478,7 +478,7 @@ export async function healJSONSchema(
           }
           if (subSchema.pattern) {
             // Fix non JS patterns
-            const javaToJsPattern = {
+            const javaToJsPattern: Record<string, string> = {
               '\\p{Digit}': '[0-9]',
               '\\p{Alpha}': '[a-zA-Z]',
               '\\p{Alnum}': '[a-zA-Z0-9]',

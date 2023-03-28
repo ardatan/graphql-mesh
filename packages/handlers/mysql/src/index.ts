@@ -28,7 +28,7 @@ import { loadFromModuleExportExpression, sanitizeNameForGraphQL } from '@graphql
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { ExecutionRequest } from '@graphql-tools/utils';
 
-const SCALARS = {
+const SCALARS: Record<string, string> = {
   bigint: 'BigInt',
   'bigint unsigned': 'BigInt',
   binary: 'String',
@@ -159,12 +159,17 @@ export default class MySQLHandler implements MeshHandler {
   private getCachedIntrospectionConnection(pool: Pool) {
     let promisifiedConnection$: Promise<MysqlPromisifiedConnection>;
     return new Proxy<MysqlPromisifiedConnection>({} as any, {
-      get: (_, methodName) => {
+      get: (_, methodName: keyof MysqlPromisifiedConnection) => {
         if (methodName === 'release') {
           return () =>
             promisifiedConnection$?.then(promisifiedConnection =>
               promisifiedConnection?.connection.release(),
             );
+        }
+        if (methodName === 'connection') {
+          return promisifiedConnection$?.then(
+            promisifiedConnection => promisifiedConnection?.connection,
+          );
         }
         return async (...args: any[]) => {
           const cacheKey = [methodName, ...args].join('_');
@@ -175,6 +180,7 @@ export default class MySQLHandler implements MeshHandler {
           return cacheProxy.getWithSet(async () => {
             promisifiedConnection$ = promisifiedConnection$ || getPromisifiedConnection(pool);
             const promisifiedConnection = await promisifiedConnection$;
+            // @ts-expect-error - Weird error
             return promisifiedConnection[methodName](...args);
           });
         };
@@ -479,7 +485,7 @@ export default class MySQLHandler implements MeshHandler {
         typeMergingOptions[objectTypeName] = {
           selectionSet: `{ ${[...primaryKeys].join(' ')} }`,
           args: obj => {
-            const where = {};
+            const where: Record<string, any> = {};
             for (const primaryKey of primaryKeys) {
               where[primaryKey] = obj[primaryKey];
             }

@@ -40,10 +40,13 @@ import {
   WSDLDefinition,
   WSDLMessage,
   WSDLObject,
+  WSDLPartAttributes,
   WSDLPortType,
   XSComplexType,
   XSDObject,
   XSElement,
+  XSElementAttributes,
+  XSExtensionAttributes,
   XSSchema,
   XSSimpleType,
 } from './types.js';
@@ -442,7 +445,7 @@ export class SOAPLoader {
                     type: () => {
                       const elementNamespace =
                         aliasMap.get(elementNamespaceAlias) ||
-                        part.attributes[elementNamespaceAlias];
+                        part.attributes[elementNamespaceAlias as keyof WSDLPartAttributes];
                       if (!elementNamespace) {
                         throw new Error(
                           `Namespace alias: ${elementNamespaceAlias} is not defined.`,
@@ -520,6 +523,7 @@ export class SOAPLoader {
   getAliasMapFromAttributes(attributes: XSSchema['attributes'] | WSDLDefinition['attributes']) {
     const aliasMap = new Map<string, string>();
     for (const attributeName in attributes) {
+      // @ts-expect-error - Weird TS error
       const attributeValue = attributes[attributeName];
       if (attributeName !== 'targetNamespace' && attributeValue.startsWith('http')) {
         aliasMap.set(attributeName, attributeValue);
@@ -633,8 +637,10 @@ export class SOAPLoader {
                     isNullable = false;
                   }
                   if (elementObj.attributes?.type) {
-                    const [typeNamespaceAlias, typeName] = elementObj.attributes.type.split(':');
-                    let typeNamespace: string;
+                    const [typeNamespaceAlias, typeName] = elementObj.attributes.type.split(
+                      ':',
+                    ) as [keyof XSElementAttributes, string];
+                    let typeNamespace;
                     if (elementObj.attributes[typeNamespaceAlias]) {
                       typeNamespace = elementObj.attributes[typeNamespaceAlias];
                     } else {
@@ -733,7 +739,9 @@ export class SOAPLoader {
       if (complexType.complexContent) {
         for (const complexContentObj of complexType.complexContent) {
           for (const extensionObj of complexContentObj.extension) {
-            const [baseTypeNamespaceAlias, baseTypeName] = extensionObj.attributes.base.split(':');
+            const [baseTypeNamespaceAlias, baseTypeName] = extensionObj.attributes.base.split(
+              ':',
+            ) as [keyof XSExtensionAttributes, string];
             let baseTypeNamespace: string;
             if (extensionObj.attributes[baseTypeNamespaceAlias]) {
               baseTypeNamespace = extensionObj.attributes[baseTypeNamespaceAlias];
@@ -757,7 +765,9 @@ export class SOAPLoader {
               for (const elementObj of sequenceObj.element) {
                 fieldMap[elementObj.attributes.name] = {
                   type: () => {
-                    const [typeNamespaceAlias, typeName] = elementObj.attributes.type.split(':');
+                    const [typeNamespaceAlias, typeName] = elementObj.attributes.type.split(
+                      ':',
+                    ) as [keyof XSElementAttributes, string];
                     let typeNamespace: string;
                     if (elementObj.attributes[typeNamespaceAlias]) {
                       typeNamespace = elementObj.attributes[typeNamespaceAlias];
@@ -794,7 +804,10 @@ export class SOAPLoader {
     namespace: string,
   ) {
     if (elementObj.attributes?.type) {
-      const [typeNamespaceAlias, typeName] = elementObj.attributes.type.split(':');
+      const [typeNamespaceAlias, typeName] = elementObj.attributes.type.split(':') as [
+        keyof XSElementAttributes,
+        string,
+      ];
       let typeNamespace: string;
       if (elementObj.attributes[typeNamespaceAlias]) {
         typeNamespace = elementObj.attributes[typeNamespaceAlias];
@@ -913,7 +926,9 @@ export class SOAPLoader {
       if (complexType.complexContent) {
         for (const complexContentObj of complexType.complexContent) {
           for (const extensionObj of complexContentObj.extension) {
-            const [baseTypeNamespaceAlias, baseTypeName] = extensionObj.attributes.base.split(':');
+            const [baseTypeNamespaceAlias, baseTypeName] = extensionObj.attributes.base.split(
+              ':',
+            ) as [keyof XSExtensionAttributes, string];
             const baseTypeNamespace =
               aliasMap.get(baseTypeNamespaceAlias) ||
               extensionObj.attributes[baseTypeNamespaceAlias];
@@ -1015,7 +1030,10 @@ export class SOAPLoader {
       const partObj = message.part[0];
 
       if (partObj.attributes.element) {
-        const [elementNamespaceAlias, elementName] = partObj.attributes.element.split(':');
+        const [elementNamespaceAlias, elementName] = partObj.attributes.element.split(':') as [
+          keyof WSDLPartAttributes,
+          string,
+        ];
         outputTCAndName = {
           type: () => {
             const elementTypeNamespace =

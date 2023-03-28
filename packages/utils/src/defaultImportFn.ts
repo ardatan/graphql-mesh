@@ -21,7 +21,7 @@ async function defaultImportFn(path: string): Promise<any> {
   if (typeof module === 'object' && module != null) {
     const prototypeOfObject = Object.getPrototypeOf(module);
     if (prototypeOfObject == null || prototypeOfObject === Object.prototype) {
-      const normalizedVal = {};
+      const normalizedVal: Record<string, any> = {};
       for (const key in module) {
         normalizedVal[key] = module[key];
       }

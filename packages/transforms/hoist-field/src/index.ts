@@ -48,10 +48,13 @@ export default class MeshHoistField implements MeshTransform {
       throw new Error(`FilterArgs is required in pathConfig item`);
     }
 
-    const filterArgsDict = (pathConfigItemFromConfig.filterArgs || []).reduce((prev, argName) => {
-      prev[argName] = true;
-      return prev;
-    }, {});
+    const filterArgsDict = (pathConfigItemFromConfig.filterArgs || []).reduce<any>(
+      (prev, argName) => {
+        prev[argName] = true;
+        return prev;
+      },
+      {},
+    );
 
     const pathConfigItem: HoistFieldCtorPathConfigItem = {
       fieldName: pathConfigItemFromConfig.fieldName,

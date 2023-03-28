@@ -69,7 +69,7 @@ export async function visitJSONSchema(
         if (enterResult[key]) {
           const entries = Object.entries(enterResult[key]);
           for (const [itemKey, itemValue] of entries) {
-            enterResult[key][itemKey] = await visitJSONSchema(
+            (enterResult as any)[key][itemKey] = await visitJSONSchema(
               itemValue,
               { enter, leave },
               { visitedSubschemaResultMap, path: `${path}/${key}/${itemKey}` },

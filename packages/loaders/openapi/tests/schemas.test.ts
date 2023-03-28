@@ -1,7 +1,7 @@
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import loadGraphQLSchemaFromOpenAPI from '../src/index.js';
 
-const schemas = {
+const schemas: Record<string, string> = {
   DeepL: 'deepl.json',
   GitHub: 'github.json',
   Instagram: 'instagram.json',

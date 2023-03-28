@@ -85,7 +85,7 @@ export function getComposerFromJSONSchema(
 ): Promise<TypeComposers> {
   const schemaComposer = new SchemaComposer();
   const formatScalarMap = getJSONSchemaStringFormatScalarMap();
-  const rootInputTypeNameComposerMap = {
+  const rootInputTypeNameComposerMap: Record<string, () => ObjectTypeComposer<any>> = {
     QueryInput: () => schemaComposer.Query,
     MutationInput: () => schemaComposer.Mutation,
     SubscriptionInput: () => schemaComposer.Subscription,

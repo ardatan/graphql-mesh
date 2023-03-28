@@ -9,6 +9,7 @@ import {
   ImportFn,
   MeshHandlerLibrary,
   MeshMergerLibrary,
+  MeshPlugin,
   MeshPluginFactory,
   MeshTransformLibrary,
   YamlConfig,
@@ -26,7 +27,14 @@ import {
   resolvePubSub,
 } from './utils.js';
 
-const ENVELOP_CORE_PLUGINS_MAP = {
+const ENVELOP_CORE_PLUGINS_MAP: Record<
+  string,
+  {
+    moduleName: string;
+    importName: string;
+    pluginFactory(...args: any[]): MeshPlugin<any>;
+  }
+> = {
   maskedErrors: {
     moduleName: '@envelop/core',
     importName: 'useMaskedErrors',

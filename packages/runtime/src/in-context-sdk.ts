@@ -68,7 +68,7 @@ export async function getInContextSDK(
 
     rawSourceLogger.debug(`Generating In Context SDK`);
     for (const operationType in rootTypes) {
-      const rootType: GraphQLObjectType = rootTypes[operationType];
+      const rootType: GraphQLObjectType = rootTypes[operationType as OperationTypeNode];
       if (rootType) {
         rawSourceContext[rootType.name] = {};
         const rootTypeFieldMap = rootType.getFields();

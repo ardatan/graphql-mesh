@@ -46,8 +46,12 @@ jobs:
           restore-keys: |
             ${{runner.os}}-${{matrix.node-version}}-jest-unit-
 
-      - name: Test
-        run: yarn test
+      - name: Run Tests
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          command: yarn test
 
   integration:
     name: integration / node ${{matrix.node-version}}

@@ -369,7 +369,7 @@ describe('odata', () => {
     let sentRequest: any;
     addMock(correctUrl, async request => {
       sentRequest = request.clone();
-      const bodyObj = await request.json();
+      const bodyObj: any = await request.json();
       bodyObj['@odata.type'] = 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
       return new MockResponse(JSON.stringify(bodyObj));
     });
@@ -463,7 +463,7 @@ describe('odata', () => {
     let sentRequest: Request;
     addMock(correctUrl, async request => {
       sentRequest = request.clone();
-      const returnBody = await request.json();
+      const returnBody: any = await request.json();
       returnBody['@odata.type'] = 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
       return new MockResponse(JSON.stringify(returnBody));
     });
