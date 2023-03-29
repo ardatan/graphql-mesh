@@ -12,7 +12,7 @@
     "@graphql-mesh/openapi": "0.35.26",
     "@whatwg-node/fetch": "^0.8.3",
     "@whatwg-node/router": "^0.3.0",
-    "concurrently": "7.6.0",
+    "concurrently": "8.0.1",
     "graphql": "16.6.0",
     "ts-node": "10.9.1",
     "ts-node-dev": "2.0.0",
