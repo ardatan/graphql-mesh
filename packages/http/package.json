@@ -38,7 +38,7 @@
   "dependencies": {
     "@graphql-mesh/runtime": "0.46.21",
     "@whatwg-node/router": "0.3.0",
-    "graphql-yoga": "3.7.3"
+    "graphql-yoga": "3.8.0"
   },
   "devDependencies": {
     "@types/lodash.get": "4.4.7",
