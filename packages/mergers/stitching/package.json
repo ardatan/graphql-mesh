@@ -39,7 +39,7 @@
   "dependencies": {
     "@graphql-tools/delegate": "9.0.28",
     "@graphql-tools/schema": "9.0.17",
-    "@graphql-tools/stitch": "8.7.43",
+    "@graphql-tools/stitch": "8.7.44",
     "@graphql-tools/stitching-directives": "2.3.31"
   },
   "publishConfig": {
