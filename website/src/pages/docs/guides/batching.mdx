@@ -124,8 +124,7 @@ additionalTypeDefs: |
   # …
   extend type Book {
     author: authors_v1_Author @resolveTo(
-      targetTypeName: "Book",
-      targetFieldName: "author",
+      sourceName: "Authors",
       sourceFieldName: "authors_v1_AuthorsService_GetAuthors",
       keyField: "authorId",
       keysArg: "input.ids"
