@@ -14,7 +14,7 @@ import { IStringifyOptions, parse as qsParse, stringify as qsStringify } from 'q
 import urlJoin from 'url-join';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { Logger, MeshFetch } from '@graphql-mesh/types';
+import { Logger, MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
 import { createGraphQLError, memoize1 } from '@graphql-tools/utils';
 import { AbortSignal, Blob, File, FormData } from '@whatwg-node/fetch';
@@ -108,7 +108,7 @@ export function addHTTPRootFieldResolver(
         }
       }
     }
-    const requestInit: RequestInit = {
+    const requestInit: MeshFetchRequestInit = {
       method: httpMethod,
       headers,
     };
@@ -425,7 +425,7 @@ export function addHTTPRootFieldResolver(
                         },
                       });
                     case 'header':
-                      return getHeadersObj(requestInit.headers as Headers);
+                      return requestInit.headers;
                     case 'body':
                       return requestInit.body;
                   }

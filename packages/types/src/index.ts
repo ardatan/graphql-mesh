@@ -161,14 +161,18 @@ export type MeshPlugin<TContext> = Plugin<TContext> & {
 
 export type MeshFetch = (
   url: string,
-  options?: RequestInit,
+  options?: MeshFetchRequestInit,
   context?: any,
   info?: GraphQLResolveInfo,
 ) => Promise<Response>;
 
+export type MeshFetchRequestInit = Omit<RequestInit, 'headers'> & {
+  headers?: Record<string, string>;
+};
+
 export interface OnFetchHookPayload<TContext> {
   url: string;
-  options: RequestInit;
+  options: MeshFetchRequestInit;
   context: TContext;
   info: GraphQLResolveInfo;
   fetchFn: MeshFetch;

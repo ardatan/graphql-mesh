@@ -56,7 +56,7 @@ import {
   MeshSource,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { readFileOrUrl } from '@graphql-mesh/utils';
+import { getHeadersObj, readFileOrUrl } from '@graphql-mesh/utils';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { ExecutionRequest, memoize1 } from '@graphql-tools/utils';
 import { Request, Response } from '@whatwg-node/fetch';
@@ -586,7 +586,7 @@ export default class ODataHandler implements MeshHandler {
                 this.fetchFn(request.url, {
                   method: request.method,
                   body: request.body && (await request.text()),
-                  headers: request.headers,
+                  headers: getHeadersObj(request.headers),
                 }),
               ),
             ),

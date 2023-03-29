@@ -76,7 +76,7 @@ export default function useIncludeHttpDetailsInExtensions(opts: {
               timestamp: requestTimestamp,
               url,
               method: options.method || 'GET',
-              headers: getHeadersObj(options.headers as Headers),
+              headers: options.headers,
             },
             response: {
               timestamp: responseTimestamp,

@@ -1,5 +1,4 @@
 import { MeshPlugin } from '@graphql-mesh/types';
-import { getHeadersObj } from '@graphql-mesh/utils';
 
 export default function useDeduplicateRequest(): MeshPlugin<any> {
   const reqResMapByContext = new WeakMap<any, Map<string, Promise<Response>>>();
@@ -19,17 +18,11 @@ export default function useDeduplicateRequest(): MeshPlugin<any> {
           method = options.method;
         }
         if (method === 'GET') {
-          let headers: Record<string, string> = {};
-
-          if (options.headers) {
-            headers = getHeadersObj(options.headers as Headers);
-          }
-
           const reqResMap = getReqResMapByContext(context);
 
           const dedupCacheKey = JSON.stringify({
             url,
-            headers,
+            headers: options.headers || {},
           });
           setFetchFn(() => {
             let dedupRes$ = reqResMap.get(dedupCacheKey);
