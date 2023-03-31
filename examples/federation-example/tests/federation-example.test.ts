@@ -1,13 +1,11 @@
-import { findAndParseConfig } from '@graphql-mesh/cli';
-import { MeshInstance, getMesh } from '@graphql-mesh/runtime';
-import { join } from 'path';
-import { accountsServer } from '../services/accounts';
-import { inventoryServer } from '../services/inventory';
-import { productsServer } from '../services/products';
-import { reviewsServer } from '../services/reviews';
-import { ApolloServer } from 'apollo-server';
-
 import { mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { join } from 'path';
+import { findAndParseConfig } from '@graphql-mesh/cli';
+import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
+import { accountsServer } from '../services/accounts/server';
+import { inventoryServer } from '../services/inventory/server';
+import { productsServer } from '../services/products/server';
+import { reviewsServer } from '../services/reviews/server';
 
 const problematicModulePath = join(__dirname, '../../../node_modules/core-js/features/array');
 const emptyModuleContent = 'module.exports = {};';
@@ -20,8 +18,10 @@ writeFileSync(join(problematicModulePath, './flat.js'), emptyModuleContent);
 writeFileSync(join(problematicModulePath, './flat-map.js'), emptyModuleContent);
 
 describe('Federation Example', () => {
-  let mesh;
-  let servicesToStop: Array<ApolloServer> = [];
+  let mesh: MeshInstance;
+  let servicesToStop: Array<{
+    stop: () => Promise<void>;
+  }> = [];
   beforeAll(async () => {
     const [config, ...services] = await Promise.all([
       findAndParseConfig({

@@ -1,5 +1,5 @@
-import { Response } from '@whatwg-node/fetch';
 import { execute, GraphQLSchema, parse } from 'graphql';
+import { Response } from '@whatwg-node/fetch';
 import loadGraphQLSchemaFromOpenAPI from '../src/index.js';
 
 describe('Explode parameter', () => {

@@ -1,0 +1,13 @@
+{
+  "title": "UploadFileRequest",
+  "type": "object",
+  "properties": {
+    "description": {
+      "type": "string"
+    },
+    "file": {
+      "type": "string",
+      "format": "binary"
+    }
+  }
+}

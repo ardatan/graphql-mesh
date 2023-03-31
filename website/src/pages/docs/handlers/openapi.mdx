@@ -1,3 +1,10 @@
+---
+description:
+  Load remote or local OpenAPI and Swagger schemas with GraphQL Mesh OpenAPI/ Swagger handler.
+  Migrate from older versions, and override default Query/Mutation operations classification. Accept
+  cookies, headers, and context values with advanced cookie handling.
+---
+
 import { PackageCmd } from '@theguild/components'
 
 # OpenAPI / Swagger
@@ -109,16 +116,16 @@ header in `Authorization-Header`. To introduce the logic needed to generate the 
 `fetch` used by GraphQL Mesh to call the Rest API.
 
 ```ts filename="custom-fetch.ts"
-import { MeshContext } from '@graphql-mesh/types';
+import { MeshContext } from '@graphql-mesh/runtime';
 import { fetch } from '@whatwg-node/fetch';
 
 export default(url: string, init: RequestInit, context: MeshContext) {
   // Set Authorization header dynamically to context value, or input cookie, or input header
-  args.headers['authorization'] =
-    context.authorization || args.headers['authorization-cookie'] || args.headers['authorization-header']
+  init.headers['authorization'] =
+    context.authorization || init.headers['authorization-cookie'] || init.headers['authorization-header']
   // Clean up headers forwarded to the Rest API
-  delete args.headers['authorization-cookie']
-  delete args.headers['authorization-header']
+  delete init.headers['authorization-cookie']
+  delete init.headers['authorization-header']
   // Execute the fetch with the new headers
   return fetch(url, args)
 }

@@ -1,9 +1,9 @@
-import { makeExecutableSchema } from '@graphql-tools/schema';
-import { YamlConfig, MeshPubSub, ImportFn, Logger } from '@graphql-mesh/types';
 import { buildSchema, execute, parse, specifiedRules, subscribe, validate } from 'graphql';
+import { envelop, useEngine, useSchema } from '@envelop/core';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
+import { ImportFn, Logger, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
-import { envelop, useSchema, useEngine } from '@envelop/core';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 import useMock from '../src/index.js';
 
 describe('mocking', () => {

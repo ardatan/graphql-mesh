@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/openapi",
-  "version": "0.19.7",
+  "version": "0.19.26",
   "type": "module",
   "repository": {
     "type": "git",
@@ -29,29 +29,23 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "graphql": "*"
-  },
-  "dependencies": {
-    "@graphql-mesh/cross-helpers": "0.3.1",
-    "@graphql-mesh/string-interpolation": "0.4.2",
-    "@graphql-mesh/types": "0.89.4",
-    "@graphql-mesh/utils": "0.43.5",
-    "@omnigraph/json-schema": "0.38.6",
-    "change-case": "4.1.2",
-    "json-machete": "0.18.4",
-    "openapi-types": "12.1.0",
+    "@graphql-mesh/cross-helpers": "^0.3.4",
+    "@graphql-mesh/types": "^0.91.12",
+    "@graphql-mesh/utils": "^0.43.20",
+    "graphql": "*",
     "tslib": "^2.4.0"
   },
+  "dependencies": {
+    "@graphql-mesh/string-interpolation": "0.4.3",
+    "@omnigraph/json-schema": "0.38.24",
+    "change-case": "4.1.2",
+    "json-machete": "0.18.20",
+    "openapi-types": "12.1.0"
+  },
   "devDependencies": {
-    "@graphql-tools/utils": "9.1.4",
-    "@types/cookie-parser": "1.4.3",
-    "@types/multer": "1.4.7",
-    "@whatwg-node/router": "0.1.7",
-    "body-parser": "1.20.1",
-    "cookie-parser": "1.4.6",
-    "express": "4.18.2",
-    "get-port": "6.1.2",
-    "graphql-yoga": "3.3.0",
+    "@graphql-tools/utils": "9.2.1",
+    "@whatwg-node/router": "0.3.0",
+    "graphql-yoga": "3.8.0",
     "json-bigint-patch": "0.0.8"
   },
   "publishConfig": {

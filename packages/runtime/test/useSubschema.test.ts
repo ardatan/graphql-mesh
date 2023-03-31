@@ -1,25 +1,29 @@
+import {
+  buildClientSchema,
+  execute,
+  ExecutionResult,
+  getIntrospectionQuery,
+  IntrospectionQuery,
+  parse,
+  printSchema,
+  specifiedRules,
+  subscribe,
+  validate,
+} from 'graphql';
 import { envelop, useEngine } from '@envelop/core';
 import { Subschema } from '@graphql-tools/delegate';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { RenameRootFields, TransformEnumValues } from '@graphql-tools/wrap';
-import {
-  buildClientSchema,
-  ExecutionResult,
-  getIntrospectionQuery,
-  IntrospectionQuery,
-  printSchema,
-  parse,
-  validate,
-  execute,
-  subscribe,
-  specifiedRules,
-} from 'graphql';
 import { useSubschema } from '../src/useSubschema.js';
 
 describe('useSubschema', () => {
   const sdl = /* GraphQL */ `
     type Query {
       foo(baz: Baz!): String
+      _service: _Service!
+    }
+    type _Service {
+      sdl: String
     }
     enum Baz {
       B
@@ -32,6 +36,10 @@ describe('useSubschema', () => {
     resolvers: {
       Query: {
         foo: (_, { baz }) => baz,
+        _service: () => ({}),
+      },
+      _Service: {
+        sdl: () => sdl,
       },
       Baz: {
         B: 'b',
@@ -87,6 +95,52 @@ describe('useSubschema', () => {
     expect(printedIntrospectedSdl).toMatchInlineSnapshot(`
       "type Query {
         bar(baz: Baz!): String
+        _service: _Service!
+      }
+
+      type _Service {
+        sdl: String
+      }
+
+      enum Baz {
+        A_B
+        A_C
+        A_D
+      }"
+    `);
+  });
+  it('should return correct SDL', async () => {
+    const { schema, parse, validate, execute, contextFactory } = getEnveloped();
+    const document = parse(/* GraphQL */ `
+      query Test {
+        _service {
+          sdl
+        }
+      }
+    `);
+    const errors = validate(schema, document);
+    expect(errors).toHaveLength(0);
+    const result = (await execute({
+      schema,
+      document,
+      contextValue: await contextFactory(),
+    })) as any as ExecutionResult<{
+      _service: {
+        sdl: string;
+      };
+    }>;
+    expect(result.data._service.sdl).toMatchInlineSnapshot(`
+      "schema {
+        query: Query
+      }
+
+      type Query {
+        bar(baz: Baz!): String
+        _service: _Service!
+      }
+
+      type _Service {
+        sdl: String
       }
 
       enum Baz {

@@ -8,7 +8,7 @@ extend type Plugin {
 type MockingConfig @md {
   """
   If this expression is truthy, mocking would be enabled
-  You can use environment variables expression, for example: `${MOCKING_ENABLED}`
+  You can use environment variables expression, for example: `process.env.MOCKING_ENABLED != null`
   """
   if: Boolean
   """

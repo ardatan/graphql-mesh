@@ -1,10 +1,10 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import { defaultImportFn, DefaultLogger, getHeadersObj, PubSub } from '@graphql-mesh/utils';
 import { execute, parse } from 'graphql';
 import LocalforageCache from '@graphql-mesh/cache-localforage';
-import JsonSchemaHandler from '../src/index.js';
+import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
+import { defaultImportFn, DefaultLogger, getHeadersObj, PubSub } from '@graphql-mesh/utils';
 import { Headers, Response } from '@whatwg-node/fetch';
+import JsonSchemaHandler from '../src/index.js';
 
 describe('JSON Schema Handler', () => {
   // TODO: Implement this feature later

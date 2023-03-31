@@ -12,7 +12,30 @@ export const exampleApi = createRouter();
 
 exampleApi.all('*', withCookies);
 
-const Users = {
+interface User {
+  username: string;
+  name: string;
+  address: {
+    street: string;
+    city: string;
+  };
+  address2?: {
+    street: string;
+    city: string;
+  };
+  employerId: string;
+  hobbies: string[];
+  status: 'staff' | 'student' | 'faculty' | 'alumni';
+  nomenclature: {
+    suborder: string;
+    family: string;
+    genus: string;
+    species: string;
+  };
+  friends: string[];
+}
+
+const Users: Record<string, User> = {
   arlene: {
     username: 'arlene',
     name: 'Arlene L McMahon',
@@ -91,7 +114,20 @@ const Users = {
   },
 };
 
-const Cars = {
+interface Car {
+  model: string;
+  color: string;
+  kind: string;
+  rating: number;
+  tags?: {
+    [key: string]: string;
+  };
+  features?: {
+    color?: string;
+  };
+}
+
+const Cars: Record<string, Car> = {
   arlene: {
     model: 'Retro Rides',
     color: 'yellow',
@@ -131,7 +167,18 @@ const Cars = {
   },
 };
 
-const Companies = {
+interface Company {
+  id: string;
+  name: string;
+  legalForm: 'public' | 'private';
+  ceoUsername: string;
+  offices: {
+    street: string;
+    city: string;
+  }[];
+}
+
+const Companies: Record<string, Company> = {
   binsol: {
     id: 'binsol',
     name: 'Binary Solutions',
@@ -232,7 +279,15 @@ const Papers = {
   },
 };
 
-const TrashCans = {
+interface TrashCan {
+  brand: string;
+  contents: {
+    type: string;
+    message: string;
+  }[];
+}
+
+const TrashCans: Record<string, TrashCan> = {
   arlene: {
     brand: 'Garbage Emporium',
     contents: [
@@ -270,7 +325,13 @@ const TrashCans = {
   },
 };
 
-const Auth = {
+interface AuthObj {
+  username: string;
+  password: string;
+  accessToken: string;
+}
+
+const Auth: Record<string, AuthObj> = {
   arlene: {
     username: 'arlene123',
     password: 'password123',
@@ -523,15 +584,7 @@ exampleApi.post('/api/users', async req => {
 });
 
 exampleApi.get('/api/assets/:companyId', req => {
-  const assets: {
-    name: string;
-    address: { street: string; city: string };
-    employerId: string;
-    hobbies: string[];
-    status: string;
-    nomenclature: { suborder: string; family: string; genus: string; species: string };
-    friends: string[];
-  }[] = [];
+  const assets: any[] = [];
   Object.entries(Users).forEach(([username, user]) => {
     if (req.params.companyId === user.employerId) {
       assets.push(user);
@@ -1019,7 +1072,7 @@ exampleApi.get('/api/trashcans/:username', req => {
 });
 
 exampleApi.post('/api/trashcans/:username', async req => {
-  const trashItem = await req.json();
+  const trashItem: any = await req.json();
 
   if (req.params.username in Users) {
     const trashCan = TrashCans[req.params.username];

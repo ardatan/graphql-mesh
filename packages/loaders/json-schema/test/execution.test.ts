@@ -1,6 +1,6 @@
+import { execute, OperationTypeNode, parse } from 'graphql';
 import { getHeadersObj } from '@graphql-mesh/utils';
 import { Request, Response } from '@whatwg-node/fetch';
-import { execute, OperationTypeNode, parse } from 'graphql';
 import loadGraphQLSchemaFromJSONSchemas from '../src/index.js';
 
 describe('Execution', () => {
@@ -449,6 +449,35 @@ describe('Execution', () => {
       });
 
       expect(receivedInput).toEqual(expectedInput);
+    });
+  });
+  it('List results', async () => {
+    const schema = await loadGraphQLSchemaFromJSONSchemas('test', {
+      cwd: __dirname,
+      operations: [
+        {
+          type: OperationTypeNode.QUERY,
+          field: 'getTest',
+          method: 'GET',
+          path: '/test',
+          responseSchema: './fixtures/list-results.schema.json#/definitions/Test',
+        },
+      ],
+      fetch: async () => Response.json(['foo', 'bar', 'baz']),
+    });
+    const query = /* GraphQL */ `
+      query Test {
+        getTest
+      }
+    `;
+    const result = await execute({
+      schema,
+      document: parse(query),
+    });
+    expect(result).toEqual({
+      data: {
+        getTest: ['foo', 'bar', 'baz'],
+      },
     });
   });
 });

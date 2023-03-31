@@ -1,34 +1,34 @@
-import {
-  MeshHandlerOptions,
-  MeshPubSub,
-  MeshHandler,
-  MeshSource,
-  YamlConfig,
-  ImportFn,
-} from '@graphql-mesh/types';
-import { SchemaComposer, EnumTypeComposerValueConfigDefinition } from 'graphql-compose';
-import { TableForeign, createPool, Pool } from 'mysql';
-import { upgrade, introspection } from 'mysql-utilities';
+import { GraphQLResolveInfo, specifiedDirectives } from 'graphql';
+import { EnumTypeComposerValueConfigDefinition, SchemaComposer } from 'graphql-compose';
 import graphqlFields from 'graphql-fields';
 import {
   GraphQLBigInt,
+  GraphQLDate,
   GraphQLDateTime,
   GraphQLJSON,
-  GraphQLDate,
-  GraphQLTimestamp,
   GraphQLTime,
-  GraphQLUnsignedInt,
+  GraphQLTimestamp,
   GraphQLUnsignedFloat,
+  GraphQLUnsignedInt,
 } from 'graphql-scalars';
-import { GraphQLResolveInfo, specifiedDirectives } from 'graphql';
-import { loadFromModuleExportExpression, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
-import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
-import { ExecutionRequest } from '@graphql-tools/utils';
-import { createDefaultExecutor } from '@graphql-tools/delegate';
+import { createPool, Pool, TableForeign } from 'mysql';
+import { introspection, upgrade } from 'mysql-utilities';
 import { process, util } from '@graphql-mesh/cross-helpers';
+import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import {
+  ImportFn,
+  MeshHandler,
+  MeshHandlerOptions,
+  MeshPubSub,
+  MeshSource,
+  YamlConfig,
+} from '@graphql-mesh/types';
+import { loadFromModuleExportExpression, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import { createDefaultExecutor } from '@graphql-tools/delegate';
+import { ExecutionRequest } from '@graphql-tools/utils';
 
-const SCALARS = {
+const SCALARS: Record<string, string> = {
   bigint: 'BigInt',
   'bigint unsigned': 'BigInt',
   binary: 'String',
@@ -159,12 +159,17 @@ export default class MySQLHandler implements MeshHandler {
   private getCachedIntrospectionConnection(pool: Pool) {
     let promisifiedConnection$: Promise<MysqlPromisifiedConnection>;
     return new Proxy<MysqlPromisifiedConnection>({} as any, {
-      get: (_, methodName) => {
+      get: (_, methodName: keyof MysqlPromisifiedConnection) => {
         if (methodName === 'release') {
           return () =>
             promisifiedConnection$?.then(promisifiedConnection =>
               promisifiedConnection?.connection.release(),
             );
+        }
+        if (methodName === 'connection') {
+          return promisifiedConnection$?.then(
+            promisifiedConnection => promisifiedConnection?.connection,
+          );
         }
         return async (...args: any[]) => {
           const cacheKey = [methodName, ...args].join('_');
@@ -175,6 +180,7 @@ export default class MySQLHandler implements MeshHandler {
           return cacheProxy.getWithSet(async () => {
             promisifiedConnection$ = promisifiedConnection$ || getPromisifiedConnection(pool);
             const promisifiedConnection = await promisifiedConnection$;
+            // @ts-expect-error - Weird error
             return promisifiedConnection[methodName](...args);
           });
         };
@@ -479,7 +485,7 @@ export default class MySQLHandler implements MeshHandler {
         typeMergingOptions[objectTypeName] = {
           selectionSet: `{ ${[...primaryKeys].join(' ')} }`,
           args: obj => {
-            const where = {};
+            const where: Record<string, any> = {};
             for (const primaryKey of primaryKeys) {
               where[primaryKey] = obj[primaryKey];
             }

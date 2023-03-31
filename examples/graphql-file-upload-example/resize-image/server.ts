@@ -1,5 +1,5 @@
-import { createYoga, createSchema } from 'graphql-yoga';
 import { createServer } from 'http';
+import { createSchema, createYoga } from 'graphql-yoga';
 import sharp from 'sharp';
 
 export function startServer() {

@@ -1,3 +1,5 @@
+import * as Calculator from './Calculator';
+
 /* tslint:disable */
 /* eslint-disable */
 /*
@@ -5,5 +7,5 @@
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  */
 export * from './AddRequest';
-import * as Calculator from './Calculator';
+
 export { Calculator };

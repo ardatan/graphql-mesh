@@ -12,7 +12,7 @@ export const exampleApi7 = createRouter({ base: '/api' });
 
 export const pubsub = new PubSub();
 
-const Devices = {
+const Devices: Record<string, { name: string; userName: string }> = {
   'Audio-player': {
     name: 'Audio-player',
     userName: 'johnny',

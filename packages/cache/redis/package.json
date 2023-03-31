@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cache-redis",
-  "version": "0.11.6",
+  "version": "0.11.21",
   "type": "module",
   "repository": {
     "type": "git",
@@ -29,16 +29,16 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "graphql": "*"
+    "@graphql-mesh/cross-helpers": "^0.3.4",
+    "@graphql-mesh/types": "^0.91.12",
+    "@graphql-mesh/utils": "^0.43.20",
+    "graphql": "*",
+    "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/cross-helpers": "0.3.1",
-    "@graphql-mesh/string-interpolation": "0.4.2",
-    "@graphql-mesh/types": "0.89.4",
-    "@graphql-mesh/utils": "0.43.5",
-    "ioredis": "5.2.5",
-    "ioredis-mock": "8.2.2",
-    "tslib": "^2.4.0"
+    "@graphql-mesh/string-interpolation": "0.4.3",
+    "ioredis": "5.3.1",
+    "ioredis-mock": "8.4.0"
   },
   "devDependencies": {
     "@types/ioredis-mock": "8.2.1"

@@ -1,10 +1,10 @@
-import { MeshPluginOptions, YamlConfig, MeshPlugin } from '@graphql-mesh/types';
 import faker from 'faker';
+import { execute, GraphQLFieldResolver, GraphQLResolveInfo, GraphQLSchema } from 'graphql';
 import { mocks as graphqlScalarsMocks } from 'graphql-scalars';
-import { addMocksToSchema, createMockStore, IMocks } from '@graphql-tools/mock';
-import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { getInterpolatedStringFactory } from '@graphql-mesh/string-interpolation';
-import { GraphQLResolveInfo, GraphQLFieldResolver, GraphQLSchema, execute } from 'graphql';
+import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { addMocksToSchema, createMockStore, IMocks } from '@graphql-tools/mock';
 
 const mockedSchemas = new WeakSet<GraphQLSchema>();
 
@@ -12,7 +12,8 @@ export default function useMock(
   config: MeshPluginOptions<YamlConfig.MockingConfig>,
   // eslint-disable-next-line @typescript-eslint/ban-types
 ): MeshPlugin<{}> {
-  const configIf = config != null && 'if' in config ? config.if : true;
+  // eslint-disable-next-line no-new-func
+  const configIf = config != null && 'if' in config ? new Function(`return ${ifDef}`)() : true;
 
   if (configIf) {
     return {

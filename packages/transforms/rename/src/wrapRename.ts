@@ -1,18 +1,18 @@
 import { GraphQLSchema } from 'graphql';
 import { YamlConfig } from '@graphql-mesh/types';
 import {
-  RenameTypes,
-  RenameObjectFields,
-  RenameInputObjectFields,
-  RenameObjectFieldArguments,
-} from '@graphql-tools/wrap';
-import { ExecutionResult, ExecutionRequest } from '@graphql-tools/utils';
-import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
-import {
   applyRequestTransforms,
   applyResultTransforms,
   applySchemaTransforms,
 } from '@graphql-mesh/utils';
+import { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
+import { ExecutionRequest, ExecutionResult } from '@graphql-tools/utils';
+import {
+  RenameInputObjectFields,
+  RenameObjectFieldArguments,
+  RenameObjectFields,
+  RenameTypes,
+} from '@graphql-tools/wrap';
 import { ignoreList } from './shared.js';
 
 export default class WrapRename implements Transform {

@@ -1,9 +1,9 @@
+import toJsonSchema from 'to-json-schema';
+import { Logger } from '@graphql-mesh/types';
+import { DefaultLogger } from '@graphql-mesh/utils';
+import { inspect } from '@graphql-tools/utils';
 import { JSONSchema, JSONSchemaObject } from './types.js';
 import { visitJSONSchema } from './visitJSONSchema.js';
-import toJsonSchema from 'to-json-schema';
-import { DefaultLogger } from '@graphql-mesh/utils';
-import { Logger } from '@graphql-mesh/types';
-import { inspect } from '@graphql-tools/utils';
 
 const asArray = <T>(value: T | T[]): T[] => (Array.isArray(value) ? value : [value]);
 
@@ -478,7 +478,7 @@ export async function healJSONSchema(
           }
           if (subSchema.pattern) {
             // Fix non JS patterns
-            const javaToJsPattern = {
+            const javaToJsPattern: Record<string, string> = {
               '\\p{Digit}': '[0-9]',
               '\\p{Alpha}': '[a-zA-Z]',
               '\\p{Alnum}': '[a-zA-Z0-9]',
@@ -489,6 +489,22 @@ export async function healJSONSchema(
                 const jsPattern = javaToJsPattern[javaPattern];
                 subSchema.pattern = subSchema.pattern.split(javaPattern).join(jsPattern);
               }
+            }
+          }
+          if (
+            subSchema.default != null &&
+            subSchema.type != null &&
+            subSchema.type !== 'string' &&
+            typeof subSchema.default === 'string'
+          ) {
+            logger.debug(
+              `${path} has a default value as a JSON string for the type ${subSchema.type}. Converting it to JSON.`,
+            );
+            try {
+              subSchema.default = JSON.parse(subSchema.default);
+            } catch (e) {
+              logger.debug(`${path} has a default value but it is not a valid JSON.`);
+              delete subSchema.default;
             }
           }
         }

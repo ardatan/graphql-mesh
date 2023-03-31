@@ -1,8 +1,8 @@
-import { SOAPLoader } from '../src/SOAPLoader.js';
-import { fetch } from '@whatwg-node/fetch';
 import { parse } from 'graphql';
-import { createExecutorFromSchemaAST } from '../src/executor.js';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { fetch } from '@whatwg-node/fetch';
+import { createExecutorFromSchemaAST } from '../src/executor.js';
+import { SOAPLoader } from '../src/SOAPLoader.js';
 
 describe('SOAP Loader', () => {
   it('should generate the schema correctly', async () => {

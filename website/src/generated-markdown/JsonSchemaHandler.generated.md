@@ -91,3 +91,4 @@ Note: when using arrayFormat set to 'comma', you can also pass the commaRoundTri
 (default: false)
 * `bundlePath` (type: `String`) - Will be removed later
 * `bundleHeaders` (type: `JSON`) - Will be removed later
+* `timeout` (type: `Int`) - Timeout for the HTTP request in milliseconds

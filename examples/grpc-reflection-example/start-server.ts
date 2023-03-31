@@ -1,16 +1,11 @@
-import {
-  Server,
-  loadPackageDefinition,
-  ServerCredentials,
-  ServiceClientConstructor,
-} from '@grpc/grpc-js';
-import { load } from '@grpc/proto-loader';
 import { join } from 'path';
+import { loadPackageDefinition, Server, ServerCredentials } from '@grpc/grpc-js';
+import { load } from '@grpc/proto-loader';
 
 const wrapServerWithReflection = require('grpc-node-server-reflection').default;
 
-export default async function startServer(subscriptionInterval = 1000) {
-  const server = wrapServerWithReflection(new Server());
+export default async function startServer() {
+  const server: Server = wrapServerWithReflection(new Server());
 
   const packageDefinition = await load('./service.proto', {
     includeDirs: [join(__dirname, './proto')],
@@ -21,13 +16,16 @@ export default async function startServer(subscriptionInterval = 1000) {
       callback(null, { greeting: 'Hello ' + call.request.name });
     },
   });
-  server.bindAsync('0.0.0.0:50051', ServerCredentials.createInsecure(), (error, port) => {
-    if (error) {
-      throw error;
-    }
-    server.start();
+  return new Promise<Server>((resolve, reject) => {
+    server.bindAsync('0.0.0.0:50051', ServerCredentials.createInsecure(), (error, port) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+      server.start();
 
-    console.log('gRPC Server started, listening: 0.0.0.0:' + port);
+      console.log('gRPC Server started, listening: 0.0.0.0:' + port);
+      resolve(server);
+    });
   });
-  return server;
 }

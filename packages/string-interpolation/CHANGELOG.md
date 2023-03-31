@@ -1,5 +1,13 @@
 # @graphql-mesh/string-interpolation
 
+## 0.4.3
+
+### Patch Changes
+
+- [#5252](https://github.com/Urigo/graphql-mesh/pull/5252)
+  [`c90eb5ac6`](https://github.com/Urigo/graphql-mesh/commit/c90eb5ac631507de1f49db68ca681193cc5a20b5)
+  Thanks [@ardatan](https://github.com/ardatan)! - Make shared packages peer dependency
+
 ## 0.4.2
 
 ### Patch Changes

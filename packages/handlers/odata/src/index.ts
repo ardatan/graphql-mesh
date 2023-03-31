@@ -1,65 +1,65 @@
+// eslint-disable-next-line import/no-nodejs-modules
+import EventEmitter from 'events';
+import DataLoader from 'dataloader';
+import { XMLParser } from 'fast-xml-parser';
 import {
-  YamlConfig,
-  MeshHandler,
-  MeshHandlerOptions,
-  MeshSource,
-  Logger,
-  ImportFn,
-  MeshFetch,
-  GetMeshSourcePayload,
-} from '@graphql-mesh/types';
-import { readFileOrUrl } from '@graphql-mesh/utils';
+  ExecutionResult,
+  getNamedType,
+  GraphQLObjectType,
+  GraphQLResolveInfo,
+  GraphQLSchema,
+  isAbstractType,
+  isListType,
+  specifiedDirectives,
+} from 'graphql';
+import {
+  EnumTypeComposerValueConfigDefinition,
+  InputTypeComposer,
+  InterfaceTypeComposer,
+  ObjectTypeComposer,
+  ObjectTypeComposerArgumentConfigMapDefinition,
+  ObjectTypeComposerFieldConfigDefinition,
+  SchemaComposer,
+} from 'graphql-compose';
+import {
+  parseResolveInfo,
+  ResolveTree,
+  simplifyParsedResolveInfoFragmentWithType,
+} from 'graphql-parse-resolve-info';
+import {
+  GraphQLBigInt,
+  GraphQLByte,
+  GraphQLDate,
+  GraphQLDateTime,
+  GraphQLGUID,
+  GraphQLISO8601Duration,
+  GraphQLJSON,
+} from 'graphql-scalars';
+import { parseResponse } from 'http-string-parser';
+import { pascalCase } from 'pascal-case';
+import urljoin from 'url-join';
+import { process } from '@graphql-mesh/cross-helpers';
+import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import {
   getInterpolatedHeadersFactory,
   parseInterpolationStrings,
   ResolverData,
   stringInterpolator,
 } from '@graphql-mesh/string-interpolation';
-import urljoin from 'url-join';
 import {
-  SchemaComposer,
-  ObjectTypeComposer,
-  InterfaceTypeComposer,
-  ObjectTypeComposerFieldConfigDefinition,
-  ObjectTypeComposerArgumentConfigMapDefinition,
-  EnumTypeComposerValueConfigDefinition,
-  InputTypeComposer,
-} from 'graphql-compose';
-import {
-  GraphQLBigInt,
-  GraphQLGUID,
-  GraphQLDateTime,
-  GraphQLJSON,
-  GraphQLDate,
-  GraphQLByte,
-  GraphQLISO8601Duration,
-} from 'graphql-scalars';
-import {
-  isListType,
-  GraphQLResolveInfo,
-  isAbstractType,
-  GraphQLObjectType,
-  GraphQLSchema,
-  specifiedDirectives,
-  ExecutionResult,
-  getNamedType,
-} from 'graphql';
-import {
-  parseResolveInfo,
-  ResolveTree,
-  simplifyParsedResolveInfoFragmentWithType,
-} from 'graphql-parse-resolve-info';
-import DataLoader from 'dataloader';
-import { parseResponse } from 'http-string-parser';
-import { pascalCase } from 'pascal-case';
-// eslint-disable-next-line import/no-nodejs-modules
-import EventEmitter from 'events';
-import { XMLParser } from 'fast-xml-parser';
+  GetMeshSourcePayload,
+  ImportFn,
+  Logger,
+  MeshFetch,
+  MeshHandler,
+  MeshHandlerOptions,
+  MeshSource,
+  YamlConfig,
+} from '@graphql-mesh/types';
+import { getHeadersObj, readFileOrUrl } from '@graphql-mesh/utils';
+import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { ExecutionRequest, memoize1 } from '@graphql-tools/utils';
 import { Request, Response } from '@whatwg-node/fetch';
-import { PredefinedProxyOptions } from '@graphql-mesh/store';
-import { createDefaultExecutor } from '@graphql-tools/delegate';
-import { process } from '@graphql-mesh/cross-helpers';
 
 const SCALARS = new Map<string, string>([
   ['Edm.Binary', 'String'],
@@ -124,6 +124,8 @@ const queryOptionsFields = {
     type: 'Boolean',
   },
 };
+
+type DataLoaderMap = Record<symbol, DataLoader<Request, Response, Request>>;
 
 export default class ODataHandler implements MeshHandler {
   private name: string;
@@ -584,7 +586,7 @@ export default class ODataHandler implements MeshHandler {
                 this.fetchFn(request.url, {
                   method: request.method,
                   body: request.body && (await request.text()),
-                  headers: request.headers,
+                  headers: getHeadersObj(request.headers),
                 }),
               ),
             ),
@@ -747,7 +749,7 @@ export default class ODataHandler implements MeshHandler {
                 },
               },
               extensions: { navigationPropertyObj },
-              resolve: async (root, args, context, info) => {
+              resolve: async (root, args, context: DataLoaderMap, info) => {
                 if (navigationPropertyName in root) {
                   return root[navigationPropertyName];
                 }
@@ -797,7 +799,7 @@ export default class ODataHandler implements MeshHandler {
                 queryOptions: { type: 'QueryOptions' },
               },
               extensions: { navigationPropertyObj },
-              resolve: async (root, args, context, info) => {
+              resolve: async (root, args, context: DataLoaderMap, info) => {
                 if (navigationPropertyName in root) {
                   return root[navigationPropertyName];
                 }
@@ -847,7 +849,7 @@ export default class ODataHandler implements MeshHandler {
                 ...commonArgs,
               },
               extensions: { navigationPropertyObj },
-              resolve: async (root, args, context, info) => {
+              resolve: async (root, args, context: DataLoaderMap, info) => {
                 if (navigationPropertyName in root) {
                   return root[navigationPropertyName];
                 }
@@ -1555,7 +1557,7 @@ export default class ODataHandler implements MeshHandler {
     return {
       schema,
       executor: <TResult>(executionRequest: ExecutionRequest) => {
-        const odataContext = {
+        const odataContext: DataLoaderMap = {
           [contextDataloaderName]: dataLoaderFactory(executionRequest.context),
         };
         return executor({
@@ -1574,7 +1576,10 @@ export default class ODataHandler implements MeshHandler {
   private prepareSearchParams(fragment: ResolveTree, schema: GraphQLSchema) {
     const fragmentTypeNames = Object.keys(fragment.fieldsByTypeName) as string[];
     const returnType = schema.getType(fragmentTypeNames[0]);
-    const { args, fields } = simplifyParsedResolveInfoFragmentWithType(fragment, returnType);
+    const { args, fields } = simplifyParsedResolveInfoFragmentWithType(fragment, returnType) as {
+      args: Record<string, any>;
+      fields: Record<string, any>;
+    };
     const searchParams = new URLSearchParams();
     if ('queryOptions' in args) {
       const { queryOptions } = args as any;

@@ -1,23 +1,22 @@
 import {
   defaultFieldResolver,
   GraphQLAbstractType,
+  GraphQLEnumType,
   GraphQLInputObjectType,
+  GraphQLInterfaceType,
   GraphQLList,
   GraphQLNonNull,
+  GraphQLObjectType,
   GraphQLOutputType,
   GraphQLScalarType,
-  GraphQLObjectType,
-  GraphQLInterfaceType,
-  GraphQLUnionType,
-  GraphQLEnumType,
   GraphQLSchema,
-  isInputObjectType,
+  GraphQLUnionType,
   isEnumType,
+  isInputObjectType,
 } from 'graphql';
-import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
+import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { MapperKind, mapSchema, renameType } from '@graphql-tools/utils';
-
-import { NAMING_CONVENTIONS, IGNORED_ROOT_FIELD_NAMES, IGNORED_TYPE_NAMES } from './shared.js';
+import { IGNORED_ROOT_FIELD_NAMES, IGNORED_TYPE_NAMES, NAMING_CONVENTIONS } from './shared.js';
 
 export declare type GraphQLTypePointer =
   | GraphQLList<GraphQLOutputType>
@@ -43,7 +42,7 @@ const defaultResolverComposer =
   (
     resolveFn = defaultFieldResolver,
     originalFieldName: string,
-    argsMap: { [key: string]: string },
+    argsMap: { [key: string]: any },
     resultMap: { [key: string]: string },
   ) =>
   (root: any, args: any, context: any, info: any) => {
@@ -167,7 +166,7 @@ export default class NamingConventionTransform implements MeshTransform {
             this.config.fieldNames && NAMING_CONVENTIONS[this.config.fieldNames];
           const argNamingConventionFn =
             this.config.fieldArgumentNames && NAMING_CONVENTIONS[this.config.fieldArgumentNames];
-          const argsMap = fieldConfig.args && {};
+          const argsMap: Record<string, any> = fieldConfig.args && {};
           const newFieldName =
             this.config.fieldNames &&
             !IGNORED_ROOT_FIELD_NAMES.includes(fieldName) &&

@@ -1,17 +1,17 @@
+import { GraphQLSchema } from 'graphql';
+import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import {
-  MeshHandlerOptions,
-  MeshHandler,
-  YamlConfig,
   GetMeshSourcePayload,
   ImportFn,
   Logger,
+  MeshHandler,
+  MeshHandlerOptions,
   MeshSource,
+  YamlConfig,
 } from '@graphql-mesh/types';
-import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
-import { createExecutorFromSchemaAST, SOAPLoader } from '@omnigraph/soap';
 import { readFileOrUrl } from '@graphql-mesh/utils';
-import { GraphQLSchema } from 'graphql';
 import { Executor } from '@graphql-tools/utils';
+import { createExecutorFromSchemaAST, SOAPLoader } from '@omnigraph/soap';
 
 export default class SoapHandler implements MeshHandler {
   private config: YamlConfig.SoapHandler;
@@ -29,7 +29,7 @@ export default class SoapHandler implements MeshHandler {
   }: MeshHandlerOptions<YamlConfig.SoapHandler>) {
     this.config = config;
     this.soapSDLProxy = store.proxy(
-      'schemaWithAnnotations.graphql',
+      'schemaWithAnnotations',
       PredefinedProxyOptions.GraphQLSchemaWithDiffing,
     );
     this.baseDir = baseDir;

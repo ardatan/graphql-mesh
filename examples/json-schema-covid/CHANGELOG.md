@@ -1,5 +1,205 @@
 # covid-mesh
 
+## 0.5.388
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c90eb5ac6`](https://github.com/Urigo/graphql-mesh/commit/c90eb5ac631507de1f49db68ca681193cc5a20b5)]:
+  - @graphql-mesh/json-schema@0.37.24
+  - @graphql-mesh/graphql@0.34.13
+  - @graphql-mesh/cli@0.82.30
+
+## 0.5.387
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54),
+  [`52e6693e6`](https://github.com/Urigo/graphql-mesh/commit/52e6693e672a2975d0f4fdc27f0796453bb50cda),
+  [`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54),
+  [`2987413b0`](https://github.com/Urigo/graphql-mesh/commit/2987413b0150835859480d07cf386c32beb35bec),
+  [`9854f62b1`](https://github.com/Urigo/graphql-mesh/commit/9854f62b16981308247c0aeacd1724498e9e9963)]:
+  - @graphql-mesh/cli@0.82.29
+  - @graphql-mesh/graphql@0.34.12
+  - @graphql-mesh/json-schema@0.37.23
+
+## 0.5.386
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.28
+  - @graphql-mesh/json-schema@0.37.22
+  - @graphql-mesh/graphql@0.34.11
+
+## 0.5.385
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.27
+  - @graphql-mesh/graphql@0.34.10
+  - @graphql-mesh/json-schema@0.37.21
+
+## 0.5.384
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b86d420d4`](https://github.com/Urigo/graphql-mesh/commit/b86d420d4fdf1132f3485c35087aaecbce45a728)]:
+  - @graphql-mesh/graphql@0.34.9
+  - @graphql-mesh/cli@0.82.26
+  - @graphql-mesh/json-schema@0.37.20
+
+## 0.5.383
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.37.19
+
+## 0.5.382
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.37.18
+
+## 0.5.381
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.25
+  - @graphql-mesh/graphql@0.34.8
+  - @graphql-mesh/json-schema@0.37.17
+
+## 0.5.380
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0b438c329`](https://github.com/Urigo/graphql-mesh/commit/0b438c32950f524db65163d67f6a64f451214391),
+  [`0b438c329`](https://github.com/Urigo/graphql-mesh/commit/0b438c32950f524db65163d67f6a64f451214391)]:
+  - @graphql-mesh/cli@0.82.24
+  - @graphql-mesh/graphql@0.34.7
+  - @graphql-mesh/json-schema@0.37.16
+
+## 0.5.379
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f268e0c50`](https://github.com/Urigo/graphql-mesh/commit/f268e0c50e2cff9344070bad6541162f425e8600)]:
+  - @graphql-mesh/cli@0.82.23
+
+## 0.5.378
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5c19f8d6f`](https://github.com/Urigo/graphql-mesh/commit/5c19f8d6f79f2d9bfbeb6458c8dc7a1729c37db9)]:
+  - @graphql-mesh/cli@0.82.22
+  - @graphql-mesh/graphql@0.34.6
+  - @graphql-mesh/json-schema@0.37.15
+
+## 0.5.377
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.21
+  - @graphql-mesh/graphql@0.34.5
+  - @graphql-mesh/json-schema@0.37.14
+
+## 0.5.376
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.37.13
+
+## 0.5.375
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.20
+
+## 0.5.374
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.19
+
+## 0.5.373
+
+### Patch Changes
+
+- Updated dependencies
+  [[`8c9c39cf5`](https://github.com/Urigo/graphql-mesh/commit/8c9c39cf56c0cd0e3e3908b5c54cb4c1bca4151e)]:
+  - @graphql-mesh/graphql@0.34.4
+  - @graphql-mesh/cli@0.82.18
+  - @graphql-mesh/json-schema@0.37.12
+
+## 0.5.372
+
+### Patch Changes
+
+- Updated dependencies
+  [[`743caf3c8`](https://github.com/Urigo/graphql-mesh/commit/743caf3c8a0f3ebcaae1e4525b2c10b281cdc3aa)]:
+  - @graphql-mesh/cli@0.82.17
+  - @graphql-mesh/graphql@0.34.3
+  - @graphql-mesh/json-schema@0.37.11
+
+## 0.5.371
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.16
+  - @graphql-mesh/graphql@0.34.2
+  - @graphql-mesh/json-schema@0.37.10
+
+## 0.5.370
+
+### Patch Changes
+
+- Updated dependencies
+  [[`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
+  [`de470cf42`](https://github.com/Urigo/graphql-mesh/commit/de470cf42c466d0ca3ca4ef911c4956e9a0d366a),
+  [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
+  [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
+  [`a3a315b38`](https://github.com/Urigo/graphql-mesh/commit/a3a315b380133dc304e2da9f56b7d0774ae5fdc9)]:
+  - @graphql-mesh/cli@0.82.15
+  - @graphql-mesh/graphql@0.34.1
+  - @graphql-mesh/json-schema@0.37.9
+
+## 0.5.369
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a5fbc9562`](https://github.com/Urigo/graphql-mesh/commit/a5fbc95627c156208e7f3891ea871d6c9d4ecfe6),
+  [`a249250a7`](https://github.com/Urigo/graphql-mesh/commit/a249250a77eacb93751d2f17f2f19e3f6f176ee1),
+  [`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72),
+  [`38eb804b9`](https://github.com/Urigo/graphql-mesh/commit/38eb804b99f9b3629713c44a59ff052d7378d2cb)]:
+  - @graphql-mesh/cli@0.82.14
+  - @graphql-mesh/graphql@0.34.0
+  - @graphql-mesh/json-schema@0.37.8
+
+## 0.5.368
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ed5843d8a`](https://github.com/Urigo/graphql-mesh/commit/ed5843d8a771045eed61cdad33b72734666577d5)]:
+  - @graphql-mesh/graphql@0.33.10
+  - @graphql-mesh/cli@0.82.13
+  - @graphql-mesh/json-schema@0.37.7
+
 ## 0.5.367
 
 ### Patch Changes

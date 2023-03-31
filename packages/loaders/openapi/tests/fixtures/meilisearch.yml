@@ -1,0 +1,3907 @@
+openapi: 3.1.0
+info:
+  title: Meilisearch Core API
+  description: 'Search documents, configure and manage the Meilisearch engine.'
+  version: 1.0.0
+  contact:
+    name: Meilisearch
+    email: bonjour@Meilisearch.com
+  license:
+    name: MIT
+    url: 'https://github.com/Meilisearch/Meilisearch/blob/main/LICENSE'
+  summary:
+    'An open source, blazingly fast and hyper relevant search-engine that will improve your search
+    experience.'
+servers:
+  - url: '{protocol}://{domain}:{port}'
+    variables:
+      protocol:
+        enum:
+          - https
+          - http
+        default: https
+      domain:
+        default: example.meilisearch.com
+      port:
+        default: '7700'
+    description: 'https://example.meilisearch.com:7700'
+components:
+  schemas:
+    limit:
+      type: integer
+      description:
+        Limit given for the query. If limit is not provided as a query parameter, this parameter
+        displays the default limit value.
+      example: 10
+    offset:
+      type: integer
+      description:
+        Offset given for the query. If offset is not provided as a query parameter, this parameter
+        displays the default offset value.
+      example: 0
+    page:
+      type: integer
+      description:
+        Sets the specific results page to fetch. If page is not provided as a query parameter, this
+        parameter is ignored.
+      example: 1
+    hitsPerPage:
+      type: integer
+      description:
+        Sets the number of results returned per page. If hitsPerPage is not provided as a query
+        parameter, this parameter is ignored.
+      example: 20
+    totalHits:
+      type: integer
+      description:
+        Returns the total number of search results. Computed if either `page` or `hitsPerPage` is
+        provided as a query parameter.
+      example: 20
+    totalPages:
+      type: integer
+      description:
+        Returns the total number of navigatable results pages for the search query. Computed if
+        either `page` or `hitsPerPage` is provided as a query parameter.
+      example: 20
+    total:
+      type: integer
+      description:
+        Total number of browsable results using offset/limit parameters for the given resource.
+      example: 50
+    from:
+      type: integer
+      description: The first task uid returned.
+      example: 999
+    next:
+      type: integer
+      description:
+        Represents the value to send in `from` to fetch the next slice of the results. The first
+        item for the next slice starts at this exact number. When the returned value is null, it
+        means that all the data have been browsed in the given order.
+      example: 989
+    timestamp:
+      type: string
+      description: An `RFC 3339` format for date/time/duration.
+      example: '2019-11-20T09:40:33.711324Z'
+    index:
+      type: object
+      additionalProperties: false
+      examples:
+        - uid: movies
+          primaryKey: movie_id
+          createdAt: '2019-11-20T09:40:33.711324Z'
+          updatedAt: '2019-11-20T09:40:33.711324Z'
+      description: ''
+      title: ''
+      properties:
+        uid:
+          type: string
+          example: movies
+          description: Unique identifier for the index
+        primaryKey:
+          type:
+            - string
+            - 'null'
+          nullable: true
+          example: movie_id
+          description: Custom primaryKey for documents
+        createdAt:
+          $ref: '#/components/schemas/timestamp'
+        updatedAt:
+          $ref: '#/components/schemas/timestamp'
+      required:
+        - uid
+        - createdAt
+        - updatedAt
+    document:
+      type: object
+      additionalProperties: true
+      example:
+        id: 25684
+        title: American Ninja 5
+        poster: 'https://image.tmdb.org/t/p/w1280/iuAQVI4mvjI83wnirpD8GVNRVuY.jpg'
+        overview:
+          'When a scientists daughter is kidnapped, American Ninja, attempts to find her, but this
+          time he teams up with a youngster he has trained in the ways of the ninja.'
+        release_date: 725846400
+      description:
+        'A document made of attribute. The maximum number of attribute for a document is 65,535.'
+    matchesPosition:
+      type: object
+      properties:
+        start:
+          type: integer
+        length:
+          type: integer
+      additionalProperties: false
+      required:
+        - start
+        - length
+      description: Starting position and length in bytes of the matched term in the returned value
+    hit:
+      type: object
+      additionalProperties: true
+      example:
+        id: 25684
+        title: American Ninja 5
+        poster: 'https://image.tmdb.org/t/p/w1280/iuAQVI4mvjI83wnirpD8GVNRVuY.jpg'
+        overview:
+          'When a scientists daughter is kidnapped, American Ninja, attempts to find her, but this
+          time he teams up with a youngster he has trained in the ways of the ninja.'
+        release_date: 725846400
+        _formatted:
+          id: 25684
+          title: American Ninja 5
+          poster: 'https://image.tmdb.org/t/p/w1280/iuAQVI4mvjI83wnirpD8GVNRVuY.jpg'
+          overview:
+            'When a scientists daughter is kidnapped, American <em>Ninja</em>, attempts to find her,
+            but this time he teams up with a youngster he has trained in the ways of the
+            <em>ninja</em>.'
+          release_date: 725846400
+        _matchesPosition:
+          overview:
+            - start: 49
+              length: 5
+            - start: 155
+              length: 5
+      examples:
+        - id: 25684
+          title: American Ninja 5
+          poster: 'https://image.tmdb.org/t/p/w1280/iuAQVI4mvjI83wnirpD8GVNRVuY.jpg'
+          overview:
+            'When a scientists daughter is kidnapped, American Ninja, attempts to find her, but this
+            time he teams up with a youngster he has trained in the ways of the ninja.'
+          release_date: 725846400
+          _formatted:
+            id: 25684
+            title: American Ninja 5
+            poster: 'https://image.tmdb.org/t/p/w1280/iuAQVI4mvjI83wnirpD8GVNRVuY.jpg'
+            overview:
+              'When a scientists daughter is kidnapped, American <em>Ninja</em>, attempts to find
+              her, but this time he teams up with a youngster he has trained in the ways of the
+              <em>ninja</em>.'
+            release_date: 725846400
+          _matchesPosition:
+            overview:
+              - start: 49
+                length: 5
+              - start: 155
+                length: 5
+      description: ''
+      properties:
+        _formatted:
+          type: object
+          description:
+            Only present if `attributesToHighlight`/`attributesToCrop` is not empty. Return
+            highlighted and cropped fields.
+          additionalProperties: true
+        _matchesPosition:
+          type: object
+          description:
+            Only present if showMatchesPosition = `true`. Array of all search query occurrences in
+            all fields.
+          properties:
+            '':
+              $ref: '#/components/schemas/matchesPosition'
+        attribute:
+          type:
+            - string
+            - number
+          description:
+            Retrieve attributes of a search result. `attributesToRetrieve` controls these fields.
+        _geoDistance:
+          type: number
+          description:
+            'Using _geoPoint({lat}, {lng}) built-in sort rule at search leads the engine to return a
+            _geoDistance within the search results. This field represents the distance in meters of
+            the document from the specified _geoPoint.'
+    documentId:
+      oneOf:
+        - type: number
+        - type: string
+      example: 468219
+    filter:
+      description: |
+        Attribute(s) to filter on.
+
+        Can be made of 3 syntaxes
+
+        - Nested Array: `["something > 1", "genres=comedy", ["genres=horror", "title=batman"]]`
+        - String: `"something > 1 AND genres=comedy AND (genres=horror OR title=batman)"`
+        - Mixed: `["something > 1 AND genres=comedy", "genres=horror OR title=batman"]`
+
+        > info
+        > _geoRadius({lat}, {lng}, {distance_in_meters}) built-in filter rule can be used to filter documents within a geo circle.
+
+        > warn
+        > Attribute(s) used in `filter` should be declared as filterable attributes. See [Filtering and Faceted Search](https://docs.meilisearch.com/reference/features/filtering_and_faceted_search.html).
+      example:
+        - 'director:Mati Diop'
+        - - 'genres:Comedy'
+          - 'genres:Romance'
+      title: filter
+      oneOf:
+        - type: array
+          items:
+            type: string
+            pattern: '^[^:]+:[^:]+$'
+        - type: string
+          properties: {}
+          pattern: '^[^:]+:[^:]+$'
+        - type: array
+          items:
+            anyOf:
+              - type: array
+                items: {}
+              - type: string
+    sort:
+      description: |
+        Fields on which you want to sort the results.
+
+        > warn
+        > Attribute(s) used in `sort` should be declared as sortable attributes. See [Sorting](https://docs.meilisearch.com/reference/features/sorting.html).
+
+        > info
+        > _geoPoint({lat}, {long}) built-in sort rule can be used to sort documents around a geo point.
+      example:
+        - 'price:desc'
+      title: sort
+      oneOf:
+        - type: array
+          items:
+            type: string
+    searchResponse:
+      type: object
+      additionalProperties: false
+      title: ''
+      properties:
+        hits:
+          type: array
+          description: Array of documents matching the search.
+          items:
+            $ref: '#/components/schemas/hit'
+        offset:
+          type: integer
+          description: Number of documents skipped.
+        limit:
+          type: integer
+          description: Number of returned documents.
+        estimatedTotalHits:
+          type: integer
+          description: Estimated number of candidates for the search query.
+        page:
+          type: integer
+          description: The specific search results page to fetch.
+        hitsPerPage:
+          type: integer
+          description: Number of returned results per page.
+        totalHits:
+          type: integer
+          description: Exhaustive total number of search results for the search query.
+        totalPages:
+          type: integer
+          description: Number of navigatable results pages for the search query.
+        facetDistribution:
+          type: object
+          additionalProperties:
+            type: object
+            additionalProperties:
+              type: integer
+          description: |
+            [Distribution of the given facets](https://docs.meilisearch.com/reference/features/search_parameters.html#facet-distribution).
+          example:
+            genres:
+              action: 273
+              animation: 118
+              adventure: 132
+              fantasy: 67
+              comedy: 475
+              mystery: 70
+              thriller: 217
+        processingTimeMs:
+          type: integer
+          description: Processing time of the query.
+        query:
+          type: string
+          description: Query originating the response.
+          example: ninja
+      required:
+        - hits
+        - processingTimeMs
+        - query
+    task:
+      type: object
+      description: |
+        Meilisearch is an asynchronous API. It means that the API does not behave as you would typically expect when handling the request's responses.
+
+        Some operations are put in a queue and will be executed in turn (asynchronously). In this case, the server response contains the identifier to track the execution of the operation.
+
+        [Learn More](https://docs.meilisearch.com/learn/advanced/asynchronous_operations.html).
+      additionalProperties: false
+      examples:
+        - uid: 0
+          indexUid: movies
+          status: succeeded
+          type: documentAdditionOrUpdate
+          canceledBy: null
+          details:
+            receivedDocuments: 10
+            indexedDocuments: 10
+          duration: PT5S
+          enqueuedAt: '2021-01-01T09:39:00.000000Z'
+          startedAt: '2021-01-01T09:40:00.000000Z'
+          finishedAt: '2021-01-01T09:40:05.000000Z'
+      properties:
+        uid:
+          type: integer
+          description: The unique sequential identifier of the task
+        indexUid:
+          type: string
+          description: The unique identifier of the index where this task is operated
+        status:
+          type: string
+          description: The status of the task
+          enum:
+            - enqueued
+            - processing
+            - succeeded
+            - failed
+          example: succeeded
+        type:
+          type: string
+          description: The type of the task
+          enum:
+            - documentAdditionOrUpdate
+            - documentDeletion
+            - indexCreation
+            - indexUpdate
+            - indexDeletion
+            - indexSwap
+            - settingsUpdate
+            - dumpCreation
+            - taskCancelation
+            - taskDeletion
+            - snapshotCreation
+        canceledBy:
+          type: integer
+          description:
+            The uid of the task that performed the taskCancelation if the task has been canceled.
+        details:
+          type: object
+          description: Details information of the task payload.
+          properties:
+            receivedDocuments:
+              type: integer
+              description: Number of documents received for documentAdditionOrUpdate task.
+            indexedDocuments:
+              type: integer
+              description:
+                Number of documents finally indexed for documentAdditionOrUpdate task or a
+                documentAdditionOrUpdate batch of tasks.
+            providedIds:
+              type: integer
+              description: Number of provided document ids for the documentDeletion task.
+            deletedDocuments:
+              type: integer
+              description:
+                Number of documents finally deleted for documentDeletion and indexDeletion tasks.
+            primaryKey:
+              type: string
+              description:
+                Value for the primaryKey field encountered if any for indexCreation or indexUpdate
+                task.
+            settings:
+              $ref: '#/components/schemas/settings'
+            dumpUid:
+              type: string
+              description: Identifier generated for the dump for dumpCreation task.
+            matchedTasks:
+              type: integer
+              description:
+                Number of tasks that match the request for taskCancelation or taskDeletion tasks.
+            canceledTasks:
+              type: integer
+              description: Number of tasks canceled for taskCancelation.
+            deletedTasks:
+              type: integer
+              description: Number of tasks deleted for taskDeletion.
+            originalFilter:
+              type: string
+              description: Original filter query for taskCancelation or taskDeletion tasks.
+        error:
+          description:
+            Error object containing error details and context when a task has a failed status.
+          $ref: '#/components/schemas/error'
+        duration:
+          type: string
+          description:
+            Total elasped time the engine was in processing state expressed as a `ISO-8601` duration
+            format. Default is set to `null`
+          nullable: true
+        enqueuedAt:
+          description:
+            Represent the date and time as a `RFC 3339` format when the task has been enqueued
+          $ref: '#/components/schemas/timestamp'
+        startedAt:
+          $ref: '#/components/schemas/timestamp'
+          description:
+            Represent the date and time as a `RFC 3339` format when the task has been dequeued and
+            started to be processed. Default is set to `null`
+          nullable: true
+        finishedAt:
+          $ref: '#/components/schemas/timestamp'
+          description:
+            Represent the date and time as a `RFC 3339` format when the task has failed or
+            succeeded. Default is set to `null`
+          nullable: true
+      required:
+        - uid
+        - indexUid
+        - status
+        - type
+        - canceledBy
+        - details
+        - error
+        - enqueuedAt
+        - startedAt
+        - finishedAt
+    summarizedTask:
+      type: object
+      description:
+        A summarized version of an asynchronous task. Summarized task representation are given for
+        the 202 Accepted HTTP response. [Learn
+        More](https://docs.meilisearch.com/learn/advanced/asynchronous_operations.html).
+      additionalProperties: false
+      examples:
+        documentAdditionOrUpdate:
+          $ref: '#/components/examples/202_documentAdditionOrUpdate'
+      properties:
+        taskUid:
+          type: integer
+          description:
+            The unique sequential identifier of the task. This `taskUid` allows you to [track the
+            current task](https://docs.meilisearch.com/reference/api/tasks.html).
+        indexUid:
+          type: string
+          description: The unique identifier of the index where this task is operated
+        status:
+          type: string
+          description: The status of the task
+          enum:
+            - enqueued
+        type:
+          type: string
+          description: The type of the task
+          enum:
+            - documentAdditionOrUpdate
+            - documentDeletion
+            - indexCreation
+            - indexUpdate
+            - indexDeletion
+            - indexSwap
+            - settingsUpdate
+            - dumpCreation
+            - taskCancelation
+            - taskDeletion
+        enqueuedAt:
+          description:
+            Represent the date and time as a `RFC 3339` format when the task has been enqueued
+          $ref: '#/components/schemas/timestamp'
+      required:
+        - uid
+        - indexUid
+        - status
+        - type
+        - enqueuedAt
+    synonyms:
+      type: object
+      description:
+        List of associated words treated similarly. A word associated to an array of word as
+        synonyms.
+      example:
+        wolverine:
+          - xmen
+          - logan
+        logan:
+          - wolverine
+          - xmen
+        wow:
+          - world of warcraft
+    stopWords:
+      type: array
+      description: List of words ignored when present in search queries.
+      items:
+        type: string
+      example:
+        - of
+        - the
+        - to
+    sortableAttributes:
+      type: array
+      description: List of attributes to sort on at search.
+      items:
+        type: string
+      example:
+        - price
+        - author
+        - title
+    rankingRules:
+      type: array
+      description: |
+        List of ranking rules sorted by order of importance. The order is customizable.
+
+        [A list of ordered built-in ranking rules](https://docs.meilisearch.com/learn/core_concepts/relevancy.html).
+      items:
+        type: string
+      example:
+        - words
+        - typo
+        - proximity
+        - attribute
+        - sort
+        - exactness
+        - 'release_date:asc'
+      examples: []
+    typoTolerance:
+      type: object
+      description: Customize typo tolerance feature.
+      properties:
+        enabled:
+          description: Enable the typo tolerance feature.
+          type: boolean
+          default: true
+          nullable: false
+        disableOnAttributes:
+          description: Disable the typo tolerance feature on the specified attributes.
+          type: array
+          items:
+            type: string
+          default: []
+          nullable: false
+        disableOnWords:
+          description:
+            Disable the typo tolerance feature for a set of query terms given for a search query.
+          type: array
+          items:
+            type: string
+          default: []
+          nullable: false
+        minWordSizeForTypos:
+          type: object
+          properties:
+            oneTypo:
+              description: Customize the minimum size for a word to tolerate 1 typo.
+              type: integer
+              default: 5
+              nullable: false
+            twoTypos:
+              description: Customize the minimum size for a word to tolerate 2 typos.
+              type: integer
+              default: 9
+              nullable: false
+    pagination:
+      type: object
+      description: Customize pagination settings
+      properties:
+        maxTotalHits:
+          description:
+            Define the maximum number of documents reachable for a search request. It means that
+            with the default value of `1000`, it is not possible to see the `1001`st result for a
+            **search query**.
+          type: integer
+          default: 1000
+          nullable: false
+    faceting:
+      type: object
+      description: Customize faceting settings
+      properties:
+        maxValuesPerFacet:
+          description:
+            Define maximum number of value returned for a facet for a **search query**. It means
+            that with the default value of `100`, it is not possible to have `101` different colors
+            if the `color`` field is defined as a facet at search time.
+          type: integer
+          default: 100
+          nullable: false
+    filterableAttributes:
+      type: array
+      description: |
+        Attributes to use for faceting and filtering. See [Filtering and Faceted Search](https://docs.meilisearch.com/reference/features/filtering_and_faceted_search.html).
+      items:
+        type: string
+      example:
+        - genres
+        - director
+      title: filterableAttributes
+    distinctAttribute:
+      type: string
+      description: Search returns documents with distinct (different) values of the given field.
+      nullable: true
+    searchableAttributes:
+      type: array
+      description: Fields in which to search for matching query words sorted by order of importance.
+      items:
+        type: string
+      example:
+        - title
+        - description
+        - genre
+    displayedAttributes:
+      type: array
+      description: Fields displayed in the returned documents.
+      items:
+        type: string
+      example:
+        - title
+        - description
+        - genre
+        - release_date
+    settings:
+      type: object
+      description: |
+        [Learn more about the settings in this guide](https://docs.meilisearch.com/reference/features/settings.html).
+      additionalProperties: false
+      properties:
+        synonyms:
+          $ref: '#/components/schemas/synonyms'
+        stopWords:
+          $ref: '#/components/schemas/stopWords'
+        rankingRules:
+          $ref: '#/components/schemas/rankingRules'
+        filterableAttributes:
+          $ref: '#/components/schemas/filterableAttributes'
+        distinctAttribute:
+          $ref: '#/components/schemas/distinctAttribute'
+        searchableAttributes:
+          $ref: '#/components/schemas/searchableAttributes'
+        displayedAttributes:
+          $ref: '#/components/schemas/displayedAttributes'
+        typoTolerance:
+          $ref: '#/components/schemas/typoTolerance'
+      required:
+        - synonyms
+        - stopWords
+        - rankingRules
+        - filterableAttributes
+        - distinctAttribute
+        - searchableAttributes
+        - displayedAttributes
+        - typoTolerance
+    stats:
+      type: object
+      additionalProperties: false
+      title: ''
+      examples:
+        - numberOfDocuments: 10
+          isIndexing: true
+          fieldDistribution:
+            genre: 10
+            author: 9
+      properties:
+        numberOfDocuments:
+          type: integer
+          description: Number of documents contained in the index.
+        isIndexing:
+          type: boolean
+          description: Whether or not the index is currently ingesting document
+        fieldDistribution:
+          type: object
+          additionalProperties:
+            type: integer
+          description: How many documents contains a field
+      required:
+        - numberOfDocuments
+        - isIndexing
+        - fieldDistribution
+    error:
+      title: error
+      type: object
+      properties:
+        message:
+          type: string
+        code:
+          type: string
+        type:
+          type: string
+        link:
+          type: string
+      required:
+        - message
+        - code
+        - type
+        - link
+      description: ''
+    key:
+      title: key
+      type: object
+      properties:
+        uid:
+          type: string
+          description:
+            A uuid v4 to identify the API Key. If not specified, it's generated by Meilisearch.
+          example: 01b4bc42-eb33-4041-b481-254d00cce834
+        key:
+          type: string
+          description:
+            The derived key to use in the Authorization header to authorize requests. Generated by
+            Meilisearch with an HMAC, using an SHA-256 hash, of the uid and the master key.
+          example: d0552b41536279a0ad88bd595327b96f01176a60c2243e906c52ac02375f9bc4
+          readOnly: true
+        actions:
+          type: array
+          description: 'A list of actions permitted for the key. ["*"] for all actions.'
+          uniqueItems: false
+          items:
+            type: string
+            example: documents.add
+            enum:
+              - search
+              - documents.add
+              - documents.get
+              - documents.delete
+              - indexes.create
+              - indexes.get
+              - indexes.update
+              - indexes.delete
+              - indexes.swap
+              - tasks.get
+              - tasks.cancel
+              - tasks.delete
+              - settings.get
+              - settings.update
+              - stats.get
+              - dumps.create
+              - version
+              - keys.get
+              - keys.create
+              - keys.update
+              - keys.delete
+        indexes:
+          type: array
+          description: 'A list of accesible indexes permitted for the key. ["*"] for all indexes.'
+          items:
+            type: string
+            example: movies
+        name:
+          type:
+            - string
+            - 'null'
+          description: A human-readable name for the key. null if empty.
+          default: null
+        description:
+          type:
+            - string
+            - 'null'
+          description: A description for the key. null if empty.
+          default: null
+        expiresAt:
+          type:
+            - string
+            - 'null'
+          description:
+            Represent the expiration date and time as RFC 3339 format. null equals to no expiration
+            time.
+        createdAt:
+          type: string
+          description:
+            Represent the date and time as RFC 3339 format when the API key has been created.
+            Generated by Meilisearch.
+          example: '2021-11-12T10:00:00Z'
+          readOnly: true
+        updatedAt:
+          type:
+            - string
+            - 'null'
+          description:
+            Represent the date and time as RFC 3339 format when the API key has been updated.
+            Generated by Meilisearch.
+          default: null
+          readOnly: true
+      required:
+        - actions
+        - indexes
+        - expiresAt
+      description:
+        API keys are stored and managed by the master key holder and the default admin key holder.
+        These are the keys used by the technical teams to interact with Meilisearch at the level of
+        the client/server code. API keys can have restrictions on which methods can be accessed via
+        an actions list; they can also expiresAt a specific date time and be restricted to a
+        specific set of indexes.
+    swapOperation:
+      type: object
+      properties:
+        indexes:
+          type: array
+          description: The two indexUids to swap in the given operation.
+      required:
+        - indexes
+    swapIndexes:
+      type: array
+      description: Array of swap operations that will be processed atomically.
+      required: true
+      items:
+        $ref: '#/components/schemas/swapOperation'
+  parameters:
+    indexUid:
+      name: indexUid
+      in: path
+      description: Index Unique Identifier
+      required: true
+      schema:
+        type: string
+        example: movies
+    documentId:
+      name: documentId
+      in: path
+      description: The document identifier
+      required: true
+      schema:
+        type: any
+    taskUid:
+      name: taskUid
+      in: path
+      description: The task identifier
+      required: true
+      schema:
+        type: integer
+    taskFilterUids:
+      name: uids
+      in: query
+      description:
+        Permits to filter tasks by their uid. By default, when the `uids` query parameter is not
+        set, all task uids are returned. It's possible to specify several uids by separating them
+        with the `,` character.
+      required: false
+      schema:
+        type: number
+    taskFilterIndexUids:
+      name: indexUids
+      in: query
+      description:
+        Permits to filter tasks by their related index. By default, when `indexUids` query parameter
+        is not set, the tasks of all the indexes are returned. It is possible to specify several
+        indexes by separating them with the `,` character.
+      required: false
+      schema:
+        type: string
+    taskFilterTypes:
+      name: types
+      in: query
+      description:
+        Permits to filter tasks by their related type. By default, when `types` query parameter is
+        not set, all task types are returned. It's possible to specify several types by separating
+        them with the `,` character.
+      required: false
+      schema:
+        type: string
+    taskFilterStatuses:
+      name: statuses
+      in: query
+      description:
+        Permits to filter tasks by their status. By default, when `statuses` query parameter is not
+        set, all task statuses are returned. It's possible to specify several statuses by separating
+        them with the `,` character.
+      required: false
+      schema:
+        type: string
+    taskFilterBeforeEnqueuedAt:
+      name: beforeEnqueuedAt
+      in: query
+      description:
+        Permits to filter tasks based on their enqueuedAt time. Matches tasks enqueued before the
+        given date. Supports RFC 3339 date format.
+      required: false
+      schema:
+        type: string
+    taskFilterAfterEnqueuedAt:
+      name: afterEnqueuedAt
+      in: query
+      description:
+        Permits to filter tasks based on their enqueuedAt time. Matches tasks enqueued after the
+        given date. Supports RFC 3339 date format.
+      required: false
+      schema:
+        type: string
+    taskFilterBeforeStartedAt:
+      name: beforeStartedAt
+      in: query
+      description:
+        Permits to filter tasks based on their startedAt time. Matches tasks started before the
+        given date. Supports RFC 3339 date format.
+      required: false
+      schema:
+        type: string
+    taskFilterAfterStartedAt:
+      name: afterStartedAt
+      in: query
+      description:
+        Permits to filter tasks based on their startedAt time. Matches tasks started after the given
+        date. Supports RFC 3339 date format.
+      required: false
+      schema:
+        type: string
+    taskFilterBeforeFinishedAt:
+      name: beforeFinishedAt
+      in: query
+      description:
+        Permits to filter tasks based on their finishedAt time. Matches tasks finished before the
+        given date. Supports RFC 3339 date format.
+      required: false
+      schema:
+        type: string
+    taskFilterAfterFinishedAt:
+      name: afterFinishedAt
+      in: query
+      description:
+        Permits to filter tasks based on their finishedAt time. Matches tasks finished after the
+        given date. Supports RFC 3339 date format.
+      required: false
+      schema:
+        type: string
+    taskFilterCanceledBy:
+      name: canceledBy
+      in: query
+      description:
+        Permits to filter tasks using the uid of the task that canceled them. It's possible to
+        specify several task uids by separating them with the `,` character.
+      required: false
+      schema:
+        type: string
+    primaryKey:
+      name: primaryKey
+      in: query
+      description: |
+        The [primary key](https://docs.meilisearch.com/learn/core_concepts/documents.html#primary-key) of the documents. primaryKey is optional.
+        If you want to set the primary key of your index through this route, it only has to be done the first time you add documents to the index. After which it will be ignored if given.
+      schema:
+        type: string
+    limit:
+      name: limit
+      in: query
+      description: Maximum number of results to return.
+      schema:
+        type: number
+        default: 20
+    offset:
+      name: offset
+      in: query
+      description: Number of results to skip.
+      schema:
+        type: number
+        default: 0
+    page:
+      name: page
+      in: query
+      description: Sets the specific results page.
+      schema:
+        type: number
+        default: 1
+    hitsPerPage:
+      name: hitsPerPage
+      in: query
+      description:
+        Sets the number of results returned for a query. If hitsPerPage is not provided as a query
+        parameter, this parameter is ignored.
+      schema:
+        type: number
+        default: 20
+    from:
+      name: from
+      in: query
+      description: Fetch the next set of results from the given uid.
+      schema:
+        type: number
+    q:
+      name: q
+      in: query
+      description: Query string.
+      schema:
+        type: string
+        example: back to the future
+        default: '""'
+    attributesToRetrieve:
+      name: attributesToRetrieve
+      in: query
+      description:
+        'Comma-separated list of attributes whose fields will be present in the returned documents.
+        Defaults to the [displayedAttributes
+        list](https://docs.meilisearch.com/reference/features/settings.html#displayed-attributes)
+        which contains by default all attributes found in the documents.'
+      schema:
+        type: string
+        items:
+          type: string
+        example: 'title,description'
+        default: '*'
+    attributesToHighlight:
+      name: attributesToHighlight
+      in: query
+      description:
+        Comma-separated list of attributes whose values will contain highlighted matching terms.
+        Highlighted attributes are returned in `_formatted` response object.
+      schema:
+        type: string
+        items:
+          type: string
+          default:
+            - ''
+        example: 'title,description'
+    highlightPreTag:
+      name: highlightPreTag
+      in: query
+      required: false
+      description: Specify the tag to put before the highlighted query terms.
+      schema:
+        type: string
+        default: '<em>'
+    highlightPostTag:
+      name: highlightPostTag
+      in: query
+      required: false
+      description: Specify the tag to put after the highlighted query terms.
+      schema:
+        type: string
+        default: '</em>'
+    attributesToCrop:
+      name: attributesToCrop
+      in: query
+      required: false
+      schema:
+        type: string
+        example: 'overview:10'
+      description:
+        Comma-separated list of attributes whose values have to be cropped. Cropped attributes are
+        returned in `_formatted` response object.
+    cropMarker:
+      name: cropMarker
+      in: query
+      description:
+        Sets the crop marker to apply before and/or after cropped part selected within an attribute
+        defined in `attributesToCrop` parameter.
+      required: false
+      schema:
+        type: string
+        default: '…'
+    cropLength:
+      name: cropLength
+      in: query
+      required: false
+      schema:
+        type: integer
+        example: 5
+        default: 10
+      description:
+        Sets the total number of words to keep around the matched part of an attribute specified in
+        the `attributesToCrop` parameter.
+    facets:
+      name: facets
+      in: query
+      schema:
+        type: string
+        example: 'genres,author'
+      description:
+        'Comma-separated list of attributes whose fields will be distributed as a facet. If you have
+        [set up
+        filterableAttributes](https://docs.meilisearch.com/reference/features/settings.html#filterable-attributes),
+        you can retrieve the count of matching terms for each facets.[Learn more about facet
+        distribution in the dedicated
+        guide](https://docs.meilisearch.com/reference/features/search_parameters.html#facet-distribution)'
+    showMatchesPosition:
+      name: showMatchesPosition
+      in: query
+      required: false
+      schema:
+        type: boolean
+        default: 'false'
+      description:
+        Defines whether an `_matchesPosition` object that contains information about the matches
+        should be returned or not.
+    matchingStrategy:
+      name: matchingStrategy
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - last
+          - all
+        default: 'last'
+      description:
+        Defines which strategy to use to match the query terms within the documents as search
+        results. Two different strategies are available, `last` and `all`. By default, the `last`
+        strategy is chosen.
+    sort:
+      name: sort
+      in: query
+      required: false
+      schema:
+        type: string
+        example: 'price:asc'
+      description: |
+        Fields on which you want to sort the results.
+
+        > warn
+        > Attribute(s) used in `sort` should be declared as sortable attributes. See [Sorting](https://docs.meilisearch.com/reference/features/sorting.html).
+
+        > info
+        > _geoPoint({lat}, {long}) built-in sort rule can be used to sort documents around a geo point.
+    filter:
+      name: filter
+      in: query
+      required: false
+      schema:
+        example: something > 1 AND genres=comedy AND (genres=horror OR title=batman)
+      description: |
+        Attribute(s) to filter on.
+
+        Can be made of 3 syntaxes
+
+        - Nested Array: `["something > 1", "genres=comedy", ["genres=horror", "title=batman"]]`
+        - String: `something > 1 AND genres=comedy AND (genres=horror OR title=batman)`
+        - Mixed: `["something > 1 AND genres=comedy", "genres=horror OR title=batman"]`
+
+        > info
+        > _geoRadius({lat}, {lng}, {distance_in_meters}) built-in filter rule can be used to filter documents within a geo circle.
+
+        > warn
+        > Attribute(s) used in `filter` should be declared as filterable attributes. See [Filtering and Faceted Search](https://docs.meilisearch.com/reference/features/filtering_and_faceted_search.html).
+    fields:
+      name: fields
+      in: query
+      description:
+        'Comma-separated list of fields to display for an API resource. By default it contains all
+        fields of an API resource.'
+      schema:
+        type: string
+        items:
+          type: string
+        example: 'uid,createdAt'
+        default: '*'
+    Content-Type:
+      name: Content-Type
+      in: header
+      required: true
+      schema:
+        type: string
+        enum:
+          - application/json
+      description: Payload content-type
+  responses:
+    '202':
+      description: Accepted
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/summarizedTask'
+    '204':
+      description: No Content
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/error'
+          examples:
+            Unauthorized:
+              value:
+                message:
+                  The Authorization header is missing. It must use the bearer authorization method.
+                code: missing_authorization_header
+                type: auth
+                link: 'https://docs.meilisearch.com/errors#missing_authorization_header'
+    '413':
+      description: Payload Too Large
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/error'
+          examples:
+            Payload Too Large:
+              value:
+                message: The provided payload reached the size limit.
+                code: payload_too_large
+                type: invalid_request
+                link: 'https://docs.meilisearch.com/errors#payload_too_large'
+  securitySchemes:
+    apiKey:
+      type: http
+      in: header
+      scheme: bearer
+      description: |-
+        An API key is a token that you provide when making API calls. Include the token in a header parameter called `Authorization`.
+
+        Example: `Authorization: Bearer 8fece4405662dd830e4cb265e7e047aab2e79672a760a12712d2a263c9003509`
+  examples:
+    202_indexCreation:
+      summary: 202 Accepted indexCreation response example
+      value:
+        taskUid: 0
+        indexUid: movies
+        status: enqueued
+        type: indexCreation
+        enqueuedAt: '2021-01-01T09:39:00.000000Z'
+    202_indexUpdate:
+      summary: 202 Accepted indexUpdate response example
+      value:
+        taskUid: 0
+        indexUid: movies
+        status: enqueued
+        type: indexUpdate
+        enqueuedAt: '2021-01-01T09:39:00.000000Z'
+    202_indexDeletion:
+      summary: 202 Accepted indexDeletion response example
+      value:
+        taskUid: 0
+        indexUid: movies
+        status: enqueued
+        type: indexDeletion
+        enqueuedAt: '2021-01-01T09:39:00.000000Z'
+    202_documentAdditionOrUpdate:
+      summary: 202 Accepted documentAdditionOrUpdate response example
+      value:
+        taskUid: 0
+        indexUid: movies
+        status: enqueued
+        type: documentAdditionOrUpdate
+        enqueuedAt: '2021-01-01T09:39:00.000000Z'
+    202_documentDeletion:
+      summary: 202 Accepted documentDeletion response example
+      value:
+        taskUid: 0
+        indexUid: movies
+        status: enqueued
+        type: documentDeletion
+        enqueuedAt: '2021-01-01T09:39:00.000000Z'
+    202_settingsUpdate:
+      summary: 202 Accepted settingsUpdate response example
+      value:
+        taskUid: 0
+        indexUid: movies
+        status: enqueued
+        type: settingsUpdate
+        enqueuedAt: '2021-01-01T09:39:00.000000Z'
+    202_dumpCreation:
+      summary: 202 Accepted dumpCreation response example
+      value:
+        taskUid: 0
+        indexUid: null
+        status: enqueued
+        type: dumpCreation
+        enqueuedAt: '2021-01-01T09:39:00.000000Z'
+    202_taskCancelation:
+      summary: 202 Accepted taskCancelation response example
+      value:
+        taskUid: 0
+        indexUid: null
+        status: enqueued
+        type: taskCancelation
+        enqueuedAt: '2021-01-01T09:39:00.000000Z'
+    202_taskDeletion:
+      summary: 202 Accepted taskDeletion response example
+      value:
+        taskUid: 0
+        indexUid: null
+        status: enqueued
+        type: taskDeletion
+        enqueuedAt: '2021-01-01T09:39:00.000000Z'
+    202_indexSwap:
+      summary: 202 Accepted indexSwap response example
+      value:
+        taskUid: 0
+        indexUid: null
+        status: enqueued
+        type: indexSwap
+        enqueuedAt: '2021-01-01T09:39:00.000000Z'
+tags:
+  - name: Indexes
+    description: |
+      An index is an entity that gathers a set of [documents](https://docs.meilisearch.com/learn/core_concepts/documents.html) with its own settings.
+      [Learn more about indexes](https://docs.meilisearch.com/learn/core_concepts/indexes.html).
+  - name: Documents
+    description: |
+      Documents are objects composed of fields that can store any type of data.
+      Each field contains an attribute and its associated value.
+      Documents are stored inside [indexes](https://docs.meilisearch.com/learn/core_concepts/indexes.html).
+      [Learn more about documents](https://docs.meilisearch.com/learn/core_concepts/documents.html).
+  - name: Search
+    description: |
+      Meilisearch exposes 2 routes to perform searches:
+      * A POST route: this is the preferred route when using API authentication, as it allows [preflight request](https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request) caching and better performances.
+      * A GET route: the usage of this route is discouraged, unless you have good reason to do otherwise (specific caching abilities for example).
+      Other than the differences mentioned above, the two routes are strictly equivalent.
+  - name: Tasks
+    description: |
+      The `tasks` route gives information about the progress of the [asynchronous operations](https://docs.meilisearch.com/learn/advanced/asynchronous_operations.html).
+  - name: Keys
+    description: |
+      Manage API `keys` for a Meilisearch instance. Each key has a given set of permissions.
+      You must have the master key or the default admin key to access the `keys` route.
+      [More information about the keys and their rights](https://docs.meilisearch.com/reference/features/security.html).
+  - name: Settings
+    description: |
+      `Settings` is a list of all the __customization__ possible for an index.
+      It is possible to update all the settings in one go or individually with the dedicated routes. Updates in the settings route are __partial__. This means that any parameters not provided in the body will be left unchanged.
+      Updating the settings means overwriting the default settings of Meilisearch. You can reset to default values using the `DELETE` routes.
+  - name: Stats
+    description: |
+      `Stats` gives extended information and metrics about indexes and the Meilisearch database.
+  - name: Health
+    description: |
+      The health check endpoint enables you to periodically test the health of your Meilisearch instance.
+  - name: Version
+    description: |
+      Current version of Meilisearch.
+  - name: Dumps
+    description: |
+      The `dumps` route allows the creation of database dumps. Dumps are `.dump` files that can be used to launch Meilisearch. Dumps are compatible between Meilisearch versions.
+      Creating a dump is also referred to as exporting it, whereas launching Meilisearch with a dump is referred to as importing it.
+      During a [dump export](https://docs.meilisearch.com/reference/api/dump.html#create-a-dump), all indexes of the current instance are exported—together with their documents and settings—and saved as a single `.dump` file.
+      During a dump import, all indexes contained in the indicated `.dump` file are imported along with their associated documents and settings. Any existing index with the same uid as an index in the dump file will be overwritten.
+      Dump imports are [performed at launch](https://docs.meilisearch.com/reference/features/configuration.html#import-dump) using an option.
+paths:
+  /dumps:
+    post:
+      operationId: dumps.create
+      summary: Create a Dump
+      description: |
+        Triggers a dump creation process. Once the process is complete, a dump is created in the [dump directory](https://docs.meilisearch.com/reference/features/configuration.html#dump-directory). If the dump directory does not exist yet, it will be created.
+      tags:
+        - Dumps
+      security:
+        - apiKey: []
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_dumpCreation'
+        '401':
+          $ref: '#/components/responses/401'
+  /health:
+    get:
+      operationId: health.check
+      summary: Get health
+      description: Get health of the Meilisearch instance.
+      tags:
+        - Health
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                      - available
+                required:
+                  - status
+              examples:
+                '200':
+                  value:
+                    status: available
+      x-internal: false
+  /indexes:
+    get:
+      operationId: indexes.list
+      summary: List Indexes
+      description: List all indexes.
+      tags:
+        - Indexes
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/index'
+                  limit:
+                    $ref: '#/components/schemas/limit'
+                  offset:
+                    $ref: '#/components/schemas/offset'
+                  total:
+                    $ref: '#/components/schemas/total'
+                required:
+                  - results
+                  - limit
+                  - offset
+                  - total
+              examples:
+                Example:
+                  value:
+                    results:
+                      - uid: movies
+                        primaryKey: movie_id
+                        createdAt: '2019-11-20T09:40:33.711324Z'
+                        updatedAt: '2019-11-20T09:40:33.711324Z'
+                    limit: 1
+                    offset: 0
+                    total: 1
+        '401':
+          $ref: '#/components/responses/401'
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+    post:
+      operationId: indexes.create
+      summary: Create Index
+      description: Create an index.
+      tags:
+        - Indexes
+      security:
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uid:
+                  type: string
+                primaryKey:
+                  type: string
+              additionalProperties: false
+              required:
+                - uid
+            examples:
+              Example:
+                value:
+                  uid: movies
+                  primaryKey: movie_id
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_indexCreation'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                Index already exists:
+                  value:
+                    message: 'Index `:indexUid` already exists.'
+                    code: index_already_exists
+                    type: invalid_request
+                    link: 'https://docs.meilisearch.com/errors#index_already_exists'
+                Invalid Index Uid:
+                  value:
+                    message:
+                      '`:indexUid` is not a valid index uid. Index uid can be an integer or a string
+                      containing only alphanumeric characters, hyphens (-) and underscores (_).'
+                    code: invalid_index_uid
+                    type: invalid_request
+                    link: 'https://docs.meilisearch.com/errors#invalid_index_uid'
+        '401':
+          $ref: '#/components/responses/401'
+      parameters:
+        - $ref: '#/components/parameters/Content-Type'
+  '/indexes/{indexUid}':
+    get:
+      operationId: indexes.get
+      summary: Get Index
+      description: Get information about an index.
+      tags:
+        - Indexes
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/index'
+              examples:
+                Example:
+                  value:
+                    uid: movies
+                    primaryKey: movie_id
+                    createdAt: '2019-11-20T09:40:33.711324Z'
+                    updatedAt: '2019-11-20T09:40:33.711324Z'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    patch:
+      operationId: indexes.update
+      summary: Update Index
+      description: Update an index. Specify a primaryKey if it doesn't already exists yet.
+      tags:
+        - Indexes
+      security:
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                primaryKey:
+                  type: string
+              additionalProperties: false
+              required:
+                - primaryKey
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_indexUpdate'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                Primary Key Already Present:
+                  value:
+                    message: 'Index `:indexUid` already has a primary key.'
+                    code: index_primary_key_already_exists
+                    type: invalid_request
+                    link: 'https://docs.meilisearch.com/errors#index_primary_key_already_exists'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+      parameters:
+        - $ref: '#/components/parameters/Content-Type'
+    delete:
+      operationId: indexes.remove
+      summary: Delete Index
+      description: Delete an index.
+      tags:
+        - Indexes
+      security:
+        - apiKey: []
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_indexDeletion'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    parameters:
+      - $ref: '#/components/parameters/indexUid'
+  '/indexes/{indexUid}/documents':
+    get:
+      operationId: indexes.documents.list
+      summary: Get Documents
+      description: |
+        Get [documents](https://docs.meilisearch.com/learn/core_concepts/documents.html) by batch.
+      tags:
+        - Documents
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/document'
+                  limit:
+                    $ref: '#/components/schemas/limit'
+                  offset:
+                    $ref: '#/components/schemas/offset'
+                  total:
+                    $ref: '#/components/schemas/total'
+                required:
+                  - results
+                  - limit
+                  - offset
+                  - total
+              examples:
+                Example:
+                  value:
+                    results:
+                      - id: 25684
+                        title: American Ninja 5
+                        poster: 'https://image.tmdb.org/t/p/w1280/iuAQVI4mvjI83wnirpD8GVNRVuY.jpg'
+                        overview:
+                          'When a scientists daughter is kidnapped, American Ninja, attempts to find
+                          her, but this time he teams up with a youngster he has trained in the ways
+                          of the ninja.'
+                        release_date: 725846400
+                      - id: 45881
+                        title: The Bridge of San Luis Rey
+                        poster: 'https://image.tmdb.org/t/p/w500/4X7quIcdkc24Cveg5XdpfRqxtYA.jpg'
+                        overview:
+                          "The Bridge of San Luis Rey is American author Thornton Wilder's second
+                          novel, first published in 1927 to worldwide acclaim. It tells the story of
+                          several interrelated people who die in the collapse of an Inca rope-fiber
+                          suspension bridge in Peru, and the events that lead up to their being on
+                          the bridge.[ A friar who has witnessed the tragic accident then goes about
+                          inquiring into the lives of the victims, seeking some sort of cosmic
+                          answer to the question of why each had to die. The novel won the Pulitzer
+                          Prize in 1928."
+                        release_date: 1072915200
+                    limit: 20
+                    offset: 0
+                    total: 2
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/fields'
+    post:
+      operationId: indexes.documents.create
+      summary: Add or replace documents
+      description: |
+        Add a list of [documents](https://docs.meilisearch.com/learn/core_concepts/documents.html) or replace them if they already exist.
+
+        If you send an already existing document (same [id](https://docs.meilisearch.com/learn/core_concepts/documents.html#primary-key)) the whole existing document will be overwritten by the new document. Fields previously in the document not present in the new document are removed.
+
+        For a partial update of the document see Add or update documents route.
+
+        > info
+        > If the provided index does not exist, it will be created.
+
+        > info
+        > Use the reserved `_geo` object to add geo coordinates to a document. `_geo` is an object made of `lat` and `lng` field.
+      tags:
+        - Documents
+      security:
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items: null
+            examples: {}
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_documentAdditionOrUpdate'
+        '401':
+          $ref: '#/components/responses/401'
+        '413':
+          $ref: '#/components/responses/413'
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - application/json
+              - text/csv
+              - application/x-ndjson
+          in: header
+          name: Content-Type
+          required: true
+          description: The content-type associated with the format to be indexed
+    put:
+      operationId: indexes.documents.upsert
+      summary: Add or update documents
+      description: |-
+        Add a list of documents or update them if they already exist.
+
+        If you send an already existing document (same [id](https://docs.meilisearch.com/learn/core_concepts/documents.html#primary-key)) the old document will be only partially updated according to the fields of the new document. Thus, any fields not present in the new document are kept and remained unchanged.
+
+        To completely overwrite a document, see Add or replace documents route.
+
+        > info
+        > If the provided index does not exist, it will be created.
+
+        > info
+        > Use the reserved `_geo` object to add geo coordinates to a document. `_geo` is an object made of `lat` and `lng` field.
+      tags:
+        - Documents
+      security:
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/document'
+            examples:
+              Example:
+                value:
+                  - id: 25684
+                    title: American Ninja 5
+                    poster: 'https://image.tmdb.org/t/p/w1280/iuAQVI4mvjI83wnirpD8GVNRVuY.jpg'
+                    overview:
+                      'When a scientists daughter is kidnapped, American Ninja, attempts to find
+                      her, but this time he teams up with a youngster he has trained in the ways of
+                      the ninja.'
+                    release_date: 725846400
+        description: ''
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_documentAdditionOrUpdate'
+        '401':
+          $ref: '#/components/responses/401'
+        '413':
+          $ref: '#/components/responses/413'
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - application/json
+              - text/csv
+              - application/x-ndjson
+          in: header
+          name: Content-Type
+          description: The content-type associated with the format to be indexed
+          required: true
+    delete:
+      operationId: indexes.documents.removeAll
+      summary: Delete all documents
+      description: Delete all documents in the specified index.
+      tags:
+        - Documents
+      security:
+        - apiKey: []
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_documentDeletion'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    parameters:
+      - $ref: '#/components/parameters/indexUid'
+  '/indexes/{indexUid}/documents/delete-batch':
+    post:
+      operationId: indexes.documents.removeBatch
+      summary: Delete documents
+      description: Delete a selection of documents based on array of document id's.
+      tags:
+        - Documents
+      security:
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              description: An array of document ids to delete
+              items:
+                type:
+                  - string
+                  - number
+            examples:
+              Example:
+                value:
+                  - 1
+                  - 2
+                  - 3
+                  - a string id
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_documentDeletion'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+      parameters:
+        - $ref: '#/components/parameters/Content-Type'
+    parameters:
+      - $ref: '#/components/parameters/indexUid'
+  '/indexes/{indexUid}/documents/{documentId}':
+    get:
+      operationId: indexes.documents.get
+      summary: Get one document
+      description:
+        'Get one [document](https://docs.meilisearch.com/learn/core_concepts/documents.html) using
+        its unique id.'
+      tags:
+        - Documents
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/document'
+              examples: {}
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+      parameters:
+        - $ref: '#/components/parameters/fields'
+    delete:
+      operationId: indexes.documents.remove
+      summary: Delete one document
+      description: Delete one document based on its unique id.
+      tags:
+        - Documents
+      security:
+        - apiKey: []
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_documentDeletion'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    parameters:
+      - $ref: '#/components/parameters/indexUid'
+      - $ref: '#/components/parameters/documentId'
+  '/indexes/{indexUid}/search':
+    get:
+      operationId: indexes.documents.searchGet
+      summary: Search
+      description: |
+        Search for documents matching a specific query in the given index.
+
+        This route should only be used when no API key is required. If an API key is required, use the POST route instead.
+      tags:
+        - Search
+      security:
+        - apiKey: []
+      parameters:
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/attributesToRetrieve'
+        - $ref: '#/components/parameters/attributesToHighlight'
+        - $ref: '#/components/parameters/highlightPreTag'
+        - $ref: '#/components/parameters/highlightPostTag'
+        - $ref: '#/components/parameters/attributesToCrop'
+        - $ref: '#/components/parameters/cropMarker'
+        - $ref: '#/components/parameters/cropLength'
+        - $ref: '#/components/parameters/facets'
+        - $ref: '#/components/parameters/filter'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/hitsPerPage'
+        - $ref: '#/components/parameters/showMatchesPosition'
+        - $ref: '#/components/parameters/matchingStrategy'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/searchResponse'
+              examples:
+                Example:
+                  value:
+                    hits:
+                      - id: 25684
+                        title: American Ninja 5
+                        poster: 'https://image.tmdb.org/t/p/w1280/iuAQVI4mvjI83wnirpD8GVNRVuY.jpg'
+                        overview:
+                          'When a scientists daughter is kidnapped, American Ninja, attempts to find
+                          her, but this time he teams up with a youngster he has trained in the ways
+                          of the ninja.'
+                        release_date: 725846400
+                        _formatted:
+                          id: 25684
+                          title: American Ninja 5
+                          poster: 'https://image.tmdb.org/t/p/w1280/iuAQVI4mvjI83wnirpD8GVNRVuY.jpg'
+                          overview:
+                            'When a scientists daughter is kidnapped, American <em>Ninja</em>,
+                            attempts to find her, but this time he teams up with a youngster he has
+                            trained in the ways of the <em>ninja</em>.'
+                          release_date: 725846400
+                        _matchesPosition:
+                          overview:
+                            - start: 49
+                              length: 5
+                            - start: 155
+                              length: 5
+                    limit: 0
+                    offset: 0
+                    estimatedTotalHits: 0
+                    query: string
+                    processingTimeMs: 0
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    post:
+      operationId: indexes.documents.search
+      summary: Search
+      description: |
+        Search for documents matching a specific query in the given index.
+
+        This is the preferred route to perform search when an API key is required, as it allows for [preflight requests](https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request) to be cached. Caching preflight requests improves considerably the speed of the search.
+      tags:
+        - Search
+      security:
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                q:
+                  type: string
+                  description: Query string.
+                  default: '""'
+                  example: '"Back to the future"'
+                attributesToRetrieve:
+                  type: array
+                  description:
+                    'Array of attributes whose fields will be present in the returned documents.
+                    Defaults to the [displayedAttributes
+                    list](https://docs.meilisearch.com/reference/features/settings.html#displayed-attributes)
+                    which contains by default all attributes found in the documents.'
+                  items:
+                    type: string
+                    example: '["title", "overview"]'
+                    default: '["*"]'
+                attributesToHighlight:
+                  type: array
+                  description:
+                    Array of attributes whose values will contain highlighted matching terms.
+                    Highlighted attributes are returned in `_formatted` response object.
+                  items:
+                    type: string
+                    example: '["title", "overview"]'
+                    default: '[]'
+                highlightPreTag:
+                  type: string
+                  description: Specify the tag to put before the highlighted query terms.
+                  example: '<mark>'
+                  default: '<em>'
+                highlightPostTag:
+                  type: string
+                  description: Specify the tag to put after the highlighted query terms.
+                  example: '</mark>'
+                  default: '</em>'
+                attributesToCrop:
+                  type: array
+                  description:
+                    Array of attributes whose values have to be cropped. Cropped attributes are
+                    returned in `_formatted` response object.
+                  items:
+                    type: string
+                    example: '["overview", "author"]'
+                    default: '[]'
+                cropMarker:
+                  type: string
+                  description:
+                    Sets the crop marker to apply before and/or after cropped part selected within
+                    an attribute defined in `attributesToCrop` parameter.
+                  default: '…'
+                cropLength:
+                  type: number
+                  description:
+                    Sets the total number of **words** to keep for the cropped part of an attribute
+                    specified in the `attributesToCrop` parameter.
+                  default: 10
+                showMatchesPosition:
+                  type: boolean
+                  description:
+                    Defines whether an `_matchesPosition` object that contains information about the
+                    matches should be returned or not.
+                  default: false
+                matchingStrategy:
+                  type: string
+                  description:
+                    Defines which strategy to use to match the query terms within the documents as
+                    search results. Two different strategies are available, `last` and `all`. By
+                    default, the `last` strategy is chosen.
+                  default: 'last'
+                filter:
+                  $ref: '#/components/schemas/filter'
+                facets:
+                  type: array
+                  description:
+                    'Array of attributes whose fields will be distributed as a facet. If you have
+                    [set up
+                    filterableAttributes](https://docs.meilisearch.com/reference/features/settings.html#filterable-attributes),
+                    you can retrieve the count of matching terms for each
+                    [facets](https://docs.meilisearch.com/reference/features/filtering_and_faceted_search.html#faceted-search).[Learn
+                    more about facet distribution in the dedicated
+                    guide](https://docs.meilisearch.com/reference/features/search_parameters.html#facet-distribution)'
+                  items:
+                    type: string
+                    example: '["genres", "author"]'
+                    default: '[]'
+                offset:
+                  type: number
+                  description: Number of documents to skip.
+                  default: 0
+                limit:
+                  type: number
+                  description: Maximum number of documents returned.
+                  default: 20
+                page:
+                  type: number
+                  description: The specific search results page to fetch.
+                  example: 1
+                hitsPerPage:
+                  type: number
+                  description: Number of returned results per page.
+                  example: 20
+                sort:
+                  $ref: '#/components/schemas/sort'
+            examples:
+              Example:
+                value:
+                  q: Harry
+                  offset: 0
+                  limit: 20
+                  filter: (genres = Horror AND genres = Mystery) OR release_date > 523242000
+                  facets:
+                    - genres
+                    - author
+                  attributesToRetrieve:
+                    - title
+                    - overview
+                  attributesToCrop:
+                    - overview
+                  cropLength: 20
+                  attributesToHighlight:
+                    - overview
+                  showMatchesPosition: true
+                  wordsMatchingStrategy: all
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/searchResponse'
+              examples:
+                Example:
+                  value:
+                    hits:
+                      - id: 25684
+                        title: American Ninja 5
+                        poster: 'https://image.tmdb.org/t/p/w1280/iuAQVI4mvjI83wnirpD8GVNRVuY.jpg'
+                        overview:
+                          'When a scientists daughter is kidnapped, American Ninja, attempts to find
+                          her, but this time he teams up with a youngster he has trained in the ways
+                          of the ninja.'
+                        release_date: 725846400
+                        _formatted:
+                          id: 25684
+                          title: American Ninja 5
+                          poster: 'https://image.tmdb.org/t/p/w1280/iuAQVI4mvjI83wnirpD8GVNRVuY.jpg'
+                          overview:
+                            'When a scientists daughter is kidnapped, American <em>Ninja</em>,
+                            attempts to find her, but this time he teams up with a youngster he has
+                            trained in the ways of the <em>ninja</em>.'
+                          release_date: 725846400
+                        _matchesPosition:
+                          overview:
+                            - start: 49
+                              length: 5
+                            - start: 155
+                              length: 5
+                    limit: 0
+                    offset: 0
+                    estimatedTotalHits: 0
+                    query: string
+                    processingTimeMs: 0
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+      parameters:
+        - $ref: '#/components/parameters/Content-Type'
+    parameters:
+      - $ref: '#/components/parameters/indexUid'
+  '/indexes/{indexUid}/settings':
+    get:
+      operationId: indexes.settings.get
+      summary: Get settings
+      description: |
+        Get the settings of an index.
+
+        [Learn more about the settings](https://docs.meilisearch.com/reference/features/settings.html).
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  rankingRules:
+                    $ref: '#/components/schemas/rankingRules'
+                  distinctAttribute:
+                    $ref: '#/components/schemas/distinctAttribute'
+                  searchableAttributes:
+                    $ref: '#/components/schemas/searchableAttributes'
+                  displayedAttributes:
+                    $ref: '#/components/schemas/displayedAttributes'
+                  stopWords:
+                    $ref: '#/components/schemas/stopWords'
+                  synonyms:
+                    $ref: '#/components/schemas/synonyms'
+                  filterableAttributes:
+                    $ref: '#/components/schemas/filterableAttributes'
+                  sortableAttributes:
+                    $ref: '#/components/schemas/sortableAttributes'
+                  typoTolerance:
+                    $ref: '#/components/schemas/typoTolerance'
+                  pagination:
+                    $ref: '#/components/schemas/pagination'
+                  faceting:
+                    $ref: '#/components/schemas/faceting'
+                required:
+                  - rankingRules
+                  - distinctAttribute
+                  - searchableAttributes
+                  - displayedAttributes
+                  - stopWords
+                  - synonyms
+                  - filterableAttributes
+                  - sortableAttributes
+                  - typoTolerance
+                  - pagination
+                  - faceting
+              examples:
+                Example:
+                  value:
+                    rankingRules:
+                      - words
+                      - typo
+                      - proximity
+                      - attribute
+                      - sort
+                      - exactness
+                      - 'release_date:asc'
+                    distinctAttribute: ean13
+                    searchableAttributes:
+                      - title
+                      - description
+                      - genre
+                    displayedAttributes:
+                      - title
+                      - description
+                      - genre
+                      - release_date
+                    stopWords:
+                      - of
+                      - the
+                      - to
+                    synonyms:
+                      wolverine:
+                        - xmen
+                        - logan
+                      logan:
+                        - wolverine
+                        - xmen
+                      wow:
+                        - world of warcraft
+                    filterableAttributes:
+                      - genres
+                      - director
+                    sortableAttributes:
+                      - price
+                      - author
+                      - title
+                    typoTolerance:
+                      enabled: true
+                      disableOnAttributes:
+                        - author
+                        - price
+                      disableOnWords:
+                        - Tolkien
+                      minWordSizeForTypos:
+                        oneTypo: 4
+                        twoTypos: 8
+                    pagination:
+                      maxTotalHits: 1000
+                    faceting:
+                      maxValuesPerFacet: 100
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    patch:
+      operationId: indexes.settings.update
+      summary: Update settings
+      description: |
+        Update the settings of an index.
+
+        Updates in the settings route are partial. This means that any parameters not provided in the body will be left unchanged.
+        [Learn more about the settings in this guide](https://docs.meilisearch.com/reference/features/settings.html).
+
+        > info
+        > If the provided index does not exist, it will be created.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                synonyms:
+                  $ref: '#/components/schemas/synonyms'
+                stopWords:
+                  $ref: '#/components/schemas/stopWords'
+                rankingRules:
+                  $ref: '#/components/schemas/rankingRules'
+                distinctAttribute:
+                  $ref: '#/components/schemas/distinctAttribute'
+                searchableAttributes:
+                  $ref: '#/components/schemas/searchableAttributes'
+                displayedAttributes:
+                  $ref: '#/components/schemas/displayedAttributes'
+                filterableAttributes:
+                  $ref: '#/components/schemas/filterableAttributes'
+                sortableAttributes:
+                  $ref: '#/components/schemas/sortableAttributes'
+                typoTolerance:
+                  $ref: '#/components/schemas/typoTolerance'
+                pagination:
+                  $ref: '#/components/schemas/pagination'
+                faceting:
+                  $ref: '#/components/schemas/faceting'
+            examples:
+              Example:
+                value:
+                  synonyms:
+                    wolverine:
+                      - xmen
+                      - logan
+                    logan:
+                      - wolverine
+                      - xmen
+                    wow:
+                      - world of warcraft
+                  stopWords:
+                    - of
+                    - the
+                    - to
+                  rankingRules:
+                    - words
+                    - typo
+                    - proximity
+                    - attribute
+                    - sort
+                    - exactness
+                    - 'release_date:asc'
+                  distinctAttribute: ean13
+                  searchableAttributes:
+                    - title
+                    - description
+                    - genre
+                  displayedAttributes:
+                    - title
+                    - description
+                    - genre
+                    - release_date
+                  filterableAttributes: []
+                  sortableAttributes: null
+                  typoTolerance:
+                    enabled: false
+                    disableOnAttributes:
+                      - title
+                      - author
+                    disableOnWords:
+                      - Tolkien
+                    minWordSizeForTypos:
+                      oneTypo: 4
+                      twoTypos: 8
+                  pagination:
+                    maxTotalHits: 1000
+                  faceting:
+                    maxValuesPerFacet: 100
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_settingsUpdate'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+      parameters:
+        - $ref: '#/components/parameters/Content-Type'
+    delete:
+      operationId: indexes.settings.reset
+      summary: Reset settings
+      description: |
+        Reset the settings of an index.
+
+        All settings will be reset to their default value.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_settingsUpdate'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    parameters:
+      - $ref: '#/components/parameters/indexUid'
+  '/indexes/{indexUid}/settings/synonyms':
+    get:
+      operationId: indexes.settings.synonyms.get
+      summary: Get synonyms
+      description: |
+        Get the list of [synonyms](https://docs.meilisearch.com/reference/features/synonyms.html) of an index.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/synonyms'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    put:
+      operationId: indexes.settings.synonyms.update
+      summary: Update synonyms
+      description: |
+        Update the list of [synonyms](https://docs.meilisearch.com/reference/features/synonyms.html) of an index. Synonyms are [normalized](https://docs.meilisearch.com/reference/features/synonyms.html#normalization).
+
+        > info
+        > If the provided index does not exist, it will be created.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/synonyms'
+            examples: {}
+        description: ''
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_settingsUpdate'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+      parameters:
+        - $ref: '#/components/parameters/Content-Type'
+    delete:
+      operationId: indexes.settings.synonyms.reset
+      summary: Reset synonyms
+      description: |
+        Reset the list of [synonyms](https://docs.meilisearch.com/reference/features/synonyms.html) of an index to its default value (`{}`).
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_settingsUpdate'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    parameters:
+      - $ref: '#/components/parameters/indexUid'
+  '/indexes/{indexUid}/settings/sortable-attributes':
+    get:
+      operationId: indexes.settings.sortable-attributes.get
+      summary: Get sortable attributes
+      description: |
+        Get the list of [sortableAttributes](https://docs.meilisearch.com//reference/features/settings.html#sortable-attributes) of an index.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/sortableAttributes'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    put:
+      operationId: indexes.settings.sortable-attributes.update
+      summary: Update sortable attributes
+      description: |
+        Update the list of [sortableAttributes](https://docs.meilisearch.com//reference/features/settings.html#sortable-attributes) of an index.
+
+        > info
+        > In order to enable sorting capabilities on geographic data, the `_geo` field must be added as a sortableAttribute.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/sortableAttributes'
+            examples: {}
+        description: ''
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_settingsUpdate'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+      parameters:
+        - $ref: '#/components/parameters/Content-Type'
+    delete:
+      operationId: indexes.settings.sortable-attributes.reset
+      summary: Reset sortable attributes
+      description: |
+        Reset the list of [sortableAttributes](https://docs.meilisearch.com//reference/features/settings.html#sortable-attributes) of an index to its default value (`[]`).
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_settingsUpdate'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    parameters:
+      - name: indexUid
+        in: path
+        description: Index Unique Identifier
+        required: true
+        schema:
+          type: string
+          example: movies
+  '/indexes/{indexUid}/settings/stop-words':
+    get:
+      operationId: indexes.settings.stopWords.get
+      summary: Get stop-words
+      description: |
+        Get the list of [stop-words](https://docs.meilisearch.com/reference/features/stop_words.html) of an index.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/stopWords'
+              examples: {}
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    put:
+      operationId: indexes.settings.stopWords.update
+      summary: Update stop-words
+      description: |
+        Update the list of [stop-words](https://docs.meilisearch.com/reference/features/stop_words.html) of an index.
+
+        If a list of stop-words already exists it will be overwritten (replaced).
+
+        > info
+        > If the provided index does not exist, it will be created.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/stopWords'
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_settingsUpdate'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+      parameters:
+        - $ref: '#/components/parameters/Content-Type'
+    delete:
+      operationId: indexes.settings.stopWords.reset
+      summary: Reset stop-words
+      description: |
+        Reset the list of [stop-words](https://docs.meilisearch.com/reference/features/stop_words.html) of an index to its default value (`[]`).
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_settingsUpdate'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    parameters:
+      - $ref: '#/components/parameters/indexUid'
+  '/indexes/{indexUid}/settings/ranking-rules':
+    get:
+      operationId: indexes.settings.rankingRules.get
+      summary: Get ranking rules
+      description: |
+        Get the [ranking rules](https://docs.meilisearch.com/learn/core_concepts/relevancy.html#ranking-rules) of an index.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rankingRules'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    put:
+      operationId: indexes.settings.rankingRules.update
+      summary: Update ranking rules
+      description: |
+        Update the [ranking rules](https://docs.meilisearch.com/learn/core_concepts/relevancy.html#ranking-rules) of an index.
+
+        To add your own ranking rule, you have to communicate either `asc` for ascending order or `desc` for descending order followed by the field name in brackets.
+
+        * To apply an ascending custom ranking rule: `attribute_name:asc`
+        * To apply a descending custom ranking rule: `attribute_name:desc`
+
+        > info
+        > If the provided index does not exist, it will be created.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/rankingRules'
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_settingsUpdate'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+      parameters:
+        - $ref: '#/components/parameters/Content-Type'
+    delete:
+      operationId: indexes.settings.rankingRules.reset
+      summary: Reset ranking rules
+      description: |
+        Reset the [ranking rules](https://docs.meilisearch.com/learn/core_concepts/relevancy.html#ranking-rules) of an index to its default value.
+
+        Default Value:
+        ```json
+        ["words", "typo", "proximity", "attribute", "sort", "exactness"]
+        ```
+
+        To remove all ranking rules, which is not recommended in any case, you would send an empty array to the add or replace ranking rules route.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_settingsUpdate'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    parameters:
+      - $ref: '#/components/parameters/indexUid'
+  '/indexes/{indexUid}/settings/typo-tolerance':
+    get:
+      operationId: indexes.settings.typoTolerance.get
+      summary: Get typo tolerance configuration
+      description: |
+        Get the typo tolerance configuration of an index.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/typoTolerance'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    patch:
+      operationId: indexes.settings.typoTolerance.update
+      summary: Update typo tolerance settings
+      description: |
+        Update the typo tolerance configuration of an index.
+
+        > info
+        > If the provided index does not exist, it will be created.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/typoTolerance'
+            examples: {}
+        description: ''
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_settingsUpdate'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+      parameters:
+        - $ref: '#/components/parameters/Content-Type'
+    delete:
+      operationId: indexes.settings.typoTolerance.reset
+      summary: Reset typo tolerance settings to the default configuration
+      description: |
+        Reset the typo tolerance settings of an index to its default configuration.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_settingsUpdate'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    parameters:
+      - $ref: '#/components/parameters/indexUid'
+  '/indexes/{indexUid}/settings/pagination':
+    get:
+      operationId: indexes.settings.pagination.get
+      summary: Get pagination configuration
+      description: |
+        Get the pagination configuration of an index.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pagination'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    patch:
+      operationId: indexes.settings.pagination.update
+      summary: Update pagination settings
+      description: |
+        Update the pagination configuration of an index.
+
+        > info
+        > If the provided index does not exist, it will be created.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/pagination'
+            examples: {}
+        description: ''
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_settingsUpdate'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+      parameters:
+        - $ref: '#/components/parameters/Content-Type'
+    delete:
+      operationId: indexes.settings.pagination.reset
+      summary: Reset pagination settings to the default configuration
+      description: |
+        Reset the pagination settings of an index to its default configuration.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_settingsUpdate'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    parameters:
+      - $ref: '#/components/parameters/indexUid'
+  '/indexes/{indexUid}/settings/faceting':
+    get:
+      operationId: indexes.settings.faceting.get
+      summary: Get faceting configuration
+      description: |
+        Get the faceting configuration of an index.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/faceting'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    patch:
+      operationId: indexes.settings.faceting.update
+      summary: Update faceting settings
+      description: |
+        Update the typo tolerance faceting of an index.
+
+        > info
+        > If the provided index does not exist, it will be created.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/faceting'
+            examples: {}
+        description: ''
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_settingsUpdate'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+      parameters:
+        - $ref: '#/components/parameters/Content-Type'
+    delete:
+      operationId: indexes.settings.faceting.reset
+      summary: Reset faceting settings to the default configuration
+      description: |
+        Reset the faceting settings of an index to its default configuration.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_settingsUpdate'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    parameters:
+      - $ref: '#/components/parameters/indexUid'
+  '/indexes/{indexUid}/settings/filterable-attributes':
+    get:
+      operationId: indexes.settings.filterableAttributes.get
+      summary: Get Filterable Attributes
+      description: |
+        Get the [filterable attributes](https://docs.meilisearch.com/reference/features/settings.html#filterable-attributes) of an index.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/filterableAttributes'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    put:
+      operationId: indexes.settings.filterableAttributes.update
+      summary: Update Filterable Attributes
+      description: |
+        Update the [filterable attributes](https://docs.meilisearch.com/reference/features/settings.html#filterable-attributes) of an index.
+
+        > info
+        > In order to enable filtering capabilities on geographic data, the `_geo` field must be added as a filterableAttribute.
+
+        > info
+        > If the provided index does not exist, it will be created.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_settingsUpdate'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/filterableAttributes'
+        description: ''
+      parameters:
+        - $ref: '#/components/parameters/Content-Type'
+    delete:
+      operationId: indexes.settings.filterableAttributes.reset
+      summary: Reset Filterable Attributes
+      description: |
+        Reset the [filterable attributes](https://docs.meilisearch.com/reference/features/settings.html#filterable-attributes) of an index to its default value (`[]`).
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_settingsUpdate'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    parameters:
+      - $ref: '#/components/parameters/indexUid'
+  '/indexes/{indexUid}/settings/distinct-attribute':
+    get:
+      operationId: indexes.settings.distinctAttribute.get
+      summary: Get distinct attribute
+      description: |
+        Get the [distinct attribute](https://docs.meilisearch.com/reference/features/settings.html#distinct-attribute) field of an index.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/distinctAttribute'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    put:
+      operationId: indexes.settings.distinctAttribute.update
+      summary: Update distinct attribute
+      description: |
+        Update the [distinct attribute](https://docs.meilisearch.com/reference/features/settings.html#distinct-attribute) field of an index.
+
+        > info
+        > If the provided index does not exist, it will be created.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/distinctAttribute'
+        description: ''
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_settingsUpdate'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+      parameters:
+        - $ref: '#/components/parameters/Content-Type'
+    delete:
+      operationId: indexes.settings.distinctAttribute.reset
+      summary: Reset distinct attribute
+      description: |
+        Reset the [distinct attribute](https://docs.meilisearch.com/reference/features/settings.html#distinct-attribute) field of an index to its default value (`null`).
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_settingsUpdate'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    parameters:
+      - $ref: '#/components/parameters/indexUid'
+  '/indexes/{indexUid}/settings/searchable-attributes':
+    get:
+      operationId: indexes.settings.searchableAttributes.get
+      summary: Get searchable attributes
+      description: |
+        Get the [searchable attributes](https://docs.meilisearch.com/reference/features/field_properties.html#searchable-fields) of an index.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/searchableAttributes'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    put:
+      operationId: indexes.settings.searchableAttributes.update
+      summary: Update searchable attributes
+      description: |
+        Update the [searchable attributes](https://docs.meilisearch.com/reference/features/field_properties.html#searchable-fields) of an index.
+
+        > info
+        > If the provided index does not exist, it will be created.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/searchableAttributes'
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_settingsUpdate'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+      parameters:
+        - $ref: '#/components/parameters/Content-Type'
+    delete:
+      operationId: indexes.settings.searchableAttributes.reset
+      summary: Reset searchable attributes
+      description: |
+        Reset the [searchable attributes](https://docs.meilisearch.com/reference/features/field_properties.html#searchable-fields) of an index to its default value (`['*']`).
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_settingsUpdate'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    parameters:
+      - $ref: '#/components/parameters/indexUid'
+  '/indexes/{indexUid}/settings/displayed-attributes':
+    get:
+      operationId: indexes.settings.displayedAttributes.get
+      summary: Get displayed attributes
+      description: |
+        Get the [displayed attributes](https://docs.meilisearch.com/reference/features/settings.html#displayed-attributes) of an index.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/displayedAttributes'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    put:
+      operationId: indexes.settings.displayedAttributes.update
+      summary: Update displayed attributes
+      description: |
+        Update the [displayed attributes](https://docs.meilisearch.com/reference/features/settings.html#displayed-attributes) of an index.
+
+        > info
+        > If the provided index does not exist, it will be created.
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/displayedAttributes'
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_settingsUpdate'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+      parameters:
+        - $ref: '#/components/parameters/Content-Type'
+    delete:
+      operationId: indexes.settings.displayedAttributes.reset
+      summary: Reset displayed attributes
+      description: |
+        Reset the [displayed attributes](https://docs.meilisearch.com/reference/features/settings.html#displayed-attributes) of an index to its default value (`['*']`).
+      tags:
+        - Settings
+      security:
+        - apiKey: []
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_settingsUpdate'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    parameters:
+      - $ref: '#/components/parameters/indexUid'
+  '/indexes/{indexUid}/stats':
+    get:
+      operationId: indexes.stats.get
+      summary: Get stat of an index
+      description: Get stats of an index.
+      tags:
+        - Stats
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/stats'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+    parameters:
+      - $ref: '#/components/parameters/indexUid'
+  /keys:
+    get:
+      operationId: keys.list
+      summary: Get API Keys
+      description: |
+        Get API Keys
+      tags:
+        - Keys
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/key'
+                  limit:
+                    $ref: '#/components/schemas/limit'
+                  offset:
+                    $ref: '#/components/schemas/offset'
+                  total:
+                    $ref: '#/components/schemas/total'
+                required:
+                  - results
+                  - limit
+                  - offset
+                  - total
+              examples:
+                example-1:
+                  value:
+                    results:
+                      - uid: 01b4bc42-eb33-4041-b481-254d00cce834
+                        key: d0552b41536279a0ad88bd595327b96f01176a60c2243e906c52ac02375f9bc4
+                        name: An API Key
+                        description: null
+                        actions:
+                          - documents.add
+                        indexes:
+                          - movies
+                        expiresAt: '2022-11-12T10:00:00Z'
+                        createdAt: '2021-11-12T10:00:00Z'
+                        updatedAt: '2021-11-12T10:00:00Z'
+                    limit: 20
+                    offset: 0
+                    total: 1
+        '401':
+          $ref: '#/components/responses/401'
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+    post:
+      summary: Create an API Key
+      operationId: keys.create
+      tags:
+        - Keys
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/key'
+              examples:
+                Create an API Key:
+                  value:
+                    uid: 01b4bc42-eb33-4041-b481-254d00cce834
+                    key: d0552b41536279a0ad88bd595327b96f01176a60c2243e906c52ac02375f9bc4
+                    name: Indexing Products API key
+                    description: null
+                    actions:
+                      - documents.add
+                    indexes:
+                      - products
+                    expiresAt: '2021-11-13T00:00:00Z'
+                    createdAt: '2021-11-12T10:00:00Z'
+                    updatedAt: '2021-11-12T10:00:00Z'
+      parameters:
+        - $ref: '#/components/parameters/Content-Type'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/key'
+            examples:
+              API Key Creation:
+                value:
+                  name: Indexing Products API key
+                  actions:
+                    - documents.add
+                  indexes:
+                    - products
+                  expiresAt: '2021-11-13T00:00:00Z'
+  '/keys/{uid_or_key}':
+    get:
+      summary: Get an API key from its uid or key field.
+      tags:
+        - Keys
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/key'
+              examples:
+                Fetch an API Key details:
+                  value:
+                    uid: 01b4bc42-eb33-4041-b481-254d00cce834
+                    key: d0552b41536279a0ad88bd595327b96f01176a60c2243e906c52ac02375f9bc4
+                    name: Indexing Products API key
+                    description: null
+                    actions:
+                      - documents.add
+                    indexes:
+                      - products
+                    expiresAt: '2021-11-13T00:00:00Z'
+                    createdAt: '2021-11-12T10:00:00Z'
+                    updatedAt: '2021-11-12T10:00:00Z'
+      operationId: keys.get
+      description: Get an API Key
+      parameters:
+        - schema:
+            type: string
+          name: uidOrKey
+          in: path
+          required: true
+          description: The uid or the key field value of the API Key.
+    delete:
+      summary: Delete an API key specified by its uid or key field.
+      operationId: keys.delete
+      tags:
+        - Keys
+      security:
+        - apiKey: []
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+      description: ''
+    patch:
+      summary: Update an API key specified by its uid or key field.
+      operationId: keys.update
+      tags:
+        - Keys
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/key'
+              examples:
+                Patch an API Key Response:
+                  value:
+                    uid: 01b4bc42-eb33-4041-b481-254d00cce834
+                    key: d0552b41536279a0ad88bd595327b96f01176a60c2243e906c52ac02375f9bc4
+                    name: Indexing Products API key
+                    description: null
+                    actions:
+                      - documents.add
+                    indexes:
+                      - products
+                    expiresAt: '2021-11-13T00:00:00Z'
+                    createdAt: '2021-11-12T10:00:00Z'
+                    updatedAt: '2021-11-12T15:00:00Z'
+      parameters:
+        - $ref: '#/components/parameters/Content-Type'
+      description: Update an API Key
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type:
+                    - string
+                    - 'null'
+                description:
+                  type:
+                    - string
+                    - 'null'
+              additionalProperties: false
+            examples:
+              Patch an API Key Request:
+                value:
+                  description: Indexing Products API key
+  /stats:
+    get:
+      operationId: stats.list
+      summary: Get stats of all indexes
+      description: Get stats of all indexes.
+      tags:
+        - Stats
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  databaseSize:
+                    type: number
+                  lastUpdate:
+                    $ref: '#/components/schemas/timestamp'
+                  indexes:
+                    type: object
+                    properties:
+                      indexUid:
+                        $ref: '#/components/schemas/stats'
+                required:
+                  - databaseSize
+                  - lastUpdate
+                  - indexes
+              examples:
+                Stats Of All Indexes:
+                  value:
+                    databaseSize: 567
+                    lastUpdate: '2019-11-20T09:40:33.711324Z'
+                    indexes:
+                      movies:
+                        numberOfDocuments: 10
+                        isIndexing: true
+                        fieldDistribution:
+                          genre: 10
+                          author: 9
+        '401':
+          $ref: '#/components/responses/401'
+  /version:
+    get:
+      operationId: version.get
+      summary: Get version of Meilisearch
+      description: Get version of Meilisearch.
+      tags:
+        - Version
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  commitSha:
+                    type: string
+                    example: b46889b5f0f2f8b91438a08a358ba8f05fc09fc1
+                  commitDate:
+                    type: string
+                    example: '2021-07-08'
+                  pkgVersion:
+                    type: string
+                    example: 0.1.1
+                additionalProperties: false
+                required:
+                  - commitSha
+                  - commitDate
+                  - pkgVersion
+              examples:
+                Example:
+                  value:
+                    commitSha: b46889b5f0f2f8b91438a08a358ba8f05fc09fc1
+                    commitDate: '2021-07-08'
+                    pkgVersion: 0.23.0
+        '401':
+          $ref: '#/components/responses/401'
+  /tasks:
+    get:
+      summary: Get all tasks
+      description:
+        'Get all [tasks](https://docs.meilisearch.com/learn/advanced/asynchronous_operations.html)'
+      tags:
+        - tasks
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/task'
+                  limit:
+                    $ref: '#/components/schemas/limit'
+                  from:
+                    $ref: '#/components/schemas/from'
+                  next:
+                    $ref: '#/components/schemas/next'
+                required:
+                  - results
+                  - limit
+                  - from
+                  - next
+              examples:
+                Example:
+                  value:
+                    results:
+                      - uid: 1
+                        indexUid: movies
+                        status: succeeded
+                        type: documentAdditionOrUpdate
+                        canceledBy: null
+                        details:
+                          receivedDocuments: 79000
+                          indexedDocuments: 79000
+                        error: null
+                        duration: PT1S
+                        enqueuedAt: '2021-01-01T09:39:00.000000Z'
+                        startedAt: '2021-01-01T09:39:01.000000Z'
+                        finishedAt: '2021-01-01T09:39:02.000000Z'
+                      - uid: 0
+                        indexUid: movies_Review
+                        status: failed
+                        type: documentAdditionOrUpdate
+                        canceledBy: null
+                        details:
+                          receivedDocuments: 67493
+                          indexedDocuments: 0
+                        error:
+                          message:
+                            'Document does not have a `:primaryKey` attribute:
+                            `:documentRepresentation`.'
+                          code: missing_document_id
+                          type: invalid_request
+                          link: 'https://docs.meilisearch.com/errors#missing_document_id'
+                        duration: PT5S
+                        enqueuedAt: '2021-01-01T09:38:00.000000Z'
+                        startedAt: '2021-01-01T09:38:02.000000Z'
+                        finishedAt: '2021-01-01T09:38:07.000000Z'
+                    limit: 2
+                    from: 1
+                    next: null
+      operationId: tasks.list
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/from'
+        - $ref: '#/components/parameters/taskFilterUids'
+        - $ref: '#/components/parameters/taskFilterIndexUids'
+        - $ref: '#/components/parameters/taskFilterStatuses'
+        - $ref: '#/components/parameters/taskFilterTypes'
+        - $ref: '#/components/parameters/taskFilterCanceledBy'
+        - $ref: '#/components/parameters/taskFilterBeforeEnqueuedAt'
+        - $ref: '#/components/parameters/taskFilterAfterEnqueuedAt'
+        - $ref: '#/components/parameters/taskFilterBeforeStartedAt'
+        - $ref: '#/components/parameters/taskFilterAfterStartedAt'
+        - $ref: '#/components/parameters/taskFilterBeforeFinishedAt'
+        - $ref: '#/components/parameters/taskFilterAfterFinishedAt'
+      security:
+        - apiKey: []
+    delete:
+      summary: Delete tasks
+      description:
+        'Delete finished
+        [tasks](https://docs.meilisearch.com/lean/advanced/asynchronous_operations.html)'
+      tags:
+        - tasks
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schema/summarizedTask'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_taskDeletion'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+      operationId: tasks.delete
+      parameters:
+        - $ref: '#/components/parameters/taskFilterUids'
+        - $ref: '#/components/parameters/taskFilterIndexUids'
+        - $ref: '#/components/parameters/taskFilterStatuses'
+        - $ref: '#/components/parameters/taskFilterTypes'
+        - $ref: '#/components/parameters/taskFilterCanceledBy'
+        - $ref: '#/components/parameters/taskFilterBeforeEnqueuedAt'
+        - $ref: '#/components/parameters/taskFilterAfterEnqueuedAt'
+        - $ref: '#/components/parameters/taskFilterBeforeStartedAt'
+        - $ref: '#/components/parameters/taskFilterAfterStartedAt'
+        - $ref: '#/components/parameters/taskFilterBeforeFinishedAt'
+        - $ref: '#/components/parameters/taskFilterAfterFinishedAt'
+      security:
+        - apiKey: []
+  '/tasks/:taskUid':
+    get:
+      summary: Get a task
+      description:
+        'Get a [task](https://docs.meilisearch.com/learn/advanced/asynchronous_operations.html) '
+      tags:
+        - tasks
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/task'
+              examples:
+                Example:
+                  value:
+                    uid: 1
+                    indexUid: movies
+                    status: succeeded
+                    type: documentAdditionOrUpdate
+                    canceledBy: null
+                    details:
+                      receivedDocuments: 79000
+                      indexedDocuments: 79000
+                    error: null
+                    duration: PT1S
+                    enqueuedAt: '2021-01-01T09:39:00.000000Z'
+                    startedAt: '2021-01-01T09:39:01.000000Z'
+                    finishedAt: '2021-01-01T09:39:02.000000Z'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                Example:
+                  value:
+                    message: 'Task :taskUid not found.'
+                    code: task_not_found
+                    type: invalid_request
+                    link: 'https://docs.meilisearch.com/errors/#task_not_found'
+      operationId: tasks.get
+      parameters:
+        - $ref: '#/components/parameters/taskUid'
+      security:
+        - apiKey: []
+  '/tasks/cancel':
+    post:
+      summary: Cancel tasks
+      description:
+        'Cancel enqueued and/or processing
+        [tasks](https://docs.meilisearch.com/learn/advanced/asynchronous_operations.html) '
+      tags:
+        - tasks
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/summarizedTask'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_taskCancelation'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        '401':
+          $ref: '#/components/responses/401'
+      operationId: tasks.cancel
+      parameters:
+        - $ref: '#/components/parameters/taskFilterUids'
+        - $ref: '#/components/parameters/taskFilterIndexUids'
+        - $ref: '#/components/parameters/taskFilterStatuses'
+        - $ref: '#/components/parameters/taskFilterTypes'
+        - $ref: '#/components/parameters/taskFilterCanceledBy'
+        - $ref: '#/components/parameters/taskFilterBeforeEnqueuedAt'
+        - $ref: '#/components/parameters/taskFilterAfterEnqueuedAt'
+        - $ref: '#/components/parameters/taskFilterBeforeStartedAt'
+        - $ref: '#/components/parameters/taskFilterAfterStartedAt'
+        - $ref: '#/components/parameters/taskFilterBeforeFinishedAt'
+        - $ref: '#/components/parameters/taskFilterAfterFinishedAt'
+      security:
+        - apiKey: []
+  '/swap-indexes':
+    post:
+      operationId: indexes.swap
+      summary: Swap Indexes
+      description:
+        Deploy a new version of an index without any downtime for clients by swapping documents,
+        settings, and task history between two indexes. Specifying several swap operations that will
+        be processed in an atomic way is possible.
+      tags:
+        - Indexes
+      security:
+        - apiKey: []
+      parameters:
+        - $ref: '#/components/parameters/Content-Type'
+      request:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/swapIndexes'
+            examples:
+              Example:
+                - indexes: ['indexA', 'indexA_new']
+                - indexes: ['indexB', 'indexB_new']
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/202'
+              examples:
+                '202':
+                  $ref: '#/components/examples/202_indexSwap'
+        '401':
+          $ref: '#/components/responses/401'
+security: []

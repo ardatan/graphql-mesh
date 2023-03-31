@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/utils",
-  "version": "0.43.5",
+  "version": "0.43.20",
   "type": "module",
   "repository": {
     "type": "git",
@@ -29,26 +29,27 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "graphql": "*"
-  },
-  "dependencies": {
-    "@graphql-mesh/cross-helpers": "0.3.1",
-    "@graphql-mesh/string-interpolation": "0.4.2",
-    "@graphql-mesh/types": "0.89.4",
-    "@graphql-tools/delegate": "9.0.22",
-    "@graphql-tools/utils": "9.1.4",
-    "js-yaml": "4.1.0",
-    "lodash.get": "4.4.2",
-    "lodash.set": "4.3.2",
-    "lodash.topath": "4.5.2",
-    "tiny-lru": "8.0.2",
+    "@graphql-mesh/cross-helpers": "^0.3.4",
+    "@graphql-mesh/types": "^0.91.12",
+    "@graphql-tools/utils": "^9.2.1",
+    "graphql": "*",
     "tslib": "^2.4.0"
   },
+  "dependencies": {
+    "@graphql-mesh/string-interpolation": "0.4.3",
+    "@graphql-tools/delegate": "9.0.28",
+    "dset": "3.1.2",
+    "js-yaml": "4.1.0",
+    "lodash.get": "4.4.2",
+    "lodash.topath": "4.5.2",
+    "tiny-lru": "8.0.2"
+  },
   "devDependencies": {
+    "@apollo/server": "4.5.0",
     "@types/js-yaml": "4.0.5",
-    "@types/lodash.set": "4.3.7",
     "@types/lodash.topath": "4.5.7",
-    "@types/object-hash": "3.0.2"
+    "@types/object-hash": "3.0.2",
+    "@whatwg-node/fetch": "0.8.4"
   },
   "publishConfig": {
     "access": "public",

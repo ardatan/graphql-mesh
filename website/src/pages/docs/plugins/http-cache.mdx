@@ -1,3 +1,9 @@
+---
+description:
+  Add HTTP caching to your GraphQL Mesh gateway using @graphql-mesh/plugin-http-cache. Reduce
+  network traffic and enable conditional caching. Get started now!
+---
+
 import { Callout, PackageCmd } from '@theguild/components'
 
 # Caching in HTTP
@@ -22,4 +28,25 @@ Then add the plugin to your configuration;
 ```yaml filename=".meshrc.yaml"
 plugins:
   httpCache: {}
+```
+
+## Conditional Caching
+
+You can cache specific URL patterns by using `matches` and `ignores` options.
+
+It follows the WHATWG URLPattern spec. You can find more information about the spec
+[here](https://developer.mozilla.org/en-US/docs/Web/API/URLPattern/URLPattern#examples)
+
+```yaml filename=".meshrc.yaml"
+plugins:
+  httpCache:
+    matches:
+      - 'https://*.github.com'
+      # or you can use objects to match more specific patterns
+      - hostname: '*.github.com'
+    ignores:
+      - 'https://api.github.com/graphql'
+      # or
+      - hostname: 'api.github.com'
+        pathname: '/graphql'
 ```

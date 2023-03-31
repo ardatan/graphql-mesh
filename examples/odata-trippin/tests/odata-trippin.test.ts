@@ -1,8 +1,7 @@
+import { basename, join } from 'path';
+import { introspectionFromSchema, lexicographicSortSchema } from 'graphql';
 import { findAndParseConfig } from '@graphql-mesh/cli';
 import { getMesh } from '@graphql-mesh/runtime';
-import { basename, join } from 'path';
-
-import { introspectionFromSchema, lexicographicSortSchema } from 'graphql';
 
 const config$ = findAndParseConfig({
   dir: join(__dirname, '..'),

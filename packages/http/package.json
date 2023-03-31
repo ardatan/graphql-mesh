@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/http",
-  "version": "0.3.9",
+  "version": "0.3.26",
   "type": "module",
   "repository": {
     "type": "git",
@@ -29,23 +29,23 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "graphql": "*"
+    "@graphql-mesh/cross-helpers": "^0.3.4",
+    "@graphql-mesh/types": "^0.91.12",
+    "@graphql-mesh/utils": "^0.43.20",
+    "graphql": "*",
+    "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/cross-helpers": "0.3.1",
-    "@graphql-mesh/runtime": "0.46.5",
-    "@graphql-mesh/types": "0.89.4",
-    "@graphql-mesh/utils": "0.43.5",
-    "@whatwg-node/router": "0.1.7",
-    "graphql-yoga": "3.3.0",
-    "tslib": "^2.4.0"
+    "@graphql-mesh/runtime": "0.46.21",
+    "@whatwg-node/router": "0.3.0",
+    "graphql-yoga": "3.8.0"
   },
   "devDependencies": {
     "@types/lodash.get": "4.4.7",
     "@types/mkdirp": "1.0.2",
     "@types/rimraf": "3.0.2",
     "@types/ws": "8.5.4",
-    "@types/yargs": "17.0.20"
+    "@types/yargs": "17.0.24"
   },
   "publishConfig": {
     "access": "public",

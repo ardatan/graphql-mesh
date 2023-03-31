@@ -1,17 +1,16 @@
-import { Source, pipe, share, filter, takeUntil, mergeMap, merge, make } from 'wonka';
-
+import { filter, make, merge, mergeMap, pipe, share, Source, takeUntil } from 'wonka';
+import { ExecuteMeshFn, SubscribeMeshFn } from '@graphql-mesh/runtime';
+import { isAsyncIterable } from '@graphql-tools/utils';
 import {
   Exchange,
   ExecutionResult,
-  makeResult,
+  getOperationName,
   makeErrorResult,
+  makeResult,
   mergeResultPatch,
   Operation,
   OperationResult,
-  getOperationName,
 } from '@urql/core';
-import { ExecuteMeshFn, SubscribeMeshFn } from '@graphql-mesh/runtime';
-import { isAsyncIterable } from '@graphql-tools/utils';
 
 const ROOT_VALUE = {};
 const makeExecuteSource = (

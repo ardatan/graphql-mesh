@@ -1,5 +1,5 @@
-import { stringInterpolator } from './index.js';
 import { GraphQLInputType, GraphQLResolveInfo } from 'graphql';
+import { stringInterpolator } from './index.js';
 
 export type ResolverData<TParent = any, TArgs = any, TContext = any, TResult = any> = {
   root?: TParent;
@@ -72,7 +72,10 @@ export function getInterpolatedHeadersFactory(
     for (const headerName in nonInterpolatedHeaders) {
       const headerValue = nonInterpolatedHeaders[headerName];
       if (headerValue) {
-        headers[headerName.toLowerCase()] = stringInterpolator.parse(headerValue, resolverData);
+        const interpolatedValue = stringInterpolator.parse(headerValue, resolverData);
+        if (interpolatedValue) {
+          headers[headerName] = interpolatedValue;
+        }
       }
     }
     return headers;

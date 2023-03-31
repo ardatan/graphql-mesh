@@ -32,7 +32,7 @@ export function handleUntitledDefinitions(schemaDocument: any) {
   if (schemaDocument.components?.schemas) {
     handleDefinitions(schemaDocument.components.schemas);
   }
-  const bodyTypeMap = {
+  const bodyTypeMap: Record<string, string> = {
     responses: 'response',
     requestBodies: 'request',
   };
@@ -63,7 +63,7 @@ export function handleUntitledDefinitions(schemaDocument: any) {
       }
     }
   }
-  const inputTypeMap = {
+  const inputTypeMap: Record<string, string> = {
     parameters: 'parameter',
     headers: 'header',
   };

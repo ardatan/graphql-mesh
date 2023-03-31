@@ -1,5 +1,5 @@
 const reservedNames = ['Query', 'Mutation', 'Subscription', 'File'];
-const KNOWN_CHARACTERS = {
+const KNOWN_CHARACTERS: Record<string, string> = {
   '+': 'PLUS',
   '-': 'MINUS',
   '>': 'GREATER_THAN',
@@ -92,6 +92,10 @@ export function sanitizeNameForGraphQL(unsafeName: string): string {
 
   if (reservedNames.includes(sanitizedName)) {
     sanitizedName += '_';
+  }
+
+  if (sanitizedName.length === 0) {
+    return '_';
   }
 
   return sanitizedName;

@@ -32,12 +32,9 @@ jobs:
           NEXT_BASE_PATH: ${{ github.ref == 'refs/heads/master' && '/graphql/mesh' || '' }}
           SITE_URL:
             ${{ github.ref == 'refs/heads/master' && 'https://the-guild.dev/graphql/mesh' || '' }}
-          NEXT_PUBLIC_ALGOLIA_INDEX_NAME: ${{ secrets.NEXT_PUBLIC_ALGOLIA_INDEX_NAME }}
-          NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY: ${{ secrets.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY }}
-          NEXT_PUBLIC_ALGOLIA_APP_ID: ${{ secrets.NEXT_PUBLIC_ALGOLIA_APP_ID }}
         with:
-          cloudflareApiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cloudflareAccountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          cloudflareApiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           projectName: graphql-mesh
           prId: ${{ github.event.pull_request.number }}

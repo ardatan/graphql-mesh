@@ -1,20 +1,20 @@
+import { paramCase } from 'param-case';
+import { path } from '@graphql-mesh/cross-helpers';
+import { MeshStore } from '@graphql-mesh/store';
 import {
-  KeyValueCache,
-  YamlConfig,
   ImportFn,
-  MeshPubSub,
+  KeyValueCache,
   Logger,
   MeshFetch,
+  MeshPubSub,
+  YamlConfig,
 } from '@graphql-mesh/types';
-import { path } from '@graphql-mesh/cross-helpers';
-import { printSchemaWithDirectives, Source } from '@graphql-tools/utils';
-import { paramCase } from 'param-case';
-import { loadDocuments, loadTypedefs } from '@graphql-tools/load';
-import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { PubSub, DefaultLogger, parseWithCache } from '@graphql-mesh/utils';
-import { fetch as defaultFetch } from '@whatwg-node/fetch';
+import { DefaultLogger, parseWithCache, PubSub } from '@graphql-mesh/utils';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
-import { MeshStore } from '@graphql-mesh/store';
+import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
+import { loadDocuments, loadTypedefs } from '@graphql-tools/load';
+import { printSchemaWithDirectives, Source } from '@graphql-tools/utils';
+import { fetch as defaultFetch } from '@whatwg-node/fetch';
 
 type ResolvedPackage<T> = {
   moduleName: string;
@@ -63,8 +63,9 @@ export async function getPackage<T>({
     try {
       const exported = await importFn(moduleName, true);
       const resolved = exported.default || (exported as T);
+      const relativeModuleName = path.isAbsolute(moduleName) ? name : moduleName;
       return {
-        moduleName,
+        moduleName: relativeModuleName,
         resolved,
       };
     } catch (err) {

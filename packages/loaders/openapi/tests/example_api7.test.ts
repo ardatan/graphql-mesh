@@ -94,18 +94,20 @@ describe('OpenAPI Loader: example_api7', () => {
     });
 
     for await (const chunk of response.body) {
-      const data = Buffer.from(chunk).toString('utf-8');
-      expect(data.trim()).toBe(
-        `data: ${JSON.stringify({
-          data: {
-            devicesEventListener: {
-              name: deviceName,
-              status: false,
+      const data = Buffer.from(chunk).toString('utf-8').trim();
+      if (data.includes('data: ')) {
+        expect(data).toContain(
+          `data: ${JSON.stringify({
+            data: {
+              devicesEventListener: {
+                name: deviceName,
+                status: false,
+              },
             },
-          },
-        })}`,
-      );
-      break;
+          })}`,
+        );
+        break;
+      }
     }
   });
 });

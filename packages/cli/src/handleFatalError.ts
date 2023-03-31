@@ -1,5 +1,5 @@
-import { Logger } from '@graphql-mesh/types';
 import { process } from '@graphql-mesh/cross-helpers';
+import { Logger } from '@graphql-mesh/types';
 
 export function handleFatalError(e: Error, logger: Logger): any {
   logger.error(e);

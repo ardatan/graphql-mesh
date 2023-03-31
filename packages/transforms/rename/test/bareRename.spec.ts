@@ -1,12 +1,12 @@
-import RenameTransform from './../src/index.js';
 import {
   buildSchema,
   graphql,
-  GraphQLObjectType,
   GraphQLNonNull,
+  GraphQLObjectType,
   GraphQLScalarType,
 } from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import RenameTransform from './../src/index.js';
 
 describe('rename', () => {
   const schema = makeExecutableSchema({

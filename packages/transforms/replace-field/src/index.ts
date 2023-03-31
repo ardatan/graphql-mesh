@@ -1,6 +1,6 @@
 import {
-  extendSchema,
   defaultFieldResolver,
+  extendSchema,
   GraphQLFieldConfig,
   GraphQLFieldResolver,
   GraphQLSchema,
@@ -19,7 +19,7 @@ type ReplaceFieldConfig = YamlConfig.ReplaceFieldConfig &
 const defaultHoistFieldComposer =
   (next: GraphQLFieldResolver<any, any, any>, targetFieldName: string) =>
   async (root: any, args: any, context: any, info: any) => {
-    const rawResult = await next(root, args, context, info);
+    const rawResult: any = await next(root, args, context, info);
     return rawResult && rawResult[targetFieldName];
   };
 

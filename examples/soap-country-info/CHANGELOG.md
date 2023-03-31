@@ -1,5 +1,191 @@
 # country-info-example
 
+## 0.5.346
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c90eb5ac6`](https://github.com/Urigo/graphql-mesh/commit/c90eb5ac631507de1f49db68ca681193cc5a20b5)]:
+  - @graphql-mesh/plugin-snapshot@0.1.23
+  - @graphql-mesh/soap@0.17.23
+  - @graphql-mesh/cli@0.82.30
+
+## 0.5.345
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54),
+  [`52e6693e6`](https://github.com/Urigo/graphql-mesh/commit/52e6693e672a2975d0f4fdc27f0796453bb50cda),
+  [`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54),
+  [`52e6693e6`](https://github.com/Urigo/graphql-mesh/commit/52e6693e672a2975d0f4fdc27f0796453bb50cda),
+  [`2987413b0`](https://github.com/Urigo/graphql-mesh/commit/2987413b0150835859480d07cf386c32beb35bec),
+  [`9854f62b1`](https://github.com/Urigo/graphql-mesh/commit/9854f62b16981308247c0aeacd1724498e9e9963)]:
+  - @graphql-mesh/cli@0.82.29
+  - @graphql-mesh/plugin-snapshot@0.1.22
+  - @graphql-mesh/soap@0.17.22
+
+## 0.5.344
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3f658a771`](https://github.com/Urigo/graphql-mesh/commit/3f658a7711cd68bc7451c1494699c5ffb8e919ce)]:
+  - @graphql-mesh/plugin-snapshot@0.1.21
+  - @graphql-mesh/cli@0.82.28
+  - @graphql-mesh/soap@0.17.21
+
+## 0.5.343
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.27
+  - @graphql-mesh/soap@0.17.20
+  - @graphql-mesh/plugin-snapshot@0.1.20
+
+## 0.5.342
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b86d420d4`](https://github.com/Urigo/graphql-mesh/commit/b86d420d4fdf1132f3485c35087aaecbce45a728)]:
+  - @graphql-mesh/cli@0.82.26
+  - @graphql-mesh/soap@0.17.19
+  - @graphql-mesh/plugin-snapshot@0.1.19
+
+## 0.5.341
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/soap@0.17.18
+
+## 0.5.340
+
+### Patch Changes
+
+- Updated dependencies
+  [[`06e5fe744`](https://github.com/Urigo/graphql-mesh/commit/06e5fe744c8a730664cc97b4bfad1809a431b7aa)]:
+  - @graphql-mesh/plugin-snapshot@0.1.18
+  - @graphql-mesh/cli@0.82.25
+  - @graphql-mesh/soap@0.17.17
+
+## 0.5.339
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0b438c329`](https://github.com/Urigo/graphql-mesh/commit/0b438c32950f524db65163d67f6a64f451214391),
+  [`a0ffbbe26`](https://github.com/Urigo/graphql-mesh/commit/a0ffbbe26569a2a5188827fa841f194609d63d64),
+  [`0b438c329`](https://github.com/Urigo/graphql-mesh/commit/0b438c32950f524db65163d67f6a64f451214391)]:
+  - @graphql-mesh/cli@0.82.24
+  - @graphql-mesh/plugin-snapshot@0.1.17
+  - @graphql-mesh/soap@0.17.16
+
+## 0.5.338
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f268e0c50`](https://github.com/Urigo/graphql-mesh/commit/f268e0c50e2cff9344070bad6541162f425e8600)]:
+  - @graphql-mesh/cli@0.82.23
+
+## 0.5.337
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5c19f8d6f`](https://github.com/Urigo/graphql-mesh/commit/5c19f8d6f79f2d9bfbeb6458c8dc7a1729c37db9)]:
+  - @graphql-mesh/cli@0.82.22
+  - @graphql-mesh/soap@0.17.15
+  - @graphql-mesh/plugin-snapshot@0.1.16
+
+## 0.5.336
+
+### Patch Changes
+
+- Updated dependencies
+  [[`47734f78b`](https://github.com/Urigo/graphql-mesh/commit/47734f78bd9b3e934844aa431a5d1465af107b0d)]:
+  - @graphql-mesh/plugin-snapshot@0.1.15
+  - @graphql-mesh/cli@0.82.21
+  - @graphql-mesh/soap@0.17.14
+
+## 0.5.335
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.20
+
+## 0.5.334
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.19
+
+## 0.5.333
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.18
+  - @graphql-mesh/soap@0.17.13
+  - @graphql-mesh/plugin-snapshot@0.1.14
+
+## 0.5.332
+
+### Patch Changes
+
+- Updated dependencies
+  [[`743caf3c8`](https://github.com/Urigo/graphql-mesh/commit/743caf3c8a0f3ebcaae1e4525b2c10b281cdc3aa)]:
+  - @graphql-mesh/cli@0.82.17
+  - @graphql-mesh/plugin-snapshot@0.1.13
+  - @graphql-mesh/soap@0.17.12
+
+## 0.5.331
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.16
+  - @graphql-mesh/soap@0.17.11
+  - @graphql-mesh/plugin-snapshot@0.1.12
+
+## 0.5.330
+
+### Patch Changes
+
+- Updated dependencies
+  [[`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
+  [`de470cf42`](https://github.com/Urigo/graphql-mesh/commit/de470cf42c466d0ca3ca4ef911c4956e9a0d366a),
+  [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
+  [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e)]:
+  - @graphql-mesh/cli@0.82.15
+  - @graphql-mesh/plugin-snapshot@0.1.11
+  - @graphql-mesh/soap@0.17.10
+
+## 0.5.329
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a5fbc9562`](https://github.com/Urigo/graphql-mesh/commit/a5fbc95627c156208e7f3891ea871d6c9d4ecfe6),
+  [`a249250a7`](https://github.com/Urigo/graphql-mesh/commit/a249250a77eacb93751d2f17f2f19e3f6f176ee1)]:
+  - @graphql-mesh/cli@0.82.14
+  - @graphql-mesh/soap@0.17.9
+  - @graphql-mesh/plugin-snapshot@0.1.10
+
+## 0.5.328
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.13
+  - @graphql-mesh/soap@0.17.8
+  - @graphql-mesh/plugin-snapshot@0.1.9
+
 ## 0.5.327
 
 ### Patch Changes

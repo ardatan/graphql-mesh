@@ -1,5 +1,199 @@
 # auth0-example
 
+## 0.1.35
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c90eb5ac6`](https://github.com/Urigo/graphql-mesh/commit/c90eb5ac631507de1f49db68ca681193cc5a20b5)]:
+  - @graphql-mesh/plugin-operation-field-permissions@0.1.20
+  - @graphql-mesh/json-schema@0.37.24
+  - @graphql-mesh/cli@0.82.30
+
+## 0.1.34
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54),
+  [`52e6693e6`](https://github.com/Urigo/graphql-mesh/commit/52e6693e672a2975d0f4fdc27f0796453bb50cda),
+  [`2987413b0`](https://github.com/Urigo/graphql-mesh/commit/2987413b0150835859480d07cf386c32beb35bec),
+  [`9854f62b1`](https://github.com/Urigo/graphql-mesh/commit/9854f62b16981308247c0aeacd1724498e9e9963)]:
+  - @graphql-mesh/cli@0.82.29
+  - @graphql-mesh/json-schema@0.37.23
+  - @graphql-mesh/plugin-operation-field-permissions@0.1.19
+
+## 0.1.33
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.28
+  - @graphql-mesh/json-schema@0.37.22
+  - @graphql-mesh/plugin-operation-field-permissions@0.1.18
+
+## 0.1.32
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.27
+  - @graphql-mesh/json-schema@0.37.21
+  - @graphql-mesh/plugin-operation-field-permissions@0.1.17
+
+## 0.1.31
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b86d420d4`](https://github.com/Urigo/graphql-mesh/commit/b86d420d4fdf1132f3485c35087aaecbce45a728)]:
+  - @graphql-mesh/cli@0.82.26
+  - @graphql-mesh/json-schema@0.37.20
+  - @graphql-mesh/plugin-operation-field-permissions@0.1.16
+
+## 0.1.30
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.37.19
+
+## 0.1.29
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.37.18
+
+## 0.1.28
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.25
+  - @graphql-mesh/json-schema@0.37.17
+  - @graphql-mesh/plugin-operation-field-permissions@0.1.15
+
+## 0.1.27
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0b438c329`](https://github.com/Urigo/graphql-mesh/commit/0b438c32950f524db65163d67f6a64f451214391),
+  [`7def5adae`](https://github.com/Urigo/graphql-mesh/commit/7def5adae9e1cab3597320731ca6767bde5c04a1),
+  [`ab08c2af5`](https://github.com/Urigo/graphql-mesh/commit/ab08c2af559aee4ee009c1bafceab7f5d1e87321)]:
+  - @graphql-mesh/cli@0.82.24
+  - @graphql-mesh/plugin-operation-field-permissions@0.1.14
+  - @graphql-mesh/json-schema@0.37.16
+
+## 0.1.26
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f268e0c50`](https://github.com/Urigo/graphql-mesh/commit/f268e0c50e2cff9344070bad6541162f425e8600)]:
+  - @graphql-mesh/cli@0.82.23
+
+## 0.1.25
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5c19f8d6f`](https://github.com/Urigo/graphql-mesh/commit/5c19f8d6f79f2d9bfbeb6458c8dc7a1729c37db9)]:
+  - @graphql-mesh/cli@0.82.22
+  - @graphql-mesh/json-schema@0.37.15
+  - @graphql-mesh/plugin-operation-field-permissions@0.1.13
+
+## 0.1.24
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.21
+  - @graphql-mesh/json-schema@0.37.14
+  - @graphql-mesh/plugin-operation-field-permissions@0.1.12
+
+## 0.1.23
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.37.13
+
+## 0.1.22
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.20
+
+## 0.1.21
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.19
+
+## 0.1.20
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.18
+  - @graphql-mesh/json-schema@0.37.12
+  - @graphql-mesh/plugin-operation-field-permissions@0.1.11
+
+## 0.1.19
+
+### Patch Changes
+
+- Updated dependencies
+  [[`743caf3c8`](https://github.com/Urigo/graphql-mesh/commit/743caf3c8a0f3ebcaae1e4525b2c10b281cdc3aa)]:
+  - @graphql-mesh/cli@0.82.17
+  - @graphql-mesh/json-schema@0.37.11
+  - @graphql-mesh/plugin-operation-field-permissions@0.1.10
+
+## 0.1.18
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.16
+  - @graphql-mesh/json-schema@0.37.10
+  - @graphql-mesh/plugin-operation-field-permissions@0.1.9
+
+## 0.1.17
+
+### Patch Changes
+
+- Updated dependencies
+  [[`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
+  [`de470cf42`](https://github.com/Urigo/graphql-mesh/commit/de470cf42c466d0ca3ca4ef911c4956e9a0d366a),
+  [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e)]:
+  - @graphql-mesh/cli@0.82.15
+  - @graphql-mesh/json-schema@0.37.9
+  - @graphql-mesh/plugin-operation-field-permissions@0.1.8
+
+## 0.1.16
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a5fbc9562`](https://github.com/Urigo/graphql-mesh/commit/a5fbc95627c156208e7f3891ea871d6c9d4ecfe6),
+  [`a249250a7`](https://github.com/Urigo/graphql-mesh/commit/a249250a77eacb93751d2f17f2f19e3f6f176ee1)]:
+  - @graphql-mesh/cli@0.82.14
+  - @graphql-mesh/json-schema@0.37.8
+  - @graphql-mesh/plugin-operation-field-permissions@0.1.7
+
+## 0.1.15
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.13
+  - @graphql-mesh/json-schema@0.37.7
+  - @graphql-mesh/plugin-operation-field-permissions@0.1.6
+
 ## 0.1.14
 
 ### Patch Changes

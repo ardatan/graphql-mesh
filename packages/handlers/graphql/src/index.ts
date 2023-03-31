@@ -8,11 +8,12 @@ import {
   GraphQLSchema,
   IntrospectionQuery,
   Kind,
+  print,
   SelectionNode,
 } from 'graphql';
 import lodashGet from 'lodash.get';
 import { process, util } from '@graphql-mesh/cross-helpers';
-import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
+import { PredefinedProxyOptions, StoreProxy, ValidationError } from '@graphql-mesh/store';
 import {
   getInterpolatedHeadersFactory,
   getInterpolatedStringFactory,
@@ -28,7 +29,13 @@ import {
   MeshSource,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { loadFromModuleExportExpression, readFileOrUrl } from '@graphql-mesh/utils';
+import {
+  isUrl,
+  loadFromModuleExportExpression,
+  readFile,
+  readFileOrUrl,
+  readUrl,
+} from '@graphql-mesh/utils';
 import { SubscriptionProtocol, UrlLoader } from '@graphql-tools/url-loader';
 import {
   ExecutionRequest,
@@ -85,9 +92,11 @@ export default class GraphQLHandler implements MeshHandler {
     return parseInterpolationStrings(this.interpolationStringSet);
   }
 
-  private wrapExecutorToPassSourceName(executor: Executor) {
+  private wrapExecutorToPassSourceNameAndDebug(executor: Executor) {
     const sourceName = this.name;
+    const logger = this.logger;
     return function executorWithSourceName(executionRequest: ExecutionRequest) {
+      logger.debug(() => `Sending GraphQL Request: `, print(executionRequest.document));
       executionRequest.info = executionRequest.info || ({} as GraphQLResolveInfo);
       (executionRequest.info as any).sourceName = sourceName;
       return executor(executionRequest);
@@ -125,6 +134,25 @@ export default class GraphQLHandler implements MeshHandler {
     };
   }
 
+  private getSchemaFromContent(sdlOrIntrospection: string | IntrospectionQuery | DocumentNode) {
+    if (typeof sdlOrIntrospection === 'string') {
+      return buildSchema(sdlOrIntrospection, {
+        assumeValid: true,
+        assumeValidSDL: true,
+      });
+    } else if (isDocumentNode(sdlOrIntrospection)) {
+      return buildASTSchema(sdlOrIntrospection, {
+        assumeValid: true,
+        assumeValidSDL: true,
+      });
+    } else if (sdlOrIntrospection.__schema) {
+      return buildClientSchema(sdlOrIntrospection, {
+        assumeValid: true,
+      });
+    }
+    throw new Error(`Invalid introspection data: ${util.inspect(sdlOrIntrospection)}`);
+  }
+
   async getNonExecutableSchemaForHTTPSource(
     httpSourceConfig: YamlConfig.GraphQLHandlerHTTPConfiguration,
   ): Promise<GraphQLSchema> {
@@ -137,36 +165,33 @@ export default class GraphQLHandler implements MeshHandler {
       httpSourceConfig.schemaHeaders || {},
     );
     if (httpSourceConfig.source) {
+      const opts = {
+        cwd: this.baseDir,
+        allowUnknownExtensions: true,
+        importFn: this.importFn,
+        fetch: this.fetchFn,
+        logger: this.logger,
+      };
+      if (!isUrl(httpSourceConfig.source)) {
+        return this.nonExecutableSchema.getWithSet(async () => {
+          const sdlOrIntrospection = await readFile<string | IntrospectionQuery | DocumentNode>(
+            httpSourceConfig.source,
+            opts,
+          );
+          return this.getSchemaFromContent(sdlOrIntrospection);
+        });
+      }
       const headers = schemaHeadersFactory({
         env: process.env,
       });
-      const sdlOrIntrospection = await readFileOrUrl<string | IntrospectionQuery | DocumentNode>(
+      const sdlOrIntrospection = await readUrl<string | IntrospectionQuery | DocumentNode>(
         httpSourceConfig.source,
         {
-          cwd: this.baseDir,
-          allowUnknownExtensions: true,
-          importFn: this.importFn,
-          fetch: this.fetchFn,
-          logger: this.logger,
+          ...opts,
           headers,
         },
       );
-      if (typeof sdlOrIntrospection === 'string') {
-        return buildSchema(sdlOrIntrospection, {
-          assumeValid: true,
-          assumeValidSDL: true,
-        });
-      } else if (isDocumentNode(sdlOrIntrospection)) {
-        return buildASTSchema(sdlOrIntrospection, {
-          assumeValid: true,
-          assumeValidSDL: true,
-        });
-      } else if (sdlOrIntrospection.__schema) {
-        return buildClientSchema(sdlOrIntrospection, {
-          assumeValid: true,
-        });
-      }
-      throw new Error(`Invalid introspection data: ${util.inspect(sdlOrIntrospection)}`);
+      return this.getSchemaFromContent(sdlOrIntrospection);
     }
     return this.nonExecutableSchema.getWithSet(() => {
       const endpointFactory = getInterpolatedStringFactory(httpSourceConfig.endpoint);
@@ -359,7 +384,7 @@ export default class GraphQLHandler implements MeshHandler {
 
         return {
           schema,
-          executor: this.wrapExecutorToPassSourceName(highestValueExecutor),
+          executor: this.wrapExecutorToPassSourceNameAndDebug(highestValueExecutor),
           // Batching doesn't make sense with fallback strategy
           batch: false,
           contextVariables,
@@ -401,6 +426,9 @@ export default class GraphQLHandler implements MeshHandler {
         this.getExecutorForHTTPSourceConfig(this.config),
       ]);
       if (schemaResult.status === 'rejected') {
+        if (schemaResult.reason instanceof ValidationError) {
+          throw schemaResult.reason;
+        }
         throw new Error(
           `Failed to fetch introspection from ${this.config.endpoint}: ${util.inspect(
             schemaResult.reason,
@@ -418,7 +446,7 @@ export default class GraphQLHandler implements MeshHandler {
 
       return {
         schema: schemaResult.value,
-        executor: this.wrapExecutorToPassSourceName(executorResult.value),
+        executor: this.wrapExecutorToPassSourceNameAndDebug(executorResult.value),
         batch: this.config.batch != null ? this.config.batch : true,
         contextVariables,
       };

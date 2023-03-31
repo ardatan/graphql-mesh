@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cross-helpers",
-  "version": "0.3.1",
+  "version": "0.3.4",
   "description": "Cross Platform Helpers for GraphQL Mesh",
   "repository": {
     "type": "git",
@@ -13,8 +13,11 @@
   "browser": "browser.js",
   "types": "index.d.ts",
   "typings": "./index.d.ts",
+  "peerDependencies": {
+    "@graphql-tools/utils": "^9.2.1",
+    "graphql": "*"
+  },
   "dependencies": {
-    "@graphql-tools/utils": "9.1.4",
     "path-browserify": "1.0.1",
     "react-native-fs": "2.20.0",
     "react-native-path": "0.0.5"

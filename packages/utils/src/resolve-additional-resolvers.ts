@@ -1,25 +1,25 @@
-import { YamlConfig, MeshPubSub, ImportFn } from '@graphql-mesh/types';
-import { IResolvers, parseSelectionSet } from '@graphql-tools/utils';
+import { dset } from 'dset';
 import {
-  GraphQLResolveInfo,
-  SelectionSetNode,
-  Kind,
-  GraphQLSchema,
-  GraphQLObjectType,
   getNamedType,
-  isAbstractType,
+  GraphQLNamedType,
+  GraphQLObjectType,
+  GraphQLResolveInfo,
+  GraphQLSchema,
   GraphQLType,
+  isAbstractType,
   isInterfaceType,
   isObjectType,
-  GraphQLNamedType,
+  Kind,
+  SelectionSetNode,
 } from 'graphql';
-import { withFilter } from './with-filter.js';
 import lodashGet from 'lodash.get';
-import lodashSet from 'lodash.set';
 import toPath from 'lodash.topath';
-import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
 import { process } from '@graphql-mesh/cross-helpers';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import { ImportFn, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
+import { IResolvers, parseSelectionSet } from '@graphql-tools/utils';
+import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
+import { withFilter } from './with-filter.js';
 
 function getTypeByPath(type: GraphQLType, path: string[]): GraphQLNamedType {
   if ('ofType' in type) {
@@ -202,7 +202,7 @@ export function resolveAdditionalResolversWithoutImport(
             const resolverData = { root, args, context, info, env: process.env };
             const targetArgs: any = {};
             for (const argPath in additionalResolver.additionalArgs || {}) {
-              lodashSet(
+              dset(
                 targetArgs,
                 argPath,
                 stringInterpolator.parse(additionalResolver.additionalArgs[argPath], resolverData),
@@ -215,7 +215,7 @@ export function resolveAdditionalResolversWithoutImport(
               info,
               argsFromKeys: (keys: string[]) => {
                 const args: any = {};
-                lodashSet(args, additionalResolver.keysArg, keys);
+                dset(args, additionalResolver.keysArg, keys);
                 Object.assign(args, targetArgs);
                 return args;
               },
@@ -265,7 +265,7 @@ export function resolveAdditionalResolversWithoutImport(
             const resolverData = { root, args, context, info, env: process.env };
             const targetArgs: any = {};
             for (const argPath in additionalResolver.sourceArgs) {
-              lodashSet(
+              dset(
                 targetArgs,
                 argPath,
                 stringInterpolator.parse(
@@ -370,7 +370,7 @@ export function resolveAdditionalResolvers(
                   const resolverData = { root, args, context, info, env: process.env };
                   const targetArgs: any = {};
                   for (const argPath in additionalResolver.additionalArgs || {}) {
-                    lodashSet(
+                    dset(
                       targetArgs,
                       argPath,
                       stringInterpolator.parse(
@@ -386,7 +386,7 @@ export function resolveAdditionalResolvers(
                     info,
                     argsFromKeys: (keys: string[]) => {
                       const args: any = {};
-                      lodashSet(args, additionalResolver.keysArg, keys);
+                      dset(args, additionalResolver.keysArg, keys);
                       Object.assign(args, targetArgs);
                       return args;
                     },
@@ -436,7 +436,7 @@ export function resolveAdditionalResolvers(
                   const resolverData = { root, args, context, info, env: process.env };
                   const targetArgs: any = {};
                   for (const argPath in additionalResolver.sourceArgs) {
-                    lodashSet(
+                    dset(
                       targetArgs,
                       argPath,
                       stringInterpolator.parse(

@@ -12,4 +12,5 @@ Default: false
   * `type` (type: `String (query | mutation | Query | Mutation)`, required)
   * `fieldName` (type: `String`, required)
 * `queryParams` (type: `JSON`) - JSON object representing the query search parameters to add to the API calls
+* `timeout` (type: `Int`) - Timeout for the HTTP request in milliseconds
 * `bundle` (type: `Boolean`)

@@ -14,7 +14,6 @@
     "sourceMap": true,
     "declaration": true,
 
-    "suppressImplicitAnyIndexErrors": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
     "alwaysStrict": true,

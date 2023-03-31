@@ -1,12 +1,12 @@
-import { MeshPubSub, KeyValueCache, Logger } from '@graphql-mesh/types';
-import { printSchema, GraphQLInterfaceType, parse, ExecutionResult } from 'graphql';
+import { ExecutionResult, GraphQLInterfaceType, parse, printSchema } from 'graphql';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
-import { addMock, resetMocks, MockResponse, mockFetch } from './custom-fetch.js';
-import { path, fs } from '@graphql-mesh/cross-helpers';
-import { PubSub, DefaultLogger } from '@graphql-mesh/utils';
-import ODataHandler from '../src/index.js';
+import { fs, path } from '@graphql-mesh/cross-helpers';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
+import { KeyValueCache, Logger, MeshPubSub } from '@graphql-mesh/types';
+import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import ODataHandler from '../src/index.js';
+import { addMock, mockFetch, MockResponse, resetMocks } from './custom-fetch.js';
 
 const TripPinMetadata = fs.readFileSync(
   path.resolve(__dirname, './fixtures/trippin-metadata.xml'),
@@ -369,7 +369,7 @@ describe('odata', () => {
     let sentRequest: any;
     addMock(correctUrl, async request => {
       sentRequest = request.clone();
-      const bodyObj = await request.json();
+      const bodyObj: any = await request.json();
       bodyObj['@odata.type'] = 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
       return new MockResponse(JSON.stringify(bodyObj));
     });
@@ -463,7 +463,7 @@ describe('odata', () => {
     let sentRequest: Request;
     addMock(correctUrl, async request => {
       sentRequest = request.clone();
-      const returnBody = await request.json();
+      const returnBody: any = await request.json();
       returnBody['@odata.type'] = 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
       return new MockResponse(JSON.stringify(returnBody));
     });

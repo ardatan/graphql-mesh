@@ -1,7 +1,7 @@
+import { getOperationAST } from 'graphql';
 import { ApolloLink, FetchResult, Observable, Operation, RequestHandler } from '@apollo/client';
 import { ExecuteMeshFn, SubscribeMeshFn } from '@graphql-mesh/runtime';
 import { isAsyncIterable } from '@graphql-tools/utils';
-import { getOperationAST } from 'graphql';
 
 export interface MeshApolloRequestHandlerOptions {
   execute: ExecuteMeshFn;

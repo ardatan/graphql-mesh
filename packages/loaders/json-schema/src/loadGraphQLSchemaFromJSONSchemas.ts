@@ -1,4 +1,5 @@
 import { DefaultLogger } from '@graphql-mesh/utils';
+import { fetch } from '@whatwg-node/fetch';
 import { createBundleFromDereferencedSchema } from './bundle.js';
 import { processDirectives } from './directives.js';
 import { getDereferencedJSONSchemaFromOperations } from './getDereferencedJSONSchemaFromOperations.js';
@@ -56,7 +57,7 @@ export async function loadGraphQLSchemaFromJSONSchemas(
     ...options,
     operationHeaders: typeof options.operationHeaders === 'object' ? options.operationHeaders : {},
     schema: graphqlSchema,
-    globalFetch: options.fetch,
+    globalFetch: options.fetch || fetch,
     pubsub: options.pubsub,
     logger: options.logger,
   });

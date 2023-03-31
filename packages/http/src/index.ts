@@ -86,8 +86,9 @@ export function createMeshHTTPHandler<TServerContext>({
       if (!relativePath) {
         relativePath = 'index.html';
       }
-      const absolutePath = path.join(baseDir, staticFiles, relativePath);
-      if (await pathExists(absolutePath)) {
+      const absoluteStaticFilesPath = path.join(baseDir, staticFiles);
+      const absolutePath = path.join(absoluteStaticFilesPath, relativePath);
+      if (absolutePath.startsWith(absoluteStaticFilesPath) && (await pathExists(absolutePath))) {
         const readStream = fs.createReadStream(absolutePath);
         return new Response(readStream as any, {
           status: 200,

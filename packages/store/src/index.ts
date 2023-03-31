@@ -1,9 +1,9 @@
-import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
-import { writeFile } from '@graphql-mesh/utils';
-import { CriticalityLevel, diff } from '@graphql-inspector/core';
-import { getDocumentNodeFromSchema, AggregateError } from '@graphql-tools/utils';
-import { ImportFn } from '@graphql-mesh/types';
 import { buildASTSchema } from 'graphql';
+import { CriticalityLevel, diff } from '@graphql-inspector/core';
+import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
+import { ImportFn } from '@graphql-mesh/types';
+import { writeFile } from '@graphql-mesh/utils';
+import { getDocumentNodeFromSchema } from '@graphql-tools/utils';
 
 export class ReadonlyStoreError extends Error {}
 
@@ -151,8 +151,10 @@ export default buildASTSchema(schemaAST, {
       const errors: string[] = [];
       for (const change of changes) {
         if (
-          change.criticality.level === CriticalityLevel.Breaking ||
-          change.criticality.level === CriticalityLevel.Dangerous
+          (change.criticality.level === CriticalityLevel.Breaking ||
+            change.criticality.level === CriticalityLevel.Dangerous) &&
+          !change.message.includes('@specifiedBy') &&
+          !change.message.includes('@deprecated')
         ) {
           errors.push(change.message);
         }
@@ -161,7 +163,9 @@ export default buildASTSchema(schemaAST, {
         if (errors.length === 1) {
           throw errors[0];
         } else {
-          throw new AggregateError(errors);
+          throw new Error(
+            `Breaking changes found; \n${errors.map(error => `- ${error}`).join('\n')}`,
+          );
         }
       }
     },
