@@ -40,7 +40,7 @@
     "@envelop/core": "3.0.6",
     "@envelop/extended-validation": "2.0.6",
     "@graphql-mesh/string-interpolation": "0.4.3",
-    "@graphql-tools/batch-delegate": "8.4.21",
+    "@graphql-tools/batch-delegate": "8.4.22",
     "@graphql-tools/batch-execute": "8.5.18",
     "@graphql-tools/delegate": "9.0.28",
     "@graphql-tools/wrap": "9.3.8",
