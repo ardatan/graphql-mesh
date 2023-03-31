@@ -10921,10 +10921,10 @@ graphql-import-node@0.0.5:
   resolved "https://registry.yarnpkg.com/graphql-import-node/-/graphql-import-node-0.0.5.tgz#caf76a6cece10858b14f27cce935655398fc1bf0"
   integrity sha512-OXbou9fqh9/Lm7vwXT0XoRN9J5+WCYKnbiTalgFDvkQERITRmcfncZs6aVABedd5B85yQU5EULS4a5pnbpuI0Q==
 
-graphql-jit@0.8.0:
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.8.0.tgz#0f8fb7240cbd0dc1ab45f3684ff296193bb2d2a5"
-  integrity sha512-mxdV9ohO6jKt1o9erb+7RpmnDKQFQCcJlYVfGa3j4+ieP0ITDsAlm194+pfvdv5F4zgrgZfSe5xx5Rf98epJmg==
+graphql-jit@0.8.1:
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.8.1.tgz#1b3842d27da6c7fe2da565216b11c212ef72a5ac"
+  integrity sha512-C2ytXbgve7eYTr26nxflrJxjD7Vez8aDO+o6wvQEypv4b9ndikceRi0SsA5trEhhvOB2z5Za2PQfaBDO5+02JQ==
   dependencies:
     "@graphql-typed-document-node/core" "^3.1.1"
     fast-json-stringify "^1.21.0"
@@ -19244,10 +19244,10 @@ table-layout@^1.0.2:
     typical "^5.2.0"
     wordwrapjs "^4.0.0"
 
-tailwindcss@3.3.0, tailwindcss@^3.0.2, tailwindcss@^3.1.8:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.3.0.tgz#8cab40e5a10a10648118c0859ba8bfbc744a761e"
-  integrity sha512-hOXlFx+YcklJ8kXiCAfk/FMyr4Pm9ck477G0m/us2344Vuj355IpoEDB5UmGAsSpTBmr+4ZhjzW04JuFXkb/fw==
+tailwindcss@3.3.1, tailwindcss@^3.0.2, tailwindcss@^3.1.8:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.3.1.tgz#b6662fab6a9b704779e48d083a9fef5a81d2b81e"
+  integrity sha512-Vkiouc41d4CEq0ujXl6oiGFQ7bA3WEhUZdTgXAhtKxSy49OmKs8rEfQmupsfF0IGW8fv2iQkp1EVUuapCFrZ9g==
   dependencies:
     arg "^5.0.2"
     chokidar "^3.5.3"
@@ -19693,10 +19693,10 @@ ts-structure-model@0.0.1:
   resolved "https://registry.yarnpkg.com/ts-structure-model/-/ts-structure-model-0.0.1.tgz#6e6c9ad489b8c9065c83f8e9d215dd09a20188ee"
   integrity sha512-7hqYQx4kPWUkJXTVsZe++1IMd63jZAjW6O00+kHJf9/DcNaxCJxNjsQhLVcC57HZhK4SUPSxMZd+AnGrLA6Itw==
 
-tsconfig-paths@4.1.2:
-  version "4.1.2"
-  resolved "https://registry.yarnpkg.com/tsconfig-paths/-/tsconfig-paths-4.1.2.tgz#4819f861eef82e6da52fb4af1e8c930a39ed979a"
-  integrity sha512-uhxiMgnXQp1IR622dUXI+9Ehnws7i/y6xvpZB9IbUVOPy0muvdvgXeZOn88UcGPiT98Vp3rJPTa8bFoalZ3Qhw==
+tsconfig-paths@4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/tsconfig-paths/-/tsconfig-paths-4.2.0.tgz#ef78e19039133446d244beac0fd6a1632e2d107c"
+  integrity sha512-NoZ4roiN7LnbKn9QqE1amc9DJfzvZXxF4xDavcOWt1BPkdx+m+0gJuPM+S0vCe7zTJMYUP0R8pO2XMr+Y8oLIg==
   dependencies:
     json5 "^2.2.2"
     minimist "^1.2.6"
