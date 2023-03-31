@@ -1,0 +1,12 @@
+{
+  "definitions": {
+    "Test": {
+      "type": "array",
+      "title": "Test",
+      "description": "Test Object",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
