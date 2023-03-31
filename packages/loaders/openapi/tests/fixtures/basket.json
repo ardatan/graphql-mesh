@@ -6,6 +6,13 @@
   },
   "paths": {
     "/basket": {
+      "summary": "Get basket",
+      "description": "Get basket",
+      "servers": [
+        {
+          "url": "https://api.example.com"
+        }
+      ],
       "post": {
         "requestBody": {
           "content": {
