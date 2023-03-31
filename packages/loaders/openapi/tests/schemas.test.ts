@@ -21,6 +21,7 @@ const schemas: Record<string, string> = {
   MeiliSearch: 'meilisearch.yml',
   BlockFrost: 'blockfrost.json',
   'Int64 with Defaults': 'int64-with-defaults.yml',
+  'Different fields with the same type': 'different-prop-same-type.yaml',
 };
 
 describe('Schemas', () => {
