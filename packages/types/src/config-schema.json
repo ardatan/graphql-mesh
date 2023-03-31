@@ -514,6 +514,9 @@
         "httpDetailsExtensions": {
           "$ref": "#/definitions/HTTPDetailsExtensionsConfig"
         },
+        "http2": {
+          "$ref": "#/definitions/Http2Plugin"
+        },
         "liveQuery": {
           "$ref": "#/definitions/LiveQueryConfig"
         },
@@ -2149,6 +2152,20 @@
               "additionalItems": true
             }
           ]
+        }
+      }
+    },
+    "Http2Plugin": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Http2Plugin",
+      "properties": {
+        "origins": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
         }
       }
     },
