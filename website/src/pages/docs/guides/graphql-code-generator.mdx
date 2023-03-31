@@ -1,8 +1,15 @@
+---
+description:
+  Configure GraphQL Code Generator in GraphQL Mesh to generate fully typed resolvers and SDK. Use
+  the default configuration or customize it to fit your needs.
+---
+
 import { Callout } from '@theguild/components'
 
 # Configure GraphQL Code Generator
 
-Mesh relies on [GraphQL Code Generator](https://graphql-code-generator.com) to generate the `Resolvers` type that give you access to:
+Mesh relies on [GraphQL Code Generator](https://graphql-code-generator.com) to generate the
+`Resolvers` type that give you access to:
 
 - fully typed resolvers map
 - fully typed SDK (through the `context`) to fetch data from Sources
@@ -23,7 +30,8 @@ async function test() {
 ```
 
 <Callout>
-  Remember you need operation documents to get this SDK generated. [See here for more details](/docs/guides/mesh-sdk)
+  Remember you need operation documents to get this SDK generated. [See here for more
+  details](/docs/guides/mesh-sdk)
 </Callout>
 
 ## GraphQL Code Generator default configuration

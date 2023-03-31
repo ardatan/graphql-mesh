@@ -1,17 +1,3 @@
-import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
-import {
-  MeshHandlerOptions,
-  Logger,
-  MeshHandler,
-  MeshPubSub,
-  MeshSource,
-  YamlConfig,
-  GetMeshSourcePayload,
-  MeshFetch,
-  ImportFn,
-} from '@graphql-mesh/types';
-import { readFileOrUrl } from '@graphql-mesh/utils';
-import { loadNonExecutableGraphQLSchemaFromRAML, processDirectives } from '@omnigraph/raml';
 import {
   buildSchema,
   execute,
@@ -20,7 +6,21 @@ import {
   OperationTypeNode,
   subscribe,
 } from 'graphql';
+import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
+import {
+  GetMeshSourcePayload,
+  ImportFn,
+  Logger,
+  MeshFetch,
+  MeshHandler,
+  MeshHandlerOptions,
+  MeshPubSub,
+  MeshSource,
+  YamlConfig,
+} from '@graphql-mesh/types';
+import { readFileOrUrl } from '@graphql-mesh/utils';
 import { getOperationASTFromRequest } from '@graphql-tools/utils';
+import { loadNonExecutableGraphQLSchemaFromRAML, processDirectives } from '@omnigraph/raml';
 
 export default class RAMLHandler implements MeshHandler {
   private name: string;
@@ -45,7 +45,7 @@ export default class RAMLHandler implements MeshHandler {
     this.config = config;
     this.baseDir = baseDir;
     this.schemaWithAnnotationsProxy = store.proxy(
-      'schemaWithAnnotations.graphql',
+      'schemaWithAnnotations',
       PredefinedProxyOptions.GraphQLSchemaWithDiffing,
     );
     this.bundleProxy = store.proxy(
@@ -59,6 +59,7 @@ export default class RAMLHandler implements MeshHandler {
 
   async getNonExecutableSchema() {
     if (this.config.source.endsWith('.graphql')) {
+      this.logger.info(`Fetching GraphQL Schema with annotations`);
       const sdl = await readFileOrUrl<string>(this.config.source, {
         allowUnknownExtensions: true,
         cwd: this.baseDir,
@@ -73,6 +74,7 @@ export default class RAMLHandler implements MeshHandler {
       });
     }
     return this.schemaWithAnnotationsProxy.getWithSet(async () => {
+      this.logger.info(`Generating GraphQL schema from RAML schema`);
       const schema = await loadNonExecutableGraphQLSchemaFromRAML(this.name, {
         ...this.config,
         cwd: this.baseDir,
@@ -101,7 +103,7 @@ export default class RAMLHandler implements MeshHandler {
     this.logger.debug('Getting the schema with annotations');
     const nonExecutableSchema = await this.getNonExecutableSchema();
     const schemaWithDirectives$ = Promise.resolve().then(() => {
-      this.logger.info(`Processing directives.`);
+      this.logger.info(`Processing annotations for the execution layer`);
       return processDirectives({
         ...this.config,
         schema: nonExecutableSchema,

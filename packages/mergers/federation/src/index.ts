@@ -1,4 +1,15 @@
 import {
+  DocumentNode,
+  execute,
+  ExecutionResult,
+  extendSchema,
+  GraphQLSchema,
+  parse,
+} from 'graphql';
+import { ApolloGateway, LocalGraphQLDataSource, SERVICE_DEFINITION_QUERY } from '@apollo/gateway';
+import { process } from '@graphql-mesh/cross-helpers';
+import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
+import {
   KeyValueCache,
   Logger,
   MeshMerger,
@@ -7,14 +18,15 @@ import {
   MeshPubSub,
   RawSourceOutput,
 } from '@graphql-mesh/types';
-import { GraphQLSchema, extendSchema, DocumentNode, parse, execute, ExecutionResult } from 'graphql';
-import { wrapSchema } from '@graphql-tools/wrap';
-import { ApolloGateway, LocalGraphQLDataSource, SERVICE_DEFINITION_QUERY } from '@apollo/gateway';
-import { addResolversToSchema } from '@graphql-tools/schema';
 import { printWithCache } from '@graphql-mesh/utils';
-import { AggregateError, asArray, ExecutionRequest, printSchemaWithDirectives } from '@graphql-tools/utils';
-import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
-import { process } from '@graphql-mesh/cross-helpers';
+import { addResolversToSchema } from '@graphql-tools/schema';
+import {
+  AggregateError,
+  asArray,
+  ExecutionRequest,
+  printSchemaWithDirectives,
+} from '@graphql-tools/utils';
+import { wrapSchema } from '@graphql-tools/wrap';
 
 export default class FederationMerger implements MeshMerger {
   name = 'federation';
@@ -48,7 +60,10 @@ export default class FederationMerger implements MeshMerger {
               document: parse(SERVICE_DEFINITION_QUERY),
             });
             if (sdlQueryResult.errors?.length) {
-              throw new AggregateError(sdlQueryResult.errors, `Failed on fetching Federated SDL for ${rawSource.name}`);
+              throw new AggregateError(
+                sdlQueryResult.errors,
+                `Failed on fetching Federated SDL for ${rawSource.name}`,
+              );
             }
             return sdlQueryResult.data._service.sdl;
           });
@@ -56,7 +71,7 @@ export default class FederationMerger implements MeshMerger {
           name: rawSource.name,
           typeDefs: parse(sdl),
         });
-      })
+      }),
     );
     this.logger.debug(`Creating ApolloGateway`);
     const gateway = new ApolloGateway({
@@ -76,7 +91,13 @@ export default class FederationMerger implements MeshMerger {
     const schemaHash: any = printSchemaWithDirectives(schema);
     let remoteSchema: GraphQLSchema = schema;
     this.logger.debug(`Wrapping gateway executor in a unified schema`);
-    const executor = <TReturn>({ document, info, variables, context, operationName }: ExecutionRequest) => {
+    const executor = <TReturn>({
+      document,
+      info,
+      variables,
+      context,
+      operationName,
+    }: ExecutionRequest) => {
       const documentStr = printWithCache(document);
       const { operation } = info;
       // const operationName = operation.name?.value;

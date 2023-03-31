@@ -1,23 +1,5 @@
 /* eslint-disable no-case-declarations */
 import {
-  AnyTypeComposer,
-  EnumTypeComposerValueConfigDefinition,
-  InputTypeComposer,
-  InputTypeComposerFieldConfigAsObjectDefinition,
-  ObjectTypeComposer,
-  ObjectTypeComposerFieldConfigMapDefinition,
-  ScalarTypeComposer,
-  SchemaComposer,
-  ListComposer,
-  UnionTypeComposer,
-  isSomeInputTypeComposer,
-  ComposeOutputType,
-  ComposeInputType,
-  EnumTypeComposer,
-  InterfaceTypeComposer,
-  Directive,
-} from 'graphql-compose';
-import {
   getNamedType,
   GraphQLBoolean,
   GraphQLFloat,
@@ -27,33 +9,48 @@ import {
   isNonNullType,
 } from 'graphql';
 import {
+  AnyTypeComposer,
+  ComposeInputType,
+  ComposeOutputType,
+  Directive,
+  EnumTypeComposer,
+  EnumTypeComposerValueConfigDefinition,
+  InputTypeComposer,
+  InputTypeComposerFieldConfigAsObjectDefinition,
+  InterfaceTypeComposer,
+  isSomeInputTypeComposer,
+  ListComposer,
+  ObjectTypeComposer,
+  ObjectTypeComposerFieldConfigMapDefinition,
+  ScalarTypeComposer,
+  SchemaComposer,
+  UnionTypeComposer,
+} from 'graphql-compose';
+import {
   GraphQLBigInt,
+  GraphQLByte,
   GraphQLDateTime,
   GraphQLEmailAddress,
-  GraphQLJSON,
-  GraphQLUUID,
   GraphQLIPv4,
   GraphQLIPv6,
-  GraphQLTime,
-  GraphQLURL,
-  GraphQLNonNegativeFloat,
-  GraphQLPositiveFloat,
-  GraphQLNonPositiveFloat,
+  GraphQLJSON,
   GraphQLNegativeFloat,
-  GraphQLNonEmptyString,
-  GraphQLNonNegativeInt,
-  GraphQLPositiveInt,
-  GraphQLNonPositiveInt,
   GraphQLNegativeInt,
-  GraphQLByte,
+  GraphQLNonEmptyString,
+  GraphQLNonNegativeFloat,
+  GraphQLNonNegativeInt,
+  GraphQLNonPositiveFloat,
+  GraphQLNonPositiveInt,
+  GraphQLPositiveFloat,
+  GraphQLPositiveInt,
+  GraphQLTime,
   GraphQLTimestamp,
+  GraphQLURL,
+  GraphQLUUID,
 } from 'graphql-scalars';
-import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import { JSONSchema, JSONSchemaObject, visitJSONSchema } from 'json-machete';
 import { Logger } from '@graphql-mesh/types';
-import { visitJSONSchema, JSONSchema, JSONSchemaObject } from 'json-machete';
-import { getJSONSchemaStringFormatScalarMap } from './getJSONSchemaStringFormatScalarMap.js';
-import { getUnionTypeComposers } from './getUnionTypeComposers.js';
-import { getValidTypeName } from './getValidTypeName.js';
+import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import {
   DictionaryDirective,
   DiscriminatorDirective,
@@ -66,6 +63,9 @@ import {
   ResolveRootFieldDirective,
   TypeScriptDirective,
 } from './directives.js';
+import { getJSONSchemaStringFormatScalarMap } from './getJSONSchemaStringFormatScalarMap.js';
+import { getUnionTypeComposers } from './getUnionTypeComposers.js';
+import { getValidTypeName } from './getValidTypeName.js';
 import { GraphQLFile, GraphQLVoid } from './scalars.js';
 
 export interface TypeComposers {
@@ -85,7 +85,7 @@ export function getComposerFromJSONSchema(
 ): Promise<TypeComposers> {
   const schemaComposer = new SchemaComposer();
   const formatScalarMap = getJSONSchemaStringFormatScalarMap();
-  const rootInputTypeNameComposerMap = {
+  const rootInputTypeNameComposerMap: Record<string, () => ObjectTypeComposer<any>> = {
     QueryInput: () => schemaComposer.Query,
     MutationInput: () => schemaComposer.Mutation,
     SubscriptionInput: () => schemaComposer.Subscription,
@@ -106,7 +106,11 @@ export function getComposerFromJSONSchema(
         throw new Error(`Something is wrong with ${path}`);
       }
       if (subSchema.type === 'array') {
-        if (typeof subSchema.items === 'object' && Object.keys(subSchema.items).length > 0) {
+        if (
+          subSchema.items != null &&
+          typeof subSchema.items === 'object' &&
+          Object.keys(subSchema.items).length > 0
+        ) {
           return {
             // These are filled after enter
             get input() {

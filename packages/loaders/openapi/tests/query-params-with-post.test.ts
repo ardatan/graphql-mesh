@@ -1,30 +1,28 @@
 import { execute, parse } from 'graphql';
+import { createRouter, Response } from '@whatwg-node/router';
 import loadGraphQLSchemaFromOpenAPI from '../src/index.js';
-import { Request, Response } from '@whatwg-node/fetch';
 
 describe('Query Params with POST', () => {
+  const queryParamsWithPostServer = createRouter();
+  queryParamsWithPostServer.post(
+    '/post-with-param',
+    request =>
+      new Response(
+        JSON.stringify({
+          url: request.url,
+        }),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      ),
+  );
   it('should create URLs with correctly concatenated query params for POST requests', async () => {
     const schema = await loadGraphQLSchemaFromOpenAPI('test', {
       source: './fixtures/query-params-with-post.yml',
       endpoint: 'http://localhost:3000',
-      async fetch(info: RequestInfo, init?: RequestInit) {
-        let request: Request;
-        if (typeof info !== 'object') {
-          request = new Request(info, init);
-        } else {
-          request = info;
-        }
-        return new Response(
-          JSON.stringify({
-            url: request.url,
-          }),
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          },
-        );
-      },
+      fetch: queryParamsWithPostServer.fetch as any,
       cwd: __dirname,
     });
     const query = /* GraphQL */ `
@@ -43,8 +41,6 @@ describe('Query Params with POST', () => {
       schema,
       document: parse(query),
     });
-
-    expect(result.errors?.length).toBeFalsy();
 
     expect(result).toEqual({
       data: {

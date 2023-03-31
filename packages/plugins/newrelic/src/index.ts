@@ -1,12 +1,12 @@
-import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
-import { useNewRelic } from '@envelop/newrelic';
-import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { process } from '@graphql-mesh/cross-helpers';
-import recordExternal from 'newrelic/lib/metrics/recorders/http_external.js';
-import NAMES from 'newrelic/lib/metrics/names.js';
-import cat from 'newrelic/lib/util/cat.js';
-import { getHeadersObj } from '@graphql-mesh/utils';
 import newRelic from 'newrelic';
+import NAMES from 'newrelic/lib/metrics/names.js';
+import recordExternal from 'newrelic/lib/metrics/recorders/http_external.js';
+import cat from 'newrelic/lib/util/cat.js';
+import { useNewRelic } from '@envelop/newrelic';
+import { process } from '@graphql-mesh/cross-helpers';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
+import { getHeadersObj } from '@graphql-mesh/utils';
 
 const EnvelopAttributeName = 'Envelop_NewRelic_Plugin';
 
@@ -113,11 +113,11 @@ export default function useMeshNewrelic(
           logger.trace('Both DT and CAT are disabled, not adding headers!');
         }
         for (const key in outboundHeaders) {
-          options.headers[key] = outboundHeaders[key];
+          (options.headers as any)[key] = outboundHeaders[key];
         }
       }
       for (const key in options.headers) {
-        httpDetailSegment.addAttribute(`request.headers.${key}`, options.headers[key]);
+        httpDetailSegment.addAttribute(`request.headers.${key}`, (options.headers as any)[key]);
       }
       return ({ response }) => {
         httpDetailSegment.addAttribute('http.statusCode', response.status);

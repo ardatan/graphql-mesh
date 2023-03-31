@@ -1,9 +1,9 @@
-import { createClient, Client, OperationResult } from '@urql/core';
-import { MeshInstance } from '@graphql-mesh/runtime';
-import { meshExchange } from '../src/index.js';
-import { getTestMesh } from '../../testing/getTestMesh.js';
-import { observableToAsyncIterable } from '@graphql-tools/utils';
 import { pipe, toObservable } from 'wonka';
+import { MeshInstance } from '@graphql-mesh/runtime';
+import { observableToAsyncIterable } from '@graphql-tools/utils';
+import { Client, createClient, OperationResult } from '@urql/core';
+import { getTestMesh } from '../../testing/getTestMesh.js';
+import { meshExchange } from '../src/index.js';
 
 describe('graphExchange', () => {
   let client: Client;
@@ -25,7 +25,7 @@ describe('graphExchange', () => {
           query Greetings {
             greetings
           }
-        `
+        `,
       )
       .toPromise();
     expect(result.error).toBeUndefined();
@@ -40,7 +40,7 @@ describe('graphExchange', () => {
           time
         }
       `),
-      toObservable
+      toObservable,
     );
 
     const asyncIterable = observableToAsyncIterable<OperationResult<any>>(observable);

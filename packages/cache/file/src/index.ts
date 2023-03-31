@@ -1,6 +1,6 @@
-import { ImportFn, KeyValueCache } from '@graphql-mesh/types';
-import { path as pathModule } from '@graphql-mesh/cross-helpers';
 import DataLoader from 'dataloader';
+import { path as pathModule } from '@graphql-mesh/cross-helpers';
+import { ImportFn, KeyValueCache } from '@graphql-mesh/types';
 import { pathExists, writeJSON } from '@graphql-mesh/utils';
 
 export default class FileCache<V = any> implements KeyValueCache<V> {

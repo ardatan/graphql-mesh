@@ -1,29 +1,11 @@
 /* eslint-disable react-hooks/rules-of-hooks */
+
 /* eslint sort-keys: error */
-
-import { defineConfig, Giscus, MeshLogo, useTheme } from '@theguild/components';
 import { useRouter } from 'next/router';
-
-const SITE_NAME = 'GraphQL Mesh';
+import { defineConfig, Giscus, useTheme } from '@theguild/components';
 
 export default defineConfig({
   docsRepositoryBase: 'https://github.com/Urigo/graphql-mesh/tree/master/website',
-  head: (
-    <>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <meta name="description" content={`${SITE_NAME}: documentation`} />
-      <meta name="og:title" content={`${SITE_NAME}: documentation`} />
-    </>
-  ),
-  logo: (
-    <>
-      <MeshLogo className="mr-1.5 h-9 w-9" />
-      <div>
-        <h1 className="md:text-md text-sm font-medium">{SITE_NAME}</h1>
-        <h2 className="hidden text-xs sm:block">Query anything, run anywhere</h2>
-      </div>
-    </>
-  ),
   main({ children }) {
     const { resolvedTheme } = useTheme();
     const { route } = useRouter();
@@ -48,5 +30,5 @@ export default defineConfig({
       </>
     );
   },
-  siteName: SITE_NAME,
+  siteName: 'MESH',
 });

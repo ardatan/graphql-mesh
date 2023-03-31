@@ -1,8 +1,11 @@
+import { DefaultLogger } from '@graphql-mesh/utils';
 import { JSONSchemaObject } from './types.js';
 import { visitJSONSchema } from './visitJSONSchema.js';
-import { DefaultLogger } from '@graphql-mesh/utils';
 
-export async function referenceJSONSchema(schema: JSONSchemaObject, logger = new DefaultLogger('referenceJSONSchema')) {
+export async function referenceJSONSchema(
+  schema: JSONSchemaObject,
+  logger = new DefaultLogger('referenceJSONSchema'),
+) {
   const initialDefinitions: Record<string, JSONSchemaObject> = {};
   const { $ref: initialRef } = await visitJSONSchema(schema, {
     enter: (subSchema, { path }) => {
@@ -54,7 +57,7 @@ export async function referenceJSONSchema(schema: JSONSchemaObject, logger = new
         }
         return subSchema;
       },
-    }
+    },
   );
   return {
     $ref: initialRef,

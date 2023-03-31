@@ -1,50 +1,33 @@
 /* eslint-disable import/no-nodejs-modules */
-/* eslint-disable no-unreachable-loop */
-import { createYoga } from 'graphql-yoga';
-import { createServer, Server } from 'http';
-import { AbortController, fetch } from '@whatwg-node/fetch';
-import { GraphQLSchema } from 'graphql';
 
+/* eslint-disable no-unreachable-loop */
+import { GraphQLSchema } from 'graphql';
+import { createYoga } from 'graphql-yoga';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
-import { startServer, stopServer, pubsub } from './example_api7_server.js';
-import { AddressInfo } from 'net';
+import { exampleApi7, pubsub } from './example_api7_server.js';
 
 let createdSchema: GraphQLSchema;
 
-let graphqlPort: number;
-let apiPort: number;
-
-let yogaServer: Server;
+let yogaServer: ReturnType<typeof createYoga>;
 
 describe('OpenAPI Loader: example_api7', () => {
   // Set up the schema first and run example API servers
   beforeAll(async () => {
-    const apiServer = await startServer();
-    apiPort = (apiServer.address() as AddressInfo).port;
-
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api7', {
-      fetch,
-      endpoint: `http://127.0.0.1:${apiPort}/api`,
+      fetch: exampleApi7.fetch as any,
+      endpoint: `http://127.0.0.1:3000/api`,
       source: './fixtures/example_oas7.json',
       cwd: __dirname,
       pubsub,
     });
 
-    const yoga = createYoga({
+    yogaServer = createYoga({
       schema: createdSchema,
       context: { pubsub },
       maskedErrors: false,
       logging: false,
     });
-
-    yogaServer = createServer(yoga);
-
-    await new Promise<void>(resolve => yogaServer.listen(0, resolve));
-
-    graphqlPort = (yogaServer.address() as AddressInfo).port;
   });
-
-  afterAll(() => Promise.all([new Promise(resolve => yogaServer.close(resolve)), stopServer()]));
 
   it('Receive data from the subscription after creating a new instance', async () => {
     const userName = 'Carlos';
@@ -70,7 +53,7 @@ describe('OpenAPI Loader: example_api7', () => {
         }
       }
     `;
-    const endpoint = `http://127.0.0.1:${graphqlPort}/graphql`;
+    const endpoint = `http://127.0.0.1:4000/graphql`;
     const url = new URL(endpoint);
 
     url.searchParams.append('query', subscriptionOperation);
@@ -83,7 +66,7 @@ describe('OpenAPI Loader: example_api7', () => {
     );
 
     setTimeout(async () => {
-      const response = await fetch(endpoint, {
+      const response = await yogaServer.fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -103,31 +86,28 @@ describe('OpenAPI Loader: example_api7', () => {
       expect(result.errors).toBeFalsy();
     }, 300);
 
-    const abortCtrl = new AbortController();
-
-    const response = await fetch(url.toString(), {
+    const response = await yogaServer.fetch(url.toString(), {
       method: 'GET',
       headers: {
         Accept: 'text/event-stream',
       },
-      signal: abortCtrl.signal,
     });
 
     for await (const chunk of response.body) {
-      const data = Buffer.from(chunk).toString('utf-8');
-      expect(data.trim()).toBe(
-        `data: ${JSON.stringify({
-          data: {
-            devicesEventListener: {
-              name: deviceName,
-              status: false,
+      const data = Buffer.from(chunk).toString('utf-8').trim();
+      if (data.includes('data: ')) {
+        expect(data).toContain(
+          `data: ${JSON.stringify({
+            data: {
+              devicesEventListener: {
+                name: deviceName,
+                status: false,
+              },
             },
-          },
-        })}`,
-      );
-      break;
+          })}`,
+        );
+        break;
+      }
     }
-
-    abortCtrl.abort();
   });
 });

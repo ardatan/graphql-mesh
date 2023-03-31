@@ -1,7 +1,7 @@
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import loadGraphQLSchemaFromOpenAPI from '../src/index.js';
 
-const schemas = {
+const schemas: Record<string, string> = {
   DeepL: 'deepl.json',
   GitHub: 'github.json',
   Instagram: 'instagram.json',
@@ -18,6 +18,9 @@ const schemas = {
   SubscriptionType: 'subscriptionType.yml',
   CloudFlare: 'cloudflare.json',
   TeachersTraining: 'uk_teachers_training_courses.json',
+  MeiliSearch: 'meilisearch.yml',
+  BlockFrost: 'blockfrost.json',
+  'Int64 with Defaults': 'int64-with-defaults.yml',
 };
 
 describe('Schemas', () => {

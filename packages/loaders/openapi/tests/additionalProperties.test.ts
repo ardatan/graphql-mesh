@@ -1,33 +1,30 @@
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { Response } from '@whatwg-node/fetch';
-import { createServerAdapter } from '@whatwg-node/server';
 import { execute, GraphQLSchema, parse } from 'graphql';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { createRouter, Response } from '@whatwg-node/router';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 
 describe('additionalProperties', () => {
   let schema: GraphQLSchema;
 
-  const serverAdapter = createServerAdapter(async request => {
-    if (request.url.endsWith('/test')) {
-      return new Response(
-        JSON.stringify({
-          id: 1,
-          foo: {
-            bar: 'baz',
+  const router = createRouter();
+  router.get('/test', () => {
+    return new Response(
+      JSON.stringify({
+        id: 1,
+        foo: {
+          bar: 'baz',
+        },
+        qux: {
+          quux: 'randomvalue',
+          quuz: {
+            corge: 'grault',
           },
-          qux: {
-            quux: 'randomvalue',
-            quuz: {
-              corge: 'grault',
-            },
-            garply: {
-              corge: 'fred',
-            },
+          garply: {
+            corge: 'fred',
           },
-        }),
-      );
-    }
-    return new Response('Not Found', { status: 404 });
+        },
+      }),
+    );
   });
 
   beforeAll(async () => {
@@ -35,7 +32,7 @@ describe('additionalProperties', () => {
       source: './fixtures/additionalProperties.json',
       endpoint: 'http://localhost:3000',
       cwd: __dirname,
-      fetch: serverAdapter.fetch as any,
+      fetch: router.fetch as any,
     });
   });
   it('should generate the schema correctly', async () => {

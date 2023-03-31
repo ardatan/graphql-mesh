@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/mongoose",
-  "version": "0.13.2",
+  "version": "0.13.20",
   "type": "module",
   "repository": {
     "type": "git",
@@ -29,20 +29,20 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
+    "@graphql-mesh/types": "^0.91.12",
+    "@graphql-mesh/utils": "^0.43.20",
     "graphql": "*",
-    "mongoose": "*"
-  },
-  "dependencies": {
-    "@graphql-mesh/types": "0.89.2",
-    "@graphql-mesh/utils": "0.43.3",
-    "graphql-compose": "9.0.10",
-    "graphql-compose-connection": "8.2.1",
-    "graphql-compose-mongoose": "9.7.2",
-    "graphql-compose-pagination": "8.3.0",
+    "mongoose": "*",
     "tslib": "^2.4.0"
   },
+  "dependencies": {
+    "graphql-compose": "9.0.10",
+    "graphql-compose-connection": "8.2.1",
+    "graphql-compose-mongoose": "9.8.0",
+    "graphql-compose-pagination": "8.3.0"
+  },
   "devDependencies": {
-    "mongoose": "6.8.0"
+    "mongoose": "7.0.3"
   },
   "publishConfig": {
     "access": "public",

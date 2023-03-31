@@ -1,19 +1,19 @@
-import { findAndParseConfig } from './config.js';
-import { getMesh, GetMeshOptions, ServeMeshOptions } from '@graphql-mesh/runtime';
-import { generateTsArtifacts } from './commands/ts-artifacts.js';
-import { serveMesh } from './commands/serve/serve.js';
-import { fs, path as pathModule, process } from '@graphql-mesh/cross-helpers';
-import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import { writeFile, pathExists, rmdirs, DefaultLogger, defaultImportFn } from '@graphql-mesh/utils';
-import { handleFatalError } from './handleFatalError.js';
-import yargs from 'yargs';
-import { hideBin } from 'yargs/helpers';
-import { Logger, YamlConfig } from '@graphql-mesh/types';
+import { config as dotEnvRegister } from 'dotenv';
+import JSON5 from 'json5';
 import { register as tsNodeRegister } from 'ts-node';
 import { register as tsConfigPathsRegister } from 'tsconfig-paths';
-import { config as dotEnvRegister } from 'dotenv';
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
+import { fs, path as pathModule, process } from '@graphql-mesh/cross-helpers';
+import { getMesh, GetMeshOptions, ServeMeshOptions } from '@graphql-mesh/runtime';
+import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
+import { Logger, YamlConfig } from '@graphql-mesh/types';
+import { defaultImportFn, DefaultLogger, pathExists, rmdirs, writeFile } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import JSON5 from 'json5';
+import { serveMesh } from './commands/serve/serve.js';
+import { generateTsArtifacts } from './commands/ts-artifacts.js';
+import { findAndParseConfig } from './config.js';
+import { handleFatalError } from './handleFatalError.js';
 
 export { generateTsArtifacts, serveMesh, findAndParseConfig, handleFatalError };
 
@@ -38,7 +38,7 @@ export const DEFAULT_CLI_PARAMS: GraphQLMeshCLIParams = {
   commandName: 'mesh',
   initialLoggerPrefix: '🕸️  Mesh',
   configName: 'mesh',
-  artifactsDir: '.mesh',
+  artifactsDir: process.env.MESH_ARTIFACTS_DIRNAME || '.mesh',
   serveMessage: 'Serving GraphQL Mesh',
   playgroundTitle: 'GraphiQL Mesh',
   builtMeshFactoryName: 'getBuiltMesh',
@@ -50,6 +50,12 @@ export const DEFAULT_CLI_PARAMS: GraphQLMeshCLIParams = {
   validateCommand: 'validate',
   additionalPackagePrefixes: [],
 };
+
+function getTsConfigBaseDir(baseDir: string) {
+  const tsConfigPath = pathModule.join(baseDir, 'tsconfig.json');
+  const tsConfigExists = fs.existsSync(tsConfigPath);
+  return tsConfigExists ? baseDir : process.cwd();
+}
 
 export async function graphqlMesh(
   cliParams = DEFAULT_CLI_PARAMS,
@@ -68,10 +74,10 @@ export async function graphqlMesh(
       default: [],
       coerce: (externalModules: string[]) =>
         Promise.all(
-          externalModules.map(module => {
-            const localModulePath = pathModule.resolve(baseDir, module);
+          externalModules.map(moduleName => {
+            const localModulePath = pathModule.resolve(baseDir, moduleName);
             const islocalModule = fs.existsSync(localModulePath);
-            return defaultImportFn(islocalModule ? localModulePath : module);
+            return defaultImportFn(islocalModule ? localModulePath : moduleName);
           }),
         ),
     })
@@ -88,12 +94,13 @@ export async function graphqlMesh(
         } else {
           baseDir = pathModule.resolve(cwdPath, dir);
         }
-        const tsConfigPath = pathModule.join(baseDir, 'tsconfig.json');
+        const tsConfigBaseDir = getTsConfigBaseDir(baseDir);
+        const tsConfigPath = pathModule.join(tsConfigBaseDir, 'tsconfig.json');
         const tsConfigExists = fs.existsSync(tsConfigPath);
         tsNodeRegister({
           transpileOnly: true,
           typeCheck: false,
-          dir: baseDir,
+          dir: tsConfigBaseDir,
           require: ['graphql-import-node/register'],
           compilerOptions: {
             module: 'commonjs',
@@ -105,7 +112,7 @@ export async function graphqlMesh(
             const tsConfig = JSON5.parse(tsConfigStr);
             if (tsConfig.compilerOptions?.paths) {
               tsConfigPathsRegister({
-                baseUrl: baseDir,
+                baseUrl: tsConfigBaseDir,
                 paths: tsConfig.compilerOptions.paths,
               });
             }
@@ -181,8 +188,8 @@ export function getMeshOptions() {
   });
 }
 
-export function createBuiltMeshHTTPHandler(): MeshHTTPHandler<MeshContext> {
-  return createMeshHTTPHandler<MeshContext>({
+export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandler<TServerContext> {
+  return createMeshHTTPHandler<TServerContext>({
     baseDir,
     getBuiltMesh: ${cliParams.builtMeshFactoryName},
     rawServeConfig: ${JSON.stringify(meshConfig.config.serve)},
@@ -291,7 +298,7 @@ export function createBuiltMeshHTTPHandler(): MeshHTTPHandler<MeshContext> {
 
           logger.info(`Generating the unified schema`);
           const mesh = await getMesh(meshConfig);
-          logger.info(`Artifacts have been validated successfully`);
+          logger.info(`Artifacts are valid!`);
           destroy = mesh?.destroy;
         } catch (e) {
           handleFatalError(e, logger);
@@ -385,8 +392,8 @@ export function createBuiltMeshHTTPHandler(): MeshHTTPHandler<MeshContext> {
             `import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';`,
           );
           meshConfig.codes.add(`
-export function createBuiltMeshHTTPHandler(): MeshHTTPHandler<MeshContext> {
-  return createMeshHTTPHandler<MeshContext>({
+export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandler<TServerContext> {
+  return createMeshHTTPHandler<TServerContext>({
     baseDir,
     getBuiltMesh: ${cliParams.builtMeshFactoryName},
     rawServeConfig: ${JSON.stringify(meshConfig.config.serve)},

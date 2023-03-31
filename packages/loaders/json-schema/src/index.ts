@@ -1,4 +1,5 @@
 import { loadGraphQLSchemaFromJSONSchemas } from './loadGraphQLSchemaFromJSONSchemas.js';
+
 export default loadGraphQLSchemaFromJSONSchemas;
 export * from './loadGraphQLSchemaFromJSONSchemas.js';
 export * from './getComposerFromJSONSchema.js';

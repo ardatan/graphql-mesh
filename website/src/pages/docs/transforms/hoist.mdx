@@ -1,12 +1,21 @@
-import { PackageCmd, Callout } from '@theguild/components'
+---
+description:
+  Learn how to use the hoist transform from GraphQL Mesh to lift a field from one object type to a
+  'parent' root or object type. Explore the HoistField transform and more.
+---
+
+import { Callout, PackageCmd } from '@theguild/components'
 
 # Hoist Field Transform
 
-The `hoist` transform allows you to lift a field from one object type to a 'parent' root or object type. It is currently only available as a `wrap` transform.
+The `hoist` transform allows you to lift a field from one object type to a 'parent' root or object
+type. It is currently only available as a `wrap` transform.
 
 <PackageCmd packages={['@graphql-mesh/transform-hoist-field']} />
 
-<Callout>Underneath it leverages the `HoistField` transform from the `@graphql-tools/wrap` package.</Callout>
+<Callout>
+  Underneath it leverages the `HoistField` transform from the `@graphql-tools/wrap` package.
+</Callout>
 
 ## How to use?
 

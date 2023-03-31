@@ -1,113 +1,148 @@
+/* eslint-disable import/no-extraneous-dependencies */
 // Copyright IBM Corp. 2017,2018. All Rights Reserved.
 // Node module: openapi-to-graphql
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
+import { parse as qsParse } from 'qs';
+import { createRouter, Response } from '@whatwg-node/router';
 
-import express from 'express';
-import * as bodyParser from 'body-parser';
-import { Server } from 'http';
+export const exampleApi6 = createRouter({ base: '/api' });
 
-let server: Server; // holds server object for shutdown
+exampleApi6.get('/object', () => {
+  return new Response(JSON.stringify({ data: 'object' }), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+});
 
-/**
- * Starts the server at the given port
- */
-export function startServer(PORT: number | string) {
-  const app = express();
-
-  app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({ extended: true }));
-
-  app.get('/api/object', (req, res) => {
-    res.send({
-      data: 'object',
+exampleApi6.get('/object2', req => {
+  if (typeof req.headers.get('specialheader') === 'string') {
+    return new Response(
+      JSON.stringify({
+        data: `object2 with special header: '${req.headers.get('specialheader')}'`,
+      }),
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+  } else {
+    return new Response(JSON.stringify({ data: 'object2' }), {
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
+  }
+});
+
+exampleApi6.post('/formUrlEncoded', async req => {
+  const textBody = await req.text();
+  const body = qsParse(textBody);
+  return new Response(JSON.stringify(body), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
   });
+});
 
-  app.get('/api/object2', (req, res) => {
-    if (typeof req.headers.specialheader === 'string') {
-      res.send({
-        data: `object2 with special header: '${req.headers.specialheader}'`,
-      });
-    } else {
-      res.send({
-        data: 'object2',
-      });
-    }
+exampleApi6.get('/cars/:id', req => {
+  return new Response(JSON.stringify(`Car ID: ${req.params.id}`), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
   });
+});
 
-  app.post('/api/formUrlEncoded', (req, res) => {
-    res.send(req.body);
+exampleApi6.get('/cacti/:cactusId', req => {
+  return new Response(JSON.stringify(`Cactus ID: ${req.params.cactusId}`), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
   });
+});
 
-  app.get('/api/cars/:id', (req, res) => {
-    res.send(`Car ID: ${req.params.id}`);
-  });
+exampleApi6.get('/eateries/:eatery/breads/:breadName/dishes/:dishKey', req => {
+  return new Response(
+    JSON.stringify(
+      `Parameters combined: ${req.params.eatery} ${req.params.breadName} ${req.params.dishKey}`,
+    ),
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    },
+  );
+});
 
-  app.get('/api/cacti/:cactusId', (req, res) => {
-    res.send(`Cactus ID: ${req.params.cactusId}`);
-  });
-
-  app.get('/api/eateries/:eatery/breads/:breadName/dishes/:dishKey', (req, res) => {
-    res.send(`Parameters combined: ${req.params.eatery} ${req.params.breadName} ${req.params.dishKey}`);
-  });
-
-  // TODO: better types for this
-  function stringifyRussianDolls(russianDoll: any): any {
-    if (!(typeof russianDoll.name === 'string')) {
-      return '';
-    }
-
-    if (typeof russianDoll.nestedDoll === 'object') {
-      return `${russianDoll.name}, ${stringifyRussianDolls(russianDoll.nestedDoll)}`;
-    } else {
-      return russianDoll.name;
-    }
+// TODO: better types for this
+function stringifyRussianDolls(russianDoll: any): any {
+  if (!(typeof russianDoll.name === 'string')) {
+    return '';
   }
 
-  app.get('/api/nestedReferenceInParameter', (req, res) => {
-    res.send(stringifyRussianDolls(req.query.russianDoll));
-  });
-
-  app.get('/api/strictGetOperation', (req, res) => {
-    if (req.headers['content-type']) {
-      res.status(400).set('Content-Type', 'text/plain').send('Get request should not have Content-Type');
-    } else {
-      res.set('Content-Type', 'text/plain').send('Perfect!');
-    }
-  });
-
-  app.get('/api/noResponseSchema', (req, res) => {
-    res.set('Content-Type', 'text/plain').send('Hello world');
-  });
-
-  app.get('/api/returnNumber', (req, res) => {
-    res.set('Content-Type', 'text/plain').send(req.headers.number);
-  });
-
-  app.get('/api/testLinkWithNonStringParam', (req, res) => {
-    res.send({ hello: 'world' });
-  });
-
-  app.get('/api/testLinkwithNestedParam', (req, res) => {
-    res.send({ nesting1: { nesting2: 5 } });
-  });
-
-  return new Promise(resolve => {
-    server = app.listen(PORT, resolve as () => void);
-  });
+  if (typeof russianDoll.nestedDoll === 'object') {
+    return `${russianDoll.name}, ${stringifyRussianDolls(russianDoll.nestedDoll)}`;
+  } else {
+    return russianDoll.name;
+  }
 }
 
-/**
- * Stops server.
- */
-export function stopServer() {
-  return new Promise(resolve => {
-    server.close(resolve);
+exampleApi6.get('/nestedReferenceInParameter', req => {
+  const queryData = qsParse(req.parsedUrl.search.slice(1));
+  return new Response(stringifyRussianDolls(queryData.russianDoll), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
   });
-}
+});
 
-// if run from command line, start server:
-if (require.main === module) {
-  startServer(3006).catch(console.error);
-}
+exampleApi6.get('/strictGetOperation', req => {
+  if (req.headers.get('content-type')) {
+    return new Response('Get request should not have Content-Type', {
+      status: 400,
+      headers: {
+        'Content-Type': 'text/plain',
+      },
+    });
+  } else {
+    return new Response('Perfect!', {
+      headers: {
+        'Content-Type': 'text/plain',
+      },
+    });
+  }
+});
+
+exampleApi6.get('/noResponseSchema', () => {
+  return new Response('Hello world', {
+    headers: {
+      'Content-Type': 'text/plain',
+    },
+  });
+});
+
+exampleApi6.get('/returnNumber', req => {
+  return new Response(req.headers.get('number'), {
+    headers: {
+      'Content-Type': 'text/plain',
+    },
+  });
+});
+
+exampleApi6.get('/testLinkWithNonStringParam', () => {
+  return new Response(JSON.stringify({ hello: 'world' }), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+});
+
+exampleApi6.get('/testLinkwithNestedParam', () => {
+  return new Response(JSON.stringify({ nesting1: { nesting2: 5 } }), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+});

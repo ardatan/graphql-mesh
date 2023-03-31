@@ -20,7 +20,7 @@ export function writeJSON<T>(
   path: string,
   data: T,
   replacer?: (this: any, key: string, value: any) => any,
-  space?: string | number
+  space?: string | number,
 ) {
   const stringified = JSON.stringify(data, replacer, space);
   return writeFile(path, stringified, 'utf-8');
@@ -54,7 +54,7 @@ export async function rmdirs(dir: string) {
         } else {
           return fs.promises.unlink(fullPath);
         }
-      })
+      }),
     );
     for (const result of results) {
       if (result.status === 'rejected' && result.reason.code !== 'ENOENT') {

@@ -1,65 +1,81 @@
 import {
-  MeshHandlerOptions,
-  ImportFn,
-  Logger,
-  MeshHandler,
-  YamlConfig,
-  MeshFetch,
-  GetMeshSourcePayload,
-  MeshSource,
-} from '@graphql-mesh/types';
-import { parse, ThriftDocument, SyntaxType, Comment, FunctionType } from '@creditkarma/thrift-parser';
-import { readFileOrUrl } from '@graphql-mesh/utils';
-import {
+  GraphQLBoolean,
   GraphQLEnumType,
   GraphQLEnumValueConfigMap,
-  GraphQLBoolean,
-  GraphQLInt,
-  GraphQLFloat,
-  GraphQLString,
-  GraphQLObjectType,
-  GraphQLInputObjectType,
-  GraphQLInputFieldConfigMap,
+  GraphQLFieldConfigArgumentMap,
   GraphQLFieldConfigMap,
-  GraphQLOutputType,
+  GraphQLFloat,
+  GraphQLID,
+  GraphQLInputFieldConfigMap,
+  GraphQLInputObjectType,
   GraphQLInputType,
+  GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
-  GraphQLFieldConfigArgumentMap,
+  GraphQLObjectType,
+  GraphQLOutputType,
   GraphQLSchema,
-  GraphQLID,
+  GraphQLString,
 } from 'graphql';
-import { GraphQLBigInt, GraphQLJSON, GraphQLByte, GraphQLVoid } from 'graphql-scalars';
+import { GraphQLBigInt, GraphQLByte, GraphQLJSON, GraphQLVoid } from 'graphql-scalars';
+import { pascalCase } from 'pascal-case';
 import { createHttpClient } from '@creditkarma/thrift-client';
 import {
-  ThriftClient,
-  IThriftAnnotations,
+  Comment,
+  FunctionType,
+  IncludeDefinition,
+  parse,
+  SyntaxType,
+  ThriftDocument,
+} from '@creditkarma/thrift-parser';
+import {
   IMethodAnnotations,
-  TTransport,
-  TProtocol,
-  MessageType,
+  IThriftAnnotations,
+  IThriftField,
   IThriftMessage,
+  MessageType,
   TApplicationException,
   TApplicationExceptionCodec,
   TApplicationExceptionType,
+  ThriftClient,
+  TProtocol,
+  TTransport,
   TType,
-  IThriftField,
 } from '@creditkarma/thrift-server-core';
-import { pascalCase } from 'pascal-case';
+import { path, process, util } from '@graphql-mesh/cross-helpers';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
+import {
+  getInterpolatedHeadersFactory,
+  parseInterpolationStrings,
+} from '@graphql-mesh/string-interpolation';
+import {
+  GetMeshSourcePayload,
+  ImportFn,
+  Logger,
+  MeshFetch,
+  MeshHandler,
+  MeshHandlerOptions,
+  MeshSource,
+  YamlConfig,
+} from '@graphql-mesh/types';
+import { readFileOrUrl } from '@graphql-mesh/utils';
 import { AggregateError } from '@graphql-tools/utils';
-import { parseInterpolationStrings, getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
-import { process, util } from '@graphql-mesh/cross-helpers';
 
 export default class ThriftHandler implements MeshHandler {
   private config: YamlConfig.ThriftHandler;
   private baseDir: string;
-  private idl: StoreProxy<ThriftDocument>;
+  private idl: StoreProxy<Record<string, ThriftDocument>>;
   private fetchFn: MeshFetch;
   private importFn: ImportFn;
   private logger: Logger;
 
-  constructor({ config, baseDir, store, importFn, logger }: MeshHandlerOptions<YamlConfig.ThriftHandler>) {
+  constructor({
+    config,
+    baseDir,
+    store,
+    importFn,
+    logger,
+  }: MeshHandlerOptions<YamlConfig.ThriftHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.idl = store.proxy('idl.json', PredefinedProxyOptions.JsonWithoutValidation);
@@ -67,27 +83,48 @@ export default class ThriftHandler implements MeshHandler {
     this.logger = logger;
   }
 
+  private async parseWithIncludes(
+    idlFilePath: string,
+    includesMap: Record<string, ThriftDocument>,
+  ): Promise<Record<string, ThriftDocument>> {
+    const rawThrift = await readFileOrUrl<string>(idlFilePath, {
+      allowUnknownExtensions: true,
+      cwd: this.baseDir,
+      headers: this.config.schemaHeaders,
+      fetch: this.fetchFn,
+      logger: this.logger,
+      importFn: this.importFn,
+    });
+    const parseResult = parse(rawThrift, { organize: false });
+    const idlNamespace = path.basename(idlFilePath).split('.')[0];
+    if (parseResult.type === SyntaxType.ThriftErrors) {
+      if (parseResult.errors.length === 1) {
+        throw parseResult.errors[0];
+      }
+      throw new AggregateError(parseResult.errors);
+    }
+    includesMap[idlNamespace] = parseResult;
+    const includes = parseResult.body.filter(
+      (statement): statement is IncludeDefinition =>
+        statement.type === SyntaxType.IncludeDefinition,
+    );
+    await Promise.all(
+      includes.map(async include => {
+        const includePath = path.resolve(path.dirname(idlFilePath), include.path.value);
+        await this.parseWithIncludes(includePath, includesMap);
+      }),
+    );
+    return includesMap;
+  }
+
   async getMeshSource({ fetchFn }: GetMeshSourcePayload): Promise<MeshSource> {
     this.fetchFn = fetchFn;
-    const { schemaHeaders, serviceName, operationHeaders } = this.config;
+    const { serviceName, operationHeaders } = this.config;
 
-    const thriftAST = await this.idl.getWithSet(async () => {
-      const rawThrift = await readFileOrUrl<string>(this.config.idl, {
-        allowUnknownExtensions: true,
-        cwd: this.baseDir,
-        headers: schemaHeaders,
-        fetch: this.fetchFn,
-        logger: this.logger,
-        importFn: this.importFn,
-      });
-      const parseResult = parse(rawThrift, { organize: false });
-      if (parseResult.type === SyntaxType.ThriftErrors) {
-        if (parseResult.errors.length === 1) {
-          throw parseResult.errors[0];
-        }
-        throw new AggregateError(parseResult.errors);
-      }
-      return parseResult;
+    const namespaceASTMap = await this.idl.getWithSet(async () => {
+      const includeMap: Record<string, ThriftDocument> = {};
+      await this.parseWithIncludes(this.config.idl, includeMap);
+      return includeMap;
     });
 
     const enumTypeMap = new Map<string, GraphQLEnumType>();
@@ -101,10 +138,24 @@ export default class ThriftHandler implements MeshHandler {
       [methodName: string]: number;
     } = {};
 
-    type TypeVal = BaseTypeVal | ListTypeVal | SetTypeVal | MapTypeVal | EnumTypeVal | StructTypeVal | VoidTypeVal;
+    type TypeVal =
+      | BaseTypeVal
+      | ListTypeVal
+      | SetTypeVal
+      | MapTypeVal
+      | EnumTypeVal
+      | StructTypeVal
+      | VoidTypeVal;
     type BaseTypeVal = {
       id?: number;
-      type: TType.BOOL | TType.BYTE | TType.DOUBLE | TType.I16 | TType.I32 | TType.I64 | TType.STRING;
+      type:
+        | TType.BOOL
+        | TType.BYTE
+        | TType.DOUBLE
+        | TType.I16
+        | TType.I32
+        | TType.I64
+        | TType.STRING;
     };
     type ListTypeVal = { id?: number; type: TType.LIST; elementType: TypeVal };
     type SetTypeVal = { id?: number; type: TType.SET; elementType: TypeVal };
@@ -282,7 +333,7 @@ export default class ThriftHandler implements MeshHandler {
             id,
           },
           args,
-          output
+          output,
         );
         output.writeMessageEnd();
         const data: Buffer = await this.connection.send(writer.flush(), context);
@@ -302,14 +353,14 @@ export default class ThriftHandler implements MeshHandler {
             } else {
               throw new TApplicationException(
                 TApplicationExceptionType.UNKNOWN,
-                methodName + ' failed: unknown result'
+                methodName + ' failed: unknown result',
               );
             }
           }
         } else {
           throw new TApplicationException(
             TApplicationExceptionType.WRONG_METHOD_NAME,
-            'Received a response to an unknown RPC function: ' + fieldName
+            'Received a response to an unknown RPC function: ' + fieldName,
           );
         }
       }
@@ -327,7 +378,7 @@ export default class ThriftHandler implements MeshHandler {
 
     function getGraphQLFunctionType(
       functionType: FunctionType,
-      id = Math.random()
+      id = Math.random(),
     ): { outputType: GraphQLOutputType; inputType: GraphQLInputType; typeVal: TypeVal } {
       let inputType: GraphQLInputType;
       let outputType: GraphQLOutputType;
@@ -397,11 +448,15 @@ export default class ThriftHandler implements MeshHandler {
           outputType = GraphQLJSON;
           const ofTypeKey = getGraphQLFunctionType(functionType.keyType, id);
           const ofTypeValue = getGraphQLFunctionType(functionType.valueType, id);
-          typeVal = typeVal! || { type: TType.MAP, keyType: ofTypeKey.typeVal, valType: ofTypeValue.typeVal };
+          typeVal = typeVal! || {
+            type: TType.MAP,
+            keyType: ofTypeKey.typeVal,
+            valType: ofTypeValue.typeVal,
+          };
           break;
         }
         case SyntaxType.Identifier: {
-          const typeName = functionType.value;
+          const typeName = functionType.value.replace('.', '_');
           if (enumTypeMap.has(typeName)) {
             const enumType = enumTypeMap.get(typeName)!;
             inputType = enumType;
@@ -429,134 +484,156 @@ export default class ThriftHandler implements MeshHandler {
       };
     }
 
-    const { args: commonArgs, contextVariables } = parseInterpolationStrings(Object.values(operationHeaders || {}));
+    const { args: commonArgs, contextVariables } = parseInterpolationStrings(
+      Object.values(operationHeaders || {}),
+    );
 
     const headersFactory = getInterpolatedHeadersFactory(operationHeaders);
+    const baseNamespace = path.basename(this.config.idl, '.thrift');
 
-    for (const statement of thriftAST.body) {
-      switch (statement.type) {
-        case SyntaxType.EnumDefinition:
-          enumTypeMap.set(
-            statement.name.value,
-            new GraphQLEnumType({
-              name: statement.name.value,
-              description: processComments(statement.comments),
-              values: statement.members.reduce(
-                (prev, curr) => ({
-                  ...prev,
-                  [curr.name.value]: {
-                    description: processComments(curr.comments),
-                    value: curr.name.value,
-                  },
-                }),
-                {} as GraphQLEnumValueConfigMap
-              ),
-            })
-          );
-          break;
-        case SyntaxType.StructDefinition: {
-          const structName = statement.name.value;
-          const description = processComments(statement.comments);
-          const objectFields: GraphQLFieldConfigMap<any, any> = {};
-          const inputObjectFields: GraphQLInputFieldConfigMap = {};
-          const structTypeVal: StructTypeVal = {
-            id: Math.random(),
-            name: structName,
-            type: TType.STRUCT,
-            fields: {},
-          };
-          topTypeMap[structName] = structTypeVal;
-          const structFieldTypeMap = structTypeVal.fields;
-          for (const field of statement.fields) {
-            const fieldName = field.name.value;
-            let fieldOutputType: GraphQLOutputType;
-            let fieldInputType: GraphQLInputType;
-            const description = processComments(field.comments);
-            const processedFieldTypes = getGraphQLFunctionType(field.fieldType, field.fieldID?.value);
-            fieldOutputType = processedFieldTypes.outputType;
-            fieldInputType = processedFieldTypes.inputType;
-
-            if (field.requiredness === 'required') {
-              fieldOutputType = new GraphQLNonNull(fieldOutputType);
-              fieldInputType = new GraphQLNonNull(fieldInputType);
-            }
-
-            objectFields[fieldName] = {
-              type: fieldOutputType,
-              description,
-            };
-            inputObjectFields[fieldName] = {
-              type: fieldInputType,
-              description,
-            };
-            structFieldTypeMap[fieldName] = processedFieldTypes.typeVal;
-          }
-          outputTypeMap.set(
-            structName,
-            new GraphQLObjectType({
-              name: structName,
-              description,
-              fields: objectFields,
-            })
-          );
-          inputTypeMap.set(
-            structName,
-            new GraphQLInputObjectType({
-              name: structName + 'Input',
-              description,
-              fields: inputObjectFields,
-            })
-          );
-          break;
+    for (const namespace of Object.keys(namespaceASTMap).reverse()) {
+      const thriftAST = namespaceASTMap[namespace];
+      for (const statement of thriftAST.body) {
+        let typeName = 'name' in statement ? statement.name.value : undefined;
+        if (namespace !== baseNamespace) {
+          typeName = `${namespace}_${typeName}`;
         }
-        case SyntaxType.ServiceDefinition:
-          for (const fnIndex in statement.functions) {
-            const fn = statement.functions[fnIndex];
-            const fnName = fn.name.value;
-            const description = processComments(fn.comments);
-            const { outputType: returnType } = getGraphQLFunctionType(fn.returnType, Number(fnIndex) + 1);
-            const args: GraphQLFieldConfigArgumentMap = {};
-            for (const argName in commonArgs) {
-              const typeNameOrType = commonArgs[argName].type;
-              args[argName] = {
-                type:
-                  typeof typeNameOrType === 'string' ? inputTypeMap.get(typeNameOrType) : typeNameOrType || GraphQLID,
-              };
-            }
-            const fieldTypeMap: TypeMap = {};
-            for (const field of fn.fields) {
-              const fieldName = field.name.value;
-              const fieldDescription = processComments(field.comments);
-              let { inputType: fieldType, typeVal } = getGraphQLFunctionType(field.fieldType, field.fieldID?.value);
-              if (field.requiredness === 'required') {
-                fieldType = new GraphQLNonNull(fieldType);
-              }
-              args[fieldName] = {
-                type: fieldType,
-                description: fieldDescription,
-              };
-              fieldTypeMap[fieldName] = typeVal;
-            }
-            rootFields[fnName] = {
-              type: returnType,
-              description,
-              args,
-              resolve: async (root, args, context, info) =>
-                thriftHttpClient.doRequest(fnName, args, fieldTypeMap, {
-                  headers: headersFactory({ root, args, context, info, env: process.env }),
-                }),
+        switch (statement.type) {
+          case SyntaxType.EnumDefinition:
+            enumTypeMap.set(
+              typeName,
+              new GraphQLEnumType({
+                name: typeName,
+                description: processComments(statement.comments),
+                values: statement.members.reduce(
+                  (prev, curr) => ({
+                    ...prev,
+                    [curr.name.value]: {
+                      description: processComments(curr.comments),
+                      value: curr.name.value,
+                    },
+                  }),
+                  {} as GraphQLEnumValueConfigMap,
+                ),
+              }),
+            );
+            break;
+          case SyntaxType.StructDefinition: {
+            const description = processComments(statement.comments);
+            const objectFields: GraphQLFieldConfigMap<any, any> = {};
+            const inputObjectFields: GraphQLInputFieldConfigMap = {};
+            const structTypeVal: StructTypeVal = {
+              id: Math.random(),
+              name: typeName,
+              type: TType.STRUCT,
+              fields: {},
             };
-            methodNames.push(fnName);
-            methodAnnotations[fnName] = { annotations: {}, fieldAnnotations: {} };
-            methodParameters[fnName] = fn.fields.length + 1;
+            topTypeMap[typeName] = structTypeVal;
+            const structFieldTypeMap = structTypeVal.fields;
+            for (const field of statement.fields) {
+              const fieldName = field.name.value;
+              let fieldOutputType: GraphQLOutputType;
+              let fieldInputType: GraphQLInputType;
+              const description = processComments(field.comments);
+              const processedFieldTypes = getGraphQLFunctionType(
+                field.fieldType,
+                field.fieldID?.value,
+              );
+              fieldOutputType = processedFieldTypes.outputType;
+              fieldInputType = processedFieldTypes.inputType;
+
+              if (field.requiredness === 'required') {
+                fieldOutputType = new GraphQLNonNull(fieldOutputType);
+                fieldInputType = new GraphQLNonNull(fieldInputType);
+              }
+
+              objectFields[fieldName] = {
+                type: fieldOutputType,
+                description,
+              };
+              inputObjectFields[fieldName] = {
+                type: fieldInputType,
+                description,
+              };
+              structFieldTypeMap[fieldName] = processedFieldTypes.typeVal;
+            }
+            outputTypeMap.set(
+              typeName,
+              new GraphQLObjectType({
+                name: typeName,
+                description,
+                fields: objectFields,
+              }),
+            );
+            inputTypeMap.set(
+              typeName,
+              new GraphQLInputObjectType({
+                name: typeName + 'Input',
+                description,
+                fields: inputObjectFields,
+              }),
+            );
+            break;
           }
-          break;
-        case SyntaxType.TypedefDefinition: {
-          const { inputType, outputType } = getGraphQLFunctionType(statement.definitionType, Math.random());
-          const typeName = statement.name.value;
-          inputTypeMap.set(typeName, inputType);
-          outputTypeMap.set(typeName, outputType);
-          break;
+          case SyntaxType.ServiceDefinition:
+            for (const fnIndex in statement.functions) {
+              const fn = statement.functions[fnIndex];
+              const fnName = fn.name.value;
+              const description = processComments(fn.comments);
+              const { outputType: returnType } = getGraphQLFunctionType(
+                fn.returnType,
+                Number(fnIndex) + 1,
+              );
+              const args: GraphQLFieldConfigArgumentMap = {};
+              for (const argName in commonArgs) {
+                const typeNameOrType = commonArgs[argName].type;
+                args[argName] = {
+                  type:
+                    typeof typeNameOrType === 'string'
+                      ? inputTypeMap.get(typeNameOrType)
+                      : typeNameOrType || GraphQLID,
+                };
+              }
+              const fieldTypeMap: TypeMap = {};
+              for (const field of fn.fields) {
+                const fieldName = field.name.value;
+                const fieldDescription = processComments(field.comments);
+                let { inputType: fieldType, typeVal } = getGraphQLFunctionType(
+                  field.fieldType,
+                  field.fieldID?.value,
+                );
+                if (field.requiredness === 'required') {
+                  fieldType = new GraphQLNonNull(fieldType);
+                }
+                args[fieldName] = {
+                  type: fieldType,
+                  description: fieldDescription,
+                };
+                fieldTypeMap[fieldName] = typeVal;
+              }
+              rootFields[fnName] = {
+                type: returnType,
+                description,
+                args,
+                resolve: async (root, args, context, info) =>
+                  thriftHttpClient.doRequest(fnName, args, fieldTypeMap, {
+                    headers: headersFactory({ root, args, context, info, env: process.env }),
+                  }),
+              };
+              methodNames.push(fnName);
+              methodAnnotations[fnName] = { annotations: {}, fieldAnnotations: {} };
+              methodParameters[fnName] = fn.fields.length + 1;
+            }
+            break;
+          case SyntaxType.TypedefDefinition: {
+            const { inputType, outputType } = getGraphQLFunctionType(
+              statement.definitionType,
+              Math.random(),
+            );
+            inputTypeMap.set(typeName, inputType);
+            outputTypeMap.set(typeName, outputType);
+            break;
+          }
         }
       }
     }

@@ -230,6 +230,10 @@ export interface GraphQLHandlerHTTPConfiguration {
    */
   subscriptionsProtocol?: 'SSE' | 'WS' | 'LEGACY_WS';
   /**
+   * URL to your endpoint serving all subscription queries for this source
+   */
+  subscriptionsEndpoint?: string;
+  /**
    * Retry attempts if fails
    */
   retry?: number;
@@ -352,6 +356,10 @@ export interface JsonSchemaHandler {
   bundleHeaders?: {
     [k: string]: any;
   };
+  /**
+   * Timeout for the HTTP request in milliseconds
+   */
+  timeout?: number;
 }
 export interface JsonSchemaHTTPOperation {
   /**
@@ -843,6 +851,10 @@ export interface OpenapiHandler {
   queryParams?: {
     [k: string]: any;
   };
+  /**
+   * Timeout for the HTTP request in milliseconds
+   */
+  timeout?: number;
   bundle?: boolean;
 }
 export interface OASSelectQueryOrMutationFieldConfig {
@@ -906,6 +918,10 @@ export interface RAMLHandler {
   selectQueryOrMutationField?: RAMLSelectQueryOrMutationFieldConfig[];
   queryParams?: any;
   bundle?: boolean;
+  /**
+   * Timeout for the HTTP request in milliseconds
+   */
+  timeout?: number;
 }
 export interface RAMLSelectQueryOrMutationFieldConfig {
   /**
@@ -1097,6 +1113,11 @@ export interface ExtendTransform {
 }
 export interface FederationTransform {
   types?: FederationTransformType[];
+  /**
+   * Version of the federation spec
+   * Default: v2.0
+   */
+  version?: string;
 }
 export interface FederationTransformType {
   name: string;
@@ -1614,7 +1635,7 @@ export interface Plugin {
   immediateIntrospection?: any;
   deduplicateRequest?: any;
   hive?: HivePlugin;
-  httpCache?: any;
+  httpCache?: HTTPCachePlugin;
   httpDetailsExtensions?: HTTPDetailsExtensionsConfig;
   liveQuery?: LiveQueryConfig;
   mock?: MockingConfig;
@@ -1638,6 +1659,7 @@ export interface HivePlugin {
   agent?: HiveAgentOptions;
   usage?: HiveUsageOptions;
   reporting?: HiveReportingOptions;
+  selfHosting?: HiveSelfHostingOptions;
 }
 /**
  * Agent Options
@@ -1727,6 +1749,51 @@ export interface HiveReportingOptions {
   commit: string;
   serviceName?: string;
   serviceUrl?: string;
+}
+/**
+ * Options for self-hosting
+ * [See more](https://github.com/kamilkisiela/graphql-hive/tree/main/packages/libraries/client#self-hosting)
+ */
+export interface HiveSelfHostingOptions {
+  /**
+   * Point to your own instance of GraphQL Hive API
+   *
+   * Used by schema reporting and token info.
+   */
+  graphqlEndpoint: string;
+  /**
+   * Address of your own GraphQL Hive application
+   *
+   * Used by token info to generate a link to the organization, project and target.
+   */
+  applicationUrl: string;
+  /**
+   * Point to your own instance of GraphQL Hive Usage API
+   *
+   * Used by usage reporting.
+   */
+  usageEndpoint?: string;
+}
+export interface HTTPCachePlugin {
+  /**
+   * If the following patterns match the request URL, the response will be cached. (Any of: String, URLPatternObj)
+   */
+  matches?: (string | URLPatternObj)[];
+  /**
+   * If the following patterns match the request URL, the response will not be cached. (Any of: String, URLPatternObj)
+   */
+  ignores?: (string | URLPatternObj)[];
+}
+export interface URLPatternObj {
+  protocol?: string;
+  username?: string;
+  password?: string;
+  hostname?: string;
+  port?: string;
+  pathname?: string;
+  search?: string;
+  hash?: string;
+  baseURL?: string;
 }
 export interface HTTPDetailsExtensionsConfig {
   if?: any;
@@ -1888,21 +1955,60 @@ export interface OperationFieldPermission {
   allow?: string[];
 }
 export interface PrometheusConfig {
-  requestCount?: boolean;
-  requestTotalDuration?: boolean;
-  requestSummary?: boolean;
-  parse?: boolean;
-  validate?: boolean;
-  contextBuilding?: boolean;
-  execute?: boolean;
-  errors?: boolean;
-  resolvers?: boolean;
-  resolversWhiteList?: string[];
-  deprecatedFields?: boolean;
-  delegation?: boolean;
-  fetch?: boolean;
+  /**
+   * Any of: Boolean, String
+   */
+  requestCount?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  requestTotalDuration?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  requestSummary?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  parse?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  validate?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  contextBuilding?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  execute?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  errors?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  deprecatedFields?: boolean | string;
   skipIntrospection?: boolean;
   registry?: string;
+  /**
+   * Any of: Boolean, String
+   */
+  delegation?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  fetch?: boolean | string;
+  fetchRequestHeaders?: boolean;
+  fetchResponseHeaders?: boolean;
+  /**
+   * Any of: Boolean, String
+   */
+  http?: boolean | string;
+  httpRequestHeaders?: boolean;
+  httpResponseHeaders?: boolean;
   /**
    * The path to the metrics endpoint
    * default: `/metrics`

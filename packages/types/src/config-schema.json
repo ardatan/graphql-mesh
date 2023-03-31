@@ -509,19 +509,7 @@
           "$ref": "#/definitions/HivePlugin"
         },
         "httpCache": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ]
+          "$ref": "#/definitions/HTTPCachePlugin"
         },
         "httpDetailsExtensions": {
           "$ref": "#/definitions/HTTPDetailsExtensionsConfig"
@@ -839,6 +827,10 @@
           "enum": ["SSE", "WS", "LEGACY_WS"],
           "description": "SSE - Server Sent Events\nWS - New graphql-ws\nLEGACY_WS - Legacy subscriptions-transport-ws (Allowed values: SSE, WS, LEGACY_WS)"
         },
+        "subscriptionsEndpoint": {
+          "type": "string",
+          "description": "URL to your endpoint serving all subscription queries for this source"
+        },
         "retry": {
           "type": "integer",
           "description": "Retry attempts if fails"
@@ -1034,6 +1026,10 @@
           "type": "object",
           "properties": {},
           "description": "Will be removed later"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Timeout for the HTTP request in milliseconds"
         }
       }
     },
@@ -1888,6 +1884,10 @@
           "properties": {},
           "description": "JSON object representing the query search parameters to add to the API calls"
         },
+        "timeout": {
+          "type": "integer",
+          "description": "Timeout for the HTTP request in milliseconds"
+        },
         "bundle": {
           "type": "boolean"
         }
@@ -1930,6 +1930,10 @@
         "reporting": {
           "$ref": "#/definitions/HiveReportingOptions",
           "description": "Schema reporting"
+        },
+        "selfHosting": {
+          "$ref": "#/definitions/HiveSelfHostingOptions",
+          "description": "Options for self-hosting\n[See more](https://github.com/kamilkisiela/graphql-hive/tree/main/packages/libraries/client#self-hosting)"
         }
       },
       "required": ["token"]
@@ -2032,6 +2036,99 @@
         }
       },
       "required": ["author", "commit"]
+    },
+    "HiveSelfHostingOptions": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "HiveSelfHostingOptions",
+      "properties": {
+        "graphqlEndpoint": {
+          "type": "string",
+          "description": "Point to your own instance of GraphQL Hive API\n\nUsed by schema reporting and token info."
+        },
+        "applicationUrl": {
+          "type": "string",
+          "description": "Address of your own GraphQL Hive application\n\nUsed by token info to generate a link to the organization, project and target."
+        },
+        "usageEndpoint": {
+          "type": "string",
+          "description": "Point to your own instance of GraphQL Hive Usage API\n\nUsed by usage reporting."
+        }
+      },
+      "required": ["graphqlEndpoint", "applicationUrl"]
+    },
+    "HTTPCachePlugin": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "HTTPCachePlugin",
+      "properties": {
+        "matches": {
+          "type": "array",
+          "items": {
+            "description": "Any of: String, URLPatternObj",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/definitions/URLPatternObj"
+              }
+            ]
+          },
+          "additionalItems": false,
+          "description": "If the following patterns match the request URL, the response will be cached. (Any of: String, URLPatternObj)"
+        },
+        "ignores": {
+          "type": "array",
+          "items": {
+            "description": "Any of: String, URLPatternObj",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/definitions/URLPatternObj"
+              }
+            ]
+          },
+          "additionalItems": false,
+          "description": "If the following patterns match the request URL, the response will not be cached. (Any of: String, URLPatternObj)"
+        }
+      }
+    },
+    "URLPatternObj": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "URLPatternObj",
+      "properties": {
+        "protocol": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "hostname": {
+          "type": "string"
+        },
+        "port": {
+          "type": "string"
+        },
+        "pathname": {
+          "type": "string"
+        },
+        "search": {
+          "type": "string"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "baseURL": {
+          "type": "string"
+        }
+      }
     },
     "HTTPDetailsExtensionsConfig": {
       "additionalProperties": false,
@@ -2313,53 +2410,154 @@
       "title": "PrometheusConfig",
       "properties": {
         "requestCount": {
-          "type": "boolean"
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
         },
         "requestTotalDuration": {
-          "type": "boolean"
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
         },
         "requestSummary": {
-          "type": "boolean"
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
         },
         "parse": {
-          "type": "boolean"
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
         },
         "validate": {
-          "type": "boolean"
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
         },
         "contextBuilding": {
-          "type": "boolean"
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
         },
         "execute": {
-          "type": "boolean"
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
         },
         "errors": {
-          "type": "boolean"
-        },
-        "resolvers": {
-          "type": "boolean"
-        },
-        "resolversWhiteList": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
         },
         "deprecatedFields": {
-          "type": "boolean"
-        },
-        "delegation": {
-          "type": "boolean"
-        },
-        "fetch": {
-          "type": "boolean"
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
         },
         "skipIntrospection": {
           "type": "boolean"
         },
         "registry": {
           "type": "string"
+        },
+        "delegation": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "fetch": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "fetchRequestHeaders": {
+          "type": "boolean"
+        },
+        "fetchResponseHeaders": {
+          "type": "boolean"
+        },
+        "http": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "httpRequestHeaders": {
+          "type": "boolean"
+        },
+        "httpResponseHeaders": {
+          "type": "boolean"
         },
         "endpoint": {
           "type": "string",
@@ -2715,6 +2913,10 @@
         },
         "bundle": {
           "type": "boolean"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Timeout for the HTTP request in milliseconds"
         }
       },
       "required": ["source"]
@@ -2949,6 +3151,10 @@
             "$ref": "#/definitions/FederationTransformType"
           },
           "additionalItems": false
+        },
+        "version": {
+          "type": "string",
+          "description": "Version of the federation spec\nDefault: v2.0"
         }
       }
     },

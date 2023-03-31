@@ -1,9 +1,9 @@
+import LocalForage from 'localforage';
 import { KeyValueCache, KeyValueCacheSetOptions, YamlConfig } from '@graphql-mesh/types';
 import { createInMemoryLRUDriver } from './InMemoryLRUDriver.js';
-import LocalForage from 'localforage';
 
 LocalForage.defineDriver(createInMemoryLRUDriver()).catch(err =>
-  console.error('Failed at defining InMemoryLRU driver', err)
+  console.error('Failed at defining InMemoryLRU driver', err),
 );
 
 export default class LocalforageCache<V = any> implements KeyValueCache<V> {
@@ -13,6 +13,7 @@ export default class LocalforageCache<V = any> implements KeyValueCache<V> {
     this.localforage = LocalForage.createInstance({
       name: config?.name || 'graphql-mesh-cache',
       storeName: config?.storeName || 'graphql-mesh-cache-store',
+      // @ts-expect-error - Weird error
       driver: driverNames.map(driverName => LocalForage[driverName] ?? driverName),
       size: config?.size,
       version: config?.version,

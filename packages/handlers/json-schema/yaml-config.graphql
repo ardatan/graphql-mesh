@@ -67,6 +67,11 @@ type JsonSchemaHandler @md {
   Will be removed later
   """
   bundleHeaders: JSON
+
+  """
+  Timeout for the HTTP request in milliseconds
+  """
+  timeout: Int
 }
 
 enum JsonSchemaOperationType {

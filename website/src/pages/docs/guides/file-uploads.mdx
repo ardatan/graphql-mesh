@@ -1,6 +1,14 @@
+---
+description:
+  GraphQL Mesh enables easy file uploads with its built-in support for GraphQL Yoga server. Forward
+  file uploads to sources with minimal configuration changes. Check out the example in the
+  documentation for more details.
+---
+
 # File uploads
 
-Thanks to its server based on [GraphQL Yoga](https://graphql-yoga.com), GraphQL Mesh provides file upload support out of the box.
+Thanks to its server based on [GraphQL Yoga](https://graphql-yoga.com), GraphQL Mesh provides file
+upload support out of the box.
 
 Similarly, just a few configuration changes will be necessary to forward file uploads to Sources.
 
@@ -19,13 +27,16 @@ Z --> E;
 Z --> F;
 ```
 
-You will find the complete example in [`examples/graphql-file-upload-example/.meshrc.yml`](https://github.com/Urigo/graphql-mesh/tree/master/examples/graphql-file-upload-example/.meshrc.yml).
+You will find the complete example in
+[`examples/graphql-file-upload-example/.meshrc.yml`](https://github.com/Urigo/graphql-mesh/tree/master/examples/graphql-file-upload-example/.meshrc.yml).
 
 ## Custom resolvers file uploads
 
-Custom resolvers, programmatically provided by `additionalResolvers`, can also support File uploads (ex: upload to S3).
+Custom resolvers, programmatically provided by `additionalResolvers`, can also support File uploads
+(ex: upload to S3).
 
-For this, the only configuration step would be to define the `File` scalar to enable file uploads and our file upload Mutation:
+For this, the only configuration step would be to define the `File` scalar to enable file uploads
+and our file upload Mutation:
 
 ```yaml filename=".meshrc.yaml"
 sources:

@@ -11,6 +11,11 @@ type RAMLHandler {
   selectQueryOrMutationField: [RAMLSelectQueryOrMutationFieldConfig]
   queryParams: Any
   bundle: Boolean
+
+  """
+  Timeout for the HTTP request in milliseconds
+  """
+  timeout: Int
 }
 
 enum QueryOrMutation {

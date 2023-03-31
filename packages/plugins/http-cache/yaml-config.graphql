@@ -1,3 +1,28 @@
 extend type Plugin {
-  httpCache: Any
+  httpCache: HTTPCachePlugin
+}
+
+type HTTPCachePlugin @md {
+  """
+  If the following patterns match the request URL, the response will be cached.
+  """
+  matches: [URLPattern]
+  """
+  If the following patterns match the request URL, the response will not be cached.
+  """
+  ignores: [URLPattern]
+}
+
+union URLPattern = String | URLPatternObj
+
+type URLPatternObj {
+  protocol: String
+  username: String
+  password: String
+  hostname: String
+  port: String
+  pathname: String
+  search: String
+  hash: String
+  baseURL: String
 }

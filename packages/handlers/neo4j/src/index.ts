@@ -1,21 +1,21 @@
-import { toGraphQLTypeDefs } from '@neo4j/introspector';
-import { Neo4jGraphQL } from '@neo4j/graphql';
 import { GraphQLBigInt } from 'graphql-scalars';
 import neo4j, { Driver } from 'neo4j-driver';
+import { process } from '@graphql-mesh/cross-helpers';
+import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import {
-  YamlConfig,
+  GetMeshSourcePayload,
+  ImportFn,
+  Logger,
+  MeshFetch,
   MeshHandler,
   MeshHandlerOptions,
   MeshPubSub,
-  Logger,
-  ImportFn,
-  MeshFetch,
-  GetMeshSourcePayload,
   MeshSource,
+  YamlConfig,
 } from '@graphql-mesh/types';
-import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import { readFileOrUrl } from '@graphql-mesh/utils';
-import { process } from '@graphql-mesh/cross-helpers';
+import { Neo4jGraphQL } from '@neo4j/graphql';
+import { toGraphQLTypeDefs } from '@neo4j/introspector';
 
 function getEventEmitterFromPubSub(pubsub: MeshPubSub): any {
   return {
@@ -64,7 +64,7 @@ export default class Neo4JHandler implements MeshHandler {
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
-    this.typeDefs = store.proxy('typeDefs.graphql', PredefinedProxyOptions.StringWithoutValidation);
+    this.typeDefs = store.proxy('typeDefs', PredefinedProxyOptions.StringWithoutValidation);
     this.logger = logger;
     this.importFn = importFn;
   }
@@ -84,9 +84,25 @@ export default class Neo4JHandler implements MeshHandler {
           'Inferring the schema from the database: ',
           `"${this.config.database || 'neo4j'}"`,
         );
-        return toGraphQLTypeDefs(() =>
+        let replaceAllPolyfilled = false;
+        if (!String.prototype.replaceAll) {
+          replaceAllPolyfilled = true;
+          // eslint-disable-next-line no-extend-native
+          String.prototype.replaceAll = function (str, newStr: any) {
+            if (Object.prototype.toString.call(str).toLowerCase() === '[object regexp]') {
+              return this.replace(str, newStr);
+            }
+            return this.replace(new RegExp(str, 'g'), newStr);
+          };
+        }
+        const typeDefs = await toGraphQLTypeDefs(() =>
           driver.session({ database: this.config.database, defaultAccessMode: neo4j.session.READ }),
         );
+        if (replaceAllPolyfilled) {
+          // eslint-disable-next-line no-extend-native
+          delete String.prototype.replaceAll;
+        }
+        return typeDefs;
       }
     });
   }

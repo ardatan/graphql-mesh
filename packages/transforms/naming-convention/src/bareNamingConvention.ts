@@ -1,23 +1,22 @@
 import {
   defaultFieldResolver,
   GraphQLAbstractType,
+  GraphQLEnumType,
   GraphQLInputObjectType,
+  GraphQLInterfaceType,
   GraphQLList,
   GraphQLNonNull,
+  GraphQLObjectType,
   GraphQLOutputType,
   GraphQLScalarType,
-  GraphQLObjectType,
-  GraphQLInterfaceType,
-  GraphQLUnionType,
-  GraphQLEnumType,
   GraphQLSchema,
-  isInputObjectType,
+  GraphQLUnionType,
   isEnumType,
+  isInputObjectType,
 } from 'graphql';
-import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
+import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { MapperKind, mapSchema, renameType } from '@graphql-tools/utils';
-
-import { NAMING_CONVENTIONS, IGNORED_ROOT_FIELD_NAMES, IGNORED_TYPE_NAMES } from './shared.js';
+import { IGNORED_ROOT_FIELD_NAMES, IGNORED_TYPE_NAMES, NAMING_CONVENTIONS } from './shared.js';
 
 export declare type GraphQLTypePointer =
   | GraphQLList<GraphQLOutputType>
@@ -30,18 +29,21 @@ export declare type GraphQLTypePointer =
       | GraphQLList<GraphQLOutputType>
     >;
 
-const isObject = (input: any) => typeof input === 'object' && input !== null && !Array.isArray(input) && true;
+const isObject = (input: any) =>
+  typeof input === 'object' && input !== null && !Array.isArray(input) && true;
 
 const getUnderlyingType = (type: GraphQLOutputType): GraphQLOutputType =>
-  (type as GraphQLTypePointer).ofType ? getUnderlyingType((type as GraphQLTypePointer).ofType) : type;
+  (type as GraphQLTypePointer).ofType
+    ? getUnderlyingType((type as GraphQLTypePointer).ofType)
+    : type;
 
 // Resolver composer mapping renamed field and arguments
 const defaultResolverComposer =
   (
     resolveFn = defaultFieldResolver,
     originalFieldName: string,
-    argsMap: { [key: string]: string },
-    resultMap: { [key: string]: string }
+    argsMap: { [key: string]: any },
+    resultMap: { [key: string]: string },
   ) =>
   (root: any, args: any, context: any, info: any) => {
     const originalResult = resolveFn(
@@ -70,7 +72,7 @@ const defaultResolverComposer =
         : args,
       context,
       // map renamed field name to its original value
-      originalFieldName ? { ...info, fieldName: originalFieldName } : info
+      originalFieldName ? { ...info, fieldName: originalFieldName } : info,
     );
 
     // map result values from original value to new renamed value
@@ -95,7 +97,9 @@ export default class NamingConventionTransform implements MeshTransform {
         [MapperKind.TYPE]: type => {
           const oldName = type.name;
           const namingConventionFn = NAMING_CONVENTIONS[this.config.typeNames];
-          const newName = IGNORED_TYPE_NAMES.includes(oldName) ? oldName : namingConventionFn(oldName);
+          const newName = IGNORED_TYPE_NAMES.includes(oldName)
+            ? oldName
+            : namingConventionFn(oldName);
 
           if (newName !== undefined && newName !== oldName) {
             return renameType(type, newName);
@@ -107,10 +111,17 @@ export default class NamingConventionTransform implements MeshTransform {
           const currentName = type.name;
           const existingResolver = type.resolveType;
           const namingConventionFn = NAMING_CONVENTIONS[this.config.typeNames];
-          const newName = IGNORED_TYPE_NAMES.includes(currentName) ? currentName : namingConventionFn(currentName);
+          const newName = IGNORED_TYPE_NAMES.includes(currentName)
+            ? currentName
+            : namingConventionFn(currentName);
 
           type.resolveType = async (data, context, info, abstractType) => {
-            const originalResolvedTypename = await existingResolver(data, context, info, abstractType);
+            const originalResolvedTypename = await existingResolver(
+              data,
+              context,
+              info,
+              abstractType,
+            );
             return IGNORED_TYPE_NAMES.includes(originalResolvedTypename)
               ? originalResolvedTypename
               : namingConventionFn(originalResolvedTypename);
@@ -151,10 +162,11 @@ export default class NamingConventionTransform implements MeshTransform {
       ...((this.config.fieldNames || this.config.fieldArgumentNames) && {
         [MapperKind.COMPOSITE_FIELD]: (fieldConfig, fieldName) => {
           const enumNamingConventionFn = NAMING_CONVENTIONS[this.config.enumValues];
-          const fieldNamingConventionFn = this.config.fieldNames && NAMING_CONVENTIONS[this.config.fieldNames];
+          const fieldNamingConventionFn =
+            this.config.fieldNames && NAMING_CONVENTIONS[this.config.fieldNames];
           const argNamingConventionFn =
             this.config.fieldArgumentNames && NAMING_CONVENTIONS[this.config.fieldArgumentNames];
-          const argsMap = fieldConfig.args && {};
+          const argsMap: Record<string, any> = fieldConfig.args && {};
           const newFieldName =
             this.config.fieldNames &&
             !IGNORED_ROOT_FIELD_NAMES.includes(fieldName) &&
@@ -178,49 +190,59 @@ export default class NamingConventionTransform implements MeshTransform {
             }, {});
 
           if (fieldConfig.args) {
-            fieldConfig.args = Object.entries(fieldConfig.args).reduce((args, [argName, argConfig]) => {
-              const newArgName = this.config.fieldArgumentNames && argNamingConventionFn(argName);
-              const useArgName = newArgName || argName;
-              const argIsInputObjectType = isInputObjectType(argConfig.type);
+            fieldConfig.args = Object.entries(fieldConfig.args).reduce(
+              (args, [argName, argConfig]) => {
+                const newArgName = this.config.fieldArgumentNames && argNamingConventionFn(argName);
+                const useArgName = newArgName || argName;
+                const argIsInputObjectType = isInputObjectType(argConfig.type);
 
-              if (argName !== useArgName || argIsInputObjectType) {
-                // take advantage of the loop to map arg name from Old to New
-                argsMap[useArgName] = !argIsInputObjectType
-                  ? argName
-                  : {
-                      [argName]: Object.keys((argConfig.type as GraphQLInputObjectType).toConfig().fields).reduce(
-                        (inputFields, inputFieldName) => {
+                if (argName !== useArgName || argIsInputObjectType) {
+                  // take advantage of the loop to map arg name from Old to New
+                  argsMap[useArgName] = !argIsInputObjectType
+                    ? argName
+                    : {
+                        [argName]: Object.keys(
+                          (argConfig.type as GraphQLInputObjectType).toConfig().fields,
+                        ).reduce((inputFields, inputFieldName) => {
                           if (Number.isFinite(inputFieldName)) return inputFields;
 
-                          const newInputFieldName = fieldNamingConventionFn(inputFieldName as string);
+                          const newInputFieldName = fieldNamingConventionFn(
+                            inputFieldName as string,
+                          );
                           return newInputFieldName === inputFieldName
                             ? inputFields
                             : {
                                 ...inputFields,
                                 [fieldNamingConventionFn(inputFieldName as string)]: inputFieldName,
                               };
-                        },
-                        {}
-                      ),
-                    };
-              }
+                        }, {}),
+                      };
+                }
 
-              return {
-                ...args,
-                [useArgName]: argConfig,
-              };
-            }, {});
+                return {
+                  ...args,
+                  [useArgName]: argConfig,
+                };
+              },
+              {},
+            );
           }
 
           // Wrap resolve fn to handle mapping renamed field and argument names as well as results (for enums)
-          fieldConfig.resolve = defaultResolverComposer(fieldConfig.resolve, fieldName, argsMap, resultMap);
+          fieldConfig.resolve = defaultResolverComposer(
+            fieldConfig.resolve,
+            fieldName,
+            argsMap,
+            resultMap,
+          );
 
           return [newFieldName || fieldName, fieldConfig];
         },
       }),
       ...(this.config.fieldNames && {
         [MapperKind.INPUT_OBJECT_FIELD]: (inputFieldConfig, fieldName) => {
-          const namingConventionFn = this.config.fieldNames && NAMING_CONVENTIONS[this.config.fieldNames];
+          const namingConventionFn =
+            this.config.fieldNames && NAMING_CONVENTIONS[this.config.fieldNames];
           const newName = namingConventionFn(fieldName);
 
           if (newName === fieldName) {

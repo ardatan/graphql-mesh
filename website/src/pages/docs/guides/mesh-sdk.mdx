@@ -1,8 +1,15 @@
+---
+description:
+  Easily execute queries and generate a type-safe SDK using GraphQL Mesh. Programmatic usage in
+  TypeScript is also possible.
+---
+
 import { Callout } from '@theguild/components'
 
 # Programmatic usage of Mesh / SDK
 
-You can use GraphQL Mesh as a completely type-safe SDK in your existing TypeScript project, or for programmatically executing queries.
+You can use GraphQL Mesh as a completely type-safe SDK in your existing TypeScript project, or for
+programmatically executing queries.
 
 ## Executing queries programmatically
 
@@ -28,7 +35,9 @@ const result = await execute(document, variables)
 
 ## Generating fully type safe SDK
 
-Instead of using GraphQL operations as string with `execute` - you can use GraphQL Mesh and generate a ready-to-use TypeScript SDK to fetch your data. It will make sure to have type-safety and auto-complete for variables and returned data.
+Instead of using GraphQL operations as string with `execute` - you can use GraphQL Mesh and generate
+a ready-to-use TypeScript SDK to fetch your data. It will make sure to have type-safety and
+auto-complete for variables and returned data.
 
 ### Getting started
 
@@ -70,7 +79,8 @@ yarn mesh build
 
 #### 4. Use the generated SDK in the code
 
-Now, instead of using `execute` manually, you can use the generated `getSdk` method with your GraphQL Mesh client, and use the functions that are generated based on your operations:
+Now, instead of using `execute` manually, you can use the generated `getSdk` method with your
+GraphQL Mesh client, and use the functions that are generated based on your operations:
 
 ```ts filename="test.ts"
 import { getMeshSDK } from './.mesh'
@@ -92,15 +102,18 @@ async function test() {
 
 ### Configuring SDK Generation
 
-GraphQL Mesh CLI uses [GraphQL Code Generator](https://graphql-code-generator.com) and its [Generic SDK plugin](https://graphql-code-generator.com/plugins/typescript-generic-sdk) to generate a fully typed SDK from your unified schema. It is possible to configure it to get more customized experience.
+GraphQL Mesh CLI uses [GraphQL Code Generator](https://graphql-code-generator.com) and its
+[Generic SDK plugin](https://graphql-code-generator.com/plugins/typescript-generic-sdk) to generate
+a fully typed SDK from your unified schema. It is possible to configure it to get more customized
+experience.
 
 [See 'Configure GraphQL Code Generator' section to learn more](/docs/guides/graphql-code-generator)
 
 ### Example with Next.js
 
 <Callout>
-  Watch [Episode #15 of `graphql.wtf`](https://graphql.wtf/episodes/15-graphql-mesh-sdk-with-nextjs) for a quick
-  introduction to using GraphQL Mesh with Next.js:
+  Watch [Episode #15 of `graphql.wtf`](https://graphql.wtf/episodes/15-graphql-mesh-sdk-with-nextjs)
+  for a quick introduction to using GraphQL Mesh with Next.js:
 </Callout>
 
 <iframe

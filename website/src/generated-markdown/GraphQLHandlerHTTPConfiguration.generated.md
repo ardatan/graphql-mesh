@@ -16,6 +16,7 @@ You can separately give schema introspection or SDL
 * `subscriptionsProtocol` (type: `String (SSE | WS | LEGACY_WS)`) - SSE - Server Sent Events
 WS - New graphql-ws
 LEGACY_WS - Legacy subscriptions-transport-ws
+* `subscriptionsEndpoint` (type: `String`) - URL to your endpoint serving all subscription queries for this source
 * `retry` (type: `Int`) - Retry attempts if fails
 * `timeout` (type: `Int`) - Timeout in milliseconds
 * `batch` (type: `Boolean`) - Enable/Disable automatic query batching

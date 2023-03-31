@@ -1,16 +1,24 @@
+---
+description:
+  Learn how to mask GraphQL errors and improve error handling practices with GraphQL Mesh. Enable
+  error masking, provide custom error formatting, and handle custom resolvers error.
+---
+
 import { Callout } from '@theguild/components'
 
 # Error Masking
 
 Mesh Gateway will forward all errors (resolvers and sources) to the end client by default.
 
-This page will guide you in masking the errors and puts the proper error handling practices in your `additionalResolvers`.
+This page will guide you in masking the errors and puts the proper error handling practices in your
+`additionalResolvers`.
 
 ## Enabling Errors masking
 
 To enable error masking on your Mesh Gateway:
 
-Configure the [`useMaskedErrors()` Envelop plugin](https://envelop.dev/plugins/use-masked-errors) by adding something like the following;
+Configure the [`useMaskedErrors()` Envelop plugin](https://envelop.dev/plugins/use-masked-errors) by
+adding something like the following;
 
 ```yaml filename=".meshrc.yaml"
 sources:
@@ -23,8 +31,8 @@ plugins:
 ```
 
 <Callout emoji="⚠️" type="warning">
-  The `maskedErrors` plugin should always put last in the plugin list (example: to avoid masking errors to the
-  `useSentry()` plugin.
+  The `maskedErrors` plugin should always put last in the plugin list (example: to avoid masking
+  errors to the `useSentry()` plugin.
 </Callout>
 
 ### Custom error formatting programmatically
@@ -43,7 +51,7 @@ Envelop allows you to provide your error formatting function as follows:
 
 ```ts filename="envelopPlugins.ts"
 import { GraphQLError } from 'graphql'
-import { useMaskedErrors, PluginOrDisabledPlugin } from '@envelop/core'
+import { PluginOrDisabledPlugin, useMaskedErrors } from '@envelop/core'
 
 export const formatError: FormatErrorHandler = err => {
   if (err.originalError && err.originalError instanceof GraphQLError === false) {

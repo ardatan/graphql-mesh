@@ -1,5 +1,5 @@
-import { LazyLoggerMessage, Logger } from '@graphql-mesh/types';
 import { process, util } from '@graphql-mesh/cross-helpers';
+import { LazyLoggerMessage, Logger } from '@graphql-mesh/types';
 
 type MessageTransformer = (msg: string) => string;
 
@@ -32,7 +32,11 @@ export class DefaultLogger implements Logger {
       .map(arg => {
         if (typeof arg === 'string') {
           if (trim && arg.length > 100) {
-            return arg.slice(0, 100) + '...' + '<Error message is too long. Enable DEBUG=1 to see the full message.>';
+            return (
+              arg.slice(0, 100) +
+              '...' +
+              '<Error message is too long. Enable DEBUG=1 to see the full message.>'
+            );
           }
           return arg;
         } else if (typeof arg === 'object' && arg?.stack != null) {

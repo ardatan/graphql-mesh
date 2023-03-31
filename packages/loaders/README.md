@@ -1,12 +1,17 @@
 # Omnigraph
 
-Omnigraph is a set of libraries and tools helps you generate local `GraphQLSchema` instances from different API Schema specifications such as JSON Schema, MySQL, SOAP, OpenAPI and RAML.
+Omnigraph is a set of libraries and tools helps you generate local `GraphQLSchema` instances from
+different API Schema specifications such as JSON Schema, MySQL, SOAP, OpenAPI and RAML.
 
-You can consume this `GraphQLSchema` inside any tools in GraphQL Ecosystem such as GraphQL Config, GraphQL Code Generator and GraphQL ESLint. You can either bind it to a GraphQL Server like Envelop, Express-GraphQL, GraphQL Helix, Apollo Server or GraphQL Yoga.
+You can consume this `GraphQLSchema` inside any tools in GraphQL Ecosystem such as GraphQL Config,
+GraphQL Code Generator and GraphQL ESLint. You can either bind it to a GraphQL Server like Envelop,
+Express-GraphQL, GraphQL Helix, Apollo Server or GraphQL Yoga.
 
 ### GraphQL Config
 
-GraphQL Config is a way of specifying your GraphQL Project in a standard way so the most of the tools around GraphQL Ecosystem can recognize your project such as VSCode GraphQL Extension, GraphQL ESLint and GraphQL Code Generator
+GraphQL Config is a way of specifying your GraphQL Project in a standard way so the most of the
+tools around GraphQL Ecosystem can recognize your project such as VSCode GraphQL Extension, GraphQL
+ESLint and GraphQL Code Generator
 
 ```yaml filename=".graphqlrc.yml"
 schema: ./packages/server/modules/**/*.graphql # Backend
@@ -26,7 +31,10 @@ schema:
 
 ### GraphQL Code Generator
 
-Let's say we want to create a type-safe SDK from the generated schema using GraphQL Code Generator and remember GraphQL Code Generator has nothing to do except GraphQL so Omnigraph helps GraphQL Config to consume the nonGraphQL source as GraphQL then it provides the schema and operations to GraphQL Code Generator;
+Let's say we want to create a type-safe SDK from the generated schema using GraphQL Code Generator
+and remember GraphQL Code Generator has nothing to do except GraphQL so Omnigraph helps GraphQL
+Config to consume the nonGraphQL source as GraphQL then it provides the schema and operations to
+GraphQL Code Generator;
 
 Like any other GraphQL project. We can use `extensions.codegen`
 
@@ -51,9 +59,9 @@ extensions:
 
 ```ts filename="get-omnigraph-sdk.ts"
 // Get GraphQL JIT SDK Factory
-import { getSdk } from './sdk'
 // Load our schema from bundle
 import loadSchemaFromBundle from './load-schema-from-bundle'
+import { getSdk } from './sdk'
 
 export async function getOmnigraphSDK() {
   const schema = await loadSchemaFromBundle()
@@ -64,13 +72,18 @@ export async function getOmnigraphSDK() {
 
 ### Bundling
 
-As you can see above, Omnigraph is able to download sources via HTTP on runtime. But this has some downsides. The remote API might be down or we might have some bandwidth concerns to avoid. So Omnigraph has "Bundling" feature that helps to store the downloaded and resolved resources once ahead-of-time. But this needs some extra code files with programmatic usage by splitting buildtime and runtime configurations;
+As you can see above, Omnigraph is able to download sources via HTTP on runtime. But this has some
+downsides. The remote API might be down or we might have some bandwidth concerns to avoid. So
+Omnigraph has "Bundling" feature that helps to store the downloaded and resolved resources once
+ahead-of-time. But this needs some extra code files with programmatic usage by splitting buildtime
+and runtime configurations;
 
-We can create a script called `generate-bundle.ts` and every time we run `npm run generate-bundle` it will download the sources and generate the bundle.
+We can create a script called `generate-bundle.ts` and every time we run `npm run generate-bundle`
+it will download the sources and generate the bundle.
 
 ```ts filename="generate-bundle.js"
-import { createBundle } from '@omnigraph/openapi'
 import { writeFileSync } from 'fs'
+import { createBundle } from '@omnigraph/openapi'
 
 async function main() {
   const createdBundle = await createBundle('my-omnigraph', {
@@ -121,5 +134,5 @@ schema:
 ### String interpolation on runtime
 
 You can have dynamic values in `operationHeaders` by using interpolation pattern;
-`{context.apiToken}` or `{env.BASE_URL}`
-In this case, `context` refers to the context you executed your schema with.
+`{context.apiToken}` or `{env.BASE_URL}` In this case, `context` refers to the context you executed
+your schema with.

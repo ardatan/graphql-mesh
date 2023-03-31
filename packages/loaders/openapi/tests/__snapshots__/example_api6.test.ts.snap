@@ -16,7 +16,7 @@ directive @linkResolver(linkResolverMap: ObjMap) on FIELD_DEFINITION
 
 directive @link(defaultRootType: String, defaultField: String) on FIELD_DEFINITION
 
-type Query @globalOptions(sourceName: "example_api6", endpoint: "http://localhost:{context.port}/api") {
+type Query @globalOptions(sourceName: "example_api6", endpoint: "http://localhost:3000/api") {
   "An arbitrary object"
   object: object_200_response @httpOperation(path: "/object", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET) @linkResolver(linkResolverMap: "{\\"object2Link\\":{\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getObject2\\"}}")
   "Serves as a link of GET /object"

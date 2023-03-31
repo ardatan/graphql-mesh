@@ -28,3 +28,5 @@
 args:
   someArg: "{root.someKeyValue}"
 ```
+* `version` (type: `String`) - Version of the federation spec
+Default: v2.0

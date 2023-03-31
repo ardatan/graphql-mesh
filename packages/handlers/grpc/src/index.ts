@@ -1,31 +1,36 @@
 /* eslint-disable import/no-duplicates */
-import './patchLongJs.js';
-import { MeshHandlerOptions, Logger, MeshHandler, YamlConfig } from '@graphql-mesh/types';
-import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { ChannelCredentials, credentials, loadPackageDefinition } from '@grpc/grpc-js';
-import { loadFileDescriptorSetFromObject } from '@grpc/proto-loader';
+import globby from 'globby';
+import { GraphQLEnumTypeConfig, GraphQLResolveInfo, specifiedDirectives } from 'graphql';
 import { ObjectTypeComposerFieldConfigAsObjectDefinition, SchemaComposer } from 'graphql-compose';
 import {
   GraphQLBigInt,
   GraphQLByte,
+  GraphQLJSON,
   GraphQLUnsignedInt,
   GraphQLVoid,
-  GraphQLJSON,
 } from 'graphql-scalars';
 import lodashGet from 'lodash.get';
 import lodashHas from 'lodash.has';
 import { AnyNestedObject, IParseOptions, Message, RootConstructor } from 'protobufjs';
 import protobufjs from 'protobufjs';
-import grpcReflection from '@ardatan/grpc-reflection-js';
 import { IFileDescriptorSet } from 'protobufjs/ext/descriptor';
 import descriptor from 'protobufjs/ext/descriptor/index.js';
-
-import { addIncludePathResolver, addMetaDataToCall, getTypeName } from './utils.js';
-import { GraphQLEnumTypeConfig, GraphQLResolveInfo, specifiedDirectives } from 'graphql';
+import { Client } from '@ardatan/grpc-reflection-js';
 import { path, process } from '@graphql-mesh/cross-helpers';
-import { StoreProxy } from '@graphql-mesh/store';
 import { fs } from '@graphql-mesh/cross-helpers';
-import globby from 'globby';
+import { StoreProxy } from '@graphql-mesh/store';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import {
+  Logger,
+  MeshHandler,
+  MeshHandlerOptions,
+  MeshPubSub,
+  YamlConfig,
+} from '@graphql-mesh/types';
+import { ChannelCredentials, credentials, loadPackageDefinition } from '@grpc/grpc-js';
+import { fromJSON } from '@grpc/proto-loader';
+import './patchLongJs.js';
+import { addIncludePathResolver, addMetaDataToCall, getTypeName } from './utils.js';
 
 const { Root } = protobufjs;
 
@@ -35,10 +40,9 @@ interface LoadOptions extends IParseOptions {
 
 type DecodedDescriptorSet = Message<IFileDescriptorSet> & IFileDescriptorSet;
 
-type RootJsonAndDecodedDescriptorSet = {
+type RootJsonEntry = {
   name: string;
   rootJson: protobufjs.INamespace;
-  decodedDescriptorSet: DecodedDescriptorSet;
 };
 
 const QUERY_METHOD_PREFIXES = ['get', 'list', 'search'];
@@ -46,29 +50,29 @@ const QUERY_METHOD_PREFIXES = ['get', 'list', 'search'];
 export default class GrpcHandler implements MeshHandler {
   private config: YamlConfig.GrpcHandler;
   private baseDir: string;
-  private rootJsonAndDecodedDescriptorSets: StoreProxy<RootJsonAndDecodedDescriptorSet[]>;
+  private rootJsonEntries: StoreProxy<RootJsonEntry[]>;
   private logger: Logger;
+  private pubsub: MeshPubSub;
 
-  constructor({ config, baseDir, store, logger }: MeshHandlerOptions<YamlConfig.GrpcHandler>) {
+  constructor({
+    config,
+    baseDir,
+    store,
+    logger,
+    pubsub,
+  }: MeshHandlerOptions<YamlConfig.GrpcHandler>) {
     this.logger = logger;
     this.config = config;
     this.baseDir = baseDir;
-    this.rootJsonAndDecodedDescriptorSets = store.proxy('descriptorSet.proto', {
-      codify: rootJsonAndDecodedDescriptorSets =>
+    this.rootJsonEntries = store.proxy('rootJsonEntries', {
+      codify: rootJsonEntries =>
         `
-import descriptor from 'protobufjs/ext/descriptor/index.js';
-
 export default [
-${rootJsonAndDecodedDescriptorSets
+${rootJsonEntries
   .map(
-    ({ name, rootJson, decodedDescriptorSet }) => `
+    ({ name, rootJson }) => `
   {
     name: ${JSON.stringify(name)},
-    decodedDescriptorSet: descriptor.FileDescriptorSet.fromObject(${JSON.stringify(
-      decodedDescriptorSet.toJSON(),
-      null,
-      2,
-    )}),
     rootJson: ${JSON.stringify(rootJson, null, 2)},
   },
 `,
@@ -77,30 +81,33 @@ ${rootJsonAndDecodedDescriptorSets
 ];
 `.trim(),
       fromJSON: jsonData => {
-        return jsonData.map(({ name, rootJson, decodedDescriptorSet }: any) => ({
+        return jsonData.map(({ name, rootJson }: any) => ({
           name,
           rootJson,
-          decodedDescriptorSet: descriptor.FileDescriptorSet.fromObject(decodedDescriptorSet),
         }));
       },
-      toJSON: rootJsonAndDecodedDescriptorSets => {
-        return rootJsonAndDecodedDescriptorSets.map(({ name, rootJson, decodedDescriptorSet }) => {
+      toJSON: rootJsonEntries => {
+        return rootJsonEntries.map(({ name, rootJson }) => {
           return {
             name,
             rootJson,
-            decodedDescriptorSet: decodedDescriptorSet.toJSON(),
           };
         });
       },
       validate: () => {},
     });
+    this.pubsub = pubsub;
   }
 
   async processReflection(creds: ChannelCredentials): Promise<Promise<protobufjs.Root>[]> {
     this.logger.debug(`Using the reflection`);
     const grpcReflectionServer = this.config.endpoint;
     this.logger.debug(`Creating gRPC Reflection Client`);
-    const reflectionClient = new grpcReflection.Client(grpcReflectionServer, creds);
+    const reflectionClient = new Client(grpcReflectionServer, creds);
+    const subId = this.pubsub.subscribe('destroy', () => {
+      reflectionClient.grpcClient.close();
+      this.pubsub.unsubscribe(subId);
+    });
     const services: (string | void)[] = await reflectionClient.listServices();
     const userServices = services.filter(
       service => service && !service?.startsWith('grpc.'),
@@ -174,7 +181,7 @@ ${rootJsonAndDecodedDescriptorSets
       };
       if (options.includeDirs) {
         if (!Array.isArray(options.includeDirs)) {
-          return Promise.reject(new Error('The includeDirs option must be an array'));
+          throw new Error('The includeDirs option must be an array');
         }
         addIncludePathResolver(protoRoot, options.includeDirs);
       }
@@ -197,15 +204,17 @@ ${rootJsonAndDecodedDescriptorSets
   }
 
   getCachedDescriptorSets(creds: ChannelCredentials) {
-    return this.rootJsonAndDecodedDescriptorSets.getWithSet(async () => {
+    return this.rootJsonEntries.getWithSet(async () => {
       const rootPromises: Promise<protobufjs.Root>[] = [];
       this.logger.debug(`Building Roots`);
-      const filePath =
-        typeof this.config.source === 'string' ? this.config.source : this.config.source.file;
-      if (filePath.endsWith('json')) {
-        rootPromises.push(this.processDescriptorFile());
-      } else if (filePath.endsWith('proto')) {
-        rootPromises.push(this.processProtoFile());
+      if (this.config.source) {
+        const filePath =
+          typeof this.config.source === 'string' ? this.config.source : this.config.source.file;
+        if (filePath.endsWith('json')) {
+          rootPromises.push(this.processDescriptorFile());
+        } else if (filePath.endsWith('proto')) {
+          rootPromises.push(this.processProtoFile());
+        }
       } else {
         const reflectionPromises = await this.processReflection(creds);
         rootPromises.push(...reflectionPromises);
@@ -224,7 +233,6 @@ ${rootJsonAndDecodedDescriptorSets
             rootJson: root.toJSON({
               keepComments: true,
             }),
-            decodedDescriptorSet: root.toDescriptor('proto3'),
           };
         }),
       );
@@ -412,6 +420,10 @@ ${rootJsonAndDecodedDescriptorSets
           this.config.endpoint,
         creds,
       );
+      const subId = this.pubsub.subscribe('destroy', () => {
+        client.close();
+        this.pubsub.unsubscribe(subId);
+      });
       for (const methodName in nested.methods) {
         const method = nested.methods[methodName];
         const rootFieldName = [...pathWithName, methodName].join('_');
@@ -529,11 +541,11 @@ ${rootJsonAndDecodedDescriptorSets
     this.logger.debug(`Getting stored root and decoded descriptor set objects`);
     const artifacts = await this.getCachedDescriptorSets(creds);
 
-    for (const { name, rootJson, decodedDescriptorSet } of artifacts) {
+    for (const { name, rootJson } of artifacts) {
       const rootLogger = this.logger.child(name);
 
       rootLogger.debug(`Creating package definition from file descriptor set object`);
-      const packageDefinition = loadFileDescriptorSetFromObject(decodedDescriptorSet);
+      const packageDefinition = fromJSON(rootJson);
 
       rootLogger.debug(`Creating service client for package definition`);
       const grpcObject = loadPackageDefinition(packageDefinition);

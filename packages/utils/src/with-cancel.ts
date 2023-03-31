@@ -1,4 +1,7 @@
-export function withCancel<T>(asyncIterable: AsyncIterable<T>, onCancel: () => void): AsyncIterable<T | undefined> {
+export function withCancel<T, TAsyncIterable extends AsyncIterable<T>>(
+  asyncIterable: TAsyncIterable,
+  onCancel: () => void,
+): AsyncIterable<T | undefined> {
   return new Proxy(asyncIterable, {
     get(asyncIterable, prop) {
       if (prop === Symbol.asyncIterator) {
@@ -20,7 +23,11 @@ export function withCancel<T>(asyncIterable: AsyncIterable<T>, onCancel: () => v
           };
         };
       }
-      return asyncIterable[prop]?.bind(asyncIterable);
+      const propVal = asyncIterable[prop as keyof TAsyncIterable];
+      if (typeof propVal === 'function') {
+        return propVal.bind(asyncIterable);
+      }
+      return propVal;
     },
   });
 }

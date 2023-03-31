@@ -1,9 +1,12 @@
 import { createHive, HivePluginOptions, useHive } from '@graphql-hive/client';
-import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
 
-export default function useMeshHive(pluginOptions: MeshPluginOptions<YamlConfig.HivePlugin>): MeshPlugin<{}> {
+export default function useMeshHive(
+  pluginOptions: MeshPluginOptions<YamlConfig.HivePlugin>,
+  // eslint-disable-next-line @typescript-eslint/ban-types
+): MeshPlugin<{}> {
   const token = stringInterpolator.parse(pluginOptions.token, {
     env: process.env,
   });
@@ -66,6 +69,7 @@ export default function useMeshHive(pluginOptions: MeshPluginOptions<YamlConfig.
     agent,
     usage,
     reporting,
+    selfHosting: pluginOptions.selfHosting,
   });
   const id = pluginOptions.pubsub.subscribe('destroy', () => {
     hiveClient

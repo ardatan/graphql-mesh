@@ -1,8 +1,13 @@
-import { KeyValueCache, KeyValueCacheSetOptions, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 import Redis from 'ioredis';
-import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { process } from '@graphql-mesh/cross-helpers';
 import RedisMock from 'ioredis-mock';
+import { process } from '@graphql-mesh/cross-helpers';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import {
+  KeyValueCache,
+  KeyValueCacheSetOptions,
+  MeshPubSub,
+  YamlConfig,
+} from '@graphql-mesh/types';
 
 function interpolateStrWithEnv(str: string): string {
   return stringInterpolator.parse(str, { env: process.env });
@@ -23,11 +28,11 @@ export default class RedisCache<V = string> implements KeyValueCache<V> {
         throw new Error('Redis URL must use either redis:// or rediss://');
       }
 
-      this.client = new Redis(redisUrl.toString());
+      this.client = new Redis(redisUrl?.toString());
     } else {
-      const parsedHost = interpolateStrWithEnv(options.host);
-      const parsedPort = interpolateStrWithEnv(options.port);
-      const parsedPassword = interpolateStrWithEnv(options.password);
+      const parsedHost = interpolateStrWithEnv(options.host?.toString());
+      const parsedPort = interpolateStrWithEnv(options.port?.toString());
+      const parsedPassword = interpolateStrWithEnv(options.password?.toString());
       if (parsedHost) {
         this.client = new Redis({
           host: parsedHost,

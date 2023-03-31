@@ -1,10 +1,19 @@
+---
+description:
+  Discover the snapshot plugin in GraphQL Mesh - apply snapshots of remote data sources for
+  development use, manipulate data, and see how your API mesh responds. Learn how to use it in our
+  example with SOAP handler.
+---
+
 import { PackageCmd } from '@theguild/components'
 
 # Snapshot Plugin
 
 The `snapshot` plugin allows applying snapshot for development usage.
 
-The snapshot plugin writes the responses of your remote data source to your file system and then uses it instead of re-fetching it every time. It's also helpful because you can easily manipulate your data manually and see how your API mesh responds.
+The snapshot plugin writes the responses of your remote data source to your file system and then
+uses it instead of re-fetching it every time. It's also helpful because you can easily manipulate
+your data manually and see how your API mesh responds.
 
 To get started with this plugin, install it:
 
@@ -25,7 +34,8 @@ plugins:
 
 The following snapshot will work if you are in a development environment (see the `if` command).
 
-To modify your snapshots and change the responses, go to `__snapshots__` and modify the responses under those files.
+To modify your snapshots and change the responses, go to `__snapshots__` and modify the responses
+under those files.
 
 ## CodeSandBox Example
 

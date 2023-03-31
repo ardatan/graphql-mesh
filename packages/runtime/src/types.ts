@@ -1,19 +1,19 @@
+import { DocumentNode, ExecutionResult } from 'graphql';
+import { envelop } from '@envelop/core';
 import {
-  KeyValueCache,
-  MeshPubSub,
   GraphQLOperation,
+  KeyValueCache,
+  Logger,
+  MeshFetch,
   MeshHandler,
+  MeshMerger,
+  MeshPubSub,
   MeshTransform,
   YamlConfig,
-  Logger,
-  MeshMerger,
-  MeshFetch,
 } from '@graphql-mesh/types';
-import { DocumentNode, ExecutionResult } from 'graphql';
 import { IResolvers, Source } from '@graphql-tools/utils';
 import { MESH_CONTEXT_SYMBOL } from './constants.js';
 import { MeshInstance } from './get-mesh.js';
-import { envelop } from '@envelop/core';
 
 export type GetMeshOptions = {
   sources: MeshResolvedSource[];
@@ -40,7 +40,7 @@ export type ExecuteMeshFn<TData = any, TVariables = any, TContext = any, TRootVa
   variables: TVariables,
   context?: TContext,
   rootValue?: TRootValue,
-  operationName?: string
+  operationName?: string,
 ) => Promise<ExecutionResult<TData>>;
 
 export type SubscribeMeshFn<TVariables = any, TContext = any, TRootValue = any, TData = any> = (
@@ -48,7 +48,7 @@ export type SubscribeMeshFn<TVariables = any, TContext = any, TRootValue = any, 
   variables?: TVariables,
   context?: TContext,
   rootValue?: TRootValue,
-  operationName?: string
+  operationName?: string,
 ) => Promise<ExecutionResult<TData> | AsyncIterable<ExecutionResult<TData>>>;
 
 export type MeshContext = {
@@ -69,5 +69,5 @@ export type MeshExecutor = <TData, TVariables, TContext, TRootValue>(
   variables?: TVariables,
   context?: TContext,
   rootValue?: TRootValue,
-  operationName?: string
+  operationName?: string,
 ) => Promise<TData | AsyncIterable<TData>>;

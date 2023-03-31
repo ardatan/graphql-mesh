@@ -1,7 +1,7 @@
-import { JSONSchema } from './types.js';
-import { visitJSONSchema } from './visitJSONSchema.js';
 import { AggregateError } from '@graphql-tools/utils';
 import { resolvePath } from './dereferenceObject.js';
+import { JSONSchema } from './types.js';
+import { visitJSONSchema } from './visitJSONSchema.js';
 
 export async function compareJSONSchemas(oldSchema: JSONSchema, newSchema: JSONSchema) {
   const breakingChanges: string[] = [];
@@ -18,12 +18,16 @@ export async function compareJSONSchemas(oldSchema: JSONSchema, newSchema: JSONS
           } else {
             if (oldSubSchema.$ref) {
               if (newSubSchema?.$ref !== oldSubSchema.$ref) {
-                breakingChanges.push(`${path}/$ref is changed from ${oldSubSchema.$ref} to ${newSubSchema?.$ref}`);
+                breakingChanges.push(
+                  `${path}/$ref is changed from ${oldSubSchema.$ref} to ${newSubSchema?.$ref}`,
+                );
               }
             }
             if (oldSubSchema.const) {
               if (newSubSchema?.const !== oldSubSchema.const) {
-                breakingChanges.push(`${path}/const is changed from ${oldSubSchema.const} to ${newSubSchema?.const}`);
+                breakingChanges.push(
+                  `${path}/const is changed from ${oldSubSchema.const} to ${newSubSchema?.const}`,
+                );
               }
             }
             if (oldSubSchema.enum) {
@@ -36,28 +40,28 @@ export async function compareJSONSchemas(oldSchema: JSONSchema, newSchema: JSONS
             if (oldSubSchema.format) {
               if (newSubSchema?.format !== oldSubSchema.format) {
                 breakingChanges.push(
-                  `${path}/format is changed from ${oldSubSchema.format} to ${newSubSchema?.format}`
+                  `${path}/format is changed from ${oldSubSchema.format} to ${newSubSchema?.format}`,
                 );
               }
             }
             if (oldSubSchema.maxLength) {
               if (oldSubSchema.maxLength > newSubSchema?.maxLength) {
                 breakingChanges.push(
-                  `${path}/maxLength is changed from ${oldSubSchema.maxLength} to ${newSubSchema?.maxLength}`
+                  `${path}/maxLength is changed from ${oldSubSchema.maxLength} to ${newSubSchema?.maxLength}`,
                 );
               }
             }
             if (oldSubSchema.minLength) {
               if (oldSubSchema.minLength < newSubSchema?.minLength) {
                 breakingChanges.push(
-                  `${path}/minLength is changed from ${oldSubSchema.minLength} to ${newSubSchema?.minLength}`
+                  `${path}/minLength is changed from ${oldSubSchema.minLength} to ${newSubSchema?.minLength}`,
                 );
               }
             }
             if (oldSubSchema.pattern) {
               if (newSubSchema?.pattern?.toString() !== oldSubSchema.pattern.toString()) {
                 breakingChanges.push(
-                  `${path}/pattern is changed from ${oldSubSchema.pattern} to ${newSubSchema?.pattern}`
+                  `${path}/pattern is changed from ${oldSubSchema.pattern} to ${newSubSchema?.pattern}`,
                 );
               }
             }
@@ -80,7 +84,9 @@ export async function compareJSONSchemas(oldSchema: JSONSchema, newSchema: JSONS
 
             if (oldSubSchema.title) {
               if (newSubSchema?.title !== oldSubSchema.title) {
-                breakingChanges.push(`${path}/title is changed from ${oldSubSchema.title} to ${newSubSchema?.title}`);
+                breakingChanges.push(
+                  `${path}/title is changed from ${oldSubSchema.title} to ${newSubSchema?.title}`,
+                );
               }
             }
 
@@ -94,7 +100,9 @@ export async function compareJSONSchemas(oldSchema: JSONSchema, newSchema: JSONS
                     : !newSubSchema?.type.includes(oldSubSchema.type)
                   : true
               ) {
-                breakingChanges.push(`${path}/type is changed from ${oldSubSchema.type} to ${newSubSchema?.type}`);
+                breakingChanges.push(
+                  `${path}/type is changed from ${oldSubSchema.type} to ${newSubSchema?.type}`,
+                );
               }
             }
           }
@@ -105,12 +113,12 @@ export async function compareJSONSchemas(oldSchema: JSONSchema, newSchema: JSONS
     {
       visitedSubschemaResultMap: new WeakMap(),
       path: '',
-    }
+    },
   );
   if (breakingChanges.length > 0) {
     throw new AggregateError(
       breakingChanges.map(breakingChange => new Error(breakingChange)),
-      `Breaking changes are found:\n${breakingChanges.join('\n')}`
+      `Breaking changes are found:\n${breakingChanges.join('\n')}`,
     );
   }
 }

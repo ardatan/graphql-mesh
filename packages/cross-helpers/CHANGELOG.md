@@ -1,5 +1,48 @@
 # @graphql-mesh/cross-helpers
 
+## 0.3.4
+
+### Patch Changes
+
+- [#5252](https://github.com/Urigo/graphql-mesh/pull/5252)
+  [`c90eb5ac6`](https://github.com/Urigo/graphql-mesh/commit/c90eb5ac631507de1f49db68ca681193cc5a20b5)
+  Thanks [@ardatan](https://github.com/ardatan)! - Make shared packages peer dependency
+
+## 0.3.3
+
+### Patch Changes
+
+- [#4674](https://github.com/Urigo/graphql-mesh/pull/4674)
+  [`975715275`](https://github.com/Urigo/graphql-mesh/commit/9757152751e37062bca4ba114bee65a0c79a3d4d)
+  Thanks [@mhassan1](https://github.com/mhassan1)! - fix(deps): add missing graphql peer deps
+
+## 0.3.2
+
+### Patch Changes
+
+- [#5091](https://github.com/Urigo/graphql-mesh/pull/5091)
+  [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@9.2.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.2.1)
+    (from `9.1.4`, in `dependencies`)
+
+## 0.3.1
+
+### Patch Changes
+
+- [#5028](https://github.com/Urigo/graphql-mesh/pull/5028)
+  [`994813331`](https://github.com/Urigo/graphql-mesh/commit/99481333186e8471207e21ad14c7883f7215ce1c)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/utils@9.1.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.1.4)
+    (from `9.1.3`, in `dependencies`)
+
+- [#4930](https://github.com/Urigo/graphql-mesh/pull/4930)
+  [`c015b02a1`](https://github.com/Urigo/graphql-mesh/commit/c015b02a1aa50e4d760c3fd59f76dc5dfe587664)
+  Thanks [@gilgardosh](https://github.com/gilgardosh)! - Prettier fixes
+
 ## 0.3.0
 
 ### Minor Changes

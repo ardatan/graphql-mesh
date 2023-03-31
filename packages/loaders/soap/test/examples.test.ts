@@ -1,9 +1,9 @@
 /* eslint-disable import/no-nodejs-modules */
-import { SOAPLoader } from '../src/index.js';
 import { promises } from 'fs';
-import { printSchema } from 'graphql';
 import { join } from 'path';
+import { printSchema } from 'graphql';
 import { fetch } from '@whatwg-node/fetch';
+import { SOAPLoader } from '../src/index.js';
 
 const { readFile } = promises;
 
@@ -15,7 +15,10 @@ describe('Examples', () => {
       const soapLoader = new SOAPLoader({
         fetch,
       });
-      const example1Wsdl = await readFile(join(__dirname, './fixtures/' + example + '.wsdl'), 'utf8');
+      const example1Wsdl = await readFile(
+        join(__dirname, './fixtures/' + example + '.wsdl'),
+        'utf8',
+      );
       await soapLoader.loadWSDL(example1Wsdl);
       const schema = soapLoader.buildSchema();
       expect(printSchema(schema)).toMatchSnapshot(example);

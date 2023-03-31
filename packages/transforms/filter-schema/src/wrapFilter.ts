@@ -1,16 +1,21 @@
+import { GraphQLSchema } from 'graphql';
+import minimatch from 'minimatch';
 import { YamlConfig } from '@graphql-mesh/types';
-import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
-import { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
-import { ExecutionResult, ExecutionRequest } from '@graphql-tools/utils';
 import {
-  FilterRootFields,
-  FilterObjectFields,
+  applyRequestTransforms,
+  applyResultTransforms,
+  applySchemaTransforms,
+} from '@graphql-mesh/utils';
+import { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
+import { ExecutionRequest, ExecutionResult } from '@graphql-tools/utils';
+import {
   FilterInputObjectFields,
+  FilterInterfaceFields,
+  FilterObjectFields,
+  FilterRootFields,
   FilterTypes,
   TransformCompositeFields,
 } from '@graphql-tools/wrap';
-import { GraphQLSchema } from 'graphql';
-import minimatch from 'minimatch';
 
 export default class WrapFilter implements Transform {
   private transforms: Transform[] = [];
@@ -24,7 +29,7 @@ export default class WrapFilter implements Transform {
         this.transforms.push(
           new FilterTypes(type => {
             return typeMatcher.match(type.name);
-          }) as any
+          }) as any,
         );
         continue;
       }
@@ -41,7 +46,7 @@ export default class WrapFilter implements Transform {
         this.transforms.push(
           new FilterTypes(type => {
             return globalTypeMatcher.match(type.name);
-          })
+          }),
         );
         continue;
       }
@@ -55,13 +60,13 @@ export default class WrapFilter implements Transform {
               const fieldArgs = Object.entries(fieldConfig.args).reduce(
                 (args, [argName, argConfig]) =>
                   !globalTypeMatcher.match(argName) ? args : { ...args, [argName]: argConfig },
-                {}
+                {},
               );
 
               return { ...fieldConfig, args: fieldArgs };
             }
             return undefined;
-          })
+          }),
         );
         continue;
       }
@@ -73,7 +78,7 @@ export default class WrapFilter implements Transform {
             return globalTypeMatcher.match(rootFieldName);
           }
           return true;
-        })
+        }),
       );
 
       this.transforms.push(
@@ -82,7 +87,7 @@ export default class WrapFilter implements Transform {
             return globalTypeMatcher.match(objectFieldName);
           }
           return true;
-        })
+        }),
       );
 
       this.transforms.push(
@@ -91,7 +96,16 @@ export default class WrapFilter implements Transform {
             return globalTypeMatcher.match(inputObjectFieldName);
           }
           return true;
-        })
+        }),
+      );
+
+      this.transforms.push(
+        new FilterInterfaceFields((interfaceTypeName, interfaceFieldName) => {
+          if (typeMatcher.match(interfaceTypeName)) {
+            return globalTypeMatcher.match(interfaceFieldName);
+          }
+          return true;
+        }),
       );
     }
   }
@@ -99,20 +113,39 @@ export default class WrapFilter implements Transform {
   transformSchema(
     originalWrappingSchema: GraphQLSchema,
     subschemaConfig: SubschemaConfig,
-    transformedSchema?: GraphQLSchema
+    transformedSchema?: GraphQLSchema,
   ) {
-    return applySchemaTransforms(originalWrappingSchema, subschemaConfig, transformedSchema, this.transforms);
+    return applySchemaTransforms(
+      originalWrappingSchema,
+      subschemaConfig,
+      transformedSchema,
+      this.transforms,
+    );
   }
 
   transformRequest(
     originalRequest: ExecutionRequest,
     delegationContext: DelegationContext,
-    transformationContext: Record<string, any>
+    transformationContext: Record<string, any>,
   ) {
-    return applyRequestTransforms(originalRequest, delegationContext, transformationContext, this.transforms);
+    return applyRequestTransforms(
+      originalRequest,
+      delegationContext,
+      transformationContext,
+      this.transforms,
+    );
   }
 
-  transformResult(originalResult: ExecutionResult, delegationContext: DelegationContext, transformationContext: any) {
-    return applyResultTransforms(originalResult, delegationContext, transformationContext, this.transforms);
+  transformResult(
+    originalResult: ExecutionResult,
+    delegationContext: DelegationContext,
+    transformationContext: any,
+  ) {
+    return applyResultTransforms(
+      originalResult,
+      delegationContext,
+      transformationContext,
+      this.transforms,
+    );
   }
 }

@@ -1,7 +1,6 @@
 import { execute, GraphQLSchema, parse } from 'graphql';
-import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
-import { fetch } from '@whatwg-node/fetch';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 
 let createdSchema: GraphQLSchema;
 
@@ -13,7 +12,6 @@ describe('OpenAPI loader: Handle anyOf and oneOf', () => {
   beforeAll(async () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
       endpoint: 'http://localhost:8080/api',
-      fetch,
       source: './fixtures/example_oas4.json',
       cwd: __dirname,
     });

@@ -1,9 +1,9 @@
-import { makeExecutableSchema } from '@graphql-tools/schema';
-import { YamlConfig, MeshPubSub, ImportFn, Logger } from '@graphql-mesh/types';
 import { buildSchema, execute, parse, specifiedRules, subscribe, validate } from 'graphql';
+import { envelop, useEngine, useSchema } from '@envelop/core';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
+import { ImportFn, Logger, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
-import { envelop, useSchema, useEngine } from '@envelop/core';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 import useMock from '../src/index.js';
 
 describe('mocking', () => {
@@ -234,7 +234,10 @@ describe('mocking', () => {
         }
       }
     `);
-    const getUserResult: any = await enveloped.execute({ schema: enveloped.schema, document: GET_USER });
+    const getUserResult: any = await enveloped.execute({
+      schema: enveloped.schema,
+      document: GET_USER,
+    });
     expect(getUserResult?.data?.user?.id).toBe(addedUserId);
     expect(getUserResult?.data?.user?.name).toBe('John Doe');
     const UPDATE_USER = enveloped.parse(/* GraphQL */ `
@@ -245,7 +248,10 @@ describe('mocking', () => {
         }
       }
     `);
-    const updateUserResult: any = await enveloped.execute({ schema: enveloped.schema, document: UPDATE_USER });
+    const updateUserResult: any = await enveloped.execute({
+      schema: enveloped.schema,
+      document: UPDATE_USER,
+    });
     expect(updateUserResult?.data?.updateUser?.id).toBe(addedUserId);
     expect(updateUserResult?.data?.updateUser?.name).toBe('Jane Doe');
   });
@@ -324,7 +330,10 @@ describe('mocking', () => {
         }
       }
     `);
-    const addUserResult: any = await enveloped.execute({ schema: enveloped.schema, document: ADD_USER });
+    const addUserResult: any = await enveloped.execute({
+      schema: enveloped.schema,
+      document: ADD_USER,
+    });
     expect(addUserResult?.data?.addUser?.name).toBe('John Doe');
     const addedUserId = addUserResult.data.addUser.id;
     const GET_USER = enveloped.parse(/* GraphQL */ `
@@ -335,7 +344,10 @@ describe('mocking', () => {
         }
       }
     `);
-    const getUserResult: any = await enveloped.execute({ schema: enveloped.schema, document: GET_USER });
+    const getUserResult: any = await enveloped.execute({
+      schema: enveloped.schema,
+      document: GET_USER,
+    });
     expect(getUserResult?.data?.user?.id).toBe(addedUserId);
     expect(getUserResult?.data?.user?.name).toBe('John Doe');
     const UPDATE_USER = parse(/* GraphQL */ `
@@ -346,7 +358,10 @@ describe('mocking', () => {
         }
       }
     `);
-    const updateUserResult: any = await enveloped.execute({ schema: enveloped.schema, document: UPDATE_USER });
+    const updateUserResult: any = await enveloped.execute({
+      schema: enveloped.schema,
+      document: UPDATE_USER,
+    });
     expect(updateUserResult?.data?.updateUser?.id).toBe(addedUserId);
     expect(updateUserResult?.data?.updateUser?.name).toBe('Jane Doe');
   });

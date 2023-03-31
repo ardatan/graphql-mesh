@@ -30,3 +30,14 @@ Default: false
   * `commit` (type: `String`, required) - Commit SHA hash (or any identifier) related to the schema version
   * `serviceName` (type: `String`)
   * `serviceUrl` (type: `String`)
+* `selfHosting` (type: `Object`) - Options for self-hosting
+[See more](https://github.com/kamilkisiela/graphql-hive/tree/main/packages/libraries/client#self-hosting): 
+  * `graphqlEndpoint` (type: `String`, required) - Point to your own instance of GraphQL Hive API
+
+Used by schema reporting and token info.
+  * `applicationUrl` (type: `String`, required) - Address of your own GraphQL Hive application
+
+Used by token info to generate a link to the organization, project and target.
+  * `usageEndpoint` (type: `String`) - Point to your own instance of GraphQL Hive Usage API
+
+Used by usage reporting.

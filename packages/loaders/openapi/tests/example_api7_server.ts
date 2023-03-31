@@ -1,21 +1,18 @@
 /* eslint-disable import/no-extraneous-dependencies */
+
 /* eslint-disable import/no-nodejs-modules */
 // Copyright IBM Corp. 2017,2018. All Rights Reserved.
 // Node module: openapi-to-graphql
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
-
 import { PubSub } from '@graphql-mesh/utils';
-import express from 'express';
-import { Server } from 'http';
+import { createRouter, Response } from '@whatwg-node/router';
 
-const app = express();
-
-let server: Server; // holds server object for shutdown
+export const exampleApi7 = createRouter({ base: '/api' });
 
 export const pubsub = new PubSub();
 
-const Devices = {
+const Devices: Record<string, { name: string; userName: string }> = {
   'Audio-player': {
     name: 'Audio-player',
     userName: 'johnny',
@@ -26,75 +23,91 @@ const Devices = {
   },
 };
 
-/**
- * Starts the server at the given port
- */
-export function startServer() {
-  app.use(express.json());
+exampleApi7.get('/user', () => {
+  return new Response(JSON.stringify({ name: 'Arlene L McMahon' }), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+});
 
-  app.get('/api/user', (req, res) => {
-    res.send({
-      name: 'Arlene L McMahon',
+exampleApi7.get('/devices', () => {
+  return new Response(JSON.stringify(Object.values(Devices)), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+});
+
+exampleApi7.post('/devices', async req => {
+  const device: any = await req.json();
+  if (device.userName && device.name) {
+    Devices[device.name] = device;
+    pubsub.publish(
+      `webhook:post:/api/${device.userName}/devices/${req.method.toUpperCase()}`,
+      device,
+    );
+    return new Response(JSON.stringify(device), {
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
-  });
+  } else {
+    return new Response(JSON.stringify({ message: 'Wrong device schema' }), {
+      status: 404,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  }
+});
 
-  app.get('/api/devices', (req, res) => {
-    res.status(200).send(Object.values(Devices));
-  });
+exampleApi7.get('/devices/:deviceName', req => {
+  if (req.params.deviceName in Devices) {
+    return new Response(JSON.stringify(Devices[req.params.deviceName]), {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  } else {
+    return new Response(JSON.stringify({ message: 'Wrong device ID.' }), {
+      status: 404,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  }
+});
 
-  app.post('/api/devices', (req, res) => {
-    if (req.body.userName && req.body.name) {
-      const device = req.body;
+exampleApi7.put('/devices/:deviceName', async req => {
+  if (req.params.deviceName in Devices) {
+    const device: any = await req.json();
+    if (device.userName && device.name) {
+      delete Devices[req.params.deviceName];
       Devices[device.name] = device;
-      pubsub.publish(`webhook:post:/api/${device.userName}/devices/${req.method.toUpperCase()}`, device);
-      res.status(200).send(device);
+      pubsub.publish(
+        `webhook:post:/api/${device.userName}/devices/${req.method.toUpperCase()}`,
+        device,
+      );
+      return new Response(JSON.stringify(device), {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
     } else {
-      res.status(404).send({
-        message: 'Wrong device schema',
+      return new Response(JSON.stringify({ message: 'Wrong device schema' }), {
+        status: 404,
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
     }
-  });
-
-  app.get('/api/devices/:deviceName', (req, res) => {
-    if (req.params.deviceName in Devices) {
-      res.status(200).send(Devices[req.params.deviceName]);
-    } else {
-      res.status(404).send({
-        message: 'Wrong device ID.',
-      });
-    }
-  });
-
-  app.put('/api/devices/:deviceName', (req, res) => {
-    if (req.params.deviceName in Devices) {
-      if (req.body.userName && req.body.name) {
-        const device = req.body;
-        delete Devices[req.params.deviceName];
-        Devices[device.deviceName] = device;
-        pubsub.publish(`webhook:post:/api/${device.userName}/devices/${req.method.toUpperCase()}`, device);
-        res.status(200).send(device);
-      } else {
-        res.status(404).send({
-          message: 'Wrong device schema',
-        });
-      }
-    } else {
-      res.status(404).send({
-        message: 'Wrong device ID.',
-      });
-    }
-  });
-
-  return new Promise<Server>(resolve => {
-    server = app.listen(0, () => {
-      resolve(server);
+  } else {
+    return new Response(JSON.stringify({ message: 'Wrong device ID.' }), {
+      status: 404,
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
-  });
-}
-
-/**
- * Stops server.
- */
-export function stopServer() {
-  return new Promise(resolve => server.close(resolve));
-}
+  }
+});

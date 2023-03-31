@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { MeshPlugin, MeshPluginOptions } from '@graphql-mesh/types';
-import { getHeadersObj } from '@graphql-mesh/utils';
 import CachePolicy from 'http-cache-semantics';
-import { Response } from '@whatwg-node/fetch';
+import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
+import { getHeadersObj } from '@graphql-mesh/utils';
+import { Response, URLPattern } from '@whatwg-node/fetch';
 
 interface CacheEntry {
   policy: CachePolicy.CachePolicyObject;
@@ -13,9 +13,27 @@ interface CacheEntry {
   body: string;
 }
 
-export default function useHTTPCache({ cache }: MeshPluginOptions<{}>): MeshPlugin<{}> {
+export default function useHTTPCache({
+  cache,
+  matches,
+  ignores,
+}: MeshPluginOptions<YamlConfig.HTTPCachePlugin>): MeshPlugin<{}> {
+  let matchesPatterns: URLPattern[] | undefined;
+  if (matches) {
+    matchesPatterns = matches.map(match => new URLPattern(match));
+  }
+  let ignoresPatterns: URLPattern[] | undefined;
+  if (ignores) {
+    ignoresPatterns = ignores.map(match => new URLPattern(match));
+  }
   return {
     async onFetch({ url, options, fetchFn, setFetchFn }) {
+      if (matchesPatterns && !matchesPatterns.some(pattern => pattern.test(url))) {
+        return () => {};
+      }
+      if (ignoresPatterns && ignoresPatterns.some(pattern => pattern.test(url))) {
+        return () => {};
+      }
       if (options.cache === 'no-cache') {
         return () => {};
       }
@@ -73,13 +91,16 @@ export default function useHTTPCache({ cache }: MeshPluginOptions<{}>): MeshPlug
               },
             },
             context,
-            info
+            info,
           );
 
-          const { policy: revalidatedPolicy, modified } = policy.revalidatedPolicy(revalidationRequest, {
-            status: revalidationResponse.status,
-            headers: getHeadersObj(revalidationResponse.headers as any),
-          });
+          const { policy: revalidatedPolicy, modified } = policy.revalidatedPolicy(
+            revalidationRequest,
+            {
+              status: revalidationResponse.status,
+              headers: getHeadersObj(revalidationResponse.headers as any),
+            },
+          );
 
           const newBody = await revalidationResponse.text();
 
@@ -134,7 +155,7 @@ export default function useHTTPCache({ cache }: MeshPluginOptions<{}>): MeshPlug
               new Response(resText, {
                 status: response.status,
                 headers: resHeaders,
-              })
+              }),
             );
           }
         }

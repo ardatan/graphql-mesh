@@ -1,10 +1,10 @@
 /* eslint-disable no-new-func */
-import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
-import { process } from '@graphql-mesh/cross-helpers';
 import { useOperationFieldPermissions } from '@envelop/operation-field-permissions';
+import { process } from '@graphql-mesh/cross-helpers';
+import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
 
 export default function useMeshOperationFieldPermissions(
-  options: MeshPluginOptions<YamlConfig.OperationFieldPermissionsConfig>
+  options: MeshPluginOptions<YamlConfig.OperationFieldPermissionsConfig>,
 ): MeshPlugin<any> {
   return {
     onPluginInit({ addPlugin }) {
@@ -22,7 +22,7 @@ export default function useMeshOperationFieldPermissions(
             }
             return allowedFields;
           },
-        })
+        }),
       );
     },
   };

@@ -1,12 +1,7 @@
 import { graphql, GraphQLSchema } from 'graphql';
-
-import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
-import { startServer, stopServer } from './example_api2_server.js';
-import { fetch } from '@whatwg-node/fetch';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import getPort from 'get-port';
-
-let createdSchema: GraphQLSchema;
+import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
+import { exampleApi2 } from './example_api2_server.js';
 
 /**
  * This test suite is used to verify the behavior of the naming convention
@@ -18,23 +13,14 @@ describe('OpenAPI loader: Naming convention', () => {
   /**
    * Set up the schema first and run example API server
    */
-  let port: number;
+  let createdSchema: GraphQLSchema;
   beforeAll(async () => {
-    port = await getPort();
     createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      fetch,
+      fetch: exampleApi2.fetch as any,
       endpoint: 'http://localhost:{context.port}/api',
       source: './fixtures/example_oas2.json',
       cwd: __dirname,
     });
-    await startServer(port);
-  });
-
-  /**
-   * Shut down API server
-   */
-  afterAll(() => {
-    return stopServer();
   });
 
   it('should generate the schema correctly', () => {
@@ -53,7 +39,7 @@ describe('OpenAPI loader: Naming convention', () => {
     expect(gqlTypes).toEqual(2);
   });
 
-  it('Querying the two operations', () => {
+  it('Querying the two operations', async () => {
     const query = /* GraphQL */ `
       query {
         user {
@@ -64,23 +50,19 @@ describe('OpenAPI loader: Naming convention', () => {
         }
       }
     `;
-    return graphql({
+    const result = await graphql({
       schema: createdSchema,
       source: query,
-      contextValue: {
-        port,
-      },
-    }).then((result: any) => {
-      expect(result).toEqual({
-        data: {
-          user: {
-            name: 'Arlene L McMahon',
-          },
-          User: {
-            name: 'William B Ropp',
-          },
+    });
+    expect(result).toEqual({
+      data: {
+        user: {
+          name: 'Arlene L McMahon',
         },
-      });
+        User: {
+          name: 'William B Ropp',
+        },
+      },
     });
   });
 });

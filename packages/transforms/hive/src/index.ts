@@ -1,10 +1,10 @@
-import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
-import { HiveClient, HivePluginOptions, createHive } from '@graphql-hive/client';
-import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { ExecutionResult, GraphQLSchema } from 'graphql';
+import { createHive, HiveClient, HivePluginOptions } from '@graphql-hive/client';
+import { process } from '@graphql-mesh/cross-helpers';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { DelegationContext } from '@graphql-tools/delegate';
 import { ExecutionRequest } from '@graphql-tools/utils';
-import { process } from '@graphql-mesh/cross-helpers';
 
 interface TransformationContext {
   collectUsageCallback: ReturnType<HiveClient['collectUsage']>;
@@ -85,7 +85,7 @@ export default class HiveTransform implements MeshTransform {
   transformRequest(
     request: ExecutionRequest,
     delegationContext: DelegationContext,
-    transformationContext: TransformationContext
+    transformationContext: TransformationContext,
   ) {
     transformationContext.collectUsageCallback = this.hiveClient.collectUsage({
       schema: delegationContext.transformedSchema,
@@ -101,7 +101,7 @@ export default class HiveTransform implements MeshTransform {
   transformResult(
     result: ExecutionResult,
     _delegationContext: DelegationContext,
-    transformationContext: TransformationContext
+    transformationContext: TransformationContext,
   ) {
     transformationContext.collectUsageCallback(result);
     return result;

@@ -1,11 +1,11 @@
 import {
+  GraphQLAbstractType,
+  GraphQLFieldConfig,
   GraphQLNamedType,
   GraphQLSchema,
-  GraphQLFieldConfig,
   isSpecifiedScalarType,
-  GraphQLAbstractType,
 } from 'graphql';
-import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
+import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { MapperKind, mapSchema, renameType } from '@graphql-tools/utils';
 import { ignoreList as defaultIgnoreList } from './shared.js';
 
@@ -66,7 +66,7 @@ export default class BarePrefix implements MeshTransform {
         [MapperKind.COMPOSITE_FIELD]: (
           fieldConfig: GraphQLFieldConfig<any, any>,
           fieldName: string,
-          typeName: string
+          typeName: string,
         ) => {
           return !rootOperations.has(typeName) || // check we're in a root Type
             this.ignoreList.includes(typeName) || // check if type is to be ignored

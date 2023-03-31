@@ -1,12 +1,12 @@
 import {
   GraphQLInputType,
+  GraphQLSchema,
+  isInputObjectType,
   isListType,
   isNonNullType,
-  isInputObjectType,
-  GraphQLSchema,
 } from 'graphql';
-import { asArray, getDirective } from '@graphql-tools/utils';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import { asArray, getDirective } from '@graphql-tools/utils';
 
 export function resolveDataByUnionInputType(
   data: any,

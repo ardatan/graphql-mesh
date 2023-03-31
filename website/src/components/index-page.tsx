@@ -1,6 +1,5 @@
-import { Anchor, Mermaid } from '@theguild/components';
-import Image from 'next/image';
 import { PropsWithChildren, ReactElement } from 'react';
+import Image from 'next/image';
 import {
   FiAlertTriangle,
   FiArrowRightCircle,
@@ -13,7 +12,7 @@ import {
   FiTarget,
   FiUserCheck,
 } from 'react-icons/fi';
-
+import { Anchor, Mermaid } from '@theguild/components';
 import GraphQLLogo from '../../public/assets/graphql-logo.svg';
 import MeshExampleLogo from '../../public/assets/mesh-example.png';
 import OpenSourceLogo from '../../public/assets/open-source.svg';
@@ -49,7 +48,10 @@ function Hero() {
           <ButtonLink className="hidden lg:block" href="/examples">
             Examples
           </ButtonLink>
-          <ButtonLink className="flex flex-row gap-2 items-center" href="https://github.com/urigo/graphql-mesh">
+          <ButtonLink
+            className="flex flex-row gap-2 items-center"
+            href="https://github.com/urigo/graphql-mesh"
+          >
             <FiGithub /> GitHub
           </ButtonLink>
           {/* TODO: this button causes hydration error */}
@@ -111,7 +113,7 @@ function Feature(
     image?: string | React.ReactNode;
     gradient: number;
     flipped?: boolean;
-  }>
+  }>,
 ) {
   const { title, description, children, image, gradient, flipped } = props;
   const [start, end] = pickGradient(gradient);
@@ -124,7 +126,11 @@ function Feature(
             flipped ? 'md:flex-row-reverse' : 'md:flex-row'
           }`}
         >
-          <div className={`flex flex-col gap-4 w-full md:w-2/5 lg:w-1/3 flex-shrink-0 ${image ? '' : 'items-center'}`}>
+          <div
+            className={`flex flex-col gap-4 w-full md:w-2/5 lg:w-1/3 flex-shrink-0 ${
+              image ? '' : 'items-center'
+            }`}
+          >
             <h2
               className={`font-semibold text-5xl bg-clip-text text-transparent dark:text-transparent leading-normal ${
                 image ? '' : 'text-center'
@@ -176,7 +182,10 @@ function FeatureHighlights(props: {
           <div className={Highlight.Root}>
             {icon && <div className={Highlight.Icon}>{icon}</div>}
             <div className={Highlight.Content}>
-              <h3 className={Highlight.Title + (icon ? '' : ' text-lg')} style={textColor ? { color: textColor } : {}}>
+              <h3
+                className={Highlight.Title + (icon ? '' : ' text-lg')}
+                style={textColor ? { color: textColor } : {}}
+              >
                 {title}
               </h3>
               <p className={Highlight.Description + (icon ? '' : ' text-sm')}>{description}</p>
@@ -261,7 +270,8 @@ export function IndexPage(): ReactElement {
         description={
           <div className="space-y-2">
             <p>
-              Mesh is a framework that helps shape and build an executable GraphQL schema from multiple data sources.
+              Mesh is a framework that helps shape and build an executable GraphQL schema from
+              multiple data sources.
             </p>
           </div>
         }
@@ -330,7 +340,9 @@ export function IndexPage(): ReactElement {
             <div className="p-2 sm:w-1/2 md:w-1/3 w-full" key={i}>
               <div className="bg-gray-100 dark:bg-gray-800 rounded flex p-4 h-full items-center">
                 <FiCheckCircle className="text-indigo-500 w-6 h-6 flex-shrink-0 mr-4" />
-                <span className="title-font font-medium text-black dark:text-white">{datasource}</span>
+                <span className="title-font font-medium text-black dark:text-white">
+                  {datasource}
+                </span>
               </div>
             </div>
           ))}
@@ -407,7 +419,9 @@ export function IndexPage(): ReactElement {
             >
               Manipulate data
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400 leading-7">Easily transform your schema</p>
+            <p className="text-lg text-gray-600 dark:text-gray-400 leading-7">
+              Easily transform your schema
+            </p>
           </div>
           <div className="max-w-screen-lg px-6 box-border mx-auto grid grid-cols-2 gap-12">
             <FeatureHighlights
@@ -459,7 +473,8 @@ export function IndexPage(): ReactElement {
                   },
                   {
                     title: 'Enhanced Security',
-                    description: 'Authentication (Basic/JWT/Auth0/...), authorization, rate-limit and more.',
+                    description:
+                      'Authentication (Basic/JWT/Auth0/...), authorization, rate-limit and more.',
                     link: '/docs/guides/auth0',
                     icon: <FiUserCheck size={36} />,
                   },
@@ -481,7 +496,9 @@ export function IndexPage(): ReactElement {
         description={
           <div className="space-y-2">
             <p>
-              Thanks to <a href="Fetch API"></a> so it can run on any <i>JavaScript</i> runtime.
+              Thanks to{' '}
+              <a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API">Fetch API</a>, it
+              can run on any <i>JavaScript</i> runtime.
             </p>
           </div>
         }
@@ -492,8 +509,13 @@ export function IndexPage(): ReactElement {
             <div className="p-2 sm:w-1/2 md:w-1/3 w-full" key={i}>
               <Anchor href={env.href}>
                 <div className="bg-gray-100 dark:bg-gray-800 rounded flex p-4 h-full items-center gap-2">
-                  <FiFastForward className="w-6 h-6 flex-shrink-0 mr-4" style={{ stroke: pickGradient(0)[0] }} />
-                  <span className="title-font font-medium text-black dark:text-white">{env.name}</span>
+                  <FiFastForward
+                    className="w-6 h-6 flex-shrink-0 mr-4"
+                    style={{ stroke: pickGradient(0)[0] }}
+                  />
+                  <span className="title-font font-medium text-black dark:text-white">
+                    {env.name}
+                  </span>
                 </div>
               </Anchor>
             </div>

@@ -1,4 +1,10 @@
-import { PackageCmd, Callout } from '@theguild/components'
+---
+description:
+  Install GraphQL Mesh and its various packages, including Mesh CLI, handlers, and transforms, to
+  easily configure REST API sources and naming conventions. Learn more here.
+---
+
+import { Callout, PackageCmd } from '@theguild/components'
 
 # Installation
 
@@ -21,8 +27,11 @@ As stated previously, Mesh comes in many packages.
 Each _Source Handler_ and _Transforms_ are shipped as dedicated packages, for example:
 
 - The _Handler_ to configure a REST API Source requires the `@graphql-mesh/openapi` package
-- The naming convention _Transforms_ requires the `@graphql-mesh/transform-naming-convention` package
+- The naming convention _Transforms_ requires the `@graphql-mesh/transform-naming-convention`
+  package
 
-Mesh will display a helpful error message when using a _Handler_ or _Transforms_ that is not properly installed.
+Mesh will display a helpful error message when using a _Handler_ or _Transforms_ that is not
+properly installed.
 
-The full list of [Source Handler packages can be found here](/docs/handlers/handlers-introduction), same for [Transforms packages](/docs/transforms/transforms-introduction).
+The full list of [Source Handler packages can be found here](/docs/handlers/handlers-introduction),
+same for [Transforms packages](/docs/transforms/transforms-introduction).

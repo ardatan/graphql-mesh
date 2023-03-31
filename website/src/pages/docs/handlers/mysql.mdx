@@ -1,3 +1,9 @@
+---
+description:
+  Generate GraphQL schema from MySQL database with GraphQL Mesh. Learn how to use the MySQL handler
+  and its powerful 'where' field. Install now with PackageCmd.
+---
+
 import { PackageCmd } from '@theguild/components'
 
 # MySQL
@@ -32,12 +38,21 @@ sources:
 
 ### How does `where` work?
 
-Every CRUD operation has `where` field in its input, so you can see all the columns of a table. `where` works like below;
+Every CRUD operation has `where` field in its input, so you can see all the columns of a table.
+`where` works like below;
 
 ```graphql
 {
   getProduct(
-    where: { id: 5, year: ">2010", price: "100..200", level: "<=3", sn: "*str?", label: "str", code: "(1,2,4,10,11)" }
+    where: {
+      id: 5
+      year: ">2010"
+      price: "100..200"
+      level: "<=3"
+      sn: "*str?"
+      label: "str"
+      code: "(1,2,4,10,11)"
+    }
   ) {
     id
     name

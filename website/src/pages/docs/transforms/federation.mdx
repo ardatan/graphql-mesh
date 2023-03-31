@@ -1,8 +1,17 @@
-import { PackageCmd, Callout } from '@theguild/components'
+---
+description:
+  Conform to the federation specification with GraphQL Mesh federation transform. Reuse source code
+  for compliance and use complex business logic with code file resolvers.
+---
+
+import { Callout, PackageCmd } from '@theguild/components'
 
 # Apollo Federation Transform
 
-The `federation` transform allows the resolvers and directives to conform to the federation specification. Much of the federation source code could be reused, ensuring it is compliant with the specification. This transform uses [`graphql-transform-federation`](https://github.com/0xR/graphql-transform-federation) package.
+The `federation` transform allows the resolvers and directives to conform to the federation
+specification. Much of the federation source code could be reused, ensuring it is compliant with the
+specification. This transform uses
+[`graphql-transform-federation`](https://github.com/0xR/graphql-transform-federation) package.
 
 <PackageCmd packages={['@graphql-mesh/transform-federation']} />
 

@@ -1,10 +1,18 @@
+---
+description:
+  Load remote or local OpenAPI and Swagger schemas with GraphQL Mesh OpenAPI/ Swagger handler.
+  Migrate from older versions, and override default Query/Mutation operations classification. Accept
+  cookies, headers, and context values with advanced cookie handling.
+---
+
 import { PackageCmd } from '@theguild/components'
 
 # OpenAPI / Swagger
 
 ![image](https://user-images.githubusercontent.com/20847995/79218686-7ba7b900-7e59-11ea-8a5e-676a83b9f86e.png)
 
-This handler allows you to load remote or local [OpenAPI (2/3) and Swagger](https://swagger.io) schemas.
+This handler allows you to load remote or local [OpenAPI (2/3) and Swagger](https://swagger.io)
+schemas.
 
 For migrating from version `< 0.32` see [migration guide](/docs/migration/openapi-0.31-0.32)
 
@@ -24,13 +32,16 @@ sources:
         source: ./my-schema.json
 ```
 
-Note that this handler is based on the [JSON Schema handler](/docs/handlers/json-schema) - so it's configurations will apply here as well.
+Note that this handler is based on the [JSON Schema handler](/docs/handlers/json-schema) - so it's
+configurations will apply here as well.
 
 ## Overriding default Query/Mutation operations classification
 
-By default, all GET operations will be placed into Query fields and all other operations into Mutation fields. with this option, you can manually override this process.
-To switch between Query and Mutation operations, and vice versa, you need to define a rule per override, consisting of the OAS title, the path of the operation, the method of the operation and finally, the destination type (e.g., Query or Mutation).
-See the example below:
+By default, all GET operations will be placed into Query fields and all other operations into
+Mutation fields. with this option, you can manually override this process. To switch between Query
+and Mutation operations, and vice versa, you need to define a rule per override, consisting of the
+OAS title, the path of the operation, the method of the operation and finally, the destination type
+(e.g., Query or Mutation). See the example below:
 
 ```yaml filename=".meshrc.yaml"
 sources:
@@ -51,11 +62,15 @@ We use `operationId` for the names, and aim to keep it as close as possible to o
 
 ### Type naming
 
-We adjust `operationId` only when necessary according to the GraphQL spec: - Chars ` ` (white space), `.`, `/`, `:` and `-` are replaced with `_` (underscore) - Other chars which are not latin/digits are replaced with their char codes - If first char of the name is a digit, we prefix it with `_` (GraphQL spec doesn’t allow that)
+We adjust `operationId` only when necessary according to the GraphQL spec: - Chars ` ` (white
+space), `.`, `/`, `:` and `-` are replaced with `_` (underscore) - Other chars which are not
+latin/digits are replaced with their char codes - If first char of the name is a digit, we prefix it
+with `_` (GraphQL spec doesn’t allow that)
 
 ### Unnamed types
 
-We use path-based naming. So names could be structured like, for example, `query_getUsers_items_firstName`
+We use path-based naming. So names could be structured like, for example,
+`query_getUsers_items_firstName`
 
 ## Headers
 
@@ -63,9 +78,11 @@ We use path-based naming. So names could be structured like, for example, `query
 
 ## Advanced cookies handling
 
-When building a web application, cookies are often used for authentication for security reasons. On the other end, mobile applications tend to use an HTTP header.
+When building a web application, cookies are often used for authentication for security reasons. On
+the other end, mobile applications tend to use an HTTP header.
 
-This section shows how to configure GraphQL Mesh to accept either and use GraphQL Mesh to set/unset cookies on the login & logout mutations.
+This section shows how to configure GraphQL Mesh to accept either and use GraphQL Mesh to set/unset
+cookies on the login & logout mutations.
 
 ### Accepting one of the cookies, header, or context value
 
@@ -75,7 +92,8 @@ We want to accept one of the following:
 - an `Authorization` header
 - an authorization value available in context (e.g. set by a GraphQL auth plugin)
 
-And transmit it to the Rest API as an `Authorization` header. GraphQL Mesh does not allow dynamic selection in the `meshrc.yaml` file, but that's fine! We can use a bit of trickery.
+And transmit it to the Rest API as an `Authorization` header. GraphQL Mesh does not allow dynamic
+selection in the `meshrc.yaml` file, but that's fine! We can use a bit of trickery.
 
 ```yaml filename=".meshrc.yaml"
 sources:
@@ -92,19 +110,22 @@ sources:
 customFetch: ./src/custom-fetch.ts
 ```
 
-Here in the `meshrc.yaml` configuration we store the cookie in `Authorization-Cookie`, and the header in `Authorization-Header`. To introduce the logic needed to generate the proper `Authorization` header for the Rest API, we need to implement a `customFetch`. It will replace the `fetch` used by GraphQL Mesh to call the Rest API.
+Here in the `meshrc.yaml` configuration we store the cookie in `Authorization-Cookie`, and the
+header in `Authorization-Header`. To introduce the logic needed to generate the proper
+`Authorization` header for the Rest API, we need to implement a `customFetch`. It will replace the
+`fetch` used by GraphQL Mesh to call the Rest API.
 
 ```ts filename="custom-fetch.ts"
-import { MeshContext } from '@graphql-mesh/types';
+import { MeshContext } from '@graphql-mesh/runtime';
 import { fetch } from '@whatwg-node/fetch';
 
 export default(url: string, init: RequestInit, context: MeshContext) {
   // Set Authorization header dynamically to context value, or input cookie, or input header
-  args.headers['authorization'] =
-    context.authorization || args.headers['authorization-cookie'] || args.headers['authorization-header']
+  init.headers['authorization'] =
+    context.authorization || init.headers['authorization-cookie'] || init.headers['authorization-header']
   // Clean up headers forwarded to the Rest API
-  delete args.headers['authorization-cookie']
-  delete args.headers['authorization-header']
+  delete init.headers['authorization-cookie']
+  delete init.headers['authorization-header']
   // Execute the fetch with the new headers
   return fetch(url, args)
 }
@@ -112,9 +133,12 @@ export default(url: string, init: RequestInit, context: MeshContext) {
 
 ### Setting / Unsetting the cookie
 
-Of course, using GraphQL Mesh as a Gateway for both the mobile application and web application is excellent. Still, there's one thing missing: the setting of the cookie for the web application.
+Of course, using GraphQL Mesh as a Gateway for both the mobile application and web application is
+excellent. Still, there's one thing missing: the setting of the cookie for the web application.
 
-We need to access the HTTP response that is sent back to the client. Luckily, we can do so in `additionalResolvers`. So we need to create two new resolvers, one for login and one for logout, and manage the cookie in their code.
+We need to access the HTTP response that is sent back to the client. Luckily, we can do so in
+`additionalResolvers`. So we need to create two new resolvers, one for login and one for logout, and
+manage the cookie in their code.
 
 The first step is to edit the `meshrc.yaml` file, add this at the end:
 
@@ -148,13 +172,19 @@ const resolvers = {
       })
       // if `result` contains a JWT token, you could instead decode it and set `Expires`
       // to the JWT token's expiration date
-      context.res.set('Set-Cookie', `accessToken=${result}; Path=/; Secure; HttpOnly; Max-Age=${oneYear};`)
+      context.res.set(
+        'Set-Cookie',
+        `accessToken=${result}; Path=/; Secure; HttpOnly; Max-Age=${oneYear};`
+      )
 
       return result
     },
     logout(root, args, { res }) {
       // use old date to unset cookie
-      res.set('Set-Cookie', `accessToken=logout; Path=/; Secure; HttpOnly; Expires=Thu, 1 Jan 1970 00:00:00 GMT;`)
+      res.set(
+        'Set-Cookie',
+        `accessToken=logout; Path=/; Secure; HttpOnly; Expires=Thu, 1 Jan 1970 00:00:00 GMT;`
+      )
 
       return true
     }
@@ -166,15 +196,20 @@ module.exports = { resolvers }
 
 ## Callbacks as Subscriptions
 
-OpenAPI handler is able to process OAS Callbacks as GraphQL Subscriptions. It uses your PubSub implementation to consume the data. But you have to define webhooks for individual callbacks to make it work.
+OpenAPI handler is able to process OAS Callbacks as GraphQL Subscriptions. It uses your PubSub
+implementation to consume the data. But you have to define webhooks for individual callbacks to make
+it work.
 
-See [Subscriptions & Webhooks](../subscriptions-webhooks.md) to create an endpoint to consume a webhook. You should use the callback url as `pubSubTopic` in the webhook configuration.
+See [Subscriptions & Webhooks](../subscriptions-webhooks.md) to create an endpoint to consume a
+webhook. You should use the callback url as `pubSubTopic` in the webhook configuration.
 
-Also see our example; [Subscriptions Example with Webhooks](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/openapi-subscriptions).
+Also see our example;
+[Subscriptions Example with Webhooks](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/openapi-subscriptions).
 
 ## Loading the sources from a CDN like GraphQL Hive or schema registry
 
-GraphQL Mesh supports loading the sources from a CDN or schema registry. You can use the `source` property to load the schema from a CDN or schema registry.
+GraphQL Mesh supports loading the sources from a CDN or schema registry. You can use the `source`
+property to load the schema from a CDN or schema registry.
 
 ```yaml filename=".meshrc.yaml"
 sources:
@@ -183,7 +218,7 @@ sources:
       openapi:
         source: https://cdn.graphql-hive.com/asce7c12-753d-hive-bee-d7f2c803e232/sdl?ext=.graphql
         schemaHeaders:
-          X-Hive-CDN-Key: "aabTxbEyC78NvSPQNO+qLrrRnBvODJJ8k4sL/2EtIwc="
+          X-Hive-CDN-Key: 'aabTxbEyC78NvSPQNO+qLrrRnBvODJJ8k4sL/2EtIwc='
 ```
 
 ## Examples

@@ -1,7 +1,10 @@
-import { Plugin } from '@envelop/core';
-import { getInterpolatedStringFactory, ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
-import { Logger, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 import { getArgumentValues, getOperationAST, TypeInfo, visit, visitWithTypeInfo } from 'graphql';
+import { Plugin } from '@envelop/core';
+import {
+  getInterpolatedStringFactory,
+  ResolverDataBasedFactory,
+} from '@graphql-mesh/string-interpolation';
+import { Logger, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 
 interface InvalidateByResultParams {
   pubsub: MeshPubSub;
@@ -14,7 +17,7 @@ export function useInvalidateByResult(params: InvalidateByResultParams): Plugin 
   params.invalidations.forEach(liveQueryInvalidation => {
     const rawInvalidationPaths = liveQueryInvalidation.invalidate;
     const factories = rawInvalidationPaths.map(rawInvalidationPath =>
-      getInterpolatedStringFactory(rawInvalidationPath)
+      getInterpolatedStringFactory(rawInvalidationPath),
     );
     liveQueryInvalidationFactoryMap.set(liveQueryInvalidation.field, factories);
   });
@@ -22,7 +25,8 @@ export function useInvalidateByResult(params: InvalidateByResultParams): Plugin 
     onExecute() {
       return {
         onExecuteDone({ args: executionArgs, result }) {
-          const { schema, document, operationName, variableValues, rootValue, contextValue } = executionArgs;
+          const { schema, document, operationName, variableValues, rootValue, contextValue } =
+            executionArgs;
           const operationAST = getOperationAST(document, operationName);
           if (!operationAST) {
             throw new Error(`Operation couldn't be found`);
@@ -45,12 +49,12 @@ export function useInvalidateByResult(params: InvalidateByResultParams): Plugin 
                       context: contextValue,
                       env: process.env,
                       result,
-                    })
+                    }),
                   );
                   params.pubsub.publish('live-query:invalidate', invalidationPaths);
                 }
               },
-            })
+            }),
           );
         },
       };

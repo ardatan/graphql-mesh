@@ -1,7 +1,8 @@
-import { Interpolator } from './interpolator.js';
 import dayjs from 'dayjs';
+import { Interpolator } from './interpolator.js';
 
-const hashCode = (s: string) => s.split('').reduce((a, b) => ((a << 5) - a + b.charCodeAt(0)) | 0, 0);
+const hashCode = (s: string) =>
+  s.split('').reduce((a, b) => ((a << 5) - a + b.charCodeAt(0)) | 0, 0);
 
 export function hashObject(value: any): string {
   return hashCode(JSON.stringify(value)).toString();
@@ -17,7 +18,9 @@ stringInterpolator.addAlias('typeName', 'info.parentType.name');
 stringInterpolator.addAlias('type', 'info.parentType.name');
 stringInterpolator.addAlias('parentType', 'info.parentType.name');
 stringInterpolator.addAlias('fieldName', 'info.fieldName');
-stringInterpolator.registerModifier('date', (formatStr: string) => dayjs(new Date()).format(formatStr));
+stringInterpolator.registerModifier('date', (formatStr: string) =>
+  dayjs(new Date()).format(formatStr),
+);
 stringInterpolator.registerModifier('hash', (value: any) => hashObject(value));
 stringInterpolator.registerModifier('base64', (value: any) => {
   if (globalThis.Buffer.from) {

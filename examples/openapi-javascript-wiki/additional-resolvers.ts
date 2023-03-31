@@ -27,7 +27,7 @@ export const resolvers: Resolvers = {
                 }
               }
             `,
-          }
+          },
         );
 
       if (result == null || !('items' in result)) {

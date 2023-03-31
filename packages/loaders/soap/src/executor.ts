@@ -1,3 +1,4 @@
+import { XMLBuilder as JSONToXMLConverter, XMLParser } from 'fast-xml-parser';
 import {
   execute,
   GraphQLFieldResolver,
@@ -7,10 +8,9 @@ import {
   isListType,
   isNonNullType,
 } from 'graphql';
-import { parse as parseXML, j2xParser as JSONToXMLConverter } from 'fast-xml-parser';
 import { MeshFetch } from '@graphql-mesh/types';
-import { PARSE_XML_OPTIONS, SoapAnnotations } from './utils.js';
 import { Executor, getDirective, getRootTypes } from '@graphql-tools/utils';
+import { PARSE_XML_OPTIONS, SoapAnnotations } from './utils.js';
 
 function isOriginallyListType(type: GraphQLOutputType): boolean {
   if (isNonNullType(type)) {
@@ -79,9 +79,10 @@ function createRootValueMethod(
 ): RootValueMethod {
   const jsonToXMLConverter = new JSONToXMLConverter({
     attributeNamePrefix: '',
-    attrNodeName: 'attributes',
+    attributesGroupName: 'attributes',
     textNodeName: 'innerText',
   });
+  const xmlToJSONConverter = new XMLParser(PARSE_XML_OPTIONS);
 
   return async function rootValueMethod(args: any, context: any, info: GraphQLResolveInfo) {
     const requestJson = {
@@ -97,7 +98,7 @@ function createRootValueMethod(
         },
       },
     };
-    const requestXML = jsonToXMLConverter.parse(requestJson);
+    const requestXML = jsonToXMLConverter.build(requestJson);
     const response = await fetchFn(
       soapAnnotations.endpoint,
       {
@@ -111,7 +112,7 @@ function createRootValueMethod(
       info,
     );
     const responseXML = await response.text();
-    const responseJSON = parseXML(responseXML, PARSE_XML_OPTIONS);
+    const responseJSON = xmlToJSONConverter.parse(responseXML, PARSE_XML_OPTIONS);
     return normalizeResult(responseJSON.Envelope[0].Body[0][soapAnnotations.elementName]);
   };
 }

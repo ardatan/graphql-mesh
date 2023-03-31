@@ -1,9 +1,16 @@
+---
+description:
+  Learn how to track and analyze GraphQL execution metrics using @graphql-mesh/plugin-prometheus.
+  Expose and collect data to optimize your gateway.
+---
+
 import { PackageCmd } from '@theguild/components'
 
 # Prometheus
 
-Prometheus is a platform for scraping metrics from services and utilities.
-You can use `@graphql-mesh/plugin-prometheus` plugin to expose and collect metrics from all phases of your GraphQL execution including internal query planning and outgoing HTTP requests.
+Prometheus is a platform for scraping metrics from services and utilities. You can use
+`@graphql-mesh/plugin-prometheus` plugin to expose and collect metrics from all phases of your
+GraphQL execution including internal query planning and outgoing HTTP requests.
 
 This plugin tracks the complete gateway execution flow and exposes the following metrics:
 
@@ -42,6 +49,25 @@ plugins:
     execute: true
     errors: true
     resolvers: true
+
+    # reports metrics for the delegation to the individual sources
+    delegation: true
+
+    # reports metrics for the outgoing HTTP requests
+    fetch: true
+    # Adds the request headers to the metrics
+    fetchRequestHeaders: true
+    # Adds the response headers to the metrics
+    fetchResponseHeaders: true
+
+    # reports metrics for the incoming HTTP requests (this sets a custom name for http)
+    # If you pass a string instead of boolean, it will be used as the name of the metric
+    http: my-http-duration-metric
+    # Adds the request headers to the metrics
+    httpRequestHeaders: true
+    # Adds the response headers to the metrics
+    httpResponseHeaders: true
+
     # reports metrics also for these resolvers, by default all fields are reported
     resolversWhiteList:
       - Mutation.*
@@ -51,7 +77,8 @@ plugins:
     endpoint: /metrics
 ```
 
-> Note: Tracing resolvers using `resolvers: true` might have a performance impact on your GraphQL runtime. Please consider to test it locally first and then decide if it's needed.
+> Note: Tracing resolvers using `resolvers: true` might have a performance impact on your GraphQL
+> runtime. Please consider to test it locally first and then decide if it's needed.
 
 ## Custom Registry
 

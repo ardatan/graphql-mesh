@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Resolvers } from '../.mesh';
+
 export const resolvers: Resolvers = {
   Query: {
     stat: async (root, args, context, info) => {

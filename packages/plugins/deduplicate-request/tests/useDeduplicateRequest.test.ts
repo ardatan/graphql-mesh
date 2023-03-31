@@ -1,38 +1,29 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
+import { Response } from '@whatwg-node/fetch';
 import { wrapFetchWithPlugins } from '../../../runtime/src/get-mesh.js';
 import useDeduplicateRequest from '../src/index.js';
-// eslint-disable-next-line import/no-nodejs-modules
-import http from 'http';
-import { fetch as originalFetch } from '@whatwg-node/fetch';
 
 describe('useDeduplicateRequest', () => {
-  let server: http.Server;
-
   let reqCount: number;
 
-  beforeAll(done => {
-    server = http.createServer((req, res) => {
-      reqCount++;
-      res.writeHead(200, {
-        'Content-Type': 'application/json',
-      });
-      res.end(
-        JSON.stringify({
-          data: {
-            hello: 'world',
-          },
-        })
-      );
-    });
-    server.listen(9856, done);
-  });
+  async function originalFetch() {
+    reqCount++;
+    return new Response(
+      JSON.stringify({
+        data: {
+          hello: 'world',
+        },
+      }),
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+  }
 
   beforeEach(() => {
     reqCount = 0;
-  });
-
-  afterAll(() => {
-    server.close();
   });
 
   it('should deduplicate the same GET requests in the same context sequentially', async () => {
@@ -53,7 +44,7 @@ describe('useDeduplicateRequest', () => {
           Accept: 'application/json',
         },
       },
-      context
+      context,
     );
     await response.text();
     const response2 = await fetchFn(
@@ -63,7 +54,7 @@ describe('useDeduplicateRequest', () => {
           Accept: 'application/json',
         },
       },
-      context
+      context,
     );
     await response2.text();
     expect(reqCount).toBe(1);
@@ -87,7 +78,7 @@ describe('useDeduplicateRequest', () => {
             Accept: 'application/json',
           },
         },
-        context
+        context,
       ),
       fetchFn(
         url,
@@ -96,7 +87,7 @@ describe('useDeduplicateRequest', () => {
             Accept: 'application/json',
           },
         },
-        context
+        context,
       ),
     ]);
     await Promise.all([response.text(), response2.text()]);
@@ -120,7 +111,7 @@ describe('useDeduplicateRequest', () => {
           Accept: 'application/json',
         },
       },
-      context
+      context,
     );
     await response.text();
     const response2 = await fetchFn(
@@ -130,7 +121,7 @@ describe('useDeduplicateRequest', () => {
           Accept: 'application/json',
         },
       },
-      context
+      context,
     );
     await response2.text();
     expect(reqCount).toBe(2);
@@ -154,7 +145,7 @@ describe('useDeduplicateRequest', () => {
             Accept: 'application/json',
           },
         },
-        context
+        context,
       ),
       fetchFn(
         url + '2',
@@ -163,7 +154,7 @@ describe('useDeduplicateRequest', () => {
             Accept: 'application/json',
           },
         },
-        context
+        context,
       ),
     ]);
     await Promise.all([response.text(), response2.text()]);
@@ -188,7 +179,7 @@ describe('useDeduplicateRequest', () => {
           Accept: 'application/json',
         },
       },
-      context
+      context,
     );
     await response.text();
     const response2 = await fetchFn(
@@ -198,7 +189,7 @@ describe('useDeduplicateRequest', () => {
           Accept: 'application/json',
         },
       },
-      context2
+      context2,
     );
     await response2.text();
     expect(reqCount).toBe(2);
@@ -223,7 +214,7 @@ describe('useDeduplicateRequest', () => {
             Accept: 'application/json',
           },
         },
-        context
+        context,
       ),
       fetchFn(
         url,
@@ -232,7 +223,7 @@ describe('useDeduplicateRequest', () => {
             Accept: 'application/json',
           },
         },
-        context2
+        context2,
       ),
     ]);
     await Promise.all([response.text(), response2.text()]);

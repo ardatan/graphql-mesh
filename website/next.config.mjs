@@ -8,22 +8,25 @@ export default withGuildDocs({
   redirects: () =>
     Object.entries({
       '/api': '/docs',
-      '/api/enums/store_src.PredefinedProxyOptionsName': '/docs/getting-started/customize-mesh-server',
+      '/api/enums/store_src.PredefinedProxyOptionsName':
+        '/docs/getting-started/customize-mesh-server',
       '/docs/api/classes/:path*': '/docs',
       '/docs/api/interfaces/:path*': '/docs',
       '/docs/api/modules/:path*': '/docs',
       '/docs/cache': '/docs/cache/cache-introduction',
       '/docs/getting-started': '/docs/getting-started/overview',
       '/docs/getting-started/basic-example': '/docs/getting-started/your-first-mesh-gateway',
-      '/docs/getting-started/combine-many-sources': '/docs/getting-started/combine-multiple-sources',
+      '/docs/getting-started/combine-many-sources':
+        '/docs/getting-started/combine-multiple-sources',
       '/docs/getting-started/introduction': '/docs/getting-started/overview',
       '/docs/getting-started/mesh-transforms': '/docs/transforms/transforms-introduction',
       '/docs/getting-started/multiple-apis': '/docs/getting-started/combine-multiple-sources',
       '/docs/guides': '/docs/guides/extending-unified-schema',
       '/docs/guides/combine-many-sources': '/docs/getting-started/combine-multiple-sources',
       '/docs/guides/error-handling': '/docs/guides/error-masking',
+      '/docs/guides/extending-unified-schema': '/docs/guides/extending-unified-schema',
       '/docs/guides/live-queries': '/docs/plugins/live-queries',
-      '/docs/guildes/extending-unified-schema': '/docs/guides/extending-unified-schema',
+      '/docs/guides/performances-best-practices': '/docs/guides/batching',
       '/docs/handlers': '/docs/handlers/handlers-introduction',
       '/docs/handlers/available-handlers': '/docs/handlers/handlers-introduction',
       '/docs/introduction': '/docs',

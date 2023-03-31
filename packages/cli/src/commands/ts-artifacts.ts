@@ -1,19 +1,19 @@
-import { Logger, Maybe, RawSourceOutput, YamlConfig } from '@graphql-mesh/types';
-import * as tsBasePlugin from '@graphql-codegen/typescript';
-import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
-import { GraphQLSchema, GraphQLObjectType, NamedTypeNode, Kind } from 'graphql';
-import { codegen } from '@graphql-codegen/core';
-import { pascalCase } from 'pascal-case';
-import { printSchemaWithDirectives, Source } from '@graphql-tools/utils';
-import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
-import * as typescriptGenericSdk from '@graphql-codegen/typescript-generic-sdk';
-import * as typedDocumentNodePlugin from '@graphql-codegen/typed-document-node';
-import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
-import ts from 'typescript';
-import { pathExists, writeFile, writeJSON } from '@graphql-mesh/utils';
-import { generateOperations } from './generate-operations.js';
-import { GraphQLMeshCLIParams } from '..';
+import { GraphQLObjectType, GraphQLSchema, Kind, NamedTypeNode } from 'graphql';
 import JSON5 from 'json5';
+import { pascalCase } from 'pascal-case';
+import ts from 'typescript';
+import { codegen } from '@graphql-codegen/core';
+import * as typedDocumentNodePlugin from '@graphql-codegen/typed-document-node';
+import * as tsBasePlugin from '@graphql-codegen/typescript';
+import * as typescriptGenericSdk from '@graphql-codegen/typescript-generic-sdk';
+import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
+import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
+import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
+import { Logger, Maybe, RawSourceOutput, YamlConfig } from '@graphql-mesh/types';
+import { pathExists, writeFile, writeJSON } from '@graphql-mesh/utils';
+import { printSchemaWithDirectives, Source } from '@graphql-tools/utils';
+import { GraphQLMeshCLIParams } from '..';
+import { generateOperations } from './generate-operations.js';
 
 const unifiedContextIdentifier = 'MeshContext';
 
@@ -291,7 +291,7 @@ ${BASEDIR_ASSIGNMENT_COMMENT}
 const importFn: ImportFn = <T>(moduleId: string) => {
   const relativeModuleId = (pathModule.isAbsolute(moduleId) ? pathModule.relative(baseDir, moduleId) : moduleId).split('\\\\').join('/').replace(baseDir + '/', '');
   switch(relativeModuleId) {${[...importedModulesSet]
-    .map(importedModuleName => {
+    .map((importedModuleName, importedModuleIndex) => {
       let moduleMapProp = importedModuleName;
       let importPath = importedModuleName;
       if (importPath.startsWith('.')) {
@@ -304,9 +304,11 @@ const importFn: ImportFn = <T>(moduleId: string) => {
           .split('\\')
           .join('/')}`;
       }
+      const importIdentifier = `importedModule$${importedModuleIndex}`;
+      importCodes.add(`import * as ${importIdentifier} from ${JSON.stringify(importPath)};`);
       return `
     case ${JSON.stringify(moduleMapProp)}:
-      return import(${JSON.stringify(importPath)}) as T;
+      return Promise.resolve(${importIdentifier}) as T;
     `;
     })
     .join('')}
@@ -455,22 +457,68 @@ const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url
       },
     });
 
-  const tsConfigPath = pathModule.join(baseDir, 'tsconfig.json');
+  function setTsConfigDefault() {
+    jobs.push(cjsJob);
+    if (fileType !== 'ts') {
+      jobs.push(packageJsonJob('commonjs'));
+    }
+  }
+  const rootDir = pathModule.resolve('./');
+  const tsConfigPath = pathModule.join(rootDir, 'tsconfig.json');
+  const packageJsonPath = pathModule.join(rootDir, 'package.json');
   if (await pathExists(tsConfigPath)) {
+    // case tsconfig exists
     const tsConfigStr = await fs.promises.readFile(tsConfigPath, 'utf-8');
     const tsConfig = JSON5.parse(tsConfigStr);
     if (tsConfig?.compilerOptions?.module?.toLowerCase()?.startsWith('es')) {
+      // case tsconfig set to esm
+      jobs.push(esmJob('js'));
+      if (fileType !== 'ts') {
+        jobs.push(packageJsonJob('module'));
+      }
+    } else if (
+      tsConfig?.compilerOptions?.module?.toLowerCase()?.startsWith('node') &&
+      (await pathExists(packageJsonPath))
+    ) {
+      // case tsconfig set to node* and package.json exists
+      const packageJsonStr = await fs.promises.readFile(packageJsonPath, 'utf-8');
+      const packageJson = JSON5.parse(packageJsonStr);
+      if (packageJson?.type === 'module') {
+        // case package.json set to esm
+        jobs.push(esmJob('js'));
+        if (fileType !== 'ts') {
+          jobs.push(packageJsonJob('module'));
+        }
+      } else {
+        // case package.json set to cjs or not set
+        setTsConfigDefault();
+      }
+    } else {
+      // case tsconfig set to cjs or set to node* with no package.json
+      setTsConfigDefault();
+    }
+  } else if (await pathExists(packageJsonPath)) {
+    // case package.json exists
+    const packageJsonStr = await fs.promises.readFile(packageJsonPath, 'utf-8');
+    const packageJson = JSON5.parse(packageJsonStr);
+    if (packageJson?.type === 'module') {
+      // case package.json set to esm
       jobs.push(esmJob('js'));
       if (fileType !== 'ts') {
         jobs.push(packageJsonJob('module'));
       }
     } else {
-      jobs.push(cjsJob);
-      if (fileType !== 'ts') {
+      // case package.json set to cjs or not set
+      jobs.push(esmJob('mjs'));
+      if (fileType === 'js') {
+        jobs.push(packageJsonJob('module'));
+      } else {
+        jobs.push(cjsJob);
         jobs.push(packageJsonJob('commonjs'));
       }
     }
   } else {
+    // case no tsconfig and no package.json
     jobs.push(esmJob('mjs'));
     if (fileType === 'js') {
       jobs.push(packageJsonJob('module'));

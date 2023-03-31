@@ -4,6 +4,11 @@ extend type Transform {
 
 type FederationTransform @md {
   types: [FederationTransformType!]
+  """
+  Version of the federation spec
+  Default: v2.0
+  """
+  version: String
 }
 
 type FederationTransformType {

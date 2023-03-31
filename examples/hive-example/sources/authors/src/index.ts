@@ -1,7 +1,5 @@
-import { createServerAdapter } from '@whatwg-node/server';
-import { Router } from 'itty-router';
-import { Response } from '@whatwg-node/fetch';
 import { createServer } from 'http';
+import { createRouter, Response } from '@whatwg-node/router';
 
 interface Author {
   id: string;
@@ -23,7 +21,7 @@ const authors: Author[] = [
 ];
 
 async function main() {
-  const app = createServerAdapter(Router());
+  const app = createRouter();
 
   app.get(
     '/authors',

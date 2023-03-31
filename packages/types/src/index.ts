@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-misused-new */
-import { IResolvers, Executor } from '@graphql-tools/utils';
-import { GraphQLSchema, GraphQLResolveInfo, DocumentNode, SelectionSetNode } from 'graphql';
-import * as YamlConfig from './config.js';
+import { DocumentNode, GraphQLResolveInfo, GraphQLSchema, SelectionSetNode } from 'graphql';
+import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
+import type { Plugin } from '@envelop/core';
+import { MeshStore } from '@graphql-mesh/store';
+import { BatchDelegateOptions } from '@graphql-tools/batch-delegate';
 import {
-  Transform,
+  CreateProxyingResolverFn,
+  IDelegateToSchemaOptions,
   MergedTypeConfig,
   SubschemaConfig,
-  IDelegateToSchemaOptions,
-  CreateProxyingResolverFn,
+  Transform,
 } from '@graphql-tools/delegate';
+import { Executor, IResolvers } from '@graphql-tools/utils';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
-import { MeshStore } from '@graphql-mesh/store';
-import type { Plugin } from '@envelop/core';
-import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
-import { BatchDelegateOptions } from '@graphql-tools/batch-delegate';
+import * as YamlConfig from './config.js';
 
 export { jsonSchema } from './config-schema.js';
 
@@ -161,14 +161,18 @@ export type MeshPlugin<TContext> = Plugin<TContext> & {
 
 export type MeshFetch = (
   url: string,
-  options?: RequestInit,
+  options?: MeshFetchRequestInit,
   context?: any,
   info?: GraphQLResolveInfo,
 ) => Promise<Response>;
 
+export type MeshFetchRequestInit = Omit<RequestInit, 'headers'> & {
+  headers?: Record<string, string>;
+};
+
 export interface OnFetchHookPayload<TContext> {
   url: string;
-  options: RequestInit;
+  options: MeshFetchRequestInit;
   context: TContext;
   info: GraphQLResolveInfo;
   fetchFn: MeshFetch;

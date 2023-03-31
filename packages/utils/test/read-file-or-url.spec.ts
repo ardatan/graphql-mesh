@@ -1,9 +1,9 @@
 import { writeFileSync } from 'fs';
 import { tmpdir } from 'os';
 import { join, relative } from 'path';
+import { fetch } from '@whatwg-node/fetch';
 import { DefaultLogger } from '../src/logger.js';
 import { readFile } from '../src/read-file-or-url.js';
-import { fetch } from '@whatwg-node/fetch';
 
 describe('readFile', () => {
   it('should convert relative paths to absolute paths correctly', async () => {

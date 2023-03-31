@@ -1,5 +1,317 @@
 # type-merging-batching-example
 
+## 0.0.248
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c90eb5ac6`](https://github.com/Urigo/graphql-mesh/commit/c90eb5ac631507de1f49db68ca681193cc5a20b5)]:
+  - @graphql-mesh/transform-type-merging@0.5.20
+  - @graphql-mesh/transform-rename@0.14.22
+  - @graphql-mesh/graphql@0.34.13
+  - @graphql-mesh/cli@0.82.30
+
+## 0.0.247
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54),
+  [`52e6693e6`](https://github.com/Urigo/graphql-mesh/commit/52e6693e672a2975d0f4fdc27f0796453bb50cda),
+  [`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54),
+  [`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54),
+  [`2987413b0`](https://github.com/Urigo/graphql-mesh/commit/2987413b0150835859480d07cf386c32beb35bec),
+  [`9854f62b1`](https://github.com/Urigo/graphql-mesh/commit/9854f62b16981308247c0aeacd1724498e9e9963)]:
+  - @graphql-mesh/cli@0.82.29
+  - @graphql-mesh/graphql@0.34.12
+  - @graphql-mesh/transform-rename@0.14.21
+  - @graphql-mesh/transform-type-merging@0.5.19
+
+## 0.0.246
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.28
+  - @graphql-mesh/graphql@0.34.11
+  - @graphql-mesh/transform-rename@0.14.20
+  - @graphql-mesh/transform-type-merging@0.5.18
+
+## 0.0.245
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.27
+  - @graphql-mesh/graphql@0.34.10
+  - @graphql-mesh/transform-rename@0.14.19
+  - @graphql-mesh/transform-type-merging@0.5.17
+
+## 0.0.244
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b86d420d4`](https://github.com/Urigo/graphql-mesh/commit/b86d420d4fdf1132f3485c35087aaecbce45a728)]:
+  - @graphql-mesh/graphql@0.34.9
+  - @graphql-mesh/cli@0.82.26
+  - @graphql-mesh/transform-rename@0.14.18
+  - @graphql-mesh/transform-type-merging@0.5.16
+
+## 0.0.243
+
+### Patch Changes
+
+- Updated dependencies
+  [[`30d4c7cac`](https://github.com/Urigo/graphql-mesh/commit/30d4c7cacfd904076863808e7f82316dd791f08b)]:
+  - @graphql-mesh/transform-rename@0.14.17
+
+## 0.0.242
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.25
+  - @graphql-mesh/graphql@0.34.8
+  - @graphql-mesh/transform-rename@0.14.16
+  - @graphql-mesh/transform-type-merging@0.5.15
+
+## 0.0.241
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0b438c329`](https://github.com/Urigo/graphql-mesh/commit/0b438c32950f524db65163d67f6a64f451214391),
+  [`0b438c329`](https://github.com/Urigo/graphql-mesh/commit/0b438c32950f524db65163d67f6a64f451214391),
+  [`0b438c329`](https://github.com/Urigo/graphql-mesh/commit/0b438c32950f524db65163d67f6a64f451214391),
+  [`0b438c329`](https://github.com/Urigo/graphql-mesh/commit/0b438c32950f524db65163d67f6a64f451214391)]:
+  - @graphql-mesh/cli@0.82.24
+  - @graphql-mesh/graphql@0.34.7
+  - @graphql-mesh/transform-rename@0.14.15
+  - @graphql-mesh/transform-type-merging@0.5.14
+
+## 0.0.240
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f268e0c50`](https://github.com/Urigo/graphql-mesh/commit/f268e0c50e2cff9344070bad6541162f425e8600)]:
+  - @graphql-mesh/cli@0.82.23
+
+## 0.0.239
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5c19f8d6f`](https://github.com/Urigo/graphql-mesh/commit/5c19f8d6f79f2d9bfbeb6458c8dc7a1729c37db9)]:
+  - @graphql-mesh/cli@0.82.22
+  - @graphql-mesh/graphql@0.34.6
+  - @graphql-mesh/transform-rename@0.14.14
+  - @graphql-mesh/transform-type-merging@0.5.13
+
+## 0.0.238
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.21
+  - @graphql-mesh/graphql@0.34.5
+  - @graphql-mesh/transform-rename@0.14.13
+  - @graphql-mesh/transform-type-merging@0.5.12
+
+## 0.0.237
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.20
+
+## 0.0.236
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.19
+
+## 0.0.235
+
+### Patch Changes
+
+- Updated dependencies
+  [[`8c9c39cf5`](https://github.com/Urigo/graphql-mesh/commit/8c9c39cf56c0cd0e3e3908b5c54cb4c1bca4151e),
+  [`8c9c39cf5`](https://github.com/Urigo/graphql-mesh/commit/8c9c39cf56c0cd0e3e3908b5c54cb4c1bca4151e),
+  [`8c9c39cf5`](https://github.com/Urigo/graphql-mesh/commit/8c9c39cf56c0cd0e3e3908b5c54cb4c1bca4151e)]:
+  - @graphql-mesh/graphql@0.34.4
+  - @graphql-mesh/transform-rename@0.14.12
+  - @graphql-mesh/transform-type-merging@0.5.11
+  - @graphql-mesh/cli@0.82.18
+
+## 0.0.234
+
+### Patch Changes
+
+- Updated dependencies
+  [[`743caf3c8`](https://github.com/Urigo/graphql-mesh/commit/743caf3c8a0f3ebcaae1e4525b2c10b281cdc3aa)]:
+  - @graphql-mesh/cli@0.82.17
+  - @graphql-mesh/graphql@0.34.3
+  - @graphql-mesh/transform-rename@0.14.11
+  - @graphql-mesh/transform-type-merging@0.5.10
+
+## 0.0.233
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.16
+  - @graphql-mesh/graphql@0.34.2
+  - @graphql-mesh/transform-rename@0.14.10
+  - @graphql-mesh/transform-type-merging@0.5.9
+
+## 0.0.232
+
+### Patch Changes
+
+- Updated dependencies
+  [[`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
+  [`de470cf42`](https://github.com/Urigo/graphql-mesh/commit/de470cf42c466d0ca3ca4ef911c4956e9a0d366a),
+  [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
+  [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
+  [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
+  [`a3a315b38`](https://github.com/Urigo/graphql-mesh/commit/a3a315b380133dc304e2da9f56b7d0774ae5fdc9)]:
+  - @graphql-mesh/cli@0.82.15
+  - @graphql-mesh/graphql@0.34.1
+  - @graphql-mesh/transform-rename@0.14.9
+  - @graphql-mesh/transform-type-merging@0.5.8
+
+## 0.0.231
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a5fbc9562`](https://github.com/Urigo/graphql-mesh/commit/a5fbc95627c156208e7f3891ea871d6c9d4ecfe6),
+  [`a249250a7`](https://github.com/Urigo/graphql-mesh/commit/a249250a77eacb93751d2f17f2f19e3f6f176ee1),
+  [`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72),
+  [`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72),
+  [`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72),
+  [`38eb804b9`](https://github.com/Urigo/graphql-mesh/commit/38eb804b99f9b3629713c44a59ff052d7378d2cb)]:
+  - @graphql-mesh/cli@0.82.14
+  - @graphql-mesh/graphql@0.34.0
+  - @graphql-mesh/transform-rename@0.14.8
+  - @graphql-mesh/transform-type-merging@0.5.7
+
+## 0.0.230
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ed5843d8a`](https://github.com/Urigo/graphql-mesh/commit/ed5843d8a771045eed61cdad33b72734666577d5),
+  [`ed5843d8a`](https://github.com/Urigo/graphql-mesh/commit/ed5843d8a771045eed61cdad33b72734666577d5),
+  [`ed5843d8a`](https://github.com/Urigo/graphql-mesh/commit/ed5843d8a771045eed61cdad33b72734666577d5)]:
+  - @graphql-mesh/graphql@0.33.10
+  - @graphql-mesh/transform-rename@0.14.7
+  - @graphql-mesh/transform-type-merging@0.5.6
+  - @graphql-mesh/cli@0.82.13
+
+## 0.0.229
+
+### Patch Changes
+
+- Updated dependencies
+  [[`9d5c92245`](https://github.com/Urigo/graphql-mesh/commit/9d5c92245f6d7ff937ddb950dca38b20f5fabe4c),
+  [`223b4f1b5`](https://github.com/Urigo/graphql-mesh/commit/223b4f1b595af5cf2924c8a83319f5105e477a46),
+  [`cd389e465`](https://github.com/Urigo/graphql-mesh/commit/cd389e465c12e24cfb443ffb843a03843c4028ec)]:
+  - @graphql-mesh/cli@0.82.12
+  - @graphql-mesh/graphql@0.33.9
+
+## 0.0.228
+
+### Patch Changes
+
+- Updated dependencies
+  [[`cb7e2c568`](https://github.com/Urigo/graphql-mesh/commit/cb7e2c568dbf027c0023b4a933f5b8f748ac90be)]:
+  - @graphql-mesh/cli@0.82.11
+
+## 0.0.227
+
+### Patch Changes
+
+- [#4930](https://github.com/Urigo/graphql-mesh/pull/4930)
+  [`c015b02a1`](https://github.com/Urigo/graphql-mesh/commit/c015b02a1aa50e4d760c3fd59f76dc5dfe587664)
+  Thanks [@gilgardosh](https://github.com/gilgardosh)! - Prettier fixes
+
+- Updated dependencies
+  [[`5c8622ead`](https://github.com/Urigo/graphql-mesh/commit/5c8622ead5588302fa84b0d40e7b25068c17fde1),
+  [`0710f10c7`](https://github.com/Urigo/graphql-mesh/commit/0710f10c7197b57403835edb0678eaff6b4daeca),
+  [`bb5abc15d`](https://github.com/Urigo/graphql-mesh/commit/bb5abc15d8ff9227f5fc9fafe78d1befc7ae0797),
+  [`e91e1640c`](https://github.com/Urigo/graphql-mesh/commit/e91e1640ce084a2b3eda4c2f64433c0baf5dda06),
+  [`ffe384441`](https://github.com/Urigo/graphql-mesh/commit/ffe384441539625048b850abb58721cfae885acd),
+  [`07365e684`](https://github.com/Urigo/graphql-mesh/commit/07365e684a52d5a72d3e3dfbd292efb9289a0239),
+  [`994813331`](https://github.com/Urigo/graphql-mesh/commit/99481333186e8471207e21ad14c7883f7215ce1c),
+  [`46d1c8623`](https://github.com/Urigo/graphql-mesh/commit/46d1c86239f7bfe5b0f0e2d50907aa797bf92da5),
+  [`2f0c312df`](https://github.com/Urigo/graphql-mesh/commit/2f0c312dfd4880896d2c084c985bca85130d7bd9),
+  [`bc28f678e`](https://github.com/Urigo/graphql-mesh/commit/bc28f678ef3f11fd3270b330150861d3f310ca22),
+  [`994813331`](https://github.com/Urigo/graphql-mesh/commit/99481333186e8471207e21ad14c7883f7215ce1c),
+  [`994813331`](https://github.com/Urigo/graphql-mesh/commit/99481333186e8471207e21ad14c7883f7215ce1c),
+  [`994813331`](https://github.com/Urigo/graphql-mesh/commit/99481333186e8471207e21ad14c7883f7215ce1c),
+  [`c015b02a1`](https://github.com/Urigo/graphql-mesh/commit/c015b02a1aa50e4d760c3fd59f76dc5dfe587664),
+  [`4f0b102dd`](https://github.com/Urigo/graphql-mesh/commit/4f0b102ddb093a14c8dec613c3b59db88ba1069e),
+  [`8429bf234`](https://github.com/Urigo/graphql-mesh/commit/8429bf23457aea19969dab246fc4f0517644bf12),
+  [`90936b2a0`](https://github.com/Urigo/graphql-mesh/commit/90936b2a0ef8ab93917e3e2671775d8375e97cdb)]:
+  - @graphql-mesh/cli@0.82.10
+  - @graphql-mesh/graphql@0.33.8
+  - @graphql-mesh/transform-rename@0.14.6
+  - @graphql-mesh/transform-type-merging@0.5.5
+
+## 0.0.226
+
+### Patch Changes
+
+- Updated dependencies
+  [[`401002516`](https://github.com/Urigo/graphql-mesh/commit/401002516ac721d81295c063a2ea803ca49c8832)]:
+  - @graphql-mesh/graphql@0.33.7
+
+## 0.0.225
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.9
+
+## 0.0.224
+
+### Patch Changes
+
+- Updated dependencies
+  [[`06db3cd64`](https://github.com/Urigo/graphql-mesh/commit/06db3cd6479853e536e36cc2619c94dea9c7e5ed),
+  [`f5f5dbb33`](https://github.com/Urigo/graphql-mesh/commit/f5f5dbb33e2b5249b9dff53ca80d12758e7f8ff8)]:
+  - @graphql-mesh/cli@0.82.8
+
+## 0.0.223
+
+### Patch Changes
+
+- Updated dependencies
+  [[`99f4c84e6`](https://github.com/Urigo/graphql-mesh/commit/99f4c84e619996bc4f392bc81c33022b8678e0d9),
+  [`99f4c84e6`](https://github.com/Urigo/graphql-mesh/commit/99f4c84e619996bc4f392bc81c33022b8678e0d9),
+  [`99f4c84e6`](https://github.com/Urigo/graphql-mesh/commit/99f4c84e619996bc4f392bc81c33022b8678e0d9),
+  [`c6aef2bc8`](https://github.com/Urigo/graphql-mesh/commit/c6aef2bc8f69c857d8b71f9afcbb37b110c9fb6d)]:
+  - @graphql-mesh/graphql@0.33.6
+  - @graphql-mesh/transform-rename@0.14.5
+  - @graphql-mesh/transform-type-merging@0.5.4
+  - @graphql-mesh/cli@0.82.7
+
+## 0.0.222
+
+### Patch Changes
+
+- Updated dependencies
+  [[`df511ade0`](https://github.com/Urigo/graphql-mesh/commit/df511ade01315bcfe07fd7e482a28128f9df2845),
+  [`df511ade0`](https://github.com/Urigo/graphql-mesh/commit/df511ade01315bcfe07fd7e482a28128f9df2845),
+  [`0a4a77135`](https://github.com/Urigo/graphql-mesh/commit/0a4a771353c2fa1700afaeb54561c078df5229ec)]:
+  - @graphql-mesh/cli@0.82.6
+  - @graphql-mesh/graphql@0.33.5
+  - @graphql-mesh/transform-rename@0.14.4
+
 ## 0.0.221
 
 ### Patch Changes

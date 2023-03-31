@@ -19,7 +19,10 @@ directive @globalOptions(sourceName: String, endpoint: String, operationHeaders:
 directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
 
 type Query @globalOptions(sourceName: "basket") {
-  customers_by_customerId: CustomerAttributes @httpOperation(path: "/customers/{customerId}", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  customers_by_customerId(
+    "Authentication Token"
+    x_auth_token: String!
+  ): CustomerAttributes @httpOperation(path: "/customers/{customerId}", operationSpecificHeaders: "{\\"x-auth-token\\":\\"{args.x_auth_token}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   Locations: [LocationModel] @httpOperation(path: "/Locations", operationSpecificHeaders: "{\\"accept\\":\\"application/json,application/custom-thingy.v3+json\\"}", httpMethod: GET)
   Cards: [CardModel] @httpOperation(path: "/Cards", operationSpecificHeaders: "{\\"accept\\":\\"application/json,application/custom.v3+json\\"}", httpMethod: GET)
 }

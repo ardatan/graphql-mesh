@@ -1,5 +1,4 @@
-import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { Logger, MeshFetch } from '@graphql-mesh/types';
+import { dset } from 'dset';
 import {
   getNamedType,
   GraphQLField,
@@ -11,16 +10,17 @@ import {
   isScalarType,
   isUnionType,
 } from 'graphql';
-import lodashSet from 'lodash.set';
+import { IStringifyOptions, parse as qsParse, stringify as qsStringify } from 'qs';
 import urlJoin from 'url-join';
+import { process } from '@graphql-mesh/cross-helpers';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import { Logger, MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
+import { getHeadersObj } from '@graphql-mesh/utils';
+import { createGraphQLError, memoize1 } from '@graphql-tools/utils';
+import { AbortSignal, Blob, File, FormData } from '@whatwg-node/fetch';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
 import { HTTPMethod } from './types.js';
 import { isFileUpload } from './utils.js';
-import { stringify as qsStringify, parse as qsParse, IStringifyOptions } from 'qs';
-import { createGraphQLError, memoize1 } from '@graphql-tools/utils';
-import { getHeadersObj } from '@graphql-mesh/utils';
-import { process } from '@graphql-mesh/cross-helpers';
-import { FormData, File, Blob } from '@whatwg-node/fetch';
 
 const isListTypeOrNonNullListType = memoize1(function isListTypeOrNonNullListType(
   type: GraphQLOutputType,
@@ -50,6 +50,7 @@ export interface HTTPRootFieldResolverOpts {
 export interface GlobalOptions {
   sourceName: string;
   endpoint: string;
+  timeout: number;
   operationHeaders: Record<string, string>;
   queryStringOptions: IStringifyOptions;
   queryParams: Record<string, string | number | boolean>;
@@ -72,6 +73,7 @@ export function addHTTPRootFieldResolver(
   {
     sourceName,
     endpoint,
+    timeout,
     operationHeaders: globalOperationHeaders,
     queryStringOptions: globalQueryStringOptions = {},
     queryParams: globalQueryParams,
@@ -106,10 +108,13 @@ export function addHTTPRootFieldResolver(
         }
       }
     }
-    const requestInit: RequestInit = {
+    const requestInit: MeshFetchRequestInit = {
       method: httpMethod,
       headers,
     };
+    if (timeout) {
+      requestInit.signal = AbortSignal.timeout(timeout);
+    }
     // Handle binary data
     if (isBinary) {
       const binaryUpload = await args.input;
@@ -137,7 +142,7 @@ export function addHTTPRootFieldResolver(
           const configValue = requestBaseBody[key];
           if (typeof configValue === 'string') {
             const value = stringInterpolator.parse(configValue, interpolationData);
-            lodashSet(args.input, key, value);
+            dset(args.input, key, value);
           } else {
             args.input[key] = configValue;
           }
@@ -420,7 +425,7 @@ export function addHTTPRootFieldResolver(
                         },
                       });
                     case 'header':
-                      return getHeadersObj(requestInit.headers as Headers);
+                      return requestInit.headers;
                     case 'body':
                       return requestInit.body;
                   }

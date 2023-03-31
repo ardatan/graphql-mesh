@@ -1,18 +1,21 @@
 import { GraphQLSchema } from 'graphql';
-import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
+import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import {
+  applyRequestTransforms,
+  applyResultTransforms,
+  applySchemaTransforms,
+} from '@graphql-mesh/utils';
+import { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
+import { ExecutionRequest, ExecutionResult } from '@graphql-tools/utils';
+import {
+  RenameInputObjectFields,
+  RenameInterfaceFields,
+  RenameObjectFieldArguments,
   RenameTypes,
   TransformEnumValues,
-  RenameInterfaceFields,
   TransformObjectFields,
-  RenameInputObjectFields,
-  RenameObjectFieldArguments,
 } from '@graphql-tools/wrap';
-import { ExecutionResult, ExecutionRequest } from '@graphql-tools/utils';
-import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
-import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
-
-import { NAMING_CONVENTIONS, IGNORED_ROOT_FIELD_NAMES, IGNORED_TYPE_NAMES } from './shared.js';
+import { IGNORED_ROOT_FIELD_NAMES, IGNORED_TYPE_NAMES, NAMING_CONVENTIONS } from './shared.js';
 
 export default class NamingConventionTransform implements MeshTransform {
   private transforms: Transform[] = [];
@@ -22,8 +25,10 @@ export default class NamingConventionTransform implements MeshTransform {
       const namingConventionFn = NAMING_CONVENTIONS[options.config.typeNames];
       this.transforms.push(
         new RenameTypes(typeName =>
-          IGNORED_TYPE_NAMES.includes(typeName) ? typeName : namingConventionFn(typeName) || typeName
-        ) as any
+          IGNORED_TYPE_NAMES.includes(typeName)
+            ? typeName
+            : namingConventionFn(typeName) || typeName,
+        ) as any,
       );
     }
     if (options.config.fieldNames) {
@@ -31,12 +36,18 @@ export default class NamingConventionTransform implements MeshTransform {
         ? NAMING_CONVENTIONS[options.config.fieldNames]
         : (s: string) => s;
       this.transforms.push(
-        new RenameInputObjectFields((_, fieldName) => fieldNamingConventionFn(fieldName) || fieldName) as any,
+        new RenameInputObjectFields(
+          (_, fieldName) => fieldNamingConventionFn(fieldName) || fieldName,
+        ) as any,
         new TransformObjectFields((_, fieldName, fieldConfig) => [
-          IGNORED_ROOT_FIELD_NAMES.includes(fieldName) ? fieldName : fieldNamingConventionFn(fieldName) || fieldName,
+          IGNORED_ROOT_FIELD_NAMES.includes(fieldName)
+            ? fieldName
+            : fieldNamingConventionFn(fieldName) || fieldName,
           fieldConfig,
         ]) as any,
-        new RenameInterfaceFields((_, fieldName) => fieldNamingConventionFn(fieldName) || fieldName) as any
+        new RenameInterfaceFields(
+          (_, fieldName) => fieldNamingConventionFn(fieldName) || fieldName,
+        ) as any,
       );
     }
 
@@ -46,7 +57,9 @@ export default class NamingConventionTransform implements MeshTransform {
         : (s: string) => s;
 
       this.transforms.push(
-        new RenameObjectFieldArguments((_typeName, _fieldName, argName) => fieldArgNamingConventionFn(argName)) as any
+        new RenameObjectFieldArguments((_typeName, _fieldName, argName) =>
+          fieldArgNamingConventionFn(argName),
+        ) as any,
       );
     }
 
@@ -57,7 +70,7 @@ export default class NamingConventionTransform implements MeshTransform {
         new TransformEnumValues((typeName, externalValue, enumValueConfig) => {
           const newEnumValue = namingConventionFn(externalValue) || externalValue;
           return [newEnumValue, enumValueConfig];
-        }) as any
+        }) as any,
       );
     }
   }
@@ -65,20 +78,39 @@ export default class NamingConventionTransform implements MeshTransform {
   transformSchema(
     originalWrappingSchema: GraphQLSchema,
     subschemaConfig: SubschemaConfig,
-    transformedSchema?: GraphQLSchema
+    transformedSchema?: GraphQLSchema,
   ) {
-    return applySchemaTransforms(originalWrappingSchema, subschemaConfig, transformedSchema, this.transforms);
+    return applySchemaTransforms(
+      originalWrappingSchema,
+      subschemaConfig,
+      transformedSchema,
+      this.transforms,
+    );
   }
 
   transformRequest(
     originalRequest: ExecutionRequest,
     delegationContext: DelegationContext,
-    transformationContext: Record<string, any>
+    transformationContext: Record<string, any>,
   ) {
-    return applyRequestTransforms(originalRequest, delegationContext, transformationContext, this.transforms);
+    return applyRequestTransforms(
+      originalRequest,
+      delegationContext,
+      transformationContext,
+      this.transforms,
+    );
   }
 
-  transformResult(originalResult: ExecutionResult, delegationContext: DelegationContext, transformationContext: any) {
-    return applyResultTransforms(originalResult, delegationContext, transformationContext, this.transforms);
+  transformResult(
+    originalResult: ExecutionResult,
+    delegationContext: DelegationContext,
+    transformationContext: any,
+  ) {
+    return applyResultTransforms(
+      originalResult,
+      delegationContext,
+      transformationContext,
+      this.transforms,
+    );
   }
 }

@@ -1,4 +1,4 @@
-import { HookName, AllHooks, MeshPubSub } from '@graphql-mesh/types';
+import { AllHooks, HookName, MeshPubSub } from '@graphql-mesh/types';
 import { observableToAsyncIterable } from '@graphql-tools/utils';
 
 type Listener<THookName extends HookName = HookName> = (data: AllHooks[THookName]) => void;
@@ -15,7 +15,9 @@ export class PubSub implements MeshPubSub {
   publish<THook extends HookName>(triggerName: THook, detail: AllHooks[THook]): void {
     const eventNameListeners = this.eventNameListenersMap.get(triggerName);
     if (eventNameListeners) {
-      Promise.allSettled([...eventNameListeners].map(listener => listener(detail))).catch(e => console.error(e));
+      Promise.allSettled([...eventNameListeners].map(listener => listener(detail))).catch(e =>
+        console.error(e),
+      );
     }
   }
 

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/thrift",
-  "version": "0.12.3",
+  "version": "0.12.21",
   "type": "module",
   "repository": {
     "type": "git",
@@ -29,26 +29,26 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "graphql": "*"
+    "@graphql-mesh/cross-helpers": "^0.3.4",
+    "@graphql-mesh/store": "^0.9.20",
+    "@graphql-mesh/types": "^0.91.12",
+    "@graphql-mesh/utils": "^0.43.20",
+    "@graphql-tools/utils": "^9.2.1",
+    "graphql": "*",
+    "tslib": "^2.4.0"
   },
   "dependencies": {
     "@creditkarma/thrift-client": "1.0.4",
     "@creditkarma/thrift-parser": "2.0.0",
     "@creditkarma/thrift-server-core": "1.0.4",
-    "@graphql-mesh/cross-helpers": "0.3.0",
-    "@graphql-mesh/store": "0.9.3",
-    "@graphql-mesh/string-interpolation": "0.4.1",
-    "@graphql-mesh/types": "0.89.2",
-    "@graphql-mesh/utils": "0.43.3",
-    "@graphql-tools/utils": "9.1.3",
-    "graphql-scalars": "1.20.1",
+    "@graphql-mesh/string-interpolation": "0.4.3",
+    "graphql-scalars": "^1.20.4",
     "pascal-case": "3.1.2",
-    "thrift": "0.17.0",
-    "tslib": "^2.4.0",
+    "thrift": "0.18.1",
     "url-join": "4.0.1"
   },
   "devDependencies": {
-    "@types/thrift": "0.10.11",
+    "@types/thrift": "0.10.12",
     "@types/url-join": "4.0.1"
   },
   "publishConfig": {

@@ -1,11 +1,35 @@
-import { GraphQLSchema, GraphQLObjectType, GraphQLUnionType, isObjectType } from 'graphql';
-import { MeshTransform, YamlConfig, MeshTransformOptions, ImportFn } from '@graphql-mesh/types';
-import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { dset } from 'dset';
+import {
+  GraphQLInterfaceType,
+  GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLUnionType,
+  isObjectType,
+} from 'graphql';
 import { entitiesField, EntityType, serviceField } from '@apollo/subgraph/dist/types.js';
-import { mapSchema, MapperKind, printSchemaWithDirectives } from '@graphql-tools/utils';
-import { MergedTypeResolver, SubschemaConfig } from '@graphql-tools/delegate';
-import set from 'lodash.set';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import { ImportFn, MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { MergedTypeResolver, SubschemaConfig } from '@graphql-tools/delegate';
+import { MapperKind, mapSchema, printSchemaWithDirectives } from '@graphql-tools/utils';
+
+const federationDirectives = [
+  'link',
+
+  'key',
+  'interfaceObject',
+  'extends',
+
+  'shareable',
+  'inaccessible',
+  'override',
+
+  'external',
+  'provides',
+  'requires',
+  'tag',
+  'composeDirective',
+];
 
 export default class FederationTransform implements MeshTransform {
   private apiName: string;
@@ -15,7 +39,12 @@ export default class FederationTransform implements MeshTransform {
 
   noWrap = true;
 
-  constructor({ apiName, baseDir, config, importFn }: MeshTransformOptions<YamlConfig.Transform['federation']>) {
+  constructor({
+    apiName,
+    baseDir,
+    config,
+    importFn,
+  }: MeshTransformOptions<YamlConfig.Transform['federation']>) {
     this.apiName = apiName;
     this.config = config;
     this.baseDir = baseDir;
@@ -31,7 +60,8 @@ export default class FederationTransform implements MeshTransform {
         rawSource.merge[type.name] = {};
         const typeObj = schema.getType(type.name) as GraphQLObjectType;
         typeObj.extensions = typeObj.extensions || {};
-        const typeDirectivesObj: any = ((typeObj.extensions as any).directives = typeObj.extensions.directives || {});
+        const typeDirectivesObj: any = ((typeObj.extensions as any).directives =
+          typeObj.extensions.directives || {});
         if (type.config?.key) {
           typeDirectivesObj.key = type.config.key;
         }
@@ -52,10 +82,13 @@ export default class FederationTransform implements MeshTransform {
               Object.assign(directivesObj, field.config);
             }
             rawSource.merge[type.name].fields = rawSource.merge[type.name].fields || {};
-            rawSource.merge[type.name].fields[field.name] = rawSource.merge[type.name].fields[field.name] || {};
+            rawSource.merge[type.name].fields[field.name] =
+              rawSource.merge[type.name].fields[field.name] || {};
             if (field.config.requires) {
               rawSource.merge[type.name].fields[field.name].computed = true;
-              rawSource.merge[type.name].fields[field.name].selectionSet = `{ ${field.config.requires} }`;
+              rawSource.merge[type.name].fields[
+                field.name
+              ].selectionSet = `{ ${field.config.requires} }`;
             }
           }
         }
@@ -97,7 +130,7 @@ export default class FederationTransform implements MeshTransform {
                   env: process.env,
                 });
                 if (argVal) {
-                  set(args, argName, argVal);
+                  dset(args, argName, argVal);
                 }
               }
               const result = await context[this.apiName].Query[queryField.name]({
@@ -124,7 +157,7 @@ export default class FederationTransform implements MeshTransform {
       if (isObjectType(type)) {
         entityTypes.push(type);
       }
-      set(type, 'extensions.apollo.subgraph.resolveReference', rawSource.merge[typeName].resolve);
+      dset(type, 'extensions.apollo.subgraph.resolveReference', rawSource.merge[typeName].resolve);
     }
 
     const schemaWithFederationQueryType = mapSchema(schema, {
@@ -137,7 +170,9 @@ export default class FederationTransform implements MeshTransform {
             _entities: entitiesField,
             _service: {
               ...serviceField,
-              resolve: (root, args, context, info) => ({ sdl: printSchemaWithDirectives(info.schema) }),
+              resolve: (root, args, context, info) => ({
+                sdl: printSchemaWithDirectives(info.schema),
+              }),
             },
           },
         });
@@ -159,21 +194,87 @@ export default class FederationTransform implements MeshTransform {
     schemaWithUnionType.extensions = schemaWithUnionType.extensions || {};
     const directivesObj: any = ((schemaWithUnionType.extensions as any).directives =
       schemaWithUnionType.extensions.directives || {});
+
+    const existingDirectives = schemaWithUnionType.getDirectives();
+    const filteredDirectives = existingDirectives.filter(directive =>
+      federationDirectives.includes(directive.name),
+    );
+
     directivesObj.link = {
-      url: 'https://specs.apollo.dev/federation/v2.0',
-      import: [
-        '@extends',
-        '@external',
-        '@inaccessible',
-        '@key',
-        '@override',
-        '@provides',
-        '@requires',
-        '@shareable',
-        '@tag',
-      ],
+      url: 'https://specs.apollo.dev/federation/' + (this.config.version || 'v2.0'),
+      import: filteredDirectives
+        .filter(({ name }) => name !== 'link')
+        .map(dirName => `@${dirName.name}`),
     };
 
-    return schemaWithUnionType;
+    if (existingDirectives.length === filteredDirectives.length) {
+      return schemaWithUnionType;
+    }
+
+    return mapSchema(schemaWithUnionType, {
+      [MapperKind.DIRECTIVE]: directive => {
+        if (federationDirectives.includes(directive.name)) {
+          return directive;
+        }
+        return null;
+      },
+      [MapperKind.OBJECT_TYPE]: type => {
+        return new GraphQLObjectType({
+          ...type.toConfig(),
+          astNode: type.astNode && {
+            ...type.astNode,
+            directives: type.astNode.directives?.filter(directive =>
+              federationDirectives.includes(directive.name.value),
+            ),
+          },
+          extensions: {
+            ...type.extensions,
+            directives: Object.fromEntries(
+              Object.entries(type.extensions?.directives || {}).filter(([key]) =>
+                federationDirectives.includes(key),
+              ),
+            ),
+          },
+        });
+      },
+      [MapperKind.INTERFACE_TYPE]: type => {
+        return new GraphQLInterfaceType({
+          ...type.toConfig(),
+          astNode: type.astNode && {
+            ...type.astNode,
+            directives: type.astNode.directives?.filter(directive =>
+              federationDirectives.includes(directive.name.value),
+            ),
+          },
+          extensions: {
+            ...type.extensions,
+            directives: Object.fromEntries(
+              Object.entries(type.extensions?.directives || {}).filter(([key]) =>
+                federationDirectives.includes(key),
+              ),
+            ),
+          },
+        });
+      },
+      [MapperKind.COMPOSITE_FIELD]: fieldConfig => {
+        return {
+          ...fieldConfig,
+          astNode: fieldConfig.astNode && {
+            ...fieldConfig.astNode,
+            directives: fieldConfig.astNode.directives?.filter(directive =>
+              federationDirectives.includes(directive.name.value),
+            ),
+          },
+          extensions: {
+            ...fieldConfig.extensions,
+            directives: Object.fromEntries(
+              Object.entries(fieldConfig.extensions?.directives || {}).filter(([key]) =>
+                federationDirectives.includes(key),
+              ),
+            ),
+          },
+        };
+      },
+    });
   }
 }

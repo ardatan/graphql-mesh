@@ -1,26 +1,44 @@
+import { BREAK, execute, OperationDefinitionNode, visit } from 'graphql';
+import { mapAsyncIterator, Plugin, TypedExecutionArgs } from '@envelop/core';
 import { applyRequestTransforms, applyResultTransforms } from '@graphql-mesh/utils';
-import { createDefaultExecutor, DelegationContext, applySchemaTransforms, Subschema } from '@graphql-tools/delegate';
+import { createBatchingExecutor } from '@graphql-tools/batch-execute';
+import {
+  applySchemaTransforms,
+  createDefaultExecutor,
+  DelegationContext,
+  Subschema,
+} from '@graphql-tools/delegate';
 import {
   ExecutionRequest,
+  ExecutionResult,
   getDefinedRootType,
   getOperationASTFromRequest,
   isAsyncIterable,
+  printSchemaWithDirectives,
 } from '@graphql-tools/utils';
-import { mapAsyncIterator, Plugin, TypedExecutionArgs } from '@envelop/core';
-import { BREAK, execute, OperationDefinitionNode, visit } from 'graphql';
-import { createBatchingExecutor } from '@graphql-tools/batch-execute';
 
-function isIntrospectionOperation(operationAST: OperationDefinitionNode) {
-  let isIntrospectionOperation = false;
+enum IntrospectionQueryType {
+  FEDERATION = 'FEDERATION',
+  REGULAR = 'REGULAR',
+}
+
+function getIntrospectionOperationType(
+  operationAST: OperationDefinitionNode,
+): IntrospectionQueryType | null {
+  let introspectionQueryType = null;
   visit(operationAST, {
     Field: node => {
       if (node.name.value === '__schema' || node.name.value === '__type') {
-        isIntrospectionOperation = true;
+        introspectionQueryType = IntrospectionQueryType.REGULAR;
+        return BREAK;
+      }
+      if (node.name.value === '_service') {
+        introspectionQueryType = IntrospectionQueryType.FEDERATION;
         return BREAK;
       }
     },
   });
-  return isIntrospectionOperation;
+  return introspectionQueryType;
 }
 
 function getExecuteFn(subschema: Subschema) {
@@ -34,7 +52,17 @@ function getExecuteFn(subschema: Subschema) {
     };
     const operationAST = getOperationASTFromRequest(originalRequest);
     // TODO: We need more elegant solution
-    if (isIntrospectionOperation(operationAST)) {
+    const introspectionQueryType = getIntrospectionOperationType(operationAST);
+    if (introspectionQueryType === IntrospectionQueryType.FEDERATION) {
+      const executionResult: ExecutionResult = {
+        data: {
+          _service: {
+            sdl: printSchemaWithDirectives(args.schema),
+          },
+        },
+      };
+      return executionResult;
+    } else if (introspectionQueryType === IntrospectionQueryType.REGULAR) {
       return execute(args);
     }
     const delegationContext: DelegationContext = {
@@ -62,19 +90,24 @@ function getExecuteFn(subschema: Subschema) {
       originalRequest,
       delegationContext,
       transformationContext,
-      subschema.transforms
+      subschema.transforms,
     );
     const originalResult = await executor(transformedRequest);
     if (isAsyncIterable(originalResult)) {
       return mapAsyncIterator(originalResult, singleResult =>
-        applyResultTransforms(singleResult, delegationContext, transformationContext, subschema.transforms)
+        applyResultTransforms(
+          singleResult,
+          delegationContext,
+          transformationContext,
+          subschema.transforms,
+        ),
       );
     }
     const transformedResult = applyResultTransforms(
       originalResult,
       delegationContext,
       transformationContext,
-      subschema.transforms
+      subschema.transforms,
     );
     return transformedResult;
   };

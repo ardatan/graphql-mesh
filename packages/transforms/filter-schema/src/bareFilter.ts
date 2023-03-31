@@ -1,7 +1,7 @@
 import { GraphQLSchema } from 'graphql';
+import minimatch from 'minimatch';
 import { MeshTransform, YamlConfig } from '@graphql-mesh/types';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
-import minimatch from 'minimatch';
 
 export default class BareFilter implements MeshTransform {
   noWrap = true;
@@ -25,7 +25,9 @@ export default class BareFilter implements MeshTransform {
 
       const rawGlob = argsGlob || fieldNameOrGlob;
       const fixedGlob =
-        rawGlob.includes('{') && !rawGlob.includes(',') ? rawGlob.replace('{', '').replace('}', '') : rawGlob;
+        rawGlob.includes('{') && !rawGlob.includes(',')
+          ? rawGlob.replace('{', '').replace('}', '')
+          : rawGlob;
       const polishedGlob = fixedGlob.split(', ').join(',').trim();
 
       if (typeName === 'Type') {
@@ -68,8 +70,10 @@ export default class BareFilter implements MeshTransform {
 
           const fieldArgs = Object.entries(fieldConfig.args).reduce(
             (args, [argName, argConfig]) =>
-              this.matchInArray(argRules, argName) === null ? args : { ...args, [argName]: argConfig },
-            {}
+              this.matchInArray(argRules, argName) === null
+                ? args
+                : { ...args, [argName]: argConfig },
+            {},
           );
 
           return { ...fieldConfig, args: fieldArgs };

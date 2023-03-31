@@ -1,16 +1,20 @@
+import { OperationTypeNode } from 'graphql';
+import {
+  dereferenceObject,
+  handleUntitledDefinitions,
+  JSONSchemaObject,
+  resolvePath,
+} from 'json-machete';
+import { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
+import { process } from '@graphql-mesh/cross-helpers';
+import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
+import { Logger } from '@graphql-mesh/types';
 import {
   defaultImportFn,
   DefaultLogger,
   readFileOrUrl,
   sanitizeNameForGraphQL,
 } from '@graphql-mesh/utils';
-import {
-  JSONSchemaObject,
-  dereferenceObject,
-  resolvePath,
-  handleUntitledDefinitions,
-} from 'json-machete';
-import { OpenAPIV3, OpenAPIV2 } from 'openapi-types';
 import {
   HTTPMethod,
   JSONSchemaHTTPJSONOperationConfig,
@@ -19,12 +23,8 @@ import {
   JSONSchemaPubSubOperationConfig,
   OperationHeadersConfiguration,
 } from '@omnigraph/json-schema';
-import { getFieldNameFromPath } from './utils.js';
-import { OperationTypeNode } from 'graphql';
 import { OpenAPILoaderSelectQueryOrMutationFieldConfig } from './types.js';
-import { Logger } from '@graphql-mesh/types';
-import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
-import { process } from '@graphql-mesh/cross-helpers';
+import { getFieldNameFromPath } from './utils.js';
 
 interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
   source: OpenAPIV3.Document | OpenAPIV2.Document | string;
@@ -122,10 +122,12 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     const pathObj = oasOrSwagger.paths[relativePath];
     const pathParameters = pathObj.parameters;
     for (const method in pathObj) {
-      if (method === 'parameters' || method === 'summary' || method === 'description') {
+      if (method === 'parameters' || method === 'summary' || method === 'description' || method === 'servers') {
         continue;
       }
-      const methodObj = pathObj[method] as OpenAPIV2.OperationObject | OpenAPIV3.OperationObject;
+      const methodObj = pathObj[method as OpenAPIV2.HttpMethods] as
+        | OpenAPIV2.OperationObject
+        | OpenAPIV3.OperationObject;
       const operationConfig: OperationConfig = {
         method: method.toUpperCase() as HTTPMethod,
         path: relativePath,
@@ -525,7 +527,8 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
             };
             const callbackUrlObj = callbackObj[callbackUrlRefKey];
             for (const method in callbackUrlObj) {
-              const callbackOperation: OpenAPIV3.OperationObject = callbackUrlObj[method];
+              const callbackOperation: OpenAPIV3.OperationObject =
+                callbackUrlObj[method as OpenAPIV2.HttpMethods];
               callbackOperationConfig.pubsubTopic = `webhook:${method}:${pubsubTopicSuffix}`;
               callbackOperationConfig.field = callbackOperation.operationId;
               callbackOperationConfig.description =

@@ -1,18 +1,25 @@
 {
   "name": "graphql-file-upload-example",
-  "version": "0.6.293",
+  "version": "0.6.319",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start-apis": "concurrently \"node upload-files/index.js\" \"node resize-image/index.js\"",
-    "start-gateway": "mesh dev"
+    "start-apis": "concurrently \"ts-node upload-files\" \"ts-node resize-image\"",
+    "start-gateway": "mesh dev",
+    "test": "jest"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.82.5",
-    "@graphql-mesh/graphql": "0.33.4",
-    "concurrently": "7.6.0",
+    "@graphql-mesh/cli": "0.82.30",
+    "@graphql-mesh/graphql": "0.34.13",
+    "concurrently": "8.0.1",
     "graphql": "16.6.0",
-    "graphql-yoga": "3.1.1",
-    "sharp": "0.31.2"
+    "graphql-yoga": "3.8.0",
+    "sharp": "0.32.0"
+  },
+  "devDependencies": {
+    "jest": "29.5.0",
+    "ts-jest": "29.0.5",
+    "ts-node": "10.9.1",
+    "typescript": "5.0.3"
   }
 }

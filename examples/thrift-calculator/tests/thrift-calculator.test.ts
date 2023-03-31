@@ -1,11 +1,11 @@
-import { findAndParseConfig } from '@graphql-mesh/cli';
-import { getMesh } from '@graphql-mesh/runtime';
+import { mkdirSync, writeFileSync } from 'fs';
 import { basename, join } from 'path';
 import { introspectionFromSchema, lexicographicSortSchema } from 'graphql';
-import { loadDocuments } from '@graphql-tools/load';
+import { findAndParseConfig } from '@graphql-mesh/cli';
+import { getMesh } from '@graphql-mesh/runtime';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
+import { loadDocuments } from '@graphql-tools/load';
 import thriftServer from '../src/main';
-import { mkdirSync, writeFileSync } from 'fs';
 
 const problematicModulePath = join(__dirname, '../../../node_modules/core-js/modules');
 const emptyModuleContent = 'module.exports = {};';
@@ -26,7 +26,7 @@ describe('Thrift Calculator', () => {
     expect(
       introspectionFromSchema(lexicographicSortSchema(schema), {
         descriptions: false,
-      })
+      }),
     ).toMatchSnapshot('thrift-calculator-schema');
   });
   it('should give correct response for example queries', async () => {
