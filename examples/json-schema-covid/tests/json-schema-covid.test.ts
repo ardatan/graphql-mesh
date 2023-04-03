@@ -1,9 +1,8 @@
+import { join } from 'path';
+import { readFile } from 'fs-extra';
+import { lexicographicSortSchema, printSchema } from 'graphql';
 import { findAndParseConfig } from '@graphql-mesh/cli';
 import { getMesh } from '@graphql-mesh/runtime';
-import { join } from 'path';
-
-import { printSchema, lexicographicSortSchema } from 'graphql';
-import { readFile } from 'fs-extra';
 
 const config$ = findAndParseConfig({
   dir: join(__dirname, '..'),
