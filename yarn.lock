@@ -2607,7 +2607,7 @@
     object-inspect "1.10.3"
     tslib "^2.0.0"
 
-"@graphql-inspector/core@~3.5.0":
+"@graphql-inspector/core@3.5.1", "@graphql-inspector/core@~3.5.0":
   version "3.5.1"
   resolved "https://registry.yarnpkg.com/@graphql-inspector/core/-/core-3.5.1.tgz#a10817f7d8d7b194f05e44968f81071714484ece"
   integrity sha512-aZ6kWU2gyf56d0asExNSL4LXSegbd1IvZdw/DM2dUNSlND53w2UczYsM9/7OXeRJHn5NK6UP+8cjHkAMDToKUA==
