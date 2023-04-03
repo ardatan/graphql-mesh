@@ -4,9 +4,10 @@ extend type Transform {
 
 type FederationTransform @md {
   types: [FederationTransformType!]
+  composeDirective: [String!]
   """
   Version of the federation spec
-  Default: v2.0
+  Default: v2.3
   """
   version: String
 }
@@ -20,6 +21,7 @@ type FederationObjectConfig {
   key: [FederationObjectKeyConfig]
   shareable: Boolean
   extends: Boolean
+  interfaceObject: Boolean
   fields: [FederationField!]
   resolveReference: ResolveReference
 }

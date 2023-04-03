@@ -6,6 +6,7 @@
       * `fields` (type: `String`)
     * `shareable` (type: `Boolean`)
     * `extends` (type: `Boolean`)
+    * `interfaceObject` (type: `Boolean`)
     * `fields` (type: `Array of Object`, required): 
       * `name` (type: `String`, required)
       * `config` (type: `Object`, required): 
@@ -28,5 +29,6 @@
 args:
   someArg: "{root.someKeyValue}"
 ```
+* `composeDirective` (type: `Array of String`, required)
 * `version` (type: `String`) - Version of the federation spec
 Default: v2.3
