@@ -122,7 +122,7 @@ describe('transform-federation', () => {
       schema,
     });
     expect(printSchemaWithDirectives(transformedSchema)).toMatchInlineSnapshot(`
-      "schema @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key"]) {
+      "schema @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key"]) @link(url: "https://myspecs.dev/myCustomDirective/v1.0", import: ["@custom"]) @composeDirective(name: "@custom") {
         query: Query
       }
 
@@ -150,7 +150,7 @@ describe('transform-federation', () => {
         package: String!
       }
 
-      type Inventory @key(fields: "id") @interfaceObject {
+      type Inventory @key(fields: "id") @interfaceObject @custom {
         id: ID!
         products: [Product!]!
       }"
