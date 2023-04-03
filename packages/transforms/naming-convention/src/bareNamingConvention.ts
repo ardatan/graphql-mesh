@@ -1,5 +1,6 @@
 import {
   defaultFieldResolver,
+  getNamedType,
   GraphQLAbstractType,
   GraphQLEnumType,
   GraphQLInputObjectType,
@@ -13,7 +14,6 @@ import {
   GraphQLUnionType,
   isEnumType,
   isInputObjectType,
-  getNamedType,
 } from 'graphql';
 import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { MapperKind, mapSchema, renameType } from '@graphql-tools/utils';
