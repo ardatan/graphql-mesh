@@ -370,7 +370,9 @@ export function ${cliParams.builtMeshSDKFactoryName}<TGlobalContext = any, TOper
       })
     )
       .replace(`import * as Operations from 'NOWHERE';\n`, '')
-      .replace(`import { DocumentNode } from 'graphql';`, '');
+      .replace(`import { DocumentNode } from 'graphql';`, '')
+      .split('(Operations.')
+      .join('(');
 
   const endpointAssignmentESM = `import { fileURLToPath } from '@graphql-mesh/utils';
 const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url)), '${pathModule.relative(
