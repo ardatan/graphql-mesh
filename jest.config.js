@@ -39,6 +39,6 @@ module.exports = {
     '^.+\\.ts?$': 'babel-jest',
     '^.+\\.js$': 'babel-jest',
   },
-  resolver: 'bob-the-bundler/jest-resolver.js',
+  resolver: 'bob-the-bundler/jest-resolver',
   testMatch,
 };
