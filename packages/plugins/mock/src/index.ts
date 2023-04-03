@@ -13,7 +13,7 @@ export default function useMock(
   // eslint-disable-next-line @typescript-eslint/ban-types
 ): MeshPlugin<{}> {
   // eslint-disable-next-line no-new-func
-  const configIf = config != null && 'if' in config ? new Function(`return ${ifDef}`)() : true;
+  const configIf = config != null && 'if' in config ? new Function(`return ${config.if}`)() : true;
 
   if (configIf) {
     return {

@@ -1852,7 +1852,7 @@ export interface LiveQueryIndexBy {
 export interface MockingConfig {
   /**
    * If this expression is truthy, mocking would be enabled
-   * You can use environment variables expression, for example: `${MOCKING_ENABLED}`
+   * You can use environment variables expression, for example: `process.env.MOCKING_ENABLED != null`
    */
   if?: boolean;
   /**

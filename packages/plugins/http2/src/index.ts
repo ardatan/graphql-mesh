@@ -47,7 +47,7 @@ export default function useHTTP2(opts: MeshPluginOptions<YamlConfig.Http2Plugin>
         }
         return new Promise(resolve => {
           let status = 200;
-          const responseHeaders = {};
+          const responseHeaders: Record<string, any> = {};
           stream.once('response', headers => {
             for (const key in headers) {
               if (key === ':status') {

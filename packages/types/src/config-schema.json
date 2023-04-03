@@ -2248,7 +2248,7 @@
       "properties": {
         "if": {
           "type": "boolean",
-          "description": "If this expression is truthy, mocking would be enabled\nYou can use environment variables expression, for example: `${MOCKING_ENABLED}`"
+          "description": "If this expression is truthy, mocking would be enabled\nYou can use environment variables expression, for example: `process.env.MOCKING_ENABLED != null`"
         },
         "preserveResolvers": {
           "type": "boolean",

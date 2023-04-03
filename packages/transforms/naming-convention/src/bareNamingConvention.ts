@@ -269,7 +269,7 @@ function generateArgsMapForInput(
 
 // Map back from new arg name to the original one
 function argsFromArgMap(argMap: ArgsMap, args: any) {
-  const originalArgs = {};
+  const originalArgs: Record<string, any> = {};
   Object.keys(args).forEach(newArgName => {
     if (typeof newArgName !== 'string') return;
 
