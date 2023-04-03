@@ -38,7 +38,7 @@ describe('transform-federation', () => {
       schema,
     });
     expect(printSchemaWithDirectives(transformedSchema)).toMatchInlineSnapshot(`
-      "schema @link(url: "https://specs.apollo.dev/federation/v2.0", import: []) {
+      "schema @link(url: "https://specs.apollo.dev/federation/v2.3", import: []) {
         query: Query
       }
 

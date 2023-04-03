@@ -1119,7 +1119,7 @@ export interface FederationTransform {
   types?: FederationTransformType[];
   /**
    * Version of the federation spec
-   * Default: v2.0
+   * Default: v2.3
    */
   version?: string;
 }

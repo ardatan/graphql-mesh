@@ -201,7 +201,7 @@ export default class FederationTransform implements MeshTransform {
     );
 
     directivesObj.link = {
-      url: 'https://specs.apollo.dev/federation/' + (this.config.version || 'v2.0'),
+      url: 'https://specs.apollo.dev/federation/' + (this.config.version || 'v2.3'),
       import: filteredDirectives
         .filter(({ name }) => name !== 'link')
         .map(dirName => `@${dirName.name}`),

@@ -3187,7 +3187,7 @@
         },
         "version": {
           "type": "string",
-          "description": "Version of the federation spec\nDefault: v2.0"
+          "description": "Version of the federation spec\nDefault: v2.3"
         }
       }
     },
