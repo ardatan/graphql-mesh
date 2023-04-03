@@ -135,7 +135,7 @@ export default class PostGraphileHandler implements MeshHandler {
       defaultExportName: 'default',
     });
     if (typeof contextOptions !== 'function') contextOptions = () => ({});
- 
+
     return {
       schema,
       executor({
