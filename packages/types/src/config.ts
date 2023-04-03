@@ -1131,6 +1131,7 @@ export interface FederationObjectConfig {
   key?: FederationObjectKeyConfig[];
   shareable?: boolean;
   extends?: boolean;
+  interfaceObject?: boolean;
   fields?: FederationField[];
   /**
    * Any of: String, ResolveReferenceObject

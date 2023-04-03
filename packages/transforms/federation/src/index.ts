@@ -71,6 +71,9 @@ export default class FederationTransform implements MeshTransform {
         if (type.config?.extends) {
           typeDirectivesObj.extends = type.config.extends;
         }
+        if (type.config?.interfaceObject) {
+          typeDirectivesObj.interfaceObject = type.config.interfaceObject;
+        }
         const typeFieldObjs = typeObj.getFields();
         if (type.config?.fields) {
           for (const field of type.config.fields) {
