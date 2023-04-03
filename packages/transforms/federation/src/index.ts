@@ -214,9 +214,10 @@ export default class FederationTransform implements MeshTransform {
       return schemaWithUnionType;
     }
 
+    const includedDirectives = [...federationDirectives, ...(this.config.composeDirective || [])];
     return mapSchema(schemaWithUnionType, {
       [MapperKind.DIRECTIVE]: directive => {
-        if (federationDirectives.includes(directive.name)) {
+        if (includedDirectives.includes(directive.name)) {
           return directive;
         }
         return null;
@@ -227,14 +228,14 @@ export default class FederationTransform implements MeshTransform {
           astNode: type.astNode && {
             ...type.astNode,
             directives: type.astNode.directives?.filter(directive =>
-              federationDirectives.includes(directive.name.value),
+              includedDirectives.includes(directive.name.value),
             ),
           },
           extensions: {
             ...type.extensions,
             directives: Object.fromEntries(
               Object.entries(type.extensions?.directives || {}).filter(([key]) =>
-                federationDirectives.includes(key),
+                includedDirectives.includes(key),
               ),
             ),
           },
@@ -246,14 +247,14 @@ export default class FederationTransform implements MeshTransform {
           astNode: type.astNode && {
             ...type.astNode,
             directives: type.astNode.directives?.filter(directive =>
-              federationDirectives.includes(directive.name.value),
+              includedDirectives.includes(directive.name.value),
             ),
           },
           extensions: {
             ...type.extensions,
             directives: Object.fromEntries(
               Object.entries(type.extensions?.directives || {}).filter(([key]) =>
-                federationDirectives.includes(key),
+                includedDirectives.includes(key),
               ),
             ),
           },
@@ -265,14 +266,14 @@ export default class FederationTransform implements MeshTransform {
           astNode: fieldConfig.astNode && {
             ...fieldConfig.astNode,
             directives: fieldConfig.astNode.directives?.filter(directive =>
-              federationDirectives.includes(directive.name.value),
+              includedDirectives.includes(directive.name.value),
             ),
           },
           extensions: {
             ...fieldConfig.extensions,
             directives: Object.fromEntries(
               Object.entries(fieldConfig.extensions?.directives || {}).filter(([key]) =>
-                federationDirectives.includes(key),
+                includedDirectives.includes(key),
               ),
             ),
           },

@@ -64,4 +64,96 @@ describe('transform-federation', () => {
       }"
     `);
   });
+
+  it('should transform to federation schema', () => {
+    const schema = buildSchema(/* GraphQL */ `
+      directive @custom on OBJECT
+
+      type Query {
+        product(id: ID!): Product
+      }
+
+      type Product @custom {
+        sku: String!
+        package: String!
+      }
+
+      type Inventory {
+        id: ID!
+        products: [Product!]!
+      }
+    `);
+
+    const transform = new FederationTransform({
+      apiName,
+      baseDir,
+      config: {
+        composeDirective: ['custom'],
+        types: [
+          {
+            name: 'Product',
+            config: {
+              key: [
+                {
+                  fields: 'sku package',
+                },
+              ],
+            },
+          },
+          {
+            name: 'Inventory',
+            config: {
+              interfaceObject: true,
+              key: [
+                {
+                  fields: 'id',
+                },
+              ],
+            },
+          },
+        ],
+      },
+      cache,
+      importFn,
+      logger,
+      pubsub,
+    });
+    const transformedSchema = transform.transformSchema(schema, {
+      schema,
+    });
+    expect(printSchemaWithDirectives(transformedSchema)).toMatchInlineSnapshot(`
+      "schema @link(url: "https://specs.apollo.dev/federation/v2.3", import: []) {
+        query: Query
+      }
+
+      directive @custom on OBJECT
+
+      type Query {
+        product(id: ID!): Product
+        _entities(representations: [_Any!]!): [_Entity]!
+        _service: _Service!
+      }
+
+      union _Entity = Product | Inventory
+
+      scalar _Any
+
+      type _Service {
+        """
+        The sdl representing the federated service capabilities. Includes federation directives, removes federation types, and includes rest of full schema after schema directives have been applied
+        """
+        sdl: String
+      }
+
+      type Product @key(fields: "sku package") {
+        sku: String!
+        package: String!
+      }
+
+      type Inventory @key(fields: "id") @interfaceObject {
+        id: ID!
+        products: [Product!]!
+      }"
+    `);
+  });
 });
