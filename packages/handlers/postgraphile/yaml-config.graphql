@@ -38,6 +38,10 @@ type PostGraphileHandler @md {
   Enables live-query support via GraphQL subscriptions (sends updated payload any time nested collections/records change) (default: true)
   """
   live: Boolean
+  """
+  A file that exports a function which takes context as a paramter and returns postgraphile context options (e.g. "./my-function#pgSettings"). See the [postgraphile docs](https://www.graphile.org/postgraphile/usage-schema/) for more information.
+  """
+  contextOptions: Any
 }
 
 union PostgraphileExternalOptions = JSON | String

@@ -9,3 +9,4 @@
   * `String`
 * `subscriptions` (type: `Boolean`) - Enable GraphQL websocket transport support for subscriptions (default: true)
 * `live` (type: `Boolean`) - Enables live-query support via GraphQL subscriptions (sends updated payload any time nested collections/records change) (default: true)
+* `contextOptions` (type: `Any`) - A file that exports a function which takes context as a paramter and returns postgraphile context options (e.g. "./my-function#pgSettings"). See the [postgraphile docs](https://www.graphile.org/postgraphile/usage-schema/) for more information.

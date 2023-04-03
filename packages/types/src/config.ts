@@ -904,6 +904,10 @@ export interface PostGraphileHandler {
    * Enables live-query support via GraphQL subscriptions (sends updated payload any time nested collections/records change) (default: true)
    */
   live?: boolean;
+  /**
+   * A file that exports a function which takes context as a paramter and returns postgraphile context options (e.g. "./my-function#pgSettings"). See the [postgraphile docs](https://www.graphile.org/postgraphile/usage-schema/) for more information.
+   */
+  contextOptions?: any;
 }
 export interface RAMLHandler {
   source: string;

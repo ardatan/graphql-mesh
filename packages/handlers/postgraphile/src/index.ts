@@ -129,6 +129,13 @@ export default class PostGraphileHandler implements MeshHandler {
       await this.pgCache.set(cachedIntrospection);
     }
 
+    let contextOptions = await loadFromModuleExportExpression<any>(this.config.contextOptions, {
+      cwd: this.baseDir,
+      importFn: this.importFn,
+      defaultExportName: 'default',
+    });
+    if (typeof contextOptions !== 'function') contextOptions = () => ({});
+
     return {
       schema,
       executor({
@@ -145,6 +152,7 @@ export default class PostGraphileHandler implements MeshHandler {
             queryDocumentAst: document,
             operationName,
             variables,
+            ...contextOptions(meshContext),
           },
           function withPgContextCallback(pgContext) {
             return defaultExecutor({
