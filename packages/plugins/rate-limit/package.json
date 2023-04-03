@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "0.4.3",
-    "minimatch": "8.0.2"
+    "minimatch": "8.0.3"
   },
   "devDependencies": {
     "@envelop/core": "3.0.6"

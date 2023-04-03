@@ -38,7 +38,7 @@
   "dependencies": {
     "@graphql-mesh/string-interpolation": "0.4.3",
     "@whatwg-node/fetch": "^0.8.3",
-    "minimatch": "8.0.2"
+    "minimatch": "8.0.3"
   },
   "publishConfig": {
     "access": "public",
