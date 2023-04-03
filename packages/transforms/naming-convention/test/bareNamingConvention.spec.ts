@@ -108,16 +108,28 @@ describe('namingConvention - bare', () => {
           last_name: String
           Type: UserType!
           interests: [UserInterests!]!
+          custom_fields: [UserCustomField!]
         }
         type Post {
           id: ID!
+        }
+        type UserCustomField {
+          field_name: String!
+          value: String
         }
         input UserSearchInput {
           id: ID
           first_name: String
           last_name: String
           type: UserType
+          custom_fields: [UserSearchKeyCustomFieldInput!]
         }
+
+        input UserSearchKeyCustomFieldInput {
+          field_name: String!
+          value: String
+        }
+
         enum UserType {
           admin
           moderator
@@ -137,6 +149,7 @@ describe('namingConvention - bare', () => {
               first_name: args.Input.first_name,
               last_name: args.Input.last_name,
               Type: args.Input.type,
+              custom_fields: args.Input.custom_fields,
             };
           },
           userById: (_, args) => {
@@ -192,11 +205,23 @@ describe('namingConvention - bare', () => {
       schema: newSchema,
       document: parse(/* GraphQL */ `
         {
-          user(Input: { id: "0", firstName: "John", lastName: "Doe", type: ADMIN }) {
+          user(
+            Input: {
+              id: "0"
+              firstName: "John"
+              lastName: "Doe"
+              type: ADMIN
+              customFields: [{ fieldName: "age", value: "30" }]
+            }
+          ) {
             id
             firstName
             lastName
             type
+            customFields {
+              fieldName
+              value
+            }
           }
         }
       `),
@@ -207,6 +232,7 @@ describe('namingConvention - bare', () => {
       firstName: 'John',
       lastName: 'Doe',
       type: 'ADMIN',
+      customFields: [{ fieldName: 'age', value: '30' }],
     });
 
     const result2 = await execute({

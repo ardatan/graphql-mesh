@@ -1,6 +1,6 @@
 
 * `if` (type: `Boolean`) - If this expression is truthy, mocking would be enabled
-You can use environment variables expression, for example: `${MOCKING_ENABLED}`
+You can use environment variables expression, for example: `process.env.MOCKING_ENABLED != null`
 * `preserveResolvers` (type: `Boolean`) - Do not mock any other resolvers other than defined in `mocks`.
 For example, you can enable this if you don't want to mock entire schema but partially.
 * `mocks` (type: `Array of Object`) - Mock configurations: 
