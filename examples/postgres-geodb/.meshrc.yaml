@@ -10,35 +10,31 @@ sources:
     handler:
       graphql:
         endpoint: https://api.github.com/graphql
-        schemaHeaders:
-          Authorization: bearer {env.GH_ACCESS_TOKEN}
+        source: https://docs.github.com/public/schema.docs.graphql
         operationHeaders:
           Authorization: bearer {env.GH_ACCESS_TOKEN}
+          User-Agent: GraphQL Mesh
+        batch: false
     transforms:
       - prefix:
           value: Github
           includeRootOperations: true
 
 additionalTypeDefs: |
-      extend type GeoCity {
-        developers(limit: Int = 10): [GithubUser]
-      }
-
-additionalResolvers:
-  - targetTypeName: GeoCity
-    targetFieldName: developers
-    requiredSelectionSet: |
-      {
-        name
-      }
-    sourceName: Github
-    sourceTypeName: Query
-    sourceFieldName: Githubsearch
-    sourceArgs:
-      type: USER
-      query: location:{root.name}
-      first: "{args.limit}"
-    result: nodes
+  extend type GeoCity {
+    developers(limit: Int = 10): [GithubUser] @resolveTo(
+      requiredSelectionSet: "{ name }",
+      sourceName: "Github",
+      sourceTypeName: "Query",
+      sourceFieldName: "Githubsearch",
+      sourceArgs: {
+        type: "USER",
+        query: "location:{root.name}",
+        first: "{args.limit}"
+      },
+      result: "nodes"
+    )
+  }
 
 documents:
   - ./src/test.query.graphql

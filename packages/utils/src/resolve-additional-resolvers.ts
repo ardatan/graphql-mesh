@@ -1,26 +1,32 @@
-import { YamlConfig, MeshPubSub, ImportFn } from '@graphql-mesh/types';
-import { IResolvers, parseSelectionSet } from '@graphql-tools/utils';
+import { dset } from 'dset';
 import {
-  GraphQLResolveInfo,
-  SelectionSetNode,
-  Kind,
-  GraphQLSchema,
-  GraphQLObjectType,
   getNamedType,
-  isAbstractType,
+  GraphQLNamedType,
+  GraphQLObjectType,
+  GraphQLResolveInfo,
+  GraphQLSchema,
   GraphQLType,
+  isAbstractType,
+  isInterfaceType,
+  isObjectType,
+  Kind,
+  SelectionSetNode,
 } from 'graphql';
-import { withFilter } from 'graphql-subscriptions';
-import _ from 'lodash';
-import { stringInterpolator } from './string-interpolator';
-import { loadFromModuleExportExpression } from './load-from-module-export-expression';
+import lodashGet from 'lodash.get';
+import toPath from 'lodash.topath';
+import { process } from '@graphql-mesh/cross-helpers';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import { ImportFn, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
+import { IResolvers, parseSelectionSet } from '@graphql-tools/utils';
+import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
+import { withFilter } from './with-filter.js';
 
-function getTypeByPath(type: GraphQLType, path: string[]): GraphQLType {
+function getTypeByPath(type: GraphQLType, path: string[]): GraphQLNamedType {
   if ('ofType' in type) {
-    return getTypeByPath(type.ofType, path);
+    return getTypeByPath(getNamedType(type), path);
   }
   if (path.length === 0) {
-    return type;
+    return getNamedType(type);
   }
   if (!('getFields' in type)) {
     throw new Error(`${type} cannot have a path ${path.join('.')}`);
@@ -40,14 +46,16 @@ function getTypeByPath(type: GraphQLType, path: string[]): GraphQLType {
 
 function generateSelectionSetFactory(
   schema: GraphQLSchema,
-  additionalResolver: YamlConfig.AdditionalStitchingBatchResolverObject | YamlConfig.AdditionalStitchingResolverObject
+  additionalResolver:
+    | YamlConfig.AdditionalStitchingBatchResolverObject
+    | YamlConfig.AdditionalStitchingResolverObject,
 ) {
   if (additionalResolver.sourceSelectionSet) {
     return () => parseSelectionSet(additionalResolver.sourceSelectionSet);
     // If result path provided without a selectionSet
   } else if (additionalResolver.result) {
-    const resultPath = _.toPath(additionalResolver.result);
-    let abstractResultType: string;
+    const resultPath = toPath(additionalResolver.result);
+    let abstractResultTypeName: string;
 
     const sourceType = schema.getType(additionalResolver.sourceTypeName) as GraphQLObjectType;
     const sourceTypeFields = sourceType.getFields();
@@ -56,23 +64,26 @@ function generateSelectionSetFactory(
 
     if (isAbstractType(resultFieldType)) {
       if (additionalResolver.resultType) {
-        abstractResultType = additionalResolver.resultType;
+        abstractResultTypeName = additionalResolver.resultType;
       } else {
         const targetType = schema.getType(additionalResolver.targetTypeName) as GraphQLObjectType;
         const targetTypeFields = targetType.getFields();
         const targetField = targetTypeFields[additionalResolver.targetFieldName];
         const targetFieldType = getNamedType(targetField.type);
-        abstractResultType = targetFieldType?.name;
+        abstractResultTypeName = targetFieldType?.name;
       }
-      const possibleTypes = schema.getPossibleTypes(resultFieldType);
-      if (!possibleTypes.some(possibleType => possibleType.name === abstractResultType)) {
-        throw new Error(
-          `${additionalResolver.sourceTypeName}.${additionalResolver.sourceFieldName}.${resultPath.join(
-            '.'
-          )} doesn't implement ${abstractResultType}. Please specify one of the following types as "returnType"; ${possibleTypes.map(
-            t => t.name
-          )}`
-        );
+      if (abstractResultTypeName !== resultFieldType.name) {
+        const abstractResultType = schema.getType(abstractResultTypeName);
+        if (
+          (isInterfaceType(abstractResultType) || isObjectType(abstractResultType)) &&
+          !schema.isSubType(resultFieldType, abstractResultType)
+        ) {
+          throw new Error(
+            `${additionalResolver.sourceTypeName}.${
+              additionalResolver.sourceFieldName
+            }.${resultPath.join('.')} doesn't implement ${abstractResultTypeName}.}`,
+          );
+        }
       }
     }
 
@@ -83,7 +94,11 @@ function generateSelectionSetFactory(
       for (const pathElem of resultPathReversed) {
         // Ensure the path elem is not array index
         if (Number.isNaN(parseInt(pathElem))) {
-          if (isLastResult && abstractResultType) {
+          if (
+            isLastResult &&
+            abstractResultTypeName &&
+            abstractResultTypeName !== resultFieldType.name
+          ) {
             finalSelectionSet = {
               kind: Kind.SELECTION_SET,
               selections: [
@@ -93,7 +108,7 @@ function generateSelectionSetFactory(
                     kind: Kind.NAMED_TYPE,
                     name: {
                       kind: Kind.NAME,
-                      value: abstractResultType,
+                      value: abstractResultTypeName,
                     },
                   },
                   selectionSet: finalSelectionSet,
@@ -130,8 +145,152 @@ function generateValuesFromResults(resultExpression: string): (result: any) => a
     if (Array.isArray(result)) {
       return result.map(valuesFromResults);
     }
-    return _.get(result, resultExpression);
+    return lodashGet(result, resultExpression);
   };
+}
+
+export function resolveAdditionalResolversWithoutImport(
+  additionalResolver:
+    | YamlConfig.AdditionalStitchingResolverObject
+    | YamlConfig.AdditionalSubscriptionObject
+    | YamlConfig.AdditionalStitchingBatchResolverObject,
+  pubsub: MeshPubSub,
+): IResolvers {
+  const baseOptions: any = {};
+  if (additionalResolver.result) {
+    baseOptions.valuesFromResults = generateValuesFromResults(additionalResolver.result);
+  }
+  if ('pubsubTopic' in additionalResolver) {
+    return {
+      [additionalResolver.targetTypeName]: {
+        [additionalResolver.targetFieldName]: {
+          subscribe: withFilter(
+            (root, args, context, info) => {
+              const resolverData = { root, args, context, info, env: process.env };
+              const topic = stringInterpolator.parse(additionalResolver.pubsubTopic, resolverData);
+              return pubsub.asyncIterator(topic) as AsyncIterableIterator<any>;
+            },
+            (root, args, context, info) => {
+              return additionalResolver.filterBy
+                ? // eslint-disable-next-line no-new-func
+                  new Function(`return ${additionalResolver.filterBy}`)()
+                : true;
+            },
+          ),
+          resolve: (payload: any) => {
+            if (baseOptions.valuesFromResults) {
+              return baseOptions.valuesFromResults(payload);
+            }
+            return payload;
+          },
+        },
+      },
+    };
+  } else if ('keysArg' in additionalResolver) {
+    return {
+      [additionalResolver.targetTypeName]: {
+        [additionalResolver.targetFieldName]: {
+          selectionSet:
+            additionalResolver.requiredSelectionSet || `{ ${additionalResolver.keyField} }`,
+          resolve: async (root: any, args: any, context: any, info: any) => {
+            if (!baseOptions.selectionSet) {
+              baseOptions.selectionSet = generateSelectionSetFactory(
+                info.schema,
+                additionalResolver,
+              );
+            }
+            const resolverData = { root, args, context, info, env: process.env };
+            const targetArgs: any = {};
+            for (const argPath in additionalResolver.additionalArgs || {}) {
+              dset(
+                targetArgs,
+                argPath,
+                stringInterpolator.parse(additionalResolver.additionalArgs[argPath], resolverData),
+              );
+            }
+            const options: any = {
+              ...baseOptions,
+              root,
+              context,
+              info,
+              argsFromKeys: (keys: string[]) => {
+                const args: any = {};
+                dset(args, additionalResolver.keysArg, keys);
+                Object.assign(args, targetArgs);
+                return args;
+              },
+              key: lodashGet(root, additionalResolver.keyField),
+            };
+            return context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
+              additionalResolver.sourceFieldName
+            ](options);
+          },
+        },
+      },
+    };
+  } else if ('targetTypeName' in additionalResolver) {
+    return {
+      [additionalResolver.targetTypeName]: {
+        [additionalResolver.targetFieldName]: {
+          selectionSet: additionalResolver.requiredSelectionSet,
+          resolve: (root: any, args: any, context: any, info: GraphQLResolveInfo) => {
+            // Assert source exists
+            if (!context[additionalResolver.sourceName]) {
+              throw new Error(`No source found named "${additionalResolver.sourceName}"`);
+            }
+            if (!context[additionalResolver.sourceName][additionalResolver.sourceTypeName]) {
+              throw new Error(
+                `No root type found named "${additionalResolver.sourceTypeName}" exists in the source ${additionalResolver.sourceName}\n` +
+                  `It should be one of the following; ${Object.keys(
+                    context[additionalResolver.sourceName],
+                  ).join(',')})}}`,
+              );
+            }
+            if (
+              !context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
+                additionalResolver.sourceFieldName
+              ]
+            ) {
+              throw new Error(
+                `No field named "${additionalResolver.sourceFieldName}" exists in the type ${additionalResolver.sourceTypeName} from the source ${additionalResolver.sourceName}`,
+              );
+            }
+
+            if (!baseOptions.selectionSet) {
+              baseOptions.selectionSet = generateSelectionSetFactory(
+                info.schema,
+                additionalResolver,
+              );
+            }
+            const resolverData = { root, args, context, info, env: process.env };
+            const targetArgs: any = {};
+            for (const argPath in additionalResolver.sourceArgs) {
+              dset(
+                targetArgs,
+                argPath,
+                stringInterpolator.parse(
+                  additionalResolver.sourceArgs[argPath].toString(),
+                  resolverData,
+                ),
+              );
+            }
+            const options: any = {
+              ...baseOptions,
+              root,
+              args: targetArgs,
+              context,
+              info,
+            };
+            return context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
+              additionalResolver.sourceFieldName
+            ](options);
+          },
+        },
+      },
+    };
+  } else {
+    return additionalResolver;
+  }
 }
 
 export function resolveAdditionalResolvers(
@@ -143,7 +302,7 @@ export function resolveAdditionalResolvers(
     | YamlConfig.AdditionalStitchingBatchResolverObject
   )[],
   importFn: ImportFn,
-  pubsub: MeshPubSub
+  pubsub: MeshPubSub,
 ): Promise<IResolvers[]> {
   return Promise.all(
     (additionalResolvers || []).map(async additionalResolver => {
@@ -173,12 +332,18 @@ export function resolveAdditionalResolvers(
                 subscribe: withFilter(
                   (root, args, context, info) => {
                     const resolverData = { root, args, context, info, env: process.env };
-                    const topic = stringInterpolator.parse(additionalResolver.pubsubTopic, resolverData);
+                    const topic = stringInterpolator.parse(
+                      additionalResolver.pubsubTopic,
+                      resolverData,
+                    );
                     return pubsub.asyncIterator(topic) as AsyncIterableIterator<any>;
                   },
                   (root, args, context, info) => {
-                    return additionalResolver.filterBy ? eval(additionalResolver.filterBy) : true;
-                  }
+                    return additionalResolver.filterBy
+                      ? // eslint-disable-next-line no-new-func
+                        new Function(`return ${additionalResolver.filterBy}`)()
+                      : true;
+                  },
                 ),
                 resolve: (payload: any) => {
                   if (baseOptions.valuesFromResults) {
@@ -193,18 +358,25 @@ export function resolveAdditionalResolvers(
           return {
             [additionalResolver.targetTypeName]: {
               [additionalResolver.targetFieldName]: {
-                selectionSet: additionalResolver.requiredSelectionSet || `{ ${additionalResolver.keyField} }`,
+                selectionSet:
+                  additionalResolver.requiredSelectionSet || `{ ${additionalResolver.keyField} }`,
                 resolve: async (root: any, args: any, context: any, info: any) => {
                   if (!baseOptions.selectionSet) {
-                    baseOptions.selectionSet = generateSelectionSetFactory(info.schema, additionalResolver);
+                    baseOptions.selectionSet = generateSelectionSetFactory(
+                      info.schema,
+                      additionalResolver,
+                    );
                   }
                   const resolverData = { root, args, context, info, env: process.env };
                   const targetArgs: any = {};
                   for (const argPath in additionalResolver.additionalArgs || {}) {
-                    _.set(
+                    dset(
                       targetArgs,
                       argPath,
-                      stringInterpolator.parse(additionalResolver.additionalArgs[argPath], resolverData)
+                      stringInterpolator.parse(
+                        additionalResolver.additionalArgs[argPath],
+                        resolverData,
+                      ),
                     );
                   }
                   const options: any = {
@@ -214,11 +386,11 @@ export function resolveAdditionalResolvers(
                     info,
                     argsFromKeys: (keys: string[]) => {
                       const args: any = {};
-                      _.set(args, additionalResolver.keysArg, keys);
+                      dset(args, additionalResolver.keysArg, keys);
                       Object.assign(args, targetArgs);
                       return args;
                     },
-                    key: _.get(root, additionalResolver.keyField),
+                    key: lodashGet(root, additionalResolver.keyField),
                   };
                   return context[additionalResolver.sourceName][additionalResolver.sourceTypeName][
                     additionalResolver.sourceFieldName
@@ -240,9 +412,9 @@ export function resolveAdditionalResolvers(
                   if (!context[additionalResolver.sourceName][additionalResolver.sourceTypeName]) {
                     throw new Error(
                       `No root type found named "${additionalResolver.sourceTypeName}" exists in the source ${additionalResolver.sourceName}\n` +
-                        `It should be one of the following; ${Object.keys(context[additionalResolver.sourceName]).join(
-                          ','
-                        )})}}`
+                        `It should be one of the following; ${Object.keys(
+                          context[additionalResolver.sourceName],
+                        ).join(',')})}}`,
                     );
                   }
                   if (
@@ -251,20 +423,26 @@ export function resolveAdditionalResolvers(
                     ]
                   ) {
                     throw new Error(
-                      `No field named "${additionalResolver.sourceFieldName}" exists in the type ${additionalResolver.sourceTypeName} from the source ${additionalResolver.sourceName}`
+                      `No field named "${additionalResolver.sourceFieldName}" exists in the type ${additionalResolver.sourceTypeName} from the source ${additionalResolver.sourceName}`,
                     );
                   }
 
                   if (!baseOptions.selectionSet) {
-                    baseOptions.selectionSet = generateSelectionSetFactory(info.schema, additionalResolver);
+                    baseOptions.selectionSet = generateSelectionSetFactory(
+                      info.schema,
+                      additionalResolver,
+                    );
                   }
                   const resolverData = { root, args, context, info, env: process.env };
                   const targetArgs: any = {};
                   for (const argPath in additionalResolver.sourceArgs) {
-                    _.set(
+                    dset(
                       targetArgs,
                       argPath,
-                      stringInterpolator.parse(additionalResolver.sourceArgs[argPath].toString(), resolverData)
+                      stringInterpolator.parse(
+                        additionalResolver.sourceArgs[argPath].toString(),
+                        resolverData,
+                      ),
                     );
                   }
                   const options: any = {
@@ -285,6 +463,6 @@ export function resolveAdditionalResolvers(
           return additionalResolver;
         }
       }
-    })
+    }),
   );
 }

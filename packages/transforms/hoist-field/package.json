@@ -1,44 +1,52 @@
 {
   "name": "@graphql-mesh/transform-hoist-field",
-  "version": "0.1.16",
-  "sideEffects": false,
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
-  "exports": {
-    ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
-    },
-    "./*": {
-      "require": "./dist/*.js",
-      "import": "./dist/*.mjs"
-    }
-  },
-  "license": "MIT",
+  "version": "0.2.21",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
     "directory": "packages/transforms/hoist-field"
   },
+  "license": "MIT",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
+    "@graphql-mesh/types": "^0.91.12",
+    "@graphql-mesh/utils": "^0.43.20",
+    "@graphql-tools/utils": "^9.2.1",
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.72.1",
-    "@graphql-mesh/utils": "0.34.6",
-    "@graphql-tools/delegate": "8.7.7",
-    "@graphql-tools/wrap": "8.4.16",
-    "@graphql-tools/utils": "8.6.9"
+    "@graphql-tools/delegate": "9.0.28",
+    "@graphql-tools/wrap": "9.3.8"
   },
   "devDependencies": {
-    "@graphql-mesh/cache-localforage": "0.6.1"
+    "@graphql-mesh/cache-localforage": "0.7.20"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
   }
 }

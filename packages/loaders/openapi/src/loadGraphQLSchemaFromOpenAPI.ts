@@ -1,6 +1,9 @@
-import { loadGraphQLSchemaFromJSONSchemas } from '@omnigraph/json-schema';
-import { OpenAPILoaderOptions } from '.';
-import { getJSONSchemaOptionsFromOpenAPIOptions } from './getJSONSchemaOptionsFromOpenAPIOptions';
+import {
+  loadGraphQLSchemaFromJSONSchemas,
+  loadNonExecutableGraphQLSchemaFromJSONSchemas,
+} from '@omnigraph/json-schema';
+import { getJSONSchemaOptionsFromOpenAPIOptions } from './getJSONSchemaOptionsFromOpenAPIOptions.js';
+import { OpenAPILoaderOptions } from './types.js';
 
 /**
  * Creates a local GraphQLSchema instance from a OpenAPI Document.
@@ -9,9 +12,22 @@ import { getJSONSchemaOptionsFromOpenAPIOptions } from './getJSONSchemaOptionsFr
  * then load it with `loadGraphQLSchemaFromBundle`.
  */
 export async function loadGraphQLSchemaFromOpenAPI(name: string, options: OpenAPILoaderOptions) {
-  const extraJSONSchemaOptions = await getJSONSchemaOptionsFromOpenAPIOptions(options);
+  const extraJSONSchemaOptions = await getJSONSchemaOptionsFromOpenAPIOptions(name, options);
   return loadGraphQLSchemaFromJSONSchemas(name, {
     ...options,
     ...extraJSONSchemaOptions,
   });
 }
+
+export async function loadNonExecutableGraphQLSchemaFromOpenAPI(
+  name: string,
+  options: OpenAPILoaderOptions,
+) {
+  const extraJSONSchemaOptions = await getJSONSchemaOptionsFromOpenAPIOptions(name, options);
+  return loadNonExecutableGraphQLSchemaFromJSONSchemas(name, {
+    ...options,
+    ...extraJSONSchemaOptions,
+  });
+}
+
+export { processDirectives } from '@omnigraph/json-schema';

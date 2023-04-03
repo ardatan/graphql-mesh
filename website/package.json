@@ -1,34 +1,33 @@
 {
-  "name": "@graphql-mesh/website",
+  "name": "website",
   "version": "0.8.2",
+  "type": "module",
   "private": true,
   "scripts": {
-    "build-mesh": "cd src/pages/api/covid/json-schema-covid && mesh build",
-    "prebuild": "yarn build-mesh",
-    "build": "next build",
-    "predev": "yarn build-mesh",
-    "dev": "concurrently -r \"next-remote-watch ./docs ./src/pages/_app.tsx ./src/pages/_document.tsx\" \"wait-on -s 1 http://localhost:3000 && open-cli http://localhost:3000\"",
+    "analyze": "cross-env ANALYZE=true next build",
+    "build": "next build && next-sitemap --config next-sitemap.config.cjs ",
+    "dev": "next dev",
     "next": "next",
-    "analyze": "cross-env ANALYZE=true next build"
+    "start": "next start"
   },
   "dependencies": {
-    "@graphql-yoga/node": "2.5.0",
-    "@chakra-ui/icons": "1.1.7",
-    "@chakra-ui/react": "1.8.8",
-    "@chakra-ui/theme-tools": "1.3.6",
-    "@guild-docs/client": "2.1.1",
-    "@guild-docs/server": "3.0.1",
-    "@theguild/components": "1.11.2",
-    "classnames": "2.3.1",
-    "framer-motion": "6.3.3",
-    "next": "12.1.6",
-    "next-i18next": "11.0.0",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "react-icons": "4.3.1",
-    "react-use": "17.3.2",
-    "next-seo": "5.4.0",
-    "@mdx-js/react": "2.1.1"
+    "@theguild/components": "4.5.8",
+    "next": "13.2.4",
+    "next-sitemap": "4.0.6",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-icons": "4.8.0"
+  },
+  "devDependencies": {
+    "@theguild/algolia": "1.1.5",
+    "@theguild/tailwind-config": "0.2.1",
+    "@types/node": "18.15.11",
+    "@types/react": "18.0.32",
+    "cross-env": "7.0.3",
+    "eslint-config-next": "13.2.4",
+    "postcss-import": "15.1.0",
+    "tailwindcss": "3.3.1",
+    "typescript": "5.0.3"
   },
   "browserslist": {
     "production": [
@@ -41,20 +40,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@next/bundle-analyzer": "12.1.6",
-    "@types/node": "16.11.33",
-    "@types/react": "18.0.8",
-    "@types/react-dom": "18.0.3",
-    "concurrently": "7.1.0",
-    "cross-env": "7.0.3",
-    "esbuild": "0.14.38",
-    "esbuild-register": "3.3.2",
-    "eslint-config-next": "12.1.6",
-    "next-remote-watch": "1.0.0",
-    "open-cli": "7.0.1",
-    "typescript": "4.6.4",
-    "wait-on": "6.0.1"
   }
 }

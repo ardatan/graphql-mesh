@@ -1,0 +1,101 @@
+---
+description:
+  Learn how to use GraphQL Mesh Response Cache Plugin to cache GraphQL queries and reduce the number
+  of requests to your sources. Customizable caching behavior and configuration options available.
+---
+
+import { Callout, PackageCmd } from '@theguild/components'
+
+# GraphQL Response Caching
+
+_GraphQL Response Caching_ is a feature that allows you to cache the response of a GraphQL query.
+This is useful when you want to reduce the number of requests to your sources. For example, if you
+have a GraphQL query that fetches a list of products, you can cache the response of this query so
+that the next time the same query is made, the response is fetched from the cache instead of making
+a request to the underlying sources.
+
+GraphQL Mesh's Response Cache Plugin uses
+[Envelop's Response Caching](https://www.envelop.dev/docs/guides/adding-a-graphql-response-cache)
+under the hood.
+
+You can
+[learn more on Envelop's docs](https://www.envelop.dev/docs/guides/adding-a-graphql-response-cache).
+
+<Callout>
+  The defined cache storage will be used for this plugin. By default, GraphQL Mesh uses
+  [Localforage](/docs/cache/localforage) as a cache storage. For example, you need to follow this
+  section to configure [Redis](/docs/cache/redis) as your cache storage. You can find other options
+  under the same category.
+</Callout>
+
+## Getting Started
+
+<PackageCmd packages={['@graphql-mesh/plugin-response-cache']} />
+
+Then add the plugin to your configuration;
+
+```yaml filename=".meshrc.yaml"
+# ...
+plugins:
+  - responseCache: {}
+```
+
+The caching behavior can be fully customized. A TTL can be provided global or more granular per type
+or schema coordinate.
+
+```yaml filename=".meshrc.yaml"
+# ...
+plugins:
+  - responseCache:
+      # cache operations for 1 hour by default
+      ttl: 60 * 1000 + 60,
+      ttlPerCoordinate:
+        # cache operation containing Stock object type for 500ms
+        - coordinate: Stock
+          ttl: 500
+        # cache operation containing Query.rocketCoordinates selection for 100ms
+        - coordinate: Query.rocketCoordinates
+          ttl: 100
+      ignoredTypes:
+        # never cache responses that include a RefreshToken object type
+        - RefreshToken
+```
+
+If you need to cache based on the user;
+
+```yaml filename=".meshrc.yaml"
+# ...
+plugins:
+  - responseCache:
+      if: 'context.headers.authorization != null'
+      session: '{context.headers.authorization}'
+```
+
+If you don't want to invalidate automatically based on mutations;
+
+```yaml filename=".meshrc.yaml"
+# ...
+plugins:
+  - responseCache:
+      invalidateViaMutation: false
+```
+
+## Config API Reference
+
+import API from '../../../generated-markdown/ResponseCacheConfig.generated.md'
+
+<API />
+
+## CodeSandBox Example
+
+You can check the
+["Location Weather" example](https://github.com/Urigo/graphql-mesh/tree/master/examples/openapi-location-weather/)
+that uses OpenAPI handler with cache transform;
+
+<iframe
+  src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/openapi-location-weather?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
+  className="mt-6 w-full h-[500px] rounded-md"
+  title="typescript-location-weather-example"
+  allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+  sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+/>

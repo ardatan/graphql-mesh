@@ -1,6 +1,13 @@
-import { GraphQLNamedType, GraphQLSchema, GraphQLFieldConfig, isSpecifiedScalarType } from 'graphql';
-import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
+import {
+  GraphQLAbstractType,
+  GraphQLFieldConfig,
+  GraphQLNamedType,
+  GraphQLSchema,
+  isSpecifiedScalarType,
+} from 'graphql';
+import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { MapperKind, mapSchema, renameType } from '@graphql-tools/utils';
+import { ignoreList as defaultIgnoreList } from './shared.js';
 
 const rootOperations = new Set(['Query', 'Mutation', 'Subscription']);
 
@@ -13,7 +20,7 @@ export default class BarePrefix implements MeshTransform {
 
   constructor(options: MeshTransformOptions<YamlConfig.PrefixTransformConfig>) {
     const { apiName, config } = options;
-    this.ignoreList = config.ignore || [];
+    this.ignoreList = [...(config.ignore || []), ...defaultIgnoreList];
     this.includeRootOperations = config.includeRootOperations === true;
     this.includeTypes = config.includeTypes !== false;
     this.prefix = null;
@@ -40,6 +47,18 @@ export default class BarePrefix implements MeshTransform {
         }
         return undefined;
       },
+      [MapperKind.ABSTRACT_TYPE]: type => {
+        if (this.includeTypes && !isSpecifiedScalarType(type)) {
+          const existingResolver = type.resolveType;
+          type.resolveType = async (data, context, info, abstractType) => {
+            const typeName = await existingResolver(data, context, info, abstractType);
+            return this.prefix + typeName;
+          };
+          const currentName = type.name;
+          return renameType(type, this.prefix + currentName) as GraphQLAbstractType;
+        }
+        return undefined;
+      },
       [MapperKind.ROOT_OBJECT]() {
         return undefined;
       },
@@ -47,7 +66,7 @@ export default class BarePrefix implements MeshTransform {
         [MapperKind.COMPOSITE_FIELD]: (
           fieldConfig: GraphQLFieldConfig<any, any>,
           fieldName: string,
-          typeName: string
+          typeName: string,
         ) => {
           return !rootOperations.has(typeName) || // check we're in a root Type
             this.ignoreList.includes(typeName) || // check if type is to be ignored

@@ -2,14 +2,14 @@ sources:
   - name: CountryInfo
     handler:
       soap:
-        wsdl: http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso?WSDL
-    transforms:
-      - snapshot:
-          if: "process.env.NODE_ENV != 'production'"
-          apply:
-            - Query.*
-            - Mutation.*
-          outputDir: snapshots
+        source: http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso?WSDL
+
+plugins:
+  - snapshot:
+      if: "process.env.NODE_ENV != 'production'"
+      apply:
+        - http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso
+      outputDir: __snapshots__
 
 documents:
   - list-of-languages-by-name.graphql

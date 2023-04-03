@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Cloudfunction should generate correct schema: cloudfunction-schema 1`] = `
+"schema {
+  query: Query
+  mutation: Mutation
+}
+
+directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+
+directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+
+type Query @globalOptions(sourceName: "test", endpoint: "https://openwhisk.ng.bluemix.net/api/v1/namespaces/_/actions", operationHeaders: "{\\"Authorization\\":\\"Basic {args.usernamePassword|base64}\\"}") {
+  dummy: String
+}
+
+type Mutation {
+  "Description of the action"
+  post_test_action_2(usernamePassword: String, blocking: Boolean = true, result: Boolean = true, input: Payload_Input): Response @httpOperation(path: "/test-action-2", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/vnd.experimental+json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST, queryParamArgMap: "{\\"blocking\\":\\"blocking\\",\\"result\\":\\"result\\"}")
+}
+
+type Response {
+  payload: String!
+  age: Float!
+  valid: Boolean!
+}
+
+input Payload_Input {
+  age: Float!
+}
+
+scalar ObjMap
+
+enum HTTPMethod {
+  GET
+  HEAD
+  POST
+  PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
+  PATCH
+}"
+`;

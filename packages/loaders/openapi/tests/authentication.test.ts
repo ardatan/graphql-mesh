@@ -1,30 +1,18 @@
+/* eslint-disable import/no-nodejs-modules */
 import { execute, parse } from 'graphql';
-import { join } from 'path';
-import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
-import { startServer, stopServer } from '../../../handlers/openapi/test/example_api_server';
-import { fetch } from 'cross-undici-fetch';
-
-const PORT = 3003;
-const oasFilePath = join(__dirname, '../../../handlers/openapi/test/fixtures/example_oas.json');
-const baseUrl = `http://localhost:${PORT}/api`;
+import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
+import { exampleApi } from './example_api_server.js';
 
 // We don't create viewers for each security scheme definition in OAS like openapi-to-graphql
 // But instead we let user to define them with string interpolation
 // No need to test every single query and mutation because this only tests the interpolation behavior
 
-describe('Authentication', () => {
+describe('OpenAPI Loader: Authentication', () => {
   /**
    * Set up the schema first and run example API server
    */
-  beforeAll(async () => {
-    await startServer(PORT);
-  });
-  /**
-   * Shut down API server
-   */
-  afterAll(async () => {
-    await stopServer();
-  });
+  const endpoint = 'http://localhost:3000/api';
+
   it('should get patent using basic auth', async () => {
     const query = /* GraphQL */ `
       query {
@@ -33,18 +21,22 @@ describe('Authentication', () => {
         }
       }
     `;
+
     const createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      oasFilePath,
-      baseUrl,
+      source: './fixtures/example_oas.json',
+      cwd: __dirname,
+      endpoint,
       operationHeaders: {
         authorization: 'Basic {args.usernameAndPassword|base64}',
       },
-      fetch,
+      fetch: exampleApi.fetch as any,
     });
+
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
     });
+
     expect(result).toEqual({
       data: {
         get_patent_with_id: {
@@ -53,6 +45,7 @@ describe('Authentication', () => {
       },
     });
   });
+
   it('Get patent using API key in the header', async () => {
     const query = /* GraphQL */ `
       query {
@@ -61,14 +54,17 @@ describe('Authentication', () => {
         }
       }
     `;
+
     const createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      oasFilePath,
-      baseUrl,
+      source: './fixtures/example_oas.json',
+      cwd: __dirname,
+      endpoint,
       operationHeaders: {
         access_token: '{args.apiKey}',
       },
-      fetch,
+      fetch: exampleApi.fetch as any,
     });
+
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
@@ -82,6 +78,7 @@ describe('Authentication', () => {
       },
     });
   });
+
   it('Get patent using API key in the cookie', async () => {
     const query = /* GraphQL */ `
       query {
@@ -90,14 +87,17 @@ describe('Authentication', () => {
         }
       }
     `;
+
     const createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      oasFilePath,
-      baseUrl,
+      source: './fixtures/example_oas.json',
+      cwd: __dirname,
+      endpoint,
       operationHeaders: {
         cookie: 'access_token={args.apiKey}',
       },
-      fetch,
+      fetch: exampleApi.fetch as any,
     });
+
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
@@ -111,6 +111,7 @@ describe('Authentication', () => {
       },
     });
   });
+
   it('Get patent using API key in the query string', async () => {
     const query = /* GraphQL */ `
       query {
@@ -119,14 +120,17 @@ describe('Authentication', () => {
         }
       }
     `;
+
     const createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      oasFilePath,
-      baseUrl,
+      source: './fixtures/example_oas.json',
+      cwd: __dirname,
+      endpoint,
       queryParams: {
         access_token: '{args.apiKey}',
       },
-      fetch,
+      fetch: exampleApi.fetch as any,
     });
+
     const result = await execute({
       schema: createdSchema,
       document: parse(query),

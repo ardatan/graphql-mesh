@@ -1,0 +1,55 @@
+sources:
+  - name: Authors
+    handler:
+      openapi:
+        source: https://cdn.graphql-hive.com/f366a86b-7807-43ca-942c-09bf773141dc/sdl?ext=.graphql
+        schemaHeaders:
+          X-Hive-CDN-Key: '{env.AUTHORS_HIVE_CDN_KEY}'
+        endpoint: http://localhost:4001
+    transforms:
+      - hive:
+          token: '{env.AUTHORS_HIVE_TOKEN}'
+          usage: {}
+  - name: Books
+    handler:
+      openapi:
+        source: https://cdn.graphql-hive.com/ef828c53-8c6c-4bc8-92a0-ef749fddb2cb/sdl?ext=.graphql
+        schemaHeaders:
+          X-Hive-CDN-Key: '{env.BOOKS_HIVE_CDN_KEY}'
+        endpoint: http://localhost:4002
+    transforms:
+      - hive:
+          token: '{env.BOOKS_HIVE_TOKEN}'
+          usage: {}
+
+additionalTypeDefs: |
+  extend type Book {
+    author: Author @resolveTo(
+      sourceName: "Authors",
+      sourceTypeName: "Query",
+      sourceFieldName: "author",
+      requiredSelectionSet: "{ authorId }"
+      sourceArgs: {
+        id: "{root.authorId}"
+      }
+    )
+  }
+
+  extend type Author {
+    books: [Book] @resolveTo(
+      sourceName: "Books",
+      sourceTypeName: "Query",
+      sourceFieldName: "booksByAuthor",
+      requiredSelectionSet: "{ id }"
+      sourceArgs: {
+        authorId: "{root.id}"
+      }
+    )
+  }
+
+plugins:
+  - hive:
+      token: '{env.HIVE_TOKEN}'
+
+serve:
+  browser: false

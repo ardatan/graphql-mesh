@@ -16,7 +16,7 @@ describe('MySQL Employees', () => {
     expect(
       printSchema(lexicographicSortSchema(schema), {
         descriptions: false,
-      })
+      }),
     ).toMatchSnapshot('mysql-employees-schema');
   });
   it('should give correct response for example queries', async () => {

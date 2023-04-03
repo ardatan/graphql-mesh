@@ -20,7 +20,7 @@ type ServeConfig @md {
   """
   fork: Fork
   """
-  TCP Port to listen (default: `3000`)
+  TCP Port to listen (default: `4000`)
   """
   port: Port
   """
@@ -31,10 +31,6 @@ type ServeConfig @md {
   Configuration for CORS
   """
   cors: CorsConfig
-  """
-  Express/Connect compatible handlers and middlewares extend GraphQL Mesh HTTP Server
-  """
-  handlers: [ServeHandler]
   """
   Path to your static files you want to be served with GraphQL Mesh HTTP Server
   """
@@ -54,18 +50,18 @@ type ServeConfig @md {
   endpoint: String
   """
   Path to the browser that will be used by `mesh serve` to open a playground window in development mode
-  This feature can be disable by passing `false`
+  This feature can be disabled by passing `false`
   """
   browser: Browser
-  """
-  If you want to use a custom GraphQL server, you can pass the path of the code file that exports a custom Mesh Server Handler
-  With a custom server handler, you won't be able to use the features of GraphQL Mesh HTTP Server
-  """
-  customServerHandler: String
   """
   Title of GraphiQL Playground
   """
   playgroundTitle: String
+  """
+  Configure Express Proxy Handling
+  [Learn more](https://expressjs.com/en/guide/behind-proxies.html)
+  """
+  trustProxy: String
 }
 
 union Port = Int | String
@@ -84,49 +80,6 @@ type CorsConfig {
   maxAge: Int
   preflightContinue: Boolean
   optionsSuccessStatus: Int
-}
-
-union ServeHandler = WebhookHandler | ExpressHandler
-
-type ExpressHandler {
-  """
-  Path that the handler will control
-  """
-  path: String!
-  """
-  Path of the handler's code
-  """
-  handler: String!
-  """
-  HTTP Method that the handler will control
-  """
-  method: ExpressHandlerMethod
-}
-
-enum ExpressHandlerMethod {
-  GET
-  POST
-  DELETE
-  PATCH
-}
-
-type WebhookHandler {
-  """
-  Path that remote API will ping
-  """
-  path: String!
-  """
-  HTTP Method that the handler will control
-  """
-  method: ExpressHandlerMethod
-  """
-  Name of the topic you want to pass incoming payload
-  """
-  pubsubTopic: String!
-  """
-  Part of the object you want to pass (e.g. `data.messages`)
-  """
-  payload: String
 }
 
 type HTTPSConfig {

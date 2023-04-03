@@ -2,7 +2,7 @@ sources:
   - name: Example
     handler:
       jsonSchema:
-        baseUrl: http://localhost:4002
+        endpoint: http://localhost:4002
         operationHeaders:
           Content-Type: application/json
         operations:
@@ -19,15 +19,8 @@ sources:
             responseSample: ./todo.json
           - type: Subscription
             field: todoAdded
-            pubsubTopic: todoAdded
+            pubsubTopic: webhook:post:/webhooks/todo_added
             responseSample: ./todo.json
-
-serve:
-  port: 4000
-  handlers:
-    - path: /webhooks/todo_added
-      method: POST
-      pubsubTopic: todoAdded
 
 documents:
   - ./example-queries/**/*.graphql
@@ -35,7 +28,9 @@ documents:
 additionalTypeDefs: |
   directive @live on QUERY
 
-liveQueryInvalidations:
-  - field: Mutation.addTodo
-    invalidate:
-      - Query.todos
+plugins:
+  - liveQuery:
+      invalidations:
+        - field: Mutation.addTodo
+          invalidate:
+            - Query.todos

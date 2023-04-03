@@ -1,0 +1,7 @@
+extend type Plugin {
+  http2: Http2Plugin
+}
+
+type Http2Plugin {
+  origins: [String!]
+}

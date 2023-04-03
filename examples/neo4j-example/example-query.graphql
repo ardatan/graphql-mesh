@@ -1,6 +1,8 @@
 query MovieWithActedIn {
   movies(options: { limit: 2 }) {
     title
+    released
+    tagline
     peopleActedIn(options: { limit: 2 }) {
       name
     }

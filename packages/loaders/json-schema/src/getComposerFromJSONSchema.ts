@@ -1,94 +1,99 @@
 /* eslint-disable no-case-declarations */
 import {
-  AnyTypeComposer,
-  EnumTypeComposerValueConfigDefinition,
-  InputTypeComposer,
-  InputTypeComposerFieldConfigAsObjectDefinition,
-  InputTypeComposerFieldConfigMap,
-  ObjectTypeComposer,
-  ObjectTypeComposerFieldConfigMap,
-  ObjectTypeComposerFieldConfigMapDefinition,
-  ScalarTypeComposer,
-  SchemaComposer,
-  ListComposer,
-  UnionTypeComposer,
-  isSomeInputTypeComposer,
-} from 'graphql-compose';
-import {
   getNamedType,
   GraphQLBoolean,
   GraphQLFloat,
   GraphQLInt,
-  GraphQLScalarType,
   GraphQLString,
+  GraphQLType,
   isNonNullType,
 } from 'graphql';
 import {
+  AnyTypeComposer,
+  ComposeInputType,
+  ComposeOutputType,
+  Directive,
+  EnumTypeComposer,
+  EnumTypeComposerValueConfigDefinition,
+  InputTypeComposer,
+  InputTypeComposerFieldConfigAsObjectDefinition,
+  InterfaceTypeComposer,
+  isSomeInputTypeComposer,
+  ListComposer,
+  ObjectTypeComposer,
+  ObjectTypeComposerFieldConfigMapDefinition,
+  ScalarTypeComposer,
+  SchemaComposer,
+  UnionTypeComposer,
+} from 'graphql-compose';
+import {
   GraphQLBigInt,
+  GraphQLByte,
   GraphQLDateTime,
   GraphQLEmailAddress,
-  GraphQLJSON,
   GraphQLIPv4,
   GraphQLIPv6,
+  GraphQLJSON,
+  GraphQLNegativeFloat,
+  GraphQLNegativeInt,
+  GraphQLNonEmptyString,
+  GraphQLNonNegativeFloat,
+  GraphQLNonNegativeInt,
+  GraphQLNonPositiveFloat,
+  GraphQLNonPositiveInt,
+  GraphQLPositiveFloat,
+  GraphQLPositiveInt,
   GraphQLTime,
+  GraphQLTimestamp,
   GraphQLURL,
-  RegularExpression,
+  GraphQLUUID,
 } from 'graphql-scalars';
-import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import { JSONSchema, JSONSchemaObject, visitJSONSchema } from 'json-machete';
 import { Logger } from '@graphql-mesh/types';
-import Ajv from 'ajv';
-import addFormats from 'ajv-formats';
-import { inspect, memoize1 } from '@graphql-tools/utils';
-import { visitJSONSchema, JSONSchema } from 'json-machete';
-import { getStringScalarWithMinMaxLength } from './getStringScalarWithMinMaxLength';
-import { getJSONSchemaStringFormatScalarMap } from './getJSONSchemaStringFormatScalarMap';
-import { getUnionTypeComposers } from './getUnionTypeComposers';
-import { getValidTypeName } from './getValidTypeName';
-import { getGenericJSONScalar } from './getGenericJSONScalar';
-import { getValidateFnForSchemaPath } from './getValidateFnForSchemaPath';
+import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import {
+  DictionaryDirective,
+  DiscriminatorDirective,
+  EnumDirective,
+  ExampleDirective,
+  LengthDirective,
+  OneOfDirective,
+  RegExpDirective,
+  ResolveRootDirective,
+  ResolveRootFieldDirective,
+  TypeScriptDirective,
+} from './directives.js';
+import { getJSONSchemaStringFormatScalarMap } from './getJSONSchemaStringFormatScalarMap.js';
+import { getUnionTypeComposers } from './getUnionTypeComposers.js';
+import { getValidTypeName } from './getValidTypeName.js';
+import { GraphQLFile, GraphQLVoid } from './scalars.js';
 
-const isListTC = memoize1(function isListTC(type: any): type is ListComposer {
-  return type instanceof ListComposer;
-});
-
-const GraphQLVoid = new GraphQLScalarType({
-  name: 'Void',
-  description: 'Represents empty values',
-  serialize: () => '',
-  extensions: {
-    codegenScalarType: 'void',
-  },
-});
-
-interface TypeComposers {
+export interface TypeComposers {
   input?: AnyTypeComposer<any>;
   output: AnyTypeComposer<any> | SchemaComposer;
+  // Information for future field definitions
   description?: string;
+  nullable?: boolean;
+  default?: any;
+  readOnly?: boolean;
+  writeOnly?: boolean;
 }
-
-const GraphQLFile = new GraphQLScalarType({
-  name: 'File',
-  extensions: {
-    codegenScalarType: 'File',
-  },
-});
 
 export function getComposerFromJSONSchema(
   schema: JSONSchema,
   logger: Logger,
-  generateInterfaceFromSharedFields = false
 ): Promise<TypeComposers> {
   const schemaComposer = new SchemaComposer();
-  const ajv = new Ajv({
-    strict: false,
-  });
-  addFormats(ajv);
-  const formatScalarMap = getJSONSchemaStringFormatScalarMap(ajv);
-  const futureTasks = new Set<VoidFunction>();
-  return visitJSONSchema(schema, function mutateFn(subSchema, { path }): any {
-    logger?.debug(() => `Processing ${path} for GraphQL Schema`);
-    const getTypeComposer = (): any => {
-      if (typeof subSchema === 'boolean') {
+  const formatScalarMap = getJSONSchemaStringFormatScalarMap();
+  const rootInputTypeNameComposerMap: Record<string, () => ObjectTypeComposer<any>> = {
+    QueryInput: () => schemaComposer.Query,
+    MutationInput: () => schemaComposer.Mutation,
+    SubscriptionInput: () => schemaComposer.Subscription,
+  };
+
+  return visitJSONSchema(schema, {
+    enter(subSchema: JSONSchema, { path, visitedSubschemaResultMap }) {
+      if (typeof subSchema === 'boolean' || subSchema.title === 'Any') {
         const typeComposer = schemaComposer.getAnyTC(GraphQLJSON);
         return subSchema
           ? {
@@ -97,48 +102,155 @@ export function getComposerFromJSONSchema(
             }
           : undefined;
       }
-      const validateWithJSONSchema = getValidateFnForSchemaPath(ajv, path, schema);
-
       if (!subSchema) {
         throw new Error(`Something is wrong with ${path}`);
       }
-
+      if (subSchema.type === 'array') {
+        if (
+          subSchema.items != null &&
+          typeof subSchema.items === 'object' &&
+          Object.keys(subSchema.items).length > 0
+        ) {
+          return {
+            // These are filled after enter
+            get input() {
+              const typeComposers = visitedSubschemaResultMap.get(subSchema.items as any);
+              return typeComposers.input.getTypePlural();
+            },
+            get output() {
+              const typeComposers = visitedSubschemaResultMap.get(subSchema.items as any);
+              return typeComposers.output.getTypePlural();
+            },
+            ...subSchema,
+          };
+        }
+        if (subSchema.contains) {
+          // Scalars cannot be in union type
+          const typeComposer = schemaComposer.getAnyTC(GraphQLJSON).getTypePlural();
+          return {
+            input: typeComposer,
+            output: typeComposer,
+            nullable: subSchema.nullable,
+            readOnly: subSchema.readOnly,
+            writeOnly: subSchema.writeOnly,
+            default: subSchema.default,
+          };
+        }
+        // If it doesn't have any clue
+        {
+          // const typeComposer = getGenericJSONScalar({
+          //   schemaComposer,
+          //   isInput: false,
+          //   subSchema,
+          //   validateWithJSONSchema,
+          // }).getTypePlural();
+          const typeComposer = schemaComposer.getAnyTC(GraphQLJSON).getTypePlural();
+          return {
+            input: typeComposer,
+            output: typeComposer,
+            description: subSchema.description,
+            nullable: subSchema.nullable,
+            readOnly: subSchema.readOnly,
+            writeOnly: subSchema.writeOnly,
+            default: subSchema.default,
+          };
+        }
+      }
       if (subSchema.pattern) {
-        const scalarType = new RegularExpression(
-          getValidTypeName({
+        let typeScriptType: string;
+        switch (subSchema.type) {
+          case 'number':
+            typeScriptType = 'number';
+            break;
+          case 'integer':
+            if (subSchema.format === 'int64') {
+              typeScriptType = 'bigint';
+            } else {
+              typeScriptType = 'number';
+            }
+            break;
+          default:
+            typeScriptType = 'string';
+            break;
+        }
+        schemaComposer.addDirective(RegExpDirective);
+        schemaComposer.addDirective(TypeScriptDirective);
+        const typeComposer = schemaComposer.createScalarTC({
+          name: getValidTypeName({
             schemaComposer,
             isInput: false,
             subSchema,
           }),
-          new RegExp(subSchema.pattern),
-          {
-            description: subSchema.description,
-          }
-        );
-        const typeComposer = schemaComposer.getAnyTC(scalarType);
+          directives: [
+            {
+              name: 'regexp',
+              args: {
+                pattern: subSchema.pattern,
+              },
+            },
+            {
+              name: 'typescript',
+              args: {
+                type: typeScriptType,
+              },
+            },
+          ],
+        });
         return {
           input: typeComposer,
           output: typeComposer,
+          nullable: subSchema.nullable,
+          readOnly: subSchema.readOnly,
+          writeOnly: subSchema.writeOnly,
         };
       }
       if (subSchema.const) {
-        const tsTypeName = JSON.stringify(subSchema.const);
         const scalarTypeName = getValidTypeName({
           schemaComposer,
           isInput: false,
           subSchema,
         });
-        const scalarType = new RegularExpression(scalarTypeName, new RegExp(subSchema.const), {
-          description: subSchema.description || `A field whose value is ${tsTypeName}`,
-          errorMessage: (_r, v: string) => `Expected ${tsTypeName} but got ${JSON.stringify(v)}`,
+        schemaComposer.addDirective(EnumDirective);
+        schemaComposer.addDirective(TypeScriptDirective);
+        schemaComposer.addDirective(ExampleDirective);
+        const typeComposer = schemaComposer.createEnumTC({
+          name: scalarTypeName,
+          values: {
+            [sanitizeNameForGraphQL(subSchema.const.toString())]: {
+              directives: [
+                {
+                  name: 'enum',
+                  args: {
+                    value: JSON.stringify(subSchema.const),
+                  },
+                },
+              ],
+            },
+          },
+          directives: [
+            {
+              name: 'typescript',
+              args: {
+                type: JSON.stringify(subSchema.const),
+              },
+            },
+            {
+              name: 'example',
+              args: {
+                value: subSchema.const,
+              },
+            },
+          ],
+          extensions: {
+            default: subSchema.const,
+          },
         });
-        scalarType.extensions = {
-          codegenScalarType: tsTypeName,
-        };
-        const typeComposer = schemaComposer.createScalarTC(scalarType);
         return {
           input: typeComposer,
           output: typeComposer,
+          nullable: subSchema.nullable,
+          readOnly: subSchema.readOnly,
+          writeOnly: subSchema.writeOnly,
         };
       }
       if (subSchema.enum && subSchema.type !== 'boolean') {
@@ -151,11 +263,35 @@ export function getComposerFromJSONSchema(
           if (typeof enumKey === 'string' && enumKey.length === 0) {
             enumKey = '_';
           }
+          schemaComposer.addDirective(EnumDirective);
+          // Falsy values are ignored by GraphQL
+          // eslint-disable-next-line no-unneeded-ternary
+          const enumValue = value ? value : value?.toString();
+          const directives: Directive[] = [];
+          if (enumValue !== enumKey) {
+            directives.push({
+              name: 'enum',
+              args: {
+                value: JSON.stringify(enumValue),
+              },
+            });
+          }
           values[enumKey] = {
-            // Falsy values are ignored by GraphQL
-            // eslint-disable-next-line no-unneeded-ternary
-            value: value ? value : value?.toString(),
+            directives,
+            value: enumValue,
           };
+        }
+        const directives = [];
+        if (subSchema.examples?.length) {
+          schemaComposer.addDirective(ExampleDirective);
+          for (const example of subSchema.examples) {
+            directives.push({
+              name: 'example',
+              args: {
+                value: example,
+              },
+            });
+          }
         }
         const typeComposer = schemaComposer.createEnumTC({
           name: getValidTypeName({
@@ -165,59 +301,645 @@ export function getComposerFromJSONSchema(
           }),
           values,
           description: subSchema.description,
+          directives,
           extensions: {
-            examples: subSchema.examples,
             default: subSchema.default,
           },
         });
         return {
           input: typeComposer,
           output: typeComposer,
+          nullable: subSchema.nullable,
+          readOnly: subSchema.readOnly,
+          writeOnly: subSchema.writeOnly,
+          default: subSchema.default,
         };
       }
 
-      if (subSchema.oneOf && !subSchema.properties) {
-        let statusCodeOneOfIndexMap: Record<string, number> | undefined;
-        if (subSchema.$comment?.startsWith('statusCodeOneOfIndexMap:')) {
-          const statusCodeOneOfIndexMapStr = subSchema.$comment.replace('statusCodeOneOfIndexMap:', '');
-          statusCodeOneOfIndexMap = JSON.parse(statusCodeOneOfIndexMapStr);
+      if (Array.isArray(subSchema.type)) {
+        const validTypes = subSchema.type.filter((typeName: string) => typeName !== 'null');
+        if (validTypes.length === 1) {
+          subSchema.type = validTypes[0];
+          // continue with the single type
+        } else {
+          const typeComposer = schemaComposer.getAnyTC(GraphQLJSON);
+          return {
+            input: typeComposer,
+            output: typeComposer,
+            nullable: subSchema.nullable,
+            readOnly: subSchema.readOnly,
+            writeOnly: subSchema.writeOnly,
+            default: subSchema.default,
+          };
         }
-        const isPlural = (subSchema.oneOf as TypeComposers[]).some(({ output }) => 'ofType' in output);
+      }
+
+      if (subSchema.format) {
+        switch (subSchema.format) {
+          case 'byte': {
+            const typeComposer = schemaComposer.getAnyTC(GraphQLByte);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              default: subSchema.default,
+            };
+          }
+          case 'binary': {
+            const typeComposer = schemaComposer.getAnyTC(GraphQLFile);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              default: subSchema.default,
+            };
+          }
+          case 'date-time': {
+            const typeComposer = schemaComposer.getAnyTC(GraphQLDateTime);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+            };
+          }
+          case 'time': {
+            const typeComposer = schemaComposer.getAnyTC(GraphQLTime);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+            };
+          }
+          case 'email': {
+            const typeComposer = schemaComposer.getAnyTC(GraphQLEmailAddress);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+            };
+          }
+          case 'ipv4': {
+            const typeComposer = schemaComposer.getAnyTC(GraphQLIPv4);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+            };
+          }
+          case 'ipv6': {
+            const typeComposer = schemaComposer.getAnyTC(GraphQLIPv6);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+            };
+          }
+          case 'uri': {
+            const typeComposer = schemaComposer.getAnyTC(GraphQLURL);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+            };
+          }
+          case 'uuid': {
+            const typeComposer = schemaComposer.getAnyTC(GraphQLUUID);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+            };
+          }
+          case 'unix-time': {
+            const typeComposer = schemaComposer.createScalarTC(GraphQLTimestamp);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+            };
+          }
+          case 'int64': {
+            const typeComposer = schemaComposer.createScalarTC(GraphQLBigInt);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+            };
+          }
+          case 'int32': {
+            const typeComposer = schemaComposer.createScalarTC(GraphQLInt);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+            };
+          }
+          case 'decimal':
+          case 'float': {
+            const typeComposer = schemaComposer.createScalarTC(GraphQLFloat);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+            };
+          }
+          default: {
+            const formatScalar = formatScalarMap.get(subSchema.format);
+            if (formatScalar) {
+              const typeComposer = schemaComposer.getAnyTC(formatScalar);
+              return {
+                input: typeComposer,
+                output: typeComposer,
+                description: subSchema.description,
+                nullable: subSchema.nullable,
+                readOnly: subSchema.readOnly,
+                writeOnly: subSchema.writeOnly,
+                default: subSchema.default,
+              };
+            }
+          }
+        }
+      }
+
+      if (subSchema.minimum === 0) {
+        const typeComposer = schemaComposer.getAnyTC(
+          subSchema.type === 'integer' ? GraphQLNonNegativeInt : GraphQLNonNegativeFloat,
+        );
+        return {
+          input: typeComposer,
+          output: typeComposer,
+          description: subSchema.description,
+          nullable: subSchema.nullable,
+          readOnly: subSchema.readOnly,
+          writeOnly: subSchema.writeOnly,
+          default: subSchema.default,
+        };
+      } else if (subSchema.minimum > 0) {
+        const typeComposer = schemaComposer.getAnyTC(
+          subSchema.type === 'integer' ? GraphQLPositiveInt : GraphQLPositiveFloat,
+        );
+        return {
+          input: typeComposer,
+          output: typeComposer,
+          description: subSchema.description,
+          nullable: subSchema.nullable,
+          readOnly: subSchema.readOnly,
+          writeOnly: subSchema.writeOnly,
+          default: subSchema.default,
+        };
+      }
+      if (subSchema.maximum === 0) {
+        const typeComposer = schemaComposer.getAnyTC(
+          subSchema.type === 'integer' ? GraphQLNonPositiveInt : GraphQLNonPositiveFloat,
+        );
+        return {
+          input: typeComposer,
+          output: typeComposer,
+          description: subSchema.description,
+          nullable: subSchema.nullable,
+          readOnly: subSchema.readOnly,
+          writeOnly: subSchema.writeOnly,
+          default: subSchema.default,
+        };
+      } else if (subSchema.maximum < 0) {
+        const typeComposer = schemaComposer.getAnyTC(
+          subSchema.type === 'integer' ? GraphQLNegativeInt : GraphQLNegativeFloat,
+        );
+        return {
+          input: typeComposer,
+          output: typeComposer,
+          description: subSchema.description,
+          nullable: subSchema.nullable,
+          readOnly: subSchema.readOnly,
+          writeOnly: subSchema.writeOnly,
+          default: subSchema.default,
+        };
+      }
+      if (
+        subSchema.maximum > Number.MAX_SAFE_INTEGER ||
+        subSchema.minimum < Number.MIN_SAFE_INTEGER
+      ) {
+        const typeComposer = schemaComposer.getAnyTC(GraphQLBigInt);
+        return {
+          input: typeComposer,
+          output: typeComposer,
+          description: subSchema.description,
+          nullable: subSchema.nullable,
+          readOnly: subSchema.readOnly,
+          writeOnly: subSchema.writeOnly,
+          default: subSchema.default,
+        };
+      }
+
+      switch (subSchema.type as any) {
+        case 'boolean': {
+          const typeComposer = schemaComposer.getAnyTC(GraphQLBoolean);
+          return {
+            input: typeComposer,
+            output: typeComposer,
+            description: subSchema.description,
+            nullable: subSchema.nullable,
+            readOnly: subSchema.readOnly,
+            writeOnly: subSchema.writeOnly,
+            default: subSchema.default,
+          };
+        }
+        case 'null': {
+          const typeComposer = schemaComposer.getAnyTC(GraphQLVoid);
+          return {
+            input: typeComposer,
+            output: typeComposer,
+            description: subSchema.description,
+            nullable: subSchema.nullable,
+            readOnly: subSchema.readOnly,
+            writeOnly: subSchema.writeOnly,
+            default: subSchema.default,
+          };
+        }
+        case 'integer': {
+          const typeComposer = schemaComposer.getAnyTC(GraphQLInt);
+          return {
+            input: typeComposer,
+            output: typeComposer,
+            description: subSchema.description,
+            nullable: subSchema.nullable,
+            readOnly: subSchema.readOnly,
+            writeOnly: subSchema.writeOnly,
+            default: subSchema.default,
+          };
+        }
+        case 'number': {
+          const typeComposer = schemaComposer.getAnyTC(GraphQLFloat);
+          return {
+            input: typeComposer,
+            output: typeComposer,
+            description: subSchema.description,
+            nullable: subSchema.nullable,
+            readOnly: subSchema.readOnly,
+            writeOnly: subSchema.writeOnly,
+            default: subSchema.default,
+          };
+        }
+        case 'string': {
+          if (subSchema.minLength === 1 && subSchema.maxLength == null) {
+            const tc = schemaComposer.getAnyTC(GraphQLNonEmptyString);
+            return {
+              input: tc,
+              output: tc,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+            };
+          }
+          if (subSchema.minLength || subSchema.maxLength) {
+            schemaComposer.addDirective(LengthDirective);
+            const typeComposer = schemaComposer.createScalarTC({
+              name: getValidTypeName({
+                schemaComposer,
+                isInput: false,
+                subSchema,
+              }),
+              description: subSchema.description,
+              directives: [
+                {
+                  name: 'length',
+                  args: {
+                    min: subSchema.minLength,
+                    max: subSchema.maxLength,
+                  },
+                },
+              ],
+            });
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+            };
+          }
+          const typeComposer = schemaComposer.getAnyTC(GraphQLString);
+          return {
+            input: typeComposer,
+            output: typeComposer,
+            description: subSchema.description,
+            nullable: subSchema.nullable,
+            readOnly: subSchema.readOnly,
+            writeOnly: subSchema.writeOnly,
+            default: subSchema.default,
+          };
+        }
+        case 'object': {
+          switch (subSchema.title) {
+            case '_schema':
+              return {
+                output: schemaComposer,
+                ...subSchema,
+              };
+            case 'Query':
+              return {
+                output: schemaComposer.Query,
+                ...subSchema,
+              };
+            case 'Mutation':
+              return {
+                output: schemaComposer.Mutation,
+                ...subSchema,
+              };
+            case 'Subscription':
+              if (path === '/properties/subscription') {
+                return {
+                  output: schemaComposer.Subscription,
+                  ...subSchema,
+                };
+              }
+              subSchema.title = 'Subscription_';
+              break;
+          }
+        }
+      }
+      if (subSchema.oneOf && !subSchema.properties) {
+        schemaComposer.addDirective(OneOfDirective);
+        const input = schemaComposer.createInputTC({
+          name: getValidTypeName({
+            schemaComposer,
+            isInput: true,
+            subSchema,
+          }),
+          fields: {},
+          directives: [
+            {
+              name: 'oneOf',
+            },
+          ],
+        });
+        const extensions: Record<string, any> = {};
+        const directives = [];
+        if (subSchema.$comment?.startsWith('statusCodeOneOfIndexMap:')) {
+          const statusCodeOneOfIndexMapStr = subSchema.$comment.replace(
+            'statusCodeOneOfIndexMap:',
+            '',
+          );
+          const statusCodeOneOfIndexMap = JSON.parse(statusCodeOneOfIndexMapStr);
+          if (statusCodeOneOfIndexMap) {
+            extensions.statusCodeOneOfIndexMap = statusCodeOneOfIndexMap;
+          }
+        }
+        if (subSchema.discriminator?.propertyName) {
+          schemaComposer.addDirective(DiscriminatorDirective);
+          const mappingByName: Record<string, string> = {};
+          for (const discriminatorValue in subSchema.discriminator.mapping) {
+            const ref = subSchema.discriminator.mapping[discriminatorValue];
+            const typeName = ref.replace('#/components/schemas/', '');
+            mappingByName[discriminatorValue] = typeName;
+          }
+          directives.push({
+            name: 'discriminator',
+            args: {
+              field: subSchema.discriminator.propertyName,
+              mapping: mappingByName,
+            },
+          });
+        }
+        const output = schemaComposer.createUnionTC({
+          name: getValidTypeName({
+            schemaComposer,
+            isInput: false,
+            subSchema,
+          }),
+          description: subSchema.description,
+          types: [],
+          directives,
+          extensions,
+        });
+        return {
+          input,
+          output,
+          ...subSchema,
+        };
+      }
+
+      if (
+        subSchema.properties ||
+        subSchema.allOf ||
+        subSchema.anyOf ||
+        subSchema.additionalProperties
+      ) {
+        if (subSchema.title === 'Any') {
+          const typeComposer = schemaComposer.getAnyTC(GraphQLJSON);
+          return {
+            input: typeComposer,
+            output: typeComposer,
+            description: subSchema.description,
+            nullable: subSchema.nullable,
+            readOnly: subSchema.readOnly,
+            writeOnly: subSchema.writeOnly,
+            default: subSchema.default,
+          };
+        }
+        const config = {
+          name: getValidTypeName({
+            schemaComposer,
+            isInput: false,
+            subSchema,
+          }),
+          description: subSchema.description,
+          fields: {},
+          directives: [] as Directive[],
+          extensions: {
+            default: subSchema.default,
+          },
+        };
+
+        if (subSchema.examples?.length) {
+          schemaComposer.addDirective(ExampleDirective);
+          for (const example of subSchema.examples) {
+            config.directives.push({
+              name: 'example',
+              args: {
+                value: example,
+              },
+            });
+          }
+        }
+
+        if (subSchema.discriminator?.propertyName) {
+          schemaComposer.addDirective(DiscriminatorDirective);
+        }
+        const directives: Directive[] = [];
+        if (subSchema.examples?.length) {
+          schemaComposer.addDirective(ExampleDirective);
+          for (const example of subSchema.examples) {
+            directives.push({
+              name: 'example',
+              args: {
+                value: example,
+              },
+            });
+          }
+        }
+        return {
+          input: schemaComposer.createInputTC({
+            name: getValidTypeName({
+              schemaComposer,
+              isInput: true,
+              subSchema,
+            }),
+            description: subSchema.description,
+            fields: {},
+            directives,
+            extensions: {
+              default: subSchema.default,
+            },
+          }),
+          output: subSchema.discriminator
+            ? schemaComposer.createInterfaceTC({
+                ...config,
+                resolveType(root: any) {
+                  return root[subSchema.discriminator.propertyName];
+                },
+                directives: [
+                  {
+                    name: 'discriminator',
+                    args: {
+                      propertyName: subSchema.discriminator.propertyName,
+                    },
+                  },
+                ],
+              })
+            : schemaComposer.createObjectTC(config),
+          ...subSchema,
+          ...(subSchema.properties ? { properties: { ...subSchema.properties } } : {}),
+          ...(subSchema.allOf ? { allOf: [...subSchema.allOf] } : {}),
+          ...(subSchema.additionalProperties
+            ? {
+                additionalProperties:
+                  subSchema.additionalProperties === true
+                    ? true
+                    : { ...subSchema.additionalProperties },
+              }
+            : {}),
+        };
+      }
+
+      return subSchema;
+    },
+    leave(subSchemaAndTypeComposers: JSONSchemaObject & TypeComposers, { path }) {
+      // const validateWithJSONSchema = getValidateFnForSchemaPath(ajv, path, schema);
+      const subSchemaOnly: JSONSchemaObject = {
+        ...subSchemaAndTypeComposers,
+        input: undefined,
+        output: undefined,
+      };
+      if (subSchemaAndTypeComposers.oneOf && !subSchemaAndTypeComposers.properties) {
+        const isPlural = (subSchemaAndTypeComposers.oneOf as TypeComposers[]).some(
+          ({ output }) => 'ofType' in output,
+        );
         if (isPlural) {
           const { input, output } = getUnionTypeComposers({
             schemaComposer,
-            ajv,
-            typeComposersList: (subSchema.oneOf as any).map(({ input, output }: any) => ({
-              input: input.ofType || input,
-              output: output.ofType || output,
-            })) as any[],
-            subSchema,
-            generateInterfaceFromSharedFields,
-            statusCodeOneOfIndexMap,
+            typeComposersList: (subSchemaAndTypeComposers.oneOf as any).map(
+              ({ input, output }: any) => ({
+                input: input.ofType || input,
+                output: output.ofType || output,
+              }),
+            ) as any[],
+            subSchemaAndTypeComposers,
+            logger,
           });
           return {
             input: input.getTypePlural(),
             output: output.getTypePlural(),
+            nullable: subSchemaAndTypeComposers.nullable,
+            default: subSchemaAndTypeComposers.default,
+            readOnly: subSchemaAndTypeComposers.readOnly,
+            writeOnly: subSchemaAndTypeComposers.writeOnly,
           };
         }
         return getUnionTypeComposers({
           schemaComposer,
-          ajv,
-          typeComposersList: subSchema.oneOf as any[],
-          subSchema,
-          generateInterfaceFromSharedFields,
-          statusCodeOneOfIndexMap,
+          typeComposersList: subSchemaAndTypeComposers.oneOf as any[],
+          subSchemaAndTypeComposers,
+          logger,
         });
       }
 
-      if (subSchema.allOf && !subSchema.properties) {
-        const inputFieldMap: InputTypeComposerFieldConfigMap = {};
-        const fieldMap: ObjectTypeComposerFieldConfigMap<any, any> = {};
-        let ableToUseGraphQLInputObjectType = true;
-        for (const maybeTypeComposers of subSchema.allOf as any) {
-          const { input: inputTypeComposer, output: outputTypeComposer } = maybeTypeComposers;
+      const fieldMap: ObjectTypeComposerFieldConfigMapDefinition<any, any> = {};
+      const inputFieldMap: Record<
+        string,
+        InputTypeComposerFieldConfigAsObjectDefinition & { type: any }
+      > = {};
+      let isList = false;
 
-          if (inputTypeComposer instanceof ScalarTypeComposer) {
+      if (subSchemaAndTypeComposers.allOf) {
+        let ableToUseGraphQLInputObjectType = true;
+        for (const maybeTypeComposers of subSchemaAndTypeComposers.allOf as any) {
+          let { input: inputTypeComposer, output: outputTypeComposer } = maybeTypeComposers;
+
+          if (inputTypeComposer instanceof ListComposer) {
+            isList = true;
+            inputTypeComposer = inputTypeComposer.ofType;
+          }
+
+          if (outputTypeComposer instanceof ListComposer) {
+            isList = true;
+            outputTypeComposer = outputTypeComposer.ofType;
+          }
+
+          if (
+            inputTypeComposer instanceof ScalarTypeComposer ||
+            inputTypeComposer instanceof EnumTypeComposer
+          ) {
             ableToUseGraphQLInputObjectType = false;
           } else {
             const inputTypeElemFieldMap = inputTypeComposer.getFields();
@@ -227,10 +949,15 @@ export function getComposerFromJSONSchema(
             }
           }
 
-          if (outputTypeComposer instanceof ScalarTypeComposer) {
+          if (isSomeInputTypeComposer(outputTypeComposer)) {
+            schemaComposer.addDirective(ResolveRootDirective);
             fieldMap[outputTypeComposer.getTypeName()] = {
-              type: outputTypeComposer,
-              resolve: root => root,
+              type: outputTypeComposer as any,
+              directives: [
+                {
+                  name: 'resolveRoot',
+                },
+              ],
             };
           } else if (outputTypeComposer instanceof UnionTypeComposer) {
             const outputTCElems = outputTypeComposer.getTypes() as ObjectTypeComposer[];
@@ -242,6 +969,12 @@ export function getComposerFromJSONSchema(
               }
             }
           } else {
+            if (outputTypeComposer instanceof InterfaceTypeComposer) {
+              (subSchemaAndTypeComposers.output as ObjectTypeComposer).addInterface(
+                outputTypeComposer,
+              );
+            }
+
             const typeElemFieldMap = outputTypeComposer.getFields();
             for (const fieldName in typeElemFieldMap) {
               const field = typeElemFieldMap[fieldName];
@@ -250,604 +983,440 @@ export function getComposerFromJSONSchema(
           }
         }
 
-        let inputTypeComposer;
-        const outputTypeComposer = schemaComposer.createObjectTC({
-          name: getValidTypeName({
-            schemaComposer,
-            isInput: false,
-            subSchema,
-          }),
-          description: subSchema.description,
-          fields: fieldMap,
-          extensions: {
-            validateWithJSONSchema,
-            examples: subSchema.examples,
-            default: subSchema.default,
-          },
+        if (subSchemaAndTypeComposers.examples?.length) {
+          schemaComposer.addDirective(ExampleDirective);
+          const directives =
+            (subSchemaAndTypeComposers.output as ObjectTypeComposer).getDirectives() || [];
+          for (const example of subSchemaAndTypeComposers.examples) {
+            directives.push({
+              name: 'example',
+              args: {
+                value: example,
+              },
+            });
+          }
+          (subSchemaAndTypeComposers.output as ObjectTypeComposer).setDirectives(directives);
+        }
+
+        (subSchemaAndTypeComposers.output as ObjectTypeComposer).addFields(fieldMap);
+        (subSchemaAndTypeComposers.output as ObjectTypeComposer).setExtensions({
+          // validateWithJSONSchema,
+          default: subSchemaAndTypeComposers.default,
         });
 
         if (ableToUseGraphQLInputObjectType) {
-          inputTypeComposer = schemaComposer.createInputTC({
-            name: getValidTypeName({
-              schemaComposer,
-              isInput: true,
-              subSchema,
-            }),
-            description: subSchema.description,
-            fields: inputFieldMap,
-            extensions: {
-              examples: subSchema.examples,
-              default: subSchema.default,
-            },
+          (subSchemaAndTypeComposers.input as InputTypeComposer).addFields(inputFieldMap);
+          if (subSchemaAndTypeComposers.examples?.length) {
+            schemaComposer.addDirective(ExampleDirective);
+            const directives =
+              (subSchemaAndTypeComposers.input as InputTypeComposer).getDirectives() || [];
+            for (const example of subSchemaAndTypeComposers.examples) {
+              directives.push({
+                name: 'example',
+                args: {
+                  value: example,
+                },
+              });
+            }
+            (subSchemaAndTypeComposers.input as InputTypeComposer).setDirectives(directives);
+          }
+          (subSchemaAndTypeComposers.input as InputTypeComposer).setExtensions({
+            default: subSchemaAndTypeComposers.default,
           });
         } else {
-          inputTypeComposer = isSomeInputTypeComposer(outputTypeComposer)
-            ? outputTypeComposer
-            : getGenericJSONScalar({
-                schemaComposer,
-                isInput: true,
-                subSchema,
-                validateWithJSONSchema,
-              });
+          subSchemaAndTypeComposers.input = schemaComposer.getAnyTC(GraphQLJSON);
         }
-
-        return {
-          input: inputTypeComposer,
-          output: outputTypeComposer,
-        };
       }
 
-      if (subSchema.anyOf && !subSchema.properties) {
-        if (subSchema.title === 'Any') {
-          const genericJSONScalar = getGenericJSONScalar({
-            schemaComposer,
-            isInput: false,
-            subSchema,
-            validateWithJSONSchema,
-          });
-          return {
-            input: genericJSONScalar,
-            output: genericJSONScalar,
-          };
-        }
+      if (subSchemaAndTypeComposers.anyOf) {
         // It should not have `required` because it is `anyOf` not `allOf`
-        const inputFieldMap: InputTypeComposerFieldConfigMap = {};
-        const fieldMap: ObjectTypeComposerFieldConfigMap<any, any> = {};
         let ableToUseGraphQLInputObjectType = true;
-        for (const typeComposers of subSchema.anyOf as any) {
-          const { input: inputTypeComposer, output: outputTypeComposer } = typeComposers;
-          if (inputTypeComposer instanceof ScalarTypeComposer) {
+        for (const typeComposers of subSchemaAndTypeComposers.anyOf as any) {
+          let { input: inputTypeComposer, output: outputTypeComposer } = typeComposers;
+          if (
+            inputTypeComposer instanceof ListComposer ||
+            outputTypeComposer instanceof ListComposer
+          ) {
+            isList = true;
+            inputTypeComposer = inputTypeComposer.ofType;
+            outputTypeComposer = outputTypeComposer.ofType;
+          }
+          if (
+            inputTypeComposer instanceof ScalarTypeComposer ||
+            inputTypeComposer instanceof EnumTypeComposer
+          ) {
             ableToUseGraphQLInputObjectType = false;
           } else {
             const inputTypeElemFieldMap = inputTypeComposer.getFields();
             for (const fieldName in inputTypeElemFieldMap) {
-              const field = inputTypeElemFieldMap[fieldName];
-              inputFieldMap[fieldName] = isNonNullType(field.type.getType())
-                ? {
-                    ...field,
-                    type: () => field.type.ofType,
+              // In case of conflict set it to JSON
+              // TODO: But instead we can convert that field into a oneOf of all possible types
+              if (inputFieldMap[fieldName]) {
+                let existingType = inputFieldMap[fieldName].type;
+                if (typeof existingType === 'function') {
+                  existingType = existingType();
+                }
+                let newType = inputTypeElemFieldMap[fieldName].type;
+                if (typeof newType === 'function') {
+                  newType = newType();
+                }
+                const newTypeName = newType.getTypeName().replace('!', '');
+                const existingTypeName = existingType.getTypeName().replace('!', '');
+                if (existingTypeName !== newTypeName) {
+                  if (newTypeName !== 'JSON') {
+                    inputFieldMap[fieldName] = {
+                      type: schemaComposer.getAnyTC(GraphQLJSON) as ComposeInputType,
+                    };
                   }
-                : field;
+                  if (existingTypeName === 'JSON') {
+                    const field = inputTypeElemFieldMap[fieldName];
+                    inputFieldMap[fieldName] = isNonNullType(field.type.getType())
+                      ? {
+                          ...field,
+                          type: () => field.type.ofType,
+                        }
+                      : field;
+                  }
+                }
+              } else {
+                const field = inputTypeElemFieldMap[fieldName];
+                inputFieldMap[fieldName] = isNonNullType(field.type.getType())
+                  ? {
+                      ...field,
+                      type: () => field.type.ofType,
+                    }
+                  : field;
+              }
             }
           }
 
           if (outputTypeComposer instanceof ScalarTypeComposer) {
             const typeName = outputTypeComposer.getTypeName();
-            fieldMap[typeName] = {
-              type: outputTypeComposer,
-              resolve: root => root,
-            };
+            // In case of conflict set it to JSON
+            // TODO: But instead we can convert that field into a union of all possible types
+            if (fieldMap[typeName]) {
+              const existingTypeName = (fieldMap[typeName] as any)?.type?.getTypeName();
+              if (existingTypeName === 'JSON') {
+                schemaComposer.addDirective(ResolveRootDirective);
+                fieldMap[typeName] = {
+                  type: outputTypeComposer,
+                  directives: [
+                    {
+                      name: 'resolveRoot',
+                    },
+                  ],
+                };
+              }
+              if (typeName !== 'JSON' && existingTypeName !== typeName) {
+                fieldMap[typeName] = {
+                  type: schemaComposer.getAnyTC(GraphQLJSON) as ComposeOutputType<any>,
+                };
+              }
+            } else {
+              schemaComposer.addDirective(ResolveRootDirective);
+              fieldMap[typeName] = {
+                type: outputTypeComposer,
+                directives: [
+                  {
+                    name: 'resolveRoot',
+                  },
+                ],
+              };
+            }
           } else {
             const typeElemFieldMap = outputTypeComposer.getFields();
             for (const fieldName in typeElemFieldMap) {
+              // In case of conflict set it to JSON
+              // TODO: But instead we can convert that field into a union of all possible types
               const field = typeElemFieldMap[fieldName];
+              const existingField: any = fieldMap[fieldName];
               fieldMap[fieldName] = {
-                type: () => getNamedType(field.type.getType()),
                 ...field,
+                type: () => {
+                  const fieldType = field.type.getType();
+                  const namedType = getNamedType(fieldType as GraphQLType);
+                  if (existingField) {
+                    const existingFieldType = existingField.type();
+                    const existingNamedType = getNamedType(existingFieldType as GraphQLType);
+                    const existingTypeName = existingNamedType.name;
+                    const newTypeName = namedType.name;
+                    if (existingTypeName !== 'JSON' && existingNamedType.name !== namedType.name) {
+                      return schemaComposer.getAnyTC(GraphQLJSON) as ComposeOutputType<any>;
+                    }
+                    if (newTypeName === 'JSON') {
+                      return existingFieldType;
+                    }
+                  }
+                  return field.type.getType();
+                },
               };
             }
           }
         }
 
-        let inputTypeComposer;
-        const outputTypeComposer = schemaComposer.createObjectTC({
-          name: getValidTypeName({
-            schemaComposer,
-            isInput: false,
-            subSchema,
-          }),
-          description: subSchema.description,
-          fields: fieldMap,
-          extensions: {
-            validateWithJSONSchema,
-            examples: subSchema.examples,
-            default: subSchema.default,
-          },
+        let outputTypeComposer = subSchemaAndTypeComposers.output;
+
+        if ('ofType' in outputTypeComposer) {
+          outputTypeComposer = outputTypeComposer.ofType;
+        }
+
+        (outputTypeComposer as ObjectTypeComposer).addFields(fieldMap);
+        if (subSchemaAndTypeComposers.examples?.length) {
+          schemaComposer.addDirective(ExampleDirective);
+          const directives = (outputTypeComposer as ObjectTypeComposer).getDirectives() || [];
+          for (const example of subSchemaAndTypeComposers.examples) {
+            directives.push({
+              name: 'example',
+              args: {
+                value: example,
+              },
+            });
+          }
+          (outputTypeComposer as ObjectTypeComposer).setDirectives(directives);
+        }
+        (outputTypeComposer as ObjectTypeComposer).setExtensions({
+          // validateWithJSONSchema,
+          default: subSchemaAndTypeComposers.default,
         });
 
+        let inputTypeComposer = subSchemaAndTypeComposers.input;
+
+        if ('ofType' in inputTypeComposer) {
+          inputTypeComposer = inputTypeComposer.ofType;
+        }
+
         if (ableToUseGraphQLInputObjectType) {
-          inputTypeComposer = schemaComposer.createInputTC({
-            name: getValidTypeName({
-              schemaComposer,
-              isInput: true,
-              subSchema,
-            }),
-            description: subSchema.description,
-            fields: inputFieldMap,
-            extensions: {
-              examples: subSchema.examples,
-              default: subSchema.default,
-            },
+          (inputTypeComposer as InputTypeComposer).addFields(inputFieldMap);
+          if (subSchemaAndTypeComposers.examples?.length) {
+            schemaComposer.addDirective(ExampleDirective);
+            const directives = (inputTypeComposer as InputTypeComposer).getDirectives() || [];
+            for (const example of subSchemaAndTypeComposers.examples) {
+              directives.push({
+                name: 'example',
+                args: {
+                  value: example,
+                },
+              });
+            }
+            (inputTypeComposer as InputTypeComposer).setDirectives(directives);
+          }
+          (inputTypeComposer as InputTypeComposer).setExtensions({
+            default: subSchemaAndTypeComposers.default,
           });
         } else {
-          inputTypeComposer = isSomeInputTypeComposer(outputTypeComposer)
-            ? outputTypeComposer
-            : getGenericJSONScalar({
-                schemaComposer,
-                isInput: true,
-                subSchema,
-                validateWithJSONSchema,
-              });
-        }
-
-        return {
-          input: inputTypeComposer,
-          output: outputTypeComposer,
-        };
-      }
-
-      if (Array.isArray(subSchema.type)) {
-        const validTypes = subSchema.type.filter((typeName: string) => typeName !== 'null');
-        if (validTypes.length === 1) {
-          subSchema.type = validTypes[0];
-          // continue with the single type
-        } else {
-          const typeComposer = schemaComposer.getAnyTC(GraphQLVoid);
-          return {
-            input: typeComposer,
-            output: typeComposer,
-          };
+          subSchemaAndTypeComposers.input = schemaComposer.getAnyTC(GraphQLJSON);
         }
       }
 
-      switch (subSchema.type as any) {
-        case 'file': {
-          const typeComposer = schemaComposer.getAnyTC(GraphQLFile);
-          return {
-            input: typeComposer,
-            output: typeComposer,
-            description: subSchema.description,
-          };
-        }
-        case 'boolean': {
-          const typeComposer = schemaComposer.getAnyTC(GraphQLBoolean);
-          return {
-            input: typeComposer,
-            output: typeComposer,
-            description: subSchema.description,
-          };
-        }
-        case 'null': {
-          const typeComposer = schemaComposer.getAnyTC(GraphQLVoid);
-          return {
-            input: typeComposer,
-            output: typeComposer,
-            description: subSchema.description,
-          };
-        }
-        case 'integer': {
-          if (subSchema.format === 'int64') {
-            const typeComposer = schemaComposer.getAnyTC(GraphQLBigInt);
-            return {
-              input: typeComposer,
-              output: typeComposer,
-              description: subSchema.description,
-            };
-          }
-          const typeComposer = schemaComposer.getAnyTC(GraphQLInt);
-          return {
-            input: typeComposer,
-            output: typeComposer,
-            description: subSchema.description,
-          };
-        }
-        case 'number': {
-          const typeComposer = schemaComposer.getAnyTC(GraphQLFloat);
-          return {
-            input: typeComposer,
-            output: typeComposer,
-            description: subSchema.description,
-          };
-        }
-        case 'string': {
-          if (subSchema.minLength || subSchema.maxLength) {
-            const scalarType = getStringScalarWithMinMaxLength({
-              schemaComposer,
-              subSchema,
-            });
-            const typeComposer = schemaComposer.getAnyTC(scalarType);
-            return {
-              input: typeComposer,
-              output: typeComposer,
-              description: subSchema.description,
-            };
-          }
-          switch (subSchema.format) {
-            case 'date-time': {
-              const typeComposer = schemaComposer.getAnyTC(GraphQLDateTime);
-              return {
-                input: typeComposer,
-                output: typeComposer,
-                description: subSchema.description,
-              };
-            }
-            case 'time': {
-              const typeComposer = schemaComposer.getAnyTC(GraphQLTime);
-              return {
-                input: typeComposer,
-                output: typeComposer,
-                description: subSchema.description,
-              };
-            }
-            case 'email': {
-              const typeComposer = schemaComposer.getAnyTC(GraphQLEmailAddress);
-              return {
-                input: typeComposer,
-                output: typeComposer,
-                description: subSchema.description,
-              };
-            }
-            case 'ipv4': {
-              const typeComposer = schemaComposer.getAnyTC(GraphQLIPv4);
-              return {
-                input: typeComposer,
-                output: typeComposer,
-                description: subSchema.description,
-              };
-            }
-            case 'ipv6': {
-              const typeComposer = schemaComposer.getAnyTC(GraphQLIPv6);
-              return {
-                input: typeComposer,
-                output: typeComposer,
-                description: subSchema.description,
-              };
-            }
-            case 'uri': {
-              const typeComposer = schemaComposer.getAnyTC(GraphQLURL);
-              return {
-                input: typeComposer,
-                output: typeComposer,
-                description: subSchema.description,
-              };
-            }
-            default: {
-              const formatScalar = formatScalarMap.get(subSchema.format) || GraphQLString;
-              const typeComposer = schemaComposer.getAnyTC(formatScalar);
-              return {
-                input: typeComposer,
-                output: typeComposer,
-                description: subSchema.description,
-              };
-            }
-          }
-        }
-        case 'array':
-          if (
-            typeof subSchema.items === 'object' &&
-            !Array.isArray(subSchema.items) &&
-            Object.keys(subSchema.items).length > 0
-          ) {
-            const typeComposers = subSchema.items;
-            return {
-              input: typeComposers.input.getTypePlural(),
-              output: typeComposers.output.getTypePlural(),
-              description: subSchema.description,
-            };
-          }
-          if (subSchema.contains) {
-            // Scalars cannot be in union type
-            const typeComposer = getGenericJSONScalar({
-              schemaComposer,
-              isInput: false,
-              subSchema,
-              validateWithJSONSchema,
-            }).getTypePlural();
-            return {
-              input: typeComposer,
-              output: typeComposer,
-            };
-          }
-          if (typeof subSchema.items === 'object' && Array.isArray(subSchema.items)) {
-            const existingItems = [...(subSchema.items as any)];
-            /* TODO
-            if (subSchema.additionalItems) {
-              existingItems.push(subSchema.additionalItems);
-            }
-            */
-            const { input: inputTypeComposer, output: outputTypeComposer } = getUnionTypeComposers({
-              schemaComposer,
-              ajv,
-              typeComposersList: existingItems,
-              subSchema,
-              generateInterfaceFromSharedFields,
-            });
-            return {
-              input: inputTypeComposer.getTypePlural(),
-              output: outputTypeComposer.getTypePlural(),
-              description: subSchema.description,
-            };
-          }
-          // If it doesn't have any clue
-          {
-            // const typeComposer = getGenericJSONScalar({
-            //   schemaComposer,
-            //   isInput: false,
-            //   subSchema,
-            //   validateWithJSONSchema,
-            // }).getTypePlural();
-            const typeComposer = schemaComposer.getAnyTC(GraphQLJSON).getTypePlural();
-            return {
-              input: typeComposer,
-              output: typeComposer,
-              description: subSchema.description,
-            };
-          }
+      switch (subSchemaAndTypeComposers.type) {
         case 'object':
-          const fieldMap: ObjectTypeComposerFieldConfigMapDefinition<any, any> = {};
-          let inputFieldMap: Record<string, InputTypeComposerFieldConfigAsObjectDefinition & { type: any }> = {};
-          if (subSchema.properties) {
-            subSchema.type = 'object';
-            for (const propertyName in subSchema.properties) {
+          if (subSchemaAndTypeComposers.properties) {
+            for (const propertyName in subSchemaAndTypeComposers.properties) {
               // TODO: needs to be fixed
               if (propertyName === 'additionalProperties') {
                 continue;
               }
-              const typeComposers = subSchema.properties[propertyName];
               const fieldName = sanitizeNameForGraphQL(propertyName);
+              const fieldDirectives: Directive[] = [];
+              if (propertyName !== fieldName) {
+                schemaComposer.addDirective(ResolveRootFieldDirective);
+                fieldDirectives.push({
+                  name: 'resolveRootField',
+                  args: {
+                    field: propertyName,
+                  },
+                });
+              }
               fieldMap[fieldName] = {
-                type: () =>
-                  subSchema.required?.includes(propertyName)
-                    ? typeComposers.output.getTypeNonNull()
-                    : typeComposers.output,
+                type: () => {
+                  const typeComposers = subSchemaAndTypeComposers.properties[propertyName];
+                  let nullable = true;
+                  if (subSchemaAndTypeComposers.required?.includes(propertyName)) {
+                    nullable = false;
+                  }
+                  // Nullable has more priority
+                  if (typeComposers.nullable === false) {
+                    nullable = false;
+                  }
+                  if (typeComposers.nullable === true) {
+                    nullable = true;
+                  }
+                  if (subSchemaAndTypeComposers.properties[propertyName].writeOnly) {
+                    nullable = true;
+                  }
+                  return !nullable ? typeComposers.output.getTypeNonNull() : typeComposers.output;
+                },
                 // Make sure you get the right property
-                resolve: root => {
-                  const actualFieldObj = root[propertyName];
-                  if (actualFieldObj != null) {
-                    const isArray = Array.isArray(actualFieldObj);
-                    const isListType = isListTC(typeComposers.output);
-                    if (isListType && !isArray) {
-                      return [actualFieldObj];
-                    } else if (!isListTC(typeComposers.output) && isArray) {
-                      return actualFieldObj[0];
-                    }
-                  }
-                  return actualFieldObj;
-                },
-                description: typeComposers.description || typeComposers.output?.description,
+                directives: fieldDirectives,
+                description:
+                  subSchemaAndTypeComposers.properties[propertyName].description ||
+                  subSchemaAndTypeComposers.properties[propertyName].output?.description,
               };
+              const directives: Directive[] = [];
+              if (fieldName !== propertyName) {
+                schemaComposer.addDirective(ResolveRootFieldDirective);
+                directives.push({
+                  name: 'resolveRootField',
+                  args: {
+                    field: propertyName,
+                  },
+                });
+              }
               inputFieldMap[fieldName] = {
-                type: () =>
-                  subSchema.required?.includes(propertyName)
-                    ? typeComposers.input?.getTypeNonNull()
-                    : typeComposers.input,
-                // Let execution logic know what is the expected propertyName
-                extensions: {
-                  propertyName,
+                type: () => {
+                  const typeComposers = subSchemaAndTypeComposers.properties[propertyName];
+                  let nullable = true;
+                  if (subSchemaAndTypeComposers.required?.includes(propertyName)) {
+                    nullable = false;
+                  }
+                  // Nullable has more priority
+                  if (typeComposers.nullable === false) {
+                    nullable = false;
+                  }
+                  if (typeComposers.nullable === true) {
+                    nullable = true;
+                  }
+                  if (subSchemaAndTypeComposers.properties[propertyName].readOnly) {
+                    nullable = true;
+                  }
+                  return !nullable ? typeComposers.input?.getTypeNonNull() : typeComposers.input;
                 },
-                description: typeComposers.description || typeComposers.input?.description,
-                defaultValue: typeComposers?.extensions?.default || typeComposers.input?.default,
+                directives,
+                description:
+                  subSchemaAndTypeComposers.properties[propertyName].description ||
+                  subSchemaAndTypeComposers.properties[propertyName].input?.description,
+                defaultValue:
+                  subSchemaAndTypeComposers.properties[propertyName]?.default ||
+                  subSchemaAndTypeComposers.properties[propertyName]?.extensions?.default ||
+                  subSchemaAndTypeComposers.properties[propertyName]?.input?.default,
               };
             }
           }
 
-          if (subSchema.allOf) {
-            for (const typeComposers of subSchema.allOf) {
-              const outputTC: ObjectTypeComposer = (typeComposers as any).output;
-              if (schemaComposer.isObjectType(outputTC)) {
-                for (const outputFieldName of outputTC.getFieldNames()) {
-                  if (!fieldMap[outputFieldName]) {
-                    fieldMap[outputFieldName] = outputTC.getField(outputFieldName);
-                  }
-                }
-              }
-              const inputTC: InputTypeComposer = (typeComposers as any).input;
-              if (schemaComposer.isInputObjectType(inputTC)) {
-                for (const inputFieldName of inputTC.getFieldNames()) {
-                  if (!inputFieldMap[inputFieldName]) {
-                    inputFieldMap[inputFieldName] = inputTC.getField(inputFieldName);
-                  }
-                }
-              }
-            }
-          }
-
-          if (subSchema.additionalProperties) {
+          if (subSchemaAndTypeComposers.additionalProperties) {
+            // Take a look later
             if (
-              typeof subSchema.additionalProperties === 'object' &&
-              subSchema.additionalProperties.output instanceof ObjectTypeComposer
+              typeof subSchemaAndTypeComposers.additionalProperties === 'object' &&
+              subSchemaAndTypeComposers.additionalProperties.output instanceof ObjectTypeComposer
             ) {
-              if (Object.keys(fieldMap).length === 0) {
-                return subSchema.additionalProperties;
-              } else {
-                const outputTC: ObjectTypeComposer = (subSchema.additionalProperties as any).output;
-                const outputTCFieldMap = outputTC.getFields();
-                for (const fieldName in outputTCFieldMap) {
-                  fieldMap[fieldName] = outputTCFieldMap[fieldName];
-                }
-                const inputTC: InputTypeComposer = (subSchema.additionalProperties as any).input;
-                const inputTCFieldMap = inputTC.getFields();
-                for (const fieldName in inputTCFieldMap) {
-                  inputFieldMap[fieldName] = inputTCFieldMap[fieldName];
-                }
-              }
-            } else {
+              const containerOutputTC = schemaComposer.createObjectTC({
+                name: `${subSchemaAndTypeComposers.additionalProperties.output.getTypeName()}_entry`,
+                fields: {
+                  key: {
+                    type: 'ID!',
+                  },
+                  value: {
+                    type: subSchemaAndTypeComposers.additionalProperties.output,
+                  },
+                },
+              });
+
+              schemaComposer.addDirective(DictionaryDirective);
+              fieldMap.additionalProperties = {
+                type: containerOutputTC.List,
+                directives: [
+                  {
+                    name: 'dictionary',
+                  },
+                ],
+              };
+            } else if (Object.keys(fieldMap).length > 0) {
+              schemaComposer.addDirective(ResolveRootDirective);
               fieldMap.additionalProperties = {
                 type: GraphQLJSON,
-                resolve: (root: any) => root,
+                directives: [
+                  {
+                    name: 'resolveRoot',
+                  },
+                ],
               };
-              inputFieldMap = {};
+            } else {
+              const typeComposer = schemaComposer.getAnyTC(GraphQLJSON);
+              schemaComposer.delete(
+                (subSchemaAndTypeComposers.input as ObjectTypeComposer)?.getTypeName?.(),
+              );
+              schemaComposer.delete(
+                (subSchemaAndTypeComposers.output as ObjectTypeComposer)?.getTypeName?.(),
+              );
+              return {
+                input: typeComposer,
+                output: typeComposer,
+                description: subSchemaAndTypeComposers.description,
+                nullable: subSchemaAndTypeComposers.nullable,
+                default: subSchemaAndTypeComposers.default,
+                readOnly: subSchemaAndTypeComposers.readOnly,
+                writeOnly: subSchemaAndTypeComposers.writeOnly,
+              };
             }
           }
 
-          if (subSchema.title === '_schema') {
-            futureTasks.forEach(futureTask => futureTask());
-            return {
-              output: schemaComposer,
-            };
-          }
-
-          if (subSchema.title === 'Query') {
-            const typeComposer = schemaComposer.Query;
-            typeComposer.addFields(fieldMap);
-            return {
-              output: typeComposer,
-            };
-          }
-
-          if (subSchema.title === 'Mutation') {
-            const typeComposer = schemaComposer.Mutation;
-            typeComposer.addFields(fieldMap);
-            return {
-              output: typeComposer,
-            };
-          }
-
-          if (subSchema.title === 'Subscription') {
-            const typeComposer = schemaComposer.Subscription;
-            typeComposer.addFields(fieldMap);
-            return {
-              output: typeComposer,
-            };
-          }
-
-          const getCorrectInputFieldType = (fieldName: string) => {
-            const inputType: InputTypeComposer | ListComposer<InputTypeComposer> = inputFieldMap[fieldName].type();
-            const actualInputType = isListTC(inputType) ? inputType.ofType : inputType;
-            if (!actualInputType.getFields) {
-              return actualInputType;
-            }
-            const fieldMap = actualInputType.getFields();
-            for (const fieldName in fieldMap) {
-              const fieldConfig = fieldMap[fieldName];
-              if (fieldConfig.type.getTypeName().endsWith('!')) {
-                return inputType.getTypeNonNull();
+          if (subSchemaAndTypeComposers.title in rootInputTypeNameComposerMap) {
+            const typeComposer = rootInputTypeNameComposerMap[subSchemaAndTypeComposers.title]();
+            for (const fieldName in inputFieldMap) {
+              let inputTC = inputFieldMap[fieldName].type();
+              if ('ofType' in inputTC) {
+                inputTC = inputTC.ofType;
               }
-            }
-            return inputType;
-          };
-
-          if (subSchema.title === 'QueryInput') {
-            const typeComposer = schemaComposer.Query;
-            for (const fieldName in inputFieldMap) {
-              futureTasks.add(() =>
-                typeComposer.addFieldArgs(fieldName, {
-                  input: {
-                    type: () => getCorrectInputFieldType(fieldName),
-                    description: inputFieldMap[fieldName].description,
-                  },
-                })
-              );
+              typeComposer.addFieldArgs(fieldName, inputTC.getFields());
             }
             return {
               output: typeComposer,
             };
           }
 
-          if (subSchema.title === 'MutationInput') {
-            const typeComposer = schemaComposer.Mutation;
-            for (const fieldName in inputFieldMap) {
-              futureTasks.add(() =>
-                typeComposer.addFieldArgs(fieldName, {
-                  input: {
-                    type: () => getCorrectInputFieldType(fieldName),
-                    description: inputFieldMap[fieldName].description,
-                  },
-                })
-              );
-            }
-            return {
-              output: typeComposer,
-            };
+          let output = subSchemaAndTypeComposers.output;
+          if (Object.keys(fieldMap).length === 0) {
+            output = schemaComposer.getAnyTC(GraphQLJSON);
+          } else if ('addFields' in output) {
+            (output as ObjectTypeComposer).addFields(fieldMap);
+          }
+          let input = subSchemaAndTypeComposers.input;
+          if (Object.keys(inputFieldMap).length === 0) {
+            input = schemaComposer.getAnyTC(GraphQLJSON);
+          } else if (input != null && 'addFields' in input) {
+            (input as InputTypeComposer).addFields(inputFieldMap);
           }
 
-          if (subSchema.title === 'SubscriptionInput') {
-            const typeComposer = schemaComposer.Subscription;
-            for (const fieldName in inputFieldMap) {
-              futureTasks.add(() =>
-                typeComposer.addFieldArgs(fieldName, {
-                  input: {
-                    type: () => getCorrectInputFieldType(fieldName),
-                    description: inputFieldMap[fieldName].description,
-                  },
-                })
-              );
-            }
-            return {
-              output: typeComposer,
-            };
+          if (isList) {
+            input = input.List;
+            output = (output as ObjectTypeComposer).List;
           }
-
-          const output =
-            Object.keys(fieldMap).length === 0
-              ? getGenericJSONScalar({
-                  schemaComposer,
-                  isInput: false,
-                  subSchema,
-                  validateWithJSONSchema,
-                })
-              : schemaComposer.createObjectTC({
-                  name: getValidTypeName({
-                    schemaComposer,
-                    isInput: false,
-                    subSchema,
-                  }),
-                  description: subSchema.description,
-                  fields: fieldMap,
-                  extensions: {
-                    validateWithJSONSchema,
-                    examples: subSchema.examples,
-                    default: subSchema.default,
-                  },
-                });
-
-          const input =
-            Object.keys(inputFieldMap).length === 0
-              ? getGenericJSONScalar({
-                  schemaComposer,
-                  isInput: true,
-                  subSchema,
-                  validateWithJSONSchema,
-                })
-              : schemaComposer.createInputTC({
-                  name: getValidTypeName({
-                    schemaComposer,
-                    isInput: true,
-                    subSchema,
-                  }),
-                  description: subSchema.description,
-                  fields: inputFieldMap,
-                  extensions: {
-                    examples: subSchema.examples,
-                    default: subSchema.default,
-                  },
-                });
-
           return {
             input,
             output,
+            nullable: subSchemaAndTypeComposers.nullable,
+            default: subSchemaAndTypeComposers.default,
+            readOnly: subSchemaAndTypeComposers.readOnly,
+            writeOnly: subSchemaAndTypeComposers.writeOnly,
           };
       }
-      logger.warn(`GraphQL Type cannot be created for this JSON Schema definition;
-subSchema: ${inspect(subSchema)}
-path: ${inspect(path)}`);
-      const typeComposer = schemaComposer.getAnyTC(GraphQLJSON);
-      return {
-        input: typeComposer,
-        output: typeComposer,
-      };
-    };
-    const result = getTypeComposer();
-    return result;
+
+      if (subSchemaAndTypeComposers.input || subSchemaAndTypeComposers.output) {
+        return {
+          input: subSchemaAndTypeComposers.input,
+          output: subSchemaAndTypeComposers.output,
+          description: subSchemaAndTypeComposers.description,
+          nullable: subSchemaAndTypeComposers.nullable,
+          default: subSchemaAndTypeComposers.default,
+          readOnly: subSchemaAndTypeComposers.readOnly,
+          writeOnly: subSchemaAndTypeComposers.writeOnly,
+        };
+      } else {
+        logger.debug(`GraphQL Type cannot be created for this JSON Schema definition;`, {
+          subSchema: subSchemaOnly,
+          path,
+        });
+        const typeComposer = schemaComposer.getAnyTC(GraphQLJSON);
+        return {
+          input: typeComposer,
+          output: typeComposer,
+          description: subSchemaAndTypeComposers.description,
+          nullable: subSchemaAndTypeComposers.nullable,
+          readOnly: subSchemaAndTypeComposers.readOnly,
+          writeOnly: subSchemaAndTypeComposers.writeOnly,
+          default: subSchemaAndTypeComposers.default,
+        };
+      }
+    },
   });
 }

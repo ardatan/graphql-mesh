@@ -1,4 +1,5 @@
 import Long from 'long';
+
 function patchLongJs() {
   const originalLongFromValue = Long.fromValue.bind(Long);
   Long.fromValue = (value: any) => {

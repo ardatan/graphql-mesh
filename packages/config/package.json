@@ -1,58 +1,62 @@
 {
   "name": "@graphql-mesh/config",
-  "version": "0.36.1",
-  "license": "MIT",
+  "version": "10.1.13",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
     "directory": "packages/config"
   },
-  "peerDependencies": {
-    "graphql": "*"
-  },
-  "sideEffects": false,
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
+  "license": "MIT",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
   "exports": {
     ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
     },
-    "./*": {
-      "require": "./dist/*.js",
-      "import": "./dist/*.mjs"
-    }
+    "./package.json": "./package.json"
+  },
+  "typings": "dist/typings/index.d.ts",
+  "peerDependencies": {
+    "@graphql-mesh/cross-helpers": "^0.3.4",
+    "@graphql-mesh/runtime": "^0.46.21",
+    "@graphql-mesh/store": "^0.9.20",
+    "@graphql-mesh/types": "^0.91.12",
+    "@graphql-mesh/utils": "^0.43.20",
+    "@graphql-tools/utils": "^9.2.1",
+    "graphql": "*",
+    "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/cross-helpers": "0.1.2",
-    "@graphql-mesh/cache-localforage": "0.6.1",
-    "@graphql-mesh/merger-bare": "0.13.43",
-    "@graphql-mesh/merger-stitching": "0.15.45",
-    "@graphql-mesh/runtime": "0.34.6",
-    "@graphql-mesh/types": "0.72.1",
-    "@graphql-mesh/store": "0.8.4",
-    "@graphql-mesh/utils": "0.34.6",
-    "@graphql-tools/merge": "8.2.10",
-    "@graphql-tools/utils": "8.6.9",
-    "@graphql-tools/load": "7.5.10",
-    "@graphql-tools/code-file-loader": "7.2.14",
-    "@graphql-tools/graphql-file-loader": "7.3.11",
+    "@envelop/core": "3.0.6",
+    "@graphql-mesh/cache-localforage": "0.7.20",
+    "@graphql-mesh/merger-bare": "0.16.22",
+    "@graphql-mesh/merger-stitching": "0.18.22",
+    "@graphql-tools/code-file-loader": "7.3.21",
+    "@graphql-tools/graphql-file-loader": "7.5.16",
+    "@graphql-tools/load": "7.8.13",
+    "@whatwg-node/fetch": "^0.8.3",
+    "camel-case": "4.1.2",
     "param-case": "3.0.4",
-    "@envelop/core": "2.3.1",
-    "tslib": "^2.3.1",
-    "fetchache": "0.1.2",
-    "pascal-case": "3.1.2",
-    "camel-case": "4.1.2"
-  },
-  "devDependencies": {
-    "@types/ajv": "1.0.0"
+    "pascal-case": "3.1.2"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
   }
 }

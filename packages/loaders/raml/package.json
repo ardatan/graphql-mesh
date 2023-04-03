@@ -1,45 +1,55 @@
 {
   "name": "@omnigraph/raml",
-  "version": "0.5.39",
-  "sideEffects": false,
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
-  "exports": {
-    ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
-    },
-    "./*": {
-      "require": "./dist/*.js",
-      "import": "./dist/*.mjs"
-    }
-  },
-  "license": "MIT",
+  "version": "0.9.24",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
     "directory": "packages/loaders/raml"
   },
+  "license": "MIT",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "graphql": "*"
+    "@graphql-mesh/cross-helpers": "^0.3.4",
+    "@graphql-mesh/utils": "^0.43.20",
+    "@graphql-tools/utils": "^9.2.1",
+    "graphql": "*",
+    "tslib": "^2.4.0"
   },
   "dependencies": {
-    "cross-undici-fetch": "^0.4.0",
-    "@omnigraph/json-schema": "0.19.4",
     "@ardatan/raml-1-parser": "1.1.69",
-    "json-machete": "0.8.3",
-    "to-json-schema": "0.2.5",
-    "@graphql-mesh/utils": "0.34.6",
-    "@graphql-tools/utils": "8.6.9",
-    "tslib": "^2.3.1",
-    "change-case": "4.1.2"
+    "@graphql-mesh/string-interpolation": "0.4.3",
+    "@omnigraph/json-schema": "0.38.24",
+    "@whatwg-node/fetch": "^0.8.0",
+    "change-case": "4.1.2",
+    "json-machete": "0.18.20",
+    "to-json-schema": "0.2.5"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
   }
 }

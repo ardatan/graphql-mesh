@@ -1,13 +1,14 @@
-import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
+import { execute, parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
-import RateLimitTransform from '../src';
+import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { wrapSchema } from '@graphql-tools/wrap';
-import { execute, parse } from 'graphql';
+import RateLimitTransform from '../src/index.js';
 
 describe('Rate Limit Transform', () => {
   let pubsub: PubSub;
   let cache: InMemoryLRUCache;
+  const logger = new DefaultLogger('test');
 
   beforeEach(() => {
     pubsub = new PubSub();
@@ -15,9 +16,7 @@ describe('Rate Limit Transform', () => {
   });
 
   afterEach(() => {
-    pubsub
-      .publish('destroy', {} as any)
-      .catch(e => console.warn(`Error on emitting destroy: ${e.stack || e.message || e}`));
+    pubsub.publish('destroy', {} as any);
   });
 
   const baseDir = process.cwd();
@@ -55,6 +54,7 @@ describe('Rate Limit Transform', () => {
       cache,
       pubsub,
       importFn,
+      logger,
     });
     const wrappedSchema = wrapSchema({
       schema,
@@ -119,6 +119,7 @@ describe('Rate Limit Transform', () => {
       cache,
       pubsub,
       importFn,
+      logger,
     });
     const wrappedSchema = wrapSchema({
       schema,
@@ -180,6 +181,7 @@ describe('Rate Limit Transform', () => {
       cache,
       pubsub,
       importFn,
+      logger,
     });
     const wrappedSchema = wrapSchema({
       schema,
@@ -255,6 +257,7 @@ describe('Rate Limit Transform', () => {
       cache,
       pubsub,
       importFn,
+      logger,
     });
 
     const wrappedSchema = wrapSchema({

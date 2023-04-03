@@ -1,6 +1,6 @@
-import { ImportFn, KeyValueCache } from '@graphql-mesh/types';
-import { path as pathModule } from '@graphql-mesh/cross-helpers';
 import DataLoader from 'dataloader';
+import { path as pathModule } from '@graphql-mesh/cross-helpers';
+import { ImportFn, KeyValueCache } from '@graphql-mesh/types';
 import { pathExists, writeJSON } from '@graphql-mesh/utils';
 
 export default class FileCache<V = any> implements KeyValueCache<V> {
@@ -23,6 +23,11 @@ export default class FileCache<V = any> implements KeyValueCache<V> {
       await writeJSON(this.absolutePath, json);
       return keys;
     });
+  }
+
+  async getKeysByPrefix(prefix: string) {
+    const json = await this.json$;
+    return Object.keys(json).filter(key => key.startsWith(prefix));
   }
 
   async get(name: string) {

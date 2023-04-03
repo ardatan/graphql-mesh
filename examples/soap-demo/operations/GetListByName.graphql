@@ -1,10 +1,12 @@
 query GetListByName {
-  GetListByName(name: "Newton") {
-    PersonIdentification {
-      Name
-      DOB
-      ID
-      SSN
+  s0_SOAPDemo_SOAPDemoSoap_GetListByName(GetListByName: { name: "Newton" }) {
+    GetListByNameResult {
+      PersonIdentification {
+        Name
+        DOB
+        ID
+        SSN
+      }
     }
   }
 }

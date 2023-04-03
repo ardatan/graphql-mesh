@@ -1,13 +1,13 @@
-import { GraphQLSchema } from 'graphql';
 import { join } from 'path';
-import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
+import { GraphQLSchema } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 
 describe('Docusign', () => {
   let createdSchema: GraphQLSchema;
   beforeAll(async () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      oasFilePath: join(__dirname, '../../../handlers/openapi/test/fixtures/docusign.json'),
+      source: join(__dirname, './fixtures/docusign.json'),
       ignoreErrorResponses: true,
       // It is not possible to provide a union type with File scalar
     });

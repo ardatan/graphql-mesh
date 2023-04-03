@@ -29,7 +29,7 @@ describe('Artifacts', () => {
     expect(sdkResult?.me?.company?.name).toBeDefined();
     expect(sdkResult?.me?.company?.type).toBeDefined();
     expect(sdkResult?.me?.company?.employers).toHaveLength(2);
-    expect(sdkResult?.me?.company?.employers[0]?.firstName).toBeDefined();
-    expect(sdkResult?.me?.company?.employers[0]?.jobTitle).toBeDefined();
+    expect(sdkResult?.me?.company?.employers?.[0]?.firstName).toBeDefined();
+    expect(sdkResult?.me?.company?.employers?.[0]?.jobTitle).toBeDefined();
   });
 });

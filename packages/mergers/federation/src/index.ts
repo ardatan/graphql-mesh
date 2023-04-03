@@ -1,4 +1,15 @@
 import {
+  DocumentNode,
+  execute,
+  ExecutionResult,
+  extendSchema,
+  GraphQLSchema,
+  parse,
+} from 'graphql';
+import { ApolloGateway, LocalGraphQLDataSource, SERVICE_DEFINITION_QUERY } from '@apollo/gateway';
+import { process } from '@graphql-mesh/cross-helpers';
+import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
+import {
   KeyValueCache,
   Logger,
   MeshMerger,
@@ -7,13 +18,15 @@ import {
   MeshPubSub,
   RawSourceOutput,
 } from '@graphql-mesh/types';
-import { GraphQLSchema, extendSchema, DocumentNode, parse, execute, ExecutionResult } from 'graphql';
-import { wrapSchema } from '@graphql-tools/wrap';
-import { ApolloGateway, SERVICE_DEFINITION_QUERY } from '@apollo/gateway';
+import { printWithCache } from '@graphql-mesh/utils';
 import { addResolversToSchema } from '@graphql-tools/schema';
-import { hashObject, jitExecutorFactory, AggregateError, printWithCache, parseWithCache } from '@graphql-mesh/utils';
-import { asArray, ExecutionRequest } from '@graphql-tools/utils';
-import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
+import {
+  AggregateError,
+  asArray,
+  ExecutionRequest,
+  printSchemaWithDirectives,
+} from '@graphql-tools/utils';
+import { wrapSchema } from '@graphql-tools/wrap';
 
 export default class FederationMerger implements MeshMerger {
   name = 'federation';
@@ -28,8 +41,8 @@ export default class FederationMerger implements MeshMerger {
     this.store = options.store;
   }
 
-  async getUnifiedSchema({ rawSources, typeDefs, resolvers, transforms }: MeshMergerContext) {
-    this.logger.debug(() => `Creating localServiceList for gateway`);
+  async getUnifiedSchema({ rawSources, typeDefs, resolvers }: MeshMergerContext) {
+    this.logger.debug(`Creating localServiceList for gateway`);
     const rawSourceMap = new Map<string, RawSourceOutput>();
     const localServiceList: { name: string; typeDefs: DocumentNode }[] = [];
     const sourceMap = new Map<RawSourceOutput, GraphQLSchema>();
@@ -41,13 +54,16 @@ export default class FederationMerger implements MeshMerger {
         const sdl = await this.store
           .proxy(`${rawSource.name}_sdl`, PredefinedProxyOptions.StringWithoutValidation)
           .getWithSet(async () => {
-            this.logger.debug(() => `Fetching Apollo Federated Service SDL for ${rawSource.name}`);
+            this.logger.debug(`Fetching Apollo Federated Service SDL for ${rawSource.name}`);
             const sdlQueryResult: any = await execute({
               schema: transformedSchema,
               document: parse(SERVICE_DEFINITION_QUERY),
             });
             if (sdlQueryResult.errors?.length) {
-              throw new AggregateError(sdlQueryResult.errors, `Failed on fetching Federated SDL for ${rawSource.name}`);
+              throw new AggregateError(
+                sdlQueryResult.errors,
+                `Failed on fetching Federated SDL for ${rawSource.name}`,
+              );
             }
             return sdlQueryResult.data._service.sdl;
           });
@@ -55,78 +71,66 @@ export default class FederationMerger implements MeshMerger {
           name: rawSource.name,
           typeDefs: parse(sdl),
         });
-      })
+      }),
     );
-    this.logger.debug(() => `Creating ApolloGateway`);
-    const rootValue = {};
+    this.logger.debug(`Creating ApolloGateway`);
     const gateway = new ApolloGateway({
       localServiceList,
       buildService: ({ name }) => {
-        this.logger.debug(() => `Building federation service: ${name}`);
+        this.logger.debug(`Building federation service: ${name}`);
         const rawSource = rawSourceMap.get(name);
         const transformedSchema = sourceMap.get(rawSource);
-        const jitExecute = jitExecutorFactory(transformedSchema, name, this.logger.child('JIT Executor'));
-        return {
-          async process({ request: { query, variables, operationName, extensions }, context }) {
-            const document = parseWithCache(query);
-            return jitExecute({
-              document,
-              variables,
-              operationName,
-              extensions,
-              context,
-              rootValue,
-            }) as ExecutionResult;
-          },
-        };
+        return new LocalGraphQLDataSource(transformedSchema);
       },
       logger: this.logger,
       debug: !!process.env.DEBUG,
       serviceHealthCheck: true,
     });
-    this.logger.debug(() => `Loading gateway`);
+    this.logger.debug(`Loading gateway`);
     const { schema, executor: gatewayExecutor } = await gateway.load();
-    const schemaHash: any = hashObject({ schema });
+    const schemaHash: any = printSchemaWithDirectives(schema);
     let remoteSchema: GraphQLSchema = schema;
-    this.logger.debug(() => `Wrapping gateway executor in a unified schema`);
-    remoteSchema = wrapSchema({
-      schema: remoteSchema,
-      executor: <TReturn>({ document, info, variables, context, operationName }: ExecutionRequest) => {
-        const documentStr = printWithCache(document);
-        const { operation } = info;
-        // const operationName = operation.name?.value;
-        return gatewayExecutor({
-          document,
-          request: {
-            query: documentStr,
-            operationName,
-            variables,
-          },
+    this.logger.debug(`Wrapping gateway executor in a unified schema`);
+    const executor = <TReturn>({
+      document,
+      info,
+      variables,
+      context,
+      operationName,
+    }: ExecutionRequest) => {
+      const documentStr = printWithCache(document);
+      const { operation } = info;
+      // const operationName = operation.name?.value;
+      return gatewayExecutor({
+        document,
+        request: {
+          query: documentStr,
           operationName,
-          cache: this.cache,
-          context,
-          queryHash: documentStr,
-          logger: this.logger,
-          metrics: {},
-          source: documentStr,
-          operation,
-          schema,
-          schemaHash,
-          overallCachePolicy: {} as any,
-        }) as ExecutionResult<TReturn>;
-      },
-      batch: true,
+          variables,
+        },
+        operationName,
+        cache: this.cache,
+        context,
+        queryHash: documentStr,
+        logger: this.logger,
+        metrics: {},
+        source: documentStr,
+        operation,
+        schema,
+        schemaHash,
+        overallCachePolicy: undefined,
+      }) as ExecutionResult<TReturn>;
+    };
+    const id = this.pubsub.subscribe('destroy', async () => {
+      this.pubsub.unsubscribe(id);
+      await gateway.stop();
     });
-    const id$ = this.pubsub.subscribe('destroy', () => {
-      gateway.stop().catch(err => this.logger.error(err));
-      id$.then(id => this.pubsub.unsubscribe(id)).catch(err => console.error(err));
-    });
-    this.logger.debug(() => `Applying additionalTypeDefs`);
+    this.logger.debug(`Applying additionalTypeDefs`);
     typeDefs?.forEach(typeDef => {
       remoteSchema = extendSchema(remoteSchema, typeDef);
     });
     if (resolvers) {
-      this.logger.debug(() => `Applying additionalResolvers`);
+      this.logger.debug(`Applying additionalResolvers`);
       for (const resolversObj of asArray(resolvers)) {
         remoteSchema = addResolversToSchema({
           schema: remoteSchema,
@@ -135,19 +139,14 @@ export default class FederationMerger implements MeshMerger {
         });
       }
     }
-    if (transforms?.length) {
-      this.logger.debug(() => `Applying root level transforms`);
-      remoteSchema = wrapSchema({
-        schema: remoteSchema,
-        transforms: transforms as any[],
-        batch: true,
-      });
-    }
-    this.logger.debug(() => `Attaching sourceMap to the unified schema`);
+    this.logger.debug(`Attaching sourceMap to the unified schema`);
     remoteSchema.extensions = remoteSchema.extensions || {};
     Object.defineProperty(remoteSchema.extensions, 'sourceMap', {
       get: () => sourceMap,
     });
-    return remoteSchema;
+    return {
+      schema: remoteSchema,
+      executor,
+    };
   }
 }

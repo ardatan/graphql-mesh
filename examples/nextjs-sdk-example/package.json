@@ -1,29 +1,29 @@
 {
   "name": "nextjs-sdk-example",
-  "version": "0.0.17",
+  "version": "0.0.157",
   "private": true,
   "scripts": {
-    "prestart": "yarn build:mesh",
-    "start": "next dev",
-    "prebuild": "yarn build:mesh",
     "build": "next build",
-    "start:prod": "next start",
     "build:mesh": "mesh build",
-    "serve:mesh": "mesh dev"
+    "prebuild": "yarn build:mesh",
+    "prestart": "yarn build:mesh",
+    "serve:mesh": "mesh dev",
+    "start": "next dev",
+    "start:prod": "next start"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.69.2",
-    "@graphql-mesh/config": "0.36.1",
-    "@graphql-mesh/new-openapi": "0.4.16",
-    "@graphql-mesh/runtime": "0.34.6",
-    "apollo-server-micro": "^2.24.0",
-    "graphql": "^15.5.0",
-    "next": "12.1.0",
-    "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "@graphql-mesh/cli": "0.82.30",
+    "@graphql-mesh/config": "10.1.13",
+    "@graphql-mesh/openapi": "0.35.26",
+    "@graphql-mesh/runtime": "0.46.21",
+    "apollo-server-micro": "3.12.0",
+    "graphql": "16.6.0",
+    "next": "13.2.4",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
   },
   "devDependencies": {
-    "@types/react": "^17.0.4",
-    "typescript": "^4.2.4"
+    "@types/react": "18.0.32",
+    "typescript": "5.0.3"
   }
 }

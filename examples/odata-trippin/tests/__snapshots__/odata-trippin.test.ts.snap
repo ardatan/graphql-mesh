@@ -1,0 +1,5804 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] = `
+{
+  "__schema": {
+    "directives": [
+      {
+        "args": [
+          {
+            "defaultValue": ""No longer supported"",
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "reason",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "isRepeatable": false,
+        "locations": [
+          "ARGUMENT_DEFINITION",
+          "ENUM_VALUE",
+          "FIELD_DEFINITION",
+          "INPUT_FIELD_DEFINITION",
+        ],
+        "name": "deprecated",
+      },
+      {
+        "args": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "if",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null,
+              },
+            },
+          },
+        ],
+        "isRepeatable": false,
+        "locations": [
+          "FIELD",
+          "FRAGMENT_SPREAD",
+          "INLINE_FRAGMENT",
+        ],
+        "name": "include",
+      },
+      {
+        "args": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "if",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null,
+              },
+            },
+          },
+        ],
+        "isRepeatable": false,
+        "locations": [
+          "FIELD",
+          "FRAGMENT_SPREAD",
+          "INLINE_FRAGMENT",
+        ],
+        "name": "skip",
+      },
+      {
+        "args": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "url",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+        ],
+        "isRepeatable": false,
+        "locations": [
+          "SCALAR",
+        ],
+        "name": "specifiedBy",
+      },
+    ],
+    "mutationType": {
+      "name": "Mutation",
+    },
+    "queryType": {
+      "name": "Query",
+    },
+    "subscriptionType": null,
+    "types": [
+      {
+        "enumValues": null,
+        "fields": [
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "AirlineCode",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Name",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "kind": "OBJECT",
+        "name": "Airline",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "AirlineCode",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Name",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "interfaces": null,
+        "kind": "INPUT_OBJECT",
+        "name": "AirlineInput",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "AirlineCode",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Name",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "interfaces": null,
+        "kind": "INPUT_OBJECT",
+        "name": "AirlineUpdateInput",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": [
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "IataCode",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "IcaoCode",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Location",
+            "type": {
+              "kind": "OBJECT",
+              "name": "AirportLocation",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Name",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "kind": "OBJECT",
+        "name": "Airport",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "IataCode",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "IcaoCode",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Location",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "AirportLocationInput",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Name",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "interfaces": null,
+        "kind": "INPUT_OBJECT",
+        "name": "AirportInput",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": [
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Address",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "City",
+            "type": {
+              "kind": "OBJECT",
+              "name": "City",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Loc",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": [
+          {
+            "kind": "INTERFACE",
+            "name": "ILocation",
+            "ofType": null,
+          },
+        ],
+        "kind": "OBJECT",
+        "name": "AirportLocation",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Address",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "City",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "CityInput",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Loc",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "interfaces": null,
+        "kind": "INPUT_OBJECT",
+        "name": "AirportLocationInput",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "IataCode",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "IcaoCode",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Location",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "AirportLocationInput",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Name",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "interfaces": null,
+        "kind": "INPUT_OBJECT",
+        "name": "AirportUpdateInput",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "kind": "SCALAR",
+        "name": "BigInt",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "kind": "SCALAR",
+        "name": "Boolean",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": [
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "CountryRegion",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Name",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Region",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "kind": "OBJECT",
+        "name": "City",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "CountryRegion",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Name",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Region",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "interfaces": null,
+        "kind": "INPUT_OBJECT",
+        "name": "CityInput",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "kind": "SCALAR",
+        "name": "DateTime",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": [
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "AddressInfo",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Location",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Age",
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "BestFriend",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Person",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Cost",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "BigInt",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Emails",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "FavoriteFeature",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "Feature",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Features",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "Feature",
+                  "ofType": null,
+                },
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "FirstName",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "queryOptions",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "QueryOptions",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Friends",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Person",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "id",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "FriendsById",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Person",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Gender",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "PersonGender",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "person",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PersonInput",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "GetFavoriteAirline",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Airline",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "person",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PersonInput",
+                  "ofType": null,
+                },
+              },
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "userName",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "GetFriendsTrips",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Trip",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "HomeAddress",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Location",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "LastName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "MiddleName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "queryOptions",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "QueryOptions",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Peers",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Person",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "id",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "PeersById",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Person",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "personInstance",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PersonInput",
+                  "ofType": null,
+                },
+              },
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "tripId",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                  },
+                },
+              },
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "userName",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "ShareTrip",
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "queryOptions",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "QueryOptions",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Trips",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Trip",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "id",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "TripsById",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Trip",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "lastName",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "person",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PersonInput",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "UpdateLastName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "UserName",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": [
+          {
+            "kind": "INTERFACE",
+            "name": "IPerson",
+            "ofType": null,
+          },
+        ],
+        "kind": "OBJECT",
+        "name": "Employee",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": [
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "ConfirmationCode",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Description",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Duration",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ISO8601Duration",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "EndsAt",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "OccursAt",
+            "type": {
+              "kind": "OBJECT",
+              "name": "EventLocation",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "PlanItemId",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "StartsAt",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null,
+              },
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": [
+          {
+            "kind": "INTERFACE",
+            "name": "IPlanItem",
+            "ofType": null,
+          },
+        ],
+        "kind": "OBJECT",
+        "name": "Event",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": [
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Address",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "BuildingInfo",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "City",
+            "type": {
+              "kind": "OBJECT",
+              "name": "City",
+              "ofType": null,
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": [
+          {
+            "kind": "INTERFACE",
+            "name": "ILocation",
+            "ofType": null,
+          },
+        ],
+        "kind": "OBJECT",
+        "name": "EventLocation",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": [
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Feature1",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Feature2",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Feature3",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Feature4",
+          },
+        ],
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "kind": "ENUM",
+        "name": "Feature",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": [
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Airline",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Airline",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "ConfirmationCode",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Duration",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ISO8601Duration",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "EndsAt",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "FlightNumber",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "From",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Airport",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "PlanItemId",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "SeatNumber",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "StartsAt",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "To",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Airport",
+              "ofType": null,
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": [
+          {
+            "kind": "INTERFACE",
+            "name": "IPublicTransportation",
+            "ofType": null,
+          },
+        ],
+        "kind": "OBJECT",
+        "name": "Flight",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "kind": "SCALAR",
+        "name": "Float",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "kind": "SCALAR",
+        "name": "GUID",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "kind": "SCALAR",
+        "name": "ID",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": [
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Address",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "City",
+            "type": {
+              "kind": "OBJECT",
+              "name": "City",
+              "ofType": null,
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "kind": "INTERFACE",
+        "name": "ILocation",
+        "possibleTypes": [
+          {
+            "kind": "OBJECT",
+            "name": "AirportLocation",
+            "ofType": null,
+          },
+          {
+            "kind": "OBJECT",
+            "name": "EventLocation",
+            "ofType": null,
+          },
+          {
+            "kind": "OBJECT",
+            "name": "Location",
+            "ofType": null,
+          },
+        ],
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": [
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "AddressInfo",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Location",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Age",
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "BestFriend",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Person",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Emails",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "FavoriteFeature",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "Feature",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Features",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "Feature",
+                  "ofType": null,
+                },
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "FirstName",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "queryOptions",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "QueryOptions",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Friends",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Person",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "id",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "FriendsById",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Person",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Gender",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "PersonGender",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "person",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PersonInput",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "GetFavoriteAirline",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Airline",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "person",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PersonInput",
+                  "ofType": null,
+                },
+              },
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "userName",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "GetFriendsTrips",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Trip",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "HomeAddress",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Location",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "LastName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "MiddleName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "personInstance",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PersonInput",
+                  "ofType": null,
+                },
+              },
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "tripId",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                  },
+                },
+              },
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "userName",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "ShareTrip",
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "queryOptions",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "QueryOptions",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Trips",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Trip",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "id",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "TripsById",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Trip",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "lastName",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "person",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PersonInput",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "UpdateLastName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "UserName",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "kind": "INTERFACE",
+        "name": "IPerson",
+        "possibleTypes": [
+          {
+            "kind": "OBJECT",
+            "name": "Employee",
+            "ofType": null,
+          },
+          {
+            "kind": "OBJECT",
+            "name": "Manager",
+            "ofType": null,
+          },
+          {
+            "kind": "OBJECT",
+            "name": "Person",
+            "ofType": null,
+          },
+        ],
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": [
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "ConfirmationCode",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Duration",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ISO8601Duration",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "EndsAt",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "PlanItemId",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "StartsAt",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null,
+              },
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "kind": "INTERFACE",
+        "name": "IPlanItem",
+        "possibleTypes": [
+          {
+            "kind": "OBJECT",
+            "name": "Event",
+            "ofType": null,
+          },
+          {
+            "kind": "OBJECT",
+            "name": "PlanItem",
+            "ofType": null,
+          },
+          {
+            "kind": "OBJECT",
+            "name": "PublicTransportation",
+            "ofType": null,
+          },
+        ],
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": [
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "ConfirmationCode",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Duration",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ISO8601Duration",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "EndsAt",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "PlanItemId",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "SeatNumber",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "StartsAt",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null,
+              },
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "kind": "INTERFACE",
+        "name": "IPublicTransportation",
+        "possibleTypes": [
+          {
+            "kind": "OBJECT",
+            "name": "Flight",
+            "ofType": null,
+          },
+          {
+            "kind": "OBJECT",
+            "name": "PublicTransportation",
+            "ofType": null,
+          },
+        ],
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "kind": "SCALAR",
+        "name": "ISO8601Duration",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": [
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "allpages",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "none",
+          },
+        ],
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "kind": "ENUM",
+        "name": "InlineCount",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "kind": "SCALAR",
+        "name": "Int",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "kind": "SCALAR",
+        "name": "JSON",
+        "possibleTypes": null,
+        "specifiedByURL": "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf",
+      },
+      {
+        "enumValues": null,
+        "fields": [
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Address",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "City",
+            "type": {
+              "kind": "OBJECT",
+              "name": "City",
+              "ofType": null,
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": [
+          {
+            "kind": "INTERFACE",
+            "name": "ILocation",
+            "ofType": null,
+          },
+        ],
+        "kind": "OBJECT",
+        "name": "Location",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Address",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "City",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "CityInput",
+              "ofType": null,
+            },
+          },
+        ],
+        "interfaces": null,
+        "kind": "INPUT_OBJECT",
+        "name": "LocationInput",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": [
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "AddressInfo",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Location",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Age",
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "BestFriend",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Person",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "BossOffice",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Location",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Budget",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "BigInt",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "queryOptions",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "QueryOptions",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "DirectReports",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Person",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "id",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "DirectReportsById",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Person",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Emails",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "FavoriteFeature",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "Feature",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Features",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "Feature",
+                  "ofType": null,
+                },
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "FirstName",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "queryOptions",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "QueryOptions",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Friends",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Person",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "id",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "FriendsById",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Person",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Gender",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "PersonGender",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "person",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PersonInput",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "GetFavoriteAirline",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Airline",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "person",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PersonInput",
+                  "ofType": null,
+                },
+              },
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "userName",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "GetFriendsTrips",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Trip",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "HomeAddress",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Location",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "LastName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "MiddleName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "personInstance",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PersonInput",
+                  "ofType": null,
+                },
+              },
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "tripId",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                  },
+                },
+              },
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "userName",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "ShareTrip",
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "queryOptions",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "QueryOptions",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Trips",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Trip",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "id",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "TripsById",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Trip",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "lastName",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "person",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PersonInput",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "UpdateLastName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "UserName",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": [
+          {
+            "kind": "INTERFACE",
+            "name": "IPerson",
+            "ofType": null,
+          },
+        ],
+        "kind": "OBJECT",
+        "name": "Manager",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": [
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "queryOptions",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "QueryOptions",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Airlines",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Airline",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "AirlineCode",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "AirlinesByAirlineCode",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Airline",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "queryOptions",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "QueryOptions",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Airports",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Airport",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "IcaoCode",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "AirportsByIcaoCode",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Airport",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "queryOptions",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "QueryOptions",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "People",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "INTERFACE",
+                "name": "IPerson",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "UserName",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "PeopleByUserName",
+            "type": {
+              "kind": "INTERFACE",
+              "name": "IPerson",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "ResetDataSource",
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "input",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "AirlineInput",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "createAirlines",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Airline",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "input",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "AirportInput",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "createAirports",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Airport",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "input",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PersonInput",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "createPeople",
+            "type": {
+              "kind": "INTERFACE",
+              "name": "IPerson",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "AirlineCode",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "deleteAirlinesByAirlineCode",
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "IcaoCode",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "deleteAirportsByIcaoCode",
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "UserName",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "deletePeopleByUserName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "AirlineCode",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "input",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "AirlineUpdateInput",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "updateAirlinesByAirlineCode",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Airline",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "IcaoCode",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "input",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "AirportUpdateInput",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "updateAirportsByIcaoCode",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Airport",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "UserName",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "input",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PersonUpdateInput",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "updatePeopleByUserName",
+            "type": {
+              "kind": "INTERFACE",
+              "name": "IPerson",
+              "ofType": null,
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "kind": "OBJECT",
+        "name": "Mutation",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": [
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "AddressInfo",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Location",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Age",
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "BestFriend",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Person",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Emails",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "FavoriteFeature",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "Feature",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Features",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "Feature",
+                  "ofType": null,
+                },
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "FirstName",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "queryOptions",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "QueryOptions",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Friends",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Person",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "id",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "FriendsById",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Person",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Gender",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "PersonGender",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "person",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PersonInput",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "GetFavoriteAirline",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Airline",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "person",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PersonInput",
+                  "ofType": null,
+                },
+              },
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "userName",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "GetFriendsTrips",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Trip",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "HomeAddress",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Location",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "LastName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "MiddleName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "personInstance",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PersonInput",
+                  "ofType": null,
+                },
+              },
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "tripId",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                  },
+                },
+              },
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "userName",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "ShareTrip",
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "queryOptions",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "QueryOptions",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Trips",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Trip",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "id",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "TripsById",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Trip",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "lastName",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "person",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PersonInput",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "UpdateLastName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "UserName",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": [
+          {
+            "kind": "INTERFACE",
+            "name": "IPerson",
+            "ofType": null,
+          },
+        ],
+        "kind": "OBJECT",
+        "name": "Person",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": [
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Female",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Male",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Unknown",
+          },
+        ],
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "kind": "ENUM",
+        "name": "PersonGender",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "AddressInfo",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "INPUT_OBJECT",
+                "name": "LocationInput",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Age",
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Emails",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "FavoriteFeature",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "Feature",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Features",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "Feature",
+                  "ofType": null,
+                },
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "FirstName",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Gender",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "PersonGender",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "HomeAddress",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "LocationInput",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "LastName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "MiddleName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "UserName",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+        ],
+        "interfaces": null,
+        "kind": "INPUT_OBJECT",
+        "name": "PersonInput",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "AddressInfo",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "INPUT_OBJECT",
+                "name": "LocationInput",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Age",
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Emails",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "FavoriteFeature",
+            "type": {
+              "kind": "ENUM",
+              "name": "Feature",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Features",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "Feature",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "FirstName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Gender",
+            "type": {
+              "kind": "ENUM",
+              "name": "PersonGender",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "HomeAddress",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "LocationInput",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "LastName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "MiddleName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "UserName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "interfaces": null,
+        "kind": "INPUT_OBJECT",
+        "name": "PersonUpdateInput",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": [
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "ConfirmationCode",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Duration",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ISO8601Duration",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "EndsAt",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "PlanItemId",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "StartsAt",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null,
+              },
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": [
+          {
+            "kind": "INTERFACE",
+            "name": "IPlanItem",
+            "ofType": null,
+          },
+        ],
+        "kind": "OBJECT",
+        "name": "PlanItem",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": [
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "ConfirmationCode",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Duration",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ISO8601Duration",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "EndsAt",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "PlanItemId",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "SeatNumber",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "StartsAt",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null,
+              },
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": [
+          {
+            "kind": "INTERFACE",
+            "name": "IPlanItem",
+            "ofType": null,
+          },
+          {
+            "kind": "INTERFACE",
+            "name": "IPublicTransportation",
+            "ofType": null,
+          },
+        ],
+        "kind": "OBJECT",
+        "name": "PublicTransportation",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": [
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "queryOptions",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "QueryOptions",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Airlines",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Airline",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "AirlineCode",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "AirlinesByAirlineCode",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Airline",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "queryOptions",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "QueryOptions",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "AirlinesCount",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "queryOptions",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "QueryOptions",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Airports",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Airport",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "IcaoCode",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "AirportsByIcaoCode",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Airport",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "queryOptions",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "QueryOptions",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "AirportsCount",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "lat",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Float",
+                    "ofType": null,
+                  },
+                },
+              },
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "lon",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Float",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "GetNearestAirport",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Airport",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "GetPersonWithMostFriends",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Person",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Me",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Person",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "queryOptions",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "QueryOptions",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "People",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "INTERFACE",
+                "name": "IPerson",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "UserName",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                  },
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "PeopleByUserName",
+            "type": {
+              "kind": "INTERFACE",
+              "name": "IPerson",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "queryOptions",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "QueryOptions",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "PeopleCount",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null,
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "kind": "OBJECT",
+        "name": "Query",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "count",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "filter",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "inlinecount",
+            "type": {
+              "kind": "ENUM",
+              "name": "InlineCount",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "orderby",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "skip",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "top",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null,
+            },
+          },
+        ],
+        "interfaces": null,
+        "kind": "INPUT_OBJECT",
+        "name": "QueryOptions",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "kind": "SCALAR",
+        "name": "String",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": [
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Budget",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Description",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "EndsAt",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "trip",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "TripInput",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "GetInvolvedPeople",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Person",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Name",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "queryOptions",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "QueryOptions",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "PlanItems",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "PlanItem",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "id",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "PlanItemsById",
+            "type": {
+              "kind": "OBJECT",
+              "name": "PlanItem",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "ShareId",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "GUID",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "StartsAt",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Tags",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "TripId",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+              },
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "kind": "OBJECT",
+        "name": "Trip",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Budget",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Description",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "EndsAt",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Name",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "ShareId",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "GUID",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "StartsAt",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "Tags",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "TripId",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+              },
+            },
+          },
+        ],
+        "interfaces": null,
+        "kind": "INPUT_OBJECT",
+        "name": "TripInput",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": [
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "name",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "description",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "isRepeatable",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "locations",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "__DirectiveLocation",
+                    "ofType": null,
+                  },
+                },
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": "false",
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "includeDeprecated",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "args",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "__InputValue",
+                    "ofType": null,
+                  },
+                },
+              },
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "kind": "OBJECT",
+        "name": "__Directive",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": [
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "QUERY",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "MUTATION",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "SUBSCRIPTION",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "FIELD",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "FRAGMENT_DEFINITION",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "FRAGMENT_SPREAD",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "INLINE_FRAGMENT",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "VARIABLE_DEFINITION",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "SCHEMA",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "SCALAR",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "OBJECT",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "FIELD_DEFINITION",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "ARGUMENT_DEFINITION",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "INTERFACE",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "UNION",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "ENUM",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "ENUM_VALUE",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "INPUT_OBJECT",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "INPUT_FIELD_DEFINITION",
+          },
+        ],
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "kind": "ENUM",
+        "name": "__DirectiveLocation",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": [
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "name",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "description",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "isDeprecated",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "deprecationReason",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "kind": "OBJECT",
+        "name": "__EnumValue",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": [
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "name",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "description",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": "false",
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "includeDeprecated",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "args",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "__InputValue",
+                    "ofType": null,
+                  },
+                },
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "type",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "__Type",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "isDeprecated",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "deprecationReason",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "kind": "OBJECT",
+        "name": "__Field",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": [
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "name",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "description",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "type",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "__Type",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "defaultValue",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "isDeprecated",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "deprecationReason",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "kind": "OBJECT",
+        "name": "__InputValue",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": [
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "description",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "types",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "__Type",
+                    "ofType": null,
+                  },
+                },
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "queryType",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "__Type",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "mutationType",
+            "type": {
+              "kind": "OBJECT",
+              "name": "__Type",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "subscriptionType",
+            "type": {
+              "kind": "OBJECT",
+              "name": "__Type",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "directives",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "__Directive",
+                    "ofType": null,
+                  },
+                },
+              },
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "kind": "OBJECT",
+        "name": "__Schema",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": [
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "kind",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "__TypeKind",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "name",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "description",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "specifiedByURL",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": "false",
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "includeDeprecated",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "fields",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "__Field",
+                  "ofType": null,
+                },
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "interfaces",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "__Type",
+                  "ofType": null,
+                },
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "possibleTypes",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "__Type",
+                  "ofType": null,
+                },
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": "false",
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "includeDeprecated",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "enumValues",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "__EnumValue",
+                  "ofType": null,
+                },
+              },
+            },
+          },
+          {
+            "args": [
+              {
+                "defaultValue": "false",
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "includeDeprecated",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "inputFields",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "__InputValue",
+                  "ofType": null,
+                },
+              },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "ofType",
+            "type": {
+              "kind": "OBJECT",
+              "name": "__Type",
+              "ofType": null,
+            },
+          },
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "kind": "OBJECT",
+        "name": "__Type",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": [
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "SCALAR",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "OBJECT",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "INTERFACE",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "UNION",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "ENUM",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "INPUT_OBJECT",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "LIST",
+          },
+          {
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "NON_NULL",
+          },
+        ],
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "kind": "ENUM",
+        "name": "__TypeKind",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+    ],
+  },
+}
+`;
+
+exports[`OData TripPin should give correct response for example queries: example-query.graphql-query-result 1`] = `
+{
+  "data": {
+    "Me": {
+      "AddressInfo": [
+        {
+          "Address": "P.O. Box 555",
+          "City": {
+            "CountryRegion": "United States",
+            "Name": "Lander",
+            "Region": "WY",
+          },
+        },
+      ],
+      "FavoriteFeature": "Feature1",
+      "FirstName": "April",
+      "Gender": "Female",
+      "LastName": "Cline",
+      "Trips": [
+        {
+          "Description": "Trip in US",
+        },
+      ],
+      "UserName": "aprilcline",
+    },
+  },
+}
+`;

@@ -1,4 +1,4 @@
-const graphqlFields = require("graphql-fields");
+const graphqlFields = require('graphql-fields');
 
 function handleFields(fields) {
   let fieldsStrsArray = [];
@@ -11,7 +11,7 @@ function handleFields(fields) {
     }
     fieldsStrsArray.push(fieldStr);
   }
-  return fieldsStrsArray.join(",");
+  return fieldsStrsArray.join(',');
 }
 
 // This function gets requested fields from GraphQLResolveInfo

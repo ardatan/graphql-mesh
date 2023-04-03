@@ -1,0 +1,57 @@
+extend type Plugin {
+  statsd: StatsdPlugin
+}
+
+type StatsdPlugin @md {
+  """
+  If you wish to disable introspection for logging (default: false)
+  """
+  skipIntrospection: Boolean
+  """
+  prefix.operations.count (default: graphql)
+  """
+  prefix: String
+
+  """
+  Client Configuration
+  """
+  client: StatsdClientConfiguration
+}
+
+type StatsdClientConfiguration {
+  bufferFlushInterval: Int
+  bufferHolder: StatsdClientBufferHolder
+  cacheDns: Boolean
+  cacheDnsTtl: Int
+  globalTags: JSON
+  globalize: Boolean
+  host: String
+  isChild: Boolean
+  maxBufferSize: Int
+  mock: Boolean
+  path: String
+  port: Int
+  protocol: StatsdClientProtocol
+  sampleRate: Float
+  suffix: String
+  telegraf: Boolean
+  useDefaultRoute: Boolean
+  tagPrefix: String
+  tagSeperator: String
+  tcpGracefulErrorHandling: Boolean
+  tcpGracefulRestartRateLimit: Int
+  udsGracefulErrorHandling: Boolean
+  udsGracefulRestartRateLimit: Int
+  closingFlushInterval: Int
+}
+
+enum StatsdClientProtocol {
+  tcp
+  udp
+  uds
+  stream
+}
+
+type StatsdClientBufferHolder {
+  buffer: String!
+}

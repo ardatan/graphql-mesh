@@ -1,0 +1,20 @@
+# STEP1: 2 sources side by side
+query getData_step1 {
+  case(countryRegion: "France") {
+    confirmed
+    deaths
+    countryRegion
+  }
+  population(country: "France") {
+    records {
+      fields {
+        value
+        country_name
+      }
+    }
+    _response {
+      status
+      body
+    }
+  }
+}

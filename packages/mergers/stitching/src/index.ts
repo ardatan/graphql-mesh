@@ -1,23 +1,22 @@
-import { Logger, MeshMerger, MeshMergerContext, MeshMergerOptions, RawSourceOutput } from '@graphql-mesh/types';
-import { stitchSchemas, ValidationLevel } from '@graphql-tools/stitch';
-import { wrapSchema } from '@graphql-tools/wrap';
-import {
-  groupTransforms,
-  applySchemaTransforms,
-  extractResolvers,
-  AggregateError,
-  jitExecutorFactory,
-} from '@graphql-mesh/utils';
-import { StitchingInfo } from '@graphql-tools/delegate';
-import {
-  stitchingDirectives,
-  federationToStitchingSDL,
-  StitchingDirectivesResult,
-} from '@graphql-tools/stitching-directives';
-import { addResolversToSchema } from '@graphql-tools/schema';
 import { buildSchema, ExecutionResult, GraphQLSchema, parse } from 'graphql';
 import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
-import { Executor } from '@graphql-tools/utils';
+import {
+  Logger,
+  MeshMerger,
+  MeshMergerContext,
+  MeshMergerOptions,
+  RawSourceOutput,
+} from '@graphql-mesh/types';
+import { extractResolvers } from '@graphql-mesh/utils';
+import { StitchingInfo } from '@graphql-tools/delegate';
+import { addResolversToSchema } from '@graphql-tools/schema';
+import { stitchSchemas, ValidationLevel } from '@graphql-tools/stitch';
+import {
+  federationToStitchingSDL,
+  stitchingDirectives,
+  StitchingDirectivesResult,
+} from '@graphql-tools/stitching-directives';
+import { AggregateError, Executor, printSchemaWithDirectives } from '@graphql-tools/utils';
 
 const APOLLO_GET_SERVICE_DEFINITION_QUERY = /* GraphQL */ `
   query __ApolloGetServiceDefinition__ {
@@ -49,25 +48,33 @@ export default class StitchingMerger implements MeshMerger {
     name: string,
     oldSchema: GraphQLSchema,
     executor: Executor,
-    stitchingDirectives: StitchingDirectivesResult
+    stitchingDirectives: StitchingDirectivesResult,
   ) {
     const rawSourceLogger = this.logger.child(name);
 
-    rawSourceLogger.debug(() => `Extracting existing resolvers if available`);
+    rawSourceLogger.debug(`Extracting existing resolvers if available`);
     const resolvers = extractResolvers(oldSchema);
 
     let newSchema = await this.store
       .proxy(`${name}_stitching`, PredefinedProxyOptions.GraphQLSchemaWithDiffing)
       .getWithSet(async () => {
-        this.logger.debug(() => `Fetching Apollo Federated Service SDL for ${name}`);
-        const sdlQueryResult: any = (await executor({
-          document: parse(APOLLO_GET_SERVICE_DEFINITION_QUERY),
-        })) as ExecutionResult;
-        if (sdlQueryResult.errors?.length) {
-          throw new AggregateError(sdlQueryResult.errors, `Failed on fetching Federated SDL for ${name}`);
+        this.logger.debug(`Fetching Apollo Federated Service SDL for ${name}`);
+        let federationSdl: string;
+        if ((oldSchema.extensions?.directives as any)?.link) {
+          federationSdl = printSchemaWithDirectives(oldSchema);
+        } else {
+          const sdlQueryResult: any = (await executor({
+            document: parse(APOLLO_GET_SERVICE_DEFINITION_QUERY),
+          })) as ExecutionResult;
+          if (sdlQueryResult.errors?.length) {
+            throw new AggregateError(
+              sdlQueryResult.errors,
+              `Failed on fetching Federated SDL for ${name}`,
+            );
+          }
+          federationSdl = sdlQueryResult.data._service.sdl;
         }
-        const federationSdl = sdlQueryResult.data._service.sdl;
-        this.logger.debug(() => `Generating Stitching SDL for ${name}`);
+        this.logger.debug(`Generating Stitching SDL for ${name}`);
         const stitchingSdl = federationToStitchingSDL(federationSdl, stitchingDirectives);
         return buildSchema(stitchingSdl, {
           assumeValid: true,
@@ -75,7 +82,7 @@ export default class StitchingMerger implements MeshMerger {
         });
       });
 
-    rawSourceLogger.debug(() => `Adding existing resolvers back to the schema`);
+    rawSourceLogger.debug(`Adding existing resolvers back to the schema`);
     newSchema = addResolversToSchema({
       schema: newSchema,
       resolvers,
@@ -85,43 +92,39 @@ export default class StitchingMerger implements MeshMerger {
       },
     });
 
+    newSchema.extensions = oldSchema.extensions;
+
     return newSchema;
   }
 
   async getUnifiedSchema(context: MeshMergerContext) {
-    const { rawSources, typeDefs, resolvers, transforms } = context;
-    this.logger.debug(() => `Stitching directives are being generated`);
+    const { rawSources, typeDefs, resolvers } = context;
+    this.logger.debug(`Stitching directives are being generated`);
     const defaultStitchingDirectives = stitchingDirectives({
       pathToDirectivesInExtensions: ['directives'],
     });
-    this.logger.debug(() => `Checking if any of sources has federation metadata`);
+    this.logger.debug(`Checking if any of sources has federation metadata`);
     const subschemas = await Promise.all(
       rawSources.map(async rawSource => {
         if (rawSource.batch == null) {
           rawSource.batch = true;
         }
-        if (rawSource.executor == null) {
-          rawSource.executor = jitExecutorFactory(
-            rawSource.schema,
-            rawSource.name,
-            this.logger.child(`${rawSource.name} - JIT Executor`)
-          );
-        }
         if (this.isFederatedSchema(rawSource.schema)) {
-          this.logger.debug(() => `${rawSource.name} has federated schema.`);
+          this.logger.debug(`${rawSource.name} has federated schema.`);
           rawSource.schema = await this.replaceFederationSDLWithStitchingSDL(
             rawSource.name,
             rawSource.schema,
             rawSource.executor,
-            defaultStitchingDirectives
+            defaultStitchingDirectives,
           );
         }
-        rawSource.merge = defaultStitchingDirectives.stitchingDirectivesTransformer(rawSource).merge;
+        rawSource.merge =
+          defaultStitchingDirectives.stitchingDirectivesTransformer(rawSource).merge;
         return rawSource;
-      })
+      }),
     );
-    this.logger.debug(() => `Stitching the source schemas`);
-    let unifiedSchema = stitchSchemas({
+    this.logger.debug(`Stitching the source schemas`);
+    const unifiedSchema = stitchSchemas({
       subschemas,
       typeDefs,
       resolvers,
@@ -130,8 +133,9 @@ export default class StitchingMerger implements MeshMerger {
           validationLevel: ValidationLevel.Off,
         },
       },
+      mergeDirectives: true,
     });
-    this.logger.debug(() => `sourceMap is being generated and attached to the unified schema`);
+    this.logger.debug(`sourceMap is being generated and attached to the unified schema`);
     unifiedSchema.extensions = unifiedSchema.extensions || {};
     Object.assign(unifiedSchema.extensions, {
       sourceMap: new Proxy({} as any, {
@@ -153,21 +157,8 @@ export default class StitchingMerger implements MeshMerger {
         },
       }),
     });
-    if (transforms?.length) {
-      this.logger.debug(() => `Root level transformations are being applied`);
-      const { noWrapTransforms, wrapTransforms } = groupTransforms(transforms);
-      if (wrapTransforms.length) {
-        unifiedSchema = wrapSchema({
-          schema: unifiedSchema,
-          transforms: transforms as any[],
-          batch: true,
-          executor: jitExecutorFactory(unifiedSchema, 'root-wrapped', this.logger.child('JIT Executor')) as any,
-        });
-      }
-      if (noWrapTransforms.length) {
-        unifiedSchema = applySchemaTransforms(unifiedSchema, { schema: unifiedSchema }, null, noWrapTransforms);
-      }
-    }
-    return unifiedSchema;
+    return {
+      schema: unifiedSchema,
+    };
   }
 }

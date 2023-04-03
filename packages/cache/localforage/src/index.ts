@@ -1,9 +1,9 @@
-import { KeyValueCache, KeyValueCacheSetOptions, YamlConfig } from '@graphql-mesh/types';
-import { createInMemoryLRUDriver } from './InMemoryLRUDriver';
 import LocalForage from 'localforage';
+import { KeyValueCache, KeyValueCacheSetOptions, YamlConfig } from '@graphql-mesh/types';
+import { createInMemoryLRUDriver } from './InMemoryLRUDriver.js';
 
 LocalForage.defineDriver(createInMemoryLRUDriver()).catch(err =>
-  console.error('Failed at defining InMemoryLRU driver', err)
+  console.error('Failed at defining InMemoryLRU driver', err),
 );
 
 export default class LocalforageCache<V = any> implements KeyValueCache<V> {
@@ -11,9 +11,13 @@ export default class LocalforageCache<V = any> implements KeyValueCache<V> {
   constructor(config?: YamlConfig.LocalforageConfig) {
     const driverNames = config?.driver || ['INDEXEDDB', 'WEBSQL', 'LOCALSTORAGE', 'INMEMORY_LRU'];
     this.localforage = LocalForage.createInstance({
-      name: config?.name,
-      storeName: config?.storeName,
+      name: config?.name || 'graphql-mesh-cache',
+      storeName: config?.storeName || 'graphql-mesh-cache-store',
+      // @ts-expect-error - Weird error
       driver: driverNames.map(driverName => LocalForage[driverName] ?? driverName),
+      size: config?.size,
+      version: config?.version,
+      description: config?.description,
     });
   }
 
@@ -23,6 +27,11 @@ export default class LocalforageCache<V = any> implements KeyValueCache<V> {
       await this.localforage.removeItem(key);
     }
     return this.localforage.getItem<V>(key.toString());
+  }
+
+  async getKeysByPrefix(prefix: string) {
+    const keys = await this.localforage.keys();
+    return keys.filter(key => key.startsWith(prefix));
   }
 
   async set(key: string, value: V, options?: KeyValueCacheSetOptions) {

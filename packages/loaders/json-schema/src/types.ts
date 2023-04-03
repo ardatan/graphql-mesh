@@ -1,26 +1,33 @@
-import { MeshPubSub, Logger } from '@graphql-mesh/types';
-import { BaseLoaderOptions } from '@graphql-tools/utils';
-import { GraphQLInputType, OperationTypeNode } from 'graphql';
+import { OperationTypeNode } from 'graphql';
+import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 import { JSONSchema, JSONSchemaObject } from 'json-machete';
+import { IStringifyOptions } from 'qs';
+import { ResolverData } from '@graphql-mesh/string-interpolation';
+import { Logger, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
+import { BaseLoaderOptions } from '@graphql-tools/utils';
 
 export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
-  baseUrl?: string;
-  operationHeaders?: Record<string, string>;
+  endpoint?: string;
+  operationHeaders?: OperationHeadersConfiguration;
+  timeout?: number;
   schemaHeaders?: Record<string, string>;
   operations: JSONSchemaOperationConfig[];
   errorMessage?: string;
   logger?: Logger;
   pubsub?: MeshPubSub;
-  fetch?: WindowOrWorkerGlobalScope['fetch'];
-  generateInterfaceFromSharedFields?: boolean;
+  fetch?: MeshFetch;
   ignoreErrorResponses?: boolean;
-  queryParams?: Record<string, string>;
+  queryParams?: Record<string, string | number | boolean>;
+  queryStringOptions?: IStringifyOptions;
+  bundle?: boolean;
 }
 
 export interface JSONSchemaOperationResponseConfig {
   responseSchema?: string | JSONSchemaObject;
   responseSample?: any;
   responseTypeName?: string;
+
+  exposeResponseMetadata?: boolean;
 
   links?: Record<string, JSONSchemaLinkConfig>;
 }
@@ -36,13 +43,9 @@ export type JSONSchemaBaseOperationConfig = {
   field: string;
   description?: string;
 
-  argTypeMap?: Record<string, string | GraphQLInputType>;
-} & (
-  | {
-      responseByStatusCode?: Record<string, JSONSchemaOperationResponseConfig>;
-    }
-  | JSONSchemaOperationResponseConfig
-);
+  argTypeMap?: Record<string, string | JSONSchemaObject>;
+  responseByStatusCode?: Record<string, JSONSchemaOperationResponseConfig>;
+} & JSONSchemaOperationResponseConfig;
 
 export type JSONSchemaBaseOperationConfigWithJSONRequest = JSONSchemaBaseOperationConfig & {
   requestSchema?: string | JSONSchema;
@@ -51,13 +54,24 @@ export type JSONSchemaBaseOperationConfigWithJSONRequest = JSONSchemaBaseOperati
   requestBaseBody?: any;
 };
 
-export type HTTPMethod = 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'CONNECT' | 'OPTIONS' | 'TRACE' | 'PATCH';
+export type HTTPMethod =
+  | 'GET'
+  | 'HEAD'
+  | 'POST'
+  | 'PUT'
+  | 'DELETE'
+  | 'CONNECT'
+  | 'OPTIONS'
+  | 'TRACE'
+  | 'PATCH';
 
 export type JSONSchemaHTTPBaseOperationConfig = JSONSchemaBaseOperationConfig & {
   path: string;
   method?: HTTPMethod;
 
   headers?: Record<string, string>;
+  queryParamArgMap?: Record<string, string>;
+  queryStringOptionsByParam?: Record<string, IStringifyOptions & { destructObject?: boolean }>;
 };
 
 export type JSONSchemaHTTPJSONOperationConfig = JSONSchemaHTTPBaseOperationConfig &
@@ -78,3 +92,15 @@ export type JSONSchemaOperationConfig =
   | JSONSchemaHTTPJSONOperationConfig
   | JSONSchemaHTTPBinaryConfig
   | JSONSchemaPubSubOperationConfig;
+
+export type OperationHeadersConfiguration = Record<string, string> | OperationHeadersFactory;
+
+export type OperationHeadersFactory = (
+  data: ResolverData,
+  operationConfig: {
+    endpoint: string;
+    field: string;
+    path: string;
+    method: HTTPMethod;
+  },
+) => PromiseOrValue<Record<string, string>>;

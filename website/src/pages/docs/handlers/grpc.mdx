@@ -1,0 +1,73 @@
+---
+description:
+  GraphQL Mesh gRPC Handler allows loading gRPC definition files and using reflection, with custom
+  metadata for authorization. Learn more now!
+---
+
+import { Callout, PackageCmd } from '@theguild/components'
+
+# gRPC / Protobuf
+
+<div className="bg-[#244c5a]/90 rounded-md dark:bg-transparent inline-block">
+  ![image](https://user-images.githubusercontent.com/20847995/79218793-b27dcf00-7e59-11ea-8f0f-df97503f5494.png)
+</div>
+
+This Handler allows you to load [gRPC](https://grpc.io) definition files (`.proto`).
+
+<PackageCmd packages={['@graphql-mesh/grpc']} />
+
+Now, you can use it directly in your Mesh config file:
+
+```yaml filename=".meshrc.yaml" {6}
+sources:
+  - name: MyGrpcApi
+    handler:
+      grpc:
+        endpoint: localhost:50051
+        source: grpc/proto/Example.proto
+```
+
+<Callout>
+  You can check out our example that uses gRPC Handler. [Click here to open the example on
+  GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/grpc-example)
+</Callout>
+
+## Use Reflection instead of proto files
+
+If you have configured reflection in your gRPC server, you don't need to provide `source`.
+
+```yaml filename=".meshrc.yaml" {6}
+sources:
+  - name: gRPC Example
+    handler:
+      grpc:
+        endpoint: localhost:50051
+```
+
+<Callout>
+  You can check out our example that uses gRPC Handler with reflection. [Click here to open the
+  example on
+  GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/grpc-reflection-example)
+</Callout>
+
+## Custom Metadata for Authorization
+
+Here you can use `metaData` field to pass some custom metadata from the context.
+
+```yaml filename=".meshrc.yaml" {7-9}
+sources:
+  - name: MyGrpcApi
+    handler:
+      grpc:
+        endpoint: localhost:50051
+        source: grpc/proto/Example.proto
+        metaData:
+          authorization: 'Bearer {context.headers['x-my-token']}'
+          someStaticValue: 'MyStaticValue'
+```
+
+## Config API Reference
+
+import API from '../../../generated-markdown/GrpcHandler.generated.md'
+
+<API />

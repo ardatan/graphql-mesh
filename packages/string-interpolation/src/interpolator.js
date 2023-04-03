@@ -1,7 +1,7 @@
-import { defaultOptions } from './statics/DefaultOptions';
-import _ from 'lodash';
-import { defaultModifiers } from './modifiers';
 import JsonPointer from 'json-pointer';
+import lodashGet from 'lodash.get';
+import { defaultModifiers } from './modifiers/index.js';
+import { defaultOptions } from './statics/DefaultOptions.js';
 
 export class Interpolator {
   constructor(options = defaultOptions) {
@@ -34,10 +34,12 @@ export class Interpolator {
     }
 
     if (typeof transform !== 'function') {
-      return new Error('Modifiers must have a transformer. Transformers must be a function that returns a value.');
+      return new Error(
+        'Modifiers must have a transformer. Transformers must be a function that returns a value.',
+      );
     }
 
-    this.modifiers.push({key: key.toLowerCase(), transform});
+    this.modifiers.push({ key: key.toLowerCase(), transform });
     return this;
   }
 
@@ -51,25 +53,32 @@ export class Interpolator {
   }
 
   extractRules(matches) {
-    return matches.map((match) => {
+    return matches.map(match => {
       const alternativeText = this.getAlternativeText(match);
       const modifiers = this.getModifiers(match);
       return {
         key: this.getKeyFromMatch(match),
         replace: match,
         modifiers,
-        alternativeText
-      }
-    })
+        alternativeText,
+      };
+    });
   }
 
   getKeyFromMatch(match) {
     const removeReservedSymbols = [':', '|'];
-    return this.removeDelimiter(removeReservedSymbols.reduce((val, sym) => val.indexOf(sym) > 0 ? this.removeAfter(val, sym) : val, match));
+    return this.removeDelimiter(
+      removeReservedSymbols.reduce(
+        (val, sym) => (val.indexOf(sym) > 0 ? this.removeAfter(val, sym) : val),
+        match,
+      ),
+    );
   }
 
   removeDelimiter(val) {
-    return val.replace(new RegExp(this.delimiterStart(), 'g'), '').replace(new RegExp(this.delimiterEnd(), 'g'), '');
+    return val
+      .replace(new RegExp(this.delimiterStart(), 'g'), '')
+      .replace(new RegExp(this.delimiterEnd(), 'g'), '');
   }
 
   removeAfter(str, val) {
@@ -119,7 +128,10 @@ export class Interpolator {
     if (dataToReplace) {
       return str.replace(rule.replace, this.applyModifiers(rule.modifiers, dataToReplace, data));
     } else if (rule.alternativeText) {
-      return str.replace(rule.replace, this.applyModifiers(rule.modifiers, rule.alternativeText, data));
+      return str.replace(
+        rule.replace,
+        this.applyModifiers(rule.modifiers, rule.alternativeText, data),
+      );
     }
 
     const defaultModifier = this.applyModifiers(rule.modifiers, rule.key, data);
@@ -135,10 +147,10 @@ export class Interpolator {
 
   applyData(key, data) {
     const [prop, ptr] = key.split('#');
-    const propData = _.get(data, prop);
+    const propData = lodashGet(data, prop);
     if (ptr) {
       try {
-          return JsonPointer.get(propData, ptr);
+        return JsonPointer.get(propData, ptr);
       } catch (e) {
         if (e.message.startsWith('Invalid reference')) {
           return undefined;
@@ -156,7 +168,10 @@ export class Interpolator {
   applyModifiers(modifiers, str, rawData) {
     try {
       const transformers = modifiers.map(modifier => modifier && modifier.transform);
-      return transformers.reduce((str, transform) => transform ? transform(str, rawData) : str, str);
+      return transformers.reduce(
+        (str, transform) => (transform ? transform(str, rawData) : str),
+        str,
+      );
     } catch (e) {
       console.error(`An error occurred while applying modifiers to ${str}`, modifiers, e);
       return str;
@@ -164,8 +179,8 @@ export class Interpolator {
   }
 
   addAlias(key, ref) {
-    if (typeof ref === 'function'){
-      this.aliases.push({key, ref: ref() });
+    if (typeof ref === 'function') {
+      this.aliases.push({ key, ref: ref() });
     } else {
       this.aliases.push({ key, ref });
     }

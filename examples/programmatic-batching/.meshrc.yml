@@ -1,0 +1,20 @@
+sources:
+  - name: ExampleAPI
+    handler:
+      openapi:
+        endpoint: http://localhost:4001
+        source: ./example-api/openapi.json
+
+additionalTypeDefs: |
+  extend type Query {
+    user(id: Float!): User
+  }
+
+additionalResolvers:
+  - ./additional-resolvers.ts
+
+serve:
+  browser: false
+
+documents:
+  - ./example-query.graphql

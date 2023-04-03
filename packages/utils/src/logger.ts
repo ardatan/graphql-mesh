@@ -1,47 +1,89 @@
+import { process, util } from '@graphql-mesh/cross-helpers';
 import { LazyLoggerMessage, Logger } from '@graphql-mesh/types';
-import { inspect } from '@graphql-tools/utils';
-import chalk from 'chalk';
 
 type MessageTransformer = (msg: string) => string;
 
-const warnColor: MessageTransformer = chalk.keyword(`orange`);
-const infoColor: MessageTransformer = chalk.cyan;
-const errorColor: MessageTransformer = chalk.red;
-const debugColor: MessageTransformer = chalk.magenta;
-const titleBold: MessageTransformer = chalk.bold;
+const ANSI_CODES = {
+  black: '\x1b[30m',
+  red: '\x1b[31m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  magenta: '\x1b[35m',
+  cyan: '\x1b[36m',
+  white: '\x1b[37m',
+  reset: '\x1b[0m',
+  bold: '\x1b[1m',
+  orange: '\x1b[48:5:166m',
+};
 
-function handleLazyMessage(...lazyArgs: LazyLoggerMessage[]) {
-  const flattenedArgs = lazyArgs.flat(Infinity).flatMap(arg => {
-    if (typeof arg === 'function') {
-      return arg();
-    }
-    return arg;
-  });
-  return getLoggerMessage(flattenedArgs);
-}
-
-function getLoggerMessage(...args: any[]) {
-  return args
-    .flat(Infinity)
-    .map(arg => (typeof arg === 'string' ? arg : inspect(arg)))
-    .join(` `);
-}
+export const warnColor: MessageTransformer = msg => ANSI_CODES.orange + msg + ANSI_CODES.reset;
+export const infoColor: MessageTransformer = msg => ANSI_CODES.cyan + msg + ANSI_CODES.reset;
+export const errorColor: MessageTransformer = msg => ANSI_CODES.red + msg + ANSI_CODES.reset;
+export const debugColor: MessageTransformer = msg => ANSI_CODES.magenta + msg + ANSI_CODES.reset;
+export const titleBold: MessageTransformer = msg => ANSI_CODES.bold + msg + ANSI_CODES.reset;
 
 export class DefaultLogger implements Logger {
   constructor(public name?: string) {}
 
-  private getPrefix() {
+  private getLoggerMessage({ args = [], trim = !this.isDebug }: { args: any[]; trim?: boolean }) {
+    return args
+      .flat(Infinity)
+      .map(arg => {
+        if (typeof arg === 'string') {
+          if (trim && arg.length > 100) {
+            return (
+              arg.slice(0, 100) +
+              '...' +
+              '<Error message is too long. Enable DEBUG=1 to see the full message.>'
+            );
+          }
+          return arg;
+        } else if (typeof arg === 'object' && arg?.stack != null) {
+          return arg.stack;
+        }
+        return util.inspect(arg);
+      })
+      .join(` `);
+  }
+
+  private handleLazyMessage({ lazyArgs, trim }: { lazyArgs: LazyLoggerMessage[]; trim?: boolean }) {
+    const flattenedArgs = lazyArgs.flat(Infinity).flatMap(arg => {
+      if (typeof arg === 'function') {
+        return arg();
+      }
+      return arg;
+    });
+    return this.getLoggerMessage({
+      args: flattenedArgs,
+      trim,
+    });
+  }
+
+  private get isDebug() {
+    return (
+      process.env.DEBUG === '1' ||
+      (globalThis as any).DEBUG === '1' ||
+      this.name.includes(process.env.DEBUG || (globalThis as any).DEBUG)
+    );
+  }
+
+  private get prefix() {
     return this.name ? titleBold(this.name) : ``;
   }
 
   log(...args: any[]) {
-    const message = getLoggerMessage(...args);
-    return console.log(`${this.getPrefix()} ${message}`);
+    const message = this.getLoggerMessage({
+      args,
+    });
+    return console.log(`${this.prefix} ${message}`);
   }
 
   warn(...args: any[]) {
-    const message = getLoggerMessage(...args);
-    const fullMessage = `⚠️ ${this.getPrefix()} ${warnColor(message)}`;
+    const message = this.getLoggerMessage({
+      args,
+    });
+    const fullMessage = `⚠️ ${this.prefix} ${warnColor(message)}`;
     if (console.warn) {
       console.warn(fullMessage);
     } else {
@@ -50,8 +92,10 @@ export class DefaultLogger implements Logger {
   }
 
   info(...args: any[]) {
-    const message = getLoggerMessage(...args);
-    const fullMessage = `💡 ${this.getPrefix()} ${infoColor(message)}`;
+    const message = this.getLoggerMessage({
+      args,
+    });
+    const fullMessage = `💡 ${this.prefix} ${infoColor(message)}`;
     if (console.info) {
       console.info(fullMessage);
     } else {
@@ -60,19 +104,20 @@ export class DefaultLogger implements Logger {
   }
 
   error(...args: any[]) {
-    const message = getLoggerMessage(...args);
-    const fullMessage = `💥 ${this.getPrefix()} ${errorColor(message)}`;
-    if (console.error) {
-      console.error(fullMessage);
-    } else {
-      console.log(fullMessage);
-    }
+    const message = this.getLoggerMessage({
+      args,
+      trim: false,
+    });
+    const fullMessage = `💥 ${this.prefix} ${errorColor(message)}`;
+    console.log(fullMessage);
   }
 
   debug(...lazyArgs: LazyLoggerMessage[]) {
-    if ((process.env.DEBUG && process.env.DEBUG === '1') || this.name.includes(process.env.DEBUG)) {
-      const message = handleLazyMessage(lazyArgs);
-      const fullMessage = `🐛 ${this.getPrefix()} ${debugColor(message)}`;
+    if (this.isDebug) {
+      const message = this.handleLazyMessage({
+        lazyArgs,
+      });
+      const fullMessage = `🐛 ${this.prefix} ${debugColor(message)}`;
       if (console.debug) {
         console.debug(fullMessage);
       } else {

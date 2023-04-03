@@ -1,5 +1,5 @@
-const reservedNames = ['Query', 'Mutation', 'Subscription'];
-const KNOWN_CHARACTERS = {
+const reservedNames = ['Query', 'Mutation', 'Subscription', 'File'];
+const KNOWN_CHARACTERS: Record<string, string> = {
   '+': 'PLUS',
   '-': 'MINUS',
   '>': 'GREATER_THAN',
@@ -37,8 +37,31 @@ function getKnownCharacterOrCharCode(ch: string): string {
   return KNOWN_CHARACTERS[ch] || ch.charCodeAt(0).toString();
 }
 
+export function removeClosedBrackets(val: string) {
+  let out = val;
+
+  for (;;) {
+    // finds the first and shortest closed bracket match, starting from the left
+    const match = out.match(/\(.+?\)/);
+    const yesbrack = match?.[0];
+    if (!yesbrack) {
+      break;
+    }
+
+    // remove the brackets
+    const nobrack = yesbrack.substring(1, yesbrack.length - 1);
+
+    // replace the match removing bracks, just once starting from the left
+    out = out.replace(yesbrack, nobrack);
+  }
+
+  return out;
+}
+
 export function sanitizeNameForGraphQL(unsafeName: string): string {
   let sanitizedName = unsafeName.trim();
+
+  sanitizedName = removeClosedBrackets(sanitizedName);
 
   if (!isNaN(parseInt(sanitizedName))) {
     if (sanitizedName.startsWith('-')) {
@@ -54,7 +77,7 @@ export function sanitizeNameForGraphQL(unsafeName: string): string {
     for (const ch of unsanitizedName) {
       if (/^[_a-zA-Z0-9]$/.test(ch)) {
         sanitizedName += ch;
-      } else if (ch === ' ' || ch === '-') {
+      } else if (ch === ' ' || ch === '-' || ch === '.' || ch === '/' || ch === ':') {
         sanitizedName += '_';
       } else {
         sanitizedName += `_${getKnownCharacterOrCharCode(ch)}_`;
@@ -69,6 +92,10 @@ export function sanitizeNameForGraphQL(unsafeName: string): string {
 
   if (reservedNames.includes(sanitizedName)) {
     sanitizedName += '_';
+  }
+
+  if (sanitizedName.length === 0) {
+    return '_';
   }
 
   return sanitizedName;

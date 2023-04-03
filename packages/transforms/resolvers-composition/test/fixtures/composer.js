@@ -1,3 +1,3 @@
 module.exports = next => (root, args, context, info) => {
-    return 'FOO';
+  return 'FOO';
 };

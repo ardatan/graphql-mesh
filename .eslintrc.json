@@ -3,7 +3,12 @@
   "parserOptions": {
     "project": "./tsconfig.json"
   },
-  "extends": ["eslint:recommended", "standard", "prettier", "plugin:@typescript-eslint/recommended"],
+  "extends": [
+    "eslint:recommended",
+    "standard",
+    "prettier",
+    "plugin:@typescript-eslint/recommended"
+  ],
   "plugins": ["@typescript-eslint"],
   "rules": {
     "no-empty": "off",
@@ -25,9 +30,13 @@
     "@typescript-eslint/return-await": "error",
     "@typescript-eslint/naming-convention": "off",
     "@typescript-eslint/no-floating-promises": "error",
+    "import/no-nodejs-modules": "error",
     "no-eval": "off",
     "no-use-before-define": "off",
-    "import/no-extraneous-dependencies": ["error", { "devDependencies": ["**/*.test.ts", "**/*.spec.ts"] }]
+    "import/no-extraneous-dependencies": [
+      "error",
+      { "devDependencies": ["**/*.test.ts", "**/*.spec.ts"] }
+    ]
   },
   "env": {
     "es6": true,
@@ -44,7 +53,7 @@
       }
     }
   ],
-  "ignorePatterns": ["dist", "node_modules", "examples", "website", "scripts"],
+  "ignorePatterns": ["dist", "node_modules", "examples", "website", "scripts", ".bob"],
   "globals": {
     "BigInt": true
   }

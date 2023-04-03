@@ -1,0 +1,11 @@
+name: WorldPop
+handler:
+  jsonSchema:
+    endpoint: https://datasource.kapsarc.org/api/records/1.0/search
+    operations:
+      - type: Query
+        field: population
+        path: /?dataset=world-population&q={args.country}&rows=1&sort=year&facet=year&facet=country_name
+        method: GET
+        responseSchema: ./src/json-schemas/worldPop.json
+        exposeResponseMetadata: true

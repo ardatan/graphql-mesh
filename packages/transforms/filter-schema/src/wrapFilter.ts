@@ -1,34 +1,35 @@
-import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
-import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
-import { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
-import { ExecutionResult, ExecutionRequest } from '@graphql-tools/utils';
+import { GraphQLSchema } from 'graphql';
+import minimatch from 'minimatch';
+import { YamlConfig } from '@graphql-mesh/types';
 import {
-  FilterRootFields,
-  FilterObjectFields,
+  applyRequestTransforms,
+  applyResultTransforms,
+  applySchemaTransforms,
+} from '@graphql-mesh/utils';
+import { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
+import { ExecutionRequest, ExecutionResult } from '@graphql-tools/utils';
+import {
   FilterInputObjectFields,
+  FilterInterfaceFields,
+  FilterObjectFields,
+  FilterRootFields,
   FilterTypes,
   TransformCompositeFields,
 } from '@graphql-tools/wrap';
-import { GraphQLSchema } from 'graphql';
-import { matcher } from 'micromatch';
 
-export default class WrapFilter implements MeshTransform {
+export default class WrapFilter implements Transform {
   private transforms: Transform[] = [];
-  constructor(options: MeshTransformOptions<YamlConfig.FilterSchemaTransform>) {
-    const {
-      config: { filters },
-    } = options;
-
+  constructor({ config: { filters } }: { config: YamlConfig.FilterSchemaTransform }) {
     for (const filter of filters) {
       const [typeName, fieldNameOrGlob, argsGlob] = filter.split('.');
-      const isTypeMatch = matcher(typeName);
+      const typeMatcher = new minimatch.Minimatch(typeName);
 
       // TODO: deprecate this in next major release as dscussed in #1605
       if (!fieldNameOrGlob) {
         this.transforms.push(
           new FilterTypes(type => {
-            return isTypeMatch(type.name);
-          }) as any
+            return typeMatcher.match(type.name);
+          }) as any,
         );
         continue;
       }
@@ -39,32 +40,33 @@ export default class WrapFilter implements MeshTransform {
       }
       fixedFieldGlob = fixedFieldGlob.split(', ').join(',');
 
-      const isMatch = matcher(fixedFieldGlob.trim());
+      const globalTypeMatcher = new minimatch.Minimatch(fixedFieldGlob.trim());
 
       if (typeName === 'Type') {
         this.transforms.push(
           new FilterTypes(type => {
-            return isMatch(type.name);
-          }) as any
+            return globalTypeMatcher.match(type.name);
+          }),
         );
         continue;
       }
 
       if (argsGlob) {
-        const isFieldMatch = matcher(fieldNameOrGlob);
+        const fieldMatcher = new minimatch.Minimatch(fieldNameOrGlob);
 
         this.transforms.push(
           new TransformCompositeFields((fieldTypeName, fieldName, fieldConfig) => {
-            if (isTypeMatch(fieldTypeName) && isFieldMatch(fieldName)) {
+            if (typeMatcher.match(fieldTypeName) && fieldMatcher.match(fieldName)) {
               const fieldArgs = Object.entries(fieldConfig.args).reduce(
-                (args, [argName, argConfig]) => (!isMatch(argName) ? args : { ...args, [argName]: argConfig }),
-                {}
+                (args, [argName, argConfig]) =>
+                  !globalTypeMatcher.match(argName) ? args : { ...args, [argName]: argConfig },
+                {},
               );
 
               return { ...fieldConfig, args: fieldArgs };
             }
             return undefined;
-          }) as any
+          }),
         );
         continue;
       }
@@ -72,29 +74,38 @@ export default class WrapFilter implements MeshTransform {
       // If the glob is not for Types nor Args, finally we register Fields filters
       this.transforms.push(
         new FilterRootFields((rootTypeName, rootFieldName) => {
-          if (isTypeMatch(rootTypeName)) {
-            return isMatch(rootFieldName);
+          if (typeMatcher.match(rootTypeName)) {
+            return globalTypeMatcher.match(rootFieldName);
           }
           return true;
-        }) as any
+        }),
       );
 
       this.transforms.push(
         new FilterObjectFields((objectTypeName, objectFieldName) => {
-          if (isTypeMatch(objectTypeName)) {
-            return isMatch(objectFieldName);
+          if (typeMatcher.match(objectTypeName)) {
+            return globalTypeMatcher.match(objectFieldName);
           }
           return true;
-        }) as any
+        }),
       );
 
       this.transforms.push(
         new FilterInputObjectFields((inputObjectTypeName, inputObjectFieldName) => {
-          if (isTypeMatch(inputObjectTypeName)) {
-            return isMatch(inputObjectFieldName);
+          if (typeMatcher.match(inputObjectTypeName)) {
+            return globalTypeMatcher.match(inputObjectFieldName);
           }
           return true;
-        }) as any
+        }),
+      );
+
+      this.transforms.push(
+        new FilterInterfaceFields((interfaceTypeName, interfaceFieldName) => {
+          if (typeMatcher.match(interfaceTypeName)) {
+            return globalTypeMatcher.match(interfaceFieldName);
+          }
+          return true;
+        }),
       );
     }
   }
@@ -102,20 +113,39 @@ export default class WrapFilter implements MeshTransform {
   transformSchema(
     originalWrappingSchema: GraphQLSchema,
     subschemaConfig: SubschemaConfig,
-    transformedSchema?: GraphQLSchema
+    transformedSchema?: GraphQLSchema,
   ) {
-    return applySchemaTransforms(originalWrappingSchema, subschemaConfig, transformedSchema, this.transforms);
+    return applySchemaTransforms(
+      originalWrappingSchema,
+      subschemaConfig,
+      transformedSchema,
+      this.transforms,
+    );
   }
 
   transformRequest(
     originalRequest: ExecutionRequest,
     delegationContext: DelegationContext,
-    transformationContext: Record<string, any>
+    transformationContext: Record<string, any>,
   ) {
-    return applyRequestTransforms(originalRequest, delegationContext, transformationContext, this.transforms);
+    return applyRequestTransforms(
+      originalRequest,
+      delegationContext,
+      transformationContext,
+      this.transforms,
+    );
   }
 
-  transformResult(originalResult: ExecutionResult, delegationContext: DelegationContext, transformationContext: any) {
-    return applyResultTransforms(originalResult, delegationContext, transformationContext, this.transforms);
+  transformResult(
+    originalResult: ExecutionResult,
+    delegationContext: DelegationContext,
+    transformationContext: any,
+  ) {
+    return applyResultTransforms(
+      originalResult,
+      delegationContext,
+      transformationContext,
+      this.transforms,
+    );
   }
 }

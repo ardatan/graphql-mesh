@@ -1,21 +1,35 @@
+import { dset } from 'dset';
 import {
-  GraphQLSchema,
+  GraphQLInterfaceType,
   GraphQLObjectType,
-  GraphQLID,
-  isNonNullType,
-  GraphQLNonNull,
-  isObjectType,
+  GraphQLSchema,
   GraphQLUnionType,
-  isListType,
+  isObjectType,
 } from 'graphql';
-import { MeshTransform, YamlConfig, MeshTransformOptions, ImportFn } from '@graphql-mesh/types';
-import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
-import { FederationConfig, FederationFieldsConfig } from 'graphql-transform-federation';
-import { addFederationAnnotations } from 'graphql-transform-federation/dist/transform-sdl.js';
-import _ from 'lodash';
 import { entitiesField, EntityType, serviceField } from '@apollo/subgraph/dist/types.js';
-import { mapSchema, MapperKind, printSchemaWithDirectives } from '@graphql-tools/utils';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import { ImportFn, MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { MergedTypeResolver, SubschemaConfig } from '@graphql-tools/delegate';
+import { MapperKind, mapSchema, printSchemaWithDirectives } from '@graphql-tools/utils';
+
+const federationDirectives = [
+  'link',
+
+  'key',
+  'interfaceObject',
+  'extends',
+
+  'shareable',
+  'inaccessible',
+  'override',
+
+  'external',
+  'provides',
+  'requires',
+  'tag',
+  'composeDirective',
+];
 
 export default class FederationTransform implements MeshTransform {
   private apiName: string;
@@ -23,7 +37,14 @@ export default class FederationTransform implements MeshTransform {
   private baseDir: string;
   private importFn: ImportFn;
 
-  constructor({ apiName, baseDir, config, importFn }: MeshTransformOptions<YamlConfig.Transform['federation']>) {
+  noWrap = true;
+
+  constructor({
+    apiName,
+    baseDir,
+    config,
+    importFn,
+  }: MeshTransformOptions<YamlConfig.Transform['federation']>) {
     this.apiName = apiName;
     this.config = config;
     this.baseDir = baseDir;
@@ -31,38 +52,56 @@ export default class FederationTransform implements MeshTransform {
   }
 
   transformSchema(schema: GraphQLSchema, rawSource: SubschemaConfig) {
-    const federationConfig: FederationConfig<any> = {};
-
     rawSource.merge = {};
     if (this.config?.types) {
       const queryType = schema.getQueryType();
       const queryTypeFields = queryType.getFields();
       for (const type of this.config.types) {
         rawSource.merge[type.name] = {};
-        const fields: FederationFieldsConfig = {};
+        const typeObj = schema.getType(type.name) as GraphQLObjectType;
+        typeObj.extensions = typeObj.extensions || {};
+        const typeDirectivesObj: any = ((typeObj.extensions as any).directives =
+          typeObj.extensions.directives || {});
+        if (type.config?.key) {
+          typeDirectivesObj.key = type.config.key;
+        }
+        if (type.config?.shareable) {
+          typeDirectivesObj.shareable = type.config.shareable;
+        }
+        if (type.config?.extends) {
+          typeDirectivesObj.extends = type.config.extends;
+        }
+        const typeFieldObjs = typeObj.getFields();
         if (type.config?.fields) {
           for (const field of type.config.fields) {
-            fields[field.name] = field.config;
+            const typeField = typeFieldObjs[field.name];
+            if (typeField) {
+              typeField.extensions = typeField.extensions || {};
+              const directivesObj: any = ((typeField.extensions as any).directives =
+                typeField.extensions.directives || {});
+              Object.assign(directivesObj, field.config);
+            }
             rawSource.merge[type.name].fields = rawSource.merge[type.name].fields || {};
-            rawSource.merge[type.name].fields[field.name] = rawSource.merge[type.name].fields[field.name] || {};
+            rawSource.merge[type.name].fields[field.name] =
+              rawSource.merge[type.name].fields[field.name] || {};
             if (field.config.requires) {
               rawSource.merge[type.name].fields[field.name].computed = true;
-              rawSource.merge[type.name].fields[field.name].selectionSet = `{ ${field.config.requires} }`;
+              rawSource.merge[type.name].fields[
+                field.name
+              ].selectionSet = `{ ${field.config.requires} }`;
             }
           }
         }
         // If a field is a key field, it should be GraphQLID
 
-        if (type.config?.keyFields) {
-          rawSource.merge[type.name].selectionSet = `{ ${type.config.keyFields.join(' ')} }`;
-          for (const fieldName of type.config.keyFields) {
-            const objectType = schema.getType(type.name) as GraphQLObjectType;
-            if (objectType) {
-              const existingType = objectType.getFields()[fieldName].type;
-              objectType.getFields()[fieldName].type = isNonNullType(existingType)
-                ? new GraphQLNonNull(GraphQLID)
-                : GraphQLID;
-            }
+        if (type.config?.key) {
+          let selectionSetContent = '';
+          for (const keyField of type.config.key) {
+            selectionSetContent += '\n';
+            selectionSetContent += keyField.fields || '';
+          }
+          if (selectionSetContent) {
+            rawSource.merge[type.name].selectionSet = `{ ${selectionSetContent} }`;
           }
         }
 
@@ -80,24 +119,23 @@ export default class FederationTransform implements MeshTransform {
             resolveReference = resolveReferenceConfig;
           } else {
             const queryField = queryTypeFields[resolveReferenceConfig.queryFieldName];
-            const keyArg = resolveReferenceConfig.keyArg || queryField.args[0].name;
-            const keyField = type.config.keyFields[0];
-            const isBatch = isListType(queryField.args.find(arg => arg.name === keyArg));
             resolveReference = async (root, context, info) => {
+              const args = {};
+              for (const argName in resolveReferenceConfig.args) {
+                const argVal = stringInterpolator.parse(resolveReferenceConfig.args[argName], {
+                  root,
+                  args,
+                  context,
+                  info,
+                  env: process.env,
+                });
+                if (argVal) {
+                  dset(args, argName, argVal);
+                }
+              }
               const result = await context[this.apiName].Query[queryField.name]({
                 root,
-                ...(isBatch
-                  ? {
-                      key: root[keyField],
-                      argsFromKeys: (keys: string[]) => ({
-                        [keyArg]: keys,
-                      }),
-                    }
-                  : {
-                      args: {
-                        [keyArg]: root[keyField],
-                      },
-                    }),
+                args,
                 context,
                 info,
               });
@@ -109,29 +147,18 @@ export default class FederationTransform implements MeshTransform {
           }
           rawSource.merge[type.name].resolve = resolveReference;
         }
-        federationConfig[type.name] = {
-          ...type.config,
-          resolveReference,
-          fields,
-        };
       }
     }
 
-    const entityTypes = Object.fromEntries(
-      Object.entries(federationConfig)
-        .filter(([, { keyFields }]) => keyFields?.length)
-        .map(([objectName]) => {
-          const type = schema.getType(objectName);
-          if (!isObjectType(type)) {
-            throw new Error(`Type "${objectName}" is not an object type and can't have a key directive`);
-          }
-          return [objectName, type];
-        })
-    );
+    const entityTypes: GraphQLObjectType[] = [];
 
-    const hasEntities = !!Object.keys(entityTypes).length;
-
-    const sdlWithFederationDirectives = addFederationAnnotations(printSchemaWithDirectives(schema), federationConfig);
+    for (const typeName in rawSource.merge || {}) {
+      const type = schema.getType(typeName);
+      if (isObjectType(type)) {
+        entityTypes.push(type);
+      }
+      dset(type, 'extensions.apollo.subgraph.resolveReference', rawSource.merge[typeName].resolve);
+    }
 
     const schemaWithFederationQueryType = mapSchema(schema, {
       [MapperKind.QUERY]: type => {
@@ -140,13 +167,13 @@ export default class FederationTransform implements MeshTransform {
           ...config,
           fields: {
             ...config.fields,
-            ...(hasEntities && {
-              _entities: entitiesField,
-              _service: {
-                ...serviceField,
-                resolve: () => ({ sdl: sdlWithFederationDirectives }),
-              },
-            }),
+            _entities: entitiesField,
+            _service: {
+              ...serviceField,
+              resolve: (root, args, context, info) => ({
+                sdl: printSchemaWithDirectives(info.schema),
+              }),
+            },
           },
         });
       },
@@ -157,24 +184,97 @@ export default class FederationTransform implements MeshTransform {
         if (type.name === EntityType.name) {
           return new GraphQLUnionType({
             ...EntityType.toConfig(),
-            types: Object.values(entityTypes),
+            types: entityTypes,
           });
         }
         return type;
       },
     });
 
-    // Not using transformSchema since it will remove resolveReference
-    Object.entries(federationConfig).forEach(([objectName, currentFederationConfig]) => {
-      if (currentFederationConfig.resolveReference) {
-        const type = schemaWithUnionType.getType(objectName);
-        if (!isObjectType(type)) {
-          throw new Error(`Type "${objectName}" is not an object type and can't have a resolveReference function`);
-        }
-        type.resolveObject = currentFederationConfig.resolveReference;
-      }
-    });
+    schemaWithUnionType.extensions = schemaWithUnionType.extensions || {};
+    const directivesObj: any = ((schemaWithUnionType.extensions as any).directives =
+      schemaWithUnionType.extensions.directives || {});
 
-    return schemaWithUnionType;
+    const existingDirectives = schemaWithUnionType.getDirectives();
+    const filteredDirectives = existingDirectives.filter(directive =>
+      federationDirectives.includes(directive.name),
+    );
+
+    directivesObj.link = {
+      url: 'https://specs.apollo.dev/federation/' + (this.config.version || 'v2.0'),
+      import: filteredDirectives
+        .filter(({ name }) => name !== 'link')
+        .map(dirName => `@${dirName.name}`),
+    };
+
+    if (existingDirectives.length === filteredDirectives.length) {
+      return schemaWithUnionType;
+    }
+
+    return mapSchema(schemaWithUnionType, {
+      [MapperKind.DIRECTIVE]: directive => {
+        if (federationDirectives.includes(directive.name)) {
+          return directive;
+        }
+        return null;
+      },
+      [MapperKind.OBJECT_TYPE]: type => {
+        return new GraphQLObjectType({
+          ...type.toConfig(),
+          astNode: type.astNode && {
+            ...type.astNode,
+            directives: type.astNode.directives?.filter(directive =>
+              federationDirectives.includes(directive.name.value),
+            ),
+          },
+          extensions: {
+            ...type.extensions,
+            directives: Object.fromEntries(
+              Object.entries(type.extensions?.directives || {}).filter(([key]) =>
+                federationDirectives.includes(key),
+              ),
+            ),
+          },
+        });
+      },
+      [MapperKind.INTERFACE_TYPE]: type => {
+        return new GraphQLInterfaceType({
+          ...type.toConfig(),
+          astNode: type.astNode && {
+            ...type.astNode,
+            directives: type.astNode.directives?.filter(directive =>
+              federationDirectives.includes(directive.name.value),
+            ),
+          },
+          extensions: {
+            ...type.extensions,
+            directives: Object.fromEntries(
+              Object.entries(type.extensions?.directives || {}).filter(([key]) =>
+                federationDirectives.includes(key),
+              ),
+            ),
+          },
+        });
+      },
+      [MapperKind.COMPOSITE_FIELD]: fieldConfig => {
+        return {
+          ...fieldConfig,
+          astNode: fieldConfig.astNode && {
+            ...fieldConfig.astNode,
+            directives: fieldConfig.astNode.directives?.filter(directive =>
+              federationDirectives.includes(directive.name.value),
+            ),
+          },
+          extensions: {
+            ...fieldConfig.extensions,
+            directives: Object.fromEntries(
+              Object.entries(fieldConfig.extensions?.directives || {}).filter(([key]) =>
+                federationDirectives.includes(key),
+              ),
+            ),
+          },
+        };
+      },
+    });
   }
 }

@@ -1,0 +1,41 @@
+---
+description:
+  Restrict API access to certain public fields with
+  @graphql-mesh/plugin-operation-field-permissions. Use this plugin to manage field-level
+  permissions in your GraphQL schema.
+---
+
+import { PackageCmd } from '@theguild/components'
+
+# Operation Field Permissions
+
+You can use `@graphql-mesh/plugin-operation-field-permissions` plugin to restrict the scope of
+certain public API users to a subset of the public GraphQL schema.
+
+Based on Envelop's
+[useOperationFieldPermissions](https://www.envelop.dev/plugins/use-operation-field-permissions)
+
+This plugin and authentication on a plugin or source level are complementary. See
+[authentication guide](/docs/guides/auth0) for more details.
+
+### Getting Started
+
+<PackageCmd packages={['@graphql-mesh/plugin-operation-field-permissions']} />
+
+## Example Configuration
+
+```yaml filename=".meshrc.yaml"
+# ...
+plugins:
+  - operationFieldPermissions:
+      permissions:
+        - if: 'context._auth0?.sub != null'
+          allow:
+            - '*'
+```
+
+## Config API Reference
+
+import API from '../../../generated-markdown/OperationFieldPermissionsConfig.generated.md'
+
+<API />

@@ -1,4 +1,4 @@
-import { compareJSONSchemas } from '../src/compareJSONSchemas';
+import { compareJSONSchemas } from '../src/compareJSONSchemas.js';
 
 describe('compareJSONSchemas', () => {
   it('should throw on removed field', async () => {
@@ -29,12 +29,11 @@ describe('compareJSONSchemas', () => {
       await compareJSONSchemas(oldSchema, newSchema);
       expect(true).toBe(false);
     } catch (e) {
-      console.log(e);
       expect(e.errors).toBeDefined();
       const errors = [...e.errors];
       expect(errors).toHaveLength(2);
-      expect(errors[0].message).toBe(`/properties/bar/type is changed from string to undefined`);
-      expect(errors[1].message).toBe(`/properties doesn't have bar`);
+      expect(errors[0].message).toBe(`/properties doesn't have bar`);
+      expect(errors[1].message).toBe(`/properties/bar/type is changed from string to undefined`);
     }
   });
 });

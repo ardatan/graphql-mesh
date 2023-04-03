@@ -29,10 +29,6 @@ type Query {
   """
   pubsub: PubSub
   """
-  Live Query Invalidations
-  """
-  liveQueryInvalidations: [LiveQueryInvalidation]
-  """
   Provide a query or queries for GraphQL Playground, validation and SDK Generation
   The value can be the file path, glob expression for the file paths or the SDL.
   (.js, .jsx, .graphql, .gql, .ts and .tsx files are supported.
@@ -43,6 +39,10 @@ type Query {
   """
   logger: Any
   """
+  Path to a custom W3 Compatible Fetch Implementation
+  """
+  customFetch: Any
+  """
   Allow connections to an SSL endpoint without certificates
   """
   skipSSLValidation: Boolean
@@ -50,6 +50,7 @@ type Query {
   You can provide Envelop plugins
   """
   additionalEnvelopPlugins: String
+  plugins: [Plugin]
 }
 
 scalar JSON
@@ -74,6 +75,14 @@ type Source {
 type Transform @withAdditionalProperties
 type Handler @withAdditionalProperties
 type Cache @withAdditionalProperties
+type Plugin @withAdditionalProperties {
+  maskedErrors: MaskedErrorsPluginConfig
+  immediateIntrospection: Any
+}
+
+type MaskedErrorsPluginConfig {
+  errorMessage: String
+}
 
 union AdditionalResolver =
     String
@@ -136,9 +145,4 @@ union PubSub = String | PubSubConfig
 type PubSubConfig {
   name: String!
   config: Any
-}
-
-type LiveQueryInvalidation {
-  field: String!
-  invalidate: [String!]!
 }

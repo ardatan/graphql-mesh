@@ -44,10 +44,6 @@ export interface Config {
    */
   pubsub?: string | PubSubConfig;
   /**
-   * Live Query Invalidations
-   */
-  liveQueryInvalidations?: LiveQueryInvalidation[];
-  /**
    * Provide a query or queries for GraphQL Playground, validation and SDK Generation
    * The value can be the file path, glob expression for the file paths or the SDL.
    * (.js, .jsx, .graphql, .gql, .ts and .tsx files are supported.
@@ -58,6 +54,10 @@ export interface Config {
    */
   logger?: any;
   /**
+   * Path to a custom W3 Compatible Fetch Implementation
+   */
+  customFetch?: any;
+  /**
    * Allow connections to an SSL endpoint without certificates
    */
   skipSSLValidation?: boolean;
@@ -65,6 +65,7 @@ export interface Config {
    * You can provide Envelop plugins
    */
   additionalEnvelopPlugins?: string;
+  plugins?: Plugin[];
 }
 /**
  * Configuration for `mesh start` or `mesh dev` command.
@@ -76,7 +77,7 @@ export interface ServeConfig {
    */
   fork?: number | boolean;
   /**
-   * TCP Port to listen (default: `3000`) (Any of: Int, String)
+   * TCP Port to listen (default: `4000`) (Any of: Int, String)
    */
   port?: number | string;
   /**
@@ -84,10 +85,6 @@ export interface ServeConfig {
    */
   hostname?: string;
   cors?: CorsConfig;
-  /**
-   * Express/Connect compatible handlers and middlewares extend GraphQL Mesh HTTP Server (Any of: WebhookHandler, ExpressHandler)
-   */
-  handlers?: (WebhookHandler | ExpressHandler)[];
   /**
    * Path to your static files you want to be served with GraphQL Mesh HTTP Server
    */
@@ -103,18 +100,18 @@ export interface ServeConfig {
   endpoint?: string;
   /**
    * Path to the browser that will be used by `mesh serve` to open a playground window in development mode
-   * This feature can be disable by passing `false` (Any of: String, Boolean)
+   * This feature can be disabled by passing `false` (Any of: String, Boolean)
    */
   browser?: string | boolean;
-  /**
-   * If you want to use a custom GraphQL server, you can pass the path of the code file that exports a custom Mesh Server Handler
-   * With a custom server handler, you won't be able to use the features of GraphQL Mesh HTTP Server
-   */
-  customServerHandler?: string;
   /**
    * Title of GraphiQL Playground
    */
   playgroundTitle?: string;
+  /**
+   * Configure Express Proxy Handling
+   * [Learn more](https://expressjs.com/en/guide/behind-proxies.html)
+   */
+  trustProxy?: string;
 }
 /**
  * Configuration for CORS
@@ -127,38 +124,6 @@ export interface CorsConfig {
   maxAge?: number;
   preflightContinue?: boolean;
   optionsSuccessStatus?: number;
-}
-export interface WebhookHandler {
-  /**
-   * Path that remote API will ping
-   */
-  path: string;
-  /**
-   * HTTP Method that the handler will control (Allowed values: GET, POST, DELETE, PATCH)
-   */
-  method?: 'GET' | 'POST' | 'DELETE' | 'PATCH';
-  /**
-   * Name of the topic you want to pass incoming payload
-   */
-  pubsubTopic: string;
-  /**
-   * Part of the object you want to pass (e.g. `data.messages`)
-   */
-  payload?: string;
-}
-export interface ExpressHandler {
-  /**
-   * Path that the handler will control
-   */
-  path: string;
-  /**
-   * Path of the handler's code
-   */
-  handler: string;
-  /**
-   * HTTP Method that the handler will control (Allowed values: GET, POST, DELETE, PATCH)
-   */
-  method?: 'GET' | 'POST' | 'DELETE' | 'PATCH';
 }
 /**
  * SSL Credentials for HTTPS Server
@@ -204,14 +169,10 @@ export interface Handler {
     | GraphQLHandlerCodeFirstConfiguration
     | GraphQLHandlerMultipleHTTPConfiguration;
   grpc?: GrpcHandler;
-  /**
-   * Handler for JSON Schema specification. Source could be a local json file, or a url to it. (Any of: JsonSchemaHandler, JsonSchemaHandlerBundle)
-   */
-  jsonSchema?: JsonSchemaHandler | JsonSchemaHandlerBundle;
+  jsonSchema?: JsonSchemaHandler;
   mongoose?: MongooseHandler;
   mysql?: MySQLHandler;
   neo4j?: Neo4JHandler;
-  newOpenapi?: NewOpenapiHandler;
   odata?: ODataHandler;
   openapi?: OpenapiHandler;
   postgraphile?: PostGraphileHandler;
@@ -247,28 +208,31 @@ export interface GraphQLHandlerHTTPConfiguration {
    */
   method?: 'GET' | 'POST';
   /**
-   * Path to a custom W3 Compatible Fetch Implementation
+   * Request Credentials if your environment supports it.
+   * [See more](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials)
+   *
+   * @default "same-origin" (Allowed values: omit, include)
    */
-  customFetch?: any;
+  credentials?: 'omit' | 'include';
   /**
    * Path to a custom W3 Compatible WebSocket Implementation
    */
   webSocketImpl?: string;
   /**
    * Path to the introspection
-   * You can seperately give schema introspection
+   * You can separately give schema introspection or SDL
    */
-  introspection?: string;
-  /**
-   * Enable multipart/formdata in order to support file uploads
-   */
-  multipart?: boolean;
+  source?: string;
   /**
    * SSE - Server Sent Events
    * WS - New graphql-ws
    * LEGACY_WS - Legacy subscriptions-transport-ws (Allowed values: SSE, WS, LEGACY_WS)
    */
   subscriptionsProtocol?: 'SSE' | 'WS' | 'LEGACY_WS';
+  /**
+   * URL to your endpoint serving all subscription queries for this source
+   */
+  subscriptionsEndpoint?: string;
   /**
    * Retry attempts if fails
    */
@@ -288,7 +252,7 @@ export interface GraphQLHandlerCodeFirstConfiguration {
    * If you provide a path to a code file(js or ts),
    * other options will be ignored and the schema exported from the file will be used directly.
    */
-  schema: any;
+  source: any;
 }
 export interface GraphQLHandlerMultipleHTTPConfiguration {
   /**
@@ -317,13 +281,11 @@ export interface GrpcHandler {
    */
   endpoint: string;
   /**
-   * gRPC Proto file that contains your protobuf schema (Any of: ProtoFilePath, String)
-   */
-  protoFilePath?: ProtoFilePath | string;
-  /**
+   * gRPC Proto file that contains your protobuf schema
+   * OR
    * Use a binary-encoded or JSON file descriptor set file (Any of: ProtoFilePath, String)
    */
-  descriptorSetFilePath?: ProtoFilePath | string;
+  source?: ProtoFilePath | string;
   /**
    * Request timeout in milliseconds
    * Default: 200000
@@ -341,9 +303,9 @@ export interface GrpcHandler {
     [k: string]: any;
   };
   /**
-   * Use gRPC reflection to automatically gather the connection
+   * prefix to collect Query method default: list, get
    */
-  useReflection?: boolean;
+  prefixQueryMethod?: string[];
 }
 export interface ProtoFilePath {
   file: string;
@@ -361,8 +323,16 @@ export interface GrpcCredentialsSsl {
   certChain?: string;
   privateKey?: string;
 }
+/**
+ * Handler for JSON Schema specification.
+ * Source could be a local json file, or a url to it.
+ */
 export interface JsonSchemaHandler {
-  baseUrl?: string;
+  /**
+   * Path to the bundle file
+   */
+  source?: string;
+  endpoint?: string;
   operationHeaders?: {
     [k: string]: any;
   };
@@ -372,39 +342,122 @@ export interface JsonSchemaHandler {
   /**
    * Any of: JsonSchemaHTTPOperation, JsonSchemaPubSubOperation
    */
-  operations: (JsonSchemaHTTPOperation | JsonSchemaPubSubOperation)[];
+  operations?: (JsonSchemaHTTPOperation | JsonSchemaPubSubOperation)[];
   ignoreErrorResponses?: boolean;
   queryParams?: any;
+  queryStringOptions?: QueryStringOptions;
+  /**
+   * Will be removed later
+   */
+  bundlePath?: string;
+  /**
+   * Will be removed later
+   */
+  bundleHeaders?: {
+    [k: string]: any;
+  };
+  /**
+   * Timeout for the HTTP request in milliseconds
+   */
+  timeout?: number;
 }
 export interface JsonSchemaHTTPOperation {
+  /**
+   * This Field based on the field name of the URL path.
+   * Example: "https://MyAPIURL.com/FieldNameHere/",
+   * so we will set the "field: FieldNameHere".
+   */
   field: string;
+  /**
+   * Your chance to describe the operation!
+   * Make sure the description is clear and concise.
+   */
   description?: string;
   /**
-   * Allowed values: Query, Mutation, Subscription
+   * Type field is set the opertion type: Query, Mutation or Subscription. (Allowed values: Query, Mutation, Subscription)
    */
   type: 'Query' | 'Mutation' | 'Subscription';
+  /**
+   * Your chance to provide request schema name.
+   */
   requestSchema?: any;
+  /**
+   * The path definition of the JSON Schema sample.
+   * Example: "./jsons/questions.response.json".
+   */
   requestSample?: any;
+  /**
+   * Inset any name for the type of the request body.
+   */
   requestTypeName?: string;
   /**
-   * This body will be merged with the request body sent with the underlying HTTP request
+   * This body will be merged with the request body sent with
+   * the underlying HTTP request
    */
   requestBaseBody?: any;
+  /**
+   * Yay! Now you can provide the response schema name.
+   */
   responseSchema?: any;
+  /**
+   * Did you use Sample? Provide the response sample path.
+   */
   responseSample?: any;
+  /**
+   * Inset any name for the type of the response body.
+   */
   responseTypeName?: string;
   /**
    * You can define your response schemas by status codes;
-   *
+   * ```yaml filename=".meshrc.yaml"
    * responseByStatusCode:
    *   200:
    *     responseSchema: ./someschema.json#/somepath
    *   404:
    *     responseSample: ./error-sample.json
    *     responseTypeName: MyError
+   * ```
    */
   responseByStatusCode?: any;
+  /**
+   * Expose response details done to the upstream API
+   * When you enable this, you will see a new field in the response type;
+   * ```graphql
+   * type MyResponseType {
+   *   myFooField: String
+   *   _response: ResponseMetadata
+   * }
+   *
+   * # And a new type for the response metadata object
+   * type ResponseMetadata {
+   *   url: URL
+   *   status: Int
+   *   method: String
+   *   headers: JSON
+   *   body: String
+   * }
+   * ```
+   */
+  exposeResponseMetadata?: boolean;
+  /**
+   * Mapping the JSON Schema and define the arguments of the operation.
+   *
+   * # Example:
+   * argTypeMap:
+   *   user_id:
+   *     type: string
+   */
   argTypeMap?: {
+    [k: string]: any;
+  };
+  /**
+   * JSON object representing the mapping of query search parameters (added to the route path) and the matching argument.
+   *
+   * # Example:
+   * queryParamArgMap:
+   *   id: user_id
+   */
+  queryParamArgMap?: {
     [k: string]: any;
   };
   path: string;
@@ -433,7 +486,8 @@ export interface JsonSchemaPubSubOperation {
   requestSample?: any;
   requestTypeName?: string;
   /**
-   * This body will be merged with the request body sent with the underlying HTTP request
+   * This body will be merged with the request body sent with
+   * the underlying HTTP request
    */
   requestBaseBody?: any;
   responseSchema?: any;
@@ -444,30 +498,30 @@ export interface JsonSchemaPubSubOperation {
   };
   pubsubTopic: string;
 }
-export interface JsonSchemaHandlerBundle {
+export interface QueryStringOptions {
   /**
-   * Path to the bundle file
+   * When arrays are stringified, by default they are not given explicit indices:
+   * `a=b&a=c&a=d`
+   * You may override this by setting the indices option to true:
+   * `a[0]=b&a[1]=c&a[2]=d`
    */
-  bundlePath: any;
+  indices?: boolean;
   /**
-   * HTTP Headers to receive the bundle
+   * You can configure how to format arrays in the query strings.
+   *
+   * Note: when using arrayFormat set to 'comma', you can also pass the commaRoundTrip option set to true or false, to append [] on single-item arrays, so that they can round trip through a parse. (Allowed values: indices, brackets, repeat, comma)
    */
-  bundleHeaders?: {
-    [k: string]: any;
-  };
-  baseUrl?: string;
-  operationHeaders?: {
-    [k: string]: any;
-  };
+  arrayFormat?: 'indices' | 'brackets' | 'repeat' | 'comma';
+  /**
+   * Even if there is a single item in an array, this option treats them as arrays
+   * (default: false)
+   */
+  commaRoundTrip?: boolean;
 }
 export interface MongooseHandler {
   connectionString?: string;
   models?: MongooseModel[];
   discriminators?: MongooseModel[];
-  /**
-   * Enable Automatic Type Merging/Federation support
-   */
-  autoTypeMerging?: boolean;
 }
 export interface MongooseModel {
   name: string;
@@ -697,7 +751,11 @@ export interface Neo4JHandler {
   /**
    * URL for the Neo4j Instance e.g. neo4j://localhost
    */
-  url: string;
+  endpoint: string;
+  /**
+   * Provide GraphQL Type Definitions instead of inferring
+   */
+  source?: string;
   /**
    * Username for basic authentication
    */
@@ -714,37 +772,6 @@ export interface Neo4JHandler {
    * Specifies database name
    */
   database?: string;
-  /**
-   * Provide GraphQL Type Definitions instead of inferring
-   */
-  typeDefs?: string;
-}
-/**
- * Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it.
- */
-export interface NewOpenapiHandler {
-  oasFilePath: string;
-  /**
-   * Allowed values: json, yaml, js, ts
-   */
-  fallbackFormat?: 'json' | 'yaml' | 'js' | 'ts';
-  baseUrl?: string;
-  schemaHeaders?: {
-    [k: string]: any;
-  };
-  operationHeaders?: {
-    [k: string]: any;
-  };
-  ignoreErrorResponses?: boolean;
-  selectQueryOrMutationField?: OASSelectQueryOrMutationFieldConfig[];
-  queryParams?: any;
-}
-export interface OASSelectQueryOrMutationFieldConfig {
-  /**
-   * Allowed values: query, mutation, Query, Mutation
-   */
-  type: 'query' | 'mutation' | 'Query' | 'Mutation';
-  fieldName: string;
 }
 /**
  * Handler for OData
@@ -753,21 +780,21 @@ export interface ODataHandler {
   /**
    * Base URL for OData API
    */
-  baseUrl: string;
+  endpoint: string;
   /**
    * Custom $metadata File or URL
    */
-  metadata?: string;
-  /**
-   * Headers to be used with the operation requests
-   */
-  operationHeaders?: {
-    [k: string]: any;
-  };
+  source?: string;
   /**
    * Headers to be used with the $metadata requests
    */
   schemaHeaders?: {
+    [k: string]: any;
+  };
+  /**
+   * Headers to be used with the operation requests
+   */
+  operationHeaders?: {
     [k: string]: any;
   };
   /**
@@ -778,29 +805,24 @@ export interface ODataHandler {
    * Use $expand for navigation props instead of seperate HTTP requests (Default: false)
    */
   expandNavProps?: boolean;
-  /**
-   * Custom Fetch
-   */
-  customFetch?: any;
 }
 /**
  * Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it.
  */
 export interface OpenapiHandler {
   /**
-   * A pointer to your API source - could be a local file, remote file or url endpoint
+   * A pointer to your API source (Support both JSON and YAML) - could be a local file, remote file or url endpoint
    */
-  source: any;
+  source: string;
   /**
-   * Format of the source file (Allowed values: json, yaml)
+   * Format of the files referenced from the source file, for cases content type isn't detected automatically (Allowed values: json, yaml, js, ts)
    */
-  sourceFormat?: 'json' | 'yaml';
+  fallbackFormat?: 'json' | 'yaml' | 'js' | 'ts';
   /**
-   * JSON object representing the Headers to add to the runtime of the API calls
+   * Specifies the URL on which all paths will be based on.
+   * Overrides the server object in the OAS.
    */
-  operationHeaders?: {
-    [k: string]: any;
-  };
+  endpoint?: string;
   /**
    * If you are using a remote URL endpoint to fetch your schema, you can set headers for the HTTP request to fetch your schema.
    */
@@ -808,66 +830,39 @@ export interface OpenapiHandler {
     [k: string]: any;
   };
   /**
-   * Specifies the URL on which all paths will be based on.
-   * Overrides the server object in the OAS.
+   * JSON object representing the Headers to add to the runtime of the API calls
    */
-  baseUrl?: string;
-  /**
-   * JSON object representing the query search parameters to add to the API calls
-   */
-  qs?: {
+  operationHeaders?: {
     [k: string]: any;
   };
   /**
-   * W3 Compatible Fetch Implementation
+   * Responses are converted to a Union type grouping all possible responses.
+   * Applying this will ignore all responses with status code other than 2xx, resulting in simpler response types, usualy regular object type instead of union.
+   * Default: false
    */
-  customFetch?: any;
-  /**
-   * Include HTTP Response details to the result object
-   */
-  includeHttpDetails?: boolean;
-  /**
-   * Auto-generate a 'limit' argument for all fields that return lists of objects, including ones produced by links
-   */
-  addLimitArgument?: boolean;
-  /**
-   * Set argument name for mutation payload to 'requestBody'. If false, name defaults to camelCased pathname
-   */
-  genericPayloadArgName?: boolean;
+  ignoreErrorResponses?: boolean;
   /**
    * Allows to explicitly override the default operation (Query or Mutation) for any OAS operation
    */
-  selectQueryOrMutationField?: SelectQueryOrMutationFieldConfig[];
+  selectQueryOrMutationField?: OASSelectQueryOrMutationFieldConfig[];
   /**
-   * Overwrite automatic wrapping of errors into GraphqlErrors
+   * JSON object representing the query search parameters to add to the API calls
    */
-  provideErrorExtensions?: boolean;
+  queryParams?: {
+    [k: string]: any;
+  };
   /**
-   * Field names can only be sanitized operationIds
-   *
-   * By default, query field names are based on the return type type name and mutation field names are based on the operationId, which may be generated if it does not exist.
-   *
-   * This option forces OpenAPI handler to only create field names based on the operationId.
+   * Timeout for the HTTP request in milliseconds
    */
-  operationIdFieldNames?: boolean;
+  timeout?: number;
+  bundle?: boolean;
 }
-export interface SelectQueryOrMutationFieldConfig {
+export interface OASSelectQueryOrMutationFieldConfig {
   /**
-   * OAS Title
+   * Allowed values: query, mutation, Query, Mutation
    */
-  title?: string;
-  /**
-   * Operation Path
-   */
-  path?: string;
-  /**
-   * Target Root Type for this operation (Allowed values: query, mutation, Query, Mutation)
-   */
-  type?: 'query' | 'mutation' | 'Query' | 'Mutation';
-  /**
-   * Which method is used for this operation
-   */
-  method?: string;
+  type: 'query' | 'mutation' | 'Query' | 'Mutation';
+  fieldName: string;
 }
 /**
  * Handler for Postgres database, based on `postgraphile`
@@ -923,8 +918,8 @@ export interface PostGraphileHandler {
   live?: boolean;
 }
 export interface RAMLHandler {
-  ramlFilePath: string;
-  baseUrl?: string;
+  source: string;
+  endpoint?: string;
   schemaHeaders?: {
     [k: string]: any;
   };
@@ -934,6 +929,11 @@ export interface RAMLHandler {
   ignoreErrorResponses?: boolean;
   selectQueryOrMutationField?: RAMLSelectQueryOrMutationFieldConfig[];
   queryParams?: any;
+  bundle?: boolean;
+  /**
+   * Timeout for the HTTP request in milliseconds
+   */
+  timeout?: number;
 }
 export interface RAMLSelectQueryOrMutationFieldConfig {
   /**
@@ -947,11 +947,9 @@ export interface RAMLSelectQueryOrMutationFieldConfig {
  */
 export interface SoapHandler {
   /**
-   * A url to your WSDL
+   * A url to your WSDL or generated SDL with annotations
    */
-  wsdl: string;
-  basicAuth?: SoapSecurityBasicAuthConfig;
-  securityCert?: SoapSecurityCertificateConfig;
+  source: string;
   /**
    * JSON object representing the Headers to add to the runtime of the API calls only for schema introspection
    * You can also provide `.js` or `.ts` file path that exports schemaHeaders as an object
@@ -963,89 +961,6 @@ export interface SoapHandler {
   operationHeaders?: {
     [k: string]: any;
   };
-  /**
-   * If true, the ports defined in the WSDL will be represented as GraphQL-Type objects in the schema.
-   * The fields of the object will be the operations of the port.
-   *
-   * Most soap-endpoints only define one port; so including it in the schema will just be inconvenient.
-   * But if there are multiple ports with operations of the same name, you should set this option to true.
-   * Otherwise only one of the identical-named operations will be callable.
-   *
-   * default: false
-   */
-  includePorts?: boolean;
-  /**
-   * If true, the services defined in the WSDL will be represented as GraphQL-Type objects in the schema.
-   * The fields of the object will be the ports of the service (or the operation, dependent on 'includePorts').
-   *
-   * Most soap-endpoints only define one service; so including it in the schema will just be inconvenient.
-   * But if there are multiple services with operations of the same name, you should set this option to true.
-   * Otherwise only one of the identical-named operations will be callable.
-   *
-   * default: false
-   */
-  includeServices?: boolean;
-  /**
-   * Allows to explicitly override the default operation (Query or Mutation) for any SOAP operation
-   */
-  selectQueryOrMutationField?: SoapSelectQueryOrMutationFieldConfig[];
-  /**
-   * Automatically put operations starts with `query` or `get` into the Query type
-   */
-  selectQueryOperationsAuto?: boolean;
-}
-/**
- * Basic Authentication Configuration
- * Including username and password fields
- */
-export interface SoapSecurityBasicAuthConfig {
-  /**
-   * Username for Basic Authentication
-   */
-  username: string;
-  /**
-   * Password for Basic Authentication
-   */
-  password: string;
-}
-/**
- * SSL Certificate Based Authentication Configuration
- * Including public key, private key and password fields
- */
-export interface SoapSecurityCertificateConfig {
-  /**
-   * Your public key
-   */
-  publicKey?: string;
-  /**
-   * Your private key
-   */
-  privateKey?: string;
-  /**
-   * Password
-   */
-  password?: string;
-  /**
-   * Path to the file or URL contains your public key
-   */
-  publicKeyPath?: string;
-  /**
-   * Path to the file or URL contains your private key
-   */
-  privateKeyPath?: string;
-  /**
-   * Path to the file or URL contains your password
-   */
-  passwordPath?: string;
-}
-export interface SoapSelectQueryOrMutationFieldConfig {
-  service: string;
-  port: string;
-  operation: string;
-  /**
-   * Allowed values: query, mutation
-   */
-  type: 'query' | 'mutation';
 }
 /**
  * Handler for OData
@@ -1121,7 +1036,6 @@ export interface Transform {
    * Transformer to hoist GraphQL fields
    */
   hoistField?: HoistFieldTransformConfig[];
-  mock?: MockingConfig;
   namingConvention?: NamingConventionTransformConfig;
   prefix?: PrefixTransformConfig;
   prune?: PruneTransformConfig;
@@ -1138,7 +1052,6 @@ export interface Transform {
    * Transformer to apply composition to resolvers (Any of: ResolversCompositionTransform, Any)
    */
   resolversComposition?: ResolversCompositionTransform | any;
-  snapshot?: SnapshotTransformConfig;
   typeMerging?: TypeMergingConfig;
   [k: string]: any;
 }
@@ -1149,18 +1062,18 @@ export interface CacheTransformConfig {
   field: string;
   /**
    * Cache key to use to store your resolvers responses.
-   * The default is: {typeName}-{fieldName}-{argsHash}-{fieldNamesHash}
+   * The default is: `{typeName}-{fieldName}-{argsHash}-{fieldNamesHash}`
    *
    * Available variables:
-   * - {args.argName} - use resolver argument
-   * - {typeName} - use name of the type
-   * - {fieldName} - use name of the field
-   * - {argsHash} - a hash based on the 'args' object
-   * - {fieldNamesHash} - a hash based on the field names selected by the client
-   * - {info} - the GraphQLResolveInfo of the resolver
+   *   - `{args.argName}` - use resolver argument
+   *   - `{typeName}` - use name of the type
+   *   - `{fieldName}` - use name of the field
+   *   - `{argsHash}` - a hash based on the 'args' object
+   *   - `{fieldNamesHash}` - a hash based on the field names selected by the client
+   *   - `{info}` - the GraphQLResolveInfo of the resolver
    *
    * Available interpolations:
-   * - {format|date} - returns the current date with a specific format
+   *   - `{format|date}` - returns the current date with a specific format
    */
   cacheKey?: string;
   invalidate?: CacheInvalidateConfig;
@@ -1212,19 +1125,28 @@ export interface ExtendTransform {
 }
 export interface FederationTransform {
   types?: FederationTransformType[];
+  /**
+   * Version of the federation spec
+   * Default: v2.0
+   */
+  version?: string;
 }
 export interface FederationTransformType {
   name: string;
   config?: FederationObjectConfig;
 }
 export interface FederationObjectConfig {
-  keyFields?: string[];
-  extend?: boolean;
+  key?: FederationObjectKeyConfig[];
+  shareable?: boolean;
+  extends?: boolean;
   fields?: FederationField[];
   /**
    * Any of: String, ResolveReferenceObject
    */
   resolveReference?: string | ResolveReferenceObject;
+}
+export interface FederationObjectKeyConfig {
+  fields?: string;
 }
 export interface FederationField {
   name: string;
@@ -1232,8 +1154,23 @@ export interface FederationField {
 }
 export interface FederationFieldConfig {
   external?: boolean;
-  provides?: string;
-  requires?: string;
+  provides?: FederationFieldProvidesConfig;
+  requires?: FederationFieldRequiresConfig;
+  tag?: FederationFieldTagConfig;
+  inaccessible?: boolean;
+  override?: FederationFieldOverrideConfig;
+}
+export interface FederationFieldProvidesConfig {
+  fields?: string;
+}
+export interface FederationFieldRequiresConfig {
+  fields?: string;
+}
+export interface FederationFieldTagConfig {
+  name?: string;
+}
+export interface FederationFieldOverrideConfig {
+  from?: string;
 }
 export interface ResolveReferenceObject {
   /**
@@ -1241,10 +1178,15 @@ export interface ResolveReferenceObject {
    */
   queryFieldName: string;
   /**
-   * If the root field name has multiple args,
-   * you need to define which argument should receive the key
+   * You need configure the arguments for that field;
+   * ```yaml
+   * args:
+   *   someArg: "{root.someKeyValue}"
+   * ```
    */
-  keyArg?: string;
+  args?: {
+    [k: string]: any;
+  };
 }
 export interface FilterSchemaTransform {
   /**
@@ -1286,83 +1228,13 @@ export interface HoistFieldTransformFieldPathConfigObject {
   filterArgs: string[];
 }
 /**
- * Mock configuration for your source
- */
-export interface MockingConfig {
-  /**
-   * If this expression is truthy, mocking would be enabled
-   * You can use environment variables expression, for example: `${MOCKING_ENABLED}`
-   */
-  if?: boolean;
-  /**
-   * Do not mock any other resolvers other than defined in `mocks`.
-   * For example, you can enable this if you don't want to mock entire schema but partially.
-   */
-  preserveResolvers?: boolean;
-  /**
-   * Mock configurations
-   */
-  mocks?: MockingFieldConfig[];
-  /**
-   * The path to the code runs before the store is attached to the schema
-   */
-  initializeStore?: any;
-}
-export interface MockingFieldConfig {
-  /**
-   * Resolver path
-   * Example: User.firstName
-   */
-  apply: string;
-  /**
-   * If this expression is truthy, mocking would be enabled
-   * You can use environment variables expression, for example: `${MOCKING_ENABLED}`
-   */
-  if?: boolean;
-  /**
-   * Faker.js expression or function
-   * Read more (https://github.com/marak/Faker.js/#fakerfake)
-   * Example:
-   * faker: name.firstName
-   * faker: "{{ name.firstName }} {{ name.lastName }}"
-   */
-  faker?: string;
-  /**
-   * Custom mocking
-   * It can be a module or json file.
-   * Both "moduleName#exportName" or only "moduleName" would work
-   */
-  custom?: string;
-  /**
-   * Length of the mock list
-   * For the list types `[ObjectType]`, how many `ObjectType` you want to return?
-   * default: 2
-   */
-  length?: number;
-  store?: GetFromMockStoreConfig;
-  /**
-   * Update the data on the mock store
-   */
-  updateStore?: UpdateMockStoreConfig[];
-}
-/**
- * Get the data from the mock store
- */
-export interface GetFromMockStoreConfig {
-  type?: string;
-  key?: string;
-  fieldName?: string;
-}
-export interface UpdateMockStoreConfig {
-  type?: string;
-  key?: string;
-  fieldName?: string;
-  value?: string;
-}
-/**
  * Transformer to apply naming convention to GraphQL Types
  */
 export interface NamingConventionTransformConfig {
+  /**
+   * Specify to apply naming-convention transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)
+   */
+  mode?: 'bare' | 'wrap';
   /**
    * Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase
    */
@@ -1500,7 +1372,7 @@ export interface RateLimitTransformConfig {
    */
   ttl: number;
   /**
-   * The identifier expression that determines the identity of the request (e.g. "{context.req.socket.remoteAddress}")
+   * The identifier expression that determines the identity of the request (e.g. `{context.req.socket.remoteAddress}`)
    */
   identifier: string;
 }
@@ -1596,33 +1468,6 @@ export interface ResolversCompositionTransformObject {
    * Example: ./src/auth.js#authComposer
    */
   composer: any;
-}
-/**
- * Configuration for Snapshot extension
- */
-export interface SnapshotTransformConfig {
-  /**
-   * Expression for when to activate this extension.
-   * Value can be a valid JS expression string or a boolean (Any of: String, Boolean)
-   */
-  if?: string | boolean;
-  /**
-   * Resolver to be applied
-   * For example;
-   *   apply:
-   *       - Query.* <- * will apply this extension to all fields of Query type
-   *       - Mutation.someMutationButProbablyYouWontNeedIt
-   */
-  apply: string[];
-  /**
-   * Path to the directory of the generated snapshot files
-   */
-  outputDir: string;
-  /**
-   * Take snapshots by respecting the requested selection set.
-   * This might be needed for the handlers like Postgraphile or OData that rely on the incoming GraphQL operation.
-   */
-  respectSelectionSet?: boolean;
 }
 /**
  * [Type Merging](https://www.graphql-tools.com/docs/stitch-type-merging) Configuration
@@ -1759,10 +1604,19 @@ export interface AdditionalSubscriptionObject {
  * Backend cache
  */
 export interface Cache {
+  cfwKv?: CFWorkersKVCacheConfig;
   file?: FileCacheConfig;
   localforage?: LocalforageConfig;
   redis?: RedisConfig;
   [k: string]: any;
+}
+export interface CFWorkersKVCacheConfig {
+  /**
+   * The name of the Workers KV namespace to use for caching.
+   *
+   * Make sure you have configured the following namespace described in [here](https://developers.cloudflare.com/workers/wrangler/cli-wrangler/commands/#kv).
+   */
+  namespace: string;
 }
 export interface FileCacheConfig {
   path?: string;
@@ -1788,7 +1642,545 @@ export interface PubSubConfig {
   name: string;
   config?: any;
 }
+export interface Plugin {
+  maskedErrors?: MaskedErrorsPluginConfig;
+  immediateIntrospection?: any;
+  deduplicateRequest?: any;
+  hive?: HivePlugin;
+  httpCache?: HTTPCachePlugin;
+  httpDetailsExtensions?: HTTPDetailsExtensionsConfig;
+  http2?: Http2Plugin;
+  liveQuery?: LiveQueryConfig;
+  mock?: MockingConfig;
+  newrelic?: NewrelicConfig;
+  operationFieldPermissions?: OperationFieldPermissionsConfig;
+  prometheus?: PrometheusConfig;
+  rateLimit?: RateLimitPluginConfig;
+  responseCache?: ResponseCacheConfig;
+  snapshot?: SnapshotPluginConfig;
+  statsd?: StatsdPlugin;
+  [k: string]: any;
+}
+export interface MaskedErrorsPluginConfig {
+  errorMessage?: string;
+}
+export interface HivePlugin {
+  /**
+   * Access Token
+   */
+  token: string;
+  agent?: HiveAgentOptions;
+  usage?: HiveUsageOptions;
+  reporting?: HiveReportingOptions;
+  selfHosting?: HiveSelfHostingOptions;
+}
+/**
+ * Agent Options
+ */
+export interface HiveAgentOptions {
+  /**
+   * 30s by default
+   */
+  timeout?: number;
+  /**
+   * 5 by default
+   */
+  maxRetries?: number;
+  /**
+   * 200 by default
+   */
+  minTimeout?: number;
+  /**
+   * Send reports in interval (defaults to 10_000ms)
+   */
+  sendInterval?: number;
+  /**
+   * Max number of traces to send at once (defaults to 25)
+   */
+  maxSize?: number;
+}
+/**
+ * Collects schema usage based on operations
+ */
+export interface HiveUsageOptions {
+  clientInfo?: HiveClientInfo;
+  /**
+   * Hive uses LRU cache to store info about operations.
+   * This option represents the maximum size of the cache.
+   * Default: 1000
+   */
+  max?: number;
+  /**
+   * Hive uses LRU cache to store info about operations.
+   * This option represents the maximum age of an unused operation in the cache.
+   * Default: no ttl
+   */
+  ttl?: number;
+  /**
+   * A list of operations (by name) to be ignored by Hive.
+   */
+  exclude?: string[];
+  /**
+   * Sample rate to determine sampling.
+   * 0.0 = 0% chance of being sent
+   * 1.0 = 100% chance of being sent
+   * Default: 1.0
+   */
+  sampleRate?: number;
+  /**
+   * (Experimental) Enables collecting Input fields usage based on the variables passed to the operation.
+   * Default: false
+   */
+  processVariables?: boolean;
+}
+/**
+ * Extract client info from GraphQL Context
+ */
+export interface HiveClientInfo {
+  /**
+   * Extract client name
+   * Example: `{context.headers['x-client-name']}`
+   */
+  name?: string;
+  /**
+   * Extract client version
+   * Example: `{context.headers['x-client-version']}`
+   */
+  version?: string;
+}
+/**
+ * Schema reporting
+ */
+export interface HiveReportingOptions {
+  /**
+   * Author of current version of the schema
+   */
+  author: string;
+  /**
+   * Commit SHA hash (or any identifier) related to the schema version
+   */
+  commit: string;
+  serviceName?: string;
+  serviceUrl?: string;
+}
+/**
+ * Options for self-hosting
+ * [See more](https://github.com/kamilkisiela/graphql-hive/tree/main/packages/libraries/client#self-hosting)
+ */
+export interface HiveSelfHostingOptions {
+  /**
+   * Point to your own instance of GraphQL Hive API
+   *
+   * Used by schema reporting and token info.
+   */
+  graphqlEndpoint: string;
+  /**
+   * Address of your own GraphQL Hive application
+   *
+   * Used by token info to generate a link to the organization, project and target.
+   */
+  applicationUrl: string;
+  /**
+   * Point to your own instance of GraphQL Hive Usage API
+   *
+   * Used by usage reporting.
+   */
+  usageEndpoint?: string;
+}
+export interface HTTPCachePlugin {
+  /**
+   * If the following patterns match the request URL, the response will be cached. (Any of: String, URLPatternObj)
+   */
+  matches?: (string | URLPatternObj)[];
+  /**
+   * If the following patterns match the request URL, the response will not be cached. (Any of: String, URLPatternObj)
+   */
+  ignores?: (string | URLPatternObj)[];
+}
+export interface URLPatternObj {
+  protocol?: string;
+  username?: string;
+  password?: string;
+  hostname?: string;
+  port?: string;
+  pathname?: string;
+  search?: string;
+  hash?: string;
+  baseURL?: string;
+}
+export interface HTTPDetailsExtensionsConfig {
+  if?: any;
+}
+export interface Http2Plugin {
+  origins?: string[];
+}
+export interface LiveQueryConfig {
+  /**
+   * Invalidate a query or queries when a specific operation is done without an error
+   */
+  invalidations?: LiveQueryInvalidation[];
+  /**
+   * Custom strategy for building resources identifiers
+   * By default resource identifiers are built by concatenating the Typename with the id separated by a color (`User:1`).
+   *
+   * This may be useful if you are using a relay compliant schema and the Typename information is not required for building a unique topic.
+   *
+   * Default: "{typename}:{id}"
+   */
+  resourceIdentifier?: string;
+  /**
+   * Whether the extensions should include a list of all resource identifiers for the latest operation result.
+   * Any of those can be used for invalidating and re-scheduling the operation execution.
+   *
+   * This is mainly useful for discovering and learning what kind of topics a given query will subscribe to.
+   * The default value is `true` if `DEBUG` environment variable is set
+   */
+  includeIdentifierExtension?: boolean;
+  /**
+   * Identifier unique field
+   *
+   * Default: "id"
+   */
+  idFieldName?: string;
+  /**
+   * Specify which fields should be indexed for specific invalidations.
+   */
+  indexBy?: LiveQueryIndexBy[];
+}
 export interface LiveQueryInvalidation {
+  /**
+   * Path to the operation that could effect it. In a form: Mutation.something. Note that wildcard is not supported in this field.
+   */
   field: string;
   invalidate: string[];
+}
+export interface LiveQueryIndexBy {
+  field: string;
+  args: string[];
+}
+/**
+ * Mock configuration for your source
+ */
+export interface MockingConfig {
+  /**
+   * If this expression is truthy, mocking would be enabled
+   * You can use environment variables expression, for example: `process.env.MOCKING_ENABLED != null`
+   */
+  if?: boolean;
+  /**
+   * Do not mock any other resolvers other than defined in `mocks`.
+   * For example, you can enable this if you don't want to mock entire schema but partially.
+   */
+  preserveResolvers?: boolean;
+  /**
+   * Mock configurations
+   */
+  mocks?: MockingFieldConfig[];
+  /**
+   * The path to the code runs before the store is attached to the schema
+   */
+  initializeStore?: any;
+}
+export interface MockingFieldConfig {
+  /**
+   * Resolver path
+   * Example: User.firstName
+   */
+  apply: string;
+  /**
+   * If this expression is truthy, mocking would be enabled
+   * You can use environment variables expression, for example: `${MOCKING_ENABLED}`
+   */
+  if?: boolean;
+  /**
+   * Faker.js expression or function
+   * Read more (https://github.com/marak/Faker.js/#fakerfake)
+   * Example:
+   * faker: `name.firstName`
+   * faker: `{{ name.firstName }} {{ name.lastName }}`
+   */
+  faker?: string;
+  /**
+   * Custom mocking
+   * It can be a module or json file.
+   * Both "moduleName#exportName" or only "moduleName" would work
+   */
+  custom?: string;
+  /**
+   * Length of the mock list
+   * For the list types `[ObjectType]`, how many `ObjectType` you want to return?
+   * default: 2
+   */
+  length?: number;
+  store?: GetFromMockStoreConfig;
+  /**
+   * Update the data on the mock store
+   */
+  updateStore?: UpdateMockStoreConfig[];
+}
+/**
+ * Get the data from the mock store
+ */
+export interface GetFromMockStoreConfig {
+  type?: string;
+  key?: string;
+  fieldName?: string;
+}
+export interface UpdateMockStoreConfig {
+  type?: string;
+  key?: string;
+  fieldName?: string;
+  value?: string;
+}
+export interface NewrelicConfig {
+  /**
+   * default `false`. When set to `true`, includes the GraphQL document defining the operations and fragments
+   */
+  includeOperationDocument?: boolean;
+  /**
+   * default `false`. When set to `true`, includes all the operation variables with their values
+   */
+  includeExecuteVariables?: boolean;
+  /**
+   * default: `false`. When set to `true`, includes the execution result of both delegation and execution
+   */
+  includeRawResult?: boolean;
+  /**
+   * default `false`. When set to `true`, track resolvers as segments to monitor their performance
+   */
+  trackResolvers?: boolean;
+  /**
+   * default `false`. When set to `true`, includes all the arguments passed to resolvers and delegation with their values
+   */
+  includeResolverArgs?: boolean;
+  /**
+   * default `false`. When set to `true` append the names of operation root fields to the transaction name
+   */
+  rootFieldsNaming?: boolean;
+  /**
+   * Allows to set a custom operation name to be used as transaction name and attribute
+   * `extractOperationName: {context.headers['x-operation-name']}`
+   */
+  extractOperationName?: string;
+}
+export interface OperationFieldPermissionsConfig {
+  permissions?: OperationFieldPermission[];
+}
+export interface OperationFieldPermission {
+  if?: string;
+  allow?: string[];
+}
+export interface PrometheusConfig {
+  /**
+   * Any of: Boolean, String
+   */
+  requestCount?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  requestTotalDuration?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  requestSummary?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  parse?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  validate?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  contextBuilding?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  execute?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  errors?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  deprecatedFields?: boolean | string;
+  skipIntrospection?: boolean;
+  registry?: string;
+  /**
+   * Any of: Boolean, String
+   */
+  delegation?: boolean | string;
+  /**
+   * Any of: Boolean, String
+   */
+  fetch?: boolean | string;
+  fetchRequestHeaders?: boolean;
+  fetchResponseHeaders?: boolean;
+  /**
+   * Any of: Boolean, String
+   */
+  http?: boolean | string;
+  httpRequestHeaders?: boolean;
+  httpResponseHeaders?: boolean;
+  /**
+   * The path to the metrics endpoint
+   * default: `/metrics`
+   */
+  endpoint?: string;
+}
+/**
+ * RateLimit plugin
+ */
+export interface RateLimitPluginConfig {
+  config: RateLimitTransformConfig[];
+}
+export interface ResponseCacheConfig {
+  /**
+   * Maximum age in ms. Defaults to `Infinity`. Set it to 0 for disabling the global TTL.
+   */
+  ttl?: number;
+  /**
+   * Overwrite the ttl for query operations whose selection contains a specific schema coordinate (e.g. Query.users).
+   * Useful if the selection of a specific field should reduce the TTL of the query operation.
+   */
+  ttlPerCoordinate?: ResponseCacheTTLConfig[];
+  /**
+   * Skip caching of following the types.
+   */
+  ignoredTypes?: string[];
+  /**
+   * List of fields that are used to identify the entity.
+   */
+  idFields?: string[];
+  /**
+   * Whether the mutation execution result should be used for invalidating resources.
+   * Defaults to `true`
+   */
+  invalidateViaMutation?: boolean;
+  /**
+   * Include extension values that provide useful information, such as whether the cache was hit or which resources a mutation invalidated.
+   */
+  includeExtensionMetadata?: boolean;
+  /**
+   * Allows to cache responses based on the resolved session id.
+   * Return a unique value for each session.
+   * Creates a global session by default.
+   * Example;
+   * ```yaml
+   * sessionId: "{context.headers.userId}"
+   * ```
+   */
+  sessionId?: string;
+  /**
+   * Specify whether the cache should be used based on the context.
+   * ```yaml
+   * if: "context.headers.userId != null"
+   * ```
+   */
+  if?: string;
+  /**
+   * Customize the behavior how the response cache key is computed from the documentString, variableValues, contextValue and sessionId.
+   * If the given string is interpolated as empty, default behavior is used.
+   * Example;
+   * ```yaml
+   * # Cache by specific value
+   * cacheKey: "{variableValues.userId}"
+   *
+   * # Cache by documentString
+   * cacheKey: "{documentString}"
+   *
+   * # Cache by operationName
+   * cacheKey: "{operationName}"
+   *
+   * # Cache by some header value
+   * cacheKey: "{contextValue.headers.authorization}"
+   *
+   * # Or combine two of each
+   * cacheKey: "{contextValue.headers.authorization}-{operationName}"
+   * ```
+   */
+  cacheKey?: string;
+  /**
+   * Checks if the result should be cached.
+   * ```yaml
+   * shouldCacheResult: "result.errors.length > 0"
+   * ```
+   */
+  shouldCacheResult?: string;
+}
+export interface ResponseCacheTTLConfig {
+  coordinate: string;
+  ttl: number;
+}
+/**
+ * Configuration for Snapshot extension
+ */
+export interface SnapshotPluginConfig {
+  /**
+   * Expression for when to activate this extension.
+   * Value can be a valid JS expression string or a boolean (Any of: String, Boolean)
+   */
+  if?: string | boolean;
+  /**
+   * HTTP URL pattern to be applied
+   * For example;
+   *   apply:
+   *       - http://my-remote-api.com/* \<- * will apply this extension to all paths of remote API
+   */
+  apply: string[];
+  /**
+   * Path to the directory of the generated snapshot files
+   */
+  outputDir: string;
+}
+export interface StatsdPlugin {
+  /**
+   * If you wish to disable introspection for logging (default: false)
+   */
+  skipIntrospection?: boolean;
+  /**
+   * prefix.operations.count (default: graphql)
+   */
+  prefix?: string;
+  client?: StatsdClientConfiguration;
+}
+/**
+ * Client Configuration
+ */
+export interface StatsdClientConfiguration {
+  bufferFlushInterval?: number;
+  bufferHolder?: StatsdClientBufferHolder;
+  cacheDns?: boolean;
+  cacheDnsTtl?: number;
+  globalTags?: {
+    [k: string]: any;
+  };
+  globalize?: boolean;
+  host?: string;
+  isChild?: boolean;
+  maxBufferSize?: number;
+  mock?: boolean;
+  path?: string;
+  port?: number;
+  /**
+   * Allowed values: tcp, udp, uds, stream
+   */
+  protocol?: 'tcp' | 'udp' | 'uds' | 'stream';
+  sampleRate?: number;
+  suffix?: string;
+  telegraf?: boolean;
+  useDefaultRoute?: boolean;
+  tagPrefix?: string;
+  tagSeperator?: string;
+  tcpGracefulErrorHandling?: boolean;
+  tcpGracefulRestartRateLimit?: number;
+  udsGracefulErrorHandling?: boolean;
+  udsGracefulRestartRateLimit?: number;
+  closingFlushInterval?: number;
+}
+export interface StatsdClientBufferHolder {
+  buffer: string;
 }

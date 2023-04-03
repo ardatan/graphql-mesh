@@ -1,61 +1,62 @@
 {
   "name": "@graphql-mesh/utils",
-  "version": "0.34.6",
-  "license": "MIT",
+  "version": "0.43.20",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
     "directory": "packages/utils"
   },
-  "peerDependencies": {
-    "graphql": "*"
-  },
-  "devDependencies": {
-    "@types/is-url": "1.2.30",
-    "@types/object-hash": "2.2.1",
-    "@types/js-yaml": "4.0.5"
-  },
-  "sideEffects": false,
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
+  "license": "MIT",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
   "exports": {
     ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
     },
-    "./*": {
-      "require": "./dist/*.js",
-      "import": "./dist/*.mjs"
-    }
+    "./package.json": "./package.json"
+  },
+  "typings": "dist/typings/index.d.ts",
+  "peerDependencies": {
+    "@graphql-mesh/cross-helpers": "^0.3.4",
+    "@graphql-mesh/types": "^0.91.12",
+    "@graphql-tools/utils": "^9.2.1",
+    "graphql": "*",
+    "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/string-interpolation": "0.1.0",
-    "@graphql-tools/delegate": "8.7.7",
-    "@graphql-tools/utils": "8.6.9",
-    "@graphql-typed-document-node/core": "3.1.1",
-    "@graphql-mesh/cross-helpers": "0.1.2",
-    "@graphql-mesh/types": "0.72.1",
-    "cross-undici-fetch": "^0.4.0",
-    "chalk": "4.1.2",
-    "dayjs": "1.11.1",
-    "fetchache": "0.1.2",
-    "flatstr": "1.0.12",
-    "graphql-jit": "0.7.3",
-    "graphql-subscriptions": "2.0.0",
-    "lodash": "4.17.21",
-    "is-url": "1.2.4",
+    "@graphql-mesh/string-interpolation": "0.4.3",
+    "@graphql-tools/delegate": "9.0.28",
+    "dset": "3.1.2",
     "js-yaml": "4.1.0",
-    "object-hash": "3.0.0",
-    "tiny-lru": "8.0.2",
-    "tslib": "^2.3.1",
-    "file-uri-to-path": "2.0.0"
+    "lodash.get": "4.4.2",
+    "lodash.topath": "4.5.2",
+    "tiny-lru": "8.0.2"
+  },
+  "devDependencies": {
+    "@apollo/server": "4.5.0",
+    "@types/js-yaml": "4.0.5",
+    "@types/lodash.topath": "4.5.7",
+    "@types/object-hash": "3.0.2",
+    "@whatwg-node/fetch": "0.8.4"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
   }
 }

@@ -7,19 +7,9 @@ extend type Handler {
 
 type SoapHandler @md {
   """
-  A url to your WSDL
+  A url to your WSDL or generated SDL with annotations
   """
-  wsdl: String!
-  """
-  Basic Authentication Configuration
-  Including username and password fields
-  """
-  basicAuth: SoapSecurityBasicAuthConfig
-  """
-  SSL Certificate Based Authentication Configuration
-  Including public key, private key and password fields
-  """
-  securityCert: SoapSecurityCertificateConfig
+  source: String!
   """
   JSON object representing the Headers to add to the runtime of the API calls only for schema introspection
   You can also provide `.js` or `.ts` file path that exports schemaHeaders as an object
@@ -29,84 +19,4 @@ type SoapHandler @md {
   JSON object representing the Headers to add to the runtime of the API calls only for operation during runtime
   """
   operationHeaders: JSON
-  """
-  If true, the ports defined in the WSDL will be represented as GraphQL-Type objects in the schema.
-  The fields of the object will be the operations of the port.
-
-  Most soap-endpoints only define one port; so including it in the schema will just be inconvenient.
-  But if there are multiple ports with operations of the same name, you should set this option to true.
-  Otherwise only one of the identical-named operations will be callable.
-
-  default: false
-  """
-  includePorts: Boolean
-  """
-  If true, the services defined in the WSDL will be represented as GraphQL-Type objects in the schema.
-  The fields of the object will be the ports of the service (or the operation, dependent on 'includePorts').
-
-  Most soap-endpoints only define one service; so including it in the schema will just be inconvenient.
-  But if there are multiple services with operations of the same name, you should set this option to true.
-  Otherwise only one of the identical-named operations will be callable.
-
-  default: false
-  """
-  includeServices: Boolean
-  """
-  Allows to explicitly override the default operation (Query or Mutation) for any SOAP operation
-  """
-  selectQueryOrMutationField: [SoapSelectQueryOrMutationFieldConfig]
-  """
-  Automatically put operations starts with `query` or `get` into the Query type
-  """
-  selectQueryOperationsAuto: Boolean
-}
-
-type SoapSelectQueryOrMutationFieldConfig {
-  service: String!
-  port: String!
-  operation: String!
-  type: SoapSelectQueryOrMutation!
-}
-
-enum SoapSelectQueryOrMutation {
-  query
-  mutation
-}
-
-type SoapSecurityBasicAuthConfig {
-  """
-  Username for Basic Authentication
-  """
-  username: String!
-  """
-  Password for Basic Authentication
-  """
-  password: String!
-}
-
-type SoapSecurityCertificateConfig {
-  """
-  Your public key
-  """
-  publicKey: String
-  """
-  Your private key
-  """
-  privateKey: String
-  """
-  Password
-  """
-  password: String
-  """
-  Path to the file or URL contains your public key
-  """
-  publicKeyPath: String
-  """
-  Path to the file or URL contains your private key
-  """
-  privateKeyPath: String
-  """
-  Path to the file or URL contains your password
-  """
-  passwordPath: String
 }

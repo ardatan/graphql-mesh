@@ -1,0 +1,23 @@
+{
+  "name": "covid-mesh",
+  "version": "0.5.388",
+  "author": {
+    "name": "JYC",
+    "url": "https://github.com/jycouet"
+  },
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "mesh dev",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@graphql-mesh/cli": "0.82.30",
+    "@graphql-mesh/graphql": "0.34.13",
+    "@graphql-mesh/json-schema": "0.37.24",
+    "graphql": "16.6.0"
+  },
+  "devDependencies": {
+    "jest": "29.5.0"
+  }
+}

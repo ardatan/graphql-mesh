@@ -1,61 +1,65 @@
+// eslint-disable-next-line import/no-nodejs-modules
+import EventEmitter from 'events';
+import DataLoader from 'dataloader';
+import { XMLParser } from 'fast-xml-parser';
 import {
-  YamlConfig,
-  ResolverData,
-  MeshHandler,
-  GetMeshSourceOptions,
-  MeshSource,
-  KeyValueCache,
-  ImportFn,
-  Logger,
-} from '@graphql-mesh/types';
-import {
-  parseInterpolationStrings,
-  getInterpolatedHeadersFactory,
-  readFileOrUrl,
-  jsonFlatStringify,
-  getCachedFetch,
-  loadFromModuleExportExpression,
-  stringInterpolator,
-  jitExecutorFactory,
-} from '@graphql-mesh/utils';
-import urljoin from 'url-join';
-import {
-  SchemaComposer,
-  ObjectTypeComposer,
-  InterfaceTypeComposer,
-  ObjectTypeComposerFieldConfigDefinition,
-  ObjectTypeComposerArgumentConfigMapDefinition,
-  EnumTypeComposerValueConfigDefinition,
-  InputTypeComposer,
-} from 'graphql-compose';
-import {
-  GraphQLBigInt,
-  GraphQLGUID,
-  GraphQLDateTime,
-  GraphQLJSON,
-  GraphQLDate,
-  GraphQLByte,
-  GraphQLISO8601Duration,
-} from 'graphql-scalars';
-import {
-  isListType,
-  GraphQLResolveInfo,
-  isAbstractType,
-  GraphQLObjectType,
-  GraphQLSchema,
-  specifiedDirectives,
   ExecutionResult,
   getNamedType,
+  GraphQLObjectType,
+  GraphQLResolveInfo,
+  GraphQLSchema,
+  isAbstractType,
+  isListType,
+  specifiedDirectives,
 } from 'graphql';
-import { parseResolveInfo, ResolveTree, simplifyParsedResolveInfoFragmentWithType } from 'graphql-parse-resolve-info';
-import DataLoader from 'dataloader';
+import {
+  EnumTypeComposerValueConfigDefinition,
+  InputTypeComposer,
+  InterfaceTypeComposer,
+  ObjectTypeComposer,
+  ObjectTypeComposerArgumentConfigMapDefinition,
+  ObjectTypeComposerFieldConfigDefinition,
+  SchemaComposer,
+} from 'graphql-compose';
+import {
+  parseResolveInfo,
+  ResolveTree,
+  simplifyParsedResolveInfoFragmentWithType,
+} from 'graphql-parse-resolve-info';
+import {
+  GraphQLBigInt,
+  GraphQLByte,
+  GraphQLDate,
+  GraphQLDateTime,
+  GraphQLGUID,
+  GraphQLISO8601Duration,
+  GraphQLJSON,
+} from 'graphql-scalars';
 import { parseResponse } from 'http-string-parser';
 import { pascalCase } from 'pascal-case';
-import EventEmitter from 'events';
-import { XMLParser } from 'fast-xml-parser';
-import { ExecutionRequest, memoize1 } from '@graphql-tools/utils';
-import { Request, Response } from 'cross-undici-fetch';
+import urljoin from 'url-join';
+import { process } from '@graphql-mesh/cross-helpers';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
+import {
+  getInterpolatedHeadersFactory,
+  parseInterpolationStrings,
+  ResolverData,
+  stringInterpolator,
+} from '@graphql-mesh/string-interpolation';
+import {
+  GetMeshSourcePayload,
+  ImportFn,
+  Logger,
+  MeshFetch,
+  MeshHandler,
+  MeshHandlerOptions,
+  MeshSource,
+  YamlConfig,
+} from '@graphql-mesh/types';
+import { getHeadersObj, readFileOrUrl } from '@graphql-mesh/utils';
+import { createDefaultExecutor } from '@graphql-tools/delegate';
+import { ExecutionRequest, memoize1 } from '@graphql-tools/utils';
+import { Request, Response } from '@whatwg-node/fetch';
 
 const SCALARS = new Map<string, string>([
   ['Edm.Binary', 'String'],
@@ -121,15 +125,17 @@ const queryOptionsFields = {
   },
 };
 
+type DataLoaderMap = Record<symbol, DataLoader<Request, Response, Request>>;
+
 export default class ODataHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.ODataHandler;
+  private fetchFn: MeshFetch;
+  private logger: Logger;
+  private importFn: ImportFn;
   private baseDir: string;
-  private cache: KeyValueCache;
   private eventEmitterSet = new Set<EventEmitter>();
   private metadataJson: any;
-  private importFn: ImportFn;
-  private logger: Logger;
   private xmlParser = new XMLParser({
     attributeNamePrefix: '',
     attributesGroupName: 'attributes',
@@ -145,54 +151,41 @@ export default class ODataHandler implements MeshHandler {
     name,
     config,
     baseDir,
-    cache,
-    store,
     importFn,
     logger,
-  }: GetMeshSourceOptions<YamlConfig.ODataHandler>) {
+    store,
+  }: MeshHandlerOptions<YamlConfig.ODataHandler>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
-    this.cache = cache;
-    this.metadataJson = store.proxy('metadata.json', PredefinedProxyOptions.JsonWithoutValidation);
     this.importFn = importFn;
     this.logger = logger;
+    this.metadataJson = store.proxy('metadata.json', PredefinedProxyOptions.JsonWithoutValidation);
   }
 
-  async getCachedMetadataJson(fetch: ReturnType<typeof getCachedFetch>) {
+  async getCachedMetadataJson() {
     return this.metadataJson.getWithSet(async () => {
-      const baseUrl = stringInterpolator.parse(this.config.baseUrl, {
+      const endpoint = stringInterpolator.parse(this.config.endpoint, {
         env: process.env,
       });
-      const metadataUrl = urljoin(baseUrl, '$metadata');
-      const metadataText = await readFileOrUrl<string>(this.config.metadata || metadataUrl, {
+      const metadataUrl = urljoin(endpoint, '$metadata');
+      const metadataText = await readFileOrUrl<string>(this.config.source || metadataUrl, {
         allowUnknownExtensions: true,
         cwd: this.baseDir,
         headers: this.config.schemaHeaders,
-        fetch,
+        fetch: this.fetchFn,
+        logger: this.logger,
+        importFn: this.importFn,
       });
 
       return this.xmlParser.parse(metadataText);
     });
   }
 
-  async getMeshSource(): Promise<MeshSource> {
-    let fetch: ReturnType<typeof getCachedFetch>;
-    if (this.config.customFetch) {
-      fetch =
-        typeof this.config.customFetch === 'string'
-          ? await loadFromModuleExportExpression<ReturnType<typeof getCachedFetch>>(this.config.customFetch, {
-              cwd: this.baseDir,
-              importFn: this.importFn,
-              defaultExportName: 'default',
-            })
-          : this.config.customFetch;
-    } else {
-      fetch = getCachedFetch(this.cache);
-    }
-
-    const { baseUrl: nonInterpolatedBaseUrl, operationHeaders } = this.config;
-    const baseUrl = stringInterpolator.parse(nonInterpolatedBaseUrl, {
+  async getMeshSource({ fetchFn }: GetMeshSourcePayload): Promise<MeshSource> {
+    this.fetchFn = fetchFn;
+    const { endpoint: nonInterpolatedBaseUrl, operationHeaders } = this.config;
+    const endpoint = stringInterpolator.parse(nonInterpolatedBaseUrl, {
       env: process.env,
     });
 
@@ -207,7 +200,7 @@ export default class ODataHandler implements MeshHandler {
 
     const aliasNamespaceMap = new Map<string, string>();
 
-    const metadataJson = await this.getCachedMetadataJson(fetch);
+    const metadataJson = await this.getCachedMetadataJson();
     const schemas = metadataJson.Edmx[0].DataServices[0].Schema;
     const multipleSchemas = schemas.length > 1;
     const namespaces = new Set<string>();
@@ -306,7 +299,7 @@ export default class ODataHandler implements MeshHandler {
             urlOfElement,
             entityTypeExtensions.entityInfo.identifierFieldName,
             entityTypeExtensions.entityInfo.identifierFieldTypeRef,
-            element
+            element,
           );
           const identifierUrl = element['@odata.id'] || getUrlString(urlOfElement);
           const fieldMap = actualReturnType.getFields();
@@ -317,7 +310,8 @@ export default class ODataHandler implements MeshHandler {
               if ('ofType' in fieldType) {
                 fieldType = fieldType.ofType;
               }
-              const { entityInfo: fieldEntityInfo } = (fieldType as any).extensions as EntityTypeExtensions;
+              const { entityInfo: fieldEntityInfo } = (fieldType as any)
+                .extensions as EntityTypeExtensions;
               if (field instanceof Array) {
                 for (const fieldElement of field) {
                   const urlOfField = new URL(urljoin(identifierUrl, fieldName));
@@ -325,7 +319,7 @@ export default class ODataHandler implements MeshHandler {
                     urlOfField,
                     fieldEntityInfo.identifierFieldName,
                     fieldEntityInfo.identifierFieldTypeRef,
-                    fieldElement
+                    fieldElement,
                   );
                   fieldElement['@odata.id'] = fieldElement['@odata.id'] || getUrlString(urlOfField);
                 }
@@ -335,7 +329,7 @@ export default class ODataHandler implements MeshHandler {
                   urlOfField,
                   fieldEntityInfo.identifierFieldName,
                   fieldEntityInfo.identifierFieldTypeRef,
-                  field
+                  field,
                 );
                 field['@odata.id'] = field['@odata.id'] || getUrlString(urlOfField);
               }
@@ -361,7 +355,8 @@ export default class ODataHandler implements MeshHandler {
             if ('ofType' in fieldType) {
               fieldType = fieldType.ofType;
             }
-            const { entityInfo: fieldEntityInfo } = (fieldType as any).extensions as EntityTypeExtensions;
+            const { entityInfo: fieldEntityInfo } = (fieldType as any)
+              .extensions as EntityTypeExtensions;
             if (field instanceof Array) {
               for (const fieldElement of field) {
                 const urlOfField = new URL(urljoin(identifierUrl, fieldName));
@@ -369,7 +364,7 @@ export default class ODataHandler implements MeshHandler {
                   urlOfField,
                   fieldEntityInfo.identifierFieldName,
                   fieldEntityInfo.identifierFieldTypeRef,
-                  fieldElement
+                  fieldElement,
                 );
                 fieldElement['@odata.id'] = fieldElement['@odata.id'] || getUrlString(urlOfField);
               }
@@ -379,7 +374,7 @@ export default class ODataHandler implements MeshHandler {
                 urlOfField,
                 fieldEntityInfo.identifierFieldName,
                 fieldEntityInfo.identifierFieldTypeRef,
-                field
+                field,
               );
               field['@odata.id'] = field['@odata.id'] || getUrlString(urlOfField);
             }
@@ -426,7 +421,7 @@ export default class ODataHandler implements MeshHandler {
     };
     const { args: commonArgs, contextVariables } = parseInterpolationStrings([
       ...Object.values(operationHeaders || {}),
-      baseUrl,
+      endpoint,
     ]);
 
     function getTCByTypeNames(...typeNames: string[]) {
@@ -438,7 +433,12 @@ export default class ODataHandler implements MeshHandler {
       return null;
     }
 
-    function addIdentifierToUrl(url: URL, identifierFieldName: string, identifierFieldTypeRef: string, args: any) {
+    function addIdentifierToUrl(
+      url: URL,
+      identifierFieldName: string,
+      identifierFieldTypeRef: string,
+      args: any,
+    ) {
       url.href += `/${args[identifierFieldName]}/`;
     }
 
@@ -466,7 +466,7 @@ export default class ODataHandler implements MeshHandler {
         const error = new Error(
           batchResponseJson.ExceptionMessage ||
             batchResponseJson.Message ||
-            `Batch Request didn't return a valid response.`
+            `Batch Request didn't return a valid response.`,
         );
         Object.assign(error, {
           extensions: batchResponseJson,
@@ -474,8 +474,10 @@ export default class ODataHandler implements MeshHandler {
         throw error;
       }
       return requests.map((_req, index) => {
-        const responseObj = batchResponseJson.responses.find((res: any) => res.id === index.toString());
-        return new Response(jsonFlatStringify(responseObj.body), {
+        const responseObj = batchResponseJson.responses.find(
+          (res: any) => res.id === index.toString(),
+        );
+        return new Response(JSON.stringify(responseObj.body), {
           status: responseObj.status,
           headers: responseObj.headers,
         });
@@ -511,10 +513,10 @@ export default class ODataHandler implements MeshHandler {
               context,
               env: process.env,
             },
-            'POST'
+            'POST',
           );
           batchHeaders['content-type'] = `multipart/mixed;boundary=${requestBoundary}`;
-          const batchResponse = await fetch(urljoin(baseUrl, '$batch'), {
+          const batchResponse = await this.fetchFn(urljoin(endpoint, '$batch'), {
             method: 'POST',
             body: requestBody,
             headers: batchHeaders,
@@ -545,16 +547,16 @@ export default class ODataHandler implements MeshHandler {
               context,
               env: process.env,
             },
-            'POST'
+            'POST',
           );
           batchHeaders['content-type'] = 'application/json';
-          const batchResponse = await fetch(urljoin(baseUrl, '$batch'), {
+          const batchResponse = await this.fetchFn(urljoin(endpoint, '$batch'), {
             method: 'POST',
-            body: jsonFlatStringify({
+            body: JSON.stringify({
               requests: await Promise.all(
                 requests.map(async (request, index) => {
                   const id = index.toString();
-                  const url = request.url.replace(baseUrl, '');
+                  const url = request.url.replace(endpoint, '');
                   const method = request.method;
                   const headers: HeadersInit = {};
                   request.headers?.forEach((value, key) => {
@@ -567,7 +569,7 @@ export default class ODataHandler implements MeshHandler {
                     body: request.body && (await request.json()),
                     headers,
                   };
-                })
+                }),
               ),
             }),
             headers: batchHeaders,
@@ -576,8 +578,18 @@ export default class ODataHandler implements MeshHandler {
           return handleBatchJsonResults(batchResponseJson, requests);
         }),
       none: () =>
+        // We should refactor here
         new DataLoader(
-          (requests: Request[]): Promise<Response[]> => Promise.all(requests.map(request => fetch(request)))
+          (requests: Request[]): Promise<Response[]> =>
+            Promise.all(
+              requests.map(async request =>
+                this.fetchFn(request.url, {
+                  method: request.method,
+                  body: request.body && (await request.text()),
+                  headers: getHeadersObj(request.headers),
+                }),
+              ),
+            ),
         ),
     };
 
@@ -646,7 +658,9 @@ export default class ODataHandler implements MeshHandler {
         });
         let abstractType: InterfaceTypeComposer;
         if (
-          typesWithBaseType.some((typeObj: any) => typeObj.attributes.BaseType.includes(`.${entityTypeName}`)) ||
+          typesWithBaseType.some((typeObj: any) =>
+            typeObj.attributes.BaseType.includes(`.${entityTypeName}`),
+          ) ||
           isAbstract
         ) {
           abstractType = schemaComposer.createInterfaceTC({
@@ -735,7 +749,7 @@ export default class ODataHandler implements MeshHandler {
                 },
               },
               extensions: { navigationPropertyObj },
-              resolve: async (root, args, context, info) => {
+              resolve: async (root, args, context: DataLoaderMap, info) => {
                 if (navigationPropertyName in root) {
                   return root[navigationPropertyName];
                 }
@@ -743,7 +757,12 @@ export default class ODataHandler implements MeshHandler {
                 url.href = urljoin(url.href, '/' + navigationPropertyName);
                 const returnType = info.returnType as GraphQLObjectType;
                 const { entityInfo } = returnType.extensions as unknown as EntityTypeExtensions;
-                addIdentifierToUrl(url, entityInfo.identifierFieldName, entityInfo.identifierFieldTypeRef, args);
+                addIdentifierToUrl(
+                  url,
+                  entityInfo.identifierFieldName,
+                  entityInfo.identifierFieldTypeRef,
+                  args,
+                );
                 const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
                 const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
                 searchParams?.forEach((value, key) => {
@@ -761,7 +780,7 @@ export default class ODataHandler implements MeshHandler {
                       info,
                       env: process.env,
                     },
-                    method
+                    method,
                   ),
                 });
                 const response = await context[contextDataloaderName].load(request);
@@ -780,7 +799,7 @@ export default class ODataHandler implements MeshHandler {
                 queryOptions: { type: 'QueryOptions' },
               },
               extensions: { navigationPropertyObj },
-              resolve: async (root, args, context, info) => {
+              resolve: async (root, args, context: DataLoaderMap, info) => {
                 if (navigationPropertyName in root) {
                   return root[navigationPropertyName];
                 }
@@ -803,7 +822,7 @@ export default class ODataHandler implements MeshHandler {
                       info,
                       env: process.env,
                     },
-                    method
+                    method,
                   ),
                 });
                 const response = await context[contextDataloaderName].load(request);
@@ -830,7 +849,7 @@ export default class ODataHandler implements MeshHandler {
                 ...commonArgs,
               },
               extensions: { navigationPropertyObj },
-              resolve: async (root, args, context, info) => {
+              resolve: async (root, args, context: DataLoaderMap, info) => {
                 if (navigationPropertyName in root) {
                   return root[navigationPropertyName];
                 }
@@ -853,7 +872,7 @@ export default class ODataHandler implements MeshHandler {
                       info,
                       env: process.env,
                     },
-                    method
+                    method,
                   ),
                 });
                 const response = await context[contextDataloaderName].load(request);
@@ -890,7 +909,9 @@ export default class ODataHandler implements MeshHandler {
           });
         }
         const updateInputType = inputType.clone(`${entityTypeName}UpdateInput`);
-        updateInputType.getFieldNames()?.forEach(fieldName => updateInputType.makeOptional(fieldName));
+        updateInputType
+          .getFieldNames()
+          ?.forEach(fieldName => updateInputType.makeOptional(fieldName));
         // Types might be considered as unused implementations of interfaces so we must prevent that
         schemaComposer.addSchemaMustHaveType(outputType);
       });
@@ -910,7 +931,7 @@ export default class ODataHandler implements MeshHandler {
               ...commonArgs,
             },
             resolve: async (root, args, context, info) => {
-              const url = new URL(baseUrl);
+              const url = new URL(endpoint);
               url.href = urljoin(url.href, '/' + functionName);
               url.href += `(${Object.entries(args)
                 .filter(argEntry => argEntry[0] !== 'queryOptions')
@@ -933,7 +954,7 @@ export default class ODataHandler implements MeshHandler {
                     info,
                     env: process.env,
                   },
-                  method
+                  method,
                 ),
               });
               const response = await context[contextDataloaderName].load(request);
@@ -1006,7 +1027,10 @@ export default class ODataHandler implements MeshHandler {
                 if (argsEntries.length) {
                   url.href += `(${argsEntries
                     .filter(argEntry => argEntry[0] !== 'queryOptions')
-                    .map(([argName, value]) => [argName, typeof value === 'string' ? `'${value}'` : value])
+                    .map(([argName, value]) => [
+                      argName,
+                      typeof value === 'string' ? `'${value}'` : value,
+                    ])
                     .map(argEntry => argEntry.join('='))
                     .join(',')})`;
                 }
@@ -1027,7 +1051,7 @@ export default class ODataHandler implements MeshHandler {
                       info,
                       env: process.env,
                     },
-                    method
+                    method,
                   ),
                 });
                 const response = await context[contextDataloaderName].load(request);
@@ -1040,10 +1064,12 @@ export default class ODataHandler implements MeshHandler {
             type: parameterTypeName,
           };
         });
-        const boundEntityType = schemaComposer.getAnyTC(boundEntityTypeName) as InterfaceTypeComposer;
+        const boundEntityType = schemaComposer.getAnyTC(
+          boundEntityTypeName,
+        ) as InterfaceTypeComposer;
         const boundEntityOtherType = getTCByTypeNames(
           'I' + boundEntityTypeName,
-          'T' + boundEntityTypeName
+          'T' + boundEntityTypeName,
         ) as InterfaceTypeComposer;
         boundEntityType.addFields({
           [functionName]: field,
@@ -1070,7 +1096,7 @@ export default class ODataHandler implements MeshHandler {
               ...commonArgs,
             },
             resolve: async (root, args, context, info) => {
-              const url = new URL(baseUrl);
+              const url = new URL(endpoint);
               url.href = urljoin(url.href, '/' + actionName);
               const urlString = getUrlString(url);
               const method = 'POST';
@@ -1084,9 +1110,9 @@ export default class ODataHandler implements MeshHandler {
                     info,
                     env: process.env,
                   },
-                  method
+                  method,
                 ),
-                body: jsonFlatStringify(args),
+                body: JSON.stringify(args),
               });
               const response = await context[contextDataloaderName].load(request);
               const responseText = await response.text();
@@ -1158,9 +1184,9 @@ export default class ODataHandler implements MeshHandler {
                       info,
                       env: process.env,
                     },
-                    method
+                    method,
                   ),
-                  body: jsonFlatStringify(args),
+                  body: JSON.stringify(args),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
@@ -1172,13 +1198,15 @@ export default class ODataHandler implements MeshHandler {
             type: parameterTypeName,
           };
         });
-        const boundEntityType = schemaComposer.getAnyTC(boundEntityTypeName) as InterfaceTypeComposer;
+        const boundEntityType = schemaComposer.getAnyTC(
+          boundEntityTypeName,
+        ) as InterfaceTypeComposer;
         boundEntityType.addFields({
           [actionName]: boundField,
         });
         const otherType = getTCByTypeNames(
           `I${boundEntityTypeName}`,
-          `T${boundEntityTypeName}`
+          `T${boundEntityTypeName}`,
         ) as InterfaceTypeComposer;
         otherType?.addFields({
           [actionName]: boundField,
@@ -1210,13 +1238,20 @@ export default class ODataHandler implements MeshHandler {
           isRequired: false,
         });
         const baseInputType = schemaComposer.getAnyTC(baseTypeName + 'Input') as InputTypeComposer;
-        const baseAbstractType = getTCByTypeNames('I' + baseTypeName, baseTypeName) as InterfaceTypeComposer;
-        const baseOutputType = getTCByTypeNames('T' + baseTypeName, baseTypeName) as ObjectTypeComposer;
+        const baseAbstractType = getTCByTypeNames(
+          'I' + baseTypeName,
+          baseTypeName,
+        ) as InterfaceTypeComposer;
+        const baseOutputType = getTCByTypeNames(
+          'T' + baseTypeName,
+          baseTypeName,
+        ) as ObjectTypeComposer;
         const { entityInfo: baseEntityInfo, eventEmitter: baseEventEmitter } =
           baseOutputType.getExtensions() as EntityTypeExtensions;
         const baseEventEmitterListener = () => {
           inputType.addFields(baseInputType.getFields());
-          entityInfo.identifierFieldName = baseEntityInfo.identifierFieldName || entityInfo.identifierFieldName;
+          entityInfo.identifierFieldName =
+            baseEntityInfo.identifierFieldName || entityInfo.identifierFieldName;
           entityInfo.identifierFieldTypeRef =
             baseEntityInfo.identifierFieldTypeRef || entityInfo.identifierFieldTypeRef;
           entityInfo.actualFields.unshift(...baseEntityInfo.actualFields);
@@ -1250,7 +1285,7 @@ export default class ODataHandler implements MeshHandler {
                 ...commonArgs,
               },
               resolve: async (root, args, context, info) => {
-                const url = new URL(baseUrl);
+                const url = new URL(endpoint);
                 url.href = urljoin(url.href, '/' + singletonName);
                 const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
                 const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
@@ -1269,7 +1304,7 @@ export default class ODataHandler implements MeshHandler {
                       info,
                       env: process.env,
                     },
-                    method
+                    method,
                   ),
                 });
                 const response = await context[contextDataloaderName].load(request);
@@ -1304,7 +1339,7 @@ export default class ODataHandler implements MeshHandler {
                 queryOptions: { type: 'QueryOptions' },
               },
               resolve: async (root, args, context, info) => {
-                const url = new URL(baseUrl);
+                const url = new URL(endpoint);
                 url.href = urljoin(url.href, '/' + entitySetName);
                 const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
                 const searchParams = this.prepareSearchParams(parsedInfoFragment, info.schema);
@@ -1323,7 +1358,7 @@ export default class ODataHandler implements MeshHandler {
                       info,
                       env: process.env,
                     },
-                    method
+                    method,
                   ),
                 });
                 const response = await context[contextDataloaderName].load(request);
@@ -1340,7 +1375,7 @@ export default class ODataHandler implements MeshHandler {
                 },
               },
               resolve: async (root, args, context, info) => {
-                const url = new URL(baseUrl);
+                const url = new URL(endpoint);
                 url.href = urljoin(url.href, '/' + entitySetName);
                 addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
                 const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
@@ -1360,7 +1395,7 @@ export default class ODataHandler implements MeshHandler {
                       info,
                       env: process.env,
                     },
-                    method
+                    method,
                   ),
                 });
                 const response = await context[contextDataloaderName].load(request);
@@ -1378,7 +1413,7 @@ export default class ODataHandler implements MeshHandler {
                 queryOptions: { type: 'QueryOptions' },
               },
               resolve: async (root, args, context, info) => {
-                const url = new URL(baseUrl);
+                const url = new URL(endpoint);
                 url.href = urljoin(url.href, `/${entitySetName}/$count`);
                 const urlString = getUrlString(url);
                 const method = 'GET';
@@ -1392,7 +1427,7 @@ export default class ODataHandler implements MeshHandler {
                       info,
                       env: process.env,
                     },
-                    method
+                    method,
                   ),
                 });
                 const response = await context[contextDataloaderName].load(request);
@@ -1412,7 +1447,7 @@ export default class ODataHandler implements MeshHandler {
                 },
               },
               resolve: async (root, args, context, info) => {
-                const url = new URL(baseUrl);
+                const url = new URL(endpoint);
                 url.href = urljoin(url.href, '/' + entitySetName);
                 const urlString = getUrlString(url);
                 rebuildOpenInputObjects(args.input);
@@ -1427,9 +1462,9 @@ export default class ODataHandler implements MeshHandler {
                       info,
                       env: process.env,
                     },
-                    method
+                    method,
                   ),
-                  body: jsonFlatStringify(args.input),
+                  body: JSON.stringify(args.input),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
@@ -1445,7 +1480,7 @@ export default class ODataHandler implements MeshHandler {
                 },
               },
               resolve: async (root, args, context, info) => {
-                const url = new URL(baseUrl);
+                const url = new URL(endpoint);
                 url.href = urljoin(url.href, '/' + entitySetName);
                 addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
                 const urlString = getUrlString(url);
@@ -1460,7 +1495,7 @@ export default class ODataHandler implements MeshHandler {
                       info,
                       env: process.env,
                     },
-                    method
+                    method,
                   ),
                 });
                 const response = await context[contextDataloaderName].load(request);
@@ -1480,7 +1515,7 @@ export default class ODataHandler implements MeshHandler {
                 },
               },
               resolve: async (root, args, context, info) => {
-                const url = new URL(baseUrl);
+                const url = new URL(endpoint);
                 url.href = urljoin(url.href, '/' + entitySetName);
                 addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
                 const urlString = getUrlString(url);
@@ -1496,9 +1531,9 @@ export default class ODataHandler implements MeshHandler {
                       info,
                       env: process.env,
                     },
-                    method
+                    method,
                   ),
-                  body: jsonFlatStringify(args.input),
+                  body: JSON.stringify(args.input),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
@@ -1517,15 +1552,15 @@ export default class ODataHandler implements MeshHandler {
     this.eventEmitterSet.forEach(ee => ee.removeAllListeners());
     this.eventEmitterSet.clear();
 
-    const jitExecutor = jitExecutorFactory(schema, this.name, this.logger);
+    const executor = createDefaultExecutor(schema);
 
     return {
       schema,
       executor: <TResult>(executionRequest: ExecutionRequest) => {
-        const odataContext = {
+        const odataContext: DataLoaderMap = {
           [contextDataloaderName]: dataLoaderFactory(executionRequest.context),
         };
-        return jitExecutor({
+        return executor({
           ...executionRequest,
           context: {
             ...executionRequest.context,
@@ -1541,7 +1576,10 @@ export default class ODataHandler implements MeshHandler {
   private prepareSearchParams(fragment: ResolveTree, schema: GraphQLSchema) {
     const fragmentTypeNames = Object.keys(fragment.fieldsByTypeName) as string[];
     const returnType = schema.getType(fragmentTypeNames[0]);
-    const { args, fields } = simplifyParsedResolveInfoFragmentWithType(fragment, returnType);
+    const { args, fields } = simplifyParsedResolveInfoFragmentWithType(fragment, returnType) as {
+      args: Record<string, any>;
+      fields: Record<string, any>;
+    };
     const searchParams = new URLSearchParams();
     if ('queryOptions' in args) {
       const { queryOptions } = args as any;

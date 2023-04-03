@@ -1,0 +1,153 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`example_api6 should generate the schema correctly 1`] = `
+"schema {
+  query: Query
+  mutation: Mutation
+}
+
+directive @oneOf on OBJECT | INTERFACE
+
+directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+
+directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+
+directive @linkResolver(linkResolverMap: ObjMap) on FIELD_DEFINITION
+
+directive @link(defaultRootType: String, defaultField: String) on FIELD_DEFINITION
+
+type Query @globalOptions(sourceName: "example_api6", endpoint: "http://localhost:3000/api") {
+  "An arbitrary object"
+  object: object_200_response @httpOperation(path: "/object", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET) @linkResolver(linkResolverMap: "{\\"object2Link\\":{\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getObject2\\"}}")
+  "Serves as a link of GET /object"
+  getObject2(
+    "HTTP headers are case-insensitive"
+    specialheader: String
+  ): getObject2_200_response @httpOperation(path: "/object2", operationSpecificHeaders: "{\\"specialheader\\":\\"{args.specialheader}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  "A particular car"
+  cars_by_id(id: String!): String @httpOperation(path: "/cars/{args.id}", operationSpecificHeaders: "{\\"accept\\":\\"text/html\\"}", httpMethod: GET)
+  "A particular cactus"
+  cacti_by_cactusId(cactusId: String!): String @httpOperation(path: "/cacti/{args.cactusId}", operationSpecificHeaders: "{\\"accept\\":\\"text/html\\"}", httpMethod: GET)
+  eateries_by_eatery_breads_by_breadName_dishes_by_dishKey(eatery: String!, breadName: String!, dishKey: String!): String @httpOperation(path: "/eateries/{args.eatery}/breads/{args.breadName}/dishes/{args.dishKey}", operationSpecificHeaders: "{\\"accept\\":\\"text/html\\"}", httpMethod: GET)
+  "Resolve a nested reference in the parameter schema"
+  nestedReferenceInParameter(russianDoll: russianDoll_Input): String @httpOperation(path: "/nestedReferenceInParameter", operationSpecificHeaders: "{\\"accept\\":\\"text/html\\"}", httpMethod: GET, queryParamArgMap: "{\\"russianDoll\\":\\"russianDoll\\"}")
+  "An arbitrary object"
+  strictGetOperation: String @httpOperation(path: "/strictGetOperation", operationSpecificHeaders: "{\\"accept\\":\\"text/plain\\"}", httpMethod: GET)
+  "No provided response schema test"
+  noResponseSchema: String @httpOperation(path: "/noResponseSchema", operationSpecificHeaders: "{\\"accept\\":\\"text/plain\\"}", httpMethod: GET)
+  "Return a number from the request header."
+  returnNumber(number: Float!): Float @httpOperation(path: "/returnNumber", operationSpecificHeaders: "{\\"number\\":\\"{args.number}\\",\\"accept\\":\\"text/plain\\"}", httpMethod: GET)
+  "Test link object with non-string parameter."
+  testLinkWithNonStringParam: testLinkWithNonStringParam_200_response @httpOperation(path: "/testLinkWithNonStringParam", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET) @linkResolver(linkResolverMap: "{\\"return5\\":{\\"linkObjArgs\\":{\\"number\\":5},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"returnNumber\\"}}")
+  "Test link object with nested parameter."
+  testLinkwithNestedParam: testLinkwithNestedParam_200_response @httpOperation(path: "/testLinkwithNestedParam", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET) @linkResolver(linkResolverMap: "{\\"returnNestedNumber\\":{\\"linkObjArgs\\":{\\"number\\":\\"{root.$response.body#/nesting1/nesting2}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"returnNumber\\"}}")
+}
+
+type object_200_response {
+  data: String
+  "Link with exposed parameter"
+  object2Link(
+    "HTTP headers are case-insensitive"
+    specialheader: String
+  ): getObject2_200_response @link(defaultRootType: "Query", defaultField: "object")
+}
+
+type getObject2_200_response {
+  data: String
+}
+
+"Arbitrary query parameter object"
+input russianDoll_Input {
+  name: String
+  "Arbitrary query parameter object"
+  nestedDoll: russianDoll_Input
+}
+
+type testLinkWithNonStringParam_200_response {
+  hello: String
+  "Return a number from the request header."
+  return5: Float @link(defaultRootType: "Query", defaultField: "testLinkWithNonStringParam")
+}
+
+type testLinkwithNestedParam_200_response {
+  nesting1: query_testLinkwithNestedParam_nesting1
+  "Return a number from the request header."
+  returnNestedNumber: Float @link(defaultRootType: "Query", defaultField: "testLinkwithNestedParam")
+}
+
+type query_testLinkwithNestedParam_nesting1 {
+  nesting2: Float
+}
+
+type Mutation {
+  "Basic application/x-www-form-urlencoded test"
+  post_formUrlEncoded(input: pet_Input): pet @httpOperation(path: "/formUrlEncoded", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/x-www-form-urlencoded\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+  post_inputUnion(input: post_inputUnion_request_Input): String @httpOperation(path: "/inputUnion", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"text/html\\"}", httpMethod: POST)
+}
+
+type pet {
+  "Name of the pet"
+  name: String
+  "Status of the pet"
+  status: String!
+  "Weight of the pet"
+  weight: Float
+  "Previouw owner of the pet"
+  previous_owner: String
+  history: mutation_post_formUrlEncoded_history
+  history2: JSON
+}
+
+"History of the pet"
+type mutation_post_formUrlEncoded_history {
+  data: String
+}
+
+"The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf)."
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+input pet_Input {
+  "Name of the pet"
+  name: String
+  "Status of the pet"
+  status: String!
+  "Weight of the pet"
+  weight: Float
+  "Previouw owner of the pet"
+  previous_owner: String
+  history: mutation_post_formUrlEncoded_history_Input
+  history2: JSON
+}
+
+"History of the pet"
+input mutation_post_formUrlEncoded_history_Input {
+  data: String
+}
+
+input post_inputUnion_request_Input @oneOf {
+  mutationInput_post_inputUnion_input_oneOf_0_Input: mutationInput_post_inputUnion_input_oneOf_0_Input
+  mutationInput_post_inputUnion_input_oneOf_1_Input: mutationInput_post_inputUnion_input_oneOf_1_Input
+}
+
+input mutationInput_post_inputUnion_input_oneOf_0_Input {
+  dogBreed: String
+}
+
+input mutationInput_post_inputUnion_input_oneOf_1_Input {
+  catBreed: String
+}
+
+scalar ObjMap
+
+enum HTTPMethod {
+  GET
+  HEAD
+  POST
+  PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
+  PATCH
+}"
+`;

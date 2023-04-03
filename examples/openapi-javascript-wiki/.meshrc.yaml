@@ -3,12 +3,11 @@ sources:
     handler:
       openapi:
         source: https://api.apis.guru/v2/specs/wikimedia.org/1.0.0/swagger.yaml
-        operationIdFieldNames: true
 
 additionalTypeDefs: |
-      extend type Query {
-        viewsInPastMonth(project: String!): Float!
-      }
+  extend type Query {
+    viewsInPastMonth(project: String!): BigInt!
+  }
 additionalResolvers:
   - ./additional-resolvers.ts
 

@@ -2,7 +2,7 @@ sources:
   - name: reddit
     handler:
       jsonSchema:
-        baseUrl: https://www.reddit.com/
+        endpoint: https://www.reddit.com/
         operations:
           - type: Query
             field: subreddit
@@ -11,4 +11,5 @@ sources:
             responseSample: https://www.reddit.com/r/AskReddit.json
             responseTypeName: Subreddit
             argTypeMap:
-              subreddit: String
+              subreddit:
+                type: string

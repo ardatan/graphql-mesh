@@ -1,9 +1,28 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["github>the-guild-org/shared-config:renovate"],
-  "ignoreDeps": [
-    "typedoc",
-    "typedoc-plugin-markdown",
-    "typedoc-plugin-rename-defaults"
+  "automerge": true,
+  "major": {
+    "automerge": false
+  },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true
+  },
+  "packageRules": [
+    {
+      "excludePackagePatterns": [
+        "@changesets/*",
+        "typescript",
+        "typedoc*",
+        "^@theguild/",
+        "@graphql-inspector/core",
+        "next"
+      ],
+      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch"
+    }
   ]
 }

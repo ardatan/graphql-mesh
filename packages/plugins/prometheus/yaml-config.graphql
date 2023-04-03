@@ -1,0 +1,38 @@
+extend type Plugin {
+  prometheus: PrometheusConfig
+}
+
+type PrometheusConfig @md {
+  requestCount: BooleanOrString
+  requestTotalDuration: BooleanOrString
+  requestSummary: BooleanOrString
+  parse: BooleanOrString
+  validate: BooleanOrString
+  contextBuilding: BooleanOrString
+  execute: BooleanOrString
+  errors: BooleanOrString
+  deprecatedFields: BooleanOrString
+
+  skipIntrospection: Boolean
+  registry: String
+
+  # Mesh specific flags
+
+  delegation: BooleanOrString
+  fetch: BooleanOrString
+  fetchRequestHeaders: Boolean
+  fetchResponseHeaders: Boolean
+
+  # Yoga specific flags
+
+  http: BooleanOrString
+  httpRequestHeaders: Boolean
+  httpResponseHeaders: Boolean
+  """
+  The path to the metrics endpoint
+  default: `/metrics`
+  """
+  endpoint: String
+}
+
+union BooleanOrString = Boolean | String

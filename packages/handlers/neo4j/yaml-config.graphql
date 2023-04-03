@@ -9,7 +9,11 @@ type Neo4jHandler @md {
   """
   URL for the Neo4j Instance e.g. neo4j://localhost
   """
-  url: String!
+  endpoint: String!
+  """
+  Provide GraphQL Type Definitions instead of inferring
+  """
+  source: String
   """
   Username for basic authentication
   """
@@ -26,8 +30,4 @@ type Neo4jHandler @md {
   Specifies database name
   """
   database: String
-  """
-  Provide GraphQL Type Definitions instead of inferring
-  """
-  typeDefs: String
 }

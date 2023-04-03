@@ -42,7 +42,7 @@ type GraphQLHandlerCodeFirstConfiguration @md {
   If you provide a path to a code file(js or ts),
   other options will be ignored and the schema exported from the file will be used directly.
   """
-  schema: Any!
+  source: Any!
 }
 
 type GraphQLHandlerHTTPConfiguration @md {
@@ -69,28 +69,31 @@ type GraphQLHandlerHTTPConfiguration @md {
   """
   method: GraphQLHandlerHTTPMethod
   """
-  Path to a custom W3 Compatible Fetch Implementation
+  Request Credentials if your environment supports it.
+  [See more](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials)
+
+  @default "same-origin"
   """
-  customFetch: Any
+  credentials: RequestCredentials
   """
   Path to a custom W3 Compatible WebSocket Implementation
   """
   webSocketImpl: String
   """
   Path to the introspection
-  You can seperately give schema introspection
+  You can separately give schema introspection or SDL
   """
-  introspection: String
-  """
-  Enable multipart/formdata in order to support file uploads
-  """
-  multipart: Boolean
+  source: String
   """
   SSE - Server Sent Events
   WS - New graphql-ws
   LEGACY_WS - Legacy subscriptions-transport-ws
   """
   subscriptionsProtocol: SubscriptionProtocol
+  """
+  URL to your endpoint serving all subscription queries for this source
+  """
+  subscriptionsEndpoint: String
   """
   Retry attempts if fails
   """
@@ -114,4 +117,9 @@ enum SubscriptionProtocol {
 enum GraphQLHandlerHTTPMethod {
   GET
   POST
+}
+
+enum RequestCredentials {
+  omit
+  include
 }

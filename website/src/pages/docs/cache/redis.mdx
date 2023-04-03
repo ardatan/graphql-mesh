@@ -1,0 +1,31 @@
+---
+description:
+  Use Redis instance as storage with GraphQL Mesh Redis caching strategy. Install
+  @graphql-mesh/cache-redis and configure your .meshrc.yaml with your Redis instance details.
+---
+
+import { PackageCmd } from '@theguild/components'
+
+# Redis Cache
+
+This caching strategy will use your Redis instance as the storage.
+
+To get started with this caching strategy, install it:
+
+<PackageCmd packages={['@graphql-mesh/cache-redis']} />
+
+## How to use?
+
+```yaml filename=".meshrc.yaml"
+cache:
+  redis:
+    host: localhost
+    port: '9876' # port should be a string
+    password: 'MY_SECRET_PASSWORD'
+```
+
+## Config API Reference
+
+import API from '../../../generated-markdown/RedisConfig.generated.md'
+
+<API />

@@ -1,9 +1,8 @@
 import { OperationTypeNode } from 'graphql';
-import type { Readable } from 'stream';
-import { JSONSchemaOperationConfig, JSONSchemaPubSubOperationConfig, HTTPMethod } from './types';
+import { HTTPMethod, JSONSchemaOperationConfig, JSONSchemaPubSubOperationConfig } from './types.js';
 
 export function isPubSubOperationConfig(
-  operationConfig: JSONSchemaOperationConfig
+  operationConfig: JSONSchemaOperationConfig,
 ): operationConfig is JSONSchemaPubSubOperationConfig {
   return 'pubsubTopic' in operationConfig;
 }
@@ -44,7 +43,7 @@ export function getOperationMetadata(operationConfig: JSONSchemaOperationConfig)
 
 export function cleanObject(obj: any) {
   if (typeof obj === 'object' && obj != null) {
-    const newObj = Array.isArray(obj) ? [] : {};
+    const newObj: any = Array.isArray(obj) ? [] : {};
     for (const key in obj) {
       const newObjForKey = cleanObject(obj[key]);
       if (newObjForKey != null) {
@@ -56,7 +55,9 @@ export function cleanObject(obj: any) {
   return obj;
 }
 
-export function isFileUpload(obj: any): obj is { createReadStream: () => Readable; mimetype: string } {
+export function isFileUpload(
+  obj: any,
+): obj is { createReadStream: () => AsyncIterable<Uint8Array>; mimetype: string } {
   return typeof obj.createReadStream === 'function';
 }
 

@@ -1,7 +1,7 @@
 import { GraphQLSchema } from 'graphql';
-import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import minimatch from 'minimatch';
+import { MeshTransform, YamlConfig } from '@graphql-mesh/types';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
-import { matcher } from 'micromatch';
 
 export default class BareFilter implements MeshTransform {
   noWrap = true;
@@ -9,10 +9,7 @@ export default class BareFilter implements MeshTransform {
   fieldsMap: Map<string, string[]>;
   argsMap: Map<string, string[]>;
 
-  constructor(options: MeshTransformOptions<YamlConfig.FilterSchemaTransform>) {
-    const {
-      config: { filters },
-    } = options;
+  constructor({ config: { filters } }: { config: YamlConfig.FilterSchemaTransform }) {
     this.typeGlobs = [];
     this.fieldsMap = new Map();
     this.argsMap = new Map();
@@ -28,7 +25,9 @@ export default class BareFilter implements MeshTransform {
 
       const rawGlob = argsGlob || fieldNameOrGlob;
       const fixedGlob =
-        rawGlob.includes('{') && !rawGlob.includes(',') ? rawGlob.replace('{', '').replace('}', '') : rawGlob;
+        rawGlob.includes('{') && !rawGlob.includes(',')
+          ? rawGlob.replace('{', '').replace('}', '')
+          : rawGlob;
       const polishedGlob = fixedGlob.split(', ').join(',').trim();
 
       if (typeName === 'Type') {
@@ -46,8 +45,8 @@ export default class BareFilter implements MeshTransform {
 
   matchInArray(rulesArray: string[], value: string): null | undefined {
     for (const rule of rulesArray) {
-      const isMatch = matcher(rule);
-      if (!isMatch(value)) return null;
+      const ruleMatcher = new minimatch.Minimatch(rule);
+      if (!ruleMatcher.match(value)) return null;
     }
     return undefined;
   }
@@ -71,8 +70,10 @@ export default class BareFilter implements MeshTransform {
 
           const fieldArgs = Object.entries(fieldConfig.args).reduce(
             (args, [argName, argConfig]) =>
-              this.matchInArray(argRules, argName) === null ? args : { ...args, [argName]: argConfig },
-            {}
+              this.matchInArray(argRules, argName) === null
+                ? args
+                : { ...args, [argName]: argConfig },
+            {},
           );
 
           return { ...fieldConfig, args: fieldArgs };

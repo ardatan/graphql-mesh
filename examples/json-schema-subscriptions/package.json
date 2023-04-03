@@ -1,21 +1,24 @@
 {
   "name": "json-schema-subscriptions",
-  "version": "0.1.172",
+  "version": "0.1.309",
   "private": true,
   "scripts": {
     "start": "concurrently \"yarn start:api\" \"yarn start:mesh\"",
-    "start:api": "node api.js",
+    "start:api": "ts-node-dev api/index.ts",
     "start:mesh": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.69.2",
-    "@graphql-mesh/json-schema": "0.28.7",
-    "graphql": "16.0.1",
-    "body-parser": "1.19.0",
-    "express": "4.17.1",
-    "cross-undici-fetch": "^0.3.5"
+    "@graphql-mesh/cli": "0.82.30",
+    "@graphql-mesh/json-schema": "0.37.24",
+    "@graphql-mesh/plugin-live-query": "0.2.20",
+    "@whatwg-node/fetch": "^0.8.3",
+    "@whatwg-node/router": "0.3.0",
+    "graphql": "16.6.0"
   },
   "devDependencies": {
-    "concurrently": "5.3.0"
+    "concurrently": "8.0.1",
+    "ts-node": "10.9.1",
+    "ts-node-dev": "2.0.0",
+    "typescript": "5.0.3"
   }
 }

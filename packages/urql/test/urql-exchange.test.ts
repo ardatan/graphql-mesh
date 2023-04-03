@@ -1,11 +1,11 @@
-import { createClient, Client, OperationResult } from '@urql/core';
-import { MeshInstance } from '@graphql-mesh/runtime';
-import { meshExchange } from '../src';
-import { getTestMesh } from '../../testing/getTestMesh';
-import { observableToAsyncIterable } from '@graphql-tools/utils';
 import { pipe, toObservable } from 'wonka';
+import { MeshInstance } from '@graphql-mesh/runtime';
+import { observableToAsyncIterable } from '@graphql-tools/utils';
+import { Client, createClient, OperationResult } from '@urql/core';
+import { getTestMesh } from '../../testing/getTestMesh.js';
+import { meshExchange } from '../src/index.js';
 
-describe('graphExchange', () => {
+describe('Mesh Exchange', () => {
   let client: Client;
   let mesh: MeshInstance;
   beforeEach(async () => {
@@ -25,7 +25,8 @@ describe('graphExchange', () => {
           query Greetings {
             greetings
           }
-        `
+        `,
+        {},
       )
       .toPromise();
     expect(result.error).toBeUndefined();
@@ -35,12 +36,15 @@ describe('graphExchange', () => {
   });
   it('should handle subscriptions correctly', async () => {
     const observable = pipe(
-      client.subscription(/* GraphQL */ `
-        subscription Time {
-          time
-        }
-      `),
-      toObservable
+      client.subscription(
+        /* GraphQL */ `
+          subscription Time {
+            time
+          }
+        `,
+        {},
+      ),
+      toObservable,
     );
 
     const asyncIterable = observableToAsyncIterable<OperationResult<any>>(observable);

@@ -2,7 +2,7 @@ sources:
   - name: FHIR
     handler:
       jsonSchema:
-        baseUrl: http://hapi.fhir.org/baseR4
+        endpoint: http://hapi.fhir.org/baseR4
         operations:
           - type: Query
             field: resourceById
@@ -22,16 +22,15 @@ sources:
 
 additionalTypeDefs: |
   extend type Reference {
-    resource: ResourceList
+    resource: ResourceList @resolveTo(
+      sourceName: "FHIR",
+      sourceTypeName: "Query",
+      sourceFieldName: "resourceById",
+      sourceArgs: {
+        resourceType: "{root.reference}"
+      }
+    )
   }
-additionalResolvers:
-  - targetTypeName: Reference
-    targetFieldName: resource
-    sourceName: FHIR
-    sourceTypeName: Query
-    sourceFieldName: resourceById
-    sourceArgs:
-      resourceType: '{root.reference}'
 
 documents:
   - ./example-queries/*.graphql

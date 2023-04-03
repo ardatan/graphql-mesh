@@ -1,0 +1,188 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`JSON Schema Covid should generate correct schema: json-schema-covid-schema 1`] = `
+"""""""
+directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | INTERFACE | OBJECT
+
+directive @globalOptions(endpoint: String, operationHeaders: ObjMap, queryParams: ObjMap, queryStringOptions: ObjMap, sourceName: String) on OBJECT
+
+directive @httpOperation(httpMethod: HTTPMethod, isBinary: Boolean, operationSpecificHeaders: ObjMap, path: String, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap) on FIELD_DEFINITION
+
+directive @resolveTo(additionalArgs: ResolveToSourceArgs, filterBy: String, keyField: String, keysArg: String, pubsubTopic: String, requiredSelectionSet: String, result: String, resultType: String, sourceArgs: ResolveToSourceArgs, sourceFieldName: String!, sourceName: String!, sourceSelectionSet: String, sourceTypeName: String!) on FIELD_DEFINITION
+
+directive @responseMetadata on FIELD_DEFINITION
+
+"""Desc Api Population"""
+type ApiPopulation {
+  _response: ResponseMetadata
+  records: [Result]
+}
+
+""""""
+enum CacheControlScope {
+  """"""
+  PRIVATE
+
+  """"""
+  PUBLIC
+}
+
+""""""
+type Case {
+  """"""
+  active: Int
+
+  """"""
+  admin2: Int
+
+  """"""
+  combinedKey: Int
+
+  """"""
+  confirmed: Int
+
+  """"""
+  countryRegion: String
+
+  """"""
+  deaths: Int
+
+  """"""
+  fips: Int
+
+  """"""
+  iso2: String
+
+  """"""
+  iso3: String
+
+  """"""
+  lastUpdate: Date
+
+  """"""
+  lat: Float
+
+  """"""
+  long: Float
+  population: ApiPopulation
+
+  """"""
+  provinceState: String
+
+  """"""
+  recovered: Int
+}
+
+""""""
+type Count {
+  """"""
+  confirmed: Int
+
+  """"""
+  deaths: Int
+
+  """"""
+  recovered: Int
+}
+
+""""""
+type Daily {
+  """"""
+  deltaConfirmed: Int
+
+  """"""
+  deltaRecovered: Int
+
+  """"""
+  mainlandChina: Int
+
+  """"""
+  objectid: Int
+
+  """"""
+  otherLocations: Int
+
+  """"""
+  reportDate: Date
+
+  """"""
+  reportDateString: String
+
+  """"""
+  totalConfirmed: Int
+
+  """"""
+  totalRecovered: Int
+}
+
+""""""
+scalar Date
+
+enum HTTPMethod {
+  CONNECT
+  DELETE
+  GET
+  HEAD
+  OPTIONS
+  PATCH
+  POST
+  PUT
+  TRACE
+}
+
+"""
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+scalar ObjMap
+
+""""""
+type Query {
+  """"""
+  case(countryRegion: String): Case
+
+  """"""
+  cases: [Case]
+
+  """"""
+  count: Count
+
+  """"""
+  daily: [Daily]
+  population(country: String): ApiPopulation
+  stat(country: String!): Stat
+}
+
+scalar ResolveToSourceArgs
+
+type ResponseMetadata {
+  body: JSON
+  headers: JSON
+  method: String
+  status: Int
+  statusText: String
+  url: String
+}
+
+"""Result of API"""
+type Result {
+  fields: query_population_records_items_fields
+}
+
+type Stat {
+  case: Case
+  confirmedRatio: Float
+  deathRatio: Float
+  population: ApiPopulation
+}
+
+"""The \`Upload\` scalar type represents a file upload."""
+scalar Upload
+
+type query_population_records_items_fields {
+  country_name: String
+  value: Float
+  year: String
+}"
+`;

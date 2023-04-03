@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`gRPC Example should generate correct schema: grpc-schema 1`] = `
+"enum ConnectivityState {
+  CONNECTING
+  IDLE
+  READY
+  SHUTDOWN
+  TRANSIENT_FAILURE
+}
+
+input GreetingRequest_Input {
+  name: String
+}
+
+type GreetingResult {
+  greeting: String
+}
+
+type Query {
+  GreetingService_GetGreeting(input: GreetingRequest_Input): GreetingResult
+  GreetingService_connectivityState(tryToConnect: Boolean): ConnectivityState
+}"
+`;
+
+exports[`gRPC Example should get greeting correctly: greeting-result 1`] = `
+{
+  "data": {
+    "GreetingService_GetGreeting": {
+      "greeting": "Hello World",
+    },
+  },
+}
+`;

@@ -1,0 +1,46 @@
+{
+  "definitions": {
+    "Book": {
+      "type": "object",
+      "title": "Book",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number"
+        },
+        "similarBooks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SimilarBook"
+          }
+        }
+      }
+    },
+    "SimilarBook": {
+      "type": "object",
+      "title": "Book",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number"
+        },
+        "similarBooks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SimilarBook"
+          }
+        }
+      }
+    }
+  }
+}

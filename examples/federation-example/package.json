@@ -3,23 +3,28 @@
   "version": "0.5.145",
   "license": "MIT",
   "private": true,
+  "workspaces": [
+    "gateway",
+    "services/*"
+  ],
   "scripts": {
     "start": "concurrently \"npm:start-services npm:start-gateway-delayed\"",
     "start-gateway": "mesh dev --dir gateway",
     "start-gateway-delayed": "delay 1 && npm run start-gateway",
-    "start-service-accounts": "nodemon services/accounts/index.js",
-    "start-service-reviews": "nodemon services/reviews/index.js",
-    "start-service-products": "nodemon services/products/index.js",
-    "start-service-inventory": "nodemon services/inventory/index.js",
-    "start-services": "concurrently \"npm:start-service-*\""
+    "start-service-accounts": "ts-node services/accounts/index.ts",
+    "start-service-inventory": "ts-node services/inventory/index.ts",
+    "start-service-products": "ts-node services/products/index.ts",
+    "start-service-reviews": "ts-node services/reviews/index.ts",
+    "start-services": "concurrently \"npm:start-service-*\"",
+    "test": "jest"
   },
   "devDependencies": {
-    "concurrently": "5.3.0",
-    "delay-cli": "1.1.0",
-    "nodemon": "2.0.6"
-  },
-  "workspaces": [
-    "gateway",
-    "services/*"
-  ]
+    "apollo-server": "3.12.0",
+    "apollo-server-caching": "3.3.0",
+    "concurrently": "8.0.1",
+    "delay-cli": "2.0.0",
+    "jest": "29.5.0",
+    "ts-node": "10.9.1",
+    "typescript": "5.0.3"
+  }
 }

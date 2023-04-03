@@ -1,0 +1,37 @@
+---
+description:
+  Learn how to limit the rate of calling GraphQL queries and mutations with
+  @graphql-mesh/plugin-rate-limit. Get started now!
+---
+
+import { PackageCmd } from '@theguild/components'
+
+# Rate Limit
+
+You can use `@graphql-mesh/plugin-rate-limit` plugin in order to limit the rate of calling queries
+and mutations.
+
+### Getting Started
+
+<PackageCmd packages={['@graphql-mesh/plugin-rate-limit']} />
+
+## Example Configuration
+
+```yaml filename=".meshrc.yaml"
+# ...
+plugins:
+  - rateLimit:
+      config:
+        # Add as many rules as you want
+        - type: Query
+          field: foo
+          max: 5 # requests limit for a time period
+          ttl: 5000 # time period
+          identifier: '{context.userId}'
+```
+
+## Config API Reference
+
+import API from '../../../generated-markdown/RateLimitPluginConfig.generated.md'
+
+<API />

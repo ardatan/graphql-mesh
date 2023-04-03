@@ -1,14 +1,42 @@
-import { createServer } from '@graphql-yoga/node';
-import { getMesh } from '@graphql-mesh/runtime';
-import GraphQLHandler from '@graphql-mesh/graphql';
-import LocalforageCache from '@graphql-mesh/cache-localforage';
-import { PubSub, DefaultLogger } from '@graphql-mesh/utils';
-import StitchingMerger from '@graphql-mesh/merger-stitching';
-import { MeshStore, InMemoryStoreStorageAdapter } from '@graphql-mesh/store';
+/* eslint-disable import/no-nodejs-modules */
 
-export async function getTestMesh() {
-  const yoga = createServer({
+/* eslint-disable import/no-extraneous-dependencies */
+import { createSchema, createYoga, Repeater } from 'graphql-yoga';
+import LocalforageCache from '@graphql-mesh/cache-localforage';
+import GraphQLHandler from '@graphql-mesh/graphql';
+import StitchingMerger from '@graphql-mesh/merger-stitching';
+import { getMesh } from '@graphql-mesh/runtime';
+import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
+import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
+
+export function getTestMesh() {
+  const yoga = createYoga({
     logging: false,
+    schema: createSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          greetings: String
+        }
+        type Subscription {
+          time: String
+        }
+      `,
+      resolvers: {
+        Query: {
+          greetings: () => 'This is the `greetings` field of the root `Query` type',
+        },
+        Subscription: {
+          time: {
+            subscribe: () =>
+              new Repeater((push, stop) => {
+                const interval = setInterval(() => push(new Date().toISOString()));
+                return stop.then(() => clearInterval(interval));
+              }),
+            resolve: time => time,
+          },
+        },
+      },
+    }),
   });
   const cache = new LocalforageCache();
   const pubsub = new PubSub();
@@ -17,12 +45,8 @@ export async function getTestMesh() {
     readonly: false,
     validate: false,
   });
-  await yoga.start();
-  const subId$ = pubsub.subscribe('destroy', async () => {
-    await yoga.stop();
-    subId$.then(subId => pubsub.unsubscribe(subId)).catch(err => console.error(err));
-  });
-  const mesh = await getMesh({
+  return getMesh({
+    fetchFn: yoga.fetch as any,
     sources: [
       {
         name: 'Yoga',
@@ -30,14 +54,14 @@ export async function getTestMesh() {
           name: 'Yoga',
           baseDir: __dirname,
           config: {
-            endpoint: yoga.getServerUrl(),
+            endpoint: `http://localhost:3000/graphql`,
             subscriptionsProtocol: 'SSE',
           },
           cache,
           pubsub,
           store: store.child('sources/Yoga'),
           logger,
-          importFn: m => import(m),
+          importFn: defaultImportFn,
         }),
       },
     ],
@@ -50,5 +74,4 @@ export async function getTestMesh() {
       store: store.child('Stitching'),
     }),
   });
-  return mesh;
 }

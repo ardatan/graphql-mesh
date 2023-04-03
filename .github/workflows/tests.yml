@@ -1,53 +1,64 @@
-name: Tests
-
+name: test
 on:
   pull_request:
     branches:
       - master
+  push:
+    branches:
+      - master
 
+env:
+  CI: true
+  NODE_TLS_REJECT_UNAUTHORIZED: 0
+  GH_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  LC_ALL: en-US
 jobs:
   lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Master
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Use Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: yarn
+    uses: the-guild-org/shared-config/.github/workflows/lint.yml@main
+    with:
+      script: yarn prettier:check && yarn ci:lint
+    secrets:
+      githubToken: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install Dependencies using Yarn
-        run: yarn install --ignore-engines && git checkout yarn.lock
-      - name: Lint
-        run: yarn lint
-  typecheck:
-    name: TypeScript Type Checking
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Master
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Use Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: yarn
-
-      - name: Install Dependencies using Yarn
-        run: yarn install --ignore-engines && git checkout yarn.lock
-      - name: Type Checking
-        run: yarn transpile-ts --noEmit # We need build for playground
-
-  test:
-    name: Testing on Node ${{matrix.node-version}}
+  unit:
+    name: unit / node ${{matrix.node-version}}
     timeout-minutes: 60
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
+      matrix:
+        node-version: [14, 18]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: the-guild-org/shared-config/setup@main
+        name: setup env
+        with:
+          nodeVersion: ${{matrix.node-version}}
+
+      - name: Cache Jest
+        uses: actions/cache@v3
+        with:
+          path: .cache/jest
+          key: ${{ runner.os }}-${{matrix.node-version}}-jest-unit-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{runner.os}}-${{matrix.node-version}}-jest-unit-
+
+      - name: Run Tests
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          command: yarn test
+
+  integration:
+    name: integration / node ${{matrix.node-version}}
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
       matrix:
         node-version: [14, 18]
     # Service containers to run with `runner-job`
@@ -61,10 +72,7 @@ jobs:
           POSTGRES_PASSWORD: docker
         # Set health checks to wait until postgres has started
         options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
         ports:
           # Maps tcp port 5432 on service container to the host
           - 5432:5432
@@ -74,32 +82,35 @@ jobs:
           MYSQL_ROOT_PASSWORD: passwd
         ports:
           - 33306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options:
+          --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s
+          --health-retries=3
 
     steps:
-      - name: Checkout Master
+      - name: Checkout
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Use Node ${{matrix.node-version}}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: yarn
 
-      - name: Install Dependencies using Yarn
-        run: yarn install --ignore-engines && git checkout yarn.lock
+      - uses: the-guild-org/shared-config/setup@main
+        name: setup env
+        with:
+          nodeVersion: ${{matrix.node-version}}
+
       - name: Cache Jest
         uses: actions/cache@v3
         with:
           path: .cache/jest
-          key: ${{ runner.os }}-${{matrix.node-version}}-jest-${{ hashFiles('yarn.lock') }}
+          key:
+            ${{ runner.os }}-${{matrix.node-version}}-jest-integration-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-${{matrix.node-version}}-jest-
+            ${{runner.os}}-${{matrix.node-version}}-jest-integration-
+
       - name: Download Postgres Dump
-        run: 'curl https://raw.githubusercontent.com/morenoh149/postgresDBSamples/master/worldDB-1.0/world.sql -o /tmp/backup.sql'
+        run:
+          'curl
+          https://raw.githubusercontent.com/morenoh149/postgresDBSamples/master/worldDB-1.0/world.sql
+          -o /tmp/backup.sql'
       - name: Load Postgres Data
-        uses: tj-actions/pg-restore@v4.5
+        uses: tj-actions/pg-restore@v4.8
         with:
           database_url: 'postgres://postgres:docker@localhost:5432/postgres'
           backup_file: '/tmp/backup.sql'
@@ -108,9 +119,98 @@ jobs:
       - name: Build Test Artifacts
         run: yarn build-test-artifacts
       - name: Test
-        run: yarn test
+        run: yarn test:integration
+
+  integration-leak:
+    name: integration / leak / node ${{matrix.node-version}}
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [14, 18]
+    # Service containers to run with `runner-job`
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
         env:
-          CI: true
-          NODE_TLS_REJECT_UNAUTHORIZED: 0
-          GH_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LC_ALL: en-US
+          POSTGRES_PASSWORD: docker
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
+      mysql:
+        image: genschsa/mysql-employees
+        env:
+          MYSQL_ROOT_PASSWORD: passwd
+        ports:
+          - 33306:3306
+        options:
+          --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: the-guild-org/shared-config/setup@main
+        name: setup env
+        with:
+          nodeVersion: ${{matrix.node-version}}
+
+      - name: Cache Jest
+        uses: actions/cache@v3
+        with:
+          path: .cache/jest
+          key:
+            ${{ runner.os }}-${{matrix.node-version}}-jest-integration-leak-${{
+            hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{runner.os}}-${{matrix.node-version}}-jest-integration-leak-
+
+      - name: Download Postgres Dump
+        run:
+          'curl
+          https://raw.githubusercontent.com/morenoh149/postgresDBSamples/master/worldDB-1.0/world.sql
+          -o /tmp/backup.sql'
+      - name: Load Postgres Data
+        uses: tj-actions/pg-restore@v4.8
+        with:
+          database_url: 'postgres://postgres:docker@localhost:5432/postgres'
+          backup_file: '/tmp/backup.sql'
+      - name: Build
+        run: yarn build
+      - name: Build Test Artifacts
+        run: yarn build-test-artifacts
+      - name: Run Tests
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          command: yarn test:integration:leak
+
+  integrity-check:
+    name: integrity-check / node ${{matrix.node-version}}
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [14, 18]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: the-guild-org/shared-config/setup@main
+        name: setup env
+        with:
+          nodeVersion: ${{matrix.node-version}}
+      - name: Build
+        run: yarn build
+      - name: Node.js integrity check
+        run: yarn bob check

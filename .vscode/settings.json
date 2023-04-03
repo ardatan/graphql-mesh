@@ -20,9 +20,8 @@
     "test-lib": true,
     "lib": true,
     "coverage": true,
-    "npm": true,
-    ".parcel-cache": true,
-    ".bob": true
+    "npm": true
+    // ".bob": true
   },
   "typescript.tsdk": "node_modules/typescript/lib"
 }

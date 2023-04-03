@@ -5,18 +5,24 @@ exports[`rename should change the name of a field 1`] = `
   user: MyUser!
   my_book: MyBook!
   profile(profile_id: ID!, role: String, some_argument: String, another_argument: Int): Profile
+  my_node(id: ID!): MyNode
 }
+
+union MyNode = MyUser | MyBook | Profile
 
 type MyUser {
   id: ID!
+  name: String!
 }
 
 type Profile {
   id: ID!
+  isActive: Boolean!
 }
 
 type MyBook {
   id: ID!
+  hits: Int!
 }"
 `;
 
@@ -25,18 +31,24 @@ exports[`rename should change the name of a type 1`] = `
   my_user: User!
   my_book: MyBook!
   profile(profile_id: ID!, role: String, some_argument: String, another_argument: Int): Profile
+  my_node(id: ID!): MyNode
 }
+
+union MyNode = User | MyBook | Profile
 
 type User {
   id: ID!
+  name: String!
 }
 
 type Profile {
   id: ID!
+  isActive: Boolean!
 }
 
 type MyBook {
   id: ID!
+  hits: Int!
 }"
 `;
 
@@ -45,18 +57,24 @@ exports[`rename should change the name of multiple fields 1`] = `
   user: MyUser!
   book: MyBook!
   profile(profile_id: ID!, role: String, some_argument: String, another_argument: Int): Profile
+  node(id: ID!): MyNode
 }
+
+union MyNode = MyUser | MyBook | Profile
 
 type MyUser {
   id: ID!
+  name: String!
 }
 
 type Profile {
   id: ID!
+  isActive: Boolean!
 }
 
 type MyBook {
   id: ID!
+  hits: Int!
 }"
 `;
 
@@ -65,18 +83,50 @@ exports[`rename should change the name of multiple type names 1`] = `
   my_user: User!
   my_book: Book!
   profile(profile_id: ID!, role: String, some_argument: String, another_argument: Int): Profile
+  my_node(id: ID!): Node
 }
+
+union Node = User | Book | Profile
 
 type User {
   id: ID!
+  name: String!
 }
 
 type Profile {
   id: ID!
+  isActive: Boolean!
 }
 
 type Book {
   id: ID!
+  hits: Int!
+}"
+`;
+
+exports[`rename should not rename default Scalar types 1`] = `
+"type Query {
+  my_user: Prefixed_MyUser!
+  my_book: Prefixed_MyBook!
+  profile(profile_id: ID!, role: String, some_argument: String, another_argument: Int): Prefixed_Profile
+  my_node(id: ID!): Prefixed_MyNode
+}
+
+union Prefixed_MyNode = Prefixed_MyUser | Prefixed_MyBook | Prefixed_Profile
+
+type Prefixed_MyUser {
+  id: ID!
+  name: String!
+}
+
+type Prefixed_Profile {
+  id: ID!
+  isActive: Boolean!
+}
+
+type Prefixed_MyBook {
+  id: ID!
+  hits: Int!
 }"
 `;
 
@@ -85,18 +135,24 @@ exports[`rename should only affect field argument only if type and field are spe
   my_user: MyUser!
   my_book: MyBook!
   profile(profile_id: ID!, role: String, some_argument: String, another_argument: Int): Profile
+  my_node(id: ID!): MyNode
 }
+
+union MyNode = MyUser | MyBook | Profile
 
 type MyUser {
   id: ID!
+  name: String!
 }
 
 type Profile {
   id: ID!
+  isActive: Boolean!
 }
 
 type MyBook {
   id: ID!
+  hits: Int!
 }"
 `;
 
@@ -105,18 +161,76 @@ exports[`rename should only affect specified field argument 1`] = `
   my_user: MyUser!
   my_book: MyBook!
   profile(profileId: ID!, role: String, some_argument: String, another_argument: Int): Profile
+  my_node(id: ID!): MyNode
 }
+
+union MyNode = MyUser | MyBook | Profile
 
 type MyUser {
   id: ID!
+  name: String!
 }
 
 type Profile {
   id: ID!
+  isActive: Boolean!
 }
 
 type MyBook {
   id: ID!
+  hits: Int!
+}"
+`;
+
+exports[`rename should only affect specified field match argument 1`] = `
+"type Query {
+  my_user: MyUser!
+  my_book: MyBook!
+  profile(profileId: ID!, role: String, some_argument: String, another_argument: Int): Profile
+  my_node(id: ID!): MyNode
+}
+
+union MyNode = MyUser | MyBook | Profile
+
+type MyUser {
+  id: ID!
+  name: String!
+}
+
+type Profile {
+  id: ID!
+  isActive: Boolean!
+}
+
+type MyBook {
+  id: ID!
+  hits: Int!
+}"
+`;
+
+exports[`rename should only affect specified match type and match field argument 1`] = `
+"type Query {
+  my_user: MyUser!
+  my_book: MyBook!
+  profile(profileId: ID!, role: String, some_argument: String, another_argument: Int): Profile
+  my_node(id: ID!): MyNode
+}
+
+union MyNode = MyUser | MyBook | Profile
+
+type MyUser {
+  id: ID!
+  name: String!
+}
+
+type Profile {
+  id: ID!
+  isActive: Boolean!
+}
+
+type MyBook {
+  id: ID!
+  hits: Int!
 }"
 `;
 
@@ -125,18 +239,24 @@ exports[`rename should only affect specified type 1`] = `
   my_user: MyUser!
   my_bok: MyBook!
   prfile(profile_id: ID!, role: String, some_argument: String, another_argument: Int): Profile
+  my_nde(id: ID!): MyNode
 }
+
+union MyNode = MyUser | MyBook | Profile
 
 type MyUser {
   id: ID!
+  name: String!
 }
 
 type Profile {
   id: ID!
+  isActive: Boolean!
 }
 
 type MyBook {
   id: ID!
+  hits: Int!
 }"
 `;
 
@@ -185,17 +305,23 @@ exports[`rename should replace the first occurrence of a substring in a field 1`
   my_user: MyUser!
   my_bok: MyBook!
   prfile(profile_id: ID!, role: String, some_argument: String, another_argument: Int): Profile
+  my_nde(id: ID!): MyNode
 }
+
+union MyNode = MyUser | MyBook | Profile
 
 type MyUser {
   id: ID!
+  name: String!
 }
 
 type Profile {
   id: ID!
+  isActive: Boolean!
 }
 
 type MyBook {
   id: ID!
+  hits: Int!
 }"
 `;

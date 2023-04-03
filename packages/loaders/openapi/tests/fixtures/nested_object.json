@@ -1,0 +1,445 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Testing Nested Objects API",
+    "description": "Nested objects used as query parameters in OpenAPI to GraphQL translation. This is a heavily cutdown version of the the Typesense API document.",
+    "version": "0.1.2"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:{port}/",
+      "description": "The location of the local test server.",
+      "variables": {
+        "port": {
+          "default": "3009"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/collections/{collectionName}/documents/search": {
+      "get": {
+        "description": "Search for documents in a collection that match the search criteria.",
+        "operationId": "searchCollection",
+        "parameters": [
+          {
+            "name": "collectionName",
+            "in": "path",
+            "description": "The name of the collection to search for the document under",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "searchParameters",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/SearchParameters"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, see error message for details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The collection or field was not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SearchResult": {
+        "type": "object",
+        "properties": {
+          "facet_counts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FacetCounts"
+            }
+          },
+          "found": {
+            "type": "integer",
+            "description": "The number of documents found"
+          },
+          "search_time_ms": {
+            "type": "integer",
+            "description": "The number of milliseconds the search took"
+          },
+          "out_of": {
+            "type": "integer",
+            "description": "The total number of pages"
+          },
+          "search_cutoff": {
+            "type": "boolean",
+            "description": "Whether the search was cut off"
+          },
+          "page": {
+            "type": "integer",
+            "description": "The search result page number"
+          },
+          "grouped_hits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SearchGroupedHit"
+            }
+          },
+          "hits": {
+            "type": "array",
+            "description": "The documents that matched the search query",
+            "items": {
+              "$ref": "#/components/schemas/SearchResultHit"
+            }
+          },
+          "request_params": {
+            "type": "object",
+            "required": ["collection_name", "q", "per_page"],
+            "properties": {
+              "collection_name": {
+                "type": "string"
+              },
+              "q": {
+                "type": "string"
+              },
+              "per_page": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      },
+      "SearchGroupedHit": {
+        "type": "object",
+        "required": ["group_key", "hits"],
+        "properties": {
+          "group_key": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "hits": {
+            "type": "array",
+            "description": "The documents that matched the search query",
+            "items": {
+              "$ref": "#/components/schemas/SearchResultHit"
+            }
+          }
+        }
+      },
+      "SearchResultHit": {
+        "type": "object",
+        "properties": {
+          "highlights": {
+            "type": "array",
+            "description": "Contains highlighted portions of the search fields",
+            "items": {
+              "$ref": "#/components/schemas/SearchHighlight"
+            }
+          },
+          "document": {
+            "type": "object",
+            "description": "Can be any key-value pair",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "text_match": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "geo_distance_meters": {
+            "type": "object",
+            "description": "Can be any key-value pair",
+            "additionalProperties": {
+              "type": "integer"
+            }
+          }
+        },
+        "example": {
+          "highlights": {
+            "company_name": {
+              "field": "company_name",
+              "snippet": "<mark>Stark</mark> Industries"
+            }
+          },
+          "document": {
+            "id": "124",
+            "company_name": "Stark Industries",
+            "num_employees": 5215,
+            "country": "USA"
+          },
+          "text_match": 1234556
+        }
+      },
+      "SearchHighlight": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "example": "company_name"
+          },
+          "snippet": {
+            "type": "string",
+            "description": "Present only for (non-array) string fields",
+            "example": "<mark>Stark</mark> Industries"
+          },
+          "snippets": {
+            "type": "array",
+            "description": "Present only for (array) string[] fields",
+            "example": ["<mark>Stark</mark> Industries", "<mark>Stark</mark> Corp"],
+            "items": {
+              "type": "string"
+            }
+          },
+          "indices": {
+            "type": "array",
+            "description": "The indices property will be present only for string[] fields and will contain the corresponding indices of the snippets in the search field",
+            "example": 1,
+            "items": {
+              "type": "integer"
+            }
+          },
+          "matched_tokens": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "x-go-type": "interface{}"
+            }
+          }
+        }
+      },
+      "ApiResponse": {
+        "type": "object",
+        "required": ["message"],
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "SearchParameters": {
+        "type": "object",
+        "required": ["q", "query_by"],
+        "properties": {
+          "q": {
+            "description": "The query text to search for in the collection. Use * as the search string to return all documents. This is typically useful when used in conjunction with filter_by.",
+            "type": "string"
+          },
+          "query_by": {
+            "description": "A list of `string` fields that should be queried against. Multiple fields are separated with a comma.",
+            "type": "string"
+          },
+          "query_by_weights": {
+            "description": "The relative weight to give each `query_by` field when ranking results. This can be used to boost fields in priority, when looking for matches. Multiple fields are separated with a comma.",
+            "type": "string"
+          },
+          "prefix": {
+            "description": "Boolean field to indicate that the last word in the query should be treated as a prefix, and not as a whole word. This is used for building autocomplete and instant search interfaces. Defaults to true.",
+            "type": "string"
+          },
+          "filter_by": {
+            "description": "Filter conditions for refining youropen api validator search results. Separate multiple conditions with &&.",
+            "type": "string",
+            "example": "num_employees:>100 && country: [USA, UK]"
+          },
+          "sort_by": {
+            "description": "A list of numerical fields and their corresponding sort orders that will be used for ordering your results. Up to 3 sort fields can be specified. The text similarity score is exposed as a special `_text_match` field that you can use in the list of sorting fields. If no `sort_by` parameter is specified, results are sorted by `_text_match:desc,default_sorting_field:desc`",
+            "type": "string",
+            "example": "num_employees:desc"
+          },
+          "facet_by": {
+            "description": "A list of fields that will be used for faceting your results on. Separate multiple fields with a comma.",
+            "type": "string"
+          },
+          "max_facet_values": {
+            "description": "Maximum number of facet values to be returned.",
+            "type": "integer"
+          },
+          "facet_query": {
+            "description": "Facet values that are returned can now be filtered via this parameter. The matching facet text is also highlighted. For example, when faceting by `category`, you can set `facet_query=category:shoe` to return only facet values that contain the prefix \"shoe\".",
+            "type": "string"
+          },
+          "num_typos": {
+            "description": "The number of typographical errors (1 or 2) that would be tolerated. Default: 2\n",
+            "type": "integer"
+          },
+          "page": {
+            "description": "Results from this specific page number would be fetched.",
+            "type": "integer"
+          },
+          "per_page": {
+            "description": "Number of results to fetch per page. Default: 10",
+            "type": "integer"
+          },
+          "group_by": {
+            "description": "You can aggregate search results into groups or buckets by specify one or more `group_by` fields. Separate multiple fields with a comma. To group on a particular field, it must be a faceted field.",
+            "type": "string"
+          },
+          "group_limit": {
+            "description": "Maximum number of hits to be returned for every group. If the `group_limit` is set as `K` then only the top K hits in each group are returned in the response. Default: 3\n",
+            "type": "integer"
+          },
+          "include_fields": {
+            "description": "List of fields from the document to include in the search result",
+            "type": "string"
+          },
+          "exclude_fields": {
+            "description": "List of fields from the document to exclude in the search result",
+            "type": "string"
+          },
+          "highlight_full_fields": {
+            "description": "List of fields which should be highlighted fully without snippeting",
+            "type": "string"
+          },
+          "highlight_affix_num_tokens": {
+            "description": "The number of tokens that should surround the highlighted text on each side. Default: 4\n",
+            "type": "integer"
+          },
+          "highlight_start_tag": {
+            "description": "The start tag used for the highlighted snippets. Default: `<mark>`\n",
+            "type": "string"
+          },
+          "highlight_end_tag": {
+            "description": "The end tag used for the highlighted snippets. Default: `</mark>`\n",
+            "type": "string"
+          },
+          "snippet_threshold": {
+            "description": "Field values under this length will be fully highlighted, instead of showing a snippet of relevant portion. Default: 30\n",
+            "type": "integer"
+          },
+          "drop_tokens_threshold": {
+            "description": "If the number of results found for a specific query is less than this number, Typesense will attempt to drop the tokens in the query until enough results are found. Tokens that have the least individual hits are dropped first. Set to 0 to disable. Default: 10\n",
+            "type": "integer"
+          },
+          "typo_tokens_threshold": {
+            "description": "If the number of results found for a specific query is less than this number, Typesense will attempt to look for tokens with more typos until enough results are found. Default: 100\n",
+            "type": "integer"
+          },
+          "pinned_hits": {
+            "description": "A list of records to unconditionally include in the search results at specific positions. An example use case would be to feature or promote certain items on the top of search results. A list of `record_id:hit_position`. Eg: to include a record with ID 123 at Position 1 and another record with ID 456 at Position 5, you'd specify `123:1,456:5`.\nYou could also use the Overrides feature to override search results based on rules. Overrides are applied first, followed by `pinned_hits` and finally `hidden_hits`.\n",
+            "type": "string"
+          },
+          "hidden_hits": {
+            "description": "A list of records to unconditionally hide from search results. A list of `record_id`s to hide. Eg: to hide records with IDs 123 and 456, you'd specify `123,456`.\nYou could also use the Overrides feature to override search results based on rules. Overrides are applied first, followed by `pinned_hits` and finally `hidden_hits`.\n",
+            "type": "string"
+          },
+          "highlight_fields": {
+            "description": "A list of custom fields that must be highlighted even if you don't query for them\n",
+            "type": "string"
+          },
+          "pre_segmented_query": {
+            "description": "You can index content from any logographic language into Typesense if you are able to segment / split the text into space-separated words yourself before indexing and querying.\nSet this parameter to true to do the same\n",
+            "type": "boolean"
+          },
+          "enable_overrides": {
+            "description": "If you have some overrides defined but want to disable all of them during query time, you can do that by setting this parameter to false\n",
+            "type": "boolean"
+          },
+          "prioritize_exact_match": {
+            "description": "Set this parameter to true to ensure that an exact match is ranked above the others\n",
+            "type": "boolean"
+          },
+          "exhaustive_search": {
+            "description": "Setting this to true will make Typesense consider all prefixes and typo corrections of the words in the query without stopping early when enough results are found (drop_tokens_threshold and typo_tokens_threshold configurations are ignored).\n",
+            "type": "boolean"
+          },
+          "search_cutoff_ms": {
+            "description": "Typesense will attempt to return results early if the cutoff time has elapsed. This is not a strict guarantee and facet computation is not bound by this parameter.\n",
+            "type": "integer"
+          },
+          "use_cache": {
+            "description": "Enable server side caching of search query results. By default, caching is disabled.\n",
+            "type": "boolean"
+          },
+          "cache_ttl": {
+            "description": "The duration (in seconds) that determines how long the search query is cached. This value can be set on a per-query basis. Default: 60.\n",
+            "type": "integer"
+          },
+          "min_len_1typo": {
+            "description": "Minimum word length for 1-typo correction to be applied. The value of num_typos is still treated as the maximum allowed typos.\n",
+            "type": "integer"
+          },
+          "min_len_2typo": {
+            "description": "Minimum word length for 2-typo correction to be applied. The value of num_typos is still treated as the maximum allowed typos.\n",
+            "type": "integer"
+          }
+        }
+      },
+      "FacetCounts": {
+        "type": "object",
+        "properties": {
+          "counts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "highlighted": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "field_name": {
+            "type": "string"
+          },
+          "stats": {
+            "type": "object",
+            "properties": {
+              "max": {
+                "type": "integer"
+              },
+              "min": {
+                "type": "integer"
+              },
+              "sum": {
+                "type": "integer"
+              },
+              "total_values": {
+                "type": "integer"
+              },
+              "avg": {
+                "type": "number",
+                "format": "float"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

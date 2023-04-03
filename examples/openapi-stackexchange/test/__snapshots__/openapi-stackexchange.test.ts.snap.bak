@@ -1,0 +1,300 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Stack Exchange should generate correct schema 1`] = `
+"schema {
+  query: Query
+}
+
+directive @enum(value: String) on ENUM_VALUE
+
+directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+
+directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+
+type Query @globalOptions(sourceName: "StackExchange", endpoint: "https://api.stackexchange.com/2.2") {
+  "Gets all the questions on the site.\\nThis method allows you make fairly flexible queries across the entire corpus of questions on a site."
+  listQuestions(fromdate: Int, todate: Int, min: Int, max: Int, tagged: String, order: queryInput_listQuestions_order, sort: queryInput_listQuestions_sort, page: Int, pagesize: Int, site: String! = "stackoverflow"): QuestionsResponse @httpOperation(path: "/questions", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fromdate\\":\\"fromdate\\",\\"todate\\":\\"todate\\",\\"min\\":\\"min\\",\\"max\\":\\"max\\",\\"tagged\\":\\"tagged\\",\\"order\\":\\"order\\",\\"sort\\":\\"sort\\",\\"page\\":\\"page\\",\\"pagesize\\":\\"pagesize\\",\\"site\\":\\"site\\"}")
+  "Gets all the questions on the site.\\nThis method allows you make fairly flexible queries across the entire corpus of questions on a site."
+  listFeaturedQuestions(fromdate: Int, todate: Int, min: Int, max: Int, tagged: String, order: queryInput_listFeaturedQuestions_order, sort: queryInput_listFeaturedQuestions_sort, page: Int, pagesize: Int, site: String! = "stackoverflow"): QuestionsResponse @httpOperation(path: "/questions/featured", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fromdate\\":\\"fromdate\\",\\"todate\\":\\"todate\\",\\"min\\":\\"min\\",\\"max\\":\\"max\\",\\"tagged\\":\\"tagged\\",\\"order\\":\\"order\\",\\"sort\\":\\"sort\\",\\"page\\":\\"page\\",\\"pagesize\\":\\"pagesize\\",\\"site\\":\\"site\\"}")
+  "Returns questions which have received no answers.\\nCompare with /questions/unanswered which merely returns questions that the sites consider insufficiently well answered."
+  listQuestionsWithoutAnswers(fromdate: Int, todate: Int, min: Int, max: Int, tagged: String, order: queryInput_listQuestionsWithoutAnswers_order, sort: queryInput_listQuestionsWithoutAnswers_sort, page: Int, pagesize: Int, site: String! = "stackoverflow"): QuestionsResponse @httpOperation(path: "/questions/no-answers", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fromdate\\":\\"fromdate\\",\\"todate\\":\\"todate\\",\\"min\\":\\"min\\",\\"max\\":\\"max\\",\\"tagged\\":\\"tagged\\",\\"order\\":\\"order\\",\\"sort\\":\\"sort\\",\\"page\\":\\"page\\",\\"pagesize\\":\\"pagesize\\",\\"site\\":\\"site\\"}")
+  "Gets all the questions on the site.\\nThis method allows you make fairly flexible queries across the entire corpus of questions on a site."
+  listUnansweredQuestions(fromdate: Int, todate: Int, min: Int, max: Int, tagged: String, order: queryInput_listUnansweredQuestions_order, sort: queryInput_listUnansweredQuestions_sort, page: Int, pagesize: Int, site: String! = "stackoverflow"): QuestionsResponse @httpOperation(path: "/questions/unanswered", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fromdate\\":\\"fromdate\\",\\"todate\\":\\"todate\\",\\"min\\":\\"min\\",\\"max\\":\\"max\\",\\"tagged\\":\\"tagged\\",\\"order\\":\\"order\\",\\"sort\\":\\"sort\\",\\"page\\":\\"page\\",\\"pagesize\\":\\"pagesize\\",\\"site\\":\\"site\\"}")
+  "Returns all users on a site.\\n\\nThis method returns a list of users.\\n\\nThe sorts accepted by this method operate on the following fields of the user object:\\n\\nreputation – reputation\\ncreation – creation_date\\nname – display_name\\nmodified – last_modified_date\\n\\nreputation is the default sort.\\n\\nIt is possible to create moderately complex queries using sort, min, max, fromdate, and todate.\\nThe \`inname\` parameter lets consumers filter the results down to just those users with a certain substring in their display name. For example, \`inname=kevin\` will return all users with both users named simply \\"Kevin\\" or those with Kevin as one of (or part of) their names; such as \\"Kevin Montrose\\"."
+  listUsers(inname: String, fromdate: Int, todate: Int, min: Int, max: Int, sort: queryInput_listUsers_sort, order: queryInput_listUsers_order, page: Int, pagesize: Int, site: String! = "stackoverflow"): UsersResponse @httpOperation(path: "/users", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"inname\\":\\"inname\\",\\"fromdate\\":\\"fromdate\\",\\"todate\\":\\"todate\\",\\"min\\":\\"min\\",\\"max\\":\\"max\\",\\"sort\\":\\"sort\\",\\"order\\":\\"order\\",\\"page\\":\\"page\\",\\"pagesize\\":\\"pagesize\\",\\"site\\":\\"site\\"}")
+  "Returns the user associated with the passed access_token.\\n\\nThis method returns a [user](https://api.stackexchange.com/docs/types/user)."
+  getMe(site: String! = "stackoverflow"): UsersResponse @httpOperation(path: "/me", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"site\\":\\"site\\"}")
+  "Gets a subset of the reputation changes for users in {ids}.\\nReputation changes are intentionally scrubbed of some data to make it difficult to correlate votes on particular posts with user reputation changes. That being said, this method returns enough data for reasonable display of reputation trends.\\n{ids} can contain up to 100 semicolon delimited ids. To find ids programmatically look for user_id on user or shallow_user objects.\\nThis method returns a list of reputation objects."
+  getUsersReputationChanges(userIds: String!, fromdate: Int, todate: Int, page: Int, pagesize: NonNegativeInt, site: String! = "stackoverflow"): ReputationResponse @httpOperation(path: "/users/{args.userIds}/reputation", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fromdate\\":\\"fromdate\\",\\"todate\\":\\"todate\\",\\"page\\":\\"page\\",\\"pagesize\\":\\"pagesize\\",\\"site\\":\\"site\\"}")
+  "Returns the reputation changed for the user associated with the given access_token.\\nThis method returns a list of [reputation changes](https://api.stackexchange.com/docs/types/reputation)."
+  getMyReputation: ReputationResponse @httpOperation(path: "/me/reputation", operationSpecificHeaders: "{\\"accept\\":\\"*/*\\"}", httpMethod: GET)
+  "Returns users' public reputation history.\\nThis method returns a list of reputation_history."
+  getUsersReputationHistory(userIds: String!, page: Int, pagesize: Int, site: String! = "stackoverflow"): ReputationHistoryResponse @httpOperation(path: "/users/{args.userIds}/reputation-history", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"page\\":\\"page\\",\\"pagesize\\":\\"pagesize\\",\\"site\\":\\"site\\"}")
+  "Returns user's public reputation history.\\n\\nThis method returns a list of [reputation_history](https://api.stackexchange.com/docs/types/reputation-history)."
+  getMyReputationHistory(page: Int, pagesize: Int): ReputationHistoryResponse @httpOperation(path: "/me/reputation-history", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"page\\":\\"page\\",\\"pagesize\\":\\"pagesize\\"}")
+  "Returns a list of [answers](https://api.stackexchange.com/docs/types/answer)."
+  listAnswers(
+    "This parameter can be the full domain name (ie. \\"stackoverflow.com\\"), or a short form identified by api_site_parameter on the site object."
+    site: String
+    "Unix epoch time"
+    fromdate: Int
+    "Unix epoch time"
+    todate: Int
+    "Unix epoch time"
+    min: Int
+    "Unix epoch time"
+    max: Int
+    sort: queryInput_listAnswers_sort
+    order: queryInput_listAnswers_order
+    page: Int
+    pagesize: Int
+  ): AnswersResponse @httpOperation(path: "/answers", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"site\\":\\"site\\",\\"fromdate\\":\\"fromdate\\",\\"todate\\":\\"todate\\",\\"min\\":\\"min\\",\\"max\\":\\"max\\",\\"sort\\":\\"sort\\",\\"order\\":\\"order\\",\\"page\\":\\"page\\",\\"pagesize\\":\\"pagesize\\"}")
+}
+
+type QuestionsResponse {
+  "A list of questions."
+  items: [Question]
+  has_more: Boolean
+  quota_max: Int
+  quota_remaining: Int
+}
+
+type Question {
+  tags: [String]
+  owner: QuestionOwner
+  is_answered: Boolean
+  view_count: Int
+  answer_count: Int
+  score: Int
+  last_activity_date: Int
+  creation_date: Int
+  question_id: Int
+  link: String
+  title: String
+}
+
+type QuestionOwner {
+  reputation: Int
+  user_id: Int
+  user_type: String
+  profile_image: String
+  display_name: String
+  link: String
+}
+
+enum queryInput_listQuestions_order {
+  desc
+  asc
+}
+
+enum queryInput_listQuestions_sort {
+  activity
+  votes
+  creation
+  hot
+  week
+  month
+}
+
+enum queryInput_listFeaturedQuestions_order {
+  desc
+  asc
+}
+
+enum queryInput_listFeaturedQuestions_sort {
+  activity
+  votes
+  creation
+}
+
+enum queryInput_listQuestionsWithoutAnswers_order {
+  desc
+  asc
+}
+
+enum queryInput_listQuestionsWithoutAnswers_sort {
+  activity
+  votes
+  creation
+}
+
+enum queryInput_listUnansweredQuestions_order {
+  desc
+  asc
+}
+
+enum queryInput_listUnansweredQuestions_sort {
+  activity
+  votes
+  creation
+}
+
+type UsersResponse {
+  items: [User]
+  has_more: Boolean
+  quote_max: Int
+  quota_remaining: Int
+}
+
+type User {
+  badge_counts: UserBadgeCounts
+  account_id: BigInt
+  is_employee: Boolean
+  last_modified_date: BigInt
+  last_access_date: BigInt
+  reputation_change_year: Int
+  reputation_change_quarter: Int
+  reputation_change_month: Int
+  reputation_change_week: Int
+  reputation_change_day: Int
+  reputation: BigInt
+  creation_date: BigInt
+  user_type: String
+  user_id: BigInt
+  accept_rate: Int
+  location: String
+  website_url: URL
+  link: URL
+  profile_image: URL
+  display_name: String
+}
+
+type UserBadgeCounts {
+  bronze: Int
+  silver: Int
+  gold: Int
+}
+
+"The \`BigInt\` scalar type represents non-fractional signed whole numeric values."
+scalar BigInt
+
+"A field whose value conforms to the standard URL format as specified in RFC3986: https://www.ietf.org/rfc/rfc3986.txt."
+scalar URL
+
+enum queryInput_listUsers_sort {
+  reputation
+  creation
+  name
+  modified
+}
+
+enum queryInput_listUsers_order {
+  desc
+  asc
+}
+
+type ReputationResponse {
+  "A list of reputation_history."
+  items: [ReputationChange]
+  has_more: Boolean
+  quota_max: Int
+  quota_remaining: Int
+}
+
+type ReputationChange {
+  on_date: Int
+  reputation_change: Int
+  vote_type: query_getUsersReputationChanges_items_items_vote_type
+  post_type: String
+  post_id: Int
+  user_id: Int
+}
+
+enum query_getUsersReputationChanges_items_items_vote_type {
+  accepts
+  bounties_won
+  down_votes
+  up_votes
+}
+
+"Integers that will have a value of 0 or more."
+scalar NonNegativeInt
+
+type ReputationHistoryResponse {
+  "A list of reputation_history."
+  items: [ReputationHistory]
+  has_more: Boolean
+  quota_max: Int
+  quota_remaining: Int
+}
+
+type ReputationHistory {
+  reputation_history_type: String
+  reputation_change: Int
+  post_id: Int
+  creation_date: Int
+  user_id: Int
+}
+
+type AnswersResponse {
+  items: [Answer]
+  has_more: Boolean
+  backoff: Int
+  quota_max: Int
+  quota_remaining: Int
+}
+
+type Answer {
+  accepted: Boolean
+  answer_id: Int
+  awarded_bounty_amount: Int
+  awarded_bounty_users: [ShallowUser]
+  body: String
+  body_markdown: String
+  can_flag: Boolean
+  comment_count: Int
+  comments: [Comment]
+  community_owned_date: Int
+  content_license: String
+  creation_date: Int
+  down_vote_count: Int
+  is_accepted: Boolean
+  last_activity_date: Int
+  last_edit_date: Int
+  last_editor: ShallowUser
+  link: String
+  locked_date: Int
+  owner: ShallowUser
+  question_id: Int
+  score: Boolean
+  share_link: Int
+  tags: [String]
+  title: String
+  up_vote_count: Int
+  upvoted: Boolean
+}
+
+type ShallowUser {
+  id: String
+}
+
+type Comment {
+  id: String
+}
+
+"\`activity\` corresponds to \`Answer. last_activity_date\` , \`creation\` to \`Answer.creation_date\` and \`votes\` to \`Answer.score\`"
+enum queryInput_listAnswers_sort {
+  activity
+  creation
+  votes
+}
+
+enum queryInput_listAnswers_order {
+  desc
+  asc
+}
+
+scalar ObjMap
+
+enum HTTPMethod {
+  GET
+  HEAD
+  POST
+  PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
+  PATCH
+}"
+`;

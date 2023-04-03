@@ -1,25 +1,25 @@
-import { Source, pipe, share, filter, takeUntil, mergeMap, merge, make } from 'wonka';
-
+import { filter, make, merge, mergeMap, pipe, share, Source, takeUntil } from 'wonka';
+import { ExecuteMeshFn, SubscribeMeshFn } from '@graphql-mesh/runtime';
+import { isAsyncIterable } from '@graphql-tools/utils';
 import {
   Exchange,
   ExecutionResult,
-  makeResult,
   makeErrorResult,
+  makeResult,
   mergeResultPatch,
   Operation,
   OperationResult,
-  getOperationName,
 } from '@urql/core';
-import { ExecuteMeshFn, SubscribeMeshFn } from '@graphql-mesh/runtime';
-import { isAsyncIterable } from '@graphql-tools/utils';
 
 const ROOT_VALUE = {};
-const makeExecuteSource = (operation: Operation, options: MeshExchangeOptions): Source<OperationResult> => {
+const makeExecuteSource = (
+  operation: Operation,
+  options: MeshExchangeOptions,
+): Source<OperationResult> => {
   const operationFn = operation.kind === 'subscription' ? options.subscribe : options.execute;
-  const operationName = getOperationName(operation.query);
   return make<OperationResult>(observer => {
     let ended = false;
-    operationFn(operation.query, operation.variables, operation.context, ROOT_VALUE, operationName)
+    operationFn(operation.query, operation.variables, operation.context, ROOT_VALUE)
       .then((result: ExecutionResult | AsyncIterable<ExecutionResult>): any => {
         if (ended || !result) {
           return;
@@ -34,7 +34,9 @@ const makeExecuteSource = (operation: Operation, options: MeshExchangeOptions): 
         function next({ done, value }: { done?: boolean; value: ExecutionResult }): any {
           if (value) {
             observer.next(
-              (prevResult = prevResult ? mergeResultPatch(prevResult, value) : makeResult(operation, value))
+              (prevResult = prevResult
+                ? mergeResultPatch(prevResult, value)
+                : makeResult(operation, value)),
             );
           }
 
@@ -77,23 +79,27 @@ export const meshExchange =
       const executedOps$ = pipe(
         sharedOps$,
         filter((operation: Operation) => {
-          return operation.kind === 'query' || operation.kind === 'mutation' || operation.kind === 'subscription';
+          return (
+            operation.kind === 'query' ||
+            operation.kind === 'mutation' ||
+            operation.kind === 'subscription'
+          );
         }),
         mergeMap((operation: Operation) => {
           const { key } = operation;
           const teardown$ = pipe(
             sharedOps$,
-            filter(op => op.kind === 'teardown' && op.key === key)
+            filter(op => op.kind === 'teardown' && op.key === key),
           );
 
           return pipe(makeExecuteSource(operation, options), takeUntil(teardown$));
-        })
+        }),
       );
 
       const forwardedOps$ = pipe(
         sharedOps$,
         filter(operation => operation.kind === 'teardown'),
-        forward
+        forward,
       );
 
       return merge([executedOps$, forwardedOps$]);

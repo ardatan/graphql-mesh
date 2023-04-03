@@ -1,20 +1,19 @@
+import { DocumentNode, ExecutionResult } from 'graphql';
+import { envelop } from '@envelop/core';
 import {
-  KeyValueCache,
-  MeshPubSub,
   GraphQLOperation,
+  KeyValueCache,
+  Logger,
+  MeshFetch,
   MeshHandler,
+  MeshMerger,
+  MeshPubSub,
   MeshTransform,
   YamlConfig,
-  Logger,
-  MeshMerger,
 } from '@graphql-mesh/types';
-import { DocumentNode, ExecutionResult } from 'graphql';
 import { IResolvers, Source } from '@graphql-tools/utils';
-import { MESH_CONTEXT_SYMBOL } from './constants';
-import { MergedTypeConfig } from '@graphql-tools/delegate';
-import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
-import { MeshInstance } from './get-mesh';
-import { envelop } from '@envelop/core';
+import { MESH_CONTEXT_SYMBOL } from './constants.js';
+import { MeshInstance } from './get-mesh.js';
 
 export type GetMeshOptions = {
   sources: MeshResolvedSource[];
@@ -22,19 +21,18 @@ export type GetMeshOptions = {
   additionalTypeDefs?: DocumentNode[];
   additionalResolvers?: IResolvers | IResolvers[];
   cache: KeyValueCache;
-  pubsub: MeshPubSub;
+  pubsub?: MeshPubSub;
   merger: MeshMerger;
   logger?: Logger;
-  liveQueryInvalidations?: YamlConfig.LiveQueryInvalidation[];
   additionalEnvelopPlugins?: Parameters<typeof envelop>[0]['plugins'];
   documents?: Source[];
+  fetchFn?: MeshFetch;
 };
 
-export type MeshResolvedSource<TContext = any> = {
+export type MeshResolvedSource = {
   name: string;
-  handler: MeshHandler<TContext>;
+  handler: MeshHandler;
   transforms?: MeshTransform[];
-  merge?: Record<string, MergedTypeConfig>;
 };
 
 export type ExecuteMeshFn<TData = any, TVariables = any, TContext = any, TRootValue = any> = (
@@ -42,7 +40,7 @@ export type ExecuteMeshFn<TData = any, TVariables = any, TContext = any, TRootVa
   variables: TVariables,
   context?: TContext,
   rootValue?: TRootValue,
-  operationName?: string
+  operationName?: string,
 ) => Promise<ExecutionResult<TData>>;
 
 export type SubscribeMeshFn<TVariables = any, TContext = any, TRootValue = any, TData = any> = (
@@ -50,18 +48,26 @@ export type SubscribeMeshFn<TVariables = any, TContext = any, TRootValue = any, 
   variables?: TVariables,
   context?: TContext,
   rootValue?: TRootValue,
-  operationName?: string
+  operationName?: string,
 ) => Promise<ExecutionResult<TData> | AsyncIterable<ExecutionResult<TData>>>;
 
 export type MeshContext = {
   [MESH_CONTEXT_SYMBOL]: true;
-} & { pubsub: MeshPubSub; cache: KeyValueCache; logger: Logger; liveQueryStore: InMemoryLiveQueryStore };
+} & { pubsub: MeshPubSub; cache: KeyValueCache; logger: Logger };
 
 export interface ServeMeshOptions {
   baseDir: string;
   getBuiltMesh: () => Promise<MeshInstance>;
   logger: Logger;
-  rawConfig: YamlConfig.Config;
+  rawServeConfig: YamlConfig.Config['serve'];
   argsPort?: number;
   playgroundTitle?: string;
 }
+
+export type MeshExecutor = <TData, TVariables, TContext, TRootValue>(
+  documentOrSDL: GraphQLOperation<TData, TVariables>,
+  variables?: TVariables,
+  context?: TContext,
+  rootValue?: TRootValue,
+  operationName?: string,
+) => Promise<TData | AsyncIterable<TData>>;

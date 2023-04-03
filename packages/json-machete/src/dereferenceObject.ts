@@ -1,8 +1,9 @@
 import JsonPointer from 'json-pointer';
-import { path as pathModule } from '@graphql-mesh/cross-helpers';
 import urlJoin from 'url-join';
-import { fetch as crossUndiciFetch } from 'cross-undici-fetch';
-import { readFileOrUrl } from '@graphql-mesh/utils';
+import { path as pathModule, process } from '@graphql-mesh/cross-helpers';
+import { defaultImportFn, DefaultLogger, isUrl, readFileOrUrl } from '@graphql-mesh/utils';
+import { fetch as crossUndiciFetch } from '@whatwg-node/fetch';
+import { handleUntitledDefinitions } from './healUntitledDefinitions.js';
 
 export const resolvePath = (path: string, root: any): any => {
   try {
@@ -15,17 +16,13 @@ export const resolvePath = (path: string, root: any): any => {
   }
 };
 function isRefObject(obj: any): obj is { $ref: string } {
-  return typeof obj === 'object' && obj.$ref;
-}
-
-function isURL(str: string) {
-  return /^https?:\/\//.test(str);
+  return typeof obj === 'object' && typeof obj.$ref === 'string';
 }
 
 const getAbsolute$Ref = (given$ref: string, baseFilePath: string) => {
   const [givenExternalFileRelativePath, givenRefPath] = given$ref.split('#');
   if (givenExternalFileRelativePath) {
-    const cwd = isURL(baseFilePath) ? getCwdForUrl(baseFilePath) : pathModule.dirname(baseFilePath);
+    const cwd = isUrl(baseFilePath) ? getCwdForUrl(baseFilePath) : pathModule.dirname(baseFilePath);
     const givenExternalFilePath = getAbsolutePath(givenExternalFileRelativePath, cwd);
     if (givenRefPath) {
       return `${givenExternalFilePath}#${givenRefPath}`;
@@ -46,10 +43,10 @@ function normalizeUrl(url: string) {
 }
 
 export function getAbsolutePath(path: string, cwd: string) {
-  if (isURL(path)) {
+  if (isUrl(path)) {
     return path;
   }
-  if (isURL(cwd)) {
+  if (isUrl(cwd)) {
     return normalizeUrl(urlJoin(cwd, path));
   }
   if (pathModule.isAbsolute(path)) {
@@ -59,10 +56,9 @@ export function getAbsolutePath(path: string, cwd: string) {
 }
 
 export function getCwd(path: string) {
-  return isURL(path) ? getCwdForUrl(path) : pathModule.dirname(path);
+  return isUrl(path) ? getCwdForUrl(path) : pathModule.dirname(path);
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 export async function dereferenceObject<T extends object, TRoot = T>(
   obj: T,
   {
@@ -70,16 +66,22 @@ export async function dereferenceObject<T extends object, TRoot = T>(
     externalFileCache = new Map<string, any>(),
     refMap = new Map<string, any>(),
     root = obj as any,
-    fetch = crossUndiciFetch,
+    fetchFn: fetch = crossUndiciFetch,
+    importFn = defaultImportFn,
+    logger = new DefaultLogger('dereferenceObject'),
+    resolvedObjects = new WeakSet(),
     headers,
   }: {
     cwd?: string;
     externalFileCache?: Map<string, any>;
     refMap?: Map<string, any>;
     root?: TRoot;
-    fetch?: WindowOrWorkerGlobalScope['fetch'];
+    fetchFn?: WindowOrWorkerGlobalScope['fetch'];
+    importFn?: (m: string) => any;
+    logger?: any;
+    resolvedObjects?: WeakSet<any>;
     headers?: Record<string, string>;
-  } = {}
+  } = {},
 ): Promise<T> {
   if (obj != null && typeof obj === 'object') {
     if (isRefObject(obj)) {
@@ -87,9 +89,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
       if (refMap.has($ref)) {
         return refMap.get($ref);
       } else {
-        if (process.env.DEBUG) {
-          console.log(`Dereferencing `, obj);
-        }
+        logger.debug(`Resolving ${$ref}`);
         const [externalRelativeFilePath, refPath] = $ref.split('#');
         if (externalRelativeFilePath) {
           const externalFilePath = getAbsolutePath(externalRelativeFilePath, cwd);
@@ -100,6 +100,8 @@ export async function dereferenceObject<T extends object, TRoot = T>(
               fetch,
               headers,
               cwd,
+              importFn,
+              logger,
             }).catch(() => {
               throw new Error(`Unable to load ${externalRelativeFilePath} from ${cwd}`);
             });
@@ -107,23 +109,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
 
             // Title should not be overwritten by the title given from the reference
             // Usually Swagger and OpenAPI Schemas have this
-            if (externalFile.definitions) {
-              for (const definitionName in externalFile.definitions) {
-                const definition = externalFile.definitions[definitionName];
-                if (!definition.title) {
-                  definition.title = definitionName;
-                }
-              }
-            }
-
-            if (externalFile.components?.schemas) {
-              for (const definitionName in externalFile.components.schemas) {
-                const definition = externalFile.components.schemas[definitionName];
-                if (!definition.title) {
-                  definition.title = definitionName;
-                }
-              }
-            }
+            handleUntitledDefinitions(externalFile);
           }
           const result = await dereferenceObject(
             refPath
@@ -156,12 +142,16 @@ export async function dereferenceObject<T extends object, TRoot = T>(
                   throw new Error('Not implemented ' + key.toString());
                 },
               }),
-              fetch,
+              fetchFn: fetch,
+              importFn,
+              logger,
               headers,
               root: externalFile,
-            }
+              resolvedObjects,
+            },
           );
           refMap.set($ref, result);
+          resolvedObjects.add(result);
           if (result && !result.$resolvedRef) {
             result.$resolvedRef = refPath;
           }
@@ -171,39 +161,53 @@ export async function dereferenceObject<T extends object, TRoot = T>(
           return result;
         } else {
           const resolvedObj = resolvePath(refPath, root);
-          if (typeof resolvedObj === 'object' && !resolvedObj.$ref) {
+          if (resolvedObjects.has(resolvedObj)) {
             refMap.set($ref, resolvedObj);
+            return resolvedObj;
           }
+          /*
           if (resolvedObj && !resolvedObj.$resolvedRef) {
             resolvedObj.$resolvedRef = refPath;
           }
+          */
           const result = await dereferenceObject(resolvedObj, {
             cwd,
             externalFileCache,
             refMap,
             root,
-            fetch,
+            fetchFn: fetch,
+            importFn,
+            logger,
             headers,
+            resolvedObjects,
           });
+          if (!result) {
+            return obj;
+          }
+          resolvedObjects.add(result);
           refMap.set($ref, result);
-          if (result && !result.$resolvedRef) {
+          if (!result.$resolvedRef) {
             result.$resolvedRef = refPath;
           }
           return result;
         }
       }
     } else {
-      for (const key in obj) {
-        const val = obj[key];
-        if (typeof val === 'object') {
-          obj[key] = await dereferenceObject<any>(val, {
-            cwd,
-            externalFileCache,
-            refMap,
-            root,
-            fetch,
-            headers,
-          });
+      if (!resolvedObjects.has(obj)) {
+        resolvedObjects.add(obj);
+        for (const key in obj) {
+          const val = obj[key];
+          if (typeof val === 'object') {
+            obj[key] = await dereferenceObject<any>(val, {
+              cwd,
+              externalFileCache,
+              refMap,
+              root,
+              fetchFn: fetch,
+              headers,
+              resolvedObjects,
+            });
+          }
         }
       }
     }

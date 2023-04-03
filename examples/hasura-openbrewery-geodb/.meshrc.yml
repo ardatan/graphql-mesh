@@ -2,7 +2,7 @@ sources:
   - name: OpenBrewery
     handler:
       jsonSchema:
-        baseUrl: https://api.openbrewerydb.org
+        endpoint: https://api.openbrewerydb.org
         operations:
           - type: Query
             field: breweries

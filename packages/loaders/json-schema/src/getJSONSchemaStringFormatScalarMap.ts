@@ -1,4 +1,5 @@
 import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
 import { GraphQLScalarType, Kind } from 'graphql';
 import { pascalCase } from 'pascal-case';
 
@@ -12,14 +13,23 @@ const JSONSchemaStringFormats = [
   'uri-template',
 ];
 
-export function getJSONSchemaStringFormatScalarMap(ajv: Ajv): Map<string, GraphQLScalarType> {
+export function getJSONSchemaStringFormatScalarMap(): Map<string, GraphQLScalarType> {
+  const ajv = new Ajv({
+    strict: false,
+  });
+  addFormats(ajv);
   const map = new Map<string, GraphQLScalarType>();
   for (const format of JSONSchemaStringFormats) {
     const schema = {
       type: 'string',
       format,
     };
-    const validate = ajv.compile(schema);
+    let validate: (value: string) => boolean;
+    try {
+      validate = ajv.compile(schema);
+    } catch (e) {
+      validate = (value: string) => ajv.validate(schema, value);
+    }
     const coerceString = (value: string) => {
       if (validate(value)) {
         return value;

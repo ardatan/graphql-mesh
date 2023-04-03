@@ -1,10 +1,10 @@
 import {
-  ValidationError,
   InMemoryStoreStorageAdapter,
   MeshStore,
   PredefinedProxyOptions,
   ReadonlyStoreError,
-} from '../src';
+  ValidationError,
+} from '../src/index.js';
 
 describe('MeshStore and storage', () => {
   describe('MeshStore', () => {
@@ -39,7 +39,7 @@ describe('MeshStore and storage', () => {
       } catch (e) {
         expect(e instanceof ReadonlyStoreError).toBeTruthy();
         expect(e.message).toBe(
-          `Unable to set value for "file.json" under "test" because the store is in read-only mode.`
+          `Unable to set value for "file.json" under "test" because the store is in read-only mode.`,
         );
       }
     });
@@ -54,6 +54,8 @@ describe('MeshStore and storage', () => {
             throw new Error('Validation failed! you changed 1 to 2!');
           }
         },
+        fromJSON: value => value,
+        toJSON: value => value,
       });
 
       try {
@@ -68,7 +70,7 @@ describe('MeshStore and storage', () => {
       } catch (e) {
         expect(e instanceof ValidationError).toBeTruthy();
         expect(e.message).toBe(
-          `Validation failed for "file.json" under "test": Validation failed! you changed 1 to 2!`
+          `Validation failed for "file.json" under "test": Validation failed! you changed 1 to 2!`,
         );
       }
 

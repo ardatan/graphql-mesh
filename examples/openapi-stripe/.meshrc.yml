@@ -1,9 +1,9 @@
 sources:
   - name: Stripe
     handler:
-      newOpenapi:
-        oasFilePath: https://raw.githubusercontent.com/stripe/openapi/master/openapi/spec3.json
-        baseUrl: https://api.stripe.com
+      openapi:
+        source: https://raw.githubusercontent.com/stripe/openapi/master/openapi/spec3.json
+        endpoint: https://api.stripe.com
         operationHeaders:
           Authorization: 'Bearer {env.STRIPE_TOKEN}'
 

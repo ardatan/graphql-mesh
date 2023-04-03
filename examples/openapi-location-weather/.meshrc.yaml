@@ -3,6 +3,7 @@ sources:
     handler:
       openapi:
         source: https://api.apis.guru/v2/specs/mashape.com/geodb/1.0.0/swagger.json
+        ignoreErrorResponses: true
         operationHeaders:
           'X-RapidAPI-Key': f93d3b393dmsh13fea7cb6981b2ep1dba0ajsn654ffeb48c26
     transforms:
@@ -16,6 +17,7 @@ sources:
     handler:
       openapi:
         source: https://api.apis.guru/v2/specs/weatherbit.io/2.0.0/swagger.json
+        ignoreErrorResponses: true
     transforms:
       - rename:
           - from:
@@ -23,58 +25,56 @@ sources:
             to:
               type: WeatherError
 
-transforms:
-  - cache:
-      # Geo data doesn't change frequently, so we can cache it forever
-      - field: Query.*
-      # Forcast data might change, so we can cache it for 1 hour only
-      - field: PopulatedPlaceSummary.dailyForecast
-        invalidate:
+plugins:
+  - responseCache:
+      ttlPerCoordinate:
+        # Geo data doesn't change frequently, so we can cache it forever
+        - coordinate: Query.*
+          ttl: 0
+        # Forcast data might change, so we can cache it for 1 hour only
+        - coordinate: PopulatedPlaceSummary.dailyForecast
           ttl: 3600
-      - field: PopulatedPlaceSummary.todayForecast
-        invalidate:
+        - coordinate: PopulatedPlaceSummary.todayForecast
           ttl: 3600
 
 additionalTypeDefs: |
-      extend type PopulatedPlaceSummary {
-        dailyForecast: [Forecast]
-        todayForecast: Forecast
-      }
-additionalResolvers:
-  - targetTypeName: PopulatedPlaceSummary
-    targetFieldName: dailyForecast
-    requiredSelectionSet: |
-      {
-        latitude
-        longitude
-      }
-    sourceName: Weather
-    sourceTypeName: Query
-    sourceFieldName: getForecastDailyLatequalToLatLonLon
-    sourceArgs:
-      lat: "{root.latitude}"
-      lon: "{root.longitude}"
-      key: 971a693de7ff47a89127664547988be5
-    result: data
-  - targetTypeName: PopulatedPlaceSummary
-    targetFieldName: todayForecast
-    requiredSelectionSet: |
-      {
-        latitude
-        longitude
-      }
-    sourceName: Weather
-    sourceTypeName: Query
-    sourceFieldName: getForecastDailyLatequalToLatLonLon
-    sourceArgs:
-      lat: "{root.latitude}"
-      lon: "{root.longitude}"
-      days: 1
-      key: 971a693de7ff47a89127664547988be5
-    result: data[0]
+  extend type PopulatedPlaceSummary {
+    dailyForecast: [Forecast] @resolveTo(
+      requiredSelectionSet: """
+       {
+          latitude
+          longitude
+        }
+      """,
+      sourceName: "Weather",
+      sourceTypeName: "Query",
+      sourceFieldName: "forecast_daily_by_lat_by_lon",
+      sourceArgs: {
+        lat: "{root.latitude}",
+        lon: "{root.longitude}",
+        key: "971a693de7ff47a89127664547988be5"
+      },
+      result: "data"
+    )
+    todayForecast: Forecast @resolveTo(
+      requiredSelectionSet: """
+       {
+          latitude
+          longitude
+        }
+      """,
+      sourceName: "Weather",
+      sourceTypeName: "Query",
+      sourceFieldName: "forecast_daily_by_lat_by_lon",
+      sourceArgs: {
+        lat: "{root.latitude}",
+        lon: "{root.longitude}",
+        days: 1
+        key: "971a693de7ff47a89127664547988be5"
+      },
+      result: "data[0]"
+    )
+  }
 
 documents:
   - ./example-query.graphql
-
-serve:
-  customServerHandler: ./customServerHandler.ts

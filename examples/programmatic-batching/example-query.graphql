@@ -1,0 +1,13 @@
+fragment UserF on User {
+  id
+  name
+}
+
+{
+  john: user(id: 1) {
+    ...UserF
+  }
+  jane: user(id: 2) {
+    ...UserF
+  }
+}

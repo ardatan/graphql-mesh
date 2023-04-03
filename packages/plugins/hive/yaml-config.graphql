@@ -1,0 +1,132 @@
+extend type Plugin {
+  hive: HivePlugin
+}
+
+type HivePlugin @md {
+  """
+  Access Token
+  """
+  token: String!
+  """
+  Agent Options
+  """
+  agent: HiveAgentOptions
+  """
+  Collects schema usage based on operations
+  """
+  usage: HiveUsageOptions
+  """
+  Schema reporting
+  """
+  reporting: HiveReportingOptions
+  """
+  Options for self-hosting
+  [See more](https://github.com/kamilkisiela/graphql-hive/tree/main/packages/libraries/client#self-hosting)
+  """
+  selfHosting: HiveSelfHostingOptions
+}
+
+type HiveAgentOptions {
+  """
+  30s by default
+  """
+  timeout: Int
+  """
+  5 by default
+  """
+  maxRetries: Int
+  """
+  200 by default
+  """
+  minTimeout: Int
+  """
+  Send reports in interval (defaults to 10_000ms)
+  """
+  sendInterval: Int
+  """
+  Max number of traces to send at once (defaults to 25)
+  """
+  maxSize: Int
+}
+
+type HiveUsageOptions {
+  """
+  Extract client info from GraphQL Context
+  """
+  clientInfo: HiveClientInfo
+  """
+  Hive uses LRU cache to store info about operations.
+  This option represents the maximum size of the cache.
+  Default: 1000
+  """
+  max: Int
+  """
+  Hive uses LRU cache to store info about operations.
+  This option represents the maximum age of an unused operation in the cache.
+  Default: no ttl
+  """
+  ttl: Int
+  """
+  A list of operations (by name) to be ignored by Hive.
+  """
+  exclude: [String]
+  """
+  Sample rate to determine sampling.
+  0.0 = 0% chance of being sent
+  1.0 = 100% chance of being sent
+  Default: 1.0
+  """
+  sampleRate: Float
+  """
+  (Experimental) Enables collecting Input fields usage based on the variables passed to the operation.
+  Default: false
+  """
+  processVariables: Boolean
+}
+
+type HiveClientInfo {
+  """
+  Extract client name
+  Example: `{context.headers['x-client-name']}`
+  """
+  name: String
+  """
+  Extract client version
+  Example: `{context.headers['x-client-version']}`
+  """
+  version: String
+}
+
+type HiveReportingOptions {
+  """
+  Author of current version of the schema
+  """
+  author: String!
+  """
+  Commit SHA hash (or any identifier) related to the schema version
+  """
+  commit: String!
+  serviceName: String
+  serviceUrl: String
+}
+
+type HiveSelfHostingOptions {
+  """
+  Point to your own instance of GraphQL Hive API
+
+  Used by schema reporting and token info.
+  """
+  graphqlEndpoint: String!
+  """
+  Address of your own GraphQL Hive application
+
+  Used by token info to generate a link to the organization, project and target.
+  """
+  applicationUrl: String!
+  """
+  Point to your own instance of GraphQL Hive Usage API
+
+  Used by usage reporting.
+  """
+  usageEndpoint: String
+}

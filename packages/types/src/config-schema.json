@@ -5,6 +5,9 @@
       "type": "object",
       "title": "Cache",
       "properties": {
+        "cfwKv": {
+          "$ref": "#/definitions/CFWorkersKVCacheConfig"
+        },
         "file": {
           "$ref": "#/definitions/FileCacheConfig"
         },
@@ -15,6 +18,18 @@
           "$ref": "#/definitions/RedisConfig"
         }
       }
+    },
+    "CFWorkersKVCacheConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "CFWorkersKVCacheConfig",
+      "properties": {
+        "namespace": {
+          "type": "string",
+          "description": "The name of the Workers KV namespace to use for caching.\n\nMake sure you have configured the following namespace described in [here](https://developers.cloudflare.com/workers/wrangler/cli-wrangler/commands/#kv)."
+        }
+      },
+      "required": ["namespace"]
     },
     "FileCacheConfig": {
       "additionalProperties": false,
@@ -94,7 +109,7 @@
           ]
         },
         "port": {
-          "description": "TCP Port to listen (default: `3000`) (Any of: Int, String)",
+          "description": "TCP Port to listen (default: `4000`) (Any of: Int, String)",
           "anyOf": [
             {
               "type": "integer"
@@ -111,22 +126,6 @@
         "cors": {
           "$ref": "#/definitions/CorsConfig",
           "description": "Configuration for CORS"
-        },
-        "handlers": {
-          "type": "array",
-          "items": {
-            "description": "Any of: WebhookHandler, ExpressHandler",
-            "anyOf": [
-              {
-                "$ref": "#/definitions/WebhookHandler"
-              },
-              {
-                "$ref": "#/definitions/ExpressHandler"
-              }
-            ]
-          },
-          "additionalItems": false,
-          "description": "Express/Connect compatible handlers and middlewares extend GraphQL Mesh HTTP Server (Any of: WebhookHandler, ExpressHandler)"
         },
         "staticFiles": {
           "type": "string",
@@ -145,7 +144,7 @@
           "description": "Path to GraphQL Endpoint (default: /graphql)"
         },
         "browser": {
-          "description": "Path to the browser that will be used by `mesh serve` to open a playground window in development mode\nThis feature can be disable by passing `false` (Any of: String, Boolean)",
+          "description": "Path to the browser that will be used by `mesh serve` to open a playground window in development mode\nThis feature can be disabled by passing `false` (Any of: String, Boolean)",
           "anyOf": [
             {
               "type": "string"
@@ -155,13 +154,13 @@
             }
           ]
         },
-        "customServerHandler": {
-          "type": "string",
-          "description": "If you want to use a custom GraphQL server, you can pass the path of the code file that exports a custom Mesh Server Handler\nWith a custom server handler, you won't be able to use the features of GraphQL Mesh HTTP Server"
-        },
         "playgroundTitle": {
           "type": "string",
           "description": "Title of GraphiQL Playground"
+        },
+        "trustProxy": {
+          "type": "string",
+          "description": "Configure Express Proxy Handling\n[Learn more](https://expressjs.com/en/guide/behind-proxies.html)"
         }
       }
     },
@@ -212,52 +211,6 @@
           "type": "integer"
         }
       }
-    },
-    "ExpressHandler": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "ExpressHandler",
-      "properties": {
-        "path": {
-          "type": "string",
-          "description": "Path that the handler will control"
-        },
-        "handler": {
-          "type": "string",
-          "description": "Path of the handler's code"
-        },
-        "method": {
-          "type": "string",
-          "enum": ["GET", "POST", "DELETE", "PATCH"],
-          "description": "HTTP Method that the handler will control (Allowed values: GET, POST, DELETE, PATCH)"
-        }
-      },
-      "required": ["path", "handler"]
-    },
-    "WebhookHandler": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "WebhookHandler",
-      "properties": {
-        "path": {
-          "type": "string",
-          "description": "Path that remote API will ping"
-        },
-        "method": {
-          "type": "string",
-          "enum": ["GET", "POST", "DELETE", "PATCH"],
-          "description": "HTTP Method that the handler will control (Allowed values: GET, POST, DELETE, PATCH)"
-        },
-        "pubsubTopic": {
-          "type": "string",
-          "description": "Name of the topic you want to pass incoming payload"
-        },
-        "payload": {
-          "type": "string",
-          "description": "Part of the object you want to pass (e.g. `data.messages`)"
-        }
-      },
-      "required": ["path", "pubsubTopic"]
     },
     "HTTPSConfig": {
       "additionalProperties": false,
@@ -372,10 +325,6 @@
           "additionalItems": false,
           "description": "Transformer to hoist GraphQL fields"
         },
-        "mock": {
-          "$ref": "#/definitions/MockingConfig",
-          "description": "Mock configuration for your source"
-        },
         "namingConvention": {
           "$ref": "#/definitions/NamingConventionTransformConfig",
           "description": "Transformer to apply naming convention to GraphQL Types"
@@ -446,10 +395,6 @@
             }
           ]
         },
-        "snapshot": {
-          "$ref": "#/definitions/SnapshotTransformConfig",
-          "description": "Configuration for Snapshot extension"
-        },
         "typeMerging": {
           "$ref": "#/definitions/TypeMergingConfig",
           "description": "[Type Merging](https://www.graphql-tools.com/docs/stitch-type-merging) Configuration"
@@ -480,15 +425,8 @@
           "description": "Handler for gRPC and Protobuf schemas"
         },
         "jsonSchema": {
-          "description": "Handler for JSON Schema specification. Source could be a local json file, or a url to it. (Any of: JsonSchemaHandler, JsonSchemaHandlerBundle)",
-          "anyOf": [
-            {
-              "$ref": "#/definitions/JsonSchemaHandler"
-            },
-            {
-              "$ref": "#/definitions/JsonSchemaHandlerBundle"
-            }
-          ]
+          "$ref": "#/definitions/JsonSchemaHandler",
+          "description": "Handler for JSON Schema specification.\nSource could be a local json file, or a url to it."
         },
         "mongoose": {
           "$ref": "#/definitions/MongooseHandler"
@@ -499,10 +437,6 @@
         "neo4j": {
           "$ref": "#/definitions/Neo4jHandler",
           "description": "Handler for Neo4j"
-        },
-        "newOpenapi": {
-          "$ref": "#/definitions/NewOpenapiHandler",
-          "description": "Handler for Swagger / OpenAPI 2/3 specification. Source could be a local json/swagger file, or a url to it."
         },
         "odata": {
           "$ref": "#/definitions/ODataHandler",
@@ -530,6 +464,98 @@
         "tuql": {
           "$ref": "#/definitions/TuqlHandler",
           "description": "Handler for SQLite database, based on `tuql`"
+        }
+      }
+    },
+    "Plugin": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Plugin",
+      "properties": {
+        "maskedErrors": {
+          "$ref": "#/definitions/MaskedErrorsPluginConfig"
+        },
+        "immediateIntrospection": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
+        },
+        "deduplicateRequest": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
+        },
+        "hive": {
+          "$ref": "#/definitions/HivePlugin"
+        },
+        "httpCache": {
+          "$ref": "#/definitions/HTTPCachePlugin"
+        },
+        "httpDetailsExtensions": {
+          "$ref": "#/definitions/HTTPDetailsExtensionsConfig"
+        },
+        "http2": {
+          "$ref": "#/definitions/Http2Plugin"
+        },
+        "liveQuery": {
+          "$ref": "#/definitions/LiveQueryConfig"
+        },
+        "mock": {
+          "$ref": "#/definitions/MockingConfig",
+          "description": "Mock configuration for your source"
+        },
+        "newrelic": {
+          "$ref": "#/definitions/NewrelicConfig"
+        },
+        "operationFieldPermissions": {
+          "$ref": "#/definitions/OperationFieldPermissionsConfig"
+        },
+        "prometheus": {
+          "$ref": "#/definitions/PrometheusConfig"
+        },
+        "rateLimit": {
+          "$ref": "#/definitions/RateLimitPluginConfig",
+          "description": "RateLimit plugin"
+        },
+        "responseCache": {
+          "$ref": "#/definitions/ResponseCacheConfig"
+        },
+        "snapshot": {
+          "$ref": "#/definitions/SnapshotPluginConfig",
+          "description": "Configuration for Snapshot extension"
+        },
+        "statsd": {
+          "$ref": "#/definitions/StatsdPlugin"
+        }
+      }
+    },
+    "MaskedErrorsPluginConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MaskedErrorsPluginConfig",
+      "properties": {
+        "errorMessage": {
+          "type": "string"
         }
       }
     },
@@ -572,7 +598,13 @@
           "description": "If return types don't match,\nyou can specify a result type to apply inline fragment"
         }
       },
-      "required": ["sourceName", "sourceTypeName", "sourceFieldName", "targetTypeName", "targetFieldName"]
+      "required": [
+        "sourceName",
+        "sourceTypeName",
+        "sourceFieldName",
+        "targetTypeName",
+        "targetFieldName"
+      ]
     },
     "AdditionalStitchingBatchResolverObject": {
       "additionalProperties": false,
@@ -678,24 +710,6 @@
       },
       "required": ["name"]
     },
-    "LiveQueryInvalidation": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "LiveQueryInvalidation",
-      "properties": {
-        "field": {
-          "type": "string"
-        },
-        "invalidate": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false
-        }
-      },
-      "required": ["field", "invalidate"]
-    },
     "GraphQLHandlerMultipleHTTPConfiguration": {
       "additionalProperties": false,
       "type": "object",
@@ -740,7 +754,7 @@
       "type": "object",
       "title": "GraphQLHandlerCodeFirstConfiguration",
       "properties": {
-        "schema": {
+        "source": {
           "anyOf": [
             {
               "type": "object",
@@ -757,7 +771,7 @@
           "description": "A file path to your GraphQL Schema\nIf you provide a path to a code file(js or ts),\nother options will be ignored and the schema exported from the file will be used directly."
         }
       },
-      "required": ["schema"]
+      "required": ["source"]
     },
     "GraphQLHandlerHTTPConfiguration": {
       "additionalProperties": false,
@@ -798,38 +812,27 @@
           "enum": ["GET", "POST"],
           "description": "HTTP method used for GraphQL operations (Allowed values: GET, POST)"
         },
-        "customFetch": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ],
-          "description": "Path to a custom W3 Compatible Fetch Implementation"
+        "credentials": {
+          "type": "string",
+          "enum": ["omit", "include"],
+          "description": "Request Credentials if your environment supports it.\n[See more](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials)\n\n@default \"same-origin\" (Allowed values: omit, include)"
         },
         "webSocketImpl": {
           "type": "string",
           "description": "Path to a custom W3 Compatible WebSocket Implementation"
         },
-        "introspection": {
+        "source": {
           "type": "string",
-          "description": "Path to the introspection\nYou can seperately give schema introspection"
-        },
-        "multipart": {
-          "type": "boolean",
-          "description": "Enable multipart/formdata in order to support file uploads"
+          "description": "Path to the introspection\nYou can separately give schema introspection or SDL"
         },
         "subscriptionsProtocol": {
           "type": "string",
           "enum": ["SSE", "WS", "LEGACY_WS"],
           "description": "SSE - Server Sent Events\nWS - New graphql-ws\nLEGACY_WS - Legacy subscriptions-transport-ws (Allowed values: SSE, WS, LEGACY_WS)"
+        },
+        "subscriptionsEndpoint": {
+          "type": "string",
+          "description": "URL to your endpoint serving all subscription queries for this source"
         },
         "retry": {
           "type": "integer",
@@ -855,19 +858,8 @@
           "type": "string",
           "description": "gRPC Endpoint"
         },
-        "protoFilePath": {
-          "description": "gRPC Proto file that contains your protobuf schema (Any of: ProtoFilePath, String)",
-          "anyOf": [
-            {
-              "$ref": "#/definitions/ProtoFilePath"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "descriptorSetFilePath": {
-          "description": "Use a binary-encoded or JSON file descriptor set file (Any of: ProtoFilePath, String)",
+        "source": {
+          "description": "gRPC Proto file that contains your protobuf schema\nOR\nUse a binary-encoded or JSON file descriptor set file (Any of: ProtoFilePath, String)",
           "anyOf": [
             {
               "$ref": "#/definitions/ProtoFilePath"
@@ -894,9 +886,13 @@
           "properties": {},
           "description": "MetaData"
         },
-        "useReflection": {
-          "type": "boolean",
-          "description": "Use gRPC reflection to automatically gather the connection"
+        "prefixQueryMethod": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "prefix to collect Query method default: list, get"
         }
       },
       "required": ["endpoint"]
@@ -948,48 +944,36 @@
         }
       }
     },
-    "JsonSchemaHandlerBundle": {
+    "QueryStringOptions": {
       "additionalProperties": false,
       "type": "object",
-      "title": "JsonSchemaHandlerBundle",
+      "title": "QueryStringOptions",
       "properties": {
-        "bundlePath": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ],
-          "description": "Path to the bundle file"
+        "indices": {
+          "type": "boolean",
+          "description": "When arrays are stringified, by default they are not given explicit indices:\n`a=b&a=c&a=d`\nYou may override this by setting the indices option to true:\n`a[0]=b&a[1]=c&a[2]=d`"
         },
-        "bundleHeaders": {
-          "type": "object",
-          "properties": {},
-          "description": "HTTP Headers to receive the bundle"
+        "arrayFormat": {
+          "type": "string",
+          "enum": ["indices", "brackets", "repeat", "comma"],
+          "description": "You can configure how to format arrays in the query strings.\n\nNote: when using arrayFormat set to 'comma', you can also pass the commaRoundTrip option set to true or false, to append [] on single-item arrays, so that they can round trip through a parse. (Allowed values: indices, brackets, repeat, comma)"
         },
-        "baseUrl": {
-          "type": "string"
-        },
-        "operationHeaders": {
-          "type": "object",
-          "properties": {}
+        "commaRoundTrip": {
+          "type": "boolean",
+          "description": "Even if there is a single item in an array, this option treats them as arrays\n(default: false)"
         }
-      },
-      "required": ["bundlePath"]
+      }
     },
     "JsonSchemaHandler": {
       "additionalProperties": false,
       "type": "object",
       "title": "JsonSchemaHandler",
       "properties": {
-        "baseUrl": {
+        "source": {
+          "type": "string",
+          "description": "Path to the bundle file"
+        },
+        "endpoint": {
           "type": "string"
         },
         "operationHeaders": {
@@ -1033,9 +1017,24 @@
               "additionalItems": true
             }
           ]
+        },
+        "queryStringOptions": {
+          "$ref": "#/definitions/QueryStringOptions"
+        },
+        "bundlePath": {
+          "type": "string",
+          "description": "Will be removed later"
+        },
+        "bundleHeaders": {
+          "type": "object",
+          "properties": {},
+          "description": "Will be removed later"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Timeout for the HTTP request in milliseconds"
         }
-      },
-      "required": ["operations"]
+      }
     },
     "JsonSchemaHTTPOperation": {
       "additionalProperties": false,
@@ -1043,15 +1042,17 @@
       "title": "JsonSchemaHTTPOperation",
       "properties": {
         "field": {
-          "type": "string"
+          "type": "string",
+          "description": "This Field based on the field name of the URL path.\nExample: \"https://MyAPIURL.com/FieldNameHere/\",\nso we will set the \"field: FieldNameHere\"."
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "description": "Your chance to describe the operation!\nMake sure the description is clear and concise."
         },
         "type": {
           "type": "string",
           "enum": ["Query", "Mutation", "Subscription"],
-          "description": "Allowed values: Query, Mutation, Subscription"
+          "description": "Type field is set the opertion type: Query, Mutation or Subscription. (Allowed values: Query, Mutation, Subscription)"
         },
         "requestSchema": {
           "anyOf": [
@@ -1066,7 +1067,8 @@
               "type": "array",
               "additionalItems": true
             }
-          ]
+          ],
+          "description": "Your chance to provide request schema name."
         },
         "requestSample": {
           "anyOf": [
@@ -1081,10 +1083,12 @@
               "type": "array",
               "additionalItems": true
             }
-          ]
+          ],
+          "description": "The path definition of the JSON Schema sample.\nExample: \"./jsons/questions.response.json\"."
         },
         "requestTypeName": {
-          "type": "string"
+          "type": "string",
+          "description": "Inset any name for the type of the request body."
         },
         "requestBaseBody": {
           "anyOf": [
@@ -1100,7 +1104,7 @@
               "additionalItems": true
             }
           ],
-          "description": "This body will be merged with the request body sent with the underlying HTTP request"
+          "description": "This body will be merged with the request body sent with\nthe underlying HTTP request"
         },
         "responseSchema": {
           "anyOf": [
@@ -1115,7 +1119,8 @@
               "type": "array",
               "additionalItems": true
             }
-          ]
+          ],
+          "description": "Yay! Now you can provide the response schema name."
         },
         "responseSample": {
           "anyOf": [
@@ -1130,10 +1135,12 @@
               "type": "array",
               "additionalItems": true
             }
-          ]
+          ],
+          "description": "Did you use Sample? Provide the response sample path."
         },
         "responseTypeName": {
-          "type": "string"
+          "type": "string",
+          "description": "Inset any name for the type of the response body."
         },
         "responseByStatusCode": {
           "anyOf": [
@@ -1149,11 +1156,21 @@
               "additionalItems": true
             }
           ],
-          "description": "You can define your response schemas by status codes;\n\nresponseByStatusCode:\n  200:\n    responseSchema: ./someschema.json#/somepath\n  404:\n    responseSample: ./error-sample.json\n    responseTypeName: MyError"
+          "description": "You can define your response schemas by status codes;\n```yaml filename=\".meshrc.yaml\"\nresponseByStatusCode:\n  200:\n    responseSchema: ./someschema.json#/somepath\n  404:\n    responseSample: ./error-sample.json\n    responseTypeName: MyError\n```"
+        },
+        "exposeResponseMetadata": {
+          "type": "boolean",
+          "description": "Expose response details done to the upstream API\nWhen you enable this, you will see a new field in the response type;\n```graphql\ntype MyResponseType {\n  myFooField: String\n  _response: ResponseMetadata\n}\n\n# And a new type for the response metadata object\ntype ResponseMetadata {\n  url: URL\n  status: Int\n  method: String\n  headers: JSON\n  body: String\n}\n```"
         },
         "argTypeMap": {
           "type": "object",
-          "properties": {}
+          "properties": {},
+          "description": "Mapping the JSON Schema and define the arguments of the operation.\n\n# Example:\nargTypeMap:\n  user_id:\n    type: string"
+        },
+        "queryParamArgMap": {
+          "type": "object",
+          "properties": {},
+          "description": "JSON object representing the mapping of query search parameters (added to the route path) and the matching argument.\n\n# Example:\nqueryParamArgMap:\n  id: user_id"
         },
         "path": {
           "type": "string"
@@ -1237,7 +1254,7 @@
               "additionalItems": true
             }
           ],
-          "description": "This body will be merged with the request body sent with the underlying HTTP request"
+          "description": "This body will be merged with the request body sent with\nthe underlying HTTP request"
         },
         "responseSchema": {
           "anyOf": [
@@ -1303,10 +1320,6 @@
             "$ref": "#/definitions/MongooseModel"
           },
           "additionalItems": false
-        },
-        "autoTypeMerging": {
-          "type": "boolean",
-          "description": "Enable Automatic Type Merging/Federation support"
         }
       }
     },
@@ -1767,9 +1780,13 @@
       "type": "object",
       "title": "Neo4jHandler",
       "properties": {
-        "url": {
+        "endpoint": {
           "type": "string",
           "description": "URL for the Neo4j Instance e.g. neo4j://localhost"
+        },
+        "source": {
+          "type": "string",
+          "description": "Provide GraphQL Type Definitions instead of inferring"
         },
         "username": {
           "type": "string",
@@ -1786,65 +1803,99 @@
         "database": {
           "type": "string",
           "description": "Specifies database name"
-        },
-        "typeDefs": {
-          "type": "string",
-          "description": "Provide GraphQL Type Definitions instead of inferring"
         }
       },
-      "required": ["url", "username", "password"]
+      "required": ["endpoint", "username", "password"]
     },
-    "NewOpenapiHandler": {
+    "ODataHandler": {
       "additionalProperties": false,
       "type": "object",
-      "title": "NewOpenapiHandler",
+      "title": "ODataHandler",
       "properties": {
-        "oasFilePath": {
-          "type": "string"
+        "endpoint": {
+          "type": "string",
+          "description": "Base URL for OData API"
+        },
+        "source": {
+          "type": "string",
+          "description": "Custom $metadata File or URL"
+        },
+        "schemaHeaders": {
+          "type": "object",
+          "properties": {},
+          "description": "Headers to be used with the $metadata requests"
+        },
+        "operationHeaders": {
+          "type": "object",
+          "properties": {},
+          "description": "Headers to be used with the operation requests"
+        },
+        "batch": {
+          "type": "string",
+          "enum": ["multipart", "json"],
+          "description": "Enable batching (Allowed values: multipart, json)"
+        },
+        "expandNavProps": {
+          "type": "boolean",
+          "description": "Use $expand for navigation props instead of seperate HTTP requests (Default: false)"
+        }
+      },
+      "required": ["endpoint"]
+    },
+    "OpenapiHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "OpenapiHandler",
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "A pointer to your API source (Support both JSON and YAML) - could be a local file, remote file or url endpoint"
         },
         "fallbackFormat": {
           "type": "string",
           "enum": ["json", "yaml", "js", "ts"],
-          "description": "Allowed values: json, yaml, js, ts"
+          "description": "Format of the files referenced from the source file, for cases content type isn't detected automatically (Allowed values: json, yaml, js, ts)"
         },
-        "baseUrl": {
-          "type": "string"
+        "endpoint": {
+          "type": "string",
+          "description": "Specifies the URL on which all paths will be based on.\nOverrides the server object in the OAS."
         },
         "schemaHeaders": {
           "type": "object",
-          "properties": {}
+          "properties": {},
+          "description": "If you are using a remote URL endpoint to fetch your schema, you can set headers for the HTTP request to fetch your schema."
         },
         "operationHeaders": {
           "type": "object",
-          "properties": {}
+          "properties": {},
+          "description": "JSON object representing the Headers to add to the runtime of the API calls"
         },
         "ignoreErrorResponses": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Responses are converted to a Union type grouping all possible responses.\nApplying this will ignore all responses with status code other than 2xx, resulting in simpler response types, usualy regular object type instead of union.\nDefault: false"
         },
         "selectQueryOrMutationField": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/OASSelectQueryOrMutationFieldConfig"
           },
-          "additionalItems": false
+          "additionalItems": false,
+          "description": "Allows to explicitly override the default operation (Query or Mutation) for any OAS operation"
         },
         "queryParams": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ]
+          "type": "object",
+          "properties": {},
+          "description": "JSON object representing the query search parameters to add to the API calls"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Timeout for the HTTP request in milliseconds"
+        },
+        "bundle": {
+          "type": "boolean"
         }
       },
-      "required": ["oasFilePath"]
+      "required": ["source"]
     },
     "OASSelectQueryOrMutationFieldConfig": {
       "additionalProperties": false,
@@ -1862,172 +1913,905 @@
       },
       "required": ["type", "fieldName"]
     },
-    "ODataHandler": {
+    "HivePlugin": {
       "additionalProperties": false,
       "type": "object",
-      "title": "ODataHandler",
+      "title": "HivePlugin",
       "properties": {
-        "baseUrl": {
+        "token": {
           "type": "string",
-          "description": "Base URL for OData API"
+          "description": "Access Token"
         },
-        "metadata": {
-          "type": "string",
-          "description": "Custom $metadata File or URL"
+        "agent": {
+          "$ref": "#/definitions/HiveAgentOptions",
+          "description": "Agent Options"
         },
-        "operationHeaders": {
-          "type": "object",
-          "properties": {},
-          "description": "Headers to be used with the operation requests"
+        "usage": {
+          "$ref": "#/definitions/HiveUsageOptions",
+          "description": "Collects schema usage based on operations"
         },
-        "schemaHeaders": {
-          "type": "object",
-          "properties": {},
-          "description": "Headers to be used with the $metadata requests"
+        "reporting": {
+          "$ref": "#/definitions/HiveReportingOptions",
+          "description": "Schema reporting"
         },
-        "batch": {
-          "type": "string",
-          "enum": ["multipart", "json"],
-          "description": "Enable batching (Allowed values: multipart, json)"
-        },
-        "expandNavProps": {
-          "type": "boolean",
-          "description": "Use $expand for navigation props instead of seperate HTTP requests (Default: false)"
-        },
-        "customFetch": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ],
-          "description": "Custom Fetch"
+        "selfHosting": {
+          "$ref": "#/definitions/HiveSelfHostingOptions",
+          "description": "Options for self-hosting\n[See more](https://github.com/kamilkisiela/graphql-hive/tree/main/packages/libraries/client#self-hosting)"
         }
       },
-      "required": ["baseUrl"]
+      "required": ["token"]
     },
-    "OpenapiHandler": {
+    "HiveAgentOptions": {
       "additionalProperties": false,
       "type": "object",
-      "title": "OpenapiHandler",
+      "title": "HiveAgentOptions",
       "properties": {
-        "source": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ],
-          "description": "A pointer to your API source - could be a local file, remote file or url endpoint"
+        "timeout": {
+          "type": "integer",
+          "description": "30s by default"
         },
-        "sourceFormat": {
-          "type": "string",
-          "enum": ["json", "yaml"],
-          "description": "Format of the source file (Allowed values: json, yaml)"
+        "maxRetries": {
+          "type": "integer",
+          "description": "5 by default"
         },
-        "operationHeaders": {
-          "type": "object",
-          "properties": {},
-          "description": "JSON object representing the Headers to add to the runtime of the API calls"
+        "minTimeout": {
+          "type": "integer",
+          "description": "200 by default"
         },
-        "schemaHeaders": {
-          "type": "object",
-          "properties": {},
-          "description": "If you are using a remote URL endpoint to fetch your schema, you can set headers for the HTTP request to fetch your schema."
+        "sendInterval": {
+          "type": "integer",
+          "description": "Send reports in interval (defaults to 10_000ms)"
         },
-        "baseUrl": {
-          "type": "string",
-          "description": "Specifies the URL on which all paths will be based on.\nOverrides the server object in the OAS."
-        },
-        "qs": {
-          "type": "object",
-          "properties": {},
-          "description": "JSON object representing the query search parameters to add to the API calls"
-        },
-        "customFetch": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ],
-          "description": "W3 Compatible Fetch Implementation"
-        },
-        "includeHttpDetails": {
-          "type": "boolean",
-          "description": "Include HTTP Response details to the result object"
-        },
-        "addLimitArgument": {
-          "type": "boolean",
-          "description": "Auto-generate a 'limit' argument for all fields that return lists of objects, including ones produced by links"
-        },
-        "genericPayloadArgName": {
-          "type": "boolean",
-          "description": "Set argument name for mutation payload to 'requestBody'. If false, name defaults to camelCased pathname"
-        },
-        "selectQueryOrMutationField": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/SelectQueryOrMutationFieldConfig"
-          },
-          "additionalItems": false,
-          "description": "Allows to explicitly override the default operation (Query or Mutation) for any OAS operation"
-        },
-        "provideErrorExtensions": {
-          "type": "boolean",
-          "description": "Overwrite automatic wrapping of errors into GraphqlErrors"
-        },
-        "operationIdFieldNames": {
-          "type": "boolean",
-          "description": "Field names can only be sanitized operationIds\n\nBy default, query field names are based on the return type type name and mutation field names are based on the operationId, which may be generated if it does not exist.\n\nThis option forces OpenAPI handler to only create field names based on the operationId."
-        }
-      },
-      "required": ["source"]
-    },
-    "SelectQueryOrMutationFieldConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "SelectQueryOrMutationFieldConfig",
-      "properties": {
-        "title": {
-          "type": "string",
-          "description": "OAS Title"
-        },
-        "path": {
-          "type": "string",
-          "description": "Operation Path"
-        },
-        "type": {
-          "type": "string",
-          "enum": ["query", "mutation", "Query", "Mutation"],
-          "description": "Target Root Type for this operation (Allowed values: query, mutation, Query, Mutation)"
-        },
-        "method": {
-          "type": "string",
-          "description": "Which method is used for this operation"
+        "maxSize": {
+          "type": "integer",
+          "description": "Max number of traces to send at once (defaults to 25)"
         }
       }
+    },
+    "HiveUsageOptions": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "HiveUsageOptions",
+      "properties": {
+        "clientInfo": {
+          "$ref": "#/definitions/HiveClientInfo",
+          "description": "Extract client info from GraphQL Context"
+        },
+        "max": {
+          "type": "integer",
+          "description": "Hive uses LRU cache to store info about operations.\nThis option represents the maximum size of the cache.\nDefault: 1000"
+        },
+        "ttl": {
+          "type": "integer",
+          "description": "Hive uses LRU cache to store info about operations.\nThis option represents the maximum age of an unused operation in the cache.\nDefault: no ttl"
+        },
+        "exclude": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "A list of operations (by name) to be ignored by Hive."
+        },
+        "sampleRate": {
+          "type": "number",
+          "description": "Sample rate to determine sampling.\n0.0 = 0% chance of being sent\n1.0 = 100% chance of being sent\nDefault: 1.0"
+        },
+        "processVariables": {
+          "type": "boolean",
+          "description": "(Experimental) Enables collecting Input fields usage based on the variables passed to the operation.\nDefault: false"
+        }
+      }
+    },
+    "HiveClientInfo": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "HiveClientInfo",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Extract client name\nExample: `{context.headers['x-client-name']}`"
+        },
+        "version": {
+          "type": "string",
+          "description": "Extract client version\nExample: `{context.headers['x-client-version']}`"
+        }
+      }
+    },
+    "HiveReportingOptions": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "HiveReportingOptions",
+      "properties": {
+        "author": {
+          "type": "string",
+          "description": "Author of current version of the schema"
+        },
+        "commit": {
+          "type": "string",
+          "description": "Commit SHA hash (or any identifier) related to the schema version"
+        },
+        "serviceName": {
+          "type": "string"
+        },
+        "serviceUrl": {
+          "type": "string"
+        }
+      },
+      "required": ["author", "commit"]
+    },
+    "HiveSelfHostingOptions": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "HiveSelfHostingOptions",
+      "properties": {
+        "graphqlEndpoint": {
+          "type": "string",
+          "description": "Point to your own instance of GraphQL Hive API\n\nUsed by schema reporting and token info."
+        },
+        "applicationUrl": {
+          "type": "string",
+          "description": "Address of your own GraphQL Hive application\n\nUsed by token info to generate a link to the organization, project and target."
+        },
+        "usageEndpoint": {
+          "type": "string",
+          "description": "Point to your own instance of GraphQL Hive Usage API\n\nUsed by usage reporting."
+        }
+      },
+      "required": ["graphqlEndpoint", "applicationUrl"]
+    },
+    "HTTPCachePlugin": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "HTTPCachePlugin",
+      "properties": {
+        "matches": {
+          "type": "array",
+          "items": {
+            "description": "Any of: String, URLPatternObj",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/definitions/URLPatternObj"
+              }
+            ]
+          },
+          "additionalItems": false,
+          "description": "If the following patterns match the request URL, the response will be cached. (Any of: String, URLPatternObj)"
+        },
+        "ignores": {
+          "type": "array",
+          "items": {
+            "description": "Any of: String, URLPatternObj",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/definitions/URLPatternObj"
+              }
+            ]
+          },
+          "additionalItems": false,
+          "description": "If the following patterns match the request URL, the response will not be cached. (Any of: String, URLPatternObj)"
+        }
+      }
+    },
+    "URLPatternObj": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "URLPatternObj",
+      "properties": {
+        "protocol": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "hostname": {
+          "type": "string"
+        },
+        "port": {
+          "type": "string"
+        },
+        "pathname": {
+          "type": "string"
+        },
+        "search": {
+          "type": "string"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "baseURL": {
+          "type": "string"
+        }
+      }
+    },
+    "HTTPDetailsExtensionsConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "HTTPDetailsExtensionsConfig",
+      "properties": {
+        "if": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
+        }
+      }
+    },
+    "Http2Plugin": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Http2Plugin",
+      "properties": {
+        "origins": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        }
+      }
+    },
+    "LiveQueryConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "LiveQueryConfig",
+      "properties": {
+        "invalidations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LiveQueryInvalidation"
+          },
+          "additionalItems": false,
+          "description": "Invalidate a query or queries when a specific operation is done without an error"
+        },
+        "resourceIdentifier": {
+          "type": "string",
+          "description": "Custom strategy for building resources identifiers\nBy default resource identifiers are built by concatenating the Typename with the id separated by a color (`User:1`).\n\nThis may be useful if you are using a relay compliant schema and the Typename information is not required for building a unique topic.\n\nDefault: \"{typename}:{id}\""
+        },
+        "includeIdentifierExtension": {
+          "type": "boolean",
+          "description": "Whether the extensions should include a list of all resource identifiers for the latest operation result.\nAny of those can be used for invalidating and re-scheduling the operation execution.\n\nThis is mainly useful for discovering and learning what kind of topics a given query will subscribe to.\nThe default value is `true` if `DEBUG` environment variable is set"
+        },
+        "idFieldName": {
+          "type": "string",
+          "description": "Identifier unique field\n\nDefault: \"id\""
+        },
+        "indexBy": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LiveQueryIndexBy"
+          },
+          "additionalItems": false,
+          "description": "Specify which fields should be indexed for specific invalidations."
+        }
+      }
+    },
+    "LiveQueryInvalidation": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "LiveQueryInvalidation",
+      "properties": {
+        "field": {
+          "type": "string",
+          "description": "Path to the operation that could effect it. In a form: Mutation.something. Note that wildcard is not supported in this field."
+        },
+        "invalidate": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        }
+      },
+      "required": ["field", "invalidate"]
+    },
+    "LiveQueryIndexBy": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "LiveQueryIndexBy",
+      "properties": {
+        "field": {
+          "type": "string"
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        }
+      },
+      "required": ["field", "args"]
+    },
+    "MockingConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MockingConfig",
+      "properties": {
+        "if": {
+          "type": "boolean",
+          "description": "If this expression is truthy, mocking would be enabled\nYou can use environment variables expression, for example: `process.env.MOCKING_ENABLED != null`"
+        },
+        "preserveResolvers": {
+          "type": "boolean",
+          "description": "Do not mock any other resolvers other than defined in `mocks`.\nFor example, you can enable this if you don't want to mock entire schema but partially."
+        },
+        "mocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MockingFieldConfig"
+          },
+          "additionalItems": false,
+          "description": "Mock configurations"
+        },
+        "initializeStore": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ],
+          "description": "The path to the code runs before the store is attached to the schema"
+        }
+      }
+    },
+    "MockingFieldConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MockingFieldConfig",
+      "properties": {
+        "apply": {
+          "type": "string",
+          "description": "Resolver path\nExample: User.firstName"
+        },
+        "if": {
+          "type": "boolean",
+          "description": "If this expression is truthy, mocking would be enabled\nYou can use environment variables expression, for example: `${MOCKING_ENABLED}`"
+        },
+        "faker": {
+          "type": "string",
+          "description": "Faker.js expression or function\nRead more (https://github.com/marak/Faker.js/#fakerfake)\nExample:\nfaker: `name.firstName`\nfaker: `{{ name.firstName }} {{ name.lastName }}`"
+        },
+        "custom": {
+          "type": "string",
+          "description": "Custom mocking\nIt can be a module or json file.\nBoth \"moduleName#exportName\" or only \"moduleName\" would work"
+        },
+        "length": {
+          "type": "integer",
+          "description": "Length of the mock list\nFor the list types `[ObjectType]`, how many `ObjectType` you want to return?\ndefault: 2"
+        },
+        "store": {
+          "$ref": "#/definitions/GetFromMockStoreConfig",
+          "description": "Get the data from the mock store"
+        },
+        "updateStore": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UpdateMockStoreConfig"
+          },
+          "additionalItems": false,
+          "description": "Update the data on the mock store"
+        }
+      },
+      "required": ["apply"]
+    },
+    "GetFromMockStoreConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "GetFromMockStoreConfig",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "fieldName": {
+          "type": "string"
+        }
+      }
+    },
+    "UpdateMockStoreConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "UpdateMockStoreConfig",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "fieldName": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "NewrelicConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "NewrelicConfig",
+      "properties": {
+        "includeOperationDocument": {
+          "type": "boolean",
+          "description": "default `false`. When set to `true`, includes the GraphQL document defining the operations and fragments"
+        },
+        "includeExecuteVariables": {
+          "type": "boolean",
+          "description": "default `false`. When set to `true`, includes all the operation variables with their values"
+        },
+        "includeRawResult": {
+          "type": "boolean",
+          "description": "default: `false`. When set to `true`, includes the execution result of both delegation and execution"
+        },
+        "trackResolvers": {
+          "type": "boolean",
+          "description": "default `false`. When set to `true`, track resolvers as segments to monitor their performance"
+        },
+        "includeResolverArgs": {
+          "type": "boolean",
+          "description": "default `false`. When set to `true`, includes all the arguments passed to resolvers and delegation with their values"
+        },
+        "rootFieldsNaming": {
+          "type": "boolean",
+          "description": "default `false`. When set to `true` append the names of operation root fields to the transaction name"
+        },
+        "extractOperationName": {
+          "type": "string",
+          "description": "Allows to set a custom operation name to be used as transaction name and attribute\n`extractOperationName: {context.headers['x-operation-name']}`"
+        }
+      }
+    },
+    "OperationFieldPermissionsConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "OperationFieldPermissionsConfig",
+      "properties": {
+        "permissions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OperationFieldPermission"
+          },
+          "additionalItems": false
+        }
+      }
+    },
+    "OperationFieldPermission": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "OperationFieldPermission",
+      "properties": {
+        "if": {
+          "type": "string"
+        },
+        "allow": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        }
+      }
+    },
+    "PrometheusConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "PrometheusConfig",
+      "properties": {
+        "requestCount": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "requestTotalDuration": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "requestSummary": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "parse": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "validate": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "contextBuilding": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "execute": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "errors": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "deprecatedFields": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "skipIntrospection": {
+          "type": "boolean"
+        },
+        "registry": {
+          "type": "string"
+        },
+        "delegation": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "fetch": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "fetchRequestHeaders": {
+          "type": "boolean"
+        },
+        "fetchResponseHeaders": {
+          "type": "boolean"
+        },
+        "http": {
+          "description": "Any of: Boolean, String",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "httpRequestHeaders": {
+          "type": "boolean"
+        },
+        "httpResponseHeaders": {
+          "type": "boolean"
+        },
+        "endpoint": {
+          "type": "string",
+          "description": "The path to the metrics endpoint\ndefault: `/metrics`"
+        }
+      }
+    },
+    "RateLimitPluginConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "RateLimitPluginConfig",
+      "properties": {
+        "config": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RateLimitTransformConfig"
+          },
+          "additionalItems": false
+        }
+      },
+      "required": ["config"]
+    },
+    "ResponseCacheConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ResponseCacheConfig",
+      "properties": {
+        "ttl": {
+          "type": "number",
+          "description": "Maximum age in ms. Defaults to `Infinity`. Set it to 0 for disabling the global TTL."
+        },
+        "ttlPerCoordinate": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ResponseCacheTTLConfig"
+          },
+          "additionalItems": false,
+          "description": "Overwrite the ttl for query operations whose selection contains a specific schema coordinate (e.g. Query.users).\nUseful if the selection of a specific field should reduce the TTL of the query operation."
+        },
+        "ignoredTypes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "Skip caching of following the types."
+        },
+        "idFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "List of fields that are used to identify the entity."
+        },
+        "invalidateViaMutation": {
+          "type": "boolean",
+          "description": "Whether the mutation execution result should be used for invalidating resources.\nDefaults to `true`"
+        },
+        "includeExtensionMetadata": {
+          "type": "boolean",
+          "description": "Include extension values that provide useful information, such as whether the cache was hit or which resources a mutation invalidated."
+        },
+        "sessionId": {
+          "type": "string",
+          "description": "Allows to cache responses based on the resolved session id.\nReturn a unique value for each session.\nCreates a global session by default.\nExample;\n```yaml\nsessionId: \"{context.headers.userId}\"\n```"
+        },
+        "if": {
+          "type": "string",
+          "description": "Specify whether the cache should be used based on the context.\n```yaml\nif: \"context.headers.userId != null\"\n```"
+        },
+        "cacheKey": {
+          "type": "string",
+          "description": "Customize the behavior how the response cache key is computed from the documentString, variableValues, contextValue and sessionId.\nIf the given string is interpolated as empty, default behavior is used.\nExample;\n```yaml\n# Cache by specific value\ncacheKey: \"{variableValues.userId}\"\n\n# Cache by documentString\ncacheKey: \"{documentString}\"\n\n# Cache by operationName\ncacheKey: \"{operationName}\"\n\n# Cache by some header value\ncacheKey: \"{contextValue.headers.authorization}\"\n\n# Or combine two of each\ncacheKey: \"{contextValue.headers.authorization}-{operationName}\"\n```"
+        },
+        "shouldCacheResult": {
+          "type": "string",
+          "description": "Checks if the result should be cached.\n```yaml\nshouldCacheResult: \"result.errors.length > 0\"\n```"
+        }
+      }
+    },
+    "ResponseCacheTTLConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "ResponseCacheTTLConfig",
+      "properties": {
+        "coordinate": {
+          "type": "string"
+        },
+        "ttl": {
+          "type": "number"
+        }
+      },
+      "required": ["coordinate", "ttl"]
+    },
+    "SnapshotPluginConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "SnapshotPluginConfig",
+      "properties": {
+        "if": {
+          "description": "Expression for when to activate this extension.\nValue can be a valid JS expression string or a boolean (Any of: String, Boolean)",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "boolean"
+            }
+          ]
+        },
+        "apply": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "HTTP URL pattern to be applied\nFor example;\n  apply:\n      - http://my-remote-api.com/* \\<- * will apply this extension to all paths of remote API"
+        },
+        "outputDir": {
+          "type": "string",
+          "description": "Path to the directory of the generated snapshot files"
+        }
+      },
+      "required": ["apply", "outputDir"]
+    },
+    "StatsdPlugin": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "StatsdPlugin",
+      "properties": {
+        "skipIntrospection": {
+          "type": "boolean",
+          "description": "If you wish to disable introspection for logging (default: false)"
+        },
+        "prefix": {
+          "type": "string",
+          "description": "prefix.operations.count (default: graphql)"
+        },
+        "client": {
+          "$ref": "#/definitions/StatsdClientConfiguration",
+          "description": "Client Configuration"
+        }
+      }
+    },
+    "StatsdClientConfiguration": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "StatsdClientConfiguration",
+      "properties": {
+        "bufferFlushInterval": {
+          "type": "integer"
+        },
+        "bufferHolder": {
+          "$ref": "#/definitions/StatsdClientBufferHolder"
+        },
+        "cacheDns": {
+          "type": "boolean"
+        },
+        "cacheDnsTtl": {
+          "type": "integer"
+        },
+        "globalTags": {
+          "type": "object",
+          "properties": {}
+        },
+        "globalize": {
+          "type": "boolean"
+        },
+        "host": {
+          "type": "string"
+        },
+        "isChild": {
+          "type": "boolean"
+        },
+        "maxBufferSize": {
+          "type": "integer"
+        },
+        "mock": {
+          "type": "boolean"
+        },
+        "path": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer"
+        },
+        "protocol": {
+          "type": "string",
+          "enum": ["tcp", "udp", "uds", "stream"],
+          "description": "Allowed values: tcp, udp, uds, stream"
+        },
+        "sampleRate": {
+          "type": "number"
+        },
+        "suffix": {
+          "type": "string"
+        },
+        "telegraf": {
+          "type": "boolean"
+        },
+        "useDefaultRoute": {
+          "type": "boolean"
+        },
+        "tagPrefix": {
+          "type": "string"
+        },
+        "tagSeperator": {
+          "type": "string"
+        },
+        "tcpGracefulErrorHandling": {
+          "type": "boolean"
+        },
+        "tcpGracefulRestartRateLimit": {
+          "type": "integer"
+        },
+        "udsGracefulErrorHandling": {
+          "type": "boolean"
+        },
+        "udsGracefulRestartRateLimit": {
+          "type": "integer"
+        },
+        "closingFlushInterval": {
+          "type": "integer"
+        }
+      }
+    },
+    "StatsdClientBufferHolder": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "StatsdClientBufferHolder",
+      "properties": {
+        "buffer": {
+          "type": "string"
+        }
+      },
+      "required": ["buffer"]
     },
     "PostGraphileHandler": {
       "additionalProperties": false,
@@ -2105,10 +2889,10 @@
       "type": "object",
       "title": "RAMLHandler",
       "properties": {
-        "ramlFilePath": {
+        "source": {
           "type": "string"
         },
-        "baseUrl": {
+        "endpoint": {
           "type": "string"
         },
         "schemaHeaders": {
@@ -2143,9 +2927,16 @@
               "additionalItems": true
             }
           ]
+        },
+        "bundle": {
+          "type": "boolean"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Timeout for the HTTP request in milliseconds"
         }
       },
-      "required": ["ramlFilePath"]
+      "required": ["source"]
     },
     "RAMLSelectQueryOrMutationFieldConfig": {
       "additionalProperties": false,
@@ -2168,17 +2959,9 @@
       "type": "object",
       "title": "SoapHandler",
       "properties": {
-        "wsdl": {
+        "source": {
           "type": "string",
-          "description": "A url to your WSDL"
-        },
-        "basicAuth": {
-          "$ref": "#/definitions/SoapSecurityBasicAuthConfig",
-          "description": "Basic Authentication Configuration\nIncluding username and password fields"
-        },
-        "securityCert": {
-          "$ref": "#/definitions/SoapSecurityCertificateConfig",
-          "description": "SSL Certificate Based Authentication Configuration\nIncluding public key, private key and password fields"
+          "description": "A url to your WSDL or generated SDL with annotations"
         },
         "schemaHeaders": {
           "anyOf": [
@@ -2200,98 +2983,9 @@
           "type": "object",
           "properties": {},
           "description": "JSON object representing the Headers to add to the runtime of the API calls only for operation during runtime"
-        },
-        "includePorts": {
-          "type": "boolean",
-          "description": "If true, the ports defined in the WSDL will be represented as GraphQL-Type objects in the schema.\nThe fields of the object will be the operations of the port.\n\nMost soap-endpoints only define one port; so including it in the schema will just be inconvenient.\nBut if there are multiple ports with operations of the same name, you should set this option to true.\nOtherwise only one of the identical-named operations will be callable.\n\ndefault: false"
-        },
-        "includeServices": {
-          "type": "boolean",
-          "description": "If true, the services defined in the WSDL will be represented as GraphQL-Type objects in the schema.\nThe fields of the object will be the ports of the service (or the operation, dependent on 'includePorts').\n\nMost soap-endpoints only define one service; so including it in the schema will just be inconvenient.\nBut if there are multiple services with operations of the same name, you should set this option to true.\nOtherwise only one of the identical-named operations will be callable.\n\ndefault: false"
-        },
-        "selectQueryOrMutationField": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/SoapSelectQueryOrMutationFieldConfig"
-          },
-          "additionalItems": false,
-          "description": "Allows to explicitly override the default operation (Query or Mutation) for any SOAP operation"
-        },
-        "selectQueryOperationsAuto": {
-          "type": "boolean",
-          "description": "Automatically put operations starts with `query` or `get` into the Query type"
         }
       },
-      "required": ["wsdl"]
-    },
-    "SoapSelectQueryOrMutationFieldConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "SoapSelectQueryOrMutationFieldConfig",
-      "properties": {
-        "service": {
-          "type": "string"
-        },
-        "port": {
-          "type": "string"
-        },
-        "operation": {
-          "type": "string"
-        },
-        "type": {
-          "type": "string",
-          "enum": ["query", "mutation"],
-          "description": "Allowed values: query, mutation"
-        }
-      },
-      "required": ["service", "port", "operation", "type"]
-    },
-    "SoapSecurityBasicAuthConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "SoapSecurityBasicAuthConfig",
-      "properties": {
-        "username": {
-          "type": "string",
-          "description": "Username for Basic Authentication"
-        },
-        "password": {
-          "type": "string",
-          "description": "Password for Basic Authentication"
-        }
-      },
-      "required": ["username", "password"]
-    },
-    "SoapSecurityCertificateConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "SoapSecurityCertificateConfig",
-      "properties": {
-        "publicKey": {
-          "type": "string",
-          "description": "Your public key"
-        },
-        "privateKey": {
-          "type": "string",
-          "description": "Your private key"
-        },
-        "password": {
-          "type": "string",
-          "description": "Password"
-        },
-        "publicKeyPath": {
-          "type": "string",
-          "description": "Path to the file or URL contains your public key"
-        },
-        "privateKeyPath": {
-          "type": "string",
-          "description": "Path to the file or URL contains your private key"
-        },
-        "passwordPath": {
-          "type": "string",
-          "description": "Path to the file or URL contains your password"
-        }
-      }
+      "required": ["source"]
     },
     "ThriftHandler": {
       "additionalProperties": false,
@@ -2351,7 +3045,7 @@
         },
         "cacheKey": {
           "type": "string",
-          "description": "Cache key to use to store your resolvers responses.\nThe default is: {typeName}-{fieldName}-{argsHash}-{fieldNamesHash}\n\nAvailable variables:\n- {args.argName} - use resolver argument\n- {typeName} - use name of the type\n- {fieldName} - use name of the field\n- {argsHash} - a hash based on the 'args' object\n- {fieldNamesHash} - a hash based on the field names selected by the client\n- {info} - the GraphQLResolveInfo of the resolver\n\nAvailable interpolations:\n- {format|date} - returns the current date with a specific format"
+          "description": "Cache key to use to store your resolvers responses.\nThe default is: `{typeName}-{fieldName}-{argsHash}-{fieldNamesHash}`\n\nAvailable variables:\n  - `{args.argName}` - use resolver argument\n  - `{typeName}` - use name of the type\n  - `{fieldName}` - use name of the field\n  - `{argsHash}` - a hash based on the 'args' object\n  - `{fieldNamesHash}` - a hash based on the field names selected by the client\n  - `{info}` - the GraphQLResolveInfo of the resolver\n\nAvailable interpolations:\n  - `{format|date}` - returns the current date with a specific format"
         },
         "invalidate": {
           "$ref": "#/definitions/CacheInvalidateConfig",
@@ -2474,6 +3168,10 @@
             "$ref": "#/definitions/FederationTransformType"
           },
           "additionalItems": false
+        },
+        "version": {
+          "type": "string",
+          "description": "Version of the federation spec\nDefault: v2.0"
         }
       }
     },
@@ -2496,14 +3194,17 @@
       "type": "object",
       "title": "FederationObjectConfig",
       "properties": {
-        "keyFields": {
+        "key": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/FederationObjectKeyConfig"
           },
           "additionalItems": false
         },
-        "extend": {
+        "shareable": {
+          "type": "boolean"
+        },
+        "extends": {
           "type": "boolean"
         },
         "fields": {
@@ -2526,6 +3227,16 @@
         }
       }
     },
+    "FederationObjectKeyConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FederationObjectKeyConfig",
+      "properties": {
+        "fields": {
+          "type": "string"
+        }
+      }
+    },
     "ResolveReferenceObject": {
       "additionalProperties": false,
       "type": "object",
@@ -2535,9 +3246,10 @@
           "type": "string",
           "description": "Name of root field name that resolves the reference"
         },
-        "keyArg": {
-          "type": "string",
-          "description": "If the root field name has multiple args,\nyou need to define which argument should receive the key"
+        "args": {
+          "type": "object",
+          "properties": {},
+          "description": "You need configure the arguments for that field;\n```yaml\nargs:\n  someArg: \"{root.someKeyValue}\"\n```"
         }
       },
       "required": ["queryFieldName"]
@@ -2565,9 +3277,58 @@
           "type": "boolean"
         },
         "provides": {
-          "type": "string"
+          "$ref": "#/definitions/FederationFieldProvidesConfig"
         },
         "requires": {
+          "$ref": "#/definitions/FederationFieldRequiresConfig"
+        },
+        "tag": {
+          "$ref": "#/definitions/FederationFieldTagConfig"
+        },
+        "inaccessible": {
+          "type": "boolean"
+        },
+        "override": {
+          "$ref": "#/definitions/FederationFieldOverrideConfig"
+        }
+      }
+    },
+    "FederationFieldProvidesConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FederationFieldProvidesConfig",
+      "properties": {
+        "fields": {
+          "type": "string"
+        }
+      }
+    },
+    "FederationFieldRequiresConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FederationFieldRequiresConfig",
+      "properties": {
+        "fields": {
+          "type": "string"
+        }
+      }
+    },
+    "FederationFieldTagConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FederationFieldTagConfig",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "FederationFieldOverrideConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "FederationFieldOverrideConfig",
+      "properties": {
+        "from": {
           "type": "string"
         }
       }
@@ -2652,125 +3413,16 @@
       },
       "required": ["fieldName", "filterArgs"]
     },
-    "MockingConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "MockingConfig",
-      "properties": {
-        "if": {
-          "type": "boolean",
-          "description": "If this expression is truthy, mocking would be enabled\nYou can use environment variables expression, for example: `${MOCKING_ENABLED}`"
-        },
-        "preserveResolvers": {
-          "type": "boolean",
-          "description": "Do not mock any other resolvers other than defined in `mocks`.\nFor example, you can enable this if you don't want to mock entire schema but partially."
-        },
-        "mocks": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/MockingFieldConfig"
-          },
-          "additionalItems": false,
-          "description": "Mock configurations"
-        },
-        "initializeStore": {
-          "anyOf": [
-            {
-              "type": "object",
-              "additionalProperties": true
-            },
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "additionalItems": true
-            }
-          ],
-          "description": "The path to the code runs before the store is attached to the schema"
-        }
-      }
-    },
-    "MockingFieldConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "MockingFieldConfig",
-      "properties": {
-        "apply": {
-          "type": "string",
-          "description": "Resolver path\nExample: User.firstName"
-        },
-        "if": {
-          "type": "boolean",
-          "description": "If this expression is truthy, mocking would be enabled\nYou can use environment variables expression, for example: `${MOCKING_ENABLED}`"
-        },
-        "faker": {
-          "type": "string",
-          "description": "Faker.js expression or function\nRead more (https://github.com/marak/Faker.js/#fakerfake)\nExample:\nfaker: name.firstName\nfaker: \"{{ name.firstName }} {{ name.lastName }}\""
-        },
-        "custom": {
-          "type": "string",
-          "description": "Custom mocking\nIt can be a module or json file.\nBoth \"moduleName#exportName\" or only \"moduleName\" would work"
-        },
-        "length": {
-          "type": "integer",
-          "description": "Length of the mock list\nFor the list types `[ObjectType]`, how many `ObjectType` you want to return?\ndefault: 2"
-        },
-        "store": {
-          "$ref": "#/definitions/GetFromMockStoreConfig",
-          "description": "Get the data from the mock store"
-        },
-        "updateStore": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/UpdateMockStoreConfig"
-          },
-          "additionalItems": false,
-          "description": "Update the data on the mock store"
-        }
-      },
-      "required": ["apply"]
-    },
-    "GetFromMockStoreConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "GetFromMockStoreConfig",
-      "properties": {
-        "type": {
-          "type": "string"
-        },
-        "key": {
-          "type": "string"
-        },
-        "fieldName": {
-          "type": "string"
-        }
-      }
-    },
-    "UpdateMockStoreConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "UpdateMockStoreConfig",
-      "properties": {
-        "type": {
-          "type": "string"
-        },
-        "key": {
-          "type": "string"
-        },
-        "fieldName": {
-          "type": "string"
-        },
-        "value": {
-          "type": "string"
-        }
-      }
-    },
     "NamingConventionTransformConfig": {
       "additionalProperties": false,
       "type": "object",
       "title": "NamingConventionTransformConfig",
       "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["bare", "wrap"],
+          "description": "Specify to apply naming-convention transforms to bare schema or by wrapping original schema (Allowed values: bare, wrap)"
+        },
         "typeNames": {
           "type": "string",
           "enum": [
@@ -2935,7 +3587,7 @@
         },
         "identifier": {
           "type": "string",
-          "description": "The identifier expression that determines the identity of the request (e.g. \"{context.req.socket.remoteAddress}\")"
+          "description": "The identifier expression that determines the identity of the request (e.g. `{context.req.socket.remoteAddress}`)"
         }
       },
       "required": ["type", "field", "max", "ttl", "identifier"]
@@ -3138,41 +3790,6 @@
         }
       },
       "required": ["resolver", "composer"]
-    },
-    "SnapshotTransformConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "SnapshotTransformConfig",
-      "properties": {
-        "if": {
-          "description": "Expression for when to activate this extension.\nValue can be a valid JS expression string or a boolean (Any of: String, Boolean)",
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "boolean"
-            }
-          ]
-        },
-        "apply": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false,
-          "description": "Resolver to be applied\nFor example;\n  apply:\n      - Query.* <- * will apply this extension to all fields of Query type\n      - Mutation.someMutationButProbablyYouWontNeedIt"
-        },
-        "outputDir": {
-          "type": "string",
-          "description": "Path to the directory of the generated snapshot files"
-        },
-        "respectSelectionSet": {
-          "type": "boolean",
-          "description": "Take snapshots by respecting the requested selection set.\nThis might be needed for the handlers like Postgraphile or OData that rely on the incoming GraphQL operation."
-        }
-      },
-      "required": ["apply", "outputDir"]
     },
     "TypeMergingConfig": {
       "additionalProperties": false,
@@ -3435,14 +4052,6 @@
         }
       ]
     },
-    "liveQueryInvalidations": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/LiveQueryInvalidation"
-      },
-      "additionalItems": false,
-      "description": "Live Query Invalidations"
-    },
     "documents": {
       "type": "array",
       "items": {
@@ -3467,6 +4076,22 @@
       ],
       "description": "Logger instance that matches `Console` interface of NodeJS"
     },
+    "customFetch": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": true
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "additionalItems": true
+        }
+      ],
+      "description": "Path to a custom W3 Compatible Fetch Implementation"
+    },
     "skipSSLValidation": {
       "type": "boolean",
       "description": "Allow connections to an SSL endpoint without certificates"
@@ -3474,6 +4099,13 @@
     "additionalEnvelopPlugins": {
       "type": "string",
       "description": "You can provide Envelop plugins"
+    },
+    "plugins": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Plugin"
+      },
+      "additionalItems": false
     }
   },
   "additionalProperties": false

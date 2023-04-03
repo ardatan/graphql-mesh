@@ -1,12 +1,20 @@
-import { KeyValueCache, YamlConfig, ImportFn, MeshPubSub, Logger } from '@graphql-mesh/types';
-import { path } from '@graphql-mesh/cross-helpers';
-import { printSchemaWithDirectives, Source } from '@graphql-tools/utils';
 import { paramCase } from 'param-case';
-import { loadDocuments, loadTypedefs } from '@graphql-tools/load';
-import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { PubSub, DefaultLogger, parseWithCache } from '@graphql-mesh/utils';
-import { CodeFileLoader } from '@graphql-tools/code-file-loader';
+import { path } from '@graphql-mesh/cross-helpers';
 import { MeshStore } from '@graphql-mesh/store';
+import {
+  ImportFn,
+  KeyValueCache,
+  Logger,
+  MeshFetch,
+  MeshPubSub,
+  YamlConfig,
+} from '@graphql-mesh/types';
+import { DefaultLogger, parseWithCache, PubSub } from '@graphql-mesh/utils';
+import { CodeFileLoader } from '@graphql-tools/code-file-loader';
+import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
+import { loadDocuments, loadTypedefs } from '@graphql-tools/load';
+import { printSchemaWithDirectives, Source } from '@graphql-tools/utils';
+import { fetch as defaultFetch } from '@whatwg-node/fetch';
 
 type ResolvedPackage<T> = {
   moduleName: string;
@@ -31,7 +39,12 @@ export async function getPackage<T>({
   const casedName = paramCase(name);
   const casedType = paramCase(type);
   const prefixes = ['@graphql-mesh/', ...additionalPrefixes];
-  const initialPossibleNames = [casedName, `${casedName}-${casedType}`, `${casedType}-${casedName}`, casedType];
+  const initialPossibleNames = [
+    casedName,
+    `${casedName}-${casedType}`,
+    `${casedType}-${casedName}`,
+    casedType,
+  ];
   const possibleNames: string[] = [];
   for (const prefix of prefixes) {
     for (const possibleName of initialPossibleNames) {
@@ -48,10 +61,11 @@ export async function getPackage<T>({
 
   for (const moduleName of possibleModules) {
     try {
-      const exported = await importFn(moduleName);
+      const exported = await importFn(moduleName, true);
       const resolved = exported.default || (exported as T);
+      const relativeModuleName = path.isAbsolute(moduleName) ? name : moduleName;
       return {
-        moduleName,
+        moduleName: relativeModuleName,
         resolved,
       };
     } catch (err) {
@@ -61,7 +75,9 @@ export async function getPackage<T>({
         !error.message.includes(`Cannot find package '${moduleName}'`) &&
         !error.message.includes(`Could not locate module`)
       ) {
-        throw new Error(`Unable to load ${type} matching ${name}: ${error.message}`);
+        throw new Error(
+          `Unable to load ${type} matching ${name} while resolving ${moduleName}: ${error.stack}`,
+        );
       }
     }
   }
@@ -76,10 +92,55 @@ export async function resolveAdditionalTypeDefs(baseDir: string, additionalTypeD
       loaders: [new CodeFileLoader(), new GraphQLFileLoader()],
     });
     return sources.map(
-      source => source.document || parseWithCache(source.rawSDL || printSchemaWithDirectives(source.schema))
+      source =>
+        source.document ||
+        parseWithCache(source.rawSDL || printSchemaWithDirectives(source.schema)),
     );
   }
   return undefined;
+}
+
+export async function resolveCustomFetch({
+  fetchConfig,
+  importFn,
+  cwd,
+  cache,
+  additionalPackagePrefixes,
+}: {
+  fetchConfig?: string;
+  importFn: ImportFn;
+  cwd: string;
+  additionalPackagePrefixes: string[];
+  cache: KeyValueCache;
+}): Promise<{
+  fetchFn: MeshFetch;
+  importCode: string;
+  code: string;
+}> {
+  let importCode = '';
+  if (!fetchConfig) {
+    importCode += `import { fetch as fetchFn } from '@whatwg-node/fetch';\n`;
+    return {
+      fetchFn: defaultFetch,
+      importCode,
+      code: ``,
+    };
+  }
+  const { moduleName, resolved: fetchFn } = await getPackage<MeshFetch>({
+    name: fetchConfig,
+    type: 'fetch',
+    importFn,
+    cwd,
+    additionalPrefixes: additionalPackagePrefixes,
+  });
+
+  importCode += `import fetchFn from ${JSON.stringify(moduleName)};\n`;
+
+  return {
+    fetchFn,
+    importCode,
+    code: '',
+  };
 }
 
 export async function resolveCache(
@@ -90,7 +151,8 @@ export async function resolveCache(
   rootStore: MeshStore,
   cwd: string,
   pubsub: MeshPubSub,
-  additionalPackagePrefixes: string[]
+  logger: Logger,
+  additionalPackagePrefixes: string[],
 ): Promise<{
   cache: KeyValueCache;
   importCode: string;
@@ -112,15 +174,17 @@ export async function resolveCache(
     importFn,
     store: rootStore.child('cache'),
     pubsub,
+    logger,
   });
 
   const code = `const cache = new (MeshCache as any)({
-      ...(rawConfig.cache || {}),
+      ...(${JSON.stringify(config)} as any),
       importFn,
       store: rootStore.child('cache'),
       pubsub,
+      logger,
     } as any)`;
-  const importCode = `import MeshCache from '${moduleName}';`;
+  const importCode = `import MeshCache from ${JSON.stringify(moduleName)};`;
 
   return {
     cache,
@@ -133,7 +197,7 @@ export async function resolvePubSub(
   pubsubYamlConfig: YamlConfig.Config['pubsub'],
   importFn: ImportFn,
   cwd: string,
-  additionalPackagePrefixes: string[]
+  additionalPackagePrefixes: string[],
 ): Promise<{
   importCode: string;
   code: string;
@@ -159,8 +223,8 @@ export async function resolvePubSub(
 
     const pubsub = new PubSub(pubsubConfig);
 
-    const importCode = `import PubSub from '${moduleName}'`;
-    const code = `const pubsub = new PubSub(rawConfig.pubsub);`;
+    const importCode = `import PubSub from ${JSON.stringify(moduleName)}`;
+    const code = `const pubsub = new PubSub(${JSON.stringify(pubsubConfig)});`;
 
     return {
       importCode,
@@ -183,7 +247,7 @@ export async function resolvePubSub(
 
 export async function resolveDocuments(
   documentsConfig: YamlConfig.Config['documents'],
-  cwd: string
+  cwd: string,
 ): Promise<Source[]> {
   if (!documentsConfig) {
     return [];
@@ -199,7 +263,8 @@ export async function resolveLogger(
   loggerConfig: YamlConfig.Config['logger'],
   importFn: ImportFn,
   cwd: string,
-  additionalPackagePrefixes: string[]
+  additionalPackagePrefixes: string[],
+  initialLoggerPrefix = '🕸️  Mesh',
 ): Promise<{
   importCode: string;
   code: string;
@@ -215,14 +280,14 @@ export async function resolveLogger(
     });
     return {
       logger,
-      importCode: `import logger from '${moduleName}';`,
+      importCode: `import logger from ${JSON.stringify(moduleName)};`,
       code: '',
     };
   }
-  const logger = new DefaultLogger('🕸️  Mesh');
+  const logger = new DefaultLogger(initialLoggerPrefix);
   return {
     logger,
     importCode: `import { DefaultLogger } from '@graphql-mesh/utils';`,
-    code: `const logger = new DefaultLogger('🕸️  Mesh');`,
+    code: `const logger = new DefaultLogger(${JSON.stringify(initialLoggerPrefix)});`,
   };
 }

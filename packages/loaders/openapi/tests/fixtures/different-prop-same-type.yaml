@@ -1,0 +1,99 @@
+openapi: 3.0.0
+info:
+  version: '2021.04'
+  title: Some title
+  description: |-
+    ## Some description
+  x-codegen-values:
+    apiVersionString: v5
+    apiVersionInt: 5
+    filePath: test.yaml
+servers:
+  - url: https://dev.url.com/api/v5
+    description: The dev API server
+paths:
+  '/get-approval-request':
+    parameters:
+      - name: employeeId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: approvalRequestId
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: get-approval-request-v5
+      summary: Get Approval Request
+      description: |-
+        ## Behavior
+      tags:
+        - Approval Requests
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v5_approvalRequest_approvalRequestGet'
+components:
+  schemas:
+    v5_approvalRequest_approvalRequestGet:
+      title: Approval Request - Get
+      allOf:
+        - $ref: '#/components/schemas/v5_approvalRequest_approvalRequestBase'
+        - type: object
+          # properties:
+          #   someThing:
+          #     type: object
+          #     oneOf:
+          # - $ref: "...""
+    v5_approvalRequest_approvalRequestBase:
+      title: Approval Request - Base
+      allOf:
+        - $ref: '#/components/schemas/v5_approvalRequest_approvalRequestSummaryGet'
+        - type: object
+          # properties:
+          #   someOtherThing:
+          #     type: object
+          #     oneOf:
+          # - $ref: "...""
+    v5_approvalRequest_approvalRequestSummaryGet:
+      title: Approval Request Summary - Get
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          $ref: '#/components/schemas/v5_approvalRequest_approvalRequestType'
+        type2:
+          $ref: '#/components/schemas/v5_approvalRequest_approvalRequestType'
+        submissionTimestamp:
+          type: string
+          format: date-time
+      required:
+        - id
+        - type
+        - type2
+        - submissionTimestamp
+    v5_approvalRequest_approvalRequestType:
+      title: Approval Request Type
+      type: string
+      enum:
+        - V4_SHIFT_OPEN
+        - V4_SHIFT_OFFER
+        - V4_SHIFT_CANCEL
+        - V4_SHIFT_TRADE
+        - V4_AVAILABILITY_TIME_OFF
+        - V5_TIME_OFF
+        - V5_AVAILABILITY
+        - V5_OPEN_SHIFT
+        - V5_SHIFT_DIRECT_OFFER
+        - V5_DIRECT_SWAP
+        - V5_DIRECT_RELEASE
+        - V5_POOL_RELEASE
+        - V5_POOL_SWAP
+        - V5_POOL_DUAL
+        - V5_BATCH_PUNCH_EDIT

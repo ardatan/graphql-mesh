@@ -1,6 +1,6 @@
-node_modules
+node_modules/
 temp
-dist
+dist/
 out
 build
 generated
@@ -12,8 +12,10 @@ package-lock.json
 .history
 .DS_Store
 .mesh
-.parcel-cache
-/.idea
-.next
-/website/api-sidebar.json
-/website/docs/api
+/.idea/
+.next/
+/website/src/pages/docs/api/
+/.husky/_/
+newrelic-agent.log
+website/public/_redirects
+packages/types/src/config-schema.ts

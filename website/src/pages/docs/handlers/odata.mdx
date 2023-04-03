@@ -1,0 +1,49 @@
+---
+description:
+  Discover how to load remote OData metadata as GraphQL Schema with GraphQL Mesh's OData/Microsoft
+  Graph handler. Get started with a few simple steps!
+---
+
+import { PackageCmd } from '@theguild/components'
+
+# OData / Microsoft Graph
+
+![image](https://user-images.githubusercontent.com/20847995/79219762-87947a80-7e5b-11ea-903d-ba159935fa17.png)
+
+This handler allows you to load remote [OData](https://odata.org) metadata/schema as GraphQL Schema.
+
+To get started, install the handler library:
+
+<PackageCmd packages={['@graphql-mesh/odata']} />
+
+Now, you can use it directly in your Mesh config file:
+
+```yaml filename=".meshrc.yaml" {4-5}
+sources:
+  - name: TripPin
+    handler:
+      odata:
+        endpoint: https://services.odata.org/TripPinRESTierService/
+```
+
+## Headers
+
+[Read about configuration and examples](/docs/guides/headers)
+
+## CodeSandBox Example
+
+You can check out our TripPin example that uses the OData handler.
+
+<iframe
+  src="https://codesandbox.io/embed/github/Urigo/graphql-mesh/tree/master/examples/odata-trippin?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
+  className="mt-6 w-full h-[500px] rounded-md"
+  title="odata-trippin-example"
+  allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+  sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+/>
+
+## Config API Reference
+
+import API from '../../../generated-markdown/ODataHandler.generated.md'
+
+<API />

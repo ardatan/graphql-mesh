@@ -3,8 +3,8 @@ query exampleQuery {
     data {
       name
       todayForecast {
-        minTemp
-        maxTemp
+        min_temp
+        max_temp
       }
     }
   }

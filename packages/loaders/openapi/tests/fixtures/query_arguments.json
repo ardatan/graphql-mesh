@@ -1,0 +1,67 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "arguments server fixture",
+    "version": "0.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:{port}/",
+      "description": "The location of the local test server.",
+      "variables": {
+        "port": {
+          "default": "3001"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/todos": {
+      "get": {
+        "parameters": [
+          {
+            "name": "id__in",
+            "description": "filter by collection of ids",
+            "in": "query",
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return list of todos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Todo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Todo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          }
+        }
+      }
+    }
+  }
+}

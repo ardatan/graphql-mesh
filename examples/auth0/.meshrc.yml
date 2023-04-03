@@ -1,0 +1,48 @@
+sources:
+  - name: PrivateAPI
+    handler:
+      jsonSchema:
+        endpoint: http://localhost:3001
+        operations:
+          - type: Query
+            field: secret
+            path: /
+            method: POST
+            responseSample: { code: 'MY_SECRET', timestamp: 0 }
+
+additionalTypeDefs: |
+  """
+  Describes the authentication object as provided by Auth0.
+  """
+  type AuthenticationInfo {
+    """
+    String that uniquely identifies an authenticated user.
+    """
+    sub: String!
+  }
+
+  extend type Query {
+    """
+    The authentication information of the request.
+    """
+    authInfo: AuthenticationInfo
+  }
+
+additionalResolvers:
+  - ./additionalResolvers.ts
+
+plugins:
+  - auth0:
+      domain: '{account_name}.{region}.auth0.com'
+      audience: 'http://localhost:3000/graphql'
+      extendContextField: '_auth0'
+      # No need to prevent unauthorized access
+      preventUnauthorizedAccess: false
+  - operationFieldPermissions:
+      permissions:
+        - if: 'context._auth0?.sub != null'
+          allow:
+            - '*'
+
+serve:
+  staticFiles: public

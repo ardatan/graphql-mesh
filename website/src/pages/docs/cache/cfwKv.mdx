@@ -1,0 +1,39 @@
+---
+description:
+  Use Cloudflare Workers KV as a caching strategy for Mesh on Cloudflare Workers. Install
+  graphql-mesh/cache-cf-kw and configure your .meshrc.yaml. Check out our deployment recipes for
+  help.
+---
+
+import { PackageCmd } from '@theguild/components'
+
+# CloudFlare Workers KV
+
+If you are using Mesh on Cloudflare Workers, you can use
+[_KV_](https://developers.cloudflare.com/workers/runtime-apis/kv/) as a storage.
+
+To get started with this caching strategy, install it:
+
+<PackageCmd packages={['@graphql-mesh/cache-cf-kw']} />
+
+## How to use?
+
+```yaml filename=".meshrc.yaml"
+cache:
+  cf-kw:
+    namespace: MY_MESH_CACHE
+```
+
+> If you need help with deploying GraphQL Mesh on CloudFlare Workers,
+> [see our deployment recipes.](/docs/getting-started/deploy-mesh-gateway#deploy-mesh-on-cloudflare-workers)
+
+## Config API Reference
+
+import API from '../../../generated-markdown/CFWorkersKVCacheConfig.generated.md'
+
+<API />
+
+### Example
+
+You can check this example to see how to use KV stores for caching in GraphQL Mesh;
+[https://github.com/Urigo/graphql-mesh/tree/master/examples/cloudflare-workers](https://github.com/Urigo/graphql-mesh/tree/master/examples/cloudflare-workers)

@@ -1,20 +1,23 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {
-  GetMeshSourceOptions,
-  MeshHandler,
-  MeshSource,
-  YamlConfig,
-  MeshPubSub,
-  Logger,
-  ImportFn,
-} from '@graphql-mesh/types';
+// eslint-disable-next-line import/no-nodejs-modules
+import { tmpdir } from 'os';
+import pg from 'pg';
 import { Plugin, withPostGraphileContext } from 'postgraphile';
 import { getPostGraphileBuilder } from 'postgraphile-core';
-import pg from 'pg';
-import { path } from '@graphql-mesh/cross-helpers';
-import { tmpdir } from 'os';
-import { jitExecutorFactory, loadFromModuleExportExpression, stringInterpolator } from '@graphql-mesh/utils';
+import { path, process } from '@graphql-mesh/cross-helpers';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import {
+  ImportFn,
+  Logger,
+  MeshHandler,
+  MeshHandlerOptions,
+  MeshPubSub,
+  MeshSource,
+  YamlConfig,
+} from '@graphql-mesh/types';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { createDefaultExecutor } from '@graphql-tools/delegate';
 
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;
@@ -33,7 +36,7 @@ export default class PostGraphileHandler implements MeshHandler {
     store,
     logger,
     importFn,
-  }: GetMeshSourceOptions<YamlConfig.PostGraphileHandler>) {
+  }: MeshHandlerOptions<YamlConfig.PostGraphileHandler>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
@@ -57,16 +60,18 @@ export default class PostGraphileHandler implements MeshHandler {
     if (!pgPool || !('connect' in pgPool)) {
       const pgLogger = this.logger.child('PostgreSQL');
       pgPool = new pg.Pool({
-        connectionString: stringInterpolator.parse(this.config.connectionString, { env: process.env }),
-        log: messages => pgLogger.debug(() => messages),
+        connectionString: stringInterpolator.parse(this.config.connectionString, {
+          env: process.env,
+        }),
+        log: messages => pgLogger.debug(messages),
         ...this.config?.pool,
       });
     }
 
-    const id$ = this.pubsub.subscribe('destroy', () => {
-      this.logger.debug(() => 'Destroying PostgreSQL pool');
+    const id = this.pubsub.subscribe('destroy', () => {
+      this.pubsub.unsubscribe(id);
+      this.logger.debug('Destroying PostgreSQL pool');
       pgPool.end();
-      id$.then(id => this.pubsub.unsubscribe(id)).catch(err => console.error(err));
     });
 
     const cacheKey = this.name + '_introspection.json';
@@ -82,8 +87,8 @@ export default class PostGraphileHandler implements MeshHandler {
           cwd: this.baseDir,
           importFn: this.importFn,
           defaultExportName: 'default',
-        })
-      )
+        }),
+      ),
     );
     const skipPlugins = await Promise.all<Plugin>(
       (this.config.skipPlugins || []).map(pluginName =>
@@ -91,8 +96,8 @@ export default class PostGraphileHandler implements MeshHandler {
           cwd: this.baseDir,
           importFn: this.importFn,
           defaultExportName: 'default',
-        })
-      )
+        }),
+      ),
     );
     const options = await loadFromModuleExportExpression<any>(this.config.options, {
       cwd: this.baseDir,
@@ -116,6 +121,7 @@ export default class PostGraphileHandler implements MeshHandler {
     });
 
     const schema = builder.buildSchema();
+    const defaultExecutor = createDefaultExecutor(schema);
 
     if (!cachedIntrospection) {
       await writeCache();
@@ -123,19 +129,24 @@ export default class PostGraphileHandler implements MeshHandler {
       await this.pgCache.set(cachedIntrospection);
     }
 
-    const jitExecutor = jitExecutorFactory(schema, this.name, this.logger);
-
     let contextOptions = await loadFromModuleExportExpression<any>(this.config.contextOptions, {
       cwd: this.baseDir,
       importFn: this.importFn,
       defaultExportName: 'default',
     });
     if (typeof contextOptions !== 'function') contextOptions = () => ({});
-
+ 
     return {
       schema,
-      executor: ({ document, variables, context: meshContext, rootValue, operationName, extensions }) =>
-        withPostGraphileContext(
+      executor({
+        document,
+        variables,
+        context: meshContext,
+        rootValue,
+        operationName,
+        extensions,
+      }) {
+        return withPostGraphileContext(
           {
             pgPool,
             queryDocumentAst: document,
@@ -143,8 +154,8 @@ export default class PostGraphileHandler implements MeshHandler {
             variables,
             ...contextOptions(meshContext),
           },
-          pgContext =>
-            jitExecutor({
+          function withPgContextCallback(pgContext) {
+            return defaultExecutor({
               document,
               variables,
               context: {
@@ -154,8 +165,10 @@ export default class PostGraphileHandler implements MeshHandler {
               rootValue,
               operationName,
               extensions,
-            }) as any
-        ) as any,
+            }) as any;
+          },
+        ) as any;
+      },
     };
   }
 }

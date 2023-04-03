@@ -1,30 +1,24 @@
+/* eslint-disable import/no-nodejs-modules */
 import { execute, GraphQLSchema, parse } from 'graphql';
-import { join } from 'path';
-import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { fetch } from 'cross-undici-fetch';
-import { startServer, stopServer } from '../../../handlers/openapi/test/example_api_server';
-
-const PORT = 3010;
-const oasFilePath = join(__dirname, '../../../handlers/openapi/test/fixtures/example_oas_combined.json');
-const baseUrl = `http://localhost:${PORT}/api`;
+import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
+import { exampleApi } from './example_api_server.js';
 
 describe('Example API Combined', () => {
   let createdSchema: GraphQLSchema;
   beforeAll(async () => {
-    await startServer(PORT);
-    createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      oasFilePath,
-      baseUrl,
-      fetch,
+    createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api_combined', {
+      source: './fixtures/example_oas_combined.json',
+      cwd: __dirname,
+      endpoint: 'http://localhost:3000/api',
+      fetch: exampleApi.fetch as any,
     });
   });
-  afterAll(async () => {
-    await stopServer();
-  });
+
   it('should generate correct schema', () => {
     expect(printSchemaWithDirectives(createdSchema)).toMatchSnapshot('example_oas_combined-schema');
   });
+
   it('should handle allOf correctly', async () => {
     const query = /* GraphQL */ `
       query {
@@ -33,10 +27,12 @@ describe('Example API Combined', () => {
         }
       }
     `;
+
     const result = await execute({
       schema: createdSchema,
       document: parse(query),
     });
+
     expect(result).toMatchSnapshot('example_oas_combined-query-result');
   });
 });

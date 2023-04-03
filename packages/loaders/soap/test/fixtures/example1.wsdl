@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://tempuri.org/" name="TodoService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+	<wsdl:types>
+		<xs:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:import namespace="http://WcfTodoService/Models/FileClass"/>
+			<xs:import namespace="http://schemas.datacontract.org/2004/07/WcfTodoService.Interface"/>
+			<xs:element name="UpdateFileClass">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element xmlns:q1="http://WcfTodoService/Models/FileClass" minOccurs="0" name="cls" nillable="true" type="q1:FileClass"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="UpdateFileClassResponse">
+				<xs:complexType>
+					<xs:sequence/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AddUpdateClass">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/WcfTodoService.Interface" minOccurs="0" name="updateClass" nillable="true" type="q2:UpdateClass"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AddUpdateClassResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" name="AddUpdateClassResult" type="xs:boolean"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AddTodo">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/WcfTodoService.Interface" minOccurs="0" name="todo" nillable="true" type="q3:TodoMessage"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AddTodoResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" name="AddTodoResult" type="xs:boolean"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetTodos">
+				<xs:complexType>
+					<xs:sequence/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetTodosResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/WcfTodoService.Interface" minOccurs="0" name="GetTodosResult" nillable="true" type="q4:ArrayOfTodoMessage"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="FaultAddTodo">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" name="text" nillable="true" type="xs:string"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="FaultAddTodoResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" name="FaultAddTodoResult" nillable="true" type="xs:string"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="FailGetTodo">
+				<xs:complexType>
+					<xs:sequence/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="FailGetTodoResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" name="FailGetTodoResult" nillable="true" type="xs:string"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+		<xs:schema xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:element name="anyType" nillable="true" type="xs:anyType"/>
+			<xs:element name="anyURI" nillable="true" type="xs:anyURI"/>
+			<xs:element name="base64Binary" nillable="true" type="xs:base64Binary"/>
+			<xs:element name="boolean" nillable="true" type="xs:boolean"/>
+			<xs:element name="byte" nillable="true" type="xs:byte"/>
+			<xs:element name="dateTime" nillable="true" type="xs:dateTime"/>
+			<xs:element name="decimal" nillable="true" type="xs:decimal"/>
+			<xs:element name="double" nillable="true" type="xs:double"/>
+			<xs:element name="float" nillable="true" type="xs:float"/>
+			<xs:element name="int" nillable="true" type="xs:int"/>
+			<xs:element name="long" nillable="true" type="xs:long"/>
+			<xs:element name="QName" nillable="true" type="xs:QName"/>
+			<xs:element name="short" nillable="true" type="xs:short"/>
+			<xs:element name="string" nillable="true" type="xs:string"/>
+			<xs:element name="unsignedByte" nillable="true" type="xs:unsignedByte"/>
+			<xs:element name="unsignedInt" nillable="true" type="xs:unsignedInt"/>
+			<xs:element name="unsignedLong" nillable="true" type="xs:unsignedLong"/>
+			<xs:element name="unsignedShort" nillable="true" type="xs:unsignedShort"/>
+			<xs:element name="char" nillable="true" type="tns:char"/>
+			<xs:simpleType name="char">
+				<xs:restriction base="xs:int"/>
+			</xs:simpleType>
+			<xs:element name="duration" nillable="true" type="tns:duration"/>
+			<xs:simpleType name="duration">
+				<xs:restriction base="xs:duration">
+					<xs:pattern value="\-?P(\d*D)?(T(\d*H)?(\d*M)?(\d*(\.\d*)?S)?)?"/>
+					<xs:minInclusive value="-P10675199DT2H48M5.4775808S"/>
+					<xs:maxInclusive value="P10675199DT2H48M5.4775807S"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:element name="guid" nillable="true" type="tns:guid"/>
+			<xs:simpleType name="guid">
+				<xs:restriction base="xs:string">
+					<xs:pattern value="[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:attribute name="FactoryType" type="xs:QName"/>
+			<xs:attribute name="Id" type="xs:ID"/>
+			<xs:attribute name="Ref" type="xs:IDREF"/>
+		</xs:schema>
+		<xs:schema xmlns:tns="http://WcfTodoService/Models/FileClass" elementFormDefault="qualified" targetNamespace="http://WcfTodoService/Models/FileClass" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:import namespace="http://schemas.datacontract.org/2004/07/WcfTodoService.Interface"/>
+			<xs:import namespace="http://schemas.datacontract.org/2004/07/WcfTodoService.Models"/>
+			<xs:complexType name="FileClass">
+				<xs:complexContent mixed="false">
+					<xs:extension xmlns:q1="http://schemas.datacontract.org/2004/07/WcfTodoService.Models" base="q1:EntityObject">
+						<xs:sequence>
+							<xs:element minOccurs="0" name="ClassIntID" type="xs:long"/>
+							<xs:element minOccurs="0" name="CreatedBy" nillable="true" type="xs:string"/>
+							<xs:element minOccurs="0" name="CreatedDtTm" type="xs:dateTime"/>
+							<xs:element minOccurs="0" name="FirmIntID" nillable="true" type="xs:string"/>
+							<xs:element minOccurs="0" name="LastUpdatedBy" nillable="true" type="xs:string"/>
+							<xs:element minOccurs="0" name="LastUpdatedDtTm" type="xs:dateTime"/>
+							<xs:element minOccurs="0" name="Name" nillable="true" type="xs:string"/>
+							<xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/WcfTodoService.Interface" minOccurs="0" name="PeriodType" nillable="true" type="q2:PeriodType"/>
+							<xs:element minOccurs="0" name="Retention" type="xs:int"/>
+							<xs:element minOccurs="0" name="Timestamp" nillable="true" type="xs:base64Binary"/>
+						</xs:sequence>
+					</xs:extension>
+				</xs:complexContent>
+			</xs:complexType>
+			<xs:element name="FileClass" nillable="true" type="tns:FileClass"/>
+		</xs:schema>
+		<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/WcfTodoService.Models" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/WcfTodoService.Models" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/"/>
+			<xs:complexType name="EntityObject">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="Mode" type="tns:EntityMode"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="EntityObject" nillable="true" type="tns:EntityObject"/>
+			<xs:simpleType name="EntityMode">
+				<xs:annotation>
+					<xs:appinfo>
+						<ActualType Name="short" Namespace="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+					</xs:appinfo>
+				</xs:annotation>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="New">
+						<xs:annotation>
+							<xs:appinfo>
+								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">1</EnumerationValue>
+							</xs:appinfo>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="Deleted">
+						<xs:annotation>
+							<xs:appinfo>
+								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">3</EnumerationValue>
+							</xs:appinfo>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="Changed"/>
+					<xs:enumeration value="Unchanged">
+						<xs:annotation>
+							<xs:appinfo>
+								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">0</EnumerationValue>
+							</xs:appinfo>
+						</xs:annotation>
+					</xs:enumeration>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:element name="EntityMode" nillable="true" type="tns:EntityMode"/>
+		</xs:schema>
+		<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/WcfTodoService.Interface" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/WcfTodoService.Interface" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:simpleType name="PeriodType">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="Days"/>
+					<xs:enumeration value="Weeks"/>
+					<xs:enumeration value="Months"/>
+					<xs:enumeration value="Years"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:element name="PeriodType" nillable="true" type="tns:PeriodType"/>
+			<xs:complexType name="UpdateClass">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="ClassIndId" nillable="true" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="UpdateClass" nillable="true" type="tns:UpdateClass"/>
+			<xs:complexType name="TodoMessage">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="Author" nillable="true" type="tns:Name"/>
+					<xs:element minOccurs="0" name="Description" nillable="true" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="TodoMessage" nillable="true" type="tns:TodoMessage"/>
+			<xs:complexType name="Name">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="First" nillable="true" type="xs:string"/>
+					<xs:element minOccurs="0" name="Last" nillable="true" type="xs:string"/>
+					<xs:element minOccurs="0" name="Middle" nillable="true" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="Name" nillable="true" type="tns:Name"/>
+			<xs:complexType name="ArrayOfTodoMessage">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="TodoMessage" nillable="true" type="tns:TodoMessage"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="ArrayOfTodoMessage" nillable="true" type="tns:ArrayOfTodoMessage"/>
+			<xs:complexType name="TodoFault">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="ErrorCode" type="xs:int"/>
+					<xs:element minOccurs="0" name="Text" nillable="true" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="TodoFault" nillable="true" type="tns:TodoFault"/>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="ITodoService_UpdateFileClass_InputMessage">
+		<wsdl:part name="parameters" element="tns:UpdateFileClass"/>
+	</wsdl:message>
+	<wsdl:message name="ITodoService_UpdateFileClass_OutputMessage">
+		<wsdl:part name="parameters" element="tns:UpdateFileClassResponse"/>
+	</wsdl:message>
+	<wsdl:message name="ITodoService_AddUpdateClass_InputMessage">
+		<wsdl:part name="parameters" element="tns:AddUpdateClass"/>
+	</wsdl:message>
+	<wsdl:message name="ITodoService_AddUpdateClass_OutputMessage">
+		<wsdl:part name="parameters" element="tns:AddUpdateClassResponse"/>
+	</wsdl:message>
+	<wsdl:message name="ITodoService_AddTodo_InputMessage">
+		<wsdl:part name="parameters" element="tns:AddTodo"/>
+	</wsdl:message>
+	<wsdl:message name="ITodoService_AddTodo_OutputMessage">
+		<wsdl:part name="parameters" element="tns:AddTodoResponse"/>
+	</wsdl:message>
+	<wsdl:message name="ITodoService_GetTodos_InputMessage">
+		<wsdl:part name="parameters" element="tns:GetTodos"/>
+	</wsdl:message>
+	<wsdl:message name="ITodoService_GetTodos_OutputMessage">
+		<wsdl:part name="parameters" element="tns:GetTodosResponse"/>
+	</wsdl:message>
+	<wsdl:message name="ITodoService_FaultAddTodo_InputMessage">
+		<wsdl:part name="parameters" element="tns:FaultAddTodo"/>
+	</wsdl:message>
+	<wsdl:message name="ITodoService_FaultAddTodo_OutputMessage">
+		<wsdl:part name="parameters" element="tns:FaultAddTodoResponse"/>
+	</wsdl:message>
+	<wsdl:message name="ITodoService_FaultAddTodo_TodoFaultFault_FaultMessage">
+		<wsdl:part xmlns:q1="http://schemas.datacontract.org/2004/07/WcfTodoService.Interface" name="detail" element="q1:TodoFault"/>
+	</wsdl:message>
+	<wsdl:message name="ITodoService_FailGetTodo_InputMessage">
+		<wsdl:part name="parameters" element="tns:FailGetTodo"/>
+	</wsdl:message>
+	<wsdl:message name="ITodoService_FailGetTodo_OutputMessage">
+		<wsdl:part name="parameters" element="tns:FailGetTodoResponse"/>
+	</wsdl:message>
+	<wsdl:portType name="ITodoService">
+		<wsdl:operation name="UpdateFileClass">
+			<wsdl:input wsaw:Action="http://tempuri.org/ITodoService/UpdateFileClass" message="tns:ITodoService_UpdateFileClass_InputMessage"/>
+			<wsdl:output wsaw:Action="http://tempuri.org/ITodoService/UpdateFileClassResponse" message="tns:ITodoService_UpdateFileClass_OutputMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="AddUpdateClass">
+			<wsdl:input wsaw:Action="http://tempuri.org/ITodoService/AddUpdateClass" message="tns:ITodoService_AddUpdateClass_InputMessage"/>
+			<wsdl:output wsaw:Action="http://tempuri.org/ITodoService/AddUpdateClassResponse" message="tns:ITodoService_AddUpdateClass_OutputMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="AddTodo">
+			<wsdl:input wsaw:Action="http://tempuri.org/ITodoService/AddTodo" message="tns:ITodoService_AddTodo_InputMessage"/>
+			<wsdl:output wsaw:Action="http://tempuri.org/ITodoService/AddTodoResponse" message="tns:ITodoService_AddTodo_OutputMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetTodos">
+			<wsdl:input wsaw:Action="http://tempuri.org/ITodoService/GetTodos" message="tns:ITodoService_GetTodos_InputMessage"/>
+			<wsdl:output wsaw:Action="http://tempuri.org/ITodoService/GetTodosResponse" message="tns:ITodoService_GetTodos_OutputMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="FaultAddTodo">
+			<wsdl:input wsaw:Action="http://tempuri.org/ITodoService/FaultAddTodo" message="tns:ITodoService_FaultAddTodo_InputMessage"/>
+			<wsdl:output wsaw:Action="http://tempuri.org/ITodoService/FaultAddTodoResponse" message="tns:ITodoService_FaultAddTodo_OutputMessage"/>
+			<wsdl:fault wsaw:Action="http://tempuri.org/ITodoService/FaultAddTodoTodoFaultFault" name="TodoFaultFault" message="tns:ITodoService_FaultAddTodo_TodoFaultFault_FaultMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="FailGetTodo">
+			<wsdl:input wsaw:Action="http://tempuri.org/ITodoService/FailGetTodo" message="tns:ITodoService_FailGetTodo_InputMessage"/>
+			<wsdl:output wsaw:Action="http://tempuri.org/ITodoService/FailGetTodoResponse" message="tns:ITodoService_FailGetTodo_OutputMessage"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="BasicHttpBinding_ITodoService" type="tns:ITodoService">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="UpdateFileClass">
+			<soap:operation soapAction="http://tempuri.org/ITodoService/UpdateFileClass" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="AddUpdateClass">
+			<soap:operation soapAction="http://tempuri.org/ITodoService/AddUpdateClass" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="AddTodo">
+			<soap:operation soapAction="http://tempuri.org/ITodoService/AddTodo" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="GetTodos">
+			<soap:operation soapAction="http://tempuri.org/ITodoService/GetTodos" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="FaultAddTodo">
+			<soap:operation soapAction="http://tempuri.org/ITodoService/FaultAddTodo" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="TodoFaultFault">
+				<soap:fault use="literal" name="TodoFaultFault" namespace=""/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="FailGetTodo">
+			<soap:operation soapAction="http://tempuri.org/ITodoService/FailGetTodo" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="TodoService">
+		<wsdl:port name="BasicHttpBinding_ITodoService" binding="tns:BasicHttpBinding_ITodoService">
+			<soap:address location="http://localhost:8088/TodoService/basichttp"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

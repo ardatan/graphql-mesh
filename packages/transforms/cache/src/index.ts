@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
-import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
-import { ResolversComposerMapping, composeResolvers } from '@graphql-tools/resolvers-composition';
-import { computeCacheKey } from './compute-cache-key';
-import { extractResolvers } from '@graphql-mesh/utils';
-import { addResolversToSchema } from '@graphql-tools/schema';
 import { GraphQLSchema } from 'graphql';
+import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import { extractResolvers } from '@graphql-mesh/utils';
+import { composeResolvers, ResolversComposerMapping } from '@graphql-tools/resolvers-composition';
+import { addResolversToSchema } from '@graphql-tools/schema';
+import { computeCacheKey } from './compute-cache-key.js';
 
 export default class CacheTransform implements MeshTransform {
   noWrap = true;
@@ -148,8 +148,8 @@ export default class CacheTransform implements MeshTransform {
 
   private waitAndReturn(pubsubTopic: string) {
     return new Promise((resolve, reject) => {
-      const subId$ = this.options.pubsub.subscribe(pubsubTopic, async ({ result, error }) => {
-        subId$.then(subId => this.options.pubsub.unsubscribe(subId));
+      const subId = this.options.pubsub.subscribe(pubsubTopic, ({ result, error }) => {
+        this.options.pubsub.unsubscribe(subId);
 
         if (error) {
           reject(error);

@@ -1,9 +1,13 @@
 import { GraphQLSchema } from 'graphql';
-import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
+import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import {
+  applyRequestTransforms,
+  applyResultTransforms,
+  applySchemaTransforms,
+} from '@graphql-mesh/utils';
+import { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
+import { ExecutionRequest, ExecutionResult, selectObjectFields } from '@graphql-tools/utils';
 import { WrapType } from '@graphql-tools/wrap';
-import { ExecutionResult, ExecutionRequest, selectObjectFields } from '@graphql-tools/utils';
-import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
-import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
 
 const DEFUALT_APPLY_TO = {
   query: true,
@@ -23,7 +27,7 @@ export default class EncapsulateTransform implements MeshTransform {
 
     if (!name) {
       throw new Error(
-        `Unable to execute encapsulate transform without a name. Please make sure to use it over a specific schema, or specify a name in your configuration!`
+        `Unable to execute encapsulate transform without a name. Please make sure to use it over a specific schema, or specify a name in your configuration!`,
       );
     }
 
@@ -36,7 +40,11 @@ export default class EncapsulateTransform implements MeshTransform {
       this.transformMap.Mutation = new WrapType('Mutation', `${name}Mutation`, name) as any;
     }
     if (applyTo.subscription) {
-      this.transformMap.Subscription = new WrapType('Subscription', `${name}Subscription`, name) as any;
+      this.transformMap.Subscription = new WrapType(
+        'Subscription',
+        `${name}Subscription`,
+        name,
+      ) as any;
     }
   }
 
@@ -52,21 +60,40 @@ export default class EncapsulateTransform implements MeshTransform {
   transformSchema(
     originalWrappingSchema: GraphQLSchema,
     subschemaConfig: SubschemaConfig,
-    transformedSchema?: GraphQLSchema
+    transformedSchema?: GraphQLSchema,
   ) {
     this.transforms = [...this.generateSchemaTransforms(originalWrappingSchema)];
-    return applySchemaTransforms(originalWrappingSchema, subschemaConfig, transformedSchema, this.transforms);
+    return applySchemaTransforms(
+      originalWrappingSchema,
+      subschemaConfig,
+      transformedSchema,
+      this.transforms,
+    );
   }
 
   transformRequest(
     originalRequest: ExecutionRequest,
     delegationContext: DelegationContext,
-    transformationContext: Record<string, any>
+    transformationContext: Record<string, any>,
   ) {
-    return applyRequestTransforms(originalRequest, delegationContext, transformationContext, this.transforms);
+    return applyRequestTransforms(
+      originalRequest,
+      delegationContext,
+      transformationContext,
+      this.transforms,
+    );
   }
 
-  transformResult(originalResult: ExecutionResult, delegationContext: DelegationContext, transformationContext: any) {
-    return applyResultTransforms(originalResult, delegationContext, transformationContext, this.transforms);
+  transformResult(
+    originalResult: ExecutionResult,
+    delegationContext: DelegationContext,
+    transformationContext: any,
+  ) {
+    return applyResultTransforms(
+      originalResult,
+      delegationContext,
+      transformationContext,
+      this.transforms,
+    );
   }
 }

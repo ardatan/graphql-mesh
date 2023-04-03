@@ -1,5 +1,5 @@
 import { JSONSchemaObject } from '@json-schema-tools/meta-schema';
-import { dereferenceObject } from '../src/dereferenceObject';
+import { dereferenceObject } from '../src/dereferenceObject.js';
 
 describe('dereferenceObject', () => {
   it('should resolve all $ref', async () => {
@@ -60,7 +60,9 @@ describe('dereferenceObject', () => {
     expect(result.title).toBe('Container');
     expect(result.properties.posts.items.title).toBe('Post');
     expect(result.properties.posts.items.properties.author.title).toBe('Author');
-    expect(result.properties.posts.items.properties.author === result.properties.authors.items).toBeTruthy();
+    expect(
+      result.properties.posts.items.properties.author === result.properties.authors.items,
+    ).toBeTruthy();
   });
   it('should dereference external references', async () => {
     const result = await dereferenceObject<JSONSchemaObject>(
@@ -69,7 +71,7 @@ describe('dereferenceObject', () => {
       },
       {
         cwd: __dirname,
-      }
+      },
     );
     expect(result.title).toBe('PostsResponse');
     expect(result.properties.items.items.title).toBe('Post');
@@ -242,11 +244,12 @@ describe('dereferenceObject', () => {
       },
     };
     const dereferencedObject = await dereferenceObject(openapiSchema);
-    expect(dereferencedObject.paths['/pets/{petId}'].get.responses[200].content['application/json'].schema).toBe(
-      openapiSchema.components.schemas.Pet
-    );
-    expect(dereferencedObject.paths['/pets'].get.responses[200].content['application/json'].schema).toBe(
-      openapiSchema.components.schemas.Pets
-    );
+    expect(
+      dereferencedObject.paths['/pets/{petId}'].get.responses[200].content['application/json']
+        .schema,
+    ).toBe(openapiSchema.components.schemas.Pet);
+    expect(
+      dereferencedObject.paths['/pets'].get.responses[200].content['application/json'].schema,
+    ).toBe(openapiSchema.components.schemas.Pets);
   });
 });

@@ -1,8 +1,9 @@
-import { MeshTransform, MeshTransformOptions, ResolverData, YamlConfig } from '@graphql-mesh/types';
-import type { ExecutionRequest } from '@graphql-tools/utils';
-import type { DelegationContext } from '@graphql-tools/delegate';
 import { ExecutionResult, GraphQLError, TypeInfo, visit, visitWithTypeInfo } from 'graphql';
-import { AggregateError, stringInterpolator } from '@graphql-mesh/utils';
+import { process } from '@graphql-mesh/cross-helpers';
+import { ResolverData, stringInterpolator } from '@graphql-mesh/string-interpolation';
+import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import type { DelegationContext } from '@graphql-tools/delegate';
+import { AggregateError, ExecutionRequest } from '@graphql-tools/utils';
 
 export default class RateLimitTransform implements MeshTransform {
   private pathRateLimitDef = new Map<string, YamlConfig.RateLimitTransformConfig>();
@@ -15,16 +16,19 @@ export default class RateLimitTransform implements MeshTransform {
       });
     }
     if (options.pubsub) {
-      const id$ = options.pubsub.subscribe('destroy', () => {
+      const id = options.pubsub.subscribe('destroy', () => {
+        options.pubsub.unsubscribe(id);
         this.timeouts.forEach(timeout => clearTimeout(timeout));
-        id$.then(id => options.pubsub.unsubscribe(id)).catch(err => console.error(err));
       });
     }
   }
 
   private errors = new WeakMap<DelegationContext, GraphQLError[]>();
 
-  transformRequest(executionRequest: ExecutionRequest, delegationContext: DelegationContext): ExecutionRequest {
+  transformRequest(
+    executionRequest: ExecutionRequest,
+    delegationContext: DelegationContext,
+  ): ExecutionRequest {
     const { transformedSchema, rootValue, args, context, info } = delegationContext;
     if (transformedSchema) {
       const errors: GraphQLError[] = [];
@@ -60,7 +64,9 @@ export default class RateLimitTransform implements MeshTransform {
               }
 
               if (remainingTokens === 0) {
-                errors.push(new GraphQLError(`Rate limit of "${path}" exceeded for "${identifier}"`));
+                errors.push(
+                  new GraphQLError(`Rate limit of "${path}" exceeded for "${identifier}"`),
+                );
                 // Remove this field from the selection set
                 return null;
               } else {
@@ -70,7 +76,7 @@ export default class RateLimitTransform implements MeshTransform {
             remainingFields++;
             return false;
           },
-        })
+        }),
       );
       if (remainingFields === 0) {
         if (errors.length === 1) {

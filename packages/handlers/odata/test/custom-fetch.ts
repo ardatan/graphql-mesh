@@ -4,13 +4,18 @@ export const MockRequest = function (url: string, config: RequestInit) {
   return {
     url,
     ...config,
-    text: async () => config.body,
+    // TODO: Arda - replace any with strict type
+    text: async () => (config.body as any).toString('utf-8'),
+    json: async () => JSON.parse((config.body as any).toString('utf-8')),
+    clone() {
+      return this;
+    },
   } as Request;
 } as any as typeof Request;
-export const MockResponse = function (body: string) {
+export const MockResponse = function (body: any) {
   return {
-    text: async () => body,
-    json: async () => JSON.parse(body),
+    text: async () => body.toString('utf-8'),
+    json: async () => JSON.parse(body.toString('utf-8')),
   } as Response;
 } as any as typeof Response;
 
@@ -27,7 +32,7 @@ export const mockFetch = function (...args: Parameters<WindowOrWorkerGlobalScope
   if (typeof args[0] === 'string') {
     request = new MockRequest(...args);
   } else {
-    request = args[0];
+    request = args[0] as Request;
   }
   const url = decodeURIComponent(request.url);
   const responseFn = mocks[url];

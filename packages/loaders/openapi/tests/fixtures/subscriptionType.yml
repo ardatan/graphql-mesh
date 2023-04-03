@@ -1,0 +1,87 @@
+openapi: 3.0.2
+info:
+  title: Sample API
+  description: test
+  version: 0.1.9
+servers:
+  - url: http://api.example.com/v1
+    description: test
+paths:
+  '/a/{company_id}/a':
+    get:
+      operationId: a
+      parameters:
+        - name: company_id
+          in: path
+          description: Company ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: a
+  /b:
+    post:
+      operationId: b
+      requestBody:
+        description: b
+        required: true
+        content:
+          application/json:
+            schema:
+              type: integer
+              format: int64
+      callbacks:
+        bFailed:
+          'https://url':
+            put:
+              operationId: bFailed
+              requestBody:
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        uuid:
+                          type: string
+                          format: uuid
+                      required:
+                        - uuid
+              responses:
+                '200':
+                  description: OK
+      responses:
+        '202':
+          description: b
+  '/subscriptions':
+    get:
+      tags:
+        - Subscriptions
+      summary: Get a list of subscriptions
+      operationId: listSubscriptions
+      parameters:
+        - name: company_id
+          in: path
+          description: Company ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 1234
+      responses:
+        '200':
+          description: List of subscriptions for the company
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+components:
+  schemas:
+    Subscription:
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+        - id

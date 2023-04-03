@@ -1,0 +1,22 @@
+{
+  "name": "books-service",
+  "version": "0.0.0",
+  "description": "Books Service",
+  "private": true,
+  "scripts": {
+    "hive:publish": "hive schema:publish .mesh/sources/Books/schema.graphql",
+    "prehive:publish": "mesh build",
+    "start": "ts-node src/index.ts"
+  },
+  "dependencies": {
+    "@whatwg-node/router": "0.3.0",
+    "ts-node": "10.9.1",
+    "typescript": "5.0.3"
+  },
+  "devDependencies": {
+    "@graphql-hive/cli": "0.20.2",
+    "@graphql-mesh/cli": "0.82.30",
+    "@graphql-mesh/openapi": "0.35.26",
+    "graphql": "16.6.0"
+  }
+}

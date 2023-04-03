@@ -1,18 +1,23 @@
-import { jsonFlatStringify } from '@graphql-mesh/utils';
-import { ClientReadableStream, ClientUnaryCall, Metadata, MetadataValue } from '@grpc/grpc-js';
-import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import { SchemaComposer } from 'graphql-compose';
-import _ from 'lodash';
+import lodashGet from 'lodash.get';
 import { Root } from 'protobufjs';
+import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
+import { ResolverData, stringInterpolator } from '@graphql-mesh/string-interpolation';
+import { withCancel } from '@graphql-mesh/utils';
+import {
+  ClientDuplexStream,
+  ClientReadableStream,
+  ClientUnaryCall,
+  Metadata,
+  MetadataValue,
+} from '@grpc/grpc-js';
+import { getGraphQLScalar, isScalarType } from './scalars.js';
 
-import { getGraphQLScalar, isScalarType } from './scalars';
-
-export type ClientMethod = (
-  input: unknown,
-  metaData?: Metadata
-) => Promise<ClientUnaryCall> | AsyncIterator<ClientReadableStream<unknown>>;
-
-export function getTypeName(schemaComposer: SchemaComposer, pathWithName: string[] | undefined, isInput: boolean) {
+export function getTypeName(
+  schemaComposer: SchemaComposer,
+  pathWithName: string[] | undefined,
+  isInput: boolean,
+) {
   if (pathWithName?.length) {
     const baseTypeName = pathWithName.filter(Boolean).join('_');
     if (isScalarType(baseTypeName)) {
@@ -46,29 +51,66 @@ export function addIncludePathResolver(root: Root, includePaths: string[]): void
   };
 }
 
+function isBlob(input: any): input is Blob {
+  return input != null && input.stream instanceof Function;
+}
+
 export function addMetaDataToCall(
-  call: ClientMethod,
-  input: unknown,
-  context: Record<string, unknown>,
-  metaData: Record<string, string | string[] | Buffer>
+  callFn: any,
+  input: any,
+  resolverData: ResolverData,
+  metaData: Record<string, string | string[] | Buffer>,
+  isResponseStream = false,
 ) {
+  const callFnArguments: any[] = [];
+  if (!isBlob(input)) {
+    callFnArguments.push(input);
+  }
   if (metaData) {
     const meta = new Metadata();
     for (const [key, value] of Object.entries(metaData)) {
       let metaValue: unknown = value;
       if (Array.isArray(value)) {
         // Extract data from context
-        metaValue = _.get(context, value);
+        metaValue = lodashGet(resolverData.context, value);
       }
+
       // Ensure that the metadata is compatible with what node-grpc expects
       if (typeof metaValue !== 'string' && !(metaValue instanceof Buffer)) {
-        metaValue = jsonFlatStringify(metaValue);
+        metaValue = JSON.stringify(metaValue);
+      }
+
+      if (typeof metaValue === 'string') {
+        metaValue = stringInterpolator.parse(metaValue, resolverData);
       }
 
       meta.add(key, metaValue as MetadataValue);
     }
-
-    return call(input, meta);
+    callFnArguments.push(meta);
   }
-  return call(input);
+  return new Promise((resolve, reject) => {
+    const call: ClientDuplexStream<any, any> = callFn(
+      ...callFnArguments,
+      (error: Error, response: ClientUnaryCall | ClientReadableStream<unknown>) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(response);
+      },
+    );
+    if (isResponseStream) {
+      let isCancelled = false;
+      const responseStreamWithCancel = withCancel(call, () => {
+        if (!isCancelled) {
+          call.call?.cancelWithStatus(0, 'Cancelled by GraphQL Mesh');
+          isCancelled = true;
+        }
+      });
+      resolve(responseStreamWithCancel);
+      if (isBlob(input)) {
+        const blobStream = input.stream();
+        (blobStream as any).pipe(call);
+      }
+    }
+  });
 }

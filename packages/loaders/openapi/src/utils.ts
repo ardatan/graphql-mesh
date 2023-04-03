@@ -11,7 +11,10 @@ export function getFieldNameFromPath(path: string, method: string, responseTypeS
   let fieldNameWithoutMethod = actualParts.join('_');
 
   // If path doesn't give any field name without identifiers, we can use the return type with HTTP Method name
-  if ((!fieldNameWithoutMethod || fieldNameWithoutMethod.startsWith('by')) && responseTypeSchemaRef) {
+  if (
+    (!fieldNameWithoutMethod || fieldNameWithoutMethod.startsWith('by')) &&
+    responseTypeSchemaRef
+  ) {
     const refArr = responseTypeSchemaRef.split('/');
     // lowercase looks better in the schema
     const prefix = camelCase(refArr[refArr.length - 1]);
@@ -20,6 +23,10 @@ export function getFieldNameFromPath(path: string, method: string, responseTypeS
     } else {
       fieldNameWithoutMethod = prefix;
     }
+  }
+
+  if (fieldNameWithoutMethod.startsWith('by_')) {
+    fieldNameWithoutMethod = fieldNameWithoutMethod.replace('by_', '');
   }
 
   if (allQueryPartsStr) {

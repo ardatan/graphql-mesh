@@ -1,15 +1,15 @@
 sources:
   - name: Weatherbit
     handler:
-      newOpenapi:
-        baseUrl: http://api.weatherbit.io/v2.0/
-        oasFilePath: https://www.weatherbit.io/static/swagger.json
-    transforms:
-      - cache:
-          # Forcast data might change, so we can cache it for 1 hour only
-          - field: Query.getForecastDailyLatequalToLatLonLon
-            invalidate:
-              ttl: 864000 # Cache daily data for 24 hours
+      openapi:
+        source: https://www.weatherbit.io/static/swagger.json
+
+plugins:
+  - responseCache:
+      ttlPerCoordinate:
+        # Forecast data might change, so we can cache it for 1 hour only
+        - coordinate: Query.forecast_daily_by_lat_by_lon
+          ttl: 3600
 
 documents:
   - ./*.graphql

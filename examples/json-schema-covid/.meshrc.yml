@@ -1,0 +1,12 @@
+sources: !includes sources
+
+additionalTypeDefs:
+  - ./src/additionalTypeDefs.graphql
+additionalResolvers:
+  - ./src/additionalResolvers
+
+documents:
+  - example-queries/*.graphql
+
+serve:
+  playground: true

@@ -1,7 +1,13 @@
-import { KeyValueCache, KeyValueCacheSetOptions, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 import Redis from 'ioredis';
-import { jsonFlatStringify, stringInterpolator } from '@graphql-mesh/utils';
-import LocalforageCache from '@graphql-mesh/cache-localforage';
+import RedisMock from 'ioredis-mock';
+import { process } from '@graphql-mesh/cross-helpers';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import {
+  KeyValueCache,
+  KeyValueCacheSetOptions,
+  MeshPubSub,
+  YamlConfig,
+} from '@graphql-mesh/types';
 
 function interpolateStrWithEnv(str: string): string {
   return stringInterpolator.parse(str, { env: process.env });
@@ -12,7 +18,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V> {
 
   constructor(options: YamlConfig.Cache['redis'] & { pubsub: MeshPubSub }) {
     if (options.url) {
-      const redisUrl = new URL(options.url);
+      const redisUrl = new URL(interpolateStrWithEnv(options.url));
 
       redisUrl.searchParams.set('lazyConnect', 'true');
       redisUrl.searchParams.set('enableAutoPipelining', 'true');
@@ -22,14 +28,11 @@ export default class RedisCache<V = string> implements KeyValueCache<V> {
         throw new Error('Redis URL must use either redis:// or rediss://');
       }
 
-      const fullUrl = redisUrl.toString();
-      const parsedFullUrl = interpolateStrWithEnv(fullUrl);
-
-      this.client = new Redis(parsedFullUrl);
+      this.client = new Redis(redisUrl?.toString());
     } else {
-      const parsedHost = interpolateStrWithEnv(options.host);
-      const parsedPort = interpolateStrWithEnv(options.port);
-      const parsedPassword = interpolateStrWithEnv(options.password);
+      const parsedHost = interpolateStrWithEnv(options.host?.toString());
+      const parsedPort = interpolateStrWithEnv(options.port?.toString());
+      const parsedPassword = interpolateStrWithEnv(options.password?.toString());
       if (parsedHost) {
         this.client = new Redis({
           host: parsedHost,
@@ -40,22 +43,17 @@ export default class RedisCache<V = string> implements KeyValueCache<V> {
           enableOfflineQueue: true,
         });
       } else {
-        return new LocalforageCache(options as any) as any;
+        this.client = new RedisMock();
       }
     }
-    const id$ = options.pubsub
-      .subscribe('destroy', () => {
-        this.client.disconnect(false);
-        id$.then(id => options.pubsub.unsubscribe(id)).catch(err => console.error(err));
-      })
-      .catch(err => {
-        console.error(err);
-        return 0;
-      });
+    const id = options.pubsub.subscribe('destroy', () => {
+      this.client.disconnect(false);
+      options.pubsub.unsubscribe(id);
+    });
   }
 
   async set(key: string, value: V, options?: KeyValueCacheSetOptions): Promise<void> {
-    const stringifiedValue = jsonFlatStringify(value);
+    const stringifiedValue = JSON.stringify(value);
     if (options?.ttl) {
       await this.client.set(key, stringifiedValue, 'EX', options.ttl);
     } else {
@@ -70,6 +68,10 @@ export default class RedisCache<V = string> implements KeyValueCache<V> {
       return value;
     }
     return undefined;
+  }
+
+  async getKeysByPrefix(prefix: string): Promise<string[]> {
+    return this.client.keys(`${prefix}*`);
   }
 
   async delete(key: string): Promise<boolean> {

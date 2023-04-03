@@ -1,11 +1,11 @@
 import { JSONSchemaLoaderOptions } from '@omnigraph/json-schema';
 
 export interface RAMLLoaderOptions extends Partial<JSONSchemaLoaderOptions> {
-  ramlFilePath: string;
+  source: string;
   selectQueryOrMutationField?: RAMLLoaderSelectQueryOrMutationFieldConfig[];
 }
 
 export interface RAMLLoaderSelectQueryOrMutationFieldConfig {
-  type: 'query' | 'mutation';
+  type: 'query' | 'mutation' | 'Query' | 'Mutation';
   fieldName: string;
 }

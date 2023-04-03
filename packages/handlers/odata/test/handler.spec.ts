@@ -1,18 +1,27 @@
-import { MeshPubSub, KeyValueCache, Logger } from '@graphql-mesh/types';
-import { printSchema, GraphQLInterfaceType, parse, ExecutionResult } from 'graphql';
+import { ExecutionResult, GraphQLInterfaceType, parse, printSchema } from 'graphql';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
-import { addMock, resetMocks, MockResponse as Response, mockFetch } from './custom-fetch';
-import { readFileSync } from 'fs';
-import { resolve } from 'path';
-import { PubSub } from '@graphql-mesh/utils';
-import ODataHandler from '../src';
+import { fs, path } from '@graphql-mesh/cross-helpers';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import { DefaultLogger } from '@graphql-mesh/utils';
+import { KeyValueCache, Logger, MeshPubSub } from '@graphql-mesh/types';
+import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import ODataHandler from '../src/index.js';
+import { addMock, mockFetch, MockResponse, resetMocks } from './custom-fetch.js';
 
-const TripPinMetadata = readFileSync(resolve(__dirname, './fixtures/trippin-metadata.xml'), 'utf8');
-const PersonMockData = JSON.parse(readFileSync(resolve(__dirname, './fixtures/russellwhyte.json'), 'utf-8'));
-const TripMockData = JSON.parse(readFileSync(resolve(__dirname, './fixtures/trip.json'), 'utf-8'));
-const BasicMetadata = readFileSync(resolve(__dirname, './fixtures/simple-metadata.xml'), 'utf-8');
+const TripPinMetadata = fs.readFileSync(
+  path.resolve(__dirname, './fixtures/trippin-metadata.xml'),
+  'utf8',
+);
+const PersonMockData = JSON.parse(
+  fs.readFileSync(path.resolve(__dirname, './fixtures/russellwhyte.json'), 'utf-8'),
+);
+const TripMockData = JSON.parse(
+  fs.readFileSync(path.resolve(__dirname, './fixtures/trip.json'), 'utf-8'),
+);
+const BasicMetadata = fs.readFileSync(
+  path.resolve(__dirname, './fixtures/simple-metadata.xml'),
+  'utf-8',
+);
 
 const baseDir = __dirname;
 const importFn = (id: string) => require(id);
@@ -33,12 +42,14 @@ describe('odata', () => {
     resetMocks();
   });
   it('should create a GraphQL schema from a simple OData endpoint', async () => {
-    addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
+    addMock(
+      'https://services.odata.org/TripPinRESTierService/$metadata',
+      async () => new MockResponse(TripPinMetadata),
+    );
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
+        endpoint: 'https://services.odata.org/TripPinRESTierService',
       },
       pubsub,
       cache,
@@ -47,16 +58,17 @@ describe('odata', () => {
       importFn,
       logger,
     });
-    const source = await handler.getMeshSource();
+    const source = await handler.getMeshSource({
+      fetchFn: mockFetch,
+    });
     expect(printSchema(source.schema)).toMatchSnapshot();
   });
   it('should create correct GraphQL schema for functions with entity set paths', async () => {
-    addMock('http://sample.service.com/$metadata', async () => new Response(BasicMetadata));
+    addMock('http://sample.service.com/$metadata', async () => new MockResponse(BasicMetadata));
     const handler = new ODataHandler({
       name: 'SampleService',
       config: {
-        baseUrl: 'http://sample.service.com',
-        customFetch: mockFetch,
+        endpoint: 'http://sample.service.com',
       },
       pubsub,
       cache,
@@ -65,16 +77,20 @@ describe('odata', () => {
       importFn,
       logger,
     });
-    const source = await handler.getMeshSource();
+    const source = await handler.getMeshSource({
+      fetchFn: mockFetch,
+    });
     expect(printSchema(source.schema)).toMatchSnapshot();
   });
   it('should declare arguments for fields created from bound functions', async () => {
-    addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
+    addMock(
+      'https://services.odata.org/TripPinRESTierService/$metadata',
+      async () => new MockResponse(TripPinMetadata),
+    );
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
+        endpoint: 'https://services.odata.org/TripPinRESTierService',
       },
       pubsub,
       cache,
@@ -83,7 +99,9 @@ describe('odata', () => {
       importFn,
       logger,
     });
-    const source = await handler.getMeshSource();
+    const source = await handler.getMeshSource({
+      fetchFn: mockFetch,
+    });
     const personType = source.schema.getType('IPerson') as GraphQLInterfaceType;
     const getFriendsTripsFunction = personType.getFields().GetFriendsTrips;
     expect(getFriendsTripsFunction.args).toHaveLength(2);
@@ -95,19 +113,21 @@ describe('odata', () => {
     expect(userNameArg.type.toString()).toBe('String!');
   });
   it('should generate correct HTTP request for requesting an EntitySet', async () => {
-    addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
+    addMock(
+      'https://services.odata.org/TripPinRESTierService/$metadata',
+      async () => new MockResponse(TripPinMetadata),
+    );
     const correctUrl = 'https://services.odata.org/TripPinRESTierService/People';
     const correctMethod = 'GET';
     let sentRequest: Request;
     addMock(correctUrl, async request => {
       sentRequest = request;
-      return new Response(JSON.stringify({ value: [PersonMockData] }));
+      return new MockResponse(JSON.stringify({ value: [PersonMockData] }));
     });
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
+        endpoint: 'https://services.odata.org/TripPinRESTierService',
       },
       pubsub,
       cache,
@@ -116,7 +136,9 @@ describe('odata', () => {
       importFn,
       logger,
     });
-    const source = await handler.getMeshSource();
+    const source = await handler.getMeshSource({
+      fetchFn: mockFetch,
+    });
 
     const graphqlResult = (await source.executor({
       context: {},
@@ -135,19 +157,21 @@ describe('odata', () => {
     expect(sentRequest!.url).toBe(correctUrl);
   });
   it('should generate correct HTTP request for requesting a single Entity by ID', async () => {
-    addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
+    addMock(
+      'https://services.odata.org/TripPinRESTierService/$metadata',
+      async () => new MockResponse(TripPinMetadata),
+    );
     const correctUrl = `https://services.odata.org/TripPinRESTierService/People/SOMEID/`;
     const correctMethod = 'GET';
     let sentRequest: Request;
     addMock(correctUrl, async request => {
       sentRequest = request;
-      return new Response(JSON.stringify(PersonMockData));
+      return new MockResponse(JSON.stringify(PersonMockData));
     });
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
+        endpoint: 'https://services.odata.org/TripPinRESTierService',
       },
       pubsub,
       cache,
@@ -156,7 +180,9 @@ describe('odata', () => {
       importFn,
       logger,
     });
-    const source = await handler.getMeshSource();
+    const source = await handler.getMeshSource({
+      fetchFn: mockFetch,
+    });
 
     const graphqlResult = (await source.executor({
       context: {},
@@ -175,13 +201,16 @@ describe('odata', () => {
     expect(sentRequest!.url).toBe(correctUrl);
   });
   it('should generate correct HTTP request for requesting a complex property', async () => {
-    addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
+    addMock(
+      'https://services.odata.org/TripPinRESTierService/$metadata',
+      async () => new MockResponse(TripPinMetadata),
+    );
     const correctUrl = `https://services.odata.org/TripPinRESTierService/Airports/KSFO/?$select=IcaoCode,Location`;
     const correctMethod = 'GET';
     let sentRequest: Request;
     addMock(correctUrl, async request => {
       sentRequest = request;
-      return new Response(
+      return new MockResponse(
         JSON.stringify({
           '@odata.type': 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Airport',
           IcaoCode: Date.now().toString(),
@@ -189,14 +218,13 @@ describe('odata', () => {
             '@odata.type': 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.AirportLocation',
             Loc: '',
           },
-        })
+        }),
       );
     });
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
+        endpoint: 'https://services.odata.org/TripPinRESTierService',
       },
       pubsub,
       cache,
@@ -205,7 +233,9 @@ describe('odata', () => {
       importFn,
       logger,
     });
-    const source = await handler.getMeshSource();
+    const source = await handler.getMeshSource({
+      fetchFn: mockFetch,
+    });
 
     const graphqlResult = (await source.executor({
       context: {},
@@ -226,19 +256,21 @@ describe('odata', () => {
     expect(sentRequest!.url).toBe(correctUrl);
   });
   it('should generate correct HTTP request for query options', async () => {
-    addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
+    addMock(
+      'https://services.odata.org/TripPinRESTierService/$metadata',
+      async () => new MockResponse(TripPinMetadata),
+    );
     const correctUrl = `https://services.odata.org/TripPinRESTierService/People?$filter=FirstName eq 'Scott'`;
     const correctMethod = 'GET';
     let sentRequest: Request;
     addMock(correctUrl, async request => {
       sentRequest = request;
-      return new Response(JSON.stringify({ value: [PersonMockData] }));
+      return new MockResponse(JSON.stringify({ value: [PersonMockData] }));
     });
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
+        endpoint: 'https://services.odata.org/TripPinRESTierService',
       },
       pubsub,
       cache,
@@ -247,7 +279,9 @@ describe('odata', () => {
       importFn,
       logger,
     });
-    const source = await handler.getMeshSource();
+    const source = await handler.getMeshSource({
+      fetchFn: mockFetch,
+    });
 
     const graphqlResult = (await source.executor({
       context: {},
@@ -266,19 +300,21 @@ describe('odata', () => {
     expect(decodeURIComponent(sentRequest!.url)).toBe(decodeURIComponent(correctUrl));
   });
   it('should generate correct HTTP request for $count', async () => {
-    addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
+    addMock(
+      'https://services.odata.org/TripPinRESTierService/$metadata',
+      async () => new MockResponse(TripPinMetadata),
+    );
     const correctUrl = `https://services.odata.org/TripPinRESTierService/People/$count`;
     const correctMethod = 'GET';
     let sentRequest: Request;
     addMock(correctUrl, async request => {
       sentRequest = request;
-      return new Response(JSON.stringify(20));
+      return new MockResponse(JSON.stringify(20));
     });
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
+        endpoint: 'https://services.odata.org/TripPinRESTierService',
       },
       pubsub,
       cache,
@@ -287,7 +323,9 @@ describe('odata', () => {
       importFn,
       logger,
     });
-    const source = await handler.getMeshSource();
+    const source = await handler.getMeshSource({
+      fetchFn: mockFetch,
+    });
 
     const graphqlResult = (await source.executor({
       context: {},
@@ -303,7 +341,10 @@ describe('odata', () => {
     expect(sentRequest!.url).toBe(correctUrl);
   });
   it('should generate correct HTTP request for creating an entity', async () => {
-    addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
+    addMock(
+      'https://services.odata.org/TripPinRESTierService/$metadata',
+      async () => new MockResponse(TripPinMetadata),
+    );
     const correctUrl = `https://services.odata.org/TripPinRESTierService/People`;
     const correctMethod = 'POST';
     const correctBody = {
@@ -328,15 +369,14 @@ describe('odata', () => {
     let sentRequest: any;
     addMock(correctUrl, async request => {
       sentRequest = request.clone();
-      const bodyObj = await request.json();
+      const bodyObj: any = await request.json();
       bodyObj['@odata.type'] = 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
-      return new Response(JSON.stringify(bodyObj));
+      return new MockResponse(JSON.stringify(bodyObj));
     });
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
+        endpoint: 'https://services.odata.org/TripPinRESTierService',
       },
       pubsub,
       cache,
@@ -345,7 +385,9 @@ describe('odata', () => {
       importFn,
       logger,
     });
-    const source = await handler.getMeshSource();
+    const source = await handler.getMeshSource({
+      fetchFn: mockFetch,
+    });
 
     const graphqlResult = (await source.executor({
       context: {},
@@ -364,22 +406,24 @@ describe('odata', () => {
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
     expect(sentRequest!.url).toBe(correctUrl);
-    expect(await sentRequest!.json()).toStrictEqual(correctBody);
+    expect(await sentRequest!.json()).toMatchObject(correctBody);
   });
   it('should generate correct HTTP request for deleting an entity', async () => {
-    addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
+    addMock(
+      'https://services.odata.org/TripPinRESTierService/$metadata',
+      async () => new MockResponse(TripPinMetadata),
+    );
     const correctUrl = `https://services.odata.org/TripPinRESTierService/People/SOMEID/`;
     const correctMethod = 'DELETE';
     let sentRequest: Request;
     addMock(correctUrl, async request => {
       sentRequest = request;
-      return new Response(JSON.stringify({}));
+      return new MockResponse(JSON.stringify({}));
     });
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
+        endpoint: 'https://services.odata.org/TripPinRESTierService',
       },
       pubsub,
       cache,
@@ -388,7 +432,9 @@ describe('odata', () => {
       importFn,
       logger,
     });
-    const source = await handler.getMeshSource();
+    const source = await handler.getMeshSource({
+      fetchFn: mockFetch,
+    });
 
     const graphqlResult = (await source.executor({
       context: {},
@@ -404,7 +450,10 @@ describe('odata', () => {
     expect(sentRequest!.url).toBe(correctUrl);
   });
   it('should generate correct HTTP request for updating an entity', async () => {
-    addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
+    addMock(
+      'https://services.odata.org/TripPinRESTierService/$metadata',
+      async () => new MockResponse(TripPinMetadata),
+    );
     const correctUrl = `https://services.odata.org/TripPinRESTierService/People/SOMEID/`;
     const correctMethod = 'PATCH';
     const correctBody = {
@@ -414,15 +463,14 @@ describe('odata', () => {
     let sentRequest: Request;
     addMock(correctUrl, async request => {
       sentRequest = request.clone();
-      const returnBody = await request.json();
+      const returnBody: any = await request.json();
       returnBody['@odata.type'] = 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
-      return new Response(JSON.stringify(returnBody));
+      return new MockResponse(JSON.stringify(returnBody));
     });
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
+        endpoint: 'https://services.odata.org/TripPinRESTierService',
       },
       pubsub,
       cache,
@@ -431,7 +479,9 @@ describe('odata', () => {
       importFn,
       logger,
     });
-    const source = await handler.getMeshSource();
+    const source = await handler.getMeshSource({
+      fetchFn: mockFetch,
+    });
 
     const graphqlResult = (await source.executor({
       context: {},
@@ -454,25 +504,27 @@ describe('odata', () => {
     expect(await sentRequest!.text()).toBe(JSON.stringify(correctBody));
   });
   it('should generate correct HTTP request for invoking unbound functions', async () => {
-    addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
+    addMock(
+      'https://services.odata.org/TripPinRESTierService/$metadata',
+      async () => new MockResponse(TripPinMetadata),
+    );
     const correctUrl = `https://services.odata.org/TripPinRESTierService/GetNearestAirport(lat = 33, lon = -118)?$select=IcaoCode,Name`;
     const correctMethod = 'GET';
     let sentRequest: Request;
     addMock(correctUrl, async request => {
       sentRequest = request;
-      return new Response(
+      return new MockResponse(
         JSON.stringify({
           '@odata.type': 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Airport',
           IcaoCode: Date.now().toString(),
           Name: 'Name',
-        })
+        }),
       );
     });
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
+        endpoint: 'https://services.odata.org/TripPinRESTierService',
       },
       pubsub,
       cache,
@@ -481,7 +533,9 @@ describe('odata', () => {
       importFn,
       logger,
     });
-    const source = await handler.getMeshSource();
+    const source = await handler.getMeshSource({
+      fetchFn: mockFetch,
+    });
 
     const graphqlResult = (await source.executor({
       context: {},
@@ -500,32 +554,34 @@ describe('odata', () => {
     expect(decodeURIComponent(sentRequest!.url)).toBe(correctUrl);
   });
   it('should generate correct HTTP request for invoking bound functions', async () => {
-    addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
+    addMock(
+      'https://services.odata.org/TripPinRESTierService/$metadata',
+      async () => new MockResponse(TripPinMetadata),
+    );
     const correctUrl = `https://services.odata.org/TripPinRESTierService/People/russellwhyte/Trips/0/Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetInvolvedPeople?$select=UserName`;
     const correctMethod = 'GET';
     let sentRequest: Request;
     addMock(`https://services.odata.org/TripPinRESTierService/People/russellwhyte/`, async () => {
-      return new Response(JSON.stringify(PersonMockData));
+      return new MockResponse(JSON.stringify(PersonMockData));
     });
     addMock(
       `https://services.odata.org/TripPinRESTierService/People/russellwhyte/Trips?$filter=TripId eq 0&$select=TripId`,
       async () => {
-        return new Response(JSON.stringify(TripMockData));
-      }
+        return new MockResponse(JSON.stringify(TripMockData));
+      },
     );
     addMock(correctUrl, async request => {
       sentRequest = request;
-      return new Response(
+      return new MockResponse(
         JSON.stringify({
           value: [],
-        })
+        }),
       );
     });
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
+        endpoint: 'https://services.odata.org/TripPinRESTierService',
       },
       pubsub,
       cache,
@@ -534,7 +590,9 @@ describe('odata', () => {
       importFn,
       logger,
     });
-    const source = await handler.getMeshSource();
+    const source = await handler.getMeshSource({
+      fetchFn: mockFetch,
+    });
 
     const graphqlResult = (await source.executor({
       context: {},
@@ -558,26 +616,28 @@ describe('odata', () => {
     expect(sentRequest!.url).toBe(correctUrl);
   });
   it('should generate correct HTTP request for invoking bound functions with arguments', async () => {
-    addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
+    addMock(
+      'https://services.odata.org/TripPinRESTierService/$metadata',
+      async () => new MockResponse(TripPinMetadata),
+    );
     const correctUrl = `https://services.odata.org/TripPinRESTierService/People/russellwhyte/Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFriendsTrips(userName='ronaldmundy')?$select=TripId,Name`;
     const correctMethod = 'GET';
     let sentRequest: Request;
     addMock(`https://services.odata.org/TripPinRESTierService/People/russellwhyte/`, async () => {
-      return new Response(JSON.stringify(PersonMockData));
+      return new MockResponse(JSON.stringify(PersonMockData));
     });
     addMock(correctUrl, async request => {
       sentRequest = request;
-      return new Response(
+      return new MockResponse(
         JSON.stringify({
           value: [],
-        })
+        }),
       );
     });
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
+        endpoint: 'https://services.odata.org/TripPinRESTierService',
       },
       pubsub,
       cache,
@@ -586,7 +646,9 @@ describe('odata', () => {
       importFn,
       logger,
     });
-    const source = await handler.getMeshSource();
+    const source = await handler.getMeshSource({
+      fetchFn: mockFetch,
+    });
 
     const graphqlResult = (await source.executor({
       context: {},
@@ -608,19 +670,21 @@ describe('odata', () => {
     expect(sentRequest!.url.replace(/'/g, '%27')).toBe(correctUrl.replace(/'/g, '%27')); // apostrophe gets percent-encoded
   });
   it('should generate correct HTTP request for invoking unbound actions', async () => {
-    addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
+    addMock(
+      'https://services.odata.org/TripPinRESTierService/$metadata',
+      async () => new MockResponse(TripPinMetadata),
+    );
     const correctUrl = `https://services.odata.org/TripPinRESTierService/ResetDataSource`;
     const correctMethod = 'POST';
     let sentRequest: Request;
     addMock(correctUrl, async request => {
       sentRequest = request;
-      return new Response(JSON.stringify(true));
+      return new MockResponse(JSON.stringify(true));
     });
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
+        endpoint: 'https://services.odata.org/TripPinRESTierService',
       },
       pubsub,
       cache,
@@ -629,7 +693,9 @@ describe('odata', () => {
       importFn,
       logger,
     });
-    const source = await handler.getMeshSource();
+    const source = await handler.getMeshSource({
+      fetchFn: mockFetch,
+    });
 
     const graphqlResult = (await source.executor({
       context: {},
@@ -645,7 +711,10 @@ describe('odata', () => {
     expect(sentRequest!.url).toBe(correctUrl);
   });
   it('should generate correct HTTP request for invoking bound actions', async () => {
-    addMock('https://services.odata.org/TripPinRESTierService/$metadata', async () => new Response(TripPinMetadata));
+    addMock(
+      'https://services.odata.org/TripPinRESTierService/$metadata',
+      async () => new MockResponse(TripPinMetadata),
+    );
     const correctUrl = `https://services.odata.org/TripPinRESTierService/People/russellwhyte/Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip`;
     const correctMethod = 'POST';
     const correctBody = {
@@ -654,17 +723,16 @@ describe('odata', () => {
     };
     let sentRequest: Request;
     addMock(`https://services.odata.org/TripPinRESTierService/People/russellwhyte/`, async () => {
-      return new Response(JSON.stringify(PersonMockData));
+      return new MockResponse(JSON.stringify(PersonMockData));
     });
     addMock(correctUrl, async request => {
       sentRequest = request;
-      return new Response(JSON.stringify(true));
+      return new MockResponse(JSON.stringify(true));
     });
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
-        baseUrl: 'https://services.odata.org/TripPinRESTierService',
-        customFetch: mockFetch,
+        endpoint: 'https://services.odata.org/TripPinRESTierService',
       },
       pubsub,
       cache,
@@ -673,7 +741,9 @@ describe('odata', () => {
       importFn,
       logger,
     });
-    const source = await handler.getMeshSource();
+    const source = await handler.getMeshSource({
+      fetchFn: mockFetch,
+    });
 
     const graphqlResult = (await source.executor({
       context: {},

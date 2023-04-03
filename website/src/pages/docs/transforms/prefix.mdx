@@ -1,0 +1,45 @@
+---
+description:
+  Add prefixes to GraphQL types and operations using Prefix Transform in GraphQL Mesh. Simplify
+  complicated names, avoid conflicts, and "namespace" APIs easily. Learn how to use it with examples
+  and API reference.
+---
+
+import { Callout, PackageCmd } from '@theguild/components'
+
+# Prefix Transform
+
+The `prefix` transforms allow you to add prefixes to existing GraphQL types and root operations
+(under `Query/Mutation`). `prefix` is similar to [`rename`](/docs/transforms/rename) in that it
+allows you to modify names to avoid conflicts, simplify complicated names, and change the appearance
+of your query. In contrast with `rename`, `prefix` is simpler and only allows you to append a
+`prefix` to the existing name.
+
+You can use it to easily "namespace" APIs in your unified API and avoid conflicts.
+
+## Installation
+
+<PackageCmd packages={['@graphql-mesh/transform-prefix']} />
+
+## How to use?
+
+Add the following configuration to your Mesh config file:
+
+```yaml filename=".meshrc.yaml"
+transforms:
+  - prefix:
+      mode: bare | wrap
+      value: MyApi_
+```
+
+<Callout>
+  For information about "bare" and "wrap" modes, please read the [dedicated section](/docs/transforms/transforms-introduction#two-different-modes).
+  You can check out our example that uses schema stitching with a PostgreSQL data source and prefix transform. [Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/postgres-geodb).
+
+</Callout>
+
+## Config API Reference
+
+import API from '../../../generated-markdown/PrefixTransformConfig.generated.md'
+
+<API />

@@ -1,30 +1,27 @@
 {
   "name": "openapi-react-weatherbit",
-  "version": "0.3.176",
+  "version": "0.3.177",
   "private": true,
+  "scripts": {
+    "build": "vite build",
+    "build:mesh": "yarn mesh build",
+    "prebuild": "yarn build:mesh",
+    "prestart": "yarn build:mesh",
+    "preview": "vite preview",
+    "start": "vite"
+  },
   "dependencies": {
-    "graphql": "16.3.0",
-    "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "graphql": "16.6.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
   },
   "devDependencies": {
-    "@graphql-mesh/cli": "0.69.2",
-    "@types/react": "17.0.33",
-    "@types/react-dom": "17.0.10",
-    "@vitejs/plugin-react": "1.3.1",
-    "typescript": "4.6.3",
-    "vite": "2.9.5"
-  },
-  "scripts": {
-    "build:mesh": "yarn mesh build",
-    "prestart": "yarn build:mesh",
-    "start": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "prebuild": "yarn build:mesh"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
+    "@graphql-mesh/cli": "0.82.30",
+    "@types/react": "18.0.32",
+    "@types/react-dom": "18.0.11",
+    "@vitejs/plugin-react": "3.1.0",
+    "typescript": "5.0.3",
+    "vite": "4.2.1"
   },
   "browserslist": {
     "production": [
@@ -37,5 +34,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "eslintConfig": {
+    "extends": "react-app"
   }
 }

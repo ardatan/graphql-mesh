@@ -1,0 +1,74 @@
+syntax = "proto3";
+package foo;
+
+import "google/protobuf/timestamp.proto";
+
+// Test Plan for comment handling
+// Background
+// The protobuf language guide states
+//
+//	'To add comments to your .proto files, use C or C++-style two slashes and slash star ... star slash syntax.'
+
+// Problem
+
+// Mesh conversion from protobuf to graphql schema results with only those comments which
+// begin with /** and end with */
+
+
+service SampleService {
+
+// Comment 1: This is a comment with two slashes
+  rpc CreateSample(CreateSampleRequest) returns (SampleResponse) {
+  };
+
+/* Comment 2: This is a comment with initial slash star and final star slash (all on one line) */
+  rpc GetSample(GetSampleRequest) returns (SampleResponse) {
+  };
+
+/** Comment 3: This is a comment with initial slash star star and final star slash (all on one line */
+  rpc UpdateSample(UpdateSampleRequest) returns (SampleResponse) {
+  };
+
+ /**
+  Comment 4: This is a comment on multiple lines, initial slash star star
+  at beginning of the line.
+*/
+  rpc DeleteSample(DeleteSampleRequest) returns (SampleResponse) {
+  };
+}
+
+/**
+  Comment 5: This is a comment on one line, delimiters slash star star at beginning of the line. Trailing comment delimiter at beginning of next line after comment.
+*/
+message SampleResponse {
+  string sample_id = 1;
+}
+
+
+message CreateSampleRequest {
+/**
+  Comment 6: This is a comment with slash followed by two stars at the beginning. The first comment delimiter is at the beginning of the line. Trailing comment delimiter on same line as text. */
+  string description = 1;
+  string type = 2;
+}
+
+
+   /**
+  Comment 7: This is a comment with slash followed by two stars at the beginning. The first comment delimiter is not at the beginning of the line. */
+message GetSampleRequest {
+  string sample_id = 1;  /* Comment 8: This is a comment with slash star delimiter on the same line as a field definition. */
+}
+
+/**
+  Comment 9: This is a comment with a blank line afterwards and is preceded with slash followed by two stars at the beginning. The first comment delimiter is not at the beginning of the line. This comment SHOULD be ignored.*/
+
+message UpdateSampleRequest {
+  string sample_id = 1;  /** Comment 10: This is a comment with slash star star delimiter on the same line as a field definition. */
+}
+
+
+// Comment 11: This is a comment beginning with two slashes and a blank line afterwards.
+
+message DeleteSampleRequest {
+  string sample_id = 1;   // Comment 12: This is a two-slash comment on the same line as a field definition.
+}

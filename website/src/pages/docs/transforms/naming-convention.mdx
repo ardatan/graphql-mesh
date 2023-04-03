@@ -1,0 +1,50 @@
+---
+description:
+  Transform the response of your GraphQL API with naming-convention. Apply casing and other
+  conventions to your response with ease.
+---
+
+import { Callout, PackageCmd } from '@theguild/components'
+
+# Naming Convention Transform
+
+The `naming-convention` transforms allow you to apply casing and other conventions to your response.
+
+## Installation
+
+<PackageCmd packages={['@graphql-mesh/transform-naming-convention']} />
+
+## How to use?
+
+<Callout>
+  In this example, enumValues fields are converted to uppercase, while fieldNames are converted to
+  camel case to enforce consistency.
+</Callout>
+
+Add the following configuration to your Mesh config file:
+
+```yaml filename=".meshrc.yaml"
+transforms:
+  - namingConvention:
+      mode: bare | wrap
+      typeNames: pascalCase
+      enumValues: upperCase
+      fieldNames: camelCase
+      fieldArgumentNames: camelCase
+```
+
+<Callout>
+  For information about "bare" and "wrap" modes, please read the [dedicated
+  section](/docs/transforms/transforms-introduction#two-different-modes).
+</Callout>
+
+<Callout>
+  You can see our gRPC example that uses this transform to see its application. [Click here to open
+  the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/grpc-example).
+</Callout>
+
+## Config API Reference
+
+import API from '../../../generated-markdown/NamingConventionTransformConfig.generated.md'
+
+<API />

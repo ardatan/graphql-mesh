@@ -1,7 +1,7 @@
 /* eslint-disable no-new */
-import RedisCache from '../src';
 import Redis from 'ioredis';
 import { PubSub } from '@graphql-mesh/utils';
+import RedisCache from '../src/index.js';
 
 jest.mock('ioredis');
 
@@ -20,7 +20,7 @@ describe('redis', () => {
       new RedisCache({ url: 'redis://password@localhost:6379', pubsub });
 
       expect(Redis).toHaveBeenCalledWith(
-        'redis://password@localhost:6379?lazyConnect=true&enableAutoPipelining=true&enableOfflineQueue=true'
+        'redis://password@localhost:6379?lazyConnect=true&enableAutoPipelining=true&enableOfflineQueue=true',
       );
     });
 
@@ -41,7 +41,7 @@ describe('redis', () => {
       new RedisCache({ url: 'redis://localhost:6379', host: 'ignoreme', port: '9999', pubsub });
 
       expect(Redis).toHaveBeenCalledWith(
-        'redis://localhost:6379?lazyConnect=true&enableAutoPipelining=true&enableOfflineQueue=true'
+        'redis://localhost:6379?lazyConnect=true&enableAutoPipelining=true&enableOfflineQueue=true',
       );
     });
 
@@ -51,7 +51,7 @@ describe('redis', () => {
         expect(() => {
           new RedisCache({ url: `${protocol}localhost:6379`, pubsub });
         }).toThrowError('Redis URL must use either redis:// or rediss://');
-      }
+      },
     );
   });
 });

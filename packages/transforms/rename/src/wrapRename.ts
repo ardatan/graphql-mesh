@@ -1,32 +1,24 @@
 import { GraphQLSchema } from 'graphql';
-import { MeshTransform, YamlConfig, MeshTransformOptions } from '@graphql-mesh/types';
+import { YamlConfig } from '@graphql-mesh/types';
 import {
-  RenameTypes,
-  RenameObjectFields,
+  applyRequestTransforms,
+  applyResultTransforms,
+  applySchemaTransforms,
+} from '@graphql-mesh/utils';
+import { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
+import { ExecutionRequest, ExecutionResult } from '@graphql-tools/utils';
+import {
   RenameInputObjectFields,
   RenameObjectFieldArguments,
+  RenameObjectFields,
+  RenameTypes,
 } from '@graphql-tools/wrap';
-import { ExecutionResult, ExecutionRequest } from '@graphql-tools/utils';
-import { Transform, SubschemaConfig, DelegationContext } from '@graphql-tools/delegate';
-import { applyRequestTransforms, applyResultTransforms, applySchemaTransforms } from '@graphql-mesh/utils';
-import { resolvers as scalarsResolversMap } from 'graphql-scalars';
+import { ignoreList } from './shared.js';
 
-const ignoreList = [
-  'date',
-  'hostname',
-  'regex',
-  'json-pointer',
-  'relative-json-pointer',
-  'uri-reference',
-  'uri-template',
-  ...Object.keys(scalarsResolversMap),
-];
-
-export default class WrapRename implements MeshTransform {
+export default class WrapRename implements Transform {
   private transforms: Transform[] = [];
 
-  constructor(options: MeshTransformOptions<YamlConfig.RenameTransform>) {
-    const { config } = options;
+  constructor({ config }: { config: YamlConfig.RenameTransform }) {
     for (const change of config.renames) {
       const {
         from: { type: fromTypeName, field: fromFieldName, argument: fromArgumentName },
@@ -48,11 +40,11 @@ export default class WrapRename implements MeshTransform {
         }
         this.transforms.push(
           new RenameTypes(typeName => {
-            if (typeName in scalarsResolversMap || ignoreList.includes(typeName)) {
+            if (ignoreList.includes(typeName)) {
               return typeName;
             }
             return replaceTypeNameFn(typeName);
-          }) as any
+          }) as any,
         );
       }
 
@@ -73,23 +65,35 @@ export default class WrapRename implements MeshTransform {
 
       if (
         fromTypeName &&
-        fromTypeName === toTypeName &&
+        (fromTypeName === toTypeName || useRegExpForTypes) &&
         toFieldName &&
-        fromFieldName === toFieldName &&
+        (fromFieldName === toFieldName || useRegExpForFields) &&
         fromArgumentName &&
         fromArgumentName !== toArgumentName
       ) {
         let replaceArgNameFn: (typeName: string, fieldName: string, argName: string) => string;
 
+        const fieldNameMatch = (fieldName: string) =>
+          fieldName ===
+          (useRegExpForFields
+            ? fieldName.replace(new RegExp(fromFieldName, regExpFlags), toFieldName)
+            : toFieldName);
+
+        const typeNameMatch = (typeName: string) =>
+          typeName ===
+          (useRegExpForTypes
+            ? typeName.replace(new RegExp(fromTypeName, regExpFlags), toTypeName)
+            : toTypeName);
+
         if (useRegExpForArguments) {
           const argNameRegExp = new RegExp(fromArgumentName, regExpFlags);
           replaceArgNameFn = (typeName, fieldName, argName) =>
-            typeName === toTypeName && fieldName === toFieldName
-              ? fieldName.replace(argNameRegExp, toArgumentName)
+            typeNameMatch(typeName) && fieldNameMatch(fieldName)
+              ? argName.replace(argNameRegExp, toArgumentName)
               : argName;
         } else {
           replaceArgNameFn = (typeName, fieldName, argName) =>
-            typeName === toTypeName && fieldName === fromFieldName && argName === fromArgumentName
+            typeNameMatch(typeName) && fieldNameMatch(fieldName) && argName === fromArgumentName
               ? toArgumentName
               : argName;
         }
@@ -102,20 +106,39 @@ export default class WrapRename implements MeshTransform {
   transformSchema(
     originalWrappingSchema: GraphQLSchema,
     subschemaConfig: SubschemaConfig,
-    transformedSchema?: GraphQLSchema
+    transformedSchema?: GraphQLSchema,
   ) {
-    return applySchemaTransforms(originalWrappingSchema, subschemaConfig, transformedSchema, this.transforms);
+    return applySchemaTransforms(
+      originalWrappingSchema,
+      subschemaConfig,
+      transformedSchema,
+      this.transforms,
+    );
   }
 
   transformRequest(
     originalRequest: ExecutionRequest,
     delegationContext: DelegationContext,
-    transformationContext: Record<string, any>
+    transformationContext: Record<string, any>,
   ) {
-    return applyRequestTransforms(originalRequest, delegationContext, transformationContext, this.transforms);
+    return applyRequestTransforms(
+      originalRequest,
+      delegationContext,
+      transformationContext,
+      this.transforms,
+    );
   }
 
-  transformResult(originalResult: ExecutionResult, delegationContext: DelegationContext, transformationContext: any) {
-    return applyResultTransforms(originalResult, delegationContext, transformationContext, this.transforms);
+  transformResult(
+    originalResult: ExecutionResult,
+    delegationContext: DelegationContext,
+    transformationContext: any,
+  ) {
+    return applyResultTransforms(
+      originalResult,
+      delegationContext,
+      transformationContext,
+      this.transforms,
+    );
   }
 }

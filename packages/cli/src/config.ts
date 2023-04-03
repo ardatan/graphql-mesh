@@ -1,28 +1,59 @@
-import { ConfigProcessOptions, processConfig } from '@graphql-mesh/config';
-import { jsonSchema, YamlConfig } from '@graphql-mesh/types';
-import { defaultImportFn, loadYaml, DefaultLogger } from '@graphql-mesh/utils';
 import Ajv from 'ajv';
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
-import { path } from '@graphql-mesh/cross-helpers';
+import { ConfigProcessOptions, processConfig } from '@graphql-mesh/config';
+import { path, process } from '@graphql-mesh/cross-helpers';
+import { jsonSchema, YamlConfig } from '@graphql-mesh/types';
+import { defaultImportFn, DefaultLogger, loadYaml } from '@graphql-mesh/utils';
+import { AggregateError } from '@graphql-tools/utils';
 
-export function validateConfig(config: any, filepath: string): asserts config is YamlConfig.Config {
+export function validateConfig(
+  config: any,
+  filepath: string,
+  initialLoggerPrefix: string,
+  throwOnInvalidConfig = false,
+): asserts config is YamlConfig.Config {
   const ajv = new Ajv({
     strict: false,
   } as any);
   jsonSchema.$schema = undefined;
   const isValid = ajv.validate(jsonSchema, config);
   if (!isValid) {
-    const logger = new DefaultLogger('🕸️  Mesh - Config');
-    logger.warn(
-      `${filepath} configuration file is not valid:\n${ajv.errorsText(ajv.errors, {
-        separator: '\n',
-      })}\nThis is just a warning! It doesn't have any effects on runtime.`
-    );
+    if (throwOnInvalidConfig) {
+      const aggregateError = new AggregateError(
+        ajv.errors.map(e => {
+          const error = new Error(e.message);
+          error.stack += `\n    at ${filepath}:0:0`;
+          return error;
+        }),
+        'Configuration file is not valid',
+      );
+      throw aggregateError;
+    }
+    const logger = new DefaultLogger(initialLoggerPrefix).child('config');
+    logger.warn('Configuration file is not valid!');
+    logger.warn("This is just a warning! It doesn't have any effects on runtime.");
+    ajv.errors.forEach(error => {
+      let errorMessage = '';
+      if (error.propertyName) {
+        errorMessage += `Property: ${error.propertyName} \n`;
+      }
+      if (error.data) {
+        errorMessage += `Given: ${error.data} \n`;
+      }
+      errorMessage += `Error: ${error.message}`;
+      logger.warn(errorMessage);
+    });
   }
 }
 
 export async function findAndParseConfig(options?: ConfigProcessOptions) {
-  const { configName = 'mesh', dir: configDir = '', ...restOptions } = options || {};
+  const {
+    configName = 'mesh',
+    dir: configDir = '',
+    initialLoggerPrefix = '🕸️  Mesh',
+    importFn,
+    ...restOptions
+  } = options || {};
   const dir = path.isAbsolute(configDir) ? configDir : path.join(process.cwd(), configDir);
   const explorer = cosmiconfig(configName, {
     searchPlaces: [
@@ -38,12 +69,12 @@ export async function findAndParseConfig(options?: ConfigProcessOptions) {
       `${configName}.config.cjs`,
     ],
     loaders: {
-      '.json': customLoader('json', options?.importFn),
-      '.yaml': customLoader('yaml', options?.importFn),
-      '.yml': customLoader('yaml', options?.importFn),
-      '.js': customLoader('js', options?.importFn),
-      '.ts': customLoader('js', options?.importFn),
-      noExt: customLoader('yaml', options?.importFn),
+      '.json': customLoader('json', importFn, initialLoggerPrefix),
+      '.yaml': customLoader('yaml', importFn, initialLoggerPrefix),
+      '.yml': customLoader('yaml', importFn, initialLoggerPrefix),
+      '.js': customLoader('js', importFn, initialLoggerPrefix),
+      '.ts': customLoader('js', importFn, initialLoggerPrefix),
+      noExt: customLoader('yaml', importFn, initialLoggerPrefix),
     },
   });
   const results = await explorer.search(dir);
@@ -53,11 +84,16 @@ export async function findAndParseConfig(options?: ConfigProcessOptions) {
   }
 
   const config = results.config;
-  validateConfig(config, results.filepath);
-  return processConfig(config, { dir, ...restOptions });
+  validateConfig(config, results.filepath, initialLoggerPrefix);
+  return processConfig(config, { dir, initialLoggerPrefix, importFn, ...restOptions });
 }
 
-function customLoader(ext: 'json' | 'yaml' | 'js', importFn = defaultImportFn) {
+function customLoader(
+  ext: 'json' | 'yaml' | 'js',
+  importFn = defaultImportFn,
+  initialLoggerPrefix = '🕸️  Mesh',
+) {
+  const logger = new DefaultLogger(initialLoggerPrefix).child('config');
   function loader(filepath: string, content: string) {
     if (process.env) {
       content = content.replace(/\$\{(.*?)\}/g, (_, variable) => {
@@ -79,7 +115,7 @@ function customLoader(ext: 'json' | 'yaml' | 'js', importFn = defaultImportFn) {
     }
 
     if (ext === 'yaml') {
-      return loadYaml(filepath, content);
+      return loadYaml(filepath, content, logger);
     }
 
     if (ext === 'js') {

@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Links on non-object fields should generate the correct schema 1`] = `
+"schema {
+  query: Query
+}
+
+directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+
+directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+
+directive @resolveRoot on FIELD_DEFINITION
+
+directive @linkResolver(linkResolverMap: ObjMap) on FIELD_DEFINITION
+
+directive @link(defaultRootType: String, defaultField: String) on FIELD_DEFINITION
+
+type Query @globalOptions(sourceName: "toto", endpoint: "http://localhost:7777") {
+  test: test_200_response @httpOperation(path: "/test", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET) @linkResolver(linkResolverMap: "{\\"testLink\\":{\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"testLink\\"}}")
+  testLink: testLink_200_response @httpOperation(path: "/test-link", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+}
+
+type test_200_response {
+  String: String @resolveRoot
+  testLink: testLink_200_response @link(defaultRootType: "Query", defaultField: "test")
+}
+
+type testLink_200_response {
+  foo: String
+}
+
+scalar ObjMap
+
+enum HTTPMethod {
+  GET
+  HEAD
+  POST
+  PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
+  PATCH
+}"
+`;
