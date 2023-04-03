@@ -87,27 +87,20 @@ export const DiscriminatorDirective = new GraphQLDirective({
     field: {
       type: GraphQLString,
     },
-  },
-});
-
-export const DiscriminatorMappingDirective = new GraphQLDirective({
-  name: 'discriminatorMapping',
-  locations: [DirectiveLocation.INTERFACE, DirectiveLocation.UNION],
-  args: {
-    value: {
-      type: GraphQLString,
-    },
-    schema: {
-      type: GraphQLString,
+    mapping: {
+      type: ObjMapScalar,
     },
   },
 });
 
-export function processDiscriminatorAnnotations(
-  interfaceType: GraphQLInterfaceType,
-  fieldName: string,
-) {
-  interfaceType.resolveType = root => root[fieldName];
+export function processDiscriminatorAnnotations({
+  interfaceType,
+  discriminatorFieldName,
+}: {
+  interfaceType: GraphQLInterfaceType;
+  discriminatorFieldName: string;
+}) {
+  interfaceType.resolveType = root => root[discriminatorFieldName];
 }
 
 export const ResolveRootDirective = new GraphQLDirective({
@@ -570,7 +563,10 @@ export function processDirectives({
       for (const directiveAnnotation of directiveAnnotations) {
         switch (directiveAnnotation.name) {
           case 'discriminator':
-            processDiscriminatorAnnotations(type, directiveAnnotation.args.field);
+            processDiscriminatorAnnotations({
+              interfaceType: type,
+              discriminatorFieldName: directiveAnnotation.args.field,
+            });
             break;
         }
       }
@@ -579,6 +575,7 @@ export function processDirectives({
       const directiveAnnotations = getDirectives(schema, type);
       let statusCodeTypeNameIndexMap: Record<number, string>;
       let discriminatorField: string;
+      let discriminatorMapping: Record<string, string>;
       for (const directiveAnnotation of directiveAnnotations) {
         switch (directiveAnnotation.name) {
           case 'statusCodeTypeName':
@@ -588,14 +585,16 @@ export function processDirectives({
             break;
           case 'discriminator':
             discriminatorField = directiveAnnotation.args.field;
+            discriminatorMapping = directiveAnnotation.args.mapping;
             break;
         }
       }
-      type.resolveType = getTypeResolverFromOutputTCs(
-        type.getTypes(),
+      type.resolveType = getTypeResolverFromOutputTCs({
+        possibleTypes: type.getTypes(),
         discriminatorField,
-        statusCodeTypeNameIndexMap,
-      );
+        discriminatorMapping,
+        statusCodeTypeNameMap: statusCodeTypeNameIndexMap,
+      });
     }
     if (isEnumType(type)) {
       const directiveAnnotations = getDirectives(schema, type);

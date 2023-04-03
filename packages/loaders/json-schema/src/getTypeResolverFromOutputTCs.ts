@@ -1,17 +1,23 @@
 import { GraphQLObjectType, GraphQLTypeResolver } from 'graphql';
 import { createGraphQLError } from '@graphql-tools/utils';
 
-export function getTypeResolverFromOutputTCs(
-  possibleTypes: readonly GraphQLObjectType[],
-  discriminatorField?: string,
-  discriminatorMapping?: Record<string, string>,
-  statusCodeTypeNameMap?: Record<string, string>,
-): GraphQLTypeResolver<any, any> {
+export function getTypeResolverFromOutputTCs({
+  possibleTypes,
+  discriminatorField,
+  discriminatorMapping,
+  statusCodeTypeNameMap,
+}: {
+  possibleTypes: readonly GraphQLObjectType[];
+  discriminatorField?: string;
+  discriminatorMapping?: Record<string, string>;
+  statusCodeTypeNameMap?: Record<string, string>;
+}): GraphQLTypeResolver<any, any> {
   return function resolveType(data: any) {
     if (data.__typename) {
       return data.__typename;
     } else if (discriminatorField != null && data[discriminatorField]) {
-      return discriminatorMapping[data[discriminatorField]] || data[discriminatorField];
+      const discriminatorValue = data[discriminatorField];
+      return discriminatorMapping?.[discriminatorValue] || discriminatorValue;
     }
     if (data.$statusCode && statusCodeTypeNameMap) {
       const typeName =
