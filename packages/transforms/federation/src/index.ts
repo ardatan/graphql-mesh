@@ -53,6 +53,7 @@ export default class FederationTransform implements MeshTransform {
 
   transformSchema(schema: GraphQLSchema, rawSource: SubschemaConfig) {
     rawSource.merge = {};
+    let usesKeyDirective = false;
     if (this.config?.types) {
       const queryType = schema.getQueryType();
       const queryTypeFields = queryType.getFields();
@@ -98,6 +99,7 @@ export default class FederationTransform implements MeshTransform {
         // If a field is a key field, it should be GraphQLID
 
         if (type.config?.key) {
+          usesKeyDirective = true;
           let selectionSetContent = '';
           for (const keyField of type.config.key) {
             selectionSetContent += '\n';
@@ -209,6 +211,9 @@ export default class FederationTransform implements MeshTransform {
         .filter(({ name }) => name !== 'link')
         .map(dirName => `@${dirName.name}`),
     };
+    if (usesKeyDirective) {
+      directivesObj.link.import.push('@key');
+    }
 
     if (existingDirectives.length === filteredDirectives.length) {
       return schemaWithUnionType;
