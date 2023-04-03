@@ -737,10 +737,17 @@ export function getComposerFromJSONSchema(
         }
         if (subSchema.discriminator?.propertyName) {
           schemaComposer.addDirective(DiscriminatorDirective);
+          const mappingByName: Record<string, string> = {};
+          for (const discriminatorValue in subSchema.discriminator.mapping) {
+            const ref = subSchema.discriminator.mapping[discriminatorValue];
+            const typeName = ref.replace('#/components/schemas/', '');
+            mappingByName[discriminatorValue] = typeName;
+          }
           directives.push({
             name: 'discriminator',
             args: {
               field: subSchema.discriminator.propertyName,
+              mapping: mappingByName,
             },
           });
         }

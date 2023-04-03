@@ -1,0 +1,47 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Swagger Petstore
+  license:
+    name: MIT
+paths:
+  /pets/{id}:
+    get:
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+
+components:
+  schemas:
+    Pet:
+      oneOf:
+        - $ref: '#/components/schemas/Cat'
+        - $ref: '#/components/schemas/DogDifferent'
+      discriminator:
+        propertyName: petType
+        mapping:
+          Dog: '#/components/schemas/DogDifferent'
+          Cat: '#/components/schemas/Cat'
+    Cat:
+      type: object
+      properties:
+        petType:
+          type: string
+        cat_exclusive:
+          type: string
+    DogDifferent:
+      type: object
+      properties:
+        petType:
+          type: string
+        dog_exclusive:
+          type: string
