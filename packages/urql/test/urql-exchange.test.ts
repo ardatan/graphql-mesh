@@ -5,7 +5,7 @@ import { Client, createClient, OperationResult } from '@urql/core';
 import { getTestMesh } from '../../testing/getTestMesh.js';
 import { meshExchange } from '../src/index.js';
 
-describe('graphExchange', () => {
+describe('Mesh Exchange', () => {
   let client: Client;
   let mesh: MeshInstance;
   beforeEach(async () => {
@@ -26,6 +26,7 @@ describe('graphExchange', () => {
             greetings
           }
         `,
+        {},
       )
       .toPromise();
     expect(result.error).toBeUndefined();
@@ -35,11 +36,14 @@ describe('graphExchange', () => {
   });
   it('should handle subscriptions correctly', async () => {
     const observable = pipe(
-      client.subscription(/* GraphQL */ `
-        subscription Time {
-          time
-        }
-      `),
+      client.subscription(
+        /* GraphQL */ `
+          subscription Time {
+            time
+          }
+        `,
+        {},
+      ),
       toObservable,
     );
 

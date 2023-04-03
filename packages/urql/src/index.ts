@@ -4,7 +4,6 @@ import { isAsyncIterable } from '@graphql-tools/utils';
 import {
   Exchange,
   ExecutionResult,
-  getOperationName,
   makeErrorResult,
   makeResult,
   mergeResultPatch,
@@ -18,10 +17,9 @@ const makeExecuteSource = (
   options: MeshExchangeOptions,
 ): Source<OperationResult> => {
   const operationFn = operation.kind === 'subscription' ? options.subscribe : options.execute;
-  const operationName = getOperationName(operation.query);
   return make<OperationResult>(observer => {
     let ended = false;
-    operationFn(operation.query, operation.variables, operation.context, ROOT_VALUE, operationName)
+    operationFn(operation.query, operation.variables, operation.context, ROOT_VALUE)
       .then((result: ExecutionResult | AsyncIterable<ExecutionResult>): any => {
         if (ended || !result) {
           return;
