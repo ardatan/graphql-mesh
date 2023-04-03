@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@0no-co/graphql.web@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@0no-co/graphql.web/-/graphql.web-1.0.0.tgz#af3f5e3b9359d2f011bc37a93654348b92d4d893"
+  integrity sha512-JBq2pWyDchE1vVjj/+c4dzZ8stbpew4RrzpZ3vYdn1WJFGHfYg6YIX1fDdMKtSXJJM9FUlsoDOxemr9WMM2p+A==
+
 "@adobe/css-tools@^4.0.1":
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/@adobe/css-tools/-/css-tools-4.2.0.tgz#e1a84fca468f4b337816fcb7f0964beb620ba855"
@@ -5900,13 +5905,13 @@
   resolved "https://registry.yarnpkg.com/@tyriar/fibonacci-heap/-/fibonacci-heap-2.0.9.tgz#df3dcbdb1b9182168601f6318366157ee16666e9"
   integrity sha512-bYuSNomfn4hu2tPiDN+JZtnzCpSpbJ/PNeulmocDy3xN2X5OkJL65zo6rPZp65cPPhLF9vfT/dgE+RtFRCSxOA==
 
-"@urql/core@2.6.1":
-  version "2.6.1"
-  resolved "https://registry.yarnpkg.com/@urql/core/-/core-2.6.1.tgz#c10ee972c5e81df6d7bf1e778ef1b5d30e2906e5"
-  integrity sha512-gYrEHy3tViJhwIhauK6MIf2Qp09QTsgNHZRd0n71rS+hF6gdwjspf1oKljl4m25+272cJF7fPjBUGmjaiEr7Kg==
+"@urql/core@4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@urql/core/-/core-4.0.0.tgz#9219771779fdd27b5f1727e4671875563b5450ab"
+  integrity sha512-ZQEtL8tXSdZXvaTsF8GY5wYklqXYKfivQ72p98MfkVSWAjgNgwfHZ32wjUBxge99jGxNjD1vUmYYEINqQhEqtw==
   dependencies:
-    "@graphql-typed-document-node/core" "^3.1.1"
-    wonka "^4.0.14"
+    "@0no-co/graphql.web" "^1.0.0"
+    wonka "^6.3.0"
 
 "@vercel/ncc@^0.36.0":
   version "0.36.1"
@@ -20876,10 +20881,10 @@ wkx@^0.4.8:
   dependencies:
     "@types/node" "*"
 
-wonka@4.0.15, wonka@^4.0.14:
-  version "4.0.15"
-  resolved "https://registry.yarnpkg.com/wonka/-/wonka-4.0.15.tgz#9aa42046efa424565ab8f8f451fcca955bf80b89"
-  integrity sha512-U0IUQHKXXn6PFo9nqsHphVCE5m3IntqZNB9Jjn7EB1lrR7YTDY3YWgFvEvwniTzXSvOH/XMzAZaIfJF/LvHYXg==
+wonka@6.3.1, wonka@^6.3.0:
+  version "6.3.1"
+  resolved "https://registry.yarnpkg.com/wonka/-/wonka-6.3.1.tgz#315b2a91e134c4032980836e6d97e13d0927634d"
+  integrity sha512-nJyGPcjuBiaLFn8QAlrHd+QjV9AlPO7snOWAhgx6aX0nQLMV6Wi0nqfrkmsXIH0efngbDOroOz2QyLnZMF16Hw==
 
 word-wrap@^1.2.3, word-wrap@~1.2.3:
   version "1.2.3"
