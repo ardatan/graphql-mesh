@@ -30,7 +30,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "micromatch": "4.0.4"
+    "micromatch": "4.0.5"
   },
   "devDependencies": {
     "@types/micromatch": "4.0.2"
