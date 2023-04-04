@@ -1,6 +1,7 @@
 {
   "name": "@graphql-mesh/transform-transfer-schema",
   "version": "0.1.2",
+  "type": "module",
   "license": "MIT",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
