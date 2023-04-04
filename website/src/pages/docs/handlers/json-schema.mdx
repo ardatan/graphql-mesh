@@ -157,6 +157,8 @@ In `./jsons/MyField.queryParams.json`:
 You can define the arguments of the operation using the `argTypeMap` config field, according to the
 JSON Schema spec.
 
+`type: number` will set the property to `Float` and `type: integer` will set it as Int.
+
 In this example we declare `page` argument as an object with `limit` and `offset` properties:
 
 ```yaml
@@ -165,9 +167,31 @@ argTypeMap:
     type: object
     properties:
       limit:
-        type: number
+        type: integer
       offset:
-        type: number
+        type: integer
+```
+
+Array can be defined as `type: array` with `items:` and their own `type:`
+```yaml
+argTypeMap:
+  page:
+    type: array
+    items:
+      limit:
+        type: integer
+      offset:
+        type: integer
+```
+
+If you need to use symbols that will cause GraphQL to error like ':' or '[' in the query param name, you can map an alternative definition.
+With the below example using `name_like` in the query will end up being `name:like` as the API call.
+```yaml
+argTypeMap:
+  name_like:
+    type: string
+queryParamArgMap:
+  'name:like': name_like
 ```
 
 In addition, especially for non-primitive types, the arguments should be added to the path using the
@@ -200,9 +224,9 @@ sources:
                 type: object
                 properties:
                   limit:
-                    type: number
+                    type: integer
                   offset:
-                    type: number
+                    type: integer
             queryParamArgMap:
               page: page
 ```
