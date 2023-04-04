@@ -1,5 +1,12 @@
 # @graphql-mesh/string-interpolation
 
+## 0.4.4
+
+### Patch Changes
+
+- [`abc0c8747`](https://github.com/Urigo/graphql-mesh/commit/abc0c8747b274e011f5b8387233fe96d4f702035)
+  Thanks [@ardatan](https://github.com/ardatan)! - Do not set empty header values
+
 ## 0.4.3
 
 ### Patch Changes

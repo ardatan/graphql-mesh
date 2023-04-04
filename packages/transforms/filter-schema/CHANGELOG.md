@@ -1,5 +1,36 @@
 # @graphql-mesh/transform-filter-schema
 
+## 0.15.24
+
+### Patch Changes
+
+- [#5146](https://github.com/Urigo/graphql-mesh/pull/5146)
+  [`676e3ffc4`](https://github.com/Urigo/graphql-mesh/commit/676e3ffc4fe90550f69a709bbaf725815f1d50bd)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`minimatch@8.0.2` ↗︎](https://www.npmjs.com/package/minimatch/v/8.0.2) (from
+    `7.4.3`, in `dependencies`)
+
+- [#5276](https://github.com/Urigo/graphql-mesh/pull/5276)
+  [`14f293ff1`](https://github.com/Urigo/graphql-mesh/commit/14f293ff155206c8f3bc83dbfc6845608bd94d92)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`minimatch@8.0.2` ↗︎](https://www.npmjs.com/package/minimatch/v/8.0.2) (from
+    `7.4.3`, in `dependencies`)
+
+- [#5287](https://github.com/Urigo/graphql-mesh/pull/5287)
+  [`dedefe873`](https://github.com/Urigo/graphql-mesh/commit/dedefe87340afcac2e1513cb309c632f4830d922)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`minimatch@8.0.3` ↗︎](https://www.npmjs.com/package/minimatch/v/8.0.3) (from
+    `8.0.2`, in `dependencies`)
+- Updated dependencies
+  [[`870de5dae`](https://github.com/Urigo/graphql-mesh/commit/870de5dae08a7e43d9aa0f52d5d504cffb4d8fc8),
+  [`aea134764`](https://github.com/Urigo/graphql-mesh/commit/aea1347645c322437ed6ccfadabcfc23065bc9c8),
+  [`a1e08193b`](https://github.com/Urigo/graphql-mesh/commit/a1e08193be3ac8cab5f6f8c84025f934134369b6),
+  [`6aa7da6f8`](https://github.com/Urigo/graphql-mesh/commit/6aa7da6f8492adb1af5598e501d089b7b008637a)]:
+  - @graphql-mesh/types@0.91.13
+  - @graphql-mesh/utils@0.43.21
+
 ## 0.15.23
 
 ### Patch Changes
