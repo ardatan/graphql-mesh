@@ -38,7 +38,7 @@
   "dependencies": {
     "@graphql-tools/delegate": "9.0.28",
     "@graphql-tools/wrap": "9.3.8",
-    "minimatch": "8.0.2"
+    "minimatch": "8.0.3"
   },
   "devDependencies": {
     "@types/minimatch": "5.1.2"
