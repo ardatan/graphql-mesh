@@ -24,7 +24,6 @@ export default withGuildDocs({
       '/docs/guides': '/docs/guides/extending-unified-schema',
       '/docs/guides/combine-many-sources': '/docs/getting-started/combine-multiple-sources',
       '/docs/guides/error-handling': '/docs/guides/error-masking',
-      '/docs/guides/extending-unified-schema': '/docs/guides/extending-unified-schema',
       '/docs/guides/live-queries': '/docs/plugins/live-queries',
       '/docs/guides/performances-best-practices': '/docs/guides/batching',
       '/docs/handlers': '/docs/handlers/handlers-introduction',
