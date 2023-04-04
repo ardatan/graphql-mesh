@@ -1695,6 +1695,11 @@
             "children": [
               {
                 "children": [],
+                "title": "With samples:",
+                "anchor": "with-samples"
+              },
+              {
+                "children": [],
                 "title": "Manual declare:",
                 "anchor": "manual-declare"
               },
@@ -1722,7 +1727,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "5d5d4a6c54e3c4272d9b2623b9e1ecf2",
+    "content": "f54e8579bcdbf126efad6d1b585df9f0",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/json-schema",
     "domain": "https://www.the-guild.dev/graphql/mesh",
     "hierarchy": ["Docs", "Source Handlers"],
