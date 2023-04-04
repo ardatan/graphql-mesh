@@ -2,7 +2,12 @@ import { AnySchema, JSONSchema, JSONSchemaObject } from 'json-machete';
 import toJsonSchema from 'to-json-schema';
 import { getInterpolationKeys } from '@graphql-mesh/string-interpolation';
 import { Logger } from '@graphql-mesh/types';
-import { defaultImportFn, DefaultLogger, readFileOrUrl } from '@graphql-mesh/utils';
+import {
+  defaultImportFn,
+  DefaultLogger,
+  readFileOrUrl,
+  sanitizeNameForGraphQL,
+} from '@graphql-mesh/utils';
 import { JSONSchemaOperationConfig, JSONSchemaOperationResponseConfig } from './types.js';
 import { getOperationMetadata } from './utils.js';
 
@@ -176,6 +181,34 @@ export async function getReferencedJSONSchemaFromOperations({
         properties: {},
         writeOnly: true,
       });
+
+    if (
+      'queryParamsSample' in operationConfig &&
+      operationConfig.queryParamsSample &&
+      typeof operationConfig.queryParamsSample === 'object'
+    ) {
+      for (const queryParamName in operationConfig.queryParamsSample) {
+        const example = operationConfig.queryParamsSample[queryParamName];
+        const generatedSchema = toJsonSchema(example, {
+          required: false,
+          objects: {
+            additionalProperties: false,
+          },
+          strings: {
+            detectFormat: true,
+          },
+          arrays: {
+            mode: 'first',
+          },
+        });
+        generatedSchema.examples = [example];
+        const argName = sanitizeNameForGraphQL(queryParamName);
+        operationConfig.queryParamArgMap = operationConfig.queryParamArgMap || {};
+        operationConfig.queryParamArgMap[queryParamName] = argName;
+        operationConfig.argTypeMap = operationConfig.argTypeMap || {};
+        operationConfig.argTypeMap[argName] = generatedSchema as any;
+      }
+    }
 
     const interpolationKeys: string[] = getInterpolationKeys(...interpolationStrings);
 

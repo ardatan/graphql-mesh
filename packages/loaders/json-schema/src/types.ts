@@ -72,6 +72,7 @@ export type JSONSchemaHTTPBaseOperationConfig = JSONSchemaBaseOperationConfig & 
   headers?: Record<string, string>;
   queryParamArgMap?: Record<string, string>;
   queryStringOptionsByParam?: Record<string, IStringifyOptions & { destructObject?: boolean }>;
+  queryParamsSample?: any;
 };
 
 export type JSONSchemaHTTPJSONOperationConfig = JSONSchemaHTTPBaseOperationConfig &

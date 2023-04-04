@@ -122,6 +122,36 @@ sources:
             responseSchema: ./json-schemas/user.json
 ```
 
+### With samples:
+
+You can use the JSON samples to define the query parameters.
+
+In this example we declare `page` argument as an object with `limit` and `offset` properties:
+
+```yaml filename=".meshrc.yaml" {11}
+sources:
+  - name: MyGraphQLApi
+    handler:
+      jsonSchema:
+        endpoint: https://some-service-url/endpoint-path/
+        operations:
+          - type: Query
+            field: getUsers
+            path: /users
+            method: GET
+            queryParamsSample: ./jsons/MyField.queryParams.json
+            responseSample: ./jsons/MyField.response.json
+```
+
+In `./jsons/MyField.queryParams.json`:
+
+```json filename="MyField.queryParams.json"
+{
+  "limit": 10,
+  "offset": 0
+}
+```
+
 ### Manual declare:
 
 You can define the arguments of the operation using the `argTypeMap` config field, according to the
