@@ -173,6 +173,7 @@ argTypeMap:
 ```
 
 Array can be defined as `type: array` with `items:` and their own `type:`
+
 ```yaml
 argTypeMap:
   page:
@@ -184,8 +185,10 @@ argTypeMap:
         type: integer
 ```
 
-If you need to use symbols that will cause GraphQL to error like ':' or '[' in the query param name, you can map an alternative definition.
-With the below example using `name_like` in the query will end up being `name:like` as the API call.
+If you need to use symbols that will cause GraphQL to error like ':' or '[' in the query param name,
+you can map an alternative definition. With the below example using `name_like` in the query will
+end up being `name:like` as the API call.
+
 ```yaml
 argTypeMap:
   name_like:
