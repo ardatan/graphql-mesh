@@ -1,11 +1,10 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { printSchema, GraphQLObjectType } from 'graphql';
+import { GraphQLObjectType, printSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { MeshPubSub } from '@graphql-mesh/types';
+import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-
 import TransferFieldTransform from '../src';
-import { DefaultLogger, PubSub, defaultImportFn } from '@graphql-mesh/utils';
 
 describe('transfer-schema transform', () => {
   const schemaDefs = /* GraphQL */ `
@@ -64,18 +63,26 @@ describe('transfer-schema transform', () => {
     const transformedSchema = transform.transformSchema(schema);
 
     // test copy
-    expect((transformedSchema.getType('Mutation') as GraphQLObjectType).getFields().ourBooks.type.toString()).toBe(
-      '[Book]'
-    );
-    expect((transformedSchema.getType('Query') as GraphQLObjectType).getFields().ourBooks.type.toString()).toBe(
-      '[Book]'
-    );
+    expect(
+      (transformedSchema.getType('Mutation') as GraphQLObjectType)
+        .getFields()
+        .ourBooks.type.toString(),
+    ).toBe('[Book]');
+    expect(
+      (transformedSchema.getType('Query') as GraphQLObjectType)
+        .getFields()
+        .ourBooks.type.toString(),
+    ).toBe('[Book]');
 
     // test move
-    expect((transformedSchema.getType('Query') as GraphQLObjectType).getFields().addBook).toBeUndefined();
-    expect((transformedSchema.getType('Mutation') as GraphQLObjectType).getFields().addBook.type.toString()).toBe(
-      'Book'
-    );
+    expect(
+      (transformedSchema.getType('Query') as GraphQLObjectType).getFields().addBook,
+    ).toBeUndefined();
+    expect(
+      (transformedSchema.getType('Mutation') as GraphQLObjectType)
+        .getFields()
+        .addBook.type.toString(),
+    ).toBe('Book');
     expect(printSchema(transformedSchema)).toMatchSnapshot();
   });
 
@@ -103,11 +110,17 @@ describe('transfer-schema transform', () => {
     const transformedSchema = transform.transformSchema(schema);
 
     expect(transformedSchema.getType('Mutation') as GraphQLObjectType).toBeUndefined();
-    expect((transformedSchema.getType('Query') as GraphQLObjectType).getFields().books.type.toString()).toBe('[Book]');
-    expect((transformedSchema.getType('Query') as GraphQLObjectType).getFields().addBook.type.toString()).toBe('Book');
-    expect((transformedSchema.getType('Query') as GraphQLObjectType).getFields().ourBooks.type.toString()).toBe(
-      '[Book]'
-    );
+    expect(
+      (transformedSchema.getType('Query') as GraphQLObjectType).getFields().books.type.toString(),
+    ).toBe('[Book]');
+    expect(
+      (transformedSchema.getType('Query') as GraphQLObjectType).getFields().addBook.type.toString(),
+    ).toBe('Book');
+    expect(
+      (transformedSchema.getType('Query') as GraphQLObjectType)
+        .getFields()
+        .ourBooks.type.toString(),
+    ).toBe('[Book]');
     expect(printSchema(transformedSchema)).toMatchSnapshot();
   });
 
@@ -134,8 +147,12 @@ describe('transfer-schema transform', () => {
     });
     const transformedSchema = transform.transformSchema(schema);
 
-    expect((transformedSchema.getType('Query') as GraphQLObjectType).getFields().addBook.args).toHaveLength(0);
-    expect((transformedSchema.getType('Query') as GraphQLObjectType).getFields().books.args).toHaveLength(2);
+    expect(
+      (transformedSchema.getType('Query') as GraphQLObjectType).getFields().addBook.args,
+    ).toHaveLength(0);
+    expect(
+      (transformedSchema.getType('Query') as GraphQLObjectType).getFields().books.args,
+    ).toHaveLength(2);
     const titleArg = (transformedSchema.getType('Query') as GraphQLObjectType)
       .getFields()
       .books.args.find(({ name }) => name === 'title');
@@ -171,8 +188,12 @@ describe('transfer-schema transform', () => {
     });
     const transformedSchema = transform.transformSchema(schema);
 
-    expect((transformedSchema.getType('Query') as GraphQLObjectType).getFields().addBook.args).toHaveLength(2);
-    expect((transformedSchema.getType('Query') as GraphQLObjectType).getFields().books.args).toHaveLength(2);
+    expect(
+      (transformedSchema.getType('Query') as GraphQLObjectType).getFields().addBook.args,
+    ).toHaveLength(2);
+    expect(
+      (transformedSchema.getType('Query') as GraphQLObjectType).getFields().books.args,
+    ).toHaveLength(2);
     const titleArg = (transformedSchema.getType('Query') as GraphQLObjectType)
       .getFields()
       .books.args.find(({ name }) => name === 'title');
@@ -209,8 +230,12 @@ describe('transfer-schema transform', () => {
     });
     const transformedSchema = transform.transformSchema(schema);
 
-    expect((transformedSchema.getType('Query') as GraphQLObjectType).getFields().addBook.args).toHaveLength(0);
-    expect((transformedSchema.getType('Query') as GraphQLObjectType).getFields().books.args).toHaveLength(2);
+    expect(
+      (transformedSchema.getType('Query') as GraphQLObjectType).getFields().addBook.args,
+    ).toHaveLength(0);
+    expect(
+      (transformedSchema.getType('Query') as GraphQLObjectType).getFields().books.args,
+    ).toHaveLength(2);
     const titleArg = (transformedSchema.getType('Query') as GraphQLObjectType)
       .getFields()
       .books.args.find(({ name }) => name === 'title');
@@ -245,8 +270,12 @@ describe('transfer-schema transform', () => {
     });
     const transformedSchema = transform.transformSchema(schema);
 
-    expect((transformedSchema.getType('Query') as GraphQLObjectType).getFields().addBook.args).toHaveLength(2);
-    expect((transformedSchema.getType('Query') as GraphQLObjectType).getFields().books.args).toHaveLength(2);
+    expect(
+      (transformedSchema.getType('Query') as GraphQLObjectType).getFields().addBook.args,
+    ).toHaveLength(2);
+    expect(
+      (transformedSchema.getType('Query') as GraphQLObjectType).getFields().books.args,
+    ).toHaveLength(2);
     const titleArg = (transformedSchema.getType('Query') as GraphQLObjectType)
       .getFields()
       .books.args.find(({ name }) => name === 'title');
@@ -281,8 +310,12 @@ describe('transfer-schema transform', () => {
     });
     const transformedSchema = transform.transformSchema(schema);
 
-    expect((transformedSchema.getType('Query') as GraphQLObjectType).getFields().addBook.args).toHaveLength(2);
-    expect((transformedSchema.getType('Query') as GraphQLObjectType).getFields().books.args).toHaveLength(1);
+    expect(
+      (transformedSchema.getType('Query') as GraphQLObjectType).getFields().addBook.args,
+    ).toHaveLength(2);
+    expect(
+      (transformedSchema.getType('Query') as GraphQLObjectType).getFields().books.args,
+    ).toHaveLength(1);
     const titleArg = (transformedSchema.getType('Query') as GraphQLObjectType)
       .getFields()
       .books.args.find(({ name }) => name === 'title');

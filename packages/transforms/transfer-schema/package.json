@@ -25,6 +25,7 @@
   "peerDependencies": {
     "@graphql-mesh/types": "^0.91.12",
     "@graphql-mesh/utils": "^0.43.20",
+    "@graphql-tools/utils": "^9.2.1",
     "graphql": "*"
   },
   "dependencies": {

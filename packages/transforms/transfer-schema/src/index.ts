@@ -1,7 +1,12 @@
-import { GraphQLArgumentConfig, GraphQLFieldConfig, GraphQLObjectType, GraphQLSchema } from 'graphql';
-import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
-import { mapSchema, pruneSchema, MapperKind } from '@graphql-tools/utils';
+import {
+  GraphQLArgumentConfig,
+  GraphQLFieldConfig,
+  GraphQLObjectType,
+  GraphQLSchema,
+} from 'graphql';
 import { matcher } from 'micromatch';
+import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import { MapperKind, mapSchema, pruneSchema } from '@graphql-tools/utils';
 
 export default class TransferSchemaTransform implements MeshTransform {
   noWrap = true;
@@ -26,7 +31,9 @@ export default class TransferSchemaTransform implements MeshTransform {
 
       const rawGlob = fromArgsGlob || fromFieldNameOrGlob;
       const fixedGlob =
-        rawGlob.includes('{') && !rawGlob.includes(',') ? rawGlob.replace('{', '').replace('}', '') : rawGlob;
+        rawGlob.includes('{') && !rawGlob.includes(',')
+          ? rawGlob.replace('{', '').replace('}', '')
+          : rawGlob;
       const polishedGlob = fixedGlob.split(', ').join(',').trim();
 
       const mapName = fromArgsGlob ? 'ArgsMap' : 'FieldsMap';
@@ -54,7 +61,10 @@ export default class TransferSchemaTransform implements MeshTransform {
       const isMatch = matcher(usePattern);
       if (isMatch(value)) {
         const currentAdditionalConfigs = this[`additional${mapIdentifier}`].get(mapKey) || {};
-        this[`additional${mapIdentifier}`].set(mapKey, { ...currentAdditionalConfigs, [value]: config });
+        this[`additional${mapIdentifier}`].set(mapKey, {
+          ...currentAdditionalConfigs,
+          [value]: config,
+        });
         break;
       }
     }
@@ -99,7 +109,9 @@ export default class TransferSchemaTransform implements MeshTransform {
         // handle args removal
         if (hasRemovalArgRules) {
           const newArgs = Object.entries(fieldConfig.args).reduce((args, [argName, argConfig]) => {
-            return this.matchInSet(removalArgRules, argName) ? args : { ...args, [argName]: argConfig };
+            return this.matchInSet(removalArgRules, argName)
+              ? args
+              : { ...args, [argName]: argConfig };
           }, {});
 
           return { ...fieldConfig, args: newArgs };
@@ -128,7 +140,10 @@ export default class TransferSchemaTransform implements MeshTransform {
 
           if (!additionalArgsConfigMap) return undefined;
 
-          return { ...fieldConfig, args: { ...(fieldConfig.args || {}), ...additionalArgsConfigMap } };
+          return {
+            ...fieldConfig,
+            args: { ...(fieldConfig.args || {}), ...additionalArgsConfigMap },
+          };
         },
       }),
     });
