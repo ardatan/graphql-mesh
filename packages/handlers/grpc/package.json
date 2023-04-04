@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/grpc",
-  "version": "0.29.18",
+  "version": "0.29.19",
   "type": "module",
   "repository": {
     "type": "git",
@@ -31,14 +31,14 @@
   "peerDependencies": {
     "@graphql-mesh/cross-helpers": "^0.3.4",
     "@graphql-mesh/store": "^0.9.20",
-    "@graphql-mesh/types": "^0.91.12",
-    "@graphql-mesh/utils": "^0.43.20",
+    "@graphql-mesh/types": "^0.91.13",
+    "@graphql-mesh/utils": "^0.43.21",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
     "@ardatan/grpc-reflection-js": "0.0.2",
-    "@graphql-mesh/string-interpolation": "0.4.3",
+    "@graphql-mesh/string-interpolation": "0.4.4",
     "@grpc/grpc-js": "^1.1.7",
     "@grpc/proto-loader": "0.7.6",
     "globby": "11.1.0",

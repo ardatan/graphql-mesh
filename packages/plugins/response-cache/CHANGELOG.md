@@ -1,5 +1,25 @@
 # @graphql-mesh/plugin-response-cache
 
+## 0.2.23
+
+### Patch Changes
+
+- [#5263](https://github.com/Urigo/graphql-mesh/pull/5263)
+  [`5156add74`](https://github.com/Urigo/graphql-mesh/commit/5156add74c011b7cfcdc5f56245676d327153229)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-yoga/plugin-response-cache@1.8.0` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-response-cache/v/1.8.0)
+    (from `1.7.3`, in `dependencies`)
+- Updated dependencies
+  [[`870de5dae`](https://github.com/Urigo/graphql-mesh/commit/870de5dae08a7e43d9aa0f52d5d504cffb4d8fc8),
+  [`aea134764`](https://github.com/Urigo/graphql-mesh/commit/aea1347645c322437ed6ccfadabcfc23065bc9c8),
+  [`a1e08193b`](https://github.com/Urigo/graphql-mesh/commit/a1e08193be3ac8cab5f6f8c84025f934134369b6),
+  [`abc0c8747`](https://github.com/Urigo/graphql-mesh/commit/abc0c8747b274e011f5b8387233fe96d4f702035),
+  [`6aa7da6f8`](https://github.com/Urigo/graphql-mesh/commit/6aa7da6f8492adb1af5598e501d089b7b008637a)]:
+  - @graphql-mesh/types@0.91.13
+  - @graphql-mesh/string-interpolation@0.4.4
+  - @graphql-mesh/utils@0.43.21
+
 ## 0.2.22
 
 ### Patch Changes

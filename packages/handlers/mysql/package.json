@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/mysql",
-  "version": "0.19.20",
+  "version": "0.19.21",
   "type": "module",
   "repository": {
     "type": "git",
@@ -31,14 +31,14 @@
   "peerDependencies": {
     "@graphql-mesh/cross-helpers": "^0.3.4",
     "@graphql-mesh/store": "^0.9.20",
-    "@graphql-mesh/types": "^0.91.12",
-    "@graphql-mesh/utils": "^0.43.20",
+    "@graphql-mesh/types": "^0.91.13",
+    "@graphql-mesh/utils": "^0.43.21",
     "@graphql-tools/utils": "^9.2.1",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/string-interpolation": "0.4.3",
+    "@graphql-mesh/string-interpolation": "0.4.4",
     "@graphql-tools/delegate": "9.0.28",
     "graphql-compose": "9.0.10",
     "graphql-fields": "2.0.3",

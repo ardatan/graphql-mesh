@@ -1,5 +1,26 @@
 # @graphql-mesh/types
 
+## 0.91.13
+
+### Patch Changes
+
+- [#5266](https://github.com/Urigo/graphql-mesh/pull/5266)
+  [`870de5dae`](https://github.com/Urigo/graphql-mesh/commit/870de5dae08a7e43d9aa0f52d5d504cffb4d8fc8)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/batch-delegate@8.4.22` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/8.4.22)
+    (from `8.4.21`, in `dependencies`)
+
+- [#3915](https://github.com/Urigo/graphql-mesh/pull/3915)
+  [`aea134764`](https://github.com/Urigo/graphql-mesh/commit/aea1347645c322437ed6ccfadabcfc23065bc9c8)
+  Thanks [@MarkLyck](https://github.com/MarkLyck)! - add contextOptions to allow customization of
+  jwt claims
+
+- [#5261](https://github.com/Urigo/graphql-mesh/pull/5261)
+  [`a1e08193b`](https://github.com/Urigo/graphql-mesh/commit/a1e08193be3ac8cab5f6f8c84025f934134369b6)
+  Thanks [@ardatan](https://github.com/ardatan)! - `timeout` option for HTTP requests
+
 ## 0.91.12
 
 ### Patch Changes

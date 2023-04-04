@@ -1,5 +1,29 @@
 # @graphql-mesh/urql-exchange
 
+## 10.0.4
+
+### Patch Changes
+
+- [#5146](https://github.com/Urigo/graphql-mesh/pull/5146)
+  [`676e3ffc4`](https://github.com/Urigo/graphql-mesh/commit/676e3ffc4fe90550f69a709bbaf725815f1d50bd)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@urql/core@^2.4.3 || ^4.0.0` ↗︎](https://www.npmjs.com/package/@urql/core/v/2.4.3) (from
+    `^2.4.3`, in `peerDependencies`)
+  - Updated dependency [`wonka@^6.3.1` ↗︎](https://www.npmjs.com/package/wonka/v/6.3.1) (from
+    `^4.0.15`, in `peerDependencies`)
+
+- [#5273](https://github.com/Urigo/graphql-mesh/pull/5273)
+  [`0834c7ede`](https://github.com/Urigo/graphql-mesh/commit/0834c7ede3557e5535825829f40add1398657790)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@urql/core@^2.4.3 || ^4.0.0` ↗︎](https://www.npmjs.com/package/@urql/core/v/2.4.3) (from
+    `^2.4.3`, in `peerDependencies`)
+- Updated dependencies
+  [[`870de5dae`](https://github.com/Urigo/graphql-mesh/commit/870de5dae08a7e43d9aa0f52d5d504cffb4d8fc8)]:
+  - @graphql-mesh/runtime@0.46.22
+
 ## 10.0.3
 
 ### Patch Changes

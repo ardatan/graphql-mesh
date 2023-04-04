@@ -1,5 +1,27 @@
 # @graphql-mesh/json-schema
 
+## 0.38.0
+
+### Minor Changes
+
+- [#5261](https://github.com/Urigo/graphql-mesh/pull/5261)
+  [`a1e08193b`](https://github.com/Urigo/graphql-mesh/commit/a1e08193be3ac8cab5f6f8c84025f934134369b6)
+  Thanks [@ardatan](https://github.com/ardatan)! - `timeout` option for HTTP requests
+
+### Patch Changes
+
+- Updated dependencies
+  [[`870de5dae`](https://github.com/Urigo/graphql-mesh/commit/870de5dae08a7e43d9aa0f52d5d504cffb4d8fc8),
+  [`aea134764`](https://github.com/Urigo/graphql-mesh/commit/aea1347645c322437ed6ccfadabcfc23065bc9c8),
+  [`a1e08193b`](https://github.com/Urigo/graphql-mesh/commit/a1e08193be3ac8cab5f6f8c84025f934134369b6),
+  [`c14a6af5e`](https://github.com/Urigo/graphql-mesh/commit/c14a6af5e16c03dfe60617738ed8610f81bc9ae8),
+  [`abc0c8747`](https://github.com/Urigo/graphql-mesh/commit/abc0c8747b274e011f5b8387233fe96d4f702035),
+  [`6aa7da6f8`](https://github.com/Urigo/graphql-mesh/commit/6aa7da6f8492adb1af5598e501d089b7b008637a)]:
+  - @graphql-mesh/types@0.91.13
+  - @omnigraph/json-schema@0.39.0
+  - @graphql-mesh/string-interpolation@0.4.4
+  - @graphql-mesh/utils@0.43.21
+
 ## 0.37.24
 
 ### Patch Changes

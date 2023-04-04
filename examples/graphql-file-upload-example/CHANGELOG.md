@@ -1,5 +1,19 @@
 # graphql-file-upload-example
 
+## 0.6.320
+
+### Patch Changes
+
+- Updated dependencies
+  [[`676e3ffc4`](https://github.com/Urigo/graphql-mesh/commit/676e3ffc4fe90550f69a709bbaf725815f1d50bd),
+  [`1a047374e`](https://github.com/Urigo/graphql-mesh/commit/1a047374ef480dc6e2e314597a1aab4443aa3ea1),
+  [`b0c21c065`](https://github.com/Urigo/graphql-mesh/commit/b0c21c0650ef907b2276fba0642c6c61fde2caf3),
+  [`c494c6f5a`](https://github.com/Urigo/graphql-mesh/commit/c494c6f5aa7e29cca117c4b172b83e6fd9469c95),
+  [`4aa89fb3c`](https://github.com/Urigo/graphql-mesh/commit/4aa89fb3c9df2189d36cd12dd642aafc08286a8b),
+  [`e0ac81b9d`](https://github.com/Urigo/graphql-mesh/commit/e0ac81b9deba88c77b6ddeebaf1466aa0bd7f74b)]:
+  - @graphql-mesh/cli@0.82.31
+  - @graphql-mesh/graphql@0.34.14
+
 ## 0.6.319
 
 ### Patch Changes

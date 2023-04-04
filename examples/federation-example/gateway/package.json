@@ -1,12 +1,12 @@
 {
   "name": "federation-gateway",
-  "version": "0.0.213",
+  "version": "0.0.214",
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "@graphql-mesh/cli": "0.82.30",
-    "@graphql-mesh/graphql": "0.34.13",
-    "@graphql-mesh/transform-federation": "0.11.14",
+    "@graphql-mesh/cli": "0.82.31",
+    "@graphql-mesh/graphql": "0.34.14",
+    "@graphql-mesh/transform-federation": "0.11.15",
     "graphql": "16.6.0"
   }
 }

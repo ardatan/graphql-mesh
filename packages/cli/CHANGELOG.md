@@ -1,5 +1,81 @@
 # @graphql-mesh/cli
 
+## 0.82.31
+
+### Patch Changes
+
+- [#5146](https://github.com/Urigo/graphql-mesh/pull/5146)
+  [`676e3ffc4`](https://github.com/Urigo/graphql-mesh/commit/676e3ffc4fe90550f69a709bbaf725815f1d50bd)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-codegen/typescript@3.0.2` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typescript/v/3.0.2)
+    (from `3.0.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-codegen/typescript-generic-sdk@3.1.0` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typescript-generic-sdk/v/3.1.0)
+    (from `3.0.4`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-codegen/typescript-operations@3.0.2` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typescript-operations/v/3.0.2)
+    (from `3.0.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-codegen/typescript-resolvers@3.1.1` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typescript-resolvers/v/3.1.1)
+    (from `3.0.0`, in `dependencies`)
+
+- [#5268](https://github.com/Urigo/graphql-mesh/pull/5268)
+  [`1a047374e`](https://github.com/Urigo/graphql-mesh/commit/1a047374ef480dc6e2e314597a1aab4443aa3ea1)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`typescript@5.0.3` ↗︎](https://www.npmjs.com/package/typescript/v/5.0.3)
+    (from `5.0.2`, in `dependencies`)
+
+- [#5269](https://github.com/Urigo/graphql-mesh/pull/5269)
+  [`b0c21c065`](https://github.com/Urigo/graphql-mesh/commit/b0c21c0650ef907b2276fba0642c6c61fde2caf3)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`tsconfig-paths@4.2.0` ↗︎](https://www.npmjs.com/package/tsconfig-paths/v/4.2.0) (from `4.1.2`,
+    in `dependencies`)
+
+- [#5283](https://github.com/Urigo/graphql-mesh/pull/5283)
+  [`c494c6f5a`](https://github.com/Urigo/graphql-mesh/commit/c494c6f5aa7e29cca117c4b172b83e6fd9469c95)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`graphql-ws@5.12.1` ↗︎](https://www.npmjs.com/package/graphql-ws/v/5.12.1)
+    (from `5.12.0`, in `dependencies`)
+
+- [#5288](https://github.com/Urigo/graphql-mesh/pull/5288)
+  [`4aa89fb3c`](https://github.com/Urigo/graphql-mesh/commit/4aa89fb3c9df2189d36cd12dd642aafc08286a8b)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-codegen/typescript@3.0.3` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typescript/v/3.0.3)
+    (from `3.0.2`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-codegen/typescript-operations@3.0.3` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typescript-operations/v/3.0.3)
+    (from `3.0.2`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-codegen/typescript-resolvers@3.2.0` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typescript-resolvers/v/3.2.0)
+    (from `3.1.1`, in `dependencies`)
+
+- [#5289](https://github.com/Urigo/graphql-mesh/pull/5289)
+  [`e0ac81b9d`](https://github.com/Urigo/graphql-mesh/commit/e0ac81b9deba88c77b6ddeebaf1466aa0bd7f74b)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-codegen/typed-document-node@4.0.0` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typed-document-node/v/4.0.0)
+    (from `3.0.2`, in `dependencies`)
+- Updated dependencies
+  [[`5156add74`](https://github.com/Urigo/graphql-mesh/commit/5156add74c011b7cfcdc5f56245676d327153229),
+  [`870de5dae`](https://github.com/Urigo/graphql-mesh/commit/870de5dae08a7e43d9aa0f52d5d504cffb4d8fc8),
+  [`870de5dae`](https://github.com/Urigo/graphql-mesh/commit/870de5dae08a7e43d9aa0f52d5d504cffb4d8fc8),
+  [`aea134764`](https://github.com/Urigo/graphql-mesh/commit/aea1347645c322437ed6ccfadabcfc23065bc9c8),
+  [`a1e08193b`](https://github.com/Urigo/graphql-mesh/commit/a1e08193be3ac8cab5f6f8c84025f934134369b6),
+  [`6aa7da6f8`](https://github.com/Urigo/graphql-mesh/commit/6aa7da6f8492adb1af5598e501d089b7b008637a)]:
+  - @graphql-mesh/http@0.3.27
+  - @graphql-mesh/runtime@0.46.22
+  - @graphql-mesh/types@0.91.13
+  - @graphql-mesh/utils@0.43.21
+  - @graphql-mesh/config@10.1.14
+
 ## 0.82.30
 
 ### Patch Changes
