@@ -1,0 +1,24 @@
+extend type Transform {
+  """
+  Transformer to transfer (move or copy) GraphQL parts of GraphQL schema across Types and Fields
+  """
+  transferSchema: TransferSchemaTransformConfig
+}
+
+type TransferSchemaTransformConfig @md {
+  """
+  Array of rules to transfer fields or args
+  """
+  transfers: [TransferSchemaTransformObject!]!
+}
+
+enum TransferSchemaAction {
+  move
+  copy
+}
+
+type TransferSchemaTransformObject @md {
+  from: String!
+  to: String!
+  action: TransferSchemaAction
+}

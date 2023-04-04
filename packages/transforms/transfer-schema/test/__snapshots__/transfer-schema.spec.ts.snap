@@ -1,0 +1,63 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transfer-schema transform should copy selected arguments correctly 1`] = `
+"type Query {
+  books(title: String, author: String): [Book]
+  addBook(title: String, author: String): Book
+}
+
+type Mutation {
+  ourBooks: [Book]
+}
+
+type Book {
+  title: String!
+  author: String!
+}"
+`;
+
+exports[`transfer-schema transform should move all fields when using whildcard "*" 1`] = `
+"type Query {
+  books: [Book]
+  addBook(title: String, author: String): Book
+  ourBooks: [Book]
+}
+
+type Book {
+  title: String!
+  author: String!
+}"
+`;
+
+exports[`transfer-schema transform should move and copy fields correctly 1`] = `
+"type Query {
+  books: [Book]
+  ourBooks: [Book]
+}
+
+type Mutation {
+  ourBooks: [Book]
+  addBook(title: String, author: String): Book
+}
+
+type Book {
+  title: String!
+  author: String!
+}"
+`;
+
+exports[`transfer-schema transform should move selected arguments correctly 1`] = `
+"type Query {
+  books(title: String, author: String): [Book]
+  addBook: Book
+}
+
+type Mutation {
+  ourBooks: [Book]
+}
+
+type Book {
+  title: String!
+  author: String!
+}"
+`;

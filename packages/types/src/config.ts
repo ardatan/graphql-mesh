@@ -1044,6 +1044,7 @@ export interface Transform {
    * Transformer to apply composition to resolvers (Any of: ResolversCompositionTransform, Any)
    */
   resolversComposition?: ResolversCompositionTransform | any;
+  transferSchema?: TransferSchemaTransformConfig;
   typeMerging?: TypeMergingConfig;
   [k: string]: any;
 }
@@ -1460,6 +1461,23 @@ export interface ResolversCompositionTransformObject {
    * Example: ./src/auth.js#authComposer
    */
   composer: any;
+}
+/**
+ * Transformer to transfer (move or copy) GraphQL parts of GraphQL schema across Types and Fields
+ */
+export interface TransferSchemaTransformConfig {
+  /**
+   * Array of rules to transfer fields or args
+   */
+  transfers: TransferSchemaTransformObject[];
+}
+export interface TransferSchemaTransformObject {
+  from: string;
+  to: string;
+  /**
+   * Allowed values: move, copy
+   */
+  action?: 'move' | 'copy';
 }
 /**
  * [Type Merging](https://www.graphql-tools.com/docs/stitch-type-merging) Configuration
