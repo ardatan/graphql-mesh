@@ -39,9 +39,9 @@
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "0.4.4",
-    "@graphql-tools/delegate": "9.0.28",
+    "@graphql-tools/delegate": "9.0.29",
     "@graphql-tools/url-loader": "7.17.14",
-    "@graphql-tools/wrap": "9.3.8",
+    "@graphql-tools/wrap": "9.4.0",
     "lodash.get": "4.4.2"
   },
   "publishConfig": {

@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "0.4.4",
-    "@graphql-tools/delegate": "9.0.28",
+    "@graphql-tools/delegate": "9.0.29",
     "graphql-compose": "9.0.10",
     "graphql-fields": "2.0.3",
     "graphql-scalars": "^1.20.4",

@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "0.4.4",
-    "@graphql-tools/delegate": "9.0.28",
+    "@graphql-tools/delegate": "9.0.29",
     "@whatwg-node/fetch": "^0.8.3",
     "dataloader": "2.2.2",
     "fast-xml-parser": "4.1.3",
