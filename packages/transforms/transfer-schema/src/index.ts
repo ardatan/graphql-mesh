@@ -4,7 +4,7 @@ import {
   GraphQLObjectType,
   GraphQLSchema,
 } from 'graphql';
-import { matcher } from 'micromatch';
+import micromatch from 'micromatch';
 import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { MapperKind, mapSchema, pruneSchema } from '@graphql-tools/utils';
 
@@ -58,7 +58,7 @@ export default class TransferSchemaTransform implements MeshTransform {
       const mapIdentifier = pattern ? 'ArgsConfig' : 'FieldsConfig';
       const mapKey = pattern ? `${toType}.${toField}` : toType;
 
-      const isMatch = matcher(usePattern);
+      const isMatch = micromatch.matcher(usePattern);
       if (isMatch(value)) {
         const currentAdditionalConfigs = this[`additional${mapIdentifier}`].get(mapKey) || {};
         this[`additional${mapIdentifier}`].set(mapKey, {
@@ -72,7 +72,7 @@ export default class TransferSchemaTransform implements MeshTransform {
 
   matchInSet(rulesSet: Set<string>, value: string): true | undefined {
     for (const rule of rulesSet) {
-      const isMatch = matcher(rule);
+      const isMatch = micromatch.matcher(rule);
       if (isMatch(value)) return true;
     }
     return undefined;
