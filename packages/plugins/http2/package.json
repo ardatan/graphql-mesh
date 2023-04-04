@@ -29,11 +29,11 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
+    "@graphql-mesh/types": "^0.91.12",
+    "@graphql-mesh/utils": "^0.43.20",
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.89.4",
-    "@graphql-mesh/utils": "0.43.5",
     "@types/node": "^18.11.18",
     "@whatwg-node/fetch": "0.8.4",
     "tslib": "^2.4.0"
