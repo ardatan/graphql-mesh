@@ -327,7 +327,7 @@ export async function processConfig(
     ),
     Promise.all(
       config.plugins?.map(async (p, pluginIndex) => {
-        const pluginName = Object.keys(p)[0].toString();
+        const [pluginName, maybeImportName] = Object.keys(p)[0].toString().split('#');
         const pluginConfig: any = p[pluginName];
         if (ENVELOP_CORE_PLUGINS_MAP[pluginName] != null) {
           const { importName, moduleName, pluginFactory } = ENVELOP_CORE_PLUGINS_MAP[pluginName];
@@ -371,26 +371,28 @@ export async function processConfig(
         })`);
           }
         } else {
-          Object.keys(possiblePluginFactory).forEach(importName => {
-            if (
-              (importName.toString().startsWith('use') ||
-                importName.toString().endsWith('Plugin')) &&
-              typeof possiblePluginFactory[importName] === 'function'
-            ) {
-              pluginFactory = possiblePluginFactory[importName];
-              importName = importName.toString();
-              if (options.generateCode) {
-                importCodes.add(`import { ${importName} } from ${JSON.stringify(moduleName)};`);
-                codes.add(
-                  `additionalEnvelopPlugins[${pluginIndex}] = await ${importName}(${JSON.stringify(
-                    pluginConfig,
-                    null,
-                    2,
-                  )});`,
-                );
-              }
+          const importName =
+            maybeImportName ||
+            Object.keys(possiblePluginFactory)
+              .find(
+                iName =>
+                  (iName.toString().startsWith('use') || iName.toString().endsWith('Plugin')) &&
+                  typeof possiblePluginFactory[iName] === 'function',
+              )
+              .toString();
+          if (importName) {
+            pluginFactory = possiblePluginFactory[importName];
+            if (options.generateCode) {
+              importCodes.add(`import { ${importName} } from ${JSON.stringify(moduleName)};`);
+              codes.add(
+                `additionalEnvelopPlugins[${pluginIndex}] = await ${importName}(${JSON.stringify(
+                  pluginConfig,
+                  null,
+                  2,
+                )});`,
+              );
             }
-          });
+          }
         }
         return pluginFactory({
           ...pluginConfig,

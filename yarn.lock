@@ -2976,7 +2976,7 @@
   dependencies:
     tslib "^2.4.0"
 
-"@graphql-tools/utils@9.2.1", "@graphql-tools/utils@^9.0.0", "@graphql-tools/utils@^9.1.1", "@graphql-tools/utils@^9.2.1":
+"@graphql-tools/utils@9.2.1", "@graphql-tools/utils@^9.0.0", "@graphql-tools/utils@^9.1.1", "@graphql-tools/utils@^9.2.0", "@graphql-tools/utils@^9.2.1":
   version "9.2.1"
   resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-9.2.1.tgz#1b3df0ef166cfa3eae706e3518b17d5922721c57"
   integrity sha512-WUw506Ql6xzmOORlriNrD6Ugx+HjVgYxt9KCXD9mHAak+eaXSwuGGPyE60hy9xaDEoXKBsG7SkG69ybitaVl6A==
@@ -3037,6 +3037,14 @@
   integrity sha512-uyXbkjBtKSulaK8GeqONgRm1vu07+Cfn98Iu0B882VG1AsAoeRgAdPQA343tY37vMO85TXAwVwUrxz0BNZrW7w==
   dependencies:
     "@envelop/response-cache" "^4.0.6"
+
+"@graphql-yoga/plugin-sofa@1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-sofa/-/plugin-sofa-1.8.0.tgz#ba91d9c278588374f30a6cb3b6aeaa3dd74383d4"
+  integrity sha512-VHN6Im9Auu0BZQYC9QVBmKjlGCLnlH/H2ygnIfCZ8JB4ARVD10HJ/9v0TwrDJwctwMsNKzVAGxkQLcALrcgJDg==
+  dependencies:
+    "@graphql-tools/utils" "^9.2.0"
+    sofa-api "^0.16.3"
 
 "@graphql-yoga/subscription@^3.1.0":
   version "3.1.0"
@@ -5987,7 +5995,7 @@
     urlpattern-polyfill "^6.0.2"
     web-streams-polyfill "^3.2.1"
 
-"@whatwg-node/fetch@^0.6.5":
+"@whatwg-node/fetch@^0.6.5", "@whatwg-node/fetch@^0.6.6":
   version "0.6.9"
   resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.6.9.tgz#6cc694cc0378e27b8dfed427c5bf633eda6972b9"
   integrity sha512-JfrBCJdMu9n9OARc0e/hPHcD98/8Nz1CKSdGYDg6VbObDkV/Ys30xe5i/wPOatYbxuvatj1kfWeHf7iNX3i17w==
@@ -6025,6 +6033,23 @@
   dependencies:
     "@whatwg-node/fetch" "^0.8.0"
     "@whatwg-node/server" "^0.7.0"
+    tslib "^2.3.1"
+
+"@whatwg-node/router@^0.2.0":
+  version "0.2.7"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/router/-/router-0.2.7.tgz#5b47279167f5c03f2d2c1d5f113d2c035a8f7e3e"
+  integrity sha512-kZynz9z5kgBJ/mWowSNzoacRsP4iGPkM6MAVHUzaUxYcQR+crtUvsp7/P6H4X20ScRbs8sDRXi7XOU9mFT8Zhg==
+  dependencies:
+    "@whatwg-node/fetch" "^0.8.0"
+    "@whatwg-node/server" "^0.6.6"
+    tslib "^2.3.1"
+
+"@whatwg-node/server@^0.6.6":
+  version "0.6.7"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.6.7.tgz#14f5d0aca49308759d64fc7faa3cbfc20162a1ee"
+  integrity sha512-M4zHWdJ6M1IdcxnZBdDmiUh1bHQ4gPYRxzkH0gh8Qf6MpWJmX6I/MNftqem3GNn+qn1y47qqlGSed7T7nzsRFw==
+  dependencies:
+    "@whatwg-node/fetch" "^0.8.1"
     tslib "^2.3.1"
 
 "@whatwg-node/server@^0.7.0", "@whatwg-node/server@^0.7.3":
@@ -15704,7 +15729,7 @@ open@^8.0.9, open@^8.4.0:
     is-docker "^2.1.1"
     is-wsl "^2.2.0"
 
-openapi-types@12.1.0:
+openapi-types@12.1.0, openapi-types@^12.1.0:
   version "12.1.0"
   resolved "https://registry.yarnpkg.com/openapi-types/-/openapi-types-12.1.0.tgz#bd01acc937b73c9f6db2ac2031bf0231e21ebff0"
   integrity sha512-XpeCy01X6L5EpP+6Hc3jWN7rMZJ+/k1lwki/kTmWzbVhdPie3jd5O2ZtedEx8Yp58icJ0osVldLMrTB/zslQXA==
@@ -18545,6 +18570,20 @@ socks@^2.6.2, socks@^2.7.1:
   dependencies:
     ip "^2.0.0"
     smart-buffer "^4.2.0"
+
+sofa-api@^0.16.3:
+  version "0.16.3"
+  resolved "https://registry.yarnpkg.com/sofa-api/-/sofa-api-0.16.3.tgz#cbf64067de7b3a7a923daa6f45ce8b80f3530dbe"
+  integrity sha512-AH4a+CesdV18/YZYDsSgXsqvJRI9wZ0gFdQPNN6fSgSoamIGBaDnP8kv8rjvVy6ccZov+pzfJhApog64P58vKA==
+  dependencies:
+    "@graphql-tools/utils" "^9.2.0"
+    "@whatwg-node/fetch" "^0.6.6"
+    "@whatwg-node/router" "^0.2.0"
+    ansi-colors "^4.1.3"
+    openapi-types "^12.1.0"
+    param-case "^3.0.4"
+    title-case "^3.0.3"
+    tslib "^2.5.0"
 
 sort-keys@^5.0.0:
   version "5.0.0"

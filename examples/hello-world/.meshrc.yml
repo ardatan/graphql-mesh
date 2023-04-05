@@ -12,6 +12,13 @@ plugins:
   - mock:
       mocks:
         - apply: Query.greeting
+  # Example for creating a REST API
+  - sofa#useSofaWithSwaggerUI:
+      basePath: /rest
+      swaggerUIEndpoint: /swagger
+      info:
+        title: 'My REST API'
+        version: '1.0.0'
 documents:
   - |
     query HelloWorld {
