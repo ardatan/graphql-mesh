@@ -18,25 +18,25 @@
     "content": "6ac00bf678fc9bce4ceff855e5c5b024",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs"],
+    "hierarchy": ["docs"],
     "source": "Mesh",
     "title": "Introduction",
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-cache-storages-cache-introduction",
+    "objectID": "mesh-docs-cache-cache-introduction",
     "headings": [],
     "toc": [],
     "content": "94a86e8c2c181be164f8253c5248e6bd",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/cache/cache-introduction",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Cache Storages"],
+    "hierarchy": ["docs", "cache"],
     "source": "Mesh",
     "title": "Introduction",
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-cache-storages-cfwkv",
+    "objectID": "mesh-docs-cache-cfwkv",
     "headings": ["How to use?", "Config API Reference"],
     "toc": [
       {
@@ -59,13 +59,13 @@
     "content": "a35e1a6d41f65d9fb32c18ed8d20d87c",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/cache/cfwKv",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Cache Storages"],
+    "hierarchy": ["docs", "cache"],
     "source": "Mesh",
     "title": "CF Workers KV",
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-cache-storages-file",
+    "objectID": "mesh-docs-cache-file",
     "headings": ["How to use?", "Config API Reference"],
     "toc": [
       {
@@ -82,13 +82,13 @@
     "content": "6995579463bb4a661fd4ba2f2fcea689",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/cache/file",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Cache Storages"],
+    "hierarchy": ["docs", "cache"],
     "source": "Mesh",
     "title": "File",
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-cache-storages-localforage",
+    "objectID": "mesh-docs-cache-localforage",
     "headings": ["How to use?", "Config API Reference"],
     "toc": [
       {
@@ -105,13 +105,13 @@
     "content": "3b51e45d64d8710a47349b9e7ff11ace",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/cache/localforage",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Cache Storages"],
+    "hierarchy": ["docs", "cache"],
     "source": "Mesh",
     "title": "LocalForage",
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-cache-storages-redis",
+    "objectID": "mesh-docs-cache-redis",
     "headings": ["How to use?", "Config API Reference"],
     "toc": [
       {
@@ -128,7 +128,7 @@
     "content": "86ce4215cf553819098ca0b113b21aa0",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/cache/redis",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Cache Storages"],
+    "hierarchy": ["docs", "cache"],
     "source": "Mesh",
     "title": "Redis",
     "type": "Documentation"
@@ -190,7 +190,7 @@
     "content": "12b48f3100111c45dd58f3e16d64311e",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/cli-commands",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs"],
+    "hierarchy": ["docs"],
     "source": "Mesh",
     "title": "CLI Commands",
     "type": "Documentation"
@@ -318,7 +318,7 @@
     "content": "2158ed5bbfe32c1ae4398685b41623f6",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/config-reference",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs"],
+    "hierarchy": ["docs"],
     "source": "Mesh",
     "title": "Config Reference",
     "type": "Documentation"
@@ -368,7 +368,7 @@
     "content": "9fc4699c2248cdd52d25fae4167272da",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/getting-started/combine-multiple-sources",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Getting Started"],
+    "hierarchy": ["docs", "getting-started"],
     "source": "Mesh",
     "title": "Combine Multiple Sources",
     "type": "Documentation"
@@ -380,7 +380,7 @@
     "content": "889962382c9630c9b35b7437b2e5e988",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/getting-started/comparison",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Getting Started"],
+    "hierarchy": ["docs", "getting-started"],
     "source": "Mesh",
     "title": "Comparison",
     "type": "Documentation"
@@ -412,7 +412,7 @@
     "content": "400eb081c32b56a609ff6bb7d1caaab1",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/getting-started/customize-mesh-server",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Getting Started"],
+    "hierarchy": ["docs", "getting-started"],
     "source": "Mesh",
     "title": "Customize the Mesh Server",
     "type": "Documentation"
@@ -504,7 +504,7 @@
     "content": "8b16a99df3646c87779fe27ecdf9d4b7",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/getting-started/deploy-mesh-gateway",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Getting Started"],
+    "hierarchy": ["docs", "getting-started"],
     "source": "Mesh",
     "title": "Deploy a Mesh Gateway",
     "type": "Documentation"
@@ -527,7 +527,7 @@
     "content": "e0f09236d0a3bce03d28568322418fb5",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/getting-started/installation",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Getting Started"],
+    "hierarchy": ["docs", "getting-started"],
     "source": "Mesh",
     "title": "Installation",
     "type": "Documentation"
@@ -539,7 +539,7 @@
     "content": "7dcf48e7ac68b815a88b0710fffd496c",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/getting-started/overview",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Getting Started"],
+    "hierarchy": ["docs", "getting-started"],
     "source": "Mesh",
     "title": "Overview",
     "type": "Documentation"
@@ -593,7 +593,7 @@
     "content": "8d86ec1c3867b8a4db18be12ff8bd5e6",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/getting-started/sources-with-no-definition",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Getting Started"],
+    "hierarchy": ["docs", "getting-started"],
     "source": "Mesh",
     "title": "Configure Sources with No Definition",
     "type": "Documentation"
@@ -638,7 +638,7 @@
     "content": "c8ba85795b0f1442354f684534733adf",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/getting-started/your-first-mesh-gateway",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Getting Started"],
+    "hierarchy": ["docs", "getting-started"],
     "source": "Mesh",
     "title": "Your First Gateway with Mesh",
     "type": "Documentation"
@@ -694,7 +694,7 @@
     "content": "363cd8c18a1d06db773fc6d0f852882e",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/auth0",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Guides"],
+    "hierarchy": ["docs", "guides"],
     "source": "Mesh",
     "title": "Authentication with Auth0",
     "type": "Documentation"
@@ -712,7 +712,7 @@
     "content": "d9a38aa6bf6c0a6668b935324bf0fcd2",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/batching",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Guides"],
+    "hierarchy": ["docs", "guides"],
     "source": "Mesh",
     "title": "Batching for N+1 Problem",
     "type": "Documentation"
@@ -747,7 +747,7 @@
     "content": "c3cb0c64fd36b241e52ac1a718c1bb57",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/dynamic-vars",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Guides"],
+    "hierarchy": ["docs", "guides"],
     "source": "Mesh",
     "title": "Dynamic Variables",
     "type": "Documentation"
@@ -776,7 +776,7 @@
     "content": "b726f04ace263c7601d281dea6b9753e",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/error-masking",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Guides"],
+    "hierarchy": ["docs", "guides"],
     "source": "Mesh",
     "title": "Error Masking",
     "type": "Documentation"
@@ -805,7 +805,7 @@
     "content": "ce3b238c0b9ecba026abe6746e4fca4d",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/extending-unified-schema",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Guides"],
+    "hierarchy": ["docs", "guides"],
     "source": "Mesh",
     "title": "Extending the Unified Schema",
     "type": "Documentation"
@@ -828,7 +828,7 @@
     "content": "da843b2b0e177902dc40e396e1097bc8",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/file-uploads",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Guides"],
+    "hierarchy": ["docs", "guides"],
     "source": "Mesh",
     "title": "File Uploads",
     "type": "Documentation"
@@ -854,7 +854,7 @@
     "content": "a151bdd2f1ff7c949a86102fceabc956",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/graphql-code-generator",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Guides"],
+    "hierarchy": ["docs", "guides"],
     "source": "Mesh",
     "title": "Configure GraphQL Code Generator",
     "type": "Documentation"
@@ -901,7 +901,7 @@
     "content": "5ccc22fac20e75716ddb3c2ec7b74128",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/headers",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Guides"],
+    "hierarchy": ["docs", "guides"],
     "source": "Mesh",
     "title": "Headers",
     "type": "Documentation"
@@ -956,7 +956,7 @@
     "content": "3bf9916997c52790bd833d07dde34ace",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/hive",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Guides"],
+    "hierarchy": ["docs", "guides"],
     "source": "Mesh",
     "title": "Integration with Hive",
     "type": "Documentation"
@@ -996,7 +996,7 @@
     "content": "cc3c0ef68a7f74409346eda8f683bba2",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/mesh-sdk",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Guides"],
+    "hierarchy": ["docs", "guides"],
     "source": "Mesh",
     "title": "Programmatic Usage / SDK",
     "type": "Documentation"
@@ -1014,7 +1014,7 @@
     "content": "43ab7a4694bdcfe0814b2f7bbe8ad778",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/monitoring-and-tracing",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Guides"],
+    "hierarchy": ["docs", "guides"],
     "source": "Mesh",
     "title": "Monitoring and Tracing",
     "type": "Documentation"
@@ -1037,7 +1037,7 @@
     "content": "5829cb7b76d03d7b38510a960a64ed05",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/sofa",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Guides"],
+    "hierarchy": ["docs", "guides"],
     "source": "Mesh",
     "title": "Generate REST API with SOFA",
     "type": "Documentation"
@@ -1061,521 +1061,13 @@
     "content": "c1fd12ef6a873bfbbae0d56427caf965",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/subscriptions-webhooks",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Guides"],
+    "hierarchy": ["docs", "guides"],
     "source": "Mesh",
     "title": "Subscriptions & Webhooks",
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-migration-guides-new-openapi-to-openapi",
-    "headings": ["Dependency Update", "Config Update"],
-    "toc": [
-      {
-        "children": [],
-        "title": "Dependency Update",
-        "anchor": "dependency-update"
-      },
-      {
-        "children": [],
-        "title": "Config Update",
-        "anchor": "config-update"
-      }
-    ],
-    "content": "2d3c7133c7c6c1283f151ae14bd1e87a",
-    "url": "https://www.the-guild.dev/graphql/mesh/docs/migration/new-openapi-to-openapi",
-    "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Migration Guides"],
-    "source": "Mesh",
-    "title": "new-openAPI to openAPI handler",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "mesh-docs-migration-guides-openapi-0",
-    "headings": ["Naming conventions", "Config options", "Security", "Miscellaneous"],
-    "toc": [
-      {
-        "children": [],
-        "title": "Naming conventions",
-        "anchor": "naming-conventions"
-      },
-      {
-        "children": [],
-        "title": "Config options",
-        "anchor": "config-options"
-      },
-      {
-        "children": [],
-        "title": "Security",
-        "anchor": "security"
-      },
-      {
-        "children": [],
-        "title": "Miscellaneous",
-        "anchor": "miscellaneous"
-      }
-    ],
-    "content": "050919e19fe7665e3260d9b0e142e5af",
-    "url": "https://www.the-guild.dev/graphql/mesh/docs/migration/openapi-0",
-    "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Migration Guides"],
-    "source": "Mesh",
-    "title": "openAPI handler `<0.31` to `0.32`",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "mesh-docs-plugins-block-field-suggestions",
-    "headings": ["Getting Started"],
-    "toc": [
-      {
-        "children": [],
-        "title": "Getting Started",
-        "anchor": "getting-started"
-      }
-    ],
-    "content": "a97fa6609c29768626fc33794b056496",
-    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/block-field-suggestions",
-    "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Plugins"],
-    "source": "Mesh",
-    "title": "Block Field Suggestions",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "mesh-docs-plugins-csrf",
-    "headings": ["Installation", "Quick Start"],
-    "toc": [
-      {
-        "children": [],
-        "title": "Installation",
-        "anchor": "installation"
-      },
-      {
-        "children": [],
-        "title": "Quick Start",
-        "anchor": "quick-start"
-      }
-    ],
-    "content": "513da1aa22070474911c9392aba4cc86",
-    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/csrf",
-    "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Plugins"],
-    "source": "Mesh",
-    "title": "CSRF Prevention",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "mesh-docs-plugins-deduplicate-request",
-    "headings": ["Getting Started"],
-    "toc": [
-      {
-        "children": [],
-        "title": "Getting Started",
-        "anchor": "getting-started"
-      }
-    ],
-    "content": "8c95fa1c7302a63b7625786686020f9d",
-    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/deduplicate-request",
-    "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Plugins"],
-    "source": "Mesh",
-    "title": "Deduplicate HTTP Requests",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "mesh-docs-plugins-http-cache",
-    "headings": ["Getting Started", "Conditional Caching"],
-    "toc": [
-      {
-        "children": [],
-        "title": "Getting Started",
-        "anchor": "getting-started"
-      },
-      {
-        "children": [],
-        "title": "Conditional Caching",
-        "anchor": "conditional-caching"
-      }
-    ],
-    "content": "7257cc5bf768a4527d6651112d6aa9f8",
-    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/http-cache",
-    "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Plugins"],
-    "source": "Mesh",
-    "title": "Caching in HTTP",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "mesh-docs-plugins-http-details-extensions",
-    "headings": ["Getting Started"],
-    "toc": [
-      {
-        "children": [],
-        "title": "Getting Started",
-        "anchor": "getting-started"
-      }
-    ],
-    "content": "b4fbd597eda36f7be4f369a3d5c13dc2",
-    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/http-details-extensions",
-    "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Plugins"],
-    "source": "Mesh",
-    "title": "HTTP Details in extensions",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "mesh-docs-plugins-live-queries",
-    "headings": ["Config API Reference", "CodeSandBox Example"],
-    "toc": [
-      {
-        "children": [],
-        "title": "Config API Reference",
-        "anchor": "config-api-reference"
-      },
-      {
-        "children": [],
-        "title": "CodeSandBox Example",
-        "anchor": "codesandbox-example"
-      }
-    ],
-    "content": "ad261d7d0f2a5afcffcb5d01b1dfbb25",
-    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/live-queries",
-    "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Plugins"],
-    "source": "Mesh",
-    "title": "Live Queries",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "mesh-docs-plugins-max-depth",
-    "headings": ["Getting Started"],
-    "toc": [
-      {
-        "children": [],
-        "title": "Getting Started",
-        "anchor": "getting-started"
-      }
-    ],
-    "content": "d799d55fcff1aa435a81aba69c210786",
-    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/max-depth",
-    "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Plugins"],
-    "source": "Mesh",
-    "title": "Query Depth Limiting",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "mesh-docs-plugins-max-tokens",
-    "headings": ["Getting Started"],
-    "toc": [
-      {
-        "children": [],
-        "title": "Getting Started",
-        "anchor": "getting-started"
-      }
-    ],
-    "content": "059836647debfa533fd87795695596c4",
-    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/max-tokens",
-    "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Plugins"],
-    "source": "Mesh",
-    "title": "Reject Malicious Operation Documents",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "mesh-docs-plugins-mock",
-    "headings": [
-      "How to use?",
-      "Custom mock functions for fields",
-      "Custom mock functions for types",
-      "Mocking the lists",
-      "Stateful mocking",
-      "CodeSandBox Example",
-      "Config API Reference"
-    ],
-    "toc": [
-      {
-        "children": [],
-        "title": "How to use?",
-        "anchor": "how-to-use"
-      },
-      {
-        "children": [],
-        "title": "Custom mock functions for fields",
-        "anchor": "custom-mock-functions-for-fields"
-      },
-      {
-        "children": [],
-        "title": "Custom mock functions for types",
-        "anchor": "custom-mock-functions-for-types"
-      },
-      {
-        "children": [],
-        "title": "Mocking the lists",
-        "anchor": "mocking-the-lists"
-      },
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "children": [],
-                "title": "Get from the store",
-                "anchor": "get-from-the-store"
-              },
-              {
-                "children": [],
-                "title": "Mutate data in the store",
-                "anchor": "mutate-data-in-the-store"
-              }
-            ],
-            "title": "Initialize store",
-            "anchor": "initialize-store"
-          }
-        ],
-        "title": "Stateful mocking",
-        "anchor": "stateful-mocking"
-      },
-      {
-        "children": [],
-        "title": "CodeSandBox Example",
-        "anchor": "codesandbox-example"
-      },
-      {
-        "children": [],
-        "title": "Config API Reference",
-        "anchor": "config-api-reference"
-      }
-    ],
-    "content": "aa297c12419a1e972e21d74e0ef0550a",
-    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/mock",
-    "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Plugins"],
-    "source": "Mesh",
-    "title": "Mocking",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "mesh-docs-plugins-new-relic",
-    "headings": ["Getting Started", "Example Configuration", "Config API Reference"],
-    "toc": [
-      {
-        "children": [
-          {
-            "children": [],
-            "title": "Enabling required NewRelic feature flags",
-            "anchor": "enabling-required-newrelic-feature-flags"
-          }
-        ],
-        "title": "Getting Started",
-        "anchor": "getting-started"
-      },
-      {
-        "children": [],
-        "title": "Example Configuration",
-        "anchor": "example-configuration"
-      },
-      {
-        "children": [],
-        "title": "Config API Reference",
-        "anchor": "config-api-reference"
-      }
-    ],
-    "content": "bc900a03ba72078f2ca5cfe68f65341a",
-    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/new-relic",
-    "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Plugins"],
-    "source": "Mesh",
-    "title": "NewRelic",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "mesh-docs-plugins-operation-field-permissions",
-    "headings": ["Example Configuration", "Config API Reference"],
-    "toc": [
-      {
-        "children": [],
-        "title": "Example Configuration",
-        "anchor": "example-configuration"
-      },
-      {
-        "children": [],
-        "title": "Config API Reference",
-        "anchor": "config-api-reference"
-      }
-    ],
-    "content": "45094cb31da85711c65020720d9d0c2a",
-    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/operation-field-permissions",
-    "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Plugins"],
-    "source": "Mesh",
-    "title": "Operation Field Permissions",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "mesh-docs-plugins-plugins-introduction",
-    "headings": ["Additional Plugins", "Mesh-specific Plugin Hooks"],
-    "toc": [
-      {
-        "children": [],
-        "title": "Additional Plugins",
-        "anchor": "additional-plugins"
-      },
-      {
-        "children": [],
-        "title": "Mesh-specific Plugin Hooks",
-        "anchor": "mesh-specific-plugin-hooks"
-      }
-    ],
-    "content": "6d458d9675ee4e8a2a6a37ea2bdac02e",
-    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/plugins-introduction",
-    "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Plugins"],
-    "source": "Mesh",
-    "title": "Introduction",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "mesh-docs-plugins-prometheus",
-    "headings": [
-      "Getting Started",
-      "Example Configuration",
-      "Custom Registry",
-      "Config API Reference"
-    ],
-    "toc": [
-      {
-        "children": [],
-        "title": "Getting Started",
-        "anchor": "getting-started"
-      },
-      {
-        "children": [],
-        "title": "Example Configuration",
-        "anchor": "example-configuration"
-      },
-      {
-        "children": [],
-        "title": "Custom Registry",
-        "anchor": "custom-registry"
-      },
-      {
-        "children": [],
-        "title": "Config API Reference",
-        "anchor": "config-api-reference"
-      }
-    ],
-    "content": "99030e3eb0c21cd162942cf21b7a80d2",
-    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/prometheus",
-    "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Plugins"],
-    "source": "Mesh",
-    "title": "Prometheus",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "mesh-docs-plugins-rate-limit",
-    "headings": ["Example Configuration", "Config API Reference"],
-    "toc": [
-      {
-        "children": [],
-        "title": "Example Configuration",
-        "anchor": "example-configuration"
-      },
-      {
-        "children": [],
-        "title": "Config API Reference",
-        "anchor": "config-api-reference"
-      }
-    ],
-    "content": "3897225c218431f4bade7063564e14e6",
-    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/rate-limit",
-    "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Plugins"],
-    "source": "Mesh",
-    "title": "Rate Limit",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "mesh-docs-plugins-response-caching",
-    "headings": ["Getting Started", "Config API Reference", "CodeSandBox Example"],
-    "toc": [
-      {
-        "children": [],
-        "title": "Getting Started",
-        "anchor": "getting-started"
-      },
-      {
-        "children": [],
-        "title": "Config API Reference",
-        "anchor": "config-api-reference"
-      },
-      {
-        "children": [],
-        "title": "CodeSandBox Example",
-        "anchor": "codesandbox-example"
-      }
-    ],
-    "content": "d3701eb8a55107a37e599525a8b10f4c",
-    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/response-caching",
-    "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Plugins"],
-    "source": "Mesh",
-    "title": "Response Caching",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "mesh-docs-plugins-snapshot",
-    "headings": ["How to use?", "CodeSandBox Example", "Config API Reference"],
-    "toc": [
-      {
-        "children": [],
-        "title": "How to use?",
-        "anchor": "how-to-use"
-      },
-      {
-        "children": [],
-        "title": "CodeSandBox Example",
-        "anchor": "codesandbox-example"
-      },
-      {
-        "children": [],
-        "title": "Config API Reference",
-        "anchor": "config-api-reference"
-      }
-    ],
-    "content": "148c0e76e61dd68d98c0d9f07441169a",
-    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/snapshot",
-    "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Plugins"],
-    "source": "Mesh",
-    "title": "snapshot",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "mesh-docs-plugins-statsd",
-    "headings": ["Example Configuration", "Config API Reference"],
-    "toc": [
-      {
-        "children": [],
-        "title": "Example Configuration",
-        "anchor": "example-configuration"
-      },
-      {
-        "children": [],
-        "title": "Config API Reference",
-        "anchor": "config-api-reference"
-      }
-    ],
-    "content": "e15eaf1beb6563d8fca0d4c8b156c17e",
-    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/statsd",
-    "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Plugins"],
-    "source": "Mesh",
-    "title": "StatsD",
-    "type": "Documentation"
-  },
-  {
-    "objectID": "mesh-docs-source-handlers-graphql",
+    "objectID": "mesh-docs-handlers-graphql",
     "headings": [
       "Headers",
       "Fetching SDL or introspection from CDN or any other schema registry tool",
@@ -1619,13 +1111,13 @@
     "content": "d481a99dccb297e2cb8727705f50d9bd",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/graphql",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Source Handlers"],
+    "hierarchy": ["docs", "handlers"],
     "source": "Mesh",
     "title": "GraphQL",
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-source-handlers-grpc",
+    "objectID": "mesh-docs-handlers-grpc",
     "headings": [
       "Use Reflection instead of proto files",
       "Custom Metadata for Authorization",
@@ -1651,25 +1143,25 @@
     "content": "d6460c55eb325e0d228863537a90f52c",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/grpc",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Source Handlers"],
+    "hierarchy": ["docs", "handlers"],
     "source": "Mesh",
     "title": "gRPC / Protobuf",
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-source-handlers-handlers-introduction",
+    "objectID": "mesh-docs-handlers-handlers-introduction",
     "headings": [],
     "toc": [],
     "content": "4b4ee1b0be10cb627af2b55a5a91f7ca",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/handlers-introduction",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Source Handlers"],
+    "hierarchy": ["docs", "handlers"],
     "source": "Mesh",
     "title": "Introduction",
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-source-handlers-json-schema",
+    "objectID": "mesh-docs-handlers-json-schema",
     "headings": ["Headers", "Query Parameters", "CodeSandBox Example", "Config API Reference"],
     "toc": [
       {
@@ -1730,13 +1222,13 @@
     "content": "cd5cde0bbd4a3306fa34cfea6d0bef44",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/json-schema",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Source Handlers"],
+    "hierarchy": ["docs", "handlers"],
     "source": "Mesh",
     "title": "JSON Schema or Samples",
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-source-handlers-mongoose",
+    "objectID": "mesh-docs-handlers-mongoose",
     "headings": ["Config API Reference"],
     "toc": [
       {
@@ -1748,13 +1240,13 @@
     "content": "12d8d718e17610d0c13e04636562acd4",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/mongoose",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Source Handlers"],
+    "hierarchy": ["docs", "handlers"],
     "source": "Mesh",
     "title": "MongoDB / Mongoose",
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-source-handlers-mysql",
+    "objectID": "mesh-docs-handlers-mysql",
     "headings": ["Config API Reference"],
     "toc": [
       {
@@ -1766,13 +1258,13 @@
     "content": "dd9d7610bc165e8786dcf679b17502b3",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/mysql",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Source Handlers"],
+    "hierarchy": ["docs", "handlers"],
     "source": "Mesh",
     "title": "MySQL",
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-source-handlers-neo4j",
+    "objectID": "mesh-docs-handlers-neo4j",
     "headings": ["Config API Reference"],
     "toc": [
       {
@@ -1784,13 +1276,13 @@
     "content": "1436e41665bf4fde38ea9958cdeb286d",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/neo4j",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Source Handlers"],
+    "hierarchy": ["docs", "handlers"],
     "source": "Mesh",
     "title": "Neo4j",
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-source-handlers-odata",
+    "objectID": "mesh-docs-handlers-odata",
     "headings": ["Headers", "CodeSandBox Example", "Config API Reference"],
     "toc": [
       {
@@ -1812,13 +1304,13 @@
     "content": "5e732b68fc94c513b7eb48ba31304f93",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/odata",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Source Handlers"],
+    "hierarchy": ["docs", "handlers"],
     "source": "Mesh",
     "title": "OData / Microsoft Graph",
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-source-handlers-openapi",
+    "objectID": "mesh-docs-handlers-openapi",
     "headings": [
       "Overriding default Query/Mutation operations classification",
       "Naming convention",
@@ -1898,13 +1390,13 @@
     "content": "9f8ee0f4e9e9cb7f02a79be7c334434d",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/openapi",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Source Handlers"],
+    "hierarchy": ["docs", "handlers"],
     "source": "Mesh",
     "title": "OpenAPI / Swagger",
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-source-handlers-postgraphile",
+    "objectID": "mesh-docs-handlers-postgraphile",
     "headings": [
       "External Plugins (e.g. FederationPlugin, PgManyToManyPlugin, PostGISPlugin)",
       "Config API Reference"
@@ -1941,13 +1433,13 @@
     "content": "ca0c28bc0c6330269a01c5cc3cf3b0da",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/postgraphile",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Source Handlers"],
+    "hierarchy": ["docs", "handlers"],
     "source": "Mesh",
     "title": "PostgreSQL / PostGraphile",
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-source-handlers-soap",
+    "objectID": "mesh-docs-handlers-soap",
     "headings": ["CodeSandBox Example", "Config API Reference"],
     "toc": [
       {
@@ -1964,13 +1456,13 @@
     "content": "2c049e4e0e0b62e1c65b86af040f0939",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/soap",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Source Handlers"],
+    "hierarchy": ["docs", "handlers"],
     "source": "Mesh",
     "title": "SOAP",
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-source-handlers-thrift",
+    "objectID": "mesh-docs-handlers-thrift",
     "headings": ["Headers", "Config API Reference"],
     "toc": [
       {
@@ -1987,13 +1479,13 @@
     "content": "fe25fb113c2ed3020b00994a13758977",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/thrift",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Source Handlers"],
+    "hierarchy": ["docs", "handlers"],
     "source": "Mesh",
     "title": "Apache Thrift",
     "type": "Documentation"
   },
   {
-    "objectID": "mesh-docs-source-handlers-tuql",
+    "objectID": "mesh-docs-handlers-tuql",
     "headings": ["CodeSandBox Example", "Config API Reference"],
     "toc": [
       {
@@ -2010,9 +1502,517 @@
     "content": "8842df3f83e8d626256d63e006a4e3c6",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/tuql",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Source Handlers"],
+    "hierarchy": ["docs", "handlers"],
     "source": "Mesh",
     "title": "SQLite / Tuql",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-migration-new-openapi-to-openapi",
+    "headings": ["Dependency Update", "Config Update"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Dependency Update",
+        "anchor": "dependency-update"
+      },
+      {
+        "children": [],
+        "title": "Config Update",
+        "anchor": "config-update"
+      }
+    ],
+    "content": "2d3c7133c7c6c1283f151ae14bd1e87a",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/migration/new-openapi-to-openapi",
+    "domain": "https://www.the-guild.dev/graphql/mesh",
+    "hierarchy": ["docs", "migration"],
+    "source": "Mesh",
+    "title": "new-openAPI to openAPI handler",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-migration-openapi-0_31-032",
+    "headings": ["Naming conventions", "Config options", "Security", "Miscellaneous"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Naming conventions",
+        "anchor": "naming-conventions"
+      },
+      {
+        "children": [],
+        "title": "Config options",
+        "anchor": "config-options"
+      },
+      {
+        "children": [],
+        "title": "Security",
+        "anchor": "security"
+      },
+      {
+        "children": [],
+        "title": "Miscellaneous",
+        "anchor": "miscellaneous"
+      }
+    ],
+    "content": "050919e19fe7665e3260d9b0e142e5af",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/migration/openapi-0.31-0.32",
+    "domain": "https://www.the-guild.dev/graphql/mesh",
+    "hierarchy": ["docs", "migration"],
+    "source": "Mesh",
+    "title": "openAPI handler `<0.31` to `0.32`",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-block-field-suggestions",
+    "headings": ["Getting Started"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      }
+    ],
+    "content": "a97fa6609c29768626fc33794b056496",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/block-field-suggestions",
+    "domain": "https://www.the-guild.dev/graphql/mesh",
+    "hierarchy": ["docs", "plugins"],
+    "source": "Mesh",
+    "title": "Block Field Suggestions",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-csrf",
+    "headings": ["Installation", "Quick Start"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Installation",
+        "anchor": "installation"
+      },
+      {
+        "children": [],
+        "title": "Quick Start",
+        "anchor": "quick-start"
+      }
+    ],
+    "content": "513da1aa22070474911c9392aba4cc86",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/csrf",
+    "domain": "https://www.the-guild.dev/graphql/mesh",
+    "hierarchy": ["docs", "plugins"],
+    "source": "Mesh",
+    "title": "CSRF Prevention",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-deduplicate-request",
+    "headings": ["Getting Started"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      }
+    ],
+    "content": "8c95fa1c7302a63b7625786686020f9d",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/deduplicate-request",
+    "domain": "https://www.the-guild.dev/graphql/mesh",
+    "hierarchy": ["docs", "plugins"],
+    "source": "Mesh",
+    "title": "Deduplicate HTTP Requests",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-http-cache",
+    "headings": ["Getting Started", "Conditional Caching"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [],
+        "title": "Conditional Caching",
+        "anchor": "conditional-caching"
+      }
+    ],
+    "content": "7257cc5bf768a4527d6651112d6aa9f8",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/http-cache",
+    "domain": "https://www.the-guild.dev/graphql/mesh",
+    "hierarchy": ["docs", "plugins"],
+    "source": "Mesh",
+    "title": "Caching in HTTP",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-http-details-extensions",
+    "headings": ["Getting Started"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      }
+    ],
+    "content": "b4fbd597eda36f7be4f369a3d5c13dc2",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/http-details-extensions",
+    "domain": "https://www.the-guild.dev/graphql/mesh",
+    "hierarchy": ["docs", "plugins"],
+    "source": "Mesh",
+    "title": "HTTP Details in extensions",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-live-queries",
+    "headings": ["Config API Reference", "CodeSandBox Example"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      },
+      {
+        "children": [],
+        "title": "CodeSandBox Example",
+        "anchor": "codesandbox-example"
+      }
+    ],
+    "content": "ad261d7d0f2a5afcffcb5d01b1dfbb25",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/live-queries",
+    "domain": "https://www.the-guild.dev/graphql/mesh",
+    "hierarchy": ["docs", "plugins"],
+    "source": "Mesh",
+    "title": "Live Queries",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-max-depth",
+    "headings": ["Getting Started"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      }
+    ],
+    "content": "d799d55fcff1aa435a81aba69c210786",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/max-depth",
+    "domain": "https://www.the-guild.dev/graphql/mesh",
+    "hierarchy": ["docs", "plugins"],
+    "source": "Mesh",
+    "title": "Query Depth Limiting",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-max-tokens",
+    "headings": ["Getting Started"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      }
+    ],
+    "content": "059836647debfa533fd87795695596c4",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/max-tokens",
+    "domain": "https://www.the-guild.dev/graphql/mesh",
+    "hierarchy": ["docs", "plugins"],
+    "source": "Mesh",
+    "title": "Reject Malicious Operation Documents",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-mock",
+    "headings": [
+      "How to use?",
+      "Custom mock functions for fields",
+      "Custom mock functions for types",
+      "Mocking the lists",
+      "Stateful mocking",
+      "CodeSandBox Example",
+      "Config API Reference"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "How to use?",
+        "anchor": "how-to-use"
+      },
+      {
+        "children": [],
+        "title": "Custom mock functions for fields",
+        "anchor": "custom-mock-functions-for-fields"
+      },
+      {
+        "children": [],
+        "title": "Custom mock functions for types",
+        "anchor": "custom-mock-functions-for-types"
+      },
+      {
+        "children": [],
+        "title": "Mocking the lists",
+        "anchor": "mocking-the-lists"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "title": "Get from the store",
+                "anchor": "get-from-the-store"
+              },
+              {
+                "children": [],
+                "title": "Mutate data in the store",
+                "anchor": "mutate-data-in-the-store"
+              }
+            ],
+            "title": "Initialize store",
+            "anchor": "initialize-store"
+          }
+        ],
+        "title": "Stateful mocking",
+        "anchor": "stateful-mocking"
+      },
+      {
+        "children": [],
+        "title": "CodeSandBox Example",
+        "anchor": "codesandbox-example"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "aa297c12419a1e972e21d74e0ef0550a",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/mock",
+    "domain": "https://www.the-guild.dev/graphql/mesh",
+    "hierarchy": ["docs", "plugins"],
+    "source": "Mesh",
+    "title": "Mocking",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-new-relic",
+    "headings": ["Getting Started", "Example Configuration", "Config API Reference"],
+    "toc": [
+      {
+        "children": [
+          {
+            "children": [],
+            "title": "Enabling required NewRelic feature flags",
+            "anchor": "enabling-required-newrelic-feature-flags"
+          }
+        ],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [],
+        "title": "Example Configuration",
+        "anchor": "example-configuration"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "bc900a03ba72078f2ca5cfe68f65341a",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/new-relic",
+    "domain": "https://www.the-guild.dev/graphql/mesh",
+    "hierarchy": ["docs", "plugins"],
+    "source": "Mesh",
+    "title": "NewRelic",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-operation-field-permissions",
+    "headings": ["Example Configuration", "Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Example Configuration",
+        "anchor": "example-configuration"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "45094cb31da85711c65020720d9d0c2a",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/operation-field-permissions",
+    "domain": "https://www.the-guild.dev/graphql/mesh",
+    "hierarchy": ["docs", "plugins"],
+    "source": "Mesh",
+    "title": "Operation Field Permissions",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-plugins-introduction",
+    "headings": ["Additional Plugins", "Mesh-specific Plugin Hooks"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Additional Plugins",
+        "anchor": "additional-plugins"
+      },
+      {
+        "children": [],
+        "title": "Mesh-specific Plugin Hooks",
+        "anchor": "mesh-specific-plugin-hooks"
+      }
+    ],
+    "content": "6d458d9675ee4e8a2a6a37ea2bdac02e",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/plugins-introduction",
+    "domain": "https://www.the-guild.dev/graphql/mesh",
+    "hierarchy": ["docs", "plugins"],
+    "source": "Mesh",
+    "title": "Introduction",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-prometheus",
+    "headings": [
+      "Getting Started",
+      "Example Configuration",
+      "Custom Registry",
+      "Config API Reference"
+    ],
+    "toc": [
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [],
+        "title": "Example Configuration",
+        "anchor": "example-configuration"
+      },
+      {
+        "children": [],
+        "title": "Custom Registry",
+        "anchor": "custom-registry"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "99030e3eb0c21cd162942cf21b7a80d2",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/prometheus",
+    "domain": "https://www.the-guild.dev/graphql/mesh",
+    "hierarchy": ["docs", "plugins"],
+    "source": "Mesh",
+    "title": "Prometheus",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-rate-limit",
+    "headings": ["Example Configuration", "Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Example Configuration",
+        "anchor": "example-configuration"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "3897225c218431f4bade7063564e14e6",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/rate-limit",
+    "domain": "https://www.the-guild.dev/graphql/mesh",
+    "hierarchy": ["docs", "plugins"],
+    "source": "Mesh",
+    "title": "Rate Limit",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-response-caching",
+    "headings": ["Getting Started", "Config API Reference", "CodeSandBox Example"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Getting Started",
+        "anchor": "getting-started"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      },
+      {
+        "children": [],
+        "title": "CodeSandBox Example",
+        "anchor": "codesandbox-example"
+      }
+    ],
+    "content": "d3701eb8a55107a37e599525a8b10f4c",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/response-caching",
+    "domain": "https://www.the-guild.dev/graphql/mesh",
+    "hierarchy": ["docs", "plugins"],
+    "source": "Mesh",
+    "title": "Response Caching",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-snapshot",
+    "headings": ["How to use?", "CodeSandBox Example", "Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "How to use?",
+        "anchor": "how-to-use"
+      },
+      {
+        "children": [],
+        "title": "CodeSandBox Example",
+        "anchor": "codesandbox-example"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "148c0e76e61dd68d98c0d9f07441169a",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/snapshot",
+    "domain": "https://www.the-guild.dev/graphql/mesh",
+    "hierarchy": ["docs", "plugins"],
+    "source": "Mesh",
+    "title": "snapshot",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-plugins-statsd",
+    "headings": ["Example Configuration", "Config API Reference"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Example Configuration",
+        "anchor": "example-configuration"
+      },
+      {
+        "children": [],
+        "title": "Config API Reference",
+        "anchor": "config-api-reference"
+      }
+    ],
+    "content": "e15eaf1beb6563d8fca0d4c8b156c17e",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/plugins/statsd",
+    "domain": "https://www.the-guild.dev/graphql/mesh",
+    "hierarchy": ["docs", "plugins"],
+    "source": "Mesh",
+    "title": "StatsD",
     "type": "Documentation"
   },
   {
@@ -2033,7 +2033,7 @@
     "content": "82b54b1c5d37a264a55072c53a1662af",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/encapsulate",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Transforms"],
+    "hierarchy": ["docs", "transforms"],
     "source": "Mesh",
     "title": "Encapsulate",
     "type": "Documentation"
@@ -2056,7 +2056,7 @@
     "content": "8f98095181511c7f88ccbee926df09c4",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/extend",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Transforms"],
+    "hierarchy": ["docs", "transforms"],
     "source": "Mesh",
     "title": "Extend",
     "type": "Documentation"
@@ -2080,7 +2080,7 @@
     "content": "7ca07d5af3f965921f3af26008e4f8ee",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/federation",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Transforms"],
+    "hierarchy": ["docs", "transforms"],
     "source": "Mesh",
     "title": "Apollo Federation",
     "type": "Documentation"
@@ -2113,7 +2113,7 @@
     "content": "297e47d9fefde0ed83defee4c3ea4fcb",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/filter-schema",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Transforms"],
+    "hierarchy": ["docs", "transforms"],
     "source": "Mesh",
     "title": "Filter Schema",
     "type": "Documentation"
@@ -2153,7 +2153,7 @@
     "content": "3228afa8904d14273ebc3133e74a4632",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/hoist",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Transforms"],
+    "hierarchy": ["docs", "transforms"],
     "source": "Mesh",
     "title": "hoist",
     "type": "Documentation"
@@ -2181,7 +2181,7 @@
     "content": "839356a04afe501cbb25b641bea8e7a3",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/naming-convention",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Transforms"],
+    "hierarchy": ["docs", "transforms"],
     "source": "Mesh",
     "title": "Naming Convention",
     "type": "Documentation"
@@ -2209,7 +2209,7 @@
     "content": "c3a8ff180f0e076bb92ea8be80b17168",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/prefix",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Transforms"],
+    "hierarchy": ["docs", "transforms"],
     "source": "Mesh",
     "title": "Prefix",
     "type": "Documentation"
@@ -2232,7 +2232,7 @@
     "content": "e572ee0f82e7f31d83870ffc9a0765c2",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/prune",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Transforms"],
+    "hierarchy": ["docs", "transforms"],
     "source": "Mesh",
     "title": "Prune",
     "type": "Documentation"
@@ -2266,7 +2266,7 @@
     "content": "cf8377daceb95d8007d49afe23d6648d",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/rename",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Transforms"],
+    "hierarchy": ["docs", "transforms"],
     "source": "Mesh",
     "title": "Rename",
     "type": "Documentation"
@@ -2340,7 +2340,7 @@
     "content": "84eb775f0a8165d86e77c2f82eabde3d",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/replace-field",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Transforms"],
+    "hierarchy": ["docs", "transforms"],
     "source": "Mesh",
     "title": "Replace Field",
     "type": "Documentation"
@@ -2363,7 +2363,7 @@
     "content": "f9c97382af4e9a22e1f4a8e4811b8a87",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/resolvers-composition",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Transforms"],
+    "hierarchy": ["docs", "transforms"],
     "source": "Mesh",
     "title": "Resolvers Composition",
     "type": "Documentation"
@@ -2424,7 +2424,7 @@
     "content": "e2bd3f7eb334bdb9aa827692f324c7ec",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/transforms-introduction",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Transforms"],
+    "hierarchy": ["docs", "transforms"],
     "source": "Mesh",
     "title": "Introduction",
     "type": "Documentation"
@@ -2468,7 +2468,7 @@
     "content": "ed3514e3aa4b077c5f408df2eaeaac03",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/type-merging",
     "domain": "https://www.the-guild.dev/graphql/mesh",
-    "hierarchy": ["Docs", "Transforms"],
+    "hierarchy": ["docs", "transforms"],
     "source": "Mesh",
     "title": "Type Merging",
     "type": "Documentation"
