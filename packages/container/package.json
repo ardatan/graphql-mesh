@@ -18,7 +18,7 @@
   "dependencies": {
     "@graphql-mesh/cli": "0.82.32",
     "@graphql-mesh/config": "10.1.15",
-    "@graphql-mesh/graphql": "0.34.15",
+    "@graphql-mesh/graphql": "0.34.16",
     "@graphql-mesh/grpc": "0.29.19",
     "@graphql-mesh/json-schema": "0.38.0",
     "@graphql-mesh/odata": "0.22.23",
