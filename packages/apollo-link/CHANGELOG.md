@@ -1,5 +1,12 @@
 # @graphql-mesh/apollo-link
 
+## 10.0.5
+
+### Patch Changes
+
+- [`f4512db27`](https://github.com/Urigo/graphql-mesh/commit/f4512db27342c2fb0586e155421c6c1e923ad632)
+  Thanks [@ardatan](https://github.com/ardatan)! - Use `* as` to satisfy bundlers
+
 ## 10.0.4
 
 ### Patch Changes
