@@ -1,5 +1,5 @@
 import { getOperationAST } from 'graphql';
-import { ApolloLink, FetchResult, Observable, Operation, RequestHandler } from '@apollo/client';
+import * as apolloClient from '@apollo/client';
 import { ExecuteMeshFn, SubscribeMeshFn } from '@graphql-mesh/runtime';
 import { isAsyncIterable } from '@graphql-tools/utils';
 
@@ -9,15 +9,19 @@ export interface MeshApolloRequestHandlerOptions {
 }
 
 const ROOT_VALUE = {};
-function createMeshApolloRequestHandler(options: MeshApolloRequestHandlerOptions): RequestHandler {
-  return function meshApolloRequestHandler(operation: Operation): Observable<FetchResult> {
+function createMeshApolloRequestHandler(
+  options: MeshApolloRequestHandlerOptions,
+): apolloClient.RequestHandler {
+  return function meshApolloRequestHandler(
+    operation: apolloClient.Operation,
+  ): apolloClient.Observable<apolloClient.FetchResult> {
     const operationAst = getOperationAST(operation.query, operation.operationName);
     if (!operationAst) {
       throw new Error('GraphQL operation not found');
     }
     const operationFn =
       operationAst.operation === 'subscription' ? options.subscribe : options.execute;
-    return new Observable(observer => {
+    return new apolloClient.Observable(observer => {
       Promise.resolve()
         .then(async () => {
           const results = await operationFn(
@@ -51,7 +55,7 @@ function createMeshApolloRequestHandler(options: MeshApolloRequestHandlerOptions
   };
 }
 
-export class MeshApolloLink extends ApolloLink {
+export class MeshApolloLink extends apolloClient.ApolloLink {
   constructor(options: MeshApolloRequestHandlerOptions) {
     super(createMeshApolloRequestHandler(options));
   }
