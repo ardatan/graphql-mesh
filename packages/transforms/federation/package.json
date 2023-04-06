@@ -38,8 +38,8 @@
   "dependencies": {
     "@apollo/subgraph": "2.4.1",
     "@graphql-mesh/string-interpolation": "0.4.4",
-    "@graphql-tools/delegate": "9.0.29",
-    "@graphql-tools/stitching-directives": "2.3.32",
+    "@graphql-tools/delegate": "9.0.30",
+    "@graphql-tools/stitching-directives": "2.3.33",
     "dset": "3.1.2",
     "graphql-transform-federation": "2.2.0"
   },
