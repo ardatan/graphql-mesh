@@ -11,7 +11,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@theguild/components": "4.5.8",
+    "@theguild/components": "4.5.9",
     "next": "13.2.4",
     "next-sitemap": "4.0.6",
     "react": "18.2.0",
@@ -19,7 +19,7 @@
     "react-icons": "4.8.0"
   },
   "devDependencies": {
-    "@theguild/algolia": "1.1.5",
+    "@theguild/algolia": "1.1.6",
     "@theguild/tailwind-config": "0.2.1",
     "@types/node": "18.15.11",
     "@types/react": "18.0.33",
