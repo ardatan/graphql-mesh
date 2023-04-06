@@ -1,5 +1,12 @@
 # cloudflare-workers
 
+## 0.0.123
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.82.32
+
 ## 0.0.122
 
 ### Patch Changes
