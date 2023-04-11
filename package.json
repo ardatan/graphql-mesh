@@ -58,7 +58,7 @@
     "@typescript-eslint/parser": "5.58.0",
     "babel-jest": "29.5.0",
     "bob-the-bundler": "6.0.0",
-    "eslint": "8.37.0",
+    "eslint": "8.38.0",
     "eslint-config-prettier": "8.8.0",
     "eslint-config-standard": "17.0.0",
     "eslint-plugin-import": "2.27.5",
@@ -77,9 +77,9 @@
     "typescript": "5.0.4"
   },
   "resolutions": {
-    "esbuild": "0.17.15",
+    "esbuild": "0.17.16",
     "graphql": "16.6.0",
-    "undici": "5.21.0",
+    "undici": "5.21.2",
     "uuid": "7.0.3"
   },
   "lint-staged": {
