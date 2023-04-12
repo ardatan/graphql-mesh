@@ -11690,10 +11690,10 @@ invariant@2.2.4, invariant@^2.2.4:
   dependencies:
     loose-envify "^1.0.0"
 
-ioredis-mock@8.5.0:
-  version "8.5.0"
-  resolved "https://registry.yarnpkg.com/ioredis-mock/-/ioredis-mock-8.5.0.tgz#0a9aa968ce888e19e1a27b848d80de9ffec312fb"
-  integrity sha512-mtYmuQTta9gjlSUvI7imWpP7axR08DyW1WdVn80NthYIzSJeAWI5dd5rU1rVYc22/dVvJGx87SaoE3Zf6Rr8lA==
+ioredis-mock@8.6.0:
+  version "8.6.0"
+  resolved "https://registry.yarnpkg.com/ioredis-mock/-/ioredis-mock-8.6.0.tgz#6e078ea5bc46dfa5a042e96f8ae147e6e3f70fa0"
+  integrity sha512-UZcvH3q3vW9Jf4gZHo0ptQBbfCgY46q6l5H32M3DAyDzJ/Z9nSOW8cG9aj/Ac4kHpyoAWDV2W1HFoH63aMRKYQ==
   dependencies:
     "@ioredis/as-callback" "^3.0.0"
     "@ioredis/commands" "^1.2.0"

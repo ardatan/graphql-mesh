@@ -38,7 +38,7 @@
   "dependencies": {
     "@graphql-mesh/string-interpolation": "0.4.4",
     "ioredis": "5.3.1",
-    "ioredis-mock": "8.5.0"
+    "ioredis-mock": "8.6.0"
   },
   "devDependencies": {
     "@types/ioredis-mock": "8.2.1"
