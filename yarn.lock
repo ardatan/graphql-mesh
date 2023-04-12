@@ -3978,22 +3978,22 @@
     "@napi-rs/simple-git-win32-arm64-msvc" "0.1.8"
     "@napi-rs/simple-git-win32-x64-msvc" "0.1.8"
 
-"@neo4j/cypher-builder@~0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@neo4j/cypher-builder/-/cypher-builder-0.3.0.tgz#7f01f3416382b65e73824b5b3edcb76e47bb7129"
-  integrity sha512-McP+iaVrC7kISLRscD5UFF/YLx+WF6SZBQjX8Qk042GtUP7xsE0bg36+7c3Z8EeRYyxIeO6Vo50oNgg0ctZsWA==
+"@neo4j/cypher-builder@~0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@neo4j/cypher-builder/-/cypher-builder-0.4.0.tgz#5e561bf7c88d59468d7d4ff8159476ba08ce482b"
+  integrity sha512-+uxFi2mdrc/6NHKdI6PgV4IHcBogTsVPMuKPg58gDdUpBEPBC15GQdw72sWFUq1aab49p7vhDMtW7o+Asm+W1w==
 
-"@neo4j/graphql@3.17.2":
-  version "3.17.2"
-  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-3.17.2.tgz#f06c14fcf6b65590820cb502787585dfe0f6d20d"
-  integrity sha512-oSjtohrf+EMBmp2ZcVdd3vy7IZA92wDN+EVBxPl93hm2uZrtAp8K3U6ocUc9juUrE/y60kXDLmEqK5GGvrQQ9g==
+"@neo4j/graphql@3.18.0":
+  version "3.18.0"
+  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-3.18.0.tgz#ec6089ce47e437ba6e2b61cdcadce1035f3c9c2e"
+  integrity sha512-QeWOfXN71Bo3nhUlKCAnhv8sGs12+YKsFuOCettjR2E4SAo15GhKfz5iYeTNOsAeuDsyV7bPHbSuBByHq+Xtyw==
   dependencies:
     "@apollo/subgraph" "^2.2.3"
     "@graphql-tools/merge" "^8.3.3"
     "@graphql-tools/resolvers-composition" "^6.5.3"
     "@graphql-tools/schema" "9.0.17"
     "@graphql-tools/utils" "^9.0.0"
-    "@neo4j/cypher-builder" "~0.3.0"
+    "@neo4j/cypher-builder" "~0.4.0"
     camelcase "^6.3.0"
     debug "^4.3.4"
     deep-equal "^2.0.5"
@@ -4001,6 +4001,7 @@
     graphql-compose "^9.0.8"
     graphql-parse-resolve-info "^4.12.3"
     graphql-relay "^0.10.0"
+    jose "^4.13.1"
     pluralize "^8.0.0"
     semver "^7.3.7"
     uuid "^9.0.0"
@@ -13110,6 +13111,11 @@ jose@^2.0.6:
   integrity sha512-FVoPY7SflDodE4lknJmbAHSUjLCzE2H1F6MS0RYKMQ8SR+lNccpMf8R4eqkNYyyUjR5qZReOzZo5C5YiHOCjjg==
   dependencies:
     "@panva/asn1.js" "^1.0.0"
+
+jose@^4.13.1:
+  version "4.13.1"
+  resolved "https://registry.yarnpkg.com/jose/-/jose-4.13.1.tgz#449111bb5ab171db85c03f1bd2cb1647ca06db1c"
+  integrity sha512-MSJQC5vXco5Br38mzaQKiq9mwt7lwj2eXpgpRyQYNHYt2lq1PjkWa7DLXX0WVcQLE9HhMh3jPiufS7fhJf+CLQ==
 
 joycon@^3.0.1:
   version "3.1.1"
