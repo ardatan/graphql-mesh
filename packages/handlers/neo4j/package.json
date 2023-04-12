@@ -38,7 +38,7 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@neo4j/graphql": "3.18.0",
+    "@neo4j/graphql": "3.18.1",
     "@neo4j/introspector": "^1.0.1",
     "graphql-scalars": "^1.20.4",
     "neo4j-driver": "5.7.0"
