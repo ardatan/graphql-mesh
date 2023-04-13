@@ -196,10 +196,10 @@
   resolved "https://registry.yarnpkg.com/@apollo/cache-control-types/-/cache-control-types-1.0.2.tgz#f42ed3563acc7f1f50617d65d208483977adc68e"
   integrity sha512-Por80co1eUm4ATsvjCOoS/tIR8PHxqVjsA6z76I6Vw0rFn4cgyVElQcmQDIZiYsy41k8e5xkrMRECkM2WR8pNw==
 
-"@apollo/client@3.7.11", "@apollo/client@^3.7.0":
-  version "3.7.11"
-  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.7.11.tgz#fbe9ac3cd508123aacae370dfb3d268fd74f3a44"
-  integrity sha512-uLg2KtxoAyj9ta7abLxXx8cGRM7HypCkXVmxtL7Ko//N5g37aoJ3ca7VYoFCMUFO1BXBulj+yKVl0U3+ILj5AQ==
+"@apollo/client@3.7.12", "@apollo/client@^3.7.0":
+  version "3.7.12"
+  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.7.12.tgz#9ddd355d0788374cdb900e5f40298b196176952b"
+  integrity sha512-XvH8ssDibx5hR92Tet8CHtUxhiIs+RbYjyxkflAcnF85QT3VacUdNAhjj0OcA2kcZ+5KyceJmilmBNjj6+rJFg==
   dependencies:
     "@graphql-typed-document-node/core" "^3.1.1"
     "@wry/context" "^0.7.0"
@@ -2387,12 +2387,12 @@
   dependencies:
     giscus "^1.2.8"
 
-"@google-cloud/functions-framework@3.1.3":
-  version "3.1.3"
-  resolved "https://registry.yarnpkg.com/@google-cloud/functions-framework/-/functions-framework-3.1.3.tgz#df73a02f0d87f9b376f9c1e812798cbd41d5def8"
-  integrity sha512-gNKEkbud/+QkS5+vn+UEvBX6L522OpyTOjM83/cR1JRhSsBTNn3kPe4L17ZQMjJHFvO9xIxF3FaPDTfOx1Umpw==
+"@google-cloud/functions-framework@3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@google-cloud/functions-framework/-/functions-framework-3.2.0.tgz#4f8e35c8f5f1c6b4aa0388e9cfbac5789eaa2186"
+  integrity sha512-eFafD4xocXmt3KM1z2X3lARvT2zLuXcw1V+T6xGoOAPfXQDduK77bKpkJx44QCAXh2c8qHYIT6dlSJWu5n5Lmg==
   dependencies:
-    "@types/express" "4.17.13"
+    "@types/express" "4.17.17"
     body-parser "^1.18.3"
     cloudevents "^6.0.0"
     express "^4.16.4"
@@ -3075,10 +3075,10 @@
     "@repeaterjs/repeater" "^3.0.4"
     tslib "^2.3.1"
 
-"@grpc/grpc-js@1.8.13", "@grpc/grpc-js@^1.1.7", "@grpc/grpc-js@^1.2.8", "@grpc/grpc-js@^1.5.5":
-  version "1.8.13"
-  resolved "https://registry.yarnpkg.com/@grpc/grpc-js/-/grpc-js-1.8.13.tgz#e775685962909b76f8d4b813833c3d123867165b"
-  integrity sha512-iY3jsdfbc0ARoCLFvbvUB8optgyb0r1XLPb142u+QtgBcKJYkCIFt3Fd/881KqjLYWjsBJF57N3b8Eop9NDfUA==
+"@grpc/grpc-js@1.8.14", "@grpc/grpc-js@^1.1.7", "@grpc/grpc-js@^1.2.8", "@grpc/grpc-js@^1.5.5":
+  version "1.8.14"
+  resolved "https://registry.yarnpkg.com/@grpc/grpc-js/-/grpc-js-1.8.14.tgz#4fe0f9917d6f094cf59245763c275442b182e9ad"
+  integrity sha512-w84maJ6CKl5aApCMzFll0hxtFNT6or9WwMslobKaqWUEf1K+zhlL43bSQhFreyYWIWR+Z0xnVFC1KtLm4ZpM/A==
   dependencies:
     "@grpc/proto-loader" "^0.7.0"
     "@types/node" ">=12.12.47"
@@ -3983,10 +3983,10 @@
   resolved "https://registry.yarnpkg.com/@neo4j/cypher-builder/-/cypher-builder-0.4.0.tgz#5e561bf7c88d59468d7d4ff8159476ba08ce482b"
   integrity sha512-+uxFi2mdrc/6NHKdI6PgV4IHcBogTsVPMuKPg58gDdUpBEPBC15GQdw72sWFUq1aab49p7vhDMtW7o+Asm+W1w==
 
-"@neo4j/graphql@3.18.0":
-  version "3.18.0"
-  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-3.18.0.tgz#ec6089ce47e437ba6e2b61cdcadce1035f3c9c2e"
-  integrity sha512-QeWOfXN71Bo3nhUlKCAnhv8sGs12+YKsFuOCettjR2E4SAo15GhKfz5iYeTNOsAeuDsyV7bPHbSuBByHq+Xtyw==
+"@neo4j/graphql@3.18.1":
+  version "3.18.1"
+  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-3.18.1.tgz#864a23656d8c997a58dee797dabb315a3cc30227"
+  integrity sha512-kEznvcvGtzX5g5HVkYnShSuDGpijH3JjgUCWjcYWh5VxcGxjZ7+U19N4NV4Uihoezv4DDk+SiZlUSXb4vE+9+Q==
   dependencies:
     "@apollo/subgraph" "^2.2.3"
     "@graphql-tools/merge" "^8.3.3"
@@ -5071,7 +5071,16 @@
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.51.tgz#cfd70924a25a3fd32b218e5e420e6897e1ac4f40"
   integrity sha512-CuPgU6f3eT/XgKKPqKd/gLZV1Xmvf1a2R5POBOGQa6uv82xpls89HU5zKeVoyR8XzHd1RGNOlQlvUe3CFkjWNQ==
 
-"@types/express-serve-static-core@*", "@types/express-serve-static-core@4.17.31", "@types/express-serve-static-core@^4.17.18", "@types/express-serve-static-core@^4.17.30":
+"@types/express-serve-static-core@*", "@types/express-serve-static-core@^4.17.18", "@types/express-serve-static-core@^4.17.30", "@types/express-serve-static-core@^4.17.33":
+  version "4.17.33"
+  resolved "https://registry.yarnpkg.com/@types/express-serve-static-core/-/express-serve-static-core-4.17.33.tgz#de35d30a9d637dc1450ad18dd583d75d5733d543"
+  integrity sha512-TPBqmR/HRYI3eC2E5hmiivIzv+bidAfXofM+sbonAGvyDhySGw9/PQZFt2BLOrjUUR++4eJVpx6KnLQK1Fk9tA==
+  dependencies:
+    "@types/node" "*"
+    "@types/qs" "*"
+    "@types/range-parser" "*"
+
+"@types/express-serve-static-core@4.17.31":
   version "4.17.31"
   resolved "https://registry.yarnpkg.com/@types/express-serve-static-core/-/express-serve-static-core-4.17.31.tgz#a1139efeab4e7323834bb0226e62ac019f474b2f"
   integrity sha512-DxMhY+NAsTwMMFHBTtJFNp5qiHKJ7TeqOo23zVEM9alT1Ml27Q3xcTH0xwxn7Q0BbMcVEJOs/7aQtUWupUQN3Q==
@@ -5080,20 +5089,20 @@
     "@types/qs" "*"
     "@types/range-parser" "*"
 
-"@types/express@*", "@types/express@4.17.14", "@types/express@^4.17.13", "@types/express@^4.17.14":
-  version "4.17.14"
-  resolved "https://registry.yarnpkg.com/@types/express/-/express-4.17.14.tgz#143ea0557249bc1b3b54f15db4c81c3d4eb3569c"
-  integrity sha512-TEbt+vaPFQ+xpxFLFssxUDXj5cWCxZJjIcB7Yg0k0GMHGtgtQgpvx/MUQUeAkNbA9AAGrwkAsoeItdTgS7FMyg==
+"@types/express@*", "@types/express@4.17.17", "@types/express@^4.17.13", "@types/express@^4.17.14":
+  version "4.17.17"
+  resolved "https://registry.yarnpkg.com/@types/express/-/express-4.17.17.tgz#01d5437f6ef9cfa8668e616e13c2f2ac9a491ae4"
+  integrity sha512-Q4FmmuLGBG58btUnfS1c1r/NQdlp3DMfGDGig8WhfpA2YRUtEkxAjkZb0yvplJGYdF1fsQ81iMDcH24sSCNC/Q==
   dependencies:
     "@types/body-parser" "*"
-    "@types/express-serve-static-core" "^4.17.18"
+    "@types/express-serve-static-core" "^4.17.33"
     "@types/qs" "*"
     "@types/serve-static" "*"
 
-"@types/express@4.17.13":
-  version "4.17.13"
-  resolved "https://registry.yarnpkg.com/@types/express/-/express-4.17.13.tgz#a76e2995728999bab51a33fabce1d705a3709034"
-  integrity sha512-6bSZTPaTIACxn48l50SR+axgrqm6qXFIxrdAKaG6PaJk3+zuUr35hBlgT7vOmJcum+OEaIBLtHV/qloEAFITeA==
+"@types/express@4.17.14":
+  version "4.17.14"
+  resolved "https://registry.yarnpkg.com/@types/express/-/express-4.17.14.tgz#143ea0557249bc1b3b54f15db4c81c3d4eb3569c"
+  integrity sha512-TEbt+vaPFQ+xpxFLFssxUDXj5cWCxZJjIcB7Yg0k0GMHGtgtQgpvx/MUQUeAkNbA9AAGrwkAsoeItdTgS7FMyg==
   dependencies:
     "@types/body-parser" "*"
     "@types/express-serve-static-core" "^4.17.18"
@@ -5481,10 +5490,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@18.0.34", "@types/react@>=16":
-  version "18.0.34"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.0.34.tgz#e553444a578f023e6e1ac499514688fb80b0a984"
-  integrity sha512-NO1UO8941541CJl1BeOXi8a9dNKFK09Gnru5ZJqkm4Q3/WoQJtHvmwt0VX0SB9YCEwe7TfSSxDuaNmx6H2BAIQ==
+"@types/react@*", "@types/react@18.0.35", "@types/react@>=16":
+  version "18.0.35"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.0.35.tgz#192061cb1044fe01f2d3a94272cd35dd50502741"
+  integrity sha512-6Laome31HpetaIUGFWl1VQ3mdSImwxtFZ39rh059a1MNnKGqBpC88J6NJ8n/Is3Qx7CefDGLgf/KhN/sYCf7ag==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
