@@ -14,7 +14,7 @@
     "@graphql-mesh/cli": "0.82.32",
     "@graphql-mesh/grpc": "0.29.19",
     "@graphql-mesh/transform-naming-convention": "0.13.24",
-    "@grpc/grpc-js": "1.8.13",
+    "@grpc/grpc-js": "1.8.14",
     "@grpc/proto-loader": "0.7.6",
     "google-protobuf": "3.21.2",
     "graphql": "16.6.0",
@@ -23,6 +23,6 @@
   "devDependencies": {
     "concurrently": "8.0.1",
     "ts-node": "10.9.1",
-    "typescript": "5.0.3"
+    "typescript": "5.0.4"
   }
 }

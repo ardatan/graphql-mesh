@@ -37,7 +37,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@apollo/client": "3.7.11"
+    "@apollo/client": "3.7.12"
   },
   "publishConfig": {
     "access": "public",
