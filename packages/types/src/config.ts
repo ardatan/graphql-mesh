@@ -1667,6 +1667,7 @@ export interface Plugin {
   prometheus?: PrometheusConfig;
   rateLimit?: RateLimitPluginConfig;
   responseCache?: ResponseCacheConfig;
+  serializeHeaders?: SerializeHeadersConfig;
   snapshot?: SnapshotPluginConfig;
   statsd?: StatsdPlugin;
   [k: string]: any;
@@ -2124,6 +2125,9 @@ export interface ResponseCacheConfig {
 export interface ResponseCacheTTLConfig {
   coordinate: string;
   ttl: number;
+}
+export interface SerializeHeadersConfig {
+  names: string[];
 }
 /**
  * Configuration for Snapshot extension
