@@ -60,6 +60,9 @@ export default function useMeshNewrelic(
         null,
         parentSegment,
       );
+      if (!sourceSegment) {
+        return undefined;
+      }
       if (options.includeResolverArgs) {
         if (args) {
           sourceSegment.addAttribute('args', JSON.stringify(args));
