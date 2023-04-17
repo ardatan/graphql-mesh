@@ -36,8 +36,8 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-tools/delegate": "9.0.30",
-    "@graphql-tools/wrap": "9.4.1",
+    "@graphql-tools/delegate": "9.0.31",
+    "@graphql-tools/wrap": "9.4.2",
     "minimatch": "8.0.4"
   },
   "devDependencies": {
