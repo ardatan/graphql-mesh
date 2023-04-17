@@ -44,9 +44,9 @@
   },
   "devDependencies": {
     "@graphql-tools/utils": "9.2.1",
-    "@whatwg-node/fetch": "0.8.4",
+    "@whatwg-node/fetch": "0.8.5",
     "@whatwg-node/router": "0.3.0",
-    "graphql-yoga": "3.8.0",
+    "graphql-yoga": "3.9.0",
     "json-bigint-patch": "0.0.8"
   },
   "publishConfig": {
