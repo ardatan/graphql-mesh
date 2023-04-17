@@ -9,16 +9,20 @@ import { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/de
 import { ExecutionRequest, ExecutionResult, selectObjectFields } from '@graphql-tools/utils';
 import { WrapType } from '@graphql-tools/wrap';
 
-const DEFUALT_APPLY_TO = {
+const DEFAULT_APPLY_TO = {
   query: true,
   mutation: true,
   subscription: true,
 };
 
-type RootType = 'Query' | 'Mutation' | 'Subscription';
+const DEFAULT_OUTER_TYPE_NAMES = {
+  query: 'Query',
+  mutation: 'Mutation',
+  subscription: 'Subscription',
+};
 
 export default class EncapsulateTransform implements MeshTransform {
-  private transformMap: Partial<Record<RootType, Transform>> = {};
+  private transformMap: Partial<Record<string, Transform>> = {};
   private transforms: Transform[] = [];
 
   constructor(options: MeshTransformOptions<YamlConfig.Transform['encapsulate']>) {
@@ -31,17 +35,26 @@ export default class EncapsulateTransform implements MeshTransform {
       );
     }
 
-    const applyTo = { ...DEFUALT_APPLY_TO, ...(config?.applyTo || {}) };
+    const applyTo = { ...DEFAULT_APPLY_TO, ...(config?.applyTo || {}) };
+    const outerTypeNames = { ...DEFAULT_OUTER_TYPE_NAMES, ...(config?.outerTypeName || {}) };
 
     if (applyTo.query) {
-      this.transformMap.Query = new WrapType('Query', `${name}Query`, name) as any;
+      this.transformMap[outerTypeNames.query] = new WrapType(
+        outerTypeNames.query,
+        `${name}Query`,
+        name,
+      ) as any;
     }
     if (applyTo.mutation) {
-      this.transformMap.Mutation = new WrapType('Mutation', `${name}Mutation`, name) as any;
+      this.transformMap[outerTypeNames.mutation] = new WrapType(
+        outerTypeNames.mutation,
+        `${name}Mutation`,
+        name,
+      ) as any;
     }
     if (applyTo.subscription) {
-      this.transformMap.Subscription = new WrapType(
-        'Subscription',
+      this.transformMap[outerTypeNames.subscription] = new WrapType(
+        outerTypeNames.subscription,
         `${name}Subscription`,
         name,
       ) as any;

@@ -4,3 +4,7 @@
   * `query` (type: `Boolean`)
   * `mutation` (type: `Boolean`)
   * `subscription` (type: `Boolean`)
+* `outerTypeName` (type: `Object`) - Allows to provide the name of root types which are not the standard ones ("Query", "Mutation" and "Subscription" for query, mutation and subscription root types respectively) so they are specified as outer type name when wrapping a type (`WrapType`).: 
+  * `query` (type: `String`)
+  * `mutation` (type: `String`)
+  * `subscription` (type: `String`)

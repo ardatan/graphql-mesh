@@ -204,4 +204,109 @@ describe('encapsulate', () => {
 
     expect(data).not.toBeNull();
   });
+
+  const customSchema = makeExecutableSchema({
+    typeDefs: /* GraphQL */ `
+      schema {
+        query: CustomQuery
+        mutation: CustomMutation
+        subscription: CustomSubscription
+      }
+
+      type CustomQuery {
+        retrieveSomething: String!
+      }
+
+      type CustomMutation {
+        doSomething: String!
+      }
+
+      type CustomSubscription {
+        notifySomething: String!
+      }
+    `,
+    resolvers: {
+      CustomQuery: {
+        retrieveSomething: () => 'something retrieved',
+      },
+      CustomMutation: {
+        doSomething: () => 'something done',
+      },
+      CustomSubscription: {
+        notifySomething: () => 'something notified',
+      },
+    },
+  });
+
+  it('should fail to encapsulate schema root types with custom names if no outer type names are not configured', async () => {
+    const newCustomSchema = wrapSchema({
+      schema: customSchema,
+      transforms: [
+        new Transform({
+          config: {
+            name: 'MyCustomSchema',
+          },
+          cache,
+          pubsub,
+          baseDir,
+          apiName: undefined,
+          importFn,
+          logger: new DefaultLogger(),
+        }),
+      ],
+    });
+
+    expect(newCustomSchema.getQueryType().getFields().MyCustomSchema).not.toBeDefined();
+    expect(newCustomSchema.getMutationType().getFields().MyCustomSchema).not.toBeDefined();
+    expect(newCustomSchema.getSubscriptionType().getFields().MyCustomSchema).not.toBeDefined();
+  });
+
+  it('should be able to encapsulate schema root types with custom names if outer type names are configured', async () => {
+    const newCustomSchema = wrapSchema({
+      schema: customSchema,
+      transforms: [
+        new Transform({
+          config: {
+            name: 'MyCustomSchema',
+            outerTypeName: {
+              query: 'CustomQuery',
+              mutation: 'CustomMutation',
+              subscription: 'CustomSubscription',
+            },
+          },
+          cache,
+          pubsub,
+          baseDir,
+          apiName: undefined,
+          importFn,
+          logger: new DefaultLogger(),
+        }),
+      ],
+    });
+
+    expect(newCustomSchema.getQueryType().getFields().MyCustomSchema).toBeDefined();
+    expect(newCustomSchema.getQueryType().getFields().MyCustomSchema.type.toString()).toBe(
+      'MyCustomSchemaQuery!',
+    );
+    expect(
+      (newCustomSchema.getQueryType().getFields().MyCustomSchema.type as any).ofType._fields
+        .retrieveSomething,
+    ).toBeDefined();
+    expect(newCustomSchema.getMutationType().getFields().MyCustomSchema).toBeDefined();
+    expect(newCustomSchema.getMutationType().getFields().MyCustomSchema.type.toString()).toBe(
+      'MyCustomSchemaMutation!',
+    );
+    expect(
+      (newCustomSchema.getMutationType().getFields().MyCustomSchema.type as any).ofType._fields
+        .doSomething,
+    ).toBeDefined();
+    expect(newCustomSchema.getSubscriptionType().getFields().MyCustomSchema).toBeDefined();
+    expect(newCustomSchema.getSubscriptionType().getFields().MyCustomSchema.type.toString()).toBe(
+      'MyCustomSchemaSubscription!',
+    );
+    expect(
+      (newCustomSchema.getSubscriptionType().getFields().MyCustomSchema.type as any).ofType._fields
+        .notifySomething,
+    ).toBeDefined();
+  });
 });
