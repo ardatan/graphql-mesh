@@ -1,5 +1,21 @@
 # @graphql-mesh/plugin-newrelic
 
+## 0.3.23
+
+### Patch Changes
+
+- [#5307](https://github.com/Urigo/graphql-mesh/pull/5307)
+  [`f36c6c2a5`](https://github.com/Urigo/graphql-mesh/commit/f36c6c2a56c6ff2350796439c8c3a13bbdf2fc10)
+  Thanks [@janos-mands](https://github.com/janos-mands)! - Avoiding operations on sourceSegment when
+  it could not be created for onDelegate.
+
+- Updated dependencies
+  [[`0d73b3f71`](https://github.com/Urigo/graphql-mesh/commit/0d73b3f71e847d751eea130df62d795c3b06a192),
+  [`0d73b3f71`](https://github.com/Urigo/graphql-mesh/commit/0d73b3f71e847d751eea130df62d795c3b06a192),
+  [`ed2232e71`](https://github.com/Urigo/graphql-mesh/commit/ed2232e715c1dadc3817d8b3b469f75ddbae6ac6)]:
+  - @graphql-mesh/types@0.91.15
+  - @graphql-mesh/utils@0.43.23
+
 ## 0.3.22
 
 ### Patch Changes
