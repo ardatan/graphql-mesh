@@ -1,5 +1,41 @@
 # @graphql-mesh/cli
 
+## 0.82.33
+
+### Patch Changes
+
+- [#5313](https://github.com/Urigo/graphql-mesh/pull/5313)
+  [`392dc0f98`](https://github.com/Urigo/graphql-mesh/commit/392dc0f9828fa0ecf3d7047018dbbb60fcc82634)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`typescript@5.0.4` ↗︎](https://www.npmjs.com/package/typescript/v/5.0.4)
+    (from `5.0.3`, in `dependencies`)
+
+- [#5317](https://github.com/Urigo/graphql-mesh/pull/5317)
+  [`6677bb2cc`](https://github.com/Urigo/graphql-mesh/commit/6677bb2ccf617e537fddb3c83c73d311621115d8)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`mkdirp@3.0.0` ↗︎](https://www.npmjs.com/package/mkdirp/v/3.0.0) (from
+    `2.1.6`, in `dependencies`)
+
+- [#5318](https://github.com/Urigo/graphql-mesh/pull/5318)
+  [`897cc09f2`](https://github.com/Urigo/graphql-mesh/commit/897cc09f25b8fa56b3b9cee258edef912801e1fa)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`rimraf@5.0.0` ↗︎](https://www.npmjs.com/package/rimraf/v/5.0.0) (from
+    `4.4.1`, in `dependencies`)
+- Updated dependencies
+  [[`0d73b3f71`](https://github.com/Urigo/graphql-mesh/commit/0d73b3f71e847d751eea130df62d795c3b06a192),
+  [`0d73b3f71`](https://github.com/Urigo/graphql-mesh/commit/0d73b3f71e847d751eea130df62d795c3b06a192),
+  [`0d73b3f71`](https://github.com/Urigo/graphql-mesh/commit/0d73b3f71e847d751eea130df62d795c3b06a192),
+  [`0d73b3f71`](https://github.com/Urigo/graphql-mesh/commit/0d73b3f71e847d751eea130df62d795c3b06a192),
+  [`0d73b3f71`](https://github.com/Urigo/graphql-mesh/commit/0d73b3f71e847d751eea130df62d795c3b06a192),
+  [`ed2232e71`](https://github.com/Urigo/graphql-mesh/commit/ed2232e715c1dadc3817d8b3b469f75ddbae6ac6)]:
+  - @graphql-mesh/config@10.1.16
+  - @graphql-mesh/http@0.3.29
+  - @graphql-mesh/runtime@0.46.24
+  - @graphql-mesh/types@0.91.15
+  - @graphql-mesh/utils@0.43.23
+
 ## 0.82.32
 
 ### Patch Changes
