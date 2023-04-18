@@ -808,4 +808,63 @@ describe('rename', () => {
     expect(queryFieldMap.bar).toBeDefined();
     expect(printSchema(newSchema)).toMatchSnapshot();
   });
+
+  it('should be possible to rename scalars', () => {
+    const newSchema = wrapSchema({
+      schema: makeExecutableSchema({
+        typeDefs: /* GraphQL */ `
+          scalar UUID
+
+          type SomeEntity {
+            id: UUID!
+            name: String!
+          }
+
+          type Query {
+            getSomeEntityById(id: UUID!): SomeEntity
+          }
+        `,
+        resolvers: {},
+      }),
+      transforms: [
+        new RenameTransform({
+          config: {
+            mode: 'wrap',
+            renames: [
+              {
+                from: {
+                  argument: '(.*)',
+                  field: '(.*)',
+                  type: '(.*)',
+                },
+                to: {
+                  argument: 'MyPrefix_$1',
+                  field: 'MyPrefix_$1',
+                  type: 'MyPrefix_$1',
+                },
+                useRegExpForArguments: true,
+                useRegExpForFields: true,
+                useRegExpForTypes: true,
+              },
+            ],
+          },
+        }),
+      ],
+    });
+
+    // Check types
+    expect(newSchema.getType('SomeEntity')).toBeUndefined();
+    expect(newSchema.getType('MyPrefix_SomeEntity')).toBeDefined();
+    expect(newSchema.getType('getSomeEntityById')).toBeUndefined();
+    expect(newSchema.getType('MyPrefix_UUID')).toBeDefined();
+    // Check fields
+    expect(
+      (newSchema.getType('MyPrefix_SomeEntity') as any)._fields.id.type.ofType.toString(),
+    ).toBe('MyPrefix_UUID');
+    // Check arguments
+    expect(
+      (newSchema.getQueryType() as any)._fields.getSomeEntityById.args[0].type.ofType.toString(),
+    ).toBe('MyPrefix_UUID');
+    expect(newSchema.getType('MyPrefix_UUID')).toBeDefined();
+  });
 });

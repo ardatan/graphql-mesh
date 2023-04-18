@@ -37,6 +37,10 @@ type RenameTransformObject @md {
   Flags to use in the Regular Expression
   """
   regExpFlags: String
+  """
+  Flag to indicate whether an ignore list should be used when renaming types to skip types from the list (typically, built-in and custom GraphQL scalars)
+  """
+  useIgnoreList: Boolean
 }
 
 type RenameConfig {

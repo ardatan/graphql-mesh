@@ -3659,6 +3659,10 @@
         "regExpFlags": {
           "type": "string",
           "description": "Flags to use in the Regular Expression"
+        },
+        "useIgnoreList": {
+          "type": "boolean",
+          "description": "Flag to indicate whether an ignore list should be used when renaming types to skip types from the list (typically, built-in and custom GraphQL scalars)"
         }
       },
       "required": ["from", "to"]

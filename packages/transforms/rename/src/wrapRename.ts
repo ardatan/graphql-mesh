@@ -7,6 +7,7 @@ import {
 } from '@graphql-mesh/utils';
 import { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
 import { ExecutionRequest, ExecutionResult } from '@graphql-tools/utils';
+// RenameTypesOptions
 import {
   RenameInputObjectFields,
   RenameObjectFieldArguments,
@@ -26,6 +27,7 @@ export default class WrapRename implements Transform {
         useRegExpForTypes,
         useRegExpForFields,
         useRegExpForArguments,
+        useIgnoreList,
       } = change;
 
       const regExpFlags = change.regExpFlags || undefined;
@@ -40,11 +42,11 @@ export default class WrapRename implements Transform {
         }
         this.transforms.push(
           new RenameTypes(typeName => {
-            if (ignoreList.includes(typeName)) {
+            if (useIgnoreList && ignoreList.includes(typeName)) {
               return typeName;
             }
             return replaceTypeNameFn(typeName);
-          }) as any,
+          }),
         );
       }
 
