@@ -42,7 +42,7 @@
     "@graphql-mesh/string-interpolation": "0.4.4",
     "@graphql-tools/batch-delegate": "8.4.25",
     "@graphql-tools/batch-execute": "8.5.19",
-    "@graphql-tools/delegate": "9.0.31",
+    "@graphql-tools/delegate": "9.0.32",
     "@graphql-tools/wrap": "9.4.2",
     "@whatwg-node/fetch": "^0.8.3"
   },

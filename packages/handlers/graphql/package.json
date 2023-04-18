@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "0.4.4",
-    "@graphql-tools/delegate": "9.0.31",
+    "@graphql-tools/delegate": "9.0.32",
     "@graphql-tools/url-loader": "7.17.18",
     "@graphql-tools/wrap": "9.4.2",
     "lodash.get": "4.4.2"
