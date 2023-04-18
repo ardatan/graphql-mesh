@@ -1399,7 +1399,7 @@ export interface RenameTransformObject {
    */
   regExpFlags?: string;
   /**
-   * Flag to indicate whether an ignore list should be used when renaming types to skip types from the list (typically, built-in and custom GraphQL scalars)
+   * Flag to indicate whether an ignore list should be used when renaming types to skip types from the list (typically, built-in and custom GraphQL scalars). Defaults to "true".
    */
   useIgnoreList?: boolean;
 }

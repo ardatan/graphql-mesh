@@ -13,4 +13,4 @@
   * `useRegExpForFields` (type: `Boolean`) - Use Regular Expression for field names
   * `useRegExpForArguments` (type: `Boolean`) - Use Regular Expression for field names
   * `regExpFlags` (type: `String`) - Flags to use in the Regular Expression
-  * `useIgnoreList` (type: `Boolean`) - Flag to indicate whether an ignore list should be used when renaming types to skip types from the list (typically, built-in and custom GraphQL scalars)
+  * `useIgnoreList` (type: `Boolean`) - Flag to indicate whether an ignore list should be used when renaming types to skip types from the list (typically, built-in and custom GraphQL scalars). Defaults to "true".

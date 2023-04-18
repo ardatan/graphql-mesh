@@ -27,8 +27,8 @@ export default class WrapRename implements Transform {
         useRegExpForTypes,
         useRegExpForFields,
         useRegExpForArguments,
-        useIgnoreList,
       } = change;
+      const useIgnoreList = change.useIgnoreList == null ? true : change.useIgnoreList;
 
       const regExpFlags = change.regExpFlags || undefined;
 
