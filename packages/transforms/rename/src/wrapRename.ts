@@ -28,7 +28,7 @@ export default class WrapRename implements Transform {
         useRegExpForFields,
         useRegExpForArguments,
       } = change;
-      const useIgnoreList = change.useIgnoreList == null ? true : change.useIgnoreList;
+      const includeDefaults = change.includeDefaults === true;
 
       const regExpFlags = change.regExpFlags || undefined;
 
@@ -42,7 +42,7 @@ export default class WrapRename implements Transform {
         }
         this.transforms.push(
           new RenameTypes(typeName => {
-            if (useIgnoreList && ignoreList.includes(typeName)) {
+            if (!includeDefaults && ignoreList.includes(typeName)) {
               return typeName;
             }
             return replaceTypeNameFn(typeName);

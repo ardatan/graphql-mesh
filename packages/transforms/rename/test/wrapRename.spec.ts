@@ -845,7 +845,7 @@ describe('rename', () => {
                 useRegExpForArguments: true,
                 useRegExpForFields: true,
                 useRegExpForTypes: true,
-                useIgnoreList: false,
+                includeDefaults: true,
               },
             ],
           },
