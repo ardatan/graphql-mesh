@@ -238,41 +238,13 @@ describe('encapsulate', () => {
     },
   });
 
-  it('should fail to encapsulate schema root types with custom names if no outer type names are not configured', async () => {
+  it('should be able to encapsulate schema root types with custom names', async () => {
     const newCustomSchema = wrapSchema({
       schema: customSchema,
       transforms: [
         new Transform({
           config: {
             name: 'MyCustomSchema',
-          },
-          cache,
-          pubsub,
-          baseDir,
-          apiName: undefined,
-          importFn,
-          logger: new DefaultLogger(),
-        }),
-      ],
-    });
-
-    expect(newCustomSchema.getQueryType().getFields().MyCustomSchema).not.toBeDefined();
-    expect(newCustomSchema.getMutationType().getFields().MyCustomSchema).not.toBeDefined();
-    expect(newCustomSchema.getSubscriptionType().getFields().MyCustomSchema).not.toBeDefined();
-  });
-
-  it('should be able to encapsulate schema root types with custom names if outer type names are configured', async () => {
-    const newCustomSchema = wrapSchema({
-      schema: customSchema,
-      transforms: [
-        new Transform({
-          config: {
-            name: 'MyCustomSchema',
-            outerTypeName: {
-              query: 'CustomQuery',
-              mutation: 'CustomMutation',
-              subscription: 'CustomSubscription',
-            },
           },
           cache,
           pubsub,

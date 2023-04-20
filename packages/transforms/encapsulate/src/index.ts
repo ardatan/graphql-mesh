@@ -1,4 +1,4 @@
-import { GraphQLSchema } from 'graphql';
+import { GraphQLSchema, OperationTypeNode } from 'graphql';
 import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import {
   applyRequestTransforms,
@@ -6,8 +6,19 @@ import {
   applySchemaTransforms,
 } from '@graphql-mesh/utils';
 import { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
-import { ExecutionRequest, ExecutionResult, selectObjectFields } from '@graphql-tools/utils';
+import {
+  ExecutionRequest,
+  ExecutionResult,
+  getRootTypeMap,
+  selectObjectFields,
+} from '@graphql-tools/utils';
 import { WrapType } from '@graphql-tools/wrap';
+
+const OPERATION_TYPE_SUFFIX_MAP = {
+  query: 'Query',
+  mutation: 'Mutation',
+  subscription: 'Subscription',
+};
 
 const DEFAULT_APPLY_TO = {
   query: true,
@@ -15,53 +26,41 @@ const DEFAULT_APPLY_TO = {
   subscription: true,
 };
 
-const DEFAULT_OUTER_TYPE_NAMES = {
-  query: 'Query',
-  mutation: 'Mutation',
-  subscription: 'Subscription',
-};
-
 export default class EncapsulateTransform implements MeshTransform {
   private transformMap: Partial<Record<string, Transform>> = {};
   private transforms: Transform[] = [];
+  private config: YamlConfig.Transform['encapsulate'];
+  private name: string;
 
   constructor(options: MeshTransformOptions<YamlConfig.Transform['encapsulate']>) {
-    const config = options.config;
-    const name = config?.name || options.apiName;
+    this.config = options.config;
+    this.name = this.config?.name || options.apiName;
 
-    if (!name) {
+    if (!this.name) {
       throw new Error(
         `Unable to execute encapsulate transform without a name. Please make sure to use it over a specific schema, or specify a name in your configuration!`,
       );
     }
-
-    const applyTo = { ...DEFAULT_APPLY_TO, ...(config?.applyTo || {}) };
-    const outerTypeNames = { ...DEFAULT_OUTER_TYPE_NAMES, ...(config?.outerTypeName || {}) };
-
-    if (applyTo.query) {
-      this.transformMap[outerTypeNames.query] = new WrapType(
-        outerTypeNames.query,
-        `${name}Query`,
-        name,
-      ) as any;
-    }
-    if (applyTo.mutation) {
-      this.transformMap[outerTypeNames.mutation] = new WrapType(
-        outerTypeNames.mutation,
-        `${name}Mutation`,
-        name,
-      ) as any;
-    }
-    if (applyTo.subscription) {
-      this.transformMap[outerTypeNames.subscription] = new WrapType(
-        outerTypeNames.subscription,
-        `${name}Subscription`,
-        name,
-      ) as any;
-    }
   }
 
   *generateSchemaTransforms(originalWrappingSchema: GraphQLSchema) {
+    const applyTo = { ...DEFAULT_APPLY_TO, ...(this.config?.applyTo || {}) } as Record<
+      OperationTypeNode,
+      boolean
+    >;
+    const outerTypeNames = getRootTypeMap(originalWrappingSchema);
+
+    for (const operationType in applyTo) {
+      const outerTypeName = outerTypeNames.get(operationType as OperationTypeNode)?.name;
+      if (outerTypeName) {
+        this.transformMap[outerTypeName] = new WrapType(
+          outerTypeName,
+          `${this.name}${OPERATION_TYPE_SUFFIX_MAP[operationType as OperationTypeNode]}`,
+          this.name,
+        ) as any;
+      }
+    }
+
     for (const typeName of Object.keys(this.transformMap)) {
       const fieldConfigMap = selectObjectFields(originalWrappingSchema, typeName, () => true);
       if (Object.keys(fieldConfigMap).length) {

@@ -1103,7 +1103,6 @@ export interface EncapsulateTransformObject {
    */
   name?: string;
   applyTo?: EncapsulateTransformApplyTo;
-  outerTypeName?: EncapsulateTransformOuterTypeName;
 }
 /**
  * Allow you to choose which root operations you would like to apply. By default, it's applied to all root types.
@@ -1112,14 +1111,6 @@ export interface EncapsulateTransformApplyTo {
   query?: boolean;
   mutation?: boolean;
   subscription?: boolean;
-}
-/**
- * Allows to provide the name of root types which are not the standard ones ("Query", "Mutation" and "Subscription" for query, mutation and subscription root types respectively) so they are specified as outer type name when wrapping a type (`WrapType`).
- */
-export interface EncapsulateTransformOuterTypeName {
-  query?: string;
-  mutation?: string;
-  subscription?: string;
 }
 export interface ExtendTransform {
   typeDefs?: any;

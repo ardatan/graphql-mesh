@@ -14,20 +14,10 @@ type EncapsulateTransformObject @md {
   Allow you to choose which root operations you would like to apply. By default, it's applied to all root types.
   """
   applyTo: EncapsulateTransformApplyTo
-  """
-  Allows to provide the name of root types which are not the standard ones ("Query", "Mutation" and "Subscription" for query, mutation and subscription root types respectively) so they are specified as outer type name when wrapping a type (`WrapType`).
-  """
-  outerTypeName: EncapsulateTransformOuterTypeName
 }
 
 type EncapsulateTransformApplyTo {
   query: Boolean
   mutation: Boolean
   subscription: Boolean
-}
-
-type EncapsulateTransformOuterTypeName {
-  query: String
-  mutation: String
-  subscription: String
 }
