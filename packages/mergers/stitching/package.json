@@ -37,10 +37,10 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-tools/delegate": "9.0.32",
-    "@graphql-tools/schema": "9.0.18",
-    "@graphql-tools/stitch": "8.7.48",
-    "@graphql-tools/stitching-directives": "2.3.34"
+    "@graphql-tools/delegate": "^9.0.32",
+    "@graphql-tools/schema": "^9.0.18",
+    "@graphql-tools/stitch": "^8.7.48",
+    "@graphql-tools/stitching-directives": "^2.3.34"
   },
   "publishConfig": {
     "access": "public",

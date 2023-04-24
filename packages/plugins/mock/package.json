@@ -37,9 +37,9 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/string-interpolation": "0.4.4",
-    "@graphql-tools/mock": "8.7.20",
-    "@graphql-tools/schema": "9.0.18",
+    "@graphql-mesh/string-interpolation": "^0.4.4",
+    "@graphql-tools/mock": "^8.7.20",
+    "@graphql-tools/schema": "^9.0.18",
     "faker": "5.5.3",
     "graphql-scalars": "^1.20.4"
   },

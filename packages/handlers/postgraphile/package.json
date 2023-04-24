@@ -37,11 +37,11 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/string-interpolation": "0.4.4",
-    "@graphql-tools/delegate": "9.0.32",
+    "@graphql-mesh/string-interpolation": "^0.4.4",
+    "@graphql-tools/delegate": "^9.0.32",
     "pg": "^8.6.0",
-    "postgraphile": "4.13.0",
-    "postgraphile-core": "4.13.0"
+    "postgraphile": "^4.13.0",
+    "postgraphile-core": "^4.13.0"
   },
   "publishConfig": {
     "access": "public",

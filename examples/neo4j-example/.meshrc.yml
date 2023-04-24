@@ -2,7 +2,7 @@ sources:
   - name: Neo4j
     handler:
       neo4j:
-        endpoint: bolt://demo.neo4jlabs.com:7687
+        endpoint: neo4j+s://demo.neo4jlabs.com
         username: movies
         password: movies
         database: movies

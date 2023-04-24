@@ -36,12 +36,12 @@
     "tslib": "^2.5.0"
   },
   "dependencies": {
-    "@graphql-tools/delegate": "9.0.32",
-    "@graphql-tools/wrap": "9.4.2",
-    "change-case": "4.1.2",
+    "@graphql-tools/delegate": "^9.0.32",
+    "@graphql-tools/wrap": "^9.4.2",
+    "change-case": "^4.1.2",
     "graphql-scalars": "^1.20.4",
-    "lower-case": "2.0.2",
-    "upper-case": "2.0.2"
+    "lower-case": "^2.0.2",
+    "upper-case": "^2.0.2"
   },
   "devDependencies": {
     "@graphql-mesh/cache-localforage": "^0.7.20",
