@@ -454,6 +454,11 @@
                 "children": [],
                 "title": "Deploy Mesh on GCP Cloud Functions",
                 "anchor": "deploy-mesh-on-gcp-cloud-functions"
+              },
+              {
+                "children": [],
+                "title": "Deploy on Azure Functions",
+                "anchor": "deploy-on-azure-functions"
               }
             ],
             "title": "Deploy Mesh on Vercel with Next.js API Routes",
@@ -501,7 +506,7 @@
         "anchor": "mesh-and-docker"
       }
     ],
-    "content": "8b16a99df3646c87779fe27ecdf9d4b7",
+    "content": "e4f40598797d0f6ab364858757045644",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/getting-started/deploy-mesh-gateway",
     "domain": "https://www.the-guild.dev/graphql/mesh",
     "hierarchy": ["docs", "getting-started"],
