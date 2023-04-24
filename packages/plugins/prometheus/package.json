@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-prometheus",
-  "version": "0.5.10",
+  "version": "1.0.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -29,8 +29,8 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/types": "^0.91.15",
-    "@graphql-mesh/utils": "^0.43.23",
+    "@graphql-mesh/types": "^1.0.0",
+    "@graphql-mesh/utils": "^1.0.0",
     "graphql": "*",
     "graphql-yoga": "3.9.1",
     "prom-client": "^13 || ^14.0.0",

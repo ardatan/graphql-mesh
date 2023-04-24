@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/soap",
-  "version": "0.17.24",
+  "version": "1.0.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -29,15 +29,15 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/store": "^0.9.20",
-    "@graphql-mesh/types": "^0.91.15",
-    "@graphql-mesh/utils": "^0.43.23",
+    "@graphql-mesh/store": "^1.0.0",
+    "@graphql-mesh/types": "^1.0.0",
+    "@graphql-mesh/utils": "^1.0.0",
     "@graphql-tools/utils": "^9.2.1",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@omnigraph/soap": "0.4.23"
+    "@omnigraph/soap": "1.0.0"
   },
   "publishConfig": {
     "access": "public",
