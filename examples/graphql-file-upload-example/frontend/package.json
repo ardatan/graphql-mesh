@@ -22,9 +22,9 @@
   },
   "devDependencies": {
     "@types/apollo-upload-client": "17.0.2",
-    "@types/jest": "29.5.0",
-    "@types/node": "18.15.11",
-    "@types/react": "18.0.37",
+    "@types/jest": "29.5.1",
+    "@types/node": "18.16.0",
+    "@types/react": "18.0.38",
     "@types/react-dom": "18.0.11",
     "typescript": "5.0.4"
   },

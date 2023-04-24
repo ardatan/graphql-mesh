@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@types/node": "^18.11.18",
-    "@whatwg-node/fetch": "0.8.5",
+    "@whatwg-node/fetch": "0.8.8",
     "tslib": "^2.4.0"
   },
   "publishConfig": {

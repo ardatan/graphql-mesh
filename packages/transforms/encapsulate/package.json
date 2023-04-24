@@ -40,7 +40,7 @@
     "@graphql-tools/wrap": "^9.4.2"
   },
   "devDependencies": {
-    "@graphql-tools/schema": "9.0.18"
+    "@graphql-tools/schema": "9.0.19"
   },
   "publishConfig": {
     "access": "public",

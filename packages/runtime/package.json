@@ -47,7 +47,7 @@
     "@whatwg-node/fetch": "^0.8.3"
   },
   "devDependencies": {
-    "@graphql-tools/schema": "9.0.18"
+    "@graphql-tools/schema": "9.0.19"
   },
   "publishConfig": {
     "access": "public",
