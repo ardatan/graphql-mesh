@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/apollo-link",
-  "version": "10.0.5",
+  "version": "11.0.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -30,7 +30,7 @@
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "@apollo/client": "^3.5.9",
-    "@graphql-mesh/runtime": "^0.46.21",
+    "@graphql-mesh/runtime": "^1.0.0",
     "@graphql-tools/utils": "^9.2.1",
     "graphql": "^15.2.0 || ^16.0.0",
     "tslib": "^2.4.0"

@@ -1,5 +1,14 @@
 # @graphql-mesh/apollo-link
 
+## 11.0.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`cff645677`](https://github.com/Urigo/graphql-mesh/commit/cff645677c680e248ed718e5bb98ece5a41f9c0f),
+  [`72fe781c1`](https://github.com/Urigo/graphql-mesh/commit/72fe781c15f20ad2af792b8245aedfdcc742e048)]:
+  - @graphql-mesh/runtime@1.0.0
+
 ## 10.0.5
 
 ### Patch Changes
