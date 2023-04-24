@@ -34,7 +34,6 @@
     "graphql": "*",
     "tslib": "^2.4.0"
   },
-  "dependencies": {},
   "publishConfig": {
     "access": "public",
     "directory": "dist"

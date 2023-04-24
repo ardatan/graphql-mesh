@@ -36,13 +36,13 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-mesh/string-interpolation": "0.4.4",
-    "@graphql-tools/delegate": "9.0.32",
-    "dset": "3.1.2",
-    "js-yaml": "4.1.0",
-    "lodash.get": "4.4.2",
-    "lodash.topath": "4.5.2",
-    "tiny-lru": "8.0.2"
+    "@graphql-mesh/string-interpolation": "^0.4.4",
+    "@graphql-tools/delegate": "^9.0.32",
+    "dset": "^3.1.2",
+    "js-yaml": "^4.1.0",
+    "lodash.get": "^4.4.2",
+    "lodash.topath": "^4.5.2",
+    "tiny-lru": "^8.0.2"
   },
   "devDependencies": {
     "@apollo/server": "4.6.0",
