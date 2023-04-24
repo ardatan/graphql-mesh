@@ -204,6 +204,55 @@ serve:
 You can see our example that shows how to setup a Cloud Function for GraphQL Mesh.
 [Cloud Functions Example](https://github.com/Urigo/graphql-mesh/tree/master/examples/gcp-functions)
 
+### Deploy on Azure Functions
+
+Similarly to regular and Vercel deployment, we will need to add the `mesh build` command in the
+build step.
+
+Then assuming that your function's name is `mesh`;
+
+```ts filename="index.ts"
+import type { IncomingMessage, ServerResponse } from 'node:http'
+import { createBuiltMeshHTTPHandler } from './.mesh'
+
+const meshHTTP = createBuiltMeshHTTPHandler()
+
+const httpTrigger: AzureFunction = async function (
+  context: Context,
+  req: HttpRequest
+): Promise<void> {
+  context.log('HTTP trigger function processed a request.')
+
+  const response = await meshHTTP.fetch(req.url, {
+    method: req.method?.toString(),
+    body: req.rawBody,
+    headers: req.headers
+  })
+
+  const headersObj = Object.fromEntries(response.headers.entries())
+
+  context.log('GraphQL Mesh response headers:', headersObj)
+
+  const responseText = await response.text()
+  context.log('GraphQL Mesh response text:', responseText)
+
+  context.res = {
+    status: response.status,
+    body: responseText,
+    headers: headersObj
+  }
+}
+
+export default httpTrigger
+```
+
+We need to configure Mesh CLI to generate artifacts for the function's path;
+
+```yaml filename=".meshrc.yml"
+serve:
+  endpoint: /api/mesh # This is the actual endpoint to the GCP function
+```
+
 ## Deploy on Node.js
 
 ### Mesh as an Express route
