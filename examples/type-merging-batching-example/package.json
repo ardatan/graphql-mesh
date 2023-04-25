@@ -7,9 +7,9 @@
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.82.34",
-    "@graphql-mesh/graphql": "1.0.0",
-    "@graphql-mesh/transform-rename": "1.0.0",
-    "@graphql-mesh/transform-type-merging": "1.0.0",
+    "@graphql-mesh/graphql": "0.93.0",
+    "@graphql-mesh/transform-rename": "0.93.0",
+    "@graphql-mesh/transform-type-merging": "0.93.0",
     "graphql": "16.6.0"
   }
 }
