@@ -1,5 +1,24 @@
 # @graphql-mesh/cache-cfw-kv
 
+## 0.93.1
+
+### Patch Changes
+
+- [#5365](https://github.com/Urigo/graphql-mesh/pull/5365)
+  [`1dd9a6940`](https://github.com/Urigo/graphql-mesh/commit/1dd9a694092094c7f00c6ca53686becadee62cb8)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/types@^0.93.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.93.0)
+    (from `^1.0.0`, in `peerDependencies`)
+  - Updated dependency
+    [`@graphql-mesh/utils@^0.93.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.93.0)
+    (from `^1.0.0`, in `peerDependencies`)
+- Updated dependencies
+  [[`1dd9a6940`](https://github.com/Urigo/graphql-mesh/commit/1dd9a694092094c7f00c6ca53686becadee62cb8),
+  [`1dd9a6940`](https://github.com/Urigo/graphql-mesh/commit/1dd9a694092094c7f00c6ca53686becadee62cb8)]:
+  - @graphql-mesh/types@0.93.1
+  - @graphql-mesh/utils@0.93.1
+
 ## 1.0.0
 
 ### Patch Changes
