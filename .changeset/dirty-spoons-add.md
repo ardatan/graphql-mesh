@@ -66,6 +66,8 @@
 '@graphql-mesh/urql-exchange': patch
 '@graphql-mesh/config': patch
 '@graphql-mesh/cli': patch
+'@graphql-mesh/apollo-link': patch
+'@graphql-mesh/urql-exchange': patch
 ---
 
 Fix versioning
