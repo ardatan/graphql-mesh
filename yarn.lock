@@ -2845,14 +2845,6 @@
     "@graphql-tools/utils" "8.9.0"
     tslib "^2.4.0"
 
-"@graphql-tools/merge@8.4.0":
-  version "8.4.0"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/merge/-/merge-8.4.0.tgz#47fbe5c4b6764276dc35bd19c4e7d3c46d3dc0fc"
-  integrity sha512-3XYCWe0d3I4F1azNj1CdShlbHfTIfiDgj00R9uvFH8tHKh7i1IWN3F7QQYovcHKhayaR6zPok3YYMESYQcBoaA==
-  dependencies:
-    "@graphql-tools/utils" "9.2.1"
-    tslib "^2.4.0"
-
 "@graphql-tools/merge@^8.3.3", "@graphql-tools/merge@^8.4.1":
   version "8.4.1"
   resolved "https://registry.yarnpkg.com/@graphql-tools/merge/-/merge-8.4.1.tgz#52879e5f73565f504ceea04fcd9ef90a6e733c62"
@@ -2904,16 +2896,6 @@
   dependencies:
     "@graphql-tools/utils" "6.1.0"
     tslib "~2.0.1"
-
-"@graphql-tools/schema@9.0.17":
-  version "9.0.17"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/schema/-/schema-9.0.17.tgz#d731e9899465f88d5b9bf69e607ec465bb88b062"
-  integrity sha512-HVLq0ecbkuXhJlpZ50IHP5nlISqH2GbNgjBJhhRzHeXhfwlUOT4ISXGquWTmuq61K0xSaO0aCjMpxe4QYbKTng==
-  dependencies:
-    "@graphql-tools/merge" "8.4.0"
-    "@graphql-tools/utils" "9.2.1"
-    tslib "^2.4.0"
-    value-or-promise "1.0.12"
 
 "@graphql-tools/schema@9.0.19", "@graphql-tools/schema@^9.0.0", "@graphql-tools/schema@^9.0.18", "@graphql-tools/schema@^9.0.19":
   version "9.0.19"
@@ -3985,22 +3967,22 @@
     "@napi-rs/simple-git-win32-arm64-msvc" "0.1.8"
     "@napi-rs/simple-git-win32-x64-msvc" "0.1.8"
 
-"@neo4j/cypher-builder@~0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@neo4j/cypher-builder/-/cypher-builder-0.4.0.tgz#5e561bf7c88d59468d7d4ff8159476ba08ce482b"
-  integrity sha512-+uxFi2mdrc/6NHKdI6PgV4IHcBogTsVPMuKPg58gDdUpBEPBC15GQdw72sWFUq1aab49p7vhDMtW7o+Asm+W1w==
+"@neo4j/cypher-builder@~0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@neo4j/cypher-builder/-/cypher-builder-0.4.1.tgz#f19c9bbc20c0f4d214661da7acea55fca75e2591"
+  integrity sha512-3E67Bxss0fPQpghE87eXNRGC0K/Q7l/BphhR369YtZ46Xtl6efy8XOHM2ygj4D1o9lY8lJ8CLDBVbqi2ChEqGg==
 
-"@neo4j/graphql@3.18.1":
-  version "3.18.1"
-  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-3.18.1.tgz#864a23656d8c997a58dee797dabb315a3cc30227"
-  integrity sha512-kEznvcvGtzX5g5HVkYnShSuDGpijH3JjgUCWjcYWh5VxcGxjZ7+U19N4NV4Uihoezv4DDk+SiZlUSXb4vE+9+Q==
+"@neo4j/graphql@3.18.2":
+  version "3.18.2"
+  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-3.18.2.tgz#8dceaa5f8c6da6c5e32360c9bb93f0502bcfba4b"
+  integrity sha512-BR8vumR1f+3HxNDLVAUfcOLMSWT+65LanNecCjIekozJGN5jtQDH9y6ucmx4SaDLm4N7xbyVv5S8jLuiOr4Tag==
   dependencies:
     "@apollo/subgraph" "^2.2.3"
     "@graphql-tools/merge" "^8.3.3"
     "@graphql-tools/resolvers-composition" "^6.5.3"
-    "@graphql-tools/schema" "9.0.17"
+    "@graphql-tools/schema" "9.0.19"
     "@graphql-tools/utils" "^9.0.0"
-    "@neo4j/cypher-builder" "~0.4.0"
+    "@neo4j/cypher-builder" "~0.4.1"
     camelcase "^6.3.0"
     debug "^4.3.4"
     deep-equal "^2.0.5"
@@ -21096,10 +21078,10 @@ workbox-window@6.5.4:
     "@types/trusted-types" "^2.0.2"
     workbox-core "6.5.4"
 
-wrangler@2.16.0:
-  version "2.16.0"
-  resolved "https://registry.yarnpkg.com/wrangler/-/wrangler-2.16.0.tgz#218aafccf14adac901086db5eb9715756f0f3a52"
-  integrity sha512-jhkOmEAF7jH58VvnGx7Uqjs2u2T17e/5r9W3OsqESyBjc/8ALUYuwqQ2gr8JsXFny/cE0ysJas0fdY9wggWMCw==
+wrangler@2.17.0:
+  version "2.17.0"
+  resolved "https://registry.yarnpkg.com/wrangler/-/wrangler-2.17.0.tgz#e3ff4e524f6f328470671e805228b5ffc2fed2de"
+  integrity sha512-ucmVHP5BAUVyC/18hReEKgxGSgU0EOxGd+ElHRHVBeGH6LPcsOoC1TolTaDYYnbOuZMbYmHAR5OH1agayr3kZg==
   dependencies:
     "@cloudflare/kv-asset-handler" "^0.2.0"
     "@esbuild-plugins/node-globals-polyfill" "^0.1.1"
