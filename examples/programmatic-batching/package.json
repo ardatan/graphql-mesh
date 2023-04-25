@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.82.34",
-    "@graphql-mesh/openapi": "1.0.0",
+    "@graphql-mesh/openapi": "0.93.0",
     "graphql": "16.6.0"
   },
   "devDependencies": {
