@@ -64,6 +64,7 @@
 '@graphql-mesh/utils': patch
 '@graphql-mesh/http': patch
 '@graphql-mesh/urql-exchange': patch
+'@graphql-mesh/config': patch
 '@graphql-mesh/cli': patch
 ---
 
