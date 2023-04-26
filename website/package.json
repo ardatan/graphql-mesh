@@ -21,12 +21,12 @@
   "devDependencies": {
     "@theguild/algolia": "1.1.6",
     "@theguild/tailwind-config": "0.2.1",
-    "@types/node": "18.16.0",
-    "@types/react": "18.0.38",
+    "@types/node": "18.16.1",
+    "@types/react": "18.2.0",
     "cross-env": "7.0.3",
     "eslint-config-next": "13.3.1",
     "postcss-import": "15.1.0",
-    "tailwindcss": "3.3.1",
+    "tailwindcss": "3.3.2",
     "typescript": "5.0.4"
   },
   "browserslist": {
