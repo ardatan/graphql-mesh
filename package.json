@@ -36,6 +36,7 @@
     "prebuild": "yarn clean && yarn generate-config-schema",
     "prebuild:website": "yarn build",
     "prerelease": "yarn build",
+    "pretest:integration": "yarn workspace example-fastify build",
     "prettier": "prettier --write --list-different .",
     "prettier:check": "prettier --check .",
     "release": "changeset publish",
