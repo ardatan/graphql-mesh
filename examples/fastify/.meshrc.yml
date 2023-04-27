@@ -1,5 +1,7 @@
 sources:
   - name: Swapi
     handler:
-      graphql:
-        endpoint: https://swapi-graphql.netlify.app/.netlify/functions/index
+      openapi:
+        source: ./swagger/pets.json
+        endpoint: >-
+          http://localhost:4001
