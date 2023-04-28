@@ -1,11 +1,11 @@
 /* eslint-disable import/no-nodejs-modules */
 import { ClientHttp2Session, connect } from 'http2';
 import { Readable } from 'stream';
-import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
+import { MeshPlugin, MeshPluginOptions } from '@graphql-mesh/types';
 import { createLruCache, getHeadersObj } from '@graphql-mesh/utils';
 import { Response } from '@whatwg-node/fetch';
 
-export default function useHTTP2(opts: MeshPluginOptions<YamlConfig.Http2Plugin>): MeshPlugin<any> {
+export default function useHTTP2(opts: MeshPluginOptions<unknown>): MeshPlugin<any> {
   const sessionsByOrigin = createLruCache<ClientHttp2Session>();
   function getSessionByOrigin(origin: string) {
     let session = sessionsByOrigin.get(origin);
