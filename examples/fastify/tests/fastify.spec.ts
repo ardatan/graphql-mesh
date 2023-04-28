@@ -8,8 +8,8 @@ describe('fastify', () => {
       port: 4000,
     });
     await upstream.listen({
-      port: 4001
-    })
+      port: 4001,
+    });
   });
 
   afterAll(async () => {
@@ -35,7 +35,7 @@ describe('fastify', () => {
     });
 
     const json = await response.json();
-    expect(json.data).toEqual({"pet_by_petId": {"name": "Bob"}});
+    expect(json.data).toEqual({ pet_by_petId: { name: 'Bob' } });
   });
 
   it('should work too', async () => {
@@ -55,8 +55,20 @@ describe('fastify', () => {
       }),
     });
 
-    const jsonText = await response.text();
+    const resJson = await response.json();
 
-    expect(jsonText).not.toEqual("{\"data\":{\"pet_by_");
+    expect(resJson).toEqual({
+      data: { pet_by_petId: null },
+      errors: [
+        {
+          message: 'HTTP Error: 500, Could not invoke operation GET /pet/{args.petId}',
+          path: ['pet_by_petId'],
+          extensions: {
+            request: { url: 'http://localhost:4001/pet/pet500', method: 'GET' },
+            responseJson: { error: 'Error' },
+          },
+        },
+      ],
+    });
   });
 });

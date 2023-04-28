@@ -20,7 +20,13 @@ app.route({
 
     reply.status(response.status);
 
-    reply.send(response.body);
+    const reader = response.body.getReader();
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      reply.send(value);
+    }
 
     return reply;
   },
