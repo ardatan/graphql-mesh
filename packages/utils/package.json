@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/utils",
-  "version": "0.93.1",
+  "version": "0.93.2",
   "type": "module",
   "repository": {
     "type": "git",
@@ -30,7 +30,7 @@
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "@graphql-mesh/cross-helpers": "^0.3.4",
-    "@graphql-mesh/types": "^0.93.1",
+    "@graphql-mesh/types": "^0.93.2",
     "@graphql-tools/utils": "^9.2.1",
     "graphql": "*",
     "tslib": "^2.4.0"

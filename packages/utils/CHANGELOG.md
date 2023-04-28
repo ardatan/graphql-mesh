@@ -1,5 +1,17 @@
 # @graphql-mesh/utils
 
+## 0.93.2
+
+### Patch Changes
+
+- [#5370](https://github.com/Urigo/graphql-mesh/pull/5370)
+  [`f17c6c8b6`](https://github.com/Urigo/graphql-mesh/commit/f17c6c8b6d47328ad0727079b1be2b685553830c)
+  Thanks [@ardatan](https://github.com/ardatan)! - Improvements on HTTP2 plugin
+
+- Updated dependencies
+  [[`f17c6c8b6`](https://github.com/Urigo/graphql-mesh/commit/f17c6c8b6d47328ad0727079b1be2b685553830c)]:
+  - @graphql-mesh/types@0.93.2
+
 ## 0.93.1
 
 ### Patch Changes
