@@ -1,0 +1,7 @@
+sources:
+  - name: Swapi
+    handler:
+      openapi:
+        source: ./swagger/pets.json
+        endpoint: >-
+          http://localhost:4001
