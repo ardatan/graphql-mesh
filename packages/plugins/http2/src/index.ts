@@ -2,11 +2,11 @@
 import { ClientHttp2Session, connect } from 'http2';
 import { Readable } from 'stream';
 import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
-import { getHeadersObj } from '@graphql-mesh/utils';
+import { createLruCache, getHeadersObj } from '@graphql-mesh/utils';
 import { Response } from '@whatwg-node/fetch';
 
 export default function useHTTP2(opts: MeshPluginOptions<YamlConfig.Http2Plugin>): MeshPlugin<any> {
-  const sessionsByOrigin = new Map<string, ClientHttp2Session>();
+  const sessionsByOrigin = createLruCache<ClientHttp2Session>();
   function getSessionByOrigin(origin: string) {
     let session = sessionsByOrigin.get(origin);
     if (!session) {
@@ -16,25 +16,24 @@ export default function useHTTP2(opts: MeshPluginOptions<YamlConfig.Http2Plugin>
     return session;
   }
   opts.pubsub.subscribe('destroy', () => {
-    for (const [, session] of sessionsByOrigin) {
-      session.destroy();
-    }
+    sessionsByOrigin.keys().forEach(origin => {
+      const session = sessionsByOrigin.get(origin);
+      if (session) {
+        session.destroy();
+      }
+    });
   });
   return {
-    onFetch({ url, setFetchFn }) {
-      const parsedUrl = new URL(url);
-      const origin = parsedUrl.origin;
-      if (opts.origins && !opts.origins.includes(origin)) {
-        return;
-      }
-      setFetchFn(function fetchForOrigin(_url, options) {
+    onFetch({ setFetchFn }) {
+      setFetchFn(function fetchForOrigin(url, options) {
+        const { origin, pathname, search } = new URL(url);
         const session = getSessionByOrigin(origin);
 
         const stream = session.request(
           {
             ...getHeadersObj(options.headers),
             ':method': options.method,
-            ':path': parsedUrl.pathname + parsedUrl.search,
+            ':path': pathname + search,
           },
           {
             signal: options.signal,

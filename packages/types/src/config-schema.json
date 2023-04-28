@@ -519,7 +519,19 @@
           "$ref": "#/definitions/HTTPDetailsExtensionsConfig"
         },
         "http2": {
-          "$ref": "#/definitions/Http2Plugin"
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
         },
         "liveQuery": {
           "$ref": "#/definitions/LiveQueryConfig"
@@ -2159,20 +2171,6 @@
               "additionalItems": true
             }
           ]
-        }
-      }
-    },
-    "Http2Plugin": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "Http2Plugin",
-      "properties": {
-        "origins": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false
         }
       }
     },

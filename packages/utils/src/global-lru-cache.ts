@@ -1,7 +1,7 @@
 import lru, { Lru } from 'tiny-lru';
 
-export type LRUCache = Lru<any>;
+export type LRUCache<T = any> = Lru<T>;
 
-export function createLruCache(max?: number, ttl?: number): LRUCache {
+export function createLruCache<T = any>(max?: number, ttl?: number): LRUCache<T> {
   return lru(max, ttl);
 }
