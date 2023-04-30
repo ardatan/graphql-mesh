@@ -198,11 +198,6 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
         setFetchFn(fetchFn);
       },
     },
-    {
-      onParse({ setParseFn }) {
-        setParseFn(parseWithCache);
-      },
-    },
     ...(additionalEnvelopPlugins as MeshPlugin<any>[]),
   ];
   const wrappedFetchFn: MeshFetch = wrapFetchWithPlugins(initialPluginList);
@@ -297,6 +292,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   const plugins = [
     useEngine({
       validate,
+      parse: parseWithCache,
       specifiedRules,
     }),
     useSubschema(subschema),

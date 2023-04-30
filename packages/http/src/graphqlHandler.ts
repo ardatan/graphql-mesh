@@ -13,8 +13,6 @@ export const graphqlHandler = (
     if (!yoga$) {
       yoga$ = getBuiltMesh().then(mesh =>
         createYoga({
-          parserCache: false,
-          validationCache: false,
           plugins: [
             ...mesh.plugins,
             useLogger({
