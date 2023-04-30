@@ -32,9 +32,7 @@
   "components": {
     "schemas": {
       "Pet": {
-        "required": [
-          "name"
-        ],
+        "required": ["name"],
         "type": "object",
         "properties": {
           "name": {
