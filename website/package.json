@@ -21,7 +21,7 @@
   "devDependencies": {
     "@theguild/algolia": "1.1.6",
     "@theguild/tailwind-config": "0.2.1",
-    "@types/node": "18.16.2",
+    "@types/node": "18.16.3",
     "@types/react": "18.2.0",
     "cross-env": "7.0.3",
     "eslint-config-next": "13.3.2",
