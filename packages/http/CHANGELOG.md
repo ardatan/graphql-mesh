@@ -1,5 +1,16 @@
 # @graphql-mesh/http
 
+## 0.93.2
+
+### Patch Changes
+
+- [`446124c24`](https://github.com/Urigo/graphql-mesh/commit/446124c24250635545792109473fc5ac17e27259)
+  Thanks [@ardatan](https://github.com/ardatan)! - Enable Yoga caching for validation
+
+- Updated dependencies
+  [[`446124c24`](https://github.com/Urigo/graphql-mesh/commit/446124c24250635545792109473fc5ac17e27259)]:
+  - @graphql-mesh/runtime@0.93.2
+
 ## 0.93.1
 
 ### Patch Changes
