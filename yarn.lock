@@ -15405,27 +15405,27 @@ neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-neo4j-driver-bolt-connection@^5.7.0:
-  version "5.7.0"
-  resolved "https://registry.yarnpkg.com/neo4j-driver-bolt-connection/-/neo4j-driver-bolt-connection-5.7.0.tgz#41effc5c4cca6ed3b5822a2848ea0b0bc619a6af"
-  integrity sha512-TMXNJuwEEYBqzyKsiyfF2DDaG/eV13y86nhxbXICcq9/1/j36OJx2zEuhzk1XstLYFD0WioSJZ3khV1+3aVRkw==
+neo4j-driver-bolt-connection@^5.8.0:
+  version "5.8.0"
+  resolved "https://registry.yarnpkg.com/neo4j-driver-bolt-connection/-/neo4j-driver-bolt-connection-5.8.0.tgz#222bd83568dd74ce872a2d540218b8560d68a539"
+  integrity sha512-WdfNk0qQK9tz8JzLRobwXb5xTS45+eqsF1HNAJnb2aOG+SIO8E7WlkYTwBOV6qIgyPvFlwRCE95HmLvX6psh8g==
   dependencies:
     buffer "^6.0.3"
-    neo4j-driver-core "^5.7.0"
+    neo4j-driver-core "^5.8.0"
     string_decoder "^1.3.0"
 
-neo4j-driver-core@^5.7.0:
-  version "5.7.0"
-  resolved "https://registry.yarnpkg.com/neo4j-driver-core/-/neo4j-driver-core-5.7.0.tgz#482931e2c5c66fe792982a07fddb14e43f02a8e8"
-  integrity sha512-q/mP1oDtt562+8uSMZZJJ8k8MNGeghTegzmmDCo9v4LDxuq+wkaKQ3tHm92o1xemuko+uyqlX8lU/844rX3T4A==
+neo4j-driver-core@^5.8.0:
+  version "5.8.0"
+  resolved "https://registry.yarnpkg.com/neo4j-driver-core/-/neo4j-driver-core-5.8.0.tgz#f56e165a5a622d8d31cebae6eb7bc124fc4d5f7e"
+  integrity sha512-EZnCrkKVRmirDuI/k+wkZ4YPq8PFI3bQswOWMveSruxSkYqFDsj0lGgA0EWAEuiF/xRp/GqIDs966BuNDYC1qQ==
 
-neo4j-driver@5.7.0:
-  version "5.7.0"
-  resolved "https://registry.yarnpkg.com/neo4j-driver/-/neo4j-driver-5.7.0.tgz#490baa467fcbb11f3917c2a22508ff4fc95719ef"
-  integrity sha512-Le5lgMERk0nIHPHQa18DRifrzXpPYkJEr9Sz/bxPQ8gbWFqTTL292LtJ/qM8RjByaRH2C923dKk2Ni8b0mzLNQ==
+neo4j-driver@5.8.0:
+  version "5.8.0"
+  resolved "https://registry.yarnpkg.com/neo4j-driver/-/neo4j-driver-5.8.0.tgz#abb11eb25e1c976c9f5e37a4c20ef4f2928e71bc"
+  integrity sha512-SH/YsRl52TYqLnIoT1NkaVg/Wz4AtgN5z+YCr0gyWwxqFcN4eklJG0UtxCZgbKqXSCgQNQDvmpQCnrCe/AYPTQ==
   dependencies:
-    neo4j-driver-bolt-connection "^5.7.0"
-    neo4j-driver-core "^5.7.0"
+    neo4j-driver-bolt-connection "^5.8.0"
+    neo4j-driver-core "^5.8.0"
     rxjs "^7.8.0"
 
 newrelic@8.17.1:
@@ -17521,20 +17521,10 @@ range-parser@^1.2.1, range-parser@~1.2.1:
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.2.1.tgz#3cf37023d199e1c24d1a55b84800c2f3e6468031"
   integrity sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==
 
-raw-body@2.5.1:
+raw-body@2.5.1, raw-body@^2.4.1:
   version "2.5.1"
   resolved "https://registry.yarnpkg.com/raw-body/-/raw-body-2.5.1.tgz#fe1b1628b181b700215e5fd42389f98b71392857"
   integrity sha512-qqJBtEyVgS0ZmPGdCFPWJ3FreoqvG4MVQln/kCgF7Olq95IbOp0/BWyMwbdtn4VTvkM8Y7khCQ2Xgk/tcrCXig==
-  dependencies:
-    bytes "3.1.2"
-    http-errors "2.0.0"
-    iconv-lite "0.4.24"
-    unpipe "1.0.0"
-
-raw-body@^2.4.1:
-  version "2.5.2"
-  resolved "https://registry.yarnpkg.com/raw-body/-/raw-body-2.5.2.tgz#99febd83b90e08975087e8f1f9419a149366b68a"
-  integrity sha512-8zGqypfENjCIqGhgXToC8aB2r7YrBX+AQAfIPs/Mlk+BtPTztOvTS01NRW/3Eh60J+a48lt8qsCzirQ6loCVfA==
   dependencies:
     bytes "3.1.2"
     http-errors "2.0.0"
@@ -20704,10 +20694,10 @@ vfile@^5.0.0, vfile@^5.3.0:
     unist-util-stringify-position "^3.0.0"
     vfile-message "^3.0.0"
 
-vite@4.3.3:
-  version "4.3.3"
-  resolved "https://registry.yarnpkg.com/vite/-/vite-4.3.3.tgz#26adb4aa01439fc4546c480ea547674d87289396"
-  integrity sha512-MwFlLBO4udZXd+VBcezo3u8mC77YQk+ik+fbc0GZWGgzfbPP+8Kf0fldhARqvSYmtIWoAJ5BXPClUbMTlqFxrA==
+vite@4.3.4:
+  version "4.3.4"
+  resolved "https://registry.yarnpkg.com/vite/-/vite-4.3.4.tgz#1c518d763d5a700d890c3a19ab59220f06e7a7d5"
+  integrity sha512-f90aqGBoxSFxWph2b39ae2uHAxm5jFBBdnfueNxZAT1FTpM13ccFQExCaKbR2xFW5atowjleRniQ7onjJ22QEg==
   dependencies:
     esbuild "^0.17.5"
     postcss "^8.4.23"
