@@ -9,7 +9,4 @@ sources:
     transforms:
         - namingConvention:
             mode: bare
-            typeNames: pascalCase
-            enumValues: upperCase
             fieldNames: camelCase
-            fieldArgumentNames: camelCase
