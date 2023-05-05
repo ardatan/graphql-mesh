@@ -26,7 +26,7 @@ describe('fastify', () => {
       body: JSON.stringify({
         query: /* GraphQL */ `
           {
-            pet_by_petId(petId: "pet200") {
+            petByPetId(petId: "pet200") {
               name
             }
           }
@@ -35,7 +35,8 @@ describe('fastify', () => {
     });
 
     const json = await response.json();
-    expect(json.data).toEqual({ pet_by_petId: { name: 'Bob' } });
+
+    expect(json.data).toEqual({ petByPetId: { name: 'Bob' } });
   });
 
   it('should work too', async () => {
@@ -47,7 +48,7 @@ describe('fastify', () => {
       body: JSON.stringify({
         query: /* GraphQL */ `
           {
-            pet_by_petId(petId: "pet500") {
+            petByPetId(petId: "pet500") {
               name
             }
           }
@@ -58,11 +59,11 @@ describe('fastify', () => {
     const resJson = await response.json();
 
     expect(resJson).toEqual({
-      data: { pet_by_petId: null },
+      data: { petByPetId: null },
       errors: [
         {
           message: 'HTTP Error: 500, Could not invoke operation GET /pet/{args.petId}',
-          path: ['pet_by_petId'],
+          path: ['petByPetId'],
           extensions: {
             request: { url: 'http://localhost:4001/pet/pet500', method: 'GET' },
             responseJson: { error: 'Error' },
