@@ -1,3 +1,4 @@
+import { buildClientSchema, getIntrospectionQuery, printSchema } from 'graphql';
 import { fetch } from '@whatwg-node/fetch';
 import { app } from '../src/app';
 import { upstream } from '../src/upstream';
@@ -15,6 +16,21 @@ describe('fastify', () => {
   afterAll(async () => {
     await app.close();
     await upstream.close();
+  });
+
+  it('should introspect correctly', async () => {
+    const response = await fetch('http://localhost:4000/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: getIntrospectionQuery(),
+      }),
+    });
+    const json = await response.json();
+    const schema = buildClientSchema(json.data);
+    expect(printSchema(schema)).toMatchSnapshot('schema');
   });
 
   it('should work', async () => {
@@ -36,7 +52,9 @@ describe('fastify', () => {
 
     const json = await response.json();
 
-    expect(json.data).toEqual({ petByPetId: { name: 'Bob' } });
+    expect(json).toEqual({
+      data: { petByPetId: { name: 'Bob' } },
+    });
   });
 
   it('should work too', async () => {
