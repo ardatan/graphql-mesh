@@ -9,7 +9,7 @@
     "start": "ts-node src/index.ts"
   },
   "dependencies": {
-    "@whatwg-node/router": "0.3.0",
+    "fets": "^0.1.4",
     "ts-node": "10.9.1",
     "typescript": "5.0.4"
   },

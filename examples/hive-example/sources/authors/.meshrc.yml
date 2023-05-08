@@ -2,4 +2,4 @@ sources:
   - name: Authors
     handler:
       openapi:
-        source: ./openapi.yaml
+        source: http://localhost:4001/openapi.json

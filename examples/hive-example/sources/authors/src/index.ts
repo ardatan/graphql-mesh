@@ -1,13 +1,7 @@
 import { createServer } from 'http';
-import { createRouter, Response } from '@whatwg-node/router';
+import { createRouter, Response } from 'fets';
 
-interface Author {
-  id: string;
-  name: string;
-  email: string;
-}
-
-const authors: Author[] = [
+const authors = [
   {
     id: '1',
     name: 'John Doe',
@@ -21,37 +15,87 @@ const authors: Author[] = [
 ];
 
 async function main() {
-  const app = createRouter();
-
-  app.get(
-    '/authors',
-    () =>
-      new Response(JSON.stringify(authors), {
-        headers: {
-          'Content-Type': 'application/json',
+  const app = createRouter({
+    components: {
+      schemas: {
+        Author: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+            },
+            name: {
+              type: 'string',
+            },
+            email: {
+              type: 'string',
+            },
+          },
+          required: ['id', 'name', 'email'],
+          additionalProperties: false,
         },
-      }),
-  );
+      },
+    } as const,
+  })
+    .route({
+      method: 'GET',
+      path: '/authors',
+      operationId: 'authors',
+      description: 'Returns a list of authors',
+      schemas: {
+        responses: {
+          200: {
+            description: 'A list of authors',
+            type: 'array',
+            items: {
+              $ref: '#/components/schemas/Author',
+            },
+          },
+        },
+      } as const,
+      handler: () => Response.json(authors),
+    })
+    .route({
+      method: 'GET',
+      path: '/authors/:id',
+      operationId: 'author',
+      description: 'Returns a single author',
+      schemas: {
+        request: {
+          params: {
+            type: 'object',
+            properties: {
+              id: {
+                type: 'string',
+              },
+            },
+            additionalProperties: false,
+            required: ['id'],
+          },
+        },
+        responses: {
+          200: {
+            description: 'The author',
+            $ref: '#/components/schemas/Author',
+          },
+        },
+      } as const,
+      handler(req) {
+        const author = authors.find(author => author.id === req.params.id);
 
-  app.get('/authors/:id', req => {
-    const author = authors.find(author => author.id === req.params.id);
+        if (!author) {
+          return new Response(null, {
+            status: 404,
+          });
+        }
 
-    if (!author) {
-      return new Response(null, {
-        status: 404,
-      });
-    }
-
-    return new Response(JSON.stringify(author), {
-      headers: {
-        'Content-Type': 'application/json',
+        return Response.json(author, { status: 200 });
       },
     });
-  });
 
   const server = createServer(app);
   server.listen(4001, () => {
-    console.log('Authors service listening on port 4001');
+    console.log('Authors service Swagger UI; http://localhost:4001/docs');
   });
 }
 

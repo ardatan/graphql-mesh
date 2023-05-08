@@ -1,13 +1,7 @@
 import { createServer } from 'http';
-import { createRouter, Response } from '@whatwg-node/router';
+import { createRouter, Response } from 'fets';
 
-interface Book {
-  id: string;
-  title: string;
-  authorId: string;
-}
-
-const books: Book[] = [
+const books = [
   {
     id: '1',
     title: "The Hitchhiker's Guide to the Galaxy",
@@ -26,53 +20,131 @@ const books: Book[] = [
 ];
 
 async function main() {
-  const app = createRouter();
-
-  app.get(
-    '/books',
-    () =>
-      new Response(JSON.stringify(books), {
-        headers: {
-          'Content-Type': 'application/json',
+  const app = createRouter({
+    components: {
+      schemas: {
+        Book: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+            },
+            title: {
+              type: 'string',
+            },
+            authorId: {
+              type: 'string',
+            },
+          },
+          required: ['id', 'title', 'authorId'],
+          additionalProperties: false,
         },
-      }),
-  );
+      },
+    } as const,
+  })
+    .route({
+      method: 'GET',
+      path: '/books',
+      operationId: 'books',
+      description: 'Returns a list of books',
+      schemas: {
+        responses: {
+          200: {
+            description: 'A list of books',
+            type: 'array',
+            items: {
+              $ref: '#/components/schemas/Book',
+            },
+          },
+        },
+      } as const,
+      handler: () => Response.json(books),
+    })
+    .route({
+      method: 'GET',
+      path: '/books/:id',
+      operationId: 'book',
+      description: 'Returns a book',
+      schemas: {
+        request: {
+          params: {
+            type: 'object',
+            properties: {
+              id: {
+                type: 'string',
+              },
+            },
+            required: ['id'],
+            additionalProperties: false,
+          },
+        },
+        responses: {
+          200: {
+            description: 'A book',
+            $ref: '#/components/schemas/Book',
+          },
+        },
+      } as const,
+      handler: req => {
+        const book = books.find(book => book.id === req.params.id);
 
-  app.get('/books/:id', req => {
-    const book = books.find(book => book.id === req.params.id);
+        if (!book) {
+          return new Response(null, {
+            status: 404,
+          });
+        }
 
-    if (!book) {
-      return new Response(null, {
-        status: 404,
-      });
-    }
+        return Response.json(book);
+      },
+    })
+    .route({
+      method: 'GET',
+      path: '/books/authors/:authorId',
+      operationId: 'booksByAuthor',
+      description: 'Returns a list of books by author',
+      schemas: {
+        request: {
+          params: {
+            type: 'object',
+            properties: {
+              authorId: {
+                type: 'string',
+              },
+            },
+            required: ['authorId'],
+            additionalProperties: false,
+          },
+        },
+        responses: {
+          200: {
+            description: 'A list of books',
+            type: 'array',
+            items: {
+              $ref: '#/components/schemas/Book',
+            },
+          },
+        },
+      } as const,
+      handler: req => {
+        const authorBooks = books.filter(book => book.authorId === req.params.authorId);
 
-    return new Response(JSON.stringify(book), {
-      headers: {
-        'Content-Type': 'application/json',
+        if (!authorBooks.length) {
+          return new Response(null, {
+            status: 404,
+          });
+        }
+
+        return new Response(JSON.stringify(authorBooks), {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
       },
     });
-  });
-
-  app.get('/books/authors/:authorId', req => {
-    const authorBooks = books.filter(book => book.authorId === req.params.authorId);
-
-    if (!authorBooks.length) {
-      return new Response(null, {
-        status: 404,
-      });
-    }
-
-    return new Response(JSON.stringify(authorBooks), {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  });
 
   const server = createServer(app);
   server.listen(4002, () => {
-    console.log('Books service listening on port 4002');
+    console.log('Books service Swagger UI; http://localhost:4001/docs');
   });
 }
 
