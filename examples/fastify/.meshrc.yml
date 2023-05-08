@@ -1,3 +1,4 @@
+merger: bare
 sources:
   - name: Swapi
     handler:
@@ -5,3 +6,14 @@ sources:
         source: ./swagger/pets.json
         endpoint: >-
           http://localhost:4001
+        selectQueryOrMutationField:
+          - fieldName: post_pet_by_petId
+            type: query
+    transforms:
+      - filterSchema:
+          mode: bare
+          filters:
+            - Mutation.!*
+      - extend:
+          typeDefs: ./src/extensions/typeDefs.graphql
+          resolvers: ./src/extensions/resolvers
