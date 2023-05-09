@@ -52,7 +52,7 @@ export default class BareFilter implements MeshTransform {
   }
 
   transformSchema(schema: GraphQLSchema) {
-    const transformedSchema = mapSchema(schema, {
+    let transformedSchema = mapSchema(schema, {
       ...(this.typeGlobs.length && {
         [MapperKind.TYPE]: type => this.matchInArray(this.typeGlobs, type.toString()),
       }),
@@ -89,6 +89,12 @@ export default class BareFilter implements MeshTransform {
           return undefined;
         },
       }),
+    });
+
+    transformedSchema = mapSchema(transformedSchema, {
+      [MapperKind.ROOT_OBJECT]: type => {
+        if (Object.keys(type.getFields()).length === 0) return null;
+      },
     });
 
     return transformedSchema;

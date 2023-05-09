@@ -830,6 +830,32 @@ type Query {
 `.trim(),
         );
       });
+
+      it("should filter Mutation type out if there are no fields left after filtering it's fields", async () => {
+        const schema = buildSchema(/* GraphQL */ `
+          type Query {
+            foo: String
+          }
+          type Mutation {
+            bar: String
+          }
+        `);
+        const filteredSchema = wrapSchema({
+          schema,
+          transforms: [
+            new FilterSchemaTransform({
+              config: { mode, filters: ['Mutation.!bar'] },
+            }),
+          ],
+        });
+        expect(printSchema(filteredSchema).trim()).toBe(
+          /* GraphQL */ `
+type Query {
+  foo: String
+}
+`.trim(),
+        );
+      });
     });
   });
 });
