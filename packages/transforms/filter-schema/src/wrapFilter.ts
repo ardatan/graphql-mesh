@@ -7,7 +7,7 @@ import {
   applySchemaTransforms,
 } from '@graphql-mesh/utils';
 import { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
-import { ExecutionRequest, ExecutionResult } from '@graphql-tools/utils';
+import { ExecutionRequest, ExecutionResult, MapperKind, mapSchema } from '@graphql-tools/utils';
 import {
   FilterInputObjectFields,
   FilterInterfaceFields,
@@ -115,12 +115,18 @@ export default class WrapFilter implements Transform {
     subschemaConfig: SubschemaConfig,
     transformedSchema?: GraphQLSchema,
   ) {
-    return applySchemaTransforms(
+    let finalSchema = applySchemaTransforms(
       originalWrappingSchema,
       subschemaConfig,
       transformedSchema,
       this.transforms,
     );
+    finalSchema = mapSchema(finalSchema, {
+      [MapperKind.ROOT_OBJECT]: type => {
+        if (Object.keys(type.getFields()).length === 0) return null;
+      },
+    });
+    return finalSchema;
   }
 
   transformRequest(
