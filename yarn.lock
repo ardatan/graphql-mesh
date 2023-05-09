@@ -5451,10 +5451,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/node@*", "@types/node@18.16.5", "@types/node@>=12.12.47", "@types/node@>=13.7.0", "@types/node@^18.11.18":
-  version "18.16.5"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.16.5.tgz#bf64e42719dc2e74da24709a2e1c0b50a966120a"
-  integrity sha512-seOA34WMo9KB+UA78qaJoCO20RJzZGVXQ5Sh6FWu0g/hfT44nKXnej3/tCQl7FL97idFpBhisLYCTB50S0EirA==
+"@types/node@*", "@types/node@18.16.6", "@types/node@>=12.12.47", "@types/node@>=13.7.0", "@types/node@^18.11.18":
+  version "18.16.6"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.16.6.tgz#d0ffffe201b253989b17ea157ddabec677a4f4fe"
+  integrity sha512-N7KINmeB8IN3vRR8dhgHEp+YpWvGFcpDoh5XZ8jB5a00AdFKCKEyyGTOPTddUf4JqU1ZKTVxkOxakDvchNVI2Q==
 
 "@types/node@^10.0.3", "@types/node@^10.1.0":
   version "10.17.60"
@@ -21369,10 +21369,10 @@ workbox-window@6.5.4:
     "@types/trusted-types" "^2.0.2"
     workbox-core "6.5.4"
 
-wrangler@2.19.0:
-  version "2.19.0"
-  resolved "https://registry.yarnpkg.com/wrangler/-/wrangler-2.19.0.tgz#ce9cba04eb744ac63674049128a82418b2bd806a"
-  integrity sha512-/XykXkD7dtvBMWq2p84V/aHhkifZA15+HBD7nm/pV62s6MJrJ+DWd1QJB7CF2D7DqknBLxdWpmmZB6YCo0BtMw==
+wrangler@2.20.0:
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/wrangler/-/wrangler-2.20.0.tgz#c4e2b18933f21b73fe5f1a9dd9406755aebae85d"
+  integrity sha512-UdKJ2LD7qgDxDvll/GkR1HnRP+bcEdqi/HJjDI+7eF4lv9V940jmm3orxCkSEosGyE14q0q6dBRM95+fBI8tdQ==
   dependencies:
     "@cloudflare/kv-asset-handler" "^0.2.0"
     "@esbuild-plugins/node-globals-polyfill" "^0.1.1"
