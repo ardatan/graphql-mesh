@@ -1,5 +1,13 @@
 # @graphql-mesh/transform-filter-schema
 
+## 0.93.2
+
+### Patch Changes
+
+- [#5411](https://github.com/Urigo/graphql-mesh/pull/5411)
+  [`dbe3e8a2c`](https://github.com/Urigo/graphql-mesh/commit/dbe3e8a2c4303930822ab8130f71f39f08760a85)
+  Thanks [@ardatan](https://github.com/ardatan)! - Remove types if they don't have a field left
+
 ## 0.93.1
 
 ### Patch Changes

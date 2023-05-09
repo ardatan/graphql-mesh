@@ -1,5 +1,13 @@
 # @graphql-mesh/plugin-deduplicate-request
 
+## 0.93.2
+
+### Patch Changes
+
+- [#5412](https://github.com/Urigo/graphql-mesh/pull/5412)
+  [`cb35b7445`](https://github.com/Urigo/graphql-mesh/commit/cb35b74458a65f18115c6edf3ef92f9a5c9b4c41)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support other fetch impl
+
 ## 0.93.1
 
 ### Patch Changes
