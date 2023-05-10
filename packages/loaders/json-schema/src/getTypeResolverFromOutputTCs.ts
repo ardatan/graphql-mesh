@@ -1,5 +1,5 @@
-import { GraphQLObjectType, GraphQLTypeResolver } from 'graphql';
-import { createGraphQLError } from '@graphql-tools/utils';
+import { GraphQLObjectType, GraphQLResolveInfo, GraphQLTypeResolver } from 'graphql';
+import { createGraphQLError, getDirective } from '@graphql-tools/utils';
 
 export function getTypeResolverFromOutputTCs({
   possibleTypes,
@@ -12,7 +12,7 @@ export function getTypeResolverFromOutputTCs({
   discriminatorMapping?: Record<string, string>;
   statusCodeTypeNameMap?: Record<string, string>;
 }): GraphQLTypeResolver<any, any> {
-  return function resolveType(data: any) {
+  return function resolveType(data: any, _ctx: any, info: GraphQLResolveInfo) {
     if (data.__typename) {
       return data.__typename;
     } else if (discriminatorField != null && data[discriminatorField]) {
@@ -27,13 +27,34 @@ export function getTypeResolverFromOutputTCs({
       }
     }
 
+    const dataTypeOf = typeof data;
+
+    if (dataTypeOf !== 'object') {
+      for (const possibleType of possibleTypes) {
+        const fieldMap = possibleType.getFields();
+        const fields = Object.values(fieldMap);
+        if (fields.length === 1) {
+          const field = fields[0];
+          const directiveObjs = getDirective(info.schema, field, 'resolveRoot');
+          if (directiveObjs?.length) {
+            const fieldType = field.type;
+            if ('parseValue' in fieldType) {
+              try {
+                fieldType.parseValue(data);
+                return possibleType.name;
+              } catch (e) {}
+            }
+          }
+        }
+      }
+    }
+
     // const validationErrors: Record<string, ErrorObject[]> = {};
-    const dataKeys =
-      typeof data === 'object'
-        ? Object.keys(data)
-            // Remove metadata fields used to pass data
-            .filter(property => !property.toString().startsWith('$'))
-        : null;
+    const dataKeys = dataTypeOf
+      ? Object.keys(data)
+          // Remove metadata fields used to pass data
+          .filter(property => !property.toString().startsWith('$'))
+      : null;
     for (const possibleType of possibleTypes) {
       const typeName = possibleType.name;
       if (dataKeys != null) {

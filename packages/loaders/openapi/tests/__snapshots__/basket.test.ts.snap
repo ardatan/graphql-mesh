@@ -6,7 +6,7 @@ exports[`Basket should generate the correct schema 1`] = `
   mutation: Mutation
 }
 
-directive @oneOf on OBJECT | INTERFACE
+directive @oneOf on OBJECT | INTERFACE | INPUT_OBJECT
 
 directive @statusCodeTypeName(typeName: String, statusCode: ID) repeatable on UNION
 

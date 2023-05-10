@@ -6,7 +6,7 @@ exports[`example_api6 should generate the schema correctly 1`] = `
   mutation: Mutation
 }
 
-directive @oneOf on OBJECT | INTERFACE
+directive @oneOf on OBJECT | INTERFACE | INPUT_OBJECT
 
 directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
 

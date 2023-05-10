@@ -1,0 +1,42 @@
+openapi: 3.0.3
+info:
+  title: one-of-no-discriminator
+  description: ''
+  contact:
+    name: ''
+  license:
+    name: ''
+  version: 0.1.0
+paths:
+  /test:
+    post:
+      description: ''
+      operationId: test_endpoint
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestType'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestType'
+        '500':
+          description: ''
+      deprecated: false
+components:
+  schemas:
+    TestType:
+      oneOf:
+        - type: string
+          enum:
+            - A
+        - type: object
+          properties:
+            B:
+              type: string
+tags: []

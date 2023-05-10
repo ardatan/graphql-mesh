@@ -108,8 +108,12 @@ export const ResolveRootDirective = new GraphQLDirective({
   locations: [DirectiveLocation.FIELD_DEFINITION],
 });
 
+function rootResolver(root: any) {
+  return root;
+}
+
 export function processResolveRootAnnotations(field: GraphQLField<any, any>) {
-  field.resolve = root => root;
+  field.resolve = rootResolver;
 }
 
 export const ResolveRootFieldDirective = new GraphQLDirective({
@@ -703,7 +707,11 @@ export const EnumDirective = new GraphQLDirective({
 
 export const OneOfDirective = new GraphQLDirective({
   name: 'oneOf',
-  locations: [DirectiveLocation.OBJECT, DirectiveLocation.INTERFACE],
+  locations: [
+    DirectiveLocation.OBJECT,
+    DirectiveLocation.INTERFACE,
+    DirectiveLocation.INPUT_OBJECT,
+  ],
 });
 
 export const ExampleDirective = new GraphQLDirective({

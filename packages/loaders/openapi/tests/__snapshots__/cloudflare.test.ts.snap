@@ -6,7 +6,7 @@ exports[`Cloudflare should generate the correct schema: cloudflare 1`] = `
   mutation: Mutation
 }
 
-directive @oneOf on OBJECT | INTERFACE
+directive @oneOf on OBJECT | INTERFACE | INPUT_OBJECT
 
 directive @resolveRoot on FIELD_DEFINITION
 
@@ -3699,7 +3699,7 @@ type cloudflare_images_image_details_4xx_response {
 union cloudflare_images_base_image_response @statusCodeTypeName(statusCode: 200, typeName: "String_container") @statusCodeTypeName(statusCode: "4xx", typeName: "cloudflare_images_base_image_4xx_response") = String_container | cloudflare_images_base_image_4xx_response
 
 type String_container {
-  String: String
+  String: String @resolveRoot
 }
 
 type cloudflare_images_base_image_4xx_response {
@@ -16581,7 +16581,7 @@ type query_filters_get_a_filter_oneOf_0_allOf_1_result_oneOf_0 {
 }
 
 type JSON_container {
-  JSON: JSON
+  JSON: JSON @resolveRoot
 }
 
 type filters_get_a_filter_4xx_response {
@@ -27371,7 +27371,7 @@ type magic_network_monitoring_rules_update_rule_4xx_response {
 union magic_network_monitoring_rules_update_advertisement_for_rule_response @statusCodeTypeName(statusCode: 200, typeName: "Boolean_container") @statusCodeTypeName(statusCode: "4xx", typeName: "magic_network_monitoring_rules_update_advertisement_for_rule_4xx_response") = Boolean_container | magic_network_monitoring_rules_update_advertisement_for_rule_4xx_response
 
 type Boolean_container {
-  Boolean: Boolean
+  Boolean: Boolean @resolveRoot
 }
 
 type magic_network_monitoring_rules_update_advertisement_for_rule_4xx_response {
