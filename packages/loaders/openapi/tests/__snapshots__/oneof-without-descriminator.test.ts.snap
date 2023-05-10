@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`oneOf without discriminator should generate correct schema: discriminator-mapping 1`] = `
+"schema {
+  query: Query
+  mutation: Mutation
+}
+
+directive @oneOf on OBJECT | INTERFACE | INPUT_OBJECT
+
+directive @enum(value: String) on ENUM_VALUE
+
+directive @typescript(type: String) on SCALAR | ENUM
+
+directive @example(value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
+
+directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+
+directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+
+type Query @globalOptions(sourceName: "test") {
+  dummy: String
+}
+
+type Mutation {
+  test_endpoint(input: TestType_Input): TestType @httpOperation(path: "/test", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+}
+
+union TestType = A_const_container | mutation_test_endpoint_oneOf_1
+
+type A_const_container {
+  A_const: A_const
+}
+
+enum A_const @typescript(type: "\\"A\\"") @example(value: "\\"A\\"") {
+  A @enum(value: "\\"A\\"")
+}
+
+type mutation_test_endpoint_oneOf_1 {
+  B: String
+}
+
+input TestType_Input @oneOf {
+  A_const: A_const
+  mutation_test_endpoint_oneOf_1_Input: mutation_test_endpoint_oneOf_1_Input
+}
+
+input mutation_test_endpoint_oneOf_1_Input {
+  B: String
+}
+
+scalar ObjMap
+
+enum HTTPMethod {
+  GET
+  HEAD
+  POST
+  PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
+  PATCH
+}"
+`;
