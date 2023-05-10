@@ -703,7 +703,11 @@ export const EnumDirective = new GraphQLDirective({
 
 export const OneOfDirective = new GraphQLDirective({
   name: 'oneOf',
-  locations: [DirectiveLocation.OBJECT, DirectiveLocation.INTERFACE],
+  locations: [
+    DirectiveLocation.OBJECT,
+    DirectiveLocation.INTERFACE,
+    DirectiveLocation.INPUT_OBJECT,
+  ],
 });
 
 export const ExampleDirective = new GraphQLDirective({
