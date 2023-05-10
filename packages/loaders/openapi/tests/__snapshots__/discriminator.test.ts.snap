@@ -5,7 +5,7 @@ exports[`Discriminator Mapping should generate correct schema: discriminator-map
   query: Query
 }
 
-directive @oneOf on OBJECT | INTERFACE
+directive @oneOf on OBJECT | INTERFACE | INPUT_OBJECT
 
 directive @discriminator(field: String, mapping: ObjMap) on INTERFACE | UNION
 

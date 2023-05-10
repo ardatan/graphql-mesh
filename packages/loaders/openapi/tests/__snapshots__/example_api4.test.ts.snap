@@ -5,7 +5,7 @@ exports[`OpenAPI loader: Handle anyOf and oneOf should generate the schema corre
   query: Query
 }
 
-directive @oneOf on OBJECT | INTERFACE
+directive @oneOf on OBJECT | INTERFACE | INPUT_OBJECT
 
 directive @resolveRoot on FIELD_DEFINITION
 
@@ -65,13 +65,13 @@ type differentAttributeObject {
 union oneOf2_200_response = commonAttributeObject | Int_container
 
 type Int_container {
-  Int: Int
+  Int: Int @resolveRoot
 }
 
 union oneOf3_200_response = String_container | Int_container
 
 type String_container {
-  String: String
+  String: String @resolveRoot
 }
 
 union oneOf5_200_response = commonAttributeObject | differentAttributeObject

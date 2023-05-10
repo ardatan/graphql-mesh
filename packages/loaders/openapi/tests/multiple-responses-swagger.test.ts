@@ -13,9 +13,11 @@ describe('Multiple Responses Swagger', () => {
         mutation: Mutation
       }
 
-      directive @oneOf on OBJECT | INTERFACE
+      directive @oneOf on OBJECT | INTERFACE | INPUT_OBJECT
 
       directive @statusCodeTypeName(typeName: String, statusCode: ID) repeatable on UNION
+
+      directive @resolveRoot on FIELD_DEFINITION
 
       directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
 
@@ -45,7 +47,7 @@ describe('Multiple Responses Swagger', () => {
       union post_response @statusCodeTypeName(statusCode: 204, typeName: "Void_container") @statusCodeTypeName(statusCode: 500, typeName: "Error") = Void_container | Error
 
       type Void_container {
-        Void: Void
+        Void: Void @resolveRoot
       }
 
       "Represents empty values"

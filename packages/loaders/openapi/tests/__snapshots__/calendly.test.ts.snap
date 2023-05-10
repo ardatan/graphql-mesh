@@ -6,7 +6,7 @@ exports[`Calendly should generate the correct schema 1`] = `
   mutation: Mutation
 }
 
-directive @oneOf on OBJECT | INTERFACE
+directive @oneOf on OBJECT | INTERFACE | INPUT_OBJECT
 
 directive @enum(value: String) on ENUM_VALUE
 
@@ -19,6 +19,8 @@ directive @statusCodeTypeName(typeName: String, statusCode: ID) repeatable on UN
 directive @regexp(pattern: String) on SCALAR
 
 directive @length(min: Int, max: Int) on SCALAR
+
+directive @resolveRoot on FIELD_DEFINITION
 
 directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
 
@@ -1469,7 +1471,7 @@ input post_organizations_uuid_invitations_request_Input @example(value: "{\\"val
 union revoke_users_organization_invitation_response @statusCodeTypeName(statusCode: 204, typeName: "Void_container") @statusCodeTypeName(statusCode: 400, typeName: "Error_Response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = Void_container | Error_Response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
 
 type Void_container {
-  Void: Void
+  Void: Void @resolveRoot
 }
 
 "Represents empty values"
@@ -1557,7 +1559,7 @@ enum _1_const @typescript(type: "1") @example(value: "1") {
 union post_data_compliance_deletion_invitees_response @statusCodeTypeName(statusCode: 202, typeName: "JSON_container") @statusCodeTypeName(statusCode: 400, typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(statusCode: 401, typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(statusCode: 403, typeName: "Error_Response") @statusCodeTypeName(statusCode: 404, typeName: "NOT_FOUND_response") @statusCodeTypeName(statusCode: 500, typeName: "UNKNOWN_response") = JSON_container | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | Error_Response | NOT_FOUND_response | UNKNOWN_response
 
 type JSON_container {
-  JSON: JSON
+  JSON: JSON @resolveRoot
 }
 
 input post_data_compliance_deletion_invitees_request_Input @example(value: "{\\"value\\":{\\"emails\\":[\\"test@example.com\\"]}}") {

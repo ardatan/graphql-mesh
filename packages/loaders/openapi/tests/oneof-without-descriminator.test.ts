@@ -17,7 +17,7 @@ describe('oneOf without discriminator', () => {
               B: 'Value',
             });
           case 'A':
-            return Response.json('"A"');
+            return Response.json('A');
           default:
             return new Response(null, {
               status: 404,
@@ -74,7 +74,9 @@ describe('oneOf without discriminator', () => {
     });
     expect(result).toEqual({
       data: {
-        test_endpoint: 'A',
+        test_endpoint: {
+          A_const: 'A',
+        },
       },
     });
   });

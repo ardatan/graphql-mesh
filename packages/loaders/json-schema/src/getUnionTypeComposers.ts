@@ -10,7 +10,7 @@ import {
 } from 'graphql-compose';
 import { Logger } from '@graphql-mesh/types';
 import { JSONSchemaObject } from '@json-schema-tools/meta-schema';
-import { StatusCodeTypeNameDirective } from './directives.js';
+import { ResolveRootDirective, StatusCodeTypeNameDirective } from './directives.js';
 import { TypeComposers } from './getComposerFromJSONSchema.js';
 
 export interface GetUnionTypeComposersOpts {
@@ -25,11 +25,16 @@ export interface GetUnionTypeComposersOpts {
 
 export function getContainerTC(schemaComposer: SchemaComposer, output: ComposeInputType) {
   const containerTypeName = `${output.getTypeName()}_container`;
+  schemaComposer.addDirective(ResolveRootDirective);
   return schemaComposer.getOrCreateOTC(containerTypeName, otc =>
     otc.addFields({
       [output.getTypeName()]: {
         type: output as any,
-        resolve: root => root,
+        directives: [
+          {
+            name: 'resolveRoot',
+          },
+        ],
       },
     }),
   );

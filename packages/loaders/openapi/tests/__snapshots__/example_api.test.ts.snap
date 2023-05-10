@@ -8,7 +8,7 @@ exports[`example_api should generate the schema correctly 1`] = `
 
 directive @enum(value: String) on ENUM_VALUE
 
-directive @oneOf on OBJECT | INTERFACE
+directive @oneOf on OBJECT | INTERFACE | INPUT_OBJECT
 
 directive @resolveRootField(field: String) on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
 

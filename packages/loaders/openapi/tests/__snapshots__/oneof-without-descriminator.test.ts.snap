@@ -14,6 +14,8 @@ directive @typescript(type: String) on SCALAR | ENUM
 
 directive @example(value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
+directive @resolveRoot on FIELD_DEFINITION
+
 directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
 
 directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
@@ -29,7 +31,7 @@ type Mutation {
 union TestType = A_const_container | mutation_test_endpoint_oneOf_1
 
 type A_const_container {
-  A_const: A_const
+  A_const: A_const @resolveRoot
 }
 
 enum A_const @typescript(type: "\\"A\\"") @example(value: "\\"A\\"") {
