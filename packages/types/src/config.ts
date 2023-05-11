@@ -281,9 +281,17 @@ export interface GrpcHandler {
    */
   endpoint: string;
   /**
+   * If you are using a remote URL endpoint to fetch your schema, you can set headers for the HTTP request to fetch your schema.
+   */
+  schemaHeaders?: {
+    [k: string]: any;
+  };
+  /**
    * gRPC Proto file that contains your protobuf schema
    * OR
    * Use a binary-encoded or JSON file descriptor set file (Any of: ProtoFilePath, String)
+   * OR
+   * Point to an existing .graphql file with the schema
    */
   source?: ProtoFilePath | string;
   /**

@@ -1,11 +1,21 @@
+/* eslint-disable import/no-nodejs-modules */
+import { promises as fsPromises } from 'fs';
 import { join } from 'path';
-import { GraphQLSchema, printSchema, validateSchema } from 'graphql';
+import {
+  buildSchema,
+  GraphQLSchema,
+  introspectionFromSchema,
+  printSchema,
+  validateSchema,
+} from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import type { KeyValueCache, YamlConfig } from '@graphql-mesh/types';
-import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
-import { DefaultLogger } from '@graphql-mesh/utils';
+import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { fetch as fetchFn } from '@whatwg-node/fetch';
 import GrpcHandler from '../src/index.js';
+
+const { readFile } = fsPromises;
 
 describe('gRPC Handler', () => {
   let cache: KeyValueCache;
@@ -23,6 +33,32 @@ describe('gRPC Handler', () => {
   });
   afterEach(() => {
     pubsub.publish('destroy', undefined);
+  });
+
+  it('handle graphql SDL files correctly as source', async () => {
+    const sdlFilePath = './fixtures/schema.graphql';
+    const handler = new GrpcHandler({
+      name: 'SDLSchema',
+      config: {
+        source: sdlFilePath,
+        endpoint: 'localhost',
+      },
+      baseDir: __dirname,
+      cache: new InMemoryLRUCache(),
+      pubsub: new PubSub(),
+      store,
+      importFn: defaultImportFn,
+      logger,
+    });
+    const absoluteFilePath = join(__dirname, sdlFilePath);
+    const schemaStringFromFile = await readFile(absoluteFilePath, 'utf-8');
+    const schemaFromFile = buildSchema(schemaStringFromFile);
+    const { schema: schemaFromHandler } = await handler.getMeshSource({
+      fetchFn,
+    });
+    expect(introspectionFromSchema(schemaFromHandler)).toStrictEqual(
+      introspectionFromSchema(schemaFromFile),
+    );
   });
 
   describe.each<[string, string]>([
@@ -58,7 +94,7 @@ describe('gRPC Handler', () => {
         baseDir: __dirname,
       });
 
-      const { schema } = await handler.getMeshSource();
+      const { schema } = await handler.getMeshSource({ fetchFn });
 
       expect(schema).toBeInstanceOf(GraphQLSchema);
       expect(validateSchema(schema)).toHaveLength(0);
@@ -88,7 +124,7 @@ describe('gRPC Handler', () => {
         baseDir: __dirname,
       });
 
-      const { schema } = await handler.getMeshSource();
+      const { schema } = await handler.getMeshSource({ fetchFn });
 
       expect(schema).toBeInstanceOf(GraphQLSchema);
       expect(validateSchema(schema)).toHaveLength(0);

@@ -50,7 +50,8 @@
     "protobufjs": "7.2.3"
   },
   "devDependencies": {
-    "@types/lodash.has": "4.5.7"
+    "@types/lodash.has": "4.5.7",
+    "@whatwg-node/fetch": "^0.8.8"
   },
   "publishConfig": {
     "access": "public",

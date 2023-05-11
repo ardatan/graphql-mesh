@@ -1,6 +1,11 @@
 /* eslint-disable import/no-duplicates */
 import globby from 'globby';
-import { GraphQLEnumTypeConfig, GraphQLResolveInfo, specifiedDirectives } from 'graphql';
+import {
+  buildSchema,
+  GraphQLEnumTypeConfig,
+  GraphQLResolveInfo,
+  specifiedDirectives,
+} from 'graphql';
 import { ObjectTypeComposerFieldConfigAsObjectDefinition, SchemaComposer } from 'graphql-compose';
 import {
   GraphQLBigInt,
@@ -21,12 +26,17 @@ import { fs } from '@graphql-mesh/cross-helpers';
 import { StoreProxy } from '@graphql-mesh/store';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import {
+  GetMeshSourcePayload,
+  ImportFn,
   Logger,
+  MeshFetch,
   MeshHandler,
   MeshHandlerOptions,
   MeshPubSub,
+  MeshSource,
   YamlConfig,
 } from '@graphql-mesh/types';
+import { readFileOrUrl } from '@graphql-mesh/utils';
 import { ChannelCredentials, credentials, loadPackageDefinition } from '@grpc/grpc-js';
 import { fromJSON } from '@grpc/proto-loader';
 import './patchLongJs.js';
@@ -52,7 +62,9 @@ export default class GrpcHandler implements MeshHandler {
   private baseDir: string;
   private rootJsonEntries: StoreProxy<RootJsonEntry[]>;
   private logger: Logger;
+  private fetchFn: MeshFetch;
   private pubsub: MeshPubSub;
+  private importFn: ImportFn;
 
   constructor({
     config,
@@ -60,6 +72,7 @@ export default class GrpcHandler implements MeshHandler {
     store,
     logger,
     pubsub,
+    importFn,
   }: MeshHandlerOptions<YamlConfig.GrpcHandler>) {
     this.logger = logger;
     this.config = config;
@@ -97,6 +110,7 @@ ${rootJsonEntries
       validate: () => {},
     });
     this.pubsub = pubsub;
+    this.importFn = importFn;
   }
 
   async processReflection(creds: ChannelCredentials): Promise<Promise<protobufjs.Root>[]> {
@@ -512,8 +526,20 @@ ${rootJsonEntries
 
   private schemaComposer = new SchemaComposer();
 
-  async getMeshSource() {
+  async getMeshSource({ fetchFn }: GetMeshSourcePayload): Promise<MeshSource> {
     this.config.requestTimeout = this.config.requestTimeout || 200000;
+    this.fetchFn = fetchFn;
+
+    if (typeof this.config.source === 'string') {
+      const interpolatedSource = stringInterpolator.parse(this.config.source, {
+        env: process.env,
+      });
+      if (interpolatedSource.endsWith('.graphql')) {
+        return {
+          schema: await this.getExistingGraphqlSchema(interpolatedSource),
+        };
+      }
+    }
 
     this.schemaComposer.add(GraphQLBigInt);
     this.schemaComposer.add(GraphQLByte);
@@ -575,5 +601,21 @@ ${rootJsonEntries
     return {
       schema,
     };
+  }
+
+  async getExistingGraphqlSchema(interpolatedSource: string) {
+    this.logger.info(`Fetching GraphQL Schema with annotations`);
+    const sdl = await readFileOrUrl<string>(interpolatedSource, {
+      allowUnknownExtensions: true,
+      cwd: this.baseDir,
+      fetch: this.fetchFn,
+      importFn: this.importFn,
+      logger: this.logger,
+      headers: this.config.schemaHeaders,
+    });
+    return buildSchema(sdl, {
+      assumeValidSDL: true,
+      assumeValid: true,
+    });
   }
 }
