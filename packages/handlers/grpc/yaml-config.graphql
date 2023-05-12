@@ -37,6 +37,8 @@ type GrpcHandler @md {
   prefix to collect Query method default: list, get
   """
   prefixQueryMethod: [String]
+
+  schemaHeaders: JSON
 }
 
 type LoadOptions {

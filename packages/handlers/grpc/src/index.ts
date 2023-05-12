@@ -1,6 +1,12 @@
 /* eslint-disable import/no-duplicates */
 import globby from 'globby';
-import { GraphQLEnumTypeConfig, GraphQLResolveInfo, specifiedDirectives } from 'graphql';
+import {
+  buildSchema,
+  GraphQLEnumTypeConfig,
+  GraphQLFieldResolver,
+  GraphQLSchema,
+  specifiedDirectives,
+} from 'graphql';
 import { ObjectTypeComposerFieldConfigAsObjectDefinition, SchemaComposer } from 'graphql-compose';
 import {
   GraphQLBigInt,
@@ -18,17 +24,28 @@ import descriptor from 'protobufjs/ext/descriptor/index.js';
 import { Client } from '@ardatan/grpc-reflection-js';
 import { path, process } from '@graphql-mesh/cross-helpers';
 import { fs } from '@graphql-mesh/cross-helpers';
-import { StoreProxy } from '@graphql-mesh/store';
+import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import {
+  ImportFn,
   Logger,
+  MeshFetch,
   MeshHandler,
   MeshHandlerOptions,
   MeshPubSub,
   YamlConfig,
 } from '@graphql-mesh/types';
+import { GetMeshSourcePayload } from '@graphql-mesh/types';
+import { readFileOrUrl } from '@graphql-mesh/utils';
+import { getDirective, getDirectives, getRootTypes } from '@graphql-tools/utils';
 import { ChannelCredentials, credentials, loadPackageDefinition } from '@grpc/grpc-js';
+import { ServiceClient } from '@grpc/grpc-js/build/src/make-client.js';
 import { fromJSON } from '@grpc/proto-loader';
+import {
+  grpcConnectivityStateDirective,
+  grpcMethodDirective,
+  grpcRootJsonDirective,
+} from './directives.js';
 import './patchLongJs.js';
 import { addIncludePathResolver, addMetaDataToCall, getTypeName } from './utils.js';
 
@@ -40,19 +57,16 @@ interface LoadOptions extends IParseOptions {
 
 type DecodedDescriptorSet = Message<IFileDescriptorSet> & IFileDescriptorSet;
 
-type RootJsonEntry = {
-  name: string;
-  rootJson: protobufjs.INamespace;
-};
-
 const QUERY_METHOD_PREFIXES = ['get', 'list', 'search'];
 
 export default class GrpcHandler implements MeshHandler {
   private config: YamlConfig.GrpcHandler;
   private baseDir: string;
-  private rootJsonEntries: StoreProxy<RootJsonEntry[]>;
+  private schemaWithAnnotationsProxy: StoreProxy<GraphQLSchema>;
   private logger: Logger;
   private pubsub: MeshPubSub;
+  private fetchFn: MeshFetch;
+  private importFn: ImportFn;
 
   constructor({
     config,
@@ -60,43 +74,17 @@ export default class GrpcHandler implements MeshHandler {
     store,
     logger,
     pubsub,
+    importFn,
   }: MeshHandlerOptions<YamlConfig.GrpcHandler>) {
     this.logger = logger;
     this.config = config;
     this.baseDir = baseDir;
-    this.rootJsonEntries = store.proxy('rootJsonEntries', {
-      codify: rootJsonEntries =>
-        `
-export default [
-${rootJsonEntries
-  .map(
-    ({ name, rootJson }) => `
-  {
-    name: ${JSON.stringify(name)},
-    rootJson: ${JSON.stringify(rootJson, null, 2)},
-  },
-`,
-  )
-  .join('\n')}
-];
-`.trim(),
-      fromJSON: jsonData => {
-        return jsonData.map(({ name, rootJson }: any) => ({
-          name,
-          rootJson,
-        }));
-      },
-      toJSON: rootJsonEntries => {
-        return rootJsonEntries.map(({ name, rootJson }) => {
-          return {
-            name,
-            rootJson,
-          };
-        });
-      },
-      validate: () => {},
-    });
+    this.schemaWithAnnotationsProxy = store.proxy(
+      'schemaWithAnnotations',
+      PredefinedProxyOptions.GraphQLSchemaWithDiffing,
+    );
     this.pubsub = pubsub;
+    this.importFn = importFn;
   }
 
   async processReflection(creds: ChannelCredentials): Promise<Promise<protobufjs.Root>[]> {
@@ -203,40 +191,38 @@ ${rootJsonEntries
     return protoRoot;
   }
 
-  getCachedDescriptorSets(creds: ChannelCredentials) {
-    return this.rootJsonEntries.getWithSet(async () => {
-      const rootPromises: Promise<protobufjs.Root>[] = [];
-      this.logger.debug(`Building Roots`);
-      if (this.config.source) {
-        const filePath =
-          typeof this.config.source === 'string' ? this.config.source : this.config.source.file;
-        if (filePath.endsWith('json')) {
-          rootPromises.push(this.processDescriptorFile());
-        } else if (filePath.endsWith('proto')) {
-          rootPromises.push(this.processProtoFile());
-        }
-      } else {
-        const reflectionPromises = await this.processReflection(creds);
-        rootPromises.push(...reflectionPromises);
+  async getDescriptorSets(creds: ChannelCredentials) {
+    const rootPromises: Promise<protobufjs.Root>[] = [];
+    this.logger.debug(`Building Roots`);
+    if (this.config.source) {
+      const filePath =
+        typeof this.config.source === 'string' ? this.config.source : this.config.source.file;
+      if (filePath.endsWith('json')) {
+        rootPromises.push(this.processDescriptorFile());
+      } else if (filePath.endsWith('proto')) {
+        rootPromises.push(this.processProtoFile());
       }
+    } else {
+      const reflectionPromises = await this.processReflection(creds);
+      rootPromises.push(...reflectionPromises);
+    }
 
-      return Promise.all(
-        rootPromises.map(async (root$, i) => {
-          const root = await root$;
-          const rootName = root.name || `Root${i}`;
-          const rootLogger = this.logger.child(rootName);
-          rootLogger.debug(`Resolving entire the root tree`);
-          root.resolveAll();
-          rootLogger.debug(`Creating artifacts from descriptor set and root`);
-          return {
-            name: rootName,
-            rootJson: root.toJSON({
-              keepComments: true,
-            }),
-          };
-        }),
-      );
-    });
+    return Promise.all(
+      rootPromises.map(async (root$, i) => {
+        const root = await root$;
+        const rootName = root.name || `Root${i}`;
+        const rootLogger = this.logger.child(rootName);
+        rootLogger.debug(`Resolving entire the root tree`);
+        root.resolveAll();
+        rootLogger.debug(`Creating artifacts from descriptor set and root`);
+        return {
+          name: rootName,
+          rootJson: root.toJSON({
+            keepComments: true,
+          }),
+        };
+      }),
+    );
   }
 
   async getCredentials(): Promise<ChannelCredentials> {
@@ -287,22 +273,165 @@ ${rootJsonEntries
     return currentWalkingPath.concat(baseTypePath);
   }
 
+  getGrpcObject({
+    rootJson,
+    loadOptions,
+    rootLogger,
+  }: {
+    rootJson: protobufjs.INamespace;
+    loadOptions: LoadOptions;
+    rootLogger: Logger;
+  }) {
+    const packageDefinition = fromJSON(rootJson, loadOptions);
+
+    rootLogger.debug(`Creating service client for package definition`);
+    const grpcObject = loadPackageDefinition(packageDefinition);
+    return grpcObject;
+  }
+
+  private grpcObjectByserviceClientByObjPath = new WeakMap<
+    ReturnType<typeof loadPackageDefinition>,
+    Map<string, ServiceClient>
+  >();
+
+  getServiceClient({
+    grpcObject,
+    objPath,
+    creds,
+  }: {
+    grpcObject: ReturnType<typeof loadPackageDefinition>;
+    objPath: string;
+    creds: ChannelCredentials;
+  }) {
+    let serviceClientByObjPath = this.grpcObjectByserviceClientByObjPath.get(grpcObject);
+    if (!serviceClientByObjPath) {
+      serviceClientByObjPath = new Map<string, ServiceClient>();
+      this.grpcObjectByserviceClientByObjPath.set(grpcObject, serviceClientByObjPath);
+    }
+    let client: ServiceClient = serviceClientByObjPath.get(objPath);
+    if (!client) {
+      const ServiceClient = lodashGet(grpcObject, objPath);
+      if (typeof ServiceClient !== 'function') {
+        throw new Error(`Object at path ${objPath} is not a Service constructor`);
+      }
+      client = new ServiceClient(
+        stringInterpolator.parse(this.config.endpoint, { env: process.env }) ??
+          this.config.endpoint,
+        creds,
+      );
+      const subId = this.pubsub.subscribe('destroy', () => {
+        client.close();
+        this.pubsub.unsubscribe(subId);
+      });
+      serviceClientByObjPath.set(objPath, client);
+    }
+    return client;
+  }
+
+  getFieldResolver({
+    client,
+    methodName,
+    isResponseStream,
+  }: {
+    client: ServiceClient;
+    methodName: string;
+    isResponseStream: boolean;
+  }): GraphQLFieldResolver<any, any> {
+    const metaData = this.config.metaData;
+    const clientMethod = client[methodName].bind(client);
+    return function grpcFieldResolver(root, args, context) {
+      return addMetaDataToCall(
+        clientMethod,
+        args.input,
+        {
+          root,
+          args,
+          context,
+          env: process.env,
+        },
+        metaData,
+        isResponseStream,
+      );
+    };
+  }
+
+  getConnectivityStateResolver({
+    client,
+  }: {
+    client: ServiceClient;
+  }): GraphQLFieldResolver<any, any> {
+    return function connectivityStateResolver(_, { tryToConnect }) {
+      return client.getChannel().getConnectivityState(tryToConnect);
+    };
+  }
+
+  processDirectives({ schema, creds }: { schema: GraphQLSchema; creds: ChannelCredentials }) {
+    const queryType = schema.getQueryType();
+    const rootJsonAnnotations = getDirective(schema, queryType, 'grpcRootJson');
+    const rootJsonMap = new Map<string, protobufjs.INamespace>();
+    const grpcObjectByRootJsonName = new Map<string, ReturnType<typeof loadPackageDefinition>>();
+    for (const { name, rootJson, loadOptions } of rootJsonAnnotations) {
+      rootJsonMap.set(name, rootJson);
+      const rootLogger = this.logger.child(name);
+      grpcObjectByRootJsonName.set(name, this.getGrpcObject({ rootJson, loadOptions, rootLogger }));
+    }
+    const rootTypes = getRootTypes(schema);
+    for (const rootType of rootTypes) {
+      for (const fieldName in rootType.getFields()) {
+        const field = rootType.getFields()[fieldName];
+        const directives = getDirectives(schema, field);
+        if (directives?.length) {
+          for (const directiveObj of directives) {
+            switch (directiveObj.name) {
+              case 'grpcMethod': {
+                const { rootJsonName, objPath, methodName, responseStream } = directiveObj.args;
+                const grpcObject = grpcObjectByRootJsonName.get(rootJsonName);
+                const client = this.getServiceClient({
+                  grpcObject,
+                  objPath,
+                  creds,
+                });
+                field.resolve = this.getFieldResolver({
+                  client,
+                  methodName,
+                  isResponseStream: responseStream,
+                });
+                break;
+              }
+              case 'grpcConnectivityState': {
+                const { rootJsonName, objPath } = directiveObj.args;
+                const grpcObject = grpcObjectByRootJsonName.get(rootJsonName);
+                const client = this.getServiceClient({
+                  grpcObject,
+                  objPath,
+                  creds,
+                });
+                field.resolve = this.getConnectivityStateResolver({ client });
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
   visit({
     nested,
     name,
     currentPath,
+    rootJsonName,
     rootJson,
-    creds,
-    grpcObject,
     rootLogger: logger,
+    loadOptions,
   }: {
     nested: AnyNestedObject;
     name: string;
     currentPath: string[];
+    rootJsonName: string;
     rootJson: protobufjs.INamespace;
-    creds: ChannelCredentials;
-    grpcObject: ReturnType<typeof loadPackageDefinition>;
     rootLogger: Logger;
+    loadOptions?: LoadOptions;
   }) {
     const pathWithName = [...currentPath, ...name.split('.')].filter(Boolean);
     if ('nested' in nested) {
@@ -313,9 +442,8 @@ ${rootJsonEntries
           nested: currentNested,
           name: key,
           currentPath: pathWithName,
+          rootJsonName,
           rootJson,
-          creds,
-          grpcObject,
           rootLogger: logger,
         });
       }
@@ -411,19 +539,6 @@ ${rootJsonEntries
       }
     } else if ('methods' in nested) {
       const objPath = pathWithName.join('.');
-      const ServiceClient = lodashGet(grpcObject, objPath);
-      if (typeof ServiceClient !== 'function') {
-        throw new Error(`Object at path ${objPath} is not a Service constructor`);
-      }
-      const client = new ServiceClient(
-        stringInterpolator.parse(this.config.endpoint, { env: process.env }) ??
-          this.config.endpoint,
-        creds,
-      );
-      const subId = this.pubsub.subscribe('destroy', () => {
-        client.close();
-        this.pubsub.unsubscribe(subId);
-      });
       for (const methodName in nested.methods) {
         const method = nested.methods[methodName];
         const rootFieldName = [...pathWithName, methodName].join('_');
@@ -471,31 +586,26 @@ ${rootJsonEntries
         )
           ? this.schemaComposer.Query
           : this.schemaComposer.Mutation;
+        this.schemaComposer.addDirective(grpcMethodDirective);
         rootTypeComposer.addFields({
           [rootFieldName]: {
             ...fieldConfig,
-            resolve: (
-              root,
-              args: Record<string, unknown>,
-              context: Record<string, unknown>,
-              info: GraphQLResolveInfo,
-            ) =>
-              addMetaDataToCall(
-                client[methodName].bind(client),
-                args.input,
-                {
-                  root,
-                  args,
-                  context,
-                  env: process.env,
+            directives: [
+              {
+                name: 'grpcMethod',
+                args: {
+                  rootJsonName,
+                  objPath,
+                  methodName,
+                  responseStream: !!method.responseStream,
                 },
-                this.config.metaData,
-                !!method.responseStream,
-              ),
+              },
+            ],
           },
         });
       }
       const connectivityStateFieldName = pathWithName.join('_') + '_connectivityState';
+      this.schemaComposer.addDirective(grpcConnectivityStateDirective);
       this.schemaComposer.Query.addFields({
         [connectivityStateFieldName]: {
           type: 'ConnectivityState',
@@ -504,7 +614,15 @@ ${rootJsonEntries
               type: 'Boolean',
             },
           },
-          resolve: (_, { tryToConnect }) => client.getChannel().getConnectivityState(tryToConnect),
+          directives: [
+            {
+              name: 'grpcConnectivityState',
+              args: {
+                rootJsonName,
+                objPath,
+              },
+            },
+          ],
         },
       });
     }
@@ -512,66 +630,92 @@ ${rootJsonEntries
 
   private schemaComposer = new SchemaComposer();
 
-  async getMeshSource() {
-    this.config.requestTimeout = this.config.requestTimeout || 200000;
+  private async getCachedNonExecutableSchema(creds: ChannelCredentials) {
+    const interpolatedSource = this.config.source?.toString();
+    if (interpolatedSource?.endsWith('.graphql')) {
+      this.logger.info(`Fetching GraphQL Schema with annotations`);
+      const sdl = await readFileOrUrl<string>(interpolatedSource, {
+        allowUnknownExtensions: true,
+        cwd: this.baseDir,
+        fetch: this.fetchFn,
+        importFn: this.importFn,
+        logger: this.logger,
+        headers: this.config.schemaHeaders,
+      });
+      return buildSchema(sdl, {
+        assumeValidSDL: true,
+        assumeValid: true,
+      });
+    }
+    return this.schemaWithAnnotationsProxy.getWithSet(async () => {
+      this.schemaComposer.add(GraphQLBigInt);
+      this.schemaComposer.add(GraphQLByte);
+      this.schemaComposer.add(GraphQLUnsignedInt);
+      this.schemaComposer.add(GraphQLVoid);
+      this.schemaComposer.add(GraphQLJSON);
+      this.schemaComposer.createScalarTC({
+        name: 'File',
+      });
+      // identical of grpc's ConnectivityState
+      this.schemaComposer.createEnumTC({
+        name: 'ConnectivityState',
+        values: {
+          IDLE: { value: 0 },
+          CONNECTING: { value: 1 },
+          READY: { value: 2 },
+          TRANSIENT_FAILURE: { value: 3 },
+          SHUTDOWN: { value: 4 },
+        },
+      });
 
-    this.schemaComposer.add(GraphQLBigInt);
-    this.schemaComposer.add(GraphQLByte);
-    this.schemaComposer.add(GraphQLUnsignedInt);
-    this.schemaComposer.add(GraphQLVoid);
-    this.schemaComposer.add(GraphQLJSON);
-    this.schemaComposer.createScalarTC({
-      name: 'File',
+      this.logger.debug(`Getting stored root and decoded descriptor set objects`);
+      const descriptorSets = await this.getDescriptorSets(creds);
+
+      for (const { name: rootJsonName, rootJson } of descriptorSets) {
+        const rootLogger = this.logger.child(rootJsonName);
+
+        rootLogger.debug(`Creating package definition from file descriptor set object`);
+        let loadOptions: LoadOptions;
+        if (typeof this.config.source === 'object') {
+          loadOptions = this.config.source.load;
+        }
+
+        this.logger.debug(`Building the schema structure based on the root object`);
+        this.visit({
+          nested: rootJson,
+          name: '',
+          currentPath: [],
+          rootJsonName,
+          rootJson,
+          rootLogger,
+          loadOptions,
+        });
+
+        this.schemaComposer.addDirective(grpcRootJsonDirective);
+        this.schemaComposer.Query.setDirectiveByName('grpcRootJson', {
+          name: rootJsonName,
+          rootJson,
+        });
+      }
+
+      // graphql-compose doesn't add @defer and @stream to the schema
+      specifiedDirectives.forEach(directive => this.schemaComposer.addDirective(directive));
+
+      this.logger.debug(`Building the final GraphQL Schema`);
+      const schema = this.schemaComposer.buildSchema();
+      return schema;
     });
-    // identical of grpc's ConnectivityState
-    this.schemaComposer.createEnumTC({
-      name: 'ConnectivityState',
-      values: {
-        IDLE: { value: 0 },
-        CONNECTING: { value: 1 },
-        READY: { value: 2 },
-        TRANSIENT_FAILURE: { value: 3 },
-        SHUTDOWN: { value: 4 },
-      },
-    });
+  }
+
+  async getMeshSource({ fetchFn }: GetMeshSourcePayload) {
+    this.fetchFn = fetchFn;
+    this.config.requestTimeout = this.config.requestTimeout || 200000;
 
     this.logger.debug(`Getting channel credentials`);
     const creds = await this.getCredentials();
 
-    this.logger.debug(`Getting stored root and decoded descriptor set objects`);
-    const artifacts = await this.getCachedDescriptorSets(creds);
-
-    for (const { name, rootJson } of artifacts) {
-      const rootLogger = this.logger.child(name);
-
-      rootLogger.debug(`Creating package definition from file descriptor set object`);
-      let options: LoadOptions;
-      if (typeof this.config.source === 'object') {
-        options = this.config.source.load;
-      }
-      const packageDefinition = fromJSON(rootJson, options);
-
-      rootLogger.debug(`Creating service client for package definition`);
-      const grpcObject = loadPackageDefinition(packageDefinition);
-
-      this.logger.debug(`Building the schema structure based on the root object`);
-      this.visit({
-        nested: rootJson,
-        name: '',
-        currentPath: [],
-        rootJson,
-        creds,
-        grpcObject,
-        rootLogger,
-      });
-    }
-
-    // graphql-compose doesn't add @defer and @stream to the schema
-    specifiedDirectives.forEach(directive => this.schemaComposer.addDirective(directive));
-
-    this.logger.debug(`Building the final GraphQL Schema`);
-    const schema = this.schemaComposer.buildSchema();
-
+    const schema = await this.getCachedNonExecutableSchema(creds);
+    this.processDirectives({ schema, creds });
     return {
       schema,
     };
