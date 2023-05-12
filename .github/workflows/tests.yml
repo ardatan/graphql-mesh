@@ -27,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18, 20]
+        node-version: [16, 18]
 
     steps:
       - name: Checkout
@@ -60,7 +60,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18, 20]
+        node-version: [16, 18]
     # Service containers to run with `runner-job`
     services:
       # Label used to access the service container
@@ -128,7 +128,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18, 20]
+        node-version: [16, 18]
     # Service containers to run with `runner-job`
     services:
       # Label used to access the service container
@@ -201,7 +201,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18, 20]
+        node-version: [16, 18]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
