@@ -6,11 +6,13 @@ exports[`JavaScript Wiki should generate correct schema: javascript-wiki-schema 
   mutation: Mutation
 }
 
-directive @oneOf on OBJECT | INTERFACE
+directive @oneOf on OBJECT | INTERFACE | INPUT_OBJECT
 
 directive @statusCodeTypeName(typeName: String, statusCode: ID) repeatable on UNION
 
 directive @resolveRootField(field: String) on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @resolveRoot on FIELD_DEFINITION
 
 directive @enum(value: String) on ENUM_VALUE
 
@@ -1248,7 +1250,7 @@ type cx_list_tools {
 union transform_list_tool_by_tool_response @statusCodeTypeName(statusCode: 200, typeName: "JSON_container") @statusCodeTypeName(statusCode: "default", typeName: "problem") = JSON_container | problem
 
 type JSON_container {
-  JSON: JSON
+  JSON: JSON @resolveRoot
 }
 
 "The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf)."

@@ -1,8 +1,8 @@
 import { join } from 'path';
 import { readFile } from 'fs-extra';
-import { lexicographicSortSchema, printSchema } from 'graphql';
 import { findAndParseConfig } from '@graphql-mesh/cli';
 import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Server } from '@grpc/grpc-js';
 import startGrpcServer from '../start-server';
 
@@ -17,7 +17,7 @@ describe('gRPC Example', () => {
     mesh = await getMesh(config);
   });
   it('should generate correct schema', async () => {
-    expect(printSchema(lexicographicSortSchema(mesh.schema))).toMatchSnapshot('grpc-schema');
+    expect(printSchemaWithDirectives(mesh.schema)).toMatchSnapshot('grpc-schema');
   });
   it('should get greeting correctly', async () => {
     const GreetingQuery = await readFile(

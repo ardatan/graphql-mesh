@@ -30,87 +30,93 @@ exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-
 `;
 
 exports[`gRPC Example should generate correct schema: grpc-schema 1`] = `
-""""
-The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
-"""
+"schema {
+  query: Query
+}
+
+directive @grpcMethod(rootJsonName: String, objPath: String, methodName: String, responseStream: Boolean) on FIELD_DEFINITION
+
+directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD_DEFINITION
+
+directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
+
+type Query @grpcRootJson(name: "Root0", rootJson: "{\\"nested\\":{\\"EmptyRequest\\":{\\"fields\\":{},\\"comment\\":null},\\"MovieRequest\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"SearchByCastRequest\\":{\\"fields\\":{\\"castName\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":\\"list of movies\\"}},\\"comment\\":\\"movie result message, contains list of movies\\"},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"AnotherExample\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"Genre\\":{\\"values\\":{\\"UNSPECIFIED\\":0,\\"ACTION\\":1,\\"DRAMA\\":2},\\"comment\\":null,\\"comments\\":{\\"UNSPECIFIED\\":null,\\"ACTION\\":null,\\"DRAMA\\":null}},\\"Movie\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"year\\":{\\"type\\":\\"int64\\",\\"id\\":2,\\"comment\\":null},\\"rating\\":{\\"type\\":\\"float\\",\\"id\\":3,\\"comment\\":null},\\"cast\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":4,\\"comment\\":\\"list of cast\\"},\\"time\\":{\\"type\\":\\"google.protobuf.Timestamp\\",\\"id\\":5,\\"comment\\":null},\\"genre\\":{\\"type\\":\\"Genre\\",\\"id\\":6,\\"comment\\":null}},\\"comment\\":\\"movie message payload\\"},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}") {
+  "get all movies"
+  exampleGetMovies(input: MovieRequest_Input): MoviesResult @grpcMethod(rootJsonName: "Root0", objPath: "Example", methodName: "GetMovies", responseStream: false)
+  "search movies by the name of the cast"
+  exampleSearchMoviesByCast(input: SearchByCastRequest_Input): [Movie] @grpcMethod(rootJsonName: "Root0", objPath: "Example", methodName: "SearchMoviesByCast", responseStream: true)
+  exampleConnectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(rootJsonName: "Root0", objPath: "Example")
+  "get all movies"
+  anotherExampleGetMovies(input: MovieRequest_Input): MoviesResult @grpcMethod(rootJsonName: "Root0", objPath: "AnotherExample", methodName: "GetMovies", responseStream: false)
+  "search movies by the name of the cast"
+  anotherExampleSearchMoviesByCast(input: SearchByCastRequest_Input): [Movie] @grpcMethod(rootJsonName: "Root0", objPath: "AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
+  anotherExampleConnectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(rootJsonName: "Root0", objPath: "AnotherExample")
+}
+
+"movie result message, contains list of movies"
+type MoviesResult {
+  "list of movies"
+  result: [Movie]
+}
+
+"movie message payload"
+type Movie {
+  name: String
+  year: BigInt
+  rating: Float
+  "list of cast"
+  cast: [String]
+  time: google_protobuf_Timestamp
+  genre: Genre
+}
+
+"The \`BigInt\` scalar type represents non-fractional signed whole numeric values."
 scalar BigInt
 
-enum ConnectivityState {
-  CONNECTING
-  IDLE
-  READY
-  SHUTDOWN
-  TRANSIENT_FAILURE
+type google_protobuf_Timestamp {
+  seconds: BigInt
+  nanos: Int
 }
 
 enum Genre {
+  UNSPECIFIED
   ACTION
   DRAMA
-  UNSPECIFIED
-}
-
-"""movie message payload"""
-type Movie {
-  """list of cast"""
-  cast: [String]
-  genre: Genre
-  name: String
-  rating: Float
-  time: google_protobuf_Timestamp
-  year: BigInt
 }
 
 input MovieRequest_Input {
   movie: Movie_Input
 }
 
-"""movie message payload"""
+"movie message payload"
 input Movie_Input {
-  """list of cast"""
-  cast: [String]
-  genre: Genre
   name: String
-  rating: Float
-  time: google_protobuf_Timestamp_Input
   year: BigInt
+  rating: Float
+  "list of cast"
+  cast: [String]
+  time: google_protobuf_Timestamp_Input
+  genre: Genre
 }
 
-"""movie result message, contains list of movies"""
-type MoviesResult {
-  """list of movies"""
-  result: [Movie]
-}
-
-type Query {
-  anotherExampleConnectivityState(tryToConnect: Boolean): ConnectivityState
-
-  """get all movies"""
-  anotherExampleGetMovies(input: MovieRequest_Input): MoviesResult
-
-  """search movies by the name of the cast"""
-  anotherExampleSearchMoviesByCast(input: SearchByCastRequest_Input): [Movie]
-  exampleConnectivityState(tryToConnect: Boolean): ConnectivityState
-
-  """get all movies"""
-  exampleGetMovies(input: MovieRequest_Input): MoviesResult
-
-  """search movies by the name of the cast"""
-  exampleSearchMoviesByCast(input: SearchByCastRequest_Input): [Movie]
+input google_protobuf_Timestamp_Input {
+  seconds: BigInt
+  nanos: Int
 }
 
 input SearchByCastRequest_Input {
   castName: String
 }
 
-type google_protobuf_Timestamp {
-  nanos: Int
-  seconds: BigInt
+enum ConnectivityState {
+  IDLE
+  CONNECTING
+  READY
+  TRANSIENT_FAILURE
+  SHUTDOWN
 }
 
-input google_protobuf_Timestamp_Input {
-  nanos: Int
-  seconds: BigInt
-}"
+scalar ObjMap"
 `;
 
 exports[`gRPC Example should get movies correctly: get-movies-grpc-example-result 1`] = `

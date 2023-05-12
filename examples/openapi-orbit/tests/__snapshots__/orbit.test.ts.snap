@@ -8,13 +8,15 @@ exports[`Orbit should generate correct schema 1`] = `
 
 directive @example(value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @oneOf on OBJECT | INTERFACE
+directive @oneOf on OBJECT | INTERFACE | INPUT_OBJECT
 
 directive @statusCodeTypeName(typeName: String, statusCode: ID) repeatable on UNION
 
 directive @resolveRootField(field: String) on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
 
 directive @enum(value: String) on ENUM_VALUE
+
+directive @resolveRoot on FIELD_DEFINITION
 
 directive @typescript(type: String) on SCALAR | ENUM
 
@@ -1920,7 +1922,7 @@ input post_activity_Input {
 union put_workspace_slug_members_by_member_slug_activities_by_id_response @statusCodeTypeName(statusCode: 204, typeName: "Void_container") @statusCodeTypeName(statusCode: 422, typeName: "put_workspace_slug_members_by_member_slug_activities_by_id_422_response") = Void_container | put_workspace_slug_members_by_member_slug_activities_by_id_422_response
 
 type Void_container {
-  Void: Void
+  Void: Void @resolveRoot
 }
 
 type put_workspace_slug_members_by_member_slug_activities_by_id_422_response @example(value: "{\\"errors\\":{\\"custom_title\\":[\\"can't be blank\\"]}}") {
