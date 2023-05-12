@@ -5,6 +5,7 @@ import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import type { KeyValueCache, YamlConfig } from '@graphql-mesh/types';
 import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
 import { DefaultLogger } from '@graphql-mesh/utils';
+import { fetch as fetchFn } from '@whatwg-node/fetch';
 import GrpcHandler from '../src/index.js';
 
 describe('gRPC Handler', () => {
@@ -58,7 +59,7 @@ describe('gRPC Handler', () => {
         baseDir: __dirname,
       });
 
-      const { schema } = await handler.getMeshSource();
+      const { schema } = await handler.getMeshSource({ fetchFn });
 
       expect(schema).toBeInstanceOf(GraphQLSchema);
       expect(validateSchema(schema)).toHaveLength(0);
@@ -88,7 +89,7 @@ describe('gRPC Handler', () => {
         baseDir: __dirname,
       });
 
-      const { schema } = await handler.getMeshSource();
+      const { schema } = await handler.getMeshSource({ fetchFn });
 
       expect(schema).toBeInstanceOf(GraphQLSchema);
       expect(validateSchema(schema)).toHaveLength(0);
