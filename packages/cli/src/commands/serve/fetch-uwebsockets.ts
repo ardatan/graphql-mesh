@@ -22,20 +22,21 @@ export function getUwebsocketsHandlerForFetch({
   return async function fetchUwebsocketsHandler(res: HttpResponse, req: HttpRequest) {
     let body: any;
     const method = req.getMethod();
+    let resAborted = false;
+    res.onAborted(function () {
+      resAborted = true;
+      body?.push(null);
+    });
     if (method !== 'get' && method !== 'head') {
       body = new Readable({
         read() {},
       });
-      res
-        .onData(function (chunk, isLast) {
-          body.push(Buffer.from(chunk));
-          if (isLast) {
-            body.push(null);
-          }
-        })
-        .onAborted(function () {
+      res.onData(function (chunk, isLast) {
+        body.push(Buffer.from(chunk));
+        if (isLast) {
           body.push(null);
-        });
+        }
+      });
     }
     const headers: Record<string, string> = {};
     req.forEach((key, value) => {
@@ -53,6 +54,9 @@ export function getUwebsocketsHandlerForFetch({
         res,
       },
     );
+    if (resAborted) {
+      return;
+    }
     res.writeStatus(`${response.status} ${response.statusText}`);
     response.headers.forEach((value, key) => {
       // content-length causes an error with Node.js's fetch
