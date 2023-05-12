@@ -200,11 +200,7 @@ export async function serveMesh(
       },
     });
 
-    console.log({
-      graphqlPath,
-      wsHandler,
-    });
-    // uWebSocketsApp.any(graphqlPath, wsHandler);
+    uWebSocketsApp.ws(graphqlPath, wsHandler);
 
     uWebSocketsApp.listen(hostname, port, listenSocket => {
       registerTerminateHandler(eventName => {

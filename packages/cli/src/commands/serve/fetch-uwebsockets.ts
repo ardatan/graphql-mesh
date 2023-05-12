@@ -2,6 +2,7 @@
 import { Readable } from 'stream';
 import { HttpRequest, HttpResponse } from 'uWebSockets.js';
 import { MeshHTTPHandler } from '@graphql-mesh/http';
+import { pipeStreamOverResponse } from './pipeStreamOverResponse';
 
 interface ServerContext {
   req: HttpRequest;
@@ -20,7 +21,7 @@ export function getUwebsocketsHandlerForFetch({
   port: number;
 }) {
   return async function fetchUwebsocketsHandler(res: HttpResponse, req: HttpRequest) {
-    let body: any;
+    let body: Readable;
     const method = req.getMethod();
     let resAborted = false;
     res.onAborted(function () {
@@ -42,12 +43,13 @@ export function getUwebsocketsHandlerForFetch({
     req.forEach((key, value) => {
       headers[key] = value;
     });
+    const url = `${protocol}://${hostname}:${port}${req.getUrl()}`;
     const response = await fetchFn(
-      `${protocol}://${hostname}:${port}${req.getUrl()}`,
+      url,
       {
         method,
         headers,
-        body,
+        body: body as any,
       },
       {
         req,
@@ -58,22 +60,22 @@ export function getUwebsocketsHandlerForFetch({
       return;
     }
     res.writeStatus(`${response.status} ${response.statusText}`);
+    let totalSize = 0;
     response.headers.forEach((value, key) => {
       // content-length causes an error with Node.js's fetch
       if (key === 'content-length') {
-        return;
+        totalSize = parseInt(value);
       }
       res.writeHeader(key, value);
     });
-    if (response.body) {
-      if (response.body instanceof Uint8Array) {
-        res.end(response.body);
-        return;
-      }
-      for await (const chunk of response.body) {
-        res.write(chunk);
-      }
+    if (!response.body) {
+      res.end();
+      return;
     }
-    res.end();
+    if ((response as any).bodyType === 'String' || (response as any).bodyType === 'Uint8Array') {
+      res.end((response as any).bodyInit);
+      return;
+    }
+    return pipeStreamOverResponse(res, response.body as any, totalSize);
   };
 }
