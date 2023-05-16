@@ -306,6 +306,9 @@ export interface GrpcHandler {
    * prefix to collect Query method default: list, get
    */
   prefixQueryMethod?: string[];
+  schemaHeaders?: {
+    [k: string]: any;
+  };
 }
 export interface ProtoFilePath {
   file: string;
