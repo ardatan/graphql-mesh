@@ -14,6 +14,7 @@ import {
   YamlConfig,
 } from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
+import { IResolvers } from '@graphql-tools/utils';
 import { Neo4jGraphQL } from '@neo4j/graphql';
 import { toGraphQLTypeDefs } from '@neo4j/introspector';
 
@@ -130,6 +131,10 @@ export default class Neo4JHandler implements MeshHandler {
     const typeDefs = await this.getCachedTypeDefs(driver);
 
     const events = getEventEmitterFromPubSub(this.pubsub);
+    const resolvers: IResolvers = {};
+    if (typeDefs.includes('scalar BigInt')) {
+      resolvers.BigInt = GraphQLBigInt;
+    }
     const neo4jGraphQL = new Neo4jGraphQL({
       typeDefs,
       config: {
@@ -139,9 +144,7 @@ export default class Neo4JHandler implements MeshHandler {
         enableDebug: !!process.env.DEBUG,
         skipValidateTypeDefs: true,
       },
-      resolvers: {
-        BigInt: GraphQLBigInt,
-      },
+      resolvers,
       plugins: {
         subscriptions: {
           events,
