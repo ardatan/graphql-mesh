@@ -912,6 +912,10 @@
           },
           "additionalItems": false,
           "description": "prefix to collect Query method default: list, get"
+        },
+        "schemaHeaders": {
+          "type": "object",
+          "properties": {}
         }
       },
       "required": ["endpoint"]

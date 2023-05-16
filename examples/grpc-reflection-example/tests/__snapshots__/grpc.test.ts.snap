@@ -1,26 +1,38 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`gRPC Example should generate correct schema: grpc-schema 1`] = `
-"enum ConnectivityState {
-  CONNECTING
-  IDLE
-  READY
-  SHUTDOWN
-  TRANSIENT_FAILURE
+"schema {
+  query: Query
 }
 
-input GreetingRequest_Input {
-  name: String
+directive @grpcMethod(rootJsonName: String, objPath: String, methodName: String, responseStream: Boolean) on FIELD_DEFINITION
+
+directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD_DEFINITION
+
+directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
+
+type Query @grpcRootJson(name: "Root0", rootJson: "{\\"nested\\":{\\"GreetingRequest\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1}},\\"comment\\":null},\\"GreetingResult\\":{\\"fields\\":{\\"greeting\\":{\\"type\\":\\"string\\",\\"id\\":1}},\\"comment\\":null},\\"GreetingService\\":{\\"methods\\":{\\"GetGreeting\\":{\\"requestType\\":\\".GreetingRequest\\",\\"responseType\\":\\".GreetingResult\\"}},\\"comment\\":null}}}") {
+  GreetingService_GetGreeting(input: GreetingRequest_Input): GreetingResult @grpcMethod(rootJsonName: "Root0", objPath: "GreetingService", methodName: "GetGreeting", responseStream: false)
+  GreetingService_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(rootJsonName: "Root0", objPath: "GreetingService")
 }
 
 type GreetingResult {
   greeting: String
 }
 
-type Query {
-  GreetingService_GetGreeting(input: GreetingRequest_Input): GreetingResult
-  GreetingService_connectivityState(tryToConnect: Boolean): ConnectivityState
-}"
+input GreetingRequest_Input {
+  name: String
+}
+
+enum ConnectivityState {
+  IDLE
+  CONNECTING
+  READY
+  TRANSIENT_FAILURE
+  SHUTDOWN
+}
+
+scalar ObjMap"
 `;
 
 exports[`gRPC Example should get greeting correctly: greeting-result 1`] = `
