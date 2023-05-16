@@ -1,46 +1,66 @@
 {
-  "openapi": "3.0.3",
+  "openapi": "3.0.1",
   "paths": {
-    "/pet/{petId}": {
-      "get": {
-        "parameters": [
-          {
-            "name": "petId",
-            "in": "path",
-            "description": "ID of pet to return",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Pet"
-                }
+      "/pet/{petId}": {
+          "get": {
+              "parameters": [
+                    {
+                        "name": "petId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+              ],
+              "responses": {
+                  "200": {
+                      "description": "Returns the Pet",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/Pet"
+                              }
+                          }
+                      }
+                  },
+                  "500": {
+                      "description": "Server error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/Error"
+                              }
+                          }
+                      }
+                  }
               }
-            }
           }
-        }
       }
-    }
   },
   "components": {
-    "schemas": {
-      "Pet": {
-        "required": ["name"],
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "doggie"
-          }
+      "schemas": {
+        "Pet": {
+            "required": [
+                "id"
+            ],
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false
+        },
+        "Error": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                  "type": "string"
+                }
+            },
+            "additionalProperties": false
         }
       }
-    }
   }
 }

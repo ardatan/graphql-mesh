@@ -1,7 +1,12 @@
+merger: bare
 sources:
-  - name: Swapi
+  - name: Search_V1
     handler:
       openapi:
         source: ./swagger/pets.json
         endpoint: >-
           http://localhost:4001
+additionalResolvers:
+  - ./src/extensions/resolvers
+additionalTypeDefs:
+  - ./src/extensions/typeDefs.graphql

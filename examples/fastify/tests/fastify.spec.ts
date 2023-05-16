@@ -26,16 +26,29 @@ describe('fastify', () => {
       body: JSON.stringify({
         query: /* GraphQL */ `
           {
-            pet_by_petId(petId: "pet200") {
-              name
-            }
+            pet_by_petId(petId: "0fc9111f-570d-4ebe-a72e-ff4eb274bc65"){
+              __typename
+              ... on Pet {
+                  id
+              }
+              ... on Error {
+                  errors
+              }
+          }
           }
         `,
       }),
     });
 
     const json = await response.json();
-    expect(json.data).toEqual({ pet_by_petId: { name: 'Bob' } });
+    expect(json).toEqual({
+      data: {
+        pet_by_petId: {
+          "__typename": "Pet",
+          "id": "0fc9111f-570d-4ebe-a72e-ff4eb274bc65",
+        },
+      }
+    });
   });
 
   it('should work too', async () => {
@@ -47,28 +60,28 @@ describe('fastify', () => {
       body: JSON.stringify({
         query: /* GraphQL */ `
           {
-            pet_by_petId(petId: "pet500") {
-              name
+            newPet(extraId: "dbd9e7c1-24f1-42e8-bd34-e7ce5bbafd7b", petId: "0fc9111f-570d-4ebe-a72e-ff4eb274bc65"){
+                __typename
+                ... on Error {
+                    errors
+                }
+                ... on NewPetResponse {
+                    foo
+                }
             }
           }
         `,
       }),
     });
 
-    const resJson = await response.json();
-
-    expect(resJson).toEqual({
-      data: { pet_by_petId: null },
-      errors: [
-        {
-          message: 'HTTP Error: 500, Could not invoke operation GET /pet/{args.petId}',
-          path: ['pet_by_petId'],
-          extensions: {
-            request: { url: 'http://localhost:4001/pet/pet500', method: 'GET' },
-            responseJson: { error: 'Error' },
-          },
-        },
-      ],
+    const json = await response.json();
+    expect(json).toEqual({
+      data: {
+        "newPet": {
+          "__typename": "NewPetResponse",
+          "foo": "{\"__typename\":\"Pet\", \"id\": \"0fc9111f-570d-4ebe-a72e-ff4eb274bc65\"}",
+        }
+      }
     });
   });
 });
