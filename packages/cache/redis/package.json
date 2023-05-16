@@ -41,7 +41,7 @@
     "ioredis-mock": "8.7.0"
   },
   "devDependencies": {
-    "@types/ioredis-mock": "8.2.1"
+    "@types/ioredis-mock": "8.2.2"
   },
   "publishConfig": {
     "access": "public",

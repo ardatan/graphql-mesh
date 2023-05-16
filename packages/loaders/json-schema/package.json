@@ -47,7 +47,7 @@
     "graphql-scalars": "^1.20.4",
     "json-machete": "0.93.1",
     "pascal-case": "3.1.2",
-    "qs": "6.11.1",
+    "qs": "6.11.2",
     "to-json-schema": "0.2.5",
     "url-join": "4.0.1"
   },
