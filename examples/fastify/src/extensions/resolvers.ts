@@ -11,7 +11,7 @@ const resolvers: Resolvers = {
     newPet: async (root, args, context: MeshContext, info): Promise<any> => {
       const { petId, extraId } = args;
 
-      const data = (await context.Search_V1.Query.pet_by_petId({
+      const data = (await context.Swapi.Query.pet_by_petId({
         root,
         args: {
           petId,
