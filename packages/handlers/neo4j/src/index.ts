@@ -131,10 +131,6 @@ export default class Neo4JHandler implements MeshHandler {
     const typeDefs = await this.getCachedTypeDefs(driver);
 
     const events = getEventEmitterFromPubSub(this.pubsub);
-    const resolvers: IResolvers = {};
-    if (typeDefs.includes('scalar BigInt')) {
-      resolvers.BigInt = GraphQLBigInt;
-    }
     const neo4jGraphQL = new Neo4jGraphQL({
       typeDefs,
       config: {
@@ -144,7 +140,12 @@ export default class Neo4JHandler implements MeshHandler {
         enableDebug: !!process.env.DEBUG,
         skipValidateTypeDefs: true,
       },
-      resolvers,
+      resolvers: {
+        BigInt: GraphQLBigInt,
+      },
+      resolverValidationOptions: {
+        requireResolversToMatchSchema: 'ignore',
+      },
       plugins: {
         subscriptions: {
           events,
