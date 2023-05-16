@@ -124,6 +124,11 @@ function createRootValue(schema: GraphQLSchema, fetchFn: MeshFetch) {
     const rootFieldMap = rootType.getFields();
     for (const fieldName in rootFieldMap) {
       const annotations = getDirective(schema, rootFieldMap[fieldName], 'soap');
+      if (!annotations) {
+        // skip fields without @soap directive
+        // we have to skip Query.placeholder field when only mutations were created
+        continue;
+      }
       const soapAnnotations: SoapAnnotations = Object.assign({}, ...annotations);
       rootValue[fieldName] = createRootValueMethod(soapAnnotations, fetchFn);
     }
