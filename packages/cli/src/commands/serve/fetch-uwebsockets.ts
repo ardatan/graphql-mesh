@@ -2,7 +2,7 @@
 import { Readable } from 'stream';
 import { HttpRequest, HttpResponse } from 'uWebSockets.js';
 import { MeshHTTPHandler } from '@graphql-mesh/http';
-import { pipeStreamOverResponse } from './pipeStreamOverResponse';
+import { pipeStreamOverResponse } from './pipeStreamOverResponse.js';
 
 interface ServerContext {
   req: HttpRequest;
