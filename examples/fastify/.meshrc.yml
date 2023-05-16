@@ -1,6 +1,6 @@
 merger: bare
 sources:
-  - name: Search_V1
+  - name: Swapi
     handler:
       openapi:
         source: ./swagger/pets.json
