@@ -1,5 +1,45 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`SOAP Loader should create executor for a service with mutations and query placeholder 1`] = `
+"schema {
+  query: Query
+  mutation: Mutation
+}
+
+directive @soap(elementName: String, bindingNamespace: String, endpoint: String) on FIELD_DEFINITION
+
+type Query {
+  placeholder: Void
+}
+
+"Represents NULL values"
+scalar Void
+
+type Mutation {
+  NumberConversion_NumberConversion_NumberConversionSoap_NumberToWords(NumberToWords: NumberConversion_NumberToWords_Input): NumberConversion_NumberToWordsResponse @soap(elementName: "NumberToWordsResponse", bindingNamespace: "http://www.dataaccess.com/webservicesserver/", endpoint: "https://www.dataaccess.com/webservicesserver/NumberConversion.wso")
+  NumberConversion_NumberConversion_NumberConversionSoap_NumberToDollars(NumberToDollars: NumberConversion_NumberToDollars_Input): NumberConversion_NumberToDollarsResponse @soap(elementName: "NumberToDollarsResponse", bindingNamespace: "http://www.dataaccess.com/webservicesserver/", endpoint: "https://www.dataaccess.com/webservicesserver/NumberConversion.wso")
+}
+
+type NumberConversion_NumberToWordsResponse {
+  NumberToWordsResult: String!
+}
+
+input NumberConversion_NumberToWords_Input {
+  ubiNum: BigInt
+}
+
+"The \`BigInt\` scalar type represents non-fractional signed whole numeric values."
+scalar BigInt
+
+type NumberConversion_NumberToDollarsResponse {
+  NumberToDollarsResult: String!
+}
+
+input NumberConversion_NumberToDollars_Input {
+  dNum: Float
+}"
+`;
+
 exports[`SOAP Loader should generate the schema correctly 1`] = `
 "schema {
   query: Query
