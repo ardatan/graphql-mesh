@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.3",
+  "openapi": "3.0.1",
   "paths": {
     "/pet/{petId}": {
       "get": {
@@ -7,7 +7,6 @@
           {
             "name": "petId",
             "in": "path",
-            "description": "ID of pet to return",
             "required": true,
             "schema": {
               "type": "string"
@@ -16,11 +15,21 @@
         ],
         "responses": {
           "200": {
-            "description": "successful operation",
+            "description": "Returns the Pet",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Pet"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -32,14 +41,23 @@
   "components": {
     "schemas": {
       "Pet": {
-        "required": ["name"],
+        "required": ["id"],
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "example": "doggie"
+          "id": {
+            "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
       }
     }
   }
