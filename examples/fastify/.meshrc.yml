@@ -6,7 +6,7 @@ sources:
         source: ./swagger/pets.json
         endpoint: >-
           http://localhost:4001
-additionalResolvers:
-  - ./src/extensions/resolvers
-additionalTypeDefs:
-  - ./src/extensions/typeDefs.graphql
+    transforms:
+      - extend:
+          typeDefs: ./src/extensions/typeDefs.graphql
+          resolvers: ./src/extensions/resolvers
