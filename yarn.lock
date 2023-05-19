@@ -2952,7 +2952,7 @@
     tslib "^2.4.0"
     value-or-promise "1.0.11"
 
-"@graphql-tools/stitch@^8.7.48":
+"@graphql-tools/stitch@^8.7.50":
   version "8.7.50"
   resolved "https://registry.yarnpkg.com/@graphql-tools/stitch/-/stitch-8.7.50.tgz#bcadf4b0dd20e22fb568042e94d711750c10f122"
   integrity sha512-VB1/uZyXjj1P5Wj0c4EKX3q8Q1Maj4dy6uNwodEPaO3EHMpaJU/DqyN0Bvnhxu0ol7RzdY3kgsvsdUjU2QMImw==
