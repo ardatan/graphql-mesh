@@ -33,7 +33,6 @@ import {
 } from '@graphql-mesh/utils';
 import { CreateProxyingResolverFn, Subschema, SubschemaConfig } from '@graphql-tools/delegate';
 import {
-  AggregateError,
   ExecutionResult,
   getRootTypeMap,
   inspect,

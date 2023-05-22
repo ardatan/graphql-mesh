@@ -20,12 +20,7 @@ import {
 } from '@graphql-mesh/types';
 import { printWithCache } from '@graphql-mesh/utils';
 import { addResolversToSchema } from '@graphql-tools/schema';
-import {
-  AggregateError,
-  asArray,
-  ExecutionRequest,
-  printSchemaWithDirectives,
-} from '@graphql-tools/utils';
+import { asArray, ExecutionRequest, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
 
 export default class FederationMerger implements MeshMerger {

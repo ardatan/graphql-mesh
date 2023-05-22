@@ -4,7 +4,6 @@ import { ConfigProcessOptions, processConfig } from '@graphql-mesh/config';
 import { path, process } from '@graphql-mesh/cross-helpers';
 import { jsonSchema, YamlConfig } from '@graphql-mesh/types';
 import { defaultImportFn, DefaultLogger, loadYaml } from '@graphql-mesh/utils';
-import { AggregateError } from '@graphql-tools/utils';
 
 export function validateConfig(
   config: any,
