@@ -126,7 +126,8 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
         method === 'parameters' ||
         method === 'summary' ||
         method === 'description' ||
-        method === 'servers'
+        method === 'servers' ||
+        method.startsWith('x-')
       ) {
         continue;
       }
@@ -197,6 +198,13 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                     operationConfig.queryStringOptionsByParam[paramObj.name].arrayFormat = 'comma';
                     break;
                   default:
+                    if (paramObj.style === undefined && paramObj.schema.type === 'array') {
+                      // when params is array and style is not defined, we assume it is form style.
+                      // it is how swagger editor behaves
+                      operationConfig.queryStringOptionsByParam[paramObj.name].arrayFormat =
+                        'comma';
+                      break;
+                    }
                     logger.warn(
                       `Other styles including ${paramObj.style} of query parameters are not supported yet.`,
                     );
