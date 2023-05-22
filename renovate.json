@@ -18,7 +18,8 @@
         "^@theguild/",
         "@graphql-inspector/core",
         "next",
-        "tailwindcss"
+        "tailwindcss",
+        "@whatwg-node/*"
       ],
       "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["minor", "patch"],
