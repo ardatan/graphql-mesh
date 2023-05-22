@@ -691,19 +691,21 @@ export function getComposerFromJSONSchema(
                 output: schemaComposer.Query,
                 ...subSchema,
               };
-              break;
             case 'Mutation':
               return {
                 output: schemaComposer.Mutation,
                 ...subSchema,
               };
+            case 'Subscription': {
+              if (path === '/properties/subscription') {
+                return {
+                  output: schemaComposer.Subscription,
+                  ...subSchema,
+                };
+              }
+              subSchema.title = 'Subscription_';
               break;
-            case 'Subscription':
-              return {
-                output: schemaComposer.Subscription,
-                ...subSchema,
-              };
-              break;
+            }
           }
         }
       }
