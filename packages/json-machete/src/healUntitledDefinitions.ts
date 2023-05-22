@@ -12,7 +12,11 @@ export function handleUntitledDefinitions(schemaDocument: any) {
       if (!definition.$ref) {
         if (!definition.title) {
           definition.title = definitionName;
-          if (definition.title === 'Subscription') {
+          if (
+            definition.title === 'Subscription' ||
+            definition.title === 'Query' ||
+            definition.title === 'Mutation'
+          ) {
             definition.title += '_';
           }
         } else {

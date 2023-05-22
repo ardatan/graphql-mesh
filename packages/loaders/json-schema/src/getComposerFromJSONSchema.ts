@@ -680,13 +680,13 @@ export function getComposerFromJSONSchema(
           };
         }
         case 'object': {
-          switch (subSchema.title.toLowerCase()) {
+          switch (subSchema.title) {
             case '_schema':
               return {
                 output: schemaComposer,
                 ...subSchema,
               };
-            case 'query':
+            case 'Query':
               if (path === '/properties/query') {
                 return {
                   output: schemaComposer.Query,
@@ -695,7 +695,7 @@ export function getComposerFromJSONSchema(
               }
               subSchema.title += '_';
               break;
-            case 'mutation':
+            case 'Mutation':
               if (path === '/properties/mutation') {
                 return {
                   output: schemaComposer.Mutation,
@@ -704,7 +704,7 @@ export function getComposerFromJSONSchema(
               }
               subSchema.title += '_';
               break;
-            case 'subscription':
+            case 'Subscription':
               if (path === '/properties/subscription') {
                 return {
                   output: schemaComposer.Subscription,

@@ -14,7 +14,6 @@ import {
   YamlConfig,
 } from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
-import { IResolvers } from '@graphql-tools/utils';
 import { Neo4jGraphQL } from '@neo4j/graphql';
 import { toGraphQLTypeDefs } from '@neo4j/introspector';
 
