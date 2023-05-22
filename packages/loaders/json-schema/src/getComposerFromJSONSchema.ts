@@ -687,31 +687,22 @@ export function getComposerFromJSONSchema(
                 ...subSchema,
               };
             case 'Query':
-              if (path === '/properties/query') {
-                return {
-                  output: schemaComposer.Query,
-                  ...subSchema,
-                };
-              }
-              subSchema.title += '_';
+              return {
+                output: schemaComposer.Query,
+                ...subSchema,
+              };
               break;
             case 'Mutation':
-              if (path === '/properties/mutation') {
-                return {
-                  output: schemaComposer.Mutation,
-                  ...subSchema,
-                };
-              }
-              subSchema.title += '_';
+              return {
+                output: schemaComposer.Mutation,
+                ...subSchema,
+              };
               break;
             case 'Subscription':
-              if (path === '/properties/subscription') {
-                return {
-                  output: schemaComposer.Subscription,
-                  ...subSchema,
-                };
-              }
-              subSchema.title += '_';
+              return {
+                output: schemaComposer.Subscription,
+                ...subSchema,
+              };
               break;
           }
         }

@@ -46,6 +46,6 @@ describe('Timeout', () => {
         }
       `),
     });
-    expect(result?.errors?.[0]?.message).toContain('timeout in 300 ms');
+    expect(result?.errors?.[0]?.message).toContain('The operation was aborted');
   });
 });
