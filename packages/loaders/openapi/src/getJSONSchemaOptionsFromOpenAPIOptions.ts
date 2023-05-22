@@ -191,12 +191,15 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                 operationConfig.queryStringOptionsByParam[paramObj.name].arrayFormat = 'repeat';
                 operationConfig.queryStringOptionsByParam[paramObj.name].destructObject = true;
               } else {
-                if (paramObj.style === 'form') {
-                  operationConfig.queryStringOptionsByParam[paramObj.name].arrayFormat = 'comma';
-                } else {
-                  logger.warn(
-                    `Other styles including ${paramObj.style} of query parameters are not supported yet.`,
-                  );
+                switch (paramObj.style) {
+                  case 'form':
+                  case 'simple': // simple is not intended for a query param but seems to be used in some APIs
+                    operationConfig.queryStringOptionsByParam[paramObj.name].arrayFormat = 'comma';
+                    break;
+                  default:
+                    logger.warn(
+                      `Other styles including ${paramObj.style} of query parameters are not supported yet.`,
+                    );
                 }
               }
             }

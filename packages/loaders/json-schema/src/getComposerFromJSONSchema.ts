@@ -680,30 +680,38 @@ export function getComposerFromJSONSchema(
           };
         }
         case 'object': {
-          switch (subSchema.title) {
+          switch (subSchema.title.toLowerCase()) {
             case '_schema':
               return {
                 output: schemaComposer,
                 ...subSchema,
               };
-            case 'Query':
-              return {
-                output: schemaComposer.Query,
-                ...subSchema,
-              };
-            case 'Mutation':
-              return {
-                output: schemaComposer.Mutation,
-                ...subSchema,
-              };
-            case 'Subscription':
+            case 'query':
+              if (path === '/properties/query') {
+                return {
+                  output: schemaComposer.Query,
+                  ...subSchema,
+                };
+              }
+              subSchema.title += '_';
+              break;
+            case 'mutation':
+              if (path === '/properties/mutation') {
+                return {
+                  output: schemaComposer.Mutation,
+                  ...subSchema,
+                };
+              }
+              subSchema.title += '_';
+              break;
+            case 'subscription':
               if (path === '/properties/subscription') {
                 return {
                   output: schemaComposer.Subscription,
                   ...subSchema,
                 };
               }
-              subSchema.title = 'Subscription_';
+              subSchema.title += '_';
               break;
           }
         }
