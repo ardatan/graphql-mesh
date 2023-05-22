@@ -67,11 +67,11 @@ describe('Looker.4.0.oas', () => {
         }
       `),
     });
+    const expectedURL = 'http://dummy/query_tasks/multi_results?query_task_ids=1%2C2%2C3';
     expect(result).toMatchObject({
       data: {
         query_task_multi_results: {
-          url:
-            'http://dummy/query_tasks/multi_results?query_task_ids=' + encodeURIComponent('1,2,3'),
+          url: expectedURL,
         },
       },
     });
