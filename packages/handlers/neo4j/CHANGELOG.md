@@ -1,5 +1,21 @@
 # @graphql-mesh/neo4j
 
+## 0.93.3
+
+### Patch Changes
+
+- [#5416](https://github.com/Urigo/graphql-mesh/pull/5416)
+  [`272c3f9b4`](https://github.com/Urigo/graphql-mesh/commit/272c3f9b4c7f68672e81c05cda5da5ef0e571d88)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@neo4j/graphql@3.18.3` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.18.3) (from
+    `3.18.2`, in `dependencies`)
+
+- [`1705cb98b`](https://github.com/Urigo/graphql-mesh/commit/1705cb98b76830d9795311a987ed5758931cc145)
+  Thanks [@ardatan](https://github.com/ardatan)! - Do not use BigInt resolver if not provided in
+  typeDefs
+
 ## 0.93.2
 
 ### Patch Changes

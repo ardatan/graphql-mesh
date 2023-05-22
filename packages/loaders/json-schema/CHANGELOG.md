@@ -1,5 +1,26 @@
 # @omnigraph/json-schema
 
+## 0.93.2
+
+### Patch Changes
+
+- [#5416](https://github.com/Urigo/graphql-mesh/pull/5416)
+  [`272c3f9b4`](https://github.com/Urigo/graphql-mesh/commit/272c3f9b4c7f68672e81c05cda5da5ef0e571d88)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`qs@6.11.2` ↗︎](https://www.npmjs.com/package/qs/v/6.11.2) (from `6.11.1`,
+    in `dependencies`)
+
+- [#5441](https://github.com/Urigo/graphql-mesh/pull/5441)
+  [`5a6b66034`](https://github.com/Urigo/graphql-mesh/commit/5a6b6603437b93f8543c3bf35668c64f1a8a510c)
+  Thanks [@devsergiy](https://github.com/devsergiy)! - Fix handling reserved operations names
+  (Query,Mutation) used as names of components Allow to use `simple` style of query params
+
+- [#5415](https://github.com/Urigo/graphql-mesh/pull/5415)
+  [`0db5f9127`](https://github.com/Urigo/graphql-mesh/commit/0db5f912789cbcf5d197f4985a5f9d364b32fc27)
+  Thanks [@devsergiy](https://github.com/devsergiy)! - Handle non object type resolution correctly
+  in union types
+
 ## 0.93.1
 
 ### Patch Changes

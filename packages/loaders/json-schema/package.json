@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/json-schema",
-  "version": "0.93.1",
+  "version": "0.93.2",
   "type": "module",
   "repository": {
     "type": "git",
