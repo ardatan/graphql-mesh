@@ -17,7 +17,7 @@ import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { Logger, MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
 import { createGraphQLError, memoize1 } from '@graphql-tools/utils';
-import { AbortSignal, Blob, File, FormData } from '@whatwg-node/fetch';
+import { Blob, File, FormData } from '@whatwg-node/fetch';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
 import { HTTPMethod } from './types.js';
 import { isFileUpload } from './utils.js';
