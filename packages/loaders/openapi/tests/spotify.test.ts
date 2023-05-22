@@ -1,20 +1,75 @@
 import { join } from 'path';
+import { Response } from 'fets';
 import { GraphQLSchema } from 'graphql';
+import { execute, parse } from 'graphql/index';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 
 describe('Spotify', () => {
-  let createdSchema: GraphQLSchema;
+  let schema: GraphQLSchema;
 
   beforeAll(async () => {
-    createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
+    schema = await loadGraphQLSchemaFromOpenAPI('test', {
       source: join(__dirname, './fixtures/spotify.yml'),
       ignoreErrorResponses: true,
-      // It is not possible to provide a union type with File scalar
+      fetch: (url): Promise<Response> => {
+        console.log(url);
+        return Promise.resolve(
+          new Response(
+            JSON.stringify({
+              albums: {
+                items: [
+                  {
+                    name: url,
+                  },
+                ],
+              },
+            }),
+            {
+              status: 200,
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            },
+          ),
+        );
+      },
     });
   });
 
   it('should generate correct schema', () => {
-    expect(printSchemaWithDirectives(createdSchema)).toMatchSnapshot('spotify-schema');
+    expect(printSchemaWithDirectives(schema)).toMatchSnapshot('spotify-schema');
+  });
+
+  it('should sent comma separated args correctly', async () => {
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        query {
+          search(q: "test", type: [album, artist]) {
+            albums {
+              items {
+                name
+              }
+            }
+          }
+        }
+      `),
+    });
+
+    const expectedURL = 'https://api.spotify.com/v1/search?q=test&type=album%2Cartist&limit=20';
+    expect(result).toMatchObject({
+      data: {
+        search: {
+          albums: {
+            items: [
+              {
+                name: expectedURL,
+              },
+            ],
+          },
+        },
+      },
+    });
   });
 });
