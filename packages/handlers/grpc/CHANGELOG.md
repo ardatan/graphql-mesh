@@ -1,5 +1,16 @@
 # @graphql-mesh/grpc
 
+## 0.93.3
+
+### Patch Changes
+
+- [#5420](https://github.com/Urigo/graphql-mesh/pull/5420)
+  [`c8e092561`](https://github.com/Urigo/graphql-mesh/commit/c8e092561044c38e59b822f4d35d6d1190c91904)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@graphql-tools/utils@^9.2.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.2.1)
+    (to `peerDependencies`)
+
 ## 0.93.2
 
 ### Patch Changes

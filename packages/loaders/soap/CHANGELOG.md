@@ -1,5 +1,14 @@
 # @omnigraph/soap
 
+## 0.93.2
+
+### Patch Changes
+
+- [#5431](https://github.com/Urigo/graphql-mesh/pull/5431)
+  [`2b72a06f5`](https://github.com/Urigo/graphql-mesh/commit/2b72a06f5a847f471da84942a3667395a401c2e3)
+  Thanks [@devsergiy](https://github.com/devsergiy)! - Fix creating soap executor for a service with
+  mutations only
+
 ## 0.93.1
 
 ### Patch Changes
