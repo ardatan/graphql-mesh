@@ -9,6 +9,9 @@
   },
   "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",
   "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "main": "node.js",
   "browser": "browser.js",
   "types": "index.d.ts",

@@ -8,6 +8,9 @@
     "directory": "packages/mergers/federation"
   },
   "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "exports": {

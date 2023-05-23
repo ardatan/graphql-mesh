@@ -8,6 +8,9 @@
     "directory": "packages/cli"
   },
   "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "bin": {
     "mesh": "dist/cjs/bin.js",
     "gql-mesh": "dist/cjs/bin.js",
