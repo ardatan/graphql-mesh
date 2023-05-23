@@ -37,8 +37,8 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@envelop/core": "^3.0.6",
-    "@envelop/extended-validation": "^2.0.6",
+    "@envelop/core": "^4.0.0",
+    "@envelop/extended-validation": "^3.0.0",
     "@graphql-mesh/string-interpolation": "^0.4.4",
     "@graphql-tools/batch-delegate": "^8.4.25",
     "@graphql-tools/batch-execute": "^8.5.19",

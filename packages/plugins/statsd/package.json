@@ -36,7 +36,7 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@envelop/statsd": "3.0.6"
+    "@envelop/statsd": "4.0.0"
   },
   "devDependencies": {
     "hot-shots": "10.0.0"

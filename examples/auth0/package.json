@@ -10,7 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@envelop/auth0": "4.0.6",
+    "@envelop/auth0": "5.0.0",
     "@graphql-mesh/cli": "0.82.35",
     "@graphql-mesh/json-schema": "0.93.2",
     "@graphql-mesh/plugin-operation-field-permissions": "0.93.1",

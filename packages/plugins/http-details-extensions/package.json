@@ -35,7 +35,7 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@envelop/core": "3.0.6",
+    "@envelop/core": "4.0.0",
     "@whatwg-node/fetch": "^0.8.3"
   },
   "publishConfig": {
