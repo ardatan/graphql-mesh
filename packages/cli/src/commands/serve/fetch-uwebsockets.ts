@@ -33,7 +33,7 @@ export function getUwebsocketsHandlerForFetch({
         read() {},
       });
       res.onData(function (chunk, isLast) {
-        body.push(Buffer.from(chunk));
+        body.push(Buffer.from(chunk, 0, chunk.byteLength));
         if (isLast) {
           body.push(null);
         }
