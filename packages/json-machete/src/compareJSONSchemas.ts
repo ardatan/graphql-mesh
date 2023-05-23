@@ -1,4 +1,3 @@
-import { AggregateError } from '@graphql-tools/utils';
 import { resolvePath } from './dereferenceObject.js';
 import { JSONSchema } from './types.js';
 import { visitJSONSchema } from './visitJSONSchema.js';
