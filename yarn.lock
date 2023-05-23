@@ -5884,12 +5884,11 @@
     "@webassemblyjs/ast" "1.11.6"
     "@xtuc/long" "4.2.2"
 
-"@whatwg-node/cookie-store@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@whatwg-node/cookie-store/-/cookie-store-0.0.1.tgz#1893f861706f35c5d0475d85f3793f9f568e4fd6"
-  integrity sha512-uoti8QU5xd+X+9PULOGpPpOqPDdwkz+ukMc4kyQG1GwXeKVGktr4FSllr6dBotjOjNVPSBPpmj5V6zrUdDcLaw==
+"@whatwg-node/cookie-store@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/cookie-store/-/cookie-store-0.1.0.tgz#7f8d68e0d4b203d1c7dbb3e29a888bcff3fe36d0"
+  integrity sha512-Tw6r2flAHYeio6ivBrERhOzkgZGXJSP7tlJIeFQhkjaBiRBz9W1Gc8zs73aq7DKC3ZAGSOdl8jlF+LztSq98cg==
   dependencies:
-    "@whatwg-node/events" "^0.0.3"
     tslib "^2.3.1"
 
 "@whatwg-node/events@0.0.2", "@whatwg-node/events@^0.0.2":
@@ -5902,7 +5901,12 @@
   resolved "https://registry.yarnpkg.com/@whatwg-node/events/-/events-0.0.3.tgz#13a65dd4f5893f55280f766e29ae48074927acad"
   integrity sha512-IqnKIDWfXBJkvy/k6tzskWTc2NK3LcqHlb+KHGCrjOCH4jfQckRX0NAiIcC/vIqQkzLYw2r2CTSwAxcrtcD6lA==
 
-"@whatwg-node/fetch@0.8.8", "@whatwg-node/fetch@^0.8.0", "@whatwg-node/fetch@^0.8.1", "@whatwg-node/fetch@^0.8.2", "@whatwg-node/fetch@^0.8.3", "@whatwg-node/fetch@^0.8.4":
+"@whatwg-node/events@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/events/-/events-0.1.0.tgz#1e7b4e4fd0d149b247ec0132b1030fe522282295"
+  integrity sha512-PnnAP/o6QkgAdjcExKugzl5ZUqPVcv9lvgGz/to3Xe5Du/P5Zw6MzB8P8mI/B4mplYOYsr6AkXkb4plG0ydCow==
+
+"@whatwg-node/fetch@0.8.8", "@whatwg-node/fetch@^0.8.0", "@whatwg-node/fetch@^0.8.1", "@whatwg-node/fetch@^0.8.3", "@whatwg-node/fetch@^0.8.4":
   version "0.8.8"
   resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.8.8.tgz#48c6ad0c6b7951a73e812f09dd22d75e9fa18cae"
   integrity sha512-CdcjGC2vdKhc13KKxgsc6/616BQ7ooDIgPeTuAiE8qfCnS0mGzcfCOoZXypQSz73nxI+GWc7ZReIAVhxoE1KCg==
@@ -5924,6 +5928,14 @@
     urlpattern-polyfill "^6.0.2"
     web-streams-polyfill "^3.2.1"
 
+"@whatwg-node/fetch@^0.9.0":
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.9.0.tgz#59492e13e33112afe561ec7f0b497db62284fa1c"
+  integrity sha512-zEyXaoz5w6BpKYKyZLTwBA41fqGuscOvSoPHytADRo1FY/s/fmjwiKq4QGmB88DlNuQ8e57s6AgWqIYyAT0Zmg==
+  dependencies:
+    "@whatwg-node/node-fetch" "^0.4.0"
+    urlpattern-polyfill "^8.0.0"
+
 "@whatwg-node/node-fetch@^0.0.5":
   version "0.0.5"
   resolved "https://registry.yarnpkg.com/@whatwg-node/node-fetch/-/node-fetch-0.0.5.tgz#bebf18891088e5e2fc449dea8d1bc94af5ec38df"
@@ -5939,6 +5951,17 @@
   integrity sha512-w9wKgDO4C95qnXZRwZTfCmLWqyRnooGjcIwG0wADWjw9/HN0p7dtvtgSvItZtUyNteEvgTrd8QojNEqV6DAGTA==
   dependencies:
     "@whatwg-node/events" "^0.0.3"
+    busboy "^1.6.0"
+    fast-querystring "^1.1.1"
+    fast-url-parser "^1.1.3"
+    tslib "^2.3.1"
+
+"@whatwg-node/node-fetch@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/node-fetch/-/node-fetch-0.4.0.tgz#f874334d20889b1d7733a74cbe091183f8235297"
+  integrity sha512-aFfJNTMwkWrkl8I9nTkslVjPlkL+zb/Z71ng+71UbYYm1gPHfltHHXBiM99aZgUCaqyvaR5XzzwyCL6m0ikqsA==
+  dependencies:
+    "@whatwg-node/events" "^0.1.0"
     busboy "^1.6.0"
     fast-querystring "^1.1.1"
     fast-url-parser "^1.1.3"
@@ -5970,12 +5993,20 @@
     "@whatwg-node/fetch" "^0.8.1"
     tslib "^2.3.1"
 
-"@whatwg-node/server@^0.7.0", "@whatwg-node/server@^0.7.3", "@whatwg-node/server@^0.7.4":
+"@whatwg-node/server@^0.7.0", "@whatwg-node/server@^0.7.3":
   version "0.7.7"
   resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.7.7.tgz#daaae73999cf8ea4d4f7e617276dcb8e84a6e49e"
   integrity sha512-aHURgNDFm/48WVV3vhTMfnEKCYwYgdaRdRhZsQZx4UVFjGGkGay7Ys0+AYu9QT/jpoImv2oONkstoTMUprDofg==
   dependencies:
     "@whatwg-node/fetch" "^0.8.3"
+    tslib "^2.3.1"
+
+"@whatwg-node/server@^0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.8.0.tgz#2fd40353a5c811e37fd5a83f4b343cc38d014ac2"
+  integrity sha512-ZEAZuzBQP40PYJ5iBbmMy46CqzF97QctLPQtFVlXnpVZwo7mMeWNf2u+1sZPM7rEgxCK2MgIUeeuKR2C2XaoMg==
+  dependencies:
+    "@whatwg-node/fetch" "^0.9.0"
     tslib "^2.3.1"
 
 "@wry/context@^0.7.0":
@@ -10225,15 +10256,15 @@ fengari@^0.1.4:
     sprintf-js "^1.1.1"
     tmp "^0.0.33"
 
-fets@^0.1.1, fets@^0.1.4:
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/fets/-/fets-0.1.5.tgz#da509e868d2b51fee534f7c7100586e5802eee54"
-  integrity sha512-mL/ya591WOgCP1yBBPbp8E37nynj8QQF6iQCUVl0aHDL80BZ9SOL4BcKBy0dnKdC+clnnAkMm05KB9hsj4m4jQ==
+fets@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/fets/-/fets-0.2.0.tgz#4a1601dfc43a53e141aa10740d27dd3f95ee1ddb"
+  integrity sha512-e4uBzNl1IVjfc+7H6F0eM5RGpUV6KpREmGI7GYcXuUj80Whk2Exu+n3m9vk94skdlzAmltBqDfwh6Ch5Ds0dLg==
   dependencies:
     "@ardatan/fast-json-stringify" "^0.0.6"
-    "@whatwg-node/cookie-store" "^0.0.1"
-    "@whatwg-node/fetch" "^0.8.2"
-    "@whatwg-node/server" "^0.7.4"
+    "@whatwg-node/cookie-store" "^0.1.0"
+    "@whatwg-node/fetch" "^0.9.0"
+    "@whatwg-node/server" "^0.8.0"
     ajv "^8.12.0"
     ajv-formats "^2.1.1"
     hotscript "^1.0.11"
@@ -21198,10 +21229,10 @@ workerd@^1.20230512.0:
     "@cloudflare/workerd-linux-arm64" "1.20230512.0"
     "@cloudflare/workerd-windows-64" "1.20230512.0"
 
-wrangler@3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/wrangler/-/wrangler-3.0.0.tgz#de610c620f0674975267a8a478df1bb0304045af"
-  integrity sha512-azppXJjEQeaVg3wxFZJOGDGtpR8e9clHr2aHuanGHOk9vX3gvesCv97BF/n8qh1Y1d7vDKOBdfQW3UOYZNFGNw==
+wrangler@3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/wrangler/-/wrangler-3.0.1.tgz#0e6ca590b532cb7389aac1aaf7244ccb8a56c9c9"
+  integrity sha512-YamXlRjkMO/V3Fvq7IC9H9GDWIbNGc4IV3l1Z5q45XYTWxUYbkwXyiTAfpmqhyl5wx+XEPKe3k/ubqmW+r63yQ==
   dependencies:
     "@cloudflare/kv-asset-handler" "^0.2.0"
     "@esbuild-plugins/node-globals-polyfill" "^0.1.1"
