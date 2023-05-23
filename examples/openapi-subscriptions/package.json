@@ -10,7 +10,7 @@
   "dependencies": {
     "@graphql-mesh/cli": "0.82.35",
     "@graphql-mesh/openapi": "0.93.2",
-    "@whatwg-node/fetch": "^0.8.3",
+    "@whatwg-node/fetch": "^0.9.0",
     "@whatwg-node/router": "^0.3.0",
     "concurrently": "8.0.1",
     "graphql": "16.6.0",
