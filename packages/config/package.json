@@ -39,7 +39,7 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@envelop/core": "^3.0.6",
+    "@envelop/core": "^4.0.0",
     "@graphql-mesh/cache-localforage": "^0.93.1",
     "@graphql-mesh/merger-bare": "^0.93.1",
     "@graphql-mesh/merger-stitching": "^0.93.1",

@@ -35,7 +35,7 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@envelop/operation-field-permissions": "4.0.6"
+    "@envelop/operation-field-permissions": "5.0.0"
   },
   "publishConfig": {
     "access": "public",

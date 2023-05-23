@@ -36,7 +36,7 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@envelop/core": "^3.0.0",
+    "@envelop/core": "^4.0.0",
     "@graphql-mesh/string-interpolation": "0.4.4",
     "@graphql-yoga/plugin-response-cache": "1.9.1"
   },

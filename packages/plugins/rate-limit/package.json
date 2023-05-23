@@ -40,7 +40,7 @@
     "minimatch": "8.0.4"
   },
   "devDependencies": {
-    "@envelop/core": "3.0.6"
+    "@envelop/core": "4.0.0"
   },
   "publishConfig": {
     "access": "public",
