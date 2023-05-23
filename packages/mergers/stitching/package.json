@@ -35,15 +35,15 @@
     "@graphql-mesh/store": "^0.93.1",
     "@graphql-mesh/types": "^0.93.1",
     "@graphql-mesh/utils": "^0.93.1",
-    "@graphql-tools/utils": "^9.2.1",
+    "@graphql-tools/utils": "^9.2.1 || ^10.0.0",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-tools/delegate": "^9.0.32",
-    "@graphql-tools/schema": "^9.0.18",
-    "@graphql-tools/stitch": "^8.7.50",
-    "@graphql-tools/stitching-directives": "^2.3.34"
+    "@graphql-tools/delegate": "^10.0.0",
+    "@graphql-tools/schema": "^10.0.0",
+    "@graphql-tools/stitch": "^9.0.0",
+    "@graphql-tools/stitching-directives": "^3.0.0"
   },
   "publishConfig": {
     "access": "public",

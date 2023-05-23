@@ -36,13 +36,13 @@
     "@graphql-mesh/store": "^0.93.1",
     "@graphql-mesh/types": "^0.93.1",
     "@graphql-mesh/utils": "^0.93.1",
-    "@graphql-tools/utils": "^9.2.1",
+    "@graphql-tools/utils": "^9.2.1 || ^10.0.0",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "^0.4.4",
-    "@graphql-tools/delegate": "^9.0.32",
+    "@graphql-tools/delegate": "^10.0.0",
     "@whatwg-node/fetch": "^0.8.3",
     "dataloader": "^2.2.2",
     "fast-xml-parser": "^4.2.1",

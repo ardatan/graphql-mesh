@@ -17,7 +17,7 @@
   "types": "index.d.ts",
   "typings": "./index.d.ts",
   "peerDependencies": {
-    "@graphql-tools/utils": "^9.2.1",
+    "@graphql-tools/utils": "^9.2.1 || ^10.0.0",
     "graphql": "*"
   },
   "dependencies": {
