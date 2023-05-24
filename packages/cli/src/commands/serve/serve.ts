@@ -2,21 +2,21 @@
 
 /* eslint-disable dot-notation */
 import cluster from 'cluster';
-import { createServer as createHTTPServer, Server } from 'http';
-import { createServer as createHTTPSServer } from 'https';
-import { Socket } from 'net';
 import { cpus, platform, release } from 'os';
 import dnscache from 'dnscache';
-import { useServer } from 'graphql-ws/lib/use/ws';
+import { execute, ExecutionArgs, subscribe } from 'graphql';
+import { makeBehavior } from 'graphql-ws/lib/use/uWebSockets';
 import 'json-bigint-patch';
 import open from 'open';
-import ws from 'ws';
-import { fs, process } from '@graphql-mesh/cross-helpers';
+// eslint-disable-next-line camelcase
+import { App, SSLApp, TemplatedApp, us_listen_socket_close } from 'uWebSockets.js';
+import { process } from '@graphql-mesh/cross-helpers';
 import { createMeshHTTPHandler } from '@graphql-mesh/http';
 import { MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
 import type { Logger } from '@graphql-mesh/types';
 import { handleFatalError } from '../../handleFatalError.js';
 import { GraphQLMeshCLIParams } from '../../index.js';
+import { getUwebsocketsHandlerForFetch } from './fetch-uwebsockets.js';
 
 const terminateEvents = ['SIGINT', 'SIGTERM'];
 
@@ -139,9 +139,9 @@ export async function serveMesh(
       })
       .catch(e => handleFatalError(e, logger));
 
-    let httpServer: Server;
+    let uWebSocketsApp: TemplatedApp;
 
-    const requestHandler = createMeshHTTPHandler({
+    const meshHTTPHandler = createMeshHTTPHandler({
       baseDir,
       getBuiltMesh: () => mesh$,
       rawServeConfig,
@@ -149,101 +149,79 @@ export async function serveMesh(
     });
 
     if (sslCredentials) {
-      const [key, cert] = await Promise.all([
-        fs.promises.readFile(sslCredentials.key, 'utf-8'),
-        fs.promises.readFile(sslCredentials.cert, 'utf-8'),
-      ]);
-      httpServer = createHTTPSServer({ key, cert }, requestHandler);
+      uWebSocketsApp = SSLApp({
+        key_file_name: sslCredentials.key,
+        cert_file_name: sslCredentials.cert,
+      });
     } else {
-      httpServer = createHTTPServer(requestHandler);
+      uWebSocketsApp = App();
     }
 
-    useServer(
-      {
-        onSubscribe: async ({ connectionParams, extra: { request } }, msg) => {
-          // spread connectionParams.headers to upgrade request headers.
-          // we completely ignore the root connectionParams because
-          // [@graphql-tools/url-loader adds the headers inside the "headers" field](https://github.com/ardatan/graphql-tools/blob/9a13357c4be98038c645f6efb26f0584828177cf/packages/loaders/url/src/index.ts#L597)
-          for (const [key, value] of Object.entries(connectionParams?.headers ?? {})) {
-            // dont overwrite existing upgrade headers due to security reasons
-            if (!(key.toLowerCase() in request.headers)) {
-              request.headers[key.toLowerCase()] = value;
-            }
-          }
-          const { getEnveloped } = await mesh$;
-          const { schema, execute, subscribe, contextFactory, parse, validate } = getEnveloped({
-            // req object holds the Node request used for extracting the headers (see packages/runtime/src/get-mesh.ts)
-            req: request,
-          });
+    const uWebSocketsHandler = getUwebsocketsHandlerForFetch({
+      fetchFn: meshHTTPHandler.fetch,
+      hostname,
+      port,
+      protocol,
+    });
 
-          const args = {
-            schema,
-            operationName: msg.payload.operationName,
-            document: parse(msg.payload.query),
-            variableValues: msg.payload.variables,
-            contextValue: await contextFactory(),
+    uWebSocketsApp.any('/*', uWebSocketsHandler);
+
+    // yoga's envelop may augment the `execute` and `subscribe` operations
+    // so we need to make sure we always use the freshest instance
+    type EnvelopedExecutionArgs = ExecutionArgs & {
+      rootValue: {
+        execute: typeof execute;
+        subscribe: typeof subscribe;
+      };
+    };
+
+    const wsHandler = makeBehavior({
+      execute: args => (args as EnvelopedExecutionArgs).rootValue.execute(args),
+      subscribe: args => (args as EnvelopedExecutionArgs).rootValue.subscribe(args),
+      onSubscribe: async (ctx, msg) => {
+        const { getEnveloped } = await mesh$;
+        const { schema, execute, subscribe, contextFactory, parse, validate } = getEnveloped(ctx);
+
+        const args: EnvelopedExecutionArgs = {
+          schema,
+          operationName: msg.payload.operationName,
+          document: parse(msg.payload.query),
+          variableValues: msg.payload.variables,
+          contextValue: await contextFactory(),
+          rootValue: {
             execute,
             subscribe,
-          };
+          },
+        };
 
-          const errors = validate(args.schema, args.document);
-          if (errors.length) return errors;
-
-          return args;
-        },
-        execute: (args: any) => args.execute(args),
-        subscribe: (args: any) => args.subscribe(args),
+        const errors = validate(args.schema, args.document);
+        if (errors.length) return errors;
+        return args;
       },
-      new ws.Server({
-        path: graphqlPath,
-        server: httpServer,
-      }),
-    );
+    });
 
-    const sockets = new Set<Socket>();
+    uWebSocketsApp.ws(graphqlPath, wsHandler);
 
-    httpServer
-      .listen(port, hostname, () => {
-        const shouldntOpenBrowser =
-          process.env.NODE_ENV?.toLowerCase() === 'production' || browser === false;
-        if (!shouldntOpenBrowser) {
-          open(
-            serverUrl.replace('0.0.0.0', 'localhost'),
-            typeof browser === 'string' ? { app: browser } : undefined,
-          ).catch(() => {});
-        }
-      })
-      .on('error', handleFatalError)
-      .on('connection', socket => {
-        sockets.add(socket);
-        socket.once('close', () => {
-          sockets.delete(socket);
-        });
+    uWebSocketsApp.listen(hostname, port, listenSocket => {
+      registerTerminateHandler(eventName => {
+        const eventLogger = logger.child(`${eventName}  💀`);
+        eventLogger.debug(`Stopping HTTP Server`);
+        us_listen_socket_close(listenSocket);
+        eventLogger.debug(`HTTP Server has been stopped`);
       });
-
-    registerTerminateHandler(eventName => {
-      const eventLogger = logger.child(`${eventName}  💀`);
-      if (sockets.size > 0) {
-        eventLogger.debug(`Open sockets found: ${sockets.size}`);
-        for (const socket of sockets) {
-          eventLogger.debug(`Destroying socket: ${socket.remoteAddress}`);
-          socket.destroy();
-          sockets.delete(socket);
-        }
+      const shouldntOpenBrowser =
+        process.env.NODE_ENV?.toLowerCase() === 'production' || browser === false;
+      if (!shouldntOpenBrowser) {
+        open(
+          serverUrl.replace('0.0.0.0', 'localhost'),
+          typeof browser === 'string' ? { app: browser } : undefined,
+        ).catch(() => {});
       }
-      eventLogger.debug(`Stopping HTTP Server`);
-      httpServer.close(error => {
-        if (error) {
-          eventLogger.error(`HTTP Server couldn't be stopped: `, error);
-        } else {
-          eventLogger.debug(`HTTP Server has been stopped`);
-        }
-      });
     });
 
     return mesh$.then(mesh => ({
       mesh,
-      httpServer,
+      httpServer: uWebSocketsApp,
       logger,
     }));
   }
