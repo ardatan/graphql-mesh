@@ -37,7 +37,7 @@ export function createMeshHTTPHandler<TServerContext>({
     {
       plugins: [
         {
-          async onRequest({ request, url, endResponse }): Promise<void> {
+          onRequest({ request, url, endResponse }): void | Promise<void> {
             if (!mesh$) {
               mesh$ = getBuiltMesh().then(mesh => {
                 readyFlag = true;
@@ -62,26 +62,27 @@ export function createMeshHTTPHandler<TServerContext>({
                 return;
             }
             if (readyFlag) {
-              const { pubsub } = await mesh$;
-              for (const eventName of pubsub.getEventNames()) {
-                if (eventName === `webhook:${request.method.toLowerCase()}:${url.pathname}`) {
-                  const body = await request.text();
-                  logger.debug(`Received webhook request for ${url.pathname}`, body);
-                  pubsub.publish(
-                    eventName,
-                    request.headers.get('content-type') === 'application/json'
-                      ? JSON.parse(body)
-                      : body,
-                  );
-                  endResponse(
-                    new Response(null, {
-                      status: 204,
-                      statusText: 'OK',
-                    }),
-                  );
-                  return;
+              return mesh$.then(async mesh => {
+                for (const eventName of mesh.pubsub.getEventNames()) {
+                  if (eventName === `webhook:${request.method.toLowerCase()}:${url.pathname}`) {
+                    const body = await request.text();
+                    logger.debug(`Received webhook request for ${url.pathname}`, body);
+                    mesh.pubsub.publish(
+                      eventName,
+                      request.headers.get('content-type') === 'application/json'
+                        ? JSON.parse(body)
+                        : body,
+                    );
+                    endResponse(
+                      new Response(null, {
+                        status: 204,
+                        statusText: 'OK',
+                      }),
+                    );
+                    return;
+                  }
                 }
-              }
+              });
             }
             if (staticFiles && request.method === 'GET') {
               let relativePath = url.pathname;
@@ -90,17 +91,17 @@ export function createMeshHTTPHandler<TServerContext>({
               }
               const absoluteStaticFilesPath = path.join(baseDir, staticFiles);
               const absolutePath = path.join(absoluteStaticFilesPath, relativePath);
-              if (
-                absolutePath.startsWith(absoluteStaticFilesPath) &&
-                (await pathExists(absolutePath))
-              ) {
-                const readStream = fs.createReadStream(absolutePath);
-                endResponse(
-                  new Response(readStream as any, {
-                    status: 200,
-                  }),
-                );
-                return;
+              if (absolutePath.startsWith(absoluteStaticFilesPath)) {
+                return pathExists(absolutePath).then(exists => {
+                  if (exists) {
+                    const readStream = fs.createReadStream(absolutePath);
+                    endResponse(
+                      new Response(readStream as any, {
+                        status: 200,
+                      }),
+                    );
+                  }
+                });
               }
             } else if (graphqlPath !== '/' && url.pathname === '/') {
               endResponse(
