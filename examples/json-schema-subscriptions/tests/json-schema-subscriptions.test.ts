@@ -1,6 +1,6 @@
 import { join } from 'path';
 import { findAndParseConfig } from '@graphql-mesh/cli';
-import { createMeshHTTPHandler } from '@graphql-mesh/http';
+import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';
 import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
 import { isAsyncIterable } from '@graphql-tools/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
@@ -9,6 +9,7 @@ import { createApi } from '../api/app';
 describe('JSON Schema Subscriptions', () => {
   let mesh: MeshInstance;
   let resetTodos = () => {};
+  let meshHttp: MeshHTTPHandler;
   const baseDir = join(__dirname, '..');
   beforeAll(async () => {
     const config = await findAndParseConfig({
@@ -20,9 +21,9 @@ describe('JSON Schema Subscriptions', () => {
         return api.app.fetch(url, options);
       },
     });
-    const meshHttp = createMeshHTTPHandler({
+    meshHttp = createMeshHTTPHandler({
       baseDir,
-      getBuiltMesh: async () => mesh,
+      getBuiltMesh: () => Promise.resolve(mesh),
     });
     const api = createApi(meshHttp.fetch as any);
   });
@@ -41,8 +42,9 @@ describe('JSON Schema Subscriptions', () => {
         }
       }
     `;
-    setTimeout(() => {
-      mesh.execute(
+    setTimeout(async () => {
+      await meshHttp.fetch('/');
+      return mesh.execute(
         /* GraphQL */ `
           mutation addTodo($name: String!, $content: String!) {
             addTodo(input: { name: $name, content: $content }) {
@@ -56,7 +58,7 @@ describe('JSON Schema Subscriptions', () => {
           content: 'Todo Subscription Content',
         },
       );
-    }, 300);
+    }, 1000);
     const subscriptionResult = await mesh.subscribe(subscription);
     if (!isAsyncIterable(subscriptionResult)) {
       throw new Error('Subscription result is not an async iterable');

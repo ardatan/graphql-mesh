@@ -9,7 +9,7 @@ export const graphqlHandler = (
   corsConfig: CORSOptions,
 ) => {
   let yoga$: Promise<ReturnType<typeof createYoga>>;
-  return (request: Request, ...args: any[]) => {
+  return (request: Request, ctx: any) => {
     if (!yoga$) {
       yoga$ = getBuiltMesh().then(mesh =>
         createYoga({
@@ -35,6 +35,6 @@ export const graphqlHandler = (
         }),
       );
     }
-    return yoga$.then(yoga => yoga(request, ...args));
+    return yoga$.then(yoga => yoga.handleRequest(request, ctx));
   };
 };
