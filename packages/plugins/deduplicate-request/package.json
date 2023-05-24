@@ -39,7 +39,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@whatwg-node/fetch": "0.8.8"
+    "@whatwg-node/fetch": "0.9.0"
   },
   "publishConfig": {
     "access": "public",

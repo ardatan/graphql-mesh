@@ -6121,6 +6121,14 @@
     urlpattern-polyfill "^8.0.0"
     web-streams-polyfill "^3.2.1"
 
+"@whatwg-node/fetch@0.9.0", "@whatwg-node/fetch@^0.9.0":
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.9.0.tgz#59492e13e33112afe561ec7f0b497db62284fa1c"
+  integrity sha512-zEyXaoz5w6BpKYKyZLTwBA41fqGuscOvSoPHytADRo1FY/s/fmjwiKq4QGmB88DlNuQ8e57s6AgWqIYyAT0Zmg==
+  dependencies:
+    "@whatwg-node/node-fetch" "^0.4.0"
+    urlpattern-polyfill "^8.0.0"
+
 "@whatwg-node/fetch@^0.6.6":
   version "0.6.9"
   resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.6.9.tgz#6cc694cc0378e27b8dfed427c5bf633eda6972b9"
@@ -6131,14 +6139,6 @@
     busboy "^1.6.0"
     urlpattern-polyfill "^6.0.2"
     web-streams-polyfill "^3.2.1"
-
-"@whatwg-node/fetch@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.9.0.tgz#59492e13e33112afe561ec7f0b497db62284fa1c"
-  integrity sha512-zEyXaoz5w6BpKYKyZLTwBA41fqGuscOvSoPHytADRo1FY/s/fmjwiKq4QGmB88DlNuQ8e57s6AgWqIYyAT0Zmg==
-  dependencies:
-    "@whatwg-node/node-fetch" "^0.4.0"
-    urlpattern-polyfill "^8.0.0"
 
 "@whatwg-node/node-fetch@^0.0.5":
   version "0.0.5"
