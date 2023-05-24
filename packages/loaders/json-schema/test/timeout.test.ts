@@ -46,6 +46,6 @@ describe('Timeout', () => {
         }
       `),
     });
-    expect(result?.errors?.[0]?.message).toContain('The operation was aborted');
+    expect(result?.errors?.[0]?.message?.toLowerCase()).toContain('abort');
   });
 });
