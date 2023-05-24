@@ -1,5 +1,5 @@
 import { GraphQLError, TypeInfo, visit, visitInParallel, visitWithTypeInfo } from 'graphql';
-import minimatch from 'minimatch';
+import { Minimatch } from 'minimatch';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
@@ -31,8 +31,8 @@ export default function useMeshRateLimit(
         onExecuteArgs.args.document,
         visitInParallel(
           options.config.map(config => {
-            const typeMatcher = new minimatch.Minimatch(config.type);
-            const fieldMatcher = new minimatch.Minimatch(config.field);
+            const typeMatcher = new Minimatch(config.type);
+            const fieldMatcher = new Minimatch(config.field);
             const identifier = stringInterpolator.parse(config.identifier, {
               env: process.env,
               root: onExecuteArgs.args.rootValue,

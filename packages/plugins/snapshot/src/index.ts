@@ -1,4 +1,4 @@
-import minimatch from 'minimatch';
+import { Minimatch } from 'minimatch';
 import { fs, path, process } from '@graphql-mesh/cross-helpers';
 import { hashObject } from '@graphql-mesh/string-interpolation';
 import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
@@ -33,7 +33,7 @@ export default function useSnapshot(
       return {};
     }
   }
-  const matches = pluginOptions.apply.map(glob => new minimatch.Minimatch(glob));
+  const matches = pluginOptions.apply.map(glob => new Minimatch(glob));
   const snapshotsDir = pluginOptions.outputDir || '__snapshots__';
   return {
     async onFetch({ url, options, setFetchFn }) {

@@ -1,5 +1,5 @@
 import { GraphQLSchema } from 'graphql';
-import minimatch from 'minimatch';
+import { Minimatch } from 'minimatch';
 import { MeshTransform, YamlConfig } from '@graphql-mesh/types';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
 
@@ -45,7 +45,7 @@ export default class BareFilter implements MeshTransform {
 
   matchInArray(rulesArray: string[], value: string): null | undefined {
     for (const rule of rulesArray) {
-      const ruleMatcher = new minimatch.Minimatch(rule);
+      const ruleMatcher = new Minimatch(rule);
       if (!ruleMatcher.match(value)) return null;
     }
     return undefined;

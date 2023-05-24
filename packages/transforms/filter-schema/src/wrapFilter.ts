@@ -1,5 +1,5 @@
 import { GraphQLSchema } from 'graphql';
-import minimatch from 'minimatch';
+import { Minimatch } from 'minimatch';
 import { YamlConfig } from '@graphql-mesh/types';
 import {
   applyRequestTransforms,
@@ -22,7 +22,7 @@ export default class WrapFilter implements Transform {
   constructor({ config: { filters } }: { config: YamlConfig.FilterSchemaTransform }) {
     for (const filter of filters) {
       const [typeName, fieldNameOrGlob, argsGlob] = filter.split('.');
-      const typeMatcher = new minimatch.Minimatch(typeName);
+      const typeMatcher = new Minimatch(typeName);
 
       // TODO: deprecate this in next major release as dscussed in #1605
       if (!fieldNameOrGlob) {
@@ -40,7 +40,7 @@ export default class WrapFilter implements Transform {
       }
       fixedFieldGlob = fixedFieldGlob.split(', ').join(',');
 
-      const globalTypeMatcher = new minimatch.Minimatch(fixedFieldGlob.trim());
+      const globalTypeMatcher = new Minimatch(fixedFieldGlob.trim());
 
       if (typeName === 'Type') {
         this.transforms.push(
@@ -52,7 +52,7 @@ export default class WrapFilter implements Transform {
       }
 
       if (argsGlob) {
-        const fieldMatcher = new minimatch.Minimatch(fieldNameOrGlob);
+        const fieldMatcher = new Minimatch(fieldNameOrGlob);
 
         this.transforms.push(
           new TransformCompositeFields((fieldTypeName, fieldName, fieldConfig) => {
