@@ -18,12 +18,12 @@ import { generateOperations } from './generate-operations.js';
 const unifiedContextIdentifier = 'MeshContext';
 
 class CodegenHelpers extends tsBasePlugin.TsVisitor {
-  public getTypeToUse(namedType: NamedTypeNode): string {
+  public getTypeToUse(namedType: NamedTypeNode, isVisitingInputType: boolean): string {
     if (this.scalars[namedType.name.value]) {
-      return this._getScalar(namedType.name.value);
+      return this._getScalar(namedType.name.value, isVisitingInputType ? 'input' : 'output');
     }
 
-    return this._getTypeForNode(namedType);
+    return this._getTypeForNode(namedType, isVisitingInputType);
   }
 }
 
@@ -53,6 +53,7 @@ function buildSignatureBasedOnRootFields(
       field.name
     }: InContextSdkMethod<${codegenHelpers.getTypeToUse(
       parentTypeNode,
+      false,
     )}['${fieldName}'], ${argsName}, ${unifiedContextIdentifier}>`;
   }
   return operationMap;
