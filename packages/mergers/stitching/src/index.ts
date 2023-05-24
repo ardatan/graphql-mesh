@@ -16,7 +16,7 @@ import {
   stitchingDirectives,
   StitchingDirectivesResult,
 } from '@graphql-tools/stitching-directives';
-import { AggregateError, Executor, printSchemaWithDirectives } from '@graphql-tools/utils';
+import { Executor, printSchemaWithDirectives } from '@graphql-tools/utils';
 
 const APOLLO_GET_SERVICE_DEFINITION_QUERY = /* GraphQL */ `
   query __ApolloGetServiceDefinition__ {
