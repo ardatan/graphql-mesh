@@ -540,6 +540,7 @@ type Query @globalOptions(sourceName: "test", endpoint: "https://api.spotify.com
   get_available_markets: get_available_markets_200_response @httpOperation(path: "/markets", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
 }
 
+"An album"
 type AlbumObject {
   album_type: query_get_an_album_allOf_0_album_type!
   "The number of tracks in the album."
@@ -638,6 +639,7 @@ type ExternalIdObject {
   upc: String
 }
 
+"An artist"
 type ArtistObject {
   external_urls: ExternalUrlObject
   followers: FollowersObject
@@ -669,6 +671,7 @@ enum artist_const @typescript(type: "\\"artist\\"") @example(value: "\\"artist\\
   artist @enum(value: "\\"artist\\"")
 }
 
+"Pages of tracks"
 type PagingSimplifiedTrackObject {
   "A link to the Web API endpoint returning the full result of the request"
   href: String!
@@ -762,6 +765,7 @@ type ManyArtists_response {
   artists: [ArtistObject]!
 }
 
+"Pages of albums"
 type PagingSimplifiedAlbumObject {
   "A link to the Web API endpoint returning the full result of the request"
   href: String!
@@ -827,6 +831,7 @@ type ManyTracks_response {
   tracks: [TrackObject]!
 }
 
+"A track"
 type TrackObject {
   album: SimplifiedAlbumObject
   "The artists who performed the track. Each artist object includes a link in \`href\` to more detailed information about the artist."
@@ -871,6 +876,7 @@ enum track_const @typescript(type: "\\"track\\"") @example(value: "\\"track\\"")
   track @enum(value: "\\"track\\"")
 }
 
+"A show"
 type ShowObject {
   "A list of the countries in which the show can be played, identified by their [ISO 3166-1 alpha-2](http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code."
   available_markets: [String]!
@@ -911,6 +917,7 @@ enum show_const @typescript(type: "\\"show\\"") @example(value: "\\"show\\"") {
   show @enum(value: "\\"show\\"")
 }
 
+"Pages of episodes"
 type PagingSimplifiedEpisodeObject {
   "A link to the Web API endpoint returning the full result of the request"
   href: String!
@@ -1033,6 +1040,7 @@ type SimplifiedShowObject {
   JSON: JSON @resolveRoot
 }
 
+"An episode"
 type EpisodeObject {
   "A URL to a 30 second preview (MP3 format) of the episode. \`null\` if not available."
   audio_preview_url: URL!
@@ -1077,6 +1085,7 @@ type ManyEpisodes_response {
   episodes: [EpisodeObject]!
 }
 
+"An Audiobook"
 type AudiobookObject {
   "The author(s) for the audiobook."
   authors: [AuthorObject]!
@@ -1131,6 +1140,7 @@ enum audiobook_const @typescript(type: "\\"audiobook\\"") @example(value: "\\"au
   audiobook @enum(value: "\\"audiobook\\"")
 }
 
+"Pages of chapters"
 type PagingSimplifiedChapterObject {
   "A link to the Web API endpoint returning the full result of the request"
   href: String!
@@ -1203,6 +1213,7 @@ type ManyAudiobooks_response {
   audiobooks: [AudiobookObject]!
 }
 
+"Pages of audiobooks"
 type PagingSimplifiedAudiobookObject {
   "A link to the Web API endpoint returning the full result of the request"
   href: String!
@@ -1259,6 +1270,7 @@ type SimplifiedAudiobookObject {
   JSON: JSON @resolveRoot
 }
 
+"A Chapter"
 type ChapterObject {
   "A URL to a 30 second preview (MP3 format) of the episode. \`null\` if not available."
   audio_preview_url: URL!
@@ -1346,6 +1358,7 @@ type PagingArtistObject {
   items: [ArtistObject]
 }
 
+"A paged set of playlists"
 type PagingPlaylistObject {
   "A link to the Web API endpoint returning the full result of the request"
   href: String!
@@ -1413,6 +1426,7 @@ type PlaylistTracksRefObject {
   total: Int
 }
 
+"Pages of shows"
 type PagingSimplifiedShowObject {
   "A link to the Web API endpoint returning the full result of the request"
   href: String!
@@ -1443,6 +1457,7 @@ enum Include_External @typescript(type: "\\"audio\\"") @example(value: "\\"audio
   audio @enum(value: "\\"audio\\"")
 }
 
+"A user"
 type PrivateUserObject {
   "The country of the user, as set in the user's account profile. An [ISO 3166-1 alpha-2 country code](http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2). _This field is only available when the current user has granted access to the [user-read-private](/documentation/web-api/concepts/scopes/#list-of-scopes) scope._"
   country: String
@@ -1474,6 +1489,7 @@ type ExplicitContentSettingsObject {
   filter_locked: Boolean
 }
 
+"A playlist"
 type PlaylistObject {
   "\`true\` if the owner allows other users to modify the playlist."
   collaborative: Boolean
@@ -1501,6 +1517,7 @@ type PlaylistObject {
   uri: String
 }
 
+"Pages of tracks"
 type PagingPlaylistTrackObject {
   "A link to the Web API endpoint returning the full result of the request"
   href: String!
@@ -1544,6 +1561,7 @@ type PlaylistUserObject {
 "Information about the track or episode."
 union query_get_playlist_tracks_allOf_1_items_items_track @discriminator(field: "type", mapping: "{}") = TrackObject | EpisodeObject
 
+"Pages of albums"
 type PagingSavedAlbumObject {
   "A link to the Web API endpoint returning the full result of the request"
   href: String!
@@ -1563,9 +1581,11 @@ type PagingSavedAlbumObject {
 type SavedAlbumObject {
   "The date and time the album was saved\\nTimestamps are returned in ISO 8601 format as Coordinated Universal Time (UTC) with a zero offset: YYYY-MM-DDTHH:MM:SSZ.\\nIf the time is imprecise (for example, the date/time of an album release), an additional field indicates the precision; see for example, release_date in an album object."
   added_at: DateTime
+  "An album"
   album: AlbumObject
 }
 
+"Pages of tracks"
 type PagingSavedTrackObject {
   "A link to the Web API endpoint returning the full result of the request"
   href: String!
@@ -1588,6 +1608,7 @@ type SavedTrackObject {
   track: TrackObject
 }
 
+"Pages of episodes"
 type PagingSavedEpisodeObject {
   "A link to the Web API endpoint returning the full result of the request"
   href: String!
@@ -1610,6 +1631,7 @@ type SavedEpisodeObject {
   episode: EpisodeObject
 }
 
+"Pages of shows"
 type PagingSavedShowObject {
   "A link to the Web API endpoint returning the full result of the request"
   href: String!
@@ -1657,6 +1679,7 @@ enum Type {
   tracks
 }
 
+"A user"
 type PublicUserObject {
   "The name displayed on the user's profile. \`null\` if not available."
   display_name: String
@@ -1673,6 +1696,7 @@ type PublicUserObject {
   uri: String
 }
 
+"A paged set of playlists"
 type PagingFeaturedPlaylistObject {
   message: String
   playlists: PagingPlaylistObject
@@ -1698,6 +1722,7 @@ type PagingObject {
   total: Int!
 }
 
+"A category"
 type CategoryObject {
   "A link to the Web API endpoint returning full details of the category."
   href: String!
@@ -1754,6 +1779,7 @@ type ManyAudioFeatures_response {
   audio_features: [AudioFeaturesObject]!
 }
 
+"Audio features for one track"
 type AudioFeaturesObject {
   "A confidence measure from 0.0 to 1.0 of whether the track is acoustic. 1.0 represents high confidence the track is acoustic."
   acousticness: Float
@@ -1799,6 +1825,7 @@ enum audio_features_const @typescript(type: "\\"audio_features\\"") @example(val
   audio_features @enum(value: "\\"audio_features\\"")
 }
 
+"Audio analysis for one track"
 type AudioAnalysisObject {
   meta: query_get_audio_analysis_meta
   track: query_get_audio_analysis_track
@@ -1952,6 +1979,7 @@ type SegmentObject {
   timbre: [Float]
 }
 
+"A set of recommendations"
 type RecommendationsObject {
   "An array of recommendation seed objects."
   seeds: [RecommendationSeedObject]!
@@ -1981,6 +2009,7 @@ type ManyGenres_response {
 
 union get_information_about_the_users_current_playback_response @statusCodeTypeName(statusCode: 200, typeName: "CurrentlyPlayingContextObject") @statusCodeTypeName(statusCode: 204, typeName: "Void_container") = CurrentlyPlayingContextObject | Void_container
 
+"Information about playback"
 type CurrentlyPlayingContextObject {
   device: DeviceObject
   "off, track, context"
@@ -2065,6 +2094,7 @@ type ManyDevices_response {
   devices: [DeviceObject]!
 }
 
+"A paged set of tracks"
 type CursorPagingPlayHistoryObject {
   "A link to the Web API endpoint returning the full result of the request."
   href: String
@@ -2085,6 +2115,7 @@ type PlayHistoryObject {
   context: ContextObject
 }
 
+"Information about the queue"
 type QueueObject {
   currently_playing: query_get_queue_currently_playing
   "The tracks or episodes in the queue. Can be empty."

@@ -1,8 +1,6 @@
-import { join } from 'path';
-import { Response } from 'fets';
-import { GraphQLSchema } from 'graphql';
-import { execute, parse } from 'graphql/index';
+import { execute, GraphQLSchema, parse } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { Response } from '@whatwg-node/fetch';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 
 describe('Spotify', () => {
@@ -10,10 +8,10 @@ describe('Spotify', () => {
 
   beforeAll(async () => {
     schema = await loadGraphQLSchemaFromOpenAPI('test', {
-      source: join(__dirname, './fixtures/spotify.yml'),
+      source: './fixtures/spotify.yml',
+      cwd: __dirname,
       ignoreErrorResponses: true,
       fetch: (url): Promise<Response> => {
-        console.log(url);
         return Promise.resolve(
           new Response(
             JSON.stringify({

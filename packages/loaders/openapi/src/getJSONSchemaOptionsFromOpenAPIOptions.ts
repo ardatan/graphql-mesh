@@ -9,12 +9,7 @@ import { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import { process } from '@graphql-mesh/cross-helpers';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import { Logger } from '@graphql-mesh/types';
-import {
-  defaultImportFn,
-  DefaultLogger,
-  readFileOrUrl,
-  sanitizeNameForGraphQL,
-} from '@graphql-mesh/utils';
+import { defaultImportFn, DefaultLogger, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import {
   HTTPMethod,
   JSONSchemaHTTPJSONOperationConfig,
@@ -61,21 +56,39 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
   }
   const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders);
   logger?.debug(`Fetching OpenAPI Document from ${source}`);
-  let oasOrSwagger: OpenAPIV3.Document | OpenAPIV2.Document =
-    typeof source === 'string'
-      ? await readFileOrUrl(source, {
-          cwd,
-          fallbackFormat,
-          headers: schemaHeadersFactory({ env: process.env }),
-          fetch: fetchFn,
-          importFn: defaultImportFn,
-          logger,
-        })
-      : source;
+  let oasOrSwagger: OpenAPIV3.Document | OpenAPIV2.Document;
+  if (typeof source === 'string') {
+    oasOrSwagger = (await dereferenceObject(
+      {
+        $ref: source,
+      },
+      {
+        cwd,
+        headers: schemaHeadersFactory({ env: process.env }),
+        fetchFn,
+        importFn: defaultImportFn,
+        logger,
+      },
+    )) as any;
+  } else {
+    oasOrSwagger = await dereferenceObject(source, {
+      cwd,
+      headers: schemaHeadersFactory({ env: process.env }),
+      fetchFn,
+      importFn: defaultImportFn,
+      logger,
+    });
+  }
 
   handleUntitledDefinitions(oasOrSwagger);
 
-  oasOrSwagger = (await dereferenceObject(oasOrSwagger)) as any;
+  oasOrSwagger = (await dereferenceObject(oasOrSwagger, {
+    cwd,
+    headers: schemaHeadersFactory({ env: process.env }),
+    fetchFn,
+    importFn: defaultImportFn,
+    logger,
+  })) as any;
   const operations: JSONSchemaOperationConfig[] = [];
   let baseOperationArgTypeMap: Record<string, JSONSchemaObject>;
 
