@@ -4,18 +4,13 @@ import { HttpRequest, HttpResponse } from 'uWebSockets.js';
 import { MeshHTTPHandler } from '@graphql-mesh/http';
 import { pipeStreamOverResponse } from './pipeStreamOverResponse.js';
 
-interface ServerContext {
-  req: HttpRequest;
-  res: HttpResponse;
-}
-
 export function getUwebsocketsHandlerForFetch({
   fetchFn,
   protocol,
   hostname,
   port,
 }: {
-  fetchFn: MeshHTTPHandler<ServerContext>['fetch'];
+  fetchFn: MeshHTTPHandler['fetch'];
   protocol: 'http' | 'https';
   hostname: string;
   port: number;
