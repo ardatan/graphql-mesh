@@ -1401,6 +1401,12 @@ export interface RenameTransformObject {
    * Flags to use in the Regular Expression
    */
   regExpFlags?: string;
+  /**
+   * Flag to indicate whether certain default types (built-ins, scalars and other types specified an exclusion list) should be renamed or not.
+   *
+   * @default: false
+   */
+  includeDefaults?: boolean;
 }
 export interface RenameConfig {
   type?: string;

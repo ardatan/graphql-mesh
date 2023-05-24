@@ -13,3 +13,6 @@
   * `useRegExpForFields` (type: `Boolean`) - Use Regular Expression for field names
   * `useRegExpForArguments` (type: `Boolean`) - Use Regular Expression for field names
   * `regExpFlags` (type: `String`) - Flags to use in the Regular Expression
+  * `includeDefaults` (type: `Boolean`) - Flag to indicate whether certain default types (built-ins, scalars and other types specified an exclusion list) should be renamed or not.
+
+@default: false

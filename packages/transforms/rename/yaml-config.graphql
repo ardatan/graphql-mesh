@@ -37,6 +37,12 @@ type RenameTransformObject @md {
   Flags to use in the Regular Expression
   """
   regExpFlags: String
+  """
+  Flag to indicate whether certain default types (built-ins, scalars and other types specified an exclusion list) should be renamed or not.
+
+  @default: false
+  """
+  includeDefaults: Boolean
 }
 
 type RenameConfig {

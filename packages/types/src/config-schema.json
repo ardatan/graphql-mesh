@@ -3679,6 +3679,10 @@
         "regExpFlags": {
           "type": "string",
           "description": "Flags to use in the Regular Expression"
+        },
+        "includeDefaults": {
+          "type": "boolean",
+          "description": "Flag to indicate whether certain default types (built-ins, scalars and other types specified an exclusion list) should be renamed or not.\n\n@default: false"
         }
       },
       "required": ["from", "to"]
