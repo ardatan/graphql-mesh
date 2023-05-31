@@ -16,7 +16,6 @@ import { MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
 import type { Logger } from '@graphql-mesh/types';
 import { handleFatalError } from '../../handleFatalError.js';
 import { GraphQLMeshCLIParams } from '../../index.js';
-import { getUwebsocketsHandlerForFetch } from './fetch-uwebsockets.js';
 
 const terminateEvents = ['SIGINT', 'SIGTERM'];
 
@@ -157,14 +156,7 @@ export async function serveMesh(
       uWebSocketsApp = App();
     }
 
-    const uWebSocketsHandler = getUwebsocketsHandlerForFetch({
-      fetchFn: meshHTTPHandler.fetch,
-      hostname,
-      port,
-      protocol,
-    });
-
-    uWebSocketsApp.any('/*', uWebSocketsHandler);
+    uWebSocketsApp.any('/*', meshHTTPHandler);
 
     // yoga's envelop may augment the `execute` and `subscribe` operations
     // so we need to make sure we always use the freshest instance
