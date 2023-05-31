@@ -2826,12 +2826,12 @@
     tslib "^2.4.0"
     value-or-promise "^1.0.12"
 
-"@graphql-tools/code-file-loader@8.0.0", "@graphql-tools/code-file-loader@^8.0.0":
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/code-file-loader/-/code-file-loader-8.0.0.tgz#1e1c90b2924df4c518bbef284ded4f5659ab37ab"
-  integrity sha512-nq36yQnUVp6Roti+RFatInRogZzbwdFKZK1YBCmP3XpUvoOBbWaHaLKxVE9mU5lb9nL99zKzhq6gfh5syzxjJQ==
+"@graphql-tools/code-file-loader@8.0.1", "@graphql-tools/code-file-loader@^8.0.0":
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/code-file-loader/-/code-file-loader-8.0.1.tgz#86ab699cc8ed76010b2f0401e8a4a149338b759e"
+  integrity sha512-pmg81lsIXGW3uW+nFSCIG0lFQIxWVbgDjeBkSWlnP8CZsrHTQEkB53DT7t4BHLryoxDS4G4cPxM52yNINDSL8w==
   dependencies:
-    "@graphql-tools/graphql-tag-pluck" "8.0.0"
+    "@graphql-tools/graphql-tag-pluck" "8.0.1"
     "@graphql-tools/utils" "^10.0.0"
     globby "^11.0.3"
     tslib "^2.4.0"
@@ -3038,10 +3038,10 @@
     "@graphql-tools/utils" "^9.2.1"
     tslib "^2.4.0"
 
-"@graphql-tools/graphql-tag-pluck@8.0.0":
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/graphql-tag-pluck/-/graphql-tag-pluck-8.0.0.tgz#9dee8afb1560deff04c6dd3b0b181d7bc496ef38"
-  integrity sha512-/xFXF7RwWf1UDAnUN/984Q1clRxRcWwO7lxi+BDzuwN14DJb424FVAmFOroBeeFWQNdj8qtNGLWhAbx23khvHQ==
+"@graphql-tools/graphql-tag-pluck@8.0.1":
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/graphql-tag-pluck/-/graphql-tag-pluck-8.0.1.tgz#480d804a0fd7576f5ee06460528f1ee2b426f50e"
+  integrity sha512-4sfBJSoXxVB4rRCCp2GTFhAYsUJgAPSKxSV+E3Voc600mK52JO+KsHCCTnPgCeyJFMNR9l94J6+tqxVKmlqKvw==
   dependencies:
     "@babel/parser" "^7.16.8"
     "@babel/plugin-syntax-import-assertions" "^7.20.0"
@@ -6309,15 +6309,7 @@
     "@whatwg-node/fetch" "^0.8.3"
     tslib "^2.3.1"
 
-"@whatwg-node/server@^0.8.0":
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.8.0.tgz#2fd40353a5c811e37fd5a83f4b343cc38d014ac2"
-  integrity sha512-ZEAZuzBQP40PYJ5iBbmMy46CqzF97QctLPQtFVlXnpVZwo7mMeWNf2u+1sZPM7rEgxCK2MgIUeeuKR2C2XaoMg==
-  dependencies:
-    "@whatwg-node/fetch" "^0.9.0"
-    tslib "^2.3.1"
-
-"@whatwg-node/server@^0.8.1":
+"@whatwg-node/server@^0.8.0", "@whatwg-node/server@^0.8.1":
   version "0.8.1"
   resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.8.1.tgz#dc22ca2cf4b834d1437c0ef97c3e79d63e4d10b4"
   integrity sha512-5nzOE61W5VA43rE4MeUVHLDPpZGDfGiQ5LnEwJNbVehUI6Ua8QD566C8dhBmXxFuT8pXTlxWZHe3sjjGZCc4ng==
