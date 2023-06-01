@@ -1,4 +1,4 @@
-import { AnySchema, JSONSchema, JSONSchemaObject } from 'json-machete';
+import { AnySchema, JSONSchemaObject } from 'json-machete';
 import toJsonSchema from 'to-json-schema';
 import { getInterpolationKeys } from '@graphql-mesh/string-interpolation';
 import { Logger } from '@graphql-mesh/types';
@@ -91,7 +91,7 @@ export async function getReferencedJSONSchemaFromOperations({
   operationHeaders: Record<string, string>;
   queryParams: Record<string, string | number | boolean>;
 }) {
-  const finalJsonSchema: JSONSchema = {
+  const finalJsonSchema: JSONSchemaObject = {
     type: 'object',
     title: '_schema',
     properties: {},

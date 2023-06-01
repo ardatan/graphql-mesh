@@ -10540,7 +10540,7 @@ fengari@^0.1.4:
     sprintf-js "^1.1.1"
     tmp "^0.0.33"
 
-fets@^0.2.0:
+fets@0.2.0, fets@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/fets/-/fets-0.2.0.tgz#4a1601dfc43a53e141aa10740d27dd3f95ee1ddb"
   integrity sha512-e4uBzNl1IVjfc+7H6F0eM5RGpUV6KpREmGI7GYcXuUj80Whk2Exu+n3m9vk94skdlzAmltBqDfwh6Ch5Ds0dLg==

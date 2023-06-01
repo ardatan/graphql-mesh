@@ -725,7 +725,6 @@ export function getComposerFromJSONSchema(
           ],
         });
         const extensions: Record<string, any> = {};
-        const directives = [];
         if (subSchema.$comment?.startsWith('statusCodeOneOfIndexMap:')) {
           const statusCodeOneOfIndexMapStr = subSchema.$comment.replace(
             'statusCodeOneOfIndexMap:',
@@ -736,22 +735,6 @@ export function getComposerFromJSONSchema(
             extensions.statusCodeOneOfIndexMap = statusCodeOneOfIndexMap;
           }
         }
-        if (subSchema.discriminator?.propertyName) {
-          schemaComposer.addDirective(DiscriminatorDirective);
-          const mappingByName: Record<string, string> = {};
-          for (const discriminatorValue in subSchema.discriminator.mapping) {
-            const ref = subSchema.discriminator.mapping[discriminatorValue];
-            const typeName = ref.replace('#/components/schemas/', '');
-            mappingByName[discriminatorValue] = typeName;
-          }
-          directives.push({
-            name: 'discriminator',
-            args: {
-              field: subSchema.discriminator.propertyName,
-              mapping: mappingByName,
-            },
-          });
-        }
         const output = schemaComposer.createUnionTC({
           name: getValidTypeName({
             schemaComposer,
@@ -760,7 +743,6 @@ export function getComposerFromJSONSchema(
           }),
           description: subSchema.description,
           types: [],
-          directives,
           extensions,
         });
         return {
@@ -844,20 +826,7 @@ export function getComposerFromJSONSchema(
             },
           }),
           output: subSchema.discriminator
-            ? schemaComposer.createInterfaceTC({
-                ...config,
-                resolveType(root: any) {
-                  return root[subSchema.discriminator.propertyName];
-                },
-                directives: [
-                  {
-                    name: 'discriminator',
-                    args: {
-                      propertyName: subSchema.discriminator.propertyName,
-                    },
-                  },
-                ],
-              })
+            ? schemaComposer.createInterfaceTC(config)
             : schemaComposer.createObjectTC(config),
           ...subSchema,
           ...(subSchema.properties ? { properties: { ...subSchema.properties } } : {}),
@@ -869,6 +838,9 @@ export function getComposerFromJSONSchema(
                     ? true
                     : { ...subSchema.additionalProperties },
               }
+            : {}),
+          ...(subSchema.discriminatorMapping
+            ? { discriminatorMapping: { ...subSchema.discriminatorMapping } }
             : {}),
         };
       }
@@ -882,6 +854,27 @@ export function getComposerFromJSONSchema(
         input: undefined,
         output: undefined,
       };
+      if (subSchemaOnly.discriminator?.propertyName) {
+        schemaComposer.addDirective(DiscriminatorDirective);
+        const discriminatorArgs: {
+          field: string;
+          mapping?: Record<string, string>;
+        } = {
+          field: subSchemaOnly.discriminator.propertyName,
+        };
+        if (subSchemaOnly.discriminator.mapping) {
+          const mappingByName: Record<string, string> = {};
+          for (const discriminatorValue in subSchemaOnly.discriminatorMapping) {
+            const discType = subSchemaOnly.discriminatorMapping[discriminatorValue];
+            mappingByName[discriminatorValue] = discType.output.getTypeName();
+          }
+          discriminatorArgs.mapping = mappingByName;
+        }
+        (subSchemaAndTypeComposers.output as InterfaceTypeComposer).setDirectiveByName(
+          'discriminator',
+          discriminatorArgs,
+        );
+      }
       if (subSchemaAndTypeComposers.oneOf && !subSchemaAndTypeComposers.properties) {
         const isPlural = (subSchemaAndTypeComposers.oneOf as TypeComposers[]).some(
           ({ output }) => 'ofType' in output,
@@ -973,6 +966,9 @@ export function getComposerFromJSONSchema(
             if (outputTypeComposer instanceof InterfaceTypeComposer) {
               (subSchemaAndTypeComposers.output as ObjectTypeComposer).addInterface(
                 outputTypeComposer,
+              );
+              schemaComposer.addSchemaMustHaveType(
+                subSchemaAndTypeComposers.output as ObjectTypeComposer,
               );
             }
 
@@ -1369,6 +1365,12 @@ export function getComposerFromJSONSchema(
           if (Object.keys(fieldMap).length === 0) {
             output = schemaComposer.getAnyTC(GraphQLJSON);
           } else if ('addFields' in output) {
+            if (subSchemaOnly.discriminatorMapping) {
+              for (const discriminatorValue in subSchemaOnly.discriminatorMapping) {
+                const discType = subSchemaOnly.discriminatorMapping[discriminatorValue];
+                discType.output.addFields(fieldMap);
+              }
+            }
             (output as ObjectTypeComposer).addFields(fieldMap);
           }
           let input = subSchemaAndTypeComposers.input;

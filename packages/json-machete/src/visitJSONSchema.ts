@@ -30,6 +30,7 @@ const dictFields = [
   'definitions',
   'properties',
   'patternProperties',
+  'discriminatorMapping',
 ] as const;
 
 export async function visitJSONSchema(
@@ -78,7 +79,7 @@ export async function visitJSONSchema(
         }
       }
 
-      if (enterResult.components?.schema) {
+      if (enterResult.components?.schemas) {
         const entries = Object.entries(enterResult.components.schemas);
         for (const [schemaName, subSchema] of entries) {
           enterResult.components.schemas[schemaName] = await visitJSONSchema(

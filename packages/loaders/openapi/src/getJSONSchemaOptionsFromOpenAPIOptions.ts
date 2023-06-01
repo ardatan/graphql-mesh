@@ -82,13 +82,21 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
 
   handleUntitledDefinitions(oasOrSwagger);
 
-  oasOrSwagger = (await dereferenceObject(oasOrSwagger, {
-    cwd,
-    headers: schemaHeadersFactory({ env: process.env }),
-    fetchFn,
-    importFn: defaultImportFn,
-    logger,
-  })) as any;
+  for (const [_name, schema] of Object.entries(
+    (oasOrSwagger as OpenAPIV3.Document).components?.schemas || {},
+  )) {
+    const mapping = (schema as any).discriminator?.mapping as Record<string, string>;
+    if (mapping) {
+      for (const [key, value] of Object.entries(mapping)) {
+        if (typeof value === 'string') {
+          const [, ref] = value.split('#');
+          (schema as any).discriminatorMapping = (schema as any).discriminatorMapping || {};
+          (schema as any).discriminatorMapping[key] = resolvePath(ref, oasOrSwagger);
+        }
+      }
+    }
+  }
+
   const operations: JSONSchemaOperationConfig[] = [];
   let baseOperationArgTypeMap: Record<string, JSONSchemaObject>;
 
