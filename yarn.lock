@@ -7341,10 +7341,10 @@ bluebird@^3.4.0, bluebird@^3.5.0, bluebird@^3.5.5:
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.7.2.tgz#9f229c15be272454ffa973ace0dbee79a1b0c36f"
   integrity sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg==
 
-bob-the-bundler@7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/bob-the-bundler/-/bob-the-bundler-7.0.0.tgz#18f5ba3d5de1fd12b1d743045dfcb49f3112dbcf"
-  integrity sha512-W758FeY/k9p8x4VVdT6Qaf3yLKMbAtwWkKm1+REpwgb5T750S8BkMwXv1VyPunOX51FUHhDB96qNrTnGSuGszQ==
+bob-the-bundler@7.0.1:
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/bob-the-bundler/-/bob-the-bundler-7.0.1.tgz#ef86131674de60f2616801d55a507594b4cbd88f"
+  integrity sha512-TFpj2AcCzTNVyMZ5ixHqJndJ9KyIUGrgTMMciz88X0HCRDujoUQL+D+61shAY+K20bM4q5Yn/NunbdiPC9drjA==
   dependencies:
     consola "^3.0.0"
     execa "7.1.1"
