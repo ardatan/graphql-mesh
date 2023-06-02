@@ -8,7 +8,6 @@ const schemas: Record<string, string> = {
   IBMLanguageTranslator: 'ibm_language_translator.json',
   InfiniteRecursion: 'infinite-recursion.yml',
   Kubernetes: 'kubernetes.json',
-  Pet: 'pet.yml',
   Stripe: 'stripe.json',
   Toto: 'toto.yml',
   Jira: 'jira.json',

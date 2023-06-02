@@ -19,34 +19,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Pet'
-  /dogs/{id}:
-    get:
-      parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Dog'
-  /cats/{id}:
-    get:
-      parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Cat'
 
 components:
   schemas:
