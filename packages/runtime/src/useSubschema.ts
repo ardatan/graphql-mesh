@@ -1,4 +1,4 @@
-import { BREAK, execute, OperationDefinitionNode, visit } from 'graphql';
+import { BREAK, execute, FieldNode, OperationDefinitionNode, visit } from 'graphql';
 import { mapAsyncIterator, Plugin, TypedExecutionArgs } from '@envelop/core';
 import { applyRequestTransforms, applyResultTransforms } from '@graphql-mesh/utils';
 import { createBatchingExecutor } from '@graphql-tools/batch-execute';
@@ -27,7 +27,7 @@ function getIntrospectionOperationType(
 ): IntrospectionQueryType | null {
   let introspectionQueryType = null;
   visit(operationAST, {
-    Field: node => {
+    Field: (node: FieldNode): any => {
       if (node.name.value === '__schema' || node.name.value === '__type') {
         introspectionQueryType = IntrospectionQueryType.REGULAR;
         return BREAK;
