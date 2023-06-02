@@ -1559,7 +1559,7 @@ type PlaylistUserObject {
 }
 
 "Information about the track or episode."
-union query_get_playlist_tracks_allOf_1_items_items_track @discriminator(field: "type", mapping: "{}") = TrackObject | EpisodeObject
+union query_get_playlist_tracks_allOf_1_items_items_track @discriminator(field: "type") = TrackObject | EpisodeObject
 
 "Pages of albums"
 type PagingSavedAlbumObject {
@@ -1671,7 +1671,7 @@ type PagingArtistOrTrackObject_response {
   items: [query_get_users_top_artists_and_tracks_allOf_1_items_items]
 }
 
-union query_get_users_top_artists_and_tracks_allOf_1_items_items @discriminator(field: "type", mapping: "{}") = ArtistObject | TrackObject
+union query_get_users_top_artists_and_tracks_allOf_1_items_items @discriminator(field: "type") = ArtistObject | TrackObject
 
 "The type of entity to return. Valid values: \`artists\` or \`tracks\`"
 enum Type {
@@ -2057,7 +2057,7 @@ type ContextObject {
 }
 
 "The currently playing track or episode. Can be \`null\`."
-union query_get_information_about_the_users_current_playback_oneOf_0_item @discriminator(field: "type", mapping: "{}") = TrackObject | EpisodeObject
+union query_get_information_about_the_users_current_playback_oneOf_0_item @discriminator(field: "type") = TrackObject | EpisodeObject
 
 type DisallowsObject {
   "Interrupting playback. Optional field."
@@ -2123,9 +2123,9 @@ type QueueObject {
 }
 
 "The currently playing track or episode. Can be \`null\`."
-union query_get_queue_currently_playing @discriminator(field: "type", mapping: "{}") = TrackObject | EpisodeObject
+union query_get_queue_currently_playing @discriminator(field: "type") = TrackObject | EpisodeObject
 
-union query_get_queue_queue_items @discriminator(field: "type", mapping: "{}") = TrackObject | EpisodeObject
+union query_get_queue_queue_items @discriminator(field: "type") = TrackObject | EpisodeObject
 
 type get_available_markets_200_response {
   markets: [String]
