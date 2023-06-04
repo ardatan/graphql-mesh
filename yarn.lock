@@ -6309,7 +6309,7 @@
     "@whatwg-node/fetch" "^0.8.3"
     tslib "^2.3.1"
 
-"@whatwg-node/server@^0.8.0", "@whatwg-node/server@^0.8.1":
+"@whatwg-node/server@^0.8.1":
   version "0.8.1"
   resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.8.1.tgz#dc22ca2cf4b834d1437c0ef97c3e79d63e4d10b4"
   integrity sha512-5nzOE61W5VA43rE4MeUVHLDPpZGDfGiQ5LnEwJNbVehUI6Ua8QD566C8dhBmXxFuT8pXTlxWZHe3sjjGZCc4ng==
@@ -10540,19 +10540,19 @@ fengari@^0.1.4:
     sprintf-js "^1.1.1"
     tmp "^0.0.33"
 
-fets@0.2.0, fets@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/fets/-/fets-0.2.0.tgz#4a1601dfc43a53e141aa10740d27dd3f95ee1ddb"
-  integrity sha512-e4uBzNl1IVjfc+7H6F0eM5RGpUV6KpREmGI7GYcXuUj80Whk2Exu+n3m9vk94skdlzAmltBqDfwh6Ch5Ds0dLg==
+fets@0.2.1, fets@^0.2.0:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/fets/-/fets-0.2.1.tgz#844364af4b11b49c06febf3dbb1813aabbe7b753"
+  integrity sha512-L/ZZQpqq8AT7tAa+grV3Zcl2yC21R6SPDEsNRu4r2aydWrc4IV9aZMysQ0Stj9eJmPADEUZLhk54tN2mS/biJQ==
   dependencies:
     "@ardatan/fast-json-stringify" "^0.0.6"
     "@whatwg-node/cookie-store" "^0.1.0"
     "@whatwg-node/fetch" "^0.9.0"
-    "@whatwg-node/server" "^0.8.0"
+    "@whatwg-node/server" "^0.8.1"
     ajv "^8.12.0"
     ajv-formats "^2.1.1"
     hotscript "^1.0.11"
-    json-schema-to-ts "^2.7.2"
+    json-schema-to-ts "^2.9.1"
     openapi-types "^12.1.0"
     tslib "^2.3.1"
     zod "^3.21.4"
@@ -13680,7 +13680,7 @@ json-schema-ref-parser@^6.1.0:
     js-yaml "^3.12.1"
     ono "^4.0.11"
 
-json-schema-to-ts@^2.7.2:
+json-schema-to-ts@^2.9.1:
   version "2.9.1"
   resolved "https://registry.yarnpkg.com/json-schema-to-ts/-/json-schema-to-ts-2.9.1.tgz#0e055b787587477abdb7e880c874efad3dba7779"
   integrity sha512-8MNpRGERlCUWYeJwsWkMrJ0MWzBz49dfqpG+n9viiIlP4othaahbiaNQZuBzmPxRLUhOv1QJMCzW5WE8nHFGIQ==
