@@ -2038,6 +2038,33 @@
     human-id "^1.0.2"
     prettier "^2.7.1"
 
+"@chevrotain/cst-dts-gen@10.5.0":
+  version "10.5.0"
+  resolved "https://registry.yarnpkg.com/@chevrotain/cst-dts-gen/-/cst-dts-gen-10.5.0.tgz#922ebd8cc59d97241bb01b1b17561a5c1ae0124e"
+  integrity sha512-lhmC/FyqQ2o7pGK4Om+hzuDrm9rhFYIJ/AXoQBeongmn870Xeb0L6oGEiuR8nohFNL5sMaQEJWCxr1oIVIVXrw==
+  dependencies:
+    "@chevrotain/gast" "10.5.0"
+    "@chevrotain/types" "10.5.0"
+    lodash "4.17.21"
+
+"@chevrotain/gast@10.5.0":
+  version "10.5.0"
+  resolved "https://registry.yarnpkg.com/@chevrotain/gast/-/gast-10.5.0.tgz#e4e614bc46d17a8892742f38e56cd33f1f3ad162"
+  integrity sha512-pXdMJ9XeDAbgOWKuD1Fldz4ieCs6+nLNmyVhe2gZVqoO7v8HXuHYs5OV2EzUtbuai37TlOAQHrTDvxMnvMJz3A==
+  dependencies:
+    "@chevrotain/types" "10.5.0"
+    lodash "4.17.21"
+
+"@chevrotain/types@10.5.0":
+  version "10.5.0"
+  resolved "https://registry.yarnpkg.com/@chevrotain/types/-/types-10.5.0.tgz#52a97d74a8cfbc197f054636d93ecd8912d33d21"
+  integrity sha512-f1MAia0x/pAVPWH/T73BJVyO2XU5tI4/iE7cnxb7tqdNTNhQI3Uq3XkqcoteTmD4t1aM0LbHCJOhgIDn07kl2A==
+
+"@chevrotain/utils@10.5.0":
+  version "10.5.0"
+  resolved "https://registry.yarnpkg.com/@chevrotain/utils/-/utils-10.5.0.tgz#0ee36f65b49b447fbac71b9e5af5c5c6c98ac057"
+  integrity sha512-hBzuU5+JjB2cqNZyszkDHZgOSrUUT8V3dhgRl8Q9Gp6dAj/H5+KILGjbhDpc3Iy9qmqlm/akuOI2ut9VUtzJxQ==
+
 "@cloudflare/kv-asset-handler@^0.2.0":
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@cloudflare/kv-asset-handler/-/kv-asset-handler-0.2.0.tgz#c9959bbd7a1c40bd7c674adae98aa8c8d0e5ca68"
@@ -2079,6 +2106,14 @@
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/@colors/colors/-/colors-1.5.0.tgz#bb504579c1cae923e6576a4f5da43d25f97bdbd9"
   integrity sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==
+
+"@contrast/fn-inspect@^3.3.0":
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/@contrast/fn-inspect/-/fn-inspect-3.3.1.tgz#3e8f7d297ce12742a4d54c7c7fea50a86e1ed5ed"
+  integrity sha512-BqsC5YslFxX/jgUzjAFEqnI0ngXXmUAFHUrhLSJu7lFYwTB7U1bLCUcjsZVnaO2bh0QDrmGAL/W0pe1Eu7PIIQ==
+  dependencies:
+    nan "^2.16.0"
+    node-gyp-build "^4.4.0"
 
 "@corex/deepmerge@^4.0.43":
   version "4.0.43"
@@ -3467,7 +3502,7 @@
     "@repeaterjs/repeater" "^3.0.4"
     tslib "^2.3.1"
 
-"@grpc/grpc-js@1.8.14", "@grpc/grpc-js@^1.1.7", "@grpc/grpc-js@^1.2.8", "@grpc/grpc-js@^1.5.5":
+"@grpc/grpc-js@1.8.14", "@grpc/grpc-js@^1.1.7", "@grpc/grpc-js@^1.2.8", "@grpc/grpc-js@^1.8.10":
   version "1.8.14"
   resolved "https://registry.yarnpkg.com/@grpc/grpc-js/-/grpc-js-1.8.14.tgz#4fe0f9917d6f094cf59245763c275442b182e9ad"
   integrity sha512-w84maJ6CKl5aApCMzFll0hxtFNT6or9WwMslobKaqWUEf1K+zhlL43bSQhFreyYWIWR+Z0xnVFC1KtLm4ZpM/A==
@@ -3475,7 +3510,7 @@
     "@grpc/proto-loader" "^0.7.0"
     "@types/node" ">=12.12.47"
 
-"@grpc/proto-loader@0.7.7", "@grpc/proto-loader@^0.7.0":
+"@grpc/proto-loader@0.7.7", "@grpc/proto-loader@^0.7.0", "@grpc/proto-loader@^0.7.5":
   version "0.7.7"
   resolved "https://registry.yarnpkg.com/@grpc/proto-loader/-/proto-loader-0.7.7.tgz#d33677a77eea8407f7c66e2abd97589b60eb4b21"
   integrity sha512-1TIeXOi8TuSCQprPItwoMymZXxWT0CPxUhkrkeCUH+D8U7QDwQ6b7SUz2MaLuWM2llT+J/TVFLmQI5KtML3BhQ==
@@ -3486,7 +3521,7 @@
     protobufjs "^7.0.0"
     yargs "^17.7.2"
 
-"@grpc/proto-loader@^0.6.0-pre17", "@grpc/proto-loader@^0.6.13":
+"@grpc/proto-loader@^0.6.0-pre17":
   version "0.6.13"
   resolved "https://registry.yarnpkg.com/@grpc/proto-loader/-/proto-loader-0.6.13.tgz#008f989b72a40c60c96cd4088522f09b05ac66bc"
   integrity sha512-FjxPYDRTn6Ec3V0arm1FtSpmP6V50wuph2yILpyvTKzjc76oDdoihXqM1DzOW5ubvCC8GivfCnNtfaRE8myJ7g==
@@ -4118,6 +4153,13 @@
     "@types/mdx" "^2.0.0"
     "@types/react" ">=16"
 
+"@mrleebo/prisma-ast@^0.5.2":
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/@mrleebo/prisma-ast/-/prisma-ast-0.5.2.tgz#3df50be48bf0f1a97bf822de6a44c7c03a2067a7"
+  integrity sha512-v2jwtrLt/x5/MaF7Sucsz/do8tDUmiq3KA+UYdyZfr3OQ2IGXUtpNSXmdlvyRM+vQ7Abn/FxpLW/qqhZGB9vhQ==
+  dependencies:
+    chevrotain "^10.4.2"
+
 "@n1ru4l/graphql-live-query-patch@^0.7.0":
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/@n1ru4l/graphql-live-query-patch/-/graphql-live-query-patch-0.7.0.tgz#c5b30341d218627b9ed15cea37e72ea3c15f3632"
@@ -4248,31 +4290,29 @@
     debug "^4.3.4"
     pluralize "^8.0.0"
 
-"@newrelic/aws-sdk@^4.1.1":
-  version "4.1.2"
-  resolved "https://registry.yarnpkg.com/@newrelic/aws-sdk/-/aws-sdk-4.1.2.tgz#6548bbe408542cd9ee2999319dc14c11e37e4a95"
-  integrity sha512-B83gZDS6eseNAMd41s8FTyd+JSxKHl4cN8kQnh1k5aYe0XB/Mi3hxn0/mxGzui84L4kL0GJCCg/UOg+A2ciSQg==
-  dependencies:
-    semver "^7.3.5"
+"@newrelic/aws-sdk@^5.0.2":
+  version "5.0.5"
+  resolved "https://registry.yarnpkg.com/@newrelic/aws-sdk/-/aws-sdk-5.0.5.tgz#85fcb79d72277b0816a3dc4227b6a879d4e03b02"
+  integrity sha512-Tl4R2rGZfRHb04Ebtb4ErRDfyVzzps+yg2jYf5seRpmXuXtrBWbZKJwd23uUZOi0qTh6Wy4peUaiT+sDo6E1Rw==
 
-"@newrelic/koa@^6.1.1":
-  version "6.1.2"
-  resolved "https://registry.yarnpkg.com/@newrelic/koa/-/koa-6.1.2.tgz#98e8e24ea0bee97197f02030e3ad09912dadacf2"
-  integrity sha512-nmjr5hv+nRDC2NaRF4+iex41K6iJ/UCujgnj8oyht1grazJXQHq0dJZdMxUVNMMO+m4ukTeisSlI4d/H/W9JUw==
+"@newrelic/koa@^7.1.1":
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/@newrelic/koa/-/koa-7.2.0.tgz#85156cb5882b9e83a2e245b536516c4f91bdb71d"
+  integrity sha512-3y/CCOLJ6sEPTKyQAmBrBP5CfZ5ak8mWt+7mWjdbblOXQh20LEsrA/KQAh/ROcTh6rV8oxsubLZ3N13LIeIoVQ==
 
-"@newrelic/native-metrics@^8.0.0":
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/@newrelic/native-metrics/-/native-metrics-8.0.0.tgz#6f5d31b57301ad97cbfa047e65ed7cb6c62a1aec"
-  integrity sha512-df/V1P6dxpX09PaA6Jx9pmkPbRrue5hDyRCc4w3bnqMbnybvwVwS+q1/QEPvjBPQJ5abTRlBcJ7UZ3sfGW1hzg==
+"@newrelic/native-metrics@^9.0.0":
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/@newrelic/native-metrics/-/native-metrics-9.0.0.tgz#2186197defc664ceca3241a1d8f50c29aa4ab60a"
+  integrity sha512-WYDRs4hlFerUyism2TjF1PIJfP8w50Nc9Kt61zWNrGM3QYOrKXZ5ibA3R0fQgU0+LM7UWtQ9g7onFpVUGsj8QQ==
   dependencies:
     https-proxy-agent "^5.0.0"
-    nan "^2.15.0"
+    nan "^2.16.0"
     semver "^5.5.1"
 
-"@newrelic/superagent@^5.1.0":
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/@newrelic/superagent/-/superagent-5.1.1.tgz#57e61878903718e1ba4310a365f65fae14a2b1a6"
-  integrity sha512-Bp2QtknriKHLKSfrBRyg4PjGJ8CCSkxYfZEDppOWmrGukJAP/9Vvr+ya0Mmj7SU8eIMMhaTvAnjvb2mVmX8wBw==
+"@newrelic/superagent@^6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@newrelic/superagent/-/superagent-6.0.0.tgz#8aee871547ebea90fcb37f98ea38d820cc1bc67b"
+  integrity sha512-5nClQp9ACd4BvLusAgFHjjKLDgAaC+dKmIsRNOPC82LOLFaoOgxxtbecnDIJ0NWCKQS+WOdmXdgYutwH+e5dsA==
 
 "@next/bundle-analyzer@13.4.2":
   version "13.4.2"
@@ -7292,7 +7332,7 @@ big.js@^5.2.2:
   resolved "https://registry.yarnpkg.com/big.js/-/big.js-5.2.2.tgz#65f0af382f578bcdc742bd9c281e9cb2d7768328"
   integrity sha512-vyL2OymJxmarO8gxMr0mhChsO9QGwhynfuu4+MHTAW6czfq9humCB7rKpUjDd9YUiDPU4mzpyupFSvOClAwbmQ==
 
-bignumber.js@9.0.0:
+bignumber.js@9.0.0, bignumber.js@^9.0.0:
   version "9.0.0"
   resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-9.0.0.tgz#805880f84a329b5eac6e7cb6f8274b6d82bdf075"
   integrity sha512-t/OYhhJ2SD+YGBQcjY8GzzDHEk9f3nerxjtfa6tlMXfe7frs/WozhvCNoGvpM0P3bNf3Gq5ZRMlGr5f3r4/N8A==
@@ -7832,6 +7872,18 @@ check-types@^11.1.1:
   version "11.2.2"
   resolved "https://registry.yarnpkg.com/check-types/-/check-types-11.2.2.tgz#7afc0b6a860d686885062f2dba888ba5710335b4"
   integrity sha512-HBiYvXvn9Z70Z88XKjz3AEKd4HJhBXsa3j7xFnITAzoS8+q6eIGi8qDB8FKPBAjtuxjI/zFpwuiCb8oDtKOYrA==
+
+chevrotain@^10.4.2:
+  version "10.5.0"
+  resolved "https://registry.yarnpkg.com/chevrotain/-/chevrotain-10.5.0.tgz#9c1dc62ef0753bb562dbe521b5f72d041bad624e"
+  integrity sha512-Pkv5rBY3+CsHOYfV5g/Vs5JY9WTHHDEKOlohI2XeygaZhUeqhAlldZ8Hz9cRmxu709bvS08YzxHdTPHhffc13A==
+  dependencies:
+    "@chevrotain/cst-dts-gen" "10.5.0"
+    "@chevrotain/gast" "10.5.0"
+    "@chevrotain/types" "10.5.0"
+    "@chevrotain/utils" "10.5.0"
+    lodash "4.17.21"
+    regexp-to-ast "0.5.0"
 
 chokidar@^3.4.2, chokidar@^3.5.1, chokidar@^3.5.3:
   version "3.5.3"
@@ -13639,6 +13691,13 @@ json-bigint-patch@0.0.8, json-bigint-patch@^0.0.8:
   resolved "https://registry.yarnpkg.com/json-bigint-patch/-/json-bigint-patch-0.0.8.tgz#45d954da1f21c6d4f3ae9ef64c9ac227cd0ab0fe"
   integrity sha512-xa0LTQsyaq8awYyZyuUsporWisZFiyqzxGW8CKM3t7oouf0GFAKYJnqAm6e9NLNBQOCtOLvy614DEiRX/rPbnA==
 
+json-bigint@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/json-bigint/-/json-bigint-1.0.0.tgz#ae547823ac0cad8398667f8cd9ef4730f5b01ff1"
+  integrity sha512-SiPv/8VpZuWbvLSMtTDU8hEfrZWg/mH/nV/b4o0CYbSxu1UIQPLdwKOCIyLQX+VIPO5vrLX3i8qtqFyhdPSUSQ==
+  dependencies:
+    bignumber.js "^9.0.0"
+
 json-buffer@3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/json-buffer/-/json-buffer-3.0.1.tgz#9338802a30d3b6605fbe0613e094008ca8c05a13"
@@ -15554,7 +15613,7 @@ mz@^2.7.0:
     object-assign "^4.0.1"
     thenify-all "^1.0.0"
 
-nan@^2.12.1, nan@^2.14.0, nan@^2.15.0, nan@^2.16.0:
+nan@^2.12.1, nan@^2.14.0, nan@^2.16.0:
   version "2.17.0"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.17.0.tgz#c0150a2368a182f033e9aa5195ec76ea41a199cb"
   integrity sha512-2ZTgtl0nJsO0KQCjEpxcIr5D+Yv90plTitZt9JBfQvVJDS5seMl3FOvsh3+9CoYWXf/1l5OaZzzF6nDm4cagaQ==
@@ -15626,26 +15685,28 @@ neo4j-driver@5.9.0:
     neo4j-driver-core "5.9.0"
     rxjs "^7.8.0"
 
-newrelic@8.17.1:
-  version "8.17.1"
-  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-8.17.1.tgz#0cea28c6eaab302815d10d5e57bd15e4016f1a50"
-  integrity sha512-7KJQaTTszlX2DaHRFXgvhG1Ebt0sR57ix5PXw/06dALP2G2f+5B9VBI2QenYuiwwebcw9KcxI07+yQRjF46fWg==
+newrelic@10.1.1:
+  version "10.1.1"
+  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-10.1.1.tgz#24b3eeca668632d99ff9a30cd2ada20101393f1e"
+  integrity sha512-evJrxNR62awuRouV+GglH5kMZfM6G+afN2bfLv+uq2xZ/HXTi7c/kPdSD1Jai37bt6I+a5NjAnDARKlXfplMCg==
   dependencies:
-    "@grpc/grpc-js" "^1.5.5"
-    "@grpc/proto-loader" "^0.6.13"
-    "@newrelic/aws-sdk" "^4.1.1"
-    "@newrelic/koa" "^6.1.1"
-    "@newrelic/superagent" "^5.1.0"
+    "@grpc/grpc-js" "^1.8.10"
+    "@grpc/proto-loader" "^0.7.5"
+    "@mrleebo/prisma-ast" "^0.5.2"
+    "@newrelic/aws-sdk" "^5.0.2"
+    "@newrelic/koa" "^7.1.1"
+    "@newrelic/superagent" "^6.0.0"
     "@tyriar/fibonacci-heap" "^2.0.7"
-    async "^3.2.3"
     concat-stream "^2.0.0"
     https-proxy-agent "^5.0.0"
+    json-bigint "^1.0.0"
     json-stringify-safe "^5.0.0"
-    readable-stream "^3.6.0"
+    readable-stream "^3.6.1"
     semver "^5.3.0"
     winston-transport "^4.5.0"
   optionalDependencies:
-    "@newrelic/native-metrics" "^8.0.0"
+    "@contrast/fn-inspect" "^3.3.0"
+    "@newrelic/native-metrics" "^9.0.0"
 
 next-mdx-remote@^4.2.1:
   version "4.4.1"
@@ -15803,6 +15864,11 @@ node-forge@^1:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/node-forge/-/node-forge-1.3.1.tgz#be8da2af243b2417d5f646a770663a92b7e9ded3"
   integrity sha512-dPEtOeMvF9VMcYV/1Wb8CPoVAXtp6MKMlcbAt4ddqmGqUJ6fQZFXkNZNkNlfevtNkGtaSoXf/vNNNSvgrdXwtA==
+
+node-gyp-build@^4.4.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/node-gyp-build/-/node-gyp-build-4.6.0.tgz#0c52e4cbf54bbd28b709820ef7b6a3c2d6209055"
+  integrity sha512-NTZVKn9IylLwUzaKjkas1e4u2DLNcV4rdYagA4PWdPwW87Bi7z+BznyKSRwS/761tV/lzCGXplWsiaMjLqP2zQ==
 
 node-int64@^0.4.0:
   version "0.4.0"
@@ -18059,7 +18125,7 @@ readable-stream@2.3.7, readable-stream@^2.0.1, readable-stream@^2.0.6:
     string_decoder "~1.1.1"
     util-deprecate "~1.0.1"
 
-readable-stream@^3.0.2, readable-stream@^3.0.6, readable-stream@^3.1.1, readable-stream@^3.4.0, readable-stream@^3.6.0:
+readable-stream@^3.0.2, readable-stream@^3.0.6, readable-stream@^3.1.1, readable-stream@^3.4.0, readable-stream@^3.6.0, readable-stream@^3.6.1:
   version "3.6.2"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-3.6.2.tgz#56a9b36ea965c00c5a93ef31eb111a0f11056967"
   integrity sha512-9u/sniCrY3D5WdsERHzHE4G2YCXqoG5FTHUiCC4SIbr6XcLZBY05ya9EKjYek9O5xOAwjGq+1JdGBAS7Q9ScoA==
@@ -18175,6 +18241,11 @@ regex-parser@^2.2.11:
   version "2.2.11"
   resolved "https://registry.yarnpkg.com/regex-parser/-/regex-parser-2.2.11.tgz#3b37ec9049e19479806e878cabe7c1ca83ccfe58"
   integrity sha512-jbD/FT0+9MBU2XAZluI7w2OBs1RBi6p9M83nkoZayQXXU9e8Robt69FcZc7wU4eJD/YFTjn1JdCk3rbMJajz8Q==
+
+regexp-to-ast@0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/regexp-to-ast/-/regexp-to-ast-0.5.0.tgz#56c73856bee5e1fef7f73a00f1473452ab712a24"
+  integrity sha512-tlbJqcMHnPKI9zSrystikWKwHkBqu2a/Sgw01h3zFjvYrMxEDYHzzoMZnUrbIfpTFEsoRnnviOXNCzFiSc54Qw==
 
 regexp.prototype.flags@^1.4.3, regexp.prototype.flags@^1.5.0:
   version "1.5.0"

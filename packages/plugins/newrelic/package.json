@@ -36,7 +36,7 @@
     "@graphql-mesh/types": "^0.93.1",
     "@graphql-mesh/utils": "^0.93.1",
     "graphql": "*",
-    "newrelic": "^7 || ^8.0.0",
+    "newrelic": "^7 || ^8.0.0 || ^10.0.0",
     "tslib": "^2.4.0"
   },
   "dependencies": {
@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@types/newrelic": "7.0.4",
-    "newrelic": "8.17.1"
+    "newrelic": "10.1.1"
   },
   "publishConfig": {
     "access": "public",
