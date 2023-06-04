@@ -15685,10 +15685,10 @@ neo4j-driver@5.9.0:
     neo4j-driver-core "5.9.0"
     rxjs "^7.8.0"
 
-newrelic@10.1.1:
-  version "10.1.1"
-  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-10.1.1.tgz#24b3eeca668632d99ff9a30cd2ada20101393f1e"
-  integrity sha512-evJrxNR62awuRouV+GglH5kMZfM6G+afN2bfLv+uq2xZ/HXTi7c/kPdSD1Jai37bt6I+a5NjAnDARKlXfplMCg==
+newrelic@10.1.2:
+  version "10.1.2"
+  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-10.1.2.tgz#8b1ae51813ffc235821e9c08033f8d16e8d0615c"
+  integrity sha512-aI2nAuNgEJbx+7dEztQJahA6IG/PdVVd4sd6Al4AECRqSPZVgEhHlzeR4ScNptsKxgHC46Ru8OdBBaU5FZ7fHQ==
   dependencies:
     "@grpc/grpc-js" "^1.8.10"
     "@grpc/proto-loader" "^0.7.5"

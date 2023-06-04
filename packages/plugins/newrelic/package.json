@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@types/newrelic": "7.0.4",
-    "newrelic": "10.1.1"
+    "newrelic": "10.1.2"
   },
   "publishConfig": {
     "access": "public",
