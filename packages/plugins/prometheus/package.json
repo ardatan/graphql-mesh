@@ -35,12 +35,12 @@
     "@graphql-mesh/types": "^0.93.1",
     "@graphql-mesh/utils": "^0.93.1",
     "graphql": "*",
-    "graphql-yoga": "3.9.1",
+    "graphql-yoga": "4.0.0",
     "prom-client": "^13 || ^14.0.0",
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-yoga/plugin-prometheus": "1.9.1"
+    "@graphql-yoga/plugin-prometheus": "2.0.0"
   },
   "devDependencies": {
     "prom-client": "14.2.0"
