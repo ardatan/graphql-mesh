@@ -16,7 +16,7 @@ describe('oneOf without discriminator', () => {
             return Response.json({
               B: 'Value',
             });
-          case 'A':
+          case '"A"':
             return Response.json('A');
           default:
             return new Response(null, {

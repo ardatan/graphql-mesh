@@ -194,7 +194,7 @@ export function addHTTPRootFieldResolver(
           }
           requestInit.body = formData;
         } else {
-          requestInit.body = typeof input === 'object' ? JSON.stringify(input) : input;
+          requestInit.body = JSON.stringify(input);
         }
       }
     }
