@@ -45,7 +45,7 @@
     "@graphql-mesh/string-interpolation": "0.4.4"
   },
   "devDependencies": {
-    "@types/newrelic": "7.0.4",
+    "@types/newrelic": "9.14.0",
     "newrelic": "10.1.2"
   },
   "publishConfig": {

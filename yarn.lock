@@ -5649,10 +5649,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/newrelic@7.0.4":
-  version "7.0.4"
-  resolved "https://registry.yarnpkg.com/@types/newrelic/-/newrelic-7.0.4.tgz#ccb65ce1dd5cae9f6bbf9248630a9ed316fd257f"
-  integrity sha512-Y4jdcdi5h+mD6yRe9JIe8jSWMmnx0C451r62sWndkkM3ZRYQ44N+kvZfAlBUP2tIaVdZweX+T3n3+uDxMg7xfw==
+"@types/newrelic@9.14.0":
+  version "9.14.0"
+  resolved "https://registry.yarnpkg.com/@types/newrelic/-/newrelic-9.14.0.tgz#822b442001b695f75dc2ee4fd3fdd30930f49e91"
+  integrity sha512-1jqbAMf6pKjAPJ8NC6VqZoylpBR6kejuw4qL3Mk8dworih+AXADki4WaUIWTzo7ERm6aykPl8xt1/J1invp6Mg==
 
 "@types/node-fetch@^2.6.1", "@types/node-fetch@^2.6.2":
   version "2.6.4"
