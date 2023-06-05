@@ -1,5 +1,38 @@
 # @graphql-mesh/plugin-operation-field-permissions
 
+## 0.94.0
+
+### Minor Changes
+
+- [#5449](https://github.com/Urigo/graphql-mesh/pull/5449)
+  [`ef520d91e`](https://github.com/Urigo/graphql-mesh/commit/ef520d91e6d1800ed63ef016ed74084261788371)
+  Thanks [@ardatan](https://github.com/ardatan)! - Drop Node 14 support and require Node 16 or
+  higher
+
+### Patch Changes
+
+- [#5421](https://github.com/Urigo/graphql-mesh/pull/5421)
+  [`7fcc4e566`](https://github.com/Urigo/graphql-mesh/commit/7fcc4e566a4fbba5dd6ecb248ddfb95e4c270417)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@envelop/operation-field-permissions@5.0.0` ↗︎](https://www.npmjs.com/package/@envelop/operation-field-permissions/v/5.0.0)
+    (from `4.0.6`, in `dependencies`)
+
+- [#5456](https://github.com/Urigo/graphql-mesh/pull/5456)
+  [`b52b4c7c1`](https://github.com/Urigo/graphql-mesh/commit/b52b4c7c1133a9904080c344dcb5140c1af67f2a)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/operation-field-permissions@5.0.0` ↗︎](https://www.npmjs.com/package/@envelop/operation-field-permissions/v/5.0.0)
+    (from `4.0.6`, in `dependencies`)
+- Updated dependencies
+  [[`e881ea609`](https://github.com/Urigo/graphql-mesh/commit/e881ea609a1d355356c1dc04c7a42b00b6e86e0d),
+  [`e881ea609`](https://github.com/Urigo/graphql-mesh/commit/e881ea609a1d355356c1dc04c7a42b00b6e86e0d),
+  [`01fb0cc85`](https://github.com/Urigo/graphql-mesh/commit/01fb0cc858dfbf2cd931d1b08b0749a0b82b232c),
+  [`ef520d91e`](https://github.com/Urigo/graphql-mesh/commit/ef520d91e6d1800ed63ef016ed74084261788371)]:
+  - @graphql-mesh/cross-helpers@0.4.0
+  - @graphql-mesh/types@0.94.0
+
 ## 0.93.1
 
 ### Patch Changes

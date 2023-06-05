@@ -1,5 +1,45 @@
 # @graphql-mesh/raml
 
+## 0.94.0
+
+### Minor Changes
+
+- [#5449](https://github.com/Urigo/graphql-mesh/pull/5449)
+  [`ef520d91e`](https://github.com/Urigo/graphql-mesh/commit/ef520d91e6d1800ed63ef016ed74084261788371)
+  Thanks [@ardatan](https://github.com/ardatan)! - Drop Node 14 support and require Node 16 or
+  higher
+
+### Patch Changes
+
+- [#5421](https://github.com/Urigo/graphql-mesh/pull/5421)
+  [`7fcc4e566`](https://github.com/Urigo/graphql-mesh/commit/7fcc4e566a4fbba5dd6ecb248ddfb95e4c270417)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@omnigraph/raml@0.93.2` ↗︎](https://www.npmjs.com/package/@omnigraph/raml/v/0.93.2) (from
+    `0.93.1`, in `dependencies`)
+
+- [#5446](https://github.com/Urigo/graphql-mesh/pull/5446)
+  [`e881ea609`](https://github.com/Urigo/graphql-mesh/commit/e881ea609a1d355356c1dc04c7a42b00b6e86e0d)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^9.2.1 || ^10.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.2.1)
+    (from `^9.2.1`, in `peerDependencies`)
+- Updated dependencies
+  [[`e881ea609`](https://github.com/Urigo/graphql-mesh/commit/e881ea609a1d355356c1dc04c7a42b00b6e86e0d),
+  [`e881ea609`](https://github.com/Urigo/graphql-mesh/commit/e881ea609a1d355356c1dc04c7a42b00b6e86e0d),
+  [`4296a55f4`](https://github.com/Urigo/graphql-mesh/commit/4296a55f4a6fb1c8e1701403cfe88067255ae9b7),
+  [`e881ea609`](https://github.com/Urigo/graphql-mesh/commit/e881ea609a1d355356c1dc04c7a42b00b6e86e0d),
+  [`7fcc4e566`](https://github.com/Urigo/graphql-mesh/commit/7fcc4e566a4fbba5dd6ecb248ddfb95e4c270417),
+  [`e881ea609`](https://github.com/Urigo/graphql-mesh/commit/e881ea609a1d355356c1dc04c7a42b00b6e86e0d),
+  [`bc438f835`](https://github.com/Urigo/graphql-mesh/commit/bc438f83549599a544d956ccbb931cf44fb834f4),
+  [`01fb0cc85`](https://github.com/Urigo/graphql-mesh/commit/01fb0cc858dfbf2cd931d1b08b0749a0b82b232c),
+  [`ef520d91e`](https://github.com/Urigo/graphql-mesh/commit/ef520d91e6d1800ed63ef016ed74084261788371)]:
+  - @graphql-mesh/store@0.94.0
+  - @graphql-mesh/types@0.94.0
+  - @graphql-mesh/utils@0.94.0
+  - @omnigraph/raml@0.94.0
+
 ## 0.93.2
 
 ### Patch Changes

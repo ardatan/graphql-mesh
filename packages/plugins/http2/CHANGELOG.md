@@ -1,5 +1,47 @@
 # @graphql-mesh/plugin-http2
 
+## 0.94.0
+
+### Minor Changes
+
+- [#5449](https://github.com/Urigo/graphql-mesh/pull/5449)
+  [`ef520d91e`](https://github.com/Urigo/graphql-mesh/commit/ef520d91e6d1800ed63ef016ed74084261788371)
+  Thanks [@ardatan](https://github.com/ardatan)! - Drop Node 14 support and require Node 16 or
+  higher
+
+### Patch Changes
+
+- [#5450](https://github.com/Urigo/graphql-mesh/pull/5450)
+  [`bc438f835`](https://github.com/Urigo/graphql-mesh/commit/bc438f83549599a544d956ccbb931cf44fb834f4)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@whatwg-node/fetch@0.9.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.9.0) (from
+    `0.8.8`, in `dependencies`)
+
+- [#5496](https://github.com/Urigo/graphql-mesh/pull/5496)
+  [`a243db81d`](https://github.com/Urigo/graphql-mesh/commit/a243db81d6c60e6b43096f687ef65edfb1843a1a)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@whatwg-node/fetch@0.9.1` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.9.1) (from
+    `0.9.0`, in `dependencies`)
+
+- [#5507](https://github.com/Urigo/graphql-mesh/pull/5507)
+  [`27556f8c8`](https://github.com/Urigo/graphql-mesh/commit/27556f8c838b0c83ecc85a22e03b18529a96b11f)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@whatwg-node/fetch@0.9.2` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.9.2) (from
+    `0.9.1`, in `dependencies`)
+- Updated dependencies
+  [[`e881ea609`](https://github.com/Urigo/graphql-mesh/commit/e881ea609a1d355356c1dc04c7a42b00b6e86e0d),
+  [`4296a55f4`](https://github.com/Urigo/graphql-mesh/commit/4296a55f4a6fb1c8e1701403cfe88067255ae9b7),
+  [`e881ea609`](https://github.com/Urigo/graphql-mesh/commit/e881ea609a1d355356c1dc04c7a42b00b6e86e0d),
+  [`01fb0cc85`](https://github.com/Urigo/graphql-mesh/commit/01fb0cc858dfbf2cd931d1b08b0749a0b82b232c),
+  [`ef520d91e`](https://github.com/Urigo/graphql-mesh/commit/ef520d91e6d1800ed63ef016ed74084261788371)]:
+  - @graphql-mesh/types@0.94.0
+  - @graphql-mesh/utils@0.94.0
+
 ## 0.93.2
 
 ### Patch Changes
