@@ -1,5 +1,22 @@
 # @graphql-mesh/string-interpolation
 
+## 0.5.0
+
+### Minor Changes
+
+- [#5449](https://github.com/Urigo/graphql-mesh/pull/5449)
+  [`ef520d91e`](https://github.com/Urigo/graphql-mesh/commit/ef520d91e6d1800ed63ef016ed74084261788371)
+  Thanks [@ardatan](https://github.com/ardatan)! - Drop Node 14 support and require Node 16 or
+  higher
+
+### Patch Changes
+
+- [#5506](https://github.com/Urigo/graphql-mesh/pull/5506)
+  [`3d9218360`](https://github.com/Urigo/graphql-mesh/commit/3d9218360dff838b9d3c731c92b3b6e8ad52e2c7)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`dayjs@1.11.8` ↗︎](https://www.npmjs.com/package/dayjs/v/1.11.8) (from
+    `1.11.7`, in `dependencies`)
+
 ## 0.4.4
 
 ### Patch Changes

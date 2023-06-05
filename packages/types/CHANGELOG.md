@@ -1,5 +1,39 @@
 # @graphql-mesh/types
 
+## 0.94.0
+
+### Minor Changes
+
+- [#5342](https://github.com/Urigo/graphql-mesh/pull/5342)
+  [`01fb0cc85`](https://github.com/Urigo/graphql-mesh/commit/01fb0cc858dfbf2cd931d1b08b0749a0b82b232c)
+  Thanks [@cweckesser](https://github.com/cweckesser)! - The rename transform uses an ignore list to
+  skip renaming certain types in a schema. It should be possible to manually enable/disable the
+  usage of the exclusion list via configuration.
+
+- [#5449](https://github.com/Urigo/graphql-mesh/pull/5449)
+  [`ef520d91e`](https://github.com/Urigo/graphql-mesh/commit/ef520d91e6d1800ed63ef016ed74084261788371)
+  Thanks [@ardatan](https://github.com/ardatan)! - Drop Node 14 support and require Node 16 or
+  higher
+
+### Patch Changes
+
+- [#5446](https://github.com/Urigo/graphql-mesh/pull/5446)
+  [`e881ea609`](https://github.com/Urigo/graphql-mesh/commit/e881ea609a1d355356c1dc04c7a42b00b6e86e0d)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/batch-delegate@^9.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/9.0.0)
+    (from `^8.4.25`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.0)
+    (from `^9.0.32`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^9.2.1 || ^10.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.2.1)
+    (from `^9.2.1`, in `peerDependencies`)
+- Updated dependencies
+  [[`e881ea609`](https://github.com/Urigo/graphql-mesh/commit/e881ea609a1d355356c1dc04c7a42b00b6e86e0d),
+  [`ef520d91e`](https://github.com/Urigo/graphql-mesh/commit/ef520d91e6d1800ed63ef016ed74084261788371)]:
+  - @graphql-mesh/store@0.94.0
+
 ## 0.93.2
 
 ### Patch Changes
