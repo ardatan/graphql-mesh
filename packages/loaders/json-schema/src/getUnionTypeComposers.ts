@@ -4,6 +4,7 @@ import {
   Directive,
   InputTypeComposer,
   isSomeInputTypeComposer,
+  ListComposer,
   ObjectTypeComposer,
   SchemaComposer,
   UnionTypeComposer,
@@ -40,6 +41,17 @@ export function getContainerTC(schemaComposer: SchemaComposer, output: ComposeIn
   );
 }
 
+export function getListContainerTC(schemaComposer: SchemaComposer, output: ListComposer) {
+  const containerTypeName = `${output.ofType.getTypeName()}_list`;
+  return schemaComposer.getOrCreateOTC(containerTypeName, otc =>
+    otc.addFields({
+      items: {
+        type: output as any,
+      },
+    }),
+  );
+}
+
 export function getUnionTypeComposers({
   schemaComposer,
   typeComposersList,
@@ -53,7 +65,9 @@ export function getUnionTypeComposers({
   const outputTypeComposers: (ObjectTypeComposer<any> | UnionTypeComposer<any>)[] = [];
   typeComposersList.forEach(typeComposers => {
     const { input, output } = typeComposers;
-    if (isSomeInputTypeComposer(output)) {
+    if (output instanceof ListComposer) {
+      outputTypeComposers.push(getListContainerTC(schemaComposer, output));
+    } else if (isSomeInputTypeComposer(output)) {
       outputTypeComposers.push(getContainerTC(schemaComposer, output));
     } else {
       outputTypeComposers.push(output);
