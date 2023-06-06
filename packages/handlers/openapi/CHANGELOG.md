@@ -1,5 +1,13 @@
 # @graphql-mesh/openapi
 
+## 0.94.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`1e9710693`](https://github.com/Urigo/graphql-mesh/commit/1e9710693085ed4932690653b1fe81e381727088)]:
+  - @omnigraph/openapi@0.94.1
+
 ## 0.94.0
 
 ### Minor Changes

@@ -1,5 +1,13 @@
 # @omnigraph/json-schema
 
+## 0.94.1
+
+### Patch Changes
+
+- [#5517](https://github.com/Urigo/graphql-mesh/pull/5517)
+  [`1e9710693`](https://github.com/Urigo/graphql-mesh/commit/1e9710693085ed4932690653b1fe81e381727088)
+  Thanks [@devsergiy](https://github.com/devsergiy)! - Fix plain string json encoding of enums
+
 ## 0.94.0
 
 ### Minor Changes

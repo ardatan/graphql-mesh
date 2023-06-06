@@ -1,5 +1,12 @@
 # @graphql-mesh/http
 
+## 0.94.1
+
+### Patch Changes
+
+- [`f38106e67`](https://github.com/Urigo/graphql-mesh/commit/f38106e6708c7b3e47975d8b5898a598117c9f7b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump whatwg-node
+
 ## 0.94.0
 
 ### Minor Changes
