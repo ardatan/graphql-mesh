@@ -148,6 +148,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
         method === 'summary' ||
         method === 'description' ||
         method === 'servers' ||
+        method === '$resolvedRef' ||
         method.startsWith('x-')
       ) {
         continue;
@@ -341,6 +342,10 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
 
       // Handling multiple response types
       for (const responseKey in methodObj.responses) {
+        if (responseKey === '$resolvedRef') {
+          continue;
+        }
+
         const responseObj = methodObj.responses[responseKey] as
           | OpenAPIV3.ResponseObject
           | OpenAPIV2.ResponseObject;
