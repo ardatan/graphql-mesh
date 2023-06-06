@@ -3,8 +3,7 @@ import { GraphQLSchema, printSchema, validateSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import type { KeyValueCache, YamlConfig } from '@graphql-mesh/types';
-import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
-import { DefaultLogger } from '@graphql-mesh/utils';
+import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { fetch as fetchFn } from '@whatwg-node/fetch';
 import GrpcHandler from '../src/index.js';
 

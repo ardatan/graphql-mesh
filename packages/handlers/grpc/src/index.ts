@@ -17,16 +17,15 @@ import {
 } from 'graphql-scalars';
 import lodashGet from 'lodash.get';
 import lodashHas from 'lodash.has';
-import { AnyNestedObject, IParseOptions, Message, RootConstructor } from 'protobufjs';
-import protobufjs from 'protobufjs';
+import protobufjs, { AnyNestedObject, IParseOptions, Message, RootConstructor } from 'protobufjs';
 import { IFileDescriptorSet } from 'protobufjs/ext/descriptor';
 import descriptor from 'protobufjs/ext/descriptor/index.js';
 import { Client } from '@ardatan/grpc-reflection-js';
-import { path, process } from '@graphql-mesh/cross-helpers';
-import { fs } from '@graphql-mesh/cross-helpers';
+import { fs, path, process } from '@graphql-mesh/cross-helpers';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import {
+  GetMeshSourcePayload,
   ImportFn,
   Logger,
   MeshFetch,
@@ -35,7 +34,6 @@ import {
   MeshPubSub,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { GetMeshSourcePayload } from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
 import { getDirective, getDirectives, getRootTypes } from '@graphql-tools/utils';
 import { ChannelCredentials, credentials, loadPackageDefinition } from '@grpc/grpc-js';

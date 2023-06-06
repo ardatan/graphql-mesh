@@ -2,8 +2,7 @@ import { join } from 'path';
 import { findAndParseConfig } from '@graphql-mesh/cli';
 import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';
 import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
-import { isAsyncIterable } from '@graphql-tools/utils';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { isAsyncIterable, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { createApi } from '../api/app';
 
 describe('JSON Schema Subscriptions', () => {

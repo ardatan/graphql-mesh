@@ -1,8 +1,7 @@
 import { join } from 'path';
 import { findAndParseConfig } from '@graphql-mesh/cli';
 import { ProcessedConfig } from '@graphql-mesh/config';
-import { MeshInstance } from '@graphql-mesh/runtime';
-import { getMesh } from '@graphql-mesh/runtime';
+import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
 
 jest.setTimeout(30000);
 
