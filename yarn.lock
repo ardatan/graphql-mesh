@@ -6250,16 +6250,7 @@
     "@whatwg-node/fetch" "^0.8.3"
     tslib "^2.3.1"
 
-"@whatwg-node/server@^0.8.1":
-  version "0.8.4"
-  resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.8.4.tgz#7ea0091cba2e2cb41caab043adc2c701c004624a"
-  integrity sha512-W9yQB/Oag0OR6BlMk81hlQ8/3Q3ls7PaoiPkbDMjtKlEdsbhWUGerqP7zOmFphj413W+UF9piAol16Vhl5iMvg==
-  dependencies:
-    "@repeaterjs/repeater" "^3.0.4"
-    "@whatwg-node/fetch" "^0.9.3"
-    tslib "^2.3.1"
-
-"@whatwg-node/server@^0.8.6":
+"@whatwg-node/server@^0.8.1", "@whatwg-node/server@^0.8.6":
   version "0.8.6"
   resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.8.6.tgz#9320860b2d7e89dc2634a99f9750e338aea9b93c"
   integrity sha512-rzvIkXY+uduFsfyJyu28qQTr73/hnHig8dyDbqvl0oKHgNxfX2B+WFaIjXmjxi2iAA9g75h4fIEQLp/zreTOAw==
@@ -15715,10 +15706,10 @@ neo4j-driver@5.9.0:
     neo4j-driver-core "5.9.0"
     rxjs "^7.8.0"
 
-newrelic@10.1.2:
-  version "10.1.2"
-  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-10.1.2.tgz#8b1ae51813ffc235821e9c08033f8d16e8d0615c"
-  integrity sha512-aI2nAuNgEJbx+7dEztQJahA6IG/PdVVd4sd6Al4AECRqSPZVgEhHlzeR4ScNptsKxgHC46Ru8OdBBaU5FZ7fHQ==
+newrelic@10.2.0:
+  version "10.2.0"
+  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-10.2.0.tgz#81e2a256065c9dd817f7801ec12f7d69b9acb853"
+  integrity sha512-pySRliw/UmO023CfBogO1hnnxby5vZ8tTjq5pPOzSO1ljbbB7abz7qqV8ucWWhaeP1/1x/FE9FZKWe9toly/tw==
   dependencies:
     "@grpc/grpc-js" "^1.8.10"
     "@grpc/proto-loader" "^0.7.5"
