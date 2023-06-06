@@ -6259,6 +6259,14 @@
     "@whatwg-node/fetch" "^0.9.3"
     tslib "^2.3.1"
 
+"@whatwg-node/server@^0.8.6":
+  version "0.8.6"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.8.6.tgz#9320860b2d7e89dc2634a99f9750e338aea9b93c"
+  integrity sha512-rzvIkXY+uduFsfyJyu28qQTr73/hnHig8dyDbqvl0oKHgNxfX2B+WFaIjXmjxi2iAA9g75h4fIEQLp/zreTOAw==
+  dependencies:
+    "@whatwg-node/fetch" "^0.9.3"
+    tslib "^2.3.1"
+
 "@wry/context@^0.7.0":
   version "0.7.3"
   resolved "https://registry.yarnpkg.com/@wry/context/-/context-0.7.3.tgz#240f6dfd4db5ef54f81f6597f6714e58d4f476a1"
@@ -20748,7 +20756,6 @@ typical@^5.2.0:
 
 uWebSockets.js@uNetworking/uWebSockets.js#v20.30.0:
   version "20.30.0"
-  uid d39d4181daf5b670d44cbc1b18f8c28c85fd4142
   resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/d39d4181daf5b670d44cbc1b18f8c28c85fd4142"
 
 ua-parser-js@^1.0.35:
