@@ -193,6 +193,8 @@ export function addHTTPRootFieldResolver(
             }
           }
           requestInit.body = formData;
+        } else if (contentType?.startsWith('text/plain')) {
+          requestInit.body = input;
         } else {
           requestInit.body = JSON.stringify(input);
         }
@@ -201,7 +203,6 @@ export function addHTTPRootFieldResolver(
     if (globalQueryParams) {
       for (const queryParamName in globalQueryParams) {
         if (
-          args != null &&
           queryParamArgMap != null &&
           queryParamName in queryParamArgMap &&
           queryParamArgMap[queryParamName] in args
