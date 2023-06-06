@@ -1,4 +1,5 @@
 ---
+'@graphql-mesh/cli': patch
 '@graphql-mesh/http': patch
 ---
 
