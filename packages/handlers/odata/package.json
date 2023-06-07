@@ -48,7 +48,7 @@
     "fast-xml-parser": "^4.2.1",
     "graphql-compose": "^9.0.10",
     "graphql-parse-resolve-info": "^4.13.0",
-    "graphql-scalars": "^1.22.2",
+    "graphql-scalars": "^1.22.1",
     "http-string-parser": "^0.0.6",
     "pascal-case": "^3.1.2",
     "url-join": "^4.0.1"
