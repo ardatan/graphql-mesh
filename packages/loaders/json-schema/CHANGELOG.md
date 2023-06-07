@@ -1,5 +1,12 @@
 # @omnigraph/json-schema
 
+## 0.94.2
+
+### Patch Changes
+
+- [`98a5ccc55`](https://github.com/Urigo/graphql-mesh/commit/98a5ccc55eb68f4e45acc134573c3baa36dc6aae)
+  Thanks [@ardatan](https://github.com/ardatan)! - Update packages
+
 ## 0.94.1
 
 ### Patch Changes
