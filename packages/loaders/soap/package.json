@@ -35,7 +35,7 @@
   "dependencies": {
     "fast-xml-parser": "4.2.4",
     "graphql-compose": "9.0.10",
-    "graphql-scalars": "^1.20.4"
+    "graphql-scalars": "^1.22.2"
   },
   "devDependencies": {
     "@whatwg-node/fetch": "0.9.3"

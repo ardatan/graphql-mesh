@@ -47,7 +47,7 @@
     "ajv-formats": "2.1.1",
     "dset": "3.1.2",
     "graphql-compose": "9.0.10",
-    "graphql-scalars": "^1.20.4",
+    "graphql-scalars": "^1.22.2",
     "json-machete": "0.94.0",
     "pascal-case": "3.1.2",
     "qs": "6.11.2",

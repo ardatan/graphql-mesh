@@ -1,0 +1,50 @@
+---
+swagger: '2.0'
+info:
+  description: 'Schema'
+  version: '1.0.0'
+  title: 'MyAPI'
+paths:
+  /sample:
+    get:
+      summary: 'Get all Samples'
+      operationId: 'getAllSamples'
+      produces:
+        - 'application/json'
+      parameters:
+        - name: 'page_number'
+          in: 'query'
+          description: 'The page number'
+          required: false
+          type: 'integer'
+          default: 1
+          format: 'int64'
+        - name: 'page_size'
+          in: 'query'
+          description: 'The maximumPage Size.'
+          required: false
+          type: 'integer'
+          format: 'int64'
+      responses:
+        200:
+          description: 'Success'
+          schema:
+            $ref: '#/definitions/ResultList'
+definitions:
+  ResultList:
+    type: 'object'
+    properties:
+      records:
+        type: 'array'
+        items:
+          $ref: '#/definitions/Result'
+  Result:
+    type: 'object'
+    properties:
+      name:
+        type: 'string'
+        description: 'The Name.'
+        maxLength: 100
+      type:
+        type: 'string'
+        description: 'The type'

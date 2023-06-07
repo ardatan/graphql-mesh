@@ -22,6 +22,7 @@ const schemas: Record<string, string> = {
   'Int64 with Defaults': 'int64-with-defaults.yml',
   'Different fields with the same type': 'different-prop-same-type.yaml',
   'Relative Dereference': 'relative_dereference/api.yml',
+  'Default Value as Integer': 'default-int-value.yml',
 };
 
 describe('Schemas', () => {
