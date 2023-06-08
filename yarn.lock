@@ -331,10 +331,10 @@
     "@apollo/utils.keyvaluecache" "^2.1.0"
     "@apollo/utils.logger" "^2.0.0"
 
-"@apollo/server@4.7.2", "@apollo/server@^4.0.0":
-  version "4.7.2"
-  resolved "https://registry.yarnpkg.com/@apollo/server/-/server-4.7.2.tgz#999c028134f6c48a8d182d105e42caa778c5a8f0"
-  integrity sha512-GCGgdrz+1+9fNRuj64J4H+iyYNm6C+Uph5kNbYgSEUz8ujjs3P4FKKMbWov2N6z2kany3y+QjOsHXksrhqrkgQ==
+"@apollo/server@4.7.3", "@apollo/server@^4.0.0":
+  version "4.7.3"
+  resolved "https://registry.yarnpkg.com/@apollo/server/-/server-4.7.3.tgz#5b1dcc5d5b2da80580d2f3c1914f2110881f431b"
+  integrity sha512-eFCzHHheNHfVALjYJjIghV7kSgO49ZFr8+4g2CKOLShoDmLplQ3blyL5NsONyC0Z5l8kqm62V8yXGoxy2eNGfw==
   dependencies:
     "@apollo/cache-control-types" "^1.0.2"
     "@apollo/server-gateway-interface" "^1.1.0"
@@ -3319,7 +3319,7 @@
     value-or-promise "^1.0.11"
     ws "^8.12.0"
 
-"@graphql-tools/utils@10.0.1", "@graphql-tools/utils@^10.0.1":
+"@graphql-tools/utils@10.0.1", "@graphql-tools/utils@^10.0.0", "@graphql-tools/utils@^10.0.1":
   version "10.0.1"
   resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-10.0.1.tgz#52e6c0ce920b57473823e487184f5017974fe4c4"
   integrity sha512-i1FozbDGHgdsFA47V/JvQZ0FE8NAy0Eiz7HGCJO2MkNdZAKNnwei66gOq0JWYVFztwpwbVQ09GkKhq7Kjcq5Cw==
@@ -3346,14 +3346,6 @@
   version "9.2.1"
   resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-9.2.1.tgz#1b3df0ef166cfa3eae706e3518b17d5922721c57"
   integrity sha512-WUw506Ql6xzmOORlriNrD6Ugx+HjVgYxt9KCXD9mHAak+eaXSwuGGPyE60hy9xaDEoXKBsG7SkG69ybitaVl6A==
-  dependencies:
-    "@graphql-typed-document-node/core" "^3.1.1"
-    tslib "^2.4.0"
-
-"@graphql-tools/utils@^10.0.0":
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-10.0.0.tgz#bfd3c78fb8c3d056d1f93956c83aaf1ab4a7dba6"
-  integrity sha512-ndBPc6zgR+eGU/jHLpuojrs61kYN3Z89JyMLwK3GCRkPv4EQn9EOr1UWqF1JO0iM+/jAVHY0mvfUxyrFFN9DUQ==
   dependencies:
     "@graphql-typed-document-node/core" "^3.1.1"
     tslib "^2.4.0"
@@ -5696,10 +5688,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@18.2.8", "@types/react@>=16":
-  version "18.2.8"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.8.tgz#a77dcffe4e9af148ca4aa8000c51a1e8ed99e2c8"
-  integrity sha512-lTyWUNrd8ntVkqycEEplasWy2OxNlShj3zqS0LuB1ENUGis5HodmhM7DtCoUGbxj3VW/WsGA0DUhpG6XrM7gPA==
+"@types/react@*", "@types/react@18.2.9", "@types/react@>=16":
+  version "18.2.9"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.9.tgz#9207f8571afdc59a9c9c30df50e8ad2591ecefaf"
+  integrity sha512-pL3JAesUkF7PEQGxh5XOwdXGV907te6m1/Qe1ERJLgomojS6Ne790QiA7GUl434JEkFA2aAaB6qJ5z4e1zJn/w==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
