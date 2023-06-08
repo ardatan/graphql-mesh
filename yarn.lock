@@ -6203,12 +6203,12 @@
     urlpattern-polyfill "^8.0.0"
     web-streams-polyfill "^3.2.1"
 
-"@whatwg-node/fetch@0.9.3", "@whatwg-node/fetch@^0.9.0", "@whatwg-node/fetch@^0.9.3":
-  version "0.9.3"
-  resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.9.3.tgz#2408f92e9336e18be7758bbd0e90fabdd6e252bf"
-  integrity sha512-zj56zQUj2w+N4UAFvyVlI9VCsGDw2UiiwjTJ3pwXpKolBXYJJYUB47emGxFe8BVBpo/slaIoCkRkGHaeS+aw+A==
+"@whatwg-node/fetch@0.9.4", "@whatwg-node/fetch@^0.9.0", "@whatwg-node/fetch@^0.9.3", "@whatwg-node/fetch@^0.9.4":
+  version "0.9.4"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.9.4.tgz#3627c997d1b68217b1597dcd026dc2674510f587"
+  integrity sha512-nR0nZeOCy4M4ep/nwuGdQxRlOrHqmA5M3t+laOAsPEwwnpoTmA4DSuopyD5Dqk7+sFaOiX328HeGhvwj4HHdng==
   dependencies:
-    "@whatwg-node/node-fetch" "^0.4.2"
+    "@whatwg-node/node-fetch" "^0.4.3"
     urlpattern-polyfill "^9.0.0"
 
 "@whatwg-node/node-fetch@^0.3.6":
@@ -6222,10 +6222,10 @@
     fast-url-parser "^1.1.3"
     tslib "^2.3.1"
 
-"@whatwg-node/node-fetch@^0.4.2":
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/@whatwg-node/node-fetch/-/node-fetch-0.4.2.tgz#89bd5f956ef03a58d0c811f2963c92d02bc0cbb0"
-  integrity sha512-fxrgqr1Yo3OrTFyLNOeUfFEoK/495jcuTrAvelqw2bPwg6xT23+9xzuJ3ukl425WWmxvbRjU+rUr1vVdfsAFmg==
+"@whatwg-node/node-fetch@^0.4.3":
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/node-fetch/-/node-fetch-0.4.3.tgz#bc1a9c2dbdc99e8d0c269052d6055a713de6c3d3"
+  integrity sha512-C+nki+rxOM4mEfQwxohx4QXlPV96oQfQNFR94/3jp125vh+UW/r0CAG/ELUFQSJIcSFAQJarq+mZGiv46Jg7ag==
   dependencies:
     "@whatwg-node/events" "^0.1.0"
     busboy "^1.6.0"
@@ -6251,11 +6251,11 @@
     tslib "^2.3.1"
 
 "@whatwg-node/server@^0.8.1", "@whatwg-node/server@^0.8.6":
-  version "0.8.6"
-  resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.8.6.tgz#9320860b2d7e89dc2634a99f9750e338aea9b93c"
-  integrity sha512-rzvIkXY+uduFsfyJyu28qQTr73/hnHig8dyDbqvl0oKHgNxfX2B+WFaIjXmjxi2iAA9g75h4fIEQLp/zreTOAw==
+  version "0.8.7"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.8.7.tgz#01ace21dd34750ab6a722ccf6e5956fa6b5a2579"
+  integrity sha512-pxopuoWn9n58eHrhwkApgtqI3oALezOzq4iwv5JKHYjAOo5SQ9tH+V2d4/lW4wRcAaZxcbYSyjXBHE/ztxHXnA==
   dependencies:
-    "@whatwg-node/fetch" "^0.9.3"
+    "@whatwg-node/fetch" "^0.9.4"
     tslib "^2.3.1"
 
 "@wry/context@^0.7.0":
