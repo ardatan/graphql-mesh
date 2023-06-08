@@ -891,7 +891,7 @@ describe('example_api', () => {
 
   /**
    * CASE: 64 bit int - return number instead of integer, leading to use of
-   * GraphQLFloat, which can support 64 bits:
+   * GraphQLBigInt, which can support 64 bits:
    */
   it('Get response containing 64-bit integer (using GraphQLBigInt)', async () => {
     const query = /* GraphQL */ `
@@ -909,10 +909,7 @@ describe('example_api', () => {
 
     expect(result).toMatchObject({
       data: {
-        getProductReviews: [
-          { timestamp: BigInt('1502787600000000') },
-          { timestamp: BigInt('1502787400000000') },
-        ],
+        getProductReviews: [{ timestamp: 1502787600000000 }, { timestamp: 1502787400000000 }],
       },
     });
   });

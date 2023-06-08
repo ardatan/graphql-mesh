@@ -12,7 +12,7 @@ exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-
         ],
         "name": "Mission: Impossible Rogue Nation",
         "rating": 0.9700000286102295,
-        "year": 2015n,
+        "year": 2015,
       },
       {
         "cast": [
@@ -22,7 +22,7 @@ exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-
         ],
         "name": "Mission: Impossible - Fallout",
         "rating": 0.9300000071525574,
-        "year": 2018n,
+        "year": 2018,
       },
     ],
   },
@@ -133,9 +133,9 @@ exports[`gRPC Example should get movies correctly: get-movies-grpc-example-resul
           "name": "The Wolf of Wall Street",
           "rating": 0.7799999713897705,
           "time": {
-            "seconds": 1608422400000n,
+            "seconds": 1608422400000,
           },
-          "year": 2013n,
+          "year": 2013,
         },
       ],
     },
