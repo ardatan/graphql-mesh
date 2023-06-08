@@ -1,11 +1,9 @@
 ---
 description:
   Use Cloudflare Workers KV as a caching strategy for Mesh on Cloudflare Workers. Install
-  graphql-mesh/cache-cf-kw and configure your .meshrc.yaml. Check out our deployment recipes for
+  `graphql-mesh/cache-cf-kw` and configure your `.meshrc.yaml`. Check out our deployment recipes for
   help.
 ---
-
-import { PackageCmd } from '@theguild/components'
 
 # CloudFlare Workers KV
 
@@ -14,7 +12,9 @@ If you are using Mesh on Cloudflare Workers, you can use
 
 To get started with this caching strategy, install it:
 
-<PackageCmd packages={['@graphql-mesh/cache-cf-kw']} />
+```sh npm2yarn
+npm i @graphql-mesh/cache-cf-kw
+```
 
 ## How to use?
 

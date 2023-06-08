@@ -5,7 +5,7 @@ description:
   and PostGIS support.
 ---
 
-import { Callout, PackageCmd } from '@theguild/components'
+import { Callout } from '@theguild/components'
 
 # PostgreSQL / PostGraphile
 
@@ -16,7 +16,9 @@ This handler allows you to use the GraphQL schema created by
 
 To get started, install the handler library:
 
-<PackageCmd packages={['@graphql-mesh/postgraphile']} />
+```sh npm2yarn
+npm i @graphql-mesh/postgraphile
+```
 
 Now, you can use it directly in your Mesh config file:
 
@@ -41,7 +43,9 @@ sources:
 You can add [PostGraphile plugins](https://graphile.org/postgraphile/community-plugins) for example
 FederationPlugin. You can install it like below:
 
-<PackageCmd packages={['@graphile/federation']} />
+```sh npm2yarn
+npm i @graphile/federation
+```
 
 and add those in your configuration file;
 
@@ -70,14 +74,18 @@ recognized by Stitching, which brings Automatic Type Merging. So you can install
 Suppose you want to have automatic many-to-many mapping across your entities. You can install
 `@graphile-contrib/pg-many-to-many` and add it under `appendPlugins`.
 
-<PackageCmd packages={['@graphile-contrib/pg-many-to-many']} />
+```sh npm2yarn
+npm i @graphile-contrib/pg-many-to-many
+```
 
 ### PostGIS Support
 
 If you use `PostGIS` in your PostgreSQL database, you need to install `@graphile/postgis` package
 and add it under `appendPlugins`.
 
-<PackageCmd packages={['@graphile/postgis']} />
+```sh npm2yarn
+npm i @graphile/postgis
+```
 
 <Callout>
   See more [plugins](https://graphile.org/postgraphile/community-plugins) to improve the experience!

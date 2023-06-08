@@ -5,8 +5,6 @@ description:
   latency.
 ---
 
-import { PackageCmd } from '@theguild/components'
-
 # DataDog, InfluxDB, Telegraf, StatsD
 
 You can use `@graphql-mesh/plugin-statsd` plugin to collect and send metrics to Datadog's DogStatsD
@@ -34,7 +32,9 @@ Available metrics:
 
 ### Getting Started
 
-<PackageCmd packages={['@graphql-mesh/plugin-statsd', 'hot-shots']} />
+```sh npm2yarn
+npm i @graphql-mesh/plugin-statsd hot-shots
+```
 
 ## Example Configuration
 

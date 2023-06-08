@@ -5,8 +5,6 @@ description:
   Inspector.
 ---
 
-import { PackageCmd } from '@theguild/components'
-
 # Reject Malicious Operation Documents
 
 Parsing a GraphQL operation document is a very expensive and compute intensitive operation that
@@ -48,7 +46,9 @@ processing of a GraphQL operation document that exceeds the limit with the `maxT
 
 Install the plugin first;
 
-<PackageCmd packages={['@escape.tech/graphql-armor-max-tokens']} />
+```sh npm2yarn
+npm i @escape.tech/graphql-armor-max-tokens
+```
 
 Then configure it in your `.meshrc.yml` file.
 

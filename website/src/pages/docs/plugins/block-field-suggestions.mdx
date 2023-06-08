@@ -4,8 +4,6 @@ description:
   ease using blockFieldSuggestions. Get started today!
 ---
 
-import { PackageCmd } from '@theguild/components'
-
 # Block Field Suggestions
 
 If you disabled schema introspection, you should also disable field suggestions as these allow
@@ -13,9 +11,11 @@ reverse-engineering a GraphQL schema.
 
 ## Getting Started
 
-Install the plugin first;
+Install the plugin
 
-<PackageCmd packages={['@escape.tech/graphql-armor-block-field-suggestions']} />
+```sh npm2yarn
+npm i @escape.tech/graphql-armor-block-field-suggestions
+```
 
 Then configure it in your `.meshrc.yml` file.
 

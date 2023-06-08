@@ -4,8 +4,6 @@ description:
   Expose and collect data to optimize your gateway.
 ---
 
-import { PackageCmd } from '@theguild/components'
-
 # Prometheus
 
 Prometheus is a platform for scraping metrics from services and utilities. You can use
@@ -29,7 +27,9 @@ This plugin tracks the complete gateway execution flow and exposes the following
 
 ## Getting Started
 
-<PackageCmd packages={['@graphql-mesh/plugin-prometheus', 'prom-client']} />
+```sh npm2yarn
+npm i @graphql-mesh/plugin-prometheus prom-client
+```
 
 ## Example Configuration
 
