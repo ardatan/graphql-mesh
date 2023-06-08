@@ -5,7 +5,7 @@ description:
   with another, including hoisting field values from a subfield to its parent.
 ---
 
-import { Callout, PackageCmd } from '@theguild/components'
+import { Callout } from '@theguild/components'
 
 # Replace Field
 
@@ -18,7 +18,9 @@ customization.
 
 ## Installation
 
-<PackageCmd packages={['@graphql-mesh/transform-replace-field']} />
+```sh npm2yarn
+npm i @graphql-mesh/transform-replace-field
+```
 
 <Callout>
   Note: currently this transform supports `bare` mode only. For information about "bare" and "wrap"

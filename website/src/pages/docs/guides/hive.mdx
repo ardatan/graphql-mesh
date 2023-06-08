@@ -4,7 +4,7 @@ description:
   tool for your GraphQL API. Track your gateway, publish and consume service schemas.
 ---
 
-import { Callout, PackageCmd } from '@theguild/components'
+import { Callout, Steps } from '@theguild/components'
 
 # GraphQL Hive Integration
 
@@ -17,7 +17,9 @@ and transforms.
 You can connect your GraphQL Mesh gateway to GraphQL Hive to GraphQL Hive registry to track changes
 on the unified schema and monitor the operations done by the clients.
 
-<PackageCmd packages={['@graphql-mesh/plugin-hive']} />
+```sh npm2yarn
+npm i @graphql-mesh/plugin-hive
+```
 
 ```yaml filename=".meshrc.yaml"
 plugins:
@@ -25,7 +27,7 @@ plugins:
       token: '{env.HIVE_TOKEN}'
 ```
 
-<Callout>You have to create a project on GraphQL Hive and get an access token</Callout>
+<Callout>You have to create a project on GraphQL Hive and get an access token.</Callout>
 
 ## Publish and check the gateway schema
 
@@ -33,7 +35,7 @@ Everytime you build GraphQL Mesh gateway, you can find human-readable SDL versio
 under `.mesh/schema.graphql`. You can configure your CI to publish and check your schema
 automatically by using Hive CLI.
 
-[Learn more about managing the schema using GraphQL Hive CLI](https://docs.graphql-hive.com/features/publish-schema#using-hive-cli)
+[Learn more about managing the schema using GraphQL Hive CLI](https://docs.graphql-hive.com/features/publish-schema#using-hive-cli).
 
 ## Publish & Consume Service Schemas
 
@@ -66,23 +68,24 @@ Let's say you have different repos on each service and you want to publish the s
 repos, and keep the configuration for these services there. And the gateway will consume these
 schemas and merge them together.
 
-#### Step 1: Create a project for the service
+<Steps>
+### Create a project for the service
 
 Create a project for the service, and get an active token for this gateway.
 
 [Learn more about getting tokens from Hive](https://docs.graphql-hive.com/features/tokens)
 
-#### Step 2: Setup Mesh CLI on the non-GraphQL service repo
+### Setup Mesh CLI on the non-GraphQL service repo
 
 Let's say you have an OpenAPI service on that repo then install the following packages in this case;
 
-```bash
-yarn add @graphql-mesh/cli @graphql-mesh/openapi graphql
+```sh npm2yarn
+npm i @graphql-mesh/cli @graphql-mesh/openapi graphql
 ```
 
 Then configure the source in `.meshrc.yml` file;
 
-```yaml
+```yaml filename=".meshrc.yml"
 sources:
   - name: FooService
     handler:
@@ -90,7 +93,7 @@ sources:
         source: ./openapi.yml
 ```
 
-#### Step 3: Publish the non-GraphQL service schema
+### Publish the non-GraphQL service schema
 
 You need to install GraphQL Hive CLI and configure it with the token you already created before.
 
@@ -101,12 +104,12 @@ CLI can publish it.
 
 Finally, you can publish the schema `hive schema:publish .mesh/sources/FooService/schema.graphql`
 
-#### Step 4: Create Hive CDN URL and token for the non-GraphQL service
+### Create Hive CDN URL and token for the non-GraphQL service
 
 Go to the service project and click `Connect` on the right top of the page. Copy the URL and header
 then paste it to the `.meshrc.yml` file.
 
-```yaml
+```yaml filename=".meshrc.yml"
 sources:
   - name: FooService
     handler:
@@ -116,6 +119,8 @@ sources:
         schemaHeaders:
           X-Hive-CDN-Key: SOME_BASE64
 ```
+
+</Steps>
 
 <Callout>
   If `source` gets a GraphQL Schema for non GraphQL handlers, it doesn't generate the schema again.
@@ -128,7 +133,9 @@ GraphQL Mesh creates GraphQL APIs from non GraphQL APIs, and it is still possibl
 to GraphQL Hive as a regular GraphQL API. GraphQL Hive transform hooks into the delegation phase to
 track operations done to the upstream APIs.
 
-<PackageCmd packages={['@graphql-mesh/transform-hive']} />
+```sh npm2yarn
+npm i @graphql-mesh/transform-hive
+```
 
 ```yaml filename=".meshrc.yaml"
 sources:

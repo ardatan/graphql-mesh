@@ -4,7 +4,7 @@ description:
   a CDN or registry, and using them with schema-stitching based on graphql-tools.
 ---
 
-import { Callout, PackageCmd } from '@theguild/components'
+import { Callout } from '@theguild/components'
 
 # GraphQL
 
@@ -15,7 +15,9 @@ This handler allows you to load remote GraphQL schemas and use them with schema-
 
 To get started, install the handler library:
 
-<PackageCmd packages={['@graphql-mesh/graphql']} />
+```sh npm2yarn
+npm i @graphql-mesh/graphql
+```
 
 Now, you can use it directly in your Mesh config file:
 
@@ -29,13 +31,13 @@ sources:
 
 <Callout>
   You can check out our example that uses schema stitching with a PostgreSQL data source.
-  [Click here to open the example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/postgres-geodb)
+  [Click here](https://github.com/Urigo/graphql-mesh/tree/master/examples/postgres-geodb) to open the example on GitHub.
 
 </Callout>
 
 ## Headers
 
-[Read about configuration and examples](/docs/guides/headers)
+[Read about configuration and examples](/docs/guides/headers).
 
 ## Fetching SDL or introspection from CDN or any other schema registry tool
 

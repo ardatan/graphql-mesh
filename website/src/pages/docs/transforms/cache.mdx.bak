@@ -1,4 +1,4 @@
-import { PackageCmd, Callout } from '@theguild/components'
+import { Callout } from '@theguild/components'
 
 # Cache Transform
 
@@ -13,7 +13,9 @@ It allows you to configure custom invalidation rules (by TTL/mutation) and selec
 
 To get started with this transform, install it:
 
-<PackageCmd packages={['@graphql-mesh/transform-cache']} />
+```sh npm2yarn
+npm i @graphql-mesh/transform-cache
+```
 
 <Callout>
   GraphQL Mesh uses a default localForage cache (it is fallback to LRU cache in NodeJS), but you can replace it with any other key=>value cache mechanism. See [cache section](/docs/cache/localforage) for more info.

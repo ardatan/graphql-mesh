@@ -5,8 +5,6 @@ description:
   issues with distributed tracing.
 ---
 
-import { PackageCmd } from '@theguild/components'
-
 # NewRelic
 
 If you wish to integrate NewRelic for tracing, monitoring and error reporting, you can use
@@ -20,7 +18,9 @@ issues.
 
 ## Getting Started
 
-<PackageCmd packages={['@graphql-mesh/plugin-newrelic', 'newrelic']} />
+```sh npm2yarn
+npm i @graphql-mesh/plugin-newrelic newrelic
+```
 
 ### Enabling required NewRelic feature flags
 

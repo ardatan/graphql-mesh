@@ -4,7 +4,7 @@ description:
   easily configure REST API sources and naming conventions. Learn more here.
 ---
 
-import { Callout, PackageCmd } from '@theguild/components'
+import { Callout } from '@theguild/components'
 
 # Installation
 
@@ -14,11 +14,11 @@ GraphQL Mesh comes in multiple packages, which you should install according to y
 
 To get started, let's first install locally the Mesh CLI package (and dependencies):
 
-<PackageCmd packages={['@graphql-mesh/cli graphql']} />
+```sh npm2yarn
+npm i @graphql-mesh/cli graphql
+```
 
-<Callout emoji="⚠️" type="warning">
-  Note: Avoid installing Mesh CLI as a global dependency
-</Callout>
+<Callout type="warning">Note: Avoid installing Mesh CLI as a global dependency</Callout>
 
 ## Handlers and Transforms packages
 
