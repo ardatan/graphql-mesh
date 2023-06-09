@@ -11,7 +11,7 @@
   "dependencies": {
     "@graphql-mesh/cli": "0.83.2",
     "@graphql-mesh/graphql": "0.94.0",
-    "concurrently": "8.1.0",
+    "concurrently": "8.2.0",
     "graphql": "16.6.0",
     "graphql-yoga": "4.0.0",
     "sharp": "0.32.1"
