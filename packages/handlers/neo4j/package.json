@@ -44,7 +44,7 @@
     "@neo4j/graphql": "3.20.1",
     "@neo4j/introspector": "^1.0.1",
     "graphql-scalars": "^1.22.2",
-    "neo4j-driver": "5.9.0"
+    "neo4j-driver": "5.9.1"
   },
   "publishConfig": {
     "access": "public",
