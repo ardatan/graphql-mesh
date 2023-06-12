@@ -87,9 +87,9 @@ export default class GrpcHandler implements MeshHandler {
 
   async processReflection(creds: ChannelCredentials): Promise<Promise<protobufjs.Root>[]> {
     this.logger.debug(`Using the reflection`);
-    const grpcReflectionServer = this.config.endpoint;
+    const reflectionEndpoint = stringInterpolator.parse(this.config.endpoint, { env: process.env });
     this.logger.debug(`Creating gRPC Reflection Client`);
-    const reflectionClient = new Client(grpcReflectionServer, creds);
+    const reflectionClient = new Client(reflectionEndpoint, creds);
     const subId = this.pubsub.subscribe('destroy', () => {
       reflectionClient.grpcClient.close();
       this.pubsub.unsubscribe(subId);
@@ -119,6 +119,7 @@ export default class GrpcHandler implements MeshHandler {
     } else {
       fileName = this.config.source;
     }
+    fileName = stringInterpolator.parse(fileName, { env: process.env });
     const absoluteFilePath = path.isAbsolute(fileName)
       ? fileName
       : path.join(this.baseDir, fileName);
@@ -174,6 +175,8 @@ export default class GrpcHandler implements MeshHandler {
     } else {
       fileGlob = this.config.source;
     }
+
+    fileGlob = stringInterpolator.parse(fileGlob, { env: process.env });
 
     const fileNames = await globby(fileGlob, {
       cwd: this.baseDir,
