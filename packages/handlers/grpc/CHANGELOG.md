@@ -1,5 +1,13 @@
 # @graphql-mesh/grpc
 
+## 0.94.2
+
+### Patch Changes
+
+- [`f99046ff0`](https://github.com/Urigo/graphql-mesh/commit/f99046ff0258229d4f428aaec227dd87e0457ddb)
+  Thanks [@ardatan](https://github.com/ardatan)! - Respect environment variable for the reflection
+  endpoint
+
 ## 0.94.1
 
 ### Patch Changes

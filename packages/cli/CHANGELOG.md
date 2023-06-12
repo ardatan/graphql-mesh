@@ -1,5 +1,12 @@
 # @graphql-mesh/cli
 
+## 0.83.3
+
+### Patch Changes
+
+- [`9352ebc22`](https://github.com/Urigo/graphql-mesh/commit/9352ebc22159d5f0b8eaca1fc5dd1ff73f780a25)
+  Thanks [@ardatan](https://github.com/ardatan)! - Load uWS.js dynamically
+
 ## 0.83.2
 
 ### Patch Changes
