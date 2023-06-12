@@ -1,5 +1,17 @@
 # @graphql-mesh/graphql
 
+## 0.94.1
+
+### Patch Changes
+
+- [`e4f94eb3a`](https://github.com/Urigo/graphql-mesh/commit/e4f94eb3a3f01ac88935b708ceb6ffa06cb7f3b3)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support string interpolation for
+  `subscriptionsEndpoint`
+
+- [`e4f94eb3a`](https://github.com/Urigo/graphql-mesh/commit/e4f94eb3a3f01ac88935b708ceb6ffa06cb7f3b3)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support string interpolation for
+  `subscriptionsEndpoint`
+
 ## 0.94.0
 
 ### Minor Changes
