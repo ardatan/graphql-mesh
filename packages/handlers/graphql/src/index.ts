@@ -18,6 +18,7 @@ import {
   getInterpolatedHeadersFactory,
   getInterpolatedStringFactory,
   parseInterpolationStrings,
+  stringInterpolator,
 } from '@graphql-mesh/string-interpolation';
 import {
   GetMeshSourcePayload,
@@ -115,8 +116,13 @@ export default class GraphQLHandler implements MeshHandler {
 
     const endpointFactory = getInterpolatedStringFactory(endpoint);
     const operationHeadersFactory = getInterpolatedHeadersFactory(operationHeaders);
+
+    const subscriptionsEndpoint = httpSourceConfig.subscriptionsEndpoint
+      ? stringInterpolator.parse(httpSourceConfig.subscriptionsEndpoint, { env: process.env })
+      : undefined;
     const executor = this.urlLoader.getExecutorAsync(endpoint, {
       ...httpSourceConfig,
+      subscriptionsEndpoint,
       subscriptionsProtocol: httpSourceConfig.subscriptionsProtocol as SubscriptionProtocol,
       customFetch: this.fetchFn,
     });
