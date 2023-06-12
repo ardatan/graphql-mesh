@@ -8,8 +8,7 @@ import { execute, ExecutionArgs, subscribe } from 'graphql';
 import { makeBehavior } from 'graphql-ws/lib/use/uWebSockets';
 import 'json-bigint-patch';
 import open from 'open';
-// eslint-disable-next-line camelcase
-import { App, SSLApp, TemplatedApp, us_listen_socket_close } from 'uWebSockets.js';
+import type { TemplatedApp } from 'uWebSockets.js';
 import { process } from '@graphql-mesh/cross-helpers';
 import { createMeshHTTPHandler } from '@graphql-mesh/http';
 import { MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
@@ -148,11 +147,13 @@ export async function serveMesh(
     });
 
     if (sslCredentials) {
+      const { SSLApp } = await import('uWebSockets.js');
       uWebSocketsApp = SSLApp({
         key_file_name: sslCredentials.key,
         cert_file_name: sslCredentials.cert,
       });
     } else {
+      const { App } = await import('uWebSockets.js');
       uWebSocketsApp = App();
     }
 
@@ -195,9 +196,11 @@ export async function serveMesh(
     uWebSocketsApp.ws(graphqlPath, wsHandler);
 
     uWebSocketsApp.listen(hostname, port, listenSocket => {
-      registerTerminateHandler(eventName => {
+      registerTerminateHandler(async eventName => {
         const eventLogger = logger.child(`${eventName}  💀`);
         eventLogger.debug(`Stopping HTTP Server`);
+        // eslint-disable-next-line camelcase
+        const { us_listen_socket_close } = await import('uWebSockets.js');
         us_listen_socket_close(listenSocket);
         eventLogger.debug(`HTTP Server has been stopped`);
       });
