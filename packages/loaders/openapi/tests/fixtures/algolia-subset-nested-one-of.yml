@@ -6,14 +6,17 @@ info:
 components:
   schemas:
     searchFiltersArrayString:
+      description: Search filters array of string
       type: array
       items:
         type: string
     mixedSearchFilters:
+      description: Mixed search filters. Array of strings or string.
       oneOf:
         - $ref: '#/components/schemas/searchFiltersArrayString'
         - type: string
     listOfSearchFilters:
+      description: List of search filters.
       type: array
       items:
         $ref: '#/components/schemas/mixedSearchFilters'

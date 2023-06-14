@@ -41,10 +41,19 @@ describe('Algolia schema with nested one Of', () => {
       }
 
       "Filter hits by facet value."
-      union facetFilters = String_container_list | String_container
+      union facetFilters = listOfSearchFilters | String_container
 
-      type String_container_list {
-        items: [String_container]
+      "List of search filters"
+      type listOfSearchFilters {
+        items: [mixedSearchFilters]
+      }
+
+      "Mixed search filters. Array of strings or string." 
+      union mixedSearchFilters = searchFiltersArrayString | String_container
+
+      "Search filters array of string"
+      type searchFiltersArrayString {
+        items: [String]
       }
 
       type String_container {
@@ -67,11 +76,16 @@ describe('Algolia schema with nested one Of', () => {
       }
 
       input consequenceParams_Input {
-        facetFilters: [facetFilters_Input]
+        facetFilters: facetFilters_Input
       }
 
       input facetFilters_Input @oneOf {
-        [String]: [String]
+        listOfSearchFilters: [mixedSearchFilters_Input]
+        String: String
+      }
+      
+      input mixedSearchFilters_Input @oneOf {
+        searchFiltersArrayString: [String]
         String: String
       }
 
