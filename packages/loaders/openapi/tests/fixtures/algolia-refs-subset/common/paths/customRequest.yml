@@ -1,0 +1,27 @@
+get:
+  operationId: get
+  $ref: '../schemas/CustomRequest.yml#/customRequest'
+
+post:
+  operationId: post
+  requestBody:
+    description: The parameters to send with the custom request.
+    content:
+      application/json:
+        schema:
+          type: object
+  $ref: '../schemas/CustomRequest.yml#/customRequest'
+
+put:
+  operationId: put
+  requestBody:
+    description: The parameters to send with the custom request.
+    content:
+      application/json:
+        schema:
+          type: object
+  $ref: '../schemas/CustomRequest.yml#/customRequest'
+
+delete:
+  operationId: del
+  $ref: '../schemas/CustomRequest.yml#/customRequest'

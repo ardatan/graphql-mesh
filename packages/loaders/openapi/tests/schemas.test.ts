@@ -23,6 +23,7 @@ const schemas: Record<string, string> = {
   'Different fields with the same type': 'different-prop-same-type.yaml',
   'Relative Dereference': 'relative_dereference/api.yml',
   'Default Value as Integer': 'default-int-value.yml',
+  'algolia-refs-subset': 'algolia-refs-subset/search/spec.yml', // test case for refs in path and responses
 };
 
 describe('Schemas', () => {
