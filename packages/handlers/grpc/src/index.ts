@@ -283,7 +283,7 @@ export default class GrpcHandler implements MeshHandler {
     loadOptions: LoadOptions;
     rootLogger: Logger;
   }) {
-    const packageDefinition = fromJSON(rootJson, loadOptions);
+    const packageDefinition = fromJSON(JSON.parse(rootJson), loadOptions);
 
     rootLogger.debug(`Creating service client for package definition`);
     const grpcObject = loadPackageDefinition(packageDefinition);
