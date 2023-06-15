@@ -1115,6 +1115,9 @@ type MovieRelationshipCreatedEvent {
 }
 
 input MovieRelationshipCreatedSubscriptionWhere {
+  AND: [MovieRelationshipCreatedSubscriptionWhere!]
+  NOT: MovieRelationshipCreatedSubscriptionWhere
+  OR: [MovieRelationshipCreatedSubscriptionWhere!]
   createdRelationship: MovieRelationshipsSubscriptionWhere
   movie: MovieSubscriptionWhere
 }
@@ -1128,6 +1131,9 @@ type MovieRelationshipDeletedEvent {
 }
 
 input MovieRelationshipDeletedSubscriptionWhere {
+  AND: [MovieRelationshipDeletedSubscriptionWhere!]
+  NOT: MovieRelationshipDeletedSubscriptionWhere
+  OR: [MovieRelationshipDeletedSubscriptionWhere!]
   deletedRelationship: MovieRelationshipsSubscriptionWhere
   movie: MovieSubscriptionWhere
 }
@@ -2640,6 +2646,9 @@ type PersonRelationshipCreatedEvent {
 }
 
 input PersonRelationshipCreatedSubscriptionWhere {
+  AND: [PersonRelationshipCreatedSubscriptionWhere!]
+  NOT: PersonRelationshipCreatedSubscriptionWhere
+  OR: [PersonRelationshipCreatedSubscriptionWhere!]
   createdRelationship: PersonRelationshipsSubscriptionWhere
   person: PersonSubscriptionWhere
 }
@@ -2653,6 +2662,9 @@ type PersonRelationshipDeletedEvent {
 }
 
 input PersonRelationshipDeletedSubscriptionWhere {
+  AND: [PersonRelationshipDeletedSubscriptionWhere!]
+  NOT: PersonRelationshipDeletedSubscriptionWhere
+  OR: [PersonRelationshipDeletedSubscriptionWhere!]
   deletedRelationship: PersonRelationshipsSubscriptionWhere
   person: PersonSubscriptionWhere
 }

@@ -4958,22 +4958,22 @@
     "@napi-rs/simple-git-win32-arm64-msvc" "0.1.8"
     "@napi-rs/simple-git-win32-x64-msvc" "0.1.8"
 
-"@neo4j/cypher-builder@~0.4.3":
-  version "0.4.3"
-  resolved "https://registry.yarnpkg.com/@neo4j/cypher-builder/-/cypher-builder-0.4.3.tgz#1294a5452b3d807466d4245b9dced024b409b144"
-  integrity sha512-keXwKfuIC7LV3ijyCrhIHgIcPJ0HEi8FOZEXaq6Sel6oxfhf8fWS0FqwMyffl6LqwBJvWhhBKAgKe8iQmOgGJw==
+"@neo4j/cypher-builder@~0.5.1":
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/@neo4j/cypher-builder/-/cypher-builder-0.5.2.tgz#07f00a9361e507eab7c1db0a766c702145521340"
+  integrity sha512-+vAqHv6OtC0oN3cuMCzA8GH/bldiwjauW8GX8TEFa5P9u8ys/DrlVaJCHDtejdtT7FWph2IdEALx27Kjqs/GeA==
 
-"@neo4j/graphql@3.20.1":
-  version "3.20.1"
-  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-3.20.1.tgz#bcfa546f26626e29407c408595c24ec3e317b681"
-  integrity sha512-VnlF/7V2ORUvVzLod13KzAinSwCRSDNC49zQqc+NIXiilEExKUCJUoINLnXPsLjGv3XVUFIAgNyIB5o4DI3KuQ==
+"@neo4j/graphql@3.21.0":
+  version "3.21.0"
+  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-3.21.0.tgz#2400794cf5acdcefe6a7d2298892f7302cdc6781"
+  integrity sha512-e1ykd+8Fyy8rXG841XEHVanArPVGbsDHl0Jamfng6cUdhdM/h4eDu25ByN4X3p/F8IsbOBdrJnR5CVH0ER/Llg==
   dependencies:
     "@apollo/subgraph" "^2.2.3"
     "@graphql-tools/merge" "^8.3.3"
     "@graphql-tools/resolvers-composition" "^6.5.3"
     "@graphql-tools/schema" "9.0.19"
     "@graphql-tools/utils" "^9.0.0"
-    "@neo4j/cypher-builder" "~0.4.3"
+    "@neo4j/cypher-builder" "~0.5.1"
     camelcase "^6.3.0"
     debug "^4.3.4"
     deep-equal "^2.0.5"
