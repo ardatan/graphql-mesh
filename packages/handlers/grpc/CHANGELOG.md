@@ -1,5 +1,13 @@
 # @graphql-mesh/grpc
 
+## 0.94.4
+
+### Patch Changes
+
+- [#5575](https://github.com/Urigo/graphql-mesh/pull/5575)
+  [`0b32aa392`](https://github.com/Urigo/graphql-mesh/commit/0b32aa392d4b5c45a8028b62c8e438f14092c722)
+  Thanks [@ardatan](https://github.com/ardatan)! - Add @stream directive
+
 ## 0.94.3
 
 ### Patch Changes
