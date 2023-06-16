@@ -7,6 +7,20 @@ directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
 
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+
+  """Unique name"""
+  label: String
+
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
 type Query {
   """
   Comment 2: This is a comment with initial slash star and final star slash (all on one line)
@@ -88,6 +102,20 @@ directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
 
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+
+  """Unique name"""
+  label: String
+
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
 type Query {
   foos_BamService_GetW(input: foos_GetBamRequest_Input): foos_GetFoosResponse
   foos_BamService_connectivityState(tryToConnect: Boolean): ConnectivityState
@@ -133,6 +161,20 @@ directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
 
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+
+  """Unique name"""
+  label: String
+
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
 type Query {
   foo_BamService_GetFOOs(input: foo_GetFOOsRequest_Input): foo_GetFOOsResponse
   foo_BamService_connectivityState(tryToConnect: Boolean): ConnectivityState
@@ -172,6 +214,20 @@ exports[`gRPC Handler Interpreting Protos should load the Empty proto 1`] = `
 directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD_DEFINITION
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
+
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+
+  """Unique name"""
+  label: String
+
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
 
 type Query {
   """get all movies"""
@@ -269,6 +325,20 @@ directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
 
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+
+  """Unique name"""
+  label: String
+
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
 type Query {
   io_xtech_outer_Example_Get(input: io_xtech_TopLevel_Nested_Input): io_xtech_Result
   io_xtech_outer_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
@@ -310,6 +380,20 @@ directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
 
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+
+  """Unique name"""
+  label: String
+
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
 type Query {
   io_xtech_MapService_GetMap(input: io_xtech_MapRequest_Input): io_xtech_MapResponse
   io_xtech_MapService_connectivityState(tryToConnect: Boolean): ConnectivityState
@@ -345,6 +429,20 @@ exports[`gRPC Handler Interpreting Protos should load the Movie proto 1`] = `
 directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD_DEFINITION
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
+
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+
+  """Unique name"""
+  label: String
+
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
 
 type Query {
   """get all movies"""
@@ -439,6 +537,20 @@ directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
 
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+
+  """Unique name"""
+  label: String
+
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
 type Query {
   io_xtech_Example_Get(input: io_xtech_TopLevel_Nested_Input): io_xtech_Result
   io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState
@@ -478,6 +590,20 @@ directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
 
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+
+  """Unique name"""
+  label: String
+
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
 type Query {
   Example_Get(input: TopLevel_Nested_Input): Result
   Example_connectivityState(tryToConnect: Boolean): ConnectivityState
@@ -516,6 +642,20 @@ exports[`gRPC Handler Interpreting Protos should load the Outside proto 1`] = `
 directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD_DEFINITION
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
+
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+
+  """Unique name"""
+  label: String
+
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
 
 type Query {
   io_outside_Example_GetMovies(input: io_outside_MovieRequest_Input): io_outside_MoviesResult
@@ -621,6 +761,20 @@ directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
 
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+
+  """Unique name"""
+  label: String
+
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
 type Query {
   Example_Get(input: Item_Input): Result
   Example_connectivityState(tryToConnect: Boolean): ConnectivityState
@@ -694,6 +848,20 @@ exports[`gRPC Handler Interpreting Protos should load the With Underscores proto
 directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD_DEFINITION
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
+
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+
+  """Unique name"""
+  label: String
+
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
 
 type Query {
   """get all movies"""
@@ -787,6 +955,20 @@ exports[`gRPC Handler Load proto with prefixQueryMethod should load the retrieve
 directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD_DEFINITION
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
+
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+
+  """Unique name"""
+  label: String
+
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
 
 type Query {
   """get all movies"""

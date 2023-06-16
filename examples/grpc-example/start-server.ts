@@ -96,6 +96,7 @@ export function startServer(subscriptionInterval = 1000, debug = false): Promise
       server.bindAsync('0.0.0.0:50051', ServerCredentials.createInsecure(), (error, port) => {
         if (error) {
           reject(error);
+          return;
         }
         server.start();
 

@@ -1,5 +1,5 @@
 query SearchMoviesByCast {
-  exampleSearchMoviesByCast(input: { castName: "Tom Cruise" }) {
+  exampleSearchMoviesByCast(input: { castName: "Tom Cruise" }) @stream {
     name
     year
     rating
