@@ -1,31 +1,69 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-by-cast-grpc-example-result 1`] = `
+exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-by-cast-grpc-example-result-0 1`] = `
 {
   "data": {
-    "exampleSearchMoviesByCast": [
-      {
-        "cast": [
-          "Tom Cruise",
-          "Simon Pegg",
-          "Jeremy Renner",
-        ],
-        "name": "Mission: Impossible Rogue Nation",
-        "rating": 0.9700000286102295,
-        "year": 2015,
-      },
-      {
-        "cast": [
-          "Tom Cruise",
-          "Simon Pegg",
-          "Henry Cavill",
-        ],
-        "name": "Mission: Impossible - Fallout",
-        "rating": 0.9300000071525574,
-        "year": 2018,
-      },
-    ],
+    "exampleSearchMoviesByCast": [],
   },
+  "hasNext": true,
+}
+`;
+
+exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-by-cast-grpc-example-result-1 1`] = `
+{
+  "hasNext": true,
+  "incremental": [
+    {
+      "items": [
+        {
+          "cast": [
+            "Tom Cruise",
+            "Simon Pegg",
+            "Jeremy Renner",
+          ],
+          "name": "Mission: Impossible Rogue Nation",
+          "rating": 0.9700000286102295,
+          "year": 2015,
+        },
+      ],
+      "path": [
+        "exampleSearchMoviesByCast",
+        0,
+      ],
+    },
+  ],
+}
+`;
+
+exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-by-cast-grpc-example-result-2 1`] = `
+{
+  "hasNext": true,
+  "incremental": [
+    {
+      "items": [
+        {
+          "cast": [
+            "Tom Cruise",
+            "Simon Pegg",
+            "Henry Cavill",
+          ],
+          "name": "Mission: Impossible - Fallout",
+          "rating": 0.9300000071525574,
+          "year": 2018,
+        },
+      ],
+      "path": [
+        "exampleSearchMoviesByCast",
+        1,
+      ],
+    },
+  ],
+}
+`;
+
+exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-by-cast-grpc-example-result-3 1`] = `
+{
+  "hasNext": false,
 }
 `;
 
@@ -39,6 +77,16 @@ directive @grpcMethod(rootJsonName: String, objPath: String, methodName: String,
 directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD_DEFINITION
 
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
+
+"Directs the executor to stream plural fields when the \`if\` argument is true or undefined."
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+  """Unique name"""
+  label: String
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
 
 type Query @grpcRootJson(name: "Root0", rootJson: "{\\"nested\\":{\\"EmptyRequest\\":{\\"fields\\":{},\\"comment\\":null},\\"MovieRequest\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"SearchByCastRequest\\":{\\"fields\\":{\\"castName\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":\\"list of movies\\"}},\\"comment\\":\\"movie result message, contains list of movies\\"},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"AnotherExample\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"Genre\\":{\\"values\\":{\\"UNSPECIFIED\\":0,\\"ACTION\\":1,\\"DRAMA\\":2},\\"comment\\":null,\\"comments\\":{\\"UNSPECIFIED\\":null,\\"ACTION\\":null,\\"DRAMA\\":null}},\\"Movie\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"year\\":{\\"type\\":\\"int64\\",\\"id\\":2,\\"comment\\":null},\\"rating\\":{\\"type\\":\\"float\\",\\"id\\":3,\\"comment\\":null},\\"cast\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":4,\\"comment\\":\\"list of cast\\"},\\"time\\":{\\"type\\":\\"google.protobuf.Timestamp\\",\\"id\\":5,\\"comment\\":null},\\"genre\\":{\\"type\\":\\"Genre\\",\\"id\\":6,\\"comment\\":null}},\\"comment\\":\\"movie message payload\\"},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}") {
   "get all movies"

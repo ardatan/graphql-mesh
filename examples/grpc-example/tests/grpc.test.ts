@@ -33,12 +33,15 @@ describe('gRPC Example', () => {
       'utf8',
     );
     const result = await mesh.execute(MoviesByCastStream, undefined);
-    expect(result).toMatchSnapshot('movies-by-cast-grpc-example-result');
+    let i = 0;
+    for await (const item of result as AsyncIterable<any>) {
+      expect(item).toMatchSnapshot(`movies-by-cast-grpc-example-result-${i++}`);
+    }
   });
   afterAll(async () => {
-    mesh.destroy();
+    mesh?.destroy();
     await new Promise<void>((resolve, reject) => {
-      grpc.tryShutdown(err => {
+      grpc?.tryShutdown(err => {
         if (err) {
           reject(err);
         } else {

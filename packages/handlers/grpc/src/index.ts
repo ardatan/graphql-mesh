@@ -36,7 +36,12 @@ import {
   YamlConfig,
 } from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
-import { getDirective, getDirectives, getRootTypes } from '@graphql-tools/utils';
+import {
+  getDirective,
+  getDirectives,
+  getRootTypes,
+  GraphQLStreamDirective,
+} from '@graphql-tools/utils';
 import { ChannelCredentials, credentials, loadPackageDefinition } from '@grpc/grpc-js';
 import { ServiceClient } from '@grpc/grpc-js/build/src/make-client.js';
 import { fromJSON } from '@grpc/proto-loader';
@@ -717,6 +722,10 @@ export default class GrpcHandler implements MeshHandler {
 
       // graphql-compose doesn't add @defer and @stream to the schema
       specifiedDirectives.forEach(directive => this.schemaComposer.addDirective(directive));
+
+      if (!this.schemaComposer.hasDirective('stream')) {
+        this.schemaComposer.addDirective(GraphQLStreamDirective);
+      }
 
       this.logger.debug(`Building the final GraphQL Schema`);
       const schema = this.schemaComposer.buildSchema();

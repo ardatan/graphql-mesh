@@ -6,7 +6,7 @@ import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Server } from '@grpc/grpc-js';
 import startGrpcServer from '../start-server';
 
-describe('gRPC Example', () => {
+describe('gRPC Reflection Example', () => {
   let mesh: MeshInstance;
   let grpc: Server;
   beforeAll(async () => {
@@ -28,9 +28,9 @@ describe('gRPC Example', () => {
     expect(result).toMatchSnapshot('greeting-result');
   });
   afterAll(() => {
-    mesh.destroy();
+    mesh?.destroy();
     return new Promise<void>((resolve, reject) => {
-      grpc.tryShutdown(err => {
+      grpc?.tryShutdown(err => {
         if (err) {
           reject(err);
         } else {
