@@ -19,7 +19,7 @@
     "@graphql-mesh/cli": "0.83.3",
     "@graphql-mesh/config": "0.94.0",
     "@graphql-mesh/graphql": "0.94.1",
-    "@graphql-mesh/grpc": "0.94.3",
+    "@graphql-mesh/grpc": "0.94.4",
     "@graphql-mesh/json-schema": "0.94.2",
     "@graphql-mesh/odata": "0.94.1",
     "@graphql-mesh/openapi": "0.94.2",
