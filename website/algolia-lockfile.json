@@ -541,7 +541,7 @@
     "objectID": "mesh-docs-getting-started-overview",
     "headings": [],
     "toc": [],
-    "content": "7dcf48e7ac68b815a88b0710fffd496c",
+    "content": "a2bd0265395087c91673141fcedb7c3a",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/getting-started/overview",
     "domain": "https://www.the-guild.dev/graphql/mesh",
     "hierarchy": ["docs", "getting-started"],
@@ -1036,7 +1036,7 @@
         "anchor": "mesh-plugins"
       }
     ],
-    "content": "43ab7a4694bdcfe0814b2f7bbe8ad778",
+    "content": "ff4b59d3845f0f698ad9e72e9360d4e2",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/monitoring-and-tracing",
     "domain": "https://www.the-guild.dev/graphql/mesh",
     "hierarchy": ["docs", "guides"],
