@@ -1361,11 +1361,9 @@ export function getComposerFromJSONSchema(
             };
           }
 
-          let isJSON = false;
           let output = subSchemaAndTypeComposers.output;
           if (Object.keys(fieldMap).length === 0) {
             output = schemaComposer.getAnyTC(GraphQLJSON);
-            isJSON = true;
           } else if ('addFields' in output) {
             if (subSchemaOnly.discriminatorMapping) {
               for (const discriminatorValue in subSchemaOnly.discriminatorMapping) {
@@ -1378,7 +1376,6 @@ export function getComposerFromJSONSchema(
           let input = subSchemaAndTypeComposers.input;
           if (Object.keys(inputFieldMap).length === 0) {
             input = schemaComposer.getAnyTC(GraphQLJSON);
-            isJSON = true;
           } else if (input != null && 'addFields' in input) {
             (input as InputTypeComposer).addFields(inputFieldMap);
           }
@@ -1391,9 +1388,7 @@ export function getComposerFromJSONSchema(
             input,
             output,
             nullable: subSchemaAndTypeComposers.nullable,
-            default: isJSON
-              ? JSON.stringify(subSchemaAndTypeComposers.default)
-              : subSchemaAndTypeComposers.default,
+            default: subSchemaAndTypeComposers.default,
             readOnly: subSchemaAndTypeComposers.readOnly,
             writeOnly: subSchemaAndTypeComposers.writeOnly,
           };
