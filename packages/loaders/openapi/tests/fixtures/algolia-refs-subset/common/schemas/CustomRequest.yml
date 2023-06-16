@@ -1,0 +1,35 @@
+customRequest:
+  summary: Send requests to the Algolia REST API.
+  description: This method allow you to send requests to the Algolia REST API.
+  parameters:
+    - $ref: '#/PathInPath'
+    - $ref: '#/Parameters'
+  responses:
+    $ref: '#/Responses'
+
+Responses:
+  '200':
+    description: OK
+    content:
+      application/json:
+        schema:
+          type: object
+  '400':
+    $ref: '../responses/BadRequest.yml'
+
+PathInPath:
+  name: path
+  in: path
+  description: The path of the API endpoint to target, anything after the /1 needs to be specified.
+  required: true
+  schema:
+    type: string
+    example: /keys
+
+Parameters:
+  name: parameters
+  in: query
+  description: Query parameters to be applied to the current query.
+  schema:
+    type: object
+    additionalProperties: true

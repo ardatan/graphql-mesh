@@ -1,0 +1,16 @@
+openapi: 3.0.2
+info:
+  title: Search API
+  description: API powering the Search feature of Algolia.
+  version: 1.0.0
+servers:
+  - url: https://{appId}.algolia.net
+    variables:
+      appId:
+        default: myAppId
+paths:
+  # ######################
+  # ### Custom request ###
+  # ######################
+  /1{path}:
+    $ref: '../common/paths/customRequest.yml'
