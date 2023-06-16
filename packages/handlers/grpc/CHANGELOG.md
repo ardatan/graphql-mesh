@@ -1,5 +1,12 @@
 # @graphql-mesh/grpc
 
+## 0.94.3
+
+### Patch Changes
+
+- [`3c99049fd`](https://github.com/Urigo/graphql-mesh/commit/3c99049fd4740710ecf45b0ce2d7e73cfeabfe44)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix gRPC artifacts
+
 ## 0.94.2
 
 ### Patch Changes
