@@ -49,8 +49,8 @@ or schema coordinate.
 # ...
 plugins:
   - responseCache:
-      # cache operations for 1 hour by default
-      ttl: 60 * 1000 + 60,
+      # cache operations for 1 hour
+      ttl: 60 * 60 * 1000,
       ttlPerCoordinate:
         # cache operation containing Stock object type for 500ms
         - coordinate: Stock
