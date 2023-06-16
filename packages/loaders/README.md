@@ -70,66 +70,6 @@ export async function getOmnigraphSDK() {
 }
 ```
 
-### Bundling
-
-As you can see above, Omnigraph is able to download sources via HTTP on runtime. But this has some
-downsides. The remote API might be down or we might have some bandwidth concerns to avoid. So
-Omnigraph has "Bundling" feature that helps to store the downloaded and resolved resources once
-ahead-of-time. But this needs some extra code files with programmatic usage by splitting buildtime
-and runtime configurations;
-
-We can create a script called `generate-bundle.ts` and every time we run `npm run generate-bundle`
-it will download the sources and generate the bundle.
-
-```ts filename="generate-bundle.js"
-import { writeFileSync } from 'fs'
-import { createBundle } from '@omnigraph/openapi'
-
-async function main() {
-  const createdBundle = await createBundle('my-omnigraph', {
-    // We don't need operation specific configuration like `operationHeaders` here
-    // We will use those later
-    source: 'https://my-openapi-source.com/openapi.yml',
-    schemaHeaders: {
-      // Some headers needed to download resources
-    }
-  })
-
-  // Save it to the disk
-  writeFileSync('./bundle.json', JSON.stringify(createdBundle))
-}
-
-main().catch(e => {
-  console.error(e)
-  process.exit(1)
-})
-```
-
-Then we can load the schema from another file called `load-schema-from-bundle.ts`
-
-```ts filename="load-schema-from-bundle.js"
-import { getGraphQLSchemaFromBundle } from '@omnigraph/openapi'
-// Load it as a module so bundlers can recognize and add it to the bundle
-import omnigraphBundle from './bundle.json'
-
-export default function loadSchemaFromBundle() {
-  return getGraphQLSchemaFromBundle(omnigraphBundle, {
-    // Now use the operation specific configuration here
-    operationHeaders: {
-      'Content-Type': 'application/json',
-      Authorization: 'Bearer {context.apiToken}'
-    }
-  })
-}
-```
-
-And use our new loader in GraphQL Config by replacing `loader`
-
-```yaml filename=".graphqlrc.yml"
-schema:
-  MyOmnigraph:
-    loader: ./load-schema-from-bundle.js # This provides GraphQLSchema to GraphQL Config
-```
 
 ### String interpolation on runtime
 
