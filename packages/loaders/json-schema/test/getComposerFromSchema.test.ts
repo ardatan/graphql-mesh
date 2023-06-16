@@ -1090,4 +1090,53 @@ ${printType(GraphQLString)}
     });
     expect.assertions(4);
   });
+  it('should handle default values for json object', async () => {
+    const jsonSchema: JSONSchemaObject = {
+      type: 'object',
+      title: '_schema',
+      properties: {
+        query: {
+          type: 'object',
+          title: 'Query',
+          properties: {
+            foo: {
+              type: 'string',
+            },
+          },
+        },
+        queryInput: {
+          type: 'object',
+          title: 'QueryInput',
+          properties: {
+            foo: {
+              type: 'object',
+              title: 'Foo_Input',
+              properties: {
+                input: {
+                  type: 'object',
+                  default: { a: 10 },
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const { output } = await getComposerFromJSONSchema(jsonSchema, logger);
+    expect(output instanceof SchemaComposer).toBeTruthy();
+    const schema = (output as SchemaComposer).buildSchema();
+    expect(printSchemaWithDirectives(schema)).toMatchInlineSnapshot(`
+      "schema {
+        query: Query
+      }
+
+      type Query {
+        foo(input: JSON = "{\\"a\\":10}"): String
+      }
+
+      "The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf)."
+      scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")"
+    `);
+  });
 });
