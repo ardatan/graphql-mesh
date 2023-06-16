@@ -1,5 +1,14 @@
 # @omnigraph/openapi
 
+## 0.94.3
+
+### Patch Changes
+
+- [#5560](https://github.com/Urigo/graphql-mesh/pull/5560)
+  [`4ee9c784d`](https://github.com/Urigo/graphql-mesh/commit/4ee9c784de487a613288eb4b037fc11fd89f31dd)
+  Thanks [@devsergiy](https://github.com/devsergiy)! - Fix skipping $resolvedRef property for path
+  and responses objects
+
 ## 0.94.2
 
 ### Patch Changes
