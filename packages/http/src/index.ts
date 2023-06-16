@@ -61,29 +61,6 @@ export function createMeshHTTPHandler<TServerContext>({
                 );
                 return;
             }
-            if (readyFlag) {
-              return mesh$.then(async mesh => {
-                for (const eventName of mesh.pubsub.getEventNames()) {
-                  if (eventName === `webhook:${request.method.toLowerCase()}:${url.pathname}`) {
-                    const body = await request.text();
-                    logger.debug(`Received webhook request for ${url.pathname}`, body);
-                    mesh.pubsub.publish(
-                      eventName,
-                      request.headers.get('content-type') === 'application/json'
-                        ? JSON.parse(body)
-                        : body,
-                    );
-                    endResponse(
-                      new Response(null, {
-                        status: 204,
-                        statusText: 'OK',
-                      }),
-                    );
-                    return;
-                  }
-                }
-              });
-            }
             if (staticFiles && request.method === 'GET') {
               let relativePath = url.pathname;
               if (relativePath === '/' || !relativePath) {
@@ -116,6 +93,29 @@ export function createMeshHTTPHandler<TServerContext>({
               return;
             }
             withCookies(request);
+            if (readyFlag) {
+              return mesh$.then(async mesh => {
+                for (const eventName of mesh.pubsub.getEventNames()) {
+                  if (eventName === `webhook:${request.method.toLowerCase()}:${url.pathname}`) {
+                    const body = await request.text();
+                    logger.debug(`Received webhook request for ${url.pathname}`, body);
+                    mesh.pubsub.publish(
+                      eventName,
+                      request.headers.get('content-type') === 'application/json'
+                        ? JSON.parse(body)
+                        : body,
+                    );
+                    endResponse(
+                      new Response(null, {
+                        status: 204,
+                        statusText: 'OK',
+                      }),
+                    );
+                    return;
+                  }
+                }
+              });
+            }
           },
         },
       ],
