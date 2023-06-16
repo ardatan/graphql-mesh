@@ -1,5 +1,12 @@
 # @graphql-mesh/http
 
+## 0.94.2
+
+### Patch Changes
+
+- [`b57decd3a`](https://github.com/Urigo/graphql-mesh/commit/b57decd3a4f185ba55e7afdcd5789be94b4df75e)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bring back the redirection for '/'
+
 ## 0.94.1
 
 ### Patch Changes
