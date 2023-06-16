@@ -1,3 +1,5 @@
+import { GraphQLScalarType } from 'graphql';
+
 type ScalarMap = Map<string, string>;
 
 const SCALARS: ScalarMap = new Map([
@@ -28,4 +30,27 @@ export function getGraphQLScalar(scalarType: string): string {
     throw new Error(`Could not find GraphQL Scalar for type ${scalarType}`);
   }
   return SCALARS.get(scalarType);
+}
+
+export function addExecutionLogicToScalar(
+  nonExecutableScalar: GraphQLScalarType,
+  actualScalar: GraphQLScalarType,
+) {
+  Object.defineProperties(nonExecutableScalar, {
+    serialize: {
+      value: actualScalar.serialize,
+    },
+    parseValue: {
+      value: actualScalar.parseValue,
+    },
+    parseLiteral: {
+      value: actualScalar.parseLiteral,
+    },
+    extensions: {
+      value: {
+        ...actualScalar.extensions,
+        ...nonExecutableScalar.extensions,
+      },
+    },
+  });
 }

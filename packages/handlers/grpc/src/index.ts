@@ -4,6 +4,7 @@ import {
   buildSchema,
   GraphQLEnumTypeConfig,
   GraphQLFieldResolver,
+  GraphQLScalarType,
   GraphQLSchema,
   specifiedDirectives,
 } from 'graphql';
@@ -43,8 +44,11 @@ import {
   grpcConnectivityStateDirective,
   grpcMethodDirective,
   grpcRootJsonDirective,
+  ObjMapScalar,
 } from './directives.js';
 import './patchLongJs.js';
+import { resolvers as scalarResolvers } from 'graphql-scalars';
+import { addExecutionLogicToScalar } from './scalars.js';
 import { addIncludePathResolver, addMetaDataToCall, getTypeName } from './utils.js';
 
 const { Root } = protobufjs;
@@ -283,7 +287,7 @@ export default class GrpcHandler implements MeshHandler {
     loadOptions: LoadOptions;
     rootLogger: Logger;
   }) {
-    const packageDefinition = fromJSON(typeof rootJson === 'string' ? JSON.parse(rootJson) : rootJson, loadOptions);
+    const packageDefinition = fromJSON(rootJson, loadOptions);
 
     rootLogger.debug(`Creating service client for package definition`);
     const grpcObject = loadPackageDefinition(packageDefinition);
@@ -367,6 +371,18 @@ export default class GrpcHandler implements MeshHandler {
   }
 
   processDirectives({ schema, creds }: { schema: GraphQLSchema; creds: ChannelCredentials }) {
+    const schemaTypeMap = schema.getTypeMap();
+    for (const scalarTypeName in scalarResolvers) {
+      if (scalarTypeName in schemaTypeMap) {
+        addExecutionLogicToScalar(
+          schemaTypeMap[scalarTypeName] as GraphQLScalarType,
+          scalarResolvers[scalarTypeName],
+        );
+      }
+    }
+    if ('ObjMap' in schemaTypeMap) {
+      addExecutionLogicToScalar(schemaTypeMap.ObjMap as GraphQLScalarType, ObjMapScalar);
+    }
     const queryType = schema.getQueryType();
     const rootJsonAnnotations = getDirective(schema, queryType, 'grpcRootJson');
     const rootJsonMap = new Map<string, protobufjs.INamespace>();
