@@ -1,3 +1,4 @@
+merger: bare
 sources:
   - name: Swapi
     handler:
@@ -5,3 +6,7 @@ sources:
         source: ./swagger/pets.json
         endpoint: >-
           http://localhost:4001
+    transforms:
+        - namingConvention:
+            mode: bare
+            fieldNames: camelCase

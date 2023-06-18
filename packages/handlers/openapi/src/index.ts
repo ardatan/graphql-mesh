@@ -1,11 +1,4 @@
-import {
-  buildSchema,
-  execute,
-  ExecutionArgs,
-  GraphQLSchema,
-  OperationTypeNode,
-  subscribe,
-} from 'graphql';
+import { buildSchema, GraphQLSchema } from 'graphql';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import {
@@ -20,7 +13,6 @@ import {
   YamlConfig,
 } from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
-import { getOperationASTFromRequest } from '@graphql-tools/utils';
 import { loadNonExecutableGraphQLSchemaFromOpenAPI, processDirectives } from '@omnigraph/openapi';
 
 export default class OpenAPIHandler implements MeshHandler {
@@ -107,33 +99,15 @@ export default class OpenAPIHandler implements MeshHandler {
     const nonExecutableSchema = await this.getNonExecutableSchema({
       interpolatedSource,
     });
-    const schemaWithDirectives$ = Promise.resolve().then(() => {
-      this.logger.info(`Processing annotations for the execution layer`);
-      return processDirectives({
-        ...this.config,
-        schema: nonExecutableSchema,
-        pubsub: this.pubsub,
-        logger: this.logger,
-        globalFetch: fetchFn,
-      });
+    const schema = processDirectives({
+      ...this.config,
+      schema: nonExecutableSchema,
+      pubsub: this.pubsub,
+      logger: this.logger,
+      globalFetch: fetchFn,
     });
     return {
-      schema: nonExecutableSchema,
-      executor: async executionRequest => {
-        const args: ExecutionArgs = {
-          schema: await schemaWithDirectives$,
-          document: executionRequest.document,
-          variableValues: executionRequest.variables,
-          operationName: executionRequest.operationName,
-          contextValue: executionRequest.context,
-          rootValue: executionRequest.rootValue,
-        };
-        const operationAST = getOperationASTFromRequest(executionRequest);
-        if (operationAST.operation === OperationTypeNode.SUBSCRIPTION) {
-          return subscribe(args) as any;
-        }
-        return execute(args) as any;
-      },
+      schema,
     };
   }
 }
