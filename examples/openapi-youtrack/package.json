@@ -10,7 +10,7 @@
     "@graphql-mesh/cli": "0.83.4",
     "@graphql-mesh/openapi": "0.94.4",
     "@graphql-mesh/transform-resolvers-composition": "0.94.0",
-    "graphql": "16.7.0",
+    "graphql": "16.7.1",
     "graphql-fields": "2.0.3"
   }
 }

@@ -4864,7 +4864,7 @@
   resolved "https://registry.yarnpkg.com/@newrelic/koa/-/koa-7.2.0.tgz#85156cb5882b9e83a2e245b536516c4f91bdb71d"
   integrity sha512-3y/CCOLJ6sEPTKyQAmBrBP5CfZ5ak8mWt+7mWjdbblOXQh20LEsrA/KQAh/ROcTh6rV8oxsubLZ3N13LIeIoVQ==
 
-"@newrelic/native-metrics@^9.0.0":
+"@newrelic/native-metrics@^9.0.1":
   version "9.0.1"
   resolved "https://registry.yarnpkg.com/@newrelic/native-metrics/-/native-metrics-9.0.1.tgz#4cf2deca74209128dd003b7256b144acc0ae97f4"
   integrity sha512-ZMCd6xW9PWhrWvg8Ik0oFU+XGFLbqRujh15qu3+7FJRI8163RBOD6SS8tsU0ydG8+LlaPDZQp/ODD4LvBXu5UA==
@@ -12188,10 +12188,10 @@ graphql-yoga@4.0.2, graphql-yoga@^4.0.0:
     lru-cache "^10.0.0"
     tslib "^2.5.2"
 
-graphql@*, "graphql@14 - 16", graphql@16.7.0, "graphql@>=0.9 <0.14 || ^14.0.2 || ^15.4.0", "graphql@^0.6.0 || ^0.7.0 || ^0.8.0-b || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.2 || ^15.0.0", graphql@^14.5.3, graphql@^16.0.0:
-  version "16.7.0"
-  resolved "https://registry.yarnpkg.com/graphql/-/graphql-16.7.0.tgz#717051b8c183fcf8c3ad0a3668aeb5ffd1e9bc33"
-  integrity sha512-kdNG+ZGNf0E4dezSA2N9cRq8UdOMCcz9Wzh1dDSrCzGCz0nj6p8qlE+utY6iqr9y1sh3MZxUb7K794neZ2oT1w==
+graphql@*, "graphql@14 - 16", graphql@16.7.1, "graphql@>=0.9 <0.14 || ^14.0.2 || ^15.4.0", "graphql@^0.6.0 || ^0.7.0 || ^0.8.0-b || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.2 || ^15.0.0", graphql@^14.5.3, graphql@^16.0.0:
+  version "16.7.1"
+  resolved "https://registry.yarnpkg.com/graphql/-/graphql-16.7.1.tgz#11475b74a7bff2aefd4691df52a0eca0abd9b642"
+  integrity sha512-DRYR9tf+UGU0KOsMcKAlXeFfX89UiiIZ0dRU3mR0yJfu6OjZqUcp68NnFLnqQU5RexygFoDy1EW+ccOYcPfmHg==
 
 gray-matter@^4.0.3:
   version "4.0.3"
@@ -16423,10 +16423,10 @@ neo4j-driver@^5.9.2:
     neo4j-driver-core "5.9.2"
     rxjs "^7.8.0"
 
-newrelic@10.3.0:
-  version "10.3.0"
-  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-10.3.0.tgz#afe4df82be47af19e1e7e3bc489633c6f6e6d699"
-  integrity sha512-MFdnSbhyoTZ2gsPmxbPkDql+Q3GLsCiQnrxj4AcF4KKM5Tin98Rlh68sDrIiuKRoFQazgrXMB9Te/eG1uP0oHQ==
+newrelic@10.3.1:
+  version "10.3.1"
+  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-10.3.1.tgz#75a083f9cafdc16be918c6f674e8cd81804982cd"
+  integrity sha512-Aq9M0zPzKCtA05UbbWhLmHohcV0bC+fq5b8DMEpalS8WLlENAocG0tS85b938QUg3eOH8I/fkmZ8pQw63y0HrQ==
   dependencies:
     "@grpc/grpc-js" "^1.8.10"
     "@grpc/proto-loader" "^0.7.5"
@@ -16441,11 +16441,11 @@ newrelic@10.3.0:
     json-bigint "^1.0.0"
     json-stringify-safe "^5.0.0"
     readable-stream "^3.6.1"
-    semver "^5.3.0"
+    semver "^7.5.2"
     winston-transport "^4.5.0"
   optionalDependencies:
     "@contrast/fn-inspect" "^3.3.0"
-    "@newrelic/native-metrics" "^9.0.0"
+    "@newrelic/native-metrics" "^9.0.1"
 
 next-mdx-remote@^4.2.1:
   version "4.4.1"
