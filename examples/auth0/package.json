@@ -14,7 +14,7 @@
     "@graphql-mesh/cli": "0.83.4",
     "@graphql-mesh/json-schema": "0.94.2",
     "@graphql-mesh/plugin-operation-field-permissions": "0.94.0",
-    "graphql": "16.6.0"
+    "graphql": "16.7.0"
   },
   "devDependencies": {
     "jest": "29.5.0"
