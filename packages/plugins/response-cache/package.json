@@ -41,7 +41,7 @@
   "dependencies": {
     "@envelop/core": "^4.0.0",
     "@graphql-mesh/string-interpolation": "0.5.0",
-    "@graphql-yoga/plugin-response-cache": "2.0.1"
+    "@graphql-yoga/plugin-response-cache": "2.0.2"
   },
   "publishConfig": {
     "access": "public",
