@@ -40,7 +40,7 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@whatwg-node/server": "^0.8.6",
+    "@whatwg-node/server": "^0.9.0",
     "graphql-yoga": "^4.0.0"
   },
   "devDependencies": {
