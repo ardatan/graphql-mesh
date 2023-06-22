@@ -1,5 +1,12 @@
 # @graphql-mesh/neo4j
 
+## 0.94.4
+
+### Patch Changes
+
+- [`1abe2a6f2`](https://github.com/Urigo/graphql-mesh/commit/1abe2a6f264f694c989b50df40a45631f7f23597)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump internal packages
+
 ## 0.94.3
 
 ### Patch Changes

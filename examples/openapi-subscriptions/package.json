@@ -1,6 +1,6 @@
 {
   "name": "openapi-subscriptions",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "private": true,
   "scripts": {
     "start": "concurrently \"yarn start:api\" \"yarn start:mesh\"",
@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.83.4",
-    "@graphql-mesh/openapi": "0.94.3",
+    "@graphql-mesh/openapi": "0.94.4",
     "@whatwg-node/fetch": "^0.9.0",
     "@whatwg-node/router": "^0.3.0",
     "concurrently": "8.2.0",
