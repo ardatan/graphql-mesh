@@ -33,7 +33,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "fast-xml-parser": "4.2.4",
+    "fast-xml-parser": "4.2.5",
     "graphql-compose": "9.0.10",
     "graphql-scalars": "^1.22.2"
   },
