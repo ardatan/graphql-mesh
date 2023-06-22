@@ -1,0 +1,91 @@
+openapi: 3.0.2
+info:
+  title: Search API
+  description: API powering the Search feature of Algolia.
+  version: 1.0.0
+components:
+  schemas:
+    searchFiltersArrayString:
+      description: Search filters array of string
+      type: array
+      items:
+        type: string
+    mixedSearchFilters:
+      description: Mixed search filters. Array of strings or string.
+      oneOf:
+        - $ref: '#/components/schemas/searchFiltersArrayString'
+        - type: string
+    listOfSearchFilters:
+      description: List of search filters.
+      type: array
+      items:
+        $ref: '#/components/schemas/mixedSearchFilters'
+    facetFilters:
+      description: Filter hits by facet value.
+      oneOf:
+        - $ref: '#/components/schemas/listOfSearchFilters'
+        - type: string
+      x-categories:
+        - Filtering
+    baseSearchParamsWithoutQuery:
+      type: object
+      additionalProperties: false
+      properties:
+        facetFilters:
+          $ref: '#/components/schemas/facetFilters'
+    consequenceParams:
+      allOf:
+        - $ref: '#/components/schemas/baseSearchParamsWithoutQuery'
+    consequence:
+      type: object
+      description: Consequence of the Rule.
+      additionalProperties: false
+      properties:
+        params:
+          $ref: '#/components/schemas/consequenceParams'
+    rule:
+      type: object
+      description: Rule object.
+      additionalProperties: false
+      properties:
+        consequence:
+          $ref: '#/components/schemas/consequence'
+servers:
+  - url: https://{appId}.algolia.net
+    variables:
+      appId:
+        default: myAppId
+paths:
+  /1/indexes/:
+    get:
+      tags:
+        - search
+      operationId: getRule
+      summary: Get a rule.
+      description: Retrieve the Rule with the specified objectID.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rule'
+    put:
+      tags:
+        - search
+      operationId: saveRule
+      summary: Save/Update a rule.
+      description: Create or update the Rule with the specified objectID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/rule'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string

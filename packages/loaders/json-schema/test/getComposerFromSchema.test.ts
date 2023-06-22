@@ -1090,4 +1090,34 @@ ${printType(GraphQLString)}
     });
     expect.assertions(4);
   });
+  it('should handle nested unions with primitive types', async () => {
+    const FacetFilterType: JSONSchema = {
+      title: 'FacetFilter',
+      description: 'Filter hits by facet value.',
+      oneOf: [
+        {
+          type: 'array',
+          items: {
+            title: 'FacetFilterItem',
+            oneOf: [
+              {
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
+              },
+              {
+                type: 'string',
+              },
+            ],
+          },
+        },
+        {
+          type: 'string',
+        },
+      ],
+    };
+    const { output } = await getComposerFromJSONSchema(FacetFilterType, logger);
+    expect((output as UnionTypeComposer).getType().toString()).toBe('[String]');
+  });
 });

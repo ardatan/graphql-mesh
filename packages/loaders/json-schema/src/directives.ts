@@ -517,6 +517,24 @@ export function processDictionaryDirective(
   };
 }
 
+export const FlattenDirective = new GraphQLDirective({
+  name: 'flatten',
+  locations: [DirectiveLocation.FIELD_DEFINITION],
+});
+
+export function processFlattenAnnotations(field: GraphQLField<any, any>) {
+  if (!field.resolve || field.resolve.name === 'defaultFieldResolver') {
+    const fieldName = field.name;
+    field.resolve = root => {
+      let result = root[fieldName];
+      if (!Array.isArray(root)) {
+        result = [result];
+      }
+      return result.flat(Infinity);
+    };
+  }
+}
+
 interface ProcessDirectiveArgs {
   schema: GraphQLSchema;
   pubsub: MeshPubSub;
@@ -639,6 +657,9 @@ export function processDirectives({
                 field as GraphQLField<any, any>,
                 directiveAnnotation.args.field,
               );
+              break;
+            case 'flatten':
+              processFlattenAnnotations(field as GraphQLField<any, any>);
               break;
             case 'pubsubOperation':
               processPubSubOperationAnnotations({

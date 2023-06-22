@@ -56,6 +56,7 @@ import {
   DiscriminatorDirective,
   EnumDirective,
   ExampleDirective,
+  FlattenDirective,
   LengthDirective,
   OneOfDirective,
   RegExpDirective,
@@ -77,6 +78,7 @@ export interface TypeComposers {
   default?: any;
   readOnly?: boolean;
   writeOnly?: boolean;
+  flatten?: boolean;
 }
 
 export function getComposerFromJSONSchema(
@@ -877,10 +879,10 @@ export function getComposerFromJSONSchema(
       }
       if (subSchemaAndTypeComposers.oneOf && !subSchemaAndTypeComposers.properties) {
         const isPlural = (subSchemaAndTypeComposers.oneOf as TypeComposers[]).some(
-          ({ output }) => 'ofType' in output,
+          ({ output }) => output instanceof ListComposer,
         );
         if (isPlural) {
-          const { input, output } = getUnionTypeComposers({
+          const { input, output, flatten } = getUnionTypeComposers({
             schemaComposer,
             typeComposersList: (subSchemaAndTypeComposers.oneOf as any).map(
               ({ input, output }: any) => ({
@@ -893,11 +895,15 @@ export function getComposerFromJSONSchema(
           });
           return {
             input: input.getTypePlural(),
-            output: output.getTypePlural(),
+            output:
+              output instanceof ListComposer
+                ? output
+                : (output as ObjectTypeComposer).getTypePlural(),
             nullable: subSchemaAndTypeComposers.nullable,
             default: subSchemaAndTypeComposers.default,
             readOnly: subSchemaAndTypeComposers.readOnly,
             writeOnly: subSchemaAndTypeComposers.writeOnly,
+            flatten,
           };
         }
         return getUnionTypeComposers({
@@ -1222,6 +1228,12 @@ export function getComposerFromJSONSchema(
                   args: {
                     field: propertyName,
                   },
+                });
+              }
+              if (subSchemaAndTypeComposers.properties[propertyName].flatten) {
+                schemaComposer.addDirective(FlattenDirective);
+                fieldDirectives.push({
+                  name: 'flatten',
                 });
               }
               fieldMap[fieldName] = {
