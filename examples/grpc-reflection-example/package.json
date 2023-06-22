@@ -14,10 +14,10 @@
     "@graphql-mesh/cli": "0.83.4",
     "@graphql-mesh/grpc": "0.94.4",
     "@graphql-mesh/transform-naming-convention": "0.94.1",
-    "@grpc/grpc-js": "1.8.15",
+    "@grpc/grpc-js": "1.8.16",
     "@grpc/proto-loader": "0.7.7",
     "google-protobuf": "3.21.2",
-    "graphql": "16.6.0",
+    "graphql": "16.7.0",
     "grpc-node-server-reflection": "1.0.2"
   },
   "devDependencies": {
