@@ -4,6 +4,7 @@ import {
   Directive,
   InputTypeComposer,
   isSomeInputTypeComposer,
+  ListComposer,
   ObjectTypeComposer,
   SchemaComposer,
   UnionTypeComposer,
@@ -45,21 +46,30 @@ export function getUnionTypeComposers({
   typeComposersList,
   subSchemaAndTypeComposers,
   logger,
-}: GetUnionTypeComposersOpts) {
+}: GetUnionTypeComposersOpts): TypeComposers {
   if (new Set(typeComposersList).size === 1) {
-    return typeComposersList[0];
+    return typeComposersList[0] as TypeComposers;
   }
   const unionInputFields: Record<string, any> = {};
   const outputTypeComposers: (ObjectTypeComposer<any> | UnionTypeComposer<any>)[] = [];
+  let isOutputPlural = false;
   typeComposersList.forEach(typeComposers => {
-    const { input, output } = typeComposers;
+    let { input, output } = typeComposers;
+    if (output instanceof ListComposer) {
+      output = output.getUnwrappedTC() as ObjectTypeComposer | UnionTypeComposer;
+      isOutputPlural = true;
+    }
     if (isSomeInputTypeComposer(output)) {
       outputTypeComposers.push(getContainerTC(schemaComposer, output));
     } else {
       outputTypeComposers.push(output);
     }
     if (input) {
-      unionInputFields[input.getTypeName()] = {
+      const inputTypeName =
+        input instanceof ListComposer
+          ? input.getUnwrappedTC().getTypeName() + '_list'
+          : input.getTypeName();
+      unionInputFields[inputTypeName] = {
         type: input,
       };
     }
@@ -109,11 +119,27 @@ export function getUnionTypeComposers({
     (subSchemaAndTypeComposers.output as UnionTypeComposer).setDirectives(directives);
   }
 
+  let flatten = false;
+  // TODO: container suffix might not be coming from us
+  if (
+    (subSchemaAndTypeComposers.output as ObjectTypeComposer).getTypeName().endsWith('_container')
+  ) {
+    const fields = (subSchemaAndTypeComposers.output as ObjectTypeComposer).getFields();
+    const fieldKeys = Object.keys(fields);
+    if (fieldKeys.length === 1) {
+      subSchemaAndTypeComposers.output = fields[fieldKeys[0]].type;
+      flatten = isOutputPlural;
+    }
+  }
+
   return {
     input: subSchemaAndTypeComposers.input as InputTypeComposer,
-    output: subSchemaAndTypeComposers.output as UnionTypeComposer,
+    output: isOutputPlural
+      ? ((subSchemaAndTypeComposers.output as UnionTypeComposer).List as ListComposer)
+      : (subSchemaAndTypeComposers.output as UnionTypeComposer),
     nullable: subSchemaAndTypeComposers.nullable,
     readOnly: subSchemaAndTypeComposers.readOnly,
     writeOnly: subSchemaAndTypeComposers.writeOnly,
+    flatten,
   };
 }

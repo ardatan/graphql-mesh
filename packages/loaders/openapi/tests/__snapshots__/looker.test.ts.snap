@@ -39,7 +39,7 @@ type Query @globalOptions(sourceName: "test", endpoint: "http://dummy") {
   query_task_results(
     "ID of the Query Task"
     query_task_id: String!
-  ): String_container @httpOperation(path: "/query_tasks/{args.query_task_id}/results", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  ): String @httpOperation(path: "/query_tasks/{args.query_task_id}/results", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   "### Get a previously created query by id.\\n\\nA Looker query object includes the various parameters that define a database query that has been run or\\ncould be run in the future. These parameters include: model, view, fields, filters, pivots, etc.\\nQuery *results* are not part of the query object.\\n\\nQuery objects are unique and immutable. Query objects are created automatically in Looker as users explore data.\\nLooker does not delete them; they become part of the query history. When asked to create a query for\\nany given set of parameters, Looker will first try to find an existing query object with matching\\nparameters and will only create a new object when an appropriate object can not be found.\\n\\nThis 'get' method is used to get the details about a query for a given id. See the other methods here\\nto 'create' and 'run' queries.\\n\\nNote that some fields like 'filter_config' and 'vis_config' etc are specific to how the Looker UI\\nbuilds queries and visualizations and are not generally useful for API use. They are not required when\\ncreating new queries and can usually just be ignored.\\n\\n"
   query(
     "Id of query"
@@ -296,7 +296,7 @@ type Query @globalOptions(sourceName: "test", endpoint: "http://dummy") {
     width: BigInt
     "The height of the image if format is supplied"
     height: BigInt
-  ): String_container @httpOperation(path: "/content_thumbnail/{args.type}/{args.resource_id}", operationSpecificHeaders: "{\\"accept\\":\\"image/svg+xml\\"}", httpMethod: GET, queryParamArgMap: "{\\"reload\\":\\"reload\\",\\"theme\\":\\"theme\\",\\"format\\":\\"format\\",\\"width\\":\\"width\\",\\"height\\":\\"height\\"}")
+  ): String @httpOperation(path: "/content_thumbnail/{args.type}/{args.resource_id}", operationSpecificHeaders: "{\\"accept\\":\\"image/svg+xml\\"}", httpMethod: GET, queryParamArgMap: "{\\"reload\\":\\"reload\\",\\"theme\\":\\"theme\\",\\"format\\":\\"format\\",\\"width\\":\\"width\\",\\"height\\":\\"height\\"}")
   "### Validate All Content\\n\\nPerforms validation of all looks and dashboards\\nReturns a list of errors found as well as metadata about the content validation run.\\n"
   content_validation(
     "Requested fields."
@@ -1212,7 +1212,7 @@ type Query @globalOptions(sourceName: "test", endpoint: "http://dummy") {
   render_task_results(
     "Id of render task"
     render_task_id: String!
-  ): String_container @httpOperation(path: "/render_tasks/{args.render_task_id}/results", operationSpecificHeaders: "{\\"accept\\":\\"image/jpeg\\"}", httpMethod: GET)
+  ): String @httpOperation(path: "/render_tasks/{args.render_task_id}/results", operationSpecificHeaders: "{\\"accept\\":\\"image/jpeg\\"}", httpMethod: GET)
   "### Get all Repository Credentials for a project\\n\\n\`root_project_id\` is required.\\n"
   get_all_repository_credentials(
     "Root Project Id"
@@ -1961,10 +1961,6 @@ type Query_ {
   query_timezone: String
   "Has Table Calculations"
   has_table_calculations: Boolean!
-}
-
-type String_container {
-  String: String @resolveRoot
 }
 
 "The \`BigInt\` scalar type represents non-fractional signed whole numeric values."
@@ -8584,6 +8580,10 @@ type DBConnectionTestResult {
 }
 
 union lock_all_response @statusCodeTypeName(statusCode: 200, typeName: "String_container") @statusCodeTypeName(statusCode: 204, typeName: "Void_container") = String_container | Void_container
+
+type String_container {
+  String: String @resolveRoot
+}
 
 input DigestEmails_Input {
   "Whether or not digest emails are enabled"

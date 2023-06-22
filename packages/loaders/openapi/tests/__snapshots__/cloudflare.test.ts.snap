@@ -799,7 +799,7 @@ type Query @globalOptions(sourceName: "cloudflare", endpoint: "https://api.cloud
     "Identifier"
     account_identifier: common_components_schemas_identifier
     script_name: script_name!
-  ): String_container @httpOperation(path: "/accounts/{args.account_identifier}/workers/scripts/{args.script_name}", operationSpecificHeaders: "{\\"accept\\":\\"undefined\\"}", httpMethod: GET)
+  ): String @httpOperation(path: "/accounts/{args.account_identifier}/workers/scripts/{args.script_name}", operationSpecificHeaders: "{\\"accept\\":\\"undefined\\"}", httpMethod: GET)
   "Fetches Cron Triggers for a Worker."
   worker_cron_trigger_get_cron_triggers(
     "Identifier"
@@ -2295,7 +2295,7 @@ type Query @globalOptions(sourceName: "cloudflare", endpoint: "https://api.cloud
   worker_script__deprecated_download_worker(
     "Identifier"
     zone_identifier: common_components_schemas_identifier
-  ): String_container @httpOperation(path: "/zones/{args.zone_identifier}/workers/script", operationSpecificHeaders: "{\\"accept\\":\\"undefined\\"}", httpMethod: GET)
+  ): String @httpOperation(path: "/zones/{args.zone_identifier}/workers/script", operationSpecificHeaders: "{\\"accept\\":\\"undefined\\"}", httpMethod: GET)
   "List the bindings for a Workers script."
   worker_binding__deprecated_list_bindings(
     "Identifier"
