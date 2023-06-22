@@ -70,7 +70,6 @@ export async function getOmnigraphSDK() {
 }
 ```
 
-
 ### String interpolation on runtime
 
 You can have dynamic values in `operationHeaders` by using interpolation pattern;
