@@ -50,7 +50,7 @@
     "@whatwg-node/fetch": "0.9.7",
     "@whatwg-node/router": "0.3.0",
     "fets": "0.2.8",
-    "graphql-yoga": "4.0.1",
+    "graphql-yoga": "4.0.2",
     "json-bigint-patch": "0.0.8"
   },
   "publishConfig": {

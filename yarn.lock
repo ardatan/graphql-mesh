@@ -3076,10 +3076,10 @@
     "@n1ru4l/in-memory-live-query-store" "^0.10.0"
     tslib "^2.5.0"
 
-"@envelop/newrelic@6.0.0":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@envelop/newrelic/-/newrelic-6.0.0.tgz#b8514e72b94ccbafe64a377eb3a332ffc0798088"
-  integrity sha512-uLenkOe0FFwId8y0BWqTS/K8U09JUMH5XinmvuBWq1tuegQvVmlUNdto3XsFm4qXHOL7CIsotDhbf2xTjgOagw==
+"@envelop/newrelic@6.0.1":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/@envelop/newrelic/-/newrelic-6.0.1.tgz#79a3359bf0ac7788387f57029b7d9091f9de1309"
+  integrity sha512-4+0icLp2sU3XEvJL6C9nqPEIIXRgVVb/NTXqZy8fJDgrXznW/Jt1aKLSL2j9DiCdefLWI2Z2k/OkwBcCND7rFQ==
   dependencies:
     "@envelop/on-resolve" "^3.0.0"
     tslib "^2.5.0"
@@ -4020,24 +4020,24 @@
   dependencies:
     tslib "^2.5.2"
 
-"@graphql-yoga/plugin-prometheus@2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-prometheus/-/plugin-prometheus-2.0.1.tgz#ccd0b7b985f615e642fd4cea14df5b865e19248e"
-  integrity sha512-/Xz/OtliEYp4pGh30OHjX00lapA5ZHqMCnstaPdrwwsuDxQL2VYIT751LHblpMohpgpLDSBVs1YIL3fVejD+3g==
+"@graphql-yoga/plugin-prometheus@2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-prometheus/-/plugin-prometheus-2.0.2.tgz#8e23b39a1c4d664d919c38ff5c0ec0e448cab434"
+  integrity sha512-xQkl5rroTlRbDffGSBXvGQvOCM8QB9gSrTdbuUIN27rh+FPEyfIQBQAiLvQfkYfVnozTpN794cMapszbxzNGHg==
   dependencies:
     "@envelop/prometheus" "8.0.0"
 
-"@graphql-yoga/plugin-response-cache@2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-response-cache/-/plugin-response-cache-2.0.1.tgz#0b68849788b8b7b03337565ed2cbd1bfc1b85165"
-  integrity sha512-Xm3klNDoz83uOH3CfLsZccPF0OjA0/keCqFsBFApwRxiOeBenn9/jfWMdLBAO62TyiyYAN4Ifp6PiJCXElB0ig==
+"@graphql-yoga/plugin-response-cache@2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-response-cache/-/plugin-response-cache-2.0.2.tgz#df88f0307502ca886347e6defdda63a89ba177d0"
+  integrity sha512-bRODDqY9oC8p/UWDuqINBGVaJiEBFlsRTshXk+EhVVBu5s/5IZY6JIwLW0GgMyR2uskf0lQKsuTnpJquzBi0xg==
   dependencies:
     "@envelop/response-cache" "^5.0.0"
 
-"@graphql-yoga/plugin-sofa@2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-sofa/-/plugin-sofa-2.0.1.tgz#5f6b147f017cc17e4884f1c6ce99e77ce2835c1b"
-  integrity sha512-RnTRnJCDAKqlC0iz87Cx9LGtsJuTEHpqZBz6iu8cgtLbg2F+CQv8y9gzZ8vEVLIruL0d8KB6zNhKM1tnG1Xk7Q==
+"@graphql-yoga/plugin-sofa@2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-sofa/-/plugin-sofa-2.0.2.tgz#32f4a0cd1d7b7744bb5af39c502579a3d6dc072f"
+  integrity sha512-m/KhJTmxBCV5dtxIXqAy2sLm5Clwl5qW9YHc1DkD26oKbRQ8+c6kJjqnBoJmiGddFhGcZNupO4l21qSg/vrNkg==
   dependencies:
     sofa-api "^0.18.0"
 
@@ -11201,10 +11201,17 @@ fast-url-parser@^1.1.3:
   dependencies:
     punycode "^1.3.2"
 
-fast-xml-parser@4.2.4, fast-xml-parser@^4.2.1:
+fast-xml-parser@4.2.4:
   version "4.2.4"
   resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-4.2.4.tgz#6e846ede1e56ad9e5ef07d8720809edf0ed07e9b"
   integrity sha512-fbfMDvgBNIdDJLdLOwacjFAPYt67tr31H9ZhWSm45CDAxvd0I6WTlSOUo7K2P/K5sA5JgMKG64PI3DMcaFdWpQ==
+  dependencies:
+    strnum "^1.0.5"
+
+fast-xml-parser@4.2.5, fast-xml-parser@^4.2.1:
+  version "4.2.5"
+  resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-4.2.5.tgz#a6747a09296a6cb34f2ae634019bf1738f3b421f"
+  integrity sha512-B9/wizE4WngqQftFPmdaMYlXoJlJOYxGQOanC77fq9k8+Z0v5dDSVh+3glErdIROP//s/jgb7ZuxKfB8nVyo0g==
   dependencies:
     strnum "^1.0.5"
 
@@ -12164,10 +12171,10 @@ graphql-ws@5.13.1, graphql-ws@^5.12.1, graphql-ws@^5.6.2:
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.13.1.tgz#96ac9963edb1e94c8e7f21af48ce5fcaab91779a"
   integrity sha512-eiX7ES/ZQr0q7hSM5UBOEIFfaAUmAY9/CSDyAnsETuybByU7l/v46drRg9DQoTvVABEHp3QnrvwgTRMhqy7zxQ==
 
-graphql-yoga@4.0.1, graphql-yoga@^4.0.0:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/graphql-yoga/-/graphql-yoga-4.0.1.tgz#61136d96d2a587820509d0ba1d37b960784d8ace"
-  integrity sha512-J/EXfaitY6sm9CXMBSHxQxFGH7Iv2Fg/kiLzpGPYrVtN6dIYeAOl59EHiXS7yv33pWKZ+cE4VyzCDtj8ncuzNw==
+graphql-yoga@4.0.2, graphql-yoga@^4.0.0:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/graphql-yoga/-/graphql-yoga-4.0.2.tgz#7fa34af1531ddbba144fa1180d701e8d2c0a452d"
+  integrity sha512-frDoqKD+b9JvUY2vgqfeWW5LT1iqibyW4//i7hNBKh7mhA1cSR4eK8C/DT//v0Sado8KQphrVThjDxVH+07wFA==
   dependencies:
     "@envelop/core" "^4.0.0"
     "@graphql-tools/executor" "^1.0.0"
