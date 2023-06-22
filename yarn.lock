@@ -6813,10 +6813,10 @@
     "@webassemblyjs/ast" "1.11.6"
     "@xtuc/long" "4.2.2"
 
-"@whatwg-node/cookie-store@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@whatwg-node/cookie-store/-/cookie-store-0.1.0.tgz#7f8d68e0d4b203d1c7dbb3e29a888bcff3fe36d0"
-  integrity sha512-Tw6r2flAHYeio6ivBrERhOzkgZGXJSP7tlJIeFQhkjaBiRBz9W1Gc8zs73aq7DKC3ZAGSOdl8jlF+LztSq98cg==
+"@whatwg-node/cookie-store@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/cookie-store/-/cookie-store-0.2.0.tgz#56d9729573945af0ecc6e7405210d245fa25c978"
+  integrity sha512-eksorZxQubxicFIn36eBgAXswejlrQnCMsdmmvWi/6I43bn++4K3wP3CUMs+rHl5NNuPcupYsJR1O5S6ALJkkQ==
   dependencies:
     tslib "^2.3.1"
 
@@ -11272,13 +11272,13 @@ fengari@^0.1.4:
     sprintf-js "^1.1.1"
     tmp "^0.0.33"
 
-fets@0.2.7, fets@^0.2.0:
-  version "0.2.7"
-  resolved "https://registry.yarnpkg.com/fets/-/fets-0.2.7.tgz#4af83f4272d6d8dd9a03ee314ec1a7a3d1bf135a"
-  integrity sha512-f+Ae45w5K/ndo1xO6OOhlVTvsiFpPlrOM9WJBVO3IoqFUyxYRb/o5Mf8j910rfr/124QJbpn+xmaY1kmYYYzfA==
+fets@0.2.8, fets@^0.2.0:
+  version "0.2.8"
+  resolved "https://registry.yarnpkg.com/fets/-/fets-0.2.8.tgz#af86b3415d0979632c346fb505fa63819324c93d"
+  integrity sha512-6nlYgVeLNMyktFrzpqds6SIynismLaaqhZNDaf6Oq4jtnmpg053HiAyHTJmDDBGkRkKYPX5zZA00LCJc/PAU1g==
   dependencies:
     "@ardatan/fast-json-stringify" "^0.0.6"
-    "@whatwg-node/cookie-store" "^0.1.0"
+    "@whatwg-node/cookie-store" "^0.2.0"
     "@whatwg-node/fetch" "^0.9.4"
     "@whatwg-node/server" "^0.8.7"
     ajv "^8.12.0"
@@ -18756,20 +18756,10 @@ range-parser@^1.2.1, range-parser@~1.2.1:
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.2.1.tgz#3cf37023d199e1c24d1a55b84800c2f3e6468031"
   integrity sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==
 
-raw-body@2.5.1:
+raw-body@2.5.1, raw-body@^2.4.1:
   version "2.5.1"
   resolved "https://registry.yarnpkg.com/raw-body/-/raw-body-2.5.1.tgz#fe1b1628b181b700215e5fd42389f98b71392857"
   integrity sha512-qqJBtEyVgS0ZmPGdCFPWJ3FreoqvG4MVQln/kCgF7Olq95IbOp0/BWyMwbdtn4VTvkM8Y7khCQ2Xgk/tcrCXig==
-  dependencies:
-    bytes "3.1.2"
-    http-errors "2.0.0"
-    iconv-lite "0.4.24"
-    unpipe "1.0.0"
-
-raw-body@^2.4.1:
-  version "2.5.2"
-  resolved "https://registry.yarnpkg.com/raw-body/-/raw-body-2.5.2.tgz#99febd83b90e08975087e8f1f9419a149366b68a"
-  integrity sha512-8zGqypfENjCIqGhgXToC8aB2r7YrBX+AQAfIPs/Mlk+BtPTztOvTS01NRW/3Eh60J+a48lt8qsCzirQ6loCVfA==
   dependencies:
     bytes "3.1.2"
     http-errors "2.0.0"
