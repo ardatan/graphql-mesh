@@ -128,7 +128,7 @@ export function getUnionTypeComposers({
     const fieldKeys = Object.keys(fields);
     if (fieldKeys.length === 1) {
       subSchemaAndTypeComposers.output = fields[fieldKeys[0]].type;
-      flatten = true;
+      flatten = isOutputPlural;
     }
   }
 
