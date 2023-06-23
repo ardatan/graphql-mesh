@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cli",
-  "version": "0.83.4",
+  "version": "0.83.5",
   "type": "module",
   "repository": {
     "type": "git",
@@ -49,7 +49,7 @@
     "@graphql-codegen/typescript-resolvers": "^4.0.0",
     "@graphql-mesh/config": "^0.94.0",
     "@graphql-mesh/cross-helpers": "^0.4.0",
-    "@graphql-mesh/http": "^0.94.2",
+    "@graphql-mesh/http": "^0.94.3",
     "@graphql-mesh/runtime": "^0.94.0",
     "@graphql-mesh/store": "^0.94.0",
     "@graphql-mesh/types": "^0.94.0",

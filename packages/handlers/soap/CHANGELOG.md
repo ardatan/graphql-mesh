@@ -1,5 +1,14 @@
 # @graphql-mesh/soap
 
+## 0.94.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`cb399b206`](https://github.com/Urigo/graphql-mesh/commit/cb399b20672514f8e47b769e254e9812301d1c69),
+  [`98654caf9`](https://github.com/Urigo/graphql-mesh/commit/98654caf91bfcf0367cb371e5d6c4a075c25e4dd)]:
+  - @omnigraph/soap@0.94.3
+
 ## 0.94.2
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @graphql-mesh/plugin-newrelic
 
+## 0.94.1
+
+### Patch Changes
+
+- [#5601](https://github.com/Urigo/graphql-mesh/pull/5601)
+  [`cb399b206`](https://github.com/Urigo/graphql-mesh/commit/cb399b20672514f8e47b769e254e9812301d1c69)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/newrelic@6.0.1` ↗︎](https://www.npmjs.com/package/@envelop/newrelic/v/6.0.1) (from
+    `6.0.0`, in `dependencies`)
+
 ## 0.94.0
 
 ### Minor Changes
