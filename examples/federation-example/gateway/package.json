@@ -7,6 +7,6 @@
     "@graphql-mesh/cli": "0.83.4",
     "@graphql-mesh/graphql": "0.94.1",
     "@graphql-mesh/transform-federation": "0.94.0",
-    "graphql": "16.7.0"
+    "graphql": "16.7.1"
   }
 }

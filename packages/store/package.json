@@ -43,7 +43,7 @@
     "@graphql-inspector/core": "3.3.0"
   },
   "devDependencies": {
-    "graphql": "16.7.0"
+    "graphql": "16.7.1"
   },
   "publishConfig": {
     "access": "public",
