@@ -3325,14 +3325,14 @@
   dependencies:
     giscus "^1.2.8"
 
-"@google-cloud/functions-framework@3.2.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@google-cloud/functions-framework/-/functions-framework-3.2.0.tgz#4f8e35c8f5f1c6b4aa0388e9cfbac5789eaa2186"
-  integrity sha512-eFafD4xocXmt3KM1z2X3lARvT2zLuXcw1V+T6xGoOAPfXQDduK77bKpkJx44QCAXh2c8qHYIT6dlSJWu5n5Lmg==
+"@google-cloud/functions-framework@3.2.1":
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@google-cloud/functions-framework/-/functions-framework-3.2.1.tgz#3bc758dff2a1cf1f05c34b193aaea79cd85077a4"
+  integrity sha512-sWpJOAh9tpa1rznTxo90i/iOzG5MYAKGVjqLVh/NgxVYCYQvwrJ2ypuV0wROuS5mIpNvyGUyMfLn4nXeE3TrCQ==
   dependencies:
     "@types/express" "4.17.17"
     body-parser "^1.18.3"
-    cloudevents "^6.0.0"
+    cloudevents "^7.0.0"
     express "^4.16.4"
     minimist "^1.2.7"
     on-finished "^2.3.0"
@@ -6374,10 +6374,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@18.2.13", "@types/react@>=16":
-  version "18.2.13"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.13.tgz#a98c09bde8b18f80021935b11d2d29ef5f4dcb2f"
-  integrity sha512-vJ+zElvi/Zn9cVXB5slX2xL8PZodPCwPRDpittQdw43JR2AJ5k3vKdgJJyneV/cYgIbLQUwXa9JVDvUZXGba+Q==
+"@types/react@*", "@types/react@18.2.14", "@types/react@>=16":
+  version "18.2.14"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.14.tgz#fa7a6fecf1ce35ca94e74874f70c56ce88f7a127"
+  integrity sha512-A0zjq+QN/O0Kpe30hA1GidzyFjatVvrpIvWLxD+xv67Vt91TWWgco9IvrJBkeyHm1trGaFS/FSGqPlhyeZRm0g==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -8630,13 +8630,14 @@ clone@^1.0.2:
   resolved "https://registry.yarnpkg.com/clone/-/clone-1.0.4.tgz#da309cc263df15994c688ca902179ca3c7cd7c7e"
   integrity sha512-JQHZ2QMW6l3aH/j6xCqQThY/9OH4D/9ls34cgkUBiEeocRTU04tHfKPBsUK1PqZCUQM7GiA0IIXJSuXHI64Kbg==
 
-cloudevents@^6.0.0:
-  version "6.0.4"
-  resolved "https://registry.yarnpkg.com/cloudevents/-/cloudevents-6.0.4.tgz#eea28e8cc518e7ae2533170745a0f2dbcd34789d"
-  integrity sha512-Vay81bTsutFkZxHnM2K0rev95d0x7aTZ3G+Bmm8/GnIzsVtGfeBkLcXFD4czZ08RoOn6POKl+rIXaBS+Xn+jIA==
+cloudevents@^7.0.0:
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/cloudevents/-/cloudevents-7.0.1.tgz#2bd8b9d39432ba95e5360059f44810f4e7df2599"
+  integrity sha512-/i7HRvIUG2RAiB9AD6TqUd07H2ZkJtwCrNpGa4vJftwz5uJdD/bO+u3kYs/r+kQCtZ6uhZs0I9vfIhuhorKUHw==
   dependencies:
     ajv "^8.11.0"
     ajv-formats "^2.1.1"
+    json-bigint "^1.0.0"
     process "^0.11.10"
     util "^0.12.4"
     uuid "^8.3.2"
@@ -16064,10 +16065,10 @@ minimalistic-assert@^1.0.0, minimalistic-assert@^1.0.1:
   resolved "https://registry.yarnpkg.com/minimalistic-assert/-/minimalistic-assert-1.0.1.tgz#2e194de044626d4a10e7f7fbc00ce73e83e4d5c7"
   integrity sha512-UtJcAD4yEaGtjPezWuO9wC4nwUnVH/8/Im3yEHQP4b67cXlD/Qr9hdITCU1xDbSEXg2XKNaP8jsReV7vQd00/A==
 
-minimatch@9.0.1, minimatch@^9.0.0, minimatch@^9.0.1:
-  version "9.0.1"
-  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-9.0.1.tgz#8a555f541cf976c622daf078bb28f29fb927c253"
-  integrity sha512-0jWhJpD/MdhPXwPuiRkCbfYfSKp2qnn2eOc279qI7f+osl/l+prKSrvhg157zSYvx/1nmgn2NqdT6k2Z7zSH9w==
+minimatch@9.0.2, minimatch@^9.0.0, minimatch@^9.0.1:
+  version "9.0.2"
+  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-9.0.2.tgz#397e387fff22f6795844d00badc903a3d5de7057"
+  integrity sha512-PZOT9g5v2ojiTL7r1xF6plNHLtOeTpSlDI007As2NlA2aYBMfVom17yqa6QzhmDP8QOhn7LjHTg7DFCVSSa6yg==
   dependencies:
     brace-expansion "^2.0.1"
 

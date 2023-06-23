@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "0.5.0",
-    "minimatch": "9.0.1"
+    "minimatch": "9.0.2"
   },
   "devDependencies": {
     "@envelop/core": "4.0.0"

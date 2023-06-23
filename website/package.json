@@ -22,7 +22,7 @@
     "@theguild/algolia": "1.1.8",
     "@theguild/tailwind-config": "0.2.2",
     "@types/node": "18.16.18",
-    "@types/react": "18.2.13",
+    "@types/react": "18.2.14",
     "cross-env": "7.0.3",
     "eslint-config-next": "13.4.7",
     "postcss-import": "15.1.0",
