@@ -3536,15 +3536,6 @@
   dependencies:
     lodash.sortby "4.7.0"
 
-"@graphql-inspector/core@3.3.0":
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/@graphql-inspector/core/-/core-3.3.0.tgz#3982909cec46a5b3050a8265569503f20a3b5742"
-  integrity sha512-LRtk9sHgj9qqVPIkkThAVq3iZ7QxgHCx6elEwd0eesZBCmaIYQxD/BFu+VT8jr10YfOURBZuAnVdyGu64vYpBg==
-  dependencies:
-    dependency-graph "0.11.0"
-    object-inspect "1.10.3"
-    tslib "^2.0.0"
-
 "@graphql-inspector/core@4.2.1":
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/@graphql-inspector/core/-/core-4.2.1.tgz#9ccaf6dddadb2d508f08ac60768125822d826d91"
@@ -3553,6 +3544,15 @@
     dependency-graph "0.11.0"
     object-inspect "1.12.3"
     tslib "2.5.0"
+
+"@graphql-inspector/core@5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@graphql-inspector/core/-/core-5.0.0.tgz#ae3cfcd9a156bd692622f06f503cf3c90c5e1a73"
+  integrity sha512-Pj5F03EdU8K3yfd5uo0BoxG1HSiZhqG5MvAdFDiA60vHfkD/t0UOXveR6vQnbThNrSzJY8vSt0NTwlSURw0kZQ==
+  dependencies:
+    dependency-graph "0.11.0"
+    object-inspect "1.12.3"
+    tslib "2.5.3"
 
 "@graphql-tools/batch-delegate@^9.0.0":
   version "9.0.0"
@@ -16788,11 +16788,6 @@ object-hash@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/object-hash/-/object-hash-3.0.0.tgz#73f97f753e7baffc0e2cc9d6e079079744ac82e9"
   integrity sha512-RSn9F68PjH9HqtltsSnqYC1XXoWe9Bju5+213R98cNGttag9q9yAOTzdbsqvIa7aNm5WffBZFpWYr2aWrklWAw==
-
-object-inspect@1.10.3:
-  version "1.10.3"
-  resolved "https://registry.yarnpkg.com/object-inspect/-/object-inspect-1.10.3.tgz#c2aa7d2d09f50c99375704f7a0adf24c5782d369"
-  integrity sha512-e5mCJlSH7poANfC8z8S9s9S2IN5/4Zb3aZ33f5s8YqoazCFzNLloLU8r5VCG+G7WoqLvAAZoVMcy3tp/3X0Plw==
 
 object-inspect@1.12.3, object-inspect@^1.12.3, object-inspect@^1.9.0:
   version "1.12.3"
