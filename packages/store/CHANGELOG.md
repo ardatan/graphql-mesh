@@ -1,5 +1,19 @@
 # @graphql-mesh/store
 
+## 0.94.1
+
+### Patch Changes
+
+- [#5613](https://github.com/Urigo/graphql-mesh/pull/5613)
+  [`b85a5b1d3`](https://github.com/Urigo/graphql-mesh/commit/b85a5b1d37f4d1c778c6a3527fe60e39fb8b3e94)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-inspector/core@5.0.0` ↗︎](https://www.npmjs.com/package/@graphql-inspector/core/v/5.0.0)
+    (from `3.3.0`, in `dependencies`)
+- Updated dependencies []:
+  - @graphql-mesh/types@0.94.1
+  - @graphql-mesh/utils@0.94.1
+
 ## 0.94.0
 
 ### Minor Changes
