@@ -51,7 +51,7 @@
     "lodash.get": "4.4.2",
     "lodash.has": "4.5.2",
     "long": "4.0.0",
-    "protobufjs": "7.2.3"
+    "protobufjs": "7.2.4"
   },
   "devDependencies": {
     "@types/lodash.has": "4.5.7"
