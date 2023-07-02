@@ -3076,7 +3076,7 @@
     "@n1ru4l/in-memory-live-query-store" "^0.10.0"
     tslib "^2.5.0"
 
-"@envelop/newrelic@6.0.1":
+"@envelop/newrelic@^6.0.1":
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/@envelop/newrelic/-/newrelic-6.0.1.tgz#79a3359bf0ac7788387f57029b7d9091f9de1309"
   integrity sha512-4+0icLp2sU3XEvJL6C9nqPEIIXRgVVb/NTXqZy8fJDgrXznW/Jt1aKLSL2j9DiCdefLWI2Z2k/OkwBcCND7rFQ==
@@ -6962,6 +6962,14 @@
   version "0.9.0"
   resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.9.0.tgz#ea670f965b68b347e1fd9fe313732760f9d44cdd"
   integrity sha512-dEpgIgLlUA9IRIUbAhsPuFvJjuAQIjWqRhNc6VpMMLnumw2bvOHd9b/Nm2UN9cLvUSSA6//Fy+v0jhxiA2LFAw==
+  dependencies:
+    "@whatwg-node/fetch" "^0.9.7"
+    tslib "^2.3.1"
+
+"@whatwg-node/server@^0.9.1":
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.9.1.tgz#1c69c47768e1aef14de53deba468a411413bbcbf"
+  integrity sha512-Zq0FWafIlJzYyyAL7UwzsEhqSMzvKci/XqIFKpC4V031PxKKPBmZSP1mXCew5eZFW8Z5Sj6bZNi2CIsHd062ug==
   dependencies:
     "@whatwg-node/fetch" "^0.9.7"
     tslib "^2.3.1"
@@ -12232,6 +12240,23 @@ graphql-yoga@4.0.2, graphql-yoga@^4.0.0:
     "@graphql-yoga/subscription" "^4.0.0"
     "@whatwg-node/fetch" "^0.9.0"
     "@whatwg-node/server" "^0.8.1"
+    dset "^3.1.1"
+    lru-cache "^10.0.0"
+    tslib "^2.5.2"
+
+graphql-yoga@4.0.3:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/graphql-yoga/-/graphql-yoga-4.0.3.tgz#28a6f9c8999a1dc5f490fca635b14785873e7fec"
+  integrity sha512-MP+v+yxCqM3lXg95vaA+kXjyRvyRxHUlgZryTecN7ugzEEnyQKKu8JBXA4ziEuLi3liRriyjCAyV4pqFzhHujA==
+  dependencies:
+    "@envelop/core" "^4.0.0"
+    "@graphql-tools/executor" "^1.0.0"
+    "@graphql-tools/schema" "^10.0.0"
+    "@graphql-tools/utils" "^10.0.0"
+    "@graphql-yoga/logger" "^1.0.0"
+    "@graphql-yoga/subscription" "^4.0.0"
+    "@whatwg-node/fetch" "^0.9.7"
+    "@whatwg-node/server" "^0.9.1"
     dset "^3.1.1"
     lru-cache "^10.0.0"
     tslib "^2.5.2"
@@ -21559,7 +21584,6 @@ typical@^5.2.0:
 
 uWebSockets.js@uNetworking/uWebSockets.js#v20.30.0:
   version "20.30.0"
-  uid d39d4181daf5b670d44cbc1b18f8c28c85fd4142
   resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/d39d4181daf5b670d44cbc1b18f8c28c85fd4142"
 
 ua-parser-js@^1.0.35:
