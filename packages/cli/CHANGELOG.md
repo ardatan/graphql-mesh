@@ -1,5 +1,30 @@
 # @graphql-mesh/cli
 
+## 0.84.0
+
+### Minor Changes
+
+- [#5632](https://github.com/Urigo/graphql-mesh/pull/5632)
+  [`989b55571`](https://github.com/Urigo/graphql-mesh/commit/989b55571aeb3f788926e96e1276fa91b7a649b6)
+  Thanks [@ardatan](https://github.com/ardatan)! - Persisted Operations
+
+### Patch Changes
+
+- [#5633](https://github.com/Urigo/graphql-mesh/pull/5633)
+  [`d0d4917f4`](https://github.com/Urigo/graphql-mesh/commit/d0d4917f405d7d6acfba62abef38909e1398ce7c)
+  Thanks [@ardatan](https://github.com/ardatan)! - Request Batching on the gateway
+
+- Updated dependencies
+  [[`989b55571`](https://github.com/Urigo/graphql-mesh/commit/989b55571aeb3f788926e96e1276fa91b7a649b6),
+  [`d0d4917f4`](https://github.com/Urigo/graphql-mesh/commit/d0d4917f405d7d6acfba62abef38909e1398ce7c),
+  [`989b55571`](https://github.com/Urigo/graphql-mesh/commit/989b55571aeb3f788926e96e1276fa91b7a649b6)]:
+  - @graphql-mesh/config@0.95.0
+  - @graphql-mesh/types@0.94.2
+  - @graphql-mesh/http@0.94.5
+  - @graphql-mesh/runtime@0.94.2
+  - @graphql-mesh/store@0.94.2
+  - @graphql-mesh/utils@0.94.2
+
 ## 0.83.6
 
 ### Patch Changes
