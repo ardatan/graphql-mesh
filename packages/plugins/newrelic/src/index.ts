@@ -47,7 +47,7 @@ export default function useMeshNewrelic(
       );
     },
     onRequest({ request, url }) {
-      const currentTransaction = instrumentationApi.getTransaction();
+      const currentTransaction = instrumentationApi.agent.tracer.getTransaction();
       if (!currentTransaction) {
         instrumentationApi.startWebTransaction(
           url.pathname,
