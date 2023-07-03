@@ -3076,7 +3076,7 @@
     "@n1ru4l/in-memory-live-query-store" "^0.10.0"
     tslib "^2.5.0"
 
-"@envelop/newrelic@6.0.1":
+"@envelop/newrelic@^6.0.1":
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/@envelop/newrelic/-/newrelic-6.0.1.tgz#79a3359bf0ac7788387f57029b7d9091f9de1309"
   integrity sha512-4+0icLp2sU3XEvJL6C9nqPEIIXRgVVb/NTXqZy8fJDgrXznW/Jt1aKLSL2j9DiCdefLWI2Z2k/OkwBcCND7rFQ==
@@ -6967,6 +6967,14 @@
   version "0.9.2"
   resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.9.2.tgz#5684f89681cb3b145987da670d2e67448e47214e"
   integrity sha512-W8CzF9Lvu/AKE+HFmKmTwJZ91G+zPmn0zjsl47hjcY5y0/kZqkCqwB86c0y8rRf8+bV5hJ2ChDK8otN0y6fzng==
+  dependencies:
+    "@whatwg-node/fetch" "^0.9.7"
+    tslib "^2.3.1"
+
+"@whatwg-node/server@^0.9.1":
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/server/-/server-0.9.1.tgz#1c69c47768e1aef14de53deba468a411413bbcbf"
+  integrity sha512-Zq0FWafIlJzYyyAL7UwzsEhqSMzvKci/XqIFKpC4V031PxKKPBmZSP1mXCew5eZFW8Z5Sj6bZNi2CIsHd062ug==
   dependencies:
     "@whatwg-node/fetch" "^0.9.7"
     tslib "^2.3.1"
@@ -12237,6 +12245,23 @@ graphql-yoga@4.0.2, graphql-yoga@^4.0.0:
     "@graphql-yoga/subscription" "^4.0.0"
     "@whatwg-node/fetch" "^0.9.0"
     "@whatwg-node/server" "^0.8.1"
+    dset "^3.1.1"
+    lru-cache "^10.0.0"
+    tslib "^2.5.2"
+
+graphql-yoga@4.0.3:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/graphql-yoga/-/graphql-yoga-4.0.3.tgz#28a6f9c8999a1dc5f490fca635b14785873e7fec"
+  integrity sha512-MP+v+yxCqM3lXg95vaA+kXjyRvyRxHUlgZryTecN7ugzEEnyQKKu8JBXA4ziEuLi3liRriyjCAyV4pqFzhHujA==
+  dependencies:
+    "@envelop/core" "^4.0.0"
+    "@graphql-tools/executor" "^1.0.0"
+    "@graphql-tools/schema" "^10.0.0"
+    "@graphql-tools/utils" "^10.0.0"
+    "@graphql-yoga/logger" "^1.0.0"
+    "@graphql-yoga/subscription" "^4.0.0"
+    "@whatwg-node/fetch" "^0.9.7"
+    "@whatwg-node/server" "^0.9.1"
     dset "^3.1.1"
     lru-cache "^10.0.0"
     tslib "^2.5.2"

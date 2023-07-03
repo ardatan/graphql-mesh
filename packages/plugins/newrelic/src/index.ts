@@ -1,3 +1,4 @@
+import { Plugin } from 'graphql-yoga';
 import newRelic from 'newrelic';
 import NAMES from 'newrelic/lib/metrics/names.js';
 import recordExternal from 'newrelic/lib/metrics/recorders/http_external.js';
@@ -12,7 +13,7 @@ const EnvelopAttributeName = 'Envelop_NewRelic_Plugin';
 
 export default function useMeshNewrelic(
   options: MeshPluginOptions<YamlConfig.NewrelicConfig>,
-): MeshPlugin<any> {
+): MeshPlugin<any> & Plugin<any> {
   const instrumentationApi = newRelic?.shim;
   if (!instrumentationApi?.agent) {
     options.logger.debug(
@@ -28,6 +29,7 @@ export default function useMeshNewrelic(
   const logger = instrumentationApi.logger.child({ component: EnvelopAttributeName });
 
   const segmentByRequestContext = new WeakMap<any, any>();
+  const transactionCallback = new WeakMap<Request, () => void>();
 
   return {
     onPluginInit({ addPlugin }) {
@@ -43,6 +45,15 @@ export default function useMeshNewrelic(
             : undefined,
         }),
       );
+    },
+    onRequest({ request, url }) {
+      const currentTransaction = instrumentationApi.getTransaction();
+      if (!currentTransaction) {
+        instrumentationApi.startWebTransaction(
+          url.pathname,
+          () => new Promise<void>(resolve => transactionCallback.set(request, resolve)),
+        );
+      }
     },
     onExecute({ args: { contextValue } }) {
       const operationSegment =
@@ -145,6 +156,12 @@ export default function useMeshNewrelic(
         }
         httpDetailSegment.end();
       };
+    },
+    onResponse({ request }) {
+      const callback = transactionCallback.get(request);
+      if (callback) {
+        callback();
+      }
     },
   };
 }
