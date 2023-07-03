@@ -28,3 +28,4 @@ This feature can be disabled by passing `false` One of:
 * `playgroundTitle` (type: `String`) - Title of GraphiQL Playground
 * `trustProxy` (type: `String`) - Configure Express Proxy Handling
 [Learn more](https://expressjs.com/en/guide/behind-proxies.html)
+* `batchingLimit` (type: `Int`) - Enable and define a limit for [Request Batching](https://github.com/graphql/graphql-over-http/blob/main/rfcs/Batching.md)
