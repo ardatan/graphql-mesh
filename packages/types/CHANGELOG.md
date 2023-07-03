@@ -1,5 +1,16 @@
 # @graphql-mesh/types
 
+## 0.94.2
+
+### Patch Changes
+
+- [#5633](https://github.com/Urigo/graphql-mesh/pull/5633)
+  [`d0d4917f4`](https://github.com/Urigo/graphql-mesh/commit/d0d4917f405d7d6acfba62abef38909e1398ce7c)
+  Thanks [@ardatan](https://github.com/ardatan)! - Request Batching on the gateway
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.94.2
+
 ## 0.94.1
 
 ### Patch Changes

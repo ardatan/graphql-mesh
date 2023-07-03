@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-http2",
-  "version": "0.94.3",
+  "version": "0.94.4",
   "type": "module",
   "repository": {
     "type": "git",
@@ -32,8 +32,8 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/types": "^0.94.1",
-    "@graphql-mesh/utils": "^0.94.1",
+    "@graphql-mesh/types": "^0.94.2",
+    "@graphql-mesh/utils": "^0.94.2",
     "graphql": "*"
   },
   "dependencies": {

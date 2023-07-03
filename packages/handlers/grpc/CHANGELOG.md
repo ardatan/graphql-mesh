@@ -1,5 +1,20 @@
 # @graphql-mesh/grpc
 
+## 0.94.6
+
+### Patch Changes
+
+- [#5622](https://github.com/Urigo/graphql-mesh/pull/5622)
+  [`ba35ca456`](https://github.com/Urigo/graphql-mesh/commit/ba35ca4568ddc3498f131388a5e186bf92733d62)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`protobufjs@7.2.4` ↗︎](https://www.npmjs.com/package/protobufjs/v/7.2.4)
+    (from `7.2.3`, in `dependencies`)
+- Updated dependencies
+  [[`d0d4917f4`](https://github.com/Urigo/graphql-mesh/commit/d0d4917f405d7d6acfba62abef38909e1398ce7c)]:
+  - @graphql-mesh/types@0.94.2
+  - @graphql-mesh/store@0.94.2
+  - @graphql-mesh/utils@0.94.2
+
 ## 0.94.5
 
 ### Patch Changes

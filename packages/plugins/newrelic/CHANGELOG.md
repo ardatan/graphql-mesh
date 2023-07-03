@@ -1,5 +1,31 @@
 # @graphql-mesh/plugin-newrelic
 
+## 0.94.3
+
+### Patch Changes
+
+- [#5625](https://github.com/Urigo/graphql-mesh/pull/5625)
+  [`f86cb00fc`](https://github.com/Urigo/graphql-mesh/commit/f86cb00fcbbc52917ddd278422bcd40c0b87d2e4)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@envelop/newrelic@^6.0.1` ↗︎](https://www.npmjs.com/package/@envelop/newrelic/v/6.0.1) (from
+    `6.0.1`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/string-interpolation@^0.5.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/string-interpolation/v/0.5.0)
+    (from `0.5.0`, in `dependencies`)
+  - Added dependency [`graphql-yoga@^4.0.3` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/4.0.3)
+    (to `peerDependencies`)
+
+- [#5625](https://github.com/Urigo/graphql-mesh/pull/5625)
+  [`f86cb00fc`](https://github.com/Urigo/graphql-mesh/commit/f86cb00fcbbc52917ddd278422bcd40c0b87d2e4)
+  Thanks [@ardatan](https://github.com/ardatan)! - Create Web Transaction if there isn't any
+
+- Updated dependencies
+  [[`d0d4917f4`](https://github.com/Urigo/graphql-mesh/commit/d0d4917f405d7d6acfba62abef38909e1398ce7c)]:
+  - @graphql-mesh/types@0.94.2
+  - @graphql-mesh/utils@0.94.2
+
 ## 0.94.2
 
 ### Patch Changes
