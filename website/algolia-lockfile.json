@@ -706,12 +706,17 @@
   },
   {
     "objectID": "mesh-docs-guides-batching",
-    "headings": ["Enable requests batching"],
+    "headings": ["Enable requests batching", "Request Batching on the gateway level"],
     "toc": [
       {
         "children": [],
         "title": "Enable requests batching",
         "anchor": "enable-requests-batching"
+      },
+      {
+        "children": [],
+        "title": "Request Batching on the gateway level",
+        "anchor": "request-batching-on-the-gateway-level"
       }
     ],
     "content": "29c74a700b9778aff3bb6e8538a892c8",
