@@ -151,7 +151,7 @@ Mesh Gateway->>Book.author resolver: Query.stores[0].bookSells[0].book[7].author
 Book.author resolver->>Authors API: GetAuthors(input: \{ ids: ["123", "754", "332"] \})
 ```
 
-# Request Batching on the gateway level
+## Request Batching on the gateway level
 
 Mesh also provides a way to batch requests on the gateway level. This is useful when you want to
 send multiple requests to the gateway in a single HTTP request. This follows
