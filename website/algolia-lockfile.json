@@ -1045,6 +1045,24 @@
     "type": "Documentation"
   },
   {
+    "objectID": "mesh-docs-guides-persisted-operations",
+    "headings": ["Testing Persisted Operations"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Testing Persisted Operations",
+        "anchor": "testing-persisted-operations"
+      }
+    ],
+    "content": "5c494b2e8b29e6b6b4837a5bb2801a77",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/persisted-operations",
+    "domain": "https://www.the-guild.dev/graphql/mesh",
+    "hierarchy": ["docs", "guides"],
+    "source": "Mesh",
+    "title": "Persisted Operations",
+    "type": "Documentation"
+  },
+  {
     "objectID": "mesh-docs-guides-sofa",
     "headings": ["Installation", "Usage"],
     "toc": [
