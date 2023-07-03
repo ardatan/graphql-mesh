@@ -8,10 +8,11 @@ import * as tsBasePlugin from '@graphql-codegen/typescript';
 import * as typescriptGenericSdk from '@graphql-codegen/typescript-generic-sdk';
 import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
+import { Source } from '@graphql-mesh/config';
 import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import { Logger, Maybe, RawSourceOutput, YamlConfig } from '@graphql-mesh/types';
-import { pathExists, writeFile, writeJSON } from '@graphql-mesh/utils';
-import { printSchemaWithDirectives, Source } from '@graphql-tools/utils';
+import { pathExists, printWithCache, writeFile, writeJSON } from '@graphql-mesh/utils';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { GraphQLMeshCLIParams } from '..';
 import { generateOperations } from './generate-operations.js';
 
@@ -205,6 +206,16 @@ export async function generateTsArtifacts(
           importDocumentNodeExternallyFrom: 'NOWHERE',
         },
       },
+    );
+    const documentHashMap: Record<string, string> = {};
+    for (const document of documentsInput) {
+      if (document.sha256Hash) {
+        documentHashMap[document.sha256Hash] = document.rawSDL || printWithCache(document.document);
+      }
+    }
+    await writeFile(
+      pathModule.join(artifactsDir, `persisted_operations.json`),
+      JSON.stringify(documentHashMap, null, 2),
     );
   }
   const codegenOutput =

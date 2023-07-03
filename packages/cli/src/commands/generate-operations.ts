@@ -1,11 +1,7 @@
 import { GraphQLSchema, print } from 'graphql';
+import { Source } from '@graphql-mesh/config';
 import type { YamlConfig } from '@graphql-mesh/types';
-import {
-  buildOperationNodeForField,
-  getRootTypeMap,
-  parseGraphQLSDL,
-  Source,
-} from '@graphql-tools/utils';
+import { buildOperationNodeForField, getRootTypeMap, parseGraphQLSDL } from '@graphql-tools/utils';
 
 export function generateOperations(
   schema: GraphQLSchema,

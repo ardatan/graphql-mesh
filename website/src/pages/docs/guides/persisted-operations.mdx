@@ -1,0 +1,60 @@
+---
+description: GraphQL Mesh allows you to use Persisted Operations approach
+---
+
+# Persisted Operations
+
+Persisted operations is a mechanism for preventing the execution of arbitrary GraphQL operation
+documents. By default, the persisted operations plugin follows the
+[the APQ Specification](https://github.com/apollographql/apollo-link-persisted-queries#apollo-engine)
+for **SENDING** hashes to the server.
+
+You have to define your operations in your configuration file like below;
+
+```yml
+documents: ./documents/*.graphql
+```
+
+Then GraphQL Mesh will generate a persisted operations map under `.mesh` artifacts as
+`persisted_operations.json` like below;
+
+```json
+{
+  "ecf4edb46db40b5132295c0291d62fb65d6759a9eedfa4d5d612dd5ec54a6b38": "{__typename}"
+}
+```
+
+So you can use this file as a reference for your persisted operations in the client side.
+
+## Testing Persisted Operations
+
+Create an example GraphQL operation;
+
+```graphql filename="test.graphql"
+query Test {
+  __typename
+}
+```
+
+And assume that you have the following configuration file;
+
+```yml filename=".meshrc.yml"
+documents: ./test.graphql
+```
+
+Then GraphQL Mesh will generate `.mesh/persisted_operations.json`;
+
+```json filename=".mesh/persisted_operations.json"
+{
+  "ecf4edb46db40b5132295c0291d62fb65d6759a9eedfa4d5d612dd5ec54a6b38": "query Test {\n  __typename\n}"
+}
+```
+
+Start your GraphQL Mesh server and send the following request to the server;
+
+```bash filename="Execute persisted GraphQL operation"
+curl -X POST -H 'Content-Type: application/json' http://localhost:4000/graphql \
+  -d '{"extensions":{"persistedQuery":{"version":1,"sha256Hash":"ecf4edb46db40b5132295c0291d62fb65d6759a9eedfa4d5d612dd5ec54a6b38"}}}'
+
+{"data":{"__typename":"Query"}}
+```

@@ -1,5 +1,5 @@
 import { camelCase } from 'camel-case';
-import { concatAST, DocumentNode, parse, print, visit } from 'graphql';
+import { DocumentNode, parse, print, visit } from 'graphql';
 import { pascalCase } from 'pascal-case';
 import { useMaskedErrors } from '@envelop/core';
 import { path as pathModule, process } from '@graphql-mesh/cross-helpers';
@@ -14,17 +14,24 @@ import {
   MeshTransformLibrary,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { defaultImportFn, parseWithCache, resolveAdditionalResolvers } from '@graphql-mesh/utils';
-import { Source } from '@graphql-tools/utils';
+import {
+  defaultImportFn,
+  parseWithCache,
+  printWithCache,
+  resolveAdditionalResolvers,
+} from '@graphql-mesh/utils';
+import { usePersistedOperations } from '@graphql-yoga/plugin-persisted-operations';
 import { getAdditionalResolversFromTypeDefs } from './getAdditionalResolversFromTypeDefs.js';
 import {
   getPackage,
+  hashSHA256,
   resolveAdditionalTypeDefs,
   resolveCache,
   resolveCustomFetch,
   resolveDocuments,
   resolveLogger,
   resolvePubSub,
+  Source,
 } from './utils.js';
 
 const ENVELOP_CORE_PLUGINS_MAP: Record<
@@ -385,11 +392,14 @@ export async function processConfig(
             if (options.generateCode) {
               importCodes.add(`import { ${importName} } from ${JSON.stringify(moduleName)};`);
               codes.add(
-                `additionalEnvelopPlugins[${pluginIndex}] = await ${importName}(${JSON.stringify(
-                  pluginConfig,
-                  null,
-                  2,
-                )});`,
+                `additionalEnvelopPlugins[${pluginIndex}] = await ${importName}({
+          ...(${JSON.stringify(pluginConfig, null, 2)}),
+          logger: logger.child(${JSON.stringify(pluginName)}),
+          cache,
+          pubsub,
+          baseDir,
+          importFn,
+        });`,
               );
             }
           }
@@ -594,20 +604,60 @@ export async function processConfig(
     }
   }
 
-  if (options.generateCode) {
-    const documentVariableNames: string[] = [];
-    if (documents?.length) {
-      importCodes.add(`import { printWithCache } from '@graphql-mesh/utils';`);
-      const allDocumentNodes: DocumentNode = concatAST(
-        documents.map(document => document.document || parseWithCache(document.rawSDL)),
-      );
-      visit(allDocumentNodes, {
-        OperationDefinition(node) {
-          documentVariableNames.push(pascalCase(node.name.value + '_Document'));
-        },
-      });
-    }
+  const documentVariableNames: string[] = [];
+  const documentVariableHashCodeMap = new Map<string, string>();
 
+  if (documents?.length) {
+    const documentHashMap = new Map<string, DocumentNode | string>();
+    const documentHashMapCodes = new Set<string>();
+    if (options.generateCode) {
+      importCodes.add(`import { printWithCache } from '@graphql-mesh/utils';`);
+    }
+    await Promise.all(
+      documents.map(async documentSource => {
+        const documentStr = documentSource.rawSDL || printWithCache(documentSource.document);
+        const sha256Hash = await hashSHA256(documentStr);
+        documentHashMap.set(sha256Hash, documentStr);
+        documentSource.sha256Hash = sha256Hash;
+        if (options.generateCode) {
+          visit(documentSource.document || parseWithCache(documentStr), {
+            OperationDefinition(node) {
+              const variableName = pascalCase(node.name.value + '_Document');
+              documentVariableNames.push(variableName);
+              documentVariableHashCodeMap.set(variableName, sha256Hash);
+              if (options.generateCode) {
+                documentHashMapCodes.add(`${sha256Hash}: ${variableName}`);
+              }
+            },
+          });
+        }
+      }),
+    );
+    additionalEnvelopPlugins.push(
+      usePersistedOperations({
+        getPersistedOperation(key) {
+          return documentHashMap.get(key);
+        },
+        skipDocumentValidation: true,
+        allowArbitraryOperations: true,
+      }),
+    );
+    if (options.generateCode) {
+      importCodes.add(
+        `import { usePersistedOperations } from '@graphql-yoga/plugin-persisted-operations';`,
+      );
+      codes.add(`const documentHashMap = {
+        ${[...documentHashMapCodes].join(',\n')}
+      }`);
+      codes.add(`additionalEnvelopPlugins.push(usePersistedOperations({
+        getPersistedOperation(key) {
+          return documentHashMap[key];
+        },
+      }))`);
+    }
+  }
+
+  if (options.generateCode) {
     codes.add(`
   return {
     sources,
@@ -628,7 +678,8 @@ export async function processConfig(
         get rawSDL() {
           return printWithCache(${documentVarName});
         },
-        location: '${documentVarName}.graphql'
+        location: '${documentVarName}.graphql',
+        sha256Hash: '${documentVariableHashCodeMap.get(documentVarName)}'
       }`,
         )
         .join(',')}

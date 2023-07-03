@@ -13,8 +13,8 @@ import { DefaultLogger, parseWithCache, PubSub } from '@graphql-mesh/utils';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadDocuments, loadTypedefs } from '@graphql-tools/load';
-import { printSchemaWithDirectives, Source } from '@graphql-tools/utils';
-import { fetch as defaultFetch } from '@whatwg-node/fetch';
+import { Source as GraphQLToolsSource, printSchemaWithDirectives } from '@graphql-tools/utils';
+import { crypto, fetch as defaultFetch, TextEncoder } from '@whatwg-node/fetch';
 
 type ResolvedPackage<T> = {
   moduleName: string;
@@ -290,4 +290,19 @@ export async function resolveLogger(
     importCode: `import { DefaultLogger } from '@graphql-mesh/utils';`,
     code: `const logger = new DefaultLogger(${JSON.stringify(initialLoggerPrefix)});`,
   };
+}
+
+export async function hashSHA256(str: string) {
+  const textEncoder = new TextEncoder();
+  const utf8 = textEncoder.encode(str);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
+  let hashHex = '';
+  for (const bytes of new Uint8Array(hashBuffer)) {
+    hashHex += bytes.toString(16).padStart(2, '0');
+  }
+  return hashHex;
+}
+
+export interface Source extends GraphQLToolsSource {
+  sha256Hash?: string;
 }
