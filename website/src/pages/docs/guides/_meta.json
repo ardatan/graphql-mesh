@@ -11,5 +11,6 @@
   "mesh-sdk": "Programmatic Usage / SDK",
   "sofa": "Generate REST API with SOFA",
   "headers": "Headers",
-  "dynamic-vars": "Dynamic Variables"
+  "dynamic-vars": "Dynamic Variables",
+  "persisted-operations": "Persisted Operations"
 }

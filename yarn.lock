@@ -4020,6 +4020,11 @@
   dependencies:
     tslib "^2.5.2"
 
+"@graphql-yoga/plugin-persisted-operations@^2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-persisted-operations/-/plugin-persisted-operations-2.0.3.tgz#c8e3e8414d4ca4219634ab0f63cdcf4ce1326a9d"
+  integrity sha512-2MWcNiwetxlfpUuwGpf9YvYfWalOHckRA81DRdWQtys4qRpozPJ5Zt+ucEEmrCtpqhloudbmXjW2aXnrLVUcQQ==
+
 "@graphql-yoga/plugin-prometheus@2.0.2":
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-prometheus/-/plugin-prometheus-2.0.2.tgz#8e23b39a1c4d664d919c38ff5c0ec0e448cab434"
@@ -21559,7 +21564,6 @@ typical@^5.2.0:
 
 uWebSockets.js@uNetworking/uWebSockets.js#v20.30.0:
   version "20.30.0"
-  uid d39d4181daf5b670d44cbc1b18f8c28c85fd4142
   resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/d39d4181daf5b670d44cbc1b18f8c28c85fd4142"
 
 ua-parser-js@^1.0.35:
