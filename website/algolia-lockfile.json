@@ -714,7 +714,7 @@
         "anchor": "enable-requests-batching"
       }
     ],
-    "content": "d9a38aa6bf6c0a6668b935324bf0fcd2",
+    "content": "29c74a700b9778aff3bb6e8538a892c8",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/batching",
     "domain": "https://www.the-guild.dev/graphql/mesh",
     "hierarchy": ["docs", "guides"],
