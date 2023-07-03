@@ -161,6 +161,10 @@
         "trustProxy": {
           "type": "string",
           "description": "Configure Express Proxy Handling\n[Learn more](https://expressjs.com/en/guide/behind-proxies.html)"
+        },
+        "batchingLimit": {
+          "type": "integer",
+          "description": "Enable and define a limit for [Request Batching](https://github.com/graphql/graphql-over-http/blob/main/rfcs/Batching.md)"
         }
       }
     },

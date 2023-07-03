@@ -28,12 +28,20 @@ export function createMeshHTTPHandler<TServerContext>({
     staticFiles,
     playground: playgroundEnabled,
     endpoint: graphqlPath = '/graphql',
+    batchingLimit,
     // TODO
     // trustProxy = 'loopback',
   } = rawServeConfig;
 
   return createServerAdapter<TServerContext>(
-    graphqlHandler(() => mesh$, playgroundTitle, playgroundEnabled, graphqlPath, corsConfig),
+    graphqlHandler({
+      getBuiltMesh: () => mesh$,
+      playgroundTitle,
+      playgroundEnabled,
+      graphqlEndpoint: graphqlPath,
+      corsConfig,
+      batchingLimit,
+    }),
     {
       plugins: [
         {

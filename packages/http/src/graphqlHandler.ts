@@ -1,13 +1,21 @@
 import { CORSOptions, createYoga, useLogger } from 'graphql-yoga';
 import { MeshInstance } from '@graphql-mesh/runtime';
 
-export const graphqlHandler = (
-  getBuiltMesh: () => Promise<MeshInstance>,
-  playgroundTitle: string,
-  playgroundEnabled: boolean,
-  graphqlEndpoint: string,
-  corsConfig: CORSOptions,
-) => {
+export const graphqlHandler = ({
+  getBuiltMesh,
+  playgroundTitle,
+  playgroundEnabled,
+  graphqlEndpoint,
+  corsConfig,
+  batchingLimit,
+}: {
+  getBuiltMesh: () => Promise<MeshInstance>;
+  playgroundTitle: string;
+  playgroundEnabled: boolean;
+  graphqlEndpoint: string;
+  corsConfig: CORSOptions;
+  batchingLimit?: number;
+}) => {
   let yoga$: Promise<ReturnType<typeof createYoga>>;
   return (request: Request, ctx: any) => {
     if (!yoga$) {
@@ -32,6 +40,7 @@ export const graphqlHandler = (
           cors: corsConfig,
           graphqlEndpoint,
           landingPage: false,
+          batching: batchingLimit ? { limit: batchingLimit } : false,
         }),
       );
     }
