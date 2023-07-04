@@ -45,7 +45,7 @@ describe('New Relic', () => {
   });
   afterAll(async () => {
     mesh.destroy();
-    helper.unload();
+    return helper.unload();
   });
   it('should work', async () => {
     const response = await httpHandler.fetch('/graphql', {
