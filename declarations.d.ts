@@ -18,3 +18,7 @@ declare module 'newrelic' {
 declare module 'newrelic/*' {
   export = shim;
 }
+
+declare module '@newrelic/test-utilities' {
+  export const TestAgent: any;
+}
