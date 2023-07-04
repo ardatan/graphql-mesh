@@ -4918,7 +4918,7 @@
   dependencies:
     webpack-bundle-analyzer "4.7.0"
 
-"@next/env@13.4.8":
+"@next/env@13.4.8", "@next/env@^13.4.3":
   version "13.4.8"
   resolved "https://registry.yarnpkg.com/@next/env/-/env-13.4.8.tgz#8048ef3c3d770a3f3d1dd51d159593acfbd4e517"
   integrity sha512-twuSf1klb3k9wXI7IZhbZGtFCWvGD4wXTY2rmvzIgVhXhs7ISThrbNyutBx3jWIL8Y/Hk9+woytFz5QsgtcRKQ==
@@ -16522,12 +16522,13 @@ next-seo@^6.0.0:
   resolved "https://registry.yarnpkg.com/next-seo/-/next-seo-6.1.0.tgz#b60b06958cc77e7ed56f0a61b2d6cd0afed88ebb"
   integrity sha512-iMBpFoJsR5zWhguHJvsoBDxDSmdYTHtnVPB1ij+CD0NReQCP78ZxxbdL9qkKIf4oEuZEqZkrjAQLB0bkII7RYA==
 
-next-sitemap@4.1.3:
-  version "4.1.3"
-  resolved "https://registry.yarnpkg.com/next-sitemap/-/next-sitemap-4.1.3.tgz#cc565f08f3107d0f5b18c83faf8bdc6b2617e58f"
-  integrity sha512-eCvbXMCqbD/rYx912y4FzGOqPCbWOIBL4UkgVY5R15eCXygKFKWzEVZGPNVBDu2KVpRCeG943NibOchfyQGDhQ==
+next-sitemap@4.1.8:
+  version "4.1.8"
+  resolved "https://registry.yarnpkg.com/next-sitemap/-/next-sitemap-4.1.8.tgz#c1392878e1119039c601fa5c07f3e02750d21a06"
+  integrity sha512-XAXpBHX4o89JfMgvrm0zimlZwpu2iBPXHpimJMUrqOZSc4C2oB1Lv89mxuVON9IE8HOezaM+w4GjJxcYCuGPTQ==
   dependencies:
     "@corex/deepmerge" "^4.0.43"
+    "@next/env" "^13.4.3"
     fast-glob "^3.2.12"
     minimist "^1.2.8"
 
