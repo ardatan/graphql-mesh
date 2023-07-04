@@ -14,13 +14,12 @@ if (process.env.LEAK_TEST) {
   testMatch.push('!**/examples/grpc-*/**');
   testMatch.push('!**/examples/sqlite-*/**');
   testMatch.push('!**/examples/mysql-*/**');
-  testMatch.push('!**/packages/plugins/newrelic/**');
 }
 
 testMatch.push(process.env.INTEGRATION_TEST ? '!**/packages/**' : '!**/examples/**');
 
 testMatch.push(
-  process.env.INTEGRATION_TEST
+  process.env.INTEGRATION_TEST && !process.env.LEAK_TEST
     ? '**/packages/plugins/newrelic/tests/**'
     : '!**/packages/plugins/newrelic/tests/**',
 );
