@@ -14,7 +14,7 @@ const EnvelopAttributeName = 'Envelop_NewRelic_Plugin';
 
 export default function useMeshNewrelic(
   options: MeshPluginOptions<YamlConfig.NewrelicConfig>,
-  { instrumentationApi = newRelic?.shim, agentApi = newRelic }: any,
+  { instrumentationApi = newRelic?.shim, agentApi = newRelic }: any = {},
 ): MeshPlugin<any> & Plugin<any> {
   if (!instrumentationApi?.agent) {
     options.logger.debug(
