@@ -868,6 +868,11 @@
         "batch": {
           "type": "boolean",
           "description": "Enable/Disable automatic query batching"
+        },
+        "connectionParams": {
+          "type": "object",
+          "properties": {},
+          "description": "JSON object representing the `connectionParams` from a WebSocket connection to add to the runtime of the API calls only for operation during runtime.\nMore information about the WebSocket `connectionParams`:\n  - When using `subscriptionsProtocol=WS` (graphql-ws): https://github.com/enisdenjo/graphql-ws/blob/master/docs/interfaces/client.ClientOptions.md#connectionparams\n  - When using `subscriptionsProtocol=LEGACY_WS` (subscriptions-transport-ws): https://github.com/apollographql/subscriptions-transport-ws/blob/51270cc7dbaf09c7b9aa67368f1de58148c7d334/README.md#subscriptionclient"
         }
       },
       "required": ["endpoint"]
