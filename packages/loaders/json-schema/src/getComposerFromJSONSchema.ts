@@ -944,8 +944,34 @@ export function getComposerFromJSONSchema(
           } else {
             const inputTypeElemFieldMap = inputTypeComposer.getFields();
             for (const fieldName in inputTypeElemFieldMap) {
-              const field = inputTypeElemFieldMap[fieldName];
-              inputFieldMap[fieldName] = field;
+              const newInputField = inputTypeElemFieldMap[fieldName];
+              const existingInputField = inputFieldMap[fieldName] as any;
+              if (!existingInputField) {
+                inputFieldMap[fieldName] = newInputField;
+              } else {
+                /*
+                  If the new field collides with an existing field:
+
+                    - If both the existing and the new field have an input type composer, combine their subfields
+                    - Otherwise, replace the existing field with the new one
+                */
+                const existingInputFieldUnwrappedTC =
+                  typeof existingInputField.type?.getUnwrappedTC === 'function'
+                    ? existingInputField.type.getUnwrappedTC()
+                    : undefined;
+                const newInputFieldUnwrappedTC =
+                  typeof newInputField.type?.getUnwrappedTC === 'function'
+                    ? newInputField.type.getUnwrappedTC()
+                    : undefined;
+                if (
+                  existingInputFieldUnwrappedTC instanceof InputTypeComposer &&
+                  newInputFieldUnwrappedTC instanceof InputTypeComposer
+                ) {
+                  existingInputFieldUnwrappedTC.addFields(newInputFieldUnwrappedTC.getFields());
+                } else {
+                  inputFieldMap[fieldName] = newInputField;
+                }
+              }
             }
           }
 
@@ -980,8 +1006,34 @@ export function getComposerFromJSONSchema(
 
             const typeElemFieldMap = outputTypeComposer.getFields();
             for (const fieldName in typeElemFieldMap) {
-              const field = typeElemFieldMap[fieldName];
-              fieldMap[fieldName] = field;
+              const newField = typeElemFieldMap[fieldName];
+              const existingField = fieldMap[fieldName] as any;
+              if (!existingField) {
+                fieldMap[fieldName] = newField;
+              } else {
+                /*
+                  If the new field collides with an existing field:
+
+                    - If both the existing and the new field have an object type composer, combine their subfields
+                    - Otherwise, replace the existing field with the new one
+                */
+                const existingFieldUnwrappedTC =
+                  typeof existingField.type?.getUnwrappedTC === 'function'
+                    ? existingField.type.getUnwrappedTC()
+                    : undefined;
+                const newFieldUnwrappedTC =
+                  typeof newField.type?.getUnwrappedTC === 'function'
+                    ? newField.type.getUnwrappedTC()
+                    : undefined;
+                if (
+                  existingFieldUnwrappedTC instanceof ObjectTypeComposer &&
+                  newFieldUnwrappedTC instanceof ObjectTypeComposer
+                ) {
+                  existingFieldUnwrappedTC.addFields(newFieldUnwrappedTC.getFields());
+                } else {
+                  fieldMap[fieldName] = newField;
+                }
+              }
             }
           }
         }

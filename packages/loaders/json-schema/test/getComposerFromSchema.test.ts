@@ -302,6 +302,83 @@ type ExampleAllOf {
     `.trim(),
     );
   });
+
+  /**
+   * TODO: Make a more generic test where deep nesting of objects have to be properly merged!
+   */
+  it('should generate deeply-merged object types from allOf definitions', async () => {
+    const inputSchema: JSONSchema = {
+      title: 'ExampleAllOf',
+      allOf: [
+        {
+          type: 'object',
+          title: 'Foo',
+          properties: {
+            attributes: {
+              type: 'object',
+              title: 'Attributes',
+              properties: {
+                id: {
+                  type: 'string',
+                },
+                age: {
+                  type: 'number',
+                },
+              },
+              required: ['id'],
+            },
+          },
+        },
+        {
+          type: 'object',
+          title: 'Bar',
+          properties: {
+            attributes: {
+              type: 'object',
+              title: 'Attributes',
+              properties: {
+                name: {
+                  type: 'string',
+                },
+                age: {
+                  type: 'string', // Overriding type
+                },
+              },
+              required: ['name'],
+            },
+          },
+        },
+      ],
+    };
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
+    expect((result.input as InputTypeComposer).toSDL({ deep: true })).toContain(
+      /* GraphQL */ `
+input ExampleAllOf_Input {
+  attributes: Attributes_Input
+}
+
+input Attributes_Input {
+  id: String!
+  age: String
+  name: String!
+}
+    `.trim(),
+    );
+    expect((result.output as InputTypeComposer).toSDL({ deep: true })).toContain(
+      /* GraphQL */ `
+type ExampleAllOf {
+  attributes: Attributes
+}
+
+type Attributes {
+  id: String!
+  age: String
+  name: String!
+}
+    `.trim(),
+    );
+  });
+
   it('should generate container types and fields for allOf definitions that contain scalar types', async () => {
     const title = 'ExampleAllOf';
     const inputSchema: JSONSchema = {
