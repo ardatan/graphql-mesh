@@ -38,7 +38,7 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "dayjs": "1.11.8",
+    "dayjs": "1.11.9",
     "json-pointer": "0.6.2",
     "lodash.get": "4.4.2"
   },
