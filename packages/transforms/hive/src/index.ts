@@ -8,6 +8,7 @@ import { ExecutionRequest } from '@graphql-tools/utils';
 
 interface TransformationContext {
   collectUsageCallback: ReturnType<HiveClient['collectUsage']>;
+  request: ExecutionRequest;
 }
 
 export default class HiveTransform implements MeshTransform {
@@ -87,23 +88,27 @@ export default class HiveTransform implements MeshTransform {
     delegationContext: DelegationContext,
     transformationContext: TransformationContext,
   ) {
-    transformationContext.collectUsageCallback = this.hiveClient.collectUsage({
-      schema: delegationContext.transformedSchema,
-      document: request.document,
-      rootValue: request.rootValue,
-      contextValue: request.context,
-      variableValues: request.variables,
-      operationName: request.operationName,
-    });
+    transformationContext.collectUsageCallback = this.hiveClient.collectUsage();
+    transformationContext.request = request;
     return request;
   }
 
   transformResult(
     result: ExecutionResult,
-    _delegationContext: DelegationContext,
+    delegationContext: DelegationContext,
     transformationContext: TransformationContext,
   ) {
-    transformationContext.collectUsageCallback(result);
+    transformationContext.collectUsageCallback(
+      {
+        schema: delegationContext.transformedSchema,
+        document: transformationContext.request.document,
+        rootValue: transformationContext.request.rootValue,
+        contextValue: transformationContext.request.context,
+        variableValues: transformationContext.request.variables,
+        operationName: transformationContext.request.operationName,
+      },
+      result,
+    );
     return result;
   }
 }

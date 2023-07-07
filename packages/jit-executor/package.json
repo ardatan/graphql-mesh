@@ -39,7 +39,7 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "graphql-jit": "0.8.2"
+    "graphql-jit": "0.8.4"
   },
   "publishConfig": {
     "access": "public",

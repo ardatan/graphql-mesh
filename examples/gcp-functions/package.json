@@ -12,10 +12,10 @@
     "start": "functions-framework --target=mesh"
   },
   "dependencies": {
-    "@google-cloud/functions-framework": "3.2.1",
+    "@google-cloud/functions-framework": "3.3.0",
     "@graphql-mesh/cli": "0.85.0",
     "@graphql-mesh/json-schema": "0.94.5",
-    "@types/node": "18.16.18",
+    "@types/node": "18.16.19",
     "graphql": "16.7.1",
     "typescript": "5.1.6"
   }

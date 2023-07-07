@@ -46,11 +46,11 @@
     "openapi-types": "^12.1.0"
   },
   "devDependencies": {
-    "@graphql-tools/utils": "10.0.1",
+    "@graphql-tools/utils": "10.0.3",
     "@whatwg-node/fetch": "0.9.7",
     "@whatwg-node/router": "0.3.0",
-    "fets": "0.2.8",
-    "graphql-yoga": "4.0.2",
+    "fets": "0.2.9",
+    "graphql-yoga": "4.0.3",
     "json-bigint-patch": "0.0.8"
   },
   "publishConfig": {
