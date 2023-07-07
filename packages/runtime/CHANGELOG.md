@@ -1,5 +1,14 @@
 # @graphql-mesh/runtime
 
+## 0.95.0
+
+### Minor Changes
+
+- [#4724](https://github.com/Urigo/graphql-mesh/pull/4724)
+  [`191f1cc88`](https://github.com/Urigo/graphql-mesh/commit/191f1cc88cdfa6f0ca5b735fbe8677bc2679c9e7)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Supply WebSocket `connectionParams` to
+  operation context and introduce `connectionParams` option for graphql handler
+
 ## 0.94.2
 
 ### Patch Changes

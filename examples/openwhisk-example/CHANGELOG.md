@@ -1,5 +1,13 @@
 # openwhisk-example
 
+## 0.3.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`191f1cc88`](https://github.com/Urigo/graphql-mesh/commit/191f1cc88cdfa6f0ca5b735fbe8677bc2679c9e7)]:
+  - @graphql-mesh/cli@0.85.0
+
 ## 0.2.0
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # postgres-geodb-example
 
+## 0.8.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`191f1cc88`](https://github.com/Urigo/graphql-mesh/commit/191f1cc88cdfa6f0ca5b735fbe8677bc2679c9e7)]:
+  - @graphql-mesh/cli@0.85.0
+  - @graphql-mesh/runtime@0.95.0
+  - @graphql-mesh/config@0.96.0
+
 ## 0.7.0
 
 ### Patch Changes
