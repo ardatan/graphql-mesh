@@ -1,4 +1,4 @@
-import { createHive, HivePluginOptions, useHive } from '@graphql-hive/client';
+import { createHive, HivePluginOptions, useYogaHive } from '@graphql-hive/client';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
@@ -79,7 +79,7 @@ export default function useMeshHive(
   });
   return {
     onPluginInit({ addPlugin }) {
-      addPlugin(useHive(hiveClient));
+      addPlugin(useYogaHive(hiveClient));
     },
   };
 }
