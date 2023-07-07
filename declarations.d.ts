@@ -12,8 +12,13 @@ declare module 'ioredis-mock' {
 
 declare module 'newrelic' {
   const shim: any;
+  function startWebTransaction(url: string, callback: () => Promise<void>): void;
 }
 
 declare module 'newrelic/*' {
   export = shim;
+}
+
+declare module '@newrelic/test-utilities' {
+  export const TestAgent: any;
 }

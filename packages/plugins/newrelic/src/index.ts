@@ -1,3 +1,4 @@
+/* eslint-disable promise/param-names */
 import { Plugin } from 'graphql-yoga';
 import newRelic from 'newrelic';
 import NAMES from 'newrelic/lib/metrics/names.js';
@@ -13,8 +14,8 @@ const EnvelopAttributeName = 'Envelop_NewRelic_Plugin';
 
 export default function useMeshNewrelic(
   options: MeshPluginOptions<YamlConfig.NewrelicConfig>,
+  { instrumentationApi = newRelic?.shim, agentApi = newRelic }: any = {},
 ): MeshPlugin<any> & Plugin<any> {
-  const instrumentationApi = newRelic?.shim;
   if (!instrumentationApi?.agent) {
     options.logger.debug(
       'Agent unavailable. Please check your New Relic Agent configuration and ensure New Relic is enabled.',
@@ -29,13 +30,13 @@ export default function useMeshNewrelic(
   const logger = instrumentationApi.logger.child({ component: EnvelopAttributeName });
 
   const segmentByRequestContext = new WeakMap<any, any>();
-  const transactionCallback = new WeakMap<Request, () => void>();
 
   return {
     onPluginInit({ addPlugin }) {
       addPlugin(
         useNewRelic({
           ...options,
+          shim: instrumentationApi,
           extractOperationName: options.extractOperationName
             ? context =>
                 stringInterpolator.parse(options.extractOperationName, {
@@ -46,12 +47,11 @@ export default function useMeshNewrelic(
         }),
       );
     },
-    onRequest({ request, url }) {
-      const currentTransaction = instrumentationApi.getTransaction();
+    onRequest({ url, requestHandler, setRequestHandler }) {
+      const currentTransaction = instrumentationApi.agent.tracer.getTransaction();
       if (!currentTransaction) {
-        instrumentationApi.startWebTransaction(
-          url.pathname,
-          () => new Promise<void>(resolve => transactionCallback.set(request, resolve)),
+        setRequestHandler((...args) =>
+          agentApi.startWebTransaction(url.pathname, () => requestHandler(...args)),
         );
       }
     },
@@ -156,12 +156,6 @@ export default function useMeshNewrelic(
         }
         httpDetailSegment.end();
       };
-    },
-    onResponse({ request }) {
-      const callback = transactionCallback.get(request);
-      if (callback) {
-        callback();
-      }
     },
   };
 }

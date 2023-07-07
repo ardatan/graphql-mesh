@@ -18,6 +18,12 @@ if (process.env.LEAK_TEST) {
 
 testMatch.push(process.env.INTEGRATION_TEST ? '!**/packages/**' : '!**/examples/**');
 
+testMatch.push(
+  process.env.INTEGRATION_TEST && !process.env.LEAK_TEST
+    ? '**/packages/plugins/newrelic/tests/**'
+    : '!**/packages/plugins/newrelic/tests/**',
+);
+
 module.exports = {
   testEnvironment: 'node',
   rootDir: ROOT_DIR,

@@ -46,9 +46,10 @@
     "@graphql-mesh/string-interpolation": "^0.5.0"
   },
   "devDependencies": {
+    "@newrelic/test-utilities": "6.5.5",
     "@types/newrelic": "9.14.0",
     "graphql-yoga": "4.0.3",
-    "newrelic": "10.3.2"
+    "newrelic": "9.15.0"
   },
   "publishConfig": {
     "access": "public",
