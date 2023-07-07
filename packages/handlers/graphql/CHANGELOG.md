@@ -1,5 +1,16 @@
 # @graphql-mesh/graphql
 
+## 0.94.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`fba66c6fc`](https://github.com/Urigo/graphql-mesh/commit/fba66c6fc7a0ca15393df8ae5382d97eb0ae8fcf)]:
+  - @graphql-mesh/string-interpolation@0.5.1
+  - @graphql-mesh/utils@0.94.3
+  - @graphql-mesh/store@0.94.3
+  - @graphql-mesh/types@0.94.3
+
 ## 0.94.3
 
 ### Patch Changes
