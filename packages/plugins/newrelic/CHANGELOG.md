@@ -1,5 +1,13 @@
 # @graphql-mesh/plugin-newrelic
 
+## 0.94.4
+
+### Patch Changes
+
+- [#5634](https://github.com/Urigo/graphql-mesh/pull/5634)
+  [`3d63d1650`](https://github.com/Urigo/graphql-mesh/commit/3d63d16505980a5d44548cfb8c8ee5274db9d290)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix getTransaction
+
 ## 0.94.3
 
 ### Patch Changes
