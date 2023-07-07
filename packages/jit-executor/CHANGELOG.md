@@ -1,5 +1,18 @@
 # @graphql-mesh/jit-executor
 
+## 0.94.3
+
+### Patch Changes
+
+- [#5626](https://github.com/Urigo/graphql-mesh/pull/5626)
+  [`fba66c6fc`](https://github.com/Urigo/graphql-mesh/commit/fba66c6fc7a0ca15393df8ae5382d97eb0ae8fcf)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`graphql-jit@0.8.4` ↗︎](https://www.npmjs.com/package/graphql-jit/v/0.8.4)
+    (from `0.8.2`, in `dependencies`)
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.94.3
+  - @graphql-mesh/types@0.94.3
+
 ## 0.94.2
 
 ### Patch Changes

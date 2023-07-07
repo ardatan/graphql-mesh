@@ -1,5 +1,20 @@
 # @graphql-mesh/plugin-hive
 
+## 0.94.3
+
+### Patch Changes
+
+- [#5626](https://github.com/Urigo/graphql-mesh/pull/5626)
+  [`fba66c6fc`](https://github.com/Urigo/graphql-mesh/commit/fba66c6fc7a0ca15393df8ae5382d97eb0ae8fcf)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/client@0.24.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/client/v/0.24.0)
+    (from `0.23.1`, in `dependencies`)
+- Updated dependencies
+  [[`fba66c6fc`](https://github.com/Urigo/graphql-mesh/commit/fba66c6fc7a0ca15393df8ae5382d97eb0ae8fcf)]:
+  - @graphql-mesh/string-interpolation@0.5.1
+  - @graphql-mesh/types@0.94.3
+
 ## 0.94.2
 
 ### Patch Changes

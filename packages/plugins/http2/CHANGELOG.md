@@ -1,5 +1,13 @@
 # @graphql-mesh/plugin-http2
 
+## 0.94.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.94.3
+  - @graphql-mesh/types@0.94.3
+
 ## 0.94.4
 
 ### Patch Changes
