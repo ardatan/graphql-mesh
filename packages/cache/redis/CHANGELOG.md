@@ -77,8 +77,9 @@
 - [#5340](https://github.com/Urigo/graphql-mesh/pull/5340)
   [`cff645677`](https://github.com/Urigo/graphql-mesh/commit/cff645677c680e248ed718e5bb98ece5a41f9c0f)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`ioredis-mock@8.7.0` ↗︎](https://www.npmjs.com/package/ioredis-mock/v/8.7.0)
-    (from `8.6.0`, in `dependencies`)
+  - Updated dependency
+    [`ioredis-mock@8.7.0` ↗︎](https://www.npmjs.com/package/ioredis-mock/v/8.7.0) (from `8.6.0`, in
+    `dependencies`)
 - Updated dependencies
   [[`cff645677`](https://github.com/Urigo/graphql-mesh/commit/cff645677c680e248ed718e5bb98ece5a41f9c0f),
   [`cff645677`](https://github.com/Urigo/graphql-mesh/commit/cff645677c680e248ed718e5bb98ece5a41f9c0f),
@@ -95,15 +96,17 @@
   [`d54b8cf29`](https://github.com/Urigo/graphql-mesh/commit/d54b8cf29490e86988c0b68a129372557d93e7a2)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
-  - Updated dependency [`ioredis-mock@8.5.0` ↗︎](https://www.npmjs.com/package/ioredis-mock/v/8.5.0)
-    (from `8.4.0`, in `dependencies`)
+  - Updated dependency
+    [`ioredis-mock@8.5.0` ↗︎](https://www.npmjs.com/package/ioredis-mock/v/8.5.0) (from `8.4.0`, in
+    `dependencies`)
 
 - [#5324](https://github.com/Urigo/graphql-mesh/pull/5324)
   [`3d4d11ac8`](https://github.com/Urigo/graphql-mesh/commit/3d4d11ac82c57549eeb6cec5ed651de102cc9205)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
-  - Updated dependency [`ioredis-mock@8.6.0` ↗︎](https://www.npmjs.com/package/ioredis-mock/v/8.6.0)
-    (from `8.5.0`, in `dependencies`)
+  - Updated dependency
+    [`ioredis-mock@8.6.0` ↗︎](https://www.npmjs.com/package/ioredis-mock/v/8.6.0) (from `8.5.0`, in
+    `dependencies`)
 
 - [#5328](https://github.com/Urigo/graphql-mesh/pull/5328)
   [`0d73b3f71`](https://github.com/Urigo/graphql-mesh/commit/0d73b3f71e847d751eea130df62d795c3b06a192)
@@ -124,8 +127,9 @@
 - [#5265](https://github.com/Urigo/graphql-mesh/pull/5265)
   [`e281e3a27`](https://github.com/Urigo/graphql-mesh/commit/e281e3a27b937813789cbcdce3d6fd716f434aad)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`ioredis-mock@8.4.0` ↗︎](https://www.npmjs.com/package/ioredis-mock/v/8.4.0)
-    (from `8.2.7`, in `dependencies`)
+  - Updated dependency
+    [`ioredis-mock@8.4.0` ↗︎](https://www.npmjs.com/package/ioredis-mock/v/8.4.0) (from `8.2.7`, in
+    `dependencies`)
 - Updated dependencies
   [[`870de5dae`](https://github.com/Urigo/graphql-mesh/commit/870de5dae08a7e43d9aa0f52d5d504cffb4d8fc8),
   [`aea134764`](https://github.com/Urigo/graphql-mesh/commit/aea1347645c322437ed6ccfadabcfc23065bc9c8),
@@ -158,8 +162,9 @@
 - [#5250](https://github.com/Urigo/graphql-mesh/pull/5250)
   [`1105e4399`](https://github.com/Urigo/graphql-mesh/commit/1105e439934c319d87267832e0edcc4a8dd423f4)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`ioredis-mock@8.2.7` ↗︎](https://www.npmjs.com/package/ioredis-mock/v/8.2.7)
-    (from `8.2.6`, in `dependencies`)
+  - Updated dependency
+    [`ioredis-mock@8.2.7` ↗︎](https://www.npmjs.com/package/ioredis-mock/v/8.2.7) (from `8.2.6`, in
+    `dependencies`)
 - Updated dependencies
   [[`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54)]:
   - @graphql-mesh/types@0.91.11
@@ -267,8 +272,9 @@
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency [`ioredis@5.3.1` ↗︎](https://www.npmjs.com/package/ioredis/v/5.3.1) (from
     `5.3.0`, in `dependencies`)
-  - Updated dependency [`ioredis-mock@8.2.6` ↗︎](https://www.npmjs.com/package/ioredis-mock/v/8.2.6)
-    (from `8.2.5`, in `dependencies`)
+  - Updated dependency
+    [`ioredis-mock@8.2.6` ↗︎](https://www.npmjs.com/package/ioredis-mock/v/8.2.6) (from `8.2.5`, in
+    `dependencies`)
 - Updated dependencies
   [[`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
   [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
@@ -285,8 +291,9 @@
 - [#5087](https://github.com/Urigo/graphql-mesh/pull/5087)
   [`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`ioredis-mock@8.2.5` ↗︎](https://www.npmjs.com/package/ioredis-mock/v/8.2.5)
-    (from `8.2.2`, in `dependencies`)
+  - Updated dependency
+    [`ioredis-mock@8.2.5` ↗︎](https://www.npmjs.com/package/ioredis-mock/v/8.2.5) (from `8.2.2`, in
+    `dependencies`)
 - Updated dependencies
   [[`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72),
   [`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72),

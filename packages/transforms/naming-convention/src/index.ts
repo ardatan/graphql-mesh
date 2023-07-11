@@ -3,9 +3,9 @@ import BareNamingConvention from './bareNamingConvention.js';
 import WrapNamingConvention from './wrapNamingConvention.js';
 
 interface NamingConventionTransformConstructor {
-  new (options: MeshTransformOptions<YamlConfig.NamingConventionTransformConfig>):
-    | WrapNamingConvention
-    | BareNamingConvention;
+  new (
+    options: MeshTransformOptions<YamlConfig.NamingConventionTransformConfig>,
+  ): WrapNamingConvention | BareNamingConvention;
 }
 
 export default (function NamingConventionTransform(

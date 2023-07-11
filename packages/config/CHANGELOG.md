@@ -77,8 +77,8 @@
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
 
   - Updated dependency
-    [`@envelop/core@^4.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/4.0.0) (from `^3.0.6`,
-    in `dependencies`)
+    [`@envelop/core@^4.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/4.0.0) (from
+    `^3.0.6`, in `dependencies`)
 
 - [#5446](https://github.com/Urigo/graphql-mesh/pull/5446)
   [`e881ea609`](https://github.com/Urigo/graphql-mesh/commit/e881ea609a1d355356c1dc04c7a42b00b6e86e0d)
@@ -102,15 +102,15 @@
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
   - Updated dependency
-    [`@whatwg-node/fetch@^0.9.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.9.0) (from
-    `^0.8.3`, in `dependencies`)
+    [`@whatwg-node/fetch@^0.9.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.9.0)
+    (from `^0.8.3`, in `dependencies`)
 
 - [#5456](https://github.com/Urigo/graphql-mesh/pull/5456)
   [`b52b4c7c1`](https://github.com/Urigo/graphql-mesh/commit/b52b4c7c1133a9904080c344dcb5140c1af67f2a)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@envelop/core@^4.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/4.0.0) (from `^3.0.6`,
-    in `dependencies`)
+    [`@envelop/core@^4.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/4.0.0) (from
+    `^3.0.6`, in `dependencies`)
 - Updated dependencies
   [[`e881ea609`](https://github.com/Urigo/graphql-mesh/commit/e881ea609a1d355356c1dc04c7a42b00b6e86e0d),
   [`e881ea609`](https://github.com/Urigo/graphql-mesh/commit/e881ea609a1d355356c1dc04c7a42b00b6e86e0d),
@@ -327,8 +327,8 @@
   [`3f658a771`](https://github.com/Urigo/graphql-mesh/commit/3f658a7711cd68bc7451c1494699c5ffb8e919ce)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
   - Updated dependency
-    [`@whatwg-node/fetch@^0.8.3` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.8.3) (from
-    `^0.8.0`, in `dependencies`)
+    [`@whatwg-node/fetch@^0.8.3` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.8.3)
+    (from `^0.8.0`, in `dependencies`)
 - Updated dependencies
   [[`3f658a771`](https://github.com/Urigo/graphql-mesh/commit/3f658a7711cd68bc7451c1494699c5ffb8e919ce),
   [`3f658a771`](https://github.com/Urigo/graphql-mesh/commit/3f658a7711cd68bc7451c1494699c5ffb8e919ce)]:
@@ -517,8 +517,8 @@
     [`@graphql-tools/utils@9.2.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.2.1)
     (from `9.1.4`, in `dependencies`)
   - Updated dependency
-    [`@whatwg-node/fetch@^0.8.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.8.0) (from
-    `^0.6.0`, in `dependencies`)
+    [`@whatwg-node/fetch@^0.8.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.8.0)
+    (from `^0.6.0`, in `dependencies`)
 - Updated dependencies
   [[`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
   [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
@@ -594,8 +594,8 @@
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
   - Updated dependency
-    [`@whatwg-node/fetch@^0.6.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.6.0) (from
-    `^0.5.0`, in `dependencies`)
+    [`@whatwg-node/fetch@^0.6.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.6.0)
+    (from `^0.5.0`, in `dependencies`)
 
 - [#5028](https://github.com/Urigo/graphql-mesh/pull/5028)
   [`994813331`](https://github.com/Urigo/graphql-mesh/commit/99481333186e8471207e21ad14c7883f7215ce1c)
@@ -1133,8 +1133,8 @@
     [`@graphql-tools/load@7.8.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.8.0)
     (from `7.7.7`, in `dependencies`)
   - Updated dependency
-    [`@whatwg-node/fetch@^0.5.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.5.0) (from
-    `^0.4.6`, in `dependencies`)
+    [`@whatwg-node/fetch@^0.5.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.5.0)
+    (from `^0.4.6`, in `dependencies`)
 
 - [`09c286994`](https://github.com/Urigo/graphql-mesh/commit/09c28699441cda92f79e4e9b8464e7be5f46a786)
   Thanks [@ardatan](https://github.com/ardatan)! - Fix on handling envelop plugins
@@ -1834,8 +1834,8 @@
   - Removed dependency
     [`@whatwg-node/fetch@^0.3.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/null) (from
     `dependencies`)
-  - Removed dependency [`fetchache@0.1.2` ↗︎](https://www.npmjs.com/package/fetchache/v/0.1.2) (from
-    `dependencies`)
+  - Removed dependency [`fetchache@0.1.2` ↗︎](https://www.npmjs.com/package/fetchache/v/0.1.2)
+    (from `dependencies`)
 
 - Updated dependencies
   [[`b5c59ffce`](https://github.com/Urigo/graphql-mesh/commit/b5c59ffceae7091f8d2b98ee548890acdbd57824),
@@ -1939,8 +1939,8 @@
     [`@graphql-tools/utils@8.10.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.10.0)
     (was `8.9.1`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/load@7.7.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.7.4) (was
-    `7.7.3`, in `dependencies`)
+    [`@graphql-tools/load@7.7.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.7.4)
+    (was `7.7.3`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/code-file-loader@7.3.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/code-file-loader/v/7.3.3)
     (was `7.3.2`, in `dependencies`)
@@ -1982,8 +1982,8 @@
     [`@graphql-tools/utils@8.9.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.9.1)
     (was `8.9.0`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/load@7.7.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.7.3) (was
-    `7.7.1`, in `dependencies`)
+    [`@graphql-tools/load@7.7.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.7.3)
+    (was `7.7.1`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/code-file-loader@7.3.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/code-file-loader/v/7.3.2)
     (was `7.3.1`, in `dependencies`)

@@ -71,16 +71,16 @@
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
 
   - Updated dependency
-    [`@envelop/core@^4.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/4.0.0) (from `^3.0.0`,
-    in `dependencies`)
+    [`@envelop/core@^4.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/4.0.0) (from
+    `^3.0.0`, in `dependencies`)
 
 - [#5456](https://github.com/Urigo/graphql-mesh/pull/5456)
   [`b52b4c7c1`](https://github.com/Urigo/graphql-mesh/commit/b52b4c7c1133a9904080c344dcb5140c1af67f2a)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
   - Updated dependency
-    [`@envelop/core@^4.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/4.0.0) (from `^3.0.0`,
-    in `dependencies`)
+    [`@envelop/core@^4.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/4.0.0) (from
+    `^3.0.0`, in `dependencies`)
 
 - [#5516](https://github.com/Urigo/graphql-mesh/pull/5516)
   [`6f22ed875`](https://github.com/Urigo/graphql-mesh/commit/6f22ed875707a2c6616ecbc48516b095f89351da)
@@ -705,8 +705,8 @@
   [`299770a78`](https://github.com/Urigo/graphql-mesh/commit/299770a781211badd594e2f3c88bf1e66736b170)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@envelop/core@^3.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/3.0.0) (from `^2.3.2`,
-    in `dependencies`)
+    [`@envelop/core@^3.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/3.0.0) (from
+    `^2.3.2`, in `dependencies`)
 
 ## 0.1.39
 

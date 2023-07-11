@@ -77,8 +77,8 @@
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
   - Updated dependency
-    [`@whatwg-node/fetch@^0.9.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.9.0) (from
-    `^0.8.3`, in `dependencies`)
+    [`@whatwg-node/fetch@^0.9.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.9.0)
+    (from `^0.8.3`, in `dependencies`)
 
 - [#5503](https://github.com/Urigo/graphql-mesh/pull/5503)
   [`3039224b2`](https://github.com/Urigo/graphql-mesh/commit/3039224b2d9f25c2e203fba6ed7aa461cfa4424f)
@@ -222,8 +222,8 @@
   [`3f658a771`](https://github.com/Urigo/graphql-mesh/commit/3f658a7711cd68bc7451c1494699c5ffb8e919ce)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
   - Updated dependency
-    [`@whatwg-node/fetch@^0.8.3` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.8.3) (from
-    `^0.8.0`, in `dependencies`)
+    [`@whatwg-node/fetch@^0.8.3` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.8.3)
+    (from `^0.8.0`, in `dependencies`)
 - Updated dependencies
   [[`3f658a771`](https://github.com/Urigo/graphql-mesh/commit/3f658a7711cd68bc7451c1494699c5ffb8e919ce),
   [`3f658a771`](https://github.com/Urigo/graphql-mesh/commit/3f658a7711cd68bc7451c1494699c5ffb8e919ce)]:
@@ -363,8 +363,8 @@
     [`@graphql-tools/utils@9.2.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.2.1)
     (from `9.1.4`, in `dependencies`)
   - Updated dependency
-    [`@whatwg-node/fetch@^0.8.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.8.0) (from
-    `^0.6.0`, in `dependencies`)
+    [`@whatwg-node/fetch@^0.8.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.8.0)
+    (from `^0.6.0`, in `dependencies`)
 
 - [`e246b4d63`](https://github.com/Urigo/graphql-mesh/commit/e246b4d63b3c7f2b56c5447d771cc68f6fd6b354)
   Thanks [@ardatan](https://github.com/ardatan)! - Handle `items: null` and `default` values as a
@@ -414,15 +414,15 @@
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
   - Updated dependency
-    [`@whatwg-node/fetch@^0.6.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.6.0) (from
-    `^0.5.0`, in `dependencies`)
+    [`@whatwg-node/fetch@^0.6.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.6.0)
+    (from `^0.5.0`, in `dependencies`)
 
 - [#4991](https://github.com/Urigo/graphql-mesh/pull/4991)
   [`bb5abc15d`](https://github.com/Urigo/graphql-mesh/commit/bb5abc15d8ff9227f5fc9fafe78d1befc7ae0797)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
-  - Updated dependency [`ajv@8.12.0` ↗︎](https://www.npmjs.com/package/ajv/v/8.12.0) (from `8.11.2`,
-    in `dependencies`)
+  - Updated dependency [`ajv@8.12.0` ↗︎](https://www.npmjs.com/package/ajv/v/8.12.0) (from
+    `8.11.2`, in `dependencies`)
 
 - [#5028](https://github.com/Urigo/graphql-mesh/pull/5028)
   [`994813331`](https://github.com/Urigo/graphql-mesh/commit/99481333186e8471207e21ad14c7883f7215ce1c)
@@ -631,8 +631,8 @@
   - Updated dependency
     [`@graphql-tools/utils@9.1.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.1.1)
     (from `9.1.0`, in `dependencies`)
-  - Updated dependency [`ajv@8.11.2` ↗︎](https://www.npmjs.com/package/ajv/v/8.11.2) (from `8.11.0`,
-    in `dependencies`)
+  - Updated dependency [`ajv@8.11.2` ↗︎](https://www.npmjs.com/package/ajv/v/8.11.2) (from
+    `8.11.0`, in `dependencies`)
 
 - [#4792](https://github.com/Urigo/graphql-mesh/pull/4792)
   [`d63bd93e0`](https://github.com/Urigo/graphql-mesh/commit/d63bd93e0feedf7bcdb4dc49c22e3c09d11ee8ea)
@@ -783,8 +783,8 @@
   [`c72d904dc`](https://github.com/Urigo/graphql-mesh/commit/c72d904dc11adfd3b6ee1695b1aaeae6ab64e1e9)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@whatwg-node/fetch@^0.5.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.5.0) (from
-    `^0.4.6`, in `dependencies`)
+    [`@whatwg-node/fetch@^0.5.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.5.0)
+    (from `^0.4.6`, in `dependencies`)
   - Updated dependency
     [`graphql-scalars@1.20.0` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.20.0) (from
     `1.19.0`, in `dependencies`)

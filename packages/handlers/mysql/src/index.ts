@@ -162,8 +162,8 @@ export default class MySQLHandler implements MeshHandler {
       get: (_, methodName: keyof MysqlPromisifiedConnection) => {
         if (methodName === 'release') {
           return () =>
-            promisifiedConnection$?.then(promisifiedConnection =>
-              promisifiedConnection?.connection.release(),
+            promisifiedConnection$?.then(
+              promisifiedConnection => promisifiedConnection?.connection.release(),
             );
         }
         if (methodName === 'connection') {

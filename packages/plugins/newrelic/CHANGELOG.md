@@ -87,8 +87,8 @@
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
 
   - Updated dependency
-    [`@envelop/core@^4.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/4.0.0) (from `^3.0.0`,
-    in `dependencies`)
+    [`@envelop/core@^4.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/4.0.0) (from
+    `^3.0.0`, in `dependencies`)
   - Updated dependency
     [`@envelop/newrelic@6.0.0` ↗︎](https://www.npmjs.com/package/@envelop/newrelic/v/6.0.0) (from
     `5.0.6`, in `dependencies`)
@@ -97,8 +97,8 @@
   [`b52b4c7c1`](https://github.com/Urigo/graphql-mesh/commit/b52b4c7c1133a9904080c344dcb5140c1af67f2a)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@envelop/core@^4.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/4.0.0) (from `^3.0.0`,
-    in `dependencies`)
+    [`@envelop/core@^4.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/4.0.0) (from
+    `^3.0.0`, in `dependencies`)
   - Updated dependency
     [`@envelop/newrelic@6.0.0` ↗︎](https://www.npmjs.com/package/@envelop/newrelic/v/6.0.0) (from
     `5.0.6`, in `dependencies`)
@@ -588,8 +588,8 @@
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
   - Updated dependency
-    [`@envelop/core@^3.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/3.0.0) (from `^2.3.2`,
-    in `dependencies`)
+    [`@envelop/core@^3.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/3.0.0) (from
+    `^2.3.2`, in `dependencies`)
 
 - [#4682](https://github.com/Urigo/graphql-mesh/pull/4682)
   [`e46ffb4dc`](https://github.com/Urigo/graphql-mesh/commit/e46ffb4dc5fa103e8edd4a9c3c2302aa8ea8dd9e)

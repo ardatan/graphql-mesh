@@ -1091,8 +1091,8 @@
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
   - Updated dependency
-    [`@graphql-tools/load@7.7.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.7.4) (was
-    `7.7.3`, in `dependencies`)
+    [`@graphql-tools/load@7.7.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.7.4)
+    (was `7.7.3`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/code-file-loader@7.3.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/code-file-loader/v/7.3.3)
     (was `7.3.2`, in `dependencies`)
@@ -1125,8 +1125,8 @@
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
   - Updated dependency
-    [`@graphql-tools/load@7.7.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.7.3) (was
-    `7.7.1`, in `dependencies`)
+    [`@graphql-tools/load@7.7.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.7.3)
+    (was `7.7.1`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/code-file-loader@7.3.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/code-file-loader/v/7.3.2)
     (was `7.3.1`, in `dependencies`)
