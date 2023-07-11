@@ -54,8 +54,9 @@
 - [#5543](https://github.com/Urigo/graphql-mesh/pull/5543)
   [`fea607696`](https://github.com/Urigo/graphql-mesh/commit/fea60769664b0c859c990220b5504f881477baf3)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`neo4j-driver@5.9.1` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.9.1)
-    (from `5.9.0`, in `dependencies`)
+  - Updated dependency
+    [`neo4j-driver@5.9.1` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.9.1) (from `5.9.0`, in
+    `dependencies`)
 
 ## 0.94.1
 
@@ -79,8 +80,9 @@
   [`7fcc4e566`](https://github.com/Urigo/graphql-mesh/commit/7fcc4e566a4fbba5dd6ecb248ddfb95e4c270417)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
 
-  - Updated dependency [`neo4j-driver@5.8.1` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.8.1)
-    (from `5.8.0`, in `dependencies`)
+  - Updated dependency
+    [`neo4j-driver@5.8.1` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.8.1) (from `5.8.0`, in
+    `dependencies`)
 
 - [#5446](https://github.com/Urigo/graphql-mesh/pull/5446)
   [`e881ea609`](https://github.com/Urigo/graphql-mesh/commit/e881ea609a1d355356c1dc04c7a42b00b6e86e0d)
@@ -94,8 +96,9 @@
   [`c96b4c2c3`](https://github.com/Urigo/graphql-mesh/commit/c96b4c2c3a747d48f312fea952f85d17c79540a9)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
-  - Updated dependency [`neo4j-driver@5.8.1` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.8.1)
-    (from `5.8.0`, in `dependencies`)
+  - Updated dependency
+    [`neo4j-driver@5.8.1` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.8.1) (from `5.8.0`, in
+    `dependencies`)
 
 - [#5462](https://github.com/Urigo/graphql-mesh/pull/5462)
   [`2984e5657`](https://github.com/Urigo/graphql-mesh/commit/2984e5657933a63f8bc208c7abb3dddcabb7d267)
@@ -117,8 +120,9 @@
   [`d6dc7ebce`](https://github.com/Urigo/graphql-mesh/commit/d6dc7ebce27d3abc2c9886197650ebb0bcb7816d)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
-  - Updated dependency [`neo4j-driver@5.9.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.9.0)
-    (from `5.8.1`, in `dependencies`)
+  - Updated dependency
+    [`neo4j-driver@5.9.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.9.0) (from `5.8.1`, in
+    `dependencies`)
 
 - [#5490](https://github.com/Urigo/graphql-mesh/pull/5490)
   [`6d6ee2053`](https://github.com/Urigo/graphql-mesh/commit/6d6ee2053a97842d239e5d8f333c208760aaad8a)
@@ -162,8 +166,9 @@
 - [#5387](https://github.com/Urigo/graphql-mesh/pull/5387)
   [`0f7a01a50`](https://github.com/Urigo/graphql-mesh/commit/0f7a01a509e6f0f1c5d7c90e79d8ed2ca0121a77)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`neo4j-driver@5.8.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.8.0)
-    (from `5.7.0`, in `dependencies`)
+  - Updated dependency
+    [`neo4j-driver@5.8.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.8.0) (from `5.7.0`, in
+    `dependencies`)
 
 ## 0.93.1
 
@@ -242,8 +247,9 @@
 - [#5283](https://github.com/Urigo/graphql-mesh/pull/5283)
   [`c494c6f5a`](https://github.com/Urigo/graphql-mesh/commit/c494c6f5aa7e29cca117c4b172b83e6fd9469c95)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`neo4j-driver@5.7.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.7.0)
-    (from `5.6.0`, in `dependencies`)
+  - Updated dependency
+    [`neo4j-driver@5.7.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.7.0) (from `5.6.0`, in
+    `dependencies`)
 - Updated dependencies
   [[`870de5dae`](https://github.com/Urigo/graphql-mesh/commit/870de5dae08a7e43d9aa0f52d5d504cffb4d8fc8),
   [`aea134764`](https://github.com/Urigo/graphql-mesh/commit/aea1347645c322437ed6ccfadabcfc23065bc9c8),
@@ -362,8 +368,9 @@
   - Updated dependency
     [`@neo4j/graphql@3.17.0` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.17.0) (from
     `3.16.1`, in `dependencies`)
-  - Updated dependency [`neo4j-driver@5.6.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.6.0)
-    (from `5.5.0`, in `dependencies`)
+  - Updated dependency
+    [`neo4j-driver@5.6.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.6.0) (from `5.5.0`, in
+    `dependencies`)
 - Updated dependencies
   [[`0b438c329`](https://github.com/Urigo/graphql-mesh/commit/0b438c32950f524db65163d67f6a64f451214391),
   [`0b438c329`](https://github.com/Urigo/graphql-mesh/commit/0b438c32950f524db65163d67f6a64f451214391)]:
@@ -461,8 +468,9 @@
 - [#5083](https://github.com/Urigo/graphql-mesh/pull/5083)
   [`ecf480e02`](https://github.com/Urigo/graphql-mesh/commit/ecf480e021390cbc0168dd665f3b91fa92cb0656)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`neo4j-driver@5.5.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.5.0)
-    (from `5.4.0`, in `dependencies`)
+  - Updated dependency
+    [`neo4j-driver@5.5.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.5.0) (from `5.4.0`, in
+    `dependencies`)
 - Updated dependencies
   [[`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72),
   [`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72),
@@ -504,8 +512,9 @@
   [`43783fc8a`](https://github.com/Urigo/graphql-mesh/commit/43783fc8a45f8e7e919f4bb3c47ec6b0fda6017d)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
-  - Updated dependency [`neo4j-driver@5.4.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.4.0)
-    (from `5.3.0`, in `dependencies`)
+  - Updated dependency
+    [`neo4j-driver@5.4.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.4.0) (from `5.3.0`, in
+    `dependencies`)
 
 - [#5028](https://github.com/Urigo/graphql-mesh/pull/5028)
   [`994813331`](https://github.com/Urigo/graphql-mesh/commit/99481333186e8471207e21ad14c7883f7215ce1c)
@@ -666,8 +675,9 @@
 - [#4856](https://github.com/Urigo/graphql-mesh/pull/4856)
   [`8b25eb578`](https://github.com/Urigo/graphql-mesh/commit/8b25eb578c293ef72de70301f2e24dc0c22ba75b)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`neo4j-driver@5.3.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.3.0)
-    (from `5.2.0`, in `dependencies`)
+  - Updated dependency
+    [`neo4j-driver@5.3.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.3.0) (from `5.2.0`, in
+    `dependencies`)
 
 ## 0.20.37
 
@@ -799,8 +809,9 @@
 - [#4756](https://github.com/Urigo/graphql-mesh/pull/4756)
   [`d0c6d29c7`](https://github.com/Urigo/graphql-mesh/commit/d0c6d29c7e44a3b1a57bd7e1153d325834b7a018)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`neo4j-driver@5.2.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.2.0)
-    (from `5.1.0`, in `dependencies`)
+  - Updated dependency
+    [`neo4j-driver@5.2.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.2.0) (from `5.1.0`, in
+    `dependencies`)
 - Updated dependencies
   [[`d5f2d950e`](https://github.com/Urigo/graphql-mesh/commit/d5f2d950e6318a74c062c9dbc436d5e9c0e8d59d)]:
   - @graphql-mesh/utils@0.42.4
@@ -916,8 +927,9 @@
   - Updated dependency
     [`@neo4j/graphql@3.10.0` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.10.0) (from
     `3.9.0`, in `dependencies`)
-  - Updated dependency [`neo4j-driver@5.1.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.1.0)
-    (from `5.0.1`, in `dependencies`)
+  - Updated dependency
+    [`neo4j-driver@5.1.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.1.0) (from `5.0.1`, in
+    `dependencies`)
 - Updated dependencies
   [[`6fb57d3ba`](https://github.com/Urigo/graphql-mesh/commit/6fb57d3ba6ce68e47d9f5dbf54e57d178441fa18),
   [`814f2d516`](https://github.com/Urigo/graphql-mesh/commit/814f2d51692df593fcf368765e9c8a0ce99f46bd)]:
@@ -963,8 +975,8 @@
   [`8cbf918a8`](https://github.com/Urigo/graphql-mesh/commit/8cbf918a84b451843b591f866fa21956d0089d0c)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@neo4j/graphql@3.9.0` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.9.0) (from `3.8.0`,
-    in `dependencies`)
+    [`@neo4j/graphql@3.9.0` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.9.0) (from
+    `3.8.0`, in `dependencies`)
 
 ## 0.20.21
 
@@ -1058,8 +1070,8 @@
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
   - Updated dependency
-    [`@neo4j/graphql@3.8.0` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.8.0) (from `3.7.0`,
-    in `dependencies`)
+    [`@neo4j/graphql@3.8.0` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.8.0) (from
+    `3.7.0`, in `dependencies`)
 
 ## 0.20.12
 
@@ -1080,8 +1092,9 @@
   [`add1020c9`](https://github.com/Urigo/graphql-mesh/commit/add1020c903fc47850054165968ee602fe2b3cc5)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
-  - Updated dependency [`neo4j-driver@5.0.1` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.0.1)
-    (from `5.0.0`, in `dependencies`)
+  - Updated dependency
+    [`neo4j-driver@5.0.1` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.0.1) (from `5.0.0`, in
+    `dependencies`)
 
 - Updated dependencies
   [[`add1020c9`](https://github.com/Urigo/graphql-mesh/commit/add1020c903fc47850054165968ee602fe2b3cc5)]:
@@ -1109,8 +1122,9 @@
   - Updated dependency
     [`@graphql-mesh/types@0.83.3` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.83.3)
     (from `0.82.1`, in `dependencies`)
-  - Updated dependency [`neo4j-driver@5.0.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.0.0)
-    (from `4.4.7`, in `dependencies`)
+  - Updated dependency
+    [`neo4j-driver@5.0.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.0.0) (from `4.4.7`, in
+    `dependencies`)
   - Updated dependency
     [`@graphql-tools/utils@8.12.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.12.0)
     (from `8.10.1`, in `dependencies`)
@@ -1165,15 +1179,17 @@
   [`2a3753b5a`](https://github.com/Urigo/graphql-mesh/commit/2a3753b5a4bd23c7c89f4f08a3e55093e24902a8)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
-  - Updated dependency [`neo4j-driver@4.4.8` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/4.4.8)
-    (from `4.4.7`, in `dependencies`)
+  - Updated dependency
+    [`neo4j-driver@4.4.8` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/4.4.8) (from `4.4.7`, in
+    `dependencies`)
 
 - [#4458](https://github.com/Urigo/graphql-mesh/pull/4458)
   [`b8a34623c`](https://github.com/Urigo/graphql-mesh/commit/b8a34623c56d6395ae08b3eaa810fdcdfc03a83c)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
-  - Updated dependency [`neo4j-driver@5.0.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.0.0)
-    (from `4.4.8`, in `dependencies`)
+  - Updated dependency
+    [`neo4j-driver@5.0.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.0.0) (from `4.4.8`, in
+    `dependencies`)
 
 - Updated dependencies
   [[`2a3753b5a`](https://github.com/Urigo/graphql-mesh/commit/2a3753b5a4bd23c7c89f4f08a3e55093e24902a8)]:
@@ -1276,8 +1292,8 @@
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
   - Updated dependency
-    [`@neo4j/graphql@3.7.0` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.7.0) (from `3.6.3`,
-    in `dependencies`)
+    [`@neo4j/graphql@3.7.0` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.7.0) (from
+    `3.6.3`, in `dependencies`)
 
 - [#4389](https://github.com/Urigo/graphql-mesh/pull/4389)
   [`12ae4469a`](https://github.com/Urigo/graphql-mesh/commit/12ae4469aa89d613bfd36a87579adc1ae62c4a1f)
@@ -1368,8 +1384,8 @@
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
   - Updated dependency
-    [`@neo4j/graphql@3.6.3` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.6.3) (from `3.6.2`,
-    in `dependencies`)
+    [`@neo4j/graphql@3.6.3` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/3.6.3) (from
+    `3.6.2`, in `dependencies`)
 
 ## 0.18.12
 

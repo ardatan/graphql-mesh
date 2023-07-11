@@ -10,8 +10,9 @@
   - Updated dependency
     [`@graphql-yoga/plugin-prometheus@2.0.3` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-prometheus/v/2.0.3)
     (from `2.0.2`, in `dependencies`)
-  - Updated dependency [`graphql-yoga@4.0.3` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/4.0.3)
-    (from `4.0.2`, in `peerDependencies`)
+  - Updated dependency
+    [`graphql-yoga@4.0.3` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/4.0.3) (from `4.0.2`, in
+    `peerDependencies`)
 - Updated dependencies []:
   - @graphql-mesh/utils@0.94.3
   - @graphql-mesh/types@0.94.3
@@ -43,8 +44,9 @@
   - Updated dependency
     [`@graphql-yoga/plugin-prometheus@2.0.2` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-prometheus/v/2.0.2)
     (from `2.0.1`, in `dependencies`)
-  - Updated dependency [`graphql-yoga@4.0.2` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/4.0.2)
-    (from `4.0.1`, in `peerDependencies`)
+  - Updated dependency
+    [`graphql-yoga@4.0.2` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/4.0.2) (from `4.0.1`, in
+    `peerDependencies`)
 
 ## 0.94.1
 
@@ -56,8 +58,9 @@
   - Updated dependency
     [`@graphql-yoga/plugin-prometheus@2.0.1` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-prometheus/v/2.0.1)
     (from `2.0.0`, in `dependencies`)
-  - Updated dependency [`graphql-yoga@4.0.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/4.0.1)
-    (from `4.0.0`, in `peerDependencies`)
+  - Updated dependency
+    [`graphql-yoga@4.0.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/4.0.1) (from `4.0.0`, in
+    `peerDependencies`)
 
 ## 0.94.0
 
@@ -76,8 +79,9 @@
   - Updated dependency
     [`@graphql-yoga/plugin-prometheus@2.0.0` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-prometheus/v/2.0.0)
     (from `1.9.1`, in `dependencies`)
-  - Updated dependency [`graphql-yoga@4.0.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/4.0.0)
-    (from `3.9.1`, in `peerDependencies`)
+  - Updated dependency
+    [`graphql-yoga@4.0.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/4.0.0) (from `3.9.1`, in
+    `peerDependencies`)
 - Updated dependencies
   [[`e881ea609`](https://github.com/Urigo/graphql-mesh/commit/e881ea609a1d355356c1dc04c7a42b00b6e86e0d),
   [`4296a55f4`](https://github.com/Urigo/graphql-mesh/commit/4296a55f4a6fb1c8e1701403cfe88067255ae9b7),
@@ -116,8 +120,9 @@
   - Updated dependency
     [`@graphql-yoga/plugin-prometheus@1.9.1` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-prometheus/v/1.9.1)
     (from `1.9.0`, in `dependencies`)
-  - Updated dependency [`graphql-yoga@3.9.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.9.1)
-    (from `3.9.0`, in `peerDependencies`)
+  - Updated dependency
+    [`graphql-yoga@3.9.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.9.1) (from `3.9.0`, in
+    `peerDependencies`)
 - Updated dependencies
   [[`cff645677`](https://github.com/Urigo/graphql-mesh/commit/cff645677c680e248ed718e5bb98ece5a41f9c0f),
   [`cff645677`](https://github.com/Urigo/graphql-mesh/commit/cff645677c680e248ed718e5bb98ece5a41f9c0f),
@@ -136,8 +141,9 @@
   - Updated dependency
     [`@graphql-yoga/plugin-prometheus@1.9.0` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-prometheus/v/1.9.0)
     (from `1.8.0`, in `dependencies`)
-  - Updated dependency [`graphql-yoga@3.9.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.9.0)
-    (from `3.8.0`, in `peerDependencies`)
+  - Updated dependency
+    [`graphql-yoga@3.9.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.9.0) (from `3.8.0`, in
+    `peerDependencies`)
 - Updated dependencies
   [[`0d73b3f71`](https://github.com/Urigo/graphql-mesh/commit/0d73b3f71e847d751eea130df62d795c3b06a192),
   [`0d73b3f71`](https://github.com/Urigo/graphql-mesh/commit/0d73b3f71e847d751eea130df62d795c3b06a192),
@@ -155,8 +161,9 @@
   - Updated dependency
     [`@graphql-yoga/plugin-prometheus@1.8.0` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-prometheus/v/1.8.0)
     (from `1.7.3`, in `dependencies`)
-  - Updated dependency [`graphql-yoga@3.8.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.8.0)
-    (from `3.7.3`, in `peerDependencies`)
+  - Updated dependency
+    [`graphql-yoga@3.8.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.8.0) (from `3.7.3`, in
+    `peerDependencies`)
 - Updated dependencies
   [[`870de5dae`](https://github.com/Urigo/graphql-mesh/commit/870de5dae08a7e43d9aa0f52d5d504cffb4d8fc8),
   [`aea134764`](https://github.com/Urigo/graphql-mesh/commit/aea1347645c322437ed6ccfadabcfc23065bc9c8),
@@ -188,8 +195,9 @@
   - Updated dependency
     [`@graphql-yoga/plugin-prometheus@1.7.3` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-prometheus/v/1.7.3)
     (from `1.7.0`, in `dependencies`)
-  - Updated dependency [`graphql-yoga@3.7.3` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.7.3)
-    (from `3.7.0`, in `peerDependencies`)
+  - Updated dependency
+    [`graphql-yoga@3.7.3` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.7.3) (from `3.7.0`, in
+    `peerDependencies`)
 - Updated dependencies
   [[`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54)]:
   - @graphql-mesh/types@0.91.11
@@ -240,8 +248,9 @@
   - Updated dependency
     [`@graphql-yoga/plugin-prometheus@1.7.0` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-prometheus/v/1.7.0)
     (from `1.6.1`, in `dependencies`)
-  - Updated dependency [`graphql-yoga@3.7.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.7.0)
-    (from `3.6.0`, in `peerDependencies`)
+  - Updated dependency
+    [`graphql-yoga@3.7.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.7.0) (from `3.6.0`, in
+    `peerDependencies`)
 - Updated dependencies
   [[`0b438c329`](https://github.com/Urigo/graphql-mesh/commit/0b438c32950f524db65163d67f6a64f451214391),
   [`0b438c329`](https://github.com/Urigo/graphql-mesh/commit/0b438c32950f524db65163d67f6a64f451214391)]:
@@ -286,8 +295,9 @@
 - [#5137](https://github.com/Urigo/graphql-mesh/pull/5137)
   [`4d61de74e`](https://github.com/Urigo/graphql-mesh/commit/4d61de74ee4bc288eb488c55ae2597b1cb5654a1)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`graphql-yoga@3.6.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.6.0)
-    (from `3.5.1`, in `peerDependencies`)
+  - Updated dependency
+    [`graphql-yoga@3.6.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.6.0) (from `3.5.1`, in
+    `peerDependencies`)
 
 ## 0.4.5
 
@@ -338,8 +348,9 @@
   - Updated dependency
     [`@graphql-yoga/plugin-prometheus@1.5.1` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-prometheus/v/1.5.1)
     (from `1.4.0`, in `dependencies`)
-  - Updated dependency [`graphql-yoga@3.5.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.5.1)
-    (from `3.4.0`, in `peerDependencies`)
+  - Updated dependency
+    [`graphql-yoga@3.5.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.5.1) (from `3.4.0`, in
+    `peerDependencies`)
 - Updated dependencies
   [[`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
   [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
@@ -362,8 +373,9 @@
   - Updated dependency
     [`@graphql-yoga/plugin-prometheus@1.4.0` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-prometheus/v/1.4.0)
     (from `1.3.0`, in `dependencies`)
-  - Updated dependency [`graphql-yoga@3.4.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.4.0)
-    (from `3.3.0`, in `peerDependencies`)
+  - Updated dependency
+    [`graphql-yoga@3.4.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.4.0) (from `3.3.0`, in
+    `peerDependencies`)
 - Updated dependencies
   [[`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72),
   [`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72),
@@ -392,8 +404,9 @@
   - Updated dependency
     [`@graphql-yoga/plugin-prometheus@1.3.0` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-prometheus/v/1.3.0)
     (from `1.2.1`, in `dependencies`)
-  - Updated dependency [`graphql-yoga@3.3.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.3.0)
-    (from `3.2.1`, in `peerDependencies`)
+  - Updated dependency
+    [`graphql-yoga@3.3.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.3.0) (from `3.2.1`, in
+    `peerDependencies`)
 
 - [#4930](https://github.com/Urigo/graphql-mesh/pull/4930)
   [`c015b02a1`](https://github.com/Urigo/graphql-mesh/commit/c015b02a1aa50e4d760c3fd59f76dc5dfe587664)
@@ -414,8 +427,9 @@
 - [#4980](https://github.com/Urigo/graphql-mesh/pull/4980)
   [`e701041f3`](https://github.com/Urigo/graphql-mesh/commit/e701041f315e918e74719e2f89e946f56320157e)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`graphql-yoga@3.2.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.2.1)
-    (from `3.2.0`, in `peerDependencies`)
+  - Updated dependency
+    [`graphql-yoga@3.2.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.2.1) (from `3.2.0`, in
+    `peerDependencies`)
 
 ## 0.3.5
 
@@ -427,8 +441,9 @@
   - Updated dependency
     [`@graphql-yoga/plugin-prometheus@1.2.1` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-prometheus/v/1.2.1)
     (from `1.1.1`, in `dependencies`)
-  - Updated dependency [`graphql-yoga@3.2.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.2.0)
-    (from `3.1.1`, in `peerDependencies`)
+  - Updated dependency
+    [`graphql-yoga@3.2.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.2.0) (from `3.1.1`, in
+    `peerDependencies`)
 
 ## 0.3.4
 
@@ -485,8 +500,9 @@
   - Updated dependency
     [`@graphql-yoga/plugin-prometheus@1.1.1` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-prometheus/v/1.1.1)
     (from `1.1.0`, in `dependencies`)
-  - Updated dependency [`graphql-yoga@3.1.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.1.1)
-    (from `3.1.0`, in `peerDependencies`)
+  - Updated dependency
+    [`graphql-yoga@3.1.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.1.1) (from `3.1.0`, in
+    `peerDependencies`)
 - Updated dependencies
   [[`500a4504c`](https://github.com/Urigo/graphql-mesh/commit/500a4504c734ee1eaf55daa2296789096034513f),
   [`500a4504c`](https://github.com/Urigo/graphql-mesh/commit/500a4504c734ee1eaf55daa2296789096034513f),
@@ -513,8 +529,9 @@
   - Updated dependency
     [`@graphql-yoga/plugin-prometheus@1.1.0` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-prometheus/v/1.1.0)
     (from `1.0.3`, in `dependencies`)
-  - Updated dependency [`graphql-yoga@3.1.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.1.0)
-    (from `3.0.3`, in `peerDependencies`)
+  - Updated dependency
+    [`graphql-yoga@3.1.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.1.0) (from `3.0.3`, in
+    `peerDependencies`)
 
 ## 0.2.13
 
@@ -537,8 +554,9 @@
   - Updated dependency
     [`@graphql-yoga/plugin-prometheus@1.0.2` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-prometheus/v/1.0.2)
     (from `1.0.1`, in `dependencies`)
-  - Updated dependency [`graphql-yoga@3.0.2` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.2)
-    (from `3.0.1`, in `peerDependencies`)
+  - Updated dependency
+    [`graphql-yoga@3.0.2` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.2) (from `3.0.1`, in
+    `peerDependencies`)
 
 - [#4850](https://github.com/Urigo/graphql-mesh/pull/4850)
   [`7df7c644d`](https://github.com/Urigo/graphql-mesh/commit/7df7c644d85c00c0c0c3f8907854bbef50d298eb)
@@ -546,8 +564,9 @@
   - Updated dependency
     [`@graphql-yoga/plugin-prometheus@1.0.3` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-prometheus/v/1.0.3)
     (from `1.0.2`, in `dependencies`)
-  - Updated dependency [`graphql-yoga@3.0.3` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.3)
-    (from `3.0.2`, in `peerDependencies`)
+  - Updated dependency
+    [`graphql-yoga@3.0.3` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.3) (from `3.0.2`, in
+    `peerDependencies`)
 
 ## 0.2.11
 
@@ -557,8 +576,9 @@
   [`ef6cc3b25`](https://github.com/Urigo/graphql-mesh/commit/ef6cc3b2565b8efd0c6c0dfbc8040747b8d80573)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
 
-  - Updated dependency [`graphql-yoga@3.0.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.0)
-    (from `3.0.0-next.12`, in `peerDependencies`)
+  - Updated dependency
+    [`graphql-yoga@3.0.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.0) (from
+    `3.0.0-next.12`, in `peerDependencies`)
 
 - [#4837](https://github.com/Urigo/graphql-mesh/pull/4837)
   [`b0adaa48c`](https://github.com/Urigo/graphql-mesh/commit/b0adaa48cf9f389ead587a23decd4750a74d8f55)
@@ -566,8 +586,9 @@
   - Updated dependency
     [`@graphql-yoga/plugin-prometheus@1.0.1` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-prometheus/v/1.0.1)
     (from `1.0.0`, in `dependencies`)
-  - Updated dependency [`graphql-yoga@3.0.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.1)
-    (from `3.0.0`, in `peerDependencies`)
+  - Updated dependency
+    [`graphql-yoga@3.0.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.1) (from `3.0.0`, in
+    `peerDependencies`)
 
 ## 0.2.10
 

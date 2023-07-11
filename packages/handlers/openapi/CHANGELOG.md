@@ -1192,16 +1192,17 @@
   - Removed dependency
     [`jsonpath-plus@7.0.0` ↗︎](https://www.npmjs.com/package/jsonpath-plus/v/7.0.0) (from
     `dependencies`)
-  - Removed dependency [`json-pointer@0.6.2` ↗︎](https://www.npmjs.com/package/json-pointer/v/0.6.2)
-    (from `dependencies`)
+  - Removed dependency
+    [`json-pointer@0.6.2` ↗︎](https://www.npmjs.com/package/json-pointer/v/0.6.2) (from
+    `dependencies`)
   - Removed dependency
     [`openapi-diff@0.23.6` ↗︎](https://www.npmjs.com/package/openapi-diff/v/0.23.6) (from
     `dependencies`)
   - Removed dependency
     [`graphql-scalars@1.18.0` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.18.0) (from
     `dependencies`)
-  - Removed dependency [`pluralize@8.0.0` ↗︎](https://www.npmjs.com/package/pluralize/v/8.0.0) (from
-    `dependencies`)
+  - Removed dependency [`pluralize@8.0.0` ↗︎](https://www.npmjs.com/package/pluralize/v/8.0.0)
+    (from `dependencies`)
   - Removed dependency [`qs@6.11.0` ↗︎](https://www.npmjs.com/package/qs/v/6.11.0) (from
     `dependencies`)
   - Removed dependency
@@ -1450,8 +1451,8 @@
   Thanks [@renovate](https://github.com/apps/renovate)! - ### Dependencies Updates
 
   - Updated dependency
-    ([`openapi-diff@0.23.6` ↗︎](https://www.npmjs.com/package/openapi-diff/v/0.23.6)) (was `0.23.5`,
-    in `dependencies`)
+    ([`openapi-diff@0.23.6` ↗︎](https://www.npmjs.com/package/openapi-diff/v/0.23.6)) (was
+    `0.23.5`, in `dependencies`)
 
 * [#4228](https://github.com/Urigo/graphql-mesh/pull/4228)
   [`31d5f6eaa`](https://github.com/Urigo/graphql-mesh/commit/31d5f6eaac6342c2d8786ea4b3e5b774fe95a5ff)

@@ -41,8 +41,8 @@
   [`90ed21f1b`](https://github.com/Urigo/graphql-mesh/commit/90ed21f1b70408179c4c83417b077da9ab6935c9)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@whatwg-node/fetch@^0.9.4` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.9.4) (from
-    `0.9.3`, in `dependencies`)
+    [`@whatwg-node/fetch@^0.9.4` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.9.4)
+    (from `0.9.3`, in `dependencies`)
 
 ## 0.94.1
 
