@@ -191,10 +191,6 @@ export default class MySQLHandler implements MeshHandler {
   async getMeshSource(): Promise<MeshSource> {
     const { pool: configPool } = this.config;
     const schemaComposer = new SchemaComposer<MysqlContext>();
-    const rejectUnauthorized =
-      typeof this.config.ssl?.rejectUnauthorized === 'undefined'
-        ? true
-        : this.config.ssl.rejectUnauthorized;
     const pool: Pool = configPool
       ? typeof configPool === 'string'
         ? await loadFromModuleExportExpression(configPool, {
@@ -224,10 +220,13 @@ export default class MySQLHandler implements MeshHandler {
           database:
             this.config.database &&
             stringInterpolator.parse(this.config.database, { env: process.env }),
-          ssl: {
-            rejectUnauthorized,
+          ssl: this.config.ssl && {
+            rejectUnauthorized:
+              typeof this.config.ssl.rejectUnauthorized === 'undefined'
+                ? true
+                : this.config.ssl.rejectUnauthorized,
             ca:
-              this.config.ssl?.ca &&
+              this.config.ssl.ca &&
               (await fs.promises.readFile(
                 path.isAbsolute(this.config.ssl.ca)
                   ? path.join(this.baseDir, this.config.ssl.ca)
