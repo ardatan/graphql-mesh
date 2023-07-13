@@ -13,7 +13,7 @@ import {
 } from 'graphql-scalars';
 import { createPool, Pool, TableForeign } from 'mysql';
 import { introspection, upgrade } from 'mysql-utilities';
-import { process, util } from '@graphql-mesh/cross-helpers';
+import { fs, path, process, util } from '@graphql-mesh/cross-helpers';
 import { MeshStore, PredefinedProxyOptions } from '@graphql-mesh/store';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import {
@@ -191,6 +191,10 @@ export default class MySQLHandler implements MeshHandler {
   async getMeshSource(): Promise<MeshSource> {
     const { pool: configPool } = this.config;
     const schemaComposer = new SchemaComposer<MysqlContext>();
+    const rejectUnauthorized =
+      typeof this.config.ssl?.rejectUnauthorized === 'undefined'
+        ? true
+        : this.config.ssl.rejectUnauthorized;
     const pool: Pool = configPool
       ? typeof configPool === 'string'
         ? await loadFromModuleExportExpression(configPool, {
@@ -204,6 +208,9 @@ export default class MySQLHandler implements MeshHandler {
           bigNumberStrings: true,
           trace: !!process.env.DEBUG,
           debug: !!process.env.DEBUG,
+          localAddress:
+            this.config.localAddress &&
+            stringInterpolator.parse(this.config.localAddress, { env: process.env }),
           host:
             this.config.host && stringInterpolator.parse(this.config.host, { env: process.env }),
           port:
@@ -217,6 +224,16 @@ export default class MySQLHandler implements MeshHandler {
           database:
             this.config.database &&
             stringInterpolator.parse(this.config.database, { env: process.env }),
+          ssl: {
+            rejectUnauthorized,
+            ca:
+              this.config.ssl?.ca &&
+              (await fs.promises.readFile(
+                path.isAbsolute(this.config.ssl.ca)
+                  ? path.join(this.baseDir, this.config.ssl.ca)
+                  : this.config.ssl.ca,
+              )),
+          },
           ...this.config,
         });
 
