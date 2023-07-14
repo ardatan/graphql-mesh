@@ -45,6 +45,9 @@ module.exports = {
     '^.+\\.ts?$': 'babel-jest',
     '^.+\\.js$': 'babel-jest',
   },
+  globals: {
+    libcurl: require('node-libcurl'),
+  },
   resolver: 'bob-the-bundler/jest-resolver',
   testMatch,
 };
