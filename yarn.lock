@@ -11360,10 +11360,10 @@ fengari@^0.1.4:
     sprintf-js "^1.1.1"
     tmp "^0.0.33"
 
-fets@0.4.1, fets@^0.4.0:
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/fets/-/fets-0.4.1.tgz#04b3d08754adc2b65cc6f8ed7328f45c0f178a1e"
-  integrity sha512-wjh2y4kVM4eyQqXlqZKAxoCIf0yzJrNd9j0SGPtqSLokiPQRyOHWD1kEws+9JJKpHDevkE24CkGzuSlFFq+hPw==
+fets@0.4.2, fets@^0.4.0:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/fets/-/fets-0.4.2.tgz#6283741d9dfb002c560a1a45002429eee26c628e"
+  integrity sha512-oPJz57YvsNdNr0kSA2i+AWzIp6OY8Ls74Xp9zFoFa5jVQBXSKLGnO4cVXfkqJmRJQauuB3aN7JgiyETAARwtTA==
   dependencies:
     "@ardatan/fast-json-stringify" "^0.0.6"
     "@whatwg-node/cookie-store" "^0.2.0"
@@ -19962,10 +19962,10 @@ sha.js@^2.4.11:
     inherits "^2.0.1"
     safe-buffer "^5.0.1"
 
-sharp@0.32.2:
-  version "0.32.2"
-  resolved "https://registry.yarnpkg.com/sharp/-/sharp-0.32.2.tgz#c35e065f8810cf0d8f3dee26fc5156127caca1ec"
-  integrity sha512-e4hyWKtU7ks/rLmoPys476zhpQnLqPJopz4+5b6OPeyJfvCTInAp0pe5tGhstjsNdUvDLrUVGEwevewYdZM8Eg==
+sharp@0.32.3:
+  version "0.32.3"
+  resolved "https://registry.yarnpkg.com/sharp/-/sharp-0.32.3.tgz#fd6f5227c5a6cb2a020836617243effe68ceb731"
+  integrity sha512-i1gFPiNqyqxC4ouVvCKj5G8WfPIMeeSxpKcMrjic6NY4e8zktW7bIdqHPc3FCG+pNKU/XCEabKA57hhvZi8UmQ==
   dependencies:
     color "^4.2.3"
     detect-libc "^2.0.1"
