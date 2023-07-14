@@ -3,20 +3,52 @@ extend type Handler {
 }
 
 type MySQLHandler @md {
+  """
+  The hostname of the database you are connecting to. (Default: localhost)
+  """
   host: String
+
+  """
+  The port number to connect to. (Default: 3306)
+  """
   port: Int
+
+  """
+  The source IP address to use for TCP connection
+  """
+  localAddress: String
+
+  """
+  The MySQL user to authenticate as
+  """
   user: String
+
+  """
+  The password of that MySQL user
+  """
   password: String
+
+  """
+  Name of the database to use for this connection
+  """
   database: String
+
+  """
+  SSL Options for your MySQL connection
+  """
+  ssl: MySQLSSLOptions
+
   """
   Use existing `Pool` instance
   Format: modulePath#exportName
   """
   pool: Any
+
   """
   Use specific tables for your schema
   """
   tables: [String!]
+
   """
   Use specific fields of specific tables
   """
@@ -26,4 +58,15 @@ type MySQLHandler @md {
 type TableField {
   table: String!
   fields: [String!]!
+}
+
+type MySQLSSLOptions {
+  """
+  Default: true
+  """
+  rejectUnauthorized: Boolean
+  """
+  Path to your CA
+  """
+  ca: String
 }

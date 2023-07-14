@@ -737,11 +737,31 @@ export interface TypeConverterResolversOpts1 {
   pagination?: boolean | PaginationResolverOpts;
 }
 export interface MySQLHandler {
+  /**
+   * The hostname of the database you are connecting to. (Default: localhost)
+   */
   host?: string;
+  /**
+   * The port number to connect to. (Default: 3306)
+   */
   port?: number;
+  /**
+   * The source IP address to use for TCP connection
+   */
+  localAddress?: string;
+  /**
+   * The MySQL user to authenticate as
+   */
   user?: string;
+  /**
+   * The password of that MySQL user
+   */
   password?: string;
+  /**
+   * Name of the database to use for this connection
+   */
   database?: string;
+  ssl?: MySQLSSLOptions;
   /**
    * Use existing `Pool` instance
    * Format: modulePath#exportName
@@ -755,6 +775,16 @@ export interface MySQLHandler {
    * Use specific fields of specific tables
    */
   tableFields?: TableField[];
+}
+export interface MySQLSSLOptions {
+  /**
+   * Default: true
+   */
+  rejectUnauthorized?: boolean;
+  /**
+   * Path to your CA
+   */
+  ca?: string;
 }
 export interface TableField {
   table: string;

@@ -1741,19 +1741,31 @@
       "title": "MySQLHandler",
       "properties": {
         "host": {
-          "type": "string"
+          "type": "string",
+          "description": "The hostname of the database you are connecting to. (Default: localhost)"
         },
         "port": {
-          "type": "integer"
+          "type": "integer",
+          "description": "The port number to connect to. (Default: 3306)"
+        },
+        "localAddress": {
+          "type": "string",
+          "description": "The source IP address to use for TCP connection"
         },
         "user": {
-          "type": "string"
+          "type": "string",
+          "description": "The MySQL user to authenticate as"
         },
         "password": {
-          "type": "string"
+          "type": "string",
+          "description": "The password of that MySQL user"
         },
         "database": {
-          "type": "string"
+          "type": "string",
+          "description": "Name of the database to use for this connection"
+        },
+        "ssl": {
+          "$ref": "#/definitions/MySQLSSLOptions"
         },
         "pool": {
           "anyOf": [
@@ -1806,6 +1818,21 @@
         }
       },
       "required": ["table", "fields"]
+    },
+    "MySQLSSLOptions": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "MySQLSSLOptions",
+      "properties": {
+        "rejectUnauthorized": {
+          "type": "boolean",
+          "description": "Default: true"
+        },
+        "ca": {
+          "type": "string",
+          "description": "Path to your CA"
+        }
+      }
     },
     "Neo4jHandler": {
       "additionalProperties": false,
