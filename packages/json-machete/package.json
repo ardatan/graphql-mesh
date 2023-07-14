@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@json-schema-tools/meta-schema": "1.7.0",
-    "@whatwg-node/fetch": "^0.9.0",
+    "@whatwg-node/fetch": "^0.9.9",
     "json-pointer": "0.6.2",
     "to-json-schema": "0.2.5",
     "url-join": "4.0.1"
