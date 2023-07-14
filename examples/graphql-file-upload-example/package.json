@@ -14,7 +14,7 @@
     "concurrently": "8.2.0",
     "graphql": "16.7.1",
     "graphql-yoga": "4.0.3",
-    "sharp": "0.32.2"
+    "sharp": "0.32.3"
   },
   "devDependencies": {
     "jest": "29.6.1",
