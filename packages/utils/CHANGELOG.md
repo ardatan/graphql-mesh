@@ -1,5 +1,16 @@
 # @graphql-mesh/utils
 
+## 0.94.5
+
+### Patch Changes
+
+- [`f11e9b307`](https://github.com/Urigo/graphql-mesh/commit/f11e9b307f1336d5ead9a75befdb61de963c6c5b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Avoid extra work for `isDebug` if `DEBUG` is not
+  defined
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.94.5
+
 ## 0.94.4
 
 ### Patch Changes
