@@ -1,5 +1,29 @@
 # @graphql-mesh/soap
 
+## 0.94.7
+
+### Patch Changes
+
+- [#5691](https://github.com/Urigo/graphql-mesh/pull/5691)
+  [`12a751e8e`](https://github.com/Urigo/graphql-mesh/commit/12a751e8e6b5b4cbd0d8b6018f37a1140a118198)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@graphql-mesh/cross-helpers@^0.4.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cross-helpers/v/0.4.0)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-mesh/string-interpolation@^0.5.1` ↗︎](https://www.npmjs.com/package/@graphql-mesh/string-interpolation/v/0.5.1)
+    (to `dependencies`)
+- Updated dependencies
+  [[`52673c705`](https://github.com/Urigo/graphql-mesh/commit/52673c7054a677908902e9249bc7e701923ff1b3),
+  [`238a4063f`](https://github.com/Urigo/graphql-mesh/commit/238a4063fba0bcad4ad6e7095272cf31504cbd36),
+  [`12a751e8e`](https://github.com/Urigo/graphql-mesh/commit/12a751e8e6b5b4cbd0d8b6018f37a1140a118198),
+  [`ff1678eea`](https://github.com/Urigo/graphql-mesh/commit/ff1678eeabec67edaa4991b938ef81437cd9361e),
+  [`12a751e8e`](https://github.com/Urigo/graphql-mesh/commit/12a751e8e6b5b4cbd0d8b6018f37a1140a118198)]:
+  - @graphql-mesh/store@0.94.4
+  - @omnigraph/soap@0.94.7
+  - @graphql-mesh/types@0.94.4
+  - @graphql-mesh/utils@0.94.4
+
 ## 0.94.6
 
 ### Patch Changes
