@@ -75,11 +75,12 @@ export default class SoapHandler implements MeshHandler {
     }
     // Create executor lazily for faster startup
     let executor: Executor;
+    const operationHeaders = this.config.operationHeaders;
     return {
       schema,
       executor(...args) {
         if (!executor) {
-          executor = createExecutorFromSchemaAST(schema, fetchFn);
+          executor = createExecutorFromSchemaAST(schema, fetchFn, operationHeaders);
         }
         return executor(...args);
       },

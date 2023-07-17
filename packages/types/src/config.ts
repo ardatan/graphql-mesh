@@ -776,6 +776,9 @@ export interface MySQLHandler {
    */
   tableFields?: TableField[];
 }
+/**
+ * SSL Options for your MySQL connection
+ */
 export interface MySQLSSLOptions {
   /**
    * Default: true

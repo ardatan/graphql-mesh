@@ -5,7 +5,7 @@
 * `user` (type: `String`) - The MySQL user to authenticate as
 * `password` (type: `String`) - The password of that MySQL user
 * `database` (type: `String`) - Name of the database to use for this connection
-* `ssl` (type: `Object`): 
+* `ssl` (type: `Object`) - SSL Options for your MySQL connection: 
   * `rejectUnauthorized` (type: `Boolean`) - Default: true
   * `ca` (type: `String`) - Path to your CA
 * `pool` (type: `Any`) - Use existing `Pool` instance

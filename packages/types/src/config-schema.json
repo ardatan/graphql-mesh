@@ -1765,7 +1765,8 @@
           "description": "Name of the database to use for this connection"
         },
         "ssl": {
-          "$ref": "#/definitions/MySQLSSLOptions"
+          "$ref": "#/definitions/MySQLSSLOptions",
+          "description": "SSL Options for your MySQL connection"
         },
         "pool": {
           "anyOf": [
