@@ -1,5 +1,16 @@
 # @graphql-mesh/thrift
 
+## 0.94.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`52673c705`](https://github.com/Urigo/graphql-mesh/commit/52673c7054a677908902e9249bc7e701923ff1b3),
+  [`ff1678eea`](https://github.com/Urigo/graphql-mesh/commit/ff1678eeabec67edaa4991b938ef81437cd9361e)]:
+  - @graphql-mesh/store@0.94.4
+  - @graphql-mesh/types@0.94.4
+  - @graphql-mesh/utils@0.94.4
+
 ## 0.94.4
 
 ### Patch Changes

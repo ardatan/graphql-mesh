@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-statsd",
-  "version": "0.94.3",
+  "version": "0.94.4",
   "type": "module",
   "repository": {
     "type": "git",
@@ -32,8 +32,8 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/types": "^0.94.3",
-    "@graphql-mesh/utils": "^0.94.3",
+    "@graphql-mesh/types": "^0.94.4",
+    "@graphql-mesh/utils": "^0.94.4",
     "graphql": "*",
     "hot-shots": "^8.0.0 || ^9.0.0 || ^10.0.0",
     "tslib": "^2.4.0"
