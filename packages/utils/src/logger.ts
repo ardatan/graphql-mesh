@@ -61,11 +61,14 @@ export class DefaultLogger implements Logger {
   }
 
   private get isDebug() {
-    return (
-      process.env.DEBUG === '1' ||
-      (globalThis as any).DEBUG === '1' ||
-      this.name.includes(process.env.DEBUG || (globalThis as any).DEBUG)
-    );
+    if (process.env.DEBUG) {
+      return (
+        process.env.DEBUG === '1' ||
+        (globalThis as any).DEBUG === '1' ||
+        this.name.includes(process.env.DEBUG || (globalThis as any).DEBUG)
+      );
+    }
+    return false;
   }
 
   private get prefix() {
