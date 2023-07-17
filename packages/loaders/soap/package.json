@@ -33,12 +33,15 @@
     "graphql": "*"
   },
   "dependencies": {
+    "@graphql-mesh/cross-helpers": "^0.4.0",
+    "@graphql-mesh/string-interpolation": "^0.5.1",
     "fast-xml-parser": "4.2.5",
     "graphql-compose": "9.0.10",
     "graphql-scalars": "^1.22.2"
   },
   "devDependencies": {
-    "@whatwg-node/fetch": "0.9.9"
+    "@whatwg-node/fetch": "0.9.9",
+    "soap": "1.0.0"
   },
   "publishConfig": {
     "access": "public",

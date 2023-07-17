@@ -1,5 +1,7 @@
 import { GraphQLSchema } from 'graphql';
+import { process } from '@graphql-mesh/cross-helpers';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
+import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import {
   GetMeshSourcePayload,
   ImportFn,
@@ -40,6 +42,7 @@ export default class SoapHandler implements MeshHandler {
   async getMeshSource({ fetchFn }: GetMeshSourcePayload): Promise<MeshSource> {
     let schema: GraphQLSchema;
 
+    const schemaHeadersFactory = getInterpolatedHeadersFactory(this.config.schemaHeaders);
     if (this.config.source.endsWith('.graphql')) {
       schema = await readFileOrUrl(this.config.source, {
         allowUnknownExtensions: true,
@@ -47,11 +50,14 @@ export default class SoapHandler implements MeshHandler {
         fetch: fetchFn,
         importFn: this.importFn,
         logger: this.logger,
+        headers: schemaHeadersFactory({ env: process.env }),
       });
     } else {
       schema = await this.soapSDLProxy.getWithSet(async () => {
         const soapLoader = new SOAPLoader({
           fetch: fetchFn,
+          schemaHeaders: this.config.schemaHeaders,
+          operationHeaders: this.config.operationHeaders,
         });
         const wsdlLocation = this.config.source;
         const wsdl = await readFileOrUrl<string>(wsdlLocation, {
@@ -60,6 +66,7 @@ export default class SoapHandler implements MeshHandler {
           fetch: fetchFn,
           importFn: this.importFn,
           logger: this.logger,
+          headers: schemaHeadersFactory({ env: process.env }),
         });
         const object = await soapLoader.loadWSDL(wsdl);
         soapLoader.loadedLocations.set(wsdlLocation, object);

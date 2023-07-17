@@ -33,6 +33,11 @@ import {
   GraphQLVoid,
   RegularExpression,
 } from 'graphql-scalars';
+import { process } from '@graphql-mesh/cross-helpers';
+import {
+  getInterpolatedHeadersFactory,
+  ResolverDataBasedFactory,
+} from '@graphql-mesh/string-interpolation';
 import { MeshFetch } from '@graphql-mesh/types';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import {
@@ -54,6 +59,8 @@ import { PARSE_XML_OPTIONS, SoapAnnotations } from './utils.js';
 
 export interface SOAPLoaderOptions {
   fetch: MeshFetch;
+  schemaHeaders?: Record<string, string>;
+  operationHeaders?: Record<string, string>;
 }
 
 const soapDirective = new GraphQLDirective({
@@ -115,10 +122,12 @@ export class SOAPLoader {
   private simpleTypeTCMap = new WeakMap<XSSimpleType, EnumTypeComposer | ScalarTypeComposer>();
   private namespaceTypePrefixMap = new Map<string, string>();
   public loadedLocations = new Map<string, WSDLObject | XSDObject>();
+  private schemaHeadersFactory: ResolverDataBasedFactory<Record<string, string>>;
 
   constructor(private options: SOAPLoaderOptions) {
     this.loadXMLSchemaNamespace();
     this.schemaComposer.addDirective(soapDirective);
+    this.schemaHeadersFactory = getInterpolatedHeadersFactory(options.schemaHeaders || {});
   }
 
   loadXMLSchemaNamespace() {
@@ -493,7 +502,9 @@ export class SOAPLoader {
   private xmlParser = new XMLParser(PARSE_XML_OPTIONS);
 
   async fetchXSD(location: string, parentAliasMap = new Map<string, string>()) {
-    const response = await this.options.fetch(location);
+    const response = await this.options.fetch(location, {
+      headers: this.schemaHeadersFactory({ env: process.env }),
+    });
     let xsdText = await response.text();
     xsdText = xsdText.split('xmlns:').join('namespace:');
     // WSDL Import is different than XS Import
@@ -506,7 +517,17 @@ export class SOAPLoader {
 
   async loadWSDL(wsdlText: string) {
     wsdlText = wsdlText.split('xmlns:').join('namespace:');
-    const wsdlObject: WSDLObject = this.xmlParser.parse(wsdlText, PARSE_XML_OPTIONS);
+    let wsdlObject: WSDLObject;
+    try {
+      wsdlObject = this.xmlParser.parse(wsdlText, PARSE_XML_OPTIONS);
+    } catch (e) {
+      throw new Error(`Failed to parse WSDL: ${e.message}. \nReturned response;\n${wsdlText}`);
+    }
+    if (!Array.isArray(wsdlObject.definitions)) {
+      throw new Error(
+        `WSDL definitions not found! Please make sure if your WSDL source is correct, and it contains <definitions> tag.\nReturned response;\n${wsdlText}`,
+      );
+    }
     for (const definition of wsdlObject.definitions) {
       await this.loadDefinition(definition);
     }
@@ -514,7 +535,9 @@ export class SOAPLoader {
   }
 
   async fetchWSDL(location: string) {
-    const response = await this.options.fetch(location);
+    const response = await this.options.fetch(location, {
+      headers: this.schemaHeadersFactory({ env: process.env }),
+    });
     const wsdlText = await response.text();
     const wsdlObject = await this.loadWSDL(wsdlText);
     this.loadedLocations.set(location, wsdlObject);

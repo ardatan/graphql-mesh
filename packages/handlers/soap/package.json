@@ -40,6 +40,8 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
+    "@graphql-mesh/cross-helpers": "^0.4.0",
+    "@graphql-mesh/string-interpolation": "^0.5.1",
     "@omnigraph/soap": "0.94.6"
   },
   "publishConfig": {

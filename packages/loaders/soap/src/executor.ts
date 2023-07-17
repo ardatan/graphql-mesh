@@ -8,6 +8,8 @@ import {
   isListType,
   isNonNullType,
 } from 'graphql';
+import { process } from '@graphql-mesh/cross-helpers';
+import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import { MeshFetch } from '@graphql-mesh/types';
 import { Executor, getDirective, getRootTypes } from '@graphql-tools/utils';
 import { PARSE_XML_OPTIONS, SoapAnnotations } from './utils.js';
@@ -76,6 +78,7 @@ type RootValueMethod = (args: any, context: any, info: GraphQLResolveInfo) => Pr
 function createRootValueMethod(
   soapAnnotations: SoapAnnotations,
   fetchFn: MeshFetch,
+  operationHeaders: Record<string, string> = {},
 ): RootValueMethod {
   const jsonToXMLConverter = new JSONToXMLConverter({
     attributeNamePrefix: '',
@@ -83,6 +86,8 @@ function createRootValueMethod(
     textNodeName: 'innerText',
   });
   const xmlToJSONConverter = new XMLParser(PARSE_XML_OPTIONS);
+
+  const operationHeadersFactory = getInterpolatedHeadersFactory(operationHeaders);
 
   return async function rootValueMethod(args: any, context: any, info: GraphQLResolveInfo) {
     const requestJson = {
@@ -106,6 +111,12 @@ function createRootValueMethod(
         body: requestXML,
         headers: {
           'Content-Type': 'application/soap+xml; charset=utf-8',
+          ...operationHeadersFactory({
+            args,
+            context,
+            info,
+            env: process.env,
+          }),
         },
       },
       context,
@@ -117,7 +128,11 @@ function createRootValueMethod(
   };
 }
 
-function createRootValue(schema: GraphQLSchema, fetchFn: MeshFetch) {
+function createRootValue(
+  schema: GraphQLSchema,
+  fetchFn: MeshFetch,
+  operationHeaders: Record<string, string> = {},
+) {
   const rootValue: Record<string, RootValueMethod> = {};
   const rootTypes = getRootTypes(schema);
   for (const rootType of rootTypes) {
@@ -136,11 +151,15 @@ function createRootValue(schema: GraphQLSchema, fetchFn: MeshFetch) {
   return rootValue;
 }
 
-export function createExecutorFromSchemaAST(schema: GraphQLSchema, fetchFn: MeshFetch) {
+export function createExecutorFromSchemaAST(
+  schema: GraphQLSchema,
+  fetchFn: MeshFetch,
+  operationHeaders: Record<string, string> = {},
+) {
   let rootValue: Record<string, RootValueMethod>;
   return function soapExecutor({ document, variables, context }) {
     if (!rootValue) {
-      rootValue = createRootValue(schema, fetchFn);
+      rootValue = createRootValue(schema, fetchFn, operationHeaders);
     }
     return execute({
       schema,
