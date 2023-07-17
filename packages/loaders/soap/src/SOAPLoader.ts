@@ -506,7 +506,17 @@ export class SOAPLoader {
 
   async loadWSDL(wsdlText: string) {
     wsdlText = wsdlText.split('xmlns:').join('namespace:');
-    const wsdlObject: WSDLObject = this.xmlParser.parse(wsdlText, PARSE_XML_OPTIONS);
+    let wsdlObject: WSDLObject;
+    try {
+      wsdlObject = this.xmlParser.parse(wsdlText, PARSE_XML_OPTIONS);
+    } catch (e) {
+      throw new Error(`Failed to parse WSDL: ${e.message}. \nReturned response;\n${wsdlText}`);
+    }
+    if (!Array.isArray(wsdlObject.definitions)) {
+      throw new Error(
+        `WSDL definitions not found! Please make sure if your WSDL source is correct, and it contains <definitions> tag.\nReturned response;\n${wsdlText}`,
+      );
+    }
     for (const definition of wsdlObject.definitions) {
       await this.loadDefinition(definition);
     }
