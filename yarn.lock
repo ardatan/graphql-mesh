@@ -2485,10 +2485,10 @@
   resolved "https://registry.yarnpkg.com/@cloudflare/workerd-windows-64/-/workerd-windows-64-1.20230710.0.tgz#0802961da9d6dc02935da9eae9183e0dbf4edf2a"
   integrity sha512-P5ihH98Pb72HrsVsvb/HCSezvAvEtPeVQVBKgIclNE9e0fkA4zX9QMzBBFvLy3yr0YLf4r7MO2tNnt7JFnheGA==
 
-"@cloudflare/workers-types@4.20230710.1":
-  version "4.20230710.1"
-  resolved "https://registry.yarnpkg.com/@cloudflare/workers-types/-/workers-types-4.20230710.1.tgz#a527537d9ee856c9b476b33b0909e516235f2cb5"
-  integrity sha512-VqEY/ZqyHKBn6ivdePSWebpqojwbCXVEuwLkMYHs0UoOAqcGylkVcabdZYdQJKeNxXcOUZ9UBId/x9UsPUm2XQ==
+"@cloudflare/workers-types@4.20230717.0":
+  version "4.20230717.0"
+  resolved "https://registry.yarnpkg.com/@cloudflare/workers-types/-/workers-types-4.20230717.0.tgz#27233bb6734c12876d09c7c76d55fc0a9089ea35"
+  integrity sha512-OJWM1s0n9Il+GjfHvZhEcUGC+qY9IsijMtzRBDRpwSUR2jTy1WdjS9+SEh7sJlNQX2WzHQCgJMGjH2lI/Tf+tQ==
 
 "@colors/colors@1.5.0":
   version "1.5.0"
@@ -5630,10 +5630,10 @@
     lz-string "^1.5.0"
     pretty-format "^27.0.2"
 
-"@testing-library/jest-dom@5.16.5":
-  version "5.16.5"
-  resolved "https://registry.yarnpkg.com/@testing-library/jest-dom/-/jest-dom-5.16.5.tgz#3912846af19a29b2dbf32a6ae9c31ef52580074e"
-  integrity sha512-N5ixQ2qKpi5OLYfwQmUb/5mSV9LneAcaUfp32pn4yCnpb8r/Yz0pXFPck21dIicKmi+ta5WRAknkZCfA8refMA==
+"@testing-library/jest-dom@5.17.0":
+  version "5.17.0"
+  resolved "https://registry.yarnpkg.com/@testing-library/jest-dom/-/jest-dom-5.17.0.tgz#5e97c8f9a15ccf4656da00fecab505728de81e0c"
+  integrity sha512-ynmNeT7asXyH3aSVv4vvX4Rb+0qjOhdNHnO/3vuZNqPmhDpV/+rCSGwQ7bLcmU2cJ4dvoheIO85LQj0IbJHEtg==
   dependencies:
     "@adobe/css-tools" "^4.0.1"
     "@babel/runtime" "^7.9.2"
