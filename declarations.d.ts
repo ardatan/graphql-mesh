@@ -3,6 +3,7 @@ declare interface ObjectConstructor {
 }
 declare module 'ajv-formats';
 declare module 'dnscache';
+declare module 'json-bigint-patch';
 
 declare module 'ioredis-mock' {
   // eslint-disable-next-line import/no-extraneous-dependencies
