@@ -1,5 +1,14 @@
 # @graphql-mesh/cli
 
+## 0.85.4
+
+### Patch Changes
+
+- [#5705](https://github.com/Urigo/graphql-mesh/pull/5705)
+  [`ffda5a6a8`](https://github.com/Urigo/graphql-mesh/commit/ffda5a6a80baeef6fc21feddffd52222e8e72908)
+  Thanks [@ardatan](https://github.com/ardatan)! - Use `json-bigint-patch` only if `BigInt` scalar
+  exists in the schema
+
 ## 0.85.3
 
 ### Patch Changes
