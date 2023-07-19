@@ -11399,10 +11399,10 @@ fengari@^0.1.4:
     sprintf-js "^1.1.1"
     tmp "^0.0.33"
 
-fets@0.4.3, fets@^0.4.0:
-  version "0.4.3"
-  resolved "https://registry.yarnpkg.com/fets/-/fets-0.4.3.tgz#ef10bf51fdc54ff179d28341263f32d073af3691"
-  integrity sha512-57E5GUGe5Qfb+fnWoB6HeQt21mOSdziPW3H7dN+WHuPHNwiBRX1XavvmgIyMMsRXFvjkSey8hatUPIwvp5R9hQ==
+fets@0.4.5, fets@^0.4.0:
+  version "0.4.5"
+  resolved "https://registry.yarnpkg.com/fets/-/fets-0.4.5.tgz#f898442e9dc43cd1c752f8e1cd43a92865086858"
+  integrity sha512-TNUSGjQQA57LmZjVKVUI22l8yTgzjTJBSjEfJLC+cHjIG0Z97KsfhVcH0+bWwad4JqN4rBW0xM+jP08glrvMkA==
   dependencies:
     "@ardatan/fast-json-stringify" "^0.0.6"
     "@whatwg-node/cookie-store" "^0.2.0"
