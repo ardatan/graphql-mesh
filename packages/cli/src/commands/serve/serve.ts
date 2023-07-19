@@ -6,7 +6,6 @@ import { cpus, platform, release } from 'os';
 import dnscache from 'dnscache';
 import { execute, ExecutionArgs, subscribe } from 'graphql';
 import { makeBehavior } from 'graphql-ws/lib/use/uWebSockets';
-import 'json-bigint-patch';
 import open from 'open';
 import type { TemplatedApp } from 'uWebSockets.js';
 import { process } from '@graphql-mesh/cross-helpers';
@@ -109,7 +108,10 @@ export async function serveMesh(
     logger.info(`Starting GraphQL Mesh...`);
 
     const mesh$: Promise<MeshInstance> = getBuiltMesh()
-      .then(mesh => {
+      .then(async mesh => {
+        if (mesh.schema.getType('BigInt')) {
+          await import('json-bigint-patch');
+        }
         dnscache({
           enable: true,
           cache: function CacheCtor({ ttl }: { ttl: number }) {
