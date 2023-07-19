@@ -2408,7 +2408,7 @@
         "anchor": "config-api-reference"
       }
     ],
-    "content": "775e2fc461132e59d7dfee1ef1ebbbd9",
+    "content": "67b7d2e367f7e3025a5ffdc484daf765",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/resolvers-composition",
     "domain": "https://www.the-guild.dev/graphql/mesh",
     "hierarchy": ["docs", "transforms"],
