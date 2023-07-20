@@ -11399,10 +11399,10 @@ fengari@^0.1.4:
     sprintf-js "^1.1.1"
     tmp "^0.0.33"
 
-fets@0.4.5, fets@^0.4.0:
-  version "0.4.5"
-  resolved "https://registry.yarnpkg.com/fets/-/fets-0.4.5.tgz#f898442e9dc43cd1c752f8e1cd43a92865086858"
-  integrity sha512-TNUSGjQQA57LmZjVKVUI22l8yTgzjTJBSjEfJLC+cHjIG0Z97KsfhVcH0+bWwad4JqN4rBW0xM+jP08glrvMkA==
+fets@0.4.6, fets@^0.4.0:
+  version "0.4.6"
+  resolved "https://registry.yarnpkg.com/fets/-/fets-0.4.6.tgz#a3d6d643f2b9070a899051a277e1af7f741e90fa"
+  integrity sha512-9fuZCdDpvUd1gJPIy8+8ZgKv/20ES5sDnAEqyPMKJtB6f9mJ8L+14ZudsQfI4htbDQEwHKAaVSJn97Q7AWg7pQ==
   dependencies:
     "@ardatan/fast-json-stringify" "^0.0.6"
     "@whatwg-node/cookie-store" "^0.2.0"
@@ -16545,10 +16545,10 @@ neo4j-driver@^5.9.2:
     neo4j-driver-core "5.10.0"
     rxjs "^7.8.1"
 
-newrelic@10.4.2:
-  version "10.4.2"
-  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-10.4.2.tgz#ec65f4e8b0b27cd52972db67d6363ee976e78fc4"
-  integrity sha512-NOD9Sm9tnnF/i6jMs6jeReWyXdYl2rpxaL42YaAv7NoH5ve9DGufF0zefd6sJj0LbRqTSlkzd6R12XQnurtHmg==
+newrelic@10.5.0:
+  version "10.5.0"
+  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-10.5.0.tgz#85fe62a1aa94e85f9740f28cd0ed2802acec8322"
+  integrity sha512-CsZiImJQT40kOL7528WiJeXi0NO6GmbmAjTGO0tZXcucFOVXsVVWBiYhT+bfFFpaYAvsjukWnaLt9jIfU2gVIg==
   dependencies:
     "@grpc/grpc-js" "^1.8.10"
     "@grpc/proto-loader" "^0.7.5"
@@ -22600,10 +22600,10 @@ wkx@^0.4.8:
   dependencies:
     "@types/node" "*"
 
-wonka@6.3.2, wonka@^6.3.2:
-  version "6.3.2"
-  resolved "https://registry.yarnpkg.com/wonka/-/wonka-6.3.2.tgz#6f32992b332251d7b696b038990f4dc284b3b33d"
-  integrity sha512-2xXbQ1LnwNS7egVm1HPhW2FyKrekolzhpM3mCwXdQr55gO+tAiY76rhb32OL9kKsW8taj++iP7C6hxlVzbnvrw==
+wonka@6.3.3, wonka@^6.3.2:
+  version "6.3.3"
+  resolved "https://registry.yarnpkg.com/wonka/-/wonka-6.3.3.tgz#aa99fa5f9303a32517497918fdd0208175e7edbe"
+  integrity sha512-id4wYGsT6aEc8/3+by7NTHvTe0DwsOjv7vah0K0+AorV1MHKuS3OQ2g8DGsem1OEXrNShbVLPsg4kG2O6GZ2SQ==
 
 wordwrap@^1.0.0:
   version "1.0.0"
