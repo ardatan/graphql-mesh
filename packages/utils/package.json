@@ -48,7 +48,7 @@
     "tiny-lru": "^11.0.0"
   },
   "devDependencies": {
-    "@apollo/server": "4.8.0",
+    "@apollo/server": "4.8.1",
     "@types/js-yaml": "4.0.5",
     "@types/lodash.topath": "4.5.7",
     "@types/object-hash": "3.0.2",
