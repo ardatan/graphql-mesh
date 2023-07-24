@@ -1,5 +1,12 @@
 # @graphql-mesh/config
 
+## 0.96.4
+
+### Patch Changes
+
+- [`e9df70280`](https://github.com/Urigo/graphql-mesh/commit/e9df70280dde671be0cd7e4f443c3aab060227fc)
+  Thanks [@ardatan](https://github.com/ardatan)! - Use quotes for persisted operation keys
+
 ## 0.96.3
 
 ### Patch Changes
