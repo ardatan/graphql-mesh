@@ -16,8 +16,8 @@
     "tslib": "^2.5.0"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.85.4",
-    "@graphql-mesh/config": "0.96.3",
+    "@graphql-mesh/cli": "0.85.5",
+    "@graphql-mesh/config": "0.96.4",
     "@graphql-mesh/graphql": "0.94.6",
     "@graphql-mesh/grpc": "0.94.9",
     "@graphql-mesh/json-schema": "0.94.8",

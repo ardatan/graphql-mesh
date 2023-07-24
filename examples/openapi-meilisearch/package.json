@@ -1,13 +1,13 @@
 {
   "name": "openapi-meilisearch",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "license": "MIT",
   "private": true,
   "scripts": {
     "start": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.85.4",
+    "@graphql-mesh/cli": "0.85.5",
     "@graphql-mesh/openapi": "0.94.9",
     "graphql": "16.7.1"
   }
