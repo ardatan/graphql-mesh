@@ -626,7 +626,7 @@ export async function processConfig(
               documentVariableNames.push(variableName);
               documentVariableHashCodeMap.set(variableName, sha256Hash);
               if (options.generateCode) {
-                documentHashMapCodes.add(`${sha256Hash}: ${variableName}`);
+                documentHashMapCodes.add(`${JSON.stringify(sha256Hash)}: ${variableName}`);
               }
             },
           });
