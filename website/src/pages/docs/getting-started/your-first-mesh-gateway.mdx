@@ -89,11 +89,11 @@ Our Books REST API provides an Open API definition file:
 [`packages/books-service/openapi3-definition.json`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/books-service/openapi3-definition.json).
 
 The `openapi3-definition.json` file describes the available endpoints along with their arguments and
-responses shape:
+responses shape associated with a noperation ID:
 
-- `GET /books`
-- `GET /books/:id`
-- `GET /categories`
+- `GET /books` (ID: `AppController_books`)
+- `GET /books/:id` (ID: `AppController_book`)
+- `GET /categories` (ID: `AppController_categories`)
 
 We now established that our Books API will require the `openapi` Mesh _Handler_ with the
 `@graphql-mesh/openapi` package.
@@ -150,9 +150,9 @@ You can try out the following Query:
 
 ```graphql
 {
-  books {
+  AppController_books {
     authorId
-    categoryId
+    categorieId
     id
     title
   }
@@ -162,13 +162,57 @@ You can try out the following Query:
 ### 3. Shaping the Unified Schema
 
 We might not want to expose all those Queries in our _Unified Schema_.
+In particular, those Queries are prefixed with `AppController_` which is not very user-friendly.
 
-Let's say that we want to **remove** the `book(id: ID!)` Query and **rename** the `categories` Query
-to `booksCategories`.
+Let's say that we want to:
+  - **remove** the `AppController_` prefix on each Query
+  - **remove** the `book(id: ID!)` Query
+  - **rename** the `categories` Query to `booksCategories`.
 
 To achieve such a final Schema design, we will leverage _Transforms_.
 
-**Remove the `book(id: ID!)` Query**
+#### Remove the `AppController_` prefix
+
+We will start by cleaning up those ugly Query names by removing their prefix.
+
+Let's install the `rename` _Transform_ to rename the Query fields.
+Loocking at the [`packages/single-source/`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source)
+folder, you will find the following package installed: `@graphql-mesh/transform-rename`.
+
+We can update our
+[`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source/.meshrc.yaml)
+as follow:
+
+```yaml filename=".meshrc.yaml" {7-16}
+sources:
+  - name: Books
+    handler:
+      openapi:
+        endpoint: http://localhost:3002/
+        source: ../books-service/openapi3-definition.json
+transforms:
+  - rename:
+      renames:
+        - from:
+            type: Query
+            field: AppController_(.*)
+          to:
+            type: Query
+            field: $1
+          useRegExpForFields: true
+```
+
+We added a `transforms` key at the root of the configuration.
+
+`transforms` value is an array of named transforms, ex: `rename`.
+
+`rename` takes a `renames` option that accepts an array of `from`/`to` pairs.
+Here, we are using a regexp to capture the end of the Query name, ignoring the `AppController_` prefix.
+
+More information on the `rename` _Transform_ on
+[its dedicated documentation page](/docs/transforms/rename).
+
+#### Remove the `book(id: ID!)` Query
 
 We will install and configure the `filterSchema` _Transform_ to remove a Query from the Unified
 Schema.
@@ -181,7 +225,7 @@ And update our
 [`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source/.meshrc.yaml)
 as follows:
 
-```yaml filename=".meshrc.yaml" {7-10}
+```yaml filename=".meshrc.yaml" {17-20}
 sources:
   - name: Books
     handler:
@@ -189,14 +233,19 @@ sources:
         endpoint: http://localhost:3002/
         source: ../books-service/openapi3-definition.json
 transforms:
+  - rename:
+      renames:
+        - from:
+            type: Query
+            field: AppController_(.*)
+          to:
+            type: Query
+            field: $1
+          useRegExpForFields: true
   - filterSchema:
       filters:
         - Query.!book
 ```
-
-We added a `transforms` key at the root of the configuration.
-
-`transforms` value is an array of named transforms, ex: `filterSchema`.
 
 `filterSchema` takes a `filters` option that accepts an array of filter rules.
 
@@ -205,20 +254,16 @@ By adding `Query.!book`, we instruct Mesh to remove the `book(…)` Query.
 More information on the `filterSchema` _Transform_ on
 [its dedicated documentation page](/docs/transforms/filter-schema).
 
-**Rename the `categories(…)` Query to `booksCategories(…)`**
+#### Rename the `categories(…)` Query to `booksCategories(…)`
 
 Finally, let's rename our `categories(…)` Query to `booksCategories(…)` by using the `rename`
-_Transform_.
-
-Again in the
-[`packages/single-source/`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source)
-folder, you will find the following package installed: `@graphql-mesh/transform-rename`.
+_Transform_ again.
 
 And update our
 [`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source/.meshrc.yaml)
 as follows:
 
-```yaml filename=".meshrc.yaml" {11-18}
+```yaml filename=".meshrc.yaml" {20-27}
 sources:
   - name: Books
     handler:
@@ -226,6 +271,15 @@ sources:
         endpoint: http://localhost:3002/
         source: ../books-service/openapi3-definition.json
 transforms:
+  - rename:
+      renames:
+        - from:
+            type: Query
+            field: AppController_(.*)
+          to:
+            type: Query
+            field: $1
+          useRegExpForFields: true
   - filterSchema:
       filters:
         - Query.!book
@@ -239,12 +293,7 @@ transforms:
             field: booksCategories
 ```
 
-`rename` takes a `renames` option that accepts an array of `from`/`to` pairs.
-
-Here, we indicate that `Query.categories` should be renamed `Query.booksCategories`.
-
-More information on the `rename` _Transform_ on
-[its dedicated documentation page](/docs/transforms/rename).
+#### Our final Unified Schema
 
 Our final _Unified Schema_ is now ready to be used:
 
