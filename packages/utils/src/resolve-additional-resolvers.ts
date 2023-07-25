@@ -265,7 +265,12 @@ export function resolveAdditionalResolversWithoutImport(
             const resolverData = { root, args, context, info, env: process.env };
             const targetArgs: any = {};
 
-            deeplySetArgs(resolverData, { targetArgs }, 'targetArgs', additionalResolver.sourceArgs)
+            deeplySetArgs(
+              resolverData,
+              { targetArgs },
+              'targetArgs',
+              additionalResolver.sourceArgs,
+            );
 
             const options: any = {
               ...baseOptions,
@@ -320,16 +325,12 @@ export function resolveAdditionalResolvers(
   );
 }
 
-
 function deeplySetArgs(resolverData: any, args: object, path: string, value: any) {
   if (typeof value === 'string') {
-    dset(args, path, stringInterpolator.parse(
-      value.toString(),
-      resolverData,
-    ))
+    dset(args, path, stringInterpolator.parse(value.toString(), resolverData));
   } else {
     for (const key in value) {
-      deeplySetArgs(resolverData, args, `${path}.${key}`, value[key])
+      deeplySetArgs(resolverData, args, `${path}.${key}`, value[key]);
     }
   }
 }
