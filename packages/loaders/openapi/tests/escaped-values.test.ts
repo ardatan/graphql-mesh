@@ -1,5 +1,5 @@
 import { createRouter, Response } from 'fets';
-import { execute, parse } from 'graphql';
+import { execute, GraphQLSchema, parse } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { loadGraphQLSchemaFromOpenAPI } from '../src';
 
