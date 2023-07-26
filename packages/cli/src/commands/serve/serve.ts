@@ -2,7 +2,7 @@
 
 /* eslint-disable dot-notation */
 import cluster from 'cluster';
-import { cpus, platform, release } from 'os';
+import { availableParallelism, cpus, platform, release } from 'os';
 import dnscache from 'dnscache';
 import { execute, ExecutionArgs, subscribe } from 'graphql';
 import { makeBehavior } from 'graphql-ws/lib/use/uWebSockets';
@@ -54,7 +54,7 @@ export async function serveMesh(
   cliParams: GraphQLMeshCLIParams,
 ) {
   const {
-    fork: configFork,
+    fork: configFork = process.env.NODE_ENV?.toLowerCase() !== 'production',
     port: configPort,
     hostname = platform() === 'win32' ||
     // is WSL?
@@ -77,17 +77,29 @@ export async function serveMesh(
 
   const envFork = process.env.FORK;
 
+  let defaultForkNum = 0;
+
+  try {
+    defaultForkNum = availableParallelism();
+  } catch (e) {
+    try {
+      defaultForkNum = cpus().length;
+    } catch (e) {
+      // ignore
+    }
+  }
+
   if (envFork != null) {
     if (envFork === 'false' || envFork === '0') {
       forkNum = 0;
     } else if (envFork === 'true') {
-      forkNum = cpus().length;
+      forkNum = defaultForkNum;
     } else {
       forkNum = parseInt(envFork);
     }
   } else if (configFork != null) {
     if (typeof configFork === 'boolean') {
-      forkNum = configFork ? cpus().length : 0;
+      forkNum = configFork ? defaultForkNum : 0;
     } else {
       forkNum = configFork;
     }
@@ -105,6 +117,9 @@ export async function serveMesh(
     }
     logger.info(`${cliParams.serveMessage}: ${serverUrl} in ${forkNum} forks`);
   } else {
+    if (cluster.isWorker) {
+      logger = logger.child(`Worker ${cluster.worker.id}`);
+    }
     logger.info(`Starting GraphQL Mesh...`);
 
     const mesh$: Promise<MeshInstance> = getBuiltMesh()
