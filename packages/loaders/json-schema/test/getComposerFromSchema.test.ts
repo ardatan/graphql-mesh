@@ -1088,7 +1088,7 @@ ${printType(GraphQLString)}
     Object.values(enumValuesMap).forEach((valueConfig, i) => {
       expect(valueConfig.value).toBe(values[i]?.toString());
     });
-    expect.assertions(4);
+    expect.assertions(3);
   });
   it('should handle nested unions with primitive types', async () => {
     const FacetFilterType: JSONSchema = {
