@@ -1,4 +1,4 @@
-import { DocumentNode, parse, print } from 'graphql';
+import { DocumentNode, parse } from 'graphql';
 import { process } from '@graphql-mesh/cross-helpers';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import {
