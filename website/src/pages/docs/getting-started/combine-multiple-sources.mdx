@@ -169,7 +169,9 @@ type Query {
   stores: [Store!]!
   bookSells(storeId: ID!): [Sells!]!
   authors_v1_AuthorsService_GetAuthor(input: authors_v1_GetAuthorRequest_Input): authors_v1_Author
-  authors_v1_AuthorsService_ListAuthors(input: authors_v1_ListAuthorsRequest_Input): authors_v1_ListAuthorsResponse
+  authors_v1_AuthorsService_ListAuthors(
+    input: authors_v1_ListAuthorsRequest_Input
+  ): authors_v1_ListAuthorsResponse
   authors_v1_AuthorsService_connectivityState(tryToConnect: Boolean): ConnectivityState
 }
 
@@ -253,8 +255,7 @@ transforms:
 
 `filterSchema` takes a `filters` option that accepts an array of filter rules.
 
-By adding `Query.!bookSells`, we instruct Mesh to remove the
-`bookSells(...)` Query.
+By adding `Query.!bookSells`, we instruct Mesh to remove the `bookSells(...)` Query.
 
 You can notice that the `filterSchema` allows using a bash-like syntax to avoid repetitive
 configuration with the `{..., ...}` syntax.
@@ -446,8 +447,8 @@ additionalTypeDefs: |
   }
 ```
 
-Here, the `@resolveTo` directive explains that Querying `Book.author` will resolve
-the data by calling the `Query.authors_v1_AuthorsService_GetAuthor` from the "Authors" source.
+Here, the `@resolveTo` directive explains that Querying `Book.author` will resolve the data by
+calling the `Query.authors_v1_AuthorsService_GetAuthor` from the "Authors" source.
 
 The `requiredSelectionSet` and `sourceArgs` ensure that the required arguments are provided
 (`requiredSelectionSet`) and adequately mapped to the Source (`sourceArgs`). `requiredSelectionSet`
@@ -457,7 +458,6 @@ ensures that the `Book.author` selection will contains `authorId`, so it can be 
 Applying the same logic to `Stores.bookSells` and `Sells.book` gives us a complete
 [`.meshrc.yaml`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/multiple-sources/.meshrc.yaml)
 configuration.
-
 
 #### Run the Mesh Gateway
 

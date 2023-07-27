@@ -161,13 +161,14 @@ You can try out the following Query:
 
 ### 3. Shaping the Unified Schema
 
-We might not want to expose all those Queries in our _Unified Schema_.
-In particular, those Queries are prefixed with `AppController_` which is not very user-friendly.
+We might not want to expose all those Queries in our _Unified Schema_. In particular, those Queries
+are prefixed with `AppController_` which is not very user-friendly.
 
 Let's say that we want to:
-  - **remove** the `AppController_` prefix on each Query
-  - **remove** the `book(id: ID!)` Query
-  - **rename** the `categories` Query to `booksCategories`.
+
+- **remove** the `AppController_` prefix on each Query
+- **remove** the `book(id: ID!)` Query
+- **rename** the `categories` Query to `booksCategories`.
 
 To achieve such a final Schema design, we will leverage _Transforms_.
 
@@ -175,8 +176,8 @@ To achieve such a final Schema design, we will leverage _Transforms_.
 
 We will start by cleaning up those ugly Query names by removing their prefix.
 
-Let's install the `rename` _Transform_ to rename the Query fields.
-Loocking at the [`packages/single-source/`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source)
+Let's install the `rename` _Transform_ to rename the Query fields. Loocking at the
+[`packages/single-source/`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/single-source)
 folder, you will find the following package installed: `@graphql-mesh/transform-rename`.
 
 We can update our
@@ -206,8 +207,8 @@ We added a `transforms` key at the root of the configuration.
 
 `transforms` value is an array of named transforms, ex: `rename`.
 
-`rename` takes a `renames` option that accepts an array of `from`/`to` pairs.
-Here, we are using a regexp to capture the end of the Query name, ignoring the `AppController_` prefix.
+`rename` takes a `renames` option that accepts an array of `from`/`to` pairs. Here, we are using a
+regexp to capture the end of the Query name, ignoring the `AppController_` prefix.
 
 More information on the `rename` _Transform_ on
 [its dedicated documentation page](/docs/transforms/rename).
