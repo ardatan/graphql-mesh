@@ -1075,7 +1075,7 @@ ${printType(GraphQLString)}
     `);
   });
   it('should workaround GraphQLjs falsy enum values bug', async () => {
-    const values = [0, false, ''];
+    const values = [false, ''];
     const FooEnum = {
       title: 'FooEnum',
       type: ['number', 'boolean', 'string'] as any,

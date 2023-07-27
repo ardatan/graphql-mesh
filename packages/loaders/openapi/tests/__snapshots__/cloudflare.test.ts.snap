@@ -18139,7 +18139,7 @@ enum browser_cache_ttl_const @typescript(type: "\\"browser_cache_ttl\\"") @examp
 
 "Value of the zone setting.\\nNotes: Setting a TTL of 0 is equivalent to selecting \`Respect Existing Headers\`"
 enum browser_cache_ttl_value {
-  _0 @enum(value: "\\"0\\"")
+  _0 @enum(value: "0")
   _30 @enum(value: "30")
   _60 @enum(value: "60")
   _120 @enum(value: "120")

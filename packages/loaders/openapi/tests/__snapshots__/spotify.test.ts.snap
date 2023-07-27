@@ -1954,7 +1954,7 @@ type SectionObject {
 "Indicates the modality (major or minor) of a section, the type of scale from which its melodic content is derived. This field will contain a 0 for \\"minor\\", a 1 for \\"major\\", or a -1 for no result. Note that the major key (e.g. C major) could more likely be confused with the minor key at 3 semitones lower (e.g. A minor) as both keys carry the same pitches."
 enum query_get_audio_analysis_sections_items_mode {
   NEGATIVE_1 @enum(value: "-1")
-  _0 @enum(value: "\\"0\\"")
+  _0 @enum(value: "0")
   _1 @enum(value: "1")
 }
 
