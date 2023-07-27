@@ -2,7 +2,7 @@
 
 /* eslint-disable dot-notation */
 import cluster from 'cluster';
-import { availableParallelism, cpus, platform, release } from 'os';
+import os from 'os';
 import dnscache from 'dnscache';
 import { execute, ExecutionArgs, subscribe } from 'graphql';
 import { makeBehavior } from 'graphql-ws/lib/use/uWebSockets';
@@ -56,9 +56,9 @@ export async function serveMesh(
   const {
     fork: configFork = process.env.NODE_ENV?.toLowerCase() !== 'production',
     port: configPort,
-    hostname = platform() === 'win32' ||
+    hostname = os.platform() === 'win32' ||
     // is WSL?
-    release().toLowerCase().includes('microsoft')
+    os.release().toLowerCase().includes('microsoft')
       ? '127.0.0.1'
       : '0.0.0.0',
     sslCredentials,
@@ -80,10 +80,10 @@ export async function serveMesh(
   let defaultForkNum = 0;
 
   try {
-    defaultForkNum = availableParallelism();
+    defaultForkNum = os.availableParallelism();
   } catch (e) {
     try {
-      defaultForkNum = cpus().length;
+      defaultForkNum = os.cpus().length;
     } catch (e) {
       // ignore
     }
