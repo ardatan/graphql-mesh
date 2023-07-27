@@ -1075,7 +1075,7 @@ ${printType(GraphQLString)}
     `);
   });
   it('should workaround GraphQLjs falsy enum values bug', async () => {
-    const values = [0, false, ''];
+    const values = [false, ''];
     const FooEnum = {
       title: 'FooEnum',
       type: ['number', 'boolean', 'string'] as any,
@@ -1088,7 +1088,7 @@ ${printType(GraphQLString)}
     Object.values(enumValuesMap).forEach((valueConfig, i) => {
       expect(valueConfig.value).toBe(values[i]?.toString());
     });
-    expect.assertions(4);
+    expect.assertions(3);
   });
   it('should handle nested unions with primitive types', async () => {
     const FacetFilterType: JSONSchema = {
