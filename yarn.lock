@@ -206,7 +206,7 @@
   resolved "https://registry.yarnpkg.com/@apollo/cache-control-types/-/cache-control-types-1.0.3.tgz#5da62cf64c3b4419dabfef4536b57a40c8ff0b47"
   integrity sha512-F17/vCp7QVwom9eG7ToauIKdAxpSoadsJnqIfyryLFSkLSOEqu+eC5Z3N8OXcUVStuOMcNHlyraRsA6rRICu4g==
 
-"@apollo/client@3.7.17", "@apollo/client@^3.7.0":
+"@apollo/client@3.7.17", "@apollo/client@^3.7.0", "@apollo/client@~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0":
   version "3.7.17"
   resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.7.17.tgz#1d2538729fd8ef138aa301a7cf62704474e57b72"
   integrity sha512-0EErSHEtKPNl5wgWikHJbKFAzJ/k11O0WO2QyqZSHpdxdAnw7UWHY4YiLbHCFG7lhrD+NTQ3Z/H9Jn4rcikoJA==
@@ -3263,6 +3263,19 @@
     tslib "^2.4.0"
     value-or-promise "^1.0.12"
 
+"@graphql-tools/executor-http@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/executor-http/-/executor-http-1.0.2.tgz#d7964a6e5ec883842f9a8e3f104f93c9b8f472be"
+  integrity sha512-JKTB4E3kdQM2/1NEcyrVPyQ8057ZVthCV5dFJiKktqY9IdmF00M8gupFcW3jlbM/Udn78ickeUBsUzA3EouqpA==
+  dependencies:
+    "@graphql-tools/utils" "^10.0.2"
+    "@repeaterjs/repeater" "^3.0.4"
+    "@whatwg-node/fetch" "^0.9.0"
+    extract-files "^11.0.0"
+    meros "^1.2.1"
+    tslib "^2.4.0"
+    value-or-promise "^1.0.12"
+
 "@graphql-tools/executor-legacy-ws@^1.0.0":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@graphql-tools/executor-legacy-ws/-/executor-legacy-ws-1.0.1.tgz#49764812fc93f401cb3f3ef32b2d6db4a9cd8db5"
@@ -3284,6 +3297,23 @@
     "@repeaterjs/repeater" "^3.0.4"
     tslib "^2.4.0"
     value-or-promise "^1.0.12"
+
+"@graphql-tools/federation@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/federation/-/federation-1.1.0.tgz#047547fcd7d28a5afdd802c47b5fd63828fc6719"
+  integrity sha512-+22aWiPqAZfdssJXcDe1RaUtPYtILU8+8wNOrsSQXXp/o0dZyAfeqXLs8CP2pyg5zaXkX25x2cnciqqR0QOi2w==
+  dependencies:
+    "@graphql-tools/delegate" "^10.0.0"
+    "@graphql-tools/executor-http" "^1.0.0"
+    "@graphql-tools/merge" "^9.0.0"
+    "@graphql-tools/schema" "^10.0.0"
+    "@graphql-tools/stitch" "^9.0.0"
+    "@graphql-tools/utils" "^10.0.0"
+    "@graphql-tools/wrap" "^10.0.0"
+    tslib "^2.4.0"
+    value-or-promise "^1.0.12"
+  optionalDependencies:
+    "@apollo/client" "~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0"
 
 "@graphql-tools/graphql-file-loader@6.1.0":
   version "6.1.0"

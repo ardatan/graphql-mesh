@@ -1,0 +1,11 @@
+sources:
+  - name: Supergraph
+    handler:
+      supergraph:
+        source: ./supergraph.graphql
+
+documents:
+  - example-query.graphql
+
+serve:
+  playground: true

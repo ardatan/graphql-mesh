@@ -182,6 +182,7 @@ export interface Handler {
   postgraphile?: PostGraphileHandler;
   raml?: RAMLHandler;
   soap?: SoapHandler;
+  supergraph?: SupergraphHandler;
   thrift?: ThriftHandler;
   tuql?: TuqlHandler;
   [k: string]: any;
@@ -1002,6 +1003,15 @@ export interface SoapHandler {
   operationHeaders?: {
     [k: string]: any;
   };
+}
+export interface SupergraphHandler {
+  /**
+   * A file path to your Supergraph Schema
+   * If you provide a path to a code file(js or ts),
+   * other options will be ignored and the schema exported from the file will be used directly.
+   */
+  source: string;
+  schemaHeaders?: any;
 }
 /**
  * Handler for OData

@@ -1,3 +1,4 @@
+import { inspect } from 'node:util';
 import { ApolloServer, gql } from 'apollo-server';
 import { buildSubgraphSchema } from '@apollo/subgraph';
 
@@ -20,6 +21,9 @@ const resolvers = {
       };
     },
     shippingEstimate(object) {
+      if (object.price == null || object.weight == null) {
+        throw new Error(`${inspect(object)} doesn't have required fields; "price" and "weight".`);
+      }
       // free for expensive items
       if (object.price > 1000) return 0;
       // estimate is based on weight
