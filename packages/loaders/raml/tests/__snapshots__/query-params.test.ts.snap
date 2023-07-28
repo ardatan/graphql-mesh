@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Query Paramters generates correct schema 1`] = `
+exports[`Query Parameters generates correct schema 1`] = `
 "schema {
   query: Query
 }
