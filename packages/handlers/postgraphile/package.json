@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/postgraphile",
-  "version": "0.94.6",
+  "version": "0.95.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -33,9 +33,9 @@
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.0",
-    "@graphql-mesh/store": "^0.94.6",
-    "@graphql-mesh/types": "^0.94.6",
-    "@graphql-mesh/utils": "^0.94.6",
+    "@graphql-mesh/store": "^0.95.0",
+    "@graphql-mesh/types": "^0.95.0",
+    "@graphql-mesh/utils": "^0.95.0",
     "graphql": "*",
     "tslib": "^2.4.0"
   },

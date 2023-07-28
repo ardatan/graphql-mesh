@@ -1,5 +1,28 @@
 # @graphql-mesh/openapi
 
+## 0.95.0
+
+### Patch Changes
+
+- [#5749](https://github.com/Urigo/graphql-mesh/pull/5749)
+  [`bb50c4f94`](https://github.com/Urigo/graphql-mesh/commit/bb50c4f941caa59d69186d1415dce5773596e8bc)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Removed dependency
+    [`@graphql-tools/utils@^9.2.1 || ^10.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.2.1)
+    (from `peerDependencies`)
+
+- [#5749](https://github.com/Urigo/graphql-mesh/pull/5749)
+  [`bb50c4f94`](https://github.com/Urigo/graphql-mesh/commit/bb50c4f941caa59d69186d1415dce5773596e8bc)
+  Thanks [@ardatan](https://github.com/ardatan)! - Avoid extra promises
+
+- Updated dependencies
+  [[`bb50c4f94`](https://github.com/Urigo/graphql-mesh/commit/bb50c4f941caa59d69186d1415dce5773596e8bc)]:
+  - @graphql-mesh/types@0.95.0
+  - @omnigraph/openapi@0.95.0
+  - @graphql-mesh/store@0.95.0
+  - @graphql-mesh/utils@0.95.0
+
 ## 0.94.10
 
 ### Patch Changes

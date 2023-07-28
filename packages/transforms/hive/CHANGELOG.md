@@ -1,5 +1,19 @@
 # @graphql-mesh/transform-hive
 
+## 0.95.0
+
+### Minor Changes
+
+- [#5749](https://github.com/Urigo/graphql-mesh/pull/5749)
+  [`bb50c4f94`](https://github.com/Urigo/graphql-mesh/commit/bb50c4f941caa59d69186d1415dce5773596e8bc)
+  Thanks [@ardatan](https://github.com/ardatan)! - `enabled` flag to enable/disable Hive Client
+
+### Patch Changes
+
+- Updated dependencies
+  [[`bb50c4f94`](https://github.com/Urigo/graphql-mesh/commit/bb50c4f941caa59d69186d1415dce5773596e8bc)]:
+  - @graphql-mesh/types@0.95.0
+
 ## 0.94.6
 
 ### Patch Changes

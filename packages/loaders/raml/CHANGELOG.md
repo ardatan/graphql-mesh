@@ -1,5 +1,18 @@
 # @omnigraph/raml
 
+## 0.95.0
+
+### Patch Changes
+
+- [#5749](https://github.com/Urigo/graphql-mesh/pull/5749)
+  [`bb50c4f94`](https://github.com/Urigo/graphql-mesh/commit/bb50c4f941caa59d69186d1415dce5773596e8bc)
+  Thanks [@ardatan](https://github.com/ardatan)! - Add query parameters as arguments
+
+- Updated dependencies []:
+  - json-machete@0.95.0
+  - @omnigraph/json-schema@0.95.0
+  - @graphql-mesh/utils@0.95.0
+
 ## 0.94.9
 
 ### Patch Changes
