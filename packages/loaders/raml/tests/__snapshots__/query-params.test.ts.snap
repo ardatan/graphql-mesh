@@ -11,10 +11,10 @@ directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMet
 
 type Query @globalOptions(sourceName: "query-params", endpoint: "http://localhost:3000") {
   "Get a list of products"
-  listOfProductIds(
+  listOfProducts(
     "Get approved products"
     isApproved: Boolean = true
-  ): [Product] @httpOperation(path: "/listOfProductIds", httpMethod: GET, queryParamArgMap: "{\\"isApproved\\":\\"isApproved\\"}")
+  ): [Product] @httpOperation(path: "/listOfProducts", httpMethod: GET, queryParamArgMap: "{\\"isApproved\\":\\"isApproved\\"}")
 }
 
 type Product {
