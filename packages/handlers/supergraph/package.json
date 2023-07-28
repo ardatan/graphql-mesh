@@ -42,7 +42,7 @@
   "dependencies": {
     "@graphql-mesh/string-interpolation": "^0.5.1",
     "@graphql-tools/executor-http": "^1.0.2",
-    "@graphql-tools/federation": "^1.1.0",
+    "@graphql-tools/federation": "^1.1.1",
     "lodash.get": "^4.4.2"
   },
   "publishConfig": {

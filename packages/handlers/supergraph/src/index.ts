@@ -91,6 +91,7 @@ export default class SupergraphHandler implements MeshHandler {
       onExecutor({ endpoint }) {
         return buildHTTPExecutor({ endpoint, fetch: fetchFn });
       },
+      batch: true,
     });
     return {
       schema,

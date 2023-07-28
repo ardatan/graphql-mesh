@@ -3315,6 +3315,23 @@
   optionalDependencies:
     "@apollo/client" "~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0"
 
+"@graphql-tools/federation@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/federation/-/federation-1.1.1.tgz#a8bc35ed341543b5dd48220602138cf238ded0d3"
+  integrity sha512-Yr0f8kfMoy4vZYRTB7aAFcUx/irEGxLac+YYWY8hejwExfUpjllFYr81Jt2mmJSNZ6nJtJW9fzLmxGOApBWDGA==
+  dependencies:
+    "@graphql-tools/delegate" "^10.0.0"
+    "@graphql-tools/executor-http" "^1.0.0"
+    "@graphql-tools/merge" "^9.0.0"
+    "@graphql-tools/schema" "^10.0.0"
+    "@graphql-tools/stitch" "^9.0.0"
+    "@graphql-tools/utils" "^10.0.0"
+    "@graphql-tools/wrap" "^10.0.0"
+    tslib "^2.4.0"
+    value-or-promise "^1.0.12"
+  optionalDependencies:
+    "@apollo/client" "~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0"
+
 "@graphql-tools/graphql-file-loader@6.1.0":
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/@graphql-tools/graphql-file-loader/-/graphql-file-loader-6.1.0.tgz#8b0d8dc7ffd0417c68ad97a916a0ea1841d55d36"
