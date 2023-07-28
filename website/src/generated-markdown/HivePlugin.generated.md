@@ -1,4 +1,6 @@
 
+* `enabled` (type: `Any`) - If this expression is truthy, mocking would be enabled
+You can use environment variables expression, for example: `process.env.MOCKING_ENABLED != null`
 * `token` (type: `String`, required) - Access Token
 * `agent` (type: `Object`) - Agent Options: 
   * `timeout` (type: `Int`) - 30s by default

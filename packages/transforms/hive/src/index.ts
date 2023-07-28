@@ -14,6 +14,10 @@ interface TransformationContext {
 export default class HiveTransform implements MeshTransform {
   private hiveClient: HiveClient;
   constructor({ config, pubsub, logger }: MeshTransformOptions<YamlConfig.HivePlugin>) {
+    const enabled =
+      // eslint-disable-next-line no-new-func
+      config != null && 'enabled' in config ? new Function(`return ${config.enabled}`)() : true;
+
     const token = stringInterpolator.parse(config.token, {
       env: process.env,
     });
@@ -63,7 +67,7 @@ export default class HiveTransform implements MeshTransform {
       };
     }
     this.hiveClient = createHive({
-      enabled: true,
+      enabled,
       debug: !!process.env.DEBUG,
       token,
       agent,

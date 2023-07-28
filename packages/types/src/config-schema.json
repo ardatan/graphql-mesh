@@ -1978,6 +1978,22 @@
       "type": "object",
       "title": "HivePlugin",
       "properties": {
+        "enabled": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ],
+          "description": "If this expression is truthy, mocking would be enabled\nYou can use environment variables expression, for example: `process.env.MOCKING_ENABLED != null`"
+        },
         "token": {
           "type": "string",
           "description": "Access Token"

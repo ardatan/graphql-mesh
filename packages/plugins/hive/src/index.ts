@@ -7,6 +7,16 @@ export default function useMeshHive(
   pluginOptions: MeshPluginOptions<YamlConfig.HivePlugin>,
   // eslint-disable-next-line @typescript-eslint/ban-types
 ): MeshPlugin<{}> {
+  const enabled =
+    pluginOptions != null && 'enabled' in pluginOptions
+      ? // eslint-disable-next-line no-new-func
+        new Function(`return ${pluginOptions.enabled}`)()
+      : true;
+
+  if (!enabled) {
+    return {};
+  }
+
   const token = stringInterpolator.parse(pluginOptions.token, {
     env: process.env,
   });

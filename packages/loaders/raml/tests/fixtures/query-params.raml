@@ -1,0 +1,30 @@
+#%RAML 1.0
+title: Product
+version: v1
+baseUri: http://localhost:3000
+
+mediaType:
+  - application/json
+annotationTypes:
+  deprecate:
+  future:
+protocols: [HTTPS]
+types:
+  ProductList:
+    type: !include ProductList.schema.json
+
+/listOfProducts:
+  description: Get a list of products
+  get:
+    queryParameters:
+      isApproved:
+        description: Get approved products
+        type: boolean
+        default: true
+    responses:
+      200:
+        body:
+          application/json:
+            type: ProductList
+
+
