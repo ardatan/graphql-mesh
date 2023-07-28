@@ -1,11 +1,4 @@
-import {
-  buildSchema,
-  execute,
-  ExecutionArgs,
-  GraphQLSchema,
-  OperationTypeNode,
-  subscribe,
-} from 'graphql';
+import { buildSchema, GraphQLSchema } from 'graphql';
 import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
 import {
   GetMeshSourcePayload,
@@ -19,7 +12,6 @@ import {
   YamlConfig,
 } from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
-import { getOperationASTFromRequest } from '@graphql-tools/utils';
 import {
   getGraphQLSchemaFromBundle,
   JSONSchemaLoaderBundle,
@@ -111,33 +103,16 @@ export default class JsonSchemaHandler implements MeshHandler {
     this.fetchFn = fetchFn;
     this.logger.debug('Getting the schema with annotations');
     const nonExecutableSchema = await this.getNonExecutableSchema();
-    const schemaWithDirectives$ = Promise.resolve().then(() => {
-      this.logger.info(`Processing annotations for the execution layer`);
-      return processDirectives({
-        ...this.config,
-        schema: nonExecutableSchema,
-        pubsub: this.pubsub,
-        logger: this.logger,
-        globalFetch: fetchFn,
-      });
+    this.logger.info(`Processing annotations for the execution layer`);
+    const schemaWithDirectives = processDirectives({
+      ...this.config,
+      schema: nonExecutableSchema,
+      pubsub: this.pubsub,
+      logger: this.logger,
+      globalFetch: fetchFn,
     });
     return {
-      schema: nonExecutableSchema,
-      executor: async executionRequest => {
-        const args: ExecutionArgs = {
-          schema: await schemaWithDirectives$,
-          document: executionRequest.document,
-          variableValues: executionRequest.variables,
-          operationName: executionRequest.operationName,
-          contextValue: executionRequest.context,
-          rootValue: executionRequest.rootValue,
-        };
-        const operationAST = getOperationASTFromRequest(executionRequest);
-        if (operationAST.operation === OperationTypeNode.SUBSCRIPTION) {
-          return subscribe(args) as any;
-        }
-        return execute(args) as any;
-      },
+      schema: schemaWithDirectives,
     };
   }
 }

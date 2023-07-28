@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Query Paramters generates correct schema 1`] = `
+"schema {
+  query: Query
+}
+
+directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+
+directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+
+type Query @globalOptions(sourceName: "query-params", endpoint: "http://localhost:3000") {
+  "Get a list of products"
+  listOfProductIds(
+    "Get approved products"
+    isApproved: Boolean = true
+  ): [Product] @httpOperation(path: "/listOfProductIds", httpMethod: GET, queryParamArgMap: "{\\"isApproved\\":\\"isApproved\\"}")
+}
+
+type Product {
+  id: String
+  name: String
+}
+
+scalar ObjMap
+
+enum HTTPMethod {
+  GET
+  HEAD
+  POST
+  PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
+  PATCH
+}"
+`;
