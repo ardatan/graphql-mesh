@@ -38,7 +38,9 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "graphql": "*"
+    "@types/ts-node": "*",
+    "graphql": "*",
+    "graphql-tag": "*"
   },
   "dependencies": {
     "@graphql-codegen/core": "^4.0.0",
@@ -78,9 +80,11 @@
   "devDependencies": {
     "@types/lodash.get": "4.4.7",
     "@types/mkdirp": "1.0.2",
+    "@types/node": "^20.4.5",
     "@types/rimraf": "3.0.2",
     "@types/ws": "8.5.5",
-    "@types/yargs": "17.0.24"
+    "@types/yargs": "17.0.24",
+    "graphql-tag": "^2.12.6"
   },
   "publishConfig": {
     "access": "public",
@@ -99,3 +103,4 @@
     "definition": "dist/typings/index.d.ts"
   }
 }
+
