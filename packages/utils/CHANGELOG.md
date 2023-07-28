@@ -1,5 +1,17 @@
 # @graphql-mesh/utils
 
+## 0.94.6
+
+### Patch Changes
+
+- [#5730](https://github.com/Urigo/graphql-mesh/pull/5730)
+  [`d1310cdff`](https://github.com/Urigo/graphql-mesh/commit/d1310cdff53c53d5342e28b7c0c1af1dd25c6c75)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Allow nested objects as `sourceArgs`
+  argument of `@resolveTo` and `additionalResolvers`
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.94.6
+
 ## 0.94.5
 
 ### Patch Changes

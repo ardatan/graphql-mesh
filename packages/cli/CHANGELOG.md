@@ -1,5 +1,22 @@
 # @graphql-mesh/cli
 
+## 0.85.6
+
+### Patch Changes
+
+- [`b9ac2eb3b`](https://github.com/Urigo/graphql-mesh/commit/b9ac2eb3bb803f9c390ca57f5c69cf81e197e1ba)
+  Thanks [@ardatan](https://github.com/ardatan)! - Enable forking automatically if it is
+  \`production\`
+
+- Updated dependencies
+  [[`d1310cdff`](https://github.com/Urigo/graphql-mesh/commit/d1310cdff53c53d5342e28b7c0c1af1dd25c6c75)]:
+  - @graphql-mesh/utils@0.94.6
+  - @graphql-mesh/config@0.96.5
+  - @graphql-mesh/http@0.95.4
+  - @graphql-mesh/runtime@0.95.4
+  - @graphql-mesh/store@0.94.6
+  - @graphql-mesh/types@0.94.6
+
 ## 0.85.5
 
 ### Patch Changes
