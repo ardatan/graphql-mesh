@@ -3,7 +3,7 @@ import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Response, URL } from '@whatwg-node/fetch';
 import { loadGraphQLSchemaFromRAML } from '../src/loadGraphQLSchemaFromRAML';
 
-describe('Query Paramters', () => {
+describe('Query Parameters', () => {
   let schema: GraphQLSchema;
   beforeAll(async () => {
     schema = await loadGraphQLSchemaFromRAML('query-params', {

@@ -19,12 +19,6 @@ type Query @globalOptions(sourceName: "FakeAPI", endpoint: "https://not-existing
   company(id: String!): Company @httpOperation(path: "/company/{args.id}", httpMethod: GET)
 }
 
-type Mutation {
-  createUser(input: CreateUpdateUserInput): User @httpOperation(path: "/user", httpMethod: PUT)
-  updateUser(id: String!, input: CreateUpdateUserInput): User @httpOperation(path: "/user/{args.id}", httpMethod: POST)
-  deleteUser(id: String!): JSON @httpOperation(path: "/user/{args.id}", httpMethod: DELETE)
-}
-
 "Fake User Object"
 type User {
   firstName: String
@@ -54,6 +48,12 @@ enum CompanyType {
   Public_Limited @enum(value: "\\"Public Limited\\"")
   Private_Limited @enum(value: "\\"Private Limited\\"")
   One_Person @enum(value: "\\"One Person\\"")
+}
+
+type Mutation {
+  createUser(input: CreateUpdateUserInput): User @httpOperation(path: "/user", httpMethod: PUT)
+  updateUser(id: String!, input: CreateUpdateUserInput): User @httpOperation(path: "/user/{args.id}", httpMethod: POST)
+  deleteUser(id: String!): JSON @httpOperation(path: "/user/{args.id}", httpMethod: DELETE)
 }
 
 input CreateUpdateUserInput @example(value: "{\\"firstName\\":\\"John\\",\\"lastName\\":\\"Doe\\",\\"jobTitle\\":\\"Software Developer\\"}") {

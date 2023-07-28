@@ -352,26 +352,6 @@ type Query @globalOptions(sourceName: "Wiki", endpoint: "https://wikimedia.org/a
   viewsInPastMonth(project: String!): BigInt!
 }
 
-type Mutation {
-  "Checks the supplied TeX formula for correctness and returns the\\nnormalised formula representation as well as information about\\nidentifiers. Available types are tex and inline-tex. The response\\ncontains the \`x-resource-location\` header which can be used to retrieve\\nthe render of the checked formula in one of the supported rendering\\nformats. Just append the value of the header to \`/media/math/{format}/\`\\nand perform a GET request against that URL.\\n\\nStability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable).\\n"
-  post_media_math_check_by_type(type: mutationInput_post_media_math_check_by_type_type!): problem @httpOperation(path: "/media/math/check/{args.type}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: POST)
-  "Fetches the machine translation for the posted content from the source\\nto the destination language.\\n\\nStability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable)\\n"
-  post_transform_html_from_by_from_lang_to_by_to_lang(
-    "The source language code"
-    from_lang: String!
-    "The target language code"
-    to_lang: String!
-  ): post_transform_html_from_by_from_lang_to_by_to_lang_response @httpOperation(path: "/transform/html/from/{args.from_lang}/to/{args.to_lang}", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/x-www-form-urlencoded\\",\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: POST)
-  "Fetches the machine translation for the posted content from the source\\nto the destination language.\\n\\nStability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable)\\n"
-  post_transform_html_from_by_from_lang_to_by_to_lang_by_provider(
-    "The source language code"
-    from_lang: String!
-    "The target language code"
-    to_lang: String!
-    provider: mutationInput_post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_provider!
-  ): post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_response @httpOperation(path: "/transform/html/from/{args.from_lang}/to/{args.to_lang}/{args.provider}", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/x-www-form-urlencoded\\",\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: POST)
-}
-
 union feed_availability_response @statusCodeTypeName(statusCode: 200, typeName: "availability") @statusCodeTypeName(statusCode: "default", typeName: "problem") = availability | problem
 
 type availability {
@@ -1302,6 +1282,26 @@ union transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider_respons
 enum queryInput_transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider_provider {
   JsonDict
   Dictd
+}
+
+type Mutation {
+  "Checks the supplied TeX formula for correctness and returns the\\nnormalised formula representation as well as information about\\nidentifiers. Available types are tex and inline-tex. The response\\ncontains the \`x-resource-location\` header which can be used to retrieve\\nthe render of the checked formula in one of the supported rendering\\nformats. Just append the value of the header to \`/media/math/{format}/\`\\nand perform a GET request against that URL.\\n\\nStability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable).\\n"
+  post_media_math_check_by_type(type: mutationInput_post_media_math_check_by_type_type!): problem @httpOperation(path: "/media/math/check/{args.type}", operationSpecificHeaders: "{\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: POST)
+  "Fetches the machine translation for the posted content from the source\\nto the destination language.\\n\\nStability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable)\\n"
+  post_transform_html_from_by_from_lang_to_by_to_lang(
+    "The source language code"
+    from_lang: String!
+    "The target language code"
+    to_lang: String!
+  ): post_transform_html_from_by_from_lang_to_by_to_lang_response @httpOperation(path: "/transform/html/from/{args.from_lang}/to/{args.to_lang}", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/x-www-form-urlencoded\\",\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: POST)
+  "Fetches the machine translation for the posted content from the source\\nto the destination language.\\n\\nStability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable)\\n"
+  post_transform_html_from_by_from_lang_to_by_to_lang_by_provider(
+    "The source language code"
+    from_lang: String!
+    "The target language code"
+    to_lang: String!
+    provider: mutationInput_post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_provider!
+  ): post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_response @httpOperation(path: "/transform/html/from/{args.from_lang}/to/{args.to_lang}/{args.provider}", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/x-www-form-urlencoded\\",\\"Accept\\":\\"application/json, application/problem+json\\"}", httpMethod: POST)
 }
 
 "The input type of the given formula; can be tex or inline-tex"

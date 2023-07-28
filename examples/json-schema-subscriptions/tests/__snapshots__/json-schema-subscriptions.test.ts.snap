@@ -21,19 +21,14 @@ type Query @globalOptions(sourceName: "Example", endpoint: "http://localhost:400
   todos: [query_todos_items] @httpOperation(path: "/todos", httpMethod: GET)
 }
 
-type Mutation {
-  addTodo(input: mutationInput_addTodo_input_Input): mutation_addTodo @httpOperation(path: "/todo", httpMethod: POST)
-}
-
-type Subscription {
-  "PubSub Topic: webhook:post:/webhooks/todo_added"
-  todoAdded: subscription_todoAdded @pubsubOperation(pubsubTopic: "webhook:post:/webhooks/todo_added")
-}
-
 type query_todos_items {
   id: Int
   name: String
   content: String
+}
+
+type Mutation {
+  addTodo(input: mutationInput_addTodo_input_Input): mutation_addTodo @httpOperation(path: "/todo", httpMethod: POST)
 }
 
 type mutation_addTodo @example(value: "{\\"id\\":0,\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") {
@@ -45,6 +40,11 @@ type mutation_addTodo @example(value: "{\\"id\\":0,\\"name\\":\\"TodoName\\",\\"
 input mutationInput_addTodo_input_Input @example(value: "{\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") {
   name: String
   content: String
+}
+
+type Subscription {
+  "PubSub Topic: webhook:post:/webhooks/todo_added"
+  todoAdded: subscription_todoAdded @pubsubOperation(pubsubTopic: "webhook:post:/webhooks/todo_added")
 }
 
 type subscription_todoAdded @example(value: "{\\"id\\":0,\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") {
