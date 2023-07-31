@@ -44,7 +44,6 @@
     "@envelop/extended-validation": "^3.0.0",
     "@graphql-mesh/string-interpolation": "^0.5.1",
     "@graphql-tools/batch-delegate": "^9.0.0",
-    "@graphql-tools/batch-execute": "^9.0.0",
     "@graphql-tools/delegate": "^10.0.0",
     "@graphql-tools/wrap": "^10.0.0",
     "@whatwg-node/fetch": "^0.9.0"

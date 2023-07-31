@@ -1,7 +1,6 @@
 import { BREAK, execute, FieldNode, OperationDefinitionNode, visit } from 'graphql';
 import { mapAsyncIterator, Plugin, TypedExecutionArgs } from '@envelop/core';
 import { applyRequestTransforms, applyResultTransforms } from '@graphql-mesh/utils';
-import { createBatchingExecutor } from '@graphql-tools/batch-execute';
 import {
   applySchemaTransforms,
   createDefaultExecutor,
