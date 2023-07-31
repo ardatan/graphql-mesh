@@ -82,9 +82,11 @@ function getExecuteFn(subschema: Subschema) {
     if (executor == null) {
       executor = createDefaultExecutor(subschema.schema);
     }
+    /*
     if (subschema.batch) {
       executor = createBatchingExecutor(executor);
     }
+    */
     const transformationContext: Record<string, any> = {};
     const transformedRequest = applyRequestTransforms(
       originalRequest,
