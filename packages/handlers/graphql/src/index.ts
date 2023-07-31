@@ -4,12 +4,15 @@ import {
   buildSchema,
   DocumentNode,
   ExecutionResult,
+  getIntrospectionQuery,
   GraphQLResolveInfo,
   GraphQLSchema,
   IntrospectionQuery,
   Kind,
+  parse,
   print,
   SelectionNode,
+  visit,
 } from 'graphql';
 import lodashGet from 'lodash.get';
 import { process, util } from '@graphql-mesh/cross-helpers';
@@ -37,17 +40,18 @@ import {
   readFileOrUrl,
   readUrl,
 } from '@graphql-mesh/utils';
+import { getSubschemaForFederationWithTypeDefs, SubgraphSDLQuery } from '@graphql-tools/federation';
 import { SubscriptionProtocol, UrlLoader } from '@graphql-tools/url-loader';
 import {
   ExecutionRequest,
   Executor,
+  getDocumentNodeFromSchema,
   getOperationASTFromRequest,
   isAsyncIterable,
   isDocumentNode,
   memoize1,
   parseSelectionSet,
 } from '@graphql-tools/utils';
-import { schemaFromExecutor } from '@graphql-tools/wrap';
 
 const getResolverData = memoize1(function getResolverData(params: ExecutionRequest) {
   return {
@@ -144,6 +148,9 @@ export default class GraphQLHandler implements MeshHandler {
 
   private getSchemaFromContent(sdlOrIntrospection: string | IntrospectionQuery | DocumentNode) {
     if (typeof sdlOrIntrospection === 'string') {
+      if (sdlOrIntrospection.includes('@key')) {
+        sdlOrIntrospection = sdlOrIntrospection.replace(/extend type (\w+)/g, 'type $1 @extends');
+      }
       return buildSchema(sdlOrIntrospection, {
         assumeValid: true,
         assumeValidSDL: true,
@@ -201,14 +208,14 @@ export default class GraphQLHandler implements MeshHandler {
       );
       return this.getSchemaFromContent(sdlOrIntrospection);
     }
-    return this.nonExecutableSchema.getWithSet(() => {
+    return this.nonExecutableSchema.getWithSet(async () => {
       const endpointFactory = getInterpolatedStringFactory(httpSourceConfig.endpoint);
       const executor = this.urlLoader.getExecutorAsync(httpSourceConfig.endpoint, {
         ...httpSourceConfig,
         customFetch: this.fetchFn,
         subscriptionsProtocol: httpSourceConfig.subscriptionsProtocol as SubscriptionProtocol,
       });
-      return schemaFromExecutor(function meshIntrospectionExecutor(params: ExecutionRequest) {
+      function meshIntrospectionExecutor(params: ExecutionRequest) {
         const resolverData = getResolverData(params);
         return executor({
           ...params,
@@ -218,6 +225,25 @@ export default class GraphQLHandler implements MeshHandler {
             endpoint: endpointFactory(resolverData),
           },
         });
+      }
+      const introspection = (await meshIntrospectionExecutor({
+        document: parse(getIntrospectionQuery()),
+      })) as ExecutionResult<IntrospectionQuery>;
+      if (introspection.data.__schema.types.find(t => t.name === '_Service')) {
+        const sdl = (await meshIntrospectionExecutor({
+          document: parse(SubgraphSDLQuery),
+        })) as ExecutionResult<{ _service: { sdl: string } }>;
+        const schema = buildSchema(
+          sdl.data._service.sdl.replace(/extend type (\w+)/g, 'type $1 @extends'),
+          {
+            assumeValid: true,
+            assumeValidSDL: true,
+          },
+        );
+        return schema;
+      }
+      return buildClientSchema(introspection.data, {
+        assumeValid: true,
       });
     });
   }
@@ -308,7 +334,32 @@ export default class GraphQLHandler implements MeshHandler {
     };
   }
 
-  async getMeshSource({ fetchFn }: GetMeshSourcePayload): Promise<MeshSource> {
+  async getMeshSource(payload: GetMeshSourcePayload): Promise<MeshSource> {
+    const meshSource = await this.getMeshSourceWithoutFederation(payload);
+    if (meshSource.schema.getDirective('key') != null) {
+      const typeDefs = visit(getDocumentNodeFromSchema(meshSource.schema), {
+        ObjectTypeDefinition(node) {
+          if (node.directives?.find(d => d.name.value === 'extends')) {
+            return {
+              ...node,
+              directives: node.directives.filter(d => d.name.value !== 'extends'),
+              kind: Kind.OBJECT_TYPE_EXTENSION,
+            };
+          }
+          return node;
+        },
+      });
+      const extraConfig = getSubschemaForFederationWithTypeDefs(typeDefs);
+      return {
+        ...meshSource,
+        ...extraConfig,
+        batch: true,
+      };
+    }
+    return meshSource;
+  }
+
+  async getMeshSourceWithoutFederation({ fetchFn }: GetMeshSourcePayload): Promise<MeshSource> {
     this.fetchFn = fetchFn;
     if ('sources' in this.config) {
       if (this.config.strategy === 'race') {

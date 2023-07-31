@@ -465,6 +465,9 @@
           "$ref": "#/definitions/SoapHandler",
           "description": "Handler for SOAP"
         },
+        "supergraph": {
+          "$ref": "#/definitions/SupergraphHandler"
+        },
         "thrift": {
           "$ref": "#/definitions/ThriftHandler",
           "description": "Handler for OData"
@@ -3076,6 +3079,33 @@
           "type": "object",
           "properties": {},
           "description": "JSON object representing the Headers to add to the runtime of the API calls only for operation during runtime"
+        }
+      },
+      "required": ["source"]
+    },
+    "SupergraphHandler": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "SupergraphHandler",
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "A file path to your Supergraph Schema\nIf you provide a path to a code file(js or ts),\nother options will be ignored and the schema exported from the file will be used directly."
+        },
+        "schemaHeaders": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
         }
       },
       "required": ["source"]

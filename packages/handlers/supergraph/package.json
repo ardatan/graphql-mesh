@@ -1,11 +1,11 @@
 {
-  "name": "@graphql-mesh/graphql",
-  "version": "0.95.0",
+  "name": "@graphql-mesh/supergraph",
+  "version": "0.0.0",
   "type": "module",
   "repository": {
     "type": "git",
     "url": "Urigo/graphql-mesh",
-    "directory": "packages/handlers/graphql"
+    "directory": "packages/handlers/supergraph"
   },
   "license": "MIT",
   "engines": {
@@ -36,15 +36,13 @@
     "@graphql-mesh/store": "^0.95.0",
     "@graphql-mesh/types": "^0.95.0",
     "@graphql-mesh/utils": "^0.95.0",
-    "@graphql-tools/utils": "^9.2.1 || ^10.0.0",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "^0.5.1",
-    "@graphql-tools/delegate": "^10.0.0",
-    "@graphql-tools/federation": "^1.1.0",
-    "@graphql-tools/url-loader": "^8.0.0",
+    "@graphql-tools/executor-http": "^1.0.2",
+    "@graphql-tools/federation": "^1.1.1",
     "lodash.get": "^4.4.2"
   },
   "publishConfig": {

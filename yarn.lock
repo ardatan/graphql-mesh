@@ -206,7 +206,7 @@
   resolved "https://registry.yarnpkg.com/@apollo/cache-control-types/-/cache-control-types-1.0.3.tgz#5da62cf64c3b4419dabfef4536b57a40c8ff0b47"
   integrity sha512-F17/vCp7QVwom9eG7ToauIKdAxpSoadsJnqIfyryLFSkLSOEqu+eC5Z3N8OXcUVStuOMcNHlyraRsA6rRICu4g==
 
-"@apollo/client@3.7.17", "@apollo/client@^3.7.0":
+"@apollo/client@3.7.17", "@apollo/client@^3.7.0", "@apollo/client@~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0":
   version "3.7.17"
   resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.7.17.tgz#1d2538729fd8ef138aa301a7cf62704474e57b72"
   integrity sha512-0EErSHEtKPNl5wgWikHJbKFAzJ/k11O0WO2QyqZSHpdxdAnw7UWHY4YiLbHCFG7lhrD+NTQ3Z/H9Jn4rcikoJA==
@@ -3250,7 +3250,7 @@
     tslib "^2.4.0"
     ws "^8.13.0"
 
-"@graphql-tools/executor-http@^1.0.0":
+"@graphql-tools/executor-http@^1.0.0", "@graphql-tools/executor-http@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@graphql-tools/executor-http/-/executor-http-1.0.2.tgz#d7964a6e5ec883842f9a8e3f104f93c9b8f472be"
   integrity sha512-JKTB4E3kdQM2/1NEcyrVPyQ8057ZVthCV5dFJiKktqY9IdmF00M8gupFcW3jlbM/Udn78ickeUBsUzA3EouqpA==
@@ -3284,6 +3284,40 @@
     "@repeaterjs/repeater" "^3.0.4"
     tslib "^2.4.0"
     value-or-promise "^1.0.12"
+
+"@graphql-tools/federation@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/federation/-/federation-1.1.0.tgz#047547fcd7d28a5afdd802c47b5fd63828fc6719"
+  integrity sha512-+22aWiPqAZfdssJXcDe1RaUtPYtILU8+8wNOrsSQXXp/o0dZyAfeqXLs8CP2pyg5zaXkX25x2cnciqqR0QOi2w==
+  dependencies:
+    "@graphql-tools/delegate" "^10.0.0"
+    "@graphql-tools/executor-http" "^1.0.0"
+    "@graphql-tools/merge" "^9.0.0"
+    "@graphql-tools/schema" "^10.0.0"
+    "@graphql-tools/stitch" "^9.0.0"
+    "@graphql-tools/utils" "^10.0.0"
+    "@graphql-tools/wrap" "^10.0.0"
+    tslib "^2.4.0"
+    value-or-promise "^1.0.12"
+  optionalDependencies:
+    "@apollo/client" "~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0"
+
+"@graphql-tools/federation@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/federation/-/federation-1.1.1.tgz#a8bc35ed341543b5dd48220602138cf238ded0d3"
+  integrity sha512-Yr0f8kfMoy4vZYRTB7aAFcUx/irEGxLac+YYWY8hejwExfUpjllFYr81Jt2mmJSNZ6nJtJW9fzLmxGOApBWDGA==
+  dependencies:
+    "@graphql-tools/delegate" "^10.0.0"
+    "@graphql-tools/executor-http" "^1.0.0"
+    "@graphql-tools/merge" "^9.0.0"
+    "@graphql-tools/schema" "^10.0.0"
+    "@graphql-tools/stitch" "^9.0.0"
+    "@graphql-tools/utils" "^10.0.0"
+    "@graphql-tools/wrap" "^10.0.0"
+    tslib "^2.4.0"
+    value-or-promise "^1.0.12"
+  optionalDependencies:
+    "@apollo/client" "~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0"
 
 "@graphql-tools/graphql-file-loader@6.1.0":
   version "6.1.0"
@@ -21800,7 +21834,6 @@ typical@^5.2.0:
 
 uWebSockets.js@uNetworking/uWebSockets.js#v20.30.0:
   version "20.30.0"
-  uid d39d4181daf5b670d44cbc1b18f8c28c85fd4142
   resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/d39d4181daf5b670d44cbc1b18f8c28c85fd4142"
 
 ua-parser-js@^1.0.35:

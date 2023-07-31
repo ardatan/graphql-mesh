@@ -12,6 +12,7 @@
     "start-gateway": "mesh dev --dir gateway",
     "start-gateway-delayed": "delay 1 && npm run start-gateway",
     "start-service-accounts": "ts-node services/accounts/index.ts",
+    "start-service-accounts-subgraph": "ts-node services/accounts-subgraph/index.ts",
     "start-service-inventory": "ts-node services/inventory/index.ts",
     "start-service-products": "ts-node services/products/index.ts",
     "start-service-reviews": "ts-node services/reviews/index.ts",

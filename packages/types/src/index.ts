@@ -3,7 +3,7 @@ import { DocumentNode, GraphQLResolveInfo, GraphQLSchema, SelectionSetNode } fro
 import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 import type { Plugin } from '@envelop/core';
 import { MeshStore } from '@graphql-mesh/store';
-import { BatchDelegateOptions } from '@graphql-tools/batch-delegate';
+import type { BatchDelegateOptions } from '@graphql-tools/batch-delegate';
 import {
   CreateProxyingResolverFn,
   IDelegateToSchemaOptions,
