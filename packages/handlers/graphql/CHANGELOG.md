@@ -1,5 +1,30 @@
 # @graphql-mesh/graphql
 
+## 0.95.1
+
+### Patch Changes
+
+- [#5744](https://github.com/Urigo/graphql-mesh/pull/5744)
+  [`7cdc69e04`](https://github.com/Urigo/graphql-mesh/commit/7cdc69e0454ab99ea5c3b8072ac28da8f81a8796)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency
+    [`@graphql-tools/federation@^1.1.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/1.1.0)
+    (to `dependencies`)
+  - Removed dependency
+    [`@graphql-tools/wrap@^10.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/10.0.0)
+    (from `dependencies`)
+
+- [#5744](https://github.com/Urigo/graphql-mesh/pull/5744)
+  [`7cdc69e04`](https://github.com/Urigo/graphql-mesh/commit/7cdc69e0454ab99ea5c3b8072ac28da8f81a8796)
+  Thanks [@ardatan](https://github.com/ardatan)! - New strategy to handle Federation
+
+- Updated dependencies
+  [[`7cdc69e04`](https://github.com/Urigo/graphql-mesh/commit/7cdc69e0454ab99ea5c3b8072ac28da8f81a8796)]:
+  - @graphql-mesh/types@0.95.1
+  - @graphql-mesh/store@0.95.1
+  - @graphql-mesh/utils@0.95.1
+
 ## 0.95.0
 
 ### Patch Changes
