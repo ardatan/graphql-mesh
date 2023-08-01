@@ -2480,10 +2480,10 @@
   resolved "https://registry.yarnpkg.com/@cloudflare/workerd-windows-64/-/workerd-windows-64-1.20230724.0.tgz#062eca390c7224eabbbf4fd811054ba5f09b55b2"
   integrity sha512-wVpPNu19fnvgsD8V6NiGPSuET0bzKmgn3wJ6RwAwQA+GQ0hdDIDVYd13aImhgO6jLfQvkduCDxeZluGZ7PPojQ==
 
-"@cloudflare/workers-types@4.20230724.0":
-  version "4.20230724.0"
-  resolved "https://registry.yarnpkg.com/@cloudflare/workers-types/-/workers-types-4.20230724.0.tgz#2fbe19df097e7cd6fb0d937bde84d2b25614269d"
-  integrity sha512-WuFlsai21oJhRMBHdkM0saIuK1Faitp/GXWj31Zlbe3cCtPNlwYtX5WkojDNWWAxX47LMHBF9wv7wrytNLabYA==
+"@cloudflare/workers-types@4.20230801.0":
+  version "4.20230801.0"
+  resolved "https://registry.yarnpkg.com/@cloudflare/workers-types/-/workers-types-4.20230801.0.tgz#d23ec9671a08d91ad027fb4c783e94dee275d279"
+  integrity sha512-RzRUR+J/T3h58qbTZHYntYsnZXu3JnrlZIhqP2hhdyfoZAZ/+ko4wX0foAqlYHi+kXWaWtySHBuMcx6ec6TXlQ==
 
 "@colors/colors@1.5.0":
   version "1.5.0"
@@ -16638,10 +16638,10 @@ neo4j-driver@^5.9.2:
     neo4j-driver-core "5.11.0"
     rxjs "^7.8.1"
 
-newrelic@10.6.0:
-  version "10.6.0"
-  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-10.6.0.tgz#7df247ff3eedb3d982e4f195b6546a028d365a7c"
-  integrity sha512-O4O1pEg4x0UnTBCReiVIZHNIq/6bl8/EPgtL0FQrHThQ8tLiS1jUSzyLiTGpH7WGvRy5ol8CFTmHEe1yfnWvqg==
+newrelic@10.6.1:
+  version "10.6.1"
+  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-10.6.1.tgz#91a75aa26523caf85308e552c88af16817484bd3"
+  integrity sha512-jtBOCcTDqEp7oWWpuFQQDhe4DEydxm6NzuloNzJANawWc94PT7abHknhXq+f4wtP6Ydzs8Uq9MdQBHkS9nQ2wQ==
   dependencies:
     "@grpc/grpc-js" "^1.8.10"
     "@grpc/proto-loader" "^0.7.5"
