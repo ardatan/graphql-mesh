@@ -1,5 +1,12 @@
 # @graphql-mesh/cli
 
+## 0.86.2
+
+### Patch Changes
+
+- [`8af682deb`](https://github.com/Urigo/graphql-mesh/commit/8af682deb0193f6d009dad90743b2d79b1053611)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fork in production not development
+
 ## 0.86.1
 
 ### Patch Changes
