@@ -5682,10 +5682,10 @@
     lodash.sortby "^4.7.0"
     remove-markdown "^0.5.0"
 
-"@theguild/components@5.1.1":
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/@theguild/components/-/components-5.1.1.tgz#105f8a6eeab12a35aeb737ec427664966f495459"
-  integrity sha512-VPmnK7r5PYWemyYby/Xfxn9jv+nKDAZcW27hlKmiG8pVHe2q6HNjZvubZijmtl6r0WoiCdBnKJSDtaKDV5fbJQ==
+"@theguild/components@5.2.1":
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/@theguild/components/-/components-5.2.1.tgz#9b7fce72dd432aa23ed6a55eacd7d8fe755a9d2b"
+  integrity sha512-sEJMyyAuB7P1fdHewWfdy7CnXUSgR+mkVK74H2UWJWVVyydx4QZnrrefZEgDLyuea7V10a4zjNou1FwdJ+05Fg==
   dependencies:
     "@algolia/autocomplete-js" "1.10.0"
     "@algolia/autocomplete-plugin-algolia-insights" "1.10.0"
