@@ -2511,16 +2511,18 @@ scalar PositiveInt
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 type result_info {
-  "Total results returned based on your search parameters."
+  "Total number of results for the requested service"
   count: Float
-  "Current page within paginated list of results."
+  "Current page within paginated list of results"
   page: Float
-  "Number of results per page of results."
+  "Number of results per page of results"
   per_page: Float
-  "Total results available without any search parameters."
+  "Total results available without any search parameters"
   total_count: Float
   cursors: query_lists_get_list_items_oneOf_0_allOf_1_result_info_cursors
-  "Opaque token indicating the position from which to continue when requesting the next set of records. A valid value for the cursor can be obtained from the cursors object in the result_info structure."
+  """
+  Opaque token indicating the position from which to continue when requesting the next set of records. A valid value for the cursor can be obtained from the cursors object in the result_info structure.
+  """
   cursor: String
   total_pages: Int
 }
@@ -2803,7 +2805,7 @@ type query_ip_address_management_address_maps_address_map_details_oneOf_0_allOf_
   algo: String!
   "Optional secret that will be passed in the \`cf-webhook-auth\` header when dispatching a webhook notification. Secrets are not returned in any API response body."
   secret: String
-  query: components_schemas_query
+  query: schemas_query
   someMetadataKey: String
   virtual_dns_ips: [query_dns_firewall__legacy_list_dns_firewall_clusters_oneOf_0_allOf_1_result_items_virtual_dns_ips_items]!
   "Audience tag."
@@ -3778,7 +3780,7 @@ enum pcaps_system @typescript(type: "\\"magic-transit\\"") @example(value: "\\"m
   magic_transit @enum(value: "\\"magic-transit\\"")
 }
 
-type components_schemas_query {
+type schemas_query {
   dimensions: [namespaceId_const]
   filters: String
   "Limit number of returned metrics."

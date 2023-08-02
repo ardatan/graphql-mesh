@@ -303,9 +303,6 @@ type ExampleAllOf {
     );
   });
 
-  /**
-   * TODO: Make a more generic test where deep nesting of objects have to be properly merged!
-   */
   it('should generate deeply-merged object types from allOf definitions', async () => {
     const inputSchema: JSONSchema = {
       title: 'ExampleAllOf',
@@ -323,6 +320,18 @@ type ExampleAllOf {
                 },
                 age: {
                   type: 'number',
+                },
+                address: {
+                  type: 'object',
+                  title: 'Address',
+                  properties: {
+                    street: {
+                      type: 'string',
+                    },
+                    number: {
+                      type: 'number',
+                    },
+                  },
                 },
               },
               required: ['id'],
@@ -343,6 +352,18 @@ type ExampleAllOf {
                 age: {
                   type: 'string', // Overriding type
                 },
+                address: {
+                  type: 'object',
+                  title: 'Address',
+                  properties: {
+                    number: {
+                      type: 'string', // Overriding type
+                    },
+                    zipCode: {
+                      type: 'string',
+                    },
+                  },
+                },
               },
               required: ['name'],
             },
@@ -351,7 +372,13 @@ type ExampleAllOf {
       ],
     };
     const result = await getComposerFromJSONSchema(inputSchema, logger);
-    expect((result.input as InputTypeComposer).toSDL({ deep: true })).toContain(
+    expect(
+      (result.input as InputTypeComposer).toSDL({
+        deep: true,
+        omitDescriptions: true,
+        omitScalars: true,
+      }),
+    ).toContain(
       /* GraphQL */ `
 input ExampleAllOf_Input {
   attributes: Attributes_Input
@@ -360,11 +387,24 @@ input ExampleAllOf_Input {
 input Attributes_Input {
   id: String!
   age: String
+  address: Address_Input
   name: String!
+}
+
+input Address_Input {
+  street: String
+  number: String
+  zipCode: String
 }
     `.trim(),
     );
-    expect((result.output as InputTypeComposer).toSDL({ deep: true })).toContain(
+    expect(
+      (result.output as InputTypeComposer).toSDL({
+        deep: true,
+        omitDescriptions: true,
+        omitScalars: true,
+      }),
+    ).toContain(
       /* GraphQL */ `
 type ExampleAllOf {
   attributes: Attributes
@@ -373,7 +413,14 @@ type ExampleAllOf {
 type Attributes {
   id: String!
   age: String
+  address: Address
   name: String!
+}
+
+type Address {
+  street: String
+  number: String
+  zipCode: String
 }
     `.trim(),
     );
