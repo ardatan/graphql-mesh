@@ -3225,10 +3225,10 @@
     is-promise "4.0.0"
     tslib "~2.0.1"
 
-"@graphql-tools/delegate@^10.0.0":
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/delegate/-/delegate-10.0.0.tgz#c9da70811de8efbf630a74188698941cdc618ccf"
-  integrity sha512-ZW5/7Q0JqUM+guwn8/cM/1Hz16Zvj6WR6r3gnOwoPO7a9bCbe8QTCk4itT/EO+RiGT8RLUPYaunWR9jxfNqqOA==
+"@graphql-tools/delegate@^10.0.0", "@graphql-tools/delegate@^10.0.1":
+  version "10.0.1"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/delegate/-/delegate-10.0.1.tgz#4905d812e4f77cc1e900166938a666e05a3ff570"
+  integrity sha512-WaubawRuK8pAOskUnkXJ9yA06SXODcSsBAeqXVxGuXoo2CXvj8JJRq9+TOj5Lm/MOm6CSVdsYfEDmvogMg9kgw==
   dependencies:
     "@graphql-tools/batch-execute" "^9.0.0"
     "@graphql-tools/executor" "^1.0.0"
@@ -3286,18 +3286,17 @@
     value-or-promise "^1.0.12"
 
 "@graphql-tools/federation@^1.1.0", "@graphql-tools/federation@^1.1.1":
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/federation/-/federation-1.1.2.tgz#28125a3bf796e9a560464f73e55920e74667b0b9"
-  integrity sha512-949oFzb2B52O5Y7uwN6z5bBnWpoOwF1Dulb6coJqzi4xBPAzO8Hpbz4yBfUKN9GKgfB2axETQonjq71gLwt1hw==
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/federation/-/federation-1.1.3.tgz#37b9263735a4e677f508560c953058db392c4d86"
+  integrity sha512-rLLV5e/SPuZMyzz0pby3gfffUv2cwN4VI7Sr6TTMSi0dGB0esbr35ueZOlox/HK8SKtDjp7E/4ZGOy83E5TENg==
   dependencies:
-    "@graphql-tools/delegate" "^10.0.0"
+    "@graphql-tools/delegate" "^10.0.1"
     "@graphql-tools/executor-http" "^1.0.0"
     "@graphql-tools/merge" "^9.0.0"
     "@graphql-tools/schema" "^10.0.0"
-    "@graphql-tools/stitch" "^9.0.0"
+    "@graphql-tools/stitch" "^9.0.1"
     "@graphql-tools/utils" "^10.0.0"
     "@graphql-tools/wrap" "^10.0.0"
-    lodash.pick "^4.4.0"
     tslib "^2.4.0"
     value-or-promise "^1.0.12"
   optionalDependencies:
@@ -3541,13 +3540,13 @@
     tslib "^2.4.0"
     value-or-promise "1.0.11"
 
-"@graphql-tools/stitch@^9.0.0":
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/stitch/-/stitch-9.0.0.tgz#b2d99106fab21f94b617025a304454d3202cbf23"
-  integrity sha512-4FvHV7ibvbEpQVubKjClPwh9HZVxDMZlDgUktAEOjAVo4WVPyZnWuteQye2gQ+mD+ZQu5CJABklBpdcvfmgEig==
+"@graphql-tools/stitch@^9.0.0", "@graphql-tools/stitch@^9.0.1":
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/stitch/-/stitch-9.0.1.tgz#5c65595723c147b14dad3b2b6f979e7252061507"
+  integrity sha512-dEtv7TVQTHcUNwUZKZbL1UppcrJBRDdvEqlufXxu/ygXjuWSRm6O86UtvcyKSd2MIEr/gAgzY4e5OuMMLzHOCA==
   dependencies:
     "@graphql-tools/batch-delegate" "^9.0.0"
-    "@graphql-tools/delegate" "^10.0.0"
+    "@graphql-tools/delegate" "^10.0.1"
     "@graphql-tools/executor" "^1.0.0"
     "@graphql-tools/merge" "^9.0.0"
     "@graphql-tools/schema" "^10.0.0"
@@ -4481,9 +4480,9 @@
   integrity sha512-EqY+X8LnbFGQfjMghDaLtulF9a/D6ir27/crx4Z4WCKpNIT7Ecz7lseyHf8Jjk5WRle6IChUsY78+aggO9o72w==
 
 "@neo4j/graphql@^3.21.0":
-  version "3.24.0"
-  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-3.24.0.tgz#b95dc86eef8d2304a718943503a1099fb0852fed"
-  integrity sha512-z0rsKdis0tsawvyywvyhGQxXU3gu2NkvkVYz8mxU4Iopu4LsZcCw7HhLIZKiSU1JotFh3NsT/WxRwBfFM1svQg==
+  version "3.24.1"
+  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-3.24.1.tgz#8d4796805f130bc6a27717ace9bcce199d1c9046"
+  integrity sha512-VdAqknH9pfqO3DPXSsJtYRAgpoF4aF6WvGmlI1kHc3cuKktH1991/ThTYuNsgms3HiT89Rd82wC2bs1JHIsg1w==
   dependencies:
     "@apollo/subgraph" "^2.2.3"
     "@graphql-tools/merge" "^8.3.3"
@@ -15174,11 +15173,6 @@ lodash.omit@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.omit/-/lodash.omit-4.5.0.tgz#6eb19ae5a1ee1dd9df0b969e66ce0b7fa30b5e60"
   integrity sha512-XeqSp49hNGmlkj2EJlfrQFIzQ6lXdNro9sddtQzcJY8QaoC2GO0DT7xaIokHeyM+mIT0mPMlPvkYzg2xCuHdZg==
-
-lodash.pick@^4.4.0:
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/lodash.pick/-/lodash.pick-4.4.0.tgz#52f05610fff9ded422611441ed1fc123a03001b3"
-  integrity sha512-hXt6Ul/5yWjfklSGvLQl8vM//l3FtyHZeuelpzK6mm99pNvN9yTDruNZPEJZD1oWrqo+izBmB7oUfWgcCX7s4Q==
 
 lodash.set@^4.3.2:
   version "4.3.2"
