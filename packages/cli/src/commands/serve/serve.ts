@@ -54,7 +54,7 @@ export async function serveMesh(
   cliParams: GraphQLMeshCLIParams,
 ) {
   const {
-    fork: configFork = process.env.NODE_ENV?.toLowerCase() !== 'production',
+    fork: configFork = process.env.NODE_ENV?.toLowerCase() === 'production',
     port: configPort,
     hostname = os.platform() === 'win32' ||
     // is WSL?
