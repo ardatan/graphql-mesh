@@ -1,5 +1,12 @@
 # @graphql-mesh/http
 
+## 0.96.2
+
+### Patch Changes
+
+- [`b2ed6fb5d`](https://github.com/Urigo/graphql-mesh/commit/b2ed6fb5d88267d1e4640026d5a9e9581d5c03cf)
+  Thanks [@ardatan](https://github.com/ardatan)! - Disable playground and browser in production
+
 ## 0.96.1
 
 ### Patch Changes
