@@ -31,6 +31,14 @@ export default function useMeshNewrelic(
 
   const segmentByRequestContext = new WeakMap<any, any>();
 
+  const headersToTrack: Record<string, string> = {
+    'user-agent': 'userAgent',
+    host: 'host',
+    'content-type': 'contentType',
+    'content-length': 'contentLength',
+    accept: 'accept',
+  };
+
   return {
     onPluginInit({ addPlugin }) {
       addPlugin(
@@ -47,12 +55,37 @@ export default function useMeshNewrelic(
         }),
       );
     },
-    onRequest({ url, requestHandler, setRequestHandler }) {
+    onRequest({ request, url, requestHandler, setRequestHandler }) {
       const currentTransaction = instrumentationApi.agent.tracer.getTransaction();
       if (!currentTransaction) {
         setRequestHandler((...args) =>
-          agentApi.startWebTransaction(url.pathname, () => requestHandler(...args)),
+          agentApi.startWebTransaction(url.pathname, () => {
+            const currentSegment = instrumentationApi.getSegment();
+            segmentByRequestContext.set(request, currentSegment);
+            currentSegment.addAttribute('request.uri', url.pathname);
+            currentSegment.addAttribute('request.method', request.method);
+            for (const headerName in headersToTrack) {
+              const headerValue = request.headers.get(headerName);
+              if (headerValue) {
+                currentSegment.addAttribute(
+                  `request.headers.${headersToTrack[headerName]}`,
+                  headerValue,
+                );
+              }
+            }
+            return requestHandler(...args);
+          }),
         );
+      }
+    },
+    onResponse({ request, response }) {
+      const currentSegment =
+        instrumentationApi.getActiveSegment() ||
+        instrumentationApi.getSegment() ||
+        segmentByRequestContext.get(request);
+      if (currentSegment) {
+        currentSegment.addAttribute('http.statusCode', response.status);
+        currentSegment.addAttribute('http.statusText', response.statusText);
       }
     },
     onExecute({ args: { contextValue } }) {
