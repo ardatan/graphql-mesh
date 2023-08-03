@@ -1,4 +1,4 @@
-import { fs, path } from '@graphql-mesh/cross-helpers';
+import { fs, path, process } from '@graphql-mesh/cross-helpers';
 import type { MeshInstance } from '@graphql-mesh/runtime';
 import { Logger, YamlConfig } from '@graphql-mesh/types';
 import { DefaultLogger, pathExists, withCookies } from '@graphql-mesh/utils';
@@ -26,7 +26,7 @@ export function createMeshHTTPHandler<TServerContext>({
   const {
     cors: corsConfig,
     staticFiles,
-    playground: playgroundEnabled,
+    playground: playgroundEnabled = process.env.NODE_ENV !== 'production',
     endpoint: graphqlPath = '/graphql',
     batchingLimit,
     // TODO

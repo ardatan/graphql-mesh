@@ -63,7 +63,7 @@ export async function serveMesh(
       : '0.0.0.0',
     sslCredentials,
     endpoint: graphqlPath = '/graphql',
-    browser,
+    browser = process.env.NODE_ENV?.toLowerCase() !== 'production',
     // TODO
     // trustProxy = 'loopback',
   } = rawServeConfig;
@@ -221,9 +221,7 @@ export async function serveMesh(
         us_listen_socket_close(listenSocket);
         eventLogger.debug(`HTTP Server has been stopped`);
       });
-      const shouldntOpenBrowser =
-        process.env.NODE_ENV?.toLowerCase() === 'production' || browser === false;
-      if (!shouldntOpenBrowser) {
+      if (browser) {
         open(
           serverUrl.replace('0.0.0.0', 'localhost'),
           typeof browser === 'string' ? { app: browser } : undefined,
