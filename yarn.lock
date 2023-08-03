@@ -3115,10 +3115,10 @@
     parse-filepath "^1.0.2"
     tslib "~2.5.0"
 
-"@graphql-hive/cli@0.26.0":
-  version "0.26.0"
-  resolved "https://registry.yarnpkg.com/@graphql-hive/cli/-/cli-0.26.0.tgz#8d5dfc5bc660ea85882c464143d5b05149746558"
-  integrity sha512-aXn9xgYMkLp/TpJIKRhRtxCVwE3G8R03qBpQOKbICzPqkeWKtRwl9mVpGnCYG7aprQKn6fSrYczGsQBn7V+47w==
+"@graphql-hive/cli@0.27.0":
+  version "0.27.0"
+  resolved "https://registry.yarnpkg.com/@graphql-hive/cli/-/cli-0.27.0.tgz#c4bf68d6dc71a75871dcf3c83c64f21445e6f783"
+  integrity sha512-YBA0IdWe7x3qF+LbipR3UXY2LStIxZZIDyzZYPqe9x+mCCB5gQyken4UpLMx3lIwTeIBgP5tpPvoRAH8eUldrQ==
   dependencies:
     "@graphql-hive/core" "0.2.3"
     "@graphql-inspector/core" "4.2.2"
@@ -3132,7 +3132,7 @@
     "@oclif/core" "^2.8.5"
     "@oclif/plugin-help" "5.2.10"
     "@oclif/plugin-update" "3.1.19"
-    "@whatwg-node/fetch" "0.9.7"
+    "@whatwg-node/fetch" "0.9.9"
     colors "1.4.0"
     env-ci "7.3.0"
     graphql "^16.0.0"
@@ -6931,14 +6931,6 @@
   resolved "https://registry.yarnpkg.com/@whatwg-node/events/-/events-0.1.1.tgz#0ca718508249419587e130da26d40e29d99b5356"
   integrity sha512-AyQEn5hIPV7Ze+xFoXVU3QTHXVbWPrzaOkxtENMPMuNL6VVHrp4hHfDt9nrQpjO7BgvuM95dMtkycX5M/DZR3w==
 
-"@whatwg-node/fetch@0.9.7":
-  version "0.9.7"
-  resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.9.7.tgz#86b5cda576581beea300191d5c1f626fc7abfff7"
-  integrity sha512-heClS5ctTmoEvVbFd+6ztX0SyQduI3/Q+77vtNApDU/+Mwajy6ugxaoDGgSzJUoQ37McSV09kcGCt1Jcc6z9lQ==
-  dependencies:
-    "@whatwg-node/node-fetch" "^0.4.6"
-    urlpattern-polyfill "^9.0.0"
-
 "@whatwg-node/fetch@0.9.9", "@whatwg-node/fetch@^0.9.0", "@whatwg-node/fetch@^0.9.4", "@whatwg-node/fetch@^0.9.7":
   version "0.9.9"
   resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.9.9.tgz#65e68aaf8353755c20657b803f2fe983dbdabf91"
@@ -6969,7 +6961,7 @@
     fast-url-parser "^1.1.3"
     tslib "^2.3.1"
 
-"@whatwg-node/node-fetch@^0.4.6", "@whatwg-node/node-fetch@^0.4.8":
+"@whatwg-node/node-fetch@^0.4.8":
   version "0.4.11"
   resolved "https://registry.yarnpkg.com/@whatwg-node/node-fetch/-/node-fetch-0.4.11.tgz#cef61fef1e075757ff8b07abf089012095267384"
   integrity sha512-JRMx/yrBW/PXUH+0EIurUIQtAsEMrHtZBBKv6b+YCK1yG7pMNqtkl5Z39Rynq8ysVc/I6yTtNwkCy9bz5To1vw==
@@ -22721,10 +22713,10 @@ wkx@^0.4.8:
   dependencies:
     "@types/node" "*"
 
-wonka@6.3.3, wonka@^6.3.2:
-  version "6.3.3"
-  resolved "https://registry.yarnpkg.com/wonka/-/wonka-6.3.3.tgz#aa99fa5f9303a32517497918fdd0208175e7edbe"
-  integrity sha512-id4wYGsT6aEc8/3+by7NTHvTe0DwsOjv7vah0K0+AorV1MHKuS3OQ2g8DGsem1OEXrNShbVLPsg4kG2O6GZ2SQ==
+wonka@6.3.4, wonka@^6.3.2:
+  version "6.3.4"
+  resolved "https://registry.yarnpkg.com/wonka/-/wonka-6.3.4.tgz#76eb9316e3d67d7febf4945202b5bdb2db534594"
+  integrity sha512-CjpbqNtBGNAeyNS/9W6q3kSkKE52+FjIj7AkFlLr11s/VWGUu6a2CdYSdGxocIhIVjaW/zchesBQUKPVU69Cqg==
 
 wordwrap@^1.0.0:
   version "1.0.0"
