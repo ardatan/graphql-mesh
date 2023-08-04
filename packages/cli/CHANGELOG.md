@@ -1,5 +1,22 @@
 # @graphql-mesh/cli
 
+## 0.87.0
+
+### Minor Changes
+
+- [#5790](https://github.com/Urigo/graphql-mesh/pull/5790)
+  [`0b998d65b`](https://github.com/Urigo/graphql-mesh/commit/0b998d65bc3190e4a8d0f20a8528fc9ddc4f5f45)
+  Thanks [@ardatan](https://github.com/ardatan)! - Use node-libcurl instead of node-http for better
+  performance
+
+### Patch Changes
+
+- [#5790](https://github.com/Urigo/graphql-mesh/pull/5790)
+  [`0b998d65b`](https://github.com/Urigo/graphql-mesh/commit/0b998d65bc3190e4a8d0f20a8528fc9ddc4f5f45)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency [`node-libcurl@^3.0.0` ↗︎](https://www.npmjs.com/package/node-libcurl/v/3.0.0)
+    (to `dependencies`)
+
 ## 0.86.3
 
 ### Patch Changes
