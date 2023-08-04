@@ -12,9 +12,9 @@ describe('fastify', () => {
     });
   });
 
-  afterAll(async () => {
-    await app.close();
-    await upstream.close();
+  afterAll(() => {
+    app.close();
+    upstream.close();
   });
 
   it('should work', async () => {
