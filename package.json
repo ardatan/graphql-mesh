@@ -54,7 +54,7 @@
     "@changesets/cli": "2.26.2",
     "@theguild/prettier-config": "2.0.0",
     "@types/jest": "29.5.3",
-    "@types/node": "18.17.2",
+    "@types/node": "18.17.3",
     "@typescript-eslint/eslint-plugin": "6.2.1",
     "@typescript-eslint/parser": "6.2.1",
     "babel-jest": "29.6.2",
@@ -78,7 +78,7 @@
   },
   "resolutions": {
     "@changesets/assemble-release-plan": "5.2.3",
-    "esbuild": "0.18.17",
+    "esbuild": "0.18.18",
     "graphql": "16.7.1",
     "undici": "5.23.0",
     "uuid": "7.0.3"
