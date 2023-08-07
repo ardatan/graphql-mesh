@@ -206,7 +206,26 @@
   resolved "https://registry.yarnpkg.com/@apollo/cache-control-types/-/cache-control-types-1.0.3.tgz#5da62cf64c3b4419dabfef4536b57a40c8ff0b47"
   integrity sha512-F17/vCp7QVwom9eG7ToauIKdAxpSoadsJnqIfyryLFSkLSOEqu+eC5Z3N8OXcUVStuOMcNHlyraRsA6rRICu4g==
 
-"@apollo/client@3.7.17", "@apollo/client@^3.7.0", "@apollo/client@~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0":
+"@apollo/client@3.8.0", "@apollo/client@^3.7.0":
+  version "3.8.0"
+  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.8.0.tgz#c582a4ed64eba822ec4d055ce1573c4293261903"
+  integrity sha512-y/NadA2AKVtV18rO+Hi++6a6f4IqhUNvRPny7wAWx39ldzy8I4f6pWOYRSiJmL6hNFciVdT/YZqaoxnF2NRIuQ==
+  dependencies:
+    "@graphql-typed-document-node/core" "^3.1.1"
+    "@wry/context" "^0.7.3"
+    "@wry/equality" "^0.5.6"
+    "@wry/trie" "^0.4.3"
+    graphql-tag "^2.12.6"
+    hoist-non-react-statics "^3.3.2"
+    optimism "^0.17.5"
+    prop-types "^15.7.2"
+    response-iterator "^0.2.6"
+    symbol-observable "^4.0.0"
+    ts-invariant "^0.10.3"
+    tslib "^2.3.0"
+    zen-observable-ts "^1.2.5"
+
+"@apollo/client@~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0":
   version "3.7.17"
   resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.7.17.tgz#1d2538729fd8ef138aa301a7cf62704474e57b72"
   integrity sha512-0EErSHEtKPNl5wgWikHJbKFAzJ/k11O0WO2QyqZSHpdxdAnw7UWHY4YiLbHCFG7lhrD+NTQ3Z/H9Jn4rcikoJA==
@@ -6993,14 +7012,14 @@
     "@whatwg-node/fetch" "^0.9.7"
     tslib "^2.3.1"
 
-"@wry/context@^0.7.0":
+"@wry/context@^0.7.0", "@wry/context@^0.7.3":
   version "0.7.3"
   resolved "https://registry.yarnpkg.com/@wry/context/-/context-0.7.3.tgz#240f6dfd4db5ef54f81f6597f6714e58d4f476a1"
   integrity sha512-Nl8WTesHp89RF803Se9X3IiHjdmLBrIvPMaJkl+rKVJAYyPsz1TEUbu89943HpvujtSJgDUx9W4vZw3K1Mr3sA==
   dependencies:
     tslib "^2.3.0"
 
-"@wry/equality@^0.5.0":
+"@wry/equality@^0.5.0", "@wry/equality@^0.5.6":
   version "0.5.6"
   resolved "https://registry.yarnpkg.com/@wry/equality/-/equality-0.5.6.tgz#cd4a533c72c3752993ab8cbf682d3d20e3cb601e"
   integrity sha512-D46sfMTngaYlrH+OspKf8mIJETntFnf6Hsjb0V41jAXJ7Bx2kB8Rv8RCUujuVWYttFtHkUNp7g+FwxNQAr6mXA==
@@ -7014,7 +7033,7 @@
   dependencies:
     tslib "^2.3.0"
 
-"@wry/trie@^0.4.0":
+"@wry/trie@^0.4.0", "@wry/trie@^0.4.3":
   version "0.4.3"
   resolved "https://registry.yarnpkg.com/@wry/trie/-/trie-0.4.3.tgz#077d52c22365871bf3ffcbab8e95cb8bc5689af4"
   integrity sha512-I6bHwH0fSf6RqQcnnXLJKhkSXG45MFral3GxPaY4uAl0LYDZM+YDVDAiU9bYwjTuysy1S0IeecWtmq1SZA3M1w==
@@ -17360,6 +17379,15 @@ optimism@^0.16.2:
     "@wry/context" "^0.7.0"
     "@wry/trie" "^0.3.0"
 
+optimism@^0.17.5:
+  version "0.17.5"
+  resolved "https://registry.yarnpkg.com/optimism/-/optimism-0.17.5.tgz#a4c78b3ad12c58623abedbebb4f2f2c19b8e8816"
+  integrity sha512-TEcp8ZwK1RczmvMnvktxHSF2tKgMWjJ71xEFGX5ApLh67VsMSTy1ZUlipJw8W+KaqgOmQ+4pqwkeivY89j+4Vw==
+  dependencies:
+    "@wry/context" "^0.7.0"
+    "@wry/trie" "^0.4.3"
+    tslib "^2.3.0"
+
 optionator@^0.9.3:
   version "0.9.3"
   resolved "https://registry.yarnpkg.com/optionator/-/optionator-0.9.3.tgz#007397d44ed1872fdc6ed31360190f81814e2c64"
@@ -19158,20 +19186,10 @@ range-parser@^1.2.1, range-parser@~1.2.1:
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.2.1.tgz#3cf37023d199e1c24d1a55b84800c2f3e6468031"
   integrity sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==
 
-raw-body@2.5.1:
+raw-body@2.5.1, raw-body@^2.4.1:
   version "2.5.1"
   resolved "https://registry.yarnpkg.com/raw-body/-/raw-body-2.5.1.tgz#fe1b1628b181b700215e5fd42389f98b71392857"
   integrity sha512-qqJBtEyVgS0ZmPGdCFPWJ3FreoqvG4MVQln/kCgF7Olq95IbOp0/BWyMwbdtn4VTvkM8Y7khCQ2Xgk/tcrCXig==
-  dependencies:
-    bytes "3.1.2"
-    http-errors "2.0.0"
-    iconv-lite "0.4.24"
-    unpipe "1.0.0"
-
-raw-body@^2.4.1:
-  version "2.5.2"
-  resolved "https://registry.yarnpkg.com/raw-body/-/raw-body-2.5.2.tgz#99febd83b90e08975087e8f1f9419a149366b68a"
-  integrity sha512-8zGqypfENjCIqGhgXToC8aB2r7YrBX+AQAfIPs/Mlk+BtPTztOvTS01NRW/3Eh60J+a48lt8qsCzirQ6loCVfA==
   dependencies:
     bytes "3.1.2"
     http-errors "2.0.0"
