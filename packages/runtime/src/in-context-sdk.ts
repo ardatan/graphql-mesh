@@ -120,6 +120,18 @@ export async function getInContextSDK(
             argsFromKeys?: (keys: string[]) => any;
             valuesFromResults?: (result: any, keys?: string[]) => any;
           }) => {
+            if (
+              !rawSourceSubSchemaConfig.executor &&
+              !rawSourceSubSchemaConfig.transforms?.length &&
+              !argsFromKeys &&
+              !valuesFromResults &&
+              !key
+            ) {
+              const originalSchema = rawSourceSubSchemaConfig.schema;
+              const originalRootType = originalSchema.getType(rootType.name) as GraphQLObjectType;
+              const originalField = originalRootType.getFields()[fieldName];
+              return originalField.resolve(root, args, context, info);
+            }
             inContextSdkLogger.debug(`Called with`, {
               args,
               key,
@@ -214,16 +226,6 @@ export async function getInContextSDK(
                 ...commonDelegateOptions,
                 args,
               };
-              if (
-                !rawSourceSubSchemaConfig.executor &&
-                !regularDelegateOptions.transforms?.length &&
-                !rawSourceSubSchemaConfig.transforms?.length
-              ) {
-                const originalSchema = rawSourceSubSchemaConfig.schema;
-                const originalRootType = originalSchema.getType(rootType.name) as GraphQLObjectType;
-                const originalField = originalRootType.getFields()[fieldName];
-                return originalField.resolve(root, args, context, info);
-              }
               if (selectionSet) {
                 const selectionSetFactory = normalizeSelectionSetParamOrFactory(selectionSet);
                 const path = [fieldName];

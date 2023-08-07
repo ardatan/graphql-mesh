@@ -260,7 +260,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
           createProxyingResolver: createProxyingResolverFactory(
             apiName,
             rootTypeMap,
-            source.executor || transforms.length ? undefined : apiSchema,
+            source.executor || transforms?.length ? undefined : apiSchema,
           ),
         });
       } catch (e: any) {
