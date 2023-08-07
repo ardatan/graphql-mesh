@@ -135,7 +135,13 @@ export function wrapFetchWithPlugins(plugins: MeshPlugin<any>[]): MeshFetch {
 function createProxyingResolverFactory(
   apiName: string,
   rootTypeMap: Map<OperationTypeNode, GraphQLObjectType>,
+  schema?: GraphQLSchema,
 ): CreateProxyingResolverFn {
+  if (schema) {
+    return function createProxyingResolver({ operation, fieldName }) {
+      return schema.getRootType(operation).getFields()[fieldName].resolve;
+    };
+  }
   return function createProxyingResolver({ operation }) {
     const rootType = rootTypeMap.get(operation);
     return function proxyingResolver(root, args, context, info) {
@@ -251,7 +257,11 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
           handler: apiSource.handler,
           batch: 'batch' in source ? source.batch : true,
           merge: source.merge,
-          createProxyingResolver: createProxyingResolverFactory(apiName, rootTypeMap),
+          createProxyingResolver: createProxyingResolverFactory(
+            apiName,
+            rootTypeMap,
+            source.executor || transforms.length ? undefined : apiSchema,
+          ),
         });
       } catch (e: any) {
         sourceLogger.error(`Failed to generate the schema`, e);

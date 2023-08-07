@@ -214,6 +214,16 @@ export async function getInContextSDK(
                 ...commonDelegateOptions,
                 args,
               };
+              if (
+                !rawSourceSubSchemaConfig.executor &&
+                !regularDelegateOptions.transforms?.length &&
+                !rawSourceSubSchemaConfig.transforms?.length
+              ) {
+                const originalSchema = rawSourceSubSchemaConfig.schema;
+                const originalRootType = originalSchema.getType(rootType.name) as GraphQLObjectType;
+                const originalField = originalRootType.getFields()[fieldName];
+                return originalField.resolve(root, args, context, info);
+              }
               if (selectionSet) {
                 const selectionSetFactory = normalizeSelectionSetParamOrFactory(selectionSet);
                 const path = [fieldName];
