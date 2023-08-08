@@ -1724,7 +1724,6 @@ export interface Plugin {
   hive?: HivePlugin;
   httpCache?: HTTPCachePlugin;
   httpDetailsExtensions?: HTTPDetailsExtensionsConfig;
-  http2?: any;
   liveQuery?: LiveQueryConfig;
   mock?: MockingConfig;
   newrelic?: NewrelicConfig;
