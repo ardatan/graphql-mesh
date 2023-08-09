@@ -3090,10 +3090,10 @@
     parse-filepath "^1.0.2"
     tslib "~2.5.0"
 
-"@graphql-hive/cli@0.27.0":
-  version "0.27.0"
-  resolved "https://registry.yarnpkg.com/@graphql-hive/cli/-/cli-0.27.0.tgz#c4bf68d6dc71a75871dcf3c83c64f21445e6f783"
-  integrity sha512-YBA0IdWe7x3qF+LbipR3UXY2LStIxZZIDyzZYPqe9x+mCCB5gQyken4UpLMx3lIwTeIBgP5tpPvoRAH8eUldrQ==
+"@graphql-hive/cli@0.27.1":
+  version "0.27.1"
+  resolved "https://registry.yarnpkg.com/@graphql-hive/cli/-/cli-0.27.1.tgz#4d56ec367f07f1a4ab0218237b8f624258a4cd54"
+  integrity sha512-H0cnR4frnSG10w0aUCnbDrytwuyUGxeQEmwQLMOqQBhCYE9Ptzo2y84dYA1MHSu50jn7FuOJY9CfpsKF/VBzrw==
   dependencies:
     "@graphql-hive/core" "0.2.3"
     "@graphql-inspector/core" "4.2.2"
