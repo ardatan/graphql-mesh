@@ -302,6 +302,130 @@ type ExampleAllOf {
     `.trim(),
     );
   });
+
+  it('should generate deeply-merged object types from allOf definitions', async () => {
+    const inputSchema: JSONSchema = {
+      title: 'ExampleAllOf',
+      allOf: [
+        {
+          type: 'object',
+          title: 'Foo',
+          properties: {
+            attributes: {
+              type: 'object',
+              title: 'Attributes',
+              properties: {
+                id: {
+                  type: 'string',
+                },
+                age: {
+                  type: 'number',
+                },
+                address: {
+                  type: 'object',
+                  title: 'Address',
+                  properties: {
+                    street: {
+                      type: 'string',
+                    },
+                    number: {
+                      type: 'number',
+                    },
+                  },
+                },
+              },
+              required: ['id'],
+            },
+          },
+        },
+        {
+          type: 'object',
+          title: 'Bar',
+          properties: {
+            attributes: {
+              type: 'object',
+              title: 'Attributes',
+              properties: {
+                name: {
+                  type: 'string',
+                },
+                age: {
+                  type: 'string', // Overriding type
+                },
+                address: {
+                  type: 'object',
+                  title: 'Address',
+                  properties: {
+                    number: {
+                      type: 'string', // Overriding type
+                    },
+                    zipCode: {
+                      type: 'string',
+                    },
+                  },
+                },
+              },
+              required: ['name'],
+            },
+          },
+        },
+      ],
+    };
+    const result = await getComposerFromJSONSchema(inputSchema, logger);
+    expect(
+      (result.input as InputTypeComposer).toSDL({
+        deep: true,
+        omitDescriptions: true,
+        omitScalars: true,
+      }),
+    ).toContain(
+      /* GraphQL */ `
+input ExampleAllOf_Input {
+  attributes: Attributes_Input
+}
+
+input Attributes_Input {
+  id: String!
+  age: String
+  address: Address_Input
+  name: String!
+}
+
+input Address_Input {
+  street: String
+  number: String
+  zipCode: String
+}
+    `.trim(),
+    );
+    expect(
+      (result.output as InputTypeComposer).toSDL({
+        deep: true,
+        omitDescriptions: true,
+        omitScalars: true,
+      }),
+    ).toContain(
+      /* GraphQL */ `
+type ExampleAllOf {
+  attributes: Attributes
+}
+
+type Attributes {
+  id: String!
+  age: String
+  address: Address
+  name: String!
+}
+
+type Address {
+  street: String
+  number: String
+  zipCode: String
+}
+    `.trim(),
+    );
+  });
+
   it('should generate container types and fields for allOf definitions that contain scalar types', async () => {
     const title = 'ExampleAllOf';
     const inputSchema: JSONSchema = {

@@ -17,13 +17,16 @@ import {
   EnumTypeComposerValueConfigDefinition,
   InputTypeComposer,
   InputTypeComposerFieldConfigAsObjectDefinition,
+  InputTypeComposerFieldConfigMap,
   InterfaceTypeComposer,
   isSomeInputTypeComposer,
   ListComposer,
   ObjectTypeComposer,
+  ObjectTypeComposerFieldConfigMap,
   ObjectTypeComposerFieldConfigMapDefinition,
   ScalarTypeComposer,
   SchemaComposer,
+  ThunkComposer,
   UnionTypeComposer,
 } from 'graphql-compose';
 import {
@@ -944,8 +947,37 @@ export function getComposerFromJSONSchema(
           } else {
             const inputTypeElemFieldMap = inputTypeComposer.getFields();
             for (const fieldName in inputTypeElemFieldMap) {
-              const field = inputTypeElemFieldMap[fieldName];
-              inputFieldMap[fieldName] = field;
+              const newInputField = inputTypeElemFieldMap[fieldName] as any;
+              const existingInputField = inputFieldMap[fieldName] as any;
+              if (!existingInputField) {
+                inputFieldMap[fieldName] = newInputField;
+              } else {
+                /*
+                  If the new field collides with an existing field:
+
+                    - If both the existing and the new field have an input type composer, combine their subfields
+                    - Otherwise, replace the existing field with the new one
+                */
+                const existingInputFieldUnwrappedTC =
+                  typeof existingInputField.type?.getUnwrappedTC === 'function'
+                    ? existingInputField.type.getUnwrappedTC()
+                    : undefined;
+                const newInputFieldUnwrappedTC =
+                  typeof newInputField.type?.getUnwrappedTC === 'function'
+                    ? newInputField.type.getUnwrappedTC()
+                    : undefined;
+                if (
+                  existingInputFieldUnwrappedTC instanceof InputTypeComposer &&
+                  newInputFieldUnwrappedTC instanceof InputTypeComposer
+                ) {
+                  deepMergeInputTypeComposerFields(
+                    existingInputFieldUnwrappedTC.getFields(),
+                    newInputFieldUnwrappedTC.getFields(),
+                  );
+                } else {
+                  inputFieldMap[fieldName] = newInputField;
+                }
+              }
             }
           }
 
@@ -980,8 +1012,37 @@ export function getComposerFromJSONSchema(
 
             const typeElemFieldMap = outputTypeComposer.getFields();
             for (const fieldName in typeElemFieldMap) {
-              const field = typeElemFieldMap[fieldName];
-              fieldMap[fieldName] = field;
+              const newField = typeElemFieldMap[fieldName] as any;
+              const existingField = fieldMap[fieldName] as any;
+              if (!existingField) {
+                fieldMap[fieldName] = newField;
+              } else {
+                /*
+                  If the new field collides with an existing field:
+
+                    - If both the existing and the new field have an object type composer, combine their subfields
+                    - Otherwise, replace the existing field with the new one
+                */
+                const existingFieldUnwrappedTC =
+                  typeof existingField.type?.getUnwrappedTC === 'function'
+                    ? existingField.type.getUnwrappedTC()
+                    : undefined;
+                const newFieldUnwrappedTC =
+                  typeof newField.type?.getUnwrappedTC === 'function'
+                    ? newField.type.getUnwrappedTC()
+                    : undefined;
+                if (
+                  existingFieldUnwrappedTC instanceof ObjectTypeComposer &&
+                  newFieldUnwrappedTC instanceof ObjectTypeComposer
+                ) {
+                  deepMergeObjectTypeComposerFields(
+                    existingFieldUnwrappedTC.getFields(),
+                    newFieldUnwrappedTC.getFields(),
+                  );
+                } else {
+                  fieldMap[fieldName] = newField;
+                }
+              }
             }
           }
         }
@@ -1434,4 +1495,68 @@ export function getComposerFromJSONSchema(
       }
     },
   });
+
+  function deepMergeInputTypeComposerFields(
+    existingInputTypeComposerFields: InputTypeComposerFieldConfigMap,
+    newInputTypeComposerFields: InputTypeComposerFieldConfigMap,
+  ) {
+    for (const [newFieldKey, newFieldValue] of Object.entries(newInputTypeComposerFields)) {
+      const existingFieldValue = existingInputTypeComposerFields[newFieldKey];
+      if (!existingFieldValue) {
+        existingInputTypeComposerFields[newFieldKey] = newFieldValue;
+      } else {
+        const existingFieldUnwrappedTC =
+          typeof (existingFieldValue.type as ThunkComposer)?.getUnwrappedTC === 'function'
+            ? (existingFieldValue.type as ThunkComposer)?.getUnwrappedTC()
+            : undefined;
+        const newFieldUnwrappedTC =
+          typeof (newFieldValue.type as ThunkComposer).getUnwrappedTC === 'function'
+            ? (newFieldValue.type as ThunkComposer).getUnwrappedTC()
+            : undefined;
+        if (
+          existingFieldUnwrappedTC instanceof InputTypeComposer &&
+          newFieldUnwrappedTC instanceof InputTypeComposer
+        ) {
+          deepMergeInputTypeComposerFields(
+            existingFieldUnwrappedTC.getFields(),
+            newFieldUnwrappedTC.getFields(),
+          );
+        } else {
+          existingInputTypeComposerFields[newFieldKey] = newFieldValue;
+        }
+      }
+    }
+  }
+
+  function deepMergeObjectTypeComposerFields(
+    existingObjectTypeComposerFields: ObjectTypeComposerFieldConfigMap<any, any>,
+    newObjectTypeComposerFields: ObjectTypeComposerFieldConfigMap<any, any>,
+  ) {
+    for (const [newFieldKey, newFieldValue] of Object.entries(newObjectTypeComposerFields)) {
+      const existingFieldValue = existingObjectTypeComposerFields[newFieldKey];
+      if (!existingFieldValue) {
+        existingObjectTypeComposerFields[newFieldKey] = newFieldValue;
+      } else {
+        const existingFieldUnwrappedTC =
+          typeof (existingFieldValue.type as ThunkComposer)?.getUnwrappedTC === 'function'
+            ? (existingFieldValue.type as ThunkComposer)?.getUnwrappedTC()
+            : undefined;
+        const newFieldUnwrappedTC =
+          typeof (newFieldValue.type as ThunkComposer).getUnwrappedTC === 'function'
+            ? (newFieldValue.type as ThunkComposer).getUnwrappedTC()
+            : undefined;
+        if (
+          existingFieldUnwrappedTC instanceof ObjectTypeComposer &&
+          newFieldUnwrappedTC instanceof ObjectTypeComposer
+        ) {
+          deepMergeObjectTypeComposerFields(
+            existingFieldUnwrappedTC.getFields(),
+            newFieldUnwrappedTC.getFields(),
+          );
+        } else {
+          existingObjectTypeComposerFields[newFieldKey] = newFieldValue;
+        }
+      }
+    }
+  }
 }
