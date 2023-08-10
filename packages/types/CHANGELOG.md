@@ -1,5 +1,15 @@
 # @graphql-mesh/types
 
+## 0.95.2
+
+### Patch Changes
+
+- [`d8da4b282`](https://github.com/Urigo/graphql-mesh/commit/d8da4b282ab15ab6d0ea24c78c172e31fa1170ea)
+  Thanks [@ardatan](https://github.com/ardatan)! - New `autoSelectionSetWithDepth` option in the
+  incontext sdk to avoid users to write manual selection sets if return types don't match
+- Updated dependencies []:
+  - @graphql-mesh/store@0.95.2
+
 ## 0.95.1
 
 ### Patch Changes
