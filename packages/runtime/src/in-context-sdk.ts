@@ -1,5 +1,6 @@
 import {
   DocumentNode,
+  FieldNode,
   getNamedType,
   GraphQLObjectType,
   GraphQLResolveInfo,
@@ -8,6 +9,7 @@ import {
   Kind,
   OperationDefinitionNode,
   OperationTypeNode,
+  print,
   SelectionSetNode,
 } from 'graphql';
 import {
@@ -26,7 +28,7 @@ import {
   StitchingInfo,
   SubschemaConfig,
 } from '@graphql-tools/delegate';
-import { isDocumentNode, memoize1 } from '@graphql-tools/utils';
+import { buildOperationNodeForField, isDocumentNode, memoize1 } from '@graphql-tools/utils';
 import { WrapQuery } from '@graphql-tools/wrap';
 import { MESH_API_CONTEXT_SYMBOL } from './constants.js';
 
@@ -110,6 +112,7 @@ export async function getInContextSDK(
             key,
             argsFromKeys,
             valuesFromResults,
+            autoSelectionSetWithDepth,
           }: {
             root: any;
             args: any;
@@ -119,6 +122,7 @@ export async function getInContextSDK(
             key?: string;
             argsFromKeys?: (keys: string[]) => any;
             valuesFromResults?: (result: any, keys?: string[]) => any;
+            autoSelectionSetWithDepth?: number;
           }) => {
             inContextSdkLogger.debug(`Called with`, {
               args,
@@ -147,9 +151,22 @@ export async function getInContextSDK(
               }
               if (selectionCount === 0) {
                 if (!selectionSet) {
-                  throw new Error(
-                    `You have to provide 'selectionSet' for context.${rawSource.name}.${rootType.name}.${fieldName}`,
-                  );
+                  if (autoSelectionSetWithDepth) {
+                    const operationNode = buildOperationNodeForField({
+                      schema: transformedSchema,
+                      kind: operationType as OperationTypeNode,
+                      depthLimit: autoSelectionSetWithDepth,
+                      field: fieldName,
+                    });
+                    selectionSet = print(
+                      (operationNode.selectionSet.selections[0] as FieldNode).selectionSet,
+                    );
+                    console.log({ selectionSet });
+                  } else {
+                    throw new Error(
+                      `You have to provide 'selectionSet' for context.${rawSource.name}.${rootType.name}.${fieldName}`,
+                    );
+                  }
                 }
                 commonDelegateOptions.info = {
                   ...info,

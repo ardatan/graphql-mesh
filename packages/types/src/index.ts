@@ -244,10 +244,20 @@ export type InContextSdkMethodInfoParams = {
   info: GraphQLResolveInfo;
 };
 
+export type InContextSdkMethodAutoSelectionSetParams = {
+  // Use this parameter if the selection set of the return type doesn't match
+  autoSelectionSetWithDepth: number;
+  info?: GraphQLResolveInfo;
+};
+
 export type InContextSdkMethodParams<TDefaultReturn, TArgs, TContext, TKey, TReturn> = {
   root?: any;
   context: TContext;
-} & (InContextSdkMethodCustomSelectionSetParams | InContextSdkMethodInfoParams) &
+} & (
+  | InContextSdkMethodCustomSelectionSetParams
+  | InContextSdkMethodInfoParams
+  | InContextSdkMethodAutoSelectionSetParams
+) &
   (
     | InContextSdkMethodBatchingParams<TDefaultReturn, TArgs, TKey, TReturn>
     | InContextSdkMethodRegularParams<TDefaultReturn, TArgs, TReturn>

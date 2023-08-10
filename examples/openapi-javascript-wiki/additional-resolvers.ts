@@ -18,15 +18,7 @@ export const resolvers: Resolvers = {
             },
             context,
             info,
-            selectionSet: /* GraphQL */ `
-              {
-                ... on pageview_project {
-                  items {
-                    views
-                  }
-                }
-              }
-            `,
+            autoSelectionSetWithDepth: 2,
           },
         );
 
