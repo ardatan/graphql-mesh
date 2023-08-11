@@ -59,7 +59,7 @@
     "@typescript-eslint/parser": "6.3.0",
     "babel-jest": "29.6.2",
     "bob-the-bundler": "7.0.1",
-    "eslint": "8.46.0",
+    "eslint": "8.47.0",
     "eslint-config-prettier": "9.0.0",
     "eslint-config-standard": "17.1.0",
     "eslint-plugin-import": "2.28.0",
@@ -78,7 +78,7 @@
   },
   "resolutions": {
     "@changesets/assemble-release-plan": "5.2.3",
-    "esbuild": "0.19.0",
+    "esbuild": "0.19.1",
     "graphql": "16.7.1",
     "tslib": "2.6.1",
     "undici": "5.23.0",
