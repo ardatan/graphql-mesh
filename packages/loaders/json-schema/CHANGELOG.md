@@ -1,5 +1,14 @@
 # @omnigraph/json-schema
 
+## 0.95.3
+
+### Patch Changes
+
+- [#5643](https://github.com/Urigo/graphql-mesh/pull/5643)
+  [`94afd25a0`](https://github.com/Urigo/graphql-mesh/commit/94afd25a05581715fb9a0f360859fddba9698fca)
+  Thanks [@cweckesser](https://github.com/cweckesser)! - Fix issue regarding allOf operator that
+  prevents overlapping sub-properties of objects provided to the operator from being merged
+
 ## 0.95.2
 
 ### Patch Changes
