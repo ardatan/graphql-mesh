@@ -1,6 +1,7 @@
 /* eslint-disable promise/param-names */
 import { Plugin } from 'graphql-yoga';
 import newRelic from 'newrelic';
+import attributeFilter from 'newrelic/lib/config/attribute-filter.js';
 import NAMES from 'newrelic/lib/metrics/names.js';
 import recordExternal from 'newrelic/lib/metrics/recorders/http_external.js';
 import cat from 'newrelic/lib/util/cat.js';
@@ -10,7 +11,13 @@ import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
 
+const DESTS = attributeFilter.DESTINATIONS;
+
 const EnvelopAttributeName = 'Envelop_NewRelic_Plugin';
+
+function isPromise<T>(value: T | Promise<T>): value is Promise<T> {
+  return (value as any)?.then != null;
+}
 
 export default function useMeshNewrelic(
   options: MeshPluginOptions<YamlConfig.NewrelicConfig>,
@@ -39,6 +46,27 @@ export default function useMeshNewrelic(
     accept: 'accept',
   };
 
+  function sendResAttributes(
+    res: Response,
+    currentSegment = instrumentationApi.getSegment(),
+    currentTransaction = instrumentationApi.agent.tracer.getTransaction(),
+  ) {
+    currentSegment.addAttribute('http.statusCode', res.status);
+    currentTransaction.trace.attributes.addAttribute(
+      DESTS.TRANS_COMMON,
+      'http.statusCode',
+      res.status,
+    );
+    currentTransaction.statusCode = res.status;
+
+    currentSegment.addAttribute('http.statusText', res.statusText);
+    currentTransaction.trace.attributes.addAttribute(
+      DESTS.TRANS_COMMON,
+      'http.statusText',
+      res.statusText,
+    );
+  }
+
   return {
     onPluginInit({ addPlugin }) {
       addPlugin(
@@ -62,30 +90,50 @@ export default function useMeshNewrelic(
           agentApi.startWebTransaction(url.pathname, () => {
             const currentSegment = instrumentationApi.getSegment();
             segmentByRequestContext.set(request, currentSegment);
+
+            const currentTransaction = instrumentationApi.agent.tracer.getTransaction();
+
+            currentTransaction.trace.attributes.addAttribute(
+              DESTS.TRANS_COMMON,
+              'request.uri',
+              url.pathname,
+            );
             currentSegment.addAttribute('request.uri', url.pathname);
+            currentTransaction.parsedUrl = url;
+
+            currentTransaction.verb = request.method;
+            currentTransaction.trace.attributes.addAttribute(
+              DESTS.TRANS_COMMON,
+              'request.method',
+              request.method,
+            );
+            currentTransaction.nameState.setVerb(request.method);
             currentSegment.addAttribute('request.method', request.method);
+
             for (const headerName in headersToTrack) {
               const headerValue = request.headers.get(headerName);
               if (headerValue) {
-                currentSegment.addAttribute(
-                  `request.headers.${headersToTrack[headerName]}`,
+                const key = `request.headers.${headersToTrack[headerName]}`;
+                currentTransaction.trace.attributes.addAttribute(
+                  DESTS.TRANS_COMMON,
+                  key,
                   headerValue,
                 );
+                currentSegment.addAttribute(key, headerValue);
               }
             }
-            return requestHandler(...args);
+            const res$ = requestHandler(...args);
+
+            if (res$) {
+              if (isPromise(res$)) {
+                return res$.then(sendResAttributes).then(() => res$);
+              }
+              sendResAttributes(res$);
+            }
+
+            return res$;
           }),
         );
-      }
-    },
-    onResponse({ request, response }) {
-      const currentSegment =
-        instrumentationApi.getActiveSegment() ||
-        instrumentationApi.getSegment() ||
-        segmentByRequestContext.get(request);
-      if (currentSegment) {
-        currentSegment.addAttribute('http.statusCode', response.status);
-        currentSegment.addAttribute('http.statusText', response.statusText);
       }
     },
     onExecute({ args: { contextValue } }) {
