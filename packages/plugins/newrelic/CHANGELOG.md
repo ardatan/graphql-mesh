@@ -1,5 +1,14 @@
 # @graphql-mesh/plugin-newrelic
 
+## 0.95.3
+
+### Patch Changes
+
+- [#5783](https://github.com/Urigo/graphql-mesh/pull/5783)
+  [`2e7e5e905`](https://github.com/Urigo/graphql-mesh/commit/2e7e5e90558077b675143961d1590c5a59ac6bc2)
+  Thanks [@ardatan](https://github.com/ardatan)! - Add HTTP details if custom web transaction is
+  created
+
 ## 0.95.2
 
 ### Patch Changes
