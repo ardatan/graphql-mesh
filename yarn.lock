@@ -2480,10 +2480,10 @@
   resolved "https://registry.yarnpkg.com/@cloudflare/workerd-windows-64/-/workerd-windows-64-1.20230807.0.tgz#076dd3445835882fa3f26f566807c546b3516847"
   integrity sha512-DYKkLtT4lNRdVx+2fbYgPxdF7ypJn9bT2HYMZ93N7XPwaKFx2svBRMrZkwBcvwuNb+99Z0jnaQwdcFnHcFLzZA==
 
-"@cloudflare/workers-types@4.20230807.0":
-  version "4.20230807.0"
-  resolved "https://registry.yarnpkg.com/@cloudflare/workers-types/-/workers-types-4.20230807.0.tgz#db6684f40f1570685e835eb3622ec7a1fb79880c"
-  integrity sha512-gQczWuGE2rxmpzOCNn0zLbx8Xz0gqspdE9S7tu4Xax39q1csgO/E9flcS+KG3GHB522ugOh84inmABDhpeJnvQ==
+"@cloudflare/workers-types@4.20230814.0":
+  version "4.20230814.0"
+  resolved "https://registry.yarnpkg.com/@cloudflare/workers-types/-/workers-types-4.20230814.0.tgz#7aadd4f600b1cf772a26160bd5ea836fa2aa42f6"
+  integrity sha512-+jHiGjZg2UpULZSSHmHLqUG45TLg1s+uppSMlGvMn0u/xyFsRX9HX6b8Ydg/oHSp3jfSuPtX05GSvtgRAmrWTg==
 
 "@colors/colors@1.5.0":
   version "1.5.0"
@@ -12489,10 +12489,10 @@ graphql-yoga@4.0.4, graphql-yoga@^4.0.0:
     lru-cache "^10.0.0"
     tslib "^2.5.2"
 
-graphql@*, "graphql@14 - 16", graphql@16.7.1, "graphql@>=0.9 <0.14 || ^14.0.2 || ^15.4.0", "graphql@^0.6.0 || ^0.7.0 || ^0.8.0-b || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.2 || ^15.0.0", graphql@^14.5.3, graphql@^16.0.0:
-  version "16.7.1"
-  resolved "https://registry.yarnpkg.com/graphql/-/graphql-16.7.1.tgz#11475b74a7bff2aefd4691df52a0eca0abd9b642"
-  integrity sha512-DRYR9tf+UGU0KOsMcKAlXeFfX89UiiIZ0dRU3mR0yJfu6OjZqUcp68NnFLnqQU5RexygFoDy1EW+ccOYcPfmHg==
+graphql@*, "graphql@14 - 16", graphql@16.8.0, "graphql@>=0.9 <0.14 || ^14.0.2 || ^15.4.0", "graphql@^0.6.0 || ^0.7.0 || ^0.8.0-b || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.2 || ^15.0.0", graphql@^14.5.3, graphql@^16.0.0:
+  version "16.8.0"
+  resolved "https://registry.yarnpkg.com/graphql/-/graphql-16.8.0.tgz#374478b7f27b2dc6153c8f42c1b80157f79d79d4"
+  integrity sha512-0oKGaR+y3qcS5mCu1vb7KG+a89vjn06C7Ihq/dDl3jA+A8B3TKomvi3CiEcVLJQGalbu8F52LxkOym7U5sSfbg==
 
 gray-matter@^4.0.3:
   version "4.0.3"
@@ -13210,10 +13210,10 @@ invariant@2.2.4, invariant@^2.2.4:
   dependencies:
     loose-envify "^1.0.0"
 
-ioredis-mock@8.8.2:
-  version "8.8.2"
-  resolved "https://registry.yarnpkg.com/ioredis-mock/-/ioredis-mock-8.8.2.tgz#58bbc41d1a0c09f8789fd78d1770b944e14d5987"
-  integrity sha512-8vdnr614VhdIpC/+19sCSUhwfQlLsIjwuDsCDL0FEi23TIb25sRCm5sRRa9x2xoxNGvStjYSSSBTDq4zluUBHQ==
+ioredis-mock@8.8.3:
+  version "8.8.3"
+  resolved "https://registry.yarnpkg.com/ioredis-mock/-/ioredis-mock-8.8.3.tgz#cf3fc27571091f1fcbe41f6027d53e65e640adf0"
+  integrity sha512-LkF17WIyYkPfUhvp0fjIZ+HKhILEoq1J2b71vv+9EOW054UlkySVEvgQ2RolXM+eI759MteHtXQvv0oRn0lkUg==
   dependencies:
     "@ioredis/as-callback" "^3.0.0"
     "@ioredis/commands" "^1.2.0"

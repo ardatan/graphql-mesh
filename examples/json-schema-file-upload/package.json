@@ -12,7 +12,7 @@
     "@graphql-mesh/cli": "0.87.1",
     "@graphql-mesh/json-schema": "0.95.3",
     "@whatwg-node/router": "0.3.0",
-    "graphql": "16.7.1"
+    "graphql": "16.8.0"
   },
   "devDependencies": {
     "@types/node": "18.17.5",
