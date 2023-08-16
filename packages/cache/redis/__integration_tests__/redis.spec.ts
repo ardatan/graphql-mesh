@@ -11,10 +11,15 @@ describe('Redis', () => {
     logger,
   });
   afterAll(() => pubsub.publish('destroy', undefined));
-  it('should set and get', async () => {
+  it('works', async () => {
+    const test = await redisCache.get('test');
+    expect(test).toBeUndefined();
     const now = Date.now();
     await redisCache.set('now', now);
-    const test = await redisCache.get('now');
-    expect(test).toBe(now);
+    const test2 = await redisCache.get('now');
+    expect(test2).toBe(now);
+    await redisCache.delete('now');
+    const test3 = await redisCache.get('now');
+    expect(test3).toBeUndefined();
   });
 });
