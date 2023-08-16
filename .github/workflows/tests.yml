@@ -12,6 +12,8 @@ env:
   NODE_TLS_REJECT_UNAUTHORIZED: 0
   GH_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   LC_ALL: en-US
+  REDIS_HOST: localhost
+  REDIS_PORT: 6379
 jobs:
   lint:
     uses: the-guild-org/shared-config/.github/workflows/lint.yml@main
@@ -88,6 +90,16 @@ jobs:
         options:
           --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s
           --health-retries=3
+      # Label used to access the service container
+      redis:
+        # Docker Hub image
+        image: redis
+        # Set health checks to wait until redis has started
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+        ports:
+          # Maps port 6379 on service container to the host
+          - 6379:6379
 
     steps:
       - name: Checkout
@@ -156,6 +168,16 @@ jobs:
         options:
           --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s
           --health-retries=3
+      # Label used to access the service container
+      redis:
+        # Docker Hub image
+        image: redis
+        # Set health checks to wait until redis has started
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+        ports:
+          # Maps port 6379 on service container to the host
+          - 6379:6379
 
     steps:
       - name: Checkout

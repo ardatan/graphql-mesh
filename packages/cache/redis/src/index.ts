@@ -5,6 +5,7 @@ import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import {
   KeyValueCache,
   KeyValueCacheSetOptions,
+  Logger,
   MeshPubSub,
   YamlConfig,
 } from '@graphql-mesh/types';
@@ -16,7 +17,7 @@ function interpolateStrWithEnv(str: string): string {
 export default class RedisCache<V = string> implements KeyValueCache<V> {
   private client: Redis;
 
-  constructor(options: YamlConfig.Cache['redis'] & { pubsub: MeshPubSub }) {
+  constructor(options: YamlConfig.Cache['redis'] & { pubsub: MeshPubSub; logger: Logger }) {
     if (options.url) {
       const redisUrl = new URL(interpolateStrWithEnv(options.url));
 
@@ -28,12 +29,14 @@ export default class RedisCache<V = string> implements KeyValueCache<V> {
         throw new Error('Redis URL must use either redis:// or rediss://');
       }
 
+      options.logger.debug(`Connecting to Redis at ${redisUrl.toString()}`);
       this.client = new Redis(redisUrl?.toString());
     } else {
       const parsedHost = interpolateStrWithEnv(options.host?.toString());
       const parsedPort = interpolateStrWithEnv(options.port?.toString());
       const parsedPassword = interpolateStrWithEnv(options.password?.toString());
       if (parsedHost) {
+        options.logger.debug(`Connecting to Redis at ${parsedHost}:${parsedPort}`);
         this.client = new Redis({
           host: parsedHost,
           port: parseInt(parsedPort),
@@ -43,6 +46,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V> {
           enableOfflineQueue: true,
         });
       } else {
+        options.logger.debug(`Connecting to Redis mock`);
         this.client = new RedisMock();
       }
     }
