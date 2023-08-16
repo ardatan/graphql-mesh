@@ -21,7 +21,7 @@ testMatch.push(process.env.INTEGRATION_TEST ? '!**/packages/**' : '!**/examples/
 testMatch.push(
   process.env.INTEGRATION_TEST
     ? '**/packages/**/__integration_tests__/**'
-    : '!**/packages/**/__integration_tests__',
+    : '!**/packages/**/__integration_tests__/**',
 );
 
 testMatch.push(
