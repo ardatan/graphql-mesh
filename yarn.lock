@@ -13210,7 +13210,7 @@ invariant@2.2.4, invariant@^2.2.4:
   dependencies:
     loose-envify "^1.0.0"
 
-ioredis-mock@8.8.3:
+ioredis-mock@^8.8.3:
   version "8.8.3"
   resolved "https://registry.yarnpkg.com/ioredis-mock/-/ioredis-mock-8.8.3.tgz#cf3fc27571091f1fcbe41f6027d53e65e640adf0"
   integrity sha512-LkF17WIyYkPfUhvp0fjIZ+HKhILEoq1J2b71vv+9EOW054UlkySVEvgQ2RolXM+eI759MteHtXQvv0oRn0lkUg==
@@ -13221,7 +13221,7 @@ ioredis-mock@8.8.3:
     fengari-interop "^0.1.3"
     semver "^7.5.4"
 
-ioredis@5.3.2, ioredis@>=5:
+ioredis@>=5, ioredis@^5.3.2:
   version "5.3.2"
   resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-5.3.2.tgz#9139f596f62fc9c72d873353ac5395bcf05709f7"
   integrity sha512-1DKMMzlIHM02eBBVOFQ1+AolGjs6+xEcM4PDL7NqOS6szq7H9jSaEkIUH6/a5Hl241LzW6JLSiAbNvTQjUupUA==
@@ -17801,9 +17801,9 @@ pg-types@^4.0.1:
     postgres-range "^1.1.1"
 
 "pg@>=6.1.0 <9", pg@^8.6.0:
-  version "8.11.2"
-  resolved "https://registry.yarnpkg.com/pg/-/pg-8.11.2.tgz#1a23f6de7bfb65ba56e4dd15df96668d319900c4"
-  integrity sha512-l4rmVeV8qTIrrPrIR3kZQqBgSN93331s9i6wiUiLOSk0Q7PmUxZD/m1rQI622l3NfqBby9Ar5PABfS/SulfieQ==
+  version "8.11.3"
+  resolved "https://registry.yarnpkg.com/pg/-/pg-8.11.3.tgz#d7db6e3fe268fcedd65b8e4599cda0b8b4bf76cb"
+  integrity sha512-+9iuvG8QfaaUrrph+kpF24cXkH1YOOUeArRNYIxq1viYHZagBxrTno7cecY1Fa44tJeZvaoG+Djpkc3JwehN5g==
   dependencies:
     buffer-writer "2.0.0"
     packet-reader "1.0.0"
