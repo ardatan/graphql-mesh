@@ -76,6 +76,8 @@ directive @grpcMethod(rootJsonName: String, objPath: String, methodName: String,
 
 directive @grpcConnectivityState(rootJsonName: String, objPath: String) on FIELD_DEFINITION
 
+directive @enum(value: String) on ENUM_VALUE
+
 directive @grpcRootJson(name: String, rootJson: ObjMap, loadOptions: ObjMap) repeatable on OBJECT
 
 "Directs the executor to stream plural fields when the \`if\` argument is true or undefined."
@@ -127,9 +129,9 @@ type google_protobuf_Timestamp {
 }
 
 enum Genre {
-  UNSPECIFIED
-  ACTION
-  DRAMA
+  UNSPECIFIED @enum(value: "0")
+  ACTION @enum(value: "1")
+  DRAMA @enum(value: "2")
 }
 
 input MovieRequest_Input {
