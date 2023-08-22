@@ -2,13 +2,17 @@
 import globby from 'globby';
 import {
   buildSchema,
-  GraphQLEnumTypeConfig,
   GraphQLFieldResolver,
   GraphQLScalarType,
   GraphQLSchema,
+  isEnumType,
   specifiedDirectives,
 } from 'graphql';
-import { ObjectTypeComposerFieldConfigAsObjectDefinition, SchemaComposer } from 'graphql-compose';
+import {
+  EnumTypeComposerValueConfigDefinition,
+  ObjectTypeComposerFieldConfigAsObjectDefinition,
+  SchemaComposer,
+} from 'graphql-compose';
 import {
   GraphQLBigInt,
   GraphQLByte,
@@ -46,6 +50,7 @@ import { ChannelCredentials, credentials, loadPackageDefinition } from '@grpc/gr
 import { ServiceClient } from '@grpc/grpc-js/build/src/make-client.js';
 import { fromJSON } from '@grpc/proto-loader';
 import {
+  EnumDirective,
   grpcConnectivityStateDirective,
   grpcMethodDirective,
   grpcRootJsonDirective,
@@ -399,8 +404,9 @@ export default class GrpcHandler implements MeshHandler {
     }
     const rootTypes = getRootTypes(schema);
     for (const rootType of rootTypes) {
-      for (const fieldName in rootType.getFields()) {
-        const field = rootType.getFields()[fieldName];
+      const rootTypeFields = rootType.getFields();
+      for (const fieldName in rootTypeFields) {
+        const field = rootTypeFields[fieldName];
         const directives = getDirectives(schema, field);
         if (directives?.length) {
           for (const directiveObj of directives) {
@@ -430,6 +436,24 @@ export default class GrpcHandler implements MeshHandler {
                 });
                 field.resolve = this.getConnectivityStateResolver({ client });
                 break;
+              }
+            }
+          }
+        }
+      }
+    }
+    const typeMap = schema.getTypeMap();
+    for (const typeName in typeMap) {
+      const type = typeMap[typeName];
+      if (isEnumType(type)) {
+        const values = type.getValues();
+        for (const value of values) {
+          const enumAnnotations = getDirective(schema, value, 'enum');
+          if (enumAnnotations?.length) {
+            for (const enumAnnotation of enumAnnotations) {
+              const enumSerializedValue = enumAnnotation.value;
+              if (enumSerializedValue) {
+                value.value = JSON.parse(enumSerializedValue);
               }
             }
           }
@@ -472,20 +496,28 @@ export default class GrpcHandler implements MeshHandler {
     }
     const typeName = pathWithName.join('_');
     if ('values' in nested) {
-      const enumTypeConfig: GraphQLEnumTypeConfig = {
-        name: typeName,
-        values: {},
-        description: (nested as any).comment,
-      };
+      const enumValues: Record<string, EnumTypeComposerValueConfigDefinition> = {};
       const commentMap = (nested as any).comments;
       for (const [key, value] of Object.entries(nested.values)) {
         logger.debug(`Visiting ${currentPath}.nested.values[${key}]`);
-        enumTypeConfig.values[key] = {
-          value,
+        enumValues[key] = {
+          directives: [
+            {
+              name: 'enum',
+              args: {
+                value: JSON.stringify(value),
+              },
+            },
+          ],
           description: commentMap?.[key],
         };
       }
-      this.schemaComposer.createEnumTC(enumTypeConfig);
+      this.schemaComposer.addDirective(EnumDirective);
+      this.schemaComposer.createEnumTC({
+        name: typeName,
+        values: enumValues,
+        description: (nested as any).comment,
+      });
     } else if ('fields' in nested) {
       const inputTypeName = typeName + '_Input';
       const outputTypeName = typeName;

@@ -38,6 +38,16 @@ export const grpcConnectivityStateDirective = new GraphQLDirective({
   },
 });
 
+export const EnumDirective = new GraphQLDirective({
+  name: 'enum',
+  locations: [DirectiveLocation.ENUM_VALUE],
+  args: {
+    value: {
+      type: GraphQLString,
+    },
+  },
+});
+
 export const ObjMapScalar = new GraphQLScalarType({
   name: 'ObjMap',
   serialize: value => JSON.stringify(value),

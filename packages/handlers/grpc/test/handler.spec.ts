@@ -1,9 +1,10 @@
 import { join } from 'path';
-import { GraphQLSchema, printSchema, validateSchema } from 'graphql';
+import { GraphQLSchema, validateSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import type { KeyValueCache, YamlConfig } from '@graphql-mesh/types';
 import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch as fetchFn } from '@whatwg-node/fetch';
 import GrpcHandler from '../src/index.js';
 
@@ -38,6 +39,7 @@ describe('gRPC Handler', () => {
     ['Custom Message2', 'custom-message-2.proto'],
     ['Comments', 'comments.proto'],
     ['Map', 'map.proto'],
+    ['Enums', 'enums.proto'],
   ])('Interpreting Protos', (name, file) => {
     test(`should load the ${name} proto`, async () => {
       const config: YamlConfig.GrpcHandler = {
@@ -62,7 +64,7 @@ describe('gRPC Handler', () => {
 
       expect(schema).toBeInstanceOf(GraphQLSchema);
       expect(validateSchema(schema)).toHaveLength(0);
-      expect(printSchema(schema)).toMatchSnapshot();
+      expect(printSchemaWithDirectives(schema)).toMatchSnapshot();
     });
   });
 
@@ -92,8 +94,8 @@ describe('gRPC Handler', () => {
 
       expect(schema).toBeInstanceOf(GraphQLSchema);
       expect(validateSchema(schema)).toHaveLength(0);
-      expect(printSchema(schema)).toContain('AnotherExample_RetrieveMovies');
-      expect(printSchema(schema)).toMatchSnapshot();
+      expect(printSchemaWithDirectives(schema)).toContain('AnotherExample_RetrieveMovies');
+      expect(printSchemaWithDirectives(schema)).toMatchSnapshot();
     });
   });
 });

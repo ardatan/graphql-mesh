@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package io.xtech;
+
+enum OrganizationStateProto {
+  UNKNOWN = 0;
+  ACTIVE = 1;
+  PENDING_PAYMENT = 2;
+  SUSPENDED = 3;
+}
+
+ message OrganizationProto {
+  string id = 1;
+  string owner = 2;
+  string name = 3;
+  string description = 4;
+  string image_url = 5;
+  OrganizationStateProto state = 6;
+  bool default_org = 7;
+}
+
+message EmptyRequest {}
+
+service OrganizationService {
+  rpc GetOrganization (EmptyRequest) returns (OrganizationProto) {}
+}
