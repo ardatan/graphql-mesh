@@ -41,17 +41,17 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@ardatan/grpc-reflection-js": "0.0.2",
-    "@graphql-mesh/string-interpolation": "0.5.1",
+    "@ardatan/grpc-reflection-js": "^0.0.2",
+    "@graphql-mesh/string-interpolation": "^0.5.1",
     "@grpc/grpc-js": "^1.1.7",
-    "@grpc/proto-loader": "0.7.8",
-    "globby": "11.1.0",
-    "graphql-compose": "9.0.10",
+    "@grpc/proto-loader": "^0.7.8",
+    "globby": "^11.1.0",
+    "graphql-compose": "^9.0.10",
     "graphql-scalars": "^1.22.2",
-    "lodash.get": "4.4.2",
-    "lodash.has": "4.5.2",
+    "lodash.get": "^4.4.2",
+    "lodash.has": "^4.5.2",
     "long": "4.0.0",
-    "protobufjs": "7.2.5"
+    "protobufjs": "^7.2.5"
   },
   "devDependencies": {
     "@types/lodash.has": "4.5.7"
