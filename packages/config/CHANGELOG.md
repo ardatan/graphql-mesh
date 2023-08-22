@@ -1,5 +1,14 @@
 # @graphql-mesh/config
 
+## 0.97.3
+
+### Patch Changes
+
+- [#5841](https://github.com/Urigo/graphql-mesh/pull/5841)
+  [`afa35c853`](https://github.com/Urigo/graphql-mesh/commit/afa35c853b211a16084a435c5678225bd83765bf)
+  Thanks [@cweckesser](https://github.com/cweckesser)! - Fix path to file containing custom fetch
+  function when building Mesh project
+
 ## 0.97.2
 
 ### Patch Changes

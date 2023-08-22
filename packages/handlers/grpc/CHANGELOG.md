@@ -1,5 +1,19 @@
 # @graphql-mesh/grpc
 
+## 0.95.3
+
+### Patch Changes
+
+- [#5853](https://github.com/Urigo/graphql-mesh/pull/5853)
+  [`41804091c`](https://github.com/Urigo/graphql-mesh/commit/41804091c17cbac48da38cb433cbd2a1ec15bb5d)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`protobufjs@7.2.5` ↗︎](https://www.npmjs.com/package/protobufjs/v/7.2.5)
+    (from `7.2.4`, in `dependencies`)
+
+- [`9d48fe994`](https://github.com/Urigo/graphql-mesh/commit/9d48fe994a0a7cd94d37041c96ef763a9fb4ea09)
+  Thanks [@ardatan](https://github.com/ardatan)! - Keep enum values in GraphQL SDL
+
 ## 0.95.2
 
 ### Patch Changes
