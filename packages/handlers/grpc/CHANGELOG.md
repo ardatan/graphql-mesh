@@ -1,5 +1,12 @@
 # @graphql-mesh/grpc
 
+## 0.95.4
+
+### Patch Changes
+
+- [`e0edf1b74`](https://github.com/Urigo/graphql-mesh/commit/e0edf1b74b3131a950e153f1a387fa922b0b48d7)
+  Thanks [@ardatan](https://github.com/ardatan)! - Use ranged versions
+
 ## 0.95.3
 
 ### Patch Changes
