@@ -85,10 +85,10 @@ be described using Open API/Swagger.
 
 Open API is a standard based on JSON Schema (JSON-based files standard) to describe APIs.
 
-Our Books REST API provides an Open API definition file:
-[`packages/books-service/openapi3-definition.json`](https://github.com/charlypoly/graphql-mesh-docs-first-gateway/tree/master/packages/books-service/openapi3-definition.json).
+Our Books REST API provides an Open API definition file in the following URL:
+`http://localhost:3002/openapi.json`.
 
-The `openapi3-definition.json` file describes the available endpoints along with their arguments and
+The `openapi.json` file describes the available endpoints along with their arguments and
 responses shape associated with a noperation ID:
 
 - `GET /books` (ID: `AppController_books`)
@@ -116,8 +116,7 @@ sources:
   - name: Books
     handler:
       openapi:
-        endpoint: http://localhost:3002/
-        source: ../books-service/openapi3-definition.json
+        source: http://localhost:3002/openapi.json
 ```
 
 The configuration is straightforward; we define a _Source_ called "Books" that is configured with
@@ -152,7 +151,7 @@ You can try out the following Query:
 {
   AppController_books {
     authorId
-    categorieId
+    categoryId
     id
     title
   }
@@ -189,8 +188,7 @@ sources:
   - name: Books
     handler:
       openapi:
-        endpoint: http://localhost:3002/
-        source: ../books-service/openapi3-definition.json
+        source: http://localhost:3002/openapi.json
 transforms:
   - rename:
       renames:
@@ -231,8 +229,7 @@ sources:
   - name: Books
     handler:
       openapi:
-        endpoint: http://localhost:3002/
-        source: ../books-service/openapi3-definition.json
+        source: http://localhost:3002/openapi.json
 transforms:
   - rename:
       renames:
@@ -269,8 +266,7 @@ sources:
   - name: Books
     handler:
       openapi:
-        endpoint: http://localhost:3002/
-        source: ../books-service/openapi3-definition.json
+        source: http://localhost:3002/openapi.json
 transforms:
   - rename:
       renames:

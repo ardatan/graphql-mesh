@@ -31,8 +31,7 @@ sources:
   - name: Books
     handler:
       openapi:
-        endpoint: http://localhost:3002/
-        source: ../books-service/openapi3-definition.json
+        source: http://localhost:3002/openapi.json
     transforms:
   - rename:
       renames:
@@ -46,7 +45,6 @@ sources:
     handler:
       grpc:
         endpoint: localhost:3003
-        source: ../authors-service/proto/authors/v1/authors_service.proto
   - name: Stores
     handler:
       graphql:
