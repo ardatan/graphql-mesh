@@ -134,9 +134,7 @@ export async function resolveCustomFetch({
     additionalPrefixes: additionalPackagePrefixes,
   });
 
-  const processedModuleName = path.isAbsolute(moduleName)
-    ? moduleName
-    : path.join('..', moduleName);
+  const processedModuleName = moduleName.startsWith('.') ? path.join('..', moduleName) : moduleName;
   importCode += `import fetchFn from ${JSON.stringify(processedModuleName)};\n`;
 
   return {
