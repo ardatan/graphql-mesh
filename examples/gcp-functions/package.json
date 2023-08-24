@@ -17,6 +17,6 @@
     "@graphql-mesh/json-schema": "0.95.3",
     "@types/node": "18.17.9",
     "graphql": "16.8.0",
-    "typescript": "5.1.6"
+    "typescript": "5.2.2"
   }
 }
