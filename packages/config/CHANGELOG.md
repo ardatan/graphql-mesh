@@ -1,5 +1,12 @@
 # @graphql-mesh/config
 
+## 0.97.4
+
+### Patch Changes
+
+- [`bd011678c`](https://github.com/Urigo/graphql-mesh/commit/bd011678c3811c0812156b3fe95ceada054657a9)
+  Thanks [@ardatan](https://github.com/ardatan)! - Handle customFetch paths correctly
+
 ## 0.97.3
 
 ### Patch Changes
