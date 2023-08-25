@@ -3120,10 +3120,10 @@
     parse-filepath "^1.0.2"
     tslib "~2.5.0"
 
-"@graphql-hive/cli@0.28.0":
-  version "0.28.0"
-  resolved "https://registry.yarnpkg.com/@graphql-hive/cli/-/cli-0.28.0.tgz#2f4c2a8db4b9831c44c7018d4e3d96b9679e8d8a"
-  integrity sha512-NBRoEtHzbgJikUeYJJDZuYVrnlVQ/Pr873K67N4TZkfOTqjlzBcB5AUsHygI7yEUOkgSePC75TF+VTO4uWQwDQ==
+"@graphql-hive/cli@0.29.0":
+  version "0.29.0"
+  resolved "https://registry.yarnpkg.com/@graphql-hive/cli/-/cli-0.29.0.tgz#53cf4d2df9dca6587f0e80abd023df73c4eb4ae5"
+  integrity sha512-PvFmyON5dbB1E36aVeCv1EpzfTs7tJL+PYygmrpgvk55aUmcGEyJv4mb60HS0tGybbFeh9mM8CY/JUBMm2pLtQ==
   dependencies:
     "@graphql-hive/core" "0.2.3"
     "@graphql-inspector/core" "4.2.2"
@@ -16642,10 +16642,10 @@ mongodb@5.7.0:
   optionalDependencies:
     saslprep "^1.0.3"
 
-mongoose@7.4.4:
-  version "7.4.4"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-7.4.4.tgz#e45a02f0cee37e6c5343c95f9ad6feb06187a9a8"
-  integrity sha512-LOOviiEqWOLH4PuBK+jbpm5vjBkdSNBcP/4UCevOJMTl5SXSbCXr68ulEYcthLcN2/xi08452HupKD8BfxNIQw==
+mongoose@7.4.5:
+  version "7.4.5"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-7.4.5.tgz#7c843c6e3e8dcd22b0ff0f0981aca69b863e7723"
+  integrity sha512-X7Mw7KHUYZmyOQmlu7D9TnZh/3vOrAYmZwEpXDU0VDvLPKT0T7PF6blwiv3aXOEMwv9T3rLTC9lJb3C5dWld2A==
   dependencies:
     bson "^5.4.0"
     kareem "2.5.1"
