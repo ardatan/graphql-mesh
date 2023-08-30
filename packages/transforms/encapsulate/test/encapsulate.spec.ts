@@ -281,4 +281,33 @@ describe('encapsulate', () => {
         .notifySomething,
     ).toBeDefined();
   });
+
+  it('should respect the settings in applyTo', async () => {
+    const newSchema = wrapSchema({
+      schema,
+      transforms: [
+        new Transform({
+          config: {
+            applyTo: {
+              subscription: false,
+              mutation: false,
+            },
+          },
+          cache,
+          pubsub,
+          baseDir,
+          apiName: 'test',
+          importFn,
+          logger: new DefaultLogger(),
+        }),
+      ],
+    });
+    expect(newSchema.getMutationType().getFields().test).not.toBeDefined();
+    expect(newSchema.getMutationType().getFields().doSomething).toBeDefined();
+    expect(newSchema.getSubscriptionType().getFields().test).not.toBeDefined();
+    expect(newSchema.getSubscriptionType().getFields().notify).toBeDefined();
+    expect(newSchema.getQueryType().getFields().test).toBeDefined();
+    expect(newSchema.getQueryType().getFields().getSomething).not.toBeDefined();
+    expect(newSchema.getQueryType().getFields().test.type.toString()).toBe('testQuery!');
+  });
 });
