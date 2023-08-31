@@ -2666,43 +2666,43 @@
   resolved "https://registry.yarnpkg.com/@csstools/selector-specificity/-/selector-specificity-2.2.0.tgz#2cbcf822bf3764c9658c4d2e568bd0c0cb748016"
   integrity sha512-+OJ9konv95ClSTOJCmMZqpd5+YGsB2S+x6w3E1oaM8UuR5j8nTNHYSz8c9BEPGDOCMQYIEEGlVPj/VY64iTbGw==
 
-"@envelop/auth0@5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@envelop/auth0/-/auth0-5.0.0.tgz#a1ae992ba2f639986f5483755a3f51e53ef071af"
-  integrity sha512-1veOOuIU/hvb8CmNDKViheIrG88XJEEOoRtX6i5tKaykcjRl541NHRE+mlQUUb/OiwQcjZbD1nKTW6frL0F/+Q==
+"@envelop/auth0@5.0.1":
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/@envelop/auth0/-/auth0-5.0.1.tgz#8f2a50bf04a1e1fc46dcbab5a818d9bced8be2dd"
+  integrity sha512-AXSUcWNBqBhe+5tyA2tbnKIthf6x9XeeNxT/iEeltxx1Xt6KwCcwX2UBDqo9lVoGGNdxQvYYa/WtXSYwgMpfXQ==
   dependencies:
     jsonwebtoken "^9.0.0"
     jwks-rsa "^3.0.1"
     tslib "^2.5.0"
 
-"@envelop/core@4.0.0", "@envelop/core@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@envelop/core/-/core-4.0.0.tgz#3aa22494c55b65abedb2983e2722055e6873575d"
-  integrity sha512-6usEZO86hWT0ZajAbhOX0QXlV++lrlEmu8br6KQVvyXOxttiHADIibgfzb3GtSI7RnnJDnrcRb7Jynv6Lca3iQ==
+"@envelop/core@4.0.1", "@envelop/core@^4.0.0":
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@envelop/core/-/core-4.0.1.tgz#0f3eb33a396e9f4527d7fa8079055ec151eb73aa"
+  integrity sha512-uBLI7ql3hZopz7vMi9UDAb9HWzKw4STKiqg4QT+lb+tu5ZNaeuJ4fom2rrmgITz38B85QZOhZrGyVrlJXxfDzw==
   dependencies:
-    "@envelop/types" "4.0.0"
+    "@envelop/types" "4.0.1"
     tslib "^2.5.0"
 
-"@envelop/depth-limit@3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@envelop/depth-limit/-/depth-limit-3.0.0.tgz#f3483092551e25f5297dc371eaf5027ea8613001"
-  integrity sha512-SOKEd+x8GMQG8m6N+uigN9vdaHd+Sr+XJwQ2q4WVD9rilQM7Ss5Ev93cfXTcb3K0Ch3/Iv16Y2yQeyrCCngYuw==
+"@envelop/depth-limit@3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@envelop/depth-limit/-/depth-limit-3.0.1.tgz#859a52e3c4debc6ff8cb9931df7b1f08f37fbc5b"
+  integrity sha512-mQVz+/jonw11EsKBxAvCqh1ojTphKovmsF2yjbgxKXE0WUBs6GKQQ6CqNeLi2mTKQDSGoU7tjR6qEyk6oApDbA==
   dependencies:
     graphql-depth-limit "^1.1.0"
     tslib "^2.5.0"
 
-"@envelop/extended-validation@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@envelop/extended-validation/-/extended-validation-3.0.0.tgz#463274e9132f8cf8ec7e666c5093757f61919a85"
-  integrity sha512-nW3EjF27qghKszEbhSJFf7jTyoXZcU5XtWCHCuq+ghJOzkjMRQdMHkoiTWhScpAvJc0i26lyWTsZ/SZ0+xIRVA==
+"@envelop/extended-validation@^3.0.0", "@envelop/extended-validation@^3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@envelop/extended-validation/-/extended-validation-3.0.1.tgz#119baf344713b99db76e4ad40de40584b0d14499"
+  integrity sha512-UQDt8/MrRKuyX8r6tJmzfqzNyPiibfLeWpeW8+CeG9oNIVYYjjq6+rB5EJCMHWb3uLpY09lD1OxxV3jFcyZq3A==
   dependencies:
     "@graphql-tools/utils" "^10.0.0"
     tslib "^2.5.0"
 
-"@envelop/live-query@6.0.0":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@envelop/live-query/-/live-query-6.0.0.tgz#90505b4e6796c5d90c9921708006f01101fec9a5"
-  integrity sha512-9NN3sbA/TZH7umCr6flUpUmOpJ2tR88OrETXWR/LJUvSaGGCPhCSHZiIQtORBWhuNXgme5pG48JNfUVWP82crw==
+"@envelop/live-query@6.0.1":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/@envelop/live-query/-/live-query-6.0.1.tgz#928f7a6dec7c738d55dc53acc18ab128e0556b28"
+  integrity sha512-FIntUK/GZQorJLzQ0hL6eSfhvyQel4inGzMGu3ryC4KMOSt3VbBYLFjNkuKO/LceKkXpUTIch+D8VWAEvidXUg==
   dependencies:
     "@graphql-tools/utils" "^10.0.0"
     "@n1ru4l/graphql-live-query" "^0.10.0"
@@ -2711,24 +2711,24 @@
     tslib "^2.5.0"
 
 "@envelop/newrelic@^6.0.1":
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/@envelop/newrelic/-/newrelic-6.0.1.tgz#79a3359bf0ac7788387f57029b7d9091f9de1309"
-  integrity sha512-4+0icLp2sU3XEvJL6C9nqPEIIXRgVVb/NTXqZy8fJDgrXznW/Jt1aKLSL2j9DiCdefLWI2Z2k/OkwBcCND7rFQ==
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/@envelop/newrelic/-/newrelic-6.0.2.tgz#79dd06bfbb155e35ab49c0b79d5f678302b0c486"
+  integrity sha512-LIytDYQ032c4OFkuLO0zr3M2WPKybHot3844zFE56d13Wsvpg9Olu4d23TNYMVR2ODp9/D5zvNH76DCmZAIdqw==
   dependencies:
-    "@envelop/on-resolve" "^3.0.0"
+    "@envelop/on-resolve" "^3.0.1"
     tslib "^2.5.0"
 
-"@envelop/on-resolve@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@envelop/on-resolve/-/on-resolve-3.0.0.tgz#378d409a92dc7ac5851f34739684db294cab8fee"
-  integrity sha512-WWsz06aN/x1ZrH32HKq+kgLiLNJ600ylTXNvHHOgkhWLNr7dz7uJDHW0CBi061+LlIFMdtt4rIwf2uipHHAVjQ==
+"@envelop/on-resolve@^3.0.0", "@envelop/on-resolve@^3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@envelop/on-resolve/-/on-resolve-3.0.1.tgz#1af2194792ebbda733a314c845ce0cc7a0832299"
+  integrity sha512-5OWcZHTvV3CeQNvaPuarTOa5WVZbgUkDxq6jnHH0mjd3V0ZDcwukFrQmfTFgOkwYKpvEbKoVWFJUyMVEHXweZA==
 
-"@envelop/operation-field-permissions@5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@envelop/operation-field-permissions/-/operation-field-permissions-5.0.0.tgz#da2f5601767163c5f2de6d6959348acf3d390298"
-  integrity sha512-cVcwtDsQJVw3xyYpChUzI3DWS631/ZtP58hAXqFNHwdH3z6M1jx1W+PVEJv4QvVLPmzzNXgNE19LwzjJkMzInw==
+"@envelop/operation-field-permissions@5.0.1":
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/@envelop/operation-field-permissions/-/operation-field-permissions-5.0.1.tgz#3ecd0479f53a669f4c27847dfa3cfa3444c77ff4"
+  integrity sha512-Cju/WqVxbSs+moPze2Ma4OG2tcTJdJKz9IGGVZQBgUvJBDOWdj+ERNf1C1011rm36g4Kj0D6rcGOT1js0DVGmA==
   dependencies:
-    "@envelop/extended-validation" "^3.0.0"
+    "@envelop/extended-validation" "^3.0.1"
     tslib "^2.5.0"
 
 "@envelop/prometheus@8.0.0":
@@ -2750,17 +2750,17 @@
     lru-cache "^10.0.0"
     tslib "^2.5.0"
 
-"@envelop/statsd@4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@envelop/statsd/-/statsd-4.0.0.tgz#ba3f655a7d3b9dc9286c725e2b3e82c6e883d26f"
-  integrity sha512-YVSbNJKyryhBFvuQUIvQOX1H9DVf3rkA9+WcShLCxG6P8wd6QVh9poLZJWub/gD/vYY7bkKPWgay4HjevmNc8Q==
+"@envelop/statsd@4.0.1":
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@envelop/statsd/-/statsd-4.0.1.tgz#c8492f478e1356de6a4fb37b2962ff8fb2125cd3"
+  integrity sha512-8dvL3jarD7P9kTFjyBwnfkfpDZhyR3M2LAuO6ENTvSH2Yo964ikehLKUsKPLKz5PagWy2Id/2I3ndKKUlGICUg==
   dependencies:
     tslib "^2.5.0"
 
-"@envelop/types@4.0.0", "@envelop/types@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@envelop/types/-/types-4.0.0.tgz#6491d15b471434e74cd4b2321b68b8bb95f0ae61"
-  integrity sha512-dmBK16VVfKCkqYYemvE+gt1cPBP0d9CbYO4yjNhSSYy9K+w6+Lw48wOLK238mSR339PNAvwj/JW/qzNy2llggA==
+"@envelop/types@4.0.1", "@envelop/types@^4.0.0":
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@envelop/types/-/types-4.0.1.tgz#145690d8266a003cdb06dd58fa1236e3c80050a9"
+  integrity sha512-ULo27/doEsP7uUhm2iTnElx13qTO6I5FKvmLoX41cpfuw8x6e0NUFknoqhEsLzAbgz8xVS5mjwcxGCXh4lDYzg==
   dependencies:
     tslib "^2.5.0"
 
@@ -16798,27 +16798,27 @@ neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-neo4j-driver-bolt-connection@5.11.0:
-  version "5.11.0"
-  resolved "https://registry.yarnpkg.com/neo4j-driver-bolt-connection/-/neo4j-driver-bolt-connection-5.11.0.tgz#844d2fbdaf3afa645ada2b87c13ff34f456e9b7d"
-  integrity sha512-jfptm6W/a4CIoip4S/KubxrPIIV3hdOJ8B5t2RtMJwVfup8uJFzRsQLW/ljg7PJdMiE1hHQ94/qcVKd3gCC3og==
+neo4j-driver-bolt-connection@5.12.0:
+  version "5.12.0"
+  resolved "https://registry.yarnpkg.com/neo4j-driver-bolt-connection/-/neo4j-driver-bolt-connection-5.12.0.tgz#aff161367d287579d7bdd3ee4179eed324398210"
+  integrity sha512-dlYbFsfT0HopGItitG5uDK4nAkcqSPNtRqMz318qy//7fb/7OXVLGYikj57Ve1toJiJD8IIVErt/dVuEUHVxGA==
   dependencies:
     buffer "^6.0.3"
-    neo4j-driver-core "5.11.0"
+    neo4j-driver-core "5.12.0"
     string_decoder "^1.3.0"
 
-neo4j-driver-core@5.11.0:
-  version "5.11.0"
-  resolved "https://registry.yarnpkg.com/neo4j-driver-core/-/neo4j-driver-core-5.11.0.tgz#0252ed596fd33df3c704125b59ccbb7c09524d23"
-  integrity sha512-HIZrX1wIkwb1BlXtDk0thbyzYrlDKQK9PuzcgeKF9/fTORxr5K39kdIiwVi3gkoGOcFCSoBu+fTnlnav1BcgRg==
+neo4j-driver-core@5.12.0:
+  version "5.12.0"
+  resolved "https://registry.yarnpkg.com/neo4j-driver-core/-/neo4j-driver-core-5.12.0.tgz#1f8616da7e945921574811368a68f5d2501bfd35"
+  integrity sha512-xBRi5oezysDUvtvBiIgBchzumkDZxvR9ol9sUtA9PBgVENeSmPH3CncitY8S979CFELS6wH7kydcjPLB4QMOzA==
 
 neo4j-driver@^5.9.2:
-  version "5.11.0"
-  resolved "https://registry.yarnpkg.com/neo4j-driver/-/neo4j-driver-5.11.0.tgz#688aefcd8c8194ae4f22152963c102a5a8c28a9d"
-  integrity sha512-2IPKXH9najfKJyczIZ8R15p/oYsb4P+nwp76XRjO46Zl+ssc22+gMe/8FLRYw3tRJYc3b87ikx2s8ZNuseOAxQ==
+  version "5.12.0"
+  resolved "https://registry.yarnpkg.com/neo4j-driver/-/neo4j-driver-5.12.0.tgz#1b2d7db1672ad224f0146542efee306a0a156a11"
+  integrity sha512-T2Vz63XDkL9TomM16dBusuXbo7d9SIGw2g3VR/rmrWTdbl1V1LYFx/u1P7AwBsFuX08oncKHfZwHGsWrCvdMyA==
   dependencies:
-    neo4j-driver-bolt-connection "5.11.0"
-    neo4j-driver-core "5.11.0"
+    neo4j-driver-bolt-connection "5.12.0"
+    neo4j-driver-core "5.12.0"
     rxjs "^7.8.1"
 
 newrelic@10.6.2:
