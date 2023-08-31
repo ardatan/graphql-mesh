@@ -28,6 +28,11 @@ describe('thrift', () => {
       path: '/thrift-with-imports',
       serviceName: 'Calculator',
     },
+    Recursive: {
+      idl: 'recursive_types.thrift',
+      path: '/recursive',
+      serviceName: 'Recursive',
+    },
   };
   for (const schemaName in schemas) {
     it(schemaName, async () => {
