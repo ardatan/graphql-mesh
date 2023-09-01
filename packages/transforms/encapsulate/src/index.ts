@@ -51,13 +51,15 @@ export default class EncapsulateTransform implements MeshTransform {
     const outerTypeNames = getRootTypeMap(originalWrappingSchema);
 
     for (const operationType in applyTo) {
-      const outerTypeName = outerTypeNames.get(operationType as OperationTypeNode)?.name;
-      if (outerTypeName) {
-        this.transformMap[outerTypeName] = new WrapType(
-          outerTypeName,
-          `${this.name}${OPERATION_TYPE_SUFFIX_MAP[operationType as OperationTypeNode]}`,
-          this.name,
-        ) as any;
+      if (applyTo[operationType as OperationTypeNode] === true) {
+        const outerTypeName = outerTypeNames.get(operationType as OperationTypeNode)?.name;
+        if (outerTypeName) {
+          this.transformMap[outerTypeName] = new WrapType(
+            outerTypeName,
+            `${this.name}${OPERATION_TYPE_SUFFIX_MAP[operationType as OperationTypeNode]}`,
+            this.name,
+          ) as any;
+        }
       }
     }
 
