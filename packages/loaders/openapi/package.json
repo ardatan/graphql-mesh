@@ -49,7 +49,7 @@
     "@graphql-tools/utils": "10.0.5",
     "@whatwg-node/fetch": "0.9.11",
     "@whatwg-node/router": "0.3.0",
-    "fets": "0.4.12",
+    "fets": "0.4.13",
     "graphql-yoga": "4.0.4",
     "json-bigint-patch": "0.0.8"
   },

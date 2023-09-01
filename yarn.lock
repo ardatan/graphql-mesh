@@ -11477,10 +11477,10 @@ fast-xml-parser@4.2.7, fast-xml-parser@^4.2.1:
   dependencies:
     strnum "^1.0.5"
 
-fastify@4.22.1:
-  version "4.22.1"
-  resolved "https://registry.yarnpkg.com/fastify/-/fastify-4.22.1.tgz#52b31bb2d5bd4c6562675b827cebc6c8738155ec"
-  integrity sha512-Jz4NFqARAjCuxteYio+jQmZ3W+MHJQWJK0rEE66qY818q9GFCFUOZRHm0hwF1VcX/CnmdxcAycjNUHSG54Gn7g==
+fastify@4.22.2:
+  version "4.22.2"
+  resolved "https://registry.yarnpkg.com/fastify/-/fastify-4.22.2.tgz#ad5ad555c9612874e8dcd7181a248fe3674142e7"
+  integrity sha512-rK8mF/1mZJHH6H/L22OhmilTgrp5XMkk3RHcSy03LC+TJ6+wLhbq+4U62bjns15VzIbBNgxTqAForBqtGAa0NQ==
   dependencies:
     "@fastify/ajv-compiler" "^3.5.0"
     "@fastify/error" "^3.2.0"
@@ -11557,10 +11557,10 @@ fengari@^0.1.4:
     sprintf-js "^1.1.1"
     tmp "^0.0.33"
 
-fets@0.4.12, fets@^0.4.0:
-  version "0.4.12"
-  resolved "https://registry.yarnpkg.com/fets/-/fets-0.4.12.tgz#1d0ab4844ad6c27a00e0850197d0bcb08bd715f7"
-  integrity sha512-gEI3hv/QRdolsc0fS6ArD3Ypn+agV42YIm1Vw1F6ybjc+AQ/RGd5XZpUeiFyAC5FBd8IzdZfAEItA7qAZ1kFFA==
+fets@0.4.13, fets@^0.4.0:
+  version "0.4.13"
+  resolved "https://registry.yarnpkg.com/fets/-/fets-0.4.13.tgz#4a285ff06978886e1b3ecd0a620ce6ca8931e2ee"
+  integrity sha512-K5Q8qYYLxi4YjGG+kEPlpqbq5UQzcM9uGAB2KfZAHuEsAm4tlphtwKIAk1egaeFDIM44fdLTKT7ijOJDnrbDeg==
   dependencies:
     "@ardatan/fast-json-stringify" "^0.0.6"
     "@whatwg-node/cookie-store" "^0.2.0"
@@ -11570,6 +11570,7 @@ fets@0.4.12, fets@^0.4.0:
     ajv-formats "^2.1.1"
     hotscript "^1.0.11"
     json-schema-to-ts "^2.9.1"
+    qs "^6.11.2"
     ts-toolbelt "^9.6.0"
     tslib "^2.3.1"
     zod "^3.21.4"
@@ -19171,7 +19172,7 @@ qs@6.11.0:
   dependencies:
     side-channel "^1.0.4"
 
-qs@6.11.2, qs@^6.4.0:
+qs@6.11.2, qs@^6.11.2, qs@^6.4.0:
   version "6.11.2"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.11.2.tgz#64bea51f12c1f5da1bc01496f48ffcff7c69d7d9"
   integrity sha512-tDNIz22aBzCDxLtVH++VnTfzxlfeK5CbqohpSqpJgj1Wg/cQbStNAz3NuqCs5vV+pjBsK4x4pN9HlVh7rcYRiA==
