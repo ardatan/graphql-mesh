@@ -19,6 +19,31 @@ input AddRequestInput {
 }"
 `;
 
+exports[`thrift Recursive 1`] = `
+"type Query {
+  """"""
+  bar(foo: FooInput): Foo
+}
+
+""""""
+type Foo {
+  """"""
+  name: String
+
+  """"""
+  foo: Foo
+}
+
+""""""
+input FooInput {
+  """"""
+  name: String
+
+  """"""
+  foo: FooInput
+}"
+`;
+
 exports[`thrift Twitter 1`] = `
 "type Query {
   """"""

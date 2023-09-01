@@ -6,7 +6,6 @@ import {
   GraphQLFieldConfigMap,
   GraphQLFloat,
   GraphQLID,
-  GraphQLInputFieldConfigMap,
   GraphQLInputObjectType,
   GraphQLInputType,
   GraphQLInt,
@@ -519,8 +518,6 @@ export default class ThriftHandler implements MeshHandler {
             break;
           case SyntaxType.StructDefinition: {
             const description = processComments(statement.comments);
-            const objectFields: GraphQLFieldConfigMap<any, any> = {};
-            const inputObjectFields: GraphQLInputFieldConfigMap = {};
             const structTypeVal: StructTypeVal = {
               id: Math.random(),
               name: typeName,
@@ -529,39 +526,40 @@ export default class ThriftHandler implements MeshHandler {
             };
             topTypeMap[typeName] = structTypeVal;
             const structFieldTypeMap = structTypeVal.fields;
+            const fields: any[] = [];
             for (const field of statement.fields) {
-              const fieldName = field.name.value;
-              let fieldOutputType: GraphQLOutputType;
-              let fieldInputType: GraphQLInputType;
-              const description = processComments(field.comments);
-              const processedFieldTypes = getGraphQLFunctionType(
-                field.fieldType,
-                field.fieldID?.value,
-              );
-              fieldOutputType = processedFieldTypes.outputType;
-              fieldInputType = processedFieldTypes.inputType;
-
-              if (field.requiredness === 'required') {
-                fieldOutputType = new GraphQLNonNull(fieldOutputType);
-                fieldInputType = new GraphQLNonNull(fieldInputType);
-              }
-
-              objectFields[fieldName] = {
-                type: fieldOutputType,
-                description,
-              };
-              inputObjectFields[fieldName] = {
-                type: fieldInputType,
-                description,
-              };
-              structFieldTypeMap[fieldName] = processedFieldTypes.typeVal;
+              fields.push({ field, description: processComments(field.comments) });
+              const { typeVal } = getGraphQLFunctionType(field.fieldType, field.fieldID?.value);
+              structFieldTypeMap[field.name.value] = typeVal;
             }
+
+            const getFieldsMap = (typeKind: 'outputType' | 'inputType'): any =>
+              Object.fromEntries(
+                fields.map(entry => {
+                  const {
+                    field: { fieldType, fieldID, name, requiredness },
+                  } = entry;
+                  if (!entry.type) {
+                    entry.type = getGraphQLFunctionType(fieldType, fieldID?.value);
+                  }
+                  const { [typeKind]: type } = entry.type;
+                  return [
+                    name.value,
+                    {
+                      type: requiredness === 'required' ? new GraphQLNonNull(type) : type,
+                      description,
+                    },
+                  ];
+                }),
+              );
+
+            // We use fields thunk to avoid circular dependency in case of recursive types
             outputTypeMap.set(
               typeName,
               new GraphQLObjectType({
                 name: typeName,
                 description,
-                fields: objectFields,
+                fields: () => getFieldsMap('outputType'),
               }),
             );
             inputTypeMap.set(
@@ -569,7 +567,7 @@ export default class ThriftHandler implements MeshHandler {
               new GraphQLInputObjectType({
                 name: typeName + 'Input',
                 description,
-                fields: inputObjectFields,
+                fields: () => getFieldsMap('inputType'),
               }),
             );
             break;
