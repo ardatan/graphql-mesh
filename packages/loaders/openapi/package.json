@@ -46,7 +46,7 @@
     "openapi-types": "^12.1.0"
   },
   "devDependencies": {
-    "@graphql-tools/utils": "10.0.5",
+    "@graphql-tools/utils": "10.0.6",
     "@whatwg-node/fetch": "0.9.12",
     "@whatwg-node/router": "0.3.0",
     "fets": "0.4.13",
