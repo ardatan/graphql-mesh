@@ -6951,12 +6951,12 @@
   resolved "https://registry.yarnpkg.com/@whatwg-node/events/-/events-0.1.1.tgz#0ca718508249419587e130da26d40e29d99b5356"
   integrity sha512-AyQEn5hIPV7Ze+xFoXVU3QTHXVbWPrzaOkxtENMPMuNL6VVHrp4hHfDt9nrQpjO7BgvuM95dMtkycX5M/DZR3w==
 
-"@whatwg-node/fetch@0.9.10", "@whatwg-node/fetch@^0.9.0", "@whatwg-node/fetch@^0.9.10", "@whatwg-node/fetch@^0.9.4", "@whatwg-node/fetch@^0.9.7":
-  version "0.9.10"
-  resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.9.10.tgz#7c98c3b3ac980b982268dbc73f7a7a9d3d5c31be"
-  integrity sha512-m3a30Po0ec4se4HEcUgChG4AHF+2imKLWpP/qzhW1T1dH1qnFkroN6ohwsG1Fqp5eFCQws2s5vu3+yfDBWoRoA==
+"@whatwg-node/fetch@0.9.11", "@whatwg-node/fetch@^0.9.0", "@whatwg-node/fetch@^0.9.10", "@whatwg-node/fetch@^0.9.4", "@whatwg-node/fetch@^0.9.7":
+  version "0.9.11"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/fetch/-/fetch-0.9.11.tgz#cb0752903c60c5a2c844a0bd315540feb6b6a2d0"
+  integrity sha512-XUdktwPlNgsF/QZeFjJKW/5Z1pYxglwmddKA5uRYTKZ378vxbZVT5IEPbsac5iWyRwI/n9R1gKYYhZ8LAgPUfw==
   dependencies:
-    "@whatwg-node/node-fetch" "^0.4.15"
+    "@whatwg-node/node-fetch" "^0.4.16"
     urlpattern-polyfill "^9.0.0"
 
 "@whatwg-node/fetch@0.9.9":
@@ -6989,10 +6989,10 @@
     fast-url-parser "^1.1.3"
     tslib "^2.3.1"
 
-"@whatwg-node/node-fetch@^0.4.15", "@whatwg-node/node-fetch@^0.4.8":
-  version "0.4.15"
-  resolved "https://registry.yarnpkg.com/@whatwg-node/node-fetch/-/node-fetch-0.4.15.tgz#41da6519948cbe6ee2057dd46a802ec1adbb6039"
-  integrity sha512-xpXxgBi5EgN3odDu4FWJQp1RjjJotx+7GW9l9ElQ66nWYzCBTpvlFuGVvuKltN99w2SpdhycqXBDU4YxDAIw7g==
+"@whatwg-node/node-fetch@^0.4.16", "@whatwg-node/node-fetch@^0.4.8":
+  version "0.4.17"
+  resolved "https://registry.yarnpkg.com/@whatwg-node/node-fetch/-/node-fetch-0.4.17.tgz#726b381cb6fed68fa31d84c921e8682ea3a8f66a"
+  integrity sha512-ltsmEHHToxug9CsMpfUtyoKUQl6GBCN8PcRAY8NLy2NLrGqRTO3N8hRuEH6z4STle9Gvv62pIvgwI/N5rNpzJQ==
   dependencies:
     "@whatwg-node/events" "^0.1.0"
     busboy "^1.6.0"

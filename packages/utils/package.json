@@ -52,7 +52,7 @@
     "@types/js-yaml": "4.0.5",
     "@types/lodash.topath": "4.5.7",
     "@types/object-hash": "3.0.3",
-    "@whatwg-node/fetch": "0.9.10"
+    "@whatwg-node/fetch": "0.9.11"
   },
   "publishConfig": {
     "access": "public",
