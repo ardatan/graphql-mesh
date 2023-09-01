@@ -1,5 +1,14 @@
 # @graphql-mesh/mysql
 
+## 0.95.3
+
+### Patch Changes
+
+- [#5882](https://github.com/Urigo/graphql-mesh/pull/5882)
+  [`8b6ccd5e6`](https://github.com/Urigo/graphql-mesh/commit/8b6ccd5e65f26f42f8dd9464a229305b20acfe93)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Fix fields wrongly marked as required
+  when column has a default value or is auto-incremented
+
 ## 0.95.2
 
 ### Patch Changes
