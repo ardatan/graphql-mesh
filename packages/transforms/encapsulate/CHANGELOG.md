@@ -1,5 +1,14 @@
 # @graphql-mesh/transform-encapsulate
 
+## 0.95.3
+
+### Patch Changes
+
+- [#5886](https://github.com/Urigo/graphql-mesh/pull/5886)
+  [`3e249d51e`](https://github.com/Urigo/graphql-mesh/commit/3e249d51ec48e725d17a721c157f0097f9cd2ced)
+  Thanks [@formatlos](https://github.com/formatlos)! - respect settings in transform encapsulate
+  applyTo config
+
 ## 0.95.2
 
 ### Patch Changes
