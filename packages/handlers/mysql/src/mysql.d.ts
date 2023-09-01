@@ -90,5 +90,6 @@ declare module 'mysql' {
     update(tableName: string, input: any, where: any, callback: Callback<{ affectedRows: any }>);
     delete(tableName: string, where: any, callback: Callback<{ affectedRows: any }>);
     count(tableName: string, where: any, callback: Callback<number>);
+    queryKeyValue(query: string, field: string[], callback: Callback<Record<string, any>>);
   }
 }

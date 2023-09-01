@@ -109,6 +109,7 @@ async function getPromisifiedConnection(pool: Pool) {
   const deleteRow = util.promisify(connection.delete.bind(connection));
   const count = util.promisify(connection.count.bind(connection));
   const release = connection.release.bind(connection);
+  const queryKeyValue = util.promisify(connection.queryKeyValue.bind(connection));
 
   return {
     connection,
@@ -123,6 +124,7 @@ async function getPromisifiedConnection(pool: Pool) {
     update,
     deleteRow,
     count,
+    queryKeyValue,
   };
 }
 
@@ -266,6 +268,7 @@ export default class MySQLHandler implements MeshHandler {
       pool.config.connectionConfig.database,
     );
     const tableNames = this.config.tables || Object.keys(tables);
+    const autoIncrementedColumns = await getAutoIncrementFields(introspectionConnection);
     const typeMergingOptions: MeshSource['merge'] = {};
     await Promise.all(
       tableNames.map(async tableName => {
@@ -347,24 +350,26 @@ export default class MySQLHandler implements MeshHandler {
               );
               type = 'JSON';
             }
-            if (tableField.Null.toLowerCase() === 'no') {
-              type += '!';
-            }
+            const isNullable = tableField.Null.toLowerCase() === 'yes';
+            const isRequired =
+              !isNullable &&
+              tableField.Default === null &&
+              autoIncrementedColumns[tableName] !== fieldName;
             tableTC.addFields({
               [fieldName]: {
-                type,
+                type: isNullable ? type : type + '!',
                 description: tableField.Comment || undefined,
               },
             });
             tableInsertIC.addFields({
               [fieldName]: {
-                type,
+                type: isRequired ? type + '!' : type,
                 description: tableField.Comment || undefined,
               },
             });
             tableUpdateIC.addFields({
               [fieldName]: {
-                type: type.replace('!', ''),
+                type,
                 description: tableField.Comment || undefined,
               },
             });
@@ -661,4 +666,11 @@ export default class MySQLHandler implements MeshHandler {
       },
     };
   }
+}
+
+async function getAutoIncrementFields(connection: any): Promise<Record<string, string>> {
+  return connection.queryKeyValue(
+    'SELECT TABLE_NAME, COLUMN_NAME FROM information_schema.columns WHERE EXTRA LIKE "%auto_increment%"',
+    [],
+  );
 }
