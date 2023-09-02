@@ -4527,10 +4527,10 @@
     semver "^7.5.4"
     uuid "^9.0.0"
 
-"@neo4j/introspector@^1.0.1":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@neo4j/introspector/-/introspector-1.0.3.tgz#55a956b8a713fb3f98888c0458b22e853dcc4b1f"
-  integrity sha512-dkFdpkuu1VGy0t2WKicttREkQyi2Phc8aaC15pP2hdrdhWwic8VjMvDqpNx0rEZwC6dR9efHSekbnm7JlDP4vA==
+"@neo4j/introspector@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@neo4j/introspector/-/introspector-2.0.0.tgz#7b4310da7e21d910044b354891ac3b575a372dae"
+  integrity sha512-uJT8IDzHzQTSDKN/YGDv4pcbc92g1YOczWSGQY1KKyWqhwf69bpuLmu7nF+S96PvyRkrL6gXKVLuXmAnsB9aTQ==
   dependencies:
     camelcase "^6.3.0"
     debug "^4.3.4"
