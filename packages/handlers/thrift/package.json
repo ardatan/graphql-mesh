@@ -47,7 +47,7 @@
     "@graphql-mesh/string-interpolation": "0.5.1",
     "graphql-scalars": "^1.22.2",
     "pascal-case": "3.1.2",
-    "thrift": "0.18.1",
+    "thrift": "0.19.0",
     "url-join": "4.0.1"
   },
   "devDependencies": {
