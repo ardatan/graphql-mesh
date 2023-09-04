@@ -14,6 +14,8 @@ import {
   YamlConfig,
 } from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
+import { createDefaultExecutor } from '@graphql-tools/delegate';
+import { ExecutionRequest } from '@graphql-tools/utils';
 import { Neo4jGraphQL } from '@neo4j/graphql';
 import { toGraphQLTypeDefs } from '@neo4j/introspector';
 
@@ -132,30 +134,33 @@ export default class Neo4JHandler implements MeshHandler {
     const events = getEventEmitterFromPubSub(this.pubsub);
     const neo4jGraphQL = new Neo4jGraphQL({
       typeDefs,
-      config: {
-        driverConfig: {
-          database: this.config.database,
-        },
-        enableDebug: !!process.env.DEBUG,
-        skipValidateTypeDefs: true,
-      },
+      driver,
+      validate: false,
+      debug: !!process.env.DEBUG,
       resolvers: {
         BigInt: GraphQLBigInt,
       },
-      resolverValidationOptions: {
-        requireResolversToMatchSchema: 'ignore',
-      },
-      plugins: {
+      features: {
         subscriptions: {
           events,
           publish: eventMeta => this.pubsub.publish(eventMeta.event, eventMeta),
         },
       },
-      driver,
     });
+
+    const schema = await neo4jGraphQL.getSchema();
+    const defaultExecutor = createDefaultExecutor(schema);
+    const sessionConfig = {
+      database: this.config.database,
+    };
 
     return {
       schema: await neo4jGraphQL.getSchema(),
+      executor(executionRequest: ExecutionRequest<any>) {
+        executionRequest.context = executionRequest.context || {};
+        executionRequest.context.sessionConfig = sessionConfig;
+        return defaultExecutor(executionRequest);
+      },
     };
   }
 }
