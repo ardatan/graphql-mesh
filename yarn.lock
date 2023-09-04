@@ -4495,9 +4495,9 @@
   integrity sha512-bUkkGO/gDVqLGdT42uHhxpSMVhIarajGsYUpqZc4/WuauN8dt/1UxOycVZXeyhpVNGBWFGNndRRUVh6loTV3dg==
 
 "@neo4j/graphql@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-4.0.0.tgz#68425ba7fed101ad65df1dc82ac12ed3b5eb680b"
-  integrity sha512-vfrpvWAv5U3H5w8JWweowNAliaiedzrw3NdfOjqfZDg5r3NbrhbOOK7ADCLAQ5/252QTmBxS6qv9EvzsFe9JMA==
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-4.1.0.tgz#d1387646e3b5cbb29131029f30c392a5ec8e8313"
+  integrity sha512-fV812D3YvNfAEU8yxiguMxfcBiypED4+E3fFAz7/WOWPq8JeVmluDiZIHERtCDBdHddhv2dcuYWpuyCQ+TP4kg==
   dependencies:
     "@apollo/subgraph" "^2.2.3"
     "@graphql-tools/merge" "^9.0.0"
