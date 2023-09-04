@@ -1,5 +1,13 @@
 # auth0-example
 
+## 0.6.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a5ace966e`](https://github.com/Urigo/graphql-mesh/commit/a5ace966e18fac0ed71fb999078fb86499374ced)]:
+  - @graphql-mesh/cli@0.87.4
+
 ## 0.6.5
 
 ### Patch Changes

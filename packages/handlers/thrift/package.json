@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/thrift",
-  "version": "0.95.3",
+  "version": "0.95.4",
   "type": "module",
   "repository": {
     "type": "git",
