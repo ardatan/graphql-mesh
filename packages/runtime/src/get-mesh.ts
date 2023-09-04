@@ -19,6 +19,7 @@ import {
   MeshPubSub,
   MeshTransform,
   OnDelegateHook,
+  OnFetchHook,
   OnFetchHookDone,
   OnFetchHookPayload,
   RawSourceOutput,
@@ -37,6 +38,7 @@ import {
   getRootTypeMap,
   inspect,
   isAsyncIterable,
+  isPromise,
   mapAsyncIterator,
   memoize1,
 } from '@graphql-tools/utils';
@@ -45,6 +47,7 @@ import { MESH_CONTEXT_SYMBOL } from './constants.js';
 import { getInContextSDK } from './in-context-sdk.js';
 import { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types.js';
 import { useSubschema } from './useSubschema.js';
+import { iterateAsync } from './utils.js';
 
 type SdkRequester = (document: DocumentNode, variables?: any, operationContext?: any) => any;
 
@@ -80,7 +83,13 @@ const memoizedGetOperationType = memoize1((document: DocumentNode) => {
 });
 
 export function wrapFetchWithPlugins(plugins: MeshPlugin<any>[]): MeshFetch {
-  return async function wrappedFetchFn(url, options, context, info) {
+  const onFetchHooks: OnFetchHook<any>[] = [];
+  for (const plugin of plugins as MeshPlugin<any>[]) {
+    if (plugin?.onFetch != null) {
+      onFetchHooks.push(plugin.onFetch);
+    }
+  }
+  return function wrappedFetchFn(url, options, context, info) {
     if (url != null && typeof url !== 'string') {
       throw new TypeError(`First parameter(url) of 'fetch' must be a string, got ${inspect(url)}`);
     }
@@ -101,34 +110,37 @@ export function wrapFetchWithPlugins(plugins: MeshPlugin<any>[]): MeshFetch {
     }
     let fetchFn: MeshFetch;
     const doneHooks: OnFetchHookDone[] = [];
-    for (const plugin of plugins as MeshPlugin<any>[]) {
-      if (plugin?.onFetch != null) {
-        const doneHook = await plugin.onFetch({
+    function setFetchFn(newFetchFn: MeshFetch) {
+      fetchFn = newFetchFn;
+    }
+    const result$ = iterateAsync(
+      onFetchHooks,
+      onFetch =>
+        onFetch({
           fetchFn,
-          setFetchFn(newFetchFn) {
-            fetchFn = newFetchFn;
-          },
+          setFetchFn,
           url,
           options,
           context,
           info,
-        });
-        if (doneHook) {
-          doneHooks.push(doneHook);
-        }
+        }),
+      doneHooks,
+    );
+    function handleIterationResult() {
+      const response$ = fetchFn(url, options, context, info);
+      if (doneHooks.length === 0) {
+        return response$;
       }
+      if (isPromise(response$)) {
+        return response$.then(response => handleOnFetchDone(response, doneHooks));
+      }
+      return handleOnFetchDone(response$, doneHooks);
     }
-    let response = await fetchFn(url, options, context, info);
-    for (const doneHook of doneHooks) {
-      await doneHook({
-        response,
-        setResponse(newResponse) {
-          response = newResponse;
-        },
-      });
+    if (isPromise(result$)) {
+      return result$.then(handleIterationResult);
     }
-    return response;
-  };
+    return handleIterationResult();
+  } as MeshFetch;
 }
 
 // Use in-context-sdk for tracing
@@ -294,7 +306,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     }
   }
 
-  let inContextSDK$: Promise<Record<string, any>>;
+  let inContextSDK: Record<string, any>;
 
   const subschema = new Subschema(unifiedSubschema);
 
@@ -306,21 +318,21 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     }),
     useSubschema(subschema),
     useExtendContext(() => {
-      if (!inContextSDK$) {
+      if (!inContextSDK) {
         const onDelegateHooks: OnDelegateHook<any>[] = [];
         for (const plugin of initialPluginList) {
           if (plugin?.onDelegate != null) {
             onDelegateHooks.push(plugin.onDelegate);
           }
         }
-        inContextSDK$ = getInContextSDK(
+        inContextSDK = getInContextSDK(
           subschema.transformedSchema,
           rawSources,
           logger,
           onDelegateHooks,
         );
       }
-      return inContextSDK$;
+      return inContextSDK;
     }),
     useExtendedValidation({
       rules: [OneOfInputObjectsRule],
@@ -335,12 +347,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   function createExecutor(globalContext: any = EMPTY_CONTEXT_VALUE): MeshExecutor {
     const getEnveloped = memoizedGetEnvelopedFactory(plugins);
     const { schema, parse, execute, subscribe, contextFactory } = getEnveloped(globalContext);
-    return async function meshExecutor<
-      TVariables = any,
-      TContext = any,
-      TRootValue = any,
-      TData = any,
-    >(
+    return function meshExecutor<TVariables = any, TContext = any, TRootValue = any, TData = any>(
       documentOrSDL: GraphQLOperation<TData, TVariables>,
       variableValues: TVariables = EMPTY_VARIABLES_VALUE,
       contextValue: TContext = EMPTY_CONTEXT_VALUE,
@@ -349,10 +356,23 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     ) {
       const document = typeof documentOrSDL === 'string' ? parse(documentOrSDL) : documentOrSDL;
       const executeFn = memoizedGetOperationType(document) === 'subscription' ? subscribe : execute;
+      const contextValue$ = contextFactory(contextValue);
+      if (isPromise(contextValue$)) {
+        return contextValue$.then(contextValue =>
+          executeFn({
+            schema,
+            document,
+            contextValue,
+            rootValue,
+            variableValues: variableValues as any,
+            operationName,
+          }),
+        );
+      }
       return executeFn({
         schema,
         document,
-        contextValue: await contextFactory(contextValue),
+        contextValue: contextValue$,
         rootValue,
         variableValues: variableValues as any,
         operationName,
@@ -362,12 +382,12 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
   function sdkRequesterFactory(globalContext: any): SdkRequester {
     const executor = createExecutor(globalContext);
-    return async function sdkRequester(...args) {
-      const result = await executor(...args);
-      if (isAsyncIterable(result)) {
-        return mapAsyncIterator(result as AsyncIterableIterator<any>, extractDataOrThrowErrors);
+    return function sdkRequester(...args) {
+      const result$ = executor(...args);
+      if (isPromise(result$)) {
+        return result$.then(handleExecutorResultForSdk);
       }
-      return extractDataOrThrowErrors(result);
+      return handleExecutorResultForSdk(result$);
     };
   }
 
@@ -399,6 +419,13 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   };
 }
 
+function handleExecutorResultForSdk(result: Awaited<ReturnType<MeshExecutor>>) {
+  if (isAsyncIterable(result)) {
+    return mapAsyncIterator(result as AsyncIterableIterator<any>, extractDataOrThrowErrors);
+  }
+  return extractDataOrThrowErrors(result);
+}
+
 function extractDataOrThrowErrors<T>(result: ExecutionResult<T>): T {
   if (result.errors) {
     if (result.errors.length === 1) {
@@ -407,4 +434,20 @@ function extractDataOrThrowErrors<T>(result: ExecutionResult<T>): T {
     throw new AggregateError(result.errors);
   }
   return result.data;
+}
+
+function handleOnFetchDone(response: Response, onFetchDoneHooks: OnFetchHookDone[]) {
+  function setResponse(newResponse: Response) {
+    response = newResponse;
+  }
+  const result$ = iterateAsync(onFetchDoneHooks, onFetchDone =>
+    onFetchDone({
+      response,
+      setResponse,
+    }),
+  );
+  if (isPromise(result$)) {
+    return result$.then(() => response);
+  }
+  return response;
 }

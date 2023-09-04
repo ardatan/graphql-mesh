@@ -13,6 +13,8 @@ import {
   getDefinedRootType,
   getOperationASTFromRequest,
   isAsyncIterable,
+  isPromise,
+  MaybeAsyncIterable,
   printSchemaWithDirectives,
 } from '@graphql-tools/utils';
 
@@ -41,7 +43,7 @@ function getIntrospectionOperationType(
 }
 
 function getExecuteFn(subschema: Subschema) {
-  return async function subschemaExecute(args: TypedExecutionArgs<any>): Promise<any> {
+  return function subschemaExecute(args: TypedExecutionArgs<any>): any {
     const originalRequest: ExecutionRequest = {
       document: args.document,
       variables: args.variableValues as any,
@@ -93,24 +95,30 @@ function getExecuteFn(subschema: Subschema) {
       transformationContext,
       subschema.transforms,
     );
-    const originalResult = await executor(transformedRequest);
-    if (isAsyncIterable(originalResult)) {
-      return mapAsyncIterator(originalResult, singleResult =>
-        applyResultTransforms(
-          singleResult,
-          delegationContext,
-          transformationContext,
-          subschema.transforms,
-        ),
+    function handleResult(originalResult: MaybeAsyncIterable<ExecutionResult>) {
+      if (isAsyncIterable(originalResult)) {
+        return mapAsyncIterator(originalResult, singleResult =>
+          applyResultTransforms(
+            singleResult,
+            delegationContext,
+            transformationContext,
+            subschema.transforms,
+          ),
+        );
+      }
+      const transformedResult = applyResultTransforms(
+        originalResult,
+        delegationContext,
+        transformationContext,
+        subschema.transforms,
       );
+      return transformedResult;
     }
-    const transformedResult = applyResultTransforms(
-      originalResult,
-      delegationContext,
-      transformationContext,
-      subschema.transforms,
-    );
-    return transformedResult;
+    const originalResult$ = executor(transformedRequest);
+    if (isPromise(originalResult$)) {
+      return originalResult$.then(handleResult);
+    }
+    return handleResult(originalResult$);
   };
 }
 

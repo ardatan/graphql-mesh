@@ -16,6 +16,7 @@ import {
   Logger,
   OnDelegateHook,
   OnDelegateHookDone,
+  OnDelegateHookPayload,
   RawSourceOutput,
   SelectionSetParam,
   SelectionSetParamOrFactory,
@@ -28,11 +29,17 @@ import {
   StitchingInfo,
   SubschemaConfig,
 } from '@graphql-tools/delegate';
-import { buildOperationNodeForField, isDocumentNode, memoize1 } from '@graphql-tools/utils';
+import {
+  buildOperationNodeForField,
+  isDocumentNode,
+  isPromise,
+  memoize1,
+} from '@graphql-tools/utils';
 import { WrapQuery } from '@graphql-tools/wrap';
 import { MESH_API_CONTEXT_SYMBOL } from './constants.js';
+import { iterateAsync } from './utils.js';
 
-export async function getInContextSDK(
+export function getInContextSDK(
   unifiedSchema: GraphQLSchema,
   rawSources: RawSourceOutput[],
   logger: Logger,
@@ -81,7 +88,7 @@ export async function getInContextSDK(
           );
           const namedReturnType = getNamedType(rootTypeField.type);
           const shouldHaveSelectionSet = !isLeafType(namedReturnType);
-          rawSourceContext[rootType.name][fieldName] = async ({
+          rawSourceContext[rootType.name][fieldName] = ({
             root,
             args,
             context,
@@ -205,27 +212,31 @@ export async function getInContextSDK(
                 batchDelegationOptions.transforms = [wrapQueryTransform as any];
               }
               const onDelegateHookDones: OnDelegateHookDone[] = [];
-              for (const onDelegateHook of onDelegateHooks) {
-                const onDelegateDone = await onDelegateHook({
-                  ...batchDelegationOptions,
-                  sourceName: rawSource.name,
-                  typeName: rootType.name,
-                  fieldName,
-                });
-                if (onDelegateDone) {
-                  onDelegateHookDones.push(onDelegateDone);
-                }
+              const onDelegatePayload: OnDelegateHookPayload<any> = {
+                ...batchDelegationOptions,
+                sourceName: rawSource.name,
+                typeName: rootType.name,
+                fieldName,
+              };
+              const onDelegateResult$ = iterateAsync(
+                onDelegateHooks,
+                onDelegateHook => onDelegateHook(onDelegatePayload),
+                onDelegateHookDones,
+              );
+              if (isPromise(onDelegateResult$)) {
+                return onDelegateResult$.then(() =>
+                  handleIterationResult(
+                    batchDelegateToSchema,
+                    batchDelegationOptions,
+                    onDelegateHookDones,
+                  ),
+                );
               }
-              let result = await batchDelegateToSchema(batchDelegationOptions);
-              for (const onDelegateHookDone of onDelegateHookDones) {
-                await onDelegateHookDone({
-                  result,
-                  setResult(newResult) {
-                    result = newResult;
-                  },
-                });
-              }
-              return result;
+              return handleIterationResult(
+                batchDelegateToSchema,
+                batchDelegationOptions,
+                onDelegateHookDones,
+              );
             } else {
               const regularDelegateOptions: IDelegateToSchemaOptions = {
                 ...commonDelegateOptions,
@@ -242,27 +253,31 @@ export async function getInContextSDK(
                 regularDelegateOptions.transforms = [wrapQueryTransform as any];
               }
               const onDelegateHookDones: OnDelegateHookDone[] = [];
-              for (const onDelegateHook of onDelegateHooks) {
-                const onDelegateDone = await onDelegateHook({
-                  ...regularDelegateOptions,
-                  sourceName: rawSource.name,
-                  typeName: rootType.name,
-                  fieldName,
-                });
-                if (onDelegateDone) {
-                  onDelegateHookDones.push(onDelegateDone);
-                }
+              const onDelegatePayload: OnDelegateHookPayload<any> = {
+                ...regularDelegateOptions,
+                sourceName: rawSource.name,
+                typeName: rootType.name,
+                fieldName,
+              };
+              const onDelegateResult$ = iterateAsync(
+                onDelegateHooks,
+                onDelegateHook => onDelegateHook(onDelegatePayload),
+                onDelegateHookDones,
+              );
+              if (isPromise(onDelegateResult$)) {
+                return onDelegateResult$.then(() =>
+                  handleIterationResult(
+                    delegateToSchema,
+                    regularDelegateOptions,
+                    onDelegateHookDones,
+                  ),
+                );
               }
-              let result = await delegateToSchema(regularDelegateOptions);
-              for (const onDelegateHookDone of onDelegateHookDones) {
-                await onDelegateHookDone({
-                  result,
-                  setResult(newResult) {
-                    result = newResult;
-                  },
-                });
-              }
-              return result;
+              return handleIterationResult(
+                delegateToSchema,
+                regularDelegateOptions,
+                onDelegateHookDones,
+              );
             }
           };
         }
@@ -315,4 +330,34 @@ function normalizeSelectionSetParamOrFactory(
 
 function identical<T>(val: T): T {
   return val;
+}
+
+function handleIterationResult<TDelegateFn extends (...args: any) => any>(
+  delegateFn: TDelegateFn,
+  delegateOptions: Parameters<TDelegateFn>[0],
+  onDelegateHookDones: OnDelegateHookDone[],
+) {
+  const delegationResult$ = delegateFn(delegateOptions);
+  if (isPromise(delegationResult$)) {
+    return delegationResult$.then(delegationResult =>
+      handleOnDelegateDone(delegationResult, onDelegateHookDones),
+    );
+  }
+  return handleOnDelegateDone(delegationResult$, onDelegateHookDones);
+}
+
+function handleOnDelegateDone(delegationResult: any, onDelegateHookDones: OnDelegateHookDone[]) {
+  function setResult(newResult: any) {
+    delegationResult = newResult;
+  }
+  const onDelegateDoneResult$ = iterateAsync(onDelegateHookDones, onDelegateHookDone =>
+    onDelegateHookDone({
+      result: delegationResult,
+      setResult,
+    }),
+  );
+  if (isPromise(onDelegateDoneResult$)) {
+    return onDelegateDoneResult$.then(() => delegationResult);
+  }
+  return delegationResult;
 }
