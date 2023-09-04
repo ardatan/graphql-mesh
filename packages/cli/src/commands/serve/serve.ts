@@ -116,6 +116,11 @@ export async function serveMesh(
       registerTerminateHandler(eventName => worker.kill(eventName));
     }
     logger.info(`${cliParams.serveMessage}: ${serverUrl} in ${forkNum} forks`);
+    cluster.on('exit', (worker, code, signal) => {
+      logger.error(`Worker ${worker.process.pid} died (${signal || code}). Restarting...`);
+      const newWorker = cluster.fork();
+      registerTerminateHandler(eventName => newWorker.kill(eventName));
+    });
   } else {
     if (cluster.isWorker) {
       logger = logger.child(`Worker ${cluster.worker.id}`);

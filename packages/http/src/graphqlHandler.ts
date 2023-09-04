@@ -16,11 +16,15 @@ export const graphqlHandler = ({
   corsConfig: CORSOptions;
   batchingLimit?: number;
 }) => {
+  let yoga: ReturnType<typeof createYoga>;
   let yoga$: Promise<ReturnType<typeof createYoga>>;
   return (request: Request, ctx: any) => {
+    if (yoga) {
+      return yoga.handleRequest(request, ctx);
+    }
     if (!yoga$) {
-      yoga$ = getBuiltMesh().then(mesh =>
-        createYoga({
+      yoga$ = getBuiltMesh().then(mesh => {
+        yoga = createYoga({
           plugins: [
             ...mesh.plugins,
             useLogger({
@@ -41,8 +45,9 @@ export const graphqlHandler = ({
           graphqlEndpoint,
           landingPage: false,
           batching: batchingLimit ? { limit: batchingLimit } : false,
-        }),
-      );
+        });
+        return yoga;
+      });
     }
     return yoga$.then(yoga => yoga.handleRequest(request, ctx));
   };
