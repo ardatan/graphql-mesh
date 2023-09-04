@@ -1,5 +1,15 @@
 # @graphql-mesh/thrift
 
+## 0.95.4
+
+### Patch Changes
+
+- [#5911](https://github.com/Urigo/graphql-mesh/pull/5911)
+  [`7b57157a0`](https://github.com/Urigo/graphql-mesh/commit/7b57157a04fbac4967704131df2307b0c0f3f004)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`thrift@0.19.0` ↗︎](https://www.npmjs.com/package/thrift/v/0.19.0) (from
+    `0.18.1`, in `dependencies`)
+
 ## 0.95.3
 
 ### Patch Changes

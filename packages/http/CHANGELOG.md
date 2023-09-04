@@ -1,5 +1,18 @@
 # @graphql-mesh/http
 
+## 0.96.4
+
+### Patch Changes
+
+- [#5917](https://github.com/Urigo/graphql-mesh/pull/5917)
+  [`a5ace966e`](https://github.com/Urigo/graphql-mesh/commit/a5ace966e18fac0ed71fb999078fb86499374ced)
+  Thanks [@ardatan](https://github.com/ardatan)! - Performance optimizations for Node.js
+  - Fork the cluster worker again when it dies
+  - Avoid unnecessary promises
+- Updated dependencies
+  [[`a5ace966e`](https://github.com/Urigo/graphql-mesh/commit/a5ace966e18fac0ed71fb999078fb86499374ced)]:
+  - @graphql-mesh/runtime@0.96.3
+
 ## 0.96.3
 
 ### Patch Changes
