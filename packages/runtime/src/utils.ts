@@ -14,11 +14,15 @@ export function iterateAsync<TInput, TOutput>(
     const result$ = callback(value);
     if (isPromise(result$)) {
       return result$.then(result => {
-        results?.push(result);
+        if (result) {
+          results?.push(result);
+        }
         return iterate();
       });
     }
-    results?.push(result$);
+    if (result$) {
+      results?.push(result$);
+    }
     return iterate();
   }
   return iterate();
