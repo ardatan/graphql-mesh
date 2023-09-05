@@ -40,6 +40,7 @@ describe('gRPC Handler', () => {
     ['Comments', 'comments.proto'],
     ['Map', 'map.proto'],
     ['Enums', 'enums.proto'],
+    ['Input bug 5880', 'input_bug_5880.proto'],
   ])('Interpreting Protos', (name, file) => {
     test(`should load the ${name} proto`, async () => {
       const config: YamlConfig.GrpcHandler = {

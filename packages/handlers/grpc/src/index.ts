@@ -494,7 +494,7 @@ export default class GrpcHandler implements MeshHandler {
         });
       }
     }
-    const typeName = pathWithName.join('_');
+    const typeName = pathWithName.join('__');
     if ('values' in nested) {
       const enumValues: Record<string, EnumTypeComposerValueConfigDefinition> = {};
       const commentMap = (nested as any).comments;
