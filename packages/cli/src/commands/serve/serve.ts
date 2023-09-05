@@ -3,7 +3,6 @@
 /* eslint-disable dot-notation */
 import cluster from 'cluster';
 import os from 'os';
-import dnscache from 'dnscache';
 import { execute, ExecutionArgs, subscribe } from 'graphql';
 import { makeBehavior } from 'graphql-ws/lib/use/uWebSockets';
 import open from 'open';
@@ -111,19 +110,25 @@ export async function serveMesh(
     playgroundTitle = rawServeConfig?.playgroundTitle || cliParams.playgroundTitle;
   }
   if (!cluster.isWorker && forkNum > 0) {
+    let mainProcessKilled = false;
+    registerTerminateHandler(eventName => {
+      mainProcessKilled = true;
+    });
     for (let i = 0; i < forkNum; i++) {
       const worker = cluster.fork();
       registerTerminateHandler(eventName => worker.kill(eventName));
     }
     logger.info(`${cliParams.serveMessage}: ${serverUrl} in ${forkNum} forks`);
     cluster.on('exit', (worker, code, signal) => {
-      logger.error(`Worker ${worker.process.pid} died (${signal || code}). Restarting...`);
-      const newWorker = cluster.fork();
-      registerTerminateHandler(eventName => newWorker.kill(eventName));
+      if (!mainProcessKilled) {
+        logger.child(`Worker ${worker.id}`).error(`died with ${signal || code}. Restarting...`);
+        const newWorker = cluster.fork();
+        registerTerminateHandler(eventName => newWorker.kill(eventName));
+      }
     });
   } else {
     if (cluster.isWorker) {
-      logger = logger.child(`Worker ${cluster.worker.id}`);
+      logger.addPrefix?.(`Worker ${cluster.worker?.id}`);
     }
     logger.info(`Starting GraphQL Mesh...`);
 
@@ -132,23 +137,6 @@ export async function serveMesh(
         if (mesh.schema.getType('BigInt')) {
           await import('json-bigint-patch');
         }
-        dnscache({
-          enable: true,
-          cache: function CacheCtor({ ttl }: { ttl: number }) {
-            return {
-              get: (key: string, callback: CallableFunction) =>
-                mesh.cache
-                  .get(key)
-                  .then(value => callback(null, value))
-                  .catch(e => callback(e)),
-              set: (key: string, value: string, callback: CallableFunction) =>
-                mesh.cache
-                  .set(key, value, { ttl })
-                  .then(() => callback())
-                  .catch(e => callback(e)),
-            };
-          },
-        });
         logger.info(`${cliParams.serveMessage}: ${serverUrl}`);
         registerTerminateHandler(eventName => {
           const eventLogger = logger.child(`${eventName}  💀`);

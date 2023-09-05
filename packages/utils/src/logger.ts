@@ -132,4 +132,11 @@ export class DefaultLogger implements Logger {
   child(name: string): Logger {
     return new DefaultLogger(this.name ? `${this.name} - ${name}` : name);
   }
+
+  addPrefix(prefix: string): Logger {
+    if (!this.name?.includes(prefix)) {
+      this.name = this.name ? `${this.name} - ${prefix}` : prefix;
+    }
+    return this;
+  }
 }

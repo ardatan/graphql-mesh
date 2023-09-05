@@ -216,6 +216,7 @@ export type Logger = {
   error: (...args: any[]) => void;
   debug: (...lazyArgs: LazyLoggerMessage[]) => void;
   child: (name: string) => Logger;
+  addPrefix?: (prefix: string) => Logger;
 };
 
 export type SelectionSetParam = SelectionSetNode | DocumentNode | string | SelectionSetNode;

@@ -7625,7 +7625,7 @@ as-table@^1.0.36:
   dependencies:
     printable-characters "^1.0.42"
 
-asap@^2.0.0, asap@^2.0.6, asap@~2.0.3, asap@~2.0.6:
+asap@^2.0.0, asap@~2.0.3, asap@~2.0.6:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/asap/-/asap-2.0.6.tgz#e50347611d7e690943208bbdafebcbc2fb866d46"
   integrity sha512-BSHWgDSAiKs50o2Re8ppvp3seVHXSRM44cdSsT9FfNEUUZLOGWVCsiWaRPWM1Znn+mqZ1OfVZ3z3DWEzSp7hRA==
@@ -10185,14 +10185,6 @@ dns-packet@^5.2.2:
   integrity sha512-l4gcSouhcgIKRvyy99RNVOgxXiicE+2jZoNmaNmZ6JXiGajBOJAesk1OBlJuM5k2c+eudGdLxDqXuPCKIj6kpw==
   dependencies:
     "@leichtgewicht/ip-codec" "^2.0.1"
-
-dnscache@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/dnscache/-/dnscache-1.0.2.tgz#fd3c24d66c141625f594c77be7a8dafee2a66c8a"
-  integrity sha512-2FFKzmLGOnD+Y378bRKH+gTjRMuSpH7OKgPy31KjjfCoKZx7tU8Dmqfd/3fhG2d/4bppuN8/KtWMUZBAcUCRnQ==
-  dependencies:
-    asap "^2.0.6"
-    lodash.clone "^4.5.0"
 
 doctrine@^2.1.0:
   version "2.1.0"
@@ -15224,11 +15216,6 @@ lodash.camelcase@^4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/lodash.camelcase/-/lodash.camelcase-4.3.0.tgz#b28aa6288a2b9fc651035c7711f65ab6190331a6"
   integrity sha512-TwuEnCnxbc3rAvhf/LbG7tJUDzhqXyFnv3dtzLOPgCG/hODL7WFnsbwktkD7yUV0RrreP/l1PALq/YSg6VvjlA==
-
-lodash.clone@^4.5.0:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/lodash.clone/-/lodash.clone-4.5.0.tgz#195870450f5a13192478df4bc3d23d2dea1907b6"
-  integrity sha512-GhrVeweiTD6uTmmn5hV/lzgCQhccwReIVRLHp7LT4SopOjqEZ5BbX8b5WWEtAKasjmy8hR7ZPwsYlxRCku5odg==
 
 lodash.clonedeep@^4.5.0:
   version "4.5.0"
@@ -22025,9 +22012,8 @@ typical@^5.2.0:
   resolved "https://registry.yarnpkg.com/typical/-/typical-5.2.0.tgz#4daaac4f2b5315460804f0acf6cb69c52bb93066"
   integrity sha512-dvdQgNDNJo+8B2uBQoqdb11eUCE1JQXhvjC/CZtgvZseVd5TYMXnq0+vuUemXbd/Se29cTaUuPX3YIc2xgbvIg==
 
-uWebSockets.js@uNetworking/uWebSockets.js#v20.31.0:
+"uWebSockets.js@uNetworking/uWebSockets.js#semver:^20":
   version "20.31.0"
-  uid "809b99d2d7d12e2cbf89b7135041e9b41ff84084"
   resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/809b99d2d7d12e2cbf89b7135041e9b41ff84084"
 
 ua-parser-js@^1.0.35:
