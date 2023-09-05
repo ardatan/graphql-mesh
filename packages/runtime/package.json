@@ -32,9 +32,6 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/cross-helpers": "^0.4.0",
-    "@graphql-mesh/types": "^0.95.2",
-    "@graphql-mesh/utils": "^0.95.2",
     "@graphql-tools/utils": "^9.2.1 || ^10.0.0",
     "graphql": "*",
     "tslib": "^2.4.0"
@@ -42,7 +39,13 @@
   "dependencies": {
     "@envelop/core": "^4.0.0",
     "@envelop/extended-validation": "^3.0.0",
+    "@graphql-mesh/config": "^0.97.5",
+    "@graphql-mesh/cross-helpers": "^0.4.0",
+    "@graphql-mesh/http": "^0.96.4",
+    "@graphql-mesh/store": "^0.95.2",
     "@graphql-mesh/string-interpolation": "^0.5.1",
+    "@graphql-mesh/types": "^0.95.2",
+    "@graphql-mesh/utils": "^0.95.2",
     "@graphql-tools/batch-delegate": "^9.0.0",
     "@graphql-tools/delegate": "^10.0.0",
     "@graphql-tools/wrap": "^10.0.0",
