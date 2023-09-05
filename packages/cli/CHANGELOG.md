@@ -1,5 +1,16 @@
 # @graphql-mesh/cli
 
+## 0.87.5
+
+### Patch Changes
+
+- [#5928](https://github.com/Urigo/graphql-mesh/pull/5928)
+  [`a6f157459`](https://github.com/Urigo/graphql-mesh/commit/a6f157459ff48d52ef22a9327b995b6a82ffbe0e)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`uWebSockets.js@uNetworking/uWebSockets.js#semver:^20` ↗︎](https://www.npmjs.com/package/uWebSockets.js/v/20.0.0)
+    (from `uNetworking/uWebSockets.js#v20.31.0`, in `dependencies`)
+
 ## 0.87.4
 
 ### Patch Changes
