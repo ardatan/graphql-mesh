@@ -1,5 +1,15 @@
 # @graphql-mesh/merger-bare
 
+## 0.95.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`33ae7a89a`](https://github.com/Urigo/graphql-mesh/commit/33ae7a89a13f40ebbe0a01620e378fe4a914df7f)]:
+  - @graphql-mesh/types@0.95.3
+  - @graphql-mesh/utils@0.95.3
+  - @graphql-mesh/merger-stitching@0.95.3
+
 ## 0.95.2
 
 ### Patch Changes

@@ -1,5 +1,21 @@
 # @graphql-mesh/cli
 
+## 0.87.6
+
+### Patch Changes
+
+- [`33ae7a89a`](https://github.com/Urigo/graphql-mesh/commit/33ae7a89a13f40ebbe0a01620e378fe4a914df7f)
+  Thanks [@ardatan](https://github.com/ardatan)! - Cleanup and fix SIGKILL issue
+
+- Updated dependencies
+  [[`33ae7a89a`](https://github.com/Urigo/graphql-mesh/commit/33ae7a89a13f40ebbe0a01620e378fe4a914df7f)]:
+  - @graphql-mesh/types@0.95.3
+  - @graphql-mesh/utils@0.95.3
+  - @graphql-mesh/config@0.97.6
+  - @graphql-mesh/http@0.96.5
+  - @graphql-mesh/runtime@0.96.4
+  - @graphql-mesh/store@0.95.3
+
 ## 0.87.5
 
 ### Patch Changes

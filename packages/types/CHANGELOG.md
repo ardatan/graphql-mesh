@@ -1,5 +1,15 @@
 # @graphql-mesh/types
 
+## 0.95.3
+
+### Patch Changes
+
+- [`33ae7a89a`](https://github.com/Urigo/graphql-mesh/commit/33ae7a89a13f40ebbe0a01620e378fe4a914df7f)
+  Thanks [@ardatan](https://github.com/ardatan)! - Cleanup and fix SIGKILL issue
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.95.3
+
 ## 0.95.2
 
 ### Patch Changes
