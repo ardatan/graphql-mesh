@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/openapi",
-  "version": "0.95.3",
+  "version": "0.95.4",
   "type": "module",
   "repository": {
     "type": "git",
@@ -32,15 +32,15 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/store": "^0.95.2",
-    "@graphql-mesh/types": "^0.95.2",
-    "@graphql-mesh/utils": "^0.95.2",
+    "@graphql-mesh/store": "^0.95.3",
+    "@graphql-mesh/types": "^0.95.3",
+    "@graphql-mesh/utils": "^0.95.3",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "0.5.1",
-    "@omnigraph/openapi": "0.95.3"
+    "@omnigraph/openapi": "0.95.4"
   },
   "publishConfig": {
     "access": "public",

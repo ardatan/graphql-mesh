@@ -1,5 +1,14 @@
 # federation-supergraph-gateway
 
+## 0.1.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`33ae7a89a`](https://github.com/Urigo/graphql-mesh/commit/33ae7a89a13f40ebbe0a01620e378fe4a914df7f)]:
+  - @graphql-mesh/cli@0.87.6
+  - @graphql-mesh/supergraph@0.0.3
+
 ## 0.1.5
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-snapshot",
-  "version": "0.95.2",
+  "version": "0.95.3",
   "type": "module",
   "repository": {
     "type": "git",
@@ -33,8 +33,8 @@
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.0",
-    "@graphql-mesh/types": "^0.95.2",
-    "@graphql-mesh/utils": "^0.95.2",
+    "@graphql-mesh/types": "^0.95.3",
+    "@graphql-mesh/utils": "^0.95.3",
     "graphql": "*",
     "tslib": "^2.4.0"
   },
