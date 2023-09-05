@@ -2699,7 +2699,7 @@
     "@envelop/on-resolve" "^3.0.1"
     tslib "^2.5.0"
 
-"@envelop/on-resolve@^3.0.0", "@envelop/on-resolve@^3.0.1":
+"@envelop/on-resolve@^3.0.1":
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/@envelop/on-resolve/-/on-resolve-3.0.1.tgz#1af2194792ebbda733a314c845ce0cc7a0832299"
   integrity sha512-5OWcZHTvV3CeQNvaPuarTOa5WVZbgUkDxq6jnHH0mjd3V0ZDcwukFrQmfTFgOkwYKpvEbKoVWFJUyMVEHXweZA==
@@ -2712,12 +2712,12 @@
     "@envelop/extended-validation" "^3.0.1"
     tslib "^2.5.0"
 
-"@envelop/prometheus@8.0.0":
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/@envelop/prometheus/-/prometheus-8.0.0.tgz#fe1199969997b0935eba43634132d236469a95fb"
-  integrity sha512-hv2IijtTmn7BazgWFMxURExOSNxAaJ1VKGVReNfU0Aet7y12uOZhTtB/Cv4Qxx/tBIH41Z9qvuO2d7Ful0bv5g==
+"@envelop/prometheus@8.0.1":
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/@envelop/prometheus/-/prometheus-8.0.1.tgz#a6087102103a5e7cef269d2774bdb1e789797f77"
+  integrity sha512-vbnSH4mOfePrGsjUh9iGonR4yh/Cjkef0SQM7zZqIov26XGlS4XkIr2wduJFCIUAW/3ur+B6rydXSM335lZ4vw==
   dependencies:
-    "@envelop/on-resolve" "^3.0.0"
+    "@envelop/on-resolve" "^3.0.1"
     tslib "^2.5.0"
 
 "@envelop/response-cache@^5.1.0":
@@ -3654,12 +3654,12 @@
   resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-persisted-operations/-/plugin-persisted-operations-2.0.4.tgz#eec7e3fd772a24a9930ff748784d5bf64bfd1381"
   integrity sha512-iPMSOpa+SiY88r7Hzt/JTNhMt7PDghFsMBBeEaRWtUaTo4oPbrqUSJyG21cPB6EJP5s+TBIza0ZCfgQZSh7mnw==
 
-"@graphql-yoga/plugin-prometheus@2.0.4":
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-prometheus/-/plugin-prometheus-2.0.4.tgz#2526f9539a77bd4faa1e90de002c48b31d0c6572"
-  integrity sha512-5jG2Zl15JrgUHEmlKjVIK1axFyawV+wLZHl+u03f7VcyFbj4mVyqHkoCniEXsPMTqu6V2At27u0evUQ26ccy5g==
+"@graphql-yoga/plugin-prometheus@2.0.5":
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-prometheus/-/plugin-prometheus-2.0.5.tgz#5e39069331a892705d98cc6c359529e81b6965bc"
+  integrity sha512-NjLJrnmIPwhqIX8Pe6FIKn7KJ6goyAEILK26gmMnoslFUCgX7RVUmgdn5DJqgshpTrwB7/eIPYDWJp+1lXmnhw==
   dependencies:
-    "@envelop/prometheus" "8.0.0"
+    "@envelop/prometheus" "8.0.1"
 
 "@graphql-yoga/plugin-response-cache@2.1.1":
   version "2.1.1"
@@ -4476,9 +4476,9 @@
   integrity sha512-bUkkGO/gDVqLGdT42uHhxpSMVhIarajGsYUpqZc4/WuauN8dt/1UxOycVZXeyhpVNGBWFGNndRRUVh6loTV3dg==
 
 "@neo4j/graphql@^4.0.0":
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-4.1.0.tgz#d1387646e3b5cbb29131029f30c392a5ec8e8313"
-  integrity sha512-fV812D3YvNfAEU8yxiguMxfcBiypED4+E3fFAz7/WOWPq8JeVmluDiZIHERtCDBdHddhv2dcuYWpuyCQ+TP4kg==
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-4.1.1.tgz#6142980aedb0f8711ac289f01e2ad8f0dd2520ef"
+  integrity sha512-oMC2hElp+lwARQN3tE8ZqTEaXyjqeCHTkYCpWYwdCy2DxOyuH9OtyyCbtaANsKPyN3Tt1lK94sYZ3sZnK+SwOg==
   dependencies:
     "@apollo/subgraph" "^2.2.3"
     "@graphql-tools/merge" "^9.0.0"
@@ -22025,7 +22025,7 @@ typical@^5.2.0:
   resolved "https://registry.yarnpkg.com/typical/-/typical-5.2.0.tgz#4daaac4f2b5315460804f0acf6cb69c52bb93066"
   integrity sha512-dvdQgNDNJo+8B2uBQoqdb11eUCE1JQXhvjC/CZtgvZseVd5TYMXnq0+vuUemXbd/Se29cTaUuPX3YIc2xgbvIg==
 
-uWebSockets.js@uNetworking/uWebSockets.js#v20.31.0:
+"uWebSockets.js@uNetworking/uWebSockets.js#semver:^20":
   version "20.31.0"
   uid "809b99d2d7d12e2cbf89b7135041e9b41ff84084"
   resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/809b99d2d7d12e2cbf89b7135041e9b41ff84084"
