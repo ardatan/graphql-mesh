@@ -3271,9 +3271,9 @@
     value-or-promise "^1.0.12"
 
 "@graphql-tools/federation@^1.1.0", "@graphql-tools/federation@^1.1.1":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/federation/-/federation-1.1.4.tgz#2bd971952762cafd8cad8eafcddeecfb0e2c7e7a"
-  integrity sha512-E8Hb8SmqjfGHL+C+LKEiD73QVWihRXSK6CKK8Kmpcke4Vq35yYWmcUg7QeWzDT442pWrUk6bIRuQoNMz3f96pQ==
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/federation/-/federation-1.1.5.tgz#482c0dbd5ab6193aefc6cd2a3cb9020c5206a037"
+  integrity sha512-/NXD5+72KxYEfPUDQnoWqids0h4HBcs7/F2nOQwLVWY4kP17s9sypZFajFeTCMQV6pvjYuFQL9RB4in0tkONuA==
   dependencies:
     "@graphql-tools/delegate" "^10.0.1"
     "@graphql-tools/executor-http" "^1.0.0"
