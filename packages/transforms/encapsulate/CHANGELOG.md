@@ -1,5 +1,19 @@
 # @graphql-mesh/transform-encapsulate
 
+## 0.95.5
+
+### Patch Changes
+
+- [#5940](https://github.com/Urigo/graphql-mesh/pull/5940)
+  [`1de20eec7`](https://github.com/Urigo/graphql-mesh/commit/1de20eec7cc67a79bac9acc47a0f99da8447917c)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.3)
+    (from `^10.0.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/wrap@^10.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/10.0.1)
+    (from `^10.0.0`, in `dependencies`)
+
 ## 0.95.4
 
 ### Patch Changes
