@@ -28,7 +28,7 @@
     "@graphql-mesh/runtime": "0.96.4",
     "@graphql-mesh/soap": "0.95.3",
     "@graphql-mesh/transform-cache": "0.95.3",
-    "@graphql-mesh/transform-encapsulate": "0.95.4",
+    "@graphql-mesh/transform-encapsulate": "0.95.5",
     "@graphql-mesh/transform-extend": "0.95.3",
     "@graphql-mesh/transform-filter-schema": "0.95.3",
     "@graphql-mesh/transform-prefix": "0.95.3",
