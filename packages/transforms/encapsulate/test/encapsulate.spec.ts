@@ -1,9 +1,11 @@
-import { execute, getIntrospectionQuery, parse } from 'graphql';
+import { execute, getIntrospectionQuery, parse, subscribe } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
 import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import { isAsyncIterable } from '@graphql-tools/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
+import { Repeater } from '@repeaterjs/repeater';
 import Transform from '../src/index.js';
 
 describe('encapsulate', () => {
@@ -31,6 +33,21 @@ describe('encapsulate', () => {
       },
       Mutation: {
         doSomething: () => 'noop',
+      },
+      Subscription: {
+        notify: {
+          subscribe: () =>
+            new Repeater((push, stop) => {
+              const interval = setInterval(
+                () =>
+                  push({
+                    notify: 'boop',
+                  }),
+                1000,
+              );
+              return stop.then(() => clearInterval(interval));
+            }),
+        },
       },
     },
   });
@@ -309,5 +326,49 @@ describe('encapsulate', () => {
     expect(newSchema.getQueryType().getFields().test).toBeDefined();
     expect(newSchema.getQueryType().getFields().getSomething).not.toBeDefined();
     expect(newSchema.getQueryType().getFields().test.type.toString()).toBe('testQuery!');
+  });
+
+  it('should handle subscriptions', async () => {
+    const newSchema = wrapSchema({
+      schema,
+      transforms: [
+        new Transform({
+          config: {
+            applyTo: {
+              query: true,
+              mutation: true,
+              subscription: true,
+            },
+          },
+          cache,
+          pubsub,
+          baseDir,
+          apiName: 'test',
+          importFn,
+          logger: new DefaultLogger(),
+        }),
+      ],
+    });
+
+    const result = (await subscribe({
+      schema: newSchema,
+      document: parse(/* GraphQL */ `
+        subscription {
+          test {
+            notify
+          }
+        }
+      `),
+    })) as AsyncIterable<any>;
+
+    if (!isAsyncIterable<any>(result)) {
+      throw new Error('Subscription did not return AsyncIterable');
+    }
+
+    // eslint-disable-next-line no-unreachable-loop
+    for await (const value of result) {
+      expect(value.data.test.notify).toBe('boop');
+      break;
+    }
   });
 });
