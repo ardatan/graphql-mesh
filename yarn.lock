@@ -3271,9 +3271,9 @@
     value-or-promise "^1.0.12"
 
 "@graphql-tools/federation@^1.1.0", "@graphql-tools/federation@^1.1.1":
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/federation/-/federation-1.1.6.tgz#4350ca0fdd273b77d0fb3af5bc58378a00c511fd"
-  integrity sha512-2FbbVr/Eond5i2J+/a8lCivbX5k4UswOdd5ftGYI1J/kWa2DkM7F0/cvtYHUz62jtVxuziGAa22OtyDE75B3Pw==
+  version "1.1.7"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/federation/-/federation-1.1.7.tgz#b2db3703339220e3c019819f13e0ca1ef7ed25a0"
+  integrity sha512-SmWlpFmr8cO6kO4ofkRn38lDpgrKQYOblXt6JsjFIVpyOYjKoa9LYk75vmzwoI/byn60n80ZSIn+nXhfoWZxFw==
   dependencies:
     "@graphql-tools/delegate" "^10.0.1"
     "@graphql-tools/executor-http" "^1.0.0"
@@ -16684,10 +16684,10 @@ mongodb@5.8.1:
   optionalDependencies:
     "@mongodb-js/saslprep" "^1.1.0"
 
-mongoose@7.5.0:
-  version "7.5.0"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-7.5.0.tgz#d10003ffc1ff876d761c7cbca6844ddd2aadd42f"
-  integrity sha512-FpOWOb0AJuaVcplmEyIJ2eCbVGe4gOoniPD+pmft5BrGrNrsFcnYXlERdXtBApGHMHPwD7WbxTyhCbUNr72F3Q==
+mongoose@7.5.1:
+  version "7.5.1"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-7.5.1.tgz#abb4a79d36df53d249784272d329fb400828ccfa"
+  integrity sha512-gJCkUtW3KgAu7Uf8HTVv+S3wf9+xldR5LFYM6mABJJQHQB0aWUGyC3bWsl2X/6dVHZSoQq3wh5UV7rWC4FrewA==
   dependencies:
     bson "^5.4.0"
     kareem "2.5.1"
