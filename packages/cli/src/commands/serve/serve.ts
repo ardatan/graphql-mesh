@@ -109,7 +109,7 @@ export async function serveMesh(
   if (!playgroundTitle) {
     playgroundTitle = rawServeConfig?.playgroundTitle || cliParams.playgroundTitle;
   }
-  if (!cluster.isWorker && forkNum > 0) {
+  if (!cluster.isWorker && forkNum > 1) {
     let mainProcessKilled = false;
     registerTerminateHandler(eventName => {
       mainProcessKilled = true;
