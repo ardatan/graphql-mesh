@@ -7,8 +7,9 @@ import {
   specifiedRules,
   validate,
 } from 'graphql';
-import { envelop, Plugin, useEngine, useExtendContext } from '@envelop/core';
+import { envelop, Plugin, useEngine, useExtendContext, useSchema } from '@envelop/core';
 import { OneOfInputObjectsRule, useExtendedValidation } from '@envelop/extended-validation';
+import { useGraphQlJit } from '@envelop/graphql-jit';
 import { process } from '@graphql-mesh/cross-helpers';
 import {
   GraphQLOperation,
@@ -308,7 +309,11 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
   let inContextSDK: Record<string, any>;
 
-  const subschema = new Subschema(unifiedSubschema);
+  let subschema: Subschema;
+
+  if (unifiedSubschema.executor != null && unifiedSubschema.transforms?.length) {
+    subschema = new Subschema(unifiedSubschema);
+  }
 
   const plugins = [
     useEngine({
@@ -316,7 +321,9 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
       parse: parseWithCache,
       specifiedRules,
     }),
-    useSubschema(subschema),
+    ...(subschema
+      ? [useSubschema(new Subschema(unifiedSubschema))]
+      : [useSchema(unifiedSubschema.schema), useGraphQlJit()]),
     useExtendContext(() => {
       if (!inContextSDK) {
         const onDelegateHooks: OnDelegateHook<any>[] = [];
@@ -326,7 +333,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
           }
         }
         inContextSDK = getInContextSDK(
-          subschema.transformedSchema,
+          subschema ? subschema.transformedSchema : unifiedSubschema.schema,
           rawSources,
           logger,
           onDelegateHooks,
@@ -397,7 +404,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
   return {
     get schema() {
-      return subschema.transformedSchema;
+      return subschema ? subschema.transformedSchema : unifiedSubschema.schema;
     },
     rawSources,
     cache,

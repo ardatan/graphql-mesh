@@ -1,12 +1,8 @@
-import { BREAK, execute, FieldNode, OperationDefinitionNode, visit } from 'graphql';
+import { BREAK, DocumentNode, execute, FieldNode, OperationDefinitionNode, visit } from 'graphql';
+import { CompiledQuery, compileQuery, isCompiledQuery } from 'graphql-jit';
 import { mapAsyncIterator, Plugin, TypedExecutionArgs } from '@envelop/core';
 import { applyRequestTransforms, applyResultTransforms } from '@graphql-mesh/utils';
-import {
-  applySchemaTransforms,
-  createDefaultExecutor,
-  DelegationContext,
-  Subschema,
-} from '@graphql-tools/delegate';
+import { applySchemaTransforms, DelegationContext, Subschema } from '@graphql-tools/delegate';
 import {
   ExecutionRequest,
   ExecutionResult,
@@ -43,6 +39,7 @@ function getIntrospectionOperationType(
 }
 
 function getExecuteFn(subschema: Subschema) {
+  const compiledQueryCache = new WeakMap<DocumentNode, CompiledQuery>();
   return function subschemaExecute(args: TypedExecutionArgs<any>): any {
     const originalRequest: ExecutionRequest = {
       document: args.document,
@@ -81,7 +78,33 @@ function getExecuteFn(subschema: Subschema) {
     };
     let executor = subschema.executor;
     if (executor == null) {
-      executor = createDefaultExecutor(subschema.schema);
+      executor = function subschemaExecutor(request: ExecutionRequest) {
+        let compiledQuery = compiledQueryCache.get(args.document);
+        if (!compiledQuery) {
+          const compilationResult = compileQuery(
+            subschema.schema,
+            request.document,
+            args.operationName ?? undefined,
+          );
+          if (!isCompiledQuery(compilationResult)) {
+            return compilationResult as ExecutionResult;
+          }
+          compiledQuery = compilationResult;
+          compiledQueryCache.set(args.document, compiledQuery);
+        }
+        if (operationAST.operation === 'subscription') {
+          return compiledQuery.subscribe(
+            request.rootValue,
+            request.context,
+            request.variables,
+          ) as ExecutionResult;
+        }
+        return compiledQuery.query(
+          request.rootValue,
+          request.context,
+          request.variables,
+        ) as ExecutionResult;
+      };
     }
     /*
     if (subschema.batch) {
