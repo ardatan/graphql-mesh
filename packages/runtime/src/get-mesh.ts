@@ -311,7 +311,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
   let subschema: Subschema;
 
-  if (unifiedSubschema.executor != null && unifiedSubschema.transforms?.length) {
+  if (unifiedSubschema.executor != null || unifiedSubschema.transforms?.length) {
     subschema = new Subschema(unifiedSubschema);
   }
 
