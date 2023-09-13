@@ -1,4 +1,4 @@
-import { GraphQLSchema, Kind, OperationTypeNode, visit } from 'graphql';
+import { GraphQLSchema, Kind, OperationTypeNode } from 'graphql';
 import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import {
   applyRequestTransforms,
