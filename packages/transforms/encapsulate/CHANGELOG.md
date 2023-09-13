@@ -1,5 +1,12 @@
 # @graphql-mesh/transform-encapsulate
 
+## 0.95.6
+
+### Patch Changes
+
+- [`0167690d0`](https://github.com/Urigo/graphql-mesh/commit/0167690d0b3a22e7cdc1361c011913da6cfb9dfc)
+  Thanks [@ardatan](https://github.com/ardatan)! - Handle single source with subscriptions
+
 ## 0.95.5
 
 ### Patch Changes

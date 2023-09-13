@@ -1,5 +1,13 @@
 # @graphql-mesh/cli
 
+## 0.87.7
+
+### Patch Changes
+
+- [`a458c88f0`](https://github.com/Urigo/graphql-mesh/commit/a458c88f08e5fc5d6337354d3f781018c736db1f)
+  Thanks [@ardatan](https://github.com/ardatan)! - Do not fork processes in production mode if there
+  is only one CPU core available
+
 ## 0.87.6
 
 ### Patch Changes
