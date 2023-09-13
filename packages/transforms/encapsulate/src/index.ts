@@ -1,4 +1,4 @@
-import { GraphQLSchema, OperationTypeNode } from 'graphql';
+import { GraphQLSchema, Kind, OperationTypeNode, visit } from 'graphql';
 import { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import {
   applyRequestTransforms,
@@ -90,12 +90,33 @@ export default class EncapsulateTransform implements MeshTransform {
     delegationContext: DelegationContext,
     transformationContext: Record<string, any>,
   ) {
-    return applyRequestTransforms(
+    const transformedRequest = applyRequestTransforms(
       originalRequest,
       delegationContext,
       transformationContext,
       this.transforms,
     );
+    if (delegationContext.operation === 'subscription') {
+      transformedRequest.document = {
+        ...transformedRequest.document,
+        definitions: transformedRequest.document.definitions.map(def => {
+          if (def.kind === Kind.OPERATION_DEFINITION) {
+            return {
+              ...def,
+              selectionSet: {
+                ...def.selectionSet,
+                selections: def.selectionSet.selections.filter(
+                  selection =>
+                    selection.kind === Kind.FIELD && selection.name.value !== '__typename',
+                ),
+              },
+            };
+          }
+          return def;
+        }),
+      };
+    }
+    return transformedRequest;
   }
 
   transformResult(

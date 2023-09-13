@@ -1,7 +1,10 @@
 import { execute, getIntrospectionQuery, parse, subscribe } from 'graphql';
+import { envelop } from '@envelop/core';
 import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
+import { useSubschema } from '@graphql-mesh/runtime';
 import { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { Subschema } from '@graphql-tools/delegate';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isAsyncIterable } from '@graphql-tools/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
@@ -350,6 +353,56 @@ describe('encapsulate', () => {
       ],
     });
 
+    const result = (await subscribe({
+      schema: newSchema,
+      document: parse(/* GraphQL */ `
+        subscription {
+          test {
+            notify
+          }
+        }
+      `),
+    })) as AsyncIterable<any>;
+
+    if (!isAsyncIterable<any>(result)) {
+      throw new Error('Subscription did not return AsyncIterable');
+    }
+
+    // eslint-disable-next-line no-unreachable-loop
+    for await (const value of result) {
+      expect(value.data.test.notify).toBe('boop');
+      break;
+    }
+  });
+
+  it('should handle subscriptions without wrapSchema', async () => {
+    const getEnveloped = envelop({
+      plugins: [
+        useSubschema(
+          new Subschema({
+            schema,
+            transforms: [
+              new Transform({
+                config: {
+                  applyTo: {
+                    query: true,
+                    mutation: true,
+                    subscription: true,
+                  },
+                },
+                cache,
+                pubsub,
+                baseDir,
+                apiName: 'test',
+                importFn,
+                logger: new DefaultLogger(),
+              }),
+            ],
+          }),
+        ),
+      ],
+    });
+    const { schema: newSchema, subscribe } = getEnveloped();
     const result = (await subscribe({
       schema: newSchema,
       document: parse(/* GraphQL */ `
