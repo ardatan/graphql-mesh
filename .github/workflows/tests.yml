@@ -51,6 +51,9 @@ jobs:
       - name: Remove node-libcurl
         run: rm -rf node_modules/node-libcurl
 
+      - name: Generate config schema
+        run: yarn generate-config-schema
+
       - name: Run Tests
         uses: nick-fields/retry@v2
         with:
