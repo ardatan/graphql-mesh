@@ -16,6 +16,7 @@ import {
   isAsyncIterable,
   isPromise,
   MaybeAsyncIterable,
+  memoize1,
   printSchemaWithDirectives,
 } from '@graphql-tools/utils';
 
@@ -25,7 +26,7 @@ enum IntrospectionQueryType {
   STREAM = 'STREAM',
 }
 
-function getIntrospectionOperationType(
+const getIntrospectionOperationType = memoize1(function getIntrospectionOperationType(
   operationAST: OperationDefinitionNode,
 ): IntrospectionQueryType | null {
   let introspectionQueryType = null;
@@ -48,7 +49,7 @@ function getIntrospectionOperationType(
     });
   }
   return introspectionQueryType;
-}
+});
 
 function getExecuteFn(subschema: Subschema) {
   const compiledQueryCache = new WeakMap<DocumentNode, CompiledQuery>();

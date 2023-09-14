@@ -50,7 +50,7 @@ import { MESH_CONTEXT_SYMBOL } from './constants.js';
 import { getInContextSDK } from './in-context-sdk.js';
 import { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types.js';
 import { useSubschema } from './useSubschema.js';
-import { iterateAsync } from './utils.js';
+import { isStreamOperation, iterateAsync } from './utils.js';
 
 type SdkRequester = (document: DocumentNode, variables?: any, operationContext?: any) => any;
 
@@ -334,16 +334,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
             },
             {
               enableIf(args) {
-                let isStream = false;
-                visit(args.document, {
-                  Field(node): any {
-                    if (node.directives?.some(d => d.name.value === 'stream')) {
-                      isStream = true;
-                      return BREAK;
-                    }
-                  },
-                });
-                return !isStream;
+                return isStreamOperation(args.document);
               },
             },
           ),
