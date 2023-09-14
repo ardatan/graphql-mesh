@@ -311,10 +311,12 @@ const importFn: ImportFn = <T>(moduleId: string) => {
       }
       if (pathModule.isAbsolute(importPath)) {
         moduleMapProp = pathModule.relative(baseDir, importedModuleName).split('\\').join('/');
+        moduleMapProp = checkAndStripScriptExtension(moduleMapProp);
         importPath = `./${pathModule
           .relative(artifactsDir, importedModuleName)
           .split('\\')
           .join('/')}`;
+        importPath = checkAndStripScriptExtension(importPath);
       }
       const importIdentifier = `importedModule$${importedModuleIndex}`;
       importCodes.add(`import * as ${importIdentifier} from ${JSON.stringify(importPath)};`);
@@ -570,4 +572,20 @@ export function compileTS(tsFilePath: string, module: ts.ModuleKind, outputFileP
   // Prepare and emit the d.ts files
   const program = ts.createProgram([tsFilePath], options, host);
   program.emit();
+}
+
+/**
+ * If the specified path corresponds to a script file (JS/TS)
+ * strip the extension from it.
+ *
+ * @param {string} path The path to a potential script (JS/TS) file
+ * @returns {string}
+ */
+function checkAndStripScriptExtension(path: string): string {
+  let strippedPath = path;
+  if (['.js', '.ts'].some(extension => strippedPath.endsWith(extension))) {
+    const extensionStart = strippedPath.lastIndexOf('.');
+    strippedPath = strippedPath.substring(0, extensionStart);
+  }
+  return strippedPath;
 }
