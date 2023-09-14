@@ -1,5 +1,4 @@
 import {
-  BREAK,
   DocumentNode,
   getOperationAST,
   GraphQLObjectType,
@@ -7,7 +6,6 @@ import {
   OperationTypeNode,
   specifiedRules,
   validate,
-  visit,
 } from 'graphql';
 import { envelop, Plugin, useEngine, useExtendContext, useSchema } from '@envelop/core';
 import { OneOfInputObjectsRule, useExtendedValidation } from '@envelop/extended-validation';
