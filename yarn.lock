@@ -12430,7 +12430,7 @@ graphql-import-node@^0.0.5:
   resolved "https://registry.yarnpkg.com/graphql-import-node/-/graphql-import-node-0.0.5.tgz#caf76a6cece10858b14f27cce935655398fc1bf0"
   integrity sha512-OXbou9fqh9/Lm7vwXT0XoRN9J5+WCYKnbiTalgFDvkQERITRmcfncZs6aVABedd5B85yQU5EULS4a5pnbpuI0Q==
 
-graphql-jit@0.8.4, graphql-jit@^0.8.0:
+graphql-jit@0.8.4, graphql-jit@^0.8.0, graphql-jit@^0.8.4:
   version "0.8.4"
   resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.8.4.tgz#53c2e43b90ec98ea0942f4062516de910fbff709"
   integrity sha512-4KRrJ1ROy3Usgbl3eAoUMfdfZCRjkcw9cCGT7QwTUIHm9dPGaSaldxzGUttyjErU0rsYEb6WWyb6mMh5r6lEoQ==

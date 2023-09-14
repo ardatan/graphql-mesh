@@ -323,7 +323,13 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     }),
     ...(subschema
       ? [useSubschema(new Subschema(unifiedSubschema))]
-      : [useSchema(unifiedSubschema.schema), useGraphQlJit()]),
+      : [
+          useSchema(unifiedSubschema.schema),
+          useGraphQlJit({
+            customJSONSerializer: true,
+            disableLeafSerialization: true,
+          }),
+        ]),
     useExtendContext(() => {
       if (!inContextSDK) {
         const onDelegateHooks: OnDelegateHook<any>[] = [];
