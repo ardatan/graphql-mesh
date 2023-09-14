@@ -332,7 +332,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
             },
             {
               enableIf(args) {
-                return isStreamOperation(args.document);
+                return !isStreamOperation(args.document);
               },
             },
           ),
