@@ -1,5 +1,16 @@
 # @graphql-mesh/types
 
+## 0.95.4
+
+### Patch Changes
+
+- [#5963](https://github.com/Urigo/graphql-mesh/pull/5963)
+  [`625e5d787`](https://github.com/Urigo/graphql-mesh/commit/625e5d7878d44abd7c9d1542bf5cdcd4e37e2411)
+  Thanks [@BabakScript](https://github.com/BabakScript)! - Add lazyConnect to cache-redis
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.95.4
+
 ## 0.95.3
 
 ### Patch Changes
