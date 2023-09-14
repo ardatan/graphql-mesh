@@ -1,5 +1,6 @@
 import {
   DocumentNode,
+  execute,
   getOperationAST,
   GraphQLObjectType,
   GraphQLSchema,
@@ -317,6 +318,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
   const plugins = [
     useEngine({
+      execute,
       validate,
       parse: parseWithCache,
       specifiedRules,
