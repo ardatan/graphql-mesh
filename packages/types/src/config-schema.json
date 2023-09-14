@@ -89,6 +89,9 @@
         },
         "url": {
           "type": "string"
+        },
+        "lazyConnect": {
+          "type": "boolean"
         }
       }
     },

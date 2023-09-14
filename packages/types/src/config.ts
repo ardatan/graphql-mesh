@@ -1712,6 +1712,7 @@ export interface RedisConfig {
   port?: string;
   password?: string;
   url?: string;
+  lazyConnect?: boolean;
 }
 export interface PubSubConfig {
   name: string;
