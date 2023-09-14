@@ -1,4 +1,5 @@
 import {
+  BREAK,
   DocumentNode,
   getOperationAST,
   GraphQLObjectType,
@@ -6,6 +7,7 @@ import {
   OperationTypeNode,
   specifiedRules,
   validate,
+  visit,
 } from 'graphql';
 import { envelop, Plugin, useEngine, useExtendContext, useSchema } from '@envelop/core';
 import { OneOfInputObjectsRule, useExtendedValidation } from '@envelop/extended-validation';
@@ -325,10 +327,26 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
       ? [useSubschema(new Subschema(unifiedSubschema))]
       : [
           useSchema(unifiedSubschema.schema),
-          useGraphQlJit({
-            customJSONSerializer: !unifiedSubschema.schema.getType('BigInt'),
-            disableLeafSerialization: true,
-          }),
+          useGraphQlJit(
+            {
+              customJSONSerializer: !unifiedSubschema.schema.getType('BigInt'),
+              disableLeafSerialization: true,
+            },
+            {
+              enableIf(args) {
+                let isStream = false;
+                visit(args.document, {
+                  Field(node): any {
+                    if (node.directives?.some(d => d.name.value === 'stream')) {
+                      isStream = true;
+                      return BREAK;
+                    }
+                  },
+                });
+                return !isStream;
+              },
+            },
+          ),
         ]),
     useExtendContext(() => {
       if (!inContextSDK) {
