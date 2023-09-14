@@ -18,16 +18,18 @@ export default class RedisCache<V = string> implements KeyValueCache<V> {
   private client: Redis;
 
   constructor(options: YamlConfig.Cache['redis'] & { pubsub: MeshPubSub; logger: Logger }) {
+    const lazyConnect = options.lazyConnect !== false;
+
     if (options.url) {
       const redisUrl = new URL(interpolateStrWithEnv(options.url));
-
-      redisUrl.searchParams.set('lazyConnect', 'true');
-      redisUrl.searchParams.set('enableAutoPipelining', 'true');
-      redisUrl.searchParams.set('enableOfflineQueue', 'true');
 
       if (!['redis:', 'rediss:'].includes(redisUrl.protocol)) {
         throw new Error('Redis URL must use either redis:// or rediss://');
       }
+
+      redisUrl.searchParams.set('lazyConnect', lazyConnect.toString());
+      redisUrl.searchParams.set('enableAutoPipelining', 'true');
+      redisUrl.searchParams.set('enableOfflineQueue', 'true');
 
       options.logger.debug(`Connecting to Redis at ${redisUrl.toString()}`);
       this.client = new Redis(redisUrl?.toString());
@@ -41,7 +43,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V> {
           host: parsedHost,
           port: parseInt(parsedPort),
           password: parsedPassword,
-          lazyConnect: true,
+          lazyConnect,
           enableAutoPipelining: true,
           enableOfflineQueue: true,
         });
