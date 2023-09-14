@@ -1,5 +1,6 @@
 import {
   DocumentNode,
+  execute,
   getOperationAST,
   GraphQLObjectType,
   GraphQLSchema,
@@ -7,8 +8,9 @@ import {
   specifiedRules,
   validate,
 } from 'graphql';
-import { envelop, Plugin, useEngine, useExtendContext } from '@envelop/core';
+import { envelop, Plugin, useEngine, useExtendContext, useSchema } from '@envelop/core';
 import { OneOfInputObjectsRule, useExtendedValidation } from '@envelop/extended-validation';
+import { useGraphQlJit } from '@envelop/graphql-jit';
 import { process } from '@graphql-mesh/cross-helpers';
 import {
   GraphQLOperation,
@@ -47,7 +49,7 @@ import { MESH_CONTEXT_SYMBOL } from './constants.js';
 import { getInContextSDK } from './in-context-sdk.js';
 import { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types.js';
 import { useSubschema } from './useSubschema.js';
-import { iterateAsync } from './utils.js';
+import { isStreamOperation, iterateAsync } from './utils.js';
 
 type SdkRequester = (document: DocumentNode, variables?: any, operationContext?: any) => any;
 
@@ -308,15 +310,35 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
   let inContextSDK: Record<string, any>;
 
-  const subschema = new Subschema(unifiedSubschema);
+  let subschema: Subschema;
+
+  if (unifiedSubschema.executor != null || unifiedSubschema.transforms?.length) {
+    subschema = new Subschema(unifiedSubschema);
+  }
 
   const plugins = [
     useEngine({
+      execute,
       validate,
       parse: parseWithCache,
       specifiedRules,
     }),
-    useSubschema(subschema),
+    ...(subschema
+      ? [useSubschema(new Subschema(unifiedSubschema))]
+      : [
+          useSchema(unifiedSubschema.schema),
+          useGraphQlJit(
+            {
+              customJSONSerializer: !unifiedSubschema.schema.getType('BigInt'),
+              disableLeafSerialization: true,
+            },
+            {
+              enableIf(args) {
+                return !isStreamOperation(args.document);
+              },
+            },
+          ),
+        ]),
     useExtendContext(() => {
       if (!inContextSDK) {
         const onDelegateHooks: OnDelegateHook<any>[] = [];
@@ -326,7 +348,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
           }
         }
         inContextSDK = getInContextSDK(
-          subschema.transformedSchema,
+          subschema ? subschema.transformedSchema : unifiedSubschema.schema,
           rawSources,
           logger,
           onDelegateHooks,
@@ -397,7 +419,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
   return {
     get schema() {
-      return subschema.transformedSchema;
+      return subschema ? subschema.transformedSchema : unifiedSubschema.schema;
     },
     rawSources,
     cache,

@@ -2680,6 +2680,15 @@
     "@graphql-tools/utils" "^10.0.0"
     tslib "^2.5.0"
 
+"@envelop/graphql-jit@^6.0.2":
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/@envelop/graphql-jit/-/graphql-jit-6.0.2.tgz#cdf8dd97a25e2300ed4888c1921c77727815b658"
+  integrity sha512-9kUKNHvWbcQG8zFFWxyVMRgl1ch2jxvS8/Xi39kl3ecah6iZPiIRqRFEL6qaCVDrr6WJGN4Wap/xgPgdik4UPA==
+  dependencies:
+    graphql-jit "^0.8.0"
+    lru-cache "^10.0.0"
+    tslib "^2.5.0"
+
 "@envelop/live-query@6.0.1":
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/@envelop/live-query/-/live-query-6.0.1.tgz#928f7a6dec7c738d55dc53acc18ab128e0556b28"
@@ -12421,7 +12430,7 @@ graphql-import-node@^0.0.5:
   resolved "https://registry.yarnpkg.com/graphql-import-node/-/graphql-import-node-0.0.5.tgz#caf76a6cece10858b14f27cce935655398fc1bf0"
   integrity sha512-OXbou9fqh9/Lm7vwXT0XoRN9J5+WCYKnbiTalgFDvkQERITRmcfncZs6aVABedd5B85yQU5EULS4a5pnbpuI0Q==
 
-graphql-jit@0.8.4:
+graphql-jit@0.8.4, graphql-jit@^0.8.0, graphql-jit@^0.8.4:
   version "0.8.4"
   resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.8.4.tgz#53c2e43b90ec98ea0942f4062516de910fbff709"
   integrity sha512-4KRrJ1ROy3Usgbl3eAoUMfdfZCRjkcw9cCGT7QwTUIHm9dPGaSaldxzGUttyjErU0rsYEb6WWyb6mMh5r6lEoQ==
@@ -22108,7 +22117,6 @@ typical@^5.2.0:
 
 "uWebSockets.js@uNetworking/uWebSockets.js#semver:^20":
   version "20.31.0"
-  uid "809b99d2d7d12e2cbf89b7135041e9b41ff84084"
   resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/809b99d2d7d12e2cbf89b7135041e9b41ff84084"
 
 ua-parser-js@^1.0.35:

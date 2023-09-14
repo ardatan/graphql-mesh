@@ -168,7 +168,6 @@ export function getInContextSDK(
                     selectionSet = print(
                       (operationNode.selectionSet.selections[0] as FieldNode).selectionSet,
                     );
-                    console.log({ selectionSet });
                   } else {
                     throw new Error(
                       `You have to provide 'selectionSet' for context.${rawSource.name}.${rootType.name}.${fieldName}`,
