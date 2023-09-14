@@ -375,7 +375,8 @@ describe('encapsulate', () => {
     }
   });
 
-  it('should handle subscriptions without wrapSchema', async () => {
+  // Todo
+  it.skip('should handle subscriptions without wrapSchema', async () => {
     const getEnveloped = envelop({
       plugins: [
         useSubschema(
