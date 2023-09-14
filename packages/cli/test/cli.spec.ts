@@ -11,10 +11,10 @@ describe('runtime', () => {
       const tsConfigFolder = 'ts-config';
       await graphqlMesh(DEFAULT_CLI_PARAMS, [
         'build',
-        `--dir=${pathModule.join(__dirname, tsConfigFolder)}`,
+        `--dir=${pathModule.resolve(__dirname, tsConfigFolder)}`,
       ]);
 
-      const meshConfigPath = pathModule.join(
+      const meshConfigPath = pathModule.resolve(
         __dirname,
         tsConfigFolder,
         generatedMeshConfiguration,
@@ -33,10 +33,10 @@ describe('runtime', () => {
       const jsConfigFolder = 'js-config';
       await graphqlMesh(DEFAULT_CLI_PARAMS, [
         'build',
-        `--dir=${pathModule.join(__dirname, jsConfigFolder)}`,
+        `--dir=${pathModule.resolve(__dirname, jsConfigFolder)}`,
       ]);
 
-      const meshConfigPath = pathModule.join(
+      const meshConfigPath = pathModule.resolve(
         __dirname,
         jsConfigFolder,
         generatedMeshConfiguration,
