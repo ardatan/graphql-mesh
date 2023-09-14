@@ -49,6 +49,7 @@ function getExecuteFn(subschema: Subschema) {
       transformationContext: Record<string, any>;
     }
   >();
+  const hasBigInt = subschema.schema.getType('BigInt') != null;
   return function subschemaExecute(args: TypedExecutionArgs<any>): any {
     const originalRequest: ExecutionRequest = {
       document: args.document,
@@ -95,7 +96,7 @@ function getExecuteFn(subschema: Subschema) {
             request.document,
             request.operationName,
             {
-              customJSONSerializer: true,
+              customJSONSerializer: !hasBigInt,
               disableLeafSerialization: true,
             },
           );

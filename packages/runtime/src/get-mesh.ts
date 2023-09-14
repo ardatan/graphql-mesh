@@ -326,7 +326,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
       : [
           useSchema(unifiedSubschema.schema),
           useGraphQlJit({
-            customJSONSerializer: true,
+            customJSONSerializer: !unifiedSubschema.schema.getType('BigInt'),
             disableLeafSerialization: true,
           }),
         ]),
