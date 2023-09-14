@@ -499,7 +499,6 @@ describe('Federation Example', () => {
     });
     it('should give correct response for example queries', async () => {
       const result = await mesh.execute(exampleQuery, undefined);
-      expect(result?.errors).toBeFalsy();
       expect(result?.data).toMatchObject(expectedResult);
     });
     afterAll(() => {

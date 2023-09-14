@@ -78,7 +78,7 @@
   },
   "resolutions": {
     "@changesets/assemble-release-plan": "5.2.3",
-    "esbuild": "0.19.2",
+    "esbuild": "0.19.3",
     "graphql": "16.8.0",
     "tslib": "2.6.2",
     "undici": "5.24.0",
