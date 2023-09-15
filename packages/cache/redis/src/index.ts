@@ -27,7 +27,10 @@ export default class RedisCache<V = string> implements KeyValueCache<V> {
         throw new Error('Redis URL must use either redis:// or rediss://');
       }
 
-      lazyConnect && redisUrl.searchParams.set('lazyConnect', 'true');
+      if (lazyConnect) {
+        redisUrl.searchParams.set('lazyConnect', 'true');
+      }
+
       redisUrl.searchParams.set('enableAutoPipelining', 'true');
       redisUrl.searchParams.set('enableOfflineQueue', 'true');
 
