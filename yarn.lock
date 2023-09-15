@@ -2461,10 +2461,10 @@
   resolved "https://registry.yarnpkg.com/@cloudflare/workerd-windows-64/-/workerd-windows-64-1.20230904.0.tgz#4274530cd9b469248060f0222e31588193e555db"
   integrity sha512-/R/dE8uy+8J2YeXfDhI8/Bg7YUirdbbjH5/l/Vv00ZRE0lC3nPLcYeyBXSwXIQ6/Xht3gN+lksLQgKd0ZWRd+Q==
 
-"@cloudflare/workers-types@4.20230904.0":
-  version "4.20230904.0"
-  resolved "https://registry.yarnpkg.com/@cloudflare/workers-types/-/workers-types-4.20230904.0.tgz#80e3b2384d7425c0b696a7aa8cab1b3c5d09e45c"
-  integrity sha512-IX4oJCe14ctblSPZBlW64BVZ9nYLUo6sD2I5gu3hX0ywByYWm1OuoKm9Xb/Zpbj8Ph18Z7Ryii6u2/ocnncXdA==
+"@cloudflare/workers-types@4.20230914.0":
+  version "4.20230914.0"
+  resolved "https://registry.yarnpkg.com/@cloudflare/workers-types/-/workers-types-4.20230914.0.tgz#42a25c3674123aa654204013a31c6ffdfb05e3b7"
+  integrity sha512-OVeN4lFVu1O0PJGZ2d0FwpK8lelFcr33qYOgCh77ErEYmEBO4adwnIxcIsdQbFbhF0ffN6joiVcljD4zakdaeQ==
 
 "@colors/colors@1.5.0":
   version "1.5.0"
@@ -6323,10 +6323,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/node@*", "@types/node@18.17.15", "@types/node@>=12.12.47", "@types/node@>=13.7.0":
-  version "18.17.15"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.17.15.tgz#31301a273b9ca7d568fe6d1c35ae52e0fb3f8d6a"
-  integrity sha512-2yrWpBk32tvV/JAd3HNHWuZn/VDN1P+72hWirHnvsvTGSqbANi+kSeuQR9yAHnbvaBvHDsoTdXV0Fe+iRtHLKA==
+"@types/node@*", "@types/node@18.17.16", "@types/node@>=12.12.47", "@types/node@>=13.7.0":
+  version "18.17.16"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.17.16.tgz#ee7b103d102787fb1530bfc6d4a1e15014f10938"
+  integrity sha512-e0zgs7qe1XH/X3KEPnldfkD07LH9O1B9T31U8qoO7lqGSjj3/IrBuvqMeJ1aYejXRK3KOphIUDw6pLIplEW17A==
 
 "@types/node@^10.0.3", "@types/node@^10.1.0":
   version "10.17.60"
