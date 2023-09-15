@@ -1,5 +1,14 @@
 # @graphql-mesh/cache-redis
 
+## 0.95.8
+
+### Patch Changes
+
+- [#5970](https://github.com/Urigo/graphql-mesh/pull/5970)
+  [`96bef0c8f`](https://github.com/Urigo/graphql-mesh/commit/96bef0c8fd58f2a31ec3bb020ea222ba66c7af86)
+  Thanks [@BabakScript](https://github.com/BabakScript)! - Avoid setting lazyConnect in case it's
+  set false
+
 ## 0.95.7
 
 ### Patch Changes
