@@ -42,7 +42,7 @@
     "http-cache-semantics": "4.1.1"
   },
   "devDependencies": {
-    "@types/http-cache-semantics": "4.0.1"
+    "@types/http-cache-semantics": "4.0.2"
   },
   "publishConfig": {
     "access": "public",

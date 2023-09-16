@@ -47,7 +47,7 @@
     "url-join": "4.0.1"
   },
   "devDependencies": {
-    "@types/json-pointer": "1.0.31"
+    "@types/json-pointer": "1.0.32"
   },
   "publishConfig": {
     "access": "public",
