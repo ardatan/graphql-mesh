@@ -54,7 +54,7 @@
     "url-join": "^4.0.1"
   },
   "devDependencies": {
-    "@types/http-string-parser": "0.0.30",
+    "@types/http-string-parser": "0.0.31",
     "@types/url-join": "4.0.1"
   },
   "publishConfig": {

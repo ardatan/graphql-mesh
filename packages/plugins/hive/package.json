@@ -42,7 +42,7 @@
     "@graphql-mesh/string-interpolation": "0.5.1"
   },
   "devDependencies": {
-    "@types/http-cache-semantics": "4.0.1"
+    "@types/http-cache-semantics": "4.0.2"
   },
   "publishConfig": {
     "access": "public",
