@@ -5711,10 +5711,10 @@
     lodash.sortby "^4.7.0"
     remove-markdown "^0.5.0"
 
-"@theguild/components@5.2.2":
-  version "5.2.2"
-  resolved "https://registry.yarnpkg.com/@theguild/components/-/components-5.2.2.tgz#5e8a2533662123e4cb7e6ed0b699c71bcde82fed"
-  integrity sha512-OOF/YrVOm0SN0Dngu8f10z7kW/p0M00IDIcZoiUmU/uw4f/5lH4SYOiLk1r7jqmqwuWgNEh55plO2iUeepwP6w==
+"@theguild/components@5.2.3":
+  version "5.2.3"
+  resolved "https://registry.yarnpkg.com/@theguild/components/-/components-5.2.3.tgz#0ebb175478e4a977204f37c2c92f564a7f3c88bb"
+  integrity sha512-93nsnL8oS1Lb4k67YmQSU4xD6gMTCAksDeZxD3Ms6iPwAaAgReMGizV/ZpQooc3q/emtlyIkJy3fLOOVXLS2/w==
   dependencies:
     "@algolia/autocomplete-js" "1.11.0"
     "@algolia/autocomplete-plugin-algolia-insights" "1.11.0"
@@ -5735,7 +5735,7 @@
     react-paginate "8.2.0"
     react-player "2.12.0"
     remark-mdx-disable-explicit-jsx "0.1.0"
-    search-insights "2.7.0"
+    search-insights "2.8.0"
     semver "^7.3.8"
     use-debounce "9.0.4"
 
@@ -19320,20 +19320,10 @@ range-parser@^1.2.1, range-parser@~1.2.1:
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.2.1.tgz#3cf37023d199e1c24d1a55b84800c2f3e6468031"
   integrity sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==
 
-raw-body@2.5.1:
+raw-body@2.5.1, raw-body@^2.4.1:
   version "2.5.1"
   resolved "https://registry.yarnpkg.com/raw-body/-/raw-body-2.5.1.tgz#fe1b1628b181b700215e5fd42389f98b71392857"
   integrity sha512-qqJBtEyVgS0ZmPGdCFPWJ3FreoqvG4MVQln/kCgF7Olq95IbOp0/BWyMwbdtn4VTvkM8Y7khCQ2Xgk/tcrCXig==
-  dependencies:
-    bytes "3.1.2"
-    http-errors "2.0.0"
-    iconv-lite "0.4.24"
-    unpipe "1.0.0"
-
-raw-body@^2.4.1:
-  version "2.5.2"
-  resolved "https://registry.yarnpkg.com/raw-body/-/raw-body-2.5.2.tgz#99febd83b90e08975087e8f1f9419a149366b68a"
-  integrity sha512-8zGqypfENjCIqGhgXToC8aB2r7YrBX+AQAfIPs/Mlk+BtPTztOvTS01NRW/3Eh60J+a48lt8qsCzirQ6loCVfA==
   dependencies:
     bytes "3.1.2"
     http-errors "2.0.0"
@@ -20299,10 +20289,10 @@ scroll-into-view-if-needed@^3.0.0:
   dependencies:
     compute-scroll-into-view "^3.0.2"
 
-search-insights@2.7.0:
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/search-insights/-/search-insights-2.7.0.tgz#d8b7ce839cae7b905e62b156f4eefe122e560e5a"
-  integrity sha512-GLbVaGgzYEKMvuJbHRhLi1qoBFnjXZGZ6l4LxOYPCp4lI2jDRB3jPU9/XNhMwv6kvnA9slTreq6pvK+b3o3aqg==
+search-insights@2.8.0:
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/search-insights/-/search-insights-2.8.0.tgz#4c3c7febab4e0f577377760ae0262de26294565d"
+  integrity sha512-VzI4PMktJbydkbrF3/n40vFfRxdwg+o3CkQt0F3mHRSXVuv0PsVxQvB6mQQq/e9MCXAemcmp/GP9CNHpayFoCw==
 
 section-matter@^1.0.0:
   version "1.0.0"
