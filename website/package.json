@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@theguild/components": "5.2.3",
-    "next": "13.4.19",
+    "next": "13.5.1",
     "next-sitemap": "4.2.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -24,7 +24,7 @@
     "@types/node": "18.17.17",
     "@types/react": "18.2.22",
     "cross-env": "7.0.3",
-    "eslint-config-next": "13.4.19",
+    "eslint-config-next": "13.5.1",
     "postcss-import": "15.1.0",
     "tailwindcss": "3.3.3",
     "typescript": "5.2.2"
