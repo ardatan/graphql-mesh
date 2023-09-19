@@ -8,7 +8,7 @@
   "replace-field": "Replace Field",
   "naming-convention": "Naming Convention",
   "type-merging": "Type Merging",
-  "federation": "Apollo Federation",
+  "federation": "Federation Subgraph",
   "extend": "Extend",
   "prune": "Prune"
 }

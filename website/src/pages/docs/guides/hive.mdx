@@ -148,6 +148,21 @@ sources:
           token: '{env.MYOAS_HIVE_TOKEN}'
 ```
 
+## Consume Supergraph SDL from Hive CDN
+
+If you have a supergraph schema published to GraphQL Hive registry, you can consume it in your
+GraphQL Mesh gateway through Hive CDN;
+
+```yaml filename=".meshrc.yaml"
+sources:
+  - name: Supergraph
+    handler:
+      supergraph:
+        source: https://cdn.graphql-hive.com/SOME_UUID?ext=.graphql
+        schemaHeaders:
+          X-Hive-CDN-Key: SOME_TOKEN
+```
+
 ## Config API Reference
 
 import API from '../../../generated-markdown/HivePlugin.generated.md'
