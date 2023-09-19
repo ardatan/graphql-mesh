@@ -922,6 +922,7 @@
       "Track your Gateway",
       "Publish and check the gateway schema",
       "Publish & Consume Service Schemas",
+      "Consume Supergraph SDL from Hive CDN",
       "Config API Reference"
     ],
     "toc": [
@@ -979,11 +980,16 @@
       },
       {
         "children": [],
+        "title": "Consume Supergraph SDL from Hive CDN",
+        "anchor": "consume-supergraph-sdl-from-hive-cdn"
+      },
+      {
+        "children": [],
         "title": "Config API Reference",
         "anchor": "config-api-reference"
       }
     ],
-    "content": "809b3b7db5bbb2c1e164950763402088",
+    "content": "f4d136e0424164e619d59283d27e9abe",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/guides/hive",
     "domain": "https://www.the-guild.dev/graphql/mesh",
     "hierarchy": ["docs", "guides"],
@@ -1507,6 +1513,29 @@
     "hierarchy": ["docs", "handlers"],
     "source": "Mesh",
     "title": "SOAP",
+    "type": "Documentation"
+  },
+  {
+    "objectID": "mesh-docs-handlers-supergraph",
+    "headings": ["Consuming prebuilt Supergraph SDL", "Using Mesh to build the supergraph"],
+    "toc": [
+      {
+        "children": [],
+        "title": "Consuming prebuilt Supergraph SDL",
+        "anchor": "consuming-prebuilt-supergraph-sdl"
+      },
+      {
+        "children": [],
+        "title": "Using Mesh to build the supergraph",
+        "anchor": "using-mesh-to-build-the-supergraph"
+      }
+    ],
+    "content": "32a9ca1732f9eec24df33c690b31054e",
+    "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/supergraph",
+    "domain": "https://www.the-guild.dev/graphql/mesh",
+    "hierarchy": ["docs", "handlers"],
+    "source": "Mesh",
+    "title": "Federation Supergraph",
     "type": "Documentation"
   },
   {
@@ -2125,12 +2154,12 @@
         "anchor": "how-to-use"
       }
     ],
-    "content": "fd7eb8245127c52e99b13e9316ed6f21",
+    "content": "630912d7dd80739ca27ad3ef4b394ed9",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/transforms/federation",
     "domain": "https://www.the-guild.dev/graphql/mesh",
     "hierarchy": ["docs", "transforms"],
     "source": "Mesh",
-    "title": "Apollo Federation",
+    "title": "Federation Subgraph",
     "type": "Documentation"
   },
   {
