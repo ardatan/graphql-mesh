@@ -1530,7 +1530,7 @@
         "anchor": "using-mesh-to-build-the-supergraph"
       }
     ],
-    "content": "32a9ca1732f9eec24df33c690b31054e",
+    "content": "4ccd0d10a2cf7bf39ee90ffa5747d71e",
     "url": "https://www.the-guild.dev/graphql/mesh/docs/handlers/supergraph",
     "domain": "https://www.the-guild.dev/graphql/mesh",
     "hierarchy": ["docs", "handlers"],
