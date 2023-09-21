@@ -10,7 +10,7 @@
   "dependencies": {
     "@graphql-mesh/cli": "0.87.8",
     "@graphql-mesh/openapi": "0.95.5",
-    "graphql": "16.8.0",
+    "graphql": "16.8.1",
     "moment": "2.29.4",
     "typescript": "5.2.2"
   }

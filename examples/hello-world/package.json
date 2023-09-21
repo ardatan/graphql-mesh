@@ -12,7 +12,7 @@
     "@graphql-mesh/json-schema": "0.95.5",
     "@graphql-mesh/plugin-mock": "0.95.4",
     "@graphql-yoga/plugin-sofa": "2.0.4",
-    "graphql": "16.8.0"
+    "graphql": "16.8.1"
   },
   "devDependencies": {
     "jest": "29.7.0"
