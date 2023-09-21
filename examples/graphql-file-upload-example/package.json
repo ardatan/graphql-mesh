@@ -12,7 +12,7 @@
     "@graphql-mesh/cli": "0.87.8",
     "@graphql-mesh/graphql": "0.95.4",
     "concurrently": "8.2.1",
-    "graphql": "16.8.0",
+    "graphql": "16.8.1",
     "graphql-yoga": "4.0.4",
     "sharp": "0.32.6"
   },

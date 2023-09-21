@@ -10,6 +10,6 @@
     "@graphql-mesh/graphql": "0.95.4",
     "@graphql-mesh/transform-rename": "0.95.4",
     "@graphql-mesh/transform-type-merging": "0.95.4",
-    "graphql": "16.8.0"
+    "graphql": "16.8.1"
   }
 }
