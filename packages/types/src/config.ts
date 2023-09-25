@@ -1712,6 +1712,11 @@ export interface RedisConfig {
   port?: string;
   password?: string;
   url?: string;
+  /**
+   * Flag to indicate lazyConnect value for Redis client.
+   *
+   * @default: true
+   */
   lazyConnect?: boolean;
 }
 export interface PubSubConfig {

@@ -1,6 +1,7 @@
 import { DEFAULT_SCHEMA, load as loadYamlFromJsYaml, Schema, Type } from 'js-yaml';
 import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import { ImportFn, Logger, MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
+import { URL } from '@whatwg-node/fetch';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
 
 export interface ReadFileOrUrlOptions extends MeshFetchRequestInit {
@@ -13,7 +14,7 @@ export interface ReadFileOrUrlOptions extends MeshFetchRequestInit {
 }
 
 export function isUrl(str: string): boolean {
-  return /^https?:\/\//.test(str);
+  return /^https?:\/\//.test(str) || /^file:\/\//.test(str);
 }
 
 export async function readFileOrUrl<T>(
@@ -80,7 +81,7 @@ export function loadYaml(filepath: string, content: string, logger: Logger): any
 
 export async function readFile<T>(
   fileExpression: string,
-  { allowUnknownExtensions, cwd, fallbackFormat, importFn, logger }: ReadFileOrUrlOptions,
+  { allowUnknownExtensions, cwd, fallbackFormat, importFn, logger, fetch }: ReadFileOrUrlOptions,
 ): Promise<T> {
   const [filePath] = fileExpression.split('#');
   if (/js$/.test(filePath) || /ts$/.test(filePath)) {
@@ -91,18 +92,22 @@ export async function readFile<T>(
     });
   }
   const actualPath = pathModule.isAbsolute(filePath) ? filePath : pathModule.join(cwd, filePath);
-  const rawResult = await fs.promises.readFile(actualPath, 'utf-8');
+  const url = new URL(`file:///${actualPath}`);
+  const res = await fetch(url.href);
   if (/json$/.test(actualPath)) {
-    return JSON.parse(rawResult);
+    return res.json();
   }
   if (/yaml$/.test(actualPath) || /yml$/.test(actualPath)) {
+    const rawResult = await res.text();
     return loadYaml(actualPath, rawResult, logger);
   } else if (fallbackFormat) {
     switch (fallbackFormat) {
       case 'json':
-        return JSON.parse(rawResult);
-      case 'yaml':
+        return res.json();
+      case 'yaml': {
+        const rawResult = await res.text();
         return loadYaml(actualPath, rawResult, logger);
+      }
       case 'ts':
       case 'js':
         return importFn(actualPath);
@@ -113,7 +118,7 @@ export async function readFile<T>(
         `the correct extension (i.e. '.json', '.yaml', or '.yml).`,
     );
   }
-  return rawResult as unknown as T;
+  return res.text() as unknown as T;
 }
 
 export async function readUrl<T>(path: string, config: ReadFileOrUrlOptions): Promise<T> {
