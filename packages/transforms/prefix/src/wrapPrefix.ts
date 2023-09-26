@@ -27,6 +27,9 @@ export default class WrapPrefix implements MeshTransform {
       throw new Error(`Transform 'prefix' has missing config: prefix`);
     }
 
+    if (!config.force) {
+      config.force = [];
+    }
     defaultIgnoreList = defaultIgnoreList.filter(x => !config.force.includes(x));
     const ignoreList = [...(config.ignore || []), ...defaultIgnoreList];
 
