@@ -26,6 +26,10 @@ type PrefixTransformConfig @md {
   Changes types (default: true)
   """
   includeTypes: Boolean
+  """
+  List of protected types you want to force prefix on
+  """
+  force: [String!]
 }
 
 enum PrefixTransformMode {

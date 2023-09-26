@@ -20,6 +20,7 @@ export default class BarePrefix implements MeshTransform {
 
   constructor(options: MeshTransformOptions<YamlConfig.PrefixTransformConfig>) {
     const { apiName, config } = options;
+    defaultIgnoreList = defaultIgnoreList.filter(x => !config.force.includes(x));
     this.ignoreList = [...(config.ignore || []), ...defaultIgnoreList];
     this.includeRootOperations = config.includeRootOperations === true;
     this.includeTypes = config.includeTypes !== false;
