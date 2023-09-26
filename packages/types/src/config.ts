@@ -1380,6 +1380,10 @@ export interface PrefixTransformConfig {
    * Changes types (default: true)
    */
   includeTypes?: boolean;
+  /**
+   * List of protected types you want to force prefix on
+   */
+  force?: string[];
 }
 /**
  * Prune transform

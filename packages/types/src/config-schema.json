@@ -3642,6 +3642,14 @@
         "includeTypes": {
           "type": "boolean",
           "description": "Changes types (default: true)"
+        },
+        "force": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "List of protected types you want to force prefix on"
         }
       }
     },
