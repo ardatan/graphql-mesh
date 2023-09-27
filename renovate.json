@@ -20,7 +20,8 @@
         "next",
         "tailwindcss",
         "@whatwg-node/*",
-        "graphql-jit"
+        "graphql-jit",
+        "fast-xml-parser"
       ],
       "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["minor", "patch"],
