@@ -79,8 +79,8 @@
     "@types/lodash.get": "4.4.7",
     "@types/mkdirp": "1.0.2",
     "@types/rimraf": "3.0.2",
-    "@types/ws": "8.5.5",
-    "@types/yargs": "17.0.24"
+    "@types/ws": "8.5.6",
+    "@types/yargs": "17.0.25"
   },
   "publishConfig": {
     "access": "public",
