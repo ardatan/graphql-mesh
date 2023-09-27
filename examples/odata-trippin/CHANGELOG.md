@@ -1,5 +1,13 @@
 # odata-trippin-example
 
+## 0.12.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.87.9
+  - @graphql-mesh/odata@0.95.5
+
 ## 0.12.8
 
 ### Patch Changes
