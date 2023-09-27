@@ -19,7 +19,8 @@
         "@graphql-inspector/core",
         "next",
         "tailwindcss",
-        "@whatwg-node/*"
+        "@whatwg-node/*",
+        "graphql-jit"
       ],
       "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["minor", "patch"],
