@@ -155,6 +155,7 @@ describe('getMesh', () => {
     expect(result).toMatchInlineSnapshot(`
       {
         "data": {},
+        "stringify": [Function],
       }
     `);
   });
@@ -208,6 +209,7 @@ describe('getMesh', () => {
         "data": {
           "strikeBack": "Hello from serviceFoo",
         },
+        "stringify": [Function],
       }
     `);
   });
