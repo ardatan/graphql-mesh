@@ -2661,35 +2661,35 @@
   resolved "https://registry.yarnpkg.com/@csstools/selector-specificity/-/selector-specificity-2.2.0.tgz#2cbcf822bf3764c9658c4d2e568bd0c0cb748016"
   integrity sha512-+OJ9konv95ClSTOJCmMZqpd5+YGsB2S+x6w3E1oaM8UuR5j8nTNHYSz8c9BEPGDOCMQYIEEGlVPj/VY64iTbGw==
 
-"@envelop/auth0@5.0.1":
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/@envelop/auth0/-/auth0-5.0.1.tgz#8f2a50bf04a1e1fc46dcbab5a818d9bced8be2dd"
-  integrity sha512-AXSUcWNBqBhe+5tyA2tbnKIthf6x9XeeNxT/iEeltxx1Xt6KwCcwX2UBDqo9lVoGGNdxQvYYa/WtXSYwgMpfXQ==
+"@envelop/auth0@5.0.3":
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/@envelop/auth0/-/auth0-5.0.3.tgz#4bfaed3e19710a843346d1fe1a548a1bcfad4281"
+  integrity sha512-QmfBvmAITCs4QG3QQ7mVvY0bYwXSKaE17E7Sg7K7bly44flGDymqum8+YxVzMz9RpdNYNr3+KBB6CMzwPXMCUA==
   dependencies:
     jsonwebtoken "^9.0.0"
     jwks-rsa "^3.0.1"
     tslib "^2.5.0"
 
-"@envelop/core@4.0.1", "@envelop/core@^4.0.0":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@envelop/core/-/core-4.0.1.tgz#0f3eb33a396e9f4527d7fa8079055ec151eb73aa"
-  integrity sha512-uBLI7ql3hZopz7vMi9UDAb9HWzKw4STKiqg4QT+lb+tu5ZNaeuJ4fom2rrmgITz38B85QZOhZrGyVrlJXxfDzw==
+"@envelop/core@4.0.3", "@envelop/core@^4.0.0":
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/@envelop/core/-/core-4.0.3.tgz#6bc3e1ed3b31aa41d81106eb5071a9b8eec188d0"
+  integrity sha512-O0Vz8E0TObT6ijAob8jYFVJavcGywKThM3UAsxUIBBVPYZTMiqI9lo2gmAnbMUnrDcAYkUTZEW9FDYPRdF5l6g==
   dependencies:
     "@envelop/types" "4.0.1"
     tslib "^2.5.0"
 
-"@envelop/depth-limit@3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@envelop/depth-limit/-/depth-limit-3.0.1.tgz#859a52e3c4debc6ff8cb9931df7b1f08f37fbc5b"
-  integrity sha512-mQVz+/jonw11EsKBxAvCqh1ojTphKovmsF2yjbgxKXE0WUBs6GKQQ6CqNeLi2mTKQDSGoU7tjR6qEyk6oApDbA==
+"@envelop/depth-limit@3.0.3":
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/@envelop/depth-limit/-/depth-limit-3.0.3.tgz#114d25d3c26c572755bb527f0f98205ac9733b92"
+  integrity sha512-fDyLQDVlSG3DPJmzwb6pdnpK67rNy9KLkN8LTthZOmEXGz0WuVP1EOOnjYY7PE566BySbNXl5z1lTeOPHR1KUw==
   dependencies:
     graphql-depth-limit "^1.1.0"
     tslib "^2.5.0"
 
-"@envelop/extended-validation@^3.0.0", "@envelop/extended-validation@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@envelop/extended-validation/-/extended-validation-3.0.1.tgz#119baf344713b99db76e4ad40de40584b0d14499"
-  integrity sha512-UQDt8/MrRKuyX8r6tJmzfqzNyPiibfLeWpeW8+CeG9oNIVYYjjq6+rB5EJCMHWb3uLpY09lD1OxxV3jFcyZq3A==
+"@envelop/extended-validation@^3.0.0", "@envelop/extended-validation@^3.0.3":
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/@envelop/extended-validation/-/extended-validation-3.0.3.tgz#2852891ff48a2dc64a38e86f4dd3ed9a6526a70a"
+  integrity sha512-KYYzNTpccryoDq7NXCXXSG8iR0m+1p0QG1L9ud8mZL/A8bxsTyPniw7szM5B3B3VLzojbij9OIW4t7y5HXD90g==
   dependencies:
     "@graphql-tools/utils" "^10.0.0"
     tslib "^2.5.0"
@@ -2703,10 +2703,10 @@
     lru-cache "^10.0.0"
     tslib "^2.5.0"
 
-"@envelop/live-query@6.0.1":
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/@envelop/live-query/-/live-query-6.0.1.tgz#928f7a6dec7c738d55dc53acc18ab128e0556b28"
-  integrity sha512-FIntUK/GZQorJLzQ0hL6eSfhvyQel4inGzMGu3ryC4KMOSt3VbBYLFjNkuKO/LceKkXpUTIch+D8VWAEvidXUg==
+"@envelop/live-query@6.0.3":
+  version "6.0.3"
+  resolved "https://registry.yarnpkg.com/@envelop/live-query/-/live-query-6.0.3.tgz#6aab48ea091124e5c74ef37f8e5d106fd36a87f5"
+  integrity sha512-nYZj15rcDodnnOG1gREJKXqFJ8btjkj7ZRVtooeWJaxvUKCbqGSVy28W6cz4Dyly7xCXWKDQW0ZU6AxPAzzotQ==
   dependencies:
     "@graphql-tools/utils" "^10.0.0"
     "@n1ru4l/graphql-live-query" "^0.10.0"
@@ -2715,24 +2715,24 @@
     tslib "^2.5.0"
 
 "@envelop/newrelic@^6.0.1":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@envelop/newrelic/-/newrelic-6.0.2.tgz#79dd06bfbb155e35ab49c0b79d5f678302b0c486"
-  integrity sha512-LIytDYQ032c4OFkuLO0zr3M2WPKybHot3844zFE56d13Wsvpg9Olu4d23TNYMVR2ODp9/D5zvNH76DCmZAIdqw==
+  version "6.0.4"
+  resolved "https://registry.yarnpkg.com/@envelop/newrelic/-/newrelic-6.0.4.tgz#a2d1bbe1b658dd0573d3792d2128e771306cee7f"
+  integrity sha512-+tmKXO5DwPv3A0qUu0P0juUQLo+Bh5WdwCw9Vn0OiHmyBzN7t75F85wigmmVS2Fv2gve0paSyhwmYpAxSW3MzQ==
   dependencies:
-    "@envelop/on-resolve" "^3.0.1"
+    "@envelop/on-resolve" "^3.0.3"
     tslib "^2.5.0"
 
-"@envelop/on-resolve@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@envelop/on-resolve/-/on-resolve-3.0.1.tgz#1af2194792ebbda733a314c845ce0cc7a0832299"
-  integrity sha512-5OWcZHTvV3CeQNvaPuarTOa5WVZbgUkDxq6jnHH0mjd3V0ZDcwukFrQmfTFgOkwYKpvEbKoVWFJUyMVEHXweZA==
+"@envelop/on-resolve@^3.0.1", "@envelop/on-resolve@^3.0.3":
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/@envelop/on-resolve/-/on-resolve-3.0.3.tgz#cfba1726c2b79b6b2d9e7333878a5b6e1c95e3f5"
+  integrity sha512-Mo2w3CHmyLCScFuIO2VS2Co44vlPSc4zwujz0x+/zyaJ+eCwBQMRuE9u+9ORjvKImNxrbXI9FQVNlbF0iDk4iQ==
 
-"@envelop/operation-field-permissions@5.0.1":
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/@envelop/operation-field-permissions/-/operation-field-permissions-5.0.1.tgz#3ecd0479f53a669f4c27847dfa3cfa3444c77ff4"
-  integrity sha512-Cju/WqVxbSs+moPze2Ma4OG2tcTJdJKz9IGGVZQBgUvJBDOWdj+ERNf1C1011rm36g4Kj0D6rcGOT1js0DVGmA==
+"@envelop/operation-field-permissions@5.0.3":
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/@envelop/operation-field-permissions/-/operation-field-permissions-5.0.3.tgz#b233a8cdc002499a569eb293d77c98a40167ea7d"
+  integrity sha512-5p/a+685DtPK7bC+5Rb2R9RmIFU98VWQi8PUfBIZALisRH3dAB40c762NvFGlMNo/qqIuVxwCCrtqBuaxofcbQ==
   dependencies:
-    "@envelop/extended-validation" "^3.0.1"
+    "@envelop/extended-validation" "^3.0.3"
     tslib "^2.5.0"
 
 "@envelop/prometheus@8.0.1":
@@ -2754,10 +2754,10 @@
     lru-cache "^10.0.0"
     tslib "^2.5.0"
 
-"@envelop/statsd@4.0.1":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@envelop/statsd/-/statsd-4.0.1.tgz#c8492f478e1356de6a4fb37b2962ff8fb2125cd3"
-  integrity sha512-8dvL3jarD7P9kTFjyBwnfkfpDZhyR3M2LAuO6ENTvSH2Yo964ikehLKUsKPLKz5PagWy2Id/2I3ndKKUlGICUg==
+"@envelop/statsd@4.0.3":
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/@envelop/statsd/-/statsd-4.0.3.tgz#68d7ec588e59801a6b4b28e65689fd29cac81b3c"
+  integrity sha512-7istuGsMEMeuRRgpk6/U6kFW1YX902jb+LDpP6+9n7a9ziwMW3C5P0AWr2+65vYPSeXl4yyWVuSI1QyXvVseMA==
   dependencies:
     tslib "^2.5.0"
 
