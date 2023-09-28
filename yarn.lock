@@ -2722,7 +2722,7 @@
     "@envelop/on-resolve" "^3.0.3"
     tslib "^2.5.0"
 
-"@envelop/on-resolve@^3.0.1", "@envelop/on-resolve@^3.0.3":
+"@envelop/on-resolve@^3.0.3":
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/@envelop/on-resolve/-/on-resolve-3.0.3.tgz#cfba1726c2b79b6b2d9e7333878a5b6e1c95e3f5"
   integrity sha512-Mo2w3CHmyLCScFuIO2VS2Co44vlPSc4zwujz0x+/zyaJ+eCwBQMRuE9u+9ORjvKImNxrbXI9FQVNlbF0iDk4iQ==
@@ -2735,18 +2735,18 @@
     "@envelop/extended-validation" "^3.0.3"
     tslib "^2.5.0"
 
-"@envelop/prometheus@8.0.1":
-  version "8.0.1"
-  resolved "https://registry.yarnpkg.com/@envelop/prometheus/-/prometheus-8.0.1.tgz#a6087102103a5e7cef269d2774bdb1e789797f77"
-  integrity sha512-vbnSH4mOfePrGsjUh9iGonR4yh/Cjkef0SQM7zZqIov26XGlS4XkIr2wduJFCIUAW/3ur+B6rydXSM335lZ4vw==
+"@envelop/prometheus@8.0.3":
+  version "8.0.3"
+  resolved "https://registry.yarnpkg.com/@envelop/prometheus/-/prometheus-8.0.3.tgz#f41fd7d5515b35afad8686b9535f744c75b604d5"
+  integrity sha512-ggAoy70JdoxIT279tkvN+P+5dHYgB6NeF2UqYbCuUmijUHD+xfLD7jbv+WUoshoot380Go9XGd9UTXChUtQ0Yw==
   dependencies:
-    "@envelop/on-resolve" "^3.0.1"
+    "@envelop/on-resolve" "^3.0.3"
     tslib "^2.5.0"
 
-"@envelop/response-cache@^5.1.0":
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/@envelop/response-cache/-/response-cache-5.3.0.tgz#3acccad4909ad98ec3d27888e82a20ca9f061f08"
-  integrity sha512-v2zwHQmtnOEnNDgP7R8hSyeaO/diBkwOdJYKn7IRmEVuC/ziatUNfJMhkxK6pNAg/1teTk15iL+hjN8uqcWEQA==
+"@envelop/response-cache@^5.3.2":
+  version "5.3.2"
+  resolved "https://registry.yarnpkg.com/@envelop/response-cache/-/response-cache-5.3.2.tgz#ae6d06f74bcf6cd067128ef9fa9de928d7e2d12d"
+  integrity sha512-q9mX4S2ylU9jj6G4gSUvm8BfD5wc90RVZ8PGgvyiDPXrFc+z3Wp4XgJ3iIm3j9u2DTDYRYOmBNZR4GcB2AZ4QA==
   dependencies:
     "@graphql-tools/utils" "^10.0.3"
     "@whatwg-node/fetch" "^0.9.0"
@@ -3673,28 +3673,28 @@
     tslib "^2.5.2"
 
 "@graphql-yoga/plugin-persisted-operations@^2.0.3":
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-persisted-operations/-/plugin-persisted-operations-2.0.4.tgz#eec7e3fd772a24a9930ff748784d5bf64bfd1381"
-  integrity sha512-iPMSOpa+SiY88r7Hzt/JTNhMt7PDghFsMBBeEaRWtUaTo4oPbrqUSJyG21cPB6EJP5s+TBIza0ZCfgQZSh7mnw==
-
-"@graphql-yoga/plugin-prometheus@2.0.5":
   version "2.0.5"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-prometheus/-/plugin-prometheus-2.0.5.tgz#5e39069331a892705d98cc6c359529e81b6965bc"
-  integrity sha512-NjLJrnmIPwhqIX8Pe6FIKn7KJ6goyAEILK26gmMnoslFUCgX7RVUmgdn5DJqgshpTrwB7/eIPYDWJp+1lXmnhw==
-  dependencies:
-    "@envelop/prometheus" "8.0.1"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-persisted-operations/-/plugin-persisted-operations-2.0.5.tgz#a5c98b09c957dc2ee2364e511298a81f77c23e72"
+  integrity sha512-I1TNdt0PFtOLQEQ2IuIkyqKUd1u2s1KOY3L38+7PDuvFJ9G+EiLTMfMbO0FgPVFBgQd63WX4kwzv3+CEccFqmQ==
 
-"@graphql-yoga/plugin-response-cache@2.1.1":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-response-cache/-/plugin-response-cache-2.1.1.tgz#3d698e9b4dbefaf17f5efde5a7c86855fb55b607"
-  integrity sha512-1Rp/ENCFGwxmSaDAjXNz3Cetc4JbwcbdTYWMtZS4SI6fHYrFSXZISwYfrdz3yuV3bY81M0d1C7mMwEEVCekJtw==
+"@graphql-yoga/plugin-prometheus@2.0.6":
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-prometheus/-/plugin-prometheus-2.0.6.tgz#0c0309c476867d57061f8d25c511b4d05dd43114"
+  integrity sha512-NlrMXus68nAaP3AnEZaqwyURwORqMCmJzHyr/RYfmovt55gBz/4theB4kh+wWiZbF28l+uKiHUTWqLUEkaGrNQ==
   dependencies:
-    "@envelop/response-cache" "^5.1.0"
+    "@envelop/prometheus" "8.0.3"
 
-"@graphql-yoga/plugin-sofa@2.0.4":
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-sofa/-/plugin-sofa-2.0.4.tgz#b9c93e57b36408f00f5faca39eb778e1a0d99f3d"
-  integrity sha512-F+oGwvPnwA3Tcp5C3oajSDiVHajNGgFuJ1OZ5fH3m58cokTP70NZEVwb5rviVFqiJjZhXgWzXkHyPu8HP+f8lQ==
+"@graphql-yoga/plugin-response-cache@2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-response-cache/-/plugin-response-cache-2.2.0.tgz#1d3e350e184e7fd0ec863ae2fa76c4bd49bf9b0e"
+  integrity sha512-1a3KvvRYCHhHuUgddkH3mg+vOuVC7eEWSmS+tJuIUwVoS2JYtSsAJ+boCRfwbU/ATFjzeMNcOpTmX60YahjJ6w==
+  dependencies:
+    "@envelop/response-cache" "^5.3.2"
+
+"@graphql-yoga/plugin-sofa@2.0.5":
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@graphql-yoga/plugin-sofa/-/plugin-sofa-2.0.5.tgz#7918d814107aab7e1ebc3154a5d749c97e5f7a53"
+  integrity sha512-BoV5zq2whoJIF0mTz/j82alrR6KA0TIALYKYD3rLeoB0Pyop0g8qKF47Q6u4eSCMHodFsE/do9Yg21kiePqlVQ==
   dependencies:
     sofa-api "^0.18.0"
 
@@ -12547,9 +12547,9 @@ graphql-type-json@0.3.2:
   integrity sha512-J+vjof74oMlCWXSvt0DOf2APEdZOCdubEvGDUAlqH//VBYcOYsGgRW7Xzorr44LvkjiuvecWc8fChxuZZbChtg==
 
 graphql-ws@^5.12.1, graphql-ws@^5.14.0, graphql-ws@^5.6.2:
-  version "5.14.0"
-  resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.14.0.tgz#766f249f3974fc2c48fae0d1fb20c2c4c79cd591"
-  integrity sha512-itrUTQZP/TgswR4GSSYuwWUzrE/w5GhbwM2GX3ic2U7aw33jgEsayfIlvaj7/GcIvZgNMzsPTrE5hqPuFUiE5g==
+  version "5.14.1"
+  resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.14.1.tgz#d05dba9c2cbf1582c990a2dfec4b8f6a55d99da4"
+  integrity sha512-aqkls1espsygP1PfkAuuLIV96IbztQ6EaADse97pw8wRIMT3+AL/OYfS8V2iCRkc0gzckitoDRGCQEdnySggiA==
 
 graphql-yoga@4.0.5, graphql-yoga@^4.0.5:
   version "4.0.5"
@@ -23468,10 +23468,10 @@ workerd@1.20230922.0:
     "@cloudflare/workerd-linux-arm64" "1.20230922.0"
     "@cloudflare/workerd-windows-64" "1.20230922.0"
 
-wrangler@3.10.0:
-  version "3.10.0"
-  resolved "https://registry.yarnpkg.com/wrangler/-/wrangler-3.10.0.tgz#bc0e1564be2cbc9a586ba2dc5ab4e9072b9e6987"
-  integrity sha512-426QvIxEU7JDiZrsCF+B84lWw9BeMVcH4kzn9MZlVTqUD21CbLS1bEs9pdaB8nsnB9Y/n5JTH8bv/vpTBO0Z4g==
+wrangler@3.10.1:
+  version "3.10.1"
+  resolved "https://registry.yarnpkg.com/wrangler/-/wrangler-3.10.1.tgz#b332cda82ab4e5d6a09cf4d07e7b0111c06d1c49"
+  integrity sha512-k7BUIinKVYFHJYo8HVeVjDncjTQIu6Z6/CNnTB9WcsGlJ0MFTsFWdWspWSPgef1vOTrzkfbweZpZCY3YXIew3g==
   dependencies:
     "@cloudflare/kv-asset-handler" "^0.2.0"
     "@esbuild-plugins/node-globals-polyfill" "^0.2.3"
