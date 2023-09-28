@@ -42,7 +42,7 @@
   "dependencies": {
     "@envelop/core": "^4.0.0",
     "@envelop/extended-validation": "^3.0.0",
-    "@envelop/graphql-jit": "^6.0.2",
+    "@envelop/graphql-jit": "^6.0.5",
     "@graphql-mesh/string-interpolation": "^0.5.2",
     "@graphql-tools/batch-delegate": "^9.0.0",
     "@graphql-tools/delegate": "^10.0.0",
