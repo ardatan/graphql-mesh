@@ -52,5 +52,6 @@ exports[`gRPC Reflection Example should get greeting correctly: greeting-result 
       "greeting": "Hello World",
     },
   },
+  "stringify": [Function],
 }
 `;
