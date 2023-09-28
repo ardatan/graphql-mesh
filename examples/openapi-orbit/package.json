@@ -1,13 +1,13 @@
 {
   "name": "openapi-orbit",
-  "version": "0.4.11",
+  "version": "0.4.12",
   "license": "MIT",
   "private": true,
   "scripts": {
     "start": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.87.10",
+    "@graphql-mesh/cli": "0.87.11",
     "@graphql-mesh/openapi": "0.95.7",
     "graphql": "16.8.1"
   }
