@@ -1,5 +1,16 @@
 # @graphql-mesh/runtime
 
+## 0.96.8
+
+### Patch Changes
+
+- [#6018](https://github.com/Urigo/graphql-mesh/pull/6018)
+  [`41005ff7d`](https://github.com/Urigo/graphql-mesh/commit/41005ff7d240ef7803c7fcca0504aaf84be850b0)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/graphql-jit@^6.0.5` ↗︎](https://www.npmjs.com/package/@envelop/graphql-jit/v/6.0.5)
+    (from `^6.0.2`, in `dependencies`)
+
 ## 0.96.7
 
 ### Patch Changes
