@@ -2695,9 +2695,9 @@
     tslib "^2.5.0"
 
 "@envelop/graphql-jit@^6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@envelop/graphql-jit/-/graphql-jit-6.0.2.tgz#cdf8dd97a25e2300ed4888c1921c77727815b658"
-  integrity sha512-9kUKNHvWbcQG8zFFWxyVMRgl1ch2jxvS8/Xi39kl3ecah6iZPiIRqRFEL6qaCVDrr6WJGN4Wap/xgPgdik4UPA==
+  version "6.0.4"
+  resolved "https://registry.yarnpkg.com/@envelop/graphql-jit/-/graphql-jit-6.0.4.tgz#77e98f15f4a2e86014613739dfdb5ae63c79fe4d"
+  integrity sha512-NahTh8LjsfFgWGLv0j/cMVdISoWglndRFcublMyF4mOMU+0nzc5ptDLai2e0Wb6FuhLz74OlneUvQCT7ZChUbA==
   dependencies:
     graphql-jit "^0.8.0"
     lru-cache "^10.0.0"
