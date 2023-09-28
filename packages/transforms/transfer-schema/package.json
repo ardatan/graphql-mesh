@@ -36,7 +36,7 @@
     "micromatch": "4.0.5"
   },
   "devDependencies": {
-    "@types/micromatch": "4.0.2"
+    "@types/micromatch": "4.0.3"
   },
   "publishConfig": {
     "access": "public",
