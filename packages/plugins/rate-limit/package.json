@@ -43,7 +43,7 @@
     "minimatch": "9.0.3"
   },
   "devDependencies": {
-    "@envelop/core": "4.0.1"
+    "@envelop/core": "4.0.3"
   },
   "publishConfig": {
     "access": "public",

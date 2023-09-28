@@ -47,7 +47,7 @@
     "graphql-scalars": "^1.22.2"
   },
   "devDependencies": {
-    "@envelop/core": "4.0.1",
+    "@envelop/core": "4.0.3",
     "@graphql-mesh/cache-localforage": "0.95.5",
     "@types/faker": "5.5.9"
   },

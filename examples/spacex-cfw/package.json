@@ -3,7 +3,7 @@
   "version": "0.5.10",
   "private": true,
   "dependencies": {
-    "@envelop/depth-limit": "3.0.1",
+    "@envelop/depth-limit": "3.0.3",
     "@graphql-mesh/cache-cfw-kv": "0.95.5",
     "@graphql-mesh/cli": "0.87.9",
     "@graphql-mesh/graphql": "0.95.5",
