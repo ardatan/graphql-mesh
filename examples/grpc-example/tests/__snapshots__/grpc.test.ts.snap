@@ -190,5 +190,6 @@ exports[`gRPC Example should get movies correctly: get-movies-grpc-example-resul
       ],
     },
   },
+  "stringify": [Function],
 }
 `;

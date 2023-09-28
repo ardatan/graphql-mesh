@@ -35,7 +35,7 @@
     "@graphql-mesh/types": "^0.95.6",
     "@graphql-mesh/utils": "^0.95.6",
     "graphql": "*",
-    "graphql-yoga": "4.0.4",
+    "graphql-yoga": "^4.0.5",
     "prom-client": "^13 || ^14.0.0",
     "tslib": "^2.4.0"
   },

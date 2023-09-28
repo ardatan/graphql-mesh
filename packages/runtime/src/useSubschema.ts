@@ -1,6 +1,7 @@
 import { BREAK, DocumentNode, execute, FieldNode, OperationDefinitionNode, visit } from 'graphql';
 import { CompiledQuery, compileQuery, isCompiledQuery } from 'graphql-jit';
 import { mapAsyncIterator, Plugin, TypedExecutionArgs } from '@envelop/core';
+import { ExecutionResultWithSerializer } from '@envelop/graphql-jit';
 import { applyRequestTransforms, applyResultTransforms } from '@graphql-mesh/utils';
 import {
   applySchemaTransforms,
@@ -16,6 +17,7 @@ import {
   isAsyncIterable,
   isPromise,
   MaybeAsyncIterable,
+  MaybePromise,
   memoize1,
   printSchemaWithDirectives,
 } from '@graphql-tools/utils';
@@ -102,7 +104,7 @@ function getExecuteFn(subschema: Subschema) {
       if (isStream) {
         executor = createDefaultExecutor(subschema.schema);
       } else {
-        executor = function subschemaExecutor(request: ExecutionRequest) {
+        executor = function subschemaExecutor(request: ExecutionRequest): any {
           let compiledQuery = compiledQueryCache.get(request.document);
           if (!compiledQuery) {
             const compilationResult = compileQuery(
@@ -121,17 +123,33 @@ function getExecuteFn(subschema: Subschema) {
             compiledQueryCache.set(request.document, compiledQuery);
           }
           if (operationAST.operation === 'subscription') {
-            return compiledQuery.subscribe(
+            const result$ = compiledQuery.subscribe(
               request.rootValue,
               request.context,
               request.variables,
-            ) as ExecutionResult;
+            ) as MaybePromise<ExecutionResultWithSerializer>;
+            if (isPromise(result$)) {
+              return result$.then(result => {
+                result.stringify = compiledQuery.stringify;
+                return result;
+              });
+            }
+            result$.stringify = compiledQuery.stringify;
+            return result$;
           }
-          return compiledQuery.query(
+          const result$ = compiledQuery.query(
             request.rootValue,
             request.context,
             request.variables,
-          ) as ExecutionResult;
+          ) as MaybePromise<ExecutionResultWithSerializer>;
+          if (isPromise(result$)) {
+            return result$.then(result => {
+              result.stringify = compiledQuery.stringify;
+              return result;
+            });
+          }
+          result$.stringify = compiledQuery.stringify;
+          return result$;
         };
       }
     }

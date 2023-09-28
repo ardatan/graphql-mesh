@@ -5576,5 +5576,6 @@ exports[`SQLite Chinook should give correct response for example queries: exampl
       },
     ],
   },
+  "stringify": [Function],
 }
 `;

@@ -1521,5 +1521,6 @@ exports[`JavaScript Wiki should give correct response for wikipediaMetrics withi
       ],
     },
   },
+  "stringify": [Function],
 }
 `;
