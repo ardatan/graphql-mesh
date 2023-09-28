@@ -1,5 +1,16 @@
 # @graphql-mesh/supergraph
 
+## 0.0.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`8e1056cf9`](https://github.com/Urigo/graphql-mesh/commit/8e1056cf91b0e7069499f5102aaed163a0168597)]:
+  - @graphql-mesh/string-interpolation@0.5.2
+  - @graphql-mesh/utils@0.95.6
+  - @graphql-mesh/store@0.95.6
+  - @graphql-mesh/types@0.95.6
+
 ## 0.0.5
 
 ### Patch Changes
