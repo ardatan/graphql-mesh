@@ -1,5 +1,19 @@
 # @graphql-mesh/plugin-statsd
 
+## 0.95.7
+
+### Patch Changes
+
+- [#6013](https://github.com/Urigo/graphql-mesh/pull/6013)
+  [`498e357c8`](https://github.com/Urigo/graphql-mesh/commit/498e357c81f3b4b1799cb7c3a68cf8aeed8268fa)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/statsd@4.0.3` ↗︎](https://www.npmjs.com/package/@envelop/statsd/v/4.0.3) (from
+    `4.0.1`, in `dependencies`)
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.95.6
+  - @graphql-mesh/types@0.95.6
+
 ## 0.95.6
 
 ### Patch Changes

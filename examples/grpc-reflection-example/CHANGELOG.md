@@ -1,5 +1,15 @@
 # grpc-reflection-example
 
+## 0.10.11
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f4cb6e384`](https://github.com/Urigo/graphql-mesh/commit/f4cb6e384414cf2877d1fbf77b6ef53dcd67f3fc)]:
+  - @graphql-mesh/grpc@0.95.8
+  - @graphql-mesh/cli@0.87.10
+  - @graphql-mesh/transform-naming-convention@0.95.6
+
 ## 0.10.10
 
 ### Patch Changes

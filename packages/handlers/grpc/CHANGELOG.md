@@ -1,5 +1,19 @@
 # @graphql-mesh/grpc
 
+## 0.95.8
+
+### Patch Changes
+
+- [`f4cb6e384`](https://github.com/Urigo/graphql-mesh/commit/f4cb6e384414cf2877d1fbf77b6ef53dcd67f3fc)
+  Thanks [@ardatan](https://github.com/ardatan)! - Process enum values correctly
+
+- Updated dependencies
+  [[`8e1056cf9`](https://github.com/Urigo/graphql-mesh/commit/8e1056cf91b0e7069499f5102aaed163a0168597)]:
+  - @graphql-mesh/string-interpolation@0.5.2
+  - @graphql-mesh/utils@0.95.6
+  - @graphql-mesh/store@0.95.6
+  - @graphql-mesh/types@0.95.6
+
 ## 0.95.7
 
 ### Patch Changes
