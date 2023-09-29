@@ -21,6 +21,7 @@ import {
   memoize1,
   printSchemaWithDirectives,
 } from '@graphql-tools/utils';
+import { getStringifier } from './utils';
 
 enum IntrospectionQueryType {
   FEDERATION = 'FEDERATION',
@@ -130,11 +131,21 @@ function getExecuteFn(subschema: Subschema) {
             ) as MaybePromise<ExecutionResultWithSerializer>;
             if (isPromise(result$)) {
               return result$.then(result => {
-                result.stringify = compiledQuery.stringify;
+                result.stringify = getStringifier(
+                  subschema.schema,
+                  request.document,
+                  request.operationName,
+                  request.variables,
+                );
                 return result;
               });
             }
-            result$.stringify = compiledQuery.stringify;
+            result$.stringify = getStringifier(
+              subschema.schema,
+              request.document,
+              request.operationName,
+              request.variables,
+            );
             return result$;
           }
           const result$ = compiledQuery.query(
@@ -144,11 +155,21 @@ function getExecuteFn(subschema: Subschema) {
           ) as MaybePromise<ExecutionResultWithSerializer>;
           if (isPromise(result$)) {
             return result$.then(result => {
-              result.stringify = compiledQuery.stringify;
+              result.stringify = getStringifier(
+                subschema.schema,
+                request.document,
+                request.operationName,
+                request.variables,
+              );
               return result;
             });
           }
-          result$.stringify = compiledQuery.stringify;
+          result$.stringify = getStringifier(
+            subschema.schema,
+            request.document,
+            request.operationName,
+            request.variables,
+          );
           return result$;
         };
       }

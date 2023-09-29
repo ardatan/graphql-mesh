@@ -49,7 +49,7 @@ import { MESH_CONTEXT_SYMBOL } from './constants.js';
 import { getInContextSDK } from './in-context-sdk.js';
 import { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types.js';
 import { useSubschema } from './useSubschema.js';
-import { isStreamOperation, iterateAsync } from './utils.js';
+import { getStringifier, isStreamOperation, iterateAsync } from './utils.js';
 
 type SdkRequester = (document: DocumentNode, variables?: any, operationContext?: any) => any;
 
@@ -338,6 +338,20 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
               },
             },
           ),
+          {
+            onExecute({ args }) {
+              return {
+                onExecuteDone({ result }) {
+                  result.stringify = getStringifier(
+                    unifiedSubschema.schema,
+                    args.document,
+                    args.operationName,
+                    args.variableValues,
+                  );
+                },
+              };
+            },
+          },
         ]),
     useExtendContext(() => {
       if (!inContextSDK) {
