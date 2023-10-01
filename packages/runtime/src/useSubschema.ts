@@ -13,7 +13,6 @@ import {
   ExecutionRequest,
   ExecutionResult,
   getDefinedRootType,
-  getOperationASTFromRequest,
   isAsyncIterable,
   isPromise,
   MaybeAsyncIterable,
@@ -21,7 +20,7 @@ import {
   memoize1,
   printSchemaWithDirectives,
 } from '@graphql-tools/utils';
-import { getStringifier } from './utils';
+import { getOperationsAndFragments, getOperationSerializer } from './sjs';
 
 enum IntrospectionQueryType {
   FEDERATION = 'FEDERATION',
@@ -71,8 +70,10 @@ function getExecuteFn(subschema: Subschema) {
       rootValue: args.rootValue,
       context: args.contextValue,
     };
-    const operationAST = getOperationASTFromRequest(originalRequest);
-    // TODO: We need more elegant solution
+    const { operations, fragments } = getOperationsAndFragments(args.document);
+    const operationAST = args.operationName
+      ? operations[args.operationName]
+      : operations[Object.keys(operations)[0]];
     const introspectionQueryType = getIntrospectionOperationType(operationAST);
     if (introspectionQueryType === IntrospectionQueryType.FEDERATION) {
       const executionResult: ExecutionResult = {
@@ -131,19 +132,19 @@ function getExecuteFn(subschema: Subschema) {
             ) as MaybePromise<ExecutionResultWithSerializer>;
             if (isPromise(result$)) {
               return result$.then(result => {
-                result.stringify = getStringifier(
+                result.stringify = getOperationSerializer(
                   subschema.schema,
-                  request.document,
-                  request.operationName,
+                  operationAST,
+                  fragments,
                   request.variables,
                 );
                 return result;
               });
             }
-            result$.stringify = getStringifier(
+            result$.stringify = getOperationSerializer(
               subschema.schema,
-              request.document,
-              request.operationName,
+              operationAST,
+              fragments,
               request.variables,
             );
             return result$;
@@ -155,19 +156,19 @@ function getExecuteFn(subschema: Subschema) {
           ) as MaybePromise<ExecutionResultWithSerializer>;
           if (isPromise(result$)) {
             return result$.then(result => {
-              result.stringify = getStringifier(
+              result.stringify = getOperationSerializer(
                 subschema.schema,
-                request.document,
-                request.operationName,
+                operationAST,
+                fragments,
                 request.variables,
               );
               return result;
             });
           }
-          result$.stringify = getStringifier(
+          result$.stringify = getOperationSerializer(
             subschema.schema,
-            request.document,
-            request.operationName,
+            operationAST,
+            fragments,
             request.variables,
           );
           return result$;
