@@ -1,5 +1,16 @@
 # @graphql-mesh/plugin-hive
 
+## 0.95.7
+
+### Patch Changes
+
+- [#6023](https://github.com/Urigo/graphql-mesh/pull/6023)
+  [`682280c66`](https://github.com/Urigo/graphql-mesh/commit/682280c66c1cbd3bf54f64b3c2b1bd25b1fe20f2)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/client@0.24.2` ↗︎](https://www.npmjs.com/package/@graphql-hive/client/v/0.24.2)
+    (from `0.24.1`, in `dependencies`)
+
 ## 0.95.6
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # gateway-example
 
+## 0.5.13
+
+### Patch Changes
+
+- Updated dependencies
+  [[`682280c66`](https://github.com/Urigo/graphql-mesh/commit/682280c66c1cbd3bf54f64b3c2b1bd25b1fe20f2)]:
+  - @graphql-mesh/plugin-hive@0.95.7
+
 ## 0.5.12
 
 ### Patch Changes
