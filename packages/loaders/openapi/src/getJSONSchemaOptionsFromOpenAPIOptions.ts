@@ -323,7 +323,8 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
         const requestBodyObj = methodObj.requestBody;
         if ('content' in requestBodyObj) {
           // use json if available, otherwise fall back to the first type
-          let contentKey = ('application/json' in requestBodyObj.content)
+         const contentKeys = Object.keys(requestBodyObj.content);
+         const contentKey = contentKeys.find(contentKey => contentKey.includes('json')) || contentKeys[0];
             ? 'application/json' : Object.keys(requestBodyObj.content)[0];
           const contentSchema = requestBodyObj.content[contentKey]?.schema;
           if (contentSchema && Object.keys(contentSchema).length > 0) {
