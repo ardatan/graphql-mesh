@@ -6436,10 +6436,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@18.2.24", "@types/react@>=16":
-  version "18.2.24"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.24.tgz#3c7d68c02e0205a472f04abe4a0c1df35d995c05"
-  integrity sha512-Ee0Jt4sbJxMu1iDcetZEIKQr99J1Zfb6D4F3qfUWoR1JpInkY1Wdg4WwCyBjL257D0+jGqSl1twBjV8iCaC0Aw==
+"@types/react@*", "@types/react@18.2.25", "@types/react@>=16":
+  version "18.2.25"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.25.tgz#99fa44154132979e870ff409dc5b6e67f06f0199"
+  integrity sha512-24xqse6+VByVLIr+xWaQ9muX1B4bXJKXBbjszbld/UEDslGLY53+ZucF44HCmLbMPejTzGG9XgR+3m2/Wqu1kw==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -16865,10 +16865,10 @@ mongodb@5.8.1:
   optionalDependencies:
     "@mongodb-js/saslprep" "^1.1.0"
 
-mongoose@7.5.3:
-  version "7.5.3"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-7.5.3.tgz#89ef67f8125c11a0e4db70317c7f6a730151c525"
-  integrity sha512-QyYzhZusux0wIJs+4rYyHvel0kJm0CT887trNd1WAB3iQnDuJow0xEnjETvuS/cTjHQUVPihOpN7OHLlpJc52w==
+mongoose@7.5.4:
+  version "7.5.4"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-7.5.4.tgz#c83d0a3de8e1a13c19ce6cc5810bf93f0fb4c2a2"
+  integrity sha512-u97BOfBOoCxysnH5X0WeF/O39DO1di75dYU75xaSs9mL3Si0qmP0qLWvWpBRdVkiiRVw+eaqJyKwaq6RvKPVZw==
   dependencies:
     bson "^5.4.0"
     kareem "2.5.1"
