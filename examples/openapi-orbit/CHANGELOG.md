@@ -1,5 +1,13 @@
 # openapi-orbit
 
+## 0.4.14
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/openapi@0.95.8
+  - @graphql-mesh/cli@0.87.13
+
 ## 0.4.13
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # hasura-openbrewery-geodb
 
+## 0.10.14
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a13969c77`](https://github.com/Urigo/graphql-mesh/commit/a13969c77794c44493d7a9426be7e38a6d673c88)]:
+  - @graphql-mesh/json-schema@0.95.8
+  - @graphql-mesh/cli@0.87.13
+
 ## 0.10.13
 
 ### Patch Changes

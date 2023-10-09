@@ -1,5 +1,15 @@
 # @graphql-mesh/odata
 
+## 0.95.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a13969c77`](https://github.com/Urigo/graphql-mesh/commit/a13969c77794c44493d7a9426be7e38a6d673c88)]:
+  - @graphql-mesh/types@0.95.7
+  - @graphql-mesh/store@0.95.7
+  - @graphql-mesh/utils@0.95.7
+
 ## 0.95.6
 
 ### Patch Changes
