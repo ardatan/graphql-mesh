@@ -1,5 +1,20 @@
 # @graphql-mesh/plugin-prometheus
 
+## 0.95.10
+
+### Patch Changes
+
+- [#6052](https://github.com/Urigo/graphql-mesh/pull/6052)
+  [`4a8abe263`](https://github.com/Urigo/graphql-mesh/commit/4a8abe263a25a64cf033df80b0dacdd2c0e35203)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`prom-client@^13 || ^14.0.0 || ^15.0.0` ↗︎](https://www.npmjs.com/package/prom-client/v/13.0.0)
+    (from `^13 || ^14.0.0`, in `peerDependencies`)
+- Updated dependencies
+  [[`a13969c77`](https://github.com/Urigo/graphql-mesh/commit/a13969c77794c44493d7a9426be7e38a6d673c88)]:
+  - @graphql-mesh/types@0.95.7
+  - @graphql-mesh/utils@0.95.7
+
 ## 0.95.9
 
 ### Patch Changes
