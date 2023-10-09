@@ -1,5 +1,15 @@
 # @graphql-mesh/runtime
 
+## 0.96.9
+
+### Patch Changes
+
+- [`482d813a9`](https://github.com/Urigo/graphql-mesh/commit/482d813a9f75935024aa77872125d197f5fca3d0)
+  Thanks [@ardatan](https://github.com/ardatan)! - Simplify the logic and use GraphQL Tools executor
+
+- [`482d813a9`](https://github.com/Urigo/graphql-mesh/commit/482d813a9f75935024aa77872125d197f5fca3d0)
+  Thanks [@ardatan](https://github.com/ardatan)! - Do not cache entire request but only DocumentNode
+
 ## 0.96.8
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @graphql-mesh/grpc
 
+## 0.95.9
+
+### Patch Changes
+
+- [`482d813a9`](https://github.com/Urigo/graphql-mesh/commit/482d813a9f75935024aa77872125d197f5fca3d0)
+  Thanks [@ardatan](https://github.com/ardatan)! - Add response streams as subscriptions
+
 ## 0.95.8
 
 ### Patch Changes
