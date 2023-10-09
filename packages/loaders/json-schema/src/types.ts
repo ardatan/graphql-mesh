@@ -45,6 +45,8 @@ export type JSONSchemaBaseOperationConfig = {
 
   argTypeMap?: Record<string, string | JSONSchemaObject>;
   responseByStatusCode?: Record<string, JSONSchemaOperationResponseConfig>;
+
+  deprecated?: boolean;
 } & JSONSchemaOperationResponseConfig;
 
 export type JSONSchemaBaseOperationConfigWithJSONRequest = JSONSchemaBaseOperationConfig & {

@@ -957,7 +957,7 @@ type SimplifiedEpisodeObject {
   "True if the episode is playable in the given market. Otherwise false."
   is_playable: Boolean!
   "The language used in the episode, identified by a [ISO 639](https://en.wikipedia.org/wiki/ISO_639) code. This field is deprecated and might be removed in the future. Please use the \`languages\` field instead."
-  language: String
+  language: String @deprecated(reason: "deprecated")
   "A list of the languages used in the episode, identified by their [ISO 639-1](https://en.wikipedia.org/wiki/ISO_639) code."
   languages: [String]!
   "The name of the episode."
@@ -1064,7 +1064,7 @@ type EpisodeObject {
   "True if the episode is playable in the given market. Otherwise false."
   is_playable: Boolean!
   "The language used in the episode, identified by a [ISO 639](https://en.wikipedia.org/wiki/ISO_639) code. This field is deprecated and might be removed in the future. Please use the \`languages\` field instead."
-  language: String
+  language: String @deprecated(reason: "deprecated")
   "A list of the languages used in the episode, identified by their [ISO 639-1](https://en.wikipedia.org/wiki/ISO_639) code."
   languages: [String]!
   "The name of the episode."

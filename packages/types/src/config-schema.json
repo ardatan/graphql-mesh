@@ -1211,6 +1211,10 @@
         "binary": {
           "type": "boolean",
           "description": "If true, this operation cannot have requestSchema or requestSample\nAnd the request body will be passed as binary with its mime type\nunless you define an explicit Content-Type header"
+        },
+        "deprecated": {
+          "type": "boolean",
+          "description": "If true, `@deprecated` will be added to the field definition"
         }
       },
       "required": ["field", "type", "path"]
@@ -1319,6 +1323,10 @@
         },
         "pubsubTopic": {
           "type": "string"
+        },
+        "deprecated": {
+          "type": "boolean",
+          "description": "If true, `@deprecated` will be added to the field definition"
         }
       },
       "required": ["field", "type", "pubsubTopic"]

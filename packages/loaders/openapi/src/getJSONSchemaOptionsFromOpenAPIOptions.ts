@@ -165,6 +165,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
         schemaHeaders,
         operationHeaders,
         responseByStatusCode: {},
+        deprecated: methodObj.deprecated,
         ...(baseOperationArgTypeMap
           ? {
               argTypeMap: {

@@ -491,6 +491,10 @@ export interface JsonSchemaHTTPOperation {
    * unless you define an explicit Content-Type header
    */
   binary?: boolean;
+  /**
+   * If true, `@deprecated` will be added to the field definition
+   */
+  deprecated?: boolean;
 }
 export interface JsonSchemaPubSubOperation {
   field: string;
@@ -514,6 +518,10 @@ export interface JsonSchemaPubSubOperation {
     [k: string]: any;
   };
   pubsubTopic: string;
+  /**
+   * If true, `@deprecated` will be added to the field definition
+   */
+  deprecated?: boolean;
 }
 export interface QueryStringOptions {
   /**

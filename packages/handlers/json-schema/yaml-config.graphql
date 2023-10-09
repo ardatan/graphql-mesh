@@ -105,6 +105,7 @@ interface JsonSchemaBaseOperation {
   responseTypeName: String
   exposeResponseMetadata: Boolean
   argTypeMap: JSON
+  deprecated: Boolean
 }
 
 type JsonSchemaHTTPOperation implements JsonSchemaBaseOperation {
@@ -215,6 +216,11 @@ type JsonSchemaHTTPOperation implements JsonSchemaBaseOperation {
   unless you define an explicit Content-Type header
   """
   binary: Boolean
+
+  """
+  If true, `@deprecated` will be added to the field definition
+  """
+  deprecated: Boolean
 }
 
 type JsonSchemaPubSubOperation implements JsonSchemaBaseOperation {
@@ -234,6 +240,10 @@ type JsonSchemaPubSubOperation implements JsonSchemaBaseOperation {
   responseTypeName: String
   argTypeMap: JSON
   pubsubTopic: String!
+  """
+  If true, `@deprecated` will be added to the field definition
+  """
+  deprecated: Boolean
 }
 
 union JsonSchemaOperation = JsonSchemaHTTPOperation | JsonSchemaPubSubOperation

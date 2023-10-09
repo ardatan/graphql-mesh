@@ -63,6 +63,7 @@ queryParamArgMap:
     * `binary` (type: `Boolean`) - If true, this operation cannot have requestSchema or requestSample
 And the request body will be passed as binary with its mime type
 unless you define an explicit Content-Type header
+    * `deprecated` (type: `Boolean`) - If true, `@deprecated` will be added to the field definition
   * `object`: 
     * `field` (type: `String`, required)
     * `description` (type: `String`)
@@ -77,6 +78,7 @@ the underlying HTTP request
     * `responseTypeName` (type: `String`)
     * `argTypeMap` (type: `JSON`)
     * `pubsubTopic` (type: `String`, required)
+    * `deprecated` (type: `Boolean`) - If true, `@deprecated` will be added to the field definition
 * `ignoreErrorResponses` (type: `Boolean`)
 * `queryParams` (type: `Any`)
 * `queryStringOptions` (type: `Object`): 

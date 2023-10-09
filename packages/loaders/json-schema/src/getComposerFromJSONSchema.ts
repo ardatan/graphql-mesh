@@ -82,6 +82,7 @@ export interface TypeComposers {
   readOnly?: boolean;
   writeOnly?: boolean;
   flatten?: boolean;
+  deprecated?: boolean;
 }
 
 export function getComposerFromJSONSchema(
@@ -139,6 +140,7 @@ export function getComposerFromJSONSchema(
             readOnly: subSchema.readOnly,
             writeOnly: subSchema.writeOnly,
             default: subSchema.default,
+            deprecated: subSchema.deprecated,
           };
         }
         // If it doesn't have any clue
@@ -158,6 +160,7 @@ export function getComposerFromJSONSchema(
             readOnly: subSchema.readOnly,
             writeOnly: subSchema.writeOnly,
             default: subSchema.default,
+            deprecated: subSchema.deprecated,
           };
         }
       }
@@ -207,6 +210,7 @@ export function getComposerFromJSONSchema(
           nullable: subSchema.nullable,
           readOnly: subSchema.readOnly,
           writeOnly: subSchema.writeOnly,
+          deprecated: subSchema.deprecated,
         };
       }
       if (subSchema.const) {
@@ -256,6 +260,7 @@ export function getComposerFromJSONSchema(
           nullable: subSchema.nullable,
           readOnly: subSchema.readOnly,
           writeOnly: subSchema.writeOnly,
+          deprecated: subSchema.deprecated,
         };
       }
       if (subSchema.enum && subSchema.type !== 'boolean') {
@@ -318,6 +323,7 @@ export function getComposerFromJSONSchema(
           readOnly: subSchema.readOnly,
           writeOnly: subSchema.writeOnly,
           default: subSchema.default,
+          deprecated: subSchema.deprecated,
         };
       }
 
@@ -335,6 +341,7 @@ export function getComposerFromJSONSchema(
             readOnly: subSchema.readOnly,
             writeOnly: subSchema.writeOnly,
             default: subSchema.default,
+            deprecated: subSchema.deprecated,
           };
         }
       }
@@ -349,6 +356,7 @@ export function getComposerFromJSONSchema(
               description: subSchema.description,
               nullable: subSchema.nullable,
               default: subSchema.default,
+              deprecated: subSchema.deprecated,
             };
           }
           case 'binary': {
@@ -359,6 +367,7 @@ export function getComposerFromJSONSchema(
               description: subSchema.description,
               nullable: subSchema.nullable,
               default: subSchema.default,
+              deprecated: subSchema.deprecated,
             };
           }
           case 'date-time': {
@@ -371,6 +380,7 @@ export function getComposerFromJSONSchema(
               readOnly: subSchema.readOnly,
               writeOnly: subSchema.writeOnly,
               default: subSchema.default,
+              deprecated: subSchema.deprecated,
             };
           }
           case 'time': {
@@ -383,6 +393,7 @@ export function getComposerFromJSONSchema(
               readOnly: subSchema.readOnly,
               writeOnly: subSchema.writeOnly,
               default: subSchema.default,
+              deprecated: subSchema.deprecated,
             };
           }
           case 'email': {
@@ -395,6 +406,7 @@ export function getComposerFromJSONSchema(
               readOnly: subSchema.readOnly,
               writeOnly: subSchema.writeOnly,
               default: subSchema.default,
+              deprecated: subSchema.deprecated,
             };
           }
           case 'ipv4': {
@@ -407,6 +419,7 @@ export function getComposerFromJSONSchema(
               readOnly: subSchema.readOnly,
               writeOnly: subSchema.writeOnly,
               default: subSchema.default,
+              deprecated: subSchema.deprecated,
             };
           }
           case 'ipv6': {
@@ -419,6 +432,7 @@ export function getComposerFromJSONSchema(
               readOnly: subSchema.readOnly,
               writeOnly: subSchema.writeOnly,
               default: subSchema.default,
+              deprecated: subSchema.deprecated,
             };
           }
           case 'uri': {
@@ -431,6 +445,7 @@ export function getComposerFromJSONSchema(
               readOnly: subSchema.readOnly,
               writeOnly: subSchema.writeOnly,
               default: subSchema.default,
+              deprecated: subSchema.deprecated,
             };
           }
           case 'uuid': {
@@ -443,6 +458,7 @@ export function getComposerFromJSONSchema(
               readOnly: subSchema.readOnly,
               writeOnly: subSchema.writeOnly,
               default: subSchema.default,
+              deprecated: subSchema.deprecated,
             };
           }
           case 'unix-time': {
@@ -455,6 +471,7 @@ export function getComposerFromJSONSchema(
               readOnly: subSchema.readOnly,
               writeOnly: subSchema.writeOnly,
               default: subSchema.default,
+              deprecated: subSchema.deprecated,
             };
           }
           case 'int64': {
@@ -467,6 +484,7 @@ export function getComposerFromJSONSchema(
               readOnly: subSchema.readOnly,
               writeOnly: subSchema.writeOnly,
               default: subSchema.default,
+              deprecated: subSchema.deprecated,
             };
           }
           case 'int32': {
@@ -479,6 +497,7 @@ export function getComposerFromJSONSchema(
               readOnly: subSchema.readOnly,
               writeOnly: subSchema.writeOnly,
               default: subSchema.default,
+              deprecated: subSchema.deprecated,
             };
           }
           case 'decimal':
@@ -492,6 +511,7 @@ export function getComposerFromJSONSchema(
               readOnly: subSchema.readOnly,
               writeOnly: subSchema.writeOnly,
               default: subSchema.default,
+              deprecated: subSchema.deprecated,
             };
           }
           default: {
@@ -506,6 +526,7 @@ export function getComposerFromJSONSchema(
                 readOnly: subSchema.readOnly,
                 writeOnly: subSchema.writeOnly,
                 default: subSchema.default,
+                deprecated: subSchema.deprecated,
               };
             }
           }
@@ -524,6 +545,7 @@ export function getComposerFromJSONSchema(
           readOnly: subSchema.readOnly,
           writeOnly: subSchema.writeOnly,
           default: subSchema.default,
+          deprecated: subSchema.deprecated,
         };
       } else if (subSchema.minimum > 0) {
         const typeComposer = schemaComposer.getAnyTC(
@@ -537,6 +559,7 @@ export function getComposerFromJSONSchema(
           readOnly: subSchema.readOnly,
           writeOnly: subSchema.writeOnly,
           default: subSchema.default,
+          deprecated: subSchema.deprecated,
         };
       }
       if (subSchema.maximum === 0) {
@@ -551,6 +574,7 @@ export function getComposerFromJSONSchema(
           readOnly: subSchema.readOnly,
           writeOnly: subSchema.writeOnly,
           default: subSchema.default,
+          deprecated: subSchema.deprecated,
         };
       } else if (subSchema.maximum < 0) {
         const typeComposer = schemaComposer.getAnyTC(
@@ -564,6 +588,7 @@ export function getComposerFromJSONSchema(
           readOnly: subSchema.readOnly,
           writeOnly: subSchema.writeOnly,
           default: subSchema.default,
+          deprecated: subSchema.deprecated,
         };
       }
       if (
@@ -579,6 +604,7 @@ export function getComposerFromJSONSchema(
           readOnly: subSchema.readOnly,
           writeOnly: subSchema.writeOnly,
           default: subSchema.default,
+          deprecated: subSchema.deprecated,
         };
       }
 
@@ -593,6 +619,7 @@ export function getComposerFromJSONSchema(
             readOnly: subSchema.readOnly,
             writeOnly: subSchema.writeOnly,
             default: subSchema.default,
+            deprecated: subSchema.deprecated,
           };
         }
         case 'null': {
@@ -605,6 +632,7 @@ export function getComposerFromJSONSchema(
             readOnly: subSchema.readOnly,
             writeOnly: subSchema.writeOnly,
             default: subSchema.default,
+            deprecated: subSchema.deprecated,
           };
         }
         case 'integer': {
@@ -617,6 +645,7 @@ export function getComposerFromJSONSchema(
             readOnly: subSchema.readOnly,
             writeOnly: subSchema.writeOnly,
             default: subSchema.default,
+            deprecated: subSchema.deprecated,
           };
         }
         case 'number': {
@@ -629,6 +658,7 @@ export function getComposerFromJSONSchema(
             readOnly: subSchema.readOnly,
             writeOnly: subSchema.writeOnly,
             default: subSchema.default,
+            deprecated: subSchema.deprecated,
           };
         }
         case 'string': {
@@ -642,6 +672,7 @@ export function getComposerFromJSONSchema(
               readOnly: subSchema.readOnly,
               writeOnly: subSchema.writeOnly,
               default: subSchema.default,
+              deprecated: subSchema.deprecated,
             };
           }
           if (subSchema.minLength || subSchema.maxLength) {
@@ -671,6 +702,7 @@ export function getComposerFromJSONSchema(
               readOnly: subSchema.readOnly,
               writeOnly: subSchema.writeOnly,
               default: subSchema.default,
+              deprecated: subSchema.deprecated,
             };
           }
           const typeComposer = schemaComposer.getAnyTC(GraphQLString);
@@ -682,6 +714,7 @@ export function getComposerFromJSONSchema(
             readOnly: subSchema.readOnly,
             writeOnly: subSchema.writeOnly,
             default: subSchema.default,
+            deprecated: subSchema.deprecated,
           };
         }
         case 'object': {
@@ -773,6 +806,7 @@ export function getComposerFromJSONSchema(
             readOnly: subSchema.readOnly,
             writeOnly: subSchema.writeOnly,
             default: subSchema.default,
+            deprecated: subSchema.deprecated,
           };
         }
         const config = {
@@ -907,6 +941,7 @@ export function getComposerFromJSONSchema(
             readOnly: subSchemaAndTypeComposers.readOnly,
             writeOnly: subSchemaAndTypeComposers.writeOnly,
             flatten,
+            deprecated: subSchemaAndTypeComposers.deprecated,
           };
         }
         return getUnionTypeComposers({
@@ -1321,6 +1356,9 @@ export function getComposerFromJSONSchema(
                 description:
                   subSchemaAndTypeComposers.properties[propertyName].description ||
                   subSchemaAndTypeComposers.properties[propertyName].output?.description,
+                deprecationReason: subSchemaAndTypeComposers.properties[propertyName].deprecated
+                  ? 'deprecated'
+                  : undefined,
               };
               const directives: Directive[] = [];
               if (fieldName !== propertyName) {
@@ -1359,6 +1397,7 @@ export function getComposerFromJSONSchema(
                   subSchemaAndTypeComposers.properties[propertyName]?.default ||
                   subSchemaAndTypeComposers.properties[propertyName]?.extensions?.default ||
                   subSchemaAndTypeComposers.properties[propertyName]?.input?.default,
+                // deprecationReason: subSchemaAndTypeComposers.properties[propertyName].deprecated ? 'deprecated' : undefined,
               };
             }
           }
@@ -1416,6 +1455,7 @@ export function getComposerFromJSONSchema(
                 default: subSchemaAndTypeComposers.default,
                 readOnly: subSchemaAndTypeComposers.readOnly,
                 writeOnly: subSchemaAndTypeComposers.writeOnly,
+                deprecated: subSchemaAndTypeComposers.deprecated,
               };
             }
           }
@@ -1464,6 +1504,7 @@ export function getComposerFromJSONSchema(
             default: subSchemaAndTypeComposers.default,
             readOnly: subSchemaAndTypeComposers.readOnly,
             writeOnly: subSchemaAndTypeComposers.writeOnly,
+            deprecated: subSchemaAndTypeComposers.deprecated,
           };
       }
 
@@ -1476,6 +1517,7 @@ export function getComposerFromJSONSchema(
           default: subSchemaAndTypeComposers.default,
           readOnly: subSchemaAndTypeComposers.readOnly,
           writeOnly: subSchemaAndTypeComposers.writeOnly,
+          deprecated: subSchemaAndTypeComposers.deprecated,
         };
       } else {
         logger.debug(`GraphQL Type cannot be created for this JSON Schema definition;`, {
@@ -1491,6 +1533,7 @@ export function getComposerFromJSONSchema(
           readOnly: subSchemaAndTypeComposers.readOnly,
           writeOnly: subSchemaAndTypeComposers.writeOnly,
           default: subSchemaAndTypeComposers.default,
+          deprecated: subSchemaAndTypeComposers.deprecated,
         };
       }
     },

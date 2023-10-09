@@ -351,7 +351,7 @@ type Query @globalOptions(sourceName: "test", endpoint: "http://dummy") {
     filter_or: Boolean
   ): [CredentialsEmailSearch] @httpOperation(path: "/credentials_email/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\",\\"limit\\":\\"limit\\",\\"offset\\":\\"offset\\",\\"sorts\\":\\"sorts\\",\\"id\\":\\"id\\",\\"email\\":\\"email\\",\\"emails\\":\\"emails\\",\\"filter_or\\":\\"filter_or\\"}")
   "### Get the current status and content of custom welcome emails\\n"
-  custom_welcome_email: CustomWelcomeEmail @httpOperation(path: "/custom_welcome_email", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  custom_welcome_email: CustomWelcomeEmail @deprecated(reason: "deprecated") @httpOperation(path: "/custom_welcome_email", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   "### Get information about all active dashboards.\\n\\nReturns an array of **abbreviated dashboard objects**. Dashboards marked as deleted are excluded from this list.\\n\\nGet the **full details** of a specific dashboard by id with [dashboard()](#!/Dashboard/dashboard)\\n\\nFind **deleted dashboards** with [search_dashboards()](#!/Dashboard/search_dashboards)\\n"
   all_dashboards(
     "Requested fields."
@@ -1838,7 +1838,7 @@ type Query @globalOptions(sourceName: "test", endpoint: "http://dummy") {
     resource_id: String!
     "Whether or not to refresh the rendered image with the latest content"
     reload: String
-  ): String @httpOperation(path: "/vector_thumbnail/{args.type}/{args.resource_id}", operationSpecificHeaders: "{\\"accept\\":\\"image/svg+xml\\"}", httpMethod: GET, queryParamArgMap: "{\\"reload\\":\\"reload\\"}")
+  ): String @deprecated(reason: "deprecated") @httpOperation(path: "/vector_thumbnail/{args.type}/{args.resource_id}", operationSpecificHeaders: "{\\"accept\\":\\"image/svg+xml\\"}", httpMethod: GET, queryParamArgMap: "{\\"reload\\":\\"reload\\"}")
   "### Get information about all API versions supported by this Looker instance.\\n"
   versions(
     "Requested fields."
@@ -1855,7 +1855,7 @@ type Query @globalOptions(sourceName: "test", endpoint: "http://dummy") {
   whitelabel_configuration(
     "Requested fields."
     fields: String
-  ): WhitelabelConfiguration @httpOperation(path: "/whitelabel_configuration", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): WhitelabelConfiguration @deprecated(reason: "deprecated") @httpOperation(path: "/whitelabel_configuration", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   "### Get All Workspaces\\n\\nReturns all workspaces available to the calling user.\\n"
   all_workspaces: [Workspace] @httpOperation(path: "/workspaces", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
   "### Get A Workspace\\n\\nReturns information about a workspace such as the git status and selected branches\\nof all projects available to the caller's user account.\\n\\nA workspace defines which versions of project files will be used to evaluate expressions\\nand operations that use model definitions - operations such as running queries or rendering dashboards.\\nEach project has its own git repository, and each project in a workspace may be configured to reference\\nparticular branch or revision within their respective repositories.\\n\\nThere are two predefined workspaces available: \\"production\\" and \\"dev\\".\\n\\nThe production workspace is shared across all Looker users. Models in the production workspace are read-only.\\nChanging files in production is accomplished by modifying files in a git branch and using Pull Requests\\nto merge the changes from the dev branch into the production branch, and then telling\\nLooker to sync with production.\\n\\nThe dev workspace is local to each Looker user. Changes made to project/model files in the dev workspace only affect\\nthat user, and only when the dev workspace is selected as the active workspace for the API session.\\n(See set_session_workspace()).\\n\\nThe dev workspace is NOT unique to an API session. Two applications accessing the Looker API using\\nthe same user account will see the same files in the dev workspace. To avoid collisions between\\nAPI clients it's best to have each client login with API credentials for a different user account.\\n\\nChanges made to files in a dev workspace are persistent across API sessions. It's a good\\nidea to commit any changes you've made to the git repository, but not strictly required. Your modified files\\nreside in a special user-specific directory on the Looker server and will still be there when you login in again\\nlater and use update_session(workspace_id: \\"dev\\") to select the dev workspace for the new API session.\\n"
@@ -3477,7 +3477,7 @@ type User {
   "EMail address"
   email: String
   "(DEPRECATED) (Embed only) ID of user's group space based on the external_group_id optionally specified during embed user login"
-  embed_group_space_id: String
+  embed_group_space_id: String @deprecated(reason: "deprecated")
   "First name"
   first_name: String
   "Array of ids of the groups for this user"
@@ -4398,7 +4398,7 @@ type LookmlModelExplore {
   "A sql_table_name expression that defines what sql table the view/explore maps onto. Example: \\"prod_orders2 AS orders\\" in a view named orders."
   sql_table_name: String
   "(DEPRECATED) Array of access filter field names"
-  access_filter_fields: [String]
+  access_filter_fields: [String] @deprecated(reason: "deprecated")
   "Access filters"
   access_filters: [LookmlModelExploreAccessFilter]
   "Aliases"
@@ -5644,7 +5644,7 @@ type ScheduledPlan {
   "Query string to run look or dashboard with"
   filters_string: String
   "(DEPRECATED) Alias for filters_string field"
-  dashboard_filters: String
+  dashboard_filters: String @deprecated(reason: "deprecated")
   "Delivery should occur if running the dashboard or look returns results"
   require_results: Boolean!
   "Delivery should occur if the dashboard look does not return results"
@@ -5757,13 +5757,13 @@ type Setting {
   "Toggle extension framework on or off"
   extension_framework_enabled: Boolean!
   "(DEPRECATED) Toggle extension extension load url on or off. Do not use. This is temporary setting that will eventually become a noop and subsequently deleted."
-  extension_load_url_enabled: Boolean!
+  extension_load_url_enabled: Boolean! @deprecated(reason: "deprecated")
   "Toggle marketplace auto install on or off. Note that auto install only runs if marketplace is enabled."
   marketplace_auto_install_enabled: Boolean!
   "Toggle marketplace on or off"
   marketplace_enabled: Boolean!
   privatelabel_configuration: PrivatelabelConfiguration
-  custom_welcome_email: CustomWelcomeEmail
+  custom_welcome_email: CustomWelcomeEmail @deprecated(reason: "deprecated")
   "Toggle onboarding on or off"
   onboarding_enabled: Boolean!
   "Change instance-wide default timezone"
@@ -5983,7 +5983,7 @@ type ThemeSettings {
   "Source specification for font"
   font_source: String
   "(DEPRECATED) Info button color"
-  info_button_color: String!
+  info_button_color: String! @deprecated(reason: "deprecated")
   "Primary button color"
   primary_button_color: String!
   "Toggle to show filters. Defaults to true."
@@ -6001,7 +6001,7 @@ type ThemeSettings {
   "Color for titles"
   title_color: String!
   "(DEPRECATED) Warning button color"
-  warn_button_color: String!
+  warn_button_color: String! @deprecated(reason: "deprecated")
   "The text alignment of tile titles (New Dashboards)"
   tile_title_alignment: String!
   "Toggles the tile shadow (not supported)"
@@ -6415,7 +6415,7 @@ type Mutation {
     "If true a test email with the content from the request will be sent to the current user after saving"
     send_test_welcome_email: Boolean
     input: CustomWelcomeEmail_Input
-  ): CustomWelcomeEmail @httpOperation(path: "/custom_welcome_email", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH, queryParamArgMap: "{\\"send_test_welcome_email\\":\\"send_test_welcome_email\\"}")
+  ): CustomWelcomeEmail @deprecated(reason: "deprecated") @httpOperation(path: "/custom_welcome_email", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: PATCH, queryParamArgMap: "{\\"send_test_welcome_email\\":\\"send_test_welcome_email\\"}")
   "Requests to this endpoint will send a welcome email with the custom content provided in the body to the currently logged in user.\\n"
   update_custom_welcome_email_test(input: WelcomeEmailTest_Input): WelcomeEmailTest @httpOperation(path: "/custom_welcome_email_test", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: PUT)
   "### Create a new dashboard\\n\\nCreates a new dashboard object and returns the details of the newly created dashboard.\\n\\n\`Title\` and \`space_id\` are required fields.\\n\`Space_id\` must contain the id of an existing space.\\nA dashboard's \`title\` must be unique within the space in which it resides.\\n\\nIf you receive a 422 error response when creating a dashboard, be sure to look at the\\nresponse body for information about exactly which fields are missing or contain invalid data.\\n\\nYou can **update** an existing dashboard with [update_dashboard()](#!/Dashboard/update_dashboard)\\n\\nYou can **permanently delete** an existing dashboard with [delete_dashboard()](#!/Dashboard/delete_dashboard)\\n"
@@ -7441,7 +7441,7 @@ type Mutation {
   "Create an embed user from an external user ID\\n"
   create_embed_user(input: CreateEmbedUserRequest_Input): UserPublic @httpOperation(path: "/users/embed_user", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
   "### Update the whitelabel configuration\\n"
-  update_whitelabel_configuration(input: WhitelabelConfiguration_Input): WhitelabelConfiguration @httpOperation(path: "/whitelabel_configuration", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: PUT)
+  update_whitelabel_configuration(input: WhitelabelConfiguration_Input): WhitelabelConfiguration @deprecated(reason: "deprecated") @httpOperation(path: "/whitelabel_configuration", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: PUT)
 }
 
 input CreateQueryTask_Input {
