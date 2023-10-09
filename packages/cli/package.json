@@ -80,7 +80,7 @@
     "@types/mkdirp": "1.0.2",
     "@types/rimraf": "3.0.2",
     "@types/ws": "8.5.6",
-    "@types/yargs": "17.0.26"
+    "@types/yargs": "17.0.28"
   },
   "publishConfig": {
     "access": "public",
