@@ -2,9 +2,11 @@ import { dset } from 'dset';
 import {
   GraphQLInterfaceType,
   GraphQLObjectType,
+  GraphQLScalarType,
   GraphQLSchema,
   GraphQLUnionType,
   isObjectType,
+  isSpecifiedScalarType,
 } from 'graphql';
 import { entitiesField, EntityType, serviceField } from '@apollo/subgraph/dist/types.js';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
@@ -274,6 +276,28 @@ export default class FederationTransform implements MeshTransform {
             ),
           },
         };
+      },
+      [MapperKind.SCALAR_TYPE]: type => {
+        if (isSpecifiedScalarType(type)) {
+          return type;
+        }
+        return new GraphQLScalarType({
+          ...type.toConfig(),
+          astNode: type.astNode && {
+            ...type.astNode,
+            directives: type.astNode.directives?.filter(directive =>
+              federationDirectives.includes(directive.name.value),
+            ),
+          },
+          extensions: {
+            ...type.extensions,
+            directives: Object.fromEntries(
+              Object.entries(type.extensions?.directives || {}).filter(([key]) =>
+                federationDirectives.includes(key),
+              ),
+            ),
+          },
+        });
       },
     });
   }

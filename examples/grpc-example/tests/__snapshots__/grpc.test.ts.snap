@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-by-cast-grpc-example-result-0 1`] = `
+exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-by-cast-grpc-example-result-stream-0 1`] = `
 {
   "data": {
     "exampleSearchMoviesByCast": [],
@@ -9,7 +9,7 @@ exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-
 }
 `;
 
-exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-by-cast-grpc-example-result-1 1`] = `
+exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-by-cast-grpc-example-result-stream-1 1`] = `
 {
   "hasNext": true,
   "incremental": [
@@ -35,7 +35,7 @@ exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-
 }
 `;
 
-exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-by-cast-grpc-example-result-2 1`] = `
+exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-by-cast-grpc-example-result-stream-2 1`] = `
 {
   "hasNext": true,
   "incremental": [
@@ -61,15 +61,50 @@ exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-
 }
 `;
 
-exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-by-cast-grpc-example-result-3 1`] = `
+exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-by-cast-grpc-example-result-stream-3 1`] = `
 {
   "hasNext": false,
+}
+`;
+
+exports[`gRPC Example should fetch movies by cast as a subscription correctly: movies-by-cast-grpc-example-result-subscription-0 1`] = `
+{
+  "data": {
+    "exampleSearchMoviesByCast": {
+      "cast": [
+        "Tom Cruise",
+        "Simon Pegg",
+        "Jeremy Renner",
+      ],
+      "name": "Mission: Impossible Rogue Nation",
+      "rating": 0.9700000286102295,
+      "year": 2015,
+    },
+  },
+}
+`;
+
+exports[`gRPC Example should fetch movies by cast as a subscription correctly: movies-by-cast-grpc-example-result-subscription-1 1`] = `
+{
+  "data": {
+    "exampleSearchMoviesByCast": {
+      "cast": [
+        "Tom Cruise",
+        "Simon Pegg",
+        "Henry Cavill",
+      ],
+      "name": "Mission: Impossible - Fallout",
+      "rating": 0.9300000071525574,
+      "year": 2018,
+    },
+  },
 }
 `;
 
 exports[`gRPC Example should generate correct schema: grpc-schema 1`] = `
 "schema {
   query: Query
+  subscription: Subscription
 }
 
 directive @grpcMethod(rootJsonName: String, objPath: String, methodName: String, responseStream: Boolean) on FIELD_DEFINITION
@@ -164,6 +199,13 @@ enum ConnectivityState {
   READY
   TRANSIENT_FAILURE
   SHUTDOWN
+}
+
+type Subscription {
+  "search movies by the name of the cast"
+  exampleSearchMoviesByCast(input: SearchByCastRequest_Input): Movie @grpcMethod(rootJsonName: "Root0", objPath: "Example", methodName: "SearchMoviesByCast", responseStream: true)
+  "search movies by the name of the cast"
+  anotherExampleSearchMoviesByCast(input: SearchByCastRequest_Input): Movie @grpcMethod(rootJsonName: "Root0", objPath: "AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
 }
 
 scalar ObjMap"

@@ -419,11 +419,22 @@ export default class GrpcHandler implements MeshHandler {
                   objPath,
                   creds,
                 });
-                field.resolve = this.getFieldResolver({
-                  client,
-                  methodName,
-                  isResponseStream: responseStream,
-                });
+                if (rootType.name === 'Subscription') {
+                  field.subscribe = this.getFieldResolver({
+                    client,
+                    methodName,
+                    isResponseStream: responseStream,
+                  });
+                  field.resolve = function identityFn(root) {
+                    return root;
+                  };
+                } else {
+                  field.resolve = this.getFieldResolver({
+                    client,
+                    methodName,
+                    isResponseStream: responseStream,
+                  });
+                }
                 break;
               }
               case 'grpcConnectivityState': {
@@ -598,26 +609,29 @@ export default class GrpcHandler implements MeshHandler {
       for (const methodName in nested.methods) {
         const method = nested.methods[methodName];
         const rootFieldName = [...pathWithName, methodName].join('_');
+        const fieldConfigTypeFactory = () => {
+          const baseResponseTypePath = method.responseType?.split('.');
+          if (baseResponseTypePath) {
+            const responseTypePath = this.walkToFindTypePath(
+              rootJson,
+              pathWithName,
+              baseResponseTypePath,
+            );
+            return getTypeName(this.schemaComposer, responseTypePath, false);
+          }
+          return 'Void';
+        };
         const fieldConfig: ObjectTypeComposerFieldConfigAsObjectDefinition<any, any> = {
           type: () => {
-            const baseResponseTypePath = method.responseType?.split('.');
-            if (baseResponseTypePath) {
-              const responseTypePath = this.walkToFindTypePath(
-                rootJson,
-                pathWithName,
-                baseResponseTypePath,
-              );
-              let typeName = getTypeName(this.schemaComposer, responseTypePath, false);
-              if (method.responseStream) {
-                typeName = `[${typeName}]`;
-              }
-              return typeName;
+            const typeName = fieldConfigTypeFactory();
+            if (method.responseStream) {
+              return `[${typeName}]`;
             }
-            return 'Void';
+            return typeName;
           },
           description: method.comment,
         };
-        fieldConfig.args = {
+        const fieldConfigArgs = {
           input: () => {
             if (method.requestStream) {
               return 'File';
@@ -635,6 +649,7 @@ export default class GrpcHandler implements MeshHandler {
             return undefined;
           },
         };
+        fieldConfig.args = fieldConfigArgs;
         const methodNameLowerCased = methodName.toLowerCase();
         const prefixQueryMethod = this.config.prefixQueryMethod || QUERY_METHOD_PREFIXES;
         const rootTypeComposer = prefixQueryMethod.some(prefix =>
@@ -659,6 +674,26 @@ export default class GrpcHandler implements MeshHandler {
             ],
           },
         });
+        if (method.responseStream) {
+          this.schemaComposer.Subscription.addFields({
+            [rootFieldName]: {
+              args: fieldConfigArgs,
+              description: method.comment,
+              type: fieldConfigTypeFactory,
+              directives: [
+                {
+                  name: 'grpcMethod',
+                  args: {
+                    rootJsonName,
+                    objPath,
+                    methodName,
+                    responseStream: true,
+                  },
+                },
+              ],
+            },
+          });
+        }
       }
       const connectivityStateFieldName = pathWithName.join('_') + '_connectivityState';
       this.schemaComposer.addDirective(grpcConnectivityStateDirective);

@@ -3287,7 +3287,7 @@
     tslib "^2.4.0"
     ws "8.14.1"
 
-"@graphql-tools/executor@^1.0.0":
+"@graphql-tools/executor@^1.0.0", "@graphql-tools/executor@^1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@graphql-tools/executor/-/executor-1.2.0.tgz#6c45f4add765769d9820c4c4405b76957ba39c79"
   integrity sha512-SKlIcMA71Dha5JnEWlw4XxcaJ+YupuXg0QCZgl2TOLFz4SkGCwU/geAsJvUJFwK2RbVLpQv/UMq67lOaBuwDtg==

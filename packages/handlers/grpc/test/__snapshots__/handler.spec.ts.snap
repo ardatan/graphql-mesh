@@ -187,6 +187,7 @@ scalar ObjMap"
 exports[`gRPC Handler Interpreting Protos should load the Empty proto 1`] = `
 "schema {
   query: Query
+  subscription: Subscription
 }
 
 directive @enum(value: String) on ENUM_VALUE
@@ -284,6 +285,13 @@ enum ConnectivityState {
   READY
   TRANSIENT_FAILURE
   SHUTDOWN
+}
+
+type Subscription {
+  "search movies by the name of the cast"
+  io_xtech_Example_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
+  "search movies by the name of the cast"
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
 }
 
 scalar ObjMap"
@@ -453,6 +461,7 @@ scalar ObjMap"
 exports[`gRPC Handler Interpreting Protos should load the Movie proto 1`] = `
 "schema {
   query: Query
+  subscription: Subscription
 }
 
 directive @enum(value: String) on ENUM_VALUE
@@ -547,6 +556,13 @@ enum ConnectivityState {
   READY
   TRANSIENT_FAILURE
   SHUTDOWN
+}
+
+type Subscription {
+  "search movies by the name of the cast"
+  io_xtech_Example_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
+  "search movies by the name of the cast"
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
 }
 
 scalar ObjMap"
@@ -661,6 +677,7 @@ scalar ObjMap"
 exports[`gRPC Handler Interpreting Protos should load the Outside proto 1`] = `
 "schema {
   query: Query
+  subscription: Subscription
 }
 
 directive @grpcMethod(rootJsonName: String, objPath: String, methodName: String, responseStream: Boolean) on FIELD_DEFINITION
@@ -767,6 +784,13 @@ input io_xtech_SearchByCastRequest_Input {
   castName: String
 }
 
+type Subscription {
+  "search movies by the name of the cast"
+  io_xtech_Example_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
+  "search movies by the name of the cast"
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
+}
+
 scalar ObjMap"
 `;
 
@@ -859,6 +883,7 @@ scalar ObjMap"
 exports[`gRPC Handler Interpreting Protos should load the With Underscores proto 1`] = `
 "schema {
   query: Query
+  subscription: Subscription
 }
 
 directive @enum(value: String) on ENUM_VALUE
@@ -955,6 +980,13 @@ enum ConnectivityState {
   SHUTDOWN
 }
 
+type Subscription {
+  "search movies by the name of the cast"
+  io_xtech_Example_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
+  "search movies by the name of the cast"
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
+}
+
 scalar ObjMap"
 `;
 
@@ -962,6 +994,7 @@ exports[`gRPC Handler Load proto with prefixQueryMethod should load the retrieve
 "schema {
   query: Query
   mutation: Mutation
+  subscription: Subscription
 }
 
 directive @enum(value: String) on ENUM_VALUE
@@ -1067,6 +1100,13 @@ type Mutation {
 
 input io_xtech_SearchByCastRequest_Input {
   castName: String
+}
+
+type Subscription {
+  "search movies by the name of the cast"
+  io_xtech_Example_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
+  "search movies by the name of the cast"
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
 }
 
 scalar ObjMap"

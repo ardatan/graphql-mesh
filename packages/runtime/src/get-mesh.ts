@@ -1,6 +1,5 @@
 import {
   DocumentNode,
-  execute,
   getOperationAST,
   GraphQLObjectType,
   GraphQLSchema,
@@ -35,10 +34,10 @@ import {
   PubSub,
 } from '@graphql-mesh/utils';
 import { CreateProxyingResolverFn, Subschema, SubschemaConfig } from '@graphql-tools/delegate';
+import { normalizedExecutor } from '@graphql-tools/executor';
 import {
   ExecutionResult,
   getRootTypeMap,
-  inspect,
   isAsyncIterable,
   isPromise,
   mapAsyncIterator,
@@ -76,14 +75,6 @@ const memoizedGetEnvelopedFactory = memoize1(function getEnvelopedFactory(
   });
 });
 
-const memoizedGetOperationType = memoize1((document: DocumentNode) => {
-  const operationAST = getOperationAST(document, undefined);
-  if (!operationAST) {
-    throw new Error('Must provide document with a valid operation');
-  }
-  return operationAST.operation;
-});
-
 export function wrapFetchWithPlugins(plugins: MeshPlugin<any>[]): MeshFetch {
   const onFetchHooks: OnFetchHook<any>[] = [];
   for (const plugin of plugins as MeshPlugin<any>[]) {
@@ -92,24 +83,6 @@ export function wrapFetchWithPlugins(plugins: MeshPlugin<any>[]): MeshFetch {
     }
   }
   return function wrappedFetchFn(url, options, context, info) {
-    if (url != null && typeof url !== 'string') {
-      throw new TypeError(`First parameter(url) of 'fetch' must be a string, got ${inspect(url)}`);
-    }
-    if (options != null && typeof options !== 'object') {
-      throw new TypeError(
-        `Second parameter(options) of 'fetch' must be an object, got ${inspect(options)}`,
-      );
-    }
-    if (context != null && typeof context !== 'object') {
-      throw new TypeError(
-        `Third parameter(context) of 'fetch' must be an object, got ${inspect(context)}`,
-      );
-    }
-    if (info != null && typeof info !== 'object') {
-      throw new TypeError(
-        `Fourth parameter(info) of 'fetch' must be an object, got ${inspect(info)}`,
-      );
-    }
     let fetchFn: MeshFetch;
     const doneHooks: OnFetchHookDone[] = [];
     function setFetchFn(newFetchFn: MeshFetch) {
@@ -318,7 +291,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
   const plugins = [
     useEngine({
-      execute,
+      execute: normalizedExecutor,
       validate,
       parse: parseWithCache,
       specifiedRules,
@@ -377,8 +350,13 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
       operationName?: string,
     ) {
       const document = typeof documentOrSDL === 'string' ? parse(documentOrSDL) : documentOrSDL;
-      const executeFn = memoizedGetOperationType(document) === 'subscription' ? subscribe : execute;
       const contextValue$ = contextFactory(contextValue);
+      const operationAST = getOperationAST(document, operationName);
+      if (!operationAST) {
+        throw new Error(`Cannot execute a request without a valid operation.`);
+      }
+      const isSubscription = operationAST.operation === 'subscription';
+      const executeFn = isSubscription ? subscribe : execute;
       if (isPromise(contextValue$)) {
         return contextValue$.then(contextValue =>
           executeFn({

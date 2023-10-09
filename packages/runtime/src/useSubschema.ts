@@ -55,13 +55,7 @@ const getIntrospectionOperationType = memoize1(function getIntrospectionOperatio
 
 function getExecuteFn(subschema: Subschema) {
   const compiledQueryCache = new WeakMap<DocumentNode, CompiledQuery>();
-  const transformedRequestCache = new WeakMap<
-    DocumentNode,
-    {
-      transformedRequest: ExecutionRequest;
-      transformationContext: Record<string, any>;
-    }
-  >();
+  const transformedDocumentNodeCache = new WeakMap<DocumentNode, DocumentNode>();
   return function subschemaExecute(args: TypedExecutionArgs<any>): any {
     const originalRequest: ExecutionRequest = {
       document: args.document,
@@ -101,7 +95,7 @@ function getExecuteFn(subschema: Subschema) {
     };
     let executor = subschema.executor;
     if (executor == null) {
-      if (isStream) {
+      if (isStream || operationAST.operation === 'subscription') {
         executor = createDefaultExecutor(subschema.schema);
       } else {
         executor = function subschemaExecutor(request: ExecutionRequest): any {
@@ -158,20 +152,20 @@ function getExecuteFn(subschema: Subschema) {
       executor = createBatchingExecutor(executor);
     }
     */
-    let transformedRequestAndContext = transformedRequestCache.get(originalRequest.document);
-    if (!transformedRequestAndContext) {
-      const transformationContext: Record<string, any> = {};
-      const transformedRequest = applyRequestTransforms(
-        originalRequest,
-        delegationContext,
-        transformationContext,
-        subschema.transforms,
-      );
-      transformedRequestAndContext = {
-        transformedRequest,
-        transformationContext,
-      };
-      transformedRequestCache.set(originalRequest.document, transformedRequestAndContext);
+    const transformationContext: Record<string, any> = {};
+    const transformedRequest = applyRequestTransforms(
+      originalRequest,
+      delegationContext,
+      transformationContext,
+      subschema.transforms,
+    );
+    const cachedTransfomedDocumentNode: DocumentNode = transformedDocumentNodeCache.get(
+      originalRequest.document,
+    );
+    if (cachedTransfomedDocumentNode) {
+      transformedRequest.document = cachedTransfomedDocumentNode;
+    } else {
+      transformedDocumentNodeCache.set(originalRequest.document, transformedRequest.document);
     }
     function handleResult(originalResult: MaybeAsyncIterable<ExecutionResult>) {
       if (isAsyncIterable(originalResult)) {
@@ -179,7 +173,7 @@ function getExecuteFn(subschema: Subschema) {
           applyResultTransforms(
             singleResult,
             delegationContext,
-            transformedRequestAndContext.transformationContext,
+            transformationContext,
             subschema.transforms,
           ),
         );
@@ -187,12 +181,12 @@ function getExecuteFn(subschema: Subschema) {
       const transformedResult = applyResultTransforms(
         originalResult,
         delegationContext,
-        transformedRequestAndContext.transformationContext,
+        transformationContext,
         subschema.transforms,
       );
       return transformedResult;
     }
-    const originalResult$ = executor(transformedRequestAndContext.transformedRequest);
+    const originalResult$ = executor(transformedRequest);
     if (isPromise(originalResult$)) {
       return originalResult$.then(handleResult);
     }
