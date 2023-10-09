@@ -1,5 +1,13 @@
 # @graphql-mesh/transform-federation
 
+## 0.95.7
+
+### Patch Changes
+
+- [`482d813a9`](https://github.com/Urigo/graphql-mesh/commit/482d813a9f75935024aa77872125d197f5fca3d0)
+  Thanks [@ardatan](https://github.com/ardatan)! - Remove other directives in scalars just like it
+  is done for objects and other types
+
 ## 0.95.6
 
 ### Patch Changes

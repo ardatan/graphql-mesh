@@ -1,5 +1,13 @@
 # country-info-example
 
+## 0.10.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/soap@0.95.7
+  - @graphql-mesh/cli@0.87.12
+
 ## 0.10.11
 
 ### Patch Changes
