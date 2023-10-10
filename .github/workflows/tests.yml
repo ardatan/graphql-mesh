@@ -25,7 +25,7 @@ jobs:
   unit:
     name: unit / node ${{matrix.node-version}}
     timeout-minutes: 60
-    runs-on: macos-latest-xlarge
+    runs-on: macos-latest-large
     strategy:
       fail-fast: false
       matrix:
@@ -61,7 +61,7 @@ jobs:
   integration:
     name: integration / node ${{matrix.node-version}}
     timeout-minutes: 60
-    runs-on: macos-latest-xlarge
+    runs-on: macos-latest-large
     strategy:
       fail-fast: false
       matrix:
@@ -139,7 +139,7 @@ jobs:
   integration-leak:
     name: integration / leak / node ${{matrix.node-version}}
     timeout-minutes: 60
-    runs-on: macos-latest-xlarge
+    runs-on: macos-latest-large
     strategy:
       fail-fast: false
       matrix:
@@ -224,7 +224,7 @@ jobs:
   integrity-check:
     name: integrity-check / node ${{matrix.node-version}}
     timeout-minutes: 60
-    runs-on: macos-latest-xlarge
+    runs-on: macos-latest-large
     strategy:
       fail-fast: false
       matrix:
