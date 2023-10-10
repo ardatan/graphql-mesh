@@ -2,7 +2,7 @@ export default {
   index: {
     title: 'Home',
     type: 'page',
-    hidden: true,
+    display: 'hidden',
     theme: {
       layout: 'raw',
     },
