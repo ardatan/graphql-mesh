@@ -1,0 +1,18 @@
+export default {
+  'plugins-introduction': 'Introduction',
+  mock: 'Mocking',
+  'live-queries': 'Live Queries',
+  'response-caching': 'Response Caching',
+  statsd: 'StatsD',
+  prometheus: 'Prometheus',
+  'new-relic': 'NewRelic',
+  'operation-field-permissions': 'Operation Field Permissions',
+  csrf: 'CSRF Prevention',
+  'rate-limit': 'Rate Limit',
+  'http-cache': 'Caching in HTTP',
+  'http-details-extensions': 'HTTP Details in extensions',
+  'deduplicate-request': 'Deduplicate HTTP Requests',
+  'max-tokens': 'Reject Malicious Operation Documents',
+  'max-depth': 'Query Depth Limiting',
+  'block-field-suggestions': 'Block Field Suggestions',
+};
