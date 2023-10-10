@@ -1,4 +1,4 @@
-{
+export default {
   "overview": "Overview",
   "installation": "Installation",
   "your-first-mesh-gateway": "Your First Gateway with Mesh",

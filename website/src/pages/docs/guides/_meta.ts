@@ -1,4 +1,4 @@
-{
+export default {
   "extending-unified-schema": "Extending the Unified Schema",
   "batching": "Batching for N+1 Problem",
   "error-masking": "Error Masking",

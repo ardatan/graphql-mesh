@@ -1,4 +1,4 @@
-{
+export default {
   "transforms-introduction": "Introduction",
   "rename": "Rename",
   "prefix": "Prefix",

@@ -1,4 +1,4 @@
-{
+export default {
   "plugins-introduction": "Introduction",
   "mock": "Mocking",
   "live-queries": "Live Queries",

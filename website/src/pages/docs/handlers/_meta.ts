@@ -1,4 +1,4 @@
-{
+export default {
   "handlers-introduction": "Introduction",
   "graphql": "GraphQL",
   "openapi": "OpenAPI / Swagger",
