@@ -1,5 +1,12 @@
 # auth0-example
 
+## 0.6.17
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.95.10
+
 ## 0.6.16
 
 ### Patch Changes
