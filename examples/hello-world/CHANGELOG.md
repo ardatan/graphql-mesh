@@ -1,5 +1,14 @@
 # json-schema-hello-world
 
+## 0.5.15
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ae5e7c972`](https://github.com/Urigo/graphql-mesh/commit/ae5e7c9728e572ea75c0f4e3b57dad932658155c)]:
+  - @graphql-mesh/plugin-mock@0.95.8
+  - @graphql-mesh/json-schema@0.95.9
+
 ## 0.5.14
 
 ### Patch Changes
