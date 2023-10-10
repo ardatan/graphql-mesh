@@ -1,24 +1,24 @@
 export default {
-  "index": {
-    "title": "Home",
-    "type": "page",
-    "hidden": true,
-    "theme": {
-      "layout": "raw"
-    }
+  index: {
+    title: 'Home',
+    type: 'page',
+    hidden: true,
+    theme: {
+      layout: 'raw',
+    },
   },
-  "docs": {
-    "title": "Docs",
-    "type": "page",
-    "theme": {
-      "toc": true
-    }
+  docs: {
+    title: 'Docs',
+    type: 'page',
+    theme: {
+      toc: true,
+    },
   },
-  "examples": {
-    "title": "Examples",
-    "type": "page",
-    "theme": {
-      "layout": "raw"
-    }
-  }
-}
+  examples: {
+    title: 'Examples',
+    type: 'page',
+    theme: {
+      layout: 'raw',
+    },
+  },
+};
