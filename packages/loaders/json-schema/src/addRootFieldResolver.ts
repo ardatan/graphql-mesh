@@ -317,16 +317,14 @@ export function addHTTPRootFieldResolver(
           `HTTP Error: ${response.status}, Could not invoke operation ${httpMethod} ${path}`,
           {
             extensions: {
-              http: {
-                status: response.status,
-                statusText: response.statusText,
-                headers: getHeadersObj(response.headers),
-              },
               request: {
                 url: fullPath,
                 method: httpMethod,
               },
               responseText,
+              responseStatus: response.status,
+              responseStatusText: response.statusText,
+              responseHeaders: getHeadersObj(response.headers),
             },
           },
         );
