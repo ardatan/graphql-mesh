@@ -3157,7 +3157,7 @@
     tslib "2.6.2"
     zod "3.22.3"
 
-"@graphql-hive/client@0.24.3", "@graphql-hive/client@^0.24.0":
+"@graphql-hive/client@^0.24.0", "@graphql-hive/client@^0.24.3":
   version "0.24.3"
   resolved "https://registry.yarnpkg.com/@graphql-hive/client/-/client-0.24.3.tgz#ec520aca97ff1fee0c6cbbd366736d103056d4b2"
   integrity sha512-xBhnQXdSdvBSaRrlS/NYBdCrHMG+rzwlXeKgcblffem8jSWse5bo4ufmZH3e5PySg/vx2arkWiLR2uDpE+dB6w==
@@ -3601,10 +3601,10 @@
     dset "^3.1.2"
     tslib "^2.4.0"
 
-"@graphql-tools/utils@10.0.6", "@graphql-tools/utils@^10.0.0", "@graphql-tools/utils@^10.0.1", "@graphql-tools/utils@^10.0.2", "@graphql-tools/utils@^10.0.3", "@graphql-tools/utils@^10.0.5":
-  version "10.0.6"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-10.0.6.tgz#8a809d6bc0df27ffe8964696f182af2383b5974b"
-  integrity sha512-hZMjl/BbX10iagovakgf3IiqArx8TPsotq5pwBld37uIX1JiZoSbgbCIFol7u55bh32o6cfDEiiJgfAD5fbeyQ==
+"@graphql-tools/utils@10.0.7", "@graphql-tools/utils@^10.0.0", "@graphql-tools/utils@^10.0.1", "@graphql-tools/utils@^10.0.2", "@graphql-tools/utils@^10.0.3", "@graphql-tools/utils@^10.0.5":
+  version "10.0.7"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-10.0.7.tgz#ed88968b5ce53dabacbdd185df967aaab35f8549"
+  integrity sha512-KOdeMj6Hd/MENDaqPbws3YJl3wVy0DeYnL7PyUms5Skyf7uzI9INynDwPMhLXfSb0/ph6BXTwMd5zBtWbF8tBQ==
   dependencies:
     "@graphql-typed-document-node/core" "^3.1.1"
     dset "^3.1.2"
