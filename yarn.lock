@@ -3157,10 +3157,10 @@
     tslib "2.6.2"
     zod "3.22.3"
 
-"@graphql-hive/client@0.24.2", "@graphql-hive/client@^0.24.0":
-  version "0.24.2"
-  resolved "https://registry.yarnpkg.com/@graphql-hive/client/-/client-0.24.2.tgz#c10c7543eba0b49736c2ece889340ad725b84d64"
-  integrity sha512-jmb1JasT+zLBuS3MUV6cOjIfhPQuxKr+MTSyhXskJ1uTZ1PAVBVtYEnQxl+WDMSs9Bqv+ymhvhdGZMoFg0pHdA==
+"@graphql-hive/client@0.24.3", "@graphql-hive/client@^0.24.0":
+  version "0.24.3"
+  resolved "https://registry.yarnpkg.com/@graphql-hive/client/-/client-0.24.3.tgz#ec520aca97ff1fee0c6cbbd366736d103056d4b2"
+  integrity sha512-xBhnQXdSdvBSaRrlS/NYBdCrHMG+rzwlXeKgcblffem8jSWse5bo4ufmZH3e5PySg/vx2arkWiLR2uDpE+dB6w==
   dependencies:
     "@graphql-hive/core" "^0.2.3"
     "@graphql-tools/utils" "^10.0.0"
