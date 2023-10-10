@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-prefix",
-  "version": "0.95.7",
+  "version": "0.95.8",
   "type": "module",
   "repository": {
     "type": "git",

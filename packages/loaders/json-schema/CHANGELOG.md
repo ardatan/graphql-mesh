@@ -1,5 +1,16 @@
 # @omnigraph/json-schema
 
+## 0.95.9
+
+### Patch Changes
+
+- [#6060](https://github.com/Urigo/graphql-mesh/pull/6060)
+  [`ae5e7c972`](https://github.com/Urigo/graphql-mesh/commit/ae5e7c9728e572ea75c0f4e3b57dad932658155c)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`graphql-scalars@^1.22.4` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.22.4) (from
+    `^1.22.2`, in `dependencies`)
+
 ## 0.95.8
 
 ### Patch Changes

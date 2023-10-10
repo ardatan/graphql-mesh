@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/grpc",
-  "version": "0.95.10",
+  "version": "0.95.11",
   "type": "module",
   "repository": {
     "type": "git",
