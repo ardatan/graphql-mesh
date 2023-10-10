@@ -91,5 +91,6 @@
     "**/*.{ts,tsx,graphql,yml,json,md,js,mdx}": [
       "prettier --write"
     ]
-  }
+  },
+  "packageManager": "yarn@1.22.19"
 }
