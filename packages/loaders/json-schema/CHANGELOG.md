@@ -1,5 +1,12 @@
 # @omnigraph/json-schema
 
+## 0.95.10
+
+### Patch Changes
+
+- [`f55e946fc`](https://github.com/Urigo/graphql-mesh/commit/f55e946fc6472ea7b9bb8d85171b94ce79500cfb)
+  Thanks [@ardatan](https://github.com/ardatan)! - Do not forward status and headers to the gateway
+
 ## 0.95.9
 
 ### Patch Changes

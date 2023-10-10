@@ -1,5 +1,14 @@
 # gateway-example
 
+## 0.5.17
+
+### Patch Changes
+
+- Updated dependencies
+  [[`888661506`](https://github.com/Urigo/graphql-mesh/commit/8886615066abeeae3669f9f7a0a4fa0b971b05f3)]:
+  - @graphql-mesh/plugin-hive@0.95.9
+  - @graphql-mesh/openapi@0.95.10
+
 ## 0.5.16
 
 ### Patch Changes
