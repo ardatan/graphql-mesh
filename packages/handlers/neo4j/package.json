@@ -44,7 +44,7 @@
   "dependencies": {
     "@neo4j/graphql": "^4.0.0",
     "@neo4j/introspector": "^2.0.0",
-    "graphql-scalars": "^1.22.2",
+    "graphql-scalars": "^1.22.4",
     "neo4j-driver": "^5.9.2"
   },
   "publishConfig": {

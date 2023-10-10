@@ -45,7 +45,7 @@
     "@graphql-tools/delegate": "^10.0.0",
     "graphql-compose": "^9.0.10",
     "graphql-fields": "^2.0.3",
-    "graphql-scalars": "^1.22.2",
+    "graphql-scalars": "^1.22.4",
     "mysql": "^2.18.1",
     "mysql-utilities": "^1.1.4"
   },
