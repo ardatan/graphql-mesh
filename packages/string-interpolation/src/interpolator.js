@@ -125,7 +125,7 @@ export class Interpolator {
 
   applyRule(str, rule, data = {}) {
     const dataToReplace = this.applyData(rule.key, data);
-    if (dataToReplace) {
+    if (dataToReplace !== undefined) {
       return str.replace(rule.replace, this.applyModifiers(rule.modifiers, dataToReplace, data));
     } else if (rule.alternativeText) {
       return str.replace(
