@@ -20,6 +20,7 @@
       "examples/hive-example/sources/*"
     ]
   },
+  "packageManager": "yarn@1.22.19",
   "scripts": {
     "build": "bob build",
     "build-test-artifacts": "yarn workspace json-schema-example build && yarn workspace example-fastify build",
@@ -91,6 +92,5 @@
     "**/*.{ts,tsx,graphql,yml,json,md,js,mdx}": [
       "prettier --write"
     ]
-  },
-  "packageManager": "yarn@1.22.19"
+  }
 }

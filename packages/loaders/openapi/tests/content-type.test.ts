@@ -9,7 +9,7 @@ describe('Query Params with POST', () => {
     request =>
       new Response(
         JSON.stringify({
-          contentType: request.headers.get('content-type')
+          contentType: request.headers.get('content-type'),
         }),
         {
           headers: {
@@ -41,7 +41,7 @@ describe('Query Params with POST', () => {
     expect(result).toEqual({
       data: {
         post: {
-          contentType: 'application/json'
+          contentType: 'application/json',
         },
       },
     });
