@@ -41,12 +41,3 @@ jobs:
             theguild/graphql-mesh:${{ github.sha }}
           context: ./packages/container
           file: ./packages/container/Dockerfile
-
-  algolia:
-    uses: the-guild-org/shared-config/.github/workflows/algolia-publish.yml@main
-    secrets:
-      githubToken: ${{ secrets.GITHUB_TOKEN }}
-      algoliaAdminApiKey: ${{ secrets.ALGOLIA_ADMIN_API_KEY }}
-    with:
-      domain: https://www.the-guild.dev/graphql/mesh/
-      source: 'Mesh'
