@@ -1,5 +1,18 @@
 # @graphql-mesh/cli
 
+## 0.87.14
+
+### Patch Changes
+
+- [`0ee3c62f9`](https://github.com/Urigo/graphql-mesh/commit/0ee3c62f9c3c3d315e4926666e8881c4d0f46280)
+  Thanks [@ardatan](https://github.com/ardatan)! - Register an event listener once for all terminate
+  event handlers to prevent \`MaxListenersExceededWarning\`
+- Updated dependencies
+  [[`2eb8d2d56`](https://github.com/Urigo/graphql-mesh/commit/2eb8d2d561ac8aa2f0aff72b8d39bd88963d464c)]:
+  - @graphql-mesh/runtime@0.96.11
+  - @graphql-mesh/config@0.97.13
+  - @graphql-mesh/http@0.96.12
+
 ## 0.87.13
 
 ### Patch Changes

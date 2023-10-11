@@ -1,6 +1,6 @@
 {
   "name": "grpc-reflection-example",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "author": "Simon Liang",
   "license": "MIT",
   "private": true,
@@ -11,7 +11,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.87.13",
+    "@graphql-mesh/cli": "0.87.14",
     "@graphql-mesh/grpc": "0.96.0",
     "@graphql-mesh/transform-naming-convention": "0.95.8",
     "@grpc/grpc-js": "1.9.5",

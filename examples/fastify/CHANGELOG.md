@@ -1,5 +1,13 @@
 # example-fastify
 
+## 0.5.14
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0ee3c62f9`](https://github.com/Urigo/graphql-mesh/commit/0ee3c62f9c3c3d315e4926666e8881c4d0f46280)]:
+  - @graphql-mesh/cli@0.87.14
+
 ## 0.5.13
 
 ### Patch Changes

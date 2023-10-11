@@ -1,6 +1,6 @@
 {
   "name": "mysql-rfam",
-  "version": "0.10.15",
+  "version": "0.10.16",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -8,7 +8,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.87.13",
+    "@graphql-mesh/cli": "0.87.14",
     "@graphql-mesh/mysql": "0.95.9",
     "graphql": "16.8.1"
   },
