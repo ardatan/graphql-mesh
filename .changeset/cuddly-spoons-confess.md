@@ -1,6 +1,5 @@
 ---
 '@graphql-mesh/grpc': minor
-'grpc-example': minor
 ---
 
 Change the generation rules of GraphQL type names to allow nested messages with name "Input"
