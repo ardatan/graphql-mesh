@@ -289,9 +289,9 @@ enum ConnectivityState {
 
 type Subscription {
   "search movies by the name of the cast"
-  io_xtech_Example_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
   "search movies by the name of the cast"
-  io_xtech_AnotherExample_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
 }
 
 scalar ObjMap"
@@ -609,9 +609,9 @@ enum ConnectivityState {
 
 type Subscription {
   "search movies by the name of the cast"
-  io_xtech_Example_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
   "search movies by the name of the cast"
-  io_xtech_AnotherExample_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
 }
 
 scalar ObjMap"
@@ -835,9 +835,9 @@ input io__xtech__SearchByCastRequest_Input {
 
 type Subscription {
   "search movies by the name of the cast"
-  io_xtech_Example_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
   "search movies by the name of the cast"
-  io_xtech_AnotherExample_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
 }
 
 scalar ObjMap"
@@ -1031,9 +1031,9 @@ enum ConnectivityState {
 
 type Subscription {
   "search movies by the name of the cast"
-  io_xtech_Example_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
   "search movies by the name of the cast"
-  io_xtech_AnotherExample_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
 }
 
 scalar ObjMap"
@@ -1153,9 +1153,9 @@ input io__xtech__SearchByCastRequest_Input {
 
 type Subscription {
   "search movies by the name of the cast"
-  io_xtech_Example_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
   "search movies by the name of the cast"
-  io_xtech_AnotherExample_SearchMoviesByCast(input: io_xtech_SearchByCastRequest_Input): io_xtech_Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
 }
 
 scalar ObjMap"
