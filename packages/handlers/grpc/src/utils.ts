@@ -19,7 +19,7 @@ export function getTypeName(
   isInput: boolean,
 ) {
   if (pathWithName?.length) {
-    const baseTypeName = pathWithName.filter(Boolean).join('_');
+    const baseTypeName = pathWithName.filter(Boolean).join('__');
     if (isScalarType(baseTypeName)) {
       return getGraphQLScalar(baseTypeName);
     }

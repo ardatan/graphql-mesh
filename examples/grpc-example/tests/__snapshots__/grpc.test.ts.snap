@@ -151,14 +151,14 @@ type Movie {
   rating: Float
   "list of cast"
   cast: [String]
-  time: google_protobuf_Timestamp
+  time: google__protobuf__Timestamp
   genre: Genre
 }
 
 "The \`BigInt\` scalar type represents non-fractional signed whole numeric values."
 scalar BigInt
 
-type google_protobuf_Timestamp {
+type google__protobuf__Timestamp {
   seconds: BigInt
   nanos: Int
 }
@@ -180,11 +180,11 @@ input Movie_Input {
   rating: Float
   "list of cast"
   cast: [String]
-  time: google_protobuf_Timestamp_Input
+  time: google__protobuf__Timestamp_Input
   genre: Genre
 }
 
-input google_protobuf_Timestamp_Input {
+input google__protobuf__Timestamp_Input {
   seconds: BigInt
   nanos: Int
 }

@@ -1,0 +1,11 @@
+syntax = "proto3";
+message TestMessage {
+  Input input = 1;
+
+  message Input {
+  }
+}
+
+service TestService {
+  rpc Get(TestMessage) returns (TestMessage) {}
+}
