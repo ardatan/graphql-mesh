@@ -14,14 +14,6 @@ import type { Logger } from '@graphql-mesh/types';
 import { handleFatalError } from '../../handleFatalError.js';
 import { GraphQLMeshCLIParams } from '../../index.js';
 
-const terminateEvents = ['SIGINT', 'SIGTERM'];
-
-function registerTerminateHandler(callback: (eventName: string) => void) {
-  for (const eventName of terminateEvents) {
-    process.once(eventName, () => callback(eventName));
-  }
-}
-
 function portSelectorFn(sources: [number, number, number], logger: Logger) {
   const port = sources.find(source => Boolean(source)) || 4000;
   if (sources.filter(source => Boolean(source)).length > 1) {
@@ -52,6 +44,26 @@ export async function serveMesh(
   }: ServeMeshOptions,
   cliParams: GraphQLMeshCLIParams,
 ) {
+  const terminateEvents = ['SIGINT', 'SIGTERM'] as const;
+  type TerminateEvents = (typeof terminateEvents)[number];
+  type TerminateHandler = (eventName: TerminateEvents) => void;
+  const terminateHandlers = new Set<TerminateHandler>();
+  for (const eventName of terminateEvents) {
+    process.once(eventName, () => {
+      for (const handler of terminateHandlers) {
+        handler(eventName);
+        terminateHandlers.delete(handler);
+      }
+    });
+  }
+
+  function registerTerminateHandler(callback: TerminateHandler) {
+    terminateHandlers.add(callback);
+    return () => {
+      terminateHandlers.delete(callback);
+    };
+  }
+
   const {
     fork: configFork = process.env.NODE_ENV?.toLowerCase() === 'production',
     port: configPort,
