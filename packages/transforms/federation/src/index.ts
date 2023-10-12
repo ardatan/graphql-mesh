@@ -1,5 +1,6 @@
 import { dset } from 'dset';
 import {
+  GraphQLEnumType,
   GraphQLInterfaceType,
   GraphQLObjectType,
   GraphQLScalarType,
@@ -299,6 +300,41 @@ export default class FederationTransform implements MeshTransform {
           },
         });
       },
+      [MapperKind.ENUM_TYPE]: type =>
+        new GraphQLEnumType({
+          ...type.toConfig(),
+          astNode: type.astNode && {
+            ...type.astNode,
+            directives: type.astNode.directives?.filter(directive =>
+              federationDirectives.includes(directive.name.value),
+            ),
+          },
+          extensions: {
+            ...type.extensions,
+            directives: Object.fromEntries(
+              Object.entries(type.extensions?.directives || {}).filter(([key]) =>
+                federationDirectives.includes(key),
+              ),
+            ),
+          },
+        }),
+      [MapperKind.ENUM_VALUE]: enumValueConfig => ({
+        ...enumValueConfig,
+        astNode: enumValueConfig.astNode && {
+          ...enumValueConfig.astNode,
+          directives: enumValueConfig.astNode.directives?.filter(directive =>
+            federationDirectives.includes(directive.name.value),
+          ),
+        },
+        extensions: {
+          ...enumValueConfig.extensions,
+          directives: Object.fromEntries(
+            Object.entries(enumValueConfig.extensions?.directives || {}).filter(([key]) =>
+              federationDirectives.includes(key),
+            ),
+          ),
+        },
+      }),
     });
   }
 }
