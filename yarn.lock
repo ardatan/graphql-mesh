@@ -5731,14 +5731,14 @@
   resolved "https://registry.yarnpkg.com/@testing-library/user-event/-/user-event-14.5.1.tgz#27337d72046d5236b32fd977edee3f74c71d332f"
   integrity sha512-UCcUKrUYGj7ClomOo2SpNVvx4/fkd/2BbIHDCle8A0ax+P3bU7yJwDBDrS6ZwdTMARWTGODX1hEsCcO+7beJjg==
 
-"@theguild/algolia@1.1.9":
-  version "1.1.9"
-  resolved "https://registry.yarnpkg.com/@theguild/algolia/-/algolia-1.1.9.tgz#988e157ba60b7277ad58c842d374da144f826fbd"
-  integrity sha512-WygxjQDdwY/ORO0QJgyAahWR1okA/6kbYbdP/Zas28L0GIvToLhzjswmZ+tzvw62GU3EeFp8JpPf24QHe5/0og==
+"@theguild/algolia@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@theguild/algolia/-/algolia-2.0.0.tgz#01459f2a5b1aeb7c094cfdbf1b75299e209a7669"
+  integrity sha512-4cjVARyY3Q1CM/9tJ8teeTXt0ZF4Dj9qAqAl393i/Kb/YEh+N/Y+/Uof2sNsoOXcIVQ32equ3VlP0qCdI6gThQ==
   dependencies:
     algoliasearch "^4.14.3"
     commander "^11.0.0"
-    fast-glob "^3.2.12"
+    fast-xml-parser "^4.3.2"
     github-slugger "^2.0.0"
     gray-matter "^4.0.3"
     lodash.sortby "^4.7.0"
@@ -11546,7 +11546,7 @@ fast-xml-parser@4.2.5:
   dependencies:
     strnum "^1.0.5"
 
-fast-xml-parser@4.3.2, fast-xml-parser@^4.2.1:
+fast-xml-parser@4.3.2, fast-xml-parser@^4.2.1, fast-xml-parser@^4.3.2:
   version "4.3.2"
   resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-4.3.2.tgz#761e641260706d6e13251c4ef8e3f5694d4b0d79"
   integrity sha512-rmrXUXwbJedoXkStenj1kkljNF7ugn5ZjR9FJcwmCfcCbtOMDghPajbc+Tck6vE6F5XsDmx+Pr2le9fw8+pXBg==
