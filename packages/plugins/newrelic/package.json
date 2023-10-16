@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@envelop/core": "^4.0.0",
-    "@envelop/newrelic": "^6.0.1",
+    "@envelop/newrelic": "^7.0.0",
     "@graphql-mesh/string-interpolation": "^0.5.2"
   },
   "devDependencies": {
