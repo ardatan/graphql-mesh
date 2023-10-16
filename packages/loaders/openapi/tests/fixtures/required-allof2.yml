@@ -44,7 +44,6 @@ components:
       required:
         - type
       allOf:
-        - $ref: '#/components/schemas/User'
         - type: 'object'
           properties:
             type:
@@ -53,3 +52,4 @@ components:
             admin:
               type: 'boolean'
               description: 'The admin'
+        - $ref: '#/components/schemas/User'
