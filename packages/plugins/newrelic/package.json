@@ -41,7 +41,7 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@envelop/core": "^4.0.0",
+    "@envelop/core": "^5.0.0",
     "@envelop/newrelic": "^7.0.0",
     "@graphql-mesh/string-interpolation": "^0.5.2"
   },
