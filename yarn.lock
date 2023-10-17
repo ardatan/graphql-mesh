@@ -4490,9 +4490,9 @@
   integrity sha512-kipIePSQLsTQM9ljUz0Sby0gLdmRanMy8NTk10s1qM/04UTj/0zbPSd1+fUp17Rf/Mi/hkeCieDzbbXBEgagkw==
 
 "@neo4j/graphql@^4.0.0":
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-4.3.2.tgz#b4042101f7041bf9e2e404acd7e5dbafe15ba49d"
-  integrity sha512-TPjgNZehGIF0V2yoqc2SIYoq9HNpUHeSZy4fdEbEPXZyAVuwfzA8pSWEg3WVw8r/ogWEIOKhaMQ7dOk/qa6G2Q==
+  version "4.3.3"
+  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-4.3.3.tgz#4c1f3a83187d3bc50160dc6bd2e1ccc62072729b"
+  integrity sha512-R7BtpNy0uIfAcUbMwsa5u8n3jfFdgWulsX2J137rMO3MciujU38j09VFvh3NyEv3HIeUI6sOy3qjRtuz68n0Qw==
   dependencies:
     "@apollo/subgraph" "^2.2.3"
     "@graphql-tools/merge" "^9.0.0"
@@ -17150,10 +17150,10 @@ mongodb@5.9.0:
   optionalDependencies:
     "@mongodb-js/saslprep" "^1.1.0"
 
-mongoose@7.6.2:
-  version "7.6.2"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-7.6.2.tgz#c55c8c41352a6e5223bd7b60aa2715331e1d2b65"
-  integrity sha512-OVx6RWbfNOzBbfTvXoOkgZmaizdXDU/B/KbBjietXQoInSg/OSULjOavXJzL51XWFkbefqkOvbeE07DfvW6FkQ==
+mongoose@7.6.3:
+  version "7.6.3"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-7.6.3.tgz#b06507dd164ad4426013eeb266d54aa1e5178092"
+  integrity sha512-moYP2qWCOdWRDeBxqB/zYwQmQnTBsF5DoolX5uPyI218BkiA1ujGY27P0NTd4oWIX+LLkZPw0LDzlc/7oh1plg==
   dependencies:
     bson "^5.5.0"
     kareem "2.5.1"
