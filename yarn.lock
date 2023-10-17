@@ -3707,10 +3707,10 @@
     "@repeaterjs/repeater" "^3.0.4"
     tslib "^2.5.2"
 
-"@grpc/grpc-js@1.9.5", "@grpc/grpc-js@^1.1.7", "@grpc/grpc-js@^1.2.8", "@grpc/grpc-js@^1.8.10":
-  version "1.9.5"
-  resolved "https://registry.yarnpkg.com/@grpc/grpc-js/-/grpc-js-1.9.5.tgz#22e283754b7b10d1ad26c3fb21849028dcaabc53"
-  integrity sha512-iouYNlPxRAwZ2XboDT+OfRKHuaKHiqjB5VFYZ0NFrHkbEF+AV3muIUY9olQsp8uxU4VvRCMiRk9ftzFDGb61aw==
+"@grpc/grpc-js@1.9.6", "@grpc/grpc-js@^1.1.7", "@grpc/grpc-js@^1.2.8", "@grpc/grpc-js@^1.8.10":
+  version "1.9.6"
+  resolved "https://registry.yarnpkg.com/@grpc/grpc-js/-/grpc-js-1.9.6.tgz#c64a2db3cb1c73939d3d666fb1339775813c1cd8"
+  integrity sha512-yq3qTy23u++8zdvf+h4mz4ohDFi681JAkMZZPTKh8zmUVh0AKLisFlgxcn22FMNowXz15oJ6pqgwT7DJ+PdJvg==
   dependencies:
     "@grpc/proto-loader" "^0.7.8"
     "@types/node" ">=12.12.47"
