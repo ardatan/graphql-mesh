@@ -6591,17 +6591,17 @@
   resolved "https://registry.yarnpkg.com/@types/unist/-/unist-3.0.0.tgz#988ae8af1e5239e89f9fbb1ade4c935f4eeedf9a"
   integrity sha512-MFETx3tbTjE7Uk6vvnWINA/1iJ7LuMdO4fcq8UfF0pRbj01aGLduVvQcRyswuACJdpnHgg8E3rQLhaRdNEJS0w==
 
-"@types/unzip-stream@0.3.2":
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/@types/unzip-stream/-/unzip-stream-0.3.2.tgz#0a310d7d66e32cf27c53fc218950dca2bf5b2a18"
-  integrity sha512-0Wozs19DLVfXhtCQAjdG6XRVrqD31KIU5Sfivk+IVAMP87lgA2dZJ8rWkYOO9a/HVXq+RjsDseqK0SueOI5p+A==
+"@types/unzip-stream@0.3.3":
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/@types/unzip-stream/-/unzip-stream-0.3.3.tgz#62b660596ad710d220ade8c97d25d5792623ac27"
+  integrity sha512-XUypMD3FZulm8asfhKxWk7uHhMYtEkS4cYhPIrrWaq3xCoFiIuVY5LXCEllBIePRBAwzWKtHxHR/n4U3kSGB5w==
   dependencies:
     "@types/node" "*"
 
-"@types/url-join@4.0.1":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@types/url-join/-/url-join-4.0.1.tgz#4989c97f969464647a8586c7252d97b449cdc045"
-  integrity sha512-wDXw9LEEUHyV+7UWy7U315nrJGJ7p1BzaCxDpEoLr789Dk1WDVMMlf3iBfbG2F8NdWnYyFbtTxUn2ZNbm1Q4LQ==
+"@types/url-join@4.0.2":
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@types/url-join/-/url-join-4.0.2.tgz#e8774924c7f492626ee3309baf6697f80e1414df"
+  integrity sha512-uv54MkAtQ4B5Qm20LmMN7tAdczqRenu1K6Sf7PHCygqylVJlRwjpUE5OGofqxdXGH3QJUu+qvDZzPadz5EOjxA==
 
 "@types/uuid@^9.0.0":
   version "9.0.5"
