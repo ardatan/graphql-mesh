@@ -55,7 +55,7 @@
     "url-join": "4.0.1"
   },
   "devDependencies": {
-    "@types/qs": "6.9.8",
+    "@types/qs": "6.9.9",
     "@types/to-json-schema": "0.2.2",
     "@types/url-join": "4.0.1"
   },
