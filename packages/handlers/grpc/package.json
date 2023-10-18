@@ -54,7 +54,7 @@
     "protobufjs": "^7.2.5"
   },
   "devDependencies": {
-    "@types/lodash.has": "4.5.7"
+    "@types/lodash.has": "4.5.8"
   },
   "publishConfig": {
     "access": "public",
