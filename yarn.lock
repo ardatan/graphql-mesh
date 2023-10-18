@@ -6555,19 +6555,19 @@
   resolved "https://registry.yarnpkg.com/@types/strip-json-comments/-/strip-json-comments-0.0.30.tgz#9aa30c04db212a9a0649d6ae6fd50accc40748a1"
   integrity sha512-7NQmHra/JILCd1QqpSzl8+mJRc8ZHz3uDm8YV1Ks9IhK0epEiTw8aIErbvH9PI+6XbqhyIQy3462nEsn7UVzjQ==
 
-"@types/thrift@0.10.14":
-  version "0.10.14"
-  resolved "https://registry.yarnpkg.com/@types/thrift/-/thrift-0.10.14.tgz#2e7c626110b931ac91ded4c4c6aba6b757be5eab"
-  integrity sha512-o6622m6PLLJKGTIBOva9QKOpPXVJRjGaz/Y53kvsFs3VjOZcdVUJ8tLl5SYgL+DGKlc/q2D6iyQc6W1Z7CQvIQ==
+"@types/thrift@0.10.15":
+  version "0.10.15"
+  resolved "https://registry.yarnpkg.com/@types/thrift/-/thrift-0.10.15.tgz#fff1d54360942e3e5562107ccfaaf875cd9af46e"
+  integrity sha512-3D92M0dQhyXojzV0NQpp8L5OsM3nyScAhvqe7yjng5FfnSBo2/yP2bYS4Wqk8AGBsjEAksp+VZ2720pVsjSmsA==
   dependencies:
     "@types/node" "*"
     "@types/node-int64" "*"
     "@types/q" "*"
 
-"@types/to-json-schema@0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@types/to-json-schema/-/to-json-schema-0.2.2.tgz#cb6a4e2da81f60226195e2e8a078cfd6ad36ebd5"
-  integrity sha512-ysPNGnFeBTBWBBjFxlFQM4C1Sx/BjOWszPQZdvOeoGYtTijixmWBU6c3Sl06H8U+kks/UEAwW421sVSiR8Ihvg==
+"@types/to-json-schema@0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@types/to-json-schema/-/to-json-schema-0.2.3.tgz#8d46746b8434881f7a5afbe899e42a237a12f6a2"
+  integrity sha512-Xd9Y1ZFXOT+MVJG7lqIAwTdQyMwAo+2S+l0WWY9zqrfDb93HFrd07MxhRDTMTqnWz571Vu1h/5AFHD1B/I8/lg==
   dependencies:
     "@types/json-schema" "*"
 
