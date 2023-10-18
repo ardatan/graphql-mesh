@@ -57,7 +57,7 @@
   "devDependencies": {
     "@types/qs": "6.9.9",
     "@types/to-json-schema": "0.2.3",
-    "@types/url-join": "4.0.1"
+    "@types/url-join": "4.0.2"
   },
   "publishConfig": {
     "access": "public",

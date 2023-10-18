@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@types/http-string-parser": "0.0.32",
-    "@types/url-join": "4.0.1"
+    "@types/url-join": "4.0.2"
   },
   "publishConfig": {
     "access": "public",

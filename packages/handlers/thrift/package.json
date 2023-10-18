@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "@types/thrift": "0.10.15",
-    "@types/url-join": "4.0.1"
+    "@types/url-join": "4.0.2"
   },
   "publishConfig": {
     "access": "public",
