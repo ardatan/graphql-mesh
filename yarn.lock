@@ -3131,10 +3131,10 @@
     parse-filepath "^1.0.2"
     tslib "~2.5.0"
 
-"@graphql-hive/cli@0.30.1":
-  version "0.30.1"
-  resolved "https://registry.yarnpkg.com/@graphql-hive/cli/-/cli-0.30.1.tgz#8b72fb7783ee59843b15d960b8e6212236111c83"
-  integrity sha512-cwvTQyUZPItu1hR7vAP72KiY9p6MkpusaKpCuj3oBMWQiE55asBnyBNB8iAHsGk/k9QR5IURYwHQhnoh7yvd1Q==
+"@graphql-hive/cli@0.30.2":
+  version "0.30.2"
+  resolved "https://registry.yarnpkg.com/@graphql-hive/cli/-/cli-0.30.2.tgz#4a16536a433b8010b7df6b966fdb8df4943be409"
+  integrity sha512-vHz8QUcD+W4DCrwNKpJNUbqHo8Z8r+rFNZjSI7G9g8PDTBoJ3RbyyXgpaOrhZpLxguC2dLaaPx4oufNmrjuBKg==
   dependencies:
     "@graphql-hive/core" "0.2.3"
     "@graphql-inspector/core" "5.0.1"
@@ -4497,9 +4497,9 @@
   integrity sha512-kipIePSQLsTQM9ljUz0Sby0gLdmRanMy8NTk10s1qM/04UTj/0zbPSd1+fUp17Rf/Mi/hkeCieDzbbXBEgagkw==
 
 "@neo4j/graphql@^4.0.0":
-  version "4.3.3"
-  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-4.3.3.tgz#4c1f3a83187d3bc50160dc6bd2e1ccc62072729b"
-  integrity sha512-R7BtpNy0uIfAcUbMwsa5u8n3jfFdgWulsX2J137rMO3MciujU38j09VFvh3NyEv3HIeUI6sOy3qjRtuz68n0Qw==
+  version "4.3.4"
+  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-4.3.4.tgz#d5a7c44390ab8cafdc81c175a7f633bff9ce0d57"
+  integrity sha512-mZkAsxxrDRkR8QaV18TblShqR2fuKRfFmvCLle4ky3JpP3YXT8MQ5IH5o3DgVv7XUl9bDGejG2rE7Cn10lzJqQ==
   dependencies:
     "@apollo/subgraph" "^2.2.3"
     "@graphql-tools/merge" "^9.0.0"
@@ -6847,10 +6847,10 @@
   resolved "https://registry.yarnpkg.com/@ungap/structured-clone/-/structured-clone-1.2.0.tgz#756641adb587851b5ccb3e095daf27ae581c8406"
   integrity sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==
 
-"@urql/core@4.1.3":
-  version "4.1.3"
-  resolved "https://registry.yarnpkg.com/@urql/core/-/core-4.1.3.tgz#8b61f015425f9c96e8e9368d071d3f663a2bd926"
-  integrity sha512-Wapa58olpEJtZzSEuZNDxzBxmOmHuivG6Hb/QPc6HjHfCJ6f36gnlWc9a9TsC8Vddle+6PsS6+quMMTuj+bj7A==
+"@urql/core@4.1.4":
+  version "4.1.4"
+  resolved "https://registry.yarnpkg.com/@urql/core/-/core-4.1.4.tgz#d1fe9f278b2d1ff32df2314b00d2d94009271665"
+  integrity sha512-wFm67yljv4uFAWNtPwcS1NMhF/n+p/68i+kZU6R1dPxhfq2nBW0142p4szeZsBDrtO7pBdOhp7YeSZROFFlXZg==
   dependencies:
     "@0no-co/graphql.web" "^1.0.1"
     wonka "^6.3.2"
@@ -11561,10 +11561,10 @@ fast-xml-parser@4.3.2, fast-xml-parser@^4.2.1, fast-xml-parser@^4.3.2:
   dependencies:
     strnum "^1.0.5"
 
-fastify@4.24.2:
-  version "4.24.2"
-  resolved "https://registry.yarnpkg.com/fastify/-/fastify-4.24.2.tgz#fad5d42b1abd112aac6ee699e40fec13a2bcbfa8"
-  integrity sha512-V/7fdhFas7HoAyjD8ha8wPCeiRLUzPgwwM5dSSUx/eBUv7GvG61YzjggqOchMOsa7Sw32MNN4uCCoFrl+9ccJA==
+fastify@4.24.3:
+  version "4.24.3"
+  resolved "https://registry.yarnpkg.com/fastify/-/fastify-4.24.3.tgz#bf97a3f5158ff7f78af949d483cac4e6115fb651"
+  integrity sha512-6HHJ+R2x2LS3y1PqxnwEIjOTZxFl+8h4kSC/TuDPXtA+v2JnV9yEtOsNSKK1RMD7sIR2y1ZsA4BEFaid/cK5pg==
   dependencies:
     "@fastify/ajv-compiler" "^3.5.0"
     "@fastify/error" "^3.4.0"
@@ -15293,26 +15293,26 @@ lines-and-columns@^1.1.6:
   resolved "https://registry.yarnpkg.com/lines-and-columns/-/lines-and-columns-1.2.4.tgz#eca284f75d2965079309dc0ad9255abb2ebc1632"
   integrity sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==
 
-lint-staged@15.0.1:
-  version "15.0.1"
-  resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-15.0.1.tgz#1db47c315c79bafe993aa33a0b50cbfeef50d906"
-  integrity sha512-2IU5OWmCaxch0X0+IBF4/v7sutpB+F3qoXbro43pYjQTOo5wumckjxoxn47pQBqqBsCWrD5HnI2uG/zJA7isew==
+lint-staged@15.0.2:
+  version "15.0.2"
+  resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-15.0.2.tgz#abef713182ec2770143e40a5d6d0130fe61ed442"
+  integrity sha512-vnEy7pFTHyVuDmCAIFKR5QDO8XLVlPFQQyujQ/STOxe40ICWqJ6knS2wSJ/ffX/Lw0rz83luRDh+ET7toN+rOw==
   dependencies:
     chalk "5.3.0"
     commander "11.1.0"
     debug "4.3.4"
     execa "8.0.1"
     lilconfig "2.1.0"
-    listr2 "7.0.1"
+    listr2 "7.0.2"
     micromatch "4.0.5"
     pidtree "0.6.0"
     string-argv "0.3.2"
-    yaml "2.3.2"
+    yaml "2.3.3"
 
-listr2@7.0.1:
-  version "7.0.1"
-  resolved "https://registry.yarnpkg.com/listr2/-/listr2-7.0.1.tgz#18e7a655b189cd7a8a76575a26f4d494b6ffc2c2"
-  integrity sha512-nz+7hwgbDp8eWNoDgzdl4hA/xDSLrNRzPu1TLgOYs6l5Y+Ma6zVWWy9Oyt9TQFONwKoSPoka3H50D3vD5EuNwg==
+listr2@7.0.2:
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/listr2/-/listr2-7.0.2.tgz#3aa3e1549dfaf3c57ab5eeaba754da3b87f33063"
+  integrity sha512-rJysbR9GKIalhTbVL2tYbF2hVyDnrf7pFUZBwjPaMIdadYHmeT+EVi/Bu3qd7ETQPahTotg2WRCatXwRBW554g==
   dependencies:
     cli-truncate "^3.1.0"
     colorette "^2.0.20"
@@ -22599,10 +22599,10 @@ underscore@^1.10.2, underscore@^1.13.1, underscore@^1.9.2:
   resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.13.6.tgz#04786a1f589dc6c09f761fc5f45b89e935136441"
   integrity sha512-+A5Sja4HP1M08MaXya7p5LvjuM7K6q/2EaC0+iovj/wOcMsTzMvDFbasi/oSapiwOlt252IqsKqPjCl7huKS0A==
 
-undici@5.26.3, undici@^5.22.1:
-  version "5.26.3"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-5.26.3.tgz#ab3527b3d5bb25b12f898dfd22165d472dd71b79"
-  integrity sha512-H7n2zmKEWgOllKkIUkLvFmsJQj062lSm3uA4EYApG8gLuiOM0/go9bIoC3HVaSnfg4xunowDE2i9p8drkXuvDw==
+undici@5.26.4, undici@^5.22.1:
+  version "5.26.4"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-5.26.4.tgz#dc861c35fb53ae025a173a790d984aa9b2e279a1"
+  integrity sha512-OG+QOf0fTLtazL9P9X7yqWxQ+Z0395Wk6DSkyTxtaq3wQEjIroVe7Y4asCX/vcCxYpNGMnwz8F0qbRYUoaQVMw==
   dependencies:
     "@fastify/busboy" "^2.0.0"
 
@@ -23931,10 +23931,10 @@ yaml-ast-parser@0.0.43:
   resolved "https://registry.yarnpkg.com/yaml-ast-parser/-/yaml-ast-parser-0.0.43.tgz#e8a23e6fb4c38076ab92995c5dca33f3d3d7c9bb"
   integrity sha512-2PTINUwsRqSd+s8XxKaJWQlUuEMHJQyEuh2edBbW8KNJz0SJPwUSD2zRWqezFEdN7IzAgeuYHFUCF7o8zRdZ0A==
 
-yaml@2.3.2, yaml@^2.1.1, yaml@^2.2.2, yaml@^2.3.2:
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/yaml/-/yaml-2.3.2.tgz#f522db4313c671a0ca963a75670f1c12ea909144"
-  integrity sha512-N/lyzTPaJasoDmfV7YTrYCI0G/3ivm/9wdG0aHuheKowWQwGTsK0Eoiw6utmzAnI6pkJa0DUVygvp3spqqEKXg==
+yaml@2.3.3, yaml@^2.1.1, yaml@^2.2.2, yaml@^2.3.2:
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/yaml/-/yaml-2.3.3.tgz#01f6d18ef036446340007db8e016810e5d64aad9"
+  integrity sha512-zw0VAJxgeZ6+++/su5AFoqBbZbrEakwu+X0M5HmcwUiBL7AzcuPKjj5we4xfQLp78LkEMpD0cOnUhmgOVy3KdQ==
 
 yaml@^1.10.0, yaml@^1.10.2, yaml@^1.7.2:
   version "1.10.2"
