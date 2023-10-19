@@ -1,5 +1,16 @@
 # @graphql-mesh/plugin-http-details-extensions
 
+## 0.95.9
+
+### Patch Changes
+
+- [#6103](https://github.com/Urigo/graphql-mesh/pull/6103)
+  [`c859f220b`](https://github.com/Urigo/graphql-mesh/commit/c859f220bc3f7db125511a7b655c8688efe2b14b)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/core@5.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.0.0) (from `4.0.3`,
+    in `dependencies`)
+
 ## 0.95.8
 
 ### Patch Changes
