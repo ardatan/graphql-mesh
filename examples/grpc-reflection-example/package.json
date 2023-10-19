@@ -21,7 +21,7 @@
     "grpc-node-server-reflection": "1.0.2"
   },
   "devDependencies": {
-    "concurrently": "8.2.1",
+    "concurrently": "8.2.2",
     "ts-node": "10.9.1",
     "typescript": "5.2.2"
   }
