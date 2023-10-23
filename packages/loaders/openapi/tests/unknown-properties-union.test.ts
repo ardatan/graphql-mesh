@@ -11,7 +11,7 @@ describe('additional properties in union type', () => {
       ignoreErrorResponses: true,
       async fetch(url, options, context) {
         return Response.json({
-          type2: 'TestType', // this breaks
+          type: 'TestType', // this breaks
           B: 'Value',
         });
       },
