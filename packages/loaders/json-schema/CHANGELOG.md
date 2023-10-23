@@ -1,5 +1,14 @@
 # @omnigraph/json-schema
 
+## 0.95.11
+
+### Patch Changes
+
+- [#6124](https://github.com/Urigo/graphql-mesh/pull/6124)
+  [`7f467f522`](https://github.com/Urigo/graphql-mesh/commit/7f467f5227c3bb840a2483f6e8f8a2fed9d907e4)
+  Thanks [@ardatan](https://github.com/ardatan)! - Select the best matched union element if there
+  are extra properties
+
 ## 0.95.10
 
 ### Patch Changes
