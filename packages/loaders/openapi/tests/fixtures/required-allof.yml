@@ -4,13 +4,6 @@ info:
   version: '1.0.0'
   title: 'MyAPI'
 paths:
-  /create:
-    post:
-      summary: 'Create users'
-      operationId: 'createUsers'
-      responses:
-        204:
-          description: 'Success'
   /admin:
     get:
       summary: 'Get admin'
@@ -22,7 +15,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Admin'
-
 components:
   schemas:
     User:

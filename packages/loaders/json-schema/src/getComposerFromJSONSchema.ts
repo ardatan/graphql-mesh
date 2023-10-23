@@ -21,6 +21,7 @@ import {
   InterfaceTypeComposer,
   isSomeInputTypeComposer,
   ListComposer,
+  NonNullComposer,
   ObjectTypeComposer,
   ObjectTypeComposerFieldConfigMap,
   ObjectTypeComposerFieldConfigMapDefinition,
@@ -1066,6 +1067,7 @@ export function getComposerFromJSONSchema(
                   typeof newField.type?.getUnwrappedTC === 'function'
                     ? newField.type.getUnwrappedTC()
                     : undefined;
+
                 if (
                   existingFieldUnwrappedTC instanceof ObjectTypeComposer &&
                   newFieldUnwrappedTC instanceof ObjectTypeComposer
@@ -1074,7 +1076,8 @@ export function getComposerFromJSONSchema(
                     existingFieldUnwrappedTC.getFields(),
                     newFieldUnwrappedTC.getFields(),
                   );
-                } else {
+                } else if (!(existingFieldUnwrappedTC instanceof NonNullComposer)) {
+                  // only overwrite this if the existing field is nullable
                   fieldMap[fieldName] = newField;
                 }
               }
@@ -1340,13 +1343,10 @@ export function getComposerFromJSONSchema(
                     nullable = false;
                   }
                   // Nullable has more priority
-                  if (typeComposers.nullable === false) {
-                    nullable = false;
+                  if (typeof typeComposers.nullable !== 'undefined') {
+                    nullable = typeComposers.nullable;
                   }
-                  if (typeComposers.nullable === true) {
-                    nullable = true;
-                  }
-                  if (subSchemaAndTypeComposers.properties[propertyName].writeOnly) {
+                  if (typeComposers.writeOnly) {
                     nullable = true;
                   }
                   return !nullable ? typeComposers.output.getTypeNonNull() : typeComposers.output;

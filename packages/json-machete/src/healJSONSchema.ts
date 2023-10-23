@@ -115,25 +115,6 @@ export async function healJSONSchema(
             subSchema.oneOf.push(...subSchema.allOf[0].oneOf);
             delete subSchema.allOf;
           }
-          // Required is inherited with swagger, but not when generating the Graphql types
-          if (subSchema.required?.length && subSchema.allOf?.length) {
-            logger.debug(
-              `${path} has a required definition and allOf definition. Applying required to sub schemas.`,
-            );
-            subSchema.allOf = subSchema.allOf.map((schema: any) => {
-              if (schema.$resolvedRef) {
-                return schema;
-              }
-
-              if (!schema.required) {
-                schema.required = [];
-              }
-
-              schema.required = schema.required.concat(subSchema.required);
-
-              return schema;
-            });
-          }
           // If they have title, it makes sense to keep them to reflect the schema in a better way
           if (!subSchema.title) {
             if (
