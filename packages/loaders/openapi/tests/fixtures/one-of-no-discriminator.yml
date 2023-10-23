@@ -36,6 +36,7 @@ components:
           enum:
             - A
         - type: object
+          additionalProperties: true
           properties:
             B:
               type: string
