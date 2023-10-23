@@ -56,7 +56,7 @@ jobs:
         with:
           timeout_minutes: 10
           max_attempts: 3
-          command: yarn test
+          command: yarn test:leak
 
   integration:
     name: integration / node ${{matrix.node-version}}
