@@ -1,23 +1,16 @@
+import { createRouter, Response } from 'fets';
 import { execute, parse } from 'graphql';
-import { createRouter, Response } from '@whatwg-node/router';
 import loadGraphQLSchemaFromOpenAPI from '../src/index.js';
 
 describe('Query Params with POST', () => {
-  const queryParamsWithPostServer = createRouter();
-  queryParamsWithPostServer.post(
-    '/post-with-param',
-    request =>
-      new Response(
-        JSON.stringify({
-          url: request.url,
-        }),
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      ),
-  );
+  const queryParamsWithPostServer = createRouter().route({
+    method: 'POST',
+    path: '/post-with-param',
+    handler: req =>
+      Response.json({
+        url: req.url,
+      }),
+  });
   it('should create URLs with correctly concatenated query params for POST requests', async () => {
     const schema = await loadGraphQLSchemaFromOpenAPI('test', {
       source: './fixtures/query-params-with-post.yml',

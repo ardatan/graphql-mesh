@@ -27,6 +27,5 @@
       "groupName": "all non-major dependencies",
       "groupSlug": "all-minor-patch"
     }
-  ],
-  "ignoreDeps": ["@whatwg-node/router"]
+  ]
 }

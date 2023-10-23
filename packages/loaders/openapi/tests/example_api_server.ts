@@ -5,12 +5,8 @@
 // Node module: openapi-to-graphql
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
+import { createRouter, HTTPError, Response, RouterRequest } from 'fets';
 import { withCookies } from '@graphql-mesh/utils';
-import { createRouter, Response, RouterRequest } from '@whatwg-node/router';
-
-export const exampleApi = createRouter();
-
-exampleApi.all('*', withCookies);
 
 interface User {
   username: string;
@@ -354,7 +350,8 @@ const Auth: Record<string, AuthObj> = {
   },
 };
 
-const authMiddleware = (req: RouterRequest): void | Response => {
+function checkAuth(request: any): void {
+  const req = request as RouterRequest & { cookies: Record<string, string> };
   const authHeader = req.headers.get('authorization');
   const accessTokenHeader = req.headers.get('access_token');
   const cookieHeader = req.headers.get('cookie');
@@ -384,17 +381,7 @@ const authMiddleware = (req: RouterRequest): void | Response => {
             }
           }
         } else {
-          return new Response(
-            JSON.stringify({
-              message: 'Basic Auth expects a single username and a single password',
-            }),
-            {
-              status: 401,
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            },
-          );
+          throw new HTTPError(401, 'Basic Auth expects a single username and a single password');
         }
       } else if (authType === 'Bearer') {
         if (authValue === 'master-bearer-token') {
@@ -408,709 +395,763 @@ const authMiddleware = (req: RouterRequest): void | Response => {
         return undefined;
       }
     }
-    return new Response(
-      JSON.stringify({
-        message: 'Incorrect credentials',
-      }),
-      {
-        status: 401,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    );
+    throw new HTTPError(401, 'Incorrect credentials');
   } else if (cookieHeader) {
     for (const user in Auth) {
       if (Auth[user].accessToken === cookieHeader.split('=')[1]) {
         return undefined;
       }
     }
-    return new Response(
-      JSON.stringify({
-        message: 'Incorrect credentials',
-      }),
-      {
-        status: 401,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    );
+    throw new HTTPError(401, 'Incorrect credentials');
   } else if ('access_token' in req.query) {
     for (const user in Auth) {
       if (Auth[user].accessToken === req.query.access_token) {
         return undefined;
       }
     }
-    return new Response(
-      JSON.stringify({
-        message: 'Incorrect credentials',
-      }),
-      {
-        status: 401,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    );
+    throw new HTTPError(401, 'Incorrect credentials');
   } else {
-    return new Response(
-      JSON.stringify({
-        message: 'Unknown/missing credentials',
-      }),
-      {
-        status: 401,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    );
+    throw new HTTPError(401, 'Unknown/missing credentials');
   }
-};
+}
 
-exampleApi.get('/api/users', req => {
-  const limit = req.query.limit;
-  if (typeof limit === 'string') {
-    const results = Object.values(Users).slice(0, Number(limit));
-    return new Response(JSON.stringify(results), {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  } else {
-    return new Response(null, {
-      status: 400,
-    });
-  }
-});
-
-exampleApi.get('/api/users/:username', req => {
-  if (req.params.username in Users) {
-    const results = Users[req.params.username];
-    return new Response(JSON.stringify(results), {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  } else {
-    return new Response(
-      JSON.stringify({
-        message: 'Wrong username',
-      }),
-      {
-        status: 404,
-        statusText: 'Not Found',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    );
-  }
-});
-
-exampleApi.get('/api/users/:username/car', req => {
-  if (req.params.username in Users) {
-    const results = Cars[req.params.username];
-    return new Response(JSON.stringify(results), {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  } else {
-    return new Response(
-      JSON.stringify({
-        message: 'Wrong username',
-      }),
-      {
-        status: 404,
-        statusText: 'Not Found',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    );
-  }
-});
-
-exampleApi.get('/api/users/:username/friends', req => {
-  if (req.params.username in Users) {
-    const results = Users[req.params.username].friends.map((friendName: string | number) => {
-      return Users[friendName];
-    });
-
-    return new Response(JSON.stringify(results), {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  } else {
-    return new Response(
-      JSON.stringify({
-        message: 'Wrong username',
-      }),
-      {
-        status: 404,
-        statusText: 'Not Found',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    );
-  }
-});
-
-exampleApi.post('/api/users', async req => {
-  const user: any = await req.json();
-  if ('name' in user && 'address' in user && 'employerId' in user && 'hobbies' in user) {
-    return new Response(JSON.stringify(user), {
-      status: 201,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  } else {
-    return new Response(
-      JSON.stringify({
-        message: 'Wrong data',
-      }),
-      {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    );
-  }
-});
-
-exampleApi.get('/api/assets/:companyId', req => {
-  const assets: any[] = [];
-  Object.entries(Users).forEach(([username, user]) => {
-    if (req.params.companyId === user.employerId) {
-      assets.push(user);
-
-      if (username in Cars) {
-        assets.push(Cars[username]);
-      }
-
-      if (username in TrashCans) {
-        assets.push(TrashCans[username]);
-      }
-    }
-  });
-
-  return new Response(JSON.stringify(assets), {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-});
-
-exampleApi.get('/api/cars', req => {
-  return new Response(JSON.stringify(Object.values(Cars)), {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-});
-
-exampleApi.get('/api/companies/:id', req => {
-  if (req.params.id in Companies) {
-    return new Response(JSON.stringify(Companies[req.params.id]), {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  } else {
-    return new Response(
-      JSON.stringify({
-        message: 'Wrong company ID',
-      }),
-      {
-        status: 404,
-        statusText: 'Not Found',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    );
-  }
-});
-
-exampleApi.get('/api/coffeeLocation', req => {
-  return new Response(
-    JSON.stringify({
-      lat: parseFloat(req.query.lat.toString()) + 5,
-      long: parseFloat(req.query.long.toString()) + 5,
-    }),
+export const exampleApi = createRouter({
+  plugins: [
     {
-      headers: {
-        'Content-Type': 'application/json',
+      onRouteHandle({ request }) {
+        withCookies(request as Request);
       },
     },
-  );
-});
-
-exampleApi.get('/api/cookie', (req: RouterRequest & { cookies: Record<string, string> }) => {
-  if (req.cookies && req.cookies.cookie_type && req.cookies.cookie_size) {
-    return new Response(
-      `You ordered a ${req.cookies.cookie_size} ${req.cookies.cookie_type} cookie!`,
-      {
-        headers: {
-          'Content-Type': 'text/plain',
-        },
-      },
-    );
-  } else {
-    return new Response('Need cookie header parameter', {
-      status: 400,
-      headers: {
-        'Content-Type': 'text/plain',
-      },
-    });
-  }
-});
-
-exampleApi.get('/api/copier', req => {
-  return new Response(
-    JSON.stringify({
-      body: req.query.query,
-    }),
-    {
-      headers: {
-        'Content-Type': 'application/json',
-      },
+  ],
+})
+  .route({
+    method: 'GET',
+    path: '/api/users',
+    handler: req => {
+      const limit = req.query.limit;
+      if (typeof limit === 'string') {
+        const results = Object.values(Users).slice(0, Number(limit));
+        return Response.json(results);
+      } else {
+        return new Response(null, {
+          status: 400,
+        });
+      }
     },
-  );
-});
-
-exampleApi.get('/api/cleanDesks', req => {
-  return new Response('5 clean desks', {
-    headers: {
-      'Content-Type': 'text/plain',
+  })
+  .route({
+    method: 'GET',
+    path: '/api/users/:username',
+    handler: req => {
+      if (req.params.username in Users) {
+        const results = Users[req.params.username];
+        return new Response(JSON.stringify(results), {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      } else {
+        return new Response(
+          JSON.stringify({
+            message: 'Wrong username',
+          }),
+          {
+            status: 404,
+            statusText: 'Not Found',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+      }
     },
-  });
-});
-
-exampleApi.get('/api/dirtyDesks', req => {
-  return new Response('5 dirty desks', {
-    headers: {
-      'Content-Type': 'text/plain',
+  })
+  .route({
+    path: '/api/users/:username/car',
+    method: 'GET',
+    handler: req => {
+      if (req.params.username in Users) {
+        const results = Cars[req.params.username];
+        return new Response(JSON.stringify(results), {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      } else {
+        return new Response(
+          JSON.stringify({
+            message: 'Wrong username',
+          }),
+          {
+            status: 404,
+            statusText: 'Not Found',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+      }
     },
-  });
-});
+  })
+  .route({
+    path: '/api/users/:username/friends',
+    method: 'GET',
+    handler: req => {
+      if (req.params.username in Users) {
+        const results = Users[req.params.username].friends.map((friendName: string | number) => {
+          return Users[friendName];
+        });
 
-exampleApi.get('/api/bonuses', req => {
-  return new Response(null, {
-    status: 204,
-  });
-});
+        return new Response(JSON.stringify(results), {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      } else {
+        return new Response(
+          JSON.stringify({
+            message: 'Wrong username',
+          }),
+          {
+            status: 404,
+            statusText: 'Not Found',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+      }
+    },
+  })
+  .route({
+    method: 'POST',
+    path: '/api/users',
+    handler: async req => {
+      const user: any = await req.json();
+      if ('name' in user && 'address' in user && 'employerId' in user && 'hobbies' in user) {
+        return new Response(JSON.stringify(user), {
+          status: 201,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      } else {
+        return new Response(
+          JSON.stringify({
+            message: 'Wrong data',
+          }),
+          {
+            status: 400,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+      }
+    },
+  })
+  .route({
+    method: 'GET',
+    path: '/api/assets/:companyId',
+    handler: req => {
+      const assets: any[] = [];
+      Object.entries(Users).forEach(([username, user]) => {
+        if (req.params.companyId === user.employerId) {
+          assets.push(user);
 
-exampleApi.get('/api/offices/:id', req => {
-  const accept = req.headers.get('Accept');
-  if (accept.includes('text/plain')) {
-    return new Response('You asked for text!', {
-      headers: {
-        'Content-Type': 'text/plain',
-      },
-    });
-  } else if (accept.includes('application/json')) {
-    const id = parseInt(req.params.id);
-    if (id >= 0 && id < Offices.length) {
-      return new Response(JSON.stringify(Offices[id]), {
+          if (username in Cars) {
+            assets.push(Cars[username]);
+          }
+
+          if (username in TrashCans) {
+            assets.push(TrashCans[username]);
+          }
+        }
+      });
+
+      return new Response(JSON.stringify(assets), {
         headers: {
           'Content-Type': 'application/json',
         },
       });
-    } else {
+    },
+  })
+  .route({
+    method: 'GET',
+    path: '/api/cars',
+    handler: req => {
+      return new Response(JSON.stringify(Object.values(Cars)), {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    },
+  })
+  .route({
+    method: 'GET',
+    path: '/api/companies/:id',
+    handler: req => {
+      if (req.params.id in Companies) {
+        return new Response(JSON.stringify(Companies[req.params.id]), {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      } else {
+        return new Response(
+          JSON.stringify({
+            message: 'Wrong company ID',
+          }),
+          {
+            status: 404,
+            statusText: 'Not Found',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+      }
+    },
+  })
+  .route({
+    method: 'GET',
+    path: '/api/coffeeLocation',
+    handler: req => {
       return new Response(
         JSON.stringify({
-          message: 'Cannot find office',
+          lat: parseFloat(req.query.lat.toString()) + 5,
+          long: parseFloat(req.query.long.toString()) + 5,
         }),
         {
-          status: 404,
           headers: {
             'Content-Type': 'application/json',
           },
         },
       );
-    }
-  } else {
-    return new Response('Please try with an accept parameter!', {
-      status: 412,
-      headers: {
-        'Content-Type': 'text/plain',
-      },
-    });
-  }
-});
-
-exampleApi.post('/api/products', async req => {
-  const product: any = await req.json();
-
-  if ('product-name' in product && 'product-id' in product && 'product-tag' in product) {
-    return new Response(JSON.stringify(product), {
-      status: 201,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  } else {
-    return new Response(
-      JSON.stringify({
-        message: 'Wrong data',
-      }),
-      {
-        status: 400,
-      },
-    );
-  }
-});
-
-exampleApi.get('/api/products/:id', req => {
-  if (typeof req.params.id !== 'undefined' && typeof req.query['product-tag'] !== 'undefined') {
-    const product = {
-      'product-id': req.params.id,
-      'product-tag': req.query['product-tag'],
-      'product-name': 'Super Product',
-    };
-
-    return new Response(JSON.stringify(product), {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  } else {
-    return new Response(
-      JSON.stringify({
-        message: 'Wrong data',
-      }),
-      {
-        status: 400,
-      },
-    );
-  }
-});
-
-exampleApi.get('/api/products/:id/reviews', req => {
-  if (typeof req.params.id !== 'undefined' && typeof req.query['product-tag'] !== 'undefined') {
-    const reviews = [
-      { text: 'Great product', timestamp: 1502787600000000 },
-      { text: 'I love it', timestamp: 1502787400000000 },
-    ];
-    return new Response(JSON.stringify(reviews), {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  } else {
-    return new Response(
-      JSON.stringify({
-        message: 'Wrong data',
-      }),
-      {
-        status: 400,
-      },
-    );
-  }
-});
-
-exampleApi.get('/api/papers', req => {
-  return new Response(JSON.stringify(Object.values(Papers)), {
-    headers: {
-      'Content-Type': 'application/json',
     },
-  });
-});
-
-exampleApi.post('/api/papers', async (req: Request) => {
-  const contentType = req.headers.get('Content-Type');
-  if (contentType.includes('text/plain')) {
-    const body = await req.text();
-    return new Response('You sent the paper idea: ' + body, {
-      headers: {
-        'Content-Type': 'text/plain',
-      },
-      status: 201,
-    });
-  } else {
-    return new Response(
-      JSON.stringify({
-        message: "Wrong content-type, expected 'text/plain' but received " + contentType,
-      }),
-      {
-        status: 400,
-      },
-    );
-  }
-});
-
-exampleApi.get('/api/patents/:id', authMiddleware, req => {
-  // Find patent based off of patent ID
-  const patent = Object.values(Patents).find(currentPatent => {
-    return currentPatent['patent-id'] === req.params.id;
-  });
-
-  if (typeof patent === 'object') {
-    return new Response(JSON.stringify(patent), {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  } else {
-    return new Response(
-      JSON.stringify({
-        message: 'Patent does not exist.',
-      }),
-      {
-        status: 404,
-        statusText: 'Not Found',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    );
-  }
-});
-
-exampleApi.post('/api/projects', authMiddleware, req => {
-  const project = req.body;
-
-  if ('project-id' in project && 'lead-id' in project) {
-    return new Response(JSON.stringify(project), {
-      status: 201,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  } else {
-    return new Response(
-      JSON.stringify({
-        message: 'Wrong data',
-      }),
-      {
-        status: 400,
-      },
-    );
-  }
-});
-
-exampleApi.get('/api/projects/:id', authMiddleware, req => {
-  // Find project based off of projectId
-  const project = Object.values(Projects).find(currentProject => {
-    return currentProject.projectId === Number(req.params.id);
-  });
-
-  if (typeof project === 'object') {
-    return new Response(JSON.stringify(project), {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  } else {
-    return new Response(
-      JSON.stringify({
-        message: 'Project does not exist.',
-      }),
-      {
-        status: 404,
-        statusText: 'Not Found',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    );
-  }
-});
-
-exampleApi.get('/api/scanner', req => {
-  const body = req.query.query;
-  return new Response(JSON.stringify({ body }), {
-    headers: {
-      'Content-Type': 'application/json',
+  })
+  .route({
+    path: '/api/cookie',
+    method: 'GET',
+    handler: (req: any) => {
+      if (req.cookies && req.cookies.cookie_type && req.cookies.cookie_size) {
+        return new Response(
+          `You ordered a ${req.cookies.cookie_size} ${req.cookies.cookie_type} cookie!`,
+          {
+            headers: {
+              'Content-Type': 'text/plain',
+            },
+          },
+        );
+      } else {
+        return new Response('Need cookie header parameter', {
+          status: 400,
+          headers: {
+            'Content-Type': 'text/plain',
+          },
+        });
+      }
     },
+  })
+  .route({
+    method: 'GET',
+    path: '/api/copier',
+    handler: req => {
+      return new Response(
+        JSON.stringify({
+          body: req.query.query,
+        }),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+    },
+  })
+  .route({
+    method: 'GET',
+    path: '/api/cleanDesks',
+    handler: req => {
+      return new Response('5 clean desks', {
+        headers: {
+          'Content-Type': 'text/plain',
+        },
+      });
+    },
+  })
+  .route({
+    method: 'GET',
+    path: '/api/dirtyDesks',
+    handler: req => {
+      return new Response('5 dirty desks', {
+        headers: {
+          'Content-Type': 'text/plain',
+        },
+      });
+    },
+  })
+  .route({
+    method: 'GET',
+    path: '/api/bonuses',
+    handler: req => {
+      return new Response(null, {
+        status: 204,
+      });
+    },
+  })
+  .route({
+    method: 'GET',
+    path: '/api/offices/:id',
+    handler: req => {
+      const accept = req.headers.get('Accept');
+      if (accept.includes('text/plain')) {
+        return new Response('You asked for text!', {
+          headers: {
+            'Content-Type': 'text/plain',
+          },
+        });
+      } else if (accept.includes('application/json')) {
+        const id = parseInt(req.params.id);
+        if (id >= 0 && id < Offices.length) {
+          return new Response(JSON.stringify(Offices[id]), {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+        } else {
+          return new Response(
+            JSON.stringify({
+              message: 'Cannot find office',
+            }),
+            {
+              status: 404,
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            },
+          );
+        }
+      } else {
+        return new Response('Please try with an accept parameter!', {
+          status: 412,
+          headers: {
+            'Content-Type': 'text/plain',
+          },
+        });
+      }
+    },
+  })
+  .route({
+    method: 'POST',
+    path: '/api/products',
+    handler: async req => {
+      const product: any = await req.json();
+
+      if ('product-name' in product && 'product-id' in product && 'product-tag' in product) {
+        return new Response(JSON.stringify(product), {
+          status: 201,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      } else {
+        return new Response(
+          JSON.stringify({
+            message: 'Wrong data',
+          }),
+          {
+            status: 400,
+          },
+        );
+      }
+    },
+  })
+  .route({
+    method: 'GET',
+    path: '/api/products/:id',
+    handler: req => {
+      if (typeof req.params.id !== 'undefined' && typeof req.query['product-tag'] !== 'undefined') {
+        const product = {
+          'product-id': req.params.id,
+          'product-tag': req.query['product-tag'],
+          'product-name': 'Super Product',
+        };
+
+        return new Response(JSON.stringify(product), {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      } else {
+        return new Response(
+          JSON.stringify({
+            message: 'Wrong data',
+          }),
+          {
+            status: 400,
+          },
+        );
+      }
+    },
+  })
+  .route({
+    method: 'GET',
+    path: '/api/products/:id/reviews',
+    handler: req => {
+      if (typeof req.params.id !== 'undefined' && typeof req.query['product-tag'] !== 'undefined') {
+        const reviews = [
+          { text: 'Great product', timestamp: 1502787600000000 },
+          { text: 'I love it', timestamp: 1502787400000000 },
+        ];
+        return new Response(JSON.stringify(reviews), {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      } else {
+        return new Response(
+          JSON.stringify({
+            message: 'Wrong data',
+          }),
+          {
+            status: 400,
+          },
+        );
+      }
+    },
+  })
+  .route({
+    method: 'GET',
+    path: '/api/papers',
+    handler: req => {
+      return new Response(JSON.stringify(Object.values(Papers)), {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    },
+  })
+  .route({
+    method: 'POST',
+    path: '/api/papers',
+    handler: async req => {
+      const contentType = req.headers.get('Content-Type');
+      if (contentType.includes('text/plain')) {
+        const body = await req.text();
+        return new Response('You sent the paper idea: ' + body, {
+          headers: {
+            'Content-Type': 'text/plain',
+          },
+          status: 201,
+        });
+      } else {
+        return new Response(
+          JSON.stringify({
+            message: "Wrong content-type, expected 'text/plain' but received " + contentType,
+          }),
+          {
+            status: 400,
+          },
+        );
+      }
+    },
+  })
+  .route({
+    path: '/api/patents/:id',
+    method: 'GET',
+    handler: req => {
+      checkAuth(req);
+      // Find patent based off of patent ID
+      const patent = Object.values(Patents).find(currentPatent => {
+        return currentPatent['patent-id'] === req.params.id;
+      });
+
+      if (typeof patent === 'object') {
+        return new Response(JSON.stringify(patent), {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      } else {
+        return new Response(
+          JSON.stringify({
+            message: 'Patent does not exist.',
+          }),
+          {
+            status: 404,
+            statusText: 'Not Found',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+      }
+    },
+  })
+  .route({
+    path: '/api/projects',
+    method: 'POST',
+    handler: req => {
+      checkAuth(req);
+      const project = req.body;
+
+      if ('project-id' in project && 'lead-id' in project) {
+        return new Response(JSON.stringify(project), {
+          status: 201,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      } else {
+        return new Response(
+          JSON.stringify({
+            message: 'Wrong data',
+          }),
+          {
+            status: 400,
+          },
+        );
+      }
+    },
+  })
+  .route({
+    method: 'GET',
+    path: '/api/projects/:id',
+    handler: req => {
+      checkAuth(req);
+      // Find project based off of projectId
+      const project = Object.values(Projects).find(currentProject => {
+        return currentProject.projectId === Number(req.params.id);
+      });
+
+      if (typeof project === 'object') {
+        return new Response(JSON.stringify(project), {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      } else {
+        return new Response(
+          JSON.stringify({
+            message: 'Project does not exist.',
+          }),
+          {
+            status: 404,
+            statusText: 'Not Found',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+      }
+    },
+  })
+  .route({
+    method: 'GET',
+    path: '/api/scanner',
+    handler: req => {
+      const body = req.query.query;
+      return new Response(JSON.stringify({ body }), {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    },
+  })
+  .route({
+    method: 'POST',
+    path: '/api/scanner/:path',
+    handler: async req => {
+      const reqBody = await req.text();
+      return new Response(
+        JSON.stringify({
+          body: `req.body: ${reqBody}, req.query.query: ${req.query.query}, req.path.path: ${req.params.path}`,
+        }),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+    },
+  })
+  .route({
+    method: 'GET',
+    path: '/api/snack',
+    handler: req => {
+      const snackType = req.headers.get('snack_type');
+      const snackSize = req.headers.get('snack_size');
+      if (snackType && snackSize) {
+        return new Response(`Here is a ${snackSize} ${snackType}`, {
+          status: 200,
+          headers: {
+            'Content-Type': 'text/plain',
+          },
+        });
+      } else {
+        return new Response('Need snack_type and snack_size header parameters', {
+          status: 400,
+          headers: {
+            'Content-Type': 'text/plain',
+          },
+        });
+      }
+    },
+  })
+  .route({
+    method: 'GET',
+    path: '/api/status',
+    handler: req => {
+      if (
+        typeof req.query.limit !== 'undefined' &&
+        typeof req.headers.get('exampleHeader') !== 'undefined'
+      ) {
+        return new Response('Ok', {
+          status: 200,
+          headers: {
+            'Content-Type': 'text/plain',
+          },
+        });
+      } else {
+        return new Response(
+          JSON.stringify({
+            message: 'wrong request',
+          }),
+          {
+            status: 400,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+      }
+    },
+  })
+  .route({
+    method: 'POST',
+    path: '/api/status',
+    handler: async req => {
+      const reqBody: any = await req.json();
+      if ('hello' in reqBody && reqBody.hello === 'world') {
+        return new Response('success', {
+          status: 200,
+          headers: {
+            'Content-Type': 'text/plain',
+          },
+        });
+      } else {
+        return new Response(
+          JSON.stringify({
+            message: "Wrong data, try 'hello': 'world'",
+          }),
+          {
+            status: 400,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+      }
+    },
+  })
+  .route({
+    method: 'GET',
+    path: '/api/secure',
+    handler: req => {
+      if (req.headers.get('authorization') === 'Bearer abcdef') {
+        return new Response('A secure message.', {
+          status: 200,
+          headers: {
+            'Content-Type': 'text/plain',
+          },
+        });
+      } else {
+        return new Response(
+          JSON.stringify({
+            message: 'Missing authorization header',
+          }),
+          {
+            status: 401,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+      }
+    },
+  })
+  .route({
+    method: 'GET',
+    path: '/api/trashcans',
+    handler: req => {
+      return new Response(JSON.stringify(Array.from(Object.values(TrashCans))), {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    },
+  })
+  .route({
+    method: 'GET',
+    path: '/api/trashcans/:username',
+    handler: req => {
+      if (req.params.username in Users) {
+        return new Response(JSON.stringify(TrashCans[req.params.username]), {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      } else {
+        return new Response(
+          JSON.stringify({
+            message: 'Wrong username',
+          }),
+          {
+            status: 404,
+            statusText: 'Not Found',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+      }
+    },
+  })
+  .route({
+    path: '/api/trashcans/:username',
+    method: 'POST',
+    handler: async req => {
+      const trashItem: any = await req.json();
+
+      if (req.params.username in Users) {
+        const trashCan = TrashCans[req.params.username];
+        trashCan.contents.push(trashItem);
+        return new Response(JSON.stringify(trashCan), {
+          status: 201,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      } else {
+        return new Response(
+          JSON.stringify({
+            message: 'Wrong username',
+          }),
+          {
+            status: 404,
+            statusText: 'Not Found',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+      }
+    },
+  })
+  .route({
+    path: '/api/random',
+    method: 'GET',
+    handler: () => Response.json({ status: 'success' }),
   });
-});
-
-exampleApi.post('/api/scanner/:path', async req => {
-  const reqBody = await req.text();
-  return new Response(
-    JSON.stringify({
-      body: `req.body: ${reqBody}, req.query.query: ${req.query.query}, req.path.path: ${req.params.path}`,
-    }),
-    {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    },
-  );
-});
-
-exampleApi.get('/api/snack', (req: Request) => {
-  const snackType = req.headers.get('snack_type');
-  const snackSize = req.headers.get('snack_size');
-  if (snackType && snackSize) {
-    return new Response(`Here is a ${snackSize} ${snackType}`, {
-      status: 200,
-      headers: {
-        'Content-Type': 'text/plain',
-      },
-    });
-  } else {
-    return new Response('Need snack_type and snack_size header parameters', {
-      status: 400,
-      headers: {
-        'Content-Type': 'text/plain',
-      },
-    });
-  }
-});
-
-exampleApi.get('/api/status', req => {
-  if (
-    typeof req.query.limit !== 'undefined' &&
-    typeof req.headers.get('exampleHeader') !== 'undefined'
-  ) {
-    return new Response('Ok', {
-      status: 200,
-      headers: {
-        'Content-Type': 'text/plain',
-      },
-    });
-  } else {
-    return new Response(
-      JSON.stringify({
-        message: 'wrong request',
-      }),
-      {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    );
-  }
-});
-
-exampleApi.post('/api/status', async req => {
-  const reqBody: any = await req.json();
-  if ('hello' in reqBody && reqBody.hello === 'world') {
-    return new Response('success', {
-      status: 200,
-      headers: {
-        'Content-Type': 'text/plain',
-      },
-    });
-  } else {
-    return new Response(
-      JSON.stringify({
-        message: "Wrong data, try 'hello': 'world'",
-      }),
-      {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    );
-  }
-});
-
-exampleApi.get('/api/secure', (req: Request) => {
-  if (req.headers.get('authorization') === 'Bearer abcdef') {
-    return new Response('A secure message.', {
-      status: 200,
-      headers: {
-        'Content-Type': 'text/plain',
-      },
-    });
-  } else {
-    return new Response(
-      JSON.stringify({
-        message: 'Missing authorization header',
-      }),
-      {
-        status: 401,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    );
-  }
-});
-
-exampleApi.get('/api/trashcans', req => {
-  return new Response(JSON.stringify(Array.from(Object.values(TrashCans))), {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-});
-
-exampleApi.get('/api/trashcans/:username', req => {
-  if (req.params.username in Users) {
-    return new Response(JSON.stringify(TrashCans[req.params.username]), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  } else {
-    return new Response(
-      JSON.stringify({
-        message: 'Wrong username',
-      }),
-      {
-        status: 404,
-        statusText: 'Not Found',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    );
-  }
-});
-
-exampleApi.post('/api/trashcans/:username', async req => {
-  const trashItem: any = await req.json();
-
-  if (req.params.username in Users) {
-    const trashCan = TrashCans[req.params.username];
-    trashCan.contents.push(trashItem);
-    return new Response(JSON.stringify(trashCan), {
-      status: 201,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  } else {
-    return new Response(
-      JSON.stringify({
-        message: 'Wrong username',
-      }),
-      {
-        status: 404,
-        statusText: 'Not Found',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    );
-  }
-});
-
-exampleApi.get('/api/random', req => {
-  return new Response(
-    JSON.stringify({
-      status: 'success',
-    }),
-    {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    },
-  );
-});
-
-exampleApi.all('*', () => new Response(null, { status: 404 }));

@@ -36,6 +36,6 @@ describe('Batching Example', () => {
     const queryStr = await readFile(join(__dirname, '..', 'example-query.graphql'), 'utf-8');
     const result = await mesh.execute(queryStr, {});
     expect(result).toMatchSnapshot('example-query-result');
-    expect(config.fetchFn).toHaveBeenCalledTimes(1);
+    expect(config.fetchFn).toHaveBeenCalledTimes(2);
   });
 });

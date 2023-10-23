@@ -1,8 +1,7 @@
-import { createRouter, Response } from '@whatwg-node/router';
+import { createRouter, Response } from 'fets';
+import { Type } from '@sinclair/typebox';
 
 export function createApp() {
-  const app = createRouter();
-
   const users = [
     { id: 1, name: 'John Doe' },
     { id: 2, name: 'Jane Doe' },
@@ -10,21 +9,43 @@ export function createApp() {
     { id: 4, name: 'Jane Smith' },
   ];
 
-  app.post('/users_by_ids', async (req: Request) => {
-    const body = await req.json();
-    const ids = body.ids;
-    const results = users.filter(user => ids.includes(user.id));
-    return new Response(
-      JSON.stringify({
-        results,
-      }),
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+  return createRouter().route({
+    method: 'POST',
+    path: '/users_by_ids',
+    operationId: 'usersByIds',
+    schemas: {
+      request: {
+        json: Type.Object(
+          {
+            ids: Type.Array(Type.Number()),
+          },
+          { title: 'UsersByIdRequest' },
+        ),
       },
-    );
+      responses: {
+        200: Type.Object(
+          {
+            results: Type.Array(
+              Type.Object(
+                {
+                  id: Type.Number(),
+                  name: Type.String(),
+                },
+                { title: 'User' },
+              ),
+            ),
+          },
+          { title: 'UsersByIdResponse' },
+        ),
+      },
+    },
+    async handler(req) {
+      const body = await req.json();
+      const ids = body.ids;
+      const results = users.filter(user => ids.includes(user.id));
+      return Response.json({
+        results,
+      });
+    },
   });
-
-  return app;
 }
