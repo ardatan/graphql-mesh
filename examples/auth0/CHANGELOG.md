@@ -1,5 +1,14 @@
 # auth0-example
 
+## 0.6.19
+
+### Patch Changes
+
+- Updated dependencies
+  [[`88355c3da`](https://github.com/Urigo/graphql-mesh/commit/88355c3da19abec6be060c4706b9a1aaf850379f)]:
+  - @graphql-mesh/plugin-operation-field-permissions@0.95.9
+  - @graphql-mesh/cli@0.87.15
+
 ## 0.6.18
 
 ### Patch Changes

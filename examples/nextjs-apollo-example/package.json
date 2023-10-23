@@ -1,6 +1,6 @@
 {
   "name": "nextjs-apollo-example",
-  "version": "0.6.17",
+  "version": "0.6.18",
   "private": true,
   "scripts": {
     "build": "next build",
@@ -11,10 +11,10 @@
     "start:prod": "next start"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.87.14",
-    "@graphql-mesh/config": "0.97.13",
+    "@graphql-mesh/cli": "0.87.15",
+    "@graphql-mesh/config": "0.97.14",
     "@graphql-mesh/openapi": "0.95.10",
-    "@graphql-mesh/runtime": "0.96.11",
+    "@graphql-mesh/runtime": "0.96.12",
     "apollo-server-micro": "3.12.1",
     "graphql": "16.8.1",
     "next": "13.5.2",
@@ -22,7 +22,7 @@
     "react-dom": "18.2.0"
   },
   "devDependencies": {
-    "@types/react": "18.2.28",
+    "@types/react": "18.2.31",
     "typescript": "5.2.2"
   }
 }
