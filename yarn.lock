@@ -7422,12 +7422,12 @@ apollo-server@3.12.1:
     apollo-server-express "^3.12.1"
     express "^4.17.1"
 
-apollo-upload-client@17.0.0:
-  version "17.0.0"
-  resolved "https://registry.yarnpkg.com/apollo-upload-client/-/apollo-upload-client-17.0.0.tgz#d9baaff8d14e54510de9f2855b487e75ca63b392"
-  integrity sha512-pue33bWVbdlXAGFPkgz53TTmxVMrKeQr0mdRcftNY+PoHIdbGZD0hoaXHvO6OePJAkFz7OiCFUf98p1G/9+Ykw==
+apollo-upload-client@18.0.0:
+  version "18.0.0"
+  resolved "https://registry.yarnpkg.com/apollo-upload-client/-/apollo-upload-client-18.0.0.tgz#c76ae45fa9764d114c63702844c75459cebcb15e"
+  integrity sha512-sahZF/P9Brbwph/RU+e64BAQSyPOgQL8fjy3kfrLkbmevdGvPr9YSU0012liHyccnkA4OdMCUexF2eX9nWgvMw==
   dependencies:
-    extract-files "^11.0.0"
+    extract-files "^13.0.0"
 
 aproba@^1.0.3, "aproba@^1.0.3 || ^2.0.0":
   version "1.2.0"
@@ -11372,6 +11372,13 @@ extract-files@^11.0.0:
   resolved "https://registry.yarnpkg.com/extract-files/-/extract-files-11.0.0.tgz#b72d428712f787eef1f5193aff8ab5351ca8469a"
   integrity sha512-FuoE1qtbJ4bBVvv94CC7s0oTnKUGvQs+Rjf1L2SJFfS+HTVVjhPFtehPdQ0JiGPqVNfSSZvL5yzHHQq2Z4WNhQ==
 
+extract-files@^13.0.0:
+  version "13.0.0"
+  resolved "https://registry.yarnpkg.com/extract-files/-/extract-files-13.0.0.tgz#9065073dedbcfb5e2ae8a90988cf609834b217ec"
+  integrity sha512-FXD+2Tsr8Iqtm3QZy1Zmwscca7Jx3mMC5Crr+sEP1I303Jy1CYMuYCm7hRTplFNg3XdUavErkxnTzpaqdSoi6g==
+  dependencies:
+    is-plain-obj "^4.1.0"
+
 extract-files@^9.0.0:
   version "9.0.0"
   resolved "https://registry.yarnpkg.com/extract-files/-/extract-files-9.0.0.tgz#8a7744f2437f81f5ed3250ed9f1550de902fe54a"
@@ -13639,7 +13646,7 @@ is-plain-obj@^3.0.0:
   resolved "https://registry.yarnpkg.com/is-plain-obj/-/is-plain-obj-3.0.0.tgz#af6f2ea14ac5a646183a5bbdb5baabbc156ad9d7"
   integrity sha512-gwsOE28k+23GP1B6vFl1oVh/WOzmawBrKwo5Ev6wMKzPkaXaCDIQKzLnvsA42DRlbVTWorkgTKIviAKCWkfUwA==
 
-is-plain-obj@^4.0.0:
+is-plain-obj@^4.0.0, is-plain-obj@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/is-plain-obj/-/is-plain-obj-4.1.0.tgz#d65025edec3657ce032fd7db63c97883eaed71f0"
   integrity sha512-+Pgi+vMuUNkJyExiMBt5IlFoMyKnr5zhJ4Uspz58WOhBF5QoIZkFyNHIbBAtHwzVAgk5RtndVNsDRN61/mmDqg==
