@@ -12493,9 +12493,9 @@ graphql-type-json@0.3.2:
   integrity sha512-J+vjof74oMlCWXSvt0DOf2APEdZOCdubEvGDUAlqH//VBYcOYsGgRW7Xzorr44LvkjiuvecWc8fChxuZZbChtg==
 
 graphql-ws@^5.12.1, graphql-ws@^5.14.0, graphql-ws@^5.6.2:
-  version "5.14.1"
-  resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.14.1.tgz#d05dba9c2cbf1582c990a2dfec4b8f6a55d99da4"
-  integrity sha512-aqkls1espsygP1PfkAuuLIV96IbztQ6EaADse97pw8wRIMT3+AL/OYfS8V2iCRkc0gzckitoDRGCQEdnySggiA==
+  version "5.14.2"
+  resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.14.2.tgz#7db6f6138717a544d9480f0213f65f2841ed1c52"
+  integrity sha512-LycmCwhZ+Op2GlHz4BZDsUYHKRiiUz+3r9wbhBATMETNlORQJAaFlAgTFoeRh6xQoQegwYwIylVD1Qns9/DA3w==
 
 graphql-yoga@5.0.0, graphql-yoga@^5.0.0:
   version "5.0.0"
