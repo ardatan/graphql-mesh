@@ -1,7 +1,0 @@
-extend type Plugin {
-  serializeHeaders: SerializeHeadersConfig
-}
-
-type SerializeHeadersConfig @md {
-  names: [String!]!
-}
