@@ -1,5 +1,12 @@
 # reddit-example
 
+## 0.5.19
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.95.11
+
 ## 0.5.18
 
 ### Patch Changes

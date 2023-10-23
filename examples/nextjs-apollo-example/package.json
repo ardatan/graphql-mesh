@@ -1,6 +1,6 @@
 {
   "name": "nextjs-apollo-example",
-  "version": "0.6.18",
+  "version": "0.6.19",
   "private": true,
   "scripts": {
     "build": "next build",
@@ -13,7 +13,7 @@
   "dependencies": {
     "@graphql-mesh/cli": "0.87.15",
     "@graphql-mesh/config": "0.97.14",
-    "@graphql-mesh/openapi": "0.95.10",
+    "@graphql-mesh/openapi": "0.95.11",
     "@graphql-mesh/runtime": "0.96.12",
     "apollo-server-micro": "3.12.1",
     "graphql": "16.8.1",
