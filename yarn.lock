@@ -7422,10 +7422,10 @@ apollo-server@3.12.1:
     apollo-server-express "^3.12.1"
     express "^4.17.1"
 
-apollo-upload-client@18.0.0:
-  version "18.0.0"
-  resolved "https://registry.yarnpkg.com/apollo-upload-client/-/apollo-upload-client-18.0.0.tgz#c76ae45fa9764d114c63702844c75459cebcb15e"
-  integrity sha512-sahZF/P9Brbwph/RU+e64BAQSyPOgQL8fjy3kfrLkbmevdGvPr9YSU0012liHyccnkA4OdMCUexF2eX9nWgvMw==
+apollo-upload-client@18.0.1:
+  version "18.0.1"
+  resolved "https://registry.yarnpkg.com/apollo-upload-client/-/apollo-upload-client-18.0.1.tgz#e3811f2f5a36bffef23954f796daf331be748dcb"
+  integrity sha512-OQvZg1rK05VNI79D658FUmMdoI2oB/KJKb6QGMa2Si25QXOaAvLMBFUEwJct7wf+19U8vk9ILhidBOU1ZWv6QA==
   dependencies:
     extract-files "^13.0.0"
 
