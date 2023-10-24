@@ -5730,9 +5730,9 @@
     remove-markdown "^0.5.0"
 
 "@theguild/components@^6.0.1":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@theguild/components/-/components-6.0.2.tgz#e03b7f8f175ae07500c7e30ad3f52d5ca9f0e957"
-  integrity sha512-K2bdxVSV5GrGcl3tg9zrixZcYkPjxL1qKt9X6RzgEmdQkMfdM9L0uApVb5EqY6KWHbMzdJkz0Y2Stv0LgakqHg==
+  version "6.0.3"
+  resolved "https://registry.yarnpkg.com/@theguild/components/-/components-6.0.3.tgz#245fc5ac76b1ae863786ede663e87d9fde227dab"
+  integrity sha512-nKwSYBc1ThSOEjCTz9zykyzNRTMg09xnojP+zXzlBVwr5QCOVejxT3MitA812ubcVDDMJQnlJiqa3/YyN61Bvw==
   dependencies:
     "@algolia/autocomplete-js" "1.11.1"
     "@algolia/autocomplete-plugin-algolia-insights" "1.11.1"
@@ -5745,12 +5745,12 @@
     clsx "2.0.0"
     fuzzy "^0.1.3"
     next-videos "1.5.0"
-    nextra "3.0.0-alpha.6"
-    nextra-theme-docs "3.0.0-alpha.6"
+    nextra "3.0.0-alpha.10"
+    nextra-theme-docs "3.0.0-alpha.10"
     react-paginate "8.2.0"
     react-player "2.13.0"
     remark-mdx-disable-explicit-jsx "0.1.0"
-    search-insights "2.8.3"
+    search-insights "2.9.0"
     semver "^7.3.8"
 
 "@theguild/prettier-config@2.0.1":
@@ -7994,6 +7994,13 @@ better-path-resolve@1.0.0:
   dependencies:
     is-windows "^1.0.0"
 
+better-react-mathjax@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/better-react-mathjax/-/better-react-mathjax-2.0.3.tgz#202dc6fe5c7263278f2491516f43f70ba188122f"
+  integrity sha512-wfifT8GFOKb1TWm2+E50I6DJpLZ5kLbch283Lu043EJtwSv0XvZDjr4YfR4d2MjAhqP6SH4VjjrKgbX8R00oCQ==
+  dependencies:
+    mathjax-full "^3.2.2"
+
 bfj@^7.0.2:
   version "7.1.0"
   resolved "https://registry.yarnpkg.com/bfj/-/bfj-7.1.0.tgz#c5177d522103f9040e1b12980fe8c38cf41d3f8b"
@@ -8913,6 +8920,11 @@ commander@7, commander@^7.2.0:
   version "7.2.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-7.2.0.tgz#a36cb57d0b501ce108e4d20559a150a391d97ab7"
   integrity sha512-QrWXB+ZQSVPmIWIhtEO9H+gwHaMGYiF5ChvoJ+K9ZGHG/sVsa6yiesAD1GC/x46sET00Xlwo1u49RVVVzvcSkw==
+
+commander@9.2.0:
+  version "9.2.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-9.2.0.tgz#6e21014b2ed90d8b7c9647230d8b7a94a4a419a9"
+  integrity sha512-e2i4wANQiSXgnrBlIatyHtP1odfUp0BbV5Y5nEGbxtIrStkEOAAzCUirvLBNXHLr7kwLvJl6V+4V3XV9x7Wd9w==
 
 commander@^10.0.0:
   version "10.0.1"
@@ -11011,6 +11023,11 @@ eslint@8.52.0, eslint@^8.3.0:
     optionator "^0.9.3"
     strip-ansi "^6.0.1"
     text-table "^0.2.0"
+
+esm@^3.2.25:
+  version "3.2.25"
+  resolved "https://registry.yarnpkg.com/esm/-/esm-3.2.25.tgz#342c18c29d56157688ba5ce31f8431fbb795cc10"
+  integrity sha512-U1suiZ2oDVWv4zPO56S0NcR5QriEahGtdN2OR6FiOG4WJvcjBVFB0qI4+eKoWFH483PKGuLuu6V8Z4T5g63UVA==
 
 espree@^9.6.0, espree@^9.6.1:
   version "9.6.1"
@@ -15776,6 +15793,16 @@ markdown-table@^3.0.0:
   resolved "https://registry.yarnpkg.com/markdown-table/-/markdown-table-3.0.3.tgz#e6331d30e493127e031dd385488b5bd326e4a6bd"
   integrity sha512-Z1NL3Tb1M9wH4XESsCDEksWoKTdlUafKc4pt0GRwjUyXaCFZ+dc3g2erqB6zm3szA2IUSi7VnPI+o/9jnxh9hw==
 
+mathjax-full@^3.2.2:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/mathjax-full/-/mathjax-full-3.2.2.tgz#43f02e55219db393030985d2b6537ceae82f1fa7"
+  integrity sha512-+LfG9Fik+OuI8SLwsiR02IVdjcnRCy5MufYLi0C3TdMT56L/pjB0alMVGgoWJF8pN9Rc7FESycZB9BMNWIid5w==
+  dependencies:
+    esm "^3.2.25"
+    mhchemparser "^4.1.0"
+    mj-context-menu "^0.6.1"
+    speech-rule-engine "^4.0.6"
+
 mdast-util-definitions@^5.0.0:
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/mdast-util-definitions/-/mdast-util-definitions-5.1.2.tgz#9910abb60ac5d7115d6819b57ae0bcef07a3f7a7"
@@ -16232,6 +16259,11 @@ methods@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/methods/-/methods-1.1.2.tgz#5529a4d67654134edcc5266656835b0f851afcee"
   integrity sha512-iclAHeNqNm68zFtnZ0e+1L2yUIdvzNoauKU4WBA3VvH/vPFieF7qfRlwUZU+DA9P9bPXIS90ulxoUoCH23sV2w==
+
+mhchemparser@^4.1.0:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/mhchemparser/-/mhchemparser-4.2.1.tgz#d73982e66bc06170a85b1985600ee9dabe157cb0"
+  integrity sha512-kYmyrCirqJf3zZ9t/0wGgRZ4/ZJw//VwaRVGA75C4nhE60vtnIzhl9J9ndkX/h6hxSN7pjg/cE0VxbnNM+bnDQ==
 
 micromark-core-commonmark@^1.0.0, micromark-core-commonmark@^1.0.1:
   version "1.1.0"
@@ -17032,6 +17064,11 @@ mixme@^0.5.1:
   resolved "https://registry.yarnpkg.com/mixme/-/mixme-0.5.9.tgz#a5a58e17354632179ff3ce5b0fc130899c8ba81c"
   integrity sha512-VC5fg6ySUscaWUpI4gxCBTQMH2RdUpNrk+MsbpCYtIvf9SBJdiUey4qE7BXviJsJR4nDQxCZ+3yaYNW3guz/Pw==
 
+mj-context-menu@^0.6.1:
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/mj-context-menu/-/mj-context-menu-0.6.1.tgz#a043c5282bf7e1cf3821de07b13525ca6f85aa69"
+  integrity sha512-7NO5s6n10TIV96d4g2uDpG7ZDpIhMh0QNfGdJw/W47JswFcosz457wqz/b5sAKvl12sxINGFCn80NZHKwxQEXA==
+
 mkdirp-classic@^0.5.2, mkdirp-classic@^0.5.3:
   version "0.5.3"
   resolved "https://registry.yarnpkg.com/mkdirp-classic/-/mkdirp-classic-0.5.3.tgz#fa10c9115cc6d8865be221ba47ee9bed78601113"
@@ -17364,10 +17401,10 @@ next@^13.5.4:
     "@next/swc-win32-ia32-msvc" "13.5.6"
     "@next/swc-win32-x64-msvc" "13.5.6"
 
-nextra-theme-docs@3.0.0-alpha.6:
-  version "3.0.0-alpha.6"
-  resolved "https://registry.yarnpkg.com/nextra-theme-docs/-/nextra-theme-docs-3.0.0-alpha.6.tgz#24eff8e3294d06ac97de3d1c8461cfdd807101ce"
-  integrity sha512-WHqL5j/425MworN4KcAkjZ6YCRXSSK+6ixO+049x2RwbH39qCUGldBgBWCIb8Fo1+Qyj4nT2HnlKsIiHmSUZnw==
+nextra-theme-docs@3.0.0-alpha.10:
+  version "3.0.0-alpha.10"
+  resolved "https://registry.yarnpkg.com/nextra-theme-docs/-/nextra-theme-docs-3.0.0-alpha.10.tgz#23bfcd53cff8d3556b933084fced18957cc82640"
+  integrity sha512-1qOZGgrJUa2qS9opbSeBSQaiSMImxX3Sw1BeSceLlxB1mgiCbfeRD7CyZ7haa5A6rozklLsp3q4qtJydwzJB7Q==
   dependencies:
     "@headlessui/react" "^1.7.17"
     "@popperjs/core" "^2.11.8"
@@ -17380,10 +17417,10 @@ nextra-theme-docs@3.0.0-alpha.6:
     scroll-into-view-if-needed "^3.1.0"
     zod "^3.22.3"
 
-nextra@3.0.0-alpha.6:
-  version "3.0.0-alpha.6"
-  resolved "https://registry.yarnpkg.com/nextra/-/nextra-3.0.0-alpha.6.tgz#b25554c314896ce3b7d352b8d1fb245cc4647c53"
-  integrity sha512-3lYF/6KPuntGJGFucFtOZ/FI0bYUGCyy9XlV4JhRX3TTJDH6A6KetIyiOX01CS8G8hI6bg3gtO0Bh9fuYXoSYw==
+nextra@3.0.0-alpha.10:
+  version "3.0.0-alpha.10"
+  resolved "https://registry.yarnpkg.com/nextra/-/nextra-3.0.0-alpha.10.tgz#8f52a586d96903fee91912c890821cd7ca7fcacf"
+  integrity sha512-UikEZpT73QyG8POilTZOYAUxLwzBD+PyiQTPoTVFdSA1dpJSVzTdXd6GvHuQf1twWCgfcXumJbu/yGskjgmXNQ==
   dependencies:
     "@headlessui/react" "^1.7.17"
     "@mdx-js/mdx" "^2.3.0"
@@ -17391,6 +17428,7 @@ nextra@3.0.0-alpha.6:
     "@napi-rs/simple-git" "^0.1.9"
     "@theguild/remark-mermaid" "^0.0.5"
     "@theguild/remark-npm2yarn" "0.3.0"
+    better-react-mathjax "^2.0.3"
     clsx "^2.0.0"
     estree-util-to-js "^2.0.0"
     estree-util-value-to-estree "^3.0.1"
@@ -17407,7 +17445,7 @@ nextra@3.0.0-alpha.6:
     remark-gfm "^3.0.1"
     remark-math "^6.0.0"
     remark-reading-time "^2.0.1"
-    shiki "npm:shikiji@0.6.8"
+    shiki "npm:shikiji@0.6.10"
     slash "^5.1.0"
     title "^3.5.3"
     unist-util-remove "^4.0.0"
@@ -20622,10 +20660,10 @@ scroll-into-view-if-needed@^3.1.0:
   dependencies:
     compute-scroll-into-view "^3.0.2"
 
-search-insights@2.8.3:
-  version "2.8.3"
-  resolved "https://registry.yarnpkg.com/search-insights/-/search-insights-2.8.3.tgz#651703c8de53a67dd7483c606d2d617d8feb8d7c"
-  integrity sha512-W9rZfQ9XEfF0O6ntgQOTI7Txc8nkZrO4eJ/pTHK0Br6wWND2sPGPoWg+yGhdIW7wMbLqk8dc23IyEtLlNGpeNw==
+search-insights@2.9.0:
+  version "2.9.0"
+  resolved "https://registry.yarnpkg.com/search-insights/-/search-insights-2.9.0.tgz#06797bc29b2d0edf54a3dffab0ef2220c02fafad"
+  integrity sha512-bkWW9nIHOFkLwjQ1xqVaMbjjO5vhP26ERsH9Y3pKr8imthofEFIxlnOabkmGcw6ksRj9jWidcI65vvjJH/nTGg==
 
 section-matter@^1.0.0:
   version "1.0.0"
@@ -20862,10 +20900,10 @@ shell-quote@^1.7.3, shell-quote@^1.8.1:
   resolved "https://registry.yarnpkg.com/shell-quote/-/shell-quote-1.8.1.tgz#6dbf4db75515ad5bac63b4f1894c3a154c766680"
   integrity sha512-6j1W9l1iAs/4xYBI1SYOVZyFcCis9b4KCLQ8fgAGG07QvzaRLVVRQvAy85yNmmZSjYjg4MWh4gNvlPujU/5LpA==
 
-"shiki@npm:shikiji@0.6.8":
-  version "0.6.8"
-  resolved "https://registry.yarnpkg.com/shikiji/-/shikiji-0.6.8.tgz#27d8d25ecfe823450167825e620dfb84ae983837"
-  integrity sha512-K0axxNAdB9KvLUflU7QoLC7p6i2p1R2MFG0eP+iclbjtuEZqng99jHcg3VJL0GWRO67yozTICnykjo1HjOzdkg==
+"shiki@npm:shikiji@0.6.10":
+  version "0.6.10"
+  resolved "https://registry.yarnpkg.com/shikiji/-/shikiji-0.6.10.tgz#0dc34a5bebbafd9425a69e9b429ee39b4726dff1"
+  integrity sha512-WE+A5Y2ntM5hL3iJQujk97qr5Uj7PSIRXpQfrZ6h+JWPXZ8KBEDhFXc4lqNriaRq1WGOVPUT83XMOzmHiH3W8A==
   dependencies:
     hast-util-to-html "^9.0.0"
 
@@ -21200,6 +21238,15 @@ spdy@^4.0.2:
     http-deceiver "^1.2.7"
     select-hose "^2.0.0"
     spdy-transport "^3.0.0"
+
+speech-rule-engine@^4.0.6:
+  version "4.0.7"
+  resolved "https://registry.yarnpkg.com/speech-rule-engine/-/speech-rule-engine-4.0.7.tgz#b655dacbad3dae04acc0f7665e26ef258397dd09"
+  integrity sha512-sJrL3/wHzNwJRLBdf6CjJWIlxC04iYKkyXvYSVsWVOiC2DSkHmxsqOhEeMsBA9XK+CHuNcsdkbFDnoUfAsmp9g==
+  dependencies:
+    commander "9.2.0"
+    wicked-good-xpath "1.3.0"
+    xmldom-sre "0.1.31"
 
 split2@^4.0.0, split2@^4.1.0:
   version "4.2.0"
@@ -23420,6 +23467,11 @@ which@^2.0.1, which@^2.0.2:
   dependencies:
     isexe "^2.0.0"
 
+wicked-good-xpath@1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/wicked-good-xpath/-/wicked-good-xpath-1.3.0.tgz#81b0e95e8650e49c94b22298fff8686b5553cf6c"
+  integrity sha512-Gd9+TUn5nXdwj/hFsPVx5cuHHiF5Bwuc30jZ4+ronF1qHK5O7HD0sgmXWSEgwKquT3ClLoKPVbO6qGwVwLzvAw==
+
 wide-align@^1.1.0, wide-align@^1.1.2, wide-align@^1.1.5:
   version "1.1.5"
   resolved "https://registry.yarnpkg.com/wide-align/-/wide-align-1.1.5.tgz#df1d4c206854369ecf3c9a4898f1b23fbd9d15d3"
@@ -23781,6 +23833,11 @@ xmldom-alpha@^0.1.28:
   version "0.1.28"
   resolved "https://registry.yarnpkg.com/xmldom-alpha/-/xmldom-alpha-0.1.28.tgz#4e8451d8df4d7bb303baae0bde783062f9d3d600"
   integrity sha512-u0hPuPt18K/f4bVck3elfDJr2SZ7oyB2pknGNL3uyCCiJ+z6za+skAv7oEiOcSuU4NYfRfc5SyAsowQa0E5W/g==
+
+xmldom-sre@0.1.31:
+  version "0.1.31"
+  resolved "https://registry.yarnpkg.com/xmldom-sre/-/xmldom-sre-0.1.31.tgz#10860d5bab2c603144597d04bf2c4980e98067f4"
+  integrity sha512-f9s+fUkX04BxQf+7mMWAp5zk61pciie+fFLC9hX9UVvCeJQfNHRHXpeo5MPcR0EUf57PYLdt+ZO4f3Ipk2oZUw==
 
 xmlhttprequest@1.8.0:
   version "1.8.0"
