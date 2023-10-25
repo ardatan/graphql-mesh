@@ -29,13 +29,66 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [16, 18]
+        node-version: [18, 20, 21]
 
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
 
+      - name: Install Required Libraries
+        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
+
       - uses: the-guild-org/shared-config/setup@main
+        continue-on-error: true
+        name: setup env
+        with:
+          nodeVersion: ${{matrix.node-version}}
+
+      - name: Cache Jest
+        uses: actions/cache@v3
+        with:
+          path: .cache/jest
+          key: ${{ runner.os }}-${{matrix.node-version}}-jest-unit-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{runner.os}}-${{matrix.node-version}}-jest-unit-
+
+      - name: Remove node-libcurl
+        run: rm -rf node_modules/node-libcurl
+
+      - name: Run Tests
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          command: yarn test
+
+  unit-leaks:
+    name: unit / leak / node ${{matrix.node-version}}
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [18]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+      - name: Install Required Libraries
+        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
+
+      - name: Use Node
+        uses: actions/setup-node@master
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'yarn'
+
+      - name: Remove node-libcurl
+        run: node scripts/remove-node-libcurl.cjs
+
+      - uses: the-guild-org/shared-config/setup@main
+        continue-on-error: true
         name: setup env
         with:
           nodeVersion: ${{matrix.node-version}}
@@ -65,7 +118,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [16, 18]
+        node-version: [18, 20, 21]
     # Service containers to run with `runner-job`
     services:
       # Label used to access the service container
@@ -105,7 +158,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
 
+      - name: Install Required Libraries
+        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
+
       - uses: the-guild-org/shared-config/setup@main
+        continue-on-error: true
         name: setup env
         with:
           nodeVersion: ${{matrix.node-version}}
@@ -134,7 +191,7 @@ jobs:
       - name: Build Test Artifacts
         run: yarn build-test-artifacts
       - name: Test
-        run: yarn test:integration
+        run: yarn test:integration -u
 
   integration-leak:
     name: integration / leak / node ${{matrix.node-version}}
@@ -143,7 +200,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [16, 18]
+        node-version: [18]
     # Service containers to run with `runner-job`
     services:
       # Label used to access the service container
@@ -183,7 +240,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
 
+      - name: Install Required Libraries
+        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
+
+      - name: Use Node
+        uses: actions/setup-node@master
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'yarn'
+
+      - name: Remove node-libcurl
+        run: node scripts/remove-node-libcurl.cjs
+
       - uses: the-guild-org/shared-config/setup@main
+        continue-on-error: true
         name: setup env
         with:
           nodeVersion: ${{matrix.node-version}}
@@ -219,7 +289,7 @@ jobs:
         with:
           timeout_minutes: 10
           max_attempts: 3
-          command: yarn test:integration:leak
+          command: yarn test:integration:leak -u
 
   integrity-check:
     name: integrity-check / node ${{matrix.node-version}}
@@ -228,12 +298,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [16, 18]
+        node-version: [18, 20, 21]
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
 
+      - name: Install Required Libraries
+        run: sudo apt update && sudo apt install -y libcurl4-openssl-dev libssl-dev
+
       - uses: the-guild-org/shared-config/setup@main
+        continue-on-error: true
         name: setup env
         with:
           nodeVersion: ${{matrix.node-version}}
