@@ -7,7 +7,7 @@ import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
 jest.setTimeout(30000);
 
 describe('SQLite Chinook', () => {
-  if (process.version.startsWith('V21.')) {
+  if (process.version.startsWith('v21.')) {
     console.warn('Skipping SQLite Chinook tests because Node v21 is not supported yet');
     it('should skip', () => {});
     return;

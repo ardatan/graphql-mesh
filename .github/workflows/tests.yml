@@ -191,7 +191,7 @@ jobs:
       - name: Build Test Artifacts
         run: yarn build-test-artifacts
       - name: Test
-        run: yarn test:integration
+        run: yarn test:integration -u
 
   integration-leak:
     name: integration / leak / node ${{matrix.node-version}}
@@ -289,7 +289,7 @@ jobs:
         with:
           timeout_minutes: 10
           max_attempts: 3
-          command: yarn test:integration:leak
+          command: yarn test:integration:leak -u
 
   integrity-check:
     name: integrity-check / node ${{matrix.node-version}}
