@@ -550,7 +550,7 @@ export default class GrpcHandler implements MeshHandler {
           description,
           fields: {},
         });
-        for (const [fieldName, { type, rule, comment, keyType }] of fieldEntries) {
+        for (const [fieldName, { type, rule, comment, keyType, options }] of fieldEntries) {
           logger.debug(`Visiting ${currentPath}.nested.fields[${fieldName}]`);
           const baseFieldTypePath = type.split('.');
           inputTC.addFields({
@@ -566,6 +566,9 @@ export default class GrpcHandler implements MeshHandler {
                     baseFieldTypePath,
                   );
                   fieldInputTypeName = getTypeName(this.schemaComposer, fieldTypePath, true);
+                  if (!options?.proto3_optional) {
+                    fieldInputTypeName = fieldInputTypeName + '!';
+                  }
                 }
                 return rule === 'repeated' ? `[${fieldInputTypeName}]` : fieldInputTypeName;
               },
@@ -585,6 +588,9 @@ export default class GrpcHandler implements MeshHandler {
                     baseFieldTypePath,
                   );
                   fieldTypeName = getTypeName(this.schemaComposer, fieldTypePath, false);
+                  if (!options?.proto3_optional) {
+                    fieldTypeName = fieldTypeName + '!';
+                  }
                 }
                 return rule === 'repeated' ? `[${fieldTypeName}]` : fieldTypeName;
               },
