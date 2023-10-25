@@ -1,5 +1,13 @@
 # @graphql-mesh/plugin-prometheus
 
+## 0.95.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.95.8
+  - @graphql-mesh/types@0.95.8
+
 ## 0.95.11
 
 ### Patch Changes

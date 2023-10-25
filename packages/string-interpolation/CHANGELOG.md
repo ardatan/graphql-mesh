@@ -1,5 +1,14 @@
 # @graphql-mesh/string-interpolation
 
+## 0.5.3
+
+### Patch Changes
+
+- [#6138](https://github.com/ardatan/graphql-mesh/pull/6138)
+  [`b4d38c55d`](https://github.com/ardatan/graphql-mesh/commit/b4d38c55df8c4d2aeb98325555979eb09d065906)
+  Thanks [@Pagebakers](https://github.com/Pagebakers)! - Fixed issue where applyRule() would handle
+  falsy replacements incorrectly
+
 ## 0.5.2
 
 ### Patch Changes
