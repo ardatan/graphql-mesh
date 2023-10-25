@@ -11601,10 +11601,10 @@ fengari@^0.1.4:
     sprintf-js "^1.1.1"
     tmp "^0.0.33"
 
-fets@0.6.0, fets@^0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/fets/-/fets-0.6.0.tgz#658f3a00543bced8d8849081bf904a9031b693fe"
-  integrity sha512-NRRrKfkNGH5gpF3KGTarFMlHW6bn7wXNwkLvc1Nyz6vtq0ARPf/mW0micDFFfVTuzlz1Jx75LRg3qbYguPBdxA==
+fets@0.6.1, fets@^0.6.0:
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/fets/-/fets-0.6.1.tgz#22bdfef6348988fb07761de4d337db23d052ab3f"
+  integrity sha512-8MEj9T5AcEwA6aKihX2fMDfcMkCEbDQcyfwfQweqinb+0Lsidx+IPZAdbxoFGnmc/INIwcJ5m6jKaWD3BLu8sA==
   dependencies:
     "@sinclair/typebox" "^0.31.18"
     "@whatwg-node/cookie-store" "^0.2.0"
