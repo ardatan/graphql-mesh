@@ -30,13 +30,13 @@ type Query @grpcRootJson(name: "Root0", rootJson: "{\\"nested\\":{\\"foo\\":{\\"
 
 "Comment 5: This is a comment on one line, delimiters slash star star at beginning of the line. Trailing comment delimiter at beginning of next line after comment."
 type foo__SampleResponse {
-  sample_id: String
+  sample_id: String!
 }
 
 "Comment 7: This is a comment with slash followed by two stars at the beginning. The first comment delimiter is not at the beginning of the line."
 input foo__GetSampleRequest_Input {
   "Comment 8: This is a comment with slash star delimiter on the same line as a field definition."
-  sample_id: String
+  sample_id: String!
 }
 
 enum ConnectivityState {
@@ -58,18 +58,18 @@ type Mutation {
 
 input foo__CreateSampleRequest_Input {
   "Comment 6: This is a comment with slash followed by two stars at the beginning. The first comment delimiter is at the beginning of the line. Trailing comment delimiter on same line as text."
-  description: String
-  type: String
+  description: String!
+  type: String!
 }
 
 input foo__UpdateSampleRequest_Input {
   "Comment 10: This is a comment with slash star star delimiter on the same line as a field definition."
-  sample_id: String
+  sample_id: String!
 }
 
 input foo__DeleteSampleRequest_Input {
   "Comment 12: This is a two-slash comment on the same line as a field definition."
-  sample_id: String
+  sample_id: String!
 }
 
 scalar ObjMap"
@@ -102,23 +102,23 @@ type Query @grpcRootJson(name: "Root0", rootJson: "{\\"nested\\":{\\"foos\\":{\\
 }
 
 type foos__GetFoosResponse {
-  abcd: foos__Bam
+  abcd: foos__Bam!
 }
 
 type foos__Bam {
-  id: BigInt
+  id: BigInt!
 }
 
 "The \`BigInt\` scalar type represents non-fractional signed whole numeric values."
 scalar BigInt
 
 input foos__GetBamRequest_Input {
-  id: Int
-  abcd: foos__Bam_Input
+  id: Int!
+  abcd: foos__Bam_Input!
 }
 
 input foos__Bam_Input {
-  id: BigInt
+  id: BigInt!
 }
 
 enum ConnectivityState {
@@ -159,18 +159,18 @@ type Query @grpcRootJson(name: "Root0", rootJson: "{\\"nested\\":{\\"foo\\":{\\"
 }
 
 type foo__GetFOOsResponse {
-  foos: [foo__FOO]
+  foos: [foo__FOO!]
 }
 
 type foo__FOO {
-  id: BigInt
+  id: BigInt!
 }
 
 "The \`BigInt\` scalar type represents non-fractional signed whole numeric values."
 scalar BigInt
 
 input foo__GetFOOsRequest_Input {
-  id: Int
+  id: Int!
 }
 
 enum ConnectivityState {
@@ -225,23 +225,23 @@ type Query @grpcRootJson(name: "Root0", rootJson: "{\\"nested\\":{\\"io\\":{\\"n
 "movie result message, contains list of movies"
 type io__xtech__MoviesResult {
   "list of movies"
-  result: [io__xtech__Movie]
+  result: [io__xtech__Movie!]
 }
 
 "movie message payload"
 type io__xtech__Movie {
-  name: String
-  year: Int
-  rating: Float
+  name: String!
+  year: Int!
+  rating: Float!
   "list of cast"
-  cast: [String]
-  time: google__protobuf__Timestamp
-  genre: io__xtech__Genre
+  cast: [String!]
+  time: google__protobuf__Timestamp!
+  genre: io__xtech__Genre!
 }
 
 type google__protobuf__Timestamp {
-  seconds: BigInt
-  nanos: Int
+  seconds: BigInt!
+  nanos: Int!
 }
 
 "The \`BigInt\` scalar type represents non-fractional signed whole numeric values."
@@ -254,29 +254,29 @@ enum io__xtech__Genre {
 }
 
 input io__xtech__MovieRequest_Input {
-  movie: io__xtech__Movie_Input
+  movie: io__xtech__Movie_Input!
 }
 
 "movie message payload"
 input io__xtech__Movie_Input {
-  name: String
-  year: Int
-  rating: Float
+  name: String!
+  year: Int!
+  rating: Float!
   "list of cast"
-  cast: [String]
-  time: google__protobuf__Timestamp_Input
-  genre: io__xtech__Genre
+  cast: [String!]
+  time: google__protobuf__Timestamp_Input!
+  genre: io__xtech__Genre!
 }
 
 input google__protobuf__Timestamp_Input {
-  seconds: BigInt
-  nanos: Int
+  seconds: BigInt!
+  nanos: Int!
 }
 
 scalar io__xtech__EmptyRequest @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 input io__xtech__SearchByCastRequest_Input {
-  castName: String
+  castName: String!
 }
 
 enum ConnectivityState {
@@ -326,13 +326,13 @@ type Query @grpcRootJson(name: "Root0", rootJson: "{\\"nested\\":{\\"io\\":{\\"n
 }
 
 type io__xtech__OrganizationProto {
-  id: String
-  owner: String
-  name: String
-  description: String
-  image_url: String
-  state: io__xtech__OrganizationStateProto
-  default_org: Boolean
+  id: String!
+  owner: String!
+  name: String!
+  description: String!
+  image_url: String!
+  state: io__xtech__OrganizationStateProto!
+  default_org: Boolean!
 }
 
 enum io__xtech__OrganizationStateProto {
@@ -384,19 +384,19 @@ type Query @grpcRootJson(name: "Root0", rootJson: "{\\"nested\\":{\\"io\\":{\\"n
 }
 
 type io__xtech__Result {
-  result: [io__xtech__Item]
+  result: [io__xtech__Item!]
 }
 
 type io__xtech__Item {
-  name: String
+  name: String!
 }
 
 input io__xtech__TopLevel__Nested_Input {
-  movie: io__xtech__Item_Input
+  movie: io__xtech__Item_Input!
 }
 
 input io__xtech__Item_Input {
-  name: String
+  name: String!
 }
 
 enum ConnectivityState {
@@ -437,13 +437,13 @@ type Query @grpcRootJson(name: "Root0", rootJson: "{\\"nested\\":{\\"TestMessage
 }
 
 type TestMessage {
-  input: TestMessage__Input
+  input: TestMessage__Input!
 }
 
 scalar TestMessage__Input @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 input TestMessage_Input {
-  input: TestMessage__Input_Input
+  input: TestMessage__Input_Input!
 }
 
 scalar TestMessage__Input_Input @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
@@ -547,23 +547,23 @@ type Query @grpcRootJson(name: "Root0", rootJson: "{\\"nested\\":{\\"io\\":{\\"n
 "movie result message, contains list of movies"
 type io__xtech__MoviesResult {
   "list of movies"
-  result: [io__xtech__Movie]
+  result: [io__xtech__Movie!]
 }
 
 "movie message payload"
 type io__xtech__Movie {
-  name: String
-  year: Int
-  rating: Float
+  name: String!
+  year: Int!
+  rating: Float!
   "list of cast"
-  cast: [String]
-  time: google__protobuf__Timestamp
-  genre: io__xtech__Genre
+  cast: [String!]
+  time: google__protobuf__Timestamp!
+  genre: io__xtech__Genre!
 }
 
 type google__protobuf__Timestamp {
-  seconds: BigInt
-  nanos: Int
+  seconds: BigInt!
+  nanos: Int!
 }
 
 "The \`BigInt\` scalar type represents non-fractional signed whole numeric values."
@@ -576,27 +576,27 @@ enum io__xtech__Genre {
 }
 
 input io__xtech__MovieRequest_Input {
-  movie: io__xtech__Movie_Input
+  movie: io__xtech__Movie_Input!
 }
 
 "movie message payload"
 input io__xtech__Movie_Input {
-  name: String
-  year: Int
-  rating: Float
+  name: String!
+  year: Int!
+  rating: Float!
   "list of cast"
-  cast: [String]
-  time: google__protobuf__Timestamp_Input
-  genre: io__xtech__Genre
+  cast: [String!]
+  time: google__protobuf__Timestamp_Input!
+  genre: io__xtech__Genre!
 }
 
 input google__protobuf__Timestamp_Input {
-  seconds: BigInt
-  nanos: Int
+  seconds: BigInt!
+  nanos: Int!
 }
 
 input io__xtech__SearchByCastRequest_Input {
-  castName: String
+  castName: String!
 }
 
 enum ConnectivityState {
@@ -644,19 +644,19 @@ type Query @grpcRootJson(name: "Root0", rootJson: "{\\"nested\\":{\\"io\\":{\\"n
 }
 
 type io__xtech__Result {
-  result: [io__xtech__Item]
+  result: [io__xtech__Item!]
 }
 
 type io__xtech__Item {
-  name: String
+  name: String!
 }
 
 input io__xtech__TopLevel__Nested_Input {
-  movie: io__xtech__Item_Input
+  movie: io__xtech__Item_Input!
 }
 
 input io__xtech__Item_Input {
-  name: String
+  name: String!
 }
 
 enum ConnectivityState {
@@ -697,19 +697,19 @@ type Query @grpcRootJson(name: "Root0", rootJson: "{\\"nested\\":{\\"Item\\":{\\
 }
 
 type Result {
-  result: [Item]
+  result: [Item!]
 }
 
 type Item {
-  name: String
+  name: String!
 }
 
 input TopLevel__Nested_Input {
-  movie: Item_Input
+  movie: Item_Input!
 }
 
 input Item_Input {
-  name: String
+  name: String!
 }
 
 enum ConnectivityState {
@@ -763,23 +763,23 @@ type Query @grpcRootJson(name: "Root0", rootJson: "{\\"nested\\":{\\"io\\":{\\"n
 }
 
 type io__outside__MoviesResult {
-  result: [io__xtech__Movie]
+  result: [io__xtech__Movie!]
 }
 
 "movie message payload"
 type io__xtech__Movie {
-  name: String
-  year: Int
-  rating: Float
+  name: String!
+  year: Int!
+  rating: Float!
   "list of cast"
-  cast: [String]
-  time: google__protobuf__Timestamp
-  genre: io__xtech__Genre
+  cast: [String!]
+  time: google__protobuf__Timestamp!
+  genre: io__xtech__Genre!
 }
 
 type google__protobuf__Timestamp {
-  seconds: BigInt
-  nanos: Int
+  seconds: BigInt!
+  nanos: Int!
 }
 
 "The \`BigInt\` scalar type represents non-fractional signed whole numeric values."
@@ -792,23 +792,23 @@ enum io__xtech__Genre {
 }
 
 input io__outside__MovieRequest_Input {
-  movie: io__xtech__Movie_Input
+  movie: io__xtech__Movie_Input!
 }
 
 "movie message payload"
 input io__xtech__Movie_Input {
-  name: String
-  year: Int
-  rating: Float
+  name: String!
+  year: Int!
+  rating: Float!
   "list of cast"
-  cast: [String]
-  time: google__protobuf__Timestamp_Input
-  genre: io__xtech__Genre
+  cast: [String!]
+  time: google__protobuf__Timestamp_Input!
+  genre: io__xtech__Genre!
 }
 
 input google__protobuf__Timestamp_Input {
-  seconds: BigInt
-  nanos: Int
+  seconds: BigInt!
+  nanos: Int!
 }
 
 enum ConnectivityState {
@@ -822,15 +822,15 @@ enum ConnectivityState {
 "movie result message, contains list of movies"
 type io__xtech__MoviesResult {
   "list of movies"
-  result: [io__xtech__Movie]
+  result: [io__xtech__Movie!]
 }
 
 input io__xtech__MovieRequest_Input {
-  movie: io__xtech__Movie_Input
+  movie: io__xtech__Movie_Input!
 }
 
 input io__xtech__SearchByCastRequest_Input {
-  castName: String
+  castName: String!
 }
 
 type Subscription {
@@ -870,25 +870,25 @@ type Query @grpcRootJson(name: "Root0", rootJson: "{\\"nested\\":{\\"Item\\":{\\
 }
 
 type Result {
-  result: [Item]
+  result: [Item!]
 }
 
 type Item {
-  boolean: Boolean
-  bytesType: Byte
-  doubleNum: Float
-  fixedint32: Int
-  fixedint64: BigInt
-  floatNum: Float
-  integer32: Int
-  integer64: BigInt
-  sfixedint32: Int
-  sfixedint64: BigInt
-  sinteger32: Int
-  sinteger64: BigInt
-  str: String
-  uinteger32: UnsignedInt
-  uinteger64: BigInt
+  boolean: Boolean!
+  bytesType: Byte!
+  doubleNum: Float!
+  fixedint32: Int!
+  fixedint64: BigInt!
+  floatNum: Float!
+  integer32: Int!
+  integer64: BigInt!
+  sfixedint32: Int!
+  sfixedint64: BigInt!
+  sinteger32: Int!
+  sinteger64: BigInt!
+  str: String!
+  uinteger32: UnsignedInt!
+  uinteger64: BigInt!
 }
 
 "The \`Byte\` scalar type represents byte value as a Buffer"
@@ -901,21 +901,21 @@ scalar BigInt
 scalar UnsignedInt
 
 input Item_Input {
-  boolean: Boolean
-  bytesType: Byte
-  doubleNum: Float
-  fixedint32: Int
-  fixedint64: BigInt
-  floatNum: Float
-  integer32: Int
-  integer64: BigInt
-  sfixedint32: Int
-  sfixedint64: BigInt
-  sinteger32: Int
-  sinteger64: BigInt
-  str: String
-  uinteger32: UnsignedInt
-  uinteger64: BigInt
+  boolean: Boolean!
+  bytesType: Byte!
+  doubleNum: Float!
+  fixedint32: Int!
+  fixedint64: BigInt!
+  floatNum: Float!
+  integer32: Int!
+  integer64: BigInt!
+  sfixedint32: Int!
+  sfixedint64: BigInt!
+  sinteger32: Int!
+  sinteger64: BigInt!
+  str: String!
+  uinteger32: UnsignedInt!
+  uinteger64: BigInt!
 }
 
 enum ConnectivityState {
@@ -969,23 +969,23 @@ type Query @grpcRootJson(name: "Root0", rootJson: "{\\"nested\\":{\\"io\\":{\\"n
 "movie result message, contains list of movies"
 type io__xtech__MoviesResult {
   "list of movies"
-  result: [io__xtech__Movie]
+  result: [io__xtech__Movie!]
 }
 
 "movie message payload"
 type io__xtech__Movie {
-  name: String
-  year: Int
-  rating: Float
+  name: String!
+  year: Int!
+  rating: Float!
   "list of cast"
-  cast: [String]
-  time: google__protobuf__Timestamp
-  genre: io__xtech__Genre
+  cast: [String!]
+  time: google__protobuf__Timestamp!
+  genre: io__xtech__Genre!
 }
 
 type google__protobuf__Timestamp {
-  seconds: BigInt
-  nanos: Int
+  seconds: BigInt!
+  nanos: Int!
 }
 
 "The \`BigInt\` scalar type represents non-fractional signed whole numeric values."
@@ -998,27 +998,27 @@ enum io__xtech__Genre {
 }
 
 input io__xtech__movie_request_Input {
-  movie: io__xtech__Movie_Input
+  movie: io__xtech__Movie_Input!
 }
 
 "movie message payload"
 input io__xtech__Movie_Input {
-  name: String
-  year: Int
-  rating: Float
+  name: String!
+  year: Int!
+  rating: Float!
   "list of cast"
-  cast: [String]
-  time: google__protobuf__Timestamp_Input
-  genre: io__xtech__Genre
+  cast: [String!]
+  time: google__protobuf__Timestamp_Input!
+  genre: io__xtech__Genre!
 }
 
 input google__protobuf__Timestamp_Input {
-  seconds: BigInt
-  nanos: Int
+  seconds: BigInt!
+  nanos: Int!
 }
 
 input io__xtech__SearchByCastRequest_Input {
-  castName: String
+  castName: String!
 }
 
 enum ConnectivityState {
@@ -1080,23 +1080,23 @@ type Query @grpcRootJson(name: "Root0", rootJson: "{\\"nested\\":{\\"io\\":{\\"n
 "movie result message, contains list of movies"
 type io__xtech__MoviesResult {
   "list of movies"
-  result: [io__xtech__Movie]
+  result: [io__xtech__Movie!]
 }
 
 "movie message payload"
 type io__xtech__Movie {
-  name: String
-  year: Int
-  rating: Float
+  name: String!
+  year: Int!
+  rating: Float!
   "list of cast"
-  cast: [String]
-  time: google__protobuf__Timestamp
-  genre: io__xtech__Genre
+  cast: [String!]
+  time: google__protobuf__Timestamp!
+  genre: io__xtech__Genre!
 }
 
 type google__protobuf__Timestamp {
-  seconds: BigInt
-  nanos: Int
+  seconds: BigInt!
+  nanos: Int!
 }
 
 "The \`BigInt\` scalar type represents non-fractional signed whole numeric values."
@@ -1109,27 +1109,27 @@ enum io__xtech__Genre {
 }
 
 input io__xtech__movie_request_Input {
-  movie: io__xtech__Movie_Input
+  movie: io__xtech__Movie_Input!
 }
 
 "movie message payload"
 input io__xtech__Movie_Input {
-  name: String
-  year: Int
-  rating: Float
+  name: String!
+  year: Int!
+  rating: Float!
   "list of cast"
-  cast: [String]
-  time: google__protobuf__Timestamp_Input
-  genre: io__xtech__Genre
+  cast: [String!]
+  time: google__protobuf__Timestamp_Input!
+  genre: io__xtech__Genre!
 }
 
 input google__protobuf__Timestamp_Input {
-  seconds: BigInt
-  nanos: Int
+  seconds: BigInt!
+  nanos: Int!
 }
 
 input io__xtech__movie_request_by_ids_Input {
-  movieIds: [String]
+  movieIds: [String!]
 }
 
 enum ConnectivityState {
@@ -1148,7 +1148,7 @@ type Mutation {
 }
 
 input io__xtech__SearchByCastRequest_Input {
-  castName: String
+  castName: String!
 }
 
 type Subscription {
