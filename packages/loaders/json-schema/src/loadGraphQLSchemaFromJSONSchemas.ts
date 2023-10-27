@@ -1,6 +1,5 @@
 import { DefaultLogger } from '@graphql-mesh/utils';
 import { fetch } from '@whatwg-node/fetch';
-import { createBundleFromDereferencedSchema } from './bundle.js';
 import { processDirectives } from './directives.js';
 import { getDereferencedJSONSchemaFromOperations } from './getDereferencedJSONSchemaFromOperations.js';
 import { getGraphQLSchemaFromDereferencedJSONSchema } from './getGraphQLSchemaFromDereferencedJSONSchema.js';
@@ -23,7 +22,7 @@ export async function loadNonExecutableGraphQLSchemaFromJSONSchemas(
     schemaHeaders: options.schemaHeaders,
     ignoreErrorResponses: options.ignoreErrorResponses,
   });
-  const schema = await getGraphQLSchemaFromDereferencedJSONSchema(name, {
+  return getGraphQLSchemaFromDereferencedJSONSchema(name, {
     fullyDeferencedSchema,
     logger: options.logger,
     operations: options.operations,
@@ -32,20 +31,6 @@ export async function loadNonExecutableGraphQLSchemaFromJSONSchemas(
     queryParams: options.queryParams,
     queryStringOptions: options.queryStringOptions,
   });
-  if (options.bundle) {
-    schema.extensions = schema.extensions || {};
-    Object.defineProperty(schema.extensions, 'bundle', {
-      value: await createBundleFromDereferencedSchema(name, {
-        dereferencedSchema: fullyDeferencedSchema,
-        endpoint: options.endpoint,
-        operations: options.operations,
-        operationHeaders:
-          typeof options.operationHeaders === 'object' ? options.operationHeaders : {},
-        logger: options.logger,
-      }),
-    });
-  }
-  return schema;
 }
 
 export async function loadGraphQLSchemaFromJSONSchemas(

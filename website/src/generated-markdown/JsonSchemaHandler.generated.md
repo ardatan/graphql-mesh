@@ -1,5 +1,5 @@
 
-* `source` (type: `String`) - Path to the bundle file
+* `source` (type: `String`)
 * `endpoint` (type: `String`)
 * `operationHeaders` (type: `JSON`)
 * `schemaHeaders` (type: `JSON`)
@@ -91,6 +91,4 @@ You may override this by setting the indices option to true:
 Note: when using arrayFormat set to 'comma', you can also pass the commaRoundTrip option set to true or false, to append [] on single-item arrays, so that they can round trip through a parse.
   * `commaRoundTrip` (type: `Boolean`) - Even if there is a single item in an array, this option treats them as arrays
 (default: false)
-* `bundlePath` (type: `String`) - Will be removed later
-* `bundleHeaders` (type: `JSON`) - Will be removed later
 * `timeout` (type: `Int`) - Timeout for the HTTP request in milliseconds

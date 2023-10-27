@@ -7,4 +7,3 @@ export * from './getDereferencedJSONSchemaFromOperations.js';
 export * from './getGraphQLSchemaFromDereferencedJSONSchema.js';
 export * from './types.js';
 export { processDirectives } from './directives.js';
-export * from './bundle.js';
