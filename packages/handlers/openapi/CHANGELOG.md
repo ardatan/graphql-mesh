@@ -1,5 +1,23 @@
 # @graphql-mesh/openapi
 
+## 0.96.0
+
+### Minor Changes
+
+- [#6222](https://github.com/ardatan/graphql-mesh/pull/6222)
+  [`5c6a8f784`](https://github.com/ardatan/graphql-mesh/commit/5c6a8f784a787641b90349e584b49de629cc41ff)
+  Thanks [@ardatan](https://github.com/ardatan)! - BREAKING: Drop bundles, you can use the SDL
+  output from the artifacts later as a `source` of the handler
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5c6a8f784`](https://github.com/ardatan/graphql-mesh/commit/5c6a8f784a787641b90349e584b49de629cc41ff)]:
+  - @graphql-mesh/types@0.96.0
+  - @omnigraph/openapi@0.96.0
+  - @graphql-mesh/store@0.96.0
+  - @graphql-mesh/utils@0.96.0
+
 ## 0.95.12
 
 ### Patch Changes
