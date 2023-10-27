@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/json-schema",
-  "version": "0.95.12",
+  "version": "0.96.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -33,8 +33,8 @@
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.1",
-    "@graphql-mesh/types": "^0.95.8",
-    "@graphql-mesh/utils": "^0.95.8",
+    "@graphql-mesh/types": "^0.96.0",
+    "@graphql-mesh/utils": "^0.96.0",
     "@graphql-tools/utils": "^9.2.1 || ^10.0.0",
     "graphql": "*",
     "tslib": "^2.4.0"
@@ -48,7 +48,7 @@
     "dset": "3.1.3",
     "graphql-compose": "9.0.10",
     "graphql-scalars": "^1.22.4",
-    "json-machete": "0.95.8",
+    "json-machete": "0.96.0",
     "pascal-case": "3.1.2",
     "qs": "6.11.2",
     "to-json-schema": "0.2.5",

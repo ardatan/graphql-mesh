@@ -1,6 +1,6 @@
 {
   "name": "json-schema-file-upload",
-  "version": "0.5.20",
+  "version": "0.6.0",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -9,8 +9,8 @@
     "start:mesh": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.87.16",
-    "@graphql-mesh/json-schema": "0.95.12",
+    "@graphql-mesh/cli": "0.88.0",
+    "@graphql-mesh/json-schema": "0.96.0",
     "fets": "0.6.2",
     "graphql": "16.8.1"
   },
