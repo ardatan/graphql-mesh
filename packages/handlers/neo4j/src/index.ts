@@ -144,6 +144,7 @@ export default class Neo4JHandler implements MeshHandler {
         subscriptions: {
           events,
           publish: eventMeta => this.pubsub.publish(eventMeta.event, eventMeta),
+          close: () => {},
         },
       },
     });
