@@ -13,8 +13,6 @@ import {
 } from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
 import {
-  getGraphQLSchemaFromBundle,
-  JSONSchemaLoaderBundle,
   loadNonExecutableGraphQLSchemaFromJSONSchemas,
   processDirectives,
 } from '@omnigraph/json-schema';
@@ -67,26 +65,6 @@ export default class JsonSchemaHandler implements MeshHandler {
       });
     }
     return this.schemaWithAnnotationsProxy.getWithSet(async () => {
-      if (this.config.bundlePath) {
-        this.logger.info(`Fetching JSON Schema bundle`);
-        const bundle = await readFileOrUrl<JSONSchemaLoaderBundle>(this.config.bundlePath, {
-          allowUnknownExtensions: true,
-          cwd: this.baseDir,
-          fetch: this.fetchFn,
-          importFn: this.importFn,
-          logger: this.logger,
-          headers: this.config.bundleHeaders,
-        });
-        return getGraphQLSchemaFromBundle(bundle, {
-          cwd: this.baseDir,
-          logger: this.logger,
-          fetch: this.fetchFn,
-          endpoint: this.config.endpoint,
-          operationHeaders: this.config.operationHeaders,
-          queryParams: this.config.queryParams,
-          queryStringOptions: this.config.queryStringOptions,
-        });
-      }
       this.logger.info(`Generating GraphQL schema from JSON Schemas`);
       return loadNonExecutableGraphQLSchemaFromJSONSchemas(this.name, {
         ...this.config,

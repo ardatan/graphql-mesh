@@ -345,9 +345,6 @@ export interface GrpcCredentialsSsl {
  * Source could be a local json file, or a url to it.
  */
 export interface JsonSchemaHandler {
-  /**
-   * Path to the bundle file
-   */
   source?: string;
   endpoint?: string;
   operationHeaders?: {
@@ -363,16 +360,6 @@ export interface JsonSchemaHandler {
   ignoreErrorResponses?: boolean;
   queryParams?: any;
   queryStringOptions?: QueryStringOptions;
-  /**
-   * Will be removed later
-   */
-  bundlePath?: string;
-  /**
-   * Will be removed later
-   */
-  bundleHeaders?: {
-    [k: string]: any;
-  };
   /**
    * Timeout for the HTTP request in milliseconds
    */
@@ -913,7 +900,6 @@ export interface OpenapiHandler {
    * Timeout for the HTTP request in milliseconds
    */
   timeout?: number;
-  bundle?: boolean;
 }
 export interface OASSelectQueryOrMutationFieldConfig {
   /**
@@ -979,7 +965,6 @@ export interface RAMLHandler {
   ignoreErrorResponses?: boolean;
   selectQueryOrMutationField?: RAMLSelectQueryOrMutationFieldConfig[];
   queryParams?: any;
-  bundle?: boolean;
   /**
    * Timeout for the HTTP request in milliseconds
    */
@@ -1745,7 +1730,6 @@ export interface Plugin {
   prometheus?: PrometheusConfig;
   rateLimit?: RateLimitPluginConfig;
   responseCache?: ResponseCacheConfig;
-  serializeHeaders?: SerializeHeadersConfig;
   snapshot?: SnapshotPluginConfig;
   statsd?: StatsdPlugin;
   [k: string]: any;
@@ -2205,9 +2189,6 @@ export interface ResponseCacheConfig {
 export interface ResponseCacheTTLConfig {
   coordinate: string;
   ttl: number;
-}
-export interface SerializeHeadersConfig {
-  names: string[];
 }
 /**
  * Configuration for Snapshot extension

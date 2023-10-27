@@ -46,8 +46,6 @@ type OpenapiHandler @md {
   Timeout for the HTTP request in milliseconds
   """
   timeout: Int
-
-  bundle: Boolean
 }
 
 enum FallbackFormat {
