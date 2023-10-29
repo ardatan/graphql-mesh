@@ -5059,10 +5059,10 @@
   resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.5.1.tgz#5f1b518ec5fa54437c0b7c4a821546c64fed6922"
   integrity sha512-6i/8UoL0P5y4leBIGzvkZdS85RDMG9y1ihZzmTZQ5LdHUYmZ7pKFoj8X0236s3lusPs1Fa5HTQUpwI+UfTcmeA==
 
-"@sinclair/typebox@0.31.20", "@sinclair/typebox@^0.31.18":
-  version "0.31.20"
-  resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.31.20.tgz#74e855ba87a795f10c1eb9d791c7316d930d292e"
-  integrity sha512-pqkf2X6fc1yk6c3Rk41cT8NYFKmzngl8TVHy375X7ihlONCsX7/YTReRLyZX7zZhuUUBx9KTZPFFDZo6AIERCw==
+"@sinclair/typebox@0.31.21", "@sinclair/typebox@^0.31.18":
+  version "0.31.21"
+  resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.31.21.tgz#d52d8e35f71e5651042aa0237e918e4b21fbbbf8"
+  integrity sha512-Wtq/K44EMkREaXytK+2c5DrygtYsH7ZxT0StQL8HMJz2BoOM7NZ/xfrUFBVuZxDrhJCoXf5Im282P2CCz5DHwQ==
 
 "@sinclair/typebox@^0.24.1":
   version "0.24.51"
