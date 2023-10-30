@@ -1,4 +1,3 @@
-import { join } from 'path';
 import { GraphQLSchema, parse, validate } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
@@ -8,7 +7,8 @@ describe('OpenAPI Loader: Cloudfunction', () => {
 
   beforeAll(async () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      source: join(__dirname, './fixtures/cloudfunction.json'),
+      source: './fixtures/cloudfunction.json',
+      cwd: __dirname,
       operationHeaders: {
         Authorization: 'Basic {args.usernamePassword|base64}',
       },

@@ -1,8 +1,5 @@
 import JsonPointer from 'json-pointer';
 import urlJoin from 'url-join';
-import { path as pathModule, process } from '@graphql-mesh/cross-helpers';
-import { defaultImportFn, DefaultLogger, isUrl, readFileOrUrl } from '@graphql-mesh/utils';
-import { fetch as crossUndiciFetch } from '@whatwg-node/fetch';
 import { handleUntitledDefinitions } from './healUntitledDefinitions.js';
 
 export const resolvePath = (path: string, root: any): any => {
@@ -15,6 +12,11 @@ export const resolvePath = (path: string, root: any): any => {
     throw e;
   }
 };
+
+function isUrl(str: string): boolean {
+  return /^https?:\/\//.test(str);
+}
+
 function isRefObject(obj: any): obj is { $ref: string } {
   return typeof obj === 'object' && typeof obj.$ref === 'string';
 }
@@ -22,7 +24,7 @@ function isRefObject(obj: any): obj is { $ref: string } {
 const getAbsolute$Ref = (given$ref: string, baseFilePath: string) => {
   const [givenExternalFileRelativePath, givenRefPath] = given$ref.split('#');
   if (givenExternalFileRelativePath) {
-    const cwd = isUrl(baseFilePath) ? getCwdForUrl(baseFilePath) : pathModule.dirname(baseFilePath);
+    const cwd = getCwd(baseFilePath);
     const givenExternalFilePath = getAbsolutePath(givenExternalFileRelativePath, cwd);
     if (givenRefPath) {
       return `${givenExternalFilePath}#${givenRefPath}`;
@@ -31,12 +33,6 @@ const getAbsolute$Ref = (given$ref: string, baseFilePath: string) => {
   }
   return `${baseFilePath}#${givenRefPath}`;
 };
-
-function getCwdForUrl(url: string) {
-  const urlParts = url.split('/');
-  urlParts.pop();
-  return urlParts.join('/');
-}
 
 function normalizeUrl(url: string) {
   return new URL(url).toString();
@@ -49,39 +45,37 @@ export function getAbsolutePath(path: string, cwd: string) {
   if (isUrl(cwd)) {
     return normalizeUrl(urlJoin(cwd, path));
   }
-  if (pathModule.isAbsolute(path)) {
+  if (path.startsWith('/') || path.substring(1).startsWith(':\\')) {
     return path;
   }
-  return pathModule.join(cwd, path);
+  return cwd + '/' + path;
 }
 
 export function getCwd(path: string) {
-  return isUrl(path) ? getCwdForUrl(path) : pathModule.dirname(path);
+  const pathParts = path.split('/');
+  pathParts.pop();
+  return pathParts.join('/');
 }
 
 export async function dereferenceObject<T extends object, TRoot = T>(
   obj: T,
   {
-    cwd = process.cwd(),
+    cwd = globalThis?.process.cwd(),
     externalFileCache = new Map<string, any>(),
     refMap = new Map<string, any>(),
     root = obj as any,
-    fetchFn: fetch = crossUndiciFetch,
-    importFn = defaultImportFn,
-    logger = new DefaultLogger('dereferenceObject'),
+    debugLogFn,
+    readFileOrUrl,
     resolvedObjects = new WeakSet(),
-    headers,
   }: {
     cwd?: string;
     externalFileCache?: Map<string, any>;
     refMap?: Map<string, any>;
     root?: TRoot;
-    fetchFn?: WindowOrWorkerGlobalScope['fetch'];
-    importFn?: (m: string) => any;
-    logger?: any;
+    debugLogFn?(message?: any): void;
+    readFileOrUrl(path: string, opts: { cwd: string }): Promise<any> | any;
     resolvedObjects?: WeakSet<any>;
-    headers?: Record<string, string>;
-  } = {},
+  },
 ): Promise<T> {
   if (obj != null && typeof obj === 'object') {
     if (isRefObject(obj)) {
@@ -89,22 +83,19 @@ export async function dereferenceObject<T extends object, TRoot = T>(
       if (refMap.has($ref)) {
         return refMap.get($ref);
       } else {
-        logger.debug(`Resolving ${$ref}`);
+        debugLogFn?.(`Resolving ${$ref}`);
         const [externalRelativeFilePath, refPath] = $ref.split('#');
         if (externalRelativeFilePath) {
           const externalFilePath = getAbsolutePath(externalRelativeFilePath, cwd);
           const newCwd = getCwd(externalFilePath);
           let externalFile = externalFileCache.get(externalFilePath);
           if (!externalFile) {
-            externalFile = await readFileOrUrl(externalFilePath, {
-              fetch,
-              headers,
-              cwd,
-              importFn,
-              logger,
-            }).catch(() => {
+            try {
+              externalFile = await readFileOrUrl(externalFilePath, { cwd });
+            } catch (e) {
+              console.error(e);
               throw new Error(`Unable to load ${externalRelativeFilePath} from ${cwd}`);
-            });
+            }
             externalFileCache.set(externalFilePath, externalFile);
 
             // Title should not be overwritten by the title given from the reference
@@ -142,10 +133,8 @@ export async function dereferenceObject<T extends object, TRoot = T>(
                   throw new Error('Not implemented ' + key.toString());
                 },
               }),
-              fetchFn: fetch,
-              importFn,
-              logger,
-              headers,
+              debugLogFn,
+              readFileOrUrl,
               root: externalFile,
               resolvedObjects,
             },
@@ -175,10 +164,8 @@ export async function dereferenceObject<T extends object, TRoot = T>(
             externalFileCache,
             refMap,
             root,
-            fetchFn: fetch,
-            importFn,
-            logger,
-            headers,
+            debugLogFn,
+            readFileOrUrl,
             resolvedObjects,
           });
           if (!result) {
@@ -203,8 +190,8 @@ export async function dereferenceObject<T extends object, TRoot = T>(
               externalFileCache,
               refMap,
               root,
-              fetchFn: fetch,
-              headers,
+              debugLogFn,
+              readFileOrUrl,
               resolvedObjects,
             });
           }
