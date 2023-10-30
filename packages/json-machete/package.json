@@ -32,11 +32,11 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-tools/utils": "^9.2.1 || ^10.0.0",
     "tslib": "^2.4.0"
   },
   "dependencies": {
     "@json-schema-tools/meta-schema": "1.7.0",
+    "cross-inspect": "1.0.0",
     "json-pointer": "0.6.2",
     "to-json-schema": "0.2.5",
     "url-join": "4.0.1"

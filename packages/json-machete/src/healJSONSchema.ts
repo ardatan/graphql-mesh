@@ -1,5 +1,5 @@
+import { inspect } from 'cross-inspect';
 import toJsonSchema from 'to-json-schema';
-import { inspect } from '@graphql-tools/utils';
 import { JSONSchema, JSONSchemaObject } from './types.js';
 import { visitJSONSchema } from './visitJSONSchema.js';
 

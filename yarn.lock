@@ -9210,6 +9210,13 @@ cross-fetch@^3.1.5:
   dependencies:
     node-fetch "^2.6.12"
 
+cross-inspect@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/cross-inspect/-/cross-inspect-1.0.0.tgz#5fda1af759a148594d2d58394a9e21364f6849af"
+  integrity sha512-4PFfn4b5ZN6FMNGSZlyb7wUhuN8wvj8t/VQHZdM4JsDcruGJ8L2kf9zao98QIrBPFCpdk27qst/AGTl7pL3ypQ==
+  dependencies:
+    tslib "^2.4.0"
+
 cross-spawn@^5.0.1, cross-spawn@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-5.1.0.tgz#e8bd0efee58fcff6f8f94510a0a554bbfa235449"
@@ -22534,7 +22541,6 @@ typical@^5.2.0:
 
 "uWebSockets.js@uNetworking/uWebSockets.js#semver:^20":
   version "20.33.0"
-  uid c10b47c350cc97c299c6b4a07a98abb628704c71
   resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/c10b47c350cc97c299c6b4a07a98abb628704c71"
 
 ua-parser-js@^1.0.35:
