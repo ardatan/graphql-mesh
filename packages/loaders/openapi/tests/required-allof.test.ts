@@ -53,7 +53,7 @@ interface User @discriminator(field: "type") {
 scalar query_getAdmin_allOf_0_name @length(min: null, max: 100)
 
 type Query @globalOptions(sourceName: "RequiredAllOf", endpoint: "http://localhost:3000/\") {
-  "\\n>**Method**: \`GET\`\\n>**Base URL**: \`http://localhost:3000/\`\\n>**Path**: \`/admin\`\\nGet admin\\n"
+  "Get admin"
   getAdmin: Admin @httpOperation(path: "/admin", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
 }
 
