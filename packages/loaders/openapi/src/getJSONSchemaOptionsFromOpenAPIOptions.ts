@@ -9,7 +9,12 @@ import { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import { process } from '@graphql-mesh/cross-helpers';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import { Logger } from '@graphql-mesh/types';
-import { defaultImportFn, DefaultLogger, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import {
+  defaultImportFn,
+  DefaultLogger,
+  readFileOrUrl,
+  sanitizeNameForGraphQL,
+} from '@graphql-mesh/utils';
 import {
   HTTPMethod,
   JSONSchemaHTTPJSONOperationConfig,
@@ -57,6 +62,14 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
   const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders);
   logger?.debug(`Fetching OpenAPI Document from ${source}`);
   let oasOrSwagger: OpenAPIV3.Document | OpenAPIV2.Document;
+  const readFileOrUrlForJsonMachete = (path: string, opts: { cwd: string }) =>
+    readFileOrUrl(path, {
+      cwd: opts.cwd,
+      fetch: fetchFn,
+      headers: schemaHeadersFactory({ env: process.env }),
+      importFn: defaultImportFn,
+      logger,
+    });
   if (typeof source === 'string') {
     oasOrSwagger = (await dereferenceObject(
       {
@@ -64,19 +77,15 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
       },
       {
         cwd,
-        headers: schemaHeadersFactory({ env: process.env }),
-        fetchFn,
-        importFn: defaultImportFn,
-        logger,
+        readFileOrUrl: readFileOrUrlForJsonMachete,
+        debugLogFn: logger.debug.bind(logger),
       },
     )) as any;
   } else {
     oasOrSwagger = await dereferenceObject(source, {
       cwd,
-      headers: schemaHeadersFactory({ env: process.env }),
-      fetchFn,
-      importFn: defaultImportFn,
-      logger,
+      readFileOrUrl: readFileOrUrlForJsonMachete,
+      debugLogFn: logger.debug.bind(logger),
     });
   }
 
@@ -484,9 +493,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
             {
               cwd,
               root: oasOrSwagger,
-              fetchFn,
-              logger,
-              headers: schemaHeaders,
+              readFileOrUrl: readFileOrUrlForJsonMachete,
             },
           );
           responseByStatusCode[responseKey].links = responseByStatusCode[responseKey].links || {};
