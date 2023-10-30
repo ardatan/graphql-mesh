@@ -456,7 +456,6 @@ export async function healJSONSchema(
               schemaByTitle.set(subSchema.title, subSchema);
             }
           }
-
           if (
             subSchema.type === 'object' &&
             subSchema.properties &&
