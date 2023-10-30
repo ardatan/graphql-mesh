@@ -1,6 +1,6 @@
 {
-  "name": "@graphql-mesh/container",
-  "version": "0.2.4",
+  "name": "@q00/container",
+  "version": "0.2.5",
   "type": "module",
   "repository": {
     "type": "git",
@@ -19,7 +19,7 @@
     "@graphql-mesh/cli": "0.87.15",
     "@graphql-mesh/config": "0.97.14",
     "@graphql-mesh/graphql": "0.95.7",
-    "@graphql-mesh/grpc": "0.96.0",
+    "@q00/grpc": "0.96.1",
     "@graphql-mesh/json-schema": "0.95.11",
     "@graphql-mesh/odata": "0.95.8",
     "@graphql-mesh/openapi": "0.95.11",
