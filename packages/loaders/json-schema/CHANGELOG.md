@@ -1,5 +1,47 @@
 # @omnigraph/json-schema
 
+## 0.96.0
+
+### Minor Changes
+
+- [#6222](https://github.com/ardatan/graphql-mesh/pull/6222)
+  [`5c6a8f784`](https://github.com/ardatan/graphql-mesh/commit/5c6a8f784a787641b90349e584b49de629cc41ff)
+  Thanks [@ardatan](https://github.com/ardatan)! - BREAKING: Drop bundles, you can use the SDL
+  output from the artifacts later as a `source` of the handler
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5c6a8f784`](https://github.com/ardatan/graphql-mesh/commit/5c6a8f784a787641b90349e584b49de629cc41ff)]:
+  - @graphql-mesh/types@0.96.0
+  - json-machete@0.96.0
+  - @graphql-mesh/utils@0.96.0
+
+## 0.95.12
+
+### Patch Changes
+
+- [#6147](https://github.com/ardatan/graphql-mesh/pull/6147)
+  [`9b8ba5d47`](https://github.com/ardatan/graphql-mesh/commit/9b8ba5d472b82af9adddee000e0b32af9c97058e)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`dset@3.1.3` ↗︎](https://www.npmjs.com/package/dset/v/3.1.3) (from `3.1.2`,
+    in `dependencies`)
+- Updated dependencies
+  [[`b4d38c55d`](https://github.com/ardatan/graphql-mesh/commit/b4d38c55df8c4d2aeb98325555979eb09d065906)]:
+  - @graphql-mesh/string-interpolation@0.5.3
+  - @graphql-mesh/utils@0.95.8
+  - json-machete@0.95.8
+  - @graphql-mesh/types@0.95.8
+
+## 0.95.11
+
+### Patch Changes
+
+- [#6124](https://github.com/Urigo/graphql-mesh/pull/6124)
+  [`7f467f522`](https://github.com/Urigo/graphql-mesh/commit/7f467f5227c3bb840a2483f6e8f8a2fed9d907e4)
+  Thanks [@ardatan](https://github.com/ardatan)! - Select the best matched union element if there
+  are extra properties
+
 ## 0.95.10
 
 ### Patch Changes

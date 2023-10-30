@@ -34,16 +34,16 @@ type Query @globalOptions(sourceName: "ExampleAPI", endpoint: "http://localhost:
 }
 
 type User {
-  id: String
-  name: String
+  id: Float!
+  name: String!
 }
 
 input UsersByIdRequest_Input {
-  ids: [Float]
+  ids: [Float]!
 }
 
 type UsersByIdResponse {
-  results: [User]
+  results: [User]!
 }"
 `;
 
@@ -51,11 +51,11 @@ exports[`Batching Example should give correct response for the batched example q
 {
   "data": {
     "jane": {
-      "id": "2",
+      "id": 2,
       "name": "Jane Doe",
     },
     "john": {
-      "id": "1",
+      "id": 1,
       "name": "John Doe",
     },
   },

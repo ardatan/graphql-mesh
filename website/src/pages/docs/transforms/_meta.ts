@@ -3,7 +3,10 @@ export default {
   rename: 'Rename',
   prefix: 'Prefix',
   encapsulate: 'Encapsulate',
-  'resolvers-composition': 'Resolvers Composition',
+  'resolvers-composition': {
+    title: 'Resolvers Composition',
+    display: 'hidden',
+  },
   'filter-schema': 'Filter Schema',
   'replace-field': 'Replace Field',
   'naming-convention': 'Naming Convention',

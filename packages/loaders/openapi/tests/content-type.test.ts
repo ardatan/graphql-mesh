@@ -1,23 +1,16 @@
+import { createRouter, Response } from 'fets';
 import { execute, parse } from 'graphql';
-import { createRouter, Response } from '@whatwg-node/router';
 import loadGraphQLSchemaFromOpenAPI from '../src/index.js';
 
 describe('Query Params with POST', () => {
-  const server = createRouter();
-  server.post(
-    '/post',
-    request =>
-      new Response(
-        JSON.stringify({
-          contentType: request.headers.get('content-type'),
-        }),
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      ),
-  );
+  const server = createRouter().route({
+    method: 'POST',
+    path: '/post',
+    handler: req =>
+      Response.json({
+        contentType: req.headers.get('content-type'),
+      }),
+  });
   it('should forward the correct content type', async () => {
     const schema = await loadGraphQLSchemaFromOpenAPI('test', {
       source: './fixtures/multi-content-types.yml',

@@ -4,7 +4,9 @@ import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { loadGraphQLSchemaFromOpenAPI } from '../src';
 
 describe('Escaped Values', () => {
-  const router = createRouter().route({
+  const router = createRouter({
+    base: '/api',
+  }).route({
     method: 'GET',
     path: '/test',
     handler() {

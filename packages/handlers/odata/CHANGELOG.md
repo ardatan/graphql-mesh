@@ -1,5 +1,26 @@
 # @graphql-mesh/odata
 
+## 0.96.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5c6a8f784`](https://github.com/ardatan/graphql-mesh/commit/5c6a8f784a787641b90349e584b49de629cc41ff)]:
+  - @graphql-mesh/types@0.96.0
+  - @graphql-mesh/store@0.96.0
+  - @graphql-mesh/utils@0.96.0
+
+## 0.95.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b4d38c55d`](https://github.com/ardatan/graphql-mesh/commit/b4d38c55df8c4d2aeb98325555979eb09d065906)]:
+  - @graphql-mesh/string-interpolation@0.5.3
+  - @graphql-mesh/utils@0.95.8
+  - @graphql-mesh/store@0.95.8
+  - @graphql-mesh/types@0.95.8
+
 ## 0.95.8
 
 ### Patch Changes

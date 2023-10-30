@@ -47,9 +47,6 @@ enum QueryStringArrayFormat {
 }
 
 type JsonSchemaHandler @md {
-  """
-  Path to the bundle file
-  """
   source: String
   endpoint: String
   operationHeaders: JSON
@@ -58,15 +55,6 @@ type JsonSchemaHandler @md {
   ignoreErrorResponses: Boolean
   queryParams: Any
   queryStringOptions: QueryStringOptions
-
-  """
-  Will be removed later
-  """
-  bundlePath: String
-  """
-  Will be removed later
-  """
-  bundleHeaders: JSON
 
   """
   Timeout for the HTTP request in milliseconds

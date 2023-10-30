@@ -1,5 +1,29 @@
 # openapi-orbit
 
+## 0.5.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5c6a8f784`](https://github.com/ardatan/graphql-mesh/commit/5c6a8f784a787641b90349e584b49de629cc41ff)]:
+  - @graphql-mesh/openapi@0.96.0
+  - @graphql-mesh/cli@0.88.0
+
+## 0.4.20
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/openapi@0.95.12
+  - @graphql-mesh/cli@0.87.16
+
+## 0.4.19
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/openapi@0.95.11
+
 ## 0.4.18
 
 ### Patch Changes

@@ -55,6 +55,7 @@ export function getTypeResolverFromOutputTCs({
           // Remove metadata fields used to pass data
           .filter(property => !property.toString().startsWith('$'))
       : null;
+    const scoreTypeNameMap = new Map<number, string>();
     for (const possibleType of possibleTypes) {
       const typeName = possibleType.name;
       if (dataKeys != null) {
@@ -64,6 +65,13 @@ export function getTypeResolverFromOutputTCs({
           dataKeys.every(property => typeFields.includes(property.toString()))
         ) {
           return typeName;
+        } else {
+          const score = dataKeys.filter(property =>
+            typeFields.includes(property.toString()),
+          ).length;
+          if (score || typeFields.includes('additionalProperties')) {
+            scoreTypeNameMap.set(score, typeName);
+          }
         }
       } /* else {
         const validateFn = possibleType.extensions.validateWithJSONSchema as ValidateFunction;
@@ -75,6 +83,11 @@ export function getTypeResolverFromOutputTCs({
           validationErrors[typeName] = ajv.errors || validateFn.errors;
         }
       } */
+    }
+    const maxScore = Math.max(...scoreTypeNameMap.keys());
+    const typeName = scoreTypeNameMap.get(maxScore);
+    if (typeName) {
+      return typeName;
     }
     if (data.$response) {
       const error = createGraphQLError(`HTTP Error: ${data.$statusCode}`, {
