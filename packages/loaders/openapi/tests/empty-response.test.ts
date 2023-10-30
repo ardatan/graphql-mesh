@@ -1,6 +1,5 @@
 import { execute, GraphQLSchema, parse } from 'graphql';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { Request, Response } from '@whatwg-node/fetch';
+import { Response } from '@whatwg-node/fetch';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 
 let createdSchema: GraphQLSchema;
