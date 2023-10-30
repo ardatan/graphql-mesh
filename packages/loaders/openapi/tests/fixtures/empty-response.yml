@@ -1,0 +1,37 @@
+---
+openapi: '3.0.1'
+info:
+  description: 'Schema'
+  version: '1.0.0'
+  title: 'MyAPI'
+paths:
+  /user:
+    delete:
+      summary: 'Delete user'
+      description: 'Deletes a user'
+      operationId: deleteUser
+      responses:
+        '200':
+          description: Created
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorList'
+components:
+  schemas:
+    errorList:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/error'
+    error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string

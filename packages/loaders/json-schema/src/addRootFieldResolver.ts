@@ -290,7 +290,7 @@ export function addHTTPRootFieldResolver(
       if (isScalarType(returnNamedGraphQLType)) {
         operationLogger.debug(` => Return type is not a JSON so returning ${responseText}`);
         return responseText;
-      } else if (response.status === 204) {
+      } else if (response.status === 204 || (response.status === 200 && responseText === '')) {
         responseJson = {};
       } else if (response.status.toString().startsWith('2')) {
         logger.debug(`Unexpected response in ${field.name};\n\t${responseText}`);
