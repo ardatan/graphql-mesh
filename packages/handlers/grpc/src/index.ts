@@ -539,6 +539,10 @@ export default class GrpcHandler implements MeshHandler {
         string,
         protobufjs.IField & { comment: string; keyType?: string },
       ][];
+      const oneofEntries = nested.oneofs ?? {} as {
+        [k: string]: protobufjs.IOneOf;
+    };
+
       if (fieldEntries.length) {
         const inputTC = this.schemaComposer.createInputTC({
           name: inputTypeName,
@@ -550,8 +554,9 @@ export default class GrpcHandler implements MeshHandler {
           description,
           fields: {},
         });
-        for (const [fieldName, { type, rule, comment, keyType, options }] of fieldEntries) {
+        for (const [fieldName, { type, rule, comment, keyType }] of fieldEntries) {
           logger.debug(`Visiting ${currentPath}.nested.fields[${fieldName}]`);
+          const isOptional = oneofEntries[`_${fieldName}`]?.oneof.includes(fieldName)
           const baseFieldTypePath = type.split('.');
           inputTC.addFields({
             [fieldName]: {
@@ -566,7 +571,7 @@ export default class GrpcHandler implements MeshHandler {
                     baseFieldTypePath,
                   );
                   fieldInputTypeName = getTypeName(this.schemaComposer, fieldTypePath, true);
-                  if (!options?.proto3_optional) {
+                  if (!isOptional) {
                     fieldInputTypeName = fieldInputTypeName + '!';
                   }
                 }
@@ -588,7 +593,7 @@ export default class GrpcHandler implements MeshHandler {
                     baseFieldTypePath,
                   );
                   fieldTypeName = getTypeName(this.schemaComposer, fieldTypePath, false);
-                  if (!options?.proto3_optional) {
+                  if (!isOptional) {
                     fieldTypeName = fieldTypeName + '!';
                   }
                 }
