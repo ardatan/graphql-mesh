@@ -1,5 +1,33 @@
 # @graphql-mesh/raml
 
+## 0.96.0
+
+### Minor Changes
+
+- [#6222](https://github.com/ardatan/graphql-mesh/pull/6222)
+  [`5c6a8f784`](https://github.com/ardatan/graphql-mesh/commit/5c6a8f784a787641b90349e584b49de629cc41ff)
+  Thanks [@ardatan](https://github.com/ardatan)! - BREAKING: Drop bundles, you can use the SDL
+  output from the artifacts later as a `source` of the handler
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5c6a8f784`](https://github.com/ardatan/graphql-mesh/commit/5c6a8f784a787641b90349e584b49de629cc41ff)]:
+  - @omnigraph/raml@0.96.0
+  - @graphql-mesh/types@0.96.0
+  - @graphql-mesh/store@0.96.0
+  - @graphql-mesh/utils@0.96.0
+
+## 0.95.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @omnigraph/raml@0.95.12
+  - @graphql-mesh/utils@0.95.8
+  - @graphql-mesh/store@0.95.8
+  - @graphql-mesh/types@0.95.8
+
 ## 0.95.11
 
 ### Patch Changes

@@ -552,9 +552,6 @@
         "responseCache": {
           "$ref": "#/definitions/ResponseCacheConfig"
         },
-        "serializeHeaders": {
-          "$ref": "#/definitions/SerializeHeadersConfig"
-        },
         "snapshot": {
           "$ref": "#/definitions/SnapshotPluginConfig",
           "description": "Configuration for Snapshot extension"
@@ -994,8 +991,7 @@
       "title": "JsonSchemaHandler",
       "properties": {
         "source": {
-          "type": "string",
-          "description": "Path to the bundle file"
+          "type": "string"
         },
         "endpoint": {
           "type": "string"
@@ -1044,15 +1040,6 @@
         },
         "queryStringOptions": {
           "$ref": "#/definitions/QueryStringOptions"
-        },
-        "bundlePath": {
-          "type": "string",
-          "description": "Will be removed later"
-        },
-        "bundleHeaders": {
-          "type": "object",
-          "properties": {},
-          "description": "Will be removed later"
         },
         "timeout": {
           "type": "integer",
@@ -1950,9 +1937,6 @@
         "timeout": {
           "type": "integer",
           "description": "Timeout for the HTTP request in milliseconds"
-        },
-        "bundle": {
-          "type": "boolean"
         }
       },
       "required": ["source"]
@@ -2732,21 +2716,6 @@
       },
       "required": ["coordinate", "ttl"]
     },
-    "SerializeHeadersConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "SerializeHeadersConfig",
-      "properties": {
-        "names": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false
-        }
-      },
-      "required": ["names"]
-    },
     "SnapshotPluginConfig": {
       "additionalProperties": false,
       "type": "object",
@@ -3020,9 +2989,6 @@
               "additionalItems": true
             }
           ]
-        },
-        "bundle": {
-          "type": "boolean"
         },
         "timeout": {
           "type": "integer",

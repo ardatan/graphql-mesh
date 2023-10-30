@@ -10,7 +10,6 @@ type RAMLHandler {
   ignoreErrorResponses: Boolean
   selectQueryOrMutationField: [RAMLSelectQueryOrMutationFieldConfig]
   queryParams: Any
-  bundle: Boolean
 
   """
   Timeout for the HTTP request in milliseconds
