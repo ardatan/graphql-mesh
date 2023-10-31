@@ -6,12 +6,8 @@ upstream.route({
   method: ['GET', 'POST'],
   url: '/pet/:petId',
   async handler(request, reply) {
-    const { petId } = request.params as { petId: string };
-
-    if (petId === 'pet200') {
-      return reply.status(200).send({ name: 'Bob' });
-    }
-
-    return reply.status(500).send({ error: `Error` });
+    return reply.status(200).send({
+      "id": "0fc9111f-570d-4ebe-a72e-ff4eb274bc65",
+    });
   },
 });

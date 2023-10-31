@@ -1,0 +1,12 @@
+type NewPetResponse {
+  foo: String
+}
+
+union NewPetResponseUnion = Error | NewPetResponse
+
+extend type Query {
+  newPet(
+    petId: String!
+    extraId: String!
+  ): NewPetResponseUnion
+}
