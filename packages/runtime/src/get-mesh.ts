@@ -46,6 +46,7 @@ import {
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 import { MESH_CONTEXT_SYMBOL } from './constants.js';
 import { getInContextSDK } from './in-context-sdk.js';
+import { useSJS } from './sjs.js';
 import { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types.js';
 import { useSubschema } from './useSubschema.js';
 import { isStreamOperation, iterateAsync } from './utils.js';
@@ -311,6 +312,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
               },
             },
           ),
+          useSJS(),
         ]),
     useExtendContext(() => {
       if (!inContextSDK) {
