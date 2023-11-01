@@ -2772,17 +2772,10 @@
   dependencies:
     tslib "^2.5.0"
 
-"@envelop/types@5.0.0":
+"@envelop/types@5.0.0", "@envelop/types@^5.0.0":
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/@envelop/types/-/types-5.0.0.tgz#3ae59b50ec31d4bdcc7bd0b47e9c8cf2ac44b0ff"
   integrity sha512-IPjmgSc4KpQRlO4qbEDnBEixvtb06WDmjKfi/7fkZaryh5HuOmTtixe1EupQI5XfXO8joc3d27uUZ0QdC++euA==
-  dependencies:
-    tslib "^2.5.0"
-
-"@envelop/types@^4.0.0":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@envelop/types/-/types-4.0.1.tgz#145690d8266a003cdb06dd58fa1236e3c80050a9"
-  integrity sha512-ULo27/doEsP7uUhm2iTnElx13qTO6I5FKvmLoX41cpfuw8x6e0NUFknoqhEsLzAbgz8xVS5mjwcxGCXh4lDYzg==
   dependencies:
     tslib "^2.5.0"
 
@@ -3175,19 +3168,19 @@
     tslib "2.6.2"
     zod "3.22.3"
 
-"@graphql-hive/client@^0.24.0", "@graphql-hive/client@^0.24.3":
-  version "0.24.3"
-  resolved "https://registry.yarnpkg.com/@graphql-hive/client/-/client-0.24.3.tgz#ec520aca97ff1fee0c6cbbd366736d103056d4b2"
-  integrity sha512-xBhnQXdSdvBSaRrlS/NYBdCrHMG+rzwlXeKgcblffem8jSWse5bo4ufmZH3e5PySg/vx2arkWiLR2uDpE+dB6w==
+"@graphql-hive/client@^0.25.0":
+  version "0.25.0"
+  resolved "https://registry.yarnpkg.com/@graphql-hive/client/-/client-0.25.0.tgz#9602ee81ebd8c9c1a737343ede59865781f3b49a"
+  integrity sha512-69QD8DrQ28SQKMhhwnr8eqtG+E93aQBMadfMspnM8zsYtdchI/B9XL3FVDiaNWapHFExOP83lIphbukHesaBlQ==
   dependencies:
     "@graphql-hive/core" "^0.2.3"
     "@graphql-tools/utils" "^10.0.0"
     async-retry "1.3.3"
-    axios "^1.2.1"
+    axios "^1.6.0"
     tiny-lru "8.0.2"
   optionalDependencies:
     "@apollo/server" "^4.0.0"
-    "@envelop/types" "^4.0.0"
+    "@envelop/types" "^5.0.0"
 
 "@graphql-hive/core@0.2.3", "@graphql-hive/core@^0.2.3":
   version "0.2.3"
@@ -6431,10 +6424,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@18.2.33", "@types/react@>=16":
-  version "18.2.33"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.33.tgz#055356243dc4350a9ee6c6a2c07c5cae12e38877"
-  integrity sha512-v+I7S+hu3PIBoVkKGpSYYpiBT1ijqEzWpzQD62/jm4K74hPpSP7FF9BnKG6+fg2+62weJYkkBWDJlZt5JO/9hg==
+"@types/react@*", "@types/react@18.2.34", "@types/react@>=16":
+  version "18.2.34"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.34.tgz#aed20f19473721ba328feb99d1ec3307ebc1a8dd"
+  integrity sha512-U6eW/alrRk37FU/MS2RYMjx0Va2JGIVXELTODaTIYgvWGCV4Y4TfTUzG8DdmpDNIT0Xpj/R7GfyHOJJrDttcvg==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -7745,7 +7738,7 @@ axios@0.21.4:
   dependencies:
     follow-redirects "^1.14.0"
 
-axios@^1.2.1, axios@^1.3.2:
+axios@^1.3.2, axios@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/axios/-/axios-1.6.0.tgz#f1e5292f26b2fd5c2e66876adc5b06cdbd7d2102"
   integrity sha512-EZ1DYihju9pwVB+jg67ogm+Tmqc6JmhamRN6I4Zt8DfZu5lbcQGw3ozH9lFejSJgs/ibaef3A9PMXPLeefFGJg==
