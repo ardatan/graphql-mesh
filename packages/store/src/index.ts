@@ -222,6 +222,7 @@ export class MeshStore {
           if (!this.flags.readonly) {
             await proxy.set(newValue);
           }
+          return newValue;
         }
         return value;
       },
