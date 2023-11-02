@@ -15,6 +15,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Admin'
+  /editor:
+    get:
+      summary: 'Get editor'
+      operationId: 'getEditor'
+      responses:
+        200:
+          description: 'Success'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Editor'
 components:
   schemas:
     User:
@@ -45,3 +56,15 @@ components:
             admin:
               type: 'boolean'
               description: 'The admin'
+    Editor:
+      type: 'object'
+      required:
+        - type
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: 'object'
+          properties:
+            type:
+              type: 'string'
+              description: 'The type'
+              nullable: true

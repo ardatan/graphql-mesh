@@ -21,7 +21,6 @@ import {
   InterfaceTypeComposer,
   isSomeInputTypeComposer,
   ListComposer,
-  NonNullComposer,
   ObjectTypeComposer,
   ObjectTypeComposerFieldConfigMap,
   ObjectTypeComposerFieldConfigMapDefinition,
@@ -851,6 +850,24 @@ export function getComposerFromJSONSchema(
             });
           }
         }
+
+        let allOf;
+        if (subSchema.allOf) {
+          allOf = subSchema.allOf.map((schema: any) => {
+            // if this is a referenced schema we don't modify it.
+            if (schema.$resolvedRef) {
+              return schema;
+            }
+            if (!schema.required) {
+              schema.required = [];
+            }
+            // we apply the required field of the parent schema to the child schema
+            // this mimics the behavior of open api / swagger.
+            schema.required = schema.required.concat(subSchema.required);
+            return schema;
+          });
+        }
+
         return {
           input: schemaComposer.createInputTC({
             name: getValidTypeName({
@@ -870,7 +887,7 @@ export function getComposerFromJSONSchema(
             : schemaComposer.createObjectTC(config),
           ...subSchema,
           ...(subSchema.properties ? { properties: { ...subSchema.properties } } : {}),
-          ...(subSchema.allOf ? { allOf: [...subSchema.allOf] } : {}),
+          allOf,
           ...(subSchema.additionalProperties
             ? {
                 additionalProperties:
@@ -1067,7 +1084,6 @@ export function getComposerFromJSONSchema(
                   typeof newField.type?.getUnwrappedTC === 'function'
                     ? newField.type.getUnwrappedTC()
                     : undefined;
-
                 if (
                   existingFieldUnwrappedTC instanceof ObjectTypeComposer &&
                   newFieldUnwrappedTC instanceof ObjectTypeComposer
@@ -1076,8 +1092,7 @@ export function getComposerFromJSONSchema(
                     existingFieldUnwrappedTC.getFields(),
                     newFieldUnwrappedTC.getFields(),
                   );
-                } else if (!(existingFieldUnwrappedTC instanceof NonNullComposer)) {
-                  // only overwrite this if the existing field is nullable
+                } else {
                   fieldMap[fieldName] = newField;
                 }
               }
@@ -1343,10 +1358,13 @@ export function getComposerFromJSONSchema(
                     nullable = false;
                   }
                   // Nullable has more priority
-                  if (typeof typeComposers.nullable !== 'undefined') {
-                    nullable = typeComposers.nullable;
+                  if (typeComposers.nullable === false) {
+                    nullable = false;
                   }
-                  if (typeComposers.writeOnly) {
+                  if (typeComposers.nullable === true) {
+                    nullable = true;
+                  }
+                  if (subSchemaAndTypeComposers.properties[propertyName].writeOnly) {
                     nullable = true;
                   }
                   return !nullable ? typeComposers.output.getTypeNonNull() : typeComposers.output;

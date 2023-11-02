@@ -6,7 +6,7 @@ import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAP
 let createdSchema: GraphQLSchema;
 
 describe('OpenAPI loader: Required allOf', () => {
-  it('type should be required in all types', async () => {
+  it('type should be correct for required and nullable', async () => {
     const endpoint = `http://localhost:3000/`;
     createdSchema = await loadGraphQLSchemaFromOpenAPI('RequiredAllOf', {
       async fetch(input, init) {
@@ -19,7 +19,7 @@ describe('OpenAPI loader: Required allOf', () => {
       source: './fixtures/required-allof.yml',
       cwd: __dirname,
     });
-
+    console.log(printSchemaWithDirectives(createdSchema));
     expect(printSchemaWithDirectives(createdSchema)).toMatchInlineSnapshot(`
 "schema {
   query: Query
@@ -52,9 +52,18 @@ interface User @discriminator(field: "type") {
 "The Name."
 scalar query_getAdmin_allOf_0_name @length(min: null, max: 100)
 
+type Editor implements User {
+  "The Name."
+  name: query_getAdmin_allOf_0_name
+  "The type"
+  type: String
+}
+
 type Query @globalOptions(sourceName: "RequiredAllOf", endpoint: "http://localhost:3000/\") {
   "Get admin"
   getAdmin: Admin @httpOperation(path: "/admin", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  "Get editor"
+  getEditor: Editor @httpOperation(path: "/editor", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
 }
 
 scalar ObjMap
