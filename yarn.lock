@@ -201,10 +201,10 @@
   resolved "https://registry.yarnpkg.com/@apollo/cache-control-types/-/cache-control-types-1.0.3.tgz#5da62cf64c3b4419dabfef4536b57a40c8ff0b47"
   integrity sha512-F17/vCp7QVwom9eG7ToauIKdAxpSoadsJnqIfyryLFSkLSOEqu+eC5Z3N8OXcUVStuOMcNHlyraRsA6rRICu4g==
 
-"@apollo/client@3.8.6", "@apollo/client@^3.7.0", "@apollo/client@~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0":
-  version "3.8.6"
-  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.8.6.tgz#d90f2a9b0147d8fc96c7a867588b5b2165cc4085"
-  integrity sha512-FnHg3vhQP8tQzgBs6oTJCFFIbovelDGYujj6MK7CJneiHf62TJstCIO0Ot4A1h7XrgFEtgl8a/OgajQWqrTuYw==
+"@apollo/client@3.8.7", "@apollo/client@^3.7.0", "@apollo/client@~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0":
+  version "3.8.7"
+  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.8.7.tgz#090b1518f513503b9a6a690ee3eaec49529822e1"
+  integrity sha512-DnQtFkQrCyxHTSa9gR84YRLmU/al6HeXcLZazVe+VxKBmx/Hj4rV8xWtzfWYX5ijartsqDR7SJgV037MATEecA==
   dependencies:
     "@graphql-typed-document-node/core" "^3.1.1"
     "@wry/context" "^0.7.3"
@@ -3140,10 +3140,10 @@
     parse-filepath "^1.0.2"
     tslib "~2.5.0"
 
-"@graphql-hive/cli@0.30.2":
-  version "0.30.2"
-  resolved "https://registry.yarnpkg.com/@graphql-hive/cli/-/cli-0.30.2.tgz#4a16536a433b8010b7df6b966fdb8df4943be409"
-  integrity sha512-vHz8QUcD+W4DCrwNKpJNUbqHo8Z8r+rFNZjSI7G9g8PDTBoJ3RbyyXgpaOrhZpLxguC2dLaaPx4oufNmrjuBKg==
+"@graphql-hive/cli@0.30.3":
+  version "0.30.3"
+  resolved "https://registry.yarnpkg.com/@graphql-hive/cli/-/cli-0.30.3.tgz#9fa999187e47a7f919524270732615f24fd33dcc"
+  integrity sha512-pgmt2WyksZ1SsicBpZEm8xcIApeQtwVej7d+8W74jujEVTk6+ebBR+sWKP5hmBN467+GFUeQE/ODe4CcewdOkw==
   dependencies:
     "@graphql-hive/core" "0.2.3"
     "@graphql-inspector/core" "5.0.1"
@@ -3155,8 +3155,8 @@
     "@graphql-tools/utils" "10.0.3"
     "@graphql-typed-document-node/core" "3.2.0"
     "@oclif/core" "^2.8.5"
-    "@oclif/plugin-help" "5.2.19"
-    "@oclif/plugin-update" "3.2.3"
+    "@oclif/plugin-help" "5.2.20"
+    "@oclif/plugin-update" "3.2.4"
     "@whatwg-node/fetch" "0.9.13"
     colors "1.4.0"
     env-ci "7.3.0"
@@ -3166,12 +3166,12 @@
     log-symbols "4.1.0"
     mkdirp "2.1.6"
     tslib "2.6.2"
-    zod "3.22.3"
+    zod "3.22.4"
 
-"@graphql-hive/client@^0.25.0":
-  version "0.25.0"
-  resolved "https://registry.yarnpkg.com/@graphql-hive/client/-/client-0.25.0.tgz#9602ee81ebd8c9c1a737343ede59865781f3b49a"
-  integrity sha512-69QD8DrQ28SQKMhhwnr8eqtG+E93aQBMadfMspnM8zsYtdchI/B9XL3FVDiaNWapHFExOP83lIphbukHesaBlQ==
+"@graphql-hive/client@^0.26.0":
+  version "0.26.0"
+  resolved "https://registry.yarnpkg.com/@graphql-hive/client/-/client-0.26.0.tgz#6f70edafdfdf338bf566e978c2a126fcb28f977f"
+  integrity sha512-oPygB1DjChXsAMLJbmpUDRURlqRXLQOddmwxujZg1QU+sLJiR3GI61lMl9KCFZu4CgUeY1oVQg0oYHp3JwUPtQ==
   dependencies:
     "@graphql-hive/core" "^0.2.3"
     "@graphql-tools/utils" "^10.0.0"
@@ -4507,9 +4507,9 @@
   integrity sha512-CtAN1bw3TPEvCxz1RLxSHNMuK9SsAkDMcj/DETpJHXVjaqP75Im1nXFYaal+BwFEz7zpe6XTEstDZT3irB/BZw==
 
 "@neo4j/graphql@^4.0.0":
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-4.4.0.tgz#8a764a6f9b3fa8d8bb6b55f09439a423f86e99de"
-  integrity sha512-6H/dF5VUvcGPjSp90hDBT9HfTeUND9Ow6wGijagYS8EQH5uqH4rPL8dF8pnHNfWqsDdF8I7JYlpuGlFLaQcHqQ==
+  version "4.4.1"
+  resolved "https://registry.yarnpkg.com/@neo4j/graphql/-/graphql-4.4.1.tgz#60c23070b07715dc8b28bb21b865f23232b883d7"
+  integrity sha512-YImv3+ekAQeF44CshO2h34rEKKVl1OOpx9llwvVGhrOHnoIS/YHKFLj2gIcCoAdN/fWHp6K/j3MWQjunJmL0EQ==
   dependencies:
     "@apollo/subgraph" "^2.2.3"
     "@graphql-tools/merge" "^9.0.0"
@@ -4524,7 +4524,7 @@
     graphql-compose "^9.0.8"
     graphql-parse-resolve-info "^4.12.3"
     graphql-relay "^0.10.0"
-    jose "^4.13.1"
+    jose "^5.0.0"
     pluralize "^8.0.0"
     semver "^7.5.4"
     typescript-memoize "^1.1.1"
@@ -4759,17 +4759,17 @@
     wordwrap "^1.0.0"
     wrap-ansi "^7.0.0"
 
-"@oclif/plugin-help@5.2.19":
-  version "5.2.19"
-  resolved "https://registry.yarnpkg.com/@oclif/plugin-help/-/plugin-help-5.2.19.tgz#be8019730c6540eefeb30e95fe13ff0b91364bf0"
-  integrity sha512-gf6/dFtzMJ8RA4ovlBCBGJsZsd4jPXhYWJho+Gh6KmA+Ev9LupoExbE0qT+a2uHJyHEvIg4uX/MBW3qdERD/8g==
+"@oclif/plugin-help@5.2.20":
+  version "5.2.20"
+  resolved "https://registry.yarnpkg.com/@oclif/plugin-help/-/plugin-help-5.2.20.tgz#4035a0ac231f95fb8e334da342175e3ca00f6abc"
+  integrity sha512-u+GXX/KAGL9S10LxAwNUaWdzbEBARJ92ogmM7g3gDVud2HioCmvWQCDohNRVZ9GYV9oKwZ/M8xwd6a1d95rEKQ==
   dependencies:
     "@oclif/core" "^2.15.0"
 
-"@oclif/plugin-update@3.2.3":
-  version "3.2.3"
-  resolved "https://registry.yarnpkg.com/@oclif/plugin-update/-/plugin-update-3.2.3.tgz#133b42efff532d62be1f260612fd2c23ae44be25"
-  integrity sha512-JVKwp4ysG9GU4RmG59MZYMunz8onRI+wEQzJThyYkUFd0VfZviYt2FHsyoNtxi30l0tInC8APgKp1pCCO4e+FQ==
+"@oclif/plugin-update@3.2.4":
+  version "3.2.4"
+  resolved "https://registry.yarnpkg.com/@oclif/plugin-update/-/plugin-update-3.2.4.tgz#02ebf1e9f9a4b004773865c06f54d8c5c46eea0f"
+  integrity sha512-41G7NTKND+yTpb8LHlvlMIcNoaEUIIJuEwju9igL+ME/pN/53opeXgFV2IjjeFiexXj50OfesY9OQ6lqOZHw+g==
   dependencies:
     "@oclif/core" "^2.11.8"
     chalk "^4"
@@ -5069,10 +5069,10 @@
   resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.5.1.tgz#5f1b518ec5fa54437c0b7c4a821546c64fed6922"
   integrity sha512-6i/8UoL0P5y4leBIGzvkZdS85RDMG9y1ihZzmTZQ5LdHUYmZ7pKFoj8X0236s3lusPs1Fa5HTQUpwI+UfTcmeA==
 
-"@sinclair/typebox@0.31.21", "@sinclair/typebox@^0.31.18":
-  version "0.31.21"
-  resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.31.21.tgz#d52d8e35f71e5651042aa0237e918e4b21fbbbf8"
-  integrity sha512-Wtq/K44EMkREaXytK+2c5DrygtYsH7ZxT0StQL8HMJz2BoOM7NZ/xfrUFBVuZxDrhJCoXf5Im282P2CCz5DHwQ==
+"@sinclair/typebox@0.31.22", "@sinclair/typebox@^0.31.18":
+  version "0.31.22"
+  resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.31.22.tgz#f13fa4050a7e883d252365902e38186fa0dc8ab8"
+  integrity sha512-CKviMgpcXd8q8IsQQD8cCleswe4/EkQRcOqtVQcP1e+XUyszjJYjgL5Dtf3XunWZc2zEGmQPqJEsq08NiW9xfw==
 
 "@sinclair/typebox@^0.24.1":
   version "0.24.51"
@@ -14804,10 +14804,15 @@ jiti@^1.19.1:
   resolved "https://registry.yarnpkg.com/jiti/-/jiti-1.20.0.tgz#2d823b5852ee8963585c8dd8b7992ffc1ae83b42"
   integrity sha512-3TV69ZbrvV6U5DfQimop50jE9Dl6J8O1ja1dvBbMba/sZ3YBEQqJ2VZRoQPVnhlzjNtU1vaXRZVrVjU4qtm8yA==
 
-jose@^4.13.1, jose@^4.14.6:
+jose@^4.14.6:
   version "4.15.4"
   resolved "https://registry.yarnpkg.com/jose/-/jose-4.15.4.tgz#02a9a763803e3872cf55f29ecef0dfdcc218cc03"
   integrity sha512-W+oqK4H+r5sITxfxpSU+MMdr/YSWGvgZMQDIsNoBDGGy4i7GBPTtvFKibQzW06n3U3TqHjhvBJsirShsEJ6eeQ==
+
+jose@^5.0.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/jose/-/jose-5.1.0.tgz#b4dcfa037b3b30ad9d64949b51bc6f173cbd61cf"
+  integrity sha512-H+RVqxA6apaJ0rcQYupKYhos7uosAiF42gUcWZiwhICWMphDULFj/CRr1R0tV/JCv9DEeJaSyYYpc9luHHNT4g==
 
 js-levenshtein@^1.1.6:
   version "1.1.6"
@@ -22565,10 +22570,10 @@ undici-types@~5.26.4:
   resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-5.26.5.tgz#bcd539893d00b56e964fd2657a4866b221a65617"
   integrity sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==
 
-undici@5.27.0, undici@^5.22.1:
-  version "5.27.0"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-5.27.0.tgz#789f2e40ce982b5507899abc2c2ddeb2712b4554"
-  integrity sha512-l3ydWhlhOJzMVOYkymLykcRRXqbUaQriERtR70B9LzNkZ4bX52Fc8wbTDneMiwo8T+AemZXvXaTx+9o5ROxrXg==
+undici@5.27.1, undici@^5.22.1:
+  version "5.27.1"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-5.27.1.tgz#d4a0154aff919f9eab81567fd651d8752a5b5d17"
+  integrity sha512-h0P6HVTlbcvF6wiX88+aoouMOuiKJ2TEGfcr+tEbr96OIizJaM4BhXJs/wxdDN/RD0F2yZCV/ylCVJy9PjQJIg==
   dependencies:
     "@fastify/busboy" "^2.0.0"
 
@@ -24034,10 +24039,10 @@ zod-validation-error@^1.5.0:
   resolved "https://registry.yarnpkg.com/zod-validation-error/-/zod-validation-error-1.5.0.tgz#2b355007a1c3b7fb04fa476bfad4e7b3fd5491e3"
   integrity sha512-/7eFkAI4qV0tcxMBB/3+d2c1P6jzzZYdYSlBuAklzMuCrJu5bzJfHS0yVAS87dRHVlhftd6RFJDIvv03JgkSbw==
 
-zod@3.22.3, zod@^3.20.2, zod@^3.20.6, zod@^3.21.4, zod@^3.22.3:
-  version "3.22.3"
-  resolved "https://registry.yarnpkg.com/zod/-/zod-3.22.3.tgz#2fbc96118b174290d94e8896371c95629e87a060"
-  integrity sha512-EjIevzuJRiRPbVH4mGc8nApb/lVLKVpmUhAaR5R5doKGfAnGJ6Gr3CViAVjP+4FWSxCsybeWQdcgCtbX+7oZug==
+zod@3.22.4, zod@^3.20.2, zod@^3.20.6, zod@^3.21.4, zod@^3.22.3:
+  version "3.22.4"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.22.4.tgz#f31c3a9386f61b1f228af56faa9255e845cf3fff"
+  integrity sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==
 
 zwitch@^2.0.0, zwitch@^2.0.4:
   version "2.0.4"
