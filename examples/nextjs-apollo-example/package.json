@@ -17,7 +17,7 @@
     "@graphql-mesh/runtime": "0.97.0",
     "apollo-server-micro": "3.12.1",
     "graphql": "16.8.1",
-    "next": "14.0.0",
+    "next": "14.0.1",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
