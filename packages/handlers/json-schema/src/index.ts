@@ -46,6 +46,11 @@ export default class JsonSchemaHandler implements MeshHandler {
     this.pubsub = pubsub;
     this.logger = logger;
     this.importFn = importFn;
+    if ('bundlePath' in config || 'bundleHeaders' in config) {
+      throw new Error(
+        `JSON Schema bundles are no longer available! You can directly use the generated SDL in \`source\` instead\nSee: https://the-guild.dev/graphql/mesh/docs/handlers/openapi#loading-the-sources-from-a-cdn-like-graphql-hive-or-schema-registry`,
+      );
+    }
   }
 
   async getNonExecutableSchema() {
