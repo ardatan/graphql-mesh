@@ -187,7 +187,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
       pubsub,
       cache,
       logger,
-      fetch: wrapFetchWithPlugins,
+      fetch: wrappedFetchFn,
       [MESH_CONTEXT_SYMBOL]: true,
     })),
     {

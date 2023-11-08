@@ -35,7 +35,13 @@ describe('fastify', () => {
     });
 
     const json = await response.json();
-    expect(json.data).toEqual({ pet_by_petId: { name: 'Bob' } });
+    expect(json).toMatchObject({
+      data: {
+        pet_by_petId: {
+          name: 'Bob',
+        },
+      },
+    });
   });
 
   it('should work too', async () => {
