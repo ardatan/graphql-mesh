@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/openapi",
-  "version": "0.96.0",
+  "version": "0.97.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "0.5.3",
-    "@omnigraph/openapi": "0.96.0"
+    "@omnigraph/openapi": "0.97.0"
   },
   "publishConfig": {
     "access": "public",

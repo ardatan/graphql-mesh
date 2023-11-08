@@ -1,5 +1,15 @@
 # json-machete
 
+## 0.97.0
+
+### Minor Changes
+
+- [#6230](https://github.com/ardatan/graphql-mesh/pull/6230)
+  [`47a50aa6d`](https://github.com/ardatan/graphql-mesh/commit/47a50aa6d1a1bb9766f0895b206756741c0f6769)
+  Thanks [@ardatan](https://github.com/ardatan)! - BREAKING: All the functions requires
+  `readFileOrUrl` instead of fetch function and/or import function, and they no longer need a logger
+  instance but `debugLogFn` for verbose logging
+
 ## 0.96.0
 
 ### Patch Changes

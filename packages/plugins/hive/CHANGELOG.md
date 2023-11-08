@@ -1,5 +1,24 @@
 # @graphql-mesh/plugin-hive
 
+## 0.96.1
+
+### Patch Changes
+
+- [#6239](https://github.com/ardatan/graphql-mesh/pull/6239)
+  [`95c340bed`](https://github.com/ardatan/graphql-mesh/commit/95c340bed250f397a919e1db9cbce2a04575eb69)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-hive/client@^0.25.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/client/v/0.25.0)
+    (from `^0.24.3`, in `dependencies`)
+
+- [#6243](https://github.com/ardatan/graphql-mesh/pull/6243)
+  [`b88df4e7e`](https://github.com/ardatan/graphql-mesh/commit/b88df4e7efcf1026692e16e113cc2664d6d4ed95)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/client@^0.26.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/client/v/0.26.0)
+    (from `^0.25.0`, in `dependencies`)
+
 ## 0.96.0
 
 ### Patch Changes

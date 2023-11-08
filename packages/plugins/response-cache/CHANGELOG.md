@@ -1,5 +1,16 @@
 # @graphql-mesh/plugin-response-cache
 
+## 0.96.1
+
+### Patch Changes
+
+- [#6233](https://github.com/ardatan/graphql-mesh/pull/6233)
+  [`78210d455`](https://github.com/ardatan/graphql-mesh/commit/78210d4550a4ec3c910c791abd5b6b804189d864)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-yoga/plugin-response-cache@3.1.0` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-response-cache/v/3.1.0)
+    (from `3.0.0`, in `dependencies`)
+
 ## 0.96.0
 
 ### Patch Changes
