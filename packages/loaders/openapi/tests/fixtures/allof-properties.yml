@@ -1,0 +1,58 @@
+openapi: 3.0.1
+info:
+  description: 'Schema'
+  version: '1.0.0'
+  title: 'MyAPI'
+paths:
+  /create:
+    post:
+      summary: 'Create users'
+      operationId: 'createUsers'
+      responses:
+        204:
+          description: 'Success'
+  /admin:
+    get:
+      summary: 'Get admin'
+      operationId: 'getAdmin'
+      responses:
+        200:
+          description: 'Success'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Admin'
+
+components:
+  schemas:
+    User:
+      type: 'object'
+      required:
+        - type
+      properties:
+        name:
+          type: 'string'
+          description: 'The name'
+          maxLength: 100
+        type:
+          type: 'string'
+          description: 'The type'
+      discriminator:
+        propertyName: type
+    Admin:
+      type: 'object'
+      required:
+        - type
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: 'object'
+          properties:
+            name:
+              type: 'string'
+              description: 'The name without maxLength'
+            type:
+              type: 'string'
+              description: 'The type'
+            admin:
+              type: 'boolean'
+              description: 'The admin'
