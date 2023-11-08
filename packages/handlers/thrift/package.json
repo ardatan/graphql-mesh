@@ -51,8 +51,8 @@
     "url-join": "4.0.1"
   },
   "devDependencies": {
-    "@types/thrift": "0.10.15",
-    "@types/url-join": "4.0.2"
+    "@types/thrift": "0.10.17",
+    "@types/url-join": "4.0.3"
   },
   "publishConfig": {
     "access": "public",

@@ -50,9 +50,9 @@
   },
   "devDependencies": {
     "@apollo/server": "4.9.5",
-    "@types/js-yaml": "4.0.8",
-    "@types/lodash.topath": "4.5.8",
-    "@types/object-hash": "3.0.5"
+    "@types/js-yaml": "4.0.9",
+    "@types/lodash.topath": "4.5.9",
+    "@types/object-hash": "3.0.6"
   },
   "publishConfig": {
     "access": "public",

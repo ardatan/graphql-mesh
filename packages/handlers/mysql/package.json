@@ -50,8 +50,8 @@
     "mysql-utilities": "^1.1.4"
   },
   "devDependencies": {
-    "@types/graphql-fields": "1.3.8",
-    "@types/mysql": "2.15.23"
+    "@types/graphql-fields": "1.3.9",
+    "@types/mysql": "2.15.24"
   },
   "publishConfig": {
     "access": "public",
