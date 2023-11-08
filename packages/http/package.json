@@ -44,11 +44,11 @@
     "graphql-yoga": "^5.0.0"
   },
   "devDependencies": {
-    "@types/lodash.get": "4.4.8",
+    "@types/lodash.get": "4.4.9",
     "@types/mkdirp": "1.0.2",
     "@types/rimraf": "3.0.2",
-    "@types/ws": "8.5.8",
-    "@types/yargs": "17.0.29"
+    "@types/ws": "8.5.9",
+    "@types/yargs": "17.0.31"
   },
   "publishConfig": {
     "access": "public",

@@ -55,9 +55,9 @@
     "url-join": "4.0.1"
   },
   "devDependencies": {
-    "@types/qs": "6.9.9",
-    "@types/to-json-schema": "0.2.3",
-    "@types/url-join": "4.0.2"
+    "@types/qs": "6.9.10",
+    "@types/to-json-schema": "0.2.4",
+    "@types/url-join": "4.0.3"
   },
   "publishConfig": {
     "access": "public",
