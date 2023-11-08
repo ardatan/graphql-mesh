@@ -106,7 +106,8 @@ function getExecuteFn(subschema: Subschema) {
               request.document,
               request.operationName,
               {
-                customJSONSerializer: true,
+                // TODO: Disable for now
+                customJSONSerializer: false,
                 disableLeafSerialization: true,
               },
             );
