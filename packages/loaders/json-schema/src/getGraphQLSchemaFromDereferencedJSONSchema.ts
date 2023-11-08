@@ -6,11 +6,13 @@ import {
   AddExecutionLogicToComposerOptions,
 } from './addExecutionLogicToComposer.js';
 import { getComposerFromJSONSchema } from './getComposerFromJSONSchema.js';
+import { CustomSchemaComposer } from './types.js';
 
 export async function getGraphQLSchemaFromDereferencedJSONSchema(
   name: string,
   opts: Omit<AddExecutionLogicToComposerOptions, 'schemaComposer'> & {
     fullyDeferencedSchema: JSONSchemaObject;
+    customSchemaComposer?: CustomSchemaComposer;
   },
 ) {
   const {
@@ -21,11 +23,13 @@ export async function getGraphQLSchemaFromDereferencedJSONSchema(
     endpoint,
     queryParams,
     queryStringOptions,
+    customSchemaComposer,
   } = opts;
   logger.debug(`Generating GraphQL Schema from the bundled JSON Schema`);
   const visitorResult = await getComposerFromJSONSchema(
     fullyDeferencedSchema,
     logger.child('getComposerFromJSONSchema'),
+    customSchemaComposer,
   );
 
   const schemaComposerWithoutExecutionLogic = visitorResult.output;

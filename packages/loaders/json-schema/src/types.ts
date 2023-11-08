@@ -1,6 +1,7 @@
 import { OperationTypeNode } from 'graphql';
+import { SchemaComposer } from 'graphql-compose';
 import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
-import { JSONSchema, JSONSchemaObject } from 'json-machete';
+import { JSONSchema, JSONSchemaObject, JSONSchemaVisitor } from 'json-machete';
 import { IStringifyOptions } from 'qs';
 import { ResolverData } from '@graphql-mesh/string-interpolation';
 import { Logger, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
@@ -20,6 +21,7 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   queryParams?: Record<string, string | number | boolean>;
   queryStringOptions?: IStringifyOptions;
   bundle?: boolean;
+  customSchemaComposer?: CustomSchemaComposer;
 }
 
 export interface JSONSchemaOperationResponseConfig {
@@ -107,3 +109,8 @@ export type OperationHeadersFactory = (
     method: HTTPMethod;
   },
 ) => PromiseOrValue<Record<string, string>>;
+
+export type CustomSchemaComposer = (
+  schema: JSONSchema,
+  composer: SchemaComposer,
+) => JSONSchemaVisitor;

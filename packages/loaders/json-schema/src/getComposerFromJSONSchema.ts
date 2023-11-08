@@ -51,7 +51,7 @@ import {
   GraphQLURL,
   GraphQLUUID,
 } from 'graphql-scalars';
-import { JSONSchema, JSONSchemaObject, visitJSONSchema } from 'json-machete';
+import { JSONSchema, JSONSchemaObject, JSONSchemaVisitor, visitJSONSchema } from 'json-machete';
 import { Logger } from '@graphql-mesh/types';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import {
@@ -71,6 +71,7 @@ import { getJSONSchemaStringFormatScalarMap } from './getJSONSchemaStringFormatS
 import { getUnionTypeComposers } from './getUnionTypeComposers.js';
 import { getValidTypeName } from './getValidTypeName.js';
 import { GraphQLFile, GraphQLVoid } from './scalars.js';
+import { CustomSchemaComposer } from './types.js';
 
 export interface TypeComposers {
   input?: AnyTypeComposer<any>;
@@ -88,6 +89,7 @@ export interface TypeComposers {
 export function getComposerFromJSONSchema(
   schema: JSONSchema,
   logger: Logger,
+  customSchemaComposer?: CustomSchemaComposer,
 ): Promise<TypeComposers> {
   const schemaComposer = new SchemaComposer();
   const formatScalarMap = getJSONSchemaStringFormatScalarMap();
@@ -99,6 +101,12 @@ export function getComposerFromJSONSchema(
 
   return visitJSONSchema(schema, {
     enter(subSchema: JSONSchema, { path, visitedSubschemaResultMap }) {
+      if (typeof customSchemaComposer === 'function') {
+        const result = customSchemaComposer(subSchema, schemaComposer);
+        if (result) {
+          return result;
+        }
+      }
       if (typeof subSchema === 'boolean' || subSchema.title === 'Any') {
         const typeComposer = schemaComposer.getAnyTC(GraphQLJSON);
         return subSchema
