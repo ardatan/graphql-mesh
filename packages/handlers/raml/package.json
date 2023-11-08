@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/raml",
-  "version": "0.96.0",
+  "version": "0.97.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -39,7 +39,7 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@omnigraph/raml": "0.96.0"
+    "@omnigraph/raml": "0.97.0"
   },
   "publishConfig": {
     "access": "public",

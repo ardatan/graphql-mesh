@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/raml",
-  "version": "0.96.0",
+  "version": "0.97.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -41,10 +41,10 @@
   "dependencies": {
     "@ardatan/raml-1-parser": "1.1.69",
     "@graphql-mesh/string-interpolation": "0.5.3",
-    "@omnigraph/json-schema": "0.96.0",
+    "@omnigraph/json-schema": "0.97.0",
     "@whatwg-node/fetch": "^0.9.0",
     "change-case": "4.1.2",
-    "json-machete": "0.96.0",
+    "json-machete": "0.97.0",
     "to-json-schema": "0.2.5"
   },
   "publishConfig": {
