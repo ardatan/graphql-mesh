@@ -1,9 +1,11 @@
 query GetCustomers {
-  getCustomers {
-    data {
-      id
-      name
-      email
+  GetCustomers {
+    ... on CustomerResourceCustomerList {
+      data {
+        id
+        name
+        email
+      }
     }
   }
 }

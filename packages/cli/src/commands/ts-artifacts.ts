@@ -154,6 +154,7 @@ export async function generateTsArtifacts(
     sdkConfig,
     fileType,
     codegenConfig = {},
+    pollingInterval,
   }: {
     unifiedSchema: GraphQLSchema;
     rawSources: readonly RawSourceOutput[];
@@ -168,6 +169,7 @@ export async function generateTsArtifacts(
     sdkConfig: YamlConfig.SDKConfig;
     fileType: 'ts' | 'json' | 'js';
     codegenConfig: any;
+    pollingInterval?: number;
   },
   cliParams: GraphQLMeshCLIParams,
 ) {
@@ -334,7 +336,7 @@ const rootStore = new MeshStore('${cliParams.artifactsDir}', new FsStoreStorageA
   importFn,
   fileType: ${JSON.stringify(fileType)},
 }), {
-  readonly: true,
+  readonly: ${!pollingInterval},
   validate: false
 });
 
@@ -342,8 +344,24 @@ ${[...meshConfigCodes].join('\n')}
 
 let meshInstance$: Promise<MeshInstance> | undefined;
 
+export const pollingInterval = ${pollingInterval || null};
+
 export function ${cliParams.builtMeshFactoryName}(): Promise<MeshInstance> {
   if (meshInstance$ == null) {
+    if (pollingInterval) {
+      setInterval(() => {
+        getMeshOptions()
+        .then(meshOptions => getMesh(meshOptions))
+        .then(newMesh =>
+          meshInstance$.then(oldMesh => {
+            oldMesh.destroy()
+            meshInstance$ = Promise.resolve(newMesh)
+          })
+        ).catch(err => {
+          console.error("Mesh polling failed so the existing version will be used:", err);
+        });
+      }, pollingInterval)
+    }
     meshInstance$ = getMeshOptions().then(meshOptions => getMesh(meshOptions)).then(mesh => {
       const id = mesh.pubsub.subscribe('destroy', () => {
         meshInstance$ = undefined;

@@ -21,7 +21,6 @@ export function createMeshHTTPHandler<TServerContext>({
 }) {
   let readyFlag = false;
   let logger: Logger = new DefaultLogger('Mesh HTTP');
-  let mesh$: Promise<MeshInstance>;
 
   const {
     cors: corsConfig,
@@ -33,9 +32,18 @@ export function createMeshHTTPHandler<TServerContext>({
     // trustProxy = 'loopback',
   } = rawServeConfig;
 
+  getBuiltMesh()
+    .then(mesh => {
+      readyFlag = true;
+      logger = mesh.logger.child('HTTP');
+    })
+    .catch(err => {
+      logger.error(err);
+    });
+
   return createServerAdapter<TServerContext>(
     graphqlHandler({
-      getBuiltMesh: () => mesh$,
+      getBuiltMesh,
       playgroundTitle,
       playgroundEnabled,
       graphqlEndpoint: graphqlPath,
@@ -46,13 +54,6 @@ export function createMeshHTTPHandler<TServerContext>({
       plugins: [
         {
           onRequest({ request, url, endResponse }): void | Promise<void> {
-            if (!mesh$) {
-              mesh$ = getBuiltMesh().then(mesh => {
-                readyFlag = true;
-                logger = mesh.logger.child('HTTP');
-                return mesh;
-              });
-            }
             switch (url.pathname) {
               case '/healthcheck':
                 endResponse(
@@ -102,7 +103,7 @@ export function createMeshHTTPHandler<TServerContext>({
             }
             withCookies(request);
             if (readyFlag) {
-              return mesh$.then(async mesh => {
+              return getBuiltMesh().then(async mesh => {
                 for (const eventName of mesh.pubsub.getEventNames()) {
                   if (eventName === `webhook:${request.method.toLowerCase()}:${url.pathname}`) {
                     const body = await request.text();
