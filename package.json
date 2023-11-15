@@ -12,10 +12,14 @@
       "packages/transforms/*",
       "packages/mergers/*",
       "packages/plugins/*",
+      "packages/fusion/*",
       "examples/*",
+      "examples/integrations/*",
       "examples/federation-example/*",
+      "examples/federation-example/services/*",
       "examples/graphql-file-upload-example/frontend",
       "packages/loaders/*",
+      "packages/transports/*",
       "examples/hive-example/gateway",
       "examples/hive-example/sources/*"
     ]
@@ -23,7 +27,7 @@
   "packageManager": "yarn@1.22.21",
   "scripts": {
     "build": "bob build",
-    "build-test-artifacts": "yarn workspace json-schema-example build && yarn workspace example-fastify build",
+    "build-test-artifacts": "yarn workspace json-schema-example build",
     "build:website": "cd website && yarn build",
     "ci:lint": "eslint --output-file eslint_report.json --ext .ts --format json \"./packages/**/src/**/*.ts\"",
     "clean": "rm -rf packages/**/dist packages/**/**/dist examples/**/node_modules/.bin/*mesh* .bob",
@@ -37,7 +41,6 @@
     "prebuild": "yarn clean && yarn generate-config-schema",
     "prebuild:website": "yarn build",
     "prerelease": "yarn build",
-    "pretest:integration": "yarn workspace example-fastify build",
     "prettier": "prettier --write --list-different .",
     "prettier:check": "prettier --check .",
     "release": "changeset publish",

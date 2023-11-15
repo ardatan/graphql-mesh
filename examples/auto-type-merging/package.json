@@ -1,0 +1,19 @@
+{
+  "name": "auto-type-merging-example",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "compose": "node ../../packages/compose-cli/dist/cjs/bin.js",
+    "serve": "node ../../packages/serve-cli/dist/cjs/bin.js",
+    "start:vaccine": "yarn ts-node vaccination/index.ts"
+  },
+  "devDependencies": {
+    "@graphql-mesh/compose-cli": "^0.0.0",
+    "@graphql-mesh/serve-cli": "^0.0.0",
+    "@graphql-yoga/plugin-defer-stream": "^3.1.1",
+    "graphql": "^16.8.1",
+    "graphql-yoga": "^5.0.0",
+    "ts-node": "^10.9.1"
+  }
+}

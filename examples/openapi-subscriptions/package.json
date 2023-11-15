@@ -3,9 +3,10 @@
   "version": "0.7.6",
   "private": true,
   "scripts": {
-    "start": "concurrently \"yarn start:api\" \"yarn start:mesh\"",
-    "start:api": "ts-node-dev api/index.ts",
-    "start:mesh": "mesh dev"
+    "compose": "node ../../packages/compose-cli/dist/cjs/bin.js",
+    "serve": "node ../../packages/serve-cli/dist/cjs/bin.js",
+    "start": "concurrently \"yarn start:api\" \"yarn serve\"",
+    "start:api": "ts-node-dev api/index.ts"
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.88.5",

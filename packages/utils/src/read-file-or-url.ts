@@ -1,6 +1,7 @@
 import { DEFAULT_SCHEMA, load as loadYamlFromJsYaml, Schema, Type } from 'js-yaml';
 import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import { ImportFn, Logger, MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
+import { fetch } from '@whatwg-node/fetch';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
 
 export interface ReadFileOrUrlOptions extends MeshFetchRequestInit {
@@ -118,7 +119,8 @@ export async function readFile<T>(
 
 export async function readUrl<T>(path: string, config: ReadFileOrUrlOptions): Promise<T> {
   const { allowUnknownExtensions, fallbackFormat } = config || {};
-  config.headers = config.headers || {};
+  config.headers ||= {};
+  config.fetch ||= fetch;
   const response = await config.fetch(path, config);
   const contentType = response.headers?.get('content-type') || '';
   const responseText = await response.text();

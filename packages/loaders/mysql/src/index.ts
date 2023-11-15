@@ -1,4 +1,5 @@
 import { GraphQLSchema } from 'graphql';
+import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { getMySQLExecutor } from './execution.js';
 import { loadGraphQLSchemaFromMySQL, LoadGraphQLSchemaFromMySQLOpts } from './schema.js';
 
@@ -17,11 +18,14 @@ export interface MySQLTransportEntry {
   location: string;
 }
 
-export function getSubgraphExecutor(
-  _transportEntry: MySQLTransportEntry,
-  getSubgraph: () => GraphQLSchema,
-) {
+export function getSubgraphExecutor(transportContext: {
+  getSubgraph: () => GraphQLSchema;
+  pubsub: MeshPubSub;
+  logger: Logger;
+}) {
   return getMySQLExecutor({
-    subgraph: getSubgraph(),
+    subgraph: transportContext.getSubgraph(),
+    pubsub: transportContext.pubsub,
+    logger: transportContext.logger,
   });
 }

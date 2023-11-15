@@ -1,46 +1,29 @@
+import { readFileSync } from 'fs';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { ExecutionResult } from 'graphql';
-import { findAndParseConfig } from '@graphql-mesh/cli';
-import { ProcessedConfig } from '@graphql-mesh/config';
-import { createMeshHTTPHandler } from '@graphql-mesh/http';
-import { getMesh } from '@graphql-mesh/runtime';
+import { createServeRuntime, useCustomFetch } from '@graphql-mesh/serve-runtime';
+import { PubSub } from '@graphql-mesh/utils';
 import { createApp } from '../api/app';
+import { serveConfig } from '../mesh.config';
 
 describe('OpenAPI Subscriptions', () => {
   if (process.versions.node.startsWith('14')) {
     it('dummy', () => {});
     return;
   }
-  let config: ProcessedConfig;
   let appWrapper: ReturnType<typeof createApp>;
-  let meshHandler: ReturnType<typeof createMeshHTTPHandler>;
-  beforeAll(async () => {
-    config = await findAndParseConfig({
-      dir: join(__dirname, '..'),
-    });
-    config.logger = {
-      info: () => {},
-      error: () => {},
-      warn: () => {},
-      debug: () => {},
-      log: () => {},
-      child() {
-        return this;
+  let meshServeRuntime: ReturnType<typeof createServeRuntime>;
+  beforeAll(() => {
+    meshServeRuntime = createServeRuntime({
+      ...serveConfig,
+      fetchAPI: {
+        fetch: (...args) => appWrapper.app.fetch(...args),
       },
-    };
-    const mesh$ = Promise.resolve().then(() =>
-      getMesh({
-        ...config,
-        fetchFn: appWrapper.app.fetch as any,
-      }),
-    );
-    meshHandler = createMeshHTTPHandler({
-      baseDir: join(__dirname, '..'),
-      getBuiltMesh: () => mesh$,
-      rawServeConfig: config.config.serve,
+      pubsub: new PubSub(),
+      supergraph: readFileSync(join(__dirname, '..', 'supergraph.graphql'), 'utf8'),
     });
-    appWrapper = createApp(meshHandler.fetch as any);
+    appWrapper = createApp((...args) => meshServeRuntime.fetch(...args));
   });
   afterAll(() => {
     appWrapper.dispose();
@@ -52,7 +35,7 @@ describe('OpenAPI Subscriptions', () => {
       'utf8',
     );
 
-    const startWebhookResponse = await meshHandler.fetch('http://localhost:4000/graphql', {
+    const startWebhookResponse = await meshServeRuntime.fetch('http://localhost:4000/graphql', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -77,7 +60,7 @@ describe('OpenAPI Subscriptions', () => {
       'utf8',
     );
 
-    const listenWebhookResponse = await meshHandler.fetch('http://localhost:4000/graphql', {
+    const listenWebhookResponse = await meshServeRuntime.fetch('http://localhost:4000/graphql', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

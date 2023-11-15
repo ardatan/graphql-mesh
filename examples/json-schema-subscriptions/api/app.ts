@@ -26,7 +26,18 @@ export function createApi(fetch = defaultFetch) {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(todo),
-        }).catch(console.log);
+        })
+          .then(res =>
+            res.text().then(resText =>
+              console.log('Webhook payload sent', {
+                status: res.status,
+                statusText: res.statusText,
+                body: resText,
+                headers: Object.fromEntries(res.headers.entries()),
+              }),
+            ),
+          )
+          .catch(err => console.error('Webhook payload failed', err));
         return Response.json(todo);
       },
     });

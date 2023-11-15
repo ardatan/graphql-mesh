@@ -1,7 +1,6 @@
 import moment from 'moment';
-import type { Resolvers } from './.mesh';
 
-export const resolvers: Resolvers = {
+export const resolvers = {
   Query: {
     async viewsInPastMonth(root, { project }, context, info) {
       const result =

@@ -21,7 +21,6 @@ import {
   MeshTransform,
   OnDelegateHook,
   OnFetchHook,
-  OnFetchHookDone,
   OnFetchHookPayload,
   RawSourceOutput,
 } from '@graphql-mesh/types';
@@ -32,6 +31,7 @@ import {
   groupTransforms,
   parseWithCache,
   PubSub,
+  wrapFetchWithHooks,
 } from '@graphql-mesh/utils';
 import { CreateProxyingResolverFn, Subschema, SubschemaConfig } from '@graphql-tools/delegate';
 import { normalizedExecutor } from '@graphql-tools/executor';
@@ -48,7 +48,7 @@ import { MESH_CONTEXT_SYMBOL } from './constants.js';
 import { getInContextSDK } from './in-context-sdk.js';
 import { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types.js';
 import { useSubschema } from './useSubschema.js';
-import { isStreamOperation, iterateAsync } from './utils.js';
+import { isStreamOperation } from './utils.js';
 
 type SdkRequester = (document: DocumentNode, variables?: any, operationContext?: any) => any;
 
@@ -82,40 +82,7 @@ export function wrapFetchWithPlugins(plugins: MeshPlugin<any>[]): MeshFetch {
       onFetchHooks.push(plugin.onFetch);
     }
   }
-  return function wrappedFetchFn(url, options, context, info) {
-    let fetchFn: MeshFetch;
-    const doneHooks: OnFetchHookDone[] = [];
-    function setFetchFn(newFetchFn: MeshFetch) {
-      fetchFn = newFetchFn;
-    }
-    const result$ = iterateAsync(
-      onFetchHooks,
-      onFetch =>
-        onFetch({
-          fetchFn,
-          setFetchFn,
-          url,
-          options,
-          context,
-          info,
-        }),
-      doneHooks,
-    );
-    function handleIterationResult() {
-      const response$ = fetchFn(url, options, context, info);
-      if (doneHooks.length === 0) {
-        return response$;
-      }
-      if (isPromise(response$)) {
-        return response$.then(response => handleOnFetchDone(response, doneHooks));
-      }
-      return handleOnFetchDone(response$, doneHooks);
-    }
-    if (isPromise(result$)) {
-      return result$.then(handleIterationResult);
-    }
-    return handleIterationResult();
-  } as MeshFetch;
+  return wrapFetchWithHooks(onFetchHooks);
 }
 
 // Use in-context-sdk for tracing
@@ -436,20 +403,4 @@ function extractDataOrThrowErrors<T>(result: ExecutionResult<T>): T {
     throw new AggregateError(result.errors);
   }
   return result.data;
-}
-
-function handleOnFetchDone(response: Response, onFetchDoneHooks: OnFetchHookDone[]) {
-  function setResponse(newResponse: Response) {
-    response = newResponse;
-  }
-  const result$ = iterateAsync(onFetchDoneHooks, onFetchDone =>
-    onFetchDone({
-      response,
-      setResponse,
-    }),
-  );
-  if (isPromise(result$)) {
-    return result$.then(() => response);
-  }
-  return response;
 }

@@ -5,17 +5,19 @@
   "private": true,
   "main": "build/main.js",
   "scripts": {
+    "build:mesh": "node ../../packages/compose-cli/dist/cjs/bin.js",
     "codegen": "thrift-typescript --target thrift-server --sourceDir ./src --outDir ./src/codegen",
     "start": "concurrently \"npm run start:thrift\" \"npm run start:mesh\"",
-    "start:mesh": "mesh dev",
+    "start:mesh": "node ../../packages/serve-cli/dist/cjs/bin.js",
     "start:thrift": "ts-node src/main.ts"
   },
   "dependencies": {
     "@creditkarma/thrift-server-core": "1.0.4",
     "@creditkarma/thrift-server-express": "1.0.4",
     "@creditkarma/thrift-typescript": "3.7.6",
-    "@graphql-mesh/cli": "0.88.5",
-    "@graphql-mesh/thrift": "0.97.1",
+    "@graphql-mesh/compose-cli": "0.0.0",
+    "@graphql-mesh/serve-cli": "0.0.0",
+    "@omnigraph/thrift": "0.0.2",
     "express": "4.18.2",
     "graphql": "16.8.1",
     "thrift": "0.19.0",

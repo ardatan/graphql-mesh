@@ -40,6 +40,7 @@ import {
 } from '@graphql-mesh/string-interpolation';
 import { MeshFetch } from '@graphql-mesh/types';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 import {
   WSDLBinding,
   WSDLDefinition,
@@ -58,7 +59,8 @@ import {
 import { PARSE_XML_OPTIONS, SoapAnnotations } from './utils.js';
 
 export interface SOAPLoaderOptions {
-  fetch: MeshFetch;
+  subgraphName: string;
+  fetch?: MeshFetch;
   schemaHeaders?: Record<string, string>;
   operationHeaders?: Record<string, string>;
 }
@@ -74,6 +76,9 @@ const soapDirective = new GraphQLDirective({
       type: GraphQLString,
     },
     endpoint: {
+      type: GraphQLString,
+    },
+    subgraph: {
       type: GraphQLString,
     },
   },
@@ -123,8 +128,12 @@ export class SOAPLoader {
   private namespaceTypePrefixMap = new Map<string, string>();
   public loadedLocations = new Map<string, WSDLObject | XSDObject>();
   private schemaHeadersFactory: ResolverDataBasedFactory<Record<string, string>>;
+  private fetchFn: MeshFetch;
+  private subgraphName: string;
 
-  constructor(private options: SOAPLoaderOptions) {
+  constructor(options: SOAPLoaderOptions) {
+    this.fetchFn = options.fetch || defaultFetchFn;
+    this.subgraphName = options.subgraphName;
     this.loadXMLSchemaNamespace();
     this.schemaComposer.addDirective(soapDirective);
     this.schemaHeadersFactory = getInterpolatedHeadersFactory(options.schemaHeaders || {});
@@ -419,6 +428,7 @@ export class SOAPLoader {
               elementName,
               bindingNamespace,
               endpoint: portObj.address[0].attributes.location,
+              subgraph: this.subgraphName,
             };
             rootTC.addFields({
               [operationFieldName]: {
@@ -502,7 +512,7 @@ export class SOAPLoader {
   private xmlParser = new XMLParser(PARSE_XML_OPTIONS);
 
   async fetchXSD(location: string, parentAliasMap = new Map<string, string>()) {
-    const response = await this.options.fetch(location, {
+    const response = await this.fetchFn(location, {
       headers: this.schemaHeadersFactory({ env: process.env }),
     });
     let xsdText = await response.text();
@@ -535,7 +545,7 @@ export class SOAPLoader {
   }
 
   async fetchWSDL(location: string) {
-    const response = await this.options.fetch(location, {
+    const response = await this.fetchFn(location, {
       headers: this.schemaHeadersFactory({ env: process.env }),
     });
     const wsdlText = await response.text();
@@ -1098,6 +1108,13 @@ export class SOAPLoader {
         },
       });
     }
-    return this.schemaComposer.buildSchema();
+    const schema = this.schemaComposer.buildSchema();
+    const schemaExts: any = (schema.extensions ||= {});
+    schemaExts.directives ||= {};
+    schemaExts.directives.transport = {
+      kind: 'soap',
+      subgraph: this.subgraphName,
+    };
+    return schema;
   }
 }

@@ -4,13 +4,15 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "mesh dev",
-    "test": "jest"
+    "compose": "node ../../packages/compose-cli/dist/cjs/bin.js",
+    "serve": "node ../../packages/serve-cli/dist/cjs/bin.js"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.88.5",
-    "@graphql-mesh/mysql": "0.96.4",
-    "graphql": "16.8.1"
+    "@graphql-mesh/compose-cli": "^0.0.0",
+    "@graphql-mesh/serve-cli": "^0.0.0",
+    "@omnigraph/mysql": "^0.0.1",
+    "graphql": "16.8.1",
+    "typescript": "5.3.3"
   },
   "devDependencies": {
     "jest": "29.7.0"

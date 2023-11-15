@@ -8,9 +8,10 @@ import {
 import { getComposerFromJSONSchema } from './getComposerFromJSONSchema.js';
 
 export async function getGraphQLSchemaFromDereferencedJSONSchema(
-  name: string,
+  subgraphName: string,
   opts: Omit<AddExecutionLogicToComposerOptions, 'schemaComposer'> & {
     fullyDeferencedSchema: JSONSchemaObject;
+    handlerName: string;
   },
 ) {
   const {
@@ -21,9 +22,11 @@ export async function getGraphQLSchemaFromDereferencedJSONSchema(
     endpoint,
     queryParams,
     queryStringOptions,
+    handlerName = 'rest',
   } = opts;
   logger.debug(`Generating GraphQL Schema from the bundled JSON Schema`);
   const visitorResult = await getComposerFromJSONSchema({
+    subgraphName,
     schema: fullyDeferencedSchema,
     logger: logger.child('getComposerFromJSONSchema'),
     getScalarForFormat: opts.getScalarForFormat,
@@ -40,7 +43,7 @@ export async function getGraphQLSchemaFromDereferencedJSONSchema(
     schemaComposerWithoutExecutionLogic.addDirective(directive);
   }
 
-  const schemaComposerWithExecutionLogic = await addExecutionDirectivesToComposer(name, {
+  return addExecutionDirectivesToComposer(subgraphName, {
     schemaComposer: schemaComposerWithoutExecutionLogic,
     logger,
     operations,
@@ -48,16 +51,6 @@ export async function getGraphQLSchemaFromDereferencedJSONSchema(
     endpoint,
     queryParams,
     queryStringOptions,
+    handlerName,
   });
-
-  if (schemaComposerWithExecutionLogic.Query.getFieldNames().length === 0) {
-    schemaComposerWithExecutionLogic.Query.addFields({
-      dummy: {
-        type: 'String',
-        resolve: () => 'dummy',
-      },
-    });
-  }
-
-  return schemaComposerWithExecutionLogic.buildSchema();
 }

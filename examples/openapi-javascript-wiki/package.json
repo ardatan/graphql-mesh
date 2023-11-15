@@ -4,8 +4,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "mesh build",
-    "start": "mesh dev"
+    "compose": "node ../../packages/compose-cli/dist/cjs/bin.js",
+    "serve": "node ../../packages/serve-cli/dist/cjs/bin.js"
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.88.5",

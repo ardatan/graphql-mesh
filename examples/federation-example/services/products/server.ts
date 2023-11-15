@@ -1,18 +1,10 @@
-import { ApolloServer, gql } from 'apollo-server';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { ApolloServer } from 'apollo-server';
+import { parse } from 'graphql';
 import { buildSubgraphSchema } from '@apollo/subgraph';
 
-const typeDefs = gql`
-  extend type Query {
-    topProducts(first: Int = 5): [Product]
-  }
-
-  type Product @key(fields: "upc") {
-    upc: String!
-    name: String
-    price: Int
-    weight: Int
-  }
-`;
+const typeDefs = parse(readFileSync(join(__dirname, './typeDefs.graphql'), 'utf8'));
 
 const resolvers = {
   Product: {

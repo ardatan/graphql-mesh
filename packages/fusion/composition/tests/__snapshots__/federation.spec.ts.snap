@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Federation converts a Federation supergraph to a Fusion supergraph 1`] = `
+"schema @transport(subgraph: "accounts", kind: "http", location: "http://accounts:4001/graphql") @transport(subgraph: "inventory", kind: "http", location: "http://inventory:4002/graphql") @transport(subgraph: "products", kind: "http", location: "http://products:4003/graphql") @transport(subgraph: "reviews", kind: "http", location: "http://reviews:4004/graphql") @resolver(name: "federationEntity", operation: "query getFederationEntity($representations: [_Any!]!) { _entities(representations: $representations) }", kind: "BATCH") {
+  query: Query
+}
+
+type Product @source(name: "Product", subgraph: "inventory") @source(name: "Product", subgraph: "products") @source(name: "Product", subgraph: "reviews") @variable(name: "Product_key_upc", select: "upc", subgraph: "inventory") @variable(name: "Product_key_upc", select: "upc", subgraph: "products") @variable(name: "Product_key_upc", select: "upc", subgraph: "reviews") @variable(name: "representations", subgraph: "inventory", value: "{ upc: $Product_key_upc, price: $Product_shippingEstimate_requires_price, weight: $Product_shippingEstimate_requires_weight }") @variable(name: "representations", subgraph: "products", value: "{ upc: $Product_key_upc }") @variable(name: "representations", subgraph: "reviews", value: "{ upc: $Product_key_upc }") @resolver(name: "federationEntity", subgraph: "inventory") @resolver(name: "federationEntity", subgraph: "products") @resolver(name: "federationEntity", subgraph: "reviews") {
+  upc: String! @source(subgraph: "inventory", name: "upc") @source(subgraph: "products", name: "upc") @source(subgraph: "reviews", name: "upc")
+  weight: Int @source(subgraph: "products", name: "weight")
+  price: Int @source(subgraph: "products", name: "price")
+  inStock: Boolean @source(subgraph: "inventory", name: "inStock")
+  shippingEstimate: Int @source(subgraph: "inventory", name: "shippingEstimate") @variable(name: "Product_shippingEstimate_requires_price", select: "price", subgraph: "products") @variable(name: "Product_shippingEstimate_requires_weight", select: "weight", subgraph: "products")
+  name: String @source(subgraph: "products", name: "name")
+  reviews: [Review] @source(subgraph: "reviews", name: "reviews")
+}
+
+type Query @source(name: "Query", subgraph: "accounts") @source(name: "Query", subgraph: "inventory") @source(name: "Query", subgraph: "products") @source(name: "Query", subgraph: "reviews") {
+  me: User @source(subgraph: "accounts", name: "me") @resolver(operation: "query me { me }")
+  users: [User] @source(subgraph: "accounts", name: "users") @resolver(operation: "query users { users }")
+  topProducts(first: Int): [Product] @source(subgraph: "products", name: "topProducts") @resolver(operation: "query topProducts($first: Int) { topProducts(first: $first) }")
+}
+
+type Review @source(name: "Review", subgraph: "reviews") @variable(name: "Review_key_id", select: "id", subgraph: "reviews") @variable(name: "representations", subgraph: "reviews", value: "{ id: $Review_key_id }") @resolver(name: "federationEntity", subgraph: "reviews") {
+  id: ID! @source(subgraph: "reviews", name: "id")
+  body: String @source(subgraph: "reviews", name: "body")
+  product: Product @source(subgraph: "reviews", name: "product")
+  author: User @source(subgraph: "reviews", name: "author")
+}
+
+type User @source(name: "User", subgraph: "accounts") @source(name: "User", subgraph: "reviews") @variable(name: "User_key_id", select: "id", subgraph: "accounts") @variable(name: "User_key_id", select: "id", subgraph: "reviews") @variable(name: "representations", subgraph: "accounts", value: "{ id: $User_key_id }") @variable(name: "representations", subgraph: "reviews", value: "{ id: $User_key_id }") @resolver(name: "federationEntity", subgraph: "accounts") @resolver(name: "federationEntity", subgraph: "reviews") {
+  id: ID! @source(subgraph: "accounts", name: "id") @source(subgraph: "reviews", name: "id")
+  name: String @source(subgraph: "accounts", name: "name")
+  username: String @source(subgraph: "accounts", name: "username")
+  birthDate: String @source(subgraph: "accounts", name: "birthDate")
+  numberOfReviews: Int @source(subgraph: "reviews", name: "numberOfReviews")
+  reviews: [Review] @source(subgraph: "reviews", name: "reviews")
+}"
+`;

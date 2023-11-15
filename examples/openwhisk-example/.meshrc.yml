@@ -1,8 +1,0 @@
-sources:
-  - name: SWAPI
-    handler:
-      graphql:
-        endpoint: https://swapi-graphql.netlify.app/.netlify/functions/index
-
-serve:
-  endpoint: /api/v1/web/guest/mesh/swapi/graphql

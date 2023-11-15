@@ -1,88 +1,125 @@
 import { join } from 'path';
-import { findAndParseConfig } from '@graphql-mesh/cli';
-import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';
-import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
-import { isAsyncIterable, printSchemaWithDirectives } from '@graphql-tools/utils';
+import { GraphQLSchema } from 'graphql';
+import { getComposedSchemaFromConfig } from '@graphql-mesh/compose-cli';
+import { createServeRuntime } from '@graphql-mesh/serve-runtime';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { createApi } from '../api/app';
+import { composeConfig, serveConfig } from '../mesh.config';
 
 describe('JSON Schema Subscriptions', () => {
-  let mesh: MeshInstance;
+  let supergraph: GraphQLSchema;
+  let meshHttp: ReturnType<typeof createServeRuntime>;
+  let api: ReturnType<typeof createApi>;
   let resetTodos = () => {};
-  let meshHttp: MeshHTTPHandler;
-  const baseDir = join(__dirname, '..');
+  const cwd = join(__dirname, '..');
   beforeAll(async () => {
-    const config = await findAndParseConfig({
-      dir: baseDir,
+    supergraph = await getComposedSchemaFromConfig({
+      ...composeConfig,
+      cwd,
     });
-    mesh = await getMesh({
-      ...config,
-      async fetchFn(url, options) {
-        return api.app.fetch(url, options);
+    meshHttp = createServeRuntime<any>({
+      ...serveConfig,
+      supergraph,
+      fetchAPI: {
+        fetch: (...args) => api.app.fetch(...args),
       },
     });
-    meshHttp = createMeshHTTPHandler({
-      baseDir,
-      getBuiltMesh: () => Promise.resolve(mesh),
-    });
-    const api = createApi(meshHttp.fetch as any);
+    api = createApi(meshHttp.fetch as any);
   });
   afterEach(() => {
     resetTodos();
   });
   it('should generate correct schema', async () => {
-    expect(printSchemaWithDirectives(mesh.schema)).toMatchSnapshot();
+    expect(printSchemaWithDirectives(supergraph)).toMatchSnapshot();
   });
   it('subscriptions', async () => {
-    const subscription = /* GraphQL */ `
-      subscription todoAdded {
-        todoAdded {
-          name
-          content
-        }
-      }
-    `;
-    setTimeout(async () => {
-      await meshHttp.fetch('/');
-      return mesh.execute(
-        /* GraphQL */ `
-          mutation addTodo($name: String!, $content: String!) {
-            addTodo(input: { name: $name, content: $content }) {
+    expect.assertions(3);
+    const initialResp = await meshHttp.fetch('/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: /* GraphQL */ `
+          query todos {
+            todos {
               name
               content
             }
           }
         `,
-        {
-          name: 'Todo Subscription',
-          content: 'Todo Subscription Content',
+      }),
+    });
+    const initialResult = await initialResp.json();
+    expect(initialResult).toMatchObject({
+      data: {
+        todos: [],
+      },
+    });
+    setTimeout(async () => {
+      return meshHttp.fetch('/graphql', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
-    }, 1000);
-    const subscriptionResult = await mesh.subscribe(subscription);
-    if (!isAsyncIterable(subscriptionResult)) {
-      throw new Error('Subscription result is not an async iterable');
-    }
-    for await (const result of subscriptionResult) {
-      expect(result).toMatchObject({
-        data: {
-          todoAdded: {
-            name: 'Todo Subscription',
-            content: 'Todo Subscription Content',
-          },
-        },
+        body: JSON.stringify({
+          query: /* GraphQL */ `
+            mutation addTodo {
+              addTodo(input: { name: "Todo Subscription", content: "Todo Subscription Content" }) {
+                name
+                content
+              }
+            }
+          `,
+        }),
       });
-      break;
-    }
-    const query = /* GraphQL */ `
-      query todos {
-        todos {
-          name
-          content
-        }
+    }, 1000);
+    const subscriptionResp = await meshHttp.fetch('/graphql', {
+      method: 'POST',
+      headers: {
+        Accept: 'text/event-stream',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: /* GraphQL */ `
+          subscription todoAdded {
+            todoAdded {
+              name
+              content
+            }
+          }
+        `,
+      }),
+    });
+    for await (const result of subscriptionResp.body) {
+      const resInText = Buffer.from(result).toString('utf8');
+      if (resInText.includes('data: ')) {
+        expect(resInText).toContain(
+          `data: {"data":{"todoAdded":{"name":"Todo Subscription","content":"Todo Subscription Content"}}}`,
+        );
+        break;
       }
-    `;
+    }
 
-    const queryResult = await mesh.execute(query, {});
+    const queryResp = await meshHttp.fetch('/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: /* GraphQL */ `
+          query todos {
+            todos {
+              name
+              content
+            }
+          }
+        `,
+      }),
+    });
+
+    const queryResult = await queryResp.json();
+
     expect(queryResult).toMatchObject({
       data: {
         todos: [
@@ -93,8 +130,5 @@ describe('JSON Schema Subscriptions', () => {
         ],
       },
     });
-  });
-  afterAll(() => {
-    mesh.destroy();
   });
 });

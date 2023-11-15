@@ -18,12 +18,10 @@ import {
   EnumTypeComposerValueConfigDefinition,
   InputTypeComposer,
   InputTypeComposerFieldConfigAsObjectDefinition,
-  InputTypeComposerFieldConfigMap,
   InterfaceTypeComposer,
   isSomeInputTypeComposer,
   ListComposer,
   ObjectTypeComposer,
-  ObjectTypeComposerFieldConfigMap,
   ObjectTypeComposerFieldConfigMapDefinition,
   ScalarTypeComposer,
   SchemaComposer,
@@ -104,12 +102,98 @@ const formatScalarMapWithoutAjv: Record<string, GraphQLScalarType> = {
 };
 
 export interface GetComposerFromJSONSchemaOpts {
+  subgraphName: string;
   schema: JSONSchema;
   logger: Logger;
   getScalarForFormat?: (format: string) => GraphQLScalarType | void;
 }
 
+const deepMergedInputTypeComposerFields = new WeakMap<
+  InputTypeComposer<any>,
+  WeakSet<InputTypeComposer<any>>
+>();
+
+function deepMergeInputTypeComposerFields(
+  existingInputTypeComposer: InputTypeComposer<any>,
+  newInputTypeComposer: InputTypeComposer<any>,
+) {
+  let mergedInputTypes = deepMergedInputTypeComposerFields.get(existingInputTypeComposer);
+  if (!mergedInputTypes) {
+    mergedInputTypes = new WeakSet();
+    deepMergedInputTypeComposerFields.set(existingInputTypeComposer, mergedInputTypes);
+  }
+  if (mergedInputTypes.has(newInputTypeComposer)) {
+    return;
+  }
+  mergedInputTypes.add(newInputTypeComposer);
+  const existingInputTypeComposerFields = existingInputTypeComposer.getFields();
+  const newInputTypeComposerFields = newInputTypeComposer.getFields();
+  for (const [newFieldKey, newFieldValue] of Object.entries(newInputTypeComposerFields)) {
+    const existingFieldValue = existingInputTypeComposerFields[newFieldKey];
+    if (!existingFieldValue) {
+      existingInputTypeComposerFields[newFieldKey] = newFieldValue;
+    } else {
+      const existingFieldUnwrappedTC =
+        typeof (existingFieldValue.type as ThunkComposer)?.getUnwrappedTC === 'function'
+          ? (existingFieldValue.type as ThunkComposer)?.getUnwrappedTC()
+          : undefined;
+      const newFieldUnwrappedTC =
+        typeof (newFieldValue.type as ThunkComposer).getUnwrappedTC === 'function'
+          ? (newFieldValue.type as ThunkComposer).getUnwrappedTC()
+          : undefined;
+      if (
+        existingFieldUnwrappedTC instanceof InputTypeComposer &&
+        newFieldUnwrappedTC instanceof InputTypeComposer
+      ) {
+        deepMergeInputTypeComposerFields(existingFieldUnwrappedTC, newFieldUnwrappedTC);
+      } else {
+        existingInputTypeComposerFields[newFieldKey] = newFieldValue;
+      }
+    }
+  }
+}
+
+function deepMergeObjectTypeComposerFields(
+  existingObjectTypeComposer: ObjectTypeComposer<any, any>,
+  newObjectTypeComposer: ObjectTypeComposer<any, any>,
+) {
+  const existingObjectTypeComposerFields = existingObjectTypeComposer.getFields();
+  const newObjectTypeComposerFields = newObjectTypeComposer.getFields();
+  for (const [newFieldKey, newFieldValue] of Object.entries(newObjectTypeComposerFields)) {
+    const existingFieldValue = existingObjectTypeComposerFields[newFieldKey];
+    if (!existingFieldValue) {
+      existingObjectTypeComposerFields[newFieldKey] = newFieldValue;
+    } else {
+      const existingFieldUnwrappedTC =
+        typeof (existingFieldValue.type as ThunkComposer)?.getUnwrappedTC === 'function'
+          ? (existingFieldValue.type as ThunkComposer)?.getUnwrappedTC()
+          : undefined;
+      const newFieldUnwrappedTC =
+        typeof (newFieldValue.type as ThunkComposer).getUnwrappedTC === 'function'
+          ? (newFieldValue.type as ThunkComposer).getUnwrappedTC()
+          : undefined;
+      if (
+        existingFieldUnwrappedTC instanceof ObjectTypeComposer &&
+        newFieldUnwrappedTC instanceof ObjectTypeComposer
+      ) {
+        deepMergeObjectTypeComposerFields(existingFieldUnwrappedTC, newFieldUnwrappedTC);
+      } else {
+        if (
+          newFieldUnwrappedTC &&
+          existingFieldUnwrappedTC &&
+          !isUnspecificType(newFieldUnwrappedTC) &&
+          isUnspecificType(existingFieldUnwrappedTC)
+        ) {
+          continue;
+        }
+        existingObjectTypeComposerFields[newFieldKey] = newFieldValue;
+      }
+    }
+  }
+}
+
 export function getComposerFromJSONSchema({
+  subgraphName,
   schema,
   logger,
   getScalarForFormat,
@@ -221,12 +305,14 @@ export function getComposerFromJSONSchema({
             {
               name: 'regexp',
               args: {
+                subgraph: subgraphName,
                 pattern: subSchema.pattern,
               },
             },
             {
               name: 'typescript',
               args: {
+                subgraph: subgraphName,
                 type: typeScriptType,
               },
             },
@@ -250,14 +336,19 @@ export function getComposerFromJSONSchema({
         schemaComposer.addDirective(EnumDirective);
         schemaComposer.addDirective(TypeScriptDirective);
         schemaComposer.addDirective(ExampleDirective);
+        let enumValueName = sanitizeNameForGraphQL(subSchema.const.toString());
+        if (enumValueName === 'true' || enumValueName === 'false') {
+          enumValueName = enumValueName.toUpperCase();
+        }
         const typeComposer = schemaComposer.createEnumTC({
           name: scalarTypeName,
           values: {
-            [sanitizeNameForGraphQL(subSchema.const.toString())]: {
+            [enumValueName]: {
               directives: [
                 {
                   name: 'enum',
                   args: {
+                    subgraph: subgraphName,
                     value: JSON.stringify(subSchema.const),
                   },
                 },
@@ -268,12 +359,14 @@ export function getComposerFromJSONSchema({
             {
               name: 'typescript',
               args: {
+                subgraph: subgraphName,
                 type: JSON.stringify(subSchema.const),
               },
             },
             {
               name: 'example',
               args: {
+                subgraph: subgraphName,
                 value: subSchema.const,
               },
             },
@@ -310,6 +403,7 @@ export function getComposerFromJSONSchema({
             directives.push({
               name: 'enum',
               args: {
+                subgraph: subgraphName,
                 value: JSON.stringify(enumValue),
               },
             });
@@ -326,6 +420,7 @@ export function getComposerFromJSONSchema({
             directives.push({
               name: 'example',
               args: {
+                subgraph: subgraphName,
                 value: example,
               },
             });
@@ -547,6 +642,7 @@ export function getComposerFromJSONSchema({
                 {
                   name: 'length',
                   args: {
+                    subgraph: subgraphName,
                     min: subSchema.minLength,
                     max: subSchema.maxLength,
                   },
@@ -618,6 +714,9 @@ export function getComposerFromJSONSchema({
           directives: [
             {
               name: 'oneOf',
+              args: {
+                subgraph: subgraphName,
+              },
             },
           ],
         });
@@ -688,6 +787,7 @@ export function getComposerFromJSONSchema({
             config.directives.push({
               name: 'example',
               args: {
+                subgraph: subgraphName,
                 value: example,
               },
             });
@@ -704,6 +804,7 @@ export function getComposerFromJSONSchema({
             directives.push({
               name: 'example',
               args: {
+                subgraph: subgraphName,
                 value: example,
               },
             });
@@ -755,9 +856,11 @@ export function getComposerFromJSONSchema({
       if (subSchemaOnly.discriminator?.propertyName) {
         schemaComposer.addDirective(DiscriminatorDirective);
         const discriminatorArgs: {
+          subgraph: string;
           field: string;
           mapping?: Record<string, string>;
         } = {
+          subgraph: subgraphName,
           field: subSchemaOnly.discriminator.propertyName,
         };
         if (subSchemaOnly.discriminator.mapping) {
@@ -779,6 +882,7 @@ export function getComposerFromJSONSchema({
         );
         if (isPlural) {
           const { input, output, flatten } = getUnionTypeComposers({
+            subgraphName,
             schemaComposer,
             typeComposersList: (subSchemaAndTypeComposers.oneOf as any).map(
               ({ input, output }: any) => ({
@@ -804,6 +908,7 @@ export function getComposerFromJSONSchema({
           };
         }
         return getUnionTypeComposers({
+          subgraphName,
           schemaComposer,
           typeComposersList: subSchemaAndTypeComposers.oneOf as any[],
           subSchemaAndTypeComposers,
@@ -865,8 +970,8 @@ export function getComposerFromJSONSchema({
                   newInputFieldUnwrappedTC instanceof InputTypeComposer
                 ) {
                   deepMergeInputTypeComposerFields(
-                    existingInputFieldUnwrappedTC.getFields(),
-                    newInputFieldUnwrappedTC.getFields(),
+                    existingInputFieldUnwrappedTC,
+                    newInputFieldUnwrappedTC,
                   );
                 } else {
                   inputFieldMap[fieldName] = newInputField;
@@ -882,6 +987,9 @@ export function getComposerFromJSONSchema({
               directives: [
                 {
                   name: 'resolveRoot',
+                  args: {
+                    subgraph: subgraphName,
+                  },
                 },
               ],
             };
@@ -929,10 +1037,7 @@ export function getComposerFromJSONSchema({
                   existingFieldUnwrappedTC instanceof ObjectTypeComposer &&
                   newFieldUnwrappedTC instanceof ObjectTypeComposer
                 ) {
-                  deepMergeObjectTypeComposerFields(
-                    existingFieldUnwrappedTC.getFields(),
-                    newFieldUnwrappedTC.getFields(),
-                  );
+                  deepMergeObjectTypeComposerFields(existingFieldUnwrappedTC, newFieldUnwrappedTC);
                 } else {
                   if (
                     newFieldUnwrappedTC &&
@@ -957,6 +1062,7 @@ export function getComposerFromJSONSchema({
             directives.push({
               name: 'example',
               args: {
+                subgraph: subgraphName,
                 value: example,
               },
             });
@@ -980,6 +1086,7 @@ export function getComposerFromJSONSchema({
               directives.push({
                 name: 'example',
                 args: {
+                  subgraph: subgraphName,
                   value: example,
                 },
               });
@@ -1069,6 +1176,9 @@ export function getComposerFromJSONSchema({
                   directives: [
                     {
                       name: 'resolveRoot',
+                      args: {
+                        subgraph: subgraphName,
+                      },
                     },
                   ],
                 };
@@ -1085,6 +1195,9 @@ export function getComposerFromJSONSchema({
                 directives: [
                   {
                     name: 'resolveRoot',
+                    args: {
+                      subgraph: subgraphName,
+                    },
                   },
                 ],
               };
@@ -1139,6 +1252,7 @@ export function getComposerFromJSONSchema({
             directives.push({
               name: 'example',
               args: {
+                subgraph: subgraphName,
                 value: example,
               },
             });
@@ -1165,6 +1279,7 @@ export function getComposerFromJSONSchema({
               directives.push({
                 name: 'example',
                 args: {
+                  subgraph: subgraphName,
                   value: example,
                 },
               });
@@ -1194,6 +1309,7 @@ export function getComposerFromJSONSchema({
                 fieldDirectives.push({
                   name: 'resolveRootField',
                   args: {
+                    subgraph: subgraphName,
                     field: propertyName,
                   },
                 });
@@ -1202,6 +1318,9 @@ export function getComposerFromJSONSchema({
                 schemaComposer.addDirective(FlattenDirective);
                 fieldDirectives.push({
                   name: 'flatten',
+                  args: {
+                    subgraph: subgraphName,
+                  },
                 });
               }
               fieldMap[fieldName] = {
@@ -1238,6 +1357,7 @@ export function getComposerFromJSONSchema({
                 directives.push({
                   name: 'resolveRootField',
                   args: {
+                    subgraph: subgraphName,
                     field: propertyName,
                   },
                 });
@@ -1298,6 +1418,9 @@ export function getComposerFromJSONSchema({
                 directives: [
                   {
                     name: 'dictionary',
+                    args: {
+                      subgraph: subgraphName,
+                    },
                   },
                 ],
               };
@@ -1308,6 +1431,9 @@ export function getComposerFromJSONSchema({
                 directives: [
                   {
                     name: 'resolveRoot',
+                    args: {
+                      subgraph: subgraphName,
+                    },
                   },
                 ],
               };
@@ -1425,78 +1551,6 @@ export function getComposerFromJSONSchema({
       }
     },
   });
-
-  function deepMergeInputTypeComposerFields(
-    existingInputTypeComposerFields: InputTypeComposerFieldConfigMap,
-    newInputTypeComposerFields: InputTypeComposerFieldConfigMap,
-  ) {
-    for (const [newFieldKey, newFieldValue] of Object.entries(newInputTypeComposerFields)) {
-      const existingFieldValue = existingInputTypeComposerFields[newFieldKey];
-      if (!existingFieldValue) {
-        existingInputTypeComposerFields[newFieldKey] = newFieldValue;
-      } else {
-        const existingFieldUnwrappedTC =
-          typeof (existingFieldValue.type as ThunkComposer)?.getUnwrappedTC === 'function'
-            ? (existingFieldValue.type as ThunkComposer)?.getUnwrappedTC()
-            : undefined;
-        const newFieldUnwrappedTC =
-          typeof (newFieldValue.type as ThunkComposer).getUnwrappedTC === 'function'
-            ? (newFieldValue.type as ThunkComposer).getUnwrappedTC()
-            : undefined;
-        if (
-          existingFieldUnwrappedTC instanceof InputTypeComposer &&
-          newFieldUnwrappedTC instanceof InputTypeComposer
-        ) {
-          deepMergeInputTypeComposerFields(
-            existingFieldUnwrappedTC.getFields(),
-            newFieldUnwrappedTC.getFields(),
-          );
-        } else {
-          existingInputTypeComposerFields[newFieldKey] = newFieldValue;
-        }
-      }
-    }
-  }
-
-  function deepMergeObjectTypeComposerFields(
-    existingObjectTypeComposerFields: ObjectTypeComposerFieldConfigMap<any, any>,
-    newObjectTypeComposerFields: ObjectTypeComposerFieldConfigMap<any, any>,
-  ) {
-    for (const [newFieldKey, newFieldValue] of Object.entries(newObjectTypeComposerFields)) {
-      const existingFieldValue = existingObjectTypeComposerFields[newFieldKey];
-      if (!existingFieldValue) {
-        existingObjectTypeComposerFields[newFieldKey] = newFieldValue;
-      } else {
-        const existingFieldUnwrappedTC =
-          typeof (existingFieldValue.type as ThunkComposer)?.getUnwrappedTC === 'function'
-            ? (existingFieldValue.type as ThunkComposer)?.getUnwrappedTC()
-            : undefined;
-        const newFieldUnwrappedTC =
-          typeof (newFieldValue.type as ThunkComposer).getUnwrappedTC === 'function'
-            ? (newFieldValue.type as ThunkComposer).getUnwrappedTC()
-            : undefined;
-        if (
-          existingFieldUnwrappedTC instanceof ObjectTypeComposer &&
-          newFieldUnwrappedTC instanceof ObjectTypeComposer
-        ) {
-          deepMergeObjectTypeComposerFields(
-            existingFieldUnwrappedTC.getFields(),
-            newFieldUnwrappedTC.getFields(),
-          );
-        } else {
-          if (
-            newFieldUnwrappedTC &&
-            existingFieldUnwrappedTC &&
-            !isUnspecificType(newFieldUnwrappedTC) &&
-            isUnspecificType(existingFieldUnwrappedTC)
-          ) {
-            continue;
-          }
-          existingObjectTypeComposerFields[newFieldKey] = newFieldValue;
-        }
-      }
-    }
-  }
 }
 
 const specifiedTypeNames = ['String', 'Int', 'Float', 'Boolean', 'ID', 'JSON', 'Void'];

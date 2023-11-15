@@ -3,12 +3,12 @@ import { KeyValueCache, Logger } from '@graphql-mesh/types';
 
 export default class CFWorkerKVCache implements KeyValueCache {
   private kvNamespace?: KVNamespace;
-  constructor(config: { namespace: string; logger: Logger }) {
+  constructor(config: { namespace: string; logger?: Logger }) {
     // @ts-expect-error - KV is in globalThis for CFW
     this.kvNamespace = globalThis[config.namespace];
     if (this.kvNamespace === undefined) {
       // We don't use mocks because they increase the bundle size.
-      config.logger.warn(`Make sure KV Namespace: ${config.namespace} exists.`);
+      config.logger?.warn(`Make sure KV Namespace: ${config.namespace} exists.`);
     }
   }
 

@@ -1,26 +1,27 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Thrift Calculator should generate correct schema: thrift-calculator-schema 1`] = `
-"schema @transport(subgraph: "Calculator", kind: "thrift", location: "http://localhost:9876/thrift", headers: {}, options: {clientAnnotations: {serviceName: "calculator-service", annotations: {}, methodNames: ["add", "subtract"], methodAnnotations: {add: {annotations: {}, fieldAnnotations: {}}, subtract: {annotations: {}, fieldAnnotations: {}}}, methodParameters: {add: 2, subtract: 3}}, topTypeMap: {AddRequest: {id: 0, name: "AddRequest", type: 12, fields: {left: {type: 8, id: 1}, right: {type: 8, id: 2}}}}}) {
-  query: Query
-}
-
-type Query {
-  add(request: AddRequestInput): Int @fieldTypeMap(request: {name: "AddRequest", type: "ref", id: 1})
-  subtract(left: Int, right: Int): Int @fieldTypeMap(left: {type: 8, id: 1}, right: {type: 8, id: 2})
-}
-
-input AddRequestInput {
-  left: Int!
-  right: Int!
-}"
-`;
-
-exports[`Thrift Calculator should give correct response for example queries: example-query.graphql-thrift-calculator-result 1`] = `
+exports[`Thrift Calculator executes Add.query.graphql query: Add.query.graphql 1`] = `
 {
   "data": {
     "add": 5,
   },
-  "stringify": [Function],
+  "errors": undefined,
+  "extensions": undefined,
 }
+`;
+
+exports[`Thrift Calculator generates the schema correctly: schema 1`] = `
+"schema @transport(subgraph: "calculator", kind: "thrift", location: "http://localhost:9876/thrift", headers: {}, options: {clientAnnotations: {serviceName: "Calculator", annotations: {}, methodNames: ["add", "subtract"], methodAnnotations: {add: {annotations: {}, fieldAnnotations: {}}, subtract: {annotations: {}, fieldAnnotations: {}}}, methodParameters: {add: 2, subtract: 3}}, topTypeMap: {AddRequest: {id: 0, name: "AddRequest", type: 12, fields: {left: {type: 8, id: 1}, right: {type: 8, id: 2}}}}}) {
+  query: Query
+}
+
+type Query {
+  add(request: AddRequestInput): Int @fieldTypeMap(request: {name: "AddRequest", type: "ref", id: 1}) @resolver(subgraph: "calculator", operation: "query add($request: AddRequestInput) { add(request: $request) }") @source(subgraph: "calculator", name: "add", type: "Int")
+  subtract(left: Int, right: Int): Int @fieldTypeMap(left: {type: 8, id: 1}, right: {type: 8, id: 2}) @resolver(subgraph: "calculator", operation: "query subtract($left: Int, $right: Int) { subtract(left: $left, right: $right) }") @source(subgraph: "calculator", name: "subtract", type: "Int")
+}
+
+input AddRequestInput @source(subgraph: "calculator", name: "AddRequestInput") {
+  left: Int! @source(subgraph: "calculator", name: "left", type: "Int!")
+  right: Int! @source(subgraph: "calculator", name: "right", type: "Int!")
+}"
 `;

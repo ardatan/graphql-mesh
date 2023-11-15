@@ -86,7 +86,7 @@ export class DefaultLogger implements Logger {
     const message = this.getLoggerMessage({
       args,
     });
-    const fullMessage = `⚠️ ${this.prefix} ${warnColor(message)}`;
+    const fullMessage = `${this.prefix} ⚠️ ${warnColor(message)}`;
     if (console.warn) {
       console.warn(fullMessage);
     } else {
@@ -98,7 +98,7 @@ export class DefaultLogger implements Logger {
     const message = this.getLoggerMessage({
       args,
     });
-    const fullMessage = `💡 ${this.prefix} ${infoColor(message)}`;
+    const fullMessage = `${this.prefix} 💡 ${infoColor(message)}`;
     if (console.info) {
       console.info(fullMessage);
     } else {
@@ -111,7 +111,7 @@ export class DefaultLogger implements Logger {
       args,
       trim: false,
     });
-    const fullMessage = `💥 ${this.prefix} ${errorColor(message)}`;
+    const fullMessage = `${this.prefix} 💥 ${errorColor(message)}`;
     console.log(fullMessage);
   }
 
@@ -120,7 +120,7 @@ export class DefaultLogger implements Logger {
       const message = this.handleLazyMessage({
         lazyArgs,
       });
-      const fullMessage = `🐛 ${this.prefix} ${debugColor(message)}`;
+      const fullMessage = `${this.prefix} 🐛 ${debugColor(message)}`;
       if (console.debug) {
         console.debug(fullMessage);
       } else {

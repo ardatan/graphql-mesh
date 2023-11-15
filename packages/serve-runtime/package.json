@@ -1,0 +1,61 @@
+{
+  "name": "@graphql-mesh/serve-runtime",
+  "version": "0.0.0",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/serve-runtime"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typings": "dist/typings/index.d.ts",
+  "peerDependencies": {
+    "graphql": "*"
+  },
+  "dependencies": {
+    "@graphql-mesh/fusion-runtime": "^0.0.0",
+    "@graphql-tools/delegate": "^10.0.3",
+    "@graphql-tools/executor-http": "^1.0.6",
+    "@graphql-tools/executor-yoga": "^2.0.3",
+    "@graphql-tools/federation": "^1.1.13",
+    "@graphql-tools/schema": "^10.0.2",
+    "@graphql-tools/utils": "^10.0.8",
+    "@graphql-tools/wrap": "^10.0.1",
+    "@whatwg-node/server": "^0.9.16",
+    "graphql-mobius": "^0.1.13",
+    "graphql-yoga": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  },
+  "sideEffects": false,
+  "buildOptions": {
+    "./package.json": "./package.json"
+  },
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
+  }
+}

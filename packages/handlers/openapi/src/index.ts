@@ -91,9 +91,8 @@ export default class OpenAPIHandler implements MeshHandler {
       interpolatedSource,
     });
     this.logger.info(`Processing annotations for the execution layer`);
-    const schemaWithDirectives = processDirectives({
+    const schemaWithDirectives = processDirectives(nonExecutableSchema, {
       ...this.config,
-      schema: nonExecutableSchema,
       pubsub: this.pubsub,
       logger: this.logger,
       globalFetch: fetchFn,

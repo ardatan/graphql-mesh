@@ -1,31 +1,32 @@
-import { basename, join } from 'path';
-import { introspectionFromSchema, lexicographicSortSchema } from 'graphql';
-import { findAndParseConfig } from '@graphql-mesh/cli';
-import { ProcessedConfig } from '@graphql-mesh/config';
-import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
-
-jest.setTimeout(30000);
+import { readdirSync, readFileSync } from 'fs';
+import { join } from 'path';
+import { GraphQLSchema, parse } from 'graphql';
+import { getComposedSchemaFromConfig } from '@graphql-mesh/compose-cli';
+import { getExecutorForSupergraph } from '@graphql-mesh/fusion-runtime';
+import { Executor, printSchemaWithDirectives } from '@graphql-tools/utils';
+import { composeConfig } from '../mesh.config';
 
 describe('SQLite Chinook', () => {
-  let config: ProcessedConfig;
-  let mesh: MeshInstance;
+  let supergraph: GraphQLSchema;
+  let executor: Executor;
   beforeAll(async () => {
-    config = await findAndParseConfig({
-      dir: join(__dirname, '..'),
+    supergraph = await getComposedSchemaFromConfig({
+      ...composeConfig,
+      cwd: join(__dirname, '..'),
     });
-    mesh = await getMesh(config);
+    ({ supergraphExecutor: executor } = getExecutorForSupergraph({ supergraph }));
   });
-  it('should generate correct schema', async () => {
-    expect(printSchemaWithDirectives(mesh.schema)).toMatchSnapshot('sqlite-chinook-schema');
+  it('generates the schema correctly', () => {
+    expect(printSchemaWithDirectives(supergraph)).toMatchSnapshot('schema');
   });
-  it('should give correct response for example queries', async () => {
-    for (const source of config.documents || []) {
-      const result = await mesh.execute(source.document!, undefined);
-      expect(result).toMatchSnapshot(basename(source.location!) + '-sqlite-chinook-result');
-    }
-  });
-  afterAll(async () => {
-    mesh.destroy();
-  });
+  const queryNames = readdirSync(join(__dirname, '../example-queries'));
+  for (const queryName of queryNames) {
+    it(`executes ${queryName} query`, async () => {
+      const query = readFileSync(join(__dirname, '../example-queries', queryName), 'utf8');
+      const result = await executor({
+        document: parse(query),
+      });
+      expect(result).toMatchSnapshot(queryName);
+    });
+  }
 });

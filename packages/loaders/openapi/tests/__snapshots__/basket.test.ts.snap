@@ -1,30 +1,30 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Basket should generate the correct schema 1`] = `
-"schema {
+"schema @transport(subgraph: "basket", kind: "rest") {
   query: Query
   mutation: Mutation
 }
 
 directive @oneOf on OBJECT | INTERFACE | INPUT_OBJECT
 
-directive @statusCodeTypeName(typeName: String, statusCode: ID) repeatable on UNION
+directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: ID) repeatable on UNION
 
-directive @regexp(pattern: String) on SCALAR
+directive @regexp(subgraph: String, pattern: String) on SCALAR
 
-directive @typescript(type: String) on SCALAR | ENUM
+directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
-directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION
 
-directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
 
-type Query @globalOptions(sourceName: "basket") {
+type Query {
   customers_by_customerId(
     """Authentication Token"""
     x_auth_token: String!
-  ): CustomerAttributes @httpOperation(path: "/customers/{customerId}", operationSpecificHeaders: "{\\"x-auth-token\\":\\"{args.x_auth_token}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET)
-  Locations: [LocationModel] @httpOperation(path: "/Locations", operationSpecificHeaders: "{\\"accept\\":\\"application/json,application/custom-thingy.v3+json\\"}", httpMethod: GET)
-  Cards: [CardModel] @httpOperation(path: "/Cards", operationSpecificHeaders: "{\\"accept\\":\\"application/json,application/custom.v3+json\\"}", httpMethod: GET)
+  ): CustomerAttributes @httpOperation(subgraph: "basket", path: "/customers/{customerId}", operationSpecificHeaders: "{\\"x-auth-token\\":\\"{args.x_auth_token}\\",\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  Locations: [LocationModel] @httpOperation(subgraph: "basket", path: "/Locations", operationSpecificHeaders: "{\\"accept\\":\\"application/json,application/custom-thingy.v3+json\\"}", httpMethod: GET)
+  Cards: [CardModel] @httpOperation(subgraph: "basket", path: "/Cards", operationSpecificHeaders: "{\\"accept\\":\\"application/json,application/custom.v3+json\\"}", httpMethod: GET)
 }
 
 type CustomerAttributes {
@@ -46,17 +46,17 @@ type LocationModel {
   parents: [LocationModel]
 }
 
-scalar query_Locations_oneOf_0_items_email @regexp(pattern: "^(?(\\")(\\".+?(?<!\\\\\\\\)\\"@)|(([0-9a-zA-Z]((\\\\.(?!\\\\.))|[-!#\\\\$%&'\\\\*\\\\+/=\\\\?\\\\^\`\\\\{\\\\}\\\\|~\\\\w])*)(?<=[0-9a-zA-Z\\\\-_])@))(?(\\\\[)(\\\\[(\\\\d{1,3}\\\\.){3}\\\\d{1,3}\\\\])|(([0-9a-zA-Z][-\\\\w]*[0-9a-zA-Z]*\\\\.)+[a-zA-Z0-9][\\\\-a-zA-Z0-9]{0,22}[a-zA-Z0-9]))$") @typescript(type: "string")
+scalar query_Locations_oneOf_0_items_email @regexp(subgraph: "basket", pattern: "^(?(\\")(\\".+?(?<!\\\\\\\\)\\"@)|(([0-9a-zA-Z]((\\\\.(?!\\\\.))|[-!#\\\\$%&'\\\\*\\\\+/=\\\\?\\\\^\`\\\\{\\\\}\\\\|~\\\\w])*)(?<=[0-9a-zA-Z\\\\-_])@))(?(\\\\[)(\\\\[(\\\\d{1,3}\\\\.){3}\\\\d{1,3}\\\\])|(([0-9a-zA-Z][-\\\\w]*[0-9a-zA-Z]*\\\\.)+[a-zA-Z0-9][\\\\-a-zA-Z0-9]{0,22}[a-zA-Z0-9]))$") @typescript(subgraph: "basket", type: "string")
 
 type CardModel {
   id: String
 }
 
 type Mutation {
-  post_basket(input: String): [post_basket_response] @httpOperation(path: "/basket", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
+  post_basket(input: String): [post_basket_response] @httpOperation(subgraph: "basket", path: "/basket", operationSpecificHeaders: "{\\"Content-Type\\":\\"application/json\\",\\"accept\\":\\"application/json\\"}", httpMethod: POST)
 }
 
-union post_basket_response @statusCodeTypeName(statusCode: 200, typeName: "BasketResponse") @statusCodeTypeName(statusCode: 400, typeName: "ApiError") = BasketResponse | ApiError
+union post_basket_response @statusCodeTypeName(subgraph: "basket", statusCode: 200, typeName: "BasketResponse") @statusCodeTypeName(subgraph: "basket", statusCode: 400, typeName: "ApiError") = BasketResponse | ApiError
 
 type BasketResponse {
   products: [mutation_post_basket_oneOf_0_products_items]

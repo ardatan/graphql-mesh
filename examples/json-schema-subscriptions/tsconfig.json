@@ -1,8 +1,12 @@
 {
   "compilerOptions": {
+    "target": "esnext",
     "module": "commonjs",
-    "target": "es6",
-    "rootDir": "./",
-    "esModuleInterop": true
-  }
+    "moduleResolution": "node",
+    "lib": ["esnext"],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "files": ["mesh.config.ts", "api/index.ts", "tests/json-schema-subscriptions.test.ts"],
+  "exclude": ["node_modules"]
 }

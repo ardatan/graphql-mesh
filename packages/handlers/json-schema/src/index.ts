@@ -87,9 +87,8 @@ export default class JsonSchemaHandler implements MeshHandler {
     this.logger.debug('Getting the schema with annotations');
     const nonExecutableSchema = await this.getNonExecutableSchema();
     this.logger.info(`Processing annotations for the execution layer`);
-    const schemaWithDirectives = processDirectives({
+    const schemaWithDirectives = processDirectives(nonExecutableSchema, {
       ...this.config,
-      schema: nonExecutableSchema,
       pubsub: this.pubsub,
       logger: this.logger,
       globalFetch: fetchFn,

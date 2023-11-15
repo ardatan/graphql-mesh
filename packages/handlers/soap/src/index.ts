@@ -16,6 +16,7 @@ import { Executor } from '@graphql-tools/utils';
 import { createExecutorFromSchemaAST, SOAPLoader } from '@omnigraph/soap';
 
 export default class SoapHandler implements MeshHandler {
+  private name: string;
   private config: YamlConfig.SoapHandler;
   private soapSDLProxy: StoreProxy<GraphQLSchema>;
   private baseDir: string;
@@ -23,12 +24,14 @@ export default class SoapHandler implements MeshHandler {
   private logger: Logger;
 
   constructor({
+    name,
     config,
     store,
     baseDir,
     importFn,
     logger,
   }: MeshHandlerOptions<YamlConfig.SoapHandler>) {
+    this.name = name;
     this.config = config;
     this.soapSDLProxy = store.proxy(
       'schemaWithAnnotations',
@@ -55,6 +58,7 @@ export default class SoapHandler implements MeshHandler {
     } else {
       schema = await this.soapSDLProxy.getWithSet(async () => {
         const soapLoader = new SOAPLoader({
+          subgraphName: this.name,
           fetch: fetchFn,
           schemaHeaders: this.config.schemaHeaders,
           operationHeaders: this.config.operationHeaders,
