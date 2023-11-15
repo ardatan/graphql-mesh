@@ -4,18 +4,13 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "mesh build",
-    "debug": "cross-env DEBUG=1 yarn dev",
-    "dev": "mesh dev",
-    "start": "yarn dev",
-    "start:prod": "mesh start"
+    "compose": "node ../../packages/compose-cli/dist/cjs/bin.js",
+    "serve": "node ../../packages/serve-cli/dist/cjs/bin.js"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.88.5",
-    "@graphql-mesh/soap": "0.96.4",
+    "@graphql-mesh/compose-cli": "^0.0.0",
+    "@graphql-mesh/serve-cli": "^0.0.0",
+    "@omnigraph/soap": "^0.96.3",
     "graphql": "16.8.1"
-  },
-  "devDependencies": {
-    "cross-env": "7.0.3"
   }
 }

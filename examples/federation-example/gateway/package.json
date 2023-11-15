@@ -1,12 +1,13 @@
 {
-  "name": "federation-gateway",
-  "version": "0.6.5",
+  "name": "federation-supergraph-gateway",
+  "version": "0.2.4",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "start": "node ../../../packages/serve-cli/dist/cjs/bin.js"
+  },
   "dependencies": {
-    "@graphql-mesh/cli": "0.88.5",
-    "@graphql-mesh/graphql": "0.96.3",
-    "@graphql-mesh/transform-federation": "0.96.3",
+    "@graphql-mesh/serve-cli": "^0.0.0",
     "graphql": "16.8.1"
   }
 }

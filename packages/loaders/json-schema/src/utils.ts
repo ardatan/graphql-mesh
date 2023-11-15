@@ -55,12 +55,6 @@ export function cleanObject(obj: any) {
   return obj;
 }
 
-export function isFileUpload(
-  obj: any,
-): obj is { createReadStream: () => AsyncIterable<Uint8Array>; mimetype: string } {
-  return typeof obj.createReadStream === 'function';
-}
-
 export function isFile(obj: any): obj is File {
   return typeof obj.arrayBuffer === 'function';
 }

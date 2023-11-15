@@ -1,20 +1,20 @@
-import { ApolloServer, gql } from 'apollo-server';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import { ApolloServer } from 'apollo-server';
+import { parse } from 'graphql';
+import { buildSubgraphSchema } from '@apollo/subgraph';
 
-const typeDefs = gql`
-  type Query {
-    me: User
-    user(id: ID!): User
-    users: [User]
-  }
-
-  type User {
-    id: ID!
-    name: String
-    username: String
-  }
-`;
+const typeDefs = parse(readFileSync(join(__dirname, './typeDefs.graphql'), 'utf8'));
 
 const resolvers = {
+  User: {
+    __resolveReference(object, context) {
+      return {
+        ...object,
+        ...context.users.find(user => user.id === object.id),
+      };
+    },
+  },
   Query: {
     me(_root, _args, context) {
       return context.users[0];
@@ -29,8 +29,12 @@ const resolvers = {
 };
 
 const server = new ApolloServer({
-  typeDefs,
-  resolvers,
+  schema: buildSubgraphSchema([
+    {
+      typeDefs,
+      resolvers,
+    },
+  ]),
   context: {
     users: [
       {
@@ -50,7 +54,7 @@ const server = new ApolloServer({
 });
 
 export const accountsServer = () =>
-  server.listen({ port: 9871 }).then(({ url }) => {
+  server.listen({ port: 9880 }).then(({ url }) => {
     if (!process.env.CI) {
       console.log(`🚀 Server ready at ${url}`);
     }

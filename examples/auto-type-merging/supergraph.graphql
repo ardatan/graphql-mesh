@@ -1,0 +1,121 @@
+schema
+  @transport(subgraph: "petstore", kind: "rest", location: "https://petstore.swagger.io/v2")
+  @transport(subgraph: "vaccination", kind: "http", location: "http://localhost:4001/graphql") {
+  query: Query
+}
+
+directive @enum(subgraph: String, value: String) on ENUM_VALUE
+
+directive @httpOperation(
+  subgraph: String
+  path: String
+  operationSpecificHeaders: ObjMap
+  httpMethod: HTTPMethod
+  isBinary: Boolean
+  requestBaseBody: ObjMap
+  queryParamArgMap: ObjMap
+  queryStringOptionsByParam: ObjMap
+  jsonApiFields: Boolean
+) on FIELD_DEFINITION
+
+directive @transport(
+  subgraph: String
+  kind: String
+  location: String
+  headers: ObjMap
+  queryStringOptions: ObjMap
+  queryParams: ObjMap
+) on OBJECT
+
+type Query {
+  getPetById(petId: BigInt!): Pet!
+    @httpOperation(
+      subgraph: "petstore"
+      path: "/pet/{args.petId}"
+      operationSpecificHeaders: "\"{\\\"Accept\\\":\\\"application/json, application/xml\\\"}\""
+      httpMethod: GET
+    )
+    @resolver(
+      subgraph: "petstore"
+      operation: "query getPetById($petId: BigInt!) { getPetById(petId: $petId) }"
+    )
+    @source(subgraph: "petstore", name: "getPetById", type: "Pet!")
+  vaccinationPetById(id: BigInt!): Pet
+    @resolver(
+      subgraph: "vaccination"
+      operation: "query pet_by_id($id: BigInt!) { pet_by_id(id: $id) }"
+    )
+    @source(subgraph: "vaccination", name: "pet_by_id", type: "Pet")
+}
+
+type Pet
+  @source(subgraph: "petstore", name: "Pet")
+  @source(subgraph: "vaccination", name: "Pet")
+  @resolver(
+    subgraph: "petstore"
+    operation: "query PetById($Pet_id: BigInt!) { getPetById(petId: $Pet_id) }"
+    kind: "FETCH"
+  )
+  @resolver(
+    subgraph: "petstore"
+    operation: "query PetById($Pet_id: BigInt!) { getPetById(petId: $Pet_id) }"
+    kind: "FETCH"
+  )
+  @resolver(
+    subgraph: "vaccination"
+    operation: "query PetById($Pet_id: BigInt!) { pet_by_id(id: $Pet_id) }"
+    kind: "FETCH"
+  )
+  @variable(subgraph: "petstore", name: "Pet_id", select: "id")
+  @variable(subgraph: "vaccination", name: "Pet_id", select: "id")
+  @variable(subgraph: "petstore", name: "Pet_id", select: "id")
+  @variable(subgraph: "vaccination", name: "Pet_id", select: "id") {
+  id: BigInt!
+    @source(subgraph: "petstore", name: "id", type: "BigInt")
+    @source(subgraph: "vaccination", name: "id", type: "BigInt!")
+  category: Category @source(subgraph: "petstore", name: "category", type: "Category")
+  name: String! @source(subgraph: "petstore", name: "name", type: "String!")
+  photoUrls: [String]! @source(subgraph: "petstore", name: "photoUrls", type: "[String]!")
+  tags: [Tag] @source(subgraph: "petstore", name: "tags", type: "[Tag]")
+  status: mutationInput_addPet_input_status
+    @source(subgraph: "petstore", name: "status", type: "mutationInput_addPet_input_status")
+  vaccinated: Boolean! @source(subgraph: "vaccination", name: "vaccinated", type: "Boolean!")
+}
+
+scalar BigInt
+  @source(subgraph: "vaccination", name: "BigInt")
+  @source(subgraph: "petstore", name: "BigInt")
+  @source(subgraph: "vaccination", name: "BigInt")
+
+type Category @source(subgraph: "petstore", name: "Category") {
+  id: BigInt @source(subgraph: "petstore", name: "id", type: "BigInt")
+  name: String @source(subgraph: "petstore", name: "name", type: "String")
+}
+
+type Tag @source(subgraph: "petstore", name: "Tag") {
+  id: BigInt @source(subgraph: "petstore", name: "id", type: "BigInt")
+  name: String @source(subgraph: "petstore", name: "name", type: "String")
+}
+
+enum mutationInput_addPet_input_status
+  @source(subgraph: "petstore", name: "mutationInput_addPet_input_status") {
+  available @source(subgraph: "petstore", name: "available")
+  pending @source(subgraph: "petstore", name: "pending")
+  sold @source(subgraph: "petstore", name: "sold")
+}
+
+scalar ObjMap
+  @source(subgraph: "petstore", name: "ObjMap")
+  @source(subgraph: "petstore", name: "ObjMap")
+
+enum HTTPMethod @source(subgraph: "petstore", name: "HTTPMethod") {
+  GET @source(subgraph: "petstore", name: "GET")
+  HEAD @source(subgraph: "petstore", name: "HEAD")
+  POST @source(subgraph: "petstore", name: "POST")
+  PUT @source(subgraph: "petstore", name: "PUT")
+  DELETE @source(subgraph: "petstore", name: "DELETE")
+  CONNECT @source(subgraph: "petstore", name: "CONNECT")
+  OPTIONS @source(subgraph: "petstore", name: "OPTIONS")
+  TRACE @source(subgraph: "petstore", name: "TRACE")
+  PATCH @source(subgraph: "petstore", name: "PATCH")
+}

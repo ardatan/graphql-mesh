@@ -1,39 +1,36 @@
-import { mkdirSync, writeFileSync } from 'fs';
-import { basename, join } from 'path';
-import { findAndParseConfig } from '@graphql-mesh/cli';
-import { getMesh } from '@graphql-mesh/runtime';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { readdirSync, readFileSync } from 'fs';
+import { join } from 'path';
+import { GraphQLSchema, parse } from 'graphql';
+import { getComposedSchemaFromConfig } from '@graphql-mesh/compose-cli';
+import { getExecutorForSupergraph } from '@graphql-mesh/fusion-runtime';
+import { Executor, printSchemaWithDirectives } from '@graphql-tools/utils';
+import { composeConfig } from '../mesh.config';
 import thriftServer from '../src/main';
 
-const problematicModulePath = join(__dirname, '../../../node_modules/core-js/modules');
-const emptyModuleContent = 'module.exports = {};';
-
-// Fix core-js issue
-mkdirSync(problematicModulePath, { recursive: true });
-writeFileSync(join(problematicModulePath, './es.array.join.js'), emptyModuleContent);
-
-const config$ = findAndParseConfig({
-  dir: join(__dirname, '..'),
-});
-const mesh$ = config$.then(config => getMesh(config));
-jest.setTimeout(30000);
-
 describe('Thrift Calculator', () => {
-  it('should generate correct schema', async () => {
-    const { schema } = await mesh$;
-    expect(printSchemaWithDirectives(schema)).toMatchSnapshot('thrift-calculator-schema');
+  let supergraph: GraphQLSchema;
+  let executor: Executor;
+  beforeAll(async () => {
+    supergraph = await getComposedSchemaFromConfig({
+      ...composeConfig,
+      cwd: join(__dirname, '..'),
+    });
+    ({ supergraphExecutor: executor } = getExecutorForSupergraph({ supergraph }));
   });
-  it('should give correct response for example queries', async () => {
-    const { documents } = await config$;
-    const { execute } = await mesh$;
-    for (const source of documents) {
-      const result = await execute(source.document!, {});
-      expect(result.errors).toBeFalsy();
-      expect(result).toMatchSnapshot(basename(source.location!) + '-thrift-calculator-result');
-    }
+  it('generates the schema correctly', () => {
+    expect(printSchemaWithDirectives(supergraph)).toMatchSnapshot('schema');
   });
+  const queryNames = readdirSync(join(__dirname, '../example-queries'));
+  for (const queryName of queryNames) {
+    it(`executes ${queryName} query`, async () => {
+      const query = readFileSync(join(__dirname, '../example-queries', queryName), 'utf8');
+      const result = await executor({
+        document: parse(query),
+      });
+      expect(result).toMatchSnapshot(queryName);
+    });
+  }
   afterAll(() => {
-    mesh$.then(mesh => mesh.destroy());
     thriftServer.close();
   });
 });

@@ -1,8 +1,0 @@
-sources:
-  - name: Orbit
-    handler:
-      openapi:
-        source: https://app.orbit.love/api-docs/v1/swagger.json
-
-serve:
-  browser: false

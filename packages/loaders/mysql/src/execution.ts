@@ -3,7 +3,7 @@ import graphqlFields from 'graphql-fields';
 import { createPool, type Pool } from 'mysql';
 import { upgrade } from 'mysql-utilities';
 import { util } from '@graphql-mesh/cross-helpers';
-import { MeshPubSub } from '@graphql-mesh/types';
+import { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { Executor, getDirective, getDirectives, MapperKind, mapSchema } from '@graphql-tools/utils';
 import { getConnectionOptsFromEndpointUri } from './parseEndpointUri.js';
@@ -20,6 +20,7 @@ export interface GetMySQLExecutorOpts {
   subgraph: GraphQLSchema;
   pool?: Pool;
   pubsub?: MeshPubSub;
+  logger: Logger;
 }
 
 export function getMySQLExecutor({ subgraph, pool, pubsub }: GetMySQLExecutorOpts): Executor {
@@ -177,10 +178,16 @@ export function getMySQLExecutor({ subgraph, pool, pubsub }: GetMySQLExecutorOpt
   const transportDirective = transportDirectives[0];
   const { location } = transportDirective;
   const connectionOpts = getConnectionOptsFromEndpointUri(location);
+  const isDebug =
+    globalThis.process?.env?.DEBUG?.includes('mysql') ||
+    globalThis.process?.env?.DEBUG?.toString() === '1' ||
+    globalThis.process?.env?.DEBUG?.toLowerCase() === 'true';
   pool ||= createPool({
     ...connectionOpts,
     supportBigNumbers: true,
     bigNumberStrings: true,
+    debug: !!isDebug,
+    trace: !!isDebug,
   });
   pool.on('connection', connection => {
     upgrade(connection);

@@ -4,16 +4,17 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "mesh build",
-    "pretest": "npm run build",
-    "start": "mesh dev",
+    "compose": "node ../../packages/compose-cli/dist/cjs/bin.js",
+    "pretest": "npm run compose",
+    "start": "node ../../packages/serve-cli/dist/cjs/bin.js",
     "test": "jest"
   },
   "dependencies": {
-    "@envelop/auth0": "6.0.0",
-    "@graphql-mesh/cli": "0.88.5",
-    "@graphql-mesh/json-schema": "0.97.4",
-    "@graphql-mesh/plugin-operation-field-permissions": "0.96.3",
+    "@envelop/auth0": "^6.0.0",
+    "@graphql-mesh/compose-cli": "^0.0.0",
+    "@graphql-mesh/plugin-operation-field-permissions": "^0.96.3",
+    "@graphql-mesh/serve-cli": "^0.0.0",
+    "@omnigraph/json-schema": "^0.97.3",
     "graphql": "16.8.1"
   },
   "devDependencies": {

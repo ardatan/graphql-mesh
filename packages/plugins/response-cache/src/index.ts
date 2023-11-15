@@ -55,42 +55,47 @@ function getCacheForResponseCache(meshCache: KeyValueCache): UseResponseCachePar
     get(responseId) {
       return meshCache.get(`response-cache:${responseId}`);
     },
-    async set(responseId, data, entities, ttl) {
+    set(responseId, data, entities, ttl) {
       const ttlConfig = Number.isFinite(ttl) ? { ttl: ttl / 1000 } : undefined;
-      await Promise.all(
-        [...entities].map(async ({ typename, id }) => {
-          const entryId = `${typename}.${id}`;
-          await meshCache.set(`response-cache:${entryId}:${responseId}`, {}, ttlConfig);
-          await meshCache.set(`response-cache:${responseId}:${entryId}`, {}, ttlConfig);
-        }),
-      );
-      return meshCache.set(`response-cache:${responseId}`, data, ttlConfig);
+      const jobs: Promise<void>[] = [];
+      jobs.push(meshCache.set(`response-cache:${responseId}`, data, ttlConfig));
+      for (const { typename, id } of entities) {
+        const entryId = `${typename}.${id}`;
+        jobs.push(meshCache.set(`response-cache:${entryId}:${responseId}`, {}, ttlConfig));
+        jobs.push(meshCache.set(`response-cache:${responseId}:${entryId}`, {}, ttlConfig));
+      }
+      return Promise.all(jobs) as any;
     },
-    async invalidate(entitiesToRemove) {
+    invalidate(entitiesToRemove) {
       const responseIdsToCheck = new Set<string>();
-      await Promise.all(
-        [...entitiesToRemove].map(async ({ typename, id }) => {
-          const entryId = `${typename}.${id}`;
-          const cacheEntriesToDelete = await meshCache.getKeysByPrefix(
-            `response-cache:${entryId}:`,
-          );
-          await Promise.all(
-            cacheEntriesToDelete.map(cacheEntryName => {
-              const [, , responseId] = cacheEntryName.split(':');
-              responseIdsToCheck.add(responseId);
-              return meshCache.delete(entryId);
+      const entitiesToRemoveJobs: Promise<any>[] = [];
+      for (const { typename, id } of entitiesToRemove) {
+        const entryId = `${typename}.${id}`;
+        entitiesToRemoveJobs.push(
+          meshCache.getKeysByPrefix(`response-cache:${entryId}:`).then(cacheEntriesToDelete =>
+            Promise.all(
+              cacheEntriesToDelete.map(cacheEntryName => {
+                const [, , responseId] = cacheEntryName.split(':');
+                responseIdsToCheck.add(responseId);
+                return meshCache.delete(entryId);
+              }),
+            ),
+          ),
+        );
+      }
+      return Promise.all(entitiesToRemoveJobs).then(() => {
+        const responseIdsToCheckJobs: Promise<any>[] = [];
+        for (const responseId of responseIdsToCheck) {
+          responseIdsToCheckJobs.push(
+            meshCache.getKeysByPrefix(`response-cache:${responseId}:`).then(cacheEntries => {
+              if (cacheEntries.length === 0) {
+                return meshCache.delete(`response-cache:${responseId}`);
+              }
+              return undefined;
             }),
           );
-        }),
-      );
-      await Promise.all(
-        [...responseIdsToCheck].map(async responseId => {
-          const cacheEntries = await meshCache.getKeysByPrefix(`response-cache:${responseId}:`);
-          if (cacheEntries.length === 0) {
-            await meshCache.delete(`response-cache:${responseId}`);
-          }
-        }),
-      );
+        }
+      });
     },
   };
 }

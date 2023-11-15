@@ -1,5 +1,0 @@
-sources:
-  - name: Netsuite
-    handler:
-      soap:
-        source: https://webservices.netsuite.com/wsdl/v2021_1_0/netsuite.wsdl

@@ -1,30 +1,30 @@
-import { basename, join } from 'path';
-import { lexicographicSortSchema } from 'graphql';
-import { findAndParseConfig } from '@graphql-mesh/cli';
-import { ProcessedConfig } from '@graphql-mesh/config';
-import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import { GraphQLSchema, lexicographicSortSchema, parse } from 'graphql';
+import { getComposedSchemaFromConfig } from '@graphql-mesh/compose-cli';
+import { getExecutorForSupergraph } from '@graphql-mesh/fusion-runtime';
+import { Executor, printSchemaWithDirectives } from '@graphql-tools/utils';
+import { composeConfig } from '../mesh.config';
 
 describe('Neo4j', () => {
-  let mesh: MeshInstance;
-  let config: ProcessedConfig;
+  let supergraph: GraphQLSchema;
+  let executor: Executor;
   beforeAll(async () => {
-    config = await findAndParseConfig({
-      dir: join(__dirname, '..'),
-    });
-    mesh = await getMesh(config);
+    supergraph = await getComposedSchemaFromConfig(composeConfig);
+    const { supergraphExecutor } = getExecutorForSupergraph({ supergraph });
+    executor = supergraphExecutor;
   });
   jest.setTimeout(120_000);
   it('should generate correct schema', () => {
-    expect(printSchemaWithDirectives(lexicographicSortSchema(mesh.schema))).toMatchSnapshot();
+    expect(printSchemaWithDirectives(lexicographicSortSchema(supergraph))).toMatchSnapshot();
   });
-  it('should give correct response for example queries', async () => {
-    for (const source of config.documents) {
-      const result = await mesh.execute(source.document!, {});
-      expect(result).toMatchSnapshot(basename(source.location!) + '-query-result');
-    }
-  });
-  afterAll(() => {
-    mesh?.destroy();
+  it('should give correct response for the example query', async () => {
+    const query = readFileSync(join(__dirname, '../example-query.graphql'), 'utf8');
+    const parsedDoc = parse(query);
+    const res = await executor({
+      document: parsedDoc,
+      variables: {},
+    });
+    expect(res).toMatchSnapshot();
   });
 });

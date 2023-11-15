@@ -1,7 +1,7 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "esnext"
+    "module": "commonjs"
   },
-  "include": ["src"]
+  "files": ["mesh.config.ts", "src/main.ts", "tests/thrift-calculator.test.ts"]
 }

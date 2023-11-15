@@ -12,10 +12,14 @@
       "packages/transforms/*",
       "packages/mergers/*",
       "packages/plugins/*",
+      "packages/fusion/*",
       "examples/*",
+      "examples/integrations/*",
       "examples/federation-example/*",
+      "examples/federation-example/services/*",
       "examples/graphql-file-upload-example/frontend",
       "packages/loaders/*",
+      "packages/transports/*",
       "examples/hive-example/gateway",
       "examples/hive-example/sources/*"
     ]
@@ -37,7 +41,6 @@
     "prebuild": "yarn clean && yarn generate-config-schema",
     "prebuild:website": "yarn build",
     "prerelease": "yarn build",
-    "pretest:integration": "yarn workspace example-fastify build",
     "prettier": "prettier --write --list-different .",
     "prettier:check": "prettier --check .",
     "release": "changeset publish",

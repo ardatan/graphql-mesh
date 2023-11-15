@@ -5,6 +5,7 @@ export interface OpenAPILoaderOptions extends Partial<JSONSchemaLoaderOptions> {
   source: string;
   selectQueryOrMutationField?: OpenAPILoaderSelectQueryOrMutationFieldConfig[];
   fallbackFormat?: 'json' | 'yaml' | 'js' | 'ts';
+  jsonApi?: boolean;
 }
 
 export interface OpenAPILoaderSelectQueryOrMutationFieldConfig {

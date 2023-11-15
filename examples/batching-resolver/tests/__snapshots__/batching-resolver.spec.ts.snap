@@ -1,0 +1,75 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Batching Resolvers Example executes userById.graphql query: userById.graphql 1`] = `
+{
+  "data": {
+    "jane": [
+      {
+        "id": 2,
+        "name": "Jane Doe",
+      },
+    ],
+    "john": [
+      {
+        "id": 1,
+        "name": "John Doe",
+      },
+    ],
+  },
+  "errors": undefined,
+  "extensions": undefined,
+}
+`;
+
+exports[`Batching Resolvers Example generates the schema correctly: schema 1`] = `
+"schema @transport(subgraph: "ExampleAPI", kind: "rest", location: "http://localhost:4001") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION
+
+directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+
+type Query {
+  dummy: String @resolver(subgraph: "ExampleAPI", operation: "query dummy { dummy }") @source(subgraph: "ExampleAPI", name: "dummy", type: "String")
+  user(id: Float!): User @resolver(subgraph: "ExampleAPI", kind: BATCH, operation: """
+  mutation UserBatch($id: [Float!]!) {
+    usersByIds(input: { ids: $id }) {
+      results
+    }
+  }
+  """)
+}
+
+type Mutation {
+  usersByIds(input: UsersByIdRequest_Input): UsersByIdResponse @httpOperation(subgraph: "ExampleAPI", path: "/users_by_ids", operationSpecificHeaders: "\\"{\\\\\\"Content-Type\\\\\\":\\\\\\"application/json\\\\\\",\\\\\\"accept\\\\\\":\\\\\\"application/json\\\\\\"}\\"", httpMethod: POST) @resolver(subgraph: "ExampleAPI", operation: "mutation mutationusersByIds($input: UsersByIdRequest_Input) { usersByIds(input: $input) }") @source(subgraph: "ExampleAPI", name: "usersByIds", type: "UsersByIdResponse")
+}
+
+type UsersByIdResponse @source(subgraph: "ExampleAPI", name: "UsersByIdResponse") {
+  results: [User]! @source(subgraph: "ExampleAPI", name: "results", type: "[User]!")
+}
+
+type User @source(subgraph: "ExampleAPI", name: "User") {
+  id: Float! @source(subgraph: "ExampleAPI", name: "id", type: "Float!")
+  name: String! @source(subgraph: "ExampleAPI", name: "name", type: "String!")
+}
+
+input UsersByIdRequest_Input @source(subgraph: "ExampleAPI", name: "UsersByIdRequest_Input") {
+  ids: [Float]! @source(subgraph: "ExampleAPI", name: "ids", type: "[Float]!")
+}
+
+scalar ObjMap @source(subgraph: "ExampleAPI", name: "ObjMap") @source(subgraph: "ExampleAPI", name: "ObjMap")
+
+enum HTTPMethod @source(subgraph: "ExampleAPI", name: "HTTPMethod") {
+  GET @source(subgraph: "ExampleAPI", name: "GET")
+  HEAD @source(subgraph: "ExampleAPI", name: "HEAD")
+  POST @source(subgraph: "ExampleAPI", name: "POST")
+  PUT @source(subgraph: "ExampleAPI", name: "PUT")
+  DELETE @source(subgraph: "ExampleAPI", name: "DELETE")
+  CONNECT @source(subgraph: "ExampleAPI", name: "CONNECT")
+  OPTIONS @source(subgraph: "ExampleAPI", name: "OPTIONS")
+  TRACE @source(subgraph: "ExampleAPI", name: "TRACE")
+  PATCH @source(subgraph: "ExampleAPI", name: "PATCH")
+}"
+`;

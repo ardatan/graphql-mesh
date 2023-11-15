@@ -1,28 +1,28 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`OpanAPI: nested objects should generate the schema correctly 1`] = `
-"schema {
+"schema @transport(subgraph: "example_api", kind: "rest", location: "http://localhost:3000", queryStringOptions: "{\\"allowDots\\":true}") {
   query: Query
 }
 
 directive @oneOf on OBJECT | INTERFACE | INPUT_OBJECT
 
-directive @statusCodeTypeName(typeName: String, statusCode: ID) repeatable on UNION
+directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: ID) repeatable on UNION
 
-directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION
 
-directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
 
-type Query @globalOptions(sourceName: "example_api", endpoint: "http://localhost:3000", queryStringOptions: "{\\"allowDots\\":true}") {
+type Query {
   """Search for documents in a collection that match the search criteria."""
   searchCollection(
     """The name of the collection to search for the document under"""
     collectionName: String!
     searchParameters: SearchParameters_Input!
-  ): searchCollection_response @httpOperation(path: "/collections/{args.collectionName}/documents/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"searchParameters\\":\\"searchParameters\\"}")
+  ): searchCollection_response @httpOperation(subgraph: "example_api", path: "/collections/{args.collectionName}/documents/search", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET, queryParamArgMap: "{\\"searchParameters\\":\\"searchParameters\\"}")
 }
 
-union searchCollection_response @statusCodeTypeName(statusCode: 200, typeName: "SearchResult") @statusCodeTypeName(statusCode: 400, typeName: "ApiResponse") @statusCodeTypeName(statusCode: 404, typeName: "ApiResponse") = SearchResult | ApiResponse
+union searchCollection_response @statusCodeTypeName(subgraph: "example_api", statusCode: 200, typeName: "SearchResult") @statusCodeTypeName(subgraph: "example_api", statusCode: 400, typeName: "ApiResponse") @statusCodeTypeName(subgraph: "example_api", statusCode: 404, typeName: "ApiResponse") = SearchResult | ApiResponse
 
 type SearchResult {
   facet_counts: [FacetCounts]

@@ -1,9 +1,0 @@
-sources:
-  - name: SOAPDemo
-    handler:
-      soap:
-        source: https://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL
-        selectQueryOperationsAuto: true
-
-documents:
-  - ./operations/*.graphql

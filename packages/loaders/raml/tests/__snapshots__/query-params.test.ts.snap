@@ -1,20 +1,20 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Query Parameters generates correct schema 1`] = `
-"schema {
+"schema @transport(subgraph: "query-params", kind: "rest", location: "http://localhost:3000") {
   query: Query
 }
 
-directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean) on FIELD_DEFINITION
 
-directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
 
-type Query @globalOptions(sourceName: "query-params", endpoint: "http://localhost:3000") {
+type Query {
   """Get a list of products"""
   listOfProducts(
     """Get approved products"""
     isApproved: Boolean = true
-  ): [Product] @httpOperation(path: "/listOfProducts", httpMethod: GET, queryParamArgMap: "{\\"isApproved\\":\\"isApproved\\"}")
+  ): [Product] @httpOperation(subgraph: "query-params", path: "/listOfProducts", httpMethod: GET, queryParamArgMap: "{\\"isApproved\\":\\"isApproved\\"}")
 }
 
 type Product {

@@ -12,6 +12,7 @@ const { readFile } = promises;
 describe('SOAP Loader', () => {
   it('should generate the schema correctly', async () => {
     const soapLoader = new SOAPLoader({
+      subgraphName: 'Test',
       fetch,
     });
     await soapLoader.fetchWSDL('https://www.w3schools.com/xml/tempconvert.asmx?WSDL');
@@ -20,6 +21,7 @@ describe('SOAP Loader', () => {
   });
   it('should execute SOAP calls correctly', async () => {
     const soapLoader = new SOAPLoader({
+      subgraphName: 'Test',
       fetch,
     });
     await soapLoader.fetchWSDL('https://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL');
@@ -40,6 +42,7 @@ describe('SOAP Loader', () => {
 
   it('should create executor for a service with mutations and query placeholder', async () => {
     const soapLoader = new SOAPLoader({
+      subgraphName: 'Test',
       fetch,
     });
     const example1Wsdl = await readFile(join(__dirname, './fixtures/greeting.wsdl'), 'utf8');

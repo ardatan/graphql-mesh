@@ -1,33 +1,32 @@
-import { readFile } from 'fs/promises';
+import { readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
-import { lexicographicSortSchema } from 'graphql';
-import { findAndParseConfig } from '@graphql-mesh/cli';
-import { ProcessedConfig } from '@graphql-mesh/config';
-import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { GraphQLSchema, parse } from 'graphql';
+import { getComposedSchemaFromConfig } from '@graphql-mesh/compose-cli';
+import { getExecutorForSupergraph } from '@graphql-mesh/fusion-runtime';
+import { Executor, printSchemaWithDirectives } from '@graphql-tools/utils';
+import { composeConfig } from '../mesh.config';
 
 describe('SOAP Country Info', () => {
-  let config: ProcessedConfig;
-  let mesh: MeshInstance;
+  let supergraph: GraphQLSchema;
+  let executor: Executor;
   beforeAll(async () => {
-    config = await findAndParseConfig({
-      dir: join(__dirname, '..'),
+    supergraph = await getComposedSchemaFromConfig({
+      ...composeConfig,
+      cwd: join(__dirname, '..'),
     });
-    mesh = await getMesh(config);
+    ({ supergraphExecutor: executor } = getExecutorForSupergraph({ supergraph }));
   });
-  afterAll(() => {
-    mesh.destroy();
+  it('generates the schema correctly', () => {
+    expect(printSchemaWithDirectives(supergraph)).toMatchSnapshot('schema');
   });
-  it('should generate correct schema', () => {
-    expect(printSchemaWithDirectives(lexicographicSortSchema(mesh.schema))).toMatchSnapshot();
-  });
-  it('should give correct response for the batched example query', async () => {
-    const queryStr = await readFile(
-      join(__dirname, '..', 'list-of-languages-by-name.graphql'),
-      'utf-8',
-    );
-    const result = await mesh.execute(queryStr, {});
-    expect(result?.errors?.[0]?.stack).toBeUndefined();
-    expect(result).toMatchSnapshot('list-of-languages-by-name-result');
-  });
+  const queryNames = readdirSync(join(__dirname, '../example-queries'));
+  for (const queryName of queryNames) {
+    it(`executes ${queryName} query`, async () => {
+      const query = readFileSync(join(__dirname, '../example-queries', queryName), 'utf8');
+      const result = await executor({
+        document: parse(query),
+      });
+      expect(result).toMatchSnapshot(queryName);
+    });
+  }
 });
