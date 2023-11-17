@@ -20,7 +20,7 @@
       "examples/hive-example/sources/*"
     ]
   },
-  "packageManager": "yarn@1.22.19",
+  "packageManager": "yarn@1.22.21",
   "scripts": {
     "build": "bob build",
     "build-test-artifacts": "yarn workspace json-schema-example build && yarn workspace example-fastify build",
@@ -56,7 +56,7 @@
     "@changesets/cli": "2.26.2",
     "@theguild/prettier-config": "2.0.1",
     "@types/jest": "29.5.8",
-    "@types/node": "20.9.0",
+    "@types/node": "20.9.1",
     "@typescript-eslint/eslint-plugin": "6.10.0",
     "@typescript-eslint/parser": "6.10.0",
     "babel-jest": "29.7.0",
