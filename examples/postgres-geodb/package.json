@@ -22,7 +22,7 @@
     "@types/node": "20.9.1",
     "cross-env": "7.0.3",
     "ts-node": "10.9.1",
-    "typescript": "5.2.2"
+    "typescript": "5.3.2"
   },
   "resolutions": {
     "graphql": "16.8.1"
