@@ -2,7 +2,7 @@ sources:
   - name: gRPC Example
     handler:
       grpc:
-        endpoint: localhost:50051
+        endpoint: localhost:50052
 
 documents:
   - example-queries/*.graphql
