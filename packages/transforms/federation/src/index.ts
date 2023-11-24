@@ -89,9 +89,8 @@ export default class FederationTransform implements MeshTransform {
               rawSource.merge[type.name].fields[field.name] || {};
             if (field.config.requires) {
               rawSource.merge[type.name].fields[field.name].computed = true;
-              rawSource.merge[type.name].fields[
-                field.name
-              ].selectionSet = `{ ${field.config.requires} }`;
+              rawSource.merge[type.name].fields[field.name].selectionSet =
+                `{ ${field.config.requires} }`;
             }
           }
         }
