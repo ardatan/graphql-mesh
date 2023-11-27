@@ -80,10 +80,10 @@
   },
   "resolutions": {
     "@changesets/assemble-release-plan": "5.2.3",
-    "esbuild": "0.19.7",
+    "esbuild": "0.19.8",
     "graphql": "16.8.1",
     "tslib": "2.6.2",
-    "undici": "5.28.0",
+    "undici": "5.28.1",
     "uuid": "7.0.3"
   },
   "lint-staged": {
