@@ -218,12 +218,14 @@ export async function serveMesh(
     uWebSocketsApp.ws(graphqlPath, wsHandler);
 
     uWebSocketsApp.listen(hostname, port, listenSocket => {
+      if (!listenSocket) {
+        logger.error(`Failed to listen to ${serverUrl}`);
+        process.exit(1);
+      }
       registerTerminateHandler(async eventName => {
         const eventLogger = logger.child(`${eventName}  💀`);
         eventLogger.debug(`Stopping HTTP Server`);
-        // eslint-disable-next-line camelcase
-        const { us_listen_socket_close } = await import('uWebSockets.js');
-        us_listen_socket_close(listenSocket);
+        uWebSocketsApp?.close?.();
         eventLogger.debug(`HTTP Server has been stopped`);
       });
       if (browser) {
