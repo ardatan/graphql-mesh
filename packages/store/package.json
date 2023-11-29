@@ -40,7 +40,7 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "@graphql-inspector/core": "5.0.1"
+    "@graphql-inspector/core": "5.0.2"
   },
   "devDependencies": {
     "graphql": "16.8.1"

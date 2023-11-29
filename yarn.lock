@@ -3228,6 +3228,15 @@
     object-inspect "1.12.3"
     tslib "2.6.0"
 
+"@graphql-inspector/core@5.0.2":
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/@graphql-inspector/core/-/core-5.0.2.tgz#f742ffc546ca42832306c55810088b351f07908d"
+  integrity sha512-pXHPCggwLmgi5NACPPV4qyf2xW/sQONnu6ZqCAid3k/S2APmVYN4Z3OvxvLA12NFhzby5Sz5K4fRsId43cK8ww==
+  dependencies:
+    dependency-graph "0.11.0"
+    object-inspect "1.12.3"
+    tslib "2.6.2"
+
 "@graphql-tools/batch-delegate@^9.0.0":
   version "9.0.0"
   resolved "https://registry.yarnpkg.com/@graphql-tools/batch-delegate/-/batch-delegate-9.0.0.tgz#dd9e87466f450bae61a20525a2a8d8b0d257df37"
