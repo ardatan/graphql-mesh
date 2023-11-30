@@ -1222,7 +1222,10 @@ export function getComposerFromJSONSchema(
                 ],
               };
             }
-          } else {
+          } else if (
+            outputTypeComposer instanceof ObjectTypeComposer ||
+            outputTypeComposer instanceof InterfaceTypeComposer
+          ) {
             const typeElemFieldMap = outputTypeComposer.getFields();
             for (const fieldName in typeElemFieldMap) {
               // In case of conflict set it to JSON
@@ -1232,6 +1235,8 @@ export function getComposerFromJSONSchema(
               fieldMap[fieldName] = {
                 ...field,
                 type: () => {
+                  if (!field.type) {
+                  }
                   const fieldType = field.type.getType();
                   const namedType = getNamedType(fieldType as GraphQLType);
                   if (existingField) {
@@ -1485,12 +1490,28 @@ export function getComposerFromJSONSchema(
               }
             }
             (output as ObjectTypeComposer).addFields(fieldMap);
+            // TODO: Improve this later
+            for (const requiredFieldName of subSchemaAndTypeComposers.required || []) {
+              const sanitizedFieldName = sanitizeNameForGraphQL(requiredFieldName);
+              const fieldType = (output as ObjectTypeComposer).getFieldType(sanitizedFieldName);
+              if (!isNonNullType(fieldType)) {
+                (output as ObjectTypeComposer).makeFieldNonNull(requiredFieldName);
+              }
+            }
           }
           let input = subSchemaAndTypeComposers.input;
           if (Object.keys(inputFieldMap).length === 0) {
             input = schemaComposer.getAnyTC(GraphQLJSON);
           } else if (input != null && 'addFields' in input) {
             (input as InputTypeComposer).addFields(inputFieldMap);
+            // TODO: Improve this later
+            for (const requiredFieldName of subSchemaAndTypeComposers.required || []) {
+              const sanitizedFieldName = sanitizeNameForGraphQL(requiredFieldName);
+              const fieldType = (input as InputTypeComposer).getFieldType(sanitizedFieldName);
+              if (!isNonNullType(fieldType)) {
+                (input as InputTypeComposer).makeFieldNonNull(requiredFieldName);
+              }
+            }
           }
 
           if (isList) {
@@ -1507,7 +1528,6 @@ export function getComposerFromJSONSchema(
             deprecated: subSchemaAndTypeComposers.deprecated,
           };
       }
-
       if (subSchemaAndTypeComposers.input || subSchemaAndTypeComposers.output) {
         return {
           input: subSchemaAndTypeComposers.input,

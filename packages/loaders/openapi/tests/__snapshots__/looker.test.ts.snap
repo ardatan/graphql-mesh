@@ -1987,7 +1987,7 @@ type Alert {
   "An optional description for the alert. This supplements the title"
   description: String
   "Array of destinations to send alerts to. Must be the same type of destination. Example \`[{ \\"destination_type\\": \\"EMAIL\\", \\"email_address\\": \\"test@test.com\\" }]\`"
-  destinations: [AlertDestination]
+  destinations: [AlertDestination]!
   field: AlertField!
   "Whether or not the user follows this alert."
   followed: Boolean!
@@ -2021,7 +2021,7 @@ type Alert {
 
 type AlertAppliedDashboardFilter {
   "Field Title. Refer to \`DashboardFilter.title\` in [DashboardFilter](#!/types/DashboardFilter). Example \`Name\`"
-  filter_title: String
+  filter_title: String!
   "Field Name. Refer to \`DashboardFilter.dimension\` in [DashboardFilter](#!/types/DashboardFilter). Example \`distribution_centers.name\`"
   field_name: String!
   "Field Value. [Filter Expressions](https://cloud.google.com/looker/docs/reference/filter-expressions). Example \`Los Angeles CA\`"
@@ -4183,11 +4183,11 @@ type UserAttribute {
   "Unique Id"
   id: String!
   "Name of user attribute"
-  name: String
+  name: String!
   "Human-friendly label for user attribute"
-  label: String
+  label: String!
   "Type of user attribute (\\"string\\", \\"number\\", \\"datetime\\", \\"yesno\\", \\"zipcode\\")"
-  type: String
+  type: String!
   "Default value for when no value is set on the user"
   default_value: String
   "Attribute is a system default"
@@ -7448,8 +7448,8 @@ input CreateQueryTask_Input {
   "Operations the current user is able to perform on this object"
   can: JSON
   "Id of query to run"
-  query_id: String
-  result_format: mutationInput_create_query_task_input_result_format
+  query_id: String!
+  result_format: mutationInput_create_query_task_input_result_format!
   "Source of query task"
   source: String
   "Create the task but defer execution"
@@ -7574,7 +7574,7 @@ input Alert_Input {
   "An optional description for the alert. This supplements the title"
   description: String
   "Array of destinations to send alerts to. Must be the same type of destination. Example \`[{ \\"destination_type\\": \\"EMAIL\\", \\"email_address\\": \\"test@test.com\\" }]\`"
-  destinations: [AlertDestination_Input]
+  destinations: [AlertDestination_Input]!
   field: AlertField_Input!
   "Whether or not the user follows this alert."
   followed: Boolean
@@ -7608,7 +7608,7 @@ input Alert_Input {
 
 input AlertAppliedDashboardFilter_Input {
   "Field Title. Refer to \`DashboardFilter.title\` in [DashboardFilter](#!/types/DashboardFilter). Example \`Name\`"
-  filter_title: String
+  filter_title: String!
   "Field Name. Refer to \`DashboardFilter.dimension\` in [DashboardFilter](#!/types/DashboardFilter). Example \`distribution_centers.name\`"
   field_name: String!
   "Field Value. [Filter Expressions](https://cloud.google.com/looker/docs/reference/filter-expressions). Example \`Los Angeles CA\`"
@@ -8272,13 +8272,13 @@ input CreateDashboardFilter_Input {
   "Unique Id"
   id: String
   "Id of Dashboard"
-  dashboard_id: String
+  dashboard_id: String!
   "Name of filter"
-  name: String
+  name: String!
   "Title of filter"
-  title: String
+  title: String!
   "Type of filter: one of date, number, string, or field"
-  type: String
+  type: String!
   "Default value of filter"
   default_value: String
   "Model of filter (required if type = field)"
@@ -8315,11 +8315,11 @@ type DataActionResponse {
 
 type ValidationError {
   "Error details"
-  message: String
+  message: String!
   "Error detail array"
   errors: [ValidationErrorDetail]
   "Documentation link"
-  documentation_url: UriReference
+  documentation_url: UriReference!
 }
 
 type ValidationErrorDetail {
@@ -8330,7 +8330,7 @@ type ValidationErrorDetail {
   "Error info message"
   message: String
   "Documentation link"
-  documentation_url: UriReference
+  documentation_url: UriReference!
 }
 
 input DataActionRequest_Input {
@@ -9290,11 +9290,11 @@ input UserAttribute_Input {
   "Unique Id"
   id: String
   "Name of user attribute"
-  name: String
+  name: String!
   "Human-friendly label for user attribute"
-  label: String
+  label: String!
   "Type of user attribute (\\"string\\", \\"number\\", \\"datetime\\", \\"yesno\\", \\"zipcode\\")"
-  type: String
+  type: String!
   "Default value for when no value is set on the user"
   default_value: String
   "Attribute is a system default"
@@ -10214,7 +10214,7 @@ input SupportAccessAddEntries_Input {
 
 input SupportAccessEnable_Input {
   "Duration Support Access will remain enabled"
-  duration_in_seconds: BigInt
+  duration_in_seconds: BigInt!
 }
 
 input Theme_Input {

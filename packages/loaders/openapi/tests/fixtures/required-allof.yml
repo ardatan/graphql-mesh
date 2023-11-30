@@ -1,0 +1,70 @@
+openapi: 3.0.1
+info:
+  description: 'Schema'
+  version: '1.0.0'
+  title: 'MyAPI'
+paths:
+  /admin:
+    get:
+      summary: 'Get admin'
+      operationId: 'getAdmin'
+      responses:
+        200:
+          description: 'Success'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Admin'
+  /editor:
+    get:
+      summary: 'Get editor'
+      operationId: 'getEditor'
+      responses:
+        200:
+          description: 'Success'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Editor'
+components:
+  schemas:
+    User:
+      type: 'object'
+      required:
+        - type
+      properties:
+        name:
+          type: 'string'
+          description: 'The Name.'
+          maxLength: 100
+        type:
+          type: 'string'
+          description: 'The type'
+      discriminator:
+        propertyName: type
+    Admin:
+      type: 'object'
+      required:
+        - type
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: 'object'
+          properties:
+            type:
+              type: 'string'
+              description: 'The type'
+            admin:
+              type: 'boolean'
+              description: 'The admin'
+    Editor:
+      type: 'object'
+      required:
+        - type
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: 'object'
+          properties:
+            type:
+              type: 'string'
+              description: 'The type'
+              nullable: true

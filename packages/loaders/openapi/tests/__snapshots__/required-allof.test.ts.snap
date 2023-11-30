@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Merge required attributes correctly in allOfs should generate correct schema: required-allof-schema 1`] = `
+"schema {
+  query: Query
+}
+
+directive @discriminator(field: String, mapping: ObjMap) on INTERFACE | UNION
+
+directive @length(min: Int, max: Int) on SCALAR
+
+directive @globalOptions(sourceName: String, endpoint: String, operationHeaders: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) on OBJECT
+
+directive @httpOperation(path: String, operationSpecificHeaders: ObjMap, httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap) on FIELD_DEFINITION
+
+type Admin implements User {
+  "The Name."
+  name: query_getAdmin_allOf_0_name
+  "The type"
+  type: String!
+  "The admin"
+  admin: Boolean
+}
+
+interface User @discriminator(field: "type") {
+  "The Name."
+  name: query_getAdmin_allOf_0_name
+  "The type"
+  type: String!
+}
+
+"The Name."
+scalar query_getAdmin_allOf_0_name @length(min: null, max: 100)
+
+type Editor implements User {
+  "The Name."
+  name: query_getAdmin_allOf_0_name
+  "The type"
+  type: String!
+}
+
+type Query @globalOptions(sourceName: "test") {
+  "Get admin"
+  getAdmin: Admin @httpOperation(path: "/admin", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+  "Get editor"
+  getEditor: Editor @httpOperation(path: "/editor", operationSpecificHeaders: "{\\"accept\\":\\"application/json\\"}", httpMethod: GET)
+}
+
+scalar ObjMap
+
+enum HTTPMethod {
+  GET
+  HEAD
+  POST
+  PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
+  PATCH
+}"
+`;
