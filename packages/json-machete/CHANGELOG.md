@@ -1,5 +1,13 @@
 # json-machete
 
+## 0.97.1
+
+### Patch Changes
+
+- [#6310](https://github.com/ardatan/graphql-mesh/pull/6310)
+  [`427ff87`](https://github.com/ardatan/graphql-mesh/commit/427ff871cd13781a4cd3dd0ead54cad3d100d083)
+  Thanks [@ardatan](https://github.com/ardatan)! - Respect `required` fields in allOf definitions
+
 ## 0.97.0
 
 ### Minor Changes

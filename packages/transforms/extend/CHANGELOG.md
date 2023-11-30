@@ -1,5 +1,22 @@
 # @graphql-mesh/transform-extend
 
+## 0.96.1
+
+### Patch Changes
+
+- [#6285](https://github.com/ardatan/graphql-mesh/pull/6285)
+  [`865adb8`](https://github.com/ardatan/graphql-mesh/commit/865adb812c2dd12496d0ef296632bfa6e3e4012f)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/load@8.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/8.0.1)
+    (from `8.0.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/schema@10.0.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.2)
+    (from `10.0.0`, in `dependencies`)
+- Updated dependencies []:
+  - @graphql-mesh/types@0.96.1
+  - @graphql-mesh/utils@0.96.1
+
 ## 0.96.0
 
 ### Patch Changes
