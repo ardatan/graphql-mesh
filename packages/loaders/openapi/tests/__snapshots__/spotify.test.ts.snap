@@ -593,9 +593,9 @@ type ImageObject {
   "The source URL of the image."
   url: String!
   "The image height in pixels."
-  height: Int
+  height: Int!
   "The image width in pixels."
-  width: Int
+  width: Int!
 }
 
 "The precision with which \`release_date\` value is known."
@@ -678,11 +678,11 @@ type PagingSimplifiedTrackObject {
   "The maximum number of items in the response (as set in the query or by default)."
   limit: Int!
   "URL to the next page of items. ( \`null\` if none)"
-  next: URL
+  next: URL!
   "The offset of the items returned (as set in the query or by default)"
   offset: Int!
   "URL to the previous page of items. ( \`null\` if none)"
-  previous: URL
+  previous: URL!
   "The total number of items available to return."
   total: Int!
   items: [SimplifiedTrackObject]
@@ -772,11 +772,11 @@ type PagingSimplifiedAlbumObject {
   "The maximum number of items in the response (as set in the query or by default)."
   limit: Int!
   "URL to the next page of items. ( \`null\` if none)"
-  next: URL
+  next: URL!
   "The offset of the items returned (as set in the query or by default)"
   offset: Int!
   "URL to the previous page of items. ( \`null\` if none)"
-  previous: URL
+  previous: URL!
   "The total number of items available to return."
   total: Int!
   items: [SimplifiedAlbumObject]
@@ -924,11 +924,11 @@ type PagingSimplifiedEpisodeObject {
   "The maximum number of items in the response (as set in the query or by default)."
   limit: Int!
   "URL to the next page of items. ( \`null\` if none)"
-  next: URL
+  next: URL!
   "The offset of the items returned (as set in the query or by default)"
   offset: Int!
   "URL to the previous page of items. ( \`null\` if none)"
-  previous: URL
+  previous: URL!
   "The total number of items available to return."
   total: Int!
   items: [SimplifiedEpisodeObject]
@@ -1147,11 +1147,11 @@ type PagingSimplifiedChapterObject {
   "The maximum number of items in the response (as set in the query or by default)."
   limit: Int!
   "URL to the next page of items. ( \`null\` if none)"
-  next: URL
+  next: URL!
   "The offset of the items returned (as set in the query or by default)"
   offset: Int!
   "URL to the previous page of items. ( \`null\` if none)"
-  previous: URL
+  previous: URL!
   "The total number of items available to return."
   total: Int!
   items: [SimplifiedChapterObject]
@@ -1220,11 +1220,11 @@ type PagingSimplifiedAudiobookObject {
   "The maximum number of items in the response (as set in the query or by default)."
   limit: Int!
   "URL to the next page of items. ( \`null\` if none)"
-  next: URL
+  next: URL!
   "The offset of the items returned (as set in the query or by default)"
   offset: Int!
   "URL to the previous page of items. ( \`null\` if none)"
-  previous: URL
+  previous: URL!
   "The total number of items available to return."
   total: Int!
   items: [SimplifiedAudiobookObject]
@@ -1332,11 +1332,11 @@ type PagingTrackObject {
   "The maximum number of items in the response (as set in the query or by default)."
   limit: Int!
   "URL to the next page of items. ( \`null\` if none)"
-  next: URL
+  next: URL!
   "The offset of the items returned (as set in the query or by default)"
   offset: Int!
   "URL to the previous page of items. ( \`null\` if none)"
-  previous: URL
+  previous: URL!
   "The total number of items available to return."
   total: Int!
   items: [TrackObject]
@@ -1348,11 +1348,11 @@ type PagingArtistObject {
   "The maximum number of items in the response (as set in the query or by default)."
   limit: Int!
   "URL to the next page of items. ( \`null\` if none)"
-  next: URL
+  next: URL!
   "The offset of the items returned (as set in the query or by default)"
   offset: Int!
   "URL to the previous page of items. ( \`null\` if none)"
-  previous: URL
+  previous: URL!
   "The total number of items available to return."
   total: Int!
   items: [ArtistObject]
@@ -1365,11 +1365,11 @@ type PagingPlaylistObject {
   "The maximum number of items in the response (as set in the query or by default)."
   limit: Int!
   "URL to the next page of items. ( \`null\` if none)"
-  next: URL
+  next: URL!
   "The offset of the items returned (as set in the query or by default)"
   offset: Int!
   "URL to the previous page of items. ( \`null\` if none)"
-  previous: URL
+  previous: URL!
   "The total number of items available to return."
   total: Int!
   items: [SimplifiedPlaylistObject]
@@ -1433,11 +1433,11 @@ type PagingSimplifiedShowObject {
   "The maximum number of items in the response (as set in the query or by default)."
   limit: Int!
   "URL to the next page of items. ( \`null\` if none)"
-  next: URL
+  next: URL!
   "The offset of the items returned (as set in the query or by default)"
   offset: Int!
   "URL to the previous page of items. ( \`null\` if none)"
-  previous: URL
+  previous: URL!
   "The total number of items available to return."
   total: Int!
   items: [SimplifiedShowObject]
@@ -1524,11 +1524,11 @@ type PagingPlaylistTrackObject {
   "The maximum number of items in the response (as set in the query or by default)."
   limit: Int!
   "URL to the next page of items. ( \`null\` if none)"
-  next: URL
+  next: URL!
   "The offset of the items returned (as set in the query or by default)"
   offset: Int!
   "URL to the previous page of items. ( \`null\` if none)"
-  previous: URL
+  previous: URL!
   "The total number of items available to return."
   total: Int!
   items: [PlaylistTrackObject]
@@ -1568,11 +1568,11 @@ type PagingSavedAlbumObject {
   "The maximum number of items in the response (as set in the query or by default)."
   limit: Int!
   "URL to the next page of items. ( \`null\` if none)"
-  next: URL
+  next: URL!
   "The offset of the items returned (as set in the query or by default)"
   offset: Int!
   "URL to the previous page of items. ( \`null\` if none)"
-  previous: URL
+  previous: URL!
   "The total number of items available to return."
   total: Int!
   items: [SavedAlbumObject]
@@ -1592,11 +1592,11 @@ type PagingSavedTrackObject {
   "The maximum number of items in the response (as set in the query or by default)."
   limit: Int!
   "URL to the next page of items. ( \`null\` if none)"
-  next: URL
+  next: URL!
   "The offset of the items returned (as set in the query or by default)"
   offset: Int!
   "URL to the previous page of items. ( \`null\` if none)"
-  previous: URL
+  previous: URL!
   "The total number of items available to return."
   total: Int!
   items: [SavedTrackObject]
@@ -1615,11 +1615,11 @@ type PagingSavedEpisodeObject {
   "The maximum number of items in the response (as set in the query or by default)."
   limit: Int!
   "URL to the next page of items. ( \`null\` if none)"
-  next: URL
+  next: URL!
   "The offset of the items returned (as set in the query or by default)"
   offset: Int!
   "URL to the previous page of items. ( \`null\` if none)"
-  previous: URL
+  previous: URL!
   "The total number of items available to return."
   total: Int!
   items: [SavedEpisodeObject]
@@ -1638,11 +1638,11 @@ type PagingSavedShowObject {
   "The maximum number of items in the response (as set in the query or by default)."
   limit: Int!
   "URL to the next page of items. ( \`null\` if none)"
-  next: URL
+  next: URL!
   "The offset of the items returned (as set in the query or by default)"
   offset: Int!
   "URL to the previous page of items. ( \`null\` if none)"
-  previous: URL
+  previous: URL!
   "The total number of items available to return."
   total: Int!
   items: [SavedShowObject]
@@ -1661,11 +1661,11 @@ type PagingArtistOrTrackObject_response {
   "The maximum number of items in the response (as set in the query or by default)."
   limit: Int!
   "URL to the next page of items. ( \`null\` if none)"
-  next: URL
+  next: URL!
   "The offset of the items returned (as set in the query or by default)"
   offset: Int!
   "URL to the previous page of items. ( \`null\` if none)"
-  previous: URL
+  previous: URL!
   "The total number of items available to return."
   total: Int!
   items: [query_get_users_top_artists_and_tracks_allOf_1_items_items]
@@ -1713,13 +1713,14 @@ type PagingObject {
   "The maximum number of items in the response (as set in the query or by default)."
   limit: Int!
   "URL to the next page of items. ( \`null\` if none)"
-  next: URL
+  next: URL!
   "The offset of the items returned (as set in the query or by default)"
   offset: Int!
   "URL to the previous page of items. ( \`null\` if none)"
-  previous: URL
+  previous: URL!
   "The total number of items available to return."
   total: Int!
+  items: JSON!
 }
 
 "A category"
@@ -2376,6 +2377,7 @@ input remove_albums_user_request_Input {
 input save_tracks_user_request_Input {
   "A JSON array of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids). For example: \`[\\"4iV5W9uYEdYUVa79Axb7Rh\\", \\"1301WleyT98MSxVHPZCA6M\\"]\`<br/>A maximum of 50 items can be specified in one request. _**Note**: if the \`ids\` parameter is present in the query string, any IDs listed here in the body will be ignored._"
   ids: [String]
+  uris: JSON!
 }
 
 input remove_tracks_user_request_Input {
@@ -2386,6 +2388,7 @@ input remove_tracks_user_request_Input {
 input save_episodes_user_request_Input {
   "A JSON array of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids). <br/>A maximum of 50 items can be specified in one request. _**Note**: if the \`ids\` parameter is present in the query string, any IDs listed here in the body will be ignored._"
   ids: [String]
+  uris: JSON!
 }
 
 input remove_episodes_user_request_Input {

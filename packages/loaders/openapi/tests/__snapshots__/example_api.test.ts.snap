@@ -290,6 +290,7 @@ type patent_with_id {
   patent_id: String! @resolveRootField(field: "patent-id")
   "The id of the inventor"
   inventor_id: String @resolveRootField(field: "inventor-id")
+  patent_name: JSON! @resolveRootField(field: "patent-name")
   "Allows to fetch the user who invented a product."
   inventor: user @link(defaultRootType: "Query", defaultField: "get_patent_with_id")
 }

@@ -296,13 +296,37 @@ export async function healJSONSchema(
               );
               delete subSchema.format;
             }
+            if (subSchema.format === 'date-time' && subSchema.default != null) {
+              try {
+                if (new Date(subSchema.default).toJSON() !== subSchema.default) {
+                  debugLogFn?.(
+                    `${path} has a default value of ${subSchema.default} but it is not a valid date-time.`,
+                  );
+                  delete subSchema.default;
+                }
+              } catch (e) {
+                debugLogFn?.(
+                  `${path} has a default value of ${subSchema.default} but it is not a valid date-time.`,
+                );
+                delete subSchema.default;
+              }
+            }
           }
           if (subSchema.required) {
-            if (!Array.isArray(subSchema.required)) {
+            if (!Array.isArray(subSchema.required) || subSchema.required.length === 0) {
               debugLogFn?.(
                 `${path} has a required definition but it is not an array. Removing it.`,
               );
               delete subSchema.required;
+            } else if (subSchema.properties) {
+              for (const requiredProperty of subSchema.required) {
+                if (!(requiredProperty in subSchema.properties)) {
+                  debugLogFn?.(
+                    `${path} has a required definition but it is not in properties. Adding it.`,
+                  );
+                  subSchema.properties[requiredProperty] = AnySchema;
+                }
+              }
             }
           }
           // If it is an object type but no properties given while example is available

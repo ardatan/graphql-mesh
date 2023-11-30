@@ -74,6 +74,7 @@ type ApiReservedProduct {
 
 type ApiError {
   code: String!
+  description: JSON!
 }
 
 scalar ObjMap
