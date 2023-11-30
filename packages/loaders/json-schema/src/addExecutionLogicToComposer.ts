@@ -1,4 +1,10 @@
-import { getNamedType, GraphQLInt, GraphQLObjectType, GraphQLString } from 'graphql';
+import {
+  getNamedType,
+  GraphQLInt,
+  GraphQLObjectType,
+  GraphQLScalarType,
+  GraphQLString,
+} from 'graphql';
 import {
   GraphQLJSON,
   ObjectTypeComposer,
@@ -32,6 +38,7 @@ export interface AddExecutionLogicToComposerOptions {
   logger: Logger;
   queryParams?: Record<string, string | number | boolean>;
   queryStringOptions?: IStringifyOptions;
+  getScalarForFormat?: (format: string) => GraphQLScalarType;
 }
 
 const responseMetadataType = new GraphQLObjectType({

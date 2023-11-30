@@ -1,4 +1,4 @@
-import { OperationTypeNode } from 'graphql';
+import { GraphQLScalarType, OperationTypeNode } from 'graphql';
 import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
 import { JSONSchema, JSONSchemaObject } from 'json-machete';
 import { IStringifyOptions } from 'qs';
@@ -20,6 +20,7 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   queryParams?: Record<string, string | number | boolean>;
   queryStringOptions?: IStringifyOptions;
   bundle?: boolean;
+  getScalarForFormat?: (format: string) => GraphQLScalarType;
 }
 
 export interface JSONSchemaOperationResponseConfig {
