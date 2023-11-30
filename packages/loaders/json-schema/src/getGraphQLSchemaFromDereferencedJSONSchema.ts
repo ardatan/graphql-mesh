@@ -23,10 +23,10 @@ export async function getGraphQLSchemaFromDereferencedJSONSchema(
     queryStringOptions,
   } = opts;
   logger.debug(`Generating GraphQL Schema from the bundled JSON Schema`);
-  const visitorResult = await getComposerFromJSONSchema(
-    fullyDeferencedSchema,
-    logger.child('getComposerFromJSONSchema'),
-  );
+  const visitorResult = await getComposerFromJSONSchema({
+    schema: fullyDeferencedSchema,
+    logger: logger.child('getComposerFromJSONSchema'),
+  });
 
   const schemaComposerWithoutExecutionLogic = visitorResult.output;
 
