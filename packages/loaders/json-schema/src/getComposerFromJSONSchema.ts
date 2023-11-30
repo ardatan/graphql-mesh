@@ -933,6 +933,14 @@ export function getComposerFromJSONSchema({
                     newFieldUnwrappedTC.getFields(),
                   );
                 } else {
+                  if (
+                    newFieldUnwrappedTC &&
+                    existingFieldUnwrappedTC &&
+                    !isUnspecificType(newFieldUnwrappedTC) &&
+                    isUnspecificType(existingFieldUnwrappedTC)
+                  ) {
+                    continue;
+                  }
                   fieldMap[fieldName] = newField;
                 }
               }
@@ -1475,9 +1483,24 @@ export function getComposerFromJSONSchema({
             newFieldUnwrappedTC.getFields(),
           );
         } else {
+          if (
+            newFieldUnwrappedTC &&
+            existingFieldUnwrappedTC &&
+            !isUnspecificType(newFieldUnwrappedTC) &&
+            isUnspecificType(existingFieldUnwrappedTC)
+          ) {
+            continue;
+          }
           existingObjectTypeComposerFields[newFieldKey] = newFieldValue;
         }
       }
     }
   }
+}
+
+const specifiedTypeNames = ['String', 'Int', 'Float', 'Boolean', 'ID', 'JSON', 'Void'];
+
+function isUnspecificType(typeComposer: AnyTypeComposer<any>) {
+  const tc = typeComposer.getTypeName();
+  return !specifiedTypeNames.includes(tc);
 }
