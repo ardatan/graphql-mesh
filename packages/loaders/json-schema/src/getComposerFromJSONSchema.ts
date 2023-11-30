@@ -8,7 +8,6 @@ import {
   GraphQLString,
   GraphQLType,
   isNonNullType,
-  isSpecifiedScalarType,
 } from 'graphql';
 import {
   AnyTypeComposer,
