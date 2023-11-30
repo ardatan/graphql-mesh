@@ -1,5 +1,28 @@
 # @graphql-mesh/cli
 
+## 0.88.2
+
+### Patch Changes
+
+- [#6288](https://github.com/ardatan/graphql-mesh/pull/6288)
+  [`a780dd8`](https://github.com/ardatan/graphql-mesh/commit/a780dd849b79000396246edfe0cb251eb91d7d74)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`cosmiconfig@^9.0.0` ↗︎](https://www.npmjs.com/package/cosmiconfig/v/9.0.0)
+    (from `^8.1.3`, in `dependencies`)
+
+- [`2482dc4`](https://github.com/ardatan/graphql-mesh/commit/2482dc4adc02ace4dc4322d6527a928f7c1efa88)
+  Thanks [@ardatan](https://github.com/ardatan)! - Stop uWebSockets.js gracefully
+
+- Updated dependencies
+  [[`0825974`](https://github.com/ardatan/graphql-mesh/commit/08259742cf6ef1243e1d4124e90d91af0c05d383)]:
+  - @graphql-mesh/store@0.96.1
+  - @graphql-mesh/config@0.98.2
+  - @graphql-mesh/types@0.96.1
+  - @graphql-mesh/http@0.97.2
+  - @graphql-mesh/runtime@0.97.2
+  - @graphql-mesh/utils@0.96.1
+
 ## 0.88.1
 
 ### Patch Changes

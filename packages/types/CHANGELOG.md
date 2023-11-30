@@ -1,5 +1,13 @@
 # @graphql-mesh/types
 
+## 0.96.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0825974`](https://github.com/ardatan/graphql-mesh/commit/08259742cf6ef1243e1d4124e90d91af0c05d383)]:
+  - @graphql-mesh/store@0.96.1
+
 ## 0.96.0
 
 ### Minor Changes
