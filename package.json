@@ -83,7 +83,7 @@
     "esbuild": "0.19.8",
     "graphql": "16.8.1",
     "tslib": "2.6.2",
-    "undici": "5.28.1",
+    "undici": "5.28.2",
     "uuid": "7.0.3"
   },
   "lint-staged": {
