@@ -26,6 +26,7 @@ export async function getGraphQLSchemaFromDereferencedJSONSchema(
   const visitorResult = await getComposerFromJSONSchema({
     schema: fullyDeferencedSchema,
     logger: logger.child('getComposerFromJSONSchema'),
+    getScalarForFormat: opts.getScalarForFormat,
   });
 
   const schemaComposerWithoutExecutionLogic = visitorResult.output;
