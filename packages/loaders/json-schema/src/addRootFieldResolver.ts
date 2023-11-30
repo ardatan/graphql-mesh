@@ -245,6 +245,12 @@ export function addHTTPRootFieldResolver(
             queryParamObj = {
               [queryParamName]: argValue,
             };
+          } else {
+            queryParamObj = resolveDataByUnionInputType(
+              queryParamObj,
+              field.args?.find(arg => arg.name === argName)?.type,
+              schema,
+            );
           }
           const queryParamsString = qsStringify(queryParamObj, opts);
           fullPath += fullPath.includes('?') ? '&' : '?';

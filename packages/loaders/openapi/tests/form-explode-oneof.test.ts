@@ -12,7 +12,6 @@ describe('OpenAPI loader: form explode with oneof query parameters', () => {
     const endpoint = `http://localhost:3000/`;
     createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
       async fetch(input, init) {
-        console.log(input);
         return Response.json({
           url: input,
         });
