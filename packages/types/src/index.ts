@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-misused-new */
 import { DocumentNode, GraphQLResolveInfo, GraphQLSchema, SelectionSetNode } from 'graphql';
+import type { Plugin } from 'graphql-yoga';
 import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue';
-import type { Plugin } from '@envelop/core';
 import { MeshStore } from '@graphql-mesh/store';
 import type { BatchDelegateOptions } from '@graphql-tools/batch-delegate';
 import {
