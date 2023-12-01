@@ -3177,10 +3177,10 @@
     parse-filepath "^1.0.2"
     tslib "~2.5.0"
 
-"@graphql-hive/cli@0.31.0":
-  version "0.31.0"
-  resolved "https://registry.yarnpkg.com/@graphql-hive/cli/-/cli-0.31.0.tgz#78042abea71307863ed373211fad811a4341d019"
-  integrity sha512-zxwfIVLRYIef9eKWJTD/+bu19B/VbJZshRexbvvDyeLKwu+/w9Kx00bephKG7Iw8EjBK/I9wK1CASaO/80vl4A==
+"@graphql-hive/cli@0.32.0":
+  version "0.32.0"
+  resolved "https://registry.yarnpkg.com/@graphql-hive/cli/-/cli-0.32.0.tgz#aec31e50f8e4ab539d67486ece0360e17e11bbae"
+  integrity sha512-PZ1jG3Hluwy2pbAECDZS45SIAfJZuP1yDwxaaJleGQQKGm9uRbNjWRcoP83Jd9hgqzHY3I2WpbqXBpKmf4J/Kw==
   dependencies:
     "@graphql-hive/core" "0.2.3"
     "@graphql-inspector/core" "5.0.1"
@@ -3189,7 +3189,7 @@
     "@graphql-tools/json-file-loader" "~8.0.0"
     "@graphql-tools/load" "~8.0.0"
     "@graphql-tools/url-loader" "~8.0.0"
-    "@graphql-tools/utils" "10.0.3"
+    "@graphql-tools/utils" "10.0.11"
     "@graphql-typed-document-node/core" "3.2.0"
     "@oclif/core" "^2.8.5"
     "@oclif/plugin-help" "5.2.20"
@@ -3665,15 +3665,6 @@
   dependencies:
     "@graphql-typed-document-node/core" "^3.1.1"
     cross-inspect "1.0.0"
-    dset "^3.1.2"
-    tslib "^2.4.0"
-
-"@graphql-tools/utils@10.0.3":
-  version "10.0.3"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-10.0.3.tgz#e5d5b217ba643b7b67a35b50086b5d831aadb71c"
-  integrity sha512-6uO41urAEIs4sXQT2+CYGsUTkHkVo/2MpM/QjoHj6D6xoEF2woXHBpdAVi0HKIInDwZqWgEYOwIFez0pERxa1Q==
-  dependencies:
-    "@graphql-typed-document-node/core" "^3.1.1"
     dset "^3.1.2"
     tslib "^2.4.0"
 
@@ -11837,10 +11828,10 @@ fengari@^0.1.4:
     sprintf-js "^1.1.1"
     tmp "^0.0.33"
 
-fets@0.6.5, fets@^0.6.0:
-  version "0.6.5"
-  resolved "https://registry.yarnpkg.com/fets/-/fets-0.6.5.tgz#a9bd26478135b1a140ad00f4bc78b5b70838ee11"
-  integrity sha512-Opz5QmyK5ldVsAYeRfUvMdrxhspFu3lbyR2KE3iXXXMN8S+XYtVY7IF7IYo/dBt4nP2FsQHsZJQgHLchRhlndA==
+fets@0.6.6, fets@^0.6.0:
+  version "0.6.6"
+  resolved "https://registry.yarnpkg.com/fets/-/fets-0.6.6.tgz#d93e48be844c07a55f78c283d9c6db81d95a5802"
+  integrity sha512-3755C8c2Bb/peJbmNHmB6vpmM3IPgGg02ejKA6J+73e/l6vo87wSzoLAI4dYvJP1L6AsuBiXeG5T2ouhZ1qikg==
   dependencies:
     "@sinclair/typebox" "^0.31.23"
     "@whatwg-node/cookie-store" "^0.2.0"
