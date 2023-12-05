@@ -19,7 +19,11 @@ import {
 
 export default class WrapFilter implements Transform {
   private transforms: Transform[] = [];
-  constructor({ config: { filters } }: { config: YamlConfig.FilterSchemaTransform }) {
+  constructor({
+    config: { filters, filterDeprecatedFields, filterDeprecatedTypes },
+  }: {
+    config: YamlConfig.FilterSchemaTransform;
+  }) {
     for (const filter of filters) {
       const [typeName, fieldNameOrGlob, argsGlob] = filter.split('.');
       const typeMatcher = new Minimatch(typeName);
@@ -105,6 +109,37 @@ export default class WrapFilter implements Transform {
             return globalTypeMatcher.match(interfaceFieldName);
           }
           return true;
+        }),
+      );
+    }
+    if (filterDeprecatedFields) {
+      this.transforms.push(
+        new FilterRootFields((_, fieldName, fieldConfig) => {
+          return !fieldConfig.deprecationReason;
+        }),
+      );
+      this.transforms.push(
+        new FilterObjectFields((_, fieldName, fieldConfig) => {
+          return !fieldConfig.deprecationReason;
+        }),
+      );
+      this.transforms.push(
+        new FilterInputObjectFields((_, fieldName, fieldConfig) => {
+          return !fieldConfig.deprecationReason;
+        }),
+      );
+      this.transforms.push(
+        new FilterInterfaceFields((_, fieldName, fieldConfig) => {
+          return !fieldConfig.deprecationReason;
+        }),
+      );
+    }
+    if (filterDeprecatedTypes) {
+      this.transforms.push(
+        new FilterTypes(type => {
+          return !type.astNode?.directives?.some(
+            directive => directive.name.value === 'deprecated',
+          );
         }),
       );
     }

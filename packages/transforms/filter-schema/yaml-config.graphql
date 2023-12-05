@@ -16,6 +16,14 @@ type FilterSchemaTransform @md {
   Array of filter rules
   """
   filters: [String!]!
+  """
+  Filter deprecated types
+  """
+  filterDeprecatedTypes: Boolean
+  """
+  Filter deprecated fields
+  """
+  filterDeprecatedFields: Boolean
 }
 
 enum FilterSchemaTransformMode {

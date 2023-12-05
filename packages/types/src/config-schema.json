@@ -3436,6 +3436,14 @@
           },
           "additionalItems": false,
           "description": "Array of filter rules"
+        },
+        "filterDeprecatedTypes": {
+          "type": "boolean",
+          "description": "Filter deprecated types"
+        },
+        "filterDeprecatedFields": {
+          "type": "boolean",
+          "description": "Filter deprecated fields"
         }
       },
       "required": ["filters"]

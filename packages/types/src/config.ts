@@ -1242,6 +1242,14 @@ export interface FilterSchemaTransform {
    * Array of filter rules
    */
   filters: string[];
+  /**
+   * Filter deprecated types
+   */
+  filterDeprecatedTypes?: boolean;
+  /**
+   * Filter deprecated fields
+   */
+  filterDeprecatedFields?: boolean;
 }
 export interface HoistFieldTransformConfig {
   /**
