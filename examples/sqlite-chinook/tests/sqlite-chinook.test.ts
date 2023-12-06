@@ -3,6 +3,7 @@ import { introspectionFromSchema, lexicographicSortSchema } from 'graphql';
 import { findAndParseConfig } from '@graphql-mesh/cli';
 import { ProcessedConfig } from '@graphql-mesh/config';
 import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 jest.setTimeout(30000);
 
@@ -21,11 +22,7 @@ describe('SQLite Chinook', () => {
     mesh = await getMesh(config);
   });
   it('should generate correct schema', async () => {
-    expect(
-      introspectionFromSchema(lexicographicSortSchema(mesh.schema), {
-        descriptions: false,
-      }),
-    ).toMatchSnapshot('sqlite-chinook-schema');
+    expect(printSchemaWithDirectives(mesh.schema)).toMatchSnapshot('sqlite-chinook-schema');
   });
   it('should give correct response for example queries', async () => {
     for (const source of config.documents || []) {
