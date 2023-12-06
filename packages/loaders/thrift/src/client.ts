@@ -14,7 +14,7 @@ import {
   TTransport,
   TType,
 } from '@creditkarma/thrift-server-core';
-import { GraphQLThriftAnnotations, TypeMap, TypeVal } from './types';
+import { GraphQLThriftAnnotations, TypeMap, TypeVal } from './types.js';
 
 interface IGraphQLThriftClient extends ThriftClient {
   doRequest(methodName: string, args: any, fields: TypeMap, context?: any): Promise<any>;

@@ -1,8 +1,8 @@
 import { type GraphQLSchema } from 'graphql';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
-import { createGraphQLThriftClient } from './client';
-import { GraphQLThriftAnnotations } from './types';
+import { createGraphQLThriftClient } from './client.js';
+import { GraphQLThriftAnnotations } from './types.js';
 
 export function getExecutableThriftSchema(subgraph: GraphQLSchema): GraphQLSchema {
   const transportDirectives = getDirective(subgraph, subgraph, 'transport');
