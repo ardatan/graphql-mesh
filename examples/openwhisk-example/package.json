@@ -16,6 +16,6 @@
     "@graphql-mesh/graphql": "0.96.1",
     "esbuild": "0.19.8",
     "graphql": "16.8.1",
-    "typescript": "5.3.2"
+    "typescript": "5.3.3"
   }
 }
