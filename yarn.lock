@@ -22538,7 +22538,7 @@ tunnel-agent@^0.6.0:
   dependencies:
     safe-buffer "^5.0.1"
 
-tuql@1.7.0:
+tuql@^1.7.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/tuql/-/tuql-1.7.0.tgz#0442e974defdcc042bdf52f8e20912791e9d05b0"
   integrity sha512-TGsl7HzCJpdrXrEhZOiDyKRcqmVt2wmOdv268CXLKDqmWFL5LWJex5gMctVYPYmhmF8KRDweKG5wm3ZDY9YFgQ==
