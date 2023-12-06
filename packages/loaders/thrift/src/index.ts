@@ -1,5 +1,5 @@
-import { getExecutableThriftSchema } from './execution';
-import { GraphQLThriftLoaderOptions, loadNonExecutableGraphQLSchemaFromIDL } from './schema';
+import { getExecutableThriftSchema } from './execution.js';
+import { GraphQLThriftLoaderOptions, loadNonExecutableGraphQLSchemaFromIDL } from './schema.js';
 
 export default async function loadGraphQLSchemaFromThriftIDL(
   name: string,
@@ -12,7 +12,7 @@ export default async function loadGraphQLSchemaFromThriftIDL(
   return getExecutableThriftSchema(nonExecutableSchema);
 }
 
-export * from './types';
-export * from './schema';
-export * from './execution';
-export * from './client';
+export * from './types.js';
+export * from './schema.js';
+export * from './execution.js';
+export * from './client.js';
