@@ -2530,7 +2530,7 @@
   resolved "https://registry.yarnpkg.com/@corex/deepmerge/-/deepmerge-4.0.43.tgz#9bd42559ebb41cc5a7fb7cfeea5f231c20977dca"
   integrity sha512-N8uEMrMPL0cu/bdboEWpQYb/0i2K5Qn8eCsxzOmxSggJbbQte7ljMRoXm917AbntqTGOzdTu+vP3KOOzoC70HQ==
 
-"@creditkarma/thrift-client@1.0.4":
+"@creditkarma/thrift-client@^1.0.4":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@creditkarma/thrift-client/-/thrift-client-1.0.4.tgz#1b0dd1ceffefeff23df1b833b9c23e275cba6c88"
   integrity sha512-CK2HarQKhzYXEKQeqYSEWdOQYcMz0o7HB7Q4c08prL0bb6EXOE0Qim5FsCvCwYkrkoEHLKSwuD795AJ48yuaNg==
@@ -2539,17 +2539,17 @@
     generic-pool "^3.4.2"
     got "^11.8.3"
 
-"@creditkarma/thrift-parser@2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@creditkarma/thrift-parser/-/thrift-parser-2.0.0.tgz#dbfc432891580177907bde04705147e41903f284"
-  integrity sha512-TnUXwCewfyDQikDqsJaI3t+wtJPDCCmx8r5FdK4ui2BlZJNQuemFww+Tp+VH9Kr/2+goUSuLG87mAOWzHKe7rw==
-
 "@creditkarma/thrift-parser@^1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@creditkarma/thrift-parser/-/thrift-parser-1.2.0.tgz#69b47dff3d2a5211e9417ff543ea65f681821906"
   integrity sha512-mSRxjSXvU6sBfWhMBWXl7H/XEKWHQ7x+MUDLwyeFIwwX9UaZKPOc7TgGd0N78kcZtIMk82ArdxO6aFhqnBuNtg==
 
-"@creditkarma/thrift-server-core@1.0.4":
+"@creditkarma/thrift-parser@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@creditkarma/thrift-parser/-/thrift-parser-2.0.0.tgz#dbfc432891580177907bde04705147e41903f284"
+  integrity sha512-TnUXwCewfyDQikDqsJaI3t+wtJPDCCmx8r5FdK4ui2BlZJNQuemFww+Tp+VH9Kr/2+goUSuLG87mAOWzHKe7rw==
+
+"@creditkarma/thrift-server-core@1.0.4", "@creditkarma/thrift-server-core@^1.0.4":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@creditkarma/thrift-server-core/-/thrift-server-core-1.0.4.tgz#ee66a9bf77add286b762fa724da68d3aec2188fd"
   integrity sha512-Jook5uFJqPeM/D0taSdKHeoerZB6HboSDMqBDWhVDJVSKJGWPSMch4GNALRqr8nCekLKMYkdCgj4FAVetnxpGA==
@@ -22181,7 +22181,7 @@ thread-stream@^2.0.0:
   dependencies:
     real-require "^0.2.0"
 
-thrift@0.19.0:
+thrift@0.19.0, thrift@^0.19.0:
   version "0.19.0"
   resolved "https://registry.yarnpkg.com/thrift/-/thrift-0.19.0.tgz#340545555ea74cd129457963aa300967afcb038c"
   integrity sha512-FfAeToex47DYF5UiqFiLXc0dTOQ1Dt94hdT/p1WEM8HQGOvI32jGs235QUeOvYwb1bApsTfFCa+ACDyF0fVtrg==
@@ -22711,7 +22711,6 @@ typical@^5.2.0:
 
 "uWebSockets.js@uNetworking/uWebSockets.js#semver:^20":
   version "20.34.0"
-  uid fca27c05066342b01951782248640c8013b37196
   resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/fca27c05066342b01951782248640c8013b37196"
 
 ua-parser-js@^1.0.35:
