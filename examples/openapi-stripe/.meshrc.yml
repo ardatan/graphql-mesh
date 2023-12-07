@@ -9,3 +9,5 @@ sources:
 
 documents:
   - get-customers.query.graphql
+
+pollingInterval: 10000
