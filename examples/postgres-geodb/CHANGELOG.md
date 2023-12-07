@@ -1,5 +1,19 @@
 # postgres-geodb-example
 
+## 0.11.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`4fac014`](https://github.com/ardatan/graphql-mesh/commit/4fac01400544bc6e8b2a4ae55f1a4dd4771bbc5c)]:
+  - @graphql-mesh/config@0.98.3
+  - @graphql-mesh/cli@0.88.3
+  - @graphql-mesh/cache-file@0.96.2
+  - @graphql-mesh/graphql@0.96.2
+  - @graphql-mesh/postgraphile@0.96.2
+  - @graphql-mesh/runtime@0.97.3
+  - @graphql-mesh/transform-prefix@0.96.2
+
 ## 0.11.2
 
 ### Patch Changes

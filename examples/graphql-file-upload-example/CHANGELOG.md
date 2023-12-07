@@ -1,5 +1,14 @@
 # graphql-file-upload-example
 
+## 0.12.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`4fac014`](https://github.com/ardatan/graphql-mesh/commit/4fac01400544bc6e8b2a4ae55f1a4dd4771bbc5c)]:
+  - @graphql-mesh/cli@0.88.3
+  - @graphql-mesh/graphql@0.96.2
+
 ## 0.12.2
 
 ### Patch Changes
