@@ -2,7 +2,7 @@ import { GraphQLError, TypeInfo, visit, visitInParallel, visitWithTypeInfo } fro
 import { Minimatch } from 'minimatch';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
+import { KeyValueCache, MeshPlugin, YamlConfig } from '@graphql-mesh/types';
 import { createGraphQLError } from '@graphql-tools/utils';
 
 function deleteNode<T extends Record<string | number, any>>(
@@ -19,7 +19,9 @@ function deleteNode<T extends Record<string | number, any>>(
 }
 
 export default function useMeshRateLimit(
-  options: MeshPluginOptions<YamlConfig.RateLimitPluginConfig>,
+  options: YamlConfig.RateLimitPluginConfig & {
+    cache: KeyValueCache;
+  },
 ): MeshPlugin<any> {
   return {
     async onExecute(onExecuteArgs) {
